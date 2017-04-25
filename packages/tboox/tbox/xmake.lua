@@ -2,10 +2,10 @@ package "tboox.tbox"
 
     set_homepage        "http://www.tboox.org"
     set_description     "A glib-like multi-platform c library"
-    set_urls           ("https://github.com/tboox/tbox/archive/v$(version).tar.gz",
+    set_urls           ("https://github.com/tboox/tbox/archive/$(version).tar.gz",
                         "git@github.com:tboox/tbox.git", 
                         "git@git.oschina.net:tboox/tbox.git")
-    set_versions       ("1.5.0", "1.5.1", "1.5.2", "1.5.3", "1.6.0", "1.6.1")
+    set_versions       ("v1.5.0", "v1.5.1", "v1.5.2", "v1.5.3", "v1.6.0", "v1.6.1")
     set_sha256s        ("232b7b1776b708ebbdbd47767caa6ae10154c68a146d92391a366aada0d77559",
                         "00166848e2602234e0481692b5db0804c007b7e5673cf5a17bd1fc889b4917d7",
                         "e4356f32ff64887706da3d8592433edb7cd5f8ab37d0304c685c967a36169606",
