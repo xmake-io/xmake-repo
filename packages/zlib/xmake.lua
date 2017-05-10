@@ -11,6 +11,6 @@ package "zlib"
     on_build(function (package)
 
         os.vrun("./configure")
-        os.vrun("$(make)")
+        os.vrun("make")
     end)
 

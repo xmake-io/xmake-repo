@@ -14,7 +14,6 @@ xmake-repo是一个基于xmake的包管理仓库。
 * [在线源码](https://github.com/tboox/xmake)
 * [项目主页](http://www.xmake.io/cn)
 
-
 ## 联系方式
 
 * 邮箱：[waruqi@gmail.com](mailto:waruqi@gmail.com)
