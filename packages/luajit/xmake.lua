@@ -14,3 +14,7 @@ package "luajit"
                         "874b1f8297c697821f561f9b73b57ffd419ed8f4278c82e05b48806d30c1e979")
 
 
+    on_build("windows", function (package)
+        os.cd("src")
+        os.vrun("msvcbuild.bat")
+    end)
