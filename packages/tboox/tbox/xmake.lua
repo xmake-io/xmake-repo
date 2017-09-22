@@ -12,4 +12,8 @@ package("tboox.tbox")
     add_sha256s("github@v1.6.2", "5236090b80374b812c136c7fe6b8c694418cbfc9c0a820ec2ba35ff553078c7b")
     add_sha256s("coding@v1.6.2", "0881b08a88722cc35e7613d9785768d4d7ae4656b134da5653f8a125fc72497e")
 
+    on_build(function (package)
+        os.vrun("xmake f -p $(plat) -a $(arch) -m $(mode) --demo=n -c")
+        os.vrun("xmake")
+    end)
 
