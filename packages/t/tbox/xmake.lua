@@ -1,4 +1,4 @@
-package("tboox.tbox")
+package("tbox")
 
     set_homepage("http://www.tboox.org")
     set_description("A glib-like multi-platform c library")
