@@ -20,7 +20,7 @@ package("luajit")
     end)
 
     on_build(function (package)
-        os.vrun("./configure --prefix=%s", package:installdir())
+        io.gsub("./Makefile", "export PREFIX=.*?\n", "export PREFIX=" .. package:installdir() .. "\n")
         os.vrun("make")
     end)
 
