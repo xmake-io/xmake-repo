@@ -18,3 +18,12 @@ package("luajit")
         os.cd("src")
         os.vrun("msvcbuild.bat")
     end)
+
+    on_build(function (package)
+        os.vrun("./configure --prefix=%s", package:installdir())
+        os.vrun("make")
+    end)
+
+    on_install(function (package)
+        os.vrun("make install")
+    end)
