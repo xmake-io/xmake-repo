@@ -19,11 +19,11 @@ package("luajit")
         os.vrun("msvcbuild.bat")
     end)
 
-    on_build(function (package)
+    on_build("macosx", "linux", function (package)
         io.gsub("./Makefile", "export PREFIX= /usr/local", "export PREFIX=" .. package:installdir())
         os.vrun("make")
     end)
 
-    on_install(function (package)
+    on_install("macosx", "linux", function (package)
         os.vrun("make install")
     end)
