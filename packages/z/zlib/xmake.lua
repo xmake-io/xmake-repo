@@ -14,6 +14,15 @@ package("zlib")
         os.vrun("make")
     end)
 
+    on_build("windows", function (package)
+        os.vrun("nmake -f win32\\Makefile.msc zlib.lib")
+    end)
+
     on_install("macosx", "linux", function (package)
         os.vrun("make install")
+    end)
+
+    on_install("windows", function (package)
+        os.cp("zlib.lib", package:installdir("lib"))
+        os.cp("*.h", package:installdir("include"))
     end)

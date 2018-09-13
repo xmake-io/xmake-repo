@@ -10,6 +10,15 @@ package("pcre2")
     add_versions("10.30", "3677ce17854fffa68fce6b66442858f48f0de1f537f18439e4bd2771f8b4c7fb")
     add_versions("10.31", "b4b40695a5347a770407d492c1749e35ba3970ca03fe83eb2c35d44343a5a444")
 
+    if is_host("windows") then
+        add_deps("cmake")
+    end
+
+    on_build("windows", function (package)
+        os.vrun("cmake .")
+        os.vrun("make")
+    end)
+
     on_build("macosx", "linux", function (package)
         os.vrun("./configure --prefix=%s", package:installdir())
         os.vrun("make")
