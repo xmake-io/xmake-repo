@@ -15,8 +15,11 @@ package("pcre2")
     end
 
     on_build("windows", function (package)
-        os.vrun("cmake .")
-        os.vrun("make")
+        import("package.builder.cmake").build(package)
+    end)
+
+    on_install("windows", function (package)
+        import("package.builder.cmake").install(package)
     end)
 
     on_build("macosx", "linux", function (package)
