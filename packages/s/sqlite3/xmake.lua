@@ -22,7 +22,7 @@ package("sqlite3")
     end)
 
     on_build("macosx", "linux", function (package)
-        os.vrun("./configure --prefix=%s", package:installdir())
+        os.vrun("./configure --prefix=%s %s", package:installdir(), is_mode("debug") and "--enable-debug" or "")
         os.vrun("make")
     end)
 
