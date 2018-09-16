@@ -12,7 +12,7 @@ package("tbox")
     add_versions("v1.6.3", "bc5a957cdb1610c19f0cf94497ad114a0e01fd7d569777e9cb2133c513ef6baa")
 
     on_build(function (package)
-        import("package.builder.xmake").build(package)
+        import("package.builder.xmake").build(package, {demo = false})
     end)
 
     on_install(function (package)
