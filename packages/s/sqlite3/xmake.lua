@@ -10,7 +10,7 @@ package("sqlite3")
     add_versions("3.23.0", "b7711a1800a071674c2bf76898ae8584fc6c9643cfe933cfc1bc54361e3a6e49")
 
     on_build("windows", function (package)
-        os.vrun("nmake DEBUG=%s -f Makefile.msc", is_mode("debug") and "1" or "0")
+        os.vrun("nmake DEBUG=%s -f Makefile.msc", package:debug() and "1" or "0")
     end)
 
     on_install("windows", function (package)
@@ -22,7 +22,7 @@ package("sqlite3")
     end)
 
     on_build("macosx", "linux", function (package)
-        os.vrun("./configure --prefix=%s %s", package:installdir(), is_mode("debug") and "--enable-debug" or "")
+        os.vrun("./configure --prefix=%s %s", package:installdir(), package:debug() and "--enable-debug" or "")
         os.vrun("make")
     end)
 
