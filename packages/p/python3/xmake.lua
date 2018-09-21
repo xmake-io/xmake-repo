@@ -12,6 +12,9 @@ package("python3")
             set_urls("https://www.python.org/ftp/python/$(version)/python-$(version)-embed-win32.zip")
             add_versions("3.7.0", "9596b23a8db1f945c2e26fe0dc1743e33f3700b4b708c68ea202cf2ac761a736")
         end
+    else
+        set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
+        add_versions("3.7.0", "85bb9feb6863e04fb1700b018d9d42d1caac178559ffa453d7e6a436e259fd0d")
     end
 
     on_build(function (package)
@@ -22,6 +25,11 @@ package("python3")
         os.cp("*", package:installdir("bin"))
     end)
 
+    on_build("macosx", "linux", function (package)
+        os.vrun("./configure --prefix=%s", package:installdir())
+        os.vrun("make")
+    end)
+
     on_install("macosx", "linux", function (package)
-        import("package.manager").install("python3")
+        os.vrun("make altinstall")
     end)

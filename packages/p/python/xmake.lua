@@ -12,6 +12,9 @@ package("python")
             set_urls("https://www.python.org/ftp/python/$(version)/python-$(version).msi")
             add_versions("2.7.15", "1afa1b10cf491c788baa340066a813d5ec6232561472cfc3af1664dbc6f29f77")
         end
+    else
+        set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
+        add_versions("2.7.15", "18617d1f15a380a919d517630a9cd85ce17ea602f9bbdc58ddc672df4b0239db")
     end
 
     on_build(function (package)
@@ -23,6 +26,12 @@ package("python")
         os.cp("targetdir/*", package:installdir("bin"))
     end)
 
-    on_install("macosx", "linux", function (package)
-        import("package.manager").install("python")
+    on_build("macosx", "linux", function (package)
+        os.vrun("./configure --prefix=%s", package:installdir())
+        os.vrun("make")
     end)
+
+    on_install("macosx", "linux", function (package)
+        os.vrun("make install")
+    end)
+
