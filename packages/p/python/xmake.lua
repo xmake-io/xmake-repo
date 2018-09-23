@@ -6,13 +6,13 @@ package("python")
 
     if is_host("windows") then
         if os.arch() == "x64" then
-            set_urls("https://www.python.org/ftp/python/$(version)/python-$(version).amd64.msi", {alias = "py2"})
-            set_urls("https://www.python.org/ftp/python/$(version)/python-$(version)-embed-amd64.zip", {alias = "py3"})
+            add_urls("https://www.python.org/ftp/python/$(version)/python-$(version).amd64.msi", {alias = "py2"})
+            add_urls("https://www.python.org/ftp/python/$(version)/python-$(version)-embed-amd64.zip", {alias = "py3"})
             add_versions("py2:2.7.15", "5e85f3c4c209de98480acbf2ba2e71a907fd5567a838ad4b6748c76deb286ad7")
             add_versions("py3:3.7.0", "0cc08f3c74c0112abc2adafd16a534cde12fe7c7aafb42e936d59fd3ab08fcdb")
         else
-            set_urls("https://www.python.org/ftp/python/$(version)/python-$(version).msi", {alias = "py2"})
-            set_urls("https://www.python.org/ftp/python/$(version)/python-$(version)-embed-win32.zip", {alias = "py3"})
+            add_urls("https://www.python.org/ftp/python/$(version)/python-$(version).msi", {alias = "py2"})
+            add_urls("https://www.python.org/ftp/python/$(version)/python-$(version)-embed-win32.zip", {alias = "py3"})
             add_versions("py2:2.7.15", "1afa1b10cf491c788baa340066a813d5ec6232561472cfc3af1664dbc6f29f77")
             add_versions("py3:3.7.0", "9596b23a8db1f945c2e26fe0dc1743e33f3700b4b708c68ea202cf2ac761a736")
         end
