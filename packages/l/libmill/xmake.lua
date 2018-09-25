@@ -9,11 +9,10 @@ package("libmill")
     add_versions("1.17", "ada513275d8d5a2ce98cdbc47ad491bfb10f5e9a5429656e539a5889f863042d")
 
     on_build("macosx", "linux", function (package)
-        os.vrun("./configure --prefix=%s", package:installdir())
-        os.vrun("make")
+        import("package.builder.autoconf").build(package)
     end)
 
     on_install("macosx", "linux", function (package)
-        os.vrun("make install")
+        import("package.builder.autoconf").install(package)
     end)
 

@@ -22,10 +22,9 @@ package("sqlite3")
     end)
 
     on_build("macosx", "linux", function (package)
-        os.vrun("./configure --prefix=%s %s", package:installdir(), package:debug() and "--enable-debug" or "")
-        os.vrun("make")
+        import("package.builder.autoconf").build(package, {package:debug() and "--enable-debug" or ""})
     end)
 
     on_install("macosx", "linux", function (package)
-        os.vrun("make install")
+        import("package.builder.autoconf").install(package)
     end)

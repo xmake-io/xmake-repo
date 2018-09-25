@@ -28,12 +28,11 @@ package("python3")
     end)
 
     on_build("macosx", "linux", function (package)
-        os.vrun("./configure --prefix=%s", package:installdir("share", package:name(), package:version_str()))
-        os.vrun("make -j4")
+        import("package.builder.autoconf").build(package, {prefix = package:installdir("share", package:name(), package:version_str())})
     end)
 
     on_install("macosx", "linux", function (package)
-        os.vrun("make install")
+        import("package.builder.autoconf").install(package)
         package:addenv("PATH", path.join("share", package:name(), package:version_str(), "bin"))
     end)
 

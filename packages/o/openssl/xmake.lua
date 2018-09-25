@@ -11,10 +11,9 @@ package("openssl")
     add_versions("github:1.1.1", "7da8c193d3828a0cb4d866dc75622b2aac392971c3d656f7817fb84355290343")
 
     on_build("linux", "macosx", function (package)
-        os.vrun("./config --prefix=%s %s", package:installdir(), is_mode("debug") and "--debug" or "")
-        os.vrun("make")
+        import("package.builder.autoconf").build(package, {package:debug() and "--debug" or ""})
     end)
 
     on_install("linux", "macosx", function (package)
-        os.vrun("make install")
+        import("package.builder.autoconf").install(package)
     end)

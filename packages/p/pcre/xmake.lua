@@ -22,10 +22,9 @@ package("pcre")
     end)
 
     on_build("macosx", "linux", function (package)
-        os.vrun("./configure --prefix=%s", package:installdir())
-        os.vrun("make")
+        import("package.builder.autoconf").build(package)
     end)
 
     on_install("macosx", "linux", function (package)
-        os.vrun("make install")
+        import("package.builder.autoconf").install(package)
     end)
