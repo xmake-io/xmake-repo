@@ -18,6 +18,7 @@ package("libxml2")
         os.cd("win32")
         os.vrun("nmake /f Makefile.msvc install")
         package:addvar("includedirs", "include/libxml2")
+        package:addvar("links", "libxml2")
     end)
 
     on_build("macosx", "linux", function (package)
