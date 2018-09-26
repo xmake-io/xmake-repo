@@ -20,6 +20,8 @@ package("pcre2")
 
     on_install("windows", function (package)
         import("package.builder.cmake").install(package)
+        package:addvar("links", "pcre2-8")
+        package:addvar("defines", "PCRE2_CODE_UNIT_WIDTH=8")
     end)
 
     on_build("macosx", "linux", function (package)
@@ -28,4 +30,6 @@ package("pcre2")
 
     on_install("macosx", "linux", function (package)
         import("package.builder.autoconf").install(package)
+        package:addvar("links", "pcre2-8")
+        package:addvar("defines", "PCRE2_CODE_UNIT_WIDTH=8")
     end)
