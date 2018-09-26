@@ -23,6 +23,7 @@ package("glew")
             os.cp("bin/Release/Win32/*.dll", package:installdir("lib"))
             os.cp("lib/Release/Win32/*.lib", package:installdir("lib"))
         end
+        package:addvar("links", "glew32s")
     end)
 
     on_build("linux", "macosx", function (package)
