@@ -17,6 +17,7 @@ package("libxml2")
     on_install("windows", function (package)
         os.cd("win32")
         os.vrun("nmake /f Makefile.msvc install")
+        package:add("includedirs", "include/libxml2")
     end)
 
     on_build("macosx", "linux", function (package)
@@ -25,4 +26,5 @@ package("libxml2")
 
     on_install("macosx", "linux", function (package)
         import("package.builder.autoconf").install(package)
+        package:add("includedirs", "include/libxml2")
     end)
