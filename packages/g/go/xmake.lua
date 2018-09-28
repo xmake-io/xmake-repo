@@ -30,9 +30,6 @@ package("go")
         end
     end
 
-    on_build(function (package)
-    end)
-
     on_install("macosx", "linux", "windows", function (package)
         os.cp("bin", package:installdir())
         os.cp("lib", package:installdir())

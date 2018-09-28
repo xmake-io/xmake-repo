@@ -17,9 +17,6 @@ package("python2")
         add_versions("2.7.15", "18617d1f15a380a919d517630a9cd85ce17ea602f9bbdc58ddc672df4b0239db")
     end
 
-    on_build(function (package)
-    end)
-
     on_install("windows", function (package)
         local installdir = package:installdir("share", package:name(), package:version_str())
         os.mkdir("targetdir")
@@ -29,12 +26,8 @@ package("python2")
         package:addenv("PATH", path.join("share", package:name(), package:version_str()))
     end)
 
-    on_build("macosx", "linux", function (package)
-        import("package.builder.autoconf").build(package, {prefix = package:installdir("share", package:name(), package:version_str())})
-    end)
-
     on_install("macosx", "linux", function (package)
-        import("package.builder.autoconf").install(package)
+        import("package.tools.autoconf").install(package, {prefix = package:installdir("share", package:name(), package:version_str())})
         package:addenv("PATH", path.join("share", package:name(), package:version_str(), "bin"))
     end)
 

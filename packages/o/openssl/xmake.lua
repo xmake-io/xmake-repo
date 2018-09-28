@@ -10,10 +10,7 @@ package("openssl")
     add_versions("home:1.1.1", "2836875a0f89c03d0fdf483941512613a50cfb421d6fd94b9f41d7279d586a3d")
     add_versions("github:1.1.1", "7da8c193d3828a0cb4d866dc75622b2aac392971c3d656f7817fb84355290343")
 
-    on_build("linux", "macosx", function (package)
-        import("package.builder.autoconf").build(package, {package:debug() and "--debug" or ""})
+    on_install("linux", "macosx", function (package)
+        import("package.tools.autoconf").install(package, {package:debug() and "--debug" or ""})
     end)
 
-    on_install("linux", "macosx", function (package)
-        import("package.builder.autoconf").install(package)
-    end)

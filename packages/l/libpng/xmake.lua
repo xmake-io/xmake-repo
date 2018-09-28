@@ -12,18 +12,10 @@ package("libpng")
         add_deps("cmake")
     end
 
-    on_build("windows", function (package)
-        import("package.builder.cmake").build(package)
-    end)
-
     on_install("windows", function (package)
-        import("package.builder.cmake").install(package)
-    end)
-
-    on_build("macosx", "linux", function (package)
-        import("package.builder.autoconf").build(package)
+        import("package.tools.cmake").install(package)
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.builder.autoconf").install(package)
+        import("package.tools.autoconf").install(package)
     end)

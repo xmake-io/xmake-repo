@@ -12,24 +12,16 @@ package("libxml2")
         add_deps("libtool", "autoconf", "automake")
     end
 
-    on_build("windows", function (package)
+    on_install("windows", function (package)
         os.cd("win32")
         os.vrun("cscript configure.js iso8859x=yes iconv=no compiler=msvc cruntime=/MT debug=%s prefix=\"%s\"", package:debug() and "yes" or "no", package:installdir())
         os.vrun("nmake /f Makefile.msvc")
-    end)
-
-    on_install("windows", function (package)
-        os.cd("win32")
         os.vrun("nmake /f Makefile.msvc install")
         package:addvar("includedirs", "include/libxml2")
         package:addvar("links", "libxml2")
     end)
 
-    on_build("macosx", "linux", function (package)
-        import("package.builder.autoconf").build(package)
-    end)
-
     on_install("macosx", "linux", function (package)
-        import("package.builder.autoconf").install(package)
+        import("package.tools.autoconf").install(package)
         package:addvar("includedirs", "include/libxml2")
     end)

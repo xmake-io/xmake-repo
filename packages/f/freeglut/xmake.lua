@@ -11,10 +11,6 @@ package("freeglut")
         add_deps("cmake")
     end
 
-    on_build("linux", "windows", function (package)
-        import("package.builder.cmake").build(package)
-    end)
-
     on_install("linux", "windows", function (package)
-        import("package.builder.cmake").install(package)
+        import("package.tools.cmake").install(package)
     end)

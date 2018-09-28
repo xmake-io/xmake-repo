@@ -12,19 +12,13 @@ package("mbedtls")
         add_deps("cmake")
     end
 
-    on_build("windows", function (package)
-        import("package.builder.cmake").build(package)
-    end)
-
     on_install("windows", function (package)
-        import("package.builder.cmake").install(package)
-    end)
-
-    on_build("macosx", "linux", function (package)
-        io.gsub("./Makefile", "DESTDIR=/usr/local", "DESTDIR=" .. package:installdir())
-        os.vrun("make")
+        import("package.tools.cmake").install(package)
     end)
 
     on_install("macosx", "linux", function (package)
+        io.gsub("./Makefile", "DESTDIR=/usr/local", "DESTDIR=" .. package:installdir())
+        os.vrun("make")
         os.vrun("make install")
     end)
+

@@ -11,9 +11,6 @@ package("glew")
         add_versions("2.1.0", "2700383d4de2455f06114fbaf872684f15529d4bdc5cdea69b5fb0e9aa7763f1")
     end
 
-    on_build("windows", function (package)
-    end)
-
     on_install("windows", function (package)
         os.cp("include", package:installdir())
         if is_arch("x64") then
@@ -26,11 +23,8 @@ package("glew")
         package:addvar("links", "glew32s")
     end)
 
-    on_build("linux", "macosx", function (package)
-        os.vrun("make")
-    end)
-
     on_install("linux", "macosx", function (package)
+        os.vrun("make")
         os.cp("lib", package:installdir())
         os.cp("include", package:installdir())
     end)

@@ -8,10 +8,6 @@ package("fontconfig")
 
     add_deps("freetype")
 
-    on_build("linux", "macosx", function (package)
-        import("package.builder.autoconf").build(package)
-    end)
-
     on_install("linux", "macosx", function (package)
-        import("package.builder.autoconf").install(package)
+        import("package.tools.autoconf").install(package)
     end)

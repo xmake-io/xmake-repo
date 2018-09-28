@@ -11,19 +11,12 @@ package("libsdl")
         add_versions("2.0.8", "e6a7c71154c3001e318ba7ed4b98582de72ff970aca05abc9f45f7cbdc9088cb")
     end
 
-    on_build("windows", function (package)
-    end)
-
     on_install("windows", function (package)
         os.cp("include", package:installdir())
         os.cp("lib/$(arch)/*.lib", package:installdir("lib"))
         os.cp("lib/$(arch)/*.dll", package:installdir("lib"))
     end)
 
-    on_build("macosx", "linux", function (package)
-        import("package.builder.autoconf").build(package)
-    end)
-
     on_install("macosx", "linux", function (package)
-        import("package.builder.autoconf").install(package)
+        import("package.tools.autoconf").install(package)
     end)

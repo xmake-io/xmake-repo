@@ -17,9 +17,6 @@ package("python3")
         add_versions("3.7.0", "85bb9feb6863e04fb1700b018d9d42d1caac178559ffa453d7e6a436e259fd0d")
     end
 
-    on_build(function (package)
-    end)
-
     on_install("windows", function (package)
         local installdir = package:installdir("share", package:name(), package:version_str())
         os.cp("*", installdir)
@@ -27,12 +24,8 @@ package("python3")
         package:addenv("PATH", path.join("share", package:name(), package:version_str()))
     end)
 
-    on_build("macosx", "linux", function (package)
-        import("package.builder.autoconf").build(package, {prefix = package:installdir("share", package:name(), package:version_str())})
-    end)
-
     on_install("macosx", "linux", function (package)
-        import("package.builder.autoconf").install(package)
+        import("package.tools.autoconf").install(package, {prefix = package:installdir("share", package:name(), package:version_str())})
         package:addenv("PATH", path.join("share", package:name(), package:version_str(), "bin"))
     end)
 

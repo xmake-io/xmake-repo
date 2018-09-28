@@ -11,18 +11,11 @@ package("freetype")
         add_versions("2.9.1", "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
     end
 
-    on_build("windows", function (package)
-    end)
-
     on_install("windows", function (package)
         os.cp("include", package:installdir())
         os.cp(is_arch("x64") and "win64/*" or "win32/*", package:installdir("lib"))
     end)
 
-    on_build("linux", "macosx", function (package)
-        import("package.builder.autoconf").build(package)
-    end)
-
     on_install("linux", "macosx", function (package)
-        import("package.builder.autoconf").install(package)
+        import("package.tools.autoconf").install(package)
     end)
