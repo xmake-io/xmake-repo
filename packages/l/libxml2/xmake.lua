@@ -9,7 +9,7 @@ package("libxml2")
     add_versions("v2.9.7", "31dd4c0e10fa625b47e27fd6a5295d246c883f214da947b9a4a9e13733905ed9")
 
     if is_plat("macosx", "linux") then
-        add_deps("libtool", "autoconf", "automake")
+        add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
     on_install("windows", function (package)
@@ -22,6 +22,6 @@ package("libxml2")
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package)
+        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--without-python", "--without-lzma"})
         package:addvar("includedirs", "include/libxml2")
     end)
