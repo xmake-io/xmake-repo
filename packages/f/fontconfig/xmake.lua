@@ -9,5 +9,11 @@ package("fontconfig")
     add_deps("pkg-config", "freetype >= 2.9")
 
     on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-silent-rules", "--enable-static"})
+        local font_dirs = {}
+        if is_plat("macosx") then
+            table.insert(font_dirs, "/System/Library/Fonts")
+            table.insert(font_dirs, "/Library/Fonts")
+            table.insert(font_dirs, "~/Library/Fonts")
+        end
+        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-silent-rules", "--enable-static", ["with-add-fonts"] = table.concat(font_dirs, ',')})
     end)
