@@ -18,5 +18,5 @@ package("pcre")
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package)
+        import("package.tools.autoconf").install(package, {"--enable-jit"})
     end)

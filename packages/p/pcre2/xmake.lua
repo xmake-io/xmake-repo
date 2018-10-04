@@ -21,7 +21,7 @@ package("pcre2")
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package)
+        import("package.tools.autoconf").install(package, {"--enable-jit"})
         package:addvar("links", "pcre2-8")
         package:addvar("defines", "PCRE2_CODE_UNIT_WIDTH=8")
     end)
