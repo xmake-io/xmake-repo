@@ -7,8 +7,9 @@ package("freetype")
         set_urls("https://github.com/ubawurinna/freetype-windows-binaries/releases/download/v$(version)/freetype-$(version).zip")
         add_versions("2.9.1", "5238a18447b6611e8838d23c42174e5429b730b91c5aa3747b3eb4e3fc0720a7")
     else
-        set_urls("https://download.savannah.gnu.org/releases/freetype/freetype-$(version).tar.gz")
-        add_versions("2.9.1", "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
+        set_urls("https://downloads.sourceforge.net/project/freetype/freetype2/$(version)/freetype-$(version).tar.bz2",
+                 "https://download.savannah.gnu.org/releases/freetype/freetype-$(version).tar.bz2")
+        add_versions("2.9.1", "db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d")
     end
 
     on_install("windows", function (package)

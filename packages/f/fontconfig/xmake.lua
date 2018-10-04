@@ -6,8 +6,8 @@ package("fontconfig")
     set_urls("https://www.freedesktop.org/software/fontconfig/release/fontconfig-$(version).tar.gz")
     add_versions("2.13.1", "9f0d852b39d75fc655f9f53850eb32555394f36104a044bb2b2fc9e66dbbfa7f")
 
-    add_deps("freetype")
+    add_deps("pkg-config", "freetype >= 2.9")
 
     on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package)
+        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-silent-rules", "--enable-static"})
     end)
