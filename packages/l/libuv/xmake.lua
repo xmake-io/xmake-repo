@@ -17,6 +17,7 @@ package("libuv")
 
     on_install("windows|x86", function (package)
         import("package.tools.cmake").install(package)
+        package:addvar("links", "uv_a")
         os.cp("include", package:installdir())
     end)
 
