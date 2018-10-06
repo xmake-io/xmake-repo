@@ -15,8 +15,9 @@ package("libuv")
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
-    on_install("windows", function (package)
+    on_install("windows|x86", function (package)
         import("package.tools.cmake").install(package)
+        os.cp("include", package:installdir())
     end)
 
     on_install("macosx", "linux", function (package)
