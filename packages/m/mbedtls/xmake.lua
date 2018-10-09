@@ -12,9 +12,11 @@ package("mbedtls")
         add_deps("cmake")
     end
 
-    on_install("windows", function (package)
-        import("package.tools.cmake").install(package)
-    end)
+    if is_plat("windows") and winos.version():gt("winxp") then
+        on_install("windows", function (package)
+            import("package.tools.cmake").install(package)
+        end)
+    end
 
     on_install("macosx", "linux", function (package)
         io.gsub("./Makefile", "DESTDIR=/usr/local", "DESTDIR=" .. package:installdir())

@@ -12,14 +12,16 @@ package("libxml2")
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
-    on_install("windows", function (package)
-        os.cd("win32")
-        os.vrun("cscript configure.js iso8859x=yes iconv=no compiler=msvc cruntime=/MT debug=%s prefix=\"%s\"", package:debug() and "yes" or "no", package:installdir())
-        os.vrun("nmake /f Makefile.msvc")
-        os.vrun("nmake /f Makefile.msvc install")
-        package:addvar("includedirs", "include/libxml2")
-        package:addvar("links", "libxml2")
-    end)
+    if is_plat("windows") and winos.version():gt("winxp") then
+        on_install("windows", function (package)
+            os.cd("win32")
+            os.vrun("cscript configure.js iso8859x=yes iconv=no compiler=msvc cruntime=/MT debug=%s prefix=\"%s\"", package:debug() and "yes" or "no", package:installdir())
+            os.vrun("nmake /f Makefile.msvc")
+            os.vrun("nmake /f Makefile.msvc install")
+            package:addvar("includedirs", "include/libxml2")
+            package:addvar("links", "libxml2")
+        end)
+    end
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--without-python", "--without-lzma"})
