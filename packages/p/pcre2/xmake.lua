@@ -10,12 +10,12 @@ package("pcre2")
     add_versions("10.30", "3677ce17854fffa68fce6b66442858f48f0de1f537f18439e4bd2771f8b4c7fb")
     add_versions("10.31", "b4b40695a5347a770407d492c1749e35ba3970ca03fe83eb2c35d44343a5a444")
 
-    if is_host("windows") and is_arch("x86") then
+    if is_host("windows") then
         add_deps("cmake")
     end
 
     if is_plat("windows") and winos.version():gt("winxp") then
-        on_install("windows|x86", function (package)
+        on_install("windows", function (package)
             import("package.tools.cmake").install(package)
             package:addvar("links", "pcre2-8")
             package:addvar("defines", "PCRE2_CODE_UNIT_WIDTH=8")
