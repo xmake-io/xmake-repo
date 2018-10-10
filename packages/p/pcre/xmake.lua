@@ -9,11 +9,11 @@ package("pcre")
     add_versions("8.40", "99e19194fa57d37c38e897d07ecb3366b18e8c395b36c6d555706a7f1df0a5d4")
     add_versions("8.41", "0e914a3a5eb3387cad6ffac591c44b24bc384c4e828643643ebac991b57dfcc5")
 
-    if is_host("windows") then
+    if is_host("windows") and is_arch("x86") then
         add_deps("cmake")
     end
 
-    on_install("windows", function (package)
+    on_install("windows|x86", function (package)
         import("package.tools.cmake").install(package)
     end)
 
