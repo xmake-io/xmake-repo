@@ -22,6 +22,14 @@ package("python")
         add_versions("3.7.0", "85bb9feb6863e04fb1700b018d9d42d1caac178559ffa453d7e6a436e259fd0d")
     end
 
+    on_load(function (package)
+        if is_host("windows") then
+            package:addenv("PATH", path.join("share", package:name(), package:version_str()))
+        else
+            package:addenv("PATH", path.join("share", package:name(), package:version_str(), "bin"))
+        end
+    end)
+
     on_install("windows", function (package)
         local installdir = package:installdir("share", package:name(), package:version_str())
         if package:version_str():startswith("2.") then
@@ -33,11 +41,9 @@ package("python")
             os.cp("*", installdir)
             os.cp("python.exe", path.join(installdir, "python3.exe"))
         end
-        package:addenv("PATH", path.join("share", package:name(), package:version_str()))
     end)
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package, {prefix = package:installdir("share", package:name(), package:version_str())})
-        package:addenv("PATH", path.join("share", package:name(), package:version_str(), "bin"))
     end)
 

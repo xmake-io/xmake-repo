@@ -15,9 +15,12 @@ package("libuv")
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
+    on_load("windows", function (package)
+        package:addvar("links", "uv_a")
+    end)
+
     on_install("windows", function (package)
         import("package.tools.cmake").install(package)
-        package:addvar("links", "uv_a")
         os.cp("include", package:installdir())
     end)
 

@@ -14,16 +14,17 @@ package("pcre2")
         add_deps("cmake")
     end
 
+    on_load(function (package)
+        package:addvar("links", "pcre2-8")
+        package:addvar("defines", "PCRE2_CODE_UNIT_WIDTH=8")
+    end)
+
     if is_plat("windows") and winos.version():gt("winxp") then
         on_install("windows", function (package)
             import("package.tools.cmake").install(package)
-            package:addvar("links", "pcre2-8")
-            package:addvar("defines", "PCRE2_CODE_UNIT_WIDTH=8")
         end)
     end
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package, {"--enable-jit"})
-        package:addvar("links", "pcre2-8")
-        package:addvar("defines", "PCRE2_CODE_UNIT_WIDTH=8")
     end)

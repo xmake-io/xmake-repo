@@ -17,17 +17,23 @@ package("python2")
         add_versions("2.7.15", "18617d1f15a380a919d517630a9cd85ce17ea602f9bbdc58ddc672df4b0239db")
     end
 
+    on_load(function (package)
+        if is_host("windows") then
+            package:addenv("PATH", path.join("share", package:name(), package:version_str()))
+        else
+            package:addenv("PATH", path.join("share", package:name(), package:version_str(), "bin"))
+        end
+    end)
+
     on_install("windows", function (package)
         local installdir = package:installdir("share", package:name(), package:version_str())
         os.mkdir("targetdir")
         os.vrun("msiexec /a \"%s\" /quiet /qn TARGETDIR=\"%s\"", package:originfile(), path.absolute("targetdir"))
         os.cp("targetdir/*", installdir)
         os.cp("targetdir/python.exe", path.join(installdir, "python2.exe"))
-        package:addenv("PATH", path.join("share", package:name(), package:version_str()))
     end)
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package, {prefix = package:installdir("share", package:name(), package:version_str())})
-        package:addenv("PATH", path.join("share", package:name(), package:version_str(), "bin"))
     end)
 

@@ -11,6 +11,10 @@ package("glew")
         add_versions("2.1.0", "2700383d4de2455f06114fbaf872684f15529d4bdc5cdea69b5fb0e9aa7763f1")
     end
 
+    on_load("windows", function (package)
+        package:addvar("links", "glew32s")
+    end)
+
     on_install("windows", function (package)
         os.cp("include", package:installdir())
         if is_arch("x64") then
@@ -20,7 +24,6 @@ package("glew")
             os.cp("bin/Release/Win32/*.dll", package:installdir("lib"))
             os.cp("lib/Release/Win32/*.lib", package:installdir("lib"))
         end
-        package:addvar("links", "glew32s")
     end)
 
     on_install("linux", "macosx", function (package)
