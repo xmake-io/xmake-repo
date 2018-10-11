@@ -15,6 +15,7 @@ package("mbedtls")
     if is_plat("windows") and winos.version():gt("winxp") then
         on_install("windows", function (package)
             import("package.tools.cmake").install(package)
+            package:addvar("links", "mbedcrypto", "mbedx509", "mbedtls")
         end)
     end
 
@@ -22,5 +23,6 @@ package("mbedtls")
         io.gsub("./Makefile", "DESTDIR=/usr/local", "DESTDIR=" .. package:installdir())
         os.vrun("make")
         os.vrun("make install")
+        package:addvar("links", "mbedcrypto", "mbedx509", "mbedtls")
     end)
 
