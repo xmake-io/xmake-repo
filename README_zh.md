@@ -1,12 +1,18 @@
-# 一个基于xmake的包管理仓库
+# 一个官方的xmake包管理仓库
 
 [![Join the chat at https://gitter.im/tboox/tboox](https://badges.gitter.im/tboox/tboox.svg)](https://gitter.im/tboox/tboox?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![donate](http://tboox.org/static/img/donate.svg)](http://xmake.io/cn/pages/donation.html#donate)
 
 ## 简介
 
-xmake-repo是一个基于xmake的包管理仓库。
+xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发包，提供跨平台支持。
 
-正处于早期开发架构阶段，暂处于只读状态，请耐性等待xmake下个版本支持。
+## 包依赖描述
+
+<img src="/assets/img/index/add_require.png" width="70%" />
+
+## 包依赖管理
+
+<img src="/assets/img/index/package_manage.png" width="80%" />
 
 如果你想要了解更多，请参考：
 
