@@ -8,11 +8,11 @@ xmake-repo is an official xmake package repository.
 
 ## Package dependences
 
-<img src="/assets/img/index/add_require.png" width="70%" />
+<img src="https://xmake.io/assets/img/index/add_require.png" width="70%" />
 
 ## Package management
 
-<img src="/assets/img/index/package_manage.png" width="80%" />
+<img src="https://xmake.io/assets/img/index/package_manage.png" width="80%" />
 
 If you want to known more, please refer to:
 

@@ -8,11 +8,11 @@ xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发
 
 ## 包依赖描述
 
-<img src="/assets/img/index/add_require.png" width="70%" />
+<img src="https://xmake.io/assets/img/index/add_require.png" width="70%" />
 
 ## 包依赖管理
 
-<img src="/assets/img/index/package_manage.png" width="80%" />
+<img src="https://xmake.io/assets/img/index/package_manage.png" width="80%" />
 
 如果你想要了解更多，请参考：
 
