@@ -14,6 +14,22 @@ package("ffmpeg")
     end)
 
     on_install("linux", "macosx", function (package)
-        local configs = {"--disable-ffmpeg", "--disable-ffplay", "--disable-debug"}
+        local configs = {"--disable-ffmpeg", 
+                         "--disable-ffplay", 
+                        "--disable-debug", 
+                        "--enable-version3",
+                        "--enable-hardcoded-tables",
+                        "--enable-avresample"}
+        local cc = get_config("cc")
+        if cc then
+            table.insert(configs, "--cc=" .. cc)
+        end
+        local cflags = get_config("cflags")
+        if cflags then
+            table.insert(configs, "--host-cflags=" .. cflags)
+        end
+        if is_plat("macosx") and macos.version():ge("10.8") then
+            table.insert(configs, "--enable-videotoolbox")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
