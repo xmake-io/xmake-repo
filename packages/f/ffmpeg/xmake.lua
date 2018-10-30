@@ -16,10 +16,10 @@ package("ffmpeg")
     on_install("linux", "macosx", function (package)
         local configs = {"--disable-ffmpeg", 
                          "--disable-ffplay", 
-                        "--disable-debug", 
-                        "--enable-version3",
-                        "--enable-hardcoded-tables",
-                        "--enable-avresample"}
+                         "--disable-debug", 
+                         "--enable-version3",
+                         "--enable-hardcoded-tables",
+                         "--enable-avresample"}
         local cc = get_config("cc")
         if cc then
             table.insert(configs, "--cc=" .. cc)
