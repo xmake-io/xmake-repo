@@ -8,5 +8,9 @@ package("nlohmann_json")
     add_versions("v3.4.0", "bfec46fc0cee01c509cf064d2254517e7fa80d1e7647fea37cf81d97c5682bdc")
 
     on_install(function (package)
-        os.cp("include", package:installdir())
+        if os.isdir("include") then
+            os.cp("include", package:installdir())
+        else
+            os.cp("*", package:installdir("include"))
+        end
     end)
