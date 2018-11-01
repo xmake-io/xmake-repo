@@ -10,6 +10,7 @@ package("ffmpeg")
     add_versions("github:4.0.2", "4df1ef0bf73b7148caea1270539ef7bd06607e0ea8aa2fbf1bb34062a097f026")
 
     add_deps("x264", {optional = true})
+    add_deps("x265", {optional = true})
 
     on_load(function (package)
         package:addvar("links", "avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
@@ -36,6 +37,9 @@ package("ffmpeg")
         end
         if package:config("x264") ~= false and package:dep("x264"):exists() then
             table.insert(configs, "--enable-libx264")
+        end
+        if package:config("x265") ~= false and package:dep("x265"):exists() then
+            table.insert(configs, "--enable-libx265")
         end
         import("package.tools.autoconf").install(package, configs)
     end)
