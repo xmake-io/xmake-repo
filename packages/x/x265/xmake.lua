@@ -9,6 +9,10 @@ package("x265")
 
     add_deps("cmake", "nasm")
 
+    on_load("linux", "macosx", function (package)
+        package:addvar("syslinks", "c++")
+    end)
+
     on_install("linux", "macosx", function (package)
         os.cd("build/linux")
         os.vrun("./multilib.sh")
