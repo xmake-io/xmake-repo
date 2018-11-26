@@ -8,6 +8,10 @@ package("ncurses")
              "ftp://ftp.gnu.org/gnu/ncurses/ncurses-$(version).tar.gz")
     add_versions("6.1", "aa057eeeb4a14d470101eff4597d5833dcef5965331be3528c08d99cebaa0d17")
 
+    on_load(function (package)
+        package:addvar("includedirs", "include/ncurses")
+    end)
+
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf").install(package, {"--without-manpages"})
     end)
