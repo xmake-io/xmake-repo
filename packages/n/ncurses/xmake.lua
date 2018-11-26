@@ -13,5 +13,5 @@ package("ncurses")
     end)
 
     on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package, {"--without-manpages"})
+        import("package.tools.autoconf").install(package, {"--without-manpages", ["with-build-cflags"] = package:config("cflags")})
     end)
