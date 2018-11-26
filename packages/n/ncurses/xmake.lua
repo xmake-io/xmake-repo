@@ -9,7 +9,8 @@ package("ncurses")
     add_versions("6.1", "aa057eeeb4a14d470101eff4597d5833dcef5965331be3528c08d99cebaa0d17")
 
     on_load(function (package)
-        package:addvar("includedirs", "include/ncurses")
+        package:addvar("includedirs", "include/ncurses", "include")
+        package:addvar("links", "ncurses", "form", "panel", "menu")
     end)
 
     on_install("linux", "macosx", function (package)
