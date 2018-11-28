@@ -9,6 +9,9 @@ package("ffmpeg")
     add_versions("home:4.0.2", "346c51735f42c37e0712e0b3d2f6476c86ac15863e4445d9e823fe396420d056")
     add_versions("github:4.0.2", "4df1ef0bf73b7148caea1270539ef7bd06607e0ea8aa2fbf1bb34062a097f026")
 
+    add_deps("x264", {optional = true})
+    add_deps("x265", {optional = true})
+
     on_load(function (package)
         package:addvar("links", "avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
     end)
@@ -17,6 +20,7 @@ package("ffmpeg")
         local configs = {"--disable-ffmpeg", 
                          "--disable-ffplay", 
                          "--disable-debug", 
+                         "--enable-gpl",
                          "--enable-version3",
                          "--enable-hardcoded-tables",
                          "--enable-avresample"}
@@ -30,6 +34,12 @@ package("ffmpeg")
         end
         if is_plat("macosx") and macos.version():ge("10.8") then
             table.insert(configs, "--enable-videotoolbox")
+        end
+        if package:config("x264") ~= false and package:dep("x264"):exists() then
+            table.insert(configs, "--enable-libx264")
+        end
+        if package:config("x265") ~= false and package:dep("x265"):exists() then
+            table.insert(configs, "--enable-libx265")
         end
         import("package.tools.autoconf").install(package, configs)
     end)
