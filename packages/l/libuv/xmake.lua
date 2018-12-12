@@ -5,7 +5,7 @@ package("libuv")
 
     set_urls("https://github.com/libuv/libuv/archive/$(version).zip",
              "https://github.com/libuv/libuv.git")
-    -- checksum sha256
+
     add_versions("v1.24.0", "e22ecac6b2370ce7bf7b0cff818e44cdaa7d0b9ea1f8d6d4f2e0aaef43ccf5d7")
     add_versions("v1.23.2", "0bb546e7cfa2a4e7576d66d0622bffb0a8111f9669f6131471754a1b68f6f754")
     add_versions("v1.23.1", "fc0de9d02cc09eb00c576e77b29405daca5ae541a87aeb944fee5360c83b9f4c")
@@ -25,22 +25,17 @@ package("libuv")
 
     on_install("windows", function (package)
         local configs = {}
-        local rtlib = string.lower(package:config('rtlib') or '')
-        if rtlib == 'md' then
-            configs = {
-                '-DCMAKE_CXX_FLAGS_DEBUG="/MDd"',
-                '-DCMAKE_CXX_FLAGS_RELEASE="/MD"',
-                '-DCMAKE_C_FLAGS_DEBUG="/MDd"',
-                '-DCMAKE_C_FLAGS_RELEASE="/MD"'
-            }
+        local rtlib = package:config('rtlib') 
+        if rtlib and rtlib:lower() == 'md' then
+            table.insert(configs, '-DCMAKE_CXX_FLAGS_DEBUG="/MDd"')
+            table.insert(configs, '-DCMAKE_CXX_FLAGS_RELEASE="/MD"')
+            table.insert(configs, '-DCMAKE_C_FLAGS_DEBUG="/MDd"')
+            table.insert(configs, '-DCMAKE_C_FLAGS_RELEASE="/MD"')
         else
-            -- default "runtime library" setting of libuv is md, it's conflict with default linke behavior
-            configs = {
-                '-DCMAKE_CXX_FLAGS_DEBUG="/MTd"',
-                '-DCMAKE_CXX_FLAGS_RELEASE="/MT"',
-                '-DCMAKE_C_FLAGS_DEBUG="/MTd"',
-                '-DCMAKE_C_FLAGS_RELEASE="/MT"'
-            }
+            table.insert(configs, '-DCMAKE_CXX_FLAGS_DEBUG="/MTd"')
+            table.insert(configs, '-DCMAKE_CXX_FLAGS_RELEASE="/MT"')
+            table.insert(configs, '-DCMAKE_C_FLAGS_DEBUG="/MTd"')
+            table.insert(configs, '-DCMAKE_C_FLAGS_RELEASE="/MT"')
         end
         import("package.tools.cmake").install(package, configs)
         os.cp("include", package:installdir())
