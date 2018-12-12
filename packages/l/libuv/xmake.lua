@@ -25,7 +25,7 @@ package("libuv")
 
     on_install("windows", function (package)
         local configs = {}
-        local rtlib = string.lower(package:config('mtlib') or '')
+        local rtlib = string.lower(package:config('rtlib') or '')
         if rtlib == 'md' then
             configs = {
                 '-DCMAKE_CXX_FLAGS_DEBUG="/MDd"',
