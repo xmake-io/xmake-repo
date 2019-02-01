@@ -20,7 +20,7 @@ package("luajit")
 
     on_install("windows", function (package)
         os.cd("src")
-        os.vrun("msvcbuild.bat")
+        os.vrun("msvcbuild.bat %s", package:debug() and "debug" and "")
         os.cp("lua51.lib", package:installdir("lib"))
         os.cp("lua51.dll", package:installdir("lib"))
         os.cp("*.h", package:installdir("include/luajit"))
@@ -28,6 +28,9 @@ package("luajit")
 
     on_install("macosx", "linux", function (package)
         io.gsub("./Makefile", "export PREFIX= /usr/local", "export PREFIX=" .. package:installdir())
+        if package:debug() then
+            io.gsub("./src/Makefile", "CCDEBUG=", "CCDEBUG= -g")
+        end
         os.vrun("make")
         os.cp("src/*.a", package:installdir("lib"))
         os.cp("src/*.h", package:installdir("include/luajit"))
