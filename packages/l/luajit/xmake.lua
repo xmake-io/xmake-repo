@@ -16,6 +16,9 @@ package("luajit")
 
     on_load(function (package)
         package:addvar("includedirs", "include/luajit")
+        if is_plat("macosx") then
+            package:addvar("ldflags", "-all_load", "-pagezero_size 10000", "-image_base 100000000")
+        end
     end)
 
     on_install("windows", function (package)
