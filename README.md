@@ -17,7 +17,7 @@ xmake-repo is an official xmake package repository.
 If you want to known more, please refer to:
 
 * [Documents](http://xmake.io/#/home)
-* [Github](https://github.com/tboox/xmake)
+* [Github](https://github.com/xmake-io/xmake)
 * [HomePage](http://www.xmake.io)
 
 ## Contacts

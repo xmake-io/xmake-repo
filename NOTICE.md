@@ -9,7 +9,7 @@ This product depends on 'xmake', A make-like build utility based on Lua,
 which can be obtained at:
 
   * LICENSE:
-    * https://github.com/tboox/xmake/blob/master/LICENSE.md (Apache License 2.0)
+    * https://github.com/xmake-io/xmake/blob/master/LICENSE.md (Apache License 2.0)
   * HOMEPAGE:
     * http://www.tboox.org/
 

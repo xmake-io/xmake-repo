@@ -17,7 +17,7 @@ xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发
 如果你想要了解更多，请参考：
 
 * [在线文档](http://xmake.io/#/zh/)
-* [在线源码](https://github.com/tboox/xmake)
+* [在线源码](https://github.com/xmake-io/xmake)
 * [项目主页](http://www.xmake.io/cn)
 
 ## 联系方式

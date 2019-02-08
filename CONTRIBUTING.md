@@ -41,4 +41,4 @@ try to follow these guidelines when you do so.
 * 确保提交的代码缩进是四个空格，而不是tab
 * 为了规范化提交日志的格式，commit消息，不要用中文，请用英文描述
 
-[1]: https://github.com/tboox/xmake-repo/issues
+[1]: https://github.com/xmake-io/xmake-repo/issues
