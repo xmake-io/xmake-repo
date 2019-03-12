@@ -11,6 +11,7 @@ function main(...)
         table.insert(packages, "tbox")
     end
     if #packages > 0 then
+        local repodir = os.curdir()
         local workdir = path.join(os.tmpdir(), "xmake-repo")
         print(packages)
         os.tryrm(workdir)
@@ -18,6 +19,8 @@ function main(...)
         os.cd(workdir)
         os.exec("xmake create test")
         os.cd("test")
-        os.exec("xmake require -f -v -y %s", table.concat(packages, " "))
+        os.exec("xmake repo --add local-repo %s", repodir)
+        os.exec("xmake repo -l")
+        os.exec("xmake require -f -v -D -y %s", table.concat(packages, " "))
     end
 end
