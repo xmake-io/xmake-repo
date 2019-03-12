@@ -1,0 +1,18 @@
+sudo: false
+language: C
+os:
+  - linux
+  - osx
+compiler:
+  - gcc
+  - clang
+
+install:
+  - git clone --branch=repo https://github.com/xmake-io/xmake.git tboox/xmake --depth 1
+  - cd ./tboox/xmake
+  - ./scripts/get.sh __local__
+  - cd -
+
+script:
+  - xmake l ./scripts/test.lua
+
