@@ -8,19 +8,19 @@ function main(...)
                 table.insert(packages, package)
             end
         end
+    end
+    if #packages == 0 then
         table.insert(packages, "tbox")
     end
-    if #packages > 0 then
-        local repodir = os.curdir()
-        local workdir = path.join(os.tmpdir(), "xmake-repo")
-        print(packages)
-        os.tryrm(workdir)
-        os.mkdir(workdir)
-        os.cd(workdir)
-        os.exec("xmake create test")
-        os.cd("test")
-        os.exec("xmake repo --add local-repo %s", repodir)
-        os.exec("xmake repo -l")
-        os.exec("xmake require -f -v -D -y %s", table.concat(packages, " "))
-    end
+    local repodir = os.curdir()
+    local workdir = path.join(os.tmpdir(), "xmake-repo")
+    print(packages)
+    os.tryrm(workdir)
+    os.mkdir(workdir)
+    os.cd(workdir)
+    os.exec("xmake create test")
+    os.cd("test")
+    os.exec("xmake repo --add local-repo %s", repodir)
+    os.exec("xmake repo -l")
+    os.exec("xmake require -f -v -D -y %s", table.concat(packages, " "))
 end
