@@ -7,13 +7,7 @@ platform:
   - Win64
 
 before_build:
-  - ps: Invoke-Command -ScriptBlock ([ScriptBlock]::Create((Invoke-Webrequest "https://raw.githubusercontent.com/xmake-io/xmake/dev/scripts/get.ps1" -UseBasicParsing).Content)) -ArgumentList "dev"
-  - cmd: xmake --version
-  - cmd: git clone https://github.com/xmake-io/xmake.git -b repo
-  - cmd: cd xmake
-  - cmd: xmake -P core 
-  - cmd: set XMAKE_PROGRAM_DIR=%cd%\xmake
-  - ps: Copy-Item -Force core\build\xmake.exe $HOME\xmake
+  - ps: Invoke-Command -ScriptBlock ([ScriptBlock]::Create((Invoke-Webrequest "https://raw.githubusercontent.com/tboox/xmake/dev/scripts/get.ps1" -UseBasicParsing).Content)) -ArgumentList "repo"
   - cmd: xmake --version
 
 build_script:
