@@ -13,6 +13,8 @@ package("libpng")
         add_deps("cmake")
     end
 
+    add_links("png")
+
     on_install("windows", function (package)
         import("package.tools.cmake").install(package)
     end)
