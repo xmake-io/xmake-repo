@@ -10,7 +10,7 @@ function main(...)
         end
     end
     if #packages == 0 then
-        table.insert(packages, "tbox")
+        table.insert(packages, "\"tbox dev\"")
     end
     local repodir = os.curdir()
     local workdir = path.join(os.tmpdir(), "xmake-repo")
