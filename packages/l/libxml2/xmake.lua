@@ -12,10 +12,8 @@ package("libxml2")
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
-    on_load(function (package)
-        package:addvar("includedirs", "include/libxml2")
-        package:addvar("links", "xml2")
-    end)
+    add_includedirs("include/libxml2")
+    add_links("xml2")
 
     if is_plat("windows") and winos.version():gt("winxp") then
         on_install("windows", function (package)

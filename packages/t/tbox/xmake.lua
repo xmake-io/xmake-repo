@@ -13,7 +13,7 @@ package("tbox")
 
     on_load(function (package) 
         if package:debug() then
-            package:addvar("defines", "__tb_debug__")
+            package:add("defines", "__tb_debug__")
         end
     end)
 

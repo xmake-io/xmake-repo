@@ -12,9 +12,7 @@ package("ffmpeg")
     add_deps("x264", {optional = true})
     add_deps("x265", {optional = true})
 
-    on_load(function (package)
-        package:addvar("links", "avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
-    end)
+    add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
 
     on_install("linux", "macosx", function (package)
         local configs = {"--disable-ffmpeg", 
