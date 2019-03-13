@@ -10,7 +10,7 @@ package("x265")
     add_deps("cmake", "nasm")
 
     on_load("linux", "macosx", function (package)
-        package:addvar("syslinks", "c++")
+        package:add("syslinks", "c++")
     end)
 
     on_install("linux", "macosx", function (package)

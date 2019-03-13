@@ -12,7 +12,7 @@ package("glew")
     end
 
     on_load("windows", function (package)
-        package:addvar("links", "glew32s")
+        package:add("links", "glew32s")
     end)
 
     on_install("windows", function (package)

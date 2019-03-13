@@ -19,8 +19,8 @@ package("libuv")
     end
 
     on_load("windows", function (package)
-        package:addvar("links", "uv_a")
-        package:addvar("syslinks", "advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
+        package:add("links", "uv_a")
+        package:add("syslinks", "advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
     end)
 
     on_install("windows", function (package)
