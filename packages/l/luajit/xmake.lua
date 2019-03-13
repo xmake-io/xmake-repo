@@ -14,9 +14,7 @@ package("luajit")
     add_versions("2.0.4", "620fa4eb12375021bef6e4f237cbd2dd5d49e56beb414bee052c746beef1807d")
     add_versions("2.0.5", "874b1f8297c697821f561f9b73b57ffd419ed8f4278c82e05b48806d30c1e979")
 
-    on_load(function (package)
-        package:addvar("includedirs", "include/luajit")
-    end)
+    add_includedirs("include/luajit")
 
     on_install("windows", function (package)
         os.cd("src")

@@ -10,9 +10,7 @@ package("lua")
     add_versions("5.2.4", "b9e2e4aad6789b3b63a056d442f7b39f0ecfca3ae0f1fc0ae4e9614401b69f4b")
     add_versions("5.1.5", "2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333")
 
-    on_load(function (package)
-        package:addvar("includedirs", "include/lua")
-    end)
+    add_includedirs("include/lua")
 
     on_install(function (package)
         io.writefile("xmake.lua", [[
