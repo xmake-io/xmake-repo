@@ -7,10 +7,10 @@
 
   <div>
     <a href="https://travis-ci.org/xmake-io/xmake-repo">
-      <img src="https://img.shields.io/travis/xmake-io/xmake-repo/master.svg?style=flat-square" alt="travis-ci" />
+      <img src="https://img.shields.io/travis/xmake-io/xmake-repo/dev.svg?style=flat-square" alt="travis-ci" />
     </a>
-    <a href="https://ci.appveyor.com/project/waruqi/xmake-repo/branch/master">
-      <img src="https://img.shields.io/appveyor/ci/waruqi/xmake-repo/master.svg?style=flat-square" alt="appveyor-ci" />
+    <a href="https://ci.appveyor.com/project/waruqi/xmake-repo">
+      <img src="https://img.shields.io/appveyor/ci/waruqi/xmake-repo/dev.svg?style=flat-square" alt="appveyor-ci" />
     </a>
     <a href="https://github.com/xmake-io/xmake-repo/blob/master/LICENSE.md">
       <img src="https://img.shields.io/github/license/xmake-io/xmake-repo.svg?colorB=f48041&style=flat-square" alt="license" />
