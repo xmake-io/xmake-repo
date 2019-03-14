@@ -14,8 +14,14 @@ package("pcre2")
         add_deps("cmake")
     end
 
-    add_links("pcre2-8")
-    add_defines("PCRE2_CODE_UNIT_WIDTH=8")
+    add_configs("jit", {description = "Enable jit.", default = true, type = "boolean"})
+    add_configs("bitwidth", {description = "Set the code unit width.", default = "8", values = {"8", "16", "32"}})
+
+    on_load(function (package)
+        local bitwidth = package:config("bitwidth") or "8"
+        package:add("links", "pcre2-" .. bitwidth)
+        package:add("defines", "PCRE2_CODE_UNIT_WIDTH=" .. bitwidth)
+    end)
 
     if is_plat("windows") and winos.version():gt("winxp") then
         on_install("windows", function (package)
@@ -24,5 +30,17 @@ package("pcre2")
     end
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package, {"--enable-jit"})
+        local configs = {}
+        if package:config("jit") then
+            table.insert(configs, "--enable-jit")
+        end
+        local bitwidth = package:config("bitwidth") or "8"
+        if bitwidth ~= "8" then
+            table.insert(configs, "--disable-pcre2-8")
+            table.insert(configs, "--enable-pcre2-" .. bitwidth)
+        end
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
