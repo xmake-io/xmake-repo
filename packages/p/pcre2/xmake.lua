@@ -26,7 +26,7 @@ package("pcre2")
             package:add("defines", "PCRE2_STATIC")
         end
     end)
-
+ 
     if is_plat("windows") and winos.version():gt("winxp") then
         on_install("windows", function (package)
             local configs = {}
