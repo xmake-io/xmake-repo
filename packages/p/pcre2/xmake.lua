@@ -14,6 +14,7 @@ package("pcre2")
         add_deps("cmake")
     end
 
+    add_configs("shared", {description = "Enable shared library.", default = false, type = "boolean"})
     add_configs("jit", {description = "Enable jit.", default = true, type = "boolean"})
     add_configs("bitwidth", {description = "Set the code unit width.", default = "8", values = {"8", "16", "32"}})
 
@@ -21,16 +22,33 @@ package("pcre2")
         local bitwidth = package:config("bitwidth") or "8"
         package:add("links", "pcre2-" .. bitwidth)
         package:add("defines", "PCRE2_CODE_UNIT_WIDTH=" .. bitwidth)
+        if not package:config("shared") then
+            package:add("defines", "PCRE2_STATIC")
+        end
     end)
 
     if is_plat("windows") and winos.version():gt("winxp") then
         on_install("windows", function (package)
-            import("package.tools.cmake").install(package)
+            local configs = {}
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DPCRE2_SUPPORT_JIT=" .. (package:config("jit") and "ON" or "OFF"))
+            local bitwidth = package:config("bitwidth") or "8"
+            if bitwidth ~= "8" then
+                table.insert(configs, "-DPCRE2_BUILD_PCRE2_8=OFF")
+                table.insert(configs, "-DPCRE2_BUILD_PCRE2_" .. bitwidth .. "=ON")
+            end
+            if package:debug() then
+                table.insert(configs, "-DPCRE2_DEBUG=ON")
+            end
+            import("package.tools.cmake").install(package, configs)
         end)
     end
 
     on_install("macosx", "linux", function (package)
         local configs = {}
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared")
+        end
         if package:config("jit") then
             table.insert(configs, "--enable-jit")
         end
