@@ -24,20 +24,7 @@ package("libuv")
     end)
 
     on_install("windows", function (package)
-        local configs = {}
-        local rtlib = package:config('rtlib') 
-        if rtlib and rtlib:lower() == 'md' then
-            table.insert(configs, '-DCMAKE_CXX_FLAGS_DEBUG="/MDd"')
-            table.insert(configs, '-DCMAKE_CXX_FLAGS_RELEASE="/MD"')
-            table.insert(configs, '-DCMAKE_C_FLAGS_DEBUG="/MDd"')
-            table.insert(configs, '-DCMAKE_C_FLAGS_RELEASE="/MD"')
-        else
-            table.insert(configs, '-DCMAKE_CXX_FLAGS_DEBUG="/MTd"')
-            table.insert(configs, '-DCMAKE_CXX_FLAGS_RELEASE="/MT"')
-            table.insert(configs, '-DCMAKE_C_FLAGS_DEBUG="/MTd"')
-            table.insert(configs, '-DCMAKE_C_FLAGS_RELEASE="/MT"')
-        end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package)
         os.cp("include", package:installdir())
     end)
 
