@@ -34,6 +34,6 @@ package("python2")
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package, {prefix = package:installdir("share", package:name(), package:version_str())})
+        import("package.tools.autoconf").install(package)
     end)
 

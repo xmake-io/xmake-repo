@@ -13,10 +13,54 @@ package("pcre")
         add_deps("cmake")
     end
 
+    add_configs("shared", {description = "Enable shared library.", default = false, type = "boolean"})
+    add_configs("jit", {description = "Enable jit.", default = true, type = "boolean"})
+    add_configs("bitwidth", {description = "Set the code unit width.", default = "8", values = {"8", "16", "32"}})
+
+    on_load(function (package)
+        local bitwidth = package:config("bitwidth") or "8"
+        package:add("links", "pcre" .. bitwidth)
+        if not package:config("shared") then
+            package:add("defines", "PCRE_STATIC")
+        end
+    end)
+ 
     on_install("windows", function (package)
-        import("package.tools.cmake").install(package)
+        local configs = {}
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DPCRE_SUPPORT_JIT=" .. (package:config("jit") and "ON" or "OFF"))
+        local bitwidth = package:config("bitwidth") or "8"
+        if bitwidth ~= "8" then
+            table.insert(configs, "-DPCRE_BUILD_PCRE8=OFF")
+            table.insert(configs, "-DPCRE_BUILD_PCRE" .. bitwidth .. "=ON")
+        end
+        if package:debug() then
+            table.insert(configs, "-DPCRE_DEBUG=ON")
+        end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package, {"--enable-jit"})
+        local configs = {}
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared")
+        end
+        if package:config("jit") then
+            table.insert(configs, "--enable-jit")
+        end
+        local bitwidth = package:config("bitwidth") or "8"
+        if bitwidth ~= "8" then
+            table.insert(configs, "--disable-pcre8")
+            table.insert(configs, "--enable-pcre" .. bitwidth)
+        end
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        import("package.tools.autoconf").install(package, configs)
+    end)
+
+    on_test(function (package)
+        local bitwidth = package:config("bitwidth") or "8"
+        local testfunc = string.format("pcre%s_compile", bitwidth ~= "8" and bitwidth or "")
+        assert(import("lib.detect.has_cfuncs")(testfunc, {configs = package:fetch(), includes = "pcre.h", links = package:get("links")}))
     end)
