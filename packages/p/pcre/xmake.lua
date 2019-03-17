@@ -39,7 +39,7 @@ package("pcre")
         end
         import("package.tools.cmake").install(package, configs)
     end)
- 
+
     on_install("macosx", "linux", function (package)
         local configs = {}
         if package:config("shared") then
