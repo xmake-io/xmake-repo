@@ -12,17 +12,33 @@ package("lua")
 
     add_includedirs("include/lua")
 
+    on_load(function (package)
+        if package:plat() ~= "windows" then
+            package:add("syslinks", "dl")
+        end
+    end)
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
-            target("lua")
+            target("lualib")
                 set_kind("static")
+                set_basename("lua")
+                add_headerfiles("src/*.h", {prefixdir = "lua"})
                 add_files("src/*.c|lua.c|luac.c")
                 add_defines("LUA_COMPAT_5_2", "LUA_COMPAT_5_1")
                 if is_plat("linux") then
                     add_defines("LUA_USE_LINUX")
                 end
+
+            target("lua")
+                set_kind("binary")
+                add_files("src/lua.c")
+                add_deps("lualib")
         ]])
         import("package.tools.xmake").install(package)
-        os.cp("src/*h", package:installdir("include/lua"))
     end)
 
+    on_test(function (package)
+        os.vrun("lua -e \"print('hello xmake!')\"")
+        assert(import("lib.detect.has_cfuncs")("lua_getinfo", {configs = package:fetch(), includes = "lua.h"}))
+    end)
