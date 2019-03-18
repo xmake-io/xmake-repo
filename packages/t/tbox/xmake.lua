@@ -23,6 +23,13 @@ package("tbox")
         if package:debug() then
             package:add("defines", "__tb_debug__")
         end
+        if package:plat() == "windows" then
+            package:add("syslinks", "ws2_32")
+        elseif package:plat() == "mingw" then
+            package:add("syslinks", "ws2_32", "pthread")
+        else
+            package:add("syslinks", "pthread")
+        end
     end)
 
     on_install(function (package)
@@ -44,5 +51,5 @@ package("tbox")
     end)
 
     on_test(function (package)
-        assert(import("lib.detect.has_cfuncs")("tb_exit", {configs = package:fetch(), includes = "tbox/tbox.h", links = "tbox"}))
+        assert(import("lib.detect.has_cfuncs")("tb_exit", {configs = package:fetch(), includes = "tbox/tbox.h"}))
     end)

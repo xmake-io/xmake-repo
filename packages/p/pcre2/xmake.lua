@@ -64,5 +64,5 @@ package("pcre2")
     end)
 
     on_test(function (package)
-        assert(import("lib.detect.has_cfuncs")("pcre2_compile", {configs = package:fetch(), includes = "pcre2.h", links = package:get("links")}))
+        assert(import("lib.detect.has_cfuncs")("pcre2_compile", {configs = package:fetch(), includes = "pcre2.h"}))
     end)
