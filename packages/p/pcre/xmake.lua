@@ -19,7 +19,7 @@ package("pcre")
 
     on_load(function (package)
         local bitwidth = package:config("bitwidth") or "8"
-        package:add("links", "pcre" .. bitwidth)
+        package:add("links", "pcre" .. (bitwidth ~= "8" and bitwidth or ""))
         if not package:config("shared") then
             package:add("defines", "PCRE_STATIC")
         end
