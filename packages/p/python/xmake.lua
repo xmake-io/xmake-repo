@@ -34,7 +34,7 @@ package("python")
         add_versions("2.7.15", "18617d1f15a380a919d517630a9cd85ce17ea602f9bbdc58ddc672df4b0239db")
         add_versions("3.7.0", "85bb9feb6863e04fb1700b018d9d42d1caac178559ffa453d7e6a436e259fd0d")
     end
-
+ 
     on_load(function (package)
         if is_host("windows") then
             package:addenv("PATH", path.join("share", package:name(), package:version_str()))
