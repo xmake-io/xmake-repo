@@ -16,6 +16,12 @@ package("luajit")
 
     add_includedirs("include/luajit")
 
+    on_load(function (package)
+        if package:plat() ~= "windows" then
+            package:add("syslinks", "dl")
+        end
+    end)
+
     on_install("windows", function (package)
         os.cd("src")
         os.vrun("msvcbuild.bat %s", package:debug() and "debug" and "")
