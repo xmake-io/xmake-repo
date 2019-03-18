@@ -34,6 +34,9 @@ package("lua")
                 set_kind("binary")
                 add_files("src/lua.c")
                 add_deps("lualib")
+                if not is_plat("windows") then
+                    add_syslinks("dl")
+                end
         ]])
         import("package.tools.xmake").install(package)
     end)
