@@ -20,7 +20,7 @@ package("libpng")
             package:add("links", "png")
         end
     end)
-
+ 
     on_install("windows", function (package)
         import("package.tools.cmake").install(package)
     end)
