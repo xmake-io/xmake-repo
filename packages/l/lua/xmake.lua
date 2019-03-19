@@ -44,5 +44,5 @@ package("lua")
 
     on_test(function (package)
         os.vrun("lua -e \"print('hello xmake!')\"")
-        assert(import("lib.detect.has_cfuncs")("lua_getinfo", {configs = package:fetch(), includes = "lua.h"}))
+        assert(package:has_cfuncs("lua_getinfo", {includes = "lua.h"}))
     end)

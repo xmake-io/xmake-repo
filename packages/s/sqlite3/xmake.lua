@@ -22,5 +22,5 @@ package("sqlite3")
     end)
 
     on_test(function (package)
-        assert(import("lib.detect.has_cfuncs")("sqlite3_open_v2", {configs = package:fetch(), includes = "sqlite3.h"}))
+        assert(package:has_cfuncs("sqlite3_open_v2", {includes = "sqlite3.h"}))
     end)

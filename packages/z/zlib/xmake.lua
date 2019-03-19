@@ -21,5 +21,5 @@ package("zlib")
     end)
 
     on_test(function (package)
-        assert(import("lib.detect.has_cfuncs")("inflate", {configs = package:fetch(), includes = "zlib.h"}))
+        assert(package:has_cfuncs("inflate", {includes = "zlib.h"}))
     end)

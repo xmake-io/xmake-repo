@@ -62,5 +62,5 @@ package("pcre")
     on_test(function (package)
         local bitwidth = package:config("bitwidth") or "8"
         local testfunc = string.format("pcre%s_compile", bitwidth ~= "8" and bitwidth or "")
-        assert(import("lib.detect.has_cfuncs")(testfunc, {configs = package:fetch(), includes = "pcre.h"}))
+        assert(package:has_cfuncs(testfunc, {includes = "pcre.h"}))
     end)

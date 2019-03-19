@@ -51,5 +51,5 @@ package("tbox")
     end)
 
     on_test(function (package)
-        assert(import("lib.detect.has_cfuncs")("tb_exit", {configs = package:fetch(), includes = "tbox/tbox.h"}))
+        assert(package:has_cfuncs("tb_exit", {includes = "tbox/tbox.h"}))
     end)
