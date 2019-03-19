@@ -29,5 +29,5 @@ package("libxml2")
     end)
 
     on_test(function (package)
-        assert(import("lib.detect.has_cfuncs")("xmlNewNode", {configs = package:fetch(), includes = {"libxml/parser.h", "libxml/tree.h"}}))
+        assert(package:has_cfuncs("xmlNewNode", {includes = {"libxml/parser.h", "libxml/tree.h"}}))
     end)
