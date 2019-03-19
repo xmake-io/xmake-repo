@@ -13,7 +13,13 @@ package("libpng")
         add_deps("cmake")
     end
 
-    add_links("png")
+    on_load(function (package)
+        if package:plat() == "windows" then
+            package:add("links", "libpng16_static")
+        else
+            package:add("links", "png")
+        end
+    end)
 
     on_install("windows", function (package)
         import("package.tools.cmake").install(package)
@@ -21,4 +27,8 @@ package("libpng")
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("png_create_read_struct", {includes = "png.h"}))
     end)

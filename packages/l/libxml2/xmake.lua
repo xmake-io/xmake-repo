@@ -27,3 +27,7 @@ package("libxml2")
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--without-python", "--without-lzma"})
     end)
+
+    on_test(function (package)
+        assert(import("lib.detect.has_cfuncs")("xmlNewNode", {configs = package:fetch(), includes = {"libxml/parser.h", "libxml/tree.h"}}))
+    end)
