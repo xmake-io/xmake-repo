@@ -17,9 +17,12 @@ package("luajit")
     add_includedirs("include/luajit")
 
     on_load(function (package)
-        if package:plat() ~= "windows" then
+        if package:plat() == "windows" then
+            package:addenv("PATH", "lib")
+        else
             package:add("syslinks", "dl")
         end
+        package:addenv("PATH", "bin")
     end)
 
     on_install("windows", function (package)
@@ -43,6 +46,7 @@ package("luajit")
     end)
 
     on_test(function (package)
+        print(os.getenv("PATH"))
         os.vrun("luajit -e \"print('hello xmake!')\"")
         assert(import("lib.detect.has_cfuncs")("lua_pcall", {configs = package:fetch(), includes = "luajit.h"}))
     end)

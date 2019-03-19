@@ -16,6 +16,7 @@ package("lua")
         if package:plat() ~= "windows" then
             package:add("syslinks", "dl")
         end
+        package:addenv("PATH", "bin")
     end)
 
     on_install(function (package)
