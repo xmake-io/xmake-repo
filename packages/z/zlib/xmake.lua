@@ -20,3 +20,7 @@ package("zlib")
         os.cp("zlib.lib", package:installdir("lib"))
         os.cp("*.h", package:installdir("include"))
     end)
+
+    on_test(function (package)
+        assert(import("lib.detect.has_cfuncs")("inflate", {configs = package:fetch(), includes = "zlib.h"}))
+    end)
