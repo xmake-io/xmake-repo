@@ -31,7 +31,7 @@ package("tbox")
             package:add("syslinks", "pthread")
         end
     end)
-
+ 
     on_install(function (package)
         local configs = {demo = false}
         if package:config("micro") then
