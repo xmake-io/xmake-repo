@@ -17,6 +17,7 @@ package("libxml2")
     on_load(function (package)
         if package:plat() == "windows" then
             package:add("links", "libxml2_a")
+            package:add("syslinks", "wsock32", "ws2_32")
         else
             package:add("links", "xml2")
         end
