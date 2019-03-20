@@ -17,11 +17,9 @@ package("ffmpeg")
     add_configs("libx264", {description = "Enable libx264 decoder.", default = false, type = "boolean"})
     add_configs("libx265", {description = "Enable libx265 decoder.", default = false, type = "boolean"})
 
-    on_load(function (package)
-        if package:plat() == "macosx" then
-            package:add("frameworks", "CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox")
-        end
-    end)
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox")
+    end
 
     on_install("linux", "macosx", function (package)
         local configs = {"--disable-ffmpeg", 

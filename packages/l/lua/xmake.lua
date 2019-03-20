@@ -11,11 +11,11 @@ package("lua")
     add_versions("5.1.5", "2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333")
 
     add_includedirs("include/lua")
+    if not is_plat("windows") then
+        add_syslinks("dl")
+    end
 
     on_load(function (package)
-        if package:plat() ~= "windows" then
-            package:add("syslinks", "dl")
-        end
         package:addenv("PATH", "bin")
     end)
 

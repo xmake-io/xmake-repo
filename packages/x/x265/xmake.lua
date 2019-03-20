@@ -9,9 +9,9 @@ package("x265")
 
     add_deps("cmake", "nasm")
 
-    on_load("linux", "macosx", function (package)
-        package:add("syslinks", "c++")
-    end)
+    if is_plat("macosx") then
+        add_syslinks("c++")
+    end
 
     on_install("linux", "macosx", function (package)
         os.cd("build/linux")

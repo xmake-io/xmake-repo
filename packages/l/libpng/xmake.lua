@@ -13,13 +13,11 @@ package("libpng")
         add_deps("cmake")
     end
 
-    on_load(function (package)
-        if package:plat() == "windows" then
-            package:add("links", "libpng16_static")
-        else
-            package:add("links", "png")
-        end
-    end)
+    if is_plat("windows") then
+        add_links("libpng16_static")
+    else
+        add_links("png")
+    end
  
     on_install("windows", function (package)
         import("package.tools.cmake").install(package)

@@ -13,15 +13,12 @@ package("libxml2")
     end
 
     add_includedirs("include/libxml2")
-
-    on_load(function (package)
-        if package:plat() == "windows" then
-            package:add("links", "libxml2_a")
-            package:add("syslinks", "wsock32", "ws2_32")
-        else
-            package:add("links", "xml2")
-        end
-    end)
+    if is_plat("windows") then
+        add_links("libxml2_a")
+        add_syslinks("wsock32", "ws2_32")
+    else
+        add_links("xml2")
+    end
 
     if is_plat("windows") and winos.version():gt("winxp") then
         on_install("windows", function (package)

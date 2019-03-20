@@ -15,12 +15,13 @@ package("luajit")
     add_versions("2.0.5", "874b1f8297c697821f561f9b73b57ffd419ed8f4278c82e05b48806d30c1e979")
 
     add_includedirs("include/luajit")
+    if not is_plat("windows") then
+        add_syslinks("dl")
+    end
 
     on_load(function (package)
-        if package:plat() == "windows" then
+        if is_plat("windows") then
             package:addenv("PATH", "lib")
-        else
-            package:add("syslinks", "dl")
         end
         package:addenv("PATH", "bin")
     end)

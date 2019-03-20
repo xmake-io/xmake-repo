@@ -19,16 +19,17 @@ package("tbox")
         add_configs(name, {description = "Enable the " .. name .. " package.", default = false, type = "boolean"})
     end
 
+    if is_plat("windows") then
+        add_syslinks("ws2_32")
+    elseif is_plat("mingw") then
+        add_syslinks("ws2_32", "pthread")
+    else
+        add_syslinks("pthread")
+    end
+
     on_load(function (package) 
         if package:debug() then
             package:add("defines", "__tb_debug__")
-        end
-        if package:plat() == "windows" then
-            package:add("syslinks", "ws2_32")
-        elseif package:plat() == "mingw" then
-            package:add("syslinks", "ws2_32", "pthread")
-        else
-            package:add("syslinks", "pthread")
         end
     end)
  
