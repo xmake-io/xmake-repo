@@ -14,6 +14,9 @@ package("ffmpeg")
 
     add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
 
+    add_configs("libx264", {description = "Enable libx264 decoder.", default = false, type = "boolean"})
+    add_configs("libx265", {description = "Enable libx265 decoder.", default = false, type = "boolean"})
+
     on_install("linux", "macosx", function (package)
         local configs = {"--disable-ffmpeg", 
                          "--disable-ffplay", 
@@ -25,11 +28,15 @@ package("ffmpeg")
         if is_plat("macosx") and macos.version():ge("10.8") then
             table.insert(configs, "--enable-videotoolbox")
         end
-        if package:config("x264") ~= false and package:dep("x264"):exists() then
+        if package:config("libx264") and package:dep("x264"):exists() then
             table.insert(configs, "--enable-libx264")
         end
-        if package:config("x265") ~= false and package:dep("x265"):exists() then
+        if package:config("libx265") and package:dep("x265"):exists() then
             table.insert(configs, "--enable-libx265")
         end
         import("package.tools.autoconf").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("avformat_open_input", {includes = "libavformat/avformat.h"}))
     end)

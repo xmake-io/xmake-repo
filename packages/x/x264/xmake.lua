@@ -12,3 +12,7 @@ package("x264")
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf").install(package, {"--disable-lsmash", "--enable-static", "--enable-strip"})
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("x264_encoder_open", {includes = {"stdint.h", "x264.h"}}))
+    end)

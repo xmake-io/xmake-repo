@@ -20,3 +20,7 @@ package("x265")
         os.cp("8bit/x265_config.h", package:installdir("include"))
         os.cp("../../source/x265.h", package:installdir("include"))
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("x265_api_get", {includes = "x265.h"}))
+    end)
