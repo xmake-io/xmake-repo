@@ -9,6 +9,8 @@ package("x264")
 
     add_deps("nasm")
 
+    add_syslinks("pthread", "dl")
+
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf").install(package, {"--disable-lsmash", "--enable-static", "--enable-strip"})
     end)
