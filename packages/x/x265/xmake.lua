@@ -22,5 +22,5 @@ package("x265")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("x265_api_get", {includes = "x265.h"}))
+        assert(package:has_cfuncs("x265_api_get", {includes = "x265.h"}))
     end)
