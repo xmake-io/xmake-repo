@@ -10,7 +10,7 @@ package("mysql-client")
     if is_plat("macosx", "linux") then
         add_deps("cmake", "openssl")
     end
-    add_includedirs("include")
+    add_includedirs("include/mysql")
  
     on_install("macosx", "linux", function (package)
         -- https://bugs.mysql.com/bug.php?id=87348
