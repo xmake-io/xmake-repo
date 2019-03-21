@@ -26,7 +26,7 @@ package("mysql-client")
                           "-DINSTALL_MANDIR=share/man",
                           "-DINSTALL_MYSQLSHAREDIR=share/mysql",
                           "-DWITH_BOOST=../boost",
-                          "-DWITH_EDITLINE=system",
+                          "-DWITH_EDITLINE=" .. is_plat("macosx") and "system" or "bundled",
                           "-DWITH_SSL=yes",
                           "-DWITH_UNIT_TESTS=OFF",
                           "-DWITHOUT_SERVER=ON"}
