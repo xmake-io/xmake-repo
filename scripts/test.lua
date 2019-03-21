@@ -24,5 +24,5 @@ function main(...)
     print(os.curdir())
     os.exec("xmake repo --add local-repo %s", repodir)
     os.exec("xmake repo -l")
-    os.exec("xmake require -f -v -D -y %s", table.concat(packages, " "))
+    os.exec("xmake require -f -D -y %s", table.concat(packages, " "))
 end
