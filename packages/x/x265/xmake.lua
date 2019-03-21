@@ -11,6 +11,8 @@ package("x265")
 
     if is_plat("macosx") then
         add_syslinks("c++")
+    elseif is_plat("linux") then
+        add_syslinks("pthread", "dl")
     end
  
     on_install("linux", "macosx", function (package)
