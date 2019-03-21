@@ -28,6 +28,7 @@ package("ffmpeg")
                          "--disable-lzma",
                          "--disable-iconv",
                          "--disable-bzlib",
+                         "--disable-zlib",
                          "--enable-gpl",
                          "--enable-version3",
                          "--enable-hardcoded-tables",
