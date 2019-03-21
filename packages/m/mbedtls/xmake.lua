@@ -12,7 +12,7 @@ package("mbedtls")
         add_deps("cmake")
     end
 
-    add_links("mbedcrypto", "mbedx509", "mbedtls")
+    add_links("mbedx509", "mbedtls", "mbedcrypto")
 
     if is_plat("windows") and winos.version():gt("winxp") then
         on_install("windows", function (package)
