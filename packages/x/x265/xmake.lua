@@ -12,7 +12,7 @@ package("x265")
     if is_plat("macosx") then
         add_syslinks("c++")
     end
-
+ 
     on_install("linux", "macosx", function (package)
         os.cd("build/linux")
         os.vrun("./multilib.sh")
