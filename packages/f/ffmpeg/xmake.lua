@@ -18,13 +18,14 @@ package("ffmpeg")
     add_configs("libx265", {description = "Enable libx265 decoder.", default = false, type = "boolean"})
 
     if is_plat("macosx") then
-        add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox")
+        add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
     end
 
     on_install("linux", "macosx", function (package)
         local configs = {"--disable-ffmpeg", 
                          "--disable-ffplay", 
                          "--disable-debug", 
+                         "--disable-lzma",
                          "--enable-gpl",
                          "--enable-version3",
                          "--enable-hardcoded-tables",
