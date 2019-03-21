@@ -20,3 +20,6 @@ package("openssl")
         os.vrun("make install")
     end)
 
+    on_test(function (package)
+        assert(package:has_cfuncs("SSL_new", {includes = "openssl/ssl.h"}))
+    end)

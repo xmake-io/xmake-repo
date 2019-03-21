@@ -26,3 +26,7 @@ package("mbedtls")
         os.vrun("make install")
     end)
 
+    on_test(function (package)
+        assert(package:has_cfuncs("mbedtls_ssl_init", {includes = "mbedtls/ssl.h"}))
+    end)
+
