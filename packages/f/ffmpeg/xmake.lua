@@ -20,7 +20,7 @@ package("ffmpeg")
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
     end
-
+ 
     on_install("linux", "macosx", function (package)
         local configs = {"--disable-ffmpeg", 
                          "--disable-ffplay", 
