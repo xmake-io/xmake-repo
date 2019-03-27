@@ -43,8 +43,8 @@ package("ffmpeg")
         if is_plat("macosx") and macos.version():ge("10.8") then
             table.insert(configs, "--enable-videotoolbox")
         end
-        for _, name in ipairs(package:get("configs")) do
-            if not package:extraconf("configs", name, "builtin") and package:config(name) then
+        for name, enabled in pairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") and enabled then
                 table.insert(configs, "--enable-" .. name)
             else
                 table.insert(configs, "--disable-" .. name)
