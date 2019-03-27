@@ -44,7 +44,7 @@ package("ffmpeg")
             table.insert(configs, "--enable-videotoolbox")
         end
         for _, name in ipairs(package:get("configs")) do
-            if package:config(name) then
+            if not package:extraconf("configs", name, "builtin") and package:config(name) then
                 table.insert(configs, "--enable-" .. name)
             else
                 table.insert(configs, "--disable-" .. name)
