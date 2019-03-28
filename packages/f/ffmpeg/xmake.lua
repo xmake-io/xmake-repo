@@ -9,12 +9,15 @@ package("ffmpeg")
     add_versions("home:4.0.2", "346c51735f42c37e0712e0b3d2f6476c86ac15863e4445d9e823fe396420d056")
     add_versions("github:4.0.2", "4df1ef0bf73b7148caea1270539ef7bd06607e0ea8aa2fbf1bb34062a097f026")
 
-    add_configs("ffmpeg",  {description = "Enable ffmpeg program.", default = false, type = "boolean"})
-    add_configs("ffplay",  {description = "Enable ffplay program.", default = false, type = "boolean"})
-    add_configs("zlib",    {description = "Enable zlib compression library.", default = false, type = "boolean"})
-    add_configs("libx264", {description = "Enable libx264 decoder.", default = false, type = "boolean"})
-    add_configs("libx265", {description = "Enable libx265 decoder.", default = false, type = "boolean"})
-    add_configs("iconv",   {description = "Enable libiconv library.", default = false, type = "boolean"})
+    add_configs("ffmpeg",           { description = "Enable ffmpeg program.", default = false, type = "boolean"})
+    add_configs("ffplay",           { description = "Enable ffplay program.", default = false, type = "boolean"})
+    add_configs("zlib",             { description = "Enable zlib compression library.", default = false, type = "boolean"})
+    add_configs("lzma",             { description = "Enable liblzma compression library.", default = false, type = "boolean"})
+    add_configs("bzlib",            { description = "Enable bzlib compression library.", default = false, type = "boolean"})
+    add_configs("libx264",          { description = "Enable libx264 decoder.", default = false, type = "boolean"})
+    add_configs("libx265",          { description = "Enable libx265 decoder.", default = false, type = "boolean"})
+    add_configs("iconv",            { description = "Enable libiconv library.", default = false, type = "boolean"})
+    add_configs("hardcoded-tables", { description = "Enable hardcoded tables.", default = true, type = "boolean"})
 
     add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
     if is_plat("macosx") then
@@ -23,6 +26,8 @@ package("ffmpeg")
 
     on_load(function (package)
         local configdeps = {zlib    = "zlib",
+                            bzlib   = "bzip2",
+                            lzma    = "xz",
                             libx264 = "x264",
                             libx265 = "x265",
                             iconv   = "libiconv"}
@@ -34,11 +39,8 @@ package("ffmpeg")
     end)
   
     on_install("linux", "macosx", function (package)
-        local configs = {"--disable-lzma",
-                         "--disable-bzlib",
-                         "--enable-gpl",
+        local configs = {"--enable-gpl",
                          "--enable-version3",
-                         "--enable-hardcoded-tables",
                          "--enable-avresample"}
         if is_plat("macosx") and macos.version():ge("10.8") then
             table.insert(configs, "--enable-videotoolbox")
