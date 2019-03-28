@@ -22,6 +22,8 @@ package("ffmpeg")
     add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
     end
 
     if is_plat("macosx", "linux") then
