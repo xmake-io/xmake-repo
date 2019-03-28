@@ -24,6 +24,10 @@ package("ffmpeg")
         add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
     end
 
+    if is_plat("macosx", "linux") then
+        add_deps("yasm")
+    end
+
     on_load(function (package)
         local configdeps = {zlib    = "zlib",
                             bzlib   = "bzip2",
