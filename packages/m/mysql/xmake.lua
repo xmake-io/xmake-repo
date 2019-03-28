@@ -1,4 +1,4 @@
-package("mysql-client")
+package("mysql")
 
     set_homepage("https://dev.mysql.com/doc/refman/5.7/en/")
     set_description("Open source relational database management system.")
