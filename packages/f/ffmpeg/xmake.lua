@@ -29,7 +29,7 @@ package("ffmpeg")
     if is_plat("macosx", "linux") then
         add_deps("yasm")
     end
-
+ 
     on_load(function (package)
         local configdeps = {zlib    = "zlib",
                             bzlib   = "bzip2",
