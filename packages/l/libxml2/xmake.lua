@@ -11,7 +11,7 @@ package("libxml2")
     if is_plat("macosx", "linux") then
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
-
+ 
     add_includedirs("include/libxml2")
     if is_plat("windows") then
         add_links("libxml2_a")
