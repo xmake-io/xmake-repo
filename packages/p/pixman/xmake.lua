@@ -5,9 +5,9 @@ package("pixman")
 
     set_urls("https://cairographics.org/releases/pixman-$(version).tar.gz")
     add_versions("0.38.0", "a7592bef0156d7c27545487a52245669b00cf7e70054505381cff2136d890ca8")
-
+ 
     if is_plat("windows") then
-        add_deps("gnumake")
+        add_deps("make")
     else
         add_deps("pkg-config")
     end
