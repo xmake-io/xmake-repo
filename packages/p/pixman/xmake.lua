@@ -4,13 +4,21 @@ package("pixman")
     set_description("Low-level library for pixel manipulation.")
 
     set_urls("https://cairographics.org/releases/pixman-$(version).tar.gz")
-
     add_versions("0.38.0", "a7592bef0156d7c27545487a52245669b00cf7e70054505381cff2136d890ca8")
 
-    if not is_plat("windows") then
+    if is_plat("windows") then
+        add_deps("gnumake")
+    else
         add_deps("pkg-config")
-        add_includedirs("include/pixman-1")
     end
+    add_includedirs("include/pixman-1")
+
+    on_install("windows", function (package)
+        io.gsub("Makefile.win32.common", "%-MD", "-" .. package:config("vs_runtime"))
+        os.vrunv("make -f Makefile.win32 pixman")
+        os.cp("pixman/*.h", package:installdir("include/pixman-1"))
+        os.cp("pixman/release/*.lib", package:installdir("lib"))
+    end)
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-gtk", "--disable-silent-rules"})
