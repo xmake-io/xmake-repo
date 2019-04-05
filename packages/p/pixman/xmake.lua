@@ -15,7 +15,7 @@ package("pixman")
 
     on_install("windows", function (package)
         io.gsub("Makefile.win32.common", "%-MD", "-" .. package:config("vs_runtime"))
-        os.vrunv("make -f Makefile.win32 pixman")
+        os.vrun("make -f Makefile.win32 pixman MMX=off")
         os.cp("pixman/*.h", package:installdir("include/pixman-1"))
         os.cp("pixman/release/*.lib", package:installdir("lib"))
     end)
