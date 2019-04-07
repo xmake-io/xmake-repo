@@ -26,5 +26,5 @@ package("freetype")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("FT_Init_FreeType", {includes = {"ft2build.h", "FT_FREETYPE_H"}}))
+        assert(package:has_cfuncs("FT_Init_FreeType", {includes = {"ft2build.h", "freetype/freetype.h"}}))
     end)
