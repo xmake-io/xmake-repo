@@ -17,3 +17,7 @@ package("fontconfig")
         end
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-silent-rules", "--enable-static", ["with-add-fonts"] = table.concat(font_dirs, ',')})
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("FcInitLoadConfigAndFonts", {includes = "fontconfig/fontconfig.h"}))
+    end)
