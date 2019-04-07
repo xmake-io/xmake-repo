@@ -12,10 +12,8 @@ package("freetype")
         add_versions("2.9.1", "db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d")
     end
 
-    if is_plat("windows") then
-        add_includedirs("include/freetype")
-    else
-        add_includedirs("include/freetype2/freetype")
+    if not is_plat("windows") then
+        add_includedirs("include/freetype2")
     end
 
     on_install("windows", function (package)
