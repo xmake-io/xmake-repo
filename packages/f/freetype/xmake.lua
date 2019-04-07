@@ -12,6 +12,8 @@ package("freetype")
         add_versions("2.9.1", "db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d")
     end
 
+    add_includedirs("include/freetype2/freetype")
+
     on_install("windows", function (package)
         os.cp("include", package:installdir())
         os.cp(is_arch("x64") and "win64/*" or "win32/*", package:installdir("lib"))
@@ -19,4 +21,8 @@ package("freetype")
 
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf").install(package)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("FT_Init_FreeType", {includes = {"ft2build.h", "FT_FREETYPE_H"}}))
     end)
