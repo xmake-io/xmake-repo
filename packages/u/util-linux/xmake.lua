@@ -31,7 +31,10 @@ package("util-linux")
     end)
 
     on_install("macosx", "linux", function (package)
-        local configs = {"--disable-dependency-tracking", "--disable-silent-rules", "--without-python"}
+        local configs = {"--disable-dependency-tracking",
+                         "--disable-silent-rules", 
+                         "--without-python",
+                         "--with-bashcompletiondir=" .. package:installdir("share/bash-completion")}
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
