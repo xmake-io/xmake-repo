@@ -23,6 +23,7 @@ package("fontconfig")
         if #font_dirs > 0 then
             table.insert(configs, "--with-add-fonts=" .. table.concat(font_dirs, ','))
         end
+        table.insert(configs, "--enable-shared=no")
         import("package.tools.autoconf").install(package, configs)
     end)
 
