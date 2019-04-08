@@ -11,7 +11,7 @@ package("fontconfig")
         add_deps("autoconf", "automake", "gperf", "bzip2")
         add_deps("util-linux", {libuuid = true})
     end
- 
+
     on_install("linux", "macosx", function (package)
         local font_dirs = {}
         if is_plat("macosx") then
