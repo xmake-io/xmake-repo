@@ -16,7 +16,7 @@ function main(...)
     local argv = option.parse({...}, options, "Test all the given or changed packages.")
 
     -- get packages
-    local packages = argv.packages
+    local packages = argv.packages or {}
     if #packages == 0 then
         local files = os.iorun("git diff --name-only HEAD^")
         for _, file in ipairs(files:split('\n'), string.trim) do
