@@ -9,7 +9,7 @@ package("fontconfig")
     add_deps("pkg-config", "freetype >= 2.9")
     if not is_plat("macosx") then
         add_deps("autoconf", "automake", "gperf", "bzip2")
-        add_deps("util-linux", {libuuid = true})
+        add_deps("util-linux", {configs = {libuuid = true}})
     end
 
     on_install("linux", "macosx", function (package)
