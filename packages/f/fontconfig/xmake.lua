@@ -7,7 +7,7 @@ package("fontconfig")
     add_versions("2.13.1", "9f0d852b39d75fc655f9f53850eb32555394f36104a044bb2b2fc9e66dbbfa7f")
 
     add_deps("pkg-config", "freetype >= 2.9")
-    if is_plat("linux") then
+    if not is_plat("macosx") then
         add_deps("gperf")
     end
  
