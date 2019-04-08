@@ -10,7 +10,7 @@ package("fontconfig")
     if is_plat("linux") then
         add_deps("gperf")
     end
-
+ 
     on_install("linux", "macosx", function (package)
         local font_dirs = {}
         if is_plat("macosx") then

@@ -1,5 +1,6 @@
 package("gperf")
 
+    set_kind("binary")
     set_homepage("https://www.gnu.org/software/gperf")
     set_description("Perfect hash function generator.")
 
