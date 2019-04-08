@@ -27,7 +27,10 @@ package("freetype")
     end)
 
     on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package)
+        local configs = { "--enable-freetype-config",
+                          "--without-harfbuzz",
+                          "--enable-shared=no"}
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
