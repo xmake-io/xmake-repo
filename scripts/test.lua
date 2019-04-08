@@ -1,5 +1,22 @@
+-- imports
+import("core.base.option")
+
+-- the options
+local options =
+{
+    {'v', "verbose",    "k",  nil, "Enable verbose information."   }
+,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information." }
+,   {nil, "packages",   "vs", nil, "The package list."             }
+}
+
+-- the main entry
 function main(...)
-    local packages = {...}
+
+    -- parse arguments
+    local argv = option.parse({...}, options, "Test all the given or changed packages.")
+
+    -- get packages
+    local packages = argv.packages
     if #packages == 0 then
         local files = os.iorun("git diff --name-only HEAD^")
         for _, file in ipairs(files:split('\n'), string.trim) do
@@ -24,5 +41,13 @@ function main(...)
     print(os.curdir())
     os.exec("xmake repo --add local-repo %s", repodir)
     os.exec("xmake repo -l")
-    os.exec("xmake require -f -D -y %s", table.concat(packages, " "))
+    local require_argv = {"require", "-f", "-y"}
+    if argv.verbose then
+        table.insert(require_argv, "-v")
+    end
+    if argv.diagnosis then
+        table.insert(require_argv, "-D")
+    end
+    table.join2(require_argv, packages)
+    os.execv("xmake", require_argv)
 end

@@ -12,10 +12,7 @@ package("freetype")
         add_versions("2.9.1", "db8d87ea720ea9d5edc5388fc7a0497bb11ba9fe972245e0f7f4c7e8b1e1e84d")
     end
 
-    add_deps("libpng")
-    if not is_plat("macosx") then
-        add_deps("bzip2", "zlib")
-    end
+    add_deps("libpng", "bzip2", "zlib")
 
     if not is_plat("windows") then
         add_includedirs("include/freetype2")

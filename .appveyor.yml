@@ -11,5 +11,5 @@ before_build:
   - cmd: xmake --version
 
 build_script:
-  - cmd: xmake l scripts/test.lua
+  - cmd: xmake l scripts/test.lua -D
 

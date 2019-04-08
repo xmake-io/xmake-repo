@@ -14,5 +14,5 @@ install:
   - cd -
 
 script:
-  - travis_wait 60 xmake l ./scripts/test.lua
+  - travis_wait 60 xmake l ./scripts/test.lua -D
 
