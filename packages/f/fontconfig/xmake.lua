@@ -8,7 +8,7 @@ package("fontconfig")
 
     add_deps("pkg-config", "freetype >= 2.9")
     if not is_plat("macosx") then
-        add_deps("autoconf", "automake", "libtool", "gperf", "bzip2")
+        add_deps("autoconf", "automake", "libtool", "gperf", "bzip2", "expat")
         add_deps("util-linux", {configs = {libuuid = true}})
         -- fix the build issue with --enable-static
         add_patches("2.13.1", "https://gitlab.freedesktop.org/fontconfig/fontconfig/commit/8208f99fa1676c42bfd8d74de3e9dac5366c150c.diff",
