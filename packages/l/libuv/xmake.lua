@@ -31,3 +31,7 @@ package("libuv")
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package)
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("uv_tcp_init", {includes = "uv.h"}))
+    end)
