@@ -11,6 +11,7 @@ package("json-c")
         add_deps("cmake")
         on_install("windows", function (package)
             import("package.tools.cmake").install(package)
+            os.cp("json_object_iterator.h", package:installdir("include/json-c"))
         end)
     end
  
