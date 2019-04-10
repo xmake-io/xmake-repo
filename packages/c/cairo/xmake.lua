@@ -11,7 +11,7 @@ package("cairo")
     end
 
     on_install("macosx", "linux", function (package)
-        local configs = {"--disable-dependency-tracking"}
+        local configs = {"--disable-dependency-tracking", "--enable-shared=no"}
 --        table.insert(configs, "--enable-gobject=yes")
         table.insert(configs, "--enable-svg=yes")
         table.insert(configs, "--enable-tee=yes")
