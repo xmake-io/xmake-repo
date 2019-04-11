@@ -10,9 +10,13 @@ package("cairo")
         add_deps("pkg-config", "fontconfig", "freetype", "libpng", "pixman")
     end
 
+    if is_plat("macosx") then
+        add_frameworks("CoreGraphics", "CoreFoundation", "Foundation")
+    end
+
     on_install("macosx", "linux", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-shared=no"}
---        table.insert(configs, "--enable-gobject=yes")
+        table.insert(configs, "--enable-gobject=no")
         table.insert(configs, "--enable-svg=yes")
         table.insert(configs, "--enable-tee=yes")
         table.insert(configs, "--enable-quartz-image=" .. (is_plat("macosx") and "yes" or "no"))
@@ -22,5 +26,5 @@ package("cairo")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("cairo_create", {includes = "cairo.h"}))
+        assert(package:has_cfuncs("cairo_create", {includes = "cairo/cairo.h"}))
     end)
