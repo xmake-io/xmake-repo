@@ -6,15 +6,39 @@ package("cairo")
     set_urls("https://cairographics.org/releases/cairo-$(version).tar.xz")
     add_versions("1.16.0", "5e7b29b3f113ef870d1e3ecf8adf21f923396401604bda16d44be45e66052331")
  
-    if not is_plat("windows") then
+    if is_plat("windows") then
+        add_deps("make", "libpng", "pixman", "zlib")
+    else
         add_deps("pkg-config", "fontconfig", "freetype", "libpng", "pixman")
     end
 
     if is_plat("macosx") then
         add_frameworks("CoreGraphics", "CoreFoundation", "Foundation")
+    elseif is_plat("windows") then
+        add_syslinks("gdi32", "msimg32", "user32")
     else
         add_syslinks("pthread")
     end
+
+    on_install("windows", function (package)
+        io.gsub("build/Makefile.win32.common", "%-MD", "-" .. package:config("vs_runtime"))
+        io.gsub("build/Makefile.win32.common", "mkdir %-p", "xmake l mkdir")
+        io.gsub("build/Makefile.win32.common", "dirname", "xmake l path.directory")
+        local pacman = package:dep("pacman")
+        if pacman then
+            io.gsub("build/Makefile.win32.common", "%$%(PIXMAN_CFLAGS%)", "-I " .. os.args(pacman:installdir("include/pixman-1")))
+        end
+        local libpng = package:dep("libpng")
+        if libpng then
+            io.gsub("build/Makefile.win32.common", "%$%(LIBPNG_CFLAGS%)", "-I " .. os.args(libpng:installdir("include")))
+        end
+        local zlib = package:dep("zlib")
+        if zlib then
+            io.gsub("build/Makefile.win32.common", "%$%(ZLIB_CFLAGS%)", "-I " .. os.args(zlib:installdir("include")))
+        end
+        os.vrunv("make", {"-f", "Makefile.win32", "CFG=" .. (package:debug() and "debug" or "release")})
+    end)
+
 
     on_install("macosx", "linux", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-shared=no"}
