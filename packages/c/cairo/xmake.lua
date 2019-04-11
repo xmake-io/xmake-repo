@@ -26,16 +26,22 @@ package("cairo")
         io.gsub("build/Makefile.win32.common", "dirname", "xmake l path.directory")
         local pacman = package:dep("pacman")
         if pacman then
-            io.gsub("build/Makefile.win32.common", "%$%(PIXMAN_CFLAGS%)", "-I " .. os.args(pacman:installdir("include/pixman-1")))
+            print("pacman include", pacman:installdir("include/pixman-1"))
+            local a, b = io.gsub("build/Makefile.win32.common", "%$%(PIXMAN_CFLAGS%)", "-I " .. os.args(pacman:installdir("include/pixman-1")))
+            print("a", a)
+            print("b", b)
         end
         local libpng = package:dep("libpng")
         if libpng then
+            print("libpng")
             io.gsub("build/Makefile.win32.common", "%$%(LIBPNG_CFLAGS%)", "-I " .. os.args(libpng:installdir("include")))
         end
         local zlib = package:dep("zlib")
         if zlib then
+            print("zlib")
             io.gsub("build/Makefile.win32.common", "%$%(ZLIB_CFLAGS%)", "-I " .. os.args(zlib:installdir("include")))
         end
+        io.cat("build/Makefile.win32.common")
         os.vrunv("make", {"-f", "Makefile.win32", "CFG=" .. (package:debug() and "debug" or "release")})
     end)
 
