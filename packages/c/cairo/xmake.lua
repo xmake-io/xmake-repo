@@ -12,6 +12,8 @@ package("cairo")
 
     if is_plat("macosx") then
         add_frameworks("CoreGraphics", "CoreFoundation", "Foundation")
+    else
+        add_syslinks("pthread")
     end
 
     on_install("macosx", "linux", function (package)
