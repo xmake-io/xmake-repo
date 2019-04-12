@@ -15,6 +15,7 @@ package("cairo")
     if is_plat("macosx") then
         add_frameworks("CoreGraphics", "CoreFoundation", "Foundation")
     elseif is_plat("windows") then
+        add_defines("CAIRO_WIN32_STATIC_BUILD=1")
         add_syslinks("gdi32", "msimg32", "user32")
     else
         add_syslinks("pthread")
@@ -24,27 +25,24 @@ package("cairo")
         io.gsub("build/Makefile.win32.common", "%-MD", "-" .. package:config("vs_runtime"))
         io.gsub("build/Makefile.win32.common", "mkdir %-p", "xmake l mkdir")
         io.gsub("build/Makefile.win32.common", "dirname", "xmake l path.directory")
-        local pacman = package:dep("pacman")
-        if pacman then
-            print("pacman include", pacman:installdir("include/pixman-1"))
-            local a, b = io.gsub("build/Makefile.win32.common", "%$%(PIXMAN_CFLAGS%)", "-I " .. os.args(pacman:installdir("include/pixman-1")))
-            print("a", a)
-            print("b", b)
+        io.gsub("build/Makefile.win32.common", "link", "echo")
+        io.gsub("src/Makefile.win32", "%$%(PIXMAN_LIBS%)", "")
+        local pixman = package:dep("pixman")
+        if pixman then
+            io.gsub("build/Makefile.win32.common", "%$%(PIXMAN_CFLAGS%)", "-I\"" .. pixman:installdir("include/pixman-1") .. "\"")
         end
         local libpng = package:dep("libpng")
         if libpng then
-            print("libpng")
-            io.gsub("build/Makefile.win32.common", "%$%(LIBPNG_CFLAGS%)", "-I " .. os.args(libpng:installdir("include")))
+            io.gsub("build/Makefile.win32.common", "%$%(LIBPNG_CFLAGS%)", "-I\"" .. libpng:installdir("include") .. "\"")
         end
         local zlib = package:dep("zlib")
         if zlib then
-            print("zlib")
-            io.gsub("build/Makefile.win32.common", "%$%(ZLIB_CFLAGS%)", "-I " .. os.args(zlib:installdir("include")))
+            io.gsub("build/Makefile.win32.common", "%$%(ZLIB_CFLAGS%)", "-I\"" .. zlib:installdir("include") .. "\"")
         end
-        io.cat("build/Makefile.win32.common")
         os.vrunv("make", {"-f", "Makefile.win32", "CFG=" .. (package:debug() and "debug" or "release")})
+        os.cp("src/*.h", package:installdir("include/cairo"))
+        os.cp("src/**.lib", package:installdir("lib"))
     end)
-
 
     on_install("macosx", "linux", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-shared=no"}
