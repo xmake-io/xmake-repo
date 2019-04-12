@@ -27,7 +27,7 @@ package("libpng")
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package)
+        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-silent-rules"})
     end)
 
     on_test(function (package)
