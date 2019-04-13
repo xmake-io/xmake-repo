@@ -6,6 +6,10 @@ package("libuv")
     set_urls("https://github.com/libuv/libuv/archive/$(version).zip",
              "https://github.com/libuv/libuv.git")
 
+    add_versions("v1.27.0", "02d4a643d5de555168f2377961aff844c3037b44c9d46eb2019113af62b3cf0a")
+    add_versions("v1.26.0", "b9b6ae976685a406e63d88084d99fc7cc792c3226605a840fea87a450fe26f16")
+    add_versions("v1.25.0", "07aa196518b786bb784ab224d6300e70fcb0f35a98180ecdc4a672f0e160728f")
+    add_versions("v1.24.1", "a8dd045466d74c0244efc35c464579a7e032dd92b0217b71596535d165de4f07")
     add_versions("v1.24.0", "e22ecac6b2370ce7bf7b0cff818e44cdaa7d0b9ea1f8d6d4f2e0aaef43ccf5d7")
     add_versions("v1.23.2", "0bb546e7cfa2a4e7576d66d0622bffb0a8111f9669f6131471754a1b68f6f754")
     add_versions("v1.23.1", "fc0de9d02cc09eb00c576e77b29405daca5ae541a87aeb944fee5360c83b9f4c")
@@ -31,7 +35,7 @@ package("libuv")
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package)
     end)
- 
+
     on_test(function (package)
         assert(package:has_cfuncs("uv_tcp_init", {includes = "uv.h"}))
     end)
