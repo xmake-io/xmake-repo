@@ -6,6 +6,8 @@ local options =
 {
     {'v', "verbose",    "k",  nil, "Enable verbose information."   }
 ,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information." }
+,   {'p', "plat",       "kv", nil, "Set the given platform."       }
+,   {'a', "arch",       "kv", nil, "Set the given architecture."   }
 ,   {nil, "packages",   "vs", nil, "The package list."             }
 }
 
@@ -39,6 +41,20 @@ function main(...)
     os.exec("xmake create test")
     os.cd("test")
     print(os.curdir())
+    local config_argv = {"f", "-c"}
+    if argv.verbose then
+        table.insert(config_argv, "-v")
+    end
+    if argv.diagnosis then
+        table.insert(config_argv, "-D")
+    end
+    if argv.plat then
+        table.insert(config_argv, "--plat=" .. argv.plat)
+    end
+    if argv.arch then
+        table.insert(config_argv, "--arch=" .. argv.arch)
+    end
+    os.execv("xmake", config_argv)
     os.exec("xmake repo --add local-repo %s", repodir)
     os.exec("xmake repo -l")
     local require_argv = {"require", "-f", "-y"}
