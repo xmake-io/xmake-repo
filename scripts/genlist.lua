@@ -21,7 +21,7 @@ function main(...)
     -- generate markdown table
     local packages_md = "## All Packages\n\n"
     for plat, _ in pairs(packages) do
-        packages_md = packages_md .. "|" .. plat .. "(arch)" 
+        packages_md = packages_md .. "|" .. plat
     end
     packages_md = packages_md .. "|\n"
     for plat, _ in pairs(packages) do
@@ -34,7 +34,7 @@ function main(...)
             local info = ""
             if pkg then
                 if pkg.generic then
-                    info = pkg.name .. "(*)"
+                    info = pkg.name
                 else
                     info = pkg.name .. "(" .. table.concat(pkg.archs, ",") .. ")"
                 end
