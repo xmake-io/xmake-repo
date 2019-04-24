@@ -23,7 +23,7 @@ package("tbox")
         add_syslinks("ws2_32")
     elseif is_plat("mingw") then
         add_syslinks("ws2_32", "pthread")
-    else
+    elseif not is_plat("android") then
         add_syslinks("pthread")
     end
 
