@@ -1,5 +1,7 @@
 -- imports
 import("core.base.option")
+import("core.platform.platform")
+import("packages", {alias = "get_packages"})
 
 -- the options
 local options =
@@ -11,6 +13,54 @@ local options =
 ,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."}
 ,   {nil, "packages",   "vs", nil, "The package list."             }
 }
+
+-- require packages
+function _require_packages(argv, packages)
+    local config_argv = {"f", "-c"}
+    if argv.verbose then
+        table.insert(config_argv, "-v")
+    end
+    if argv.diagnosis then
+        table.insert(config_argv, "-D")
+    end
+    if argv.plat then
+        table.insert(config_argv, "--plat=" .. argv.plat)
+    end
+    if argv.arch then
+        table.insert(config_argv, "--arch=" .. argv.arch)
+    end
+    if argv.ndk then
+        table.insert(config_argv, "--ndk=" .. argv.ndk)
+    end
+    os.execv("xmake", config_argv)
+    local require_argv = {"require", "-f", "-y"}
+    if argv.verbose then
+        table.insert(require_argv, "-v")
+    end
+    if argv.diagnosis then
+        table.insert(require_argv, "-D")
+    end
+    table.join2(require_argv, packages)
+    os.execv("xmake", require_argv)
+end
+
+-- the given package is supported?
+function _package_is_supported(argv, packagename)
+    local packages = get_packages()
+    if packages then
+        local packages_plat = packages[argv.plat or os.host()]
+        for _, package in ipairs(packages_plat) do
+            if package and packagename:split("%s+")[1] == package.name then
+                local arch = argv.arch or platform.archs(plat)[1] or os.arch()
+                for _, package_arch in ipairs(package.archs) do
+                    if arch == package_arch then
+                        return true
+                    end
+                end
+            end
+        end
+    end
+end
 
 -- the main entry
 function main(...)
@@ -32,6 +82,19 @@ function main(...)
     if #packages == 0 then
         table.insert(packages, "tbox dev")
     end
+
+    -- remove unsupported packages
+    for idx, package in irpairs(packages) do
+        if not _package_is_supported(argv, package) then
+            table.remove(packages, idx)
+        end
+    end
+    if #packages == 0 then
+        print("no testable packages on %s!", argv.plat or os.host())
+        return 
+    end
+
+    -- prepare test project
     local repodir = os.curdir()
     local workdir = path.join(os.tmpdir(), "xmake-repo")
     print(packages)
@@ -42,32 +105,9 @@ function main(...)
     os.exec("xmake create test")
     os.cd("test")
     print(os.curdir())
-    local config_argv = {"f", "-c"}
-    if argv.verbose then
-        table.insert(config_argv, "-v")
-    end
-    if argv.diagnosis then
-        table.insert(config_argv, "-D")
-    end
-    if argv.plat then
-        table.insert(config_argv, "--plat=" .. argv.plat)
-    end
-    if argv.arch then
-        table.insert(config_argv, "--arch=" .. argv.arch)
-    end
-    if argv.ndk then
-        table.insert(config_argv, "--ndk=" .. argv.ndk)
-    end
-    os.execv("xmake", config_argv)
     os.exec("xmake repo --add local-repo %s", repodir)
     os.exec("xmake repo -l")
-    local require_argv = {"require", "-f", "-y"}
-    if argv.verbose then
-        table.insert(require_argv, "-v")
-    end
-    if argv.diagnosis then
-        table.insert(require_argv, "-D")
-    end
-    table.join2(require_argv, packages)
-    os.execv("xmake", require_argv)
+
+    -- require packages
+    _require_packages(argv, packages)
 end
