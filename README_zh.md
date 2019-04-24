@@ -89,3 +89,4 @@ xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发
 
 这里只显示了部分包，如果你想看所有包列表，可以看下：[PKGLIST.md](https://github.com/xmake-io/xmake-repo/blob/master/PKGLIST.md)
 
+我们也非常欢迎大家能够贡献一些进来。🙏 

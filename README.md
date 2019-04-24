@@ -86,5 +86,9 @@ If you want to know more, please refer to:
 |libuv|||libxml2|||
 |libxml2|||lua|||
 
-Only some packages are shown here. If you want to see a complete list of all packages, please see: [PKGLIST.md](https://github.com/xmake-io/xmake-repo/blob/master/PKGLIST.md)
+Note: Only some packages are shown here.
+
+If you want to see a complete list of all packages, please see: [PKGLIST.md](https://github.com/xmake-io/xmake-repo/blob/master/PKGLIST.md)
+
+We also welcome everyone to contribute some packages to our package repository.🙏 
 
