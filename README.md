@@ -49,15 +49,42 @@ xmake-repo is an official xmake package repository.
 
 <img src="https://xmake.io/assets/img/index/package_manage.png" width="80%" />
 
-If you want to known more, please refer to:
+If you want to know more, please refer to:
 
-* [Documents](http://xmake.io/#/home)
+* [Documents](https://xmake.io/#/home)
 * [Github](https://github.com/xmake-io/xmake)
-* [HomePage](http://www.xmake.io)
+* [HomePage](https://xmake.io)
 
-## Contacts
+## Supported Packages
 
-* Email：[waruqi@gmail.com](mailto:waruqi@gmail.com)
-* Homepage：[TBOOX Open Source Project](http://www.tboox.org/cn)
-* Community：[TBOOX Open Source Community](http://www.tboox.org/forum)
+|linux|windows|iphoneos|macosx|android|
+|-----|-------|--------|------|-------|
+|autoconf|bzip2|cmake|autoconf|cmake||
+|automake|cairo|doctest|automake|doctest||
+|bzip2|cmake|libjpeg|bzip2|libjpeg||
+|cairo|doctest|lua|cairo|lua||
+|cjson|expat|nlohmann_json|cjson|nlohmann_json||
+|cmake|freeglut|tbox|cmake|tbox||
+|doctest|freetype|zlib|doctest|zlib||
+|expat|glew||expat|||
+|ffmpeg|go||ffmpeg|||
+|fontconfig|libjpeg||fontconfig|||
+|freeglut|libpng||freetype|||
+|freetype|libsdl||glew|||
+|glew|libuv||go|||
+|go|lua||gperf|||
+|gperf|luajit||json-c|||
+|json-c|make||libev|||
+|libev|nlohmann_json||libiconv|||
+|libiconv|patch||libjpeg|||
+|libjpeg|pcre||libmill|||
+|libmill|pixman||libpng|||
+|libpng|python||libsdl|||
+|libsdl|sqlite3||libtask|||
+|libtask|tbox||libtool|||
+|libtool|zlib||libuv|||
+|libuv|||libxml2|||
+|libxml2|||lua|||
+
+Only some packages are shown here. If you want to see a complete list of all packages, please see: [PKGLIST.md](https://github.com/xmake-io/xmake-repo/blob/master/PKGLIST.md)
 

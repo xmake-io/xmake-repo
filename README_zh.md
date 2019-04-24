@@ -51,15 +51,41 @@ xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发
 
 如果你想要了解更多，请参考：
 
-* [在线文档](http://xmake.io/#/zh/)
+* [在线文档](https://xmake.io/#/zh/)
 * [在线源码](https://github.com/xmake-io/xmake)
-* [项目主页](http://www.xmake.io/cn)
+* [项目主页](https://xmake.io/cn)
 
-## 联系方式
 
-* 邮箱：[waruqi@gmail.com](mailto:waruqi@gmail.com)
-* 主页：[TBOOX开源工程](http://www.tboox.org/cn)
-* 社区：[TBOOX开源社区](http://www.tboox.org/forum)
-* QQ群：343118190
-* 微信公众号：tboox-os
+## 被支持的包列表
+
+|linux|windows|iphoneos|macosx|android|
+|-----|-------|--------|------|-------|
+|autoconf|bzip2|cmake|autoconf|cmake||
+|automake|cairo|doctest|automake|doctest||
+|bzip2|cmake|libjpeg|bzip2|libjpeg||
+|cairo|doctest|lua|cairo|lua||
+|cjson|expat|nlohmann_json|cjson|nlohmann_json||
+|cmake|freeglut|tbox|cmake|tbox||
+|doctest|freetype|zlib|doctest|zlib||
+|expat|glew||expat|||
+|ffmpeg|go||ffmpeg|||
+|fontconfig|libjpeg||fontconfig|||
+|freeglut|libpng||freetype|||
+|freetype|libsdl||glew|||
+|glew|libuv||go|||
+|go|lua||gperf|||
+|gperf|luajit||json-c|||
+|json-c|make||libev|||
+|libev|nlohmann_json||libiconv|||
+|libiconv|patch||libjpeg|||
+|libjpeg|pcre||libmill|||
+|libmill|pixman||libpng|||
+|libpng|python||libsdl|||
+|libsdl|sqlite3||libtask|||
+|libtask|tbox||libtool|||
+|libtool|zlib||libuv|||
+|libuv|||libxml2|||
+|libxml2|||lua|||
+
+这里只显示了部分包，如果你想看所有包列表，可以看下：[PKGLIST.md](https://github.com/xmake-io/xmake-repo/blob/master/PKGLIST.md)
 

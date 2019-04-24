@@ -19,7 +19,7 @@ function main(...)
     end
 
     -- generate markdown table
-    local packages_md = "## All Packages\n\n"
+    local packages_md = "## All Supported Packages\n\n"
     for plat, _ in pairs(packages) do
         packages_md = packages_md .. "|" .. plat
     end
