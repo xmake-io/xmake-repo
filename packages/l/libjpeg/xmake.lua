@@ -15,6 +15,10 @@ package("libjpeg")
         os.cp("libjpeg.lib", package:installdir("lib"))
     end)
 
-    on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package)
+    on_install(function (package)
+        import("package.tools.autoconf").install(package, {"--enable-shared=no"})
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("jpeg_create_compress(0)", {includes = {"stdio.h", "jpeglib.h"}}))
     end)

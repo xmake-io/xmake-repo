@@ -8,6 +8,7 @@ local options =
 ,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information." }
 ,   {'p', "plat",       "kv", nil, "Set the given platform."       }
 ,   {'a', "arch",       "kv", nil, "Set the given architecture."   }
+,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."}
 ,   {nil, "packages",   "vs", nil, "The package list."             }
 }
 
@@ -53,6 +54,9 @@ function main(...)
     end
     if argv.arch then
         table.insert(config_argv, "--arch=" .. argv.arch)
+    end
+    if argv.ndk then
+        table.insert(config_argv, "--ndk=" .. argv.ndk)
     end
     os.execv("xmake", config_argv)
     os.exec("xmake repo --add local-repo %s", repodir)
