@@ -1,10 +1,14 @@
+import("packages")
+
 function main(...)
-    local packages = {}
-    for _, dir in ipairs(os.dirs(path.join("packages", "*", "*"))) do
-        local package = path.filename(dir)
-        local key = package:sub(1, 1)
-        packages[key] = packages[key] or {}
-        table.insert(packages[key], package)
+    for plat, pkgs in pairs(packages()) do
+        cprint("${magenta}%s${clear}:", plat)
+        for _, pkg in ipairs(pkgs) do
+            if pkg.generic then
+                cprint("  ${yellow}->${clear} %s", pkg.name)
+            else
+                cprint("  ${yellow}->${clear} %s (%s)", pkg.name, table.concat(pkg.archs, ", "))
+            end
+        end
     end
-    print(packages)
 end
