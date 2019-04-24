@@ -19,7 +19,7 @@ package("lua")
         package:addenv("PATH", "bin")
     end)
 
-    on_install(function (package)
+    on_install("linux", "macosx", "windows", function (package)
         io.writefile("xmake.lua", [[
             target("lualib")
                 set_kind("static")

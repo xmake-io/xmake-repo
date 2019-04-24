@@ -42,10 +42,6 @@ package("cmake")
         os.cp("share", package:installdir())
     end)
 
-    on_install(function (package)
-        import("package.manager").install("cmake")
-    end)
-
     on_test(function (package)
         os.vrun("cmake --version")
     end)

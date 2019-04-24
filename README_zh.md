@@ -60,13 +60,13 @@ xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发
 
 |linux|windows|iphoneos|macosx|android|
 |-----|-------|--------|------|-------|
-|autoconf|bzip2|cmake|autoconf|cmake||
-|automake|cairo|doctest|automake|doctest||
-|bzip2|cmake|libjpeg|bzip2|libjpeg||
-|cairo|doctest|lua|cairo|lua||
-|cjson|expat|nlohmann_json|cjson|nlohmann_json||
-|cmake|freeglut|tbox|cmake|tbox||
-|doctest|freetype|zlib|doctest|zlib||
+|autoconf|bzip2|doctest|autoconf|doctest||
+|automake|cairo|libjpeg|automake|libjpeg||
+|bzip2|cmake|nlohmann_json|bzip2|nlohmann_json||
+|cairo|doctest|tbox|cairo|tbox||
+|cjson|expat|zlib|cjson|zlib||
+|cmake(x86_64)|freeglut||cmake|||
+|doctest|freetype||doctest|||
 |expat|glew||expat|||
 |ffmpeg|go||ffmpeg|||
 |fontconfig|libjpeg||fontconfig|||
