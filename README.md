@@ -60,11 +60,11 @@ If you want to know more, please refer to:
 |linux|windows|mingw|iphoneos|macosx|android|
 |-----|-------|-----|--------|------|-------|
 |autoconf|bzip2|doctest|doctest|autoconf|doctest||
-|automake|cairo|libjpeg|libjpeg|automake|libjpeg||
-|bzip2|cmake|nlohmann_json|nlohmann_json|bzip2|nlohmann_json||
-|cairo|doctest|tbox|tbox|cairo|tbox||
-|cjson|expat|zlib|zlib|cjson|zlib||
-|cmake(x86_64)|freeglut|||cmake|||
+|automake|cairo|nlohmann_json|libjpeg|automake|libjpeg||
+|bzip2|cmake|tbox|libpng|bzip2|nlohmann_json||
+|cairo|doctest|zlib|nlohmann_json|cairo|tbox||
+|cjson|expat||tbox|cjson|zlib||
+|cmake(x86_64)|freeglut||zlib|cmake|||
 |doctest|freetype|||doctest|||
 |expat|glew|||expat|||
 |ffmpeg|go|||ffmpeg|||

@@ -27,7 +27,7 @@ package("libpng")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "iphoneos", function (package)
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-silent-rules"})
     end)
 
