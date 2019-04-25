@@ -20,7 +20,7 @@ package("zlib")
         os.cp("*.h", package:installdir("include"))
     end)
 
-    on_install("iphoneos", "android", "cross", function (package)
+    on_install("iphoneos", "android", "mingw", function (package)
         import("package.tools.autoconf").configure(package, {host = "", "--static"})
         io.gsub("Makefile", "\nAR=.-\n",      "\nAR=" .. (package:build_getenv("ar") or "") .. "\n")
         io.gsub("Makefile", "\nARFLAGS=.-\n", "\nARFLAGS=cr\n")

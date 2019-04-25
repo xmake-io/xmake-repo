@@ -50,7 +50,7 @@ function main(...)
         local packagefile = path.join(packagedir, "xmake.lua")
         local instance = package.load_from_repository(packagename, nil, packagedir, packagefile)
         if instance then
-            for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android"}) do
+            for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw"}) do
                 local archs = platform.archs(plat)
                 if archs then
                     local package_archs = {}

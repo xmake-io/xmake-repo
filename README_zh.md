@@ -58,34 +58,34 @@ xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发
 
 ## 被支持的包列表
 
-|linux|windows|iphoneos|macosx|android|
-|-----|-------|--------|------|-------|
-|autoconf|bzip2|doctest|autoconf|doctest||
-|automake|cairo|libjpeg|automake|libjpeg||
-|bzip2|cmake|nlohmann_json|bzip2|nlohmann_json||
-|cairo|doctest|tbox|cairo|tbox||
-|cjson|expat|zlib|cjson|zlib||
-|cmake(x86_64)|freeglut||cmake|||
-|doctest|freetype||doctest|||
-|expat|glew||expat|||
-|ffmpeg|go||ffmpeg|||
-|fontconfig|libjpeg||fontconfig|||
-|freeglut|libpng||freetype|||
-|freetype|libsdl||glew|||
-|glew|libuv||go|||
-|go|lua||gperf|||
-|gperf|luajit||json-c|||
-|json-c|make||libev|||
-|libev|nlohmann_json||libiconv|||
-|libiconv|patch||libjpeg|||
-|libjpeg|pcre||libmill|||
-|libmill|pixman||libpng|||
-|libpng|python||libsdl|||
-|libsdl|sqlite3||libtask|||
-|libtask|tbox||libtool|||
-|libtool|zlib||libuv|||
-|libuv|||libxml2|||
-|libxml2|||lua|||
+|linux|windows|mingw|iphoneos|macosx|android|
+|-----|-------|-----|--------|------|-------|
+|autoconf|bzip2|doctest|doctest|autoconf|doctest||
+|automake|cairo|libjpeg|libjpeg|automake|libjpeg||
+|bzip2|cmake|nlohmann_json|nlohmann_json|bzip2|nlohmann_json||
+|cairo|doctest|tbox|tbox|cairo|tbox||
+|cjson|expat|zlib|zlib|cjson|zlib||
+|cmake(x86_64)|freeglut|||cmake|||
+|doctest|freetype|||doctest|||
+|expat|glew|||expat|||
+|ffmpeg|go|||ffmpeg|||
+|fontconfig|libjpeg|||fontconfig|||
+|freeglut|libpng|||freetype|||
+|freetype|libsdl|||glew|||
+|glew|libuv|||go|||
+|go|lua|||gperf|||
+|gperf|luajit|||json-c|||
+|json-c|make|||libev|||
+|libev|nlohmann_json|||libiconv|||
+|libiconv|patch|||libjpeg|||
+|libjpeg|pcre|||libmill|||
+|libmill|pixman|||libpng|||
+|libpng|python|||libsdl|||
+|libsdl|sqlite3|||libtask|||
+|libtask|tbox|||libtool|||
+|libtool|zlib|||libuv|||
+|libuv||||libxml2|||
+|libxml2||||lua|||
 
 这里只显示了部分包，如果你想看所有包列表，可以看下：[PKGLIST.md](https://github.com/xmake-io/xmake-repo/blob/master/PKGLIST.md)
 
