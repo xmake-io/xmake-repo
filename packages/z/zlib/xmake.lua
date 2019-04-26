@@ -12,7 +12,7 @@ package("zlib")
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf").install(package, {"--static"})
     end)
- 
+
     on_install("windows", function (package)
         io.gsub("win32/Makefile.msc", "%-MD", "-" .. package:config("vs_runtime"))
         os.vrun("nmake -f win32\\Makefile.msc zlib.lib")
