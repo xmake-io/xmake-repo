@@ -5,10 +5,10 @@
 |autoconf|bzip2|doctest|doctest|autoconf|doctest||
 |automake|cairo|nlohmann_json|libev|automake|libjpeg||
 |bzip2|cmake|tbox|libjpeg|bzip2|libpng||
-|cairo|doctest|zlib|libpng|cairo|nlohmann_json||
-|cjson|expat||libuv|cjson|tbox||
-|cmake(x86_64)|freeglut||nlohmann_json|cmake|zlib||
-|doctest|freetype||tbox|doctest|||
+|cairo|doctest|zlib|libpng|cairo|libuv||
+|cjson|expat||libuv|cjson|nlohmann_json||
+|cmake(x86_64)|freeglut||nlohmann_json|cmake|tbox||
+|doctest|freetype||tbox|doctest|zlib||
 |expat|glew||zlib|expat|||
 |ffmpeg|go|||ffmpeg|||
 |fontconfig|libjpeg|||fontconfig|||
