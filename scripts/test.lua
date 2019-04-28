@@ -11,6 +11,7 @@ local options =
 ,   {'p', "plat",       "kv", nil, "Set the given platform."       }
 ,   {'a', "arch",       "kv", nil, "Set the given architecture."   }
 ,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."}
+,   {nil, "mingw",      "kv", nil, "Set the MingW directory."      }
 ,   {nil, "packages",   "vs", nil, "The package list."             }
 }
 
@@ -32,6 +33,9 @@ function _require_packages(argv, packages)
     if argv.ndk then
         table.insert(config_argv, "--ndk=" .. argv.ndk)
     end
+    if argv.mingw then
+        table.insert(config_argv, "--mingw=" .. argv.mingw)
+    end
     os.execv("xmake", config_argv)
     local require_argv = {"require", "-f", "-y"}
     if argv.verbose then
@@ -48,7 +52,8 @@ end
 function _package_is_supported(argv, packagename)
     local packages = get_packages()
     if packages then
-        local packages_plat = packages[argv.plat or os.host()]
+        local plat = argv.plat or os.host()
+        local packages_plat = packages[plat]
         for _, package in ipairs(packages_plat) do
             if package and packagename:split("%s+")[1] == package.name then
                 local arch = argv.arch or platform.archs(plat)[1] or os.arch()

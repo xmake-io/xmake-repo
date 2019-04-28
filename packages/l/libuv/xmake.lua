@@ -33,7 +33,7 @@ package("libuv")
         os.cp("include", package:installdir())
     end)
 
-    on_install("macosx", "linux", "iphoneos", "android", function (package)
+    on_install("macosx", "linux", "iphoneos", "android@linux,android", function (package)
         import("package.tools.autoconf").install(package, {"--enable-shared=no"})
     end)
 

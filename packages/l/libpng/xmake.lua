@@ -31,7 +31,7 @@ package("libpng")
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-silent-rules", "--enable-shared=no"})
     end)
 
-    on_install("iphoneos", "android", function (package)
+    on_install("iphoneos", "android@linux,macosx", function (package)
         import("package.tools.autoconf")
         local zlib = package:dep("zlib")
         local envs = autoconf.buildenvs(package)

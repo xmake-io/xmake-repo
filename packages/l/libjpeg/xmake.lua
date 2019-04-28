@@ -15,7 +15,7 @@ package("libjpeg")
         os.cp("libjpeg.lib", package:installdir("lib"))
     end)
 
-    on_install("linux", "macosx", "iphoneos", "android", function (package)
+    on_install("linux", "macosx", "iphoneos", "android@linux,macosx", function (package)
         import("package.tools.autoconf").install(package, {"--enable-shared=no"})
     end)
 
