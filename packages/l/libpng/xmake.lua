@@ -27,8 +27,19 @@ package("libpng")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", "iphoneos", function (package)
-        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-silent-rules"})
+    on_install("macosx", "linux", function (package)
+        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-silent-rules", "--enable-shared=no"})
+    end)
+
+    on_install("iphoneos", "android", function (package)
+        import("package.tools.autoconf")
+        local zlib = package:dep("zlib")
+        local envs = autoconf.buildenvs(package)
+        if zlib then
+            envs.CPPFLAGS = (envs.CPPFLAGS or "") .. " -I" .. os.args(path.join(zlib:installdir(), "include"))
+            envs.LDFLAGS = (envs.LDFLAGS or "") .. " -L" .. os.args(path.join(zlib:installdir(), "lib"))
+        end
+        autoconf.install(package, {"--disable-dependency-tracking", "--disable-silent-rules", "--enable-shared=no"}, {envs = envs})
     end)
 
     on_test(function (package)
