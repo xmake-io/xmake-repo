@@ -22,7 +22,7 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       travis_wait 60 xmake l ./scripts/test.lua -D -p iphoneos;
       brew install mingw-w64;
-      travis_wait 60 CC="" xmake l ./scripts/test.lua -D -p mingw;
+      CC="" travis_wait 60 xmake l ./scripts/test.lua -D -p mingw;
     else
       travis_wait 60 xmake l ./scripts/test.lua -v -D -p android --ndk=`pwd`/android-ndk-r19c;
     fi
