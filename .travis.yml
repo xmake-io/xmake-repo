@@ -12,10 +12,7 @@ install:
   - cd ./tboox/xmake
   - ./scripts/get.sh __local__
   - cd -
-  - if [ "$TRAVIS_OS_NAME" = "osc" ]; then
-      brew install mingw-w64;
-      brew --prefix mingw-w64;
-    else
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       wget -q https://dl.google.com/android/repository/android-ndk-r19c-linux-x86_64.zip;
       unzip -q -o ./android-ndk-r19c-linux-x86_64.zip;
     fi
@@ -24,7 +21,8 @@ script:
   - travis_wait 60 xmake l ./scripts/test.lua -D
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       travis_wait 60 xmake l ./scripts/test.lua -D -p iphoneos;
-      travis_wait 60 xmake l ./scripts/test.lua -D -p mingw --mingw=`brew --prefix mingw-w64`;
+      brew install mingw-w64;
+      travis_wait 60 CC="" xmake l ./scripts/test.lua -D -p mingw;
     else
       travis_wait 60 xmake l ./scripts/test.lua -v -D -p android --ndk=`pwd`/android-ndk-r19c;
     fi
