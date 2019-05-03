@@ -10,11 +10,18 @@ package("libcurl")
  
     if is_plat("linux") then
         add_deps("openssl")
+    elseif is_plat("windows") then
+        add_deps("cmake")
     end
 
     if is_plat("macosx") then
         add_frameworks("Security")
     end
+ 
+    on_install("windows", function (package)
+        local configs = {}
+        import("package.tools.cmake").install(package, configs)
+    end)
 
     on_install("macosx", "linux", "iphoneos", function (package)
         local configs = {"--disable-silent-rules", "--disable-dependency-tracking", "--enable-shared=no"}
