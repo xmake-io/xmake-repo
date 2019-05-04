@@ -6,7 +6,7 @@ package("python")
 
     if is_host("windows") then
         if os.arch() == "x64" then
-            add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).arm64.zip", {alias = "py2"})
+            add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).amd64.zip", {alias = "py2"})
             add_versions("py2:2.7.15", "b9d8157fe2ca58f84d29a814bedf1d304d2277ad02f0930acd22e2ce7367b77e")
         else
             add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).win32.zip", {alias = "py2"})
@@ -22,7 +22,7 @@ package("python")
             end
         else
             if os.arch() == "x64" then
-                add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).arm64.zip", {alias = "py3"})
+                add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).amd64.zip", {alias = "py3"})
                 add_versions("py3:3.3.4", "a83bf90b28f8b44b99c3524a34ab18f21a59999e07c107da19b031869fb42af1")
             else
                 add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).win32.zip", {alias = "py3"})
