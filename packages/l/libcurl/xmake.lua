@@ -34,7 +34,17 @@ package("libcurl")
             table.insert(configs, "--disable-debug")
         end
         if is_plat("macosx") then
-            table.insert(configs, "--with-darwinssl")
+            local with_darwinssl = false
+            local xcode_sdkver = get_config("xcode_sdkver")
+            if xcode_sdkver then
+                -- fix undefined symbols: _SSLCopyALPNProtocols, _SSLSetALPNProtocols
+                with_darwinssl = import("core.base.semver").compare(xcode_sdkver, "9.4.1") > 0 
+            end
+            if with_darwinssl then
+                table.insert(configs, "--with-darwinssl")
+            else
+                table.insert(configs, "--without-darwinssl")
+            end
         end
         table.insert(configs, "--without-ca-bundle")
         table.insert(configs, "--without-ca-path")
