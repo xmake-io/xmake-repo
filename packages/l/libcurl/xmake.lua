@@ -4,8 +4,9 @@ package("libcurl")
     set_description("The multiprotocol file transfer library.")
 
     set_urls("https://curl.haxx.se/download/curl-$(version).tar.bz2",
-             "http://curl.mirror.anstey.ca/curl-$(version).tar.bz2",
-             "https://github.com/curl/curl/releases/download/curl-7_64_1/curl-$(version).tar.bz2")
+             "http://curl.mirror.anstey.ca/curl-$(version).tar.bz2")
+    add_urls("https://github.com/curl/curl/releases/download/curl-$(version).tar.bz2",
+             {version = function (version) return (version:gsub("%.", "_")) .. "/curl-" .. version end})
     add_versions("7.64.1", "4cc7c738b35250d0680f29e93e0820c4cb40035f43514ea3ec8d60322d41a45d")
  
     if is_plat("linux") then
@@ -38,6 +39,7 @@ package("libcurl")
         table.insert(configs, "--without-ca-bundle")
         table.insert(configs, "--without-ca-path")
         table.insert(configs, "--without-zlib")
+        table.insert(configs, "--without-librtmp")
         table.insert(configs, "--disable-ares")
         table.insert(configs, "--disable-ldap")
         import("package.tools.autoconf").install(package, configs) 
