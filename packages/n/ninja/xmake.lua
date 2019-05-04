@@ -17,7 +17,7 @@ package("ninja")
         os.vrun("./configure.py")
         os.cp("./ninja", package:installdir("bin"))
     end)
-
+ 
     on_test(function (package)
         os.vrun("ninja --version")
     end)
