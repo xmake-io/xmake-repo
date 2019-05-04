@@ -26,8 +26,6 @@ package("libcurl")
     end)
 
     on_install("macosx", "linux", "iphoneos", function (package)
-        import("package.tools.autoconf")
-        local envs = autoconf.buildenvs(package)
         local configs = {"--disable-silent-rules", "--disable-dependency-tracking", "--enable-shared=no"}
         if package:debug() then
             table.insert(configs, "--enable-debug")
@@ -35,11 +33,6 @@ package("libcurl")
             table.insert(configs, "--disable-debug")
         end
         if is_plat("macosx") then
-            -- https://github.com/curl/curl/issues/2835
-            local target_minver = get_config("target_minver")
-            if target_minver then
-                envs.CFLAGS = "-mmacosx-version-min=" .. target_minver
-            end
             table.insert(configs, "--with-darwinssl")
         end
         table.insert(configs, "--without-ca-bundle")
@@ -48,7 +41,7 @@ package("libcurl")
         table.insert(configs, "--without-librtmp")
         table.insert(configs, "--disable-ares")
         table.insert(configs, "--disable-ldap")
-        autoconf.install(package, configs, {envs = envs}) 
+        import("package.tools.autoconf").install(package, configs) 
     end)
 
     on_test(function (package)
