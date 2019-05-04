@@ -16,6 +16,8 @@ package("libcurl")
 
     if is_plat("macosx") then
         add_frameworks("Security")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
     end
  
     on_install("windows", function (package)
