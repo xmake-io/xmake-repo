@@ -4,17 +4,22 @@ package("ninja")
     set_homepage("https://ninja-build.org/")
     set_description("Small build system for use with gyp or CMake.")
 
-    add_urls("https://github.com/ninja-build/ninja/archive/v$(version).tar.gz",
-             "https://github.com/ninja-build/ninja.git")
-    add_versions("1.9.0", "5d7ec75828f8d3fd1a0c2f31b5b0cea780cdfe1031359228c428c1a48bfcd5b9")
-
-    if not is_host("macosx") then
-        add_deps("python 2.x")
+    if is_host("windows") then
+        set_urls("https://github.com/ninja-build/ninja/releases/download/v$(version)/ninja-win.zip")
+        add_versions("1.9.0", "2d70010633ddaacc3af4ffbd21e22fae90d158674a09e132e06424ba3ab036e9")
+    elseif is_host("macosx") then
+        set_urls("https://github.com/ninja-build/ninja/releases/download/v$(version)/ninja-mac.zip")
+        add_versions("1.9.0", "26d32a79f786cca1004750f59e545199bf110e21e300d3c2424c1fddd78f28ab")
+    elseif is_host("linux") then
+        set_urls("https://github.com/ninja-build/ninja/releases/download/v$(version)/ninja-linux.zip")
+        add_versions("1.9.0", "1b1235f2b0b4df55ac6d80bbe681ea3639c9d2c505c7ff2159a3daf63d196305")
     end
 
-    on_install("linux", "macosx", "windows", function (package)
-        os.vrun("python configure.py --bootstrap")
-        os.vrun("./configure.py")
+    on_install("windows", function (package)
+        os.cp("./ninja.exe", package:installdir("bin"))
+    end)
+
+    on_install("linux", "macosx", function (package)
         os.cp("./ninja", package:installdir("bin"))
     end)
  
