@@ -16,17 +16,18 @@ package("libcurl")
     end
 
     if is_plat("macosx") then
-        add_frameworks("Security")
+        add_frameworks("Security", "CoreFoundation")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     end
  
     on_install("windows", function (package)
-        local configs = {}
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package)
     end)
 
     on_install("macosx", "linux", "iphoneos", function (package)
+        import("package.tools.autoconf")
+        local envs = autoconf.buildenvs(package)
         local configs = {"--disable-silent-rules", "--disable-dependency-tracking", "--enable-shared=no"}
         if package:debug() then
             table.insert(configs, "--enable-debug")
@@ -34,17 +35,12 @@ package("libcurl")
             table.insert(configs, "--disable-debug")
         end
         if is_plat("macosx") then
-            local with_darwinssl = false
-            local xcode_sdkver = get_config("xcode_sdkver")
-            if xcode_sdkver then
-                -- fix undefined symbols: _SSLCopyALPNProtocols, _SSLSetALPNProtocols
-                with_darwinssl = import("core.base.semver").compare(xcode_sdkver, "9.4.1") > 0 
+            -- https://github.com/curl/curl/issues/2835
+            local target_minver = get_config("target_minver")
+            if target_minver then
+                envs.CFLAGS = "-mmacosx-version-min=" .. target_minver
             end
-            if with_darwinssl then
-                table.insert(configs, "--with-darwinssl")
-            else
-                table.insert(configs, "--without-darwinssl")
-            end
+            table.insert(configs, "--with-darwinssl")
         end
         table.insert(configs, "--without-ca-bundle")
         table.insert(configs, "--without-ca-path")
@@ -52,7 +48,7 @@ package("libcurl")
         table.insert(configs, "--without-librtmp")
         table.insert(configs, "--disable-ares")
         table.insert(configs, "--disable-ldap")
-        import("package.tools.autoconf").install(package, configs) 
+        autoconf.install(package, configs, {envs = envs}) 
     end)
 
     on_test(function (package)
