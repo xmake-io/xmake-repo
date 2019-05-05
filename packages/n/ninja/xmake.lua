@@ -11,15 +11,25 @@ package("ninja")
         set_urls("https://github.com/ninja-build/ninja/releases/download/v$(version)/ninja-mac.zip")
         add_versions("1.9.0", "26d32a79f786cca1004750f59e545199bf110e21e300d3c2424c1fddd78f28ab")
     elseif is_host("linux") then
-        set_urls("https://github.com/ninja-build/ninja/releases/download/v$(version)/ninja-linux.zip")
-        add_versions("1.9.0", "1b1235f2b0b4df55ac6d80bbe681ea3639c9d2c505c7ff2159a3daf63d196305")
+        add_urls("https://github.com/ninja-build/ninja/archive/v$(version).tar.gz",
+                 "https://github.com/ninja-build/ninja.git")
+        add_versions("1.9.0", "5d7ec75828f8d3fd1a0c2f31b5b0cea780cdfe1031359228c428c1a48bfcd5b9")
+    end
+
+    if is_host("linux") then
+        add_deps("python 2.x")
     end
 
     on_install("windows", function (package)
         os.cp("./ninja.exe", package:installdir("bin"))
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("macosx", function (package)
+        os.cp("./ninja", package:installdir("bin"))
+    end)
+
+    on_install("linux", function (package)
+        os.vrun("python2 configure.py --bootstrap")
         os.cp("./ninja", package:installdir("bin"))
     end)
  
