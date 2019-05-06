@@ -17,7 +17,7 @@ package("ninja")
     end
 
     if is_host("linux") then
-        add_deps("python 2.x")
+        add_deps("python2")
     end
 
     on_install("windows", function (package)

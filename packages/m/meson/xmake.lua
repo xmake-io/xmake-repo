@@ -9,7 +9,7 @@ package("meson")
     add_versions("0.50.1", "f68f56d60c80a77df8fc08fa1016bc5831605d4717b622c96212573271e14ecc")
 
     add_deps("ninja", "python 3.x")
- 
+  
     on_install("macosx", "linux", "windows", function (package)
         import("core.base.semver")
         local version = semver.new(package:dep("python"):version_str())
