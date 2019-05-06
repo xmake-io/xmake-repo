@@ -14,7 +14,7 @@ package("meson")
         import("core.base.semver")
         local version = semver.new(package:dep("python"):version_str())
         local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
-        os.vrunv("python3", {"./setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
+        os.vrunv("python3", {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
         package:addenv("PYTHONPATH", envs.PYTHONPATH)
     end)
 
