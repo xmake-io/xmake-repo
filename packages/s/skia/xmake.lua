@@ -11,7 +11,7 @@ package("skia")
     add_deps("python2", "ninja")
 
     on_install("macosx", "linux", "windows", function (package)
-        os.vrun("git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git")
+        os.vrun("git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git --depth 1")
         local pathes = os.getenv("PATH")
         os.addenv("PATH", path.join(os.curdir(), "depot_tools"))
         os.addenv("PATH", path.join(os.curdir(), "bin"))
