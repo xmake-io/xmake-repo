@@ -10,7 +10,7 @@ package("meson")
 
     add_deps("ninja", "python 3.x")
   
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", function (package)
         import("core.base.semver")
         local version = semver.new(package:dep("python"):version_str())
         local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}

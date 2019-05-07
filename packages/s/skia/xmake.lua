@@ -3,17 +3,22 @@ package("skia")
     set_homepage("https://skia.org/")
     set_description("A complete 2D graphic library for drawing Text, Geometries, and Images.")
 
-    set_urls("hhttps://skia.googlesource.com/skia.git",
+    set_urls("https://skia.googlesource.com/skia.git",
              "https://github.com/google/skia.git")
 
-    add_versions("2f3637", "2f3637bf2ed44ef75966786ab4c2974d17c9f649")
+    add_versions("68046c", "68046cd7be837bd31bc8f0e821a2f82a02dda9cf")
 
-    add_deps("python", "ninja")
+    add_deps("python2", "ninja")
 
     on_install("macosx", "linux", "windows", function (package)
-        os.vrun("python tools/git-sync-deps")
+        os.vrun("git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git")
+        local pathes = os.getenv("PATH")
+        os.addenv("PATH", path.join(os.curdir(), "depot_tools"))
+        os.addenv("PATH", path.join(os.curdir(), "bin"))
+        os.vrun("python2 tools/git-sync-deps")
         os.vrun("bin/gn gen build --args='is_official_build=true is_debug=false'")
         os.vrun("ninja -C build")
+        os.setenv("PATH", pathes)
     end)
 
     on_test(function (package)

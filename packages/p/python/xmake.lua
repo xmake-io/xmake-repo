@@ -34,6 +34,10 @@ package("python")
         add_versions("2.7.15", "18617d1f15a380a919d517630a9cd85ce17ea602f9bbdc58ddc672df4b0239db")
         add_versions("3.7.0", "85bb9feb6863e04fb1700b018d9d42d1caac178559ffa453d7e6a436e259fd0d")
     end
+
+    if is_host("macosx", "linux") then
+        add_deps("openssl")
+    end
  
     on_load(function (package)
         if is_host("windows") then
@@ -54,7 +58,31 @@ package("python")
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package)
+        -- unset these so that installing pip and setuptools puts them where we want
+        -- and not into some other Python the user has installed.
+        local PYTHONHOME = os.getenv("PYTHONHOME")
+        local PYTHONPATH = os.getenv("PYTHONPATH")
+        os.setenv("PYTHONHOME", "")
+        os.setenv("PYTHONPATH", "")
+
+        -- init configs
+        local configs = {"--enable-ipv6", "--without-ensurepip"}
+        table.insert(configs, "--datadir=" .. package:installdir("share"))
+        table.insert(configs, "--datarootdir=" .. package:installdir("share"))
+
+        -- add openssl libs path for detecting
+        local openssl_dir = package:dep("openssl"):installdir()
+        if package:version_str():startswith("3") then
+            table.insert(configs, "--with-openssl=" .. openssl_dir)
+        else
+            io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+        end
+
+        -- do install
+        import("package.tools.autoconf").install(package, configs)
+
+        os.setenv("PYTHONHOME", PYTHONHOME)
+        os.setenv("PYTHONPATH", PYTHONPATH)
     end)
 
     on_test(function (package)
