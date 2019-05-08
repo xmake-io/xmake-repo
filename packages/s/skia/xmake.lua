@@ -11,7 +11,6 @@ package("skia")
     add_deps("python2", "ninja")
 
     on_install("macosx", "linux", "windows", function (package)
-        --os.vrun("git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git --depth 1")
         local pathes = os.getenv("PATH") or ""
         pathes = pathes .. path.envsep() .. path.join(os.curdir(), "depot_tools")
         pathes = pathes .. path.envsep() .. path.join(os.curdir(), "bin")
@@ -41,7 +40,7 @@ package("skia")
         for k, v in pairs(args) do
             argstr = argstr .. ' ' .. k .. '=' .. tostring(v)
         end
-        os.vrunv("python2", {"tools/git-sync-deps"})--, {envs = {PATH = pathes}})
+        os.vrun("python2 tools/git-sync-deps")
         os.vrun("bin/gn gen build --args='%s'", argstr)
         os.vrun("ninja -C build")
     end)
