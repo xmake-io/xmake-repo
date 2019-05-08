@@ -9,10 +9,10 @@ package("libffi")
     add_versions("3.2.1", "d06ebb8e1d9a22d19e38d63fdb83954253f39bedc5d46232a05645685722ca37")
 
     on_load(function (package)
-        if package:version_str():find('.', 1, true) then
-            package:add("includedirs", "lib/libffi-" .. package:version_str() .. "/include")
-        else
+        if package:gitref() then
             package:add("deps", "autoconf", "automake", "libtool")
+        else
+            package:add("includedirs", "lib/libffi-" .. package:version_str() .. "/include")
         end
     end)
 

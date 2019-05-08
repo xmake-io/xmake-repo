@@ -13,18 +13,21 @@ package("skia")
     on_install("macosx", "linux", "windows", function (package)
         os.vrun("git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git --depth 1")
         local pathes = os.getenv("PATH")
-        os.addenv("PATH", path.join(os.curdir(), "depot_tools"))
-        os.addenv("PATH", path.join(os.curdir(), "bin"))
-        os.vrun("python2 tools/git-sync-deps")
-        os.vrun("bin/gn gen build --args='is_official_build=true is_debug=false'")
+        pathes = pathes .. path.envsep() .. path.join(os.curdir(), "depot_tools")
+        pathes = pathes .. path.envsep() .. path.join(os.curdir(), "bin")
+        local args = {is_official_build = true, is_debug = package:debug()}
+        local argstr = ""
+        for k, v in pairs(args) do
+            argstr = argstr .. ' ' .. k .. '=' .. tostring(v)
+        end
+        os.vrunv("python2", {"tools/git-sync-deps"}, {envs = {PATH = pathes}})
+        os.vrun("bin/gn gen build --args='%s'", argstr)
         os.vrun("ninja -C build")
-        os.setenv("PATH", pathes)
     end)
 
     on_test(function (package)
-        import("lib.detect.check_cxsnippets")
-        assert(check_cxsnippets({test = [[
+        assert(package:check_cxxsnippets({test = [[
             SkPaint paint;
             paint.setStyle(SkPaint::kFill_Style);
-        ]]}, {configs = table.join(package:fetch(), {languages = "c++11"}), sourcekind = "cxx", includes = "core/SkPaint.h", defines = "DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "core/SkPaint.h", defines = "DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN"}))
     end)

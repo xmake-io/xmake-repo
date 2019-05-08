@@ -13,14 +13,12 @@ package("nana")
     end)]]
 
     on_test(function (package)
-        import("lib.detect.check_cxsnippets")
-        assert(check_cxsnippets({test = [[
+        assert(package:check_cxxsnippets({test = [[
             using namespace nana;
             form    fm;
             label   lb(fm, rectangle(fm.size()));
             lb.caption("Hello, World");
             fm.show();
             exec();
-        ]]}, {configs = table.join(package:fetch(), {languages = "c++11"}), sourcekind = "cxx", 
-              includes = {"nana/gui/wvl.hpp", "nana/gui/widgets/label.hpp"}}))
+        ]]}, {configs = {languages = "c++11"}, includes = {"nana/gui/wvl.hpp", "nana/gui/widgets/label.hpp"}}))
     end)

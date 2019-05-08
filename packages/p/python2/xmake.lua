@@ -36,12 +36,6 @@ package("python2")
     end)
 
     on_install("macosx", "linux", function (package)
-        -- unset these so that installing pip and setuptools puts them where we want
-        -- and not into some other Python the user has installed.
-        local PYTHONHOME = os.getenv("PYTHONHOME")
-        local PYTHONPATH = os.getenv("PYTHONPATH")
-        os.setenv("PYTHONHOME", "")
-        os.setenv("PYTHONPATH", "")
 
         -- init configs
         local configs = {"--enable-ipv6", "--without-ensurepip"}
@@ -51,10 +45,9 @@ package("python2")
         -- add openssl libs path for detecting
         io.gsub("setup.py", "/usr/local/ssl", package:dep("openssl"):installdir())
 
-        -- do install
-        import("package.tools.autoconf").install(package, configs)
-        os.setenv("PYTHONHOME", PYTHONHOME)
-        os.setenv("PYTHONPATH", PYTHONPATH)
+        -- unset these so that installing pip and setuptools puts them where we want
+        -- and not into some other Python the user has installed.
+        import("package.tools.autoconf").install(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
     end)
 
     on_test(function (package)

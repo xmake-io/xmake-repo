@@ -50,20 +50,14 @@ package("python")
     on_install("windows", function (package)
         local installdir = package:installdir("share", package:name(), package:version_str())
         os.cp("*", installdir)
-        if package:version_str():startswith("2.") then
-            os.cp("python.exe", path.join(installdir, "python2.exe"))
-        else
+        if package:version():ge("3.0") then
             os.cp("python.exe", path.join(installdir, "python3.exe"))
+        else
+            os.cp("python.exe", path.join(installdir, "python2.exe"))
         end
     end)
 
     on_install("macosx", "linux", function (package)
-        -- unset these so that installing pip and setuptools puts them where we want
-        -- and not into some other Python the user has installed.
-        local PYTHONHOME = os.getenv("PYTHONHOME")
-        local PYTHONPATH = os.getenv("PYTHONPATH")
-        os.setenv("PYTHONHOME", "")
-        os.setenv("PYTHONPATH", "")
 
         -- init configs
         local configs = {"--enable-ipv6", "--without-ensurepip"}
@@ -72,17 +66,15 @@ package("python")
 
         -- add openssl libs path for detecting
         local openssl_dir = package:dep("openssl"):installdir()
-        if package:version_str():startswith("3") then
+        if package:version():ge("3.0") then
             table.insert(configs, "--with-openssl=" .. openssl_dir)
         else
             io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
         end
 
-        -- do install
-        import("package.tools.autoconf").install(package, configs)
-
-        os.setenv("PYTHONHOME", PYTHONHOME)
-        os.setenv("PYTHONPATH", PYTHONPATH)
+        -- unset these so that installing pip and setuptools puts them where we want
+        -- and not into some other Python the user has installed.
+        import("package.tools.autoconf").install(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
     end)
 
     on_test(function (package)

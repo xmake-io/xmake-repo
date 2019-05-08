@@ -13,8 +13,7 @@ package("doctest")
     end)
 
     on_test(function (package)
-        import("lib.detect.check_cxsnippets")
-        assert(check_cxsnippets({test = [[
+        assert(package:check_cxxsnippets({test = [[
             int factorial(int number) { return number <= 1 ? number : factorial(number - 1) * number; }
 
             TEST_CASE("testing the factorial function") {
@@ -23,5 +22,5 @@ package("doctest")
                 CHECK(factorial(3) == 6);
                 CHECK(factorial(10) == 3628800);
             }
-        ]]}, {configs = table.join(package:fetch(), {languages = "c++11"}), sourcekind = "cxx", includes = "doctest/doctest.h", defines = "DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "doctest/doctest.h", defines = "DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN"}))
     end)
