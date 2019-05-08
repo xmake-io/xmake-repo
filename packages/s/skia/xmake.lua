@@ -12,7 +12,7 @@ package("skia")
 
     on_install("macosx", "linux", "windows", function (package)
         os.vrun("git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git --depth 1")
-        local pathes = os.getenv("PATH")
+        local pathes = os.getenv("PATH") or ""
         pathes = pathes .. path.envsep() .. path.join(os.curdir(), "depot_tools")
         pathes = pathes .. path.envsep() .. path.join(os.curdir(), "bin")
         local args = {is_official_build = true, is_debug = package:debug()}
