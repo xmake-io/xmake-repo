@@ -19,7 +19,7 @@ package("lua")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows", "android", function (package)
         io.writefile("xmake.lua", [[
             target("lualib")
                 set_kind("static")
@@ -29,6 +29,10 @@ package("lua")
                 add_defines("LUA_COMPAT_5_2", "LUA_COMPAT_5_1")
                 if is_plat("linux") then
                     add_defines("LUA_USE_LINUX")
+                elseif is_plat("macosx") then
+                    add_defines("LUA_USE_MACOSX")
+                elseif is_plat("windows") then
+                    add_defines("LUA_USE_WINDOWS")
                 end
 
             target("lua")
@@ -43,6 +47,8 @@ package("lua")
     end)
 
     on_test(function (package)
-        os.vrun("lua -e \"print('hello xmake!')\"")
+        if is_plat(os.host()) then
+            os.vrun("lua -e \"print('hello xmake!')\"")
+        end
         assert(package:has_cfuncs("lua_getinfo", {includes = "lua.h"}))
     end)
