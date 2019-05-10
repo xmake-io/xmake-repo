@@ -29,11 +29,53 @@ package("python2")
             package:addenv("PATH", path.join("share", package:name(), package:version_str(), "bin"))
         end
     end)
+ 
+    local resources = 
+    {
+        setuptools = 
+        {
+            url = "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip",
+            sha256 = "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d"
+        },
+        pip = 
+        {
+            url = "https://files.pythonhosted.org/packages/36/fa/51ca4d57392e2f69397cd6e5af23da2a8d37884a605f9e3f2d3bfdc48397/pip-19.0.3.tar.gz",
+            sha256 = "6e6f197a1abfb45118dbb878b5c859a0edbdd33fd250100bc015b67fded4b9f2"
+        },
+        wheel =
+        {
+            url = "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz",
+            sha256 = "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
+        }
+    }
 
     on_install("@windows", function (package)
+
+        -- install python
         local installdir = package:installdir("share", package:name(), package:version_str())
         os.cp("*", installdir)
         os.cp("python.exe", path.join(installdir, "python2.exe"))
+
+        -- set python environments
+        local version = package:version()
+        local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
+        package:addenv("PYTHONPATH", envs.PYTHONPATH)
+
+        -- install resources
+        import("net.http")
+        import("utils.archive")
+        import("lib.detect.find_file")
+        for name, resource in pairs(resources) do
+            local resourcefile = path.join(os.curdir(), path.filename(resource.url))
+            local resourcedir = resourcefile .. ".dir"
+            http.download(resource.url, resourcefile)
+            assert(resource.sha256 == hash.sha256(resourcefile), "resource(%s): unmatched checksum!", name)
+            assert(archive.extract(resourcefile, resourcedir), "resource(%s): extract failed!", name)
+            local setupfile = assert(find_file("setup.py", path.join(resourcedir, "*")), "resource(%s): setup.py not found!", name)
+            local oldir = os.cd(path.directory(setupfile))
+            os.vrunv("python2", {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
+            os.cd(oldir)
+        end
     end)
 
     on_install("@macosx", "@linux", function (package)
@@ -60,26 +102,8 @@ package("python2")
         local version = package:version()
         local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
         package:addenv("PYTHONPATH", envs.PYTHONPATH)
- 
+
         -- install resources
-        local resources = 
-        {
-            setuptools = 
-            {
-                url = "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip",
-                sha256 = "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d"
-            },
-            pip = 
-            {
-                url = "https://files.pythonhosted.org/packages/36/fa/51ca4d57392e2f69397cd6e5af23da2a8d37884a605f9e3f2d3bfdc48397/pip-19.0.3.tar.gz",
-                sha256 = "6e6f197a1abfb45118dbb878b5c859a0edbdd33fd250100bc015b67fded4b9f2"
-            },
-            wheel =
-            {
-                url = "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz",
-                sha256 = "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
-            }
-        }
         import("net.http")
         import("utils.archive")
         import("lib.detect.find_file")
