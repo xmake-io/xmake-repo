@@ -21,15 +21,7 @@ package("python2")
     if is_host("macosx", "linux") then
         add_deps("openssl")
     end
- 
-    on_load(function (package)
-        if is_host("windows") then
-            package:addenv("PATH", path.join("share", package:name(), package:version_str()))
-        else
-            package:addenv("PATH", path.join("share", package:name(), package:version_str(), "bin"))
-        end
-    end)
- 
+
     local resources = 
     {
         setuptools = 
@@ -48,6 +40,39 @@ package("python2")
             sha256 = "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
         }
     }
+ 
+    on_load(function (package)
+        if is_host("windows") then
+            package:addenv("PATH", path.join("share", package:name(), package:version_str()))
+        else
+            package:addenv("PATH", path.join("share", package:name(), package:version_str(), "bin"))
+        end
+        package:data_set("install_resources", function()
+
+            -- imports
+            import("net.http")
+            import("utils.archive")
+            import("lib.detect.find_file")
+
+            -- set python environments
+            local version = package:version()
+            local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
+            package:addenv("PYTHONPATH", envs.PYTHONPATH)
+
+            -- install resources
+            for name, resource in pairs(resources) do
+                local resourcefile = path.join(os.curdir(), path.filename(resource.url))
+                local resourcedir = resourcefile .. ".dir"
+                http.download(resource.url, resourcefile)
+                assert(resource.sha256 == hash.sha256(resourcefile), "resource(%s): unmatched checksum!", name)
+                assert(archive.extract(resourcefile, resourcedir), "resource(%s): extract failed!", name)
+                local setupfile = assert(find_file("setup.py", path.join(resourcedir, "*")), "resource(%s): setup.py not found!", name)
+                local oldir = os.cd(path.directory(setupfile))
+                os.vrunv("python2", {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
+                os.cd(oldir)
+            end
+        end)
+    end)
 
     on_install("@windows", function (package)
 
@@ -55,27 +80,7 @@ package("python2")
         local installdir = package:installdir("share", package:name(), package:version_str())
         os.cp("*", installdir)
         os.cp("python.exe", path.join(installdir, "python2.exe"))
-
-        -- set python environments
-        local version = package:version()
-        local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
-        package:addenv("PYTHONPATH", envs.PYTHONPATH)
-
-        -- install resources
-        import("net.http")
-        import("utils.archive")
-        import("lib.detect.find_file")
-        for name, resource in pairs(resources) do
-            local resourcefile = path.join(os.curdir(), path.filename(resource.url))
-            local resourcedir = resourcefile .. ".dir"
-            http.download(resource.url, resourcefile)
-            assert(resource.sha256 == hash.sha256(resourcefile), "resource(%s): unmatched checksum!", name)
-            assert(archive.extract(resourcefile, resourcedir), "resource(%s): extract failed!", name)
-            local setupfile = assert(find_file("setup.py", path.join(resourcedir, "*")), "resource(%s): setup.py not found!", name)
-            local oldir = os.cd(path.directory(setupfile))
-            os.vrunv("python2", {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
-            os.cd(oldir)
-        end
+        package:data("install_resources")()
     end)
 
     on_install("@macosx", "@linux", function (package)
@@ -97,27 +102,7 @@ package("python2")
         -- and not into some other Python the user has installed.
         import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
         os.vrunv("make", {"install", "-j4", "PYTHONAPPSDIR=" .. package:installdir()})
-
-        -- set python environments
-        local version = package:version()
-        local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
-        package:addenv("PYTHONPATH", envs.PYTHONPATH)
-
-        -- install resources
-        import("net.http")
-        import("utils.archive")
-        import("lib.detect.find_file")
-        for name, resource in pairs(resources) do
-            local resourcefile = path.join(os.curdir(), path.filename(resource.url))
-            local resourcedir = resourcefile .. ".dir"
-            http.download(resource.url, resourcefile)
-            assert(resource.sha256 == hash.sha256(resourcefile), "resource(%s): unmatched checksum!", name)
-            assert(archive.extract(resourcefile, resourcedir), "resource(%s): extract failed!", name)
-            local setupfile = assert(find_file("setup.py", path.join(resourcedir, "*")), "resource(%s): setup.py not found!", name)
-            local oldir = os.cd(path.directory(setupfile))
-            os.vrunv("python2", {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
-            os.cd(oldir)
-        end
+        package:data("install_resources")()
     end)
 
     on_test(function (package)
