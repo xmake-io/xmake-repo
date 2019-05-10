@@ -30,7 +30,8 @@ package("python")
             end
         end
     else
-        set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
+        set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
+                 "https://github.com/xmake-mirror/cpython/releases/download/v$(version)/Python-$(version).tgz")
         add_versions("2.7.15", "18617d1f15a380a919d517630a9cd85ce17ea602f9bbdc58ddc672df4b0239db")
         add_versions("3.7.0", "85bb9feb6863e04fb1700b018d9d42d1caac178559ffa453d7e6a436e259fd0d")
     end
@@ -74,7 +75,7 @@ package("python")
 
         -- allow python modules to use ctypes.find_library to find xmake's stuff
         if is_host("macosx") then
-            io.gsub("Lib/ctypes/macholib/dyld.py", "DEFAULT_LIBRARY_FALLBACK = [", format("DEFAULT_LIBRARY_FALLBACK = [ '%s/lib',", package:installdir()))
+            io.gsub("Lib/ctypes/macholib/dyld.py", "DEFAULT_LIBRARY_FALLBACK = %[", format("DEFAULT_LIBRARY_FALLBACK = [ '%s/lib',", package:installdir()))
         end
 
         -- unset these so that installing pip and setuptools puts them where we want
@@ -103,15 +104,15 @@ package("python")
         }
         import("net.http")
         import("utils.archive")
+        import("lib.detect.find_file")
         for name, resource in pairs(resources) do
-            local resourcefile = path.join(package:cachedir(), path.filename(resource.url))
+            local resourcefile = path.join(os.curdir(), path.filename(resource.url))
             local resourcedir = resourcefile .. ".dir"
             http.download(resource.url, resourcefile)
             assert(resource.sha256 == hash.sha256(resourcefile), "resource(%s): unmatched checksum!", name)
             assert(archive.extract(resourcefile, resourcedir), "resource(%s): extract failed!", name)
-            os.cd(resourcedir)
-            os.vrun("python setup.py install")
-            os.cd("-")
+            local setupfile = assert(find_file("setup.py", path.join(resourcedir, "*")), "resource(%s): setup.py not found!", name)
+            os.vrunv("python", {setupfile, "install"})
         end
     end)
 
