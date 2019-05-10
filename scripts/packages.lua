@@ -3,7 +3,7 @@ import("core.package.package")
 import("core.platform.platform")
 
 -- is supported platform and architecture?
-function _is_supported(instance, plat, arch)
+function _is_supported(instance, plat, arch, opt)
 
     -- get script
     local script = instance:get("install")
@@ -36,6 +36,9 @@ function _is_supported(instance, plat, arch)
                 end
                 return "" 
             end)
+            if _pattern:trim() == "" and opt and opt.onlyhost then
+                _pattern = os.host()
+            end
             if not _pattern:startswith("__") and (not hosts_spec or hosts[os.host() .. '|' .. os.arch()] or hosts[os.host()])  
             and (_pattern:trim() == "" or (plat .. '|' .. arch):find('^' .. _pattern .. '$') or plat:find('^' .. _pattern .. '$')) then
                 result = _script
@@ -50,9 +53,8 @@ function _is_supported(instance, plat, arch)
 end
 
 -- the main entry
-function main(...)
+function main(opt)
     local packages = {}
-    local plat = os.host()
     for _, packagedir in ipairs(os.dirs(path.join("packages", "*", "*"))) do
         local packagename = path.filename(packagedir)
         local packagefile = path.join(packagedir, "xmake.lua")
@@ -63,7 +65,7 @@ function main(...)
                 if archs then
                     local package_archs = {}
                     for _, arch in ipairs(archs) do
-                        if _is_supported(instance, plat, arch) then
+                        if _is_supported(instance, plat, arch, opt) then
                             table.insert(package_archs, arch)
                         end
                     end

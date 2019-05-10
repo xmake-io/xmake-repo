@@ -3,7 +3,7 @@ import("packages", {alias = "get_packages"})
 function main(...)
     
     -- get packages
-    local packages = get_packages()
+    local packages = get_packages({onlyhost = true})
     local tables = {}
     local col = 1
     local row_max = 0

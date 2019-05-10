@@ -72,9 +72,15 @@ package("python")
             io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
         end
 
+        -- allow python modules to use ctypes.find_library to find xmake's stuff
+        if is_host("macosx") then
+            io.gsub("Lib/ctypes/macholib/dyld.py", "DEFAULT_LIBRARY_FALLBACK = [", format("DEFAULT_LIBRARY_FALLBACK = [ '%s/lib',", package:installdir()))
+        end
+
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
-        import("package.tools.autoconf").install(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
+        import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
+        os.vrunv("make", {"install", "-j4", "PYTHONAPPSDIR=" .. package:installdir()})
     end)
 
     on_test(function (package)
