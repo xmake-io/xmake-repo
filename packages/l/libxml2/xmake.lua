@@ -3,14 +3,11 @@ package("libxml2")
     set_homepage("http://xmlsoft.org/")
     set_description("The XML C parser and toolkit of Gnome.")
 
-    set_urls("https://github.com/GNOME/libxml2/archive/$(version).zip", {excludes = {"*/result/*", "*/test/*"}})
+    set_urls("http://xmlsoft.org/sources/libxml2-$(version).tar.gz", 
+             "https://ftp.osuosl.org/pub/blfs/conglomeration/libxml2/libxml2-$(version).tar.gz")
+    add_urls("https://gitlab.gnome.org/GNOME/libxml2.git")
 
-    add_versions("v2.9.8", "c87793e45e66a7aa19200f861873f75195065de786a21c1b469bdb7bfc1230fb")
-    add_versions("v2.9.7", "31dd4c0e10fa625b47e27fd6a5295d246c883f214da947b9a4a9e13733905ed9")
-
-    if is_plat("macosx", "linux") then
-        add_deps("autoconf", "automake", "libtool", "pkg-config")
-    end
+    add_versions("2.9.9", "94fb70890143e3c6549f265cee93ec064c80a84c42ad0f23e85ee1fd6540a871")
  
     add_includedirs("include/libxml2")
     if is_plat("windows") then
@@ -19,6 +16,12 @@ package("libxml2")
     else
         add_links("xml2")
     end
+
+    on_load("macosx", "linux", "iphoneos", "android", function (package)
+        if package:gitref() then
+            package:add("deps", "autoconf", "automake", "libtool", "pkg-config")
+        end
+    end)
 
     if is_plat("windows") and winos.version():gt("winxp") then
         on_install("windows", function (package)
@@ -29,8 +32,14 @@ package("libxml2")
         end)
     end
 
-    on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--without-python", "--without-lzma"})
+    on_install("macosx", "linux", "iphoneos", "android", function (package)
+        local configs = {"--disable-dependency-tracking",
+                         "--without-python", 
+                         "--without-lzma", 
+                         "--without-zlib",
+                         "--without-iconv",
+                         "--enable-shared=no"}
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
