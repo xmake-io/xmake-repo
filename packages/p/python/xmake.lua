@@ -83,6 +83,11 @@ package("python")
         import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
         os.vrunv("make", {"install", "-j4", "PYTHONAPPSDIR=" .. package:installdir()})
 
+        -- set python environments
+        local version = package:version()
+        local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
+        package:addenv("PYTHONPATH", envs.PYTHONPATH)
+
         -- install resources
         local resources = 
         {
@@ -112,10 +117,16 @@ package("python")
             assert(resource.sha256 == hash.sha256(resourcefile), "resource(%s): unmatched checksum!", name)
             assert(archive.extract(resourcefile, resourcedir), "resource(%s): extract failed!", name)
             local setupfile = assert(find_file("setup.py", path.join(resourcedir, "*")), "resource(%s): setup.py not found!", name)
-            os.vrunv("python", {setupfile, "install"})
+            local oldir = os.cd(path.directory(setupfile))
+            os.vrunv("python", {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
+            os.cd(oldir)
         end
     end)
 
     on_test(function (package)
         os.vrun("python --version")
+        os.vrun("python -c \"import ssl\"")
+        os.vrun("python -c \"import pip\"")
+        os.vrun("python -c \"import setuptools\"")
+        os.vrun("python -c \"import wheel\"")
     end)
