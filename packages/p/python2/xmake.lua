@@ -60,7 +60,7 @@ package("python2")
         local version = package:version()
         local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
         package:addenv("PYTHONPATH", envs.PYTHONPATH)
-
+ 
         -- install resources
         local resources = 
         {

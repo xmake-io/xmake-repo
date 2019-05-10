@@ -6,13 +6,14 @@ import("packages", {alias = "get_packages"})
 -- the options
 local options =
 {
-    {'v', "verbose",    "k",  nil, "Enable verbose information."   }
-,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information." }
-,   {'p', "plat",       "kv", nil, "Set the given platform."       }
-,   {'a', "arch",       "kv", nil, "Set the given architecture."   }
-,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."}
-,   {nil, "mingw",      "kv", nil, "Set the MingW directory."      }
-,   {nil, "packages",   "vs", nil, "The package list."             }
+    {'v', "verbose",    "k",  nil, "Enable verbose information."     }
+,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information."   }
+,   {nil, "shallow",    "k",  nil, "Only install the root packages." }
+,   {'p', "plat",       "kv", nil, "Set the given platform."         }
+,   {'a', "arch",       "kv", nil, "Set the given architecture."     }
+,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."  }
+,   {nil, "mingw",      "kv", nil, "Set the MingW directory."        }
+,   {nil, "packages",   "vs", nil, "The package list."               }
 }
 
 -- require packages
@@ -43,6 +44,9 @@ function _require_packages(argv, packages)
     end
     if argv.diagnosis then
         table.insert(require_argv, "-D")
+    end
+    if argv.shallow then
+        table.insert(require_argv, "--shallow")
     end
     table.join2(require_argv, packages)
     os.execv("xmake", require_argv)
