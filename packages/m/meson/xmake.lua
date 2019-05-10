@@ -10,7 +10,7 @@ package("meson")
 
     add_deps("ninja", "python 3.x")
  
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx", "@linux", "@windows", function (package)
         local version = package:dep("python"):version()
         local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
         os.vrunv("python3", {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
