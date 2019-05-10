@@ -20,15 +20,15 @@ package("ninja")
         add_deps("python2")
     end
 
-    on_install("windows", function (package)
+    on_install("@windows", function (package)
         os.cp("./ninja.exe", package:installdir("bin"))
     end)
 
-    on_install("macosx", function (package)
+    on_install("@macosx", function (package)
         os.cp("./ninja", package:installdir("bin"))
     end)
 
-    on_install("linux", function (package)
+    on_install("@linux", function (package)
         os.vrun("python2 configure.py --bootstrap")
         os.cp("./ninja", package:installdir("bin"))
     end)

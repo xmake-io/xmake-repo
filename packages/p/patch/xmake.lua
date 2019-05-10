@@ -15,11 +15,11 @@ package("patch")
         add_versions("github:2.7.6", "33d5a86bad9813b27dbbe890123d0b88fbcc74d5d997aeadde60c670a2bd0eb9")
     end
 
-    on_install("windows", function (package)
+    on_install("@windows", function (package)
         os.cp("bin/*", package:installdir("bin"))
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("@macosx", "@linux", function (package)
         import("package.tools.autoconf").install(package)
     end)
 

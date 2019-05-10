@@ -16,42 +16,30 @@ function _is_supported(instance, plat, arch)
         local plat = plat or ""
         local arch = arch or ""
 
-        -- match script for special plat and arch
-        local pattern = plat .. '|' .. arch
+        -- match pattern
+        --
+        -- `@linux`
+        -- `@linux|x86_64`
+        -- `@macosx,linux`
+        -- `android@macosx,linux`
+        -- `android|armv7-a@macosx,linux`
+        -- `android|armv7-a@macosx,linux|x86_64`
+        -- `android|armv7-a@linux|x86_64`
+        --
         for _pattern, _script in pairs(script) do
             local hosts = {}
             local hosts_spec = false
             _pattern = _pattern:gsub("@(.+)", function (v) 
-                -- get and remove hosts for `android|armv7-a@macosx,linux`
                 for _, host in ipairs(v:split(',')) do
                     hosts[host] = true
                     hosts_spec = true
                 end
                 return "" 
             end)
-            if not _pattern:startswith("__") and pattern:find('^' .. _pattern .. '$') and (not hosts_spec or hosts[os.host()]) then
+            if not _pattern:startswith("__") and (not hosts_spec or hosts[os.host() .. '|' .. os.arch()] or hosts[os.host()])  
+            and (_pattern:trim() == "" or (plat .. '|' .. arch):find('^' .. _pattern .. '$') or plat:find('^' .. _pattern .. '$')) then
                 result = _script
                 break
-            end
-        end
-
-        -- match script for special plat
-        if result == nil then
-            for _pattern, _script in pairs(script) do
-                local hosts = {}
-                local hosts_spec = false
-                _pattern = _pattern:gsub("@(.+)", function (v) 
-                    -- get and remove hosts for `android@macosx,linux`
-                    for _, host in ipairs(v:split(',')) do
-                        hosts[host] = true
-                        hosts_spec = true
-                    end
-                    return "" 
-                end)
-                if not _pattern:startswith("__") and plat:find('^' .. _pattern .. '$') and (not hosts_spec or hosts[os.host()]) then
-                    result = _script
-                    break
-                end
             end
         end
 

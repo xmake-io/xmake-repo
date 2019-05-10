@@ -32,12 +32,12 @@ package("cmake")
         end
     end
 
-    on_install("macosx", function (package)
+    on_install("@macosx", function (package)
         os.cp("CMake.app/Contents/bin", package:installdir())
         os.cp("CMake.app/Contents/share", package:installdir())
     end)
 
-    on_install("linux|x86_64", "windows", function (package)
+    on_install("@linux|x86_64", "@windows", function (package)
         os.cp("bin", package:installdir())
         os.cp("share", package:installdir())
     end)
