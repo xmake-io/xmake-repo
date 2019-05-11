@@ -7,7 +7,7 @@ package("glib")
              {version = function (version) return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/glib-" .. version end})
     add_versions("2.60.2", "2ef15475060addfda0443a7e8a52b28a10d5e981e82c083034061daf9a8f80d9")
 
-    add_deps("meson", "ninja")
+    add_deps("meson", "ninja", "libffi")
 
     on_install("macosx", "linux", function (package)
         local configs = {"-Dbsymbolic_functions=false", "-Ddtrace=false"}

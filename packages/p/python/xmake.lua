@@ -88,12 +88,14 @@ package("python")
     end)
 
     on_install("@windows", function (package)
-        os.cp("*", package:installdir())
         if package:version():ge("3.0") then
             os.cp("python.exe", path.join(package:installdir("bin"), "python3.exe"))
         else
             os.cp("python.exe", path.join(package:installdir("bin"), "python2.exe"))
         end
+        os.mv("*.exe", package:installdir("bin"))
+        os.mv("*.dll", package:installdir("bin"))
+        os.cp("*", package:installdir())
         package:data("install_resources")()
     end)
 
