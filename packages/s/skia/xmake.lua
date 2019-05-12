@@ -37,10 +37,16 @@ package("skia")
                       skia_use_system_libpng = false,
                       skia_use_system_libwebp = false,
                       skia_use_system_zlib = false}
+        args.cc  = package:build_getenv("cc")
+        args.cxx = package:build_getenv("cxx")
         local argstr = ""
         for k, v in pairs(args) do
-            argstr = argstr .. ' ' .. k .. '=' .. tostring(v)
-        end
+            if type(v) == "string" then
+                argstr = argstr .. ' ' .. k .. '=\"' .. v .. "\""
+            else
+                argstr = argstr .. ' ' .. k .. '=' .. tostring(v)
+            end
+        end 
         os.vrun("python2 tools/git-sync-deps")
         os.vrun("bin/gn gen build --args='%s'", argstr)
         os.vrun("ninja -C build")
