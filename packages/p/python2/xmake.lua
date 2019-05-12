@@ -19,7 +19,7 @@ package("python2")
     end
 
     if is_host("macosx", "linux") then
-        add_deps("openssl", {plat = os.host(), arch = os.arch()})
+        add_deps("openssl", {host = true})
     end
  
     on_load(function (package)
@@ -61,7 +61,6 @@ package("python2")
                 http.download(resource.url, resourcefile)
                 assert(resource.sha256 == hash.sha256(resourcefile), "resource(%s): unmatched checksum!", name)
                 assert(archive.extract(resourcefile, resourcedir), "resource(%s): extract failed!", name)
-                print(resourcedir)
                 local setupfile = assert(find_file("setup.py", path.join(resourcedir, "*")), "resource(%s): setup.py not found!", name)
                 local oldir = os.cd(path.directory(setupfile))
                 os.vrunv(python, {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
