@@ -39,7 +39,7 @@ package("python")
     if is_host("macosx", "linux") then
         add_deps("openssl", {host = true})
     end
-
+ 
     on_load(function (package)
         package:data_set("install_resources", function()
 

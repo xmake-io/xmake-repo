@@ -1,28 +1,76 @@
 sudo: false
 language: C
-os:
-  - linux
-  - osx
-compiler:
-  - gcc
-  - clang
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env:
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+         - PLAT=linux
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+        - PLAT=linux
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+      env:
+        - PLAT=android
+
+    - os: osx
+      osx_image: xcode10.1
+      env:
+        - PLAT=osx
+    
+    - os: osx
+      osx_image: xcode9.4
+      env:
+        - PLAT=osx
+
+    - os: osx
+      env:
+        - PLAT=iphoneos
+
+    - os: osx
+      env:
+        - PLAT=mingw
+
+before_install:
+    - eval "${MATRIX_EVAL}"
 
 install:
   - git clone --branch=dev https://github.com/xmake-io/xmake.git tboox/xmake --depth 1
   - cd ./tboox/xmake
   - ./scripts/get.sh __local__
   - cd -
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+  - if [ "$PLAT" = "android" ]; then
       wget -q https://dl.google.com/android/repository/android-ndk-r19c-linux-x86_64.zip;
       unzip -q -o ./android-ndk-r19c-linux-x86_64.zip;
     fi
 
 script:
-  - travis_wait 60 xmake l ./scripts/test.lua -D
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+  - if [ "$PLAT" = "iphoneos" ]; then
       travis_wait 60 xmake l ./scripts/test.lua -D -p iphoneos;
+    elif [ "$PLAT" = "mingw" ]; then
       brew install mingw-w64;
       CC="" travis_wait 60 xmake l ./scripts/test.lua -D -p mingw;
-    else
+    elif [ "$PLAT" = "android" ]; then 
       travis_wait 60 xmake l ./scripts/test.lua -v -D -p android --ndk=`pwd`/android-ndk-r19c;
+    else
+      travis_wait 60 xmake l ./scripts/test.lua -D;
     fi
