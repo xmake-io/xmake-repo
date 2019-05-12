@@ -21,7 +21,7 @@ package("python2")
     if is_host("macosx", "linux") then
         add_deps("openssl", {plat = os.host(), arch = os.arch()})
     end
-
+ 
     on_load(function (package)
         package:data_set("install_resources", function()
 
