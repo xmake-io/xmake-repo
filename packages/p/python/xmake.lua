@@ -37,7 +37,7 @@ package("python")
     end
 
     if is_host("macosx", "linux") then
-        add_deps("openssl", {plat = os.host(), arch = os.arch()})
+        add_deps("openssl", {host = true})
     end
 
     on_load(function (package)
