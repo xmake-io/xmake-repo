@@ -50,9 +50,14 @@ package("python")
 
             -- set python environments
             local version = package:version()
-            local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
+            local envs = {}
+            if is_host("windows") and package:version():ge("3.0") then
+                envs.PYTHONPATH = package:installdir("Lib", "site-packages")
+            else
+                envs.PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")
+            end
             package:addenv("PYTHONPATH", envs.PYTHONPATH)
-
+ 
             -- install resources
             local resources = 
             {
