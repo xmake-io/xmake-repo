@@ -14,6 +14,7 @@ package("meson")
         local version = package:dep("python"):version()
         local envs = {}
         if is_host("windows") then
+            package:addenv("PATH", "Scripts")
             envs.PYTHONPATH = package:installdir("Lib", "site-packages")
         else
             envs.PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")
