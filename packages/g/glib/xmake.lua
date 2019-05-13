@@ -7,17 +7,20 @@ package("glib")
              {version = function (version) return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/glib-" .. version end})
     add_versions("2.60.2", "2ef15475060addfda0443a7e8a52b28a10d5e981e82c083034061daf9a8f80d9")
 
-    add_deps("meson", "ninja", "libffi")
+    add_deps("meson", "ninja", "gettext", "libiconv", "libffi", "pcre")
+
+    add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
+    add_links("glib-2.0", "gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0")
+    if is_plat("macosx") then
+        add_frameworks("Foundation", "CoreFoundation")
+    end
 
     on_install("macosx", "linux", function (package)
-        local configs = {"-Dbsymbolic_functions=false", "-Ddtrace=false"}
+        local configs = {"-Dbsymbolic_functions=false", "-Ddtrace=false", "-Ddefault_library=static"}
         table.insert(configs, "-Dgio_module_dir=" .. path.join(package:installdir(), "lib/gio/modules"))
-        if is_plat("macosx") then
-            table.insert(configs, "-Diconv=native")
-        end
         import("package.tools.meson").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("g_convert", {includes = "glib.h"}))
+        assert(package:has_cfuncs("g_list_append", {includes = "glib.h"}))
     end)

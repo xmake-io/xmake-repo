@@ -17,7 +17,7 @@ package("libiconv")
     end)
 
     on_install("macosx", "linux", function (package)
-        local configs = {"--enable-static", "--disable-dependency-tracking", "--enable-extra-encodings"}
+        local configs = {"--enable-static", "--enable-shared=no", "--disable-dependency-tracking", "--enable-extra-encodings"}
         if package:debug() then
             table.insert(configs, "--enable-debug")
         else
@@ -29,6 +29,6 @@ package("libiconv")
 
     on_test(function (package)
         os.vrun("iconv --version")
-        assert(package:has_cfuncs("iconv_open", {includes = "iconv.h"}))
+        assert(package:has_cfuncs("iconv_open(0, 0);", {includes = "iconv.h"}))
     end)
 
