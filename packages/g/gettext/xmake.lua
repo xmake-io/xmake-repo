@@ -8,10 +8,10 @@ package("gettext")
              {version = function (version) return version:gsub('%-', '.') end})
     add_versions("0.19.8-1", "105556dbc5c3fbbc2aa0edb46d22d055748b6f5c7cd7a8d99f8e7eb84e938be4")
 
-    add_deps("libiconv")
-
     if is_plat("macosx") then
-        add_frameworks("CoreFoundation")
+        add_links("iconv")
+    else
+        add_deps("libiconv")
     end
 
     on_install("macosx", "linux", function (package)
