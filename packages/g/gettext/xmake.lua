@@ -22,11 +22,12 @@ package("gettext")
                          "--with-included-glib",
                          "--with-included-libcroco",
                          "--with-included-libunistring",
-                         "--with-emacs",
                          "--with-lispdir=#{elisp}",
                          "--disable-java",
                          "--disable-csharp",
+                         "--without-emacs",
                          "--without-git",
+                         "--without-bzip2",
                          "--without-cvs",
                          "--without-xz"}
         if is_plat("macosx") then
