@@ -12,7 +12,12 @@ package("meson")
   
     on_install("@macosx", "@linux", "@windows", function (package)
         local version = package:dep("python"):version()
-        local envs = {PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")}
+        local envs = {}
+        if is_host("windows") then
+            envs.PYTHONPATH = package:installdir("Lib", "site-packages")
+        else
+            envs.PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")
+        end
         os.vrunv("python3", {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
         package:addenv("PYTHONPATH", envs.PYTHONPATH)
     end)
