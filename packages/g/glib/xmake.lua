@@ -8,8 +8,9 @@ package("glib")
     add_versions("2.60.2", "2ef15475060addfda0443a7e8a52b28a10d5e981e82c083034061daf9a8f80d9")
 
     add_deps("meson", "ninja", "libffi", "pcre")
-    if not is_plat("macosx") then
+    if is_plat("linux") then
         add_deps("libiconv")
+        add_deps("util-linux", {configs = {libmount = true}})
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
