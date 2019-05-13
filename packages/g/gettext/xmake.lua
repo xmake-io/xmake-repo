@@ -9,7 +9,8 @@ package("gettext")
     add_versions("0.19.8-1", "105556dbc5c3fbbc2aa0edb46d22d055748b6f5c7cd7a8d99f8e7eb84e938be4")
 
     if is_plat("macosx") then
-        add_links("iconv")
+        add_syslinks("iconv")
+        add_frameworks("CoreFoundation")
     else
         add_deps("libiconv")
     end
