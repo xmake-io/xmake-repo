@@ -70,7 +70,7 @@ script:
       brew install mingw-w64;
       CC="" travis_wait 60 xmake l ./scripts/test.lua -D -p mingw;
     elif [ "$MATRIX_PLAT" = "android" ]; then 
-      travis_wait 60 xmake l ./scripts/test.lua -v -D -p android --ndk=`pwd`/android-ndk-r19c;
+      travis_wait 60 xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-r19c;
     else
       travis_wait 60 xmake l ./scripts/test.lua -D;
     fi
