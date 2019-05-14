@@ -19,7 +19,7 @@ package("glib")
         add_syslinks("iconv")
         add_frameworks("Foundation", "CoreFoundation")
     elseif is_plat("linux") then
-        add_syslinks("pthread")
+        add_syslinks("pthread", "dl")
     end
 
     on_install("macosx", "linux", function (package)
