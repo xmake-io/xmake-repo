@@ -18,14 +18,18 @@ package("glib")
     if is_plat("macosx") then
         add_syslinks("iconv")
         add_frameworks("Foundation", "CoreFoundation")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
     end
 
     on_install("macosx", "linux", function (package)
-        local configs = {"-Dbsymbolic_functions=false", "-Ddtrace=false", "-Ddefault_library=static"}
+        local configs = {"-Dbsymbolic_functions=false", "-Ddtrace=false", "-Dman=false", "-Ddefault_library=static", "-Dinstalled_tests=false"}
         if is_plat("macosx") then
             table.insert(configs, "-Diconv=native")
         end
         table.insert(configs, "-Dgio_module_dir=" .. path.join(package:installdir(), "lib/gio/modules"))
+        io.gsub("meson.build", "subdir%('tests'%)", "")
+        io.gsub("gio/meson.build", "subdir%('tests'%)", "")
         import("package.tools.meson").install(package, configs)
     end)
 
