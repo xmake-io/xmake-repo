@@ -10,7 +10,7 @@ package("glib")
     add_deps("meson", "ninja", "libffi", "pcre")
     if is_plat("linux") then
         add_deps("libiconv")
-        add_deps("util-linux", {configs = {libmount = true}})
+        add_deps("util-linux", {configs = {libmount = true, mount = true}})
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
