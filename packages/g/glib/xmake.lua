@@ -10,7 +10,6 @@ package("glib")
     add_deps("meson", "ninja", "libffi", "pcre")
     if is_plat("linux") then
         add_deps("libiconv")
-        add_deps("util-linux", {configs = {libmount = true}})
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
@@ -23,7 +22,12 @@ package("glib")
     end
 
     on_install("macosx", "linux", function (package)
-        local configs = {"-Dbsymbolic_functions=false", "-Ddtrace=false", "-Dman=false", "-Ddefault_library=static", "-Dinstalled_tests=false"}
+        local configs = {"-Dbsymbolic_functions=false", 
+                         "-Ddtrace=false", 
+                         "-Dman=false", 
+                         "-Ddefault_library=static", 
+                         "-Dlibmount=false",
+                         "-Dinstalled_tests=false"}
         if is_plat("macosx") then
             table.insert(configs, "-Diconv=native")
         end
