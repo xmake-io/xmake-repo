@@ -37,6 +37,8 @@ package("util-linux")
                          "--disable-silent-rules", 
                          "--without-python",
                          "--without-systemd",
+                         "--enable-static=yes",
+                         "--enable-shared=no",
                          "--with-bashcompletiondir=" .. package:installdir("share/bash-completion")}
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
