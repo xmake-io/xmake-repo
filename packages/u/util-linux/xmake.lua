@@ -36,6 +36,7 @@ package("util-linux")
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules", 
                          "--without-python",
+                         "--without-systemd",
                          "--with-bashcompletiondir=" .. package:installdir("share/bash-completion")}
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
