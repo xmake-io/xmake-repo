@@ -11,7 +11,8 @@ matrix:
             - g++-4.9
       env:
          - MATRIX_PLAT=linux
-         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+         - MATRIX_CC=gcc-4.9 
+         - MATRIX_CXX=g++-4.9
 
     - os: linux
       addons:
@@ -22,7 +23,8 @@ matrix:
             - g++-6
       env:
         - MATRIX_PLAT=linux
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+        - MATRIX_CC=gcc-6 
+        - MATRIX_CXX=g++-6
 
     - os: linux
       addons:
@@ -61,14 +63,15 @@ install:
     fi
 
 script:
-  - eval "${MATRIX_EVAL}"
   - if [ "$MATRIX_PLAT" = "iphoneos" ]; then
       travis_wait 60 xmake l ./scripts/test.lua -D -p iphoneos;
     elif [ "$MATRIX_PLAT" = "mingw" ]; then
       brew install mingw-w64;
-      CC="" travis_wait 60 xmake l ./scripts/test.lua -D -p mingw;
+      CC="" CXX="" travis_wait 60 xmake l ./scripts/test.lua -D -p mingw;
     elif [ "$MATRIX_PLAT" = "android" ]; then 
       travis_wait 60 xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-r19c;
+    elif [ "$MATRIX_PLAT" = "linux" ]; then 
+      CC=$MATRIX_CC CXX=$MATRIX_CXX travis_wait 60 xmake l ./scripts/test.lua -D;
     else
       travis_wait 60 xmake l ./scripts/test.lua -D;
     fi

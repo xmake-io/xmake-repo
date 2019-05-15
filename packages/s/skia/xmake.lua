@@ -10,6 +10,25 @@ package("skia")
 
     add_deps("python2", "ninja")
 
+    add_links("skia")
+    add_includedirs("include")
+    add_includedirs("include/android")
+    add_includedirs("include/atlastext")
+    add_includedirs("include/c")
+    add_includedirs("include/codec")
+    add_includedirs("include/config")
+    add_includedirs("include/core")
+    add_includedirs("include/docs")
+    add_includedirs("include/effects")
+    add_includedirs("include/encode")
+    add_includedirs("include/gpu")
+    add_includedirs("include/pathops")
+    add_includedirs("include/ports")
+    add_includedirs("include/private")
+    add_includedirs("include/svg")
+    add_includedirs("include/third_party")
+    add_includedirs("include/utils")
+
     on_install("macosx", "linux", "windows", function (package)
         local pathes = os.getenv("PATH") or ""
         pathes = pathes .. path.envsep() .. path.join(os.curdir(), "depot_tools")
@@ -20,6 +39,7 @@ package("skia")
                       skia_enable_gpu = true,
                       skia_enable_pdf = false,
                       skia_enable_nvpr = false,
+                      skia_enable_tools = false,
                       skia_use_icu = false,
                       skia_use_sfntly = false,
                       skia_use_piex = false,
@@ -44,11 +64,20 @@ package("skia")
         os.vrun("python2 tools/git-sync-deps")
         os.vrun("bin/gn gen build --args='%s'", argstr:trim())
         os.vrun("ninja -C build")
+        os.cp("include", package:installdir())
+        os.cp("third_party", package:installdir())
+        if is_plat("windows") then
+            os.cp("build/*.lib", package:installdir("lib"))
+        else
+            os.cp("build/*.a", package:installdir("lib"))
+        end
     end)
-
+ 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            SkPaint paint;
-            paint.setStyle(SkPaint::kFill_Style);
+            static void test() {
+                SkPaint paint;
+                paint.setStyle(SkPaint::kFill_Style);
+            }
         ]]}, {configs = {languages = "c++14"}, includes = "core/SkPaint.h", defines = "DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN"}))
     end)
