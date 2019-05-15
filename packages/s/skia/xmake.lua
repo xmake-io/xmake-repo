@@ -10,7 +10,6 @@ package("skia")
 
     add_deps("python2", "ninja")
 
-    --[[ TODO
     on_install("macosx", "linux", "windows", function (package)
         local pathes = os.getenv("PATH") or ""
         pathes = pathes .. path.envsep() .. path.join(os.curdir(), "depot_tools")
@@ -50,7 +49,7 @@ package("skia")
         os.vrun("python2 tools/git-sync-deps")
         os.vrun("bin/gn gen build --args='%s'", argstr)
         os.vrun("ninja -C build")
-    end)]]
+    end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
