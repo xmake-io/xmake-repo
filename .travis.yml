@@ -50,9 +50,6 @@ matrix:
       env:
         - MATRIX_PLAT=mingw
 
-before_install:
-    - eval "${MATRIX_EVAL}"
-
 install:
   - git clone --branch=dev https://github.com/xmake-io/xmake.git tboox/xmake --depth 1
   - cd ./tboox/xmake
@@ -64,6 +61,7 @@ install:
     fi
 
 script:
+  - eval "${MATRIX_EVAL}"
   - if [ "$MATRIX_PLAT" = "iphoneos" ]; then
       travis_wait 60 xmake l ./scripts/test.lua -D -p iphoneos;
     elif [ "$MATRIX_PLAT" = "mingw" ]; then

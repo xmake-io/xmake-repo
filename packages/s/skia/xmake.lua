@@ -30,12 +30,7 @@ package("skia")
                       skia_use_libjpeg_turbo = false,
                       skia_use_libpng = false,
                       skia_use_libwebp = false,
-                      skia_use_zlib = false,
-                      skia_use_system_expat = false,
-                      skia_use_system_libjpeg_turbo = false,
-                      skia_use_system_libpng = false,
-                      skia_use_system_libwebp = false,
-                      skia_use_system_zlib = false}
+                      skia_use_zlib = false}
         args.cc  = package:build_getenv("cc")
         args.cxx = package:build_getenv("cxx")
         local argstr = ""
@@ -47,7 +42,7 @@ package("skia")
             end
         end 
         os.vrun("python2 tools/git-sync-deps")
-        os.vrun("bin/gn gen build --args='%s'", argstr)
+        os.vrun("bin/gn gen build --args='%s'", argstr:trim())
         os.vrun("ninja -C build")
     end)
 
