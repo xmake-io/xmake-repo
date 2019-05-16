@@ -28,7 +28,8 @@ package("skia")
     add_includedirs("include/svg")
     add_includedirs("include/third_party")
     add_includedirs("include/utils")
-
+ 
+    -- @note windows: only can build for vs2017 or vs2015 update 3
     on_install("macosx", "linux", "windows", function (package)
         local pathes = os.getenv("PATH") or ""
         pathes = pathes .. path.envsep() .. path.join(os.curdir(), "depot_tools")
@@ -53,7 +54,7 @@ package("skia")
                       skia_use_zlib = false}
         args.cc  = package:build_getenv("cc")
         args.cxx = package:build_getenv("cxx")
-        local argstr = ""
+        local argstr = "" 
         for k, v in pairs(args) do
             if type(v) == "string" then
                 argstr = argstr .. ' ' .. k .. '=\"' .. v .. "\""
@@ -65,14 +66,14 @@ package("skia")
         os.vrun("bin/gn gen build --args='%s'", argstr:trim())
         os.vrun("ninja -C build")
         os.cp("include", package:installdir())
-        os.cp("third_party", package:installdir())
+        os.cp("third_party/skcms/*.h", package:installdir("third_party/skcms"))
         if is_plat("windows") then
             os.cp("build/*.lib", package:installdir("lib"))
         else
             os.cp("build/*.a", package:installdir("lib"))
         end
     end)
- 
+  
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             static void test() {
