@@ -33,6 +33,7 @@ package("protobuf-cpp")
                 repeated TestCase case = 1;
             }
         ]])
-        os.vrun("protoc test.proto --cpp_out=.")
+        local protoc = path.join(package:dep("protoc"):installdir("bin"), "protoc" .. (is_host("windows") and ".exe" or ""))
+        os.vrunv(protoc, {"test.proto", "--cpp_out=."})
         assert(package:check_cxxsnippets({test = io.readfile("test.pb.cc")}, {configs = {includedirs = {".", package:installdir("include")}, languages = "c++11"}}))
     end)
