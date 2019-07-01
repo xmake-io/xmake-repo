@@ -16,12 +16,16 @@ package("protobuf-c")
         add_deps("cmake")
     end
 
-    add_links("protobuf-c")
+    if is_plat("windows") then
+        add_links("libprotobuf-c")
+    else
+        add_links("protobuf-c")
+    end
 
     on_load(function (package)
         package:addenv("PATH", "bin")
     end)
-
+ 
     on_install("windows", function (package)
         os.cd("build-cmake")
         import("package.tools.cmake").install(package)
