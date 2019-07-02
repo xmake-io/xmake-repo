@@ -16,11 +16,7 @@ package("protobuf-c")
         add_deps("cmake")
     end
 
-    if is_plat("windows") then
-        add_links("libprotobuf-c")
-    else
-        add_links("protobuf-c")
-    end
+    add_links("protobuf-c")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
@@ -28,7 +24,8 @@ package("protobuf-c")
  
     on_install("windows", function (package)
         os.cd("build-cmake")
-        import("package.tools.cmake").install(package)
+        import("package.tools.cmake").install(package, {"-Dprotobuf_BUILD_PROTOC_BINARIES=ON"})
+        os.cp("build_*/Release/protoc-gen-c.exe", path.join(package:installdir("bin"), "protoc-c.exe"))
     end)
 
     on_install("linux", "macosx", function (package)
