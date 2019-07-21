@@ -10,11 +10,27 @@ package("boost")
 
     if is_plat("linux") then
         add_deps("bzip2", "zlib")
-    elseif is_plat("macosx") then
-        add_deps("icu4c")
     end
 
-    add_configs("multi", { description = "Enable multi-thread support.", default = true, type = "boolean"})
+    add_configs("multi",         { description = "Enable multi-thread support.",  default = true, type = "boolean"})
+    add_configs("filesystem",    { description = "Enable filesystem library.",    default = true, type = "boolean"})
+    add_configs("fiber",         { description = "Enable fiber library.",         default = false, type = "boolean"})
+    add_configs("coroutine",     { description = "Enable coroutine library.",     default = false, type = "boolean"})
+    add_configs("context",       { description = "Enable context library.",       default = false, type = "boolean"})
+    add_configs("thread",        { description = "Enable thread library.",        default = false, type = "boolean"})
+    add_configs("regex",         { description = "Enable regex library.",         default = false, type = "boolean"})
+    add_configs("system",        { description = "Enable system library.",        default = false, type = "boolean"})
+    add_configs("container",     { description = "Enable container library.",     default = false, type = "boolean"})
+    add_configs("exception",     { description = "Enable exception library.",     default = false, type = "boolean"})
+    add_configs("timer",         { description = "Enable timer library.",         default = false, type = "boolean"})
+    add_configs("atomic",        { description = "Enable atomic library.",        default = false, type = "boolean"})
+    add_configs("graph",         { description = "Enable graph library.",         default = false, type = "boolean"})
+    add_configs("serialization", { description = "Enable serialization library.", default = false, type = "boolean"})
+    add_configs("random",        { description = "Enable random library.",        default = false, type = "boolean"})
+    add_configs("wave",          { description = "Enable wave library.",          default = false, type = "boolean"})
+    add_configs("date_time",     { description = "Enable date time library.",     default = false, type = "boolean"})
+    add_configs("locale",        { description = "Enable locale library.",        default = false, type = "boolean"})
+    add_configs("iostreams",     { description = "Enable iostreams library.",     default = false, type = "boolean"})
 
     on_install("macosx", "linux", function (package)
     
@@ -32,14 +48,35 @@ package("boost")
         local bootstrap_argv = 
         {
             "--prefix=" .. package:installdir(), 
-            "--libdir=" .. package:installdir("lib"), 
-            "--without-libraries=python,mpi,log"
+            "--libdir=" .. package:installdir("lib"),
+            "--without-icu"
         }
-        local icu4c = package:dep("icu4c")
-        if icu4c then
-            table.insert(bootstrap_argv, "--with-icu=" .. icu4c:installdir())
-        else
-            table.insert(bootstrap_argv, "--without-icu")
+        local libs = {}
+        local libnames = {"filesystem", 
+                          "fiber", 
+                          "coroutine", 
+                          "context", 
+                          "thread", 
+                          "regex",
+                          "system",
+                          "container",
+                          "exception",
+                          "timer",
+                          "atomic",
+                          "graph",
+                          "serialization",
+                          "random",
+                          "wave",
+                          "date_time",
+                          "locale",
+                          "iostreams"}
+        for _, libname in ipairs(libnames) do
+            if package:config(libname) then
+                table.insert(libs, libname)
+            end
+        end
+        if #libs > 0 then
+            table.insert(bootstrap_argv, "--with-libraries=" .. table.concat(libs, ","))
         end
         local argv =
         {
