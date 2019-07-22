@@ -110,6 +110,8 @@ package("boost")
             local vs_runtime = package:config("vs_runtime")
             if vs_runtime and vs_runtime:startswith("MT") then
                 table.insert(argv, "runtime-link=static")
+            else
+                table.insert(argv, "runtime-link=shared")
             end
         end
         if is_host("windows") then
