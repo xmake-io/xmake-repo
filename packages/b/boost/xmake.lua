@@ -96,6 +96,7 @@ package("boost")
             "-sNO_ZSTD=1",
             "install",
             "threading=" .. (package:config("multi") and "multi" or "single"),
+            "debug-symbols=" .. (package:debug() and "on" or "off"),
             "link=static",
             "cxxflags=-std=c++14"
         }
@@ -105,7 +106,12 @@ package("boost")
         else
             table.insert(argv, "address-model=32")
         end
-        table.insert(argv, "debug-symbols=" .. (package:debug() and "on" or "off"))
+        if package:plat() == "windows" then
+            local vs_runtime = package:config("vs_runtime")
+            if vs_runtime and vs_runtime:startswith("MT") then
+                table.insert(argv, "runtime-link=static")
+            end
+        end
         if is_host("windows") then
             os.vrunv("bootstrap.bat", bootstrap_argv)
         else
