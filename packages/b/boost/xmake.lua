@@ -97,8 +97,7 @@ package("boost")
             "install",
             "threading=" .. (package:config("multi") and "multi" or "single"),
             "debug-symbols=" .. (package:debug() and "on" or "off"),
-            "link=static",
-            "cxxflags=-std=c++14"
+            "link=static"
         }
         local arch = package:arch()
         if arch == "x64" or arch == "x86_64" then
@@ -113,6 +112,8 @@ package("boost")
             else
                 table.insert(argv, "runtime-link=shared")
             end
+        else
+            table.insert(argv, "cxxflags=-std=c++14")
         end
         if is_host("windows") then
             os.vrunv("bootstrap.bat", bootstrap_argv)
