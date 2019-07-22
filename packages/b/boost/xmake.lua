@@ -6,6 +6,9 @@ package("boost")
     add_urls("https://dl.bintray.com/boostorg/release/$(version).tar.bz2", {version = function (version) 
             return version .. "/source/boost_" .. (version:gsub("%.", "_"))
         end})
+    add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {version = function (version) 
+            return version .. "/boost_" .. (version:gsub("%.", "_"))
+        end})
     add_versions("1.70.0", "430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778")
 
     if is_plat("linux") then
@@ -32,7 +35,7 @@ package("boost")
     add_configs("locale",        { description = "Enable locale library.",        default = false, type = "boolean"})
     add_configs("iostreams",     { description = "Enable iostreams library.",     default = false, type = "boolean"})
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "windows", function (package)
     
         -- force boost to compile with the desired compiler
         local file = io.open("user-config.jam", "a")
@@ -94,7 +97,11 @@ package("boost")
             "link=static",
             "cxxflags=-std=c++14"
         }
-        os.vrunv("./bootstrap.sh", bootstrap_argv)
+        if is_host("windows") then
+            os.vrunv("bootstrap.bat", bootstrap_argv)
+        else
+            os.vrunv("./bootstrap.sh", bootstrap_argv)
+        end
         os.vrun("./b2 headers")
         os.vrunv("./b2", argv)
     end)
