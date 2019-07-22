@@ -56,7 +56,8 @@ package("boost")
             "--libdir=" .. package:installdir("lib"),
             "--without-icu"
         }
-        local libs = {}
+        local libs_enabled  = {}
+        local libs_disabled = {}
         local libnames = {"filesystem", 
                           "fiber", 
                           "coroutine", 
@@ -77,11 +78,16 @@ package("boost")
                           "iostreams"}
         for _, libname in ipairs(libnames) do
             if package:config(libname) then
-                table.insert(libs, libname)
+                table.insert(libs_enabled, libname)
+            else
+                table.insert(libs_disabled, libname)
             end
         end
-        if #libs > 0 then
-            table.insert(bootstrap_argv, "--with-libraries=" .. table.concat(libs, ","))
+        if #libs_enabled > 0 then
+            table.insert(bootstrap_argv, "--with-libraries=" .. table.concat(libs_enabled, ","))
+        end
+        if #libs_disabled > 0 then
+            table.insert(bootstrap_argv, "--without-libraries=" .. table.concat(libs_disabled, ","))
         end
         local argv =
         {
