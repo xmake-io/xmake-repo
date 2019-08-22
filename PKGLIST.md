@@ -2,11 +2,12 @@
 
 |linux|windows|mingw|iphoneos|macosx|android|
 |-----|-------|-----|--------|------|-------|
-|boost|boost|doctest|cjson|autoconf|cjson||
-|bzip2|bzip2|nlohmann_json|doctest|automake|doctest||
-|cairo|cairo|tbox|json-c|boost|json-c||
-|cjson|doctest|zlib|libcurl|bzip2|libjpeg||
-|doctest|expat||libev|cairo|libpng||
+|boost|boost|catch2|catch2|autoconf|catch2||
+|bzip2|bzip2|doctest|cjson|automake|cjson||
+|cairo|cairo|nlohmann_json|doctest|boost|doctest||
+|catch2|catch2|tbox|json-c|bzip2|json-c||
+|cjson|doctest|zlib|libcurl|cairo|libjpeg||
+|doctest|expat||libev|catch2|libpng||
 |expat|freeglut||libffi|cjson|libuv||
 |ffmpeg|freetype||libjpeg|cmake|libxml2||
 |fontconfig|glew||libpng|doctest|lua||
