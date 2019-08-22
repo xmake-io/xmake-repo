@@ -61,6 +61,8 @@ Write a xmake.lua of new package in `packages/x/xxx/xmake.lua` and push a pull-r
 
 For example, [packages/z/zlib/xmake.lua](https://github.com/xmake-io/xmake-repo/blob/dev/packages/z/zlib/xmake.lua):
 
+If you want to known more, please see: [Create and Submit packages to the official repository](https://xmake.io/#/package/remote_package?id=submit-packages-to-the-official-repository)
+
 ```lua
 package("zlib")
 

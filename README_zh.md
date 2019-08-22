@@ -61,6 +61,8 @@ xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发
 
 例如：[packages/z/zlib/xmake.lua](https://github.com/xmake-io/xmake-repo/blob/dev/packages/z/zlib/xmake.lua):
 
+关于如何制作包的更详细描述，请参看文档：[制作和提交到官方仓库](https://xmake.io/#/zh-cn/package/remote_package?id=%e6%b7%bb%e5%8a%a0%e5%8c%85%e5%88%b0%e4%bb%93%e5%ba%93)
+
 ```lua
 package("zlib")
 
