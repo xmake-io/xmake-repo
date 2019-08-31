@@ -20,9 +20,9 @@ package("lua")
     end)
 
     on_install("linux", "macosx", "windows", "android", function (package)
-        io.writefile("xmake.lua", [[
+        io.writefile("xmake.lua", format([[
             target("lualib")
-                set_kind("static")
+                set_kind("%s")
                 set_basename("lua")
                 add_headerfiles("src/*.h", {prefixdir = "lua"})
                 add_files("src/*.c|lua.c|luac.c")
@@ -42,7 +42,7 @@ package("lua")
                 if not is_plat("windows") then
                     add_syslinks("dl")
                 end
-        ]])
+        ]], package:config("shared") and "shared" or "static"))
         import("package.tools.xmake").install(package)
     end)
 

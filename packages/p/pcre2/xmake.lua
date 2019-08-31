@@ -14,7 +14,6 @@ package("pcre2")
         add_deps("cmake")
     end
 
-    add_configs("shared", {description = "Enable shared library.", default = false, type = "boolean"})
     add_configs("jit", {description = "Enable jit.", default = true, type = "boolean"})
     add_configs("bitwidth", {description = "Set the code unit width.", default = "8", values = {"8", "16", "32"}})
 

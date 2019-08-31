@@ -28,10 +28,18 @@ package("luajit")
 
     on_install("windows", function (package)
         os.cd("src")
-        os.vrun("msvcbuild.bat %s", package:debug() and "debug" and "")
+        if not package:config("shared") then
+            os.vrun("msvcbuild.bat static")
+        elseif package:debug() then
+            os.vrun("msvcbuild.bat debug")
+        else
+            os.vrun("msvcbuild.bat")
+        end
         os.cp("luajit.exe", package:installdir("bin"))
         os.cp("lua51.lib", package:installdir("lib"))
-        os.cp("lua51.dll", package:installdir("lib"))
+        if package:config("shared") then
+            os.cp("lua51.dll", package:installdir("lib"))
+        end
         os.cp("*.h", package:installdir("include/luajit"))
     end)
 
@@ -40,9 +48,18 @@ package("luajit")
         if package:debug() then
             io.gsub("./src/Makefile", "CCDEBUG=", "CCDEBUG= -g")
         end
+        if package:config("shared") then
+            io.gsub("./src/Makefile", "BUILDMODE= mixed", "BUILDMODE= dynamic")
+        else
+            io.gsub("./src/Makefile", "BUILDMODE= mixed", "BUILDMODE= static")
+        end
         os.vrun("make")
         os.cp("src/luajit", package:installdir("bin"))
-        os.cp("src/*.a", package:installdir("lib"))
+        if package:config("shared") then
+            os.cp("src/*" .. (is_plat("macosx") and ".dylib" or ".so"), package:installdir("lib"))
+        else
+            os.cp("src/*.a", package:installdir("lib"))
+        end
         os.cp("src/*.h", package:installdir("include/luajit"))
     end)
 
