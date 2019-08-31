@@ -36,13 +36,14 @@ package("lua")
                 end
 
             target("lua")
+                set_enabled(%s)
                 set_kind("binary")
                 add_files("src/lua.c")
                 add_deps("lualib")
                 if not is_plat("windows") then
                     add_syslinks("dl")
                 end
-        ]], package:config("shared") and "shared" or "static"))
+        ]], package:config("shared") and "shared" or "static"), is_plat(os.host()) and "true" or "false")
         import("package.tools.xmake").install(package)
     end)
 
