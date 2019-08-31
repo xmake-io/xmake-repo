@@ -12,7 +12,7 @@ package("lua")
 
     add_includedirs("include/lua")
     if not is_plat("windows") then
-        add_syslinks("dl")
+        add_syslinks("dl", "m")
     end
 
     on_load(function (package)
