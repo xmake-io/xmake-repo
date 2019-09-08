@@ -11,11 +11,11 @@ package("fmt")
         add_deps("cmake")
     end
 
-    on_install("@windows", function (package)
+    on_install("windows", function (package)
         os.cp("include/fmt", package:installdir("include"))
     end)
 
-    on_install("@linux", "@macosx", function (package)
+    on_install("linux", "macosx", function (package)
         import("package.tools.cmake").install(package)
     end)
 
