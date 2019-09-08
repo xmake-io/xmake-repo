@@ -31,8 +31,25 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+      env:
+        - MATRIX_PLAT=linux
+        - MATRIX_CC=gcc-8
+        - MATRIX_CXX=g++-8
+
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
       env:
         - MATRIX_PLAT=android
+
+    - os: osx
+      osx_image: xcode10.3
+      env:
+        - MATRIX_PLAT=osx
 
     - os: osx
       osx_image: xcode10.1
