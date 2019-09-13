@@ -43,7 +43,7 @@ package("pcre2")
         end)
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "mingw@linux,macosx", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
