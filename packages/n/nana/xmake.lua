@@ -8,6 +8,10 @@ package("nana")
     add_versions("1.6.2", "5f5cb791dff292e27bfa29d850b93f809a0d91d6044ea7e22ce7ae76a5d8b24e")
     add_versions("1.7.2", "e2efb3b7619e4ef3b6de93f8afc70ff477ec6cabf4f9740f0d786904c790613f")
 
+    if is_plat("linux") then
+        add_deps("cmake")
+    end
+
     on_install("linux", function (package)
         import("package.tools.cmake").install(package)
     end)
@@ -15,10 +19,12 @@ package("nana")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             using namespace nana;
-            form    fm;
-            label   lb(fm, rectangle(fm.size()));
-            lb.caption("Hello, World");
-            fm.show();
-            exec();
+            void test() {
+                form    fm;
+                label   lb(fm, rectangle(fm.size()));
+                lb.caption("Hello, World");
+                fm.show();
+                exec();
+            }
         ]]}, {configs = {languages = "c++11"}, includes = {"nana/gui/wvl.hpp", "nana/gui/widgets/label.hpp"}}))
     end)
