@@ -11,8 +11,13 @@ package("nana")
     if is_plat("linux") then
         add_deps("cmake")
     end
+    if is_plat("windows") then
+        add_deps("cmake")
+        add_deps("libjpeg")
+        add_deps("libpng")
+    end
 
-    on_install("linux", function (package)
+    on_install("linux", "windows", function (package)
         import("package.tools.cmake").install(package)
     end)
 
