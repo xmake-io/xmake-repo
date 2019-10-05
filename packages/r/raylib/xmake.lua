@@ -3,7 +3,7 @@ package("raylib")
     set_homepage("http://www.raylib.com")
     set_description("A simple and easy-to-use library to enjoy videogames programming.")
 
-    if false then --is_plat("macosx") then
+    if is_plat("macosx") then
         add_urls("https://github.com/raysan5/raylib/releases/download/$(version)/raylib-$(version)-macOS.tar.gz")
         add_versions("2.5.0", "e9ebdf70ad4912dc9f3c7965dc702d5c61f2841aeae521e8dd3b0a96a9d82d58")
     else
@@ -20,15 +20,15 @@ package("raylib")
         add_frameworks("OpenGL", "CoreVideo", "CoreGraphics", "AppKit", "IOKit", "CoreFoundation", "Foundation")
     end
 
-    --[[
     on_install("macosx", function (package)
         os.cp("include/raylib.h", package:installdir("include/raylib"))
         os.cp("lib/libraylib.a", package:installdir("lib"))
-    end)]]
+    end)
 
+    --[[ TODO
     on_install(function (package)
         import("package.tools.cmake").install(package)
-    end)
+    end)]]
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
