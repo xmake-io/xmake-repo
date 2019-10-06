@@ -13,7 +13,7 @@ package("raylib")
     end
 
     if not is_plat("macosx") then
-        add_deps("cmake")
+        add_deps("cmake >=3.11")
     end
 
     if is_plat("macosx") then
