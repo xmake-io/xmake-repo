@@ -14,10 +14,12 @@ package("nana")
 
     if is_plat("windows") then
         add_syslinks("ole32", "shell32", "user32", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32")
+    elseif is_plat("linux") then
+        add_syslinks("pthread", "X11", "Xft", "fontconfig")
     end
 
     on_install("linux", "windows", function (package)
-        import("package.tools.cmake").install(package)
+        import("package.tools.cmake").install(package, {"-DNANA_CMAKE_NANA_FILESYSTEM_FORCE=ON"})
     end)
 
     on_test(function (package)
