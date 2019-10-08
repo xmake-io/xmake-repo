@@ -19,7 +19,7 @@ package("nana")
     end
 
     on_install("linux", "windows", function (package)
-        import("package.tools.cmake").install(package, {"-DNANA_CMAKE_NANA_FILESYSTEM_FORCE=ON"})
+        import("package.tools.cmake").install(package, {"-DNANA_CMAKE_NANA_FILESYSTEM_FORCE=ON", "-DNANA_CMAKE_ENABLE_JPEG=OFF", "-DNANA_CMAKE_ENABLE_PNG=OFF"})
     end)
 
     on_test(function (package)
