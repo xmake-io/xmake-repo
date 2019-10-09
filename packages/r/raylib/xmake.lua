@@ -18,6 +18,8 @@ package("raylib")
 
     if is_plat("macosx") then
         add_frameworks("OpenGL", "CoreVideo", "CoreGraphics", "AppKit", "IOKit", "CoreFoundation", "Foundation")
+    elseif is_plat("windows") then
+        add_syslinks("gdi32", "user32", "winmm")
     end
 
     on_install("macosx", function (package)
