@@ -21,14 +21,13 @@ package("raylib")
     end
 
     on_install("macosx", function (package)
-        os.cp("include/raylib.h", package:installdir("include/raylib"))
+        os.cp("include/raylib.h", package:installdir("include"))
         os.cp("lib/libraylib.a", package:installdir("lib"))
     end)
 
-    --[[ TODO
-    on_install(function (package)
-        import("package.tools.cmake").install(package)
-    end)]]
+    on_install("linux", "windows", function (package)
+        import("package.tools.cmake").install(package, {"-DBUILD_EXAMPLES=OFF", "-DBUILD_GAMES=OFF"})
+    end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
@@ -37,5 +36,5 @@ package("raylib")
                 Camera camera = { 0 };
                 UpdateCamera(&camera);
             }
-        ]]}, {includes = {"raylib/raylib.h"}}))
+        ]]}, {includes = {"raylib.h"}}))
     end)
