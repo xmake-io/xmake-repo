@@ -27,7 +27,7 @@ package("raylib")
         os.cp("lib/libraylib.a", package:installdir("lib"))
     end)
 
-    on_install("linux", "windows", function (package)
+    on_install("windows", function (package)
         import("package.tools.cmake").install(package, {"-DBUILD_EXAMPLES=OFF", "-DBUILD_GAMES=OFF"})
     end)
 
