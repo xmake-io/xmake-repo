@@ -3,13 +3,14 @@ package("tbox")
     set_homepage("http://www.tboox.org")
     set_description("A glib-like multi-platform c library")
 
-    add_urls("https://github.com/tboox/tbox/archive/$(version).zip")
+    add_urls("https://github.com/tboox/tbox/archive/$(version).tar.gz")
     add_urls("https://github.com/tboox/tbox.git")
     add_urls("https://gitlab.com/tboox/tbox.git")
     add_urls("https://gitee.com/tboox/tbox.git")
 
-    add_versions("v1.6.2", "5236090b80374b812c136c7fe6b8c694418cbfc9c0a820ec2ba35ff553078c7b")
-    add_versions("v1.6.3", "bc5a957cdb1610c19f0cf94497ad114a0e01fd7d569777e9cb2133c513ef6baa")
+    add_versions("v1.6.2", "26ede7fd61e33c3635bf2d6657ae4040a4a75c82a5da88855fd965db2f834025")
+    add_versions("v1.6.3", "1ea225195ad6d41a29389137683fee7a853fa42f3292226ddcb6d6d862f5b33c")
+    add_versions("v1.6.4", "eb5d25c64dcfdf2ca7723f74f8252412b74d6ada4ba278664d54e271545ae330")
 
     add_configs("micro",      {description = "Compile micro core library for the embed system.", default = false, type = "boolean"})
     add_configs("float",      {description = "Enable or disable the float type.", default = true, type = "boolean"})
