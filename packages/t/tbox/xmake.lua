@@ -63,5 +63,5 @@ package("tbox")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("tb_exit", {includes = "tbox/tbox.h"}))
+        assert(package:has_cfuncs("tb_exit", {includes = "tbox/tbox.h", configs = {languages = "c99"}}))
     end)
