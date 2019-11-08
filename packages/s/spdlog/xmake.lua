@@ -9,8 +9,6 @@ package("spdlog")
     add_versions("1.4.2", "56b90f0bd5b126cf1b623eeb19bf4369516fa68f036bbc22d9729d2da511fb5a")
     add_versions("1.3.1", "db6986d0141546d4fba5220944cc1f251bd8afdfc434bda173b4b0b6406e3cd0")
 
-    add_deps("cmake")
-    
     add_configs("header_only",  { description = "Use header only", default = true, type = "boolean"})
     add_configs("fmt_external", { description = "Use external fmt library instead of bundled", default = false, type = "boolean"})
     add_configs("noexcept",     { description = "Compile with -fno-exceptions. Call abort() on any spdlog exceptions", default = false, type = "boolean"})
@@ -21,6 +19,12 @@ package("spdlog")
         end
         if package:config("fmt_external") then
             package:add("defines", "SPDLOG_FMT_EXTERNAL")
+        end
+        if package:version():ge("1.4.0") and not package:config("header_only") then
+            package:add("deps", "cmake")
+        end
+        if package:config("fmt_external") then
+            package:add("deps", "fmt")
         end
     end)
     
