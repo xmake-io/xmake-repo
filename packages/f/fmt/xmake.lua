@@ -20,7 +20,7 @@ package("fmt")
         end
     end)
     
-    on_install("windows", function (package)
+    on_install(function (package)
         if package:config("header_only") then
             os.cp("include/fmt", package:installdir("include"))
             return
