@@ -14,3 +14,7 @@ package("freeglut")
     on_install("linux", "windows", function (package)
         import("package.tools.cmake").install(package)
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("glutInit", {includes = "GL/glut.h"}))
+    end)
