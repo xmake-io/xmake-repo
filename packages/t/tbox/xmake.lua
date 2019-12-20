@@ -41,13 +41,13 @@ package("tbox")
     on_install(function (package)
         local configs = {demo = false}
         if package:config("micro") then
-            config.micro = true
+            configs.micro = true
         end
         if not package:config("float") then
-            config["float"] = false
+            configs["float"] = false
         end
         if package:config("force-utf8") then
-            config["force-utf8"] = true
+            configs["force-utf8"] = true
         end
         for _, name in ipairs({"xml", "zip", "hash", "regex", "object", "charset", "database", "coroutine"}) do
             if package:config(name) then
