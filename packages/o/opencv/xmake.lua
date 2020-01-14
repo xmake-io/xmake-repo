@@ -13,6 +13,8 @@ package("opencv")
     add_includedirs("include/opencv4")
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL")
+    elseif is_plat("linux") then
+        add_syslinks("pthread", "dl")
     end
 
     on_load(function (package)
@@ -75,6 +77,9 @@ package("opencv")
                          "-DWITH_LAPACK=OFF",
                          "-DBUILD_opencv_python2=OFF",
                          "-DBUILD_opencv_python3=ON"}
+        if is_plat("linux") then
+            table.insert(configs, "-DBUILD_ZLIB=ON")
+        end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local modulesdir = package:data("install_modules")()
         if modulesdir then
