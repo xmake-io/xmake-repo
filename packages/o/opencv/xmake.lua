@@ -7,6 +7,7 @@ package("opencv")
              "https://github.com/opencv/opencv.git")
 
     add_versions("4.2.0", "9ccb2192d7e8c03c58fee07051364d94ed7599363f3b0dce1c5e6cc11c1bb0ec")
+    add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
     add_deps("cmake", "python 3.x")
 
@@ -16,6 +17,11 @@ package("opencv")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
+
+    --[[ enable for v2.3.0 in the future
+    add_resources("4.2.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.2.0.tar.gz", "8a6b5661611d89baa59a26eb7ccf4abb3e55d73f99bb52d8f7c32265c8a43020")
+    add_resources("3.4.9", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz", "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57")
+    ]]
 
     on_load(function (package)
         package:data_set("install_modules", function()
@@ -30,6 +36,11 @@ package("opencv")
                 {
                     url = "https://github.com/opencv/opencv_contrib/archive/4.2.0.tar.gz",
                     sha256 = "8a6b5661611d89baa59a26eb7ccf4abb3e55d73f99bb52d8f7c32265c8a43020"
+                },
+                ["3.4.9"] = 
+                {
+                    url = "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz",
+                    sha256 = "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57"
                 }
             }
             local resource = contrib_resources[package:version_str()]
@@ -86,13 +97,19 @@ package("opencv")
         if modulesdir then
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. modulesdir)
         end
+        --[[ enable for v2.3.0 in the future
+        local resourcedir = package:resourcedir("opencv_contrib")
+        if resourcedir then
+            import("lib.detect.find_path")
+            local modulesdir = assert(find_path("modules", path.join(resourcedir, "*")), "modules not found!")
+            table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
+        end]]
         import("package.tools.cmake").install(package, configs)
-        os.cp("3rdparty/**/*.a", package:installdir("lib"))
+        os.trycp("3rdparty/**/*.a", package:installdir("lib"))
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <opencv2/opencv.hpp>
             #include <iostream>
             void test(int argc, char** argv) {
                 cv::CommandLineParser parser(argc, argv, "{help h||show help message}");
@@ -102,5 +119,6 @@ package("opencv")
                 cv::namedWindow("Image", 1);
                 std::cout << CV_VERSION << std::endl;
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++11"},
+              includes = package:version():ge("4.0") and "opencv2/opencv.hpp" or "opencv/cv.h"}))
     end)
