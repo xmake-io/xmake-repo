@@ -54,7 +54,6 @@ package("opencv")
                          "-DBUILD_PNG=OFF",
                          "-DBUILD_TESTS=OFF",
                          "-DBUILD_TIFF=OFF",
-                         "-DBUILD_ZLIB=OFF",
                          "-DBUILD_opencv_hdf=OFF",
                          "-DBUILD_opencv_java=OFF",
                          "-DBUILD_opencv_text=ON",
@@ -79,6 +78,8 @@ package("opencv")
                          "-DBUILD_opencv_python3=ON"}
         if is_plat("linux") then
             table.insert(configs, "-DBUILD_ZLIB=ON")
+        else
+            table.insert(configs, "-DBUILD_ZLIB=OFF")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local modulesdir = package:data("install_modules")()
@@ -86,6 +87,7 @@ package("opencv")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. modulesdir)
         end
         import("package.tools.cmake").install(package, configs)
+        os.cp("3rdparty/**/*.a", package:installdir("lib"))
     end)
 
     on_test(function (package)
