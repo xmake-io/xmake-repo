@@ -11,7 +11,6 @@ package("opencv")
 
     add_deps("cmake", "python 3.x")
 
-    add_includedirs("include/opencv4")
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL")
     elseif is_plat("linux") then
@@ -24,6 +23,11 @@ package("opencv")
     ]]
 
     on_load(function (package)
+        if package:version():ge("4.0") then
+            package:add("includedirs", "include/opencv4")
+        end
+
+        -- TODO it will be removed after xmake v2.3.0
         package:data_set("install_modules", function()
 
             import("net.http")
@@ -93,6 +97,7 @@ package("opencv")
             table.insert(configs, "-DBUILD_ZLIB=OFF")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        -- TODO it will be removed after xmake v2.3.0
         local modulesdir = package:data("install_modules")()
         if modulesdir then
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. modulesdir)
@@ -116,7 +121,6 @@ package("opencv")
                 if (parser.has("help")) {
                     parser.printMessage();
                 }
-                cv::namedWindow("Image", 1);
                 std::cout << CV_VERSION << std::endl;
             }
         ]]}, {configs = {languages = "c++11"},
