@@ -14,6 +14,7 @@ package("opencv")
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL")
     elseif is_plat("linux") then
+        add_deps("zlib")
         add_syslinks("pthread", "dl")
     end
 
@@ -69,6 +70,7 @@ package("opencv")
                          "-DBUILD_PNG=OFF",
                          "-DBUILD_TESTS=OFF",
                          "-DBUILD_TIFF=OFF",
+                         "-DBUILD_ZLIB=OFF",
                          "-DBUILD_opencv_hdf=OFF",
                          "-DBUILD_opencv_java=OFF",
                          "-DBUILD_opencv_text=ON",
@@ -91,11 +93,6 @@ package("opencv")
                          "-DWITH_LAPACK=OFF",
                          "-DBUILD_opencv_python2=OFF",
                          "-DBUILD_opencv_python3=ON"}
-        if is_plat("linux") then
-            table.insert(configs, "-DBUILD_ZLIB=ON")
-        else
-            table.insert(configs, "-DBUILD_ZLIB=OFF")
-        end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         -- TODO it will be removed after xmake v2.3.0
         local modulesdir = package:data("install_modules")()
