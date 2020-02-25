@@ -18,47 +18,13 @@ package("opencv")
         add_syslinks("pthread", "dl")
     end
 
-    --[[ enable for v2.3.0 in the future
     add_resources("4.2.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.2.0.tar.gz", "8a6b5661611d89baa59a26eb7ccf4abb3e55d73f99bb52d8f7c32265c8a43020")
     add_resources("3.4.9", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz", "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57")
-    ]]
 
     on_load(function (package)
         if package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
         end
-
-        -- TODO it will be removed after xmake v2.3.0
-        package:data_set("install_modules", function()
-
-            import("net.http")
-            import("utils.archive")
-            import("lib.detect.find_path")
-
-            local contrib_resources = 
-            {
-                ["4.2.0"] = 
-                {
-                    url = "https://github.com/opencv/opencv_contrib/archive/4.2.0.tar.gz",
-                    sha256 = "8a6b5661611d89baa59a26eb7ccf4abb3e55d73f99bb52d8f7c32265c8a43020"
-                },
-                ["3.4.9"] = 
-                {
-                    url = "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz",
-                    sha256 = "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57"
-                }
-            }
-            local resource = contrib_resources[package:version_str()]
-            if resource then
-                local resourcefile = path.join(os.curdir(), path.filename(resource.url))
-                local resourcedir = resourcefile .. ".dir"
-                http.download(resource.url, resourcefile)
-                assert(resource.sha256 == hash.sha256(resourcefile), "unmatched resource checksum!")
-                assert(archive.extract(resourcefile, resourcedir), "extract resource failed!")
-                local modulesdir = assert(find_path("modules", path.join(resourcedir, "*")), "modules not found!")
-                return path.absolute(path.join(modulesdir, "modules"))
-            end
-        end)
     end)
 
     on_install("linux", "macosx", function (package)
@@ -94,18 +60,12 @@ package("opencv")
                          "-DBUILD_opencv_python2=OFF",
                          "-DBUILD_opencv_python3=ON"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        -- TODO it will be removed after xmake v2.3.0
-        local modulesdir = package:data("install_modules")()
-        if modulesdir then
-            table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. modulesdir)
-        end
-        --[[ enable for v2.3.0 in the future
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then
             import("lib.detect.find_path")
             local modulesdir = assert(find_path("modules", path.join(resourcedir, "*")), "modules not found!")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
-        end]]
+        end
         import("package.tools.cmake").install(package, configs)
         os.trycp("3rdparty/**/*.a", package:installdir("lib"))
     end)

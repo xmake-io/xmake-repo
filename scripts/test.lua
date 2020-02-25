@@ -37,7 +37,7 @@ function _require_packages(argv, packages)
     if argv.mingw then
         table.insert(config_argv, "--mingw=" .. argv.mingw)
     end
-    os.execv("xmake", config_argv)
+    os.vexecv("xmake", config_argv)
     local require_argv = {"require", "-f", "-y"}
     if argv.verbose then
         table.insert(require_argv, "-v")
@@ -49,7 +49,7 @@ function _require_packages(argv, packages)
         table.insert(require_argv, "--shallow")
     end
     table.join2(require_argv, packages)
-    os.execv("xmake", require_argv)
+    os.vexecv("xmake", require_argv)
 end
 
 -- the given package is supported?
