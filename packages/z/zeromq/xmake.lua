@@ -19,7 +19,13 @@ package("zeromq")
     end)
 
     on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package)
+        local configs = {}
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared=yes")
+        else
+            table.insert(configs, "--enable-shared=no")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
  
     on_test(function (package)
