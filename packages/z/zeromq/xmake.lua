@@ -8,6 +8,16 @@ package("zeromq")
 
     add_versions("4.3.2", "ebd7b5c830d6428956b67a0454a7f8cbed1de74b3b01e5c33c5378e22740f763")
 
+    if is_host("windows") then
+        add_deps("cmake")
+    end
+
+    on_install("windows", function (package)
+        local configs = {}
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
+    end)
+
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf").install(package)
     end)
