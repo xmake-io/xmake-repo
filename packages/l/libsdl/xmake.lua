@@ -19,13 +19,12 @@ package("libsdl")
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "winmm", "shell32")
     end
+    add_links("SDL2main", "SDL2")
 
     on_install("windows", "mingw", function (package)
         local arch = package:arch()
-        if arch == "x86_64" then
-            arch = "x64"
-        else
-            arch = "x86"
+        if package:is_plat("mingw") then
+            arch = (arch == "x86_64") and "x64" or "x86"
         end
         os.cp("include/*", package:installdir("include/SDL2"))
         os.cp(path.join("lib", arch, "*.lib"), package:installdir("lib"))
@@ -43,5 +42,6 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h"}))
+        local configs = package:is_plat("windows") and {ldflags = "/SUBSYSTEM:CONSOLE"}
+        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = configs}))
     end)
