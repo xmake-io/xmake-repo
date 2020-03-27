@@ -76,7 +76,7 @@ package("ffmpeg")
                 cpu = "armv8-a"
                 triple = "aarch64-linux-android"
                 cross_prefix = path.join(bin, "aarch64-linux-android-")
-            elseif package:is_arch("armv7-a") then
+            elseif package:arch():startswith("arm") then
                 arch = "arm"
                 cpu = "armv7-a"
                 triple = "armv7a-linux-androideabi"
@@ -92,7 +92,7 @@ package("ffmpeg")
                 table.insert(cflags, "-mfpu=neon")
                 table.insert(cflags, "-mfloat-abi=soft")
             else
-                table.insert(cflags, "-mfpu=vfpv3-d16")
+                table.insert(cflags, "-mfpu=neon")
                 table.insert(cflags, "-mfloat-abi=soft")
             end
             table.insert(configs, "--enable-neon")
