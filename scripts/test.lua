@@ -11,6 +11,9 @@ local options =
 ,   {nil, "shallow",    "k",  nil, "Only install the root packages." }
 ,   {'p', "plat",       "kv", nil, "Set the given platform."         }
 ,   {'a', "arch",       "kv", nil, "Set the given architecture."     }
+,   {nil, "cflags",     "kv", nil, "Set the cflags."                 }
+,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."               }
+,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                }
 ,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."  }
 ,   {nil, "mingw",      "kv", nil, "Set the MingW directory."        }
 ,   {nil, "packages",   "vs", nil, "The package list."               }
@@ -36,6 +39,15 @@ function _require_packages(argv, packages)
     end
     if argv.mingw then
         table.insert(config_argv, "--mingw=" .. argv.mingw)
+    end
+    if argv.cflags then
+        table.insert(config_argv, "--cflags=" .. argv.cflags)
+    end
+    if argv.cxxflags then
+        table.insert(config_argv, "--cxxflags=" .. argv.cxxflags)
+    end
+    if argv.ldflags then
+        table.insert(config_argv, "--ldflags=" .. argv.ldflags)
     end
     os.vexecv("xmake", config_argv)
     local require_argv = {"require", "-f", "-y"}
