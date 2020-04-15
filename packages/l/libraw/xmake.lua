@@ -10,15 +10,15 @@ package("libraw")
     on_install(function(package)
         io.writefile("xmake.lua", format([[
             target("libraw")
-                set_kind("%s")
-
-                if get_config("shared") then
+                if %s then
+                    set_kind("shared")
                     add_defines("LIBRAW_BUILDLIB")
                 else
+                    set_kind("static")
                     add_defines("LIBRAW_NODLL")
                 end
-                
-                if is_plat("windows") then
+
+                if %s then
                     add_defines("WIN32")
                 end
 
@@ -30,7 +30,7 @@ package("libraw")
                 add_files("internal/dcraw_common.cpp", 
                     "internal/dcraw_fileio.cpp", 
                     "internal/demosaic_packs.cpp")
-        ]], package:config("shared") and "shared" or "static"))
+        ]], package:config("shared") and "true" or "false", package:is_plat("windows") and "true" or "false"))
         import("package.tools.xmake").install(package)
     end)
 
@@ -39,5 +39,5 @@ package("libraw")
         if not package:config("shared") then
             table.insert(defines, "LIBRAW_NODLL")
         end
-        assert(package:has_cfuncs("libraw_version", {configs = {defines = defines, shared = true}, includes = {"libraw/libraw.h"}, }))
+        assert(package:has_cfuncs("libraw_version", {configs = {defines = defines}, includes = {"libraw/libraw.h"}, }))
     end)
