@@ -17,7 +17,7 @@ package("libxmake")
         add_syslinks("kernel32", "user32", "gdi32")
         add_syslinks("ws2_32", "advapi32", "shell32")
     elseif is_plat("android") then
-        add_links("m", "c")
+        add_syslinks("m", "c")
     elseif is_plat("macosx") then
         add_ldflags("-all_load", "-pagezero_size 10000", "-image_base 100000000")
     elseif is_plat("msys") then
@@ -25,7 +25,7 @@ package("libxmake")
         add_syslinks("kernel32", "user32", "gdi32")
         add_syslinks("ws2_32", "advapi32", "shell32")
     else
-        add_links("pthread", "dl", "m", "c")
+        add_syslinks("pthread", "dl", "m", "c")
     end
 
     on_load(function (package)
