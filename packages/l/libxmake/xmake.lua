@@ -34,7 +34,7 @@ package("libxmake")
             if package:is_plat("windows") then
                 package:add("links", "pdcurses")
             else
-                package:add("links", "ncurses")
+                package:add_deps("ncurses")
             end
         end
         if package:config("readline") then
@@ -44,12 +44,16 @@ package("libxmake")
 
     on_install("linux", "macosx", "windows", "msys", "android", function (package)
         local configs = {"--onlylib=y"}
-        table.insert(configs, "--curses=" .. (package:config("curses") and "y" or "n"))
+        if package:is_plat("windows") then
+            table.insert(configs, "--pdcurses=" .. (package:config("curses") and "y" or "n"))
+        else
+            table.insert(configs, "--curses=" .. (package:config("curses") and "y" or "n"))
+        end
         table.insert(configs, "--readline=" .. (package:config("readline") and "y" or "n"))
         os.cd("core")
         import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("xm_machine_init", {includes = "xmake/xmake.h"}))
+        assert(package:has_cfuncs("xm_engine_init", {includes = "xmake/xmake.h"}))
     end)
