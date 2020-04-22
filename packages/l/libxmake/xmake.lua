@@ -52,6 +52,7 @@ package("libxmake")
         table.insert(configs, "--readline=" .. (package:config("readline") and "y" or "n"))
         os.cd("core")
         import("package.tools.xmake").install(package, configs)
+        os.cp("../xmake", package:installdir("share"))
     end)
 
     on_test(function (package)
