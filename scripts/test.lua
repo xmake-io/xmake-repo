@@ -11,6 +11,7 @@ local options =
 ,   {nil, "shallow",    "k",  nil, "Only install the root packages." }
 ,   {'p', "plat",       "kv", nil, "Set the given platform."         }
 ,   {'a', "arch",       "kv", nil, "Set the given architecture."     }
+,   {'m', "mode",       "kv", nil, "Set the given mode."             }
 ,   {nil, "cflags",     "kv", nil, "Set the cflags."                 }
 ,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."               }
 ,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                }
@@ -33,6 +34,9 @@ function _require_packages(argv, packages)
     end
     if argv.arch then
         table.insert(config_argv, "--arch=" .. argv.arch)
+    end
+    if argv.mode then
+        table.insert(config_argv, "--mode=" .. argv.mode)
     end
     if argv.ndk then
         table.insert(config_argv, "--ndk=" .. argv.ndk)
@@ -59,6 +63,9 @@ function _require_packages(argv, packages)
     end
     if argv.shallow then
         table.insert(require_argv, "--shallow")
+    end
+    if argv.mode == "debug" then
+        table.insert(require_argv, "--extra={debug=true}")
     end
     table.join2(require_argv, packages)
     os.vexecv("xmake", require_argv)
