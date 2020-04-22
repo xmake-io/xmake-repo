@@ -40,6 +40,9 @@ package("libxmake")
         if package:config("readline") then
             package:add("links", "readline")
         end
+        if package:debug() then
+            package:add("defines", "__tb_debug__")
+        end
     end)
 
     on_install("linux", "macosx", "windows", "msys", "android", function (package)
