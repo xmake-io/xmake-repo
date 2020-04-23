@@ -20,6 +20,7 @@ package("lief")
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {"-DLIEF_PYTHON_API=OFF", "-DLIEF_DOC=OFF", "-DLIEF_TESTS=OFF", "-DLIEF_EXAMPLES=OFF", "-DLIEF_INSTALL_PYTHON=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
