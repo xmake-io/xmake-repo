@@ -3,9 +3,12 @@ package("libxmake")
     set_homepage("https://xmake.io")
     set_description("The c/c++ bindings of the xmake core engine")
 
+    add_urls("https://github.com/xmake-io/xmake/releases/download/$(version)/xmake-$(version).tar.gz")
     add_urls("https://gitee.com/tboox/xmake.git",
              "https://github.com/xmake-io/xmake.git",
              "https://gitlab.com/tboox/xmake.git")
+
+    add_versions("v2.3.3", "851e01256c89cb9c86b6bd7327831b45809a3255daa234d3162b1db061ca44ae")
 
     add_configs("curses",   { description = "Enable curses library.", default = false, type = "boolean"})
     add_configs("readline", { description = "Enable readline library.", default = false, type = "boolean"})
