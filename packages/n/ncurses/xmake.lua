@@ -10,13 +10,13 @@ package("ncurses")
 
     add_configs("widec", { description = "Compile with wide-char/UTF-8 code.", default = true, type = "boolean"})
 
-    add_includedirs("include/ncurses", "include")
-
     on_load(function (package)
         if package:config("widec") then
             package:add("links", "ncursesw", "formw", "panelw", "menuw")
+            package:add("includedirs", "include/ncursesw", "include")
         else
             package:add("links", "ncurses", "form", "panel", "menu")
+            package:add("includedirs", "include/ncurses", "include")
         end
     end)
 
