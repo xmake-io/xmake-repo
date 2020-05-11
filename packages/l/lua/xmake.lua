@@ -27,6 +27,7 @@ package("lua")
                 add_headerfiles("src/*.h", {prefixdir = "lua"})
                 add_files("src/*.c|lua.c|luac.c")
                 add_defines("LUA_COMPAT_5_2", "LUA_COMPAT_5_1")
+                add_defines("LUA_DL_DLL")
                 if is_plat("linux") then
                     add_defines("LUA_USE_LINUX")
                 elseif is_plat("macosx") then
