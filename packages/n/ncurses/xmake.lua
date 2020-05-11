@@ -20,7 +20,7 @@ package("ncurses")
         end
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "bsd", function (package)
         local configs = {"--without-manpages", "--enable-sigwinch", "--with-gpm=no"}
         if package:config("widec") then
             table.insert(configs, "--enable-widec")
