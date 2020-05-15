@@ -22,9 +22,9 @@ function _is_supported(instance, plat, arch, opt)
         -- `@linux|x86_64`
         -- `@macosx,linux`
         -- `android@macosx,linux`
-        -- `android|armv7-a@macosx,linux`
-        -- `android|armv7-a@macosx,linux|x86_64`
-        -- `android|armv7-a@linux|x86_64`
+        -- `android|armeabi-v7a@macosx,linux`
+        -- `android|armeabi-v7a@macosx,linux|x86_64`
+        -- `android|armeabi-v7a@linux|x86_64`
         --
         for _pattern, _script in pairs(script) do
             local hosts = {}
@@ -60,7 +60,7 @@ function main(opt)
         local packagefile = path.join(packagedir, "xmake.lua")
         local instance = package.load_from_repository(packagename, nil, packagedir, packagefile)
         if instance then
-            for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw"}) do
+            for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw", "msys", "bsd"}) do
                 local archs = platform.archs(plat)
                 if archs then
                     local package_archs = {}

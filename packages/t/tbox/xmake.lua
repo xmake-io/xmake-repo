@@ -11,6 +11,7 @@ package("tbox")
     add_versions("v1.6.2", "26ede7fd61e33c3635bf2d6657ae4040a4a75c82a5da88855fd965db2f834025")
     add_versions("v1.6.3", "1ea225195ad6d41a29389137683fee7a853fa42f3292226ddcb6d6d862f5b33c")
     add_versions("v1.6.4", "07747a3704a2f3937debf0e666ffca368c4cb427008a52641782c0d8b7821886")
+    add_versions("v1.6.5", "076599f8699a21934f633f1732977d0df9181891ca982fd23ba172047d2cf4ab")
 
     add_configs("micro",      {description = "Compile micro core library for the embed system.", default = false, type = "boolean"})
     add_configs("float",      {description = "Enable or disable the float type.", default = true, type = "boolean"})
@@ -23,7 +24,7 @@ package("tbox")
     end
 
     if is_plat("windows") then
-        add_syslinks("ws2_32")
+        add_syslinks("ws2_32", "user32", "kernel32")
     elseif is_plat("mingw") then
         add_syslinks("ws2_32", "pthread")
     elseif not is_plat("android") then

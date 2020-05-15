@@ -11,6 +11,10 @@ local options =
 ,   {nil, "shallow",    "k",  nil, "Only install the root packages." }
 ,   {'p', "plat",       "kv", nil, "Set the given platform."         }
 ,   {'a', "arch",       "kv", nil, "Set the given architecture."     }
+,   {'m', "mode",       "kv", nil, "Set the given mode."             }
+,   {nil, "cflags",     "kv", nil, "Set the cflags."                 }
+,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."               }
+,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                }
 ,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."  }
 ,   {nil, "mingw",      "kv", nil, "Set the MingW directory."        }
 ,   {nil, "packages",   "vs", nil, "The package list."               }
@@ -31,13 +35,25 @@ function _require_packages(argv, packages)
     if argv.arch then
         table.insert(config_argv, "--arch=" .. argv.arch)
     end
+    if argv.mode then
+        table.insert(config_argv, "--mode=" .. argv.mode)
+    end
     if argv.ndk then
         table.insert(config_argv, "--ndk=" .. argv.ndk)
     end
     if argv.mingw then
         table.insert(config_argv, "--mingw=" .. argv.mingw)
     end
-    os.execv("xmake", config_argv)
+    if argv.cflags then
+        table.insert(config_argv, "--cflags=" .. argv.cflags)
+    end
+    if argv.cxxflags then
+        table.insert(config_argv, "--cxxflags=" .. argv.cxxflags)
+    end
+    if argv.ldflags then
+        table.insert(config_argv, "--ldflags=" .. argv.ldflags)
+    end
+    os.vexecv("xmake", config_argv)
     local require_argv = {"require", "-f", "-y"}
     if argv.verbose then
         table.insert(require_argv, "-v")
@@ -48,8 +64,11 @@ function _require_packages(argv, packages)
     if argv.shallow then
         table.insert(require_argv, "--shallow")
     end
+    if argv.mode == "debug" then
+        table.insert(require_argv, "--extra={debug=true}")
+    end
     table.join2(require_argv, packages)
-    os.execv("xmake", require_argv)
+    os.vexecv("xmake", require_argv)
 end
 
 -- the given package is supported?

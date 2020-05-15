@@ -19,7 +19,7 @@ package("lua")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("linux", "macosx", "windows", "android", function (package)
+    on_install("linux", "macosx", "windows", "android", "bsd", function (package)
         io.writefile("xmake.lua", format([[
             target("lualib")
                 set_kind("%s")
@@ -27,12 +27,15 @@ package("lua")
                 add_headerfiles("src/*.h", {prefixdir = "lua"})
                 add_files("src/*.c|lua.c|luac.c")
                 add_defines("LUA_COMPAT_5_2", "LUA_COMPAT_5_1")
-                if is_plat("linux") then
+                if is_plat("linux", "bsd") then
                     add_defines("LUA_USE_LINUX")
+                    add_defines("LUA_DL_DLOPEN")
                 elseif is_plat("macosx") then
                     add_defines("LUA_USE_MACOSX")
+                    add_defines("LUA_DL_DYLD")
                 elseif is_plat("windows") then
                     add_defines("LUA_USE_WINDOWS")
+                    add_defines("LUA_DL_DLL")
                 end
 
             target("lua")
