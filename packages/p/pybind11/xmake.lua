@@ -13,5 +13,26 @@ package("pybind11")
     end)
 
     on_test(function (package)
-        print("pybind11 is a lightweight header-only library that exposes C++ types in Python.")
+        import("lib.detect.find_tool")
+        local py_include_dir = ""
+        if is_plat("windows") then
+            local python = assert(find_tool("python", {version = true}), "python not found, please install it first! note: python version must > 3.0")
+            local pydir = os.iorun("python -c \"import sys; print(sys.executable)\"")
+            py_include_dir = path.directory(pydir) .. "/include"
+        else
+            py_include_dir = try { function () return os.iorun("python3-config --includes"):trim() end }
+        end
+        local old_include_env = os.getenv("INCLUDE")
+        if old_include_env == nil then 
+            old_include_env = ""
+        end
+        local new_include_env = ""
+        if is_plat("windows") then 
+            new_include_env = old_include_env .. ";" .. py_include_dir
+        else
+            new_include_env = old_include_env .. ":" .. py_include_dir
+        end 
+        os.setenv("INCLUDE", new_include_env)
+        assert(package:has_cxxfuncs("pybind11::globals()", {includes = "pybind11/pybind11.h", configs = {languages = "c++11"}}))
+        os.setenv("INCLUDE", old_include_env)
     end)
