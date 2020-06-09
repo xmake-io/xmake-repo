@@ -124,6 +124,38 @@ package("python")
             io.gsub("Lib/ctypes/macholib/dyld.py", "DEFAULT_LIBRARY_FALLBACK = %[", format("DEFAULT_LIBRARY_FALLBACK = [ '%s/lib',", package:installdir()))
         end
 
+        -- add flags
+        local cflags = {}
+        local ldflags = {}
+        if package:is_plat("macosx") then
+            local xcode_dir     = get_config("xcode")
+            local xcode_sdkver  = get_config("xcode_sdkver")
+            if xcode_dir and xcode_sdkver then
+                -- help Python's build system (setuptools/pip) to build things on SDK-based systems
+                -- the setup.py looks at "-isysroot" to get the sysroot (and not at --sysroot)
+                local xcode_sdkdir = xcode_dir .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode_sdkver .. ".sdk"
+                table.insert(cflags, "-isysroot " .. xcode_sdkdir)
+                table.insert(cflags, "-I" .. path.join(xcode_sdkdir, "/usr/include"))
+                table.insert(ldflags, "-isysroot " .. xcode_sdkdir)
+
+                -- for the Xlib.h, Python needs this header dir with the system Tk
+                -- yep, this needs the absolute path where zlib needed a path relative to the SDK.
+                table.insert(cflags, "-I" .. path.join(xcode_sdkdir, "/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"))
+            end
+    
+            -- avoid linking to libgcc https://mail.python.org/pipermail/python-dev/2012-February/116205.html
+            local target_minver = get_config("target_minver")
+            if target_minver then
+                table.insert(configs, "MACOSX_DEPLOYMENT_TARGET=" .. target_minver)
+            end
+        end
+        if #cflags > 0 then
+            table.insert(configs, "CFLAGS=" .. table.concat(cflags, " "))
+        end
+        if #ldflags > 0 then
+            table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
+        end
+
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
         import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
