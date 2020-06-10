@@ -26,7 +26,7 @@ package("python2")
     end
 
     if is_plat("linux") then
-        add_syslinks("pthread")
+        add_syslinks("util", "pthread", "dl")
     end
 
     add_resources("2.7.15", "setuptools", "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip", "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d")
