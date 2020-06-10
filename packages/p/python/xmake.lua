@@ -1,6 +1,5 @@
 package("python")
 
-    set_kind("binary")
     set_homepage("https://www.python.org/")
     set_description("The python programming language.")
 
@@ -40,50 +39,44 @@ package("python")
         add_deps("openssl", {host = true})
     end
 
+    add_resources("3.7.0", "setuptools",  "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip", "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d")
+    add_resources("3.7.0", "pip",         "https://files.pythonhosted.org/packages/36/fa/51ca4d57392e2f69397cd6e5af23da2a8d37884a605f9e3f2d3bfdc48397/pip-19.0.3.tar.gz", "6e6f197a1abfb45118dbb878b5c859a0edbdd33fd250100bc015b67fded4b9f2")
+    add_resources("3.7.0", "wheel",       "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz", "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d")
+
+    add_resources("2.7.15", "setuptools", "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip", "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d")
+    add_resources("2.7.15", "pip",        "https://files.pythonhosted.org/packages/36/fa/51ca4d57392e2f69397cd6e5af23da2a8d37884a605f9e3f2d3bfdc48397/pip-19.0.3.tar.gz", "6e6f197a1abfb45118dbb878b5c859a0edbdd33fd250100bc015b67fded4b9f2")
+    add_resources("2.7.15", "wheel",      "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz", "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d")
+
     on_load(function (package)
+        
+        -- add PATH
+        package:addenv("PATH", "bin")
+
+        -- set includedirs
+        local version = package:version()
+        if version:ge("3.0") then
+            package:add("includedirs", ("include/python%d.%dm"):format(version:major(), version:minor()))
+        end
+
+        -- define install_resources()
         package:data_set("install_resources", function()
 
             -- imports
-            import("net.http")
-            import("utils.archive")
             import("lib.detect.find_file")
 
             -- set python environments
-            local version = package:version()
             local envs = {}
-            if is_host("windows") and package:version():ge("3.0") then
+            if is_host("windows") and version:ge("3.0") then
                 envs.PYTHONPATH = package:installdir("Lib", "site-packages")
             else
                 envs.PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")
             end
             package:addenv("PYTHONPATH", envs.PYTHONPATH)
- 
+     
             -- install resources
-            local resources = 
-            {
-                setuptools = 
-                {
-                    url = "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip",
-                    sha256 = "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d"
-                },
-                pip = 
-                {
-                    url = "https://files.pythonhosted.org/packages/36/fa/51ca4d57392e2f69397cd6e5af23da2a8d37884a605f9e3f2d3bfdc48397/pip-19.0.3.tar.gz",
-                    sha256 = "6e6f197a1abfb45118dbb878b5c859a0edbdd33fd250100bc015b67fded4b9f2"
-                },
-                wheel =
-                {
-                    url = "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz",
-                    sha256 = "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
-                }
-            }
             local python = path.join(package:installdir("bin"), "python" .. (is_host("windows") and ".exe" or ""))
-            for name, resource in pairs(resources) do
-                local resourcefile = path.join(os.curdir(), path.filename(resource.url))
-                local resourcedir = resourcefile .. ".dir"
-                http.download(resource.url, resourcefile)
-                assert(resource.sha256 == hash.sha256(resourcefile), "resource(%s): unmatched checksum!", name)
-                assert(archive.extract(resourcefile, resourcedir), "resource(%s): extract failed!", name)
+            for _, name in ipairs({"setuptools", "pip", "wheel"}) do
+                local resourcedir = assert(package:resourcedir(name), "resource(%s): not found!", name)
                 local setupfile = assert(find_file("setup.py", path.join(resourcedir, "*")), "resource(%s): setup.py not found!", name)
                 local oldir = os.cd(path.directory(setupfile))
                 os.vrunv(python, {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
@@ -164,6 +157,8 @@ package("python")
             os.cp(path.join(package:installdir("bin"), "python3"), path.join(package:installdir("bin"), "python"))
             os.cp(path.join(package:installdir("bin"), "python3-config"), path.join(package:installdir("bin"), "python-config"))
         end
+
+        -- install resources
         package:data("install_resources")()
     end)
 
@@ -172,4 +167,7 @@ package("python")
         os.vrun("python -c \"import pip\"")
         os.vrun("python -c \"import setuptools\"")
         os.vrun("python -c \"import wheel\"")
+        if not package:is_plat("windows") then
+            assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
+        end
     end)

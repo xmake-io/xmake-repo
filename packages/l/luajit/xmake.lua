@@ -64,7 +64,6 @@ package("luajit")
     end)
 
     on_test(function (package)
-        print(os.getenv("PATH"))
         os.vrun("luajit -e \"print('hello xmake!')\"")
         assert(package:has_cfuncs("lua_pcall", {includes = "luajit.h"}))
     end)
