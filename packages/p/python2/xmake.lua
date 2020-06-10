@@ -137,7 +137,5 @@ package("python2")
         os.vrun("python2 -c \"import pip\"")
         os.vrun("python2 -c \"import setuptools\"")
         os.vrun("python2 -c \"import wheel\"")
-        if not package:is_plat("windows") then
-            assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
-        end
+        assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
     end)
