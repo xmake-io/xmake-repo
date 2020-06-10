@@ -5,11 +5,15 @@ package("python2")
 
     if is_host("windows") then
         if os.arch() == "x64" then
-            add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).amd64.zip")
-            add_versions("2.7.15", "b9d8157fe2ca58f84d29a814bedf1d304d2277ad02f0930acd22e2ce7367b77e")
+            add_urls("https://cdn.jsdelivr.net/gh/xmake-mirror/python-releases@$(version)/python-$(version).win64.tar.gz",
+                     "https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win64.tar.gz",
+                     "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win64.tar.gz")
+            add_versions("2.7.15", "c81c4604b4176ff26be8d37cf48a2582e71a5e8f475b531c2e5d032a39511acb")
         else
-            add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).win32.zip")
-            add_versions("2.7.15", "f34e2555c4fde5d7d746e6a0bbfc9151435f3f5c3eaddfc046ec0993b7cc9660")
+            add_urls("https://cdn.jsdelivr.net/gh/xmake-mirror/python-releases@$(version)/python-$(version).win32.tar.gz",
+                     "https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win32.tar.gz",
+                     "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win32.tar.gz")
+            add_versions("2.7.15", "4a7be2b440b74776662daaeb6bb6c5574bb6d0f4ddc0ad03ce63571ab2353303")
         end
     else
         set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
@@ -32,7 +36,11 @@ package("python2")
 
         -- set includedirs
         local version = package:version()
-        package:add("includedirs", ("include/python%d.%d"):format(version:major(), version:minor()))
+        if package:is_plat("windows") then
+            package:add("includedirs", "include")
+        else
+            package:add("includedirs", ("include/python%d.%d"):format(version:major(), version:minor()))
+        end
 
         -- define install_resources()
         package:data_set("install_resources", function()
@@ -61,6 +69,7 @@ package("python2")
         os.cp("python.exe", path.join(package:installdir("bin"), "python2.exe"))
         os.mv("*.exe", package:installdir("bin"))
         os.mv("*.dll", package:installdir("bin"))
+        os.mv("libs/*", package:installdir("lib"))
         os.cp("*", package:installdir())
         package:data("install_resources")()
     end)

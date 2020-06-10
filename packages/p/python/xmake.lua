@@ -5,28 +5,17 @@ package("python")
 
     if is_host("windows") then
         if os.arch() == "x64" then
-            add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).amd64.zip", {alias = "py2"})
-            add_versions("py2:2.7.15", "b9d8157fe2ca58f84d29a814bedf1d304d2277ad02f0930acd22e2ce7367b77e")
+            add_urls("https://cdn.jsdelivr.net/gh/xmake-mirror/python-releases@$(version)/python-$(version).win64.tar.gz",
+                     "https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win64.tar.gz",
+                     "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win64.tar.gz")
+            add_versions("2.7.15", "c81c4604b4176ff26be8d37cf48a2582e71a5e8f475b531c2e5d032a39511acb")
+            add_versions("3.7.0", "8acd395e64d09b6b33ef78e199ffa48a8fd48f32d4d90d575e72448939a0e4c5")
         else
-            add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).win32.zip", {alias = "py2"})
-            add_versions("py2:2.7.15", "f34e2555c4fde5d7d746e6a0bbfc9151435f3f5c3eaddfc046ec0993b7cc9660")
-        end
-        if winos.version():gt("winxp") then
-            if os.arch() == "x64" then
-                add_urls("https://www.python.org/ftp/python/$(version)/python-$(version)-embed-amd64.zip", {alias = "py3"})
-                add_versions("py3:3.7.0", "0cc08f3c74c0112abc2adafd16a534cde12fe7c7aafb42e936d59fd3ab08fcdb")
-            else
-                add_urls("https://www.python.org/ftp/python/$(version)/python-$(version)-embed-win32.zip", {alias = "py3"})
-                add_versions("py3:3.7.0", "9596b23a8db1f945c2e26fe0dc1743e33f3700b4b708c68ea202cf2ac761a736")
-            end
-        else
-            if os.arch() == "x64" then
-                add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).amd64.zip", {alias = "py3"})
-                add_versions("py3:3.3.4", "a83bf90b28f8b44b99c3524a34ab18f21a59999e07c107da19b031869fb42af1")
-            else
-                add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).win32.zip", {alias = "py3"})
-                add_versions("py3:3.3.4", "c9843d585e30da1c7c85663543b2f6a1f68621e02d288abc5b5e54361d93ccd6")
-            end
+            add_urls("https://cdn.jsdelivr.net/gh/xmake-mirror/python-releases@$(version)/python-$(version).win32.tar.gz",
+                     "https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win32.tar.gz",
+                     "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win32.tar.gz")
+            add_versions("2.7.15", "4a7be2b440b74776662daaeb6bb6c5574bb6d0f4ddc0ad03ce63571ab2353303")
+            add_versions("3.7.0", "6f6dfd3df4b15157a12d06685a6dda450478ca118aa8832f0033093b9ca6329f")
         end
     else
         set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
@@ -54,8 +43,12 @@ package("python")
 
         -- set includedirs
         local version = package:version()
-        if version:ge("3.0") then
+        if package:is_plat("windows") then
+            package:add("includedirs", "include")
+        elseif version:ge("3.0") then
             package:add("includedirs", ("include/python%d.%dm"):format(version:major(), version:minor()))
+        else
+            package:add("includedirs", ("include/python%d.%d"):format(version:major(), version:minor()))
         end
 
         -- define install_resources()
@@ -93,6 +86,7 @@ package("python")
         end
         os.mv("*.exe", package:installdir("bin"))
         os.mv("*.dll", package:installdir("bin"))
+        os.mv("libs/*", package:installdir("lib"))
         os.cp("*", package:installdir())
         package:data("install_resources")()
     end)
@@ -167,7 +161,5 @@ package("python")
         os.vrun("python -c \"import pip\"")
         os.vrun("python -c \"import setuptools\"")
         os.vrun("python -c \"import wheel\"")
-        if not package:is_plat("windows") then
-            assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
-        end
+        assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
     end)
