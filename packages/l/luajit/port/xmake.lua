@@ -1,5 +1,11 @@
 set_policy("build.across_targets_in_parallel", false)
 
+add_rules("mode.debug", "mode.release")
+if is_mode("release") then
+    add_cflags("-fomit-frame-pointer")
+    add_cflags("-fno-stack-protector")
+end
+
 option("nojit")
     set_default(false)
     set_showmenu(true)
