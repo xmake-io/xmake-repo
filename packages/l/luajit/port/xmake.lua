@@ -100,7 +100,9 @@ target("buildvm")
         add_files("src/vm_x86.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X86")
     elseif is_arch("x64", "x86_64") then
-        add_files("src/vm_x64.dasc")
+        --FIXME will crash
+        --add_files("src/vm_x64.dasc")
+        add_files("src/vm_x86.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X64")
     elseif is_arch("arm64", "arm64-v8a") then
         add_files("src/vm_arm64.dasc")
@@ -123,12 +125,12 @@ target("luajit")
     set_kind("$(kind)")
     add_deps("buildvm")
     add_options("nojit", "fpu")
-    add_defines("LUAJIT_ENABLE_LUA52COMPAT")
     if is_mode("debug") then
         add_defines("LUA_USE_ASSERT")
     end
-    add_defines("_FILE_OFFSET_BITS=64", "LARGEFILE_SOURCE")
-    add_undefines("_FORTIFY_SOURCE")
+    add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
+    add_defines("_FILE_OFFSET_BITS=64", "LARGEFILE_SOURCE", {public = true})
+    add_undefines("_FORTIFY_SOURCE", {public = true})
     add_headerfiles("src/*.h", {prefixdir = "luajit"})
     add_files("src/ljamalg.c")
     add_files("src/lib_base.c",
@@ -148,6 +150,7 @@ target("luajit_bin")
     add_deps("luajit")
     set_basename("luajit")
     add_files("src/luajit.c")
+    add_options("nojit", "fpu")
     if is_plat("windows") then
         add_links("advapi32", "shell32")
         if is_arch("x86") then
