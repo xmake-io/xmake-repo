@@ -138,7 +138,8 @@ target("luajit")
     add_defines("_FILE_OFFSET_BITS=64", "LARGEFILE_SOURCE", {public = true})
     add_undefines("_FORTIFY_SOURCE", {public = true})
     add_headerfiles("src/*.h", {prefixdir = "luajit"})
-    add_files("src/ljamalg.c")
+    add_cflags("-msse4.2")
+    add_files("src/ljamalg.c", "src/lj_str_hash.c")
     add_files("src/lib_base.c",
               "src/lib_math.c",
               "src/lib_bit.c",
