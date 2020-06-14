@@ -7,12 +7,10 @@ package("luajit")
              "http://luajit.org/git/luajit-2.0.git",
              "http://repo.or.cz/luajit-2.0.git")
 
-    add_versions("2.0.0", "deaed645c4a093c5fb250c30c9933c9131ee05c94b13262d58f6e0b60b338c15")
-    add_versions("2.0.1", "2371cceb53453d8a7b36451e6a0ccdb66236924545d6042ddd4c34e9668990c0")
-    add_versions("2.0.2", "c05202974a5890e777b181908ac237625b499aece026654d7cc33607e3f46c38")
-    add_versions("2.0.3", "55be6cb2d101ed38acca32c5b1f99ae345904b365b642203194c585d27bebd79")
-    add_versions("2.0.4", "620fa4eb12375021bef6e4f237cbd2dd5d49e56beb414bee052c746beef1807d")
-    add_versions("2.0.5", "874b1f8297c697821f561f9b73b57ffd419ed8f4278c82e05b48806d30c1e979")
+    add_versions("2.1.0-beta3", "1ad2e34b111c802f9d0cdf019e986909123237a28c746b21295b63c9e785d9c3")
+
+    add_configs("nojit", { description = "Disable JIT.", default = false, type = "boolean"})
+    add_configs("fpu",   { description = "Enable FPU.", default = true, type = "boolean"})
 
     add_includedirs("include/luajit")
     if not is_plat("windows") then
@@ -20,47 +18,18 @@ package("luajit")
     end
 
     on_load(function (package)
-        if is_plat("windows") then
-            package:addenv("PATH", "lib")
-        end
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", function (package)
-        os.cd("src")
-        if not package:config("shared") then
-            os.vrun("msvcbuild.bat static")
-        elseif package:debug() then
-            os.vrun("msvcbuild.bat debug")
-        else
-            os.vrun("msvcbuild.bat")
-        end
-        os.cp("luajit.exe", package:installdir("bin"))
-        os.cp("lua51.lib", package:installdir("lib"))
+    on_install("windows", "linux", "macosx", "bsd", function (package)
+        local configs = {}
         if package:config("shared") then
-            os.cp("lua51.dll", package:installdir("lib"))
+            configs.kind = "shared"
         end
-        os.cp("*.h", package:installdir("include/luajit"))
-    end)
-
-    on_install("macosx", "linux", function (package)
-        io.gsub("./Makefile", "export PREFIX= /usr/local", "export PREFIX=" .. package:installdir())
-        if package:debug() then
-            io.gsub("./src/Makefile", "CCDEBUG=", "CCDEBUG= -g")
-        end
-        if package:config("shared") then
-            io.gsub("./src/Makefile", "BUILDMODE= mixed", "BUILDMODE= dynamic")
-        else
-            io.gsub("./src/Makefile", "BUILDMODE= mixed", "BUILDMODE= static")
-        end
-        os.vrun("make")
-        os.cp("src/luajit", package:installdir("bin"))
-        if package:config("shared") then
-            os.cp("src/*" .. (is_plat("macosx") and ".dylib" or ".so"), package:installdir("lib"))
-        else
-            os.cp("src/*.a", package:installdir("lib"))
-        end
-        os.cp("src/*.h", package:installdir("include/luajit"))
+        configs.fpu     = package:config("fpu")
+        configs.nojit   = package:config("nojit")
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
