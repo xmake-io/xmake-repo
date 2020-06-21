@@ -1,3 +1,4 @@
+set_xmakever("2.3.4")
 set_policy("build.across_targets_in_parallel", false)
 
 add_rules("mode.debug", "mode.release")
@@ -24,9 +25,8 @@ rule("dasc")
         if not os.isdir(outputdir) then
             os.mkdir(outputdir)
         end
-
         local argv = {"dynasm/dynasm.lua", "-LN"}
-        if is_arch("x64", "x86_64", "arm64", "mips64") then
+        if is_arch("x64", "x86_64", "arm64", "arm64-v8a", "mips64") then
             -- 64bits pointer
             table.insert(argv, "-D")
             table.insert(argv, "P64")
@@ -37,7 +37,8 @@ rule("dasc")
             table.insert(argv, "-D")
             table.insert(argv, "HFABI")
         end
-        if not target:opt("nojit") then
+        -- jit is not supported on ios
+        if not target:opt("nojit") and not is_plat("iphoneos", "watchos") then
             table.insert(argv, "-D")
             table.insert(argv, "JIT")
             table.insert(argv, "-D")
@@ -86,46 +87,88 @@ rule("buildvm")
                 march = "elfasm"
             end
             os.vrunv(buildvm_bin, {"-m", march, "-o", lj_vm_asm})
+            print(compiler.compcmd(lj_vm_asm, lj_vm_obj, {target = target}))
             compiler.compile(lj_vm_asm, lj_vm_obj, {target = target})
             table.join2(target:objectfiles(), lj_vm_obj)
         end
     end)    
 
+function set_host_toolchains()
+    -- only for cross-compliation
+    if is_plat(os.host()) then
+        return 
+    end
+    local arch
+    if is_arch("arm64", "arm64-v8a", "mips64", "x86_64") then
+        arch = is_host("windows") and "x64" or "x86_64"
+    else
+        arch = is_host("windows") and "x86" or "i386"
+    end
+    set_plat(os.host())
+    set_arch(arch)
+end
+
 target("minilua")
     set_kind("binary")
+    set_default(false)
     add_files("src/host/minilua.c")
+    set_host_toolchains()
+    if is_host("windows") then
+        add_defines("_CRT_SECURE_NO_DEPRECATE", "_CRT_STDIO_INLINE=__declspec(dllexport)__inline")
+    end
 
 target("buildvm")
     set_kind("binary")
+    set_default(false)
     add_deps("minilua")
     add_rules("dasc")
     add_options("nojit", "fpu")
     add_includedirs("src")
+    set_host_toolchains()
     add_files("src/host/buildvm*.c")
+    if is_host("windows") then
+        add_defines("_CRT_SECURE_NO_DEPRECATE", "_CRT_STDIO_INLINE=__declspec(dllexport)__inline")
+    end
     if is_arch("x86", "i386") then
         add_files("src/vm_x86.dasc")
-        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X86")
+        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X86", {public = true})
     elseif is_arch("x64", "x86_64") then
         --FIXME will crash
         --add_files("src/vm_x64.dasc")
+        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X64", {public = true})
         add_files("src/vm_x86.dasc")
-        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X64")
     elseif is_arch("arm64", "arm64-v8a") then
         add_files("src/vm_arm64.dasc")
-        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM64")
-    elseif is_arch("arm*") then
+        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM64", {public = true})
+    elseif is_arch("arm.*") then
         add_files("src/vm_arm.dasc")
-        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM")
+        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM", {public = true})
     elseif is_arch("mips64") then
         add_files("src/vm_mips64.dasc")
-        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_MIPS64")
+        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_MIPS64", {public = true})
     elseif is_arch("mips") then
         add_files("src/vm_mips.dasc")
-        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_MIPS")
+        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_MIPS", {public = true})
     elseif is_arch("ppc") then
         add_files("src/vm_ppc.dasc")
-        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_PPC")
+        add_defines("LUAJIT_TARGET=LUAJIT_ARCH_PPC", {public = true})
     end
+    if is_plat("macosx", "iphoneos", "watchos") then
+        add_defines("LUAJIT_OS=LUAJIT_OS_OSX", {public = true})
+    elseif is_plat("windows") then
+        add_defines("LUAJIT_OS=LUAJIT_OS_WINDOWS", {public = true})
+    elseif is_plat("linux", "android") then
+        add_defines("LUAJIT_OS=LUAJIT_OS_LINUX", {public = true})
+    else
+        add_defines("LUAJIT_OS=LUAJIT_OS_OTHER", {public = true})
+    end
+    before_build("@windows", function (target)
+        if not is_arch("x86", "x64", "mips", "mips64") then
+            -- @note we need fix `illegal zero-sized array` errors for msvc
+            io.gsub("src/lj_jit.h", "  LJ_K32__MAX\n", "  LJ_K32__MAX=1\n")
+            io.gsub("src/lj_jit.h", "  LJ_K64__MAX,\n", "  LJ_K64__MAX=1\n")
+        end
+    end)
 
 target("luajit")
     set_kind("$(kind)")

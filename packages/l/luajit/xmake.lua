@@ -21,7 +21,7 @@ package("luajit")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", function (package)
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
@@ -33,6 +33,8 @@ package("luajit")
     end)
 
     on_test(function (package)
-        os.vrun("luajit -e \"print('hello xmake!')\"")
+        if package:is_plat(os.host()) then
+            os.vrun("luajit -e \"print('hello xmake!')\"")
+        end
         assert(package:has_cfuncs("lua_pcall", {includes = "luajit.h"}))
     end)
