@@ -68,7 +68,7 @@ package("boost")
             if is_plat("macosx") then
                 file:print("using darwin : : %s ;", package:build_getenv("cxx"))
             elseif is_plat("windows") then
-                file:print("using msvc : : %s ;", package:build_getenv("cxx"))
+                file:print("using msvc : : %s ;", os.args(package:build_getenv("cxx")))
             else
                 file:print("using gcc : : %s ;", package:build_getenv("cxx"))
             end
