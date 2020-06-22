@@ -8,7 +8,7 @@ package("meson")
              "https://github.com/mesonbuild/meson.git")
     add_versions("0.50.1", "f68f56d60c80a77df8fc08fa1016bc5831605d4717b622c96212573271e14ecc")
 
-    add_deps("ninja", "python 3.x")
+    add_deps("ninja", "python 3.x", {kind = "binary"})
   
     on_install("@macosx", "@linux", "@windows", function (package)
         local version = package:dep("python"):version()

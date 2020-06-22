@@ -8,7 +8,7 @@ package("skia")
 
     add_versions("68046c", "68046cd7be837bd31bc8f0e821a2f82a02dda9cf")
 
-    add_deps("python2", "ninja")
+    add_deps("python2", "ninja", {kind = "binary"})
 
     add_links("skia")
     add_includedirs("include")

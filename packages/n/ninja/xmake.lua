@@ -17,7 +17,7 @@ package("ninja")
     end
 
     if is_host("linux") then
-        add_deps("python2")
+        add_deps("python2", {kind = "binary"})
     end
 
     on_install("@windows", function (package)
