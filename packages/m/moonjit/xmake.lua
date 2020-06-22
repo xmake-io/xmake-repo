@@ -1,13 +1,12 @@
-package("luajit")
+package("moonjit")
 
-    set_homepage("http://luajit.org")
+    set_homepage("https://github.com/moonjit/moonjit")
     set_description("A Just-In-Time Compiler (JIT) for the Lua programming language.")
 
-    set_urls("http://luajit.org/download/LuaJIT-$(version).tar.gz",
-             "http://luajit.org/git/luajit-2.0.git",
-             "http://repo.or.cz/luajit-2.0.git")
+    set_urls("https://github.com/moonjit/moonjit/archive/$(version).tar.gz",
+             "https://github.com:moonjit/moonjit.git")
 
-    add_versions("2.1.0-beta3", "1ad2e34b111c802f9d0cdf019e986909123237a28c746b21295b63c9e785d9c3")
+    add_versions("2.2.0", "83deb2c880488dfe7dd8ebf09e3b1e7613ef4b8420de53de6f712f01aabca2b6")
 
     add_configs("nojit", { description = "Disable JIT.", default = false, type = "boolean"})
     add_configs("fpu",   { description = "Enable FPU.", default = true, type = "boolean"})
