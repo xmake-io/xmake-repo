@@ -49,7 +49,11 @@ package("boost")
             if package:config("multi") then
                 linkname = linkname .. "-mt"
             end
-            if vs_runtime == "MT" then
+            if package:config("shared") then
+                if package:debug() then
+                    linkname = linkname .. "-gd"
+                end
+            elseif vs_runtime == "MT" then
                 linkname = linkname .. "-s"
             elseif vs_runtime == "MTd" then
                 linkname = linkname .. "-sgd"
@@ -66,7 +70,8 @@ package("boost")
         local file = io.open("user-config.jam", "a")
         if file then
             if is_plat("macosx") then
-                file:print("using darwin : : %s ;", package:build_getenv("cxx"))
+                -- we uses ld/clang++ for link stdc++ for shared libraries
+                file:print("using darwin : : %s ;", package:build_getenv("ld"))
             elseif is_plat("windows") then
                 file:print("using msvc : : %s ;", os.args(package:build_getenv("cxx")))
             else
@@ -103,17 +108,18 @@ package("boost")
             "install",
             "threading=" .. (package:config("multi") and "multi" or "single"),
             "debug-symbols=" .. (package:debug() and "on" or "off"),
-            "link=static"
+            "link=" .. (package:config("shared") and "shared" or "static")
         }
-        local arch = package:arch()
-        if arch == "x64" or arch == "x86_64" then
+        if package:is_arch("x64", "x86_64") then
             table.insert(argv, "address-model=64")
         else
             table.insert(argv, "address-model=32")
         end
-        if package:plat() == "windows" then
+        if package:is_plat("windows") then
             local vs_runtime = package:config("vs_runtime")
-            if vs_runtime and vs_runtime:startswith("MT") then
+            if package:config("shared") then
+                table.insert(argv, "runtime-link=shared")
+            elseif vs_runtime and vs_runtime:startswith("MT") then
                 table.insert(argv, "runtime-link=static")
             else
                 table.insert(argv, "runtime-link=shared")
@@ -121,6 +127,10 @@ package("boost")
             table.insert(argv, "cxxflags=-std:c++14")
         else
             table.insert(argv, "cxxflags=-std=c++14")
+            if package:build_getenv("cxx"):find("clang", 1, true) then
+                table.insert(argv, "cxxflags=-stdlib=libc++")
+                table.insert(argv, "linkflags=-stdlib=libc++")
+            end
         end
         for _, libname in ipairs(libnames) do
             if package:config(libname) then
