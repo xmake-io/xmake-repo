@@ -16,6 +16,8 @@ package("boost")
 
     if is_plat("linux") then
         add_deps("bzip2", "zlib")
+    elseif is_plat("windows") then
+        add_cxflags("/EHsc")
     end
 
     local libnames = {"filesystem", 
@@ -45,7 +47,7 @@ package("boost")
     on_load("windows", function (package)
         local vs_runtime = package:config("vs_runtime")
         for _, libname in ipairs(libnames) do
-            local linkname = "libboost_" .. libname
+            local linkname = "boost_" .. libname
             if package:config("multi") then
                 linkname = linkname .. "-mt"
             end
