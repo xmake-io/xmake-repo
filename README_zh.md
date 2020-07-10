@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://xmake.io">
-    <img width="200" heigth="200" src="https://tboox.org/static/img/xmake/logo256c.png">
+    <img width="160" heigth="160" src="https://tboox.org/static/img/xmake/logo256c.png">
   </a>  
 
   <h1>xmake-repo</h1>
@@ -42,6 +42,20 @@
 
   <p>一个官方的xmake包管理仓库</p>
 </div>
+
+## 项目支持
+
+xmake-repo由以下工具赞助, 请通过查看并注册免费试用来帮助支持我们。🙏
+
+<a href="https://tracking.gitads.io/?repo=xmake">
+ <img src="https://images.gitads.io/xmake" alt="GitAds"/> 
+</a>
+
+### 赞助支持
+
+通过成为赞助者来支持该项目。您的logo将显示在此处，并带有指向您网站的链接。🙏 [[成为赞助商](https://xmake.io/#/zh-cn/about/sponsor)]
+
+<a href="https://opencollective.com/xmake#backers" target="_blank"><img src="https://opencollective.com/xmake/backers.svg?width=890"></a>
 
 ## 简介
 
