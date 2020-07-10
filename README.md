@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://xmake.io">
-    <img width="200" heigth="200" src="https://tboox.org/static/img/xmake/logo256c.png">
+    <img width="160" heigth="160" src="https://tboox.org/static/img/xmake/logo256c.png">
   </a>  
 
   <h1>xmake-repo</h1>
@@ -42,6 +42,20 @@
 
   <p>An official xmake package repository</p>
 </div>
+
+## Supporting the project
+
+xmake-repo is being sponsored by the following tool; please help to support us by taking a look and signing up to a free trial. 🙏
+
+<a href="https://tracking.gitads.io/?repo=xmake">
+ <img src="https://images.gitads.io/xmake" alt="GitAds"/> 
+</a>
+
+### Sponsor
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. 🙏 [[Become a sponsor](https://xmake.io/#/about/sponsor)]
+
+<a href="https://opencollective.com/xmake#backers" target="_blank"><img src="https://opencollective.com/xmake/backers.svg?width=890"></a>
 
 ## Introduction ([中文](/README_zh.md))
 
