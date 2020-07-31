@@ -48,7 +48,7 @@
 xmake-repo is being sponsored by the following tool; please help to support us by taking a look and signing up to a free trial. 🙏
 
 <a href="https://tracking.gitads.io/?repo=xmake">
- <img src="https://images.gitads.io/xmake" alt="GitAds"/> 
+ <img src="https://images.gitads.io/xmake" alt="GitAds" width="650px"/> 
 </a>
 
 ### Sponsor
