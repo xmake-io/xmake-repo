@@ -1,5 +1,5 @@
 package("libsdl_ttf")
-    add_deps("libsdl", "freetype")
+    add_deps("libsdl")
 
     set_homepage("https://www.libsdl.org/projects/SDL_ttf/")
     set_description("Simple DirectMedia Layer text rendering library")
