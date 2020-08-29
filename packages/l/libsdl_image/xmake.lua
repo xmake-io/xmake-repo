@@ -20,18 +20,15 @@ package("libsdl_image")
             arch = (arch == "x86_64") and "x64" or "x86"
         end
         local file_name = "include/SDL_image.h"
-        local f = io.open(file_name)
-        local content = f:read("*all")
-        f:close()
+        local content = io.readfile(file_name)
 
-        content = string.gsub(content, "\"SDL.h\"", "<SDL2/SDL.h>")
-        content = string.gsub(content, "\"SDL_version.h\"", "<SDL2/SDL_version.h>")
-        content = string.gsub(content, "\"begin_code.h\"", "<SDL2/begin_code.h>")
-        content = string.gsub(content, "\"close_code.h\"", "<SDL2/close_code.h>")
+        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
+        content = content:gsub("\"SDL_version.h\"", "<SDL2/SDL_version.h>")
+        content = content:gsub("\"begin_code.h\"", "<SDL2/begin_code.h>")
+        content = content:gsub("\"close_code.h\"", "<SDL2/close_code.h>")
 
-        local f = io.open(file_name, "w")
-        f:write(content)
-        f:close()
+        io.writefile(file_name, content)
+
         os.cp("include/*", package:installdir("include/SDL2"))
         os.cp(path.join("lib", arch, "*.lib"), package:installdir("lib"))
         os.cp(path.join("lib", arch, "*.dll"), package:installdir("lib"))
@@ -46,16 +43,12 @@ package("libsdl_image")
         end
         import("package.tools.autoconf").install(package, configs)
         local file_name = path.join(package:installdir("include"), "SDL2", "SDL_image.h")
-        local f = io.open(file_name)
-        local content = f:read("*all")
-        f:close()
+        local content = io.readfile(file_name)
 
-        content = string.gsub(content, "\"SDL.h\"", "<SDL2/SDL.h>")
-        content = string.gsub(content, "\"SDL_version.h\"", "<SDL2/SDL_version.h>")
-        content = string.gsub(content, "\"begin_code.h\"", "<SDL2/begin_code.h>")
-        content = string.gsub(content, "\"close_code.h\"", "<SDL2/close_code.h>")
+        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
+        content = content:gsub("\"SDL_version.h\"", "<SDL2/SDL_version.h>")
+        content = content:gsub("\"begin_code.h\"", "<SDL2/begin_code.h>")
+        content = content:gsub("\"close_code.h\"", "<SDL2/close_code.h>")
 
-        local f = io.open(file_name, "w")
-        f:write(content)
-        f:close()
+        io.writefile(file_name, content)
     end)

@@ -23,35 +23,23 @@ package("libsdl_gfx")
 
         import("package.tools.autoconf").install(package, configs)
         local file_name = path.join(package:installdir("include"), "SDL2", "SDL2_framerate.h")
-        local f = io.open(file_name)
-        local content = f:read("*all")
-        f:close()
+        local content = io.readfile(file_name)
 
-        content = string.gsub(content, "\"SDL.h\"", "<SDL2/SDL.h>")
+        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
 
-        local f = io.open(file_name, "w")
-        f:write(content)
-        f:close()
+        io.writefile(file_name, content)
 
         local file_name = path.join(package:installdir("include"), "SDL2", "SDL2_gfxPrimitives.h")
-        local f = io.open(file_name)
-        local content = f:read("*all")
-        f:close()
+        local content = io.readfile(file_name)
 
-        content = string.gsub(content, "\"SDL.h\"", "<SDL2/SDL.h>")
+        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
 
-        local f = io.open(file_name, "w")
-        f:write(content)
-        f:close()
+        io.writefile(file_name, content)
 
         local file_name = path.join(package:installdir("include"), "SDL2", "SDL2_rotozoom.h")
-        local f = io.open(file_name)
-        local content = f:read("*all")
-        f:close()
+        local content = io.readfile(file_name)
 
-        content = string.gsub(content, "\"SDL.h\"", "<SDL2/SDL.h>")
+        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
 
-        local f = io.open(file_name, "w")
-        f:write(content)
-        f:close()
+        io.writefile(file_name, content)
     end)
