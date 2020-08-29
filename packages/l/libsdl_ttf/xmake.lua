@@ -39,6 +39,9 @@ package("libsdl_ttf")
     --     else
     --         table.insert(configs, "--enable-shared=no")
     --     end
+
+    --     table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
+
     --     import("package.tools.autoconf").install(package, configs)
     --     local file_name = path.join(package:installdir("include"), "SDL2", "SDL_ttf.h")
     --     local content = io.readfile(file_name)
