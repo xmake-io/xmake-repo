@@ -18,6 +18,9 @@ package("libsdl_gfx")
         else
             table.insert(configs, "--enable-shared=no")
         end
+
+        table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
+
         import("package.tools.autoconf").install(package, configs)
         local file_name = path.join(package:installdir("include"), "SDL2", "SDL2_framerate.h")
         local f = io.open(file_name)
