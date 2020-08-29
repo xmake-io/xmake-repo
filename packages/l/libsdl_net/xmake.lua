@@ -45,6 +45,8 @@ package("libsdl_net")
         local file_name = path.join(package:installdir("include"), "SDL2", "SDL_net.h")
         local content = io.readfile(file_name)
 
+        table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
+
         content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
         content = content:gsub("\"SDL_version.h\"", "<SDL2/SDL_version.h>")
         content = content:gsub("\"SDL_endian.h\"", "<SDL2/SDL_endian.h>")
