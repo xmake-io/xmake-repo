@@ -23,7 +23,6 @@ package("libsdl_ttf")
         if package:is_plat("mingw") then
             arch = (arch == "x86_64") and "x64" or "x86"
         end
-
         os.cp("include/*", package:installdir("include/SDL2"))
         os.cp(path.join("lib", arch, "*.lib"), package:installdir("lib"))
         os.cp(path.join("lib", arch, "*.dll"), package:installdir("lib"))
@@ -36,9 +35,7 @@ package("libsdl_ttf")
         else
             table.insert(configs, "--enable-shared=no")
         end
-
         table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
-
         import("package.tools.autoconf").install(package, configs)
     end)
 
