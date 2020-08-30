@@ -1,8 +1,4 @@
 package("libsdl_ttf")
-    add_deps("libsdl")
-    if is_plat("linux") or is_plat("macosx") then
-        add_deps("freetype")
-    end
 
     set_homepage("https://www.libsdl.org/projects/SDL_ttf/")
     set_description("Simple DirectMedia Layer text rendering library")
@@ -13,6 +9,11 @@ package("libsdl_ttf")
     else
         set_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-$(version).zip")
         add_versions("2.0.15", "cdb72b5b1c3b27795fa128af36f369fee5d3e38a96c350855da0b81880555dbc")
+    end
+
+    add_deps("libsdl")
+    if is_plat("linux", "macosx") then
+        add_deps("freetype")
     end
 
     add_links("SDL2_ttf")
