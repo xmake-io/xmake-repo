@@ -1,5 +1,4 @@
 package("libsdl_net")
-    add_deps("libsdl")
 
     set_homepage("https://www.libsdl.org/projects/SDL_net/")
     set_description("Simple DirectMedia Layer networking library")
@@ -11,6 +10,8 @@ package("libsdl_net")
         set_urls("https://www.libsdl.org/projects/SDL_net/release/SDL2_net-$(version).zip")
         add_versions("2.0.1", "52031ed9d08a5eb1eda40e9a0409248bf532dde5e8babff5780ef1925657d59f")
     end
+
+    add_deps("libsdl")
 
     add_links("SDL2_net")
 
