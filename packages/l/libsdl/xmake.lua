@@ -20,6 +20,7 @@ package("libsdl")
         add_syslinks("gdi32", "user32", "winmm", "shell32")
     end
     add_links("SDL2main", "SDL2")
+    add_includedirs("include", "include/SDL2")
 
     on_install("windows", "mingw", function (package)
         local arch = package:arch()
