@@ -8,10 +8,13 @@ package("libsdl_gfx")
     set_description("Simple DirectMedia Layer primitives drawing library")
 
     if is_plat("windows") then
-        set_urls("https://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-$(version).zip")
-        add_versions("1.0.4", "b6da07583b7fb8f4d8cee97cac9176b97a287f56a8112e22f38183ecf47b9dcb")
+        set_urls("https://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-$(version).zip", {alias = "ferzkopp"})
+        add_urls("https://ufpr.dl.sourceforge.net/project/sdl2gfx/SDL2_gfx-$(version).tar.gz", {alias = "sourceforge"})
+        add_versions("ferzkopp:1.0.4", "b6da07583b7fb8f4d8cee97cac9176b97a287f56a8112e22f38183ecf47b9dcb")
+        add_versions("sourceforge:1.0.4", "63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262")
     elseif is_plat("macosx", "linux") then
         set_urls("https://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-$(version).tar.gz")
+        add_urls("https://ufpr.dl.sourceforge.net/project/sdl2gfx/SDL2_gfx-$(version).tar.gz")
         add_versions("1.0.4", "63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262")
     end
 
