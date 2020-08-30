@@ -1,5 +1,4 @@
 package("libsdl_mixer")
-    add_deps("libsdl")
 
     set_homepage("https://www.libsdl.org/projects/SDL_mixer/")
     set_description("Simple DirectMedia Layer mixer audio library")
@@ -11,6 +10,8 @@ package("libsdl_mixer")
         set_urls("https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-$(version).zip")
         add_versions("2.0.4", "9affb8c7bf6fbffda0f6906bfb99c0ea50dca9b188ba9e15be90042dc03c5ded")
     end
+
+    add_deps("libsdl")
 
     add_links("SDL2_mixer")
 
