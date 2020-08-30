@@ -102,7 +102,6 @@ package("libsdl_gfx")
         import("package.tools.msbuild").build(package, configs)
 
         build_dir = path.join(build_dir, "Release")
-
         os.cp(path.join(build_dir, "*.lib"), package:installdir("lib"))
         os.cp(path.join(build_dir, "*.dll"), package:installdir("lib"))
         os.cp("*.h", package:installdir("include", "SDL2"))
@@ -115,9 +114,7 @@ package("libsdl_gfx")
         else
             table.insert(configs, "--enable-shared=no")
         end
-
         table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
-
         import("package.tools.autoconf").install(package, configs)
     end)
 
