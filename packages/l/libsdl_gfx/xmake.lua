@@ -102,27 +102,6 @@ package("libsdl_gfx")
         os.cp(path.join(build_dir, "*.lib"), package:installdir("lib"))
         os.cp(path.join(build_dir, "*.dll"), package:installdir("lib"))
         os.cp("*.h", package:installdir("include", "SDL2"))
-
-        local file_name = path.join(package:installdir("include"), "SDL2", "SDL2_framerate.h")
-        local content = io.readfile(file_name)
-
-        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
-
-        io.writefile(file_name, content)
-
-        local file_name = path.join(package:installdir("include"), "SDL2", "SDL2_gfxPrimitives.h")
-        local content = io.readfile(file_name)
-
-        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
-
-        io.writefile(file_name, content)
-
-        local file_name = path.join(package:installdir("include"), "SDL2", "SDL2_rotozoom.h")
-        local content = io.readfile(file_name)
-
-        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
-
-        io.writefile(file_name, content)
     end)
 
     on_install("macosx", "linux", function (package)
@@ -136,24 +115,4 @@ package("libsdl_gfx")
         table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
 
         import("package.tools.autoconf").install(package, configs)
-        local file_name = path.join(package:installdir("include"), "SDL2", "SDL2_framerate.h")
-        local content = io.readfile(file_name)
-
-        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
-
-        io.writefile(file_name, content)
-
-        local file_name = path.join(package:installdir("include"), "SDL2", "SDL2_gfxPrimitives.h")
-        local content = io.readfile(file_name)
-
-        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
-
-        io.writefile(file_name, content)
-
-        local file_name = path.join(package:installdir("include"), "SDL2", "SDL2_rotozoom.h")
-        local content = io.readfile(file_name)
-
-        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
-
-        io.writefile(file_name, content)
     end)

@@ -19,16 +19,7 @@ package("libsdl_net")
         if package:is_plat("mingw") then
             arch = (arch == "x86_64") and "x64" or "x86"
         end
-        local file_name = "include/SDL_net.h"
-        local content = io.readfile(file_name)
 
-        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
-        content = content:gsub("\"SDL_version.h\"", "<SDL2/SDL_version.h>")
-        content = content:gsub("\"SDL_endian.h\"", "<SDL2/SDL_endian.h>")
-        content = content:gsub("\"begin_code.h\"", "<SDL2/begin_code.h>")
-        content = content:gsub("\"close_code.h\"", "<SDL2/close_code.h>")
-
-        io.writefile(file_name, content)
         os.cp("include/*", package:installdir("include/SDL2"))
         os.cp(path.join("lib", arch, "*.lib"), package:installdir("lib"))
         os.cp(path.join("lib", arch, "*.dll"), package:installdir("lib"))
@@ -45,14 +36,4 @@ package("libsdl_net")
         table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
 
         import("package.tools.autoconf").install(package, configs)
-        local file_name = path.join(package:installdir("include"), "SDL2", "SDL_net.h")
-        local content = io.readfile(file_name)
-
-        content = content:gsub("\"SDL.h\"", "<SDL2/SDL.h>")
-        content = content:gsub("\"SDL_version.h\"", "<SDL2/SDL_version.h>")
-        content = content:gsub("\"SDL_endian.h\"", "<SDL2/SDL_endian.h>")
-        content = content:gsub("\"begin_code.h\"", "<SDL2/begin_code.h>")
-        content = content:gsub("\"close_code.h\"", "<SDL2/close_code.h>")
-
-        io.writefile(file_name, content)
     end)

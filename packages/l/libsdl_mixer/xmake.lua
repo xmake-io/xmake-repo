@@ -19,18 +19,7 @@ package("libsdl_mixer")
         if package:is_plat("mingw") then
             arch = (arch == "x86_64") and "x64" or "x86"
         end
-        local file_name = "include/SDL_mixer.h"
-        local content = io.readfile(file_name)
 
-        content = content:gsub("\"SDL_stdinc.h\"", "<SDL2/SDL_stdinc.h>")
-        content = content:gsub("\"SDL_rwops.h\"", "<SDL2/SDL_rwops.h>")
-        content = content:gsub("\"SDL_audio.h\"", "<SDL2/SDL_audio.h>")
-        content = content:gsub("\"SDL_endian.h\"", "<SDL2/SDL_endian.h>")
-        content = content:gsub("\"SDL_version.h\"", "<SDL2/SDL_version.h>")
-        content = content:gsub("\"begin_code.h\"", "<SDL2/begin_code.h>")
-        content = content:gsub("\"close_code.h\"", "<SDL2/close_code.h>")
-
-        io.writefile(file_name, content)
         os.cp("include/*", package:installdir("include/SDL2"))
         os.cp(path.join("lib", arch, "*.lib"), package:installdir("lib"))
         os.cp(path.join("lib", arch, "*.dll"), package:installdir("lib"))
@@ -47,16 +36,4 @@ package("libsdl_mixer")
         table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
 
         import("package.tools.autoconf").install(package, configs)
-        local file_name = path.join(package:installdir("include"), "SDL2", "SDL_mixer.h")
-        local content = io.readfile(file_name)
-
-        content = content:gsub("\"SDL_stdinc.h\"", "<SDL2/SDL_stdinc.h>")
-        content = content:gsub("\"SDL_rwops.h\"", "<SDL2/SDL_rwops.h>")
-        content = content:gsub("\"SDL_audio.h\"", "<SDL2/SDL_audio.h>")
-        content = content:gsub("\"SDL_endian.h\"", "<SDL2/SDL_endian.h>")
-        content = content:gsub("\"SDL_version.h\"", "<SDL2/SDL_version.h>")
-        content = content:gsub("\"begin_code.h\"", "<SDL2/begin_code.h>")
-        content = content:gsub("\"close_code.h\"", "<SDL2/close_code.h>")
-
-        io.writefile(file_name, content)
     end)
