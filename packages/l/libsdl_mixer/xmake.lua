@@ -37,3 +37,7 @@ package("libsdl_mixer")
 
         import("package.tools.autoconf").install(package, configs)
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("Mix_Init", {includes = "SDL2/SDL_mixer.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+    end)

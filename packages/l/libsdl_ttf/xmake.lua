@@ -40,3 +40,7 @@ package("libsdl_ttf")
 
         import("package.tools.autoconf").install(package, configs)
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("TTF_Init", {includes = "SDL2/SDL_ttf.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+    end)

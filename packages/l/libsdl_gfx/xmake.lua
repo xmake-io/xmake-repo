@@ -116,3 +116,10 @@ package("libsdl_gfx")
 
         import("package.tools.autoconf").install(package, configs)
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("aacircleRGBA", {includes = "SDL2/SDL2_gfxPrimitives.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("SDL_initFramerate", {includes = "SDL2/SDL2_framerate.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("rotozoomSurface", {includes = "SDL2/SDL2_rotozoom.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("SDL_imageFilterAdd", {includes = "SDL2/SDL2_imageFilter.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+    end)
