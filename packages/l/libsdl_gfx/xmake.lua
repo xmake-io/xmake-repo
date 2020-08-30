@@ -1,8 +1,4 @@
 package("libsdl_gfx")
-    add_deps("libsdl")
-    on_load(function(package)
-        package:add("includedirs", "include")
-    end)
 
     set_homepage("https://www.ferzkopp.net/wordpress/2016/01/02/sdl_gfx-sdl2_gfx/")
     set_description("Simple DirectMedia Layer primitives drawing library")
@@ -17,6 +13,11 @@ package("libsdl_gfx")
         add_urls("https://ufpr.dl.sourceforge.net/project/sdl2gfx/SDL2_gfx-$(version).tar.gz")
         add_versions("1.0.4", "63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262")
     end
+
+    add_deps("libsdl")
+    on_load(function(package)
+        package:add("includedirs", "include")
+    end)
 
     add_links("SDL2_gfx")
 
