@@ -26,28 +26,21 @@ package("libsdl_gfx")
     on_install("windows", function(package)
         local file_name = "SDL2_gfx.vcxproj"
         local content = io.readfile(file_name)
-
         content = content:gsub("%%%(AdditionalIncludeDirectories%)", package:dep("libsdl"):installdir("include", "SDL2") .. ";%%%(AdditionalIncludeDirectories%)")
         content = content:gsub("%%%(AdditionalLibraryDirectories%)", package:dep("libsdl"):installdir("lib") .. ";%%%(AdditionalLibraryDirectories%)")
-
         io.writefile(file_name, content)
 
         local configs = {}
-        local build_dir = ""
+        local arch = package:is_arch("x86") and "Win32" or "x64"
+        local mode = package:debug() and "Debug" or "Release"
 
-        if package:arch() == "x86" then
-            build_dir = "Win32"
-        else
-            build_dir = "x64"
-        end
-
-        table.insert(configs, "/property:Configuration=Release")
-        table.insert(configs, "/property:Platform=" .. build_dir)
+        table.insert(configs, "/property:Configuration=" .. mode)
+        table.insert(configs, "/property:Platform=" .. arch)
         table.insert(configs, "-target:SDL2_gfx")
 
         import("package.tools.msbuild").build(package, configs)
 
-        build_dir = path.join(build_dir, "Release")
+        local build_dir = path.join(arch, mode)
         os.cp(path.join(build_dir, "*.lib"), package:installdir("lib"))
         os.cp(path.join(build_dir, "*.dll"), package:installdir("lib"))
         os.cp("*.h", package:installdir("include", "SDL2"))
