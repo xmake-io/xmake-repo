@@ -15,6 +15,10 @@ package("glew")
         package:add("links", "glew32s")
     end)
 
+    if is_plat("mingw") then
+        add_deps("cmake")
+    end
+
     on_install("windows", function (package)
         os.cp("include", package:installdir())
         if is_arch("x64") then
@@ -30,4 +34,9 @@ package("glew")
         os.vrun("make")
         os.cp("lib", package:installdir())
         os.cp("include", package:installdir())
+    end)
+
+    on_install("mingw", function (package)
+        os.cd("build/cmake")
+        import("package.tools.cmake").install(package)
     end)
