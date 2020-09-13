@@ -1,0 +1,16 @@
+diff --git a/bin2c.c b/bin2c.c
+index 1004dd6..ae3c9b3 100644
+--- a/bin2c.c
++++ b/bin2c.c
+@@ -32,6 +32,11 @@ main(int argc, char *argv[])
+     unsigned int uncompressed_size, bz2_size;
+ #endif
+ 
++	if (argc == 2 && strcmp(argv[1], "test") == 0) {
++		fprintf(stdout, "bin2c installation succeeded!\n");
++		return 0;
++	}
++
+     if (argc < 4) {
+         fprintf(stderr, "Usage: %s binary_file output_file array_name\n",
+                 argv[0]);
