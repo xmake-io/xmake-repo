@@ -18,6 +18,7 @@ package("luajit")
     end
 
     on_load(function (package)
+        cprint("${green}package luajit : in on_load")
         package:addenv("PATH", "bin")
     end)
 
