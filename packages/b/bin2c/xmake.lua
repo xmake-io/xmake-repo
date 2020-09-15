@@ -16,7 +16,7 @@ package("bin2c")
             set_kind("binary")
             add_files("bin2c.c")
         ]])
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, {plat = os.host(), arch = os.arch()})
     end)
 
     on_test(function (package)
