@@ -177,6 +177,9 @@ target("luajit")
     if is_mode("debug") then
         add_defines("LUA_USE_ASSERT")
     end
+    if is_kind("shared") then
+        add_defines("LUA_BUILD_AS_DLL")
+    end
     add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
     add_defines("_FILE_OFFSET_BITS=64", "LARGEFILE_SOURCE", {public = true})
     add_undefines("_FORTIFY_SOURCE", {public = true})
