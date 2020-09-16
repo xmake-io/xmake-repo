@@ -19,6 +19,9 @@ package("luajit")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
+        if package:config("shared") then
+            package:addenv("PATH", "lib")
+        end
     end)
 
     on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", function (package)
