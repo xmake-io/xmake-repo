@@ -24,7 +24,7 @@ package("libuv")
     end
 
     on_load("windows", function (package)
-        package:add("links", "uv_a")
+        package:add("links", "uv" .. (package:config("shared") and "" or "_a"))
         package:add("syslinks", "advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
     end)
 
