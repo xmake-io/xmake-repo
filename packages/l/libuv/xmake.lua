@@ -28,6 +28,10 @@ package("libuv")
         package:add("syslinks", "advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
     end)
 
+    on_load("linux", function (package)
+        package:add("syslinks", "pthread")
+    end)
+
     on_install("windows", function (package)
         import("package.tools.cmake").install(package)
         os.cp("include", package:installdir())
