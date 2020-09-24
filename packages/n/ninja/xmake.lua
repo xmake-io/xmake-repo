@@ -32,7 +32,7 @@ package("ninja")
         os.vrun("python2 configure.py --bootstrap")
         os.cp("./ninja", package:installdir("bin"))
     end)
- 
+
     on_test(function (package)
         os.vrun("ninja --version")
     end)

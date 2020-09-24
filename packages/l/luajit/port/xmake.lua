@@ -57,7 +57,7 @@ rule("dasc")
 
 rule("buildvm")
     before_build_files(function (target, sourcebatch)
-       
+
         local buildvm = target:dep("buildvm")
         local outputdir = buildvm:objectdir()
         if not os.isdir(outputdir) then
@@ -91,12 +91,12 @@ rule("buildvm")
             compiler.compile(lj_vm_asm, lj_vm_obj, {target = target})
             table.join2(target:objectfiles(), lj_vm_obj)
         end
-    end)    
+    end)
 
 function set_host_toolchains()
     -- only for cross-compliation
     if is_plat(os.host()) then
-        return 
+        return
     end
     local arch
     if is_arch("arm64", "arm64-v8a", "mips64", "x86_64") then

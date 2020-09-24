@@ -3,10 +3,10 @@ package("boost")
     set_homepage("https://www.boost.org/")
     set_description("Collection of portable C++ source libraries.")
 
-    add_urls("https://dl.bintray.com/boostorg/release/$(version).tar.bz2", {version = function (version) 
+    add_urls("https://dl.bintray.com/boostorg/release/$(version).tar.bz2", {version = function (version)
             return version .. "/source/boost_" .. (version:gsub("%.", "_"))
         end})
-    add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {version = function (version) 
+    add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
 
@@ -20,11 +20,11 @@ package("boost")
         add_cxflags("/EHsc")
     end
 
-    local libnames = {"filesystem", 
-                      "fiber", 
-                      "coroutine", 
-                      "context", 
-                      "thread", 
+    local libnames = {"filesystem",
+                      "fiber",
+                      "coroutine",
+                      "context",
+                      "thread",
                       "regex",
                       "system",
                       "container",
@@ -67,7 +67,7 @@ package("boost")
     end)
 
     on_install("macosx", "linux", "windows", function (package)
-    
+
         -- force boost to compile with the desired compiler
         local file = io.open("user-config.jam", "a")
         if file then
@@ -82,9 +82,9 @@ package("boost")
             file:close()
         end
 
-        local bootstrap_argv = 
+        local bootstrap_argv =
         {
-            "--prefix=" .. package:installdir(), 
+            "--prefix=" .. package:installdir(),
             "--libdir=" .. package:installdir("lib"),
             "--without-icu"
         }
@@ -97,8 +97,8 @@ package("boost")
 
         local argv =
         {
-            "--prefix=" .. package:installdir(), 
-            "--libdir=" .. package:installdir("lib"), 
+            "--prefix=" .. package:installdir(),
+            "--libdir=" .. package:installdir("lib"),
             "-d2",
             "-j4",
             "--hash",

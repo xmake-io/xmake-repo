@@ -9,7 +9,7 @@ package("sol2")
     add_versions("v3.2.1", "b10f88dc1246f74a10348faef7d2c06e2784693307df74dcd87c4641cf6a6828")
 
     add_deps("cmake", "lua")
-    
+
     on_install("linux", "macosx", "windows", function (package)
         local configs = {}
         import("package.tools.cmake").install(package, configs)

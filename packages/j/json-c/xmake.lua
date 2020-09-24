@@ -14,7 +14,7 @@ package("json-c")
             os.cp("json_object_iterator.h", package:installdir("include/json-c"))
         end)
     end
- 
+
     on_install("linux", "macosx", "iphoneos", "android", function (package)
         local configs = {"--disable-dependency-tracking", "--disable-silent-rules", "--enable-shared=no"}
         import("package.tools.autoconf").install(package, configs)

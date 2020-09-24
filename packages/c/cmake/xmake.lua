@@ -6,7 +6,7 @@ package("cmake")
 
     if is_host("macosx") then
         add_urls("https://cmake.org/files/v$(version)-Darwin-x86_64.tar.gz", {version = function (version)
-                return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version 
+                return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version
             end})
         add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version)-Darwin-x86_64.tar.gz")
         add_urls("https://gitlab.com/xmake-mirror/cmake-releases/raw/master/cmake-$(version)-Darwin-x86_64.tar.gz")
@@ -14,7 +14,7 @@ package("cmake")
         add_versions("3.15.4", "adfbf611d21daa83b9bf6d85ab06a455e481b63a38d6e1270d563b03d4e5f829")
     elseif is_host("linux") and is_arch("x86_64") then
         add_urls("https://cmake.org/files/v$(version)-Linux-x86_64.tar.gz", {version = function (version)
-                return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version 
+                return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version
             end})
         add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version)-Linux-x86_64.tar.gz")
         add_urls("https://gitlab.com/xmake-mirror/cmake-releases/raw/master/cmake-$(version)-Linux-x86_64.tar.gz")
@@ -23,7 +23,7 @@ package("cmake")
     elseif is_host("windows") then
         if os.arch() == "x64" then
             add_urls("https://cmake.org/files/v$(version)-win64-x64.zip", {excludes = "*/doc/*", version = function (version)
-                    return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version 
+                    return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version
                 end})
             add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version)-win64-x64.zip", {excludes = "*/doc/*"})
             add_urls("https://gitlab.com/xmake-mirror/cmake-releases/raw/master/cmake-$(version)-win64-x64.zip", {excludes = "*/doc/*"})
@@ -31,7 +31,7 @@ package("cmake")
             add_versions("3.15.4", "5bb49c0274800c38833e515a01af75a7341db68ea82c71856bb3cf171d2068be")
         else
             add_urls("https://cmake.org/files/v$(version)-win32-x86.zip", {excludes = "*/doc/*", version = function (version)
-                    return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version 
+                    return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version
                 end})
             add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version)-win32-x86.zip", {excludes = "*/doc/*"})
             add_urls("https://gitlab.com/xmake-mirror/cmake-releases/raw/master/cmake-$(version)-win32-x86.zip", {excludes = "*/doc/*"})

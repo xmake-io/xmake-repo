@@ -4,7 +4,7 @@ package("libraw")
 
     add_urls("https://github.com/LibRaw/LibRaw/archive/$(version).tar.gz")
     add_urls("https://github.com/LibRaw/LibRaw.git")
-    
+
     add_versions("0.19.5", "9a2a40418e4fb0ab908f6d384ff6f9075f4431f8e3d79a0e44e5a6ea9e75abdc")
 
     if is_plat("windows", "mingw") then

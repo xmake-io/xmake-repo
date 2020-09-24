@@ -34,7 +34,7 @@ package("util-linux")
 
     on_install("macosx", "linux", function (package)
         local configs = {"--disable-dependency-tracking",
-                         "--disable-silent-rules", 
+                         "--disable-silent-rules",
                          "--without-python",
                          "--without-systemd",
                          "--enable-static=yes",

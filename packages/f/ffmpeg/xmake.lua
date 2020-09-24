@@ -30,7 +30,7 @@ package("ffmpeg")
     if is_plat("macosx", "linux") then
         add_deps("yasm")
     end
- 
+
     on_load(function (package)
         local configdeps = {zlib    = "zlib",
                             bzlib   = "bzip2",
@@ -44,7 +44,7 @@ package("ffmpeg")
             end
         end
     end)
-  
+
     on_install("linux", "macosx", "android@linux,macosx", function (package)
         local configs = {"--enable-gpl",
                          "--enable-version3",

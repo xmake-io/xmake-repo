@@ -20,5 +20,5 @@ package("bin2c")
     end)
 
     on_test(function (package)
-        os.vrun("bin2c test") 
+        os.vrun("bin2c test")
     end)

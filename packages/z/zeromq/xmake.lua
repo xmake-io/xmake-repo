@@ -27,7 +27,7 @@ package("zeromq")
         end
         import("package.tools.autoconf").install(package, configs)
     end)
- 
+
     on_test(function (package)
         assert(package:has_cfuncs("zmq_msg_init_size", {includes = "zmq.h"}))
     end)
