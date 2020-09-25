@@ -3,12 +3,12 @@ package("libxml2")
     set_homepage("http://xmlsoft.org/")
     set_description("The XML C parser and toolkit of Gnome.")
 
-    set_urls("http://xmlsoft.org/sources/libxml2-$(version).tar.gz", 
+    set_urls("http://xmlsoft.org/sources/libxml2-$(version).tar.gz",
              "https://ftp.osuosl.org/pub/blfs/conglomeration/libxml2/libxml2-$(version).tar.gz")
     add_urls("https://gitlab.gnome.org/GNOME/libxml2.git")
 
     add_versions("2.9.9", "94fb70890143e3c6549f265cee93ec064c80a84c42ad0f23e85ee1fd6540a871")
- 
+
     add_includedirs("include/libxml2")
     if is_plat("windows") then
         add_links("libxml2_a")
@@ -31,8 +31,8 @@ package("libxml2")
 
     on_install("macosx", "linux", "iphoneos", "android", function (package)
         local configs = {"--disable-dependency-tracking",
-                         "--without-python", 
-                         "--without-lzma", 
+                         "--without-python",
+                         "--without-lzma",
                          "--without-zlib",
                          "--without-iconv",
                          "--enable-shared=no"}

@@ -13,7 +13,7 @@ package("spdlog")
     add_configs("header_only",  { description = "Use header only", default = true, type = "boolean"})
     add_configs("fmt_external", { description = "Use external fmt library instead of bundled", default = false, type = "boolean"})
     add_configs("noexcept",     { description = "Compile with -fno-exceptions. Call abort() on any spdlog exceptions", default = false, type = "boolean"})
-    
+
     on_load(function (package)
         if not package:config("header_only") then
             package:add("defines", "SPDLOG_COMPILE_LIB")
@@ -28,13 +28,13 @@ package("spdlog")
             package:add("deps", "fmt")
         end
     end)
-    
+
     on_install(function (package)
         if package:version():lt("1.4.0") or package:config("header_only") then
             os.cp("include", package:installdir())
             return
         end
-        
+
         local configs = {}
         if package:config("shared") and is_plat("windows") then
             raise("spdlog shared lib is not yet supported under windows!")

@@ -20,6 +20,9 @@ package("luajit")
     on_load(function (package)
         cprint("${green}package luajit : in on_load")
         package:addenv("PATH", "bin")
+        if package:config("shared") then
+            package:addenv("PATH", "lib")
+        end
     end)
 
     on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", function (package)

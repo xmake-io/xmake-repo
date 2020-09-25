@@ -2,9 +2,9 @@ package("co")
 
     set_homepage("https://github.com/idealvin/co")
     set_description("Yet another libco and more.")
- 
+
     add_urls("https://github.com/idealvin/co.git")
- 
+
     on_install("macosx", "linux", "windows", function (package)
         import("package.tools.xmake").install(package)
     end)

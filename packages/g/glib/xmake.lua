@@ -22,10 +22,10 @@ package("glib")
     end
 
     on_install("macosx", "linux", function (package)
-        local configs = {"-Dbsymbolic_functions=false", 
-                         "-Ddtrace=false", 
-                         "-Dman=false", 
-                         "-Ddefault_library=static", 
+        local configs = {"-Dbsymbolic_functions=false",
+                         "-Ddtrace=false",
+                         "-Dman=false",
+                         "-Ddefault_library=static",
                          "-Dlibmount=false",
                          "-Dinstalled_tests=false"}
         if is_plat("macosx") then

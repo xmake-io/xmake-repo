@@ -15,7 +15,7 @@ package("fontconfig")
     -- fix the build issue with --enable-static
     add_patches("2.13.1", "https://gitlab.freedesktop.org/fontconfig/fontconfig/commit/8208f99fa1676c42bfd8d74de3e9dac5366c150c.diff",
                           "2abdff214b99f2d074170e6512b0149cc858ea26cd930690aa6b4ccea2c549ef")
- 
+
     on_install("linux", "macosx", function (package)
         local font_dirs = {}
         if is_plat("macosx") then

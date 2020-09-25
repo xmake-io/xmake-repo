@@ -11,9 +11,13 @@ package("glew")
         add_versions("2.1.0", "2700383d4de2455f06114fbaf872684f15529d4bdc5cdea69b5fb0e9aa7763f1")
     end
 
-    on_load("windows", function (package)
-        package:add("links", "glew32s")
+    on_load("windows", "mingw", function (package)
+        package:add("links", is_plat("windows") and "glew32s" or "glew32")
     end)
+
+    if is_plat("mingw") then
+        add_deps("cmake")
+    end
 
     on_install("windows", function (package)
         os.cp("include", package:installdir())
@@ -30,4 +34,15 @@ package("glew")
         os.vrun("make")
         os.cp("lib", package:installdir())
         os.cp("include", package:installdir())
+    end)
+
+    on_install("mingw", function (package)
+        os.cd("build/cmake")
+        local configs = {}
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        if package:config("shared") then
+            os.cp("build/bin/*.dll", package:installdir("lib"))
+        end
     end)

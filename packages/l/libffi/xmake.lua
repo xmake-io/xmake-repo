@@ -23,7 +23,7 @@ package("libffi")
         else
             table.insert(configs, "--disable-debug")
         end
-        import("package.tools.autoconf").install(package, configs) 
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

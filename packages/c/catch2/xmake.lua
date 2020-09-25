@@ -2,10 +2,10 @@ package("catch2")
 
     set_homepage("https://github.com/catchorg/Catch2")
     set_description("Catch2 is a multi-paradigm test framework for C++. which also supports Objective-C (and maybe C). ")
- 
+
     add_urls("https://github.com/catchorg/Catch2/archive/v$(version).zip")
     add_versions("2.9.2", "dc486300de22b0d36ddba1705abb07b9e5780639d824ba172ddf7062b2a1bf8f")
- 
+
     on_install(function (package)
         os.cp("single_include/catch2", package:installdir("include"))
     end)

@@ -25,7 +25,7 @@ package("pcre2")
             package:add("defines", "PCRE2_STATIC")
         end
     end)
- 
+
     if is_plat("windows") and winos.version():gt("winxp") then
         on_install("windows", function (package)
             local configs = {"-DPCRE2_BUILD_TESTS=OFF", "-DPCRE2_BUILD_PCRE2GREP=OFF"}

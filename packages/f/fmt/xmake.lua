@@ -20,13 +20,13 @@ package("fmt")
             package:add("defines", "FMT_EXPORT")
         end
     end)
-    
+
     on_install(function (package)
         if package:config("header_only") then
             os.cp("include/fmt", package:installdir("include"))
             return
         end
-        
+
         local configs = {}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DFMT_TEST=OFF")
@@ -34,7 +34,7 @@ package("fmt")
         table.insert(configs, "-DFMT_FUZZ=OFF")
         import("package.tools.cmake").install(package, configs)
     end)
-    
+
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <fmt/format.h>
@@ -45,5 +45,5 @@ package("fmt")
                 assert(s == "hello");
             }
         ]]}, {configs = {languages = "c++11"}, includes = "fmt/format.h", defines="FMT_HEADER_ONLY"}))
-    end)    
-    
+    end)
+

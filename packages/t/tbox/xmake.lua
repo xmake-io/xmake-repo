@@ -33,12 +33,12 @@ package("tbox")
         add_frameworks("Foundation")
     end
 
-    on_load(function (package) 
+    on_load(function (package)
         if package:debug() then
             package:add("defines", "__tb_debug__")
         end
     end)
- 
+
     on_install(function (package)
         local configs = {demo = false}
         if package:config("micro") then

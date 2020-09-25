@@ -21,7 +21,7 @@ package("cpp-taskflow")
                 std::vector<int> out(10);
                 std::iota(range.begin(), range.end(), 0);
                 std::iota(out.begin(), out.end(), 0);
-                taskflow.parallel_for(range.begin(), range.end(), [&] (const int i) { 
+                taskflow.parallel_for(range.begin(), range.end(), [&] (const int i) {
                     out[i] = i;
                 });
                 executor.run(taskflow).get();
@@ -30,5 +30,5 @@ package("cpp-taskflow")
                 }
             }
         ]]}, {configs = {languages = "c++1z"}, includes = "taskflow/taskflow.hpp"}))
-    end)    
-    
+    end)
+

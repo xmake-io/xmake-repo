@@ -14,7 +14,7 @@ package("expat")
     on_install("windows", function (package)
         import("package.tools.cmake").install(package)
     end)
- 
+
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf").install(package)
     end)

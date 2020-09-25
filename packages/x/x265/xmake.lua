@@ -14,7 +14,7 @@ package("x265")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
- 
+
     on_install("linux", "macosx", function (package)
         os.cd("build/linux")
         os.vrun("./multilib.sh")

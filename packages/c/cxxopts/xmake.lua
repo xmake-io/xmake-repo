@@ -22,5 +22,5 @@ package("cxxopts")
                   ("v,verbose", "Verbose output", cxxopts::value<bool>()->default_value("false"));
             }
         ]]}, {configs = {languages = "c++11"}, includes = "cxxopts.hpp"}))
-    end)    
-    
+    end)
+

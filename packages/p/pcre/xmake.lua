@@ -23,7 +23,7 @@ package("pcre")
             package:add("defines", "PCRE_STATIC")
         end
     end)
- 
+
     on_install("windows", function (package)
         local configs = {}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

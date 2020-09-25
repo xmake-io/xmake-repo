@@ -8,7 +8,7 @@ package("libcurl")
     add_urls("https://github.com/curl/curl/releases/download/curl-$(version).tar.bz2",
              {version = function (version) return (version:gsub("%.", "_")) .. "/curl-" .. version end})
     add_versions("7.64.1", "4cc7c738b35250d0680f29e93e0820c4cb40035f43514ea3ec8d60322d41a45d")
- 
+
     if is_plat("linux") then
         add_deps("openssl")
     elseif is_plat("windows") then
@@ -20,7 +20,7 @@ package("libcurl")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     end
- 
+
     on_install("windows", function (package)
         import("package.tools.cmake").install(package)
     end)
@@ -41,7 +41,7 @@ package("libcurl")
         table.insert(configs, "--without-librtmp")
         table.insert(configs, "--disable-ares")
         table.insert(configs, "--disable-ldap")
-        import("package.tools.autoconf").install(package, configs) 
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

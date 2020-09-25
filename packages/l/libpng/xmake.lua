@@ -19,10 +19,10 @@ package("libpng")
     else
         add_links("png")
     end
- 
+
     on_install("windows", function (package)
         local configs = {"-DPNG_TESTS=OFF",
-                         "-DPNG_SHARED=OFF", 
+                         "-DPNG_SHARED=OFF",
                          "-DPNG_DEBUG=" .. (package:debug() and "ON" or "OFF")}
         import("package.tools.cmake").install(package, configs)
     end)

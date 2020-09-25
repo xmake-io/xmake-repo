@@ -41,7 +41,7 @@ package("python")
     add_resources("2.7.15", "wheel",      "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz", "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d")
 
     on_load(function (package)
-        
+
         -- add PATH
         package:addenv("PATH", "bin")
 
@@ -69,7 +69,7 @@ package("python")
                 envs.PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")
             end
             package:addenv("PYTHONPATH", envs.PYTHONPATH)
-     
+
             -- install resources
             local python = path.join(package:installdir("bin"), "python" .. (is_host("windows") and ".exe" or ""))
             for _, name in ipairs({"setuptools", "pip", "wheel"}) do
@@ -133,7 +133,7 @@ package("python")
                 -- yep, this needs the absolute path where zlib needed a path relative to the SDK.
                 table.insert(cflags, "-I" .. path.join(xcode_sdkdir, "/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"))
             end
-    
+
             -- avoid linking to libgcc https://mail.python.org/pipermail/python-dev/2012-February/116205.html
             local target_minver = get_config("target_minver")
             if target_minver then
