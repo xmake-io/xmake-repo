@@ -9,11 +9,13 @@ package("fmt")
     add_versions("5.3.0", "4c0741e10183f75d7d6f730b8708a99b329b2f942dad5a9da3385ab92bb4a15c")
 
     add_configs("header_only", {description = "Use header only", default = true, type = "boolean"})
+    add_configs("cmake",       {description = "Use cmake buildsystem", default = false, type = "boolean"})
 
     on_load(function (package)
         if package:config("header_only") then
             package:add("defines", "FMT_HEADER_ONLY=1")
-        else
+        end
+        if not package:config("header_only") or package:config("cmake") then
             package:add("deps", "cmake")
         end
         if package:config("shared") then
@@ -22,7 +24,8 @@ package("fmt")
     end)
 
     on_install(function (package)
-        if package:config("header_only") then
+        print("fmt", package:config("cmake"))
+        if package:config("header_only") and not package:config("cmake") then
             os.cp("include/fmt", package:installdir("include"))
             return
         end
