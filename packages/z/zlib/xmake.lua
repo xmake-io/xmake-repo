@@ -11,7 +11,7 @@ package("zlib")
 
     on_install("windows", function (package)
         io.gsub("win32/Makefile.msc", "%-MD", "-" .. package:config("vs_runtime"))
-        os.vrun("nmake -f win32\\Makefile.msc zlib.lib")
+        import("package.tools.nmake").build(package, {"-f", "win32\\Makefile.msc", "zlib.lib"})
         os.cp("zlib.lib", package:installdir("lib"))
         os.cp("*.h", package:installdir("include"))
     end)
