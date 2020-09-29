@@ -20,5 +20,10 @@ jobs:
 
       - name: tests
         run: |
+          gcc --version
+          sudo apt install gcc-10 g++-10
+          export CC=gcc-10
+          export CXX=gcc-10
+          export LD=g++-10
           xmake l ./scripts/test.lua -D
 
