@@ -12,7 +12,11 @@ package("expresscpp")
     add_deps("nlohmann_json", "fmt", {configs = {cmake = true}})
     add_deps("boost", {configs = {system = true}})
 
-    on_install("linux", "macosx", "windows", function (package)
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
+    on_install("linux", "macosx", function (package)
         local configs = {}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
