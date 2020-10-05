@@ -6,16 +6,37 @@ package("bullet3")
     set_urls("https://github.com/bulletphysics/bullet3/archive/$(version).zip",
              "https://github.com/bulletphysics/bullet3.git")
     add_versions("2.88", "f361d10961021a186b80821cfc1cfafc8dac48ce35f7d5e8de0943af4b3ddce4")
+    add_versions("3.05", "e7ef322d8038e397cd6d79145a856cf5b4d558ce091d49b5239d625a46fef0d7")
+
+    add_configs("double_precision", { description = "Enable double precision floats", default = false, type = "boolean"})
+    add_configs("extras",           { description = "Build the extras", default = false, type = "boolean"})
 
     add_deps("cmake")
 
-    on_install("macosx", "linux", function (package)
-        local configs = {"-DBUILD_CPU_DEMOS=OFF"}
+    add_links("Bullet2FileLoader", "Bullet3Collision", "Bullet3Common", "Bullet3Dynamics", "Bullet3Geometry", "Bullet3OpenCL_clew", "BulletDynamics", "BulletCollision", "BulletInverseDynamics", "BulletSoftBody", "LinearMath")
+    add_includedirs("include", "include/bullet")
+
+    on_install("macosx", "linux", "windows", function (package)
+        local configs = {"-DBUILD_CPU_DEMOS=OFF", "-DBUILD_OPENGL3_DEMOS=OFF", "-DBUILD_BULLET2_DEMOS=OFF", "-DBUILD_UNIT_TESTS=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_DOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_EXTRAS=" .. (package:config("extras") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+
+        os.cp("src/**.h", package:installdir("include", "bullet"), {rootdir = "src"})
+        os.cp(path.join("build", "lib", package:debug() and "Debug" or "Release", "*"), package:installdir("lib"))
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("btVector3(0,0,0)", {includes = "bullet/LinearMath/btVector3.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test(int argc, char** argv) {
+                btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
+                btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
+                btBroadphaseInterface* overlappingPairCache = new btDbvtBroadphase();
+                btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver;
+                btDiscreteDynamicsWorld* dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+                dynamicsWorld->setGravity(btVector3(0, -10, 0));
+            }
+        ]]}, {includes = "bullet/btBulletDynamicsCommon.h"}))
     end)
