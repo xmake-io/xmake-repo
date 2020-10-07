@@ -33,5 +33,5 @@ package("tmxparser")
                 Tmx::Map map;
                 map.ParseFile("test.xml");
             }
-        ]]}, {configss = {languages = "c++11"}, includes = "Tmx.h"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "Tmx.h"}))
     end)

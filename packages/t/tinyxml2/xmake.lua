@@ -36,5 +36,5 @@ package("tinyxml2")
                 tinyxml2::XMLDocument doc;
                 doc.Parse(xml);
             }
-        ]]}, {configss = {languages = "c++11"}, includes = "tinyxml2.h"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "tinyxml2.h"}))
     end)
