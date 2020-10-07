@@ -18,6 +18,6 @@ jobs:
         with:
           xmake-version: branch@dev
 
-      - name: tests
+      - name: Tests
         run: |
           xmake l ./scripts/test.lua -D -p iphoneos

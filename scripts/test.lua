@@ -9,6 +9,7 @@ local options =
     {'v', "verbose",    "k",  nil, "Enable verbose information."     }
 ,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information."   }
 ,   {nil, "shallow",    "k",  nil, "Only install the root packages." }
+,   {nil, "shared",     "k",  nil, "Enable shared library."          }
 ,   {'p', "plat",       "kv", nil, "Set the given platform."         }
 ,   {'a', "arch",       "kv", nil, "Set the given architecture."     }
 ,   {'m', "mode",       "kv", nil, "Set the given mode."             }
@@ -64,8 +65,12 @@ function _require_packages(argv, packages)
     if argv.shallow then
         table.insert(require_argv, "--shallow")
     end
-    if argv.mode == "debug" then
+    if argv.mode == "debug" and argv.shared then
+        table.insert(require_argv, "--extra={debug=true,configs={shared=true}}")
+    elseif argv.mode == "debug" then
         table.insert(require_argv, "--extra={debug=true}")
+    elseif argv.shared then
+        table.insert(require_argv, "--extra={configs={shared=true}}")
     end
     table.join2(require_argv, packages)
     os.vexecv("xmake", require_argv)
