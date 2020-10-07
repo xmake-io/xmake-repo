@@ -9,6 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [macOS-latest]
+        kind: [static, shared]
 
     runs-on: ${{ matrix.os }}
 
@@ -18,10 +19,7 @@ jobs:
         with:
           xmake-version: branch@dev
 
-      - name: Tests (Static)
+      - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D
+          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
 
-      - name: Tests (Shared)
-        run: |
-          xmake l ./scripts/test.lua -D --shared
