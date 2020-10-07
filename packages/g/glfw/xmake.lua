@@ -20,17 +20,40 @@ package("glfw")
         add_deps("cmake")
     end
 
-    if is_plat("windows", "mingw") then
-        add_syslinks("opengl32", "gdi32", "user32", "shell32")
-    elseif is_plat("macosx") then
-        add_frameworks("Cocoa", "IOKit", "CoreFoundation")
+    add_configs("include_none", {description = "Adds the GLFW_INCLUDE_NONE Preprocessor Macro to disable all OpenGL includes inside GLFW", default = true, type = "boolean"})
+
+    if is_plat("macosx") then
+        add_frameworks("Cocoa", "IOKit")
     elseif is_plat("linux") then
         add_defines("_GLFW_X11")
-        add_syslinks("xrandr", "x11", "xinerama", "xcursor", "xi", "xext")
     end
 
-    on_load("windows", function (package)
-        package:add("links", "glfw3")
+    on_load(function (package)
+        if package:config("shared") then
+            if package:is_plat("windows", "mingw") then
+                package:add("defines", "GLFW_DLL")
+                package:add("links", "glfw3dll")
+            elseif package:is_plat("macosx") then
+                package:add("links", "glfw")
+            end
+        else
+            if package:is_plat("windows", "mingw") then
+                package:add("links", "glfw3")
+                if package:is_plat("windows") then
+                    package:add("syslinks", "user32", "shell32")
+                    package:add("cxflags", "/MD")
+                end
+                package:add("syslinks", "gdi32")
+            elseif package:is_plat("macosx") then
+                package:add("links", "glfw3")
+            elseif package:is_plat("linux") then
+                package:add("syslinks", "Xrandr", "X11", "Xinerama", "Xcursor", "Xi", "Xext", "dl", "pthread")
+            end
+        end
+
+        if package:config("include_none") then
+            package:add("defines", "GLFW_INCLUDE_NONE")
+        end
     end)
 
     on_install("windows", function (package)
@@ -59,5 +82,14 @@ package("glfw")
     end)
 
     on_install("linux", function (package)
-        import("package.tools.cmake").install(package)
+        local config = {}
+        table.insert(config, "-DGLFW_BUILD_DOCS=OFF")
+        table.insert(config, "-DGLFW_BUILD_TESTS=OFF")
+        table.insert(config, "-DGLFW_BUILD_EXAMPLES=OFF")
+        table.insert(config, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, config)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("glfwInit", {includes = "GLFW/glfw3.h"}))
     end)
