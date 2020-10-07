@@ -21,6 +21,7 @@ package("tinyxml2")
             add_rules("mode.debug", "mode.release")
             target("tinyxml2")
                 set_kind("$(kind)")
+                set_languages("cxx11")
                 add_headerfiles("tinyxml2.h")
                 add_files("tinyxml2.cpp")
         ]])
@@ -35,5 +36,5 @@ package("tinyxml2")
                 tinyxml2::XMLDocument doc;
                 doc.Parse(xml);
             }
-        ]]}, {includes = "tinyxml2.h"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "tinyxml2.h"}))
     end)
