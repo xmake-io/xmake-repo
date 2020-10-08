@@ -11,8 +11,29 @@ package("glew")
         add_versions("2.1.0", "2700383d4de2455f06114fbaf872684f15529d4bdc5cdea69b5fb0e9aa7763f1")
     end
 
-    on_load("windows", "mingw", function (package)
-        package:add("links", is_plat("windows") and "glew32s" or "glew32")
+    if is_plat("windows", "mingw") then
+        add_syslinks("glu32", "opengl32")
+    else
+        add_links("GLEW")
+        if is_plat("linux") then
+            add_syslinks("GLU", "GL")
+        elseif is_plat("macosx") then
+            add_frameworks("OpenGL")
+        end
+    end
+
+    on_load(function (package)
+        if package:config("shared") then
+            package:add("defines", "GLEW_BUILD")
+            if package:is_plat("windows", "mingw") then
+                package:add("links", "glew32")
+            end
+        else
+            package:add("defines", "GLEW_STATIC")
+            if package:is_plat("windows", "mingw") then
+                package:add("links", "glew32s")
+            end
+        end
     end)
 
     if is_plat("mingw") then
@@ -31,7 +52,7 @@ package("glew")
     end)
 
     on_install("linux", "macosx", function (package)
-        os.vrun("make")
+        os.vrun("make", {"glew.lib." .. (package:config("shared") and "shared" or "static")})
         os.cp("lib", package:installdir())
         os.cp("include", package:installdir())
     end)
@@ -45,4 +66,8 @@ package("glew")
         if package:config("shared") then
             os.cp("build/bin/*.dll", package:installdir("lib"))
         end
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("glewInit", {includes = "GL/glew.h"}))
     end)
