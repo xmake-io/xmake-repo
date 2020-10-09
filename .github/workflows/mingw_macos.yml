@@ -1,4 +1,4 @@
-name: MingW
+name: MingW (MacOS)
 
 on:
   pull_request:

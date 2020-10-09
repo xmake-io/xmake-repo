@@ -16,6 +16,16 @@ package("zlib")
         os.cp("*.h", package:installdir("include"))
     end)
 
+    on_install("mingw@windows", function (package)
+        if is_subhost("msys") then
+            io.gsub("win32/Makefile.gcc", "\nCC =.-\n",      "\nCC=" .. (package:build_getenv("cc") or "") .. "\n")
+            io.gsub("win32/Makefile.gcc", "\nAR =.-\n",      "\nAR=" .. (package:build_getenv("ar") or "") .. "\n")
+            import("package.tools.make").build(package, {"-f", "win32/Makefile.gcc", "libz.a"})
+            os.cp("libz.a", package:installdir("lib"))
+            os.cp("*.h", package:installdir("include"))
+        end
+    end)
+
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf").install(package, {"--static"})
     end)
