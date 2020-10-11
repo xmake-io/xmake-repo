@@ -8,6 +8,10 @@ package("gtest")
     add_versions("github:1.8.1", "release-1.8.1")
     add_versions("archive:1.8.1", "927827c183d01734cc5cfef85e0ff3f5a92ffe6188e0d18e909c5efebf28a0c7")
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             target("gtest")
