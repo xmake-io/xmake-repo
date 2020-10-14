@@ -1,22 +1,22 @@
-package("libxdmcp")
+package("libxext")
 
     set_homepage("https://www.x.org/")
-    set_description("X.Org: X Display Manager Control Protocol library")
+    set_description("X.Org: Library for common extensions to the X11 protocol")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXdmcp-$(version).tar.bz2")
-    add_versions("1.1.3", "20523b44aaa513e17c009e873ad7bbc301507a3224c232610ce2e099011c6529")
+    set_urls("https://www.x.org/archive/individual/lib/libXext-$(version).tar.bz2")
+    add_versions("1.3.4", "59ad6fcce98deaecc14d39a672cf218ca37aba617c9a0f691cac3bcd28edf82b")
 
-    add_deps("pkg-config", "xorgproto")
+    add_deps("pkg-config", "libx11", "xorgproto")
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
                          "--disable-silent-rules",
-                         "--enable-docs=no"}
+                         "--enable-specs=no"}
         import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:has_ctypes("xdmOpCode", {includes = "X11/Xdmcp.h"}))
+        assert(package:has_ctypes("XShapeEvent", {includes = "X11/extensions/shape.h"}))
     end)

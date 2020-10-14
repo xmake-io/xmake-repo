@@ -6,7 +6,7 @@ package("xorgproto")
     set_urls("https://xorg.freedesktop.org/archive/individual/proto/xorgproto-$(version).tar.bz2")
     add_versions("2019.2", "46ecd0156c561d41e8aa87ce79340910cdf38373b759e737fcbba5df508e7b8e")
 
-    add_deps("autoconf", "util-macros")
+    add_deps("pkg-config", "util-macros")
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

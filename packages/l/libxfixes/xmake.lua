@@ -1,12 +1,12 @@
-package("libxau")
+package("libxfixes")
 
     set_homepage("https://www.x.org/")
-    set_description("X.Org: A Sample Authorization Protocol for X")
+    set_description("X.Org: Header files for the XFIXES extension")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXau-$(version).tar.bz2")
-    add_versions("1.0.9", "ccf8cbf0dbf676faa2ea0a6d64bcc3b6746064722b606c8c52917ed00dcb73ec")
+    set_urls("https://www.x.org/archive/individual/lib/libXfixes-$(version).tar.bz2")
+    add_versions("5.0.3", "de1cd33aff226e08cefd0e6759341c2c8e8c9faf8ce9ac6ec38d43e287b22ad6")
 
-    add_deps("pkg-config", "util-macros", "xorgproto")
+    add_deps("pkg-config", "libx11", "xorgproto")
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
@@ -17,5 +17,5 @@ package("libxau")
     end)
 
     on_test(function (package)
-        assert(package:has_ctypes("Xauth", {includes = "X11/Xauth.h"}))
+        assert(package:has_ctypes("XFixesSelectionNotifyEvent", {includes = "X11/extensions/Xfixes.h"}))
     end)
