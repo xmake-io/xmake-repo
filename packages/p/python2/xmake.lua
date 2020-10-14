@@ -90,7 +90,7 @@ package("python2")
         local ldflags = {}
         if package:is_plat("macosx") then
             local xcode_dir     = get_config("xcode")
-            local xcode_sdkver  = get_config("xcode_sdkver")
+            local xcode_sdkver  = get_config("xcode_sdkver") or get_config("xcode_sdkver_macosx")
             if xcode_dir and xcode_sdkver then
                 -- help Python's build system (setuptools/pip) to build things on SDK-based systems
                 -- the setup.py looks at "-isysroot" to get the sysroot (and not at --sysroot)
@@ -105,7 +105,7 @@ package("python2")
             end
 
             -- avoid linking to libgcc https://mail.python.org/pipermail/python-dev/2012-February/116205.html
-            local target_minver = get_config("target_minver")
+            local target_minver = get_config("target_minver") or get_config("target_minver_macosx")
             if target_minver then
                 table.insert(configs, "MACOSX_DEPLOYMENT_TARGET=" .. target_minver)
             end
