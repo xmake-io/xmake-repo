@@ -6,7 +6,9 @@ package("libxfixes")
     set_urls("https://www.x.org/archive/individual/lib/libXfixes-$(version).tar.bz2")
     add_versions("5.0.3", "de1cd33aff226e08cefd0e6759341c2c8e8c9faf8ce9ac6ec38d43e287b22ad6")
 
-    add_deps("pkg-config", "libx11", "xorgproto")
+    if is_plat("macosx", "linux") then
+        add_deps("pkg-config", "libx11", "xorgproto")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

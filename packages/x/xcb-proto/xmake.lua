@@ -6,7 +6,9 @@ package("xcb-proto")
     set_urls("https://xcb.freedesktop.org/dist/xcb-proto-$(version).tar.bz2")
     add_versions("1.13", "7b98721e669be80284e9bbfeab02d2d0d54cd11172b72271e47a2fe875e2bde1")
 
-    add_deps("pkg-config", "python 3.x")
+    if is_plat("macosx", "linux") then
+        add_deps("pkg-config", "python 3.x")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

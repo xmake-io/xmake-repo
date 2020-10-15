@@ -25,6 +25,7 @@ package("glfw")
     if is_plat("macosx") then
         add_frameworks("Cocoa", "IOKit")
     elseif is_plat("linux") then
+        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxi", "libxext")
         add_defines("_GLFW_X11")
     end
 
@@ -47,7 +48,7 @@ package("glfw")
             elseif package:is_plat("macosx") then
                 package:add("links", "glfw3")
             elseif package:is_plat("linux") then
-                package:add("syslinks", "Xrandr", "X11", "Xinerama", "Xcursor", "Xi", "Xext", "dl", "pthread")
+                package:add("syslinks", "dl", "pthread")
             end
         end
 
@@ -82,12 +83,23 @@ package("glfw")
     end)
 
     on_install("linux", function (package)
-        local config = {}
-        table.insert(config, "-DGLFW_BUILD_DOCS=OFF")
-        table.insert(config, "-DGLFW_BUILD_TESTS=OFF")
-        table.insert(config, "-DGLFW_BUILD_EXAMPLES=OFF")
-        table.insert(config, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, config)
+        local configs = {}
+        table.insert(configs, "-DGLFW_BUILD_DOCS=OFF")
+        table.insert(configs, "-DGLFW_BUILD_TESTS=OFF")
+        table.insert(configs, "-DGLFW_BUILD_EXAMPLES=OFF")
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        -- patch missing libxrender/includes
+        local cflags = {}
+        local fetchinfo = package:dep("libxrender"):fetch()
+        if fetchinfo then
+            for _, includedir in ipairs(fetchinfo.includedirs) do
+                table.insert(cflags, "-I" .. includedir)
+            end
+        end
+        if #cflags > 0 then
+            table.insert(configs, "-DCMAKE_C_FLAGS=" .. table.concat(cflags, " "))
+        end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)

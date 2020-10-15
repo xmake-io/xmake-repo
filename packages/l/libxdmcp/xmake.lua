@@ -6,7 +6,9 @@ package("libxdmcp")
     set_urls("https://www.x.org/archive/individual/lib/libXdmcp-$(version).tar.bz2")
     add_versions("1.1.3", "20523b44aaa513e17c009e873ad7bbc301507a3224c232610ce2e099011c6529")
 
-    add_deps("pkg-config", "xorgproto")
+    if is_plat("macosx", "linux") then
+        add_deps("pkg-config", "xorgproto")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

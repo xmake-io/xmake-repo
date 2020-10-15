@@ -6,7 +6,9 @@ package("libxrandr")
     set_urls("https://www.x.org/archive/individual/lib/libXrandr-$(version).tar.bz2")
     add_versions("1.5.2", "8aea0ebe403d62330bb741ed595b53741acf45033d3bda1792f1d4cc3daee023")
 
-    add_deps("pkg-config", "libx11", "libxext", "libxrender", "xorgproto")
+    if is_plat("macosx", "linux") then
+        add_deps("pkg-config", "libx11", "libxext", "libxrender", "xorgproto")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

@@ -11,6 +11,10 @@ package("freeglut")
         add_deps("cmake")
     end
 
+    if is_plat("linux") then
+        add_deps("libx11", "libxi")
+    end
+
     on_install("linux", "windows", function (package)
         import("package.tools.cmake").install(package)
     end)

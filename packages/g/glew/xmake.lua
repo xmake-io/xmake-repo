@@ -16,23 +16,17 @@ package("glew")
     else
         add_links("GLEW")
         if is_plat("linux") then
-            add_syslinks("GLU", "GL")
+            add_deps("libx11", "xorgproto", "freeglut")
+            add_syslinks("GL")
         elseif is_plat("macosx") then
             add_frameworks("OpenGL")
         end
     end
 
     on_load(function (package)
-        if package:config("shared") then
-            package:add("defines", "GLEW_BUILD")
-            if package:is_plat("windows", "mingw") then
-                package:add("links", "glew32")
-            end
-        else
-            package:add("defines", "GLEW_STATIC")
-            if package:is_plat("windows", "mingw") then
-                package:add("links", "glew32s")
-            end
+        package:add("defines", "GLEW_BUILD")
+        if package:is_plat("windows", "mingw") then
+            package:add("links", "glew32")
         end
     end)
 
@@ -52,7 +46,20 @@ package("glew")
     end)
 
     on_install("linux", "macosx", function (package)
-        os.vrun("make", {"glew.lib." .. (package:config("shared") and "shared" or "static")})
+        local configs = {"glew.lib." .. (package:config("shared") and "shared" or "static")}
+        local cflags  = {}
+        for _, dep in ipairs(package:orderdeps()) do
+            local fetchinfo = dep:fetch()
+            if fetchinfo then
+                for _, includedir in ipairs(fetchinfo.includedirs) do
+                    table.insert(cflags, "-I" .. includedir)
+                end
+            end
+        end
+        if #cflags > 0 then
+            table.insert(configs, "CFLAGS.EXTRA=" .. table.concat(cflags, " "))
+        end
+        import("package.tools.make").build(package, configs)
         os.cp("lib", package:installdir())
         os.cp("include", package:installdir())
     end)

@@ -6,7 +6,9 @@ package("libxi")
     set_urls("https://www.x.org/archive/individual/lib/libXi-$(version).tar.bz2")
     add_versions("1.7.10", "36a30d8f6383a72e7ce060298b4b181fd298bc3a135c8e201b7ca847f5f81061")
 
-    add_deps("pkg-config", "libx11", "libxext", "libxfixes", "xorgproto")
+    if is_plat("macosx", "linux") then
+        add_deps("pkg-config", "libx11", "libxext", "libxfixes", "xorgproto")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

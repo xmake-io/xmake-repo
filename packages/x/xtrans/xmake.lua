@@ -6,7 +6,9 @@ package("xtrans")
     set_urls("https://www.x.org/archive/individual/lib/xtrans-$(version).tar.bz2")
     add_versions("1.4.0", "377c4491593c417946efcd2c7600d1e62639f7a8bbca391887e2c4679807d773")
 
-    add_deps("pkg-config", "util-macros", "xorgproto")
+    if is_plat("macosx", "linux") then
+        add_deps("pkg-config", "util-macros", "xorgproto")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
