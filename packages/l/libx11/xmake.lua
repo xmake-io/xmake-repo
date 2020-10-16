@@ -6,7 +6,9 @@ package("libx11")
     set_urls("https://www.x.org/archive/individual/lib/libX11-$(version).tar.bz2")
     add_versions("1.6.9", "9cc7e8d000d6193fa5af580d50d689380b8287052270f5bb26a5fb6b58b2bed1")
 
-    add_deps("pkg-config", "util-macros", "xtrans", "libxcb", "xorgproto")
+    if is_plat("macosx", "linux") then
+        add_deps("pkg-config", "util-macros", "xtrans", "libxcb", "xorgproto")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

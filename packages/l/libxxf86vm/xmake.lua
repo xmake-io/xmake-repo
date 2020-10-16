@@ -1,13 +1,13 @@
-package("libxrender")
+package("libxxf86vm")
 
     set_homepage("https://www.x.org/")
-    set_description("X.Org: Library for the Render Extension to the X11 protocol")
+    set_description("X.Org: XFree86-VidMode X extension")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXrender-$(version).tar.bz2")
-    add_versions("0.9.10", "c06d5979f86e64cabbde57c223938db0b939dff49fdb5a793a1d3d0396650949")
+    set_urls("https://www.x.org/archive/individual/lib/libXxf86vm-$(version).tar.bz2")
+    add_versions("1.1.4", "afee27f93c5f31c0ad582852c0fb36d50e4de7cd585fcf655e278a633d85cd57")
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", "libx11", "xorgproto")
+        add_deps("pkg-config", "libx11", "libxext", "xorgproto")
     end
 
     on_install("macosx", "linux", function (package)
@@ -19,5 +19,5 @@ package("libxrender")
     end)
 
     on_test(function (package)
-        assert(package:has_ctypes("XRenderColor", {includes = "X11/extensions/Xrender.h"}))
+        assert(package:has_ctypes("XF86VidModeModeInfo", {includes = {"X11/Xlib.h", "X11/extensions/xf86vmode.h"}}))
     end)

@@ -6,7 +6,9 @@ package("libxcb")
     set_urls("https://xcb.freedesktop.org/dist/libxcb-$(version).tar.bz2")
     add_versions("1.13.1", "a89fb7af7a11f43d2ce84a844a4b38df688c092bf4b67683aef179cdf2a647c4")
 
-    add_deps("autoconf", "python 3.x", "xcb-proto", "libpthread-stubs", "libxau", "libxdmcp")
+    if is_plat("macosx", "linux") then
+        add_deps("pkg-config", "python 3.x", "xcb-proto", "libpthread-stubs", "libxau", "libxdmcp")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
