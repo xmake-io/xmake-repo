@@ -28,7 +28,7 @@ package("python")
         add_deps("openssl", {host = true})
     end
 
-    if is_plat("linux") then
+    if is_host("linux") then
         add_syslinks("util", "pthread", "dl")
     end
 
