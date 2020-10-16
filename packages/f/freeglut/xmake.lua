@@ -12,7 +12,7 @@ package("freeglut")
     end
 
     if is_plat("linux") then
-        add_deps("libx11", "libxi", "libxxf86vm")
+        add_deps("libx11", "libxi", "libxxf86vm", "libxrandr")
         add_syslinks("GLU", "GL")
     end
 
