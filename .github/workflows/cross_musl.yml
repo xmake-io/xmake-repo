@@ -1,0 +1,30 @@
+name: Cross (Musl)
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        arch: [arm, aarch64]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: branch@dev
+
+      - name: Installation
+        run: |
+          wget https://musl.cc/${{ matrix.arch }}-linux-musleabi-cross.tgz
+          tar -xvf ${{ matrix.arch }}-linux-musleabi-cross.tgz
+
+      - name: Tests
+        run: |
+          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -p cross --sdk=`pwd`/${{ matrix.arch }}-linux-musleabi-cross
+

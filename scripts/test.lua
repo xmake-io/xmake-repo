@@ -6,19 +6,20 @@ import("packages", {alias = "get_packages"})
 -- the options
 local options =
 {
-    {'v', "verbose",    "k",  nil, "Enable verbose information."     }
-,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information."   }
-,   {nil, "shallow",    "k",  nil, "Only install the root packages." }
-,   {'k', "kind",       "kv", nil, "Enable static/shared library."   }
-,   {'p', "plat",       "kv", nil, "Set the given platform."         }
-,   {'a', "arch",       "kv", nil, "Set the given architecture."     }
-,   {'m', "mode",       "kv", nil, "Set the given mode."             }
-,   {nil, "cflags",     "kv", nil, "Set the cflags."                 }
-,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."               }
-,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                }
-,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."  }
-,   {nil, "mingw",      "kv", nil, "Set the MingW directory."        }
-,   {nil, "packages",   "vs", nil, "The package list."               }
+    {'v', "verbose",    "k",  nil, "Enable verbose information."                }
+,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information."              }
+,   {nil, "shallow",    "k",  nil, "Only install the root packages."            }
+,   {'k', "kind",       "kv", nil, "Enable static/shared library."              }
+,   {'p', "plat",       "kv", nil, "Set the given platform."                    }
+,   {'a', "arch",       "kv", nil, "Set the given architecture."                }
+,   {'m', "mode",       "kv", nil, "Set the given mode."                        }
+,   {nil, "cflags",     "kv", nil, "Set the cflags."                            }
+,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."                          }
+,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                           }
+,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."             }
+,   {nil, "sdk",        "kv", nil, "Set the SDK directory of cross toolchain."  }
+,   {nil, "mingw",      "kv", nil, "Set the MingW directory."                   }
+,   {nil, "packages",   "vs", nil, "The package list."                          }
 }
 
 -- require packages
@@ -41,6 +42,9 @@ function _require_packages(argv, packages)
     end
     if argv.ndk then
         table.insert(config_argv, "--ndk=" .. argv.ndk)
+    end
+    if argv.sdk then
+        table.insert(config_argv, "--sdk=" .. argv.sdk)
     end
     if argv.mingw then
         table.insert(config_argv, "--mingw=" .. argv.mingw)
