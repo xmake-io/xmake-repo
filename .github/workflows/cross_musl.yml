@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        arch: [arm, aarch64]
+        cross: [arm-linux-musleabi, aarch64-linux-musl]
 
     runs-on: ${{ matrix.os }}
 
@@ -21,10 +21,10 @@ jobs:
 
       - name: Installation
         run: |
-          wget https://musl.cc/${{ matrix.arch }}-linux-musleabi-cross.tgz
-          tar -xvf ${{ matrix.arch }}-linux-musleabi-cross.tgz
+          wget https://musl.cc/${{ matrix.cross }}-cross.tgz
+          tar -xvf ${{ matrix.cross }}-cross.tgz
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -p cross --sdk=`pwd`/${{ matrix.arch }}-linux-musleabi-cross
+          xmake l ./scripts/test.lua -D -p cross --sdk=`pwd`/${{ matrix.cross }}-cross
 
