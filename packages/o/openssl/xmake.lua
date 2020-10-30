@@ -14,10 +14,27 @@ package("openssl")
     add_versions("github:1.0.2", "b61942861405c634f86ca2b8dd1a34687e24b5036598d0fa971fac02405fdb1a")
     add_versions("github:1.0.0", "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
+    add_links("ssl", "crypto")
+
     on_install("linux", "macosx", function (package)
         os.vrun("./config %s --prefix=\"%s\"", package:debug() and "--debug" or "", package:installdir())
-        os.vrun("make -j4")
-        os.vrun("make install")
+        import("package.tools.make").install(package)
+    end)
+
+    on_install("cross", function (package)
+        local target = "linux-generic32"
+        if package:is_os("linux") then
+            if package:is_arch("arm64") then
+                target = "linux-aarch64"
+            else
+                target = "linux-armv4"
+            end
+        end
+        local configs = {target, "-DOPENSSL_NO_HEARTBEATS", "no-shared", "no-threads", "--prefix=" .. package:installdir()}
+        local buildenvs = import("package.tools.autoconf").buildenvs(package)
+        os.vrunv("./Configure", configs, {envs = buildenvs})
+        local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
+        import("package.tools.make").install(package, makeconfigs)
     end)
 
     on_test(function (package)
