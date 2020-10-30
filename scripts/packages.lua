@@ -71,7 +71,7 @@ function main(opt)
                     end
                     if #package_archs > 0 then
                         packages[plat] = packages[plat] or {}
-                        table.insert(packages[plat], {name = instance:name(), archs = package_archs, generic = #package_archs == #archs})
+                        table.insert(packages[plat], {name = instance:name(), instance = instance, archs = package_archs, generic = #package_archs == #archs})
                     end
                 end
             end
