@@ -14,7 +14,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Install Xmake
+      - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: branch@dev
