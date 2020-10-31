@@ -11,14 +11,16 @@ package("blosc")
     add_deps("cmake")
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
-        local configs = {}
+        local configs = {"-DBUILD_TESTS=OFF", "-DBUILD_BENCHMARKS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs)
-        if is_plat("windows") then
-            os.rm(path.join(package:installdir("lib"), "blosc.lib"))
-        elseif is_plat("mingw") then
-            os.rm(path.join(package:installdir("lib"), "libblosc.dll.a"))
+        if package:config("shared") then
+                table.insert(configs, "-DBUILD_SHARED=ON")
+                table.insert(configs, "-DBUILD_STATIC=OFF")
+        else
+                table.insert(configs, "-DBUILD_SHARED=OFF")
+                table.insert(configs, "-DBUILD_STATIC=ON")
         end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
