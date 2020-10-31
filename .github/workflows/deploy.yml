@@ -1,0 +1,41 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Install Xmake
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: branch@dev
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          name: id_rsa # optional
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Publish
+        run: |
+          git clone git@github.com:xmake-io/xrepo-docs.git
+          cd xrepo-docs
+          git remote add all git@github.com:xmake-io/xrepo-docs.git
+          git remote set-url --add all git@github.com:waruqi/xrepo-docs.git
+          git remote set-url --add all git@gitee.com:xmake-io/xrepo-docs.git
+          git remote set-url --add all git@gitlab.com:xmake-io/xrepo-docs.git
+          xmake l build.lua
+          git commit -a -m "update docs"
+          git push all master
+
+
