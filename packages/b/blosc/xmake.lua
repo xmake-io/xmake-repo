@@ -9,16 +9,19 @@ package("blosc")
     add_versions("1.20.1", "42c4d3fcce52af9f8e2078f8f57681bfc711706a3330cb72b9b39e05ae18a413")
 
     add_deps("cmake")
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
         local configs = {"-DBUILD_TESTS=OFF", "-DBUILD_BENCHMARKS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
-                table.insert(configs, "-DBUILD_SHARED=ON")
-                table.insert(configs, "-DBUILD_STATIC=OFF")
+            table.insert(configs, "-DBUILD_SHARED=ON")
+            table.insert(configs, "-DBUILD_STATIC=OFF")
         else
-                table.insert(configs, "-DBUILD_SHARED=OFF")
-                table.insert(configs, "-DBUILD_STATIC=ON")
+            table.insert(configs, "-DBUILD_SHARED=OFF")
+            table.insert(configs, "-DBUILD_STATIC=ON")
         end
         import("package.tools.cmake").install(package, configs)
     end)
