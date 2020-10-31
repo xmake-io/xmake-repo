@@ -11,7 +11,7 @@ package("blosc")
     add_deps("cmake")
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
-        configs = {}
+        local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
         if is_plat("windows") then
