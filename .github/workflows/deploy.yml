@@ -34,7 +34,7 @@ jobs:
           git remote set-url --add all git@github.com:waruqi/xrepo-docs.git
           git remote set-url --add all git@gitee.com:xmake-io/xrepo-docs.git
           git remote set-url --add all git@gitlab.com:xmake-io/xrepo-docs.git
-          xmake l build.lua
+          xmake l -vD ./build.lua
           git commit -a -m "update docs"
           git push all master
 
