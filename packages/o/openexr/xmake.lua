@@ -12,7 +12,7 @@ package("openexr")
     add_deps("zlib")
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
-        configs = {"-DBUILD_TESTING=OFF", "-DBUILD_OPENEXR_EXAMPLES=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_OPENEXR_EXAMPLES=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPYILMBASE_ENABLE=" .. "OFF")
