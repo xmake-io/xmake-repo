@@ -26,8 +26,14 @@ package("zlib")
         end
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("macosx", function (package)
         import("package.tools.autoconf").install(package, {"--static"})
+    end)
+
+    on_install("linux", function (package)
+        import("package.tools.autoconf").configure(package, {"--static"})
+        io.gsub("Makefile", "\nCFLAGS=(.-)\n", "\nCFLAGS=%1 -fPIC\n")
+        os.vrun("make install -j4")
     end)
 
     on_install("iphoneos", "android@linux,macosx", "mingw@linux,macosx", "cross", function (package)
