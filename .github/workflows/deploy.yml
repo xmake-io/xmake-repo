@@ -42,6 +42,7 @@ jobs:
           xmake l -vD `pwd`/build.lua
           git config --global user.email "waruqi@gmail.com"
           git config --global user.name "ruki"
+          git status
           git add -A
           git diff-index --quiet HEAD || git commit -m "autoupdate docs by xmake-repo/ci"
           git push all master
