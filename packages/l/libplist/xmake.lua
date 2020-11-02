@@ -10,7 +10,7 @@ package("libplist")
 
     add_deps("autoconf", "automake", "libtool", "pkg-config")
 
-    on_install("macosx", "linux", "windows", "mingw", "iphoneos", "cross", function (package)
+    on_install("macosx", "linux", "mingw", "iphoneos", "cross", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--without-cython"}
@@ -19,7 +19,11 @@ package("libplist")
         else
             table.insert(configs, "--enable-shared=no")
         end
-        import("package.tools.autoconf").install(package, configs)
+        local cxflags
+        if package:is_plat("linux") and not package:config("shared") then
+            cxflags = "-fPIC"
+        end
+        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
