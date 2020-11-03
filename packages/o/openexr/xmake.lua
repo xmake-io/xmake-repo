@@ -26,11 +26,8 @@ package("openexr")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPYILMBASE_ENABLE=" .. "OFF")
-        import("package.tools.cmake").install(package, configs)
-        for _, name in ipairs(os.dirs(os.curdir() .. "/build_*")) do
-            os.cp(name .. "/install/bin", package:installdir())
-            break
-        end
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        os.cp("build/install/bin", package:installdir())
         package:addenv("PATH", "bin")
     end)
 
