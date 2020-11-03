@@ -11,6 +11,10 @@ package("pthreads4w")
 
     add_includedirs("include/pthread")
 
+    if is_host("linux", "macosx") and is_plat("mingw") then
+        add_deps("autoconf", "automake")
+    end
+
     on_install("windows", function (package)
         local target = "VC"
         if not package:config("shared") then
@@ -29,6 +33,28 @@ package("pthreads4w")
         if package:debug() then
             os.cp("*.pdb", package:installdir("lib"))
         end
+    end)
+
+    on_install("mingw@macosx,linux", function (package)
+        local configs = {}
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared=yes")
+        else
+            table.insert(configs, "--enable-shared=no")
+        end
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        import("package.tools.autoconf").configure(package, configs)
+
+        local target = "GC"
+        if not package:config("shared") then
+            target = target .. "-static"
+        end
+        if package:debug() then
+            target = target .. "-debug"
+        end
+        os.vrunv("make", {"V=1", target})
     end)
 
     on_test(function (package)
