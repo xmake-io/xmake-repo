@@ -9,7 +9,7 @@ add_versions("1.9.4", "6da6cdc026fe042599d9fce7b06ff2c128e8dd6b8b751fca91eb022bc
 
 add_includedirs("include")
 add_deps("cmake")
-on_install("linux", "macosx", "iphoneos", "android", function(package)
+on_install("linux", "macosx", function(package)
     local configs = {}
     table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
     table.insert(configs, "-DDBUILD_STATIC_LIBS=" .. (package:config("static") and "ON" or "OFF"))
