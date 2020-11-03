@@ -18,6 +18,12 @@ package("m4")
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking"})
     end)
 
+    if is_subhost("msys") then
+        on_install("@windows", function (package)
+            import("package.tools.autoconf").install(package, {"--disable-dependency-tracking"})
+        end)
+    end
+
     on_test(function (package)
         os.vrun("m4 --version")
     end)
