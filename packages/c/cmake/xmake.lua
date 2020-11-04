@@ -13,7 +13,7 @@ package("cmake")
         add_versions("3.11.4", "2b5eb705f036b1906a5e0bce996e9cd56d43d73bdee8318ece3e5ce31657b812")
         add_versions("3.15.4", "adfbf611d21daa83b9bf6d85ab06a455e481b63a38d6e1270d563b03d4e5f829")
         add_versions("3.18.4", "9d27049660474cf134ab46fa0e0db771b263313fcb8ba82ee8b2d1a1a62f8f20")
-    elseif is_host("linux") and is_arch("x86_64") then
+    elseif is_host("linux") and os.arch() == "x86_64" then
         add_urls("https://cmake.org/files/v$(version)-Linux-x86_64.tar.gz", {version = function (version)
                 return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version
             end})
