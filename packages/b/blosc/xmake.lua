@@ -7,6 +7,7 @@ package("blosc")
              "https://github.com/Blosc/c-blosc")
 
     add_versions("1.20.1", "42c4d3fcce52af9f8e2078f8f57681bfc711706a3330cb72b9b39e05ae18a413")
+    add_versions("1.5.0", "208ba4db0e5116421ed2fbbdf2adfa3e1d133d29a6324a0f47cf2d71f3810c92")
 
     add_deps("cmake")
     if is_plat("linux") then

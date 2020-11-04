@@ -11,12 +11,23 @@ package("openexr")
     add_deps("cmake")
     add_deps("zlib")
 
-    on_install("macosx", "linux", "windows", "mingw", function (package)
-        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_OPENEXR_EXAMPLES=OFF"}
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+    add_configs("build_both", {description = "Build both static library and shared library.", default = false, type = "boolean"})
+
+    on_install("macosx", "linux", "windows", "mingw@windows", function (package)
+        local configs = {"-DBUILD_TESTING=OFF", "-DINSTALL_OPENEXR_EXAMPLES=OFF", "-DINSTALL_OPENEXR_DOCS=OFF", "-DOPENEXR_BUILD_UTILS=ON"}
+        if package:config("build_both") then
+            table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
+            table.insert(configs, "-DOPENEXR_BUILD_BOTH_STATIC_SHARED=ON")
+            table.insert(configs, "-DILMBASE_BUILD_BOTH_STATIC_SHARED=ON")
+        else
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DOPENEXR_BUILD_BOTH_STATIC_SHARED=OFF")
+            table.insert(configs, "-DILMBASE_BUILD_BOTH_STATIC_SHARED=OFF")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPYILMBASE_ENABLE=" .. "OFF")
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        os.cp("build/install/bin", package:installdir())
         package:addenv("PATH", "bin")
     end)
 
@@ -26,6 +37,6 @@ package("openexr")
             void test() {
                 printf( OPENEXR_PACKAGE_STRING );
             }
-        ]]}, {configs = {defines = "c++14"},
+        ]]}, {configs = {languages = "c++14"},
               includes = {"OpenEXR/OpenEXRConfig.h"}}))
     end)
