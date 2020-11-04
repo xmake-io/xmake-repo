@@ -42,7 +42,6 @@ package("glfw")
                 package:add("links", "glfw3")
                 if package:is_plat("windows") then
                     package:add("syslinks", "user32", "shell32")
-                    package:add("cxflags", "/MD")
                 end
                 package:add("syslinks", "gdi32")
             elseif package:is_plat("macosx") then
@@ -103,5 +102,9 @@ package("glfw")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("glfwInit", {includes = "GLFW/glfw3.h"}))
+        local cxflags
+        if not package:config("shared") and package:is_plat("windows") then
+            cxflags = "/MD"
+        end
+        assert(package:has_cfuncs("glfwInit", {includes = "GLFW/glfw3.h", configs = {cxflags = cxflags}}))
     end)
