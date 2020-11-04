@@ -162,7 +162,7 @@ target("buildvm")
     else
         add_defines("LUAJIT_OS=LUAJIT_OS_OTHER", {public = true})
     end
-    before_build("@windows", function (target)
+    before_build("@windows", "@msys", "@cygwin", function (target)
         if not is_arch("x86", "x64", "mips", "mips64") then
             -- @note we need fix `illegal zero-sized array` errors for msvc
             io.gsub("src/lj_jit.h", "  LJ_K32__MAX\n", "  LJ_K32__MAX=1\n")

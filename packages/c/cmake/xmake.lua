@@ -49,7 +49,7 @@ package("cmake")
         os.cp("CMake.app/Contents/share", package:installdir())
     end)
 
-    on_install("@linux|x86_64", "@windows", function (package)
+    on_install("@linux|x86_64", "@windows", "@msys", "@cygwin", function (package)
         os.cp("bin", package:installdir())
         os.cp("share", package:installdir())
     end)

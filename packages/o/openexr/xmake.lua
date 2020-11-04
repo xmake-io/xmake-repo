@@ -13,7 +13,7 @@ package("openexr")
 
     add_configs("build_both", {description = "Build both static library and shared library.", default = false, type = "boolean"})
 
-    on_install("macosx", "linux", "windows", "mingw@windows", function (package)
+    on_install("macosx", "linux", "windows", "mingw@windows", "mingw@msys", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DINSTALL_OPENEXR_EXAMPLES=OFF", "-DINSTALL_OPENEXR_DOCS=OFF", "-DOPENEXR_BUILD_UTILS=ON"}
         if package:config("build_both") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")

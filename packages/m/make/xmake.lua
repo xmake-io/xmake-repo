@@ -10,11 +10,17 @@ package("make")
     add_versions("4.2.1", "e40b8f018c1da64edd1cc9a6fce5fa63b2e707e404e20cad91fbae337c98a5b7")
 
     on_install("@windows", function(package)
-        os.vrun("build_w32.bat")
+        import("core.tool.toolchain")
+        local runenvs = toolchain.load("msvc"):runenvs()
+        os.vrunv("build_w32.bat", {}, {envs = runenvs})
         os.cp("WinRel/gnumake.exe", path.join(package:installdir("bin"), "make.exe"))
     end)
 
     on_install("@macosx", "@linux", function (package)
+        -- fix undefined reference to `__alloca'
+        if is_subhost("linux") then
+            io.replace("glob/glob.c", "!defined __alloca && !defined __GNU_LIBRARY__", "1")
+        end
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-gtk", "--disable-silent-rules"})
     end)
 

@@ -20,7 +20,7 @@ package("ninja")
         add_deps("python2", {kind = "binary"})
     end
 
-    on_install("@windows", function (package)
+    on_install("@windows", "@msys", "@cygwin", function (package)
         os.cp("./ninja.exe", package:installdir("bin"))
     end)
 

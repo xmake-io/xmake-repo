@@ -82,7 +82,7 @@ package("python")
         end)
     end)
 
-    on_install("@windows", function (package)
+    on_install("@windows", "@msys", "@cygwin", function (package)
         if package:version():ge("3.0") then
             os.cp("python.exe", path.join(package:installdir("bin"), "python3.exe"))
         else
@@ -165,5 +165,7 @@ package("python")
         os.vrun("python -c \"import pip\"")
         os.vrun("python -c \"import setuptools\"")
         os.vrun("python -c \"import wheel\"")
-        assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
+        if package:kind() ~= "binary" then
+            assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
+        end
     end)

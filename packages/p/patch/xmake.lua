@@ -9,13 +9,12 @@ package("patch")
         add_urls("https://github.com/xmake-mirror/patch/releases/download/v2.5.9/patch-$(version)-bin.zip")
         add_versions("2.5.9-7", "fabd6517e7bd88e067db9bf630d69bb3a38a08e044fa73d13a704ab5f8dd110b")
     else
-        add_urls("https://ftp.gnu.org/gnu/patch/patch-$(version).tar.bz2", {alias = "gnuftp"})
-        add_urls("https://github.com/xmake-mirror/patch/archive/v$(version).tar.gz", {alias = "github"})
-        add_versions("gnuftp:2.7.6", "3d1d001210d76c9f754c12824aa69f25de7cb27bb6765df63455b77601a0dcc9")
-        add_versions("github:2.7.6", "33d5a86bad9813b27dbbe890123d0b88fbcc74d5d997aeadde60c670a2bd0eb9")
+        add_urls("https://ftp.gnu.org/gnu/patch/patch-$(version).tar.bz2",
+                 "https://github.com/xmake-mirror/patch/releases/download/v$(version)/patch-$(version).tar.bz2")
+        add_versions("2.7.6", "3d1d001210d76c9f754c12824aa69f25de7cb27bb6765df63455b77601a0dcc9")
     end
 
-    on_install("@windows", function (package)
+    on_install("@windows", "@msys", "@cygwin", function (package)
         os.cp("bin/*", package:installdir("bin"))
     end)
 

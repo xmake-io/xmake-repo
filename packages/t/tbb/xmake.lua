@@ -18,7 +18,7 @@ package("tbb")
         end
     end
 
-    on_install("macosx", "linux", "mingw@windows", function (package)
+    on_install("macosx", "linux", "mingw@windows", "mingw@msys", function (package)
         local configs = {"-j4", "tbb_build_prefix=build_dir"}
         local cfg = package:debug() and "debug" or "release"
         table.insert(configs, "cfg=" .. cfg)

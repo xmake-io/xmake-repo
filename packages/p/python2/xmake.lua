@@ -69,7 +69,7 @@ package("python2")
         end)
     end)
 
-    on_install("@windows", function (package)
+    on_install("@windows", "@msys", "@cygwin", function (package)
         os.cp("python.exe", path.join(package:installdir("bin"), "python2.exe"))
         os.mv("*.exe", package:installdir("bin"))
         os.mv("*.dll", package:installdir("bin"))
@@ -137,5 +137,7 @@ package("python2")
         os.vrun("python2 -c \"import pip\"")
         os.vrun("python2 -c \"import setuptools\"")
         os.vrun("python2 -c \"import wheel\"")
-        assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
+        if package:kind() ~= "binary" then
+            assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
+        end
     end)
