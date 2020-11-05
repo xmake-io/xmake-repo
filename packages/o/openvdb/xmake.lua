@@ -17,7 +17,7 @@ package("openvdb")
     add_configs("print", {description = "Command line binary for displaying information about OpenVDB files.", default = true, type = "boolean"})
     add_configs("lod", {description = "Command line binary for generating volume mipmaps from an OpenVDB grid.", default = false, type = "boolean"})
     add_configs("render", {description = "Command line binary for ray-tracing OpenVDB grids.", default = false, type = "boolean"})
-    add_configs("view", {description = "Command line binary for displaying OpenVDB grids in a GL viewport", default = true, type = "boolean"})
+    add_configs("view", {description = "Command line binary for displaying OpenVDB grids in a GL viewport.", default = false, type = "boolean"})
 
     on_load(function (package)
         if package:config("with_houdini") == "" then
