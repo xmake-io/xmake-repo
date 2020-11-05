@@ -22,6 +22,7 @@ local options =
 ,   {nil, "packages",   "vs", nil, "The package list."                          }
 }
 
+
 -- require packages
 function _require_packages(argv, packages)
     local config_argv = {"f", "-c"}
@@ -128,7 +129,7 @@ function main(...)
     end
     if #packages == 0 then
         print("no testable packages on %s!", argv.plat or os.host())
-        return 
+        return
     end
 
     -- prepare test project
@@ -146,5 +147,7 @@ function main(...)
     os.exec("xmake repo -l")
 
     -- require packages
-    _require_packages(argv, packages)
+    for _, package in ipairs(packages) do
+        _require_packages(argv, package)
+    end
 end
