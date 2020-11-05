@@ -54,18 +54,10 @@ package("glfw")
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets([[
+        assert(package:check_csnippets({test = [[
             void test() {
                 glfwInit();
                 glfwTerminate();
             }
-<<<<<<< HEAD
-<<<<<<< HEAD
-        ]], {configs = {languages = "c11"}, includes = "GLFW/glfw3.h"}))
-=======
-        ]], {languages = "c11", includes = "GLFW/glfw3.h"}))
->>>>>>> cc78b65 (rewrite glfw/xmake.lua)
-=======
-        ]], {configs = {languages = "c11"}, includes = "GLFW/glfw3.h"}))
->>>>>>> 729104c (activate ci)
+        ]]}, {configs = {languages = "c11"}, includes = "GLFW/glfw3.h"}))
     end)
