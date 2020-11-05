@@ -1,3 +1,5 @@
+includes(path.join(os.scriptdir(), "versions.lua"))
+
 package("libcurl")
 
     set_homepage("https://curl.haxx.se/")
@@ -7,7 +9,7 @@ package("libcurl")
              "http://curl.mirror.anstey.ca/curl-$(version).tar.bz2")
     add_urls("https://github.com/curl/curl/releases/download/curl-$(version).tar.bz2",
              {version = function (version) return (version:gsub("%.", "_")) .. "/curl-" .. version end})
-    add_versions("7.64.1", "4cc7c738b35250d0680f29e93e0820c4cb40035f43514ea3ec8d60322d41a45d")
+    add_versions_list()
 
     if is_plat("linux") then
         add_deps("openssl")
@@ -43,6 +45,7 @@ package("libcurl")
             table.insert(configs, "--without-libidn2")
             table.insert(configs, "--without-nghttp2")
             table.insert(configs, "--without-brotli")
+            table.insert(configs, "--without-zstd")
         end
         table.insert(configs, "--without-ca-bundle")
         table.insert(configs, "--without-ca-path")
