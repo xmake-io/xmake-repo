@@ -1,5 +1,3 @@
-local add_versions_list = includes("versions.lua")
-
 package("libcurl")
 
     set_homepage("https://curl.haxx.se/")
@@ -10,7 +8,7 @@ package("libcurl")
     add_urls("https://github.com/curl/curl/releases/download/curl-$(version).tar.bz2",
              {version = function (version) return (version:gsub("%.", "_")) .. "/curl-" .. version end})
 
-    add_versions_list()
+    includes("versions.lua")
 
     if is_plat("linux") then
         add_deps("openssl")
