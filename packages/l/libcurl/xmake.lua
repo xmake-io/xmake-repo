@@ -41,6 +41,7 @@ package("libcurl")
             table.insert(configs, "--with-darwinssl")
             table.insert(configs, "--without-libidn2")
             table.insert(configs, "--without-nghttp2")
+            table.insert(configs, "--without-brotli")
         end
         table.insert(configs, "--without-ca-bundle")
         table.insert(configs, "--without-ca-path")
