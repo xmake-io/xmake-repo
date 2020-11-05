@@ -40,6 +40,7 @@ package("libcurl")
         if is_plat("macosx") then
             table.insert(configs, "--with-darwinssl")
             table.insert(configs, "--without-libidn2")
+            table.insert(configs, "--without-nghttp2")
         end
         table.insert(configs, "--without-ca-bundle")
         table.insert(configs, "--without-ca-path")
