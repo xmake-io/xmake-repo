@@ -11,7 +11,7 @@ package("tbb")
         add_urls("https://github.com/oneapi-src/oneTBB/archive/v$(version).tar.gz")
         add_versions("2020.3", "ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3")
 
-        if is_host("macosx") then
+        if is_plat("macosx") then
             add_configs("compiler", {description = "Compiler used to compile tbb." , default = "clang", type = "string", values = {"clang", "gcc", "icc", "cl", "icl", "[others]"}})
         else
             add_configs("compiler", {description = "Compiler used to compile tbb." , default = "gcc", type = "string", values = {"gcc", "clang", "icc", "cl", "icl", "[others]"}})
@@ -30,7 +30,12 @@ package("tbb")
             os.vrunv("make", configs)
         end
         os.cp("include", package:installdir())
+        os.rm("build/build_dir_" .. cfg .. "/*.d")
+        os.rm("build/build_dir_" .. cfg .. "/*.o")
         os.cp("build/build_dir_" .. cfg .. "/**", package:installdir("lib"))
+        if package:is_plat("mingw") then
+            package:addenv("PATH", "lib")
+        end
         package:add("links", "tbb", "tbbmalloc")
     end)
 
@@ -43,6 +48,7 @@ package("tbb")
             os.cp("tbb/lib/ia32/vc14/**", package:installdir("lib"))
             os.cp("tbb/bin/ia32/vc14/**", package:installdir("bin"))
         end
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
