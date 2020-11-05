@@ -11,11 +11,13 @@ package("glfw")
 
     add_deps("cmake")
 
-    if is_host("macosx") then
+    if is_plat("macosx") then
         add_frameworks("Cocoa", "IOKit")
-    elseif is_host("windows") then
+    elseif is_plat("windows") then
         add_syslinks("user32", "shell32", "gdi32")
-    elseif is_host("linux") then
+    elseif is_plat("mingw") then
+        add_syslinks("gdi32")
+    elseif is_plat("linux") then
         -- TODO: add wayland support
         add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxi", "libxext")
         add_syslinks("dl", "pthread")
