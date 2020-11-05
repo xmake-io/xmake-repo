@@ -11,13 +11,13 @@ package("mimalloc")
 
     add_deps("cmake")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("advapi32")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     end
 
-    on_install("windows", "linux", function (package)
+    on_install("windows", "mingw", "linux", function (package)
         local configs = {}
         table.insert(configs, "-DMI_OVERRIDE=" .. "OFF")
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
