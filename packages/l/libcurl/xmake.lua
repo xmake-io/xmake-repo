@@ -44,6 +44,7 @@ package("libcurl")
             table.insert(configs, "--without-libidn2")
             table.insert(configs, "--without-nghttp2")
             table.insert(configs, "--without-brotli")
+            table.insert(configs, "--without-zstd")
         end
         table.insert(configs, "--without-ca-bundle")
         table.insert(configs, "--without-ca-path")
