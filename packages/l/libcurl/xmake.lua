@@ -26,14 +26,20 @@ package("libcurl")
     end)
 
     on_install("macosx", "linux", "iphoneos", function (package)
-        local configs = {"--disable-silent-rules", "--disable-dependency-tracking", "--enable-shared=no"}
+        local configs = {"--disable-silent-rules", "--disable-dependency-tracking"}
         if package:debug() then
             table.insert(configs, "--enable-debug")
         else
             table.insert(configs, "--disable-debug")
         end
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared=yes")
+        else
+            table.insert(configs, "--enable-shared=no")
+        end
         if is_plat("macosx") then
             table.insert(configs, "--with-darwinssl")
+            table.insert(configs, "--without-libidn2")
         end
         table.insert(configs, "--without-ca-bundle")
         table.insert(configs, "--without-ca-path")
