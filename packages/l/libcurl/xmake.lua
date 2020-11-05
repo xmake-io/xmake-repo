@@ -22,7 +22,8 @@ package("libcurl")
     end
 
     on_install("windows", function (package)
-        import("package.tools.cmake").install(package)
+        local configs = {"-DBUILD_TESTING=OFF"}
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_install("macosx", "linux", "iphoneos", function (package)
