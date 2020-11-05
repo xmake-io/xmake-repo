@@ -25,10 +25,11 @@ package("blosc")
             table.insert(configs, "-DBUILD_STATIC=ON")
         end
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
-        if is_host("windows") then
+        if package:is_plat("windows", "mingw") then
+            -- special concern for legacy versions which keep producing the shared library
             local version = package:version()
             if version:le("1.10") and not package:config("shared") then
-                os.rm(package:installdir(lib) .. "/blosc.lib")
+                os.rm(path.join(package:installdir("lib"), "blosc.lib"))
             elseif package:config("shared") then
                 os.cp("build/install/bin", package:installdir())
                 package:addenv("PATH", "bin")

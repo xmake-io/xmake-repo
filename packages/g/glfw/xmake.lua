@@ -29,9 +29,9 @@ package("glfw")
     on_install("macosx", "windows", "linux", "mingw", function (package)
         local configs = {"-DGLFW_BUILD_DOCS=OFF", "-DGLFW_BUILD_TESTS=OFF", "-DGLFW_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if is_plat("windows") and vs_runtime and vs_runtime:startswith("MD") then
+        if package:is_plat("windows") and vs_runtime and vs_runtime:startswith("MD") then
             table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL")
-        elseif is_plat("linux") then
+        elseif package:is_plat("linux") then
             -- patch missing libxrender/includes
             local cflags = {}
             local fetchinfo = package:dep("libxrender"):fetch()
@@ -45,7 +45,7 @@ package("glfw")
             end
         end
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
-        if is_host("windows") and package:config("shared") then
+        if package:is_plat("windows", "mingw") and package:config("shared") then
             os.trycp("build/install/bin", package:installdir())
             package:addenv("PATH", "bin")
         end

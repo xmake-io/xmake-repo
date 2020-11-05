@@ -29,8 +29,6 @@ package("glew")
         package:add("defines", "GLEW_BUILD")
         if package:is_plat("windows") then
             package:add("links", package:config("shared") and "glew32" or "glew32s")
-        elseif package:is_plat("mingw") then
-            package:add("links", "glew32")
         end
     end)
 
@@ -82,7 +80,7 @@ package("glew")
         table.insert(configs, "-DBUILD_UTILS=" .. (package:config("build_utils") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
         if package:config("shared") then
-            os.cp("build/bin/*.dll", package:installdir("bin"))
+            os.cp("build/install/bin", package:installdir())
             package:addenv("PATH", "bin")
         end
     end)
