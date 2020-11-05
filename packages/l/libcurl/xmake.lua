@@ -22,7 +22,7 @@ package("libcurl")
     end
 
     on_install("windows", function (package)
-        local configs = { "-DBUILD_TESTING=OFF" }
+        local configs = {"-DBUILD_TESTING=OFF"}
         import("package.tools.cmake").install(package, configs)
     end)
 
