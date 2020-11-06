@@ -90,7 +90,9 @@ package("boost")
             "--without-icu"
         }
         if is_host("windows") then
-            os.vrunv("bootstrap.bat", bootstrap_argv)
+            import("core.tool.toolchain")
+            local runenvs = toolchain.load("msvc"):runenvs()
+            os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
         else
             os.vrunv("./bootstrap.sh", bootstrap_argv)
         end
