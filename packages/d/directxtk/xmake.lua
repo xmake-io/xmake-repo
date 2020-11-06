@@ -16,7 +16,13 @@ package("DirectXTK")
     add_versions("20.9.0", "9d5131243bf3e33db2e3a968720d860abdcbbe7cb037c2cb5dd06046d439ed09")
 
     on_install("windows", function (package)
-        local configs = { "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. config.get("vs_sdkver") }
+        local configs = {}
+        
+        local vs_sdkver = get_config("vs_sdkver")
+        if vs_sdkver then
+            table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
+        end
+
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
