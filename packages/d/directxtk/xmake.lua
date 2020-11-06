@@ -7,7 +7,7 @@ package("DirectXTK")
              "https://github.com/microsoft/DirectXTK.git",
              {version = function (version)
                 local versions = {
-                    ["20.9.0"]="sept2020"
+                    ["20.9.0"] = "sept2020"
                 }
 
                 return versions[version]
@@ -16,7 +16,7 @@ package("DirectXTK")
     add_versions("20.9.0", "9d5131243bf3e33db2e3a968720d860abdcbbe7cb037c2cb5dd06046d439ed09")
 
     on_install("windows", function (package)
-        local configs = {}
+        local configs = { "-DCMAKE_SYSTEM_VERSION=10.0.19041" }
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
