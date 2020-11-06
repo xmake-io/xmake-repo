@@ -32,7 +32,7 @@ package("DirectXTK")
         if vs_sdkver then
             local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
 
-            assert(build_ver) >= 19041, "DirectXTK requires Windows SDK to be at least 10.0.19041.0")
+            assert(tonumber(build_ver) >= 19041, "DirectXTK requires Windows SDK to be at least 10.0.19041.0")
 
             table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
             table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
