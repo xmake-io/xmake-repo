@@ -34,10 +34,7 @@ package("DirectXTK")
                 table.insert(split_version, match);
             end
 
-            if tonumber(split_version[3]) < 19041 then
-                print("DirectXTK requires Windows SDK to be at least 10.0.19041.0")
-                assert(false)
-            end
+            assert(tonumber(split_version[3]) >= 19041, "DirectXTK requires Windows SDK to be at least 10.0.19041.0")
 
             table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
             table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
