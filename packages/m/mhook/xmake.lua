@@ -12,7 +12,7 @@ package("mhook")
 
     on_install("windows", function (package)
         local configs = {}
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
