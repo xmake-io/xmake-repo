@@ -1,3 +1,12 @@
+function split(s, delimiter)
+    result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
+end
+
+
 package("DirectXTK")
 
     set_homepage("https://github.com/Tessil/hopscotch-map")
@@ -20,6 +29,16 @@ package("DirectXTK")
         
         local vs_sdkver = get_config("vs_sdkver")
         if vs_sdkver then
+            split_version = {};
+            for match in string.gmatch(vs_sdkver, "([^.]+)")do
+                table.insert(split_version, match);
+            end
+
+            if tonumber(split_version[3]) < 19041 then
+                print("DirectXTK requires Windows SDK to be at least 10.0.19041.0")
+                assert(false)
+            end
+
             table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
             table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
         end
