@@ -9,7 +9,7 @@ end
 
 package("DirectXTK")
 
-    set_homepage("https://github.com/Tessil/hopscotch-map")
+    set_homepage("https://github.com/microsoft/DirectXTK")
     set_description("This package contains the \"DirectX Tool Kit\", a collection of helper classes for writing Direct3D 11 C++ code for Universal Windows Platform (UWP) apps for Windows 10, Xbox One, and Win32 desktop applications for Windows 7 Service Pack 1 or later.")
 
     set_urls("https://github.com/microsoft/DirectXTK/archive/$(version).zip",
@@ -24,17 +24,15 @@ package("DirectXTK")
 
     add_versions("20.9.0", "9d5131243bf3e33db2e3a968720d860abdcbbe7cb037c2cb5dd06046d439ed09")
 
+
     on_install("windows", function (package)
         local configs = {}
         
         local vs_sdkver = get_config("vs_sdkver")
         if vs_sdkver then
-            split_version = {};
-            for match in string.gmatch(vs_sdkver, "([^.]+)")do
-                table.insert(split_version, match);
-            end
+            local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
 
-            assert(tonumber(split_version[3]) >= 19041, "DirectXTK requires Windows SDK to be at least 10.0.19041.0")
+            assert(build_ver) >= 19041, "DirectXTK requires Windows SDK to be at least 10.0.19041.0")
 
             table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
             table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
