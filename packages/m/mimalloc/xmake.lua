@@ -18,8 +18,7 @@ package("mimalloc")
     end
 
     on_install("macosx", "windows", "linux", function (package)
-        local configs = {}
-        table.insert(configs, "-DMI_OVERRIDE=" .. "OFF")
+        local configs = {"-DMI_OVERRIDE=OFF"}
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
