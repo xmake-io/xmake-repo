@@ -17,7 +17,7 @@ package("mimalloc")
         add_syslinks("pthread")
     end
 
-    on_install("windows", "linux", function (package)
+    on_install("macosx", "windows", "linux", function (package)
         local configs = {}
         table.insert(configs, "-DMI_OVERRIDE=" .. "OFF")
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
@@ -33,4 +33,8 @@ package("mimalloc")
         os.cp("include/mimalloc.h", package:installdir("include"), {rootdir = "include"})
         os.cp("include/mimalloc-new-delete.h", package:installdir("include"), {rootdir = "include"})
         os.cp("include/mimalloc-override.h", package:installdir("include"), {rootdir = "include"})
+    end)
+
+    on_test(function (package) 
+        assert(package:has_cfuncs("mi_malloc", {includes = "mimalloc.h"})) 
     end)
