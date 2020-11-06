@@ -3,7 +3,8 @@ package("mhook")
     set_homepage("https://github.com/martona/mhook")
     set_description("A Windows API hooking library ")
 
-    set_urls("https://github.com/apriorit/mhook/archive/$(version).zip")
+    set_urls("https://github.com/apriorit/mhook/archive/$(version).zip",
+             "https://github.com/apriorit/mhook.git")
 
     add_versions("2.5.1", "37e7d65422a770b0a28835b4fe557823278f7118ff4a399d7acf345c8db318e5")
 
