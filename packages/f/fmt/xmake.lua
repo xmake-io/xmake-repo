@@ -24,7 +24,6 @@ package("fmt")
     end)
 
     on_install(function (package)
-        print("fmt", package:config("cmake"))
         if package:config("header_only") and not package:config("cmake") then
             os.cp("include/fmt", package:installdir("include"))
             return
