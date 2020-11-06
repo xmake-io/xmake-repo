@@ -21,6 +21,7 @@ package("DirectXTK")
         local vs_sdkver = get_config("vs_sdkver")
         if vs_sdkver then
             table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
+            table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
         end
 
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
