@@ -6,7 +6,6 @@ function split(s, delimiter)
     return result;
 end
 
-
 package("DirectXTK")
 
     set_homepage("https://github.com/microsoft/DirectXTK")
@@ -18,26 +17,20 @@ package("DirectXTK")
                 local versions = {
                     ["20.9.0"] = "sept2020"
                 }
-
                 return versions[version]
             end})
 
     add_versions("20.9.0", "9d5131243bf3e33db2e3a968720d860abdcbbe7cb037c2cb5dd06046d439ed09")
 
-
     on_install("windows", function (package)
         local configs = {}
-        
         local vs_sdkver = get_config("vs_sdkver")
         if vs_sdkver then
             local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
-
             assert(tonumber(build_ver) >= 19041, "DirectXTK requires Windows SDK to be at least 10.0.19041.0")
-
             table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
             table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
         end
-
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
