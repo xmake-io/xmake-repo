@@ -13,7 +13,7 @@ package("stackwalker")
         add_syslinks("advapi32")
     end
 
-    on_install("windows", "mingw", function (package)
+    on_install("windows", function (package)
         local configs = {"-DStackWalker_DISABLE_TESTS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
