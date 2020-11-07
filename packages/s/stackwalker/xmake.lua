@@ -27,10 +27,8 @@ package("stackwalker")
             void Func2() { Func3(); }
             void Func1() { Func2(); }
 
-            int test()
-            {
+            void test() {
                 Func1();
-                return 0;
             }
         ]]}, {includes = {"StackWalker.h"}}))
     end)
