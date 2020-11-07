@@ -15,8 +15,6 @@ package("libsodium")
         add_versions("1.0.18", "d2f1918e198cd86b9e6ba05b2f5c2dc86753875ea3ee887892767231c6b7e121")
     end
 
-
-
     on_load(function (package)
         if not package:config("shared") then
             package:add("defines", "SODIUM_STATIC")
@@ -25,23 +23,19 @@ package("libsodium")
     
     on_install("windows", function (package)
         os.cp("include", package:installdir())
-        os.cp(path.join((is_arch("x86") and "Win32" or "x64"), (package:debug() and "Debug" or "Release"), "v142", (package:config("shared") and "dynamic" or "static"), "*"), package:installdir("lib"))
-        package:add("links", "libsodium.lib")
-        
+        os.cp(path.join((package:is_plat("x86") and "Win32" or "x64"), (package:debug() and "Debug" or "Release"), "v142", (package:config("shared") and "dynamic" or "static"), "*"), package:installdir("lib"))
     end)
 
     on_install("mingw", function (package)
 
-        local root_dir = (is_arch("x86") and "libsodium-win32" or "libsodium-win64")
+        local root_dir = (package:is_plat("x86") and "libsodium-win32" or "libsodium-win64")
 
         os.cp(path.join(root_dir, "include"), package:installdir())
         if package:config("shared") then
             os.cp(path.join(root_dir, "lib", "libsodium.dll.a"), package:installdir("lib"))
             os.cp(path.join(root_dir, "bin", "*"), package:installdir("lib"))
-            package:add("links", "libsodium.dll.a")
         else
             os.cp(path.join(root_dir, "lib", "libsodium.a"), package:installdir("lib"))
-            package:add("links", "libsodium.a")
         end
     end)
 
