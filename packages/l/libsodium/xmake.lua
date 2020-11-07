@@ -23,12 +23,12 @@ package("libsodium")
     
     on_install("windows", function (package)
         os.cp("include", package:installdir())
-        os.cp(path.join((package:is_plat("x64") and "x64" or "Win32"), (package:debug() and "Debug" or "Release"), "v142", (package:config("shared") and "dynamic" or "static"), "*"), package:installdir("lib"))
+        os.cp(path.join((package:is_arch("x86_64") and "x64" or "Win32"), (package:debug() and "Debug" or "Release"), "v142", (package:config("shared") and "dynamic" or "static"), "*"), package:installdir("lib"))
     end)
 
     on_install("mingw", function (package)
 
-        local root_dir = (package:is_plat("x64") and "libsodium-win64" or "libsodium-win32")
+        local root_dir = (package:is_arch("x86_64") and "libsodium-win64" or "libsodium-win32")
 
         os.cp(path.join(root_dir, "include"), package:installdir())
         if package:config("shared") then
