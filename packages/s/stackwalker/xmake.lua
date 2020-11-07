@@ -5,7 +5,9 @@ package("stackwalker")
 
     set_urls("https://github.com/JochenKalmbach/StackWalker/archive/$(version).zip",
              "https://github.com/JochenKalmbach/StackWalker.git")
-    add_versions("1.20", "b139c83b7c4991930ebe48eae43b0feedca034e136f00be294f3641495b2c835")
+
+    add_versions("1.20.0", "b139c83b7c4991930ebe48eae43b0feedca034e136f00be294f3641495b2c835")
+    add_patches("1.20.0", path.join(os.scriptdir(), "patches", "1.20.0", "debug_build.patch"), "732c476f40a61be767ad8cfbe3afd0633a647fb882c37b4f7fffd3966999c671")
 
     add_deps("cmake")
 
