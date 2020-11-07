@@ -1,4 +1,4 @@
-package("jsoncpp")
+package("libuuid")
 
     set_homepage("https://sourceforge.net/projects/libuuid")
     set_description("Portable uuid C library")
