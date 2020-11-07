@@ -25,7 +25,7 @@ package("openvdb")
             package:add("deps", "blosc ~1.5.0", {configs = {shared = package:is_plat("linux")}})
             package:add("deps", "openexr", {configs = {shared = package:is_plat("windows")}})
             if package:config("with_maya") == "" then
-                package:add("deps", "tbb")
+                package:add("deps", "tbb", {configs = {shared = true}})
             end
         end
         if package:config("view") then
