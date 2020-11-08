@@ -20,7 +20,8 @@ package("chipmunk2d")
             table.insert(configs, "-DBUILD_SHARED=OFF")
             table.insert(configs, "-DBUILD_STATIC=ON")
         end
-       import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs)
+        os.vcp("include/chipmunk", package:installdir("include"))
    end)
 
     on_test(function (package)
