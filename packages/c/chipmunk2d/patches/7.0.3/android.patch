@@ -1,0 +1,35 @@
+diff --git a/include/chipmunk/chipmunk_types.h b/include/chipmunk/chipmunk_types.h
+index 9544da8..444f5c6 100644
+--- a/include/chipmunk/chipmunk_types.h
++++ b/include/chipmunk/chipmunk_types.h
+@@ -53,8 +53,12 @@
+ #endif
+ 
+ #ifndef CP_USE_DOUBLES
+-	// Use doubles by default for higher precision.
+-	#define CP_USE_DOUBLES 1
++	// Use doubles by default for higher precision when possible.
++	#if (!defined(__ARM_NEON__) || !__ARM_NEON__ || __arm64)
++		#define CP_USE_DOUBLES 1
++	#else
++		#define CP_USE_DOUBLES 0
++	#endif
+ #endif
+ 
+ /// @defgroup basicTypes Basic Types
+diff --git a/src/cpHastySpace.c b/src/cpHastySpace.c
+index 8dca425..3e3792c 100644
+--- a/src/cpHastySpace.c
++++ b/src/cpHastySpace.c
+@@ -8,7 +8,11 @@
+ 
+ //#include <sys/param.h >
+ #ifndef _WIN32
++#if defined(ANDROID)
++#include <linux/sysctl.h>
++#else
+ #include <sys/sysctl.h>
++#endif
+ #include <pthread.h>
+ #else
+ #ifndef WIN32_LEAN_AND_MEAN
