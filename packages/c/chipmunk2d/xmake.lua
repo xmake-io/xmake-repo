@@ -7,7 +7,7 @@ package("chipmunk2d")
              "https://github.com/slembcke/Chipmunk2D.git")
 
     add_versions("7.0.3", "1e6f093812d6130e45bdf4cb80280cb3c93d1e1833d8cf989d554d7963b7899a")
-    add_patches("7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "16d0a7c5f03beece2594369ea55985cd326a9762896727c5bb95922b32497256")
+    add_patches("7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "8ef7789559f3153f9851022a4c54bbd9864a0554b6edaa8e34f761a5064f395a")
 
     add_deps("cmake")
 
