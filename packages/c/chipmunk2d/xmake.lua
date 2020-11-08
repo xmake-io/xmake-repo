@@ -11,7 +11,7 @@ package("chipmunk2d")
     add_deps("cmake")
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
-        local configs = {"-BUILD_DEMOS=OFF"}
+        local configs = {"-DBUILD_DEMOS=OFF", "-DINSTALL_STATIC=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED=ON")
