@@ -1,16 +1,22 @@
 diff --git a/include/chipmunk/chipmunk_types.h b/include/chipmunk/chipmunk_types.h
-index 9544da8..0a4d151 100644
+index 9544da8..444f5c6 100644
 --- a/include/chipmunk/chipmunk_types.h
 +++ b/include/chipmunk/chipmunk_types.h
-@@ -45,7 +45,7 @@
- 		#include <ApplicationServices/ApplicationServices.h>
- 	#endif
- 	
--	#if defined(__LP64__) && __LP64__
-+	#if defined(__LP64__) && __LP64__ && (!defined(__ARM_NEON__) || !__ARM_NEON__ || __arm64)
- 		#define CP_USE_DOUBLES 1
- 	#else
- 		#define CP_USE_DOUBLES 0
+@@ -53,8 +53,12 @@
+ #endif
+ 
+ #ifndef CP_USE_DOUBLES
+-	// Use doubles by default for higher precision.
+-	#define CP_USE_DOUBLES 1
++	// Use doubles by default for higher precision when possible.
++	#if (!defined(__ARM_NEON__) || !__ARM_NEON__ || __arm64)
++		#define CP_USE_DOUBLES 1
++	#else
++		#define CP_USE_DOUBLES 0
++	#endif
+ #endif
+ 
+ /// @defgroup basicTypes Basic Types
 diff --git a/src/cpHastySpace.c b/src/cpHastySpace.c
 index 8dca425..3e3792c 100644
 --- a/src/cpHastySpace.c
