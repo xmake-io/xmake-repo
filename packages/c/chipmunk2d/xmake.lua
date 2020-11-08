@@ -16,11 +16,12 @@ package("chipmunk2d")
     end
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
-        local configs = {"-DBUILD_DEMOS=OFF", "-DINSTALL_STATIC=OFF"}
+        local configs = {"-DBUILD_DEMOS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED=ON")
             table.insert(configs, "-DBUILD_STATIC=OFF")
+            table.insert(configs, "-DINSTALL_STATIC=OFF")
         else
             table.insert(configs, "-DBUILD_SHARED=OFF")
             table.insert(configs, "-DBUILD_STATIC=ON")
