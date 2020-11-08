@@ -7,8 +7,13 @@ package("chipmunk2d")
              "https://github.com/slembcke/Chipmunk2D.git")
 
     add_versions("7.0.3", "1e6f093812d6130e45bdf4cb80280cb3c93d1e1833d8cf989d554d7963b7899a")
+    add_patches("7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "d396fd4a588beb19d518fd0b7b867dac7e8f67dda61f7ec54139fb70dd0268d4")
 
     add_deps("cmake")
+
+    if is_plat("linux") then
+        add_syslinks("pthread", "m")
+    end
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
         local configs = {"-DBUILD_DEMOS=OFF", "-DINSTALL_STATIC=OFF"}
