@@ -6,7 +6,7 @@ index 8dca425..11c69b9 100644
  
  //#include <sys/param.h >
  #ifndef _WIN32
-+#if defined(__ANDROID__)
++#if defined(ANDROID)
 +#include <linux/sysctl.h>
 +#else
  #include <sys/sysctl.h>
