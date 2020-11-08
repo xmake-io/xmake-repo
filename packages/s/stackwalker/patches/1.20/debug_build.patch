@@ -1,0 +1,11 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.5)
+ 
+ if(NOT CMAKE_BUILD_TYPE)
+     set(CMAKE_BUILD_TYPE Release)
+-    #set(CMAKE_BUILD_TYPE Debug)
++    set(CMAKE_BUILD_TYPE Debug)
+ endif()
+ 
+ 
