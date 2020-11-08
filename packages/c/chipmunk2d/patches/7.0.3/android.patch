@@ -1,15 +1,16 @@
 diff --git a/src/cpHastySpace.c b/src/cpHastySpace.c
-index 8422c3e..c05fd5a 100644
+index 8dca425..11c69b9 100644
 --- a/src/cpHastySpace.c
 +++ b/src/cpHastySpace.c
-@@ -8,7 +8,9 @@
+@@ -8,7 +8,11 @@
  
  //#include <sys/param.h >
- 
--#ifdef __APPLE__
+ #ifndef _WIN32
 +#if defined(__ANDROID__)
 +#include <linux/sysctl.h>
-+#elif defined(__APPLE__)
++#else
  #include <sys/sysctl.h>
- #endif
- 
++#endif
+ #include <pthread.h>
+ #else
+ #ifndef WIN32_LEAN_AND_MEAN
