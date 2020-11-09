@@ -4,13 +4,9 @@ package("sfml")
     set_description("Simple and Fast Multimedia Library")
 
     if is_plat("windows") then
-        if is_arch("x64") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-vc15-64-bit.zip")
-            add_versions("2.5.1", "3e807f7e810d6357ede35acd97615f1fe67b17028ff3d3d946328afb6104ab86")
-        elseif is_arch("x86") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-vc15-32-bit.zip")
-            add_versions("2.5.1", "9c7bef70ef481884756c9b52851c73caea11eeacb5cc83d03a3c157aee9e395f")
-        end
+        set_urls("https://www.sfml-dev.org/files/SFML-$(version)-sources.zip")
+        add_urls("https://github.com/SFML/SFML/releases/download/$(version)/SFML-$(version)-sources.zip")
+        add_versions("2.5.1", "bf1e0643acb92369b24572b703473af60bac82caf5af61e77c063b779471bb7f")
     elseif is_plat("linux") then
         if is_arch("x64", "x86_64") then
             set_urls("https://www.sfml-dev.org/files/SFML-$(version)-linux-gcc-64-bit.tar.gz")
@@ -38,11 +34,12 @@ package("sfml")
     add_configs("main",       {description = "Link to the sfml-main library", default = true, type = "boolean"})
 
     on_load("windows", "linux", "macosx", "mingw", function (package)
+        if package:is_plat("windows") then
+            package:add("deps", "cmake")
+        end
+        
         if not package:config("shared") then
             package:add("defines", "SFML_STATIC")
-            if package:is_plat("windows") then
-                package:add("cxflags", "/MD")
-            end
         end
 
         local e = ""
@@ -61,42 +58,66 @@ package("sfml")
         end
 
         if package:config("graphics") then
-            package:add("links", a .. "graphics" .. e)
-            if package:is_plat("windows", "mingw") then
-                package:add("syslinks", "freetype")
+            if package:is_plat("mingw") then
+                package:add("links", a .. "graphics" .. e)
+                package:add("links", "freetype")
             end
         end
         if package:config("window") or package:config("graphics") then
-            package:add("links", a .. "window" .. e)
+            if package:is_plat("mingw") then
+                package:add("links", a .. "window" .. e)
+            end
             if package:is_plat("windows", "mingw") then
                 package:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
             end
         end
         if package:config("audio") then
-            package:add("links", a .. "audio" .. e)
-            if package:is_plat("windows", "mingw") then
-               package:add("syslinks", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
+            if package:is_plat("mingw") then
+                package:add("links", a .. "audio" .. e)
+                package:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
             end
         end
         if package:config("network") then
-            package:add("links", a .. "network" .. e)
+            if package:is_plat("mingw") then
+                package:add("links", a .. "network" .. e)
+            end
             if package:is_plat("windows", "mingw") then
                 package:add("syslinks", "ws2_32")
             end
         end
-        package:add("links", a .. "system" .. e)
+        if package:is_plat("mingw") then
+            package:add("links", a .. "system" .. e)
+            package:add("links", main_module)
+        end
         if package:is_plat("windows", "mingw") then
             package:add("syslinks", "winmm")
-            if package:config("main") then
-                package:add("links", main_module)
-            end
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install("windows", function (package)
+        local configs = {"-DSFML_BUILD_DOC=OFF", "-DSFML_BUILD_EXAMPLES=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        if package:config("shared") then
+            table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
+        else
+            table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
+            if package:config("vs_runtime"):startswith("MT") then
+                table.insert(configs, "-DSFML_USE_STATIC_STD_LIBS=ON")
+            end
+        end
+        table.insert(configs, "-DSFML_BUILD_AUDIO=" .. (package:config("audio") and "ON" or "OFF"))
+        table.insert(configs, "-DSFML_BUILD_GRAPHICS=" .. (package:config("graphics") and "ON" or "OFF"))
+        table.insert(configs, "-DSFML_BUILD_WINDOW=" .. (package:config("window") and "ON" or "OFF"))
+        table.insert(configs, "-DSFML_BUILD_NETWORK=" .. (package:config("network") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        os.cp("build/install/bin", package:installdir())
+        package:addenv("PATH", "bin")
+    end)
+
+    on_install("linux", "macosx", "mingw", function (package)
         os.cp("lib", package:installdir())
         os.cp("include", package:installdir())
-        if package:is_plat("windows", "mingw") then
+        if package:is_plat("mingw") then
             os.cp("bin/*", package:installdir("lib"), {rootdir = "bin"})
         end
     end)
