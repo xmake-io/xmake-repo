@@ -21,7 +21,7 @@ package("sfml")
         if is_arch("x64", "x86_64") then
             set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-gcc-7.3.0-mingw-64-bit.zip")
             add_versions("2.5.1", "671e786f1af934c488cb22c634251c8c8bd441c709b4ef7bc6bbe227b2a28560")
-        elseif is_arch("x86") then
+        elseif is_arch("x86", "i386") then
             set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-gcc-7.3.0-mingw-32-bit.zip")
             add_versions("2.5.1", "92d864c9c9094dc9d91e0006d66784f25ac900a8ee23c3f79db626de46a1d9d8")
         end
