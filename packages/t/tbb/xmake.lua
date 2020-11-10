@@ -41,12 +41,18 @@ package("tbb")
 
     on_install("windows", function (package)
         os.cp("tbb/include", package:installdir())
+        local prefix = ""
         if package:is_arch("x64", "x86_64") then
-            os.cp("tbb/lib/intel64/vc14/**", package:installdir("lib"))
-            os.cp("tbb/bin/intel64/vc14/**", package:installdir("bin"))
+            prefix = "intel64/vc14"
         else
-            os.cp("tbb/lib/ia32/vc14/**", package:installdir("lib"))
-            os.cp("tbb/bin/ia32/vc14/**", package:installdir("bin"))
+            prefix = "ia32/vc14"
+        end
+        if package:config("debug") then
+            os.cp("tbb/lib/" .. prefix .. "/*_debug.*", package:installdir("lib"))
+            os.cp("tbb/bin/" .. prefix .. "/*_debug.*", package:installdir("bin"))
+        else
+            os.cp("tbb/lib/" .. prefix .. "/**|*_debug.*", package:installdir("lib"))
+            os.cp("tbb/bin/" .. prefix .. "/**|*_debug.*", package:installdir("bin"))
         end
         package:addenv("PATH", "bin")
     end)
