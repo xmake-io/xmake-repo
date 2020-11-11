@@ -42,8 +42,7 @@ package("openblas")
             if fortran then
                 table.insert(configs, "FC=" .. fortran.program)
             else
-                cprint("${yellow}warning: gfortran not found!${clear}")
-                table.insert(configs, "NO_FORTRAN=1")
+                raise("gfortran not found!")
             end
         else
             table.insert(configs, "NO_FORTRAN=1")
