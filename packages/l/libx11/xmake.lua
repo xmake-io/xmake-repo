@@ -9,6 +9,10 @@ package("libx11")
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "util-macros", "xtrans", "libxcb", "xorgproto")
     end
+    if is_plat("macosx") then
+        -- fix sed: RE error: illegal byte sequence
+        add_deps("gnu-sed")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),

@@ -25,5 +25,5 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -D -p mingw -k ${{ matrix.kind }}
 
