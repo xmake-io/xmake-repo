@@ -6,7 +6,7 @@ package("jsoncons")
     set_urls("https://github.com/danielaparker/jsoncons/archive/$(version).zip",
              "https://github.com/danielaparker/jsoncons.git")
 
-    add_versions("0.158.0", "7ad7cc0e9c74df495dd16b818758ec2e2a5b7fef8f1852841087fd5e8bb6a6cb")
+    add_versions("v0.158.0", "7ad7cc0e9c74df495dd16b818758ec2e2a5b7fef8f1852841087fd5e8bb6a6cb")
 
     on_install(function (package)
         os.cp("include/*", package:installdir("include"))
