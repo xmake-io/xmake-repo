@@ -2,6 +2,7 @@ package("giflib")
 
     set_homepage("https://sourceforge.net/projects/giflib/")
     set_description("A library for reading and writing gif images.")
+    set_license("MIT")
 
     add_urls("https://jaist.dl.sourceforge.net/project/giflib/giflib-$(version).tar.gz")
     add_versions("5.2.1", "31da5562f44c5f15d63340a09a4fd62b48c45620cd302f77a6d9acf0077879bd")
@@ -14,6 +15,14 @@ package("giflib")
 
     on_install("linux", "macosx", "windows", "mingw", "android", "iphoneos", function (package)
         local lib_sources = {"dgif_lib.c", "egif_lib.c", "gifalloc.c", "gif_err.c", "gif_font.c", "gif_hash.c", "openbsd-reallocarray.c"}
+        local kind = "static"
+        if package:config("shared") then
+            if package:is_plat("windows") then
+                cprint("${yellow}No support for dll on windows!${clear}")
+            else
+                kind = "shared"
+            end
+        end
         if package:is_plat("windows") then
             io.gsub("gif_hash.h", "\n#include <unistd.h>\n", [[
                 #ifndef _MSC_VER
@@ -31,7 +40,7 @@ package("giflib")
                 set_kind("%s")
                 add_files("%s")
                 add_headerfiles("gif_lib.h")
-        ]], (package:config("shared") and "shared" or "static"), table.concat(lib_sources, "\", \""))
+        ]], kind, table.concat(lib_sources, "\", \""))
         if package:config("utils") then
             local util_table = {"gif2rgb", "gifbuild", "gifclrmp", "giffix", "giftext", "giftool"}
             for _, util in ipairs(util_table) do

@@ -2,6 +2,7 @@ package("libwebp")
 
     set_homepage("https://chromium.googlesource.com/webm/libwebp/")
     set_description("Library to encode and decode images in WebP format.")
+    set_license("BSD-3-Clause")
 
     local commits = {["1.1.0"] = "d7844e9762b61c9638c263657bd49e1690184832"}
     add_urls("https://github.com/webmproject/libwebp/archive/v$(version).tar.gz", {alias = "github"})
@@ -18,8 +19,8 @@ package("libwebp")
 
     on_install("linux", "macosx", function (package)
         local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "1" or "0"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "0" or "1"))
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         import("package.tools.autoconf").install(package, configs)
     end)
 
