@@ -8,6 +8,10 @@ package("giflib")
 
     add_configs("utils", {description = "Build utility binaries.", default = true, type = "boolean"})
 
+    if is_plat("windows") then
+        add_deps("cgetopt")
+    end
+
     on_install("linux", "macosx", "windows", "mingw", "android", "iphoneos", function (package)
         local lib_sources = {"dgif_lib.c", "egif_lib.c", "gifalloc.c", "gif_err.c", "gif_font.c", "gif_hash.c", "openbsd-reallocarray.c"}
         if package:is_plat("windows") then
@@ -17,10 +21,12 @@ package("giflib")
                 #endif
             ]])
             io.gsub("gif_font.c", "\n#include \"gif_lib.h\"\n", "\n#include \"gif_lib.h\"\n#define strtok_r strtok_s\n")
-            os.cp(path.join(package:scriptdir(), "src", "**"), os.curdir())
-            table.insert(lib_sources, "getopt.c")
         end
         local xmake_lua = string.format([[
+            add_rules("mode.debug", "mode.release")
+            if is_plat("windows") then
+                add_requires("cgetopt")
+            end
             target("gif")
                 set_kind("%s")
                 add_files("%s")
@@ -32,6 +38,9 @@ package("giflib")
                 xmake_lua = xmake_lua .. string.format([[
                     target("%s")
                         set_kind("binary")
+                        if is_plat("windows") then
+                            add_packages("cgetopt")
+                        end
                         add_files("%s.c", "getarg.c", "qprintf.c", "quantize.c", "%s")
                 ]], util, util, table.concat(lib_sources, "\", \""))
             end
