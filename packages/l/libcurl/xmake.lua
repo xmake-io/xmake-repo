@@ -25,7 +25,7 @@ package("libcurl")
         add_syslinks("advapi32", "winmm", "ws2_32")
     end
 
-    on_load("windows", function (package)
+    on_load("windows", "mingw@macosx,linux", function (package)
         if not package:config("shared") then
             package:add("defines", "CURL_STATICLIB")
         end
