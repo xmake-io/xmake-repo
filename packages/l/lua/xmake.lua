@@ -22,8 +22,10 @@ package("lua")
 
     on_install("linux", "macosx", "windows", "android", "bsd", function (package)
         io.writefile("xmake.lua", format([[
+            local kind = "%s"
+
             target("lualib")
-                set_kind("%s")
+                set_kind(kind)
                 set_basename("lua")
                 add_headerfiles("src/*.h", {prefixdir = "lua"})
                 add_files("src/*.c|lua.c|luac.c")
@@ -36,7 +38,7 @@ package("lua")
                     add_defines("LUA_DL_DYLD")
                 elseif is_plat("windows") then
                     -- Lua already detects Windows and sets according defines
-                    if is_kind("shared") then
+                    if kind == "shared" then
                         add_defines("LUA_BUILD_AS_DLL", {public = true})
                     end
                 end
