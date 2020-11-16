@@ -35,8 +35,7 @@ package("lua")
                     add_defines("LUA_USE_MACOSX")
                     add_defines("LUA_DL_DYLD")
                 elseif is_plat("windows") then
-                    add_defines("LUA_USE_WINDOWS")
-                    add_defines("LUA_DL_DLL")
+                    -- Lua already detects Windows and sets according defines
                     if is_kind("shared") then
                         add_defines("LUA_BUILD_AS_DLL", {public = true})
                     end
