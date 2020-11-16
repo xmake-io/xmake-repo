@@ -37,6 +37,9 @@ package("lua")
                 elseif is_plat("windows") then
                     add_defines("LUA_USE_WINDOWS")
                     add_defines("LUA_DL_DLL")
+                    if is_kind("shared") then
+                        add_defines("LUA_BUILD_AS_DLL", {public = true})
+                    end
                 end
 
             target("lua")
