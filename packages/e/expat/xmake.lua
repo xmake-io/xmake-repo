@@ -9,7 +9,7 @@ package("expat")
     add_versions("2.2.10", "b2c160f1b60e92da69de8e12333096aeb0c3bf692d41c60794de278af72135a5")
     add_versions("2.2.6", "17b43c2716d521369f82fc2dc70f359860e90fa440bea65b3b85f0b246ea81f2")
 
-    if is_host("windows") then
+    if is_plat("windows") then
         add_deps("cmake")
     end
 
