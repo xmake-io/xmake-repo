@@ -4,7 +4,7 @@ package("python")
     set_description("The python programming language.")
 
     if is_host("windows") then
-        if is_arch("x64", "x86_64") then
+        if os.arch() == "x64" or os.arch() == "x86_64" then
             add_urls("https://cdn.jsdelivr.net/gh/xmake-mirror/python-releases@$(version)/python-$(version).win64.tar.gz",
                      "https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win64.tar.gz",
                      "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win64.tar.gz")
@@ -38,6 +38,11 @@ package("python")
         add_syslinks("util", "pthread", "dl")
     end
 
+    -- mangle with cross compilation
+    if not is_plat(os.host()) then
+        set_kind("binary")
+    end
+
     on_load("@windows", "@msys", "@cygwin", function (package)
         package:addenv("PATH", "bin")
 
@@ -50,7 +55,7 @@ package("python")
         package:addenv("PYTHONPATH", envs.PYTHONPATH)
     end)
 
-    on_load("macosx", "linux", function (package)
+    on_load("@macosx", "@linux", function (package)
         package:addenv("PATH", "bin")
 
         -- set includedirs
@@ -79,7 +84,7 @@ package("python")
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("@macosx", "@linux", function (package)
 
         -- init configs
         local configs = {"--enable-ipv6", "--with-ensurepip"}
@@ -151,5 +156,8 @@ package("python")
         os.vrun("python -c \"import wheel\"")
         if package:kind() ~= "binary" then
             assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
+        end
+        if is_host("windows") then
+            os.vrun("py -3 -c \"import sys\"")
         end
     end)
