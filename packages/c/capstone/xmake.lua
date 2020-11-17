@@ -8,9 +8,6 @@ package("capstone")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
-        if package:config("shared") then
-            package:addenv("PATH", "lib")
-        end
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "msys", "bsd", function (package)
@@ -25,6 +22,6 @@ package("capstone")
     on_test(function (package)
         if package:is_plat(os.host()) then
             os.vrun("cstool -v")
-        end    
+        end
         assert(package:has_cfuncs("cs_version", {includes = "capstone/capstone.h"}))
     end)
