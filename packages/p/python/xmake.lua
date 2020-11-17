@@ -39,7 +39,7 @@ package("python")
     end
 
     -- mangle with cross compilation
-    if not is_plat(os.host()) then
+    if not is_plat(os.host()) or not is_arch(os.arch()) then
         set_kind("binary")
     end
 
