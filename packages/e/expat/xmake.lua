@@ -31,10 +31,5 @@ package("expat")
     end)
 
     on_test(function (package)
-        -- assert(package:has_cfuncs("XML_ParserCreate", {includes = "expat.h"}))
-        assert(package:check_csnippets({test = [[
-            void test() {
-                XML_Parser p = XML_ParserCreate(NULL);
-            }
-        ]]}, {configs = {languages = "c99"}, includes = "expat.h"}))
+        assert(package:has_cfuncs("XML_ParserCreate(NULL)", {includes = "expat.h"}))
     end)

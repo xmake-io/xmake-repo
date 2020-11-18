@@ -51,9 +51,5 @@ package("piex")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                size_t max_bytes = piex::BytesRequiredForIsRaw();
-            }
-        ]]}, {configs = {languages = "c++11"}, includes = "piex.h"}))
+        assert(package:has_cxxfuncs("piex::BytesRequiredForIsRaw()", {configs = {languages = "c++11"}, includes = "piex.h"}))
     end)
