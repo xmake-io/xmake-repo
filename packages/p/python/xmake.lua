@@ -61,7 +61,11 @@ package("python")
         -- set includedirs
         local version = package:version()
         local pyver = ("python%d.%d"):format(version:major(), version:minor())
-        package:add("includedirs", path.join("include", pyver))
+        if version:le("3.8") then
+            package:add("includedirs", path.join("include", pyver .. "m"))
+        else
+            package:add("includedirs", path.join("include", pyver))
+        end
 
         -- set python environments
         local envs = {}
