@@ -17,7 +17,7 @@ package("expat")
         local configs = {"-DEXPAT_BUILD_EXAMPLES=OFF", "-DEXPAT_BUILD_TESTS=OFF", "-DEXPAT_BUILD_DOCS=OFF"}
         table.insert(configs, "-DEXPAT_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DEXPAT_MSVC_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package)
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_install("linux", "macosx", function (package)

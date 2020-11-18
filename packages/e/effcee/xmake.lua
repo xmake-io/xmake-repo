@@ -15,7 +15,7 @@ package("effcee")
         -- add re2 include
         local fetchinfo = package:dep("re2"):fetch()
         local cxflags = {}
-        for _, includedir in ipairs(fetchinfo.sysincludedirs) do
+        for _, includedir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
             table.insert(cxflags, "-I" .. includedir)
         end
 
