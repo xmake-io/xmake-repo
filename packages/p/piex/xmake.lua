@@ -5,8 +5,11 @@ package("piex")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/google/piex.git")
-    add_versions("20201107", "a1b85d566521a4a03c7c715d2851c4272da4e301")
+    -- version 20201107 is buggy
+    -- add_versions("20201107", "a1b85d566521a4a03c7c715d2851c4272da4e301")
+    add_versions("20190530", "84e9cdf11cd8dac8a4977dd1a6a874ddf884d322")
 
+    add_links("piex", "image_type_recognition", "tiff_directory", "binary_parse")
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         for _, folder in ipairs({"binary_parse", "image_type_recognition", "tiff_directory"}) do
             for _, file in ipairs(os.files(path.join("src", folder, "*.*"))) do
@@ -16,8 +19,8 @@ package("piex")
         for _, file in ipairs(os.files(path.join("src", "*.*"))) do
             io.gsub(file, "#include \"src/", "#include \"")
         end
-        io.gsub("src/piex_cr3.cc", "s%[0%], s%[1%], s%[2%], s%[3%]", "std::uint8_t(s[0]), std::uint8_t(s[1]), std::uint8_t(s[2]), std::uint8_t(s[3])")
-        io.gsub("src/image_type_recognition/image_type_recognition_lite.cc", "kSignatureOffset %+ strlen", "kSignatureOffset + binary_parse::strlen")
+        io.gsub("src/image_type_recognition/image_type_recognition_lite.cc", "#include <string>", "#include <string>\n#include <cstring>")
+        io.gsub("src/image_type_recognition/image_type_recognition_lite.cc", "kSignatureOffset %+ strlen", "kSignatureOffset + std::strlen")
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("binary_parse")
@@ -41,8 +44,8 @@ package("piex")
                 set_kind("static")
                 set_languages("c++11")
                 add_deps("binary_parse", "image_type_recognition", "tiff_directory")
-                add_files("src/piex.cc", "src/piex_cr3.cc", "src/tiff_parser.cc")
-                add_headerfiles("src/(piex.h)", "src/(piex_cr3.h)", "src/(piex_types.h)", "src/(tiff_parser.h)")
+                add_files("src/piex.cc", "src/tiff_parser.cc")
+                add_headerfiles("src/(piex.h)", "src/(piex_types.h)", "src/(tiff_parser.h)")
         ]])
         import("package.tools.xmake").install(package)
     end)
@@ -52,5 +55,5 @@ package("piex")
             void test() {
                 size_t max_bytes = piex::BytesRequiredForIsRaw();
             }
-        ]]}, {includes = "piex.h"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "piex.h"}))
     end)
