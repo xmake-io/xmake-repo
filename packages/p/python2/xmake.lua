@@ -9,16 +9,23 @@ package("python2")
                      "https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win64.tar.gz",
                      "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win64.tar.gz")
             add_versions("2.7.15", "c81c4604b4176ff26be8d37cf48a2582e71a5e8f475b531c2e5d032a39511acb")
+            add_versions("2.7.18", "a51d27c9f64cd28415ea0a8fdcb2ffda113ce61267f5f05c9af7fd00e27c9376")
         else
             add_urls("https://cdn.jsdelivr.net/gh/xmake-mirror/python-releases@$(version)/python-$(version).win32.tar.gz",
                      "https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win32.tar.gz",
                      "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win32.tar.gz")
             add_versions("2.7.15", "4a7be2b440b74776662daaeb6bb6c5574bb6d0f4ddc0ad03ce63571ab2353303")
+            add_versions("2.7.18", "e80770ae6a10e8bccb56b378cb75a1c28c2762926205923b2fd51ce266e4baad")
         end
     else
         set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
                  "https://github.com/xmake-mirror/cpython/releases/download/v$(version)/Python-$(version).tgz")
         add_versions("2.7.15", "18617d1f15a380a919d517630a9cd85ce17ea602f9bbdc58ddc672df4b0239db")
+        add_versions("2.7.18", "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814")
+    end
+
+    if not is_plat(os.host()) or not is_arch(os.arch()) then
+        set_kind("binary")
     end
 
     if is_host("macosx", "linux") then
@@ -29,33 +36,35 @@ package("python2")
         add_syslinks("util", "pthread", "dl")
     end
 
-    add_resources("2.7.15", "setuptools", "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip", "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d")
-    add_resources("2.7.15", "pip",        "https://files.pythonhosted.org/packages/36/fa/51ca4d57392e2f69397cd6e5af23da2a8d37884a605f9e3f2d3bfdc48397/pip-19.0.3.tar.gz", "6e6f197a1abfb45118dbb878b5c859a0edbdd33fd250100bc015b67fded4b9f2")
-    add_resources("2.7.15", "wheel",      "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz", "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d")
+    add_resources("2.7.x", "setuptools", "https://files.pythonhosted.org/packages/b2/40/4e00501c204b457f10fe410da0c97537214b2265247bc9a5bc6edd55b9e4/setuptools-44.1.1.zip", "c67aa55db532a0dadc4d2e20ba9961cbd3ccc84d544e9029699822542b5a476b")
+    add_resources("2.7.x", "pip",        "https://files.pythonhosted.org/packages/0b/f5/be8e741434a4bf4ce5dbc235aa28ed0666178ea8986ddc10d035023744e6/pip-20.2.4.tar.gz", "85c99a857ea0fb0aedf23833d9be5c40cf253fe24443f0829c7b472e23c364a1")
+    add_resources("2.7.x", "wheel",      "https://files.pythonhosted.org/packages/59/b0/11710a598e1e148fb7cbf9220fd2a0b82c98e94efbdecb299cb25e7f0b39/wheel-0.33.6.tar.gz", "10c9da68765315ed98850f8e048347c3eb06dd81822dc2ab1d4fde9dc9702646")
 
     on_load(function (package)
 
         -- add PATH
         package:addenv("PATH", "bin")
+        package:addenv("PATH", "Scripts")
 
         -- set includedirs
         local version = package:version()
+        local pyver = ("python%d.%d"):format(version:major(), version:minor())
         if package:is_plat("windows") then
             package:add("includedirs", "include")
         else
-            package:add("includedirs", ("include/python%d.%d"):format(version:major(), version:minor()))
+            package:add("includedirs", path.join("include", pyver))
         end
+
+        -- set python environments
+        local envs = {}
+        envs.PYTHONPATH = package:installdir("lib", pyver, "site-packages")
+        package:addenv("PYTHONPATH", envs.PYTHONPATH)
 
         -- define install_resources()
         package:data_set("install_resources", function()
 
             -- imports
             import("lib.detect.find_file")
-
-            -- set python environments
-            local envs = {}
-            envs.PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")
-            package:addenv("PYTHONPATH", envs.PYTHONPATH)
 
             -- install resources
             local python = path.join(package:installdir("bin"), "python" .. (is_host("windows") and ".exe" or ""))
@@ -74,7 +83,7 @@ package("python2")
         os.mv("*.exe", package:installdir("bin"))
         os.mv("*.dll", package:installdir("bin"))
         os.mv("libs/*", package:installdir("lib"))
-        os.cp("*", package:installdir())
+        os.cp("*|libs", package:installdir())
         package:data("install_resources")()
     end)
 
