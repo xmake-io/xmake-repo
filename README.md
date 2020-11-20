@@ -67,6 +67,16 @@ If you want to know more, please refer to:
 * [Github](https://github.com/xmake-io/xmake)
 * [HomePage](https://xmake.io)
 
+## Xrepo
+
+xrepo is a cross-platform C/C++ package manager based on [Xmake](https://github.com/xmake-io/xmake).
+
+It is based on the runtime provided by xmake, but it is a complete and independent package management program. Compared with package managers such as vcpkg/homebrew, xrepo can provide C/C++ packages for more platforms and architectures at the same time.
+
+If you want to know more, please refer to: [Documents](https://xrepo.xmake.io/#/getting_started), [Github](https://github.com/xmake-io/xrepo) and [Gitee](https://gitee.com/tboox/xrepo)
+
+![](https://xrepo.xmake.io/assets/img/xrepo.gif)
+
 ## Submit package to repository
 
 Write a xmake.lua of new package in `packages/x/xxx/xmake.lua` and push a pull-request to the dev branch.
@@ -155,7 +165,7 @@ package("zlib")
 |libwebsockets|unqlite|||libtool|||
 |libxml2|zeromq|||libusb|||
 
-Note: Only some packages are shown here. If you want to see a complete list of all packages, please see: [PKGLIST.md](https://github.com/xmake-io/xmake-repo/blob/master/PKGLIST.md)
+Note: Only some packages are shown here. If you want to see a complete list of all packages, please see: [Packages List](https://xrepo.xmake.io/#/packages/linux)
 
 We also welcome everyone to contribute some packages to our package repository.🙏 
 

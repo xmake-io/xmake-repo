@@ -67,6 +67,16 @@ xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发
 * [在线源码](https://github.com/xmake-io/xmake)
 * [项目主页](https://xmake.io/cn)
 
+## Xrepo
+
+xrepo 是一个基于 [Xmake](https://github.com/xmake-io/xmake) 的跨平台 C/C++ 包管理器。
+
+它基于 xmake 提供的运行时，但却是一个完整独立的包管理程序，相比 vcpkg/homebrew 此类包管理器，xrepo 能够同时提供更多平台和架构的 C/C++ 包。
+
+如果你想要了解更多，请参考：[在线文档](https://xrepo.xmake.io/#/zh-cn/getting_started), [Github](https://github.com/xmake-io/xrepo) 以及 [Gitee](https://gitee.com/tboox/xrepo)
+
+![](https://xrepo.xmake.io/assets/img/xrepo.gif)
+
 ## 提交一个新包到仓库
 
 在`packages/x/xxx/xmake.lua`中写个关于新包的xmake.lua描述，然后提交一个pull-request到dev分支。
@@ -155,6 +165,6 @@ package("zlib")
 |libwebsockets|unqlite|||libtool|||
 |libxml2|zeromq|||libusb|||
 
-这里只显示了部分包，如果你想看所有包列表，可以看下：[PKGLIST.md](https://github.com/xmake-io/xmake-repo/blob/master/PKGLIST.md)
+这里只显示了部分包，如果你想看所有包列表，请到 [仓库包列表](https://xrepo.xmake.io/#/zh-cn/packages/linux) 查看。
 
 我们也非常欢迎大家能够贡献一些进来。🙏 
