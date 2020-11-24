@@ -35,6 +35,10 @@ package("python")
         set_kind("binary")
     end
 
+    if not is_plat(os.host()) or not is_arch(os.arch()) then
+        set_kind("binary")
+    end
+
     if is_host("macosx", "linux") then
         add_deps("openssl", {host = true})
     end
