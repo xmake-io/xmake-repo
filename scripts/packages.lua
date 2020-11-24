@@ -37,9 +37,9 @@ function _is_supported(instance, plat, arch, opt)
                 return "" 
             end)
             if _pattern:trim() == "" and opt and opt.onlyhost then
-                _pattern = os.host()
+                _pattern = os.subhost()
             end
-            if not _pattern:startswith("__") and (not hosts_spec or hosts[os.host() .. '|' .. os.arch()] or hosts[os.host()])  
+            if not _pattern:startswith("__") and (not hosts_spec or hosts[os.subhost() .. '|' .. os.subarch()] or hosts[os.subhost()])  
             and (_pattern:trim() == "" or (plat .. '|' .. arch):find('^' .. _pattern .. '$') or plat:find('^' .. _pattern .. '$')) then
                 result = _script
                 break
