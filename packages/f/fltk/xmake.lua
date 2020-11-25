@@ -19,7 +19,7 @@ package("fltk")
 
     on_install("macosx", "windows", "mingw", "linux", function (package)
         local configs = {}
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DOPTION_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DFLTK_BUILD_TEST=OFF")
         if package:is_plat("linux") then
