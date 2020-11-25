@@ -25,6 +25,11 @@ package("fltk")
         if package:is_plat("linux") then
             table.insert(configs, "-DOPTION_USE_PANGO=ON")
         end
+        if package:is_plat("android") then
+            table.insert(configs, "-DOPTION_USE_SYSTEM_LIBPNG=OFF")
+            table.insert(configs, "-DOPTION_USE_SYSTEM_ZLIB=OFF")
+            table.insert(configs, "-DOPTION_USE_SYSTEM_LIBJPEG=OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
