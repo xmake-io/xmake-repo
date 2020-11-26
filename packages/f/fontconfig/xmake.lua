@@ -7,7 +7,9 @@ package("fontconfig")
     add_versions("2.13.1", "9f0d852b39d75fc655f9f53850eb32555394f36104a044bb2b2fc9e66dbbfa7f")
 
     add_deps("pkg-config", "freetype >= 2.9", "expat")
-    if not is_plat("macosx") then
+    if is_plat("macosx") then
+        add_deps("gettext")
+    else
         add_deps("autoconf", "automake", "libtool", "gperf", "bzip2")
         add_deps("util-linux", {configs = {libuuid = true}})
     end
@@ -17,6 +19,7 @@ package("fontconfig")
                           "2abdff214b99f2d074170e6512b0149cc858ea26cd930690aa6b4ccea2c549ef")
 
     on_install("linux", "macosx", function (package)
+        import("package.tools.autoconf")
         local font_dirs = {}
         if is_plat("macosx") then
             table.insert(font_dirs, "/System/Library/Fonts")
@@ -27,8 +30,12 @@ package("fontconfig")
         if #font_dirs > 0 then
             table.insert(configs, "--with-add-fonts=" .. table.concat(font_dirs, ','))
         end
+        local envs = autoconf.buildenvs(package)
+        if package:is_plat("linux") then
+            envs.UUID_CFLAGS = "-I" .. package:dep("util-linux"):installdir("include")
+        end
         table.insert(configs, "--enable-shared=no")
-        import("package.tools.autoconf").install(package, configs)
+        autoconf.install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
