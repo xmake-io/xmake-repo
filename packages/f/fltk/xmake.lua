@@ -17,7 +17,7 @@ package("fltk")
         add_configs("pango",   {description = "Use pango for font support", default = false, type = "boolean"})
         add_configs("xft",     {description = "Use libXft for font support", default = false, type = "boolean"})
         add_syslinks("dl", "pthread")
-        add_deps("libx11", "libxext", "libxinerama", "libxcursor", "libxrender", "libxfixes", "libuuid", "fontconfig") 
+        add_deps("libx11", "libxext", "libxinerama", "libxcursor", "libxrender", "libxfixes", "fontconfig") 
     end
 
     on_load(function (package)
