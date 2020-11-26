@@ -14,14 +14,18 @@ package("bzip2")
 
     on_install("windows", function (package)
         io.gsub("makefile.msc", "%-MD", "-" .. package:config("vs_runtime"))
-        os.vrunv("nmake", {"-f", "makefile.msc"})
+        import("package.tools.nmake").build(package, {"-f", "makefile.msc", "bzip2"})
         os.cp("libbz2.lib", package:installdir("lib"))
         os.cp("*.h", package:installdir("include"))
         os.cp("*.exe", package:installdir("bin"))
     end)
 
     on_install("macosx", "linux", function (package)
-        os.vrunv("make", {"install", "PREFIX=" .. package:installdir()})
+        local configs = {"PREFIX=" .. package:installdir()}
+        if package:config("shared") then
+            table.insert(configs, "CFLAGS=-fPIC")
+        end
+        import("package.tools.make").install(package, configs)
     end)
 
     on_test(function (package)
