@@ -14,11 +14,22 @@ package("fltk")
         add_syslinks("android")
         add_syslinks("dl")
     else
+        add_configs("pango",   {description = "Use pango for font support", default = false, type = "boolean"})
+        add_configs("xft",     {description = "Use libXft for font support", default = false, type = "boolean"})
         add_syslinks("dl", "pthread")
-        add_deps("libx11", "libxext", "libxinerama", "libxcursor", "libxrender", "libxfixes", "fontconfig") 
-        -- add_deps("libxft", "pango-1.0", "pangoxft-1.0", "gobject-2.0", "cairo", "pangocairo-1.0")
+        add_deps("libx11", "libxext", "libxinerama", "libxcursor", "libxrender", "libxfixes", "libuuid", "fontconfig") 
     end
 
+    on_load(function (package)
+        if is_plat("linux") then
+            if package:config("pango") then 
+                package:add("deps", "pango-1.0", "pangoxft-1.0", "gobject-2.0", "cairo", "pangocairo-1.0")
+            end
+            if package:config("xft") then 
+                package:add("deps", "libxft")
+            end
+        end
+    end)
 
     on_install("macosx", "windows", "mingw", "linux", "android", function (package)
         local configs = {}
@@ -26,8 +37,16 @@ package("fltk")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DFLTK_BUILD_TEST=OFF")
         if package:is_plat("linux") then
-            table.insert(configs, "-DOPTION_USE_PANGO=OFF") -- keep OFF until pango is available on xmake-repo
-            table.insert(configs, "-DOPTION_USE_XFT=OFF") -- keep OFF until libxft is available on xmake-repo
+            if package:config("pango") then 
+                table.insert(configs, "-DOPTION_USE_PANGO=ON")
+            else 
+                table.insert(configs, "-DOPTION_USE_PANGO=OFF")
+            end 
+            if package:config("xft") then 
+                table.insert(configs, "-DOPTION_USE_XFT=ON")
+            else 
+                table.insert(configs, "-DOPTION_USE_XFT=OFF")
+            end
         end
         if package:is_plat("android") then
             table.insert(configs, "-DOPTION_USE_SYSTEM_LIBPNG=OFF")
