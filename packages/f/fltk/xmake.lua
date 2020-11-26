@@ -36,6 +36,9 @@ package("fltk")
         table.insert(configs, "-DOPTION_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DFLTK_BUILD_TEST=OFF")
+        table.insert(configs, "-DOPTION_USE_SYSTEM_LIBPNG=OFF")
+        table.insert(configs, "-DOPTION_USE_SYSTEM_ZLIB=OFF")
+        table.insert(configs, "-DOPTION_USE_SYSTEM_LIBJPEG=OFF")
         if package:is_plat("linux") then
             if package:config("pango") then 
                 table.insert(configs, "-DOPTION_USE_PANGO=ON")
@@ -47,11 +50,6 @@ package("fltk")
             else 
                 table.insert(configs, "-DOPTION_USE_XFT=OFF")
             end
-        end
-        if package:is_plat("android") then
-            table.insert(configs, "-DOPTION_USE_SYSTEM_LIBPNG=OFF")
-            table.insert(configs, "-DOPTION_USE_SYSTEM_ZLIB=OFF")
-            table.insert(configs, "-DOPTION_USE_SYSTEM_LIBJPEG=OFF")
         end
         import("package.tools.cmake").install(package, configs)
     end)
