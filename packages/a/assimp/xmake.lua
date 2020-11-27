@@ -27,6 +27,84 @@ package("assimp")
     add_configs("inject_debug_postfix",  {description = "Inject debug postfix in .a/.so lib names", default = false, type = "boolean"})
     add_configs("ignore_git_hash",       {description = "Don't call git to get the hash", default = false, type = "boolean"})
     add_configs("install_pdb",           {description = "Install MSVC debug files", default = false, type = "boolean"})
+    add_configs("build_all_importers",   {description = "Build all importers by default", default = true, type = "boolean"})
+    add_configs("build_all_exporters",   {description = "Build all exporters by default", default = true, type = "boolean"})
+
+    local importers = {
+        "AMF",
+        "3DS",
+        "AC",
+        "ASE",
+        "ASSBIN",
+        "B3D",
+        "BVH",
+        "COLLADA",
+        "DXF",
+        "CSM",
+        "HMP",
+        "IRRMESH",
+        "IRR",
+        "LWO",
+        "LWS",
+        "MD2",
+        "MD3",
+        "MD5",
+        "MDC",
+        "MDL",
+        "NFF",
+        "NDO",
+        "OFF",
+        "OBJ",
+        "OGRE",
+        "OPENGEX",
+        "PLY",
+        "MS3D",
+        "COB",
+        "BLEND",
+        "IFC",
+        "XGL",
+        "FBX",
+        "Q3D",
+        "Q3BSP",
+        "RAW",
+        "SIB",
+        "SMD",
+        "STL",
+        "TERRAGEN",
+        "3D",
+        "X",
+        "X3D",
+        "GLTF",
+        "3MF",
+        "MMD",
+        "STEP"
+    }
+
+    for _, importer in ipairs(importers) do
+        add_configs("build_" .. importer .. "_importer", {description = "Build " .. importer .. " importers", default = true, type = "boolean"})
+    end
+
+    local exporters = {
+        "3DS",
+        "ASSBIN",
+        "ASSXML",
+        "COLLADA",
+        "OBJ",
+        "OPENGEX",
+        "PLY",
+        "FBX",
+        "STL",
+        "X",
+        "X3D",
+        "GLTF",
+        "3MF",
+        "ASSJSON",
+        "STEP"
+    }
+
+    for _, exporter in ipairs(exporters) do
+        add_configs("build_" .. exporter .. "_exporter", {description = "Build " .. exporter .. " exporters", default = true, type = "boolean"})
+    end
 
     add_deps("cmake")
 
@@ -65,6 +143,24 @@ package("assimp")
         add_config_arg("system_irrxml",        "SYSTEM_IRRXML")
         add_config_arg("build_docs",           "BUILD_DOCS")
         add_config_arg("ignore_git_hash",      "IGNORE_GIT_HASH")
+
+        --if ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT is set to TRUE, the user can manually disable importers by setting
+        --ASSIMP_BUILD_XXX_IMPORTER to FALSE for each importer
+        --if ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT is set to FALSE, the user can manually enable importers by setting
+        --ASSIMP_BUILD_XXX_IMPORTER to TRUE for each importer
+        add_config_arg("build_all_importers",  "ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT")
+        for _, importer in ipairs(importers) do
+            add_config_arg("build_" .. importer .. "_importer", "ASSIMP_BUILD_" .. importer .. "_IMPORTER")
+        end
+
+        --if ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT is set to TRUE, the user can manually disable exporters by setting
+        --ASSIMP_BUILD_XXX_EXPORTER to FALSE for each exporter
+        --if ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT is set to FALSE, the user can manually enable exporters by setting
+        --ASSIMP_BUILD_XXX_EXPORTER to TRUE for each exporter
+        add_config_arg("build_all_exporters",  "ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT")
+        for _, exporter in ipairs(exporters) do
+            add_config_arg("build_" .. exporter .. "_exporter", "ASSIMP_BUILD_" .. exporter .. "_EXPORTER")
+        end
 
         if is_plat("macosx") then
             add_config_arg("build_framework", "BUILD_FRAMEWORK")
