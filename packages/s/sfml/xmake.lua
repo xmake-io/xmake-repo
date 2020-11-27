@@ -123,9 +123,8 @@ package("sfml")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test(int args, char** argv) {
-                sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-                sf::CircleShape shape(100.f);
-                shape.setFillColor(sf::Color::Green);
+                sf::Clock c;
+                c.restart();
             }
-        ]]}, {includes = "SFML/Graphics.hpp"}))
+        ]]}, {includes = "SFML/System.hpp"}))
     end)
