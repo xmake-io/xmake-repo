@@ -40,7 +40,11 @@ package("icu4c")
 
     on_install("macosx", "linux", function (package)
         os.cd("source")
-        local configs = {"--disable-samples", "--disable-tests"}
+        local configs = {}
+        if package:is_plat("linux") and not package:config("shared") then
+            table.join2(configs, {"CFLAGS=-fPIC", "CXXFLAGS=-fPIC"})
+        end
+        table.join2(configs, {"--disable-samples", "--disable-tests"})
         if package:debug() then
             table.insert(configs, "--enable-debug")
             table.insert(configs, "--disable-release")
@@ -51,9 +55,6 @@ package("icu4c")
         else
             table.insert(configs, "--disable-shared")
             table.insert(configs, "--enable-static")
-        end
-        if package:is_plat("linux") then
-            table.insert(configs, "CFLAGS=-fPIC CXXFLAGS=-fPIC")
         end
         import("package.tools.autoconf").install(package, configs)
         package:addenv("PATH", "bin")
