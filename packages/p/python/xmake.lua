@@ -35,10 +35,6 @@ package("python")
         set_kind("binary")
     end
 
-    if not is_plat(os.host()) or not is_arch(os.arch()) then
-        set_kind("binary")
-    end
-
     if is_host("macosx", "linux") then
         add_deps("openssl", {host = true})
     end
@@ -56,6 +52,7 @@ package("python")
         local PYTHONPATH = package:installdir("Lib", "site-packages")
         package:addenv("PYTHONPATH", PYTHONPATH)
         package:addenv("PATH", "bin")
+        package:addenv("PATH", "Scripts")
     end)
 
     on_load("@macosx", "@linux", function (package)
@@ -73,6 +70,7 @@ package("python")
         local PYTHONPATH = package:installdir("lib", pyver, "site-packages")
         package:addenv("PYTHONPATH", PYTHONPATH)
         package:addenv("PATH", "bin")
+        package:addenv("PATH", "Scripts")
     end)
 
     on_install("@windows", "@msys", "@cygwin", function (package)
