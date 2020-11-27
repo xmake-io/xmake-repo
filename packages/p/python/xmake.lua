@@ -31,7 +31,7 @@ package("python")
         add_versions("3.8.5", "015115023c382eb6ab83d512762fe3c5502fa0c6c52ffebc4831c4e1a06ffc49")
     end
 
-    if not is_plat(os.host()) or not is_arch(os.arch()) then
+    if not is_plat(os.host()) then
         set_kind("binary")
     end
 
