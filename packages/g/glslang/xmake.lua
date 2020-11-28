@@ -8,6 +8,9 @@ package("glslang")
     add_versions("1.2.154+1", "bacaef3237c515e40d1a24722be48c0a0b30f75f")
 
     add_deps("cmake", "spirv-tools", "python 3.x")
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
 
     on_install("linux", "windows", "macosx", function (package)
         package:addenv("PATH", "bin")
