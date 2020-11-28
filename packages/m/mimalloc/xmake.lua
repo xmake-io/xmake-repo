@@ -30,14 +30,14 @@ package("mimalloc")
         if package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
             io.gsub("CMakeLists.txt", "-redirect", "-redirect32")
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").build(package, configs, {buildir = "build"})
 
-        os.rm(path.join(package:installdir("lib"), "mimalloc-*"))
-        os.cp(path.join("build", package:debug() and "Debug" or "Release", "*"), package:installdir("lib"))
-        os.cp(path.join("build", "*.a"), package:installdir("lib"))
-        if package:config("shared") then
-            os.cp("build/*.so", package:installdir("lib"))
-            os.cp("build/*.dll", package:installdir("lib"))
+        if package:is_plat("windows") then
+            os.trycp("build/**.dll", package:installdir("bin"))
+            os.trycp("build/**.lib", package:installdir("lib"))
+        else
+            os.trycp("build/*.so", package:installdir("lib"))
+            os.trycp("build/*.a", package:installdir("lib"))
         end
         os.cp("include", package:installdir())
     end)
