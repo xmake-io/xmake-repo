@@ -21,13 +21,11 @@ package("nasm")
     end
 
     on_install("@windows", "@mingw", "@msys", function (package)
-        package:addenv("PATH", "bin")
         os.cp("*.exe", package:installdir("bin"))
         os.cp(path.join("rdoff", "*.exe"), package:installdir("bin"))
     end)
 
     on_install("@linux", "@macosx", function (package)
-        package:addenv("PATH", "bin")
         import("package.tools.autoconf").install(package)
     end)
 
