@@ -3,8 +3,9 @@ package("libxcb")
     set_homepage("https://www.x.org/")
     set_description("X.Org: Interface to the X Window System protocol")
 
-    set_urls("https://xcb.freedesktop.org/dist/libxcb-$(version).tar.bz2")
-    add_versions("1.13.1", "a89fb7af7a11f43d2ce84a844a4b38df688c092bf4b67683aef179cdf2a647c4")
+    set_urls("https://xcb.freedesktop.org/dist/libxcb-$(version).tar.gz")
+    add_versions("1.13.1", "f09a76971437780a602303170fd51b5f7474051722bc39d566a272d2c4bde1b5")
+    add_versions("1.14", "2c7fcddd1da34d9b238c9caeda20d3bd7486456fc50b3cc6567185dbd5b0ad02")
 
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "python 3.x", "xcb-proto", "libpthread-stubs", "libxau", "libxdmcp")
