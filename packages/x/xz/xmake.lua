@@ -5,12 +5,54 @@ package("xz")
 
     set_urls("https://downloads.sourceforge.net/project/lzmautils/xz-$(version).tar.gz",
              "https://tukaani.org/xz/xz-$(version).tar.gz")
-    add_versions("5.2.4", "b512f3b726d3b37b6dc4c8570e137b9311e7552e8ccbab4d39d47ce5f4177145")
+    add_versions("5.2.5", "f6f4910fd033078738bd82bfba4f49219d03b17eb0794eb91efbae419f4aba10")
 
     on_load(function (package)
         if is_plat(os.host()) then
             package:addenv("PATH", "bin")
         end
+        if package:is_plat("windows") and not package:config("shared") then
+            package:add("defines", "LZMA_API_STATIC")
+        end
+    end)
+
+    on_install("windows", "mingw@windows", function (package)
+        local configs = {}
+        if package:config("shared") then
+            configs.kind = "shared"
+        end
+        io.writefile("xmake.lua", [[
+            add_rules("mode.release", "mode.debug")
+            target("lzma")
+                set_kind("$(kind)")
+                add_defines("HAVE_CONFIG_H")
+                add_includedirs("src/common",
+                                "src/liblzma/common",
+                                "src/liblzma/api",
+                                "src/liblzma/check",
+                                "src/liblzma/delta",
+                                "src/liblzma/lz",
+                                "src/liblzma/lzma",
+                                "src/liblzma/rangecoder",
+                                "src/liblzma/simple",
+                                --2013/2017/2019 config.h is the same
+                                "windows/vs2013")
+                add_files("src/common/tuklib_cpucores.c",
+                          "src/common/tuklib_physmem.c",
+                          "src/liblzma/check/*.c|*_small.c|*_tablegen.c",
+                          "src/liblzma/common/*.c",
+                          "src/liblzma/delta/*.c",
+                          "src/liblzma/lzma/*.c|*_tablegen.c",
+                          "src/liblzma/lz/*.c",
+                          "src/liblzma/rangecoder/price_table.c",
+                          "src/liblzma/simple/*.c")
+                if is_kind("shared") and is_plat("windows") then
+                    add_defines("DLL_EXPORT")
+                end
+                add_headerfiles("src/liblzma/api/*.h")
+                add_headerfiles("src/liblzma/api/(lzma/*.h)")
+        ]])
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_install("macosx", "linux", "mingw@linux,macosx", function (package)
@@ -27,8 +69,5 @@ package("xz")
     end)
 
     on_test(function (package)
-        if is_plat(os.host()) then
-            os.vrun("xz --version")
-        end
         assert(package:has_cfuncs("lzma_code", {includes = "lzma.h"}))
     end)
