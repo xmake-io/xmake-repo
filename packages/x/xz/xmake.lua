@@ -21,7 +21,37 @@ package("xz")
         if package:config("shared") then
             configs.kind = "shared"
         end
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        io.writefile("xmake.lua", [[
+            add_rules("mode.release", "mode.debug")
+            target("lzma")
+                set_kind("$(kind)")
+                add_defines("HAVE_CONFIG_H")
+                add_includedirs("src/common",
+                                "src/liblzma/common",
+                                "src/liblzma/api",
+                                "src/liblzma/check",
+                                "src/liblzma/delta",
+                                "src/liblzma/lz",
+                                "src/liblzma/lzma",
+                                "src/liblzma/rangecoder",
+                                "src/liblzma/simple",
+                                --2013/2017/2019 config.h is the same
+                                "windows/vs2013")
+                add_files("src/common/tuklib_cpucores.c",
+                          "src/common/tuklib_physmem.c",
+                          "src/liblzma/check/*.c|*_small.c|*_tablegen.c",
+                          "src/liblzma/common/*.c",
+                          "src/liblzma/delta/*.c",
+                          "src/liblzma/lzma/*.c|*_tablegen.c",
+                          "src/liblzma/lz/*.c",
+                          "src/liblzma/rangecoder/price_table.c",
+                          "src/liblzma/simple/*.c")
+                if is_kind("shared") and is_plat("windows") then
+                    add_defines("DLL_EXPORT")
+                end
+                add_headerfiles("src/liblzma/api/*.h")
+                add_headerfiles("src/liblzma/api/(lzma/*.h)")
+        ]])
         import("package.tools.xmake").install(package, configs)
     end)
 
