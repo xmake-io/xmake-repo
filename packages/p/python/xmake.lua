@@ -91,7 +91,7 @@ package("python")
     on_install("@macosx", "@linux", function (package)
 
         -- init configs
-        local configs = {"--enable-ipv6", "--with-ensurepip"}
+        local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
         table.insert(configs, "--datadir=" .. package:installdir("share"))
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
 
