@@ -12,7 +12,7 @@ package("brotli")
     --VC <= 2012 build failed
     if is_plat("windows") then
         add_patches("1.0.9", path.join(os.scriptdir(), "patches", "1.0.9_common_platform.patch"),
-                    "b65bf30ffb3753ac58bf09265e57ea3ca349a1212e4c9adfad920e3b4d74df57")
+                    "5d7363a6ed1f9a504dc7af08920cd184f0d04d1ad12d25d657364cf0a2dae6bb")
         add_patches("1.0.9", path.join(os.scriptdir(), "patches", "1.0.9_tool_brotli.patch"),
                     "a9bf60127b568635c4e4bf830768f8b773a1554a86f857540265439cf3def11a")
     end

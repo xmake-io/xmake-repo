@@ -1,12 +1,3 @@
-From 97006561ea9a2c3c6fb09b4f77d6c109589a9219 Mon Sep 17 00:00:00 2001
-From: Gabriel <gabriel@potter.fr>
-Date: Mon, 21 Sep 2020 13:22:56 +0200
-Subject: [PATCH] Fix VC C++ 12.0 BROTLI_MSVC_VERSION_CHECK calls (#843)
-
----
- c/common/platform.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
 diff --git a/c/common/platform.h b/c/common/platform.h
 index f5ca4435..7e5807da 100644
 --- a/c/common/platform.h
