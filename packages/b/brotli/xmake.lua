@@ -8,13 +8,13 @@ package("brotli")
 
     add_versions("1.0.9", "f9e8d81d0405ba66d181529af42a3354f838c939095ff99930da6aa9cdf6fe46")
 
-    --Fix VC C++ 12.0 BROTLI_MSVC_VERSION_CHECK calls
-    --VC <= 2012 build failed
+    -- Fix VC C++ 12.0 BROTLI_MSVC_VERSION_CHECK calls
+    -- VC <= 2012 build failed
     if is_plat("windows") then
-        add_patches("1.0.9", path.join(os.scriptdir(), "patches", "1.0.9_common_platform.patch"),
+        add_patches("1.0.9", path.join(os.scriptdir(), "patches", "1.0.9", "common_platform.patch"),
                     "5d7363a6ed1f9a504dc7af08920cd184f0d04d1ad12d25d657364cf0a2dae6bb")
-        add_patches("1.0.9", path.join(os.scriptdir(), "patches", "1.0.9_tool_brotli.patch"),
-                    "a9bf60127b568635c4e4bf830768f8b773a1554a86f857540265439cf3def11a")
+        add_patches("1.0.9", path.join(os.scriptdir(), "patches", "1.0.9", "tool_brotli.patch"),
+                    "333e2a0306cf33f2fac381aa6b81afd3d1237e7511e5cc8fe7fb760d16d01ca1")
     end
 
     on_load(function (package)
