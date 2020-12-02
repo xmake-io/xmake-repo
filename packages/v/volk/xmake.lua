@@ -14,10 +14,6 @@ package("volk")
     end
 
     on_install("windows", "linux", "macosx", function (package)
-        import("package.tools.cmake").install(package)
-    end)
-
-    on_install("windows", "linux", "macosx", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
