@@ -9,7 +9,7 @@ package("DirectXTK")
                 local versions = {
                     ["20.9.0"] = "sept2020"
                 }
-                return versions[version]
+                return versions[tostring(version)]
             end})
 
     add_versions("20.9.0", "9d5131243bf3e33db2e3a968720d860abdcbbe7cb037c2cb5dd06046d439ed09")

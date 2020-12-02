@@ -4,7 +4,7 @@ package("sfntly")
     set_description("The sfntly project contains Java and C++ libraries for reading, editing, and writing sfnt container fonts (OpenType, TrueType, AAT/GX, and Graphite.)")
 
     local commits = {["20190917"] = "1e7adf313bd9c488a70015f8df8782f7c65e9ce7"}
-    add_urls("https://github.com/googlefonts/sfntly/archive/$(version).zip", {version = function (version) return commits[version] end})
+    add_urls("https://github.com/googlefonts/sfntly/archive/$(version).zip", {version = function (version) return commits[tostring(version)] end})
     add_versions("20190917", "8b27d570624dcbe1769c64274c75cfce4afc9d12893b0b8acba090e5c870e51f")
 
     add_deps("icu4c")
