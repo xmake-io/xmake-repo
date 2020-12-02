@@ -10,6 +10,14 @@ package("brotli")
 
     add_deps("cmake")
 
+    on_load("linux", function (package)
+        if package:config("shared") then
+            package:add("links", "brotlidec", "brotlienc", "brotlicommon")
+        else
+            package:add("links", "brotlidec-static", "brotlienc-static", "brotlicommon-static")
+        end
+    end)
+
     on_install("linux", "macosx", "windows", function(package)
         local configs = {"-DBUILD_TESTING=OFF"}
         -- NOTE: BUILD_SHARED_LIBS not supported now, may be added in future.
