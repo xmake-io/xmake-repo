@@ -9,6 +9,7 @@ package("eigen")
     add_versions("3.3.7", "685adf14bd8e9c015b78097c1dc22f2f01343756f196acdc76a678e1ae352e11")
 
     add_deps("cmake")
+    add_includedirs("include")
     add_includedirs("include/eigen3")
 
     on_install("macosx", "linux", "windows", function (package)
