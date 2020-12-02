@@ -1,0 +1,19 @@
+--- a/c/tools/brotli.c	2020-08-27 22:12:55.000000000 +0800
++++ b/c/tools/brotli.c	2020-12-01 15:45:55.992034700 +0800
+@@ -876,6 +876,7 @@
+ }
+
+ static BROTLI_BOOL DecompressFile(Context* context, BrotliDecoderState* s) {
++  int has_more_input;
+   BrotliDecoderResult result = BROTLI_DECODER_RESULT_NEEDS_MORE_INPUT;
+   InitializeBuffers(context);
+   for (;;) {
+@@ -890,7 +891,7 @@
+       if (!ProvideOutput(context)) return BROTLI_FALSE;
+     } else if (result == BROTLI_DECODER_RESULT_SUCCESS) {
+       if (!FlushOutput(context)) return BROTLI_FALSE;
+-      int has_more_input =
++      has_more_input =
+           (context->available_in != 0) || (fgetc(context->fin) != EOF);
+       if (has_more_input) {
+         fprintf(stderr, "corrupt input [%s]\n",
