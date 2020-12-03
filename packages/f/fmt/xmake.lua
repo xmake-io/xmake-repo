@@ -9,14 +9,12 @@ package("fmt")
     add_versions("6.0.0", "b4a16b38fa171f15dbfb958b02da9bbef2c482debadf64ac81ec61b5ac422440")
     add_versions("5.3.0", "4c0741e10183f75d7d6f730b8708a99b329b2f942dad5a9da3385ab92bb4a15c")
 
-    add_configs("header_only", {description = "Use header only", default = true, type = "boolean"})
-    add_configs("cmake",       {description = "Use cmake buildsystem", default = false, type = "boolean"})
+    add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
     on_load(function (package)
         if package:config("header_only") then
             package:add("defines", "FMT_HEADER_ONLY=1")
-        end
-        if not package:config("header_only") or package:config("cmake") then
+        else
             package:add("deps", "cmake")
         end
         if package:config("shared") then
@@ -25,17 +23,17 @@ package("fmt")
     end)
 
     on_install(function (package)
-        if package:config("header_only") and not package:config("cmake") then
+        if package:config("header_only") then
             os.cp("include/fmt", package:installdir("include"))
             return
         end
-
-        local configs = {}
+        io.gsub("CMakeLists.txt", "MASTER_PROJECT AND CMAKE_GENERATOR MATCHES \"Visual Studio\"", "0")
+        local configs = {"-DFMT_TEST=OFF", "-DFMT_DOC=OFF", "-DFMT_FUZZ=OFF"}
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded" .. (package:debug() and "Debug" or "") .. (package:config("vs_runtime"):startswith("MT") and "" or "DLL"))
+        end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DFMT_TEST=OFF")
-        table.insert(configs, "-DFMT_DOC=OFF")
-        table.insert(configs, "-DFMT_FUZZ=OFF")
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -48,6 +46,6 @@ package("fmt")
                 std::string s = fmt::format("{}", "hello");
                 assert(s == "hello");
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "fmt/format.h", defines="FMT_HEADER_ONLY"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "fmt/format.h"}))
     end)
 
