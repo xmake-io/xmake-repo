@@ -5,7 +5,7 @@ package("spdlog")
 
     set_urls("https://github.com/gabime/spdlog/archive/v$(version).zip",
              "https://github.com/gabime/spdlog.git")
-
+    add_versions("1.8.1", "eed0095a1d52d08a0834feda146d4f9148fa4125620cd04d8ea57e0238fa39cd")
     add_versions("1.8.0", "3cc41508fcd79e5141a6ef350506ef82982ca42a875e0588c02c19350ac3702e")
     add_versions("1.5.0", "87e87c989f15d6b9f5379385aec1001c89a42941341ebaa09ec895b98a00efb4")
     add_versions("1.4.2", "56b90f0bd5b126cf1b623eeb19bf4369516fa68f036bbc22d9729d2da511fb5a")
@@ -26,7 +26,7 @@ package("spdlog")
             package:add("deps", "cmake")
         end
         if package:config("fmt_external") then
-            package:add("deps", "fmt")
+            package:add("deps", "fmt", {configs = {header_only = true}})
         end
     end)
 
