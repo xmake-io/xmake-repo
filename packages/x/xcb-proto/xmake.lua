@@ -8,7 +8,7 @@ package("xcb-proto")
     add_versions("1.14", "1c3fa23d091fb5e4f1e9bf145a902161cec00d260fabf880a7a248b02ab27031")
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", "python 3.x")
+        add_deps("pkg-config", "python 3.x", {kind = "binary"})
     end
 
     on_install("macosx", "linux", function (package)
