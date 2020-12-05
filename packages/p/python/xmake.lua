@@ -57,6 +57,13 @@ package("python")
 
     on_load("@macosx", "@linux", function (package)
 
+        -- check system libs
+        if is_host("linux") then
+            for link, lib in pairs({z = "zlib", ffi = "libffi"}) do
+                assert(find_package("system::" .. link, {plat = os.host(), arch = os.arch()}), ("%s-dev not found, please use your system package manager to install it."):format(lib))
+            end
+        end
+
         -- set includedirs
         local version = package:version()
         local pyver = ("python%d.%d"):format(version:major(), version:minor())
