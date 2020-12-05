@@ -1,75 +1,105 @@
 package("hpsocket")
     set_homepage("https://github.com/ldcsaa/HP-Socket")
     set_description("High Performance Network Framework")
+    set_license("Apache-2.0")
+
     add_urls("https://github.com/ldcsaa/HP-Socket/archive/$(version).tar.gz",
              "https://github.com/ldcsaa/HP-Socket.git")
 
-    add_versions("v5.7.2", "4397375000ec261265542498f6c5675d71cec9582319a9083e0f77ac41deac5a")
+    add_versions("v5.7.3", "b3f77120f94b0e85cabce3c184b8163c62aec42562c3b44beff61fd4d3aa4784")
 
-    if is_plat("windows") then
-        add_syslinks("crypt32", "ws2_32", "kernel32")
-        add_links("hpsocket", "libssl", "libcrypto")
-    elseif is_plat("linux") then
-        add_syslinks("rt", "dl", "pthread")
-        add_links("hpsocket", "ssl", "crypto", "z", "jemalloc_pic")
-    elseif is_plat("android") then
-        add_syslinks("dl", "z")
-        add_links("hpsocket", "ssl", "crypto", "iconv", "charset")
+    local configs = {{name = "udp",    package = "kcp"},
+                     {name = "http",   package = "http_parser"},
+                     {name = "zlib",   package = is_plat("android") and "" or "zlib"},
+                     {name = "brotli", package = "brotli"},
+                     {name = "ssl",    package = ""},
+                     {name = "iconv",  package = ""}}
+
+    for _, cfg in ipairs(configs) do
+        local cfg_name = "no_" .. cfg.name
+        add_configs(cfg_name, {description = "Build hpsocket without " .. cfg.name, default = false, type = "boolean"})
     end
+    add_configs("no_4c",   {description = "Build hpsocket without C interface", default = true, type = "boolean"})
+    add_configs("unicode", {description = "Build hpsocket with unicode character set", default = false, type = "boolean"})
 
     on_load(function (package)
+        for _, cfg in ipairs(configs) do
+            local cfg_name = "no_" .. cfg.name
+            if not package:config(cfg_name) then
+                if cfg.package ~= "" then
+                    package:add("deps", cfg.package, package:is_plat("windows") and {} or {configs = {cxflags = "-fpic"}})
+                end
+            else
+                package:add("defines", "_" .. string.upper(cfg.name) .. "_DISABLED")
+            end
+        end
+
         if package:is_plat("windows") then
-            package:add("defines", "HPSOCKET_STATIC_LIB")
+            if not package:config("shared") then
+                package:add("defines", "HPSOCKET_STATIC_LIB")
+            end
+            package:add("syslinks", "ws2_32", "user32", "kernel32")
+            if not package:config("no_ssl") then
+                package:add("syslinks", "crypt32")
+            end
+        elseif package:is_plat("linux") then
+            package:add("syslinks", "pthread", "dl", "rt")
+        elseif package:is_plat("android") then
+            package:add("syslinks", "dl")
+            if not package:config("no_zlib") then
+                package:add("syslinks", "z")
+            end
+        end
+
+        package:add("links", package:config("no_4c") and "hpsocket" or "hpsocket4c")
+        if not package:config("shared") then
+            if not package:config("no_ssl") then
+                local prefix = is_plat("windows") and "lib" or ""
+                package:add("links", prefix .. "ssl", prefix .. "crypto")
+            end
+            if not package:config("no_iconv") then
+                if is_plat("android") then
+                    package:add("links", "iconv", "charset")
+                end
+            end
+            if is_plat("linux") then
+                package:add("links", "jemalloc_pic")
+            end
         end
     end)
 
     on_install("windows", "linux", "android", function (package)
         if package:is_plat("windows") then
             io.writefile("stdafx.h", [[
-            #pragma once
-            #define _DETECT_MEMORY_LEAK
-            #include "Windows/Common/Src/GeneralHelper.h"
+                #pragma once
+                #include "Windows/Common/Src/GeneralHelper.h"
             ]])
             io.writefile("stdafx.cpp", [[
                 #include "stdafx.h"
             ]])
         end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
 
-        if package:is_plat("windows") then
-            local vs = get_config("vs")
-            local vs_ver = "10.0"
-            local arch = "x64"
-            if is_arch("x86") then
-                arch = "x86"
+        local config = {}
+        config.no_4c = package:config("no_4c")
+        config.unicode = package:config("unicode")
+        for _, cfg in ipairs(configs) do
+            local cfg_name = "no_" .. cfg.name
+            if package:config(cfg_name) then
+                config[cfg_name] = true
             end
-
-            if vs == "2015" then
-                vs_ver = "14.0"
-            elseif vs == "2017" then
-                vs_ver = "15.0"
-            elseif vs == "2019" then
-                vs_ver = "16.0"
-            end
-            os.cp("Windows/Common/Lib/openssl/" .. vs_ver .. "/" .. arch .. "/lib" .. "/*.lib", package:installdir("lib"))
-        elseif package:is_plat("linux") then
-            local arch = "x86"
-            if is_arch("x86_64") then 
-                arch = "x64"
-            end
-            os.cp("Linux/dependent/" .. arch .. "/lib" .. "/*.a", package:installdir("lib"))
-        elseif package:is_plat("android") then
-            os.cp("Linux/dependent/android-ndk/$(arch)/lib/*.a", package:installdir("lib"))
         end
+        if package:config("shared") then
+            config.kind = "shared"
+        end
+        import("package.tools.xmake").install(package, config)
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
-            #include "HPSocket.h"
             static void test() {
                 std::cout << HP_GetHPSocketVersion() << "\n";
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "HPSocket.h", defines = "HPSOCKET_STATIC_LIB"}))
+        ]]}, {configs = {languages = "c++11"}, includes = package:config("no_4c") and "HPSocket.h" or "HPSocket4C.h"}))
     end)
