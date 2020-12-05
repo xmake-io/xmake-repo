@@ -9,7 +9,8 @@ package("spirv-tools")
 
     add_patches("2020.5", "https://github.com/KhronosGroup/SPIRV-Tools/commit/a1d38174b1f7d2651c718ae661886d606cb50a32.patch", "2811faeef3ad53a83e409c8ef9879badcf9dc04fc3d98dbead7313514b819933")
 
-    add_deps("cmake", "spirv-headers", "python 3.x")
+    add_deps("cmake", "python 3.x", {kind = "binary"})
+    add_deps("spirv-headers")
 
     on_install("linux", "windows", "macosx", function (package)
         package:addenv("PATH", "bin")
