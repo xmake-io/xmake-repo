@@ -45,4 +45,3 @@ package("cgal")
             }
         ]]}, {config = {languages = "c++14"}, includes = {"CGAL/Epick_d.h", "CGAL/Delaunay_triangulation.h"}})
     end)
-    
