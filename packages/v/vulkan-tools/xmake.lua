@@ -1,0 +1,55 @@
+package("vulkan-tools")
+
+    set_homepage("https://github.com/KhronosGroup/Vulkan-Tools")
+    set_description("Vulkan Utilities and Tools")
+    set_license("Apache-2.0")
+
+    add_urls("https://github.com/KhronosGroup/Vulkan-Tools/archive/sdk-$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
+    add_versions("1.2.154+0", "c7d66ec1f5fe5c0a13e487fe5c6eefd3a954522c0b05f06bd2ae41792aeea272")
+
+    add_deps("cmake", "ninja")
+    add_deps("glslang")
+    if is_plat("linux") then
+        add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
+    end
+
+    on_load("windows", "linux", function (package)
+        local sdkver = package:version():split("%+")[1]
+        package:add("deps", "vulkan-headers " .. sdkver)
+        package:add("deps", "vulkan-loader " .. sdkver)
+    end)
+
+    on_install("windows", "linux", function (package)
+        import("package.tools.cmake")
+        local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
+        if package:is_plat("linux") then
+            local includes = {}
+            local linkdirs = {}
+            for _, lib in ipairs({"wayland", "libxrandr", "libxcb", "libxkbcommon"}) do
+                local fetchinfo = package:dep(lib):fetch()
+                for _, dir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
+                    table.insert(includes, dir)
+                end
+                for _, dir in ipairs(fetchinfo.linkdirs) do
+                    table.insert(linkdirs, dir)
+                end
+            end
+            envs.CPLUS_INCLUDE_PATH = (envs.CPLUS_INCLUDE_PATH or "") .. path.envsep() .. path.joinenv(table.unique(includes))
+            envs.LD_LIBRARY_PATH = (envs.LD_LIBRARY_PATH or "") .. path.envsep() .. path.joinenv(table.unique(linkdirs))
+        end
+
+        package:addenv("PATH", "bin")
+        io.replace(path.join("icd", "CMakeLists.txt"), "copy ${src_json} ${dst_json}", "${CMAKE_COMMAND} -E copy ${src_json} ${dst_json}", {plain = true})
+        local configs = {}
+        local vulkan_headers = package:dep("vulkan-headers")
+        local vulkan_loader = package:dep("vulkan-loader")
+        local glslang = package:dep("glslang")
+        table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
+        table.insert(configs, "-DVULKAN_LOADER_INSTALL_DIR=" .. vulkan_loader:installdir())
+        table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. glslang:installdir())
+        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs})
+    end)
+
+    on_test(function (package)
+        os.vrun("vulkaninfo --summary")
+    end)
