@@ -45,12 +45,12 @@ package("vulkan-validationlayers")
 
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
-        table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
         local glslang = package:dep("glslang")
-        table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. glslang:installdir())
         local spirv_headers = package:dep("spirv-headers")
-        table.insert(configs, "-DSPIRV_HEADERS_INSTALL_DIR=" .. spirv_headers:installdir())
         local spirv_tools = package:dep("spirv-tools")
+        table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
+        table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. glslang:installdir())
+        table.insert(configs, "-DSPIRV_HEADERS_INSTALL_DIR=" .. spirv_headers:installdir())
         table.insert(configs, "-DSPIRV_TOOLS_INSTALL_DIR=" .. spirv_tools:installdir())
 
         if package:is_plat("windows") then
