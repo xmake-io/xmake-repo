@@ -14,7 +14,6 @@ package("libigl")
     on_load("macosx", "linux", "windows", function (package)
         if not package:config("header_only") then
             raise("Non-header-only version is not supported yet!")
-            -- package:add("deps", "glad", "glfw", "imgui", "embree")
         end
         if package:config("use_cgal") then
             package:add("deps", "cgal")
