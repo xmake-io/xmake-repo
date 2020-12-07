@@ -18,7 +18,7 @@ package("flatbuffers")
     end)
 
     on_test(function(package)
-        if is_plat("windows", "linux", "macosx", "mingw") then
+        if is_plat("windows", "linux", "macosx", "mingw@windows") then
             os.vrun("flatc --version")
         end
         assert(package:check_cxxsnippets({test = [[
