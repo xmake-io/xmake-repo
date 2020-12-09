@@ -41,7 +41,9 @@ package("libpng")
         local zlib = package:dep("zlib")
         local envs = autoconf.buildenvs(package)
         if zlib then
-            envs.CPPFLAGS = (envs.CPPFLAGS or "") .. " -I" .. os.args(path.join(zlib:installdir(), "include"))
+            -- we need patch cflags to cppflags for supporting zlib on android ndk
+            -- @see https://github.com/xmake-io/xmake/issues/1126
+            envs.CPPFLAGS = (envs.CFLAGS or "") .. " -I" .. os.args(path.join(zlib:installdir(), "include"))
             envs.LDFLAGS = (envs.LDFLAGS or "") .. " -L" .. os.args(path.join(zlib:installdir(), "lib"))
         end
         local configs = {"--disable-dependency-tracking", "--disable-silent-rules"}
