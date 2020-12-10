@@ -9,7 +9,7 @@ package("pcre")
     add_versions("8.40", "99e19194fa57d37c38e897d07ecb3366b18e8c395b36c6d555706a7f1df0a5d4")
     add_versions("8.41", "0e914a3a5eb3387cad6ffac591c44b24bc384c4e828643643ebac991b57dfcc5")
 
-    if is_host("windows") then
+    if is_host("windows") and not is_plat("mingw") then
         add_deps("cmake")
     end
 
@@ -23,9 +23,9 @@ package("pcre")
             package:add("defines", "PCRE_STATIC")
         end
     end)
- 
+
     on_install("windows", function (package)
-        local configs = {}
+        local configs = {"-DPCRE_BUILD_TESTS=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DPCRE_SUPPORT_JIT=" .. (package:config("jit") and "ON" or "OFF"))
         local bitwidth = package:config("bitwidth") or "8"
@@ -39,7 +39,7 @@ package("pcre")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", "mingw@linux,macosx", function (package)
+    on_install("macosx", "linux", "mingw", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")

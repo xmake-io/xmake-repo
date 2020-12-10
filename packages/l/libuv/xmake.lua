@@ -23,17 +23,23 @@ package("libuv")
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
-    on_load("windows", function (package)
-        package:add("links", "uv_a")
+    on_load("windows", "mingw@linux,macosx", function (package)
+        if package:is_plat("windows") then
+            package:add("links", "uv" .. (package:config("shared") and "" or "_a"))
+        end
         package:add("syslinks", "advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
     end)
+
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
 
     on_install("windows", function (package)
         import("package.tools.cmake").install(package)
         os.cp("include", package:installdir())
     end)
 
-    on_install("macosx", "linux", "iphoneos", "android@linux,macosx", function (package)
+    on_install("macosx", "linux", "iphoneos", "android@linux,macosx", "mingw@linux,macosx", function (package)
         import("package.tools.autoconf").install(package, {"--enable-shared=no"})
     end)
 

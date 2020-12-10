@@ -25,25 +25,23 @@ package("pcre2")
             package:add("defines", "PCRE2_STATIC")
         end
     end)
- 
-    if is_plat("windows") and winos.version():gt("winxp") then
-        on_install("windows", function (package)
-            local configs = {}
-            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-            table.insert(configs, "-DPCRE2_SUPPORT_JIT=" .. (package:config("jit") and "ON" or "OFF"))
-            local bitwidth = package:config("bitwidth") or "8"
-            if bitwidth ~= "8" then
-                table.insert(configs, "-DPCRE2_BUILD_PCRE2_8=OFF")
-                table.insert(configs, "-DPCRE2_BUILD_PCRE2_" .. bitwidth .. "=ON")
-            end
-            if package:debug() then
-                table.insert(configs, "-DPCRE2_DEBUG=ON")
-            end
-            import("package.tools.cmake").install(package, configs)
-        end)
-    end
 
-    on_install("macosx", "linux", "mingw@linux,macosx", function (package)
+    on_install("windows", function (package)
+        local configs = {"-DPCRE2_BUILD_TESTS=OFF", "-DPCRE2_BUILD_PCRE2GREP=OFF"}
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DPCRE2_SUPPORT_JIT=" .. (package:config("jit") and "ON" or "OFF"))
+        local bitwidth = package:config("bitwidth") or "8"
+        if bitwidth ~= "8" then
+            table.insert(configs, "-DPCRE2_BUILD_PCRE2_8=OFF")
+            table.insert(configs, "-DPCRE2_BUILD_PCRE2_" .. bitwidth .. "=ON")
+        end
+        if package:debug() then
+            table.insert(configs, "-DPCRE2_DEBUG=ON")
+        end
+        import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_install("macosx", "linux", "mingw", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")

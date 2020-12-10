@@ -11,7 +11,7 @@ package("mysql")
         add_deps("cmake", "openssl")
     end
     add_includedirs("include/mysql")
- 
+
     on_install("macosx", "linux", function (package)
         -- https://bugs.mysql.com/bug.php?id=87348
         -- Fixes: "ADD_SUBDIRECTORY given source

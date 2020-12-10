@@ -1,19 +1,22 @@
 <div align="center">
   <a href="https://xmake.io">
-    <img width="200" heigth="200" src="https://tboox.org/static/img/xmake/logo256c.png">
+    <img width="160" heigth="160" src="https://tboox.org/static/img/xmake/logo256c.png">
   </a>  
 
   <h1>xmake-repo</h1>
 
   <div>
-    <a href="https://travis-ci.org/xmake-io/xmake-repo">
-      <img src="https://img.shields.io/travis/xmake-io/xmake-repo/dev.svg?style=flat-square" alt="travis-ci" />
+    <a href="https://github.com/xmake-io/xmake-repo/actions?query=workflow%3AWindows">
+      <img src="https://img.shields.io/github/workflow/status/xmake-io/xmake-repo/Windows/dev.svg?style=flat-square&logo=windows" alt="github-ci" />
     </a>
-    <a href="https://ci.appveyor.com/project/waruqi/xmake-repo">
-      <img src="https://img.shields.io/appveyor/ci/waruqi/xmake-repo/dev.svg?style=flat-square" alt="appveyor-ci" />
+    <a href="https://github.com/xmake-io/xmake-repo/actions?query=workflow%3ALinux">
+      <img src="https://img.shields.io/github/workflow/status/xmake-io/xmake-repo/Linux/dev.svg?style=flat-square&logo=linux" alt="github-ci" />
     </a>
-    <a href="https://github.com/xmake-io/xmake-repo/blob/master/LICENSE.md">
-      <img src="https://img.shields.io/github/license/xmake-io/xmake-repo.svg?colorB=f48041&style=flat-square" alt="license" />
+    <a href="https://github.com/xmake-io/xmake-repo/actions?query=workflow%3AmacOS">
+      <img src="https://img.shields.io/github/workflow/status/xmake-io/xmake-repo/macOS/dev.svg?style=flat-square&logo=apple" alt="github-ci" />
+    </a>
+    <a href="https://github.com/xmake-io/xmake-repo/actions?query=workflow%3AAndroid">
+      <img src="https://img.shields.io/github/workflow/status/xmake-io/xmake-repo/Android/dev.svg?style=flat-square&logo=android" alt="github-ci" />
     </a>
   </div>
   <div>
@@ -29,6 +32,12 @@
     <a href="https://jq.qq.com/?_wv=1027&k=5hpwWFv">
       <img src="https://img.shields.io/badge/chat-on%20QQ-ff69b4.svg?style=flat-square" alt="QQ" />
     </a>
+    <a href="https://discord.gg/XXRp26A4Gr">
+      <img src="https://img.shields.io/badge/chat-on%20discord-7289da.svg?style=flat-square" alt="Discord" />
+    </a>
+    <a href="https://github.com/xmake-io/xmake-repo/blob/master/LICENSE.md">
+      <img src="https://img.shields.io/github/license/xmake-io/xmake-repo.svg?colorB=f48041&style=flat-square" alt="license" />
+    </a>
     <a href="http://xmake.io/pages/donation.html#donate">
       <img src="https://img.shields.io/badge/donate-us-orange.svg?style=flat-square" alt="Donate" />
     </a>
@@ -36,6 +45,12 @@
 
   <p>An official xmake package repository</p>
 </div>
+
+## Supporting the project
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. 🙏 [[Become a sponsor](https://xmake.io/#/about/sponsor)]
+
+<a href="https://opencollective.com/xmake#backers" target="_blank"><img src="https://opencollective.com/xmake/backers.svg?width=890"></a>
 
 ## Introduction ([中文](/README_zh.md))
 
@@ -54,6 +69,16 @@ If you want to know more, please refer to:
 * [Documents](https://xmake.io/#/home)
 * [Github](https://github.com/xmake-io/xmake)
 * [HomePage](https://xmake.io)
+
+## Xrepo
+
+xrepo is a cross-platform C/C++ package manager based on [Xmake](https://github.com/xmake-io/xmake).
+
+It is based on the runtime provided by xmake, but it is a complete and independent package management program. Compared with package managers such as vcpkg/homebrew, xrepo can provide C/C++ packages for more platforms and architectures at the same time.
+
+If you want to know more, please refer to: [Documents](https://xrepo.xmake.io/#/getting_started), [Github](https://github.com/xmake-io/xrepo) and [Gitee](https://gitee.com/tboox/xrepo)
+
+![](https://xrepo.xmake.io/assets/img/xrepo.gif)
 
 ## Submit package to repository
 
@@ -143,7 +168,7 @@ package("zlib")
 |libwebsockets|unqlite|||libtool|||
 |libxml2|zeromq|||libusb|||
 
-Note: Only some packages are shown here. If you want to see a complete list of all packages, please see: [PKGLIST.md](https://github.com/xmake-io/xmake-repo/blob/master/PKGLIST.md)
+Note: Only some packages are shown here. If you want to see a complete list of all packages, please see: [Packages List](https://xrepo.xmake.io/#/packages/linux)
 
 We also welcome everyone to contribute some packages to our package repository.🙏 
 

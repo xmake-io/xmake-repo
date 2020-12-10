@@ -8,7 +8,7 @@ package("skia")
 
     add_versions("68046c", "68046cd7be837bd31bc8f0e821a2f82a02dda9cf")
 
-    add_deps("python2", "ninja")
+    add_deps("python2", "ninja", {kind = "binary"})
 
     add_links("skia")
     add_includedirs("include")
@@ -28,7 +28,7 @@ package("skia")
     add_includedirs("include/svg")
     add_includedirs("include/third_party")
     add_includedirs("include/utils")
- 
+
     -- @note windows: only can build for vs2017 or vs2015 update 3
     on_install("macosx", "linux", "windows", function (package)
         local pathes = os.getenv("PATH") or ""
@@ -54,14 +54,14 @@ package("skia")
                       skia_use_zlib = false}
         args.cc  = package:build_getenv("cc")
         args.cxx = package:build_getenv("cxx")
-        local argstr = "" 
+        local argstr = ""
         for k, v in pairs(args) do
             if type(v) == "string" then
                 argstr = argstr .. ' ' .. k .. '=\"' .. v .. "\""
             else
                 argstr = argstr .. ' ' .. k .. '=' .. tostring(v)
             end
-        end 
+        end
         os.vrun("python2 tools/git-sync-deps")
         os.vrun("bin/gn gen build --args='%s'", argstr:trim())
         os.vrun("ninja -C build")
@@ -73,7 +73,7 @@ package("skia")
             os.cp("build/*.a", package:installdir("lib"))
         end
     end)
-  
+
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             static void test() {

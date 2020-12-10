@@ -16,7 +16,7 @@ package("gettext")
     end
 
     on_install("macosx", "linux", function (package)
-        local configs = {"--disable-dependency-tracking", 
+        local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--enable-shared=no",
                          "--enable-static=yes",

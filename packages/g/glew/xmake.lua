@@ -11,23 +11,80 @@ package("glew")
         add_versions("2.1.0", "2700383d4de2455f06114fbaf872684f15529d4bdc5cdea69b5fb0e9aa7763f1")
     end
 
-    on_load("windows", function (package)
-        package:add("links", "glew32s")
+    add_configs("build_utils", {description = "Build utility binaries", default = false, type = "boolean"})
+
+    if is_plat("windows", "mingw") then
+        add_syslinks("glu32", "opengl32")
+    else
+        add_links("GLEW")
+        if is_plat("linux") then
+            add_deps("libx11", "xorgproto")
+            add_syslinks("GLU", "GL")
+        elseif is_plat("macosx") then
+            add_frameworks("OpenGL")
+        end
+    end
+
+    on_load(function (package)
+        package:add("defines", "GLEW_BUILD")
+        if package:is_plat("windows") then
+            package:add("links", package:config("shared") and "glew32" or "glew32s")
+        end
     end)
+
+    if is_plat("mingw") then
+        add_deps("cmake")
+    end
 
     on_install("windows", function (package)
         os.cp("include", package:installdir())
         if is_arch("x64") then
-            os.cp("bin/Release/x64/*.dll", package:installdir("lib"))
+            os.cp("bin/Release/x64/*.dll", package:installdir("bin"))
             os.cp("lib/Release/x64/*.lib", package:installdir("lib"))
         else
-            os.cp("bin/Release/Win32/*.dll", package:installdir("lib"))
+            os.cp("bin/Release/Win32/*.dll", package:installdir("bin"))
             os.cp("lib/Release/Win32/*.lib", package:installdir("lib"))
+        end
+        if package:config("shared") then
+            package:addenv("PATH", "bin")
         end
     end)
 
     on_install("linux", "macosx", function (package)
-        os.vrun("make")
+        local configs = {"glew.lib." .. (package:config("shared") and "shared" or "static")}
+        local cflags  = {}
+        for _, dep in ipairs(package:orderdeps()) do
+            local fetchinfo = dep:fetch()
+            if fetchinfo then
+                for _, includedir in ipairs(fetchinfo.includedirs) do
+                    table.insert(cflags, "-I" .. includedir)
+                end
+            end
+        end
+        if package:config("shared") then
+            table.insert(cflags, "-fPIC")
+        end
+        if #cflags > 0 then
+            table.insert(configs, "CFLAGS.EXTRA=" .. table.concat(cflags, " "))
+        end
+        import("package.tools.make").build(package, configs)
         os.cp("lib", package:installdir())
         os.cp("include", package:installdir())
+    end)
+
+    on_install("mingw", function (package)
+        os.cd("build/cmake")
+        local configs = {}
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_UTILS=" .. (package:config("build_utils") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        if package:config("shared") then
+            os.cp("build/install/bin", package:installdir())
+            package:addenv("PATH", "bin")
+        end
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("glewInit", {includes = "GL/glew.h"}))
     end)

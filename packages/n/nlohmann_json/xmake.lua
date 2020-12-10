@@ -3,16 +3,28 @@ package("nlohmann_json")
     set_homepage("https://nlohmann.github.io/json/")
     set_description("JSON for Modern C++")
 
-    add_urls("https://github.com/nlohmann/json/releases/download/$(version)/include.zip",
+    add_urls("https://github.com/nlohmann/json/archive/$(version).tar.gz",
              "https://github.com/nlohmann/json.git")
-    add_versions("v3.4.0", "bfec46fc0cee01c509cf064d2254517e7fa80d1e7647fea37cf81d97c5682bdc")
-    add_versions("v3.7.0", "541c34438fd54182e9cdc68dd20c898d766713ad6d901fb2c6e28ff1f1e7c10d")
+    add_versions("v3.9.1", "4cf0df69731494668bdd6460ed8cb269b68de9c19ad8c27abc24cd72605b2d5b")
+
+    add_configs("cmake", {description = "Use cmake buildsystem", default = false, type = "boolean"})
+
+    on_load(function (package)
+        if package:config("cmake") then
+            package:add("deps", "cmake")
+        end
+    end)
 
     on_install(function (package)
-        if os.isdir("include") then
-            os.cp("include", package:installdir())
+        if package:config("cmake") then
+            local configs = {"-DJSON_BuildTests=OFF"}
+            import("package.tools.cmake").install(package, configs)
         else
-            os.cp("*", package:installdir("include"))
+            if os.isdir("include") then
+                os.cp("include", package:installdir())
+            else
+                os.cp("*", package:installdir("include"))
+            end
         end
     end)
 

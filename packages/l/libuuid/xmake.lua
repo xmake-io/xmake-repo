@@ -1,0 +1,26 @@
+package("libuuid")
+
+    set_homepage("https://sourceforge.net/projects/libuuid")
+    set_description("Portable uuid C library")
+
+    set_urls("https://jaist.dl.sourceforge.net/project/libuuid/libuuid-$(version).tar.gz",
+             "https://git.code.sf.net/p/libuuid/code.git")
+
+    add_versions("1.0.3", "46af3275291091009ad7f1b899de3d0cea0252737550e7919d17237997db5644")
+
+    on_install("linux", "macosx", function(package)
+        import("package.tools.autoconf").install(package)
+    end)
+
+    on_test(function(package)
+        assert(package:check_csnippets({
+            test = [[
+                void test() {
+                    uuid_t buf;
+                    char str[100];
+                    uuid_generate(buf);
+	                uuid_unparse(buf, str);
+                }
+            ]]
+        }, {configs = {languages = "c11"}, includes = "uuid/uuid.h"}))
+    end)

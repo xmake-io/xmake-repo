@@ -1,98 +1,86 @@
 package("python")
 
-    set_kind("binary")
     set_homepage("https://www.python.org/")
     set_description("The python programming language.")
 
     if is_host("windows") then
-        if os.arch() == "x64" then
-            add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).amd64.zip", {alias = "py2"})
-            add_versions("py2:2.7.15", "b9d8157fe2ca58f84d29a814bedf1d304d2277ad02f0930acd22e2ce7367b77e")
+        if is_arch("x86", "i386") or os.arch() == "x86" then
+            add_urls("https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win32.tar.gz",
+                     "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win32.tar.gz")
+            add_versions("2.7.15", "4a7be2b440b74776662daaeb6bb6c5574bb6d0f4ddc0ad03ce63571ab2353303")
+            add_versions("2.7.18", "9efaf273aa2e7d23fa22efa2936619ec91cf9ee189f707e375f9063fadeabcd6")
+            add_versions("3.7.0", "6f6dfd3df4b15157a12d06685a6dda450478ca118aa8832f0033093b9ca6329f")
+            add_versions("3.8.1", "f4fe3eeec4ee50260382a8221b1bebf919b6635a499341abe128986ae76f17e3")
+            add_versions("3.8.5", "9d1b901a508b3a6745aa225596d98a1aaa39cf8e9b9f79b5ded7192d4503a5aa")
         else
-            add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).win32.zip", {alias = "py2"})
-            add_versions("py2:2.7.15", "f34e2555c4fde5d7d746e6a0bbfc9151435f3f5c3eaddfc046ec0993b7cc9660")
-        end
-        if winos.version():gt("winxp") then
-            if os.arch() == "x64" then
-                add_urls("https://www.python.org/ftp/python/$(version)/python-$(version)-embed-amd64.zip", {alias = "py3"})
-                add_versions("py3:3.7.0", "0cc08f3c74c0112abc2adafd16a534cde12fe7c7aafb42e936d59fd3ab08fcdb")
-            else
-                add_urls("https://www.python.org/ftp/python/$(version)/python-$(version)-embed-win32.zip", {alias = "py3"})
-                add_versions("py3:3.7.0", "9596b23a8db1f945c2e26fe0dc1743e33f3700b4b708c68ea202cf2ac761a736")
-            end
-        else
-            if os.arch() == "x64" then
-                add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).amd64.zip", {alias = "py3"})
-                add_versions("py3:3.3.4", "a83bf90b28f8b44b99c3524a34ab18f21a59999e07c107da19b031869fb42af1")
-            else
-                add_urls("https://gitlab.com/xmake-mirror/python-releases/raw/master/python-$(version).win32.zip", {alias = "py3"})
-                add_versions("py3:3.3.4", "c9843d585e30da1c7c85663543b2f6a1f68621e02d288abc5b5e54361d93ccd6")
-            end
+            add_urls("https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win64.tar.gz",
+                     "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win64.tar.gz")
+            add_versions("2.7.15", "c81c4604b4176ff26be8d37cf48a2582e71a5e8f475b531c2e5d032a39511acb")
+            add_versions("2.7.18", "0e1adec089c4358b4ff1cd392c8bd7c975e0bf7c279aee91e7aaa04c00fb2c10")
+            add_versions("3.7.0", "8acd395e64d09b6b33ef78e199ffa48a8fd48f32d4d90d575e72448939a0e4c5")
+            add_versions("3.8.1", "9b7666a3d39a5b8405b0706fc042390b7ecfd0f75b948c7d2be012598b11163e")
+            add_versions("3.8.5", "585f71093dd1303140f2e97700581456fe38e3ec47922bcb4ad3c76ee8ee2433")
         end
     else
         set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
                  "https://github.com/xmake-mirror/cpython/releases/download/v$(version)/Python-$(version).tgz")
         add_versions("2.7.15", "18617d1f15a380a919d517630a9cd85ce17ea602f9bbdc58ddc672df4b0239db")
+        add_versions("2.7.18", "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814")
         add_versions("3.7.0", "85bb9feb6863e04fb1700b018d9d42d1caac178559ffa453d7e6a436e259fd0d")
+        add_versions("3.8.1", "c7cfa39a43b994621b245e029769e9126caa2a93571cee2e743b213cceac35fb")
+        add_versions("3.8.5", "015115023c382eb6ab83d512762fe3c5502fa0c6c52ffebc4831c4e1a06ffc49")
+    end
+
+    if not is_plat(os.host()) then
+        set_kind("binary")
     end
 
     if is_host("macosx", "linux") then
         add_deps("openssl", {host = true})
     end
 
-    on_load(function (package)
-        package:data_set("install_resources", function()
+    if is_host("linux") then
+        add_syslinks("util", "pthread", "dl")
+    end
 
-            -- imports
-            import("net.http")
-            import("utils.archive")
-            import("lib.detect.find_file")
+    on_load("@windows", "@msys", "@cygwin", function (package)
 
-            -- set python environments
-            local version = package:version()
-            local envs = {}
-            if is_host("windows") and package:version():ge("3.0") then
-                envs.PYTHONPATH = package:installdir("Lib", "site-packages")
-            else
-                envs.PYTHONPATH = package:installdir("lib", "python" .. version:major() .. "." .. version:minor(), "site-packages")
-            end
-            package:addenv("PYTHONPATH", envs.PYTHONPATH)
- 
-            -- install resources
-            local resources = 
-            {
-                setuptools = 
-                {
-                    url = "https://files.pythonhosted.org/packages/c2/f7/c7b501b783e5a74cf1768bc174ee4fb0a8a6ee5af6afa92274ff964703e0/setuptools-40.8.0.zip",
-                    sha256 = "6e4eec90337e849ade7103723b9a99631c1f0d19990d6e8412dc42f5ae8b304d"
-                },
-                pip = 
-                {
-                    url = "https://files.pythonhosted.org/packages/36/fa/51ca4d57392e2f69397cd6e5af23da2a8d37884a605f9e3f2d3bfdc48397/pip-19.0.3.tar.gz",
-                    sha256 = "6e6f197a1abfb45118dbb878b5c859a0edbdd33fd250100bc015b67fded4b9f2"
-                },
-                wheel =
-                {
-                    url = "https://files.pythonhosted.org/packages/b7/cf/1ea0f5b3ce55cacde1e84cdde6cee1ebaff51bd9a3e6c7ba4082199af6f6/wheel-0.33.1.tar.gz",
-                    sha256 = "66a8fd76f28977bb664b098372daef2b27f60dc4d1688cfab7b37a09448f0e9d"
-                }
-            }
-            local python = path.join(package:installdir("bin"), "python" .. (is_host("windows") and ".exe" or ""))
-            for name, resource in pairs(resources) do
-                local resourcefile = path.join(os.curdir(), path.filename(resource.url))
-                local resourcedir = resourcefile .. ".dir"
-                http.download(resource.url, resourcefile)
-                assert(resource.sha256 == hash.sha256(resourcefile), "resource(%s): unmatched checksum!", name)
-                assert(archive.extract(resourcefile, resourcedir), "resource(%s): extract failed!", name)
-                local setupfile = assert(find_file("setup.py", path.join(resourcedir, "*")), "resource(%s): setup.py not found!", name)
-                local oldir = os.cd(path.directory(setupfile))
-                os.vrunv(python, {"setup.py", "install", "--prefix=" .. package:installdir()}, {envs = envs})
-                os.cd(oldir)
-            end
-        end)
+        -- set includedirs
+        package:add("includedirs", "include")
+
+        -- set python environments
+        local PYTHONPATH = package:installdir("Lib", "site-packages")
+        package:addenv("PYTHONPATH", PYTHONPATH)
+        package:addenv("PATH", "bin")
+        package:addenv("PATH", "Scripts")
     end)
 
-    on_install("@windows", function (package)
+    on_load("@macosx", "@linux", function (package)
+
+        -- check system libs
+        if is_host("linux") then
+            for link, lib in pairs({z = "zlib", ffi = "libffi"}) do
+                assert(find_package("system::" .. link, {plat = os.host(), arch = os.arch()}), ("%s-dev not found, please use your system package manager to install it."):format(lib))
+            end
+        end
+
+        -- set includedirs
+        local version = package:version()
+        local pyver = ("python%d.%d"):format(version:major(), version:minor())
+        if version:ge("3.0") and version:le("3.8") then
+            package:add("includedirs", path.join("include", pyver .. "m"))
+        else
+            package:add("includedirs", path.join("include", pyver))
+        end
+
+        -- set python environments
+        local PYTHONPATH = package:installdir("lib", pyver, "site-packages")
+        package:addenv("PYTHONPATH", PYTHONPATH)
+        package:addenv("PATH", "bin")
+        package:addenv("PATH", "Scripts")
+    end)
+
+    on_install("@windows", "@msys", "@cygwin", function (package)
         if package:version():ge("3.0") then
             os.cp("python.exe", path.join(package:installdir("bin"), "python3.exe"))
         else
@@ -100,14 +88,17 @@ package("python")
         end
         os.mv("*.exe", package:installdir("bin"))
         os.mv("*.dll", package:installdir("bin"))
-        os.cp("*", package:installdir())
-        package:data("install_resources")()
+        os.mv("Lib", package:installdir())
+        os.mv("libs/*", package:installdir("lib"))
+        os.cp("*|libs", package:installdir())
+        local python = path.join(package:installdir("bin"), "python.exe")
+        os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
     on_install("@macosx", "@linux", function (package)
 
         -- init configs
-        local configs = {"--enable-ipv6", "--without-ensurepip"}
+        local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
         table.insert(configs, "--datadir=" .. package:installdir("share"))
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
 
@@ -124,6 +115,52 @@ package("python")
             io.gsub("Lib/ctypes/macholib/dyld.py", "DEFAULT_LIBRARY_FALLBACK = %[", format("DEFAULT_LIBRARY_FALLBACK = [ '%s/lib',", package:installdir()))
         end
 
+        -- add flags
+        local cflags = {}
+        local ldflags = {}
+        if package:is_plat("macosx") then
+            local xcode_dir = get_config("xcode")
+            local xcode_sdkver  = get_config("xcode_sdkver") or get_config("xcode_sdkver_macosx")
+            if not xcode_dir or not xcode_sdkver then
+                -- maybe on cross platform, we need find xcode envs manually
+                local xcode = import("detect.sdks.find_xcode")(nil, {force = true, plat = package:plat(), arch = package:arch()})
+                if xcode then
+                    xcode_dir = xcode.sdkdir
+                    xcode_sdkver = xcode.sdkver
+                end
+            end
+            if xcode_dir and xcode_sdkver then
+                -- help Python's build system (setuptools/pip) to build things on SDK-based systems
+                -- the setup.py looks at "-isysroot" to get the sysroot (and not at --sysroot)
+                local xcode_sdkdir = xcode_dir .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode_sdkver .. ".sdk"
+                table.insert(cflags, "-isysroot " .. xcode_sdkdir)
+                table.insert(cflags, "-I" .. path.join(xcode_sdkdir, "/usr/include"))
+                table.insert(ldflags, "-isysroot " .. xcode_sdkdir)
+
+                -- for the Xlib.h, Python needs this header dir with the system Tk
+                -- yep, this needs the absolute path where zlib needed a path relative to the SDK.
+                table.insert(cflags, "-I" .. path.join(xcode_sdkdir, "/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"))
+            end
+
+            -- avoid linking to libgcc https://mail.python.org/pipermail/python-dev/2012-February/116205.html
+            local target_minver = get_config("target_minver") or get_config("target_minver_macosx")
+            if not target_minver then
+                local macos_ver = macos.version()
+                if macos_ver then
+                    target_minver = macos_ver:major() .. "." .. macos_ver:minor()
+                end
+            end
+            if target_minver then
+                table.insert(configs, "MACOSX_DEPLOYMENT_TARGET=" .. target_minver)
+            end
+        end
+        if #cflags > 0 then
+            table.insert(configs, "CFLAGS=" .. table.concat(cflags, " "))
+        end
+        if #ldflags > 0 then
+            table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
+        end
+
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
         import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
@@ -132,7 +169,10 @@ package("python")
             os.cp(path.join(package:installdir("bin"), "python3"), path.join(package:installdir("bin"), "python"))
             os.cp(path.join(package:installdir("bin"), "python3-config"), path.join(package:installdir("bin"), "python-config"))
         end
-        package:data("install_resources")()
+
+        -- install wheel
+        local python = path.join(package:installdir("bin"), "python")
+        os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
     on_test(function (package)
@@ -140,4 +180,10 @@ package("python")
         os.vrun("python -c \"import pip\"")
         os.vrun("python -c \"import setuptools\"")
         os.vrun("python -c \"import wheel\"")
+        if package:kind() ~= "binary" then
+            assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
+        end
+        if is_host("windows") and package:version():ge("3.8.0") then
+            os.vrun("py -3 -c \"import sys\"")
+        end
     end)

@@ -25,7 +25,7 @@ package("protoc")
         add_versions("3.8.0", "91ea92a8c37825bd502d96af9054064694899c5c7ecea21b8d11b1b5e7e993b5")
     end
 
-    on_install("@windows", "@macosx", function (package)
+    on_install("@windows", "@msys", "@cygwin", "@macosx", function (package)
         os.cp("bin", package:installdir())
         os.cp("include", package:installdir())
     end)

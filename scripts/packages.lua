@@ -37,9 +37,9 @@ function _is_supported(instance, plat, arch, opt)
                 return "" 
             end)
             if _pattern:trim() == "" and opt and opt.onlyhost then
-                _pattern = os.host()
+                _pattern = os.subhost()
             end
-            if not _pattern:startswith("__") and (not hosts_spec or hosts[os.host() .. '|' .. os.arch()] or hosts[os.host()])  
+            if not _pattern:startswith("__") and (not hosts_spec or hosts[os.subhost() .. '|' .. os.subarch()] or hosts[os.subhost()])  
             and (_pattern:trim() == "" or (plat .. '|' .. arch):find('^' .. _pattern .. '$') or plat:find('^' .. _pattern .. '$')) then
                 result = _script
                 break
@@ -60,7 +60,7 @@ function main(opt)
         local packagefile = path.join(packagedir, "xmake.lua")
         local instance = package.load_from_repository(packagename, nil, packagedir, packagefile)
         if instance then
-            for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw", "msys", "bsd"}) do
+            for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw", "msys", "bsd", "cross"}) do
                 local archs = platform.archs(plat)
                 if archs then
                     local package_archs = {}
@@ -71,7 +71,7 @@ function main(opt)
                     end
                     if #package_archs > 0 then
                         packages[plat] = packages[plat] or {}
-                        table.insert(packages[plat], {name = instance:name(), archs = package_archs, generic = #package_archs == #archs})
+                        table.insert(packages[plat], {name = instance:name(), instance = instance, archs = package_archs, generic = #package_archs == #archs})
                     end
                 end
             end

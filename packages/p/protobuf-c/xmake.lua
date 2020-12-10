@@ -21,7 +21,7 @@ package("protobuf-c")
     on_load(function (package)
         package:addenv("PATH", "bin")
     end)
- 
+
     on_install("windows", function (package)
         os.cd("build-cmake")
         import("package.tools.cmake").install(package, {"-Dprotobuf_BUILD_PROTOC_BINARIES=ON"})

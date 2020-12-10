@@ -6,19 +6,23 @@ import("packages", {alias = "get_packages"})
 -- the options
 local options =
 {
-    {'v', "verbose",    "k",  nil, "Enable verbose information."     }
-,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information."   }
-,   {nil, "shallow",    "k",  nil, "Only install the root packages." }
-,   {'p', "plat",       "kv", nil, "Set the given platform."         }
-,   {'a', "arch",       "kv", nil, "Set the given architecture."     }
-,   {'m', "mode",       "kv", nil, "Set the given mode."             }
-,   {nil, "cflags",     "kv", nil, "Set the cflags."                 }
-,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."               }
-,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                }
-,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."  }
-,   {nil, "mingw",      "kv", nil, "Set the MingW directory."        }
-,   {nil, "packages",   "vs", nil, "The package list."               }
+    {'v', "verbose",    "k",  nil, "Enable verbose information."                }
+,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information."              }
+,   {nil, "shallow",    "k",  nil, "Only install the root packages."            }
+,   {'k', "kind",       "kv", nil, "Enable static/shared library."              }
+,   {'p', "plat",       "kv", nil, "Set the given platform."                    }
+,   {'a', "arch",       "kv", nil, "Set the given architecture."                }
+,   {'m', "mode",       "kv", nil, "Set the given mode."                        }
+,   {nil, "cflags",     "kv", nil, "Set the cflags."                            }
+,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."                          }
+,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                           }
+,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."             }
+,   {nil, "sdk",        "kv", nil, "Set the SDK directory of cross toolchain."  }
+,   {nil, "vs_sdkver",  "kv", nil, "Set the Windows SDK version."               }
+,   {nil, "mingw",      "kv", nil, "Set the MingW directory."                   }
+,   {nil, "packages",   "vs", nil, "The package list."                          }
 }
+
 
 -- require packages
 function _require_packages(argv, packages)
@@ -40,6 +44,12 @@ function _require_packages(argv, packages)
     end
     if argv.ndk then
         table.insert(config_argv, "--ndk=" .. argv.ndk)
+    end
+    if argv.sdk then
+        table.insert(config_argv, "--sdk=" .. argv.sdk)
+    end
+    if argv.vs_sdkver then
+        table.insert(config_argv, "--vs_sdkver=" .. argv.vs_sdkver)
     end
     if argv.mingw then
         table.insert(config_argv, "--mingw=" .. argv.mingw)
@@ -64,8 +74,12 @@ function _require_packages(argv, packages)
     if argv.shallow then
         table.insert(require_argv, "--shallow")
     end
-    if argv.mode == "debug" then
+    if argv.mode == "debug" and argv.kind == "shared" then
+        table.insert(require_argv, "--extra={debug=true,configs={shared=true}}")
+    elseif argv.mode == "debug" then
         table.insert(require_argv, "--extra={debug=true}")
+    elseif argv.kind == "shared" then
+        table.insert(require_argv, "--extra={configs={shared=true}}")
     end
     table.join2(require_argv, packages)
     os.vexecv("xmake", require_argv)
@@ -75,7 +89,7 @@ end
 function _package_is_supported(argv, packagename)
     local packages = get_packages()
     if packages then
-        local plat = argv.plat or os.host()
+        local plat = argv.plat or os.subhost()
         local packages_plat = packages[plat]
         for _, package in ipairs(packages_plat) do
             if package and packagename:split("%s+")[1] == package.name then
@@ -118,8 +132,8 @@ function main(...)
         end
     end
     if #packages == 0 then
-        print("no testable packages on %s!", argv.plat or os.host())
-        return 
+        print("no testable packages on %s!", argv.plat or os.subhost())
+        return
     end
 
     -- prepare test project
@@ -137,5 +151,7 @@ function main(...)
     os.exec("xmake repo -l")
 
     -- require packages
-    _require_packages(argv, packages)
+    for _, package in ipairs(packages) do
+        _require_packages(argv, package)
+    end
 end

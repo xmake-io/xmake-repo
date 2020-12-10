@@ -6,10 +6,12 @@ package("raylib")
     if is_plat("macosx") then
         add_urls("https://github.com/raysan5/raylib/releases/download/$(version)/raylib-$(version)-macOS.tar.gz")
         add_versions("2.5.0", "e9ebdf70ad4912dc9f3c7965dc702d5c61f2841aeae521e8dd3b0a96a9d82d58")
+        add_versions("3.0.0", "8244898b09887f29baa9325b5ae47c30ec0f45dc15b4f740178c65af068b3141")
     else
         add_urls("https://github.com/raysan5/raylib/archive/$(version).tar.gz",
                  "https://github.com/raysan5/raylib.git")
         add_versions("2.5.0", "fa947329975bdc9ea284019f0edc30ca929535dc78dcf8c19676900d67a845ac")
+        add_versions("3.0.0", "164d1cc1710bb8e711a495e84cc585681b30098948d67d482e11dc37d2054eab")
     end
 
     if not is_plat("macosx") then

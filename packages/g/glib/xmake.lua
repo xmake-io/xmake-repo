@@ -10,6 +10,8 @@ package("glib")
     add_deps("meson", "ninja", "libffi", "pcre")
     if is_plat("linux") then
         add_deps("libiconv")
+    elseif is_plat("macosx") then
+        add_deps("gettext")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
@@ -22,10 +24,10 @@ package("glib")
     end
 
     on_install("macosx", "linux", function (package)
-        local configs = {"-Dbsymbolic_functions=false", 
-                         "-Ddtrace=false", 
-                         "-Dman=false", 
-                         "-Ddefault_library=static", 
+        local configs = {"-Dbsymbolic_functions=false",
+                         "-Ddtrace=false",
+                         "-Dman=false",
+                         "-Ddefault_library=static",
                          "-Dlibmount=false",
                          "-Dinstalled_tests=false"}
         if is_plat("macosx") then
