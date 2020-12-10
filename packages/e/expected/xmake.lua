@@ -10,7 +10,7 @@ package("expected")
     add_versions("v1.0.0", "c1733556cbd3b532a02b68e2fbc2091b5bc2cccc279e4f6c6bd83877aabd4b02")
 
     on_install(function (package)
-        os.cp("include/tl", package:installdir("include"))
+        os.cp("include", package:installdir("include"))
     end)
 
     on_test(function (package)
