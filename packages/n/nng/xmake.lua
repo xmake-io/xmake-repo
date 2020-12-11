@@ -32,12 +32,13 @@ package("nng")
     add_configs("NNG_TRANSPORT_WS", {description = "Enable WebSocket transport.", default = true, type = "boolean"})
     add_configs("NNG_TRANSPORT_WSS", {description = "Enable WSS transport.", default = true, type = "boolean"})
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_load(function (package)
         if package:config("static") then
             package:add("defines", "NNG_STATIC_LIB")
-            if is_plat("linux") then 
-                add_syslinks("pthread") 
-            end             
         end
     end)
 
