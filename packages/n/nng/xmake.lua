@@ -37,7 +37,7 @@ package("nng")
     end
 
     on_load(function (package)
-        if package:config("static") then
+        if not package:config("shared") then
             package:add("defines", "NNG_STATIC_LIB")
         end
     end)
