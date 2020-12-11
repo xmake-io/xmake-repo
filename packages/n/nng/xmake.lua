@@ -35,6 +35,9 @@ package("nng")
     on_load(function (package)
         if package:config("static") then
             package:add("defines", "NNG_STATIC_LIB")
+            if is_plat("linux") then 
+                add_syslinks("pthread") 
+            end             
         end
     end)
 
@@ -42,31 +45,11 @@ package("nng")
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function(package)
         local configs = {"-DNNG_TESTS=OFF", "-DNNG_ENABLE_NNGCAT=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_ELIDE_DEPRECATED=" .. (package:config("NNG_ELIDE_DEPRECATED") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_TRANSPORT_ZEROTIER=" .. (package:config("NNG_TRANSPORT_ZEROTIER") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_ENABLE_TLS=" .. (package:config("NNG_ENABLE_TLS") and "ON" or "OFF"))
-
-        table.insert(configs, "-DNNG_ENABLE_STATS=" .. (package:config("NNG_ENABLE_STATS") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_BUS0=" .. (package:config("NNG_PROTO_BUS0") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_PAIR0=" .. (package:config("NNG_PROTO_PAIR0") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_PAIR1=" .. (package:config("NNG_PROTO_PAIR1") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_PUSH0=" .. (package:config("NNG_PROTO_PUSH0") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_PULL0=" .. (package:config("NNG_PROTO_PULL0") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_PUB0=" .. (package:config("NNG_PROTO_PUB0") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_SUB0=" .. (package:config("NNG_PROTO_SUB0") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_REQ0=" .. (package:config("NNG_PROTO_REQ0") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_REP0=" .. (package:config("NNG_PROTO_REP0") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_RESPONDENT0=" .. (package:config("NNG_PROTO_RESPONDENT0") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_PROTO_SURVEYOR0=" .. (package:config("NNG_PROTO_SURVEYOR0") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_ENABLE_HTTP=" .. (package:config("NNG_ENABLE_HTTP") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_TRANSPORT_INPROC=" .. (package:config("NNG_TRANSPORT_INPROC") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_TRANSPORT_IPC=" .. (package:config("NNG_TRANSPORT_IPC") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_TRANSPORT_TCP=" .. (package:config("NNG_TRANSPORT_TCP") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_TRANSPORT_TLS=" .. (package:config("NNG_TRANSPORT_TLS") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_TRANSPORT_WS=" .. (package:config("NNG_TRANSPORT_WS") and "ON" or "OFF"))
-        table.insert(configs, "-DNNG_TRANSPORT_WSS=" .. (package:config("NNG_TRANSPORT_WSS") and "ON" or "OFF"))
-
+        for name, enabled in pairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") then
+                table.insert(configs, "-D" .. name .. "=" .. (enabled and "ON" or "OFF"))
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
