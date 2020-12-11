@@ -8,7 +8,7 @@ package("gmp")
     add_versions("6.2.1", "fd4829912cddd12f84181c3451cc752be224643e87fac497b69edddadc49b4f2")
 
     on_install("macosx", "linux", function (package)
-        local configs = {}
+        local configs = {"--with-pic"}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
             table.insert(configs, "--enable-static=no")
