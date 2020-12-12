@@ -11,6 +11,10 @@ package("libflac")
 
     add_deps("cmake", "libogg")
 
+    if is_plat("linux") then
+        add_syslinks("m")
+    end
+
     on_load("windows", function (package)
         if not package:config("shared") then
             package:add("defines", "FLAC__NO_DLL")
