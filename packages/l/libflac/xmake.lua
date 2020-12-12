@@ -8,6 +8,7 @@ package("libflac")
              "https://github.com/xiph/flac.git")
 
     add_versions("1.3.3", "668cdeab898a7dd43cf84739f7e1f3ed6b35ece2ef9968a5c7079fe9adfe1689")
+    add_patches("1.3.3", path.join(os.scriptdir(), "patches", "1.3.3", "cmake.patch"), "41fb73c034dbb6f4e963b50c4d55294492a401a8a77f2bccefd1b2bab002dab2")
 
     add_deps("cmake", "libogg")
 
@@ -28,6 +29,7 @@ package("libflac")
         table.insert(configs, "-DBUILD_PROGRAMS=OFF")
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")
         table.insert(configs, "-DBUILD_TESTING=OFF")
+        table.insert(configs, "-DBUILD_UTILS=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
