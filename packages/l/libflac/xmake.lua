@@ -11,6 +11,12 @@ package("libflac")
 
     add_deps("cmake", "libogg")
 
+    on_load("windows", function (package)
+        if not package:config("shared") then
+            package:add("defines", "FLAC__NO_DLL")
+        end
+    end)
+
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
         local configs = {}
         table.insert(configs, "-DBUILD_CXXLIBS=OFF")
