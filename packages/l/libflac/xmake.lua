@@ -16,7 +16,7 @@ package("libflac")
         add_syslinks("m")
     end
 
-    on_load("windows", function (package)
+    on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "FLAC__NO_DLL")
         end
@@ -32,6 +32,7 @@ package("libflac")
         table.insert(configs, "-DBUILD_UTILS=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
 
         local libogg = package:dep("libogg")
         if (libogg) then
