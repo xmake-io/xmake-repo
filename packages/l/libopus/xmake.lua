@@ -7,6 +7,7 @@ package("libopus")
              "https://gitlab.xiph.org/xiph/opus.git")
 
     add_versions("1.3.1", "65b58e1e25b2a114157014736a3d9dfeaad8d41be1c8179866f144a2fb44ff9d")
+    add_patches("1.3.1", path.join(os.scriptdir(), "patches", "1.3.1", "cmake.patch"), "8efbd57350d0ae5febbbc03223417114d99018a31330c88d5f57e3ccbf9334fa")
 
     add_deps("cmake")
 
