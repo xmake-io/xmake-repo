@@ -9,7 +9,7 @@ package("libsndfile")
 
     add_versions("1.0.30", "5942b963d1db3ed8ab1ffb85708322aa9637df76d9fe84e1dfe49a97a90e8f47")
 
-    add_deps("cmake")
+    add_deps("cmake", "libflac", "libogg", "libopus", "libvorbis")
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
         local configs = {"-DBUILD_PROGRAMS=OFF", "-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTING=OFF"}
