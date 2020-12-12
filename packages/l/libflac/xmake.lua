@@ -35,7 +35,7 @@ package("libflac")
 
         local libogg = package:dep("libogg")
         table.insert(configs, "-DOGG_INCLUDE_DIR=" .. libogg:installdir("include"))
-        table.insert(configs, "-DOGG_LIBRARY=" .. libogg:installdir("lib"))
+        table.insert(configs, "-DOGG_LIBRARY=" .. libogg:fetch().libfiles[1])
         import("package.tools.cmake").install(package, configs)
     end)
 
