@@ -25,7 +25,6 @@ package("libflac")
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
         end
-
         import("package.tools.cmake").install(package, configs)
    end)
 
