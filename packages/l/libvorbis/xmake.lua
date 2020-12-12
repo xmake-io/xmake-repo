@@ -20,7 +20,7 @@ package("libvorbis")
         table.insert(configs, "-DOGG_INCLUDE_DIR=" .. libogg:installdir("include"))
         table.insert(configs, "-DOGG_LIBRARY=" .. libogg:installdir("lib"))
         import("package.tools.cmake").install(package, configs)
-   end)
+    end)
 
     on_test(function (package)
         assert(package:has_cfuncs("vorbis_info_init", {includes = "vorbis/codec.h"}))
