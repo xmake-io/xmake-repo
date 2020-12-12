@@ -18,8 +18,13 @@ package("libvorbis")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         local libogg = package:dep("libogg")
-        table.insert(configs, "-DOGG_INCLUDE_DIR=" .. libogg:installdir("include"))
-        table.insert(configs, "-DOGG_LIBRARY=" .. libogg:fetch().libfiles[1])
+        if (libogg) then
+            local liboggFiles = libogg:fetch()
+            if (liboggFiles) then
+                table.insert(configs, "-DOGG_INCLUDE_DIR=" .. libogg:installdir("include"))
+                table.insert(configs, "-DOGG_LIBRARY=" .. liboggFiles.libfiles[1])
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
