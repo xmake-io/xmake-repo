@@ -10,7 +10,12 @@ package("libogg")
     on_install("windows", "macosx", "linux", "mingw", "iphoneos", "android", "cross", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("shared") then
+            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+            table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
+        else
+            table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
