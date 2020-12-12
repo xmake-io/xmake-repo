@@ -4,10 +4,10 @@ package("libvorbis")
     set_description("Reference implementation of the Ogg Vorbis audio format.")
     set_license("BSD-3")
 
-    set_urls("https://github.com/xiph/vorbis/archive/v$(version).tar.gz",
-             "https://github.com/xiph/vorbis.git")
+    set_urls("https://ftp.osuosl.org/pub/xiph/releases/vorbis/libvorbis-v$(version).tar.gz",
+             "https://gitlab.xiph.org/xiph/vorbis.git")
 
-    add_versions("1.3.7", "270c76933d0934e42c5ee0a54a36280e2d87af1de3cc3e584806357e237afd13")
+    add_versions("1.3.7", "0e982409a9c3fc82ee06e08205b1355e5c6aa4c36bca58146ef399621b0ce5ab")
 
     add_deps("cmake")
 

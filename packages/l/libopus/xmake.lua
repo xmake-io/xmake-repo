@@ -3,10 +3,10 @@ package("libopus")
     set_homepage("https://opus-codec.org")
     set_description("Modern audio compression for the internet.")
 
-    set_urls("https://github.com/xiph/opus/archive/v$(version).tar.gz",
-             "https://github.com/xiph/opus.git")
+    set_urls("https://archive.mozilla.org/pub/opus/opus-$(version).tar.gz",
+             "https://gitlab.xiph.org/xiph/opus.git")
 
-    add_versions("1.3.1", "4834a8944c33a7ecab5cad9454eeabe4680ca1842cb8f5a2437572dbf636de8f")
+    add_versions("1.3.1", "65b58e1e25b2a114157014736a3d9dfeaad8d41be1c8179866f144a2fb44ff9d")
 
     add_deps("cmake")
 
