@@ -12,29 +12,16 @@ package("libsndfile")
     add_deps("cmake", "libflac", "libogg", "libopus", "libvorbis")
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
-        local configs = {"-DBUILD_PROGRAMS=OFF", "-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTING=OFF"}
+        local configs = {}
+        table.insert(configs, "-DBUILD_PROGRAMS=OFF")
+        table.insert(configs, "-DBUILD_EXAMPLES=OFF")
+        table.insert(configs, "-DBUILD_TESTING=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            local vs_runtime = package:config("vs_runtime")
-            if vs_runtime == "MT" then
-                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded")
-            elseif vs_runtime == "MTd" then
-                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug")
-            elseif vs_runtime == "MD" then
-                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL")
-            elseif vs_runtime == "MDd" then
-                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebugDLL")
-            end
-       end
 
         import("package.tools.cmake").install(package, configs)
    end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                const char* version = sf_version_string();
-            }
-        ]]}, {includes = {"sndfile.h"}}))
+        assert(package:has_cfuncs("sf_version_string", {includes = "sndfile.h"}))
     end)
