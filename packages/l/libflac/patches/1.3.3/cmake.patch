@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c2d2dfc7..2ed17ed4 100644
+index c2d2dfc7..c724e66f 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -9,7 +9,10 @@ project(FLAC VERSION 1.3.2) # HOMEPAGE_URL "https://www.xiph.org/flac/")
@@ -13,7 +13,18 @@ index c2d2dfc7..2ed17ed4 100644
  option(WITH_OGG "ogg support (default: test for libogg)" ON)
  
  if(WITH_OGG)
-@@ -93,9 +96,11 @@ if(CMAKE_BUILD_TYPE STREQUAL Debug OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
+@@ -84,6 +87,10 @@ include_directories("include")
+ include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+ add_definitions(-DHAVE_CONFIG_H)
+ 
++if(WIN32 AND NOT BUILD_SHARED_LIBS)
++    add_definitions(-DFLAC__NO_DLL)
++endif()
++
+ if(MSVC)
+     add_definitions(
+         -D_CRT_SECURE_NO_WARNINGS
+@@ -93,9 +100,11 @@ if(CMAKE_BUILD_TYPE STREQUAL Debug OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
      add_definitions(-DFLAC__OVERFLOW_DETECT)
  endif()
  
