@@ -30,5 +30,5 @@ package("libflac")
    end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("FLAC__stream_encoder_new", {includes = "FLAC/stream_encoder.h"}))
+        assert(package:has_cfuncs("FLAC__format_sample_rate_is_valid", {includes = "FLAC/format.h"}))
     end)
