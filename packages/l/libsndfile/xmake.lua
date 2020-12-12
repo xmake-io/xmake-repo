@@ -4,7 +4,7 @@ package("libsndfile")
     set_description("A C library for reading and writing sound files containing sampled audio data.")
     set_license("LGPL-2.1")
 
-    set_urls("https://github.com/libsndfile/libsndfile/archive/v$(version).tar.gz"
+    set_urls("https://github.com/libsndfile/libsndfile/archive/v$(version).tar.gz",
              "https://github.com/libsndfile/libsndfile.git")
 
     add_versions("1.0.30", "5942b963d1db3ed8ab1ffb85708322aa9637df76d9fe84e1dfe49a97a90e8f47")
