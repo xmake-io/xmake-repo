@@ -9,17 +9,7 @@ package("libogg")
 
     add_deps("cmake")
 
-    on_install("macosx", "linux", "mingw", "iphoneos", "android", "cross", function (package)
-        local configs = {"--disable-dependency-tracking"}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
-        end
-        import("package.tools.autoconf").install(package, configs)
-    end)
-
-    on_install("windows", function (package)
+    on_install("windows", "macosx", "linux", "mingw", "iphoneos", "android", "cross", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
