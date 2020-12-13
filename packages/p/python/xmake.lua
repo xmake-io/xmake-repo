@@ -60,7 +60,9 @@ package("python")
         -- check system libs
         if is_host("linux") then
             for link, lib in pairs({z = "zlib", ffi = "libffi"}) do
-                assert(find_package("system::" .. link, {plat = os.host(), arch = os.arch()}), ("%s-dev not found, please use your system package manager to install it."):format(lib))
+                local result = find_package("pkg_config::" .. lib, {plat = os.host(), arch = os.arch()}) or
+                               find_package("system::" .. link, {plat = os.host(), arch = os.arch()})
+                assert(result, ("%s-dev not found, please use your system package manager to install it."):format(lib))
             end
         end
 
