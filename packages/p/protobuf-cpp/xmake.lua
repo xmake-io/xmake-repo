@@ -7,7 +7,7 @@ package("protobuf-cpp")
     add_versions("3.8.0", "91ea92a8c37825bd502d96af9054064694899c5c7ecea21b8d11b1b5e7e993b5")
     add_versions("3.12.3", "74da289e0d0c24b2cb097f30fdc09fa30754175fd5ebb34fae4032c6d95d4ce3")
     add_versions("3.13.0", "f7b99f47822b0363175a6751ab59ccaa4ee980bf1198f11a4c3cef162698dde3")
-    add_versions("3.14.0", "71530b0f727c74bf477571eaefc50ea16804d49d30358116e80017ac9d3c112e")
+    add_versions("3.14.0", "87d6e96166cf5cafc16f2bcfa91c0b54f48bab38538285bee1b9331d992569fa")
 
     if is_plat("windows") then
         add_deps("cmake")
