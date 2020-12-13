@@ -7,14 +7,14 @@ package("libogg")
              "https://gitlab.xiph.org/xiph/ogg.git")
     add_versions("1.3.4", "fe5670640bd49e828d64d2879c31cb4dde9758681bb664f9bdbf159a01b0c76e")
 
-    on_install("macosx", "linux", "mingw", "iphoneos", "android", "cross", function (package)
-        local configs = {"--disable-dependency-tracking"}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
-        end
-        import("package.tools.autoconf").install(package, configs)
+    add_deps("cmake")
+
+    on_install("windows", "macosx", "linux", "mingw", "iphoneos", "android", "cross", function (package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
