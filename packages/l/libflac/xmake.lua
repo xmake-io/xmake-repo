@@ -23,6 +23,10 @@ package("libflac")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
+        if package:config("shared") and package:is_plat("mingw") then
+            package:add("syslinks", "ssp")
+        end
+
         local configs = {}
         table.insert(configs, "-DBUILD_CXXLIBS=OFF")
         table.insert(configs, "-DBUILD_DOCS=OFF")
@@ -33,11 +37,6 @@ package("libflac")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-
-        if package:config("shared") and package:is_plat("mingw") then
-            -- enable ssp on MinGW to link -lssp
-            table.insert(configs, "-DENABLE_SSP=ON")
-        end
 
         -- we pass libogg as packagedeps instead of findOgg.cmake (it does not work)
         local libogg = package:dep("libogg"):fetch()
