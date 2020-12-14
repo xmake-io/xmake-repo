@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c2d2dfc7..c724e66f 100644
+index c2d2dfc7..09428ddb 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -9,7 +9,10 @@ project(FLAC VERSION 1.3.2) # HOMEPAGE_URL "https://www.xiph.org/flac/")
@@ -24,19 +24,24 @@ index c2d2dfc7..c724e66f 100644
  if(MSVC)
      add_definitions(
          -D_CRT_SECURE_NO_WARNINGS
-@@ -93,9 +100,11 @@ if(CMAKE_BUILD_TYPE STREQUAL Debug OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
+@@ -93,13 +100,15 @@ if(CMAKE_BUILD_TYPE STREQUAL Debug OR CMAKE_BUILD_TYPE STREQUAL RelWithDebInfo)
      add_definitions(-DFLAC__OVERFLOW_DETECT)
  endif()
  
 -add_subdirectory("doc")
  add_subdirectory("src")
- add_subdirectory("microbench")
+-add_subdirectory("microbench")
 +if(BUILD_DOCS)
 +    add_subdirectory("doc")
 +endif()
  if(BUILD_EXAMPLES)
      add_subdirectory("examples")
  endif()
+ if(BUILD_TESTING)
++    add_subdirectory("microbench")
+     add_subdirectory("test")
+ endif()
+ 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
 index ba7a439e..5bb020f1 100644
 --- a/src/CMakeLists.txt
