@@ -34,6 +34,11 @@ package("libflac")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
 
+        if package:config("shared") and package:is_plat("mingw") then
+            -- enable ssp on MinGW to link -lssp
+            table.insert(configs, "-DENABLE_SSP=ON")
+        end
+
         -- we pass libogg as packagedeps instead of findOgg.cmake (it does not work)
         local libogg = package:dep("libogg"):fetch()
         if libogg then
@@ -44,13 +49,6 @@ package("libflac")
 if(TARGET Ogg::ogg)
     target_link_libraries(FLAC PUBLIC Ogg::ogg)
 endif()]], "target_link_libraries(FLAC PUBLIC " .. links .. ")", {plain = true})
-        end
-        if package:config("shared") and package:is_plat("mingw") then
-            -- stack protection in shared with MinGW causes linking error
-            io.replace("CMakeLists.txt", [[
-    $<$<AND:$<BOOL:${HAVE_SSP_FLAG}>,$<BOOL:${ENABLE_SSP}>>:-fstack-protector>
-    $<$<AND:$<BOOL:${HAVE_SSP_FLAG}>,$<BOOL:${ENABLE_SSP}>>:--param>
-    $<$<AND:$<BOOL:${HAVE_SSP_FLAG}>,$<BOOL:${ENABLE_SSP}>>:ssp-buffer-size=4>]], "", {plain = true})
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = "libogg"})
     end)
