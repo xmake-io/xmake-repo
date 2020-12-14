@@ -19,7 +19,8 @@ package("libvorbis")
 
         local libogg = package:dep("libogg")
         if (libogg) then
-            table.insert(configs, "-DOGG_ROOT=" .. libogg:installdir())
+            table.insert(configs, "-DPC_OGG_INCLUDEDIR=" .. libogg:installdir("include"))
+            table.insert(configs, "-DPC_OGG_LIBDIR=" .. libogg:installdir("lib"))
         end
         import("package.tools.cmake").install(package, configs)
     end)
