@@ -23,8 +23,11 @@ package("libflac")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
+        import("package.tools.cmake")
+
+        local envs = cmake.buildenvs(package)
         if package:config("shared") and package:is_plat("mingw") then
-            package:build_addenv("ldflags", "ssp")
+            envs.LDFLAGS = (envs.LDFLAGS or "") .. " -lssp")
         end
 
         local configs = {}
@@ -49,7 +52,7 @@ if(TARGET Ogg::ogg)
     target_link_libraries(FLAC PUBLIC Ogg::ogg)
 endif()]], "target_link_libraries(FLAC PUBLIC " .. links .. ")", {plain = true})
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = "libogg"})
+        cmake.install(package, configs, {packagedeps = "libogg", envs = envs})
     end)
 
     on_test(function (package)
