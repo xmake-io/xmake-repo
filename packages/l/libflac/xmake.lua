@@ -27,7 +27,7 @@ package("libflac")
 
         local envs = cmake.buildenvs(package)
         if package:config("shared") and package:is_plat("mingw") then
-            envs.LDFLAGS = (envs.LDFLAGS or "") .. " -lssp")
+            envs.LDFLAGS = (envs.LDFLAGS or "") .. " -lssp"
         end
 
         local configs = {}
