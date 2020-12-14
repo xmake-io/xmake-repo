@@ -23,13 +23,10 @@ package("libflac")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
-        import("package.tools.cmake")
-
-        local envs = cmake.buildenvs(package)
         if package:config("shared") and package:is_plat("mingw") then
             -- stack protector causes linking issues on MinGW shared
-            envs.CFLAGS = (envs.CFLAGS or "") .. " -fnostack-protector"
-            envs.CPPFLAGS = (envs.CPPFLAGS or "") .. " -fnostack-protector"
+            -- I cannot find a way to disable it, except for this shitty hack
+            io.replace("src/libFLAC/metadata_iterators.c", "memset", "(memset)", {plain = true})
         end
 
         local configs = {}
@@ -54,7 +51,7 @@ if(TARGET Ogg::ogg)
     target_link_libraries(FLAC PUBLIC Ogg::ogg)
 endif()]], "target_link_libraries(FLAC PUBLIC " .. links .. ")", {plain = true})
         end
-        cmake.install(package, configs, {packagedeps = "libogg", envs = envs})
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libogg"})
     end)
 
     on_test(function (package)
