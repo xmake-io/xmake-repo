@@ -45,6 +45,10 @@ if(TARGET Ogg::ogg)
     target_link_libraries(FLAC PUBLIC Ogg::ogg)
 endif()]], "target_link_libraries(FLAC PUBLIC " .. links .. ")", {plain = true})
         end
+        if package:config("shared") and package:is_plat("mingw") then
+            -- stack protection in shared with MinGW causes linking error
+            io.replace("CMakeLists.txt", [[check_c_compiler_flag("-fstack-protector --param ssp-buffer-size=4" HAVE_SSP_FLAG)]], "", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = "libogg"})
     end)
 
