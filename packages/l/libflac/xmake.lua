@@ -27,7 +27,9 @@ package("libflac")
 
         local envs = cmake.buildenvs(package)
         if package:config("shared") and package:is_plat("mingw") then
-            envs.LDFLAGS = (envs.LDFLAGS or "") .. " -lssp"
+            -- stack protector causes linking issues on MinGW shared
+            envs.CFLAGS = (envs.CFLAGS or "") .. " -fnostack-protector"
+            envs.CPPFLAGS = (envs.CPPFLAGS or "") .. " -fnostack-protector"
         end
 
         local configs = {}
