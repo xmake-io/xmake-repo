@@ -34,15 +34,18 @@ package("libflac")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
 
-        local libogg = package:dep("libogg")
-        if (libogg) then
-            local liboggFiles = libogg:fetch()
-            if (liboggFiles and liboggFiles.libfiles[1]) then
-                table.insert(configs, "-DOGG_INCLUDE_DIR=" .. libogg:installdir("include"))
-                table.insert(configs, "-DOGG_LIBRARY=" .. liboggFiles.libfiles[1])
-            end
+        -- we pass libogg as packagedeps instead of findOgg.cmake (it does not work)
+        local libogg = package:dep("libogg"):fetch()
+        if libogg then
+            local links = table.concat(table.wrap(libogg.links), " ")
+            io.replace("CMakeLists.txt", "find_package(Ogg REQUIRED)", "", {plain = true})
+            io.replace("src/libFLAC/CMakeLists.txt", 
+            [[
+if(TARGET Ogg::ogg)
+    target_link_libraries(FLAC PUBLIC Ogg::ogg)
+endif()]], "target_link_libraries(FLAC PUBLIC " .. links .. ")", {plain = true})
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libogg"})
     end)
 
     on_test(function (package)
