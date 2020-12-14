@@ -47,7 +47,10 @@ endif()]], "target_link_libraries(FLAC PUBLIC " .. links .. ")", {plain = true})
         end
         if package:config("shared") and package:is_plat("mingw") then
             -- stack protection in shared with MinGW causes linking error
-            io.replace("CMakeLists.txt", [[check_c_compiler_flag("-fstack-protector --param ssp-buffer-size=4" HAVE_SSP_FLAG)]], "", {plain = true})
+            io.replace("CMakeLists.txt", [[
+    $<$<AND:$<BOOL:${HAVE_SSP_FLAG}>,$<BOOL:${ENABLE_SSP}>>:-fstack-protector>
+    $<$<AND:$<BOOL:${HAVE_SSP_FLAG}>,$<BOOL:${ENABLE_SSP}>>:--param>
+    $<$<AND:$<BOOL:${HAVE_SSP_FLAG}>,$<BOOL:${ENABLE_SSP}>>:ssp-buffer-size=4>]], "", {plain = true})
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = "libogg"})
     end)
