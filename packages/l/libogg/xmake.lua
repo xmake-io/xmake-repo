@@ -6,6 +6,7 @@ package("libogg")
     set_urls("https://downloads.xiph.org/releases/ogg/libogg-$(version).tar.gz",
              "https://gitlab.xiph.org/xiph/ogg.git")
     add_versions("1.3.4", "fe5670640bd49e828d64d2879c31cb4dde9758681bb664f9bdbf159a01b0c76e")
+    add_patches("1.3.4", path.join(os.scriptdir(), "patches", "1.3.4", "macos_fix.patch"), "e12c41ad71206777f399c1048914e5e5a2fe44e18d0d50ebe9bedbfbe0624c35")
 
     add_deps("cmake")
 
