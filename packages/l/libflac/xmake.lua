@@ -38,7 +38,7 @@ package("libflac")
         local libogg = package:dep("libogg"):fetch()
         if libogg then
             local links = table.concat(table.wrap(libogg.links), " ")
-            io.replace("CMakeLists.txt", "find_package(Ogg REQUIRED)", "", {plain = true})
+            io.replace("CMakeLists.txt", "find_package(OGG REQUIRED)", "", {plain = true})
             io.replace("src/libFLAC/CMakeLists.txt", 
             [[
 if(TARGET Ogg::ogg)
