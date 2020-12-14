@@ -24,7 +24,7 @@ package("libflac")
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
         if package:config("shared") and package:is_plat("mingw") then
-            package:add("syslinks", "ssp")
+            package:build_addenv("ldflags", "ssp")
         end
 
         local configs = {}
