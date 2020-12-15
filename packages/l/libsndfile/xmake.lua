@@ -23,9 +23,9 @@ package("libsndfile")
         if package:is_plat("windows") then
             if not package:dep("libflac"):config("shared") then
                 -- libsndfile doesn't build well with a static libFLAC, this fixes it
-                local cmake = assert(io.open("CMakeLists.txt", "a"))
+                local cmake = io.open("CMakeLists.txt", "a")
                 cmake:write("add_definitions(-DFLAC__NO_DLL)\n")
-                cmake:close() -- Flush the file
+                cmake:close()
             end
 
             local vs_runtime = package:config("vs_runtime")
