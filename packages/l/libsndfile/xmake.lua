@@ -21,14 +21,10 @@ package("libsndfile")
 
         -- It seems libsndfile expects CMAKE_MSVC_RUNTIME_LIBRARY
         if package:is_plat("windows") then
-            if not package:config("shared") then
+            if not package:dep("libflac"):config("shared") then
                 -- libsndfile doesn't build well with a static libFLAC, this fixes it
                 local cmake = assert(io.open("CMakeLists.txt", "a"))
-                cmake:write([[
-if (WIN32 AND NOT BUILD_SHARED_LIBS)
-    add_definitions(-DFLAC__NO_DLL)
-endif()
-]])
+                cmake:write("add_definitions(-DFLAC__NO_DLL)\n")
                 cmake:close() -- Flush the file
             end
 
