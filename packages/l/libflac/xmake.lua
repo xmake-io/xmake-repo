@@ -39,7 +39,7 @@ package("libflac")
         -- @see https://github.com/msys2/MINGW-packages/issues/5803
         if package:config("shared") and package:is_plat("mingw") then
             io.replace("CMakeLists.txt", "add_definitions(-DHAVE_CONFIG_H)", "add_definitions(-DHAVE_CONFIG_H -D_FORTIFY_SOURCE=0)", {plain = true})
-	    end
+        end
 
         -- we pass libogg as packagedeps instead of findOgg.cmake (it does not work)
         local libogg = package:dep("libogg"):fetch()
