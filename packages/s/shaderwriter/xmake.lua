@@ -25,7 +25,7 @@ package("shaderwriter")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <CompilerGLSL/compileGlsl.hpp>
+            #include <CompilerGlsl/compileGlsl.hpp>
             #include <CompilerSpirV/compileSpirV.hpp>
             #include <ShaderWriter/Intrinsics/Intrinsics.hpp>
             #include <ShaderWriter/Source.hpp>
