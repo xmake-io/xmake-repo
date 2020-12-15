@@ -23,11 +23,6 @@ package("libflac")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
-        if package:config("shared") and package:is_plat("mingw") then
-            -- stack protector causes linking issues on MinGW shared
-            -- I cannot find a way to disable it, except for this shitty hack
-            io.replace("src/libFLAC/metadata_iterators.c", "memset", "(memset)", {plain = true})
-        end
 
         local configs = {}
         table.insert(configs, "-DBUILD_CXXLIBS=OFF")
@@ -40,12 +35,18 @@ package("libflac")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
 
+        -- fix, undefined reference to `__memset_chk'
+        -- @see https://github.com/msys2/MINGW-packages/issues/5803
+        if package:config("shared") and package:is_plat("mingw") then
+            io.replace("CMakeLists.txt", "add_definitions(-DHAVE_CONFIG_H)", "add_definitions(-DHAVE_CONFIG_H -D_FORTIFY_SOURCE=0)", {plain = true})
+	    end
+
         -- we pass libogg as packagedeps instead of findOgg.cmake (it does not work)
         local libogg = package:dep("libogg"):fetch()
         if libogg then
             local links = table.concat(table.wrap(libogg.links), " ")
             io.replace("CMakeLists.txt", "find_package(OGG REQUIRED)", "", {plain = true})
-            io.replace("src/libFLAC/CMakeLists.txt", 
+            io.replace("src/libFLAC/CMakeLists.txt",
             [[
 if(TARGET Ogg::ogg)
     target_link_libraries(FLAC PUBLIC Ogg::ogg)
