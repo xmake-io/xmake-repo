@@ -24,20 +24,20 @@ package("cmake")
         add_versions("3.18.4", "149e0cee002e59e0bb84543cf3cb099f108c08390392605e944daeb6594cbc29")
     elseif is_host("windows") then
         if os.arch() == "x64" then
-            add_urls("https://cmake.org/files/v$(version)-win64-x64.zip", {excludes = "*/doc/*", version = function (version)
+            add_urls("https://cmake.org/files/v$(version)-win64-x64.zip", {excludes = {"*/doc/*"}, version = function (version)
                     return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version
                 end})
-            add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version)-win64-x64.zip", {excludes = "*/doc/*"})
-            add_urls("https://gitlab.com/xmake-mirror/cmake-releases/raw/master/cmake-$(version)-win64-x64.zip", {excludes = "*/doc/*"})
+            add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version)-win64-x64.zip", {excludes = {"*/doc/*"}})
+            add_urls("https://gitlab.com/xmake-mirror/cmake-releases/raw/master/cmake-$(version)-win64-x64.zip", {excludes = {"*/doc/*"}})
             add_versions("3.11.4", "d3102abd0ded446c898252b58857871ee170312d8e7fd5cbff01fbcb1068a6e5")
             add_versions("3.15.4", "5bb49c0274800c38833e515a01af75a7341db68ea82c71856bb3cf171d2068be")
             add_versions("3.18.4", "a932bc0c8ee79f1003204466c525b38a840424d4ae29f9e5fb88959116f2407d")
         else
-            add_urls("https://cmake.org/files/v$(version)-win32-x86.zip", {excludes = "*/doc/*", version = function (version)
+            add_urls("https://cmake.org/files/v$(version)-win32-x86.zip", {excludes = {"*/doc/*"}, version = function (version)
                     return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version
                 end})
-            add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version)-win32-x86.zip", {excludes = "*/doc/*"})
-            add_urls("https://gitlab.com/xmake-mirror/cmake-releases/raw/master/cmake-$(version)-win32-x86.zip", {excludes = "*/doc/*"})
+            add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version)-win32-x86.zip", {excludes = {"*/doc/*"}})
+            add_urls("https://gitlab.com/xmake-mirror/cmake-releases/raw/master/cmake-$(version)-win32-x86.zip", {excludes = {"*/doc/*"}})
             add_versions("3.11.4", "b068001ff879f86e704977c50a8c5917e4b4406c66242366dba2674abe316579")
             add_versions("3.15.4", "19c2bfd26c4de4d8046dd5ad6de95b57a2556559ec81b13b94e63ea4ae49b3f2")
             add_versions("3.18.4", "4c519051853686927f87df99669ada3ff15a3086535a7131892febd7c6e2f122")
