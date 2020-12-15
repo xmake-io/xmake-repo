@@ -28,7 +28,8 @@ jobs:
 
       - name: Installation
         run: |
-          sudo apt-get install -y nodejs npm
+          sudo apt update
+          sudo apt install -y nodejs npm
           sudo npm install markdown-to-html -g
 
       - name: Publish
