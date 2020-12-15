@@ -45,6 +45,5 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        local configs = package:is_plat("windows") and {ldflags = "/SUBSYSTEM:CONSOLE"}
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = configs}))
+        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)
