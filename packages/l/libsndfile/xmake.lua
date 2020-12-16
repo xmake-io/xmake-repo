@@ -19,15 +19,16 @@ package("libsndfile")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        -- It seems libsndfile expects CMAKE_MSVC_RUNTIME_LIBRARY
         if package:is_plat("windows") then
+
+            -- libsndfile doesn't build well with a static libFLAC, this fixes it
             if not package:dep("libflac"):config("shared") then
-                -- libsndfile doesn't build well with a static libFLAC, this fixes it
                 local cmake = io.open("CMakeLists.txt", "a")
                 cmake:write("add_definitions(-DFLAC__NO_DLL)\n")
                 cmake:close()
             end
 
+            -- it seems libsndfile expects CMAKE_MSVC_RUNTIME_LIBRARY
             local vs_runtime = package:config("vs_runtime")
             if vs_runtime == "MT" then
                 table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded")
@@ -39,7 +40,6 @@ package("libsndfile")
                 table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebugDLL")
             end
         end
-
         import("package.tools.cmake").install(package, configs)
    end)
 
