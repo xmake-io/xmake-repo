@@ -121,8 +121,24 @@ package("python")
         local cflags = {}
         local ldflags = {}
         if package:is_plat("macosx") then
-            local xcode_dir = get_config("xcode")
-            local xcode_sdkver  = get_config("xcode_sdkver") or get_config("xcode_sdkver_macosx")
+
+            -- get xcode information
+            import("core.tool.toolchain")
+            local xcode_dir
+            local xcode_sdkver
+            local target_minver
+            local xcode = toolchain.load("xcode", {plat = package:plat(), arch = package:arch()})
+            if xcode and xcode.config and xcode:check() then
+                xcode_dir = xcode:config("xcode")
+                xcode_sdkver = xcode:config("xcode_sdkver")
+                target_minver = xcode:config("target_minver")
+            end
+            xcode_dir = xcode_dir or get_config("xcode")
+            xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver")
+            target_minver = target_minver or get_config("target_minver")
+
+            -- TODO will be deprecated after xmake v2.5.1
+            xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver_macosx")
             if not xcode_dir or not xcode_sdkver then
                 -- maybe on cross platform, we need find xcode envs manually
                 local xcode = import("detect.sdks.find_xcode")(nil, {force = true, plat = package:plat(), arch = package:arch()})
@@ -131,6 +147,16 @@ package("python")
                     xcode_sdkver = xcode.sdkver
                 end
             end
+
+            -- TODO will be deprecated after xmake v2.5.1
+            target_minver = target_minver or get_config("target_minver_macosx")
+            if not target_minver then
+                local macos_ver = macos.version()
+                if macos_ver then
+                    target_minver = macos_ver:major() .. "." .. macos_ver:minor()
+                end
+            end
+
             if xcode_dir and xcode_sdkver then
                 -- help Python's build system (setuptools/pip) to build things on SDK-based systems
                 -- the setup.py looks at "-isysroot" to get the sysroot (and not at --sysroot)
@@ -145,13 +171,6 @@ package("python")
             end
 
             -- avoid linking to libgcc https://mail.python.org/pipermail/python-dev/2012-February/116205.html
-            local target_minver = get_config("target_minver") or get_config("target_minver_macosx")
-            if not target_minver then
-                local macos_ver = macos.version()
-                if macos_ver then
-                    target_minver = macos_ver:major() .. "." .. macos_ver:minor()
-                end
-            end
             if target_minver then
                 table.insert(configs, "MACOSX_DEPLOYMENT_TARGET=" .. target_minver)
             end
