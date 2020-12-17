@@ -21,7 +21,7 @@ package("openblas")
         add_syslinks("pthread")
     end
 
-    on_install("windows", function (package)
+    on_install("windows|x64", function (package)
         if package:is_arch("x64", "x86_64") then
             os.cp("bin", package:installdir())
             os.cp("include", package:installdir())
@@ -30,7 +30,7 @@ package("openblas")
         end
     end)
 
-    on_install("linux", "mingw", function (package)
+    on_install("linux", "mingw@windows", function (package)
         local configs = {}
         if package:config("debug") then table.insert(configs, "DEBUG=1") end
         if not package:config("shared") then
