@@ -4,7 +4,7 @@ package("shaderwriter")
     set_description("Library used to write shaders from C++, and export them in either GLSL, HLSL or SPIR-V.")
 
     set_urls("https://github.com/DragonJoker/ShaderWriter.git")
-    add_versions("1.0", "c378a373e66735882903ffefc8e467dc07b46d27")
+    add_versions("1.0", "a5ef99ff141693ef28cee0e464500888cabc65ad")
 
     add_deps("cmake")
 
@@ -24,19 +24,6 @@ package("shaderwriter")
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")
         }
         import("package.tools.cmake").install(package, configs)
-        if not package:is_plat("windows") then
-            -- fix sdwCompilerHlsl.a to libsdwCompilerHlsl.a
-            local libdir = package:installdir("lib")
-            for _, libfile in ipairs(os.files(path.join(libdir, "*.a"))) do
-                os.mv(libfile, path.join(libdir, "lib" .. path.filename(libfile)))
-            end
-            for _, libfile in ipairs(os.files(path.join(libdir, "*.so"))) do
-                os.mv(libfile, path.join(libdir, "lib" .. path.filename(libfile)))
-            end
-            for _, libfile in ipairs(os.files(path.join(libdir, "*.dylib"))) do
-                os.mv(libfile, path.join(libdir, "lib" .. path.filename(libfile)))
-            end
-        end
     end)
 
     on_test(function (package)
