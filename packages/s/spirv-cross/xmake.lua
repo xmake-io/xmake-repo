@@ -4,8 +4,9 @@ package("spirv-cross")
     set_description("SPIRV-Cross is a practical tool and library for performing reflection on SPIR-V and disassembling SPIR-V back to high level languages.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/KhronosGroup/SPIRV-Cross/archive/$(version).tar.gz", {version = function (version) return version:gsub("%.", "-") end})
-    add_versions("2020.09.17", "a3351742fe1fae9a15e91abbfb5314d96f5f77927ed07f55124d6df830ac97a7")
+    add_urls("https://github.com/KhronosGroup/SPIRV-Cross.git")
+    add_versions("1.2.154+1", "e6f5ce6b8998f551f3400ad743b77be51bbe3019")
+    add_versions("1.2.162+0", "6d10da0224bd3214c9a507832e62d9fb6ae9620d")
 
     add_deps("cmake")
     add_links("spirv-cross-c", "spirv-cross-cpp", "spirv-cross-reflect", "spirv-cross-msl", "spirv-cross-util", "spirv-cross-hlsl", "spirv-cross-glsl", "spirv-cross-core")
