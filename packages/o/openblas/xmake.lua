@@ -30,7 +30,7 @@ package("openblas")
         end
     end)
 
-    on_install("linux", "mingw@windows", function (package)
+    on_install("linux", "mingw@windows,msys", function (package)
         local configs = {}
         if package:config("debug") then table.insert(configs, "DEBUG=1") end
         if not package:config("shared") then
