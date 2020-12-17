@@ -4,8 +4,9 @@ package("spirv-headers")
     set_description("SPIR-V Headers")
     set_license("MIT")
 
-    add_urls("https://github.com/KhronosGroup/SPIRV-Headers/archive/$(version).tar.gz")
-    add_versions("1.5.4", "fc026b6566167f6db03dc48779f0f986f9ff8c93ed651a557f28cfbe2dff4ede")
+    local map = {["1.5.4+2"] = "1.5.4.raytracing.fixed"}
+    add_urls("https://github.com/KhronosGroup/SPIRV-Headers/archive/$(version).tar.gz", {version = function (version) return map[tostring(version)] end})
+    add_versions("1.5.4+2", "df2ad2520be4d95a479fa248921065885bbf435a658349a7fc164ad7b26b68c6")
 
     add_deps("cmake")
 
