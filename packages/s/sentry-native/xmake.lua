@@ -35,8 +35,10 @@ package("sentry-native")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            sentry_options_t* options = sentry_options_new();
-            sentry_init(options);
-            sentry_shutdown();
+            void test(int args, char** argv) {
+                sentry_options_t* options = sentry_options_new();
+                sentry_init(options);
+                sentry_shutdown();
+            }
         ]]}, {includes = {"sentry.h"}}))
     end)
