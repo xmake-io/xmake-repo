@@ -3,7 +3,7 @@ package("sentry-native")
     set_homepage("https://sentry.io")
     set_description("Sentry SDK for C, C++ and native applications.")
 
-    set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip"
+    set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
     add_versions("0.4.4", "fe6c711d42861e66e53bfd7ee0b2b226027c64446857f0d1bbb239ca824a3d8d")
