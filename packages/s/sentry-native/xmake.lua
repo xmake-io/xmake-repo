@@ -11,6 +11,14 @@ package("sentry-native")
 
     add_deps("cmake")
 
+    if is_plat("windows") then
+        add_syslinks("dbghelp")
+    elseif is_plat("linux") then
+        add_syslinks("dl", "pthread", "rt")
+    elseif is_plat("android") then
+        add_syslinks("dl", "log")
+    end
+
     on_load("linux", "macos", "iphoneos", "android", "cross", function (package)
         package:add("deps", "libcurl")
     end)
