@@ -11,9 +11,7 @@ package("sentry-native")
     add_deps("cmake")
 
     on_load("linux", "macos", "iphoneos", "android", "cross", function (package)
-        if package:config("includes_lua") then
-            package:add("deps", "libcurl")
-        end
+        package:add("deps", "libcurl")
     end)
 
     on_install(function (package)
