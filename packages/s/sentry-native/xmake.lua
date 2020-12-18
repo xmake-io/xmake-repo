@@ -7,6 +7,7 @@ package("sentry-native")
              "https://github.com/getsentry/sentry-native.git")
 
     add_versions("0.4.4", "fe6c711d42861e66e53bfd7ee0b2b226027c64446857f0d1bbb239ca824a3d8d")
+    add_patches("0.4.4", path.join(os.scriptdir(), "patches", "0.4.4", "zlib_fix.patch"), "1a6ac711b7824112a9062ec1716a316facce5055498d1f87090d2cad031b865b")
 
     add_deps("cmake")
 
