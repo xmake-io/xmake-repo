@@ -19,11 +19,11 @@ package("sentry-native")
         add_syslinks("dl", "log")
     end
 
-    on_load("linux", "macos", "iphoneos", "android", "cross", function (package)
+    on_load("linux", "macos", function (package)
         package:add("deps", "libcurl")
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macos", "android", function (package)
         local configs = {}
         table.insert(configs, "-DSENTRY_BUILD_EXAMPLES=OFF")
         table.insert(configs, "-DSENTRY_BUILD_TESTS=OFF")
