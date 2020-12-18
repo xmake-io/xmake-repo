@@ -3,17 +3,35 @@ package("sentry-native")
     set_homepage("https://sentry.io")
     set_description("Sentry SDK for C, C++ and native applications.")
 
-    set_urls("https://github.com/getsentry/sentry-native/archive/$(version).tar.gz",
+    set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip"
              "https://github.com/getsentry/sentry-native.git")
 
-    add_versions("0.4.4", "2a5917a4193a7412f5b55fe122c39032f087ae437a4183054a57b2c6b9465f63")
+    add_versions("0.4.4", "fe6c711d42861e66e53bfd7ee0b2b226027c64446857f0d1bbb239ca824a3d8d")
 
     add_deps("cmake")
 
+    on_load("linux", "macos", "iphoneos", "android", "cross", function (package)
+        if package:config("includes_lua") then
+            package:add("deps", "libcurl")
+        end
+    end)
+
     on_install(function (package)
         local configs = {}
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DSENTRY_BUILD_EXAMPLES=OFF")
+        table.insert(configs, "-DSENTRY_BUILD_TESTS=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        if package:config("shared") then
+            table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
+            table.insert(configs, "-DSENTRY_BUILD_SHARED_LIBS=ON")
+        else
+            table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
+            table.insert(configs, "-DSENTRY_BUILD_SHARED_LIBS=OFF")
+        end
+        if package:is_plat("windows") then
+            local vs_runtime = package:config("vs_runtime")
+            table.insert(configs, "-SENTRY_BUILD_RUNTIMESTATIC=" .. ((vs_runtime == "MT" or vs_runtime == "MTd") and "ON" or "OFF"))
+        end
         import("package.tools.cmake").install(package, configs)
    end)
 
