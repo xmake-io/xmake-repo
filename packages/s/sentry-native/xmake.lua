@@ -14,14 +14,14 @@ package("sentry-native")
     if is_plat("windows") then
         add_syslinks("dbghelp")
     elseif is_plat("linux") then
+        add_deps("libcurl")
         add_syslinks("dl", "pthread", "rt")
     elseif is_plat("android") then
         add_syslinks("dl", "log")
+    elseif is_plat("macosx") then
+        add_deps("libcurl")
+        add_frameworks("CoreText", "CoreGraphics", "CoreFoundation", "Foundation")
     end
-
-    on_load("linux", "macosx", function (package)
-        package:add("deps", "libcurl")
-    end)
 
     on_install("windows", "linux", "macosx", "android", function (package)
         local configs = {}
