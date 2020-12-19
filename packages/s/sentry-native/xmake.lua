@@ -25,6 +25,7 @@ package("sentry-native")
     end
 
     on_install("windows", "linux", "macosx", "android", function (package)
+        local opt = {}
         local configs = {}
         table.insert(configs, "-DSENTRY_BUILD_EXAMPLES=OFF")
         table.insert(configs, "-DSENTRY_BUILD_TESTS=OFF")
@@ -37,10 +38,11 @@ package("sentry-native")
             table.insert(configs, "-DSENTRY_BUILD_SHARED_LIBS=OFF")
         end
         if package:is_plat("windows") then
+            opt.cxflags = { "/experimental:preprocessor-" } -- fixes <Windows SDK>\um\oaidl.h(487): error C2059: syntax error: '/'
             local vs_runtime = package:config("vs_runtime")
             table.insert(configs, "-SENTRY_BUILD_RUNTIMESTATIC=" .. ((vs_runtime == "MT" or vs_runtime == "MTd") and "ON" or "OFF"))
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
    end)
 
     on_test(function (package)
