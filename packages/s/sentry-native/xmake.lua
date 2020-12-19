@@ -21,6 +21,7 @@ package("sentry-native")
     elseif is_plat("macosx") then
         add_deps("libcurl")
         add_frameworks("CoreText", "CoreGraphics", "CoreFoundation", "Foundation")
+        add_syslinks("bsm")
     end
 
     on_install("windows", "linux", "macosx", "android", function (package)
