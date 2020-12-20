@@ -36,6 +36,7 @@ package("libcurl")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCURL_DISABLE_LDAP=ON")
+        table.insert(configs, "-DCMAKE_USE_SCHANNEL=ON")
         import("package.tools.cmake").install(package, configs)
     end)
 
