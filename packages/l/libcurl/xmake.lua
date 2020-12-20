@@ -22,7 +22,7 @@ package("libcurl")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then
-        add_syslinks("advapi32", "winmm", "ws2_32")
+        add_syslinks("advapi32", "crypt32", "winmm", "ws2_32")
     end
 
     on_load("windows", "mingw@macosx,linux", function (package)
@@ -36,6 +36,8 @@ package("libcurl")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCURL_DISABLE_LDAP=ON")
+        table.insert(configs, "-DCMAKE_USE_SCHANNEL=ON")
+        table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
