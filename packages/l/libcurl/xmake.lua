@@ -22,7 +22,7 @@ package("libcurl")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then
-        add_syslinks("advapi32", "winmm", "ws2_32")
+        add_syslinks("advapi32", "crypt32", "secur32", "winmm", "ws2_32")
     end
 
     on_load("windows", "mingw@macosx,linux", function (package)
