@@ -46,7 +46,7 @@ package("sentry-native")
         if package:is_plat("windows") then
             opt.cxflags = { "/experimental:preprocessor-" } -- fixes <Windows SDK>\um\oaidl.h(487): error C2059: syntax error: '/'
             local vs_runtime = package:config("vs_runtime")
-            table.insert(configs, "-SENTRY_BUILD_RUNTIMESTATIC=" .. ((vs_runtime == "MT" or vs_runtime == "MTd") and "ON" or "OFF"))
+            table.insert(configs, "-DSENTRY_BUILD_RUNTIMESTATIC=" .. ((vs_runtime == "MT" or vs_runtime == "MTd") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs, opt)
    end)
