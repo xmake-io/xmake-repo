@@ -12,7 +12,7 @@ package("sentry-native")
     add_deps("cmake")
 
     if is_plat("windows") then
-        add_syslinks("dbghelp")
+        add_syslinks("dbghelp", "winhttp", "shlwapi", "advapi32")
     elseif is_plat("linux") then
         add_deps("libcurl")
         add_syslinks("dl", "pthread", "rt")
