@@ -24,6 +24,12 @@ package("sentry-native")
         add_syslinks("bsm")
     end
 
+    on_load("windows", function (package)
+        if not package:config("shared") then
+            package:add("defines", "SENTRY_BUILD_STATIC")
+        end
+    end)
+
     on_install("windows", "linux", "macosx", "android", function (package)
         local opt = {}
         local configs = {}
