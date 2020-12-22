@@ -1,4 +1,4 @@
-package("TiltedCore")
+package("tiltedcore")
 
     set_homepage("https://github.com/tiltedphoques/TiltedCore")
     set_description("Core library from Tilted Phoques")
@@ -6,9 +6,8 @@ package("TiltedCore")
     add_urls("https://github.com/tiltedphoques/TiltedCore/releases/download/$(version)/release.zip")
     add_urls("https://github.com/tiltedphoques/TiltedCore.git")
 
-    add_versions("v0.1.0", "7ce69086a3d4275a68877f443e682781275447ca0cc89b495428659410813655")
+    add_versions("v0.1.1", "a9a5df99d10067aff1306b99b40658ad5bb3749275ae6ddb4d3f95e4fe68381a")
 
-    add_includedirs("Code/core/include")
     add_deps("mimalloc")
 
     on_install("windows", "msys", function (package)
@@ -21,5 +20,5 @@ package("TiltedCore")
             void test(int args, char** argv) {
                 Outcome<int, float> outcome;
             }
-        ]]}, {includes = {"Code/core/include/Outcome.hpp"}}))
+        ]]}, {includes = {"TiltedCore/Outcome.hpp"}}))
     end)
