@@ -3,7 +3,7 @@ package("TiltedCore")
     set_homepage("https://github.com/tiltedphoques/TiltedCore")
     set_description("Core library from Tilted Phoques")
 
-    add_urls("https://github.com/tiltedphoques/TiltedCore/archive/$(version).zip")
+    add_urls("https://github.com/tiltedphoques/TiltedCore/releases/download/$(version)/release.zip")
     add_urls("https://github.com/tiltedphoques/TiltedCore.git")
 
     add_versions("v0.1.0", "7ce69086a3d4275a68877f443e682781275447ca0cc89b495428659410813655")
