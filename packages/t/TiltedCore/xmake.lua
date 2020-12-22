@@ -9,13 +9,9 @@ package("TiltedCore")
     add_versions("v0.1.0", "7ce69086a3d4275a68877f443e682781275447ca0cc89b495428659410813655")
 
     add_includedirs("Code/core/include")
-    add_links("mimalloc")
+    add_deps("mimalloc")
 
-    on_load(function (package)
-        package:add("mimalloc")
-    end)
-
-    on_install("linux", "macosx", "windows", "msys", function (package)
+    on_install("windows", "msys", function (package)
         local configs = {}
         import("package.tools.xmake").install(package, configs)
     end)
