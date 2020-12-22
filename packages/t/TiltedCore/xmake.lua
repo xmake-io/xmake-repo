@@ -18,7 +18,7 @@ package("tiltedcore")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test(int args, char** argv) {
-                Outcome<int, float> outcome;
+                TiltedPhoques::Outcome<int, float> outcome;
             }
         ]]}, {includes = {"TiltedCore/Outcome.hpp"}}))
     end)
