@@ -21,5 +21,5 @@ package("TiltedCore")
             void test(int args, char** argv) {
                 Outcome<int, float> outcome;
             }
-        ]]}, {includes = {"Outcome.hpp"}}))
+        ]]}, {includes = {"Code/core/include/Outcome.hpp"}}))
     end)
