@@ -24,15 +24,17 @@ package("sol2")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <sol/sol.hpp>
-            #include <cassert>
-            void test() {
-                sol::state lua;
-                int x = 0;
-                lua.set_function("beep", [&x]{ ++x; });
-                lua.script("beep()");
-                assert(x == 1);
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+        if package:config("includes_lua") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <sol/sol.hpp>
+                #include <cassert>
+                void test() {
+                    sol::state lua;
+                    int x = 0;
+                    lua.set_function("beep", [&x]{ ++x; });
+                    lua.script("beep()");
+                    assert(x == 1);
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
     end)
