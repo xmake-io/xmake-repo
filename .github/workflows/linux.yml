@@ -28,7 +28,7 @@ jobs:
           sudo update-alternatives --install /usr/bin/cpp cpp /usr/bin/cpp-9 60
           sudo update-alternatives --set g++ /usr/bin/g++-9
           sudo update-alternatives --set gcc /usr/bin/gcc-9
-          sudo update-alternatives --set cpp-bin /usr/bin/cpp-9
+          sudo update-alternatives --set cpp /usr/bin/cpp-9
 
       - name: Tests
         run: |
