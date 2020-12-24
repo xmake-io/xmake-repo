@@ -19,6 +19,7 @@ local options =
 ,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."             }
 ,   {nil, "sdk",        "kv", nil, "Set the SDK directory of cross toolchain."  }
 ,   {nil, "vs_sdkver",  "kv", nil, "Set the Windows SDK version."               }
+,   {nil, "vs_runtime", "kv", nil, "Set the VS Runtime library."                }
 ,   {nil, "mingw",      "kv", nil, "Set the MingW directory."                   }
 ,   {nil, "toolchain",  "kv", nil, "Set the toolchain name."                    }
 ,   {nil, "packages",   "vs", nil, "The package list."                          }
@@ -51,6 +52,9 @@ function _require_packages(argv, packages)
     end
     if argv.vs_sdkver then
         table.insert(config_argv, "--vs_sdkver=" .. argv.vs_sdkver)
+    end
+    if argv.vs_runtime then
+        table.insert(config_argv, "--vs_runtime=" .. argv.vs_runtime)
     end
     if argv.mingw then
         table.insert(config_argv, "--mingw=" .. argv.mingw)

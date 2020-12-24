@@ -11,6 +11,7 @@ jobs:
         os: [windows-latest]
         kind: [static, shared]
         arch: [x64, x86]
+        vs_runtime: [MT, MD]
 
     runs-on: ${{ matrix.os }}
 
@@ -18,9 +19,9 @@ jobs:
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: branch@dev
+          xmake-version: branch@cache
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_sdkver=10.0.19041.0
+          xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --vs_sdkver=10.0.19041.0
 
