@@ -8,6 +8,7 @@ package("mimalloc")
     add_versions("1.6.7", "5a12aac020650876615a2ce3dd8adc8b208cdcee4d9e6bcfc33b3fbe307f0dbf")
 
     add_configs("secure", {description = "Use a secured version of mimalloc", default = false, type = "boolean"})
+    add_configs("rltgenrandom", {description = "Use a RtlGenRandom instead of BCrypt", default = false, type = "boolean"})
 
     add_deps("cmake")
 
@@ -24,6 +25,9 @@ package("mimalloc")
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
+        if package:config("rltgenrandom") then
+           table.insert(configs, { cxflags = "-DMI_USE_RTLGENRANDOM" }) 
+        end
         table.insert(configs, "-DMI_BUILD_TESTS=OFF")
         table.insert(configs, "-DMI_BUILD_OBJECT=OFF")
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
