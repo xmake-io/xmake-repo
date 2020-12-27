@@ -8,6 +8,7 @@ package("mimalloc")
     add_versions("1.6.7", "5a12aac020650876615a2ce3dd8adc8b208cdcee4d9e6bcfc33b3fbe307f0dbf")
 
     add_configs("secure", {description = "Use a secured version of mimalloc", default = false, type = "boolean"})
+    add_configs("rltgenrandom", {description = "Use a RtlGenRandom instead of BCrypt", default = false, type = "boolean"})
 
     add_deps("cmake")
 
@@ -30,7 +31,16 @@ package("mimalloc")
         if package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
             io.gsub("CMakeLists.txt", "-redirect", "-redirect32")
         end
-        import("package.tools.cmake").build(package, configs, {buildir = "build"})
+        local cxflags
+        if package:config("rltgenrandom") then
+            if xmake:version():ge("2.5.1") then
+                cxflags = "-DMI_USE_RTLGENRANDOM"
+            else
+                -- it will be deprecated after xmake/v2.5.1
+                package:configs().cxflags = "-DMI_USE_RTLGENRANDOM"
+            end
+        end
+        import("package.tools.cmake").build(package, configs, {buildir = "build", cxflags = cxflags})
 
         if package:is_plat("windows") then
             os.trycp("build/**.dll", package:installdir("bin"))
