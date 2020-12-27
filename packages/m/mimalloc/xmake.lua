@@ -25,16 +25,22 @@ package("mimalloc")
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
-        if package:config("rltgenrandom") then
-           table.insert(configs, { cxflags = "-DMI_USE_RTLGENRANDOM" }) 
-        end
         table.insert(configs, "-DMI_BUILD_TESTS=OFF")
         table.insert(configs, "-DMI_BUILD_OBJECT=OFF")
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
         if package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
             io.gsub("CMakeLists.txt", "-redirect", "-redirect32")
         end
-        import("package.tools.cmake").build(package, configs, {buildir = "build"})
+        local cxflags
+        if package:config("rltgenrandom") then
+            if xmake:version():ge("2.5.1") then
+                cxflags = "-DMI_USE_RTLGENRANDOM"
+            else
+                -- it will be deprecated after xmake/v2.5.1
+                package:configs().cxflags = "-DMI_USE_RTLGENRANDOM"
+            end
+        end
+        import("package.tools.cmake").build(package, configs, {buildir = "build", cxflags = cxflags})
 
         if package:is_plat("windows") then
             os.trycp("build/**.dll", package:installdir("bin"))
