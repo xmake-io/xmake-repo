@@ -124,6 +124,7 @@ function main(...)
         local files = os.iorun("git diff --name-only HEAD^")
         for _, file in ipairs(files:split('\n'), string.trim) do
             if file:find("packages", 1, true) and path.filename(file) == "xmake.lua" then
+                assert(file == file:lower(), "%s must be lower case!", file)
                 local package = path.filename(path.directory(file))
                 table.insert(packages, package)
             end
@@ -135,6 +136,7 @@ function main(...)
 
     -- remove unsupported packages
     for idx, package in irpairs(packages) do
+        assert(package == package:lower(), "package(%s) must be lower case!", package)
         if not _package_is_supported(argv, package) then
             table.remove(packages, idx)
         end
