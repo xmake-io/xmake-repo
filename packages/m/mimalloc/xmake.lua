@@ -8,7 +8,7 @@ package("mimalloc")
     add_versions("1.6.7", "5a12aac020650876615a2ce3dd8adc8b208cdcee4d9e6bcfc33b3fbe307f0dbf")
 
     add_configs("secure", {description = "Use a secured version of mimalloc", default = false, type = "boolean"})
-    add_configs("rltgenrandom", {description = "Use a RtlGenRandom instead of BCrypt", default = true, type = "boolean"})
+    add_configs("rltgenrandom", {description = "Use a RtlGenRandom instead of BCrypt", default = false, type = "boolean"})
 
     add_deps("cmake")
 
