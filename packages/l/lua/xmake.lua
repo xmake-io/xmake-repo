@@ -6,6 +6,7 @@ package("lua")
     set_urls("https://www.lua.org/ftp/lua-$(version).tar.gz",
              "https://github.com/lua/lua.git")
 
+    add_versions("5.4.2", "11570d97e9d7303c0a59567ed1ac7c648340cd0db10d5fd594c09223ef2f524f")
     add_versions("5.4.1", "4ba786c3705eb9db6567af29c91a01b81f1c0ac3124fdbf6cd94bdd9e53cca7d")
     add_versions("5.3.6", "fc5fd69bb8736323f026672b1b7235da613d7177e72558893a0bdcd320466d60")
     add_versions("5.2.4", "b9e2e4aad6789b3b63a056d442f7b39f0ecfca3ae0f1fc0ae4e9614401b69f4b")
