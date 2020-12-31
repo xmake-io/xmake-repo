@@ -22,12 +22,10 @@ package("openblas")
     end
 
     on_install("windows|x64", function (package)
-        if package:is_arch("x64", "x86_64") then
-            os.cp("bin", package:installdir())
-            os.cp("include", package:installdir())
-            os.cp("lib", package:installdir())
-            package:addenv("PATH", "bin")
-        end
+        os.cp("bin", package:installdir())
+        os.cp("include", package:installdir())
+        os.cp("lib", package:installdir())
+        package:addenv("PATH", "bin")
     end)
 
     on_install("linux", "mingw@windows,msys", function (package)
