@@ -21,12 +21,14 @@ package("lua")
     end)
 
     on_install("linux", "macosx", "windows", "android", "bsd", function (package)
+        local sourcedir = os.isdir("src") and "src/" or "" -- for tar.gz or git source
         io.writefile("xmake.lua", format([[
+            local sourcedir = "%s"
             target("lualib")
                 set_kind("%s")
                 set_basename("lua")
-                add_headerfiles("src/*.h", {prefixdir = "lua"})
-                add_files("src/*.c|lua.c|luac.c")
+                add_headerfiles(sourcedir .. "*.h", {prefixdir = "lua"})
+                add_files(sourcedir .. "*.c|lua.c|luac.c|onelua.c")
                 add_defines("LUA_COMPAT_5_2", "LUA_COMPAT_5_1")
                 if is_plat("linux", "bsd") then
                     add_defines("LUA_USE_LINUX")
@@ -44,16 +46,18 @@ package("lua")
             target("lua")
                 set_enabled(%s)
                 set_kind("binary")
-                add_files("src/lua.c")
+                add_files(sourcedir .. "lua.c")
                 add_deps("lualib")
                 if not is_plat("windows") then
                     add_syslinks("dl")
                 end
-        ]], package:config("shared") and "shared" or "static", is_plat(os.host()) and "true" or "false"))
+        ]], sourcedir,
+            package:config("shared") and "shared" or "static",
+            is_plat(os.host()) and "true" or "false"))
 
         local configs = {}
-        if package:config("shared") then 
-            configs.kind = "shared" 
+        if package:config("shared") then
+            configs.kind = "shared"
         end
 
         import("package.tools.xmake").install(package, configs)
