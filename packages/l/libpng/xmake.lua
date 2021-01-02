@@ -12,16 +12,18 @@ package("libpng")
     set_license("libpng-2.0")
 
     add_deps("zlib")
-    if is_host("windows") then
+    if is_host("windows", "mingw") then
         add_deps("cmake")
     end
 
-    on_install("windows", function (package)
-        local configs = {"-DPNG_TESTS=OFF",
+    on_install("windows", "mingw", function (package)
+        local configs = {"-DPNG_TESTS=OFF", "-DPNG_BUILD_ZLIB=ON", "-DPNG_EXECUTABLES=OFF",
                          "-DPNG_SHARED=" .. (package:config("shared") and "ON" or "OFF"),
                          "-DPNG_STATIC=" .. (package:config("shared") and "OFF" or "ON"),
                          "-DPNG_DEBUG=" .. (package:debug() and "ON" or "OFF")}
-        import("package.tools.cmake").install(package, configs)
+        local zlib = assert(package:dep("zlib"):fetch(), "zlib not found!")
+        io.replace("CMakeLists.txt", "${ZLIB_LIBRARY}", table.unwrap(zlib.links), {plain = true})
+        import("package.tools.cmake").install(package, configs, {packagedeps = "zlib"})
     end)
 
     on_install("iphoneos", "android@linux,macosx", "macosx", "linux", function (package)
