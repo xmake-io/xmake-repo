@@ -13,8 +13,9 @@ package("libwebp")
     add_deps("libpng", "libjpeg", "libtiff", "giflib")
     if is_plat("linux") then
         add_syslinks("pthread")
-    elseif is_plat("macosx") then
-        add_deps("automake")
+    end
+    if is_plat("linux", "macosx", "bsd") then
+        add_deps("autoconf", "automake")
     end
 
     on_install("linux", "macosx", function (package)
