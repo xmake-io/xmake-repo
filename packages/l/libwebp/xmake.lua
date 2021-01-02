@@ -10,32 +10,42 @@ package("libwebp")
     add_versions("github:1.1.0", "424faab60a14cb92c2a062733b6977b4cc1e875a6398887c5911b3a1a6c56c51")
     add_versions("google:1.1.0", "538fa4368f303251f7a672db5bf9970089493fab58c0d457e31a89703d9a786b")
 
+    add_configs("anim_utils",     { description = "Build animation utilities.", default = false, type = "boolean"})
+    add_configs("cwebp",          { description = "Build the cwebp command line tool.", default = false, type = "boolean"})
+    add_configs("dwebp",          { description = "Build the dwebp command line tool.", default = false, type = "boolean"})
+    add_configs("gif2webp",       { description = "Build the gif2webp conversion tool.", default = false, type = "boolean"})
+    add_configs("img2webp",       { description = "Build the img2webp animation tool.", default = false, type = "boolean"})
+    add_configs("vwebp",          { description = "Build the vwebp viewer tool.", default = false, type = "boolean"})
+    add_configs("webpinfo",       { description = "Build the webpinfo command line tool.", default = false, type = "boolean"})
+    add_configs("webpmux",        { description = "Build the webpmux command line tool.", default = false, type = "boolean"})
+    add_configs("extras",         { description = "Build extras.", default = false, type = "boolean"})
+
+    add_deps("cmake")
     add_deps("libpng", "libjpeg", "libtiff", "giflib")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
-    if is_plat("linux", "macosx") then
-        add_deps("libtool", "autoconf", "automake")
-    end
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "windows", function (package)
         local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        import("package.tools.autoconf").install(package, configs)
-    end)
-
-    on_install("windows", function (package)
-        local configs = {"-f", "Makefile.vc"}
-        local cfg = (package:debug() and "debug" or "release") .. "-" .. (package:config("shared") and "dynamic" or "static")
-        local arch = package:arch()
-        table.insert(configs, "CFG=" .. cfg)
-        table.insert(configs, "RTLIBCFG=" .. (package:config("vs_runtime"):startswith("MT") and "static" or "dynamic"))
-        table.insert(configs, "ARCH=" .. arch)
-        import("package.tools.nmake").build(package, configs)
-        local base = path.join("..", "obj", cfg, arch)
-        os.cp(path.join(base, "lib"), package:installdir())
-        os.cp(path.join("src", "webp"), package:installdir("include"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        for name, enabled in pairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") then
+                table.insert(configs, "-DWEBP_BUILD_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
+            end
+        end
+        local cxflags
+        if package:is_plat("windows") and package:config("shared") then
+            if xmake.version():ge("2.5.1") then
+                cxflags = "-DWEBP_EXTERN=__declspec(dllexport)"
+            else
+                cxflags = package:configs().cxflags or {}
+                table.insert(cxflags, "-DWEBP_EXTERN=__declspec(dllexport)")
+                package:configs().cxflags = cxflags
+            end
+        end
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
