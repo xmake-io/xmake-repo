@@ -14,8 +14,8 @@ package("libwebp")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
-    if is_plat("linux", "macosx", "bsd") then
-        add_deps("autoconf", "automake")
+    if is_plat("linux", "macosx") then
+        add_deps("libtool", "autoconf", "automake")
     end
 
     on_install("linux", "macosx", function (package)
