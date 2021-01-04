@@ -15,6 +15,11 @@ package("libtiff")
     on_install("windows", "mingw", function (package)
         local configs = {"-Dzstd=OFF", "-Dlzma=OFF", "-Dwebp=OFF", "-Djpeg12=OFF", "-Djbig=OFF", "-Dpixarlog=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        io.replace("CMakeLists.txt", "add_subdirectory(contrib)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(man)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(html)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(test)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(tools)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
