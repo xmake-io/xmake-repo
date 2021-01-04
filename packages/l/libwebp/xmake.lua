@@ -4,11 +4,8 @@ package("libwebp")
     set_description("Library to encode and decode images in WebP format.")
     set_license("BSD-3-Clause")
 
-    local commits = {["1.1.0"] = "d7844e9762b61c9638c263657bd49e1690184832"}
-    add_urls("https://github.com/webmproject/libwebp/archive/v$(version).tar.gz", {alias = "github"})
-    add_urls("https://chromium.googlesource.com/webm/libwebp/+archive/$(version).tar.gz", {alias = "google", version = function (version) return commits[tostring(version)] end})
-    add_versions("github:1.1.0", "424faab60a14cb92c2a062733b6977b4cc1e875a6398887c5911b3a1a6c56c51")
-    add_versions("google:1.1.0", "538fa4368f303251f7a672db5bf9970089493fab58c0d457e31a89703d9a786b")
+    add_urls("https://github.com/webmproject/libwebp/archive/v$(version).tar.gz")
+    add_versions("1.1.0", "424faab60a14cb92c2a062733b6977b4cc1e875a6398887c5911b3a1a6c56c51")
 
     add_configs("anim_utils",     { description = "Build animation utilities.", default = false, type = "boolean"})
     add_configs("cwebp",          { description = "Build the cwebp command line tool.", default = false, type = "boolean"})
