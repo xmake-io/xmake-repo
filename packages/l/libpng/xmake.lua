@@ -12,7 +12,7 @@ package("libpng")
     set_license("libpng-2.0")
 
     add_deps("zlib")
-    if is_host("windows", "mingw") then
+    if is_plat("windows", "mingw") then
         add_deps("cmake")
     end
 
