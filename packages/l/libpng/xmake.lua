@@ -13,7 +13,7 @@ package("libpng")
 
     add_deps("zlib")
     if is_plat("windows", "mingw") then
-        add_deps("cmake")
+        add_deps("cmake >3.12")
     end
 
     on_install("windows", "mingw", function (package)
