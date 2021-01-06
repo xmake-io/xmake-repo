@@ -44,6 +44,10 @@ package("giflib")
         if package:config("utils") then
             local util_table = {"gif2rgb", "gifbuild", "gifclrmp", "giffix", "giftext", "giftool"}
             for _, util in ipairs(util_table) do
+                if package:is_plat("windows") then
+                    -- fix unresolved external symbol snprintf before vs2013
+                    io.replace(util .. ".c", "snprintf", "_snprintf")
+                end
                 xmake_lua = xmake_lua .. string.format([[
                     target("%s")
                         set_kind("binary")
