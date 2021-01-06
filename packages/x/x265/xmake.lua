@@ -3,9 +3,10 @@ package("x265")
     set_homepage("http://x265.org")
     set_description("A free software library and application for encoding video streams into the H.265/MPEG-H HEVC compression format.")
 
-    add_urls("https://bitbucket.org/multicoreware/x265/downloads/x265_$(version).tar.gz")
+    add_urls("https://github.com/videolan/x265/archive/$(version).tar.gz",
+             "https://github.com/videolan/x265.git")
 
-    add_versions("2.9", "ebae687c84a39f54b995417c52a2fdde65a4e2e7ebac5730d251471304b91024")
+    add_versions("3.4", "544d147bf146f8994a7bf8521ed878c93067ea1c7c6e93ab602389be3117eaaf")
 
     add_deps("cmake", "nasm")
 
