@@ -2,7 +2,7 @@ name: Monkey
 
 on:
   schedule: # execute every 24 hours
-    - cron: "0 */24 * * *":
+    - cron: "0 */24 * * *"
 
 jobs:
   build:
