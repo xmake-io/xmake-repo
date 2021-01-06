@@ -12,43 +12,39 @@ package("libpng")
     set_license("libpng-2.0")
 
     add_deps("zlib")
-    if is_plat("windows", "mingw") then
-        add_deps("cmake")
-    end
-
-    on_install("windows", "mingw", function (package)
-        local configs = {"-DPNG_TESTS=OFF", "-DPNG_BUILD_ZLIB=ON", "-DPNG_EXECUTABLES=OFF",
-                         "-DPNG_SHARED=" .. (package:config("shared") and "ON" or "OFF"),
-                         "-DPNG_STATIC=" .. (package:config("shared") and "OFF" or "ON"),
-                         "-DPNG_DEBUG=" .. (package:debug() and "ON" or "OFF")}
-        local zlib = assert(package:dep("zlib"):fetch(), "zlib not found!")
-        io.replace("CMakeLists.txt", "${ZLIB_LIBRARY}", table.unwrap(zlib.links), {plain = true})
-        -- fix generate symbols.out fails for vs2013
-        if package:is_plat("windows") then
-            io.replace("CMakeLists.txt", "${CMAKE_CURRENT_BINARY_DIR}/scripts/symbols.out", "", {plain = true})
-        end
-        import("package.tools.cmake").install(package, configs, {packagedeps = "zlib"})
-    end)
-
-    on_install("iphoneos", "android@linux,macosx", "macosx", "linux", function (package)
-        import("package.tools.autoconf")
-        local zlib = package:dep("zlib")
-        local envs = autoconf.buildenvs(package)
-        if zlib then
-            -- we need patch cflags to cppflags for supporting zlib on android ndk
-            -- @see https://github.com/xmake-io/xmake/issues/1126
-            envs.CPPFLAGS = (envs.CFLAGS or "") .. " -I" .. os.args(path.join(zlib:installdir(), "include"))
-            envs.LDFLAGS = (envs.LDFLAGS or "") .. " -L" .. os.args(path.join(zlib:installdir(), "lib"))
-        end
-        local configs = {"--disable-dependency-tracking", "--disable-silent-rules"}
+    on_install(function (package)
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            add_requires("zlib")
+            target("png")
+                set_kind("$(kind)")
+                add_files("*.c")
+                if is_arch("x86", "x64", "i386", "x86_64") then
+                    add_files("intel/*.c")
+                    add_defines("PNG_INTEL_SSE_OPT=1")
+                    add_vectorexts("sse", "sse2")
+                elseif is_arch("arm.*") then
+                    add_files("arm/*.c", "arm/*.S")
+                    add_defines("PNG_ARM_NEON_OPT=2")
+                elseif is_arch("mips.*") then
+                    add_files("mips/*.c")
+                    add_defines("PNG_MIPS_MSA_OPT=2")
+                elseif is_arch("ppc.*") then
+                    add_files("powerpc/*.c")
+                    add_defines("PNG_POWERPC_VSX_OPT=2")
+                end
+                add_headerfiles("*.h")
+                add_packages("zlib")
+                if is_kind("shared") and is_plat("windows") then
+                    add_defines("PNG_BUILD_DLL")
+                end
+        ]])
+        local configs = {}
         if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-            table.insert(configs, "--enable-static=no")
-        else
-            table.insert(configs, "--enable-static=yes")
-            table.insert(configs, "--enable-shared=no")
+            configs.kind = "shared"
         end
-        autoconf.install(package, configs, {envs = envs})
+        os.cp("scripts/pnglibconf.h.prebuilt", "pnglibconf.h")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
