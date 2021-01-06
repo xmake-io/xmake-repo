@@ -23,6 +23,10 @@ package("libpng")
                          "-DPNG_DEBUG=" .. (package:debug() and "ON" or "OFF")}
         local zlib = assert(package:dep("zlib"):fetch(), "zlib not found!")
         io.replace("CMakeLists.txt", "${ZLIB_LIBRARY}", table.unwrap(zlib.links), {plain = true})
+        -- fix generate symbols.out fails for vs2013
+        if package:is_plat("windows") then
+            io.replace("CMakeLists.txt", "${CMAKE_CURRENT_BINARY_DIR}/scripts/symbols.out", "", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = "zlib"})
     end)
 
