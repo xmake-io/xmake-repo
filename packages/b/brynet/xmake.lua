@@ -11,7 +11,7 @@ package("brynet")
         add_syslinks("Ws2_32")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "android", "cross", function (package)
         os.cp("include", package:installdir())
     end)
 
