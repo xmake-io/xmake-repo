@@ -1,4 +1,4 @@
-name: Monkey
+name: Monkey (Linux)
 
 on:
   schedule: # execute every 24 hours
