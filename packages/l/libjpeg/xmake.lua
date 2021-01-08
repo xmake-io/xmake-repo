@@ -7,6 +7,7 @@ package("libjpeg")
 
     add_versions("v9c", "650250979303a649e21f87b5ccd02672af1ea6954b911342ea491f351ceb7122")
     add_versions("v9b", "240fd398da741669bf3c90366f58452ea59041cacc741a489b99f2f6a0bad052")
+    add_versions("v9d", "6c434a3be59f8f62425b2e3c077e785c9ce30ee5874ea1c270e843f273ba71ee")
 
     on_install(function (package)
         io.writefile("xmake.lua", [[
