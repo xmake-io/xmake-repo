@@ -4,12 +4,11 @@ package("libjpeg-turbo")
     set_description("A JPEG image codec that uses SIMD instructions (MMX, SSE2, AVX2, Neon, AltiVec) to accelerate baseline JPEG compression and decompression on x86, x86-64, Arm, and PowerPC systems.")
     set_license("BSD-3-Clause")
 
-    add_urls("https://cfhcable.dl.sourceforge.net/project/libjpeg-turbo/$(version)/libjpeg-turbo-$(version).tar.gz", {alias = "sf"})
-    add_urls("https://github.com/libjpeg-turbo/libjpeg-turbo/archive/$(version).tar.gz", {alias = "github"})
-    add_versions("sf:2.0.5", "16f8f6f2715b3a38ab562a84357c793dd56ae9899ce130563c72cd93d8357b5d")
-    add_versions("sf:2.0.6", "d74b92ac33b0e3657123ddcf6728788c90dc84dcb6a52013d758af3c4af481bb")
-    add_versions("github:2.0.5", "b3090cd37b5a8b3e4dbd30a1311b3989a894e5d3c668f14cbc6739d77c9402b7")
-    add_versions("github:2.0.6", "005aee2fcdca252cee42271f7f90574dda64ca6505d9f8b86ae61abc2b426371")
+    add_urls("https://github.com/libjpeg-turbo/libjpeg-turbo/archive/$(version).tar.gz",
+             "https://github.com/libjpeg-turbo/libjpeg-turbo.git")
+    add_versions("2.0.5",  "b3090cd37b5a8b3e4dbd30a1311b3989a894e5d3c668f14cbc6739d77c9402b7")
+    add_versions("2.0.6",  "005aee2fcdca252cee42271f7f90574dda64ca6505d9f8b86ae61abc2b426371")
+    add_versions("2.0.90", "6a965adb02ad898b2ae48214244618fe342baea79db97157fdc70d8844ac6f09")
 
     add_configs("jpeg", {description = "libjpeg API/ABI emulation target version.", default = "6", type = "string", values = {"6", "7", "8"}})
 
