@@ -6,7 +6,7 @@ package("libwebsockets")
     set_urls("https://github.com/warmcat/libwebsockets/archive/$(version).tar.gz",
              "https://github.com/warmcat/libwebsockets.git")
 
-    add_versions("v3.2.0", "5e731c536a20d9c03ae611631db073f05cd77bf0906a8c30d2a13638d4c8c667")
+    add_versions("v4.1.6", "402e9a8df553c9cd2aff5d7a9758e9e5285bf3070c82539082864633db3deb83")
 
     add_deps("cmake")
 
@@ -26,6 +26,7 @@ package("libwebsockets")
         local configs = {}
         table.insert(configs, "-DLWS_WITH_SSL=" .. (package:config("ssl") and "ON" or "OFF"))
         table.insert(configs, "-DLWS_WITH_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DLWS_LINK_TESTAPPS_DYNAMIC=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLWS_WITH_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
