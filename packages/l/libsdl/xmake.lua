@@ -46,6 +46,12 @@ package("libsdl")
         import("package.tools.autoconf").install(package, configs)
     end)
 
+    on_load(function (package)
+        if package:is_plat("macosx") and package:version():ge("2.0.14") then
+            package:add("frameworks", "GameController")
+        end
+    end)
+
     on_test(function (package)
         assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)
