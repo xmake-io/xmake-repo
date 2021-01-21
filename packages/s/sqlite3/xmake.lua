@@ -3,11 +3,21 @@ package("sqlite3")
     set_homepage("https://sqlite.org/")
     set_description("The most used database engine in the world")
 
-    set_urls("https://sqlite.org/2018/sqlite-autoconf-$(version)000.tar.gz",
-             {version = function (version) return version:gsub("%.", "") end})
+    set_urls("https://sqlite.org/$(version)", {version = function (version)
+        local year = "2021"
+        if version:le("3.24") then
+            year = "2018"
+        end
+        local version_str = version:gsub("[.+]", "")
+        if #version_str < 7 then
+            version_str = version_str .. "00"
+        end
+        return year .. "/sqlite-autoconf-" .. version_str .. ".tar.gz"
+    end})
 
-    add_versions("3.24.0", "d9d14e88c6fb6d68de9ca0d1f9797477d82fc3aed613558f87ffbdbbc5ceb74a")
-    add_versions("3.23.0", "b7711a1800a071674c2bf76898ae8584fc6c9643cfe933cfc1bc54361e3a6e49")
+    add_versions("3.23.0+0",   "b7711a1800a071674c2bf76898ae8584fc6c9643cfe933cfc1bc54361e3a6e49")
+    add_versions("3.24.0+0",   "d9d14e88c6fb6d68de9ca0d1f9797477d82fc3aed613558f87ffbdbbc5ceb74a")
+    add_versions("3.34.0+100", "2a3bca581117b3b88e5361d0ef3803ba6d8da604b1c1a47d902ef785c1b53e89")
 
     on_install("windows", function (package)
         local configs = {"-f", "Makefile.msc", "DYNAMIC_SHELL=1"}
