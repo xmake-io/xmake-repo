@@ -48,7 +48,7 @@ package("libsdl")
 
     on_load(function (package)
         if package:is_plat("macosx") and package:version():ge("2.0.14") then
-            package:add("frameworks", "GameController")
+            package:add("frameworks", "CoreHaptics", "GameController")
         end
     end)
 
