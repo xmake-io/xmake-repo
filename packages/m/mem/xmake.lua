@@ -3,7 +3,7 @@ package("mem")
     set_homepage("https://github.com/0x1F9F1/mem")
     set_description("A collection of C++11 headers useful for reverse engineering")
 
-    set_urls("https://github.com/0x1F9F1/mem")
+    set_urls("https://github.com/0x1F9F1/mem.git")
 
     add_versions("0.1.0", "db0289a50da77101c4e827b92b39f06ba2e90f76")
 
