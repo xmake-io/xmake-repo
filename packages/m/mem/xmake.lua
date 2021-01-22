@@ -4,9 +4,12 @@ package("mem")
     set_description("A collection of C++11 headers useful for reverse engineering")
 
     set_urls("https://github.com/0x1F9F1/mem")
-    
-    add_versions("0.1.0", "2be6647b8f4c5cdbbd6799eaca80ad6bda07cb2097a0ddd705acff748507f615")
-    add_deps("cmake")
+
+    add_versions("0.1.0", "db0289a50da77101c4e827b92b39f06ba2e90f76")
+
+    if is_plat("windows") then
+        add_deps("cmake")
+    end
 
     on_install("windows", function (package)
         local configs = {}
