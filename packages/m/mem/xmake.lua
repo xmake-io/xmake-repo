@@ -6,6 +6,7 @@ package("mem")
     set_urls("https://github.com/0x1F9F1/mem")
     
     add_versions("0.1.0", "2be6647b8f4c5cdbbd6799eaca80ad6bda07cb2097a0ddd705acff748507f615")
+    add_deps("cmake")
 
     on_install("windows", function (package)
         local configs = {}
