@@ -9,7 +9,6 @@ package("mem")
 
     on_install("windows", function (package)
         local configs = {}
-
         import("package.tools.cmake").install(package, configs)
     end)
 
