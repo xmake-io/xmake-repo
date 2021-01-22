@@ -1,0 +1,42 @@
+name: FreeBSD
+
+on:
+  pull_request:
+  push:
+  release:
+    types: [published]
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        os: [macOS-latest]
+        kind: [static, shared]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Tests
+        uses: vmactions/freebsd-vm@v0.1.0
+        with:
+          usesh: true
+          prepare: pkg install -y git curl unzip gmake llvm gsed bash perl5
+          run: |
+            git clone --recurse-submodules https://github.com/xmake-io/xmake.git /tmp/xmake -b dev
+            cd /tmp/xmake
+            gmake -j4
+            gmake install
+            export XMAKE_ROOT=y
+            git clone https://github.com/xmake-io/xmake-repo.git /tmp/xmake-repo -b ${{ env.GITHUB_REF_SLUG }} --depth 2
+            cd /tmp/xmake-repo
+            xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
+
+

@@ -13,7 +13,7 @@ package("giflib")
         add_deps("cgetopt")
     end
 
-    on_install("linux", "macosx", "windows", "mingw", "android", "iphoneos", function (package)
+    on_install("linux", "macosx", "windows", "mingw", "android", "iphoneos", "bsd", function (package)
         local lib_sources = {"dgif_lib.c", "egif_lib.c", "gifalloc.c", "gif_err.c", "gif_font.c", "gif_hash.c", "openbsd-reallocarray.c"}
         local kind = "static"
         if package:config("shared") then
