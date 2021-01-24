@@ -10,8 +10,14 @@ package("snappy")
 
     add_deps("cmake")
 
+    add_configs("avx", {description = "Use the AVX instruction set", default = false, type = "boolean"})
+    add_configs("avx2", {description = "Use the AVX2 instruction set", default = false, type = "boolean"})
+
     on_install(function (package)
         local configs = {"-DSNAPPY_BUILD_TESTS=OFF"}
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DSNAPPY_REQUIRE_AVX=" .. (package:config("avx") and "ON" or "OFF"))
+        table.insert(configs, "-DSNAPPY_REQUIRE_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
