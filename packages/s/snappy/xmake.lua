@@ -20,5 +20,5 @@ package("snappy")
             void test(int args, char** argv) {
                 snappy::Compress(nullptr, nullptr);
             }
-        ]]}, {includes = {"snappy.h"}}))
+        ]]}, {configs = {languages = "c++17"}, includes = "snappy.h"}))
     end)
