@@ -21,9 +21,6 @@ jobs:
         with:
           submodules: true
 
-      - name: Inject slug/short variables
-        uses: rlespinasse/github-slug-action@v3.x
-
       - name: Tests
         uses: vmactions/freebsd-vm@v0.1.0
         with:
@@ -36,7 +33,7 @@ jobs:
             gmake -j4
             gmake install
             export XMAKE_ROOT=y
-            git clone https://github.com/xmake-io/xmake-repo.git /tmp/xmake-repo -b ${{ env.GITHUB_REF_SLUG }} --depth 2
+            git clone https://github.com/xmake-io/xmake-repo.git /tmp/xmake-repo -b dev --depth 2
             cd /tmp/xmake-repo
             xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
 
