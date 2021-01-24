@@ -23,7 +23,7 @@ package("zlib")
         os.cp("*.h", package:installdir("include"))
     end)
 
-    on_install("macosx", function (package)
+    on_install("macosx", "bsd", function (package)
         import("package.tools.autoconf").install(package, {"--static"})
     end)
 

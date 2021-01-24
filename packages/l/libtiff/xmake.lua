@@ -23,7 +23,7 @@ package("libtiff")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {"--disable-dependency-tracking", "--disable-lzma", "--disable-webp", "--disable-jpeg", "--disable-zstd", "--disable-old-jpeg", "--disable-jbig", "--disable-pixarlog", "--without-x"}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
