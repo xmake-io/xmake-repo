@@ -11,7 +11,7 @@ package("snappy")
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {}
+        local configs = {"-DSNAPPY_BUILD_TESTS=OFF"}
         import("package.tools.cmake").install(package, configs)
     end)
 
