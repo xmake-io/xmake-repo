@@ -15,11 +15,15 @@ package("gamenetworkingsockets")
             if is_plat("windows") then
                 package:add("deps", "libsodium", "protobuf-cpp")
                 package:add("syslinks", "ws2_32")
-                package:add("defines", "_WINDOWS", "WIN32")
             else
                 package:add("deps", "openssl", "protobuf-cpp", {configs = {cxflags = "-fpic"}})
-                package:add("defines", "POSIX", "LINUX")
             end
+        end
+
+        if is_plat("windows") then
+            package:add("defines", "_WINDOWS", "WIN32")
+        else
+            package:add("defines", "POSIX", "LINUX")
         end
     end)
 
