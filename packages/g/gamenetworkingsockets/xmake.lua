@@ -7,7 +7,7 @@ package("gamenetworkingsockets")
     set_urls("https://github.com/ValveSoftware/GameNetworkingSockets/archive/$(version).tar.gz",
              "https://github.com/ValveSoftware/GameNetworkingSockets.git")
 
-    add_versions("1.2.0", "768a7cec2491e34c824204c4858351af2866618ceb13a024336dc1df8076bef3")
+    add_versions("v1.2.0", "768a7cec2491e34c824204c4858351af2866618ceb13a024336dc1df8076bef3")
 
     on_install("windows", "linux", function (package)
         local configs = {}
