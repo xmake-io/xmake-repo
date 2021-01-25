@@ -30,6 +30,7 @@ target("gamenetworkingsockets")
                     "src/common/crypto_25519_libsodium.cpp")
     else
         add_packages("openssl")
+        add_syslinks("pthread")
         add_defines("STEAMNETWORKINGSOCKETS_CRYPTO_25519_OPENSSL", "STEAMNETWORKINGSOCKETS_CRYPTO_VALVEOPENSSL", "OPENSSL_HAS_25519_RAW")
         add_defines("POSIX", "LINUX", "GNUC", "GNU_COMPILER")
         add_cxxflags("-fPIC")
@@ -58,7 +59,6 @@ target("gamenetworkingsockets")
                     "src/steamnetworkingsockets",
                     "src/steamnetworkingsockets/clientlib",
                     "src/public")
-                    
 
     add_headerfiles("include/(steam/*.h)")
     add_headerfiles("include/(minbase/*.h)")

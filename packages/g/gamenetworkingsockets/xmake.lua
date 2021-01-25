@@ -17,7 +17,6 @@ package("gamenetworkingsockets")
                 package:add("syslinks", "ws2_32")
             else
                 package:add("deps", "openssl", "protobuf-cpp", {configs = {cxflags = "-fpic"}})
-                package:add("syslinks", "pthread")
             end
         end
 
@@ -25,6 +24,7 @@ package("gamenetworkingsockets")
             package:add("defines", "_WINDOWS", "WIN32")
         else
             package:add("defines", "POSIX", "LINUX")
+            package:add("syslinks", "pthread")
         end
     end)
 
