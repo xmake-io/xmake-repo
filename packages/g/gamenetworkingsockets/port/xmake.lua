@@ -33,6 +33,7 @@ target("gamenetworkingsockets")
         add_packages("openssl")
         add_defines("STEAMNETWORKINGSOCKETS_CRYPTO_25519_OPENSSL", "STEAMNETWORKINGSOCKETS_CRYPTO_VALVEOPENSSL", "OPENSSL_HAS_25519_RAW")
         add_defines("POSIX", "LINUX", "GNUC", "GNU_COMPILER")
+        add_cxxflags("-fPIC")
         add_files(  "src/common/crypto_openssl.cpp",
                     "src/common/crypto_25519_openssl.cpp",
                     "src/common/opensslwrapper.cpp")
