@@ -42,6 +42,9 @@ package("cmake")
             add_versions("3.15.4", "19c2bfd26c4de4d8046dd5ad6de95b57a2556559ec81b13b94e63ea4ae49b3f2")
             add_versions("3.18.4", "4c519051853686927f87df99669ada3ff15a3086535a7131892febd7c6e2f122")
         end
+    else
+        add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version).tar.gz")
+        add_versions("3.18.4", "597c61358e6a92ecbfad42a9b5321ddd801fc7e7eca08441307c9138382d4f77")
     end
 
     on_install("@macosx", function (package)
@@ -52,6 +55,11 @@ package("cmake")
     on_install("@linux|x86_64", "@windows", "@msys", "@cygwin", function (package)
         os.cp("bin", package:installdir())
         os.cp("share", package:installdir())
+    end)
+
+    on_install("@bsd", function (package)
+        os.vrunv("sh", {"./bootstrap", "--prefix=" .. package:installdir()})
+        import("package.tools.make").install(package)
     end)
 
     on_test(function (package)

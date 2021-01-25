@@ -146,11 +146,6 @@ function main(...)
         return
     end
 
-    -- we only test one package because freebsd ci is too slow
-    if is_host("bsd") then
-        packages = {packages[1]}
-    end
-
     -- prepare test project
     local repodir = os.curdir()
     local workdir = path.join(os.tmpdir(), "xmake-repo")
