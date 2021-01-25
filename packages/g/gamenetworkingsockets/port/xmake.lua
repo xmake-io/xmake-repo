@@ -9,11 +9,11 @@ if is_mode("release") then
     set_optimize("fastest")
 end
 
-add_requires("protobuf-cpp")
+add_requires("protobuf-cpp", is_plat("windows") and {} or {configs = {cxflags = "-fpic"}})
 if is_plat("windows") then
     add_requires("libsodium")
 else
-    add_requires("openssl")
+    add_requires("openssl", {configs = {cxflags = "-fpic"}})
 end
 
 target("gamenetworkingsockets")
