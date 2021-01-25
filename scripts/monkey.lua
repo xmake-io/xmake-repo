@@ -123,7 +123,8 @@ function main(...)
     local packages = argv.packages or {}
     if #packages == 0 then
         local files = os.files(path.join(os.scriptdir(), "..", "packages", "*", "*", "xmake.lua"))
-        while #packages < 10 do
+        local limit = is_host("bsd") and 1 or 10
+        while #packages < limit do
             local file = files[math.random(#files)]
             if file:find("packages", 1, true) and path.filename(file) == "xmake.lua" then
                 assert(file == file:lower(), "%s must be lower case!", file)

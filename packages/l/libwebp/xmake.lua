@@ -19,7 +19,7 @@ package("libwebp")
 
     add_deps("cmake")
     add_deps("libpng", "libjpeg", "libtiff", "giflib")
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
