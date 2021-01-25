@@ -1,5 +1,4 @@
 set_xmakever("2.5.1")
-
 set_languages("cxx11")
 
 add_rules("mode.debug", "mode.release")
@@ -39,7 +38,9 @@ target("gamenetworkingsockets")
                     "src/common/opensslwrapper.cpp")
     end
 
-    if not is_kind("shared") then
+    if is_kind("shared") then
+        add_defines("STEAMNETWORKINGSOCKETS_FOREXPORT")
+    else
         add_defines("STEAMNETWORKINGSOCKETS_STATIC_LINK")
     end
 
@@ -58,8 +59,6 @@ target("gamenetworkingsockets")
                     "src/steamnetworkingsockets/clientlib",
                     "src/public")
 
-    add_headerfiles("src/**.h")
-
     add_files(  "src/common/*.proto", {rules = "protobuf.cpp"})
     add_files(  "src/common/crypto.cpp",
                 "src/common/crypto_textencode.cpp",
@@ -68,6 +67,7 @@ target("gamenetworkingsockets")
                 "src/vstdlib/strtools.cpp",
                 "src/tier0/dbg.cpp",
                 "src/tier0/platformtime.cpp",
+                "src/tier1/bitstring.cpp",
                 "src/tier1/ipv6text.c",
                 "src/tier1/netadr.cpp",
                 "src/tier1/utlbuffer.cpp",

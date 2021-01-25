@@ -9,7 +9,18 @@ package("gamenetworkingsockets")
 
     add_versions("v1.2.0", "768a7cec2491e34c824204c4858351af2866618ceb13a024336dc1df8076bef3")
 
-    add_includedirs("include/")
+    on_load("windows", "linux", function(package)
+        if not package:config("shared") then
+            package:add("defines", "STEAMNETWORKINGSOCKETS_STATIC_LINK")
+            if is_plat("windows") then
+                package:add("deps", "libsodium", "protobuf-cpp")
+                package:add("syslinks", "ws2_32")
+            else
+                package:add("deps", "openssl", "protobuf-cpp", {configs = {cxflags = "-fpic"}})
+            end
+        end
+    end)
+
     on_install("windows", "linux", function (package)
         local configs = {}
         if package:config("shared") then
@@ -17,8 +28,17 @@ package("gamenetworkingsockets")
         end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
+
+        os.cp("include/*", package:installdir("include"))
+        os.cp("src/public", package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("GameNetworkingSockets_Init", {includes = "steam/steamnetworkingsockets.h"}))
+        assert(package:check_cxxsnippets({test = [[
+                #include <steam/steamnetworkingsockets.h>
+
+                void test() {
+                    GameNetworkingSockets_Kill();
+                }
+            ]]}))
     end)
