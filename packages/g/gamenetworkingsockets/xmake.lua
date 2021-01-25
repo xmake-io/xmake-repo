@@ -17,6 +17,7 @@ package("gamenetworkingsockets")
                 package:add("syslinks", "ws2_32")
             else
                 package:add("deps", "openssl", "protobuf-cpp", {configs = {cxflags = "-fpic"}})
+                package:add("syslinks", "pthread")
             end
         end
 
@@ -34,9 +35,6 @@ package("gamenetworkingsockets")
         end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
-
-        os.cp("include/*", package:installdir("include"))
-        os.cp("src/public", package:installdir("include"))
     end)
 
     on_test(function (package)

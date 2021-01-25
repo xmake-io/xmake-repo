@@ -58,6 +58,11 @@ target("gamenetworkingsockets")
                     "src/steamnetworkingsockets",
                     "src/steamnetworkingsockets/clientlib",
                     "src/public")
+                    
+
+    add_headerfiles("include/(steam/*.h)")
+    add_headerfiles("include/(minbase/*.h)")
+    add_headerfiles("src/public/(*/*.h)")
 
     add_files(  "src/common/*.proto", {rules = "protobuf.cpp"})
     add_files(  "src/common/crypto.cpp",
