@@ -1,5 +1,5 @@
 package("gamenetworkingsockets")
-
+ 
     set_homepage("https://github.com/ValveSoftware/GameNetworkingSockets")
     set_description("Reliable & unreliable messages over UDP. Robust message fragmentation & reassembly. P2P networking / NAT traversal. Encryption. ")
     set_license("BSD-3-Clause")
