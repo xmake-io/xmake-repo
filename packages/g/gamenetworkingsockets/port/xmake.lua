@@ -2,19 +2,54 @@ set_xmakever("2.5.1")
 set_languages("cxx11")
 
 add_rules("mode.debug", "mode.release")
-if is_mode("release") then
-    add_ldflags("/LTCG", "/OPT:REF")
-    add_cxflags("/Ot", "/GL", "/Ob2", "/Oi", "/GS-")
-    add_defines("NDEBUG")
-    set_optimize("fastest")
-end
 
-add_requires("protobuf-cpp", is_plat("windows") and {} or {configs = {cxflags = "-fpic"}})
+add_requires("protobuf-cpp")
 if is_plat("windows") then
     add_requires("libsodium")
 else
-    add_requires("openssl", {configs = {cxflags = "-fpic"}})
+    add_requires("openssl")
 end
+
+-- there may be a dependency order between proto files, we can only disable parallel compilation
+-- TODO xmake will fix `rule("protobuf.cpp")` in v2.5.2
+rule("protobuf.cpp.disable_parallel")
+    set_extensions(".proto")
+    before_build_files(function (target, sourcebatch, opt)
+        if target:is_plat("windows") then
+            winos.cmdargv = function (argv, key)
+
+                -- too long arguments?
+                local limit = 1024
+                local argn = 0
+                for _, arg in ipairs(argv) do
+                    argn = argn + #arg
+                    if argn > limit then
+                        break
+                    end
+                end
+                if argn > limit then
+                    local argsfile = os.tmpfile(key or table.concat(argv, '')) .. ".args.txt"
+                    local f = io.open(argsfile, 'w', {encoding = "ansi"})
+                    if f then
+                        -- we need split args file to solve `fatal error LNK1170: line in command file contains 131071 or more characters`
+                        -- @see https://github.com/xmake-io/xmake/issues/812
+                        for _, arg in ipairs(argv) do
+                            f:write(os.args(arg, {escape = true}) .. "\n")
+                        end
+                        f:close()
+                    end
+                    argv = {"@" .. argsfile}
+                    io.cat(argsfile)
+                end
+                return argv
+            end
+        end
+        import("rules.protobuf.proto", {rootdir = os.programdir(), alias = "build_proto"})
+        for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
+            build_proto(target, "cxx", sourcefile, opt)
+        end
+    end)
+rule_end()
 
 target("gamenetworkingsockets")
     set_kind("$(kind)")
@@ -33,7 +68,6 @@ target("gamenetworkingsockets")
         add_syslinks("pthread")
         add_defines("STEAMNETWORKINGSOCKETS_CRYPTO_25519_OPENSSL", "STEAMNETWORKINGSOCKETS_CRYPTO_VALVEOPENSSL", "OPENSSL_HAS_25519_RAW")
         add_defines("POSIX", "LINUX", "GNUC", "GNU_COMPILER")
-        add_cxxflags("-fPIC")
         add_files(  "src/common/crypto_openssl.cpp",
                     "src/common/crypto_25519_openssl.cpp",
                     "src/common/opensslwrapper.cpp")
@@ -64,7 +98,9 @@ target("gamenetworkingsockets")
     add_headerfiles("include/(minbase/*.h)")
     add_headerfiles("src/public/(*/*.h)")
 
-    add_files(  "src/common/*.proto", {rules = "protobuf.cpp"})
+    add_files(  "src/common/steamnetworkingsockets_messages_certs.proto",
+                "src/common/steamnetworkingsockets_messages.proto",
+                "src/common/steamnetworkingsockets_messages_udp.proto", {rules = "protobuf.cpp.disable_parallel"})
     add_files(  "src/common/crypto.cpp",
                 "src/common/crypto_textencode.cpp",
                 "src/common/keypair.cpp",

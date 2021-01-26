@@ -9,22 +9,22 @@ package("gamenetworkingsockets")
 
     add_versions("v1.2.0", "768a7cec2491e34c824204c4858351af2866618ceb13a024336dc1df8076bef3")
 
+    if is_plat("windows") then
+        add_syslinks("ws2_32")
+        add_defines("_WINDOWS", "WIN32")
+    else
+        add_defines("POSIX", "LINUX")
+        add_syslinks("pthread")
+    end
+
     on_load("windows", "linux", function(package)
         if not package:config("shared") then
             package:add("defines", "STEAMNETWORKINGSOCKETS_STATIC_LINK")
             if is_plat("windows") then
                 package:add("deps", "libsodium", "protobuf-cpp")
-                package:add("syslinks", "ws2_32")
             else
-                package:add("deps", "openssl", "protobuf-cpp", {configs = {cxflags = "-fpic"}})
+                package:add("deps", "openssl", "protobuf-cpp")
             end
-        end
-
-        if is_plat("windows") then
-            package:add("defines", "_WINDOWS", "WIN32")
-        else
-            package:add("defines", "POSIX", "LINUX")
-            package:add("syslinks", "pthread")
         end
     end)
 
@@ -38,11 +38,5 @@ package("gamenetworkingsockets")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-                #include <steam/steamnetworkingsockets.h>
-
-                void test() {
-                    GameNetworkingSockets_Kill();
-                }
-            ]]}))
+        assert(package:has_cxxfuncs("GameNetworkingSockets_Kill()", {includes = "steam/steamnetworkingsockets.h"}))
     end)
