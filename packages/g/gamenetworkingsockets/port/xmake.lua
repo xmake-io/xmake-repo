@@ -29,7 +29,7 @@ rule("protobuf.cpp.disable_parallel")
                 end
                 if argn > limit then
                     local argsfile = os.tmpfile(key or table.concat(argv, '')) .. ".args.txt"
-                    local f = io.open(argsfile, 'w', {encoding = "ansi"})
+                    local f = io.open(argsfile, 'w')
                     if f then
                         -- we need split args file to solve `fatal error LNK1170: line in command file contains 131071 or more characters`
                         -- @see https://github.com/xmake-io/xmake/issues/812
