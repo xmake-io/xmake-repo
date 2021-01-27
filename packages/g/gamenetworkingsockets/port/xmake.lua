@@ -32,9 +32,18 @@ rule("protobuf.cpp.disable_parallel")
                     local f = io.open(argsfile, 'w')
                     if f then
                         -- we need split args file to solve `fatal error LNK1170: line in command file contains 131071 or more characters`
-                        -- @see https://github.com/xmake-io/xmake/issues/812
-                        for _, arg in ipairs(argv) do
-                            f:write(os.args(arg, {escape = true}) .. "\n")
+                        -- @see https://github.com/xmake-io/xmake/issues/812       
+                        local idx = 1
+                        while idx <= #args do
+                            arg = args[idx]
+                            if idx + 1 <= #args and arg:find("^[-/]") and not args[idx + 1]:find("^[-/]") then
+                                f:write(os.args(arg, {escape = true}) .. " ")
+                                f:write(os.args(args[idx + 1], {escape = true}) .. "\n")
+                                idx = idx + 2
+                            else
+                                f:write(os.args(arg, {escape = true}) .. "\n")
+                                idx = idx + 1
+                            end
                         end
                         f:close()
                     end
