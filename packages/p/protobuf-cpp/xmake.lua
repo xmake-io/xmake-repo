@@ -25,12 +25,29 @@ package("protobuf-cpp")
 
     on_install("windows", function (package)
         os.cd("cmake")
-        import("package.tools.cmake").install(package, {"-Dprotobuf_BUILD_PROTOC_BINARIES=ON"})
+        local configs = {"-Dprotobuf_BUILD_TESTS=OFF", "-Dprotobuf_BUILD_PROTOC_BINARIES=ON"}
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-Dprotobuf_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        if package:config("shared") then
+            package:add("defines", "PROTOBUF_USE_DLLS")
+        end
+        import("package.tools.cmake").install(package, configs)
         os.cp("build_*/Release/protoc.exe", package:installdir("bin"))
     end)
 
     on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package, {"--enable-shared=no"})
+        local configs = {}
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared=yes")
+            table.insert(configs, "--enable-static=no")
+        else
+            table.insert(configs, "--enable-static=yes")
+            table.insert(configs, "--enable-shared=no")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

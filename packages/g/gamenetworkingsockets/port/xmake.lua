@@ -2,25 +2,20 @@ set_xmakever("2.5.1")
 set_languages("cxx11")
 
 add_rules("mode.debug", "mode.release")
-if is_mode("release") then
-    add_ldflags("/LTCG", "/OPT:REF")
-    add_cxflags("/Ot", "/GL", "/Ob2", "/Oi", "/GS-")
-    add_defines("NDEBUG")
-    set_optimize("fastest")
-end
 
-add_requires("protobuf-cpp", is_plat("windows") and {} or {configs = {cxflags = "-fpic"}})
+add_requires("protobuf-cpp")
 if is_plat("windows") then
     add_requires("libsodium")
 else
-    add_requires("openssl", {configs = {cxflags = "-fpic"}})
+    add_requires("openssl")
 end
 
-target("gamenetworkingsockets")
+target("gns") -- we need limit path length
     set_kind("$(kind)")
 
     add_vectorexts("sse2")
     add_packages("protobuf-cpp")
+    set_basename("gamenetworkingsockets")
 
     if is_plat("windows") then
         add_packages("libsodium")
@@ -33,7 +28,6 @@ target("gamenetworkingsockets")
         add_syslinks("pthread")
         add_defines("STEAMNETWORKINGSOCKETS_CRYPTO_25519_OPENSSL", "STEAMNETWORKINGSOCKETS_CRYPTO_VALVEOPENSSL", "OPENSSL_HAS_25519_RAW")
         add_defines("POSIX", "LINUX", "GNUC", "GNU_COMPILER")
-        add_cxxflags("-fPIC")
         add_files(  "src/common/crypto_openssl.cpp",
                     "src/common/crypto_25519_openssl.cpp",
                     "src/common/opensslwrapper.cpp")
@@ -64,7 +58,9 @@ target("gamenetworkingsockets")
     add_headerfiles("include/(minbase/*.h)")
     add_headerfiles("src/public/(*/*.h)")
 
-    add_files(  "src/common/*.proto", {rules = "protobuf.cpp"})
+    add_files(  "src/common/steamnetworkingsockets_messages_certs.proto",
+                "src/common/steamnetworkingsockets_messages.proto",
+                "src/common/steamnetworkingsockets_messages_udp.proto", {rules = "protobuf.cpp"})
     add_files(  "src/common/crypto.cpp",
                 "src/common/crypto_textencode.cpp",
                 "src/common/keypair.cpp",
