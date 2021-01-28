@@ -28,13 +28,16 @@ package("protobuf-c")
         local shflags
         local configs = {}
         if package:config("shared") then
-            table.insert(configs, "-DMSVC_STATIC_BUILD=OFF")
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
             cflags = {"-DPROTOBUF_C_USE_SHARED_LIB", "-DPROTOBUF_C_EXPORT"}
             shflags = "/export:protobuf_c_empty_string"
         else
-            table.insert(configs, "-DMSVC_STATIC_BUILD=ON")
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
+        end
+        if package:config("vs_runtime"):startswith("MT") then
+            table.insert(configs, "-DMSVC_STATIC_BUILD=ON")
+        else
+            table.insert(configs, "-DMSVC_STATIC_BUILD=OFF")
         end
         import("package.tools.cmake").install(package, configs, {cflags = cflags, shflags = shflags})
         os.cp("build_*/Release/protoc-gen-c.exe", path.join(package:installdir("bin"), "protoc-c.exe"))
