@@ -21,9 +21,9 @@ package("mbedtls")
     end
 	
     on_install("mingw@windows", function (package)
-		import("core.tool.toolchain")
-		local bindir = toolchain.load("mingw"):bindir()
-		local make = path.join(bindir, "mingw32-make.exe")
+        import("core.tool.toolchain")
+        local bindir = toolchain.load("mingw"):bindir()
+        local make = path.join(bindir, "mingw32-make.exe")
         os.vrun(make.." no_test CC=gcc WINDOWS=1")
         os.cp("include/mbedtls", package:installdir("include"))
         os.mkdir(package:installdir().."/lib")
