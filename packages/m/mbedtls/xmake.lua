@@ -19,7 +19,19 @@ package("mbedtls")
             import("package.tools.cmake").install(package)
         end)
     end
-
+	
+    on_install("mingw@windows", function (package)
+        import("core.tool.toolchain")
+        local bindir = toolchain.load("mingw"):bindir()
+        local make = path.join(bindir, "mingw32-make.exe")
+        os.vrun(make.." no_test CC=gcc WINDOWS=1")
+        os.cp("include/mbedtls", package:installdir("include"))
+        os.mkdir(package:installdir().."/lib")
+        os.cp("library/libmbedtls.*", package:installdir("lib"))
+        os.cp("library/libmbedcrypto.*", package:installdir("lib"))
+        os.cp("library/libmbedx509.*", package:installdir("lib"))
+    end)
+	
     on_install("macosx", "linux", function (package)
         io.gsub("./Makefile", "DESTDIR=/usr/local", "DESTDIR=" .. package:installdir())
         import("package.tools.make").build(package)
