@@ -34,7 +34,7 @@ package("zig")
         add_versions("0.7.1", "e73c1dca35791a3183fdd5ecde0443ebbe180942efceafe651886034fb8def09")
     end
 
-    on_install("macosx", "linux", "windows", "bsd", function (package)
+    on_install("@macosx", "@linux", "@windows", "@msys", "@bsd", function (package)
         os.cp("*", package:installdir())
         package:addenv("PATH", package:installdir())
     end)
