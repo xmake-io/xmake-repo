@@ -32,6 +32,8 @@ package("tbox")
         add_syslinks("pthread")
     elseif is_plat("macosx", "iphoneos") then
         add_frameworks("Foundation")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread", "m", "dl")
     end
 
     on_load(function (package)
