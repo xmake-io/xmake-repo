@@ -17,9 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: true
+      - uses: actions/checkout@v1
 
       - name: Tests
         uses: vmactions/freebsd-vm@v0.1.0
@@ -33,8 +31,7 @@ jobs:
             gmake -j4
             gmake install
             export XMAKE_ROOT=y
-            git clone https://github.com/xmake-io/xmake-repo.git /tmp/xmake-repo -b dev --depth 2
-            cd /tmp/xmake-repo
+            cd -
             xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
 
 
