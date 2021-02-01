@@ -40,6 +40,11 @@ package("tbox")
         if package:debug() then
             package:add("defines", "__tb_debug__")
         end
+        for _, dep in ipairs({"mbedtls", "openssl", "sqlite3", "pcre2", "pcre", "mysql", "zlib"}) do
+            if package:config(dep) then
+                package:add("deps", dep)
+            end
+        end
     end)
 
     on_install(function (package)
@@ -62,6 +67,9 @@ package("tbox")
             if package:config(name) then
                 configs[name] = true
             end
+        end
+        if not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
     end)
