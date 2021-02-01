@@ -1,11 +1,12 @@
-package("cpp-taskflow")
+package("taskflow")
 
-    set_homepage("https://cpp-taskflow.github.io/")
+    set_homepage("https://taskflow.github.io/")
     set_description("A fast C++ header-only library to help you quickly write parallel programs with complex task dependencies")
 
-    add_urls("https://github.com/cpp-taskflow/cpp-taskflow.git")
-    add_urls("https://github.com/cpp-taskflow/cpp-taskflow/archive/v$(version).zip")
-    add_versions("2.2.0", "6b3c3b083e6e93a988cebc8bbf794a78f61904efab21f1e3a667b3cf60d58ca2")
+    add_urls("https://github.com/taskflow/taskflow.git")
+    add_urls("https://github.com/taskflow/taskflow/archive/$(version).tar.gz")
+    add_versions("v2.2.0", "a8ad8c94ceeac0bc18d8429f877e10a2af2cd44cd9dc420d9751e69f48ff85d1")
+    add_versions("v3.0.0", "553c88a6e56e115d29ac1520b8a0fea4557a5fcda1af1427bd3ba454926d03a2")
 
     on_install(function (package)
         os.cp("taskflow", package:installdir("include"))
