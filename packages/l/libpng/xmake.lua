@@ -18,7 +18,7 @@ package("libpng")
             add_requires("zlib")
             target("png")
                 set_kind("$(kind)")
-                add_files("*.c")
+                add_files("*.c|example.c")
                 if is_arch("x86", "x64", "i386", "x86_64") then
                     add_files("intel/*.c")
                     add_defines("PNG_INTEL_SSE_OPT=1")
@@ -42,6 +42,8 @@ package("libpng")
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
+        elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
         end
         os.cp("scripts/pnglibconf.h.prebuilt", "pnglibconf.h")
         import("package.tools.xmake").install(package, configs)

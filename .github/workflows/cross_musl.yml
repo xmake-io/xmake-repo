@@ -26,5 +26,5 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p cross --toolchain=musl --sdk=`pwd`/${{ matrix.cross }}-cross
+          xmake l ./scripts/test.lua -D -p cross --toolchain=muslcc --sdk=`pwd`/${{ matrix.cross }}-cross
 

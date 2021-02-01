@@ -50,6 +50,8 @@ package("zlib")
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
+        elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
     end)
