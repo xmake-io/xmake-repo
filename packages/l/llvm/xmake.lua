@@ -31,9 +31,9 @@ package("llvm")
     end
 
     if is_host("linux") then
-        add_deps("libffi")
-        add_deps("binutils") -- needed for gold and strip
-        --add_deps("libelf") -- openmp requires <gelf.h>
+        add_deps("libffi", {host = true})
+        add_deps("binutils", {host = true}) -- needed for gold and strip
+        --add_deps("libelf", {host  = true}) -- openmp requires <gelf.h>
 
         --[[
         add_patches("11.0.0", "https://github.com/llvm/llvm-project/commit/c86f56e32e724c6018e579bb2bc11e667c96fc96.patch?full_index=1", "6e13e01b4f9037bb6f43f96cb752d23b367fe7db4b66d9bf2a4aeab9234b740a")
@@ -50,12 +50,12 @@ package("llvm")
     on_install("@linux", function (package)
         local projects = {
             "clang",
-            "clang-tools-extra",
-            "lld",
+            --"clang-tools-extra",
+            --"lld",
             --"lldb",
             --"openmp",
-            "polly",
-            "mlir",
+            --"polly",
+            --"mlir",
         }
         local runtimes = {
             "compiler-rt",
@@ -63,6 +63,7 @@ package("llvm")
             "libcxxabi"
         }
         local configs = {
+            "-DCMAKE_BUILD_TYPE=Release",
             "-DLLVM_ENABLE_PROJECTS=" .. table.concat(projects, ";"),
             "-DLLVM_ENABLE_RUNTIMES=" .. table.concat(runtimes, ";"),
             "-DLLVM_POLLY_LINK_INTO_TOOLS=ON",
