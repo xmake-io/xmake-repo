@@ -30,42 +30,64 @@ package("llvm")
         add_versions("11.0.0", "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b")
     end
 
+    add_configs("clang",                    {description = "Enable clang project.", default = true, type = "boolean"})
+    add_configs("clang-tools-extra",        {description = "Enable extra clang tools project.", default = false, type = "boolean"})
+    add_configs("lld",                      {description = "Enable lld project.", default = false, type = "boolean"})
+    add_configs("lldb",                     {description = "Enable lldb project.", default = false, type = "boolean"})
+    add_configs("openmp",                   {description = "Enable openmp project.", default = false, type = "boolean"})
+    add_configs("polly",                    {description = "Enable polly project.", default = false, type = "boolean"})
+    add_configs("mlir",                     {description = "Enable mlir project.", default = false, type = "boolean"})
+
+    add_configs("compiler-rt",              {description = "Enable compiler-rt runtime.", default = true, type = "boolean"})
+    add_configs("libunwind",                {description = "Enable libunwind runtime.", default = true, type = "boolean"})
+    add_configs("libcxxabi",                {description = "Enable clang runtime.", default = true, type = "boolean"})
+
     if is_host("linux") then
         add_deps("libffi", {host = true})
         add_deps("binutils", {host = true}) -- needed for gold and strip
-        --add_deps("libelf", {host  = true}) -- openmp requires <gelf.h>
-
-        --[[
-        add_patches("11.0.0", "https://github.com/llvm/llvm-project/commit/c86f56e32e724c6018e579bb2bc11e667c96fc96.patch?full_index=1", "6e13e01b4f9037bb6f43f96cb752d23b367fe7db4b66d9bf2a4aeab9234b740a")
-        add_patches("11.0.0", "https://github.com/llvm/llvm-project/commit/31e5f7120bdd2f76337686d9d169b1c00e6ee69c.patch?full_index=1", "f025110aa6bf80bd46d64a0e2b1e2064d165353cd7893bef570b6afba7e90b4d")
-        add_patches("11.0.0", "https://github.com/llvm/llvm-project/commit/3c7bfbd6831b2144229734892182d403e46d7baf.patch?full_index=1", "62014ddad6d5c485ecedafe3277fe7978f3f61c940976e3e642536726abaeb68")
-        add_patches("11.0.0", "https://github.com/llvm/llvm-project/commit/c4d7536136b331bada079b2afbb2bd09ad8296bf.patch?full_index=1", "2b894cbaf990510969bf149697882c86a068a1d704e749afa5d7b71b6ee2eb9f")
-        ]]
     end
 
     on_install("@macosx", "@windows", "@msys", "@bsd", function (package)
         os.cp("*", package:installdir())
     end)
 
+    on_load("@linux", function (package)
+        if package:config("openmp") then
+            package:add("deps", "libelf", {host = true})
+        end
+    end)
+
     on_install("@linux", function (package)
         local projects = {
             "clang",
-            --"clang-tools-extra",
-            --"lld",
-            --"lldb",
-            --"openmp",
-            --"polly",
-            --"mlir",
+            "clang-tools-extra",
+            "lld",
+            "lldb",
+            "openmp",
+            "polly",
+            "mlir",
         }
+        local projects_enabled = {}
+        for _, project in ipairs(projects) do
+            if package:config(project) then
+                table.insert(projects_enabled, project)
+            end
+        end
         local runtimes = {
             "compiler-rt",
             "libunwind",
             "libcxxabi"
         }
+        local runtimes_enabled = {}
+        for _, runtime in ipairs(runtimes) do
+            if package:config(runtime) then
+                table.insert(runtimes_enabled, runtime)
+            end
+        end
         local configs = {
             "-DCMAKE_BUILD_TYPE=Release",
-            "-DLLVM_ENABLE_PROJECTS=" .. table.concat(projects, ";"),
-            "-DLLVM_ENABLE_RUNTIMES=" .. table.concat(runtimes, ";"),
+            "-DLLVM_ENABLE_PROJECTS=" .. table.concat(projects_enabled, ";"),
+            "-DLLVM_ENABLE_RUNTIMES=" .. table.concat(runtimes_enabled, ";"),
             "-DLLVM_POLLY_LINK_INTO_TOOLS=ON",
             "-DLLVM_BUILD_EXTERNAL_COMPILER_RT=ON",
             "-DLLVM_LINK_LLVM_DYLIB=ON",
