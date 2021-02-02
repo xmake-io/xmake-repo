@@ -26,8 +26,13 @@ package("llvm")
             add_versions("11.0.0", "de2dce781b70a66c28b389905ae825998b18b33b7b1e3e94f947a2ec57fb328d")
         end
     elseif is_host("linux") then
-        set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).tar.xz")
-        add_versions("11.0.0", "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b")
+        if linuxos.name() == "ubuntu" and linuxos.version():eq("20.04") and os.arch() == "x86_64" then
+            set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-linux-gnu-ubuntu-20.04.tar.xz")
+            add_versions("11.0.0", "829f5fb0ebda1d8716464394f97d5475d465ddc7bea2879c0601316b611ff6db")
+        else
+            set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).tar.xz")
+            add_versions("11.0.0", "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b")
+        end
     end
 
     add_configs("clang",                    {description = "Enable clang project.", default = true, type = "boolean"})
@@ -52,12 +57,20 @@ package("llvm")
     end)
 
     on_load("@linux", function (package)
-        if package:config("openmp") then
+        if linuxos.name() == "ubuntu" and linuxos.version():eq("20.04") and os.arch() == "x86_64" then
+            return
+        elseif package:config("openmp") then
             package:add("deps", "libelf", {host = true})
         end
     end)
 
     on_install("@linux", function (package)
+
+        if linuxos.name() == "ubuntu" and linuxos.version():eq("20.04") and os.arch() == "x86_64" then
+            os.cp("*", package:installdir())
+            return
+        end
+
         local projects = {
             "clang",
             "clang-tools-extra",
