@@ -48,8 +48,12 @@ package("llvm")
     add_configs("libcxxabi",                {description = "Enable clang runtime.", default = true, type = "boolean"})
 
     if is_host("linux") then
-        add_deps("libffi", {host = true})
-        add_deps("binutils", {host = true}) -- needed for gold and strip
+        if linuxos.name() == "ubuntu" and linuxos.version():eq("20.04") and os.arch() == "x86_64" then
+            -- use binary directly
+        else
+            add_deps("libffi", {host = true})
+            add_deps("binutils", {host = true}) -- needed for gold and strip
+        end
     end
 
     on_install("@macosx", "@windows", "@msys", "@bsd", function (package)
