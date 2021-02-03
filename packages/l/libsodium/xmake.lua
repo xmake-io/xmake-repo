@@ -2,8 +2,7 @@ package("libsodium")
 
     set_homepage("https://libsodium.org")
     set_description("Sodium is a new, easy-to-use software library for encryption, decryption, signatures, password hashing and more.")
-    add_urls("https://github.com/jedisct1/libsodium.git")
-
+    
     if is_plat("windows") then
         add_urls("https://download.libsodium.org/libsodium/releases/libsodium-$(version)-stable-msvc.zip")
         add_versions("1.0.18", "5c9d3d4180068ae35263ed06e20abc6c29a1787e6b71a6fccf9690219b3d1e84")
@@ -15,6 +14,8 @@ package("libsodium")
         add_urls("https://download.libsodium.org/libsodium/releases/libsodium-$(version)-stable-mingw.tar.gz")
         add_versions("1.0.18", "1ad939e3098afd7d3e00ec4e0d84155a32988f14dede61dd39ddf1f95d6e14ad")
     end
+
+    add_urls("https://github.com/jedisct1/libsodium.git")
 
     on_load(function (package)
         if not package:config("shared") then
