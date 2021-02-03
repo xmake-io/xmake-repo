@@ -49,6 +49,7 @@ package("muslcc")
     end
 
     on_install("@windows", "@linux", "@macosx", function (package)
+        os.tryrm("usr") -- remove soft link
         os.vcp("*", package:installdir())
     end)
 
