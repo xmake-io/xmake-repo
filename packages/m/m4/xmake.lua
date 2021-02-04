@@ -15,6 +15,24 @@ package("m4")
     end
 
     on_install("@macosx", "@linux", "@msys", "@cygwin", function (package)
+        if package:is_plat("linux") then
+            -- fix freadahead.c:92:3: error: #error "Please port gnulib freadahead.c to your platform! Look at the definition of fflush, fread, ungetc on your system, then report this to bug-gnulib."
+            -- https://git.savannah.gnu.org/cgit/gnulib.git
+            for _, gnulib_file in ipairs(os.files("lib/*.c")) do
+                io.replace(gnulib_file, "defined _IO_ftrylockfile", "defined _IO_EOF_SEEN || defined _IO_ftrylockfile")
+            end
+            local file = io.open("lib/stdio-impl.h", "a+")
+            file:write([[
+#if defined _IO_EOF_SEEN
+# if !defined _IO_UNBUFFERED
+#  define _IO_UNBUFFERED 0x2
+# endif
+# if !defined _IO_IN_BACKUP
+#  define _IO_IN_BACKUP 0x100
+# endif
+#endif]])
+            file:close()
+        end
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking"})
     end)
 
