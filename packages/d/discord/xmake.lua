@@ -10,13 +10,20 @@ package("discord")
     on_install("windows", function (package)
         os.cp("cpp/*.h", package:installdir("include"))
         os.cp("Release/*.lib", package:installdir("lib"))
-        if package:is_arch("x86_64") then
+        if package:is_arch("x64") then
             os.cp("lib/x86_64/discord_game_sdk.dll", package:installdir("bin"))
             os.cp("lib/x86_64/discord_game_sdk.dll.lib", package:installdir("lib"))
         else
             os.cp("lib/x86/discord_game_sdk.dll", package:installdir("bin"))
             os.cp("lib/x86/discord_game_sdk.dll.lib", package:installdir("lib"))
         end
+
+        local configs = {}
+        if package:config("shared") then
+            configs.kind = "shared"
+        end
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
@@ -25,5 +32,5 @@ package("discord")
                 discord::Core* core{};
                 auto result = discord::Core::Create(310270644849737729, DiscordCreateFlags_Default, &core);
             }
-        ]]}, {configs = {languages = "c++14"}}, {includes = "discord.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "discord.h"}))
     end)
