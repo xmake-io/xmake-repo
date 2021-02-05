@@ -9,6 +9,7 @@ package("discord")
 
     on_install("windows", function (package)
         os.cp("cpp/*.h", package:installdir("include"))
+        os.cp("c/*.h", package:installdir("include"))
         os.cp("Release/*.lib", package:installdir("lib"))
         if package:is_arch("x64") then
             os.cp("lib/x86_64/discord_game_sdk.dll", package:installdir("bin"))
