@@ -12,6 +12,8 @@ package("libusb")
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
+    add_includedirs("include", "include/libusb-1.0")
+
     on_install("windows", function (package)
         os.cd("msvc")
 
