@@ -12,6 +12,11 @@ package("libpng")
     set_license("libpng-2.0")
 
     add_deps("zlib")
+
+    if is_plat("linux") then
+        add_syslinks("m")
+    end
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
