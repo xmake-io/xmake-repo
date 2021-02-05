@@ -21,8 +21,8 @@ package("libusb")
         local mode = package:debug() and "Debug" or "Release"
 
         import("core.tool.toolchain")
-        local vs = string.match(toolchain.load("msvc"):config("vs") or "", "^(%d+)") or "2019"
-        local configs = {"libusb_" .. vs .. " .sln"}
+        local vs = toolchain.load("msvc"):config("vs") or "2019"
+        local configs = {"libusb_" .. vs .. ".sln"}
         table.insert(configs, "/property:Configuration=" .. mode)
         table.insert(configs, "/property:Platform=" .. arch)
         --table.insert(configs, "-t:" .. (package:config("shared") and "libusb-1_0%20_dll_" or "libusb-1_0%20_static_"))
