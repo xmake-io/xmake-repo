@@ -8,8 +8,12 @@ package("libusb")
     add_versions("v1.0.24", "b7724c272dfc5713dce88ff717efd60f021ca5b7c8e30f08ebb2c42d2eea08ae")
     add_versions("v1.0.23", "02620708c4eea7e736240a623b0b156650c39bfa93a14bcfa5f3e05270313eba")
 
-    if not is_host("windows") then
+    if not is_plat("windows") then
         add_deps("autoconf", "automake", "libtool", "pkg-config")
+    end
+
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation", "IOKit")
     end
 
     add_includedirs("include", "include/libusb-1.0")
@@ -39,7 +43,13 @@ package("libusb")
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package)
+        local configs = {}
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared=yes")
+        else
+            table.insert(configs, "--enable-shared=no")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
