@@ -8,12 +8,17 @@ package("libusb")
     add_versions("v1.0.24", "b7724c272dfc5713dce88ff717efd60f021ca5b7c8e30f08ebb2c42d2eea08ae")
     add_versions("v1.0.23", "02620708c4eea7e736240a623b0b156650c39bfa93a14bcfa5f3e05270313eba")
 
-    if not is_plat("windows") then
+    if is_plat("macosx", "linux") then
         add_deps("autoconf", "automake", "libtool", "pkg-config")
+        if is_plat("linux") then
+            add_deps("eudev")
+        end
     end
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "IOKit")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
     end
 
     add_includedirs("include", "include/libusb-1.0")
@@ -49,7 +54,15 @@ package("libusb")
         else
             table.insert(configs, "--enable-shared=no")
         end
-        import("package.tools.autoconf").install(package, configs)
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
+        local cflags, ldflags
+        if package:is_plat("linux") then
+            cflags = "-I" .. package:dep("eudev"):installdir("include")
+            ldflags = "-L" .. package:dep("eudev"):installdir("lib")
+        end
+        import("package.tools.autoconf").install(package, configs, {cflags = cflags, ldflags = ldflags})
     end)
 
     on_test(function (package)
