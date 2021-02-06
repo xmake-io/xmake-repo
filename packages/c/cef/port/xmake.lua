@@ -1,6 +1,6 @@
 add_rules("mode.release", "mode.debug")
 target("cef")
-    set_kind("$(kind)")
+    set_kind("static")
     add_files("libcef_dll/**.cc")
     add_includedirs(".")
     add_headerfiles("include/(**.h)")

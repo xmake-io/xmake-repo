@@ -101,7 +101,13 @@ function _package_is_supported(argv, packagename)
         local packages_plat = packages[plat]
         for _, package in ipairs(packages_plat) do
             if package and packagename:split("%s+")[1] == package.name then
-                local arch = argv.arch or platform.archs(plat)[1] or os.arch()
+                local arch = argv.arch
+                if not arch and plat ~= os.subhost() then
+                    arch = platform.archs(plat)[1]
+                end
+                if not arch then
+                    arch = os.subarch()
+                end
                 for _, package_arch in ipairs(package.archs) do
                     if arch == package_arch then
                         return true

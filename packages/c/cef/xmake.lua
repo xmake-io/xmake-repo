@@ -19,15 +19,13 @@ package("cef")
         add_syslinks("user32", "advapi32")
     end
 
-    on_install("windows", function (package)
+    on_install("windows|x64", function (package)
+        assert(package:config("vs_runtime") == "MT" and not package:config("shared"), "only support static library with MT")
         package:addenv("PATH", "bin")
         os.cp("Release/*.lib", package:installdir("lib"))
         os.cp("Release/*.dll", package:installdir("bin"))
         os.cp("Resources/*", package:installdir("bin"))
         local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
