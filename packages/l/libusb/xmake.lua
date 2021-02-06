@@ -24,22 +24,19 @@ package("libusb")
     add_includedirs("include", "include/libusb-1.0")
 
     on_install("windows", function (package)
-        os.cd("msvc")
-
+        import("core.tool.toolchain")
         local arch = package:is_arch("x86") and "Win32" or "x64"
         local mode = package:debug() and "Debug" or "Release"
-
-        import("core.tool.toolchain")
         local vs = toolchain.load("msvc"):config("vs") or "2019"
         local configs = {"libusb_" .. vs .. ".sln"}
         table.insert(configs, "/property:Configuration=" .. mode)
         table.insert(configs, "/property:Platform=" .. arch)
         --table.insert(configs, "-t:" .. (package:config("shared") and "libusb-1_0%20_dll_" or "libusb-1_0%20_static_"))
 
+        os.cd("msvc")
         import("package.tools.msbuild").build(package, configs)
-
         os.vcp("libusb/*.h", package:installdir("include/libusb-1.0"))
-        if (package:config("shared")) then
+        if package:config("shared") then
             os.vcp(path.join(arch, mode, "dll/libusb-1.0.dll"), package:installdir("lib"))
             os.vcp(path.join(arch, mode, "dll/libusb-1.0.lib"), package:installdir("lib"))
         else
