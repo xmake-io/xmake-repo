@@ -31,10 +31,9 @@ package("libusb")
         local configs = {"libusb_" .. vs .. ".sln"}
         table.insert(configs, "/property:Configuration=" .. mode)
         table.insert(configs, "/property:Platform=" .. arch)
-        --table.insert(configs, "-t:" .. (package:config("shared") and "libusb-1_0%20_dll_" or "libusb-1_0%20_static_"))
-
-        os.cd("msvc")
+        local oldir = os.cd("msvc")
         import("package.tools.msbuild").build(package, configs)
+        os.cd(oldir)
         os.vcp("libusb/*.h", package:installdir("include/libusb-1.0"))
         if package:config("shared") then
             os.vcp(path.join(arch, mode, "dll/libusb-1.0.dll"), package:installdir("lib"))
