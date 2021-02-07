@@ -50,7 +50,20 @@ package("libuv")
     end)
 
     on_install("macosx", "linux", "iphoneos", "android@linux,macosx", "mingw@linux,macosx", function (package)
-        import("package.tools.autoconf").install(package, {"--enable-shared=no"})
+        local configs = {}
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared=yes")
+        else
+            table.insert(configs, "--enable-shared=no")
+        end
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
+        if package:version():ge("1.40.0") and package:is_plat("iphoneos") then
+            -- fix CoreFoundation type definition
+            io.replace("src/unix/darwin.c", "!TARGET_OS_IPHONE", "1", {plain = true})
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
