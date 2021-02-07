@@ -24,24 +24,28 @@ package("libuv")
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
-    if is_plat("macosx") then
+    if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
     end
 
-    on_load("windows", "mingw@linux,macosx", function (package)
-        if package:is_plat("windows") then
-            package:add("links", "uv" .. (package:config("shared") and "" or "_a"))
-            if package:config("shared") then
-                package:add("defines", "USING_UV_SHARED")
-            end
+    on_load("windows", function (package)
+        package:add("links", "uv" .. (package:config("shared") and "" or "_a"))
+        if package:config("shared") then
+            package:add("defines", "USING_UV_SHARED")
         end
-        package:add("syslinks", "advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
+        if package:version():ge("1.40.0") then
+            package:add("linkdirs", path.join("lib", package:debug() and "Debug" or "Release"))
+        end
     end)
 
     on_install("windows", function (package)
-        import("package.tools.cmake").install(package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        import("package.tools.cmake").install(package, configs)
         os.cp("include", package:installdir())
     end)
 
