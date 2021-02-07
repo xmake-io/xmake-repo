@@ -24,16 +24,21 @@ package("libuv")
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation")
+    elseif is_plat("linux") then
+        add_syslinks("pthread", "dl")
+    end
+
     on_load("windows", "mingw@linux,macosx", function (package)
         if package:is_plat("windows") then
             package:add("links", "uv" .. (package:config("shared") and "" or "_a"))
+            if package:config("shared") then
+                package:add("defines", "USING_UV_SHARED")
+            end
         end
         package:add("syslinks", "advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
     end)
-
-    if is_plat("linux") then
-        add_syslinks("pthread")
-    end
 
     on_install("windows", function (package)
         import("package.tools.cmake").install(package)
