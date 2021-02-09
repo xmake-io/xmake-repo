@@ -14,7 +14,7 @@ package("libplist")
         add_syslinks("pthread")
     end
 
-    on_install("macosx", "linux", "mingw", "iphoneos", "cross", function (package)
+    on_install("macosx", "linux", "mingw@macosx", "iphoneos", "cross", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--without-cython"}
