@@ -24,7 +24,7 @@ package("libplist")
             table.insert(configs, "--enable-shared=no")
         end
         local cxflags
-        if package:is_plat("linux") and not package:config("shared") then
+        if package:is_plat("linux") and package:config("pic") ~= false then
             cxflags = "-fPIC"
         end
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
