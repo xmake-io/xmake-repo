@@ -25,7 +25,7 @@ package("openssl")
 
     on_install("cross", function (package)
         local target = "linux-generic32"
-        if package:is_os("linux") then
+        if package:is_targetos("linux") then
             if package:is_arch("arm64") then
                 target = "linux-aarch64"
             else
