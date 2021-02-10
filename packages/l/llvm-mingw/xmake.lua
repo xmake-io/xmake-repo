@@ -34,11 +34,11 @@ package("llvm-mingw")
 
     on_test(function (package)
         local gcc
-        if is_arch("i386", "x86", "i686") then
+        if package:is_targetarch("i386", "x86", "i686") then
             gcc = "i686-w64-mingw32-gcc"
-        elseif is_arch("arm64", "aarch64") then
+        elseif package:is_targetarch("arm64", "aarch64") then
             gcc = "aarch64-w64-mingw32-gcc"
-        elseif is_arch("armv7", "arm.*") then
+        elseif package:is_targetarch("armv7", "arm.*") then
             gcc = "armv7-w64-mingw32-gcc"
         else
             gcc = "x86_64-w64-mingw32-gcc"

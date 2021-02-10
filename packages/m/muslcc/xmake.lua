@@ -55,11 +55,11 @@ package("muslcc")
 
     on_test(function (package)
         local gcc
-        if is_arch("arm64") then
+        if package:is_targetarch("arm64") then
             gcc = "aarch64-linux-musl-gcc"
-        elseif is_arch("arm.*") then
+        elseif package:is_targetarch("arm.*") then
             gcc = "arm-linux-musleabi-gcc"
-        elseif is_arch("x86", "i386") then
+        elseif package:is_targetarch("x86", "i386") then
             gcc = "i686-linux-musl-gcc"
         else
             gcc = "x86_64-linux-musl-gcc"
