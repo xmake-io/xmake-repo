@@ -1,6 +1,6 @@
 package("zig")
 
-    set_kind("binary")
+    set_kind("toolchain")
     set_homepage("https://www.ziglang.org/")
     set_description("Zig is a general-purpose programming language and toolchain for maintaining robust, optimal, and reusable software.")
 

@@ -1,6 +1,6 @@
 package("llvm-mingw")
 
-    set_kind("binary")
+    set_kind("toolchain")
     set_homepage("https://github.com/mstorsjo/llvm-mingw")
     set_description("An LLVM/Clang/LLD based mingw-w64 toolchain")
 

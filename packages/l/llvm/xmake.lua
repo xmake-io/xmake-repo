@@ -1,6 +1,6 @@
 package("llvm")
 
-    set_kind("binary")
+    set_kind("toolchain")
     set_homepage("https://llvm.org/")
     set_description("The LLVM Compiler Infrastructure")
 

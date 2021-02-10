@@ -1,6 +1,6 @@
 package("gnu-rm")
 
-    set_kind("binary")
+    set_kind("toolchain")
     set_homepage("https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm")
     set_description("GNU Arm Embedded Toolchain")
 

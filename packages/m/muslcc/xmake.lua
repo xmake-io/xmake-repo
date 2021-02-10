@@ -1,6 +1,6 @@
 package("muslcc")
 
-    set_kind("binary")
+    set_kind("toolchain")
     set_homepage("https://musl.cc/")
     set_description("static cross- and native- musl-based toolchains.")
 
