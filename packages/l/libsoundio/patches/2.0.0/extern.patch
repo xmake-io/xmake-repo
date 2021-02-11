@@ -1,0 +1,216 @@
+diff --git a/src/alsa.h b/src/alsa.h
+index e2b1764..6cb1911 100644
+--- a/src/alsa.h
++++ b/src/alsa.h
+@@ -15,6 +15,10 @@
+ 
+ #include <alsa/asoundlib.h>
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ struct SoundIoPrivate;
+ int soundio_alsa_init(struct SoundIoPrivate *si);
+ 
+@@ -86,4 +90,8 @@ struct SoundIoInStreamAlsa {
+     struct SoundIoChannelArea areas[SOUNDIO_MAX_CHANNELS];
+ };
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+diff --git a/src/coreaudio.h b/src/coreaudio.h
+index 8515f21..bfda4f9 100644
+--- a/src/coreaudio.h
++++ b/src/coreaudio.h
+@@ -16,6 +16,10 @@
+ #include <CoreAudio/CoreAudio.h>
+ #include <AudioUnit/AudioUnit.h>
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ struct SoundIoPrivate;
+ int soundio_coreaudio_init(struct SoundIoPrivate *si);
+ 
+@@ -64,4 +68,8 @@ struct SoundIoInStreamCoreAudio {
+     struct SoundIoChannelArea areas[SOUNDIO_MAX_CHANNELS];
+ };
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+diff --git a/src/dummy.h b/src/dummy.h
+index d50d12e..6a66e65 100644
+--- a/src/dummy.h
++++ b/src/dummy.h
+@@ -13,6 +13,10 @@
+ #include "ring_buffer.h"
+ #include "atomics.h"
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ struct SoundIoPrivate;
+ int soundio_dummy_init(struct SoundIoPrivate *si);
+ 
+@@ -52,4 +56,8 @@ struct SoundIoInStreamDummy {
+     struct SoundIoChannelArea areas[SOUNDIO_MAX_CHANNELS];
+ };
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+diff --git a/src/jack.h b/src/jack.h
+index e96cf9b..ddae54d 100644
+--- a/src/jack.h
++++ b/src/jack.h
+@@ -19,6 +19,10 @@
+ #include <jack/jack.h>
+ #pragma GCC diagnostic pop
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ struct SoundIoPrivate;
+ int soundio_jack_init(struct SoundIoPrivate *si);
+ 
+@@ -76,4 +80,8 @@ struct SoundIoInStreamJack {
+     char *buf_ptrs[SOUNDIO_MAX_CHANNELS];
+ };
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+diff --git a/src/os.h b/src/os.h
+index c5e43a9..1c01e00 100644
+--- a/src/os.h
++++ b/src/os.h
+@@ -11,6 +11,10 @@
+ #include <stdbool.h>
+ #include <stddef.h>
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ // safe to call from any thread(s) multiple times, but
+ // must be called at least once before calling any other os functions
+ // soundio_create calls this function.
+@@ -64,4 +68,8 @@ struct SoundIoOsMirroredMemory {
+ int soundio_os_init_mirrored_memory(struct SoundIoOsMirroredMemory *mem, size_t capacity);
+ void soundio_os_deinit_mirrored_memory(struct SoundIoOsMirroredMemory *mem);
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+diff --git a/src/pulseaudio.h b/src/pulseaudio.h
+index a216e26..aaf10eb 100644
+--- a/src/pulseaudio.h
++++ b/src/pulseaudio.h
+@@ -13,6 +13,10 @@
+ 
+ #include <pulse/pulseaudio.h>
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ struct SoundIoPrivate;
+ int soundio_pulseaudio_init(struct SoundIoPrivate *si);
+ 
+@@ -62,4 +66,8 @@ struct SoundIoInStreamPulseAudio {
+     struct SoundIoChannelArea areas[SOUNDIO_MAX_CHANNELS];
+ };
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+diff --git a/src/ring_buffer.h b/src/ring_buffer.h
+index 61b8dcd..2ca0bb3 100644
+--- a/src/ring_buffer.h
++++ b/src/ring_buffer.h
+@@ -11,6 +11,10 @@
+ #include "os.h"
+ #include "atomics.h"
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ struct SoundIoRingBuffer {
+     struct SoundIoOsMirroredMemory mem;
+     struct SoundIoAtomicULong write_offset;
+@@ -21,4 +25,8 @@ struct SoundIoRingBuffer {
+ int soundio_ring_buffer_init(struct SoundIoRingBuffer *rb, int requested_capacity);
+ void soundio_ring_buffer_deinit(struct SoundIoRingBuffer *rb);
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+diff --git a/src/util.h b/src/util.h
+index 7292b82..5e427d8 100644
+--- a/src/util.h
++++ b/src/util.h
+@@ -13,6 +13,10 @@
+ #include <assert.h>
+ #include <stdbool.h>
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ #define ALLOCATE_NONZERO(Type, count) ((Type*)malloc((count) * sizeof(Type)))
+ 
+ #define ALLOCATE(Type, count) ((Type*)calloc(count, sizeof(Type)))
+@@ -95,4 +99,8 @@ static inline double ceil_dbl(double x) {
+     return ceiling;
+ }
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif
+diff --git a/src/wasapi.h b/src/wasapi.h
+index cdb15fb..7ccef9e 100644
+--- a/src/wasapi.h
++++ b/src/wasapi.h
+@@ -24,6 +24,10 @@
+ #include <audiosessiontypes.h>
+ #include <audiopolicy.h>
+ 
++#ifdef __cplusplus
++extern "C" {
++#endif
++
+ #ifndef AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM
+ #define AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM 0x80000000
+ #endif
+@@ -114,4 +118,8 @@ struct SoundIoInStreamWasapi {
+     struct SoundIoChannelArea areas[SOUNDIO_MAX_CHANNELS];
+ };
+ 
++#ifdef __cplusplus
++}
++#endif
++
+ #endif

@@ -5,11 +5,15 @@ package("libsoundio")
 
     set_urls("https://github.com/andrewrk/libsoundio/archive/$(version).tar.gz",
              "https://github.com/andrewrk/libsoundio.git")
+
     add_versions("2.0.0", "67a8fc1c9bef2b3704381bfb3fb3ce99e3952bc4fea2817729a7180fddf4a71e")
+    add_patches("2.0.0", path.join(os.scriptdir(), "patches", "2.0.0", "extern.patch"), "c1c9084012cf39b203cdf7c59d46a8e6362b6a1e7203700d77faef529d49d401")
 
     add_deps("cmake")
 
     add_includedirs("include", "include/soundio")
+
+    set_languages("c11")
 
     on_install("windows", "linux", "macosx", function (package)
         local configs = {}
