@@ -10,6 +10,7 @@ package("bullet3")
 
     add_configs("double_precision", { description = "Enable double precision floats", default = false, type = "boolean"})
     add_configs("extras",           { description = "Build the extras", default = false, type = "boolean"})
+    add_configs("msvc_runtime_dll", { description = "MSVC runtime library DLL", default = false, type = "boolean"})
 
     add_deps("cmake")
 
@@ -21,6 +22,8 @@ package("bullet3")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_DOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_EXTRAS=" .. (package:config("extras") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("msvc_runtime_dll") and "ON" or "OFF"))
+		
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
 
