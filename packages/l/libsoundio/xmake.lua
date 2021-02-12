@@ -10,13 +10,23 @@ package("libsoundio")
 
     add_includedirs("include", "include/soundio")
 
-    if is_plat("windows") then
+    add_configs("jack",       { description = "Enable JACK backend.", default = false, type = "boolean"})
+    add_configs("pulseaudio", { description = "Enable PulseAudio backend.", default = false, type = "boolean"})
+    add_configs("alsa",       { description = "Enable Alsa backend.", default = false, type = "boolean"})
+    add_configs("coreaudio",  { description = "Enable CoreAudio backend.", default = false, type = "boolean"})
+    add_configs("wasapi",     { description = "Enable WASAPI backend.", default = false, type = "boolean"})
+
+    if is_plat("windows", "mingw") then
         add_syslinks("ole32")
+    elseif is_plat("linux", "bsd", "macosx") then
+        add_syslinks("pthread")
     end
 
-    on_load("windows", function (package)
-        if not package:config("shared") then
+    on_load(function (package)
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "SOUNDIO_STATIC_LIBRARY")
+        elseif package:is_plat("macosx") and package:config("coreaudio") and not package:config("shared") then
+            package:add("frameworks", "CoreAudio", "CoreFoundation", "AudioToolbox")
         end
     end)
 
@@ -33,6 +43,18 @@ package("libsoundio")
         io.writefile("xmake.lua", ([[
             set_version("%s")
             add_rules("mode.debug", "mode.release")
+            for _, name in ipairs({"jack", "pulseaudio", "alsa", "coreaudio", "wasapi"}) do
+                option(name)
+                    set_default(false)
+                    set_showmenu(true)
+                    set_configvar("SOUNDIO_HAVE_" .. name:upper(), 1)
+                    if name == "coreaudio" then
+                        add_frameworks("CoreAudio", "CoreFoundation", "AudioToolbox")
+                    else
+                        -- TODO for other backend or use add_requires
+                    end
+                option_end()
+            end
             target("soundio")
                 set_kind("$(kind)")
                 add_files("src/*.c|alsa.c|jack.c|wasapi.c|pulseaudio.c|coreaudio.c")
@@ -42,7 +64,19 @@ package("libsoundio")
                 add_headerfiles("(soundio/*.h)")
                 if is_plat("windows") then
                     add_cflags("/TP") -- fix missing stdatomic.h
-                    add_syslinks("ole32")
+                end
+                for _, name in ipairs({"jack", "pulseaudio", "alsa", "coreaudio", "wasapi"}) do
+                    if has_config(name) then
+                        add_files("src/" .. name .. ".c")
+                        add_options(name)
+                    end
+                end
+                if is_kind("shared") then
+                    if is_plat("windows", "mingw") then
+                        add_syslinks("ole32")
+                    elseif is_plat("linux", "bsd", "macosx") then
+                        add_syslinks("pthread")
+                    end
                 end
         ]]):format(package:version_str()))
         local configs = {}
@@ -50,6 +84,12 @@ package("libsoundio")
             configs.kind = "shared"
         elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
             configs.cxflags = "-fPIC"
+        end
+        -- TODO we only support coreaudio backend now
+        for _, name in ipairs({"jack", "pulseaudio", "alsa", "coreaudio", "wasapi"}) do
+            if package:config(name) then
+                configs[name] = true
+            end
         end
         import("package.tools.xmake").install(package, configs)
     end)
