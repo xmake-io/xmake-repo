@@ -53,7 +53,7 @@ package("muslcc")
         add_deps("libisl 0.22", {host = true, configs = {shared = true}})
     end
 
-    on_install("@windows", "@linux", "@macosx", function (package)
+    on_install("@windows", "@msys", "@linux", "@macosx", function (package)
         os.tryrm("usr") -- remove soft link
         -- fix missing libisl.22.dylib
         if is_host("macosx") then
