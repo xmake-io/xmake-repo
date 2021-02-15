@@ -48,15 +48,14 @@ package("muslcc")
         end
     end
 
+    if is_host("macosx") then
+        -- fix missing libisl.22.dylib
+        add_deps("libisl 0.22", {host = true, configs = {shared = true}})
+    end
+
     on_install("@windows", "@linux", "@macosx", function (package)
         os.tryrm("usr") -- remove soft link
         os.vcp("*", package:installdir())
-        if package:is_plat("macosx") then
-            -- fix missing libisl.22.dylib
-            if not os.isfile("/usr/local/opt/isl/lib/libisl.22.dylib") then
-                os.vcp("/usr/local/opt/isl/lib/libisl.21.dylib", path.join(package:installdir("lib"), "libisl.22.dylib"))
-            end
-        end
     end)
 
     on_test(function (package)
