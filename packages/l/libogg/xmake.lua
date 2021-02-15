@@ -9,6 +9,9 @@ package("libogg")
     add_patches("1.3.4", path.join(os.scriptdir(), "patches", "1.3.4", "macos_fix.patch"), "e12c41ad71206777f399c1048914e5e5a2fe44e18d0d50ebe9bedbfbe0624c35")
 
     add_deps("cmake")
+    if is_plat("cross") and is_subhost("windows") then
+        add_deps("make")
+    end
 
     on_install("windows", "macosx", "linux", "mingw", "iphoneos", "android", "cross", function (package)
         local configs = {}
