@@ -55,6 +55,32 @@ package("muslcc")
 
     on_install("@windows", "@linux", "@macosx", function (package)
         os.tryrm("usr") -- remove soft link
+        -- fix missing libisl.22.dylib
+        if is_host("macosx") then
+            local function patchbin(bin_name)
+                local cross
+                if package:is_targetarch("arm64") then
+                    cross = "aarch64-linux-musl-"
+                elseif package:is_targetarch("arm.*") then
+                    cross = "arm-linux-musleabi-"
+                elseif package:is_targetarch("x86", "i386") then
+                    cross = "i686-linux-musl-"
+                else
+                    cross = "x86_64-linux-musl-"
+                end
+                local binfile = path.join("bin", cross .. bin_name)
+                local binfile_raw = binfile .. "-raw"
+                os.mv(binfile, binfile_raw)
+                io.writefile(binfile, ([[
+#!/usr/bin/env bash
+export DYLD_LIBRARY_PATH="%s"
+"%s" "$@"]]):format(package:dep("libisl"):installdir("lib"),
+                    path.join(package:installdir(), binfile_raw)))
+                os.vrunv("chmod", {"777", binfile})
+            end
+            patchbin("gcc")
+            patchbin("g++")
+        end
         os.vcp("*", package:installdir())
     end)
 
