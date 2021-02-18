@@ -17,11 +17,14 @@ package("libffi")
     end)
 
     on_install("macosx", "linux", "iphoneos", function (package)
-        local configs = {"--disable-silent-rules", "--disable-dependency-tracking", "--enable-shared=no"}
+        local configs = {"--disable-silent-rules", "--disable-dependency-tracking"}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
             table.insert(configs, "--enable-debug")
-        else
-            table.insert(configs, "--disable-debug")
+        end
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs)
     end)
