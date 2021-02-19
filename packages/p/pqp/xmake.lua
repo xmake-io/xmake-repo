@@ -14,8 +14,8 @@ package("pqp")
             add_rules("mode.debug", "mode.release")
             target("pqp")
                 set_kind("$(kind)")
-                add_files("**.cpp|**/demos/**")
-                add_headerfiles("**.h|**/demos/**")
+                add_files("**/src/*.cpp")
+                add_headerfiles("**/src/*.h")
         ]])
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
