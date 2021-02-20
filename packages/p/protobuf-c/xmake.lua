@@ -23,6 +23,8 @@ package("protobuf-c")
     end)
 
     on_install("windows", function (package)
+        -- fix run `protoc-c.exe` failed
+        io.replace("protoc-c/main.cc", "invocation_basename == legacy_name", "1")
         os.cd("build-cmake")
         local cflags
         local shflags
