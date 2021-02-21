@@ -21,6 +21,11 @@ package("libusb")
         add_syslinks("pthread")
     end
 
+    -- it will be provided in xmake v2.5.2
+    if add_extsources then
+        add_extsources("pkgconfig::libusb-1.0")
+    end
+
     add_includedirs("include", "include/libusb-1.0")
 
     on_install("windows", function (package)
