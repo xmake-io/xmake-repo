@@ -18,7 +18,7 @@ package("snappy")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSNAPPY_REQUIRE_AVX=" .. (package:config("avx") and "ON" or "OFF"))
         table.insert(configs, "-DSNAPPY_REQUIRE_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE")
+        table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         import("package.tools.cmake").install(package, configs)
     end)
 
