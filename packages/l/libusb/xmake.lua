@@ -23,7 +23,9 @@ package("libusb")
 
     -- it will be provided in xmake v2.5.2
     if add_extsources then
-        add_extsources("pkgconfig::libusb-1.0")
+        if is_plat("macosx", "linux") then
+            add_extsources("pkgconfig::libusb-1.0")
+        end
     end
 
     add_includedirs("include", "include/libusb-1.0")
