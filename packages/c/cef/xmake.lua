@@ -22,7 +22,7 @@ package("cef")
     on_install("windows|x64", function (package)
         assert(package:config("vs_runtime") == "MT" and not package:config("shared"), "only support static library with MT")
         package:addenv("PATH", "bin")
-        local distrib_type = package:debug() and "Debug" and "Release"
+        local distrib_type = package:debug() and "Debug" or "Release"
         os.cp(path.join(distrib_type, "*.lib"), package:installdir("lib"))
         os.cp(path.join(distrib_type, "*.dll"), package:installdir("bin"))
         os.cp("Resources/*", package:installdir("bin"))
