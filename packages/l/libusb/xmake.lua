@@ -52,11 +52,8 @@ package("libusb")
 
     on_install("macosx", "linux", function (package)
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
-        end
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
