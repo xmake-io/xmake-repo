@@ -22,13 +22,9 @@ package("cef")
     on_install("windows|x64", function (package)
         assert(package:config("vs_runtime") == "MT" and not package:config("shared"), "only support static library with MT")
         package:addenv("PATH", "bin")
-        local distrib_type = "Release"
-        if package:debug() then
-            distrib_type = "Debug
-        end
-        
-        os.cp(distrib_type .. "/*.lib", package:installdir("lib"))
-        os.cp(distrib_type .. "/*.dll", package:installdir("bin"))
+        local distrib_type = package:debug() and "Debug" and "Release"
+        os.cp(path.join(distrib_type, "*.lib"), package:installdir("lib"))
+        os.cp(path.join(distrib_type, "*.dll"), package:installdir("bin"))
         os.cp("Resources/*", package:installdir("bin"))
         local configs = {}
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
