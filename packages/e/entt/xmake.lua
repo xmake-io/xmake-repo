@@ -15,13 +15,10 @@ package("entt")
     end)
 
     on_test(function (package)
-        if package:config("includes_lua") then
-            assert(package:check_cxxsnippets({test = [[
-                #include <entt/entt.hpp>
-                #include <cassert>
-                void test() {
-                    entt::registry r;
-                }
-            ]]}, {configs = {languages = "c++17"}}))
-        end
+        assert(package:check_cxxsnippets({test = [[
+            #include <entt/entt.hpp>
+            void test() {
+                entt::registry r;
+            }
+        ]]}, {configs = {languages = "c++17"}}))
     end)
