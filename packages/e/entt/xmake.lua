@@ -9,7 +9,7 @@ package("entt")
     add_versions("v3.6.0", "94b7dc874acd0961cfc28cf6b0342eeb0b7c58250ddde8bdc6c101e84b74c190")
     add_deps("cmake")
 
-    on_install("", function (package)
+    on_install(function (package)
         local configs = {}
         import("package.tools.cmake").install(package, configs)
     end)
