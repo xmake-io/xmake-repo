@@ -19,6 +19,10 @@ package("sqlite3")
     add_versions("3.24.0+0",   "d9d14e88c6fb6d68de9ca0d1f9797477d82fc3aed613558f87ffbdbbc5ceb74a")
     add_versions("3.34.0+100", "2a3bca581117b3b88e5361d0ef3803ba6d8da604b1c1a47d902ef785c1b53e89")
 
+    if is_plat("macosx", "linux") then
+        add_syslinks("pthread", "dl")
+    end
+
     on_install("windows", function (package)
         local configs = {"-f", "Makefile.msc", "DYNAMIC_SHELL=1"}
         table.insert(configs, "DEBUG=" .. (package:debug() and "1" or "0"))
