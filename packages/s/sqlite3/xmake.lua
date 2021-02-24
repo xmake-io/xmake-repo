@@ -32,7 +32,16 @@ package("sqlite3")
     end)
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package, {package:debug() and "--enable-debug" or ""})
+        local configs = {}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
