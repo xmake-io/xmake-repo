@@ -11,6 +11,8 @@ package("mbedtls")
 
     if is_host("windows") then
         add_deps("cmake")
+    else
+	add_deps("pythin 2.x")
     end
 
     add_links("mbedtls", "mbedx509", "mbedcrypto")
