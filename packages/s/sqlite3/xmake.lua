@@ -19,33 +19,30 @@ package("sqlite3")
     add_versions("3.24.0+0",   "d9d14e88c6fb6d68de9ca0d1f9797477d82fc3aed613558f87ffbdbbc5ceb74a")
     add_versions("3.34.0+100", "2a3bca581117b3b88e5361d0ef3803ba6d8da604b1c1a47d902ef785c1b53e89")
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
     end
 
-    on_install("windows", function (package)
-        local configs = {"-f", "Makefile.msc", "DYNAMIC_SHELL=1"}
-        table.insert(configs, "DEBUG=" .. (package:debug() and "1" or "0"))
-        table.insert(configs, "PLATFORM=" .. package:arch())
-        table.insert(configs, "USE_CRT_DLL=" .. (package:config("vs_runtime"):startswith("MD") and "1" or "0"))
-        import("package.tools.nmake").build(package, configs)
-        os.cp("*.h", package:installdir("include"))
-        os.cp("sqlite3.lib", package:installdir("lib"))
-        os.cp("sqlite3.pdb", package:installdir("bin"))
-        os.cp("sqlite3.dll", package:installdir("bin"))
-    end)
-
-    on_install("macosx", "linux", function (package)
+    on_install(function (package)
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            target("sqlite3")
+                set_kind("$(kind)")
+                add_files("sqlite3.c")
+                add_headerfiles("sqlite3.h", "sqlite3ext.h")
+                add_defines("SQLITE_ENABLE_EXPLAIN_COMMENTS", "SQLITE_ENABLE_DBPAGE_VTAB", "SQLITE_ENABLE_STMTVTAB", "SQLITE_ENABLE_DBSTAT_VTAB")
+                if is_kind("shared") and is_plat("windows") then
+                    add_defines("SQLITE_API=__declspec(dllexport)")
+                end
+        ]])
         local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
+        if package:config("shared") then
+            configs.kind = "shared"
         end
-        if package:debug() then
-            table.insert(configs, "--enable-debug")
+        if not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
         end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
