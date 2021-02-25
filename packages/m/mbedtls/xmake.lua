@@ -35,7 +35,7 @@ package("mbedtls")
 	
     on_install("macosx", "linux", function (package)
         io.gsub("./Makefile", "DESTDIR=/usr/local", "DESTDIR=" .. package:installdir())
-	local configs = { "no_test" }
+        local configs = { "no_test" }
         import("package.tools.make").build(package, configs)
         os.vrun("make install")
     end)
