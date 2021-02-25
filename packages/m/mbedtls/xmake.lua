@@ -12,7 +12,7 @@ package("mbedtls")
     if is_host("windows") then
         add_deps("cmake")
     else
-        add_deps("python 2.7")
+        add_deps("python2")
     end
 
     add_links("mbedtls", "mbedx509", "mbedcrypto")
