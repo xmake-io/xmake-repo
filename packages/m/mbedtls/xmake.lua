@@ -11,8 +11,6 @@ package("mbedtls")
 
     if is_host("windows") then
         add_deps("cmake")
-    else
-        add_deps("python2")
     end
 
     add_links("mbedtls", "mbedx509", "mbedcrypto")
@@ -37,7 +35,8 @@ package("mbedtls")
 	
     on_install("macosx", "linux", function (package)
         io.gsub("./Makefile", "DESTDIR=/usr/local", "DESTDIR=" .. package:installdir())
-        import("package.tools.make").build(package)
+	local configs = { "no_test" }
+        import("package.tools.make").build(package, configs)
         os.vrun("make install")
     end)
 
