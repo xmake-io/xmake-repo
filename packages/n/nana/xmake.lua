@@ -12,6 +12,8 @@ package("nana")
         add_patches("1.7.4", path.join(os.scriptdir(), "patches", "1.7.4", "u8string_fix.patch"), "c783588816664124ba3b4077e18696899c8389419a015773b5bfe988e3a73f6a")
     end
 
+    add_configs("nana_filesystem_force", {description = "Force nana filesystem over ISO and boost?", default = is_plat("linux"), type = "boolean"})
+
     if is_plat("linux", "windows") then
         add_deps("cmake >=3.12")
     end
@@ -25,6 +27,12 @@ package("nana")
     end
     add_links("nana")
 
+    on_load("linux", "windows", function (package)
+        if package:config("nana_filesystem_force") then
+            package:add("defines", "NANA_FILESYSTEM_FORCE")
+        end
+    end)
+
     on_install("linux", "windows", function (package)
         if package:is_plat("windows") then
             local file_name = path.join(os.curdir(), "source", "system", "split_string.cpp")
@@ -32,7 +40,7 @@ package("nana")
         end
 
         local configs = {"-DNANA_CMAKE_ENABLE_JPEG=OFF", "-DNANA_CMAKE_ENABLE_PNG=OFF", "-DBUILD_SHARED_LIBS=OFF"}
-        if package:is_plat("linux") then
+        if package:config("nana_filesystem_force") then
             table.insert(configs, "-DNANA_CMAKE_NANA_FILESYSTEM_FORCE=ON")
         end
         import("package.tools.cmake").build(package, configs, {buildir = "build_xmake"})
