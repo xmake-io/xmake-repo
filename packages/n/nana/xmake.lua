@@ -47,7 +47,7 @@ package("nana")
 
         os.cp("include", package:installdir())
         if package:is_plat("windows") then
-            os.trycp(path.join("build_xmake", "src", "*", "*.lib"), package:installdir("lib"))
+            os.trycp(path.join("build_xmake", "*", "*.lib"), package:installdir("lib"))
         else
             os.trycp(path.join("build_xmake", "*.a"), package:installdir("lib"))
         end
