@@ -26,19 +26,19 @@ package("nana")
     end
 
     on_install("linux", "windows", function (package)
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             local file_name = path.join(os.curdir(), "source", "system", "split_string.cpp")
             io.gsub(file_name, " and ", " && ")
         end
 
         local configs = {"-DNANA_CMAKE_ENABLE_JPEG=OFF", "-DNANA_CMAKE_ENABLE_PNG=OFF"}
-        if is_plat("linux") then
+        if package:is_plat("linux") then
             table.insert(configs, "-DNANA_CMAKE_NANA_FILESYSTEM_FORCE=ON")
         end
         import("package.tools.cmake").install(package, configs)
 
         os.cp("include", package:installdir())
-        if is_plat("linux") then
+        if package:is_plat("linux") then
             os.cp("**.a", package:installdir("lib"))
         end
     end)
