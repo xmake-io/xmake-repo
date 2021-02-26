@@ -22,8 +22,8 @@ package("nana")
     elseif is_plat("linux") then
         add_deps("libxcursor")
         add_syslinks("pthread", "fontconfig", "Xft")
-        add_links("nana")
     end
+    add_links("nana")
 
     on_install("linux", "windows", function (package)
         if package:is_plat("windows") then
