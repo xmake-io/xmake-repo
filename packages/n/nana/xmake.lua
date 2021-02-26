@@ -8,6 +8,7 @@ package("nana")
     add_versions("1.6.2", "5f5cb791dff292e27bfa29d850b93f809a0d91d6044ea7e22ce7ae76a5d8b24e")
     add_versions("1.7.2", "e2efb3b7619e4ef3b6de93f8afc70ff477ec6cabf4f9740f0d786904c790613f")
     add_versions("1.7.4", "56f7b1ed006c750fccf8ef15ab1e83f96751f2dfdcb68d93e5f712a6c9b58bcb")
+    add_patches("1.7.4", path.join(os.scriptdir(), "patches", "1.7.4", "cmake_policy_fix.patch"), "237a60d12eb2760c1010043686b1938b03e18791003d8ddfc639f458f0c7467d")
     if is_plat("linux") then
         add_patches("1.7.4", path.join(os.scriptdir(), "patches", "1.7.4", "u8string_fix.patch"), "c783588816664124ba3b4077e18696899c8389419a015773b5bfe988e3a73f6a")
     end
