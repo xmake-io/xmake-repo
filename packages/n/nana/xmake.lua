@@ -35,12 +35,10 @@ package("nana")
         if package:is_plat("linux") then
             table.insert(configs, "-DNANA_CMAKE_NANA_FILESYSTEM_FORCE=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").build(package, configs, {buildir = "build_xmake"})
 
         os.cp("include", package:installdir())
-        if package:is_plat("linux") then
-            os.cp("**.a", package:installdir("lib"))
-        end
+        os.trycp(path.join("build_xmake", "*." .. (package:is_plat("windows") and "lib" or "a")), package:installdir("lib"))
     end)
 
     on_test(function (package)
