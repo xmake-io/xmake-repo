@@ -26,7 +26,6 @@ package("nana")
         add_deps("libxcursor")
         add_syslinks("pthread", "fontconfig", "Xft")
     end
-    add_links("nana")
 
     on_load("linux", "windows", function (package)
         if package:config("nana_filesystem_force") then
