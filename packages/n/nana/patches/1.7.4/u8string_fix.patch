@@ -1,0 +1,44 @@
+diff --git a/source/detail/posix/xdnd_protocol.hpp b/source/detail/posix/xdnd_protocol.hpp
+index aa1ae43..d856869 100644
+--- a/source/detail/posix/xdnd_protocol.hpp
++++ b/source/detail/posix/xdnd_protocol.hpp
+@@ -156,7 +156,7 @@ namespace nana{
+ 				    	for(auto& file : data.files)
+ 				    	{
+ 				    		uri_list += "file://";
+-				    		uri_list += file.u8string();
++				    		uri_list += file.string();
+ 				    		uri_list += "\r\n";
+ 				    	}
+ 
+diff --git a/source/gui/filebox.cpp b/source/gui/filebox.cpp
+index 63586ab..28071d5 100644
+--- a/source/gui/filebox.cpp
++++ b/source/gui/filebox.cpp
+@@ -1013,7 +1013,7 @@ namespace nana
+ 				for(auto i = selection_.targets.cbegin(); i != selection_.targets.cend();)
+ 				{
+ 					std::filesystem::path p{*i};
+-					if(p.filename().u8string() == mfs.name)
++					if(p.filename().string() == mfs.name)
+ 					{
+ 						if(!selection_.is_deselect_delayed)
+ 						{
+@@ -1042,7 +1042,7 @@ namespace nana
+ 					if(!filename_string.empty())
+ 						filename_string += ' ';
+ 
+-					filename_string += "\"" + p.filename().u8string() + "\"";
++					filename_string += "\"" + p.filename().string() + "\"";
+ 				}
+ 			}
+ 
+@@ -1576,7 +1576,7 @@ namespace nana
+ 
+ 
+ 		if(!targets.empty())
+-			impl_->path = targets.front().parent_path().u8string();
++			impl_->path = targets.front().parent_path().string();
+ 		else
+ 			impl_->path.clear();
+ #endif
