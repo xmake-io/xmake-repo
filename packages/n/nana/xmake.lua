@@ -38,7 +38,11 @@ package("nana")
         import("package.tools.cmake").build(package, configs, {buildir = "build_xmake"})
 
         os.cp("include", package:installdir())
-        os.trycp(path.join("build_xmake", "*." .. (package:is_plat("windows") and "lib" or "a")), package:installdir("lib"))
+        if package:is_plat("windows") then
+            os.trycp(path.join("build_xmake", "src", "*", "*.lib"), package:installdir("lib"))
+        else
+            os.trycp(path.join("build_xmake", "*.a"), package:installdir("lib"))
+        end
     end)
 
     on_test(function (package)
