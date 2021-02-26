@@ -15,7 +15,7 @@ package("nana")
     add_configs("nana_filesystem_force", {description = "Force nana filesystem over ISO and boost?", default = is_plat("linux"), type = "boolean"})
 
     if is_plat("linux", "windows") then
-        add_deps("cmake >=3.12")
+        add_deps("cmake >=3.15")
     end
 
     if is_plat("windows") then
@@ -42,6 +42,18 @@ package("nana")
         local configs = {"-DNANA_CMAKE_ENABLE_JPEG=OFF", "-DNANA_CMAKE_ENABLE_PNG=OFF", "-DBUILD_SHARED_LIBS=OFF"}
         if package:config("nana_filesystem_force") then
             table.insert(configs, "-DNANA_CMAKE_NANA_FILESYSTEM_FORCE=ON")
+        end
+        if package:is_plat("windows") then
+            local cmake_vsr = "MultiThreaded"
+            local pvsr = package:config("vs_runtime")
+            if pvsr == "MTd" then
+                cmake_vsr = "MultiThreadedDebug"
+            elseif pvsr == "MD" then
+                cmake_vsr = "MultiThreadedDLL"
+            elseif pvsr == "MDd" then
+                cmake_vsr = "MultiThreadedDebugDLL"
+            end
+            table.insert(configs, "-DMSVC_RUNTIME_LIBRARY=" .. cmake_vsr)
         end
         import("package.tools.cmake").build(package, configs, {buildir = "build_xmake"})
 
