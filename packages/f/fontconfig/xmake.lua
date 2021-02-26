@@ -35,6 +35,9 @@ package("fontconfig")
             envs.UUID_CFLAGS = "-I" .. package:dep("util-linux"):installdir("include")
         end
         table.insert(configs, "--enable-shared=no")
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
         autoconf.install(package, configs, {envs = envs})
     end)
 
