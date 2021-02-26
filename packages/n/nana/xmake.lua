@@ -34,6 +34,7 @@ package("nana")
     end)
 
     on_install("linux", "windows", function (package)
+        -- The 'and' operator, which is an equivalent of '&&', is not supported by MSVC
         if package:is_plat("windows") then
             local file_name = path.join(os.curdir(), "source", "system", "split_string.cpp")
             io.gsub(file_name, " and ", " && ")
@@ -42,18 +43,6 @@ package("nana")
         local configs = {"-DNANA_CMAKE_ENABLE_JPEG=OFF", "-DNANA_CMAKE_ENABLE_PNG=OFF", "-DBUILD_SHARED_LIBS=OFF"}
         if package:config("nana_filesystem_force") then
             table.insert(configs, "-DNANA_CMAKE_NANA_FILESYSTEM_FORCE=ON")
-        end
-        if package:is_plat("windows") then
-            local cmake_vsr = "MultiThreaded"
-            local pvsr = package:config("vs_runtime")
-            if pvsr == "MTd" then
-                cmake_vsr = "MultiThreadedDebug"
-            elseif pvsr == "MD" then
-                cmake_vsr = "MultiThreadedDLL"
-            elseif pvsr == "MDd" then
-                cmake_vsr = "MultiThreadedDebugDLL"
-            end
-            table.insert(configs, "-DMSVC_RUNTIME_LIBRARY=" .. cmake_vsr)
         end
         import("package.tools.cmake").build(package, configs, {buildir = "build_xmake"})
 
