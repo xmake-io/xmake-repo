@@ -23,8 +23,8 @@ package("nana")
         add_syslinks("ole32", "shell32", "kernel32", "user32", "gdi32", "winspool", "comdlg32", "advapi32")
         add_defines("_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING")
     elseif is_plat("linux") then
-        add_deps("libxcursor")
-        add_syslinks("pthread", "fontconfig", "Xft")
+        add_deps("libxcursor", "libxft", "fontconfig")
+        add_syslinks("pthread")
     end
 
     on_load("linux", "windows", function (package)

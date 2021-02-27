@@ -26,7 +26,6 @@ jobs:
           dnf -y install perl
           dnf -y install libffi-devel
           dnf -y install zlib-devel
-          dnf -y install libxft-dev
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
