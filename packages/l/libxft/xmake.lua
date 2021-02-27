@@ -1,5 +1,5 @@
 package("libxft")
-
+ 
     set_homepage("https://www.x.org/")
     set_description("X.Org: X FreeType library")
     set_license("MIT")
