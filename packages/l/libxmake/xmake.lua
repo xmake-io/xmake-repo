@@ -9,6 +9,7 @@ package("libxmake")
              "https://gitlab.com/tboox/xmake.git")
 
     add_versions("v2.3.3", "851e01256c89cb9c86b6bd7327831b45809a3255daa234d3162b1db061ca44ae")
+    add_versions("v2.5.1", "809347dcd08659490c71a883198118e5484b271c452c02feb4c67551ef56c320")
 
     add_configs("curses",   { description = "Enable curses library.", default = false, type = "boolean"})
     add_configs("readline", { description = "Enable readline library.", default = false, type = "boolean"})
@@ -45,6 +46,9 @@ package("libxmake")
         end
         if package:debug() then
             package:add("defines", "__tb_debug__")
+        end
+        if package:version():ge("2.5.1") then
+            package:add("links", "lua-cjson")
         end
     end)
 
