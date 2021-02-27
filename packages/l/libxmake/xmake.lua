@@ -11,7 +11,6 @@ package("libxmake")
     add_versions("v2.3.3", "851e01256c89cb9c86b6bd7327831b45809a3255daa234d3162b1db061ca44ae")
     add_versions("v2.5.1", "809347dcd08659490c71a883198118e5484b271c452c02feb4c67551ef56c320")
 
-    add_configs("curses",   { description = "Enable curses library.", default = false, type = "boolean"})
     add_configs("readline", { description = "Enable readline library.", default = false, type = "boolean"})
 
     add_includedirs("include", "include/luajit")
@@ -33,13 +32,11 @@ package("libxmake")
     end
 
     on_load(function (package)
-        if package:config("curses") then
-            package:add("links", "lcurses")
-            if package:is_plat("windows") then
-                package:add("links", "pdcurses")
-            else
-                package:add_deps("ncurses")
-            end
+        package:add("links", "lcurses")
+        if package:is_plat("windows") then
+            package:add("links", "pdcurses")
+        else
+            package:add("deps", "ncurses")
         end
         if package:config("readline") then
             package:add("links", "readline")
@@ -52,7 +49,7 @@ package("libxmake")
         end
     end)
 
-    on_install("linux", "macosx", "windows", "msys", "android", function (package)
+    on_install("linux", "macosx", "windows", "mingw", function (package)
         local configs = {"--onlylib=y"}
         if package:is_plat("windows") then
             table.insert(configs, "--pdcurses=" .. (package:config("curses") and "y" or "n"))
