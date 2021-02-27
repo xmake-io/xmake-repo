@@ -22,7 +22,7 @@ package("bzip2")
 
     on_install("macosx", "linux", function (package)
         local configs = {}
-        if package:config("shared") then
+        if package:config("pic") ~= false then
             table.insert(configs, "CFLAGS=-fPIC")
         end
         io.gsub("Makefile", "PREFIX=.-\n", "PREFIX=" .. package:installdir() .. "\n")
