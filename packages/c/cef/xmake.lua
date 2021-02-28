@@ -4,8 +4,15 @@ package("cef")
     set_description("Chromium Embedded Framework (CEF). A simple framework for embedding Chromium-based browsers in other applications.")
     set_license("BSD-3-Clause")
 
-    add_versions("88.2.9", "86c01e38e7b7d59fed8a1e1ab2c3bfbcc1db42e21f8a6e6feb4061b2af7b1b7d")
-    add_versions("88.2.1", "8ed01da6327258536c61ada46e14157149ce727e7729ec35a30b91b3ad3cf555")
+    if is_plat("windows") then
+        if is_arch("x64") then
+            add_versions("88.2.9", "86c01e38e7b7d59fed8a1e1ab2c3bfbcc1db42e21f8a6e6feb4061b2af7b1b7d")
+            add_versions("88.2.1", "8ed01da6327258536c61ada46e14157149ce727e7729ec35a30b91b3ad3cf555")
+        else
+            add_versions("88.2.9", "90c15421d6d7b970ca839b746d8e85c09f449ae37d87d07f42dd45dfe16df455")
+            add_versions("88.2.1", "f608e4028478d4c87541c679f5cfe42bda0d459a80ee26acfe93f634c25e96ab")
+        end
+    end
 
     set_urls("https://cef-builds.spotifycdn.com/cef_binary_$(version).tar.bz2", {version = function (version)
         if version:eq("88.2.1") then
