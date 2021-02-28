@@ -6,15 +6,14 @@ package("tclap")
     set_urls("https://netcologne.dl.sourceforge.net/project/tclap/tclap-$(version).tar.bz2")
     add_versions("1.4.0-rc1", "33e18c7828f76a9e5f2a00afe575156520e383693059ca9bc34ff562927e20c6")
 
-    -- NOTE it could be useful to patch CMakeLists.txt
-    -- in order to avoid building examples
-
-    -- python3 is required by the tests module
-    add_deps("cmake", "python 3.*")
+    add_deps("cmake")
 
     on_install(function (package)
-        -- We don't want to build the doc
-        local configs = {"-DBUILD_DOC=false"}
+        io.replace("CMakeLists.txt", "add_subdirectory(docs)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
+
+        local configs = {}
         import("package.tools.cmake").install(package, configs)
     end)
 
