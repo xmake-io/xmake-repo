@@ -105,11 +105,24 @@ package("python")
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
 
         -- add openssl libs path for detecting
-        local openssl_dir = package:dep("openssl"):installdir()
-        if package:version():ge("3.0") then
-            table.insert(configs, "--with-openssl=" .. openssl_dir)
-        else
-            io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+        local openssl_dir
+        local openssl = package:dep("openssl"):fetch()
+        if openssl then
+            for _, linkdir in ipairs(openssl.linkdirs) do
+                if path.filename(linkdir) == "lib" then
+                    openssl_dir = path.directory(linkdir)
+                    if openssl_dir then
+                        break
+                    end
+                end
+            end
+        end
+        if openssl_dir then
+            if package:version():ge("3.0") then
+                table.insert(configs, "--with-openssl=" .. openssl_dir)
+            else
+                io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+            end
         end
 
         -- allow python modules to use ctypes.find_library to find xmake's stuff
