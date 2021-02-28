@@ -33,6 +33,7 @@ package("python2")
     end
 
     if is_host("linux") then
+        add_deps("libffi", "zlib", {host = true})
         add_syslinks("util", "pthread", "dl")
     end
 
@@ -79,11 +80,24 @@ package("python2")
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
 
         -- add openssl libs path for detecting
-        local openssl_dir = package:dep("openssl"):installdir()
-        io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+        local openssl_dir
+        local openssl = package:dep("openssl"):fetch()
+        if openssl then
+            for _, linkdir in ipairs(openssl.linkdirs) do
+                if path.filename(linkdir) == "lib" then
+                    openssl_dir = path.directory(linkdir)
+                    if openssl_dir then
+                        break
+                    end
+                end
+            end
+        end
+        if openssl_dir then
+            io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+        end
 
         -- allow python modules to use ctypes.find_library to find xmake's stuff
-        if is_host("macosx") then
+        if package:is_plat("macosx") then
             io.gsub("Lib/ctypes/macholib/dyld.py", "DEFAULT_LIBRARY_FALLBACK = %[", format("DEFAULT_LIBRARY_FALLBACK = [ '%s/lib',", package:installdir()))
         end
 
@@ -150,6 +164,33 @@ package("python2")
         end
         if #ldflags > 0 then
             table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
+        end
+
+        -- add zlib to fix `No module named 'zlib'`
+        local linkdirs = {}
+        local includedirs = {}
+        if package:is_plat("linux") then
+            local zlib = package:dep("zlib"):fetch({external = false})
+            if zlib then
+                table.join2(linkdirs, zlib.linkdirs)
+                table.join2(includedirs, zlib.includedirs)
+            end
+            -- add libffi to fix `No module named '_ctypes'`
+            local libffi = package:dep("libffi"):fetch({external = false})
+            if libffi then
+                table.join2(linkdirs, libffi.linkdirs)
+                table.join2(includedirs, libffi.includedirs)
+            end
+        end
+        if #linkdirs > 0 and #includedirs > 0 then
+            io.replace("setup.py", "    def detect_modules(self):", format([[    def detect_modules(self):
+        linkdirs = ['%s']
+        includedirs = ['%s']
+        for includedir in includedirs:
+            add_dir_to_list(self.compiler.include_dirs, includedir)
+        for linkdir in linkdirs:
+            add_dir_to_list(self.compiler.library_dirs, linkdir)
+]], table.concat(linkdirs, "', '"), table.concat(includedirs, "', '")), {plain = true})
         end
 
         -- unset these so that installing pip and setuptools puts them where we want
