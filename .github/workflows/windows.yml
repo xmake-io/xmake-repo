@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest]
-        kind: [static, shared]
+        kind: [shared]
         arch: [x64, x86]
         vs_runtime: [MT]
 
