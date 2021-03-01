@@ -49,7 +49,7 @@ package("libxmake")
         end
     end)
 
-    on_install("linux", "macosx", "windows", "mingw", function (package)
+    on_install("linux", "macosx", "windows", function (package)
         local configs = {"--onlylib=y"}
         if package:is_plat("windows") then
             table.insert(configs, "--pdcurses=" .. (package:config("curses") and "y" or "n"))
