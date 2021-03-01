@@ -12,9 +12,7 @@ package("tclap")
         io.replace("CMakeLists.txt", "add_subdirectory(docs)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
-
-        local configs = {}
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package)
     end)
 
     on_test(function (package)
