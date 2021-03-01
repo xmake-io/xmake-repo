@@ -7,10 +7,12 @@ package("libsdl")
         set_urls("https://www.libsdl.org/release/SDL2-devel-$(version)-VC.zip")
         add_versions("2.0.8", "68505e1f7c16d8538e116405411205355a029dcf2df738dbbc768b2fe95d20fd")
         add_versions("2.0.12", "00c55a597cebdb9a4eb2723f2ad2387a4d7fd605e222c69b46099b15d5d8b32d")
+        add_versions("2.0.14", "232071cf7d40546cde9daeddd0ec30e8a13254c3431be1f60e1cdab35a968824")
     else
         set_urls("https://www.libsdl.org/release/SDL2-$(version).zip")
         add_versions("2.0.8", "e6a7c71154c3001e318ba7ed4b98582de72ff970aca05abc9f45f7cbdc9088cb")
         add_versions("2.0.12", "476e84d6fcbc499cd1f4a2d3fd05a924abc165b5d0e0d53522c9604fe5a021aa")
+        add_versions("2.0.14", "2c1e870d74e13dfdae870600bfcb6862a5eab4ea5b915144aff8d75a0f9bf046")
     end
 
     if is_plat("macosx") then
@@ -44,7 +46,12 @@ package("libsdl")
         import("package.tools.autoconf").install(package, configs)
     end)
 
+    on_load(function (package)
+        if package:is_plat("macosx") and package:version():ge("2.0.14") then
+            package:add("frameworks", "CoreHaptics", "GameController")
+        end
+    end)
+
     on_test(function (package)
-        local configs = package:is_plat("windows") and {ldflags = "/SUBSYSTEM:CONSOLE"}
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = configs}))
+        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)

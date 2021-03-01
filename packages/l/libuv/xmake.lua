@@ -6,6 +6,7 @@ package("libuv")
     set_urls("https://github.com/libuv/libuv/archive/$(version).zip",
              "https://github.com/libuv/libuv.git")
 
+    add_versions("v1.40.0", "61366e30d8484197dc9e4a94dbd98a0ba52fb55cb6c6d991af1f3701b10f322b")
     add_versions("v1.28.0", "e7b3caea3388a02f2f99e61f9a71ed3e3cbb88bbb4b0b630d609544099b40674")
     add_versions("v1.27.0", "02d4a643d5de555168f2377961aff844c3037b44c9d46eb2019113af62b3cf0a")
     add_versions("v1.26.0", "b9b6ae976685a406e63d88084d99fc7cc792c3226605a840fea87a450fe26f16")
@@ -23,24 +24,46 @@ package("libuv")
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
-    on_load("windows", "mingw@linux,macosx", function (package)
-        if package:is_plat("windows") then
-            package:add("links", "uv" .. (package:config("shared") and "" or "_a"))
-        end
-        package:add("syslinks", "advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
-    end)
-
-    if is_plat("linux") then
-        add_syslinks("pthread")
+    if is_plat("macosx", "iphoneos") then
+        add_frameworks("CoreFoundation")
+    elseif is_plat("linux") then
+        add_syslinks("pthread", "dl")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
     end
 
+    on_load("windows", function (package)
+        package:add("links", "uv" .. (package:config("shared") and "" or "_a"))
+        if package:config("shared") then
+            package:add("defines", "USING_UV_SHARED")
+        end
+        if package:version():ge("1.40.0") then
+            package:add("linkdirs", path.join("lib", package:debug() and "Debug" or "Release"))
+        end
+    end)
+
     on_install("windows", function (package)
-        import("package.tools.cmake").install(package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        import("package.tools.cmake").install(package, configs)
         os.cp("include", package:installdir())
     end)
 
     on_install("macosx", "linux", "iphoneos", "android@linux,macosx", "mingw@linux,macosx", function (package)
-        import("package.tools.autoconf").install(package, {"--enable-shared=no"})
+        local configs = {}
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared=yes")
+        else
+            table.insert(configs, "--enable-shared=no")
+        end
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
+        if package:version():ge("1.40.0") and package:is_plat("iphoneos") then
+            -- fix CoreFoundation type definition
+            io.replace("src/unix/darwin.c", "!TARGET_OS_IPHONE", "1", {plain = true})
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

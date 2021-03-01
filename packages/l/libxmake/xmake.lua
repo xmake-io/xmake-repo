@@ -9,8 +9,8 @@ package("libxmake")
              "https://gitlab.com/tboox/xmake.git")
 
     add_versions("v2.3.3", "851e01256c89cb9c86b6bd7327831b45809a3255daa234d3162b1db061ca44ae")
+    add_versions("v2.5.2", "682c2908b80da7703d6b0213589274d41f76d2f3bc8bfe2eac5c5f625f1109b9")
 
-    add_configs("curses",   { description = "Enable curses library.", default = false, type = "boolean"})
     add_configs("readline", { description = "Enable readline library.", default = false, type = "boolean"})
 
     add_includedirs("include", "include/luajit")
@@ -32,13 +32,11 @@ package("libxmake")
     end
 
     on_load(function (package)
-        if package:config("curses") then
-            package:add("links", "lcurses")
-            if package:is_plat("windows") then
-                package:add("links", "pdcurses")
-            else
-                package:add_deps("ncurses")
-            end
+        package:add("links", "lcurses")
+        if package:is_plat("windows") then
+            package:add("links", "pdcurses")
+        else
+            package:add("deps", "ncurses")
         end
         if package:config("readline") then
             package:add("links", "readline")
@@ -46,9 +44,12 @@ package("libxmake")
         if package:debug() then
             package:add("defines", "__tb_debug__")
         end
+        if package:version():ge("2.5.1") then
+            package:add("links", "lua-cjson")
+        end
     end)
 
-    on_install("linux", "macosx", "windows", "msys", "android", function (package)
+    on_install("linux", "macosx", "windows", function (package)
         local configs = {"--onlylib=y"}
         if package:is_plat("windows") then
             table.insert(configs, "--pdcurses=" .. (package:config("curses") and "y" or "n"))

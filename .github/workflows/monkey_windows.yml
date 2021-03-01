@@ -1,0 +1,27 @@
+name: Monkey (Windows)
+
+on:
+  schedule: # execute every 24 hours
+    - cron: "0 */24 * * *"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest]
+        kind: [static, shared]
+        arch: [x64, x86]
+        vs_runtime: [MT, MD]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: branch@dev
+
+      - name: Tests
+        run: |
+          xmake l ./scripts/monkey.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --vs_sdkver=10.0.19041.0
+

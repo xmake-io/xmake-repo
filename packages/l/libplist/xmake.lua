@@ -14,7 +14,7 @@ package("libplist")
         add_syslinks("pthread")
     end
 
-    on_install("macosx", "linux", "mingw", "iphoneos", "cross", function (package)
+    on_install("macosx", "linux", "mingw@macosx", "iphoneos", "cross", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--without-cython"}
@@ -24,7 +24,7 @@ package("libplist")
             table.insert(configs, "--enable-shared=no")
         end
         local cxflags
-        if package:is_plat("linux") and not package:config("shared") then
+        if package:is_plat("linux") and package:config("pic") ~= false then
             cxflags = "-fPIC"
         end
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})

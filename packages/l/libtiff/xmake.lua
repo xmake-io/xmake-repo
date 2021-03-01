@@ -8,17 +8,22 @@ package("libtiff")
     add_versions("4.1.0", "5d29f32517dadb6dbcd1255ea5bbc93a2b54b94fbf83653b4d65c7d6775b8634")
 
     add_deps("zlib")
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_deps("cmake")
     end
 
-    on_install("windows", function (package)
-        local configs = {}
+    on_install("windows", "mingw", function (package)
+        local configs = {"-Dzstd=OFF", "-Dlzma=OFF", "-Dwebp=OFF", "-Djpeg12=OFF", "-Djbig=OFF", "-Dpixarlog=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        io.replace("CMakeLists.txt", "add_subdirectory(contrib)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(man)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(html)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(test)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(tools)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {"--disable-dependency-tracking", "--disable-lzma", "--disable-webp", "--disable-jpeg", "--disable-zstd", "--disable-old-jpeg", "--disable-jbig", "--disable-pixarlog", "--without-x"}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")

@@ -5,7 +5,7 @@ package("opencv")
 
     add_urls("https://github.com/opencv/opencv/archive/$(version).tar.gz",
              "https://github.com/opencv/opencv.git")
-
+    add_versions("4.5.1", "e27fe5b168918ab60d58d7ace2bd82dd14a4d0bd1d3ae182952c2113f5637513")
     add_versions("4.2.0", "9ccb2192d7e8c03c58fee07051364d94ed7599363f3b0dce1c5e6cc11c1bb0ec")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
@@ -18,16 +18,17 @@ package("opencv")
         add_syslinks("pthread", "dl")
     end
 
+    add_resources("4.5.1", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.1.tar.gz", "12c3b1ddd0b8c1a7da5b743590a288df0934e5cef243e036ca290c2e45e425f5")
     add_resources("4.2.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.2.0.tar.gz", "8a6b5661611d89baa59a26eb7ccf4abb3e55d73f99bb52d8f7c32265c8a43020")
     add_resources("3.4.9", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz", "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57")
 
-    on_load(function (package)
+    on_load("linux", "macosx", function (package)
         if package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
         end
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "windows", function (package)
         local configs = {"-DCMAKE_OSX_DEPLOYMENT_TARGET=",
                          "-DBUILD_JASPER=OFF",
                          "-DBUILD_JPEG=ON",

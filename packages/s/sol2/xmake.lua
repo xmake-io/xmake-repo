@@ -6,6 +6,7 @@ package("sol2")
     set_urls("https://github.com/ThePhD/sol2/archive/$(version).tar.gz",
              "https://github.com/ThePhD/sol2.git")
 
+    add_versions("v3.2.2", "141790dae0c1821dd2dbac3595433de49ba72545845efc3ec7d88de8b0a3b2da")
     add_versions("v3.2.1", "b10f88dc1246f74a10348faef7d2c06e2784693307df74dcd87c4641cf6a6828")
 
     add_configs("includes_lua", {description = "Should this package includes the Lua package (set to false if you're shipping a custom Lua)", default = true, type = "boolean"})
@@ -24,15 +25,17 @@ package("sol2")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <sol/sol.hpp>
-            #include <cassert>
-            void test() {
-                sol::state lua;
-                int x = 0;
-                lua.set_function("beep", [&x]{ ++x; });
-                lua.script("beep()");
-                assert(x == 1);
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+        if package:config("includes_lua") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <sol/sol.hpp>
+                #include <cassert>
+                void test() {
+                    sol::state lua;
+                    int x = 0;
+                    lua.set_function("beep", [&x]{ ++x; });
+                    lua.script("beep()");
+                    assert(x == 1);
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
     end)

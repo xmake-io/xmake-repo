@@ -87,7 +87,6 @@ rule("buildvm")
                 march = "elfasm"
             end
             os.vrunv(buildvm_bin, {"-m", march, "-o", lj_vm_asm})
-            print(compiler.compcmd(lj_vm_asm, lj_vm_obj, {target = target}))
             compiler.compile(lj_vm_asm, lj_vm_obj, {target = target})
             table.join2(target:objectfiles(), lj_vm_obj)
         end

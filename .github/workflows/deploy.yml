@@ -28,7 +28,11 @@ jobs:
 
       - name: Installation
         run: |
-          sudo apt-get install -y nodejs npm
+          sudo apt update -y
+          sudo apt install -y wget
+          wget https://nodejs.org/dist/v14.15.4/node-v14.15.4-linux-x64.tar.xz
+          tar -xvf node-v14.15.4-linux-x64.tar.xz
+          export PATH=`pwd`/node-v14.15.4-linux-x64/bin:$PATH
           sudo npm install markdown-to-html -g
 
       - name: Publish

@@ -11,6 +11,8 @@ package("mhook")
     add_patches("2.5.1", "https://github.com/apriorit/mhook/commit/5ccb00a9c89280bfff7ce595873a9923415172a7.patch",
                         "56561718ccf05c8c42fff05e6531cfa525cf93e0c9fa3bd226e74ef19eae1a1f")
 
+    add_deps("cmake")
+
     on_install("windows", function (package)
         local configs = {}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

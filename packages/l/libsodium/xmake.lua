@@ -4,15 +4,18 @@ package("libsodium")
     set_description("Sodium is a new, easy-to-use software library for encryption, decryption, signatures, password hashing and more.")
 
     if is_plat("windows") then
-        set_urls("https://download.libsodium.org/libsodium/releases/libsodium-$(version)-stable-msvc.zip")
-        add_versions("1.0.18", "5d313795d13fc99fb925c4d49c16f1a80779f69e49b58a9a4260bd3b150d45b7")
+        set_urls("https://download.libsodium.org/libsodium/releases/libsodium-$(version)-msvc.zip",
+                 "https://github.com/jedisct1/libsodium/releases/download/$(version)-RELEASE/libsodium-$(version)-msvc.zip")
+        add_versions("1.0.18", "c1d48d85c9361e350931ffe5067559cd7405a697c655d26955fb568d1084a5f4")
     elseif is_plat("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool", "pkg-config")
-        set_urls("https://download.libsodium.org/libsodium/releases/libsodium-$(version)-stable.tar.gz")
-        add_versions("1.0.18", "91441b13c965e241cd64bb42823f1f2d882f08f8f40f1716cda17df2b3450af2")
+        set_urls("https://download.libsodium.org/libsodium/releases/libsodium-$(version).tar.gz",
+                 "https://github.com/jedisct1/libsodium/releases/download/$(version)-RELEASE/libsodium-$(version).tar.gz")
+        add_versions("1.0.18", "6f504490b342a4f8a4c4a02fc9b866cbef8622d5df4e5452b46be121e46636c1")
     elseif is_plat("mingw") then
-        set_urls("https://download.libsodium.org/libsodium/releases/libsodium-$(version)-stable-mingw.tar.gz")
-        add_versions("1.0.18", "d2f1918e198cd86b9e6ba05b2f5c2dc86753875ea3ee887892767231c6b7e121")
+        set_urls("https://download.libsodium.org/libsodium/releases/libsodium-$(version)-mingw.tar.gz",
+                 "https://github.com/jedisct1/libsodium/releases/download/$(version)-RELEASE/libsodium-$(version)-mingw.tar.gz")
+        add_versions("1.0.18", "e499c65b1c511cbc6700e436deb3771c3baa737981114c9e9f85f2ec90176861")
     end
 
     on_load(function (package)
@@ -20,7 +23,7 @@ package("libsodium")
             package:add("defines", "SODIUM_STATIC")
         end
     end)
-    
+
     on_install("windows", function (package)
         os.cp("include", package:installdir())
         os.cp(path.join((package:is_arch("x64") and "x64" or "Win32"), (package:debug() and "Debug" or "Release"), "v142", (package:config("shared") and "dynamic" or "static"), "*"), package:installdir("lib"))

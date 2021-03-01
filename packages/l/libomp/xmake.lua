@@ -13,7 +13,7 @@ package("libomp")
         add_syslinks("pthread", "dl")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "cross", function (package)
         local configs = {"-DLIBOMP_INSTALL_ALIASES=OFF"}
         local shared = package:config("shared")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (shared and "ON" or "OFF"))

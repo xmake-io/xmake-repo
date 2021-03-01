@@ -1,0 +1,28 @@
+diff --git a/PQP_v1.3/src/GetTime.h b/PQP_v1.3/src/GetTime.h
+index 5529a08..62521f4 100644
+--- a/PQP_v1.3/src/GetTime.h
++++ b/PQP_v1.3/src/GetTime.h
+@@ -41,7 +41,7 @@
+ #ifndef PQP_GETTIME_H
+ #define PQP_GETTIME_H
+ 
+-#ifdef WIN32
++#ifdef _WIN32
+ 
+   #include <time.h>
+   #include <sys/timeb.h>
+diff --git a/PQP_v1.3/src/PQP_Compile.h b/PQP_v1.3/src/PQP_Compile.h
+index f76c981..a5e36b1 100644
+--- a/PQP_v1.3/src/PQP_Compile.h
++++ b/PQP_v1.3/src/PQP_Compile.h
+@@ -44,10 +44,6 @@
+ // prevents compiler warnings when PQP_REAL is float
+ 
+ #include <math.h>
+-inline float sqrt(float x) { return (float)sqrt((double)x); }
+-inline float cos(float x) { return (float)cos((double)x); }
+-inline float sin(float x) { return (float)sin((double)x); }
+-inline float fabs(float x) { return (float)fabs((double)x); }
+ 
+ //-------------------------------------------------------------------------
+ //

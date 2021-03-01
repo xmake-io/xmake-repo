@@ -1,7 +1,8 @@
 package("chipmunk2d")
 
     set_homepage("https://chipmunk-physics.net/")
-    set_description(" A fast and lightweight 2D game physics library.")
+    set_description("A fast and lightweight 2D game physics library.")
+    set_license("MIT")
 
     set_urls("https://github.com/slembcke/Chipmunk2D/archive/Chipmunk-$(version).tar.gz",
              "https://github.com/slembcke/Chipmunk2D.git")

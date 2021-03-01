@@ -6,6 +6,7 @@ package("spirv-reflect")
 
     add_urls("https://github.com/KhronosGroup/SPIRV-Reflect.git")
     add_versions("1.2.154+1", "5de48fe8d3ef434e846d64ed758adc5d26335ae5")
+    add_versions("1.2.162+0", "481e34d666031eae28423f3b723a1a8c717d7636")
 
     add_deps("spirv-headers")
 

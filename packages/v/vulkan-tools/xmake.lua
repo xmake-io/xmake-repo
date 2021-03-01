@@ -5,6 +5,7 @@ package("vulkan-tools")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/Vulkan-Tools/archive/sdk-$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
+    add_versions("1.2.162+0", "8324a6dfd1bc20d4fad45c4ea56357d8354fc03e3e4529d0a4919f124d9e6106")
     add_versions("1.2.154+0", "c7d66ec1f5fe5c0a13e487fe5c6eefd3a954522c0b05f06bd2ae41792aeea272")
 
     add_deps("cmake", "ninja")

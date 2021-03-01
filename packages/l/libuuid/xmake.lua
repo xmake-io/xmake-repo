@@ -9,7 +9,16 @@ package("libuuid")
     add_versions("1.0.3", "46af3275291091009ad7f1b899de3d0cea0252737550e7919d17237997db5644")
 
     on_install("linux", "macosx", function(package)
-        import("package.tools.autoconf").install(package)
+        local configs = {}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function(package)

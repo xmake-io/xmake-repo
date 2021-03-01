@@ -13,7 +13,7 @@ package("giflib")
         add_deps("cgetopt")
     end
 
-    on_install("linux", "macosx", "windows", "mingw", "android", "iphoneos", function (package)
+    on_install("linux", "macosx", "windows", "mingw", "android", "iphoneos", "bsd", function (package)
         local lib_sources = {"dgif_lib.c", "egif_lib.c", "gifalloc.c", "gif_err.c", "gif_font.c", "gif_hash.c", "openbsd-reallocarray.c"}
         local kind = "static"
         if package:config("shared") then
@@ -44,6 +44,10 @@ package("giflib")
         if package:config("utils") then
             local util_table = {"gif2rgb", "gifbuild", "gifclrmp", "giffix", "giftext", "giftool"}
             for _, util in ipairs(util_table) do
+                if package:is_plat("windows") then
+                    -- fix unresolved external symbol snprintf before vs2013
+                    io.replace(util .. ".c", "snprintf", "_snprintf")
+                end
                 xmake_lua = xmake_lua .. string.format([[
                     target("%s")
                         set_kind("binary")

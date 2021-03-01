@@ -22,6 +22,8 @@ package("cairo")
     end
 
     on_install("windows", function (package)
+        import("core.tool.toolchain")
+        local runenvs = toolchain.load("msvc"):runenvs()
         io.gsub("build/Makefile.win32.common", "%-MD", "-" .. package:config("vs_runtime"))
         io.gsub("build/Makefile.win32.common", "mkdir %-p", "xmake l mkdir")
         io.gsub("build/Makefile.win32.common", "dirname", "xmake l path.directory")
@@ -39,7 +41,7 @@ package("cairo")
         if zlib then
             io.gsub("build/Makefile.win32.common", "%$%(ZLIB_CFLAGS%)", "-I\"" .. zlib:installdir("include") .. "\"")
         end
-        os.vrunv("make", {"-f", "Makefile.win32", "CFG=" .. (package:debug() and "debug" or "release")})
+        os.vrunv("make", {"-f", "Makefile.win32", "CFG=" .. (package:debug() and "debug" or "release")}, {envs = runenvs})
         os.cp("src/*.h", package:installdir("include/cairo"))
         os.cp("src/**.lib", package:installdir("lib"))
     end)

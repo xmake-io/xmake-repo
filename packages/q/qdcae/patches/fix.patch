@@ -1,0 +1,68 @@
+diff --git a/qd/cae/dyna_cpp/dyna/binout/lsda/l2amain.c b/qd/cae/dyna_cpp/dyna/binout/lsda/l2amain.c
+index 1d3b972..635187c 100644
+--- a/qd/cae/dyna_cpp/dyna/binout/lsda/l2amain.c
++++ b/qd/cae/dyna_cpp/dyna/binout/lsda/l2amain.c
+@@ -1,10 +1,16 @@
+ #include <ctype.h>
++#ifdef __APPLE__
++#include <stdlib.h>
++#else
+ #include <malloc.h>
++#endif
+ #include <math.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#if !defined _WIN32 && !defined WIN64 && !defined MPPWIN
+ #include <unistd.h>
++#endif
+ 
+ #include "l2a_version.h"
+ #include "lsda.h"
+@@ -192,7 +198,7 @@ main(int argc, char* argv[])
+   int target = 0;
+   int nopen, first, last;
+   char* toopen[1024];
+-#ifdef MPPWIN
++#if defined _WIN32 || defined WIN64 || defined MPPWIN
+   int optind = 1;
+ #else
+   extern int optind, opterr, optopt;
+@@ -206,7 +212,7 @@ main(int argc, char* argv[])
+   }
+ 
+   use_jobid = 0;
+-#ifdef MPPWIN
++#if defined _WIN32 || defined WIN64 || defined MPPWIN
+   for (i = 1; i < argc; i++) {
+     if (!strcmp(argv[i], "-h")) {
+       print_help(argv[0]);
+@@ -248,7 +254,7 @@ main(int argc, char* argv[])
+   */
+   nopen = 0;
+   for (i = optind; i < argc; i++) {
+-#ifdef MPPWIN
++#if defined _WIN32 || defined WIN64 || defined MPPWIN
+     if (!strcmp(argv[i], "-h"))
+       continue;
+     if (!strcmp(argv[i], "-j"))
+diff --git a/qd/cae/dyna_cpp/dyna/keyfile/ElementKeyword.hpp b/qd/cae/dyna_cpp/dyna/keyfile/ElementKeyword.hpp
+index 3affbb0..bbe6407 100644
+--- a/qd/cae/dyna_cpp/dyna/keyfile/ElementKeyword.hpp
++++ b/qd/cae/dyna_cpp/dyna/keyfile/ElementKeyword.hpp
+@@ -48,13 +48,13 @@ public:
+     T _id,
+     T _part_id,
+     const std::vector<int32_t>& _node_ids,
+-    const std::vector<std::string>& _additional_card_data = "");
++    const std::vector<std::string>& _additional_card_data = {});
+   template<typename T>
+   std::shared_ptr<Element> add_elementByNodeIndex(
+     T _id,
+     T _part_id,
+     const std::vector<size_t>& _node_indexes,
+-    const std::vector<std::string>& _additional_card_data = "");
++    const std::vector<std::string>& _additional_card_data = {});
+   std::vector<std::shared_ptr<Element>> get_elements();
+   std::string str() override;
+ };

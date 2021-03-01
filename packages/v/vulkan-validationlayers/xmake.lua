@@ -5,6 +5,7 @@ package("vulkan-validationlayers")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/sdk-$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
+    add_versions("1.2.162+0", "80aa9e180b3900598121d7a3ea613665b99aae21bb40268ecafd82df8016c6f5")
     add_versions("1.2.154+0", "8898ab05d0d8dec04fbba03d0ed2e79a1eb5c0382e5c89d4c737b45a6648f7f9")
 
     add_patches("1.2.154+0", "https://github.com/KhronosGroup/Vulkan-ValidationLayers/commit/9d3ef3258715573b17e8195855c76626600998be.patch", "1fa39483c345fbfb43b925e8410a55e58fa8a9776f9e5443c6e4ec994a554749")

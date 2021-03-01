@@ -6,6 +6,7 @@ package("spirv-tools")
 
     add_urls("https://github.com/KhronosGroup/SPIRV-Tools/archive/v$(version).tar.gz")
     add_versions("2020.5", "947ee994ba416380bd7ccc1c6377ac28a4802a55ca81ccc06796c28e84c00b71")
+    add_versions("2020.6", "de2392682df8def7ac666a2a320cd475751badf4790b01c7391b7644ecb550a3")
 
     add_patches("2020.5", "https://github.com/KhronosGroup/SPIRV-Tools/commit/a1d38174b1f7d2651c718ae661886d606cb50a32.patch", "2811faeef3ad53a83e409c8ef9879badcf9dc04fc3d98dbead7313514b819933")
 

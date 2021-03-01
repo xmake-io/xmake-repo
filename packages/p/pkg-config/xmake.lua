@@ -12,6 +12,9 @@ package("pkg-config")
 
     on_install("@macosx", "@linux", function (package)
         local pcpath = {"/usr/local/lib/pkgconfig", "/usr/lib/pkgconfig"}
+        if package:is_plat("linux") and package:is_arch("x86_64") then
+            table.insert(pcpath, "/usr/lib/x86_64-linux-gnu/pkgconfig")
+        end
         if is_host("macosx") then
             table.insert(pcpath, "/usr/local/Homebrew/Library/Homebrew/os/mac/pkgconfig/" .. macos.version():major() .. '.' .. macos.version():minor())
         end

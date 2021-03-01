@@ -7,14 +7,17 @@ package("gmp")
     add_urls("https://gmplib.org/download/gmp/gmp-$(version).tar.xz")
     add_versions("6.2.1", "fd4829912cddd12f84181c3451cc752be224643e87fac497b69edddadc49b4f2")
 
+    add_deps("autoconf")
+
     on_install("macosx", "linux", function (package)
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-            table.insert(configs, "--enable-static=no")
-        else
-            table.insert(configs, "--enable-static=yes")
-            table.insert(configs, "--enable-shared=no")
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs)
     end)

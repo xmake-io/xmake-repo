@@ -21,10 +21,11 @@ package("bzip2")
     end)
 
     on_install("macosx", "linux", function (package)
-        local configs = {"PREFIX=" .. package:installdir()}
-        if package:config("shared") then
+        local configs = {}
+        if package:config("pic") ~= false then
             table.insert(configs, "CFLAGS=-fPIC")
         end
+        io.gsub("Makefile", "PREFIX=.-\n", "PREFIX=" .. package:installdir() .. "\n")
         import("package.tools.make").install(package, configs)
     end)
 
