@@ -61,17 +61,30 @@ package("opencv")
                          "-DBUILD_opencv_python2=OFF",
                          "-DBUILD_opencv_python3=ON"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then
             import("lib.detect.find_path")
             local modulesdir = assert(find_path("modules", path.join(resourcedir, "*")), "modules not found!")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
         os.trycp("3rdparty/**/*.a", package:installdir("lib"))
+        if package:is_plat("windows") then
+            local instpath = path.join(os.curdir(), "build", "install", package:is_arch("x64") and "x64" or "x86", "vc*")
+            os.trycp(path.join(instpath, "bin", "**"), package:installdir("bin"))
+            if package:config("shared") then
+                os.trycp(path.join(instpath, "lib", "**"), package:installdir("lib"))
+            else
+                os.trycp(path.join(instpath, "staticlib", "**"), package:installdir("lib"))
+            end
+        end
     end)
 
     on_test(function (package)
+        if package:is_plat("windows") then
+            os.vrun("opencv_version")
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             void test(int argc, char** argv) {
@@ -79,6 +92,7 @@ package("opencv")
                 if (parser.has("help")) {
                     parser.printMessage();
                 }
+                cv::Mat image(3, 3, CV_8UC1);
                 std::cout << CV_VERSION << std::endl;
             }
         ]]}, {configs = {languages = "c++11"},
