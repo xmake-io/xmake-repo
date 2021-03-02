@@ -11,10 +11,10 @@ package("libhv")
     add_configs("http_server", {description = "compile http/server", default = true, type = "boolean"})
     add_configs("http_client", {description = "compile http/client", default = true, type = "boolean"})
     add_configs("consul",      {description = "compile consul", default = false, type = "boolean"})
-    add_configs("ipv6",        {description = "ipv6", default = false, type = "boolean"})
-    add_configs("uds",         {description = "Unix Domain Socket", default = false, type = "boolean"})
-    add_configs("windump",     {description = "Windows MiniDumpWriteDump", default = false, type = "boolean"})
-    add_configs("multimap",    {description = "MultiMap", default = false, type = "boolean"})
+    add_configs("ipv6",        {description = "enable ipv6", default = false, type = "boolean"})
+    add_configs("uds",         {description = "enable Unix Domain Socket", default = false, type = "boolean"})
+    add_configs("windump",     {description = "enable Windows MiniDumpWriteDump", default = false, type = "boolean"})
+    add_configs("multimap",    {description = "use MultiMap", default = false, type = "boolean"})
     add_configs("curl",        {description = "with curl library", default = false, type = "boolean"})
     add_configs("nghttp2",     {description = "with nghttp2 library", default = false, type = "boolean"})
     add_configs("openssl",     {description = "with openssl library", default = false, type = "boolean"})
@@ -25,6 +25,21 @@ package("libhv")
     end
 
     add_deps("cmake")
+
+    on_load(function (package)
+        if package:config("openssl") then
+            package:add("deps", "openssl")
+        elseif package:config("mbedtls") then
+            package:add("deps", "mbedtls")
+        elseif package:config("curl") then
+            package:add("deps", "libcurl")
+        elseif package:config("nghttp2") then
+            -- TODO
+        end
+        if package:is_plat("windows") and not package:config("shared") then
+            package:add("defines", "HV_STATICLIB")
+        end
+    end)
 
     on_install("windows", "linux", "macosx", "android", "iphoneos", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
@@ -46,7 +61,13 @@ package("libhv")
             local config_name = name:gsub("with_", ""):gsub("use_", ""):gsub("enable_", "")
             table.insert(configs, "-D" .. name:upper() .. "=" .. (package:config(config_name) and "ON" or "OFF"))
         end
-        import("package.tools.cmake").install(package, configs)
+        local packagedeps = {}
+        if package:config("openssl") then
+            table.insert(packagedeps, "openssl")
+        elseif package:config("mbedtls") then
+            table.insert(packagedeps, "mbedtls")
+        end
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function(package)
