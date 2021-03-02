@@ -27,6 +27,13 @@ package("libffi")
             table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs)
+        if package:is_plat("linux") and package:is_arch("x86_64") then
+            local lib64 = path.join(package:installdir(), "lib64")
+            if os.isdir(lib64) then
+                package:add("links", "ffi")
+                package:add("linkdirs", "lib64")
+            end
+        end
     end)
 
     on_test(function (package)
