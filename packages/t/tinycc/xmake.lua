@@ -21,7 +21,7 @@ package("tinycc")
         if opt.system then
             return import("lib.detect.find_tool")("tcc")
         end
-    end
+    end)
 
     on_install("windows", function (package)
         os.vcp("include", package:installdir())
