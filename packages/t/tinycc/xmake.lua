@@ -17,6 +17,12 @@ package("tinycc")
         add_versions("0.9.27", "de23af78fca90ce32dff2dd45b3432b2334740bb9bb7b05bf60fdbfc396ceb9c")
     end
 
+    on_fetch(function (package, opt)
+        if opt.system then
+            return import("lib.detect.find_tool")("tcc")
+        end
+    end
+
     on_install("windows", function (package)
         os.vcp("include", package:installdir())
         os.vcp("lib", package:installdir())
