@@ -6,44 +6,49 @@ package("libhv")
     add_urls("https://github.com/ithewei/libhv/archive/v$(version).zip")
     add_versions("1.0.0", "39adb77cc7addaba82b69fa9a433041c8288f3d9c773fa360162e3391dcf6a7b")
 
-    add_configs("BUILD_SHARED", {description = "build shared library", default = false, type = "boolean"})
-    add_configs("BUILD_STATIC", {description = "build static library", default = true, type = "boolean"})
-    add_configs("WITH_PROTOCOL", {description = "compile protocol", default = false, type = "boolean"})
-    add_configs("WITH_HTTP", {description = "compile http", default = true, type = "boolean"})
-    add_configs("WITH_HTTP_SERVER", {description = "compile http/server", default = true, type = "boolean"})
-    add_configs("WITH_HTTP_CLIENT", {description = "compile http/client", default = true, type = "boolean"})
-    add_configs("WITH_CONSUL", {description = "compile consul", default = false, type = "boolean"})
-    add_configs("ENABLE_IPV6", {description = "ipv6", default = false, type = "boolean"})
-    add_configs("ENABLE_UDS", {description = "Unix Domain Socket", default = false, type = "boolean"})
-    add_configs("ENABLE_WINDUMP", {description = "Windows MiniDumpWriteDump", default = false, type = "boolean"})
-    add_configs("USE_MULTIMAP", {description = "MultiMap", default = false, type = "boolean"})
-    add_configs("WITH_CURL", {description = "with curl library", default = false, type = "boolean"})
-    add_configs("WITH_NGHTTP2", {description = "with nghttp2 library", default = false, type = "boolean"})
-    add_configs("WITH_OPENSSL", {description = "with openssl library", default = false, type = "boolean"})
-    add_configs("WITH_MBEDTLS", {description = "with mbedtls library", default = false, type = "boolean"})
+    add_configs("protocol",    {description = "compile protocol", default = false, type = "boolean"})
+    add_configs("http",        {description = "compile http", default = true, type = "boolean"})
+    add_configs("http_server", {description = "compile http/server", default = true, type = "boolean"})
+    add_configs("http_client", {description = "compile http/client", default = true, type = "boolean"})
+    add_configs("consul",      {description = "compile consul", default = false, type = "boolean"})
+    add_configs("ipv6",        {description = "ipv6", default = false, type = "boolean"})
+    add_configs("uds",         {description = "Unix Domain Socket", default = false, type = "boolean"})
+    add_configs("windump",     {description = "Windows MiniDumpWriteDump", default = false, type = "boolean"})
+    add_configs("multimap",    {description = "MultiMap", default = false, type = "boolean"})
+    add_configs("curl",        {description = "with curl library", default = false, type = "boolean"})
+    add_configs("nghttp2",     {description = "with nghttp2 library", default = false, type = "boolean"})
+    add_configs("openssl",     {description = "with openssl library", default = false, type = "boolean"})
+    add_configs("mbedtls",     {description = "with mbedtls library", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread")
     end
 
     add_deps("cmake")
+
     on_install("windows", "linux", "macosx", "android", "iphoneos", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
-        table.insert(configs, "-DBUILD_SHARED=" .. ((package:config("shared") or package:config("BUILD_SHARED")) and "ON" or "OFF"))
-        table.insert(configs, "-DBUILD_STATIC=" .. ((package:config("static") or package:config("BUILD_STATIC")) and "ON" or "OFF"))
-        for name, enabled in pairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") then
-                table.insert(configs, "-D" .. name .. "=" .. (enabled and "ON" or "OFF"))
-            end
+        table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        for _, name in ipairs({"with_protocol",
+                               "with_http",
+                               "with_http_server",
+                               "with_http_client",
+                               "with_consul",
+                               "with_curl",
+                               "with_nghttp2",
+                               "with_openssl",
+                               "with_mbedtls",
+                               "enable_ipv6",
+                               "enable_uds",
+                               "enable_windump",
+                               "use_multimap"}) do
+            local config_name = name:gsub("with_", ""):gsub("use_", ""):gsub("enable_", "")
+            table.insert(configs, "-D" .. name:upper() .. "=" .. (package:config(config_name) and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function(package)
-        assert(package:check_csnippets({test = [[
-            #include <hv/hloop.h>
-            static void test() {
-                hloop_t* loop = hloop_new(0);            
-            }
-        ]]}, {includes = "hv/hloop.h"}))
+        assert(package:has_cfuncs("hloop_new", {includes = "hv/hloop.h"}))
     end)
