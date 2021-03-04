@@ -9,13 +9,17 @@ package("mpfr")
 
     add_deps("gmp")
     on_install("macosx", "linux", function (package)
-        local configs = {"--disable-dependency-tracking", "--with-pic"}
+        local configs = {"--disable-dependency-tracking"}
+        table.insert(configs, "--with-gmp=" .. package:dep("gmp"):installdir())
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
             table.insert(configs, "--enable-static=no")
         else
             table.insert(configs, "--enable-static=yes")
             table.insert(configs, "--enable-shared=no")
+        end
+        if package:config("pic") then
+            table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs)
     end)

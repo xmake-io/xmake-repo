@@ -10,12 +10,13 @@ package("cgal")
     add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("boost")
+    add_deps("boost", "eigen")
     if is_plat("macosx", "linux") then
         add_deps("gmp", "mpfr")
     end
 
     on_load("windows", function (package)
+        package:add("defines", "CGAL_NO_GMP")
         if not package:config("header_only") then
             raise("Non-header-only version is not supported yet!")
         end
@@ -35,7 +36,7 @@ package("cgal")
     end)
 
     on_test(function (package)
-        package:check_cxxsnippets({test = [[
+        assert(package:check_cxxsnippets({test = [[
             #include <vector>
             void test() {
                 using K = CGAL::Epick_d<CGAL::Dynamic_dimension_tag>;
@@ -43,5 +44,5 @@ package("cgal")
                 DT::Point p;
                 std::vector<DT::Point> points;
             }
-        ]]}, {config = {languages = "c++14"}, includes = {"CGAL/Epick_d.h", "CGAL/Delaunay_triangulation.h"}})
+        ]]}, {configs = {languages = "c++14"}, includes = {"CGAL/Epick_d.h", "CGAL/Delaunay_triangulation.h"}}))
     end)

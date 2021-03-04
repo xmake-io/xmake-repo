@@ -10,12 +10,14 @@ package("opencv")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
+    add_deps("zlib")
 
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL")
     elseif is_plat("linux") then
-        add_deps("zlib")
         add_syslinks("pthread", "dl")
+    elseif is_plat("windows") then
+        add_syslinks("gdi32", "user32", "advapi32", "comdlg32")
     end
 
     add_resources("4.5.1", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.1.tar.gz", "12c3b1ddd0b8c1a7da5b743590a288df0934e5cef243e036ca290c2e45e425f5")
