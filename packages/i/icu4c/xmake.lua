@@ -56,7 +56,7 @@ package("icu4c")
         end
 
         local envs = {}
-        if package:is_plat("linux") and not package:config("shared") then
+        if package:is_plat("linux") and package:config("pic") ~= false then
             envs = autoconf.buildenvs(package, {cxflags = "-fPIC"})
         else
             envs = autoconf.buildenvs(package)

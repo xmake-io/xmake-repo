@@ -18,7 +18,7 @@ package("mpfr")
             table.insert(configs, "--enable-static=yes")
             table.insert(configs, "--enable-shared=no")
         end
-        if package:config("pic") then
+        if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs)
