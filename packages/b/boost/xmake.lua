@@ -66,6 +66,8 @@ package("boost")
             end
             package:add("links", linkname)
         end
+        -- disable auto-link all libs
+        package:add("defines", "BOOST_ALL_NO_LIB")
     end)
 
     on_install("macosx", "linux", "windows", function (package)
@@ -150,16 +152,19 @@ package("boost")
             #include <boost/algorithm/string.hpp>
             #include <string>
             #include <vector>
-            #include <assert.h>
-            using namespace boost::algorithm;
-            using namespace std;
             static void test() {
-                string str("a,b");
-                vector<string> strVec;
-                split(strVec, str, is_any_of(","));
-                assert(strVec.size()==2);
-                assert(strVec[0]=="a");
-                assert(strVec[1]=="b");
+                std::string str("a,b");
+                std::vector<std::string> vec;
+                boost::algorithm::split(vec, str, boost::algorithm::is_any_of(","));
             }
         ]]}, {configs = {languages = "c++14"}}))
+
+        if package:config("date_time") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <boost/date_time/gregorian/gregorian.hpp>
+                static void test() {
+                    boost::gregorian::date d(2010, 1, 30);
+                }
+            ]]}, {configs = {languages = "c++14"}}))
+        end
     end)
