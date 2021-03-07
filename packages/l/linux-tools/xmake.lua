@@ -50,22 +50,6 @@ package("linux-tools")
         table.insert(configs, "EXTRA_CFLAGS=" .. table.concat(cflags, " "))
         table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
 
-        --[[
-        if package:config("libbpf") then
-            local oldir = os.cd("tools/lib/bpf")
-            io.replace("Makefile", "prefix ?= /usr/local", "prefix ?= " .. package:installdir(), {plain = true})
-            make.build(package, configs)
-            os.vrunv("make", table.join("install", configs))
-            if package:is_plat("linux") and package:is_arch("x86_64") then
-                local lib64 = path.join(package:installdir(), "lib64")
-                if os.isdir(lib64) then
-                    package:add("links", "bpf")
-                    package:add("linkdirs", "lib64")
-                end
-            end
-            os.cd(oldir)
-        end]]
-
         if package:config("bpf") then
             local oldir = os.cd("tools/bpf/bpftool")
             io.replace("Makefile", "prefix ?= /usr/local", "prefix ?= " .. package:installdir(), {plain = true})
