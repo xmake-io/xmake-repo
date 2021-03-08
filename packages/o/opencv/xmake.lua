@@ -10,12 +10,14 @@ package("opencv")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
+    add_deps("zlib")
 
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL")
     elseif is_plat("linux") then
-        add_deps("zlib")
         add_syslinks("pthread", "dl")
+    elseif is_plat("windows") then
+        add_syslinks("gdi32", "user32", "advapi32", "comdlg32")
     end
 
     add_resources("4.5.1", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.1.tar.gz", "12c3b1ddd0b8c1a7da5b743590a288df0934e5cef243e036ca290c2e45e425f5")
@@ -61,17 +63,30 @@ package("opencv")
                          "-DBUILD_opencv_python2=OFF",
                          "-DBUILD_opencv_python3=ON"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then
             import("lib.detect.find_path")
             local modulesdir = assert(find_path("modules", path.join(resourcedir, "*")), "modules not found!")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
         os.trycp("3rdparty/**/*.a", package:installdir("lib"))
+        if package:is_plat("windows") then
+            local instpath = path.join(os.curdir(), "build", "install", package:is_arch("x64") and "x64" or "x86", "vc*")
+            os.trycp(path.join(instpath, "bin", "**"), package:installdir("bin"))
+            if package:config("shared") then
+                os.trycp(path.join(instpath, "lib", "**"), package:installdir("lib"))
+            else
+                os.trycp(path.join(instpath, "staticlib", "**"), package:installdir("lib"))
+            end
+        end
     end)
 
     on_test(function (package)
+        if package:is_plat("windows") then
+            os.vrun("opencv_version")
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             void test(int argc, char** argv) {
@@ -79,6 +94,7 @@ package("opencv")
                 if (parser.has("help")) {
                     parser.printMessage();
                 }
+                cv::Mat image(3, 3, CV_8UC1);
                 std::cout << CV_VERSION << std::endl;
             }
         ]]}, {configs = {languages = "c++11"},

@@ -28,5 +28,5 @@ package("box2d")
             void test(int argc, char** argv) {
                 b2World world(b2Vec2(0.0f, -10.0f));
             }
-        ]]}, {configss = {languages = "c++11"}, includes = "box2d/box2d.h"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "box2d/box2d.h"}))
     end)

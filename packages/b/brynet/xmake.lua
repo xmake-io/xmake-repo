@@ -20,5 +20,5 @@ package("brynet")
             void test(int argc, char** argv) {
                 auto service = brynet::net::TcpService::Create();
             }
-        ]]}, {configss = {languages = "c++17"}, includes = "brynet/net/TcpService.hpp"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "brynet/net/TcpService.hpp"}))
     end)
