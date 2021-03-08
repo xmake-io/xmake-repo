@@ -6,6 +6,8 @@ package("libelf")
     set_urls("https://dl.bintray.com/homebrew/mirror/libelf-$(version).tar.gz")
     add_versions("0.8.13", "591a9b4ec81c1f2042a97aa60564e0cb79d041c52faa7416acb38bc95bd2c76d")
 
+    add_includedirs("include", "include/libelf")
+
     on_install("linux", function (package)
         local configs = {"--disable-debug",
                          "--disable-dependency-tracking",

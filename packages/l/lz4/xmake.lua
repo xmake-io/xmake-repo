@@ -22,6 +22,9 @@ package("lz4")
         if package:config("shared") then
             configs.kind = "shared"
         end
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
+        end
         import("package.tools.xmake").install(package, configs)
     end)
 
