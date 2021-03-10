@@ -21,6 +21,30 @@ package("brotli")
         package:addenv("PATH", "bin")
     end)
 
+    if on_fetch then
+        on_fetch("linux", "macosx", function (package, opt)
+            if opt.system then
+                local result
+                for _, name in ipairs({"libbrotlidec", "libbrotlienc", "libbrotlicommon"}) do
+                    local pkginfo = find_package("pkgconfig::" .. name)
+                    if pkginfo then
+                        if not result then
+                            result = table.copy(pkginfo)
+                        else
+                            result.links = result.links or {}
+                            result.linkdirs = result.linkdirs or {}
+                            result.includedirs = result.includedirs or {}
+                            table.join2(result.includedirs, pkginfo.includedirs)
+                            table.join2(result.linkdirs, pkginfo.linkdirs)
+                            table.join2(result.links, pkginfo.links)
+                        end
+                    end
+                end
+                return result
+            end
+        end)
+    end
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
