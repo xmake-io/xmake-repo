@@ -9,7 +9,7 @@ package("libtorch")
 
     add_configs("python", {description = "Build python interface.", default = false, type = "boolean"})
 
-    add_deps("cmake")
+    add_deps("cmake", "ninja")
     add_deps("python 3.x", {kind = "binary", system = false})
     add_deps("libuv")
     add_includedirs("include")
@@ -17,6 +17,19 @@ package("libtorch")
 
     -- prevent the link to the libraries found automatically
     add_links("")
+
+    function _add_package_dep(package, args)
+        for _, includedir in ipairs(args.includedirs or args.sysincludedirs) do
+            package:add("includedirs", includedir)
+        end
+        for _, linkdir in ipairs(args.linkdirs) do
+            package:add("linkdirs", linkdir)
+        end
+        for _, link in ipairs(args.links) do
+            package:add("links", link)
+        end
+    end
+
     on_load("windows|x64", "macosx", "linux", function (package)
         import("detect.sdks.find_cuda")
 
@@ -27,17 +40,20 @@ package("libtorch")
         local cuda = find_cuda()
         if not package:is_plat("macosx") then
             local mkl = find_package("mkl")
-            package:add("deps", mkl ~= nil and find_package("mkl") or "openblas")
+            if mkl ~= nil then
+                _add_package_dep(package, mkl)
+            else
+                package:add("deps", "openblas")
+            end
             if cuda ~= nil then
-                package:add("deps", cuda)
                 table.insert(libnames, "torch_cuda")
             end
         end
         table.insert(libnames, "c10")
         if cuda ~= nil then
             table.insert(libnames, "c10_cuda")
-            package:add("deps", cuda)
-            package:add("deps", find_package("nvtx"))
+            _add_package_dep(package, cuda)
+            _add_package_dep(package, find_package("nvtx"))
             for _, lib in ipairs({"nvrtc", "cudnn", "cufft", "curand", "cublas", "cudart_static"}) do
                 package:add("links", lib)
             end
@@ -95,7 +111,7 @@ package("libtorch")
         end
 
         -- prepare for installation
-        local envs = cmake.buildenvs(package)
+        local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
         if not package:is_plat("macosx") then
             local mkl = find_package("mkl")
             if mkl then
@@ -111,7 +127,7 @@ package("libtorch")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCAFFE2_USE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-        cmake.install(package, configs, {envs = envs})
+        cmake.install(package, configs, {envs = envs, cmake_generator = "Ninja"})
     end)
 
     on_test(function (package)
