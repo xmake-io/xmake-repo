@@ -16,14 +16,14 @@ package("libtorch")
     add_includedirs("include/torch/csrc/api/include")
 
     -- prevent the link to the libraries found automatically
-    add_links()
+    add_links("")
     on_load("windows|x64", "macosx", "linux", function (package)
         import("detect.sdks.find_cuda")
 
         -- ensure that git core.longpaths is enabled
         os.vrun("git config --global core.longpaths true")
 
-        local libnames = {"torch"}
+        local libnames = {"torch", "torch_cpu"}
         local cuda = find_cuda()
         if not package:is_plat("macosx") then
             local mkl = find_package("mkl")
@@ -31,18 +31,16 @@ package("libtorch")
             if cuda ~= nil then
                 package:add("deps", cuda)
                 table.insert(libnames, "torch_cuda")
-            else
-                table.insert(libnames, "torch_cpu")
             end
-        else
-            table.insert(libnames, "torch_cpu")
         end
         table.insert(libnames, "c10")
         if cuda ~= nil then
             table.insert(libnames, "c10_cuda")
             package:add("deps", cuda)
             package:add("deps", find_package("nvtx"))
-            package:add("links", "nvrtc", "cudnn", "cufft", "curand", "cublas", "cudart_static")
+            for _, lib in ipairs({"nvrtc", "cudnn", "cufft", "curand", "cublas", "cudart_static"}) do
+                package:add("links", lib)
+            end
             if package:is_plat("windows") then
                 package:addenv("PATH", cuda.bindir)
             end
