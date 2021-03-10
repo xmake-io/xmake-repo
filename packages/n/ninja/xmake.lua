@@ -22,9 +22,9 @@ package("ninja")
         add_versions("1.10.2", "ce35865411f0490368a8fc383f29071de6690cbadc27704734978221f25e2bed")
     end
 
-    if is_host("linux") then
-        add_deps(package:version():ge("1.10.0") and "python" or "python2", {kind = "binary"})
-    end
+    on_load("linux", function (package)
+        package:add("deps", package:version():ge("1.10.0") and "python" or "python2", {kind = "binary"})
+    end)
 
     on_install("@windows", "@msys", "@cygwin", function (package)
         os.cp("./ninja.exe", package:installdir("bin"))
