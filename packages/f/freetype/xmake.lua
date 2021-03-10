@@ -42,7 +42,6 @@ package("freetype")
     on_install("linux", "macosx", function (package)
         local configs = { "--enable-freetype-config",
                           "--without-harfbuzz"}
-        local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:config("pic") ~= false then
