@@ -9,7 +9,7 @@ package("libtorch")
 
     add_configs("python", {description = "Build python interface.", default = false, type = "boolean"})
 
-    add_deps("cmake", {kind = "binary"})
+    add_deps("cmake")
     add_deps("python 3.x", {kind = "binary", system = false})
     add_deps("libuv")
     add_includedirs("include")
@@ -18,7 +18,6 @@ package("libtorch")
     -- prevent the link to the libraries found automatically
     add_links()
     on_load("windows|x64", "macosx", "linux", function (package)
-        import("lib.detect.find_package")
         import("detect.sdks.find_cuda")
 
         -- ensure that git core.longpaths is enabled
@@ -41,6 +40,12 @@ package("libtorch")
         table.insert(libnames, "c10")
         if cuda ~= nil then
             table.insert(libnames, "c10_cuda")
+            package:add("deps", cuda)
+            package:add("deps", find_package("nvtx"))
+            package:add("links", "nvrtc", "cudnn", "cufft", "curand", "cublas", "cudart_static")
+            if package:is_plat("windows") then
+                package:addenv("PATH", cuda.bindir)
+            end
         end
         local suffix = ""
         if not package:is_plat("windows") and package:config("shared") then
@@ -62,16 +67,17 @@ package("libtorch")
 
     on_install("windows|x64", "macosx", "linux", function (package)
         import("package.tools.cmake")
-        import("lib.detect.find_package")
 
-        -- git issue
-        os.vrun("git submodule sync")
-        os.vrun("git submodule update --init --recursive")
+        -- workaround before 2.5.3, will be removed in future 
+        if xmake.version():le("2.5.3") then
+            os.vrun("git submodule sync")
+            os.vrun("git submodule update --init --recursive")
+        end
 
         -- some patches to the third-party cmake files
         io.replace("cmake/Modules/FindMKL.cmake", "MSVC AND NOT CMAKE_CXX_COMPILER_ID STREQUAL \"Intel\"", "FALSE", {plain = true})
         io.replace("third_party/fbgemm/CMakeLists.txt", "PRIVATE FBGEMM_STATIC", "PUBLIC FBGEMM_STATIC", {plain = true})
-        io.gsub("third_party/protobuf/cmake/install.cmake", "install%(DIRECTORY.-%)", "")
+        io.replace("third_party/protobuf/cmake/install.cmake", "install%(DIRECTORY.-%)", "")
         io.replace("third_party/ideep/mkl-dnn/src/CMakeLists.txt", "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}", "${CMAKE_INSTALL_LIBDIR}", {plain = true})
         if package:is_plat("windows") then
             io.replace("cmake/Modules/FindOpenBLAS.cmake", "NAMES openblas PATHS", "NAMES libopenblas PATHS", {plain = true})

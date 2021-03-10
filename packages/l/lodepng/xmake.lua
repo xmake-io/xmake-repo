@@ -10,11 +10,17 @@ package("lodepng")
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("lodepng")
-                set_kind("static")
+                set_kind("$(kind)")
                 add_files("lodepng.cpp")
                 add_headerfiles("lodepng.h")
         ]])
-        import("package.tools.xmake").install(package, {mode = package:debug() and "debug" or "release"})
+        local configs = {}
+        if package:config("shared") then
+            configs.kind = "shared"
+        elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
+        end
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
