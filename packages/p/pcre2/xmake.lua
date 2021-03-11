@@ -43,10 +43,13 @@ package("pcre2")
 
     on_install("macosx", "linux", "mingw", function (package)
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
         end
         if package:config("jit") then
             table.insert(configs, "--enable-jit")
@@ -55,9 +58,6 @@ package("pcre2")
         if bitwidth ~= "8" then
             table.insert(configs, "--disable-pcre2-8")
             table.insert(configs, "--enable-pcre2-" .. bitwidth)
-        end
-        if package:debug() then
-            table.insert(configs, "--enable-debug")
         end
         import("package.tools.autoconf").install(package, configs)
     end)

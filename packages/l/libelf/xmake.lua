@@ -9,10 +9,18 @@ package("libelf")
     add_includedirs("include", "include/libelf")
 
     on_install("linux", function (package)
-        local configs = {"--disable-debug",
-                         "--disable-dependency-tracking",
+        local configs = {"--disable-dependency-tracking",
                          "--disable-compat"}
-        import("package.tools.autoconf").install(package, configs)
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        local cxflags
+        if package:config("pic") ~= false then
+            cxflags = "-fPIC"
+        end
+        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)

@@ -22,6 +22,9 @@ package("linux-tools")
             if package:is_plat("linux") and package:is_arch("x86_64") then
                 package:add("links", "bpf")
                 package:add("linkdirs", "lib64")
+                if package:config("shared") then
+                    package:addenv("LD_LIBRARY_PATH", "lib64")
+                end
             end
         end
     end)
@@ -58,6 +61,11 @@ package("linux-tools")
             os.vrunv("make", table.join("install", configs))
             os.cd("../../lib/bpf")
             io.replace("Makefile", "prefix ?= /usr/local", "prefix ?= " .. package:installdir(), {plain = true})
+            if not package:config("shared") then
+                io.replace("Makefile", "LIB_TARGET%s-=.-\n", "LIB_TARGET = libbpf.a\n")
+                io.replace("Makefile", "LIB_FILE%s-=.-\n", "LIB_FILE = libbpf.a\n")
+                io.replace("Makefile", "all_cmd: $(CMD_TARGETS) check", "all_cmd: $(CMD_TARGETS)", {plain = true})
+            end
             os.vrunv("make", table.join("install", configs))
             os.cd(oldir)
         end
