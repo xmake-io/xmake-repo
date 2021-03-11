@@ -8,8 +8,9 @@ package("libtorch")
     add_versions("v1.8.0", "37c1f4a7fef115d719104e871d0cf39434aa9d56")
 
     add_configs("python", {description = "Build python interface.", default = false, type = "boolean"})
+    add_configs("ninja", {description = "Use ninja as build tool.", default = false, type = "boolean"})
 
-    add_deps("cmake", "ninja")
+    add_deps("cmake")
     add_deps("python 3.x", {kind = "binary", system = false})
     add_deps("libuv")
     add_includedirs("include")
@@ -35,6 +36,10 @@ package("libtorch")
 
         -- ensure that git core.longpaths is enabled
         os.vrun("git config --global core.longpaths true")
+
+        if package:config("ninja") then
+            package:add("deps", "ninja")
+        end
 
         local libnames = {"torch", "torch_cpu"}
         local cuda = find_cuda()
@@ -111,7 +116,11 @@ package("libtorch")
         end
 
         -- prepare for installation
-        local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
+        local extracfg = {}
+        if package:config("ninja") then
+            extracfg.cmake_generator = "Ninja"
+        end
+        local envs = cmake.buildenvs(package, extracfg)
         if not package:is_plat("macosx") then
             local mkl = find_package("mkl")
             if mkl then
@@ -127,7 +136,8 @@ package("libtorch")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCAFFE2_USE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-        cmake.install(package, configs, {envs = envs, cmake_generator = "Ninja"})
+        extracfg.envs = envs
+        cmake.install(package, configs, extracfg)
     end)
 
     on_test(function (package)
