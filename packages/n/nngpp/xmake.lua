@@ -4,6 +4,7 @@ package("nngpp")
     set_description("C++ wrapper around the nanomsg NNG API.")
 
     add_urls("https://github.com/cwzx/nngpp.git")
+    add_versions("v2020.10.30", "8da8c026bd551b7685a8a140909ff96cfe91bf90")
 
     add_deps("nng")
     add_deps("cmake")
@@ -11,7 +12,7 @@ package("nngpp")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function(package)
+    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <nngpp/nngpp.h>
             static void test() {
