@@ -17,26 +17,24 @@ package("libiconv")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "android", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings"}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
             table.insert(configs, "--enable-debug")
-        else
-            table.insert(configs, "--disable-debug")
         end
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-            table.insert(configs, "--enable-static=no")
-        else
-            table.insert(configs, "--enable-static=yes")
-            table.insert(configs, "--enable-shared=no")
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
         end
         os.vrunv("make", {"-f", "Makefile.devel", "CFLAGS=" .. (package:config("cflags") or "")})
         import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
-        os.vrun("iconv --version")
+        if package:is_plat("macosx", "linux") then
+            os.vrun("iconv --version")
+        end
         assert(package:has_cfuncs("iconv_open(0, 0);", {includes = "iconv.h"}))
     end)
 
