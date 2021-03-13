@@ -9,8 +9,11 @@ package("libiconv")
     add_versions("1.15", "ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178")
 
     if is_plat("macosx") then
-        add_patches("1.15", "https://raw.githubusercontent.com/Homebrew/patches/9be2793af/libiconv/patch-utf8mac.diff",
-                            "e8128732f22f63b5c656659786d2cf76f1450008f36bcf541285268c66cabeab")
+        add_patches("1.15", path.join(os.scriptdir(), "patches", "1.15", "patch-utf8mac.diff"),
+            "e8128732f22f63b5c656659786d2cf76f1450008f36bcf541285268c66cabeab")
+    elseif is_plat("android") then
+        add_patches("1.x", path.join(os.scriptdir(), "patches", "1.16", "makefile.in.patch"),
+            "d09e4212040f5adf1faa5cf5a9a18f6f79d4cdce9affb05f2e75df2ea3b3d686")
     end
 
     on_load(function (package)
@@ -26,6 +29,10 @@ package("libiconv")
         end
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
+        end
+        if package:is_plat("android") then
+            io.replace("./configure", "#define gid_t int", "")
+            io.replace("./configure", "#define uid_t int", "")
         end
         os.vrunv("make", {"-f", "Makefile.devel", "CFLAGS=" .. (package:config("cflags") or "")})
         import("package.tools.autoconf").install(package, configs)
