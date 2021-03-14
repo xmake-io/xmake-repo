@@ -10,10 +10,6 @@ package("elfutils")
     add_patches("0.183", path.join(os.scriptdir(), "patches", "0.183", "configure.patch"), "7a16719d9e3d8300b5322b791ba5dd02986f2663e419c6798077dd023ca6173a")
 
     add_deps("m4", "zlib")
-    --[[
-    if is_plat("android") then
-        add_deps("argp-standalone")
-    end]]
 
     on_install("linux", function (package)
         local configs = {"--disable-dependency-tracking",
