@@ -10,7 +10,7 @@ package("libelf")
 
     add_includedirs("include", "include/libelf")
 
-    on_install("linux", function (package)
+    on_install("linux", "android", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-compat"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
@@ -22,9 +22,19 @@ package("libelf")
         if package:config("pic") ~= false then
             cxflags = "-fPIC"
         end
+        if package:is_plat("android") then
+            io.replace("./configure", "#define off_t long", "")
+            io.replace("lib/private.h", "HAVE_MEMMOVE", "1")
+            io.replace("lib/private.h", "HAVE_MEMCPY", "1")
+            package:add("defines", "__LIBELF64=1")
+            package:add("defines", "__LIBELF64_LINUX=1")
+            package:add("defines", "__libelf_u64_t=uint64_t")
+            package:add("defines", "__libelf_i64_t=int64_t")
+        end
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
         assert(package:has_cfuncs("elf_begin", {includes = "libelf/gelf.h"}))
+        assert(package:has_cfuncs("elf_begin", {includes = "libelf/libelf.h"}))
     end)
