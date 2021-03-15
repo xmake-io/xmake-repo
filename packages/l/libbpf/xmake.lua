@@ -11,23 +11,36 @@ package("libbpf")
 
     add_includedirs("include", "include/uapi")
 
-    on_install("linux", function (package)
-        os.cd("src")
-        io.replace("Makefile", "PREFIX ?= /usr", "PREFIX ?= " .. package:installdir(), {plain = true})
+    on_load("android", function (package)
+        import("core.tool.toolchain")
+        local ndk_sdkver = toolchain.load("ndk"):config("ndk_sdkver")
+        if ndk_sdkver and tonumber(ndk_sdkver) < 23 then
+            package:add("deps", "memorymapping")
+        end
+    end)
+
+    on_install("linux", "android", function (package)
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            add_requires("libelf", "zlib")
+            target("bpf")
+                set_kind("$(kind)")
+                add_files("src/*.c")
+                add_includedirs("include", "include/uapi")
+                add_packages("libelf", "zlib")
+                add_headerfiles("src/(*.h)", {prefixdir = "bpf"})
+                add_headerfiles("include/(uapi/**.h)")
+                if is_plat("android") then
+                    add_defines("__user=", "__force=", "__poll_t=uint32_t")
+                end
+        ]])
+        local configs = {}
         if package:config("shared") then
-            io.replace("Makefile", "STATIC_LIBS := .-\n", "STATIC_LIBS :=\n")
-        else
-            io.replace("Makefile", "ifndef BUILD_STATIC_ONLY", "ifeq (1,0)")
+            configs.kind = "shared"
+        elseif package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
         end
-        import("package.tools.make").install(package)
-        if package:is_plat("linux") and package:is_arch("x86_64") then
-            local lib64 = path.join(package:installdir(), "lib64")
-            if os.isdir(lib64) then
-                package:add("links", "bpf")
-                package:add("linkdirs", "lib64")
-            end
-        end
-        os.cp("../include/uapi", package:installdir("include"))
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
