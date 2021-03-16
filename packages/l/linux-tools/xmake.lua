@@ -13,8 +13,8 @@ package("linux-tools")
     add_versions("5.0.8",  "11908044e8cce1e093141f8da594708d45d05d0381676ae9aa3d8aeaf7c85435")
     add_versions("5.9.16", "b0d7abae88e5f91893627c645e680a95c818defd1b4fcaf3e2afb4b2b6b4ab86")
 
-    add_configs("bpftool",     { description = "Enable bpftool.", default = false, type = "boolean"})
-    add_configs("libbpf",      { description = "Enable libbpf library.", default = true, type = "boolean"})
+    add_configs("bpftool",     { description = "Enable bpftool.", default = true, type = "boolean"})
+    add_configs("libbpf",      { description = "Enable libbpf library.", default = false, type = "boolean"})
 
     local modules = {"bpftool", "libbpf"}
 
@@ -26,7 +26,7 @@ package("linux-tools")
         end
     end)
 
-    on_install("linux", "android", function (package)
+    on_install("linux", function (package)
         for _, name in ipairs(modules) do
             if package:config(name) then
                 local oldir = os.curdir()

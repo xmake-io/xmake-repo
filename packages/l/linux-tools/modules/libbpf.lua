@@ -10,7 +10,7 @@ function install(package)
         target("bpf")
             set_kind("$(kind)")
             add_files("*.c")
-            add_includedirs("../../include", "../../include/uapi")
+            add_sysincludedirs("../../include", "../../include/uapi")
             add_packages("libelf", "zlib")
             add_headerfiles("*.h", {prefixdir = "bpf"})
             if is_plat("android") then
