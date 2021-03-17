@@ -36,7 +36,8 @@ package("freetype")
 
     on_install("windows", function (package)
         os.cp("include", package:installdir())
-        os.cp(is_arch("x64") and "win64/*" or "win32/*", package:installdir("lib"))
+        os.cp(is_arch("x64") and "win64/*.lib" or "win32/*.lib", package:installdir("lib"))
+        os.cp(is_arch("x64") and "win64/*.dll" or "win32/*.dll", package:installdir("bin"))
     end)
 
     on_install("linux", "macosx", function (package)
