@@ -9,6 +9,8 @@ package("libfreenect2")
 
     if is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("macosx") then
+        add_frameworks("CoreGraphics", "CoreFoundation", "Foundation")
     end
 
     on_install("windows", "linux", "macosx", function (package)
