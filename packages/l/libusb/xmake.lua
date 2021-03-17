@@ -3,10 +3,11 @@ package("libusb")
     set_homepage("https://libusb.info")
     set_description("A cross-platform library to access USB devices.")
 
-    set_urls("https://github.com/libusb/libusb/archive/$(version).tar.gz",
-             "https://github.com/libusb/libusb.git")
-    add_versions("v1.0.24", "b7724c272dfc5713dce88ff717efd60f021ca5b7c8e30f08ebb2c42d2eea08ae")
-    add_versions("v1.0.23", "02620708c4eea7e736240a623b0b156650c39bfa93a14bcfa5f3e05270313eba")
+    add_urls("https://github.com/libusb/libusb/releases/download/$(version).tar.bz2", {version = function (version)
+        return version .. "/libusb-" .. (version:gsub("v", ""))
+    end})
+    add_urls("https://github.com/libusb/libusb.git")
+    add_versions("v1.0.24", "7efd2685f7b327326dcfb85cee426d9b871fd70e22caa15bb68d595ce2a2b12a")
 
     if is_plat("macosx", "linux") then
         add_deps("autoconf", "automake", "libtool", "pkg-config")
@@ -22,10 +23,12 @@ package("libusb")
     end
 
     -- it will be provided in xmake v2.5.2
-    if add_extsources then
-        if is_plat("macosx", "linux") then
-            add_extsources("pkgconfig::libusb-1.0")
-        end
+    if on_fetch then
+        on_fetch("linux", "macosx", function(package, opt)
+            if opt.system then
+                return find_package("pkgconfig::libusb-1.0")
+            end
+        end)
     end
 
     add_includedirs("include", "include/libusb-1.0")
