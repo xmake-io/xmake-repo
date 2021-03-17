@@ -15,6 +15,7 @@ package("linux-tools")
 
     add_configs("bpftool",     { description = "Enable bpftool.", default = true, type = "boolean"})
     add_configs("libbpf",      { description = "Enable libbpf library.", default = false, type = "boolean"})
+    add_configs("headers",     { description = "Enable linux headers.", default = false, type = "boolean"})
 
     local modules = {"bpftool", "libbpf"}
 
