@@ -1,11 +1,9 @@
 function load(package)
-    package:add("deps", "libcap", "libelf", "zlib")
+    package:add("deps", "libcap", "libelf", "zlib", {host = true})
     package:addenv("PATH", "sbin")
 end
 
 function install(package)
-
-    assert(package:is_plat("linux"), "bpftool: only support for linux!")
 
     local cflags = {}
     local ldflags = {}

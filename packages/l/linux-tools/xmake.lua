@@ -1,7 +1,8 @@
 package("linux-tools")
 
+    set_kind("binary")
     set_homepage("https://kernel.org/")
-    set_description("Tools and libraries of the Linux kernel")
+    set_description("Tools of the Linux kernel")
     set_license("GPL-2.0-only")
 
     add_urls("https://cdn.kernel.org/pub/linux/kernel/$(version).tar.xz",
@@ -14,10 +15,8 @@ package("linux-tools")
     add_versions("5.9.16", "b0d7abae88e5f91893627c645e680a95c818defd1b4fcaf3e2afb4b2b6b4ab86")
 
     add_configs("bpftool",     { description = "Enable bpftool.", default = true, type = "boolean"})
-    add_configs("libbpf",      { description = "Enable libbpf library.", default = false, type = "boolean"})
-    add_configs("headers",     { description = "Enable linux headers.", default = false, type = "boolean"})
 
-    local modules = {"bpftool", "libbpf"}
+    local modules = {"bpftool"}
 
     on_load(function (package)
         for _, name in ipairs(modules) do
