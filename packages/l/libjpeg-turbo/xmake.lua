@@ -30,6 +30,12 @@ package("libjpeg-turbo")
             table.insert(configs, "-DENABLE_SHARED=OFF")
             table.insert(configs, "-DENABLE_STATIC=ON")
         end
+        if package:config("vs_runtime"):startswith("MD") then
+            table.insert(configs, "-DWITH_CRT_DLL=ON")
+        end
+        if package:config("pic") ~= false then
+            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
