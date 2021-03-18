@@ -33,7 +33,12 @@ package("libfreenect2")
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
 
-        import("package.tools.cmake").install(package, configs, {packagedeps="libusb"})
+        local shflags
+        if is_plat("macosx") then
+            shflags = "-framework IOKit"
+        end
+
+        import("package.tools.cmake").install(package, configs, {packagedeps="libusb", shflags = shflags})
     end)
 
     on_test(function (package)
