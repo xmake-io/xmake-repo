@@ -13,7 +13,7 @@ package("libbpf")
 
     on_load("android", function (package)
         import("core.tool.toolchain")
-        local ndk_sdkver = toolchain.load("ndk"):config("ndk_sdkver")
+        local ndk_sdkver = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()}):config("ndk_sdkver")
         if ndk_sdkver and tonumber(ndk_sdkver) < 23 then
             package:add("deps", "memorymapping")
         end

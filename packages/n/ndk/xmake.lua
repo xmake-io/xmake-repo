@@ -25,6 +25,17 @@ package("ndk")
         add_versions("22.0", "14fce4dea7fb3facbc0e3d20270007bffec3ba383aec02e8b0e0dad8d8782892")
     end
 
+    on_fetch(function (package, opt)
+        if opt.system then
+            import("core.base.semver")
+            import("detect.sdks.find_ndk")
+            local ndk = find_ndk()
+            if ndk and ndk.ndkver and semver.satisfies(ndk.ndkver .. ".0", opt.require_version) then
+                return true
+            end
+        end
+    end)
+
     on_install("@windows", "@msys", "@linux", "@macosx", function (package)
         os.vcp("*", package:installdir())
     end)
