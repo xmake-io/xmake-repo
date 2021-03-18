@@ -11,7 +11,7 @@ package("glew")
         add_syslinks("glu32", "opengl32")
     elseif is_plat("linux") then
         add_syslinks("GLU", "GL")
-        add_deps("libx11")
+        add_deps("libx11", "xorgproto")
     end
 
     on_load("windows", "mingw@windows", function (package)
@@ -21,57 +21,6 @@ package("glew")
     end)
 
     on_install("linux", "macosx", "mingw@windows", "windows", function (package)
-        io.writefile("xmake.lua", [[
-            add_rules("mode.debug", "mode.release")
-            if is_plat("linux") then
-                add_requires("libx11", "xorgproto")
-            end
-            target("glew")
-                set_kind("$(kind)")
-                if is_plat("windows") or is_plat("mingw") then
-                    set_basename("glew32")
-                    add_syslinks("glu32", "opengl32")
-                elseif is_plat("macosx") then
-                    add_frameworks("OpenGL")
-                elseif is_plat("linux") then
-                    add_syslinks("GLU", "GL")
-                end
-                add_defines("GLEW_NO_GLU")
-                if is_plat("windows") then
-                    if get_config("kind") == "shared" then
-                        add_defines("GLEW_BUILD")
-                    else
-                        add_defines("GLEW_STATIC", {public = true})
-                    end
-                end
-                add_files("src/glew.c")
-                add_includedirs("include", {public = true})
-                add_headerfiles("include/(GL/*.h)")
-            target("glewinfo")
-                set_kind("binary")
-                add_deps("glew")
-                if is_plat("windows") or is_plat("mingw") then
-                    add_syslinks("user32", "gdi32", "glu32", "opengl32")
-                elseif is_plat("macosx") then
-                    add_frameworks("OpenGL")
-                elseif is_plat("linux") then
-                    add_syslinks("GLU", "GL")
-                    add_packages("libx11", "xorgproto")
-                end
-                add_files("src/glewinfo.c")
-            target("visualinfo")
-                set_kind("binary")
-                add_deps("glew")
-                if is_plat("windows") or is_plat("mingw") then
-                    add_syslinks("user32", "gdi32", "glu32", "opengl32")
-                elseif is_plat("macosx") then
-                    add_frameworks("OpenGL")
-                elseif is_plat("linux") then
-                    add_syslinks("GLU", "GL")
-                    add_packages("libx11", "xorgproto")
-                end
-                add_files("src/visualinfo.c")
-        ]])
         local configs = {}
         configs.mode = package:debug() and "debug" or "release"
         if package:config("shared") then
@@ -79,6 +28,7 @@ package("glew")
         elseif package:is_plat("linux") and package:config("pic") ~= false then
             configs.cxflags = "-fPIC"
         end
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
 
