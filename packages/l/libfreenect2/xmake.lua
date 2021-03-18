@@ -14,8 +14,6 @@ package("libfreenect2")
     end
 
     on_install("windows", "linux", "macosx", function (package)
-        local libjpegturbo = package:dep("libjpeg-turbo")
-
         io.replace("CMakeLists.txt", "FIND_PACKAGE(LibUSB REQUIRED)", "", {plain = true})
 
         local configs = {}
@@ -24,21 +22,22 @@ package("libfreenect2")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        if libjpegturbo:fetch() and libjpegturbo:fetch().libfiles then
-            table.insert(configs, "-DTurboJPEG_INCLUDE_DIRS=" .. libjpegturbo:installdir("include"))
-            table.insert(configs, "-DTurboJPEG_LIBRARIES=" .. table.concat(libjpegturbo:fetch().libfiles, ";"))
-        end
-
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
 
+        local libjpegturbo = package:dep("libjpeg-turbo"):fetch()
+        if libjpegturbo then
+            table.insert(configs, "-DTurboJPEG_INCLUDE_DIRS=" .. table.concat(libjpegturbo.includedirs or libjpegturbo.sysincludedirs, ";"))
+            table.insert(configs, "-DTurboJPEG_LIBRARIES=" .. table.concat(libjpegturbo.libfiles, ";"))
+        end
+
         local shflags
-        if is_plat("macosx") then
+        if package:is_plat("macosx") then
             shflags = "-framework IOKit"
         end
 
-        import("package.tools.cmake").install(package, configs, {packagedeps="libusb", shflags = shflags})
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libusb", shflags = shflags})
     end)
 
     on_test(function (package)
