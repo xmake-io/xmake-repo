@@ -9,6 +9,9 @@ package("ptex")
     add_versions("v2.3.2", "30aeb85b965ca542a8945b75285cd67d8e207d23dbb57fcfeaab587bb443402b")
 
     add_deps("zlib")
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
 
     on_load("windows", "mingw@windows", function (package)
         if not package:config("shared") then
@@ -17,6 +20,7 @@ package("ptex")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
+        io.replace("src/ptex/PtexPlatform.h", "sys/types.h", "unistd.h", {plain = true})
         io.writefile("xmake.lua", format([[
             add_rules("mode.debug", "mode.release")
             set_configvar("PTEX_MAJOR_VERSION", "%s")
