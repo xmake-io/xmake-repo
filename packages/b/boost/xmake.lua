@@ -138,6 +138,9 @@ package("boost")
                 table.insert(argv, "cxxflags=-stdlib=libc++")
                 table.insert(argv, "linkflags=-stdlib=libc++")
             end
+            if package:config("pic") ~= false then
+                table.insert(argv, "cxxflags=-fPIC")
+            end
         end
         for _, libname in ipairs(libnames) do
             if package:config(libname) then
