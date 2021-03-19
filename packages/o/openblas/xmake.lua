@@ -19,6 +19,8 @@ package("openblas")
 
     if is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("windows") then
+        add_links("libopenblas")
     end
 
     on_install("windows|x64", function (package)
