@@ -3,10 +3,10 @@ package("libfreenect2")
     set_description("Open source drivers for the Kinect for Windows v2 device")
     set_license("GPL-2.0")
 
-    add_urls("https://github.com/OpenKinect/libfreenect2/archive/$(version).tar.gz",
-             "https://github.com/OpenKinect/libfreenect2.git")
+    add_urls("https://github.com/OpenKinect/libfreenect2.git")
 
-    add_versions("v0.2.0", "344019f4360d3858f4c5843e215b0b9d0c0d396a2ebe5cb1953c262df4d9ff54")
+    add_versions("v0.2.1", "fd64c5d9b214df6f6a55b4419357e51083f15d93")
+    add_versions("v0.2.0", "v0.2.0")
 
     add_patches("v0.2.0", path.join(os.scriptdir(), "patches", "0.2.0", "frame_listener_impl.cpp.patch"), "47687b34fd0ca275d3e1c2ce87064ffaacd13f2f8d3a310224d3b9fef2cd54a3")
 
