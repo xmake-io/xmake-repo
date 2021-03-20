@@ -50,7 +50,6 @@ package("ptex")
                 add_files("src/utils/ptxinfo.cpp")
         ]], package:version():major(), package:version():minor()))
         local configs = {}
-        configs.mode = package:debug() and "debug" or "release"
         if package:config("shared") then
             configs.kind = "shared"
         elseif package:is_plat("linux") and package:config("pic") ~= false then
