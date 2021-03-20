@@ -6,6 +6,7 @@ package("cgal")
 
     add_urls("https://github.com/CGAL/cgal/releases/download/v$(version)/CGAL-$(version)-library.zip")
     add_versions("5.1.1", "ceca7ea896505941878f6c1fb7a7ae86653fdd9b3d87b276da72227f173a9cd2")
+    add_versions("5.2.1", "ccdea67db79153417504f50c534cea3bb6b0e9754e7f32fb753fc19005114db0")
 
     add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
 
