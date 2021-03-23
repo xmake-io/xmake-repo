@@ -57,17 +57,20 @@ package("skia")
             args["skia_enable_" .. component] = package:config(component)
         end
         if package:is_arch("x86") then
-            args.target_cpu   = "x86"
+            args.target_cpu    = "x86"
         elseif package:is_arch("x64") then
-            args.target_cpu   = "x64"
+            args.target_cpu    = "x64"
         elseif package:is_arch("arm64") then
-            args.target_cpu   = "arm64"
+            args.target_cpu    = "arm64"
         end
         if not package:is_plat("windows") then
-            args.cc           = package:build_getenv("cc")
-            args.cxx          = package:build_getenv("cxx")
+            args.cc            = package:build_getenv("cc")
+            args.cxx           = package:build_getenv("cxx")
         else
-            args.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+            args.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+        end
+        if package:is_plat("macosx") then
+            args.xcode_sysroot = "$(shell xcrun --sdk macosx --show-sdk-path)"
         end
 
         -- patches
