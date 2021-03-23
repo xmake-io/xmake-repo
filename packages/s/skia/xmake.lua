@@ -66,11 +66,11 @@ package("skia")
         if not package:is_plat("windows") then
             args.cc            = package:build_getenv("cc")
             args.cxx           = package:build_getenv("cxx")
-            args.extra_ldflags = {"-lstdc++"}
         else
             args.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
         end
         if package:is_plat("macosx") then
+            args.extra_ldflags = {"-lstdc++"}
             local xcode = import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
             args.xcode_sysroot = xcode:config("xcode") .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode:config("xcode_sdkver") .. ".sdk"
         end
@@ -78,7 +78,7 @@ package("skia")
         -- patches
         io.replace("bin/fetch-gn", "import os\n", "import os\nimport ssl\nssl._create_default_https_context = ssl._create_unverified_context\n", {plain = true})
         os.vrun("python tools/git-sync-deps")
-        io.replace("gn/BUILD.gn", "libs += [ \"pthread\" ]", "libs += [ \"pthread\", \"m\" ]", {plain = true})
+        io.replace("gn/BUILD.gn", "libs += [ \"pthread\" ]", "libs += [ \"pthread\", \"m\", \"stdc++\" ]", {plain = true})
         io.replace("gn/toolchain/BUILD.gn", "$shell $win_sdk/bin/SetEnv.cmd /x86 && ", "", {plain = true})
         io.replace("third_party/externals/dng_sdk/source/dng_pthread.cpp", "auto_ptr", "unique_ptr", {plain = true})
 
