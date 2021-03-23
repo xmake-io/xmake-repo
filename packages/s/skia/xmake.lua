@@ -58,6 +58,10 @@ package("skia")
         end
         if package:is_arch("x86") then
             args.target_cpu   = "x86"
+        elseif package:is_arch("x64") then
+            args.target_cpu   = "x64"
+        elseif package:is_arch("arm64") then
+            args.target_cpu   = "arm64"
         end
         if not package:is_plat("windows") then
             args.cc           = package:build_getenv("cc")
@@ -91,7 +95,6 @@ package("skia")
             os.trymv("*.dylib", package:installdir("lib"))
             os.trymv("*", package:installdir("bin"))
         end
-        print(os.files(package:installdir("**")))
     end)
 
     on_test(function (package)
