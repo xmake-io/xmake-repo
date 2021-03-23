@@ -11,7 +11,7 @@ package("scons")
 
     set_kind("binary")
 
-    on_load("@linux", "@macosx", "mingw", function (package)
+    on_load("@linux", "@macosx", "@msys", function (package)
         import("lib.detect.find_tool")
 
         -- get version from python
