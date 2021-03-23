@@ -10,11 +10,42 @@ package("godotcpp")
 
     add_includedirs("include", "include/core", "include/gen")
 
-    on_install(function (package)
-	local python = assert(import("lib.detect.find_tool")("python"), "python not found!")
-	assert(os.execv(python.program, {"-m", "pip", "install", "scons"}))
+    on_install("linux", "windows", "macosx", "mingw", "cygwin", "iphoneos", "msys", "bsd", "android", function (package)
+        local python = assert(import("lib.detect.find_tool")("python"), "python not found!")
+        assert(os.execv(python.program, {"-m", "pip", "install", "scons"}))
 
-	import("package.tools.scons").build(package, {"platform=" .. package:plat(), "generate_bindings=yes", "target=" .. (package:debug() and "debug" or "release")})
+        -- configure platform for scons
+        local scons_plat = package:plat()
+        if package:is_plat("macosx") then
+            scons_plat = "osx"
+        elseif package:is_plat("iphoneos") then
+            scons_plat = "ios"
+        elseif package:is_plat("mingw", "cygwin", "msys") then
+            scons_plat = "windows"
+        elseif package:is_plat("bsd") then
+            scons_plat = "freebsd"
+        end
+        -- configure architecture for scons
+        local scons_bits = "64"
+        if package:is_arch("x86") then
+            scons_bits = "32"
+        end
+        -- configure architecture for android
+        local scons_android_arch = package:arch()
+        -- configure architecture for ios
+        local scons_ios_arch = package:arch()
+
+        local configs = {
+            "platform=" .. scons_plat,
+            "bits=" .. scons_bits,
+            "generate_bindings=yes",
+            "target=" .. (package:debug() and "debug" or "release"),
+            "use_mingw=" .. (package:is_plat("mingw", "cygwin", "msys") and "yes" or "no"),
+            "android_arch=" .. scons_android_arch,
+            "ios_arch=" .. scons_ios_arch
+        }
+
+        import("package.tools.scons").build(package, configs)
         os.cp("bin/*." .. (package:is_plat("windows") and "lib" or "a"), package:installdir("lib"))
         os.cp("include/core/*.hpp", package:installdir("include/core"))
         os.cp("include/gen/*.hpp",  package:installdir("include/gen"))
@@ -32,71 +63,23 @@ package("godotcpp")
         assert(package:check_cxxsnippets({test = [[
         #include <Godot.hpp>
         #include <Reference.hpp>
-
         using namespace godot;
-
         class SimpleClass : public Reference {
             GODOT_CLASS(SimpleClass, Reference);
         public:
             SimpleClass() { }
-
-            /** `_init` must exist as it is called by Godot. */
             void _init() { }
-
-            void test_void_method() {
-                Godot::print("This is test");
-            }
-
             Variant method(Variant arg) {
-                Variant ret;
-                ret = arg;
-
-                return ret;
+                Variant ret; ret = arg; return ret;
             }
-
             static void _register_methods() {
                 register_method("method", &SimpleClass::method);
-
-                /**
-                * The line below is equivalent to the following GDScript export:
-                *     export var _name = "SimpleClass"
-                **/
-                register_property<SimpleClass, String>("base/name", &SimpleClass::_name, String("SimpleClass"));
-
-                /** Alternatively, with getter and setter methods: */
-                register_property<SimpleClass, int>("base/value", &SimpleClass::set_value, &SimpleClass::get_value, 0);
-
-                /** Registering a signal: **/
-                // register_signal<SimpleClass>("signal_name");
-                // register_signal<SimpleClass>("signal_name", "string_argument", GODOT_VARIANT_TYPE_STRING)
-            }
-
-            String _name;
-            int _value;
-
-            void set_value(int p_value) {
-                _value = p_value;
-            }
-
-            int get_value() const {
-                return _value;
             }
         };
-
-        /** GDNative Initialize **/
-        extern "C" void GDN_EXPORT godot_gdnative_init(godot_gdnative_init_options *o) {
-            godot::Godot::gdnative_init(o);
-        }
-
-        /** GDNative Terminate **/
-        extern "C" void GDN_EXPORT godot_gdnative_terminate(godot_gdnative_terminate_options *o) {
-            godot::Godot::gdnative_terminate(o);
-        }
-
-        /** NativeScript Initialize **/
+        extern "C" void GDN_EXPORT godot_gdnative_init(godot_gdnative_init_options *o) { godot::Godot::gdnative_init(o); }
+        extern "C" void GDN_EXPORT godot_gdnative_terminate(godot_gdnative_terminate_options *o) { godot::Godot::gdnative_terminate(o); }
         extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
             godot::Godot::nativescript_init(handle);
-
             godot::register_class<SimpleClass>();
         }
         ]]}))
