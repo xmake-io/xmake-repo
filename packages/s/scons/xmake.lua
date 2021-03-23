@@ -11,31 +11,26 @@ package("scons")
 
     set_kind("binary")
 
-    on_load("@linux", "@macosx", "@msys", function (package)
-        import("lib.detect.find_tool")
-
-        -- get version from python
-        local python = assert(find_tool("python3"), "python3 not found!")
-        local py_out = os.iorunv(python.program, {"--version"})
-        local index = py_out:find("%.")
-        local version_major = py_out:sub(index - 1, index - 1)
-        local index1 = py_out:find("%.", index + 1)
-        local version_minor = py_out:sub(index + 1, index1 - 1)
-
-        -- get version from scons
-        local scons_version = package:version()
-        local scons_egg = "SCons-" .. scons_version:major() .. "." .. scons_version:minor() .. "." .. scons_version:patch() .. "-py" .. version_major .. "." .. version_minor .. ".egg"
-
-        -- set PYTHONPATH
-        local pyver = ("python%d.%d"):format(version_major, version_minor)
-        local PYTHONPATH = package:installdir("lib", pyver, "site-packages", scons_egg)
-        package:addenv("PYTHONPATH", PYTHONPATH)
-    end)
-
     on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         import("lib.detect.find_tool")
 
         local python = assert(find_tool("python3"), "python3 not found!")
+
+        -- get version from python
+        local python_version = package:dep("python"):version()
+
+        -- get version from scons
+        local scons_version = package:version()
+        local scons_egg = "SCons-" .. scons_version:major() .. "." .. scons_version:minor() .. "." .. scons_version:patch() .. "-py" .. python_version:major() .. "." .. python_version:minor() .. ".egg"
+
+        -- set PYTHONPATH
+        local PYTHONPATH = package:installdir("lib")
+        if os.host() ~= "windows" then
+            local pyver = ("python%d.%d"):format(python_version:major(), python_version:minor())
+            PYTHONPATH = path.join(PYTHONPATH, pyver)
+        end
+        PYTHONPATH = path.join(PYTHONPATH, "site-packages", scons_egg)
+        package:addenv("PYTHONPATH", PYTHONPATH)
 
         -- setup.py install needs these
         os.mkdir("build/doc/man")
