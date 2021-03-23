@@ -1,6 +1,6 @@
 package("scons")
-    set_kind("binary")
 
+    set_kind("binary")
     set_homepage("https://scons.org")
     set_description("A software construction tool")
 
