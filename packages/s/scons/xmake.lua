@@ -11,14 +11,11 @@ package("scons")
     add_deps("python >=3.0")
 
     on_install("@windows", "@linux", "@macosx", "@msys", function (package)
-        -- get version from python
         local python_version = package:dep("python"):version()
 
-        -- get version from scons
         local scons_version = package:version()
         local scons_egg = "SCons-" .. scons_version:major() .. "." .. scons_version:minor() .. "." .. scons_version:patch() .. "-py" .. python_version:major() .. "." .. python_version:minor() .. ".egg"
 
-        -- set PYTHONPATH
         local PYTHONPATH = package:installdir("lib")
         if os.host() ~= "windows" then
             local pyver = ("python%d.%d"):format(python_version:major(), python_version:minor())
