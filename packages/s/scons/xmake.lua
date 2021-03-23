@@ -17,12 +17,11 @@ package("scons")
         local scons_egg = "SCons-" .. scons_version:major() .. "." .. scons_version:minor() .. "." .. scons_version:patch() .. "-py" .. python_version:major() .. "." .. python_version:minor() .. ".egg"
 
         local PYTHONPATH = package:installdir("lib")
-        if os.host() ~= "windows" or package:is_plat("mingw") then
-            local pyver = ("python%d.%d"):format(python_version:major(), python_version:minor())
-            PYTHONPATH = path.join(PYTHONPATH, pyver)
-        end
+        local pyver = ("python%d.%d"):format(python_version:major(), python_version:minor())
+        local PYTHONPATH1 = path.join(PYTHONPATH, pyver)
         PYTHONPATH = path.join(PYTHONPATH, "site-packages", scons_egg)
-        package:addenv("PYTHONPATH", PYTHONPATH)
+        PYTHONPATH1 = path.join(PYTHONPATH1, "site-packages", scons_egg)
+        package:addenv("PYTHONPATH", PYTHONPATH, PYTHONPATH1)
 
         -- setup.py install needs these
         io.writefile("build/doc/man/scons.1", "")
