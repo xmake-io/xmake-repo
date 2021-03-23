@@ -11,7 +11,7 @@ package("scons")
 
     set_kind("binary")
 
-    on_load("@linux", "@macosx", function (package)
+    on_load("@linux", "@macosx", "mingw", function (package)
         import("lib.detect.find_tool")
 
         -- get version from python
@@ -32,7 +32,7 @@ package("scons")
         package:addenv("PYTHONPATH", PYTHONPATH)
     end)
 
-    on_install("@windows", "@linux", "@macosx", "@bsd", "@msys", function (package)
+    on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         import("lib.detect.find_tool")
 
         local python = assert(find_tool("python3"), "python3 not found!")
