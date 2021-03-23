@@ -17,11 +17,10 @@ package("scons")
         -- get version from python
         local python = assert(find_tool("python"), "python not found!")
         local py_out = os.iorunv(python.program, {"--version"})
-        local version = py_out:gsub("Python ", "")
-        local index = version:find("%.")
-        local version_major = version:sub(1, index - 1)
-        local index1 = version:find("%.", index + 1)
-        local version_minor = version:sub(index + 1, index1 - 1)
+        local index = py_out:find("%.")
+        local version_major = py_out:sub(index - 1, index - 1)
+        local index1 = py_out:find("%.", index + 1)
+        local version_minor = py_out:sub(index + 1, index1 - 1)
 
         -- get version from scons
         local scons_version = package:version()
