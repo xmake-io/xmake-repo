@@ -17,7 +17,7 @@ package("scons")
         local scons_egg = "SCons-" .. scons_version:major() .. "." .. scons_version:minor() .. "." .. scons_version:patch() .. "-py" .. python_version:major() .. "." .. python_version:minor() .. ".egg"
 
         local PYTHONPATH = package:installdir("lib")
-        if os.host() ~= "windows" then
+        if os.host() ~= "windows" or package:is_plat("mingw") then
             local pyver = ("python%d.%d"):format(python_version:major(), python_version:minor())
             PYTHONPATH = path.join(PYTHONPATH, pyver)
         end
