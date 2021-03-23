@@ -70,7 +70,7 @@ package("skia")
             args.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
         end
         if package:is_plat("macosx") then
-            local xcode = toolchain.load("xcode", {plat = package:plat(), arch = package:arch()})
+            local xcode = import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
             args.xcode_sysroot = xcode:config("xcode") .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode:config("xcode_sdkver") .. ".sdk"
         end
 
