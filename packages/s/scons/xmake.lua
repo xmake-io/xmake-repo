@@ -32,10 +32,6 @@ package("scons")
         package:addenv("PYTHONPATH", PYTHONPATH)
     end)
 
-    on_load("windows", function (package)
-        package:addenv("PATH", package:installdir("Scripts"))
-    end)
-
     on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         import("lib.detect.find_tool")
 
@@ -48,6 +44,9 @@ package("scons")
         io.writefile("build/doc/man/sconsign.1", "")
 
         os.execv(python.program, {"setup.py", "install", "--prefix", package:installdir()})
+        if package:is_plat("windows") then
+            os.mv(package:installdir("Scripts", "*"), package:installdir("bin"))
+        end
     end)
 
     on_test(function (package)
