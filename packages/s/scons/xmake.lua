@@ -32,6 +32,10 @@ package("scons")
         package:addenv("PYTHONPATH", PYTHONPATH)
     end)
 
+    on_load("windows", function (package)
+        package:addenv("PATH", package:installdir("Scripts"))
+    end)
+
     on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         import("lib.detect.find_tool")
 
