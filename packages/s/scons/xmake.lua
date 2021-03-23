@@ -1,4 +1,5 @@
 package("scons")
+    set_kind("binary")
 
     set_homepage("https://scons.org")
     set_description("A software construction tool")
@@ -9,13 +10,7 @@ package("scons")
 
     add_deps("python >=3.0")
 
-    set_kind("binary")
-
     on_install("@windows", "@linux", "@macosx", "@msys", function (package)
-        import("lib.detect.find_tool")
-
-        local python = assert(find_tool("python3"), "python3 not found!")
-
         -- get version from python
         local python_version = package:dep("python"):version()
 
@@ -33,19 +28,17 @@ package("scons")
         package:addenv("PYTHONPATH", PYTHONPATH)
 
         -- setup.py install needs these
-        os.mkdir("build/doc/man")
         io.writefile("build/doc/man/scons.1", "")
         io.writefile("build/doc/man/scons-time.1", "")
         io.writefile("build/doc/man/sconsign.1", "")
 
-        os.execv(python.program, {"setup.py", "install", "--prefix", package:installdir()})
+        os.vrunv("python", {"setup.py", "install", "--prefix", package:installdir()})
         if package:is_plat("windows") then
             os.mv(package:installdir("Scripts", "*"), package:installdir("bin"))
+            os.rmdir(package:installdir("Scripts"))
         end
     end)
 
     on_test(function (package)
-        import("lib.detect.find_tool")
-        local scons = assert(find_tool("scons"), "scons not found!")
-        assert(os.execv(scons.program, {"--version"}))
+        os.vrun("scons --version")
     end)
