@@ -32,7 +32,7 @@ package("scons")
         package:addenv("PYTHONPATH", PYTHONPATH)
     end)
 
-    on_install("@windows", "@linux", "@macosx", "@bsd", function (package)
+    on_install("@windows", "@linux", "@macosx", "@bsd", "@msys", function (package)
         import("lib.detect.find_tool")
 
         local python = assert(find_tool("python"), "python not found!")
