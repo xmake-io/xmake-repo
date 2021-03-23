@@ -15,7 +15,7 @@ package("scons")
         import("lib.detect.find_tool")
 
         -- get version from python
-        local python = assert(find_tool("python"), "python not found!")
+        local python = assert(find_tool("python3"), "python3 not found!")
         local py_out = os.iorunv(python.program, {"--version"})
         local index = py_out:find("%.")
         local version_major = py_out:sub(index - 1, index - 1)
@@ -35,7 +35,7 @@ package("scons")
     on_install("@windows", "@linux", "@macosx", "@bsd", "@msys", function (package)
         import("lib.detect.find_tool")
 
-        local python = assert(find_tool("python"), "python not found!")
+        local python = assert(find_tool("python3"), "python3 not found!")
 
         -- setup.py install needs these
         os.mkdir("build/doc/man")
