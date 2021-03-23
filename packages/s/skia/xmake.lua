@@ -20,7 +20,7 @@ package("skia")
     if is_plat("windows") then
         add_syslinks("gdi32", "user32", "opengl32")
     elseif is_plat("macosx") then
-        add_frameworks("CoreFoundation", "CoreGraphics", "CoreText")
+        add_frameworks("CoreFoundation", "CoreGraphics", "CoreText", "CoreServices")
     elseif is_plat("linux") then
         add_deps("fontconfig")
         add_syslinks("pthread", "GL", "dl", "rt")
@@ -66,6 +66,7 @@ package("skia")
         if not package:is_plat("windows") then
             args.cc            = package:build_getenv("cc")
             args.cxx           = package:build_getenv("cxx")
+            args.extra_ldflags = {"-lstdc++"}
         else
             args.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
         end
@@ -77,7 +78,7 @@ package("skia")
         -- patches
         io.replace("bin/fetch-gn", "import os\n", "import os\nimport ssl\nssl._create_default_https_context = ssl._create_unverified_context\n", {plain = true})
         os.vrun("python tools/git-sync-deps")
-        io.replace("gn/BUILD.gn", "libs += [ \"pthread\" ]", "libs += [ \"pthread\", \"m\", \"stdc++\" ]", {plain = true})
+        io.replace("gn/BUILD.gn", "libs += [ \"pthread\" ]", "libs += [ \"pthread\", \"m\" ]", {plain = true})
         io.replace("gn/toolchain/BUILD.gn", "$shell $win_sdk/bin/SetEnv.cmd /x86 && ", "", {plain = true})
         io.replace("third_party/externals/dng_sdk/source/dng_pthread.cpp", "auto_ptr", "unique_ptr", {plain = true})
 
