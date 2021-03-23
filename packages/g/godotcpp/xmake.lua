@@ -6,14 +6,11 @@ package("godotcpp")
     set_urls("https://github.com/godotengine/godot-cpp.git")
     add_versions("3.2", "77d41fa179e40560f1e264ed483638bf51713779")
 
-    add_deps("python >=3.0")
+    add_deps("scons")
 
     add_includedirs("include", "include/core", "include/gen")
 
     on_install("linux", "windows", "macosx", "mingw", "cygwin", "iphoneos", "msys", "bsd", "android", function (package)
-        local python = assert(import("lib.detect.find_tool")("python"), "python not found!")
-        assert(os.execv(python.program, {"-m", "pip", "install", "scons"}))
-
         -- configure platform for scons
         local scons_plat = package:plat()
         if package:is_plat("macosx") then
