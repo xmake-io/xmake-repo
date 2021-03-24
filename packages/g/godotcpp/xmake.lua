@@ -10,7 +10,7 @@ package("godotcpp")
 
     add_includedirs("include", "include/core", "include/gen")
 
-    on_install("linux", "windows", "macosx", "mingw", "cygwin", "iphoneos", "msys", "bsd", "android", function (package)
+    on_install("linux", "windows", "macosx", "mingw", "cygwin", "iphoneos", "msys", "android", function (package)
         -- configure platform for scons
         local scons_plat = package:plat()
         if package:is_plat("macosx") then
