@@ -38,9 +38,13 @@ package("godotcpp")
             "generate_bindings=yes",
             "target=" .. (package:debug() and "debug" or "release"),
             "use_mingw=" .. (package:is_plat("mingw", "cygwin", "msys") and "yes" or "no"),
-            "android_arch=" .. scons_android_arch,
-            "ios_arch=" .. scons_ios_arch
         }
+
+        if package:is_plat("android") then
+            table.insert(configs, "android_arch=" .. scons_android_arch)
+        elseif package:is_plat("iphoneos") then
+            table.insert(configs, "ios_arch=" .. scons_ios_arch)
+        end
 
         import("package.tools.scons").build(package, configs)
         os.cp("bin/*." .. (package:is_plat("windows") and "lib" or "a"), package:installdir("lib"))
