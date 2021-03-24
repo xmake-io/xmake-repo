@@ -50,6 +50,8 @@ package("godotcpp")
         elseif package:is_plat("windows") then
             io.gsub("SConstruct", "/MD", "/" .. package:config("vs_runtime"))
         end
+        -- this fixes an error on ios and osx (https://godotengine.org/qa/65616/problems-compiling-gdnative-c-example-on-osx)
+        io.gsub("SConstruct", "(-std=c%+%+14)", "-std=c++17")
 
         import("package.tools.scons").build(package, configs)
         os.cp("bin/*." .. (package:is_plat("windows") and "lib" or "a"), package:installdir("lib"))
@@ -88,5 +90,5 @@ package("godotcpp")
             godot::Godot::nativescript_init(handle);
             godot::register_class<SimpleClass>();
         }
-        ]]}))
+        ]]}, {configs = {languages = "cxx17"}}))
     end)
