@@ -28,7 +28,10 @@ package("godotcpp")
             scons_bits = "32"
         end
         -- configure architecture for android
-        local scons_android_arch = package:arch()
+        local scons_android_arch = "armv7"
+        if package:is_arch("arm64-v8a") then
+            scons_android_arch = "arm64v8"
+        end
         -- configure architecture for ios
         local scons_ios_arch = package:arch()
 
@@ -44,6 +47,8 @@ package("godotcpp")
             table.insert(configs, "android_arch=" .. scons_android_arch)
         elseif package:is_plat("iphoneos") then
             table.insert(configs, "ios_arch=" .. scons_ios_arch)
+        elseif package:is_plat("windows") then
+            io.gsub("SConstruct", "/MD", "/" .. package:config("vs_runtime"))
         end
 
         import("package.tools.scons").build(package, configs)
