@@ -12,12 +12,10 @@ package("scons")
 
     on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         local python_version = package:dep("python"):version()
-
         local scons_version = package:version()
         local scons_egg = "SCons-" .. scons_version:major() .. "." .. scons_version:minor() .. "." .. scons_version:patch() .. "-py" .. python_version:major() .. "." .. python_version:minor() .. ".egg"
-
-        local PYTHONPATH = package:installdir("lib")
         local pyver = ("python%d.%d"):format(python_version:major(), python_version:minor())
+        local PYTHONPATH = package:installdir("lib")
         local PYTHONPATH1 = path.join(PYTHONPATH, pyver)
         PYTHONPATH = path.join(PYTHONPATH, "site-packages", scons_egg)
         PYTHONPATH1 = path.join(PYTHONPATH1, "site-packages", scons_egg)
