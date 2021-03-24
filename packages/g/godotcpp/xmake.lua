@@ -51,7 +51,9 @@ package("godotcpp")
             io.gsub("SConstruct", "/MD", "/" .. package:config("vs_runtime"))
         end
         -- this fixes an error on ios and osx (https://godotengine.org/qa/65616/problems-compiling-gdnative-c-example-on-osx)
-        io.gsub("SConstruct", "(-std=c%+%+14)", "-std=c++17")
+        if package:is_plat("macosx", "iphoneos") then
+            io.gsub("SConstruct", "(-std=c%+%+14)", "-std=c++17")
+        end
 
         import("package.tools.scons").build(package, configs)
         os.cp("bin/*." .. (package:is_plat("windows") and "lib" or "a"), package:installdir("lib"))
