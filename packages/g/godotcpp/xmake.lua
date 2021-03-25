@@ -13,11 +13,11 @@ package("godotcpp")
     on_install("linux", "windows", "macosx", "mingw", "cygwin", "iphoneos", "msys", function (package)
         local configs = {"generate_bindings=yes"}
         if package:is_plat("windows") then
-            io.gsub("SConstruct", "/MD", "/" .. package:config("vs_runtime"))
+            io.replace("SConstruct", "/MD", "/" .. package:config("vs_runtime"), {plain = true})
         end
         -- this fixes an error on ios and osx (https://godotengine.org/qa/65616/problems-compiling-gdnative-c-example-on-osx)
         if package:is_plat("macosx", "iphoneos") then
-            io.gsub("SConstruct", "(-std=c%+%+14)", "-std=c++17")
+            io.replace("SConstruct", "-std=c++14", "-std=c++17", {plain = true})
         end
 
         import("package.tools.scons").build(package, configs)
