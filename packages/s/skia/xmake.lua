@@ -32,7 +32,7 @@ package("skia")
         add_configs(component, {description = "Enable " .. component .. " support.", default = true, type = "boolean"})
     end
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", "windows", function (package, opt)
         local args = {is_official_build = false,
                       is_component_build = false,
                       is_debug = package:debug(),
@@ -77,7 +77,7 @@ package("skia")
 
         -- patches
         io.replace("bin/fetch-gn", "import os\n", "import os\nimport ssl\nssl._create_default_https_context = ssl._create_unverified_context\n", {plain = true})
-        os.vrun("python tools/git-sync-deps")
+        os.vrunv("python", {"tools/git-sync-deps"}, {envs = opt.oldenvs})
         io.replace("gn/BUILD.gn", "libs += [ \"pthread\" ]", "libs += [ \"pthread\", \"m\", \"stdc++\" ]", {plain = true})
         io.replace("gn/toolchain/BUILD.gn", "$shell $win_sdk/bin/SetEnv.cmd /x86 && ", "", {plain = true})
         io.replace("third_party/externals/dng_sdk/source/dng_pthread.cpp", "auto_ptr", "unique_ptr", {plain = true})
