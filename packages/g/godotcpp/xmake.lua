@@ -11,43 +11,8 @@ package("godotcpp")
     add_includedirs("include", "include/core", "include/gen")
 
     on_install("linux", "windows", "macosx", "mingw", "cygwin", "iphoneos", "msys", function (package)
-        -- configure platform for scons
-        local scons_plat = package:plat()
-        if package:is_plat("macosx") then
-            scons_plat = "osx"
-        elseif package:is_plat("iphoneos") then
-            scons_plat = "ios"
-        elseif package:is_plat("mingw", "cygwin", "msys") then
-            scons_plat = "windows"
-        elseif package:is_plat("bsd") then
-            scons_plat = "freebsd"
-        end
-        -- configure architecture for scons
-        local scons_bits = "64"
-        if package:is_arch("x86") then
-            scons_bits = "32"
-        end
-        -- configure architecture for android
-        local scons_android_arch = "armv7"
-        if package:is_arch("arm64-v8a") then
-            scons_android_arch = "arm64v8"
-        end
-        -- configure architecture for ios
-        local scons_ios_arch = package:arch()
-
-        local configs = {
-            "platform=" .. scons_plat,
-            "bits=" .. scons_bits,
-            "generate_bindings=yes",
-            "target=" .. (package:debug() and "debug" or "release"),
-            "use_mingw=" .. (package:is_plat("mingw", "cygwin", "msys") and "yes" or "no"),
-        }
-
-        if package:is_plat("android") then
-            table.insert(configs, "android_arch=" .. scons_android_arch)
-        elseif package:is_plat("iphoneos") then
-            table.insert(configs, "ios_arch=" .. scons_ios_arch)
-        elseif package:is_plat("windows") then
+        local configs = {"generate_bindings=yes"}
+        if package:is_plat("windows") then
             io.gsub("SConstruct", "/MD", "/" .. package:config("vs_runtime"))
         end
         -- this fixes an error on ios and osx (https://godotengine.org/qa/65616/problems-compiling-gdnative-c-example-on-osx)
