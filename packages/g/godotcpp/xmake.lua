@@ -12,6 +12,7 @@ package("godotcpp")
 
     on_install("linux", "windows", "macosx", "mingw", "cygwin", "iphoneos", "msys", function (package)
         local configs = {"generate_bindings=yes"}
+        table.insert(configs, "bits=" .. ((package:is_arch("x64") or package:is_arch("x86_64")) and "64" or "32"))
         if package:is_plat("windows") then
             io.replace("SConstruct", "/MD", "/" .. package:config("vs_runtime"), {plain = true})
         end
