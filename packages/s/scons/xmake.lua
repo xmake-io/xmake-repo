@@ -8,7 +8,7 @@ package("scons")
              "https://github.com/SCons/scons.git")
     add_versions("4.1.0", "106259e92ba001feae5b50175bcec92306d0420bb08229fb037440cf303fcfc3")
 
-    add_deps("python >=3.0")
+    add_deps("python 3.x", {kind = "binary"})
 
     on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         local python_version = package:dep("python"):version()
