@@ -6,10 +6,11 @@ package("cairo")
     set_urls("https://cairographics.org/releases/cairo-$(version).tar.xz")
     add_versions("1.16.0", "5e7b29b3f113ef870d1e3ecf8adf21f923396401604bda16d44be45e66052331")
 
+    add_deps("libpng", "pixman")
     if is_plat("windows") then
-        add_deps("make", "libpng", "pixman", "zlib")
+        add_deps("make", "zlib")
     else
-        add_deps("pkg-config", "fontconfig", "freetype", "libpng", "pixman")
+        add_deps("pkg-config", "freetype", "fontconfig")
     end
 
     if is_plat("macosx") then
@@ -17,33 +18,50 @@ package("cairo")
     elseif is_plat("windows") then
         add_defines("CAIRO_WIN32_STATIC_BUILD=1")
         add_syslinks("gdi32", "msimg32", "user32")
-    else
+    elseif is_plat("linux") then
+        add_deps("libxrender", "zlib", {host = true})
         add_syslinks("pthread")
     end
 
     on_install("windows", function (package)
-        import("core.tool.toolchain")
-        local runenvs = toolchain.load("msvc"):runenvs()
-        io.gsub("build/Makefile.win32.common", "%-MD", "-" .. package:config("vs_runtime"))
-        io.gsub("build/Makefile.win32.common", "mkdir %-p", "xmake l mkdir")
-        io.gsub("build/Makefile.win32.common", "dirname", "xmake l path.directory")
-        io.gsub("build/Makefile.win32.common", "link", "echo")
-        io.gsub("src/Makefile.win32", "%$%(PIXMAN_LIBS%)", "")
+
+        -- patches
+        io.replace("build/Makefile.win32.common", "-MD", "-" .. package:config("vs_runtime"), {plain = true})
+        io.replace("build/Makefile.win32.common", "@mkdir -p $(CFG)/`dirname $<`", "", {plain = true})
+        io.replace("build/Makefile.win32.common", "zdll.lib", "zlib.lib", {plain = true})
+        io.replace("build/Makefile.win32.common", "libpng.lib", "png.lib", {plain = true})
+        io.replace("build/Makefile.win32.common", "/pixman/$(CFG)", "", {plain = true})
+        io.replace("src/Makefile.win32", "@for x in $(enabled_cairo_headers); do echo \"	src/$$x\"; done", "", {plain = true})
+
+        -- configs
+        local cfg = package:debug() and "debug" or "release"
+        local args = {"-f", "Makefile.win32", "CFG=" .. cfg}
         local pixman = package:dep("pixman")
         if pixman then
-            io.gsub("build/Makefile.win32.common", "%$%(PIXMAN_CFLAGS%)", "-I\"" .. pixman:installdir("include/pixman-1") .. "\"")
+            io.replace("build/Makefile.win32.common", "%$%(PIXMAN_CFLAGS%)", "-I\"" .. pixman:installdir("include/pixman-1") .. "\"")
+            table.insert(args, "PIXMAN_PATH=" .. (pixman:installdir("lib")))
         end
         local libpng = package:dep("libpng")
         if libpng then
-            io.gsub("build/Makefile.win32.common", "%$%(LIBPNG_CFLAGS%)", "-I\"" .. libpng:installdir("include") .. "\"")
+            io.replace("build/Makefile.win32.common", "%$%(LIBPNG_CFLAGS%)", "-I\"" .. libpng:installdir("include") .. "\"")
+            table.insert(args, "LIBPNG_PATH=" .. (libpng:installdir("lib")))
         end
         local zlib = package:dep("zlib")
         if zlib then
-            io.gsub("build/Makefile.win32.common", "%$%(ZLIB_CFLAGS%)", "-I\"" .. zlib:installdir("include") .. "\"")
+            io.replace("build/Makefile.win32.common", "%$%(ZLIB_CFLAGS%)", "-I\"" .. zlib:installdir("include") .. "\"")
+            table.insert(args, "ZLIB_PATH=" .. (zlib:installdir("lib")))
         end
-        os.vrunv("make", {"-f", "Makefile.win32", "CFG=" .. (package:debug() and "debug" or "release")}, {envs = runenvs})
+
+        -- installation
+        os.mkdir(path.join("src", cfg, "win32"))
+        os.vrunv("make", args, {envs = import("core.tool.toolchain").load("msvc"):runenvs()})
         os.cp("src/*.h", package:installdir("include/cairo"))
-        os.cp("src/**.lib", package:installdir("lib"))
+        if package:config("shared") then
+            os.cp(path.join("src", cfg, "cairo.lib"), package:installdir("lib"))
+            os.cp(path.join("src", cfg, "cairo.dll"), package:installdir("bin"))
+        else
+            os.cp(path.join("src", cfg, "cairo-static.lib"), package:installdir("lib"))
+        end
     end)
 
     on_install("macosx", "linux", function (package)
