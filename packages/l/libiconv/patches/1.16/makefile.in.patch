@@ -1,0 +1,41 @@
+diff --git a/Makefile.in b/Makefile.in
+index 5d501ce..08899a9 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -31,11 +31,6 @@ SHELL = @SHELL@
+ 
+ all : lib/localcharset.h force
+ 	cd lib && $(MAKE) all
+-	cd srclib && $(MAKE) all
+-	cd src && $(MAKE) all
+-	cd po && $(MAKE) all
+-	cd man && $(MAKE) all
+-	if test -d tests; then cd tests && $(MAKE) all; fi
+ 
+ lib/localcharset.h :
+ 	builddir="`pwd`"; cd libcharset && $(MAKE) all && $(MAKE) install-lib libdir="$$builddir/lib" includedir="$$builddir/lib"
+@@ -50,12 +45,8 @@ install-lib : all force
+ install : lib/localcharset.h force
+ 	cd libcharset && $(MAKE) install prefix='$(prefix)' exec_prefix='$(exec_prefix)' libdir='$(libdir)'
+ 	cd lib && $(MAKE) install prefix='$(prefix)' exec_prefix='$(exec_prefix)' libdir='$(libdir)'
+-	cd srclib && $(MAKE) install prefix='$(prefix)' exec_prefix='$(exec_prefix)' libdir='$(libdir)'
+-	cd src && $(MAKE) install prefix='$(prefix)' exec_prefix='$(exec_prefix)' libdir='$(libdir)'
+ 	if [ ! -d $(DESTDIR)$(includedir) ] ; then $(mkinstalldirs) $(DESTDIR)$(includedir) ; fi
+ 	$(INSTALL_DATA) include/iconv.h.inst $(DESTDIR)$(includedir)/iconv.h
+-	cd po && $(MAKE) install prefix='$(prefix)' exec_prefix='$(exec_prefix)' datarootdir='$(datarootdir)' datadir='$(datadir)'
+-	cd man && $(MAKE) install prefix='$(prefix)' exec_prefix='$(exec_prefix)' datarootdir='$(datarootdir)' datadir='$(datadir)' mandir='$(mandir)'
+ 
+ install-strip : lib/localcharset.h force
+ 	cd libcharset && $(MAKE) install-strip prefix='$(prefix)' exec_prefix='$(exec_prefix)' libdir='$(libdir)'
+@@ -88,11 +79,6 @@ uninstall : force
+ check : all force
+ 	cd libcharset && $(MAKE) check
+ 	cd lib && $(MAKE) check
+-	cd srclib && $(MAKE) check
+-	cd src && $(MAKE) check
+-	cd po && $(MAKE) check
+-	cd man && $(MAKE) check
+-	if test -d tests; then cd tests && $(MAKE) check; fi
+ 
+ mostlyclean : force
+ 	cd libcharset && $(MAKE) mostlyclean

@@ -13,10 +13,12 @@ local options =
 ,   {'p', "plat",       "kv", nil, "Set the given platform."                    }
 ,   {'a', "arch",       "kv", nil, "Set the given architecture."                }
 ,   {'m', "mode",       "kv", nil, "Set the given mode."                        }
+,   {'j', "jobs",       "kv", nil, "Set the build jobs."                        }
 ,   {nil, "cflags",     "kv", nil, "Set the cflags."                            }
 ,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."                          }
 ,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                           }
-,   {nil, "ndk",        "kv", nil, "Set the android NDK directory."             }
+,   {nil, "ndk",        "kv", nil, "Set the Android NDK directory."             }
+,   {nil, "ndk_sdkver", "kv", nil, "Set the Android NDK platform sdk version."  }
 ,   {nil, "sdk",        "kv", nil, "Set the SDK directory of cross toolchain."  }
 ,   {nil, "vs_sdkver",  "kv", nil, "Set the Windows SDK version."               }
 ,   {nil, "vs_runtime", "kv", nil, "Set the VS Runtime library."                }
@@ -50,6 +52,9 @@ function _require_packages(argv, packages)
     if argv.sdk then
         table.insert(config_argv, "--sdk=" .. argv.sdk)
     end
+    if argv.ndk_sdkver then
+        table.insert(config_argv, "--ndk_sdkver=" .. argv.ndk_sdkver)
+    end
     if argv.vs_sdkver then
         table.insert(config_argv, "--vs_sdkver=" .. argv.vs_sdkver)
     end
@@ -81,6 +86,9 @@ function _require_packages(argv, packages)
     end
     if argv.shallow then
         table.insert(require_argv, "--shallow")
+    end
+    if argv.jobs then
+        table.insert(require_argv, "--jobs=" .. argv.jobs)
     end
     if argv.mode == "debug" and argv.kind == "shared" then
         table.insert(require_argv, "--extra={debug=true,configs={shared=true}}")

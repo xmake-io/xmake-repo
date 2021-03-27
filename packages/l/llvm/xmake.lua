@@ -57,16 +57,28 @@ package("llvm")
         end
     end
 
-    on_install("@macosx", "@windows", "@msys", "@bsd", function (package)
-        os.cp("*", package:installdir())
-    end)
-
     on_load("@linux", function (package)
         if linuxos.name() == "ubuntu" and linuxos.version():eq("20.04") and os.arch() == "x86_64" then
             return
         elseif package:config("openmp") then
             package:add("deps", "libelf", {host = true})
         end
+    end)
+
+    if on_fetch then
+        on_fetch(function (package, opt)
+            local version = try {function() return os.iorunv("llvm-config --version") end}
+            if version then
+                import("core.base.semver")
+                if semver.satisfies(version:trim(), opt.require_version) then
+                    return true
+                end
+            end
+        end)
+    end
+
+    on_install("@macosx", "@windows", "@msys", "@bsd", function (package)
+        os.cp("*", package:installdir())
     end)
 
     on_install("@linux", function (package)
@@ -144,5 +156,8 @@ package("llvm")
     end)
 
     on_test(function (package)
-        os.vrun("clang --version")
+        os.vrun("llvm-config --version")
+        if package:config("clang") then
+            os.vrun("clang --version")
+        end
     end)

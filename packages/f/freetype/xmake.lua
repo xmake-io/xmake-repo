@@ -19,6 +19,14 @@ package("freetype")
         add_includedirs("include/freetype2")
     end
 
+    if on_fetch then
+        on_fetch("linux", "macosx", function (package, opt)
+            if opt.system then
+                return find_package("pkgconfig::freetype2")
+            end
+        end)
+    end
+
     on_load("linux", "macosx", function (package)
         package:add("deps", "libpng", "bzip2", "zlib")
         if package:config("woff2") then
@@ -28,14 +36,18 @@ package("freetype")
 
     on_install("windows", function (package)
         os.cp("include", package:installdir())
-        os.cp(is_arch("x64") and "win64/*" or "win32/*", package:installdir("lib"))
+        os.cp(is_arch("x64") and "win64/*.lib" or "win32/*.lib", package:installdir("lib"))
+        os.cp(is_arch("x64") and "win64/*.dll" or "win32/*.dll", package:installdir("bin"))
     end)
 
     on_install("linux", "macosx", function (package)
         local configs = { "--enable-freetype-config",
-                          "--without-harfbuzz",
-                          "--disable-shared",
-                          "--with-pic"}
+                          "--without-harfbuzz"}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 

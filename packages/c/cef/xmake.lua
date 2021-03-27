@@ -35,6 +35,8 @@ package("cef")
         local distrib_type = package:debug() and "Debug" or "Release"
         os.cp(path.join(distrib_type, "*.lib"), package:installdir("lib"))
         os.cp(path.join(distrib_type, "*.dll"), package:installdir("bin"))
+        os.cp(path.join(distrib_type, "swiftshader", "*.dll"), package:installdir("bin/swiftshader"))
+        os.cp(path.join(distrib_type, "*.bin"), package:installdir("bin"))
         os.cp("Resources/*", package:installdir("bin"))
         local configs = {}
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")

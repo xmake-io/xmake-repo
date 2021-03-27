@@ -1,0 +1,12 @@
+diff --git a/src/frame_listener_impl.cpp b/src/frame_listener_impl.cpp
+index f4f8a97..34b1da8 100644
+--- a/src/frame_listener_impl.cpp
++++ b/src/frame_listener_impl.cpp
+@@ -28,6 +28,7 @@
+ 
+ #include <libfreenect2/frame_listener_impl.h>
+ #include <libfreenect2/threading.h>
++#include <functional>
+ 
+ namespace libfreenect2
+ {

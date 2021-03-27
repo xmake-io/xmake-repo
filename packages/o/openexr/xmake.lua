@@ -5,13 +5,19 @@ package("openexr")
 
     add_urls("https://github.com/AcademySoftwareFoundation/openexr/archive/v$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openexr.git")
-
     add_versions("2.5.3", "6a6525e6e3907715c6a55887716d7e42d09b54d2457323fcee35a0376960bebf")
+    add_versions("2.5.5", "59e98361cb31456a9634378d0f653a2b9554b8900f233450f2396ff495ea76b3")
 
     add_deps("cmake")
     add_deps("zlib")
 
     add_configs("build_both", {description = "Build both static library and shared library.", default = false, type = "boolean"})
+
+    on_load("windows", function (package)
+        if package:config("shared") then
+            package:add("defines", "OPENEXR_DLL")
+        end
+    end)
 
     on_install("macosx", "linux", "windows", "mingw@windows", "mingw@msys", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DINSTALL_OPENEXR_EXAMPLES=OFF", "-DINSTALL_OPENEXR_DOCS=OFF", "-DOPENEXR_BUILD_UTILS=ON"}
@@ -26,9 +32,7 @@ package("openexr")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPYILMBASE_ENABLE=" .. "OFF")
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
-        os.cp("build/install/bin", package:installdir())
-        package:addenv("PATH", "bin")
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)

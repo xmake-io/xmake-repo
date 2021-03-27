@@ -1,0 +1,71 @@
+package("godotcpp")
+
+    set_homepage("https://godotengine.org/")
+    set_description("C++ bindings for the Godot script API")
+
+    set_urls("https://github.com/godotengine/godot-cpp.git")
+    add_versions("3.2", "77d41fa179e40560f1e264ed483638bf51713779")
+
+    add_deps("scons")
+
+    add_includedirs("include", "include/core", "include/gen")
+
+    on_install("linux", "windows", "macosx", "mingw", "cygwin", "iphoneos", "android", "msys", function (package)
+        local configs = {"generate_bindings=yes"}
+        table.insert(configs, "bits=" .. ((package:is_arch("x64") or package:is_arch("x86_64")) and "64" or "32"))
+        if package:is_plat("windows") then
+            io.replace("SConstruct", "/MD", "/" .. package:config("vs_runtime"), {plain = true})
+        end
+
+        -- this fixes an error on ios and osx (https://godotengine.org/qa/65616/problems-compiling-gdnative-c-example-on-osx)
+        if package:is_plat("macosx", "iphoneos") then
+            io.replace("SConstruct", "-std=c++14", "-std=c++17", {plain = true})
+        end
+
+        -- fix to use correct ranlib, @see https://github.com/godotengine/godot-cpp/issues/510
+        if package:is_plat("android") then
+            io.replace("SConstruct",
+                [[env['AR'] = toolchain + "/bin/" + arch_info['tool_path'] + "-ar"]],
+                [[env['AR'] = toolchain + "/bin/" + arch_info['tool_path'] + "-ar"
+    env['RANLIB'] = toolchain + "/bin/" + arch_info['tool_path'] + "-ranlib"]], {plain = true})
+        end
+
+        import("package.tools.scons").build(package, configs)
+        os.cp("bin/*." .. (package:is_plat("windows") and "lib" or "a"), package:installdir("lib"))
+        os.cp("include/core/*.hpp", package:installdir("include/core"))
+        os.cp("include/gen/*.hpp",  package:installdir("include/gen"))
+        os.cp("godot-headers/android",            package:installdir("include"))
+        os.cp("godot-headers/arvr",               package:installdir("include"))
+        os.cp("godot-headers/gdnative",           package:installdir("include"))
+        os.cp("godot-headers/nativescript",       package:installdir("include"))
+        os.cp("godot-headers/net",                package:installdir("include"))
+        os.cp("godot-headers/pluginscript",       package:installdir("include"))
+        os.cp("godot-headers/videodecoder",       package:installdir("include"))
+        os.cp("godot-headers/*.h",                package:installdir("include"))
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+        #include <Godot.hpp>
+        #include <Reference.hpp>
+        using namespace godot;
+        class SimpleClass : public Reference {
+            GODOT_CLASS(SimpleClass, Reference);
+        public:
+            SimpleClass() { }
+            void _init() { }
+            Variant method(Variant arg) {
+                Variant ret; ret = arg; return ret;
+            }
+            static void _register_methods() {
+                register_method("method", &SimpleClass::method);
+            }
+        };
+        extern "C" void GDN_EXPORT godot_gdnative_init(godot_gdnative_init_options *o) { godot::Godot::gdnative_init(o); }
+        extern "C" void GDN_EXPORT godot_gdnative_terminate(godot_gdnative_terminate_options *o) { godot::Godot::gdnative_terminate(o); }
+        extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
+            godot::Godot::nativescript_init(handle);
+            godot::register_class<SimpleClass>();
+        }
+        ]]}, {configs = {languages = "cxx17"}}))
+    end)
