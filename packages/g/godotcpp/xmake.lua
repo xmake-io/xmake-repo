@@ -10,15 +10,24 @@ package("godotcpp")
 
     add_includedirs("include", "include/core", "include/gen")
 
-    on_install("linux", "windows", "macosx", "mingw", "cygwin", "iphoneos", "msys", function (package)
+    on_install("linux", "windows", "macosx", "mingw", "cygwin", "iphoneos", "android", "msys", function (package)
         local configs = {"generate_bindings=yes"}
         table.insert(configs, "bits=" .. ((package:is_arch("x64") or package:is_arch("x86_64")) and "64" or "32"))
         if package:is_plat("windows") then
             io.replace("SConstruct", "/MD", "/" .. package:config("vs_runtime"), {plain = true})
         end
+
         -- this fixes an error on ios and osx (https://godotengine.org/qa/65616/problems-compiling-gdnative-c-example-on-osx)
         if package:is_plat("macosx", "iphoneos") then
             io.replace("SConstruct", "-std=c++14", "-std=c++17", {plain = true})
+        end
+
+        -- fix to use correct ranlib, @see https://github.com/godotengine/godot-cpp/issues/510
+        if package:is_plat("android") then
+            io.replace("SConstruct",
+                [[env['AR'] = toolchain + "/bin/" + arch_info['tool_path'] + "-ar"]],
+                [[env['AR'] = toolchain + "/bin/" + arch_info['tool_path'] + "-ar"
+    env['RANLIB'] = toolchain + "/bin/" + arch_info['tool_path'] + "-ranlib"]], {plain = true})
         end
 
         import("package.tools.scons").build(package, configs)
