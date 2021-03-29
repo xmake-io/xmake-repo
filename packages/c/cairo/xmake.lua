@@ -16,7 +16,7 @@ package("cairo")
     elseif is_plat("macosx") then
         add_frameworks("CoreGraphics", "CoreFoundation")
     elseif is_plat("linux") then
-        add_cxflags("pthread")
+        add_syslinks("pthread")
     end
 
     on_load("windows", function (package)
