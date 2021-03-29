@@ -12,7 +12,7 @@ package("skia")
     add_versions("89", "b4c8260ad7d1a60e0382422d76ea6174fc35ce781b01030068fcad08364dd334")
     add_versions("90", "5201386a026d1dd55e662408acf9df6ff9d8c1df24ef6a5b3d51b006b516ac90")
 
-    add_deps("gn", "python", "ninja", {binary = true})
+    add_deps("gn", "python", "ninja", {kind = "binary"})
 
     add_includedirs("include")
     add_includedirs("include/..")
@@ -22,7 +22,7 @@ package("skia")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreGraphics", "CoreText", "CoreServices")
     elseif is_plat("linux") then
-        add_deps("fontconfig")
+        add_deps("fontconfig", "freetype >=2.10")
         add_syslinks("pthread", "GL", "dl", "rt")
     end
     add_links("skia")
@@ -32,7 +32,7 @@ package("skia")
         add_configs(component, {description = "Enable " .. component .. " support.", default = true, type = "boolean"})
     end
 
-    on_install("macosx", "linux", "windows", function (package, opt)
+    on_install("macosx", "linux", "windows", function (package)
         local args = {is_official_build = false,
                       is_component_build = false,
                       is_debug = package:debug(),
@@ -42,7 +42,7 @@ package("skia")
                       skia_use_sfntly = true,
                       skia_use_piex = true,
                       skia_use_freetype = true,
-                      skia_use_system_freetype2 = false,
+                      skia_use_system_freetype2 = package:is_plat("linux") and true or false,
                       skia_use_harfbuzz = true,
                       skia_use_libheif = true,
                       skia_use_expat = true,
@@ -72,15 +72,52 @@ package("skia")
         if package:is_plat("macosx") then
             args.extra_ldflags = {"-lstdc++"}
             local xcode = import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
-            args.xcode_sysroot = xcode:config("xcode") .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode:config("xcode_sdkver") .. ".sdk"
+            args.xcode_sysroot = xcode:config("xcode_sysroot")
+        end
+
+        -- fix symbol lookup error: /lib64/libk5crypto.so.3: undefined symbol: EVP_KDF_ctrl, version OPENSSL_1_1_1b
+        local LD_LIBRARY_PATH
+        if package:is_plat("linux") and linuxos.name() == "fedora" then
+            LD_LIBRARY_PATH = os.getenv("LD_LIBRARY_PATH")
+            if LD_LIBRARY_PATH then
+                local libdir = os.arch() == "x86_64" and "/usr/lib64" or "/usr/lib"
+                LD_LIBRARY_PATH = libdir .. ":" .. LD_LIBRARY_PATH
+            end
         end
 
         -- patches
         io.replace("bin/fetch-gn", "import os\n", "import os\nimport ssl\nssl._create_default_https_context = ssl._create_unverified_context\n", {plain = true})
-        os.vrunv("python", {"tools/git-sync-deps"}, {envs = opt.oldenvs})
+        os.vrunv("python", {"tools/git-sync-deps"}, {envs = {LD_LIBRARY_PATH = LD_LIBRARY_PATH}})
         io.replace("gn/BUILD.gn", "libs += [ \"pthread\" ]", "libs += [ \"pthread\", \"m\", \"stdc++\" ]", {plain = true})
         io.replace("gn/toolchain/BUILD.gn", "$shell $win_sdk/bin/SetEnv.cmd /x86 && ", "", {plain = true})
         io.replace("third_party/externals/dng_sdk/source/dng_pthread.cpp", "auto_ptr", "unique_ptr", {plain = true})
+        io.replace("BUILD.gn", 'executable%("skia_c_api_example"%) {.-}', "")
+
+        -- set deps flags
+        local cflags = {}
+        local ldflags = {}
+        if package:is_plat("linux") then
+            for _, depname in ipairs({"fontconfig", "freetype"}) do
+                local fetchinfo = package:dep(depname):fetch()
+                if fetchinfo then
+                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                        table.insert(cflags, "-I" .. includedir)
+                    end
+                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                        table.insert(ldflags, "-L" .. linkdir)
+                    end
+                    for _, link in ipairs(fetchinfo.links) do
+                        table.insert(ldflags, "-l" .. link)
+                    end
+                end
+            end
+        end
+        if #cflags > 0 then
+            io.replace("gn/BUILD.gn", "cflags = []", 'cflags = ["' .. table.concat(cflags, '", "') .. '"]', {plain = true})
+        end
+        if #ldflags > 0 then
+            io.replace("gn/BUILD.gn", "ldflags = []", 'ldflags = ["' .. table.concat(ldflags, '", "') .. '"]', {plain = true})
+        end
 
         -- installation
         import("package.tools.gn").build(package, args, {buildir = "out"})

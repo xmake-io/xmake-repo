@@ -23,7 +23,7 @@ package("libpng")
             add_requires("zlib")
             target("png")
                 set_kind("$(kind)")
-                add_files("*.c|example.c")
+                add_files("*.c|example.c|pngtest.c")
                 if is_arch("x86", "x64", "i386", "x86_64") then
                     add_files("intel/*.c")
                     add_defines("PNG_INTEL_SSE_OPT=1")
