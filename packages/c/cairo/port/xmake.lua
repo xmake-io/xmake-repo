@@ -28,11 +28,10 @@ end
 target("cairo")
     set_kind("$(kind)")
     add_packages("zlib", "libpng", "pixman")
-
     add_includedirs("$(projectdir)")
     add_includedirs("$(projectdir)/src")
     if is_plat("windows") then
-        if get_config("kind") == "static" then 
+        if is_kind("static") then
             add_defines("CAIRO_WIN32_STATIC_BUILD=1")
         end
         add_syslinks("gdi32", "msimg32", "user32")
