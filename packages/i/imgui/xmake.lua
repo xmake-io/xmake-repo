@@ -12,6 +12,10 @@ package("imgui")
     add_versions("v1.79", "f1908501f6dc6db8a4d572c29259847f6f882684b10488d3a8d2da31744cd0a4")
     add_versions("v1.75", "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("Imm32")
+    end
+
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         io.writefile("xmake.lua", [[
             target("imgui")
