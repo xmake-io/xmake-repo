@@ -18,6 +18,7 @@ package("sqlite3")
     add_versions("3.23.0+0",   "b7711a1800a071674c2bf76898ae8584fc6c9643cfe933cfc1bc54361e3a6e49")
     add_versions("3.24.0+0",   "d9d14e88c6fb6d68de9ca0d1f9797477d82fc3aed613558f87ffbdbbc5ceb74a")
     add_versions("3.34.0+100", "2a3bca581117b3b88e5361d0ef3803ba6d8da604b1c1a47d902ef785c1b53e89")
+    add_versions("3.35.0+300", "ecbccdd440bdf32c0e1bb3611d635239e3b5af268248d130d0445a32daf0274b")
 
     if is_plat("macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
