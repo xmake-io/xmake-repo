@@ -56,13 +56,13 @@ target("cairo")
         )
     else
         add_defines(
-            "-DHAVE_INTTYPES_H=1",
-            "-DHAVE_STDINT_H=1",
-            "-DHAVE_SYS_TYPES_H=1",
-            "-DHAVE_UINT64_T=1",
-            "-DHAVE_UNISTD_H=1",
-            "-DCAIRO_HAS_PTHREAD=1",
-            "-DCAIRO_HAS_REAL_PTHREAD=1"
+            "HAVE_INTTYPES_H=1",
+            "HAVE_STDINT_H=1",
+            "HAVE_SYS_TYPES_H=1",
+            "HAVE_UINT64_T=1",
+            "HAVE_UNISTD_H=1",
+            "CAIRO_HAS_PTHREAD=1",
+            "CAIRO_HAS_REAL_PTHREAD=1"
         )
     end
 
