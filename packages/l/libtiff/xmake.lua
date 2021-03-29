@@ -7,7 +7,7 @@ package("libtiff")
              "https://fossies.org/linux/misc/tiff-$(version).tar.gz")
     add_versions("4.1.0", "5d29f32517dadb6dbcd1255ea5bbc93a2b54b94fbf83653b4d65c7d6775b8634")
 
-    add_deps("zlib")
+    add_deps("zlib", "libjpeg")
     if is_plat("windows", "mingw") then
         add_deps("cmake")
     end
