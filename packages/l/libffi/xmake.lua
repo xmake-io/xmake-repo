@@ -27,7 +27,6 @@ package("libffi")
                 package:add("linkdirs", "lib64")
             end
         end
-        print(os.files(package:installdir("**")))
     end)
 
     on_test(function (package)
