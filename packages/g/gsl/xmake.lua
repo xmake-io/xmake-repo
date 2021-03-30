@@ -4,7 +4,8 @@ package("gsl")
     set_description("Guidelines Support Library")
     set_license("MIT")
 
-    add_urls("https://github.com/microsoft/GSL/archive/$(version).tar.gz")
+    add_urls("https://github.com/microsoft/GSL/archive/$(version).tar.gz",
+             "https://github.com/microsoft/GSL.git")
     add_versions("v3.1.0", "d3234d7f94cea4389e3ca70619b82e8fb4c2f33bb3a070799f1e18eef500a083")
 
     on_install(function (package)
