@@ -3,18 +3,11 @@ package("libffi")
     set_homepage("https://sourceware.org/libffi/")
     set_description("Portable Foreign Function Interface library.")
 
-    set_urls("https://sourceware.org/pub/libffi/libffi-$(version).tar.gz",
-             "https://deb.debian.org/debian/pool/main/libf/libffi/libffi_$(version).orig.tar.gz",
-             "https://github.com/atgreen/libffi.git")
+    set_urls("http://sourceware.org/pub/libffi/libffi-$(version).tar.gz",
+             "https://github.com/libffi/libffi/releases/download/v$(version)/libffi-$(version).tar.gz",
+             "https://github.com/libffi/libffi.git")
     add_versions("3.2.1", "d06ebb8e1d9a22d19e38d63fdb83954253f39bedc5d46232a05645685722ca37")
-
-    on_load(function (package)
-        if package:gitref() then
-            package:add("deps", "autoconf", "automake", "libtool")
-        else
-            package:add("includedirs", "lib/libffi-" .. package:version_str() .. "/include")
-        end
-    end)
+    add_versions("3.3", "72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056")
 
     on_install("macosx", "linux", "iphoneos", function (package)
         local configs = {"--disable-silent-rules", "--disable-dependency-tracking"}
@@ -34,6 +27,7 @@ package("libffi")
                 package:add("linkdirs", "lib64")
             end
         end
+        print(os.files(package:installdir("**")))
     end)
 
     on_test(function (package)
