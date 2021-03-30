@@ -7,9 +7,10 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        ndk_sdkver: ["21", "29"]
+        ndk_sdkver: ["29", "21"]
 
     runs-on: ${{ matrix.os }}
 
