@@ -35,7 +35,9 @@ package("ninja")
     end)
 
     on_install("@linux", function (package)
-        os.vrun("python configure.py --bootstrap")
+        import("lib.detect.find_tool")
+        local python = assert(find_tool("python"), "python not found!")
+        os.vrunv(python.program, {"configure.py", "--bootstrap"})
         os.cp("./ninja", package:installdir("bin"))
     end)
 
