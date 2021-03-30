@@ -9,6 +9,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
+        ndk_sdkver: ["21", "29"]
 
     runs-on: ${{ matrix.os }}
 
@@ -25,5 +26,5 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-r21
+          xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-r21 --ndk_sdkver=${{ matrix.ndk_sdkver }}
 
