@@ -38,7 +38,7 @@ package("glfw")
             local cflags = {}
             local fetchinfo = package:dep("libxrender"):fetch()
             if fetchinfo then
-                for _, includedir in ipairs(fetchinfo.includedirs) do
+                for _, includedir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
                     table.insert(cflags, "-I" .. includedir)
                 end
             end
