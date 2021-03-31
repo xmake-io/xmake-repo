@@ -18,7 +18,9 @@ package("cuda")
                 table.insert(utils, package:config("shared") and "cudart" or "cudart_static")
         
                 for _, util in ipairs(utils) do
-                    if not find_library(util, cuda.linkdirs) then return end
+                    if not find_library(util, cuda.linkdirs) then
+                        return
+                    end
                     table.insert(result.links, util)
                 end
                 return result

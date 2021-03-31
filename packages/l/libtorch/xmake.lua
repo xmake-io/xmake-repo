@@ -15,7 +15,7 @@ package("libtorch")
     add_deps("python 3.x", {kind = "binary", system = false})
     add_deps("libuv")
     add_deps("cuda", {optional = true, configs = {utils = {"nvrtc", "cudnn", "cufft", "curand", "cublas", "cudart_static"}}})
-    add_deps("nvtx", "mkl", {optional = true})
+    add_deps("nvtx", "mkl", {optional = true, system = true})
     add_includedirs("include")
     add_includedirs("include/torch/csrc/api/include")
 
