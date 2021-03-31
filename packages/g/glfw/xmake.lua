@@ -19,7 +19,7 @@ package("glfw")
         add_syslinks("gdi32")
     elseif is_plat("linux") then
         -- TODO: add wayland support
-        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxi", "libxext")
+        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext")
         add_syslinks("dl", "pthread")
         add_defines("_GLFW_X11")
     end
@@ -33,20 +33,12 @@ package("glfw")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
-        elseif package:is_plat("linux") then
-            -- patch missing libxrender/includes
-            local cflags = {}
-            local fetchinfo = package:dep("libxrender"):fetch()
-            if fetchinfo then
-                for _, includedir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
-                    table.insert(cflags, "-I" .. includedir)
-                end
-            end
-            if #cflags > 0 then
-                table.insert(configs, "-DCMAKE_C_FLAGS=" .. table.concat(cflags, " "))
-            end
         end
-        import("package.tools.cmake").install(package, configs)
+        if package:is_plat("linux") then
+            import("package.tools.cmake").install(package, configs, {packagedeps = {"libxrender", "libxfixes"}})
+        else
+            import("package.tools.cmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)
