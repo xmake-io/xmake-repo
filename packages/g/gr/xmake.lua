@@ -44,7 +44,7 @@ package("gr")
     on_load("windows|x64", "macosx", "linux|x86,x86_64", function (package)
         local libs = {"GR", "GR3", "GRM", "GKS"}
         local prefix = ""
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             prefix = "lib"
         else
             package:add("ldflags", "-Wl,-rpath," .. package:installdir("lib"))
