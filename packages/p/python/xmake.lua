@@ -236,7 +236,7 @@ package("python")
         if package:kind() ~= "binary" then
             assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
         end
-        if is_host("windows") and package:version():ge("3.8.0") then
+        if is_host("windows") and package:version():ge("3.8.0") and winos.version():gt("win8") then
             os.vrun("py -3 -c \"import sys\"")
         end
     end)
