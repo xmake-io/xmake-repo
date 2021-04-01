@@ -55,7 +55,7 @@ package("gr")
     end)
 
     on_install("windows|x64", "macosx", "linux|x86,x86_64", function (package)
-        os.cp("**", package:installdir())
+        os.cp("*", package:installdir())
         package:addenv("PATH", "bin")
     end)
 
