@@ -23,10 +23,6 @@ package("libtorch")
     add_links("")
 
     on_load("windows|x64", "macosx", "linux", function (package)
-
-        -- ensure that git core.longpaths is enabled
-        os.vrun("git config --global core.longpaths true")
-
         if package:config("ninja") then
             package:add("deps", "ninja")
         end
