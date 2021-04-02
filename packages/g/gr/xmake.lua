@@ -56,7 +56,10 @@ package("gr")
 
     on_install("windows|x64", "macosx", "linux|x86,x86_64", function (package)
         os.cp("*", package:installdir())
+        package:addenv("PATH", ".")
         package:addenv("PATH", "bin")
+        package:addenv("GRDIR", package:installdir())
+        package:addenv("GKS_WSTYPE", package:is_plat("windows") and "41" or "x11")
     end)
 
     on_test(function (package)
