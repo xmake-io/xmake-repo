@@ -26,7 +26,6 @@ package("mingw-w64")
 
     on_install("@windows", function (package)
         os.cp("*", package:installdir())
-        package:addenv("PATH", "bin")
         if package:config("python2") then
             package:addenv("PATH", path.join("opt", "bin"))
         end
