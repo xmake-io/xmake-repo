@@ -19,6 +19,11 @@ package("libtorch")
     add_includedirs("include")
     add_includedirs("include/torch/csrc/api/include")
 
+    -- enable long paths for git submodule on windows
+    if is_host("windows") then
+        set_policy("platform.longpaths", true)
+    end
+
     -- prevent the link to the libraries found automatically
     add_links("")
 
@@ -36,7 +41,7 @@ package("libtorch")
 
     on_install("windows|x64", "macosx", "linux", function (package)
         import("package.tools.cmake")
-        
+
         -- tackle link flags
         local has_cuda = package:dep("cuda"):exists() and package:dep("nvtx"):exists()
         local libnames = {"torch", "torch_cpu"}
@@ -62,12 +67,6 @@ package("libtorch")
             for _, lib in ipairs(libnames) do
                 package:add("links", lib)
             end
-        end
-
-        -- workaround before 2.5.3, will be removed in future 
-        if xmake.version():le("2.5.3") then
-            os.vrun("git submodule sync")
-            os.vrun("git submodule update --init --recursive")
         end
 
         -- some patches to the third-party cmake files
@@ -125,3 +124,4 @@ package("libtorch")
             }
         ]]}, {configs = {languages = "c++14"}, includes = "torch/torch.h"}))
     end)
+
