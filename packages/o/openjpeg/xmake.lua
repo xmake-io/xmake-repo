@@ -7,6 +7,7 @@ package("openjpeg")
     add_urls("https://github.com/uclouvain/openjpeg/archive/v$(version).tar.gz",
              "https://github.com/uclouvain/openjpeg.git")
     add_versions("2.3.1", "63f5a4713ecafc86de51bfad89cc07bb788e9bba24ebbf0c4ca637621aadb6a9")
+    add_versions("2.4.0", "8702ba68b442657f11aaeb2b338443ca8d5fb95b0d845757968a7be31ef7f16d")
 
     add_deps("cmake")
     add_deps("lcms", "libtiff", "libpng")
