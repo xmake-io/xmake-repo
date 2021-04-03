@@ -32,9 +32,13 @@ package("openssl")
         os.vrunv("perl", args)
 
         -- temporary workaround, will be removed in future
-        local envs = import("core.tool.toolchain").load("msvc"):runenvs()
-        envs.PATH = package:dep("nasm"):installdir("bin") .. path.envsep() .. envs.PATH
-        import("package.tools.nmake").install(package, {}, {envs = envs})
+        if xmake.version():ge("2.5.3") then
+            import("package.tools.nmake").install(package)
+        else
+            local envs = import("core.tool.toolchain").load("msvc"):runenvs()
+            envs.PATH = package:dep("nasm"):installdir("bin") .. path.envsep() .. envs.PATH
+            import("package.tools.nmake").install(package, {}, {envs = envs})
+        end
     end)
 
     on_install("linux", "macosx", function (package)
