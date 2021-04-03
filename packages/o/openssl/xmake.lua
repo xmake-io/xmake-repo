@@ -19,8 +19,10 @@ package("openssl")
 
     if is_plat("windows") then
         add_deps("strawberry-perl", "nasm")
+        add_links("libssl", "libcrypto")
+    else
+        add_links("ssl", "crypto")
     end
-    add_links("ssl", "crypto")
 
     on_install("windows", function (package)
         local args = {"Configure"}
@@ -29,7 +31,7 @@ package("openssl")
         table.insert(args, "--openssldir=" .. package:installdir("conf"))
         os.vrunv("perl", args)
 
-        -- temporal workaround, will be removed in future
+        -- temporary workaround, will be removed in future
         local envs = import("core.tool.toolchain").load("msvc"):runenvs()
         envs.PATH = package:dep("nasm"):installdir("bin") .. path.envsep() .. envs.PATH
         import("package.tools.nmake").install(package, {}, {envs = envs})
