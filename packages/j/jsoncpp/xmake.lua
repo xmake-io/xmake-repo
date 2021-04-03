@@ -10,10 +10,13 @@ package("jsoncpp")
     add_deps("cmake")
 
     on_install("linux", "macosx", "android", "iphoneos", "windows", "mingw", "cross", function(package)
-        local configs = {"-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF", "-DJSONCPP_WITH_TESTS=OFF"}
+        local configs = {"-DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF", "-DJSONCPP_WITH_TESTS=OFF", "-DJSONCPP_WITH_EXAMPLE=OFF", "-DBUILD_OBJECT_LIBS=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("static") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        if package:config("pic") ~= false then
+            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
