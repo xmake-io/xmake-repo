@@ -24,12 +24,16 @@ package("drogon")
         end
     end
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "macosx", "linux", function (package)
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
         io.replace("CMakeLists.txt", "else(BUILD_DROGON_SHARED)\n", "if(APPLE)\ntarget_link_libraries(${PROJECT_NAME} PUBLIC resolv)\nendif(APPLE)\nelse(BUILD_DROGON_SHARED)\n", {plain = true})
+
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_DROGON_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        -- no support for windows shared library
+        if not package:is_plat("windows") then
+            table.insert(configs, "-DBUILD_DROGON_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        end
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
