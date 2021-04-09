@@ -27,19 +27,17 @@ package("postgresql")
             end
 
             -- find programs
-            local binfile = find_program("postgres", {pathes = {"$(env PATH)"}})
+            local binfile = find_program("postgres", {paths = os.getenv("PATH")})
             if binfile then
                 local packagedir = path.directory(path.directory(binfile))
                 table.insert(paths, packagedir)
                 package:addenv("PATH", path.join(packagedir, "bin"))
             end
 
-            local result = {links = {}, linkdirs = {}, includedirs = {}, libfiles = {}}
-            
             -- find library
+            local result = {links = {}, linkdirs = {}, includedirs = {}, libfiles = {}}
             local libname = (package:is_plat("windows") and "libpq" or "pq")
             local linkinfo = find_library(libname, paths, {suffixes = "lib"})
-            print(linkinfo)
             if linkinfo then
                 table.insert(result.linkdirs, linkinfo.linkdir)
                 table.insert(result.links, libname)
@@ -58,8 +56,6 @@ package("postgresql")
             if path then
                 table.insert(result.includedirs, path)
             end
-
-            -- ok?
             if #result.includedirs > 0 and #result.linkdirs > 0 then
                 return result
             end
