@@ -59,8 +59,6 @@ package("postgresql")
                 table.insert(result.includedirs, path)
             end
 
-            print(result)
-
             -- ok?
             if #result.includedirs > 0 and #result.linkdirs > 0 then
                 return result
