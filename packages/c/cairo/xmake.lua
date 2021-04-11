@@ -6,9 +6,9 @@ package("cairo")
     set_urls("https://cairographics.org/releases/cairo-$(version).tar.xz")
     add_versions("1.16.0", "5e7b29b3f113ef870d1e3ecf8adf21f923396401604bda16d44be45e66052331")
 
-    add_deps("libpng", "pixman", "zlib")
+    add_deps("libpng", "pixman", "zlib", "freetype")
     if is_plat("linux") then
-        add_deps("freetype", "fontconfig")
+        add_deps("fontconfig")
     end
 
     if is_plat("windows") then
@@ -28,7 +28,7 @@ package("cairo")
     on_install("windows", "macosx", "linux", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         os.cp(path.join(package:scriptdir(), "port", "cairo-features.h.in"), "cairo-features.h")
-        io.replace("cairo-features.h", "${FT_ON}", (package:is_plat("linux") and "1" or "0"), {plain = true})
+        io.replace("cairo-features.h", "${FC_ON}", (package:is_plat("linux") and "1" or "0"), {plain = true})
         import("package.tools.xmake").install(package, {kind = package:config("shared") and "shared" or "static"})
     end)
 
