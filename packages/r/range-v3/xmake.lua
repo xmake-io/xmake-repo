@@ -4,7 +4,7 @@ package("range-v3")
     set_description("Range library for C++14/17/20, basis for C++20's std::ranges")
     set_license("BSL-1.0")
 
-    add_urls("https://github.com/ericniebler/range-v3/archive/refs/tags/0.11.0.tar.gz",
+    add_urls("https://github.com/ericniebler/range-v3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ericniebler/range-v3.git")
     add_versions("0.11.0", "376376615dbba43d3bef75aa590931431ecb49eb36d07bb726a19f680c75e20c")
 
