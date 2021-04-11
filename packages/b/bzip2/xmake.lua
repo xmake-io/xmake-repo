@@ -1,18 +1,17 @@
 package("bzip2")
 
-    set_homepage("https://en.wikipedia.org/wiki/Bzip2")
-    set_description("Freely available high-quality data compressor.")
+    set_homepage("https://sourceware.org/bzip2/")
+    set_description("Freely available, patent free, high-quality data compressor.")
 
-    set_urls("https://ftp.osuosl.org/pub/clfs/conglomeration/bzip2/bzip2-$(version).tar.gz",
-             "https://fossies.org/linux/misc/bzip2-$(version).tar.gz")
-    add_versions("1.0.6", "a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd")
+    add_urls("https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz")
+    add_versions("1.0.8", "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269")
 
     on_load("windows", function (package)
-        package:addenv("PATH", "bin")
         package:add("links", "libbz2")
     end)
 
     on_install("windows", function (package)
+        package:addenv("PATH", "bin")
         io.gsub("makefile.msc", "%-MD", "-" .. package:config("vs_runtime"))
         import("package.tools.nmake").build(package, {"-f", "makefile.msc", "bzip2"})
         os.cp("libbz2.lib", package:installdir("lib"))
@@ -21,6 +20,7 @@ package("bzip2")
     end)
 
     on_install("macosx", "linux", function (package)
+        package:addenv("PATH", "bin")
         local configs = {}
         if package:config("pic") ~= false then
             table.insert(configs, "CFLAGS=-fPIC")

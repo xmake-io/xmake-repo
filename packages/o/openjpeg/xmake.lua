@@ -12,12 +12,20 @@ package("openjpeg")
     add_deps("cmake")
     add_deps("lcms", "libtiff", "libpng")
 
+    on_load("windows", "linux", "macosx", function (package)
+        local ver = package:version():major() .. "." .. package:version():minor()
+        package:add("includedirs", "include/openjpeg-" .. ver)
+    end)
+
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_DOC=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
-        os.mv(package:installdir("include", "openjpeg*", "*.h"), package:installdir("include"))
         package:add("PATH", "bin")
+        
+        -- fix cmake import files
+        local ver = package:version():major() .. "." .. package:version():minor()
+        io.gsub(package:installdir("lib", "openjpeg-" .. ver, "OpenJPEGConfig.cmake"), "set%(INC_DIR .-%)", format("set(INC_DIR ${SELF_DIR}/../../include/openjpeg-%s)", ver))
     end)
 
     on_test(function (package)
