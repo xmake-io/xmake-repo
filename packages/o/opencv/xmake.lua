@@ -100,7 +100,7 @@ package("opencv")
             -- keep compatibility for old versions
             local instdir = package:installdir(arch, vc_ver)
             if os.isdir(path.join(os.curdir(), "build", "install")) then
-                os.cp(path.join(os.curdir(), "build", "install", arch, vc_ver), package:installdir(arch))
+                os.trycp(path.join(os.curdir(), "build", "install", arch, vc_ver), package:installdir(arch))
             end
 
             -- scanning for links
