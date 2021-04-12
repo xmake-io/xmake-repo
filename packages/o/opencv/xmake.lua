@@ -32,6 +32,19 @@ package("opencv")
         end
     end)
 
+    on_load("windows", function (package)
+        local arch = (package:is_arch("x64") and "x64" or "x86")
+        local linkdir = (package:config("shared") and "lib" or "staticlib")
+        local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+        local vc_ver = "vc13"
+        if     vs == "2015" then vc_ver = "vc14"
+        elseif vs == "2017" then vc_ver = "vc15"
+        elseif vs == "2019" then vc_ver = "vc16"
+        end
+        package:add("linkdirs", path.join(arch, vc_ver, linkdir))
+        package:addenv("PATH", path.join(arch, vc_ver, "bin"))
+    end)
+
     on_install("linux", "macosx", "windows", function (package)
         io.replace("cmake/OpenCVUtils.cmake", "if(PKG_CONFIG_FOUND OR PkgConfig_FOUND)", "if(NOT WIN32 AND (PKG_CONFIG_FOUND OR PkgConfig_FOUND))", {plain = true})
         local configs = {"-DCMAKE_OSX_DEPLOYMENT_TARGET=",
@@ -74,15 +87,28 @@ package("opencv")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
         end
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
-        os.trycp("3rdparty/**/*.a", package:installdir("lib"))
         if package:is_plat("windows") then
-            local instpath = path.join(os.curdir(), "build", "install", package:is_arch("x64") and "x64" or "x86", "vc*")
-            os.trycp(path.join(instpath, "bin", "**"), package:installdir("bin"))
-            if package:config("shared") then
-                os.trycp(path.join(instpath, "lib", "**"), package:installdir("lib"))
-            else
-                os.trycp(path.join(instpath, "staticlib", "**"), package:installdir("lib"))
+            local arch = package:is_arch("x64") and "x64" or "x86"
+            local linkdir = (package:config("shared") and "lib" or "staticlib")
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            local vc_ver = "vc13"
+            if     vs == "2015" then vc_ver = "vc14"
+            elseif vs == "2017" then vc_ver = "vc15"
+            elseif vs == "2019" then vc_ver = "vc16"
             end
+
+            -- keep compatibility for old versions
+            local instdir = package:installdir(arch, vc_ver)
+            if os.isdir(path.join(os.curdir(), "build", "install")) then
+                os.cp(path.join(os.curdir(), "build", "install", arch, vc_ver), package:installdir(arch))
+            end
+
+            -- scanning for links
+            for _, f in ipairs(os.files(path.join(instdir, linkdir, "*.lib"))) do
+                package:add("links", path.basename(f))
+            end
+        else
+            os.trycp("3rdparty/**/*.a", package:installdir("lib"))
         end
     end)
 
