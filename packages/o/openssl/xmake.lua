@@ -28,7 +28,7 @@ package("openssl")
         local args = {"Configure"}
         table.insert(args, (package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A"))
         table.insert(args, "--prefix=" .. package:installdir())
-        table.insert(args, "--openssldir=" .. package:installdir("conf"))
+        table.insert(args, "--openssldir=" .. package:installdir())
         os.vrunv("perl", args)
 
         -- temporary workaround, will be removed in future
@@ -42,7 +42,8 @@ package("openssl")
     end)
 
     on_install("linux", "macosx", function (package)
-        os.vrun("./config %s --prefix=\"%s\"", package:debug() and "--debug" or "", package:installdir())
+        -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
+        os.vrun("./config %s --openssldir=\"%s\" --prefix=\"%s\"", package:debug() and "--debug" or "", package:installdir(), package:installdir())
         import("package.tools.make").install(package)
     end)
 
