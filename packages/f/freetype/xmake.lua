@@ -21,7 +21,7 @@ package("freetype")
 
     if on_fetch then
         on_fetch("linux", "macosx", function (package, opt)
-            if opt.system and not package:is_cross() then
+            if opt.system then
                 return find_package("pkgconfig::freetype2")
             end
         end)

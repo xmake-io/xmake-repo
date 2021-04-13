@@ -26,7 +26,7 @@ function _find_package_on_windows(package, opt)
 end
 
 function main(package, opt)
-    if opt.system and not package:is_cross() and package.find_package then
+    if opt.system and package.find_package then
         local result
         if package:is_plat("windows", "mingw", "msys") and is_host("windows") then
             result = _find_package_on_windows(package, opt)
