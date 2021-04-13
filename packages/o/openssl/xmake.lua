@@ -24,6 +24,8 @@ package("openssl")
         add_links("ssl", "crypto")
     end
 
+    on_fetch("fetch")
+
     on_install("windows", function (package)
         local args = {"Configure"}
         table.insert(args, (package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A"))
