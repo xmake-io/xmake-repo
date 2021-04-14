@@ -10,19 +10,28 @@ if has_config("with_x11") then
 end
 
 option("with_freetype")
-    set_default(is_plat("linux") and true or false)
+    set_default(true)
     add_defines(
         "HAVE_FT_GLYPHSLOT_EMBOLDEN=1",
         "HAVE_FT_LIBRARY_SETLCDFILTER=1",
         "HAVE_FT_GLYPHSLOT_OBLIQUE=1",
         "HAVE_FT_LOAD_SFNT_TABLE=1",
-        "HAVE_FT_GET_X11_FONT_FORMAT=1",
-        "CAIRO_HAS_FT_FONT=1",
-        "CAIRO_HAS_FC_FONT=1"
+        "HAVE_FT_GET_X11_FONT_FORMAT=" .. (has_config("with_x11") and "1" or "0"),
+        "CAIRO_HAS_FT_FONT=1"
     )
 option_end()
 if has_config("with_freetype") then
-    add_requires("freetype", "fontconfig")
+    add_requires("freetype")
+end
+
+option("with_fontconfig")
+    set_default(is_plat("linux") and true or false)
+    add_defines(
+        "CAIRO_HAS_FC_FONT=1"
+    )
+option_end()
+if has_config("with_fontconfig") then
+    add_requires("fontconfig")
 end
 
 target("cairo")

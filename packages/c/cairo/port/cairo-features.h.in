@@ -21,7 +21,7 @@
 
 #define CAIRO_HAS_GOBJECT_FUNCTIONS 0
 
-#define CAIRO_HAS_FT_FONT ${FT_ON}
-#define CAIRO_HAS_FC_FONT ${FT_ON}
+#define CAIRO_HAS_FT_FONT 1
+#define CAIRO_HAS_FC_FONT ${FC_ON}
 
 #endif
