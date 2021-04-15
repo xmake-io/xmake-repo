@@ -13,6 +13,7 @@ package("libfive")
     on_install("windows", "macosx", "linux", function (package)
         if package:is_plat("windows") then
             io.replace("libfive/src/CMakeLists.txt", "EIGEN_INCLUDE_DIRS", "EIGEN3_INCLUDE_DIRS", {plain = true})
+            io.replace("libfive/src/CMakeLists.txt", "if (UNIX)", "if (true)", {plain = true})
             io.replace("CMakeLists.txt", "%/MD.", "")
         end
         io.replace("libfive/include/libfive.h", "[[deprecated(\"use libfive_tree_nullary instead\")]]", "", {plain = true})
@@ -24,6 +25,7 @@ package("libfive")
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
         import("package.tools.cmake").install(package, configs)
+        os.trycp("libfive/include", package:installdir("include"))
     end)
 
     on_test(function (package)
