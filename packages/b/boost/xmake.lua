@@ -16,6 +16,8 @@ package("boost")
     add_versions("1.72.0", "59c9b274bc451cf91a9ba1dd2c7fdcaf5d60b1b3aa83f2c9fa143417cc660722")
     add_versions("1.70.0", "430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778")
 
+    add_patches("1.75.0", path.join(os.scriptdir(), "patches", "1.75.0", "warning.patch"), "43ff97d338c78b5c3596877eed1adc39d59a000cf651d0bcc678cf6cd6d4ae2e")
+
     if is_plat("linux") then
         add_deps("bzip2", "zlib")
     elseif is_plat("windows") then
@@ -39,7 +41,8 @@ package("boost")
                       "wave",
                       "date_time",
                       "locale",
-                      "iostreams"}
+                      "iostreams",
+                      "program_options"}
 
     add_configs("multi",        { description = "Enable multi-thread support.",  default = true, type = "boolean"})
     for _, libname in ipairs(libnames) do
