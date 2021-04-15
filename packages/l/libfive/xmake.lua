@@ -7,8 +7,16 @@ package("libfive")
     add_versions("20210408", "e6a6448694f2204b003e29bba45754461261b9b2")
 
     add_deps("cmake", "eigen", "libpng", "boost")
+    if not is_plat("windows") then
+        add_deps("pkg-config")
+    end
     on_install("windows", "macosx", "linux", function (package)
-        io.replace("libfive/src/CMakeLists.txt", "EIGEN_INCLUDE_DIRS", "EIGEN3_INCLUDE_DIRS", {plain = true})
+        if package:is_plat("windows") then
+            io.replace("libfive/src/CMakeLists.txt", "EIGEN_INCLUDE_DIRS", "EIGEN3_INCLUDE_DIRS", {plain = true})
+            io.replace("CMakeLists.txt", "%/MD.", "")
+        end
+        io.replace("libfive/include/libfive.h", "[[deprecated(\"use libfive_tree_nullary instead\")]]", "", {plain = true})
+        io.replace("libfive/src/CMakeLists.txt", "bash -c \"git diff --quiet --exit-code || echo +\"", "echo +", {plain = true})
         local configs = {"-DBUILD_GUILE_BINDINGS=OFF", "-DBUILD_PYTHON_BINDINGS=OFF", "-DBUILD_STUDIO_APP=OFF", "-DBUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -19,5 +27,5 @@ package("libfive")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("libfive_tree_save_mesh", {includes = "libfive.h"}))
+        assert(package:has_cfuncs("libfive_mesh_delete", {includes = "libfive.h"}))
     end)

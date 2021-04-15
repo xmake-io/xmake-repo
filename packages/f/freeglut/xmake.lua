@@ -8,12 +8,14 @@ package("freeglut")
     add_versions("3.0.0", "050e09f17630249a7d2787c21691e4b7d7b86957a06b3f3f34fa887b561d8e04")
     add_versions("3.2.1", "501324c27a3ee809ac4a6374f63c5049c1c0d342d93fdb5db12b8c1c84760fa4")
 
+    add_patches("3.2.1", path.join(os.scriptdir(), "patches", "3.2.1", "gcc10.patch"), "26cf5026249c9e288080a75a1e9b40b3fa74a4048321cc93907f1476c5a6508b")
+
     if is_plat("linux", "windows") then
         add_deps("cmake")
     end
 
     if is_plat("linux") then
-        add_deps("libx11", "libxi", "libxxf86vm", "libxrandr")
+        add_deps("libx11", "libxi", "libxxf86vm", "libxrandr", "libxrender")
         add_syslinks("GLU", "GL")
     end
 
@@ -45,7 +47,7 @@ package("freeglut")
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
         if package:is_plat("linux") then
-            import("package.tools.cmake").install(package, configs, {packagedeps = "libxi"})
+            import("package.tools.cmake").install(package, configs, {packagedeps = {"libxi", "libxxf86vm", "libxrandr", "libxrender"}})
         else
             import("package.tools.cmake").install(package, configs)
         end
@@ -53,5 +55,5 @@ package("freeglut")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("glutInit", {includes = "GL/freeglut.h"}))
+        assert(package:has_cfuncs("glutInit", {includes = "GL/glut.h"}))
     end)

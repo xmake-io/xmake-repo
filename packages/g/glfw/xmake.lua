@@ -11,9 +11,9 @@ package("glfw")
     add_configs("glfw_include", {description = "Choose submodules enabled in glfw", default = "none", type = "string", values = {"none", "vulkan", "glu", "glext", "es2", "es3"}})
 
     on_fetch(function (package, opt) 
-        if opt.system ~= false and package.find_package then
+        if opt.system and package.find_package then
             if package:is_plat("linux") then
-                return package:find_package("apt::libglfw3-dev")
+                return package:find_package("apt::libglfw3-dev", opt)
             end
         end
     end)
