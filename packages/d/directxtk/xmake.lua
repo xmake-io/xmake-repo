@@ -7,12 +7,14 @@ package("DirectXTK")
              "https://github.com/microsoft/DirectXTK.git",
              {version = function (version)
                 local versions = {
-                    ["20.9.0"] = "sept2020"
+                    ["20.9.0"] = "sept2020",
+                    ["21.4.0"] = "apr2021"
                 }
                 return versions[tostring(version)]
             end})
 
     add_versions("20.9.0", "9d5131243bf3e33db2e3a968720d860abdcbbe7cb037c2cb5dd06046d439ed09")
+    add_versions("21.4.0", "481e769b1aabd08b46659bbec8363a2429f04d3bb9a1e857eb0ebd163304d1bf")
 
     on_install("windows", function (package)
         local configs = {}
