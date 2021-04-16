@@ -23,6 +23,7 @@ package("bullet3")
         table.insert(configs, "-DUSE_DOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_EXTRAS=" .. (package:config("extras") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MD") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
 
         os.cp("src/**.h", package:installdir("include", "bullet"), {rootdir = "src"})
