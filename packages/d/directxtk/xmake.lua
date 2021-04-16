@@ -40,5 +40,5 @@ package("DirectXTK")
 
                 auto lookAt = DirectX::SimpleMath::Matrix::CreateLookAt(eye, at, DirectX::SimpleMath::Vector3::UnitY);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = { "SimpleMath.h" } }))
+        ]]}, {configs = {languages = "c++11"}, includes = { "windows.h", "SimpleMath.h" } }))
     end)
