@@ -59,7 +59,11 @@ package("giflib")
             end
         end
         io.writefile("xmake.lua", xmake_lua)
-        import("package.tools.xmake").install(package)
+        local configs = {}
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
+        end
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
