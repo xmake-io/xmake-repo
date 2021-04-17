@@ -125,6 +125,7 @@ target("buildvm")
     add_includedirs("src")
     set_host_toolchains()
     add_files("src/host/buildvm*.c")
+    add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
     if is_host("windows") then
         add_defines("_CRT_SECURE_NO_DEPRECATE", "_CRT_STDIO_INLINE=__declspec(dllexport)__inline")
     end

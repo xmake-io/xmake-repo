@@ -8,6 +8,7 @@ package("make")
              "https://mirrors.ustc.edu.cn/gnu/make/make-$(version).tar.gz",
              "http://mirror.easyname.at/gnu/make/make-$(version).tar.gz")
     add_versions("4.2.1", "e40b8f018c1da64edd1cc9a6fce5fa63b2e707e404e20cad91fbae337c98a5b7")
+    add_versions("4.3", "e05fdde47c5f7ca45cb697e973894ff4f5d79e13b750ed57d7b66d8defc78e19")
 
     on_install("@windows", function(package)
         import("core.tool.toolchain")
@@ -17,10 +18,6 @@ package("make")
     end)
 
     on_install("@macosx", "@linux", function (package)
-        -- fix undefined reference to `__alloca'
-        if is_subhost("linux") then
-            io.replace("glob/glob.c", "!defined __alloca && !defined __GNU_LIBRARY__", "1")
-        end
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-gtk", "--disable-silent-rules"})
     end)
 
