@@ -16,6 +16,8 @@ package("freetype")
 
     if not is_plat("windows") then
         add_configs("woff2", {description = "Enable woff2 support.", default = true, type = "boolean"})
+        add_configs("bzip2", {description = "Enable bzip2 support.", default = true, type = "boolean"})
+        add_configs("png", {description = "Enable png support.", default = true, type = "boolean"})
         add_includedirs("include/freetype2")
     end
 
@@ -28,9 +30,15 @@ package("freetype")
     end
 
     on_load("linux", "macosx", function (package)
-        package:add("deps", "libpng", "bzip2", "zlib")
+        package:add("deps", "zlib", "pkg-config")
         if package:config("woff2") then
             package:add("deps", "brotli")
+        end
+        if package:config("bzip2") then
+            package:add("deps", "bzip2")
+        end
+        if package:config("png") then
+            package:add("deps", "libpng")
         end
     end)
 
@@ -41,10 +49,14 @@ package("freetype")
     end)
 
     on_install("linux", "macosx", function (package)
+        io.gsub("builds/unix/configure", "libbrotlidec", "brotli")
         local configs = { "--enable-freetype-config",
                           "--without-harfbuzz"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        table.insert(configs, "--with-bzip2=" .. (package:config("bzip2") and "yes" or "no"))
+        table.insert(configs, "--with-brotli=" .. (package:config("woff2") and "yes" or "no"))
+        table.insert(configs, "--with-png=" .. (package:config("png") and "yes" or "no"))
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
