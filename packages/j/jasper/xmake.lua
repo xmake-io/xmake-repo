@@ -14,6 +14,13 @@ package("jasper")
     on_install("windows", "macosx", "linux", function (package)
         io.replace("build/cmake/modules/JasOpenGL.cmake", "find_package(GLUT", "find_package(FreeGLUT", {plain = true})
         local configs = {"-DJAS_ENABLE_PROGRAMS=OFF", "-DJAS_ENABLE_DOC=OFF"}
+        local vs_sdkver = get_config("vs_sdkver")
+        if vs_sdkver then
+            local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
+            assert(tonumber(build_ver) >= 18362, "DirectXTK requires Windows SDK to be at least 10.0.18362.0")
+            table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
+            table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DJAS_ENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("pic") ~= false then
