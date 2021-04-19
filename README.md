@@ -64,8 +64,9 @@ xmake-repo is an official xmake package repository.
 
 <img src="https://xmake.io/assets/img/index/package_manage.png" width="80%" />
 
-If you want to know more, please refer to:
+If you want to know more, please refer to the xmake documentation:
 
+* [Remote Packages in xmake](https://xmake.io/#/package/remote_package)
 * [Github](https://github.com/xmake-io/xmake)
 * [HomePage](https://xmake.io)
 
@@ -75,7 +76,11 @@ xrepo is a cross-platform C/C++ package manager based on [Xmake](https://github.
 
 It is based on the runtime provided by xmake, but it is a complete and independent package management program. Compared with package managers such as vcpkg/homebrew, xrepo can provide C/C++ packages for more platforms and architectures at the same time.
 
-If you want to know more, please refer to: [Documents](https://xrepo.xmake.io/#/getting_started), [Github](https://github.com/xmake-io/xrepo) and [Gitee](https://gitee.com/tboox/xrepo)
+If you want to know more, please refer to the xrepo documentation: 
+
+* [Documents](https://xrepo.xmake.io/#/getting_started) 
+* [Github](https://github.com/xmake-io/xrepo) 
+* [Gitee](https://gitee.com/tboox/xrepo)
 
 ![](https://xrepo.xmake.io/assets/img/xrepo.gif)
 
