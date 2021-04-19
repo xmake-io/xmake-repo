@@ -8,16 +8,26 @@ package("poco")
              "https://github.com/pocoproject/poco.git")
     add_versions("1.10.1", "44592a488d2830c0b4f3bfe4ae41f0c46abbfad49828d938714444e858a00818")
 
-    add_deps("cmake")
-    add_deps("openssl", {optional = true})
+    add_deps("cmake", "zlib")
+    if is_plat("windows") then
+        add_deps("pcre", "expat", {configs = {shared = true}})
+    else
+        add_deps("pcre", "expat")
+    end
+    add_deps("openssl", "sqlite3", {optional = true})
     add_deps("postgresql", {system = true, optional = true})
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {}
+        io.gsub("CMakeLists.txt", "install%(FILES.-%)", "")
+        local configs = {"-DPOCO_UNBUNDLED=ON", "-DENABLE_PDF=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") and not package:config("shared") then
+        if package:is_plat("windows") then
             table.insert(configs, "-DPOCO_MT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-        elseif package:config("pic") ~= false then
+            table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
+        else
+            -- shared library is not supported on windows
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        end
+        if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
         import("package.tools.cmake").install(package, configs)
