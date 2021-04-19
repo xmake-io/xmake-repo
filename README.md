@@ -66,7 +66,7 @@ xmake-repo is an official xmake package repository.
 
 If you want to know more, please refer to:
 
-* [Documents](https://xmake.io/#/home)
+* [Documents](https://xmake.io/#/getting_started)
 * [Github](https://github.com/xmake-io/xmake)
 * [HomePage](https://xmake.io)
 
