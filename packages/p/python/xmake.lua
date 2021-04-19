@@ -86,6 +86,7 @@ package("python")
         os.cp("libs/*", package:installdir("lib"))
         os.cp("*", package:installdir())
         local python = path.join(package:installdir("bin"), "python.exe")
+        os.vrunv(python, {"-m", "pip", "install", "-U", "pip"})
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
