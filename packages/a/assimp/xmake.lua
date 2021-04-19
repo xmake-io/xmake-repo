@@ -3,16 +3,14 @@ package("assimp")
     set_homepage("https://assimp.org")
     set_description("Portable Open-Source library to import various well-known 3D model formats in a uniform manner")
 
-    if is_plat("windows", "linux", "macosx") then
-        set_urls("https://github.com/assimp/assimp/archive/v$(version).zip")
-        add_versions("5.0.1", "d10542c95e3e05dece4d97bb273eba2dfeeedb37a78fb3417fd4d5e94d879192")
-    end
+    set_urls("https://github.com/assimp/assimp/archive/v$(version).zip")
+    add_versions("5.0.1", "d10542c95e3e05dece4d97bb273eba2dfeeedb37a78fb3417fd4d5e94d879192")
 
     add_configs("shared",                {description = "Generation of shared libs ( dll for windows, so for Linux ). Set this to OFF to get a static lib", default = true, type = "boolean"})
     add_configs("build_framework",       {description = "Build package as Mac OS X Framework bundle (macosx only)", default = false, type = "boolean"})
     add_configs("double_precision",      {description = "All data will be stored as double values", default = false, type = "boolean"})
     add_configs("opt_build_packages",    {description = "Set to true to generate CPack configuration files and packaging targets", default = false, type = "boolean"})
-    add_configs("android_jniiosysystem", {description = "Android JNI IOSystem support is active", default = false, type = "boolean"})
+    add_configs("android_jniiosystem", {description = "Android JNI IOSystem support is active", default = false, type = "boolean"})
     add_configs("no_export",             {description = "Disable Assimp's export functionality", default = false, type = "boolean"})
     add_configs("build_zlib",            {description = "Build your own zlib", default = false, type = "boolean"})
     add_configs("build_assimp_tools",    {description = "If the supplementary tools for Assimp are built in addition to the library", default = false, type = "boolean"})
@@ -36,11 +34,14 @@ package("assimp")
                 package:add("deps", "freeglut")
             end
         end
-        if is_plat("linux") or package:config("build_zlib") then
+        if not package:config("build_zlib") then
             package:add("deps", "zlib")
         end
         if package:config("system_irrxml") then
             package:add("deps", "irrxml")
+        end
+        if is_plat("linux") and package:config("shared") then
+            package:add("ldflags", "-Wl,--as-needed," .. package:installdir("lib", "libassimp.so"))
         end
     end)
 
@@ -73,29 +74,25 @@ package("assimp")
         if is_plat("windows") then
             table.insert(config, "-DASSIMP_INSTALL_PDB=" .. ((package:debug() or package:config("install_pdb")) and "ON" or "OFF"))
         end
-
         if is_plat("linux", "macosx") then
             table.insert(config, "-DINJECT_DEBUG_POSTFIX=" .. ((package:debug() or package:config("inject_debug_postfix")) and "ON" or "OFF"))
         end
-
         if is_plat("android") then
             add_config_arg("android_jniiosysystem", "ASSIMP_ANDROID_JNIIOSYSTEM")
         end
-
         if is_plat("windows", "linux", "macosx") then
             add_config_arg("build_assimp_tools", "ASSIMP_BUILD_ASSIMP_TOOLS")
         end
-
         if is_plat("android", "iphoneos") then
             table.insert(config, "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF")
         end
+        if package:config("pic") ~= false then
+            table.insert(config, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+        end
 
         import("package.tools.cmake").install(package, config)
-        if is_plat("linux") and not package:config("system_irrxml") then
-            package:add("links", "assimp", "IrrXML")
-        end
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("aiImportFile", {includes = "assimp/cimport.h"}))
+        assert(package:has_cxxtypes("Assimp::Importer", {configs = {languages = "c++11"}, includes = "assimp/Importer.hpp"}))
     end)
