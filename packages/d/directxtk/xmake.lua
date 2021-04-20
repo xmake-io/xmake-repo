@@ -1,4 +1,4 @@
-package("DirectXTK")
+package("directxtk")
 
     set_homepage("https://github.com/microsoft/DirectXTK")
     set_description("This package contains the \"DirectX Tool Kit\", a collection of helper classes for writing Direct3D 11 C++ code for Universal Windows Platform (UWP) apps for Windows 10, Xbox One, and Win32 desktop applications for Windows 7 Service Pack 1 or later.")
