@@ -1,0 +1,22 @@
+package("fastcppcsvparser")
+
+    set_homepage("https://github.com/ben-strasser/fast-cpp-csv-parser")
+    set_description("This is a small, easy-to-use and fast header-only library for reading comma separated value (CSV) files (by ben-strasser)")
+
+    add_urls("https://github.com/ben-strasser/fast-cpp-csv-parser.git")
+    add_versions("0.0", "75600d0b77448e6c410893830df0aec1dbacf8e3")
+
+    on_install(function (package)
+        os.cp("csv.h", package:installdir("include"))
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            void test(int argc, char** argv) {
+                io::CSVReader<3> in("example.csv");
+                in.read_header(io::ignore_extra_column, "vendor", "size", "speed");
+                std::string vendor; int size; double speed;
+                while(in.read_row(vendor, size, speed));
+            }
+        ]]}, {includes = "csv.h", {configs = {languages = "cxx11"}}}))
+    end)
