@@ -7,6 +7,10 @@ package("fastcppcsvparser")
     add_versions("0.0", "75600d0b77448e6c410893830df0aec1dbacf8e3")
 
     on_install(function (package)
+        if package:is_plat("macosx", "iphoneos") then
+            io.replace("csv.h", "noexcept", "_NOEXCEPT")
+        end
+
         os.cp("csv.h", package:installdir("include"))
     end)
 
