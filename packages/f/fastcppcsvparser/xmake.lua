@@ -15,7 +15,7 @@ package("fastcppcsvparser")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            void test(int argc, char** argv) {
+            void test() {
                 io::CSVReader<3> in("example.csv");
                 in.read_header(io::ignore_extra_column, "vendor", "size", "speed");
                 std::string vendor; int size; double speed;
