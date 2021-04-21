@@ -10,7 +10,6 @@ package("fastcppcsvparser")
         if package:is_plat("macosx", "iphoneos") then
             io.replace("csv.h", "noexcept", "_NOEXCEPT")
         end
-
         os.cp("csv.h", package:installdir("include"))
     end)
 
