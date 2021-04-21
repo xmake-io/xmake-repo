@@ -21,5 +21,5 @@ package("fastcppcsvparser")
                 std::string vendor; int size; double speed;
                 while(in.read_row(vendor, size, speed));
             }
-        ]]}, {includes = "csv.h", {configs = {languages = "cxx11"}}}))
+        ]]}, {includes = "csv.h", configs = {languages = "cxx11"}}))
     end)
