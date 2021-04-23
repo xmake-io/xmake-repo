@@ -1,3 +1,4 @@
+import("core.base.semver")
 import("lib.detect.find_path")
 import("lib.detect.find_library")
 
@@ -53,6 +54,9 @@ function main(package, opt)
             result = _find_package_on_windows(package, opt)
         else
             result = package:find_package("tbb", opt)
+        end
+        if opt.require_version and result.version and not semver.satisfies(result.version, opt.require_version) then
+            result = nil
         end
         return result or false
     end
