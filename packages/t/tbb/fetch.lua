@@ -1,4 +1,3 @@
-import("core.base.semver")
 import("lib.detect.find_path")
 import("lib.detect.find_library")
 
@@ -9,7 +8,7 @@ function _find_package_on_windows(package, opt)
         "$(env ONEAPI_ROOT)\\tbb\\latest"
     }
 
-    -- find library
+    -- find includes and links
     local result = {links = {}, linkdirs = {}, includedirs = {}}
     for _, lib in ipairs({"tbb", "tbbmalloc", "tbbmalloc_proxy"}) do
         local linkinfo = find_library(lib, paths, {suffixes = path.join("lib", rdir, "vc14")})
@@ -19,13 +18,9 @@ function _find_package_on_windows(package, opt)
         end
     end
     result.linkdirs = table.unique(result.linkdirs)
-
-    -- find include
     table.insert(result.includedirs, find_path(path.join("tbb", "tbb.h"), paths, {suffixes = "include"}))
 
     if #result.includedirs > 0 and #result.linkdirs > 0 then
-
-        -- find version
         local root = result.includedirs[1]
         local version_file = path.join(root, "oneapi", "tbb", "version.h")
         if not os.isfile(version_file) then
@@ -52,9 +47,6 @@ function main(package, opt)
         local result
         if package:is_plat("windows") then
             result = _find_package_on_windows(package, opt)
-            if opt.require_version and result and result.version and not semver.satisfies(result.version, opt.require_version) then
-                result = nil
-            end
         else
             result = package:find_package("tbb", opt)
         end
