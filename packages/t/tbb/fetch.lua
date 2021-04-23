@@ -52,11 +52,11 @@ function main(package, opt)
         local result
         if package:is_plat("windows") then
             result = _find_package_on_windows(package, opt)
+            if opt.require_version and result and result.version and not semver.satisfies(result.version, opt.require_version) then
+                result = nil
+            end
         else
             result = package:find_package("tbb", opt)
-        end
-        if opt.require_version and result.version and not semver.satisfies(result.version, opt.require_version) then
-            result = nil
         end
         return result or false
     end
