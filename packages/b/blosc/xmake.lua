@@ -30,9 +30,10 @@ package("blosc")
             local version = package:version()
             if package:config("shared") then
                 os.trycp("build/install/bin", package:installdir())
+                os.trymv(path.join(package:installdir("lib"), "blosc.dll"), package:installdir("bin"))
             elseif version:le("1.10") then
                 os.rm(path.join(package:installdir("lib"), "blosc.lib"))
-                os.mv(path.join(package:installdir("lib"), "blosc.dll"), package:installdir("bin"))
+                os.rm(path.join(package:installdir("lib"), "blosc.dll"))
             end
         end
     end)
