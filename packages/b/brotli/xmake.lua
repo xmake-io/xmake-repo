@@ -58,6 +58,9 @@ package("brotli")
                                 "BROTLIENC_SHARED_COMPILATION",
                                 "BROTLIDEC_SHARED_COMPILATION")
                 end
+                if is_plat("linux") then
+                    add_cxflags("-fvisibility=default")
+                end
                 add_headerfiles("c/include/(brotli/*.h)")
             target("brotlibin")
                 set_kind("binary")
@@ -67,6 +70,9 @@ package("brotli")
         local configs = {buildir = "xbuild"}
         if package:config("shared") then
             configs.kind = "shared"
+        end
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
     end)

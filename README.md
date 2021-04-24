@@ -64,9 +64,9 @@ xmake-repo is an official xmake package repository.
 
 <img src="https://xmake.io/assets/img/index/package_manage.png" width="80%" />
 
-If you want to know more, please refer to:
+If you want to know more, please refer to the xmake documentation:
 
-* [Documents](https://xmake.io/#/home)
+* [Documents](https://xmake.io/#/package/remote_package)
 * [Github](https://github.com/xmake-io/xmake)
 * [HomePage](https://xmake.io)
 
@@ -76,7 +76,11 @@ xrepo is a cross-platform C/C++ package manager based on [Xmake](https://github.
 
 It is based on the runtime provided by xmake, but it is a complete and independent package management program. Compared with package managers such as vcpkg/homebrew, xrepo can provide C/C++ packages for more platforms and architectures at the same time.
 
-If you want to know more, please refer to: [Documents](https://xrepo.xmake.io/#/getting_started), [Github](https://github.com/xmake-io/xrepo) and [Gitee](https://gitee.com/tboox/xrepo)
+If you want to know more, please refer to the xrepo documentation: 
+
+* [Documents](https://xrepo.xmake.io/#/getting_started) 
+* [Github](https://github.com/xmake-io/xrepo) 
+* [Gitee](https://gitee.com/tboox/xrepo)
 
 ![](https://xrepo.xmake.io/assets/img/xrepo.gif)
 
@@ -88,87 +92,4 @@ For example, [packages/z/zlib/xmake.lua](https://github.com/xmake-io/xmake-repo/
 
 If you want to known more, please see: [Create and Submit packages to the official repository](https://xmake.io/#/package/remote_package?id=submit-packages-to-the-official-repository)
 
-```lua
-package("zlib")
-
-    set_homepage("http://www.zlib.net")
-    set_description("A Massively Spiffy Yet Delicately Unobtrusive Compression Library")
-
-    set_urls("http://zlib.net/zlib-$(version).tar.gz",
-             "https://downloads.sourceforge.net/project/libpng/zlib/$(version)/zlib-$(version).tar.gz")
-
-    add_versions("1.2.10", "8d7e9f698ce48787b6e1c67e6bff79e487303e66077e25cb9784ac8835978017")
-    add_versions("1.2.11", "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1")
-
-    on_install("windows", function (package)
-        io.gsub("win32/Makefile.msc", "%-MD", "-" .. package:config("vs_runtime"))
-        os.vrun("nmake -f win32\\Makefile.msc zlib.lib")
-        os.cp("zlib.lib", package:installdir("lib"))
-        os.cp("*.h", package:installdir("include"))
-    end)
-
-    on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package, {"--static"})
-    end)
- 
-    on_install("iphoneos", "android@linux,macosx", "mingw@linux,macosx", function (package)
-        import("package.tools.autoconf").configure(package, {host = "", "--static"})
-        io.gsub("Makefile", "\nAR=.-\n",      "\nAR=" .. (package:build_getenv("ar") or "") .. "\n")
-        io.gsub("Makefile", "\nARFLAGS=.-\n", "\nARFLAGS=cr\n")
-        io.gsub("Makefile", "\nRANLIB=.-\n",  "\nRANLIB=\n")
-        os.vrun("make install -j4")
-    end)
-
-    on_test(function (package)
-        assert(package:has_cfuncs("inflate", {includes = "zlib.h"}))
-    end)
-```
-
-## Supported Packages
-
-|linux|windows|mingw|iphoneos|macosx|android|
-|-----|-------|-----|--------|------|-------|
-|boost|boost|catch2|catch2|autoconf|catch2||
-|bullet3|bzip2|concurrentqueue|cjson|automake|cjson||
-|bzip2|cairo|cpp-taskflow|concurrentqueue|boost|concurrentqueue||
-|cairo|catch2|doctest|cpp-taskflow|bullet3|cpp-taskflow||
-|catch2|concurrentqueue|fmt|doctest|bzip2|doctest||
-|cjson|cpp-taskflow|gtest|fmt|cairo|ffmpeg||
-|concurrentqueue|doctest|imgui|gtest|catch2|fmt||
-|cpp-taskflow|expat|inja|imgui|cjson|gtest||
-|doctest|fmt|libjpeg|inja|cmake|imgui||
-|expat|freeglut|libsdl|json-c|concurrentqueue|inja||
-|ffmpeg|freetype|nlohmann_json|libcurl|cpp-taskflow|json-c||
-|fmt|glew|pcre|libev|doctest|libjpeg||
-|fontconfig|go|pcre2|libffi|expat|libpng||
-|freeglut|gtest|spdlog|libjpeg|ffmpeg|libuv||
-|freetype|imgui|tbox|libpng|fmt|libxml2||
-|gettext|inja|xz|libuv|fontconfig|lua||
-|glew|libcurl|zlib|libxml2|freetype|nlohmann_json||
-|glib|libjpeg||nlohmann_json|gettext|spdlog||
-|go|libpng||spdlog|glew|tbox||
-|gperf|libsdl||tbox|glib|zlib||
-|gtest|libtiff||zlib|go|||
-|icu4c|libuv|||gperf|||
-|imgui|libwebsockets|||gtest|||
-|inja|lua|||icu4c|||
-|json-c|luajit|||imgui|||
-|libcurl|nana|||inja|||
-|libev|nlohmann_json|||json-c|||
-|libffi|oatpp|||libcurl|||
-|libiconv|pcre|||libev|||
-|libjpeg|pixman|||libffi|||
-|libmill|protobuf-c|||libiconv|||
-|libpng|protobuf-cpp|||libjpeg|||
-|libsdl|raylib|||libmill|||
-|libtask|skia|||libpng|||
-|libtiff|spdlog|||libsdl|||
-|libusb|sqlite3|||libtask|||
-|libuv|tbox|||libtiff|||
-|libwebsockets|unqlite|||libtool|||
-|libxml2|zeromq|||libusb|||
-
-Note: Only some packages are shown here. If you want to see a complete list of all packages, please see: [Packages List](https://xrepo.xmake.io/#/packages/linux)
-
-We also welcome everyone to contribute some packages to our package repository.🙏 
 

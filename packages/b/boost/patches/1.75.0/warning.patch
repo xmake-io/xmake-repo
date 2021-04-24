@@ -1,0 +1,13 @@
+diff --git a/boost/concept_check.hpp b/boost/concept_check.hpp
+index abbadb7..cab58e5 100644
+--- a/boost/concept_check.hpp
++++ b/boost/concept_check.hpp
+@@ -352,7 +352,7 @@ 
+     private:
+         void test(boost::false_type)
+         {
+-            f(first,second);
++            (void) f(first,second);
+             Return r = f(first, second); // require operator()
+             (void)r;
+         }

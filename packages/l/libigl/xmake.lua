@@ -3,9 +3,10 @@ package("libigl")
     set_homepage("https://libigl.github.io/")
     set_description("Simple C++ geometry processing library.")
 
-    add_urls("https://github.com/libigl/libigl/archive/v$(version).tar.gz",
+    add_urls("https://github.com/libigl/libigl/archive/$(version).tar.gz",
              "https://github.com/libigl/libigl.git")
-    add_versions("2.2.0", "b336e548d718536956e2d6958a0624bc76d50be99039454072ecdc5cf1b2ede5")
+    add_versions("v2.2.0", "b336e548d718536956e2d6958a0624bc76d50be99039454072ecdc5cf1b2ede5")
+    add_versions("v2.3.0", "9d6de3bdb9c1cfc61a0a0616fd96d14ef8465995600328c196fa672ee4579b70")
 
     add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
     add_configs("use_cgal", {description = "Use CGAL library.", default = false, type = "boolean"})

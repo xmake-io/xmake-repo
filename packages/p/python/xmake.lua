@@ -83,9 +83,10 @@ package("python")
         os.mv("*.exe", package:installdir("bin"))
         os.mv("*.dll", package:installdir("bin"))
         os.mv("Lib", package:installdir())
-        os.mv("libs/*", package:installdir("lib"))
-        os.cp("*|libs", package:installdir())
+        os.cp("libs/*", package:installdir("lib"))
+        os.cp("*", package:installdir())
         local python = path.join(package:installdir("bin"), "python.exe")
+        os.vrunv(python, {"-m", "pip", "install", "-U", "pip"})
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
@@ -236,7 +237,7 @@ package("python")
         if package:kind() ~= "binary" then
             assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
         end
-        if is_host("windows") and package:version():ge("3.8.0") then
+        if is_host("windows") and package:version():ge("3.8.0") and winos.version():gt("win8") then
             os.vrun("py -3 -c \"import sys\"")
         end
     end)

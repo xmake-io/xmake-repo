@@ -1,10 +1,11 @@
 package("libraw")
     set_homepage("http://www.libraw.org")
     set_description("LibRaw is a library for reading RAW files from digital cameras.")
+    set_license("LGPL-2.1")
 
     add_urls("https://github.com/LibRaw/LibRaw/archive/$(version).tar.gz")
     add_urls("https://github.com/LibRaw/LibRaw.git")
-
+    add_versions("0.20.2", "dc1b486c2003435733043e4e05273477326e51c3ea554c6864a4eafaff1004a6")
     add_versions("0.19.5", "9a2a40418e4fb0ab908f6d384ff6f9075f4431f8e3d79a0e44e5a6ea9e75abdc")
 
     if is_plat("windows", "mingw") then
@@ -20,7 +21,7 @@ package("libraw")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "mingw", "iphoneos", function(package)
+    on_install("macosx", "linux", "windows", "mingw@windows", "iphoneos", function(package)
         io.writefile("xmake.lua", [[
             target("libraw")
                 set_kind("$(kind)")
@@ -32,6 +33,9 @@ package("libraw")
                 if is_plat("windows") then
                     add_defines("WIN32")
                 end
+                if is_plat("windows") or is_plat("mingw") then
+                    add_syslinks("ws2_32")
+                end
                 add_headerfiles("(libraw/*.h)")
                 add_includedirs(".")
                 add_files("src/libraw_cxx.cpp", "src/libraw_datastream.cpp", "src/libraw_c_api.cpp")
@@ -39,7 +43,10 @@ package("libraw")
         ]])
         local configs = {}
         if package:config("shared") then
-            table.insert(configs, "--kind=shared")
+            configs.kind = "shared"
+        end
+        if package:is_plat("linux") and package:config("pic") then
+            configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
     end)

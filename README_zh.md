@@ -66,9 +66,9 @@ xmake-repo是一个官方的xmake包管理仓库，收录了常用的c/c++开发
 
 如果你想要了解更多，请参考：
 
-* [在线文档](https://xmake.io/#/zh/)
+* [在线文档](https://xmake.io/#/zh-cn/package/remote_package)
 * [在线源码](https://github.com/xmake-io/xmake)
-* [项目主页](https://xmake.io/cn)
+* [项目主页](https://xmake.io/#/zh-cn/)
 
 ## Xrepo
 
@@ -87,87 +87,3 @@ xrepo 是一个基于 [Xmake](https://github.com/xmake-io/xmake) 的跨平台 C/
 例如：[packages/z/zlib/xmake.lua](https://github.com/xmake-io/xmake-repo/blob/dev/packages/z/zlib/xmake.lua):
 
 关于如何制作包的更详细描述，请参看文档：[制作和提交到官方仓库](https://xmake.io/#/zh-cn/package/remote_package?id=%e6%b7%bb%e5%8a%a0%e5%8c%85%e5%88%b0%e4%bb%93%e5%ba%93)
-
-```lua
-package("zlib")
-
-    set_homepage("http://www.zlib.net")
-    set_description("A Massively Spiffy Yet Delicately Unobtrusive Compression Library")
-
-    set_urls("http://zlib.net/zlib-$(version).tar.gz",
-             "https://downloads.sourceforge.net/project/libpng/zlib/$(version)/zlib-$(version).tar.gz")
-
-    add_versions("1.2.10", "8d7e9f698ce48787b6e1c67e6bff79e487303e66077e25cb9784ac8835978017")
-    add_versions("1.2.11", "c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1")
-
-    on_install("windows", function (package)
-        io.gsub("win32/Makefile.msc", "%-MD", "-" .. package:config("vs_runtime"))
-        os.vrun("nmake -f win32\\Makefile.msc zlib.lib")
-        os.cp("zlib.lib", package:installdir("lib"))
-        os.cp("*.h", package:installdir("include"))
-    end)
-
-    on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package, {"--static"})
-    end)
- 
-    on_install("iphoneos", "android@linux,macosx", "mingw@linux,macosx", function (package)
-        import("package.tools.autoconf").configure(package, {host = "", "--static"})
-        io.gsub("Makefile", "\nAR=.-\n",      "\nAR=" .. (package:build_getenv("ar") or "") .. "\n")
-        io.gsub("Makefile", "\nARFLAGS=.-\n", "\nARFLAGS=cr\n")
-        io.gsub("Makefile", "\nRANLIB=.-\n",  "\nRANLIB=\n")
-        os.vrun("make install -j4")
-    end)
-
-    on_test(function (package)
-        assert(package:has_cfuncs("inflate", {includes = "zlib.h"}))
-    end)
-```
-
-## 被支持的包列表
-
-|linux|windows|mingw|iphoneos|macosx|android|
-|-----|-------|-----|--------|------|-------|
-|boost|boost|catch2|catch2|autoconf|catch2||
-|bullet3|bzip2|concurrentqueue|cjson|automake|cjson||
-|bzip2|cairo|cpp-taskflow|concurrentqueue|boost|concurrentqueue||
-|cairo|catch2|doctest|cpp-taskflow|bullet3|cpp-taskflow||
-|catch2|concurrentqueue|fmt|doctest|bzip2|doctest||
-|cjson|cpp-taskflow|gtest|fmt|cairo|ffmpeg||
-|concurrentqueue|doctest|imgui|gtest|catch2|fmt||
-|cpp-taskflow|expat|inja|imgui|cjson|gtest||
-|doctest|fmt|libjpeg|inja|cmake|imgui||
-|expat|freeglut|libsdl|json-c|concurrentqueue|inja||
-|ffmpeg|freetype|nlohmann_json|libcurl|cpp-taskflow|json-c||
-|fmt|glew|pcre|libev|doctest|libjpeg||
-|fontconfig|go|pcre2|libffi|expat|libpng||
-|freeglut|gtest|spdlog|libjpeg|ffmpeg|libuv||
-|freetype|imgui|tbox|libpng|fmt|libxml2||
-|gettext|inja|xz|libuv|fontconfig|lua||
-|glew|libcurl|zlib|libxml2|freetype|nlohmann_json||
-|glib|libjpeg||nlohmann_json|gettext|spdlog||
-|go|libpng||spdlog|glew|tbox||
-|gperf|libsdl||tbox|glib|zlib||
-|gtest|libtiff||zlib|go|||
-|icu4c|libuv|||gperf|||
-|imgui|libwebsockets|||gtest|||
-|inja|lua|||icu4c|||
-|json-c|luajit|||imgui|||
-|libcurl|nana|||inja|||
-|libev|nlohmann_json|||json-c|||
-|libffi|oatpp|||libcurl|||
-|libiconv|pcre|||libev|||
-|libjpeg|pixman|||libffi|||
-|libmill|protobuf-c|||libiconv|||
-|libpng|protobuf-cpp|||libjpeg|||
-|libsdl|raylib|||libmill|||
-|libtask|skia|||libpng|||
-|libtiff|spdlog|||libsdl|||
-|libusb|sqlite3|||libtask|||
-|libuv|tbox|||libtiff|||
-|libwebsockets|unqlite|||libtool|||
-|libxml2|zeromq|||libusb|||
-
-这里只显示了部分包，如果你想看所有包列表，请到 [仓库包列表](https://xrepo.xmake.io/#/zh-cn/packages/linux) 查看。
-
-我们也非常欢迎大家能够贡献一些进来。🙏 
