@@ -12,6 +12,10 @@ package("newtondynamics")
 
     add_includedirs("include", "include/dgCore")
 
+    if is_plat("linux", "android") then
+        add_syslinks("dl")
+    end
+
     on_load(function (package)
         if package:is_plat("windows") then
             if not package:config("shared") then
