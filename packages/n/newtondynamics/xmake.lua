@@ -32,6 +32,9 @@ package("newtondynamics")
                 package:add("defines", "_POSIX_VER")
             end
         end
+
+        local d = package:debug() and "_d" or ""
+        package:add("links", "newton" .. d, "dgPhysics" .. d, "dgCore" .. d)
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "android", function (package)
@@ -39,13 +42,10 @@ package("newtondynamics")
         io.replace("CMakeLists.txt", [[set(CMAKE_INSTALL_PREFIX "win64sdk" CACHE PATH "..." FORCE)]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_INSTALL_PREFIX "win32sdk" CACHE PATH "..." FORCE)]], "", {plain = true})
 
-        local configs = {"-DNEWTON_BUILD_SANDBOX_DEMOS=OFF"}
+        local configs = {"-DNEWTON_BUILD_SANDBOX_DEMOS=OFF", "-DNEWTON_BUILD_CORE_ONLY=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        if package:config("shared") then
-            table.insert(configs, "-DNEWTON_BUILD_SHARED_LIBS=ON")
-        else
-            table.insert(configs, "-DNEWTON_BUILD_SHARED_LIBS=OFF")
-        end
+        table.insert(configs, "-DDNEWTON_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
         if package:is_plat("windows") then
             table.insert(configs, "-DNEWTON_STATIC_RUNTIME_LIBRARIES=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         elseif package:is_plat("android") then
