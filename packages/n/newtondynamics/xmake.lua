@@ -34,7 +34,7 @@ package("newtondynamics")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "android", function (package)
         -- prevent cmakelists.txt from overwriting CMAKE_INSTALL_PREFIX
         io.replace("CMakeLists.txt", [[set(CMAKE_INSTALL_PREFIX "win64sdk" CACHE PATH "..." FORCE)]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_INSTALL_PREFIX "win32sdk" CACHE PATH "..." FORCE)]], "", {plain = true})
@@ -48,6 +48,9 @@ package("newtondynamics")
         end
         if package:is_plat("windows") then
             table.insert(configs, "-DNEWTON_STATIC_RUNTIME_LIBRARIES=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        elseif package:is_plat("android") then
+            table.insert(configs, "-DNEWTON_WITH_AVX_PLUGIN=OFF")
+            table.insert(configs, "-DNEWTON_WITH_REFERENCE_GPU_PLUGIN=OFF")
         end
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
