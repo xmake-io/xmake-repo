@@ -13,7 +13,7 @@ package("newtondynamics")
     add_includedirs("include", "include/dgCore")
 
     if is_plat("linux", "android") then
-        add_syslinks("dl")
+        add_syslinks("dl", "pthread")
     end
 
     on_load(function (package)
