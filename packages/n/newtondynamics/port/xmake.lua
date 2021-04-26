@@ -18,7 +18,7 @@ target("newton")
             end
         end
     elseif is_plat("linux", "android") then
-        add_syslinks("dl", "pthread")
+        add_syslinks("dl")
         if is_arch("x86") then
             add_defines("_POSIX_VER")
         else
@@ -29,6 +29,8 @@ target("newton")
             add_cxflags("-mfpu=neon", {force = true})
             add_cxflags("-mfloat-abi=soft", {force = true})
             add_cxflags("-include arm_neon.h", {force = true})
+        else
+            add_syslinks("pthread")
         end
     elseif is_plat("macosx", "iphoneos") then
         add_defines("_MACOSX_VER")

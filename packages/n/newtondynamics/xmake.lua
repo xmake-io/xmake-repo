@@ -17,7 +17,7 @@ package("newtondynamics")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         os.cd("newton-3.14")
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
