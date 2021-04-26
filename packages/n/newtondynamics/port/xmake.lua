@@ -26,13 +26,14 @@ target("newton")
         end
         if is_plat("android") then
             add_defines("_ARM_VER")
+            add_cxflags("-include arm_neon.h")
         end
     elseif is_plat("macosx", "iphoneos") then
         add_defines("_MACOSX_VER")
     end
 
     if is_plat("windows") then
-        if get_config("kind") == "static" then
+        if is_kind("static") then
             add_defines("_NEWTON_STATIC_LIB", {public = true})
         else
             add_defines("_NEWTON_BUILD_DLL")
