@@ -27,11 +27,14 @@ target("newton")
         if is_plat("android") then
             add_defines("_ARM_VER")
             add_cxflags("-mfpu=neon", {force = true})
-            add_cxflags("-mfloat-abi=hard", {force = true})
+            add_cxflags("-mfloat-abi=soft", {force = true})
             add_cxflags("-include arm_neon.h", {force = true})
         end
     elseif is_plat("macosx", "iphoneos") then
         add_defines("_MACOSX_VER")
+        if is_plat("iphoneos") then
+            add_cxflags("-include emmintrin.h", {force = true})
+        end
     end
 
     if is_plat("windows") then
