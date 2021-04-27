@@ -44,6 +44,7 @@ package("boost")
                       "iostreams",
                       "program_options"}
 
+    add_configs("all",          { description = "Enable all library modules support.",  default = false, type = "boolean"})
     add_configs("multi",        { description = "Enable multi-thread support.",  default = true, type = "boolean"})
     for _, libname in ipairs(libnames) do
         add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
@@ -146,7 +147,7 @@ package("boost")
             end
         end
         for _, libname in ipairs(libnames) do
-            if package:config(libname) then
+            if package:config("all") or package:config(libname) then
                 table.insert(argv, "--with-" .. libname)
             end
         end
