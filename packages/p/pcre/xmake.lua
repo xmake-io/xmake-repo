@@ -17,7 +17,7 @@ package("pcre")
     add_configs("jit", {description = "Enable jit.", default = true, type = "boolean"})
     add_configs("bitwidth", {description = "Set the code unit width.", default = "8", values = {"8", "16", "32"}})
 
-    on_load("windows", function (package)
+    on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "PCRE_STATIC")
         end
