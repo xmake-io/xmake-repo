@@ -12,13 +12,12 @@ package("pcre")
     if is_host("windows") and not is_plat("mingw") then
         add_deps("cmake")
     end
+    add_deps("zlib")
 
     add_configs("jit", {description = "Enable jit.", default = true, type = "boolean"})
     add_configs("bitwidth", {description = "Set the code unit width.", default = "8", values = {"8", "16", "32"}})
 
-    on_load(function (package)
-        local bitwidth = package:config("bitwidth") or "8"
-        package:add("links", "pcre" .. (bitwidth ~= "8" and bitwidth or ""))
+    on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "PCRE_STATIC")
         end

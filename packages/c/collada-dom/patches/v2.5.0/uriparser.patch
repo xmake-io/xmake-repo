@@ -1,0 +1,13 @@
+diff --git a/dom/src/dae/daeURI.cpp b/dom/src/dae/daeURI.cpp
+index 3a8f815..1623753 100644
+--- a/dom/src/dae/daeURI.cpp
++++ b/dom/src/dae/daeURI.cpp
+@@ -790,7 +790,7 @@
+         scheme = fromRange(uri.scheme);
+         authority = fromRange(uri.hostText);
+         path = fromList(uri.pathHead, "/");
+-        if (uri.absolutePath != URI_TRUE and uri.hostText.first == NULL)
++        if (uri.absolutePath != URI_TRUE && uri.hostText.first == NULL)
+             path = path.erase(0, 1);
+         query = fromRange(uri.query);
+         fragment = fromRange(uri.fragment);

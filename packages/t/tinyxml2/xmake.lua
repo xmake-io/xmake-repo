@@ -3,7 +3,7 @@ package("tinyxml2")
     set_homepage("http://www.grinninglizard.com/tinyxml2/")
     set_description("simple, small, efficient, C++ XML parser that can be easily integrating into other programs.")
 
-    add_urls("https://github.com/leethomason/tinyxml2/archive/8.0.0.tar.gz")
+    add_urls("https://github.com/leethomason/tinyxml2/archive/$(version).tar.gz")
     add_urls("https://github.com/leethomason/tinyxml2.git")
     add_versions("8.0.0", "6ce574fbb46751842d23089485ae73d3db12c1b6639cda7721bf3a7ee862012c")
 
@@ -13,7 +13,8 @@ package("tinyxml2")
 
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-DBUILD_TESTS=OFF"}
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:configs("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
