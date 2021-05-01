@@ -8,7 +8,7 @@ package("gflags")
              "https://github.com/gflags/gflags.git")
     add_versions("v2.2.2", "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf")
 
-    add_configs("mt", {description = "Build the multi-threaded gflags library.", default = true, type = "boolean"})
+    add_configs("mt", {description = "Build the multi-threaded gflags library.", default = false, type = "boolean"})
 
     add_deps("cmake")
     if is_plat("windows") then
