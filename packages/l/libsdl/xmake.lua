@@ -111,6 +111,10 @@ package("libsdl")
         if package:is_plat("linux") and package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
+        if package:is_plat("linux") then
+            -- fix Missing Xext.h if some X libs are found
+            table.insert(configs, "--without-x")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
