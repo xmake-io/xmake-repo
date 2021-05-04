@@ -25,7 +25,8 @@ package("libsdl")
     end
     add_includedirs("include", "include/SDL2")
 
-    add_configs("use_sdlmain", {description = "Use SDL_main entry", default = true, type = "boolean"})
+    add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
+    add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
 
     on_load(function (package)
         if package:config("use_sdlmain") then
@@ -108,12 +109,14 @@ package("libsdl")
         else
             table.insert(configs, "--enable-shared=no")
         end
-        if package:is_plat("linux") and package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
         if package:is_plat("linux") then
-            -- fix Missing Xext.h if some X libs are found
-            table.insert(configs, "--without-x")
+            if package:config("pic") ~= false then
+                table.insert(configs, "--with-pic")
+            end
+
+            if not package:config("with_x") then
+                table.insert(configs, "--without-x")
+            end
         end
         import("package.tools.autoconf").install(package, configs)
     end)
