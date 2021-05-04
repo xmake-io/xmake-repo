@@ -23,15 +23,15 @@ package("libsdl")
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "winmm", "shell32")
     end
-    add_links("SDL2")
     add_includedirs("include", "include/SDL2")
 
     add_configs("use_sdlmain", {description = "Use SDL_main entry", default = true, type = "boolean"})
 
     on_load(function (package)
         if package:config("use_sdlmain") then
-            package:add("links", "SDL2main")
+            package:add("links", "SDL2main", "SDL2")
         else
+            package:add("links", "SDL2")
             package:add("defines", "SDL_MAIN_HANDLED")
         end
     end)
