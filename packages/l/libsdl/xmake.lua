@@ -42,66 +42,54 @@ package("libsdl")
 
     on_fetch("linux", "macosx", function (package, opt)
         if opt.system then
-            local function find_sdl2(opt)
-                -- use sdl2-config
-                local sdl2conf = try {function() return os.iorunv("sdl2-config", {"--version", "--cflags", "--libs"}) end}
-                if sdl2conf then
-                    sdl2conf = os.argv(sdl2conf)
-                    local sdl2ver = table.remove(sdl2conf, 1)
-                    if opt.require_version then
-                        import("core.base.semver")
-                        if not semver.satisfies(sdl2ver, opt.require_version) then
-                            return -- system sdl2 doesn't satisfy version requirements
-                        end
+            -- use sdl2-config
+            local sdl2conf = try {function() return os.iorunv("sdl2-config", {"--version", "--cflags", "--libs"}) end}
+            if sdl2conf then
+                sdl2conf = os.argv(sdl2conf)
+                local sdl2ver = table.remove(sdl2conf, 1)
+                if opt.require_version then
+                    import("core.base.semver")
+                    if not semver.satisfies(sdl2ver, opt.require_version) then
+                        return -- system sdl2 doesn't satisfy version requirements
                     end
-
-                    local result = {}
-                    result.version = sdl2ver
-
-                    for _, flag in ipairs(sdl2conf) do
-                        if flag:startswith("-L") and #flag > 2 then
-                            -- get linkdirs
-                            local linkdir = flag:sub(3)
-                            if linkdir and os.isdir(linkdir) then
-                                result.linkdirs = result.linkdirs or {}
-                                table.insert(result.linkdirs, linkdir)
-                            end
-                        elseif flag:startswith("-I") and #flag > 2 then
-                            -- get includedirs
-                            local includedir = flag:sub(3)
-                            if includedir and os.isdir(includedir) then
-                                result.includedirs = result.includedirs or {}
-                                table.insert(result.includedirs, includedir)
-                            end
-                        elseif flag:startswith("-l") and #flag > 2 then
-                            -- get links
-                            local link = flag:sub(3)
-                            result.links = result.links or {}
-                            table.insert(result.links, link)
-                        elseif flag:startswith("-D") and #flag > 2 then
-                            -- get defines
-                            local define = flag:sub(3)
-                            result.defines = result.defines or {}
-                            table.insert(result.defines, define)
-                        end
-                    end
-
-                    return result
                 end
 
-                -- finding using sdl2-config didn't work, fallback on pkgconfig
-                return find_package("pkgconfig::sdl2", {require_version = opt.require_version})
-            end
+                local result = {}
+                result.version = sdl2ver
 
-            local result = find_sdl2(opt)
-            if result then
-                -- neither sdl2-config nor pkgconfig links SDL2main by default
-                if package:config("use_sdlmain") then
-                    table.insert(result.links, "SDL2main")
+                for _, flag in ipairs(sdl2conf) do
+                    if flag:startswith("-L") and #flag > 2 then
+                        -- get linkdirs
+                        local linkdir = flag:sub(3)
+                        if linkdir and os.isdir(linkdir) then
+                            result.linkdirs = result.linkdirs or {}
+                            table.insert(result.linkdirs, linkdir)
+                        end
+                    elseif flag:startswith("-I") and #flag > 2 then
+                        -- get includedirs
+                        local includedir = flag:sub(3)
+                        if includedir and os.isdir(includedir) then
+                            result.includedirs = result.includedirs or {}
+                            table.insert(result.includedirs, includedir)
+                        end
+                    elseif flag:startswith("-l") and #flag > 2 then
+                        -- get links
+                        local link = flag:sub(3)
+                        result.links = result.links or {}
+                        table.insert(result.links, link)
+                    elseif flag:startswith("-D") and #flag > 2 then
+                        -- get defines
+                        local define = flag:sub(3)
+                        result.defines = result.defines or {}
+                        table.insert(result.defines, define)
+                    end
                 end
 
                 return result
             end
+
+            -- finding using sdl2-config didn't work, fallback on pkgconfig
+            return find_package("pkgconfig::sdl2", {require_version = opt.require_version})
         end
     end)
 
