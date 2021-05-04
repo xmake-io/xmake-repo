@@ -47,12 +47,6 @@ package("libsdl")
             if sdl2conf then
                 sdl2conf = os.argv(sdl2conf)
                 local sdl2ver = table.remove(sdl2conf, 1)
-                if opt.require_version then
-                    import("core.base.semver")
-                    if not semver.satisfies(sdl2ver, opt.require_version) then
-                        return -- system sdl2 doesn't satisfy version requirements
-                    end
-                end
 
                 local result = {}
                 result.version = sdl2ver
@@ -89,7 +83,11 @@ package("libsdl")
             end
 
             -- finding using sdl2-config didn't work, fallback on pkgconfig
-            return find_package("pkgconfig::sdl2", {require_version = opt.require_version})
+            if package.find_package then
+                return package.find_package("pkgconfig::sdl2", opt)
+            else
+                return find_package("pkgconfig::sdl2", opt)
+            end
         end
     end)
 
@@ -109,6 +107,9 @@ package("libsdl")
             table.insert(configs, "--enable-shared=yes")
         else
             table.insert(configs, "--enable-shared=no")
+        end
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs)
     end)
