@@ -6,12 +6,12 @@ package("msmpi")
     on_fetch("windows", function (package, opt)
         if opt.system then
             import("lib.detect.find_path")
-            import("lib.detect.find_program")
             import("lib.detect.find_library")
 
             -- init search paths
             local paths = {
                 "$(env MSMPI_ROOT)",
+                "$(env MSMPI_INC)\\..",
                 "$(env PROGRAMFILES%(x86%))\\Microsoft SDKs\\MPI"
             }
 
