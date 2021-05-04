@@ -34,6 +34,10 @@ package("libsdl")
             package:add("links", "SDL2")
             package:add("defines", "SDL_MAIN_HANDLED")
         end
+
+        if package:is_plat("macosx") and package:version():ge("2.0.14") then
+            package:add("frameworks", "CoreHaptics", "GameController")
+        end
     end)
 
     on_fetch("linux", "macosx", function (package, opt)
@@ -119,12 +123,6 @@ package("libsdl")
             table.insert(configs, "--enable-shared=no")
         end
         import("package.tools.autoconf").install(package, configs)
-    end)
-
-    on_load(function (package)
-        if package:is_plat("macosx") and package:version():ge("2.0.14") then
-            package:add("frameworks", "CoreHaptics", "GameController")
-        end
     end)
 
     on_test(function (package)
