@@ -84,7 +84,7 @@ package("libsdl")
 
             -- finding using sdl2-config didn't work, fallback on pkgconfig
             if package.find_package then
-                return package.find_package("pkgconfig::sdl2", opt)
+                return package:find_package("pkgconfig::sdl2", opt)
             else
                 return find_package("pkgconfig::sdl2", opt)
             end
