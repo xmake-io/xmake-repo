@@ -18,7 +18,10 @@ function _find_package_on_windows(package, opt)
         end
     end
     result.linkdirs = table.unique(result.linkdirs)
-    table.insert(result.includedirs, find_path(path.join("tbb", "tbb.h"), paths, {suffixes = "include"}))
+    local path = find_path(path.join("tbb", "tbb.h"), paths, {suffixes = "include"})
+    if path then
+        table.insert(result.includedirs, path)
+    end
 
     if #result.includedirs > 0 and #result.linkdirs > 0 then
         local root = result.includedirs[1]
