@@ -15,7 +15,7 @@ target("glew")
         add_syslinks("GLU", "GL")
     end
     add_defines("GLEW_NO_GLU")
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         if get_config("kind") == "shared" then
             add_defines("GLEW_BUILD")
         else
