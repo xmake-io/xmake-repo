@@ -18,8 +18,10 @@ package("libsdl")
     if is_plat("macosx") then
         add_frameworks("OpenGL", "CoreVideo", "CoreAudio", "AudioToolbox", "Carbon", "CoreGraphics", "ForceFeedback", "Metal", "AppKit", "IOKit", "CoreFoundation", "Foundation")
         add_syslinks("iconv")
+        add_deps("cmake")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
+        add_deps("cmake")
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "winmm", "shell32")
     end
@@ -35,7 +37,9 @@ package("libsdl")
             package:add("links", "SDL2")
             package:add("defines", "SDL_MAIN_HANDLED")
         end
-
+        if package:is_plat("linux") and package:config("with_x") then
+            package:add("deps", "libxext")
+        end
         if package:is_plat("macosx") and package:version():ge("2.0.14") then
             package:add("frameworks", "CoreHaptics", "GameController")
         end
@@ -48,10 +52,7 @@ package("libsdl")
             if sdl2conf then
                 sdl2conf = os.argv(sdl2conf)
                 local sdl2ver = table.remove(sdl2conf, 1)
-
-                local result = {}
-                result.version = sdl2ver
-
+                local result = {version = sdl2ver}
                 for _, flag in ipairs(sdl2conf) do
                     if flag:startswith("-L") and #flag > 2 then
                         -- get linkdirs
@@ -104,21 +105,9 @@ package("libsdl")
 
     on_install("macosx", "linux", function (package)
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
-        end
-        if package:is_plat("linux") then
-            if package:config("pic") ~= false then
-                table.insert(configs, "--with-pic")
-            end
-
-            if not package:config("with_x") then
-                table.insert(configs, "--without-x")
-            end
-        end
-        import("package.tools.autoconf").install(package, configs)
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        import("package.tools.cmake").install(package, configs, {packagedeps = package:is_plat("linux") and "libxext"})
     end)
 
     on_test(function (package)
