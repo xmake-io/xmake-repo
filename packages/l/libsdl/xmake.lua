@@ -36,7 +36,7 @@ package("libsdl")
             package:add("defines", "SDL_MAIN_HANDLED")
         end
         if package:is_plat("linux") and package:config("with_x") then
-            package:add("deps", "libxext")
+            package:add("deps", "libxext", {private = true})
         end
         if package:is_plat("macosx") and package:version():ge("2.0.14") then
             package:add("frameworks", "CoreHaptics", "GameController")
