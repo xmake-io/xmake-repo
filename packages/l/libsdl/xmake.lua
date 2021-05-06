@@ -18,10 +18,8 @@ package("libsdl")
     if is_plat("macosx") then
         add_frameworks("OpenGL", "CoreVideo", "CoreAudio", "AudioToolbox", "Carbon", "CoreGraphics", "ForceFeedback", "Metal", "AppKit", "IOKit", "CoreFoundation", "Foundation")
         add_syslinks("iconv")
-        add_deps("cmake")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
-        add_deps("cmake")
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "winmm", "shell32")
     end
@@ -105,9 +103,23 @@ package("libsdl")
 
     on_install("macosx", "linux", function (package)
         local configs = {}
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = package:is_plat("linux") and "libxext"})
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
+        local cflags = {}
+        if package:is_plat("linux") then
+            for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
+                local dep = package:dep(depname):fetch()
+                if dep then
+                    for _, includedir in ipairs(dep.includedirs or dep.sysincludedirs) do
+                        table.join2(cflags, "-I" .. includedir)
+                    end
+                end
+            end
+        end
+        import("package.tools.autoconf").install(package, configs, {cflags = cflags})
     end)
 
     on_test(function (package)
