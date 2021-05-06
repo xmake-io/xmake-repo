@@ -11,7 +11,7 @@ package("meson")
 
     add_deps("ninja", "python 3.x", {kind = "binary"})
 
-    on_install("@macosx", "@linux", "@windows", function (package)
+    on_install("@macosx", "@linux", "@windows", "@msys", function (package)
         local version = package:dep("python"):version()
         local envs = {}
         if is_host("windows") then
