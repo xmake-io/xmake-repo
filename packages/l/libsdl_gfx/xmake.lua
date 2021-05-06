@@ -53,6 +53,9 @@ package("libsdl_gfx")
         else
             table.insert(configs, "--enable-shared=no")
         end
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
         table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
         import("package.tools.autoconf").install(package, configs)
     end)
