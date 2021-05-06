@@ -22,7 +22,7 @@ package("libsdl_net")
         end
         os.cp("include/*", package:installdir("include/SDL2"))
         os.cp(path.join("lib", arch, "*.lib"), package:installdir("lib"))
-        os.cp(path.join("lib", arch, "*.dll"), package:installdir("lib"))
+        os.cp(path.join("lib", arch, "*.dll"), package:installdir("bin"))
     end)
 
     on_install("macosx", "linux", function (package)
@@ -32,7 +32,13 @@ package("libsdl_net")
         else
             table.insert(configs, "--enable-shared=no")
         end
-        table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
+        local libsdl = package:dep("libsdl")
+        if libsdl and not libsdl:is_system() then
+            table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
