@@ -59,7 +59,10 @@ package("libsdl_gfx")
         if package:is_plat("linux") and package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
+        local libsdl = package:dep("libsdl")
+        if libsdl and not libsdl:is_system() then
+            table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
