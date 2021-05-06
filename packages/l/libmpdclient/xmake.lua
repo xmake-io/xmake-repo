@@ -8,6 +8,8 @@ package("libmpdclient")
     on_install("linux", function (package)
         import("package.tools.meson").install(package)
         os.cp("include", package:installdir())
+        os.cp("build_*/version.h", package:installdir() .. "/include/mpd")
+        os.rm(package:installdir() .. "/include/mpd/version.h.in")
     end)
 
     on_test(function (package)
