@@ -8,25 +8,28 @@ package("openblas")
             add_urls("https://github.com/xianyi/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version)-x64.zip")
             add_versions("0.3.12", "f1d231594365d5c7f2c625f9d8bd4eeea4f7b748675a95301d3cb2c0aa118e26")
             add_versions("0.3.13", "85cacd71dec9bc1e1168a8463fd0aa29a31f449b4583ed3a1c689a56df8eae29")
+            add_versions("0.3.15", "afc029572a84820596fe81f1faeb909ada5bab27d091285fdd80bc2a8231f4a6")
+        elseif is_arch("x86") then
+            add_urls("https://github.com/xianyi/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version)-x86.zip")
+            add_versions("0.3.15", "bcde933737b477813eaac290de5cb8756d3b42199e8ef5f44b23ae5f06fe0834")
         end
     else
         add_urls("https://github.com/xianyi/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version).tar.gz")
         add_versions("0.3.12", "65a7d3a4010a4e3bd5c0baa41a234797cd3a1735449a4a5902129152601dc57b")
         add_versions("0.3.13", "79197543b17cc314b7e43f7a33148c308b0807cd6381ee77f77e15acf3e6459e")
+        add_versions("0.3.15", "30a99dec977594b387a17f49904523e6bc8dd88bd247266e83485803759e4bbe")
 
         add_configs("with_fortran", {description="Compile with fortran enabled.", default = true, type = "boolean"})
     end
 
     if is_plat("linux") then
         add_syslinks("pthread")
-    elseif is_plat("windows") then
-        add_links("libopenblas")
     end
 
-    on_install("windows|x64", function (package)
-        os.cp("bin", package:installdir())
-        os.cp("include", package:installdir())
-        os.cp("lib", package:installdir())
+    on_install("windows", function (package)
+        os.mv(path.join("bin", "libopenblas.dll"), path.join(package:installdir("bin"), "openblas.dll"))
+        os.mv("include", package:installdir())
+        os.mv(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
         package:addenv("PATH", "bin")
     end)
 

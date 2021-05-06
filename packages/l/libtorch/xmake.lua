@@ -74,11 +74,8 @@ package("libtorch")
         io.replace("third_party/fbgemm/CMakeLists.txt", "PRIVATE FBGEMM_STATIC", "PUBLIC FBGEMM_STATIC", {plain = true})
         io.replace("third_party/protobuf/cmake/install.cmake", "install%(DIRECTORY.-%)", "")
         io.replace("third_party/ideep/mkl-dnn/src/CMakeLists.txt", "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}", "${CMAKE_INSTALL_LIBDIR}", {plain = true})
-        if package:is_plat("windows") then
-            io.replace("cmake/Modules/FindOpenBLAS.cmake", "NAMES openblas PATHS", "NAMES libopenblas PATHS", {plain = true})
-            if package:config("vs_runtime"):startswith("MD") then
-                io.replace("third_party/fbgemm/CMakeLists.txt", "MT", "MD", {plain = true})
-            end
+        if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
+            io.replace("third_party/fbgemm/CMakeLists.txt", "MT", "MD", {plain = true})
         end
 
         -- prepare python
@@ -92,11 +89,11 @@ package("libtorch")
         end
 
         -- prepare for installation
-        local extracfg = {}
+        local opt = {}
         if package:config("ninja") then
-            extracfg.cmake_generator = "Ninja"
+            opt.cmake_generator = "Ninja"
         end
-        local envs = cmake.buildenvs(package, extracfg)
+        local envs = cmake.buildenvs(package, opt)
         if not package:is_plat("macosx") then
             if package:dep("mkl"):exists() then
                 table.insert(configs, "-DBLAS=MKL")
@@ -110,9 +107,11 @@ package("libtorch")
         envs.libuv_ROOT = package:dep("libuv"):installdir()
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCAFFE2_USE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-        extracfg.envs = envs
-        cmake.install(package, configs, extracfg)
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCAFFE2_USE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        end
+        opt.envs = envs
+        cmake.install(package, configs, opt)
     end)
 
     on_test(function (package)
@@ -124,4 +123,3 @@ package("libtorch")
             }
         ]]}, {configs = {languages = "c++14"}, includes = "torch/torch.h"}))
     end)
-
