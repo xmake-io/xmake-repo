@@ -22,7 +22,7 @@ package("libsdl_image")
         end
         os.cp("include/*", package:installdir("include/SDL2"))
         os.cp(path.join("lib", arch, "*.lib"), package:installdir("lib"))
-        os.cp(path.join("lib", arch, "*.dll"), package:installdir("lib"))
+        os.cp(path.join("lib", arch, "*.dll"), package:installdir("bin"))
     end)
 
     on_install("macosx", "linux", function (package)

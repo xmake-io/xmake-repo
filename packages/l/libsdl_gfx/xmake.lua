@@ -42,7 +42,7 @@ package("libsdl_gfx")
 
         local build_dir = path.join(arch, mode)
         os.cp(path.join(build_dir, "*.lib"), package:installdir("lib"))
-        os.cp(path.join(build_dir, "*.dll"), package:installdir("lib"))
+        os.cp(path.join(build_dir, "*.dll"), package:installdir("bin"))
         os.cp("*.h", package:installdir("include", "SDL2"))
     end)
 
