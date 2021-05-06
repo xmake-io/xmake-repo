@@ -5,8 +5,8 @@ package("libmpdclient")
     add_versions("2.19", "158aad4c2278ab08e76a3f2b0166c99b39fae00ee17231bd225c5a36e977a189")
     add_deps("meson", "ninja")
 
-    on_install(function (package)
-        import("package.tools.meson").install(package, {"-Dxxx=ON"})
+    on_install("linux", "windows", function (package)
+        import("package.tools.meson").install(package)
         os.cp("include", package:installdir())
     end)
 
