@@ -23,11 +23,11 @@ package("filament")
         if package:is_plat("windows") then
             table.insert(configs, "-DUSE_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
-        local extracfg = {buildir = os.tmpdir()}
+        local opt = {buildir = os.tmpdir()}
         if package:config("ninja") then
-            extracfg.cmake_generator = "Ninja"
+            opt.cmake_generator = "Ninja"
         end
-        import("package.tools.cmake").install(package, configs, extracfg)
+        import("package.tools.cmake").install(package, configs, opt)
         package:addenv("PATH", "bin")
     end)
 
