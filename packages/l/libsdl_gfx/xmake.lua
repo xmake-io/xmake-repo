@@ -30,6 +30,9 @@ package("libsdl_gfx")
         content = content:gsub("%%%(AdditionalLibraryDirectories%)", package:dep("libsdl"):installdir("lib") .. ";%%%(AdditionalLibraryDirectories%)")
         io.writefile(file_name, content)
 
+        -- MSVC trick no longer required since C++11
+        io.replace("SDL2_gfxPrimitives.c", "#if defined(_MSC_VER)", "#if 0", {plain = true})
+
         local configs = {}
         local arch = package:is_arch("x86") and "Win32" or "x64"
         local mode = package:debug() and "Debug" or "Release"
