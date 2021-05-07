@@ -38,9 +38,9 @@ package("mkl")
     end
     on_load("windows", "macosx", "linux", function (package)
         if package:is_plat("windows") then
-            package:add("links", package:is_arch("x64", "x86_64") and "mkl_intel_ilp64" or "mkl_intel")
-        else
             package:add("links", package:is_arch("x64", "x86_64") and "mkl_intel_ilp64" or "mkl_intel_c")
+        else
+            package:add("links", package:is_arch("x64", "x86_64") and "mkl_intel_ilp64" or "mkl_intel")
         end
 
         local threading = package:config("threading")
