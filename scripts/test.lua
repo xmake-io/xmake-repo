@@ -175,7 +175,8 @@ function main(...)
     os.exec("xmake repo -l")
 
     -- require packages
-    for _, package in ipairs(packages) do
+    _require_packages(argv, packages)
+    --[[for _, package in ipairs(packages) do
         _require_packages(argv, package)
-    end
+    end]]
 end
