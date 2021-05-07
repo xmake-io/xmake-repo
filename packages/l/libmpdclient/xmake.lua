@@ -5,11 +5,6 @@ package("libmpdclient")
     add_versions("2.19", "158aad4c2278ab08e76a3f2b0166c99b39fae00ee17231bd225c5a36e977a189")
     add_deps("meson", "ninja")
 
-    if is_plat("linux") and is_arch("x86_64") then
-        add_linkdirs("lib/x86_64-linux-gnu")
-        add_links("mpdclient")
-    end
-
     on_install("linux", function (package)
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
@@ -17,6 +12,14 @@ package("libmpdclient")
         os.cp("include", package:installdir())
         os.cp("build_*/version.h", package:installdir() .. "/include/mpd")
         os.rm(package:installdir() .. "/include/mpd/version.h.in")
+        if package:is_plat("linux") and package:is_arch("x86_64") then
+            if os.isdir(path.join(package:installdir(), "lib", "x86_64-linux-gnu")) then
+                package:add("linkdirs", "lib/x86_64-linux-gnu")
+            elseif os.isdir(path.join(package:installdir(), "lib64")) then
+                package:add("linkdirs", "lib64")
+            end
+            package:add("links", "mpdclient")
+        end
     end)
 
     on_test(function (package)
