@@ -3,15 +3,15 @@ package("pybind11")
     set_homepage("https://github.com/pybind/pybind11")
     set_description("Seamless operability between C++11 and Python.")
 
-    set_urls("https://github.com/pybind/pybind11/archive/v$(version).zip",
+    add_urls("https://github.com/pybind/pybind11/archive/$(version).zip",
              "https://github.com/pybind/pybind11.git")
+    add_versions("v2.5.0", "1859f121837f6c41b0c6223d617b85a63f2f72132bae3135a2aa290582d61520")
+    add_versions("v2.6.2", "0bdb5fd9616fcfa20918d043501883bf912502843d5afc5bc7329a8bceb157b3")
 
-    add_deps("python 3.x")
+    add_deps("cmake", "python 3.x")
 
-    add_versions("2.5.0", "1859f121837f6c41b0c6223d617b85a63f2f72132bae3135a2aa290582d61520")
-
-    on_install(function (package)
-        os.cp("include", package:installdir())
+    on_install("windows", "macosx", "linux", function (package)
+        import("package.tools.cmake").install(package, {"-DPYBIND11_TEST=OFF"})
     end)
 
     on_test(function (package)
