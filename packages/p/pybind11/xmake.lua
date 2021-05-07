@@ -10,7 +10,7 @@ package("pybind11")
 
     add_deps("cmake", "python 3.x")
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", function (package)
         import("package.tools.cmake").install(package, {"-DPYBIND11_TEST=OFF"})
     end)
 
