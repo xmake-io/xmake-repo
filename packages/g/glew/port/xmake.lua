@@ -7,7 +7,7 @@ end
 target("glew")
     set_kind("$(kind)")
     if is_plat("windows", "mingw") then
-        set_basename("glew32")
+        set_basename(is_kind("shared") and "glew32" or "glew32s")
         add_syslinks("glu32", "opengl32")
     elseif is_plat("macosx") then
         add_frameworks("OpenGL")

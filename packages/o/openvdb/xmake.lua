@@ -29,11 +29,15 @@ package("openvdb")
             end
         end
         if package:config("view") then
-            package:add("deps", "glew")
+            package:add("deps", "glew", {configs = {shared = true}})
             package:add("deps", "glfw")
         end
         if not package:config("shared") then
             package:add("defines", "OPENVDB_STATICLIB")
+        end
+        if package:is_plat("windows") then
+            package:add("defines", "_USE_MATH_DEFINES")
+            package:add("defines", "NOMINMAX")
         end
     end)
 
