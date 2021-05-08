@@ -67,11 +67,10 @@ package("llvm")
 
     if on_fetch then
         on_fetch(function (package, opt)
-            local version = try {function() return os.iorunv("llvm-config --version") end}
-            if version then
-                import("core.base.semver")
-                if semver.satisfies(version:trim(), opt.require_version) then
-                    return true
+            if opt.system then
+                local version = try {function() return os.iorunv("llvm-config --version") end}
+                if version then
+                    return {version = version:trim()}
                 end
             end
         end)
