@@ -18,6 +18,7 @@ package("nativefiledialog")
             target("nfd")
                 set_kind("static")
                 add_includedirs("include")
+                add_mflags("-fno-objc-arc")
                 add_files("nfd_common.c")
                 if is_plat("windows") then
                     add_defines("_CRT_SECURE_NO_WARNINGS")
