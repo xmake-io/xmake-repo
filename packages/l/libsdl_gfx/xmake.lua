@@ -31,6 +31,9 @@ package("libsdl_gfx")
         content = content:gsub("%%%(AdditionalLibraryDirectories%)", package:dep("libsdl"):installdir("lib") .. ";%%%(AdditionalLibraryDirectories%)")
         io.writefile(file_name, content)
 
+        -- MSVC trick no longer required since C++11
+        io.replace("SDL2_gfxPrimitives.c", "#if defined(_MSC_VER)", "#if 0", {plain = true})
+
         local configs = {}
         local arch = package:is_arch("x86") and "Win32" or "x64"
         local mode = package:debug() and "Debug" or "Release"
@@ -43,7 +46,7 @@ package("libsdl_gfx")
 
         local build_dir = path.join(arch, mode)
         os.cp(path.join(build_dir, "*.lib"), package:installdir("lib"))
-        os.cp(path.join(build_dir, "*.dll"), package:installdir("lib"))
+        os.cp(path.join(build_dir, "*.dll"), package:installdir("bin"))
         os.cp("*.h", package:installdir("include", "SDL2"))
     end)
 
@@ -54,7 +57,13 @@ package("libsdl_gfx")
         else
             table.insert(configs, "--enable-shared=no")
         end
-        table.insert(configs, "--with-sdl-prefix=" .. package:dep("libsdl"):installdir())
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
+        local libsdl = package:dep("libsdl")
+        if libsdl and not libsdl:is_system() then
+            table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 

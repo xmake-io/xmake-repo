@@ -3,8 +3,8 @@ name: Fedora
 on:
   pull_request:
   push:
-  release:
-    types: [published]
+    branches:
+      - dev
 
 jobs:
   build:
