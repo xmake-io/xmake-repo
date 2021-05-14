@@ -72,6 +72,7 @@ package("openvdb")
             table.insert(configs, "-DUSE_EXR=ON")
         end
         import("package.tools.cmake").install(package, configs)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
