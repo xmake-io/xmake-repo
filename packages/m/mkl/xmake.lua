@@ -29,7 +29,7 @@ package("mkl")
         end
     end
 
-    add_configs("threading", {description = "Choose threading modal for mkl.", default = nil, type = "string", values = {"tbb", "openmp", "seq"}})
+    add_configs("threading", {description = "Choose threading modal for mkl.", default = "tbb", type = "string", values = {"tbb", "openmp", "seq"}})
 
     on_fetch("fetch")
 
@@ -44,24 +44,14 @@ package("mkl")
         end
 
         local threading = package:config("threading")
-        if threading then
-            if threading == "tbb" then
-                package:add("links", "mkl_tbb_thread")
-                package:add("deps", "tbb")
-            elseif threading == "seq" then
-                package:add("links", "mkl_sequential")
-            elseif threading == "openmp" then
-                package:add("links", "mkl_intel_thread")
-            end
-        else
-            if find_package("tbb") then
-                package:add("links", "mkl_tbb_thread")
-                package:add("deps", "tbb")
-            else
-                package:add("links", "mkl_sequential")
-            end
+        if threading == "tbb" then
+            package:add("links", "mkl_tbb_thread")
+            package:add("deps", "tbb")
+        elseif threading == "seq" then
+            package:add("links", "mkl_sequential")
+        elseif threading == "openmp" then
+            package:add("links", "mkl_intel_thread")
         end
-
         package:add("links", "mkl_core")
     end)
 

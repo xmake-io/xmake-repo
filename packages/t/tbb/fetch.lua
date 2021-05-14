@@ -18,16 +18,15 @@ function _find_package_on_windows(package, opt)
         end
     end
     result.linkdirs = table.unique(result.linkdirs)
-    local path = find_path(path.join("tbb", "tbb.h"), paths, {suffixes = "include"})
-    if path then
-        table.insert(result.includedirs, path)
+    local incpath = find_path(path.join("tbb", "tbb.h"), paths, {suffixes = "include"})
+    if incpath then
+        table.insert(result.includedirs, incpath)
     end
 
     if #result.includedirs > 0 and #result.linkdirs > 0 then
-        local root = result.includedirs[1]
-        local version_file = path.join(root, "oneapi", "tbb", "version.h")
+        local version_file = path.join(incpath, "oneapi", "tbb", "version.h")
         if not os.isfile(version_file) then
-            version_file = path.join(root, "tbb", "tbb_stddef.h")
+            version_file = path.join(incpath, "tbb", "tbb_stddef.h")
         end
         if os.isfile(version_file) then
             local content = io.readfile(version_file)
@@ -50,7 +49,8 @@ function main(package, opt)
         local result
         if package:is_plat("windows") then
             result = _find_package_on_windows(package, opt)
-        else
+        end
+        if not result then
             result = package:find_package("tbb", opt)
         end
         return result or false
