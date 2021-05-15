@@ -22,15 +22,15 @@ package("superlu")
             target("superlu")
                 set_kind("$(kind)")
                 add_defines("USE_VENDOR_BLAS")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
+                end
                 add_files("*.c")
                 add_includedirs(".")
                 add_headerfiles("*.h")
                 add_packages("%s")
         ]], package:config("blas_vendor"), package:config("blas_vendor")))
         local configs = {kind = package:config("shared") and "shared" or "static"}
-        if package:is_plat("windows") and package:config("shared") then
-            raise("shared library is not supported on windows!")
-        end
         import("package.tools.xmake").install(package, configs)
     end)
 
