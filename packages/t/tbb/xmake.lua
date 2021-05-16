@@ -13,6 +13,8 @@ package("tbb")
         add_versions("2020.3", "ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3")
         add_versions("2021.2.0", "cee20b0a71d977416f3e3b4ec643ee4f38cedeb2a9ff015303431dd9d8d79854")
 
+        add_patches("2021.2.0", path.join(os.scriptdir(), "patches", "2021.2.0", "gcc11.patch"), "181511cf4878460cb48ac0531d3ce8d1c57626d698e9001a0951c728fab176fb")
+
         if is_plat("macosx") then
             add_configs("compiler", {description = "Compiler used to compile tbb." , default = "clang", type = "string", values = {"clang", "gcc", "icc", "cl", "icl", "[others]"}})
         else

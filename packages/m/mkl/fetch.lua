@@ -24,22 +24,12 @@ function _find_package(package, opt)
     end
 
     local threading = package:config("threading")
-    if threading then
-        if threading == "tbb" then
-            table.join2(result.links, {"mkl_tbb_thread", "mkl_core"})
-            package:add("deps", "tbb")
-        elseif threading == "seq" then
-            table.join2(result.links, {"mkl_sequential", "mkl_core"})
-        elseif threading == "openmp" then
-            table.join2(result.links, {"mkl_intel_thread", "mkl_core"})
-        end
-    else
-        if find_package("tbb") then
-            table.join2(result.links, {"mkl_tbb_thread", "mkl_core"})
-            package:add("deps", "tbb")
-        else
-            table.join2(result.links, {"mkl_sequential", "mkl_core"})
-        end
+    if threading == "tbb" then
+        table.join2(result.links, {"mkl_tbb_thread", "mkl_core"})
+    elseif threading == "seq" then
+        table.join2(result.links, {"mkl_sequential", "mkl_core"})
+    elseif threading == "openmp" then
+        table.join2(result.links, {"mkl_intel_thread", "mkl_core"})
     end
 
     -- find include
