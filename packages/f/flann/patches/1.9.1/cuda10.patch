@@ -1,0 +1,12 @@
+diff --git a/src/cpp/flann/algorithms/kdtree_cuda_3d_index.cu b/src/cpp/flann/algorithms/kdtree_cuda_3d_index.cu
+index e9b05080..8465322e 100644
+--- a/src/cpp/flann/algorithms/kdtree_cuda_3d_index.cu
++++ b/src/cpp/flann/algorithms/kdtree_cuda_3d_index.cu
+@@ -32,6 +32,7 @@
+ #include <flann/util/cuda/result_set.h>
+ // #define THRUST_DEBUG 1
+ #include <cuda.h>
++#include <thrust/gather.h>
+ #include <thrust/copy.h>
+ #include <thrust/device_vector.h>
+ #include <vector_types.h>
