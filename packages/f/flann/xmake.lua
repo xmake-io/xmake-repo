@@ -24,6 +24,7 @@ package("flann")
 
     on_install("windows", "linux", "macosx", function (package)
         os.cd("src/cpp")
+        io.replace("flann/defines.h", "#ifdef WIN32", "#ifdef _WIN32", {plain = true})
         io.writefile("xmake.lua", format([[
             add_rules("mode.debug", "mode.release")
             add_requires("lz4")
@@ -37,9 +38,6 @@ package("flann")
             end
             target("flann")
                 set_kind("$(kind)")
-                if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all")
-                end
                 add_files("flann/flann.cpp")
                 add_includedirs(".")
                 add_includedirs("flann")
