@@ -7,9 +7,12 @@ package("drogon")
     add_urls("https://github.com/an-tao/drogon/archive/refs/tags/$(version).tar.gz",
              "https://github.com/an-tao/drogon.git")
     add_versions("v1.4.1", "ad794d7744b600240178348c15e216c919fe7a2bc196cf1239f129aee2af19c7")
+    add_versions("v1.6.0", "9f8802b579aac29e9eddfb156e432276727a3d3c49fffdf453a2ddcd1cb69093")
 
     add_patches("1.4.1", path.join(os.scriptdir(), "patches", "1.4.1", "trantor.patch"), "7f9034a27bb63de8dedb80dd9f246ea7aa7724c87f2c0d0054f4b6097ea2a862")
     add_patches("1.4.1", path.join(os.scriptdir(), "patches", "1.4.1", "resolv.patch"), "84bff60e9ad632f585fadc2384eccb193aec95ccc14ec9c18196cd40a527538c")
+    add_patches("1.6.0", path.join(os.scriptdir(), "patches", "1.6.0", "trantor.patch"), "87e317bf5e45b3f3dfe781db8a0af9603ebdab057a6aedbc36d8aec9e0da58a7")
+    add_patches("1.6.0", path.join(os.scriptdir(), "patches", "1.6.0", "resolv.patch"), "198a20f91755ba0145ee1f17b592f9dc9e618adb424c7d85300138a3f1dc17ea")
 
     add_deps("cmake")
     add_deps("trantor", "jsoncpp", "brotli", "zlib")
