@@ -18,7 +18,10 @@ package("libsdl")
     if is_plat("macosx") then
         add_frameworks("OpenGL", "CoreVideo", "CoreAudio", "AudioToolbox", "Carbon", "CoreGraphics", "ForceFeedback", "Metal", "AppKit", "IOKit", "CoreFoundation", "Foundation")
         add_syslinks("iconv")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
+        if is_plat("bsd") then
+            add_syslinks("usbhid")
+        end
         add_syslinks("pthread", "dl")
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "winmm", "shell32")
@@ -43,7 +46,7 @@ package("libsdl")
         end
     end)
 
-    on_fetch("linux", "macosx", function (package, opt)
+    on_fetch("linux", "macosx", "bsd", function (package, opt)
         if opt.system then
             -- use sdl2-config
             local sdl2conf = try {function() return os.iorunv("sdl2-config", {"--version", "--cflags", "--libs"}) end}
@@ -101,7 +104,7 @@ package("libsdl")
         os.cp(path.join("lib", arch, "*.dll"), package:installdir("bin"))
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
