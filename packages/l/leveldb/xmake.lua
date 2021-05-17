@@ -6,6 +6,7 @@ package("leveldb")
     add_urls("https://github.com/google/leveldb/archive/$(version).tar.gz",
              "https://github.com/google/leveldb.git")
     add_versions("1.22", "55423cac9e3306f4a9502c738a001e4a339d1a38ffbee7572d4a07d5d63949b2")
+    add_versions("1.23", "9a37f8a6174f09bd622bc723b55881dc541cd50747cbd08831c2a82d620f6d76")
 
     add_deps("cmake")
     if is_plat("linux") then

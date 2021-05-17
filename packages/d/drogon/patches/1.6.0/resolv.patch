@@ -1,7 +1,7 @@
 diff --git a/drogon_ctl/CMakeLists.txt b/drogon_ctl/CMakeLists.txt
 --- a/drogon_ctl/CMakeLists.txt
 +++ b/drogon_ctl/CMakeLists.txt
-@@ -39,6 +39,9 @@
+@@ -55,6 +55,9 @@
  if(WIN32)
    target_link_libraries(drogon_ctl PRIVATE ws2_32 Rpcrt4)
  endif(WIN32)
@@ -15,13 +15,14 @@ diff --git a/drogon_ctl/CMakeLists.txt b/drogon_ctl/CMakeLists.txt
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -58,6 +58,9 @@
- else(BUILD_DROGON_SHARED)
-   add_library(${PROJECT_NAME} STATIC)
- endif(BUILD_DROGON_SHARED)
+@@ -68,7 +68,10 @@
+ else (BUILD_DROGON_SHARED)
+     add_library(${PROJECT_NAME} STATIC)
+ endif (BUILD_DROGON_SHARED)
  
-+if(APPLE)
-+  target_link_libraries(${PROJECT_NAME} PUBLIC resolv)
-+endif()
- include(cmake/DrogonUtilities.cmake)
- include(CheckIncludeFileCXX)
++if (APPLE)
++    target_link_libraries(${PROJECT_NAME} PUBLIC resolv)
++endif (APPLE)
+ if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
+     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
+ endif()
