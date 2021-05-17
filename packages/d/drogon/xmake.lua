@@ -12,7 +12,7 @@ package("drogon")
     add_patches("1.4.1", path.join(os.scriptdir(), "patches", "1.4.1", "trantor.patch"), "7f9034a27bb63de8dedb80dd9f246ea7aa7724c87f2c0d0054f4b6097ea2a862")
     add_patches("1.4.1", path.join(os.scriptdir(), "patches", "1.4.1", "resolv.patch"), "84bff60e9ad632f585fadc2384eccb193aec95ccc14ec9c18196cd40a527538c")
     add_patches("1.6.0", path.join(os.scriptdir(), "patches", "1.6.0", "trantor.patch"), "87e317bf5e45b3f3dfe781db8a0af9603ebdab057a6aedbc36d8aec9e0da58a7")
-    add_patches("1.6.0", path.join(os.scriptdir(), "patches", "1.6.0", "resolv.patch"), "198a20f91755ba0145ee1f17b592f9dc9e618adb424c7d85300138a3f1dc17ea")
+    add_patches("1.6.0", path.join(os.scriptdir(), "patches", "1.6.0", "resolv.patch"), "834c212a14da8371ce82946287bb4be1471c90f385a70bb9f6191a3a5566cdc2")
 
     add_deps("cmake")
     add_deps("trantor", "jsoncpp", "brotli", "zlib")
