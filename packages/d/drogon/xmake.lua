@@ -36,6 +36,9 @@ package("drogon")
         if not package:is_plat("windows") then
             table.insert(configs, "-DBUILD_DROGON_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         end
+        if not package:dep("postgresql"):fetch() then
+            table.insert(configs, "-DBUILD_POSTGRESQL=OFF")
+        end
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
