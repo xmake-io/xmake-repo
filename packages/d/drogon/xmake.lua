@@ -23,7 +23,7 @@ package("drogon")
     else
         add_deps("libuuid")
         if is_plat("linux") then
-            add_syslinks("pthread")
+            add_syslinks("pthread", "dl")
         end
     end
 
