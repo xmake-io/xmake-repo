@@ -11,3 +11,17 @@ diff --git a/drogon_ctl/CMakeLists.txt b/drogon_ctl/CMakeLists.txt
  message(STATUS "bin:" ${INSTALL_BIN_DIR})
  install(TARGETS drogon_ctl RUNTIME DESTINATION ${INSTALL_BIN_DIR})
  if(WIN32)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -58,6 +58,9 @@
+ else(BUILD_DROGON_SHARED)
+   add_library(${PROJECT_NAME} STATIC)
+ endif(BUILD_DROGON_SHARED)
+ 
++if(APPLE)
++  target_link_libraries(${PROJECT_NAME} PUBLIC resolv)
++endif()
+ include(cmake/DrogonUtilities.cmake)
+ include(CheckIncludeFileCXX)
