@@ -39,6 +39,9 @@ package("drogon")
         if not package:dep("postgresql"):fetch() then
             table.insert(configs, "-DBUILD_POSTGRESQL=OFF")
         end
+        if not package:dep("sqlite3"):fetch() then
+            table.insert(configs, "-DBUILD_SQLITE=OFF")
+        end
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
