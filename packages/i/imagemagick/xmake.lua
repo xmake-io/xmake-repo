@@ -7,11 +7,12 @@ package("imagemagick")
     add_deps("ffmpeg", "fftw", "jasper", 
         "libjpeg-turbo", "libpng", "libtiff", 
         "libwebp", "openjpeg", "openexr", 
-        "zlib", "bzip2", "libxml2", {optional = true})
+        "zlib", "bzip2", "libxml2", 
+        "lzma", {optional = true})
     add_includedirs("include/ImageMagick-7")
 
     on_install("bsd", "linux", "macosx", function(package)
-        local configs = {"--with-utilities=no", "--with-x=no"}
+        local configs = {"--with-utilities=no", "--with-x=no", "--without-djvu", "--without-jbig", "--disable-openmp"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no")) 
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes")) 
         if package:config("pic") ~= false then
