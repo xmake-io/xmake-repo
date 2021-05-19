@@ -13,6 +13,7 @@ package("imagemagick")
     add_configs("lzma", {description = "Enable LZMA support.", default = false, type = "boolean"})
     add_configs("openjpeg", {description = "Enable jpeg support through openjpeg.", default = false, type = "boolean"})
     add_configs("png", {description = "Enable png support.", default = true, type = "boolean"})
+    add_configs("raw", {description = "Enable raw image support.", default = false, type = "boolean"})
     add_configs("tiff", {description = "Enable tiff support.", default = false, type = "boolean"})
     add_configs("threads", {description = "Enable threading support.", default = false})
     add_configs("xml", {description = "Enable XML support.", default = false, type = "boolean"})
@@ -30,6 +31,7 @@ package("imagemagick")
                             lzma       = "lzma",
                             openjpeg   = "openjpeg",
                             png        = "libpng",
+                            raw        = "libraw",
                             tiff       = "libtiff",
                             xml        = "libxml2",
                             webp       = "libwebp"}
@@ -53,7 +55,8 @@ package("imagemagick")
                          "--without-jbig",
                          "--disable-openmp",
                          "--without-perl",
-                         "--without-lcms"}
+                         "--without-lcms",
+                         "--disable-hdri"}
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
