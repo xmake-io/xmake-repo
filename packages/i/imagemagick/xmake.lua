@@ -8,7 +8,7 @@ package("imagemagick")
         "libjpeg-turbo", "libpng", "libtiff", 
         "libwebp", "openjpeg", "openexr", 
         "zlib", "bzip2", "libxml2", 
-        "lzma", {optional = true})
+        "lzma", "freetype", "fontconfig", {optional = true})
     add_includedirs("include/ImageMagick-7")
 
     on_install("bsd", "linux", "macosx", function(package)
