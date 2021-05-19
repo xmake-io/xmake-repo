@@ -9,14 +9,8 @@ package("imagemagick")
 
     on_install("bsd", "linux", "macosx", function(package)
         local configs = {"--with-utilities=no", "--with-x=no"}
-
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-            table.insert(configs, "--enable-static=no")
-        else
-            table.insert(configs, "--enable-static=yes")
-            table.insert(configs, "--enable-shared=no")
-        end
+         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no")) 
+         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes")) 
         import("package.tools.autoconf").install(package, configs)
     end)
 
