@@ -47,7 +47,13 @@ package("imagemagick")
     end)
 
     on_install("bsd", "linux", "macosx", function(package)
-        local configs = {"--without-utilities", "--without-x", "--without-djvu", "--without-jbig", "--disable-openmp", "--without-perl"}
+        local configs = {"--without-utilities",
+                         "--without-x",
+                         "--without-djvu",
+                         "--without-jbig",
+                         "--disable-openmp",
+                         "--without-perl",
+                         "--without-lcms"}
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
