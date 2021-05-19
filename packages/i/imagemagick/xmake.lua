@@ -9,7 +9,7 @@ package("imagemagick")
     add_configs("fftw", {description = "Enable fftw support.", default = false, type = "boolean"})
     add_configs("fontconfig", {description = "Enable fontconfig support.", default = false, type = "boolean"})
     add_configs("freetype", {description = "Enable freetype support.", default = false, type = "boolean"})
-    add_configs("jpeg", {description = "Enable jpeg support through libjpeg-turbo.", default = true, type = "boolean"})
+    add_configs("jpeg", {description = "Enable jpeg support through libjpeg.", default = true, type = "boolean"})
     add_configs("lzma", {description = "Enable LZMA support.", default = false, type = "boolean"})
     add_configs("openjpeg", {description = "Enable jpeg support through openjpeg.", default = false, type = "boolean"})
     add_configs("png", {description = "Enable png support.", default = true, type = "boolean"})
@@ -27,7 +27,7 @@ package("imagemagick")
                             fontconfig = "fontconfig",
                             freetype   = "freetype",
                             fftw       = "fftw",
-                            jpeg       = "libjpeg-turbo",
+                            jpeg       = "libjpeg",
                             lzma       = "lzma",
                             openjpeg   = "openjpeg",
                             png        = "libpng",
