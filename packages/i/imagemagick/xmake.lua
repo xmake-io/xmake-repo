@@ -4,7 +4,10 @@ package("imagemagick")
     add_urls("https://download.imagemagick.org/ImageMagick/download/ImageMagick-$(version).tar.gz")
     add_versions("7.0.11-13", "6c162d7cbd7b80968a6d083d39eb18d9c9bbd49f500f7f49c9a5dcc0fc36a03b")
     add_deps("pkg-config")
-    add_deps("ffmpeg", "fftw", "jasper", "libjpeg-turbo", "libpng", "libtiff", "libwebp", "openjpeg", "openexr", "zlib", {optional = true})
+    add_deps("ffmpeg", "fftw", "jasper", 
+        "libjpeg-turbo", "libpng", "libtiff", 
+        "libwebp", "openjpeg", "openexr", 
+        "zlib", "bzip2", "libxml2", {optional = true})
     add_includedirs("include/ImageMagick-7")
 
     on_install("bsd", "linux", "macosx", function(package)
