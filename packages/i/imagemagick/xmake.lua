@@ -9,11 +9,12 @@ package("imagemagick")
     add_configs("fftw", {description = "Enable fftw support.", default = false, type = "boolean"})
     add_configs("fontconfig", {description = "Enable fontconfig support.", default = false, type = "boolean"})
     add_configs("freetype", {description = "Enable freetype support.", default = false, type = "boolean"})
-    add_configs("jpeg", {description = "Enable jpeg support through libjpeg-turbo.", default = false, type = "boolean"})
+    add_configs("jpeg", {description = "Enable jpeg support through libjpeg-turbo.", default = true, type = "boolean"})
     add_configs("lzma", {description = "Enable LZMA support.", default = false, type = "boolean"})
     add_configs("openjpeg", {description = "Enable jpeg support through openjpeg.", default = false, type = "boolean"})
     add_configs("png", {description = "Enable png support.", default = true, type = "boolean"})
     add_configs("tiff", {description = "Enable tiff support.", default = false, type = "boolean"})
+    add_configs("threads", {description = "Enable threading support.", default = true})
     add_configs("xml", {description = "Enable XML support.", default = false, type = "boolean"})
     add_configs("webp", {description = "Enable webp support.", default = false, type = "boolean"})
     add_includedirs("include/ImageMagick-7")
@@ -58,7 +59,7 @@ package("imagemagick")
                     if name == "openjpeg" then
                         table.insert(configs, "--without-" .. "openjp2")
                     elseif name == "exr" then
-                        table.insert(configs, "--with-" .. "openexr")
+                        table.insert(configs, "--without-" .. "openexr")
                     else
                         table.insert(configs, "--without-" .. name)
                     end
@@ -69,6 +70,11 @@ package("imagemagick")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes")) 
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
+        end
+        if package:config("threads") then
+            package:add("cflags", "-pthread")
+        else
+            table.insert(configs, "--without-threads")
         end
         import("package.tools.autoconf").install(package, configs)
     end)
