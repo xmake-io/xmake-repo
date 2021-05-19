@@ -14,7 +14,7 @@ package("imagemagick")
     add_configs("openjpeg", {description = "Enable jpeg support through openjpeg.", default = false, type = "boolean"})
     add_configs("png", {description = "Enable png support.", default = true, type = "boolean"})
     add_configs("tiff", {description = "Enable tiff support.", default = false, type = "boolean"})
-    add_configs("threads", {description = "Enable threading support.", default = true})
+    add_configs("threads", {description = "Enable threading support.", default = false})
     add_configs("xml", {description = "Enable XML support.", default = false, type = "boolean"})
     add_configs("webp", {description = "Enable webp support.", default = false, type = "boolean"})
     add_includedirs("include/ImageMagick-7")
@@ -40,6 +40,9 @@ package("imagemagick")
                     package:add("deps", "zlib")
                 end
             end
+        end
+        if package:config("threads") and is_plat("linux") then
+            add_syslinks("pthread")
         end
     end)
 
@@ -71,9 +74,8 @@ package("imagemagick")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        if package:config("threads") then
-            package:add("cflags", "-pthread")
-        else
+
+        if not package:config("threads") then
             table.insert(configs, "--without-threads")
         end
         import("package.tools.autoconf").install(package, configs)
