@@ -32,6 +32,7 @@ package("openexr")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPYILMBASE_ENABLE=" .. "OFF")
+        table.insert(configs, "-DCMAKE_INSTALL_LIBDIR=lib")
         import("package.tools.cmake").install(package, configs)
     end)
 
