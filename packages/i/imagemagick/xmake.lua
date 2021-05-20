@@ -19,7 +19,7 @@ package("imagemagick")
     add_configs("xml", {description = "Enable XML support.", default = false, type = "boolean"})
     add_configs("webp", {description = "Enable webp support.", default = false, type = "boolean"})
     add_includedirs("include/ImageMagick-7/")
-    add_links("MagickCore-7.Q16", "MagickWand-7.Q16", "Magick++-7.Q16")
+    add_links("MagickWand-7.Q16", "MagickCore-7.Q16", "Magick++-7.Q16")
 
     on_load(function(package)
         local configdeps = {bzlib      = "bzip2",
