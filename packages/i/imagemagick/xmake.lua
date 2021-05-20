@@ -47,7 +47,7 @@ package("imagemagick")
             end
         end
         if package:config("threads") and package:is_plat("linux") then
-            add_syslinks("pthread")
+            package:add("syslinks", "pthread")
         end
     end)
 
