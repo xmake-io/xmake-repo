@@ -57,7 +57,8 @@ package("imagemagick")
                          "--disable-openmp",
                          "--without-perl",
                          "--without-lcms",
-                         "--disable-hdri"}
+                         "--disable-hdri",
+                         "--without-lqr"}
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
