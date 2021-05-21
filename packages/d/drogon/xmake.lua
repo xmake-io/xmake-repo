@@ -62,14 +62,12 @@ package("drogon")
                 if enabled then
                     if name == "sqlite3" then
                         table.insert(configs, "-DBUILD_SQLITE=ON")
-                    elseif name == "c_ares" or "openssl" then
                     else
                         table.insert(configs, "-DBUILD_" .. name:upper() .. "=ON")
                     end
                 else
                     if name == "sqlite3" then
                         table.insert(configs, "-DBUILD_SQLITE=OFF")
-                    elseif name == "c_ares" or "openssl" then
                     else
                         table.insert(configs, "-DBUILD_" .. name:upper() .. "=OFF")
                     end
