@@ -26,15 +26,16 @@ package("brotli")
             if opt.system then
                 local result
                 for _, name in ipairs({"libbrotlidec", "libbrotlienc", "libbrotlicommon"}) do
-                    local pkginfo = find_package("pkgconfig::" .. name)
+                    local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
                     if pkginfo then
                         if not result then
                             result = table.copy(pkginfo)
                         else
-                            result.links = result.links or {}
-                            result.linkdirs = result.linkdirs or {}
-                            result.includedirs = result.includedirs or {}
-                            table.join2(result.includedirs, pkginfo.includedirs)
+                            local includedirs = pkginfo.sysincludedirs or pkginfo.includedirs
+                            result.links = table.wrap(result.links)
+                            result.linkdirs = table.wrap(result.linkdirs)
+                            result.includedirs = table.wrap(result.includedirs)
+                            table.join2(result.includedirs, includedirs)
                             table.join2(result.linkdirs, pkginfo.linkdirs)
                             table.join2(result.links, pkginfo.links)
                         end
