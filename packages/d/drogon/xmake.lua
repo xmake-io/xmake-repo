@@ -16,7 +16,7 @@ package("drogon")
 
     add_deps("cmake")
     add_deps("trantor", "jsoncpp", "brotli", "zlib")
-    add_deps("c-ares", "sqlite3", "openssl", {optional = true})
+    add_deps("c-ares", "sqlite3", "openssl", "mysql", {optional = true})
     add_deps("postgresql", {optional = true, system = true})
     if is_plat("windows") then
         add_syslinks("ws2_32", "rpcrt4", "crypt32", "advapi32")
@@ -41,6 +41,9 @@ package("drogon")
         end
         if not package:dep("sqlite3"):fetch() then
             table.insert(configs, "-DBUILD_SQLITE=OFF")
+        end
+        if not package:dep("mysql"):fetch() then
+            table.insert(configs, "-DBUILD_MYSQL=OFF")
         end
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
