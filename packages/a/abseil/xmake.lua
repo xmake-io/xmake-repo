@@ -11,7 +11,7 @@ package("abseil")
     add_deps("cmake")
 
     on_install("macosx", "linux", "windows", function (package)
-        local configs = {}
+        local configs = {"-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
@@ -22,11 +22,10 @@ package("abseil")
             #include <iostream>
             #include <string>
             #include <vector>
-            #include "absl/strings/str_join.h"
             void test () {
                 std::vector<std::string> v = {"foo","bar","baz"};
                 std::string s = absl::StrJoin(v, "-");
                 std::cout << "Joined string: " << s << "\\n";
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++17"}, includes = "absl/strings/str_join.h"}))
     end)
