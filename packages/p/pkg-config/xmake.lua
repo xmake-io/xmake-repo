@@ -10,7 +10,7 @@ package("pkg-config")
         add_versions("0.29.2", "6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591")
     end
 
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx", "@linux", "@bsd", function (package)
         local pcpath = {"/usr/local/lib/pkgconfig", "/usr/lib/pkgconfig"}
         if package:is_plat("linux") and package:is_arch("x86_64") then
             table.insert(pcpath, "/usr/lib/x86_64-linux-gnu/pkgconfig")
