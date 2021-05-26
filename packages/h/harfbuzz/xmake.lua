@@ -12,7 +12,7 @@ package("harfbuzz")
 
     add_deps("meson")
     if not is_plat("windows") then
-        add_deps("glib", "freetype")
+        add_deps("freetype")
     end
     on_load("windows", "linux", "macosx", function (package)
         if package:config("icu") then
@@ -21,7 +21,7 @@ package("harfbuzz")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-Dtests=disabled", "-Ddocs=disabled", "-Dbenchmark=disabled", "-Dcairo=disabled", "-Dfontconfig=disabled"}
+        local configs = {"-Dtests=disabled", "-Ddocs=disabled", "-Dbenchmark=disabled", "-Dcairo=disabled", "-Dfontconfig=disabled", "-Dglib=disabled", "-Dgobject=disabled"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         if package:config("icu") then
             table.insert(configs, "-Dicu=enabled")
