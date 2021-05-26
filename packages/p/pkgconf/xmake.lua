@@ -22,7 +22,7 @@ package("pkgconf")
     end)
 
     on_install("windows", function(package)
-        import("package.tools.meson").install(package)
+        import("package.tools.meson").install(package, {"-Dtests=false"})
     end)
 
     on_test(function (package)
