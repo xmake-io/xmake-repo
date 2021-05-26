@@ -30,13 +30,11 @@ package("glib")
                          "-Ddefault_library=static",
                          "-Dlibmount=false",
                          "-Dinstalled_tests=false"}
-        if is_plat("macosx") then
+        if package:is_plat("macosx") then
             table.insert(configs, "-Diconv=native")
         end
         table.insert(configs, "-Dgio_module_dir=" .. path.join(package:installdir(), "lib/gio/modules"))
-        if is_plat("linux") then
-            table.insert(configs, "--libdir=" .. package:installdir("lib"))
-        end
+        table.insert(configs, "--libdir=lib")
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("gio/meson.build", "subdir%('tests'%)", "")
