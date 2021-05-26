@@ -6,7 +6,7 @@ package("pkgconf")
     add_versions("1.1.0", "5f1ef65d73a880fa5e7012102a17f7b32010e5e46139aed85851a541ba828a63")
 
     on_load("windows", function(package)
-        add_deps("cmake")
+        package:add("deps", "cmake")
     end)
 
     on_install("linux", "bsd", function(package)
