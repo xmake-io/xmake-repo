@@ -6,7 +6,8 @@ package("pkgconf")
     add_versions("1.7.4", "d73f32c248a4591139a6b17777c80d4deab6b414ec2b3d21d0a24be348c476ab")
 
     on_load("windows", function(package)
-        package:add("deps", "cmake")
+        package:add("deps", "meson")
+        package:add("deps", "ninja")
     end)
 
     on_install("linux", "bsd", function(package)
@@ -21,7 +22,7 @@ package("pkgconf")
     end)
 
     on_install("windows", function(package)
-        import("package.tools.cmake").install(package)
+        import("package.tools.meson").install(package)
     end)
 
     on_test(function (package)
