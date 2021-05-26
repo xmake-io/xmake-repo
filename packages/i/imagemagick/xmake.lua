@@ -19,7 +19,6 @@ package("imagemagick")
     add_configs("xml", {description = "Enable XML support.", default = false, type = "boolean"})
     add_configs("webp", {description = "Enable webp support.", default = false, type = "boolean"})
 
-    add_deps("pkg-config")
     add_includedirs("include/ImageMagick-7/")
     add_links("MagickWand-7.Q16", "MagickCore-7.Q16", "Magick++-7.Q16")
 
@@ -38,6 +37,7 @@ package("imagemagick")
                             tiff       = "libtiff",
                             xml        = "libxml2",
                             webp       = "libwebp"}
+
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
@@ -46,8 +46,21 @@ package("imagemagick")
                 end
             end
         end
+
         if package:config("threads") and package:is_plat("linux") then
             package:add("syslinks", "pthread")
+        end
+
+        if package:is_plat("linux") then
+            package:add("deps", "pkg-config")
+        end
+
+        if package:is_plat("bsd") then
+            package:add("deps", "pkgconf")
+            local pkgconf = package:find_tool("pkgconf")
+            if pkgconf then
+                package:addenv("PKG_CONFIG", pkgconf.program)
+            end
         end
     end)
 
