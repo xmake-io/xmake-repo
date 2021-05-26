@@ -21,7 +21,7 @@ package("freetype")
 
     if not is_plat("windows") then
         for conf, dep in pairs(configdeps) do
-            add_configs(conf, {description = "Enable " .. conf .. " support.", default = true, type = "boolean"})
+            add_configs(conf, {description = "Enable " .. conf .. " support.", default = false, type = "boolean"})
         end
         add_includedirs("include/freetype2")
     end
