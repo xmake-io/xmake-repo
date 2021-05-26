@@ -51,7 +51,7 @@ package("imagemagick")
         end
     end)
 
-    on_install("linux", "macosx", function(package)
+    on_install("linux", "macosx", "bsd", function(package)
         local configs = {"--without-utilities",
                          "--without-x",
                          "--without-djvu",
