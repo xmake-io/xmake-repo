@@ -57,7 +57,7 @@ package("imagemagick")
 
         if package:is_plat("bsd") then
             package:add("deps", "pkgconf")
-            package:set_env("PKG_CONFIG", "pkgconf")
+            package:set_env("PKG_CONFIG", path.join(packackage:dep("pkgconf"):installdir("bin"), "pkgconf"))
         end
     end)
 
