@@ -12,8 +12,7 @@ package("harfbuzz")
 
     add_deps("meson")
     if not is_plat("windows") then
-        add_deps("glib", "cairo")
-        add_deps("freetype", {configs = {png = false, woff2 = false, bzip2 = false, zlib = false}})
+        add_deps("glib", "cairo", "freetype")
     end
     on_load("windows", "linux", "macosx", function (package)
         if package:config("icu") then
