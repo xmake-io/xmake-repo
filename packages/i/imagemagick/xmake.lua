@@ -52,7 +52,7 @@ package("imagemagick")
         end
 
         if package:is_plat("linux") then
-            add_deps("pkg-config")
+            package:add("deps", "pkg-config")
         end
 
         if package:is_plat("bsd") then
