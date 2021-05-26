@@ -11,7 +11,9 @@ package("fmt")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
-    add_extsources("brew::fmt")
+    if is_plat("macosx") then
+        add_extsources("brew::fmt")
+    end
 
     on_load(function (package)
         if package:config("header_only") then
