@@ -20,15 +20,8 @@ package("libxkbcommon")
     add_deps("meson")
     on_install("linux", function (package)
         package:addenv("PATH", "bin")
-
-        -- add links
-        local arch = package:is_arch("x86_64", "x64") and "x86_64" or "x86"
-        package:add("linkdirs", path.join("lib", arch .. "-linux-gnu"))
-        package:add("links", "xkbregistry", "xkbcommon")
-        os.mv(package:installdir("lib", arch .. "-linux-gnu", "pkgconfig"), package:installdir("lib"))
-
-        -- build
         local configs = {"-Denable-docs=false", "-Dc_link_args=-lm"}
+        table.insert(configs, "--libdir=lib")
         if package:config("x11") then
             table.join2(configs, {"-Denable-wayland=false", "-Dxkb-config-root=/usr/share/X11/xkb", "-Dx-locale-root=/usr/share/X11/locale"})
         else

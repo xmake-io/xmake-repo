@@ -11,6 +11,8 @@ package("fmt")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
+    add_extsources("brew::fmt")
+
     on_load(function (package)
         if package:config("header_only") then
             package:add("defines", "FMT_HEADER_ONLY=1")
