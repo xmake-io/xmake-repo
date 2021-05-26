@@ -3,7 +3,7 @@ package("pkgconf")
     set_homepage("http://pkgconf.org")
     set_description("A program which helps to configure compiler and linker flags for development frameworks.")
     add_urls("https://distfiles.dereferenced.org/pkgconf/pkgconf-$(version).tar.xz")
-    add_versions("1.1.0", "5f1ef65d73a880fa5e7012102a17f7b32010e5e46139aed85851a541ba828a63")
+    add_versions("1.7.4", "d73f32c248a4591139a6b17777c80d4deab6b414ec2b3d21d0a24be348c476ab")
 
     on_load("windows", function(package)
         package:add("deps", "cmake")
