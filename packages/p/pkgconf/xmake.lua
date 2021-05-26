@@ -2,13 +2,13 @@ package("pkgconf")
     set_kind("binary")
     set_homepage("http://pkgconf.org")
     set_description("A program which helps to configure compiler and linker flags for development frameworks.")
+
     add_urls("https://distfiles.dereferenced.org/pkgconf/pkgconf-$(version).tar.xz")
     add_versions("1.7.4", "d73f32c248a4591139a6b17777c80d4deab6b414ec2b3d21d0a24be348c476ab")
 
-    on_load("windows", function(package)
-        package:add("deps", "meson")
-        package:add("deps", "ninja")
-    end)
+    if is_plat("windows") then
+        add_deps("meson", "ninja")
+    end
 
     on_install("linux", "bsd", function(package)
         local configs = {}
@@ -17,7 +17,6 @@ package("pkgconf")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-
         import("package.tools.autoconf").install(package, configs)
     end)
 
