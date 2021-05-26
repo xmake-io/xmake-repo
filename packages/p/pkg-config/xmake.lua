@@ -4,7 +4,7 @@ package("pkg-config")
     set_homepage("https://freedesktop.org/wiki/Software/pkg-config/")
     set_description("A helper tool used when compiling applications and libraries.")
 
-    if is_host("macosx", "linux") then
+    if is_host("macosx", "linux", "bsd") then
         add_urls("https://pkgconfig.freedesktop.org/releases/pkg-config-$(version).tar.gz")
         add_urls("http://fco.it.distfiles.macports.org/mirrors/macports-distfiles/pkgconfig/pkg-config-$(version).tar.gz")
         add_versions("0.29.2", "6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591")
