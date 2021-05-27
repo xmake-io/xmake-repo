@@ -37,6 +37,7 @@ package("mkl")
         add_syslinks("pthread", "dl")
     end
     on_load("windows", "macosx", "linux", function (package)
+        package:add("links", package:is_arch("x64", "x86_64") and "mkl_lapack95_ilp64" or "mkl_lapack95")
         if package:is_plat("windows") then
             package:add("links", package:is_arch("x64", "x86_64") and "mkl_intel_ilp64" or "mkl_intel_c")
         else
