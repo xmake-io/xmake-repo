@@ -9,6 +9,8 @@ package("util-linux")
     add_versions("2.32.1", "86e6707a379c7ff5489c218cfaf1e3464b0b95acf7817db0bc5f179e356a67b2")
     add_versions("2.36.2", "f7516ba9d8689343594356f0e5e1a5f0da34adfbc89023437735872bb5024c5f")
 
+    add_patches("2.36.2", path.join(os.scriptdir(), "patches", "2.36.2", "includes.patch"), "7274762cac2810b5f0d17ecb5ac69c7069e7ff2b880df663b7072628df0867f3")
+
     if not is_plat("macosx") then
         add_deps("ncurses", "zlib")
     end

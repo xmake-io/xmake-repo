@@ -1,0 +1,30 @@
+diff --git a/lib/procutils.c b/lib/procutils.c
+--- a/lib/procutils.c
++++ b/lib/procutils.c
+@@ -13,7 +13,12 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <sys/stat.h>
++#ifndef __APPLE__
+ #include <sys/vfs.h>
++#else
++#include <sys/param.h>
++#include <sys/mount.h>
++#endif
+ #include <sys/types.h>
+ #include <dirent.h>
+ #include <ctype.h>
+
+diff --git a/include/statfs_magic.c b/include/statfs_magic.c
+--- a/include/statfs_magic.h
++++ b/include/statfs_magic.h
+@@ -1,7 +1,9 @@
+ #ifndef UTIL_LINUX_STATFS_MAGIC_H
+ #define UTIL_LINUX_STATFS_MAGIC_H
+ 
++#ifndef __APPLE__
+ #include <sys/statfs.h>
++#endif
+ 
+ /*
+  * If possible then don't depend on internal libc __SWORD_TYPE type.
