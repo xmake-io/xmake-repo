@@ -16,6 +16,11 @@ function _find_package(package, opt)
     end
     table.insert(result.linkdirs, linkinfo.linkdir)
     if rdir == "intel64" then
+        table.insert(result.links, "mkl_lapack95_ilp64")
+    else
+        table.insert(result.links, "mkl_lapack95")
+    end
+    if rdir == "intel64" then
         table.insert(result.links, "mkl_intel_ilp64")
     elseif package:is_plat("windows") then
         table.insert(result.links, "mkl_intel_c")
