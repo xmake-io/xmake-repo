@@ -11,5 +11,5 @@ package("dr_mp3")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("drmp3_init", {includes = "dr_flac.h"}))
+        assert(package:has_cfuncs("drmp3_init", {includes = "dr_mp3.h"}))
     end)
