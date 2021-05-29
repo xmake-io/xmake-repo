@@ -7,7 +7,7 @@ package("mariadb-connector-c")
     add_deps("cmake")
 
     add_links("mariadb")
-    add_linkdirs("lib/mariadb/")
+    add_linkdirs("lib/mariadb")
 
     if is_plat("windows") then
         add_configs("iconv", {description = "Enables character set conversion.", default = false, type = "boolean"})
@@ -57,10 +57,9 @@ package("mariadb-connector-c")
 
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-	end
+        end
 	
         import("package.tools.cmake").install(package, configs)
-        print(os.files(path.join(package:installdir(), "**")))
     end)
 
     on_test(function (package)
