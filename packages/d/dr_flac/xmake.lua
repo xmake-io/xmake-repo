@@ -1,15 +1,16 @@
-package("dr_mp3")
+package("dr_flac")
     set_homepage("https://github.com/mackron/dr_libs")
     set_description("Single file audio decoding libraries for C/C++.")
     set_license("MIT")
 
     set_urls("https://github.com/mackron/dr_libs.git")
-    add_versions("0.6.27", "f357ade3aae55ced341aa7c83b4e7f628f948e51")
+    add_versions("0.12.29", "343aa923439e59e7a9f7726f70edc77a4500bdec")
 
     on_install(function (package)
-        os.cp("dr_mp3.h", package:installdir("include"))
+        os.cp("dr_flac.h", package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("drmp3_init", {includes = "dr_mp3.h"}))
+        assert(package:has_cfuncs("drmp3_init", {includes = "dr_flac.h"}))
+        assert(package:has_cfuncs("drflac_open", {includes = "dr_flac.h"}))
     end)
