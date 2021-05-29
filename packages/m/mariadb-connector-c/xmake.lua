@@ -10,14 +10,14 @@ package("mariadb-connector-c")
     add_linkdirs("lib/mariadb/")
 
     if is_plat("windows") then
-	add_configs("iconv", {description = "Enables character set conversion.", default = false, type = "boolean"})
-	add_configs("msi", {description = "Build MSI installation package.", default = false, type = "boolean"})
-	add_configs("rtc", {description = "Enables runtime checks for debug builds.", default = false, type = "boolean"})
-	add_configs("signcode", {description = "Digitally sign files.", default = false, type = "boolean"})
+        add_configs("iconv", {description = "Enables character set conversion.", default = false, type = "boolean"})
+        add_configs("msi", {description = "Build MSI installation package.", default = false, type = "boolean"})
+        add_configs("rtc", {description = "Enables runtime checks for debug builds.", default = false, type = "boolean"})
+        add_configs("signcode", {description = "Digitally sign files.", default = false, type = "boolean"})
     end
 
     if not is_plat("windows") then
-	add_configs("mysqlcompat", {description = "Creates libmysql* symbolic links.", default = false, type = "boolean"})
+        add_configs("mysqlcompat", {description = "Creates libmysql* symbolic links.", default = false, type = "boolean"})
     end
 
     if not is_plat("bsd") then
@@ -30,35 +30,36 @@ package("mariadb-connector-c")
     add_configs("unit_tests", {description = "Build test suite.", default = false, type = "boolean"})
 
     on_load(function (package)
-	local configdeps = {external_zlib  = "zlib",
-	                    ssl            = "openssl"}
+        local configdeps = {external_zlib  = "zlib",
+                            ssl            = "openssl"}
 
-	for name, dep in pairs(configdeps) do
-	    if package:config(name) then
-	        package:add("deps", dep)
-	    end
-	end
+        for name, dep in pairs(configdeps) do
+            if package:config(name) then
+                package:add("deps", dep)
+            end
+        end
     end)
 
     on_install("bsd", "linux", "windows", function(package)
-	local configs = {}
-	table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-	table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-	for name, enabled in pairs(package:configs()) do
-	    if not package:extraconf("configs", name, "builtin") then
-	        if enabled then
-		    table.insert(configs, "-DWITH_" .. name:upper() .. "=ON")
-		else
-		    table.insert(configs, "-DWITH_" .. name:upper() .. "=OFF")
-	        end
-	    end
-	end
+        for name, enabled in pairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") then
+                if enabled then
+                    table.insert(configs, "-DWITH_" .. name:upper() .. "=ON")
+                else
+                    table.insert(configs, "-DWITH_" .. name:upper() .. "=OFF")
+                end
+            end
+        end
 
-	if package:config("pic") ~= false then
-	    table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+        if package:config("pic") ~= false then
+            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
 	end
-	import("package.tools.cmake").install(package, configs)
+	
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
