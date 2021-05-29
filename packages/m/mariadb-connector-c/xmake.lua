@@ -60,6 +60,7 @@ package("mariadb-connector-c")
 	end
 	
         import("package.tools.cmake").install(package, configs)
+        print(os.files(path.join(package:installdir(), "**")))
     end)
 
     on_test(function (package)
