@@ -6,7 +6,12 @@ package("mariadb-connector-c")
     add_versions("3.1.13", "361136e9c365259397190109d50f8b6a65c628177792273b4acdb6978942b5e7")
     add_deps("cmake")
 
-    add_links("mariadb")
+    if is_plat("windows") then
+        add_links("libmariadb")
+    else
+        add_links("mariadb")
+    end
+
     add_linkdirs("lib/mariadb")
 
     if is_plat("windows") then
@@ -32,7 +37,6 @@ package("mariadb-connector-c")
     on_load(function (package)
         local configdeps = {external_zlib  = "zlib",
                             ssl            = "openssl"}
-
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
@@ -44,7 +48,6 @@ package("mariadb-connector-c")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
@@ -54,11 +57,9 @@ package("mariadb-connector-c")
                 end
             end
         end
-
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
-	
+        end	
         import("package.tools.cmake").install(package, configs)
     end)
 
