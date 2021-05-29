@@ -1,4 +1,4 @@
-package("dr_flac")
+package("dr_mp3")
     set_homepage("https://github.com/mackron/dr_libs")
     set_description("Single file audio decoding libraries for C/C++.")
     set_license("MIT")
