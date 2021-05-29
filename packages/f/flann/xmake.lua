@@ -20,10 +20,16 @@ package("flann")
         if package:config("with_cuda") then
             package:add("deps", "cuda", {system = true})
         end
+        local suffix = package:config("shared") and "" or "_s"
+        local libs = package:config("with_cuda") and {"flann"} or {"flann", "flann_cuda"}
+        for _, lib in ipairs(libs) do
+            package:add("links", lib .. suffix)
+        end
     end)
 
     on_install("windows", "linux", "macosx", function (package)
         os.cd("src/cpp")
+        io.replace("flann/util/serialization.h", "flann/ext/lz4", "lz4", {plain = true})
         io.replace("flann/defines.h", "#ifdef WIN32", "#ifdef _WIN32", {plain = true})
         io.writefile("xmake.lua", format([[
             add_rules("mode.debug", "mode.release")
@@ -36,6 +42,9 @@ package("flann")
                 end
                 add_cxxflags("/bigobj")
             end
+            if is_kind("static") then
+                set_suffixname("_s")
+            end
             target("flann")
                 set_kind("$(kind)")
                 add_files("flann/flann.cpp")
@@ -44,6 +53,12 @@ package("flann")
                 add_packages("lz4")
                 add_headerfiles("(flann/config.h)", "(flann/defines.h)", "(flann/flann.h)")
                 add_headerfiles("(flann/flann.hpp)", "(flann/general.h)", "(flann/algorithms/*.h)", "(flann/io/*.h)", "(flann/nn/*.h)", "(flann/util/*.h)")
+            target("flann_cpp") -- for cmake finding only
+                set_kind("$(kind)")
+                add_files("flann/flann_cpp.cpp")
+                add_includedirs(".")
+                add_includedirs("flann")
+                add_packages("lz4")
             target("flann_cuda")
                 set_enabled(%s)
                 set_kind("$(kind)")
