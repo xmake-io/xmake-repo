@@ -4,19 +4,19 @@ set_languages("cxx11")
 add_rules("mode.debug", "mode.release")
 
 target("DebugUtils")
-    set_kind("$(kind)")
+    set_kind("static")
 
     add_includedirs(
         "DebugUtils/Include",
-		"Detour/Include",
-		"DetourTileCache/Include",
-		"Recast/Include")
+	"Detour/Include",
+	"DetourTileCache/Include",
+	"Recast/Include")
 
     add_headerfiles("DebugUtils/Include/*.h")
     add_files("DebugUtils/Source/*.cpp")
 
 target("Detour")
-    set_kind("$(kind)")
+    set_kind("static")
 
     add_includedirs("Detour/Include")
 
@@ -24,7 +24,7 @@ target("Detour")
     add_files("Detour/Source/*.cpp")
 
 target("DetourCrowd")
-    set_kind("$(kind)")
+    set_kind("static")
 
     add_includedirs(
         "DetourCrowd/Include",
@@ -35,7 +35,7 @@ target("DetourCrowd")
     add_files("DetourCrowd/Source/*.cpp")
 
 target("DetourTileCache")
-    set_kind("$(kind)")
+    set_kind("static")
 
     add_includedirs(
         "DetourTileCache/Include",
@@ -46,7 +46,7 @@ target("DetourTileCache")
     add_files("DetourTileCache/Source/*.cpp")
 
 target("Recast")
-    set_kind("$(kind)")
+    set_kind("static")
 
     add_includedirs("Recast/Include")
 
