@@ -33,20 +33,20 @@ package("libvorbis")
                     return
                 end
 
-                result.sysincludedirs = table.join(vorbisenc.sysincludedirs or vorbisenc.includedirs, result.sysincludedirs or {})
-                result.linkdirs = table.join(vorbisenc.linkdirs, result.linkdirs or {})
-                result.links = table.join(vorbisenc.links, result.links or {})
+                result.sysincludedirs = table.join(vorbisenc.sysincludedirs or vorbisenc.includedirs, result.sysincludedirs)
+                result.linkdirs = table.join(vorbisenc.linkdirs, result.linkdirs)
+                result.links = table.join(vorbisenc.links, result.links)
             end
-            
+
             if package:config("vorbisfile") then
                 local vorbisfile = find_package("vorbisfile", opt)
                 if not vorbisfile then
                     return
                 end
 
-                result.sysincludedirs = table.join(vorbisfile.sysincludedirs or vorbisfile.includedirs, result.sysincludedirs or {})
-                result.linkdirs = table.join(vorbisfile.linkdirs, result.linkdirs or {})
-                result.links = table.join(vorbisfile.links, result.links or {})
+                result.sysincludedirs = table.join(vorbisfile.sysincludedirs or vorbisfile.includedirs, result.sysincludedirs)
+                result.linkdirs = table.join(vorbisfile.linkdirs, result.linkdirs)
+                result.links = table.join(vorbisfile.links, result.links)
             end
 
             return result
