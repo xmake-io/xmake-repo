@@ -1,7 +1,7 @@
 package("recastnavigation")
 
     set_homepage("https://github.com/recastnavigation/recastnavigation")
-    set_description(" Navigation-mesh Toolset for Games ")
+    set_description("Navigation-mesh Toolset for Games")
     set_license("zlib")
 
     set_urls("https://github.com/recastnavigation/recastnavigation/archive/refs/tags/$(version).zip",
