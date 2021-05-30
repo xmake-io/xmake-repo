@@ -22,10 +22,6 @@ package("libvorbis")
                 return
             end
             local result = table.copy(vorbis)
-            if result.includedirs then
-                result.sysincludedirs = result.includedirs
-                result.includedirs = nil
-            end
 
             if package:config("vorbisenc") then
                 local vorbisenc = package:find_package("vorbisenc", opt)
@@ -33,7 +29,7 @@ package("libvorbis")
                     return
                 end
 
-                result.sysincludedirs = table.join(vorbisenc.sysincludedirs or vorbisenc.includedirs, result.sysincludedirs)
+                result.includedirs = table.join(vorbisenc.sysincludedirs or vorbisenc.includedirs, result.includedirs)
                 result.linkdirs = table.join(vorbisenc.linkdirs, result.linkdirs)
                 result.links = table.join(vorbisenc.links, result.links)
             end
@@ -44,7 +40,7 @@ package("libvorbis")
                     return
                 end
 
-                result.sysincludedirs = table.join(vorbisfile.sysincludedirs or vorbisfile.includedirs, result.sysincludedirs)
+                result.includedirs = table.join(vorbisfile.sysincludedirs or vorbisfile.includedirs, result.includedirs)
                 result.linkdirs = table.join(vorbisfile.linkdirs, result.linkdirs)
                 result.links = table.join(vorbisfile.links, result.links)
             end
