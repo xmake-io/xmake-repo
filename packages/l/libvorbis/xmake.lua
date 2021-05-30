@@ -17,7 +17,7 @@ package("libvorbis")
 
     on_fetch(function (package, opt)
         if opt.system then
-            local vorbis = find_package("vorbis", opt)
+            local vorbis = package:find_package("vorbis", opt)
             if not vorbis then
                 return
             end
@@ -28,7 +28,7 @@ package("libvorbis")
             end
 
             if package:config("vorbisenc") then
-                local vorbisenc = find_package("vorbisenc", opt)
+                local vorbisenc = package:find_package("vorbisenc", opt)
                 if not vorbisenc then
                     return
                 end
@@ -39,7 +39,7 @@ package("libvorbis")
             end
 
             if package:config("vorbisfile") then
-                local vorbisfile = find_package("vorbisfile", opt)
+                local vorbisfile = package:find_package("vorbisfile", opt)
                 if not vorbisfile then
                     return
                 end
