@@ -10,8 +10,8 @@ package("libvorbis")
 
     add_versions("1.3.7", "0e982409a9c3fc82ee06e08205b1355e5c6aa4c36bca58146ef399621b0ce5ab")
 
-    add_configs("with_vorbisenc",  {description = "Includes vorbisenc", default = true, type = "boolean"})
-    add_configs("with_vorbisfile", {description = "Includes vorbisfile", default = true, type = "boolean"})
+    add_configs("vorbisenc",  {description = "Includes vorbisenc", default = true, type = "boolean"})
+    add_configs("vorbisfile", {description = "Includes vorbisfile", default = true, type = "boolean"})
 
     add_deps("cmake", "libogg")
 
@@ -23,7 +23,7 @@ package("libvorbis")
             end
             local result = table.copy(vorbis)
 
-            if package:config("with_vorbisenc") then
+            if package:config("vorbisenc") then
                 local vorbisenc = find_package("vorbisenc")
                 if not vorbisenc then
                     return
@@ -34,7 +34,7 @@ package("libvorbis")
                 result.links = table.join(vorbisenc.links, result.links or {})
             end
             
-            if package:config("with_vorbisfile") then
+            if package:config("vorbisfile") then
                 local vorbisfile = find_package("vorbisfile")
                 if not vorbisfile then
                     return
@@ -50,10 +50,10 @@ package("libvorbis")
     end)
 
     on_load(function (package)
-        if package:config("with_vorbisenc") then
+        if package:config("vorbisenc") then
             package:add("links", "vorbisenc")
         end
-        if package:config("with_vorbisfile") then
+        if package:config("vorbisfile") then
             package:add("links", "vorbisfile")
         end
         package:add("links", "vorbis")
@@ -64,10 +64,10 @@ package("libvorbis")
         table.insert(configs, "-DBUILD_TESTING=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if not package:config("with_vorbisenc") then
+        if not package:config("vorbisenc") then
             io.replace("CMakeLists.txt", "${CMAKE_CURRENT_BINARY_DIR}/vorbisenc.pc", "", {plain = true})
         end
-        if not package:config("with_vorbisfile") then
+        if not package:config("vorbisfile") then
             io.replace("CMakeLists.txt", "${CMAKE_CURRENT_BINARY_DIR}/vorbisfile.pc", "", {plain = true})
         end
         -- we pass libogg as packagedeps instead of findOgg.cmake (it does not work)
@@ -88,10 +88,10 @@ package("libvorbis")
 
     on_test(function (package)
         assert(package:has_cfuncs("vorbis_info_init", {includes = "vorbis/codec.h"}))
-        if package:config("with_vorbisenc") then
+        if package:config("vorbisenc") then
             assert(package:has_cfuncs("vorbis_encode_init", {includes = "vorbis/vorbisenc.h"}))
         end
-        if package:config("with_vorbisfile") then
+        if package:config("vorbisfile") then
             assert(package:has_cfuncs("ov_open_callbacks", {includes = "vorbis/vorbisfile.h"}))
         end
     end)
