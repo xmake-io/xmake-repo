@@ -54,7 +54,7 @@ package("libvorbis")
     end)
 
     on_load(function (package)
-        local ext = package:is_plat("mingw") and ".dll" or ""
+        local ext = (package:is_plat("mingw") and package:config("shared")) and ".dll" or ""
         if package:config("vorbisenc") then
             package:add("links", "vorbisenc" .. ext)
         end
