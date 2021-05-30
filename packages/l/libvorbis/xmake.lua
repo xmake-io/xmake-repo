@@ -17,30 +17,34 @@ package("libvorbis")
 
     on_fetch(function (package, opt)
         if opt.system then
-            local vorbis = find_package("vorbis")
+            local vorbis = find_package("vorbis", opt)
             if not vorbis then
                 return
             end
             local result = table.copy(vorbis)
+            if result.includedirs then
+                result.sysincludedirs = result.includedirs
+                result.includedirs = nil
+            end
 
             if package:config("vorbisenc") then
-                local vorbisenc = find_package("vorbisenc")
+                local vorbisenc = find_package("vorbisenc", opt)
                 if not vorbisenc then
                     return
                 end
 
-                result.includedirs = table.join(vorbisenc.includedirs, result.includedirs or {})
+                result.sysincludedirs = table.join(vorbisenc.sysincludedirs or vorbisenc.includedirs, result.sysincludedirs or {})
                 result.linkdirs = table.join(vorbisenc.linkdirs, result.linkdirs or {})
                 result.links = table.join(vorbisenc.links, result.links or {})
             end
             
             if package:config("vorbisfile") then
-                local vorbisfile = find_package("vorbisfile")
+                local vorbisfile = find_package("vorbisfile", opt)
                 if not vorbisfile then
                     return
                 end
 
-                result.includedirs = table.join(vorbisfile.includedirs, result.includedirs or {})
+                result.sysincludedirs = table.join(vorbisfile.sysincludedirs or vorbisfile.includedirs, result.sysincludedirs or {})
                 result.linkdirs = table.join(vorbisfile.linkdirs, result.linkdirs or {})
                 result.links = table.join(vorbisfile.links, result.links or {})
             end
