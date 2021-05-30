@@ -54,13 +54,14 @@ package("libvorbis")
     end)
 
     on_load(function (package)
+        local ext = package:is_plat("mingw") and ".dll" or ""
         if package:config("vorbisenc") then
-            package:add("links", "vorbisenc")
+            package:add("links", "vorbisenc" .. ext)
         end
         if package:config("vorbisfile") then
-            package:add("links", "vorbisfile")
+            package:add("links", "vorbisfile" .. ext)
         end
-        package:add("links", "vorbis")
+        package:add("links", "vorbis" .. ext)
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
