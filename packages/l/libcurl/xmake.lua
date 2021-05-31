@@ -25,9 +25,23 @@ package("libcurl")
         add_syslinks("advapi32", "crypt32", "winmm", "ws2_32")
     end
 
-    on_load("windows", "mingw@macosx,linux", function (package)
-        if not package:config("shared") then
-            package:add("defines", "CURL_STATICLIB")
+    add_configs("zlib",    { description = "Enable zlib compression library.", default = false, type = "boolean"})
+    add_configs("zstd",    { description = "Enable zstd compression library.", default = false, type = "boolean"})
+    add_configs("openssl", { description = "Enable openssl library.", default = false, type = "boolean"})
+
+    on_load(function (package)
+        if package:is_plat("windows", "mingw") then
+            if not package:config("shared") then
+                package:add("defines", "CURL_STATICLIB")
+            end
+        end
+        local configdeps = {zlib    = "zlib",
+                            openssl = "openssl",
+                            zstd    = "zstd"}
+        for name, dep in pairs(configdeps) do
+            if package:config(name) then
+                package:add("deps", dep)
+            end
         end
     end)
 
@@ -37,35 +51,55 @@ package("libcurl")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCURL_DISABLE_LDAP=ON")
         table.insert(configs, "-DCMAKE_USE_SCHANNEL=ON")
+        table.insert(configs, "-DCMAKE_USE_LIBSSH2=OFF")
         table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        for name, enabled in pairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") then
+                if name == "zlib" then
+                    if not enabled then
+                        io.replace("CMakeLists.txt", "if(ZLIB_FOUND)", "if(OFF)", {palin = true}) -- disable zlib now
+                    end
+                elseif name == "openssl" then
+                    table.insert(configs, "-DCMAKE_USE_" .. name:upper() .. (enabled and "=ON" or "=OFF"))
+                else
+                    table.insert(configs, "-DCURL_" .. name:upper() .. (enabled and "=ON" or "=OFF"))
+                end
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_install("macosx", "linux", "iphoneos", "mingw@macosx,linux", "cross", function (package)
         local configs = {"--disable-silent-rules", "--disable-dependency-tracking"}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
             table.insert(configs, "--enable-debug")
-        else
-            table.insert(configs, "--disable-debug")
         end
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
         end
         if is_plat("macosx") then
             table.insert(configs, "--with-darwinssl")
-            table.insert(configs, "--without-libidn2")
-            table.insert(configs, "--without-nghttp2")
-            table.insert(configs, "--without-brotli")
-            table.insert(configs, "--without-zstd")
         end
+        table.insert(configs, "--without-libidn2")
+        table.insert(configs, "--without-nghttp2")
+        table.insert(configs, "--without-brotli")
         table.insert(configs, "--without-ca-bundle")
         table.insert(configs, "--without-ca-path")
-        table.insert(configs, "--without-zlib")
         table.insert(configs, "--without-librtmp")
+        table.insert(configs, "--without-libpsl")
         table.insert(configs, "--disable-ares")
         table.insert(configs, "--disable-ldap")
+        for name, enabled in pairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") then
+                if enabled then
+                    table.insert(configs, "--with-" .. name)
+                else
+                    table.insert(configs, "--without-" .. name)
+                end
+            end
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
