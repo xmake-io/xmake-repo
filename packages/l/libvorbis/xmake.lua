@@ -17,32 +17,33 @@ package("libvorbis")
 
     on_fetch(function (package, opt)
         if opt.system then
-            local vorbis = package:find_package("vorbis", opt)
-            if not vorbis then
-                return
-            end
-            local result = table.copy(vorbis)
-
+            local libs = {"vorbis"}
+            -- vorbisenc and vorbisfile depends on vorbis, put them first to fix link order
             if package:config("vorbisenc") then
-                local vorbisenc = package:find_package("vorbisenc", opt)
-                if not vorbisenc then
-                    return
-                end
-
-                result.includedirs = table.join(vorbisenc.sysincludedirs or vorbisenc.includedirs, result.includedirs)
-                result.linkdirs = table.join(vorbisenc.linkdirs, result.linkdirs)
-                result.links = table.join(vorbisenc.links, result.links)
+                table.insert(libs, 1, "vorbisenc")
+            end
+            if package:config("vorbisfile") then
+                table.insert(libs, 1, "vorbisfile")
             end
 
-            if package:config("vorbisfile") then
-                local vorbisfile = package:find_package("vorbisfile", opt)
-                if not vorbisfile then
-                    return
+            local result 
+            for _, name in ipairs(libs) do
+                local pkginfo = package:find_package(name, opt)
+                if not pkginfo then
+                    return -- we must find all wanted libraries
                 end
 
-                result.includedirs = table.join(vorbisfile.sysincludedirs or vorbisfile.includedirs, result.includedirs)
-                result.linkdirs = table.join(vorbisfile.linkdirs, result.linkdirs)
-                result.links = table.join(vorbisfile.links, result.links)
+                if not result then 
+                    result = table.copy(pkginfo) 
+                else
+                    local includedirs = pkginfo.sysincludedirs or pkginfo.includedirs
+                    result.links = table.wrap(result.links)
+                    result.linkdirs = table.wrap(result.linkdirs)
+                    result.includedirs = table.wrap(result.includedirs)
+                    table.join2(result.includedirs, includedirs)
+                    table.join2(result.linkdirs, pkginfo.linkdirs)
+                    table.join2(result.links, pkginfo.links)
+                end
             end
 
             return result
