@@ -55,13 +55,12 @@ package("libcurl")
         table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
-                if name == "zlib" then
-                    if not enabled then
-                        io.replace("CMakeLists.txt", "if(ZLIB_FOUND)", "if(OFF)", {palin = true}) -- disable zlib now
-                    end
-                elseif name == "openssl" then
+                if name == "openssl" then
                     table.insert(configs, "-DCMAKE_USE_" .. name:upper() .. (enabled and "=ON" or "=OFF"))
                 else
+                    if name == "zlib" and not enabled then
+                        io.replace("CMakeLists.txt", "if(ZLIB_FOUND)", "if(OFF)", {palin = true}) -- disable zlib now
+                    end
                     table.insert(configs, "-DCURL_" .. name:upper() .. (enabled and "=ON" or "=OFF"))
                 end
             end
