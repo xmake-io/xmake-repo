@@ -14,7 +14,7 @@ package("openal-soft")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ole32", "shell32", "user32", "winmm")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "cross") then
         add_syslinks("dl", "pthread")
     elseif is_plat("android") then
         add_syslinks("dl", "OpenSLES")
@@ -28,7 +28,7 @@ package("openal-soft")
         end
     end)
 
-    on_install("windows", "linux", "mingw@linux,msys,windows", "macosx", "android", "iphoneos", function (package)
+    on_install("windows", "linux", "mingw@linux,msys,windows", "macosx", "android", "iphoneos", "cross", function (package)
         local configs = {"-DALSOFT_EXAMPLES=OFF", "-DALSOFT_UTILS=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
