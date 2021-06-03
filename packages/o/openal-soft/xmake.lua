@@ -22,7 +22,7 @@ package("openal-soft")
 
     if is_plat("windows") then
         add_syslinks("ole32", "shell32", "user32", "winmm")
-    elseif is_plat("linux", "android") then
+    elseif is_plat("linux") then
         add_syslinks("dl", "pthread")
     elseif is_plat("android") then
         add_syslinks("dl", "OpenSLES")
