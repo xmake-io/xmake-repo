@@ -24,10 +24,9 @@ package("openal-soft")
         add_syslinks("ole32", "shell32", "user32", "winmm")
     elseif is_plat("linux", "android") then
         add_syslinks("dl", "pthread")
-        if is_plat("android") then
-            add_syslinks("opensles")
-        end
-    elseif is_plat("macosx") then
+    elseif is_plat("android") then
+        add_syslinks("dl", "OpenSLES")
+    elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreAudio", "CoreFoundation", "AudioToolbox")
     end
 
@@ -37,7 +36,7 @@ package("openal-soft")
         end
     end)
 
-    on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", function (package)
+    on_install("windows", "linux", "mingw@linux,msys,windows", "macosx", "android", "iphoneos", function (package)
         local configs = {"-DALSOFT_EXAMPLES=OFF", "-DALSOFT_UTILS=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
