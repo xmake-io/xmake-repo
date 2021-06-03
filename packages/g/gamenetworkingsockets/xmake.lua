@@ -7,7 +7,7 @@ package("gamenetworkingsockets")
     set_urls("https://github.com/ValveSoftware/GameNetworkingSockets/archive/$(version).tar.gz",
              "https://github.com/ValveSoftware/GameNetworkingSockets.git")
 
-    add_versions("v1.3.0", "22e409546babc449c44f492b253b547a2f5f11abe11a100686a10a990b5091cd")
+    add_versions("v1.3.0", "f473789ae8a8415dd1f5473793775e68a919d27eba18b9ba7d0a14f254afddf9")
     add_versions("v1.2.0", "768a7cec2491e34c824204c4858351af2866618ceb13a024336dc1df8076bef3")
 
     if is_plat("windows") then
