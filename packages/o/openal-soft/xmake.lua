@@ -20,7 +20,7 @@ package("openal-soft")
     add_versions("1.21.1", "8ac17e4e3b32c1af3d5508acfffb838640669b4274606b7892aa796ca9d7467f")
     add_deps("cmake")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ole32", "shell32", "user32", "winmm")
     elseif is_plat("linux") then
         add_syslinks("dl", "pthread")
