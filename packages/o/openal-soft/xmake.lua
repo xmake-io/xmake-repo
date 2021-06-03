@@ -20,6 +20,17 @@ package("openal-soft")
     add_versions("1.21.1", "8ac17e4e3b32c1af3d5508acfffb838640669b4274606b7892aa796ca9d7467f")
     add_deps("cmake")
 
+    if is_plat("windows") then
+        add_syslinks("ole32", "shell32", "user32", "winmm")
+    elseif is_plat("linux", "android")
+        add_syslinks("dl", "pthread")
+        if is_plat("android") then
+            add_syslinks("opensles")
+        end
+    elseif is_plat("macosx") then
+        add_frameworks("CoreAudio", "CoreFoundation", "AudioToolbox")
+    end
+
     on_load(function (package)
         if not package:config("shared") then
             package:add("defines", "AL_LIBTYPE_STATIC")
