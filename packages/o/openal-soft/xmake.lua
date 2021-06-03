@@ -5,15 +5,7 @@ package("openal-soft")
     set_license("LGPL-2.0")
 
     add_urls("https://github.com/kcat/openal-soft/archive/refs/tags/$(version).tar.gz", {version = function (version)
-        if version:ge("1.21.0") then
-            if version:startswith("openal-soft-") then
-                return version:sub(13)
-            else
-                return version
-            end
-        else
-            return "openal-soft-" .. version
-        end
+        return version:ge("1.21.0") and version or "openal-soft-" .. version
     end})
     add_urls("https://github.com/kcat/openal-soft.git")
 
