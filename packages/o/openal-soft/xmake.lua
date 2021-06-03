@@ -1,6 +1,6 @@
 package("openal-soft")
 
-    set_homepage("https://github.com/paceholder/nodeeditor")
+    set_homepage("https://openal-soft.org")
     set_description("OpenAL Soft is a software implementation of the OpenAL 3D audio API.")
     set_license("LGPL-2.0")
 
