@@ -1,5 +1,5 @@
 set_xmakever("2.5.1")
-set_languages("cxx14")
+set_languages("gnu11")
 
 add_rules("mode.debug", "mode.release")
 
