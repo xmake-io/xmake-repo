@@ -15,7 +15,7 @@ package("libjpeg-turbo")
 
     add_deps("cmake", "nasm")
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "android", function (package)
         local configs = {}
         local jpeg = package:config("jpeg")
         if jpeg == "7" then
