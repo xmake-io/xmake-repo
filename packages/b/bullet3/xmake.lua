@@ -2,6 +2,7 @@ package("bullet3")
 
     set_homepage("http://bulletphysics.org")
     set_description("Bullet Physics SDK.")
+    set_license("zlib")
 
     set_urls("https://github.com/bulletphysics/bullet3/archive/$(version).zip",
              "https://github.com/bulletphysics/bullet3.git")
@@ -18,12 +19,17 @@ package("bullet3")
     add_includedirs("include", "include/bullet")
 
     on_install("macosx", "linux", "windows", function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            raise("shared library is not available on windows.")
+        end
         local configs = {"-DBUILD_CPU_DEMOS=OFF", "-DBUILD_OPENGL3_DEMOS=OFF", "-DBUILD_BULLET2_DEMOS=OFF", "-DBUILD_UNIT_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_DOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_EXTRAS=" .. (package:config("extras") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MD") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MD") and "ON" or "OFF"))
+        end
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
 
         os.cp("src/**.h", package:installdir("include", "bullet"), {rootdir = "src"})
