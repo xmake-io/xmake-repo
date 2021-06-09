@@ -14,8 +14,10 @@ package("vulkan-hpp")
         os.mkdir("build")
         if package:is_plat("windows") then
             os.cp(path.join("**", "VulkanHppGenerator.exe"), "build")
+        else
+            os.cp(path.join("**", "VulkanHppGenerator"), "build")
         end
-        os.exec(path.join("build", "VulkanHppGenerator"))
+        os.runv(path.join("build", "VulkanHppGenerator"))
         os.cp("Vulkan-Headers/include", package:installdir())
         os.cp("vulkan/*.hpp", package:installdir(path.join("include", "vulkan")))
     end)
