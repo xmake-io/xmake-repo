@@ -23,6 +23,9 @@ package("openssl")
     else
         add_links("ssl", "crypto")
     end
+    if is_plat("linux", "cross") then
+        add_syslinks("dl")
+    end
 
     on_fetch("fetch")
 
