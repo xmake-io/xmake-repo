@@ -4,7 +4,7 @@ package("vcglib")
     set_description("The Visualization and Computer Graphics Library (VCG for short) is a open source portable C++ templated library for manipulation, processing and displaying with OpenGL of triangle and tetrahedral meshes.")
     set_license("GPL-3.0")
 
-    add_urls("https://github.com/cnr-isti-vclab/vcglib/archive/refs/tags/2020.12.tar.gz")
+    add_urls("https://github.com/cnr-isti-vclab/vcglib/archive/refs/tags/$(version).tar.gz")
     add_versions("2020.12", "731c57435e39c4b958a1d766cadd9865d9db35e36410708f2da7818e9fa5f786")
 
     add_deps("eigen")
