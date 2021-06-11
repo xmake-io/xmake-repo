@@ -1,4 +1,6 @@
 package("minimp3")
+
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/lieff/minimp3")
     set_description("Minimalistic MP3 decoder single header library")
     set_license("CC0")

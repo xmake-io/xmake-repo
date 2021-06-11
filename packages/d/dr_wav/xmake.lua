@@ -1,4 +1,6 @@
 package("dr_wav")
+
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/mackron/dr_libs")
     set_description("Single file audio decoding libraries for C/C++.")
     set_license("MIT")
