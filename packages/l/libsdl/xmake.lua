@@ -30,6 +30,10 @@ package("libsdl")
 
     add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
     add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+    if is_plat("windows", "mingw") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
+    end
 
     on_load(function (package)
         if package:config("use_sdlmain") then
