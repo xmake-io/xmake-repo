@@ -1,4 +1,4 @@
-package("function_ref")
+package("tl_function_ref")
 
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/TartanLlama/function_ref")
