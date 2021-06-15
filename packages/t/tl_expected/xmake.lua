@@ -1,4 +1,4 @@
-package("expected")
+package("tl_expected")
 
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/TartanLlama/expected")
@@ -9,10 +9,6 @@ package("expected")
              "https://github.com/TartanLlama/expected.git")
 
     add_versions("v1.0.0", "c1733556cbd3b532a02b68e2fbc2091b5bc2cccc279e4f6c6bd83877aabd4b02")
-
-    on_load(function (package)
-        cprint("${yellow}the expected package has been renamed to tl_expected, please update its name!${clear}")
-    end)
 
     on_install(function (package)
         os.cp("include/tl", package:installdir("include"))
