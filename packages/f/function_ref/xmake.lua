@@ -1,5 +1,6 @@
 package("function_ref")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/TartanLlama/function_ref")
     set_description("A lightweight, non-owning reference to a callable.")
     set_license("CC0")

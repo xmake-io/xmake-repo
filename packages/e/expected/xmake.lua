@@ -1,5 +1,6 @@
 package("expected")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/TartanLlama/expected")
     set_description("C++11/14/17 std::expected with functional-style extensions")
     set_license("CC0")
