@@ -19,5 +19,5 @@ package("function_ref")
             {
                 tl::function_ref<void(void)> fr1 = []{};
             }
-        ]]}, {configs = {languages = "c++11"}, includes = { "tl/function_ref.hpp"} }))
+        ]]}, {configs = {languages = "c++14"}, includes = { "tl/function_ref.hpp"} }))
     end) 
