@@ -3,10 +3,11 @@ package("co")
     set_homepage("https://github.com/idealvin/co")
     set_description("Yet another libco and more.")
 
-    add_urls("https://github.com/idealvin/co/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/idealvin/co.git")
+--    add_urls("https://github.com/idealvin/co/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/idealvin/co.git")
 
-    add_versions("v2.0.0", "1bf687ebc08f9951869a111c56b90898b2c320e988dc86355ce17368f279e44d")
+--    add_versions("v2.0.0", "1bf687ebc08f9951869a111c56b90898b2c320e988dc86355ce17368f279e44d")
+    add_versions("v2.0.0+1", "d6b2685212e90fccfb8a261b4d0506054e9d7aeb")
 
     for _, name in ipairs({"libcurl", "openssl"}) do
         add_configs(name, {description = "Enable " .. name .. " library.", default = false, type = "boolean"})
