@@ -17,7 +17,7 @@ package("opencv")
 
     add_configs("bundled", {description = "Build 3rd-party libraries with OpenCV.", default = true, type = "boolean"})
 
-    add_deps("cmake", "python 3.x")
+    add_deps("cmake", "python 3.x", {kind = "binary"})
 
     local features = {"1394",
                       "vtk",
@@ -65,8 +65,18 @@ package("opencv")
         add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32")
     end
 
-    on_load("linux", "macosx", function (package)
-        if package:version():ge("4.0") then
+    on_load("linux", "macosx", "windows", function (package)
+        if package:is_plat("windows") then
+            local arch = (package:is_arch("x64") and "x64" or "x86")
+            local linkdir = (package:config("shared") and "lib" or "staticlib")
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            local vc_ver = "vc13"
+            if     vs == "2015" then vc_ver = "vc14"
+            elseif vs == "2017" then vc_ver = "vc15"
+            elseif vs == "2019" then vc_ver = "vc16"
+            end
+            package:add("linkdirs", path.join(arch, vc_ver, linkdir))
+        elseif package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
         end
         if package:config("blas") then
@@ -75,18 +85,6 @@ package("opencv")
         if package:config("cuda") then
             package:add("deps", "cuda", {system = true, configs = {utils = {"cudnn", "cufft", "cublas"}}})
         end
-    end)
-
-    on_load("windows", function (package)
-        local arch = (package:is_arch("x64") and "x64" or "x86")
-        local linkdir = (package:config("shared") and "lib" or "staticlib")
-        local vs = import("core.tool.toolchain").load("msvc"):config("vs")
-        local vc_ver = "vc13"
-        if     vs == "2015" then vc_ver = "vc14"
-        elseif vs == "2017" then vc_ver = "vc15"
-        elseif vs == "2019" then vc_ver = "vc16"
-        end
-        package:add("linkdirs", path.join(arch, vc_ver, linkdir))
     end)
 
     on_install("linux", "macosx", "windows", function (package)
@@ -100,7 +98,8 @@ package("opencv")
                          "-DOPENCV_ENABLE_NONFREE=ON",
                          "-DOPENCV_GENERATE_PKGCONFIG=ON",
                          "-DBUILD_opencv_python2=OFF",
-                         "-DBUILD_opencv_python3=ON"}
+                         "-DBUILD_opencv_python3=OFF",
+                         "-DBUILD_JAVA=OFF"}
         if package:config("bundled") then
             table.insert(configs, "-DOPENCV_FORCE_3RDPARTY_BUILD=ON")
         end
