@@ -35,7 +35,7 @@ jobs:
           export PATH=`pwd`/node-v14.15.4-linux-x64/bin:$PATH
           sudo npm install markdown-to-html -g
 
-      - name: Publish
+      - name: Publish documents
         run: |
           git clone git@github.com:xmake-io/xrepo-docs.git
           cd xrepo-docs
@@ -51,4 +51,7 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "autoupdate docs by xmake-repo/ci"
           git push all master
 
+      - name: Build artifacts
+        run: |
+          xmake l scripts/build_artifacts.lua
 
