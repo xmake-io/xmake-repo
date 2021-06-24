@@ -77,7 +77,7 @@ function _require_packages(argv, packages)
         table.insert(config_argv, "--ldflags=" .. argv.ldflags)
     end
     os.vexecv("xmake", config_argv)
-    local require_argv = {"require", "-f", "-y"}
+    local require_argv = {"require", "-f", "-y", "--build"}
     if argv.verbose then
         table.insert(require_argv, "-v")
     end
