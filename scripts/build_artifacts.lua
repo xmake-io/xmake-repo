@@ -9,15 +9,23 @@ function build_artifacts(name, versions)
     local oldir = os.cd("build-artifacts")
     local trycount = 0
     while trycount < 2 do
-        local ok = try { function ()
-            os.exec("git reset --hard HEAD^")
-            os.exec("git pull origin build")
-            io.save("build.txt", buildinfo)
-            os.exec("git add -A")
-            os.exec("git commit -a -m \"autobuild %s by xmake-repo/ci\"", name)
-            os.exec("git push origin build")
-            return true
-        end }
+        local ok = try
+        {
+            function ()
+                io.save("build.txt", buildinfo)
+                os.exec("git add -A")
+                os.exec("git commit -a -m \"autobuild %s by xmake-repo/ci\"", name)
+                os.exec("git push origin build")
+                return true
+            end,
+            catch
+            {
+                function ()
+                    os.exec("git reset --hard HEAD^")
+                    os.exec("git pull origin build")
+                end
+            }
+        }
         if ok then
             break
         end
