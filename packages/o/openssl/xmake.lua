@@ -13,7 +13,6 @@ package("openssl")
     add_versions("1.0.0",   "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
     if is_plat("windows") then
-        add_deps("strawberry-perl", "nasm")
         add_links("libssl", "libcrypto")
     else
         add_links("ssl", "crypto")
@@ -23,6 +22,12 @@ package("openssl")
     end
 
     on_fetch("fetch")
+
+    on_load(function (package)
+        if package:is_plat("windows") and (not package.is_built or package:is_built()) then
+            package:add("deps", "strawberry-perl", "nasm")
+        end
+    end)
 
     on_install("windows", function (package)
         local args = {"Configure"}
