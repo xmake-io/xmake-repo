@@ -8,6 +8,7 @@ package("trantor")
              "https://github.com/an-tao/trantor.git")
     add_versions("v1.3.0", "524589dc9258e1ace3b2f887b835cfbeccab3c5efc4ba94963c59f3528248d9b")
     add_versions("v1.4.1", "aa3f4dddfd3fd1a6e04f79744e69f23bb6472c314724eaa3051872a2a03bbda9")
+    add_versions("v1.5.0", "8704df75b783089d7e5361174054e0e46a09cc315b851dbc2ab6736e631b090b")
 
     add_deps("cmake")
     add_deps("openssl", "c-ares", {optional = true})
