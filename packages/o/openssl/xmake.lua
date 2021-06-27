@@ -4,12 +4,12 @@ package("openssl")
     set_description("A robust, commercial-grade, and full-featured toolkit for TLS and SSL.")
 
     add_urls("https://github.com/openssl/openssl/archive/OpenSSL_$(version).zip", {version = function (version)
-        return version:gsub("%.", "_"):gsub("%-", "")
+        return version:gsub("%.", "_")
     end, excludes = "*/fuzz/*"})
-    add_versions("1.1.1-k", "255c038f5861616f67b527434475d226f5fe00522fbd21fafd3df32019edd202")
-    add_versions("1.1.1-h", "0a976b769bdb26470971a184f5263d0c3256152d5671ed7287cf17acc4698afc")
-    add_versions("1.1.0-l", "a305d4af4b442ad61ba3d7e82905d09bfbd80424e132e10df4899d064aa47ce2")
-    add_versions("1.0.2-u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
+    add_versions("1.1.1k", "255c038f5861616f67b527434475d226f5fe00522fbd21fafd3df32019edd202")
+    add_versions("1.1.1h", "0a976b769bdb26470971a184f5263d0c3256152d5671ed7287cf17acc4698afc")
+    add_versions("1.1.0l", "a305d4af4b442ad61ba3d7e82905d09bfbd80424e132e10df4899d064aa47ce2")
+    add_versions("1.0.2u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
     add_versions("1.0.0",   "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
     if is_plat("windows") then
