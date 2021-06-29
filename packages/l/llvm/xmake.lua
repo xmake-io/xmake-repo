@@ -155,7 +155,9 @@ package("llvm")
     end)
 
     on_test(function (package)
-        os.vrun("llvm-config --version")
+        if not package:is_plat("windows", "mingw") then
+            os.vrun("llvm-config --version")
+        end
         if package:config("clang") then
             os.vrun("clang --version")
         end
