@@ -14,6 +14,7 @@ local options =
 ,   {'a', "arch",       "kv", nil, "Set the given architecture."                }
 ,   {'m', "mode",       "kv", nil, "Set the given mode."                        }
 ,   {'j', "jobs",       "kv", nil, "Set the build jobs."                        }
+,   {nil, "linkjobs",   "kv", nil, "Set the link jobs."                         }
 ,   {nil, "cflags",     "kv", nil, "Set the cflags."                            }
 ,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."                          }
 ,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                           }
@@ -89,6 +90,9 @@ function _require_packages(argv, packages)
     end
     if argv.jobs then
         table.insert(require_argv, "--jobs=" .. argv.jobs)
+    end
+    if argv.linkjobs then
+        table.insert(require_argv, "--linkjobs=" .. argv.linkjobs)
     end
     if argv.mode == "debug" and argv.kind == "shared" then
         table.insert(require_argv, "--extra={debug=true,configs={shared=true}}")
