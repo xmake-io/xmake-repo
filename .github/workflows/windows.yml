@@ -26,5 +26,5 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --vs_sdkver=10.0.19041.0
+          xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --vs_sdkver=10.0.19041.0 --linkjobs=1
 
