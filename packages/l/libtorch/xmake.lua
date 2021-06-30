@@ -38,7 +38,6 @@ package("libtorch")
         if package:config("ninja") then
             package:add("deps", "ninja")
         end
-
         if not package:is_plat("macosx") and package:config("blas") then
             package:add("deps", package:config("blas"))
         end
