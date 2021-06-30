@@ -5,7 +5,7 @@ package("asmjit")
     set_license("zlib")
 
     add_urls("https://github.com/asmjit/asmjit.git")
-    add_versions("210627", "d02235b83434943b52a6d7c57118205c5082de08")
+    add_versions("2021.06.27", "d02235b83434943b52a6d7c57118205c5082de08")
 
     add_deps("cmake")
     if is_plat("linux") then
