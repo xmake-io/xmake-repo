@@ -5,7 +5,7 @@ package("mem")
 
     set_urls("https://github.com/0x1F9F1/mem.git")
 
-    add_versions("0.1.0", "db0289a50da77101c4e827b92b39f06ba2e90f76")
+    add_versions("1.0.0")
 
     on_install("windows", function (package)
         os.cp("include/mem", package:installdir("include"))
