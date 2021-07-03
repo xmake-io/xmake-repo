@@ -1,5 +1,6 @@
 package("mem")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/0x1F9F1/mem")
     set_description("A collection of C++11 headers useful for reverse engineering")
 
