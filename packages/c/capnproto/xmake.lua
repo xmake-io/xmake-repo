@@ -9,7 +9,7 @@ package("capnproto")
 
     add_deps("cmake", "zlib")
 
-    on_install("windows", "linux", "macosx", "bsd", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "bsd", function (package)
         local configs = {}
         table.insert(configs, "-DBUILD_TESTING=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
