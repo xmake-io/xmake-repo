@@ -10,7 +10,7 @@ package("opencc")
     
     on_load(function (package)
         package:addenv("PATH", "bin")
-    end
+    end)
 
     on_install("linux", "macosx", "bsd", function (package)
         local configs = {"-DBUILD_DOCUMENTATION=OFF", "-DENABLE_GTEST=OFF"}
