@@ -14,7 +14,7 @@ package("opencc")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
         if package:config("static") then
-            os.cp("build/deps/marisa-0.2.6/" .. (package:debug() and "Debug" or "Release") .. "/*.a", package:installdir("lib"))
+            os.cp("build/deps/marisa-0.2.6/*.a", package:installdir("lib"))
         end
     end)
 
