@@ -5,6 +5,7 @@ import("packages")
 function build_artifacts(name, versions)
     local buildinfo = {name = name, versions = versions}
     print(buildinfo)
+    os.tryrm("build-artifacts")
     os.exec("git clone git@github.com:xmake-mirror/build-artifacts.git -b build")
     local oldir = os.cd("build-artifacts")
     local trycount = 0
