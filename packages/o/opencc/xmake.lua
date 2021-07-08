@@ -8,13 +8,31 @@ package("opencc")
 
     add_deps("cmake")
 
-    on_install("windows", "mingw", "linux", "macosx", "bsd", function (package)
+    on_install("linux", "macosx", "bsd", function (package)
         local configs = {"-DBUILD_DOCUMENTATION=OFF", "-DENABLE_GTEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        if package:config("static") then
+            os.cp("build/deps/marisa-0.2.6/" .. (package:debug() and "Debug" or "Release") .. "/*.a", package:installdir("lib"))
+        end
     end)
 
-    on_test(function (package)
-        assert(package:has_cfuncs("opencc_open", {includes = "opencc/opencc.h"}))
+    on_install("windows", "mingw", function (package)
+        local configs = {"-DBUILD_DOCUMENTATION=OFF", "-DENABLE_GTEST=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
+        package:addenv("PATH", "bin")
+        if package:config("static") then
+            os.cp("build/deps/marisa-0.2.6/" .. (package:debug() and "Debug" or "Release") .. "/*.lib", package:installdir("lib"))
+        end
+    end)
+
+    on_test("windows", "mingw", "linux", "macosx", "bsd", function (package)
+        local configs = {includes = "opencc/opencc.h"}
+        if package:config("static") then
+            configs.ldflags = "-lmarisa"
+        end
+        assert(package:has_cfuncs("opencc_open", configs))
     end)
