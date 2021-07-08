@@ -7,6 +7,10 @@ package("opencc")
     add_versions("1.1.2", "b4a53564d0de446bf28c8539a8a17005a3e2b1877647b68003039e77f8f7d9c2")
 
     add_deps("cmake")
+    
+    on_load(function (package)
+        package:addenv("PATH", "bin")
+    end
 
     on_install("linux", "macosx", "bsd", function (package)
         local configs = {"-DBUILD_DOCUMENTATION=OFF", "-DENABLE_GTEST=OFF"}
@@ -30,9 +34,9 @@ package("opencc")
     end)
 
     on_test("windows", "mingw", "linux", "macosx", "bsd", function (package)
-        local configs = {includes = "opencc/opencc.h"}
+        local configs = {}
         if package:config("static") then
             configs.ldflags = "-lmarisa"
         end
-        assert(package:has_cfuncs("opencc_open", configs))
+        assert(package:has_cfuncs("opencc_open", {includes = "opencc/opencc.h", configs = configs}))
     end)
