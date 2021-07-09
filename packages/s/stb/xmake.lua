@@ -1,5 +1,6 @@
 package("stb")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/nothings/stb")
     set_description("single-file public domain (or MIT licensed) libraries for C/C++")
 

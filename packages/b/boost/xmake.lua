@@ -3,13 +3,13 @@ package("boost")
     set_homepage("https://www.boost.org/")
     set_description("Collection of portable C++ source libraries.")
 
-    add_urls("https://dl.bintray.com/boostorg/release/$(version).tar.bz2", {version = function (version)
+    add_urls("https://boostorg.jfrog.io/artifactory/main/release/$(version).tar.bz2", {version = function (version)
             return version .. "/source/boost_" .. (version:gsub("%.", "_"))
         end})
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
-
+    add_versions("1.76.0", "f0397ba6e982c4450f27bf32a2a83292aba035b827a5623a14636ea583318c41")
     add_versions("1.75.0", "953db31e016db7bb207f11432bef7df100516eeb746843fa0486a222e3fd49cb")
     add_versions("1.74.0", "83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1")
     add_versions("1.73.0", "4eb3b8d442b426dc35346235c8733b5ae35ba431690e38c6a8263dce9fcbb402")
@@ -42,8 +42,10 @@ package("boost")
                       "date_time",
                       "locale",
                       "iostreams",
-                      "program_options"}
+                      "program_options",
+                      "test"}
 
+    add_configs("all",          { description = "Enable all library modules support.",  default = false, type = "boolean"})
     add_configs("multi",        { description = "Enable multi-thread support.",  default = true, type = "boolean"})
     for _, libname in ipairs(libnames) do
         add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
@@ -146,7 +148,7 @@ package("boost")
             end
         end
         for _, libname in ipairs(libnames) do
-            if package:config(libname) then
+            if package:config("all") or package:config(libname) then
                 table.insert(argv, "--with-" .. libname)
             end
         end

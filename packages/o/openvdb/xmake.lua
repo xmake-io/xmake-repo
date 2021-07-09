@@ -25,15 +25,19 @@ package("openvdb")
             package:add("deps", "blosc ~1.5.0", {configs = {shared = package:is_plat("linux")}})
             package:add("deps", "openexr", {configs = {shared = package:is_plat("windows")}})
             if package:config("with_maya") == "" then
-                package:add("deps", "tbb", {configs = {shared = true}})
+                package:add("deps", "tbb <2021.0", {configs = {shared = true}})
             end
         end
         if package:config("view") then
-            package:add("deps", "glew")
+            package:add("deps", "glew", {configs = {shared = true}})
             package:add("deps", "glfw")
         end
         if not package:config("shared") then
             package:add("defines", "OPENVDB_STATICLIB")
+        end
+        if package:is_plat("windows") then
+            package:add("defines", "_USE_MATH_DEFINES")
+            package:add("defines", "NOMINMAX")
         end
     end)
 
@@ -68,6 +72,7 @@ package("openvdb")
             table.insert(configs, "-DUSE_EXR=ON")
         end
         import("package.tools.cmake").install(package, configs)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)

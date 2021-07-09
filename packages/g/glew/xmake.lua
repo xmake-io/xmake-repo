@@ -14,13 +14,13 @@ package("glew")
         add_deps("libx11", "xorgproto")
     end
 
-    on_load("windows", "mingw@windows", function (package)
+    on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "GLEW_STATIC")
         end
     end)
 
-    on_install("linux", "macosx", "mingw@windows", "windows", function (package)
+    on_install("linux", "macosx", "mingw", "windows", function (package)
         local configs = {}
         configs.mode = package:debug() and "debug" or "release"
         if package:config("shared") then

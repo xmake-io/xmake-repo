@@ -7,35 +7,39 @@ package("libtorch")
     add_urls("https://github.com/pytorch/pytorch.git")
     add_versions("v1.8.0", "37c1f4a7fef115d719104e871d0cf39434aa9d56")
     add_versions("v1.8.1", "56b43f4fec1f76953f15a627694d4bba34588969")
+    add_versions("v1.9.0", "d69c22dd61a2f006dcfe1e3ea8468a3ecaf931aa")
+
+    add_patches("v1.9.0", path.join(os.scriptdir(), "patches", "1.9.0", "gcc11.patch"), "4191bb3296f18f040c230d7c5364fb160871962d6278e4ae0f8bc481f27d8e4b")
 
     add_configs("python", {description = "Build python interface.", default = false, type = "boolean"})
-    add_configs("ninja", {description = "Use ninja as build tool.", default = false, type = "boolean"})
+    add_configs("ninja", {description = "Use ninja as build tool.", default = true, type = "boolean"})
+    if not is_plat("macosx") then
+        add_configs("blas", {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
+    end
 
     add_deps("cmake")
     add_deps("python 3.x", {kind = "binary", system = false})
     add_deps("libuv")
     add_deps("cuda", {optional = true, configs = {utils = {"nvrtc", "cudnn", "cufft", "curand", "cublas", "cudart_static"}}})
-    add_deps("nvtx", "mkl", {optional = true, system = true})
+    add_deps("nvtx", {optional = true, system = true})
     add_includedirs("include")
     add_includedirs("include/torch/csrc/api/include")
 
-    -- enable long paths for git submodule on windows
-    if is_host("windows") then
-        set_policy("platform.longpaths", true)
+    if is_plat("linux") then
+        add_syslinks("rt")
     end
 
-    -- prevent the link to the libraries found automatically
-    add_links("")
+    -- enable long paths for git submodule on windows
+    if is_host("windows") and set_policy then
+        set_policy("platform.longpaths", true)
+    end
 
     on_load("windows|x64", "macosx", "linux", function (package)
         if package:config("ninja") then
             package:add("deps", "ninja")
         end
-
-        if not package:is_plat("macosx") then
-            if not find_package("mkl") then
-                package:add("deps", "openblas")
-            end
+        if not package:is_plat("macosx") and package:config("blas") then
+            package:add("deps", package:config("blas"))
         end
     end)
 
@@ -68,41 +72,37 @@ package("libtorch")
                 package:add("links", lib)
             end
         end
+        package:add("links", "fbgemm")
+        package:add("links", "asmjit")
+        package:add("links", "cpuinfo")
+        package:add("links", "clog")
 
         -- some patches to the third-party cmake files
-        io.replace("cmake/Modules/FindMKL.cmake", "MSVC AND NOT CMAKE_CXX_COMPILER_ID STREQUAL \"Intel\"", "FALSE", {plain = true})
         io.replace("third_party/fbgemm/CMakeLists.txt", "PRIVATE FBGEMM_STATIC", "PUBLIC FBGEMM_STATIC", {plain = true})
         io.replace("third_party/protobuf/cmake/install.cmake", "install%(DIRECTORY.-%)", "")
-        io.replace("third_party/ideep/mkl-dnn/src/CMakeLists.txt", "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}", "${CMAKE_INSTALL_LIBDIR}", {plain = true})
-        if package:is_plat("windows") then
-            io.replace("cmake/Modules/FindOpenBLAS.cmake", "NAMES openblas PATHS", "NAMES libopenblas PATHS", {plain = true})
-            if package:config("vs_runtime"):startswith("MD") then
-                io.replace("third_party/fbgemm/CMakeLists.txt", "MT", "MD", {plain = true})
-            end
+        if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
+            io.replace("third_party/fbgemm/CMakeLists.txt", "MT", "MD", {plain = true})
         end
 
         -- prepare python
         os.vrun("python -m pip install typing_extensions pyyaml")
-        local configs = {"-DUSE_MPI=OFF"}
+        local configs = {"-DUSE_MPI=OFF", "-DCMAKE_INSTALL_LIBDIR=lib"}
         if package:config("python") then
             table.insert(configs, "-DBUILD_PYTHON=ON")
             os.vrun("python -m pip install numpy")
         else
             table.insert(configs, "-DBUILD_PYTHON=OFF")
+            table.insert(configs, "-DUSE_NUMPY=OFF")
         end
 
         -- prepare for installation
-        local extracfg = {}
-        if package:config("ninja") then
-            extracfg.cmake_generator = "Ninja"
-        end
-        local envs = cmake.buildenvs(package, extracfg)
+        local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
         if not package:is_plat("macosx") then
-            if package:dep("mkl"):exists() then
+            if package:config("blas") == "mkl" then
                 table.insert(configs, "-DBLAS=MKL")
                 local mkl = package:dep("mkl"):fetch()
                 table.insert(configs, "-DINTEL_MKL_DIR=" .. path.directory(mkl.sysincludedirs[1]))
-            else
+            elseif package:config("blas") == "openblas" then
                 table.insert(configs, "-DBLAS=OpenBLAS")
                 envs.OpenBLAS_HOME = package:dep("openblas"):installdir()
             end
@@ -110,9 +110,15 @@ package("libtorch")
         envs.libuv_ROOT = package:dep("libuv"):installdir()
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCAFFE2_USE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-        extracfg.envs = envs
-        cmake.install(package, configs, extracfg)
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCAFFE2_USE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        end
+
+        local opt = {envs = envs}
+        if package:config("ninja") then
+            opt.cmake_generator = "Ninja"
+        end
+        cmake.install(package, configs, opt)
     end)
 
     on_test(function (package)
@@ -124,4 +130,3 @@ package("libtorch")
             }
         ]]}, {configs = {languages = "c++14"}, includes = "torch/torch.h"}))
     end)
-

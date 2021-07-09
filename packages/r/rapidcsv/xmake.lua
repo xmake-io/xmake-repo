@@ -1,0 +1,20 @@
+package("rapidcsv")
+
+    set_homepage("https://github.com/d99kris/rapidcsv")
+    set_description("C++ header-only library for CSV parsing (by d99kris)")
+
+    add_urls("https://github.com/d99kris/rapidcsv/archive/refs/tags/v$(version).zip")
+    add_versions("8.50", "c7822b590f48f7d8c9b560a6e2d7e29d7ec2f7b3642eb75ddff40a803949b502")
+
+    on_install(function (package)
+        os.cp("src/rapidcsv.h", package:installdir("include"))
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            void test(int argc, char** argv) {
+                rapidcsv::Document doc("example.csv");
+                doc.GetColumn<float>("Example").size();
+            }
+        ]]},{includes = "rapidcsv.h", configs = {languages = "cxx11"}}))
+    end)

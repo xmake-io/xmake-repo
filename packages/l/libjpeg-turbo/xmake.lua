@@ -9,12 +9,16 @@ package("libjpeg-turbo")
     add_versions("2.0.5",  "b3090cd37b5a8b3e4dbd30a1311b3989a894e5d3c668f14cbc6739d77c9402b7")
     add_versions("2.0.6",  "005aee2fcdca252cee42271f7f90574dda64ca6505d9f8b86ae61abc2b426371")
     add_versions("2.0.90", "6a965adb02ad898b2ae48214244618fe342baea79db97157fdc70d8844ac6f09")
+    add_versions("2.1.0",  "d6b7790927d658108dfd3bee2f0c66a2924c51ee7f9dc930f62c452f4a638c52")
 
     add_configs("jpeg", {description = "libjpeg API/ABI emulation target version.", default = "6", type = "string", values = {"6", "7", "8"}})
 
     add_deps("cmake", "nasm")
+    if is_subhost("windows") and is_plat("android") then
+        add_deps("make")
+    end
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "android", function (package)
         local configs = {}
         local jpeg = package:config("jpeg")
         if jpeg == "7" then
@@ -30,7 +34,7 @@ package("libjpeg-turbo")
             table.insert(configs, "-DENABLE_SHARED=OFF")
             table.insert(configs, "-DENABLE_STATIC=ON")
         end
-        if package:config("vs_runtime"):startswith("MD") then
+        if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
             table.insert(configs, "-DWITH_CRT_DLL=ON")
         end
         if package:config("pic") ~= false then

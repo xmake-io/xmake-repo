@@ -5,10 +5,13 @@ package("flatbuffers")
 
     add_urls("https://github.com/google/flatbuffers/archive/v$(version).zip")
     add_versions("1.12.0", "4b8b21adbfe8a74b90604161afcf87c125a26b86c99327e7a04525080606536c")
+    add_versions("2.0.0", "ffd68aebdfb300c9e82582ea38bf4aa9ce65c77344c94d5047f3be754cc756ea")
 
     add_deps("cmake")
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function(package)
         local configs = {"-DFLATBUFFERS_BUILD_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DFLATBUFFERS_BUILD_SHAREDLIB=" .. (package:config("shared") and "ON" or "OFF"))
         if is_plat("android", "iphoneos") then
             table.insert(configs, "-DFLATBUFFERS_BUILD_FLATC=OFF")
             table.insert(configs, "-DFLATBUFFERS_BUILD_FLATHASH=OFF")

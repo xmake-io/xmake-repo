@@ -1,0 +1,33 @@
+name: Archlinux
+
+on:
+  pull_request:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        kind: [static, shared]
+
+    container: archlinux:latest
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Installation
+        run: |
+          pacman -Sy --noconfirm --needed git base-devel perl make unzip
+          pacman -Sy --noconfirm --needed mesa gcc-fortran
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: branch@dev
+
+      - name: Tests
+        env:
+          XMAKE_ROOT: y
+        run: |
+          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}

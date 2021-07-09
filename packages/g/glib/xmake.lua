@@ -6,6 +6,7 @@ package("glib")
     set_urls("https://download.gnome.org/sources/glib/$(version).tar.xz",
              {version = function (version) return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/glib-" .. version end})
     add_versions("2.60.2", "2ef15475060addfda0443a7e8a52b28a10d5e981e82c083034061daf9a8f80d9")
+    add_versions("2.68.2", "ecc7798a9cc034eabdfd7f246e6dd461cdbf1175fcc2e9867cc7da7b7309e0fb")
 
     add_deps("meson", "ninja", "libffi", "pcre")
     if is_plat("linux") then
@@ -27,16 +28,15 @@ package("glib")
         local configs = {"-Dbsymbolic_functions=false",
                          "-Ddtrace=false",
                          "-Dman=false",
+                         "-Dtests=false",
                          "-Ddefault_library=static",
-                         "-Dlibmount=false",
+                         "-Dlibmount=disabled",
                          "-Dinstalled_tests=false"}
-        if is_plat("macosx") then
+        if package:is_plat("macosx") and package:version():le("2.61.0") then
             table.insert(configs, "-Diconv=native")
         end
         table.insert(configs, "-Dgio_module_dir=" .. path.join(package:installdir(), "lib/gio/modules"))
-        if is_plat("linux") then
-            table.insert(configs, "--libdir=" .. package:installdir("lib"))
-        end
+        table.insert(configs, "--libdir=lib")
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("gio/meson.build", "subdir%('tests'%)", "")

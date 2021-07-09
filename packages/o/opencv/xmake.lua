@@ -10,76 +10,111 @@ package("opencv")
     add_versions("4.2.0", "9ccb2192d7e8c03c58fee07051364d94ed7599363f3b0dce1c5e6cc11c1bb0ec")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
+    add_resources("4.5.2", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.2.tar.gz", "9f52fd3114ac464cb4c9a2a6a485c729a223afb57b9c24848484e55cef0b5c2a")
+    add_resources("4.5.1", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.1.tar.gz", "12c3b1ddd0b8c1a7da5b743590a288df0934e5cef243e036ca290c2e45e425f5")
+    add_resources("4.2.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.2.0.tar.gz", "8a6b5661611d89baa59a26eb7ccf4abb3e55d73f99bb52d8f7c32265c8a43020")
+    add_resources("3.4.9", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz", "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57")
+
+    add_configs("bundled", {description = "Build 3rd-party libraries with OpenCV.", default = true, type = "boolean"})
+
     add_deps("cmake", "python 3.x", {kind = "binary"})
-    add_deps("zlib")
+
+    local features = {"1394",
+                      "vtk",
+                      "eigen",
+                      "ffmpeg",
+                      "gstreamer",
+                      "gtk",
+                      "ipp",
+                      "halide",
+                      "vulkan",
+                      "jasper",
+                      "openjpeg",
+                      "jpeg",
+                      "webp",
+                      "openexr",
+                      "opengl",
+                      "png",
+                      "tbb",
+                      "tiff",
+                      "itt",
+                      "protobuf",
+                      "quirc"}
+    local default_features = {"1394", "eigen", "ffmpeg", "jpeg", "opengl", "png", "protobuf", "quirc", "webp", "tiff"}
+    local function opencv_is_default(feature)
+        for _, df in ipairs(default_features) do
+            if feature == df then
+                return true
+            end
+        end
+        return false
+    end
+
+    for _, feature in ipairs(features) do
+        add_configs(feature, {description = "Include " .. feature .. " support.", default = opencv_is_default(feature), type = "boolean"})
+    end
+    add_configs("blas", {description = "Set BLAS vendor.", default = nil, type = "string", values = {"mkl", "openblas"}})
+    add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
+    add_configs("dynamic_parallel", {description = "Dynamically load parallel runtime (TBB etc.).", default = false, type = "boolean"})
 
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
-        add_syslinks("gdi32", "user32", "advapi32", "comdlg32")
+        add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32")
     end
 
-    add_resources("4.5.2", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.2.tar.gz", "9f52fd3114ac464cb4c9a2a6a485c729a223afb57b9c24848484e55cef0b5c2a")
-    add_resources("4.5.1", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.1.tar.gz", "12c3b1ddd0b8c1a7da5b743590a288df0934e5cef243e036ca290c2e45e425f5")
-    add_resources("4.2.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.2.0.tar.gz", "8a6b5661611d89baa59a26eb7ccf4abb3e55d73f99bb52d8f7c32265c8a43020")
-    add_resources("3.4.9", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz", "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57")
-
-    on_load("linux", "macosx", function (package)
-        if package:version():ge("4.0") then
+    on_load("linux", "macosx", "windows", function (package)
+        if package:is_plat("windows") then
+            local arch = (package:is_arch("x64") and "x64" or "x86")
+            local linkdir = (package:config("shared") and "lib" or "staticlib")
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            local vc_ver = "vc13"
+            if     vs == "2015" then vc_ver = "vc14"
+            elseif vs == "2017" then vc_ver = "vc15"
+            elseif vs == "2019" then vc_ver = "vc16"
+            end
+            package:add("linkdirs", path.join(arch, vc_ver, linkdir))
+        elseif package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
         end
-    end)
-
-    on_load("windows", function (package)
-        local arch = (package:is_arch("x64") and "x64" or "x86")
-        local linkdir = (package:config("shared") and "lib" or "staticlib")
-        local vs = import("core.tool.toolchain").load("msvc"):config("vs")
-        local vc_ver = "vc13"
-        if     vs == "2015" then vc_ver = "vc14"
-        elseif vs == "2017" then vc_ver = "vc15"
-        elseif vs == "2019" then vc_ver = "vc16"
+        if package:config("blas") then
+            package:add("deps", package:config("blas"))
         end
-        package:add("linkdirs", path.join(arch, vc_ver, linkdir))
-        package:addenv("PATH", path.join(arch, vc_ver, "bin"))
+        if package:config("cuda") then
+            package:add("deps", "cuda", {system = true, configs = {utils = {"cudnn", "cufft", "cublas"}}})
+        end
     end)
 
     on_install("linux", "macosx", "windows", function (package)
         io.replace("cmake/OpenCVUtils.cmake", "if(PKG_CONFIG_FOUND OR PkgConfig_FOUND)", "if(NOT WIN32 AND (PKG_CONFIG_FOUND OR PkgConfig_FOUND))", {plain = true})
         local configs = {"-DCMAKE_OSX_DEPLOYMENT_TARGET=",
-                         "-DBUILD_JASPER=OFF",
-                         "-DBUILD_JPEG=ON",
-                         "-DBUILD_OPENEXR=OFF",
                          "-DBUILD_PERF_TESTS=OFF",
-                         "-DBUILD_PNG=OFF",
                          "-DBUILD_TESTS=OFF",
-                         "-DBUILD_TIFF=OFF",
-                         "-DBUILD_ZLIB=OFF",
                          "-DBUILD_opencv_hdf=OFF",
                          "-DBUILD_opencv_java=OFF",
                          "-DBUILD_opencv_text=ON",
                          "-DOPENCV_ENABLE_NONFREE=ON",
                          "-DOPENCV_GENERATE_PKGCONFIG=ON",
-                         "-DWITH_1394=OFF",
-                         "-DWITH_CUDA=OFF",
-                         "-DWITH_EIGEN=ON",
-                         "-DWITH_FFMPEG=ON",
-                         "-DWITH_GPHOTO2=OFF",
-                         "-DWITH_GSTREAMER=OFF",
-                         "-DWITH_JASPER=OFF",
-                         "-DWITH_OPENEXR=ON",
-                         "-DWITH_OPENGL=OFF",
-                         "-DWITH_QT=OFF",
-                         "-DWITH_TBB=ON",
-                         "-DWITH_VTK=OFF",
-                         "-DWITH_ITT=OFF",
-                         "-DWITH_IPP=OFF",
-                         "-DWITH_LAPACK=OFF",
                          "-DBUILD_opencv_python2=OFF",
-                         "-DBUILD_opencv_python3=ON"}
+                         "-DBUILD_opencv_python3=OFF",
+                         "-DBUILD_JAVA=OFF"}
+        if package:config("bundled") then
+            table.insert(configs, "-DOPENCV_FORCE_3RDPARTY_BUILD=ON")
+        end
+        for _, feature in ipairs(features) do
+            table.insert(configs, "-DWITH_" .. feature:upper() .. "=" .. (package:config(feature) and "ON" or "OFF"))
+        end
+        if package:config("cuda") then
+            table.insert(configs, "-DWITH_CUDA=ON")
+        end
+        table.insert(configs, "-DPARALLEL_ENABLE_PLUGINS=" .. (package:config("dynamic_parallel") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        end
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then
             import("lib.detect.find_path")
@@ -107,15 +142,13 @@ package("opencv")
             for _, f in ipairs(os.files(path.join(instdir, linkdir, "*.lib"))) do
                 package:add("links", path.basename(f))
             end
+            package:addenv("PATH", path.join(arch, vc_ver, "bin"))
         else
             os.trycp("3rdparty/**/*.a", package:installdir("lib"))
         end
     end)
 
     on_test(function (package)
-        if package:is_plat("windows") then
-            os.vrun("opencv_version")
-        end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             void test(int argc, char** argv) {

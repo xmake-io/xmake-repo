@@ -3,6 +3,8 @@ name: MingW (MacOS)
 on:
   pull_request:
   push:
+    branches:
+      - dev
 
 jobs:
   build:

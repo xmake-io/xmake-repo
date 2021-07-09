@@ -7,6 +7,7 @@ package("ncurses")
              "https://invisible-mirror.net/archives/ncurses/ncurses-$(version).tar.gz",
              "ftp://ftp.gnu.org/gnu/ncurses/ncurses-$(version).tar.gz")
     add_versions("6.1", "aa057eeeb4a14d470101eff4597d5833dcef5965331be3528c08d99cebaa0d17")
+    add_versions("6.2", "30306e0c76e0f9f1f0de987cf1c82a5c21e1ce6568b9227f7da5b71cbea86c9d")
 
     add_configs("widec", { description = "Compile with wide-char/UTF-8 code.", default = true, type = "boolean"})
 

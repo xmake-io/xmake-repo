@@ -1,0 +1,33 @@
+diff --git a/folly/experimental/TestUtil.cpp b/folly/experimental/TestUtil.cpp
+--- a/folly/experimental/TestUtil.cpp
++++ b/folly/experimental/TestUtil.cpp
+@@ -19,6 +19,7 @@
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ 
++#include <folly/portability/Windows.h>
+ #include <boost/regex.hpp>
+ #include <glog/logging.h>
+ 
+diff --git a/folly/experimental/io/HugePages.cpp b/folly/experimental/io/HugePages.cpp
+--- a/folly/experimental/io/HugePages.cpp
++++ b/folly/experimental/io/HugePages.cpp
+@@ -27,6 +27,7 @@
+ #include <stdexcept>
+ #include <system_error>
+ 
++#include <folly/portability/Windows.h>
+ #include <boost/regex.hpp>
+ 
+ #include <folly/Conv.h>
+diff --git a/folly/Benchmark.cpp b/folly/Benchmark.cpp
+--- a/folly/Benchmark.cpp
++++ b/folly/Benchmark.cpp
+@@ -29,6 +29,7 @@
+ #include <utility>
+ #include <vector>
+ 
++#include <folly/portability/Windows.h>
+ #include <boost/regex.hpp>
+ 
+ #include <folly/FileUtil.h>

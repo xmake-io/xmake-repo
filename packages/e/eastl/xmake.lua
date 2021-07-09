@@ -6,22 +6,20 @@ package("eastl")
 
     add_urls("https://github.com/electronicarts/EASTL/archive/$(version).tar.gz")
     add_versions("3.17.03", "50a072066e30fda364d482df6733572d8ca440a33825d81254b59a6ca9f4375a")
+    add_versions("3.17.06", "9ebeef26cdf091877ee348450d2711cd0bb60ae435309126c0adf8fec9a01ea5")
 
     add_deps("cmake")
     add_deps("eabase")
 
     on_install("windows", "linux", "macosx", function (package)
-        io.gsub("CMakeLists.txt", "add_subdirectory%(test/packages/EABase%)", "#")
-        local configs = {}
-        table.insert(configs, "-DEASTL_BUILD_BENCHMARK:BOOL=OFF")
-        import("package.tools.cmake").build(package, configs, {buildir = "build", packagedeps = "eabase"})
-        if package:is_plat("windows") then
-            os.trycp("build/*.lib", package:installdir("lib"))
-            os.trycp("build/*.dll", package:installdir("bin"))
-        else
-            os.trycp("build/*.a", package:installdir("lib"))
-            os.trycp("build/*.so", package:installdir("lib"))
+        io.replace("CMakeLists.txt", "add_subdirectory(test/packages/EABase)", "", {plain = true})
+        io.replace("CMakeLists.txt", "target_link_libraries(EASTL EABase)", "", {plain = true})
+        local configs = {"-DEASTL_BUILD_TESTS=OFF", "-DEASTL_BUILD_BENCHMARK=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        if not package:is_plat("windows") then
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         end
+        import("package.tools.cmake").install(package, configs, {packagedeps = "eabase"})
         os.cp("include/EASTL", package:installdir("include"))
     end)
 

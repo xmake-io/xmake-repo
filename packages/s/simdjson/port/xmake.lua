@@ -22,7 +22,9 @@ option("logging")
 target("simdjson")   
     set_languages("c++17")
     set_kind("$(kind)")
+    if is_plat("windows") and is_kind("shared") then
+        add_defines("SIMDJSON_BUILDING_WINDOWS_DYNAMIC_LIBRARY")
+    end
     add_options("threads", "noexceptions", "logging")
     add_files("singleheader/simdjson.cpp")
     add_headerfiles("singleheader/simdjson.h")
-    
