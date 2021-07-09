@@ -14,13 +14,13 @@ package("opencc")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "bsd", function (package)
+    on_install("windows", "mingw@windows,msys", "linux", "macosx", "bsd", function (package)
         local configs = {"-DBUILD_DOCUMENTATION=OFF", "-DENABLE_GTEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test("windows", "mingw", "linux", "macosx", "bsd", function (package)
+    on_test("windows", "mingw@windows,msys", "linux", "macosx", "bsd", function (package)
         assert(package:has_cfuncs("opencc_open", {includes = "opencc/opencc.h"}))
     end)
