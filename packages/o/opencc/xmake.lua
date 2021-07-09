@@ -8,10 +8,13 @@ package("opencc")
 
     add_patches("1.1.2", path.join(os.scriptdir(), "patches", "1.1.2", "fix-static.patch"), "a51b58d5d092a057461bc8c7661546cde5c39af3c1f4438abc1d89e1a1df7122")
 
-    add_deps("cmake", "python 3.x", {kind = "binary"})
+    add_deps("cmake", {kind = "binary"})
+    if not is_plat("bsd") then
+        add_deps("python 3.x", {kind = "binary"})
+    end
 
     on_load(function (package)
-        if package:is_plat("linux") and not package:config("shared") then
+        if package:is_plat("linux", "mingw") and not package:config("shared") then
             package:add("links", "opencc", "marisa")
         end
         package:addenv("PATH", "bin")
