@@ -1,3 +1,24 @@
+diff --git a/data/CMakeLists.txt b/data/CMakeLists.txt
+index e9b921f..b55e7b4 100644
+--- a/data/CMakeLists.txt
++++ b/data/CMakeLists.txt
+@@ -1,6 +1,7 @@
+ find_package(PythonInterp REQUIRED)
+ 
+ set(OPENCC_DICT_BIN opencc_dict)
++set(OPENCC_DICT_EXECUTABLE "$<TARGET_FILE:${OPENCC_DICT_BIN}>")
+ set(DICT_MERGE_BIN "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge.py")
+ set(DICT_REVERSE_BIN "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/scripts/reverse.py")
+ set(DICT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dictionary)
+@@ -136,7 +137,7 @@ foreach(DICT ${DICTS})
+     COMMENT
+       "Building ${DICT}.ocd2"
+     COMMAND
+-      ${OPENCC_DICT_BIN}
++      ${OPENCC_DICT_EXECUTABLE}
+         --input ${DICT_${DICT}_INPUT}
+         --output ${DICT}.ocd2
+         --from text
 diff --git a/deps/marisa-0.2.6/CMakeLists.txt b/deps/marisa-0.2.6/CMakeLists.txt
 index 305f273..1472532 100644
 --- a/deps/marisa-0.2.6/CMakeLists.txt

@@ -6,7 +6,7 @@ package("opencc")
     set_urls("https://github.com/BYVoid/OpenCC/archive/ver.$(version).zip")
     add_versions("1.1.2", "b4a53564d0de446bf28c8539a8a17005a3e2b1877647b68003039e77f8f7d9c2")
 
-    add_patches("1.1.2", path.join(os.scriptdir(), "patches", "1.1.2", "fix-static.patch"), "8f6369e2133a8415bcdb73128814dda900a0833a8aaf6f6fb164e0aaf621adac")
+    add_patches("1.1.2", path.join(os.scriptdir(), "patches", "1.1.2", "fix-static.patch"), "a51b58d5d092a057461bc8c7661546cde5c39af3c1f4438abc1d89e1a1df7122")
 
     add_deps("cmake")
 
