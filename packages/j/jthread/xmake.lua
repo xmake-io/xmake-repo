@@ -11,8 +11,11 @@ package("jthread")
     add_configs("configs", {description = "Configs for this library.", default = "", type = "string"})
 
     add_deps("cmake")
-    on_install("linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local confs = {}
+        if package:config("shared") then
+            table.insert(confs, "-DBUILD_SHARED_LIBS=ON")
+        end
         string.gsub(package:config("configs"), '[^ ]+', function(w)
             table.insert(confs, w)
         end)
