@@ -8,12 +8,18 @@ package("opencc")
 
     add_patches("1.1.2", path.join(os.scriptdir(), "patches", "1.1.2", "fix-static.patch"), "a51b58d5d092a057461bc8c7661546cde5c39af3c1f4438abc1d89e1a1df7122")
 
-    add_deps("cmake")
+    add_deps("cmake", "python 3.x", {kind = "binary"})
+
+    if is_plat("linux") then
+        -- FIXME: marisa only needed for kind static
+        add_links("opencc", "marisa")
+    end
 
     on_load(function (package)
         package:addenv("PATH", "bin")
     end)
 
+    -- FIXME: 'cmake -DUSE_SYSTEM_MARISA=ON' to find xmake'd marisa?
     on_install("windows", "mingw@windows,msys", "linux", "macosx", "bsd", function (package)
         local configs = {"-DBUILD_DOCUMENTATION=OFF", "-DENABLE_GTEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
