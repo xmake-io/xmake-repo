@@ -20,6 +20,7 @@ package("c-ares")
         end
         import("package.tools.nmake").build(package, configs)
         os.cp(path.join("include", "*.h"), package:installdir("include"))
+        os.cp(path.join("src/lib", "nameser.h"), package:installdir("include"))
         os.cp(path.join("msvc", "cares", cfg, "*.lib"), package:installdir("lib"))
         os.trycp(path.join("msvc", "cares", cfg, "*.dll"), package:installdir("bin"))
         if not package:config("shared") then

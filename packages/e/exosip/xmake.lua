@@ -11,12 +11,51 @@ package("exosip")
 
     add_configs("configs", {description = "Configs for this library.", default = "", type = "string"})
 
+    on_install("windows", function(package)
+        import("package.tools.msbuild")
+        local name = path.filename(os.curdir())
+        os.cd("..")
+        local cur_dir = os.curdir() .. "\\"
+        os.mv(cur_dir .. name, cur_dir .. "\\exosip")
+        os.cd(cur_dir .. "\\exosip")
+        local arch = package:is_arch("x64") and "x64" or "x86"
+        local mode = package:debug() and "Debug" or "Release"
+        local configs = { "eXosip.sln" }
+        table.insert(configs, "/t:eXosip")
+        table.insert(configs, "/property:Configuration=" .. mode)
+        table.insert(configs, "/property:Platform=" .. arch)
+        table.insert(configs, "/p:BuildProjectReferences=false")
+        local deps_include_dir = ""
+        local deps_lib_dir = ""
+        for _, dep in pairs(package:deps()) do
+            print("dep ", dep:name(), "include: ", dep:installdir("include"))
+            deps_include_dir = deps_include_dir .. dep:installdir("include") .. ";"
+            deps_lib_dir = deps_lib_dir .. dep:installdir("lib") .. ";"
+        end
+        for name, envv in pairs(msbuild.buildenvs()) do
+            print(name, ": ", envv)
+            if name == "INCLUDE" then
+                deps_include_dir = deps_include_dir .. envv
+            end
+            if name == "LIB" then
+                deps_lib_dir = deps_lib_dir .. envv
+            end
+        end
+        table.insert(configs, "/p:IncludePath=\"" .. deps_include_dir .. "\"")
+        table.insert(configs, "/p:LibPath=\"" .. deps_lib_dir .. "\"")
+        local oldir = os.cd("platform/vsnet")
+        msbuild.build(package, configs)
+        os.cd(oldir)
+        os.vcp("include/eXosip2/*.h", package:installdir("include/eXosip2"))
+        if package:config("shared") then
+            os.vcp(path.join("platform/vsnet/v141", arch, mode, "eXosip.lib"), package:installdir("lib"))
+            os.vcp(path.join("platform/vsnet/v141", arch, mode, "eXosip.dll"), package:installdir("lib"))
+        else
+            os.vcp(path.join("platform/vsnet/v141", arch, mode, "eXosip.lib"), package:installdir("lib"))
+        end
+    end)
+
     on_install("linux", "macosx", function (package)
---         local configs = { "--enable-shared",
---                           "--enable-static",
---                           "--enable-mt",
---                           "--enable-openssl" }
---         import("package.tools.autoconf").install(package, configs)
         local confs = {}
         string.gsub(package:config("configs"), '[^ ]+', function(w)
             table.insert(confs, w)
@@ -25,5 +64,20 @@ package("exosip")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("eXosip_malloc", {includes = "eXosip2/eXosip.h"}))
+        local confs = {}
+        if package:plat() == "windows" then
+            confs["defines"] = "WIN32"
+            confs["cflags"] = "/c"
+        end
+        assert(package:check_cxxsnippets({test = [[
+            #include <eXosip2/eXosip.h>
+            #ifdef WIN32
+                #include <winsock.h>
+            #endif
+
+            static void test() {
+              eXosip_t* sip = eXosip_malloc();
+              eXosip_quit(sip);
+            }
+        ]]}, {configs = confs}))
     end)
