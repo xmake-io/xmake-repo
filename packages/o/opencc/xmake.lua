@@ -10,16 +10,13 @@ package("opencc")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
 
-    if is_plat("linux") then
-        -- FIXME: marisa only needed for kind static
-        add_links("opencc", "marisa")
-    end
-
     on_load(function (package)
+        if package:is_plat("linux") and not package:config("shared") then
+            package:add("links", "opencc", "marisa")
+        end
         package:addenv("PATH", "bin")
     end)
 
-    -- FIXME: 'cmake -DUSE_SYSTEM_MARISA=ON' to find xmake'd marisa?
     on_install("windows", "mingw@windows,msys", "linux", "macosx", "bsd", function (package)
         local configs = {"-DBUILD_DOCUMENTATION=OFF", "-DENABLE_GTEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
