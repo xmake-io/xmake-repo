@@ -10,6 +10,9 @@ package("gtest")
     add_versions("github:1.10.0", "release-1.10.0")
     add_versions("archive:1.10.0", "94c634d499558a76fa649edb13721dce6e98fb1e7018dfaeba3cd7a083945e91")
 
+    add_configs("main",  {description = "Link to the gtest_main entry point.", default = false, type = "boolean"})
+    add_configs("gmock", {description = "Link to the googlemock library.", default = true, type = "boolean"})
+
     if is_plat("linux") then
         add_syslinks("pthread")
     end
@@ -23,9 +26,18 @@ package("gtest")
                 add_includedirs("googletest/include", "googletest")
                 add_headerfiles("googletest/include/(**.h)")
 
+            target("gtest_main")
+                set_kind("static")
+                set_languages("cxx11")
+                set_default(]] .. tostring(package:config("gtest_main")) .. [[)
+                add_files("googletest/src/gtest_main.cc")
+                add_includedirs("googletest/include", "googletest")
+                add_headerfiles("googletest/include/(**.h)")
+
             target("gmock")
                 set_kind("static")
                 set_languages("cxx11")
+                set_default(]] .. tostring(package:config("gmock")) .. [[)
                 add_files("googlemock/src/gmock-all.cc")
                 add_includedirs("googlemock/include", "googlemock", "googletest/include", "googletest")
                 add_headerfiles("googlemock/include/(**.h)")
