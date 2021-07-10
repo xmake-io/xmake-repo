@@ -14,7 +14,7 @@ package("spdlog")
     add_versions("v1.4.2", "56b90f0bd5b126cf1b623eeb19bf4369516fa68f036bbc22d9729d2da511fb5a")
     add_versions("v1.3.1", "db6986d0141546d4fba5220944cc1f251bd8afdfc434bda173b4b0b6406e3cd0")
 
-    add_patches("v1.8.5", path.join(os.scriptdir(), "patches", "1.8.5", "spdlog-1.8.5-fmt8.patch"), "42c2350ac24b76d49f39bb6f9d8f067ce5f40102c6f62cf81671033b2955be6b")
+    add_patches("v1.8.5", path.join(os.scriptdir(), "patches", "1.8.5", "spdlog-1.8.5-fmt8.patch"), "c1627ddbe1c7a918e608a6550f7a6a3401ebcc37577f8d536350f0a587327b32")
 
     add_configs("header_only",  { description = "Use header only", default = true, type = "boolean"})
     add_configs("fmt_external", { description = "Use external fmt library instead of bundled", default = false, type = "boolean"})
