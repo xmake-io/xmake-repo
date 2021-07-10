@@ -17,6 +17,9 @@ package("opencc")
         if package:is_plat("linux", "mingw") and not package:config("shared") then
             package:add("links", "opencc", "marisa")
         end
+        if not package:config("shared") then
+            package:add("defines", "Opencc_BUILT_AS_STATIC")
+        end
         package:addenv("PATH", "bin")
     end)
 
@@ -29,4 +32,9 @@ package("opencc")
 
     on_test("windows", "mingw@windows,msys", "linux", "macosx", "bsd", function (package)
         assert(package:has_cfuncs("opencc_open", {includes = "opencc/opencc.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                opencc::Config config;
+            }
+        ]]}, {includes = {"opencc/Config.hpp"}}))
     end)
