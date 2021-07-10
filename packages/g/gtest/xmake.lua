@@ -9,6 +9,8 @@ package("gtest")
     add_versions("archive:1.8.1", "927827c183d01734cc5cfef85e0ff3f5a92ffe6188e0d18e909c5efebf28a0c7")
     add_versions("github:1.10.0", "release-1.10.0")
     add_versions("archive:1.10.0", "94c634d499558a76fa649edb13721dce6e98fb1e7018dfaeba3cd7a083945e91")
+    add_versions("github:1.11.0", "release-1.11.0")
+    add_versions("archive:1.11.0", "353571c2440176ded91c2de6d6cd88ddd41401d14692ec1f99e35d013feda55a")
 
     add_configs("main",  {description = "Link to the gtest_main entry point.", default = false, type = "boolean"})
     add_configs("gmock", {description = "Link to the googlemock library.", default = true, type = "boolean"})
