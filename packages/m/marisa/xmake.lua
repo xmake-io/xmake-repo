@@ -9,7 +9,7 @@ package("marisa")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "mingw", "linux", "macosx", "bsd", function (package)
         os.cp(path.join(package:scriptdir(), "port", "CMakeLists.txt"), "CMakeLists.txt")
         local configs = {"-DENABLE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
