@@ -3,9 +3,9 @@ package("spdlog")
     set_homepage("https://github.com/gabime/spdlog")
     set_description("Fast C++ logging library.")
 
-    set_urls("https://github.com/gabime/spdlog/archive/$(version).zip",
+    set_urls(--"https://github.com/gabime/spdlog/archive/$(version).zip",
              "https://github.com/gabime/spdlog.git")
-             
+
     add_versions("v1.8.5", "6e66c8ed4c014b0fb00c74d34eea95b5d34f6e4b51b746b1ea863dc3c2e854fd")
     add_versions("v1.8.2", "f0410b12b526065802b40db01304783550d3d20b4b6fe2f8da55f9d08ed2035d")
     add_versions("v1.8.1", "eed0095a1d52d08a0834feda146d4f9148fa4125620cd04d8ea57e0238fa39cd")
@@ -14,7 +14,7 @@ package("spdlog")
     add_versions("v1.4.2", "56b90f0bd5b126cf1b623eeb19bf4369516fa68f036bbc22d9729d2da511fb5a")
     add_versions("v1.3.1", "db6986d0141546d4fba5220944cc1f251bd8afdfc434bda173b4b0b6406e3cd0")
 
-    add_patches("v1.8.5", path.join(os.scriptdir(), "patches", "1.8.5", "spdlog-1.8.5-fmt8.patch"), "42c2350ac24b76d49f39bb6f9d8f067ce5f40102c6f62cf81671033b2955be6b")
+    add_patches("v1.8.5", path.join(os.scriptdir(), "patches", "1.8.5", "spdlog-1.8.5-fmt8.patch"), "843ae1f3e654bc545ede6b3b2171ea9ffe10a2befa77cd8d503d6a67acb3034f")
 
     add_configs("header_only",  { description = "Use header only", default = true, type = "boolean"})
     add_configs("fmt_external", { description = "Use external fmt library instead of bundled", default = false, type = "boolean"})
