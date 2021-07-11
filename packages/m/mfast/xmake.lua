@@ -35,9 +35,5 @@ package("mfast")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            static void test() {
-                mfast::fast_decoder decoder{};
-            }
-        ]]}, {configs = {languages = "c++14"}, includes = "mfast/coder/fast_decoder.h"}))
+        assert(package:has_cxxtypes("mfast::fast_decoder", {configs = {languages = "c++14"}, includes = "mfast/coder/fast_decoder.h"}))
     end)
