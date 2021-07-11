@@ -13,7 +13,7 @@ package("mfast")
     add_configs("sqlite", {description = "Build with SQLite support.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("boost", {configs = {container = true}})
+    add_deps("boost", {configs = {container = true, date_time = true, exception = true, iostreams = true, regex = true}})
     add_deps("tinyxml2")
 
     on_load(function (package)
@@ -32,4 +32,12 @@ package("mfast")
             table.insert(configs, "-DBUILD_SQLITE3=ON")
         end
         import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            static void test() {
+                mfast::fast_decoder decoder{};
+            }
+        ]]}, {configs = {languages = "c++14"}, includes = "mfast/coder/fast_decoder.h"}))
     end)
