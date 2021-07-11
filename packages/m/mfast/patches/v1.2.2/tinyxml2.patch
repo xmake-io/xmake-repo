@@ -1,0 +1,88 @@
+diff --git a/src/mfast/xml_parser/CMakeLists.txt b/src/mfast/xml_parser/CMakeLists.txt
+--- a/src/mfast/xml_parser/CMakeLists.txt
++++ b/src/mfast/xml_parser/CMakeLists.txt
+@@ -6,12 +6,12 @@ file (GLOB_RECURSE sources "*.cpp")     ## retrieve all source files in current
+ 
+ set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+ 
+-include_directories("${CMAKE_SOURCE_DIR}/tinyxml2")
++find_package(tinyxml2 REQUIRED)
+ 
+-set(mfast_xml_parser_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../../tinyxml2/tinyxml2.cpp ${sources} ${headers})
++set(mfast_xml_parser_SRCS ${sources} ${headers})
+ 
+ add_library(mfast_xml_parser_static STATIC ${mfast_xml_parser_SRCS})
+-target_link_libraries(mfast_xml_parser_static mfast_static)
++target_link_libraries(mfast_xml_parser_static mfast_static tinyxml2)
+ 
+ if (UNIX)
+   set_target_properties(mfast_xml_parser_static PROPERTIES OUTPUT_NAME mfast_xml_parser)
+@@ -39,7 +39,7 @@ if (BUILD_SHARED_LIBS)
+     set_target_properties(mfast_xml_parser PROPERTIES COMPILE_FLAGS -fvisibility=hidden)
+   endif()
+ 
+-  target_link_libraries(mfast_xml_parser mfast)
++  target_link_libraries(mfast_xml_parser mfast tinyxml2)
+   set_target_properties(mfast_xml_parser PROPERTIES
+                         LINKER_LANGUAGE CXX
+                         VERSION "${MFAST_VERSION}"
+diff --git a/src/mfast/xml_parser/FastXMLVisitor.h b/src/mfast/xml_parser/FastXMLVisitor.h
+--- a/src/mfast/xml_parser/FastXMLVisitor.h
++++ b/src/mfast/xml_parser/FastXMLVisitor.h
+@@ -12,7 +12,7 @@
+ #include <cstring>
+ #include <deque>
+ 
+-#include "tinyxml2.h"
++#include <tinyxml2.h>
+ 
+ using namespace tinyxml2;
+ 
+diff --git a/src/mfast/xml_parser/fast_xml_attributes.h b/src/mfast/xml_parser/fast_xml_attributes.h
+--- a/src/mfast/xml_parser/fast_xml_attributes.h
++++ b/src/mfast/xml_parser/fast_xml_attributes.h
+@@ -5,7 +5,7 @@
+ // See the file license.txt for licensing information.
+ #pragma once
+ 
+-#include "tinyxml2.h"
++#include <tinyxml2.h>
+ #include "../instructions/field_instruction.h"
+ #include <cstring>
+ #include <boost/lexical_cast.hpp>
+diff --git a/src/mfast/xml_parser/templates_builder.h b/src/mfast/xml_parser/templates_builder.h
+--- a/src/mfast/xml_parser/templates_builder.h
++++ b/src/mfast/xml_parser/templates_builder.h
+@@ -2,7 +2,7 @@
+ 
+ #include <string>
+ #include "../field_instructions.h"
+-#include "tinyxml2.h"
++#include <tinyxml2.h>
+ #include "field_builder.h"
+ #include "dynamic_templates_description.h"
+ #include <boost/utility.hpp>
+diff --git a/src/mfast/xml_parser/view_info_builder.h b/src/mfast/xml_parser/view_info_builder.h
+--- a/src/mfast/xml_parser/view_info_builder.h
++++ b/src/mfast/xml_parser/view_info_builder.h
+@@ -3,7 +3,7 @@
+ #include <map>
+ #include <deque>
+ #include <mfast.h>
+-#include "tinyxml2.h"
++#include <tinyxml2.h>
+ #include "../view_iterator.h"
+ 
+ namespace mfast {
+diff --git a/src/mfast/xml_parser/xml_util.h b/src/mfast/xml_parser/xml_util.h
+--- a/src/mfast/xml_parser/xml_util.h
++++ b/src/mfast/xml_parser/xml_util.h
+@@ -5,7 +5,7 @@
+ // See the file license.txt for licensing information.
+ #pragma once
+ 
+-#include "tinyxml2.h"
++#include <tinyxml2.h>
+ #include "../arena_allocator.h"
+ 
+ namespace mfast {
