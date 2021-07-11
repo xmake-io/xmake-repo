@@ -17,5 +17,5 @@ package("python-launcher")
     end)
 
     on_test(function (package)
-        os.vrun("py -h")
+        os.vrun("py -0p")
     end)

@@ -78,9 +78,9 @@ package("python")
         else
             os.cp("python.exe", path.join(package:installdir("bin"), "python2.exe"))
         end
-        os.mv("*.exe", package:installdir("bin"))
-        os.mv("*.dll", package:installdir("bin"))
-        os.mv("Lib", package:installdir())
+        os.cp("*.exe", package:installdir("bin"))
+        os.cp("*.dll", package:installdir("bin"))
+        os.cp("Lib", package:installdir())
         os.cp("libs/*", package:installdir("lib"))
         os.cp("*", package:installdir())
         local python = path.join(package:installdir("bin"), "python.exe")

@@ -11,12 +11,14 @@ package("icu4c")
     add_versions("68.1", "a9f2e3d8b4434b8e53878b4308bd1e6ee51c9c7042e2b1a376abefb6fbb29f2d")
     add_versions("64.2", "627d5d8478e6d96fc8c90fed4851239079a561a6a8b9e48b0892f24e82d31d6c")
 
+    add_patches("69.1", path.join(os.scriptdir(), "patches", "69.1", "replace-py-3.patch"), "d0a5172389a09d740b7c458c4286c22fd0400179a9a79c96d5296bc2ed82ccac")
+
     add_links("icuuc", "icutu", "icui18n", "icuio", "icudata")
     if is_plat("linux") then
         add_syslinks("dl")
     end
     if is_plat("windows") then
-        add_deps("python 3.x", "python-launcher", {kind = "binary"})
+        add_deps("python 3.x", {kind = "binary"})
     end
 
     on_install("windows", function (package)
