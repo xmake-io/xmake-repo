@@ -8,7 +8,7 @@ package("mfast")
              "https://github.com/objectcomputing/mFAST.git")
     add_versions("v1.2.2", "bcfde8de2a621021841e330438f404041cd285bf10b4dc041f164876f3d8b692")
 
-    add_patches("v1.2.2", path.join(os.scriptdir(), "patches", "v1.2.2", "tinyxml2.patch"), "a9af5885309b6f66099b09083ac3b80727a76ee1911a07f64a210e6755cb42e4")
+    add_patches("v1.2.2", path.join(os.scriptdir(), "patches", "v1.2.2", "tinyxml2.patch"), "e0b92fa386ca9e0c1265391b9bb5505410cf82902d41126c786b7fe9a36f2b6b")
 
     add_configs("sqlite", {description = "Build with SQLite support.", default = true, type = "boolean"})
 
