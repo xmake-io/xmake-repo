@@ -1,6 +1,6 @@
-diff -ur orig/source/data/makedata.mak icu/source/data/makedata.mak
---- orig/source/data/makedata.mak       2021-04-08 08:10:27.000000000 +0800
-+++ icu/source/data/makedata.mak        2021-07-11 22:29:00.841861000 +0800
+diff -ur a/source/data/makedata.mak b/source/data/makedata.mak
+--- a/source/data/makedata.mak       2021-04-08 08:10:27.000000000 +0800
++++ b/source/data/makedata.mak       2021-07-11 22:29:00.841861000 +0800
 @@ -33,7 +33,7 @@
  !ENDIF
  !MESSAGE ICU data make path is $(ICUMAKE)
@@ -19,9 +19,9 @@ diff -ur orig/source/data/makedata.mak icu/source/data/makedata.mak
                 --mode windows-exec \
                 --src_dir "$(ICUSRCDATA)" \
                 --tool_dir "$(ICUTOOLS)" \
-diff -ur orig/source/test/testdata/testdata.mak icu/source/test/testdata/testdata.mak
---- orig/source/test/testdata/testdata.mak      2021-04-08 08:10:27.000000000 +0800
-+++ icu/source/test/testdata/testdata.mak       2021-07-11 22:43:29.411269200 +0800
+diff -ur a/source/test/testdata/testdata.mak b/source/test/testdata/testdata.mak
+--- a/source/test/testdata/testdata.mak      2021-04-08 08:10:27.000000000 +0800
++++ b/source/test/testdata/testdata.mak      2021-07-11 22:43:29.411269200 +0800
 @@ -35,7 +35,7 @@
  "$(TESTDATAOUT)\testdata.dat" :
         @echo Building test data
