@@ -16,23 +16,14 @@ package("icu4c")
         add_syslinks("dl")
     end
     if is_plat("windows") then
-        add_deps("python 3.x", {kind = "binary"})
+        add_deps("python 3.x", "python-launcher", {kind = "binary"})
     end
 
     on_install("windows", function (package)
-        import("package.tools.msbuild")
-
-        -- set configs
         local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
         table.insert(configs, "/p:Configuration=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
-
-        -- set envs
-        local envs = msbuild.buildenvs(package)
-        envs.PATH = package:dep("python"):installdir("bin") .. path.envsep() .. envs.PATH
-
-        -- build
-        msbuild.build(package, configs, {envs = envs})
+        import("package.tools.msbuild").build(package, configs)
         os.cp("include", package:installdir())
         os.cp("bin*/*", package:installdir("bin"))
         os.cp("lib*/*", package:installdir("lib"))
