@@ -22,7 +22,7 @@ package("mfast")
         end
     end)
 
-    on_install(function (package)
+    on_install("linux", "macosx", "windows", function (package)
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DBUILD_EXAMPLES=OFF",
                          "-DBUILD_PACKAGES=OFF"}
