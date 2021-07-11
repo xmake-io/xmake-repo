@@ -8,7 +8,7 @@ package("namedtype")
              "https://github.com/jamesdbrock/hffix.git")
     add_versions("v1.1.0", "7646ddb8ca19da31a8835b64493100a0f2239c28980f590918e0b5bfab4d736d")
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("linux", "macosx", function (package)
         os.cp("include/*.hpp", package:installdir("include/hffix"))
     end)
 
