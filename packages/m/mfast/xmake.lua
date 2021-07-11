@@ -10,7 +10,7 @@ package("mfast")
 
     add_patches("v1.2.2", path.join(os.scriptdir(), "patches", "v1.2.2", "tinyxml2.patch"), "e0b92fa386ca9e0c1265391b9bb5505410cf82902d41126c786b7fe9a36f2b6b")
 
-    add_configs("sqlite", {description = "Build with SQLite support.", default = true, type = "boolean"})
+    add_configs("sqlite", {description = "Build with SQLite support.", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("boost", {configs = {container = true}})
