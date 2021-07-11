@@ -36,3 +36,4 @@ package("yasm")
     on_test(function (package)
         os.vrun("yasm --version")
     end)
+    
