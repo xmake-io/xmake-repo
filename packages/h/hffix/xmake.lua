@@ -1,5 +1,6 @@
 package("hffix")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/jamesdbrock/hffix")
     set_description("C++ Library for FIX (Financial Information Exchange) Protocol.")
     set_license("BSD-2-Clause")
