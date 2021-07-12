@@ -1,7 +1,8 @@
-diff -ur a/source/data/makedata.mak b/source/data/makedata.mak
---- a/source/data/makedata.mak       2021-04-08 08:10:27.000000000 +0800
-+++ b/source/data/makedata.mak       2021-07-11 22:29:00.841861000 +0800
-@@ -33,7 +33,7 @@
+diff --git a/source/data/makedata.mak b/source/data/makedata.mak
+index 286c18a..48a9be3 100644
+--- a/source/data/makedata.mak
++++ b/source/data/makedata.mak
+@@ -33,7 +33,7 @@ ICU_LIB_TARGET=$(DLL_OUTPUT)\$(U_ICUDATA_NAME).dll
  !ENDIF
  !MESSAGE ICU data make path is $(ICUMAKE)
 
@@ -10,7 +11,7 @@ diff -ur a/source/data/makedata.mak b/source/data/makedata.mak
  !MESSAGE Information: Unable to find Python 3. Data will fail to build from source.
  !ENDIF
 
-@@ -283,7 +283,7 @@
+@@ -283,7 +283,7 @@ $(TOOLS_TS): "$(ICUTOOLS)\genrb\$(CFGTOOLS)\genrb.exe" "$(ICUTOOLS)\gencnval\$(C
  $(COREDATA_TS):
         @cd "$(ICUSRCDATA)"
         set PYTHONPATH=$(ICUP)\source\python;%PYTHONPATH%
@@ -19,10 +20,11 @@ diff -ur a/source/data/makedata.mak b/source/data/makedata.mak
                 --mode windows-exec \
                 --src_dir "$(ICUSRCDATA)" \
                 --tool_dir "$(ICUTOOLS)" \
-diff -ur a/source/test/testdata/testdata.mak b/source/test/testdata/testdata.mak
---- a/source/test/testdata/testdata.mak      2021-04-08 08:10:27.000000000 +0800
-+++ b/source/test/testdata/testdata.mak      2021-07-11 22:43:29.411269200 +0800
-@@ -35,7 +35,7 @@
+diff --git a/source/test/testdata/testdata.mak b/source/test/testdata/testdata.mak
+index 2809efd..591058b 100644
+--- a/source/test/testdata/testdata.mak
++++ b/source/test/testdata/testdata.mak
+@@ -35,7 +35,7 @@ CREATE_DIRS :
  "$(TESTDATAOUT)\testdata.dat" :
         @echo Building test data
         set PYTHONPATH=$(ICUP)\source\python;%PYTHONPATH%

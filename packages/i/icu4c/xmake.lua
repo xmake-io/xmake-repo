@@ -11,7 +11,7 @@ package("icu4c")
     add_versions("68.1", "a9f2e3d8b4434b8e53878b4308bd1e6ee51c9c7042e2b1a376abefb6fbb29f2d")
     add_versions("64.2", "627d5d8478e6d96fc8c90fed4851239079a561a6a8b9e48b0892f24e82d31d6c")
 
-    add_patches("69.1", path.join(os.scriptdir(), "patches", "69.1", "replace-py-3.patch"), "9109edac90fe61a14a5346340046a550aaf5789676589bd367e653efc7f277b6")
+    add_patches("69.1", path.join(os.scriptdir(), "patches", "69.1", "replace-py-3.patch"), "68c44de54cc09b19b629c632913a0b3fa4056358e699614917ca10fd51784f2b")
 
     add_links("icuuc", "icutu", "icui18n", "icuio", "icudata")
     if is_plat("linux") then
