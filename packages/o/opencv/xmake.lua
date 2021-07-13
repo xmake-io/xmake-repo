@@ -62,7 +62,7 @@ package("opencv")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
-        add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32")
+        add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32")
     end
 
     on_load("linux", "macosx", "windows", function (package)
