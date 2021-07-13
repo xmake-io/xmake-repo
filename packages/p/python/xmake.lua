@@ -10,12 +10,14 @@ package("python")
             add_versions("3.7.9", "55c8a408a11e598964f5d581589cf7f8c622e3cad048dce331ee5a61e5a6f57f")
             add_versions("3.8.10", "f520d2880578df076e3df53bf9e147b81b5328db02d8d873670a651fa076be50")
             add_versions("3.9.5", "ce0bfe8ced874d8d74a6cf6a98f13f5afee27cffbaf2d1ee0f09d3a027fab299")
+            add_versions("3.9.6", "2918246384dfb233bd8f8c2bcf6aa3688e6834e84ab204f7c962147c468f8d12")
         else
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
             add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
             add_versions("3.7.9", "d0d879c934b463d46161f933db53a676790d72f24e92143f629ee5629ae286bc")
             add_versions("3.8.10", "acf35048274404dd415e190bf5b928fae3b03d8bb5dfbfa504f9a183361468bd")
             add_versions("3.9.5", "3265059edac21bf4c46fac13553a5d78417e7aa209eceeffd0250aa1dd8d6fdf")
+            add_versions("3.9.6", "57ccd1b1b5fbc62882bd2a6f47df6e830ba39af741acf0a1d2f161eef4e87f2e")
         end
     else
         set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
@@ -24,6 +26,7 @@ package("python")
         add_versions("3.7.9", "39b018bc7d8a165e59aa827d9ae45c45901739b0bbb13721e4f973f3521c166a")
         add_versions("3.8.10", "b37ac74d2cbad2590e7cd0dd2b3826c29afe89a734090a87bf8c03c45066cb65")
         add_versions("3.9.5", "e0fbd5b6e1ee242524430dee3c91baf4cbbaba4a72dd1674b90fda87b713c7ab")
+        add_versions("3.9.6", "d0a35182e19e416fc8eae25a3dcd4d02d4997333e4ad1f2eee6010aadc3fe866")
     end
 
     if not is_plat(os.host()) then
@@ -75,9 +78,9 @@ package("python")
         else
             os.cp("python.exe", path.join(package:installdir("bin"), "python2.exe"))
         end
-        os.mv("*.exe", package:installdir("bin"))
-        os.mv("*.dll", package:installdir("bin"))
-        os.mv("Lib", package:installdir())
+        os.cp("*.exe", package:installdir("bin"))
+        os.cp("*.dll", package:installdir("bin"))
+        os.cp("Lib", package:installdir())
         os.cp("libs/*", package:installdir("lib"))
         os.cp("*", package:installdir())
         local python = path.join(package:installdir("bin"), "python.exe")
@@ -231,8 +234,5 @@ package("python")
         os.vrun("python -c \"import wheel\"")
         if package:kind() ~= "binary" then
             assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
-        end
-        if is_host("windows") and package:version():ge("3.8.0") and winos.version():gt("win8") then
-            os.vrun("py -3 -c \"import sys\"")
         end
     end)
