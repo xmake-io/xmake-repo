@@ -17,8 +17,6 @@ package("opencv")
 
     add_configs("bundled", {description = "Build 3rd-party libraries with OpenCV.", default = true, type = "boolean"})
 
-    add_deps("cmake", "python 3.x", {kind = "binary"})
-
     local features = {"1394",
                       "vtk",
                       "eigen",
@@ -84,6 +82,9 @@ package("opencv")
         end
         if package:config("cuda") then
             package:add("deps", "cuda", {system = true, configs = {utils = {"cudnn", "cufft", "cublas"}}})
+        end
+        if not package.is_built or package:is_built() then
+            package:add("deps", "cmake", "python 3.x", {kind = "binary"})
         end
     end)
 
