@@ -8,11 +8,12 @@ package("glew")
     add_versions("2.2.0", "a9046a913774395a095edcc0b0ac2d81c3aacca61787b39839b941e9be14e0d4")
 
     if is_plat("windows") or is_plat("mingw") then
-        add_syslinks("glu32", "opengl32")
+        add_syslinks("opengl32")
     elseif is_plat("linux") then
-        add_syslinks("GLU", "GL")
+        add_syslinks("GL")
         add_deps("libx11", "xorgproto")
     end
+    add_defines("GLEW_NO_GLU")
 
     on_load("windows", "mingw", function (package)
         if not package:config("shared") then
