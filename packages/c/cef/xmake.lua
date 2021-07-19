@@ -10,12 +10,11 @@ package("cef")
         ["90.5.3"]  = "90.5.3+gaf0e862+chromium-90.0.4430.72",
         ["91.1.22"] = "91.1.22+gc67b5dd+chromium-91.0.4472.124"
     }
-    
-    set_urls("https://cef-builds.spotifycdn.com/cef_binary_$(version).tar.bz2", {version = function (version)
-        return format("%s_windows%s", buildver[tostring(version)], (is_arch("x64") and "64" or "32"))
-    end})
-
+  
     if is_plat("windows") then
+        add_urls("https://cef-builds.spotifycdn.com/cef_binary_$(version).tar.bz2", {version = function (version)
+            return format("%s_windows%s", buildver[tostring(version)], (is_arch("x64") and "64" or "32"))
+        end})
         if is_arch("x64") then
             add_versions("91.1.22", "a01dd3f996061a8d0ddc1a2ab211340f9b3bb890eef3606329579b43101607dc")
             add_versions("90.5.3", "d92abe3e3d3aa2aa7bf25669fe7cb59a0232ee9eb14ad4f1ea60334f9485d0ef")
@@ -27,6 +26,7 @@ package("cef")
             add_versions("88.2.9", "90c15421d6d7b970ca839b746d8e85c09f449ae37d87d07f42dd45dfe16df455")
             add_versions("88.2.1", "f608e4028478d4c87541c679f5cfe42bda0d459a80ee26acfe93f634c25e96ab")
         end
+        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT", type = "string", readonly = true})
     end
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
