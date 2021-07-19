@@ -1,5 +1,5 @@
 add_rules("mode.release", "mode.debug")
-target("cef")
+target("cef_dll_wrapper")
     set_kind("static")
     add_files("libcef_dll/**.cc|ctocpp/test/**.cc|cpptoc/test/**.cc")
     add_includedirs(".")
