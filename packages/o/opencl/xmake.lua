@@ -41,7 +41,6 @@ package("opencl")
                     local incpath = find_path(path.join("CL", "cl.h"), intelsdkpaths, {suffixes = {"include"}})
                     if incpath then
                         table.insert(result.includedirs, incpath)
-                        print(result)
                         return result
                     end
                 end
