@@ -12,6 +12,8 @@ package("ode")
     add_deps("cmake")
     if is_plat("windows") then
         add_syslinks("user32")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
     end
 
     on_install("windows", "macosx", "linux", function (package)
