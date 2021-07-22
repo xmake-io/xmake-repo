@@ -180,9 +180,6 @@ target("luajit")
     if is_kind("shared") and is_plat("windows") then
         add_defines("LUA_BUILD_AS_DLL")
     end
-    if not is_plat("windows") then
-        add_syslinks("dl", {public = true})
-    end
     add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
     add_defines("_FILE_OFFSET_BITS=64", "LARGEFILE_SOURCE", {public = true})
     add_undefines("_FORTIFY_SOURCE", {public = true})
@@ -208,18 +205,18 @@ target("luajit_bin")
     add_files("src/luajit.c")
     add_options("nojit", "fpu")
     if is_plat("windows") then
-        add_links("advapi32", "shell32")
+        add_syslinks("advapi32", "shell32")
         if is_arch("x86") then
             add_ldflags("/subsystem:console,5.01")
         else
             add_ldflags("/subsystem:console,5.02")
         end
     elseif is_plat("android") then
-        add_links("m", "c")
+        add_syslinks("m", "c")
     elseif is_plat("macosx") then
         add_ldflags("-all_load", "-pagezero_size 10000", "-image_base 100000000")
     elseif is_plat("mingw") then
         add_ldflags("-static-libgcc", {force = true})
     else
-        add_syslinks("pthread", "m", "c")
+        add_syslinks("pthread", "dl", "m", "c")
     end
