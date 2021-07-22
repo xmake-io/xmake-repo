@@ -17,6 +17,10 @@ option("fpu")
     set_showmenu(true)
     add_defines("LJ_ARCH_HASFPU=1", "LJ_ABI_SOFTFP=0")
 
+option("gc64")
+    set_default(false)
+    set_showmenu(true)
+
 rule("dasc")
     set_extensions(".dasc")
     before_build_file(function(target, sourcefile)
@@ -133,10 +137,13 @@ target("buildvm")
         add_files("src/vm_x86.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X86", {public = true})
     elseif is_arch("x64", "x86_64") then
-        --FIXME will crash
-        --add_files("src/vm_x64.dasc")
+        if has_config("gc64") then
+            add_files("src/vm_x64.dasc")
+            add_defines("LUAJIT_ENABLE_GC64", {public = true})
+        else
+            add_files("src/vm_x86.dasc")
+        end
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X64", {public = true})
-        add_files("src/vm_x86.dasc")
     elseif is_arch("arm64", "arm64-v8a") then
         add_files("src/vm_arm64.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM64", {public = true})
