@@ -212,19 +212,19 @@ target("luajit_bin")
     add_files("src/luajit.c")
     add_options("nojit", "fpu")
     if is_plat("windows") then
-        add_links("advapi32", "shell32")
+        add_syslinks("advapi32", "shell32")
         if is_arch("x86") then
             add_ldflags("/subsystem:console,5.01")
         else
             add_ldflags("/subsystem:console,5.02")
         end
     elseif is_plat("android") then
-        add_links("m", "c")
+        add_syslinks("m", "c")
     elseif is_plat("macosx") then
         add_ldflags("-all_load", "-pagezero_size 10000", "-image_base 100000000")
     elseif is_plat("mingw") then
         add_ldflags("-static-libgcc", {force = true})
     else
-        add_links("pthread", "dl", "m", "c")
+        add_syslinks("pthread", "dl", "m", "c")
     end
 
