@@ -180,6 +180,9 @@ target("luajit")
     if is_kind("shared") and is_plat("windows") then
         add_defines("LUA_BUILD_AS_DLL")
     end
+    if not is_plat("windows") then
+        add_syslinks("dl", {public = true})
+    end
     add_defines("LUAJIT_ENABLE_LUA52COMPAT", {public = true})
     add_defines("_FILE_OFFSET_BITS=64", "LARGEFILE_SOURCE", {public = true})
     add_undefines("_FORTIFY_SOURCE", {public = true})
@@ -218,6 +221,5 @@ target("luajit_bin")
     elseif is_plat("mingw") then
         add_ldflags("-static-libgcc", {force = true})
     else
-        add_links("pthread", "dl", "m", "c")
+        add_syslinks("pthread", "m", "c")
     end
-

@@ -41,4 +41,3 @@ package("luajit")
         end
         assert(package:has_cfuncs("lua_pcall", {includes = "luajit.h"}))
     end)
- 
