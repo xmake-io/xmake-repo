@@ -32,6 +32,7 @@ package("luajit")
         end
         configs.fpu     = package:config("fpu")
         configs.nojit   = package:config("nojit")
+        configs.gc64    = package:config("gc64")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
