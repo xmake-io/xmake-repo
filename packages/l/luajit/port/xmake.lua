@@ -166,6 +166,8 @@ target("buildvm")
         add_defines("LUAJIT_OS=LUAJIT_OS_WINDOWS", {public = true})
     elseif is_plat("linux", "android") then
         add_defines("LUAJIT_OS=LUAJIT_OS_LINUX", {public = true})
+    elseif is_plat("bsd"") then
+        add_defines("LUAJIT_OS=LUAJIT_OS_BSD", {public = true})
     else
         add_defines("LUAJIT_OS=LUAJIT_OS_OTHER", {public = true})
     end
