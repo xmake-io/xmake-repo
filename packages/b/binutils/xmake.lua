@@ -26,6 +26,8 @@ package("binutils")
             table.insert(configs, "--enable-gold")
             table.insert(configs, "--enable-plugins")
         end
+        -- fix 'makeinfo' is missing on your system.
+        io.replace("binutils/Makefile.in", "SUBDIRS = doc po", "SUBDIRS = ")
         import("package.tools.autoconf").install(package, configs)
     end)
 
