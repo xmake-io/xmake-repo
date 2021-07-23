@@ -1,5 +1,6 @@
 package("entt")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/skypjack/entt")
     set_description("Gaming meets modern C++ - a fast and reliable entity component system (ECS) and much more.")
 
