@@ -35,6 +35,6 @@ jobs:
         env:
           XMAKE_ROOT: y
         run: |
-          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -j1
 
 
