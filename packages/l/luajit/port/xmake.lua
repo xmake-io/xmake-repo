@@ -17,6 +17,10 @@ option("fpu")
     set_showmenu(true)
     add_defines("LJ_ARCH_HASFPU=1", "LJ_ABI_SOFTFP=0")
 
+option("gc64")
+    set_default(false)
+    set_showmenu(true)
+
 rule("dasc")
     set_extensions(".dasc")
     before_build_file(function(target, sourcefile)
@@ -133,10 +137,13 @@ target("buildvm")
         add_files("src/vm_x86.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X86", {public = true})
     elseif is_arch("x64", "x86_64") then
-        --FIXME will crash
-        --add_files("src/vm_x64.dasc")
+        if has_config("gc64") then
+            add_files("src/vm_x64.dasc")
+            add_defines("LUAJIT_ENABLE_GC64", {public = true})
+        else
+            add_files("src/vm_x86.dasc")
+        end
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X64", {public = true})
-        add_files("src/vm_x86.dasc")
     elseif is_arch("arm64", "arm64-v8a") then
         add_files("src/vm_arm64.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM64", {public = true})
@@ -159,6 +166,8 @@ target("buildvm")
         add_defines("LUAJIT_OS=LUAJIT_OS_WINDOWS", {public = true})
     elseif is_plat("linux", "android") then
         add_defines("LUAJIT_OS=LUAJIT_OS_LINUX", {public = true})
+    elseif is_plat("bsd") then
+        add_defines("LUAJIT_OS=LUAJIT_OS_BSD", {public = true})
     else
         add_defines("LUAJIT_OS=LUAJIT_OS_OTHER", {public = true})
     end
@@ -205,19 +214,19 @@ target("luajit_bin")
     add_files("src/luajit.c")
     add_options("nojit", "fpu")
     if is_plat("windows") then
-        add_links("advapi32", "shell32")
+        add_syslinks("advapi32", "shell32")
         if is_arch("x86") then
             add_ldflags("/subsystem:console,5.01")
         else
             add_ldflags("/subsystem:console,5.02")
         end
     elseif is_plat("android") then
-        add_links("m", "c")
+        add_syslinks("m", "c")
     elseif is_plat("macosx") then
         add_ldflags("-all_load", "-pagezero_size 10000", "-image_base 100000000")
     elseif is_plat("mingw") then
         add_ldflags("-static-libgcc", {force = true})
     else
-        add_links("pthread", "dl", "m", "c")
+        add_syslinks("pthread", "dl", "m", "c")
     end
 

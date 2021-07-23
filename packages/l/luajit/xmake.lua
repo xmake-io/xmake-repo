@@ -11,6 +11,7 @@ package("luajit")
 
     add_configs("nojit", { description = "Disable JIT.", default = false, type = "boolean"})
     add_configs("fpu",   { description = "Enable FPU.", default = true, type = "boolean"})
+    add_configs("gc64",  { description = "Enable GC64.", default = false, type = "boolean"})
 
     add_includedirs("include/luajit")
     if not is_plat("windows") then
