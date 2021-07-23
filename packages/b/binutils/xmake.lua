@@ -1,10 +1,10 @@
 package("binutils")
 
+    set_kind("binary")
     set_homepage("https://www.gnu.org/software/binutils/binutils.html")
     set_description("GNU binary tools for native development")
     set_license("GPL-2.0")
 
-    set_kind("binary")
     set_urls("https://ftp.gnu.org/gnu/binutils/binutils-$(version).tar.xz",
              "https://ftpmirror.gnu.org/binutils/binutils-$(version).tar.xz")
 
