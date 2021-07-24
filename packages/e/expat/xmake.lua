@@ -10,9 +10,7 @@ package("expat")
     add_versions("2.2.10", "b2c160f1b60e92da69de8e12333096aeb0c3bf692d41c60794de278af72135a5")
     add_versions("2.2.6", "17b43c2716d521369f82fc2dc70f359860e90fa440bea65b3b85f0b246ea81f2")
 
-    if is_plat("windows") or is_plat("mingw") then
-        add_deps("cmake")
-    end
+    add_deps("cmake")
 
     on_load("windows", function (package)
         if not package:config("shared") then
@@ -20,7 +18,7 @@ package("expat")
         end
     end)
 
-    on_install("windows", "mingw", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DEXPAT_BUILD_EXAMPLES=OFF", "-DEXPAT_BUILD_TESTS=OFF", "-DEXPAT_BUILD_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DEXPAT_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -28,16 +26,6 @@ package("expat")
             table.insert(configs, "-DEXPAT_MSVC_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
-    end)
-
-    on_install("linux", "macosx", function (package)
-        local configs = {"--without-examples", "--without-tests", "--without-docbook"}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
