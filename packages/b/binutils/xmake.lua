@@ -28,6 +28,10 @@ package("binutils")
         end
         -- fix 'makeinfo' is missing on your system.
         io.replace("binutils/Makefile.in", "SUBDIRS = doc po", "SUBDIRS = ")
+        -- fix multiple definition of `program_name'
+        io.replace("binutils/srconv.c", "char *program_name;", "extern char *program_name;", {plain = true})
+        io.replace("binutils/sysdump.c", "char *program_name;", "extern char *program_name;", {plain = true})
+        io.replace("binutils/coffdump.c", "char * program_name;", "extern char *program_name;", {plain = true})
         import("package.tools.autoconf").install(package, configs)
     end)
 
