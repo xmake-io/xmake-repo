@@ -15,12 +15,14 @@ package("snappy")
 
     add_configs("avx", {description = "Use the AVX instruction set", default = false, type = "boolean"})
     add_configs("avx2", {description = "Use the AVX2 instruction set", default = false, type = "boolean"})
+    add_configs("bmi2", {description = "Use the BMI2 instruction set", default = false, type = "boolean"})
 
     on_install("windows", "linux", "macosx", "mingw", "android", function (package)
         local configs = {"-DSNAPPY_BUILD_TESTS=OFF", "-DSNAPPY_BUILD_BENCHMARKS=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSNAPPY_REQUIRE_AVX=" .. (package:config("avx") and "ON" or "OFF"))
         table.insert(configs, "-DSNAPPY_REQUIRE_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
+        table.insert(configs, "-DSNAPPY_HAVE_BMI2=" .. (package:config("bmi2") and "ON" or "OFF"))
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
