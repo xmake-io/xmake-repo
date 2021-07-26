@@ -25,7 +25,10 @@ package("openssl")
 
     on_load(function (package)
         if package:is_plat("windows") and (not package.is_built or package:is_built()) then
-            package:add("deps", "strawberry-perl", "nasm")
+            package:add("deps", "nasm")
+            -- the perl executable found in GitForWindows will fail to build OpenSSL
+            -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
+            package:add("deps", "strawberry-perl", { system = false })
         end
     end)
 
