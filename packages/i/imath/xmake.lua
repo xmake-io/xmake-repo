@@ -7,6 +7,7 @@ package("imath")
     add_urls("https://github.com/AcademySoftwareFoundation/Imath/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/Imath.git")
     add_versions("v3.1.0", "211c907ab26d10bd01e446da42f073ee7381e1913d8fa48084444bc4e1b4ef87")
+    add_versions("v3.1.1", "a63fe91d8d0917acdc31b0c9344b1d7dbc74bf42de3e3ef5ec982386324b9ea4")
 
     on_load(function (package)
         if not package.is_built or package:is_built() then
@@ -14,7 +15,7 @@ package("imath")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "mingw@windows", "mingw@msys", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
