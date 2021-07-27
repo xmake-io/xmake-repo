@@ -14,7 +14,7 @@ package("openvdb")
 
     add_configs("with_houdini", {description = "Location of Houdini installation. Set to enable built with Houdini.", default = "", type = "string"})
     add_configs("with_maya", {description = "Location of Maya installation. Set to enable built with Maya.", default = "", type = "string"})
-    add_configs("simd", {description = "SIMD acceleration architecture.", default = nil, type = "string", values = {"None", "SSE42", "AVX"}})
+    add_configs("simd", {description = "SIMD acceleration architecture.", type = "string", values = {"None", "SSE42", "AVX"}})
     add_configs("print", {description = "Command line binary for displaying information about OpenVDB files.", default = true, type = "boolean"})
     add_configs("lod", {description = "Command line binary for generating volume mipmaps from an OpenVDB grid.", default = false, type = "boolean"})
     add_configs("render", {description = "Command line binary for ray-tracing OpenVDB grids.", default = false, type = "boolean"})
