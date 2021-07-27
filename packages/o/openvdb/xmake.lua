@@ -53,6 +53,9 @@ package("openvdb")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:is_plat("windows") then
+            if package:config("shared") and package:config("vs_runtime"):startswith("MT") then
+                raise("OpenVDB shared library cannot be linked to a static msvc runtime")
+            end
             table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         table.insert(configs, "-DOPENVDB_BUILD_VDB_LOD=" .. (package:config("lod") and "ON" or "OFF"))
