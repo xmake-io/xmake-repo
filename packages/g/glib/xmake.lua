@@ -24,6 +24,14 @@ package("glib")
         add_syslinks("pthread", "dl")
     end
 
+    if on_fetch then
+        on_fetch("macosx", "linux", function (package, opt)
+            if opt.system and package.find_package then
+                return package:find_package("pkgconfig::glib-2.0")
+            end
+        end)
+    end
+
     on_install("macosx", "linux", function (package)
         local configs = {"-Dbsymbolic_functions=false",
                          "-Ddtrace=false",
