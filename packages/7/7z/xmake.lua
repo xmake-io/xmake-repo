@@ -4,31 +4,29 @@ package("7z")
     set_homepage("https://www.7-zip.org/")
     set_description("A file archiver with a high compression ratio.")
 
-    if is_host("windows") then
-        if is_arch("x64", "x86_64") then
-            set_urls("https://github.com/xmake-mirror/7zip/releases/download/$(version)/7z$(version)-x64.zip",
-                     "https://gitlab.com/xmake-mirror/7zip-releases/raw/master/7z$(version)-x64.zip")
-            add_versions("19.00", "fc21cf510d70a69bfa8e5b0449fe0a054fb76e2f8bd568364821f319c8b1d86d")
-            add_versions("18.05", "e6e2d21e2c482f1b1c5a6d21ed80800ce1273b902cf4b9afa68621545540ee2f")
-        else
-            set_urls("https://github.com/xmake-mirror/7zip/releases/download/$(version)/7z$(version)-x86.zip",
-                     "https://gitlab.com/xmake-mirror/7zip-releases/raw/master/7z$(version)-x86.zip")
-            add_versions("19.00", "f84fab081a2d8a6b5868a2eaf01cd56017363fb24560259cea80567f8062334f")
-            add_versions("18.05", "544c37bebee30437aba405071484e0ac6310332b4bdabe4ca7420a800d4b4b5e")
-        end
-    else
-        add_urls("https://github.com/jinfeihan57/p7zip/archive/refs/tags/v$(version).tar.gz")
-        add_urls("https://github.com/jinfeihan57/p7zip.git")
-        add_versions("17.04", "ea029a2e21d2d6ad0a156f6679bd66836204aa78148a4c5e498fe682e77127ef")
-    end
+    set_urls("https://github.com/SirLynix/7z/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/SirLynix/7z.git")
+    add_versions("21.02", "39c20421b199c7fe19b7a5328c4808f096a12ecfa02cf65c69317cc8f6e4bdf8")
+    add_patches("21.02", path.join(os.scriptdir(), "patches", "21.02", "backport-21.03-fix-for-GCC-10.patch"), "f1d8fa0bbb25123b28e9b2842da07604238b77e51b918260a369f97c2f694c89")
 
     on_install("macosx", "linux", function (package)
-        os.vrun("make 7z")
-        os.cp("bin", package:installdir())
+        os.cd("CPP/7zip/Bundles/Alone2")
+        os.vrun("make -j -f ../../cmpl_gcc.mak")
+
+        local bin = package:installdir("bin")
+        os.cp("b/g/7zz", bin)
+        os.ln(bin .. "/7zz", bin .. "/7z")
     end)
 
     on_install("windows", function (package)
-        os.cp("*", package:installdir("bin"))
+        local archdir = package:is_arch("x64", "x86_64") and "x64" or "x86"
+        os.cd("CPP/7zip/Bundles/Alone2")
+        local configs = {"-f", "makefile"}
+        table.insert(configs, "PLATFORM=" .. archdir)
+        import("package.tools.nmake").build(package, configs)
+
+        local bin = package:installdir("bin")
+        os.cp(archdir .. "/7zz.exe", bin .. "/7z.exe")
     end)
 
     on_test(function (package)
