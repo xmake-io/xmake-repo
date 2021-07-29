@@ -1,5 +1,6 @@
 package("vala")
 
+    set_kind("toolchain")
     set_homepage("https://wiki.gnome.org/Projects/Vala")
     set_description("Compiler for the GObject type system")
     set_license("LGPL-2.1-or-later")
