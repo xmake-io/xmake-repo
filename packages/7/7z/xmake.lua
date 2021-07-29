@@ -28,7 +28,7 @@ package("7z")
         os.vrun("make -j -f makefile.gcc")
 
         local bin = package:installdir("bin")
-        os.cp("b/g/7zz", bin)
+        os.cp("_o/7zz", bin)
         os.ln(bin .. "/7zz", bin .. "/7z")
     end)
 
