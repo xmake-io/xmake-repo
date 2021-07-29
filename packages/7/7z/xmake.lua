@@ -24,6 +24,9 @@ package("7z")
     end
 
     on_install("macosx", "linux", function (package)
+        -- Clang has some indentation warnings that fails compilation using -Werror, remove it
+        io.replace("CPP/7zip/7zip_gcc.mak", "CFLAGS_WARN_WALL = -Wall -Werror -Wextra", "CFLAGS_WARN_WALL = -Wall -Wextra", {plain = true})
+
         os.cd("CPP/7zip/Bundles/Alone2")
         os.vrun("make -j -f makefile.gcc")
 
