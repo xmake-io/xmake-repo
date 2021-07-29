@@ -17,7 +17,7 @@ package("7z")
             add_versions("18.05", "544c37bebee30437aba405071484e0ac6310332b4bdabe4ca7420a800d4b4b5e")
         end
     else
-        set_urls("https://xmake-mirror/7zip/archive/refs/tags/$(version).tar.gz",
+        set_urls("https://github.com/xmake-mirror/7zip/archive/refs/tags/$(version).tar.gz",
                  "https://github.com/xmake-mirror/7zip.git")
         add_versions("21.02", "39c20421b199c7fe19b7a5328c4808f096a12ecfa02cf65c69317cc8f6e4bdf8")
         add_patches("21.02", path.join(os.scriptdir(), "patches", "21.02", "backport-21.03-fix-for-GCC-10.patch"), "f1d8fa0bbb25123b28e9b2842da07604238b77e51b918260a369f97c2f694c89")
