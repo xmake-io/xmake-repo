@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, windows-2016]
+        os: [windows-latest]
         kind: [static, shared]
         arch: [x64, x86]
         vs_runtime: [MT, MD]
