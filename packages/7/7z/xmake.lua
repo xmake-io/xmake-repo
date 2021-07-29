@@ -19,13 +19,13 @@ package("7z")
     else
         set_urls("https://github.com/xmake-mirror/7zip/archive/refs/tags/$(version).tar.gz",
                  "https://github.com/xmake-mirror/7zip.git")
-        add_versions("21.02", "39c20421b199c7fe19b7a5328c4808f096a12ecfa02cf65c69317cc8f6e4bdf8")
+        add_versions("21.02", "b2a4c5bec8207508b26f94507f62f5a79c57ae9ab77dbf393f3b2fc8eef2e382")
         add_patches("21.02", path.join(os.scriptdir(), "patches", "21.02", "backport-21.03-fix-for-GCC-10.patch"), "f1d8fa0bbb25123b28e9b2842da07604238b77e51b918260a369f97c2f694c89")
     end
 
     on_install("macosx", "linux", function (package)
         os.cd("CPP/7zip/Bundles/Alone2")
-        os.vrun("make -j -f ../../cmpl_gcc.mak")
+        os.vrun("make -j -f makefile.gcc")
 
         local bin = package:installdir("bin")
         os.cp("b/g/7zz", bin)
