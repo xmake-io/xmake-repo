@@ -3,6 +3,7 @@ package("decimal_for_cpp")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/vpiotr/decimal_for_cpp")
     set_description("Decimal data type support, for COBOL-like fixed-point operations on currency/money values.")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/vpiotr/decimal_for_cpp.git")
 
