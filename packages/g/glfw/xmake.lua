@@ -10,7 +10,7 @@ package("glfw")
 
     add_configs("glfw_include", {description = "Choose submodules enabled in glfw", default = "none", type = "string", values = {"none", "vulkan", "glu", "glext", "es2", "es3"}})
 
-    on_fetch(function (package, opt) 
+    on_fetch(function (package, opt)
         if opt.system and package.find_package then
             if package:is_plat("linux") then
                 return package:find_package("apt::libglfw3-dev", opt)
@@ -19,7 +19,7 @@ package("glfw")
     end)
 
     add_deps("cmake")
-
+    add_deps("opengl", {optional = true})
     if is_plat("macosx") then
         add_frameworks("Cocoa", "IOKit")
     elseif is_plat("windows") then
