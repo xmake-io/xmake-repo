@@ -16,7 +16,8 @@ package("doxygen")
         add_urls("https://doxygen.nl/files/doxygen-$(version).src.tar.gz")
         add_versions("1.9.1", "67aeae1be4e1565519898f46f1f7092f1973cce8a767e93101ee0111717091d1")
 
-        add_deps("cmake", "python 3.x", "bison", "flex", {kind = "binary"})
+        add_deps("cmake", "bison", "flex")
+        add_deps("python 3.x", {kind = "binary"})
     end
 
     on_install("@windows", function (package)
