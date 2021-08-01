@@ -7,6 +7,7 @@ package("bison")
 
     add_urls("http://ftp.gnu.org/gnu/bison/bison-$(version).tar.gz")
     add_versions("3.7.4", "fbabc7359ccd8b4b36d47bfe37ebbce44805c052526d5558b95eda125d1677e2")
+    add_versions("3.7.6", "69dc0bb46ea8fc307d4ca1e0b61c8c355eb207d0b0c69f4f8462328e74d7b9ea")
 
     if is_plat("linux") then
         add_deps("m4")
