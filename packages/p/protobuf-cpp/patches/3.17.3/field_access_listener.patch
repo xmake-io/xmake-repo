@@ -1,0 +1,24 @@
+diff --git a/cmake/libprotobuf-lite.cmake b/cmake/libprotobuf-lite.cmake
+index cd74dbccf..e6fab3bec 100644
+--- a/cmake/libprotobuf-lite.cmake
++++ b/cmake/libprotobuf-lite.cmake
+@@ -3,7 +3,6 @@ set(libprotobuf_lite_files
+   ${protobuf_source_dir}/src/google/protobuf/arena.cc
+   ${protobuf_source_dir}/src/google/protobuf/arenastring.cc
+   ${protobuf_source_dir}/src/google/protobuf/extension_set.cc
+-  ${protobuf_source_dir}/src/google/protobuf/field_access_listener.cc
+   ${protobuf_source_dir}/src/google/protobuf/generated_enum_util.cc
+   ${protobuf_source_dir}/src/google/protobuf/generated_message_table_driven_lite.cc
+   ${protobuf_source_dir}/src/google/protobuf/generated_message_util.cc
+diff --git a/cmake/libprotobuf.cmake b/cmake/libprotobuf.cmake
+index 0f6b5cea7..f5a70becb 100644
+--- a/cmake/libprotobuf.cmake
++++ b/cmake/libprotobuf.cmake
+@@ -11,6 +11,7 @@ set(libprotobuf_files
+   ${protobuf_source_dir}/src/google/protobuf/dynamic_message.cc
+   ${protobuf_source_dir}/src/google/protobuf/empty.pb.cc
+   ${protobuf_source_dir}/src/google/protobuf/extension_set_heavy.cc
++  ${protobuf_source_dir}/src/google/protobuf/field_access_listener.cc
+   ${protobuf_source_dir}/src/google/protobuf/field_mask.pb.cc
+   ${protobuf_source_dir}/src/google/protobuf/generated_message_reflection.cc
+   ${protobuf_source_dir}/src/google/protobuf/generated_message_table_driven.cc
