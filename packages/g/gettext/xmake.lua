@@ -7,6 +7,7 @@ package("gettext")
              "https://ftpmirror.gnu.org/gettext/gettext-$(version).tar.xz",
              {version = function (version) return version:gsub('%-', '.') end})
     add_versions("0.19.8-1", "105556dbc5c3fbbc2aa0edb46d22d055748b6f5c7cd7a8d99f8e7eb84e938be4")
+    add_versions("0.21", "d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192")
 
     if is_plat("macosx") then
         add_syslinks("iconv")
@@ -40,7 +41,7 @@ package("gettext")
         if package:is_plat("macosx") then
             table.insert(configs, "--with-included-gettext")
         end
-        if package:is_plat("android") then
+        if package:is_plat("android") and package:version():le("0.20") then
             io.replace("./gettext-tools/configure", "#define gid_t int", "")
             io.replace("./gettext-tools/configure", "#define uid_t int", "")
             io.replace("./gettext-runtime/configure", "#define gid_t int", "")
@@ -86,6 +87,7 @@ package("gettext")
             end
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags, ldflags = ldflags})
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
