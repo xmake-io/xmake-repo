@@ -15,6 +15,8 @@ package("openblas")
             add_versions("0.3.15", "bcde933737b477813eaac290de5cb8756d3b42199e8ef5f44b23ae5f06fe0834")
             add_versions("0.3.17", "8258a9a22075280fb02b65447ea77d9439a0097711e220fc4ae8f92927f32273")
         end
+
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     else
         add_urls("https://github.com/xianyi/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version).tar.gz")
         add_versions("0.3.12", "65a7d3a4010a4e3bd5c0baa41a234797cd3a1735449a4a5902129152601dc57b")
@@ -30,7 +32,7 @@ package("openblas")
     end
 
     on_install("windows", function (package)
-        os.mv(path.join("bin", "libopenblas.dll"), path.join(package:installdir("bin"), "openblas.dll"))
+        os.mv(path.join("bin", "libopenblas.dll"), package:installdir("bin"))
         os.mv("include", package:installdir())
         os.mv(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
         package:addenv("PATH", "bin")
