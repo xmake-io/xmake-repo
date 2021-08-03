@@ -29,13 +29,14 @@ package("raylib")
     end
 
     if is_plat("macosx") then
-        add_frameworks("OpenGL", "CoreVideo", "CoreGraphics", "AppKit", "IOKit", "CoreFoundation", "Foundation")
+        add_frameworks("CoreVideo", "CoreGraphics", "AppKit", "IOKit", "CoreFoundation", "Foundation")
     elseif is_plat("windows") then
         add_syslinks("gdi32", "user32", "winmm", "shell32")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl", "m")
         add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxi", "libxext")
     end
+    add_deps("opengl", {optional = true})
 
     on_install("macosx", function (package)
         os.cp("include/raylib.h", package:installdir("include"))
@@ -43,7 +44,10 @@ package("raylib")
     end)
 
     on_install("windows", "linux", function (package)
-        import("package.tools.cmake").install(package, {"-DBUILD_EXAMPLES=OFF", "-DBUILD_GAMES=OFF"})
+        local configs = {"-DBUILD_EXAMPLES=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"libxrender", "libxfixes", "libxext"}})
     end)
 
     on_test(function (package)
