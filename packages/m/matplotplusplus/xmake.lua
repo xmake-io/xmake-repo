@@ -20,6 +20,7 @@ package("matplotplusplus")
     end
 
     add_deps("cmake")
+    add_deps("nodesoup")
     if is_plat("windows") then
         add_syslinks("user32", "shell32", "gdi32")
     end
@@ -32,7 +33,7 @@ package("matplotplusplus")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-        local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DBUILD_INSTALLER=ON", "-DBUILD_PACKAGE=OFF"}
+        local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DBUILD_INSTALLER=ON", "-DBUILD_PACKAGE=OFF", "-DWITH_SYSTEM_NODESOUP=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
