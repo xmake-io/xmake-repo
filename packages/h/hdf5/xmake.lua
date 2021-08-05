@@ -4,8 +4,11 @@ package("hdf5")
     set_description("High-performance data management and storage suite")
     set_license("BSD-3-Clause")
 
-    add_urls("https://hdf-wordpress-1.s3.amazonaws.com/wp-content/uploads/manual/HDF5/HDF5_$(version).tar.gz", {version = function (version) return version:gsub("%.", "_") .. "/source/hdf5-" .. version end})
+    add_urls("https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-$(version).tar.gz", {version = function (version)
+        return format("%d.%d/hdf5-%s/src/hdf5-%s", version:major(), version:minor(), version, version)
+    end})
     add_versions("1.12.0", "a62dcb276658cb78e6795dd29bf926ed7a9bc4edf6e77025cd2c689a8f97c17a")
+    add_versions("1.12.1", "79c66ff67e666665369396e9c90b32e238e501f345afd2234186bfb8331081ca")
 
     add_deps("cmake")
     if is_plat("linux") then
