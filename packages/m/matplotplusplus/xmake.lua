@@ -33,6 +33,13 @@ package("matplotplusplus")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
+        if is_plat("windows") then
+            -- fix constexpr fail to compile
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            if tonumber(vs) < 2019 then
+                io.replace("source/matplot/util/world_map_10m.cpp", "constexpr", "const", {plain = true})
+            end
+        end
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DBUILD_INSTALLER=ON", "-DBUILD_PACKAGE=OFF", "-DWITH_SYSTEM_NODESOUP=ON"}
         for config, dep in pairs(configdeps) do
             if not package:config(config) then
