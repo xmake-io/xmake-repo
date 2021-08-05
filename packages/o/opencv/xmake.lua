@@ -124,7 +124,7 @@ package("opencv")
             local modulesdir = assert(find_path("modules", path.join(resourcedir, "*")), "modules not found!")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs, {buildir = "bd"})
         if package:is_plat("windows") then
             local arch = package:is_arch("x64") and "x64" or "x86"
             local linkdir = (package:config("shared") and "lib" or "staticlib")
@@ -137,8 +137,8 @@ package("opencv")
 
             -- keep compatibility for old versions
             local instdir = package:installdir(arch, vc_ver)
-            if os.isdir(path.join(os.curdir(), "build", "install")) then
-                os.trycp(path.join(os.curdir(), "build", "install", arch, vc_ver), package:installdir(arch))
+            if os.isdir(path.join(os.curdir(), "bd", "install")) then
+                os.trycp(path.join(os.curdir(), "bd", "install", arch, vc_ver), package:installdir(arch))
             end
 
             -- scanning for links
@@ -147,11 +147,23 @@ package("opencv")
             end
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
         else
-            os.trycp("3rdparty/**/*.a", package:installdir("lib"))
+            -- scanning for links
+            for _, suffix in ipairs({"*.a", "*.so", "*.dylib"}) do
+                for _, f in ipairs(os.files(path.join(package:installdir("lib"), suffix))) do
+                    package:add("links", path.basename(f):match("lib(.+)"))
+                end
+            end
+            for _, f in ipairs(os.files("bd/3rdparty/lib/*.a")) do
+                os.cp(f, package:installdir("lib"))
+                package:add("links", path.basename(f):match("lib(.+)"))
+            end
+
+            package:addenv("PATH", "bin"))
         end
     end)
 
     on_test(function (package)
+        os.vrun("opencv_version")
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             void test(int argc, char** argv) {
