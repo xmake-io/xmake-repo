@@ -149,6 +149,7 @@ package("opencv")
             end
             package:add("linkdirs", linkdir)
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
+            print(os.files(path.join(os.curdir(), "bd", "install", "**.lib")))
             print(os.files(path.join(package:installdir(), "**.lib")))
         else
             -- scanning for links for old xmake version
