@@ -136,28 +136,33 @@ package("opencv")
             end
 
             -- keep compatibility for old versions
-            local instdir = package:installdir(arch, vc_ver)
+            local installdir = package:installdir(arch, vc_ver)
             if os.isdir(path.join(os.curdir(), "bd", "install")) then
                 os.trycp(path.join(os.curdir(), "bd", "install", arch, vc_ver), package:installdir(arch))
             end
 
-            -- scanning for links
-            for _, f in ipairs(os.files(path.join(instdir, linkdir, "*.lib"))) do
-                package:add("links", path.basename(f))
-            end
-            package:addenv("PATH", path.join(arch, vc_ver, "bin"))
-        else
-            -- scanning for links
-            for _, suffix in ipairs({"*.a", "*.so", "*.dylib"}) do
-                for _, f in ipairs(os.files(path.join(package:installdir("lib"), suffix))) do
-                    package:add("links", path.basename(f):match("lib(.+)"))
+            -- scanning for links for old xmake version
+            if xmake.version():le("2.5.6") then
+                for _, f in ipairs(os.files(path.join(installdir, linkdir, "*.lib"))) do
+                    package:add("links", path.basename(f))
                 end
             end
-            for _, f in ipairs(os.files("bd/3rdparty/lib/*.a")) do
-                os.cp(f, package:installdir("lib"))
-                package:add("links", path.basename(f):match("lib(.+)"))
+            package:add("linkdirs", linkdir)
+            package:addenv("PATH", path.join(arch, vc_ver, "bin"))
+            print(os.files(path.join(package:installdir(), "**.lib")))
+        else
+            -- scanning for links for old xmake version
+            if xmake.version():le("2.5.6") then
+                for _, suffix in ipairs({"*.a", "*.so", "*.dylib"}) do
+                    for _, f in ipairs(os.files(path.join(package:installdir("lib"), suffix))) do
+                        package:add("links", path.basename(f):match("lib(.+)"))
+                    end
+                    for _, f in ipairs(os.files(path.join(package:installdir("lib/opencv4/3rdparty"), suffix))) do
+                        package:add("links", path.basename(f):match("lib(.+)"))
+                    end
+                end
             end
-
+            package:add("linkdirs", "lib", "lib/opencv4/3rdparty")
             package:addenv("PATH", "bin")
         end
     end)
