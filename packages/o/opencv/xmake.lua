@@ -158,7 +158,7 @@ package("opencv")
                 package:add("links", path.basename(f):match("lib(.+)"))
             end
 
-            package:addenv("PATH", "bin"))
+            package:addenv("PATH", "bin")
         end
     end)
 
