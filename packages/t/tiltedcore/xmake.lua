@@ -6,6 +6,7 @@ package("tiltedcore")
     add_urls("https://github.com/tiltedphoques/TiltedCore/archive/$(version).zip")
     add_urls("https://github.com/tiltedphoques/TiltedCore.git")
 
+    add_versions("v0.2.3", "228d2d48a01ab0166a586cd1daa9809db457bbbd9d8773a94be8e572af0bd260")
     add_versions("v0.2.2", "5b6b9fd4c9c3e46f7af7fdefb0b004f2106b2da3f2b7e068fd594730d4c41eaa")
     add_versions("v0.2.1", "5cf7aab7f548c7dc49349af321d4e96286cea83177a4b779a2b8504e86f1ff3b")
     add_versions("v0.2.0", "c08096df42542add9ced163de4784a998fa08e343da3fcd9ffa42fc5393f8f93")
