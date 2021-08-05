@@ -58,6 +58,7 @@ package("opencv")
     add_configs("dynamic_parallel", {description = "Dynamically load parallel runtime (TBB etc.).", default = false, type = "boolean"})
 
     if is_plat("macosx") then
+        add_linkdirs("lib", "lib/opencv4/3rdparty")
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
@@ -146,7 +147,7 @@ package("opencv")
                 package:add("links", path.basename(f))
             end
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
-        else
+        elseif is_plat("linux") then
             -- scanning for links
             for _, suffix in ipairs({"*.a", "*.so", "*.dylib"}) do
                 for _, f in ipairs(os.files(path.join(package:installdir("lib"), suffix))) do
@@ -158,6 +159,9 @@ package("opencv")
                 package:add("links", path.basename(f):match("lib(.+)"))
             end
 
+            package:addenv("PATH", "bin")
+            print(os.files(package:installdir("**")))
+        elseif is_plat("macosx") then
             package:addenv("PATH", "bin")
         end
     end)
