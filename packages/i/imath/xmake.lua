@@ -8,6 +8,7 @@ package("imath")
              "https://github.com/AcademySoftwareFoundation/Imath.git")
     add_versions("v3.1.0", "211c907ab26d10bd01e446da42f073ee7381e1913d8fa48084444bc4e1b4ef87")
     add_versions("v3.1.1", "a63fe91d8d0917acdc31b0c9344b1d7dbc74bf42de3e3ef5ec982386324b9ea4")
+    add_versions("v3.1.2", "f21350efdcc763e23bffd4ded9bbf822e630c15ece6b0697e2fcb42737c08c2d")
 
     on_load(function (package)
         if not package.is_built or package:is_built() then
