@@ -50,6 +50,10 @@ package("libpng")
         elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
             configs.cxflags = "-fPIC"
         end
+        if package:is_plat("android") and package:is_arch("armeabi-v7a") then
+            io.replace("arm/filter_neon.S", ".func", ".hidden", {plain = true})
+            io.replace("arm/filter_neon.S", ".endfunc", "", {plain = true})
+        end
         os.cp("scripts/pnglibconf.h.prebuilt", "pnglibconf.h")
         import("package.tools.xmake").install(package, configs)
     end)
