@@ -58,7 +58,7 @@ package("opencv")
     add_configs("dynamic_parallel", {description = "Dynamically load parallel runtime (TBB etc.).", default = false, type = "boolean"})
 
     if is_plat("macosx") then
-        add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL")
+        add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL", "Accelerate")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
@@ -124,7 +124,7 @@ package("opencv")
             local modulesdir = assert(find_path("modules", path.join(resourcedir, "*")), "modules not found!")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs, {buildir = "bd"})
         if package:is_plat("windows") then
             local arch = package:is_arch("x64") and "x64" or "x86"
             local linkdir = (package:config("shared") and "lib" or "staticlib")
@@ -133,25 +133,44 @@ package("opencv")
             if     vs == "2015" then vc_ver = "vc14"
             elseif vs == "2017" then vc_ver = "vc15"
             elseif vs == "2019" then vc_ver = "vc16"
+            elseif vs == "2022" then vc_ver = "vc17"
             end
 
             -- keep compatibility for old versions
-            local instdir = package:installdir(arch, vc_ver)
-            if os.isdir(path.join(os.curdir(), "build", "install")) then
-                os.trycp(path.join(os.curdir(), "build", "install", arch, vc_ver), package:installdir(arch))
+            local installdir = package:installdir(arch, vc_ver)
+            if os.isdir(path.join(os.curdir(), "bd", "install")) then
+                os.trycp(path.join(os.curdir(), "bd", "install", arch, vc_ver), package:installdir(arch))
             end
 
-            -- scanning for links
-            for _, f in ipairs(os.files(path.join(instdir, linkdir, "*.lib"))) do
-                package:add("links", path.basename(f))
+            -- scanning for links for old xmake version
+            if xmake.version():le("2.5.6") then
+                for _, f in ipairs(os.files(path.join(installdir, linkdir, "*.lib"))) do
+                    package:add("links", path.basename(f))
+                end
             end
+            package:add("linkdirs", linkdir)
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
         else
-            os.trycp("3rdparty/**/*.a", package:installdir("lib"))
+            if package:version():ge("4.0") then
+                -- scanning for links for old xmake version
+                if xmake.version():le("2.5.6") then
+                    for _, suffix in ipairs({"*.a", "*.so", "*.dylib"}) do
+                        for _, f in ipairs(os.files(path.join(package:installdir("lib"), suffix))) do
+                            package:add("links", path.basename(f):match("lib(.+)"))
+                        end
+                        for _, f in ipairs(os.files(path.join(package:installdir("lib/opencv4/3rdparty"), suffix))) do
+                            package:add("links", path.basename(f):match("lib(.+)"))
+                        end
+                    end
+                end
+                package:add("linkdirs", "lib", "lib/opencv4/3rdparty")
+            end
+            package:addenv("PATH", "bin")
         end
     end)
 
     on_test(function (package)
+        os.vrun("opencv_version")
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             void test(int argc, char** argv) {
