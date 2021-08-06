@@ -18,6 +18,12 @@ package("tiltedcore")
     add_deps("mimalloc", {configs = {rltgenrandom = true}})
 
     on_install("windows", "msys", "linux", function (package)
+        if package:is_plat("windows") then
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            if tonumber(vs) < 2019 then
+                raise("Your compiler is too old to use this library, it need c++17 support above vs2019.")
+            end
+        end
         import("package.tools.xmake").install(package)
     end)
 
