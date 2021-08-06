@@ -58,7 +58,7 @@ package("opencv")
     add_configs("dynamic_parallel", {description = "Dynamically load parallel runtime (TBB etc.).", default = false, type = "boolean"})
 
     if is_plat("macosx") then
-        add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL")
+        add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL", "Accelerate")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
@@ -141,39 +141,29 @@ package("opencv")
                 os.trycp(path.join(os.curdir(), "bd", "install", arch, vc_ver), package:installdir(arch))
             end
 
-            -- scanning for links and ensure link order
-            for _, f in ipairs(os.files(path.join(installdir, linkdir, "opencv_*.lib"))) do
-                package:add("links", path.basename(f))
-            end
-            for _, f in ipairs(os.files(path.join(installdir, linkdir, "*.lib"))) do
-                local linkname = path.basename(f)
-                if not linkname:startswith("opencv_") then
-                    package:add("links", linkname)
+            -- scanning for links for old xmake version
+            if xmake.version():le("2.5.6") then
+                for _, f in ipairs(os.files(path.join(installdir, linkdir, "*.lib"))) do
+                    package:add("links", path.basename(f))
                 end
             end
             package:add("linkdirs", linkdir)
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
-            print(os.files(path.join(package:installdir(), "**.lib")))
-            print(os.files(path.join(package:installdir(), "**.dll")))
         else
-            local linkdirs_3rd
             if package:version():ge("4.0") then
-                linkdirs_3rd = "lib/opencv4/3rdparty"
-            else
-                linkdirs_3rd = "lib/opencv3/3rdparty"
-            end
-            -- scanning for links for old xmake version
-            if xmake.version():le("2.5.6") then
-                for _, suffix in ipairs({"*.a", "*.so", "*.dylib"}) do
-                    for _, f in ipairs(os.files(path.join(package:installdir("lib"), suffix))) do
-                        package:add("links", path.basename(f):match("lib(.+)"))
-                    end
-                    for _, f in ipairs(os.files(path.join(package:installdir(linkdirs_3rd), suffix))) do
-                        package:add("links", path.basename(f):match("lib(.+)"))
+                -- scanning for links for old xmake version
+                if xmake.version():le("2.5.6") then
+                    for _, suffix in ipairs({"*.a", "*.so", "*.dylib"}) do
+                        for _, f in ipairs(os.files(path.join(package:installdir("lib"), suffix))) do
+                            package:add("links", path.basename(f):match("lib(.+)"))
+                        end
+                        for _, f in ipairs(os.files(path.join(package:installdir("lib/opencv4/3rdparty"), suffix))) do
+                            package:add("links", path.basename(f):match("lib(.+)"))
+                        end
                     end
                 end
+                package:add("linkdirs", "lib", "lib/opencv4/3rdparty")
             end
-            package:add("linkdirs", "lib", linkdirs_3rd)
             package:addenv("PATH", "bin")
         end
     end)
