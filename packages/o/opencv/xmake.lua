@@ -133,6 +133,7 @@ package("opencv")
             if     vs == "2015" then vc_ver = "vc14"
             elseif vs == "2017" then vc_ver = "vc15"
             elseif vs == "2019" then vc_ver = "vc16"
+            elseif vs == "2022" then vc_ver = "vc17"
             end
 
             -- keep compatibility for old versions
