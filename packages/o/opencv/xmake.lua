@@ -170,7 +170,14 @@ package("opencv")
     end)
 
     on_test(function (package)
-        os.vrun("opencv_version")
+        -- bin path envs will be missing for precompiled artifacts in old xmake version
+        local runtest = true
+        if package.is_built and not package:is_built() and xmake.version():le("2.5.6") then
+            runtest = false
+        end
+        if runtest then
+            os.vrun("opencv_version")
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             void test(int argc, char** argv) {
