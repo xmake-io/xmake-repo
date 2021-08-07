@@ -34,6 +34,7 @@ package("blosc")
             elseif version:le("1.10") then
                 os.rm(path.join(package:installdir("lib"), "blosc.lib"))
                 os.rm(path.join(package:installdir("lib"), "blosc.dll"))
+                os.mv(path.join(package:installdir("lib"), "libblosc.lib"), path.join(package:installdir("lib"), "blosc.lib"))
             end
         end
     end)

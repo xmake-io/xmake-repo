@@ -7,6 +7,7 @@ package("m4")
     add_urls("https://ftp.gnu.org/gnu/m4/m4-$(version).tar.xz",
              "https://ftpmirror.gnu.org/m4/m4-$(version).tar.xz")
     add_versions("1.4.18", "f2c1e86ca0a404ff281631bdc8377638992744b175afb806e25871a24a934e07")
+    add_versions("1.4.19", "63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96")
 
     if is_host("macosx") then
         -- fix crash from usage of %n in dynamic format strings on High Sierra

@@ -5,19 +5,19 @@ package("opencv")
 
     add_urls("https://github.com/opencv/opencv/archive/$(version).tar.gz",
              "https://github.com/opencv/opencv.git")
+    add_versions("4.5.3", "77f616ae4bea416674d8c373984b20c8bd55e7db887fd38c6df73463a0647bab")
     add_versions("4.5.2", "ae258ed50aa039279c3d36afdea5c6ecf762515836b27871a8957c610d0424f8")
     add_versions("4.5.1", "e27fe5b168918ab60d58d7ace2bd82dd14a4d0bd1d3ae182952c2113f5637513")
     add_versions("4.2.0", "9ccb2192d7e8c03c58fee07051364d94ed7599363f3b0dce1c5e6cc11c1bb0ec")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
+    add_resources("4.5.3", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.3.tar.gz", "73da052fd10e73aaba2560eaff10cc5177e2dcc58b27f8aedf7c649e24c233bc")
     add_resources("4.5.2", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.2.tar.gz", "9f52fd3114ac464cb4c9a2a6a485c729a223afb57b9c24848484e55cef0b5c2a")
     add_resources("4.5.1", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.1.tar.gz", "12c3b1ddd0b8c1a7da5b743590a288df0934e5cef243e036ca290c2e45e425f5")
     add_resources("4.2.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.2.0.tar.gz", "8a6b5661611d89baa59a26eb7ccf4abb3e55d73f99bb52d8f7c32265c8a43020")
     add_resources("3.4.9", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz", "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57")
 
     add_configs("bundled", {description = "Build 3rd-party libraries with OpenCV.", default = true, type = "boolean"})
-
-    add_deps("cmake", "python 3.x", {kind = "binary"})
 
     local features = {"1394",
                       "vtk",
@@ -58,11 +58,11 @@ package("opencv")
     add_configs("dynamic_parallel", {description = "Dynamically load parallel runtime (TBB etc.).", default = false, type = "boolean"})
 
     if is_plat("macosx") then
-        add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL")
+        add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL", "Accelerate")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
-        add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32")
+        add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32")
     end
 
     on_load("linux", "macosx", "windows", function (package)
@@ -84,6 +84,9 @@ package("opencv")
         end
         if package:config("cuda") then
             package:add("deps", "cuda", {system = true, configs = {utils = {"cudnn", "cufft", "cublas"}}})
+        end
+        if not package.is_built or package:is_built() then
+            package:add("deps", "cmake", "python 3.x", {kind = "binary"})
         end
     end)
 
@@ -121,7 +124,7 @@ package("opencv")
             local modulesdir = assert(find_path("modules", path.join(resourcedir, "*")), "modules not found!")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs, {buildir = "bd"})
         if package:is_plat("windows") then
             local arch = package:is_arch("x64") and "x64" or "x86"
             local linkdir = (package:config("shared") and "lib" or "staticlib")
@@ -130,25 +133,51 @@ package("opencv")
             if     vs == "2015" then vc_ver = "vc14"
             elseif vs == "2017" then vc_ver = "vc15"
             elseif vs == "2019" then vc_ver = "vc16"
+            elseif vs == "2022" then vc_ver = "vc17"
             end
 
             -- keep compatibility for old versions
-            local instdir = package:installdir(arch, vc_ver)
-            if os.isdir(path.join(os.curdir(), "build", "install")) then
-                os.trycp(path.join(os.curdir(), "build", "install", arch, vc_ver), package:installdir(arch))
+            local installdir = package:installdir(arch, vc_ver)
+            if os.isdir(path.join(os.curdir(), "bd", "install")) then
+                os.trycp(path.join(os.curdir(), "bd", "install", arch, vc_ver), package:installdir(arch))
             end
 
-            -- scanning for links
-            for _, f in ipairs(os.files(path.join(instdir, linkdir, "*.lib"))) do
-                package:add("links", path.basename(f))
+            -- scanning for links for old xmake version
+            if xmake.version():le("2.5.6") then
+                for _, f in ipairs(os.files(path.join(installdir, linkdir, "*.lib"))) do
+                    package:add("links", path.basename(f))
+                end
             end
+            package:add("linkdirs", linkdir)
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
         else
-            os.trycp("3rdparty/**/*.a", package:installdir("lib"))
+            if package:version():ge("4.0") then
+                -- scanning for links for old xmake version
+                if xmake.version():le("2.5.6") then
+                    for _, suffix in ipairs({"*.a", "*.so", "*.dylib"}) do
+                        for _, f in ipairs(os.files(path.join(package:installdir("lib"), suffix))) do
+                            package:add("links", path.basename(f):match("lib(.+)"))
+                        end
+                        for _, f in ipairs(os.files(path.join(package:installdir("lib/opencv4/3rdparty"), suffix))) do
+                            package:add("links", path.basename(f):match("lib(.+)"))
+                        end
+                    end
+                end
+                package:add("linkdirs", "lib", "lib/opencv4/3rdparty")
+            end
+            package:addenv("PATH", "bin")
         end
     end)
 
     on_test(function (package)
+        -- bin path envs will be missing for precompiled artifacts in old xmake version
+        local runtest = true
+        if package.is_built and not package:is_built() and xmake.version():le("2.5.6") then
+            runtest = false
+        end
+        if runtest then
+            os.vrun("opencv_version")
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             void test(int argc, char** argv) {

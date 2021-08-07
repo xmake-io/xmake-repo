@@ -7,9 +7,10 @@ package("folly")
     add_urls("https://github.com/facebook/folly/releases/download/v$(version).00/folly-v$(version).00.zip",
              "https://github.com/facebook/folly.git")
     add_versions("2021.06.28", "477765d43045d82ac6a2750142aed9534cd5efc1fbf2be622bb682a8c02a45a4")
+    add_versions("2021.08.02", "03159657ef7a08c1207d90e63f02d4d6b1241dcae49f11a72441c0c269b269fa")
 
     add_patches("2021.06.28", path.join(os.scriptdir(), "patches", "2021.06.28", "reorder.patch"), "9a6bf283881580474040cfc7a8e89d461d68b89bae5583d89fff0a3198739980")
-    add_patches("2021.06.28", path.join(os.scriptdir(), "patches", "2021.06.28", "regex.patch"), "6a77ade9f48dd9966d3f7154e66ca8a5c030ae2b6d335cbe3315784aefd8f495")
+    add_patches("2021.x", path.join(os.scriptdir(), "patches", "2021.06.28", "regex.patch"), "6a77ade9f48dd9966d3f7154e66ca8a5c030ae2b6d335cbe3315784aefd8f495")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 From 8bf718671a9eac5517c27a5ffe72089b7f426d8c Mon Sep 17 00:00:00 2001
 From: gabime <gmelman1@gmail.com>
 Date: Thu, 24 Jun 2021 13:22:02 +0300
@@ -8,6 +9,13 @@ index c3e992224..5fa4e5d95 100644
 --- a/include/spdlog/common-inl.h
 +++ b/include/spdlog/common-inl.h
 @@ -56,7 +56,7 @@ SPDLOG_INLINE spdlog_ex::spdlog_ex(std::string msg)
+=======
+diff --git a/include/spdlog/common-inl.h b/include/spdlog/common-inl.h
+index 378efe60..3632ec94 100644
+--- a/include/spdlog/common-inl.h
++++ b/include/spdlog/common-inl.h
+@@ -60,7 +60,7 @@ SPDLOG_INLINE spdlog_ex::spdlog_ex(std::string msg)
+>>>>>>> 423ed9814aaa793b3e27f7e71aa3bdfe9969785d
  SPDLOG_INLINE spdlog_ex::spdlog_ex(const std::string &msg, int last_errno)
  {
      memory_buf_t outbuf;
@@ -15,9 +23,15 @@ index c3e992224..5fa4e5d95 100644
 +    fmt::format_system_error(outbuf, last_errno, msg.c_str());
      msg_ = fmt::to_string(outbuf);
  }
+<<<<<<< HEAD
 
 diff --git a/src/fmt.cpp b/src/fmt.cpp
 index 9e91beb17..edd52dd55 100644
+=======
+ 
+diff --git a/src/fmt.cpp b/src/fmt.cpp
+index 9e91beb1..edd52dd5 100644
+>>>>>>> 423ed9814aaa793b3e27f7e71aa3bdfe9969785d
 --- a/src/fmt.cpp
 +++ b/src/fmt.cpp
 @@ -10,94 +10,58 @@
