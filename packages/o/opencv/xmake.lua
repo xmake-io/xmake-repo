@@ -40,7 +40,7 @@ package("opencv")
                       "itt",
                       "protobuf",
                       "quirc"}
-    local default_features = {"1394", "eigen", "ffmpeg", "jpeg", "opengl", "png", "protobuf", "quirc", "webp", "tiff"}
+    local default_features = {"gtk", "1394", "eigen", "ffmpeg", "jpeg", "opengl", "png", "protobuf", "quirc", "webp", "tiff"}
     local function opencv_is_default(feature)
         for _, df in ipairs(default_features) do
             if feature == df then
@@ -150,6 +150,7 @@ package("opencv")
             end
             package:add("linkdirs", linkdir)
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
+print(os.files(path.join(package:installdir("lib"), "*.lib")))
         else
             if package:version():ge("4.0") then
                 -- scanning for links for old xmake version
@@ -165,6 +166,7 @@ package("opencv")
                 end
                 package:add("linkdirs", "lib", "lib/opencv4/3rdparty")
             end
+	    print(os.files(path.join(package:installdir("lib"), "*.a")))
             package:addenv("PATH", "bin")
         end
     end)
