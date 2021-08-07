@@ -6,6 +6,7 @@ package("jasper")
 
     add_urls("https://github.com/jasper-software/jasper/archive/refs/tags/version-$(version).tar.gz")
     add_versions("2.0.28", "6b4e5f682be0ab1a5acb0eeb6bf41d6ce17a658bb8e2dbda95de40100939cc88")
+    add_versions("2.0.32", "a3583a06698a6d6106f2fc413aa42d65d86bedf9a988d60e5cfa38bf72bc64b9")
 
     add_deps("cmake", "libjpeg")
     if not is_plat("macosx") then

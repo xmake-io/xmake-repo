@@ -6,6 +6,7 @@ package("cpp-httplib")
     set_urls("https://github.com/yhirose/cpp-httplib/archive/v$(version).zip",
              "https://github.com/yhirose/cpp-httplib.git")
     add_versions("0.8.5", "57d2a7e67ae6944292cd08cb16083463a93c7c139f6698560e872ade63b9b463")
+    add_versions("0.9.2", "87131d53c14b921ca1a4fae0d5d4081c218dd18004b768a8069de29b130ab6bc")
 
     add_configs("ssl",  { description = "Requires OpenSSL", default = false, type = "boolean"})
     add_configs("zlib",  { description = "Requires Zlib", default = false, type = "boolean"})

@@ -7,6 +7,7 @@ package("amgcl")
     add_urls("https://github.com/ddemidov/amgcl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ddemidov/amgcl.git")
     add_versions("1.4.0", "018b824396494c8958faa6337cebcaba48a2584d828f279eef0bbf9e05f900a7")
+    add_versions("1.4.2", "db0de6b75e6c205f44542c3ac8d9935c8357a58072963228d0bb11a54181aea8")
 
     add_deps("cmake")
     add_deps("boost", {configs = {serialization = true, program_options = true}})

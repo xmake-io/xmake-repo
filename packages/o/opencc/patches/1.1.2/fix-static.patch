@@ -1,0 +1,53 @@
+diff --git a/data/CMakeLists.txt b/data/CMakeLists.txt
+index e9b921f..b55e7b4 100644
+--- a/data/CMakeLists.txt
++++ b/data/CMakeLists.txt
+@@ -1,6 +1,7 @@
+ find_package(PythonInterp REQUIRED)
+ 
+ set(OPENCC_DICT_BIN opencc_dict)
++set(OPENCC_DICT_EXECUTABLE "$<TARGET_FILE:${OPENCC_DICT_BIN}>")
+ set(DICT_MERGE_BIN "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/scripts/merge.py")
+ set(DICT_REVERSE_BIN "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/scripts/reverse.py")
+ set(DICT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dictionary)
+@@ -136,7 +137,7 @@ foreach(DICT ${DICTS})
+     COMMENT
+       "Building ${DICT}.ocd2"
+     COMMAND
+-      ${OPENCC_DICT_BIN}
++      ${OPENCC_DICT_EXECUTABLE}
+         --input ${DICT_${DICT}_INPUT}
+         --output ${DICT}.ocd2
+         --from text
+diff --git a/deps/marisa-0.2.6/CMakeLists.txt b/deps/marisa-0.2.6/CMakeLists.txt
+index 305f273..1472532 100644
+--- a/deps/marisa-0.2.6/CMakeLists.txt
++++ b/deps/marisa-0.2.6/CMakeLists.txt
+@@ -17,3 +17,10 @@ set(
+ add_library(marisa STATIC ${LIBMARISA_SOURCES})
+ set_target_properties(marisa PROPERTIES POSITION_INDEPENDENT_CODE ON)
+ source_group(marisa FILES ${LIBMARISA_SOURCES})
++
++if (NOT BUILD_SHARED_LIBS)
++  install(TARGETS marisa
++    RUNTIME DESTINATION bin
++    LIBRARY DESTINATION lib
++    ARCHIVE DESTINATION lib)
++endif()
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 8ec1177..2bc2900 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -104,7 +104,11 @@ endif()
+ add_library(libopencc ${LIBOPENCC_SOURCES} ${LIBOPENCC_HEADERS})
+ set_target_properties(libopencc PROPERTIES POSITION_INDEPENDENT_CODE ON)
+ source_group(libopencc FILES ${LIBOPENCC_SOURCES} ${LIBOPENCC_HEADERS})
+-target_link_libraries(libopencc marisa)
++if (NOT BUILD_SHARED_LIBS)
++  target_link_libraries(libopencc PUBLIC marisa)
++else()
++  target_link_libraries(libopencc marisa)
++endif()
+ 
+ GENERATE_EXPORT_HEADER(
+   libopencc

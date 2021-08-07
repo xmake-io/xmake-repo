@@ -12,9 +12,9 @@ target("glew")
     elseif is_plat("macosx") then
         add_frameworks("OpenGL")
     elseif is_plat("linux") then
-        add_syslinks("GLU", "GL")
+        add_syslinks("GL")
     end
-    add_defines("GLEW_NO_GLU")
+    add_defines("GLEW_NO_GLU", {public = true})
     if is_plat("windows") then
         if is_kind("shared") then
             add_defines("GLEW_BUILD")
@@ -36,7 +36,7 @@ target("glewinfo")
     elseif is_plat("macosx") then
         add_frameworks("OpenGL")
     elseif is_plat("linux") then
-        add_syslinks("GLU", "GL")
+        add_syslinks("GL")
         add_packages("libx11", "xorgproto")
     end
     add_files("src/glewinfo.c")
@@ -49,7 +49,7 @@ target("visualinfo")
     elseif is_plat("macosx") then
         add_frameworks("OpenGL")
     elseif is_plat("linux") then
-        add_syslinks("GLU", "GL")
+        add_syslinks("GL")
         add_packages("libx11", "xorgproto")
     end
     add_files("src/visualinfo.c")

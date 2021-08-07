@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
+        os: [windows-latest, windows-2016]
         kind: [static, shared]
         arch: [x64, x86]
         vs_runtime: [MT, MD]
@@ -33,5 +33,9 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --vs_sdkver=10.0.19041.0 --linkjobs=2
+          if ("${{ matrix.os }}" -eq "windows-latest") {
+            xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --vs_sdkver=10.0.19041.0 --linkjobs=2
+          } else {
+            xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --linkjobs=2
+          }
 

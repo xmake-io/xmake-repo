@@ -5,6 +5,7 @@ package("box2d")
 
     set_urls("https://github.com/erincatto/box2d/archive/v$(version).zip")
     add_versions("2.4.0", "6aebbc54c93e367c97e382a57ba12546731dcde51526964c2ab97dec2050f8b9")
+    add_versions("2.4.1", "0cb512dfa5be79ca227cd881b279adee61249c85c8b51caf5aa036b71e943002")
 
     add_deps("cmake")
 

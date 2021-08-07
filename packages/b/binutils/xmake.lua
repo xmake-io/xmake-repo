@@ -1,10 +1,10 @@
 package("binutils")
 
+    set_kind("binary")
     set_homepage("https://www.gnu.org/software/binutils/binutils.html")
     set_description("GNU binary tools for native development")
     set_license("GPL-2.0")
 
-    set_kind("binary")
     set_urls("https://ftp.gnu.org/gnu/binutils/binutils-$(version).tar.xz",
              "https://ftpmirror.gnu.org/binutils/binutils-$(version).tar.xz")
 
@@ -26,6 +26,12 @@ package("binutils")
             table.insert(configs, "--enable-gold")
             table.insert(configs, "--enable-plugins")
         end
+        -- fix 'makeinfo' is missing on your system.
+        io.replace("binutils/Makefile.in", "SUBDIRS = doc po", "SUBDIRS = ")
+        -- fix multiple definition of `program_name'
+        io.replace("binutils/srconv.c", "char *program_name;", "extern char *program_name;", {plain = true})
+        io.replace("binutils/sysdump.c", "char *program_name;", "extern char *program_name;", {plain = true})
+        io.replace("binutils/coffdump.c", "char * program_name;", "extern char *program_name;", {plain = true})
         import("package.tools.autoconf").install(package, configs)
     end)
 

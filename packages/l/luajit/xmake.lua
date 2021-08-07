@@ -11,6 +11,7 @@ package("luajit")
 
     add_configs("nojit", { description = "Disable JIT.", default = false, type = "boolean"})
     add_configs("fpu",   { description = "Enable FPU.", default = true, type = "boolean"})
+    add_configs("gc64",  { description = "Enable GC64.", default = false, type = "boolean"})
 
     add_includedirs("include/luajit")
     if not is_plat("windows") then
@@ -31,6 +32,7 @@ package("luajit")
         end
         configs.fpu     = package:config("fpu")
         configs.nojit   = package:config("nojit")
+        configs.gc64    = package:config("gc64")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)

@@ -13,10 +13,15 @@ package("libjpeg-turbo")
 
     add_configs("jpeg", {description = "libjpeg API/ABI emulation target version.", default = "6", type = "string", values = {"6", "7", "8"}})
 
-    add_deps("cmake", "nasm")
     if is_subhost("windows") and is_plat("android") then
         add_deps("make")
     end
+
+    on_load(function (package)
+        if not package.is_built or package:is_built() then
+            package:add("deps", "cmake", "nasm")
+        end
+    end)
 
     on_install("windows", "linux", "macosx", "android", function (package)
         local configs = {}
