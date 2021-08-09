@@ -26,6 +26,7 @@ package("imgui")
         if package:config("glfw_opengl3") then
             package:add("deps", "glad")
             package:add("deps", "glfw")
+            package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
         end
     end)
 
