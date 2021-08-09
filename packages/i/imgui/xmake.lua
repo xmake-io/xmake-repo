@@ -14,18 +14,46 @@ package("imgui")
     add_versions("v1.75", "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
     
     add_configs("user_config", {description = "Use user config (disables test!)", default = nil, type = "string"})
+    add_configs("glfw_opengl3", {description = "Use glfw+opengl3 as backend", default = false, type = "boolean"})
+
+    add_includedirs("include", "include/imgui")
 
     if is_plat("windows", "mingw") then
         add_syslinks("Imm32")
     end
 
+    on_load("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
+        if package:config("glfw_opengl3") then
+            package:add("deps", "glad")
+            package:add("deps", "glfw")
+            package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
+        end
+    end)
+
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
-        local xmake_lua = [[
-            target("imgui")
-                set_kind("static")
-                add_files("*.cpp")
-                add_headerfiles("imgui.h", "imconfig.h")
-        ]]
+        local xmake_lua
+        if package:config("glfw_opengl3") then
+            xmake_lua = [[
+                add_rules("mode.debug", "mode.release")
+                add_requires("glfw", "glad")
+                target("imgui")
+                    set_kind("static")
+                    add_files("*.cpp", "backends/imgui_impl_glfw.cpp", "backends/imgui_impl_opengl3.cpp")
+                    add_defines("IMGUI_IMPL_OPENGL_LOADER_GLAD")
+                    add_packages("glfw", "glad")
+                    add_includedirs(".")
+                    add_headerfiles("*.h", {prefixdir = "imgui"})
+                    add_headerfiles("backends/imgui_impl_glfw.h", "backends/imgui_impl_opengl3.h")
+            ]]
+        else
+            xmake_lua = [[
+                add_rules("mode.debug", "mode.release")
+                target("imgui")
+                    set_kind("static")
+                    add_files("*.cpp")
+                    add_headerfiles("imgui.h", "imconfig.h")
+            ]]
+        end
         
         local user_config = package:config("user_config")
         if user_config ~= nil then

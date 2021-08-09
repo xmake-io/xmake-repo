@@ -8,22 +8,36 @@ package("libigl")
     add_versions("v2.2.0", "b336e548d718536956e2d6958a0624bc76d50be99039454072ecdc5cf1b2ede5")
     add_versions("v2.3.0", "9d6de3bdb9c1cfc61a0a0616fd96d14ef8465995600328c196fa672ee4579b70")
 
+    add_resources("2.x", "libigl_imgui", "https://github.com/libigl/libigl-imgui.git", "7e1053e750b0f4c129b046f4e455243cb7f804f3")
+
     add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
-    add_configs("use_cgal", {description = "Use CGAL library.", default = false, type = "boolean"})
+    add_configs("cgal", {description = "Use CGAL library.", default = false, type = "boolean"})
+    add_configs("imgui", {description = "Use imgui with libigl.", default = false, type = "boolean"})
+
+    if is_plat("windows") then
+        add_syslinks("comdlg32")
+    end
 
     add_deps("cmake", "eigen")
     on_load("macosx", "linux", "windows", function (package)
         if not package:config("header_only") then
             raise("Non-header-only version is not supported yet!")
         end
-        if package:config("use_cgal") then
+        if package:config("cgal") then
             package:add("deps", "cgal")
+        end
+        if package:config("imgui") then
+            package:add("deps", "imgui", {configs = {glfw_opengl3 = true}})
         end
     end)
 
     on_install("macosx", "linux", "windows", function (package)
+        if package:config("imgui") then
+            local igl_imgui_dir = package:resourcefile("libigl_imgui")
+            os.cp(path.join(igl_imgui_dir, "imgui_fonts_droid_sans.h"), package:installdir("include"))
+        end
         if package:config("header_only") then
-            os.mv("include", package:installdir())
+            os.mv("include/igl", package:installdir("include"))
             return
         end
         local configs = {"-DLIBIGL_BUILD_TESTS=OFF", "-DLIBIGL_BUILD_TUTORIALS=OFF", "-DLIBIGL_SKIP_DOWNLOAD=ON"}
