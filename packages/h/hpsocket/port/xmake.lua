@@ -1,10 +1,12 @@
 ﻿local dep_packages = {}
 local options = {{name = "udp",    package = "kcp"},
                  {name = "http",   package = "http_parser"},
-                 {name = "zlib",   package = is_plat("android") and "" or "zlib"},
+                 {name = "zlib",   package = is_plat("android", "windows") and "" or "zlib"},
                  {name = "brotli", package = "brotli"},
                  {name = "ssl",    package = ""},
                  {name = "iconv",  package = ""}}
+local winCommonSrcPath = (get_config("hpversion") == "v5.7.3") and "Windows/Common/Src/" or "Windows/Src/Common/"
+local winBuiltinDependentLibPath = (get_config("hpversion") == "v5.7.3") and "Windows/Common/Lib/" or "Windows/Dependent/"
 
 for _, opt in ipairs(options) do
     local opt_name = "no_" .. opt.name
@@ -36,8 +38,27 @@ option("unicode")
     set_description("Build hpsocket with unicode character set")
 option_end()
 
+option("hpversion")
+    set_default("v5.8.4")
+    set_showmenu(true)
+    set_values("v5.7.3", "v5.8.4")
+    set_category("option")
+    set_description("The version of HP-Socket")
+option_end()
+
 add_rules("mode.debug", "mode.release")
 target("hpsocket")
+    before_build(function (target)
+        if is_plat("windows") then
+            io.writefile("stdafx.h", [[
+                #pragma once
+                #include "]] .. winCommonSrcPath .. [[GeneralHelper.h"
+            ]])
+            io.writefile("stdafx.cpp", [[
+                #include "stdafx.h"
+            ]])
+        end
+    end)
     set_kind("$(kind)")
 
     for _, opt in ipairs(options) do
@@ -68,14 +89,15 @@ target("hpsocket")
         end
     end
 
-    local linkdir
     if is_plat("windows") then
         if has_config("unicode") then
             add_defines("UNICODE", "_UNICODE")
         end
+        
         set_pcxxheader("stdafx.h")
         add_files("stdafx.cpp")
-        add_files("Windows/Common/Src/*.cpp")
+        add_files(path.join(winCommonSrcPath, "http/*.c"))
+        add_files(path.join(winCommonSrcPath, "*.cpp"))
         add_files("Windows/Src/*.cpp|" .. exclude_file)
         add_headerfiles("Windows/Include/HPSocket/*.h|" .. exclude_file)
         add_defines(is_kind("shared") and "HPSOCKET_EXPORTS" or "HPSOCKET_STATIC_LIB")
@@ -88,19 +110,30 @@ target("hpsocket")
         end
 
         add_includedirs(".")
-        add_includedirs(path.join("Windows/Common/Lib/openssl", vs_ver, "$(arch)", "include"))
-        linkdir = path.join("Windows/Common/Lib/openssl", vs_ver, "$(arch)", "lib")
-        add_linkdirs(linkdir)
+        add_includedirs(path.join(winBuiltinDependentLibPath, "openssl", vs_ver, "$(arch)", "include"))
+        ssllinkdir = path.join(winBuiltinDependentLibPath, "openssl", vs_ver, "$(arch)", "lib")
+        add_linkdirs(ssllinkdir)
+        add_includedirs(path.join(winBuiltinDependentLibPath, "zlib", vs_ver, "$(arch)", "include"))
+        zliblinkdir = path.join(winBuiltinDependentLibPath, "zlib", vs_ver, "$(arch)", "lib")
+        add_linkdirs(zliblinkdir)
 
         if not has_config("no_ssl") then
             add_links("libssl", "libcrypto")
             if is_kind("static") then
-                table.insert(install_files, path.join(linkdir, "*.lib"))
+                table.insert(install_files, path.join(ssllinkdir, "*.lib"))
+            end
+        end
+        
+        if not has_config("no_zlib") then
+            add_links("zlib")
+            if is_kind("static") then
+                table.insert(install_files, path.join(zliblinkdir, "*.lib"))
             end
         end
     elseif is_plat("linux", "android") then
         add_cxflags("-fpic", {force = true})
         add_files("Linux/src/common/crypto/*.cpp")
+        add_files("Linux/src/common/http/*.c")
         add_files("Linux/src/common/*.cpp")
         add_files("Linux/src/*.cpp|" .. exclude_file)
         add_headerfiles("Linux/include/hpsocket/*.h|" .. exclude_file)
