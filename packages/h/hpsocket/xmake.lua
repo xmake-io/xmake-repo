@@ -73,7 +73,7 @@ package("hpsocket")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
 
         local config = {}
-        config.hpversion = '"' .. package:version() .. '"'
+        config.hpversion = package:version()
         config.no_4c = package:config("no_4c")
         config.unicode = package:config("unicode")
         for _, cfg in ipairs(configs) do

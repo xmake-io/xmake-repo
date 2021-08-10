@@ -96,9 +96,7 @@ target("hpsocket")
         
         set_pcxxheader("stdafx.h")
         add_files("stdafx.cpp")
-        if is_kind("shared") then
-            add_files(path.join(winCommonSrcPath, "http/*.c"))
-        end
+        add_files(path.join(winCommonSrcPath, "http/*.c"))
         add_files(path.join(winCommonSrcPath, "*.cpp"))
         add_files("Windows/Src/*.cpp|" .. exclude_file)
         add_headerfiles("Windows/Include/HPSocket/*.h|" .. exclude_file)
@@ -135,9 +133,7 @@ target("hpsocket")
     elseif is_plat("linux", "android") then
         add_cxflags("-fpic", {force = true})
         add_files("Linux/src/common/crypto/*.cpp")
-        if is_kind("shared") then
-            add_files("Linux/src/common/http/*.c")
-        end
+        add_files("Linux/src/common/http/*.c")
         add_files("Linux/src/common/*.cpp")
         add_files("Linux/src/*.cpp|" .. exclude_file)
         add_headerfiles("Linux/include/hpsocket/*.h|" .. exclude_file)
