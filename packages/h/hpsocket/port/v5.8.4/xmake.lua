@@ -1,7 +1,7 @@
 ﻿local dep_packages = {}
 local options = {{name = "udp",    package = "kcp"},
                  {name = "http",   package = "http_parser"},
-                 {name = "zlib",   package = is_plat("android") and "" or "zlib"},
+                 {name = "zlib",   package = is_plat("android", "windows") and "" or "zlib"},
                  {name = "brotli", package = "brotli"},
                  {name = "ssl",    package = ""},
                  {name = "iconv",  package = ""}}
@@ -75,7 +75,7 @@ target("hpsocket")
         end
         set_pcxxheader("stdafx.h")
         add_files("stdafx.cpp")
-        add_files("Windows/Common/Src/*.cpp")
+        add_files("Windows/Src/Common/*.cpp")
         add_files("Windows/Src/*.cpp|" .. exclude_file)
         add_headerfiles("Windows/Include/HPSocket/*.h|" .. exclude_file)
         add_defines(is_kind("shared") and "HPSOCKET_EXPORTS" or "HPSOCKET_STATIC_LIB")
@@ -87,15 +87,25 @@ target("hpsocket")
         elseif vs == "2019" then vs_ver = "16.0"
         end
 
-        add_includedirs(".")
-        add_includedirs(path.join("Windows/Common/Lib/openssl", vs_ver, "$(arch)", "include"))
-        linkdir = path.join("Windows/Common/Lib/openssl", vs_ver, "$(arch)", "lib")
-        add_linkdirs(linkdir)
+		add_includedirs(".")
+        add_includedirs(path.join("Windows/Dependent/openssl", vs_ver, "$(arch)", "include"))
+        ssllinkdir = path.join("Windows/Dependent/openssl", vs_ver, "$(arch)", "lib")
+        add_linkdirs(ssllinkdir)
+        add_includedirs(path.join("Windows/Dependent/zlib", vs_ver, "$(arch)", "include"))
+        zliblinkdir = path.join("Windows/Dependent/zlib", vs_ver, "$(arch)", "lib")
+        add_linkdirs(zliblinkdir)
 
         if not has_config("no_ssl") then
             add_links("libssl", "libcrypto")
             if is_kind("static") then
-                table.insert(install_files, path.join(linkdir, "*.lib"))
+                table.insert(install_files, path.join(ssllinkdir, "*.lib"))
+            end
+        end
+        
+        if not has_config("no_zlib") then
+            add_links("zlib")
+            if is_kind("static") then
+                table.insert(install_files, path.join(zliblinkdir, "*.lib"))
             end
         end
     elseif is_plat("linux", "android") then
