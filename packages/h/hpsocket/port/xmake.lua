@@ -5,6 +5,8 @@ local options = {{name = "udp",    package = "kcp"},
                  {name = "brotli", package = "brotli"},
                  {name = "ssl",    package = ""},
                  {name = "iconv",  package = ""}}
+local winCommonSrcPath = (get_config("hpversion") == "v5.7.3") and "Windows/Common/Src/" or "Windows/Src/Common/"
+local winBuiltinDependentLibPath = (get_config("hpversion") == "v5.7.3") and "Windows/Common/Lib/" or "Windows/Dependent/"
 
 for _, opt in ipairs(options) do
     local opt_name = "no_" .. opt.name
@@ -36,8 +38,27 @@ option("unicode")
     set_description("Build hpsocket with unicode character set")
 option_end()
 
+option("hpversion")
+    set_default("v5.8.4")
+    set_showmenu(true)
+    set_values("v5.7.3", "v5.8.4")
+    set_category("option")
+    set_description("The version of HP-Socket")
+option_end()
+
 add_rules("mode.debug", "mode.release")
 target("hpsocket")
+    before_build(function (target)
+        if is_plat("windows") then
+            io.writefile("stdafx.h", [[
+                #pragma once
+                #include "]] .. winCommonSrcPath .. [[GeneralHelper.h"
+            ]])
+            io.writefile("stdafx.cpp", [[
+                #include "stdafx.h"
+            ]])
+        end
+    end)
     set_kind("$(kind)")
 
     for _, opt in ipairs(options) do
@@ -68,14 +89,17 @@ target("hpsocket")
         end
     end
 
-    local linkdir
     if is_plat("windows") then
         if has_config("unicode") then
             add_defines("UNICODE", "_UNICODE")
         end
+        
         set_pcxxheader("stdafx.h")
         add_files("stdafx.cpp")
-        add_files("Windows/Src/Common/*.cpp")
+        if is_kind("shared") then
+            add_files(path.join(winCommonSrcPath, "http/*.c"))
+        end
+        add_files(path.join(winCommonSrcPath, "*.cpp"))
         add_files("Windows/Src/*.cpp|" .. exclude_file)
         add_headerfiles("Windows/Include/HPSocket/*.h|" .. exclude_file)
         add_defines(is_kind("shared") and "HPSOCKET_EXPORTS" or "HPSOCKET_STATIC_LIB")
@@ -87,12 +111,12 @@ target("hpsocket")
         elseif vs == "2019" then vs_ver = "16.0"
         end
 
-		add_includedirs(".")
-        add_includedirs(path.join("Windows/Dependent/openssl", vs_ver, "$(arch)", "include"))
-        ssllinkdir = path.join("Windows/Dependent/openssl", vs_ver, "$(arch)", "lib")
+        add_includedirs(".")
+        add_includedirs(path.join(winBuiltinDependentLibPath, "openssl", vs_ver, "$(arch)", "include"))
+        ssllinkdir = path.join(winBuiltinDependentLibPath, "openssl", vs_ver, "$(arch)", "lib")
         add_linkdirs(ssllinkdir)
-        add_includedirs(path.join("Windows/Dependent/zlib", vs_ver, "$(arch)", "include"))
-        zliblinkdir = path.join("Windows/Dependent/zlib", vs_ver, "$(arch)", "lib")
+        add_includedirs(path.join(winBuiltinDependentLibPath, "zlib", vs_ver, "$(arch)", "include"))
+        zliblinkdir = path.join(winBuiltinDependentLibPath, "zlib", vs_ver, "$(arch)", "lib")
         add_linkdirs(zliblinkdir)
 
         if not has_config("no_ssl") then
@@ -111,6 +135,9 @@ target("hpsocket")
     elseif is_plat("linux", "android") then
         add_cxflags("-fpic", {force = true})
         add_files("Linux/src/common/crypto/*.cpp")
+        if is_kind("shared") then
+            add_files("Linux/src/common/http/*.c")
+        end
         add_files("Linux/src/common/*.cpp")
         add_files("Linux/src/*.cpp|" .. exclude_file)
         add_headerfiles("Linux/include/hpsocket/*.h|" .. exclude_file)

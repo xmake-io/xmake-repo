@@ -70,11 +70,10 @@ package("hpsocket")
     end)
 
     on_install("windows", "linux", "android", function (package)
-        os.cp(path.join(package:scriptdir(), "port", package:version(), "stdafx.h"), "stdafx.h")
-        os.cp(path.join(package:scriptdir(), "port", package:version(), "stdafx.cpp"), "stdafx.cpp")
-        os.cp(path.join(package:scriptdir(), "port", package:version(), "xmake.lua"), "xmake.lua")
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
 
         local config = {}
+        config.hpversion = '"' .. package:version() .. '"'
         config.no_4c = package:config("no_4c")
         config.unicode = package:config("unicode")
         for _, cfg in ipairs(configs) do
