@@ -7,6 +7,7 @@ package("simdjson")
     add_urls("https://github.com/simdjson/simdjson/archive/refs/tags/$(version).tar.gz",
              "https://github.com/simdjson/simdjson.git")
     add_versions("v0.9.5", "db69582fc5e4ece8c0a6a64894efeef475fe22fe466bd67195422de11b08b4d2")
+    add_versions("v0.9.7", "a21279ae4cf0049234a822c5c3550f99ec1707d3cda12156d331dcc8cd411ba0")
 
     add_configs("threads",      { description = "Enable threads.",     default = true,  type = "boolean"})
     add_configs("noexceptions", { description = "Disable exceptions.", default = false, type = "boolean"})
