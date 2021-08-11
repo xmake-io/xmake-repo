@@ -7,6 +7,8 @@ package("farmhash")
     add_urls("https://github.com/google/farmhash.git")
     add_versions("2019.05.14", "0d859a811870d10f53a594927d0d0b97573ad06d")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     on_install("windows", "macosx", "linux", "mingw", function (package)
         os.cd("src")
         io.writefile("xmake.lua", [[
