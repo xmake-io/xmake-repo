@@ -85,6 +85,11 @@ package("opencv")
         if package:config("cuda") then
             package:add("deps", "cuda", {system = true, configs = {utils = {"cudnn", "cufft", "cublas"}}})
         end
+        if package:is_plat("linux") then
+            if package:config("gtk") then
+                package:add("deps", "gtk+3", {optional = true})
+            end
+        end
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake", "python 3.x", {kind = "binary"})
         end
