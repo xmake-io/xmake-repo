@@ -16,7 +16,7 @@ package("glib")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
-    add_links("glib-2.0", "gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "intl")
+    add_links("gobject-2.0", "glib-2.0", "gio-2.0", "gthread-2.0", "gmodule-2.0", "intl")
     if is_plat("macosx") then
         add_syslinks("iconv")
         add_frameworks("Foundation", "CoreFoundation")
@@ -27,6 +27,7 @@ package("glib")
     if on_fetch then
         on_fetch("macosx", "linux", function (package, opt)
             if opt.system and package.find_package then
+                -- TODO gobject, gmodule ...
                 return package:find_package("pkgconfig::glib-2.0")
             end
         end)
