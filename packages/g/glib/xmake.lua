@@ -27,8 +27,24 @@ package("glib")
     if on_fetch then
         on_fetch("macosx", "linux", function (package, opt)
             if opt.system and package.find_package then
-                -- TODO gobject, gmodule ...
-                return package:find_package("pkgconfig::glib-2.0")
+                local result
+                for _, name in ipairs({"gobject-2.0", "glib-2.0"}) do
+                    local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
+                    if pkginfo then
+                        if not result then
+                            result = table.copy(pkginfo)
+                        else
+                            local includedirs = pkginfo.sysincludedirs or pkginfo.includedirs
+                            result.links = table.wrap(result.links)
+                            result.linkdirs = table.wrap(result.linkdirs)
+                            result.includedirs = table.wrap(result.includedirs)
+                            table.join2(result.includedirs, includedirs)
+                            table.join2(result.linkdirs, pkginfo.linkdirs)
+                            table.join2(result.links, pkginfo.links)
+                        end
+                    end
+                end
+                return result
             end
         end)
     end
