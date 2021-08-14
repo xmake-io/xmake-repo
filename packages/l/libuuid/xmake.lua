@@ -3,7 +3,7 @@ package("libuuid")
     set_homepage("https://sourceforge.net/projects/libuuid")
     set_description("Portable uuid C library")
 
-    set_urls("https://jaist.dl.sourceforge.net/project/libuuid/libuuid-$(version).tar.gz",
+    set_urls("https://sourceforge.net/projects/libuuid/files/libuuid-$(version).tar.gz",
              "https://git.code.sf.net/p/libuuid/code.git")
 
     add_versions("1.0.3", "46af3275291091009ad7f1b899de3d0cea0252737550e7919d17237997db5644")
