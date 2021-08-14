@@ -33,8 +33,8 @@ package("mimalloc")
         table.insert(configs, "-DMI_BUILD_TESTS=OFF")
         table.insert(configs, "-DMI_BUILD_OBJECT=OFF")
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
-        if package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
-            io.gsub("CMakeLists.txt", "-redirect", "-redirect32")
+        if package:version():le("2.0.1") and package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
+            io.replace("CMakeLists.txt", "-redirect.", "-redirect32.", {plain = true})
         end
         local cxflags
         if package:config("rltgenrandom") then
