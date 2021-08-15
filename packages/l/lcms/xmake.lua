@@ -30,6 +30,7 @@ package("lcms")
     end)
 
     on_install("macosx", "linux", function (package)
+        local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
             table.insert(configs, "--enable-static=no")
