@@ -10,6 +10,12 @@ package("make")
     add_versions("4.2.1", "e40b8f018c1da64edd1cc9a6fce5fa63b2e707e404e20cad91fbae337c98a5b7")
     add_versions("4.3", "e05fdde47c5f7ca45cb697e973894ff4f5d79e13b750ed57d7b66d8defc78e19")
 
+    if is_host("linux") then
+        add_extsources("pacman::make", "apt::make")
+    elseif is_host("macosx") then
+        add_extsources("brew::make")
+    end
+
     on_install("@windows", function(package)
         import("core.tool.toolchain")
         local runenvs = toolchain.load("msvc"):runenvs()
