@@ -5,19 +5,14 @@ package("pkgconf")
 
     add_urls("https://distfiles.dereferenced.org/pkgconf/pkgconf-$(version).tar.xz")
     add_versions("1.7.4", "d73f32c248a4591139a6b17777c80d4deab6b414ec2b3d21d0a24be348c476ab")
+    add_versions("1.8.0", "ef9c7e61822b7cb8356e6e9e1dca58d9556f3200d78acab35e4347e9d4c2bbaf")
 
     if is_plat("windows") then
         add_deps("meson", "ninja")
     end
 
     on_install("linux", "bsd", function(package)
-        local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no")) 
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes")) 
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf").install(package)
     end)
 
     on_install("windows", function(package)
