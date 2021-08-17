@@ -6,6 +6,10 @@ package("libxrender")
     set_urls("https://www.x.org/archive/individual/lib/libXrender-$(version).tar.bz2")
     add_versions("0.9.10", "c06d5979f86e64cabbde57c223938db0b939dff49fdb5a793a1d3d0396650949")
 
+    if is_plat("linux") then
+        add_extsources("apt::libxrender-dev")
+    end
+
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "libx11", "xorgproto")
     end

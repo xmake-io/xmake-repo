@@ -6,6 +6,10 @@ package("libxext")
     set_urls("https://www.x.org/archive/individual/lib/libXext-$(version).tar.bz2")
     add_versions("1.3.4", "59ad6fcce98deaecc14d39a672cf218ca37aba617c9a0f691cac3bcd28edf82b")
 
+    if is_plat("linux") then
+        add_extsources("apt::libxext-dev")
+    end
+
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "libx11", "xorgproto")
     end

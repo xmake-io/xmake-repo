@@ -8,6 +8,10 @@ package("libxkbcommon")
              "https://github.com/xkbcommon.git")
     add_versions("1.0.3", "5d10a57ab65daad7d975926166770eca1d2c899131ab96c23845df1c42da5c31")
 
+    if is_plat("linux") then
+        add_extsources("apt::libxkbcommon-dev")
+    end
+
     add_configs("x11", {description = "Switch backend to X11 (default is wayland).", default = false, type = "boolean"})
     on_load("linux", function (package)
         if package:config("x11") then

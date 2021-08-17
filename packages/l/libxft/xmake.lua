@@ -7,6 +7,10 @@ package("libxft")
     set_urls("https://www.x.org/archive/individual/lib/libXft-$(version).tar.bz2")
     add_versions("2.3.3", "225c68e616dd29dbb27809e45e9eadf18e4d74c50be43020ef20015274529216")
 
+    if is_plat("linux") then
+        add_extsources("apt::libxft-dev")
+    end
+
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "fontconfig", "libxrender")
     end
