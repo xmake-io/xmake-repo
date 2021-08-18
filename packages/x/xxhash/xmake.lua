@@ -10,7 +10,7 @@ package("xxhash")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("xxhash")
