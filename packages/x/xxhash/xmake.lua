@@ -4,13 +4,13 @@ package("xxhash")
     set_description("xxHash is an extremely fast non-cryptographic hash algorithm, working at RAM speed limit.")
     set_license("BSD-2-Clause")
 
-    add_urls("https://github.com/Cyan4973/xxHash/archive/refs/tags/v0.8.0.tar.gz",
+    add_urls("https://github.com/Cyan4973/xxHash/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Cyan4973/xxHash.git")
     add_versions("v0.8.0", "7054c3ebd169c97b64a92d7b994ab63c70dd53a06974f1f630ab782c28db0f4f")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("xxhash")
