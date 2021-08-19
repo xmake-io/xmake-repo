@@ -45,14 +45,16 @@ package("libcurl")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows", "mingw@windows", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCURL_DISABLE_LDAP=ON")
         table.insert(configs, "-DCMAKE_USE_SCHANNEL=ON")
         table.insert(configs, "-DCMAKE_USE_LIBSSH2=OFF")
-        table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        if is_plat("windows") then
+            table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if name == "openssl" then

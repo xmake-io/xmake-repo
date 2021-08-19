@@ -23,6 +23,7 @@ jobs:
       - name: Installation
         run: |
           # TODO we will remove it later
+          sudo apt-get update
           sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 60
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60
@@ -34,4 +35,3 @@ jobs:
       - name: Tests
         run: |
           xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
-

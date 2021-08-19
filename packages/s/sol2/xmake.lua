@@ -21,7 +21,7 @@ package("sol2")
         end
     end)
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install(function (package)
         local configs = {}
         import("package.tools.cmake").install(package, configs)
     end)
