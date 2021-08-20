@@ -16,10 +16,10 @@ index 9544da8..82d027e 100644
  
  /// @defgroup basicTypes Basic Types
 diff --git a/src/cpHastySpace.c b/src/cpHastySpace.c
-index 8dca425..8422c3e 100644
+index 8dca425..fa3074d 100644
 --- a/src/cpHastySpace.c
 +++ b/src/cpHastySpace.c
-@@ -7,8 +7,14 @@
+@@ -7,8 +7,16 @@
  //TODO: Move all the thread stuff to another file
  
  //#include <sys/param.h >
@@ -27,6 +27,8 @@ index 8dca425..8422c3e 100644
 +
 +#ifdef __APPLE__
  #include <sys/sysctl.h>
++#elif defined(ANDROID)
++#include <linux/sysctl.h>
 +#endif
 +
 +#ifndef _WIN32
