@@ -13,7 +13,7 @@ package("imgui")
     add_versions("v1.80", "d7e4e1c7233409018437a646680316040e6977b9a635c02da93d172baad94ce9")
     add_versions("v1.79", "f1908501f6dc6db8a4d572c29259847f6f882684b10488d3a8d2da31744cd0a4")
     add_versions("v1.75", "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
-    
+
     add_configs("user_config", {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("glfw_opengl3", {description = "Use glfw+opengl3 as backend", default = false, type = "boolean"})
 
@@ -29,7 +29,7 @@ package("imgui")
             package:add("deps", "glfw")
             package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
         end
-        if string.find(package:version_str(), "-docking") ~= nil then
+        if package:version_str():find("-docking", 1, true) then
             package:set("urls", {"https://github.com/ocornut/imgui.git"})
         end
     end)
@@ -58,7 +58,7 @@ package("imgui")
                     add_headerfiles("imgui.h", "imconfig.h")
             ]]
         end
-        
+
         local user_config = package:config("user_config")
         if user_config ~= nil then
             if is_host("windows") then
