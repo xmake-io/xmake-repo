@@ -15,7 +15,8 @@ package("meson")
 
     on_install("@macosx", "@linux", "@windows", function (package)
         local envs = {PYTHONPATH = package:installdir()}
-        os.vrunv("python", {"-m", "pip", "install", "--target=" .. package:installdir(), "."}, {envs = envs})
+        local python = package:is_plat("windows") and "python" or "python3"
+        os.vrunv(python, {"-m", "pip", "install", "--target=" .. package:installdir(), "."}, {envs = envs})
         package:addenv("PYTHONPATH", envs.PYTHONPATH)
     end)
 

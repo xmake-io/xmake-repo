@@ -14,8 +14,7 @@ package("attr")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        import("package.tools.autoconf").install(package)
-        print(os.files(package:installdir("**")))
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
