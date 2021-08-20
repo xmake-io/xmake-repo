@@ -11,6 +11,12 @@ package("libsdl_image")
         add_versions("2.0.5", "eee0927d1e7819d57c623fe3e2b3c6761c77c474fe9bc425e8674d30ac049b1c")
     end
 
+    if is_plat("linux") then
+        add_extsources("pacman::sdl2_image", "apt::libsdl2-image-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::sdl2_image")
+    end
+
     add_deps("libsdl")
 
     add_links("SDL2_image")

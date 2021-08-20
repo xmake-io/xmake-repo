@@ -6,11 +6,12 @@ package("hpsocket")
     add_urls("https://github.com/ldcsaa/HP-Socket/archive/$(version).tar.gz",
              "https://github.com/ldcsaa/HP-Socket.git")
 
-    add_versions("v5.7.3", "b3f77120f94b0e85cabce3c184b8163c62aec42562c3b44beff61fd4d3aa4784")
+    add_versions("v5.7.3", "e653f3c15ded3a4b622ab9a4a52a477c7aa40f5b86398c6b75f5a732a55496a0")
+    add_versions("v5.8.4", "21c4fa70c5619074c41d3065261de1828ec521dcb6eeec9d0640e93e67ae05a4")
 
     local configs = {{name = "udp",    package = "kcp"},
                      {name = "http",   package = "http_parser"},
-                     {name = "zlib",   package = is_plat("android") and "" or "zlib"},
+                     {name = "zlib",   package = is_plat("android", "windows") and "" or "zlib"},
                      {name = "brotli", package = "brotli"},
                      {name = "ssl",    package = ""},
                      {name = "iconv",  package = ""}}
@@ -69,18 +70,10 @@ package("hpsocket")
     end)
 
     on_install("windows", "linux", "android", function (package)
-        if package:is_plat("windows") then
-            io.writefile("stdafx.h", [[
-                #pragma once
-                #include "Windows/Common/Src/GeneralHelper.h"
-            ]])
-            io.writefile("stdafx.cpp", [[
-                #include "stdafx.h"
-            ]])
-        end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
 
         local config = {}
+        config.hpversion = package:version()
         config.no_4c = package:config("no_4c")
         config.unicode = package:config("unicode")
         for _, cfg in ipairs(configs) do

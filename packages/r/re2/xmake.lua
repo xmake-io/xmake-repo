@@ -7,6 +7,7 @@ package("re2")
     add_urls("https://github.com/google/re2/archive/$(version).tar.gz", {version = function (version) return version:gsub("%.", "-") end})
     add_versions("2020.11.01", "8903cc66c9d34c72e2bc91722288ebc7e3ec37787ecfef44d204b2d6281954d7")
     add_versions("2021.06.01", "26155e050b10b5969e986dab35654247a3b1b295e0532880b5a9c13c0a700ceb")
+    add_versions("2021.08.01", "cd8c950b528f413e02c12970dce62a7b6f37733d7f68807e73a2d9bc9db79bc8")
 
     if is_plat("windows") then
         add_deps("cmake")

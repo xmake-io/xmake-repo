@@ -5,6 +5,7 @@ package("nlohmann_json")
 
     add_urls("https://github.com/nlohmann/json/archive/$(version).tar.gz",
              "https://github.com/nlohmann/json.git")
+    add_versions("v3.10.0", "eb8b07806efa5f95b349766ccc7a8ec2348f3b2ee9975ad879259a371aea8084")
     add_versions("v3.9.1", "4cf0df69731494668bdd6460ed8cb269b68de9c19ad8c27abc24cd72605b2d5b")
 
     add_configs("cmake", {description = "Use cmake buildsystem", default = false, type = "boolean"})

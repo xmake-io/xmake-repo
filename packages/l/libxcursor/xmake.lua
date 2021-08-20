@@ -6,6 +6,10 @@ package("libxcursor")
     set_urls("https://www.x.org/archive/individual/lib/libXcursor-$(version).tar.bz2")
     add_versions("1.2.0", "3ad3e9f8251094af6fe8cb4afcf63e28df504d46bfa5a5529db74a505d628782")
 
+    if is_plat("linux") then
+        add_extsources("apt::libxcursor-dev")
+    end
+
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "util-macros", "libx11", "libxfixes", "libxrender")
     end

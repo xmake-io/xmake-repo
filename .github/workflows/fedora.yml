@@ -2,7 +2,6 @@ name: Fedora
 
 on:
   pull_request:
-  push:
     branches:
       - dev
 

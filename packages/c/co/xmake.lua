@@ -1,13 +1,10 @@
 package("co")
 
     set_homepage("https://github.com/idealvin/co")
-    set_description("Yet another libco and more.")
+    set_description("A go-style coroutine library in C++11 and more")
 
---    add_urls("https://github.com/idealvin/co/archive/refs/tags/$(version).tar.gz")
     add_urls("https://github.com/idealvin/co.git")
-
---    add_versions("v2.0.0", "1bf687ebc08f9951869a111c56b90898b2c320e988dc86355ce17368f279e44d")
-    add_versions("v2.0.0+1", "d962c6f77680cfc3337d1fc718f5ccda04210bd0")
+    add_versions("v2.0.1", "82b9f75dcd114c69d2b9c2c5a13ce2c3b95ba99f")
 
     if is_plat("windows") then
         -- disable shared library

@@ -4,7 +4,7 @@ package("tinyxml")
     set_description("TinyXML is a simple, small, minimal, C++ XML parser that can be easily integrating into other programs.")
     set_license("zlib")
 
-    add_urls("https://jaist.dl.sourceforge.net/project/tinyxml/tinyxml/$(version).zip", {version = function (version) return version .. "/tinyxml_" .. version:gsub("%.", "_") end})
+    add_urls("https://sourceforge.net/projects/tinyxml/files/tinyxml/$(version).zip", {version = function (version) return version .. "/tinyxml_" .. version:gsub("%.", "_") end})
     add_versions("2.6.2", "ac6bb9501c6f50cc922d22f26b02fab168db47521be5e845b83d3451a3e1d512")
 
     on_install(function (package)

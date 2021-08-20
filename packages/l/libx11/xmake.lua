@@ -8,7 +8,9 @@ package("libx11")
     add_versions("1.7.0", "36c8f93b6595437c8cfbc9f08618bcb3041cbd303e140a0013f88e4c2977cb54")
 
     if is_plat("linux") then
-        add_extsources("apt::libx11-dev")
+        add_extsources("apt::libx11-dev", "pacman::libx11")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libx11")
     end
 
     if is_plat("macosx", "linux") then

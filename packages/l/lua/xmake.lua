@@ -16,7 +16,7 @@ package("lua")
     add_versions("v5.1.5", "2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333")
 
     add_includedirs("include/lua")
-    if not is_plat("windows") then
+    if not is_plat("windows", "mingw") then
         add_syslinks("dl", "m")
     end
 
@@ -24,23 +24,42 @@ package("lua")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("linux", "macosx", "windows", "android", "bsd", function (package)
+    on_install(function (package)
         local sourcedir = os.isdir("src") and "src/" or "" -- for tar.gz or git source
+        if is_plat("iphoneos", "android") then
+            -- disable system() calls as they're not supported on these platforms
+            local luaconf = io.open(sourcedir .. "/luaconf.h", "a")
+            luaconf:write([[
+#ifndef lconfig_h_ext
+#define lconfig_h_ext
+
+#if defined(LUA_LIB)
+/* disable system calls as it's not available on this sytem */
+#define system(s) ((s)==NULL ? 0 : -1)
+#endif
+
+#endif
+]])
+            luaconf:close()
+        end
+
         io.writefile("xmake.lua", format([[
             local sourcedir = "%s"
+            local kind = "%s"
+            local enabled = %s
             target("lualib")
-                set_kind("%s")
+                set_kind(kind)
                 set_basename("lua")
                 add_headerfiles(sourcedir .. "*.h", {prefixdir = "lua"})
                 add_files(sourcedir .. "*.c|lua.c|luac.c|onelua.c")
                 add_defines("LUA_COMPAT_5_2", "LUA_COMPAT_5_1")
-                if is_plat("linux", "bsd") then
+                if is_plat("linux", "bsd", "cross") then
                     add_defines("LUA_USE_LINUX")
                     add_defines("LUA_DL_DLOPEN")
-                elseif is_plat("macosx") then
+                elseif is_plat("macosx", "iphoneos") then
                     add_defines("LUA_USE_MACOSX")
                     add_defines("LUA_DL_DYLD")
-                elseif is_plat("windows") then
+                elseif is_plat("windows", "mingw") then
                     -- Lua already detects Windows and sets according defines
                     if is_kind("shared") then
                         add_defines("LUA_BUILD_AS_DLL", {public = true})
@@ -48,11 +67,11 @@ package("lua")
                 end
 
             target("lua")
-                set_enabled(%s)
+                set_enabled(enabled)
                 set_kind("binary")
                 add_files(sourcedir .. "lua.c")
                 add_deps("lualib")
-                if not is_plat("windows") then
+                if not is_plat("windows", "mingw") then
                     add_syslinks("dl")
                 end
         ]], sourcedir,

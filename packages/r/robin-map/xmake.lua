@@ -1,0 +1,25 @@
+package("robin-map")
+
+    set_kind("library", {headeronly = true})
+    set_homepage("https://github.com/Tessil/robin-map")
+    set_description("A C++ implementation of a fast hash map and hash set using robin hood hashing")
+    set_license("MIT")
+
+    add_urls("https://github.com/Tessil/robin-map/archive/refs/tags/$(version).tar.gz")
+    add_versions("v0.6.3", "e6654c8c2598f63eb0b1d52ff8bdf39cfcc91d81dd5d05274a6dca91241cd72f")
+
+    add_deps("cmake")
+    on_install(function (package)
+        import("package.tools.cmake").install(package)
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                tsl::robin_map<int, int> map = {{1, 1}, {2, 1}, {3, 1}};
+                for (auto it = map.begin(); it != map.end(); ++it) {
+                    it.value() = 2;
+                }
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "tsl/robin_map.h"}))
+    end)

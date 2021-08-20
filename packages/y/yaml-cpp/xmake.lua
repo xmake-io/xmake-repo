@@ -6,6 +6,7 @@ package("yaml-cpp")
 
     add_urls("https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-$(version).tar.gz")
     add_versions("0.6.3", "77ea1b90b3718aa0c324207cb29418f5bced2354c2e483a9523d98c3460af1ed")
+    add_versions("0.7.0", "43e6a9fcb146ad871515f0d0873947e5d497a1c9c60c58cb102a97b47208b7c3")
 
     add_deps("cmake")
     on_install("windows", "linux", "macosx", "mingw", function (package)

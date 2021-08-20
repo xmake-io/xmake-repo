@@ -20,8 +20,7 @@ package("boost")
 
     if is_plat("linux") then
         add_deps("bzip2", "zlib")
-    elseif is_plat("windows") then
-        add_cxflags("/EHsc")
+        add_syslinks("dl")
     end
 
     local libnames = {"filesystem",

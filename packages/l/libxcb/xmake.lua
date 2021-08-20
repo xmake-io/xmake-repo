@@ -7,6 +7,10 @@ package("libxcb")
     add_versions("1.13.1", "f09a76971437780a602303170fd51b5f7474051722bc39d566a272d2c4bde1b5")
     add_versions("1.14", "2c7fcddd1da34d9b238c9caeda20d3bd7486456fc50b3cc6567185dbd5b0ad02")
 
+    if is_plat("linux") then
+        add_extsources("apt::libxcb1-dev")
+    end
+
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "python 3.x", {kind = "binary"})
         add_deps("xcb-proto", "libpthread-stubs", "libxau", "libxdmcp")
