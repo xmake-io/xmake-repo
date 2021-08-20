@@ -4,11 +4,11 @@ package("chipmunk2d")
     set_description("A fast and lightweight 2D game physics library.")
     set_license("MIT")
 
-    set_urls("https://github.com/slembcke/Chipmunk2D/archive/Chipmunk-$(version).tar.gz",
+    set_urls("https://github.com/slembcke/Chipmunk2D/archive/$(version).tar.gz",
              "https://github.com/slembcke/Chipmunk2D.git")
 
-    add_versions("7.0.3", "1e6f093812d6130e45bdf4cb80280cb3c93d1e1833d8cf989d554d7963b7899a")
-    add_patches("7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "8efbd57350d0ae5febbbc03223417114d99018a31330c88d5f57e3ccbf9334fa")
+    add_versions("Chipmunk-7.0.3", "1e6f093812d6130e45bdf4cb80280cb3c93d1e1833d8cf989d554d7963b7899a")
+    add_patches("Chipmunk-7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "b8169e0a283a1b38f9bfe9aedc28d31b152a3b864138d2b5ca13bce4bfc2599f")
 
     add_deps("cmake")
 
