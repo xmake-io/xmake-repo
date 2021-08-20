@@ -7,6 +7,7 @@ package("leptonica")
     add_urls("https://github.com/DanBloomberg/leptonica/archive/$(version).tar.gz",
              "https://github.com/DanBloomberg/leptonica.git")
     add_versions("1.80.0", "3952b974ec057d24267aae48c54bca68ead8275604bf084a73a4b953ff79196e")
+    add_versions("1.81.1", "e9dd2100194843a20bbb980ad8b94610558d47f623861bc80ac967f2d2ecb879")
 
     add_deps("cmake")
     add_deps("libwebp", {configs = {img2webp = true, webpmux = true}})
