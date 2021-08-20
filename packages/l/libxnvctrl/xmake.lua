@@ -13,9 +13,7 @@ package("libxnvctrl")
             import("lib.detect.find_library")
 
             -- init search paths
-            local paths = {
-                "/usr"
-            }
+            local paths = {"/usr"}
 
             -- find library
             local result = {links = {}, linkdirs = {}, includedirs = {}}
