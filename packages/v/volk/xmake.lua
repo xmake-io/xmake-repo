@@ -8,7 +8,7 @@ package("volk")
              "https://github.com/zeux/volk.git")
     add_versions("1.2.162", "ac4d9d6e88dee5a83ad176e2da57f1989ca2c6df155a0aeb5e18e9471aa4d777")
 
-    add_deps("cmake", "vulkan-headers")
+    add_deps("vulkan-headers")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
@@ -17,11 +17,22 @@ package("volk")
     end
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-DVOLK_INSTALL=ON", "-DVOLK_PULL_IN_VULKAN=OFF"}
-        import("package.tools.cmake").build(package, configs, {packagedeps = "vulkan-headers"})
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            add_requires("vulkan-headers")
+            target("volk")
+                set_kind("static")
+                add_files("volk.c")
+                add_headerfiles("volk.h")
+                add_packages("vulkan-headers")
+                if is_plat("linux") then
+                    add_syslinks("dl")
+                end
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("volkInitialize", {configs = {languages = "c++14"}, includes = "volk.h"}))
+        assert(package:has_cfuncs("volkInitialize", {includes = "volk.h"}))
     end)
     
