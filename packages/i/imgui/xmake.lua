@@ -25,9 +25,11 @@ package("imgui")
 
     on_load("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         if package:config("glfw_opengl3") then
-            package:add("deps", "glad")
+            if package:version():lt("1.84") then
+                package:add("deps", "glad")
+                package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
+            end
             package:add("deps", "glfw")
-            package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
         end
         if package:version_str():find("-docking", 1, true) then
             package:set("urls", {"https://github.com/ocornut/imgui.git"})
@@ -37,18 +39,22 @@ package("imgui")
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         local xmake_lua
         if package:config("glfw_opengl3") then
-            xmake_lua = [[
+            local pkgs = "\"glfw\""
+            if package:version():lt("1.84") then
+                pkgs = pkgs .. ", \"glad\""
+            end
+            xmake_lua = format([[
                 add_rules("mode.debug", "mode.release")
-                add_requires("glfw", "glad")
+                add_requires(%s)
                 target("imgui")
                     set_kind("static")
                     add_files("*.cpp", "backends/imgui_impl_glfw.cpp", "backends/imgui_impl_opengl3.cpp")
                     add_defines("IMGUI_IMPL_OPENGL_LOADER_GLAD")
-                    add_packages("glfw", "glad")
+                    add_packages(%s)
                     add_includedirs(".")
                     add_headerfiles("*.h", {prefixdir = "imgui"})
                     add_headerfiles("backends/imgui_impl_glfw.h", "backends/imgui_impl_opengl3.h")
-            ]]
+            ]], pkgs, pkgs)
             if package:version():ge("1.84") then
                 xmake_lua = xmake_lua .. "add_headerfiles(\"backends/imgui_impl_opengl3_loader.h\")\n"
             end
