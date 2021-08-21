@@ -49,6 +49,9 @@ package("imgui")
                     add_headerfiles("*.h", {prefixdir = "imgui"})
                     add_headerfiles("backends/imgui_impl_glfw.h", "backends/imgui_impl_opengl3.h")
             ]]
+            if package:version():ge("1.84") then
+                xmake_lua = xmake_lua .. "add_headerfiles(\"backends/imgui_impl_opengl3_loader.h\")\n"
+            end
         else
             xmake_lua = [[
                 add_rules("mode.debug", "mode.release")
