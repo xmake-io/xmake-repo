@@ -1,5 +1,6 @@
 package("taskflow")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://taskflow.github.io/")
     set_description("A fast C++ header-only library to help you quickly write parallel programs with complex task dependencies")
     set_license("MIT")
