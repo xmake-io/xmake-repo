@@ -10,26 +10,15 @@ package("volk")
 
     add_deps("cmake", "vulkan-headers")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     if is_plat("linux") then
         add_syslinks("dl")
     end
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
-        end
-        import("package.tools.cmake").build(package, configs, {buildir = "build", packagedeps = "vulkan-headers"})
-        if package:is_plat("windows") then
-            os.trycp("build/*.lib", package:installdir("lib"))
-            os.trycp("build/*.dll", package:installdir("bin"))
-        else
-            os.trycp("build/*.a", package:installdir("lib"))
-            os.trycp("build/*.so", package:installdir("lib"))
-        end
-        os.cp("*.h", package:installdir("include"))
+        local configs = {"-DVOLK_INSTALL=ON", "-DVOLK_PULL_IN_VULKAN=OFF"}
+        import("package.tools.cmake").build(package, configs, {packagedeps = "vulkan-headers"})
     end)
 
     on_test(function (package)
