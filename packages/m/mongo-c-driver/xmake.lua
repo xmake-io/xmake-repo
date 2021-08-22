@@ -21,6 +21,9 @@ package("mongo-c-driver")
                         "-DENABLE_ICU=OFF",
                         "-DENABLE_TESTS=OFF",
                         "-DENABLE_EXAMPLES=OFF"}
+        if is_plat("windows") then 
+            table.insert(configs, "-DENABLE_EXTRA_ALIGNMENT=0")    
+        end
         table.insert(configs, "-DBUILD_VERSION=" .. package:version())
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "RelWithDebInfo"))
         table.insert(configs, "-DENABLE_STATIC=" .. (package:config("shared") and "OFF" or "BUILD_ONLY"))
