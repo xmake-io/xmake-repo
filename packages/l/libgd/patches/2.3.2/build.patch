@@ -1,0 +1,72 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 57cd95d..67c703a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -280,8 +280,10 @@ else (USE_EXT_GD)
+ 	add_subdirectory(src)
+ endif (USE_EXT_GD)
+ 
++if(BUILD_TEST)
+ add_subdirectory(tests)
+ add_subdirectory(examples)
++endif()
+ 
+ add_custom_target(distclean ${GD_SOURCE_DIR}/cmake/distclean.sh)
+ 
+@@ -299,6 +301,7 @@ else(WIN32)
+ endif(WIN32)
+ 
+ 
++if (BUILD_DOCS)
+ INSTALL(FILES docs/INSTALL DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+ INSTALL(FILES docs/README.JPN DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+ INSTALL(FILES docs/README.CMAKE DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+@@ -320,6 +323,7 @@ INSTALL(FILES examples/test_crop_threshold.png DESTINATION share/doc/gd-${GDLIB_
+ INSTALL(FILES examples/tgaread.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+ INSTALL(FILES examples/tiffread.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
+ INSTALL(FILES examples/windows.c DESTINATION share/doc/gd-${GDLIB_MAJOR}.${GDLIB_MINOR})
++endif()
+ 
+ 
+ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/COPYING")
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 509c422..45c27f4 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -98,7 +98,7 @@ if (BUILD_STATIC_LIBS)
+ 	endif()
+ endif()
+ 
+-if (NOT "${GD_PROGRAMS_LIB_SRC_FILES}" STREQUAL "")
++if (BUILD_PROGRAMS AND NOT "${GD_PROGRAMS_LIB_SRC_FILES}" STREQUAL "")
+ 	add_library(gd_programs_lib STATIC ${GD_PROGRAMS_LIB_SRC_FILES})
+ endif()
+ 
+@@ -148,6 +148,7 @@ SET(LIBS_PRIVATES
+ 	${WEBP_LIBRARIES}
+ )
+ 
++if (BUILD_PROGRAMS)
+ set(GD_PROGRAMS gdcmpgif)
+ 
+ if (PNG_FOUND)
+@@ -178,6 +179,9 @@ foreach(program ${GD_PROGRAMS})
+ endforeach(program)
+ 
+ set(GD_INSTALL_TARGETS ${GD_PROGRAMS})
++else ()
++set(GD_INSTALL_TARGETS )
++endif ()
+ if (BUILD_SHARED_LIBS)
+ 	set(GD_INSTALL_TARGETS ${GD_INSTALL_TARGETS} ${GD_LIB})
+ endif()
+@@ -189,7 +193,9 @@ install(TARGETS ${GD_INSTALL_TARGETS}
+         RUNTIME DESTINATION bin
+         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
++if (UNIX)
+ install(PROGRAMS bdftogd DESTINATION bin)
++endif ()
+ install(FILES
+ 	entities.h
+ 	gd.h
