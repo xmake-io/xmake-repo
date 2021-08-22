@@ -13,10 +13,8 @@ package("mongo-c-driver")
         add_deps("openssl")
     end
 
-    on_load(function (package)
-        package:add("includedirs", "/include/libbson-1.0")
-        package:add("includedirs", "/include/libmongoc-1.0")
-    end)
+    add_includedirs("include/libbson-1.0")
+    add_includedirs("include/libmongoc-1.0")
 
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF",
