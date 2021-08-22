@@ -21,7 +21,7 @@ package("mongo-c-driver")
                         "-DENABLE_ICU=OFF",
                         "-DENABLE_TESTS=OFF",
                         "-DENABLE_EXAMPLES=OFF"}
-        if is_plat("windows") then 
+        if package:is_plat("windows") then 
             table.insert(configs, "-DENABLE_EXTRA_ALIGNMENT=0")    
         end
         table.insert(configs, "-DBUILD_VERSION=" .. package:version())
