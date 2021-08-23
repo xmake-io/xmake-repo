@@ -15,6 +15,14 @@ package("libiconv")
         add_patches("1.x", path.join(os.scriptdir(), "patches", "1.16", "makefile.in.patch"),
             "d09e4212040f5adf1faa5cf5a9a18f6f79d4cdce9affb05f2e75df2ea3b3d686")
     end
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::iconv")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libiconv")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libiconv")
+    end
 
     on_load(function (package)
         package:addenv("PATH", "bin")

@@ -9,8 +9,12 @@ package("libffi")
     add_versions("3.2.1", "d06ebb8e1d9a22d19e38d63fdb83954253f39bedc5d46232a05645685722ca37")
     add_versions("3.3", "72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056")
 
-    if is_plat("linux") then
-        add_extsources("apt::libffi-dev")
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libffi")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libffi", "apt::libffi-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libffi")
     end
 
     on_load(function (package)

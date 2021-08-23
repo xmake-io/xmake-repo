@@ -13,6 +13,14 @@ package("freetype")
         add_versions("2.9.1", "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
         add_versions("2.10.4", "5eab795ebb23ac77001cfb68b7d4d50b5d6c7469247b0b01b2c953269f658dac")
     end
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::freetype")
+    elseif is_plat("linux") then
+        add_extsources("pacman::freetype2", "apt::libfreetype-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::freetype")
+    end
 
     local configdeps = {woff2 = "brotli",
                         bzip2 = "bzip2",

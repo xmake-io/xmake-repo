@@ -25,6 +25,14 @@ package("assimp")
     add_configs("inject_debug_postfix",  {description = "Inject debug postfix in .a/.so lib names", default = false, type = "boolean"})
     add_configs("ignore_git_hash",       {description = "Don't call git to get the hash", default = false, type = "boolean"})
     add_configs("install_pdb",           {description = "Install MSVC debug files", default = false, type = "boolean"})
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::assimp")
+    elseif is_plat("linux") then
+        add_extsources("pacman::assimp", "apt::libassimp-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::assimp")
+    end
 
     add_deps("cmake")
 

@@ -6,6 +6,14 @@ package("libgcrypt")
 
     add_urls("https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-$(version).tar.gz")
     add_versions("1.8.7", "55d98db5e5c7e7bb1efabe1299040d501e5d55272e10f60b68de9f9118b53102")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libgcrypt")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libgcrypt", "apt::libgcrypt11-dev", "apt::libgcrypt20-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libgcrypt")
+    end
 
     add_deps("libgpg-error", "libxml2")
     on_install("linux", function (package)

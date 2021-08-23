@@ -9,6 +9,14 @@ package("nlohmann_json")
     add_versions("v3.9.1", "4cf0df69731494668bdd6460ed8cb269b68de9c19ad8c27abc24cd72605b2d5b")
 
     add_configs("cmake", {description = "Use cmake buildsystem", default = false, type = "boolean"})
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::nlohmann-json")
+    elseif is_plat("linux") then
+        add_extsources("pacman::nlohmann-json", "apt::nlohmann-json3-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::nlohmann-json")
+    end
 
     on_load(function (package)
         if package:config("cmake") then

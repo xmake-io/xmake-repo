@@ -10,6 +10,15 @@ package("openal-soft")
     add_urls("https://github.com/kcat/openal-soft.git")
 
     add_versions("1.21.1", "8ac17e4e3b32c1af3d5508acfffb838640669b4274606b7892aa796ca9d7467f")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::openal")
+    elseif is_plat("linux") then
+        add_extsources("pacman::openal", "apt::libopenal-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::openal-soft")
+    end
+    
     add_deps("cmake")
 
     if is_plat("windows", "mingw") then

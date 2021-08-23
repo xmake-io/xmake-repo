@@ -17,7 +17,9 @@ package("libsdl_gfx")
         add_versions("1.0.4", "63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262")
     end
 
-    if is_plat("linux") then
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::SDL2_gfx")
+    elseif is_plat("linux") then
         add_extsources("pacman::sdl2_gfx", "apt::libsdl2-gfx-dev")
     elseif is_plat("macosx") then
         add_extsources("brew::sdl2_gfx")

@@ -12,6 +12,14 @@ package("libvorbis")
 
     add_configs("vorbisenc",  {description = "Includes vorbisenc", default = true, type = "boolean"})
     add_configs("vorbisfile", {description = "Includes vorbisfile", default = true, type = "boolean"})
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libvorbis")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libvorbis", "apt::libvorbis-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libvorbis")
+    end
 
     add_deps("cmake", "libogg")
 

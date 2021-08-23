@@ -10,6 +10,12 @@ package("sol2")
     add_versions("v3.2.3", "f74158f92996f476786be9c9e83f8275129bb1da2a8d517d050421ac160a4b9e")
     add_versions("v3.2.2", "141790dae0c1821dd2dbac3595433de49ba72545845efc3ec7d88de8b0a3b2da")
     add_versions("v3.2.1", "b10f88dc1246f74a10348faef7d2c06e2784693307df74dcd87c4641cf6a6828")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::sol2")
+    elseif is_plat("linux") then
+        add_extsources("pacman::sol2")
+    end
 
     add_configs("includes_lua", {description = "Should this package includes the Lua package (set to false if you're shipping a custom Lua)", default = true, type = "boolean"})
 

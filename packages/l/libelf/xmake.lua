@@ -7,6 +7,14 @@ package("libelf")
              "https://github.com/xmake-mirror/libelf/releases/download/$(version)/libelf-$(version).tar.gz",
              "https://github.com/xmake-mirror/libelf.git")
     add_versions("0.8.13", "591a9b4ec81c1f2042a97aa60564e0cb79d041c52faa7416acb38bc95bd2c76d")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libelf")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libelf", "apt::libelf-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libelf")
+    end
 
     add_includedirs("include", "include/libelf")
 

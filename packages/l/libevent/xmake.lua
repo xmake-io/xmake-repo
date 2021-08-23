@@ -10,6 +10,14 @@ package("libevent")
 
     add_configs("openssl", {description = "Build with OpenSSL library.", default = false, type = "boolean"})
     add_configs("mbedtls", {description = "Build with mbedtls library.", default = false, type = "boolean"})
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libevent")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libevent", "apt::libevent-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libevent")
+    end
 
     add_deps("cmake")
     on_load(function (package)

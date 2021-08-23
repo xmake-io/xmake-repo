@@ -9,6 +9,12 @@ package("libavif")
     add_versions("v0.9.1", "8526f3fff34a05a51d7c703cdcf1d0d38c939b5b6dd4bb7d3a3405ddad88186c")
 
     add_configs("dav1d", {description = "Use the dav1d codec for decoding.", default = false, type = "boolean"})
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libavif")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libavif")
+    end
 
     add_deps("cmake")
     on_load(function (package)

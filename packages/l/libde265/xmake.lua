@@ -6,6 +6,14 @@ package("libde265")
 
     add_urls("https://github.com/strukturag/libde265/releases/download/v$(version)/libde265-$(version).tar.gz")
     add_versions("1.0.8", "24c791dd334fa521762320ff54f0febfd3c09fc978880a8c5fbc40a88f21d905")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libde265")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libde265", "apt::libde265-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libde265")
+    end
 
     add_deps("cmake")
     if is_plat("linux") then

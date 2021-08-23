@@ -6,6 +6,14 @@ package("libgpg-error")
 
     add_urls("https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-$(version).tar.gz")
     add_versions("1.39", "3d4dc56588d62ff01067af192e2d3de38ef4c060857ed8da77327365477569ca")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libgpg-error")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libgpg-error", "apt::libgpg-error-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libgpg-error")
+    end
 
     on_install("linux", function (package)
         local configs = {"--disable-doc", "--disable-tests", "--with-pic"}

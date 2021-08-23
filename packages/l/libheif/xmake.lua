@@ -6,6 +6,14 @@ package("libheif")
 
     add_urls("https://github.com/strukturag/libheif/releases/download/v$(version)/libheif-$(version).tar.gz")
     add_versions("1.12.0", "e1ac2abb354fdc8ccdca71363ebad7503ad731c84022cf460837f0839e171718")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libheif")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libheif", "apt::libheif-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libheif")
+    end
 
     add_deps("cmake")
     local configdeps = {"libde265", "x265", "dav1d"}

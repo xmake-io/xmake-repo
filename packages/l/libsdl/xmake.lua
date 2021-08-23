@@ -2,6 +2,14 @@ package("libsdl")
 
     set_homepage("https://www.libsdl.org/")
     set_description("Simple DirectMedia Layer")
+	
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::SDL2")
+    elseif is_plat("linux") then
+        add_extsources("pacman::sdl2", "apt::libsdl2-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::sdl2")
+    end
 
     if is_plat("windows", "mingw") then
         set_urls("https://www.libsdl.org/release/SDL2-devel-$(version)-VC.zip")

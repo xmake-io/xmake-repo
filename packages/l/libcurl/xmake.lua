@@ -10,6 +10,14 @@ package("libcurl")
     add_urls("https://github.com/curl/curl/releases/download/curl-$(version).tar.bz2",
              {version = function (version) return (version:gsub("%.", "_")) .. "/curl-" .. version end})
     add_versions_list()
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::curl")
+    elseif is_plat("linux") then
+        add_extsources("pacman::curl", "apt::libcurl4-openssl-dev", "apt::libcurl4-nss-dev", "apt::libcurl4-gnutls-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::curl")
+    end
 
     if is_plat("linux") then
         add_deps("openssl")

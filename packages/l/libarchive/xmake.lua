@@ -6,6 +6,14 @@ package("libarchive")
 
     add_urls("https://libarchive.org/downloads/libarchive-$(version).tar.gz")
     add_versions("3.5.1", "9015d109ec00bb9ae1a384b172bf2fc1dff41e2c66e5a9eeddf933af9db37f5a")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libarchive")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libarchive", "apt::libarchive-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libarchive")
+    end
 
     add_deps("cmake")
     add_deps("zlib", "bzip2", "lz4")

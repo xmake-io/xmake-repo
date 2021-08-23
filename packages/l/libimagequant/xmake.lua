@@ -9,6 +9,14 @@ package("libimagequant")
     add_versions("2.15.1", "3a9548f99be8c3b20a5d9407d0ca95bae8b0fb424a2735a87cb6cf3fdd028225")
 
     add_configs("sse", {description = "Use SSE.", default = true, type = "boolean"})
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libimagequant")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libimagequant", "apt::libimagequant-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libimagequant")
+    end
 
     on_install("windows", "macosx", "linux", function (package)
         io.writefile("xmake.lua", [[
