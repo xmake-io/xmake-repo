@@ -28,6 +28,9 @@ package("ogre-next")
         local configs = {"-DOGRE_BUILD_SAMPLES2=OFF", "-DOGRE_BUILD_TESTS=OFF", "-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DOGRE_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        if package:is_plat("macosx") then
+            table.insert(configs, "-DOGRE_BUILD_RENDERSYSTEM_GL3PLUS=OFF")
+        end
         if package:is_plat("linux") then
             import("package.tools.cmake").install(package, configs, {packagedeps = {"libx11", "libxt", "libxaw", "libxrandr", "libsm", "libice", "xtrans"}})
         else
