@@ -1,4 +1,4 @@
-package("ogre")
+package("ogre-next")
 
     set_homepage("https://www.ogre3d.org/")
     set_description("scene-oriented, flexible 3D engine written in C++")
@@ -7,6 +7,8 @@ package("ogre")
     add_urls("https://github.com/OGRECave/ogre-next/archive/refs/tags/$(version).tar.gz",
              "https://github.com/OGRECave/ogre-next.git")
     add_versions("v2.2.5", "b3b555386aa7ebf164a41451ad896bb3774521410944568ecec58f780d0725c4")
+
+    add_patches("v2.2.5", path.join(os.scriptdir(), "patches", "2.2.5", "macosx.patch"), "2a2d2e338830a6e4e05d700f190524e2465f3930d0b99c94adddd4ef5f12fcdf")
 
     add_deps("cmake", "zziplib", "freetype", "zlib", "assimp")
     add_deps("boost", {configs = {thread = true, date_time = true}})
