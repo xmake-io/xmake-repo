@@ -3,7 +3,7 @@ package("freetype")
     set_homepage("https://www.freetype.org")
     set_description("A freely available software library to render fonts.")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         set_urls("https://github.com/ubawurinna/freetype-windows-binaries/archive/v$(version).tar.gz")
         add_versions("2.9.1", "60f788b63f1243a30e01611694ed196ee5ad1b89d553527700e5359d57d33b82")
         add_versions("2.10.4", "24d7d3ab605e9f9b338adf0c4200ab14f6601a8c41a98741b9d1ecb3e759869c")
@@ -43,7 +43,7 @@ package("freetype")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows", "mingw", function (package)
         os.cp("include", package:installdir())
         os.cp(is_arch("x64") and "win64/*.lib" or "win32/*.lib", package:installdir("lib"))
         os.cp(is_arch("x64") and "win64/*.dll" or "win32/*.dll", package:installdir("bin"))

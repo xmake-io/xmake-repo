@@ -45,7 +45,7 @@ package("assimp")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         local config = {}
 
         local function add_config_arg(config_name, cmake_name)
