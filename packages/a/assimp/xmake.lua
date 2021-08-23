@@ -3,10 +3,11 @@ package("assimp")
     set_homepage("https://assimp.org")
     set_description("Portable Open-Source library to import various well-known 3D model formats in a uniform manner")
 
-    set_urls("https://github.com/assimp/assimp/archive/v$(version).zip")
-    add_versions("5.0.1", "d10542c95e3e05dece4d97bb273eba2dfeeedb37a78fb3417fd4d5e94d879192")
+    set_urls("https://github.com/assimp/assimp/archive/$(version).zip",
+             "https://github.com/assimp/assimp.git")
+    add_versions("v5.0.1", "d10542c95e3e05dece4d97bb273eba2dfeeedb37a78fb3417fd4d5e94d879192")
+    add_patches("v5.0.1", path.join(os.scriptdir(), "patches", "5.0.1", "fix-mingw.patch"), "a3375489e2bbb2dd97f59be7dd84e005e7e9c628b4395d7022a6187ca66b5abb")
 
-    add_configs("shared",                {description = "Generation of shared libs ( dll for windows, so for Linux ). Set this to OFF to get a static lib", default = true, type = "boolean"})
     add_configs("build_framework",       {description = "Build package as Mac OS X Framework bundle (macosx only)", default = false, type = "boolean"})
     add_configs("double_precision",      {description = "All data will be stored as double values", default = false, type = "boolean"})
     add_configs("opt_build_packages",    {description = "Set to true to generate CPack configuration files and packaging targets", default = false, type = "boolean"})
@@ -29,7 +30,7 @@ package("assimp")
     add_deps("cmake")
 
     on_load(function (package)
-        if is_plat("windows", "linux", "macosx") then
+        if is_plat("windows", "linux", "macosx", "mingw") then
             if package:config("build_samples") then
                 package:add("deps", "freeglut")
             end
@@ -80,7 +81,7 @@ package("assimp")
         if is_plat("android") then
             add_config_arg("android_jniiosysystem", "ASSIMP_ANDROID_JNIIOSYSTEM")
         end
-        if is_plat("windows", "linux", "macosx") then
+        if is_plat("windows", "linux", "macosx", "mingw") then
             add_config_arg("build_assimp_tools", "ASSIMP_BUILD_ASSIMP_TOOLS")
         end
         if is_plat("android", "iphoneos") then
