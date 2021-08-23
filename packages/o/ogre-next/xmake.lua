@@ -8,7 +8,7 @@ package("ogre-next")
              "https://github.com/OGRECave/ogre-next.git")
     add_versions("v2.2.5", "b3b555386aa7ebf164a41451ad896bb3774521410944568ecec58f780d0725c4")
 
-    add_patches("v2.2.5", path.join(os.scriptdir(), "patches", "2.2.5", "macosx.patch"), "2a2d2e338830a6e4e05d700f190524e2465f3930d0b99c94adddd4ef5f12fcdf")
+    add_patches("v2.2.5", path.join(os.scriptdir(), "patches", "2.2.5", "macosx.patch"), "a20f32d8847dd4c93fe2b824d2b793862b8e3126ae7fda4450ad22e76bb00c32")
 
     add_deps("cmake", "zziplib", "freetype", "zlib", "assimp")
     add_deps("boost", {configs = {thread = true, date_time = true}})
