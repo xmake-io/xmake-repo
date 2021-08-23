@@ -15,7 +15,7 @@ package("resip")
 
     on_install("windows", function(package)
         import("package.tools.msbuild")
-        local arch = package:is_arch("x64") and "x64" or "x86"
+        local arch = package:is_arch("x64") and "x64" or "Win32"
         local mode = package:debug() and "Debug" or "Release"
         local configs = { "reSIProcate_15_0.sln" }
         table.insert(configs, "/t:resiprocate")
