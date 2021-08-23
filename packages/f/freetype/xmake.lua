@@ -3,27 +3,25 @@ package("freetype")
     set_homepage("https://www.freetype.org")
     set_description("A freely available software library to render fonts.")
 
-    if is_plat("windows", "mingw") then
-        set_urls("https://github.com/ubawurinna/freetype-windows-binaries/archive/v$(version).tar.gz")
-        add_versions("2.9.1", "60f788b63f1243a30e01611694ed196ee5ad1b89d553527700e5359d57d33b82")
-        add_versions("2.10.4", "24d7d3ab605e9f9b338adf0c4200ab14f6601a8c41a98741b9d1ecb3e759869c")
-    else
-        set_urls("https://downloads.sourceforge.net/project/freetype/freetype2/$(version)/freetype-$(version).tar.gz",
-                 "https://download.savannah.gnu.org/releases/freetype/freetype-$(version).tar.gz")
-        add_versions("2.9.1", "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
-        add_versions("2.10.4", "5eab795ebb23ac77001cfb68b7d4d50b5d6c7469247b0b01b2c953269f658dac")
-    end
+    set_urls("https://downloads.sourceforge.net/project/freetype/freetype2/$(version)/freetype-$(version).tar.gz",
+             "https://download.savannah.gnu.org/releases/freetype/freetype-$(version).tar.gz",
+             "https://gitlab.freedesktop.org/freetype/freetype.git")
+    add_versions("2.9.1", "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
+    add_versions("2.10.4", "5eab795ebb23ac77001cfb68b7d4d50b5d6c7469247b0b01b2c953269f658dac")
 
     local configdeps = {woff2 = "brotli",
                         bzip2 = "bzip2",
                         png   = "libpng",
                         zlib  = "zlib"}
 
-    if not is_plat("windows") then
+    add_includedirs("include/freetype2")
+    if is_plat("windows", "mingw") then
+        add_deps("cmake")
+    else
+        add_deps("pkg-config")
         for conf, dep in pairs(configdeps) do
             add_configs(conf, {description = "Enable " .. conf .. " support.", default = false, type = "boolean"})
         end
-        add_includedirs("include/freetype2")
     end
 
     if on_fetch then
@@ -35,7 +33,6 @@ package("freetype")
     end
 
     on_load("linux", "macosx", function (package)
-        package:add("deps", "pkg-config")
         for conf, dep in pairs(configdeps) do
             if package:config(conf) then
                 package:add("deps", dep)
@@ -44,9 +41,10 @@ package("freetype")
     end)
 
     on_install("windows", "mingw", function (package)
-        os.cp("include", package:installdir())
-        os.cp(is_arch("x64") and "win64/*.lib" or "win32/*.lib", package:installdir("lib"))
-        os.cp(is_arch("x64") and "win64/*.dll" or "win32/*.dll", package:installdir("bin"))
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_install("linux", "macosx", function (package)
