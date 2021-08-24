@@ -43,12 +43,20 @@ package("freetype")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        table.insert(configs, "-DFT_WITH_BZIP2=" .. (package:config("bzip2") and "ON" or "OFF"))
-        table.insert(configs, "-DFT_WITH_PNG=" .. (package:config("png") and "ON" or "OFF"))
-        table.insert(configs, "-DFT_WITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
+        local function add_dep(dep, cmakeConf, cmakeDisableConf)
+            if package:config("dep") then
+                table.insert(configs, "-DFT_WITH_" .. cmakeConf .. "=ON"))
+            else
+                table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (cmakeDisableConf or cmakeConf) .. "=ON")
+            end
+        end
 
-        -- brotli isn't detected automatically
-        table.insert(configs, "-DFT_WITH_BROTLI=" .. (package:config("zlib") and "ON" or "OFF"))
+        add_dep("bzip2", "BZIP2", "Bzip2")
+        add_dep("png", "PNG")
+        add_dep("woff2", "BROTLI", "BrotliDec")
+        add_dep("zlib", "ZLIB")
+
+        -- brotli isn't found automatically
         if package:config("woff2") then
             local brotli = package:dep("brotli")
             if brotli and not brotli:is_system() then
