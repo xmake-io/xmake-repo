@@ -10,7 +10,12 @@ package("freetype")
     add_versions("2.10.4", "5eab795ebb23ac77001cfb68b7d4d50b5d6c7469247b0b01b2c953269f658dac")
     add_versions("2.9.1", "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
 
-    add_extsources("apt::libfreetype6", "pkgconfig::freetype2", "brew::freetype")
+    add_extsources("pkgconfig::freetype2")
+    if is_host("linux") then
+        add_extsources("apt::libfreetype6")
+    elseif is_host("macosx") then
+        add_extsources("brew::freetype")
+    end
 
     add_configs("bzip2", {description = "Support bzip2 compressed fonts", default = false, type = "boolean"})
     add_configs("png", {description = "Support PNG compressed OpenType embedded bitmaps", default = false, type = "boolean"})
@@ -39,6 +44,9 @@ package("freetype")
     end)
 
     on_install("windows", "mingw", function (package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local function add_dep(dep, cmakeConf, cmakeDisableConf)
             if package:config("dep") then
                 table.insert(configs, "-DFT_WITH_" .. cmakeConf .. "=ON")
@@ -46,10 +54,6 @@ package("freetype")
                 table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (cmakeDisableConf or cmakeConf) .. "=ON")
             end
         end
-
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         add_dep("bzip2", "BZIP2", "Bzip2")
         add_dep("png", "PNG")
         add_dep("woff2", "BROTLI", "BrotliDec")
@@ -74,16 +78,13 @@ package("freetype")
                           "--without-harfbuzz"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-
         local function add_dep(conf, name)
             table.insert(configs, "--with-" .. (name or conf) .. "=" .. (package:config(conf) and "yes" or "no"))
         end
-
         add_dep("bzip2")
         add_dep("png")
         add_dep("woff2", "brotli")
-        add_dep("zlib", "zlib")
-
+        add_dep("zlib")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
