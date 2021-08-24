@@ -10,41 +10,54 @@ package("freetype")
     add_versions("2.10.4", "5eab795ebb23ac77001cfb68b7d4d50b5d6c7469247b0b01b2c953269f658dac")
     add_versions("2.9.1", "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
 
-    local configdeps = {woff2 = "brotli",
-                        bzip2 = "bzip2",
-                        png   = "libpng",
-                        zlib  = "zlib"}
+    add_extsources("apt::libfreetype6", "pkgconfig::freetype2", "brew::freetype")
 
-    add_includedirs("include/freetype2")
+    add_configs("bzip2", {description = "Support bzip2 compressed fonts", default = false, type = "boolean"})
+    add_configs("png", {description = "Support PNG compressed OpenType embedded bitmaps", default = false, type = "boolean"})
+    add_configs("woff2", {description = "Use Brotli library to support decompressing WOFF2 fonts", default = false, type = "boolean"})
+    add_configs("zlib", {description = "Support reading gzip-compressed font files", default = false, type = "boolean"})
+
     if is_plat("windows", "mingw") then
         add_deps("cmake")
     else
         add_deps("pkg-config")
-        for conf, dep in pairs(configdeps) do
-            add_configs(conf, {description = "Enable " .. conf .. " support.", default = false, type = "boolean"})
-        end
     end
 
-    if on_fetch then
-        on_fetch("linux", "macosx", function (package, opt)
-            if opt.system then
-                return find_package("pkgconfig::freetype2")
-            end
-        end)
-    end
+    add_includedirs("include/freetype2")
 
-    on_load("linux", "macosx", function (package)
-        for conf, dep in pairs(configdeps) do
+    on_load(function (package)
+        local function add_dep(conf, pkg)
             if package:config(conf) then
-                package:add("deps", dep)
+                package:add("deps", pkg or conf)
             end
         end
+
+        add_dep("bzip2")
+        add_dep("png", "libpng")
+        add_dep("woff2", "brotli")
+        add_dep("zlib")
     end)
 
     on_install("windows", "mingw", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        table.insert(configs, "-DFT_WITH_BZIP2=" .. (package:config("bzip2") and "ON" or "OFF"))
+        table.insert(configs, "-DFT_WITH_PNG=" .. (package:config("png") and "ON" or "OFF"))
+        table.insert(configs, "-DFT_WITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
+
+        -- brotli isn't detected automatically
+        table.insert(configs, "-DFT_WITH_BROTLI=" .. (package:config("zlib") and "ON" or "OFF"))
+        if package:config("woff2") then
+            local brotli = package:dep("brotli")
+            if brotli and not brotli:is_system() then
+                local fetchinfo = brotli:fetch()
+                table.insert(configs, "-DBROTLIDEC_INCLUDE_DIRS=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
+                table.insert(configs, "-DBROTLIDEC_LIBRARIES=" .. table.concat(fetchinfo.libfiles, ";"))
+            end
+        end
+
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -57,6 +70,16 @@ package("freetype")
         for conf, dep in pairs(configdeps) do
             table.insert(configs, "--with-" .. conf .. "=" .. (package:config(conf) and "yes" or "no"))
         end
+
+        local function add_dep(conf, name)
+            table.insert(configs, "--with-" .. (name or conf) .. "=" .. (package:config(conf) and "yes" or "no"))
+        end
+
+        add_dep("bzip2")
+        add_dep("png")
+        add_dep("woff2", "brotli")
+        add_dep("zlib", "zlib")
+
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
