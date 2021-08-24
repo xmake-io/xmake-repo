@@ -10,7 +10,10 @@ package("freetype")
     add_versions("2.10.4", "5eab795ebb23ac77001cfb68b7d4d50b5d6c7469247b0b01b2c953269f658dac")
     add_versions("2.9.1", "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
 
-    add_extsources("pkgconfig::freetype2")
+    if not is_host("windows") then
+        add_extsources("pkgconfig::freetype2")
+    end
+
     if is_host("linux") then
         add_extsources("apt::libfreetype6")
     elseif is_host("macosx") then
@@ -54,7 +57,7 @@ package("freetype")
                 table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (cmakeDisableConf or cmakeConf) .. "=ON")
             end
         end
-        add_dep("bzip2", "BZIP2", "Bzip2")
+        add_dep("bzip2", "BZIP2", "BZip2")
         add_dep("png", "PNG")
         add_dep("woff2", "BROTLI", "BrotliDec")
         add_dep("zlib", "ZLIB")
