@@ -8,7 +8,7 @@ package("assimp")
     add_versions("v5.0.1", "d10542c95e3e05dece4d97bb273eba2dfeeedb37a78fb3417fd4d5e94d879192")
     add_patches("v5.0.1", path.join(os.scriptdir(), "patches", "5.0.1", "fix-mingw.patch"), "a3375489e2bbb2dd97f59be7dd84e005e7e9c628b4395d7022a6187ca66b5abb")
 
-    add_configs("android_jniiosystem",   {description = "Android JNI IOSystem support is active", default = false, type = "boolean"})
+    --add_configs("android_jniiosystem",   {description = "Android JNI IOSystem support is active", default = false, type = "boolean"})
     add_configs("asan",                  {description = "Enable AddressSanitizer", default = false, type = "boolean"})
     add_configs("build_tools",           {description = "If the supplementary tools for Assimp are built in addition to the library", default = false, type = "boolean"})
     add_configs("double_precision",      {description = "All data will be stored as double values", default = false, type = "boolean"})
