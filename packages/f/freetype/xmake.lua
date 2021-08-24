@@ -39,18 +39,17 @@ package("freetype")
     end)
 
     on_install("windows", "mingw", function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
         local function add_dep(dep, cmakeConf, cmakeDisableConf)
             if package:config("dep") then
-                table.insert(configs, "-DFT_WITH_" .. cmakeConf .. "=ON"))
+                table.insert(configs, "-DFT_WITH_" .. cmakeConf .. "=ON")
             else
                 table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (cmakeDisableConf or cmakeConf) .. "=ON")
             end
         end
 
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         add_dep("bzip2", "BZIP2", "Bzip2")
         add_dep("png", "PNG")
         add_dep("woff2", "BROTLI", "BrotliDec")
@@ -75,9 +74,6 @@ package("freetype")
                           "--without-harfbuzz"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        for conf, dep in pairs(configdeps) do
-            table.insert(configs, "--with-" .. conf .. "=" .. (package:config(conf) and "yes" or "no"))
-        end
 
         local function add_dep(conf, name)
             table.insert(configs, "--with-" .. (name or conf) .. "=" .. (package:config(conf) and "yes" or "no"))
