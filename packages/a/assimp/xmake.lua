@@ -10,7 +10,6 @@ package("assimp")
 
     add_configs("android_jniiosystem",   {description = "Android JNI IOSystem support is active", default = false, type = "boolean"})
     add_configs("asan",                  {description = "Enable AddressSanitizer", default = false, type = "boolean"})
-    add_configs("build_framework",       {description = "Build package as Mac OS X Framework bundle (macosx only)", default = false, type = "boolean"})
     add_configs("build_tools",           {description = "If the supplementary tools for Assimp are built in addition to the library", default = false, type = "boolean"})
     add_configs("double_precision",      {description = "All data will be stored as double values", default = false, type = "boolean"})
     add_configs("no_export",             {description = "Disable Assimp's export functionality (reduces library size)", default = false, type = "boolean"})
@@ -27,9 +26,10 @@ package("assimp")
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {}
-        table.insert(configs, "-DBUILD_DOCS=OFF")
         table.insert(configs, "-DASSIMP_BUILD_SAMPLES=OFF")
         table.insert(configs, "-DASSIMP_BUILD_TESTS=OFF")
+        table.insert(configs, "-DBUILD_DOCS=OFF")
+        table.insert(configs, "-DBUILD_FRAMEWORK=OFF")
         table.insert(configs, "-DINJECT_DEBUG_POSTFIX=" .. ((package:debug()) and "ON" or "OFF"))
 
         local irrxml = package:dep("irrxml")
@@ -68,10 +68,6 @@ package("assimp")
         add_config_arg("no_export",        "ASSIMP_NO_EXPORT")
         add_config_arg("shared",           "BUILD_SHARED_LIBS")
         add_config_arg("ubsan",            "ASSIMP_UBSAN")
-
-        if package:is_plat("macosx") then
-            add_config_arg("build_framework", "BUILD_FRAMEWORK")
-        end
 
         if package:is_plat("windows") then
             table.insert(configs, "-DASSIMP_INSTALL_PDB=" .. ((package:debug() or package:config("install_pdb")) and "ON" or "OFF"))
