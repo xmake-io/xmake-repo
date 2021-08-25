@@ -126,10 +126,13 @@ package("libsdl")
         local cflags = {}
         if package:is_plat("linux") then
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
-                local dep = package:dep(depname):fetch()
+                local dep = package:dep(depname)
                 if dep then
-                    for _, includedir in ipairs(dep.includedirs or dep.sysincludedirs) do
-                        table.join2(cflags, "-I" .. includedir)
+                    local depfetch = dep:fetch
+                    if depfetch then
+                        for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
+                            table.join2(cflags, "-I" .. includedir)
+                        end
                     end
                 end
             end
