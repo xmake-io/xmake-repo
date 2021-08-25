@@ -17,6 +17,12 @@ package("freeimage")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
+        if package:is_plat("windows") and package:is_arch("x86") then
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            if tonumber(vs) < 2019 then
+                raise("Your compiler is too old to use this library.")
+            end
+        end
         local sources, includes
         local content = io.readfile("Makefile.srcs")
         sources = content:match("SRCS = (.-)\n"):split(" ")
