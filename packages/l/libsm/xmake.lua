@@ -6,6 +6,10 @@ package("libsm")
     add_urls("https://www.x.org/archive/individual/lib/libSM-$(version).tar.gz")
     add_versions("1.2.3", "1e92408417cb6c6c477a8a6104291001a40b3bb56a4a60608fdd9cd2c5a0f320")
 
+    if is_plat("linux") then
+        add_extsources("apt::libsm-dev")
+    end
+
     add_deps("libice")
 
     on_install("macosx", "linux", function (package)

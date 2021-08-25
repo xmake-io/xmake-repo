@@ -20,7 +20,7 @@ package("boost")
 
     if is_plat("linux") then
         add_deps("bzip2", "zlib")
-        add_syslinks("dl")
+        add_syslinks("pthread", "dl")
     end
 
     local libnames = {"filesystem",
