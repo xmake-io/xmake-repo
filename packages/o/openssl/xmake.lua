@@ -21,6 +21,10 @@ package("openssl")
         add_syslinks("dl")
     end
 
+    if is_plat("linux") then
+        add_extsources("apt::libssl-dev")
+    end
+
     on_fetch("fetch")
 
     on_load(function (package)
