@@ -11,6 +11,10 @@ package("taskflow")
     add_versions("v3.1.0", "17b56e23312d20c4ad5cc497b9f42cd0ad4451dbd2df0160a0a692fd16d47143")
     add_versions("v3.0.0", "553c88a6e56e115d29ac1520b8a0fea4557a5fcda1af1427bd3ba454926d03a2")
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_install(function (package)
         os.cp("taskflow", package:installdir("include"))
     end)
