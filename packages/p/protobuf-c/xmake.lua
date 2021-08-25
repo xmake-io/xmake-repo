@@ -17,6 +17,9 @@ package("protobuf-c")
     end
 
     add_links("protobuf-c")
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
 
     on_load(function (package)
         package:addenv("PATH", "bin")
