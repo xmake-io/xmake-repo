@@ -7,9 +7,11 @@ package('cpr')
              "https://github.com/whoshuu/cpr.git")
     add_versions("1.6.2", "c45f9c55797380c6ba44060f0c73713fbd7989eeb1147aedb8723aa14f3afaa3")
 
-    add_deps("libcurl")
+    add_deps("cmake", "libcurl")
+    if is_plat("macosx") then
+        add_frameworks("Security")
+    end
 
-    add_deps("cmake")
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-DCPR_BUILD_TESTS=OFF", "-DCPR_FORCE_USE_SYSTEM_CURL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")) 
