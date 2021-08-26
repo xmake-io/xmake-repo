@@ -1,4 +1,4 @@
-package('cpr')
+package("cpr")
 
     set_homepage("https://whoshuu.github.io/cpr/")
     set_description("C++ Requests is a simple wrapper around libcurl inspired by the excellent Python Requests project.")
@@ -11,9 +11,13 @@ package('cpr')
 
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-DCPR_BUILD_TESTS=OFF", "-DCPR_FORCE_USE_SYSTEM_CURL=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")) 
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")) 
-        import("package.tools.cmake").install(package, configs)
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        local shflags
+        if package:config("shared") and package:is_plat("macosx") then
+            shflags = {"-framework", "Security"}
+        end
+        import("package.tools.cmake").install(package, configs, {shflags = shflags})
     end)
 
     on_test(function (package)
