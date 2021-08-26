@@ -25,7 +25,7 @@ package("cpr")
             #include <cassert>
             #include <cpr/cpr.h>
             static void test() {
-                cpr::Response r = cpr::Get(cpr::Url{"https://www.baidu.com"});
+                cpr::Response r = cpr::Get(cpr::Url{"https://xmake.io"});
                 assert(r.status_code == 200);
             }
         ]]}, {configs = {languages = "c++11"}}))
