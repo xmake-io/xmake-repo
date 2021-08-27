@@ -128,7 +128,7 @@ package("libsdl")
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)
                 if dep then
-                    local depfetch = dep:fetch
+                    local depfetch = dep:fetch()
                     if depfetch then
                         for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
                             table.join2(cflags, "-I" .. includedir)
