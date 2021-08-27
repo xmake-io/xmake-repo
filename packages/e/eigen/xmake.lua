@@ -1,23 +1,23 @@
 package("eigen")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://eigen.tuxfamily.org/")
     set_description("C++ template library for linear algebra")
+    set_license("MPL-2.0")
 
     add_urls("https://gitlab.com/libeigen/eigen/-/archive/$(version)/eigen-$(version).tar.bz2",
              "https://gitlab.com/libeigen/eigen")
     add_versions("3.3.7", "685adf14bd8e9c015b78097c1dc22f2f01343756f196acdc76a678e1ae352e11")
     add_versions("3.3.8", "0215c6593c4ee9f1f7f28238c4e8995584ebf3b556e9dbf933d84feb98d5b9ef")
     add_versions("3.3.9", "0fa5cafe78f66d2b501b43016858070d52ba47bd9b1016b0165a7b8e04675677")
+    add_versions("3.4.0", "b4c198460eba6f28d34894e3a5710998818515104d6e74e5cc331ce31e46e626")
 
     add_deps("cmake")
     add_includedirs("include")
     add_includedirs("include/eigen3")
 
     on_install("macosx", "linux", "windows", function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
     end)
 
     on_test(function (package)

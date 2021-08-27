@@ -6,6 +6,10 @@ package("libxvmc")
     set_urls("https://www.x.org/archive/individual/lib/libXvMC-$(version).tar.bz2")
     add_versions("1.0.12", "6b3da7977b3f7eaf4f0ac6470ab1e562298d82c4e79077765787963ab7966dcd")
 
+    if is_plat("linux") then
+        add_extsources("apt::libxvmc-dev")
+    end
+
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "util-macros", "libx11", "libxext", "libxv", "xorgproto")
     end

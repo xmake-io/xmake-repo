@@ -6,6 +6,10 @@ package("libxau")
     set_urls("https://www.x.org/archive/individual/lib/libXau-$(version).tar.bz2")
     add_versions("1.0.9", "ccf8cbf0dbf676faa2ea0a6d64bcc3b6746064722b606c8c52917ed00dcb73ec")
 
+    if is_plat("linux") then
+        add_extsources("apt::libxau-dev")
+    end
+
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "util-macros", "xorgproto")
     end

@@ -18,8 +18,17 @@ package("openexr")
     add_configs("build_both", {description = "Build both static library and shared library.", default = false, type = "boolean"})
 
     on_load("windows", "macosx", "linux", "mingw@windows", "mingw@msys", function (package)
-        if package:version():ge("3.0") then
+        local ver = package:version()
+        local suffix = format("-%d_%d", ver:major(), ver:minor())
+        local links = {}
+        if ver:ge("3.0") then
             package:add("deps", "imath")
+            links = {"OpenEXRUtil", "OpenEXR", "OpenEXRCore", "IlmThread", "Iex"}
+        else
+            links = {"IlmImfUtil", "IlmImf", "IlmThread", "Imath", "Half", "IexMath", "Iex"}
+        end
+        for _, link in ipairs(links) do
+            package:add("links", link .. suffix)
         end
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "OPENEXR_DLL")
@@ -30,9 +39,6 @@ package("openexr")
         local configs = {"-DBUILD_TESTING=OFF", "-DINSTALL_OPENEXR_EXAMPLES=OFF", "-DINSTALL_OPENEXR_DOCS=OFF", "-DOPENEXR_BUILD_UTILS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:version():ge("3.0") then
-            if package:is_plat("mingw") then
-                raise("mingw is not supported in version 3.0")
-            end
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         else
             if package:config("build_both") then

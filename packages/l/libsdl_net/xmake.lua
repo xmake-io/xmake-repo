@@ -11,6 +11,12 @@ package("libsdl_net")
         add_versions("2.0.1", "52031ed9d08a5eb1eda40e9a0409248bf532dde5e8babff5780ef1925657d59f")
     end
 
+    if is_plat("linux") then
+        add_extsources("pacman::sdl2_net", "apt::libsdl2-net-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::sdl2_net")
+    end
+
     add_deps("libsdl")
 
     add_links("SDL2_net")

@@ -8,6 +8,7 @@ package("fontconfig")
     add_versions("2.13.93", "0f302a18ee52dde0793fe38b266bf269dfe6e0c0ae140e30d72c6cca5dc08db5")
 
     add_deps("pkg-config", "freetype >=2.9", "expat")
+    add_deps("python 3.x", {kind = "binary"})
     if is_plat("macosx") then
         add_deps("gettext")
     else
