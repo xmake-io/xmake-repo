@@ -2,6 +2,14 @@ package("libsdl")
 
     set_homepage("https://www.libsdl.org/")
     set_description("Simple DirectMedia Layer")
+	
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::SDL2")
+    elseif is_plat("linux") then
+        add_extsources("pacman::sdl2", "apt::libsdl2-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::sdl2")
+    end
 
     if is_plat("windows", "mingw") then
         set_urls("https://www.libsdl.org/release/SDL2-devel-$(version)-VC.zip")
@@ -118,10 +126,13 @@ package("libsdl")
         local cflags = {}
         if package:is_plat("linux") then
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
-                local dep = package:dep(depname):fetch()
+                local dep = package:dep(depname)
                 if dep then
-                    for _, includedir in ipairs(dep.includedirs or dep.sysincludedirs) do
-                        table.join2(cflags, "-I" .. includedir)
+                    local depfetch = dep:fetch
+                    if depfetch then
+                        for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
+                            table.join2(cflags, "-I" .. includedir)
+                        end
                     end
                 end
             end

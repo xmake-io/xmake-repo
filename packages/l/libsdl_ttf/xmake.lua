@@ -11,7 +11,9 @@ package("libsdl_ttf")
         add_versions("2.0.15", "cdb72b5b1c3b27795fa128af36f369fee5d3e38a96c350855da0b81880555dbc")
     end
 
-    if is_plat("linux") then
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::SDL2_ttf")
+    elseif is_plat("linux") then
         add_extsources("pacman::sdl2_ttf", "apt::libsdl2-ttf-dev")
     elseif is_plat("macosx") then
         add_extsources("brew::sdl2_ttf")
