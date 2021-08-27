@@ -17,7 +17,7 @@ package("freetype")
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::freetype")
     elseif is_host("linux") then
-        add_extsources("pacman::freetype2", "apt::libfreetype6")
+        add_extsources("pacman::freetype2", "apt::libfreetype-dev")
     elseif is_host("macosx") then
         add_extsources("brew::freetype")
     end
