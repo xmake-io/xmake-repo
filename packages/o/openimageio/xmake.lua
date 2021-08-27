@@ -21,7 +21,8 @@ package("openimageio")
                         openvdb  = "OpenVDB",
                         ptex     = "Ptex",
                         libwebp  = "WebP",
-                        libraw   = "LibRaw"}
+                        libraw   = "LibRaw",
+                        field3d  = "Field3D"}
     for conf, dep in pairs(configdeps) do
         add_configs(conf, {description = "Build with " .. conf .. " support.", default = (conf == "libwebp"), type = "boolean"})
     end
@@ -55,7 +56,6 @@ package("openimageio")
                          "-DLINKSTATIC=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_Nuke=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_DCMTK=ON",
-                         "-DCMAKE_DISABLE_FIND_PACKAGE_Field3D=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_R3DSDK=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
