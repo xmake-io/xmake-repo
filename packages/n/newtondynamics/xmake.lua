@@ -6,6 +6,12 @@ package("newtondynamics")
     set_urls("https://github.com/MADEAPPS/newton-dynamics.git")
 
     add_versions("v3.14d", "e501c6d13e127a595c847d92b12ca3c7616a441d")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::newton-dynamics")
+    elseif is_plat("linux") then
+        add_extsources("pacman::newton-dynamics")
+    end
 
     if is_plat("linux", "android") then
         add_syslinks("dl", "pthread")
