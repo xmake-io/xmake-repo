@@ -81,7 +81,7 @@ package("libcurl")
             table.insert(configs, "--with-pic")
         end
         if is_plat("macosx") then
-            table.insert(configs, "--with-darwinssl")
+            table.insert(configs, (package:version():ge("7.77") and "--with-secure-transport" or "--with-darwinssl"))
         end
         table.insert(configs, "--without-libidn2")
         table.insert(configs, "--without-nghttp2")
