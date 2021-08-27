@@ -18,7 +18,7 @@ package("libcurl")
     end
 
     if is_plat("macosx") then
-        add_frameworks("Security", "CoreFoundation")
+        add_frameworks("Security", "CoreFoundation", "SystemConfiguration")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then
