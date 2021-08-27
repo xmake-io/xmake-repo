@@ -25,9 +25,9 @@ package("libcurl")
         add_syslinks("advapi32", "crypt32", "winmm", "ws2_32")
     end
 
-    add_configs("zlib",    { description = "Enable zlib compression library.", default = false, type = "boolean"})
-    add_configs("zstd",    { description = "Enable zstd compression library.", default = false, type = "boolean"})
-    add_configs("openssl", { description = "Enable openssl library.", default = false, type = "boolean"})
+    add_configs("zlib",    {description = "Enable zlib compression library.", default = false, type = "boolean"})
+    add_configs("zstd",    {description = "Enable zstd compression library.", default = false, type = "boolean"})
+    add_configs("openssl", {description = "Enable openssl library.", default = false, type = "boolean"})
 
     on_load(function (package)
         if package:is_plat("windows", "mingw") then
