@@ -7,6 +7,7 @@ package("harfbuzz")
     add_urls("https://github.com/harfbuzz/harfbuzz/archive/refs/tags/$(version).tar.gz",
              "https://github.com/harfbuzz/harfbuzz.git")
     add_versions("2.8.1", "b3f17394c5bccee456172b2b30ddec0bb87e9c5df38b4559a973d14ccd04509d")
+    add_versions("2.9.0", "bf5d5bad69ee44ff1dd08800c58cb433e9b3bf4dad5d7c6f1dec5d1cf0249d04")
 
     add_configs("icu", {description = "Use the ICU library.", default = false, type = "boolean"})
 
