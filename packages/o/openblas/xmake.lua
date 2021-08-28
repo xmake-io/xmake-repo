@@ -24,12 +24,19 @@ package("openblas")
         add_versions("0.3.15", "30a99dec977594b387a17f49904523e6bc8dd88bd247266e83485803759e4bbe")
         add_versions("0.3.17", "df2934fa33d04fd84d839ca698280df55c690c86a5a1133b3f7266fce1de279f")
 
-        add_configs("with_fortran", {description="Compile with fortran enabled.", default = true, type = "boolean"})
+        add_configs("with_fortran", {description="Compile with fortran enabled.", default = is_plat("linux"), type = "boolean"})
     end
 
     if is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("macosx") then
+        add_frameworks("Accelerate")
     end
+    on_load("macosx", "linux", function (package)
+        if package:config("with_fortran") then
+            package:add("syslinks", "gfortran")
+        end
+    end)
 
     on_install("windows", function (package)
         os.mv(path.join("bin", "libopenblas.dll"), package:installdir("bin"))
@@ -38,7 +45,7 @@ package("openblas")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("linux", "mingw@windows,msys", function (package)
+    on_install("macosx", "linux", "mingw@windows,msys", function (package)
         local configs = {}
         if package:config("debug") then table.insert(configs, "DEBUG=1") end
         if not package:config("shared") then
