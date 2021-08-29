@@ -15,7 +15,7 @@ package("libmng")
         package:add("defines", "WIN32")
     end)
 
-    on_install("windows", "macosx", "linux", "mingw", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         os.rm("config.h")
         local configs = {"-DMNG_INSTALL_LIB_DIR=lib"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
