@@ -15,7 +15,7 @@ package("openssl")
 
     if is_plat("windows") then
         add_links("libssl", "libcrypto")
-		add_syslinks("Ws2_32", "User32", "Crypt32", "Advapi32")
+        add_syslinks("Ws2_32", "User32", "Crypt32", "Advapi32")
     else
         add_links("ssl", "crypto")
     end
