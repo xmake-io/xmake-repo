@@ -11,7 +11,9 @@ package("libsdl_mixer")
         add_versions("2.0.4", "9affb8c7bf6fbffda0f6906bfb99c0ea50dca9b188ba9e15be90042dc03c5ded")
     end
 
-    if is_plat("linux") then
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::SDL2_mixer")
+    elseif is_plat("linux") then
         add_extsources("pacman::sdl2_mixer", "apt::libsdl2-mixer-dev")
     elseif is_plat("macosx") then
         add_extsources("brew::sdl2_mixer")
