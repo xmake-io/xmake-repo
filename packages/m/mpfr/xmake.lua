@@ -6,6 +6,14 @@ package("mpfr")
 
     add_urls("https://www.mpfr.org/mpfr-current/mpfr-$(version).tar.gz")
     add_versions("4.1.0", "3127fe813218f3a1f0adf4e8899de23df33b4cf4b4b3831a5314f78e65ffa2d6")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::mpfr")
+    elseif is_host("linux") then
+        add_extsources("pacman::mpfr", "apt::libmpfr-dev")
+    elseif is_host("macosx") then
+        add_extsources("brew::mpfr")
+    end
 
     add_deps("gmp")
     on_install("macosx", "linux", function (package)
