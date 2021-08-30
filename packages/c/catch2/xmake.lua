@@ -10,6 +10,14 @@ package("catch2")
     add_versions("2.13.6", "39d50f5d1819cdf2908066664d57c2cde4a4000c364ad3376ea099735c896ff4")
     add_versions("2.13.5", "728679b056dc1248cc79b3a1999ff7453f76422c68417563fc47a0ac2aaeeaef")
     add_versions("2.9.2", "dc486300de22b0d36ddba1705abb07b9e5780639d824ba172ddf7062b2a1bf8f")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::catch")
+    elseif is_plat("linux") then
+        add_extsources("pacman::catch2-git", "apt::catch2")
+    elseif is_plat("macosx") then
+        add_extsources("brew::catch2")
+    end
 
     on_install(function (package)
         os.cp("single_include/catch2", package:installdir("include"))

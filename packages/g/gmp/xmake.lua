@@ -10,9 +10,9 @@ package("gmp")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::gmp")
-    elseif is_host("linux") then
+    elseif is_plat("linux") then
         add_extsources("pacman::gmp", "apt::libgmp-dev")
-    elseif is_host("macosx") then
+    elseif is_plat("macosx") then
         add_extsources("brew::gmp")
     end
 

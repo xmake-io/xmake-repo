@@ -12,9 +12,11 @@ package("assimp")
         add_extsources("pkgconfig::assimp")
     end
 
-    if is_host("linux") then
-        add_extsources("apt::libassimp-dev")
-    elseif is_host("macosx") then
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::assimp")
+    elseif is_plat("linux") then
+        add_extsources("pacman::assimp", "apt::libassimp-dev")
+    elseif is_plat("macosx") then
         add_extsources("brew::assimp")
     end
 

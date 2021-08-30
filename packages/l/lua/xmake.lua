@@ -17,9 +17,9 @@ package("lua")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::lua", "pacman::lua51")
-    elseif is_host("linux") then
+    elseif is_plat("linux") then
         add_extsources("pacman::lua", "pacman::lua51", "pacman::lua52", "pacman::lua53", "apt::liblua5.1-0-dev", "apt::liblua5.2-dev", "apt::liblua5.3-dev", "apt::liblua5.4-dev")
-    elseif is_host("macosx") then
+    elseif is_plat("macosx") then
         add_extsources("brew::lua", "brew::lua@5.3")
     end
 

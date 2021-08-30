@@ -9,7 +9,7 @@ package("stb")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::stb")
-    elseif is_host("linux") then
+    elseif is_plat("linux") then
         add_extsources("pacman::stb", "apt::libstb-dev")
     end
 
