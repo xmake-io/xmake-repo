@@ -1,0 +1,141 @@
+diff --git a/dynamicEDT3D/src/CMakeLists.txt b/dynamicEDT3D/src/CMakeLists.txt
+index 0b9357c..728bab7 100644
+--- a/dynamicEDT3D/src/CMakeLists.txt
++++ b/dynamicEDT3D/src/CMakeLists.txt
+@@ -2,35 +2,30 @@ SET( dynamicEDT3D_SRCS
+    dynamicEDT3D.cpp
+    )
+ 
+-add_library(dynamicedt3d SHARED ${dynamicEDT3D_SRCS})
++add_library(dynamicedt3d ${dynamicEDT3D_SRCS})
+ set_target_properties(dynamicedt3d PROPERTIES
+   VERSION ${DYNAMICEDT3D_VERSION}
+   SOVERSION ${DYNAMICEDT3D_SOVERSION}
++  OUTPUT_NAME dynamicedt3d
+ )
+ target_link_libraries(dynamicedt3d ${OCTOMAP_LIBRARIES})
+ 
+-add_library(dynamicedt3d-static STATIC ${dynamicEDT3D_SRCS})
+-target_link_libraries(dynamicedt3d-static ${OCTOMAP_LIBRARIES})
+-
+-SET_TARGET_PROPERTIES(dynamicedt3d-static PROPERTIES OUTPUT_NAME "dynamicedt3d") 
+ 
+ if(NOT EXISTS "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D")
+   file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D")
+ endif()
+ 
+-export(TARGETS dynamicedt3d dynamicedt3d-static
++export(TARGETS dynamicedt3d
+   FILE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/dynamicEDT3D/dynamicEDT3DTargets.cmake")
+ 
+ # directly depend on the octomap library target when building the
+ # complete distribution, so it it recompiled as needed
+ if (CMAKE_PROJECT_NAME STREQUAL "octomap-distribution")
+-  ADD_DEPENDENCIES(dynamicedt3d-static octomap-static)
+   ADD_DEPENDENCIES(dynamicedt3d octomap)
+ endif()
+ 
+-ADD_SUBDIRECTORY(examples)
+ 
+-install(TARGETS dynamicedt3d dynamicedt3d-static
++install(TARGETS dynamicedt3d
+   EXPORT dynamicEDT3DTargets
+   INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+   ${INSTALL_TARGETS_DEFAULT_ARGS}
+diff --git a/octomap/CMakeLists.txt b/octomap/CMakeLists.txt
+index f091ea1..7ec808f 100644
+--- a/octomap/CMakeLists.txt
++++ b/octomap/CMakeLists.txt
+@@ -94,7 +94,7 @@ set(OCTOMAP_INCLUDE_DIRS "${INCLUDE_DIRS}")
+ set(OCTOMAP_LIB_DIR "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+ # Set library names as absolute paths
+ # Windows, spec. MSVC requires the .lib suffix for imported libs
+-IF(WIN32)
++IF(WIN32 OR NOT BUILD_SHARED_LIBS)
+   set(OCTOMAP_LIBRARY
+     "${CMAKE_IMPORT_LIBRARY_PREFIX}octomap${CMAKE_IMPORT_LIBRARY_SUFFIX}"
+   )
+diff --git a/octomap/src/CMakeLists.txt b/octomap/src/CMakeLists.txt
+index 45b384f..7b1a860 100644
+--- a/octomap/src/CMakeLists.txt
++++ b/octomap/src/CMakeLists.txt
+@@ -11,14 +11,12 @@ SET (octomap_SRCS
+   )
+ 
+ # dynamic and static libs, see CMake FAQ:
+-ADD_LIBRARY( octomap SHARED ${octomap_SRCS})
++ADD_LIBRARY( octomap ${octomap_SRCS})
+ set_target_properties( octomap PROPERTIES
+   VERSION ${OCTOMAP_VERSION}
+   SOVERSION ${OCTOMAP_SOVERSION}
++  OUTPUT_NAME octomap
+ )
+-ADD_LIBRARY( octomap-static STATIC ${octomap_SRCS})
+-SET_TARGET_PROPERTIES(octomap-static PROPERTIES OUTPUT_NAME "octomap") 
+-add_dependencies(octomap-static octomath-static)
+ 
+ TARGET_LINK_LIBRARIES(octomap octomath)
+ 
+@@ -26,7 +24,7 @@ if(NOT EXISTS "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap")
+   file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap")
+ endif()
+ 
+-export(TARGETS octomap octomap-static
++export(TARGETS octomap
+   APPEND FILE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octomap-targets.cmake")
+ 
+ ADD_SUBDIRECTORY( testing )
+@@ -55,19 +53,10 @@ TARGET_LINK_LIBRARIES(eval_octree_accuracy octomap)
+ ADD_EXECUTABLE(compare_octrees compare_octrees.cpp)
+ TARGET_LINK_LIBRARIES(compare_octrees octomap)
+ 
+-ADD_EXECUTABLE(simple_example simple_example.cpp)
+-TARGET_LINK_LIBRARIES(simple_example octomap)
+-
+-ADD_EXECUTABLE(normals_example normals_example.cpp)
+-TARGET_LINK_LIBRARIES(normals_example octomap)
+-
+-ADD_EXECUTABLE(intersection_example intersection_example.cpp)
+-TARGET_LINK_LIBRARIES(intersection_example octomap)
+-
+ ADD_EXECUTABLE(octree2pointcloud octree2pointcloud.cpp)
+ TARGET_LINK_LIBRARIES(octree2pointcloud octomap)
+ 
+-install(TARGETS octomap octomap-static
++install(TARGETS octomap
+   EXPORT octomap-targets
+   INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+   ${INSTALL_TARGETS_DEFAULT_ARGS}
+diff --git a/octomap/src/math/CMakeLists.txt b/octomap/src/math/CMakeLists.txt
+index 3b47ec4..d453153 100644
+--- a/octomap/src/math/CMakeLists.txt
++++ b/octomap/src/math/CMakeLists.txt
+@@ -5,24 +5,23 @@ SET (octomath_SRCS
+  )
+ 
+ 
+-ADD_LIBRARY( octomath SHARED ${octomath_SRCS})
++ADD_LIBRARY( octomath ${octomath_SRCS})
+ 
+ SET_TARGET_PROPERTIES( octomath PROPERTIES
+   VERSION ${OCTOMAP_VERSION}
+   SOVERSION ${OCTOMAP_SOVERSION}
++  OUTPUT_NAME octomath
+ )
+ 
+-ADD_LIBRARY( octomath-static STATIC ${octomath_SRCS})
+-SET_TARGET_PROPERTIES(octomath-static PROPERTIES OUTPUT_NAME "octomath")
+ 
+ if(NOT EXISTS "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap")
+   file(MAKE_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap")
+ endif()
+ 
+-export(TARGETS octomath octomath-static
++export(TARGETS octomath
+   APPEND FILE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/cmake/octomap/octomap-targets.cmake")
+ 
+-install(TARGETS octomath octomath-static
++install(TARGETS octomath
+   EXPORT octomap-targets
+   INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+   ${INSTALL_TARGETS_DEFAULT_ARGS}
