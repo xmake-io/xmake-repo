@@ -6,6 +6,7 @@ package("openssl")
     add_urls("https://github.com/openssl/openssl/archive/OpenSSL_$(version).zip", {version = function (version)
         return version:gsub("%.", "_")
     end, excludes = "*/fuzz/*"})
+    add_versions("1.1.1l", "23d8908e82b63af754018256a4eb02f13965f10067969f6a63f497960c11dbeb")
     add_versions("1.1.1k", "255c038f5861616f67b527434475d226f5fe00522fbd21fafd3df32019edd202")
     add_versions("1.1.1h", "0a976b769bdb26470971a184f5263d0c3256152d5671ed7287cf17acc4698afc")
     add_versions("1.1.0l", "a305d4af4b442ad61ba3d7e82905d09bfbd80424e132e10df4899d064aa47ce2")
@@ -14,6 +15,7 @@ package("openssl")
 
     if is_plat("windows") then
         add_links("libssl", "libcrypto")
+        add_syslinks("Ws2_32", "User32", "Crypt32", "Advapi32")
     else
         add_links("ssl", "crypto")
     end
@@ -39,6 +41,11 @@ package("openssl")
     on_install("windows", function (package)
         local args = {"Configure"}
         table.insert(args, (package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A"))
+        if package:config("shared") then
+            table.insert(args, "shared")
+        else
+            table.insert(args, "no-shared")
+        end
         table.insert(args, "--prefix=" .. package:installdir())
         table.insert(args, "--openssldir=" .. package:installdir())
         os.vrunv("perl", args)

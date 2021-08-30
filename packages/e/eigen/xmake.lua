@@ -11,6 +11,14 @@ package("eigen")
     add_versions("3.3.8", "0215c6593c4ee9f1f7f28238c4e8995584ebf3b556e9dbf933d84feb98d5b9ef")
     add_versions("3.3.9", "0fa5cafe78f66d2b501b43016858070d52ba47bd9b1016b0165a7b8e04675677")
     add_versions("3.4.0", "b4c198460eba6f28d34894e3a5710998818515104d6e74e5cc331ce31e46e626")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::eigen3")
+    elseif is_host("linux") then
+        add_extsources("pacman::eigen", "apt::libeigen3-dev")
+    elseif is_host("macosx") then
+        add_extsources("brew::eigen")
+    end
 
     add_deps("cmake")
     add_includedirs("include")

@@ -7,8 +7,13 @@ package("gmp")
     add_urls("https://gmplib.org/download/gmp/gmp-$(version).tar.xz")
     add_versions("6.2.1", "fd4829912cddd12f84181c3451cc752be224643e87fac497b69edddadc49b4f2")
 
-    if is_plat("linux") then
-        add_extsources("apt::libgmp-dev")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::gmp")
+    elseif is_host("linux") then
+        add_extsources("pacman::gmp", "apt::libgmp-dev")
+    elseif is_host("macosx") then
+        add_extsources("brew::gmp")
     end
 
     add_deps("m4")

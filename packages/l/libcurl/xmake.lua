@@ -18,16 +18,16 @@ package("libcurl")
     end
 
     if is_plat("macosx") then
-        add_frameworks("Security", "CoreFoundation")
+        add_frameworks("Security", "CoreFoundation", "SystemConfiguration")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then
         add_syslinks("advapi32", "crypt32", "winmm", "ws2_32")
     end
 
-    add_configs("zlib",    { description = "Enable zlib compression library.", default = false, type = "boolean"})
-    add_configs("zstd",    { description = "Enable zstd compression library.", default = false, type = "boolean"})
-    add_configs("openssl", { description = "Enable openssl library.", default = false, type = "boolean"})
+    add_configs("zlib",    {description = "Enable zlib compression library.", default = false, type = "boolean"})
+    add_configs("zstd",    {description = "Enable zstd compression library.", default = false, type = "boolean"})
+    add_configs("openssl", {description = "Enable openssl library.", default = false, type = "boolean"})
 
     on_load(function (package)
         if package:is_plat("windows", "mingw") then
@@ -81,7 +81,7 @@ package("libcurl")
             table.insert(configs, "--with-pic")
         end
         if is_plat("macosx") then
-            table.insert(configs, "--with-darwinssl")
+            table.insert(configs, (package:version():ge("7.77") and "--with-secure-transport" or "--with-darwinssl"))
         end
         table.insert(configs, "--without-libidn2")
         table.insert(configs, "--without-nghttp2")

@@ -11,8 +11,12 @@ package("chipmunk2d")
     add_versions("github:7.0.3", "87340c216bf97554dc552371bbdecf283f7c540e")
     add_patches("7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "08e80020880e9bf3c61b48d41537d953e7bf6a63797eb8bcd6b78ba038b79d8f")
 
-    if is_host("linux") then
-        add_extsources("apt::libchipmunk-dev")
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::chipmunk")
+    elseif is_plat("linux") then
+        add_extsources("pacman::chipmunk", "apt::libchipmunk-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::chipmunk")
     end
 
     add_deps("cmake")

@@ -10,6 +10,14 @@ package("cgal")
     add_versions("5.3", "49ccfb6b72a78d03ab026c6502099ba9358cf604d9d1f51c33e90b314635fe35")
 
     add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::cgal")
+    elseif is_host("linux") then
+        add_extsources("pacman::cgal", "apt::libcgal-dev")
+    elseif is_host("macosx") then
+        add_extsources("brew::cgal")
+    end
 
     add_deps("cmake")
     add_deps("boost", "eigen")

@@ -55,6 +55,14 @@ package("cmake")
         add_versions("3.18.4", "597c61358e6a92ecbfad42a9b5321ddd801fc7e7eca08441307c9138382d4f77")
         add_versions("3.21.0", "4a42d56449a51f4d3809ab4d3b61fd4a96a469e56266e896ce1009b5768bd2ab")
     end
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::cmake")
+    elseif is_host("linux") then
+        add_extsources("pacman::cmake", "apt::cmake")
+    elseif is_host("macosx") then
+        add_extsources("brew::cmake")
+    end
 
     on_install("@macosx", function (package)
         os.cp("CMake.app/Contents/bin", package:installdir())

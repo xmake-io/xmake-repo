@@ -1,0 +1,34 @@
+package("magnum-extras")
+
+    set_homepage("https://magnum.graphics/")
+    set_description("Extras for magnum, Light­weight and mod­u­lar C++11/C++14 graph­ics mid­dle­ware for games and data visu­al­iz­a­tion.")
+    set_license("MIT")
+
+    add_urls("https://github.com/mosra/magnum-extras/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/mosra/magnum-extras.git")
+    add_versions("v2020.06", "a8d7babc50ac070984d39f6cc15c3ce2af7b41fe980fe81b0405da6f5ba3c36d")
+
+    add_configs("ui",         {description = "Build the ui library.", default = false, type = "boolean"})
+    add_configs("player",     {description = "Build the magnum-player executable.", default = false, type = "boolean"})
+    add_configs("ui_gallery", {description = "Build the magnum-ui-gallery executable.", default = false, type = "boolean"})
+
+    add_deps("cmake", "magnum")
+
+    on_install("windows", "linux", "macosx", function (package)
+        local configs = {"-DBUILD_TESTS=OFF", "-DLIB_SUFFIX="}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DWITH_UI=" .. (package:config("ui") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_PLAYER=" .. (package:config("player") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_UI_GALLERY=" .. (package:config("ui_gallery") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                auto year = MAGNUMEXTRAS_VERSION_YEAR;
+                auto month = MAGNUMEXTRAS_VERSION_MONTH;
+            }
+        ]]}, {configs = {languages = "c++14"}, includes = "Magnum/versionExtras.h"}))
+    end)
