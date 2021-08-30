@@ -11,9 +11,9 @@ package("catch2")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::catch")
-    elseif is_host("linux") then
+    elseif is_plat("linux") then
         add_extsources("pacman::catch2-git", "apt::catch2")
-    elseif is_host("macosx") then
+    elseif is_plat("macosx") then
         add_extsources("brew::catch2")
     end
 
