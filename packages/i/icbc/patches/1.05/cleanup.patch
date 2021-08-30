@@ -1,0 +1,28 @@
+diff --git a/icbc.h b/icbc.h
+--- a/icbc.h
++++ b/icbc.h
+@@ -2652,20 +2652,10 @@ static void evaluate_palette_amd(Color16 c0, Color16 c1, Color32 palette[4]) {
+     }
+ }
+ 
+-inline void evaluate_palette4(Color16 c0, Color16 c1, Color32 palette[4]) {
+-    if (s_decoder == Decoder_D3D10)         evaluate_palette4_d3d10(palette);    
+-    else if (s_decoder == Decoder_NVIDIA)   evaluate_palette4_nv(c0, c1, palette);
+-    else if (s_decoder == Decoder_AMD)      evaluate_palette4_amd(palette);
+-}
+-inline void evaluate_palette3(Color16 c0, Color16 c1, Color32 palette[4]) {
+-    if (s_decoder == Decoder_D3D10)         evaluate_palette3_d3d10(palette);
+-    else if (s_decoder == Decoder_NVIDIA)   evaluate_palette3_nv(c0, c1, palette);
+-    else if (s_decoder == Decoder_AMD)      evaluate_palette3_amd(palette);
+-}
+-inline void evaluate_palette(Color16 c0, Color16 c1, Color32 palette[4]) {
+-    if (s_decoder == Decoder_D3D10)         evaluate_palette_d3d10(c0, c1, palette);
+-    else if (s_decoder == Decoder_NVIDIA)   evaluate_palette_nv(c0, c1, palette);
+-    else if (s_decoder == Decoder_AMD)      evaluate_palette_amd(c0, c1, palette);
++inline void evaluate_palette(Color16 c0, Color16 c1, Color32 palette[4], Decoder decoder = s_decoder) {
++    if (decoder == Decoder_D3D10)         evaluate_palette_d3d10(c0, c1, palette);
++    else if (decoder == Decoder_NVIDIA)   evaluate_palette_nv(c0, c1, palette);
++    else if (decoder == Decoder_AMD)      evaluate_palette_amd(c0, c1, palette);
+ }
+ 
+ static void evaluate_palette(Color16 c0, Color16 c1, Vector3 palette[4]) {
