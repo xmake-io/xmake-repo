@@ -20,7 +20,7 @@ package("devil")
                            lcms    = {"lcms", "LCMS2"},
                            mng     = {"libmng", "MNG"}}
     for config, depopt in pairs(configdepopts) do
-        add_configs(config, {description = "Build with " .. depopt[2] .. " support.", default = true, type = "boolean"})
+        add_configs(config, {description = "Build with " .. depopt[2] .. " support.", default = (config == "png"), type = "boolean"})
     end
 
     on_load("windows", "macosx", "linux", function (package)
@@ -43,7 +43,6 @@ package("devil")
             table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. depopt[2] .. "=" .. (package:config(config) and "OFF" or "ON"))
         end
         import("package.tools.cmake").install(package, configs)
-        print(os.files(package:installdir("**")))
     end)
 
     on_test(function (package)
