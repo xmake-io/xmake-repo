@@ -14,9 +14,9 @@ package("eigen")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::eigen3")
-    elseif is_host("linux") then
+    elseif is_plat("linux") then
         add_extsources("pacman::eigen", "apt::libeigen3-dev")
-    elseif is_host("macosx") then
+    elseif is_plat("macosx") then
         add_extsources("brew::eigen")
     end
 

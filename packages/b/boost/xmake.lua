@@ -18,9 +18,9 @@ package("boost")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::boost")
-    elseif is_host("linux") then
+    elseif is_plat("linux") then
         add_extsources("pacman::boost", "apt::libboost-all-dev")
-    elseif is_host("macosx") then
+    elseif is_plat("macosx") then
         add_extsources("brew::boost")
     end
 
