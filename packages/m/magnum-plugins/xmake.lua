@@ -19,6 +19,8 @@ package("magnum-plugins")
     add_deps("cmake", "magnum")
     on_load("windows", "linux", "macosx", function (package)
         local configdeps = {assimpimporter = "assimp",
+                            devilimageimporter = "devil",
+                            faad2audioimporter = "faad2",
                             freetypefont = "freetype",
                             glslangshaderconverter = "vulkansdk",
                             harfbuzzfont = "harfbuzz",

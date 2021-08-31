@@ -39,6 +39,9 @@ package("magnum")
     end
 
     add_deps("cmake", "corrade", "opengl")
+    add_links("AnyAudioImporter", "AnyImageConverter", "AnyImageImporter", "AnySceneConverter", "AnySceneImporter", "MagnumFont", "MagnumFontConverter", "ObjImporter", "TgaImageConverter", "TgaImporter", "WavAudioImporter")
+    add_links("CglContext", "EglContext", "GlxContext", "WglContext", "OpenGLTester", "VulkanTester")
+    add_links("AndroidApplication", "EmscriptenApplication", "GlfwApplication", "GlxApplication", "Sdl2Application", "XEglApplication", "WindowlessCglApplication", "WindowlessEglApplication", "WindowlessGlxApplication", "WindowlessIosApplication", "WindowlessWglApplication", "WindowlessWindowsEglApplication")
     add_links("MagnumAudio", "MagnumDebugTools", "MagnumGL", "MagnumMeshTools", "MagnumPrimitives", "MagnumSceneGraph", "MagnumShaders", "MagnumText", "MagnumTextureTools", "MagnumTrade", "MagnumVk", "Magnum")
     on_load("windows", "linux", "macosx", function (package)
         if package:config("audio") then
