@@ -8,6 +8,7 @@ package("nlopt")
              "https://github.com/stevengj/nlopt.git")
     add_versions("v2.7.0", "b881cc2a5face5139f1c5a30caf26b7d3cb43d69d5e423c9d78392f99844499f")
 
+    add_deps("cmake")
     on_install("linux", "windows", "macosx", function (package)
         local configs = {"-DNLOPT_PYTHON=OFF", "-DNLOPT_OCTAVE=OFF", "-DNLOPT_MATLAB=OFF", "-DNLOPT_GUILE=OFF", "-DNLOPT_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
