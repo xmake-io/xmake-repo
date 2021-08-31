@@ -2,6 +2,7 @@ package("opencv")
 
     set_homepage("https://opencv.org/")
     set_description("A open source computer vision library.")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/opencv/opencv/archive/$(version).tar.gz",
              "https://github.com/opencv/opencv.git")
@@ -61,11 +62,11 @@ package("opencv")
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL", "Accelerate")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
-    elseif is_plat("windows") then
+    elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32")
     end
 
-    on_load("linux", "macosx", "windows", function (package)
+    on_load("linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
             local arch = (package:is_arch("x64") and "x64" or "x86")
             local linkdir = (package:config("shared") and "lib" or "staticlib")
@@ -76,8 +77,13 @@ package("opencv")
             elseif vs == "2019" then vc_ver = "vc16"
             end
             package:add("linkdirs", path.join(arch, vc_ver, linkdir))
+        elseif package:is_plat("mingw") then
+            local arch = (package:is_arch("x86_64") and "x64" or "x86")
+            local linkdir = (package:config("shared") and "lib" or "staticlib")
+            package:add("linkdirs", path.join(arch, "mingw", linkdir))
         elseif package:version():ge("4.0") then
             package:add("includedirs", "include/opencv4")
+            package:add("linkdirs", "lib", "lib/opencv4/3rdparty")
         end
         if package:config("blas") then
             package:add("deps", package:config("blas"))
@@ -95,7 +101,7 @@ package("opencv")
         end
     end)
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows", "mingw@windows,msys", function (package)
         io.replace("cmake/OpenCVUtils.cmake", "if(PKG_CONFIG_FOUND OR PkgConfig_FOUND)", "if(NOT WIN32 AND (PKG_CONFIG_FOUND OR PkgConfig_FOUND))", {plain = true})
         local configs = {"-DCMAKE_OSX_DEPLOYMENT_TARGET=",
                          "-DBUILD_PERF_TESTS=OFF",
@@ -122,6 +128,8 @@ package("opencv")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        elseif package:is_plat("mingw") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "x86_64" or "x86"))
         end
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then
@@ -153,8 +161,11 @@ package("opencv")
                     package:add("links", path.basename(f))
                 end
             end
-            package:add("linkdirs", linkdir)
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
+        elseif package:is_plat("mingw") then
+            local arch = package:is_arch("x86_64") and "x64" or "x86"
+            local linkdir = (package:config("shared") and "lib" or "staticlib")
+            package:addenv("PATH", path.join(arch, "mingw", "bin"))
         else
             if package:version():ge("4.0") then
                 -- scanning for links for old xmake version
@@ -168,7 +179,6 @@ package("opencv")
                         end
                     end
                 end
-                package:add("linkdirs", "lib", "lib/opencv4/3rdparty")
             end
             package:addenv("PATH", "bin")
         end
