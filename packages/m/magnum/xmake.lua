@@ -4,9 +4,9 @@ package("magnum")
     set_description("Light­weight and mod­u­lar C++11/C++14 graph­ics mid­dle­ware for games and data visu­al­iz­a­tion.")
     set_license("MIT")
 
-    add_urls("https://github.com/mosra/magnum/archive/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/mosra/magnum/archive/refs/tags/$(version).zip",
              "https://github.com/mosra/magnum.git")
-    add_versions("v2020.06", "98dfe802e56614e4e6bf750d9b693de46a5ed0c6eb479b0268f1a20bf34268bf")
+    add_versions("v2020.06", "78c52bc403cec27b98d8d87186622ca57f8d70ffd64342fe4094c720b7d3b0e3")
 
     add_configs("audio",         {description = "Build audio module.", default = false, type = "boolean"})
     add_configs("vulkan",        {description = "Build vulkan module.", default = false, type = "boolean"})
@@ -39,9 +39,9 @@ package("magnum")
     end
 
     add_deps("cmake", "corrade", "opengl")
-    add_links("AnyAudioImporter", "AnyImageConverter", "AnyImageImporter", "AnySceneConverter", "AnySceneImporter", "MagnumFont", "MagnumFontConverter", "ObjImporter", "TgaImageConverter", "TgaImporter", "WavAudioImporter")
-    add_links("CglContext", "EglContext", "GlxContext", "WglContext", "OpenGLTester", "VulkanTester")
-    add_links("AndroidApplication", "EmscriptenApplication", "GlfwApplication", "GlxApplication", "Sdl2Application", "XEglApplication", "WindowlessCglApplication", "WindowlessEglApplication", "WindowlessGlxApplication", "WindowlessIosApplication", "WindowlessWglApplication", "WindowlessWindowsEglApplication")
+    add_links("MagnumAnyAudioImporter", "MagnumAnyImageConverter", "MagnumAnyImageImporter", "MagnumAnySceneConverter", "MagnumAnySceneImporter", "MagnumMagnumFont", "MagnumMagnumFontConverter", "MagnumObjImporter", "MagnumTgaImageConverter", "MagnumTgaImporter", "MagnumWavAudioImporter")
+    add_links("MagnumCglContext", "MagnumEglContext", "MagnumGlxContext", "MagnumWglContext", "MagnumOpenGLTester", "MagnumVulkanTester")
+    add_links("MagnumAndroidApplication", "MagnumEmscriptenApplication", "MagnumGlfwApplication", "MagnumGlxApplication", "MagnumSdl2Application", "MagnumXEglApplication", "MagnumWindowlessCglApplication", "MagnumWindowlessEglApplication", "MagnumWindowlessGlxApplication", "MagnumWindowlessIosApplication", "MagnumWindowlessWglApplication", "MagnumWindowlessWindowsEglApplication")
     add_links("MagnumAudio", "MagnumDebugTools", "MagnumGL", "MagnumMeshTools", "MagnumPrimitives", "MagnumSceneGraph", "MagnumShaders", "MagnumText", "MagnumTextureTools", "MagnumTrade", "MagnumVk", "Magnum")
     on_load("windows", "linux", "macosx", function (package)
         if package:config("audio") then

@@ -4,9 +4,9 @@ package("corrade")
     set_description("Cor­rade is a mul­ti­plat­form util­i­ty li­brary writ­ten in C++11/C++14.")
     set_license("MIT")
 
-    add_urls("https://github.com/mosra/corrade/archive/refs/tags/v2020.06.tar.gz",
+    add_urls("https://github.com/mosra/corrade/archive/refs/tags/$(version).zip",
              "https://github.com/mosra/corrade.git")
-    add_versions("v2020.06", "2a62492ccc717422b72f2596a3e1a6a105b9574aa9467917f12d19ef3aab1341")
+    add_versions("v2020.06", "d89a06128c334920d91fecf23cc1df48fd6be26543dc0ed81b2f819a92d70e72")
 
     if is_plat("windows") then
         add_syslinks("shell32")

@@ -4,9 +4,9 @@ package("magnum-integration")
     set_description("Integration libraries for magnum, Light­weight and mod­u­lar C++11/C++14 graph­ics mid­dle­ware for games and data visu­al­iz­a­tion.")
     set_license("MIT")
 
-    add_urls("https://github.com/mosra/magnum-integration/archive/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/mosra/magnum-integration/archive/refs/tags/$(version).zip",
              "https://github.com/mosra/magnum-integration.git")
-    add_versions("v2020.06", "4eb461e0a38d7be69a52b8faf7664493da4e4cabc2c4fa86bd672d2e8f0a9311")
+    add_versions("v2020.06", "8e5d7ffc9df300eb9fac9cff24e74d40f9a13f5e952bd3185fb002d4d6ac38ed")
 
     local intergrations = {"bullet", "dart", "eigen", "glm", "imgui", "ovr"}
     for _, integration in ipairs(integrations) do

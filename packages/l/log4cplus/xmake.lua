@@ -6,10 +6,11 @@ package("log4cplus")
 
     add_urls("https://github.com/log4cplus/log4cplus/releases/download/REL_$(version).tar.gz", {version = function (version) return version:gsub("%.", "_") .. "/log4cplus-" .. version end})
     add_versions("2.0.6", "5fb26433b0f200ebfc2e6effb7e2e5131185862a2ea9a621a8e7f3f725a72b08")
+    add_versions("2.0.7", "086451c7e7c582862cbd6c60d87bb6d9d63c4b65321dba85fa71766382f7ec6d")
 
     add_configs("unicode", {description = "Use unicode charset.", default = true, type = "boolean"})
 
-    add_deps("cmake", {kind = "binary"})
+    add_deps("cmake")
     if is_plat("windows") then
         add_syslinks("advapi32", "ws2_32")
     elseif is_plat("linux") then
