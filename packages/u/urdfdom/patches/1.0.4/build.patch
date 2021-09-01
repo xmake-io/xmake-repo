@@ -1,0 +1,25 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -41,7 +41,7 @@ if (NOT MSVC)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+ endif()
+ 
+-find_package(console_bridge 0.3 REQUIRED)
++find_package(console_bridge REQUIRED)
+ include_directories(SYSTEM ${console_bridge_INCLUDE_DIRS})
+ link_directories(${console_bridge_LIBRARY_DIRS})
+ 
+diff --git a/urdf_parser/CMakeLists.txt b/urdf_parser/CMakeLists.txt
+--- a/urdf_parser/CMakeLists.txt
++++ b/urdf_parser/CMakeLists.txt
+@@ -1,5 +1,9 @@
+ include_directories(include)
+ 
++if(MSVC)
++add_definitions(-D_USE_MATH_DEFINES)
++endif()
++
+ add_library(urdfdom_world SHARED src/pose.cpp src/model.cpp src/link.cpp src/joint.cpp src/world.cpp)
+ target_link_libraries(urdfdom_world ${TinyXML_LIBRARIES} ${console_bridge_LIBRARIES})
+ set_target_properties(urdfdom_world PROPERTIES SOVERSION ${URDF_MAJOR_MINOR_VERSION})
