@@ -7,7 +7,12 @@ package("tinyxml")
     add_urls("https://sourceforge.net/projects/tinyxml/files/tinyxml/$(version).zip", {version = function (version) return version .. "/tinyxml_" .. version:gsub("%.", "_") end})
     add_versions("2.6.2", "ac6bb9501c6f50cc922d22f26b02fab168db47521be5e845b83d3451a3e1d512")
 
+    add_configs("stl", {description = "Enable STL support.", default = true, type = "boolean"})
+
     on_install(function (package)
+        if package:config("stl") then
+            io.replace("tinyxml.h", "#define TINYXML_INCLUDED", "#define TINYXML_INCLUDED\n#define TIXML_USE_STL", {plain = true})
+        end
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("tinyxml")
