@@ -4,9 +4,9 @@ package("magnum-plugins")
     set_description("Plugins for magnum, C++11/C++14 graph­ics mid­dle­ware for games and data visu­al­iz­a­tion.")
     set_license("MIT")
 
-    add_urls("https://github.com/mosra/magnum-plugins/archive/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/mosra/magnum-plugins/archive/refs/tags/$(version).zip",
              "https://github.com/mosra/magnum-plugins.git")
-    add_versions("v2020.06", "8650cab43570c826d2557d5b42459150d253316f7f734af8b3e7d0883510b40a")
+    add_versions("v2020.06", "8e1e98674ef3f0276f68abbdfecef1d72ae95b5a812b78c1ff45dba10fc72e3f")
 
     add_configs("plugin_static", {description = "Build plugins as static libraries.", default = false, type = "boolean"})
     add_configs("openddl",       {description = "Build the OpenDdl library.", default = false, type = "boolean"})

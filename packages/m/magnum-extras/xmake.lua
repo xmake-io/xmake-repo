@@ -4,9 +4,9 @@ package("magnum-extras")
     set_description("Extras for magnum, Light­weight and mod­u­lar C++11/C++14 graph­ics mid­dle­ware for games and data visu­al­iz­a­tion.")
     set_license("MIT")
 
-    add_urls("https://github.com/mosra/magnum-extras/archive/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/mosra/magnum-extras/archive/refs/tags/$(version).zip",
              "https://github.com/mosra/magnum-extras.git")
-    add_versions("v2020.06", "a8d7babc50ac070984d39f6cc15c3ce2af7b41fe980fe81b0405da6f5ba3c36d")
+    add_versions("v2020.06", "9a53b503b45580dbaa54f852f65755330f5ace81be9d2a4c4605091d5f58d9bb")
 
     add_configs("ui",         {description = "Build the ui library.", default = false, type = "boolean"})
     add_configs("player",     {description = "Build the magnum-player executable.", default = false, type = "boolean"})
