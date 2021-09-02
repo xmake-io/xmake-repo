@@ -7,6 +7,7 @@ package("glib")
              {version = function (version) return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/glib-" .. version end})
     add_versions("2.60.2", "2ef15475060addfda0443a7e8a52b28a10d5e981e82c083034061daf9a8f80d9")
     add_versions("2.68.2", "ecc7798a9cc034eabdfd7f246e6dd461cdbf1175fcc2e9867cc7da7b7309e0fb")
+    add_versions("2.69.2", "a62249e35a8635175a697b3215f1df2b89e0fbb4adb520dcbe21a3ae1ebb8882")
 
     add_deps("meson", "ninja", "libffi", "pcre")
     if is_plat("linux") then
@@ -53,19 +54,21 @@ package("glib")
         local configs = {"-Dbsymbolic_functions=false",
                          "-Ddtrace=false",
                          "-Dman=false",
+                         "-Dgtk_doc=false",
                          "-Dtests=false",
-                         "-Ddefault_library=static",
-                         "-Dlibmount=disabled",
-                         "-Dinstalled_tests=false"}
+                         "-Dinstalled_tests=false",
+                         "-Dlibmount=disabled"}
         if package:is_plat("macosx") and package:version():le("2.61.0") then
             table.insert(configs, "-Diconv=native")
         end
+        table.insert(configs, "-Dglib_debug=" .. (package:debug() and "enabled" or "disabled"))
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dgio_module_dir=" .. path.join(package:installdir(), "lib/gio/modules"))
-        table.insert(configs, "--libdir=lib")
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("gio/meson.build", "subdir%('tests'%)", "")
         import("package.tools.meson").install(package, configs)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
