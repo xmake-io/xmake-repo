@@ -9,6 +9,10 @@ package("atk")
     end})
     add_versions("2.36.0", "fb76247e369402be23f1f5c65d38a9639c1164d934e40f6a9cf3c9e96b652788")
 
+    if is_plat("linux") then
+        add_extsources("apt::libatk1.0-dev")
+    end
+
     add_deps("meson", "ninja", "glib", "pkg-config")
     add_includedirs("include/atk-1.0")
     on_install("linux", function (package)
