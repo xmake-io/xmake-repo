@@ -20,6 +20,7 @@ package("lvgl")
         io.replace("src/lv_conf.h", "#define LV_COLOR_DEPTH -16", "#define LV_COLOR_DEPTH " .. package:config("color_depth"))
         io.replace("src/lv_conf.h", "#define LV_USE_LOG -0", "#define LV_USE_LOG " .. (package:config("use_log") and "1" or "0"))
         io.replace("CMakeLists.txt", "add_library(lvgl STATIC ${SOURCES})", "add_library(lvgl STATIC ${SOURCES})\ninstall(TARGETS lvgl)\ninstall(FILES lvgl.h DESTINATION include)\ninstall(DIRECTORY src DESTINATION include FILES_MATCHING PATTERN \"*.h\")", {plain = true})
+        io.replace("CMakeLists.txt", "if(ESP_PLATFORM)", "cmake_minimum_required(VERSION 3.15)\nif(ESP_PLATFORM)", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
