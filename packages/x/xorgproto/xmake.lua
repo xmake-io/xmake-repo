@@ -8,7 +8,7 @@ package("xorgproto")
     add_versions("2021.3", "4c732b14fc7c7db64306374d9e8386d6172edbb93f587614df1938b9d9b9d737")
 
     if is_plat("linux") then
-        add_extsources("apt::x11proto-dev")
+        add_extsources("apt::x11proto-dev", "pkgconfig::xproto")
     end
 
     if is_plat("macosx", "linux") then
