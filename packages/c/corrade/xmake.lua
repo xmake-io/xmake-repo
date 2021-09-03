@@ -19,9 +19,11 @@ package("corrade")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
+        os.vrun("corrade-rc --help")
         assert(package:check_cxxsnippets({test = [[
             #include <string>
             void test() {
