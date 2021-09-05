@@ -4,7 +4,7 @@ package("cgns")
     set_description("CFD General Notation System")
 
     add_urls("https://github.com/CGNS/CGNS/archive/refs/tags/$(version).tar.gz")
-    add_versions("v4.2.0", "090ec6cb0916d90c16790183fc7c2bd2bd7e9a5e3764b36c8196ba37bf1dc817"
+    add_versions("v4.2.0", "090ec6cb0916d90c16790183fc7c2bd2bd7e9a5e3764b36c8196ba37bf1dc817")
 
     add_configs("hdf5", {description = "Enable HDF5 interface.", default = false, type = "boolean"})
     
