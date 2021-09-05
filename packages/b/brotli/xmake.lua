@@ -7,6 +7,14 @@ package("brotli")
              "https://github.com/google/brotli.git")
 
     add_versions("1.0.9", "f9e8d81d0405ba66d181529af42a3354f838c939095ff99930da6aa9cdf6fe46")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::brotli")
+    elseif is_plat("linux") then
+        add_extsources("pacman::brotli", "apt::libbrotli-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::brotli")
+    end
 
     -- Fix VC C++ 12.0 BROTLI_MSVC_VERSION_CHECK calls
     -- VC <= 2012 build failed

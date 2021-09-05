@@ -6,6 +6,14 @@ package("box2d")
     set_urls("https://github.com/erincatto/box2d/archive/v$(version).zip")
     add_versions("2.4.0", "6aebbc54c93e367c97e382a57ba12546731dcde51526964c2ab97dec2050f8b9")
     add_versions("2.4.1", "0cb512dfa5be79ca227cd881b279adee61249c85c8b51caf5aa036b71e943002")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::box2d")
+    elseif is_plat("linux") then
+        add_extsources("pacman::box2d", "apt::libbox2d-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::box2d")
+    end
 
     add_deps("cmake")
 

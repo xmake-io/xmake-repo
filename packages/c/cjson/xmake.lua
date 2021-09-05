@@ -7,6 +7,14 @@ package("cjson")
              "https://github.com/DaveGamble/cJSON.git")
     add_versions("1.7.10", "80a0584410656c8d8da2ba703744f44d7535fc4f0778d8bf4f980ce77c6a9f65")
     add_versions("1.7.14", "d797b4440c91a19fa9c721d1f8bab21078624aa9555fc64c5c82e24aa2a08221")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::cjson")
+    elseif is_plat("linux") then
+        add_extsources("pacman::cjson", "apt::libcjson-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::cjson")
+    end
 
     add_deps("cmake")
 

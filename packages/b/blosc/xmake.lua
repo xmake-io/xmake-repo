@@ -8,6 +8,14 @@ package("blosc")
 
     add_versions("1.20.1", "42c4d3fcce52af9f8e2078f8f57681bfc711706a3330cb72b9b39e05ae18a413")
     add_versions("1.5.0", "208ba4db0e5116421ed2fbbdf2adfa3e1d133d29a6324a0f47cf2d71f3810c92")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::blosc")
+    elseif is_plat("linux") then
+        add_extsources("pacman::blosc", "apt::libblosc-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::c-blosc")
+    end
 
     add_deps("cmake", "zlib")
     if is_plat("linux") then

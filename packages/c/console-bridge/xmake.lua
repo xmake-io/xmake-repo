@@ -7,6 +7,12 @@ package("console-bridge")
     add_urls("https://github.com/ros/console_bridge/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ros/console_bridge.git")
     add_versions("1.0.1", "2ff175a9bb2b1849f12a6bf972ce7e4313d543a2bbc83b60fdae7db6e0ba353f")
+    
+    if is_plat("linux") then
+        add_extsources("pacman::console-bridge", "apt::libconsole-bridge-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::console-bridge")
+    end
 
     add_deps("cmake")
     on_install("windows", "macosx", "linux", function (package)

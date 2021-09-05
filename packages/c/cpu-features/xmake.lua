@@ -7,6 +7,12 @@ package("cpu-features")
     add_urls("https://github.com/google/cpu_features/archive/$(version).tar.gz",
              "https://github.com/google/cpu_features.git")
     add_versions("v0.6.0", "95a1cf6f24948031df114798a97eea2a71143bd38a4d07d9a758dda3924c1932")
+    
+    if is_plat("linux") then
+        add_extsources("apt::libcpu-features-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::cpu_features")
+    end
 
     add_deps("cmake")
 

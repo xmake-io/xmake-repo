@@ -4,6 +4,10 @@ package("concurrentqueue")
     set_description("An industrial-strength lock-free queue for C++.")
 
     add_urls("https://github.com/cameron314/concurrentqueue.git")
+    
+    if is_plat("linux") then
+        add_extsources("pacman::concurrent-queue", "apt::libconcurrentqueue-dev")
+    end
 
     on_install(function (package)
         os.cp("*.h", package:installdir("include/concurrentqueue"))

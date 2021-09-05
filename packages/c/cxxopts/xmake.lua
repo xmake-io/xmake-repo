@@ -6,6 +6,14 @@ package("cxxopts")
     add_urls("https://github.com/jarro2783/cxxopts.git")
     add_urls("https://github.com/jarro2783/cxxopts/archive/$(version).tar.gz")
     add_versions("v2.2.0", "447dbfc2361fce9742c5d1c9cfb25731c977b405f9085a738fbd608626da8a4d")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::cxxopts")
+    elseif is_plat("linux") then
+        add_extsources("pacman::cxxopts", "apt::libcxxopts-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::cxxopts")
+    end
 
     on_install(function (package)
         os.cp("include/*.hpp", package:installdir("include"))

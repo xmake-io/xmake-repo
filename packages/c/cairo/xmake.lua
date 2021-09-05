@@ -5,6 +5,14 @@ package("cairo")
 
     set_urls("https://cairographics.org/releases/cairo-$(version).tar.xz")
     add_versions("1.16.0", "5e7b29b3f113ef870d1e3ecf8adf21f923396401604bda16d44be45e66052331")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::cairo")
+    elseif is_plat("linux") then
+        add_extsources("pacman::cairo", "apt::libcairo2-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::cairo")
+    end
 
     add_deps("libpng", "pixman", "zlib", "freetype")
     if is_plat("linux") then

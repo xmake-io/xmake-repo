@@ -9,8 +9,12 @@ package("atk")
     end})
     add_versions("2.36.0", "fb76247e369402be23f1f5c65d38a9639c1164d934e40f6a9cf3c9e96b652788")
 
-    if is_plat("linux") then
-        add_extsources("apt::libatk1.0-dev")
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::atk")
+    elseif is_plat("linux") then
+        add_extsources("pacman::atk", "apt::libatk1.0-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::atk")
     end
 
     add_deps("meson", "ninja", "glib", "pkg-config")

@@ -6,6 +6,14 @@ package("capnproto")
     set_urls("https://github.com/capnproto/capnproto/archive/v$(version).zip")
     add_versions("0.8.0", "9a5e090b1f3ad39bb47fed5fd03672169493674ce273418b76c868393fced2e4")
     add_versions("0.7.0", "1054a879e174b8f797f1b506fedb14ecba5556c656e33ac51bd0a62bd90f925f")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::capnproto")
+    elseif is_plat("linux") then
+        add_extsources("pacman::capnproto", "apt::libcapnp-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::capnp")
+    end
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})

@@ -7,6 +7,14 @@ package("benchmark")
              "https://github.com/google/benchmark.git")
     add_versions("1.5.2", "dccbdab796baa1043f04982147e67bb6e118fe610da2c65f88912d73987e700c")
     add_versions("1.5.5", "3bff5f237c317ddfd8d5a9b96b3eede7c0802e799db520d38ce756a2a46a18a0")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::benchmark")
+    elseif is_plat("linux") then
+        add_extsources("pacman::benchmark", "apt::libbenchmark-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::google-benchmark")
+    end
 
     if is_plat("linux") then
         add_syslinks("pthread")

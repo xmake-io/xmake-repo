@@ -4,6 +4,15 @@ package("capstone")
     add_urls("https://github.com/aquynh/capstone/archive/$(version).tar.gz")
 
     add_versions("4.0.2", "7c81d798022f81e7507f1a60d6817f63aa76e489aa4e7055255f21a22f5e526a")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::capstone")
+    elseif is_plat("linux") then
+        add_extsources("pacman::capstone", "apt::libcapstone-dev")
+    elseif is_plat("macosx")then
+        add_extsources("brew::capstone")
+    end
+    
     add_deps("cmake")
 
     on_load(function (package)

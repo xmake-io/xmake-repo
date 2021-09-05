@@ -7,6 +7,12 @@ package("corrade")
     add_urls("https://github.com/mosra/corrade/archive/refs/tags/$(version).zip",
              "https://github.com/mosra/corrade.git")
     add_versions("v2020.06", "d89a06128c334920d91fecf23cc1df48fd6be26543dc0ed81b2f819a92d70e72")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::corrade")
+    elseif is_plat("linux") then
+        add_extsources("pacman::corrade-git")
+    end
 
     if is_plat("windows") then
         add_syslinks("shell32")
