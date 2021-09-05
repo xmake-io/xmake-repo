@@ -47,7 +47,7 @@ package("mnn")
         if package:is_plat("android") then
             table.insert(configs, "-DMNN_USE_SSE=OFF")
         end
-        import("package.tools.cmake").install(package, configs, {buildir="bd"})
+        import("package.tools.cmake").install(package, configs, {buildir="build_xmake"})
         if package:is_plat("windows") then
             package:set("kind", "shared")
             os.cp("bd/Release/*.exe", package:installdir("bin"))
