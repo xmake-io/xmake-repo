@@ -20,9 +20,9 @@ package("libpaper")
         end
         local libtool = package:dep("libtool")
         if libtool then
-            os.vrun("autoreconf --install -I" .. libtool:installdir("share", "aclocal"))
+            os.vrunv("autoreconf", {"--install", "-I" .. libtool:installdir("share", "aclocal")})
         else
-            os.vrun("autoreconf --install")
+            os.vrunv("autoreconf", {"--install"})
         end
         import("package.tools.autoconf").install(package, configs)
     end)
