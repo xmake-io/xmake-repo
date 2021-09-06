@@ -53,7 +53,7 @@ package("freetype")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local function add_dep(dep, cmakeConf, cmakeDisableConf)
-            if package:config("dep") then
+            if package:config(dep) then
                 table.insert(configs, "-DFT_WITH_" .. cmakeConf .. "=ON")
             else
                 table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (cmakeDisableConf or cmakeConf) .. "=ON")
