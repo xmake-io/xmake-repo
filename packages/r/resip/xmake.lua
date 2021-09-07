@@ -12,6 +12,9 @@ package("resip")
     if is_plat("linux") or is_plat("macosx") then
         add_links("dum", "resip", "rutil")
     end
+    if is_plat("linux") then
+        add_deps("patchelf")
+    end
 
     on_install("windows", function(package)
         import("package.tools.msbuild")
@@ -57,6 +60,11 @@ package("resip")
             table.insert(confs, w)
         end)
         import("package.tools.autoconf").install(package, confs)
+        os.cd(package:installdir("lib"))
+        local ver = package["_VERSION_STR"]
+        local librutil = "librutil-" .. string.match(ver, "%d+%.%d+") .. ".so"
+        os.execv("patchelf", {"--set-rpath", "$ORIGIN", "librutil.so"})
+        os.execv("patchelf", {"--set-rpath", "$ORIGIN", librutil})
     end)
 
     on_test(function(package)
