@@ -1,0 +1,11 @@
+diff --git a/include/celero/TestFixture.h b/include/celero/TestFixture.h
+--- a/include/celero/TestFixture.h
++++ b/include/celero/TestFixture.h
+@@ -25,6 +25,7 @@
+ #include <cstddef>
+ #include <cstdint>
+ #include <limits>
++#include <memory>
+ #include <string>
+ #include <vector>
+ 
