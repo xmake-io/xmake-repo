@@ -3,8 +3,10 @@ add_rules("mode.debug", "mode.release")
 target("bz2")
     set_kind("$(kind)")
     set_languages("c89")
-    if is_plat("windows", "mingw") and is_kind("static") then
+    if is_kind("static") then
         add_defines("BZ_STATIC", {public = true})
+    else
+        add_defines("BZ_EXPORT")
     end
 
     add_headerfiles("bzlib.h")
