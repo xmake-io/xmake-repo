@@ -19,14 +19,18 @@ package("bzip2")
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
         configs.mode = package:debug() and "debug" or "release"
+        configs.build_bin = not package:is_plat("cross", "iphoneos", "android")
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
-        os.vrun("bunzip2 --help")
-        os.vrun("bzcat --help")
-        os.vrun("bzip2 --help")
+        if not package:is_plat("cross", "iphoneos", "android") then
+            os.vrun("bunzip2 --help")
+            os.vrun("bzcat --help")
+            os.vrun("bzip2 --help")
+        end
+
         assert(package:has_cfuncs("BZ2_bzCompressInit", {includes = "bzlib.h"}))
     end)
