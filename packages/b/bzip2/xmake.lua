@@ -8,14 +8,14 @@ package("bzip2")
     add_patches("1.0.8", path.join(os.scriptdir(), "patches", "dllexport.patch"), "f72679b2ad55262bbc9da49f352f6cf128db85047aaa04ca42126c839b709461")
 
     on_load(function (package)
-        if package:is_plat("windows", "mingw") and not package:config("shared") then
+        package:addenv("PATH", "bin")
+
+        if not package:config("shared") then
             package:add("defines", "BZ_STATIC")
         end
     end)
 
     on_install(function (package)
-        package:addenv("PATH", "bin")
-
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
         configs.mode = package:debug() and "debug" or "release"
