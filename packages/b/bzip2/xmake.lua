@@ -14,6 +14,8 @@ package("bzip2")
     end)
 
     on_install(function (package)
+        package:addenv("PATH", "bin")
+
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
         configs.mode = package:debug() and "debug" or "release"
