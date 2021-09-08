@@ -9,7 +9,7 @@ package("guilite")
              "https://github.com/idea4good/GuiLite.git")
     add_versions("v2.1", "53363a5e3a053708b3e081510134fca9bfc635cfdbc9ce01da1ea6ae7e5ba8bc")
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", "mingw", "android", "iphoneos", function (package)
         os.cp("GuiLite.h", package:installdir("include"))
     end)
 
