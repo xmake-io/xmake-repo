@@ -26,7 +26,7 @@ package("gf")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DGF_DEBUG=" .. (package:debug() and "ON" or "OFF"))
 
-        import("package.tools.cmake").install(package, configs, {packagedeps={"zlib"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps={"stb", "zlib"}})
     end)
 
     on_test(function (package)

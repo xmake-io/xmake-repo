@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 4704402..368cff1 100644
+index 4704402..a5a3e30 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -43,7 +43,7 @@ endif()
@@ -11,7 +11,15 @@ index 4704402..368cff1 100644
  find_package(Freetype REQUIRED)
  find_package(pugixml REQUIRED)
  find_package(ZLIB REQUIRED)
-@@ -74,11 +74,11 @@ if(MSVC)
+@@ -55,7 +55,6 @@ if(GF_USE_EMBEDDED_LIBS)
+   set(Stb_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/library/vendor/stb")
+ else()
+   # works on vcpkg
+-  find_package(Stb REQUIRED)
+ endif()
+ 
+ if(APPLE)
+@@ -74,11 +73,11 @@ if(MSVC)
  else()
    message(STATUS "Using GCC or Clang compiler")
    # assume it's a GNU-like compiler (GCC, clang)
