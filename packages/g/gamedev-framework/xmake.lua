@@ -1,4 +1,4 @@
-package("gf")
+package("gamedev-framework")
 
     set_homepage("https://gamedevframework.github.io")
     set_description("A C++17 framework for 2D games")
