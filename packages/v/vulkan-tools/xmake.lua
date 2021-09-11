@@ -16,7 +16,7 @@ package("vulkan-tools")
         add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
     end
 
-    on_load("windows", "linux", function (package)
+    on_load("windows|x64", "linux", function (package)
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
         package:add("deps", "vulkan-loader " .. sdkver)
@@ -25,7 +25,7 @@ package("vulkan-tools")
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install("windows|x64", "linux", function (package)
         import("package.tools.cmake")
         local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
         if package:is_plat("linux") then
