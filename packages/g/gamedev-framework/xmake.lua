@@ -7,7 +7,7 @@ package("gamedev-framework")
     set_urls("https://github.com/GamedevFramework/gf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/GamedevFramework/gf.git")
     add_versions("v0.21.0", "1b8a35e8eae753315a6e0f7c5fab1266fad500bf20356d7a85c1938ee4b03853")
-    add_patches("v0.21.0", path.join(os.scriptdir(), "patches", "v0.21.0", "fix_cmake.patch"), "ae297b669e25de73a4987e134c325ad6d22a37045929b50e264aea77877f0e70")
+    add_patches("v0.21.0", path.join(os.scriptdir(), "patches", "v0.21.0", "fix_cmake.patch"), "e650698f8aad6ed22bd84023263de197070cc89a1a398fec910922e4d1cf36a4")
 
     add_extsources("vcpkg::gamedev-framework")
 
@@ -26,7 +26,7 @@ package("gamedev-framework")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DGF_DEBUG=" .. (package:debug() and "ON" or "OFF"))
 
-        import("package.tools.cmake").install(package, configs, {packagedeps={"stb", "zlib"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps={"boost", "stb", "zlib"}})
     end)
 
     on_test(function (package)

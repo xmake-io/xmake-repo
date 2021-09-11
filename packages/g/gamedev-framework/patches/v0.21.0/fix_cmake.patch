@@ -7,7 +7,6 @@ index 4704402..a5a3e30 100644
  find_package(SDL2 REQUIRED)
  
 -find_package(Boost REQUIRED)
-+find_package(Boost REQUIRED COMPONENTS exception)
  find_package(Freetype REQUIRED)
  find_package(pugixml REQUIRED)
  find_package(ZLIB REQUIRED)
@@ -45,7 +44,6 @@ index 3da79e7..3ecfc69 100644
    PUBLIC
      Threads::Threads
 -    Boost::boost
-+    ${Boost_LIBRARIES}
    PRIVATE
      ZLIB::ZLIB
      pugixml
