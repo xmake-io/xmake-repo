@@ -19,6 +19,10 @@ jobs:
       - name: Installation
         run: |
           uname -a
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
           dnf -y install gfortran
           dnf -y install mesa-libGL-devel mesa-libGLU-devel
           dnf -y install @development-tools @rpm-development-tools
