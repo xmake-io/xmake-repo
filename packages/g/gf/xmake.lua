@@ -7,6 +7,7 @@ package("gf")
     set_urls("https://github.com/GamedevFramework/gf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/GamedevFramework/gf.git")
     add_versions("v0.21.0", "1b8a35e8eae753315a6e0f7c5fab1266fad500bf20356d7a85c1938ee4b03853")
+    add_patches("v0.21.0", path.join(os.scriptdir(), "patches", "v0.21.0", "fix_cmake.patch"), "f1d8fa0bbb25123b28e9b2842da07604238b77e51b918260a369f97c2f694c89")
 
     add_extsources("vcpkg::gamedev-framework")
 
@@ -19,15 +20,13 @@ package("gf")
         end
     end)
 
-    on_install("windows", "linux", "mingw", "macosx", function (package)
-        io.replace("CMakeLists.txt", "add_subdirectory(tools/gf_info)", "", {plain=true})
-        io.replace("CMakeLists.txt", [[set(CMAKE_CXX_FLAGS                 "-Wall -Wextra -pedantic")]], [[set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")]], {plain=true})
-        local configs = {"-DGF_BUILD_DOCUMENTATION=OFF", "-DGF_BUILD_EXAMPLES=OFF", "-DBUILD_TESTING=OFF"}
+    on_install("windows", "linux", function (package)
+        local configs = {"-DGF_BUILD_DOCUMENTATION=OFF", "-DGF_BUILD_EXAMPLES=OFF", "-DBUILD_TESTING=OFF", "-DGF_USE_EMBEDDED_LIBS=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DGF_DEBUG=" .. (package:debug() and "ON" or "OFF"))
 
-        import("package.tools.cmake").install(package, configs, {packagedeps={"stb", "zlib"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps={"zlib"}})
     end)
 
     on_test(function (package)
