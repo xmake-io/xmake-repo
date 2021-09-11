@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 4704402..a5a3e30 100644
+index 4704402..463c58e 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -43,7 +43,7 @@ endif()
+@@ -43,7 +43,6 @@ endif()
  set(SDL2_BUILDING_LIBRARY TRUE)
  find_package(SDL2 REQUIRED)
  
@@ -10,7 +10,7 @@ index 4704402..a5a3e30 100644
  find_package(Freetype REQUIRED)
  find_package(pugixml REQUIRED)
  find_package(ZLIB REQUIRED)
-@@ -55,7 +55,6 @@ if(GF_USE_EMBEDDED_LIBS)
+@@ -55,7 +54,6 @@ if(GF_USE_EMBEDDED_LIBS)
    set(Stb_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/library/vendor/stb")
  else()
    # works on vcpkg
@@ -18,7 +18,14 @@ index 4704402..a5a3e30 100644
  endif()
  
  if(APPLE)
-@@ -74,11 +73,11 @@ if(MSVC)
+@@ -67,18 +65,17 @@ endif()
+ if(MSVC)
+   message(STATUS "Using MSVC compiler")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DNOMINMAX /W4 /utf-8")
+-  link_directories(${Boost_LIBRARY_DIRS})
+   # for more information on the last two switches:
+   # - https://blogs.msdn.microsoft.com/vcblog/2016/06/07/standards-version-switches-in-the-compiler/
+   # - https://blogs.msdn.microsoft.com/vcblog/2016/11/16/permissive-switch/
  else()
    message(STATUS "Using GCC or Clang compiler")
    # assume it's a GNU-like compiler (GCC, clang)
@@ -36,10 +43,10 @@ index 4704402..a5a3e30 100644
  
  if(UNIX)
 diff --git a/library/CMakeLists.txt b/library/CMakeLists.txt
-index 3da79e7..3ecfc69 100644
+index 3da79e7..533b55b 100644
 --- a/library/CMakeLists.txt
 +++ b/library/CMakeLists.txt
-@@ -391,7 +391,7 @@ endif()
+@@ -391,7 +391,6 @@ endif()
  target_link_libraries(gfcore0
    PUBLIC
      Threads::Threads
@@ -47,3 +54,15 @@ index 3da79e7..3ecfc69 100644
    PRIVATE
      ZLIB::ZLIB
      pugixml
+diff --git a/library/gfConfig.cmake b/library/gfConfig.cmake
+index 9c896fe..4695db0 100644
+--- a/library/gfConfig.cmake
++++ b/library/gfConfig.cmake
+@@ -28,7 +28,6 @@ macro (load_dependencies component)
+   # For gf::core
+   if (${component} STREQUAL "core")
+     find_dependency(Threads)
+-    find_dependency(Boost REQUIRED)
+     if (NOT BUILD_SHARED_LIBS)
+       find_dependency(ZLIB)
+       find_dependency(pugixml)
