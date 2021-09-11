@@ -7,7 +7,7 @@ package("gamedev-framework")
     set_urls("https://github.com/GamedevFramework/gf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/GamedevFramework/gf.git")
     add_versions("v0.21.0", "1b8a35e8eae753315a6e0f7c5fab1266fad500bf20356d7a85c1938ee4b03853")
-    add_patches("v0.21.0", path.join(os.scriptdir(), "patches", "v0.21.0", "fix_cmake.patch"), "59c561153ecee8be8bf9ce85b61fc55c47ccd0203e5a810d3db1814842a2ab72")
+    add_patches("v0.21.0", path.join(os.scriptdir(), "patches", "v0.21.0", "fix_cmake.patch"), "ae297b669e25de73a4987e134c325ad6d22a37045929b50e264aea77877f0e70")
 
     add_extsources("vcpkg::gamedev-framework")
 
