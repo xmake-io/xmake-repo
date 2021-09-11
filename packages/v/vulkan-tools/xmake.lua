@@ -1,16 +1,18 @@
 package("vulkan-tools")
 
+    set_kind("binary")
     set_homepage("https://github.com/KhronosGroup/Vulkan-Tools")
     set_description("Vulkan Utilities and Tools")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/Vulkan-Tools/archive/sdk-$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
+    add_versions("1.2.189+1", "ef5db0934ff7192657bbfc675f6e3e1ee009f2ad34aab915d2bd9993a59add81")
     add_versions("1.2.162+0", "8324a6dfd1bc20d4fad45c4ea56357d8354fc03e3e4529d0a4919f124d9e6106")
     add_versions("1.2.154+0", "c7d66ec1f5fe5c0a13e487fe5c6eefd3a954522c0b05f06bd2ae41792aeea272")
 
-    add_deps("cmake", "ninja")
     add_deps("glslang")
     if is_plat("linux") then
+        add_extsources("apt::vulkan-tools")
         add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
     end
 
@@ -18,6 +20,9 @@ package("vulkan-tools")
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
         package:add("deps", "vulkan-loader " .. sdkver)
+        if not package.is_built or package:is_built() then
+            package:add("deps", "cmake", "ninja")
+        end
     end)
 
     on_install("windows", "linux", function (package)

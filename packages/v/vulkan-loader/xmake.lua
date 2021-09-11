@@ -5,17 +5,21 @@ package("vulkan-loader")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/Vulkan-Loader/archive/sdk-$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
+    add_versions("1.2.189+1", "1d9f539154d37cea0ca336341c3b25e73d5a5320f2f9c9c55f8309422fe6ec3c")
     add_versions("1.2.162+0", "f8f5ec2485e7fdba3f58c1cde5a25145ece1c6a686c91ba4016b28c0af3f21dd")
     add_versions("1.2.154+1", "889e45f7175d915dd0d702013b8021192e181d20f2ad4021c94006088f1edfe5")
 
-    add_deps("cmake", "ninja")
     if is_plat("linux") then
+        add_extsources("apt::libvulkan-dev")
         add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
     end
 
     on_load("windows", "linux", function (package)
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
+        if not package.is_built or package:is_built() then
+            package:add("deps", "cmake", "ninja")
+        end
     end)
 
     on_install("windows", "linux", function (package)
