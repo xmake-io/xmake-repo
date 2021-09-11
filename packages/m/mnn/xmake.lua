@@ -8,7 +8,7 @@ package("mnn")
              "https://github.com/alibaba/MNN.git")
     add_versions("1.2.1", "485ae09558ff5626a63d1467ca81ebe0e17fbc60222c386d8f0e857f487c74d0")
 
-    for _, name in ipairs({"meta", "opencl", "opengl", "vulkan", "arm82", "onednn", "avx512", "cuda", "tensorrt", "coreml"}) do
+    for _, name in ipairs({"metal", "opencl", "opengl", "vulkan", "arm82", "onednn", "avx512", "cuda", "tensorrt", "coreml"}) do
         add_configs(name, {description = "Enable " .. name .. " support.", default = false, type = "boolean"})
     end
 
@@ -18,24 +18,64 @@ package("mnn")
 
     add_configs("thread_pool", {description = "Use MNN's own thread pool implementation. Will disabel openmp.", default = true, type = "boolean"})
     add_configs("openmp", {description = "Use OpenMP's thread pool implementation. Does not work on iOS or Mac OS.", default = false, type = "boolean"})
+    add_configs("use_system_lib", {description = "When compiling OpenCL/Vulkan, it depends on the OpenCL / Vulkan library of the system.", default = false, type = "boolean"})
 
-    add_deps("cmake", "ninja")
+    add_deps("cmake")
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", function (package)
-        local configs = {"-DMNN_USE_SYSTEM_LIB=OFF",
-                        "-DMNN_BUILD_TEST=OFF",
+    add_links("")
+
+    on_load("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package) 
+        local mnn_path = package:installdir("include")
+        local mnn_lib_dir = string.sub(mnn_path, 0, string.len(mnn_path)-7) .. "lib"
+        if package:config("shared") then
+            package:add("ldflags", "-L" .. mnn_lib_dir .. " -lmnn")
+            package:add("shflags", "-L" .. mnn_lib_dir .. " -lmnn")
+        else
+            if package:is_plat("linux", "android", "cross") then
+                package:add("shflags", " -Wl,--whole-archive " .. mnn_lib_dir .. "/libmnn.a -Wl,--no-whole-archive")
+                package:add("ldflags", " -Wl,--whole-archive " .. mnn_lib_dir .. "/libmnn.a -Wl,--no-whole-archive")
+            elseif package:is_plat("macosx") then
+                package:add("ldflags", "-Wl,-force_load " .. mnn_lib_dir .. "/libmnn.a")
+                package:add("shflags", "-Wl,-force_load " .. mnn_lib_dir .. "/libmnn.a", {force=true})
+            elseif package:is_plat("windows") then
+                package:add("linkdirs", mnn_lib_dir)
+                package:add("shflags", "/WHOLEARCHIVE:mnn")
+                package:add("ldflags", "/WHOLEARCHIVE:mnn")
+            end
+        end
+
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "USING_MNN_DLL")
+        end
+
+        if package:is_plat("macosx", "iphoneos") then 
+            if package:config("MNN_OPENCL") then
+                package:add("frameworks", "OpenCL")
+            end
+            if package:config("MNN_OPENGL") then
+                package:add("frameworks", "OpenGL")
+            end
+            if package:config("MNN_METAL") then
+                package:add("frameworks", "Metal")
+            end
+        end
+    end)
+
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package)
+        local configs = {"-DMNN_BUILD_TEST=OFF",
                         "-DMNN_BUILD_DEMO=OFF",
                         "-DMNN_SUPPORT_TFLITE_QUAN=ON",
                         "-DMNN_PORTABLE_BUILD=OFF",
                         "-DMNN_SEP_BUILD=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMNN_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DMNN_USE_SYSTEM_LIB=" .. (package:config("use_system_lib") and "ON" or "OFF"))
         table.insert(configs, "-DMNN_USE_THREAD_POOL=" .. (package:config("thread_pool") and "ON" or "OFF"))
         table.insert(configs, "-DMNN_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         if package:config("thread_pool") and package:config("openmp") then 
-            print("Warning: use mnn's thread pool, will disable openmp!")
+            print("Warning: You are using mnn's thread pool, it will disable openmp!")
         end
-        for _, name in ipairs({"meta", "opencl", "opengl", "vulkan", "arm82", "onednn", "avx512", "cuda", "tensorrt", "coreml"}) do
+        for _, name in ipairs({"metal", "opencl", "opengl", "vulkan", "arm82", "onednn", "avx512", "cuda", "tensorrt", "coreml"}) do
             table.insert(configs, "-DMNN_" .. string.upper(name) .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
         for _, name in ipairs({"train", "quantools", "convert"}) do
@@ -46,10 +86,10 @@ package("mnn")
         end
         if package:is_plat("android") then
             table.insert(configs, "-DMNN_USE_SSE=OFF")
+            table.insert(configs, "-DMNN_BUILD_FOR_ANDROID_COMMAND=ON")
         end
-        import("package.tools.cmake").install(package, configs, {buildir="build_xmake"})
+        import("package.tools.cmake").install(package, configs, {buildir="bd"})--, cmake_generator="Ninja"})
         if package:is_plat("windows") then
-            package:set("kind", "shared")
             os.cp("bd/Release/*.exe", package:installdir("bin"))
             os.cp("bd/Release/*.dll", package:installdir("bin"))
         else
@@ -59,5 +99,13 @@ package("mnn")
     end)
 
     on_test(function (package)
-        --assert(package:has_cfuncs("mongoc_init", {includes = "mongoc/mongoc.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <MNN/Interpreter.hpp>
+            #include <assert.h>
+            static void test() {
+                MNN::Interpreter* session = MNN::Interpreter::createFromFile(nullptr);
+                assert(session == nullptr);
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "MNN/Interpreter.hpp"}))
+
     end)
