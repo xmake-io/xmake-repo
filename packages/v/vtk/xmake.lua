@@ -8,6 +8,9 @@ package("vtk")
         return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/VTK-" .. version
     end})
     add_versions("9.0.1", "1b39a5e191c282861e7af4101eaa8585969a2de05f5646c9199a161213a622c7")
+    add_versions("9.0.3", "bc3eb9625b2b8dbfecb6052a2ab091fc91405de4333b0ec68f3323815154ed8a")
+
+    add_patches("9.0.3", path.join(os.scriptdir(), "patches", "9.0.3", "limits.patch"), "3bebcd1cac52462b0cf84c8232c3426202c75c944784252b215b4416cbe111db")
 
     add_deps("cmake")
     if is_plat("windows") then
@@ -25,7 +28,7 @@ package("vtk")
     end)
 
     on_install("windows", "linux", function (package)
-        local configs = {"-DVTK_BUILD_TESTING=OFF", "-DVTK_BUILD_EXAMPLES=OFF", "-DVTK_ENABLE_WRAPPING=OFF"}
+        local configs = {"-DVTK_BUILD_TESTING=OFF", "-DVTK_BUILD_EXAMPLES=OFF", "-DVTK_ENABLE_WRAPPING=OFF", "-DCMAKE_CXX_STANDARD=14"}
         table.insert(configs, "-DCMAKE_INSTALL_LIBDIR=lib")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -39,5 +42,5 @@ package("vtk")
                 vtkAlgorithm::SetDefaultExecutivePrototype(exec);
                 exec->Delete();
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"vtkAlgorithm.h", "vtkCompositeDataPipeline.h"}}))
+        ]]}, {configs = {languages = "c++14"}, includes = {"vtkAlgorithm.h", "vtkCompositeDataPipeline.h"}}))
     end)
