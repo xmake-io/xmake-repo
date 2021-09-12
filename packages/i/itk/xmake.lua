@@ -4,8 +4,9 @@ package("itk")
     set_description("ITK is an open-source, cross-platform library that provides developers with an extensive suite of software tools for image analysis.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/InsightSoftwareConsortium/ITK/archive/refs/tags/$(version).tar.gz")
-    add_versions("v5.2.0", "e53961cd78df8bcfaf8bd8b813ae2cafdde984c7650a2ddf7dcf808df463ea74")
+    add_urls("https://github.com/InsightSoftwareConsortium/ITK/releases/download/v$(version)/InsightToolkit-$(version).tar.gz")
+    add_versions("5.2.0", "12c9cf543cbdd929330322f0a704ba6925a13d36d01fc721a74d131c0b82796e")
+    add_versions("5.2.1", "192d41bcdd258273d88069094f98c61c38693553fd751b54f8cda308439555db")
 
     add_deps("cmake", "eigen")
     if is_plat("windows") then
@@ -27,14 +28,15 @@ package("itk")
                          "-DBUILD_TESTING=OFF",
                          "-DBUILD_EXAMPLES=OFF",
                          "-DITK_WRAPPING=OFF",
-                         "-DITK_USE_SYSTEM_EIGEN=ON"}
+                         "-DITK_USE_SYSTEM_EIGEN=ON",
+                         "-DCMAKE_CXX_STANDARD=14"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
         if package:is_plat("windows") then
-            import("package.tools.cmake").install(package, configs, {buildir = os.tmpdir()})
+            import("package.tools.cmake").install(package, configs, {buildir = path.join(os.tmpdir(), "itk_build")})
         else
             import("package.tools.cmake").install(package, configs)
         end
@@ -46,5 +48,5 @@ package("itk")
                 using ImageType = itk::Image<unsigned short, 3>;
                 ImageType::Pointer image = ImageType::New();
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "itkImage.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "itkImage.h"}))
     end)
