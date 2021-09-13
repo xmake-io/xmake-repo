@@ -7,7 +7,7 @@ package("mnn")
     add_urls("https://github.com/alibaba/MNN/archive/$(version).zip",
              "https://github.com/alibaba/MNN.git")
              
-    add_versions("1.2.2", "3924fbcebf3e0c4b0b5b8d1feb001cf03c5438a97955766644c330b7507559ef")
+    add_versions("1.2.2", "78698b879f796a84d1aeb02f60ee38f6860dfdd03c27d1649aaaf9e0adfc8630")
     add_versions("1.2.1", "485ae09558ff5626a63d1467ca81ebe0e17fbc60222c386d8f0e857f487c74d0")
 
     for _, name in ipairs({"metal", "opencl", "opengl", "vulkan", "arm82", "onednn", "avx512", "cuda", "tensorrt", "coreml"}) do
@@ -26,7 +26,7 @@ package("mnn")
 
     add_links("")
 
-    on_load("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package) 
+    on_load("windows", "linux", "macosx", "android", function (package) 
         local mnn_path = package:installdir("include")
         local mnn_lib_dir = string.sub(mnn_path, 1, string.len(mnn_path) - 7) .. "lib"
         if package:config("shared") then
@@ -63,7 +63,7 @@ package("mnn")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package)
+    on_install("windows", "linux", "macosx", "android", function (package)
         local configs = {"-DMNN_BUILD_TEST=OFF",
                         "-DMNN_BUILD_DEMO=OFF",
                         "-DMNN_SUPPORT_TFLITE_QUAN=ON",
