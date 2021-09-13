@@ -43,6 +43,7 @@ package("zlib")
                 check_cincludes("HAVE_SYS_TYPES_H", "sys/types.h")
                 check_cincludes("HAVE_STDINT_H", "stdint.h")
                 check_cincludes("HAVE_STDDEF_H", "stddef.h")
+                set_symbols("none")
                 if is_plat("windows") then
                     add_defines("_CRT_SECURE_NO_DEPRECATE")
                     add_defines("_CRT_NONSTDC_NO_DEPRECATE")
@@ -51,7 +52,6 @@ package("zlib")
                     end
                 else
                     add_defines("_LARGEFILE64_SOURCE=1")
-                    add_cflags("-fvisibility=default")
                 end
         ]])
         local configs = {}
