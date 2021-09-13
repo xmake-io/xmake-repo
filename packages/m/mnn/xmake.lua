@@ -6,6 +6,8 @@ package("mnn")
 
     add_urls("https://github.com/alibaba/MNN/archive/$(version).zip",
              "https://github.com/alibaba/MNN.git")
+             
+    add_versions("1.2.2", "3924fbcebf3e0c4b0b5b8d1feb001cf03c5438a97955766644c330b7507559ef")
     add_versions("1.2.1", "485ae09558ff5626a63d1467ca81ebe0e17fbc60222c386d8f0e857f487c74d0")
 
     for _, name in ipairs({"metal", "opencl", "opengl", "vulkan", "arm82", "onednn", "avx512", "cuda", "tensorrt", "coreml"}) do
@@ -26,7 +28,7 @@ package("mnn")
 
     on_load("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package) 
         local mnn_path = package:installdir("include")
-        local mnn_lib_dir = string.sub(mnn_path, 0, string.len(mnn_path)-7) .. "lib"
+        local mnn_lib_dir = string.sub(mnn_path, 1, string.len(mnn_path) - 7) .. "lib"
         if package:config("shared") then
             package:add("ldflags", "-L" .. mnn_lib_dir .. " -lmnn")
             package:add("shflags", "-L" .. mnn_lib_dir .. " -lmnn")
@@ -36,7 +38,7 @@ package("mnn")
                 package:add("ldflags", " -Wl,--whole-archive " .. mnn_lib_dir .. "/libmnn.a -Wl,--no-whole-archive")
             elseif package:is_plat("macosx") then
                 package:add("ldflags", "-Wl,-force_load " .. mnn_lib_dir .. "/libmnn.a")
-                package:add("shflags", "-Wl,-force_load " .. mnn_lib_dir .. "/libmnn.a", {force=true})
+                package:add("shflags", "-Wl,-force_load " .. mnn_lib_dir .. "/libmnn.a")
             elseif package:is_plat("windows") then
                 package:add("linkdirs", mnn_lib_dir)
                 package:add("shflags", "/WHOLEARCHIVE:mnn")
@@ -88,10 +90,13 @@ package("mnn")
             table.insert(configs, "-DMNN_USE_SSE=OFF")
             table.insert(configs, "-DMNN_BUILD_FOR_ANDROID_COMMAND=ON")
         end
-        import("package.tools.cmake").install(package, configs, {buildir="bd"})--, cmake_generator="Ninja"})
+        import("package.tools.cmake").install(package, configs, {buildir = "bd"})
         if package:is_plat("windows") then
             os.cp("bd/Release/*.exe", package:installdir("bin"))
             os.cp("bd/Release/*.dll", package:installdir("bin"))
+        elseif package:is_plat("macosx") then
+            os.cp("include/MNN", package:installdir("include"))
+            os.cp("bd/*.out", package:installdir("bin"))
         else
             os.cp("bd/*.out", package:installdir("bin"))
         end
@@ -107,5 +112,4 @@ package("mnn")
                 assert(session == nullptr);
             }
         ]]}, {configs = {languages = "c++11"}, includes = "MNN/Interpreter.hpp"}))
-
     end)
