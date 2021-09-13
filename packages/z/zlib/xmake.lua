@@ -51,6 +51,7 @@ package("zlib")
                     end
                 else
                     add_defines("_LARGEFILE64_SOURCE=1")
+                    add_cflags("-fvisibility=default")
                 end
         ]])
         local configs = {}
