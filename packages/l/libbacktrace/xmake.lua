@@ -6,7 +6,6 @@ package("libbacktrace")
     add_urls("https://github.com/ianlancetaylor/libbacktrace.git")
     add_versions("v1.0", "d0f5e95a87a4d3e0a1ed6c069b5dae7cbab3ed2a")
 
-    add_deps("make")
     on_install("linux", "macosx", function (package)
-        import("package.tools.make").install(package)
+        import("package.tools.autoconf").install(package)
     end)
