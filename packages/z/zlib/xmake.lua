@@ -50,6 +50,7 @@ package("zlib")
                         add_defines("ZLIB_DLL")
                     end
                 else
+                    add_defines("ZEXPORT=__attribute__((visibility(\"default\")))")
                     add_defines("_LARGEFILE64_SOURCE=1")
                 end
         ]])
