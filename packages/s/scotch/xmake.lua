@@ -24,8 +24,21 @@ package("scotch")
             end
             os.cp(basename .. (package:config("shared") and ".shlib" or ""), "Makefile.inc")
         end
-        io.replace("Makefile.inc", "-lz", os.args({"-L" .. package:dep("zlib"):installdir("lib"), "-lz"}))
+        io.replace("Makefile.inc", "CFLAGS%s+=", "CFLAGS := $(CFLAGS)")
+        io.replace("Makefile.inc", "LDFLAGS%s+=", "LDFLAGS := $(LDFLAGS)")
         local envs = import("package.tools.make").buildenvs(package)
+        local zlib = package:dep("zlib"):fetch()
+        if zlib then
+            local cflags, ldflags
+            for _, includedir in ipairs(zlib.sysincludedirs or zlib.includedirs) do
+                cflags = (cflags or "") .. " -I" .. includedir
+            end
+            for _, linkdir in ipairs(zlib.linkdirs) do
+                ldflags = (ldflags or "") .. " -L" .. linkdir
+            end
+            envs.CFLAGS  = cflags
+            envs.LDFLAGS = ldflags
+        end
         os.vrunv("make", {"scotch"}, {envs = envs})
         os.vrunv("make", {"prefix=" .. package:installdir(), "install"}, {envs = envs})
     end)
