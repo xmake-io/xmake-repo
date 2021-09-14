@@ -9,3 +9,8 @@ package("libbacktrace")
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf").install(package)
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("backtrace_create_state", {includes = "backtrace.h"}))
+        assert(package:has_cfuncs("backtrace_full", {includes = "backtrace.h"}))
+    end)
