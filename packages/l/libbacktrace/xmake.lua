@@ -7,7 +7,14 @@ package("libbacktrace")
     add_versions("v1.0", "d0f5e95a87a4d3e0a1ed6c069b5dae7cbab3ed2a")
 
     on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package)
+        local configs = {}
+        local cxflags = {}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:config("pic") ~= false then
+            table.insert(cxflags, "-fPIC")
+        end
+        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
