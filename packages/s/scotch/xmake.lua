@@ -24,6 +24,7 @@ package("scotch")
             end
             os.cp(basename .. (package:config("shared") and ".shlib" or ""), "Makefile.inc")
         end
+        io.replace("Makefile.inc", "-lz", os.args({"-L" .. package:dep("zlib"):installdir("lib"), "-lz"}))
         local envs = import("package.tools.make").buildenvs(package)
         os.vrunv("make", {"scotch"}, {envs = envs})
         os.vrunv("make", {"prefix=" .. package:installdir(), "install"}, {envs = envs})
