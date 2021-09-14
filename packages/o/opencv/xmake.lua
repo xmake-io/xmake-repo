@@ -138,6 +138,9 @@ package("opencv")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
         end
         import("package.tools.cmake").install(package, configs, {buildir = "bd"})
+        for _, link in ipairs({"opencv_datasets", "opencv_highgui", "opencv_phase_unwrapping", "opencv_features2d", "opencv_surface_matching", "opencv_stitching", "opencv_saliency", "opencv_wechat_qrcode", "opencv_mcc", "opencv_face", "opencv_img_hash", "opencv_videostab", "opencv_photo", "opencv_structured_light", "opencv_intensity_transform", "opencv_xobjdetect", "opencv_ccalib", "opencv_line_descriptor", "opencv_stereo", "opencv_dnn_objdetect", "opencv_dnn_superres", "opencv_dnn", "opencv_fuzzy", "opencv_hfs", "opencv_rapid", "opencv_quality", "opencv_bgsegm", "opencv_calib3d", "opencv_bioinspired", "opencv_xfeatures2d", "opencv_xphoto", "opencv_rgbd", "opencv_optflow", "opencv_dpm", "opencv_ml", "opencv_flann", "opencv_aruco", "opencv_plot", "opencv_reg", "opencv_shape", "opencv_objdetect", "opencv_tracking", "opencv_gapi", "opencv_barcode", "opencv_superres", "opencv_videoio", "opencv_video", "opencv_text", "opencv_ximgproc", "opencv_imgproc", "opencv_imgcodecs", "opencv_core"}) do
+            package:add("links", package:is_plat("windows") and (link .. package:version():gsub("%.", "")) or link)
+        end
         if package:is_plat("windows") then
             local arch = package:is_arch("x64") and "x64" or "x86"
             local linkdir = (package:config("shared") and "lib" or "staticlib")
@@ -149,15 +152,9 @@ package("opencv")
             elseif vs == "2022" then vc_ver = "vc17"
             end
 
-            -- keep compatibility for old versions
             local installdir = package:installdir(arch, vc_ver)
-            if os.isdir(path.join(os.curdir(), "bd", "install")) then
-                os.trycp(path.join(os.curdir(), "bd", "install", arch, vc_ver), package:installdir(arch))
-            end
-
-            -- scanning for links for old xmake version
-            if xmake.version():le("2.5.6") then
-                for _, f in ipairs(os.files(path.join(installdir, linkdir, "*.lib"))) do
+            for _, f in ipairs(os.files(path.join(installdir, linkdir, "*.lib"))) do
+                if not f:match("opencv_.+") then
                     package:add("links", path.basename(f))
                 end
             end
@@ -165,18 +162,17 @@ package("opencv")
         elseif package:is_plat("mingw") then
             local arch = package:is_arch("x86_64") and "x64" or "x86"
             local linkdir = (package:config("shared") and "lib" or "staticlib")
+            for _, f in ipairs(os.files(path.join(arch, "mingw", linkdir, "lib*.a"))) do
+                if not f:match("libopencv_.+") then
+                    package:add("links", path.basename(f):match("lib(.+)"))
+                end
+            end
             package:addenv("PATH", path.join(arch, "mingw", "bin"))
         else
             if package:version():ge("4.0") then
-                -- scanning for links for old xmake version
-                if xmake.version():le("2.5.6") then
-                    for _, suffix in ipairs({"*.a", "*.so", "*.dylib"}) do
-                        for _, f in ipairs(os.files(path.join(package:installdir("lib"), suffix))) do
-                            package:add("links", path.basename(f):match("lib(.+)"))
-                        end
-                        for _, f in ipairs(os.files(path.join(package:installdir("lib/opencv4/3rdparty"), suffix))) do
-                            package:add("links", path.basename(f):match("lib(.+)"))
-                        end
+                for _, suffix in ipairs({"*.a", "*.so", "*.dylib"}) do
+                    for _, f in ipairs(os.files(path.join(package:installdir("lib/opencv4/3rdparty"), suffix))) do
+                        package:add("links", path.basename(f):match("lib(.+)"))
                     end
                 end
             end
