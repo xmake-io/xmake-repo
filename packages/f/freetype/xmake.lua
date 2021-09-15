@@ -72,10 +72,10 @@ package("freetype")
                 table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (opt.cmakedisable or opt.cmakewith) .. "=ON")
             end
         end
-        add_dep({conf="bzip2", cmakewith="BZIP2", cmakedisable="BZip2", cmakeinclude="BZIP2_INCLUDE_DIR"})
-        add_dep({conf="png", pkg="libpng", cmakewith="PNG", cmakeinclude="PNG_PNG_INCLUDE_DIR", cmakelib="PNG_LIBRARY"})
-        add_dep({conf="woff2", pkg="brotli", cmakewith="BROTLI", cmakedisable="BrotliDec", cmakeinclude="BROTLIDEC_INCLUDE_DIRS", cmakelib="BROTLIDEC_LIBRARIES"})
-        add_dep({conf="zlib", cmakewith="ZLIB", cmakeinclude="ZLIB_INCLUDE_DIR", cmakelib="ZLIB_LIBRARY"})
+        add_dep({conf = "bzip2", cmakewith = "BZIP2", cmakedisable = "BZip2", cmakeinclude = "BZIP2_INCLUDE_DIR"})
+        add_dep({conf = "png", pkg = "libpng", cmakewith = "PNG", cmakeinclude = "PNG_PNG_INCLUDE_DIR", cmakelib = "PNG_LIBRARY"})
+        add_dep({conf = "woff2", pkg = "brotli", cmakewith = "BROTLI", cmakedisable = "BrotliDec", cmakeinclude = "BROTLIDEC_INCLUDE_DIRS", cmakelib = "BROTLIDEC_LIBRARIES"})
+        add_dep({conf = "zlib", cmakewith = "ZLIB", cmakeinclude = "ZLIB_INCLUDE_DIR", cmakelib = "ZLIB_LIBRARY"})
 
         import("package.tools.cmake").install(package, configs)
     end)
