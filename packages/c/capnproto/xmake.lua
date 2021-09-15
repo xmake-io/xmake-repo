@@ -14,10 +14,8 @@ package("capnproto")
     end
 
     add_deps("cmake", "zlib")
-
-    on_install("windows", "mingw", "linux", "macosx", "bsd", function (package)
-        local configs = {}
-        table.insert(configs, "-DBUILD_TESTING=OFF")
+    on_install("windows", "mingw@windows,msys", "linux", "macosx", "bsd", function (package)
+        local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
