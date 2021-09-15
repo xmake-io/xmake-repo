@@ -139,7 +139,7 @@ package("opencv")
         end
         import("package.tools.cmake").install(package, configs, {buildir = "bd"})
         for _, link in ipairs({"opencv_datasets", "opencv_highgui", "opencv_phase_unwrapping", "opencv_features2d", "opencv_surface_matching", "opencv_stitching", "opencv_saliency", "opencv_wechat_qrcode", "opencv_mcc", "opencv_face", "opencv_img_hash", "opencv_videostab", "opencv_photo", "opencv_structured_light", "opencv_intensity_transform", "opencv_xobjdetect", "opencv_ccalib", "opencv_line_descriptor", "opencv_stereo", "opencv_dnn_objdetect", "opencv_dnn_superres", "opencv_dnn", "opencv_fuzzy", "opencv_hfs", "opencv_rapid", "opencv_quality", "opencv_bgsegm", "opencv_calib3d", "opencv_bioinspired", "opencv_xfeatures2d", "opencv_xphoto", "opencv_rgbd", "opencv_optflow", "opencv_dpm", "opencv_ml", "opencv_flann", "opencv_aruco", "opencv_plot", "opencv_reg", "opencv_shape", "opencv_objdetect", "opencv_tracking", "opencv_gapi", "opencv_barcode", "opencv_superres", "opencv_videoio", "opencv_video", "opencv_text", "opencv_ximgproc", "opencv_imgproc", "opencv_imgcodecs", "opencv_core"}) do
-            package:add("links", package:is_plat("windows") and (link .. package:version():gsub("%.", "")) or link)
+            package:add("links", package:is_plat("windows", "mingw") and (link .. package:version():gsub("%.", "")) or link)
         end
         if package:is_plat("windows") then
             local arch = package:is_arch("x64") and "x64" or "x86"
