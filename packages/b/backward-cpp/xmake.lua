@@ -13,16 +13,8 @@ package("backward-cpp")
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-DBACKWARD_TESTS=OFF"}
         table.insert(configs, "-DBACKWARD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").build(package, configs, {buildir = "build"})
-
-        os.cp("backward.hpp", package:installdir("include/backward"))
-        if package:is_plat("windows") then
-            os.trycp("build/**.dll", package:installdir("bin"))
-            os.trycp("build/**.lib", package:installdir("lib"))
-        else
-            os.trycp("build/*.so", package:installdir("lib"))
-            os.trycp("build/*.a", package:installdir("lib"))
-        end
+        import("package.tools.cmake").install(package, configs)
+        os.mv(package:installdir("include/*.hpp"), package:installdir("include/backward"))
     end)
 
     on_test(function (package)
