@@ -4,7 +4,8 @@ package("giflib")
     set_description("A library for reading and writing gif images.")
     set_license("MIT")
 
-    add_urls("https://downloads.sourceforge.net/project/giflib/giflib-$(version).tar.gz")
+    add_urls("https://github.com/xmake-mirror/giflib/releases/download/$(version)/giflib-$(version).tar.gz",
+             "https://downloads.sourceforge.net/project/giflib/giflib-$(version).tar.gz")
     add_versions("5.2.1", "31da5562f44c5f15d63340a09a4fd62b48c45620cd302f77a6d9acf0077879bd")
 
     add_configs("utils", {description = "Build utility binaries.", default = true, type = "boolean"})
