@@ -14,7 +14,7 @@ package("jthread")
     on_install("windows", "linux", "macosx", function (package)
         local confs = {}
         if package:config("shared") then
-            table.insert(confs, "-DBUILD_SHARED_LIBS=ON")
+            table.insert(confs, "-DJTHREAD_COMPILE_STATIC=OFF")
         end
         string.gsub(package:config("configs"), '[^ ]+', function(w)
             table.insert(confs, w)

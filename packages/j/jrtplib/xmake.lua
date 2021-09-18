@@ -8,7 +8,7 @@ package("jrtplib")
     add_versions("home:3.11.2", "7a7c7f547c8ee661b0fe4d2ad9b36d7f4655d646141c035d62a000c05a8d4f02")
     add_versions("github:v3.11.2", "591bf6cddd0976a4659ed4dd2fada43140e5f5f9c9dbef56b137a3023549673f")
 
-    add_deps("jthread")
+    add_deps("jthread", {configs = {shared = true}})
 
     add_configs("configs", {description = "Configs for this library.", default = "", type = "string"})
 
@@ -17,11 +17,10 @@ package("jrtplib")
         local confs = {}
         local jthread_dir = package:dep("jthread"):installdir("lib") .. "/cmake/JThread"
         table.insert(confs, "-DJThread_DIR=" .. jthread_dir)
-        if package:config("debug") == false then
-            table.insert(confs, "-DCMKAE_BUILD_TYPE=Release")
-        end
+        local type = "-DCMKAE_BUILD_TYPE=" .. (package:config("debug") and "Debug" or "Release")
+        table.insert(confs, type)
         if package:config("shared") then
-            table.insert(confs, "-DBUILD_SHARED_LIBS=ON")
+            table.insert(confs, "-DJRTPLIB_COMPILE_STATIC=OFF")
         end
         string.gsub(package:config("configs"), '[^ ]+', function(w)
             table.insert(confs, w)
