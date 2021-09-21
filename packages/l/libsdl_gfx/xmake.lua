@@ -29,6 +29,8 @@ package("libsdl_gfx")
 
     add_links("SDL2_gfx")
 
+    add_includedirs("include", "include/SDL2")
+
     on_install("windows", function(package)
         local vs = import("core.tool.toolchain").load("msvc"):config("vs")
         if tonumber(vs) < 2019 then

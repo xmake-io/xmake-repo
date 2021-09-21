@@ -23,6 +23,8 @@ package("libsdl_image")
 
     add_links("SDL2_image")
 
+    add_includedirs("include", "include/SDL2")
+
     on_install("windows", "mingw", function (package)
         local arch = package:arch()
         if package:is_plat("mingw") then
