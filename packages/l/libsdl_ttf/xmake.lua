@@ -26,6 +26,8 @@ package("libsdl_ttf")
 
     add_links("SDL2_ttf")
 
+    add_includedirs("include", "include/SDL2")
+
     on_install("windows", "mingw", function (package)
         local arch = package:arch()
         if package:is_plat("mingw") then
