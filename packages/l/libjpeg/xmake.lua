@@ -9,6 +9,8 @@ package("libjpeg")
     add_versions("v9b", "240fd398da741669bf3c90366f58452ea59041cacc741a489b99f2f6a0bad052")
     add_versions("v9d", "6c434a3be59f8f62425b2e3c077e785c9ce30ee5874ea1c270e843f273ba71ee")
 
+    add_configs("headeronly", { description = "Install headerfiles only.", default = false, type = "boolean"})
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -26,9 +28,9 @@ package("libjpeg")
                 add_files("jquant2.c", "jutils.c", "jmemmgr.c", "jmemansi.c")
 
                 if is_plat("windows") then
-                    add_configfiles("jconfig.txt", {filename = "jconfig.h"})
-                else
                     add_configfiles("jconfig.vc", {filename = "jconfig.h"})
+                else
+                    add_configfiles("jconfig.txt", {filename = "jconfig.h"})
                 end
                 add_includedirs("$(buildir)", {public = true})
                 add_headerfiles("jerror.h", "jmorecfg.h", "jpeglib.h", "$(buildir)/jconfig.h")
@@ -39,9 +41,22 @@ package("libjpeg")
         elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
             configs.cxflags = "-fPIC"
         end
-        import("package.tools.xmake").install(package, configs)
+        if package:config("headeronly") then
+            if package:is_plat("windows") then
+                os.cp("jconfig.vc", "jconfig.h")
+            else
+                os.cp("jconfig.txt", "jconfig.h")
+            end
+            os.cp("*.h", package:installdir("include"))
+        else
+            import("package.tools.xmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("jpeg_create_compress(0)", {includes = {"stdio.h", "jpeglib.h"}}))
+        if package:config("headeronly") then
+            assert(package:has_cincludes({"stdio.h", "jpeglib.h"}))
+        else
+            assert(package:has_cfuncs("jpeg_create_compress(0)", {includes = {"stdio.h", "jpeglib.h"}}))
+        end
     end)
