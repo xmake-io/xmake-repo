@@ -28,7 +28,7 @@ package("vulkan-loader")
         if package:is_plat("linux") then
             local includes = {}
             local linkdirs = {}
-            for _, lib in ipairs({"wayland", "libxrandr", "libxcb", "libxkbcommon"}) do
+            for _, lib in ipairs({"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}) do
                 local fetchinfo = package:dep(lib):fetch()
                 for _, dir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
                     table.insert(includes, dir)
