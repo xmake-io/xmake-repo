@@ -9,6 +9,16 @@ package("moltenvk")
     add_versions("1.1.4", "f9bba6d3bf3648e7685c247cb6d126d62508af614bc549cedd5859a7da64967e")
     add_versions("1.1.5", "2cdcb8dbf2acdcd8cbe70b109dadc05a901038c84970afbe4863e5e23f33deae")
 
+    on_fetch("macosx", function (package, opt)
+        if opt.system then
+            import("lib.detect.find_path")
+            local frameworkdir = find_path("vulkan.framework", "~/VulkanSDK/*/macOS/Frameworks")
+            if frameworkdir then
+                return {frameworkdirs = frameworkdir, frameworks = "vulkan"}
+            end
+        end
+    end)
+
     on_install("macosx", function (package)
         local configs = {"--macos"}
         if package:debug() then
