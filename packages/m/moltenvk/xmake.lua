@@ -14,7 +14,7 @@ package("moltenvk")
             import("lib.detect.find_path")
             local frameworkdir = find_path("vulkan.framework", "~/VulkanSDK/*/macOS/Frameworks")
             if frameworkdir then
-                return {frameworkdirs = frameworkdir, frameworks = "vulkan"}
+                return {frameworkdirs = frameworkdir, frameworks = "vulkan", rpathdirs = frameworkdir}
             end
         end
     end)
