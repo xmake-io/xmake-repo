@@ -14,15 +14,29 @@ package("vulkan-loader")
         add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
     end
 
-    on_load("windows", "linux", function (package)
+    on_load("windows", "linux", "macosx", function (package)
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake", "ninja")
         end
+        if package:is_plat("macosx") then
+            package:add("links", "vulkan")
+        end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_fetch("macosx", function (package, opt)
+        if opt.system then
+            import("lib.detect.find_path")
+            local libdir = find_path("libvulkan.dylib", "~/VulkanSDK/*/macOS/lib")
+            local includedir = find_path("vulkan/vulkan.h", "~/VulkanSDK/*/macOS/include")
+            if libdir and includedir then
+                return {linkdirs = libdir, links = "vulkan", includedirs = includedir}
+            end
+        end
+    end)
+
+    on_install("windows", "linux", "macosx", function (package)
         import("package.tools.cmake")
         local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
         if package:is_plat("linux") then
