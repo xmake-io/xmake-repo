@@ -7,11 +7,12 @@ package("superlu")
     add_urls("https://github.com/xiaoyeli/superlu/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xiaoyeli/superlu.git")
     add_versions("v5.2.2", "470334a72ba637578e34057f46948495e601a5988a602604f5576367e606a28c")
+    add_versions("v5.3.0", "3e464afa77335de200aeb739074a11e96d9bef6d0b519950cfa6684c4be1f350")
 
-    add_configs("blas_vendor", {description = "Set BLAS vendor.", default = "mkl", type = "string", values = {"mkl", "openblas"}})
+    add_configs("blas", {description = "Choose BLAS library to use.", default = "mkl", type = "string", values = {"mkl", "openblas"}})
 
     on_load("windows", "linux", "macosx", function (package)
-        package:add("deps", package:config("blas_vendor"))
+        package:add("deps", package:config("blas"))
     end)
 
     on_install("windows", "linux", "macosx", function (package)
@@ -29,7 +30,7 @@ package("superlu")
                 add_includedirs(".")
                 add_headerfiles("*.h")
                 add_packages("%s")
-        ]], package:config("blas_vendor"), package:config("blas_vendor")))
+        ]], package:config("blas"), package:config("blas")))
         local configs = {kind = package:config("shared") and "shared" or "static"}
         import("package.tools.xmake").install(package, configs)
     end)
