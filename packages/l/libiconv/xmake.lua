@@ -37,7 +37,7 @@ package("libiconv")
 
     on_install("macosx", "linux", "android", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings"}
-        if not is_plat("macosx") then
+        if not package:is_plat("macosx") then
             table.insert(configs, "--enable-relocatable")
         end
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
