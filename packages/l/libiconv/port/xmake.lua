@@ -198,8 +198,7 @@ int test() { char* cs = nl_langinfo(CODESET); return !cs; }]])
 configvar_check_csnippets("HAVE_ENVIRON_DECL=0", [[extern struct {int foo;} environ;
 void test() {environ.foo = 1;}]], {includes = has_config("__HAVE_UNISTD_H") and "unistd.h" or "stdlib.h", default = 1})
 
-target("libcharset")
-    set_prefixname("")
+target("charset")
     set_kind("$(kind)")
     add_defines("HAVE_CONFIG_H")
     if is_kind("shared") then
@@ -217,10 +216,9 @@ target("libcharset")
     end)
 target_end()
 
-target("libiconv")
-    set_prefixname("")
+target("iconv")
     set_kind("$(kind)")
-    add_deps("libcharset", {inherit = false})
+    add_deps("charset", {inherit = false})
     add_defines("HAVE_CONFIG_H", "NO_XMALLOC", "IN_LIBRARY")
     if is_kind("shared") then
         add_defines("BUILDING_LIBICONV", "BUILDING_DLL")
@@ -241,8 +239,7 @@ target("libiconv")
     end)
 target_end()
 
-target("libicrt")
-    set_prefixname("")
+target("icrt")
     set_kind("static")
     add_includedirs(".", "srclib", {public = true})
     set_configdir(".")
@@ -257,7 +254,7 @@ target("libicrt")
 
 target("iconv_no_i18n")
     set_kind("binary")
-    add_deps("libiconv", "libicrt")
+    add_deps("iconv", "icrt")
     if has_config("installprefix") then
         add_defines("INSTALLDIR=\"" .. path.join(get_config("installprefix"), "bin"):gsub("\\", "\\\\") .. "\"")
         add_defines("LOCALEDIR=\"" .. path.join(get_config("installprefix"), "share", "locale"):gsub("\\", "\\\\") .. "\"")
