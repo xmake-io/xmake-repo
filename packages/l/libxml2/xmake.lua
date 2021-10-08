@@ -38,7 +38,7 @@ package("libxml2")
             end
         end
         if package:config("python") then
-            if not is_plat(os.host()) then
+            if not package:is_plat(os.host()) then
                 raise("libxml2 python interface does not support cross-compilation")
             end
             if not package:config("iconv") then
