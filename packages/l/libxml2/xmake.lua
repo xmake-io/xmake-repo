@@ -129,7 +129,6 @@ package("libxml2")
             end
             os.vrun("python setup.py install --prefix=\"" .. package:installdir() .. "\"")
             local pythonver = package:dep("python"):version()
-            package:addenv("PYTHONPATH", package:installdir("bin"))
             package:addenv("PYTHONPATH", path.join(package:installdir("lib"), format("python%s.%s", pythonver:major(), pythonver:minor()), "site-packages"))
         end
     end)
