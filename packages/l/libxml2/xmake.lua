@@ -59,8 +59,10 @@ package("libxml2")
         table.insert(args, "iconv=" .. (package:config("iconv") and "yes" or "no"))
         table.insert(args, "python=" .. (package:config("python") and "yes" or "no"))
         table.insert(args, "prefix=" .. package:installdir())
-        table.insert(args, "include=" .. package:dep("libiconv"):installdir("include"))
-        table.insert(args, "lib=" .. package:dep("libiconv"):installdir("lib"))
+        if package:config("iconv") then
+            table.insert(args, "include=" .. package:dep("libiconv"):installdir("include"))
+            table.insert(args, "lib=" .. package:dep("libiconv"):installdir("lib"))
+        end
         os.vrunv("cscript", args)
         import("package.tools.nmake").install(package, {"/f", "Makefile.msvc"})
         os.tryrm(path.join(package:installdir("bin"), "run*.exe"))
