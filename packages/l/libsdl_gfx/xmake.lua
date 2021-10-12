@@ -39,8 +39,8 @@ package("libsdl_gfx")
 
         local file_name = "SDL2_gfx.vcxproj"
         local content = io.readfile(file_name)
-        content = content:gsub("%%%(AdditionalIncludeDirectories%)", package:dep("libsdl"):installdir("include", "SDL2") .. ";%%%(AdditionalIncludeDirectories%)")
-        content = content:gsub("%%%(AdditionalLibraryDirectories%)", package:dep("libsdl"):installdir("lib") .. ";%%%(AdditionalLibraryDirectories%)")
+        content = content:gsub("%%%(AdditionalIncludeDirectories%)", package:dep("libsdl"):installdir("include", "SDL2") .. ";%%(AdditionalIncludeDirectories)")
+        content = content:gsub("%%%(AdditionalLibraryDirectories%)", package:dep("libsdl"):installdir("lib") .. ";%%(AdditionalLibraryDirectories)")
         io.writefile(file_name, content)
 
         -- MSVC trick no longer required since C++11
