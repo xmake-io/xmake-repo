@@ -4,12 +4,18 @@ package("libsndfile")
     set_description("A C library for reading and writing sound files containing sampled audio data.")
     set_license("LGPL-2.1")
 
-    set_urls("https://github.com/libsndfile/libsndfile/archive/v$(version).tar.gz",
+    add_urls("https://github.com/libsndfile/libsndfile/archive/$(version).tar.gz",
              "https://github.com/libsndfile/libsndfile.git")
-
-    add_versions("1.0.30", "5942b963d1db3ed8ab1ffb85708322aa9637df76d9fe84e1dfe49a97a90e8f47")
+    add_versions("v1.0.30", "5942b963d1db3ed8ab1ffb85708322aa9637df76d9fe84e1dfe49a97a90e8f47")
+    add_versions("1.0.31", "a8cfb1c09ea6e90eff4ca87322d4168cdbe5035cb48717b40bf77e751cc02163")
 
     add_deps("cmake", "libflac", "libopus", "libvorbis", "libogg")
+
+    on_load("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
+        if package:config("shared") then
+            package:add("deps", "python 3.x", {kind = "binary"})
+        end
+    end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
         local configs = {}
@@ -26,18 +32,6 @@ package("libsndfile")
                 local cmake = io.open("CMakeLists.txt", "a")
                 cmake:write("add_definitions(-DFLAC__NO_DLL)\n")
                 cmake:close()
-            end
-
-            -- it seems libsndfile expects CMAKE_MSVC_RUNTIME_LIBRARY
-            local vs_runtime = package:config("vs_runtime")
-            if vs_runtime == "MT" then
-                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded")
-            elseif vs_runtime == "MTd" then
-                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug")
-            elseif vs_runtime == "MD" then
-                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL")
-            elseif vs_runtime == "MDd" then
-                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebugDLL")
             end
         end
         import("package.tools.cmake").install(package, configs)
