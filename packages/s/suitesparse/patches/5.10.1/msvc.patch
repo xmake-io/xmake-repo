@@ -1,0 +1,52 @@
+diff --git a/GPUQREngine/Include/GPUQREngine_BucketList.hpp b/GPUQREngine/Include/GPUQREngine_BucketList.hpp
+index f37e3ecf..6f141a99 100644
+--- a/GPUQREngine/Include/GPUQREngine_BucketList.hpp
++++ b/GPUQREngine/Include/GPUQREngine_BucketList.hpp
+@@ -62,7 +62,7 @@ public:
+     int VThead;              // Index of the first available entry in VTlist
+ 
+     // Constructors
+-    void *operator new(long unsigned int, BucketList* p)
++    void *operator new(size_t, BucketList* p)
+     {
+         return p;
+     }
+diff --git a/GPUQREngine/Include/GPUQREngine_Front.hpp b/GPUQREngine/Include/GPUQREngine_Front.hpp
+index 02d4208b..8517b2c2 100644
+--- a/GPUQREngine/Include/GPUQREngine_Front.hpp
++++ b/GPUQREngine/Include/GPUQREngine_Front.hpp
+@@ -47,7 +47,7 @@ public:
+     /* Debug Fields */
+     bool printMe;
+ 
+-    void* operator new(long unsigned int reqMem, Front* ptr){ return ptr; }
++    void* operator new(size_t reqMem, Front* ptr){ return ptr; }
+ 
+     Front(
+         Int fids_arg,                   // the front identifier
+diff --git a/GPUQREngine/Include/GPUQREngine_LLBundle.hpp b/GPUQREngine/Include/GPUQREngine_LLBundle.hpp
+index 93bd3212..fc347143 100644
+--- a/GPUQREngine/Include/GPUQREngine_LLBundle.hpp
++++ b/GPUQREngine/Include/GPUQREngine_LLBundle.hpp
+@@ -68,7 +68,7 @@ public:
+ 
+     TaskType CurrentTask;
+ 
+-    void *operator new(long unsigned int, LLBundle* p){ return p; }
++    void *operator new(size_t, LLBundle* p){ return p; }
+     LLBundle(BucketList *buckets, Int panelSize, Int nativeBucket);
+ 
+     // empty LLBundle constructor (currently used, kept for possible future use
+diff --git a/GPUQREngine/Include/GPUQREngine_Scheduler.hpp b/GPUQREngine/Include/GPUQREngine_Scheduler.hpp
+index aa3781d5..069b01a5 100644
+--- a/GPUQREngine/Include/GPUQREngine_Scheduler.hpp
++++ b/GPUQREngine/Include/GPUQREngine_Scheduler.hpp
+@@ -90,7 +90,7 @@ public:
+     cudaStream_t memoryStreamD2H;
+ 
+     /* Scheduler.cpp */
+-    void *operator new(long unsigned int, Scheduler* p){ return p; }
++    void *operator new(size_t, Scheduler* p){ return p; }
+     Scheduler(Front *fronts, Int numFronts, size_t gpuMemorySize);
+     ~Scheduler();
+ 
