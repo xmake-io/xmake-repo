@@ -15,6 +15,10 @@ package("libspectre")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
+        if package:is_plat("macosx") then
+            -- patch configure to make ci happy
+            io.replace("configure", "have_libgs=no", "have_libgs=yes", {plain = true})
+        end
         local cppflags = {}
         local ldflags = {}
         for _, dep in ipairs(package:orderdeps()) do
