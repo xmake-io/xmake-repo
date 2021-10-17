@@ -19,7 +19,7 @@ package("libxslt")
     on_install("windows", function (package)
         io.replace("libxslt/xsltconfig.h.in", "@WITH_PROFILER@", "0", {plain = true})
         os.cd("win32")
-        local args = {"configure.js", "compiler=msvc"}
+        local args = {"configure.js", "compiler=msvc", "iconv=no"}
         table.insert(args, "cruntime=/" .. package:config("vs_runtime"))
         table.insert(args, "debug=" .. (package:debug() and "yes" or "no"))
         local cflags = "/DLIBXML_STATIC \"/I$(INCPREFIX)\" \"/I" .. package:dep("libxml2"):installdir("include", "libxml2") .. "\""
