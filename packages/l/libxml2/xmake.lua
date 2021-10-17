@@ -18,7 +18,7 @@ package("libxml2")
 
     add_includedirs("include/libxml2")
     if is_plat("windows") then
-        add_syslinks("wsock32", "ws2_32")
+        add_syslinks("ws2_32")
     else
         add_links("xml2")
     end
