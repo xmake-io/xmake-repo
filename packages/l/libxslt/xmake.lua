@@ -9,7 +9,7 @@ package("libxslt")
 
     add_configs("iconv", {description = "Enable libiconv support.", default = false, type = "boolean"})
 
-    on_load("windows", "macosx", "linux", "iphoneos", "android", function (package)
+    on_load("windows", "macosx", "linux", function (package)
         if package:is_plat("windows") and not package:config("shared") then
             package:add("defines", "LIBXSLT_STATIC")
         end
@@ -42,7 +42,7 @@ package("libxslt")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", "iphoneos", "android", function (package)
+    on_install("macosx", "linux", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
