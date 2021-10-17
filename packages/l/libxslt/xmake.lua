@@ -14,9 +14,6 @@ package("libxslt")
             package:add("defines", "LIBXSLT_STATIC")
         end
         package:add("deps", "libxml2", {configs = {iconv = package:config("iconv")}})
-        if package:config("iconv") then
-            package:add("deps", "libiconv")
-        end
     end)
 
     on_install("windows", function (package)
@@ -25,13 +22,8 @@ package("libxslt")
         local args = {"configure.js", "compiler=msvc"}
         table.insert(args, "cruntime=/" .. package:config("vs_runtime"))
         table.insert(args, "debug=" .. (package:debug() and "yes" or "no"))
-        table.insert(args, "iconv=" .. (package:config("iconv") and "yes" or "no"))
         local cflags = "/DLIBXML_STATIC \"/I$(INCPREFIX)\" \"/I" .. package:dep("libxml2"):installdir("include", "libxml2") .. "\""
         local ldflags = "ws2_32.lib \"/LIBPATH:$(LIBPREFIX)\" \"/LIBPATH:" .. package:dep("libxml2"):installdir("lib") .. "\""
-        if package:config("iconv") then
-            cflags = cflags .. " \"/I" .. package:dep("libiconv"):installdir("include") .. "\""
-            ldflags = ldflags .. " \"/LIBPATH:" .. package:dep("libiconv"):installdir("lib") .. "\""
-        end
         io.replace("Makefile.msvc", "libxml2.lib", "libxml2_a.lib", {plain = true})
         io.replace("Makefile.msvc", "/I$(INCPREFIX)", cflags, {plain = true})
         io.replace("Makefile.msvc", "/LIBPATH:$(LIBPREFIX)", ldflags, {plain = true})
