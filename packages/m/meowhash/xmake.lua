@@ -12,7 +12,7 @@ package("meowhash")
         add_cxflags("-maes", "-mpclmul", "-mssse3")
     end
 
-    on_install(function (package)
+    on_install("macosx", "windows", "linux", "bsd", function (package)
         os.cp("meow_hash_x64_aesni.h", package:installdir("include"))
     end)
 
