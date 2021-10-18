@@ -9,6 +9,7 @@ package("boost")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
+    add_versions("1.77.0", "fc9f85fc030e233142908241af7a846e60630aa7388de9a5fafb1f3a26840854")
     add_versions("1.76.0", "f0397ba6e982c4450f27bf32a2a83292aba035b827a5623a14636ea583318c41")
     add_versions("1.75.0", "953db31e016db7bb207f11432bef7df100516eeb746843fa0486a222e3fd49cb")
     add_versions("1.74.0", "83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1")
@@ -120,7 +121,7 @@ package("boost")
             "-d2",
             "-j4",
             "--hash",
-            "--layout=tagged-1.66",
+            "--layout=tagged",
             "--user-config=user-config.jam",
             "-sNO_LZMA=1",
             "-sNO_ZSTD=1",

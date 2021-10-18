@@ -5,7 +5,8 @@ package("vulkan-hpp")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/Vulkan-Hpp.git")
-    add_versions("v1.2.180", "1ef8f08176b0b19a9dc8f917a773bcf9681058d1d15226508e8677961ca6ed1e")
+    add_versions("v1.2.180", "bfa6d4765212505c8241a44b97dc5a9ce3aa2969")
+    add_versions("v1.2.189", "58ff1da4c03f5f124eb835f41a9dd8fe3c2e8087")
 
     add_deps("cmake")
 
