@@ -121,7 +121,7 @@ package("boost")
             "-d2",
             "-j4",
             "--hash",
-            "--layout=tagged-1.66",
+            "--layout=tagged",
             "--user-config=user-config.jam",
             "-sNO_LZMA=1",
             "-sNO_ZSTD=1",
