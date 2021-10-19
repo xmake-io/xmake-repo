@@ -7,6 +7,8 @@ package("vc")
     add_urls("https://github.com/VcDevel/Vc/releases/download/$(version)/Vc-$(version).tar.gz")
     add_versions("1.4.2", "50d3f151e40b0718666935aa71d299d6370fafa67411f0a9e249fbce3e6e3952")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     add_deps("cmake")
     on_install("windows", "macosx", "linux", function (package)
         import("package.tools.cmake").install(package)
