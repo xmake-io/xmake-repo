@@ -1,0 +1,21 @@
+diff --git a/src/mfast/decimal_ref.h b/src/mfast/decimal_ref.h
+--- a/src/mfast/decimal_ref.h
++++ b/src/mfast/decimal_ref.h
+@@ -41,7 +41,7 @@
+ 
+ inline decimal make_decimal(int64_t mantissa, int16_t exponent) {
+   decimal r(mantissa);
+-  r *= decimal_backend(1.0, exponent);
++  r *= decimal(decimal_backend(1.0, exponent));
+   return r;
+ }
+ 
+@@ -119,7 +119,7 @@
+ 
+   decimal value() const {
+     decimal r(mantissa());
+-    r *= decimal_backend(1.0, exponent());
++    r *= decimal(decimal_backend(1.0, exponent()));
+     return r;
+   }
+ 
