@@ -1,0 +1,129 @@
+diff --git a/CLHEP/cmake/Modules/ClhepBuildLibrary.cmake b/CLHEP/cmake/Modules/ClhepBuildLibrary.cmake
+--- a/CLHEP/cmake/Modules/ClhepBuildLibrary.cmake
++++ b/CLHEP/cmake/Modules/ClhepBuildLibrary.cmake
+@@ -30,29 +30,22 @@ macro(clhep_build_library package)
+   endif()
+ 
+   # Add the libraries and set properties
+-  ADD_LIBRARY(${package}  SHARED ${CLHEP_${package}_SOURCES})
+-  ADD_LIBRARY(${package}S STATIC ${CLHEP_${package}_SOURCES})
++  ADD_LIBRARY(${package}  ${CLHEP_${package}_SOURCES})
+   SET_TARGET_PROPERTIES (${package}
+       PROPERTIES 
+         OUTPUT_NAME CLHEP-${package}-${VERSION}
+       )
+-  SET_TARGET_PROPERTIES(${package}S
+-      PROPERTIES 
+-        OUTPUT_NAME CLHEP-${package}-${VERSION}
+-      )
+ 
+   # Do not add -Dname_EXPORTS to the command-line when building files in this
+   # target. Doing so is actively harmful for the modules build because it
+   # creates extra module variants, and not useful because we don't use these
+   # macros.
+   SET_TARGET_PROPERTIES(${package} PROPERTIES DEFINE_SYMBOL "")
+-  SET_TARGET_PROPERTIES(${package}S PROPERTIES DEFINE_SYMBOL "")
+ 
+   target_link_libraries(${package}  ${package_library_list} )
+-  target_link_libraries(${package}S ${package_library_list_static} )
+ 
+   # Install the libraries
+-  INSTALL (TARGETS ${package} ${package}S
++  INSTALL (TARGETS ${package}
+       EXPORT CLHEPLibraryDepends
+       RUNTIME DESTINATION bin
+       LIBRARY DESTINATION lib${LIB_SUFFIX}
+@@ -69,26 +62,20 @@ macro(clhep_build_libclhep )
+   endforeach()
+   ##message( STATUS "clheplib source list ${clhep_sources}" )
+ 
+-  ADD_LIBRARY (CLHEP  SHARED ${clhep_sources})
+-  ADD_LIBRARY (CLHEPS STATIC ${clhep_sources})
++  ADD_LIBRARY (CLHEP  ${clhep_sources})
+ 
+   SET_TARGET_PROPERTIES(CLHEP
+       PROPERTIES 
+         OUTPUT_NAME CLHEP-${VERSION}
+       )
+-  SET_TARGET_PROPERTIES(CLHEPS
+-      PROPERTIES 
+-        OUTPUT_NAME CLHEP-${VERSION}
+-      )
+   # Do not add -Dname_EXPORTS to the command-line when building files in this
+   # target. Doing so is actively harmful for the modules build because it
+   # creates extra module variants, and not useful because we don't use these
+   # macros.
+   SET_TARGET_PROPERTIES(CLHEP PROPERTIES DEFINE_SYMBOL "")
+-  SET_TARGET_PROPERTIES(CLHEPS PROPERTIES DEFINE_SYMBOL "")
+ 
+   # export creates library dependency files for CLHEPConfig.cmake
+-  INSTALL(TARGETS CLHEP CLHEPS
++  INSTALL(TARGETS CLHEP
+       EXPORT CLHEPLibraryDepends
+       RUNTIME DESTINATION bin
+       LIBRARY DESTINATION lib${LIB_SUFFIX}
+@@ -98,19 +85,28 @@ macro(clhep_build_libclhep )
+ 
+   if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
+       # copy
++      if( NOT BUILD_SHARED_LIBS )
+       file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/clhep_static_symlink 
+         	 "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E copy ${CMAKE_STATIC_LIBRARY_PREFIX}CLHEP-${VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX} ${CMAKE_STATIC_LIBRARY_PREFIX}CLHEP${CMAKE_STATIC_LIBRARY_SUFFIX} WORKING_DIRECTORY \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}\" )" )
++      else()
+       file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/clhep_shared_symlink 
+         	 "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E copy ${CMAKE_SHARED_LIBRARY_PREFIX}CLHEP-${VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_SHARED_LIBRARY_PREFIX}CLHEP${CMAKE_SHARED_LIBRARY_SUFFIX} WORKING_DIRECTORY \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin\" )" )
++      endif()
+   else()
+       # create the symbolic links
++      if( NOT BUILD_SHARED_LIBS )
+       file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/clhep_static_symlink 
+         	 "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink ${CMAKE_STATIC_LIBRARY_PREFIX}CLHEP-${VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX} ${CMAKE_STATIC_LIBRARY_PREFIX}CLHEP${CMAKE_STATIC_LIBRARY_SUFFIX} WORKING_DIRECTORY \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}\" )" )
++      else()
+       file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/clhep_shared_symlink 
+         	 "execute_process(COMMAND \"${CMAKE_COMMAND}\" -E create_symlink ${CMAKE_SHARED_LIBRARY_PREFIX}CLHEP-${VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_SHARED_LIBRARY_PREFIX}CLHEP${CMAKE_SHARED_LIBRARY_SUFFIX} WORKING_DIRECTORY \"\$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}\" )" )
++      endif()
+   endif()
+ 
++  if( NOT BUILD_SHARED_LIBS )
+   INSTALL(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/clhep_static_symlink )
++  else()
+   INSTALL(SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/clhep_shared_symlink )
++  endif()
+ 
+ endmacro(clhep_build_libclhep )
+diff --git a/CLHEP/cmake/Modules/ClhepBuildTest.cmake b/CLHEP/cmake/Modules/ClhepBuildTest.cmake
+--- a/CLHEP/cmake/Modules/ClhepBuildTest.cmake
++++ b/CLHEP/cmake/Modules/ClhepBuildTest.cmake
+@@ -26,14 +26,14 @@ macro( clhep_test testname )
+   if( CTST_NOLIB )
+     set(package_library_list)
+   else()
+-    set( package_library_list ${PACKAGE}S)
++    set( package_library_list ${PACKAGE})
+     #set( package_library_list ${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CLHEP-${PACKAGE}-${VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX} )
+   endif()
+ 
+   if( ${PACKAGE}_DEPS )
+      foreach ( dep ${${PACKAGE}_DEPS} )
+         ##message( STATUS "clhep_test ${testname} will use ${dep}")
+-	list(APPEND package_library_list ${PACKAGE}S)
++	list(APPEND package_library_list ${PACKAGE})
+ 	#list(APPEND package_library_list  ${PROJECT_BINARY_DIR}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}CLHEP-${dep}-${VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX} )
+      endforeach()
+   endif()
+diff --git a/CLHEP/cmake/Modules/ClhepToolchain.cmake b/CLHEP/cmake/Modules/ClhepToolchain.cmake
+--- a/CLHEP/cmake/Modules/ClhepToolchain.cmake
++++ b/CLHEP/cmake/Modules/ClhepToolchain.cmake
+@@ -53,11 +53,8 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/Templates/CLHEPConfig.cmake.in
+ # This file is include()d by CLHEPConfig.cmake
+ # First build up list of all modular targets, static and shared
+ set(CLHEP_libraries_all ${CLHEP_libraries})
+-foreach(_lib ${CLHEP_libraries})
+-  list(APPEND CLHEP_libraries_all "${_lib}S")
+-endforeach()
+ 
+-export(TARGETS CLHEP CLHEPS ${CLHEP_libraries_all}
++export(TARGETS CLHEP ${CLHEP_libraries_all}
+   NAMESPACE "CLHEP::"
+   FILE ${PROJECT_BINARY_DIR}/CLHEPLibraryDepends.cmake
+   )

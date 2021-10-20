@@ -12,7 +12,7 @@ jobs:
         os: [ubuntu-latest]
         kind: [static, shared]
 
-    container: archlinux:latest
+    container: archlinux:base-devel
     runs-on: ${{ matrix.os }}
 
     steps:
