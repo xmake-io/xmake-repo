@@ -77,6 +77,9 @@ package("boost")
             elseif vs_runtime == "MDd" then
                 linkname = linkname .. "-gd"
             end
+            if package:version():ge("1.77.0") then
+                linkname = linkname .. (package:is_arch("x64") and "-x64" or "-x32")
+            end
             package:add("links", linkname)
         end
         -- disable auto-link all libs
