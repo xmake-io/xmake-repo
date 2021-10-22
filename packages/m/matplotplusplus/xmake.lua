@@ -33,7 +33,7 @@ package("matplotplusplus")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             if tonumber(vs) < 2019 then
                 raise("Your compiler is too old to use this library.")
