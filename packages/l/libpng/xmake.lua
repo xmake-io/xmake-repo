@@ -2,6 +2,7 @@ package("libpng")
 
     set_homepage("http://www.libpng.org/pub/png/libpng.html")
     set_description("The official PNG reference library")
+    set_license("libpng-2.0")
 
     set_urls("https://github.com/glennrp/libpng/archive/$(version).zip",
              "https://github.com/glennrp/libpng.git")
@@ -9,7 +10,6 @@ package("libpng")
     add_versions("v1.6.36", "6274d3f761cc80f7f6e2cde6c07bed10c00bc4ddd24c4f86e25eb51affa1664d")
     add_versions("v1.6.35", "3d22d46c566b1761a0e15ea397589b3a5f36ac09b7c785382e6470156c04247f")
     add_versions("v1.6.34", "7ffa5eb8f9f3ed23cf107042e5fec28699718916668bbce48b968600475208d3")
-    set_license("libpng-2.0")
 
     add_deps("zlib")
 
@@ -17,7 +17,7 @@ package("libpng")
         add_syslinks("m")
     end
 
-    on_install(function (package)
+    on_install("windows", "mingw", "android", "iphoneos", "cross", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("zlib")
@@ -56,6 +56,29 @@ package("libpng")
         end
         os.cp("scripts/pnglibconf.h.prebuilt", "pnglibconf.h")
         import("package.tools.xmake").install(package, configs)
+    end)
+
+    on_install("macosx", "linux", function (package)
+        local configs = {}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
+        local cppflags = {}
+        local ldflags = {}
+        for _, dep in ipairs(package:orderdeps()) do
+            local fetchinfo = dep:fetch()
+            if fetchinfo then
+                for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                    table.insert(cppflags, "-I" .. includedir)
+                end
+                for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                    table.insert(ldflags, "-L" .. linkdir)
+                end
+            end
+        end
+        import("package.tools.autoconf").install(package, configs, {cppflags = cppflags, ldflags = ldflags})
     end)
 
     on_test(function (package)
