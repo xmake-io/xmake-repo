@@ -150,6 +150,6 @@ target("ffi")
         add_headerfiles("src/arm/ffitarget.h")
     elseif is_arch("arm64") then
         add_files("src/aarch64/ffi.c", "src/aarch64/sysv.S")
-        add_headerfiles("src/aarch64")
+        add_includedirs("src/aarch64")
         add_headerfiles("src/aarch64/ffitarget.h")
     end
