@@ -36,7 +36,7 @@ package("zig")
 
     on_install("@macosx", "@linux", "@windows", "@msys", "@bsd", function (package)
         os.cp("*", package:installdir())
-        package:addenv("PATH", package:installdir())
+        package:addenv("PATH", ".")
     end)
 
     on_test(function (package)
