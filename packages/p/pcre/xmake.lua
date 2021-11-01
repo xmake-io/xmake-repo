@@ -41,11 +41,7 @@ package("pcre")
 
     on_install("macosx", "linux", "mingw", function (package)
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
-        end
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:config("jit") then
             table.insert(configs, "--enable-jit")
         end
