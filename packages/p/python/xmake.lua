@@ -94,6 +94,7 @@ package("python")
         local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
         table.insert(configs, "--datadir=" .. package:installdir("share"))
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
 
         -- add openssl libs path for detecting
         local openssl_dir
