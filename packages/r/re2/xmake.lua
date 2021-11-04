@@ -8,6 +8,7 @@ package("re2")
     add_versions("2020.11.01", "8903cc66c9d34c72e2bc91722288ebc7e3ec37787ecfef44d204b2d6281954d7")
     add_versions("2021.06.01", "26155e050b10b5969e986dab35654247a3b1b295e0532880b5a9c13c0a700ceb")
     add_versions("2021.08.01", "cd8c950b528f413e02c12970dce62a7b6f37733d7f68807e73a2d9bc9db79bc8")
+    add_versions("2021.11.01", "8c45f7fba029ab41f2a7e6545058d9eec94eef97ce70df58e92d85cfc08b4669")
 
     if is_plat("windows") then
         add_deps("cmake")
