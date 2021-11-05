@@ -16,7 +16,11 @@ package("pcre2")
 
     on_load(function (package)
         local bitwidth = package:config("bitwidth") or "8"
-        package:add("links", "pcre2-" .. bitwidth)
+        if package:version():ge("10.39") and package:is_plat("windows") and not package:config("shared") then
+            package:add("links", "pcre2-" .. bitwidth .. "-static")
+        else
+            package:add("links", "pcre2-" .. bitwidth)
+        end
         package:add("defines", "PCRE2_CODE_UNIT_WIDTH=" .. bitwidth)
         if not package:config("shared") then
             package:add("defines", "PCRE2_STATIC")
