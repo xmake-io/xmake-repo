@@ -13,12 +13,6 @@ package("libffi")
         add_extsources("apt::libffi-dev")
     end
 
-    on_load("windows", function (package)
-        if not package:config("shared") then
-            package:add("defines", "FFI_BUILDING")
-        end
-    end)
-
     on_load("macosx", "linux", "iphoneos", function (package)
         if package:gitref() then
             package:add("deps", "autoconf", "automake", "libtool")

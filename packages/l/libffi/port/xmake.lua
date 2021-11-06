@@ -2,6 +2,8 @@ set_project("libffi")
 
 add_rules("mode.debug", "mode.release")
 
+add_rules("utils.install.cmake_importfiles")
+
 set_configvar("PACKAGE", "libffi")
 set_configvar("PACKAGE_NAME", "libffi")
 set_configvar("PACKAGE_TARNAME", "libffi")
@@ -13,6 +15,7 @@ option("vers")
     set_showmenu(true)
 option_end()
 if has_config("vers") then
+    set_version(get_config("vers"))
     set_configvar("VERSION", get_config("vers"))
     set_configvar("PACKAGE_VERSION", get_config("vers"))
     set_configvar("PACKAGE_STRING", "libffi " .. get_config("vers"))
@@ -115,7 +118,6 @@ end
 
 target("ffi")
     set_kind("$(kind)")
-    add_defines("FFI_BUILDING")
     if is_plat("windows") and is_kind("shared") then
         add_defines("FFI_BUILDING_DLL")
     end
@@ -153,3 +155,6 @@ target("ffi")
         add_includedirs("src/aarch64")
         add_headerfiles("src/aarch64/ffitarget.h")
     end
+    before_build(function (target)
+        io.replace("include/ffi.h", "!defined FFI_BUILDING", target:is_static() and "0" or "1", {plain = true})
+    end)

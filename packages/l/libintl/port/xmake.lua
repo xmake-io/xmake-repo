@@ -23,6 +23,7 @@ option("vers")
     set_showmenu(true)
 option_end()
 if has_config("vers") then
+    set_version(get_config("vers"))
     set_configvar("VERSION", get_config("vers"))
     set_configvar("PACKAGE_VERSION", get_config("vers"))
     set_configvar("PACKAGE_STRING", "gettext-runtime " .. get_config("vers"))
@@ -40,6 +41,7 @@ end
 includes("check_cfuncs.lua")
 includes("check_ctypes.lua")
 includes("check_macros.lua")
+includes("check_links.lua")
 includes("check_cincludes.lua")
 includes("check_csnippets.lua")
 
@@ -222,11 +224,12 @@ configvar_check_csnippets("GNULIB_SIGPIPE", [[#include <signal.h>
 configvar_check_csnippets("HAVE_LANGINFO_CODESET", [[#include <langinfo.h>
 int test() { char* cs = nl_langinfo(CODESET); return !cs; }]])
 configvar_check_csnippets("HAVE_ENVIRON_DECL=0", [[extern struct {int foo;} environ;
-void test() {environ.foo = 1;}]], {includes = has_config("__HAVE_UNISTD_H") and "unistd.h" or "stdlib.h", default = 1})
+void test() {environ.foo = 1;}]], {includes = is_plat("windows") and "stdlib.h" or "unistd.h", default = 1})
 
 -- config.h variables
 configvar_check_ctypes("HAVE_STDINT_H_WITH_UINTMAX", "uintmax_t", {includes = "stdint.h"})
 configvar_check_ctypes("HAVE_UINTMAX_T", "uintmax_t", {includes = "stdint.h"})
+configvar_check_links("HAVE_PTHREAD_API", "pthread")
 configvar_check_csnippets("HAVE_ALLOCA", [[
 #ifdef __GNUC__
 # define alloca __builtin_alloca
@@ -241,10 +244,14 @@ void test() { char *p = (char *)alloca(1); }
 if is_plat("windows") and is_kind("shared") then
     set_configvar("WOE32DLL", 1)
 end
+set_configvar("SETLOCALE_NULL_ALL_MTSAFE", is_plat("windows", "linux") and 1 or 0)
+set_configvar("SETLOCALE_NULL_ONE_MTSAFE", 1)
+set_configvar("NEED_SETLOCALE_IMPROVED", is_plat("mingw") and 1 or 0)
+set_configvar("NEED_SETLOCALE_MTSAFE", is_plat("windows", "linux") and 0 or 1)
 
 -- libgnuintl.h variables
 set_configvar("HAVE_NAMELESS_LOCALES", 0)
-configvar_check_cfuncs("HAVE_NEWLOCALE", "newlocale", {includes = "locale.h", default = 0})
+configvar_check_cfuncs("HAVE_NEWLOCALE", "newlocale", {includes = (is_plat("macosx") and "xlocale.h" or "locale.h"), default = 0})
 configvar_check_cfuncs("HAVE_POSIX_PRINTF", "printf", {includes = "stdio.h", default = 0})
 configvar_check_cfuncs("HAVE_WPRINTF", "wprintf", {includes = "wchar.h", default = 0})
 configvar_check_cfuncs("HAVE_SNPRINTF", "snprintf", {includes = "stdio.h", default = 0})
@@ -283,6 +290,7 @@ target("intl")
               "gettext-runtime/intl/loadmsgcat.c",
               "gettext-runtime/intl/localealias.c",
               "gettext-runtime/intl/localename.c",
+              "gettext-runtime/intl/localename-table.c",
               "gettext-runtime/intl/localcharset.c",
               "gettext-runtime/intl/lock.c",
               "gettext-runtime/intl/log.c",
@@ -292,8 +300,19 @@ target("intl")
               "gettext-runtime/intl/plural-exp.c",
               "gettext-runtime/intl/printf.c",
               "gettext-runtime/intl/relocatable.c",
+              "gettext-runtime/intl/setlocale.c",
+              "gettext-runtime/intl/setlocale-lock.c",
+              "gettext-runtime/intl/setlocale_null.c",
+              "gettext-runtime/intl/threadlib.c",
               "gettext-runtime/intl/textdomain.c",
-              "gettext-runtime/intl/version.c")
+              "gettext-runtime/intl/version.c",
+              "gettext-runtime/intl/xsize.c")
+    if is_plat("windows") then
+        add_files("gettext-runtime/intl/windows-mutex.c",
+                  "gettext-runtime/intl/windows-rwlock.c",
+                  "gettext-runtime/intl/windows-recmutex.c",
+                  "gettext-runtime/intl/windows-once.c")
+    end
     before_build(function (target)
         os.cp("gettext-runtime/intl/libgnuintl.h", "gettext-runtime/intl/libintl.h")
         local lines = io.readfile("gettext-runtime/export.h")
