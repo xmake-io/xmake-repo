@@ -224,7 +224,7 @@ configvar_check_csnippets("GNULIB_SIGPIPE", [[#include <signal.h>
 configvar_check_csnippets("HAVE_LANGINFO_CODESET", [[#include <langinfo.h>
 int test() { char* cs = nl_langinfo(CODESET); return !cs; }]])
 configvar_check_csnippets("HAVE_ENVIRON_DECL=0", [[extern struct {int foo;} environ;
-void test() {environ.foo = 1;}]], {includes = has_config("__HAVE_UNISTD_H") and "unistd.h" or "stdlib.h", default = 1})
+void test() {environ.foo = 1;}]], {includes = is_plat("windows") and "stdlib.h" or "unistd.h", default = 1})
 
 -- config.h variables
 configvar_check_ctypes("HAVE_STDINT_H_WITH_UINTMAX", "uintmax_t", {includes = "stdint.h"})
@@ -251,7 +251,7 @@ set_configvar("NEED_SETLOCALE_MTSAFE", is_plat("windows", "linux") and 0 or 1)
 
 -- libgnuintl.h variables
 set_configvar("HAVE_NAMELESS_LOCALES", 0)
-configvar_check_cfuncs("HAVE_NEWLOCALE", "newlocale", {includes = "locale.h", default = 0})
+configvar_check_cfuncs("HAVE_NEWLOCALE", "newlocale", {includes = (is_plat("macosx") and "xlocale.h" or "locale.h"), default = 0})
 configvar_check_cfuncs("HAVE_POSIX_PRINTF", "printf", {includes = "stdio.h", default = 0})
 configvar_check_cfuncs("HAVE_WPRINTF", "wprintf", {includes = "wchar.h", default = 0})
 configvar_check_cfuncs("HAVE_SNPRINTF", "snprintf", {includes = "stdio.h", default = 0})
