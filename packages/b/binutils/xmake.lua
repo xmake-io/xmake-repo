@@ -9,6 +9,14 @@ package("binutils")
              "https://ftpmirror.gnu.org/binutils/binutils-$(version).tar.xz")
 
     add_versions("2.34", "f00b0e8803dc9bab1e2165bd568528135be734df3fabf8d0161828cd56028952")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::binutils")
+    elseif is_plat("linux") then
+        add_extsources("pacman::binutils", "apt::binutils")
+    elseif is_plat("macosx")then
+        add_extsources("brew::binutils")
+    end
 
     on_install("@linux", "@macosx", "@msys", function (package)
         local configs = {"--disable-debug",
