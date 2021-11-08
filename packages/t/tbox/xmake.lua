@@ -1,6 +1,6 @@
 package("tbox")
 
-    set_homepage("http://www.tboox.org")
+    set_homepage("https://tboox.org")
     set_description("A glib-like multi-platform c library")
 
     add_urls("https://github.com/tboox/tbox/archive/$(version).tar.gz")
