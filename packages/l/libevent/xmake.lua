@@ -22,11 +22,15 @@ package("libevent")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
+        io.replace("CMakeLists.txt", "advapi32", "advapi32 crypt32", {plain = true})
         local configs = {"-DEVENT__DISABLE_TESTS=ON", "-DEVENT__DISABLE_REGRESS=ON", "-DEVENT__DISABLE_SAMPLES=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DEVENT__DISABLE_OPENSSL=" .. (package:config("openssl") and "OFF" or "ON"))
         table.insert(configs, "-DEVENT__DISABLE_MBEDTLS=" .. (package:config("mbedtls") and "OFF" or "ON"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DEVENT__MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
