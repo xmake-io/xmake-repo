@@ -1,12 +1,12 @@
 package("toml++")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://marzer.github.io/tomlplusplus/")
     set_description("toml++ is a header-only TOML config file parser and serializer for C++17 (and later!).")
 
-    set_urls("https://github.com/marzer/tomlplusplus/archive/refs/tags/v$(version).zip")
-    add_versions("2.5.0", "887dfb7025d532a3485e1269ce5102d9e628ddce8dd055af1020c7b10ee14248")
+    add_urls("https://github.com/marzer/tomlplusplus/archive/refs/tags/$(version).tar.gz",
+                    "https://github.com/marzer/tomlplusplus.git")
+    add_versions("v2.5.0", "2e246ee126cfb7bd68edd7285d5bb5c8c5296121ce809306ee71cfd6127c76a6")
 
-    set_kind("library", {headeronly = true})
     add_deps("cmake")
 
     on_install(function (package)
