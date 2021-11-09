@@ -6,13 +6,11 @@ package("toml++")
     set_urls("https://github.com/marzer/tomlplusplus/archive/refs/tags/v$(version).zip")
     add_versions("2.5.0", "887dfb7025d532a3485e1269ce5102d9e628ddce8dd055af1020c7b10ee14248")
 
-    on_load(function (package)
-        package:add("deps", "cmake")
-    end)
+    set_kind("library", {headeronly = true})
+    add_deps("cmake")
 
     on_install(function (package)
-        local configs = {}
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package)
     end)
 
     on_test(function (package)
