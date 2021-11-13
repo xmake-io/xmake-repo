@@ -11,6 +11,8 @@ package("libgit2")
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Security")
         add_syslinks("iconv")
+    else
+        add_deps("openssl", "zlib")
     end
 
     on_install(function (package)
