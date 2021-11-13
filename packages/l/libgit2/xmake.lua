@@ -18,6 +18,8 @@ package("libgit2")
     if is_plat("linux") then
         add_deps("pcre")
         add_syslinks("pthread", "dl")
+    elseif is_plat("windows") then
+        add_syslinks("ole32", "rpcrt4", "winhttp")
     end
 
     on_install("macosx", "linux", "windows", "android", "iphoneos", function (package)
