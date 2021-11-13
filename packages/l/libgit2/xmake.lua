@@ -8,14 +8,17 @@ package("libgit2")
              "https://github.com/libgit2/libgit2.git")
     add_versions("v1.3.0", "192eeff84596ff09efb6b01835a066f2df7cd7985e0991c79595688e6b36444e")
 
-    if is_plat("macosx") then
+    if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
         add_syslinks("iconv")
     else
         add_deps("openssl", "zlib")
     end
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl")
+    end
 
-    on_install(function (package)
+    on_install("macosx", "linux", "windows", "mingw", "iphoneos", function (package)
         local configs = {"-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF", "-DBUILD_FUZZERS=OFF", "-DUSE_SSH=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
