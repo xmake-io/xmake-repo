@@ -8,6 +8,7 @@ package("libgit2")
              "https://github.com/libgit2/libgit2.git")
     add_versions("v1.3.0", "192eeff84596ff09efb6b01835a066f2df7cd7985e0991c79595688e6b36444e")
 
+    add_deps("cmake")
     if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
         add_syslinks("iconv")
