@@ -9,6 +9,7 @@ package("mfast")
     add_versions("v1.2.2", "bcfde8de2a621021841e330438f404041cd285bf10b4dc041f164876f3d8b692")
 
     add_patches("v1.2.2", path.join(os.scriptdir(), "patches", "v1.2.2", "tinyxml2.patch"), "e0b92fa386ca9e0c1265391b9bb5505410cf82902d41126c786b7fe9a36f2b6b")
+    add_patches("v1.2.2", path.join(os.scriptdir(), "patches", "v1.2.2", "boost_multiprecision.patch"), "f9fc628c3ef439bee671f6018fced0f2ee46ee6f55d2bd1d501303dad9942feb")
 
     add_configs("sqlite", {description = "Build with SQLite support.", default = false, type = "boolean"})
 

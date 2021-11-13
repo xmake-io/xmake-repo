@@ -1,0 +1,26 @@
+--- bzlib.h	2019-07-13 19:50:05.000000000 +0200
++++ bzlib.h	2021-09-08 10:18:55.838440200 +0200
+@@ -75,19 +75,13 @@
+ #include <stdio.h>
+ #endif
+ 
+-#ifdef _WIN32
+-#   include <windows.h>
+-#   ifdef small
+-      /* windows.h define small to char */
+-#      undef small
+-#   endif
++#if defined(_WIN32) && !defined(BZ_STATIC)
++#   define BZ_API(func)  func
+ #   ifdef BZ_EXPORT
+-#   define BZ_API(func) WINAPI func
+-#   define BZ_EXTERN extern
++#   define BZ_EXTERN __declspec(dllexport)
+ #   else
+    /* import windows dll dynamically */
+-#   define BZ_API(func) (WINAPI * func)
+-#   define BZ_EXTERN
++#   define BZ_EXTERN __declspec(dllimport)
+ #   endif
+ #else
+ #   define BZ_API(func) func

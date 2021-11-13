@@ -20,8 +20,26 @@ package("libiconv")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", "android", function (package)
+    on_install("windows", function (package)
+        io.gsub("config.h.in", "%$", "")
+        io.gsub("config.h.in", "# ?undef (.-)\n", "${define %1}\n")
+        io.gsub("libcharset/config.h.in", "%$", "")
+        io.gsub("libcharset/config.h.in", "# ?undef (.-)\n", "${define %1}\n")
+        io.gsub("srclib/safe-read.c", "#include <unistd.h>", "")
+        io.gsub("srclib/progreloc.c", "#include <unistd.h>", "")
+        os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), ".")
+        import("package.tools.xmake").install(package, {
+            relocatable = true,
+            installprefix = package:installdir():gsub("\\", "\\\\"),
+            vers = package:version_str()
+        })
+    end)
+
+    on_install("macosx", "linux", "android", "mingw@msys", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings"}
+        if not package:is_plat("macosx") then
+            table.insert(configs, "--enable-relocatable")
+        end
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then

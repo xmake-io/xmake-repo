@@ -9,7 +9,7 @@ package("mem")
 
     add_versions("1.0.0", "db1e58b040ea39ec5794fc1dcc6749c81b062579d9f6b086d035266456bccaf3")
 
-    on_install("windows", function (package)
+    on_install("windows", "linux", function (package)
         os.cp("include/mem", package:installdir("include"))
     end)
 

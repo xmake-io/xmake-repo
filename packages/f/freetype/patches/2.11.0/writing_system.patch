@@ -1,0 +1,15 @@
+diff --git a/src/autofit/afwrtsys.h b/src/autofit/afwrtsys.h
+index 39aa12112..2627e4332 100644
+--- a/src/autofit/afwrtsys.h
++++ b/src/autofit/afwrtsys.h
+@@ -15,6 +15,10 @@
+  *
+  */
+ 
++// Bypass MSVC optimization that fails build
++// see https://gitlab.freedesktop.org/freetype/freetype/-/issues/1075
++#if 0
++#endif
+ 
+ #ifndef AFWRTSYS_H_
+ #define AFWRTSYS_H_

@@ -6,6 +6,7 @@ package("volk")
 
     add_urls("https://github.com/zeux/volk/archive/$(version).tar.gz",
              "https://github.com/zeux/volk.git")
+    add_versions("1.2.190", "07f03720b8c70a626c98cc9545350538122bca9f853e6ed20ccad5a25d55fa4b")
     add_versions("1.2.162", "ac4d9d6e88dee5a83ad176e2da57f1989ca2c6df155a0aeb5e18e9471aa4d777")
 
     add_deps("vulkan-headers")

@@ -14,14 +14,14 @@ package("bullet3")
     add_configs("extras",           { description = "Build the extras", default = false, type = "boolean"})
 
     add_deps("cmake")
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_links("Bullet2FileLoader", "Bullet3Collision", "Bullet3Common", "Bullet3Dynamics", "Bullet3Geometry", "Bullet3OpenCL_clew", "BulletDynamics", "BulletCollision", "BulletInverseDynamics", "BulletSoftBody", "LinearMath")
     add_includedirs("include", "include/bullet")
 
     on_install("macosx", "linux", "windows", function (package)
-        if package:is_plat("windows") and package:config("shared") then
-            raise("shared library is not available on windows.")
-        end
         local configs = {"-DBUILD_CPU_DEMOS=OFF", "-DBUILD_OPENGL3_DEMOS=OFF", "-DBUILD_BULLET2_DEMOS=OFF", "-DBUILD_UNIT_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

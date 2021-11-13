@@ -23,6 +23,8 @@ package("libsdl_mixer")
 
     add_links("SDL2_mixer")
 
+    add_includedirs("include", "include/SDL2")
+
     on_install("windows", "mingw", function (package)
         local arch = package:arch()
         if package:is_plat("mingw") then

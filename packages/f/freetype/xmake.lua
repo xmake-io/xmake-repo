@@ -10,6 +10,8 @@ package("freetype")
     add_versions("2.10.4", "5eab795ebb23ac77001cfb68b7d4d50b5d6c7469247b0b01b2c953269f658dac")
     add_versions("2.9.1", "ec391504e55498adceb30baceebd147a6e963f636eb617424bcfc47a169898ce")
 
+    add_patches("2.11.0", path.join(os.scriptdir(), "patches", "2.11.0", "writing_system.patch"), "3172cf1e50501fc7455d9bb04ef4d5bb35b9712bb635f217f90ae6b2f7532eef")
+
     if not is_host("windows") then
         add_extsources("pkgconfig::freetype2")
     end
@@ -43,36 +45,37 @@ package("freetype")
         end
 
         add_dep("bzip2")
+        add_dep("zlib")
         add_dep("png", "libpng")
         add_dep("woff2", "brotli")
-        add_dep("zlib")
     end)
 
     on_install("windows", "mingw", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        local function add_dep(dep, cmakeConf, cmakeDisableConf)
-            if package:config("dep") then
-                table.insert(configs, "-DFT_WITH_" .. cmakeConf .. "=ON")
-            else
-                table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (cmakeDisableConf or cmakeConf) .. "=ON")
-            end
-        end
-        add_dep("bzip2", "BZIP2", "BZip2")
-        add_dep("png", "PNG")
-        add_dep("woff2", "BROTLI", "BrotliDec")
-        add_dep("zlib", "ZLIB")
+        local function add_dep(opt)
+            if package:config(opt.conf) then
+                table.insert(configs, "-DFT_WITH_" .. opt.cmakewith .. "=ON")
 
-        -- brotli isn't found automatically
-        if package:config("woff2") then
-            local brotli = package:dep("brotli")
-            if brotli and not brotli:is_system() then
-                local fetchinfo = brotli:fetch()
-                table.insert(configs, "-DBROTLIDEC_INCLUDE_DIRS=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
-                table.insert(configs, "-DBROTLIDEC_LIBRARIES=" .. table.concat(fetchinfo.libfiles, ";"))
+                local lib = package:dep(opt.pkg or opt.conf)
+                if lib and not lib:is_system() then
+                    local includeconf = opt.cmakeinclude or (opt.cmakewith .. "_INCLUDE_DIRS")
+                    local libconf = opt.cmakelib or (opt.cmakewith .. "_LIBRARIES")
+                    local fetchinfo = lib:fetch()
+                    if fetchinfo then
+                        table.insert(configs, "-D" .. includeconf .. "=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
+                        table.insert(configs, "-D" .. libconf .. "=" .. table.concat(fetchinfo.libfiles, ";"))
+                    end
+                end
+            else
+                table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (opt.cmakedisable or opt.cmakewith) .. "=ON")
             end
         end
+        add_dep({conf = "bzip2", cmakewith = "BZIP2", cmakedisable = "BZip2", cmakeinclude = "BZIP2_INCLUDE_DIR"})
+        add_dep({conf = "png", pkg = "libpng", cmakewith = "PNG", cmakeinclude = "PNG_PNG_INCLUDE_DIR", cmakelib = "PNG_LIBRARY"})
+        add_dep({conf = "woff2", pkg = "brotli", cmakewith = "BROTLI", cmakedisable = "BrotliDec", cmakeinclude = "BROTLIDEC_INCLUDE_DIRS", cmakelib = "BROTLIDEC_LIBRARIES"})
+        add_dep({conf = "zlib", cmakewith = "ZLIB", cmakeinclude = "ZLIB_INCLUDE_DIR", cmakelib = "ZLIB_LIBRARY"})
 
         import("package.tools.cmake").install(package, configs)
     end)
