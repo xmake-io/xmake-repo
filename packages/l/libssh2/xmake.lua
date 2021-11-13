@@ -10,6 +10,9 @@ package("libssh2")
     add_versions("1.10.0", "2d64e90f3ded394b91d3a2e774ca203a4179f69aebee03003e5a6fa621e41d51")
 
     add_deps("cmake", "libgcrypt")
+    if is_plat("linux") then
+        add_deps("openssl")
+    end
 
     on_install("macosx", "linux", function (package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTING=OFF"}
