@@ -15,5 +15,6 @@ package("dlib")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("command_line_parser", {includes = "dlib/cmd_line_parser.h"}))
+        assert(package:has_cxxfuncs("command_line_parser", {
+            includes = "dlib/cmd_line_parser.h", configs = {languages = "c++11"}}))
     end)
