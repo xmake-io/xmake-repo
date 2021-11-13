@@ -16,6 +16,7 @@ package("libgit2")
         add_deps("openssl", "zlib")
     end
     if is_plat("linux") then
+        add_deps("pcre")
         add_syslinks("pthread", "dl")
     end
 
@@ -29,6 +30,13 @@ package("libgit2")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("android", "iphoneos") then
             table.insert(configs, "-DUSE_HTTPS=OFF")
+        elseif package:is_plat("windows") then
+            if package:config("vs_runtime"):startswith("MT") then
+                table.insert(configs, "-DSTATIC_CRT=ON")
+            else
+                table.insert(configs, "-DSTATIC_CRT=OFF")
+            end
+            io.replace("CMakeLists.txt", "/GL", "", {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
     end)
