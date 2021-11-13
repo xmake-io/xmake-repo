@@ -9,7 +9,7 @@ package("libgit2")
     add_versions("v1.3.0", "192eeff84596ff09efb6b01835a066f2df7cd7985e0991c79595688e6b36444e")
 
     add_deps("cmake")
-    if is_plat("macosx", "iphoneos") then
+    if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Security")
         add_syslinks("iconv")
     else
@@ -19,7 +19,7 @@ package("libgit2")
         add_syslinks("pthread", "dl")
     end
 
-    on_install("macosx", "linux", "windows", "mingw", "iphoneos", function (package)
+    on_install("macosx", "linux", "windows", function (package)
         local configs = {"-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF", "-DBUILD_FUZZERS=OFF", "-DUSE_SSH=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
