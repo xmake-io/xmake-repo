@@ -14,6 +14,7 @@ package("minizip-ng")
     add_deps("cmake")
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Security")
+        add_syslinks("iconv")
     elseif is_plat("linux", "android") then
         add_deps("openssl")
     elseif is_plat("windows", "mingw") then
