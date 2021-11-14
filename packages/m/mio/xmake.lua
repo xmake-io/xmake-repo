@@ -9,7 +9,7 @@ package("mio")
     add_versions("2021.9.21", "3f86a95c0784d73ce6815237ec33ed25f233b643")
 
     add_deps("cmake")
-    on_install("linux", "macosx", "windows", "bsd", "iphoneos", "android", function (package)
+    on_install("linux", "macosx", "bsd", "iphoneos", "android", function (package)
         import("package.tools.cmake").install(package, {"-Dmio.tests=OFF"})
     end)
 
