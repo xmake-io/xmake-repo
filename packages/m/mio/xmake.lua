@@ -16,8 +16,10 @@ package("mio")
     on_test(function(package)
         assert(package:check_cxxsnippets({
             test = [[
-              #include <mio/mmap.hpp>
+              #include <string>
+              #include <vector>
               #include <algorithm>
+              #include <mio/mmap.hpp>
 
               static void test() {
                 mio::mmap_source mmap(0, 0, mio::map_entire_file);
