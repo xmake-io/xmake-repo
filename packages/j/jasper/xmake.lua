@@ -21,7 +21,7 @@ package("jasper")
     on_install("windows", "macosx", "linux", function (package)
         io.replace("build/cmake/modules/JasOpenGL.cmake", "find_package(GLUT", "find_package(FreeGLUT", {plain = true})
         local configs = {"-DJAS_ENABLE_PROGRAMS=OFF", "-DJAS_ENABLE_DOC=OFF"}
-        local vs_sdkver = get_config("vs_sdkver")
+        local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
         if vs_sdkver then
             local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
             assert(tonumber(build_ver) >= 18362, "Jasper requires Windows SDK to be at least 10.0.18362.0")
