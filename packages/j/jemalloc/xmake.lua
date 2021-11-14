@@ -11,7 +11,7 @@ fragmentation avoidance and scalable concurrency support]])
 
     add_patches("5.2.1", path.join(os.scriptdir(), "patches", "5.2.1", "fix_nothrow_type.patch"), "d79f5c8767695059ff541f291db3fbc57c9b67299dc129848dd365c2f51b214a")
 
-    if is_plat("linux", "bsd") then
+    if is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
 
@@ -26,7 +26,7 @@ fragmentation avoidance and scalable concurrency support]])
         end
     end)
 
-    on_install("linux", "macosx", "bsd", "mingw@macosx", function(package)
+    on_install("linux", "macosx", "mingw@macosx", function(package)
         local configs = {"--disable-debug",
                          "--with-jemalloc-prefix="}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
