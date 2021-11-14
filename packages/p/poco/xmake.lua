@@ -7,6 +7,7 @@ package("poco")
     add_urls("https://github.com/pocoproject/poco/archive/refs/tags/poco-$(version)-release.tar.gz",
              "https://github.com/pocoproject/poco.git")
     add_versions("1.11.0", "8a7bfd0883ee95e223058edce8364c7d61026ac1882e29643822ce9b753f3602")
+    add_versions("1.11.1", "2412a5819a239ff2ee58f81033bcc39c40460d7a8b330013a687c8c0bd2b4ac0")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
