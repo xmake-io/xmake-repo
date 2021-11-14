@@ -43,5 +43,5 @@ package("minizip-ng")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("mz_zip_open", {includes = {"mz.h", "mz_zip.h"}}))
+        assert(package:has_cfuncs("zipOpen", {includes = {"mz.h", "mz_compat.h"}}))
     end)
