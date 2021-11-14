@@ -9,6 +9,8 @@ fragmentation avoidance and scalable concurrency support]])
 
     add_versions("5.2.1", "34330e5ce276099e2e8950d9335db5a875689a4c6a56751ef3b1d8c537f887f6")
 
+    add_patches("5.2.1", path.join(os.scriptdir(), "patches", "5.2.1", "fix_nothrow_type.patch"), "d79f5c8767695059ff541f291db3fbc57c9b67299dc129848dd365c2f51b214a")
+
     on_load(function (package)
         if package:gitref() then
             package:add("deps", "automake", "autoconf")
@@ -17,7 +19,7 @@ fragmentation avoidance and scalable concurrency support]])
 
     on_install(function(package)
         local configs = {"--disable-debug",
-                         "--with-jemalloc-prefix=" .. package:installdir()}
+                         "--with-jemalloc-prefix="}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_plat("linux") and package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
