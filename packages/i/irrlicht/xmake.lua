@@ -11,10 +11,11 @@ package("irrlicht")
     if is_plat("windows") then
         add_syslinks("user32", "gdi32", "advapi32")
     elseif is_plat("macosx") then
+        add_deps("libx11", "libxft")
         add_frameworks("Cocoa", "OpenGL", "IOKit")
     elseif is_plat("linux") then
         add_syslinks("GL")
-        add_deps("libx11", "libxxf86vm", "libxcursor", "libxext")
+        add_deps("libx11", "libxxf86vm", "libxcursor", "libxext", "libxft")
     end
     on_load("windows", "macosx", "linux", function (package)
         if not package:config("shared") then

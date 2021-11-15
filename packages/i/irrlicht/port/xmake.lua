@@ -3,8 +3,10 @@ set_project("irrlicht")
 add_rules("mode.debug", "mode.release")
 
 add_requires("bzip2", "libjpeg-turbo", "libpng", "zlib")
-if is_plat("linux") then
-    add_requires("libx11", "libxxf86vm", "libxcursor", "libxext")
+if is_plat("macosx") then
+    add_requires("libx11", "libxft")
+elseif is_plat("linux") then
+    add_requires("libx11", "libxxf86vm", "libxcursor", "libxext", "libxft")
 end
 
 target("Irrlicht")
@@ -13,10 +15,10 @@ target("Irrlicht")
     add_files("source/Irrlicht/lzma/*.c")
     add_files("source/Irrlicht/aesGladman/*.cpp")
     add_includedirs("source/Irrlicht")
-    add_includedirs("include")
+    add_includedirs("include", {public = true})
     add_headerfiles("include/(**.h)")
     add_packages("bzip2", "libjpeg-turbo", "libpng", "zlib")
-    add_defines(is_kind("shared") and "IRRLICHT_EXPORTS" or "_IRR_STATIC_LIB_")
+    add_defines(is_kind("shared") and "IRRLICHT_EXPORTS" or "_IRR_STATIC_LIB_", {public = is_kind("static")})
     add_defines("NO_IRR_USE_NON_SYSTEM_ZLIB_",
                 "NO_IRR_USE_NON_SYSTEM_BZLIB_",
                 "NO_IRR_USE_NON_SYSTEM_JPEG_LIB_",
@@ -34,3 +36,33 @@ target("Irrlicht")
         add_syslinks("GL")
         add_packages("libx11", "libxxf86vm", "libxcursor", "libxext")
     end
+target_end()
+
+target("MeshConverter")
+    set_kind("binary")
+    add_deps("Irrlicht")
+    add_files("tools/MeshConverter/*.cpp")
+target_end()
+
+target("IrrFontTool")
+    set_kind("binary")
+    add_deps("Irrlicht")
+    add_files("tools/IrrFontTool/newFontTool/*.cpp")
+    if is_plat("windows") then
+        add_syslinks("gdi32")
+    elseif is_plat("macosx", "linux") then
+        add_packages("libx11", "libxft")
+    end
+target_end()
+
+target("GUIEditor")
+    set_kind("binary")
+    add_deps("Irrlicht")
+    add_files("tools/GUIEditor/*.cpp")
+target_end()
+
+target("FileToHeader")
+    set_kind("binary")
+    add_deps("Irrlicht")
+    add_files("tools/FileToHeader/*.cpp")
+target_end()
