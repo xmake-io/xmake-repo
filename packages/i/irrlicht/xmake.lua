@@ -37,4 +37,3 @@ package("irrlicht")
             }
         ]]}, {configs = {languages = "c++11"}, includes = "irrlicht.h"}))
     end)
-
