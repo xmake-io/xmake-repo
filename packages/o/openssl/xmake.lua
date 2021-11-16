@@ -15,7 +15,7 @@ package("openssl")
 
     if is_plat("windows") then
         add_links("libssl", "libcrypto")
-        add_syslinks("Ws2_32", "User32", "Crypt32", "Advapi32")
+        add_syslinks("ws2_32", "user32", "crypt32", "advapi32")
     else
         add_links("ssl", "crypto")
     end
@@ -50,14 +50,7 @@ package("openssl")
         table.insert(args, "--openssldir=" .. package:installdir())
         os.vrunv("perl", args)
 
-        -- temporary workaround, will be removed in future
-        if xmake.version():ge("2.5.3") then
-            import("package.tools.nmake").install(package)
-        else
-            local envs = import("core.tool.toolchain").load("msvc"):runenvs()
-            envs.PATH = package:dep("nasm"):installdir("bin") .. path.envsep() .. envs.PATH
-            import("package.tools.nmake").install(package, {}, {envs = envs})
-        end
+        import("package.tools.nmake").install(package)
     end)
 
     on_install("linux", "macosx", function (package)
