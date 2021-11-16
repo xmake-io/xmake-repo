@@ -1,12 +1,15 @@
 set_project("irrlicht")
 
+option("tools", {default = false, showmenu = true})
+
 add_rules("mode.debug", "mode.release")
 
 add_requires("bzip2", "libjpeg-turbo", "libpng", "zlib")
-if is_plat("macosx") then
-    add_requires("libx11", "libxft")
-elseif is_plat("linux") then
-    add_requires("libx11", "libxxf86vm", "libxcursor", "libxext", "libxft")
+if is_plat("linux") then
+    add_requires("libx11", "libxxf86vm", "libxcursor", "libxext")
+end
+if has_config("tools") and is_plat("macosx", "linux") then
+    add_requires("libxft")
 end
 
 target("Irrlicht")
@@ -38,6 +41,7 @@ target("Irrlicht")
     end
 target_end()
 
+if has_config("tools") then
 target("MeshConverter")
     set_kind("binary")
     add_deps("Irrlicht")
@@ -51,7 +55,7 @@ target("IrrFontTool")
     if is_plat("windows") then
         add_syslinks("gdi32")
     elseif is_plat("macosx", "linux") then
-        add_packages("libx11", "libxft")
+        add_packages("libxft")
     end
 target_end()
 
@@ -66,3 +70,4 @@ target("FileToHeader")
     add_deps("Irrlicht")
     add_files("tools/FileToHeader/*.cpp")
 target_end()
+end

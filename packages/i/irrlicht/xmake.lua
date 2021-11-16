@@ -7,25 +7,32 @@ package("irrlicht")
     add_urls("https://downloads.sourceforge.net/irrlicht/irrlicht-$(version).zip")
     add_versions("1.8.5", "effb7beed3985099ce2315a959c639b4973aac8210f61e354475a84105944f3d")
 
+    add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
+
     add_deps("bzip2", "libjpeg-turbo", "libpng", "zlib")
     if is_plat("windows") then
         add_syslinks("user32", "gdi32", "advapi32")
     elseif is_plat("macosx") then
-        add_deps("libx11", "libxft")
         add_frameworks("Cocoa", "OpenGL", "IOKit")
     elseif is_plat("linux") then
         add_syslinks("GL")
-        add_deps("libx11", "libxxf86vm", "libxcursor", "libxext", "libxft")
+        add_deps("libx11", "libxxf86vm", "libxcursor", "libxext")
     end
     on_load("windows", "macosx", "linux", function (package)
         if not package:config("shared") then
             package:add("defines", "_IRR_STATIC_LIB_")
         end
+        if package:is_plat("macosx", "linux") and package:config("tools") then
+            package:add("deps", "libxft")
+        end
     end)
 
     on_install("windows", "macosx", "linux", function (package)
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, {tools = package:config("tools")})
+        if package:config("tools") then
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_test(function (package)
