@@ -29,7 +29,7 @@ package("python2")
     end
 
     if is_host("macosx", "linux") then
-        add_deps("openssl", {host = true})
+        add_deps("openssl", "ca-certificates", {host = true})
     end
 
     if is_host("linux") then
