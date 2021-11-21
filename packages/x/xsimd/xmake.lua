@@ -26,8 +26,8 @@ package("xsimd")
             assert(package:check_cxxsnippets({test = [[
                 #include <iostream>
                 void test() {
-                    xsimd::batch<double, xsimd::avx2> a{1.5, 2.5, 3.5, 4.5};
-                    xsimd::batch<double, xsimd::avx2> b{2.5, 3.5, 4.5, 5.5};
+                    xsimd::batch<double, xsimd::avx> a{1.5, 2.5, 3.5, 4.5};
+                    xsimd::batch<double, xsimd::avx> b{2.5, 3.5, 4.5, 5.5};
                     auto mean = (a + b) / 2;
                     std::cout << mean << std::endl;
                 }
