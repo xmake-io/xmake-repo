@@ -5,8 +5,10 @@ package("xsimd")
     set_description("C++ wrappers for SIMD intrinsics")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/xtensor-stack/xsimd/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/xtensor-stack/xsimd/archive/refs/tags/$(version).tar.gz"
+             "https://github.com/xtensor-stack/xsimd.git")
     add_versions("7.6.0", "eaf47f1a316ef6c3287b266161eeafc5aa61226ce5ac6c13502546435b790252")
+    add_versions("8.0.3", "d1d41253c4f82eaf2f369d7fcb4142e35076cf8675b9d94caa06ecf883024344")
 
     if is_plat("windows") then
         add_cxxflags("/arch:AVX")

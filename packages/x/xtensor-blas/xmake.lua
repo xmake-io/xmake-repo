@@ -5,8 +5,10 @@ package("xtensor-blas")
     set_description("BLAS extension to xtensor")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/xtensor-stack/xtensor-blas/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/xtensor-stack/xtensor-blas/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/xtensor-stack/xtensor-blas.git")
     add_versions("0.19.1", "c77cc4e2297ebd22d0d1c6e8d0a6cf0975176afa8cb99dbfd5fb2be625a0248f")
+    add_versions("0.20.0", "272f5d99bb7511a616bfe41b13a000e63de46420f0b32a25fa4fb935b462c7ff")
 
     add_configs("vendor", {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
 
