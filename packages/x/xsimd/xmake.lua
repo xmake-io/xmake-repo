@@ -11,7 +11,7 @@ package("xsimd")
     add_versions("8.0.3", "d1d41253c4f82eaf2f369d7fcb4142e35076cf8675b9d94caa06ecf883024344")
 
     if is_plat("windows") then
-        add_cxxflags("/arch:AVX")
+        add_cxxflags("/arch:AVX2")
     else
         add_cxxflags("-march=native")
     end
