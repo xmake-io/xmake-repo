@@ -13,7 +13,7 @@ package("openssl")
     add_versions("1.0.2u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
     add_versions("1.0.0",   "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_links("libssl", "libcrypto")
         add_syslinks("ws2_32", "user32", "crypt32", "advapi32")
     else
@@ -30,7 +30,7 @@ package("openssl")
     on_fetch("fetch")
 
     on_load(function (package)
-        if package:is_plat("windows", "mingw") and (not package.is_built or package:is_built()) then
+        if package:is_plat("windows") and (not package.is_built or package:is_built()) then
             package:add("deps", "nasm")
             -- the perl executable found in GitForWindows will fail to build OpenSSL
             -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
@@ -40,11 +40,7 @@ package("openssl")
 
     on_install("windows", function (package)
         local args = {"Configure"}
-        if package:is_plat("windows") then
-            table.insert(args, (package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A"))
-        else
-            table.insert(args, (package:is_arch("x86") and "mingw" or "mingw64"))
-        end
+        table.insert(args, (package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A"))
         if package:config("shared") then
             table.insert(args, "shared")
         else
@@ -54,11 +50,7 @@ package("openssl")
         table.insert(args, "--openssldir=" .. package:installdir())
         os.vrunv("perl", args)
 
-        if package:is_plat("windows") then
-            import("package.tools.nmake").install(package)
-        else
-            import("package.tools.make").install(package)
-        end
+        import("package.tools.nmake").install(package)
     end)
 
     on_install("mingw", function (package)
