@@ -53,7 +53,7 @@ package("openssl")
         import("package.tools.nmake").install(package)
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("mingw", "linux", "macosx", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         os.vrun("./config %s --openssldir=\"%s\" --prefix=\"%s\"", package:debug() and "--debug" or "", package:installdir(), package:installdir())
         import("package.tools.make").install(package)
