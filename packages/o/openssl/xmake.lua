@@ -30,7 +30,7 @@ package("openssl")
     on_fetch("fetch")
 
     on_load(function (package)
-        if package:is_plat("windows") and (not package.is_built or package:is_built()) then
+        if package:is_plat("windows", "mingw") and (not package.is_built or package:is_built()) then
             package:add("deps", "nasm")
             -- the perl executable found in GitForWindows will fail to build OpenSSL
             -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
@@ -40,7 +40,11 @@ package("openssl")
 
     on_install("windows", function (package)
         local args = {"Configure"}
-        table.insert(args, (package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A"))
+        if package:is_plat("windows") then
+            table.insert(args, (package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A"))
+        else
+            table.insert(args, (package:is_arch("x86") and "mingw" or "mingw64"))
+        end
         if package:config("shared") then
             table.insert(args, "shared")
         else
@@ -50,10 +54,34 @@ package("openssl")
         table.insert(args, "--openssldir=" .. package:installdir())
         os.vrunv("perl", args)
 
-        import("package.tools.nmake").install(package)
+        if package:is_plat("windows") then
+            import("package.tools.nmake").install(package)
+        else
+            import("package.tools.make").install(package)
+        end
     end)
 
-    on_install("mingw", "linux", "macosx", function (package)
+    on_install("mingw", function (package)
+        local args = {"Configure"}
+        table.insert(args, (package:is_arch("x86") and "mingw" or "mingw64"))
+        if package:config("shared") then
+            table.insert(args, "shared")
+        else
+            table.insert(args, "no-shared")
+        end
+        local installdir = package:installdir()
+        -- Use MSYS2 paths instead of Windows paths
+        if os.subhost() == "msys" then
+            installdir = installdir:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
+        end
+        table.insert(args, "--prefix=" .. installdir)
+        table.insert(args, "--openssldir=" .. installdir)
+        os.vrunv("perl", args)
+
+        import("package.tools.make").install(package)
+    end)
+
+    on_install("linux", "macosx", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         os.vrun("./config %s --openssldir=\"%s\" --prefix=\"%s\"", package:debug() and "--debug" or "", package:installdir(), package:installdir())
         import("package.tools.make").install(package)
