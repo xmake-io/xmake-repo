@@ -2,21 +2,23 @@ package("lief")
 
     set_homepage("https://lief.quarkslab.com")
     set_description("Library to Instrument Executable Formats.")
+    set_license("Apache-2.0")
 
     set_urls("https://github.com/lief-project/LIEF/archive/$(version).tar.gz",
              "https://github.com/lief-project/LIEF.git")
     add_versions("0.10.1", "6f30c98a559f137e08b25bcbb376c0259914b33c307b8b901e01ca952241d00a")
+    add_versions("0.11.5", "6d6d57304a56850958e4ce54f3da2ea2b9eb856ccbab61c6cde9cba15d7c9da5")
 
     add_deps("cmake")
 
-    add_configs("elf",    { description = "Enable ELF module.", default = true, type = "boolean"})
-    add_configs("pe",     { description = "Enable PE module.", default = true, type = "boolean"})
-    add_configs("macho",  { description = "Enable MachO module.", default = true, type = "boolean"})
+    add_configs("elf",    {description = "Enable ELF module.", default = true, type = "boolean"})
+    add_configs("pe",     {description = "Enable PE module.", default = true, type = "boolean"})
+    add_configs("macho",  {description = "Enable MachO module.", default = true, type = "boolean"})
 
-    add_configs("dex",    { description = "Enable Dex module.", default = false, type = "boolean"})
-    add_configs("vdex",   { description = "Enable Vdex module.", default = false, type = "boolean"})
-    add_configs("oat",    { description = "Enable Oat module.", default = false, type = "boolean"})
-    add_configs("art",    { description = "Enable Art module.", default = false, type = "boolean"})
+    add_configs("dex",    {description = "Enable Dex module.", default = false, type = "boolean"})
+    add_configs("vdex",   {description = "Enable Vdex module.", default = false, type = "boolean"})
+    add_configs("oat",    {description = "Enable Oat module.", default = false, type = "boolean"})
+    add_configs("art",    {description = "Enable Art module.", default = false, type = "boolean"})
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {"-DLIEF_PYTHON_API=OFF", "-DLIEF_DOC=OFF", "-DLIEF_TESTS=OFF", "-DLIEF_EXAMPLES=OFF", "-DLIEF_INSTALL_PYTHON=OFF"}
