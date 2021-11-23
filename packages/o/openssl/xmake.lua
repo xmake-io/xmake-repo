@@ -56,7 +56,7 @@ package("openssl")
 
     on_install("mingw", function (package)
         local args = {"Configure"}
-        table.insert(args, (package:is_arch("i686", "x86") and "mingw" or "mingw64"))
+        table.insert(args, (package:is_arch("i386", "x86") and "mingw" or "mingw64"))
         if package:config("shared") then
             table.insert(args, "shared")
         else
