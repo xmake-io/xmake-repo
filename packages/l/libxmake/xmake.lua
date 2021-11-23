@@ -8,13 +8,11 @@ package("libxmake")
              "https://github.com/xmake-io/xmake.git",
              "https://gitlab.com/tboox/xmake.git")
 
-    add_versions("v2.3.3", "851e01256c89cb9c86b6bd7327831b45809a3255daa234d3162b1db061ca44ae")
-    add_versions("v2.5.2", "682c2908b80da7703d6b0213589274d41f76d2f3bc8bfe2eac5c5f625f1109b9")
+    add_versions("v2.5.9", "5b50e3f28956cabcaa153624c91781730387ceb7c056f3f9b5306b1c77460d8f")
 
     add_configs("readline", { description = "Enable readline library.", default = false, type = "boolean"})
 
-    add_includedirs("include", "include/luajit")
-    add_links("xmake", "tbox", "luajit", "sv")
+    add_includedirs("include")
     if is_plat("windows") then
         add_ldflags("/export:malloc", "/export:free")
         add_syslinks("kernel32", "user32", "gdi32")
@@ -32,7 +30,7 @@ package("libxmake")
     end
 
     on_load(function (package)
-        package:add("links", "lcurses")
+        package:add("links", "xmake", "tbox", "sv", "lcurses")
         if package:is_plat("windows") then
             package:add("links", "pdcurses")
         else
@@ -44,8 +42,13 @@ package("libxmake")
         if package:debug() then
             package:add("defines", "__tb_debug__")
         end
-        if package:version():ge("2.5.1") then
-            package:add("links", "lua-cjson")
+        package:add("links", "lua-cjson")
+        if not package:gitref() and package:version():le("2.5.9") then
+            package:add("includedirs", "include/luajit")
+            package:add("links", "luajit")
+        else
+            package:add("includedirs", "include/lua")
+            package:add("links", "lua")
         end
     end)
 
@@ -55,6 +58,9 @@ package("libxmake")
             table.insert(configs, "--pdcurses=" .. (package:config("curses") and "y" or "n"))
         else
             table.insert(configs, "--curses=" .. (package:config("curses") and "y" or "n"))
+        end
+        if not package:gitref() and package:version():le("2.5.9") then
+            io.replace("core/src/luajit/xmake.lua", "set_default(false)", "", {plain = true})
         end
         table.insert(configs, "--readline=" .. (package:config("readline") and "y" or "n"))
         os.cd("core")
