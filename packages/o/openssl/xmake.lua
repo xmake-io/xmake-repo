@@ -13,13 +13,14 @@ package("openssl")
     add_versions("1.0.2u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
     add_versions("1.0.0",   "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
-    if is_plat("windows", "mingw") then
+    if is_plat("windows") then
         add_links("libssl", "libcrypto")
-        add_syslinks("ws2_32", "user32", "crypt32", "advapi32")
     else
         add_links("ssl", "crypto")
     end
-    if is_plat("linux", "cross") then
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32", "user32", "crypt32", "advapi32")
+    elseif is_plat("linux", "cross") then
         add_syslinks("dl")
     end
 
