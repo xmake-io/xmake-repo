@@ -9,7 +9,7 @@ package("libxmake")
              "https://gitlab.com/tboox/xmake.git")
 
     add_versions("v2.3.3", "851e01256c89cb9c86b6bd7327831b45809a3255daa234d3162b1db061ca44ae")
-    add_versions("v2.5.2", "682c2908b80da7703d6b0213589274d41f76d2f3bc8bfe2eac5c5f625f1109b9")
+    add_versions("v2.5.9", "5b50e3f28956cabcaa153624c91781730387ceb7c056f3f9b5306b1c77460d8f")
 
     add_configs("readline", { description = "Enable readline library.", default = false, type = "boolean"})
 
