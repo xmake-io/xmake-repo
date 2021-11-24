@@ -15,11 +15,12 @@ package("openssl")
 
     if is_plat("windows") then
         add_links("libssl", "libcrypto")
-        add_syslinks("ws2_32", "user32", "crypt32", "advapi32")
     else
         add_links("ssl", "crypto")
     end
-    if is_plat("linux", "cross") then
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32", "user32", "crypt32", "advapi32")
+    elseif is_plat("linux", "cross") then
         add_syslinks("dl")
     end
 
@@ -39,23 +40,47 @@ package("openssl")
     end)
 
     on_install("windows", function (package)
-        local args = {"Configure"}
-        table.insert(args, (package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A"))
-        if package:config("shared") then
-            table.insert(args, "shared")
-        else
-            table.insert(args, "no-shared")
-        end
-        table.insert(args, "--prefix=" .. package:installdir())
-        table.insert(args, "--openssldir=" .. package:installdir())
-        os.vrunv("perl", args)
-
+        local configs = {"Configure"}
+        table.insert(configs, package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A")
+        table.insert(configs, package:config("shared") and "shared" or "no-shared")
+        table.insert(configs, "--prefix=" .. package:installdir())
+        table.insert(configs, "--openssldir=" .. package:installdir())
+        os.vrunv("perl", configs)
         import("package.tools.nmake").install(package)
+    end)
+
+    on_install("mingw", function (package)
+        local configs = {"Configure", "no-tests"}
+        table.insert(configs, package:is_arch("i386", "x86") and "mingw" or "mingw64")
+        table.insert(configs, package:config("shared") and "shared" or "no-shared")
+        local installdir = package:installdir()
+        -- Use MSYS2 paths instead of Windows paths
+        if is_subhost("msys") then
+            installdir = installdir:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
+        end
+        table.insert(configs, "--prefix=" .. installdir)
+        table.insert(configs, "--openssldir=" .. installdir)
+        local buildenvs = import("package.tools.autoconf").buildenvs(package)
+        buildenvs.RC = package:build_getenv("mrc")
+        if is_subhost("msys") then
+            local rc = buildenvs.RC
+            if rc then
+                rc = rc:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
+                buildenvs.RC = rc
+            end
+        end
+        -- fix 'cp: directory fuzz does not exist'
+        if package:config("shared") then
+            os.mkdir("fuzz")
+        end
+        os.vrunv("perl", configs, {envs = buildenvs})
+        import("package.tools.make").install(package)
     end)
 
     on_install("linux", "macosx", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
-        os.vrun("./config %s --openssldir=\"%s\" --prefix=\"%s\"", package:debug() and "--debug" or "", package:installdir(), package:installdir())
+        os.vrun("./config %s --openssldir=\"%s\" --prefix=\"%s\"",
+            package:debug() and "--debug" or "", package:installdir(), package:installdir())
         import("package.tools.make").install(package)
     end)
 
@@ -68,7 +93,8 @@ package("openssl")
                 target = "linux-armv4"
             end
         end
-        local configs = {target, "-DOPENSSL_NO_HEARTBEATS", "no-shared", "no-threads", "--prefix=" .. package:installdir()}
+        local configs = {target, "-DOPENSSL_NO_HEARTBEATS", "no-shared", "no-threads",
+            "--prefix=" .. package:installdir()}
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         os.vrunv("./Configure", configs, {envs = buildenvs})
         local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
