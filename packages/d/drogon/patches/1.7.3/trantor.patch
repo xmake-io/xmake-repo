@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -120,9 +120,9 @@
+         PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/third_party/mman-win32>)
+ endif (WIN32)
+ 
+-add_subdirectory(trantor)
++find_package(Trantor CONFIG REQUIRED)
+ 
+-target_link_libraries(${PROJECT_NAME} PUBLIC trantor)
++target_link_libraries(${PROJECT_NAME} PUBLIC Trantor::Trantor)
+ 
+ if(${CMAKE_SYSTEM_NAME} STREQUAL "Haiku")
+     target_link_libraries(${PROJECT_NAME} PRIVATE network)

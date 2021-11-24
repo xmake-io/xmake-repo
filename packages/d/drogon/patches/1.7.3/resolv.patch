@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -79,7 +79,10 @@
+ else (BUILD_DROGON_SHARED)
+     add_library(${PROJECT_NAME} STATIC)
+ endif (BUILD_DROGON_SHARED)
+ 
++if (APPLE)
++    target_link_libraries(${PROJECT_NAME} PUBLIC resolv)
++endif (APPLE)
+ if (NOT ${CMAKE_PLATFORM_NAME} STREQUAL "Windows" AND CMAKE_CXX_COMPILER_ID MATCHES GNU)
+     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror)
+ endif ()
