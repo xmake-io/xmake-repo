@@ -50,7 +50,7 @@ package("openssl")
     end)
 
     on_install("mingw", function (package)
-        local configs = {"Configure"}
+        local configs = {"Configure", "no-tests"}
         table.insert(configs, package:is_arch("i386", "x86") and "mingw" or "mingw64")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         local installdir = package:installdir()
@@ -68,6 +68,10 @@ package("openssl")
                 rc = rc:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
                 buildenvs.RC = rc
             end
+        end
+        -- fix 'cp: directory fuzz does not exist'
+        if package:config("shared") then
+            os.mkdir("fuzz")
         end
         os.vrunv("perl", configs, {envs = buildenvs})
         import("package.tools.make").install(package)
