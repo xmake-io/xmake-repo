@@ -12,7 +12,7 @@ package("imguizmo")
             local xmake_lua
             xmake_lua = [[
                 add_rules("mode.debug", "mode.release")
-                add_requires("imgui v1.83", {build = true})
+                add_requires("imgui v1.83")
 
                 target("imguizmo")
                     set_kind("static")
