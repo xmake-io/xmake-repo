@@ -9,6 +9,12 @@ package("libspng")
 
     add_deps("cmake", "zlib")
 
+    on_load(function (package)
+        if not package:config("shared") then
+            package:add("defines", "SPNG_STATIC")
+        end
+    end)
+
     on_install(function (package)
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
