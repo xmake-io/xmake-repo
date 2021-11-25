@@ -5,6 +5,8 @@ package("imgui")
 
     add_urls("https://github.com/ocornut/imgui/archive/$(version).tar.gz",
              "https://github.com/ocornut/imgui.git")
+
+    add_versions("v1.85-docking", "dc8c3618e8f8e2dada23daa1aa237626af341fd8")
     add_versions("v1.85", "7ed49d1f4573004fa725a70642aaddd3e06bb57fcfe1c1a49ac6574a3e895a77")
     add_versions("v1.84.2", "35cb5ca0fb42cb77604d4f908553f6ef3346ceec4fcd0189675bdfb764f62b9b")
     add_versions("v1.84.1", "292ab54cfc328c80d63a3315a242a4785d7c1cf7689fbb3d70da39b34db071ea")
@@ -68,7 +70,7 @@ package("imgui")
                 target("imgui")
                     set_kind("static")
                     add_files("*.cpp")
-                    add_headerfiles("imgui.h", "imconfig.h")
+                    add_headerfiles("*.h")
             ]]
         end
 
