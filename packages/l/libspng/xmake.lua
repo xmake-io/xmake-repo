@@ -7,7 +7,7 @@ package("libspng")
              "https://github.com/randy408/libspng.git")
     add_versions("v0.7.1", "0726a4914ad7155028f3baa94027244d439cd2a2fbe8daf780c2150c4c951d8e")
 
-    add_deps("cmake", "zlib")
+    add_deps("zlib")
 
     on_load(function (package)
         if not package:config("shared") then
@@ -16,16 +16,25 @@ package("libspng")
     end)
 
     on_install(function (package)
-        local configs = {"-DBUILD_EXAMPLES=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            add_requires("zlib")
+            target("spng")
+                set_kind("$(kind)")
+                add_files("spng/*.c")
+                add_headerfiles("spng/*.h")
+                add_packages("zlib")
+                if is_kind("static") then
+                    add_defines("SPNG_STATIC")
+                end
+        ]])
+        local configs = {}
         if package:config("shared") then
-            table.insert(configs, "-DSPNG_SHARED=ON")
-            table.insert(configs, "-DSPNG_STATIC=OFF")
-        else
-            table.insert(configs, "-DSPNG_SHARED=OFF")
-            table.insert(configs, "-DSPNG_STATIC=ON")
+            configs.kind = "shared"
+        elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
