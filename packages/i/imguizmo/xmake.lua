@@ -9,8 +9,7 @@ package("imguizmo")
     add_versions("1.83", "e6d05c5ebde802df7f6c342a06bc675bd2aa1c754d2d96755399a182187098a8")
 
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
-            local xmake_lua
-            xmake_lua = [[
+            local xmake_lua = [[
                 add_rules("mode.debug", "mode.release")
                 add_requires("imgui v1.83")
 
