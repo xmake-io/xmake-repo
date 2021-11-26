@@ -5,6 +5,11 @@ package("libhv")
 
     add_urls("https://github.com/ithewei/libhv/archive/v$(version).zip")
     add_versions("1.0.0", "39adb77cc7addaba82b69fa9a433041c8288f3d9c773fa360162e3391dcf6a7b")
+    add_versions("1.1.0", "a753c268976d9c4f85dcc10be2377bebc36d4cb822ac30345cf13f2a7285dbe3")
+    add_versions("1.1.1", "e012d9752fe8fb3f788cb6360cd9abe61d4ccdc1d2085501d85f1068eba8603e")
+    add_versions("1.2.1", "d658a8e7f1a3b2f3b0ddcabe3b13595b70246c94d57f2c27bf9a9946431b2e63")
+    add_versions("1.2.2", "a15ec12cd77d1fb745a74465b8bdee5a45247e854371db9d0863573beca08466")
+    add_versions("1.2.3", "C30ACE04597A0558CE957451D64ACC7CD3260D991DC21628E048C8DEC3028F34")
 
     add_configs("protocol",    {description = "compile protocol", default = false, type = "boolean"})
     add_configs("http",        {description = "compile http", default = true, type = "boolean"})
@@ -19,6 +24,7 @@ package("libhv")
     add_configs("nghttp2",     {description = "with nghttp2 library", default = false, type = "boolean"})
     add_configs("openssl",     {description = "with openssl library", default = false, type = "boolean"})
     add_configs("mbedtls",     {description = "with mbedtls library", default = false, type = "boolean"})
+    add_configs("GNUTLS",      {description="with gnutls library",default=false,type="boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread")
@@ -57,7 +63,8 @@ package("libhv")
                                "enable_ipv6",
                                "enable_uds",
                                "enable_windump",
-                               "use_multimap"}) do
+                               "use_multimap",
+                               "WITH_GNUTLS"}) do
             local config_name = name:gsub("with_", ""):gsub("use_", ""):gsub("enable_", "")
             table.insert(configs, "-D" .. name:upper() .. "=" .. (package:config(config_name) and "ON" or "OFF"))
         end
