@@ -32,6 +32,9 @@ package("loguru")
                 set_kind("static")
                 add_files("loguru.cpp")
                 add_headerfiles("loguru.hpp")
+                if is_plat("cross") then
+                    add_defines("LOGURU_STACKTRACES=0")
+                end
                 if has_config("with_fmt") then
                     add_packages("fmt")
                     add_defines("LOGURU_USE_FMTLIB")
