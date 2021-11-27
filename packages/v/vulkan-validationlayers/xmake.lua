@@ -4,21 +4,30 @@ package("vulkan-validationlayers")
     set_description("Vulkan Validation Layers")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/sdk-$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
-    add_versions("1.2.189+1", "d169ae71ae3ba12159df355b58f86f5635062c695d1deac9b97d5653561d517d")
-    add_versions("1.2.162+0", "80aa9e180b3900598121d7a3ea613665b99aae21bb40268ecafd82df8016c6f5")
-    add_versions("1.2.154+0", "8898ab05d0d8dec04fbba03d0ed2e79a1eb5c0382e5c89d4c737b45a6648f7f9")
+    if is_plat("android") then
+        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/download/sdk-$(version)/android-binaries-$(version).tar.gz",
+        {version = function (version) return version:gsub("%+", ".") end})
 
-    add_patches("1.2.154+0", "https://github.com/KhronosGroup/Vulkan-ValidationLayers/commit/9d3ef3258715573b17e8195855c76626600998be.patch", "1fa39483c345fbfb43b925e8410a55e58fa8a9776f9e5443c6e4ec994a554749")
+        add_versions("1.2.189+1", "b3e69b60a67a17b023825f9eb0ce1aef22e6b59d095afa204d883a9ce3d81021")
+    else
+        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/sdk-$(version).tar.gz",
+        {version = function (version) return version:gsub("%+", ".") end})
 
-    add_deps("cmake")
-    add_deps("glslang", "spirv-headers", "spirv-tools")
-    if is_plat("windows") then
-        add_syslinks("Advapi32")
-    elseif is_plat("linux") then
-        add_extsources("apt::vulkan-validationlayers-dev")
-        add_deps("ninja")
-        add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
+        add_versions("1.2.189+1", "d169ae71ae3ba12159df355b58f86f5635062c695d1deac9b97d5653561d517d")
+        add_versions("1.2.162+0", "80aa9e180b3900598121d7a3ea613665b99aae21bb40268ecafd82df8016c6f5")
+        add_versions("1.2.154+0", "8898ab05d0d8dec04fbba03d0ed2e79a1eb5c0382e5c89d4c737b45a6648f7f9")
+
+        add_patches("1.2.154+0", "https://github.com/KhronosGroup/Vulkan-ValidationLayers/commit/9d3ef3258715573b17e8195855c76626600998be.patch", "1fa39483c345fbfb43b925e8410a55e58fa8a9776f9e5443c6e4ec994a554749")
+
+        add_deps("cmake")
+        add_deps("glslang", "spirv-headers", "spirv-tools")
+        if is_plat("windows") then
+            add_syslinks("Advapi32")
+        elseif is_plat("linux") then
+            add_extsources("apt::vulkan-validationlayers-dev")
+            add_deps("ninja")
+            add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
+        end
     end
 
     on_load("windows", "linux", function (package)
@@ -67,6 +76,17 @@ package("vulkan-validationlayers")
         os.mv("layers", package:installdir("include"))
     end)
 
+    on_install("android", function (package)
+        os.cp("*", package:installdir("lib"))
+    end)
+
     on_test(function (package)
-        assert(package:has_cxxfuncs("getLayerOption", {includes = "layers/vk_layer_config.h"}))
+        if package:is_plat("android") then
+            assert(os.isfile(path.join(package:installdir("lib"), "x86_64", "libVkLayer_khronos_validation.so")))
+            assert(os.isfile(path.join(package:installdir("lib"), "x86", "libVkLayer_khronos_validation.so")))
+            assert(os.isfile(path.join(package:installdir("lib"), "armeabi-v7a", "libVkLayer_khronos_validation.so")))
+            assert(os.isfile(path.join(package:installdir("lib"), "arm64-v8a", "libVkLayer_khronos_validation.so")))
+        else
+            assert(package:has_cxxfuncs("getLayerOption", {includes = "layers/vk_layer_config.h"}))
+        end
     end)
