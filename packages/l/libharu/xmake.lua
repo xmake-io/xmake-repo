@@ -2,7 +2,7 @@ package("libharu")
 
     set_homepage("http://libharu.org/")
     set_description("libHaru is a free, cross platform, open source library for generating PDF files.")
-    set_license("LGPL")
+    set_license("zlib")
 
     add_urls("https://github.com/libharu/libharu/archive/refs/tags/RELEASE_$(version).tar.gz", {version = function (version) return version:gsub("%.", "_") end})
     add_urls("https://github.com/libharu/libharu.git")
