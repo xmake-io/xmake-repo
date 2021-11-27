@@ -10,7 +10,7 @@ package("loguru")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("fmt", {description = "Use fmt to format the log.", default = false, type = "boolean"})
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
     end
     on_load(function (package)
