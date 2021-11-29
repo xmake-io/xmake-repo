@@ -1,0 +1,33 @@
+package("nanogui")
+
+    set_homepage("https://github.com/wjakob/nanogui")
+    set_description("Minimalistic GUI library for OpenGL")
+
+    add_urls("https://github.com/wjakob/nanogui.git")
+    add_versions("2019.9.23", "e9ec8a1a9861cf578d9c6e85a6420080aa715c03")
+
+    add_deps("cmake", "eigen", "glfw", "nanovg")
+
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation", "CoreGraphics", "CoreVideo", "IOKit", "AppKit")
+    end
+
+    on_install("windows", "macosx", "linux", function (package)
+        local configs = {"-DNANOGUI_BUILD_EXAMPLE=OFF", "-DNANOGUI_BUILD_PYTHON=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DNANOGUI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <iostream>
+            using namespace std;
+            using namespace nanogui;
+            void test() {
+                Button *b = new Button(NULL/*window*/, "Plain button");
+                b->setCallback([] { cout << "pushed!" << endl; });
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "nanogui/nanogui.h"}))
+    end)
