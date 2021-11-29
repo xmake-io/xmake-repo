@@ -7,6 +7,9 @@ package("nanogui")
     add_versions("2019.9.23", "e9ec8a1a9861cf578d9c6e85a6420080aa715c03")
 
     add_deps("cmake", "eigen", "glfw", "nanovg")
+    if is_plat("linux") then
+        add_deps("libxi", "libxcursor", "libxinerama", "libxrandr", "libxxf86vm")
+    end
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreGraphics", "CoreVideo", "IOKit", "AppKit")
@@ -25,7 +28,11 @@ package("nanogui")
             io.replace("include/nanogui/opengl.h", '#include <nanovg.h>', "#include <nanovg.h>\n#include <GL/gl.h>", {plain = true})
         end
         os.rm("ext/eigen")
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"eigen", "nanovg", "glfw"}})
+        local packagedeps = {"eigen", "nanovg", "glfw"}
+        if package:is_plat("linux") then
+            table.join2(packagedeps, "libxi", "libxcursor", "libxinerama", "libxrandr", "libxxf86vm")
+        end
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
