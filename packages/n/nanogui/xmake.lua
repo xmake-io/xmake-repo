@@ -21,7 +21,9 @@ package("nanogui")
         io.replace("CMakeLists.txt", 'ext/nanovg/src/nanovg.c', "", {plain = true})
         io.replace("CMakeLists.txt", 'add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ext/glfw" "ext_build/glfw")', "", {plain = true})
         io.replace("CMakeLists.txt", 'set_target_properties(glfw PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)', "", {plain = true})
-        io.replace("include/nanogui/opengl.h", '#include <nanovg.h>', "#include <nanovg.h>\n#include <GL/gl.h>", {plain = true})
+        if package:is_plat("linux", "windows") then
+            io.replace("include/nanogui/opengl.h", '#include <nanovg.h>', "#include <nanovg.h>\n#include <GL/gl.h>", {plain = true})
+        end
         os.rm("ext/eigen")
         import("package.tools.cmake").install(package, configs, {packagedeps = {"eigen", "nanovg", "glfw"}})
     end)
