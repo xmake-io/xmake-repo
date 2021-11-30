@@ -13,6 +13,8 @@ package("nanogui")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreGraphics", "CoreVideo", "IOKit", "AppKit")
+    elseif is_plat("windows") then
+        add_syslinks("comdlg32")
     end
 
     on_install("windows", "macosx", "linux", function (package)
@@ -25,7 +27,12 @@ package("nanogui")
         io.replace("CMakeLists.txt", 'add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ext/glfw" "ext_build/glfw")', "", {plain = true})
         io.replace("CMakeLists.txt", 'set_target_properties(glfw PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)', "", {plain = true})
         if package:is_plat("linux", "windows") then
-            io.replace("include/nanogui/opengl.h", '#include <nanovg.h>', "#include <nanovg.h>\n#include <GL/gl.h>", {plain = true})
+            io.replace("include/nanogui/opengl.h", '#include <nanovg.h>', [[#include <nanovg.h>
+#ifdef _MSC_VER
+#   include <windows.h>
+#   define glUniform1i(...) // FIXME: indentify not found
+#endif
+#include <GL/gl.h>]], {plain = true})
         end
         os.rm("ext/eigen")
         local packagedeps = {"eigen", "nanovg", "glfw"}
@@ -38,11 +45,12 @@ package("nanogui")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
+            #include <nanogui/nanogui.h>
             using namespace std;
             using namespace nanogui;
             void test() {
                 Button *b = new Button(NULL/*window*/, "Plain button");
                 b->setCallback([] { cout << "pushed!" << endl; });
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "nanogui/nanogui.h"}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)
