@@ -38,7 +38,7 @@ package("openmp")
         return {}
     end)
 
-    on_install(function (package)
+    on_install("linux", "macosx", "windows", function (package)
         -- we need not install anything because we need only compiler flags and deps
     end)
 
