@@ -18,6 +18,26 @@ package("spirv-tools")
         add_extsources("apt::spirv-tools")
     end
 
+    on_fetch("macosx", function (package, opt)
+        if opt.system then
+            -- fix missing includedirs when the system library is found on macOS
+            local result = package:find_package("spirv-tools")
+            if result and not result.includedirs then
+                for _, linkdir in ipairs(result.linkdirs) do
+                    if linkdir:startswith("/usr") then
+                        local includedir = path.join(path.directory(linkdir), "include", "spirv-tools")
+                        if os.isdir(includedir) then
+                            includedir = path.directory(includedir)
+                            result.includedirs = result.includedirs or {}
+                            table.insert(result.includedirs, includedir)
+                        end
+                    end
+                end
+            end
+            return result
+        end
+    end)
+
     on_install("linux", "windows", "macosx", function (package)
         package:addenv("PATH", "bin")
         local configs = {"-DSPIRV_SKIP_TESTS=ON"}
