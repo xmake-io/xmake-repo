@@ -13,7 +13,7 @@ package("vulkan-loader")
 
     if is_plat("linux") then
         add_extsources("apt::libvulkan-dev")
-        add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
+        add_deps("wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon")
     end
 
     on_load("windows", "linux", "macosx", function (package)
