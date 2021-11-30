@@ -22,7 +22,7 @@ package("vulkan-validationlayers")
         add_patches("1.2.154+0", "https://github.com/KhronosGroup/Vulkan-ValidationLayers/commit/9d3ef3258715573b17e8195855c76626600998be.patch", "1fa39483c345fbfb43b925e8410a55e58fa8a9776f9e5443c6e4ec994a554749")
 
         add_deps("cmake")
-        add_deps("glslang", "spirv-headers 1.2.198+0-sdk", "spirv-tools")
+        add_deps("glslang", "spirv-tools")
         if is_plat("windows") then
             add_syslinks("Advapi32")
         elseif is_plat("linux") then
@@ -37,6 +37,11 @@ package("vulkan-validationlayers")
         package:add("deps", "vulkan-headers " .. sdkver)
         if package:version():ge("1.2.189") then
             package:add("deps", "robin-hood-hashing")
+        end
+        if package:version():ge("1.2.198") then
+            package:add("deps", "spirv-headers " .. package:version() .. "-sdk")
+        else
+            package:add("deps", "spirv-headers")
         end
     end)
 
