@@ -7,11 +7,12 @@ package("spirv-headers")
 
     local map = {["1.5.4+2"] = "1.5.4.raytracing.fixed",
                  -- Workaround since no new releases are available for spirv-headers, will be removed in future
-                 ["1.5.5"] = "e71feddb3f17c5586ff7f4cfb5ed1258b800574b"}
+        ["1.5.5"] = "e71feddb3f17c5586ff7f4cfb5ed1258b800574b",
+        ["1.2.198+0-sdk"] = "sdk-1.2.198.0"}
     add_urls("https://github.com/KhronosGroup/SPIRV-Headers/archive/$(version).tar.gz", {version = function (version) return map[tostring(version)] end})
     add_versions("1.5.4+2", "df2ad2520be4d95a479fa248921065885bbf435a658349a7fc164ad7b26b68c6")
     add_versions("1.5.5", "9eb56548460fd8850250ebf78071528fb66c2a5db2ef535edc1d493b2581ec66")
-    add_versions("sdk-1.2.198.0", "3301a23aca0434336a643e433dcacacdd60000ab3dd35dc0078a297c06124a12")
+    add_versions("1.2.198+0-sdk", "3301a23aca0434336a643e433dcacacdd60000ab3dd35dc0078a297c06124a12")
 
     add_deps("cmake")
 
