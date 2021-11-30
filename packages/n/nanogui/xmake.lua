@@ -35,6 +35,7 @@ package("nanogui")
 #include <GL/gl.h>]], {plain = true})
         end
         os.rm("ext/eigen")
+        os.rm("ext/nanovg/src/nanovg.c")
         local packagedeps = {"eigen", "nanovg", "glfw"}
         if package:is_plat("linux") then
             table.join2(packagedeps, "libxi", "libxcursor", "libxinerama", "libxrandr", "libxxf86vm")
