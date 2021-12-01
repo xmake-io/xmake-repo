@@ -11,6 +11,10 @@ package("shaderc")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_load(function (package)
         if package:config("binaryonly") then
             package:set("kind", "binary")
