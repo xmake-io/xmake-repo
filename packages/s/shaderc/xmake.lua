@@ -17,6 +17,14 @@ package("shaderc")
         end
     end)
 
+    on_load(function (package)
+        if package:config("shared") then
+            package:add("links", "shaderc_shared")
+        else
+            package:add("links", "shaderc_combined")
+        end
+    end)
+
     on_install("linux", "windows", "macosx", function (package)
         os.execv("python3", {"./utils/git-sync-deps"})
         package:addenv("PATH", "bin")
@@ -29,7 +37,7 @@ package("shaderc")
     on_test(function (package)
         os.vrun("glslc --version")
         if not package:config("binaryonly") then
-            assert(package:has_cfuncs("shaderc_get_spv_version", {configs = {includes = "shaderc/shaderc.h"}}))
+            assert(package:has_cfuncs("shaderc_compiler_initialize", {includes = "shaderc/shaderc.h"}))
         end
     end)
 
