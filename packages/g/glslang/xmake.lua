@@ -23,6 +23,12 @@ package("glslang")
         end
     end)
 
+    on_fetch(function (package, opt)
+        if opt.system and package:config("binaryonly") then
+            return package:find_tool("glslangValidator")
+        end
+    end)
+
     on_install("linux", "windows", "macosx", function (package)
         package:addenv("PATH", "bin")
         io.replace("CMakeLists.txt", "ENABLE_OPT OFF", "ENABLE_OPT ON")
