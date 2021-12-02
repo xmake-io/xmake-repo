@@ -22,6 +22,7 @@ package("e2fsprogs")
         os.rm("scrub")
         local configs = {"MKDIR_P=mkdir -p", "--disable-e2initrd-helper"}
         table.insert(configs, "--exec-prefix=" .. package:installdir())
+        table.insert(configs, "--enable-libuuid")
         if package:config("shared") then
             if package:is_plat("linux") then
                 table.insert(configs, "--enable-elf-shlibs")
@@ -39,4 +40,5 @@ package("e2fsprogs")
 
     on_test(function (package)
         assert(package:has_cfuncs("ext2fs_open", {includes = "ext2fs/ext2fs.h"}))
+        assert(package:has_cfuncs("uuid_parse", {includes = "uuid/uuid.h"}))
     end)
