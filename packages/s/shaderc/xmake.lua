@@ -19,13 +19,16 @@ package("shaderc")
         if package:config("binaryonly") then
             package:set("kind", "binary")
         end
-    end)
-
-    on_load(function (package)
         if package:config("shared") then
             package:add("links", "shaderc_shared")
         else
             package:add("links", "shaderc_combined")
+        end
+    end)
+
+    on_fetch(function (package, opt)
+        if opt.system and package:config("binaryonly") then
+            return package:find_tool("glslc")
         end
     end)
 
