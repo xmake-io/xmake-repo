@@ -16,7 +16,7 @@ package("boost")
     add_versions("1.73.0", "4eb3b8d442b426dc35346235c8733b5ae35ba431690e38c6a8263dce9fcbb402")
     add_versions("1.72.0", "59c9b274bc451cf91a9ba1dd2c7fdcaf5d60b1b3aa83f2c9fa143417cc660722")
     add_versions("1.70.0", "430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778")
-    
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::boost")
     elseif is_plat("linux") then
@@ -95,7 +95,7 @@ package("boost")
                 -- we uses ld/clang++ for link stdc++ for shared libraries
                 file:print("using darwin : : %s ;", package:build_getenv("ld"))
             elseif is_plat("windows") then
-                file:print("using msvc : : %s ;", os.args(package:build_getenv("cxx")))
+                file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
             else
                 file:print("using gcc : : %s ;", package:build_getenv("cxx"))
             end
