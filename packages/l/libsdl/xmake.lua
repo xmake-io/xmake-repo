@@ -50,9 +50,9 @@ package("libsdl")
     on_load(function (package)
         if package:config("use_sdlmain") then
             package:add("links", "SDL2main", "SDL2")
+            package:add("defines", "SDL_MAIN_HANDLED")
         else
             package:add("links", "SDL2")
-            package:add("defines", "SDL_MAIN_HANDLED")
         end
         if package:is_plat("linux") and package:config("with_x") then
             package:add("deps", "libxext", {private = true})
