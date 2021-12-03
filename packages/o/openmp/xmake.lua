@@ -25,8 +25,6 @@ package("openmp")
                 elseif package:has_tool(toolkind, "icl") then
                     package:add(flagname, "-Qopenmp")
                 end
-            end
-            if package:is_plat("macosx", "linux") then
                 if package:config("runtime") == "default" then
                     if package:has_tool(toolkind, "cl") then
                         package:add("ldflags", "/openmp")
@@ -44,8 +42,6 @@ package("openmp")
                         package:add("ldflags", "-Qopenmp")
                     end
                 end
-            end
-            if package:is_plat("windows") then
                 if package:config("runtime") == "custom" then
                     if package:has_tool(toolkind, "cl") then
                         package:add("ldflags", "/openmp")
