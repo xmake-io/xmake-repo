@@ -3,12 +3,15 @@ package("openmp")
     set_homepage("https://openmp.org/")
     set_description("The OpenMP API specification for parallel programming")
 
+    add_configs("runtime",      {description = "Set OpenMP runtime for gcc/clang like compilers.", default = "default", type = "string", values = {"default", "custom"}})
+    add_configs("experimental", {description = "Enable experimental OpenMP feature for msvc.", default = true, type = boolean})
+
     on_load(function (package)
         if package.has_tool then
             for _, toolkind in ipairs({"cc", "cxx"}) do
                 local flagname = toolkind == "cxx" and "cxxflags" or "cflags"
                 if package:has_tool(toolkind, "cl") then
-                    package:add(flagname, "/openmp")
+                    package:add(flagname, (package:config("experimental") and "/openmp:experimental" or "/openmp"))
                 elseif package:has_tool(toolkind, "clang", "clangxx") then
                     if package:is_plat("macosx") then
                         package:add(flagname, "-Xpreprocessor -fopenmp")
@@ -23,9 +26,33 @@ package("openmp")
                     package:add(flagname, "-Qopenmp")
                 end
             end
-        end
-        if package:is_plat("macosx", "linux") then
-            package:add("deps", "libomp")
+            if package:is_plat("macosx", "linux") then
+                if package:config("runtime") == "default" then
+                    if package:has_tool(toolkind, "cl") then
+                        package:add("ldflags", "/openmp")
+                    elseif package:has_tool(toolkind, "clang", "clangxx") then
+                        if package:is_plat("macosx") then
+                            package:add("deps", "libomp") -- need to tell apple clang from llvm clang
+                        else
+                            package:add("ldflags", "-fopenmp")
+                        end
+                    elseif package:has_tool(toolkind, "gcc", "gxx") then
+                        package:add("ldflags", "-fopenmp")
+                    elseif package:has_tool(toolkind, "icc", "icpc") then
+                        package:add("ldflags", "-qopenmp")
+                    elseif package:has_tool(toolkind, "icl") then
+                        package:add("ldflags", "-Qopenmp")
+                    end
+                end
+            end
+            if package:is_plat("windows") then
+                if package:config("runtime") == "custom" then
+                    if package:has_tool(toolkind, "cl") then
+                        package:add("ldflags", "/openmp")
+                        package:add("ldflags", "/nodefaultlib:vcomp")
+                    end
+                end
+            end
         end
     end)
 
@@ -35,6 +62,7 @@ package("openmp")
                 return
             end
         end
+        -- need to detect the existance of flags
         return {}
     end)
 
