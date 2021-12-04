@@ -58,8 +58,11 @@ package("openmp")
                 return
             end
         end
-        -- need to detect the existance of flags
-        return {}
+        -- we need fetch the installed flags in on_load
+        local manifest = package:manifest_load()
+        if manifest then
+            return manifest.vars
+        end
     end)
 
     on_install("linux", "macosx", "windows", function (package)
