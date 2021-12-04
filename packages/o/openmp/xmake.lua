@@ -79,7 +79,9 @@ package("openmp")
         assert(package:check_csnippets({test = [[
         #include <stdio.h>
         #include <omp.h>
-
+        #ifndef _OPENMP
+        #    error missing openmp flags
+        #endif
         static void test() {
             #pragma omp parallel
             {
