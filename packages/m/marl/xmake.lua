@@ -8,7 +8,7 @@ package("marl")
     add_versions("2021.8.18", "49602432d97222eec1e6c8e4f70723c3864c49c1")
 
     add_deps("cmake")
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
