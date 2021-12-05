@@ -12,8 +12,7 @@ package("marl")
         add_syslinks("pthread")
     end
 
-    on_install(function (package)
-        import("package.tools.cmake")
+    on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DMARL_INSTALL=on"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -21,7 +20,7 @@ package("marl")
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=off")
         end
-        cmake.install(package, configs)
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
