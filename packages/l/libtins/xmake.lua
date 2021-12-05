@@ -3,8 +3,9 @@ package("libtins")
     set_homepage("http://libtins.github.io/")
     set_description("High-level, multiplatform C++ network packet sniffing and crafting library.")
 
-    set_urls("https://github.com/mfontanini/libtins.git")
-    add_versions("2021.6.23", "24ac038c302b2dff1cd47b104893ee60965d108f")
+    set_urls("https://github.com/mfontanini/libtins/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/mfontanini/libtins.git")
+    add_versions("v4.2", "a9fed73e13f06b06a4857d342bb30815fa8c359d00bd69547e567eecbbb4c3a1")
 
     add_deps("cmake", "boost")
 
@@ -24,11 +25,11 @@ package("libtins")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <string>
             using namespace Tins;
             void test() {
-                SnifferConfiguration config;
-                config.set_promisc_mode(true);
-                config.set_filter("udp and port 53");
+                std::string name = NetworkInterface::default_interface().name();
+                printf("%s\n", name.c_str());
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"tins/tins.h", "tins/sniffer.h"}}))
+        ]]}, {configs = {languages = "c++11"}, includes = {"tins/tins.h"}}))
     end)
