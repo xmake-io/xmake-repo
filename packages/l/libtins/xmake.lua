@@ -30,5 +30,5 @@ package("libtins")
                 config.set_promisc_mode(true);
                 config.set_filter("udp and port 53");
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"tins/tins.h"}}))
+        ]]}, {configs = {languages = "c++11"}, includes = {"tins/tins.h", "tins/sniffer.h"}}))
     end)
