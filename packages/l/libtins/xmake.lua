@@ -3,9 +3,8 @@ package("libtins")
     set_homepage("http://libtins.github.io/")
     set_description("High-level, multiplatform C++ network packet sniffing and crafting library.")
 
-    set_urls("https://github.com/mfontanini/libtins/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/mfontanini/libtins.git")
-    add_versions("v4.2", "a9fed73e13f06b06a4857d342bb30815fa8c359d00bd69547e567eecbbb4c3a1")
+    set_urls("https://github.com/mfontanini/libtins.git")
+    add_versions("2021.6.23", "24ac038c302b2dff1cd47b104893ee60965d108f")
 
     add_deps("cmake", "boost")
 
