@@ -4,7 +4,7 @@ package("openmp")
     set_description("The OpenMP API specification for parallel programming")
 
     add_configs("runtime",      {description = "Set OpenMP runtime for gcc/clang like compilers.", default = "default", type = "string", values = {"default", "custom"}})
-    add_configs("experimental", {description = "Enable experimental OpenMP feature for msvc.", default = true, type = boolean})
+    add_configs("experimental", {description = "Enable experimental OpenMP feature for msvc.", default = false, type = boolean})
 
     on_load(function (package)
         if package.has_tool then
@@ -67,6 +67,8 @@ package("openmp")
                     end
                 end
             end
+        else
+            raise("This package(openmp) requires xmake version 2.6.1 or newer.")
         end
         return (result.cflags or result.cxxflags) and result
     end)
