@@ -7,6 +7,9 @@ package("libtins")
     add_versions("2021.6.23", "24ac038c302b2dff1cd47b104893ee60965d108f")
 
     add_deps("cmake", "boost")
+    if is_plat("windows') then
+        add_syslinks("ws2_32", "iphlpapi")
+    end
 
     on_install("linux", "windows", "macosx", function (package)
         local configs = {"-DLIBTINS_BUILD_EXAMPLES=OFF", "-DLIBTINS_BUILD_TESTS=OFF",
@@ -19,6 +22,7 @@ package("libtins")
             "-DLIBTINS_ENABLE_WPA2_CALLBACKS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBTINS_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configd, "-DCMAKE_INSTALL_LIBDIR=lib")
         import("package.tools.cmake").install(package, configs)
     end)
 
