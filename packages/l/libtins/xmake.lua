@@ -7,7 +7,7 @@ package("libtins")
     add_versions("2021.6.23", "24ac038c302b2dff1cd47b104893ee60965d108f")
 
     add_deps("cmake", "boost")
-    if is_plat("windows') then
+    if is_plat("windows") then
         add_syslinks("ws2_32", "iphlpapi")
     end
 
