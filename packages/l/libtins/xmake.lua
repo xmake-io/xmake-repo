@@ -11,6 +11,12 @@ package("libtins")
         add_syslinks("ws2_32", "iphlpapi")
     end
 
+    on_load("windows", function (package)
+        if not package:config("shared") then
+            package:add("defines", "TINS_STATIC")
+        end
+    end)
+
     on_install("linux", "windows", "macosx", function (package)
         local configs = {"-DLIBTINS_BUILD_EXAMPLES=OFF", "-DLIBTINS_BUILD_TESTS=OFF",
             "-DLIBTINS_ENABLE_PCAP=OFF",
