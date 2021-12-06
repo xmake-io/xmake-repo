@@ -22,7 +22,7 @@ package("libtins")
             "-DLIBTINS_ENABLE_WPA2_CALLBACKS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBTINS_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configd, "-DCMAKE_INSTALL_LIBDIR=lib")
+        table.insert(configs, "-DCMAKE_INSTALL_LIBDIR=lib")
         import("package.tools.cmake").install(package, configs)
     end)
 
