@@ -18,19 +18,18 @@ package("linux-headers")
 
     on_load(function (package)
         if package:config("driver_modules") then
-            package:add("deps", "flex", "bison", "bc")
+            package:add("deps", "flex", "bison", "bc", "pkg-config", "openssl", "elfutils")
         else
             package:add("deps", "rsync")
         end
     end)
 
     on_install("@linux", function (package)
+        import("package.tools.make")
         if package:config("driver_modules") then
             os.cp("*", package:installdir())
-            os.vrunv("make", {"allyesconfig"}, {curdir = package:installdir()})
-            -- disable libelf deps
-            io.replace(path.join(package:installdir(), ".config"), "CONFIG_UNWINDER_ORC=y", "CONFIG_UNWINDER_ORC=n")
-            os.vrunv("make", {"modules_prepare"}, {curdir = package:installdir()})
+            make.make(package, {"allyesconfig"}, {curdir = package:installdir()})
+            make.make(package, {"modules_prepare"}, {curdir = package:installdir()})
             os.rm(path.join(package:installdir(), "source"))
         else
             os.vrunv("make", {"headers_install", "INSTALL_HDR_PATH=" .. package:installdir()})
