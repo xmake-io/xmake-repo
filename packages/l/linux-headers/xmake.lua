@@ -18,7 +18,8 @@ package("linux-headers")
 
     on_load(function (package)
         if package:config("driver_modules") then
-            package:add("deps", "flex", "bison", "bc", "pkg-config", "openssl", "elfutils")
+            package:add("deps", "flex", "bison", "bc", "pkg-config")
+            package:add("deps", "openssl", "elfutils", {host = true})
         else
             package:add("deps", "rsync")
         end
