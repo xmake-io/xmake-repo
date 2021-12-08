@@ -25,5 +25,5 @@ package("bc")
     end)
 
     on_test(function (package)
-        os.run("bc --version")
+        os.vrun("bc --version")
     end)
