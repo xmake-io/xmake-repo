@@ -14,10 +14,27 @@ package("linux-headers")
     add_versions("5.9.16", "b0d7abae88e5f91893627c645e680a95c818defd1b4fcaf3e2afb4b2b6b4ab86")
     add_versions("5.10.46", "569122a39c6b325befb9ac1c07da0c53e6363b3baacd82081d131b06c1dc1415")
 
-    add_deps("rsync")
+    add_configs("driver_modules", {description = "Enable driver modules files.", default = true, type = "boolean"})
+
+    on_load(function (package)
+        if package:config("driver_modules") then
+            package:add("deps", "flex", "bison", "bc")
+        else
+            package:add("deps", "rsync")
+        end
+    end)
 
     on_install("@linux", function (package)
-        os.vrunv("make", {"headers_install", "INSTALL_HDR_PATH=" .. package:installdir()})
+        if package:config("driver_modules") then
+            os.cp("*", package:installdir())
+            os.vrunv("make", {"allyesconfig"}, {curdir = package:installdir()})
+            -- disable libelf deps
+            io.replace(path.join(package:installdir(), ".config"), "CONFIG_UNWINDER_ORC=y", "CONFIG_UNWINDER_ORC=n")
+            os.vrunv("make", {"modules_prepare"}, {curdir = package:installdir()})
+            os.rm(path.join(package:installdir(), "source"))
+        else
+            os.vrunv("make", {"headers_install", "INSTALL_HDR_PATH=" .. package:installdir()})
+        end
     end)
 
     on_test(function (package)
