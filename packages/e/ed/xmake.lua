@@ -14,5 +14,5 @@ package("ed")
     end)
 
     on_test(function (package)
-        os.exec("ed --version")
+        os.run("ed --version")
     end)

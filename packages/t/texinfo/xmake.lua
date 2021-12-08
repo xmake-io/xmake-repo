@@ -17,5 +17,5 @@ package("texinfo")
     end)
 
     on_test(function (package)
-        os.exec("makeinfo --version")
+        os.run("makeinfo --version")
     end)
