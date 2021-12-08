@@ -16,10 +16,11 @@ package("bc")
             "--disable-dependency-tracking",
             "--disable-install-warnings",
             "--disable-debug",
-            "--with-libedit",
             "--infodir=" .. package:installdir("info"),
             "--mandir=" .. package:installdir("man")}
-        io.replace("bc/main.c", '#include "getopt.h"', '#include "getopt.h"\n#include "global.h"', {plain = true})
+        if package:is_plat("macosx") then
+            table.insert(configs, "--with-libedit")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
