@@ -28,11 +28,11 @@ package("linux-headers")
     on_install("linux", function (package)
         import("package.tools.make")
         if package:config("driver_modules") then
-            local kernelsrc = package:installdir("kernelsrc")
-            os.cp("*", kernelsrc)
-            make.make(package, {"allyesconfig", "O=" .. package:installdir()}, {curdir = kernelsrc})
-            make.make(package, {"modules_prepare", "O=" .. package:installdir()}, {curdir = kernelsrc})
-            os.rm(path.join(kernelsrc, "source"))
+            local installdir = package:installdir()
+            os.cp("*", installdir)
+            make.make(package, {"allyesconfig"}, {curdir = installdir})
+            make.make(package, {"modules_prepare"}, {curdir = installdir})
+            os.rm(path.join(installdir, "source"))
         else
             os.vrunv("make", {"headers_install", "INSTALL_HDR_PATH=" .. package:installdir()})
         end
