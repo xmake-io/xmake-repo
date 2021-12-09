@@ -25,7 +25,7 @@ package("linux-headers")
         end
     end)
 
-    on_install("@linux", function (package)
+    on_install("linux", function (package)
         import("package.tools.make")
         if package:config("driver_modules") then
             os.cp("*", package:installdir())
