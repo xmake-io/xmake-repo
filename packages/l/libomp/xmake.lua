@@ -11,32 +11,11 @@ package("libomp")
     add_deps("cmake")
 
     add_links("omp")
-    if is_plat("linux") then
+    if is_plat("macosx") then
+        add_extsources("brew::libomp")
+    elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
-
-    on_load(function (package)
-        if package.has_tool then
-            for _, toolkind in ipairs({"cc", "cxx"}) do
-                local flagname = toolkind == "cxx" and "cxxflags" or "cflags"
-                if package:has_tool(toolkind, "cl") then
-                    package:add(flagname, "/openmp")
-                elseif package:has_tool(toolkind, "clang", "clangxx") then
-                    if package:is_plat("macosx") then
-                        package:add(flagname, "-Xpreprocessor -fopenmp")
-                    else
-                        package:add(flagname, "-fopenmp")
-                    end
-                elseif package:has_tool(toolkind, "gcc", "gxx") then
-                    package:add(flagname, "-fopenmp")
-                elseif package:has_tool(toolkind, "icc", "icpc") then
-                    package:add(flagname, "-qopenmp")
-                elseif package:has_tool(toolkind, "icl") then
-                    package:add(flagname, "-Qopenmp")
-                end
-            end
-        end
-    end)
 
     on_install("macosx", "linux", "cross", function (package)
         local configs = {"-DLIBOMP_INSTALL_ALIASES=OFF"}
