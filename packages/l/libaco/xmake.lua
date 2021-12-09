@@ -3,10 +3,10 @@ package("libaco")
     set_homepage("https://github.com/hnes/libaco")
     set_description("A blazing fast and lightweight C asymmetric coroutine library")
 
-    add_urls("https://github.com/hnes/libaco/archive/refs/tags/v$(version).tar.gz",
+    add_urls("https://github.com/hnes/libaco/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hnes/libaco.git")
 
-    add_versions("1.2.4", "25e0777ec2c686cc8c8433537d9b3694d196b0287abe6df4f0c21f8605fa5a06")
+    add_versions("v1.2.4", "25e0777ec2c686cc8c8433537d9b3694d196b0287abe6df4f0c21f8605fa5a06")
 
     on_install("macosx", "linux", function (package)
         io.writefile("xmake.lua", [[
