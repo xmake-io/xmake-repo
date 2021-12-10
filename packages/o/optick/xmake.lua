@@ -12,6 +12,8 @@ package("optick")
     if is_plat("windows") then
         add_syslink("Advapi32")
     end
+    
+    add_deps("cmake")
 
     on_install(function (package)
         local configs = {}
