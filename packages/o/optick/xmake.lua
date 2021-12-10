@@ -8,6 +8,10 @@ package("optick")
     
     add_configs("vulkan", {description = "Built-in support for Vulkan",     default = false, type = "boolean"})
     add_configs("d3d12",  {description = "Built-in support for DirectX 12", default = false, type = "boolean"})
+    
+    if is_plat("windows") then
+        add_syslink("Advapi32")
+    end
 
     on_install(function (package)
         local configs = {}
