@@ -25,6 +25,18 @@ package("linux-headers")
         end
     end)
 
+    on_fetch(function (package, opt)
+        if opt.system then
+            import("lib.detect.find_path")
+            local linux_headersdir = find_path("include/linux", "/usr/src/linux-headers-*")
+            if linux_headersdir then
+                -- parse version, linux-headers-5.11.0-41-generic, linux-headers-5.11.0-41
+                local version = path.filename(linux_headersdir):match("linux%-headers%-(%d+%.%d+%.%d+).*")
+                return {includedirs = path.join(linux_headersdir, "include"), version = version}
+            end
+        end
+    end)
+
     on_install("linux", function (package)
         import("package.tools.make")
         if package:config("driver_modules") then
