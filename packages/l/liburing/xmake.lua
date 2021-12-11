@@ -11,11 +11,11 @@ package("liburing")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     on_install("linux", function (package)
-        local configs = {}
+        local cflags
         if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
+            cflags = "-fPIC"
         end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf").install(package, {}, {cflags = cflags})
     end)
 
     on_test(function (package)
