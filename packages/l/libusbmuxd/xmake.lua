@@ -31,7 +31,7 @@ package("libusbmuxd")
         -- fix multiple definition with libplist
         io.replace("common/thread.c", " thread_once(", " thread_once_(", {plain = true})
         io.replace("common/thread.h", " thread_once(", " thread_once_(", {plain = true})
-        io.replace("src/libusbmuxd.c", " thread_once(", " thread_once_(", {plain = true})
+        io.replace("src/libusbmuxd.c", "\tthread_once(", " thread_once_(", {plain = true})
         import("package.tools.autoconf").install(package, configs, {cflags = cflags})
     end)
 
