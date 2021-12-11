@@ -18,11 +18,8 @@ package("libplist")
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--without-cython"}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
-        end
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         local cxflags
         if package:is_plat("linux") and package:config("pic") ~= false then
             cxflags = "-fPIC"
