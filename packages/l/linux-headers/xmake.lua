@@ -14,7 +14,7 @@ package("linux-headers")
     add_versions("5.9.16", "b0d7abae88e5f91893627c645e680a95c818defd1b4fcaf3e2afb4b2b6b4ab86")
     add_versions("5.10.46", "569122a39c6b325befb9ac1c07da0c53e6363b3baacd82081d131b06c1dc1415")
 
-    add_configs("driver_modules", {description = "Enable driver modules files.", default = false, type = "boolean"})
+    add_configs("driver_modules", {description = "Enable driver modules files.", default = true, type = "boolean"})
 
     on_load(function (package)
         if package:config("driver_modules") then
@@ -26,7 +26,7 @@ package("linux-headers")
     end)
 
     on_fetch(function (package, opt)
-        if opt.system then
+        if opt.system and not package:is_cross() then
             import("lib.detect.find_path")
             local linux_headersdir = find_path("include/linux", "/usr/src/linux-headers-*")
             if linux_headersdir then
@@ -37,13 +37,27 @@ package("linux-headers")
         end
     end)
 
-    on_install("linux", function (package)
+    on_install("linux", "cross", function (package)
         import("package.tools.make")
         if package:config("driver_modules") then
             local installdir = package:installdir()
             os.cp("*", installdir)
-            make.make(package, {"allyesconfig"}, {curdir = installdir})
-            make.make(package, {"modules_prepare"}, {curdir = installdir})
+            if package:is_plat("cross") then
+                local arch
+                if package:is_arch("arm", "armv7") then
+                    arch = "arm"
+                elseif package:is_arch("arm64", "arm64-v8a") then
+                    arch = "arm64"
+                end
+                assert(arch, "unknown arch(%s)!", package:arch())
+                local cc = package:tool("cc")
+                local cross = cc:gsub("%-gcc$", "-")
+                make.make(package, {"ARCH=" .. arch, "CROSS_COMPILE=" .. cross, "allyesconfig"}, {curdir = installdir})
+                make.make(package, {"ARCH=" .. arch, "CROSS_COMPILE=" .. cross, "modules_prepare"}, {curdir = installdir})
+            else
+                make.make(package, {"allyesconfig"}, {curdir = installdir})
+                make.make(package, {"modules_prepare"}, {curdir = installdir})
+            end
             os.rm(path.join(installdir, "source"))
         else
             os.vrunv("make", {"headers_install", "INSTALL_HDR_PATH=" .. package:installdir()})
