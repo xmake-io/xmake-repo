@@ -12,7 +12,14 @@ package("libusbmuxd")
         add_syslinks("ws2_32")
     end
 
-    add_deps("libplist")
+    on_load(function (package)
+        if package:is_plat("mingw") and package:config("shared") then
+            package:add("deps", "libplist", {configs = {shared = true}})
+        else
+            package:add("deps", "libplist")
+        end
+    end)
+
     on_install("macosx", "linux", "mingw@macosx", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
