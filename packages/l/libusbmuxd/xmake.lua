@@ -29,9 +29,9 @@ package("libusbmuxd")
         -- disable tools
         io.replace("tools/Makefile.am", "bin_PROGRAMS = iproxy inetcat", "bin_PROGRAMS =")
         -- fix multiple definition with libplist
-        io.replace("common/thread.c", "thread_once", "thread_once_")
-        io.replace("common/thread.h", "thread_once", "thread_once_")
-        io.replace("src/libusbmuxd.c", "thread_once", "thread_once_")
+        io.replace("common/thread.c", " thread_once(", " thread_once_(", {plain = true})
+        io.replace("common/thread.h", " thread_once(", " thread_once_(", {plain = true})
+        io.replace("src/libusbmuxd.c", " thread_once(", " thread_once_(", {plain = true})
         import("package.tools.autoconf").install(package, configs, {cflags = cflags})
     end)
 
