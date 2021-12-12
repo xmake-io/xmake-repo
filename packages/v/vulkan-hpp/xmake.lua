@@ -12,15 +12,16 @@ package("vulkan-hpp")
     add_deps("cmake")
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
-        local plat, arch
+        local arch_prev
         if package:is_plat("mingw") and package.plat_set then
-            plat = package:plat_set(os.host())
-            arch = package:arch_set(os.arch())
+            arch_prev = package:arch()
+            package:plat_set(os.host())
+            package:arch_set(os.arch())
         end
         import("package.tools.cmake").build(package, {buildir = "build"})
-        if plat and arch then
-            package:plat_set(plat)
-            package:arch_set(arch)
+        if arch_prev then
+            package:plat_set("mingw")
+            package:arch_set(arch_prev)
         end
         os.mkdir("build")
         if is_host("windows") then
