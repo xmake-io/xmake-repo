@@ -25,19 +25,20 @@ package("ifort")
         
         local script_path = "./install_ifort.sh"
         os.run("chmod +x " .. script_path) 
+        local install_dir = vformat("$(env HOME)/intel/oneapi/")
         local argv = {}
         table.insert(argv, "-a")
         table.insert(argv, "-s")
         table.insert(argv, "--eula")
         table.insert(argv, "accept")
-        -- table.insert(argv, "--install-dir")
-        -- table.insert(argv, package:installdir())
+        table.insert(argv, "--install-dir")
+        table.insert(argv, install_dir)
 
         os.execv(script_path, argv)
 
         local arch = package:arch()
-        package:addenv("PATH", vformat(path.join("$(env HOME)/intel/oneapi/compiler", version, "linux/bin", arch == "x86_64" and "intel64" or "ia32")))
-        package:addenv("LD_LIBRARY_PATH", vformat(path.join("$(env HOME)/intel/oneapi/compiler", version, "linux/compiler/lib", arch == "x86_64" and "intel64" or "ia32")))
+        package:addenv("PATH", path.join(install_dir, "compiler", version, "linux/bin", arch == "x86_64" and "intel64" or "ia32"))
+        package:addenv("LD_LIBRARY_PATH", path.join(install_dir, "compiler", version, "linux/compiler/lib", arch == "x86_64" and "intel64" or "ia32"))
     end)
 
     on_install("@windows", function(package)
