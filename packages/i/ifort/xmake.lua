@@ -58,9 +58,6 @@ package("ifort")
         table.insert(argv, install_dir)
 
         os.execv(exe_path, argv)
-        local ifort = assert(import("lib.detect.find_file")("ifort.exe", install_dir), "ifort not correctly installed")
-        print("IFORT")
-        print(ifort)
 
         local arch = package:arch()
         package:addenv("PATH", path.join(install_dir, "compiler", version, "windows\\bin", arch == "x64" and "intel64" or "ia32"))
