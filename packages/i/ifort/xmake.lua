@@ -36,8 +36,8 @@ package("ifort")
         os.execv(script_path, argv)
 
         local arch = package:arch()
-        package:addenv("PATH", path.join("~/intel/oneapi/compiler", version, "linux/bin", arch == "x86_64" and "intel64" or "ia32"))
-        package:addenv("LD_LIBRARY_PATH", path.join("~/intel/oneapi/compiler", version, "linux/compiler/lib", arch == "x86_64" and "intel64" or "ia32"))
+        package:addenv("PATH", path.join("$(env HOME)/intel/oneapi/compiler", version, "linux/bin", arch == "x86_64" and "intel64" or "ia32"))
+        package:addenv("LD_LIBRARY_PATH", path.join("$(env HOME)/intel/oneapi/compiler", version, "linux/compiler/lib", arch == "x86_64" and "intel64" or "ia32"))
     end)
 
     on_install("@windows", function(package)
