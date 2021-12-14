@@ -51,7 +51,18 @@ package("boost")
                       "locale",
                       "iostreams",
                       "program_options",
-                      "test"}
+                      "test",
+                      "chrono",
+                      "contract",
+                      "graph_parallel",
+                      "json",
+                      "log",
+                      "math",
+                      "mpi",
+                      "nowide",
+                      "python",
+                      "stacktrace",
+                      "type_erasure"}
 
     add_configs("all",          { description = "Enable all library modules support.",  default = false, type = "boolean"})
     add_configs("multi",        { description = "Enable multi-thread support.",  default = true, type = "boolean"})
