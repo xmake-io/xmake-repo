@@ -2,6 +2,7 @@ package("boost")
 
     set_homepage("https://www.boost.org/")
     set_description("Collection of portable C++ source libraries.")
+    set_license("BSL-1.0")
 
     add_urls("https://boostorg.jfrog.io/artifactory/main/release/$(version).tar.bz2", {version = function (version)
             return version .. "/source/boost_" .. (version:gsub("%.", "_"))
@@ -9,6 +10,7 @@ package("boost")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
+    add_versions("1.78.0", "8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc")
     add_versions("1.77.0", "fc9f85fc030e233142908241af7a846e60630aa7388de9a5fafb1f3a26840854")
     add_versions("1.76.0", "f0397ba6e982c4450f27bf32a2a83292aba035b827a5623a14636ea583318c41")
     add_versions("1.75.0", "953db31e016db7bb207f11432bef7df100516eeb746843fa0486a222e3fd49cb")
@@ -88,9 +90,6 @@ package("boost")
             elseif vs_runtime == "MDd" then
                 linkname = linkname .. "-gd"
             end
-            if package:version():ge("1.77.0") then
-                linkname = linkname .. (package:is_arch("x64") and "-x64" or "-x32")
-            end
             package:add("links", linkname)
         end
         -- disable auto-link all libs
@@ -135,7 +134,7 @@ package("boost")
             "-d2",
             "-j4",
             "--hash",
-            "--layout=tagged",
+            "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
             "-sNO_LZMA=1",
             "-sNO_ZSTD=1",
