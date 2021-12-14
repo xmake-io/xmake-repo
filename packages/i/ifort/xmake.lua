@@ -45,7 +45,7 @@ package("ifort")
         os.execv("curl", {"https://registrationcenter-download.intel.com/akdlm/irc_nas/18215/w_fortran-compiler_p_" .. version .. ".3208.exe", "-o", path.join(package:cachedir(), "install_ifort.exe")})
         os.cd(package:cachedir())
         
-        local exe_path = "./install_ifort.exe"
+        local exe_path = "install_ifort.exe"
         local argv = {}
         table.insert(argv, "-a")
         table.insert(argv, "-s")
