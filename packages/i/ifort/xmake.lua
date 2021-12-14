@@ -19,14 +19,12 @@ package("ifort")
         table.insert(argv, "-s")
         table.insert(argv, "--eula")
         table.insert(argv, "accept")
-        table.insert(argv, "--install-dir")
-        table.insert(argv, package:installdir())
 
         os.execv(script_path, argv)
 
         local arch = package:arch()
-        package:addenv("PATH", path.join(package:installdir(), "compiler", version, "linux/bin", arch == "x86_64" and "intel64" or "ia32"))
-        package:addenv("LD_LIBRARY_PATH", path.join(package:installdir(), "compiler", version, "linux/compiler/lib", arch == "x86_64" and "intel64" or "ia32"))
+        package:addenv("PATH", path.join("~/intel/oneapi/compiler", version, "linux/bin", arch == "x86_64" and "intel64" or "ia32"))
+        package:addenv("LD_LIBRARY_PATH", path.join("~/intel/oneapi/compiler", version, "linux/compiler/lib", arch == "x86_64" and "intel64" or "ia32"))
     end)
 
     on_test(function (package)
