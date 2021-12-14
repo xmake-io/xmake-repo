@@ -58,6 +58,12 @@ package("ifort")
         table.insert(argv, install_dir)
 
         os.execv(exe_path, argv)
+        os.execv("dir", {install_dir})
+        os.execv("dir", {path.join(install_dir, "compiler")})
+        os.execv("dir", {path.join(install_dir, "compiler", version)})
+        os.execv("dir", {path.join(install_dir, "compiler", version, "windows")})
+        os.execv("dir", {path.join(install_dir, "compiler", version, "windows", "bin")})
+        os.execv("dir", {path.join(install_dir, "compiler", version, "windows", "bin", "intel64")})
 
         local arch = package:arch()
         package:addenv("PATH", path.join(install_dir, "compiler", version, "windows\\bin", arch == "x64" and "intel64" or "ia32"))
