@@ -8,7 +8,8 @@ package("ifort")
     add_versions("2021.4.0", "")
     
     on_install("@linux", function(package)
-        os.execv("curl", {"https://registrationcenter-download.intel.com/akdlm/irc_nas/18210/l_fortran-compiler_p_" .. package:version_str() .. ".3224.sh", "-o", path.join(package:cachedir(), "install_ifort.sh")})
+	local version = package:version_str()
+        os.execv("curl", {"https://registrationcenter-download.intel.com/akdlm/irc_nas/18210/l_fortran-compiler_p_" .. version .. ".3224.sh", "-o", path.join(package:cachedir(), "install_ifort.sh")})
         os.cd(package:cachedir())
         
         local script_path = "./install_ifort.sh"
@@ -24,8 +25,8 @@ package("ifort")
         os.execv(script_path, argv)
 
         local arch = package:arch()
-        packge:addenv("PATH", path.join(package:installdir(), "intel/oneapi/compiler", version, "linux/bin", arch == "x86_64" and "intel64" or "ia32"))
-        package:addenv("LD_LIBRARY_PATH", path.join(package:installdir(), "intel/oneapi/compiler", version, "linux/compiler/lib", arch == "x86_64" and "intel64" or "ia32"))
+        package:addenv("PATH", path.join(package:installdir(), "compiler", version, "linux/bin", arch == "x86_64" and "intel64" or "ia32"))
+        package:addenv("LD_LIBRARY_PATH", path.join(package:installdir(), "compiler", version, "linux/compiler/lib", arch == "x86_64" and "intel64" or "ia32"))
     end)
 
     on_test(function (package)
