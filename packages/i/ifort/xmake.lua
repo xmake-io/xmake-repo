@@ -46,20 +46,20 @@ package("ifort")
         os.cd(package:cachedir())
         
         local exe_path = "install_ifort.exe"
+        local install_dir = "C:\\Program Files\\Intel Fortran\\"
         local argv = {}
         table.insert(argv, "-a")
         table.insert(argv, "-s")
         table.insert(argv, "--eula")
         table.insert(argv, "accept")
         table.insert(argv, "-p=NEED_VS2017_INTEGRATION=0")
-        -- table.insert(argv, "--install-dir")
-        -- table.insert(argv, package:installdir())
+        table.insert(argv, "--install-dir")
+        table.insert(argv, install_dir)
 
         os.execv(exe_path, argv)
 
         local arch = package:arch()
-        local compiler_path = vformat("$(env IFORT_COMPILER21)")
-        package:addenv("PATH", path.join(compiler_path, "bin", arch == "x64" and "intel64" or "ia32"))
+        package:addenv("PATH", path.join(install_dir, "compiler", version, "windows\\bin", arch == "x64" and "intel64" or "ia32"))
     end)
 
     on_test(function (package)
