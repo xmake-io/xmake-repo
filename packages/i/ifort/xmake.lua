@@ -6,6 +6,17 @@ package("ifort")
 
     -- add_resources("2021.4.0", "script", "https://registrationcenter-download.intel.com/akdlm/irc_nas/18210/l_fortran-compiler_p_2021.4.0.3224.sh", "7fef4c98a86db04061634a462e8e4743d9a073f805c191db2a83ee161cea5313")
     add_versions("2021.4.0", "")
+
+    on_fetch("@linux", function(package, opt)
+        if opt.system then
+            local ifortenv = import("detect.sdks.find_ifortenv")()
+            if ifortenv then
+                package:addenv("PATH", ifortenv.bindir)
+                package:addenv("LD_LIBRARY_PATH", ifortenv.libdir)
+                return true
+            end
+        end
+    end)
     
     on_install("@linux", function(package)
 	local version = package:version_str()
