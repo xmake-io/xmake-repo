@@ -47,7 +47,7 @@ package("ifort")
         os.cd(package:cachedir())
         
         local exe_path = "install_ifort.exe"
-        local install_dir = "C:\\Program Files\\Intel Fortran\\"
+        local install_dir = vformat("$(env PROGRAMFILES)\\Intel Fortran\\")
         local argv = {}
         table.insert(argv, "-a")
         table.insert(argv, "-s")
