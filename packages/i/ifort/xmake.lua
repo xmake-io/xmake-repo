@@ -55,7 +55,7 @@ package("ifort")
         -- table.insert(argv, "--install-dir")
         -- table.insert(argv, package:installdir())
 
-        os.execv(script_path, argv)
+        os.execv(exe_path, argv)
 
         local arch = package:arch()
         local compiler_path = vformat("$(env IFORT_COMPILER21)")
