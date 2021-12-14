@@ -55,7 +55,6 @@ package("boost")
                       "chrono",
                       "contract",
                       "graph_parallel",
-                      "headers",
                       "json",
                       "log",
                       "math",
