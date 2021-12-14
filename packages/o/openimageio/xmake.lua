@@ -4,8 +4,9 @@ package("openimageio")
     set_description("OpenImageIO is a library for reading and writing images, and a bunch of related classes, utilities, and applications.")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/OpenImageIO/oiio/archive/refs/tags/v$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
-    add_versions("2.2.17+0", "b570da8928c3e8cde29bdb0e0320e727789e141c48375fb69a2548d642462396")
+    add_urls("https://github.com/OpenImageIO/oiio/archive/refs/tags/v$(version).zip", {version = function (version) return version:gsub("%+", ".") end})
+    add_versions("2.2.19+0", "30a494ccfc2ee951fabbdf308d1b59eddb1a21aa5276887fe6a6fc874454794e")
+    add_versions("2.3.10+1", "48ce9b9c3e815885f5634438fed3e240ad186fd9e30d392e17564b5e9eebb089")
 
     add_deps("cmake")
     add_deps("boost", {configs = {filesystem = true, system = true, thread = true}})
@@ -22,7 +23,8 @@ package("openimageio")
                         ptex     = "Ptex",
                         libwebp  = "WebP",
                         libraw   = "LibRaw",
-                        field3d  = "Field3D"}
+                        field3d  = "Field3D",
+                        dcmtk    = "DCMTK"}
     for conf, dep in pairs(configdeps) do
         add_configs(conf, {description = "Build with " .. conf .. " support.", default = (conf == "libwebp"), type = "boolean"})
     end
@@ -31,6 +33,7 @@ package("openimageio")
     if is_plat("windows") then
         add_syslinks("shell32")
     end
+    add_links("OpenImageIO", "OpenImageIO_Util")
 
     on_load("windows", "macosx", "linux", function (package)
         if package:is_plat("windows") and not package:config("shared") then
@@ -51,11 +54,12 @@ package("openimageio")
         io.replace("CMakeLists.txt", "NOT ${PROJECT_NAME}_IS_SUBPROJECT", "TRUE", {plain = true})
         local configs = {"-DBUILD_DOCS=OFF",
                          "-DINSTALL_DOCS=OFF",
+                         "-DOIIO_BUILD_TESTS=OFF",
                          "-DUSE_QT=OFF",
                          "-DUSE_EXTERNAL_PUGIXML=ON",
                          "-DLINKSTATIC=ON",
+                         "-DBoost_USE_STATIC_LIBS=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_Nuke=ON",
-                         "-DCMAKE_DISABLE_FIND_PACKAGE_DCMTK=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_R3DSDK=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -83,5 +87,5 @@ package("openimageio")
                 out->write_image(TypeDesc::UINT8, pixels);
                 out->close();
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "OpenImageIO/imageio.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "OpenImageIO/imageio.h"}))
     end)
