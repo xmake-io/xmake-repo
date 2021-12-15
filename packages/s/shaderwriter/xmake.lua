@@ -32,13 +32,14 @@ package("shaderwriter")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <CompilerGlsl/compileGlsl.hpp>
-            #include <CompilerSpirV/compileSpirV.hpp>
-            #include <ShaderWriter/Intrinsics/Intrinsics.hpp>
-            #include <ShaderWriter/Source.hpp>
             static void test()
             {
                 sdw::ComputeWriter writer;
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++17"},
+            includes = {
+                "CompilerGlsl/compileGlsl.hpp",
+                "CompilerSpirV/compileSpirV.hpp",
+                "ShaderWriter/Intrinsics/Intrinsics.hpp",
+                "ShaderWriter/Source.hpp"}}))
     end)
