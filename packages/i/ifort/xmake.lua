@@ -23,10 +23,10 @@ package("ifort")
         os.execv("curl", {"https://registrationcenter-download.intel.com/akdlm/irc_nas/18210/l_fortran-compiler_p_" .. version .. ".3224.sh", "-o", path.join(package:cachedir(), "install_ifort.sh")})
         os.cd(package:cachedir())
         
-        local script_path = "./install_ifort.sh"
-        os.run("chmod +x " .. script_path) 
+        local script_path = "install_ifort.sh"
         local install_dir = vformat("$(env HOME)/intel/oneapi/")
         local argv = {}
+        table.insert(argv, script_path)
         table.insert(argv, "-a")
         table.insert(argv, "-s")
         table.insert(argv, "--eula")
@@ -34,7 +34,7 @@ package("ifort")
         table.insert(argv, "--install-dir")
         table.insert(argv, install_dir)
 
-        os.execv(script_path, argv)
+        os.execv("sh", argv)
 
         local arch = package:arch()
         package:addenv("PATH", path.join(install_dir, "compiler", version, "linux/bin", arch == "x86_64" and "intel64" or "ia32"))
