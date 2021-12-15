@@ -47,7 +47,10 @@ package("ifort")
         os.cd(package:cachedir())
         
         local exe_path = "install_ifort.exe"
-        local install_dir = vformat("$(env PROGRAMFILES)\\Intel Fortran\\")
+        -- windows is installing it to PROGRAMFILES(x86) not matter
+        -- what you choose as install-dir
+        -- we need to use os.getenv, since the variable uses '(' and ')'
+        local install_dir = path.join(os.getenv("PROGRAMFILES(x86)"), "Intel Fortran")
         local argv = {}
         table.insert(argv, "-a")
         table.insert(argv, "-s")
@@ -56,18 +59,8 @@ package("ifort")
         table.insert(argv, "-p=NEED_VS2017_INTEGRATION=0")
         table.insert(argv, "--install-dir")
         table.insert(argv, install_dir)
-        table.insert(argv, "--log-dir")
-        table.insert(argv, path.join(package:cachedir(), "logs"))
 
-        os.mkdir(path.join(package:cachedir(), "logs"))
         os.execv(exe_path, argv)
-
-        for _, filepath in ipairs(os.files(path.join(package:cachedir(), "logs"))) do
-            local contents = io.readfile(filepath)
-            print("---- " .. filepath .. "----")
-            print(contents)
-            print("------------------------")
-        end
 
         local arch = package:arch()
         package:addenv("PATH", path.join(install_dir, "compiler", version, "windows\\bin", arch == "x64" and "intel64" or "ia32"))
