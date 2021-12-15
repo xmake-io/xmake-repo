@@ -41,7 +41,11 @@ package("ifort")
         package:addenv("LD_LIBRARY_PATH", path.join(install_dir, "compiler", version, "linux/compiler/lib", arch == "x86_64" and "intel64" or "ia32"))
     end)
 
-    on_install("@windows", function(package)
+    -- windows is starting 'bootstrapper.exe' in another process
+    -- and therefore xmake thinks it is done, so currently we need
+    -- to disable it
+    -- We could wait until the 'bootstrapper.exe' is done and then continue, maybe.
+    on_install("@window", function(package)
     local version = package:version_str()
         os.execv("curl", {"https://registrationcenter-download.intel.com/akdlm/irc_nas/18215/w_fortran-compiler_p_" .. version .. ".3208.exe", "-o", path.join(package:cachedir(), "install_ifort.exe")})
         os.cd(package:cachedir())
