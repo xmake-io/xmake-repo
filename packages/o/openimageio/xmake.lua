@@ -24,7 +24,8 @@ package("openimageio")
                         libwebp  = "WebP",
                         libraw   = "LibRaw",
                         field3d  = "Field3D",
-                        dcmtk    = "DCMTK"}
+                        dcmtk    = "DCMTK",
+                        ffmpeg   = "FFmpeg"}
     for conf, dep in pairs(configdeps) do
         add_configs(conf, {description = "Build with " .. conf .. " support.", default = (conf == "libwebp"), type = "boolean"})
     end
