@@ -56,8 +56,18 @@ package("ifort")
         table.insert(argv, "-p=NEED_VS2017_INTEGRATION=0")
         table.insert(argv, "--install-dir")
         table.insert(argv, install_dir)
+        table.insert(argv, "--log-dir")
+        table.insert(argv, path.join(package:cachedir(), "logs"))
 
+        os.mkdir(path.join(package:cachedir(), "logs"))
         os.execv(exe_path, argv)
+
+        for _, filepath in ipairs(os.files(path.join(package:cachedir(), "logs"))) do
+            local contents = io.readfile(filepath)
+            print("---- " .. filepath .. "----")
+            print(contents)
+            print("------------------------")
+        end
 
         local arch = package:arch()
         package:addenv("PATH", path.join(install_dir, "compiler", version, "windows\\bin", arch == "x64" and "intel64" or "ia32"))
