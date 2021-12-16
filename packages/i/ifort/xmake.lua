@@ -4,17 +4,17 @@ package("ifort")
     set_homepage("https://www.intel.com/content/www/us/en/developer/tools/oneapi/fortran-compiler.html")
     set_description("The Fortran Compiler provided by Intel®")
 
-    if is_plat("linux") then
+    if is_host("linux") then
         add_urls("https://registrationcenter-download.intel.com/akdlm/irc_nas/18210/l_fortran-compiler_p_$(version).sh", {version = function(version)
             return version:gsub("%+", ".")
         end})
         add_versions("2021.4.0+3224", "7fef4c98a86db04061634a462e8e4743d9a073f805c191db2a83ee161cea5313")
-    elseif is_plat("windows") then
+    elseif is_host("windows") then
         add_urls("https://registrationcenter-download.intel.com/akdlm/irc_nas/18215/w_fortran-compiler_p_$(version).exe", {version = function(version)
             return version:gsub("%+", ".")
         end})
         add_versions("2021.4.0+3208", "942e2f466ec70198a6137a60e3a96880a09cddce3a4a89c449dce20cad5d7a5a")
-    elseif is_plat("macosx") then
+    elseif is_host("macosx") then
         add_urls("https://registrationcenter-download.intel.com/akdlm/irc_nas/18341/m_HPCKit_p_$(version)_offline.dmg", {version = function(version)
             return version:gsub("%+", ".")
         end})
