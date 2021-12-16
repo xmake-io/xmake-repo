@@ -4,8 +4,18 @@ package("ifort")
     set_homepage("https://www.intel.com/content/www/us/en/developer/tools/oneapi/fortran-compiler.html")
     set_description("The Fortran Compiler provided by Intel®")
 
-    -- add_resources("2021.4.0", "script", "https://registrationcenter-download.intel.com/akdlm/irc_nas/18210/l_fortran-compiler_p_2021.4.0.3224.sh", "7fef4c98a86db04061634a462e8e4743d9a073f805c191db2a83ee161cea5313")
-    add_versions("2021.4.0", "")
+    if is_plat("linux") then
+        add_urls("https://registrationcenter-download.intel.com/akdlm/irc_nas/18210/l_fortran-compiler_p_$(version).sh", {version = function(version)
+            return version:gsub("%+", ".")
+        end})
+        add_versions("2021.4.0+3224", "7fef4c98a86db04061634a462e8e4743d9a073f805c191db2a83ee161cea5313")
+    elseif is_plat("windows") then
+        add_urls("https://registrationcenter-download.intel.com/akdlm/irc_nas/18215/w_fortran-compiler_p_$(version).exe" {version = function(version)
+            return version:gsub("%+", ".")
+        end})
+        add_versions("2021.4.0+3208", "942e2f466ec70198a6137a60e3a96880a09cddce3a4a89c449dce20cad5d7a5a")
+    end
+
 
     on_fetch("@linux", function(package, opt)
         if opt.system then
@@ -17,57 +27,24 @@ package("ifort")
             end
         end
     end)
-    
-    on_install("@linux", function(package)
-    local version = package:version_str()
-        os.execv("curl", {"https://registrationcenter-download.intel.com/akdlm/irc_nas/18210/l_fortran-compiler_p_" .. version .. ".3224.sh", "-o", path.join(package:cachedir(), "install_ifort.sh")})
-        os.cd(package:cachedir())
-        
-        local script_path = "install_ifort.sh"
-        local install_dir = vformat("$(env HOME)/intel/oneapi/")
-        local argv = {}
-        table.insert(argv, script_path)
-        table.insert(argv, "-a")
-        table.insert(argv, "-s")
-        table.insert(argv, "--eula")
-        table.insert(argv, "accept")
-        table.insert(argv, "--install-dir")
-        table.insert(argv, install_dir)
-
-        os.execv("sh", argv)
-
-        local arch = package:arch()
-        package:addenv("PATH", path.join(install_dir, "compiler", version, "linux/bin", arch == "x86_64" and "intel64" or "ia32"))
-        package:addenv("LD_LIBRARY_PATH", path.join(install_dir, "compiler", version, "linux/compiler/lib", arch == "x86_64" and "intel64" or "ia32"))
-    end)
 
     -- windows is starting 'bootstrapper.exe' in another process
     -- and therefore xmake thinks it is done, so currently we need
     -- to disable it
     -- We could wait until the 'bootstrapper.exe' is done and then continue, maybe.
-    on_install("@window", function(package)
-    local version = package:version_str()
-        os.execv("curl", {"https://registrationcenter-download.intel.com/akdlm/irc_nas/18215/w_fortran-compiler_p_" .. version .. ".3208.exe", "-o", path.join(package:cachedir(), "install_ifort.exe")})
-        os.cd(package:cachedir())
-        
-        local exe_path = "install_ifort.exe"
-        -- windows is installing it to PROGRAMFILES(x86) not matter
-        -- what you choose as install-dir
-        -- we need to use os.getenv, since the variable uses '(' and ')'
-        local install_dir = path.join(os.getenv("PROGRAMFILES(x86)"), "Intel Fortran")
-        local argv = {}
-        table.insert(argv, "-a")
-        table.insert(argv, "-s")
-        table.insert(argv, "--eula")
-        table.insert(argv, "accept")
-        table.insert(argv, "-p=NEED_VS2017_INTEGRATION=0")
-        table.insert(argv, "--install-dir")
-        table.insert(argv, install_dir)
-
-        os.execv(exe_path, argv)
-
-        local arch = package:arch()
-        package:addenv("PATH", path.join(install_dir, "compiler", version, "windows\\bin", arch == "x64" and "intel64" or "ia32"))
+    on_install("@linux", function(package)
+        local arch = package:is_arch("x86_64") and "intel64" or "ia32"
+        local plat = package:plat()
+        local version = package:version():shortstr()
+        local installdir = package:installdir()
+        local homedir = path.absolute("home")
+        if package:is_plat("windows") then
+            os.execv(package:originfile(), {"-a", "-s", "--eula", "accept", "-p=NEED_VS2017_INTEGRATION=0", "--install-dir", installdir}, {envs = {HOME = homedir}})
+        else
+            os.execv("sh", {package:originfile(), "-a", "-s", "--eula", "accept", "--install-dir", installdir}, {envs = {HOME = homedir}})
+            package:addenv("LD_LIBRARY_PATH", path.join(installdir, "compiler", version, plat, "compiler/lib", arch))
+        end
+        package:addenv("PATH", path.join(installdir, "compiler", version, plat, "bin", arch))
     end)
 
     on_test(function (package)
