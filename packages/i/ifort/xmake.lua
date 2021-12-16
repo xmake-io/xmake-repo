@@ -16,7 +16,6 @@ package("ifort")
         add_versions("2021.4.0+3208", "942e2f466ec70198a6137a60e3a96880a09cddce3a4a89c449dce20cad5d7a5a")
     end
 
-
     on_fetch("@linux", function(package, opt)
         if opt.system then
             local ifortenv = import("detect.sdks.find_ifortenv")()
