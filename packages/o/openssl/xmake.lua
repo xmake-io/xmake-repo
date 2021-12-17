@@ -13,21 +13,6 @@ package("openssl")
     add_versions("1.0.2u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
     add_versions("1.0.0",   "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
-    if is_plat("windows") then
-        add_links("libssl", "libcrypto")
-    else
-        add_links("ssl", "crypto")
-    end
-    if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32", "user32", "crypt32", "advapi32")
-    elseif is_plat("linux", "cross") then
-        add_syslinks("dl")
-    end
-
-    if is_plat("linux") then
-        add_extsources("apt::libssl-dev")
-    end
-
     on_fetch("fetch")
 
     on_load(function (package)
@@ -36,6 +21,21 @@ package("openssl")
             -- the perl executable found in GitForWindows will fail to build OpenSSL
             -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
             package:add("deps", "strawberry-perl", { system = false })
+        end
+
+        -- @note we must use package:is_plat() instead of is_plat in description for supporting add_deps("openssl", {host = true}) in python
+        if package:is_plat("windows") then
+            package:add("links", "libssl", "libcrypto")
+        else
+            package:add("links", "ssl", "crypto")
+        end
+        if package:is_plat("windows", "mingw") then
+            package:add("syslinks", "ws2_32", "user32", "crypt32", "advapi32")
+        elseif package:is_plat("linux", "cross") then
+            package:add("syslinks", "dl")
+        end
+        if package:is_plat("linux") then
+            package:add("extsources", "apt::libssl-dev")
         end
     end)
 
