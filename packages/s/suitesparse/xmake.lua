@@ -27,7 +27,7 @@ package("suitesparse")
             package:add("links", "GraphBLAS")
         end
         package:add("deps", package:config("blas"))
-        for _, lib in ipairs({"SPQR", "UMFPACK", "LDL", "KLU", "CXSparse", "CHOLMOD", "COLAMD", "CCOLAMD", "CAMD", "BTF", "AMD", "SuiteSparse_config"}) do
+        for _, lib in ipairs({"SPQR", "UMFPACK", "LDL", "KLU", "CXSparse", "CHOLMOD", "COLAMD", "CCOLAMD", "CAMD", "BTF", "AMD", "suitesparseconfig"}) do
             package:add("links", lib)
         end
     end)
