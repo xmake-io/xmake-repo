@@ -27,7 +27,8 @@ package("openblas")
         add_versions("0.3.17", "df2934fa33d04fd84d839ca698280df55c690c86a5a1133b3f7266fce1de279f")
         add_versions("0.3.18", "1632c1e8cca62d8bed064b37747e331a1796fc46f688626337362bf0d16aeadb")
 
-        add_configs("with_fortran", {description="Compile with fortran enabled.", default = is_plat("linux"), type = "boolean"})
+        add_configs("fortran", {description = "Compile with fortran enabled.", default = is_plat("linux"), type = "boolean"})
+        add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = true, type = "boolean"})
     end
 
     if is_plat("linux") then
@@ -36,9 +37,12 @@ package("openblas")
     elseif is_plat("macosx") then
         add_frameworks("Accelerate")
     end
-    on_load("macosx", "linux", function (package)
-        if package:config("with_fortran") then
+    on_load("macosx", "linux", "mingw@windows,msys", function (package)
+        if package:config("fortran") then
             package:add("syslinks", "gfortran")
+        end
+        if package:config("openmp") then
+            package:add("deps", "openmp")
         end
     end)
 
@@ -50,15 +54,17 @@ package("openblas")
     end)
 
     on_install("macosx", "linux", "mingw@windows,msys", function (package)
+        import("lib.detect.find_tool")
+        import("package.tools.make")
         local configs = {}
-        if package:config("debug") then table.insert(configs, "DEBUG=1") end
+        if package:debug() then table.insert(configs, "DEBUG=1") end
+        if package:config("openmp") then table.insert(configs, "USE_OPENMP=1") end
         if not package:config("shared") then
             table.insert(configs, "NO_SHARED=1")
         else
             table.insert(configs, "NO_STATIC=1")
         end
-        if package:config("with_fortran") then
-            import("lib.detect.find_tool")
+        if package:config("fortran") then
             local fortran = find_tool("gfortran")
             if fortran then
                 table.insert(configs, "FC=" .. fortran.program)
@@ -72,15 +78,42 @@ package("openblas")
             if package:is_arch("i386", "x86") then
                 table.insert(configs, "BINARY=32")
             end
-            os.vrunv("mingw32-make", configs)
-            os.vrunv("mingw32-make install PREFIX=" .. package:installdir(), configs)
             if package:config("shared") then
                 package:addenv("PATH", "bin")
             end
         else
-            os.vrunv("make", configs)
-            os.vrunv("make install PREFIX=" .. package:installdir(), configs)
+            if package:config("openmp") then
+                local openmp = package:dep("openmp"):fetch()
+                if openmp then
+                    local ldflags
+                    local cflags = openmp.cflags
+                    local libomp = package:dep("libomp")
+                    if libomp then
+                        local fetchinfo = libomp:fetch()
+                        if fetchinfo then
+                            local includedirs = fetchinfo.sysincludedirs or fetchinfo.includedirs
+                            for _, includedir in ipairs(includedirs) do
+                                cflags = (cflags or "") .. " -I" .. includedir
+                            end
+                            for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                                ldflags = (ldflags or "") .. " -Wl,-L" .. linkdir
+                            end
+                            for _, link in ipairs(fetchinfo.links) do
+                                ldflags = (ldflags or "") .. " -Wl,-l" .. link
+                            end
+                        end
+                    end
+                    if cflags then
+                        io.replace("Makefile.system", "-fopenmp", cflags, {plain = true})
+                    end
+                    if ldflags then
+                        table.insert(configs, "LDFLAGS=" .. ldflags)
+                    end
+                end
+            end
         end
+        make.build(package, configs)
+        make.make(package, table.join("install", "PREFIX=" .. package:installdir(), configs))
     end)
 
     on_test(function (package)
