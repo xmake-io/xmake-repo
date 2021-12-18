@@ -54,6 +54,8 @@ package("openblas")
     end)
 
     on_install("macosx", "linux", "mingw@windows,msys", function (package)
+        import("lib.detect.find_tool")
+        import("package.tools.make")
         local configs = {}
         if package:debug() then table.insert(configs, "DEBUG=1") end
         if package:config("openmp") then table.insert(configs, "USE_OPENMP=1") end
@@ -63,7 +65,6 @@ package("openblas")
             table.insert(configs, "NO_STATIC=1")
         end
         if package:config("fortran") then
-            import("lib.detect.find_tool")
             local fortran = find_tool("gfortran")
             if fortran then
                 table.insert(configs, "FC=" .. fortran.program)
@@ -77,8 +78,6 @@ package("openblas")
             if package:is_arch("i386", "x86") then
                 table.insert(configs, "BINARY=32")
             end
-            os.vrunv("mingw32-make", configs)
-            os.vrunv("mingw32-make install PREFIX=" .. package:installdir(), configs)
             if package:config("shared") then
                 package:addenv("PATH", "bin")
             end
@@ -86,6 +85,7 @@ package("openblas")
             if package:config("openmp") then
                 local openmp = package:dep("openmp"):fetch()
                 if openmp then
+                    local ldflags
                     local cflags = openmp.cflags
                     local libomp = package:dep("libomp")
                     if libomp then
@@ -95,16 +95,25 @@ package("openblas")
                             for _, includedir in ipairs(includedirs) do
                                 cflags = (cflags or "") .. " -I" .. includedir
                             end
+                            for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                                ldflags = (ldflags or "") .. " -Wl,-L" .. linkdir
+                            end
+                            for _, link in ipairs(fetchinfo.links) do
+                                ldflags = (ldflags or "") .. " -Wl,-l" .. link
+                            end
                         end
                     end
                     if cflags then
                         io.replace("Makefile.system", "-fopenmp", cflags, {plain = true})
                     end
+                    if ldflags then
+                        table.insert(configs, "LDFLAGS=" .. ldflags)
+                    end
                 end
             end
-            os.vrunv("make", configs)
-            os.vrunv("make install PREFIX=" .. package:installdir(), configs)
         end
+        make.build(package, configs)
+        make.make(package, table.join("install", "PREFIX=" .. package:installdir(), configs))
     end)
 
     on_test(function (package)
