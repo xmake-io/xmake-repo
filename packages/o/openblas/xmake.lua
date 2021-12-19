@@ -28,7 +28,7 @@ package("openblas")
         add_versions("0.3.18", "1632c1e8cca62d8bed064b37747e331a1796fc46f688626337362bf0d16aeadb")
 
         add_configs("fortran", {description = "Compile with fortran enabled.", default = is_plat("linux"), type = "boolean"})
-        add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = true, type = "boolean"})
+        add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean"})
     end
 
     if is_plat("linux") then
