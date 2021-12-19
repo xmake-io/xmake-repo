@@ -24,6 +24,11 @@ package("imgui-sfml")
                 table.insert(configs, "-DIMGUI_DIR=" .. imguidir)
             end
         end
+        if package:is_plat("windows") and package:config("shared") then
+            io.replace("CMakeLists.txt", "sfml-graphics", "sfml-graphics-s", {plain = true})
+            io.replace("CMakeLists.txt", "sfml-system", "sfml-system-s", {plain = true})
+            io.replace("CMakeLists.txt", "sfml-window", "sfml-window-s", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = "sfml"})
     end)
 
@@ -31,7 +36,6 @@ package("imgui-sfml")
         assert(package:check_cxxsnippets({test = [[
             #include "imgui.h"
             #include "imgui-SFML.h"
-
             #include <SFML/Graphics/CircleShape.hpp>
             #include <SFML/Graphics/RenderWindow.hpp>
             #include <SFML/System/Clock.hpp>
