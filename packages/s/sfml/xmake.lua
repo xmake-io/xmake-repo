@@ -33,11 +33,15 @@ package("sfml")
     add_configs("network",    {description = "Use the network module", default = true, type = "boolean"})
     add_configs("main",       {description = "Link to the sfml-main library", default = true, type = "boolean"})
 
+    if is_plat("linux") then
+        add_deps("libx11", "libxrandr", "freetype", "libogg", "libflac", "libvorbis")
+    end
+
     on_load("windows", "linux", "macosx", "mingw", function (package)
         if package:is_plat("windows") then
             package:add("deps", "cmake")
         end
-        
+
         if not package:config("shared") then
             package:add("defines", "SFML_STATIC")
         end
@@ -101,7 +105,7 @@ package("sfml")
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
-            if package:config("vs_runtime"):startswith("MT") then
+            if package:is_plat("windows") and package:config("vs_runtime"):startswith("MT") then
                 table.insert(configs, "-DSFML_USE_STATIC_STD_LIBS=ON")
             end
         end
