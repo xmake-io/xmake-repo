@@ -56,6 +56,7 @@ package("openimageio")
         local configs = {"-DBUILD_DOCS=OFF",
                          "-DINSTALL_DOCS=OFF",
                          "-DOIIO_BUILD_TESTS=OFF",
+                         "-DOIIO_BUILD_TOOLS=OFF",
                          "-DUSE_QT=OFF",
                          "-DUSE_EXTERNAL_PUGIXML=ON",
                          "-DLINKSTATIC=ON",
