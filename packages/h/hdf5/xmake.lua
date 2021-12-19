@@ -21,6 +21,15 @@ package("hdf5")
         table.insert(configs, "-DONLY_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
+        if package:is_plat("windows") then
+            -- fix libname to let cmake can find it.
+            for _, libfile in ipairs(os.files(path.join(package:installdir("lib"), "*.lib"))) do
+                local basename = path.basename(libfile)
+                if basename:startswith("lib") then
+                    os.mv(libfile, path.join(path.directory(libfile), basename:sub(4) .. ".lib"))
+                end
+            end
+        end
         package:addenv("PATH", "bin")
     end)
 
