@@ -29,6 +29,9 @@ package("imgui-sfml")
             io.replace("CMakeLists.txt", "sfml-system", "sfml-system-s", {plain = true})
             io.replace("CMakeLists.txt", "sfml-window", "sfml-window-s", {plain = true})
         end
+        if package:is_plat("mingw") then
+            io.replace("cmake/FindImGui.cmake", "NO_DEFAULT_PATH", "NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH")
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = "sfml"})
     end)
 
