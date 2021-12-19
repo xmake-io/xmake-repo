@@ -35,6 +35,8 @@ package("sfml")
 
     if is_plat("linux") then
         add_deps("libx11", "libxrandr", "freetype", "libogg", "libflac", "libvorbis")
+        add_deps("openal-soft")
+        add_deps("opengl", {optional = true})
     end
 
     on_load("windows", "linux", "macosx", "mingw", function (package)
