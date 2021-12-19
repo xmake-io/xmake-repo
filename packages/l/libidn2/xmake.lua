@@ -1,15 +1,19 @@
-package("libunistring")
+package("libidn2")
 
-    set_homepage("https://www.gnu.org/software/libunistring/")
-    set_description("This library provides functions for manipulating Unicode strings and for manipulating C strings according to the Unicode standard.")
-    set_license("GPL-3.0")
+    set_homepage("https://www.gnu.org/software/libidn/")
+    set_description("Libidn2 is an implementation of the IDNA2008 + TR46 specifications.")
+    set_license("LGPL-3.0")
 
-    add_urls("https://ftp.gnu.org/gnu/libunistring/libunistring-$(version).tar.gz")
-    add_versions("0.9.10", "a82e5b333339a88ea4608e4635479a1cfb2e01aafb925e1290b65710d43f610b")
+    add_urls("https://ftp.gnu.org/gnu/libidn/libidn2-$(version).tar.gz",
+             "https://ftpmirror.gnu.org/libidn/libidn2-$(version).tar.gz")
+    add_versions("2.3.2", "76940cd4e778e8093579a9d195b25fff5e936e9dc6242068528b437a76764f91")
 
-    add_deps("libiconv")
+    add_deps("libunistring")
+    if is_plat("linux") then
+        add_extsources("apt::libidn2-dev")
+    end
 
-    on_install("linux", "macosx", function (package)
+    on_install("macosx", "linux", function (package)
         local configs = {"--disable-dependency-tracking"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
@@ -33,5 +37,5 @@ package("libunistring")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("u8_check", {includes = "unistr.h"}))
+        assert(package:has_cfuncs("idn2_to_ascii_8z", {includes = "idn2.h"}))
     end)
