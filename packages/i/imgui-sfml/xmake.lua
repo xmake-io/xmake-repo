@@ -10,7 +10,7 @@ package("imgui-sfml")
 
     add_deps("cmake")
     add_deps("imgui", {system = false, private = true})
-    add_deps("sfml")
+    add_deps("sfml", "opengl")
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
         local configs = {"-DIMGUI_SFML_FIND_SFML=OFF"}
