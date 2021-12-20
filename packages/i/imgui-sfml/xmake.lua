@@ -10,8 +10,15 @@ package("imgui-sfml")
 
     add_deps("cmake")
     add_deps("imgui", {system = false, private = true})
-    add_deps("sfml")
     add_deps("opengl", {optional = true})
+
+    on_load(function(package)
+        if package:is_plat("linux") and package:config("shared") then
+            package:add("deps", "sfml", {configs = {shared = true}}))
+        else
+            package:add("deps", "sfml")
+        end
+    end)
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
         local configs = {"-DIMGUI_SFML_FIND_SFML=OFF"}
