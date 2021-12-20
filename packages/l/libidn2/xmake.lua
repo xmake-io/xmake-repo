@@ -20,7 +20,7 @@ package("libidn2")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        import("package.tools.autoconf").install(package, configs, {packagedeps = package:orderdeps()})
+        import("package.tools.autoconf").install(package, configs, {packagedeps = {"libunistring"}})
     end)
 
     on_test(function (package)
