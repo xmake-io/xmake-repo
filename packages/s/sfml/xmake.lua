@@ -66,8 +66,8 @@ package("sfml")
                 package:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
             end
             if package:is_plat("linux") then
-                package:add("deps", "libx11", "libxrandr", "freetype")
-                package:add("deps", "opengl", "glx", "libudev", {optional = true})
+                package:add("deps", "libx11", "libxrandr", "freetype", "eudev")
+                package:add("deps", "opengl", "glx", {optional = true})
             end
         end
         if package:config("audio") then
