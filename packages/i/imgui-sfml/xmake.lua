@@ -25,13 +25,15 @@ package("imgui-sfml")
             end
         end
         -- fix sfml links
-        local sfml = package:dep("sfml"):fetch()
-        if sfml.links then
-            for _, name in ipairs({"sfml-graphics", "sfml-system", "sfml-window"}) do
-                for _, link in ipairs(sfml.links) do
-                    if link:find(name, 1, true) then
-                        io.replace("CMakeLists.txt", name, link, {plain = true})
-                        break
+        if package:is_plat("windows", "linux") then
+            local sfml = package:dep("sfml"):fetch()
+            if sfml.links then
+                for _, name in ipairs({"sfml-graphics", "sfml-system", "sfml-window"}) do
+                    for _, link in ipairs(sfml.links) do
+                        if link:find(name, 1, true) then
+                            io.replace("CMakeLists.txt", name, link, {plain = true})
+                            break
+                        end
                     end
                 end
             end
