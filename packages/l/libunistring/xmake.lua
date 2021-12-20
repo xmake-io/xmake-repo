@@ -16,20 +16,7 @@ package("libunistring")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        local cppflags = {}
-        local ldflags = {}
-        for _, dep in ipairs(package:orderdeps()) do
-            local fetchinfo = dep:fetch()
-            if fetchinfo then
-                for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                    table.insert(cppflags, "-I" .. includedir)
-                end
-                for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    table.insert(ldflags, "-L" .. linkdir)
-                end
-            end
-        end
-        import("package.tools.autoconf").install(package, configs, {cppflags = cppflags, ldflags = ldflags})
+        import("package.tools.autoconf").install(package, configs, {packagedeps = package:orderdeps()})
     end)
 
     on_test(function (package)
