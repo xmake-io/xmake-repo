@@ -3,15 +3,10 @@ package("sfml")
     set_homepage("https://www.sfml-dev.org")
     set_description("Simple and Fast Multimedia Library")
 
-    if is_plat("windows") then
+    if is_plat("windows", "linux") then
         set_urls("https://www.sfml-dev.org/files/SFML-$(version)-sources.zip")
         add_urls("https://github.com/SFML/SFML/releases/download/$(version)/SFML-$(version)-sources.zip")
         add_versions("2.5.1", "bf1e0643acb92369b24572b703473af60bac82caf5af61e77c063b779471bb7f")
-    elseif is_plat("linux") then
-        if is_arch("x64", "x86_64") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-linux-gcc-64-bit.tar.gz")
-            add_versions("2.5.1", "34ad106e4592d2ec03245db5e8ad8fbf85c256d6ef9e337e8cf5c4345dc583dd")
-        end
     elseif is_plat("macosx") then
         if is_arch("x64", "x86_64") then
             set_urls("https://www.sfml-dev.org/files/SFML-$(version)-macOS-clang.tar.gz")
@@ -32,12 +27,6 @@ package("sfml")
     add_configs("audio",      {description = "Use the audio module", default = true, type = "boolean"})
     add_configs("network",    {description = "Use the network module", default = true, type = "boolean"})
     add_configs("main",       {description = "Link to the sfml-main library", default = true, type = "boolean"})
-
-    if is_plat("linux") then
-        add_deps("libx11", "libxrandr", "freetype", "libogg", "libflac", "libvorbis")
-        add_deps("openal-soft")
-        add_deps("opengl", {optional = true})
-    end
 
     on_load("windows", "linux", "macosx", "mingw", function (package)
         if package:is_plat("windows") then
@@ -76,11 +65,16 @@ package("sfml")
             if package:is_plat("windows", "mingw") then
                 package:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
             end
+            if package:is_plat("linux") then
+                package:add("deps", "libx11", "libxrandr", "freetype", "opengl", "glx", "libudev")
+            end
         end
         if package:config("audio") then
             if package:is_plat("mingw") then
                 package:add("links", a .. "audio" .. e)
                 package:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
+            elseif package:is_plat("linux") then
+                package:add("deps", "libogg", "libflac", "libvorbis", "openal-soft")
             end
         end
         if package:config("network") then
@@ -100,7 +94,7 @@ package("sfml")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows", "linux", function (package)
         local configs = {"-DSFML_BUILD_DOC=OFF", "-DSFML_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -118,7 +112,7 @@ package("sfml")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("linux", "macosx", "mingw", function (package)
+    on_install("macosx", "mingw", function (package)
         os.cp("lib", package:installdir())
         os.cp("include", package:installdir())
         if package:is_plat("mingw") then
