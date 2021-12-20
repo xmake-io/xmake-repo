@@ -24,10 +24,17 @@ package("imgui-sfml")
                 table.insert(configs, "-DIMGUI_DIR=" .. imguidir)
             end
         end
-        if package:is_plat("windows") and package:config("shared") then
-            io.replace("CMakeLists.txt", "sfml-graphics", "sfml-graphics-s", {plain = true})
-            io.replace("CMakeLists.txt", "sfml-system", "sfml-system-s", {plain = true})
-            io.replace("CMakeLists.txt", "sfml-window", "sfml-window-s", {plain = true})
+        -- fix sfml links
+        local sfml = package:dep("sfml"):fetch()
+        if sfml.links then
+            for _, name in ipairs({"sfml-graphics", "sfml-system", "sfml-window"}) do
+                for _, link in ipairs(sfml.links) do
+                    if link:find(name, 1, true) then
+                        io.replace("CMakeLists.txt", name, link, {plain = true})
+                        break
+                    end
+                end
+            end
         end
         if package:is_plat("mingw") then
             io.replace("cmake/FindImGui.cmake", "NO_DEFAULT_PATH", "NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH")
