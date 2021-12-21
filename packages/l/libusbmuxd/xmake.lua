@@ -4,9 +4,9 @@ package("libusbmuxd")
     set_description("A client library to multiplex connections from and to iOS devices")
     set_license("LGPL-2.1")
 
-    add_urls("https://github.com/libimobiledevice/libusbmuxd/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/libimobiledevice/libusbmuxd.git")
-    add_versions("2.0.2", "8ae3e1d9340177f8f3a785be276435869363de79f491d05d8a84a59efc8a8fdc")
+    add_urls("https://github.com/libimobiledevice/libusbmuxd.git")
+    add_versions("2021.09.13", "2ec5354a6ff2ba5e2740eabe7402186f29294f79")
+    add_deps("libimobiledevice-glue")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
@@ -35,10 +35,6 @@ package("libusbmuxd")
         end
         -- disable tools
         io.replace("tools/Makefile.am", "bin_PROGRAMS = iproxy inetcat", "bin_PROGRAMS =")
-        -- fix multiple definition with libplist
-        io.replace("common/thread.c", " thread_once(", " thread_once_(", {plain = true})
-        io.replace("common/thread.h", " thread_once(", " thread_once_(", {plain = true})
-        io.replace("src/libusbmuxd.c", "\tthread_once(", " thread_once_(", {plain = true})
         import("package.tools.autoconf").install(package, configs, {cflags = cflags})
     end)
 
