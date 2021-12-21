@@ -6,14 +6,13 @@ package("libimobiledevice-glue")
     add_urls("https://github.com/libimobiledevice/libimobiledevice-glue.git")
     add_versions("2021.11.24", "106cea58ae2d92fc755705a79e1753b3750edd15")
 
-    on_load(function (package) 
-        if package:is_plat("mingw") and package:config("shared") then 
-            package:add("deps", "libplist", {configs = {shared = true}}) 
-        else 
-            package:add("deps", "libplist") 
-        end 
-    end)
-    on_install("macosx", "linux", function (package)
+    add_deps("autoconf", "automake", "libplist")
+
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32", "iphlpapi")
+    end
+
+    on_install("macosx", "linux", "mingw@macosx", function (package)
         local configs = {}
         if package:is_plat("linux") and package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
@@ -21,6 +20,9 @@ package("libimobiledevice-glue")
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-debug=" .. (package:config("debug") and "yes" or "no"))
+        io.replace("src/thread.c", "%sthread_once%(", " img_thread_once_(")
+        io.replace("src/glue.c", "%sthread_once%(", " img_thread_once_(")
+        io.replace("include/libimobiledevice-glue/thread.h", "%sthread_once%(", " img_thread_once_(")
         import("package.tools.autoconf").install(package, configs)
     end)
 
