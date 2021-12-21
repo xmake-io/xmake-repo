@@ -12,14 +12,6 @@ package("libusbmuxd")
         add_syslinks("ws2_32")
     end
 
-    on_load(function (package)
-        if package:is_plat("mingw") and package:config("shared") then
-            package:add("deps", "libplist", {configs = {shared = true}})
-        else
-            package:add("deps", "libplist")
-        end
-    end)
-
     on_install("macosx", "linux", "mingw@macosx", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
@@ -27,15 +19,9 @@ package("libusbmuxd")
         if package:is_plat("linux") and package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        local cflags
-        if package:is_plat("mingw") then
-            -- disable ifaddrs for mingw
-            cflags = {"-DWIN32", "-D_WIN32_WINNT=0x0600"}
-            io.replace("common/socket.c", "AF_INET6", "AF_INET6_")
-        end
         -- disable tools
         io.replace("tools/Makefile.am", "bin_PROGRAMS = iproxy inetcat", "bin_PROGRAMS =")
-        import("package.tools.autoconf").install(package, configs, {cflags = cflags})
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
