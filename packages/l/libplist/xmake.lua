@@ -24,6 +24,7 @@ package("libplist")
         if package:is_plat("linux") and package:config("pic") ~= false then
             cxflags = "-fPIC"
         end
+        io.replace("src/plist.c", "void thread_once", "static void thread_once")
         import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
