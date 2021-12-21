@@ -19,7 +19,6 @@ package("libusbmuxd")
         if package:is_plat("linux") and package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        -- disable tools
         io.replace("tools/Makefile.am", "bin_PROGRAMS = iproxy inetcat", "bin_PROGRAMS =")
         import("package.tools.autoconf").install(package, configs)
     end)
