@@ -14,7 +14,7 @@ package("imgui-sfml")
 
     on_load(function(package)
         if package:is_plat("linux") and package:config("shared") then
-            package:add("deps", "sfml", {configs = {shared = true}}))
+            package:add("deps", "sfml", {configs = {shared = true}})
         else
             package:add("deps", "sfml")
         end
