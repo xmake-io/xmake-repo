@@ -26,15 +26,17 @@ package("glib")
     if is_plat("macosx") then
         add_syslinks("iconv")
         add_frameworks("Foundation", "CoreFoundation")
+        add_extsources("brew::glib")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
+        add_extsources("apt::libglib2.0-dev")
     end
 
     if on_fetch then
         on_fetch("macosx", "linux", function (package, opt)
             if opt.system and package.find_package then
                 local result
-                for _, name in ipairs({"gobject-2.0", "glib-2.0"}) do
+                for _, name in ipairs({"gobject-2.0", "glib-2.0", "gio-2.0", "gmodule-2.0", "gthread-2.0"}) do
                     local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
                     if pkginfo then
                         if not result then
