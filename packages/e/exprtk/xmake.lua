@@ -10,6 +10,8 @@ package("exprtk")
 
     if is_plat("windows") then
         add_cxxflags("/bigobj")
+    elseif is_plat("mingw") then
+        add_cxxflags("-Wa,-mbig-obj")
     end
     on_install(function (package)
         os.cp("exprtk.hpp", package:installdir("include"))
