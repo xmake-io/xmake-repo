@@ -50,7 +50,7 @@ package("linux-headers")
                     arch = "arm64"
                 elseif package:is_arch("mips") then
                     arch = "mips"
-                elseif package:is_arch("ppc", "powerpc") then
+                elseif package:is_arch("ppc", "powerpc", "ppc64", "powerpc64") then
                     arch = "powerpc"
                 end
                 assert(arch, "unknown arch(%s)!", package:arch())
