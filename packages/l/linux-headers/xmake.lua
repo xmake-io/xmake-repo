@@ -48,6 +48,10 @@ package("linux-headers")
                     arch = "arm"
                 elseif package:is_arch("arm64", "arm64-v8a") then
                     arch = "arm64"
+                elseif package:is_arch("mips") then
+                    arch = "mips"
+                elseif package:is_arch("ppc", "powerpc") then
+                    arch = "powerpc"
                 end
                 assert(arch, "unknown arch(%s)!", package:arch())
                 local cc = package:tool("cc")
