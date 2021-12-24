@@ -29,7 +29,7 @@ package("glslang")
         end
     end)
 
-    on_install("linux", "windows", "macosx", function (package)
+    on_install("linux", "windows", "macosx", "mingw", function (package)
         package:addenv("PATH", "bin")
         io.replace("CMakeLists.txt", "ENABLE_OPT OFF", "ENABLE_OPT ON")
         io.replace("StandAlone/CMakeLists.txt", "target_link_libraries(glslangValidator ${LIBRARIES})", [[
@@ -57,5 +57,3 @@ package("glslang")
             assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
         end
     end)
-
-
