@@ -1,6 +1,6 @@
 package("wayland-protocols")
-    set_homepage("Additional Wayland protocols")
-    set_description("Library for handling OpenGL function pointer management")
+    set_homepage("https://wayland.freedesktop.org")
+    set_description("Additional Wayland protocols")
     set_license("MIT")
 
     set_urls("https://wayland.freedesktop.org/releases/wayland-protocols-$(version).tar.xz")
