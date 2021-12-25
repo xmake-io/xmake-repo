@@ -87,3 +87,34 @@ xrepo 是一个基于 [Xmake](https://github.com/xmake-io/xmake) 的跨平台 C/
 例如：[packages/z/zlib/xmake.lua](https://github.com/xmake-io/xmake-repo/blob/dev/packages/z/zlib/xmake.lua):
 
 关于如何制作包的更详细描述，请参看文档：[制作和提交到官方仓库](https://xmake.io/#/zh-cn/package/remote_package?id=%e6%b7%bb%e5%8a%a0%e5%8c%85%e5%88%b0%e4%bb%93%e5%ba%93)
+
+## 从 Github 创建一个包模板
+
+我们需要先安装 [gh](https://github.com/cli/cli) cli 工具，然后执行下面的命令登入 github。
+
+```console
+$ gh auth login
+```
+
+基于 github 的包地址创建一个包配置文件到此仓库。
+
+```console
+$ xmake l scripts/new.lua github:glennrp/libpng
+package("libpng")
+    set_homepage("http://libpng.sf.net")
+    set_description("LIBPNG: Portable Network Graphics support, official libpng repository")
+
+    add_urls("https://github.com/glennrp/libpng/archive/refs/tags/v1.6.35.tar.gz",
+             "https://github.com/glennrp/libpng.git")
+    add_versions("v1.6.35", "6d59d6a154ccbb772ec11772cb8f8beb0d382b61e7ccc62435bf7311c9f4b210")
+
+    on_install(function (package)
+        local configs = {}
+        import("package.tools.xmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("foo", {includes = "foo.h"}))
+    end)
+packages/l/libpng/xmake.lua generated!
+```
