@@ -13,7 +13,7 @@ package("spirv-headers")
 
     add_deps("cmake")
 
-    on_install("linux", "windows", "macosx", function (package)
+    on_install(function (package)
         import("package.tools.cmake").install(package, {"-DSPIRV_HEADERS_SKIP_EXAMPLES=ON"})
     end)
 

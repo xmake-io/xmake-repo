@@ -38,7 +38,7 @@ package("spirv-tools")
         end
     end)
 
-    on_install("linux", "windows", "macosx", function (package)
+    on_install("linux", "windows", "macosx", "mingw", function (package)
         package:addenv("PATH", "bin")
         local configs = {"-DSPIRV_SKIP_TESTS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -59,7 +59,9 @@ package("spirv-tools")
     end)
 
     on_test(function (package)
-        os.runv("spirv-as --help")
-        os.runv("spirv-opt --help")
+        if not package:is_plat("mingw") or is_subhost("msys") then
+            os.runv("spirv-as --help")
+            os.runv("spirv-opt --help")
+        end
         assert(package:has_cxxfuncs("spvContextCreate", {configs = {languages = "c++11"}, includes = "spirv-tools/libspirv.hpp"}))
     end)

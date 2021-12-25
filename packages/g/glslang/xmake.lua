@@ -29,7 +29,7 @@ package("glslang")
         end
     end)
 
-    on_install("linux", "windows", "macosx", function (package)
+    on_install("linux", "windows", "macosx", "mingw", function (package)
         package:addenv("PATH", "bin")
         io.replace("CMakeLists.txt", "ENABLE_OPT OFF", "ENABLE_OPT ON")
         io.replace("StandAlone/CMakeLists.txt", "target_link_libraries(glslangValidator ${LIBRARIES})", [[
@@ -52,10 +52,10 @@ package("glslang")
     end)
 
     on_test(function (package)
-        os.vrun("glslangValidator --version")
+        if not package:is_plat("mingw") or is_subhost("msys") then
+            os.vrun("glslangValidator --version")
+        end
         if not package:config("binaryonly") then
             assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
         end
     end)
-
-
