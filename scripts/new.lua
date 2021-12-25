@@ -2,7 +2,9 @@ import("core.base.option")
 import("core.base.semver")
 import("core.base.json")
 import("lib.detect.find_tool")
+import("lib.detect.find_file")
 import("net.http")
+import("utils.archive")
 
 local options = {
     {nil, "repo", "v", nil, "Set repository name.",
@@ -45,16 +47,28 @@ function _generate_package_from_github(reponame)
     file:print("")
 
     -- generate package urls and versions
+    local cmakefile
+    local autoconf
     local latest_release = repoinfo.latestRelease
     if type(latest_release) == "table" then
         local url = ("https://github.com/%s/archive/refs/tags/%s.tar.gz"):format(reponame, latest_release.tagName)
         local giturl = ("https://github.com/%s.git"):format(reponame)
         file:print('    add_urls("%s",', url)
         file:print('             "%s")', giturl)
-        local tmpfile = os.tmpfile()
+        local tmpfile = os.tmpfile({ramdisk = false})
+        local tmpdir = tmpfile .. ".dir"
         print("downloading %s", url)
         http.download(url, tmpfile)
         file:print('    add_versions("%s", "%s")', latest_release.tagName, hash.sha256(tmpfile))
+        archive.extract(tmpfile, tmpdir)
+        cmakefile = find_file("CMakeLists.txt", path.join(tmpdir, "**"))
+        if not cmakefile then
+            autoconf = find_file("configure", path.join(tmpdir, "**"))
+            if not autoconf then
+                autoconf = find_file("autogen.sh", path.join(tmpdir, "**"))
+            end
+        end
+        os.rm(tmpdir)
         os.rm(tmpfile)
     end
 
@@ -62,7 +76,30 @@ function _generate_package_from_github(reponame)
     file:print("")
     file:print("    on_install(function (package)")
     file:print("        local configs = {}")
-    file:print('        import("package.tools.xmake").install(package, configs)')
+    if cmakefile then
+        file:print('        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))')
+        file:print('        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))')
+        file:print('        import("package.tools.cmake").install(package, configs)')
+    elseif autoconf then
+        file:print('        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))')
+        file:print('        if package:debug() then')
+        file:print('            table.insert(configs, "--enable-debug")')
+        file:print('        end')
+        file:print('        if package:is_plat("linux") and package:config("pic") ~= false then')
+        file:print('            table.insert(configs, "--with-pic")')
+        file:print('        end')
+    else
+        file:print('        io.writefile("xmake.lua", [[')
+        file:print('            add_rules("mode.release", "mode.debug")')
+        file:print('            target("%s")', packagename)
+        file:write('               set_kind("$(kind)")\n')
+        file:print('               add_files("src/*.c")')
+        file:print('        ]])')
+        file:print('        if package:config("shared") then')
+        file:print('            configs.kind = "shared"')
+        file:print('        end')
+        file:print('        import("package.tools.xmake").install(package, configs)')
+    end
     file:print("    end)")
 
     -- generate test scripts
