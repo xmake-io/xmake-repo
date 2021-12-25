@@ -12,10 +12,13 @@ package("cairo")
         add_deps("pkgconf")
     end
 
+    add_includedirs("include", "include/cairo")
+
     add_patches("2021.10.07", path.join(os.scriptdir(), "patches", "2021.10.07", "macosx.patch"), "8f47e272eb9112e0592b2fcf816fe225c6540a9298dbddc38543ae2fc9fe4e6d")
 
-    if is_plat("linux") or is_plat("macosx") then
+    if is_plat("linux", "macosx") then
         add_syslinks("pthread")
+        add_deps("fontconfig")
     end
 
     if is_plat("windows") then
@@ -34,8 +37,13 @@ package("cairo")
         local configs = {
             "-Dtests=disabled",
             "-Dgtk_doc=false",
-            "-Dfontconfig=disabled",
+            "-Dfreetype=enabled",
             "-Dgtk2-utils=disabled"}
+        if package:is_plat("macosx") or package:is_plat("linux") then
+            table.insert(configs, "-Dfontconfig=enabled")
+        else
+            table.insert(configs, "-Dfontconfig=disabled")
+        end
         table.insert(configs, "-Ddebug=" .. (package:debug() and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         io.replace("meson.build", "subdir('fuzzing')", "", {plain = true})
@@ -43,9 +51,6 @@ package("cairo")
         io.replace("meson.build", "fallback: ['fontconfig', 'fontconfig_dep'],", "", {plain = true})
         io.replace("meson.build", "'CoreFoundation'", "'CoreFoundation', 'Foundation'", {plain = true})
         io.replace("meson.build", "subdir('util')", "", {plain = true})
-        io.replace("src/meson.build", ", subdir: 'cairo'", "", {plain = true})
-        io.replace("util/cairo-gobject/meson.build", ", subdir: 'cairo'", "", {plain = true})
-        io.replace("util/cairo-script/meson.build", ", subdir: 'cairo'", "", {plain = true})
 
         import("package.tools.meson").install(package, configs)
     end)
