@@ -11,7 +11,7 @@ package("spirv-reflect")
 
     add_deps("spirv-headers")
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         io.gsub("spirv_reflect.h", "#include \"%.%/include%/spirv%/unified1%/spirv.h\"", "#include \"spirv/unified1/spirv.h\"")
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
