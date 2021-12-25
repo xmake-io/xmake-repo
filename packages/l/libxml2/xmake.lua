@@ -104,7 +104,16 @@ package("libxml2")
             table.insert(configs, "--enable-static=yes")
         end
         if package:config("iconv") then
-            table.insert(configs, "--with-iconv=" .. package:dep("libiconv"):installdir())
+            local iconvdir
+            local iconv = package:dep("libiconv"):fetch()
+            if iconv then
+                iconvdir = table.wrap(iconv.sysincludedirs or iconv.includedirs)[1]
+            end
+            if iconvdir then
+                table.insert(configs, "--with-iconv=" .. path.directory(iconvdir))
+            else
+                table.insert(configs, "--with-iconv")
+            end
         else
             table.insert(configs, "--without-iconv")
         end
