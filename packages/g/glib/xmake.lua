@@ -22,13 +22,13 @@ package("glib")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
-    add_links("gobject-2.0", "glib-2.0", "gio-2.0", "gthread-2.0", "gmodule-2.0", "intl")
+    add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0", "intl")
     if is_plat("macosx") then
         add_syslinks("iconv")
         add_frameworks("Foundation", "CoreFoundation")
         add_extsources("brew::glib")
     elseif is_plat("linux") then
-        add_syslinks("pthread", "dl")
+        add_syslinks("pthread", "dl", "resolv")
         add_extsources("apt::libglib2.0-dev")
     end
 
@@ -36,7 +36,7 @@ package("glib")
         on_fetch("macosx", "linux", function (package, opt)
             if opt.system and package.find_package then
                 local result
-                for _, name in ipairs({"gobject-2.0", "glib-2.0", "gio-2.0", "gmodule-2.0", "gthread-2.0"}) do
+                for _, name in ipairs({"gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0"}) do
                     local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
                     if pkginfo then
                         if not result then
@@ -78,6 +78,7 @@ package("glib")
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("gio/meson.build", "subdir%('tests'%)", "")
+        io.replace("meson.build", "glib_conf.set('HAVE_SELINUX', selinux_dep.found())", "", {plain = true})
         if package:is_plat("windows") then
             io.gsub("meson.build", "dependency%('libffi',", "dependency('libffi', modules: ['libffi::ffi'],")
         end
