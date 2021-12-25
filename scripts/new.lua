@@ -32,7 +32,7 @@ function _generate_package_from_github(reponame)
     end
     local description = repoinfo.description or ("The " .. packagename .. " package")
     file:print('    set_description("%s")', description)
-    local licensekey = repoinfo.licenseInfo and repoinfo.licenseInfo.key
+    local licensekey = type(repoinfo.licenseInfo) == "table" and repoinfo.licenseInfo.key
     if licensekey then
         local licenses = {
             ["apache-2.0"] = "Apache-2.0"
@@ -46,7 +46,7 @@ function _generate_package_from_github(reponame)
 
     -- generate package urls and versions
     local latest_release = repoinfo.latestRelease
-    if latest_release then
+    if type(latest_release) == "table" then
         local url = ("https://github.com/%s/archive/refs/tags/%s.tar.gz"):format(reponame, latest_release.tagName)
         local giturl = ("https://github.com/%s.git"):format(reponame)
         file:print('    add_urls("%s",', url)
