@@ -47,25 +47,34 @@ function _generate_package_from_github(reponame)
     file:print("")
 
     -- generate package urls and versions
-    local cmakefile
-    local autoconf
+    local has_xmake
+    local has_cmake
+    local has_meson
+    local has_autoconf
     local latest_release = repoinfo.latestRelease
     if type(latest_release) == "table" then
         local url = ("https://github.com/%s/archive/refs/tags/%s.tar.gz"):format(reponame, latest_release.tagName)
         local giturl = ("https://github.com/%s.git"):format(reponame)
         file:print('    add_urls("%s",', url)
         file:print('             "%s")', giturl)
-        local tmpfile = os.tmpfile({ramdisk = false})
+        local tmpfile = os.tmpfile({ramdisk = false}) .. ".tar.gz"
         local tmpdir = tmpfile .. ".dir"
         print("downloading %s", url)
         http.download(url, tmpfile)
         file:print('    add_versions("%s", "%s")', latest_release.tagName, hash.sha256(tmpfile))
         archive.extract(tmpfile, tmpdir)
-        cmakefile = find_file("CMakeLists.txt", path.join(tmpdir, "**"))
-        if not cmakefile then
-            autoconf = find_file("configure", path.join(tmpdir, "**"))
-            if not autoconf then
-                autoconf = find_file("autogen.sh", path.join(tmpdir, "**"))
+        local files = os.files(path.join(tmpdir, "*")) or {}
+        table.join2(files, os.files(path.join(tmpdir, "*", "*")))
+        for _, file in ipairs(files) do
+            local filename = path.filename(file)
+            if filename == "xmake.lua" then
+                has_xmake = true
+            elseif filename == "CMakeLists.txt" then
+                has_cmake = true
+            elseif filename == "configure" or filename == "autogen.sh" then
+                has_autoconf = true
+            elseif filename == "meson.build" then
+                has_meson = true
             end
         end
         os.rm(tmpdir)
@@ -76,11 +85,11 @@ function _generate_package_from_github(reponame)
     file:print("")
     file:print("    on_install(function (package)")
     file:print("        local configs = {}")
-    if cmakefile then
+    if has_cmake then
         file:print('        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))')
         file:print('        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))')
         file:print('        import("package.tools.cmake").install(package, configs)')
-    elseif autoconf then
+    elseif has_autoconf then
         file:print('        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))')
         file:print('        if package:debug() then')
         file:print('            table.insert(configs, "--enable-debug")')
@@ -88,6 +97,9 @@ function _generate_package_from_github(reponame)
         file:print('        if package:is_plat("linux") and package:config("pic") ~= false then')
         file:print('            table.insert(configs, "--with-pic")')
         file:print('        end')
+    elseif has_meson then
+        file:print('        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))')
+        file:print('        import("package.tools.meson").install(package, configs)')
     else
         file:print('        io.writefile("xmake.lua", [[')
         file:print('            add_rules("mode.release", "mode.debug")')
