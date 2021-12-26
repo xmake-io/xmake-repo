@@ -21,7 +21,7 @@ function _generate_package_from_github(reponame)
     if repoinfo then
         repoinfo = json.decode(repoinfo)
     end
-    print(repoinfo)
+    vprint(repoinfo)
 
     -- generate package header
     local packagename = assert(repoinfo.name, "package name not found!"):lower()
@@ -51,6 +51,7 @@ function _generate_package_from_github(reponame)
     local has_cmake
     local has_meson
     local has_autoconf
+    local need_autogen
     local latest_release = repoinfo.latestRelease
     if type(latest_release) == "table" then
         local url = ("https://github.com/%s/archive/refs/tags/%s.tar.gz"):format(reponame, latest_release.tagName)
@@ -71,7 +72,10 @@ function _generate_package_from_github(reponame)
                 has_xmake = true
             elseif filename == "CMakeLists.txt" then
                 has_cmake = true
-            elseif filename == "configure" or filename == "autogen.sh" then
+            elseif filename == "configure" then
+                has_autoconf = true
+            elseif filename == "autogen.sh" then
+                need_autogen = true
                 has_autoconf = true
             elseif filename == "meson.build" then
                 has_meson = true
@@ -79,6 +83,18 @@ function _generate_package_from_github(reponame)
         end
         os.rm(tmpdir)
         os.rm(tmpfile)
+    end
+
+    -- add dependencies
+    if has_cmake then
+        file:print("")
+        file:print('    add_deps("cmake")')
+    elseif has_meson then
+        file:print("")
+        file:print('    add_deps("meson", "ninja")')
+    elseif need_autogen then
+        file:print("")
+        file:print('    add_deps("autoconf", "automake")')
     end
 
     -- generate install scripts
