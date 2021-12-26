@@ -64,7 +64,7 @@ function _generate_package_from_github(reponame)
     if type(latest_release) == "table" then
         local url = ("https://github.com/%s/archive/refs/tags/%s.tar.gz"):format(reponame, latest_release.tagName)
         local giturl = ("https://github.com/%s.git"):format(reponame)
-        file:print('    add_urls("%s",', url)
+        file:write('    add_urls("https://github.com/' .. reponame .. '/archive/refs/tags/$(version).tar.gz",\n')
         file:print('             "%s")', giturl)
         local tmpfile = os.tmpfile({ramdisk = false}) .. ".tar.gz"
         repodir = tmpfile .. ".dir"
