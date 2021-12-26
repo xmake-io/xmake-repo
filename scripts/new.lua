@@ -4,6 +4,7 @@ import("core.base.json")
 import("lib.detect.find_tool")
 import("lib.detect.find_file")
 import("net.http")
+import("devel.git")
 import("utils.archive")
 
 local options = {
@@ -47,6 +48,7 @@ function _generate_package_from_github(reponame)
     file:print("")
 
     -- generate package urls and versions
+    local repodir
     local has_xmake
     local has_cmake
     local has_meson
@@ -59,13 +61,29 @@ function _generate_package_from_github(reponame)
         file:print('    add_urls("%s",', url)
         file:print('             "%s")', giturl)
         local tmpfile = os.tmpfile({ramdisk = false}) .. ".tar.gz"
-        local tmpdir = tmpfile .. ".dir"
+        repodir = tmpfile .. ".dir"
         print("downloading %s", url)
         http.download(url, tmpfile)
         file:print('    add_versions("%s", "%s")', latest_release.tagName, hash.sha256(tmpfile))
-        archive.extract(tmpfile, tmpdir)
-        local files = os.files(path.join(tmpdir, "*")) or {}
-        table.join2(files, os.files(path.join(tmpdir, "*", "*")))
+        archive.extract(tmpfile, repodir)
+        os.rm(tmpfile)
+    else
+        local giturl = ("https://github.com/%s.git"):format(reponame)
+        repodir = os.tmpfile({ramdisk = false})
+        file:print('    add_urls("%s")', giturl)
+        print("downloading %s", giturl)
+        git.clone(giturl, {outputdir = repodir, depth = 1})
+        local commit = git.lastcommit({repodir = repodir})
+        local version = try{ function() return os.iorunv("git", {"log", "-1", "--date=format:%Y.%m.%d", "--format=%ad"}, {curdir = repodir}) end}
+        if version then
+            file:print('    add_versions("%s", "%s")', version:trim(), commit)
+        end
+    end
+
+    -- detect build system
+    if repodir then
+        local files = os.files(path.join(repodir, "*")) or {}
+        table.join2(files, os.files(path.join(repodir, "*", "*")))
         for _, file in ipairs(files) do
             local filename = path.filename(file)
             if filename == "xmake.lua" then
@@ -81,8 +99,7 @@ function _generate_package_from_github(reponame)
                 has_meson = true
             end
         end
-        os.rm(tmpdir)
-        os.rm(tmpfile)
+        os.rm(repodir)
     end
 
     -- add dependencies
