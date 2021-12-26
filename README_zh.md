@@ -104,7 +104,7 @@ package("libpng")
     set_homepage("http://libpng.sf.net")
     set_description("LIBPNG: Portable Network Graphics support, official libpng repository")
 
-    add_urls("https://github.com/glennrp/libpng/archive/refs/tags/v1.6.35.tar.gz",
+    add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/glennrp/libpng.git")
     add_versions("v1.6.35", "6d59d6a154ccbb772ec11772cb8f8beb0d382b61e7ccc62435bf7311c9f4b210")
 
