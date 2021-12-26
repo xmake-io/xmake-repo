@@ -108,9 +108,13 @@ package("libpng")
              "https://github.com/glennrp/libpng.git")
     add_versions("v1.6.35", "6d59d6a154ccbb772ec11772cb8f8beb0d382b61e7ccc62435bf7311c9f4b210")
 
+    add_deps("cmake")
+
     on_install(function (package)
         local configs = {}
-        import("package.tools.xmake").install(package, configs)
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
