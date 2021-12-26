@@ -29,7 +29,10 @@ function _generate_package_from_github(reponame)
     local packagefile = path.join("packages", packagename:sub(1, 1), packagename, "xmake.lua")
     local file = io.open(packagefile, "w")
     file:print('package("%s")', packagename)
-    local homepage = repoinfo.homepageUrl or repoinfo.url
+    local homepage = repoinfo.homepageUrl
+    if homepage == nil or homepage == "" then
+        homepage = repoinfo.url
+    end
     if homepage then
         file:print('    set_homepage("%s")', homepage)
     end
@@ -38,7 +41,10 @@ function _generate_package_from_github(reponame)
     local licensekey = type(repoinfo.licenseInfo) == "table" and repoinfo.licenseInfo.key
     if licensekey then
         local licenses = {
-            ["apache-2.0"] = "Apache-2.0"
+            ["apache-2.0"] = "Apache-2.0",
+            ["lgpl-2.0"] = "LGPL-2.0",
+            ["lgpl-2.1"] = "LGPL-2.1",
+            ["zlib"] = "zlib"
         }
         local license = licenses[licensekey]
         if license then
