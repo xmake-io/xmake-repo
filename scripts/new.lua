@@ -44,7 +44,8 @@ function _generate_package_from_github(reponame)
             ["apache-2.0"] = "Apache-2.0",
             ["lgpl-2.0"] = "LGPL-2.0",
             ["lgpl-2.1"] = "LGPL-2.1",
-            ["zlib"] = "zlib"
+            zlib = "zlib",
+            mit = "MIT"
         }
         local license = licenses[licensekey]
         if license then
