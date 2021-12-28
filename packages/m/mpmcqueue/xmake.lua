@@ -10,6 +10,24 @@ package("mpmcqueue")
     add_deps("cmake")
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", [[if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+	if (MSVC)
+		add_compile_options(/permissive- /W4 /wd4172 /wd4324 /wd4530)
+	else()
+		add_compile_options(-Wall -Wextra -Wpedantic)
+	endif()
+
+	find_package(Threads REQUIRED)
+
+	add_executable(MPMCQueueExample src/MPMCQueueExample.cpp)
+	target_link_libraries(MPMCQueueExample MPMCQueue Threads::Threads)
+
+	add_executable(MPMCQueueTest src/MPMCQueueTest.cpp)
+	target_link_libraries(MPMCQueueTest MPMCQueue Threads::Threads)
+
+	enable_testing()
+	add_test(MPMCQueueTest MPMCQueueTest)
+endif()]], "", {plain = true})
         import("package.tools.cmake").install(package)
     end)
 
