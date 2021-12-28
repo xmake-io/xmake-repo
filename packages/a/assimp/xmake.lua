@@ -30,6 +30,10 @@ package("assimp")
 
     add_deps("cmake", "irrxml", "zlib")
 
+    if is_plat("windows") then
+        add_syslinks("advapi32")
+    end
+
     on_load(function (package)
         if is_plat("linux") and package:config("shared") then
             package:add("ldflags", "-Wl,--as-needed," .. package:installdir("lib", "libassimp.so"))
