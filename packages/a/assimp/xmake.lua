@@ -5,6 +5,7 @@ package("assimp")
 
     set_urls("https://github.com/assimp/assimp/archive/$(version).zip",
              "https://github.com/assimp/assimp.git")
+    add_versions("v5.1.4", "59a00cf72fa5ceff960460677e2b37be5cd1041e85bae9c02828c27ade7e4160")
     add_versions("v5.0.1", "d10542c95e3e05dece4d97bb273eba2dfeeedb37a78fb3417fd4d5e94d879192")
     add_patches("v5.0.1", path.join(os.scriptdir(), "patches", "5.0.1", "fix-mingw.patch"), "a3375489e2bbb2dd97f59be7dd84e005e7e9c628b4395d7022a6187ca66b5abb")
 
@@ -90,6 +91,11 @@ package("assimp")
             add_config_arg("build_tools", "ASSIMP_BUILD_ASSIMP_TOOLS")
         else
             table.insert(configs, "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF")
+        end
+
+        if package:is_plat("mingw") then
+            -- CMAKE_COMPILER_IS_MINGW has been removed: https://github.com/assimp/assimp/pull/4311
+            io.replace("CMakeLists.txt", "CMAKE_COMPILER_IS_MINGW", "MINGW", {plain = true})
         end
 
         import("package.tools.cmake").install(package, configs)
