@@ -63,6 +63,8 @@ package("assimp")
             if not zlib:is_system() then
                 local fetchinfo = zlib:fetch()
                 io.replace("CMakeLists.txt", "FIND_PACKAGE(ZLIB)", "", {plain = true})
+                io.replace("CMakeLists.txt", [[INSTALL( TARGETS zlib zlibstatic
+        EXPORT "${TARGETS_EXPORT_NAME}")]], "", {plain = true})
                 table.insert(configs, "-DZLIB_FOUND=TRUE")
                 table.insert(configs, "-DZLIB_INCLUDE_DIR=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
                 table.insert(configs, "-DZLIB_LIBRARIES=" .. table.concat(fetchinfo.libfiles, ";"))
