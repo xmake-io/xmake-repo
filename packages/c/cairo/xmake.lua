@@ -8,12 +8,15 @@ package("cairo")
 
     add_deps("meson")
     add_deps("libpng", "pixman", "zlib", "freetype", "expat")
+    if is_plat("windows") then
+        add_deps("pkgconf")
+    end
+
     add_patches("2021.10.07", path.join(os.scriptdir(), "patches", "2021.10.07", "macosx.patch"), "8f47e272eb9112e0592b2fcf816fe225c6540a9298dbddc38543ae2fc9fe4e6d")
 
     if is_plat("linux") or is_plat("macosx") then
         add_syslinks("pthread")
     end
-
 
     if is_plat("windows") then
         add_syslinks("gdi32", "msimg32", "user32")
@@ -22,15 +25,17 @@ package("cairo")
     end
 
     on_load("windows", function (package)
-        if not package:config("shared") then 
+        if not package:config("shared") then
             package:add("defines", "CAIRO_WIN32_STATIC_BUILD=1")
         end
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-        import("package.tools.meson")
-        local configs = {"-Dtests=disabled", "-Dgtk_doc=false", "-Dfontconfig=disabled", "-Dgtk2-utils=disabled"}
-        
+        local configs = {
+            "-Dtests=disabled",
+            "-Dgtk_doc=false",
+            "-Dfontconfig=disabled",
+            "-Dgtk2-utils=disabled"}
         table.insert(configs, "-Ddebug=" .. (package:debug() and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
@@ -39,7 +44,7 @@ package("cairo")
         io.replace("util/cairo-gobject/meson.build", ", subdir: 'cairo'", "", {plain = true})
         io.replace("util/cairo-script/meson.build", ", subdir: 'cairo'", "", {plain = true})
 
-        meson.install(package, configs, {packagedeps = {"libpng", "pixman", "zlib", "freetype", "expat"}})
+        import("package.tools.meson").install(package, configs)
     end)
 
     on_test(function (package)
