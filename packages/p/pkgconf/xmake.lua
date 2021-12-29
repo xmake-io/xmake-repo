@@ -25,6 +25,6 @@ package("pkgconf")
     on_test(function (package)
         os.vrun("pkgconf --version")
         if is_subhost("windows") then
-            os.vrunv("pkg-config --version")
+            os.vrun("pkg-config --version")
         end
     end)
