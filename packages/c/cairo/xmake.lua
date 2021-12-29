@@ -6,7 +6,7 @@ package("cairo")
     add_urls("https://gitlab.freedesktop.org/cairo/cairo/-/archive/a04786b9330109ce54bf7f65c7068281419cec6a/cairo-a04786b9330109ce54bf7f65c7068281419cec6a.tar.gz")
     add_versions("2021.10.07", "8fc7e374a2de1d975171b58c7d43e4d430a28da082c0536ad6e2b178a9863d03")
 
-    add_deps("meson")
+    add_deps("meson", "ninja")
     add_deps("libpng", "pixman", "zlib", "freetype", "expat", "glib")
     if is_plat("windows") then
         add_deps("pkgconf")
@@ -21,7 +21,7 @@ package("cairo")
     if is_plat("windows") then
         add_syslinks("gdi32", "msimg32", "user32")
     elseif is_plat("macosx") then
-        add_frameworks("CoreGraphics", "CoreFoundation")
+        add_frameworks("CoreGraphics", "CoreFoundation", "Foundation")
     end
 
     on_load("windows", function (package)
@@ -38,8 +38,10 @@ package("cairo")
             "-Dgtk2-utils=disabled"}
         table.insert(configs, "-Ddebug=" .. (package:debug() and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        io.gsub("meson.build", "subdir%('fuzzing'%)", "")
-        io.gsub("meson.build", "subdir%('docs'%)", "")
+        io.replace("meson.build", "subdir('fuzzing')", "", {plain = true})
+        io.replace("meson.build", "subdir('docs')", "", {plain = true})
+        io.replace("meson.build", "fallback: ['fontconfig', 'fontconfig_dep'],", "", {plain = true})
+        io.replace("meson.build", "'CoreFoundation'", "'CoreFoundation', 'Foundation'", {plain = true})
         io.replace("src/meson.build", ", subdir: 'cairo'", "", {plain = true})
         io.replace("util/cairo-gobject/meson.build", ", subdir: 'cairo'", "", {plain = true})
         io.replace("util/cairo-script/meson.build", ", subdir: 'cairo'", "", {plain = true})
