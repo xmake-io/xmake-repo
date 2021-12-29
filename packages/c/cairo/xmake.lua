@@ -7,7 +7,7 @@ package("cairo")
     add_versions("2021.10.07", "8fc7e374a2de1d975171b58c7d43e4d430a28da082c0536ad6e2b178a9863d03")
 
     add_deps("meson")
-    add_deps("libpng", "pixman", "zlib", "freetype", "expat")
+    add_deps("libpng", "pixman", "zlib", "freetype", "expat", "glib")
     if is_plat("windows") then
         add_deps("pkgconf")
     end
