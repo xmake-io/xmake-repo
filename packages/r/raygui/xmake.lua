@@ -1,4 +1,5 @@
 package("raygui")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/raysan5/raygui")
     set_description("A simple and easy-to-use immediate-mode gui library")
     set_license("zlib")
@@ -9,30 +10,14 @@ package("raygui")
 
     add_deps("raylib 4.x")
 
+    add_defines("RAYGUI_IMPLEMENTATION")
+
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {}
-        io.writefile("xmake.lua", [[
-            add_rules("mode.release", "mode.debug")
-            add_requires("raylib")
-            target("raygui")
-               set_kind("$(kind)")
-               add_files("src/*.c")
-               add_headerfiles("src/(**.h)")
-               add_defines("RAYGUI_IMPLEMENTATION")
-               add_packages("raylib")
-               if is_plat("windows") and is_kind("shared") then
-                    add_defines("BUILD_LIBTYPE_SHARED")
-               end
-        ]])
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        os.cp("src/raygui.h", "src/raygui.c")
-        import("package.tools.xmake").install(package, configs)
+        os.cp("src/*", package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
+        assert(package:check_csnippets({test = [[
             #include <raygui.h>
             void test() {
                 InitWindow(100, 100, "hello world!");
