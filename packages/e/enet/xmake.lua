@@ -8,7 +8,7 @@ package("enet")
              "https://github.com/lsalzman/enet.git")
 
     add_versions("v1.3.17", "1e0b4bc0b7127a2d779dd7928f0b31830f5b3dcb7ec9588c5de70033e8d2434a")
-    add_patches("v1.3.17", path.join(os.scriptdir(), "patches", "cmake.patch"), "8c75f8fcfad3ccd872eb6c42a2a5b184767257554eb9091ba9324c1aa48118d2")
+    add_patches("v1.3.17", path.join(os.scriptdir(), "patches", "cmake.patch"), "e77d2d129952443d67c1ec432de81843d72b854d25bbd6fb244b0f85804d21d1")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::enet")
@@ -23,6 +23,12 @@ package("enet")
     if is_plat("windows", "mingw") then
         add_syslinks("winmm", "ws2_32")
     end
+
+    on_load("windows", "mingw", function (package)
+        if package:config("shared") then
+            package:add("defines", "ENET_DLL")
+        end
+    end)
 
     on_install(function (package)
         local configs = {}

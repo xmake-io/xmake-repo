@@ -15,7 +15,7 @@ index 6f7fc27..6062da7 100644
 -if (MINGW)
 +if (WIN32)
 +    if (BUILD_SHARED_LIBS)
-+        set_property(TARGET enet PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS ON)
++        add_definitions(-DENET_DLL=1)
 +    endif()
 +
      target_link_libraries(enet winmm ws2_32)
