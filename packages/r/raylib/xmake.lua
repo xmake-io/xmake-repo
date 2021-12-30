@@ -15,6 +15,7 @@ package("raylib")
         add_versions("3.0.0", "8244898b09887f29baa9325b5ae47c30ec0f45dc15b4f740178c65af068b3141")
         add_versions("3.5.0", "9b9be75fe1b231225c91a6fcf5ed9c24cbf03c6193f917e40e4655ef27f281e2")
         add_versions("3.7.0", "439dc1851dd1b7f385f4caf4f5c7191dda90add9d8d531e5e74702315e432003")
+        add_versions("4.0.0", "be73734815a7ef4eb3130f4a2ecaabb2059602745ae6ce1173201a74034c2ec9")
     else
         add_urls("https://github.com/raysan5/raylib/archive/$(version).tar.gz",
                  "https://github.com/raysan5/raylib.git")
@@ -22,6 +23,7 @@ package("raylib")
         add_versions("3.0.0", "164d1cc1710bb8e711a495e84cc585681b30098948d67d482e11dc37d2054eab")
         add_versions("3.5.0", "761985876092fa98a99cbf1fef7ca80c3ee0365fb6a107ab901a272178ba69f5")
         add_versions("3.7.0", "7bfdf2e22f067f16dec62b9d1530186ddba63ec49dbd0ae6a8461b0367c23951")
+        add_versions("4.0.0", "11f6087dc7bedf9efb3f69c0c872f637e421d914e5ecea99bbe7781f173dc38c")
     end
 
     if not is_plat("macosx") then
@@ -34,7 +36,7 @@ package("raylib")
         add_syslinks("gdi32", "user32", "winmm", "shell32")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl", "m")
-        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxi", "libxext")
+        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext")
     end
     add_deps("opengl", {optional = true})
 
@@ -47,7 +49,7 @@ package("raylib")
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"libxrender", "libxfixes", "libxext"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"libx11", "libxrender", "libxrandr", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext"}})
     end)
 
     on_test(function (package)
