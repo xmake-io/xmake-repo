@@ -22,7 +22,6 @@ package("libsdl_image")
     add_deps("libsdl")
 
     add_links("SDL2_image")
-
     add_includedirs("include", "include/SDL2")
 
     on_install("windows", "mingw", function (package)
@@ -49,6 +48,7 @@ package("libsdl_image")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
         end
+        io.replace("Makefile.am", "noinst_PROGRAMS = showimage", "")
         import("package.tools.autoconf").install(package, configs)
     end)
 
