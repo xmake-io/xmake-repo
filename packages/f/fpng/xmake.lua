@@ -2,8 +2,9 @@ package("fpng")
     set_homepage("https://github.com/richgel999/fpng")
     set_description("Super fast C++ .PNG writer/reader")
 
-    add_urls("https://github.com/richgel999/fpng.git")
-    add_versions("2021.12.31", "4dae96d7876d17654ac5912449689f9f74ed9aae")
+    add_urls("https://github.com/richgel999/fpng/archive/refs/tags/$(version).tar.gz",
+	     "https://github.com/richgel999/fpng.git")
+    add_versions("v1.0.1", "ef4e7ee23176908fdad4936f05f3ad097abaf61485171e108fb1e7ff230bd523")
 
     add_configs("sse4", { description = "Enable SSE 4.1 support.", default = false, type = "boolean"})
 
