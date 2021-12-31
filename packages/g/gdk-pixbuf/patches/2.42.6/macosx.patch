@@ -1,80 +1,38 @@
+commit 0b873aab346559416d37573672f49141d345ff02
+Author: Kelvin Zhang <zhangxp1998@gmail.com>
+Date:   Fri Dec 31 11:57:52 2021 -0800
+
+    Fix gir scan linker error
+    
+    Need to link gdk-pixbuf as a dependency, otherwise build for static
+    library will fail due to missing libpng/libgjpeg
+
 diff --git a/gdk-pixbuf/meson.build b/gdk-pixbuf/meson.build
-index 54ff9dda3..ec0d902a9 100644
+index 8b0590b..45546ad 100644
 --- a/gdk-pixbuf/meson.build
 +++ b/gdk-pixbuf/meson.build
-@@ -75,7 +75,7 @@ gdk_pixbuf_cflags = [
-   '-DBUILT_MODULES_DIR="@0@"'.format(meson.current_build_dir()),
- ]
+@@ -241,6 +241,7 @@ if build_gir
+     identifier_prefix: 'Gdk',
+     symbol_prefix: 'gdk',
+     export_packages: 'gdk-pixbuf-2.0',
++    dependencies: loaders_deps,
+     includes: [ 'GModule-2.0', 'Gio-2.0', ],
+     header: 'gdk-pixbuf/gdk-pixbuf.h',
+     install: true,
+@@ -255,6 +256,7 @@ if build_gir
+     identifier_prefix: 'Gdk',
+     symbol_prefix: 'gdk',
+     export_packages: 'gdk-pixbuf-2.0',
++    dependencies: loaders_deps,
+     includes: [ gdkpixbuf_gir[0] ],
+     header: 'gdk-pixbuf/gdk-pixdata.h',
+     install: true,
+@@ -338,7 +340,7 @@ foreach bin: gdkpixbuf_bin
  
--gdk_pixbuf_api_path = join_paths(gdk_pixbuf_api_name, 'gdk-pixbuf')
-+gdk_pixbuf_api_path = join_paths('gdk-pixbuf')
- 
- gdkpixbuf_features_conf = configuration_data()
- gdkpixbuf_features_conf.set('GDK_PIXBUF_MAJOR', gdk_pixbuf_version_major)
-@@ -340,6 +340,7 @@ foreach bin: gdkpixbuf_bin
+   bin = executable(bin_name, bin_source,
                     gdkpixbuf_enum_h,
-                    dependencies: gdk_pixbuf_deps + [ gdkpixbuf_dep ],
+-                   dependencies: gdk_pixbuf_deps + [ gdkpixbuf_dep ],
++                   dependencies: [ gdkpixbuf_dep ],
                     include_directories: [ root_inc, gdk_pixbuf_inc ],
-+                   link_args: ['-framework', 'CoreFoundation', '-framework', 'Foundation', '-framework', 'CoreServices', '-framework', 'AppKit'],
                     c_args: common_cflags + gdk_pixbuf_cflags,
                     install: true)
-   meson.override_find_program(bin_name, bin)
-diff --git a/gdk-pixbuf/pixops/meson.build b/gdk-pixbuf/pixops/meson.build
-index 101fbf669..718767ba4 100644
---- a/gdk-pixbuf/pixops/meson.build
-+++ b/gdk-pixbuf/pixops/meson.build
-@@ -8,6 +8,7 @@ pixops = static_library('pixops',
- pixops_dep = declare_dependency(
-   link_with: pixops,
-   include_directories: [ root_inc, include_directories('.') ],
-+  link_args: ['-framework', 'CoreFoundation', '-framework', 'Foundation', '-framework', 'CoreServices', '-framework', 'AppKit'],
-   dependencies: gdk_pixbuf_deps,
- )
- 
-diff --git a/meson.build b/meson.build
-index 33044e820..f73bb9bd7 100644
---- a/meson.build
-+++ b/meson.build
-@@ -116,7 +116,7 @@ gdk_pixbuf_conf.set('HAVE_SIGSETJMP',
- 
- # Common compiler and linker flags
- common_cflags = []
--common_ldflags = []
-+common_ldflags = ['-framework', 'CoreFoundation', '-framework', 'Foundation', '-framework', 'CoreServices', '-framework', 'AppKit']
- 
- if cc.get_id() == 'msvc'
-   # For Visual Studio, just force-include msvc_reommended_pragmas.h
-@@ -414,13 +414,11 @@ subdir('gdk-pixbuf')
- subdir('po')
- 
- if not meson.is_cross_build()
--  subdir('tests')
-   subdir('thumbnailer')
- endif
- 
- # Documentation
- build_docs = get_option('gtk_doc') or get_option('docs')
--subdir('docs')
- 
- if not meson.is_cross_build()
-   meson.add_install_script('build-aux/post-install.py',
-diff --git a/thumbnailer/meson.build b/thumbnailer/meson.build
-index b6a206d5b..ba905c812 100644
---- a/thumbnailer/meson.build
-+++ b/thumbnailer/meson.build
-@@ -4,6 +4,7 @@ bin = executable('gdk-pixbuf-thumbnailer',
-              '-DTHUMBNAILER_RETURNS_PIXBUF',
-              '-DTHUMBNAILER_USAGE="Thumbnail images"',
-            ],
-+		   link_args: ['-framework', 'CoreFoundation', '-framework', 'Foundation', '-framework', 'CoreServices', '-framework', 'AppKit'],
-            dependencies: gdk_pixbuf_deps + [ gdkpixbuf_dep ],
-            install: true)
- meson.override_find_program('gdk-pixbuf-thumbnailer', bin)
-@@ -11,6 +12,7 @@ meson.override_find_program('gdk-pixbuf-thumbnailer', bin)
- gdk_pixbuf_print_mime_types = executable('gdk-pixbuf-print-mime-types',
-                                          'gdk-pixbuf-print-mime-types.c',
-                                          c_args: common_cflags,
-+										 link_args: ['-framework', 'CoreFoundation', '-framework', 'Foundation', '-framework', 'CoreServices', '-framework', 'AppKit'],
-                                          dependencies: gdk_pixbuf_deps + [ gdkpixbuf_dep ])
- 
- custom_target('thumbnailer',

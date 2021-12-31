@@ -8,6 +8,7 @@ package("gdk-pixbuf")
     add_urls("https://gitlab.gnome.org/GNOME/gdk-pixbuf.git")
 
     add_versions("2.42.6", "c4f3a84a04bc7c5f4fbd97dce7976ab648c60628f72ad4c7b79edce2bbdb494d")
+    add_includedirs("include", "include/gdk-pixbuf-2.0")
 
     add_deps("meson", "ninja")
     add_deps("libpng", "libjpeg", "glib")
@@ -15,7 +16,7 @@ package("gdk-pixbuf")
         add_frameworks("Foundation", "CoreFoundation", "AppKit")
         add_extsources("brew::gdk-pixbuf")
         add_syslinks("resolv")
-        add_patches("2.42.6", path.join(os.scriptdir(), "patches", "2.42.6", "macosx.patch"), "52ab09e9811d14673413a950074262b825261971ff7bb3aa0d152446a7381e71")
+        add_patches("2.42.6", path.join(os.scriptdir(), "patches", "2.42.6", "macosx.patch"), "ad2705a5a9aa4b90fb4588bb567e95f5d82fccb6a5d463cd07462180e2e418eb")
     end
 
     on_install("macosx", "linux", function (package)
@@ -26,8 +27,8 @@ package("gdk-pixbuf")
                          "-Dtiff=true",
                          "-Dnative_windows_loaders=false",
                          "-Dgio_sniffing=false",
+                         "-Drelocatable=true",
                          "-Djpeg=true",
-                         "-Dintrospection=disabled",
                          "-Dinstalled_tests=false"}
         
         table.insert(configs, "-Ddebug=" .. (package:debug() and "true" or "false"))
@@ -35,7 +36,7 @@ package("gdk-pixbuf")
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("meson.build", "subdir%('docs'%)", "")
-        io.replace("gdk-pixbuf/meson.build", "join_paths(gdk_pixbuf_api_name,", "join_paths(", {plain = true})
+
         meson.install(package, configs, {packagedeps = {"libpng", "libjpeg", "glib"}})
     end)
 
