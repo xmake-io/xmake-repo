@@ -8,7 +8,7 @@ package("pixman")
 
     add_deps("meson", "ninja")
 
-    add_includedirs("include/pixman-1")
+    add_includedirs("include", "include/pixman-1")
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {

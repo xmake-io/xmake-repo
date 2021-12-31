@@ -17,6 +17,10 @@ package("util-linux")
         add_deps("ncurses", "zlib")
     end
 
+    if is_plat("linux") then
+        add_extsources("apt::util-linux")
+    end
+
     add_configs("ipcs",               { description = "Enable ipcs.", default = false, type = "boolean"})
     add_configs("ipcrm",              { description = "Enable ipcrm.", default = false, type = "boolean"})
     add_configs("wall",               { description = "Enable wall.", default = false, type = "boolean"})
