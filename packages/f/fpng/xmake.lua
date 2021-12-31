@@ -33,14 +33,10 @@ package("fpng")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("fpng::fpng_encode_image_to_memory(0,0,0,0,std::vector<uint8_t>(),0)", {includes = "fpng.h"}))
-    end)
-
-    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 std::vector<uint8_t> fpng_file_buf;
-		        fpng::fpng_encode_image_to_memory(0, 0, 0, 0, fpng_file_buf, 0);
+	 	fpng::fpng_encode_image_to_memory(0, 0, 0, 0, fpng_file_buf, 0);
             }
         ]]}, {configs = {languages = "c++11"}, includes = "fpng.h"}))
     end)
