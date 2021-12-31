@@ -7,7 +7,7 @@ package("fpng")
 
     add_configs("sse4", { description = "Enable SSE 4.1 support.", default = false, type = "boolean"})
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             option("sse4", {showmenu = true, default = false})
