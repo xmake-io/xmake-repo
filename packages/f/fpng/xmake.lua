@@ -7,7 +7,7 @@ package("fpng")
 
     add_configs("sse4", { description = "Enable SSE 4.1 support.", default = false, type = "boolean"})
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             option("sse4", {showmenu = true, default = false})
@@ -22,7 +22,7 @@ package("fpng")
                     add_defines("FPNG_NO_SSE=1")
                 end
                 if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all")
+                    add_rules("utils.symbols.export_all", {export_classes = true})
                 end
         ]])
         local configs = {sse4 = package:config("sse4")}
@@ -33,10 +33,14 @@ package("fpng")
     end)
 
     on_test(function (package)
+        assert(package:has_cxxfuncs("fpng::fpng_encode_image_to_memory(0,0,0,0,std::vector<uint8_t>(),0)", {includes = "fpng.h"}))
+    end)
+
+    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 std::vector<uint8_t> fpng_file_buf;
-		fpng::fpng_encode_image_to_memory(0, 0, 0, 0, fpng_file_buf, 0);
+		        fpng::fpng_encode_image_to_memory(0, 0, 0, 0, fpng_file_buf, 0);
             }
         ]]}, {configs = {languages = "c++11"}, includes = "fpng.h"}))
     end)
