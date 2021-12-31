@@ -26,7 +26,7 @@ package("raylib")
         add_versions("4.0.0", "11f6087dc7bedf9efb3f69c0c872f637e421d914e5ecea99bbe7781f173dc38c")
     end
 
-    if not is_plat("macosx") then
+    if not (is_plat("macosx") and is_arch("x86_64")) then
         add_deps("cmake >=3.11")
     end
 
