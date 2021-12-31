@@ -8,6 +8,7 @@ package("gdk-pixbuf")
     add_urls("https://gitlab.gnome.org/GNOME/gdk-pixbuf.git")
 
     add_versions("2.42.6", "c4f3a84a04bc7c5f4fbd97dce7976ab648c60628f72ad4c7b79edce2bbdb494d")
+    add_includedirs("include", "include/gdk-pixbuf-2.0")
 
     add_deps("meson", "ninja")
     add_deps("libpng", "libjpeg", "glib")
@@ -26,6 +27,7 @@ package("gdk-pixbuf")
                          "-Dtiff=true",
                          "-Dnative_windows_loaders=false",
                          "-Dgio_sniffing=false",
+                         "-Drelocatable=true",
                          "-Djpeg=true",
                          "-Dintrospection=disabled",
                          "-Dinstalled_tests=false"}
@@ -35,7 +37,7 @@ package("gdk-pixbuf")
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("meson.build", "subdir%('docs'%)", "")
-        io.replace("gdk-pixbuf/meson.build", "join_paths(gdk_pixbuf_api_name,", "join_paths(", {plain = true})
+
         meson.install(package, configs, {packagedeps = {"libpng", "libjpeg", "glib"}})
     end)
 
