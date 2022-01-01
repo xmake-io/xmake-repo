@@ -11,7 +11,10 @@ package("libffi")
 
     if is_plat("linux") then
         add_extsources("apt::libffi-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libffi")
     end
+
 
     on_load("macosx", "linux", "iphoneos", function (package)
         if package:gitref() then

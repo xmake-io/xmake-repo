@@ -11,7 +11,9 @@ package("libomp")
     add_deps("cmake")
 
     add_links("omp")
-    if is_plat("linux") then
+    if is_plat("macosx") then
+        add_extsources("brew::libomp")
+    elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
 

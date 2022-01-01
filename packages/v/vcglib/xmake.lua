@@ -7,6 +7,7 @@ package("vcglib")
     add_urls("https://github.com/cnr-isti-vclab/vcglib/archive/refs/tags/$(version).tar.gz")
     add_versions("2020.12", "731c57435e39c4b958a1d766cadd9865d9db35e36410708f2da7818e9fa5f786")
     add_versions("2021.07", "384bb4bb86b4114391cbc0fb8990f218473a656d06f2214bcc3725dac193db1c")
+    add_versions("2021.10", "a443a4a63c0f6691229c80aa22a15f17ab7d9da2b0b6a5111cf39aee86632d5a")
 
     add_deps("eigen")
     on_install("windows", "macosx", "linux", function (package)

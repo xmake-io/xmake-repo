@@ -29,26 +29,39 @@ package("libusb")
         add_syslinks("pthread")
     end
 
-    -- it will be provided in xmake v2.5.2
-    if on_fetch then
-        on_fetch("linux", "macosx", function(package, opt)
-            if opt.system then
-                return find_package("pkgconfig::libusb-1.0")
-            end
-        end)
-    end
+    on_fetch("linux", "macosx", function(package, opt)
+        if opt.system then
+            return find_package("pkgconfig::libusb-1.0")
+        end
+    end)
 
     add_includedirs("include", "include/libusb-1.0")
 
     on_install("windows", function (package)
         import("core.tool.toolchain")
+        local vsversion = toolchain.load("msvc"):config("vs") or "2019"
+        local solutionFiles = {
+            "libusb_" .. vsversion .. ".sln",
+            "libusb_2019.sln",
+            "libusb_2017.sln",
+            "libusb_2015.sln",
+        }
+
+        local solutionFile
+        local oldir = os.cd("msvc")
+        for _, file in ipairs(solutionFiles) do
+            if os.isfile(file) then
+                solutionFile = file
+                break
+            end
+        end
+        assert(solutionFile, "solution file not found")
+
         local arch = package:is_arch("x86") and "Win32" or "x64"
         local mode = package:debug() and "Debug" or "Release"
-        local vs = toolchain.load("msvc"):config("vs") or "2019"
-        local configs = {"libusb_" .. vs .. ".sln"}
+        local configs = {solutionFile}
         table.insert(configs, "/property:Configuration=" .. mode)
         table.insert(configs, "/property:Platform=" .. arch)
-        local oldir = os.cd("msvc")
         import("package.tools.msbuild").build(package, configs)
         os.cd(oldir)
         os.vcp("libusb/*.h", package:installdir("include/libusb-1.0"))

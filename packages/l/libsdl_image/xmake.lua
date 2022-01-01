@@ -19,10 +19,16 @@ package("libsdl_image")
         add_extsources("brew::sdl2_image")
     end
 
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation", "CoreGraphics", "ImageIO", "CoreServices")
+    end
+
+    if is_plat("macosx", "linux") then
+        add_deps("automake", "autoconf")
+    end
     add_deps("libsdl")
 
     add_links("SDL2_image")
-
     add_includedirs("include", "include/SDL2")
 
     on_install("windows", "mingw", function (package)
@@ -49,6 +55,8 @@ package("libsdl_image")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
         end
+        io.replace("Makefile.am", "noinst_PROGRAMS = showimage", "")
+        os.rm("./configure")
         import("package.tools.autoconf").install(package, configs)
     end)
 

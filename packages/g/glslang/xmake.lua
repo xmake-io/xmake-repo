@@ -9,13 +9,27 @@ package("glslang")
     add_versions("1.2.162+0", "c594de23cdd790d64ad5f9c8b059baae0ee2941d")
     add_versions("1.2.189+1", "2fb89a0072ae7316af1c856f22663fde4928128a")
 
+    add_configs("binaryonly", { description = "Only use binary program.", default = false, type = "boolean"})
+
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("spirv-tools")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
 
-    on_install("linux", "windows", "macosx", function (package)
+    on_load(function (package)
+        if package:config("binaryonly") then
+            package:set("kind", "binary")
+        end
+    end)
+
+    on_fetch(function (package, opt)
+        if opt.system and package:config("binaryonly") then
+            return package:find_tool("glslangValidator")
+        end
+    end)
+
+    on_install("linux", "windows", "macosx", "mingw", function (package)
         package:addenv("PATH", "bin")
         io.replace("CMakeLists.txt", "ENABLE_OPT OFF", "ENABLE_OPT ON")
         io.replace("StandAlone/CMakeLists.txt", "target_link_libraries(glslangValidator ${LIBRARIES})", [[
@@ -32,12 +46,16 @@ package("glslang")
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = {"spirv-tools"}})
-        package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "HLSL", "SPIRV", "SPVRemapper")
+        if not package:config("binaryonly") then
+            package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "HLSL", "SPIRV", "SPVRemapper")
+        end
     end)
 
     on_test(function (package)
-        os.vrun("glslangValidator --version")
-        assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
+        if not package:is_plat("mingw") or is_subhost("msys") then
+            os.vrun("glslangValidator --version")
+        end
+        if not package:config("binaryonly") then
+            assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
+        end
     end)
-
-

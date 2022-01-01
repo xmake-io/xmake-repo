@@ -5,21 +5,13 @@ package("bzip2")
 
     add_urls("https://sourceware.org/pub/bzip2/bzip2-$(version).tar.gz")
     add_versions("1.0.8", "ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269")
-    add_patches("1.0.8", path.join(os.scriptdir(), "patches", "dllexport.patch"), "f72679b2ad55262bbc9da49f352f6cf128db85047aaa04ca42126c839b709461")
-
-    on_load(function (package)
-        package:addenv("PATH", "bin")
-
-        if not package:config("shared") then
-            package:add("defines", "BZ_STATIC")
-        end
-    end)
 
     on_install(function (package)
         local configs = {}
-        configs.kind = package:config("shared") and "shared" or "static"
-        configs.mode = package:debug() and "debug" or "release"
-        configs.build_bin = not package:is_plat("cross", "iphoneos", "android")
+        if not package:is_plat("cross", "iphoneos", "android") then
+            configs.enable_tools = true
+            package:addenv("PATH", "bin")
+        end
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)

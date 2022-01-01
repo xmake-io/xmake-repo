@@ -12,7 +12,7 @@ package("libvorbis")
 
     add_configs("vorbisenc",  {description = "Includes vorbisenc", default = true, type = "boolean"})
     add_configs("vorbisfile", {description = "Includes vorbisfile", default = true, type = "boolean"})
-    
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::libvorbis")
     elseif is_plat("linux") then
@@ -34,15 +34,15 @@ package("libvorbis")
                 table.insert(libs, 1, "vorbisfile")
             end
 
-            local result 
+            local result
             for _, name in ipairs(libs) do
                 local pkginfo = package:find_package(name, opt)
                 if not pkginfo then
                     return -- we must find all wanted libraries
                 end
 
-                if not result then 
-                    result = table.copy(pkginfo) 
+                if not result then
+                    result = table.copy(pkginfo)
                 else
                     local includedirs = pkginfo.sysincludedirs or pkginfo.includedirs
                     result.links = table.wrap(result.links)
@@ -52,8 +52,10 @@ package("libvorbis")
                     table.join2(result.linkdirs, pkginfo.linkdirs)
                     table.join2(result.links, pkginfo.links)
                 end
+                if result then
+                    result.version = result.version or pkginfo.version
+                end
             end
-
             return result
         end
     end)

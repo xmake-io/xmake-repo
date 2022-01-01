@@ -12,7 +12,7 @@ package("spirv-cross")
     add_deps("cmake")
     add_links("spirv-cross-c", "spirv-cross-cpp", "spirv-cross-reflect", "spirv-cross-msl", "spirv-cross-util", "spirv-cross-hlsl", "spirv-cross-glsl", "spirv-cross-core")
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DSPIRV_CROSS_ENABLE_TESTS=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DSPIRV_CROSS_SHARED=ON")
@@ -24,6 +24,8 @@ package("spirv-cross")
     end)
 
     on_test(function (package)
-        os.vrun("spirv-cross --help")
+        if not package:is_plat("mingw") or is_subhost("msys") then
+            os.vrun("spirv-cross --help")
+        end
         assert(package:has_cfuncs("spvc_get_version", {includes = "spirv_cross/spirv_cross_c.h"}))
     end)
