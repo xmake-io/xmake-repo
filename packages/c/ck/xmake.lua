@@ -11,8 +11,11 @@ package("ck")
         if package:config("shared") then
             table.insert(configs, "--disable-static")
         end
-
-        import("package.tools.autoconf").install(package, configs, {cxflags = "-fpic"})
+        local cxflags
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            cxflags = "-fpic"
+        end
+        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
