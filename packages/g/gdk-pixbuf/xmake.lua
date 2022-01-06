@@ -12,13 +12,22 @@ package("gdk-pixbuf")
     add_includedirs("include", "include/gdk-pixbuf-2.0")
 
     add_deps("meson", "ninja")
-    add_deps("libpng", "libjpeg", "glib")
+    add_deps("libpng", "libjpeg")
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "AppKit")
         add_extsources("brew::gdk-pixbuf")
         add_syslinks("resolv")
         add_patches("2.42.6", path.join(os.scriptdir(), "patches", "2.42.6", "macosx.patch"), "ad2705a5a9aa4b90fb4588bb567e95f5d82fccb6a5d463cd07462180e2e418eb")
     end
+
+    on_load(function (package)
+        if package:config("shared") then
+            -- fix gobject conflict error: assertion failed: (type == G_TYPE_CHAR)
+            package:add("deps", "glib", {configs = {shared = true}})
+        else
+            package:add("deps", "glib")
+        end
+    end)
 
     on_install("macosx", "linux", function (package)
         local configs = {"-Dman=false",
