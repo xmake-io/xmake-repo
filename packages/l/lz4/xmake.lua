@@ -13,6 +13,10 @@ package("lz4")
         end
     end)
 
+    if is_plat("macosx") then
+        add_extsources("brew::lz4")
+    end
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -23,6 +27,9 @@ package("lz4")
                 add_defines("XXH_NAMESPACE=LZ4_")
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("LZ4_DLL_EXPORT")
+                end
+                if is_kind("static") then
+                    add_defines("LZ4_HC_STATIC_LINKING_ONLY", "LZ4_STATIC_LINKING_ONLY")
                 end
         ]])
         local configs = {}
