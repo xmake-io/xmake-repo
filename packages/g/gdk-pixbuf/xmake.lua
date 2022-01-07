@@ -38,6 +38,7 @@ package("gdk-pixbuf")
                          "-Dgio_sniffing=false",
                          "-Drelocatable=true",
                          "-Djpeg=true",
+                         "-Dintrospection=enabled",
                          "-Dinstalled_tests=false"}
         table.insert(configs, "-Ddebug=" .. (package:debug() and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
