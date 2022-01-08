@@ -7,7 +7,7 @@ package("boringssl")
 
     add_patches("2021.12.29", path.join(os.scriptdir(), "patches", "2021.12.29", "cmake.patch"), "d8bb6312b87b8aad434ea3f9f4275f769af3cdbaab78adf400e8e3907443b505")
 
-    add_deps("cmake")--, "go")
+    add_deps("cmake", "go")
 
     add_links("ssl", "crypto")
 
