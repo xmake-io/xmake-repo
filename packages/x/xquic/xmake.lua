@@ -3,7 +3,7 @@ package("xquic")
     set_description("A client and server implementation of QUIC and HTTP/3 as specified by the IETF")
     set_license("Apache-2.0")
 
-    add_urls("https://hub.fastgit.org/alibaba/xquic.git")
+    add_urls("https://github.com/alibaba/xquic.git")
     add_versions("2022.01.08", "837c493d51952cd842b815f7d60c88efbad3b9eb")
 
     add_deps("cmake", "boringssl")
