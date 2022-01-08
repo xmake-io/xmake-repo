@@ -29,6 +29,8 @@ package("boringssl")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "-WX", "", {plain = true})
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        print(os.files("build/**.lib"))
+        print(os.files("build/**.dll"))
         os.cp("include", package:installdir())
         if package:config("shared") then
             if package:is_plat("windows") then
