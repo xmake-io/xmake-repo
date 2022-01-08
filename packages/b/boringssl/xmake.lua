@@ -9,6 +9,11 @@ package("boringssl")
 
     add_deps("cmake", "go")
 
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl", "m")
+    elseif is_plat("windows") then
+        add_deps("nasm")
+    end
     add_links("ssl", "crypto")
 
     on_install("linux", "macosx", "windows", function (package)
