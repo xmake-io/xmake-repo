@@ -8,7 +8,7 @@ package("xquic")
 
     add_deps("cmake", "boringssl")
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {"-DSSL_TYPE=boringssl"}
         if package:is_plat("macosx") then
             table.insert(configs, "-DPLATFORM=mac")
@@ -21,16 +21,11 @@ package("xquic")
         import("package.tools.cmake").install(package, configs, {buildir = "build", packagedeps = "boringssl"})
         os.cp("include", package:installdir())
         if package:config("shared") then
-            if package:is_plat("windows") then
-                os.cp("build/*.dll", package:installdir("bin"))
-                os.cp("build/*.lib", package:installdir("lib"))
-            elseif package:is_plat("macosx") then
+            if package:is_plat("macosx") then
                 os.cp("build/*.dylib", package:installdir("lib"))
             else
                 os.cp("build/*.so", package:installdir("lib"))
             end
-        elseif package:is_plat("windows") then
-            os.cp("build/*.lib", package:installdir("lib"))
         else
             os.cp("build/*.a", package:installdir("lib"))
         end
