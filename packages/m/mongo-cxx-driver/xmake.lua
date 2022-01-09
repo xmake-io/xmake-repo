@@ -7,16 +7,14 @@ package("mongo-cxx-driver")
              "https://github.com/mongodb/mongo-cxx-driver.git")
     add_versions("3.6.6", "4413de483c5070b48dc5b5c8ee3e32c8e7a2b74b892fe2a55ef78fb758bc01e0")
 
+    add_deps("cmake")
     add_deps("mongo-c-driver")
     if is_plat("windows") then
         add_deps("boost")
     end
 
-    on_load("windows", "macosx", "linux", function (package)
-        local install_path = package:installdir()
-        package:add("includedirs", "/include/bsoncxx/v_noabi")
-        package:add("includedirs", "/include/mongocxx/v_noabi")
-    end)
+    add_includedirs("include/bsoncxx/v_noabi")
+    add_includedirs("include/mongocxx/v_noabi")
 
     on_install("windows", "macosx", "linux", function (package)
         local configs = {"-DBUILD_SHARED_LIBS=ON", 
