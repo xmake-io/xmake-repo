@@ -12,6 +12,7 @@ package("boringssl")
     if is_plat("linux") then
         add_syslinks("pthread", "dl", "m")
     elseif is_plat("windows") then
+        add_syslinks("advapi32")
         add_deps("nasm")
     end
     add_links("ssl", "crypto")
