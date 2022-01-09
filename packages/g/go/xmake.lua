@@ -34,6 +34,7 @@ package("go")
         os.cp("lib", package:installdir())
         os.cp("pkg", package:installdir())
         os.cp("misc", package:installdir())
+        os.cp("src", package:installdir())
     end)
 
     on_test(function (package)
