@@ -1,9 +1,9 @@
-package("co")
+package("cocoyaxi")
 
-    set_homepage("https://github.com/idealvin/co")
+    set_homepage("https://github.com/idealvin/cocoyaxi")
     set_description("A go-style coroutine library in C++11 and more")
 
-    add_urls("https://github.com/idealvin/co.git")
+    add_urls("https://github.com/idealvin/cocoyaxi.git")
     add_versions("v2.0.3", "3fd22601de4d7a06548ca4d24ac36b4f82cde8c5")
     add_versions("v2.0.2", "25915760f5cbcde1c5af625dd4d19a632ae43f12")
     add_versions("v2.0.1", "82b9f75dcd114c69d2b9c2c5a13ce2c3b95ba99f")
