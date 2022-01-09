@@ -29,15 +29,13 @@ package("boringssl")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "-WX", "", {plain = true})
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
-        print(os.files("build/**.lib"))
-        print(os.files("build/**.dll"))
         os.cp("include", package:installdir())
         if package:config("shared") then
             if package:is_plat("windows") then
-                os.cp("build/ssl/ssl.dll", package:installdir("bin"))
-                os.cp("build/ssl/ssl.lib", package:installdir("lib"))
-                os.cp("build/crypto/crypto.dll", package:installdir("bin"))
-                os.cp("build/crypto/crypto.lib", package:installdir("lib"))
+                os.cp("build/ssl/*/ssl.dll", package:installdir("bin"))
+                os.cp("build/ssl/*/ssl.lib", package:installdir("lib"))
+                os.cp("build/crypto/*/crypto.dll", package:installdir("bin"))
+                os.cp("build/crypto/*/crypto.lib", package:installdir("lib"))
             elseif package:is_plat("macosx") then
                 os.cp("build/ssl/libssl.dylib", package:installdir("lib"))
                 os.cp("build/crypto/libcrypto.dylib", package:installdir("lib"))
@@ -46,8 +44,8 @@ package("boringssl")
                 os.cp("build/crypto/libcrypto.so", package:installdir("lib"))
             end
         elseif package:is_plat("windows") then
-            os.cp("build/ssl/ssl.lib", package:installdir("lib"))
-            os.cp("build/crypto/crypto.lib", package:installdir("lib"))
+            os.cp("build/ssl/*/ssl.lib", package:installdir("lib"))
+            os.cp("build/crypto/*/crypto.lib", package:installdir("lib"))
         else
             os.cp("build/ssl/libssl.a", package:installdir("lib"))
             os.cp("build/crypto/libcrypto.a", package:installdir("lib"))
