@@ -5,8 +5,10 @@ package("xtl")
     set_description("Basic tools (containers, algorithms) used by other quantstack packages")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/xtensor-stack/xtl/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/xtensor-stack/xtl/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/xtensor-stack/xtl.git")
     add_versions("0.7.2", "95c221bdc6eaba592878090916383e5b9390a076828552256693d5d97f78357c")
+    add_versions("0.7.3", "f4a81e3c9ca9ddb42bd4373967d4859ecfdca1aba60b9fa6ced6c84d8b9824ff")
 
     add_deps("cmake")
     add_deps("nlohmann_json")

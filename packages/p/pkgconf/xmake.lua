@@ -18,8 +18,13 @@ package("pkgconf")
 
     on_install("@windows", function(package)
         import("package.tools.meson").install(package, {"-Dtests=false"})
+        local bindir = package:installdir("bin")
+        os.cp(path.join(bindir, "pkgconf.exe"), path.join(bindir, "pkg-config.exe"))
     end)
 
     on_test(function (package)
         os.vrun("pkgconf --version")
+        if is_subhost("windows") then
+            os.vrun("pkg-config --version")
+        end
     end)

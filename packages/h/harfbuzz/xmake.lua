@@ -16,6 +16,9 @@ package("harfbuzz")
 
     add_deps("meson")
     add_includedirs("include", "include/harfbuzz")
+    if is_plat("macosx") then
+        add_frameworks("CoreText", "CoreFoundation", "CoreGraphics")
+    end
     on_load("windows", "linux", "macosx", function (package)
         if package:config("icu") then
             package:add("deps", "icu4c")
@@ -29,6 +32,9 @@ package("harfbuzz")
         import("package.tools.meson")
 
         local configs = {"-Dtests=disabled", "-Ddocs=disabled", "-Dbenchmark=disabled", "-Dcairo=disabled", "-Dglib=disabled", "-Dgobject=disabled"}
+        if package:is_plat("macosx") then
+            table.insert(configs, "-Dcoretext=enabled")
+        end
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dicu=" .. (package:config("icu") and "enabled" or "disabled"))
         table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))

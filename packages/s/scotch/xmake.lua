@@ -11,6 +11,7 @@ package("scotch")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
+    add_links("esmumps", "scotch", "scotcherr", "scotcherrexit", "scotchmetis")
     on_install("macosx|x86_64", "linux", function (package)
         os.cd("src")
         if package:is_plat("macosx") then
@@ -40,6 +41,7 @@ package("scotch")
             envs.LDFLAGS = ldflags
         end
         os.vrunv("make", {"scotch"}, {envs = envs})
+        os.vrunv("make", {"esmumps"}, {envs = envs})
         os.vrunv("make", {"prefix=" .. package:installdir(), "install"}, {envs = envs})
     end)
 

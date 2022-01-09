@@ -5,8 +5,10 @@ package("xtensor")
     set_description("Multi-dimensional arrays with broadcasting and lazy computing")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/xtensor-stack/xtensor/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/xtensor-stack/xtensor/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/xtensor-stack/xtensor.git")
     add_versions("0.23.10", "2e770a6d636962eedc868fef4930b919e26efe783cd5d8732c11e14cf72d871c")
+    add_versions("0.24.0", "37738aa0865350b39f048e638735c05d78b5331073b6329693e8b8f0902df713")
 
     add_deps("cmake")
     add_deps("xtl", "xsimd")

@@ -4,6 +4,7 @@ package("libcurl")
 
     set_homepage("https://curl.haxx.se/")
     set_description("The multiprotocol file transfer library.")
+    set_license("MIT")
 
     set_urls("https://curl.haxx.se/download/curl-$(version).tar.bz2",
              "http://curl.mirror.anstey.ca/curl-$(version).tar.bz2")

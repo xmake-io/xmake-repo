@@ -92,4 +92,37 @@ For example, [packages/z/zlib/xmake.lua](https://github.com/xmake-io/xmake-repo/
 
 If you want to known more, please see: [Create and Submit packages to the official repository](https://xmake.io/#/package/remote_package?id=submit-packages-to-the-official-repository)
 
+## Create a package template from Github
 
+We need to install the [gh](https://github.com/cli/cli) cli tool first, and then execute the following command to log in to github.
+
+```console
+$ gh auth login
+```
+
+Create a package configuration file to this warehouse based on the package address of github.
+
+```console
+$ xmake l scripts/new.lua github:glennrp/libpng
+package("libpng")
+    set_homepage("http://libpng.sf.net")
+    set_description("LIBPNG: Portable Network Graphics support, official libpng repository")
+
+    add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/glennrp/libpng.git")
+    add_versions("v1.6.35", "6d59d6a154ccbb772ec11772cb8f8beb0d382b61e7ccc62435bf7311c9f4b210")
+
+    add_deps("cmake")
+
+    on_install(function (package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("foo", {includes = "foo.h"}))
+    end)
+packages/l/libpng/xmake.lua generated!
+```

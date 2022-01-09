@@ -18,10 +18,12 @@ package("quickjs")
             target("quickjs")
                 set_kind("$(kind)")
                 add_files("quickjs*.c", "cutils.c", "lib*.c")
+                add_headerfiles("quickjs-libc.h")
                 add_headerfiles("quickjs.h")
                 add_installfiles("*.js", {prefixdir = "share"})
                 set_languages("c99")
                 add_defines("CONFIG_VERSION=\"%s\"", "_GNU_SOURCE")
+                add_defines("CONFIG_BIGNUM")
                 if is_plat("windows", "mingw") then
                     add_defines("__USE_MINGW_ANSI_STDIO")
                 end

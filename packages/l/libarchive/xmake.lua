@@ -11,7 +11,6 @@ package("libarchive")
     add_deps("cmake")
     add_deps("zlib", "bzip2", "lz4", "zstd")
     on_install("windows", "linux", "macosx", function (package)
-        io.replace("CMakeLists.txt", "-D_CRT_SECURE_NO_DEPRECATE)", "-D_CRT_SECURE_NO_DEPRECATE)\nADD_DEFINITIONS(-DWIN32_LEAN_AND_MEAN)", {plain = true})
         local configs = {"-DENABLE_TEST=OFF", "-DENABLE_OPENSSL=OFF", "-DENABLE_PCREPOSIX=OFF", "-DENABLE_LibGCC=OFF", "-DENABLE_CNG=OFF", "-DENABLE_ICONV=OFF", "-DENABLE_ACL=OFF", "-DENABLE_EXPAT=OFF", "-DENABLE_LIBXML2=OFF", "-DENABLE_LIBB2=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

@@ -5,9 +5,9 @@ package("libjpeg")
 
     set_urls("https://www.ijg.org/files/jpegsrc.$(version).tar.gz")
 
-    add_versions("v9c", "650250979303a649e21f87b5ccd02672af1ea6954b911342ea491f351ceb7122")
-    add_versions("v9b", "240fd398da741669bf3c90366f58452ea59041cacc741a489b99f2f6a0bad052")
-    add_versions("v9d", "6c434a3be59f8f62425b2e3c077e785c9ce30ee5874ea1c270e843f273ba71ee")
+    add_versions("v9c", "682aee469c3ca857c4c38c37a6edadbfca4b04d42e56613b11590ec6aa4a278d")
+    add_versions("v9b", "566241ad815df935390b341a5d3d15a73a4000e5aab40c58505324c2855cbbb8")
+    add_versions("v9d", "2303a6acfb6cc533e0e86e8a9d29f7e6079e118b9de3f96e07a71a11c082fa6a")
 
     add_configs("headeronly", { description = "Install headerfiles only.", default = false, type = "boolean"})
 

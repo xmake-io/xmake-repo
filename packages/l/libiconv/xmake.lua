@@ -16,6 +16,12 @@ package("libiconv")
             "d09e4212040f5adf1faa5cf5a9a18f6f79d4cdce9affb05f2e75df2ea3b3d686")
     end
 
+    on_fetch("macosx", "linux", function (package, opt)
+        if opt.system then
+            return package:find_package("system::iconv", {includes = "iconv.h"})
+        end
+    end)
+
     on_load(function (package)
         package:addenv("PATH", "bin")
     end)

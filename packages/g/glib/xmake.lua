@@ -3,12 +3,11 @@ package("glib")
     set_homepage("https://developer.gnome.org/glib/")
     set_description("Core application library for C.")
 
-    set_urls("https://download.gnome.org/sources/glib/$(version).tar.xz",
-             {version = function (version) return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/glib-" .. version end})
-    add_versions("2.60.2", "2ef15475060addfda0443a7e8a52b28a10d5e981e82c083034061daf9a8f80d9")
-    add_versions("2.68.2", "ecc7798a9cc034eabdfd7f246e6dd461cdbf1175fcc2e9867cc7da7b7309e0fb")
-    add_versions("2.69.2", "a62249e35a8635175a697b3215f1df2b89e0fbb4adb520dcbe21a3ae1ebb8882")
-    add_versions("2.70.0", "200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742")
+    set_urls("https://github.com/GNOME/glib/archive/refs/tags/$(version).tar.gz",
+             "https://gitlab.gnome.org/GNOME/glib/-/archive/$(version)/glib-$(version).tar.gz",
+             "https://gitlab.gnome.org/GNOME/glib.git")
+    add_versions("2.71.0", "10cdfa2893b7ccf6a95b25644ec51e2c609274a5af3ad8e743d6dc35434fdf11")
+    add_patches("2.71.0", path.join(os.scriptdir(), "patches", "2.71.0", "macosx.patch"), "a0c928643e40f3a3dfdce52950486c7f5e6f6e9cfbd76b20c7c5b43de51d6399")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
@@ -22,19 +21,21 @@ package("glib")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
-    add_links("gobject-2.0", "glib-2.0", "gio-2.0", "gthread-2.0", "gmodule-2.0", "intl")
+    add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0", "intl")
     if is_plat("macosx") then
         add_syslinks("iconv")
         add_frameworks("Foundation", "CoreFoundation")
+        add_extsources("brew::glib")
     elseif is_plat("linux") then
-        add_syslinks("pthread", "dl")
+        add_syslinks("pthread", "dl", "resolv")
+        add_extsources("apt::libglib2.0-dev")
     end
 
     if on_fetch then
         on_fetch("macosx", "linux", function (package, opt)
             if opt.system and package.find_package then
                 local result
-                for _, name in ipairs({"gobject-2.0", "glib-2.0"}) do
+                for _, name in ipairs({"gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0"}) do
                     local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
                     if pkginfo then
                         if not result then
@@ -76,6 +77,7 @@ package("glib")
         io.gsub("meson.build", "subdir%('tests'%)", "")
         io.gsub("meson.build", "subdir%('fuzzing'%)", "")
         io.gsub("gio/meson.build", "subdir%('tests'%)", "")
+        io.replace("meson.build", "glib_conf.set('HAVE_SELINUX', selinux_dep.found())", "", {plain = true})
         if package:is_plat("windows") then
             io.gsub("meson.build", "dependency%('libffi',", "dependency('libffi', modules: ['libffi::ffi'],")
         end
