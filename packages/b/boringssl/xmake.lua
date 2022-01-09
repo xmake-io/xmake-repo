@@ -26,10 +26,15 @@ package("boringssl")
         if #proxyurls > 0 then
             os.setenv("GOPROXY", proxyurls[1])
         end
+        -- we need suppress "hidden symbol ... is referenced by DSO"
+        local cxflags
+        if not package:config("shared") and package:is_plat("linux") then
+            cxflags = "-DBORINGSSL_SHARED_LIBRARY"
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "-WX", "", {plain = true})
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags, buildir = "build"})
         os.cp("include", package:installdir())
         if package:config("shared") then
             if package:is_plat("windows") then
