@@ -41,8 +41,8 @@ package("mnn")
                 package:add("shflags", "-Wl,-force_load " .. mnn_lib_dir .. "/libmnn.a")
             elseif package:is_plat("windows") then
                 package:add("linkdirs", mnn_lib_dir)
-                package:add("shflags", "/WHOLEARCHIVE:mnn")
-                package:add("ldflags", "/WHOLEARCHIVE:mnn")
+                package:add("shflags", "/WHOLEARCHIVE:" .. mnn_lib_dir .. "/mnn.lib")
+                package:add("ldflags", "/WHOLEARCHIVE:" .. mnn_lib_dir .. "/mnn.lib")
             end
         end
 
