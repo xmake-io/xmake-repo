@@ -16,7 +16,7 @@ package("promise-cpp")
         table.insert(configs, "-DPROMISE_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
         os.cp("include", package:installdir())
-        os.cp("add-ons", package:installdir("include"))
+        os.cp("add_ons", package:installdir("include"))
     end)
 
     on_test(function (package)
