@@ -8,6 +8,7 @@ package("openvdb")
     add_versions("7.1.0", "0c3588c1ca6e647610738654ec2c6aaf41a203fd797f609fbeab1c9f7c3dc116")
     add_versions("8.0.1", "a6845da7c604d2c72e4141c898930ac8a2375521e535f696c2cd92bebbe43c4f")
     add_versions("8.1.0", "3e09d47331429be7409a3a3c27fdd3c297f96d31d2153febe194e664a99d6183")
+    add_versions("8.2.0", "d2e77a0720db79e9c44830423bdb013c24a1cf50994dd61d570b6e0c3e0be699")
     add_versions("9.0.0", "ad3816e8f1931d1d6fdbddcec5a1acd30695d049dd10aa965096b2fb9972b468")
 
     add_deps("cmake")
