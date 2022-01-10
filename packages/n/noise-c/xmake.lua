@@ -8,7 +8,7 @@ package("noise-c")
 
     add_deps("autoconf", "automake")
 
-    on_install(function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:debug() then
