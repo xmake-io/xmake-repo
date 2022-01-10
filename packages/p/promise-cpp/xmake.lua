@@ -8,6 +8,7 @@ package("promise-cpp")
     add_versions("2.1.3", "831f5c7fb36a1f0adda408898038b428d4afe96e7028947be0f755c6851eec26")
 
     add_deps("cmake", "boost")
+    add_includedirs("include/promise-cpp")
 
     on_install("linux", "macosx", "windows", function (package)
         local configs = {}
