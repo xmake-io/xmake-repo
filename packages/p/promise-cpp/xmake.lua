@@ -8,7 +8,7 @@ package("promise-cpp")
     add_versions("2.1.3", "831f5c7fb36a1f0adda408898038b428d4afe96e7028947be0f755c6851eec26")
 
     add_deps("cmake", "boost")
-    add_includedirs("include/promise-cpp")
+    add_includedirs("include", "include/promise-cpp")
 
     on_install("linux", "macosx", "windows", function (package)
         local configs = {}
@@ -16,6 +16,7 @@ package("promise-cpp")
         table.insert(configs, "-DPROMISE_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
         os.cp("include", package:installdir())
+        os.cp("add-ons", package:installdir("include"))
     end)
 
     on_test(function (package)
