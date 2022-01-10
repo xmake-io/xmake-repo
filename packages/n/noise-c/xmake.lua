@@ -6,7 +6,7 @@ package("noise-c")
     add_urls("https://github.com/rweather/noise-c.git")
     add_versions("2021.04.09", "9379e580a14c0374a57d826a49ba53b7440c80bc")
 
-    add_deps("autoconf", "automake")
+    add_deps("autoconf", "automake", "bison")
 
     on_install("linux", "macosx", function (package)
         local configs = {}
