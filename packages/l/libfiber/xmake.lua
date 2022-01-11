@@ -9,8 +9,8 @@ package("libfiber")
     add_versions("v0.9.0+0", "9359a7ebc8d9c48cfaa4c7d1445b3a3e1c392a238574f1d4f7c1191ec8242af2")
 
     add_deps("cmake")
-    if is_plat("macosx", "linux") then
-        add_syslinks("pthread")
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl", "m")
     end
 
     on_load(function (package)
