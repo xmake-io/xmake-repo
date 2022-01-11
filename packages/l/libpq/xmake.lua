@@ -28,7 +28,11 @@ package("libpq")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        import("package.tools.autoconf").install(package, configs, {packagedeps = {"openssl", "zlib"}})
+        local packagedeps = {"openssl", "zlib"}
+        if package:is_plat("linux") then
+            table.insert(packagedeps, "readline")
+        end
+        import("package.tools.autoconf").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
