@@ -12,11 +12,11 @@ package("libpq")
 
     add_deps("krb5", "openssl", "zlib")
     if is_plat("linux") then
-        add_deps("flex", "bison", "readline")
+        add_deps("flex", "bison")
     end
 
     on_install("macosx", "linux", function (package)
-        local configs = {"--with-openssl"}
+        local configs = {"--with-openssl", "--without-readline"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:is_plat("macosx") then
@@ -28,11 +28,7 @@ package("libpq")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        local packagedeps = {"openssl", "zlib"}
-        if package:is_plat("linux") then
-            table.insert(packagedeps, "readline")
-        end
-        import("package.tools.autoconf").install(package, configs, {packagedeps = packagedeps})
+        import("package.tools.autoconf").install(package, configs, {packagedeps = {"openssl", "zlib"}})
     end)
 
     on_test(function (package)
