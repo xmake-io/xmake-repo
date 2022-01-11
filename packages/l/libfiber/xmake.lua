@@ -13,6 +13,16 @@ package("libfiber")
         add_syslinks("pthread")
     end
 
+    on_load(function (package)
+        if package:is_plat("windows") then
+            if package:config("shared") then
+                package:add("defines", "FIBER_DLL")
+            else
+                package:add("defines", "FIBER_LIB")
+            end
+        end
+    end)
+
     on_install("linux", "macosx", "windows", "android", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
