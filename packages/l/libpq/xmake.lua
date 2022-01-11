@@ -3,12 +3,10 @@ package("libpq")
     set_description("Postgres C API library")
     set_license("PostgreSQL")
 
-    add_urls("https://ftp.postgresql.org/pub/source/v$(version)/postgresql-$(version).tar.bz2", {alias = "home"})
     add_urls("https://github.com/postgres/postgres/archive/refs/tags/REL_$(version).tar.gz", {alias = "github", version = function (version)
         return version:gsub("%.", "_")
     end})
-    add_versions("home:14.1", "4d3c101ea7ae38982f06bdc73758b53727fb6402ecd9382006fa5ecc7c2ca41f")
-    add_versions("github:14.1", "14809c9f669851ab89b344a50219e85b77f3e93d9df9e255b9781d8d60fcfbc9")
+    add_versions("14.1", "14809c9f669851ab89b344a50219e85b77f3e93d9df9e255b9781d8d60fcfbc9")
 
     add_deps("krb5", "openssl", "zlib")
     if is_plat("linux") then
