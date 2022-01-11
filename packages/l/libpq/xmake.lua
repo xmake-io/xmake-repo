@@ -12,7 +12,7 @@ package("libpq")
 
     add_deps("krb5", "openssl", "zlib")
     if is_plat("linux") then
-        add_deps("flex", "bison")
+        add_deps("flex", "bison", "readline")
     end
 
     on_install("macosx", "linux", function (package)
