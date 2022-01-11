@@ -14,9 +14,14 @@ package("promise-cpp")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPROMISE_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
         os.cp("include", package:installdir())
         os.cp("add_ons", package:installdir("include"))
+        print(os.files(package:installdir("lib") .. "/**.a"))
+        print(os.files(package:installdir("lib") .. "/**.lib"))
+        print(os.files("build/**.a"))
+        print(os.files("build/**.lib"))
+
     end)
 
     on_test(function (package)
