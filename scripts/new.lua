@@ -137,6 +137,7 @@ function _generate_package_from_github(reponame)
         file:print('        if package:is_plat("linux") and package:config("pic") ~= false then')
         file:print('            table.insert(configs, "--with-pic")')
         file:print('        end')
+        file:print('        import("package.tools.autoconf").install(package, configs)')
     elseif has_meson then
         file:print('        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))')
         file:print('        import("package.tools.meson").install(package, configs)')

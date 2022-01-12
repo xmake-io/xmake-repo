@@ -3,7 +3,8 @@ package("glib")
     set_homepage("https://developer.gnome.org/glib/")
     set_description("Core application library for C.")
 
-    set_urls("https://gitlab.gnome.org/GNOME/glib/-/archive/$(version)/glib-$(version).tar.gz",
+    set_urls("https://github.com/GNOME/glib/archive/refs/tags/$(version).tar.gz",
+             "https://gitlab.gnome.org/GNOME/glib/-/archive/$(version)/glib-$(version).tar.gz",
              "https://gitlab.gnome.org/GNOME/glib.git")
     add_versions("2.71.0", "10cdfa2893b7ccf6a95b25644ec51e2c609274a5af3ad8e743d6dc35434fdf11")
     add_patches("2.71.0", path.join(os.scriptdir(), "patches", "2.71.0", "macosx.patch"), "a0c928643e40f3a3dfdce52950486c7f5e6f6e9cfbd76b20c7c5b43de51d6399")
