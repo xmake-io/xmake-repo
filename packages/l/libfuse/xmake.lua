@@ -8,7 +8,7 @@ package("libfuse")
     add_versions("3.10.4", "9365b74fd8471caecdb3cc5adf25a821f70a931317ee9103d15bd39089e3590d")
 
     if is_plat("linux") then
-        add_extsources("apt::fuse3")
+        add_extsources("apt::fuse3", "pacman::fuse3")
         add_syslinks("pthread", "dl", "rt")
     end
 
