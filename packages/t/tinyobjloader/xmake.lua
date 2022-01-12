@@ -8,7 +8,7 @@ package("tinyobjloader")
              "https://github.com/tinyobjloader/tinyobjloader.git")
     add_versions("1.0.7", "b9d08b675ba54b9cb00ffc99eaba7616d0f7e6f6b8947a7e118474e97d942129")
 
-    add_configs("double",     {description = "Use double precision floating numbers.", default = false, type = "boolean"})
+    add_configs("double", {description = "Use double precision floating numbers.", default = false, type = "boolean"})
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
