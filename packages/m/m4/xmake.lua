@@ -15,7 +15,7 @@ package("m4")
         -- patch credit to Jeremy Huddleston Sequoia <jeremyhu@apple.com>
         add_patches("1.4.18", path.join(os.scriptdir(), "patches", "1.4.18", "secure_snprintf.patch"), "c0a408fbffb7255fcc75e26bd8edab116fc81d216bfd18b473668b7739a4158e")
     elseif is_host("linux") then
-        add_extsources("apt::m4")
+        add_extsources("apt::m4", "pacman::m4")
     end
 
     on_install("@macosx", "@linux", "@msys", "@cygwin", function (package)
