@@ -12,7 +12,7 @@ package("vulkan-loader")
     add_versions("1.2.154+1", "889e45f7175d915dd0d702013b8021192e181d20f2ad4021c94006088f1edfe5")
 
     if is_plat("linux") then
-        add_extsources("apt::libvulkan-dev")
+        add_extsources("apt::libvulkan-dev", "pacman::vulkan-icd-loader")
         add_deps("wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon")
     end
 
