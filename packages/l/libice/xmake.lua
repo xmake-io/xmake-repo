@@ -7,7 +7,7 @@ package("libice")
     add_versions("1.0.10", "1116bc64c772fd127a0d0c0ffa2833479905e3d3d8197740b3abd5f292f22d2d")
 
     if is_plat("linux") then
-        add_extsources("apt::libice-dev")
+        add_extsources("apt::libice-dev", "pacman::libice")
     end
 
     add_deps("xtrans")
