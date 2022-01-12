@@ -11,7 +11,7 @@ package("libxaw")
     end
 
     if is_plat("linux") then
-        add_extsources("apt::libxaw7-dev")
+        add_extsources("apt::libxaw7-dev", "pacman::libxaw")
     end
 
     on_install("macosx", "linux", function (package)
