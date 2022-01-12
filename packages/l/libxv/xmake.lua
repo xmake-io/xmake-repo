@@ -7,7 +7,7 @@ package("libxv")
     add_versions("1.0.11", "d26c13eac99ac4504c532e8e76a1c8e4bd526471eb8a0a4ff2a88db60cb0b088")
 
     if is_plat("linux") then
-        add_extsources("apt::libxv-dev")
+        add_extsources("apt::libxv-dev", "pacman::libxv")
     end
 
     if is_plat("macosx", "linux") then
