@@ -10,7 +10,7 @@ package("libffi")
     add_versions("3.4.2", "540fb721619a6aba3bdeef7d940d8e9e0e6d2c193595bc243241b77ff9e93620")
 
     if is_plat("linux") then
-        add_extsources("apt::libffi-dev")
+        add_extsources("apt::libffi-dev", "pacman::libffi")
     elseif is_plat("macosx") then
         add_extsources("brew::libffi")
     end
