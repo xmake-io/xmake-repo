@@ -23,7 +23,7 @@ package("libxml2")
         add_links("xml2")
     end
     if is_plat("linux") then
-        add_extsources("pkgconfig::libxml-2.0", "apt::libxml2-dev")
+        add_extsources("pkgconfig::libxml-2.0", "apt::libxml2-dev", "pacman::libxml2")
         add_syslinks("m")
     end
 
