@@ -21,7 +21,7 @@ package("tinycrypt")
         if package:config("shared") then
             configs.kind = "shared"
         end
-        if package:is_plat("windows") then
+        if package:is_plat("windows", "mingw") then
             io.replace("lib/include/tinycrypt/ecc_platform_specific.h", "#define default_RNG_defined 1", "#define default_RNG_defined 0", {plain = true})
         end
         import("package.tools.xmake").install(package, configs)
