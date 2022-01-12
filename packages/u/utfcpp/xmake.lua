@@ -9,7 +9,7 @@ package("utfcpp")
              "https://github.com/nemtrif/utfcpp.git")
     add_versions("v3.2.1", "8d6aa7d77ad0abb35bb6139cb9a33597ac4c5b33da6a004ae42429b8598c9605")
 
-    add_extsources("apt::libutfcpp-dev")
+    add_extsources("apt::libutfcpp-dev", "pacman::utf8cpp")
 
     add_deps("cmake")
     on_install(function (package)
