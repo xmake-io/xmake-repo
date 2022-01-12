@@ -10,19 +10,16 @@ package("libxkbcommon")
 
     if is_plat("linux") then
         add_extsources("apt::libxkbcommon-dev")
-        if package:config("x11") then
-            add_extsources("pacman::libxkbcommon-x11")
-        else
-            add_extsources("pacman::libxkbcommon")
-        end
     end
 
     add_configs("x11", {description = "Switch backend to X11 (default is wayland).", default = false, type = "boolean"})
     on_load("linux", function (package)
         if package:config("x11") then
             package:add("deps", "libxcb", "xcb-proto", "libxml2")
+            package:add("extsources", "pacman::libxkbcommon-x11")
         else
             package:add("deps", "wayland")
+            package:add("extsources", "pacman::libxkbcommon")
         end
     end)
 
