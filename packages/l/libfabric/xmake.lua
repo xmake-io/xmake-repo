@@ -9,7 +9,7 @@ package("libfabric")
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl", "rt")
-        add_extsources("apt::libfabric-dev")
+        add_extsources("apt::libfabric-dev", "pacman::libfabric")
     end
 
     on_install("macosx", "linux", function (package)
