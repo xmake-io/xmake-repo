@@ -1,7 +1,7 @@
 package("libunwind")
 
-    set_homepage("https://github.com/libunwind/libunwind")
-    set_description("This library provides functions for manipulating Unicode strings and for manipulating C strings according to the Unicode standard.")
+    set_homepage("https://www.nongnu.org/libunwind/")
+    set_description("A portable and efficient C programming interface (API) to determine the call-chain of a program.")
 
     add_urls("https://github.com/libunwind/libunwind/releases/download/$(version).tar.gz", {version = function (version)
         return version .. "/libunwind-" .. (version:gsub("v", "")) .. ".0"
