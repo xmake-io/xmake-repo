@@ -8,7 +8,7 @@ package("libpaper")
     add_versions("1.1.28", "c8bb946ec93d3c2c72bbb1d7257e90172a22a44a07a07fb6b802a5bb2c95fddc")
 
     if is_plat("linux") then
-        add_extsources("apt::libpaper-dev")
+        add_extsources("apt::libpaper-dev", "pacman::libpaper")
     end
     add_deps("automake", "autoconf", "libtool")
     on_install("macosx", "linux", function (package)
