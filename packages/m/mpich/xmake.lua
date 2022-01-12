@@ -10,7 +10,7 @@ package("mpich")
     add_configs("x11", {description = "Use the X Window System.", default = false, type = "boolean"})
 
     if is_plat("linux") then
-        add_extsources("apt::libmpich-dev")
+        add_extsources("apt::libmpich-dev", "pacman::mpich")
         add_syslinks("pthread", "dl", "rt")
     end
 
