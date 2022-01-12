@@ -18,7 +18,7 @@ package("util-linux")
     end
 
     if is_plat("linux") then
-        add_extsources("apt::util-linux")
+        add_extsources("apt::util-linux", "pacman::util-linux")
     end
 
     add_configs("ipcs",               { description = "Enable ipcs.", default = false, type = "boolean"})
