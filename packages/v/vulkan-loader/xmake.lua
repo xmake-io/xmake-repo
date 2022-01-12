@@ -1,4 +1,4 @@
-ackage("vulkan-loader")
+package("vulkan-loader")
 
     set_homepage("https://github.com/KhronosGroup/Vulkan-Loader")
     set_description("This project provides the Khronos official Vulkan ICD desktop loader for Windows, Linux, and MacOS.")
