@@ -7,7 +7,7 @@ package("libxfixes")
     add_versions("5.0.3", "de1cd33aff226e08cefd0e6759341c2c8e8c9faf8ce9ac6ec38d43e287b22ad6")
 
     if is_plat("linux") then
-        add_extsources("apt::libxfixes-dev")
+        add_extsources("apt::libxfixes-dev", "pacman::libxfixes")
     end
 
     if is_plat("macosx", "linux") then
