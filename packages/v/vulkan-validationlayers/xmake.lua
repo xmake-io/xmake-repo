@@ -27,7 +27,7 @@ package("vulkan-validationlayers")
         if is_plat("windows") then
             add_syslinks("Advapi32")
         elseif is_plat("linux") then
-            add_extsources("apt::vulkan-validationlayers-dev")
+            add_extsources("apt::vulkan-validationlayers-dev", "pacman::vulkan-extra-layers")
             add_deps("ninja")
             add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
         end
