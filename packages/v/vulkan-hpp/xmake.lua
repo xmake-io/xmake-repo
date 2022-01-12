@@ -11,7 +11,7 @@ package("vulkan-hpp")
 
     add_deps("cmake")
 
-    if is_plat("linux")
+    if is_plat("linux") then
       add_extsources("pacman::vulkan-headers")
     end
 
