@@ -14,7 +14,7 @@ package("glfw")
     add_configs("glfw_include", {description = "Choose submodules enabled in glfw", default = "none", type = "string", values = {"none", "vulkan", "glu", "glext", "es2", "es3"}})
 
     if is_plat("linux") then
-        add_extsources("apt::libglfw3-dev")
+        add_extsources("apt::libglfw3-dev", "pacman::glfw-x11")
     end
 
     add_deps("cmake")
