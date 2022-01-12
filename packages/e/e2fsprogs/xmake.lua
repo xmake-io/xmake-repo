@@ -8,7 +8,7 @@ package("e2fsprogs")
     add_versions("1.46.4", "c011bf3bf4ae5efe9fa2b0e9b0da0c14ef4b79c6143c1ae6d9f027931ec7abe1")
 
     if is_plat("linux") then
-        add_extsources("apt::e2fsprogs")
+        add_extsources("apt::e2fsprogs", "pacman::e2fsprogs")
     elseif is_plat("macosx") then
         add_extsources("brew::e2fsprogs")
     end
