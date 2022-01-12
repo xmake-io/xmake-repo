@@ -12,7 +12,7 @@ package("gobject-introspection")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     if is_plat("linux") then
-        add_extsources("apt::libgirepository1.0-dev")
+        add_extsources("apt::libgirepository1.0-dev", "pacman::gobject-introspection-runtime")
     end
 
     add_deps("meson", "ninja", "pkg-config", "python 3.x", "flex", "bison")
