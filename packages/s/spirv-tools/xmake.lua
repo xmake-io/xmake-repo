@@ -15,7 +15,7 @@ package("spirv-tools")
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("spirv-headers")
     if is_plat("linux") then
-        add_extsources("apt::spirv-tools")
+        add_extsources("apt::spirv-tools", "pacman::spirv-tools")
     end
 
     on_fetch("macosx", function (package, opt)
