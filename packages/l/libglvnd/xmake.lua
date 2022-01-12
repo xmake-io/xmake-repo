@@ -10,7 +10,7 @@ package("libglvnd")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     if is_plat("linux") then
-        add_extsources("apt::libglvnd-dev")
+        add_extsources("apt::libglvnd-dev", "pacman::libglvnd")
     end
 
     add_deps("meson", "ninja", "pkg-config")
