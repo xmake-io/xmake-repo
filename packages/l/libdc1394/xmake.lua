@@ -8,7 +8,7 @@ package("libdc1394")
     add_versions("2.2.6", "2b905fc9aa4eec6bdcf6a2ae5f5ba021232739f5be047dec8fe8dd6049c10fed")
 
     if is_plat("linux") then
-        add_extsources("apt::libdc1394-22-dev")
+        add_extsources("apt::libdc1394-22-dev", "pacman::libdc1394")
     end
 
     add_deps("libusb")
