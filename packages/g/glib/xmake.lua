@@ -28,7 +28,7 @@ package("glib")
         add_extsources("brew::glib")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl", "resolv")
-        add_extsources("apt::libglib2.0-dev")
+        add_extsources("apt::libglib2.0-dev", "pacman::glib2")
     end
 
     if on_fetch then
