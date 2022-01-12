@@ -6,6 +6,7 @@ package("toml++")
     add_urls("https://github.com/marzer/tomlplusplus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/marzer/tomlplusplus.git")
     add_versions("v2.5.0", "2e246ee126cfb7bd68edd7285d5bb5c8c5296121ce809306ee71cfd6127c76a6")
+    add_versions("v3.0.0", "934ad62e82ae5ee67bdef512b39d24ddba45e012fb94e22b39fa1fb192bdabab")
 
     add_deps("cmake")
 
