@@ -11,6 +11,10 @@ package("vulkan-hpp")
 
     add_deps("cmake")
 
+    if is_plat("linux")
+      add_extsources("pacman::vulkan-headers")
+    end
+
     on_install("windows", "linux", "macosx", "mingw", function (package)
         local arch_prev
         if package:is_plat("mingw") and package.plat_set then
