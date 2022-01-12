@@ -8,7 +8,7 @@ package("libdivsufsort")
     add_versions("2021.2.18", "d6031097d39aabfff1372e9a1601eed3fbd5fd9b")
 
     if is_plat("linux") then
-        add_extsources("apt::libdivsufsort-dev")
+        add_extsources("apt::libdivsufsort-dev", "paru::libdivsufsort")
     end
     add_deps("cmake")
     add_configs("use_64", {description = "Build 64bit suffxi array sorting APIs", default = false, type = "boolean"})
