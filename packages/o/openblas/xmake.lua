@@ -32,7 +32,7 @@ package("openblas")
     end
 
     if is_plat("linux") then
-        add_extsources("apt::libopenblas-dev")
+        add_extsources("apt::libopenblas-dev", "pacman::libopenblas")
         add_syslinks("pthread")
     elseif is_plat("macosx") then
         add_frameworks("Accelerate")
