@@ -8,6 +8,10 @@ package("wayland-protocols")
 
     add_deps("meson", "ninja", "wayland", "pkg-config")
 
+    if is_plat("linux") then 
+        add_extsources("pacman::wayland-protocols")
+    end
+
     on_install("linux", function (package)
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
