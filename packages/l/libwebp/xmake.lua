@@ -22,8 +22,12 @@ package("libwebp")
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
-    add_extsources("brew::webp")
-    add_extsources("apt::libwebp-dev")
+
+    if is_plat("macosx") then
+        add_extsources("brew::webp")
+    elseif is_plat("linux") then
+        add_extsources("apt::libwebp-dev", "pacman::libwebp")
+    end
 
     on_install("linux", "macosx", "windows", "mingw", "bsd", function (package)
         local configs = {}
