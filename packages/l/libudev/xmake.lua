@@ -9,4 +9,4 @@ package("libudev")
         end
     end)
 
-    add_extsources("apt::libudev-dev")
+    add_extsources("apt::libudev-dev", "pacman::systemd")
