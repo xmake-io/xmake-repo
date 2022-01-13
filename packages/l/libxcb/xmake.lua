@@ -8,7 +8,7 @@ package("libxcb")
     add_versions("1.14", "2c7fcddd1da34d9b238c9caeda20d3bd7486456fc50b3cc6567185dbd5b0ad02")
 
     if is_plat("linux") then
-        add_extsources("apt::libxcb1-dev")
+        add_extsources("apt::libxcb1-dev", "pacman::libxcb")
     end
 
     if is_plat("macosx", "linux") then
