@@ -10,7 +10,7 @@ package("libidn2")
 
     add_deps("libunistring")
     if is_plat("linux") then
-        add_extsources("apt::libidn2-dev")
+        add_extsources("apt::libidn2-dev", "pacman::libidn2")
     end
 
     on_install("macosx", "linux", function (package)
