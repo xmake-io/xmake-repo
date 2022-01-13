@@ -16,8 +16,10 @@ package("libxkbcommon")
     on_load("linux", function (package)
         if package:config("x11") then
             package:add("deps", "libxcb", "xcb-proto", "libxml2")
+            package:add("extsources", "pacman::libxkbcommon-x11")
         else
             package:add("deps", "wayland")
+            package:add("extsources", "pacman::libxkbcommon")
         end
     end)
 
