@@ -10,7 +10,7 @@ package("bison")
     add_versions("3.7.6", "69dc0bb46ea8fc307d4ca1e0b61c8c355eb207d0b0c69f4f8462328e74d7b9ea")
     add_versions("3.8.2", "06c9e13bdf7eb24d4ceb6b59205a4f67c2c7e7213119644430fe82fbd14a0abb")
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_deps("m4")
     end
 
