@@ -17,6 +17,9 @@ package("lame")
         if package:is_plat("linux") and package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
+        -- fix undefined symbol error _lame_init_old
+        -- https://sourceforge.net/p/lame/mailman/message/36081038/
+        io.replace("include/libmp3lame.sym", "lame_init_old\n", "", {plain = true})
         import("package.tools.autoconf").install(package, configs)
     end)
 
