@@ -24,7 +24,7 @@ package("nasm")
         os.cp(path.join("rdoff", "*.exe"), package:installdir("bin"))
     end)
 
-    on_install("@linux", "@macosx", function (package)
+    on_install("@linux", "@macosx", "@bsd", function (package)
         import("package.tools.autoconf").install(package)
     end)
 
