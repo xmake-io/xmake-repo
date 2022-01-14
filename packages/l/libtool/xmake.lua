@@ -16,7 +16,7 @@ package("libtool")
 
     add_deps("autoconf")
 
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx", "@linux", "@bsd", function (package)
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--enable-ltdl-install"})
     end)
 

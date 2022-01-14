@@ -18,7 +18,7 @@ package("automake")
 
     add_deps("autoconf")
 
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx", "@linux", "@bsd", function (package)
         import("package.tools.autoconf").install(package)
         io.writefile(path.join(package:installdir("share", "aclocal"), "dirlist"), [[
             /usr/local/share/aclocal
