@@ -25,7 +25,6 @@ package("xcb-util-keysyms")
     end)
 
     on_test(function (package)
-        local envs = {PKG_CONFIG_PATH = path.join(package:installdir(), "lib", "pkgconfig")}
-        os.vrunv("pkg-config", {"--exists", "xcb-util"}, {envs = envs})
+        assert(package:has_cfuncs("xcb_key_symbols_get_keycode", {includes = "xcb/xcb_keysyms.h"}))
     end)
 

@@ -26,7 +26,6 @@ package("xcb-util")
     end)
 
     on_test(function (package)
-        local envs = {PKG_CONFIG_PATH = path.join(package:installdir(), "lib", "pkgconfig")}
-        os.vrunv("pkg-config", {"--exists", "xcb-util"}, {envs = envs})
+        assert(package:has_cfuncs("xcb_atom_name_by_screen", {includes = "xcb/xcb_atom.h"}))
     end)
 

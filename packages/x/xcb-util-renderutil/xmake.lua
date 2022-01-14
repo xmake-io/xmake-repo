@@ -24,7 +24,6 @@ package("xcb-util-renderutil")
     end)
 
     on_test(function (package)
-        local envs = {PKG_CONFIG_PATH = path.join(package:installdir(), "lib", "pkgconfig")}
-        os.vrunv("pkg-config", {"--exists", "xcb-util"}, {envs = envs})
+        assert(package:has_cfuncs("xcb_render_util_find_format", {includes = "xcb/xcb_renderutil.h"}))
     end)
 

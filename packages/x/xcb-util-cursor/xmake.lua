@@ -26,7 +26,6 @@ package("xcb-util-cursor")
     end)
 
     on_test(function (package)
-        local envs = {PKG_CONFIG_PATH = path.join(package:installdir(), "lib", "pkgconfig")}
-        os.vrunv("pkg-config", {"--exists", "xcb-util"}, {envs = envs})
+        assert(package:has_cfuncs("xcb_cursor_context_new", {includes = "xcb/xcb_cursor.h"}))
     end)
 
