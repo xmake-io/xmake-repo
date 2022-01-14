@@ -13,7 +13,7 @@ package("xcb-util-renderutil")
 
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", {kind = "binary"})
-        add_deps("libxcb")
+        add_deps("libxcb", "xcb-util")
     end
 
     on_install("macosx", "linux", function (package)
