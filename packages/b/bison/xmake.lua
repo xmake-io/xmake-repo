@@ -14,7 +14,7 @@ package("bison")
         add_deps("m4")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         import("package.tools.autoconf").install(package)
         os.rm(package:installdir("share", "doc"))
     end)
