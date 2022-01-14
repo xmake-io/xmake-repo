@@ -7,7 +7,7 @@ package("xcb-util-errors")
     add_versions("1.0", "7752a722e580efdbada30632cb23aed35c18757399ac3b547b59fd7257cf5e33")
 
     if is_plat("linux") then
-        add_extsources("apt::APT_PACKAGE", "pacman::xcb-util-errors")
+        add_extsources("pacman::xcb-util-errors")
     end
 
     if is_plat("macosx", "linux") then

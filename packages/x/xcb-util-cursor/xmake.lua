@@ -10,7 +10,7 @@ package("xcb-util-cursor")
     add_versions("0.1.3", "a322332716a384c94d3cbf98f2d8fe2ce63c2fe7e2b26664b6cea1d411723df8")
 
     if is_plat("linux") then
-        add_extsources("apt::APT_PACKAGE", "pacman::xcb-util-cursor")
+        add_extsources("apt::libxcb-cursor-dev", "pacman::xcb-util-cursor")
     end
 
     if is_plat("macosx", "linux") then

@@ -9,7 +9,7 @@ package("xcb-util-keysyms")
     add_versions("0.4.0", "0807cf078fbe38489a41d755095c58239e1b67299f14460dec2ec811e96caa96")
 
     if is_plat("linux") then
-        add_extsources("apt::APT_PACKAGE", "pacman::xcb-util-keysyms")
+        add_extsources("apt::libxcb-keysyms1-dev", "pacman::xcb-util-keysyms")
     end
 
     if is_plat("macosx", "linux") then

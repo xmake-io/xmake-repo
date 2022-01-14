@@ -8,7 +8,7 @@ package("xcb-util-renderutil")
     add_versions("0.3.9", "55eee797e3214fe39d0f3f4d9448cc53cffe06706d108824ea37bb79fcedcad5")
 
     if is_plat("linux") then
-        add_extsources("apt::APT_PACKAGE", "pacman::xcb-util-renderutil")
+        add_extsources("apt::libxcb-render-util0-dev", "pacman::xcb-util-renderutil")
     end
 
     if is_plat("macosx", "linux") then

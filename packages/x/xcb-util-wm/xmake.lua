@@ -10,7 +10,7 @@ package("xcb-util-wm")
     add_versions("0.4.1", "038b39c4bdc04a792d62d163ba7908f4bb3373057208c07110be73c1b04b8334")
 
     if is_plat("linux") then
-        add_extsources("apt::APT_PACKAGE", "pacman::xcb-util-wm")
+        add_extsources("apt::libxcb-icccm4-dev", "pacman::xcb-util-wm")
     end
 
     if is_plat("macosx", "linux") then

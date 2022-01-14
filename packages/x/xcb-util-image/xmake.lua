@@ -9,7 +9,7 @@ package("xcb-util-image")
     add_versions("0.4.0", "cb2c86190cf6216260b7357a57d9100811bb6f78c24576a3a5bfef6ad3740a42")
 
     if is_plat("linux") then
-        add_extsources("apt::APT_PACKAGE", "pacman::xcb-util-image")
+        add_extsources("apt::libxcb-image0-dev", "pacman::xcb-util-image")
     end
 
     if is_plat("macosx", "linux") then
