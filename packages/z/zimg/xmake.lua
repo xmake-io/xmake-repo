@@ -6,7 +6,7 @@ package("zimg")
     add_urls("https://github.com/sekrit-twc/zimg/archive/refs/tags/release-$(version).tar.gz")
     add_versions("3.0.3", "5e002992bfe8b9d2867fdc9266dc84faca46f0bfd931acc2ae0124972b6170a7")
 
-    add_deps("autoconf", "automake")
+    add_deps("autoconf", "automake", "libtool")
 
     on_install("macosx", "linux", "bsd", function (package)
         local configs = {}
