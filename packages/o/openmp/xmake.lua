@@ -46,9 +46,7 @@ package("openmp")
                     result[flagname] = "-Qopenmp"
                 end
                 if package:config("runtime") == "default" then
-                    if package:has_tool(toolkind, "cl") then
-                        result.ldflags = "/openmp"
-                    elseif package:has_tool(toolkind, "clang", "clangxx") then
+                    if package:has_tool(toolkind, "clang", "clangxx") then
                         if not package:is_plat("macosx") then
                             result.ldflags = "-fopenmp"
                         end
@@ -62,7 +60,6 @@ package("openmp")
                 end
                 if package:config("runtime") == "custom" then
                     if package:has_tool(toolkind, "cl") then
-                        result.ldflags = "/openmp"
                         result.ldflags = "/nodefaultlib:vcomp"
                     end
                 end
