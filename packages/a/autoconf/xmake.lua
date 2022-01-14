@@ -17,7 +17,7 @@ package("autoconf")
 
     add_deps("m4")
 
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx", "@linux", "@bsd", function (package)
         import("package.tools.autoconf").install(package)
     end)
 
