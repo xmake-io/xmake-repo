@@ -14,6 +14,7 @@ package("xcb-util-image")
 
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", {kind = "binary"})
+        add_deps("m4", {kind = "binary"})
         add_deps("xcb-proto", "libxcb", "xcb-util")
     end
 
