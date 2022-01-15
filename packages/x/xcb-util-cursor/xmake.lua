@@ -14,8 +14,7 @@ package("xcb-util-cursor")
     end
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", {kind = "binary"})
-        add_deps("m4", {kind = "binary"})
+        add_deps("m4", "pkg-config")
         add_deps("libxcb", "xcb-util-renderutil", "xcb-util-image")
     end
 
