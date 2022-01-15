@@ -14,7 +14,7 @@ package("xcb-util")
     end
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", {kind = "binary"})
+        add_deps("pkg-config")
         add_deps("libxcb")
     end
 
