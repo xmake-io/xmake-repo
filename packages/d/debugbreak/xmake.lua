@@ -12,5 +12,5 @@ package("debugbreak")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("debug_break", {includes = "debugbreak.h"}))
+        assert(package:has_cfuncs("debug_break()", {includes = "debugbreak.h"}))
     end)
