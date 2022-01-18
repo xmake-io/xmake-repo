@@ -18,7 +18,7 @@ package("vulkan-headers")
       add_extsources("pacman::vulkan-headers")
     end
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "android", function (package)
         import("package.tools.cmake").install(package)
     end)
 
