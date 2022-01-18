@@ -3,7 +3,7 @@ package("workflow")
     set_description("C++ Parallel Computing and Asynchronous Networking Engine")
     set_license("Apache-2.0")
 
-    add_configs("kafka",{description="Use kafka protocol", default="false", values={"false","true"}})
+    add_configs("kafka", {description = "Use kafka protocol", default = "false", values = {"false","true"}})
 
     add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/workflow.git")
@@ -11,7 +11,7 @@ package("workflow")
 
     add_deps("cmake", "openssl")
 
-    on_load("linux", "macosx", "windows", "android", function (package)
+    on_load(function (package)
         local kafka = package:config("kafka") or true
         package:add("deps", "lz4")
         package:add("deps", "zstd")
