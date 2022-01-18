@@ -7,7 +7,7 @@ package("workflow")
              "https://github.com/sogou/workflow.git")
     add_versions("v0.9.9", "309775e74e9f22bead08147380be4a69072e8f603d7216992f5b73510643cbe1")
 
-    add_configs("kafka", {description = "Use kafka protocol"}, default = false)
+    add_configs("kafka", {description = "Use kafka protocol", default = false})
 
     add_deps("cmake", "openssl")
 
