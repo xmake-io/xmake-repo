@@ -25,7 +25,8 @@ package("workflow")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        io.replace("src/CMakeLists.txt", "GROUP ( libworkflow.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
+        -- io.replace("src/CMakeLists.txt", "GROUP ( libworkflow.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
+        -- io.replace("src/CMakeLists.txt", "GROUP ( libwfkafka.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
         import("package.tools.cmake").install(package, configs, {packagedeps = "openssl"})
     end)
 
