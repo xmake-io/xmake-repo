@@ -11,12 +11,13 @@ package("workflow")
 
     add_deps("cmake", "openssl")
 
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl")
+    end
+
     on_load(function(package)
         if package:config("kafka") then
             package:add("deps", "lz4", "zstd", "snappy")
-        end
-        if is_plat("linux") then
-            add_syslinks("pthread", "dl")
         end
     end )
 
