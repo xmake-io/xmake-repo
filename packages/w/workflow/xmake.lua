@@ -28,7 +28,7 @@ package("workflow")
         io.replace("src/CMakeLists.txt", "GROUP ( libworkflow.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
         io.replace("src/CMakeLists.txt", "GROUP ( libwfkafka.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
         import("package.tools.cmake").install(package, configs, {packagedeps = "openssl"})
-        if is_kind("shared") then
+        if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"),  "*.a"))
         end
     end)
