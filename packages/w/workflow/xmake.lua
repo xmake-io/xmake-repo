@@ -9,7 +9,7 @@ package("workflow")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("linux", "macosx", "windows", "android", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -17,5 +17,17 @@ package("workflow")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("foo", {includes = "foo.h"}))
+        assert(package:check_cxxsnippets({test = [[
+        #include <stdio.h>
+        #include "workflow/WFHttpServer.h"
+        static void test() {
+            WFHttpServer server([](WFHttpTask *task) {
+                task->get_resp()->append_output_body("<html>Hello World!</html>");
+            });
+            if (server.start(8888) == 0) {  // start server on port 8888
+                getchar(); // press "Enter" to end.
+                server.stop();
+            }
+        }
+    ]]}, {configs = {languages = "c++11"}}))
     end)
