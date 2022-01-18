@@ -30,6 +30,8 @@ package("workflow")
         import("package.tools.cmake").install(package, configs, {packagedeps = "openssl"})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"),  "*.a"))
+        else 
+            os.tryrm(path.join(package:installdir("lib"),  "*.so"))
         end
     end)
 
