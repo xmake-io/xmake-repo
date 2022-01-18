@@ -13,7 +13,9 @@ package("workflow")
 
     on_load("linux", "macosx", "windows", "android", function (package)
         local kafka = package:config("kafka") or true
-        package:add("deps", "lz4", "zstd", "snappy")
+        package:add("deps", "lz4")
+        package:add("deps", "zstd")
+        package:add("deps", "snappy")
     end)
 
     on_install("linux", "macosx", "windows", "android", function (package)
