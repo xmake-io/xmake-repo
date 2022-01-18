@@ -28,11 +28,13 @@ package("workflow")
         io.replace("src/CMakeLists.txt", "GROUP ( libworkflow.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
         io.replace("src/CMakeLists.txt", "GROUP ( libwfkafka.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
         import("package.tools.cmake").install(package, configs, {packagedeps = "openssl"})
-        if package:is_plat("linux") then 
-            if package:config("shared") then
-                os.tryrm(path.join(package:installdir("lib"),  "*.a"))
-            else 
+        if package:config("shared") then
+            os.tryrm(path.join(package:installdir("lib"),  "*.a"))
+        else 
+            if package:is_plat("linux") then 
                 os.tryrm(path.join(package:installdir("lib"),  "*.so"))
+            elseif package:is_plat("macosx") then
+                os.tryrm(path.join(package:installdir("lib"),  "*.dylib"))
             end
         end
     end)
