@@ -9,11 +9,11 @@ package("vulkan-memory-allocator")
 
     add_deps("vulkan-headers")
 
-    on_install("windows", "linux", "macosx", function (package) 
+    on_install("windows", "linux", "macosx", "android", function (package)
         os.cp("src/vk_mem_alloc.h", package:installdir("include"))
     end)
 
-    on_test(function (package) 
+    on_test(function (package)
         assert(package:check_csnippets({test = [[
             void test() {
                 int version = VMA_VULKAN_VERSION;
