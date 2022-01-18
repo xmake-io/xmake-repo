@@ -9,11 +9,13 @@ package("workflow")
              "https://github.com/sogou/workflow.git")
     add_versions("v0.9.9", "309775e74e9f22bead08147380be4a69072e8f603d7216992f5b73510643cbe1")
 
-    if package:config("kafka") then
-        package:add("deps", "lz4", "zstd", "snappy")
-    end
-
     add_deps("cmake", "openssl")
+
+    on_load(function(package)
+        if package:config("kafka") then
+            package:add("deps", "lz4", "zstd", "snappy")
+        end
+    end )
 
     on_install("linux", "macosx", "windows", "android", function (package)
         local configs = {}
