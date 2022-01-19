@@ -8,6 +8,7 @@ package("workflow")
     add_versions("v0.9.9", "309775e74e9f22bead08147380be4a69072e8f603d7216992f5b73510643cbe1")
 
     add_configs("kafka", {description = "Use kafka protocol", default = false})
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake", "openssl")
 
@@ -24,19 +25,10 @@ package("workflow")
     on_install("linux", "macosx", "android", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("src/CMakeLists.txt", "GROUP ( libworkflow.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
         io.replace("src/CMakeLists.txt", "GROUP ( libwfkafka.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
         import("package.tools.cmake").install(package, configs, {packagedeps = "openssl"})
-        if package:config("shared") then
-            os.tryrm(path.join(package:installdir("lib"),  "*.a"))
-        else 
-            if package:is_plat("linux") then 
-                os.tryrm(path.join(package:installdir("lib"),  "*.so"))
-            elseif package:is_plat("macosx") then
-                os.tryrm(path.join(package:installdir("lib"),  "*.dylib"))
-            end
-        end
+        os.tryrm(path.join(package:installdir("lib"),  "*.so"))
     end)
 
     on_test(function (package)
