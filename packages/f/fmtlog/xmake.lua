@@ -15,6 +15,9 @@ package("fmtlog")
     on_install("linux", "macosx", "windows", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        if package:is_plat("windows") and package:config("shared") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
         io.replace("CMakeLists.txt", "add_subdirectory(fmt)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(test)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(bench)", "", {plain = true})
