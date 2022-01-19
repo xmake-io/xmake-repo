@@ -3,8 +3,7 @@ package("workflow")
     set_description("C++ Parallel Computing and Asynchronous Networking Engine")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/sogou/workflow/archive/$(version).zip",
-              "https://github.com/sogou/workflow.git")
+    add_urls("https://github.com/sogou/workflow.git")
     add_versions("v0.9.9", "9994ef0d85a7422aad392ee82f5b2739c265965b")
 
     add_configs("kafka", {description = "Use kafka protocol", default = false})
