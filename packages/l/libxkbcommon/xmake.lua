@@ -35,8 +35,8 @@ package("libxkbcommon")
           "-Dxkb-config-root=/usr/share/X11/xkb", 
           "-Dx-locale-root=/usr/share/X11/locale", 
           "--libdir=lib",
-          "-Denable-x11=" .. package:config("x11"),
-          "-Denable-wayland=" .. package:config("wayland"),
+          format("-Denable-x11=%s", package:config("x11")),
+          format("-Denable-wayland=%s", package:config("wayland")),
         }
 
         import("package.tools.meson").install(package, configs)
