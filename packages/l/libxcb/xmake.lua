@@ -1,5 +1,34 @@
-package("libxcb")
+local components = {
+    composite       = { apt_package = "apt::libxcb-composite0-dev", default_value = true },
+    damage          = { apt_package = "apt::libxcb-damage0-dev" , default_value = true},
+    dpms            = { apt_package = "apt::libxcb-dpms0-dev" , default_value = true},
+    dri2            = { apt_package = "apt::libxcb-dri2-0-dev" , default_value = true},
+    dri3            = { apt_package = "apt::libxcb-dri3-dev" , default_value = true},
+    present         = { apt_package = "apt::libxcb-present-dev" , default_value = true},
+    glx             = { apt_package = "apt::libxcb-glx0-dev" , default_value = true},
+    randr           = { apt_package = "apt::libxcb-randr0-dev" , default_value = true},
+    record          = { apt_package = "apt::libxcb-record0-dev" , default_value = true},
+    render          = { apt_package = "apt::libxcb-render0-dev" , default_value = true},
+    resource        = { apt_package = "apt::libxcb-xrm-dev" , default_value = true},
+    screensaver     = { apt_package = "apt::libxcb-screensaver-dev" , default_value = true},
+    shape           = { apt_package = "apt::libxcb-shape0-dev" , default_value = true},
+    shm             = { apt_package = "apt::libxcb-shm0-dev" , default_value = true},
+    sync            = { apt_package = "apt::libxcb-sync0-dev" , default_value = true},
+    xevie           = { apt_package = "apt::libxcb-xevie0-dev" , default_value = true},
+    ["xfree86-dri"] = { apt_package = "apt::libxcb-xfreedri0-dev" , default_value = true},
+    xfixes          = { apt_package = "apt::libxcb-xfixes0-dev" , default_value = true},
+    xinerama        = { apt_package = "apt::libxcb-xinerama0-dev" , default_value = true},
+    xinput          = { apt_package = "apt::libxcb-xinput-dev" , default_value = true},
+    xkb             = { apt_package = "apt::libxcb-xkb-dev" , default_value = true},
+    xprint          = { apt_package = "apt::libxcb-xprint0-dev" , default_value = false},
+    selinux         = { default_value = false},
+    xtest           = { apt_package = "apt::libxcb-xtest0-dev" , default_value = true},
+    xv              = { apt_package = "apt::libxcb-xv0-dev" , default_value = true},
+    xvmc            = { apt_package = "apt::libxcb-xvmc0-dev" , default_value = true},
+    ge              = { default_value = true}
+}
 
+package("libxcb")
     set_homepage("https://www.x.org/")
     set_description("X.Org: Interface to the X Window System protocol")
 
@@ -7,33 +36,9 @@ package("libxcb")
     add_versions("1.13.1", "f09a76971437780a602303170fd51b5f7474051722bc39d566a272d2c4bde1b5")
     add_versions("1.14", "2c7fcddd1da34d9b238c9caeda20d3bd7486456fc50b3cc6567185dbd5b0ad02")
 
-    add_configs("composite", {description = "Enable composite submodule (default is true).", default = true, type = "boolean"})
-    add_configs("damage", {description = "Enable damage submodule (default is true).", default = true, type = "boolean"})
-    add_configs("dpms", {description = "Enable dpms submodule (default is true).", default = true, type = "boolean"})
-    add_configs("dri2", {description = "Enable dri2 submodule (default is true).", default = true, type = "boolean"})
-    add_configs("dri3", {description = "Enable dri3 submodule (default is true).", default = true, type = "boolean"})
-    add_configs("present", {description = "Enable present submodule (default is true).", default = true, type = "boolean"})
-    add_configs("glx", {description = "Enable glx submodule (default is true).", default = true, type = "boolean"})
-    add_configs("randr", {description = "Enable randr submodule (default is true).", default = true, type = "boolean"})
-    add_configs("record", {description = "Enable record submodule (default is true).", default = true, type = "boolean"})
-    add_configs("render", {description = "Enable render submodule (default is true).", default = true, type = "boolean"})
-    add_configs("resource", {description = "Enable resource submodule (default is true).", default = true, type = "boolean"})
-    add_configs("screensaver", {description = "Enable screensaver submodule (default is true).", default = true, type = "boolean"})
-    add_configs("shape", {description = "Enable shape submodule (default is true).", default = true, type = "boolean"})
-    add_configs("shm", {description = "Enable shm submodule (default is true).", default = true, type = "boolean"})
-    add_configs("sync", {description = "Enable sync submodule (default is true).", default = true, type = "boolean"})
-    add_configs("xevie", {description = "Enable xevie submodule (default is true).", default = false, type = "boolean"})
-    add_configs("xfree86dri", {description = "Enable xfree86-dri submodule (default is true).", default = true, type = "boolean"})
-    add_configs("xfixes", {description = "Enable xfixes submodule (default is true).", default = true, type = "boolean"})
-    add_configs("xinerama", {description = "Enable xinerama submodule (default is true).", default = true, type = "boolean"})
-    add_configs("xinput", {description = "Enable xinput submodule (default is true).", default = true, type = "boolean"})
-    add_configs("xkb", {description = "Enable xkb submodule (default is true).", default = true, type = "boolean"})
-    add_configs("xprint", {description = "Enable xprint submodule (default is true).", default = false, type = "boolean"})
-    add_configs("selinux", {description = "Enable selinux submodule (default is true).", default = false, type = "boolean"})
-    add_configs("xtest", {description = "Enable xtest submodule (default is true).", default = true, type = "boolean"})
-    add_configs("xv", {description = "Enable xv submodule (default is true).", default = true, type = "boolean"})
-    add_configs("xvmc", {description = "Enable xvmc submodule (default is true).", default = true, type = "boolean"})
-    add_configs("ge", {description = "Enable ge submodule (default is false).", default = true, type = "boolean"})
+    for name, opt in pairs(components) do 
+        add_configs(name, {description = format("Enable %s submodule (default is %s).", name, opt.default_value), default_value = opt.default_value})
+    end
 
     if is_plat("linux") then
         add_extsources("apt::libxcb1-dev", "pacman::libxcb")
@@ -45,141 +50,25 @@ package("libxcb")
     end
 
     on_load("linux", function(package)
-        if package:config("composite") then
-            package:add("extsources", "apt::libxcb-composite0-dev")
-        end
-
-        if package:config("damage") then
-            package:add("extsources", "apt::libxcb-damage0-dev")
-        end
-
-        if package:config("dpms") then
-            package:add("extsources", "apt::libxcb-dpms0-dev")
-        end
-
-        if package:config("dri2") then
-            package:add("extsources", "apt::libxcb-dri2-0-dev")
-        end
-
-        if package:config("dri3") then
-            package:add("extsources", "apt::libxcb-dri3-dev")
-        end
-
-        if package:config("present") then
-            package:add("extsources", "apt::libxcb-present-dev")
-        end
-
-        if package:config("glx") then
-            package:add("extsources", "apt::libxcb-glx0-dev")
-        end
-
-        if package:config("randr") then
-            package:add("extsources", "apt::libxcb-randr0-dev")
-        end
-
-        if package:config("record") then
-            package:add("extsources", "apt::libxcb-record0-dev")
-        end
-
-        if package:config("render") then
-            package:add("extsources", "apt::libxcb-render0-dev")
-        end
-
-        if package:config("resource") then
-            package:add("extsources", "apt::libxcb-xrm-dev")
-        end
-
-        if package:config("screensaver") then
-            package:add("extsources", "apt::libxcb-screensaver-dev")
-        end
-
-        if package:config("shape") then
-            package:add("extsources", "apt::libxcb-shape0-dev")
-        end
-
-        if package:config("shm") then
-            package:add("extsources", "apt::libxcb-shm0-dev")
-        end
-
-        if package:config("sync") then
-            package:add("extsources", "apt::libxcb-sync0-dev")
-        end
-
-        if package:config("xevie") then
-            package:add("extsources", "apt::libxcb-xevie0-dev")
-        end
-
-        if package:config("xfree86dri") then
-            package:add("extsources", "apt::libxcb-xfreedri0-dev")
-        end
-
-        if package:config("xfixes") then
-            package:add("extsources", "apt::libxcb-xfixes0-dev")
-        end
-
-        if package:config("xinerama") then
-            package:add("extsources", "apt::libxcb-xinerama0-dev")
-        end
-
-        if package:config("xinput") then
-            package:add("extsources", "apt::libxcb-xinput-dev")
-        end
-
-        if package:config("xkb") then
-            package:add("extsources", "apt::libxcb-xkb-dev")
-        end
-
-        if package:config("xprint") then
-            package:add("extsources", "apt::libxcb-xprint0-dev")
-        end
-
-        if package:config("xtest") then
-            package:add("extsources", "apt::libxcb-xtest0-dev")
-        end
-
-        if package:config("xvmc") then
-            package:add("extsources", "apt::libxcb-xv0-dev")
-        end
-
-        if package:config("xv") then
-            package:add("extsources", "apt::libxcb-xvmc0-dev")
+        for name, opt in pairs(components) do 
+            if opt.apt_package and package:config(name) then
+                package:add("extsources", opt.apt_package)
+            end
         end
     end)
 
     on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
-                         "--enable-composite=" .. format("%s", package:config("composite")),
-                         "--enable-damage=" .. format("%s", package:config("damage")),
-                         "--enable-dpms=" .. format("%s", package:config("dpms")),
-                         "--enable-dri2=" .. format("%s", package:config("dri2")),
-                         "--enable-dri3=" .. format("%s", package:config("dri3")),
-                         "--enable-present=" .. format("%s", package:config("present")),
-                         "--enable-glx=" .. format("%s", package:config("glx")),
-                         "--enable-randr=" .. format("%s", package:config("randr")),
-                         "--enable-record=" .. format("%s", package:config("record")),
-                         "--enable-render=" .. format("%s", package:config("render")),
-                         "--enable-resource=" .. format("%s", package:config("resource")),
-                         "--enable-screensaver=" .. format("%s", package:config("screensaver")),
-                         "--enable-shape=" .. format("%s", package:config("shape")),
-                         "--enable-shm=" .. format("%s", package:config("shm")),
-                         "--enable-sync=" .. format("%s", package:config("sync")),
-                         "--enable-xevie=" .. format("%s", package:config("xevie")),
-                         "--enable-xfree86-dri=" .. format("%s", package:config("xfree86dri")),
-                         "--enable-xfixes=" .. format("%s", package:config("xfixes")),
-                         "--enable-xinerama=" .. format("%s", package:config("xinerama")),
-                         "--enable-xinput=" .. format("%s", package:config("xinput")),
-                         "--enable-xkb=" .. format("%s", package:config("xkb")),
-                         "--enable-xprint=" .. format("%s", package:config("xprint")),
-                         "--enable-selinux=" .. format("%s", package:config("selinux")),
-                         "--enable-xtest=" .. format("%s", package:config("xtest")),
-                         "--enable-xv=" .. format("%s", package:config("xv")),
-                         "--enable-xvmc=" .. format("%s", package:config("xvmc")),
-                         "--enable-ge=" .. format("%s", package:config("ge")),
                          "--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--enable-devel-docs=no",
                          "--with-doxygen=no"}
+
+        for name, opt in pairs(components) do
+            table.insert(configs, format("--enable-%s=%s", name, package:config(name)))
+        end
+
         import("package.tools.autoconf").install(package, configs)
     end)
 
