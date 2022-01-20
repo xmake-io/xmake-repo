@@ -20,11 +20,17 @@ package("workflow")
         end
     end )
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "android", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = "openssl"})
+        if package:config("shared") then
+            os.tryrm(path.join(package:installdir("lib"), "*.a"))
+        else
+            os.tryrm(path.join(package:installdir("lib"), "*.so"))
+            os.tryrm(path.join(package:installdir("lib"), "*.dylib"))
+        end
     end)
 
     on_test(function (package)
