@@ -22,6 +22,11 @@ package("workflow")
 
     on_install("linux", "macosx", "android", function (package)
         local configs = {}
+        if is_plat("android") then 
+            table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. package:installdir(openssl))
+            table.insert(configs, "-DOPENSSL_LIBRARIES=" .. package:installdir(openssl)+"/lib")
+            table.insert(configs, "-DOPENSSL_INCLUDE_DIR=" .. package:installdir(openssl)+"/include")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = "openssl"})
