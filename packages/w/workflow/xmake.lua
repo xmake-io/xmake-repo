@@ -3,12 +3,10 @@ package("workflow")
     set_description("C++ Parallel Computing and Asynchronous Networking Engine")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/sogou/workflow.git")
-    add_versions("v0.9.9", "309775e74e9f22bead08147380be4a69072e8f603d7216992f5b73510643cbe1")
+    add_urls("https://github.com/sogou/workflow.git")
+    add_versions("v0.9.9", "d7d29d68f1e94020f2e31a08e76fa644fd604bd7")
 
     add_configs("kafka", {description = "Use kafka protocol", default = false})
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake", "openssl")
 
@@ -22,13 +20,11 @@ package("workflow")
         end
     end )
 
-    on_install("linux", "macosx", "android", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        io.replace("src/CMakeLists.txt", "GROUP ( libworkflow.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
-        io.replace("src/CMakeLists.txt", "GROUP ( libwfkafka.a AS_NEEDED ( libpthread.so libssl.so libcrypto.so ) ) ", "", {plain = true})
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = "openssl"})
-        os.tryrm(path.join(package:installdir("lib"),  "*.so"))
     end)
 
     on_test(function (package)
