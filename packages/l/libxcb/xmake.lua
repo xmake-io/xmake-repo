@@ -37,7 +37,7 @@ package("libxcb")
     add_versions("1.14", "2c7fcddd1da34d9b238c9caeda20d3bd7486456fc50b3cc6567185dbd5b0ad02")
 
     for name, opt in pairs(components) do 
-        add_configs(name, {description = format("Enable %s submodule (default is %s).", name, opt.default_value), default_value = opt.default_value})
+        add_configs(name, {description = format("Enable %s submodule (default is %s).", name, opt.default_value), default = opt.default_value})
     end
 
     if is_plat("linux") then
