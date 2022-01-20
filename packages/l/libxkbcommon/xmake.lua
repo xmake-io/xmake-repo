@@ -29,15 +29,15 @@ package("libxkbcommon")
     add_deps("meson")
     on_install("linux", function (package)
         package:addenv("PATH", "bin")
-        local configs = {"-Denable-docs=false", "-Dc_link_args=-lm"}
-        table.insert(configs, "--libdir=lib")
-        if package:config("x11") then
-            table.join2(configs, {"-Denable-x11=true", "-Dxkb-config-root=/usr/share/X11/xkb", "-Dx-locale-root=/usr/share/X11/locale"})
-        end
-
-        if package:config("wayland") then
-            table.join2(configs, {"-Denable-wayland=true", "-Dxkb-config-root=/usr/share/X11/xkb", "-Dx-locale-root=/usr/share/X11/locale"})
-        end
+        local configs = {
+          "-Denable-docs=false", 
+          "-Dc_link_args=-lm", 
+          "-Dxkb-config-root=/usr/share/X11/xkb", 
+          "-Dx-locale-root=/usr/share/X11/locale", 
+          "--libdir=lib",
+          "-Denable-x11=" .. package:config("x11"),
+          "-Denable-wayland=" .. package:config("wayland"),
+        }
 
         import("package.tools.meson").install(package, configs)
     end)
