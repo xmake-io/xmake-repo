@@ -24,6 +24,9 @@ package("workflow")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("android") then
+            io.replace("src/CMakeLists.txt", "add_subdirectory(client)", "add_subdirectory(client)\nlink_libraries(ssl crypto)", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = "openssl"})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"), "*.a"))
