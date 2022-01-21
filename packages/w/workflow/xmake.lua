@@ -4,7 +4,7 @@ package("workflow")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/sogou/workflow.git")
-    add_versions("v0.9.9", "e777886b1e887e765801e0de24aabbfe9f948361")
+    add_versions("v0.9.9", "90cab0cb9a7567ac56a39ae2361d2dc1f4c3ee7b")
 
     add_configs("kafka", {description = "Use kafka protocol", default = false})
 
