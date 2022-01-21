@@ -7,6 +7,7 @@ package("shaderwriter")
     add_versions("0.1", "a5ef99ff141693ef28cee0e464500888cabc65ad")
     add_versions("1.0", "7d506b6864edb5f357ed8993512f5a3618a4ddc1")
     add_versions("1.1", "e7ddabe2b9ec6279951f4dcfe6a803d42d0e9052")
+    add_versions("2.0", "9e7488290713f88149038ef56fdc4034c3a1dd7f")
 
     add_deps("cmake")
 
@@ -19,9 +20,6 @@ package("shaderwriter")
             "-DSDW_BUILD_EXPORTERS=ON",
             "-DSDW_BUILD_STATIC_SDW=".. (package:config("shared") and "OFF" or "ON"),
             "-DSDW_BUILD_STATIC_SDAST=".. (package:config("shared") and "OFF" or "ON"),
-            "-DSDW_BUILD_EXPORTER_GLSL_STATIC=".. (package:config("shared") and "OFF" or "ON"),
-            "-DSDW_BUILD_EXPORTER_HLSL_STATIC=".. (package:config("shared") and "OFF" or "ON"),
-            "-DSDW_BUILD_EXPORTER_SPIRV_STATIC=".. (package:config("shared") and "OFF" or "ON"),
             "-DSDW_GENERATE_SOURCE=OFF",
             "-DSDW_BUILD_VULKAN_LAYER=OFF",
             "-DPROJECTS_USE_PRECOMPILED_HEADERS=OFF",
