@@ -6,7 +6,7 @@ package("gnu-rm")
 
     local version_map = {
         ["2020.10"] = "10-2020q4/gcc-arm-none-eabi-2020.10-major",
-        ["2021.10"] = "2021.10/gcc-arm-none-eabi-2021.10"
+        ["2021.10"] = "10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10"
     }
 
     if is_host("windows") then
