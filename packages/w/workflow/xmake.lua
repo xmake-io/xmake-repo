@@ -5,21 +5,13 @@ package("workflow")
 
     add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/workflow.git")
-    add_versions("v0.9.10", "90cab0cb9a7567ac56a39ae2361d2dc1f4c3ee7b")
-
-    add_configs("kafka", {description = "Use kafka protocol", default = false})
+    add_versions("v0.9.10", "7a0a9b184a6baa745235fc8b0cb59f6289111049b14f38657379ad6c029e6aaa")
 
     add_deps("cmake", "openssl")
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
-
-    on_load(function(package)
-        if package:config("kafka") then
-            package:add("deps", "lz4", "zstd", "snappy")
-        end
-    end )
 
     on_install("linux", "macosx", "android", function (package)
         local configs = {}
