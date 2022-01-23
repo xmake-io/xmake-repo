@@ -5,7 +5,7 @@ package("workflow")
 
     add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/workflow.git")
-    add_versions("v0.9.10", "90cab0cb9a7567ac56a39ae2361d2dc1f4c3ee7b")
+    add_versions("v0.9.10", "7a0a9b184a6baa745235fc8b0cb59f6289111049b14f38657379ad6c029e6aaa")
 
     add_configs("kafka", {description = "Use kafka protocol", default = false})
 
@@ -25,6 +25,9 @@ package("workflow")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("kafka") then 
+            table.insert(configs, "-DKAFKA=y")
+        end
         if package:is_plat("android") then
             io.replace("src/CMakeLists.txt", "add_subdirectory(client)", "add_subdirectory(client)\nlink_libraries(ssl crypto)", {plain = true})
         end
