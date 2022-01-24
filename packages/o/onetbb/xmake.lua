@@ -9,6 +9,10 @@ package("onetbb")
 
     add_deps("cmake")
 
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl")
+    end
+
     on_install("linux", "macosx", "windows", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
