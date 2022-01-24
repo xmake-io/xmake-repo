@@ -7,7 +7,7 @@ package("libwfkafka")
              "https://github.com/sogou/workflow.git")
     add_versions("v0.9.10", "7a0a9b184a6baa745235fc8b0cb59f6289111049b14f38657379ad6c029e6aaa")
 
-    add_deps("cmake", "openssl", "workflow", "lz4", "zstd", "snappy")
+    add_deps("cmake", "openssl", "workflow", "lz4", "zstd", "snappy", "zlib")
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
@@ -19,7 +19,7 @@ package("libwfkafka")
         local configs = {"-DKAFKA=y"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        local packagedeps = {"workflow", "lz4", "zstd", "snappy"}
+        local packagedeps = {"workflow", "lz4", "zstd", "snappy", "zlib"}
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"), "*.a"))
