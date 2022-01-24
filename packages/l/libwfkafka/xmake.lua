@@ -15,18 +15,11 @@ package("libwfkafka")
 
     add_links("wfkafka")
 
-    on_install("linux", "macosx", "android", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {"-DKAFKA=y"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("android") then
-            io.replace("src/CMakeLists.txt", "add_subdirectory(client)", "add_subdirectory(client)\nlink_libraries(ssl crypto)", {plain = true})
-        end
-        local packagedeps = {}
-        if package:is_plat("android") then
-            table.insert(packagedeps, "openssl")
-        end
-        table.join2(packagedeps, "workflow", "lz4", "zstd", "snappy")
+        local packagedeps = {"workflow", "lz4", "zstd", "snappy"}
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"), "*.a"))

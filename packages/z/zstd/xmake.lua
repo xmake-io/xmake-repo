@@ -16,7 +16,7 @@ package("zstd")
                 add_files("lib/common/*.c")
                 add_files("lib/compress/*.c")
                 add_files("lib/decompress/*.c")
-                add_headerfiles("lib/zstd.h")
+                add_headerfiles("lib/*.h")
                 add_defines("XXH_NAMESPACE=ZSTD_")
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("ZSTD_DLL_EXPORT")
