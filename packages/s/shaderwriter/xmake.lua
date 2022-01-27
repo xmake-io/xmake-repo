@@ -34,7 +34,7 @@ package("shaderwriter")
             {
                 sdw::ComputeWriter writer;
             }
-        ]]}, {configs = {languages = "c++20"},
+        ]]}, {configs = {languages = "cxx20"},
             includes = {
                 "CompilerGlsl/compileGlsl.hpp",
                 "CompilerSpirV/compileSpirV.hpp",
