@@ -6,6 +6,7 @@ package("openmesh")
 
     add_urls("https://www.graphics.rwth-aachen.de/media/openmesh_static/Releases/$(version)/OpenMesh-$(version).tar.gz")
     add_versions("8.1", "0953777f483d47ea9fa00c329838443a7a09dde8be77bf7de188001cb9e768a7")
+    add_versions("9.0", "b9574c921482798ce75a8bf578345a84b928ca26ee759219d21b310e2db9d006")
 
     add_deps("cmake")
     if is_plat("windows") then
