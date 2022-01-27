@@ -12,11 +12,11 @@ package("armadillo")
 
     add_configs("blas", {description = "Choose BLAS library to use.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
 
-    on_load("macosx", "linux", function (package)
+    on_load("windows", "macosx", "linux", function (package)
         package:add("deps", "superlu", {configs = {blas = package:config("blas")}})
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         os.cd("include")
         io.gsub("armadillo_bits/config.hpp.cmake", "${.-}/?", "")
         io.gsub("armadillo_bits/config.hpp.cmake", "#cmakedefine (.-)\n", "${define %1}\n")
