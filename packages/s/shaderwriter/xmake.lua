@@ -8,6 +8,7 @@ package("shaderwriter")
     add_versions("1.0", "7d506b6864edb5f357ed8993512f5a3618a4ddc1")
     add_versions("1.1", "e7ddabe2b9ec6279951f4dcfe6a803d42d0e9052")
     add_versions("2.0", "9e7488290713f88149038ef56fdc4034c3a1dd7f")
+    add_versions("2.1", "ca0e47f57c1984884f0dc62dbfb6ca0eb2e86cb4")
 
     add_deps("cmake")
 
@@ -19,7 +20,6 @@ package("shaderwriter")
             "-DSDW_BUILD_TESTS=OFF",
             "-DSDW_BUILD_EXPORTERS=ON",
             "-DSDW_BUILD_STATIC_SDW=".. (package:config("shared") and "OFF" or "ON"),
-            "-DSDW_BUILD_STATIC_SDAST=".. (package:config("shared") and "OFF" or "ON"),
             "-DSDW_GENERATE_SOURCE=OFF",
             "-DSDW_BUILD_VULKAN_LAYER=OFF",
             "-DPROJECTS_USE_PRECOMPILED_HEADERS=OFF",
@@ -34,7 +34,7 @@ package("shaderwriter")
             {
                 sdw::ComputeWriter writer;
             }
-        ]]}, {configs = {languages = "c++17"},
+        ]]}, {configs = {languages = "c++20"},
             includes = {
                 "CompilerGlsl/compileGlsl.hpp",
                 "CompilerSpirV/compileSpirV.hpp",
