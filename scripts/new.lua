@@ -99,7 +99,7 @@ function _generate_package_from_github(reponame)
                 has_cmake = true
             elseif filename == "configure" then
                 has_autoconf = true
-            elseif filename == "autogen.sh" then
+            elseif filename == "autogen.sh" or filename == "configure.ac" then
                 need_autogen = true
                 has_autoconf = true
             elseif filename == "meson.build" then
@@ -118,7 +118,7 @@ function _generate_package_from_github(reponame)
         file:print('    add_deps("meson", "ninja")')
     elseif need_autogen then
         file:print("")
-        file:print('    add_deps("autoconf", "automake")')
+        file:print('    add_deps("autoconf", "automake", "libtool")')
     end
 
     -- generate install scripts
