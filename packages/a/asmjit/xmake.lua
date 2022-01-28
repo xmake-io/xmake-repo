@@ -5,6 +5,7 @@ package("asmjit")
     set_license("zlib")
 
     add_urls("https://github.com/asmjit/asmjit.git")
+    add_versions("2022.01.18", "9a92d2f97260749f6f29dc93e53c743448f0137a")
     add_versions("2021.06.27", "d02235b83434943b52a6d7c57118205c5082de08")
 
     add_deps("cmake")
