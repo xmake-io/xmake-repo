@@ -36,7 +36,7 @@ package("libxcb")
     add_versions("1.13.1", "f09a76971437780a602303170fd51b5f7474051722bc39d566a272d2c4bde1b5")
     add_versions("1.14", "2c7fcddd1da34d9b238c9caeda20d3bd7486456fc50b3cc6567185dbd5b0ad02")
 
-    for name, opt in pairs(components) do 
+    for name, opt in pairs(components) do
         add_configs(name, {description = format("Enable %s submodule (default is %s).", name, opt.default_value), default = opt.default_value})
     end
 
@@ -50,7 +50,7 @@ package("libxcb")
     end
 
     on_load("linux", function(package)
-        for name, opt in pairs(components) do 
+        for name, opt in pairs(components) do
             if opt.apt_package and package:config(name) then
                 package:add("extsources", opt.apt_package)
             end
@@ -64,11 +64,13 @@ package("libxcb")
                          "--disable-silent-rules",
                          "--enable-devel-docs=no",
                          "--with-doxygen=no"}
-
-        for name, opt in pairs(components) do
-            table.insert(configs, format("--enable-%s=%s", name, package:config(name)))
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
         end
-
+        for name, opt in pairs(components) do
+            table.insert(configs, format("--enable-%s=%s", name, package:config(name) and "yes" or "no"))
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
