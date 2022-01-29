@@ -8,6 +8,8 @@ package("librdkafka")
 
     add_deps("cmake")
 
+    add_links("rdkafka++", "rdkafka")
+
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-DRDKAFKA_BUILD_EXAMPLES=OFF", "-DRDKAFKA_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
