@@ -18,6 +18,9 @@ package("bspwm")
                add_headerfiles("src/*.h")
                add_defines("JSMN_STRICT", "_POSIX_C_SOURCE=200809L")
                add_packages("libxcb", "xcb-util", "xcb-util-wm", "xcb-util-keysyms")
+               on_load(function (target)
+                   target:add("defines", "VERSION=\"" .. io.readfile("$(projectdir)/VERSION"):trim() .. "\"")
+               end)
         ]])
         if package:config("shared") then
             configs.kind = "shared"
