@@ -25,3 +25,7 @@ package("mongo-cxx-driver")
         end
         import("package.tools.cmake").install(package, configs, {cmake_build = true, config = (package:debug() and "Debug" or "Release")})
     end)
+
+    on_test(function (package)
+        assert(package:has_cxxfuncs("mongocxx::instance{nullptr}", {includes = "mongocxx/instance.hpp"}))
+    end)
