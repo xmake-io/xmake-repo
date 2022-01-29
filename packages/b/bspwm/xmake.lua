@@ -35,5 +35,4 @@ package("bspwm")
 
     on_test(function (package)
         os.vrun("bspwm -v")
-        os.vrun("bspc -v")
     end)
