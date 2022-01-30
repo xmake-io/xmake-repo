@@ -29,11 +29,7 @@ package("mongo-cxx-driver")
         io.replace("CMakeLists.txt", "add_subdirectory(examples EXCLUDE_FROM_ALL)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(benchmark EXCLUDE_FROM_ALL)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory (docs)", "", {plain = true})
-        local cxflags
-        if package:is_plat("windows") then
-            cxflags = "/FS"
-        end
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags, cmake_build = true, config = (package:debug() and "Debug" or "Release")})
+        import("package.tools.cmake").install(package, configs, {cmake_build = true, config = (package:debug() and "Debug" or "Release")})
     end)
 
     on_test(function (package)
