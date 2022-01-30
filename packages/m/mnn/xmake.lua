@@ -91,15 +91,19 @@ package("mnn")
             table.insert(configs, "-DMNN_USE_SSE=OFF")
             table.insert(configs, "-DMNN_BUILD_FOR_ANDROID_COMMAND=ON")
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "bd"})
+        local cxflags
         if package:is_plat("windows") then
-            os.cp("bd/Release/*.exe", package:installdir("bin"))
-            os.cp("bd/Release/*.dll", package:installdir("bin"))
+            cxflags = "/FS"
+        end
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags, buildir = "build"})
+        if package:is_plat("windows") then
+            os.cp("build/Release/*.exe", package:installdir("bin"))
+            os.cp("build/Release/*.dll", package:installdir("bin"))
         elseif package:is_plat("macosx") then
             os.cp("include/MNN", package:installdir("include"))
-            os.cp("bd/*.out", package:installdir("bin"))
+            os.cp("build/*.out", package:installdir("bin"))
         else
-            os.cp("bd/*.out", package:installdir("bin"))
+            os.cp("build/*.out", package:installdir("bin"))
         end
         package:addenv("PATH", "bin")
     end)
