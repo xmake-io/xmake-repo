@@ -11,7 +11,7 @@ package("fribidi")
     if is_plat("windows") then
         add_deps("meson", "ninja")
     elseif is_plat("linux") then
-        add_extsources("apt::libfribidi-dev")
+        add_extsources("apt::libfribidi-dev", "pacman::fribidi")
     end
 
     on_load("windows", function (package)

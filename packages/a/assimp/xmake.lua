@@ -26,7 +26,6 @@ package("assimp")
     add_configs("double_precision",      {description = "All data will be stored as double values", default = false, type = "boolean"})
     add_configs("no_export",             {description = "Disable Assimp's export functionality (reduces library size)", default = false, type = "boolean"})
     add_configs("ubsan",                 {description = "Enable Undefined Behavior sanitizer", default = false, type = "boolean"})
-    add_configs("with_pdb",              {description = "Install MSVC debug files", default = false, type = "boolean"})
 
     add_deps("cmake", "irrxml", "zlib")
 
@@ -47,6 +46,7 @@ package("assimp")
         table.insert(configs, "-DBUILD_DOCS=OFF")
         table.insert(configs, "-DBUILD_FRAMEWORK=OFF")
         table.insert(configs, "-DINJECT_DEBUG_POSTFIX=" .. ((package:debug()) and "ON" or "OFF"))
+        table.insert(configs, "-DASSIMP_INSTALL_PDB=ON")
 
         local irrxml = package:dep("irrxml")
         if irrxml then
@@ -87,9 +87,6 @@ package("assimp")
         add_config_arg("shared",           "BUILD_SHARED_LIBS")
         add_config_arg("ubsan",            "ASSIMP_UBSAN")
 
-        if package:is_plat("windows") then
-            table.insert(configs, "-DASSIMP_INSTALL_PDB=" .. ((package:debug() or package:config("install_pdb")) and "ON" or "OFF"))
-        end
         if package:is_plat("android") then
             add_config_arg("android_jniiosysystem", "ASSIMP_ANDROID_JNIIOSYSTEM")
         end
@@ -105,6 +102,15 @@ package("assimp")
         end
 
         import("package.tools.cmake").install(package, configs)
+
+        -- copy pdb
+        if package:is_plat("windows") then
+            if package:config("shared") then
+                os.trycp(path.join(package:buildir(), "bin", "**.pdb"), package:installdir("bin"))
+            else
+                os.trycp(path.join(package:buildir(), "lib", "**.pdb"), package:installdir("lib"))
+            end
+        end
     end)
 
     on_test(function (package)

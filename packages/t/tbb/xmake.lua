@@ -4,7 +4,6 @@ package("tbb")
     set_description("Threading Building Blocks (TBB) lets you easily write parallel C++ programs that take full advantage of multicore performance, that are portable, composable and have future-proof scalability.")
 
     if is_plat("windows") then
-        -- use precompiled binary
         add_urls("https://github.com/oneapi-src/oneTBB/releases/download/v$(version)-win.zip", {version = function (version) return version .. (version:ge("2021.0") and "/oneapi-tbb-" or "/tbb-") .. version end})
         add_versions("2020.3", "cda37eed5209746a79c88a658f8c1bf3782f58bd9f9f6ba0da3a16624a9bfaa1")
         add_versions("2021.2.0", "9be37b1cb604a5905db0a15b2b893d85579fd0b2f1024859e1f75e96d7331a02")
@@ -29,16 +28,16 @@ package("tbb")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     on_fetch("fetch")
-    
+
     add_links("tbb", "tbbmalloc", "tbbmalloc_proxy")
 
-    on_load("macosx", "linux", "mingw@windows", "mingw@msys", function (package)
+    on_load(function (package)
         if package:version():ge("2021.0") then
             package:add("deps", "cmake")
         end
     end)
 
-    on_install("macosx", "linux", "mingw@windows", "mingw@msys", function (package)
+    on_install("macosx", "linux", "mingw@windows", "mingw@msys", "android", function (package)
         if package:version():ge("2021.0") then
             if package:is_plat("mingw") then
                 raise("mingw build is not supported in this version")

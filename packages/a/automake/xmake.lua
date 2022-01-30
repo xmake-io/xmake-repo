@@ -13,12 +13,12 @@ package("automake")
     add_versions("1.9.5", "68712753fcb756f3707b7da554917afb348450eb8530cae3b623a067078596fd")
 
     if is_host("linux") then
-        add_extsources("apt::automake")
+        add_extsources("apt::automake", "pacman::automake")
     end
 
     add_deps("autoconf")
 
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx", "@linux", "@bsd", function (package)
         import("package.tools.autoconf").install(package)
         io.writefile(path.join(package:installdir("share", "aclocal"), "dirlist"), [[
             /usr/local/share/aclocal

@@ -72,6 +72,16 @@ package("python")
         package:addenv("PATH", "Scripts")
     end)
 
+    on_fetch(function (package, opt)
+        if opt.system then
+            local result = package:find_tool("python3", opt)
+            if not result then
+                result = package:find_tool("python", opt)
+            end
+            return result
+        end
+    end)
+
     on_install("@windows", "@msys", "@cygwin", function (package)
         if package:version():ge("3.0") then
             os.cp("python.exe", path.join(package:installdir("bin"), "python3.exe"))

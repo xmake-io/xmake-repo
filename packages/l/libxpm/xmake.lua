@@ -7,7 +7,7 @@ package("libxpm")
     add_versions("3.5.13", "e3dfb0fb8c1f127432f2a498c7856b37ce78a61e8da73f1aab165a73dd97ad00")
 
     if is_plat("linux") then
-        add_extsources("apt::libxpm-dev")
+        add_extsources("apt::libxpm-dev", "pacman::libxpm")
     end
 
     add_deps("libx11", "xorgproto", "gettext")

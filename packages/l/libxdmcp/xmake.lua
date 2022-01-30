@@ -7,7 +7,7 @@ package("libxdmcp")
     add_versions("1.1.3", "20523b44aaa513e17c009e873ad7bbc301507a3224c232610ce2e099011c6529")
 
     if is_plat("linux") then
-        add_extsources("apt::libxdmcp-dev")
+        add_extsources("apt::libxdmcp-dev", "pacman::libxmdcp")
     end
 
     if is_plat("macosx", "linux") then

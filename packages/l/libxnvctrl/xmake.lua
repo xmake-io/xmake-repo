@@ -4,7 +4,7 @@ package("libxnvctrl")
     set_description("NVIDIA driver control panel")
 
     if is_plat("linux") then
-        add_extsources("apt::libxnvctrl-dev")
+        add_extsources("apt::libxnvctrl-dev", "pacman::libxnctrl")
     end
 
     on_fetch("linux", function (package, opt)

@@ -13,7 +13,12 @@ package("vulkan-headers")
     add_versions("1.2.154+0", "a0528ade4dd3bd826b960ba4ccabc62e92ecedc3c70331b291e0a7671b3520f9")
 
     add_deps("cmake")
-    on_install("windows", "linux", "macosx", function (package)
+
+    if is_plat("linux") then
+      add_extsources("pacman::vulkan-headers")
+    end
+
+    on_install("windows", "linux", "macosx", "android", function (package)
         import("package.tools.cmake").install(package)
     end)
 

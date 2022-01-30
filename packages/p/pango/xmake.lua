@@ -16,7 +16,7 @@ package("pango")
         add_frameworks("CoreFoundation")
     elseif is_plat("linux") then
         add_deps("xorgproto")
-        add_extsources("apt::libpango-1.0-0")
+        add_extsources("apt::libpango-1.0-0", "pacman::pango")
     end
     add_includedirs("include", "include/pango-1.0")
 

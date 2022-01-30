@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://xmake.io">
     <img width="160" heigth="160" src="https://tboox.org/static/img/xmake/logo256c.png">
-  </a>  
+  </a>
 
   <h1>xmake-repo</h1>
 
@@ -48,13 +48,14 @@
 
 ## Supporting the project
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. 🙏 [[Become a sponsor](https://xmake.io/#/about/sponsor)]
+Support this project by [becoming a sponsor](https://xmake.io/#/about/sponsor). Your logo will show up here with a link to your website. 🙏
 
+<a href="https://opencollective.com/xmake#sponsors" target="_blank"><img src="https://opencollective.com/xmake/sponsors.svg?width=890"></a>
 <a href="https://opencollective.com/xmake#backers" target="_blank"><img src="https://opencollective.com/xmake/backers.svg?width=890"></a>
 
 ## Introduction ([中文](/README_zh.md))
 
-xmake-repo is an official xmake package repository. 
+xmake-repo is an official xmake package repository.
 
 ## Package dependences
 
@@ -76,10 +77,10 @@ xrepo is a cross-platform C/C++ package manager based on [Xmake](https://github.
 
 It is based on the runtime provided by xmake, but it is a complete and independent package management program. Compared with package managers such as vcpkg/homebrew, xrepo can provide C/C++ packages for more platforms and architectures at the same time.
 
-If you want to know more, please refer to the xrepo documentation: 
+If you want to know more, please refer to the xrepo documentation:
 
-* [Documents](https://xrepo.xmake.io/#/getting_started) 
-* [Github](https://github.com/xmake-io/xrepo) 
+* [Documents](https://xrepo.xmake.io/#/getting_started)
+* [Github](https://github.com/xmake-io/xrepo)
 * [Gitee](https://gitee.com/tboox/xrepo)
 
 ![](https://xrepo.xmake.io/assets/img/xrepo.gif)

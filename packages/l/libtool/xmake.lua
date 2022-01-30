@@ -11,12 +11,12 @@ package("libtool")
     add_versions("2.4.5", "509cb49c7de14ce7eaf88993cf09fd4071882699dfd874c2e95b31ab107d6987")
 
     if is_host("linux") then
-        add_extsources("apt::libtool")
+        add_extsources("apt::libtool", "pacman::libtool")
     end
 
     add_deps("autoconf")
 
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx", "@linux", "@bsd", function (package)
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--enable-ltdl-install"})
     end)
 

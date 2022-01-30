@@ -15,6 +15,8 @@ package("lz4")
 
     if is_plat("macosx") then
         add_extsources("brew::lz4")
+    elseif is_plat("linux") then
+        add_extsources("pacman::lz4")
     end
 
     on_install(function (package)
