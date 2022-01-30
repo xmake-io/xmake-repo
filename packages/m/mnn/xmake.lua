@@ -85,6 +85,7 @@ package("mnn")
         end
         if package:is_plat("windows") then
             table.insert(configs, "-DMNN_WIN_RUNTIME_MT=" .. (package:config("vs_runtime") and "ON" or "OFF"))
+            table.insert(configs, "-DCMAKE_CXX_FLAGS=/FS")
         end
         if package:is_plat("android") then
             table.insert(configs, "-DMNN_USE_SSE=OFF")
