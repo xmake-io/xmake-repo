@@ -6,6 +6,7 @@ package("mongo-c-driver")
 
     add_urls("https://github.com/mongodb/mongo-c-driver/archive/$(version).zip",
              "https://github.com/mongodb/mongo-c-driver.git")
+    add_versions("1.20.1", "3a856e1c40b02fc5160cb7b39594d654f3076eeb671829b867971e7d35ed497c")
     add_versions("1.19.0", "3e545964ee82ee60afe4213852208e6174297b19d6b837eca3c711af34a4b107")
 
     add_deps("cmake")
