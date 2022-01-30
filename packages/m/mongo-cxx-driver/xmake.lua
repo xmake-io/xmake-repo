@@ -23,7 +23,6 @@ package("mongo-cxx-driver")
             "-DBUILD_SHARED_LIBS=ON",
             "-DENABLE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:version() then
             table.insert(configs, "-DBUILD_VERSION=" .. package:version())
         end
