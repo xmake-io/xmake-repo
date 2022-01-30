@@ -1,0 +1,30 @@
+package("uvwasi")
+    set_homepage("https://github.com/nodejs/uvwasi")
+    set_description("WASI syscall API built atop libuv")
+    set_license("MIT")
+
+    add_urls("https://github.com/nodejs/uvwasi/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/nodejs/uvwasi.git")
+    add_versions("v0.0.12", "f310a628d2657b9ed523a19284f58e4a407466f2e17efb2250d2e58524d02c53")
+
+    add_deps("cmake", "libuv")
+
+    on_install(function (package)
+        local configs = {"-DWITH_SYSTEM_LIBUV=ON", "-DUVWASI_BUILD_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        os.cp("include", package:installdir())
+        if package:config("shared") then
+            os.trycp("build/*.dll", package:installdir("bin"))
+            os.trycp("build/*.so", package:installdir("lib"))
+            os.trycp("build/*.dylib", package:installdir("lib"))
+        else
+            os.trycp("build/*.a", package:installdir("lib"))
+            os.trycp("build/*.lib", package:installdir("lib"))
+        end
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("uvwasi_init", {includes = "uvwasi.h"}))
+    end)
