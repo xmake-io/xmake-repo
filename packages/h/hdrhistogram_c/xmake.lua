@@ -18,5 +18,5 @@ package("hdrhistogram_c")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("hdr_log_reader_init", {includes = "hdr/hdr_histogram.h"}))
+        assert(package:has_cfuncs("hdr_init", {includes = "hdr/hdr_histogram.h"}))
     end)
