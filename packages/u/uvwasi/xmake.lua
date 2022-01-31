@@ -17,7 +17,7 @@ package("uvwasi")
             io.replace("CMakeLists.txt", "-fvisibility=hidden", "", {plain = true})
         end
         if package:is_plat("windows") then
-            table.insert(configs, "-DLIBUV_LIBRARIES=uv" .. (package:config("shared") and "" or "_a"))
+            table.insert(configs, "-DLIBUV_LIBRARIES=uv_a.lib")
         end
         import("package.tools.cmake").install(package, configs, {buildir = "build", packagedeps = "libuv"})
         os.cp("include", package:installdir())
