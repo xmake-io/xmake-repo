@@ -15,7 +15,7 @@ package("hdrhistogram_c")
         table.insert(configs, "-DHDR_HISTOGRAM_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHDR_HISTOGRAM_INSTALL_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and package:config("shared") then
-            table.insert(configs, "-DWINDOWS_EXPORT_ALL_SYMBOLS")
+            table.insert(configs, "-DWINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
         import("package.tools.cmake").install(package, configs)
     end)
