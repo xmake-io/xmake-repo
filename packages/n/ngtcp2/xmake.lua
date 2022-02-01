@@ -8,7 +8,7 @@ package("ngtcp2")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("macosx", "linux", "windows", "android", "mingw", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
@@ -16,6 +16,9 @@ package("ngtcp2")
         io.replace("CMakeLists.txt", "add_subdirectory(third-party)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
+        if not package:config("shared") then
+            package:add("defines", "NGTCP2_STATICLIB")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
