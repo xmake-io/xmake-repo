@@ -12,6 +12,7 @@ package("depot_tools")
     on_load(function (package)
         package:addenv("PATH", ".")
         package:addenv("DEPOT_TOOLS_UPDATE", "0")
+        package:addenv("DEPOT_TOOLS_METRICS", "0")
     end)
 
     on_install("linux", "macosx", "windows", function (package)
