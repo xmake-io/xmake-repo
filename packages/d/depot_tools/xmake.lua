@@ -14,7 +14,7 @@ package("depot_tools")
         package:addenv("DEPOT_TOOLS_UPDATE", "0")
     end)
 
-    on_install(function (package)
+    on_install("linux", "macosx", "windows", function (package)
         os.cp("*", package:installdir())
     end)
 
