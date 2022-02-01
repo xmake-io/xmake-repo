@@ -17,7 +17,7 @@ package("depot_tools")
 
     on_install("linux", "macosx", "windows", function (package)
         os.cp("*", package:installdir())
-        io.writefile("python-bin/python3", 'python3 "$@"')
+        io.writefile("python-bin/python3", '#!/usr/bin/env bash\npython3 "$@"')
     end)
 
     on_test(function (package)
