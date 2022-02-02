@@ -8,9 +8,9 @@ package("v8")
     add_deps("depot_tools")
 
     on_install(function (package)
-        os.cd("v8")
-        os.vrun("gclient sync -v")
-        os.vrunv("python", {"./tools/dev/gm.py", "x64.release"})
+        local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
+        os.vrunv(gclient, {"sync", "-v"})
+        os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
 --        import("package.tools.gn").build(package, args, {buildir = "out"})
     end)
 
