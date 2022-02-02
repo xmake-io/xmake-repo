@@ -11,7 +11,9 @@ package("depot_tools")
 
     on_load(function (package)
         package:addenv("PATH", ".")
-        package:addenv("DEPOT_TOOLS_UPDATE", "0")
+        if not package:is_plat("windows") then
+            package:addenv("DEPOT_TOOLS_UPDATE", "0")
+        end
         package:addenv("DEPOT_TOOLS_METRICS", "0")
     end)
 
