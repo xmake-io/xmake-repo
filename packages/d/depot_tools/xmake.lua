@@ -26,5 +26,6 @@ package("depot_tools")
 
     on_test(function (package)
         os.vrun("python3 --version")
+        os.vrun("ninja --version")
         os.vrunv(package:is_plat("windows") and "gclient.bat" or "gclient", {"--version"})
     end)
