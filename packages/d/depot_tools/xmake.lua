@@ -11,15 +11,15 @@ package("depot_tools")
 
     on_load(function (package)
         package:addenv("PATH", ".")
-        if not package:is_plat("windows") then
-            package:addenv("DEPOT_TOOLS_UPDATE", "0")
-        end
+        package:addenv("DEPOT_TOOLS_UPDATE", "0")
         package:addenv("DEPOT_TOOLS_METRICS", "0")
     end)
 
     on_install("linux", "macosx", "windows", function (package)
         os.cp("*", package:installdir())
-    end)
+        os.cd(package:installdir())
+        os.vrunv(package:is_plat("windows") and "gclient.bat" or "gclient")
+  end)
 
     on_test(function (package)
         os.vrunv(package:is_plat("windows") and "gclient.bat" or "gclient", {"--version"})
