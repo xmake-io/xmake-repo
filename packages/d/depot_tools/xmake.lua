@@ -7,7 +7,7 @@ package("depot_tools")
              "https://chromium.googlesource.com/chromium/tools/depot_tools.git")
     add_versions("2022.2.1", "8a6d00f116d6de9d5c4e92acb519fd0859c6449a")
 
-    add_deps("python")
+    add_deps("python 3.x")
 
     on_load(function (package)
         package:addenv("PATH", ".")
@@ -17,6 +17,7 @@ package("depot_tools")
 
     on_install("linux", "macosx", "windows", function (package)
         os.cp("*", package:installdir())
+        io.writefile("python-bin/python3", 'python3 "$@"')
     end)
 
     on_test(function (package)
