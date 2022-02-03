@@ -15,17 +15,35 @@ package("depot_tools")
     end)
 
     on_install("linux", "macosx", "windows", function (package)
+        import("core.base.global")
         os.cp("*", package:installdir())
         os.cd(package:installdir())
+        -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
+        local envs = {}
+        local proxy = global.get("proxy")
+        if proxy then
+            envs.HTTP_PROXY = proxy
+            envs.HTTPS_PROXY = proxy
+            envs.ALL_PROXY = proxy
+        end
+        -- we need fetch some files when running gclient for the first time
         if package:is_plat("windows") then
-            os.vrunv("gclient.bat")
+            os.vrunv("gclient.bat", {"--verbose"}, {envs = envs})
         else
-            os.vrunv("sh", {"./gclient"})
+            os.vrunv("sh", {"./gclient", "--verbose"}, {envs = envs})
         end
   end)
 
     on_test(function (package)
+        import("core.base.global")
         os.vrun("python3 --version")
         os.vrun("ninja --version")
-        os.vrunv(package:is_plat("windows") and "gclient.bat" or "gclient", {"--version"})
+        local envs = {}
+        local proxy = global.get("proxy")
+        if proxy then
+            envs.HTTP_PROXY = proxy
+            envs.HTTPS_PROXY = proxy
+            envs.ALL_PROXY = proxy
+        end
+        os.vrunv(package:is_plat("windows") and "gclient.bat" or "gclient", {"--version"}, {envs = envs})
     end)
