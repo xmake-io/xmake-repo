@@ -29,6 +29,8 @@ package("libhv")
 
     if is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("macosx") then
+        add_frameworks("CoreFoundation", "Security")
     end
 
     add_deps("cmake")
