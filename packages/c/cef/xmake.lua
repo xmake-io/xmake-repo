@@ -32,6 +32,8 @@ package("cef")
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT", type = "string", readonly = true})
     end
 
+    add_patches("97.7.9", path.join(os.scriptdir(), "patches", "97.1.9", "msvc_cpp20.patch"), "28562870ae1dd30eaa42a9297ad76eae8f80422cdf3638674c80e51768fb520d")
+
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     
     if is_plat("windows") then
