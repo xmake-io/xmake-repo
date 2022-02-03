@@ -29,8 +29,12 @@ package("v8")
   }]]=])
         local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
+        os.cd("v8")
         os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
---        import("package.tools.gn").build(package, args, {buildir = "out"})
+        print(os.files("out/**.a"))
+        print(os.files("out/**.dylib"))
+        print(os.files("out/**.so"))
+        print(os.files("out/**.lib"))
     end)
 
     on_test(function (package)
