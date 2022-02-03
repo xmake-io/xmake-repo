@@ -8,14 +8,14 @@ package("v8")
     add_deps("depot_tools")
 
     on_install(function (package)
-        io.writefile(".gclient", [[solutions = [
+        io.writefile(".gclient", [=[solutions = [
   {
     "name": "v8",
     "url": "https://chromium.googlesource.com/v8/v8.git",
     "deps_file": "DEPS",
     "managed": False,
     "custom_deps": {},
-  }]]])
+  }]]=])
         local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"})
         os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
