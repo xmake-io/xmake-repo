@@ -15,7 +15,7 @@ package("v8")
     "deps_file": "DEPS",
     "managed": False,
     "custom_deps": {},
-  }]]]
+  }]]])
         local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"})
         os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
