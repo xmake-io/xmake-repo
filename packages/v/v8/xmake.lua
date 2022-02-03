@@ -7,7 +7,8 @@ package("v8")
 
     add_deps("depot_tools")
 
-    on_install(function (package)
+    on_install("linux", "macosx", "windows", function (package)
+        print(os.curdir())
         import("core.base.global")
 
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
