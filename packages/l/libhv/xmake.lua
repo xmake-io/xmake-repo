@@ -29,7 +29,7 @@ package("libhv")
 
     if is_plat("linux") then
         add_syslinks("pthread")
-    elseif is_plat("macosx") then
+    elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
     end
 
