@@ -7,6 +7,8 @@ package("v8")
 
     add_deps("depot_tools")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
 
@@ -29,6 +31,9 @@ package("v8")
         local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
         os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
+        os.cp("include", package:installdir("include"))
+        os.trycp("out/x64.release/obj/**.a", package:installdir("lib"))
+        os.trycp("out/x64.release/obj/**.lib", package:installdir("lib"))
         print(os.files("out/**.a"))
         print(os.files("out/**.dylib"))
         print(os.files("out/**.so"))
