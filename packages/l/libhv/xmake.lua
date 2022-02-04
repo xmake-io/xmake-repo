@@ -77,6 +77,10 @@ package("libhv")
         elseif package:config("mbedtls") then
             table.insert(packagedeps, "mbedtls")
         end
+        if package:is_plat("iphoneos") then
+            io.replace("ssl/appletls.c", "ret = SSLSetProtocolVersionEnabled(appletls->session, kSSLProtocolAll, true);",
+                "ret = SSLSetProtocolVersionMin(appletls->session, kTLSProtocol12);", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
