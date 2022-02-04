@@ -20,7 +20,7 @@ package("v8")
         end
         io.writefile(".gclient", [=[solutions = [
   {
-    "name": "v8",
+    "name": ".",
     "url": "https://github.com/v8/v8.git",
     "deps_file": "DEPS",
     "managed": False,
@@ -28,13 +28,13 @@ package("v8")
   }]]=])
         local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
-        os.vrunv("python3", {"./v8/tools/dev/gm.py", "x64.release"}, {curdir = "v8"})
-        print(os.files("v8/out/**.a"))
-        print(os.files("v8/out/**.dylib"))
-        print(os.files("v8/out/**.so"))
-        print(os.files("v8/out/**.lib"))
-        print(os.files("v8/out/**.h"))
-        print(os.files("v8/out/**.hpp"))
+        os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
+        print(os.files("out/**.a"))
+        print(os.files("out/**.dylib"))
+        print(os.files("out/**.so"))
+        print(os.files("out/**.lib"))
+        print(os.files("out/**.h"))
+        print(os.files("out/**.hpp"))
     end)
 
     on_test(function (package)
