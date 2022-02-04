@@ -20,6 +20,7 @@ package("depot_tools")
         os.cp("*", package:installdir())
         os.cd(package:installdir())
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
+        -- @note we must use http proxy instead of socks5 proxy
         local envs = {}
         local proxy = global.get("proxy")
         if proxy then
