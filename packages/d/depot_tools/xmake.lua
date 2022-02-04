@@ -12,6 +12,7 @@ package("depot_tools")
         package:addenv("PATH", "python-bin")
         package:addenv("DEPOT_TOOLS_UPDATE", "0")
         package:addenv("DEPOT_TOOLS_METRICS", "0")
+        package:addenv("DEPOT_TOOLS_WIN_TOOLCHAIN", "0")
     end)
 
     on_install("linux", "macosx", "windows", function (package)

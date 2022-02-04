@@ -8,7 +8,6 @@ package("v8")
     add_deps("depot_tools")
 
     on_install("linux", "macosx", "windows", function (package)
-        print(os.curdir())
         import("core.base.global")
 
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
@@ -29,12 +28,13 @@ package("v8")
   }]]=])
         local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
-        os.cd("v8")
-        os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
-        print(os.files("out/**.a"))
-        print(os.files("out/**.dylib"))
-        print(os.files("out/**.so"))
-        print(os.files("out/**.lib"))
+        os.vrunv("python3", {"./v8/tools/dev/gm.py", "x64.release"}, {curdir = "v8"})
+        print(os.files("v8/out/**.a"))
+        print(os.files("v8/out/**.dylib"))
+        print(os.files("v8/out/**.so"))
+        print(os.files("v8/out/**.lib"))
+        print(os.files("v8/out/**.h"))
+        print(os.files("v8/out/**.hpp"))
     end)
 
     on_test(function (package)
