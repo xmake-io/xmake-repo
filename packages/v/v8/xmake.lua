@@ -31,7 +31,7 @@ package("v8")
         local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
         os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
-        os.cp("include", package:installdir("include"))
+        os.cp("include", package:installdir())
         os.trycp("out/x64.release/obj/**.a", package:installdir("lib"))
         os.trycp("out/x64.release/obj/**.lib", package:installdir("lib"))
         print(os.files("out/**.a"))
