@@ -196,13 +196,16 @@ package("python")
 
         -- add external path for zlib and libffi
         for _, libname in ipairs({"zlib", "libffi"}) do
-            local fetchinfo = package:dep(libname):fetch({external = false})
-            if fetchinfo then
-                for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                    table.insert(cppflags, "-I" .. includedir)
-                end
-                for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    table.insert(ldflags, "-L" .. linkdir)
+            local lib = package:dep(libname)
+            if lib and not lib:is_system() then
+                local fetchinfo = lib:fetch({external = false})
+                if fetchinfo then
+                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                        table.insert(cppflags, "-I" .. includedir)
+                    end
+                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                        table.insert(ldflags, "-L" .. linkdir)
+                    end
                 end
             end
         end
