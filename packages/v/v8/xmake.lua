@@ -43,5 +43,5 @@ package("v8")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("V8::Initialize", {configs = {languages = "c++17"}, includes = "v8.h"}))
+        assert(package:has_cxxfuncs("v8::V8::Initialize()", {configs = {languages = "c++17"}, includes = "v8.h"}))
     end)
