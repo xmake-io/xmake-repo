@@ -11,6 +11,7 @@ package("python")
             add_versions("3.8.10", "f520d2880578df076e3df53bf9e147b81b5328db02d8d873670a651fa076be50")
             add_versions("3.9.5", "ce0bfe8ced874d8d74a6cf6a98f13f5afee27cffbaf2d1ee0f09d3a027fab299")
             add_versions("3.9.6", "2918246384dfb233bd8f8c2bcf6aa3688e6834e84ab204f7c962147c468f8d12")
+            add_versions("3.9.10", "e2c8e6b792748289ac27ef8462478022c96e24c99c4c3eb97d3afe510d9db646")
         else
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
             add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
@@ -18,6 +19,7 @@ package("python")
             add_versions("3.8.10", "acf35048274404dd415e190bf5b928fae3b03d8bb5dfbfa504f9a183361468bd")
             add_versions("3.9.5", "3265059edac21bf4c46fac13553a5d78417e7aa209eceeffd0250aa1dd8d6fdf")
             add_versions("3.9.6", "57ccd1b1b5fbc62882bd2a6f47df6e830ba39af741acf0a1d2f161eef4e87f2e")
+            add_versions("3.9.10", "4cee67e2a529fe363e34f0da57f8e5c3fc036913dc838b17389b2319ead0927e")
         end
     else
         set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
@@ -27,6 +29,7 @@ package("python")
         add_versions("3.8.10", "b37ac74d2cbad2590e7cd0dd2b3826c29afe89a734090a87bf8c03c45066cb65")
         add_versions("3.9.5", "e0fbd5b6e1ee242524430dee3c91baf4cbbaba4a72dd1674b90fda87b713c7ab")
         add_versions("3.9.6", "d0a35182e19e416fc8eae25a3dcd4d02d4997333e4ad1f2eee6010aadc3fe866")
+        add_versions("3.9.10", "1aa9c0702edbae8f6a2c95f70a49da8420aaa76b7889d3419c186bfc8c0e571e")
     end
 
     if not is_plat(os.host()) then
@@ -73,7 +76,7 @@ package("python")
     end)
 
     on_fetch(function (package, opt)
-        if opt.system then
+        if opt.system and package:is_binary() then
             local result = package:find_tool("python3", opt)
             if not result then
                 result = package:find_tool("python", opt)
@@ -94,7 +97,7 @@ package("python")
         os.cp("libs/*", package:installdir("lib"))
         os.cp("*", package:installdir())
         local python = path.join(package:installdir("bin"), "python.exe")
-        os.vrunv(python, {"-m", "pip", "install", "-U", "pip"})
+        os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"})
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
@@ -105,9 +108,6 @@ package("python")
         table.insert(configs, "--datadir=" .. package:installdir("share"))
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:is_plat("linux") and package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
 
         -- add openssl libs path for detecting
         local openssl_dir
@@ -136,7 +136,7 @@ package("python")
         end
 
         -- add flags for macOS
-        local cflags = {}
+        local cppflags = {}
         local ldflags = {}
         if package:is_plat("macosx") then
 
@@ -179,13 +179,13 @@ package("python")
                 -- help Python's build system (setuptools/pip) to build things on SDK-based systems
                 -- the setup.py looks at "-isysroot" to get the sysroot (and not at --sysroot)
                 local xcode_sdkdir = xcode_dir .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode_sdkver .. ".sdk"
-                table.insert(cflags, "-isysroot " .. xcode_sdkdir)
-                table.insert(cflags, "-I" .. path.join(xcode_sdkdir, "/usr/include"))
+                table.insert(cppflags, "-isysroot " .. xcode_sdkdir)
+                table.insert(cppflags, "-I" .. path.join(xcode_sdkdir, "/usr/include"))
                 table.insert(ldflags, "-isysroot " .. xcode_sdkdir)
 
                 -- for the Xlib.h, Python needs this header dir with the system Tk
                 -- yep, this needs the absolute path where zlib needed a path relative to the SDK.
-                table.insert(cflags, "-I" .. path.join(xcode_sdkdir, "/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"))
+                table.insert(cppflags, "-I" .. path.join(xcode_sdkdir, "/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"))
             end
 
             -- avoid linking to libgcc https://mail.python.org/pipermail/python-dev/2012-February/116205.html
@@ -193,38 +193,27 @@ package("python")
                 table.insert(configs, "MACOSX_DEPLOYMENT_TARGET=" .. target_minver)
             end
         end
-        if #cflags > 0 then
-            table.insert(configs, "CFLAGS=" .. table.concat(cflags, " "))
+
+        -- add external path for zlib and libffi
+        for _, libname in ipairs({"zlib", "libffi"}) do
+            local lib = package:dep(libname)
+            if lib and not lib:is_system() then
+                local fetchinfo = lib:fetch({external = false})
+                if fetchinfo then
+                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                        table.insert(cppflags, "-I" .. includedir)
+                    end
+                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                        table.insert(ldflags, "-L" .. linkdir)
+                    end
+                end
+            end
+        end
+        if #cppflags > 0 then
+            table.insert(configs, "CPPFLAGS=" .. table.concat(cppflags, " "))
         end
         if #ldflags > 0 then
             table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
-        end
-
-        -- add zlib to fix `No module named 'zlib'`
-        local linkdirs = {}
-        local includedirs = {}
-        if package:is_plat("linux") then
-            local zlib = package:dep("zlib"):fetch({external = false})
-            if zlib then
-                table.join2(linkdirs, zlib.linkdirs)
-                table.join2(includedirs, zlib.includedirs)
-            end
-            -- add libffi to fix `No module named '_ctypes'`
-            local libffi = package:dep("libffi"):fetch({external = false})
-            if libffi then
-                table.join2(linkdirs, libffi.linkdirs)
-                table.join2(includedirs, libffi.includedirs)
-            end
-        end
-        if #linkdirs > 0 and #includedirs > 0 then
-            io.replace("setup.py", "    def detect_modules(self):", format([[    def detect_modules(self):
-        linkdirs = ['%s']
-        includedirs = ['%s']
-        for includedir in includedirs:
-            add_dir_to_list(self.compiler.include_dirs, includedir)
-        for linkdir in linkdirs:
-            add_dir_to_list(self.compiler.library_dirs, linkdir)
-]], table.concat(linkdirs, "', '"), table.concat(includedirs, "', '")), {plain = true})
         end
 
         -- unset these so that installing pip and setuptools puts them where we want
@@ -238,7 +227,15 @@ package("python")
 
         -- install wheel
         local python = path.join(package:installdir("bin"), "python")
-        os.vrunv(python, {"-m", "pip", "install", "wheel"})
+        local version = package:version()
+        local pyver = ("python%d.%d"):format(version:major(), version:minor())
+        local envs = {
+            PATH = package:installdir("bin"),
+            PYTHONPATH = package:installdir("lib", pyver, "site-packages"),
+            LD_LIBRARY_PATH = package:installdir("lib")
+        }
+        os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"}, {envs = envs})
+        os.vrunv(python, {"-m", "pip", "install", "wheel"}, {envs = envs})
     end)
 
     on_test(function (package)
