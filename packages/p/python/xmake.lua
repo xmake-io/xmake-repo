@@ -227,6 +227,7 @@ package("python")
 
         -- install wheel
         local python = path.join(package:installdir("bin"), "python")
+        local version = package:version()
         local pyver = ("python%d.%d"):format(version:major(), version:minor())
         local envs = {
             PATH = package:installdir("bin"),
