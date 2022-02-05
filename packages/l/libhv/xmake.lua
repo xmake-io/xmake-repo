@@ -9,7 +9,8 @@ package("libhv")
     add_versions("1.1.1", "e012d9752fe8fb3f788cb6360cd9abe61d4ccdc1d2085501d85f1068eba8603e")
     add_versions("1.2.1", "d658a8e7f1a3b2f3b0ddcabe3b13595b70246c94d57f2c27bf9a9946431b2e63")
     add_versions("1.2.2", "a15ec12cd77d1fb745a74465b8bdee5a45247e854371db9d0863573beca08466")
-    add_versions("1.2.3", "C30ACE04597A0558CE957451D64ACC7CD3260D991DC21628E048C8DEC3028F34")
+    add_versions("1.2.3", "c30ace04597a0558ce957451d64acc7cd3260d991dc21628e048c8dec3028f34")
+    add_versions("1.2.4", "389fa60f0d6697b5267ddc69de00e4844f1d8ac8ee4d2ad3742850589c20d46e")
 
     add_configs("protocol",    {description = "compile protocol", default = false, type = "boolean"})
     add_configs("http",        {description = "compile http", default = true, type = "boolean"})
@@ -28,6 +29,8 @@ package("libhv")
 
     if is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("macosx", "iphoneos") then
+        add_frameworks("CoreFoundation", "Security")
     end
 
     add_deps("cmake")
@@ -73,6 +76,10 @@ package("libhv")
             table.insert(packagedeps, "openssl")
         elseif package:config("mbedtls") then
             table.insert(packagedeps, "mbedtls")
+        end
+        if package:is_plat("iphoneos") then
+            io.replace("ssl/appletls.c", "ret = SSLSetProtocolVersionEnabled(appletls->session, kSSLProtocolAll, true);",
+                "ret = SSLSetProtocolVersionMin(appletls->session, kTLSProtocol12);", {plain = true})
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
