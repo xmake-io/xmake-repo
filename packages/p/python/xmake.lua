@@ -227,8 +227,14 @@ package("python")
 
         -- install wheel
         local python = path.join(package:installdir("bin"), "python")
-        os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"})
-        os.vrunv(python, {"-m", "pip", "install", "wheel"})
+        local pyver = ("python%d.%d"):format(version:major(), version:minor())
+        local envs = {
+            PATH = package:installdir("bin"),
+            PYTHONPATH = package:installdir("lib", pyver, "site-packages"),
+            LD_LIBRARY_PATH = package:installdir("lib")
+        }
+        os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"}, {envs = envs})
+        os.vrunv(python, {"-m", "pip", "install", "wheel"}, {envs = envs})
     end)
 
     on_test(function (package)
