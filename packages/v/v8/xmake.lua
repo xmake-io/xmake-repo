@@ -30,7 +30,32 @@ package("v8")
   }]]=])
         local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
-        os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
+        --os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
+        --os.vrunv("python3", {"./tools/dev/v8gen.py", "x64.release"})
+        if package:is_plat("macosx") then
+            io.writefile("x64.release/args.gn", [[is_component_build = false
+is_debug = false
+target_cpu = "x64"
+use_custom_libcxx = false
+v8_monolithic = true
+v8_use_external_startup_data = false]])
+        else
+            io.writefile("x64.release/args.gn", [[target_os = "linux"
+is_debug = false
+target_cpu = "x64"
+use_custom_libcxx = false
+clang_use_chrome_plugins = false
+is_component_build = false
+is_clang = true
+v8_static_library = true
+v8_monolithic = true
+v8_use_external_startup_data = false
+v8_enable_test_features = false
+v8_enable_i18n_support = false
+treat_warnings_as_errors = false
+symbol_level = 0]])
+        end
+        import("package.tools.ninja").build(package, {}, {buildir = "out/x64.release"})
         os.cp("include", package:installdir())
         os.trycp("out/x64.release/obj/**.a", package:installdir("lib"))
         os.trycp("out/x64.release/obj/**.lib", package:installdir("lib"))
