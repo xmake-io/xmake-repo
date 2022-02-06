@@ -33,14 +33,14 @@ package("v8")
         --os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
         --os.vrunv("python3", {"./tools/dev/v8gen.py", "x64.release"})
         if package:is_plat("macosx") then
-            io.writefile("x64.release/args.gn", [[is_component_build = false
+            io.writefile("out/x64.release/args.gn", [[is_component_build = false
 is_debug = false
 target_cpu = "x64"
 use_custom_libcxx = false
 v8_monolithic = true
 v8_use_external_startup_data = false]])
         else
-            io.writefile("x64.release/args.gn", [[target_os = "linux"
+            io.writefile("out/x64.release/args.gn", [[target_os = "linux"
 is_debug = false
 target_cpu = "x64"
 use_custom_libcxx = false
