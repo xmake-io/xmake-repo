@@ -22,7 +22,7 @@ package("libcurl")
     end
 
     add_configs("cares",    {description = "Enable c-ares support.", default = false, type = "boolean"})
-    add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = is_plat("linux"), type = "boolean"})
+    add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = is_plat("linux", "cross"), type = "boolean"})
     add_configs("mbedtls",  {description = "Enable mbedTLS for SSL/TLS.", default = false, type = "boolean"})
     add_configs("nghttp2",  {description = "Use Nghttp2 library.", default = false, type = "boolean"})
     add_configs("openldap", {description = "Use OpenLDAP library.", default = false, type = "boolean"})
@@ -97,7 +97,7 @@ package("libcurl")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        if is_plat("macosx") then
+        if is_plat("macosx", "iphoneos") or (is_plat("mingw") and is_host("macosx")) then
             table.insert(configs, (package:version():ge("7.77") and "--with-secure-transport" or "--with-darwinssl"))
         end
         for _, name in ipairs({"openssl", "mbedtls", "zlib", "brotli", "zstd", "libssh2", "libidn2", "nghttp2"}) do

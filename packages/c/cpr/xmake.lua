@@ -16,7 +16,7 @@ package("cpr")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local shflags
         if package:config("shared") and package:is_plat("macosx") then
-            shflags = {"-framework", "Security"}
+            shflags = {"-framework", "Security", "-framework", "SystemConfiguration"}
         end
         import("package.tools.cmake").install(package, configs, {shflags = shflags})
     end)
