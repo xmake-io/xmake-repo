@@ -12,7 +12,7 @@ package("libcurl")
              {version = function (version) return (version:gsub("%.", "_")) .. "/curl-" .. version end})
     add_versions_list()
 
-    if is_plat("macosx") then
+    if is_plat("macosx", "iphoneos") then
         add_frameworks("Security", "CoreFoundation", "SystemConfiguration")
     elseif is_plat("linux") then
         add_syslinks("pthread")
@@ -79,12 +79,13 @@ package("libcurl")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", "iphoneos", "mingw@macosx,linux", "cross", function (package)
+    on_install("macosx", "linux", "iphoneos", "mingw@macosx", "cross", function (package)
         local configs = {"--disable-silent-rules",
                          "--disable-dependency-tracking",
                          "--without-ca-bundle",
                          "--without-hyper",
                          "--without-libpsl",
+                         "--without-libgsasl",
                          "--without-librtmp",
                          "--without-quiche",
                          "--without-ngtcp2",
@@ -97,8 +98,11 @@ package("libcurl")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        if is_plat("macosx", "iphoneos") or (is_plat("mingw") and is_host("macosx")) then
+        if is_plat("macosx", "iphoneos") then
             table.insert(configs, (package:version():ge("7.77") and "--with-secure-transport" or "--with-darwinssl"))
+        end
+        if is_plat("mingw") then
+            table.insert(configs, "--with-schannel")
         end
         for _, name in ipairs({"openssl", "mbedtls", "zlib", "brotli", "zstd", "libssh2", "libidn2", "nghttp2"}) do
             table.insert(configs, package:config(name) and "--with-" .. name or "--without-" .. name)
