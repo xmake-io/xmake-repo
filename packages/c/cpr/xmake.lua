@@ -1,21 +1,22 @@
 package("cpr")
 
-    set_homepage("https://whoshuu.github.io/cpr/")
+    set_homepage("https://docs.libcpr.org/")
     set_description("C++ Requests is a simple wrapper around libcurl inspired by the excellent Python Requests project.")
+    set_license("MIT")
 
-    set_urls("https://github.com/whoshuu/cpr/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/whoshuu/cpr.git")
+    set_urls("https://github.com/libcpr/cpr/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/libcpr/cpr.git")
     add_versions("1.6.2", "c45f9c55797380c6ba44060f0c73713fbd7989eeb1147aedb8723aa14f3afaa3")
+    add_versions("1.7.2", "aa38a414fe2ffc49af13a08b6ab34df825fdd2e7a1213d032d835a779e14176f")
 
     add_deps("cmake", "libcurl")
-
     on_install("linux", "macosx", "windows", function (package)
-        local configs = {"-DCPR_BUILD_TESTS=OFF", "-DCPR_FORCE_USE_SYSTEM_CURL=ON"}
+        local configs = {"-DCPR_BUILD_TESTS=OFF", "-DCPR_ENABLE_SSL=ON", "-DCPR_FORCE_USE_SYSTEM_CURL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local shflags
         if package:config("shared") and package:is_plat("macosx") then
-            shflags = {"-framework", "Security"}
+            shflags = {"-framework", "CoreFoundation", "-framework", "Security", "-framework", "SystemConfiguration"}
         end
         import("package.tools.cmake").install(package, configs, {shflags = shflags})
     end)
