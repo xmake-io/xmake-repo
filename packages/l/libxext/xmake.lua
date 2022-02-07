@@ -20,6 +20,11 @@ package("libxext")
                          "--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--enable-specs=no"}
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        if package:config("pic") then
+            table.insert(configs, "--with-pic")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
