@@ -82,7 +82,6 @@ package("libcurl")
     on_install("macosx", "linux", "iphoneos", "mingw@macosx", "cross", function (package)
         local configs = {"--disable-silent-rules",
                          "--disable-dependency-tracking",
-                         "--without-ca-bundle",
                          "--without-hyper",
                          "--without-libpsl",
                          "--without-libgsasl",
