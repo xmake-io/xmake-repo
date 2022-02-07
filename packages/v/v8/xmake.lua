@@ -7,7 +7,9 @@ package("v8")
 
     add_deps("depot_tools")
 
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread", "dl")
+    end
 
     add_links("v8_monolith",
               "v8_initializers",
@@ -25,7 +27,7 @@ package("v8")
               "cppgc_base",
               "torque_ls_base")
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows", "bsd", function (package)
         import("core.base.global")
 
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
@@ -59,18 +61,18 @@ package("v8")
             v8_use_external_startup_data = false,
             v8_enable_test_features = false,
             v8_enable_i18n_support = false}
-        if package:is_arch("x86") then
-            configs.target_cpu    = "x86"
-        elseif package:is_arch("x64") then
-            configs.target_cpu    = "x64"
-        elseif package:is_arch("arm64") then
-            configs.target_cpu    = "arm64"
+        if package:is_arch("x86", "i386") then
+            configs.target_cpu = "x86"
+        elseif package:is_arch("x64", "x86_64") then
+            configs.target_cpu = "x64"
+        elseif package:is_arch("arm64", "arm64-v8a") then
+            configs.target_cpu = "arm64"
         end
         if not package:is_plat("windows") then
-            configs.cc            = package:build_getenv("cc")
-            configs.cxx           = package:build_getenv("cxx")
+            configs.cc  = package:build_getenv("cc")
+            configs.cxx = package:build_getenv("cxx")
         else
-            configs.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+            configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
         end
         if package:is_plat("macosx") then
             configs.extra_ldflags = {"-lstdc++"}
