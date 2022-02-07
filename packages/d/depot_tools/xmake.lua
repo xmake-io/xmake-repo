@@ -29,7 +29,7 @@ package("depot_tools")
             envs.ALL_PROXY = proxy
         end
         -- we need fetch some files when running gclient for the first time
-        if package:is_plat("windows") then
+        if is_host("windows") then
             os.vrunv("gclient.bat", {"--verbose"}, {envs = envs})
         else
             os.vrunv("sh", {"./gclient", "--verbose"}, {envs = envs})
@@ -47,5 +47,5 @@ package("depot_tools")
             envs.HTTPS_PROXY = proxy
             envs.ALL_PROXY = proxy
         end
-        os.vrunv(package:is_plat("windows") and "gclient.bat" or "gclient", {"--version"}, {envs = envs})
+        os.vrunv(is_host("windows") and "gclient.bat" or "gclient", {"--version"}, {envs = envs})
     end)

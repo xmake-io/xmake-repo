@@ -46,7 +46,7 @@ package("v8")
     "managed": False,
     "custom_deps": {},
   }]]=])
-        local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
+        local gclient = is_host("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
         local configs = {
             is_official_build = false,
