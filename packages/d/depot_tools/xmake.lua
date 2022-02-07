@@ -15,7 +15,7 @@ package("depot_tools")
         package:addenv("DEPOT_TOOLS_WIN_TOOLCHAIN", "0")
     end)
 
-    on_install("linux", "macosx", "windows", "bsd", function (package)
+    on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
         os.cp("*", package:installdir())
         os.cd(package:installdir())
