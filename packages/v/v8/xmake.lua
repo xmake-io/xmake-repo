@@ -9,6 +9,22 @@ package("v8")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
+    add_links("v8_monolith",
+              "v8_initializers",
+              "v8_init",
+              "v8_compiler",
+              "v8_compiler_opt",
+              "v8_cppgc_shared",
+              "v8_bigint",
+              "v8_snapshot",
+              "v8_base_without_compiler",
+              "v8_libplatform",
+              "v8_libbase",
+              "torque_base",
+              "torque_generated_definitions",
+              "cppgc_base",
+              "torque_ls_base")
+
     on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
 
@@ -65,6 +81,7 @@ package("v8")
         os.cp("include", package:installdir())
         os.trycp("out/obj/*.a", package:installdir("lib"))
         os.trycp("out/obj/*.lib", package:installdir("lib"))
+        os.trycp("out/obj/*.dll", package:installdir("bin"))
         print(os.files("out/**.a"))
         print(os.files("out/**.dylib"))
         print(os.files("out/**.so"))
