@@ -30,32 +30,38 @@ package("v8")
   }]]=])
         local gclient = package:is_plat("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
-        --os.vrunv("python3", {"./tools/dev/gm.py", "x64.release"})
-        --os.vrunv("python3", {"./tools/dev/v8gen.py", "x64.release"})
-        if package:is_plat("macosx") then
-            io.writefile("out/x64.release/args.gn", [[is_component_build = false
-is_debug = false
-target_cpu = "x64"
-use_custom_libcxx = false
-v8_monolithic = true
-v8_use_external_startup_data = false]])
-        else
-            io.writefile("out/x64.release/args.gn", [[target_os = "linux"
-is_debug = false
-target_cpu = "x64"
-use_custom_libcxx = false
-clang_use_chrome_plugins = false
-is_component_build = false
-is_clang = true
-v8_static_library = true
-v8_monolithic = true
-v8_use_external_startup_data = false
-v8_enable_test_features = false
-v8_enable_i18n_support = false
-treat_warnings_as_errors = false
-symbol_level = 0]])
+        local configs = {
+            is_official_build = false,
+            is_component_build = false,
+            is_debug = package:debug(),
+            is_shared_library = package:config("shared"),
+            symbol_level = 0,
+            treat_warnings_as_errors = false,
+            use_custom_libcxx = false,
+            v8_static_library = not package:config("shared"),
+            v8_monolithic = true,
+            v8_use_external_startup_data = false,
+            v8_enable_test_features = false,
+            v8_enable_i18n_support = false}
+        if package:is_arch("x86") then
+            args.target_cpu    = "x86"
+        elseif package:is_arch("x64") then
+            args.target_cpu    = "x64"
+        elseif package:is_arch("arm64") then
+            args.target_cpu    = "arm64"
         end
-        import("package.tools.ninja").build(package, {}, {buildir = "out/x64.release"})
+        if not package:is_plat("windows") then
+            args.cc            = package:build_getenv("cc")
+            args.cxx           = package:build_getenv("cxx")
+        else
+            args.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+        end
+        if package:is_plat("macosx") then
+            args.extra_ldflags = {"-lstdc++"}
+            local xcode = import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
+            args.xcode_sysroot = xcode:config("xcode_sysroot")
+        end
+        import("package.tools.gn").build(package, configs, {buildir = "out"})
         os.cp("include", package:installdir())
         os.trycp("out/x64.release/obj/**.a", package:installdir("lib"))
         os.trycp("out/x64.release/obj/**.lib", package:installdir("lib"))
