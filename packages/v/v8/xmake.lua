@@ -44,22 +44,22 @@ package("v8")
             v8_enable_test_features = false,
             v8_enable_i18n_support = false}
         if package:is_arch("x86") then
-            args.target_cpu    = "x86"
+            configs.target_cpu    = "x86"
         elseif package:is_arch("x64") then
-            args.target_cpu    = "x64"
+            configs.target_cpu    = "x64"
         elseif package:is_arch("arm64") then
-            args.target_cpu    = "arm64"
+            configs.target_cpu    = "arm64"
         end
         if not package:is_plat("windows") then
-            args.cc            = package:build_getenv("cc")
-            args.cxx           = package:build_getenv("cxx")
+            configs.cc            = package:build_getenv("cc")
+            configs.cxx           = package:build_getenv("cxx")
         else
-            args.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+            configs.extra_cflags  = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
         end
         if package:is_plat("macosx") then
-            args.extra_ldflags = {"-lstdc++"}
+            configs.extra_ldflags = {"-lstdc++"}
             local xcode = import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
-            args.xcode_sysroot = xcode:config("xcode_sysroot")
+            configs.xcode_sysroot = xcode:config("xcode_sysroot")
         end
         import("package.tools.gn").build(package, configs, {buildir = "out"})
         os.cp("include", package:installdir())
