@@ -27,7 +27,7 @@ package("v8")
               "cppgc_base",
               "torque_ls_base")
 
-    on_install("linux", "macosx", "windows", "bsd", function (package)
+    on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
 
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
