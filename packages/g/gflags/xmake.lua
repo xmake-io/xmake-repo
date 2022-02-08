@@ -17,7 +17,11 @@ package("gflags")
         add_syslinks("pthread")
     end
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
+        local configs = {
+            "-DBUILD_TESTING=OFF",
+            "-DGFLAGS_REGISTER_BUILD_DIR=OFF",
+            "-DGFLAGS_REGISTER_INSTALL_PREFIX=OFF",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
