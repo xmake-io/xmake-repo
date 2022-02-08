@@ -79,7 +79,14 @@ package("assimp")
             io.replace("CMakeLists.txt", "CMAKE_COMPILER_IS_MINGW", "MINGW", {plain = true})
         end
 
-        import("package.tools.cmake").install(package, configs)
+        -- patch environment variables
+        import("package.tools.cmake")
+        local envs = cmake.buildenvs(package)
+        local zlib = package:dep("zlib")
+        if zlib and not zlib:is_system() then
+            envs.ZLIB_HOME = zlib:installdir()
+        end
+        cmake.install(package, configs, {envs = envs})
 
         -- copy pdb
         if package:is_plat("windows") then
