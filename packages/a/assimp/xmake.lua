@@ -46,6 +46,7 @@ package("assimp")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
+        os.tryrm("cmake-modules/FindZLIB.cmake")
         io.replace("CMakeLists.txt", "FIND_PACKAGE(ZLIB)", "FIND_PACKAGE(ZLIB REQUIRED)", {plain = true})
         local configs = {"-DASSIMP_BUILD_SAMPLES=OFF",
                          "-DASSIMP_BUILD_TESTS=OFF",
@@ -79,14 +80,7 @@ package("assimp")
             io.replace("CMakeLists.txt", "CMAKE_COMPILER_IS_MINGW", "MINGW", {plain = true})
         end
 
-        -- patch environment variables
-        import("package.tools.cmake")
-        local envs = cmake.buildenvs(package)
-        local zlib = package:dep("zlib")
-        if zlib and not zlib:is_system() then
-            envs.ZLIB_HOME = zlib:installdir()
-        end
-        cmake.install(package, configs, {envs = envs})
+        import("package.tools.cmake").install(package, configs)
 
         -- copy pdb
         if package:is_plat("windows") then
