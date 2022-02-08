@@ -27,7 +27,7 @@ package("v8")
               "cppgc_base",
               "torque_ls_base")
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", function (package)
         import("core.base.global")
 
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
@@ -84,12 +84,6 @@ package("v8")
         os.trycp("out/obj/*.a", package:installdir("lib"))
         os.trycp("out/obj/*.lib", package:installdir("lib"))
         os.trycp("out/obj/*.dll", package:installdir("bin"))
-        print(os.files("out/**.a"))
-        print(os.files("out/**.dylib"))
-        print(os.files("out/**.so"))
-        print(os.files("out/**.lib"))
-        print(os.files("out/**.h"))
-        print(os.files("out/**.hpp"))
     end)
 
     on_test(function (package)
