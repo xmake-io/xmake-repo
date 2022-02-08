@@ -46,8 +46,6 @@ package("assimp")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
-        os.tryrm("cmake-modules/FindZLIB.cmake")
-        io.replace("CMakeLists.txt", "FIND_PACKAGE(ZLIB)", "FIND_PACKAGE(ZLIB REQUIRED)", {plain = true})
         local configs = {"-DASSIMP_BUILD_SAMPLES=OFF",
                          "-DASSIMP_BUILD_TESTS=OFF",
                          "-DASSIMP_BUILD_DOCS=OFF",
@@ -57,6 +55,18 @@ package("assimp")
                          "-DASSIMP_BUILD_ZLIB=OFF",
                          "-DSYSTEM_IRRXML=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+
+        -- temporary workaround
+        local zlib = package:dep("zlib")
+        if zlib and not zlib:is_system() then
+            local fetchinfo = zlib:fetch()
+            io.replace("CMakeLists.txt", "FIND_PACKAGE(ZLIB)", "", {plain = true})
+            io.replace("CMakeLists.txt", [[INSTALL( TARGETS zlib zlibstatic
+    EXPORT "${TARGETS_EXPORT_NAME}")]], "", {plain = true})
+            table.insert(configs, "-DZLIB_FOUND=TRUE")
+            table.insert(configs, "-DZLIB_INCLUDE_DIR=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
+            table.insert(configs, "-DZLIB_LIBRARIES=" .. table.concat(fetchinfo.libfiles, ";"))
+        end
 
         local function add_config_arg(config_name, cmake_name)
             table.insert(configs, "-D" .. cmake_name .. "=" .. (package:config(config_name) and "ON" or "OFF"))
