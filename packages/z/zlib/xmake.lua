@@ -21,7 +21,7 @@ package("zlib")
             add_rules("mode.debug", "mode.release")
             target("zlib")
                 set_kind("$(kind)")
-                if not is_plat("windows", "mingw") then
+                if not is_plat("windows") then
                     set_basename("z")
                 end
                 add_files("adler32.c")
