@@ -34,7 +34,9 @@ package("cgal")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-        io.gsub("CMakeLists.txt", "install%(DIRECTORY.-%/demo%/.-%/demo%/.-%)", "")
+        if package:version():le("5.3") then
+            io.gsub("CMakeLists.txt", "install%(DIRECTORY.-%/demo%/.-%/demo%/.-%)", "")
+        end
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_DOC=OFF"}
         table.insert(configs, "-DCGAL_HEADER_ONLY=" .. (package:config("header_only") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
