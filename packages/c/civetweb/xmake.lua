@@ -13,8 +13,10 @@ package("civetweb")
 
     add_deps("cmake")
 
-    if is_plat("linux") then
+    if is_plat("linux") or is_plat("bsd") then
         add_syslinks("pthread")
+    elseif is_plat("mingw") then
+        add_syslinks("ws2_32")
     end
 
     on_load(function (package)
@@ -32,7 +34,12 @@ package("civetweb")
     on_install(function (package)
         local configs = {
             "-DCIVETWEB_BUILD_TESTING=OFF",
+            "-DCIVETWEB_ENABLE_DEBUG_TOOLS=OFF",
             "-DCIVETWEB_ENABLE_CXX=ON",
+            "-DCIVETWEB_ENABLE_SERVER_EXECUTABLE=OFF",
+            "-DCIVETWEB_ENABLE_WEBSOCKETS=ON",
+            "-DCIVETWEB_ENABLE_SSL_DYNAMIC_LOADING=OFF",
+            "-DCIVETWEB_ENABLE_IPV6=ON",
         }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
