@@ -48,6 +48,10 @@ package("civetweb")
         table.insert(configs, "-DCIVETWEB_ENABLE_SSL=" .. (package:config("openssl") and "ON" or "OFF"))
         table.insert(configs, "-DCIVETWEB_ENABLE_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
 
+        local shflags
+        if package:is_plat("mingw") and package:config("shared") then
+            shflags = "-lws2_32"
+        end
         import("package.tools.cmake").install(package, configs, {shflags = shflags})
     end)
 
