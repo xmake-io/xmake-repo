@@ -13,6 +13,10 @@ package("civetweb")
 
     add_deps("cmake")
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_load(function (package)
         local configdeps = {
             openssl = "openssl",
@@ -37,4 +41,8 @@ package("civetweb")
         table.insert(configs, "-DCIVETWEB_ENABLE_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
 
         import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("mg_start", {includes = "civetweb.h"}))
     end)
