@@ -48,6 +48,11 @@ package("civetweb")
         table.insert(configs, "-DCIVETWEB_ENABLE_SSL=" .. (package:config("openssl") and "ON" or "OFF"))
         table.insert(configs, "-DCIVETWEB_ENABLE_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
 
+        -- make sure ws2_32 is always used even find-winsock doesn't work
+        if package:is_plat("mingw") and package:config("shared") then
+            io.replace("src/CMakeLists.txt", "if (WINSOCK_FOUND)", "if (TRUE)", {plain = true})
+            io.replace("src/CMakeLists.txt", "WINSOCK::WINSOCK", "ws2_32", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
