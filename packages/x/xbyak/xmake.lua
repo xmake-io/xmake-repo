@@ -19,7 +19,7 @@ package("xbyak")
             {
                 class Sample : public Xbyak::CodeGenerator {
                     Sample() {
-                      inc(eax)
+                      inc(eax);
                     }
                 };
             }
