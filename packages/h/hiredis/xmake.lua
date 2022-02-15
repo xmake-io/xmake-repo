@@ -9,7 +9,7 @@ package("hiredis")
     add_versions('v1.0.2', 'e0ab696e2f07deb4252dda45b703d09854e53b9703c7d52182ce5a22616c3819')
     -- This patch is created with hiredis commit f8de9a4. Removed NuGet related install code.
     -- We need latest CMakeLists.txt to get static library support. It also contains other fixes.
-    add_patches("v1.0.2", path.join(os.scriptdir(), "patches", "v1.0.2", "cmake.patch"), "d75d3034cc5d487440d7bc24a3a2229a433351639848562e2416461ede4f428f")
+    add_patches("v1.0.2", path.join(os.scriptdir(), "patches", "v1.0.2", "cmake.patch"), "a2115f727821e4a121e4e2145ef3e5caa0669559f24f2213125119520ee4d881")
 
     add_configs("openssl", {description = "with openssl library", default = false, type = "boolean"})
 
