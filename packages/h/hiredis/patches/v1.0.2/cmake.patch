@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index f86c9b7..b545e21 100644
+index f86c9b7..55ae30b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -1,10 +1,9 @@
@@ -116,6 +116,15 @@ index f86c9b7..b545e21 100644
  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/hiredis.pc
      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
  
+@@ -72,7 +127,7 @@ export(EXPORT hiredis-targets
+     FILE "${CMAKE_CURRENT_BINARY_DIR}/hiredis-targets.cmake"
+     NAMESPACE hiredis::)
+ 
+-SET(CMAKE_CONF_INSTALL_DIR share/hiredis)
++SET(CMAKE_CONF_INSTALL_DIR lib/cmake/hiredis)
+ SET(INCLUDE_INSTALL_DIR include)
+ include(CMakePackageConfigHelpers)
+ configure_package_config_file(hiredis-config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/hiredis-config.cmake
 @@ -95,10 +150,12 @@ IF(ENABLE_SSL)
          ENDIF()
      ENDIF()
