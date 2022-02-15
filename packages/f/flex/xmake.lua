@@ -4,12 +4,21 @@ package("flex")
     set_homepage("https://github.com/westes/flex/")
     set_license("BSD-2-Clause")
 
-    add_urls("https://github.com/westes/flex/releases/download/v$(version)/flex-$(version).tar.gz")
+    if not is_plat("windows") then
+        add_urls("https://github.com/westes/flex/releases/download/v$(version)/flex-$(version).tar.gz")
+    end
+
     add_versions("2.6.4", "e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995")
 
-    if is_plat("linux") then
+    if is_plat("windows") then
+        add_deps("winflexbison")
+    elseif is_plat("linux") then
         add_deps("m4")
     end
+
+    on_install("windows", function (package)
+        -- nothing to do, winflexbison does everything
+    end)
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package)
