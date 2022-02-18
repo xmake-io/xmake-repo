@@ -17,9 +17,21 @@ package("libunwind")
     add_versions("v1.5", "90337653d92d4a13de590781371c604f9031cdb50520366aa1e3a91e1efb1017")
     add_versions("v1.6.2", "4a6aec666991fb45d0889c44aede8ad6eb108071c3554fcdff671f9c94794976")
 
+    add_configs("minidebuginfo", {description = "Enables support for LZMA-compressed symbol tables", default = false, type = "boolean"})
+    add_configs("zlibdebuginfo", {description = "Enables support for ZLIB-compressed symbol tables", default = false, type = "boolean"})
+
     add_deps("autoconf")
 
     add_defines("_GNU_SOURCE=1")
+
+    on_load("linux", function (package)
+        if package:config("minidebuginfo") then
+            package:add("deps", "lzma")
+        end
+        if package:config("zlibdebuginfo") then
+            package:add("deps", "zlib")
+        end
+    end)
 
     on_install("android", "linux", function (package)
         local configs = {"--enable-coredump=no", "--disable-tests"}
@@ -31,6 +43,8 @@ package("libunwind")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
+        table.insert(configs, (package:config("minidebuginfo") and "--enable" or "--disable") .. "-minidebuginfo")
+        table.insert(configs, (package:config("zlibdebuginfo") and "--enable" or "--disable") .. "-zlibdebuginfo")
         import("package.tools.autoconf").install(package, configs)
     end)
 
