@@ -4,13 +4,18 @@ package("libunwind")
     set_description("A portable and efficient C programming interface (API) to determine the call-chain of a program.")
 
     add_urls("https://github.com/libunwind/libunwind/releases/download/$(version).tar.gz", {version = function (version)
-        return version .. "/libunwind-" .. (version:gsub("v", "")) .. ".0"
+        if version:eq("v1.5") then
+            return "v1.5/libunwind-1.5.0"
+        else
+            return version .. "/libunwind-" .. (version:gsub("v", ""))
+        end
     end})
     add_urls("http://download.savannah.nongnu.org/releases/libunwind/libunwind-$(version).tar.gz", {version = function (version)
-        return (version:gsub("v", "")) .. ".0"
+        return version:gsub("v", "")
     end})
     add_urls("https://github.com/libunwind/libunwind.git")
     add_versions("v1.5", "90337653d92d4a13de590781371c604f9031cdb50520366aa1e3a91e1efb1017")
+    add_versions("v1.6.2", "4a6aec666991fb45d0889c44aede8ad6eb108071c3554fcdff671f9c94794976")
 
     add_deps("autoconf")
 
