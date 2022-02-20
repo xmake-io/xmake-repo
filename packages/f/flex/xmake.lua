@@ -16,8 +16,12 @@ package("flex")
         add_deps("m4")
     end
 
+    on_load("macosx", "linux", function (package)
+        package:addenv("PATH", "bin")
+    end)
+
     on_install("windows", function (package)
-        -- nothing to do, winflexbison does everything
+        -- handled by winflexbison
     end)
 
     on_install("macosx", "linux", function (package)
