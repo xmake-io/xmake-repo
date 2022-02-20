@@ -13,6 +13,10 @@ package("winflexbison")
 
     add_deps("cmake")
 
+    on_load(function (package)
+        package:addenv("PATH", "bin")
+    end)
+
     on_install("windows", function (package)
         local debugType = (package:debug() and "Debug" or "Release")
         local configs = {}
