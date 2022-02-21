@@ -8,7 +8,7 @@ package("unicorn")
     add_deps("cmake")
     add_deps("glib")
 
-    on_install("windows", "macosx", "linux", "mingw", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         local configs = {
             "-DUNICORN_BUILD_TESTS=OFF",
             "-DUNICORN_STATIC_MSVCRT=OFF"}
