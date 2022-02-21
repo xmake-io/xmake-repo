@@ -8,6 +8,8 @@ package("unicorn")
     add_deps("cmake")
     add_deps("glib")
 
+    add_links("unicorn", "unicorn-common", "aarch64-softmmu", "sparc-softmmu", "riscv64-softmmu", "arm-softmmu", "m68k-softmmu", "x86_64-softmmu", "s390x-softmmu", "mips64-softmmu", "sparc64-softmmu", "ppc-softmmu", "ppc64-softmmu", "mipsel-softmmu", "riscv32-softmmu", "mips-softmmu", "mips64el-softmmu")
+
     on_install("windows", "macosx", "linux", function (package)
         local configs = {
             "-DUNICORN_BUILD_TESTS=OFF",
