@@ -17,7 +17,10 @@ target("zlib")
     add_headerfiles("zlib.h", "zconf.h", "chromeconf.h", "deflate.h", "inffast.h", "inffixed.h", "inflate.h", "inftrees.h", "zutil.h")
     add_includedirs(".", {public = true})
     -- SIMD settings
-    if is_arch("x86") or is_arch("x64") or is_arch("x86_64") then
+    if is_plat("cross") then
+        add_defines("CPU_NO_SIMD")
+        add_files("inflate.c")
+    elseif is_arch("x86", "x64", "x86_64") then
         add_defines("CRC32_SIMD_SSE42_PCLMUL", "DEFLATE_FILL_WINDOW_SSE2")
         add_files("crc32_simd.c", "crc_folding.c", "fill_window_sse.c")
         add_defines("ADLER32_SIMD_SSSE3", "INFLATE_CHUNK_SIMD_SSE2")
@@ -52,7 +55,7 @@ target("zlib")
             elseif is_plat("macosx") then
                 add_defines("ARMV8_OS_MACOS")
             else
-                raise("Unsupported ARM OS.")
+                os.raise("Unsupported ARM OS")
             end
         end
     else

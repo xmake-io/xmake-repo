@@ -4,9 +4,9 @@ package("chromium_zlib")
     set_description("zlib from chromium")
     set_license("zlib")
 
-    add_urls("https://github.com/xq114/chromium_zlib.git")
+    add_urls("https://github.com/xmake-mirror/chromium_zlib.git")
     add_urls("https://chromium.googlesource.com/chromium/src/third_party/zlib.git")
-    add_versions("2022.02.22", "f8d70d13465e79ff7513aafe3a0f4374271fbade")
+    add_versions("2022.02.22", "6f44c22c1f003bd20011062abec283678842567c")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
