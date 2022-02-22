@@ -23,9 +23,9 @@ target("zlib")
         add_defines("ADLER32_SIMD_SSSE3", "INFLATE_CHUNK_SIMD_SSE2")
         add_files("adler32_simd.c", "contrib/optimizations/inffast_chunk.c", "contrib/optimizations/inflate.c")
         if is_plat("windows") then
-            add_vectorexts("avx", "avx2")
+            add_vectorexts("avx")
         else
-            add_cflags("-march=native")
+            add_cflags("-msse4.2", "-mssse3", "-mpclmul")
         end
         add_defines(is_plat("windows") and "X86_WINDOWS" or "X86_NOT_WINDOWS")
         if is_arch(".+64") then
@@ -34,18 +34,13 @@ target("zlib")
     elseif is_arch("arm.*") then
         add_defines("ADLER32_SIMD_NEON", "INFLATE_CHUNK_SIMD_NEON")
         add_files("adler32_simd.c", "contrib/optimizations/inffast_chunk.c", "contrib/optimizations/inflate.c")
-        if is_plat("windows") then
-            add_vectorexts("neon")
-        else
-            add_cflags("-march=native")
-        end
         if is_arch(".+64") then
             add_defines("INFLATE_CHUNK_READ_64LE")
         end
         if not is_plat("iphoneos") then
             -- ARM v8 architecture
             add_defines("CRC32_ARMV8_CRC32")
-            if not is_plat("windows") then
+            if not is_plat("windows", "android") then
                 add_cflags("-march=armv8-a+crc")
             end
             if is_plat("android") then
