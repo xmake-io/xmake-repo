@@ -10,6 +10,10 @@ package("chromium_zlib")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_install(function (package)
         for _, f in ipairs(table.join(os.files("contrib/minizip/*.c"), os.files("contrib/minizip/*.h"))) do
             io.replace(f, "third_party/zlib/zlib.h", "zlib.h", {plain = true})
