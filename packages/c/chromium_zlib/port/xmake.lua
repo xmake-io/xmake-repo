@@ -65,6 +65,7 @@ target("zlib")
             else
                 os.raise("Unsupported ARM OS")
             end
+            add_files("crc32_simd.c")
         end
     else
         add_defines("CPU_NO_SIMD")
