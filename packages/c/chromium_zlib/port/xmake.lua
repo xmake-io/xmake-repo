@@ -17,6 +17,14 @@ target("zlib")
     add_headerfiles("zlib.h", "zconf.h", "chromeconf.h", "deflate.h", "inffast.h", "inffixed.h", "inflate.h", "inftrees.h", "zutil.h")
     add_includedirs(".", {public = true})
     -- SIMD settings
+    on_load(function (target)
+        import("core.tool.toolchain")
+        if is_plat("android") then
+            local ndk = toolchain.load("ndk"):config("ndk")
+            target:add("includedirs", path.join(ndk, "sources", "android", "cpufeatures"))
+            target:add("files", path.join(ndk, "sources", "android", "cpufeatures", "cpu-features.c"))
+        end
+    end)
     if is_plat("cross") then
         add_defines("CPU_NO_SIMD")
         add_files("inflate.c")
