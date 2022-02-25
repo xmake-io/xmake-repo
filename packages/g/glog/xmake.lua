@@ -15,7 +15,7 @@ package("glog")
     end
 
     add_deps("cmake")
-    on_load("windows", "linux", "macosx", function (package)
+    on_load("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package)
         if package:is_plat("windows") and package:version():le("0.4") and not package:config("shared") then
             package:add("defines", "GOOGLE_GLOG_DLL_DECL=")
         end
@@ -26,7 +26,7 @@ package("glog")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_INSTALL_LIBDIR=lib"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
