@@ -11,11 +11,17 @@ package("gflags")
 
     add_configs("mt", {description = "Build the multi-threaded gflags library.", default = true, type = "boolean"})
     add_deps("cmake")
-    if is_plat("windows", "mingw") then
-        add_syslinks("shlwapi")
-    elseif is_plat("linux") then
-        add_syslinks("pthread")
-    end
+
+    on_load(function (package)
+        if package:config("mt") then
+            if is_plat("windows", "mingw") then
+                package:add("syslinks", "shlwapi")
+            elseif is_plat("linux") then
+                package:add("syslinks", "pthread")
+            end
+        end
+    end)
+
     on_install(function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
