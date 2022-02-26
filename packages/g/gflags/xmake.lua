@@ -9,14 +9,19 @@ package("gflags")
     add_versions("v2.2.2", "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf")
     add_patches("v2.2.2", path.join(os.scriptdir(), "patches", "v2.2.2", "fix-cmake.patch"), "a2b9f99fe1421723aacd66e1a268efcb23c3dbf357776d4942c0bb25fc89d15c")
 
-    add_configs("mt", {description = "Build the multi-threaded gflags library.", default = false, type = "boolean"})
-
+    add_configs("mt", {description = "Build the multi-threaded gflags library.", default = true, type = "boolean"})
     add_deps("cmake")
-    if is_plat("windows", "mingw") then
-        add_syslinks("shlwapi")
-    elseif is_plat("linux") then
-        add_syslinks("pthread")
-    end
+
+    on_load(function (package)
+        if package:config("mt") then
+            if package:is_plat("windows", "mingw") then
+                package:add("syslinks", "shlwapi")
+            elseif package:is_plat("linux") then
+                package:add("syslinks", "pthread")
+            end
+        end
+    end)
+
     on_install(function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
