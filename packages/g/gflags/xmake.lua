@@ -14,9 +14,9 @@ package("gflags")
 
     on_load(function (package)
         if package:config("mt") then
-            if is_plat("windows", "mingw") then
+            if package:is_plat("windows", "mingw") then
                 package:add("syslinks", "shlwapi")
-            elseif is_plat("linux") then
+            elseif package:is_plat("linux") then
                 package:add("syslinks", "pthread")
             end
         end
