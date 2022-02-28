@@ -24,7 +24,7 @@ package("libunwind")
 
     add_defines("_GNU_SOURCE=1")
 
-    on_load("linux", function (package)
+    on_load("android", "linux", "bsd", "cross", function (package)
         if package:config("minidebuginfo") then
             package:add("deps", "lzma")
         end
@@ -33,7 +33,7 @@ package("libunwind")
         end
     end)
 
-    on_install("android", "linux", function (package)
+    on_install("android", "linux", "bsd", "cross", function (package)
         local configs = {"--enable-coredump=no", "--disable-tests"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
