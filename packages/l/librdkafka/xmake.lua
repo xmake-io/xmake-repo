@@ -10,7 +10,7 @@ package("librdkafka")
 
     add_links("rdkafka++", "rdkafka")
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows", "mingw", "android", function (package)
         local configs = {"-DRDKAFKA_BUILD_EXAMPLES=OFF", "-DRDKAFKA_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
