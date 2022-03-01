@@ -9,14 +9,12 @@ package("pcre2")
 
     add_deps("cmake")
 
-    add_configs("jit", {description = "Enable jit.", default = true, type = "boolean"})
+    if not is_plat("iphoneos") then
+        add_configs("jit", {description = "Enable jit.", default = true, type = "boolean"})
+    end
     add_configs("bitwidth", {description = "Set the code unit width.", default = "8", values = {"8", "16", "32"}})
 
     on_load(function (package)
-        if package:is_plat("iphoneos") then
-            package:config_set("jit", false)
-        end
-
         local bitwidth = package:config("bitwidth") or "8"
         if package:version():ge("10.39") and package:is_plat("windows") and not package:config("shared") then
             package:add("links", "pcre2-" .. bitwidth .. "-static")
