@@ -54,11 +54,9 @@ package("librdkafka")
         table.insert(configs, "-DWITH_SSL=" .. (package:config("ssl") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DRDKAFKA_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
-
         for config, dep in pairs(configdeps) do
-            table.insert(configs, "-DWITH_" .. string.upper(config)  .. "=" .. (package:config(config) and "ON" or "OFF"))
+            table.insert(configs, "-DWITH_" .. config:upper()  .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
-
         import("package.tools.cmake").install(package, configs)
     end)
 
