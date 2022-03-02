@@ -20,7 +20,7 @@ package("aqt")
         add_deps("python >=3.6", "7z")
     end
 
-    on_install(function (package)
+    on_install("windows", "mingw", "linux", "macosx", "android", "iphoneos", function (package)
         if is_host("windows") then
             os.mv(package:originfile(), path.join(package:installdir("bin"), "aqt.exe"))
         else
