@@ -24,7 +24,7 @@ package("imgui")
     add_configs("user_config", {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("glfw_opengl3", {description = "Use glfw+opengl3 as backend", default = false, type = "boolean"})
 
-    add_includedirs("include", "include/imgui")
+    add_includedirs("include", "include/imgui", "include/backends")
 
     if is_plat("windows", "mingw") then
         add_syslinks("Imm32")
@@ -60,10 +60,10 @@ package("imgui")
                     add_packages(%s)
                     add_includedirs(".")
                     add_headerfiles("*.h", {prefixdir = "imgui"})
-                    add_headerfiles("backends/imgui_impl_glfw.h", "backends/imgui_impl_opengl3.h")
+                    add_headerfiles("(backends/imgui_impl_glfw.h)", "(backends/imgui_impl_opengl3.h)")
             ]], pkgs, pkgs)
             if package:version():ge("1.84") then
-                xmake_lua = xmake_lua .. "add_headerfiles(\"backends/imgui_impl_opengl3_loader.h\")\n"
+                xmake_lua = xmake_lua .. "add_headerfiles(\"(backends/imgui_impl_opengl3_loader.h)\")\n"
             else
                 xmake_lua = xmake_lua .. "add_defines(\"IMGUI_IMPL_OPENGL_LOADER_GLAD\")\n"
             end
