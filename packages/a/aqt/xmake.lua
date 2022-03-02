@@ -1,5 +1,4 @@
 package("aqt")
-
     set_kind("binary")
     set_homepage("https://github.com/miurahr/aqtinstall")
     set_description("aqt: Another (unofficial) Qt CLI Installer on multi-platforms")
@@ -17,18 +16,16 @@ package("aqt")
             add_versions("2.0.6", "b0ad07fe8fd2c094425449f3053598959e467833dadf509da948571259510078")
         end
     else
-        add_deps("python >=3.6", "7z")
+        add_deps("7z")
+        add_deps("python >=3.6", {kind="binary"})
     end
 
-    on_install("windows", "mingw", "linux", "macosx", "android", "iphoneos", function (package)
+    on_install("@macosx", "@linux", "@windows", "@msys", function (package)
         if is_host("windows") then
             os.mv(package:originfile(), path.join(package:installdir("bin"), "aqt.exe"))
         else
             -- ensurepip has been dropped in recent releases
-            try
-            {
-                function () os.vrunv("python3", {"-m", "ensurepip"}) end
-            }
+            try{function () os.vrunv("python3", {"-m", "ensurepip"}) end}
 
             os.vrunv("python3", {"-m", "pip", "install", "-U", "pip"})
             os.vrunv("python3", {"-m", "pip", "install", "aqtinstall"})
