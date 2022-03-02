@@ -1,5 +1,4 @@
 package("qt5base")
-
     set_kind("phony")
     set_homepage("https://www.qt.io")
     set_description("Qt is the faster, smarter way to create innovative devices, modern UIs & applications for multiple screens. Cross-platform software development at its best.")
@@ -11,23 +10,30 @@ package("qt5base")
     add_versions("5.15.2", "dummy")
     add_versions("5.12.5", "dummy")
 
-    add_deps("aqt", {private=true}) -- only required for installation
+    add_deps("aqt")
 
     on_fetch(function (package, opt)
-        local qt = package:data("qtdir")
+        import("core.base.semver")
+        import("core.cache.localcache")
+        import("detect.sdks.find_qt")
+
+        local qt = package:data("qt")
         if qt then
             return qt
         end
 
         if os.isfile(package:manifest_file()) then
+            -- find_qt can fail if it failed to find qt before, clear detect cache to prevent this
+            localcache.clear("detect")
+
             local installdir = package:installdir()
-            local qt = {
-                version = package:version():shortstr(),
-                bindir = path.join(installdir, "bin"),
-                includedir = path.join(installdir, "include"),
-                libdir = path.join(installdir, "lib")
-            }
-            package:data_set("qtdir", qt)
+            local qt = find_qt(installdir, {version=version})
+            assert(qt, "failed to retrieve qt info")
+            assert(path.absolute(qt.sdkdir) == path.absolute(installdir), "failed to retrieve qt info")
+
+            qt.version = qt.sdkver
+
+            package:data_set("qt", qt)
             return qt
         end
 
@@ -35,26 +41,28 @@ package("qt5base")
             return
         end
 
-        import("core.base.semver")
-        import("detect.sdks.find_qt")
         local qt = find_qt()
         if not qt then
             return
         end
 
         local qtversion = semver.new(qt.sdkver)
-        if not qtversion:satisfies("5.X") then
+        if not qtversion:satisfies("5.x") then
             return
         end
 
-        qt.version = qt.sdkversion
+        qt.version = qt.sdkver
 
-        package:data_set("qtdir", qt)
+        package:data_set("qt", qt)
         return qt
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
-        local version = package:version() or semver.new("5.15.2")
+        import("core.cache.localcache")
+        import("core.project.config")
+        import("detect.sdks.find_qt")
+
+        local version = package:version()
 
         local host
         if is_host("windows") then
@@ -64,7 +72,7 @@ package("qt5base")
         elseif is_host("macosx") then
             host = "mac"
         else
-            os.raise("unhandled host " .. os.host())
+            raise("unhandled host " .. os.host())
         end
 
         local target
@@ -75,18 +83,18 @@ package("qt5base")
         elseif package:is_plat("iphoneos") then
             target = "ios"
         else
-            os.raise("unhandled plat " .. package:plat())
+            raise("unhandled plat " .. package:plat())
         end
 
         local arch
         if package:is_plat("windows", "mingw") then
-            local winArch
-            if package:is_targetarch("x64", "x86_64") then
-                winArch = "64"
-            elseif package:is_targetarch("x86", "i386") then
-                winArch = "32"
+            local winarch
+            if package:is_arch("x64", "x86_64") then
+                winarch = "64"
+            elseif package:is_arch("x86", "i386") then
+                winarch = "32"
             else
-                os.raise("unhandled arch " .. package:targetarch())
+                raise("unhandled arch " .. package:targetarch())
             end
 
             local compilerVersion
@@ -97,10 +105,10 @@ package("qt5base")
                 elseif vs == "2017" or vs == "2015" then
                     compilerVersion = "msvc" .. vs
                 else
-                    os.raise("unhandled msvc version " .. vs)
+                    raise("unhandled msvc version " .. vs)
                 end
 
-                if package:is_targetarch("x64", "x86_64") then
+                if package:is_arch("x64", "x86_64") then
                     compilerVersion = compilerVersion .. "_64"
                 end
             else
@@ -117,24 +125,24 @@ package("qt5base")
                 elseif mingw_version:ge("5.3") then
                     compilerVersion = "mingw53"
                 else
-                    os.raise("unhandled mingw version " .. version)
+                    raise("unhandled mingw version " .. version)
                 end
             end
 
-            arch = "win" .. winArch .. "_" .. compilerVersion
+            arch = "win" .. winarch .. "_" .. compilerVersion
         elseif package:is_plat("linux") then
             arch = "gcc_64"
         elseif package:is_plat("macosx") then
             arch = "clang_64"
         elseif package:is_plat("android") then
             if package:version():le("5.13") then
-                if package:is_targetarch("x86_64", "x64") then
+                if package:is_arch("x86_64", "x64") then
                     arch = "android_x86_64"
-                elseif package:is_targetarch("arm64", "arm64-v8a") then
+                elseif package:is_arch("arm64", "arm64-v8a") then
                     arch = "android_arm64_v8a"
-                elseif package:is_targetarch("armv7", "armv7-a") then
+                elseif package:is_arch("armv7", "armv7-a") then
                     arch = "android_armv7"
-                elseif package:is_targetarch("x86") then
+                elseif package:is_arch("x86") then
                     arch = "android_x86"
                 end
             else
@@ -148,30 +156,29 @@ package("qt5base")
         -- move files to root
         local subdirs = {}
         if package:is_plat("linux") then
-            table.insert(subdirs, package:is_targetarch("x86_64") and "gcc_64" or "gcc_32")
-            table.insert(subdirs, package:is_targetarch("x86_64") and "clang_64" or "clang_32")
+            table.insert(subdirs, package:is_arch("x86_64") and "gcc_64" or "gcc_32")
+            table.insert(subdirs, package:is_arch("x86_64") and "clang_64" or "clang_32")
         elseif package:is_plat("macosx") then
-            table.insert(subdirs, package:is_targetarch("x86_64") and "clang_64" or "clang_32")
+            table.insert(subdirs, package:is_arch("x86_64") and "clang_64" or "clang_32")
         elseif package:is_plat("windows") then
-            import("core.project.config")
             local vs = config.get("vs")
             if vs then
-                table.insert(subdirs, package:is_targetarch("x64") and "msvc" .. vs .. "_64" or "msvc" .. vs .. "_32")
+                table.insert(subdirs, package:is_arch("x64") and "msvc" .. vs .. "_64" or "msvc" .. vs .. "_32")
                 table.insert(subdirs, "msvc" .. vs)
             end
-            table.insert(subdirs, package:is_targetarch("x64") and "msvc*_64" or "msvc*_32")
+            table.insert(subdirs, package:is_arch("x64") and "msvc*_64" or "msvc*_32")
             table.insert(subdirs, "msvc*")
         elseif package:is_plat("mingw") then
-            table.insert(subdirs, package:is_targetarch("x86_64") and "mingw*_64" or "mingw*_32")
+            table.insert(subdirs, package:is_arch("x86_64") and "mingw*_64" or "mingw*_32")
         elseif package:is_plat("android") then
             local subdir
-            if package:is_targetarch("arm64-v8a") then
+            if package:is_arch("arm64-v8a") then
                 subdir = "android_arm64_v8a"
-            elseif package:is_targetarch("armeabi-v7a", "armeabi", "armv7-a", "armv5te") then -- armv7-a/armv5te are deprecated
+            elseif package:is_arch("armeabi-v7a", "armeabi", "armv7-a", "armv5te") then -- armv7-a/armv5te are deprecated
                 subdir = "android_armv7"
-            elseif package:is_targetarch("x86", "i386") then -- i386 is deprecated
+            elseif package:is_arch("x86", "i386") then -- i386 is deprecated
                 subdir = "android_x86"
-            elseif package:is_targetarch("x86_64") then
+            elseif package:is_arch("x86_64") then
                 subdir = "android_x86_64"
             end
             if subdir then
@@ -193,24 +200,25 @@ package("qt5base")
             end
         end
 
-        if not installeddir then
-            os.raise("couldn't find where qt was installed!")
-        end
+        assert(installdir, "couldn't find where qt was installed!")
 
-        os.mv(installeddir .. "/*", installdir)
+        os.mv(path.join(installeddir, "*"), installdir)
         os.rmdir(path.join(installdir, version))
 
-        package:data_set("qtdir", {
-            version = version:shortstr(),
-            bindir = path.join(installdir, "bin"),
-            includedir = path.join(installdir, "include"),
-            libdir = path.join(installdir, "lib")
-        })
+        -- find_qt can fail if it failed to find qt before, clear detect cache to prevent this
+        localcache.clear("detect")
+
+        local qt = find_qt(installdir, {version=version})
+        assert(qt, "failed to retrieve qt info")
+        assert(path.absolute(qt.sdkdir) == path.absolute(installdir), "failed to retrieve qt info")
+
+        qt.version = qt.sdkver
+
+        package:data_set("qt", qt)
     end)
 
     on_test(function (package)
-        local qt = assert(package:data("qtdir"))
+        local qt = assert(package:data("qt"))
         os.vrun(path.join(qt.bindir, "moc") .. " -v")
         os.vrun(path.join(qt.bindir, "rcc") .. " -v")
-        --os.vrun(path.join(qt.bindir, "uic") .. " -v")
     end)

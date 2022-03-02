@@ -1,5 +1,4 @@
 package("qt5gui")
-
     set_homepage("https://www.qt.io")
     set_description("Qt is the faster, smarter way to create innovative devices, modern UIs & applications for multiple screens. Cross-platform software development at its best.")
     set_license("LGPL-3")
@@ -16,22 +15,40 @@ package("qt5gui")
 
     on_fetch(function (package)
         local base = package:dep("qt5base")
-        local qt = base:fetch()
+        local qt = base:data("qt")
         if not qt then
             return
         end
 
+        local link = "Qt5Gui"
+        if package:is_plat("windows") then
+            if package:is_debug() then
+                link = link .. "d"
+            end
+        elseif package:is_plat("android") then
+            if package:is_arch("x86_64", "x64") then
+                link = link .. "_x86_64"
+            elseif package:is_arch("arm64", "arm64-v8a") then
+                link = link .. "_arm64-v8a"
+            elseif package:is_arch("armv7", "armv7-a") then
+                link = link .. "_armeabi-v7a"
+            elseif package:is_arch("x86") then
+                link = link .. "_x86"
+            end
+        end
+
         return {
+            qtdir = qt,
             version = qt.version,
             includedirs = {qt.includedir, path.join(qt.includedir, "QtGui")},
-            links = table.wrap("Qt5Gui" .. (package:is_plat("windows") and package:is_debug() and "d" or "")),
-            linkdirs = table.wrap(qt.libdir),
+            links = table.wrap(link),
+            linkdirs = table.wrap(qt.libdir)
         }
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         local base = package:dep("qt5base")
-        local qt = base:fetch()
+        local qt = base:data("qt")
         assert(qt, "qt5base is required")
     end)
 
