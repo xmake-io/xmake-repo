@@ -10,27 +10,17 @@ package("re2")
     add_versions("2021.08.01", "cd8c950b528f413e02c12970dce62a7b6f37733d7f68807e73a2d9bc9db79bc8")
     add_versions("2021.11.01", "8c45f7fba029ab41f2a7e6545058d9eec94eef97ce70df58e92d85cfc08b4669")
 
-    if is_plat("windows") then
-        add_deps("cmake")
-    elseif is_plat("linux") then
+    add_deps("cmake")
+
+    if is_plat("linux") then
         add_syslinks("pthread")
     end
 
-    on_install("windows", function (package)
+    on_install(function (package)
         local configs = {"-DRE2_BUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-    end)
-
-    on_install("macosx", "linux", function (package)
-        local configs = {"prefix=" .. package:installdir()}
-        import("package.tools.make").build(package, configs)
-        if package:config("shared") then
-            os.vrunv("make shared-install ", configs)
-        else
-            os.vrunv("make static-install ", configs)
-        end
     end)
 
     on_test(function (package)

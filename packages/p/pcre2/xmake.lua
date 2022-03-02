@@ -7,11 +7,11 @@ package("pcre2")
 
     add_versions("10.39", "0781bd2536ef5279b1943471fdcdbd9961a2845e1d2c9ad849b9bd98ba1a9bd4")
 
-    if is_host("windows") then
-        add_deps("cmake")
-    end
+    add_deps("cmake")
 
-    add_configs("jit", {description = "Enable jit.", default = true, type = "boolean"})
+    if not is_plat("iphoneos") then
+        add_configs("jit", {description = "Enable jit.", default = true, type = "boolean"})
+    end
     add_configs("bitwidth", {description = "Set the code unit width.", default = "8", values = {"8", "16", "32"}})
 
     on_load(function (package)
@@ -27,7 +27,7 @@ package("pcre2")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install(function (package)
         if package:version():lt("10.21") then
             io.replace("CMakeLists.txt", [[SET(CMAKE_C_FLAGS -I${PROJECT_SOURCE_DIR}/src)]], [[SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I${PROJECT_SOURCE_DIR}/src")]], {plain = true})
         end
@@ -46,27 +46,6 @@ package("pcre2")
             table.insert(configs, "-DPCRE2_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
-    end)
-
-    on_install("macosx", "linux", "mingw", function (package)
-        local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:debug() then
-            table.insert(configs, "--enable-debug")
-        end
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-        if package:config("jit") then
-            table.insert(configs, "--enable-jit")
-        end
-        local bitwidth = package:config("bitwidth") or "8"
-        if bitwidth ~= "8" then
-            table.insert(configs, "--disable-pcre2-8")
-            table.insert(configs, "--enable-pcre2-" .. bitwidth)
-        end
-        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

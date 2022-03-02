@@ -97,7 +97,12 @@ package("python")
         os.cp("libs/*", package:installdir("lib"))
         os.cp("*", package:installdir())
         local python = path.join(package:installdir("bin"), "python.exe")
-        os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"})
+        if package:version():eq("3.9.10") then
+            -- https://github.com/xmake-io/xmake-repo/issues/1013
+            os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip==21.3.1"})
+        else
+            os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"})
+        end
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 

@@ -5,6 +5,7 @@ package("mimalloc")
     set_license("MIT")
 
     set_urls("https://github.com/microsoft/mimalloc/archive/v$(version).zip")
+    add_versions("2.0.5", "e8d4e031123e82081325a5131ac57d954f5123b6a13653a6d984cbc3b8488bd9")
     add_versions("2.0.3", "8e5f0b74fdafab09e8853415700a9ade4d62d5f56cd43f54adf02580ceda86c1")
     add_versions("2.0.2", "6ccba822e251b8d10f8a63d5d7767bc0cbfae689756a4047cdf3d1e4a9fd33d0")
     add_versions("2.0.1", "59c1fe79933e0ac9837a9ca4d954e4887dccd80a84281a6f849681b89a8b8876")
