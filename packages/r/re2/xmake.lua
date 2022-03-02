@@ -12,9 +12,7 @@ package("re2")
 
     add_deps("cmake")
 
-    if is_plat("windows") then
-        add_syslinks("shlwapi")
-    elseif is_plat("linux") then
+    if is_plat("linux") then
         add_syslinks("pthread")
     end
 
