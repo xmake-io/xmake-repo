@@ -14,8 +14,7 @@ package("qt5gui")
     end)
 
     on_fetch(function (package)
-        local base = package:dep("qt5base")
-        local qt = base:data("qt")
+        local qt = package:dep("qt5base"):data("qt")
         if not qt then
             return
         end
@@ -47,8 +46,7 @@ package("qt5gui")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
-        local base = package:dep("qt5base")
-        local qt = base:data("qt")
+        local qt = package:dep("qt5base"):data("qt")
         assert(qt, "qt5base is required")
     end)
 

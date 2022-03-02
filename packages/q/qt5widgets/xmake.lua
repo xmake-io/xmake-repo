@@ -14,8 +14,7 @@ package("qt5widgets")
     end)
 
     on_fetch(function (package)
-        local base = package:dep("qt5base")
-        local qt = base:data("qt")
+        local qt = package:dep("qt5base"):data("qt")
         if not qt then
             return
         end

@@ -1,3 +1,18 @@
+local function qt_table(sdkdir, version)
+    return {
+        version = version,
+        sdkdir = sdkdir,
+        sdkver = version,
+        bindir = path.join(sdkdir, "bin"),
+        includedir = path.join(sdkdir, "include"),
+        libdir = path.join(sdkdir, "lib"),
+        libexecdir = path.join(sdkdir, "libexec"),
+        mkspecsdir = path.join(sdkdir, "mkspecs"),
+        qmldir = path.join(sdkdir, "qml"),
+        pluginsdir = path.join(sdkdir, "plugins")
+    }
+end
+
 package("qt5base")
     set_kind("phony")
     set_homepage("https://www.qt.io")
@@ -23,16 +38,8 @@ package("qt5base")
         end
 
         if os.isfile(package:manifest_file()) then
-            -- find_qt can fail if it failed to find qt before, clear detect cache to prevent this
-            localcache.clear("detect")
-
             local installdir = package:installdir()
-            local qt = find_qt(installdir, {version=version})
-            assert(qt, "failed to retrieve qt info")
-            assert(path.absolute(qt.sdkdir) == path.absolute(installdir), "failed to retrieve qt info")
-
-            qt.version = qt.sdkver
-
+            local qt = qt_table(installdir, package:version():shortstr())
             package:data_set("qt", qt)
             return qt
         end
@@ -58,14 +65,12 @@ package("qt5base")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
-        import("core.cache.localcache")
         import("core.project.config")
-        import("detect.sdks.find_qt")
 
         local version = package:version()
 
         local host
-        if is_host("windows") then
+        if is_host("windows") or package:is_plat("mingw") then
             host = "windows"
         elseif is_host("linux") then
             host = "linux"
@@ -205,16 +210,7 @@ package("qt5base")
         os.mv(path.join(installeddir, "*"), installdir)
         os.rmdir(path.join(installdir, version))
 
-        -- find_qt can fail if it failed to find qt before, clear detect cache to prevent this
-        localcache.clear("detect")
-
-        local qt = find_qt(installdir, {version=version})
-        assert(qt, "failed to retrieve qt info")
-        assert(path.absolute(qt.sdkdir) == path.absolute(installdir), "failed to retrieve qt info")
-
-        qt.version = qt.sdkver
-
-        package:data_set("qt", qt)
+        package:data_set("qt", qt_table(installdir, version:shortstr()))
     end)
 
     on_test(function (package)
