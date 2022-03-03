@@ -10,6 +10,10 @@ package("enkits")
 
     add_deps("cmake")
     add_linkdirs("lib/enkiTS")
+    add_links("enkiTS")
+    if is_plat("linux") then
+        add_syslinks("pthread", "rt")
+    end
     on_load("windows", function (package)
         if package:config("shared") then
             package:add("defines", "ENKITS_DLL")
