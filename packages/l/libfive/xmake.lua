@@ -21,9 +21,6 @@ package("libfive")
         local configs = {"-DBUILD_GUILE_BINDINGS=OFF", "-DBUILD_PYTHON_BINDINGS=OFF", "-DBUILD_STUDIO_APP=OFF", "-DBUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         import("package.tools.cmake").install(package, configs)
         os.trycp("libfive/include", package:installdir("include"))
     end)

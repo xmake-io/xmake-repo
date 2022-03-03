@@ -57,9 +57,6 @@ package("mariadb-connector-c")
                 end
             end
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end	
         import("package.tools.cmake").install(package, configs)
     end)
 

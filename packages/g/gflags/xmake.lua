@@ -38,9 +38,6 @@ package("gflags")
             table.insert(configs, "-DBUILD_gflags_LIB=OFF")
             table.insert(configs, "-DBUILD_gflags_nothreads_LIB=ON")
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 

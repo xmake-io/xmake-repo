@@ -31,9 +31,6 @@ package("jasper")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DJAS_ENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DJAS_ENABLE_OPENGL=" .. (package:config("opengl") and "ON" or "OFF"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
 
         -- warning: only works on windows sdk 10.0.18362.0 and later
         import("package.tools.cmake").install(package, configs)

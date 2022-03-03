@@ -17,9 +17,6 @@ package("zziplib")
         if package:is_plat("windows") then
             table.insert(configs, "-DMSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 

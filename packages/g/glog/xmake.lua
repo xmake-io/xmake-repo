@@ -33,9 +33,6 @@ package("glog")
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DWITH_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 

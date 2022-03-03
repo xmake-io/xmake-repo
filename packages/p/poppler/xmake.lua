@@ -33,9 +33,6 @@ package("poppler")
         for _, libname in ipairs(libnames) do
             table.insert(configs, "-DENABLE_" .. libname:upper() .. "=" .. (package:config(libname) and "ON" or "OFF"))
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 

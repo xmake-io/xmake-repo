@@ -21,9 +21,6 @@ package("uriparser")
         if package:is_plat("windows") then
             table.insert(configs, "-DURIPARSER_MSVC_RUNTIME=/" .. package:config("vs_runtime"))
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 

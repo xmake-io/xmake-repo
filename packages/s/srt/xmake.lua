@@ -18,9 +18,6 @@ package("srt")
         local configs = {"-DENABLE_APPS=OFF", "-DENABLE_TESTING=OFF", "-DENABLE_UNITTESTS=OFF"}
         table.insert(configs, "-DENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         io.replace("CMakeLists.txt", "install(PROGRAMS scripts/srt-ffplay DESTINATION ${CMAKE_INSTALL_BINDIR})", "", {plain = true})
         table.insert(configs, "-DCMAKE_INSTALL_INCLUDEDIR=" .. package:installdir("include"))
         import("package.tools.cmake").install(package, configs)

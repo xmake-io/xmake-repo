@@ -32,9 +32,6 @@ package("itk")
                          "-DCMAKE_CXX_STANDARD=14"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         if package:is_plat("windows") then
             import("package.tools.cmake").install(package, configs, {buildir = path.join(os.tmpdir(), "itk_build")})
         else

@@ -50,9 +50,6 @@ package("freeglut")
                 table.insert(configs, "-DCMAKE_C_FLAGS=-DFREEGLUT_LIB_PRAGMAS=0 -DFREEGLUT_STATIC=1")
             end
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         if package:is_plat("linux") then
             import("package.tools.cmake").install(package, configs, {packagedeps = {"libxi", "libxxf86vm", "libxrandr", "libxrender"}})
         else

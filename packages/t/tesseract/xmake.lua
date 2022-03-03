@@ -33,9 +33,6 @@ package("tesseract")
             table.insert(configs, "-DWIN32_MT_BUILD=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         table.insert(configs, "-DBUILD_TRAINING_TOOLS=" .. (package:config("training") and "ON" or "OFF"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
     end)
