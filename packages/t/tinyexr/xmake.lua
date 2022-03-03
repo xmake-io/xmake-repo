@@ -26,5 +26,5 @@ package("tinyexr")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxfuncs("IsEXR", {includes = "tinyexr.h"}))
+        assert(package:has_cxxfuncs("IsEXR", {includes = "tinyexr.h"}))
     end)
