@@ -29,7 +29,7 @@ package("qt5gui")
                 link = link .. "_x86_64"
             elseif package:is_arch("arm64", "arm64-v8a") then
                 link = link .. "_arm64-v8a"
-            elseif package:is_arch("armv7", "armv7-a") then
+            elseif package:is_arch("armv7", "armv7-v7a") then
                 link = link .. "_armeabi-v7a"
             elseif package:is_arch("x86") then
                 link = link .. "_x86"

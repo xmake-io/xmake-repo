@@ -213,7 +213,7 @@ package("qt5base")
         package:data_set("qt", qt_table(installdir, version:shortstr()))
     end)
 
-    on_test(function (package)
+    on_test("windows", "linux", "macosx", "mingw@windows", "mingw@msys", "android", "iphoneos", function (package)
         local qt = assert(package:data("qt"))
         os.vrun(path.join(qt.bindir, "moc") .. " -v")
         os.vrun(path.join(qt.bindir, "rcc") .. " -v")
