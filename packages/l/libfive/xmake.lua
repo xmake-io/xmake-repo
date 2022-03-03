@@ -7,9 +7,11 @@ package("libfive")
     add_versions("2021.04.08", "e6a6448694f2204b003e29bba45754461261b9b2")
     add_versions("2022.02.22", "03b592cfc0fa3d9b3cf8117c191e0836d88a89a3")
 
-    add_deps("cmake", "eigen", "libpng", "boost")
-    if not is_plat("windows") then
-        add_deps("pkg-config")
+    add_deps("cmake", "libpng", "boost")
+    if is_plat("windows") then
+        add_deps("eigen 3.3.x")
+    else
+        add_deps("pkg-config", "eigen")
     end
     on_install("windows", "macosx", "linux", function (package)
         if package:is_plat("windows") then
