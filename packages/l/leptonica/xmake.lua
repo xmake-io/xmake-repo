@@ -11,7 +11,7 @@ package("leptonica")
     add_versions("1.82.0", "40fa9ac1e815b91e0fa73f0737e60c9eec433a95fa123f95f2573dd3127dd669")
 
     add_deps("cmake")
-    add_deps("libwebp", {configs = {img2webp = true, webpmux = true}})
+    add_deps("libwebp", {configs = {libwebpmux = true}})
     add_deps("zlib", "libtiff", "libpng", "libjpeg", "giflib")
     on_load("windows", function (package)
         if package:config("shared") then

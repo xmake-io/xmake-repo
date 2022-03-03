@@ -6,6 +6,7 @@ package("catch2")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/catchorg/Catch2/archive/v$(version).zip")
+    add_versions("2.13.8", "de0fd1f4c51a1021ffcb33a4d42028545bf1a0665a4ab59ddb839a0cc93f03a5")
     add_versions("2.13.7", "3f3ccd90ad3a8fbb1beeb15e6db440ccdcbebe378dfd125d07a1f9a587a927e9")
     add_versions("2.13.6", "39d50f5d1819cdf2908066664d57c2cde4a4000c364ad3376ea099735c896ff4")
     add_versions("2.13.5", "728679b056dc1248cc79b3a1999ff7453f76422c68417563fc47a0ac2aaeeaef")
