@@ -78,24 +78,33 @@ package("openssl")
         import("package.tools.make").install(package)
     end)
 
-    on_install("linux", "macosx", function (package)
-        -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
-        os.vrun("./config %s --openssldir=\"%s\" --prefix=\"%s\"",
-            package:debug() and "--debug" or "", package:installdir(), package:installdir())
-        import("package.tools.make").install(package)
-    end)
+    on_install("macosx", "linux", "cross", "android", function (package)
 
-    on_install("cross", "android", function (package)
-        local target = "linux-generic32"
-        if package:is_targetos("linux") then
-            if package:is_arch("arm64") then
-                target = "linux-aarch64"
-            else
-                target = "linux-armv4"
-            end
+        local target_arch = "generic32"
+        if package:is_arch("x86_64") then
+            target_arch = "x86_64"
+        elseif package:is_arch("i386", "x86") then
+            target_arch = "x86"
+        elseif package:is_arch("arm64", "arm64-v8a") then
+            target_arch = "aarch64"
+        elseif package:is_arch("arm.*") then
+            target_arch = "armv4"
+        elseif package:is_arch(".*64") then
+            target_arch = "generic64"
         end
-        local configs = {target, "-DOPENSSL_NO_HEARTBEATS", "no-shared", "no-threads",
-            "--prefix=" .. package:installdir()}
+
+        local target_plat = "linux"
+        if package:is_plat("macosx") then
+            target_plat = "darwin64"
+            target_arch = "x86_64-cc"
+        end
+
+        local target = target_plat .. "-" .. target_arch
+        local configs = {target,
+                         "-DOPENSSL_NO_HEARTBEATS",
+                         "no-shared",
+                         "no-threads",
+                         "--prefix=" .. package:installdir()}
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         os.vrunv("./Configure", configs, {envs = buildenvs})
         local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
