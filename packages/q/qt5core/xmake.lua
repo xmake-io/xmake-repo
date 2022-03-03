@@ -47,9 +47,9 @@ package("qt5core")
             qtdir = qt,
             version = qt.version,
             includedirs = {qt.includedir, path.join(qt.includedir, "QtCore")},
-            links = table.wrap(libname),
-            linkdirs = table.wrap(qt.libdir),
-            syslinks = syslinks and table.wrap(syslinks) or nil
+            links = libname,
+            linkdirs = qt.libdir,
+            syslinks = syslinks
         }
     end)
 

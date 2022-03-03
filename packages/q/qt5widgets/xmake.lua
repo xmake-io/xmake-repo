@@ -20,6 +20,7 @@ package("qt5widgets")
         end
 
         local libname = "Qt5Widgets"
+        local syslinks
         if package:is_plat("windows") then
             if package:is_debug() then
                 libname = libname .. "d"
@@ -39,8 +40,9 @@ package("qt5widgets")
         return {
             version = qt.version,
             includedirs = {qt.includedir, path.join(qt.includedir, "QtWidgets")},
-            links = table.wrap(libname),
-            linkdirs = table.wrap(qt.libdir)
+            links = libname,
+            linkdirs = qt.libdir,
+            syslinks = syslinks
         }
     end)
 

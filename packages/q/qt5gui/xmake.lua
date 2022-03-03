@@ -36,16 +36,16 @@ package("qt5gui")
                 libname = libname .. "_x86"
             end
 
-            syslinks = "libGLESv2"
+            syslinks = "GLESv2"
         end
 
         return {
             qtdir = qt,
             version = qt.version,
             includedirs = {qt.includedir, path.join(qt.includedir, "QtGui")},
-            links = table.wrap(libname),
-            linkdirs = table.wrap(qt.libdir),
-            syslinks = syslinks and table.wrap(syslinks) or nil
+            links = libname,
+            linkdirs = qt.libdir,
+            syslinks = syslinks
         }
     end)
 
