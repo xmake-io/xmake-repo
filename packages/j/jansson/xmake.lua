@@ -15,6 +15,7 @@ package("jansson")
         if package:is_plat("windows") then
             table.insert(configs, "-DJANSSON_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
