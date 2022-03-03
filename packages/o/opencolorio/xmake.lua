@@ -22,9 +22,6 @@ package("opencolorio")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-        if package:is_plat("windows") and package:config("shared") and package:config("vs_runtime"):startswith("MT") then
-            raise("Can not build this shared library against static runtime.")
-        end
         local configs = {"-DOCIO_BUILD_APPS=OFF", "-DOCIO_BUILD_OPENFX=OFF", "-DOCIO_BUILD_PYTHON=OFF", "-DOCIO_BUILD_DOCS=OFF", "-DOCIO_BUILD_TESTS=OFF", "-DOCIO_BUILD_GPU_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
