@@ -96,7 +96,7 @@ package("boost")
         package:add("defines", "BOOST_ALL_NO_LIB")
     end)
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", "windows", "bsd", "cross", function (package)
 
         -- force boost to compile with the desired compiler
         local file = io.open("user-config.jam", "a")
