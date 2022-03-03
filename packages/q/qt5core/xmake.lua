@@ -18,14 +18,13 @@ package("qt5core")
     end)
 
     on_fetch(function (package)
-        local base = package:dep("qt5base")
-        local qt = base:data("qt")
+        local qt = package:dep("qt5base"):data("qt")
         if not qt then
             return
         end
 
         local libname = "Qt5Core"
-        local links
+        local syslinks
         if package:is_plat("windows") then
             if package:is_debug() then
                 libname = libname .. "d"
@@ -35,21 +34,22 @@ package("qt5core")
                 libname = libname .. "_x86_64"
             elseif package:is_arch("arm64", "arm64-v8a") then
                 libname = libname .. "_arm64-v8a"
-            elseif package:is_arch("armv7", "armv7-v7a") then
+            elseif package:is_arch("armv7", "armeabi-v7a", "armeabi", "armv7-a", "armv5te") then
                 libname = libname .. "_armeabi-v7a"
             elseif package:is_arch("x86") then
                 libname = libname .. "_x86"
             end
 
-            links = {libname, "z"}
+            syslinks = "z"
         end
 
         return {
             qtdir = qt,
             version = qt.version,
             includedirs = {qt.includedir, path.join(qt.includedir, "QtCore")},
-            links = links or table.wrap(libname),
-            linkdirs = table.wrap(qt.libdir)
+            links = table.wrap(libname),
+            linkdirs = table.wrap(qt.libdir),
+            syslinks = syslinks and table.wrap(syslinks) or nil
         }
     end)
 

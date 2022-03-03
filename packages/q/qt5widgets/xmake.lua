@@ -19,27 +19,27 @@ package("qt5widgets")
             return
         end
 
-        local link = "Qt5Widgets"
+        local libname = "Qt5Widgets"
         if package:is_plat("windows") then
             if package:is_debug() then
-                link = link .. "d"
+                libname = libname .. "d"
             end
         elseif package:is_plat("android") then
             if package:is_arch("x86_64", "x64") then
-                link = link .. "_x86_64"
+                libname = libname .. "_x86_64"
             elseif package:is_arch("arm64", "arm64-v8a") then
-                link = link .. "_arm64-v8a"
-            elseif package:is_arch("armv7", "armv7-v7a") then
-                link = link .. "_armeabi-v7a"
+                libname = libname .. "_arm64-v8a"
+            elseif package:is_arch("armv7", "armeabi-v7a", "armeabi", "armv7-a", "armv5te") then
+                libname = libname .. "_armeabi-v7a"
             elseif package:is_arch("x86") then
-                link = link .. "_x86"
+                libname = libname .. "_x86"
             end
         end
 
         return {
             version = qt.version,
             includedirs = {qt.includedir, path.join(qt.includedir, "QtWidgets")},
-            links = table.wrap(link),
+            links = table.wrap(libname),
             linkdirs = table.wrap(qt.libdir)
         }
     end)

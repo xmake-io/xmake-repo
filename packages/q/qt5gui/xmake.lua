@@ -19,29 +19,33 @@ package("qt5gui")
             return
         end
 
-        local link = "Qt5Gui"
+        local libname = "Qt5Gui"
+        local syslinks
         if package:is_plat("windows") then
             if package:is_debug() then
-                link = link .. "d"
+                libname = libname .. "d"
             end
         elseif package:is_plat("android") then
             if package:is_arch("x86_64", "x64") then
-                link = link .. "_x86_64"
+                libname = libname .. "_x86_64"
             elseif package:is_arch("arm64", "arm64-v8a") then
-                link = link .. "_arm64-v8a"
-            elseif package:is_arch("armv7", "armv7-v7a") then
-                link = link .. "_armeabi-v7a"
+                libname = libname .. "_arm64-v8a"
+            elseif package:is_arch("armv7", "armeabi-v7a", "armeabi", "armv7-a", "armv5te") then
+                libname = libname .. "_armeabi-v7a"
             elseif package:is_arch("x86") then
-                link = link .. "_x86"
+                libname = libname .. "_x86"
             end
+
+            syslinks = "libGLESv2"
         end
 
         return {
             qtdir = qt,
             version = qt.version,
             includedirs = {qt.includedir, path.join(qt.includedir, "QtGui")},
-            links = table.wrap(link),
-            linkdirs = table.wrap(qt.libdir)
+            links = table.wrap(libname),
+            linkdirs = table.wrap(qt.libdir),
+            syslinks = syslinks and table.wrap(syslinks) or nil
         }
     end)
 

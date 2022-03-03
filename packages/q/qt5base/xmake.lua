@@ -65,7 +65,9 @@ package("qt5base")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+        import("core.base.semver")
         import("core.project.config")
+        import("core.tool.toolchain")
 
         local version = package:version()
 
@@ -104,7 +106,7 @@ package("qt5base")
 
             local compilerVersion
             if package:is_plat("windows") then
-                local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+                local vs = toolchain.load("msvc"):config("vs")
                 if tonumber(vs) >= 2019 then
                     compilerVersion = "msvc2019"
                 elseif vs == "2017" or vs == "2015" then
@@ -120,7 +122,6 @@ package("qt5base")
                 local cc = package:tool("cc")
                 local version = os.iorunv(cc, {"-dumpversion"}):trim()
 
-                import("core.base.semver")
                 local mingw_version = semver.new(version)
 
                 if mingw_version:ge("8.1") then
