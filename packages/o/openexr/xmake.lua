@@ -41,6 +41,13 @@ package("openexr")
         local configs = {"-DBUILD_TESTING=OFF", "-DINSTALL_OPENEXR_EXAMPLES=OFF", "-DINSTALL_OPENEXR_DOCS=OFF", "-DOPENEXR_BUILD_UTILS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:version():ge("3.0") then
+            if package:is_plat("windows") and package:version():le("3.1.4") then
+                local vs_toolset = import("core.tool.toolchain").load("msvc"):config("vs_toolset")
+                if vs_toolset then
+                    local toolsetver = vs_toolset:match("(%d+%.%d+)%.%d+")
+                    assert(tonumber(toolsetver) < 14.31, "This version is incompatible with MSVC 14.31.")
+                end
+            end
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         else
             if package:config("build_both") then
