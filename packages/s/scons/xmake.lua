@@ -23,9 +23,15 @@ package("scons")
         package:addenv("PYTHONPATH", PYTHONPATH, PYTHONPATH1)
 
         -- setup.py install needs these
-        io.writefile("build/doc/man/scons.1", "")
-        io.writefile("build/doc/man/scons-time.1", "")
-        io.writefile("build/doc/man/sconsign.1", "")
+        if package:version():ge("4.3.0") then
+            io.writefile("scons.1", "")
+            io.writefile("scons-time.1", "")
+            io.writefile("sconsign.1", "")
+        else
+            io.writefile("build/doc/man/scons.1", "")
+            io.writefile("build/doc/man/scons-time.1", "")
+            io.writefile("build/doc/man/sconsign.1", "")
+        end
 
         os.vrunv("python", {"setup.py", "install", "--prefix", package:installdir()}, {envs = {PYTHONPATH = package:installdir()}})
         if package:is_plat("windows") then
