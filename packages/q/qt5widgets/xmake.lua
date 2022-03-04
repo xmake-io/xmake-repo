@@ -19,29 +19,41 @@ package("qt5widgets")
             return
         end
 
-        local libname = "Qt5Widgets"
+        local linkname
         local syslinks
+        local frameworks
+        local includedirs = {qt.includedir}
         if package:is_plat("windows") then
+            linkname = "Qt5Widgets"
             if package:is_debug() then
-                libname = libname .. "d"
+                linkname = linkname .. "d"
             end
+            table.insert(includedirs, path.join(qt.includedir, "QtWidgets"))
         elseif package:is_plat("android") then
+            linkname = "Qt5Widgets"
             if package:is_arch("x86_64", "x64") then
-                libname = libname .. "_x86_64"
+                linkname = linkname .. "_x86_64"
             elseif package:is_arch("arm64", "arm64-v8a") then
-                libname = libname .. "_arm64-v8a"
+                linkname = linkname .. "_arm64-v8a"
             elseif package:is_arch("armv7", "armeabi-v7a", "armeabi", "armv7-a", "armv5te") then
-                libname = libname .. "_armeabi-v7a"
+                linkname = linkname .. "_armeabi-v7a"
             elseif package:is_arch("x86") then
-                libname = libname .. "_x86"
+                linkname = linkname .. "_x86"
             end
+            table.insert(includedirs, path.join(qt.includedir, "QtWidgets"))
+        elseif package:is_plat("macosx", "iphoneos") then
+            table.insert(includedirs, path.join(qt.libdir, "QtWidgets.framework/Versions/5/Headers"))
+            frameworks = "QtWidgets"
         end
 
         return {
+            qtdir = qt,
             version = qt.version,
-            includedirs = {qt.includedir, path.join(qt.includedir, "QtWidgets")},
-            links = libname,
+            includedirs = includedirs,
+            links = linkname,
             linkdirs = qt.libdir,
+            frameworks = frameworks,
+            frameworkdirs = qt.libdir,
             syslinks = syslinks
         }
     end)
