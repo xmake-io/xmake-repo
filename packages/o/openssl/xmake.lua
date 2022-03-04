@@ -78,7 +78,20 @@ package("openssl")
         import("package.tools.make").install(package)
     end)
 
-    on_install("macosx", "linux", "cross", "android", function (package)
+    on_install("linux", "macosx", function (package)
+        -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
+        local buildenvs = import("package.tools.autoconf").buildenvs(package)
+        local configs = {"--openssldir=" .. package:installdir(),
+                         "--prefix=" .. package:installdir()}
+        if package:debug() then
+            table.insert(configs, "--debug")
+        end
+        os.vrunv("./config", configs, {envs = buildenvs})
+        local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
+        import("package.tools.make").install(package, makeconfigs)
+    end)
+
+    on_install("cross", "android", function (package)
 
         local target_arch = "generic32"
         if package:is_arch("x86_64") then
@@ -104,6 +117,7 @@ package("openssl")
                          "-DOPENSSL_NO_HEARTBEATS",
                          "no-shared",
                          "no-threads",
+                         "--openssldir=" .. package:installdir(),
                          "--prefix=" .. package:installdir()}
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         os.vrunv("./Configure", configs, {envs = buildenvs})
