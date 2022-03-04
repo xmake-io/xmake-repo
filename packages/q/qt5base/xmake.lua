@@ -104,38 +104,35 @@ package("qt5base")
                 raise("unhandled arch " .. package:targetarch())
             end
 
-            local compilerVersion
+            local compiler_version
             if package:is_plat("windows") then
                 local vs = toolchain.load("msvc"):config("vs")
                 if tonumber(vs) >= 2019 then
-                    compilerVersion = "msvc2019"
+                    compiler_version = "msvc2019"
                 elseif vs == "2017" or vs == "2015" then
-                    compilerVersion = "msvc" .. vs
+                    compiler_version = "msvc" .. vs
                 else
                     raise("unhandled msvc version " .. vs)
                 end
 
                 if package:is_arch("x64", "x86_64") then
-                    compilerVersion = compilerVersion .. "_64"
+                    compiler_version = compiler_version .. "_64"
                 end
             else
                 local cc = package:tool("cc")
                 local version = os.iorunv(cc, {"-dumpversion"}):trim()
-
                 local mingw_version = semver.new(version)
-
                 if mingw_version:ge("8.1") then
-                    compilerVersion = "mingw81"
+                    compiler_version = "mingw81"
                 elseif mingw_version:ge("7.3") then
-                    compilerVersion = "mingw73"
+                    compiler_version = "mingw73"
                 elseif mingw_version:ge("5.3") then
-                    compilerVersion = "mingw53"
+                    compiler_version = "mingw53"
                 else
                     raise("unhandled mingw version " .. version)
                 end
             end
-
-            arch = "win" .. winarch .. "_" .. compilerVersion
+            arch = "win" .. winarch .. "_" .. compiler_version
         elseif package:is_plat("linux") then
             arch = "gcc_64"
         elseif package:is_plat("macosx") then
@@ -205,7 +202,6 @@ package("qt5base")
                 break
             end
         end
-
         assert(installdir, "couldn't find where qt was installed!")
 
         os.mv(path.join(installeddir, "*"), installdir)
@@ -214,7 +210,7 @@ package("qt5base")
         package:data_set("qt", qt_table(installdir, version:shortstr()))
     end)
 
-    on_test("windows", "linux", "macosx", "mingw@windows", "mingw@msys", "android", "iphoneos", function (package)
+    on_test(function (package)
         local qt = assert(package:data("qt"))
         os.vrun(path.join(qt.bindir, "moc") .. " -v")
         os.vrun(path.join(qt.bindir, "rcc") .. " -v")
