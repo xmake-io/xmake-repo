@@ -42,7 +42,7 @@ package("qt5core")
             end
             syslinks = "z"
             table.insert(includedirs, path.join(qt.includedir, "QtCore"))
-        elseif package:is_plat("macosx", "iphoneos") then
+        elseif package:is_plat("macosx") then
             table.insert(includedirs, path.join(qt.libdir, "QtCore.framework/Versions/5/Headers"))
             frameworks = "QtCore"
         else
