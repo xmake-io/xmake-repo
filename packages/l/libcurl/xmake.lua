@@ -60,16 +60,17 @@ package("libcurl")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, (package:version():ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
+        local version = package:version()
         local configopts = {cares    = "ENABLE_ARES",
-                            openssl  = "CURL_USE_OPENSSL",
-                            mbedtls  = "CURL_USE_MBEDTLS",
+                            openssl  = (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL"),
+                            mbedtls  = (version:ge("7.81") and "CURL_USE_MBEDTLS" or "CMAKE_USE_MBEDTLS"),
                             nghttp2  = "USE_NGHTTP2",
                             openldap = "CURL_USE_OPENLDAP",
                             libidn2  = "USE_LIBIDN2",
                             zlib     = "CURL_ZLIB",
                             zstd     = "CURL_ZSTD",
                             brotli   = "CURL_BROTLI",
-                            libssh2  = "CURL_USE_LIBSSH2"}
+                            libssh2  = (version:ge("7.81") and "CURL_USE_LIBSSL2" or "CMAKE_USE_LIBSSL2")}
         for name, opt in pairs(configopts) do
             table.insert(configs, "-D" .. opt .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
