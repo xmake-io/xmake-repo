@@ -206,13 +206,12 @@ package("qt5base")
         os.rmdir(path.join(installdir, version))
 
         package:data_set("qt", qt_table(installdir, version:shortstr()))
-        print("xxxxxxxxxxx")
-        print(os.files(path.join(package:installdir(), "**", "moc")))
-        print(os.files(path.join(package:installdir(), "**", "QCoreApplication")))
     end)
 
     on_test(function (package)
         local qt = assert(package:data("qt"))
-        os.vrun(path.join(qt.bindir, "moc") .. " -v")
-        os.vrun(path.join(qt.bindir, "rcc") .. " -v")
+        if not package:is_plat("mingw") then
+            os.vrun(path.join(qt.bindir, "moc") .. " -v")
+            os.vrun(path.join(qt.bindir, "rcc") .. " -v")
+        end
     end)
