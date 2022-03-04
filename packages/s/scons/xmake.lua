@@ -27,7 +27,7 @@ package("scons")
         io.writefile("build/doc/man/scons-time.1", "")
         io.writefile("build/doc/man/sconsign.1", "")
 
-        os.vrunv("python", {"setup.py", "install", "--prefix", package:installdir()})
+        os.vrunv("PYTHONPATH=\"" .. package:getenv("PYTHONPATH") .. "\" python", {"setup.py", "install", "--prefix", package:installdir()})
         if package:is_plat("windows") then
             os.mv(package:installdir("Scripts", "*"), package:installdir("bin"))
             os.rmdir(package:installdir("Scripts"))
