@@ -15,6 +15,9 @@ jobs:
     container: archlinux:base-devel
     runs-on: ${{ matrix.os }}
 
+    concurrency:
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Archlinux-${{ matrix.kind }}
+        cancel-in-progress: true
     steps:
       - name: Installation
         run: |
