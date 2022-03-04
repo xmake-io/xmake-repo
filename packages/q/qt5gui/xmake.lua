@@ -45,6 +45,10 @@ package("qt5gui")
         elseif package:is_plat("macosx") then
             table.insert(includedirs, path.join(qt.libdir, "QtGui.framework/Versions/5/Headers"))
             frameworks = "QtGui"
+        elseif package:is_plat("iphoneos") then
+            linkname = {"Qt5Gui", "qtharfbuzz"}
+            syslinks = {"qtlibpng", "z"}
+            table.insert(includedirs, path.join(qt.includedir, "QtGui"))
         else
             linkname = "Qt5Gui"
             table.insert(includedirs, path.join(qt.includedir, "QtGui"))
