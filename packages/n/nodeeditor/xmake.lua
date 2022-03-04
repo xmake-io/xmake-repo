@@ -12,7 +12,6 @@ package("nodeeditor")
 
     on_load(function (package)
         package:add("deps", "qt5core", "qt5gui", "qt5widgets", {debug = package:is_debug()})
-
         if package:config("shared") then
             package:add("defines", "NODE_EDITOR_SHARED")
         else
@@ -34,10 +33,14 @@ package("nodeeditor")
     end)
 
     on_test(function (package)
+        local cxflags
+        if not package:is_plat("windows") then
+            cxflags = "-fPIC"
+        end
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 QtNodes::FlowScene scene(std::make_shared<QtNodes::DataModelRegistry>());
                 QtNodes::FlowView view(&scene);
             }
-        ]]}, {configs = {languages = "c++14", cxflags = not package:is_plat("windows") and "-fPIC" or nil}, includes = {"nodes/FlowScene", "nodes/FlowView"}}))
+        ]]}, {configs = {languages = "c++14", cxflags = cxflags, includes = {"nodes/FlowScene", "nodes/FlowView"}}))
     end)

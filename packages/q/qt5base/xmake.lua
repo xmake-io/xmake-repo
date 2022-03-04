@@ -158,9 +158,7 @@ package("qt5base")
         os.mv(path.join(installdir, version, "*", "*"), installdir)
         os.rmdir(path.join(installdir, version))
 
-        print(os.files(path.join(installdir, "bin", "*")))
-
-        -- Special case for cross-compilation using MinGW since we need binaries we can run on the host
+        -- special case for cross-compilation using MinGW since we need binaries we can run on the host
         if package:is_plat("mingw") and not is_host("windows") then
             local runhost
             if is_host("linux") then
@@ -173,7 +171,7 @@ package("qt5base")
 
             os.vrunv("aqt", {"install-qt", "-O", path.join(installdir, "bin_host"), runhost, "desktop", version:shortstr(), "--archives", "qtbase"})
 
-            -- Add symbolic links for useful tools
+            -- add symbolic links for useful tools
             local tools = {
                 moc = true,
                 qmake = true,
