@@ -41,7 +41,7 @@ package("qt5widgets")
                 linkname = linkname .. "_x86"
             end
             table.insert(includedirs, path.join(qt.includedir, "QtWidgets"))
-        elseif package:is_plat("macosx", "iphoneos") then
+        elseif package:is_plat("macosx") then
             table.insert(includedirs, path.join(qt.libdir, "QtWidgets.framework/Versions/5/Headers"))
             frameworks = "QtWidgets"
         else
