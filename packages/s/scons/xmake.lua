@@ -7,6 +7,7 @@ package("scons")
     add_urls("https://github.com/SCons/scons/archive/refs/tags/$(version).zip",
              "https://github.com/SCons/scons.git")
     add_versions("4.1.0", "106259e92ba001feae5b50175bcec92306d0420bb08229fb037440cf303fcfc3")
+    add_versions("4.3.0", "c8cb3be5861c05a46250c60938857b9711c29a1500001da187e36dc05ee70295")
 
     add_deps("python 3.x", {kind = "binary"})
 
