@@ -42,5 +42,5 @@ package("nodeeditor")
                 QtNodes::FlowScene scene(std::make_shared<QtNodes::DataModelRegistry>());
                 QtNodes::FlowView view(&scene);
             }
-        ]]}, {configs = {languages = "c++14", cxflags = cxflags, includes = {"nodes/FlowScene", "nodes/FlowView"}}))
+        ]]}, {configs = {languages = "c++14", cxflags = cxflags, includes = {"nodes/FlowScene", "nodes/FlowView"}}}))
     end)

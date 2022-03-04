@@ -169,6 +169,7 @@ package("qt5base")
                 raise("unhandled host " .. os.host())
             end
 
+            -- download qtbase to bin_host folder
             os.vrunv("aqt", {"install-qt", "-O", path.join(installdir, "bin_host"), runhost, "desktop", version:shortstr(), "--archives", "qtbase"})
 
             -- add symbolic links for useful tools
