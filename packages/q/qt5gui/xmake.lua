@@ -46,7 +46,7 @@ package("qt5gui")
             table.insert(includedirs, path.join(qt.libdir, "QtGui.framework/Versions/5/Headers"))
             frameworks = "QtGui"
         else
-            linkname = "QtGui"
+            linkname = "Qt5Gui"
             table.insert(includedirs, path.join(qt.includedir, "QtGui"))
         end
 
