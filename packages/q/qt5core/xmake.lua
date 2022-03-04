@@ -9,10 +9,6 @@ package("qt5core")
     add_versions("5.15.2", "dummy")
     add_versions("5.12.5", "dummy")
 
-    if is_plat("android") then
-        add_syslinks("z")
-    end
-
     on_load(function (package)
         package:add("deps", "qt5base", {debug = package:is_debug(), version = package:version_str()})
     end)
@@ -49,6 +45,9 @@ package("qt5core")
         elseif package:is_plat("macosx", "iphoneos") then
             table.insert(includedirs, path.join(qt.libdir, "QtCore.framework/Versions/5/Headers"))
             frameworks = "QtCore"
+        else
+            linkname = "Qt5Core"
+            table.insert(includedirs, path.join(qt.includedir, "QtCore"))
         end
 
         return {
