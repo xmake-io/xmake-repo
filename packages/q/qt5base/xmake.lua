@@ -57,9 +57,7 @@ package("qt5base")
         if not qtversion:satisfies("5.x") then
             return
         end
-
         qt.version = qt.sdkver
-
         package:data_set("qt", qt)
         return qt
     end)
