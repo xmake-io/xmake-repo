@@ -25,7 +25,7 @@ package("aqt")
             os.mv(package:originfile(), path.join(package:installdir("bin"), "aqt.exe"))
         else
             -- ensurepip has been dropped in recent releases
-            try{function () os.vrunv("python3", {"-m", "ensurepip"}) end}
+            try {function () os.vrunv("python3", {"-m", "ensurepip"}) end}
 
             os.vrunv("python3", {"-m", "pip", "install", "-U", "pip"})
             os.vrunv("python3", {"-m", "pip", "install", "aqtinstall"})
