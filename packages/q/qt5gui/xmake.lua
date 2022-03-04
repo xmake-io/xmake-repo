@@ -42,7 +42,7 @@ package("qt5gui")
             end
             syslinks = "GLESv2"
             table.insert(includedirs, path.join(qt.includedir, "QtGui"))
-        elseif package:is_plat("macosx", "iphoneos") then
+        elseif package:is_plat("macosx") then
             table.insert(includedirs, path.join(qt.libdir, "QtGui.framework/Versions/5/Headers"))
             frameworks = "QtGui"
         else
