@@ -47,8 +47,8 @@ package("qt5core")
             frameworks = "QtCore"
         elseif package:is_plat("iphoneos") then
             linkname = "Qt5Core"
-            frameworks = {"UIKit", "CoreFoundation"}
-            syslinks = "pcre2"
+            frameworks = {"UIKit", "CoreServices", "CoreFoundation"}
+            syslinks = {"qtpcre2", "z"}
             table.insert(includedirs, path.join(qt.includedir, "QtCore"))
         else
             linkname = "Qt5Core"
