@@ -206,6 +206,9 @@ package("qt5base")
         os.rmdir(path.join(installdir, version))
 
         package:data_set("qt", qt_table(installdir, version:shortstr()))
+        print("xxxxxxxxxxx")
+        print(os.files(path.join(package:installdir(), "**", "moc")))
+        print(os.files(path.join(package:installdir(), "**", "QCoreApplication")))
     end)
 
     on_test(function (package)
