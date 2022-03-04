@@ -1,5 +1,4 @@
 package("nodeeditor")
-
     set_homepage("https://github.com/paceholder/nodeeditor")
     set_description("Qt Node Editor. Dataflow programming framework")
     set_license("BSD-3")

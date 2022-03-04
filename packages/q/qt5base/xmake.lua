@@ -155,63 +155,49 @@ package("qt5base")
         os.vrunv("aqt", {"install-qt", "-O", installdir, host, target, version:shortstr(), arch})
 
         -- move files to root
-        local subdirs = {}
-        if package:is_plat("linux") then
-            table.insert(subdirs, package:is_arch("x86_64") and "gcc_64" or "gcc_32")
-            table.insert(subdirs, package:is_arch("x86_64") and "clang_64" or "clang_32")
-        elseif package:is_plat("macosx") then
-            table.insert(subdirs, package:is_arch("x86_64") and "clang_64" or "clang_32")
-        elseif package:is_plat("windows") then
-            local vs = config.get("vs")
-            if vs then
-                table.insert(subdirs, package:is_arch("x64") and "msvc" .. vs .. "_64" or "msvc" .. vs .. "_32")
-                table.insert(subdirs, "msvc" .. vs)
-            end
-            table.insert(subdirs, package:is_arch("x64") and "msvc*_64" or "msvc*_32")
-            table.insert(subdirs, "msvc*")
-        elseif package:is_plat("mingw") then
-            table.insert(subdirs, package:is_arch("x86_64") and "mingw*_64" or "mingw*_32")
-        elseif package:is_plat("android") then
-            local subdir
-            if package:is_arch("arm64-v8a") then
-                subdir = "android_arm64_v8a"
-            elseif package:is_arch("armeabi-v7a", "armeabi", "armv7-a", "armv5te") then -- armv7-a/armv5te are deprecated
-                subdir = "android_armv7"
-            elseif package:is_arch("x86", "i386") then -- i386 is deprecated
-                subdir = "android_x86"
-            elseif package:is_arch("x86_64") then
-                subdir = "android_x86_64"
-            end
-            if subdir then
-                table.insert(subdirs, subdir)
-            end
-            table.insert(subdirs, "android")
-        elseif package:is_plat("wasm") then
-            table.insert(subdirs, "wasm_32")
-        else
-            table.insert(subdirs, "*")
-        end
-
-        local installeddir
-        for _, subdir in pairs(subdirs) do
-            local results = os.dirs(path.join(installdir, version, subdir), function (file, isdir) return false end)
-            if results and #results > 0 then
-                installeddir = results[1]
-                break
-            end
-        end
-        assert(installdir, "couldn't find where qt was installed!")
-
-        os.mv(path.join(installeddir, "*"), installdir)
+        os.mv(path.join(installdir, version, "*", "*"), installdir)
         os.rmdir(path.join(installdir, version))
+
+        print(os.files(path.join(installdir, "bin", "*")))
+
+        -- Special case for cross-compilation using MinGW since we need binaries we can run on the host
+        if package:is_plat("mingw") and not is_host("windows") then
+            local runhost
+            if is_host("linux") then
+                runhost = "linux"
+            elseif is_host("macosx") then
+                runhost = "mac"
+            else
+                raise("unhandled host " .. os.host())
+            end
+
+            os.vrunv("aqt", {"install-qt", "-O", path.join(installdir, "bin_host"), runhost, "desktop", version:shortstr(), "--archives", "qtbase"})
+
+            -- Add symbolic links for useful tools
+            local tools = {
+                moc = true,
+                qmake = true,
+                rcc = true,
+                uic = true
+            }
+
+            for _, file in pairs(os.files(path.join(installdir, "bin_host", version, "*", "bin", "*"))) do
+                local filename = path.filename(file)
+                if (tools[filename]) then
+                    local targetpath = path.join(installdir, "bin", filename)
+                    os.ln(file, path.join(installdir, "bin", filename))
+                    -- some tools like CMake will try to run moc.exe, trick them
+                    os.rm(targetpath .. ".exe")
+                    os.ln(file, path.join(installdir, "bin", filename .. ".exe"))
+                end
+            end
+        end
 
         package:data_set("qt", qt_table(installdir, version:shortstr()))
     end)
 
     on_test(function (package)
         local qt = assert(package:data("qt"))
-        if not package:is_plat("mingw") then
-            os.vrun(path.join(qt.bindir, "moc") .. " -v")
-            os.vrun(path.join(qt.bindir, "rcc") .. " -v")
-        end
+        os.vrun(path.join(qt.bindir, "moc") .. " -v")
+        os.vrun(path.join(qt.bindir, "rcc") .. " -v")
     end)
