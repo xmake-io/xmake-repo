@@ -8,21 +8,16 @@ package("arrow")
              "https://github.com/apache/arrow.git")
     add_versions('7.0.0', '57e13c62f27b710e1de54fd30faed612aefa22aa41fa2c0c3bacd204dd18a8f3')
 
-    local features = {
-        csv = {description = "CSV reader module", default = true, type = "boolean"},
-        json = {description = "JSON reader module", default = false, type = "boolean"},
-        engine = {description = "Build the Arrow Execution Engine", default = true, type = "boolean"},
-        dataset = {description = "Dataset API, implies the Filesystem API", default = true, type = "boolean"},
-        orc = {description = "Arrow integration with Apache ORC", default = false, type = "boolean"},
-        parquet = {description = "Apache Parquet libraries and Arrow integration", default = false, type = "boolean"},
-        python = {description = "Enable Python C++ integration library. Requires python and numpy (not managed by xrepo).", default = false, type = "boolean"},
-        -- Arrow uses vendored mimalloc and jemalloc. So do not add those two libraries to configdeps.
-        mimalloc = {description = "Build the Arrow mimalloc-based allocator", default = true, type = "boolean"},
-        jemalloc = {description = "Build the Arrow jemalloc-based allocator", default = false, type = "boolean"},
-    }
-    for config, desc in pairs(features) do
-        add_configs(config, desc)
-    end
+    add_configs(csv,      {description = "CSV reader module", default = true, type = "boolean"})
+    add_configs(json,     {description = "JSON reader module", default = false, type = "boolean"})
+    add_configs(engine,   {description = "Build the Arrow Execution Engine", default = true, type = "boolean"})
+    add_configs(dataset,  {description = "Dataset API, implies the Filesystem API", default = true, type = "boolean"})
+    add_configs(orc,      {description = "Arrow integration with Apache ORC", default = false, type = "boolean"})
+    add_configs(parquet,  {description = "Apache Parquet libraries and Arrow integration", default = false, type = "boolean"})
+    add_configs(python,   {description = "Enable Python C++ integration library. Requires python and numpy (not managed by xrepo).", default = false, type = "boolean"})
+    -- Arrow uses vendored mimalloc and jemalloc. Do not add these two libraries to configdeps.
+    add_configs(mimalloc, {description = "Build the Arrow mimalloc-based allocator", default = true, type = "boolean"})
+    add_configs(jemalloc, {description = "Build the Arrow jemalloc-based allocator", default = false, type = "boolean"})
 
     -- Some libraries are required for build with our default config settings.
     local configdeps = {
@@ -83,8 +78,10 @@ ${yellow}In case of boost dependency conflicts, please use following code (order
         table.insert(configs, "-DDARROW_BUILD_SHARED=" .. (shared and "ON" or "OFF"))
         table.insert(configs, "-DARROW_DEPENDENCY_USE_SHARED=" .. (shared and "ON" or "OFF"))
 
-        for config, _ in pairs(features) do
-            table.insert(configs, "-DARROW_" .. string.upper(config)  .. "=" .. (package:config(config) and "ON" or "OFF"))
+        for config, enabled in pairs(package:configs()) do
+            if not package:extraconf("configs", config, "builtin") and configdeps[config] == nil then
+                table.insert(configs, "-DARROW_" .. string.upper(config)  .. "=" .. (enabled and "ON" or "OFF"))
+            end
         end
 
         for config, dep in pairs(configdeps) do
