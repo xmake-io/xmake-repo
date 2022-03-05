@@ -16,7 +16,7 @@ package("flex")
         add_deps("m4")
     end
 
-    on_load("macosx", "linux", function (package)
+    on_load("macosx", "linux", "bsd", "android", "iphoneos", "cross", function (package)
         package:addenv("PATH", "bin")
     end)
 
@@ -24,7 +24,7 @@ package("flex")
         -- handled by winflexbison
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", "android", "iphoneos", "cross", function (package)
         import("package.tools.autoconf").install(package)
     end)
 
