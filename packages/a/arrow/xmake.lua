@@ -88,6 +88,9 @@ ${yellow}In case of boost dependency conflicts, please use following code (order
             table.insert(configs, "-DARROW_WITH_" .. string.upper(config)  .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
 
+        -- To fix arrow src/arrow/CMakeLists.txt:538, when CMAKE_SYSTEM_NAME set but CMAKE_SYSTEM_PROCESSOR is not causing error.
+        table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "x86_64" or "x86"))
+
         os.cd("cpp")
         import("package.tools.cmake").install(package, configs)
     end)
