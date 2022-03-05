@@ -19,15 +19,19 @@ package("bison")
         add_deps("m4")
     end
 
-    on_load("macosx", "linux", "bsd", function (package)
+    on_load(function (package)
+        if package:is_plat("windows") then
+            -- handled by winflexbison
+            return
+        end
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", function (package)
-        -- handled by winflexbison
-    end)
-
-    on_install("macosx", "linux", "bsd", function (package)
+    on_install(function (package)
+        if package:is_plat("windows") then
+            -- handled by winflexbison
+            return
+        end
         import("package.tools.autoconf").install(package)
         os.rm(package:installdir("share", "doc"))
     end)
