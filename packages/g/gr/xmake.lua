@@ -59,7 +59,7 @@ package("gr")
                 add_versions("0.62.0", "99da04bda9520e99181dd28a175de3689d699e0bbe09495d328b715d17f874a2")
                 add_versions("0.64.0", "d0e19779973602e58ed81eb607a612d9b89d883423ce6d5b3c373d63e639e445")
             end
-        elseif is_arch("x86") then
+        elseif is_arch("i386") then
             add_urls("https://github.com/sciapp/gr/releases/download/v$(version)/gr-$(version)-Linux-i386.tar.gz")
             add_versions("0.57.0", "f6ec390e1f9b2a0a83d5b7da95ebfe615aedc84075475a28c363b671353c65c5")
             add_versions("0.58.0", "681dbd0fa7cea25e189d4f58e5a4b7cf002cea2b13a663df67598f95f6a548a6")
@@ -70,7 +70,7 @@ package("gr")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
-    on_load("windows|x64", "macosx", "linux|x86,x86_64", function (package)
+    on_load("windows|x64", "macosx", "linux|i386", "linux|x86_64", function (package)
         local libs = {"GR", "GR3", "GRM", "GKS"}
         local prefix = ""
         if package:is_plat("windows") then
@@ -83,7 +83,7 @@ package("gr")
         end
     end)
 
-    on_install("windows|x64", "macosx", "linux|x86,x86_64", function (package)
+    on_install("windows|x64", "macosx", "linux|i386", "linux|x86_64", function (package)
         os.cp("*", package:installdir())
         package:addenv("PATH", ".")
         package:addenv("PATH", "bin")

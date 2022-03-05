@@ -21,7 +21,7 @@ package("bazel")
         add_versions("5.0.0", "4a88b8f48cac3bf6fe657332631c36b4d255628c87bd77eb3159f4eb166f5e66")
     end
 
-    on_install("@windows|x64", "@macosx|x86_64,arm64", "@linux|x86_64,arm64", function (package)
+    on_install("@windows|x64", "@macosx", "@linux|x86_64", "@linux|arm64", function (package)
         if is_host("windows") then
             os.cp("../bazel-*.exe", path.join(package:installdir("bin"), "bazel.exe"))
         else

@@ -33,7 +33,7 @@ package("llvm-mingw")
         end
     end
 
-    on_install("@windows", "@linux|x86_64,arm64", function (package)
+    on_install("@windows", "@linux|x86_64", "@linux|arm64", function (package)
         os.cp("*", package:installdir())
     end)
 
