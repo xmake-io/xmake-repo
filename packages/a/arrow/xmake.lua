@@ -65,7 +65,7 @@ ${yellow}In case of boost dependency conflicts, please use following code (order
         end
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "bsd", function (package)
         local configs = {
             "-DARROW_BUILD_TESTS=OFF",
             "-DARROW_DEPENDENCY_SOURCE=SYSTEM",
