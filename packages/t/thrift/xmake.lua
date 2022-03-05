@@ -34,7 +34,7 @@ package("thrift")
         end
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "bsd", "cross", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DWITH_STDTHREADS=ON",
