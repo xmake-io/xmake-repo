@@ -17,7 +17,7 @@ package("gyp-next")
 
     on_test(function (package)
         if is_host("windows") then
-            os.vrun("cmd /c \"gyp --help\"")
+            os.vrun("gyp.bat --help")
         else
             os.vrun("gyp --help")
         end

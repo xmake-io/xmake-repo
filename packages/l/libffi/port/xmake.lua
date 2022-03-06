@@ -32,12 +32,12 @@ if is_plat("windows") then
     elseif is_arch("arm64") then
         targetarch = "ARM_WIN64"
     end
-elseif is_plat("macosx") and is_arch("x86") then
+elseif is_plat("macosx") and is_arch("i386", "x86") then
     targetarch = "X86_DARWIN"
-elseif is_plat("bsd") and is_arch("x86") then
+elseif is_plat("bsd") and is_arch("i386", "x86") then
     targetarch = "X86_FREEBSD"
 else
-    if is_arch("x86") then
+    if is_arch("i386", "x86") then
         targetarch = "X86"
     elseif is_arch("x64") then
         targetarch = "X86_64"
@@ -133,7 +133,7 @@ target("ffi")
     if is_plat("windows") and is_arch("x86") then
         add_asflags("/GZ")
     end
-    if is_arch("x86") then
+    if is_arch("i386", "x86") then
         add_files("src/x86/ffi.c")
         add_files(is_plat("windows") and "src/x86/sysv_intel.S" or "src/x86/sysv.S")
         add_includedirs("src/x86")

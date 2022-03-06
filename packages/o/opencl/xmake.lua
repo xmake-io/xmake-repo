@@ -17,7 +17,7 @@ package("opencl")
             if package:is_arch("x64") then
                 table.insert(archsuffixes, "lib64")
                 table.insert(archsuffixes, path.join("lib", "x64"))
-            elseif package:is_arch("x86") then
+            elseif package:is_arch("x86", "i386") then
                 table.insert(archsuffixes, path.join("lib", "x86"))
             elseif package:is_arch("x86_64") then
                 table.insert(archsuffixes, "lib64")
