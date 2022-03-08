@@ -7,9 +7,11 @@ package("hiredis")
     add_urls("https://github.com/redis/hiredis/archive/refs/tags/$(version).tar.gz",
              "https://github.com/redis/hiredis.git")
     add_versions('v1.0.2', 'e0ab696e2f07deb4252dda45b703d09854e53b9703c7d52182ce5a22616c3819')
-    -- This patch is created with hiredis commit f8de9a4. Removed NuGet related install code.
-    -- We need latest CMakeLists.txt to get static library support. It also contains other fixes.
-    add_patches("v1.0.2", path.join(os.scriptdir(), "patches", "v1.0.2", "cmake.patch"), "a2115f727821e4a121e4e2145ef3e5caa0669559f24f2213125119520ee4d881")
+
+    if is_plat("windows", "mingw") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
+    end
 
     add_configs("openssl", {description = "with openssl library", default = false, type = "boolean"})
 
@@ -22,10 +24,17 @@ package("hiredis")
     end)
 
     on_install(function (package)
+        if not package:config("shared") then
+            if package:version():eq("v1.0.2") then
+                -- Following change is required for package user to call `find_package(hiredis)` to work.
+                io.replace("CMakeLists.txt", "ADD_LIBRARY(hiredis SHARED", "ADD_LIBRARY(hiredis", {plain = true})
+                io.replace("CMakeLists.txt", "ADD_LIBRARY(hiredis_ssl SHARED", "ADD_LIBRARY(hiredis_ssl", {plain = true})
+            end
+        end
+
         local configs = {
             "-DDISABLE_TESTS=ON",
             "-DENABLE_SSL_TESTS=OFF",
-            "-DENABLE_ASYNC_TESTS=OFF",
         }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
