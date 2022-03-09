@@ -5,6 +5,11 @@ import("core.platform.platform")
 -- is supported platform and architecture?
 function is_supported(instance, plat, arch, opt)
 
+    -- ignore template package
+    if instance.is_template and instance:is_template() then
+        return false
+    end
+
     -- get script
     local script = instance:get("install")
     local result = nil
@@ -59,6 +64,12 @@ function main(opt)
         local packagename = path.filename(packagedir)
         local packagefile = path.join(packagedir, "xmake.lua")
         local instance = package.load_from_repository(packagename, nil, packagedir, packagefile)
+        local basename = instance:get("base")
+        if instance and basename then
+            local basedir = path.join("packages", basename:sub(1, 1):lower(), basename:lower())
+            local basefile = path.join(basedir, "xmake.lua")
+            instance._BASE = package.load_from_repository(basename, nil, basedir, basefile)
+        end
         if instance then
             for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw", "msys", "bsd", "cross"}) do
                 local archs = platform.archs(plat)
