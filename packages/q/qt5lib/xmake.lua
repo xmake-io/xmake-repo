@@ -71,12 +71,3 @@ package("qt5lib")
         local qt = package:dep("qt5base"):data("qt")
         assert(qt, "qt5base is required")
     end)
-
-    on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            int test(int argc, char** argv) {
-                QGuiApplication app (argc, argv);
-                return app.exec();
-            }
-        ]]}, {configs = {languages = "c++14", cxflags = not package:is_plat("windows") and "-fPIC" or nil}, includes = {"QGuiApplication"}}))
-    end)

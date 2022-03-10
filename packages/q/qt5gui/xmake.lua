@@ -13,14 +13,13 @@ package("qt5gui")
             package:data_set("syslinks", {"qtlibpng", "z"})
         end
     
-        local base = package:base()
-        base:script("load")(package)
+        package:base():script("load")(package)
     end)
 
     on_test(function (package)
         local cxflags
         if not package:is_plat("windows") then
-            cxflags ="-fPIC"
+            cxflags = "-fPIC"
         end
         assert(package:check_cxxsnippets({test = [[
             int test(int argc, char** argv) {

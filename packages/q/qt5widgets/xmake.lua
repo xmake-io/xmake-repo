@@ -6,14 +6,13 @@ package("qt5widgets")
         package:add("deps", "qt5core", "qt5gui", {debug = package:is_debug(), version = package:version_str()})
         package:data_set("libname", "Widgets")
 
-        local base = package:base()
-        base:script("load")(package)
+        package:base():script("load")(package)
     end)
 
     on_test(function (package)
         local cxflags
         if not package:is_plat("windows") then
-            cxflags ="-fPIC"
+            cxflags = "-fPIC"
         end
         assert(package:check_cxxsnippets({test = [[
             int test(int argc, char** argv) {
