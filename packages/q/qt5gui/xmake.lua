@@ -14,6 +14,7 @@ package("qt5gui")
         end
     
         package:base():script("load")(package)
+        package:set("kind", "library")
     end)
 
     on_test(function (package)
