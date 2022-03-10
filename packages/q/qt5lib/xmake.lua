@@ -12,6 +12,10 @@ package("qt5lib")
     add_versions("5.15.2", "dummy")
     add_versions("5.12.5", "dummy")
 
+    on_load(function (package)
+        package:add("deps", "qt5base", {debug = package:is_debug(), version = package:version_str()})
+    end)
+
     on_fetch(function (package)
         local qt = package:dep("qt5base"):data("qt")
         if not qt then

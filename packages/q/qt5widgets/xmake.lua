@@ -3,8 +3,11 @@ package("qt5widgets")
     set_kind("library")
 
     on_load(function (package)
-        package:add("deps", "qt5base", "qt5core", "qt5gui", {debug = package:is_debug(), version = package:version_str()})
+        package:add("deps", "qt5core", "qt5gui", {debug = package:is_debug(), version = package:version_str()})
         package:data_set("libname", "Widgets")
+    
+        local base = package:base()
+        base:script("load")(package)
     end)
 
     on_test(function (package)

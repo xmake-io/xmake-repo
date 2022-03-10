@@ -3,7 +3,7 @@ package("qt5gui")
     set_kind("library")
 
     on_load(function (package)
-        package:add("deps", "qt5base", "qt5core", {debug = package:is_debug(), version = package:version_str()})
+        package:add("deps", "qt5core", {debug = package:is_debug(), version = package:version_str()})
         package:data_set("libname", "Gui")
         if package:is_plat("android") then
             package:data_set("syslinks", "GLESv2")
@@ -11,6 +11,9 @@ package("qt5gui")
             package:data_set("links", "qtharfbuzz")
             package:data_set("syslinks", {"qtlibpng", "z"})
         end
+    
+        local base = package:base()
+        base:script("load")(package)
     end)
 
     on_test(function (package)

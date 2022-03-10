@@ -2,7 +2,6 @@ package("qt5core")
     set_base("qt5lib")
     
     on_load(function (package)
-        package:add("deps", "qt5base", {debug = package:is_debug(), version = package:version_str()})
         package:data_set("libname", "Core")
         if package:is_plat("android") then
             package:data_set("syslinks", "z")
@@ -11,6 +10,9 @@ package("qt5core")
             package:data_set("links", "qtharfbuzz")
             package:data_set("syslinks", {"qtpcre2", "z"})
         end
+    
+        local base = package:base()
+        base:script("load")(package)
     end)
 
     on_test(function (package)
