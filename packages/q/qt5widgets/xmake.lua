@@ -5,7 +5,7 @@ package("qt5widgets")
     on_load(function (package)
         package:add("deps", "qt5core", "qt5gui", {debug = package:is_debug(), version = package:version_str()})
         package:data_set("libname", "Widgets")
-    
+
         local base = package:base()
         base:script("load")(package)
     end)

@@ -1,6 +1,6 @@
 package("qt5core")
     set_base("qt5lib")
-    
+
     on_load(function (package)
         package:data_set("libname", "Core")
         if package:is_plat("android") then

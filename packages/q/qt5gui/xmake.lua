@@ -5,6 +5,7 @@ package("qt5gui")
     on_load(function (package)
         package:add("deps", "qt5core", {debug = package:is_debug(), version = package:version_str()})
         package:data_set("libname", "Gui")
+
         if package:is_plat("android") then
             package:data_set("syslinks", "GLESv2")
         elseif package:is_plat("iphoneos") then

@@ -1,7 +1,4 @@
 package("qt5lib")
-    if xmake.version():ge("2.6.5") then
-        set_kind("template")
-    end
     set_homepage("https://www.qt.io")
     set_description("Qt is the faster, smarter way to create innovative devices, modern UIs & applications for multiple screens. Cross-platform software development at its best.")
     set_license("LGPL-3")
@@ -13,6 +10,9 @@ package("qt5lib")
     add_versions("5.12.5", "dummy")
 
     on_load(function (package)
+        if package.is_template then
+            package:set("kind", "template")
+        end
         package:add("deps", "qt5base", {debug = package:is_debug(), version = package:version_str()})
     end)
 
