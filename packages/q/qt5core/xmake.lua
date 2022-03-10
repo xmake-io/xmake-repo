@@ -7,7 +7,6 @@ package("qt5core")
             package:data_set("syslinks", "z")
         elseif package:is_plat("iphoneos") then
             package:data_set("frameworks", {"UIKit", "CoreText", "CoreGraphics", "CoreServices", "CoreFoundation"})
-            package:data_set("links", "qtharfbuzz")
             package:data_set("syslinks", {"qtpcre2", "z"})
         end
 
