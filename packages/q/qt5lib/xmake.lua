@@ -44,7 +44,7 @@ package("qt5lib")
             elseif package:is_arch("x86") then
                 linkname = linkname .. "_x86"
             end
-            table.insert(includedirs, path.join(qt.includedir, "QtGui"))
+            table.insert(includedirs, path.join(qt.includedir, "Qt" .. libname))
         elseif package:is_plat("macosx") then
             table.insert(includedirs, path.join(qt.libdir, "Qt" .. libname .. ".framework", "Versions", "5", "Headers"))
             frameworks = "Qt" .. libname
