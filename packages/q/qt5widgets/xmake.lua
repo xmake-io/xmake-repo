@@ -11,6 +11,10 @@ package("qt5widgets")
     end)
 
     on_test(function (package)
+        local cxflags
+        if not package:is_plat("windows") then
+            cxflags ="-fPIC"
+        end
         assert(package:check_cxxsnippets({test = [[
             int test(int argc, char** argv) {
                 QApplication app (argc, argv);
@@ -18,5 +22,5 @@ package("qt5widgets")
                 button.show();
                 return app.exec();
             }
-        ]]}, {configs = {languages = "c++14", cxflags = not package:is_plat("windows") and "-fPIC" or nil}, includes = {"QApplication", "QPushButton"}}))
+        ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = {"QApplication", "QPushButton"}}))
     end)

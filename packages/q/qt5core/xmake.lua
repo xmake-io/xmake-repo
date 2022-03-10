@@ -16,10 +16,14 @@ package("qt5core")
     end)
 
     on_test(function (package)
+        local cxflags
+        if not package:is_plat("windows") then
+            cxflags ="-fPIC"
+        end
         assert(package:check_cxxsnippets({test = [[
             int test(int argc, char** argv) {
                 QCoreApplication app (argc, argv);
                 return app.exec();
             }
-        ]]}, {configs = {languages = "c++14", cxflags = not package:is_plat("windows") and "-fPIC" or nil}, includes = {"QCoreApplication"}}))
+        ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = {"QCoreApplication"}}))
     end)
