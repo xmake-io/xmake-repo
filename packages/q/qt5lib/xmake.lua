@@ -59,7 +59,7 @@ package("qt5lib")
             qtdir = qt,
             version = qt.version,
             includedirs = includedirs,
-            links = linkname,
+            links = links,
             linkdirs = qt.libdir,
             frameworks = package:data("frameworks"),
             frameworkdirs = qt.libdir,
