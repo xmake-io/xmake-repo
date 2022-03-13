@@ -6,8 +6,10 @@ package("qt5network")
         package:add("deps", "qt5core", {debug = package:is_debug(), version = package:version_str()})
         package:data_set("libname", "Network")
 
-        if package:is_plat("iphoneos") then
-            package:data_set("frameworks", {"DiskArbitration", "IOKit"})
+        if package:is_plat("linux") then
+            package:add_deps("openssl >=1.1.1")
+        elseif package:is_plat("iphoneos") then
+            package:data_set("frameworks", {"IOKit", "Security"})
         end
     
         package:base():script("load")(package)
