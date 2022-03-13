@@ -7,7 +7,7 @@ package("qt5network")
         package:data_set("libname", "Network")
 
         if package:is_plat("linux") then
-            package:add("deps", "openssl >=1.1")
+            package:add("deps", "openssl 1.1.1b")
         elseif package:is_plat("iphoneos") then
             package:data_set("frameworks", {"GSS", "IOKit", "Security", "SystemConfiguration"})
         end
