@@ -37,5 +37,5 @@ package("filament")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("filament::Engine", {configs = {languages = "c++14"}, includes = "filament/Engine.h"}))
+        assert(package:has_cxxtypes("filament::Engine", {configs = {languages = "c++17"}, includes = "filament/Engine.h"}))
     end)
