@@ -7,7 +7,7 @@ package("efsw")
              "https://github.com/SpartanJ/efsw.git")
     add_versions("1.1.0", "a67566d642510e3f571cc0f98d520bd806150362a51cfbc47366ed6c9890722f")
 
-    add_deps("cmake", { private=true })
+    add_deps("cmake")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -38,7 +38,7 @@ package("efsw")
                 CustomListener customListener;
 
                 efsw::FileWatcher fileWatcher;
-                fileWatcher.addWatch("~", &customListener);
+                fileWatcher.addWatch(".", &customListener);
             }
         ]]}, {includes = {"efsw/efsw.hpp"}}))
     end)
