@@ -25,6 +25,7 @@ package("tbb")
         add_versions("2021.5.0", "e5b57537c741400cf6134b428fc1689a649d7d38d9bb9c1b6d64f092ea28178a")
 
         add_patches("2021.2.0", path.join(os.scriptdir(), "patches", "2021.2.0", "gcc11.patch"), "181511cf4878460cb48ac0531d3ce8d1c57626d698e9001a0951c728fab176fb")
+        add_patches("2021.5.0", path.join(os.scriptdir(), "patches", "2021.5.0", "i386.patch"), "1a1c11724839cf98b1b8f4d415c0283ec7719c330b11503c578739eb02889ec0")
 
         if is_plat("macosx") then
             add_configs("compiler", {description = "Compiler used to compile tbb." , default = "clang", type = "string", values = {"clang", "gcc", "icc", "cl", "icl", "[others]"}})
@@ -50,7 +51,7 @@ package("tbb")
             if package:version():le("2021.4") and package:is_plat("mingw") then
                 raise("mingw build is not supported in this version")
             end
-            local configs = {"-DTBB_TEST=OFF"}
+            local configs = {"-DTBB_TEST=OFF", "-DTBB_STRICT=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             import("package.tools.cmake").install(package, configs)
         else
@@ -76,7 +77,7 @@ package("tbb")
 
     on_install("windows", function (package)
         if package:version():ge("2021.0") then
-            local configs = {"-DTBB_TEST=OFF"}
+            local configs = {"-DTBB_TEST=OFF", "-DTBB_STRICT=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             import("package.tools.cmake").install(package, configs)
         else
