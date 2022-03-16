@@ -11,9 +11,7 @@ package("openmp")
             for _, toolkind in ipairs({"cc", "cxx"}) do
                 if package:config("runtime") == "default" then
                     if package:has_tool(toolkind, "clang", "clangxx") then
-                        if package:is_plat("macosx") then
-                            package:add("deps", "libomp") -- need to tell apple clang from llvm clang
-                        end
+                        package:add("deps", "libomp")
                     end
                 end
             end
@@ -48,7 +46,7 @@ package("openmp")
                 if package:config("runtime") == "default" then
                     if package:has_tool(toolkind, "clang", "clangxx") then
                         if not package:is_plat("macosx") then
-                            result.ldflags = "-fopenmp=libomp"
+                            result.ldflags = "-fopenmp"
                         end
                     elseif package:has_tool(toolkind, "gcc", "gxx") then
                         result.ldflags = "-fopenmp"
