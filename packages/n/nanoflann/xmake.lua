@@ -12,7 +12,7 @@ package("nanoflann")
 
     add_deps("cmake")
     on_install(function (package)
-        import("package.tools.cmake").install(package)
+        import("package.tools.cmake").install(package, {"-DNANOFLANN_BUILD_EXAMPLES=OFF", "-DNANOFLANN_BUILD_TESTS=OFF"})
     end)
 
     on_test(function (package)
