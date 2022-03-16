@@ -9,12 +9,14 @@ package("tbb")
         add_versions("2021.2.0", "9be37b1cb604a5905db0a15b2b893d85579fd0b2f1024859e1f75e96d7331a02")
         add_versions("2021.3.0", "90e2055cd4be55f79eedd3d50b2010bf05d1739309c4cdd219192d129e931093")
         add_versions("2021.4.0", "3868c557739a7a5b74c985571648c066167fd7a0a8c63bdac00a6cfeeb58037f")
+        add_versions("2021.5.0", "096c004c7079af89fe990bb259d58983b0ee272afa3a7ef0733875bfe09fcd8e")
     else
         add_urls("https://github.com/oneapi-src/oneTBB/archive/v$(version).tar.gz")
         add_versions("2020.3", "ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3")
         add_versions("2021.2.0", "cee20b0a71d977416f3e3b4ec643ee4f38cedeb2a9ff015303431dd9d8d79854")
         add_versions("2021.3.0", "8f616561603695bbb83871875d2c6051ea28f8187dbe59299961369904d1d49e")
         add_versions("2021.4.0", "021796c7845e155e616f5ecda16daa606ebb4c6f90b996e5c08aebab7a8d3de3")
+        add_versions("2021.5.0", "e5b57537c741400cf6134b428fc1689a649d7d38d9bb9c1b6d64f092ea28178a")
 
         add_patches("2021.2.0", path.join(os.scriptdir(), "patches", "2021.2.0", "gcc11.patch"), "181511cf4878460cb48ac0531d3ce8d1c57626d698e9001a0951c728fab176fb")
 
@@ -39,7 +41,7 @@ package("tbb")
 
     on_install("macosx", "linux", "mingw@windows", "mingw@msys", "android", function (package)
         if package:version():ge("2021.0") then
-            if package:is_plat("mingw") then
+            if package:version():le("2021.4") and package:is_plat("mingw") then
                 raise("mingw build is not supported in this version")
             end
             local configs = {"-DTBB_TEST=OFF"}
