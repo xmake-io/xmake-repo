@@ -7,6 +7,7 @@ package("libomp")
     add_versions("10.0.1", "d19f728c8e04fb1e94566c8d76aef50ec926cd2f95ef3bf1e0a5de4909b28b44")
     add_versions("11.1.0", "d187483b75b39acb3ff8ea1b7d98524d95322e3cb148842957e9b0fbb866052e")
     add_versions("12.0.1", "60fe79440eaa9ebf583a6ea7f81501310388c02754dbe7dc210776014d06b091")
+    add_versions("13.0.1", "6b79261371616c31fea18cd3ee1797c79ee38bcaf8417676d4fa366a24c96b4f")
 
     add_deps("cmake")
 
@@ -14,6 +15,7 @@ package("libomp")
     if is_plat("macosx") then
         add_extsources("brew::libomp")
     elseif is_plat("linux") then
+        add_extsources("apt::libomp-dev")
         add_syslinks("pthread", "dl")
     end
 
