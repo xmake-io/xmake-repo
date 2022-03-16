@@ -1,5 +1,6 @@
 package("nanoflann")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/jlblancoc/nanoflann/")
     set_description("nanoflann: a C++11 header-only library for Nearest Neighbor (NN) search with KD-trees")
     set_license("BSD-2-Clause")
@@ -7,9 +8,11 @@ package("nanoflann")
     add_urls("https://github.com/jlblancoc/nanoflann/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jlblancoc/nanoflann.git")
     add_versions("v1.3.2", "e100b5fc8d72e9426a80312d852a62c05ddefd23f17cbb22ccd8b458b11d0bea")
+    add_versions("v1.4.2", "97fce650eb644a359a767af526cab9ba31842e53790a7279887e1ae2fffe7319")
 
+    add_deps("cmake")
     on_install(function (package)
-        os.cp("include/nanoflann.hpp", package:installdir("include"))
+        import("package.tools.cmake").install(package, {"-DNANOFLANN_BUILD_EXAMPLES=OFF", "-DNANOFLANN_BUILD_TESTS=OFF"})
     end)
 
     on_test(function (package)
