@@ -48,7 +48,7 @@ package("openmp")
                 if package:config("runtime") == "default" then
                     if package:has_tool(toolkind, "clang", "clangxx") then
                         if not package:is_plat("macosx") then
-                            result.ldflags = "-fopenmp"
+                            result.ldflags = "-fopenmp=libomp"
                         end
                     elseif package:has_tool(toolkind, "gcc", "gxx") then
                         result.ldflags = "-fopenmp"
