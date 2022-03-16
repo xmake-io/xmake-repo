@@ -22,6 +22,7 @@ package("tinyobjloader")
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         io.writefile("xmake.lua", string.format([[
             add_rules("mode.debug", "mode.release")
+            add_rules("utils.install.cmake_importfiles")
             target("tinyobjloader")
                 set_kind("$(kind)")
                 %s
