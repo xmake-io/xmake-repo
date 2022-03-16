@@ -27,7 +27,7 @@ package("imgui")
     add_includedirs("include", "include/imgui", "include/backends")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("Imm32")
+        add_syslinks("imm32")
     end
 
     on_load("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
@@ -74,7 +74,7 @@ package("imgui")
                 target("imgui")
                     set_kind("static")
                     add_files("*.cpp")
-                    add_headerfiles("*.h")
+                    add_headerfiles("*.h", {prefixdir = "imgui"})
             ]]
         end
 
