@@ -3,7 +3,7 @@ package("openssl")
     set_homepage("https://www.openssl.org/")
     set_description("A robust, commercial-grade, and full-featured toolkit for TLS and SSL.")
 
-    add_urls("https://github.com/openssl/openssl/archive/OpenSSL_$(version).zip", {version = function (version)
+    add_urls("https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_$(version).zip", {version = function (version)
         return version:gsub("%.", "_")
     end, excludes = "*/fuzz/*"})
     add_versions("1.1.1m", "dab2287910427d82674618d512ba2571401539ca6ed12ab3c3143a0db9fad542")
