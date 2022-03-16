@@ -10,7 +10,7 @@ package("tinyobjloader")
 
     add_configs("double", {description = "Use double precision floating numbers.", default = false, type = "boolean"})
     if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     on_load(function (package)
