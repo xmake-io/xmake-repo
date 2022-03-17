@@ -10,7 +10,7 @@ package("magnum-integration")
 
     local integrations = {"bullet", "dart", "eigen", "glm", "imgui", "ovr"}
     for _, integration in ipairs(integrations) do
-        add_configs(integration, {description = "Build " .. integration .. " integration library.", default = false, type = "boolean"})
+        add_configs(integration, {description = "Build " .. integration .. " integration library.", default = (integration == "imgui"), type = "boolean"})
     end
 
     add_deps("cmake", "magnum")
