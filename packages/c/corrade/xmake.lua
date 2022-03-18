@@ -1,12 +1,10 @@
 package("corrade")
-
     set_homepage("https://magnum.graphics/corrade/")
     set_description("Cor­rade is a mul­ti­plat­form util­i­ty li­brary writ­ten in C++11/C++14.")
     set_license("MIT")
 
-    add_urls("https://github.com/mosra/corrade/archive/refs/tags/$(version).zip",
-             "https://github.com/mosra/corrade.git")
-    add_versions("v2020.06", "d89a06128c334920d91fecf23cc1df48fd6be26543dc0ed81b2f819a92d70e72")
+    add_urls("https://github.com/mosra/corrade.git")
+    add_versions("2022.3.17", "4f53744bc2344168973eb73d41d262004f76be54")
 
     if is_plat("windows") then
         add_syslinks("shell32")
