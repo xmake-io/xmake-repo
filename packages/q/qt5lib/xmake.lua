@@ -27,6 +27,7 @@ package("qt5lib")
         local links = table.wrap(package:data("links"))
         local includedirs = {qt.includedir}
         local linkname
+        local frameworks
         if package:is_plat("windows") then
             linkname = "Qt5" .. libname
             if package:is_debug() then
@@ -54,6 +55,9 @@ package("qt5lib")
         end
 
         table.insert(links, 1, linkname)
+        if frameworks then
+            table.join2(frameworks, package:data("frameworks"))
+        end
 
         return {
             qtdir = qt,
@@ -61,7 +65,7 @@ package("qt5lib")
             includedirs = includedirs,
             links = links,
             linkdirs = qt.libdir,
-            frameworks = package:data("frameworks"),
+            frameworks = frameworks,
             frameworkdirs = qt.libdir,
             syslinks = package:data("syslinks")
         }
