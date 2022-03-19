@@ -57,6 +57,8 @@ package("qt5lib")
         table.insert(links, 1, linkname)
         if frameworks then
             table.join2(frameworks, package:data("frameworks"))
+        else
+            frameworks = package:data("frameworks")
         end
 
         return {
