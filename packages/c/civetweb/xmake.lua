@@ -21,14 +21,13 @@ package("civetweb")
     end
 
     on_load(function (package)
-        local configdeps = {
-            openssl = "openssl",
-            zlib    = "zlib",
-        }
-        for name, dep in pairs(configdeps) do
-            if package:config(name) then
-                package:add("deps", dep)
-            end
+        if package:config("openssl") then
+            package:add("deps", "openssl")
+            package:add("syslinks", "ssl", "crypto")
+        end
+        if package:config("zlib") then
+            package:add("deps", "zlib")
+            package:add("syslinks", "z")
         end
     end)
 
