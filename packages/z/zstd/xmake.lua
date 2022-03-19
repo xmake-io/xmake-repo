@@ -7,9 +7,10 @@ package("zstd")
              "https://github.com/facebook/zstd.git")
     add_versions("v1.4.5", "734d1f565c42f691f8420c8d06783ad818060fc390dee43ae0a89f86d0a4f8c2")
     add_versions("v1.5.0", "0d9ade222c64e912d6957b11c923e214e2e010a18f39bec102f572e693ba2867")
+    add_versions("v1.5.2", "f7de13462f7a82c29ab865820149e778cbfe01087b3a55b5332707abf9db4a6e")
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
+        local xmake_code = [[
             add_rules("mode.debug", "mode.release")
             target("zstd")
                 set_kind("$(kind)")
@@ -21,7 +22,21 @@ package("zstd")
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("ZSTD_DLL_EXPORT")
                 end
-        ]])
+        ]]
+
+        if is_arch("x64", "x86_64") and
+                (package:build_getenv("cc"):find("clang", 1, true) or package:build_getenv("cc"):find("gcc", 1, true)) then
+            -- Refer to build/meson/lib/meson.build in zstd 1.5.2 source code for details.
+            xmake_code = xmake_code .. [[
+                add_files("lib/decompress/*.S")
+            ]]
+        else
+            xmake_code = xmake_code .. [[
+                add_defines("ZSTD_DISABLE_ASM")
+            ]]
+        end
+
+        io.writefile("xmake.lua", xmake_code)
         import("package.tools.xmake").install(package)
     end)
 
