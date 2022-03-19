@@ -22,13 +22,13 @@ package("zstd")
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("ZSTD_DLL_EXPORT")
                 end
-				on_config(function (target)
-					if target:is_arch("x64", "x86_64") and target:has_tool("cc", "clang", "gcc") then
-						target:add("files", "lib/decompress/*.S")
-					else
-						target:add("defines", "ZSTD_DISABLE_ASM")
-					end
-				end)
+                on_config(function (target)
+                    if target:is_arch("x64", "x86_64") and target:has_tool("cc", "clang", "gcc") then
+                        target:add("files", "lib/decompress/*.S")
+                    else
+                        target:add("defines", "ZSTD_DISABLE_ASM")
+                    end
+                end)
         ]])
 
         import("package.tools.xmake").install(package)
