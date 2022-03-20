@@ -93,6 +93,13 @@ package("libcurl")
                 io.replace("configure", "libbrotlidec", "brotli", {plain = true})
             end
         end
+        local zstd = package:dep("zstd")
+        if zstd and not zstd:is_system() then
+            io.replace("configure.ac", "libzstd", "zstd", {plain = true})
+            if os.exists("configure") then
+                io.replace("configure", "libzstd", "zstd", {plain = true})
+            end
+        end
         local configs = {"--disable-silent-rules",
                          "--disable-dependency-tracking",
                          "--without-hyper",
