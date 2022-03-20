@@ -32,6 +32,10 @@ package("libcurl")
     add_configs("brotli",   {description = "Enable brotli support.", default = false, type = "boolean"})
     add_configs("libssh2",  {description = "Use libSSH2 library.", default = false, type = "boolean"})
 
+    if not is_plat("windows", "mingw@windows") then
+        add_configs("libpsl",   {description = "Use libpsl for Public Suffix List.", default = false, type = "boolean"})
+    end
+
     on_load(function (package)
         if package:is_plat("windows", "mingw") then
             if not package:config("shared") then
@@ -44,6 +48,7 @@ package("libcurl")
                             nghttp2  = "nghttp2",
                             openldap = "openldap",
                             libidn2  = "libidn2",
+                            libpsl   = "libpsl",
                             zlib     = "zlib",
                             zstd     = "zstd",
                             brotli   = "brotli",
@@ -84,7 +89,6 @@ package("libcurl")
         local configs = {"--disable-silent-rules",
                          "--disable-dependency-tracking",
                          "--without-hyper",
-                         "--without-libpsl",
                          "--without-libgsasl",
                          "--without-librtmp",
                          "--without-quiche",
@@ -104,7 +108,7 @@ package("libcurl")
         if is_plat("mingw") then
             table.insert(configs, "--with-schannel")
         end
-        for _, name in ipairs({"openssl", "mbedtls", "zlib", "brotli", "zstd", "libssh2", "libidn2", "nghttp2"}) do
+        for _, name in ipairs({"openssl", "mbedtls", "zlib", "brotli", "zstd", "libssh2", "libidn2", "libpsl", "nghttp2"}) do
             table.insert(configs, package:config(name) and "--with-" .. name or "--without-" .. name)
         end
         table.insert(configs, package:config("cares") and "--enable-ares" or "--disable-ares")
