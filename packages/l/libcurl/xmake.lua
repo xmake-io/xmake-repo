@@ -87,6 +87,13 @@ package("libcurl")
     end)
 
     on_install("macosx", "linux", "iphoneos", "mingw@macosx", "cross", function (package)
+        local brotli = package:dep("brotli")
+        if brotli and not brotli:is_system() then
+            io.replace("configure.ac", "libbrotlidec", "brotli", {plain = true})
+            if os.exists("configure") then
+                io.replace("configure", "libbrotlidec", "brotli", {plain = true})
+            end
+        end
         local configs = {"--disable-silent-rules",
                          "--disable-dependency-tracking",
                          "--without-hyper",
