@@ -199,6 +199,11 @@ package("python")
             end
         end
 
+        -- add pic
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            table.insert(cppflags, "-fPIC")
+        end
+
         -- add external path for zlib and libffi
         for _, libname in ipairs({"zlib", "libffi"}) do
             local lib = package:dep(libname)
