@@ -33,6 +33,9 @@ package("magnum-integration")
         for _, integration in ipairs(integrations) do
             table.insert(configs, "-DWITH_" .. integration:upper() .. "=" .. (package:config(integration) and "ON" or "OFF"))
         end
+        for _, file in ipairs(os.files("src/Magnum/ImGuiIntegration/*")) do
+            io.replace(file, "<imgui.h>", "<imgui/imgui.h>", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
