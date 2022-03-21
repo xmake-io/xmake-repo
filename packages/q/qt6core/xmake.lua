@@ -8,7 +8,7 @@ package("qt6core")
             package:data_set("syslinks", "z")
         elseif package:is_plat("iphoneos") then
             package:data_set("frameworks", {"UIKit", "CoreText", "CoreGraphics", "CoreServices", "CoreFoundation"})
-            package:data_set("syslinks", {"qtpcre2", "z"})
+            package:data_set("syslinks", "z")
         end
 
         package:base():script("load")(package)

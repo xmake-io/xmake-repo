@@ -6,7 +6,9 @@ package("qt6gui")
         package:add("deps", "qt6core", {debug = package:is_debug(), version = package:version_str()})
         package:data_set("libname", "Gui")
 
-        if package:is_plat("android") then
+        if package:is_plat("linux") then 
+            package:add("deps", "freetype", "fontconfig")
+        elseif package:is_plat("android") then
             package:data_set("syslinks", "GLESv2")
         elseif package:is_plat("iphoneos") then
             package:data_set("links", "qtharfbuzz")
