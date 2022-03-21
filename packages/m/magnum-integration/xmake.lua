@@ -10,7 +10,7 @@ package("magnum-integration")
 
     local integrations = {"bullet", "dart", "eigen", "glm", "imgui", "ovr"}
     for _, integration in ipairs(integrations) do
-        add_configs(integration, {description = "Build " .. integration .. " integration library.", default = false, type = "boolean"})
+        add_configs(integration, {description = "Build " .. integration .. " integration library.", default = (integration == "imgui"), type = "boolean"})
     end
 
     add_deps("cmake", "magnum")
@@ -32,10 +32,6 @@ package("magnum-integration")
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         for _, integration in ipairs(integrations) do
             table.insert(configs, "-DWITH_" .. integration:upper() .. "=" .. (package:config(integration) and "ON" or "OFF"))
-        end
-        local packagedeps = {}
-        if package:config("imgui") then
-            table.insert(packagedeps, "imgui")
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)

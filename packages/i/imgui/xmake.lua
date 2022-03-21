@@ -74,7 +74,7 @@ package("imgui")
                 target("imgui")
                     set_kind("static")
                     add_files("*.cpp")
-                    add_headerfiles("*.h", {prefixdir = "imgui"})
+                    add_headerfiles("*.h"})
             ]]
         end
 
