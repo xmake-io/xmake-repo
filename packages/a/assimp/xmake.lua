@@ -75,7 +75,7 @@ package("assimp")
         -- since v5.3.2, assimp allow user to choose C runtime library version, on Windows
         -- https://github.com/assimp/assimp/pull/4444
         if package:version():ge("v5.2.3") then
-            if package:is_plat("windows") and package:config("vs_runtime") == "MT" then
+            if package:is_plat("windows") and (package:config("vs_runtime") == "MT" or package:config("vs_runtime") == "MTd") then
                 table.insert(configs, "-DUSE_STATIC_CRT=ON")
             end
         end
