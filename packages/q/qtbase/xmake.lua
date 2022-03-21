@@ -185,18 +185,18 @@ package("qtbase")
             -- add symbolic links for useful tools
             local tool_folders = {}
             if version:ge("6.0") then
-                tools.bin = {
+                tool_folders.bin = {
                     qmake = true,
                     qmake6 = true
                 }
 
-                tools.libexec = {
+                tool_folders.libexec = {
                     moc = true,
                     rcc = true,
                     uic = true
                 }
             else
-                tools.bin = {
+                tool_folders.bin = {
                     qmake = true,
                     moc = true,
                     rcc = true,
