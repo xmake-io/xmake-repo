@@ -13,7 +13,7 @@ package("qt6widgets")
     on_test(function (package)
         local cxflags
         if package:is_plat("windows") then
-            cxflags = "/Zc:__cplusplus"
+            cxflags = {"/Zc:__cplusplus", "/permissive-"}
         else
             cxflags = "-fPIC"
         end
