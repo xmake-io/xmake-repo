@@ -2,7 +2,7 @@ local function qt_table(package)
     local sdkdir = package:installdir()
     local version = package:version()
     return {
-        version = version,
+        version = version:shortstr(),
         sdkdir = sdkdir,
         sdkver = version:shortstr(),
         bindir = path.join(sdkdir, "bin"),
