@@ -33,10 +33,6 @@ package("magnum-integration")
         for _, integration in ipairs(integrations) do
             table.insert(configs, "-DWITH_" .. integration:upper() .. "=" .. (package:config(integration) and "ON" or "OFF"))
         end
-        local packagedeps = {}
-        if package:config("imgui") then
-            table.insert(packagedeps, "imgui")
-        end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
