@@ -99,7 +99,7 @@ package("qtbase")
             local winarch
             if package:is_arch("x64", "x86_64") then
                 winarch = "64"
-            elseif version:lt("6.x") and package:is_arch("x86", "i386") then -- 32bits support was removed in Qt6
+            elseif not version:ge("6.0") and package:is_arch("x86", "i386") then -- 32bits support was removed in Qt6
                 winarch = "32"
             else
                 raise("unhandled arch " .. package:targetarch())
@@ -139,7 +139,7 @@ package("qtbase")
         elseif package:is_plat("macosx") then
             arch = "clang_64"
         elseif package:is_plat("android") then
-            if version:le("5.13") or version:ge("6.x") then
+            if version:le("5.13") or version:ge("6.0") then
                 if package:is_arch("x86_64", "x64") then
                     arch = "android_x86_64"
                 elseif package:is_arch("arm64", "arm64-v8a") then
