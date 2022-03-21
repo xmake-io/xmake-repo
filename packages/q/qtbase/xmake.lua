@@ -1,8 +1,10 @@
-local function qt_table(sdkdir, version)
+local function qt_table(package)
+    local installdir = package:installdir()
+    local version = package:version()
     return {
         version = version,
         sdkdir = sdkdir,
-        sdkver = version,
+        sdkver = version:shortstr(),
         bindir = path.join(sdkdir, "bin"),
         includedir = path.join(sdkdir, "include"),
         libdir = path.join(sdkdir, "lib"),
@@ -40,8 +42,7 @@ package("qtbase")
         end
 
         if os.isfile(package:manifest_file()) then
-            local installdir = package:installdir()
-            local qt = qt_table(installdir, package:version():shortstr())
+            local qt = qt_table(package)
             package:data_set("qt", qt)
             return qt
         end
@@ -99,7 +100,7 @@ package("qtbase")
             local winarch
             if package:is_arch("x64", "x86_64") then
                 winarch = "64"
-            elseif not version:ge("6.0") and package:is_arch("x86", "i386") then -- 32bits support was removed in Qt6
+            elseif version:lt("6.0") and package:is_arch("x86", "i386") then -- 32bits support was removed in Qt6
                 winarch = "32"
             else
                 raise("unhandled arch " .. package:targetarch())
@@ -121,9 +122,11 @@ package("qtbase")
                 end
             else
                 local cc = package:tool("cc")
-                local version = os.iorunv(cc, {"-dumpversion"}):trim()
-                local mingw_version = semver.new(version)
-                if mingw_version:ge("8.1") then
+                local ccversion = os.iorunv(cc, {"-dumpversion"}):trim()
+                local mingw_version = semver.new(ccversion)
+                if version:ge("6.2.2") then
+                    compiler_version = "mingw"
+                elseif mingw_version:ge("8.1") then
                     compiler_version = "mingw81"
                 elseif mingw_version:ge("7.3") then
                     compiler_version = "mingw73"
@@ -144,7 +147,7 @@ package("qtbase")
                     arch = "android_x86_64"
                 elseif package:is_arch("arm64", "arm64-v8a") then
                     arch = "android_arm64_v8a"
-                elseif package:is_arch("armv7", "armv7-a") then
+                elseif package:is_arch("armv7", "armv7-a", "armeabi", "armeabi-v7a") then
                     arch = "android_armv7"
                 elseif package:is_arch("x86") then
                     arch = "android_x86"
@@ -200,5 +203,29 @@ package("qtbase")
             end
         end
 
-        package:data_set("qt", qt_table(installdir, versionstr))
+        package:data_set("qt", qt_table(package))
+    end)
+
+    on_test(function (package)
+        local qt = assert(package:data("qt"))
+
+        local function getbin(name)
+            if is_host("windows") then
+                name = name .. ".exe"
+            end
+            local exec = path.join(qt.bindir, name)
+            if not os.isexec(exec) and qt.libexecdir then
+                exec = path.join(qt.libexecdir, name)
+            end
+            if not os.isexec(exec) and qt.libexecdir_host then
+                exec = path.join(qt.libexecdir_host, name)
+            end
+            assert(os.isexec(exec), name .. " not found!")
+            return exec
+        end
+
+        os.vrun(getbin("qmake") .. " -v")
+        os.vrun(getbin("moc") .. " -v")
+        os.vrun(getbin("rcc") .. " -v")
+        os.vrun(getbin("uic") .. " -v")
     end)
