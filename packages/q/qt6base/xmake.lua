@@ -13,12 +13,11 @@ local function qt_table(sdkdir, version)
     }
 end
 
-package("qt5base")
+package("qt6base")
     set_kind("phony")
     set_base("qtbase")
 
-    add_versions("5.15.2", "dummy")
-    add_versions("5.12.5", "dummy")
+    add_versions("6.3.0", "dummy")
 
     on_load(function (package)
         package:set("kind", "phony")

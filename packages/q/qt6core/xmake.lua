@@ -1,5 +1,5 @@
-package("qt5core")
-    set_base("qt5lib")
+package("qt6core")
+    set_base("qt6lib")
     set_kind("library")
 
     on_load(function (package)
@@ -17,7 +17,9 @@ package("qt5core")
 
     on_test(function (package)
         local cxflags
-        if not package:is_plat("windows") then
+        if package:is_plat("windows") then
+            cxflags = "/Zc:__cplusplus"
+        else
             cxflags = "-fPIC"
         end
         assert(package:check_cxxsnippets({test = [[
@@ -25,5 +27,5 @@ package("qt5core")
                 QCoreApplication app (argc, argv);
                 return app.exec();
             }
-        ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = {"QCoreApplication"}}))
+        ]]}, {configs = {languages = "c++17", cxflags = cxflags}, includes = {"QCoreApplication"}}))
     end)
