@@ -6,11 +6,17 @@ package("assimp")
 
     set_urls("https://github.com/assimp/assimp/archive/$(version).zip",
              "https://github.com/assimp/assimp.git")
+    add_versions("v5.2.3", "9667cfc8ddabd5dd5e83f3aebb99dbf232fce99f17b9fe59540dccbb5e347393")
     add_versions("v5.2.2", "7b833182b89917b3c6e8aee6432b74870fb71f432cc34aec5f5411bd6b56c1b5")
     add_versions("v5.2.1", "636fe5c2cfe925b559b5d89e53a42412a2d2ab49a0712b7d655d1b84c51ed504")
     add_versions("v5.1.4", "59a00cf72fa5ceff960460677e2b37be5cd1041e85bae9c02828c27ade7e4160")
     add_versions("v5.0.1", "d10542c95e3e05dece4d97bb273eba2dfeeedb37a78fb3417fd4d5e94d879192")
     add_patches("v5.0.1", path.join(os.scriptdir(), "patches", "5.0.1", "fix-mingw.patch"), "a3375489e2bbb2dd97f59be7dd84e005e7e9c628b4395d7022a6187ca66b5abb")
+
+    -- issues https://github.com/assimp/assimp/issues/4334 add this patch to fix
+    add_patches("v5.2.1", path.join(os.scriptdir(), "patches", "5.2.1", "fix_zlib_filefunc_def.patch"), "a9f8a9aa1975888ea751b80c8268296dee901288011eeb1addf518eac40b71b1")
+    add_patches("v5.2.2", path.join(os.scriptdir(), "patches", "5.2.1", "fix_zlib_filefunc_def.patch"), "a9f8a9aa1975888ea751b80c8268296dee901288011eeb1addf518eac40b71b1")
+    add_patches("v5.2.3", path.join(os.scriptdir(), "patches", "5.2.1", "fix_zlib_filefunc_def.patch"), "a9f8a9aa1975888ea751b80c8268296dee901288011eeb1addf518eac40b71b1")
 
     if not is_host("windows") then
         add_extsources("pkgconfig::assimp")
@@ -40,9 +46,9 @@ package("assimp")
     on_load(function (package)
         if package:version():le("5.1.0") then
             package:add("deps", "irrxml")
-            if package:is_plat("linux") and package:config("shared") then
-                package:add("ldflags", "-Wl,--as-needed," .. package:installdir("lib", "libassimp.so"))
-            end
+        end
+        if package:is_plat("linux", "macosx") and package:config("shared") then
+            package:add("links", "assimp")
         end
     end)
 
@@ -53,21 +59,9 @@ package("assimp")
                          "-DASSIMP_BUILD_FRAMEWORK=OFF",
                          "-DASSIMP_INSTALL_PDB=ON",
                          "-DASSIMP_INJECT_DEBUG_POSTFIX=ON",
-                         "-DASSIMP_BUILD_ZLIB=OFF",
+                         "-DASSIMP_BUILD_ZLIB=ON",
                          "-DSYSTEM_IRRXML=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-
-        -- temporary workaround
-        local zlib = package:dep("zlib")
-        if zlib and not zlib:is_system() then
-            local fetchinfo = zlib:fetch()
-            io.replace("CMakeLists.txt", "FIND_PACKAGE(ZLIB)", "", {plain = true})
-            io.replace("CMakeLists.txt", [[INSTALL( TARGETS zlib zlibstatic
-        EXPORT "${TARGETS_EXPORT_NAME}")]], "", {plain = true})
-            table.insert(configs, "-DZLIB_FOUND=TRUE")
-            table.insert(configs, "-DZLIB_INCLUDE_DIR=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
-            table.insert(configs, "-DZLIB_LIBRARIES=" .. table.concat(fetchinfo.libfiles, ";"))
-        end
 
         local function add_config_arg(config_name, cmake_name)
             table.insert(configs, "-D" .. cmake_name .. "=" .. (package:config(config_name) and "ON" or "OFF"))
@@ -77,6 +71,15 @@ package("assimp")
         add_config_arg("no_export",        "ASSIMP_NO_EXPORT")
         add_config_arg("asan",             "ASSIMP_ASAN")
         add_config_arg("ubsan",            "ASSIMP_UBSAN")
+
+        -- since v5.3.2, assimp allow user to choose C runtime library version, on Windows
+        -- https://github.com/assimp/assimp/pull/4444
+        if package:version():ge("v5.2.3") then
+            if package:is_plat("windows") and package:config("vs_runtime") == "MT" then
+                table.insert(configs, "-DUSE_STATIC_CRT=ON")
+            end
+        end
+
         if package:is_plat("android") then
             add_config_arg("android_jniiosysystem", "ASSIMP_ANDROID_JNIIOSYSTEM")
         end
@@ -104,5 +107,10 @@ package("assimp")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("Assimp::Importer", {configs = {languages = "c++11"}, includes = "assimp/Importer.hpp"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <cassert>
+            void test() {
+                Assimp::Importer importer;
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "assimp/Importer.hpp"}))
     end)
