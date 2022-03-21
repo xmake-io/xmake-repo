@@ -155,6 +155,10 @@ package("qtbase")
         end
 
         local installdir = package:installdir()
+        print("host", host)
+        print("target", target)
+        print("versionstr", versionstr)
+        print("arch", arch)
         os.vrunv("aqt", {"install-qt", "-O", installdir, host, target, versionstr, arch})
 
         -- move files to root
