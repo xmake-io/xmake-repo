@@ -1,5 +1,5 @@
 local function qt_table(package)
-    local installdir = package:installdir()
+    local sdkdir = package:installdir()
     local version = package:version()
     return {
         version = version,
