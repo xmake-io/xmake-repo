@@ -88,6 +88,7 @@ package("open3d")
                 end
             end
         end
+        print(os.files(package:installdir("**")))
     end)
 
     on_test(function (package)
