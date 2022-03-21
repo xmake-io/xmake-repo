@@ -34,10 +34,10 @@ package("open3d")
     on_install("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
         if package:is_plat("linux") then
             if package:has_tool("cxx", "clang", "clangxx") then
-                package:add("syslinks", "c++experimental")
+                package:add("syslinks", "stdc++fs")
                 package:add("ldflags", "-fsanitize=safe-stack")
             else
-                raise("GCC compiler is not supported yet, please install LLVM and Clang instead.")
+                raise("GCC compiler is not supported yet, please use LLVM and Clang instead.")
             end
         end
         io.replace("CMakeLists.txt", "add_subdirectory(docs)", "", {plain = true})
@@ -99,5 +99,5 @@ package("open3d")
                 std::vector<std::string> filenames;
                 ListFilesInDirectory(".", filenames);
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "open3d/Open3D.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "open3d/Open3D.h"}))
     end)
