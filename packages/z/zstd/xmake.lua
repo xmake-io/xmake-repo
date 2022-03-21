@@ -10,7 +10,8 @@ package("zstd")
     add_versions("v1.5.2", "f7de13462f7a82c29ab865820149e778cbfe01087b3a55b5332707abf9db4a6e")
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
+        io.writefile("xmake.lua", ([[
+            set_version("%s")
             add_rules("mode.debug", "mode.release", "asm")
             add_rules("utils.install.pkgconfig_importfiles", {filename = "libzstd.pc"})
             target("zstd")
@@ -30,7 +31,7 @@ package("zstd")
                         target:add("defines", "ZSTD_DISABLE_ASM")
                     end
                 end)
-        ]])
+        ]]):format(package:version_str()))
 
         import("package.tools.xmake").install(package)
     end)
