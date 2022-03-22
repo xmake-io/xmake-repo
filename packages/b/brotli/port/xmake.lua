@@ -1,5 +1,14 @@
 add_rules("mode.debug", "mode.release")
 
+option("vers")
+    set_default("")
+    set_showmenu(true)
+option_end()
+
+if has_config("vers") then
+    set_version(get_config("vers"))
+end
+
 target("brotlienc")
     set_kind("$(kind)")
     add_deps("brotlicommon")
