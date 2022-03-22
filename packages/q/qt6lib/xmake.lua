@@ -44,7 +44,7 @@ package("qt6lib")
             end
             table.insert(includedirs, path.join(qt.includedir, "Qt" .. libname))
         elseif package:is_plat("macosx") then
-            table.insert(includedirs, path.join(qt.libdir, "Qt" .. libname .. ".framework", "Versions", "6", "Headers"))
+            table.insert(includedirs, path.join(qt.libdir, "Qt" .. libname .. ".framework", "Headers"))
             frameworks = "Qt" .. libname
         else
             linkname = "Qt6" .. libname
