@@ -12,7 +12,7 @@ package("open3d")
     add_configs("cuda",   {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("blas",   {description = "Choose BLAS vendor.", default = "mkl", type = "string", values = {"mkl", "openblas"}})
 
-    add_deps("cmake", "nasm", {kind = "binary"})
+    add_deps("cmake", "nasm")
     add_includedirs("include", "include/open3d/3rdparty")
     if is_plat("linux") then
         add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi")
@@ -51,6 +51,7 @@ package("open3d")
             elseif vs == "2019" then vstool = "vc142"
             elseif vs == "2022" then vstool = "vc143"
             end
+            assert(vstool, "unknown vs version: %s", vs)
             io.replace("3rdparty/assimp/assimp.cmake", "lib_name assimp%-vc.-%-mt", format("lib_name assimp-%s-mt", vstool))
         end
         local configs = {"-DCMAKE_INSTALL_LIBDIR=lib",
@@ -82,13 +83,12 @@ package("open3d")
         end
         if not package:is_plat("windows") then
             package:add("links", "Open3D")
-            for _, f in ipairs(os.files(package:installdir("lib", "lib*.a"))) do
+            for _, f in ipairs(os.files(path.join(package:installdir("lib"), "lib*.a"))) do
                 if f:match(".+Open3D_3rdparty_.+%.a") then
                     package:add("links", path.basename(f):match("lib(.+)"))
                 end
             end
         end
-        print(os.files(package:installdir("**")))
     end)
 
     on_test(function (package)
