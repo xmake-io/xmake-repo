@@ -7,6 +7,7 @@ package("xbyak")
     set_urls("https://github.com/herumi/xbyak/archive/$(version).zip",
              "https://github.com/herumi/xbyak.git")
 
+    add_versions("v6.03", "e13ec1247a3a34f602434cf5075f0dfeea42bbd9bc4a73fd59dcf3e44907e68a")
     add_versions("v6.02", "cd3fe5ee15df6bfa73c721584b101c885096551124e6ded31b6f866ecb381cf0")
 
     on_install(function (package)
