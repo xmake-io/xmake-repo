@@ -16,7 +16,7 @@ package("librdkafka")
     -- lz4_ext means using external lz4 library instead of librdkafka's bundled one.
     -- When lz4_ext is disabled, we still need to link with external lz4 library.
     local config_default = {lz4_ext = true}
-    local configdeps = {lz4_ext = "lz4", sasl = "cyrus-sasl", ssl = "openssl", zlib = "zlib", zstd = "std"}
+    local configdeps = {lz4_ext = "lz4", sasl = "cyrus-sasl", ssl = "openssl", zlib = "zlib", zstd = "zstd"}
     for config, dep in pairs(configdeps) do
         add_configs(config, {description = "Enable " .. config .. " support.", default = config_default[config] or false, type = "boolean"})
     end
