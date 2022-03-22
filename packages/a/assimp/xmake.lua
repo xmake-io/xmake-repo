@@ -17,6 +17,7 @@ package("assimp")
     add_patches("v5.2.1", path.join(os.scriptdir(), "patches", "5.2.1", "fix_zlib_filefunc_def.patch"), "a9f8a9aa1975888ea751b80c8268296dee901288011eeb1addf518eac40b71b1")
     add_patches("v5.2.2", path.join(os.scriptdir(), "patches", "5.2.1", "fix_zlib_filefunc_def.patch"), "a9f8a9aa1975888ea751b80c8268296dee901288011eeb1addf518eac40b71b1")
     add_patches("v5.2.3", path.join(os.scriptdir(), "patches", "5.2.1", "fix_zlib_filefunc_def.patch"), "a9f8a9aa1975888ea751b80c8268296dee901288011eeb1addf518eac40b71b1")
+    add_patches("v5.2.3", path.join(os.scriptdir(), "patches", "5.2.3", "cmake_static_crt.patch"), "3872a69976055bed9e40814e89a24a3420692885b50e9f9438036e8d809aafb4")
 
     if not is_host("windows") then
         add_extsources("pkgconfig::assimp")
@@ -72,14 +73,6 @@ package("assimp")
         add_config_arg("asan",             "ASSIMP_ASAN")
         add_config_arg("ubsan",            "ASSIMP_UBSAN")
 
-        -- since v5.3.2, assimp allow user to choose C runtime library version, on Windows
-        -- https://github.com/assimp/assimp/pull/4444
-        if package:version():ge("v5.2.3") then
-            if package:is_plat("windows") and (package:config("vs_runtime") == "MT" or package:config("vs_runtime") == "MTd") then
-                table.insert(configs, "-DUSE_STATIC_CRT=ON")
-            end
-        end
-
         if package:is_plat("android") then
             add_config_arg("android_jniiosysystem", "ASSIMP_ANDROID_JNIIOSYSTEM")
         end
@@ -89,7 +82,7 @@ package("assimp")
             table.insert(configs, "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF")
         end
 
-        if package:is_plat("mingw") then
+        if package:is_plat("mingw") and package:version():lt("v5.1.5") then
             -- CMAKE_COMPILER_IS_MINGW has been removed: https://github.com/assimp/assimp/pull/4311
             io.replace("CMakeLists.txt", "CMAKE_COMPILER_IS_MINGW", "MINGW", {plain = true})
         end
