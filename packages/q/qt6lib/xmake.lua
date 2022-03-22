@@ -70,7 +70,7 @@ package("qt6lib")
         }
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "mingw|x86_64", "android", "iphoneos", function (package)
         local qt = package:dep("qt6base"):data("qt")
         assert(qt, "qt6base is required")
     end)
