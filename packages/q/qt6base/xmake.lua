@@ -7,3 +7,7 @@ package("qt6base")
     on_load(function (package)
         package:set("kind", "phony")
     end)
+
+    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "mingw|x86_64", "android", "iphoneos", function (package)
+        package:base():script("install")(package)
+    end)
