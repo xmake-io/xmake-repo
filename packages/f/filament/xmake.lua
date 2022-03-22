@@ -6,12 +6,15 @@ package("filament")
 
     if is_plat("windows") and is_arch("x64") then
         add_urls("https://github.com/google/filament/releases/download/v$(version)/filament-v$(version)-windows.tgz")
+        add_versions("1.9.23", "8f5728dd944c052f991bfb15d18cd6fc8f678d0cbd37bb066d76bf682ab789c8")
         add_versions("1.20.3", "0a3fdd5fe8662a02117f3de51dcbea3b260cff716a7cffa407ca939727d7b634")
     elseif is_plat("macosx") and is_arch("x86_64") then
         add_urls("https://github.com/google/filament/releases/download/v$(version)/filament-v$(version)-mac.tgz")
+        add_versions("1.9.23", "0adbf2359338e28a80b2ef84c70d8914b56ed1c97ef0135603fcd330ec4c34a1")
         add_versions("1.20.3", "820f2c7b5360021b9ff361f0868b45613726d6704f9112e8c8cf92d07c7c95b7")
     elseif is_plat("linux") and is_arch("x86_64") then
         add_urls("https://github.com/google/filament/releases/download/v$(version)/filament-v$(version)-linux.tgz")
+        add_versions("1.9.23", "016473371753ff6beb430900eb6550f73acc71c1092cbb654f272ed0666f6210")
         add_versions("1.20.3", "f57e1c967e09fe73ef69b0db8a48a09b3dab6f9ecb21b906b3f1fbe1d3a2ce3d")
     end
 
