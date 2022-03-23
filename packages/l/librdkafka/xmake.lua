@@ -36,11 +36,6 @@ package("librdkafka")
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
-                if name == "sasl" then
-                    package:add("syslinks", "sasl2")
-                else
-                    package:add("syslinks", dep)
-                end
             end
         end
     end)
