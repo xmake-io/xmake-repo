@@ -12,6 +12,9 @@ package("pthreadpool")
     end
 
     add_deps("cmake", "fxdiv")
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
     on_install("windows", "macosx", "linux", function (package)
         io.gsub("CMakeLists.txt", "IF%(NOT TARGET fxdiv%).-ENDIF%(%)", "add_library(fxdiv INTERFACE)\ntarget_include_directories(fxdiv INTERFACE \"${FXDIV_SOURCE_DIR}/include\")")
         local configs = {"-DPTHREADPOOL_BUILD_TESTS=OFF", "-DPTHREADPOOL_BUILD_BENCHMARKS=OFF"}
