@@ -40,16 +40,18 @@ package("libuv")
         if package:config("shared") then
             package:add("defines", "USING_UV_SHARED")
         end
-        if package:version():ge("1.40.0") then
+        if package:version():ge("1.40") and package:version():lt("1.44") then
             package:add("linkdirs", path.join("lib", package:debug() and "Debug" or "Release"))
         end
     end)
 
     on_install("windows", function (package)
-        local configs = {}
+        local configs = {"-DLIBUV_BUILD_TESTS=OFF", "-DLIBUV_BUILD_BENCH=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
-        os.cp("include", package:installdir())
+        if package:version():lt("1.40") then
+            os.cp("include", package:installdir())
+        end
     end)
 
     on_install("macosx", "linux", "iphoneos", "android@linux,macosx", "mingw@linux,macosx", function (package)
@@ -62,7 +64,7 @@ package("libuv")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        if package:version():ge("1.40.0") and package:is_plat("iphoneos") then
+        if package:is_plat("iphoneos") and package:version():ge("1.40") and package:version():lt("1.44") then
             -- fix CoreFoundation type definition
             io.replace("src/unix/darwin.c", "!TARGET_OS_IPHONE", "1", {plain = true})
         end
