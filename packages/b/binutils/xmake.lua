@@ -34,9 +34,9 @@ package("binutils")
             table.insert(configs, "--enable-gold")
             table.insert(configs, "--enable-plugins")
         end
+        -- fix 'makeinfo' is missing on your system.
+        io.replace("binutils/Makefile.in", "SUBDIRS =.-po", "SUBDIRS = ")
         if package:version():le("2.34") then
-            -- fix 'makeinfo' is missing on your system.
-            io.replace("binutils/Makefile.in", "SUBDIRS = doc po", "SUBDIRS = ")
             -- fix multiple definition of `program_name'
             io.replace("binutils/srconv.c", "char *program_name;", "extern char *program_name;", {plain = true})
             io.replace("binutils/sysdump.c", "char *program_name;", "extern char *program_name;", {plain = true})
