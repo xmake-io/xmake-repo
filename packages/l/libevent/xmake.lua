@@ -12,6 +12,11 @@ package("libevent")
     add_configs("mbedtls", {description = "Build with mbedtls library.", default = false, type = "boolean"})
 
     add_deps("cmake")
+
+    if is_plat("windows") then
+        add_syslinks("ws2_32")
+    end
+
     on_load(function (package)
         if package:config("openssl") then
             package:add("deps", "openssl")
