@@ -13,7 +13,7 @@ package("onednn")
     add_configs("gpu_runtime", {description = "Defines the offload runtime for GPU engines.", default = "none", type = "string", values = {"none", "ocl", "dpcpp"}})
 
     add_deps("cmake")
-    on_load("windows", "macosx", "linux", function (package)
+    on_load("windows|x64", "macosx", "linux|x86_64", function (package)
         local cpu_runtime = package:config("cpu_runtime")
         if cpu_runtime == "omp" then
             package:add("deps", "openmp")
@@ -26,7 +26,7 @@ package("onednn")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "macosx", "linux|x86_64", function (package)
         local configs = {"-DDNNL_BUILD_TESTS=OFF", "-DDNNL_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DDNNL_LIBRARY_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
