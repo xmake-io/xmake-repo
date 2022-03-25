@@ -75,7 +75,7 @@ ${yellow}In case of boost dependency conflicts, please use following code (order
 
         local shared = package:config("shared")
         table.insert(configs, "-DARROW_BUILD_STATIC=" .. (shared and "OFF" or "ON"))
-        table.insert(configs, "-DDARROW_BUILD_SHARED=" .. (shared and "ON" or "OFF"))
+        table.insert(configs, "-DARROW_BUILD_SHARED=" .. (shared and "ON" or "OFF"))
         table.insert(configs, "-DARROW_DEPENDENCY_USE_SHARED=" .. (shared and "ON" or "OFF"))
 
         for config, enabled in pairs(package:configs()) do
