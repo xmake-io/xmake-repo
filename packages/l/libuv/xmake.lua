@@ -54,7 +54,7 @@ package("libuv")
         end
     end)
 
-    on_install("macosx", "linux", "iphoneos", "android@linux,macosx", "mingw@linux,macosx", function (package)
+    on_install("macosx", "linux", "android@linux,macosx", "mingw@linux,macosx", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
