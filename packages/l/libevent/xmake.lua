@@ -12,6 +12,11 @@ package("libevent")
     add_configs("mbedtls", {description = "Build with mbedtls library.", default = false, type = "boolean"})
 
     add_deps("cmake")
+
+    if is_plat("windows") then
+        add_syslinks("ws2_32", "advapi32")
+    end
+
     on_load(function (package)
         if package:config("openssl") then
             package:add("deps", "openssl")
@@ -25,7 +30,7 @@ package("libevent")
         io.replace("CMakeLists.txt", "advapi32", "advapi32 crypt32", {plain = true})
         local configs = {"-DEVENT__DISABLE_TESTS=ON", "-DEVENT__DISABLE_REGRESS=ON", "-DEVENT__DISABLE_SAMPLES=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DEVENT__LIBRARY_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
         table.insert(configs, "-DEVENT__DISABLE_OPENSSL=" .. (package:config("openssl") and "OFF" or "ON"))
         table.insert(configs, "-DEVENT__DISABLE_MBEDTLS=" .. (package:config("mbedtls") and "OFF" or "ON"))
         if package:is_plat("windows") then
