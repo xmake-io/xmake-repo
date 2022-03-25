@@ -6,6 +6,7 @@ package("libuv")
 
     set_urls("https://github.com/libuv/libuv/archive/$(version).zip",
              "https://github.com/libuv/libuv.git")
+    add_versions("v1.44.1", "d233a9c522a9f4afec47b0d12f302d93d114a9e3ea104150e65f55fd931518e6")
     add_versions("v1.42.0", "031130768b25ae18c4b9d4a94ba7734e2072b11c6fce3e554612c516c3241402")
     add_versions("v1.41.0", "cb89a8b9f686c5ccf7ed09a9e0ece151a73ebebc17af3813159c335b02181794")
     add_versions("v1.40.0", "61366e30d8484197dc9e4a94dbd98a0ba52fb55cb6c6d991af1f3701b10f322b")
@@ -39,19 +40,21 @@ package("libuv")
         if package:config("shared") then
             package:add("defines", "USING_UV_SHARED")
         end
-        if package:version():ge("1.40.0") then
+        if package:version():ge("1.40") and package:version():lt("1.44") then
             package:add("linkdirs", path.join("lib", package:debug() and "Debug" or "Release"))
         end
     end)
 
     on_install("windows", function (package)
-        local configs = {}
+        local configs = {"-DLIBUV_BUILD_TESTS=OFF", "-DLIBUV_BUILD_BENCH=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
-        os.cp("include", package:installdir())
+        if package:version():lt("1.40") then
+            os.cp("include", package:installdir())
+        end
     end)
 
-    on_install("macosx", "linux", "iphoneos", "android@linux,macosx", "mingw@linux,macosx", function (package)
+    on_install("macosx", "linux", "android@linux,macosx", "mingw@linux,macosx", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
@@ -61,7 +64,7 @@ package("libuv")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        if package:version():ge("1.40.0") and package:is_plat("iphoneos") then
+        if package:is_plat("iphoneos") and package:version():ge("1.40") and package:version():lt("1.44") then
             -- fix CoreFoundation type definition
             io.replace("src/unix/darwin.c", "!TARGET_OS_IPHONE", "1", {plain = true})
         end
