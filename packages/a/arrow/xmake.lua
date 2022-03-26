@@ -50,20 +50,17 @@ package("arrow")
     end
 
     on_load(function (package)
-        local links = {}
         if package:config("plasma") then
-            table.insert(links, "plasma")
+            package:add("links", "plasma")
             package:add("deps", "gflags")
         end
         if package:config("parquet") then
-            table.insert(links, "parquet")
+            package:add("links", "parquet")
         end
         if package:config("dataset") then
-            table.insert(links, "arrow_dataset")
+            package:add("links", "arrow_dataset")
         end
-        table.insert(links, "arrow")
-        table.insert(links, "arrow_bundled_dependencies")
-        package:add("links", links)
+        package:add("links", "arrow", "arrow_bundled_dependencies")
 
         for name, dep in pairs(configdeps) do
             if package:config(name) then
