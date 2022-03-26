@@ -16,7 +16,7 @@ package("arrow")
     add_configs("parquet",  {description = "Apache Parquet libraries and Arrow integration", default = false, type = "boolean"})
     add_configs("plasma",   {description = "Plasma Shared Memory Object Store", default = false, type = "boolean"})
     -- After install with python enabled, the pyarrow package can be built by following command:
-    --     cd <arrow-src>/arrow/python
+    --     cd <arrow-src>/python
     --     export CMAKE_PREFIX_PATH=<xrepo arrow install dir>
     --     # export options that's enabled for the c++ install, e.g.
     --     export PYARROW_WITH_PARQUET=1
@@ -85,15 +85,6 @@ package("arrow")
             package:add("deps", "zstd")
         end
         if package:config("parquet") then
-            cprint([[
-${yellow}In case of boost dependency conflicts, please use following code (order is important):
-
-    local boost_config = {configs = {system = true}} -- change this according to what your need
-    add_requires("thrift")
-    add_requireconfs("thrift.boost", boost_config)
-    add_requires("arrow", {configs = {parquet = true}})
-    add_requireconfs("arrow.boost", boost_config)
-]])
             package:add("deps", "thrift", configs)
         end
     end)
