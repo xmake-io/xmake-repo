@@ -31,6 +31,12 @@ package("arrow")
 
     add_deps("cmake", "boost")
 
+    if is_plat("bsd") then
+        add_syslinks("pthread", "execinfo")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_load(function (package)
         for name, dep in pairs(configdeps) do
             if package:config(name) then
