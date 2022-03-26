@@ -14,7 +14,7 @@ package("binutils")
         add_extsources("pacman::binutils")
     elseif is_plat("linux") then
         add_extsources("pacman::binutils", "apt::binutils")
-    elseif is_plat("macosx")then
+    elseif is_plat("macosx") then
         add_extsources("brew::binutils")
     end
 
@@ -35,7 +35,8 @@ package("binutils")
             table.insert(configs, "--enable-plugins")
         end
         -- fix 'makeinfo' is missing on your system.
-        io.replace("binutils/Makefile.in", "SUBDIRS =.-po", "SUBDIRS = ")
+        io.replace("binutils/Makefile.in", "SUBDIRS =[^\n]-po", "SUBDIRS =")
+        io.replace("gas/Makefile.in", "INFO_DEPS =[^\n]-%.info", "INFO_DEPS =")
         if package:version():le("2.34") then
             -- fix multiple definition of `program_name'
             io.replace("binutils/srconv.c", "char *program_name;", "extern char *program_name;", {plain = true})
