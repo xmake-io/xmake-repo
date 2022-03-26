@@ -124,15 +124,11 @@ ${yellow}In case of boost dependency conflicts, please use following code (order
         -- To fix arrow src/arrow/CMakeLists.txt:538, when CMAKE_SYSTEM_NAME set but CMAKE_SYSTEM_PROCESSOR is not causing error.
         table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "x86_64" or "x86"))
 
-        -- For install without internet access, uncommend following code and
-        -- change the url to internal accessible one.
-        --[[
         if package:version():eq("7.0.0") then
-            -- Use environment variables to define vendored package url.
+            -- For install without internet access, change the url to internal accessible one.
             os.setenv("ARROW_MIMALLOC_URL", "https://github.com/microsoft/mimalloc/archive/v1.7.3.tar.gz")
             os.setenv("ARROW_XSIMD_URL", "https://github.com/xtensor-stack/xsimd/archive/aeec9c872c8b475dedd7781336710f2dd2666cb2.tar.gz")
         end
-        --]]
         os.cd("cpp")
         import("package.tools.cmake").install(package, configs)
     end)
