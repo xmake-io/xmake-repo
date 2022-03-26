@@ -31,6 +31,12 @@ package("arrow")
 
     add_deps("cmake", "boost")
 
+    if is_plat("bsd") then
+        add_syslinks("pthread", "execinfo")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_load(function (package)
         for name, dep in pairs(configdeps) do
             if package:config(name) then
@@ -75,7 +81,7 @@ ${yellow}In case of boost dependency conflicts, please use following code (order
 
         local shared = package:config("shared")
         table.insert(configs, "-DARROW_BUILD_STATIC=" .. (shared and "OFF" or "ON"))
-        table.insert(configs, "-DDARROW_BUILD_SHARED=" .. (shared and "ON" or "OFF"))
+        table.insert(configs, "-DARROW_BUILD_SHARED=" .. (shared and "ON" or "OFF"))
         table.insert(configs, "-DARROW_DEPENDENCY_USE_SHARED=" .. (shared and "ON" or "OFF"))
 
         for config, enabled in pairs(package:configs()) do
