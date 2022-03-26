@@ -1,4 +1,6 @@
 package("arrow")
+    -- For how to enable various features and build PyArrow python packages,
+    -- refer to this discussion https://github.com/xmake-io/xmake-repo/discussions/1106 
 
     set_homepage("https://arrow.apache.org/")
     set_description("Apache Arrow is a multi-language toolbox for accelerated data interchange and in-memory processing")
@@ -15,14 +17,6 @@ package("arrow")
     add_configs("orc",      {description = "Arrow integration with Apache ORC", default = false, type = "boolean"})
     add_configs("parquet",  {description = "Apache Parquet libraries and Arrow integration", default = false, type = "boolean"})
     add_configs("plasma",   {description = "Plasma Shared Memory Object Store", default = false, type = "boolean"})
-    -- After install with python enabled, the pyarrow package can be built by following command:
-    --     cd <arrow-src>/python
-    --     export CMAKE_PREFIX_PATH=<xrepo arrow install dir>
-    --     # export options that's enabled for the c++ install, e.g.
-    --     export PYARROW_WITH_PARQUET=1
-    --     export PYARROW_WITH_LZ4=1
-    --     python setup.py -- build_ext --build-type=release --bundle-arrow-cpp bdist_wheel
-    -- Refer to https://arrow.apache.org/docs/developers/python.html#python-development
     add_configs("python",   {description = "Enable Python C++ integration library. Requires python and numpy (not managed by xmake/xrepo).", default = false, type = "boolean"})
     -- Arrow uses vendored mimalloc and jemalloc. Do not add these two libraries to configdeps.
     add_configs("mimalloc", {description = "Build the Arrow mimalloc-based allocator", default = true, type = "boolean"})
