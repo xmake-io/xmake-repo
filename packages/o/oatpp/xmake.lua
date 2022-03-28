@@ -41,9 +41,9 @@ package("oatpp")
                 oatpp::String messageEncoded = "b2F0Kysgd2ViIGZyYW1ld29yaw==";
                 {
                     oatpp::String encoded = oatpp::encoding::Base64::encode(message);
-                    OATPP_ASSERT(encoded->equals(messageEncoded.get()));
+                    OATPP_ASSERT(encoded == messageEncoded);
                     oatpp::String decoded = oatpp::encoding::Base64::decode(encoded);
-                    OATPP_ASSERT(message->equals(decoded.get()));
+                    OATPP_ASSERT(message == decoded);
                 }
             }
         ]]}, {configs = {languages = "c++11"}}))
