@@ -12,11 +12,7 @@ package("openssl")
     add_versions("1.1.1h", "0a976b769bdb26470971a184f5263d0c3256152d5671ed7287cf17acc4698afc")
     add_versions("1.1.0l", "a305d4af4b442ad61ba3d7e82905d09bfbd80424e132e10df4899d064aa47ce2")
     add_versions("1.0.2u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
-    add_versions("1.0.0",   "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
-
-    if is_plat("linux") then
-        add_syslinks("pthread")
-    end
+    add_versions("1.0.0",  "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
     on_fetch("fetch")
 
@@ -37,7 +33,7 @@ package("openssl")
         if package:is_plat("windows", "mingw") then
             package:add("syslinks", "ws2_32", "user32", "crypt32", "advapi32")
         elseif package:is_plat("linux", "cross") then
-            package:add("syslinks", "dl")
+            package:add("syslinks", "pthread", "dl")
         end
         if package:is_plat("linux") then
             package:add("extsources", "apt::libssl-dev")
