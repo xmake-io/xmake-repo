@@ -53,6 +53,13 @@ package("librdkafka")
             table.insert(configs, "-DWITH_" .. config:upper()  .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:version():startswith("v1.8.2") then
+            io.replace(path.join(package:installdir("lib"), "cmake", "RdKafka", "RdKafkaConfig.cmake"),
+                "find_dependency(LZ4)",
+                'list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")\n  find_dependency(LZ4)',
+                {plain = true})
+        end
     end)
 
     on_test(function (package)
