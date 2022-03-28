@@ -14,6 +14,10 @@ package("openssl")
     add_versions("1.0.2u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
     add_versions("1.0.0",   "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_fetch("fetch")
 
     on_load(function (package)
@@ -83,12 +87,17 @@ package("openssl")
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         local configs = {"--openssldir=" .. package:installdir(),
                          "--prefix=" .. package:installdir()}
+        table.insert(configs, package:config("shared") and "shared" or "no-shared")
         if package:debug() then
             table.insert(configs, "--debug")
         end
         os.vrunv("./config", configs, {envs = buildenvs})
         local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
         import("package.tools.make").install(package, makeconfigs)
+
+        if package:config("shared") then
+            os.tryrm(path.join(package:installdir("lib"), "*.a"))
+        end
     end)
 
     on_install("cross", "android", function (package)
