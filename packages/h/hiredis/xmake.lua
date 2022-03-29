@@ -24,8 +24,12 @@ package("hiredis")
     end)
 
     on_install(function (package)
-        if not package:config("shared") then
-            if package:version():eq("v1.0.2") then
+        if package:version():eq("v1.0.2") then
+            io.replace("CMakeLists.txt",
+                "TARGET_INCLUDE_DIRECTORIES(hiredis PUBLIC $<INSTALL_INTERFACE:.>",
+                "TARGET_INCLUDE_DIRECTORIES(hiredis PUBLIC $<INSTALL_INTERFACE:include>",
+                {plain = true})
+            if not package:config("shared") then
                 -- Following change is required for package user to call `find_package(hiredis)` to work.
                 io.replace("CMakeLists.txt", "ADD_LIBRARY(hiredis SHARED", "ADD_LIBRARY(hiredis", {plain = true})
                 io.replace("CMakeLists.txt", "ADD_LIBRARY(hiredis_ssl SHARED", "ADD_LIBRARY(hiredis_ssl", {plain = true})
