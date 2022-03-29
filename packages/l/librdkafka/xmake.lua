@@ -57,7 +57,7 @@ package("librdkafka")
         if package:version():startswith("v1.8.2") then
             io.replace(path.join(package:installdir("lib"), "cmake", "RdKafka", "RdKafkaConfig.cmake"),
                 "find_dependency(LZ4)",
-                'list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")\n  find_dependency(LZ4)',
+                'list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_LIST_DIR}")\n  find_dependency(LZ4)\n  list(REMOVE_AT CMAKE_MODULE_PATH 0)',
                 {plain = true})
         end
     end)
