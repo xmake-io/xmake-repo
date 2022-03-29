@@ -24,13 +24,14 @@ package("ncurses")
 
     on_install("linux", "macosx", "bsd", function (package)
         local configs = {"--without-manpages", "--enable-sigwinch", "--with-gpm=no"}
+        table.insert(configs, "--with-debug=" .. (package:debug() and "yes" or "no"))
         if package:config("widec") then
             table.insert(configs, "--enable-widec")
         end
         if package:config("shared") then
             table.insert(configs, "--with-shared")
         end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf").install(package, configs, {jobs = 1})
     end)
 
     on_test(function (package)
