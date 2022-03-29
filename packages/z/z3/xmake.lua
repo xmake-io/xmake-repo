@@ -74,7 +74,9 @@ package("z3")
     end)
 
     on_test(function (package)
-        os.vrun("z3 -version")
-        os.vrun("python3 -c \"import z3\"")
+        if package:is_plat(os.host()) and package:is_arch(os.arch()) then
+            os.vrun("z3 -version")
+            os.vrun("python3 -c \"import z3\"")
+        end
         assert(package:has_cfuncs("Z3_mk_config", {includes = "z3.h"}))
     end)
