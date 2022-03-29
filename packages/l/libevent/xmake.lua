@@ -28,6 +28,14 @@ package("libevent")
 
     on_install("windows", "linux", "macosx", function (package)
         io.replace("CMakeLists.txt", "advapi32", "advapi32 crypt32", {plain = true})
+        if package:version():eq("2.1.12") then
+            io.replace("cmake/LibeventConfig.cmake.in",
+                'get_filename_component(_INSTALL_PREFIX "${LIBEVENT_CMAKE_DIR}/../../.." ABSOLUTE)',
+                'get_filename_component(_INSTALL_PREFIX "${LIBEVENT_CMAKE_DIR}/../.." ABSOLUTE)',
+                {plain = true})
+            io.replace("cmake/LibeventConfig.cmake.in", "NO_DEFAULT_PATH)", ")", {plain = true})
+        end
+
         local configs = {"-DEVENT__DISABLE_TESTS=ON", "-DEVENT__DISABLE_REGRESS=ON", "-DEVENT__DISABLE_SAMPLES=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DEVENT__LIBRARY_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
