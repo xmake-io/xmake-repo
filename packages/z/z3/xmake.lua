@@ -22,7 +22,7 @@ package("z3")
         if package:is_arch("x64") then
             table.insert(args, "--x64")
         end
-        if package:config("shared") then
+        if not package:config("shared") then
             table.insert(args, "--staticlib")
         end
         if package:config("vs_runtime"):startswith("MT") then
@@ -43,7 +43,7 @@ package("z3")
             os.cp("libz3-static.lib", package:installdir("lib"))
         end
         package:addenv("PATH", "bin")
-        package:addenv("PYTHONPATH", "python")
+        package:addenv("PYTHONPATH", package:installdir("python"))
     end)
 
     on_install("macosx", "linux", function (package)
@@ -61,21 +61,20 @@ package("z3")
         end
         if not package:config("shared") then
             table.insert(args, "--staticlib")
-            table.insert(args, "--staticbin")
         end
         os.vrunv("python", args)
         os.cd("build")
         import("package.tools.make").install(package)
         if not package:config("shared") then
-            -- allow python to find libz3.so
-            os.mv(path.join(package:installdir("lib"), "libz3.so"), package:installdir("python"))
-            package:addenv("LD_LIBRARY_PATH", "python")
+            local libfile = package:is_plat("macosx") and "libz3.dylib" or "libz3.so"
+            os.mv(path.join(package:installdir("lib"), libfile), path.join(package:installdir("python"), "z3", "lib", libfile))
         end
         package:addenv("PATH", "bin")
-        package:addenv("PYTHONPATH", "python")
+        package:addenv("PYTHONPATH", package:installdir("python"))
     end)
 
     on_test(function (package)
         os.vrun("z3 -version")
+        os.vrun("python3 -c \"import z3\"")
         assert(package:has_cfuncs("Z3_mk_config", {includes = "z3.h"}))
     end)
