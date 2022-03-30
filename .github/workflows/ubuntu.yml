@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: branch@dev
+          xmake-version: branch@test
 
       - name: Installation
         run: |
@@ -37,4 +37,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -vD -k -j1 ${{ matrix.kind }}

@@ -34,7 +34,7 @@ package("pcre")
         end
         import("package.tools.cmake").install(package, configs)
     end)
-
+ 
     on_install("macosx", "linux", "mingw", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
