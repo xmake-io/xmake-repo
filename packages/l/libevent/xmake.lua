@@ -14,7 +14,7 @@ package("libevent")
     add_deps("cmake")
 
     if is_plat("windows") then
-        add_syslinks("ws2_32", "advapi32", "lphlpapi")
+        add_syslinks("ws2_32", "advapi32", "iphlpapi")
     end
 
     on_load(function (package)
