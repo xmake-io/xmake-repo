@@ -20,7 +20,8 @@ package("lz4")
     end
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
+        io.writefile("xmake.lua", ([[
+            set_version("%s")
             add_rules("mode.debug", "mode.release")
             target("lz4")
                 set_kind("$(kind)")
@@ -34,7 +35,7 @@ package("lz4")
                 if is_kind("static") then
                     add_defines("LZ4_HC_STATIC_LINKING_ONLY", "LZ4_STATIC_LINKING_ONLY")
                 end
-        ]])
+        ]]):format(package:version_str()))
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
