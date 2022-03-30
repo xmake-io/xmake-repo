@@ -31,7 +31,7 @@ package("ncurses")
         if package:config("shared") then
             table.insert(configs, "--with-shared")
         end
-        import("package.tools.autoconf").install(package, configs, {jobs = 1})
+        import("package.tools.autoconf").install(package, configs, {arflags = "-curvU"})
     end)
 
     on_test(function (package)
