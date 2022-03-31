@@ -30,10 +30,8 @@ package("crossguid")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <crossguid/guid.hpp>
-
             void test() {
                 auto g = xg::newGuid();
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++17"}, includes = "crossguid/guid.hpp"}))
     end)
