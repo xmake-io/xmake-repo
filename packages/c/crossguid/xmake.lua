@@ -7,7 +7,7 @@ package("crossguid")
     add_versions("2019.3.29", "ca1bf4b810e2d188d04cb6286f957008ee1b7681")
 
     if is_plat("macosx", "iphoneos") then
-        add_patches("2019.3.29", path.join(os.scriptdir(), "patches", "warnings.patch"), "52546cb4b33bb467bd901d54a1bc97a467b5861ff54c5e39063de9540313adbb")
+        add_patches("2019.3.29", path.join(os.scriptdir(), "patches", "warnings.patch"), "9953cb5ef68bdffa7cc9cb138a2119dd3460f3055db14a13aecc4dd256104c09")
     elseif is_plat("linux") then
         add_deps("libuuid")
     elseif is_plat("windows", "mingw") then
