@@ -4,34 +4,34 @@ package("crossguid")
     set_license("MIT")
 
     add_urls("https://github.com/graeme-hill/crossguid.git")
-    add_versions("master", "40aaf2e0e8fddb67dd2e1dc89091a47f1c417459b5afeeb590292fa041650952")
+    add_versions("2019.3.29", "ca1bf4b810e2d188d04cb6286f957008ee1b7681")
 
     if is_plat("macosx") then
         add_patches("master", path.join(os.scriptdir(), "patches", "warnings.patch"), "52546cb4b33bb467bd901d54a1bc97a467b5861ff54c5e39063de9540313adbb")
     elseif is_plat("linux") then
         add_deps("libuuid")
+    elseif is_plat("windows") then
+        add_syslinks("Ole32")
     end
 
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {"-DCROSSGUID_TESTS:BOOL=OFF"}
+        local configs = {"-DCROSSGUID_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
 
         if package:is_plat("windows") then
-            if package:config("shared") then
-                os.trycp(path.join(package:buildir(), "bin", "**.pdb"), package:installdir("bin"))
-            else
-                os.trycp(path.join(package:buildir(), "lib", "**.pdb"), package:installdir("lib"))
-            end
+            os.trycp("build/pbd/**.pdb", package:installdir("lib"))
         end
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <crossguid/guid.hpp>
-            auto g = xg::newGuid();
-        ]]}))
+
+            void test() {
+                auto g = xg::newGuid();
+            }
+        ]]}, {configs = {languages = "c++17"}}))
     end)
