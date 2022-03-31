@@ -6,13 +6,9 @@ package("crossguid")
     add_urls("https://github.com/graeme-hill/crossguid.git")
     add_versions("2019.3.29", "ca1bf4b810e2d188d04cb6286f957008ee1b7681")
 
-    -- Apply patch
+    -- Apply patch and necessary lib
     if is_plat("macosx", "iphoneos") then
         add_patches("2019.3.29", path.join(os.scriptdir(), "patches", "warnings.patch"), "9953cb5ef68bdffa7cc9cb138a2119dd3460f3055db14a13aecc4dd256104c09")
-    end
-
-    -- Add necessary lib
-    if is_plat("macosx") then
         add_frameworks("CoreFoundation")
     elseif is_plat("linux") then
         add_deps("libuuid")
