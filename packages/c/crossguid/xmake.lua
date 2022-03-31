@@ -28,7 +28,7 @@ package("crossguid")
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
 
         if package:is_plat("windows") then
-            os.trycp("build/pbd/**.pdb", package:installdir("lib"))
+            os.trycp("build/pdb/**.pdb", package:installdir("lib"))
         end
     end)
 
