@@ -66,5 +66,9 @@ package("util-linux")
                 end
             end
         end
+        local libtool = package:dep("libtool")
+        if libtool then
+            os.vrunv("autoreconf", {"--install", "-I" .. libtool:installdir("share", "aclocal")})
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
