@@ -25,6 +25,7 @@ jobs:
 
       - name: Tests
         run: |
+          brew install gtk-doc
           wget https://curl.haxx.se/ca/cacert.pem -O /tmp/cacert.pem
           export CURL_CA_BUNDLE=/tmp/cacert.pem
           xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
