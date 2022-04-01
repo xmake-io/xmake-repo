@@ -11,7 +11,7 @@ package("util-linux")
     add_versions("2.38", "6d111cbe4d55b336db2f1fbeffbc65b89908704c01136371d32aa9bec373eb64")
 
     add_patches("2.36.2", path.join(os.scriptdir(), "patches", "2.36.2", "includes.patch"), "7274762cac2810b5f0d17ecb5ac69c7069e7ff2b880df663b7072628df0867f3")
-    add_patches("2.38", path.join(os.scriptdir(), "patches", "2.38", "hardlink.patch"), "bfab903c249de9aea08d165b7a99edd088bf97ca37b9ee53abf75d8e04fe6234")
+    add_patches("2.38", path.join(os.scriptdir(), "patches", "2.38", "macos.patch"), "ab6d203420f34162859a48c6530ae9fdf22168b55030e97246ce148927c1e25c")
 
     if is_plat("macosx") then
         add_extsources("brew::util-linux")

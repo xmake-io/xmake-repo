@@ -1,0 +1,31 @@
+diff --git a/misc-utils/hardlink.c b/misc-utils/hardlink.c
+--- a/misc-utils/hardlink.c
++++ b/misc-utils/hardlink.c
+@@ -53,7 +53,10 @@
+ #include "monotonic.h"
+ #include "optutils.h"
+ #include "fileeq.h"
+-#include "statfs_magic.h"
++
++#ifdef USE_REFLINK
++# include "statfs_magic.h"
++#endif
+ 
+ #include <regex.h>		/* regcomp(), regexec() */
+ 
+diff --git a/lib/Makemodule.am b/lib/Makemodule.am
+--- a/lib/Makemodule.am
++++ b/lib/Makemodule.am
+@@ -56,10 +56,12 @@ endif
+ if HAVE_OPENAT
+ if HAVE_DIRFD
+ libcommon_la_SOURCES += lib/path.c
++if LINUX
+ libcommon_la_SOURCES += lib/sysfs.c
+ libcommon_la_SOURCES += lib/procfs.c
+ endif
+ endif
++endif
+ 
+ EXTRA_LTLIBRARIES += libtcolors.la
+ libtcolors_la_CFLAGS = $(AM_CFLAGS)
