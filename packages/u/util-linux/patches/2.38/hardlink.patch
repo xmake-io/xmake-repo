@@ -1,0 +1,16 @@
+diff --git a/misc-utils/hardlink.c b/misc-utils/hardlink.c
+index b4dcb3c908..dd55af12aa 100644
+--- a/misc-utils/hardlink.c
++++ b/misc-utils/hardlink.c
+@@ -53,7 +53,10 @@
+ #include "monotonic.h"
+ #include "optutils.h"
+ #include "fileeq.h"
+-#include "statfs_magic.h"
++
++#ifdef USE_REFLINK
++# include "statfs_magic.h"
++#endif
+ 
+ #include <regex.h>		/* regcomp(), regexec() */
+ 
