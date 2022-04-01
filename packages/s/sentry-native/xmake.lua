@@ -6,6 +6,7 @@ package("sentry-native")
     set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
+    add_versions("0.4.15", "bee2e00d120f56670d176a58485085693caf6ec13735c410400bcb6c50c4a8b8")
     add_versions("0.4.4", "fe6c711d42861e66e53bfd7ee0b2b226027c64446857f0d1bbb239ca824a3d8d")
     add_patches("0.4.4", path.join(os.scriptdir(), "patches", "0.4.4", "zlib_fix.patch"), "1a6ac711b7824112a9062ec1716a316facce5055498d1f87090d2cad031b865b")
 
@@ -42,6 +43,9 @@ package("sentry-native")
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
             table.insert(configs, "-DSENTRY_BUILD_SHARED_LIBS=OFF")
+        end
+        if package:config("backend_crashpad") then
+            table.insert(configs, "-DSENTRY_BACKEND=crashpad")
         end
         if package:is_plat("windows") then
             opt.cxflags = { "/experimental:preprocessor-" } -- fixes <Windows SDK>\um\oaidl.h(487): error C2059: syntax error: '/'
