@@ -129,3 +129,4 @@ package("sfml")
             }
         ]]}, {includes = "SFML/System.hpp"}))
     end)
+package_end()
