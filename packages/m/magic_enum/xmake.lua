@@ -18,7 +18,7 @@ package("magic_enum")
             "-DMAGIC_ENUM_OPT_INSTALL=ON"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
