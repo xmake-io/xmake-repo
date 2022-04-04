@@ -9,6 +9,7 @@ package("mapbox_eternal")
              "https://github.com/mapbox/eternal.git")
 
     add_versions("v1.0.1", "7d799381b3786d0bd987eea75df2a81f581a64ee962e922a2f7a7d3d0c3d0421")
+    add_patches("v1.0.1", path.join(os.scriptdir(), "patches", "add_cstdint.patch"), "9a3724ec903fb9d8963ac1d144228f9b5800a102857ea80199b0251f254d89b4")
 
     on_install(function (package)
         os.cp("include/mapbox", package:installdir("include"))
