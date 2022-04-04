@@ -10,7 +10,7 @@ package("rendergraph")
 
     add_links("RenderGraph")
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "macosx", "linux", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("vulkan-headers")
