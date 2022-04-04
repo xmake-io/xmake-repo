@@ -4,8 +4,9 @@ package("rendergraph")
     set_description("Vulkan render graph management library. .")
     set_license("MIT")
 
-    set_urls("https://github.com/DragonJoker/RenderGraph.git")
-    add_versions("1.0", "61e814bb0298983eae853d9ba5386a272ebc1eb9")
+    set_urls("https://github.com/DragonJoker/RenderGraph/archive/refs/tags/$(version).tar.gz",
+         "https://github.com/DragonJoker/RenderGraph.git")
+    add_versions("v1.0.0", "73814e89f854adb1287c33ea8d89f56ef7822977b5e974218a9a826d76a18e67")
 
     add_deps("vulkan-headers")
 
