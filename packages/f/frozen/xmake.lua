@@ -5,7 +5,7 @@ package("frozen")
     set_description("A header-only, constexpr alternative to gperf for C++14 users")
     set_license("Apache-2.0")
 
-    set_urls("https://github.com/serge-sans-paille/archive/refs/tags/$(version).tar.gz",
+    set_urls("https://github.com/serge-sans-paille/frozen/archive/refs/tags/$(version).tar.gz",
              "https://github.com/serge-sans-paille/frozen.git")
 
     add_versions("1.1.1", "f7c7075750e8fceeac081e9ef01944f221b36d9725beac8681cbd2838d26be45")
