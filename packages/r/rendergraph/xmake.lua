@@ -2,6 +2,7 @@ package("rendergraph")
 
     set_homepage("https://github.com/DragonJoker/RenderGraph/")
     set_description("Vulkan render graph management library. .")
+    set_license("MIT")
 
     set_urls("https://github.com/DragonJoker/RenderGraph.git")
     add_versions("1.0", "61e814bb0298983eae853d9ba5386a272ebc1eb9")
@@ -17,8 +18,7 @@ package("rendergraph")
             target("RenderGraph")
                 set_kind("$(kind)")
                 add_includedirs("include")
-                add_files("source/RenderGraph/RunnablePasses/*.cpp")
-                add_files("source/RenderGraph/*.cpp")
+                add_files("source/RenderGraph/**.cpp")
                 set_languages("c++20")
                 if is_plat("windows") then
                     if is_kind("shared") then
