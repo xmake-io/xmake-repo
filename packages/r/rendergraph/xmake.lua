@@ -15,17 +15,27 @@ package("rendergraph")
             add_rules("mode.debug", "mode.release")
             add_requires("vulkan-headers")
             target("RenderGraph")
-                set_kind("shared")
+                set_kind("$(kind)")
                 add_includedirs("include")
                 add_files("source/RenderGraph/RunnablePasses/*.cpp")
                 add_files("source/RenderGraph/*.cpp")
                 set_languages("c++20")
-                add_defines("RenderGraph_EXPORTS")
+                if is_plat("windows") then
+                    if is_kind("shared") then
+                        add_defines("RenderGraph_EXPORTS")
+                    else
+                        add_defines("CRG_BUILD_STATIC")
+                    end
+                end
                 add_headerfiles("include/RenderGraph/RunnablePasses/*.hpp", {prefixdir = "RenderGraph/RunnablePasses"})
                 add_headerfiles("include/RenderGraph/*.hpp", {prefixdir = "RenderGraph"})
                 add_packages("vulkan-headers")
         ]])
-        import("package.tools.xmake").install(package)
+        local configs = {}
+        if package:config("shared") then 
+            configs.kind = "shared"
+        end
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
