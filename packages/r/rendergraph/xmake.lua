@@ -27,8 +27,7 @@ package("rendergraph")
                         add_defines("CRG_BUILD_STATIC")
                     end
                 end
-                add_headerfiles("include/RenderGraph/RunnablePasses/*.hpp", {prefixdir = "RenderGraph/RunnablePasses"})
-                add_headerfiles("include/RenderGraph/*.hpp", {prefixdir = "RenderGraph"})
+                add_headerfiles("include/(RenderGraph/**.hpp)")
                 add_packages("vulkan-headers")
         ]])
         local configs = {}
