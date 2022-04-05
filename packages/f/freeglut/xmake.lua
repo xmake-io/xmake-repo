@@ -2,11 +2,13 @@ package("freeglut")
 
     set_homepage("http://freeglut.sourceforge.net")
     set_description("A free-software/open-source alternative to the OpenGL Utility Toolkit (GLUT) library.")
+    set_license("MIT")
 
     set_urls("https://github.com/dcnieho/FreeGLUT/archive/FG_$(version).zip",
             {version = function (version) return (version:gsub("%.", "_")) end})
     add_versions("3.0.0", "050e09f17630249a7d2787c21691e4b7d7b86957a06b3f3f34fa887b561d8e04")
     add_versions("3.2.1", "501324c27a3ee809ac4a6374f63c5049c1c0d342d93fdb5db12b8c1c84760fa4")
+    add_versions("3.2.2", "2c913b7f698e2183d753c94440f5a0fe3785a1c564e6b73e073c2f6a1b077bf8")
 
     add_patches("3.2.1", path.join(os.scriptdir(), "patches", "3.2.1", "gcc10.patch"), "26cf5026249c9e288080a75a1e9b40b3fa74a4048321cc93907f1476c5a6508b")
 
@@ -16,15 +18,22 @@ package("freeglut")
 
     if is_plat("linux") then
         add_deps("libx11", "libxi", "libxxf86vm", "libxrandr", "libxrender")
-        add_syslinks("GLU", "GL")
+        add_deps("glx", {optional = true})
     end
+    add_deps("glu", "opengl", {optional = true})
 
     on_load("windows", function (package)
         if not package:config("shared") then
             package:add("defines", "FREEGLUT_STATIC=1")
         end
         package:add("defines", "FREEGLUT_LIB_PRAGMAS=0")
-        package:add("syslinks", "glu32", "opengl32", "gdi32", "winmm", "user32", "advapi32")
+        package:add("syslinks", "gdi32", "winmm", "user32", "advapi32")
+    end)
+
+    on_fetch("linux", function (package, opt)
+        if package.find_package then
+            return package:find_package("pkgconfig::glut", opt)
+        end
     end)
 
     on_install("linux", "windows", function (package)

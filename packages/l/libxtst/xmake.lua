@@ -7,6 +7,10 @@ package("libxtst")
     set_urls("https://www.x.org/archive/individual/lib/libXtst-$(version).tar.bz2")
     add_versions("1.2.3", "4655498a1b8e844e3d6f21f3b2c4e2b571effb5fd83199d428a6ba7ea4bf5204")
 
+    if is_plat("linux") then
+        add_extsources("apt::libxtst-dev", "pacman::libxtst")
+    end
+
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "util-macros", "libxi", "xorgproto")
     end

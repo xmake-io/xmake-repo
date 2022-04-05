@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://xmake.io">
     <img width="160" heigth="160" src="https://tboox.org/static/img/xmake/logo256c.png">
-  </a>  
+  </a>
 
   <h1>xmake-repo</h1>
 
@@ -48,13 +48,14 @@
 
 ## Supporting the project
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. 🙏 [[Become a sponsor](https://xmake.io/#/about/sponsor)]
+Support this project by [becoming a sponsor](https://xmake.io/#/about/sponsor). Your logo will show up here with a link to your website. 🙏
 
+<a href="https://opencollective.com/xmake#sponsors" target="_blank"><img src="https://opencollective.com/xmake/sponsors.svg?width=890"></a>
 <a href="https://opencollective.com/xmake#backers" target="_blank"><img src="https://opencollective.com/xmake/backers.svg?width=890"></a>
 
 ## Introduction ([中文](/README_zh.md))
 
-xmake-repo is an official xmake package repository. 
+xmake-repo is an official xmake package repository.
 
 ## Package dependences
 
@@ -76,10 +77,10 @@ xrepo is a cross-platform C/C++ package manager based on [Xmake](https://github.
 
 It is based on the runtime provided by xmake, but it is a complete and independent package management program. Compared with package managers such as vcpkg/homebrew, xrepo can provide C/C++ packages for more platforms and architectures at the same time.
 
-If you want to know more, please refer to the xrepo documentation: 
+If you want to know more, please refer to the xrepo documentation:
 
-* [Documents](https://xrepo.xmake.io/#/getting_started) 
-* [Github](https://github.com/xmake-io/xrepo) 
+* [Documents](https://xrepo.xmake.io/#/getting_started)
+* [Github](https://github.com/xmake-io/xrepo)
 * [Gitee](https://gitee.com/tboox/xrepo)
 
 ![](https://xrepo.xmake.io/assets/img/xrepo.gif)
@@ -92,4 +93,37 @@ For example, [packages/z/zlib/xmake.lua](https://github.com/xmake-io/xmake-repo/
 
 If you want to known more, please see: [Create and Submit packages to the official repository](https://xmake.io/#/package/remote_package?id=submit-packages-to-the-official-repository)
 
+## Create a package template from Github
 
+We need to install the [gh](https://github.com/cli/cli) cli tool first, and then execute the following command to log in to github.
+
+```console
+$ gh auth login
+```
+
+Create a package configuration file to this warehouse based on the package address of github.
+
+```console
+$ xmake l scripts/new.lua github:glennrp/libpng
+package("libpng")
+    set_homepage("http://libpng.sf.net")
+    set_description("LIBPNG: Portable Network Graphics support, official libpng repository")
+
+    add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/glennrp/libpng.git")
+    add_versions("v1.6.35", "6d59d6a154ccbb772ec11772cb8f8beb0d382b61e7ccc62435bf7311c9f4b210")
+
+    add_deps("cmake")
+
+    on_install(function (package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("foo", {includes = "foo.h"}))
+    end)
+packages/l/libpng/xmake.lua generated!
+```

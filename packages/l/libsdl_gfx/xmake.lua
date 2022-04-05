@@ -5,7 +5,7 @@ package("libsdl_gfx")
 
     if is_plat("windows") then
         set_urls("https://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-$(version).zip", {alias = "ferzkopp"})
-        add_urls("https://ufpr.dl.sourceforge.net/project/sdl2gfx/SDL2_gfx-$(version).tar.gz", {alias = "sourceforge"})
+        add_urls("https://sourceforge.net/projects/sdl2gfx/files/SDL2_gfx-$(version).tar.gz", {alias = "sourceforge"})
         add_versions("ferzkopp:1.0.4", "b6da07583b7fb8f4d8cee97cac9176b97a287f56a8112e22f38183ecf47b9dcb")
         add_versions("sourceforge:1.0.4", "63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262")
 
@@ -13,22 +13,34 @@ package("libsdl_gfx")
         add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "lrint_fix.patch"), "9fb928306fb25293720214377bff2f605f60ea26f43ea5346cf1268c504aff1a")
     elseif is_plat("macosx", "linux") then
         set_urls("https://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-$(version).tar.gz")
-        add_urls("https://ufpr.dl.sourceforge.net/project/sdl2gfx/SDL2_gfx-$(version).tar.gz")
+        add_urls("https://sourceforge.net/projects/sdl2gfx/files/SDL2_gfx-$(version).tar.gz")
         add_versions("1.0.4", "63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262")
     end
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::SDL2_gfx")
+    elseif is_plat("linux") then
+        add_extsources("pacman::sdl2_gfx", "apt::libsdl2-gfx-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::sdl2_gfx")
+    end
+
     add_deps("libsdl")
-    on_load(function(package)
-        package:add("includedirs", "include")
-    end)
 
     add_links("SDL2_gfx")
 
+    add_includedirs("include", "include/SDL2")
+
     on_install("windows", function(package)
+        local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+        if tonumber(vs) < 2019 then
+            raise("Your compiler is too old to use this library.")
+        end
+
         local file_name = "SDL2_gfx.vcxproj"
         local content = io.readfile(file_name)
-        content = content:gsub("%%%(AdditionalIncludeDirectories%)", package:dep("libsdl"):installdir("include", "SDL2") .. ";%%%(AdditionalIncludeDirectories%)")
-        content = content:gsub("%%%(AdditionalLibraryDirectories%)", package:dep("libsdl"):installdir("lib") .. ";%%%(AdditionalLibraryDirectories%)")
+        content = content:gsub("%%%(AdditionalIncludeDirectories%)", package:dep("libsdl"):installdir("include", "SDL2") .. ";%%(AdditionalIncludeDirectories)")
+        content = content:gsub("%%%(AdditionalLibraryDirectories%)", package:dep("libsdl"):installdir("lib") .. ";%%(AdditionalLibraryDirectories)")
         io.writefile(file_name, content)
 
         -- MSVC trick no longer required since C++11

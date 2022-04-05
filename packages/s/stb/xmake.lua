@@ -1,10 +1,18 @@
 package("stb")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/nothings/stb")
     set_description("single-file public domain (or MIT licensed) libraries for C/C++")
 
     add_urls("https://github.com/nothings/stb.git")
-    add_versions("0.0", "b42009b3b9d4ca35bc703f5310eedc74f584be58")
+    add_versions("2021.07.13", "3a1174060a7dd4eb652d4e6854bc4cd98c159200")
+    add_versions("2021.09.10", "af1a5bc352164740c1cc1354942b1c6b72eacb8a")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::stb")
+    elseif is_plat("linux") then
+        add_extsources("pacman::stb", "apt::libstb-dev")
+    end
 
     on_install(function (package)
         os.cp("*.h", package:installdir("include"))

@@ -10,15 +10,13 @@ package("libunistring")
     add_deps("libiconv")
 
     on_install("linux", "macosx", function (package)
-        local configs = {"--disable-dependency-tracking", "--with-pic"}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-            table.insert(configs, "--enable-static=no")
-        else
-            table.insert(configs, "--enable-static=yes")
-            table.insert(configs, "--enable-shared=no")
+        local configs = {"--disable-dependency-tracking"}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
         end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf").install(package, configs, {packagedeps = {"libiconv"}})
     end)
 
     on_test(function (package)

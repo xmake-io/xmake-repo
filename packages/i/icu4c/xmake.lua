@@ -6,10 +6,14 @@ package("icu4c")
     add_urls("https://github.com/unicode-org/icu/releases/download/release-$(version)-src.tgz", {version = function (version)
             return (version:gsub("%.", "-")) .. "/icu4c-" .. (version:gsub("%.", "_"))
         end})
+    add_versions("70.1", "8d205428c17bf13bb535300669ed28b338a157b1c01ae66d31d0d3e2d47c3fd5")
     add_versions("69.1", "4cba7b7acd1d3c42c44bb0c14be6637098c7faf2b330ce876bc5f3b915d09745")
     add_versions("68.2", "c79193dee3907a2199b8296a93b52c5cb74332c26f3d167269487680d479d625")
     add_versions("68.1", "a9f2e3d8b4434b8e53878b4308bd1e6ee51c9c7042e2b1a376abefb6fbb29f2d")
     add_versions("64.2", "627d5d8478e6d96fc8c90fed4851239079a561a6a8b9e48b0892f24e82d31d6c")
+
+    add_patches("69.1", path.join(os.scriptdir(), "patches", "69.1", "replace-py-3.patch"), "ae27a55b0e79a8420024d6d349a7bae850e1dd403a8e1131e711c405ddb099b9")
+    add_patches("70.1", path.join(os.scriptdir(), "patches", "70.1", "replace-py-3.patch"), "6469739da001721122b62af513370ed62901caf43af127de3f27ea2128830e35")
 
     add_links("icuuc", "icutu", "icui18n", "icuio", "icudata")
     if is_plat("linux") then
@@ -20,19 +24,10 @@ package("icu4c")
     end
 
     on_install("windows", function (package)
-        import("package.tools.msbuild")
-
-        -- set configs
         local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
         table.insert(configs, "/p:Configuration=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
-
-        -- set envs
-        local envs = msbuild.buildenvs(package)
-        envs.PATH = package:dep("python"):installdir("bin") .. path.envsep() .. envs.PATH
-
-        -- build
-        msbuild.build(package, configs, {envs = envs})
+        import("package.tools.msbuild").build(package, configs)
         os.cp("include", package:installdir())
         os.cp("bin*/*", package:installdir("bin"))
         os.cp("lib*/*", package:installdir("lib"))

@@ -1,0 +1,17 @@
+@PACKAGE_INIT@
+
+# Usage:
+#
+#     find_pacakge(@PACKAGE_NAME@)
+#
+#     add_executable(foo)
+#     target_link_libraries(foo @PACKAGE_NAMESPACE@base64)
+
+set_and_check(@PACKAGE_NAME@_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+set_and_check(@PACKAGE_NAME@_LIBRARY_DIRS "@PACKAGE_CMAKE_INSTALL_LIBDIR@")
+
+set(@PACKAGE_NAME@_LIBRARIES @PACKAGE_NAMESPACE@base64)
+
+include(${CMAKE_CURRENT_LIST_DIR}/@PACKAGE_NAME@-targets.cmake)
+
+check_required_components(@PACKAGE_NAME@)

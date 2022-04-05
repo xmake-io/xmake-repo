@@ -1,14 +1,12 @@
 diff --git a/include/chipmunk/chipmunk_types.h b/include/chipmunk/chipmunk_types.h
-index 9544da8..444f5c6 100644
+index 9544da8..82d027e 100644
 --- a/include/chipmunk/chipmunk_types.h
 +++ b/include/chipmunk/chipmunk_types.h
-@@ -53,8 +53,12 @@
- #endif
+@@ -54,7 +54,11 @@
  
  #ifndef CP_USE_DOUBLES
--	// Use doubles by default for higher precision.
+ 	// Use doubles by default for higher precision.
 -	#define CP_USE_DOUBLES 1
-+	// Use doubles by default for higher precision when possible.
 +	#if (!defined(__ARM_NEON__) || !__ARM_NEON__ || __arm64)
 +		#define CP_USE_DOUBLES 1
 +	#else
@@ -18,18 +16,24 @@ index 9544da8..444f5c6 100644
  
  /// @defgroup basicTypes Basic Types
 diff --git a/src/cpHastySpace.c b/src/cpHastySpace.c
-index 8dca425..3e3792c 100644
+index 8dca425..fa3074d 100644
 --- a/src/cpHastySpace.c
 +++ b/src/cpHastySpace.c
-@@ -8,7 +8,11 @@
+@@ -7,8 +7,16 @@
+ //TODO: Move all the thread stuff to another file
  
  //#include <sys/param.h >
- #ifndef _WIN32
-+#if defined(ANDROID)
-+#include <linux/sysctl.h>
-+#else
+-#ifndef _WIN32
++
++#ifdef __APPLE__
  #include <sys/sysctl.h>
++#elif defined(ANDROID)
++#include <linux/sysctl.h>
 +#endif
++
++#ifndef _WIN32
++#include <pthread.h>
++#elif defined(__MINGW32__)
  #include <pthread.h>
  #else
  #ifndef WIN32_LEAN_AND_MEAN

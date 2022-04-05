@@ -6,8 +6,11 @@ package("fontconfig")
     set_urls("https://www.freedesktop.org/software/fontconfig/release/fontconfig-$(version).tar.gz")
     add_versions("2.13.1", "9f0d852b39d75fc655f9f53850eb32555394f36104a044bb2b2fc9e66dbbfa7f")
     add_versions("2.13.93", "0f302a18ee52dde0793fe38b266bf269dfe6e0c0ae140e30d72c6cca5dc08db5")
+    add_versions("2.13.94",
+    "246d1640a7e54fba697b28e4445f4d9eb63dda1b511d19986249368ee7191882")
 
-    add_deps("pkg-config", "freetype >=2.9", "expat")
+    add_deps("meson", "pkg-config", "freetype >=2.9", "expat")
+    add_deps("python 3.x", {kind = "binary"})
     if is_plat("macosx") then
         add_deps("gettext")
     else
@@ -20,26 +23,14 @@ package("fontconfig")
                           "2abdff214b99f2d074170e6512b0149cc858ea26cd930690aa6b4ccea2c549ef")
 
     on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf")
-        local font_dirs = {}
-        if is_plat("macosx") then
-            table.insert(font_dirs, "/System/Library/Fonts")
-            table.insert(font_dirs, "/Library/Fonts")
-            table.insert(font_dirs, "~/Library/Fonts")
-        end
-        local configs = {"--disable-dependency-tracking", "--disable-silent-rules", "--enable-static", "--disable-docs"}
-        if #font_dirs > 0 then
-            table.insert(configs, "--with-add-fonts=" .. table.concat(font_dirs, ','))
-        end
-        local envs = autoconf.buildenvs(package)
-        if package:is_plat("linux") then
-            envs.UUID_CFLAGS = "-I" .. package:dep("util-linux"):installdir("include")
-        end
-        table.insert(configs, "--enable-shared=no")
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-        autoconf.install(package, configs, {envs = envs})
+        local configs = {
+            "-Dtests=disabled",
+            "-Dtools=disabled",
+            "-Ddoc=disabled"}
+        table.insert(configs, "-Ddebug=" .. (package:debug() and "true" or "false"))
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+
+        import("package.tools.meson").install(package, configs)
     end)
 
     on_test(function (package)

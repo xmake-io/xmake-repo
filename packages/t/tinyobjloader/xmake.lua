@@ -9,17 +9,26 @@ package("tinyobjloader")
     add_versions("1.0.7", "b9d08b675ba54b9cb00ffc99eaba7616d0f7e6f6b8947a7e118474e97d942129")
 
     add_configs("double", {description = "Use double precision floating numbers.", default = false, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    on_load(function (package)
+        if package:config("double") then
+            package:add("defines", "TINYOBJLOADER_USE_DOUBLE")
+        end
+    end)
 
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
-        local kind = package:config("shared") and "shared" or "static"
         io.writefile("xmake.lua", string.format([[
             add_rules("mode.debug", "mode.release")
+            add_rules("utils.install.cmake_importfiles")
             target("tinyobjloader")
-                set_kind("%s")
+                set_kind("$(kind)")
                 %s
                 add_files("tiny_obj_loader.cc")
                 add_headerfiles("tiny_obj_loader.h")
-        ]], kind, (package:config("double") and "add_defines(\"TINYOBJLOADER_USE_DOUBLE\")" or "")))
+        ]], package:config("double") and "add_defines(\"TINYOBJLOADER_USE_DOUBLE\")" or ""))
         import("package.tools.xmake").install(package)
     end)
 

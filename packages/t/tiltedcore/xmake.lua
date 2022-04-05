@@ -6,6 +6,10 @@ package("tiltedcore")
     add_urls("https://github.com/tiltedphoques/TiltedCore/archive/$(version).zip")
     add_urls("https://github.com/tiltedphoques/TiltedCore.git")
 
+    add_versions("v0.2.6", "b5e323c579395689cabccd24b87ef0ff74e448a4d3088f25596334ccbcd634ba")
+    add_versions("v0.2.5", "60cffe615bc5817b85ce6dbef92d08a80f76347464f8604a0b344bc3417aa3d6")
+    add_versions("v0.2.4", "7c229b1a23a4a4c19a7871b0a43eae98a12064b2cd4894c31f7189da1729d3c0")
+    add_versions("v0.2.3", "228d2d48a01ab0166a586cd1daa9809db457bbbd9d8773a94be8e572af0bd260")
     add_versions("v0.2.2", "5b6b9fd4c9c3e46f7af7fdefb0b004f2106b2da3f2b7e068fd594730d4c41eaa")
     add_versions("v0.2.1", "5cf7aab7f548c7dc49349af321d4e96286cea83177a4b779a2b8504e86f1ff3b")
     add_versions("v0.2.0", "c08096df42542add9ced163de4784a998fa08e343da3fcd9ffa42fc5393f8f93")
@@ -17,6 +21,12 @@ package("tiltedcore")
     add_deps("mimalloc", {configs = {rltgenrandom = true}})
 
     on_install("windows", "msys", "linux", function (package)
+        if package:is_plat("windows") then
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            if tonumber(vs) < 2019 then
+                raise("Your compiler is too old to use this library, it need c++17 support above vs2019.")
+            end
+        end
         import("package.tools.xmake").install(package)
     end)
 

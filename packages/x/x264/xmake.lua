@@ -4,15 +4,19 @@ package("x264")
     set_description("A free software library and application for encoding video streams into the H.264/MPEG-4 AVC compression format.")
 
     add_urls("http://git.videolan.org/git/x264.git")
-
+    add_versions("v2021.09.29", "66a5bc1bd1563d8227d5d18440b525a09bcf17ca")
     add_versions("v2018.09.25", "545de2ffec6ae9a80738de1b2c8cf820249a2530")
 
     add_deps("nasm")
 
     add_syslinks("pthread", "dl")
-
     on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package, {"--disable-lsmash", "--enable-static", "--enable-strip"})
+        local configs = {"--disable-avs", "--disable-lsmash", "--disable-lavf", "--disable-bashcompletion"}
+        table.insert(configs, "--enable-" .. (package:configs("shared") and "shared" or "static"))
+        if package:config("pic") then
+            table.insert(configs, "--enable-pic")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

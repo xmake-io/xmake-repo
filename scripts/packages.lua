@@ -3,7 +3,12 @@ import("core.package.package")
 import("core.platform.platform")
 
 -- is supported platform and architecture?
-function _is_supported(instance, plat, arch, opt)
+function is_supported(instance, plat, arch, opt)
+
+    -- ignore template package
+    if instance.is_template and instance:is_template() then
+        return false
+    end
 
     -- get script
     local script = instance:get("install")
@@ -29,17 +34,17 @@ function _is_supported(instance, plat, arch, opt)
         for _pattern, _script in pairs(script) do
             local hosts = {}
             local hosts_spec = false
-            _pattern = _pattern:gsub("@(.+)", function (v) 
+            _pattern = _pattern:gsub("@(.+)", function (v)
                 for _, host in ipairs(v:split(',')) do
                     hosts[host] = true
                     hosts_spec = true
                 end
-                return "" 
+                return ""
             end)
             if _pattern:trim() == "" and opt and opt.onlyhost then
                 _pattern = os.subhost()
             end
-            if not _pattern:startswith("__") and (not hosts_spec or hosts[os.subhost() .. '|' .. os.subarch()] or hosts[os.subhost()])  
+            if not _pattern:startswith("__") and (not hosts_spec or hosts[os.subhost() .. '|' .. os.subarch()] or hosts[os.subhost()])
             and (_pattern:trim() == "" or (plat .. '|' .. arch):find('^' .. _pattern .. '$') or plat:find('^' .. _pattern .. '$')) then
                 result = _script
                 break
@@ -59,13 +64,19 @@ function main(opt)
         local packagename = path.filename(packagedir)
         local packagefile = path.join(packagedir, "xmake.lua")
         local instance = package.load_from_repository(packagename, nil, packagedir, packagefile)
+        local basename = instance:get("base")
+        if instance and basename then
+            local basedir = path.join("packages", basename:sub(1, 1):lower(), basename:lower())
+            local basefile = path.join(basedir, "xmake.lua")
+            instance._BASE = package.load_from_repository(basename, nil, basedir, basefile)
+        end
         if instance then
             for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw", "msys", "bsd", "cross"}) do
                 local archs = platform.archs(plat)
                 if archs then
                     local package_archs = {}
                     for _, arch in ipairs(archs) do
-                        if _is_supported(instance, plat, arch, opt) then
+                        if is_supported(instance, plat, arch, opt) then
                             table.insert(package_archs, arch)
                         end
                     end

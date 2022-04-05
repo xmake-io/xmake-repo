@@ -2,6 +2,7 @@ package("boost")
 
     set_homepage("https://www.boost.org/")
     set_description("Collection of portable C++ source libraries.")
+    set_license("BSL-1.0")
 
     add_urls("https://boostorg.jfrog.io/artifactory/main/release/$(version).tar.bz2", {version = function (version)
             return version .. "/source/boost_" .. (version:gsub("%.", "_"))
@@ -9,6 +10,8 @@ package("boost")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
+    add_versions("1.78.0", "8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc")
+    add_versions("1.77.0", "fc9f85fc030e233142908241af7a846e60630aa7388de9a5fafb1f3a26840854")
     add_versions("1.76.0", "f0397ba6e982c4450f27bf32a2a83292aba035b827a5623a14636ea583318c41")
     add_versions("1.75.0", "953db31e016db7bb207f11432bef7df100516eeb746843fa0486a222e3fd49cb")
     add_versions("1.74.0", "83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1")
@@ -16,12 +19,19 @@ package("boost")
     add_versions("1.72.0", "59c9b274bc451cf91a9ba1dd2c7fdcaf5d60b1b3aa83f2c9fa143417cc660722")
     add_versions("1.70.0", "430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::boost")
+    elseif is_plat("linux") then
+        add_extsources("pacman::boost", "apt::libboost-all-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::boost")
+    end
+
     add_patches("1.75.0", path.join(os.scriptdir(), "patches", "1.75.0", "warning.patch"), "43ff97d338c78b5c3596877eed1adc39d59a000cf651d0bcc678cf6cd6d4ae2e")
 
     if is_plat("linux") then
         add_deps("bzip2", "zlib")
-    elseif is_plat("windows") then
-        add_cxflags("/EHsc")
+        add_syslinks("pthread", "dl")
     end
 
     local libnames = {"filesystem",
@@ -43,7 +53,18 @@ package("boost")
                       "locale",
                       "iostreams",
                       "program_options",
-                      "test"}
+                      "test",
+                      "chrono",
+                      "contract",
+                      "graph_parallel",
+                      "json",
+                      "log",
+                      "math",
+                      "mpi",
+                      "nowide",
+                      "python",
+                      "stacktrace",
+                      "type_erasure"}
 
     add_configs("all",          { description = "Enable all library modules support.",  default = false, type = "boolean"})
     add_configs("multi",        { description = "Enable multi-thread support.",  default = true, type = "boolean"})
@@ -75,7 +96,7 @@ package("boost")
         package:add("defines", "BOOST_ALL_NO_LIB")
     end)
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", "windows", "bsd", "cross", function (package)
 
         -- force boost to compile with the desired compiler
         local file = io.open("user-config.jam", "a")
@@ -84,7 +105,7 @@ package("boost")
                 -- we uses ld/clang++ for link stdc++ for shared libraries
                 file:print("using darwin : : %s ;", package:build_getenv("ld"))
             elseif is_plat("windows") then
-                file:print("using msvc : : %s ;", os.args(package:build_getenv("cxx")))
+                file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
             else
                 file:print("using gcc : : %s ;", package:build_getenv("cxx"))
             end
@@ -113,7 +134,7 @@ package("boost")
             "-d2",
             "-j4",
             "--hash",
-            "--layout=tagged-1.66",
+            "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
             "-sNO_LZMA=1",
             "-sNO_ZSTD=1",

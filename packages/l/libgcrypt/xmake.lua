@@ -4,20 +4,18 @@ package("libgcrypt")
     set_description("Libgcrypt is a general purpose cryptographic library originally based on code from GnuPG.")
     set_license("GPL-2.0")
 
-    add_urls("https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-$(version).tar.gz")
-    add_versions("1.8.7", "55d98db5e5c7e7bb1efabe1299040d501e5d55272e10f60b68de9f9118b53102")
+    add_urls("https://www.gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-$(version).tar.gz")
+    add_versions("1.10.0", "624dc2f72aaadf6ef4e183589aba794cc060bfbf14d2f4f0995b4d636189c584")
 
-    add_deps("libgpg-error", "libxml2")
-    on_install("linux", function (package)
-        local configs = {"--disable-doc", "--with-pic"}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-            table.insert(configs, "--enable-static=no")
-        else
-            table.insert(configs, "--enable-static=yes")
-            table.insert(configs, "--enable-shared=no")
-        end
+    add_deps("libgpg-error")
+    on_install("linux", "macosx", function (package)
+        local configs = {"--disable-doc"}
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--with-libgpg-error-prefix=" .. package:dep("libgpg-error"):installdir())
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 

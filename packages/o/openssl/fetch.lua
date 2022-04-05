@@ -32,9 +32,6 @@ function main(package, opt)
             result = _find_package_on_windows(package, opt)
         else
             result = package:find_package("openssl", opt)
-            if not result and package:is_plat("linux") then
-                result = package:find_package("apt::libssl-dev", opt)
-            end
         end
         return result or false
     end

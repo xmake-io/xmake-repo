@@ -11,27 +11,30 @@ package("util-linux")
 
     add_patches("2.36.2", path.join(os.scriptdir(), "patches", "2.36.2", "includes.patch"), "7274762cac2810b5f0d17ecb5ac69c7069e7ff2b880df663b7072628df0867f3")
 
-    if not is_plat("macosx") then
+    if is_plat("macosx") then
+        add_extsources("brew::util-linux")
+    elseif is_plat("linux") then
+        add_extsources("apt::util-linux", "pacman::util-linux")
         add_deps("ncurses", "zlib")
     end
 
-    add_configs("ipcs",               { description = "Enable ipcs.", default = false, type = "boolean"})
-    add_configs("ipcrm",              { description = "Enable ipcrm.", default = false, type = "boolean"})
-    add_configs("wall",               { description = "Enable wall.", default = false, type = "boolean"})
-    add_configs("libuuid",            { description = "Enable libuuid.", default = false, type = "boolean"})
-    add_configs("libmount",           { description = "Enable libmount.", default = false, type = "boolean"})
-    add_configs("libsmartcols",       { description = "Enable libsmartcols.", default = false, type = "boolean"})
-    add_configs("use-tty-group",      { description = "Enable use-tty-group.", default = false, type = "boolean"})
-    add_configs("kill",               { description = "Enable kill.", default = false, type = "boolean"})
-    add_configs("cal",                { description = "Enable cal.", default = false, type = "boolean"})
-    add_configs("systemd",            { description = "Enable systemd.", default = false, type = "boolean"})
-    add_configs("chfn-chsh",          { description = "Enable chfn-chsh.", default = false, type = "boolean"})
-    add_configs("login",              { description = "Enable login.", default = false, type = "boolean"})
-    add_configs("su",                 { description = "Enable su.", default = false, type = "boolean"})
-    add_configs("mount",              { description = "Enable mount.", default = false, type = "boolean"})
-    add_configs("runuser",            { description = "Enable runuser.", default = false, type = "boolean"})
-    add_configs("makeinstall-chown",  { description = "Enable makeinstall-chown.", default = false, type = "boolean"})
-    add_configs("makeinstall-setuid", { description = "Enable makeinstall-setuid.", default = false, type = "boolean"})
+    add_configs("ipcs",               {description = "Enable ipcs.", default = false, type = "boolean"})
+    add_configs("ipcrm",              {description = "Enable ipcrm.", default = false, type = "boolean"})
+    add_configs("wall",               {description = "Enable wall.", default = false, type = "boolean"})
+    add_configs("libuuid",            {description = "Enable libuuid.", default = false, type = "boolean"})
+    add_configs("libmount",           {description = "Enable libmount.", default = false, type = "boolean"})
+    add_configs("libsmartcols",       {description = "Enable libsmartcols.", default = false, type = "boolean"})
+    add_configs("use-tty-group",      {description = "Enable use-tty-group.", default = false, type = "boolean"})
+    add_configs("kill",               {description = "Enable kill.", default = false, type = "boolean"})
+    add_configs("cal",                {description = "Enable cal.", default = false, type = "boolean"})
+    add_configs("systemd",            {description = "Enable systemd.", default = false, type = "boolean"})
+    add_configs("chfn-chsh",          {description = "Enable chfn-chsh.", default = false, type = "boolean"})
+    add_configs("login",              {description = "Enable login.", default = false, type = "boolean"})
+    add_configs("su",                 {description = "Enable su.", default = false, type = "boolean"})
+    add_configs("mount",              {description = "Enable mount.", default = false, type = "boolean"})
+    add_configs("runuser",            {description = "Enable runuser.", default = false, type = "boolean"})
+    add_configs("makeinstall-chown",  {description = "Enable makeinstall-chown.", default = false, type = "boolean"})
+    add_configs("makeinstall-setuid", {description = "Enable makeinstall-setuid.", default = false, type = "boolean"})
 
     on_load(function (package)
         package:addenv("PATH", "bin")
@@ -42,9 +45,7 @@ package("util-linux")
                          "--disable-silent-rules",
                          "--without-python",
                          "--without-systemd",
-                         "--enable-static=yes",
-                         "--enable-shared=no",
-                         "--with-bashcompletiondir=" .. package:installdir("share/bash-completion")}
+                         "--with-bashcompletiondir=" .. path.join(package:installdir("share"), "bash-completion")}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
@@ -64,4 +65,3 @@ package("util-linux")
         end
         import("package.tools.autoconf").install(package, configs)
     end)
-

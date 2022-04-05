@@ -1,5 +1,6 @@
 package("tinygltf")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/syoyo/tinygltf/")
     set_description("Header only C++11 tiny glTF 2.0 library")
     set_license("MIT")
@@ -11,6 +12,7 @@ package("tinygltf")
     add_deps("stb", "nlohmann_json")
     on_install(function (package)
         os.cp("tiny_gltf.h", package:installdir("include"))
+        os.cp("cmake/TinyGLTFConfig.cmake", package:installdir("cmake"))
     end)
 
     on_test(function (package)

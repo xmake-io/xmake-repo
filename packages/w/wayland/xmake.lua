@@ -11,6 +11,10 @@ package("wayland")
     add_resources("1.18.0", "protocols", "https://wayland.freedesktop.org/releases/wayland-protocols-1.20.tar.xz", "9782b7a1a863d82d7c92478497d13c758f52e7da4f197aa16443f73de77e4de7")
     add_resources("1.19.0", "protocols", "https://wayland.freedesktop.org/releases/wayland-protocols-1.21.tar.xz", "b99945842d8be18817c26ee77dafa157883af89268e15f4a5a1a1ff3ffa4cde5")
 
+    if is_plat("linux") then
+        add_extsources("apt::libwayland-dev", "pacman::wayland")
+    end
+
     add_deps("meson", "libxml2", "libffi", "expat", "bison")
     on_install("linux", function (package)
 

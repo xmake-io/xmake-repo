@@ -3,10 +3,17 @@ package("zlib")
     set_homepage("http://www.zlib.net")
     set_description("A Massively Spiffy Yet Delicately Unobtrusive Compression Library")
 
-    add_urls("https://github.com/madler/zlib/archive/v$(version).tar.gz")
+    add_urls("https://github.com/madler/zlib/archive/$(version).tar.gz",
+             "https://github.com/madler/zlib.git")
 
-    add_versions("1.2.10", "42cd7b2bdaf1c4570e0877e61f2fdc0bce8019492431d054d3d86925e5058dc5")
-    add_versions("1.2.11", "629380c90a77b964d896ed37163f5c3a34f6e6d897311f1df2a7016355c45eff")
+    add_versions("v1.2.10", "42cd7b2bdaf1c4570e0877e61f2fdc0bce8019492431d054d3d86925e5058dc5")
+    add_versions("v1.2.11", "629380c90a77b964d896ed37163f5c3a34f6e6d897311f1df2a7016355c45eff")
+
+    if is_plat("linux") then
+        add_extsources("pacman::zlib", "apt::zlib1g-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::zlib")
+    end
 
     on_install(function (package)
         io.writefile("xmake.lua", [[
@@ -14,7 +21,7 @@ package("zlib")
             add_rules("mode.debug", "mode.release")
             target("zlib")
                 set_kind("$(kind)")
-                if not is_plat("windows", "mingw") then
+                if not is_plat("windows") then
                     set_basename("z")
                 end
                 add_files("adler32.c")
@@ -44,6 +51,7 @@ package("zlib")
                         add_defines("ZLIB_DLL")
                     end
                 else
+                    add_defines("ZEXPORT=__attribute__((visibility(\"default\")))")
                     add_defines("_LARGEFILE64_SOURCE=1")
                 end
         ]])

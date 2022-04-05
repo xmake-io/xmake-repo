@@ -9,6 +9,14 @@ package("libflac")
 
     add_versions("1.3.3", "668cdeab898a7dd43cf84739f7e1f3ed6b35ece2ef9968a5c7079fe9adfe1689")
     add_patches("1.3.3", path.join(os.scriptdir(), "patches", "1.3.3", "cmake.patch"), "49baa40ab70d63e74cfc3f0cc2f13824545a618ceaeffdd51d3333d90b37fd32")
+    
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::flac")
+    elseif is_plat("linux") then
+        add_extsources("pacman::flac", "apt::libflac++-dev", "apt::libflac-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::flac")
+    end
 
     add_deps("cmake", "libogg")
 

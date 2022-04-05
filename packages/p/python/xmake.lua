@@ -5,30 +5,31 @@ package("python")
 
     if is_host("windows") then
         if is_arch("x86", "i386") or os.arch() == "x86" then
-            add_urls("https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win32.tar.gz",
-                     "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win32.tar.gz")
-            add_versions("2.7.15", "4a7be2b440b74776662daaeb6bb6c5574bb6d0f4ddc0ad03ce63571ab2353303")
-            add_versions("2.7.18", "9efaf273aa2e7d23fa22efa2936619ec91cf9ee189f707e375f9063fadeabcd6")
-            add_versions("3.7.0", "6f6dfd3df4b15157a12d06685a6dda450478ca118aa8832f0033093b9ca6329f")
-            add_versions("3.8.1", "f4fe3eeec4ee50260382a8221b1bebf919b6635a499341abe128986ae76f17e3")
-            add_versions("3.8.5", "9d1b901a508b3a6745aa225596d98a1aaa39cf8e9b9f79b5ded7192d4503a5aa")
+            add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win32.zip")
+            add_versions("2.7.18", "95e21c87c9f38fa8068e014fc3683c3bc2c827f64875e620b9ecd3c75976a79c")
+            add_versions("3.7.9", "55c8a408a11e598964f5d581589cf7f8c622e3cad048dce331ee5a61e5a6f57f")
+            add_versions("3.8.10", "f520d2880578df076e3df53bf9e147b81b5328db02d8d873670a651fa076be50")
+            add_versions("3.9.5", "ce0bfe8ced874d8d74a6cf6a98f13f5afee27cffbaf2d1ee0f09d3a027fab299")
+            add_versions("3.9.6", "2918246384dfb233bd8f8c2bcf6aa3688e6834e84ab204f7c962147c468f8d12")
+            add_versions("3.9.10", "e2c8e6b792748289ac27ef8462478022c96e24c99c4c3eb97d3afe510d9db646")
         else
-            add_urls("https://github.com/xmake-mirror/python-releases/raw/$(version)/python-$(version).win64.tar.gz",
-                     "https://gitlab.com/xmake-mirror/python-releases/-/raw/$(version)/python-$(version).win64.tar.gz")
-            add_versions("2.7.15", "c81c4604b4176ff26be8d37cf48a2582e71a5e8f475b531c2e5d032a39511acb")
-            add_versions("2.7.18", "0e1adec089c4358b4ff1cd392c8bd7c975e0bf7c279aee91e7aaa04c00fb2c10")
-            add_versions("3.7.0", "8acd395e64d09b6b33ef78e199ffa48a8fd48f32d4d90d575e72448939a0e4c5")
-            add_versions("3.8.1", "9b7666a3d39a5b8405b0706fc042390b7ecfd0f75b948c7d2be012598b11163e")
-            add_versions("3.8.5", "585f71093dd1303140f2e97700581456fe38e3ec47922bcb4ad3c76ee8ee2433")
+            add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
+            add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
+            add_versions("3.7.9", "d0d879c934b463d46161f933db53a676790d72f24e92143f629ee5629ae286bc")
+            add_versions("3.8.10", "acf35048274404dd415e190bf5b928fae3b03d8bb5dfbfa504f9a183361468bd")
+            add_versions("3.9.5", "3265059edac21bf4c46fac13553a5d78417e7aa209eceeffd0250aa1dd8d6fdf")
+            add_versions("3.9.6", "57ccd1b1b5fbc62882bd2a6f47df6e830ba39af741acf0a1d2f161eef4e87f2e")
+            add_versions("3.9.10", "4cee67e2a529fe363e34f0da57f8e5c3fc036913dc838b17389b2319ead0927e")
         end
     else
         set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
                  "https://github.com/xmake-mirror/cpython/releases/download/v$(version)/Python-$(version).tgz")
-        add_versions("2.7.15", "18617d1f15a380a919d517630a9cd85ce17ea602f9bbdc58ddc672df4b0239db")
         add_versions("2.7.18", "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814")
-        add_versions("3.7.0", "85bb9feb6863e04fb1700b018d9d42d1caac178559ffa453d7e6a436e259fd0d")
-        add_versions("3.8.1", "c7cfa39a43b994621b245e029769e9126caa2a93571cee2e743b213cceac35fb")
-        add_versions("3.8.5", "015115023c382eb6ab83d512762fe3c5502fa0c6c52ffebc4831c4e1a06ffc49")
+        add_versions("3.7.9", "39b018bc7d8a165e59aa827d9ae45c45901739b0bbb13721e4f973f3521c166a")
+        add_versions("3.8.10", "b37ac74d2cbad2590e7cd0dd2b3826c29afe89a734090a87bf8c03c45066cb65")
+        add_versions("3.9.5", "e0fbd5b6e1ee242524430dee3c91baf4cbbaba4a72dd1674b90fda87b713c7ab")
+        add_versions("3.9.6", "d0a35182e19e416fc8eae25a3dcd4d02d4997333e4ad1f2eee6010aadc3fe866")
+        add_versions("3.9.10", "1aa9c0702edbae8f6a2c95f70a49da8420aaa76b7889d3419c186bfc8c0e571e")
     end
 
     if not is_plat(os.host()) then
@@ -36,7 +37,7 @@ package("python")
     end
 
     if is_host("macosx", "linux") then
-        add_deps("openssl", {host = true})
+        add_deps("openssl", "ca-certificates", {host = true})
     end
 
     if is_host("linux") then
@@ -74,19 +75,34 @@ package("python")
         package:addenv("PATH", "Scripts")
     end)
 
+    on_fetch(function (package, opt)
+        if opt.system and package:is_binary() then
+            local result = package:find_tool("python3", opt)
+            if not result then
+                result = package:find_tool("python", opt)
+            end
+            return result
+        end
+    end)
+
     on_install("@windows", "@msys", "@cygwin", function (package)
         if package:version():ge("3.0") then
             os.cp("python.exe", path.join(package:installdir("bin"), "python3.exe"))
         else
             os.cp("python.exe", path.join(package:installdir("bin"), "python2.exe"))
         end
-        os.mv("*.exe", package:installdir("bin"))
-        os.mv("*.dll", package:installdir("bin"))
-        os.mv("Lib", package:installdir())
+        os.cp("*.exe", package:installdir("bin"))
+        os.cp("*.dll", package:installdir("bin"))
+        os.cp("Lib", package:installdir())
         os.cp("libs/*", package:installdir("lib"))
         os.cp("*", package:installdir())
         local python = path.join(package:installdir("bin"), "python.exe")
-        os.vrunv(python, {"-m", "pip", "install", "-U", "pip"})
+        if package:version():eq("3.9.10") then
+            -- https://github.com/xmake-io/xmake-repo/issues/1013
+            os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip==21.3.1"})
+        else
+            os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"})
+        end
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
@@ -96,6 +112,7 @@ package("python")
         local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
         table.insert(configs, "--datadir=" .. package:installdir("share"))
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
 
         -- add openssl libs path for detecting
         local openssl_dir
@@ -124,7 +141,7 @@ package("python")
         end
 
         -- add flags for macOS
-        local cflags = {}
+        local cppflags = {}
         local ldflags = {}
         if package:is_plat("macosx") then
 
@@ -167,13 +184,13 @@ package("python")
                 -- help Python's build system (setuptools/pip) to build things on SDK-based systems
                 -- the setup.py looks at "-isysroot" to get the sysroot (and not at --sysroot)
                 local xcode_sdkdir = xcode_dir .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode_sdkver .. ".sdk"
-                table.insert(cflags, "-isysroot " .. xcode_sdkdir)
-                table.insert(cflags, "-I" .. path.join(xcode_sdkdir, "/usr/include"))
+                table.insert(cppflags, "-isysroot " .. xcode_sdkdir)
+                table.insert(cppflags, "-I" .. path.join(xcode_sdkdir, "/usr/include"))
                 table.insert(ldflags, "-isysroot " .. xcode_sdkdir)
 
                 -- for the Xlib.h, Python needs this header dir with the system Tk
                 -- yep, this needs the absolute path where zlib needed a path relative to the SDK.
-                table.insert(cflags, "-I" .. path.join(xcode_sdkdir, "/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"))
+                table.insert(cppflags, "-I" .. path.join(xcode_sdkdir, "/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers"))
             end
 
             -- avoid linking to libgcc https://mail.python.org/pipermail/python-dev/2012-February/116205.html
@@ -181,38 +198,32 @@ package("python")
                 table.insert(configs, "MACOSX_DEPLOYMENT_TARGET=" .. target_minver)
             end
         end
-        if #cflags > 0 then
-            table.insert(configs, "CFLAGS=" .. table.concat(cflags, " "))
+
+        -- add pic
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            table.insert(cppflags, "-fPIC")
+        end
+
+        -- add external path for zlib and libffi
+        for _, libname in ipairs({"zlib", "libffi"}) do
+            local lib = package:dep(libname)
+            if lib and not lib:is_system() then
+                local fetchinfo = lib:fetch({external = false})
+                if fetchinfo then
+                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                        table.insert(cppflags, "-I" .. includedir)
+                    end
+                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                        table.insert(ldflags, "-L" .. linkdir)
+                    end
+                end
+            end
+        end
+        if #cppflags > 0 then
+            table.insert(configs, "CPPFLAGS=" .. table.concat(cppflags, " "))
         end
         if #ldflags > 0 then
             table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
-        end
-
-        -- add zlib to fix `No module named 'zlib'`
-        local linkdirs = {}
-        local includedirs = {}
-        if package:is_plat("linux") then
-            local zlib = package:dep("zlib"):fetch({external = false})
-            if zlib then
-                table.join2(linkdirs, zlib.linkdirs)
-                table.join2(includedirs, zlib.includedirs)
-            end
-            -- add libffi to fix `No module named '_ctypes'`
-            local libffi = package:dep("libffi"):fetch({external = false})
-            if libffi then
-                table.join2(linkdirs, libffi.linkdirs)
-                table.join2(includedirs, libffi.includedirs)
-            end
-        end
-        if #linkdirs > 0 and #includedirs > 0 then
-            io.replace("setup.py", "    def detect_modules(self):", format([[    def detect_modules(self):
-        linkdirs = ['%s']
-        includedirs = ['%s']
-        for includedir in includedirs:
-            add_dir_to_list(self.compiler.include_dirs, includedir)
-        for linkdir in linkdirs:
-            add_dir_to_list(self.compiler.library_dirs, linkdir)
-]], table.concat(linkdirs, "', '"), table.concat(includedirs, "', '")), {plain = true})
         end
 
         -- unset these so that installing pip and setuptools puts them where we want
@@ -226,7 +237,15 @@ package("python")
 
         -- install wheel
         local python = path.join(package:installdir("bin"), "python")
-        os.vrunv(python, {"-m", "pip", "install", "wheel"})
+        local version = package:version()
+        local pyver = ("python%d.%d"):format(version:major(), version:minor())
+        local envs = {
+            PATH = package:installdir("bin"),
+            PYTHONPATH = package:installdir("lib", pyver, "site-packages"),
+            LD_LIBRARY_PATH = package:installdir("lib")
+        }
+        os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"}, {envs = envs})
+        os.vrunv(python, {"-m", "pip", "install", "wheel"}, {envs = envs})
     end)
 
     on_test(function (package)
@@ -236,8 +255,5 @@ package("python")
         os.vrun("python -c \"import wheel\"")
         if package:kind() ~= "binary" then
             assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
-        end
-        if is_host("windows") and package:version():ge("3.8.0") and winos.version():gt("win8") then
-            os.vrun("py -3 -c \"import sys\"")
         end
     end)

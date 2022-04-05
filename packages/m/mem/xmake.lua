@@ -1,13 +1,15 @@
 package("mem")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/0x1F9F1/mem")
     set_description("A collection of C++11 headers useful for reverse engineering")
 
-    set_urls("https://github.com/0x1F9F1/mem.git")
+    add_urls("https://github.com/0x1F9F1/mem/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/0x1F9F1/mem.git")
 
-    add_versions("0.1.0", "db0289a50da77101c4e827b92b39f06ba2e90f76")
+    add_versions("1.0.0", "db1e58b040ea39ec5794fc1dcc6749c81b062579d9f6b086d035266456bccaf3")
 
-    on_install("windows", function (package)
+    on_install("windows", "linux", function (package)
         os.cp("include/mem", package:installdir("include"))
     end)
 

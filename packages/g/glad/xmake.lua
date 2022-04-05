@@ -7,11 +7,17 @@ package("glad")
     add_urls("https://github.com/Dav1dde/glad/archive/$(version).tar.gz",
              "https://github.com/Dav1dde/glad.git")
     add_versions("v0.1.34", "4be2900ff76ac71a2aab7a8be301eb4c0338491c7e205693435b09aad4969ecd")
+    add_versions("v0.1.36", "8470ed1b0e9fbe88e10c34770505c8a1dc8ccb78cadcf673331aaf5224f963d2")
 
-    add_deps("cmake", "python 3.x", {kind = "binary"})
     if is_plat("linux") then
         add_syslinks("dl")
     end
+    on_load("windows", "linux", "macosx", function (package)
+        if not package.is_built or package:is_built() then
+            package:add("deps", "cmake", "python 3.x", {kind = "binary"})
+        end
+    end)
+
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DGLAD_INSTALL=ON", "-DGLAD_REPRODUCIBLE=ON"}
         if package:is_plat("windows") then

@@ -14,9 +14,10 @@ package("poppler")
 
     add_deps("cmake")
     add_deps("libtiff", "openjpeg", "lcms", "libjpeg", "libpng", "bzip2", "zlib")
-    add_deps("freetype", {configs = {woff2 = false, png = false, bzip2 = false}})
     if is_plat("linux") then
         add_deps("fontconfig", "expat")
+    else
+        add_deps("freetype", {configs = {woff2 = false, png = false, bzip2 = false}})
     end
 
     add_includedirs("include")

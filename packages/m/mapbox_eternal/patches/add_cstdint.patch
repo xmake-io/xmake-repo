@@ -1,0 +1,12 @@
+diff --git a/include/mapbox/eternal.hpp b/include/mapbox/eternal.hpp
+index 10c2f82..ab92ccb 100644
+--- a/include/mapbox/eternal.hpp
++++ b/include/mapbox/eternal.hpp
+@@ -2,6 +2,7 @@
+ 
+ #include <utility>
+ #include <functional>
++#include <cstdint>
+ 
+ // GCC 4.9 compatibility
+ #if !defined(__clang__) && defined(__GNUC__) && __GNUC__ < 5

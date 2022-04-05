@@ -7,6 +7,7 @@ package("fftw")
     add_urls("http://fftw.org/fftw-$(version).tar.gz")
     add_versions("3.3.8", "6113262f6e92c5bd474f2875fa1b01054c4ad5040f6b0da7c03c98821d9ae303")
     add_versions("3.3.9", "bf2c7ce40b04ae811af714deb512510cc2c17b9ab9d6ddcf49fe4487eea7af3d")
+    add_versions("3.3.10", "56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467")
 
     add_configs("precision", {description = "Float number precision.", default = "double", type = "string", values = {"float", "double", "quad", "long"}})
     add_configs("thread", {description = "Thread model used.", default = "fftw", type = "string", values = {"none", "fftw", "openmp"}})

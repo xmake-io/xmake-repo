@@ -1,0 +1,56 @@
+diff --git a/include/assimp/defs.h b/include/assimp/defs.h
+index 05a5e3fd4..8b90edfca 100644
+--- a/include/assimp/defs.h
++++ b/include/assimp/defs.h
+@@ -126,7 +126,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * GENBOUNDINGBOXES */
+ //////////////////////////////////////////////////////////////////////////
+ 
+-#ifdef _MSC_VER
++#ifdef _WIN32
+ #   undef ASSIMP_API
+ 
+     //////////////////////////////////////////////////////////////////////////
+@@ -135,7 +135,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #   ifdef ASSIMP_BUILD_DLL_EXPORT
+ #       define ASSIMP_API __declspec(dllexport)
+ #       define ASSIMP_API_WINONLY __declspec(dllexport)
+-#       pragma warning (disable : 4251)
++#       ifdef _MSC_VER
++#           pragma warning (disable : 4251)
++#       endif
+ 
+     //////////////////////////////////////////////////////////////////////////
+     /* Define 'ASSIMP_DLL' before including Assimp to link to ASSIMP in
+@@ -149,6 +151,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #       define ASSIMP_API_WINONLY
+ #   endif
+ 
++#   ifdef _MSC_VER
++
+     /* Force the compiler to inline a function, if possible
+      */
+ #   define AI_FORCE_INLINE __forceinline
+@@ -157,6 +161,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+      * to skip dead paths (e.g. after an assertion evaluated to false). */
+ #   define AI_WONT_RETURN __declspec(noreturn)
+ 
++#   else
++
++#      define AI_FORCE_INLINE inline
++#      define AI_WONT_RETURN
++
++#   endif
++
+ #elif defined(SWIG)
+ 
+     /* Do nothing, the relevant defines are all in AssimpSwigPort.i */
+@@ -170,7 +181,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ #   define AI_FORCE_INLINE inline
+ #endif // (defined _MSC_VER)
+ 
+-#ifdef __GNUC__
++#if defined(__GNUC__) || defined(__MINGW32__)
+ #   define AI_WONT_RETURN_SUFFIX  __attribute__((noreturn))
+ #else
+ #   define AI_WONT_RETURN_SUFFIX

@@ -17,6 +17,8 @@ package("brotli")
                     "333e2a0306cf33f2fac381aa6b81afd3d1237e7511e5cc8fe7fb760d16d01ca1")
     end
 
+    add_links("brotlienc", "brotlidec", "brotlicommon")
+
     on_load(function (package)
         package:addenv("PATH", "bin")
     end)
@@ -47,28 +49,8 @@ package("brotli")
     end
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
-            add_rules("mode.debug", "mode.release")
-            target("brotli")
-                set_kind("$(kind)")
-                add_includedirs("c/include", {public = true})
-                add_files("c/common/*.c", "c/dec/*.c", "c/enc/*.c")
-                if is_kind("shared") and is_plat("windows") then
-                    add_defines("BROTLI_SHARED_COMPILATION",
-                                "BROTLICOMMON_SHARED_COMPILATION",
-                                "BROTLIENC_SHARED_COMPILATION",
-                                "BROTLIDEC_SHARED_COMPILATION")
-                end
-                if is_plat("linux") then
-                    add_cxflags("-fvisibility=default")
-                end
-                add_headerfiles("c/include/(brotli/*.h)")
-            target("brotlibin")
-                set_kind("binary")
-                add_files("c/tools/brotli.c")
-                add_deps("brotli")
-        ]])
-        local configs = {buildir = "xbuild"}
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        local configs = {buildir = "xbuild", vers = package:version_str()}
         if package:config("shared") then
             configs.kind = "shared"
         end
@@ -80,7 +62,7 @@ package("brotli")
 
     on_test(function(package)
         if package:is_plat(os.host()) then
-            os.vrun("brotlibin --version")
+            os.vrun("brotli --version")
         end
         assert(package:check_csnippets([[
             void test() {

@@ -14,13 +14,16 @@ local options =
 ,   {'a', "arch",       "kv", nil, "Set the given architecture."                }
 ,   {'m', "mode",       "kv", nil, "Set the given mode."                        }
 ,   {'j', "jobs",       "kv", nil, "Set the build jobs."                        }
+,   {nil, "linkjobs",   "kv", nil, "Set the link jobs."                         }
 ,   {nil, "cflags",     "kv", nil, "Set the cflags."                            }
 ,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."                          }
 ,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                           }
 ,   {nil, "ndk",        "kv", nil, "Set the Android NDK directory."             }
 ,   {nil, "ndk_sdkver", "kv", nil, "Set the Android NDK platform sdk version."  }
 ,   {nil, "sdk",        "kv", nil, "Set the SDK directory of cross toolchain."  }
+,   {nil, "vs",         "kv", nil, "Set the VS Compiler version."               }
 ,   {nil, "vs_sdkver",  "kv", nil, "Set the Windows SDK version."               }
+,   {nil, "vs_toolset", "kv", nil, "Set the Windows Toolset version."           }
 ,   {nil, "vs_runtime", "kv", nil, "Set the VS Runtime library."                }
 ,   {nil, "mingw",      "kv", nil, "Set the MingW directory."                   }
 ,   {nil, "toolchain",  "kv", nil, "Set the toolchain name."                    }
@@ -55,8 +58,14 @@ function _require_packages(argv, packages)
     if argv.ndk_sdkver then
         table.insert(config_argv, "--ndk_sdkver=" .. argv.ndk_sdkver)
     end
+    if argv.vs then
+        table.insert(config_argv, "--vs=" .. argv.vs)
+    end
     if argv.vs_sdkver then
         table.insert(config_argv, "--vs_sdkver=" .. argv.vs_sdkver)
+    end
+    if argv.vs_toolset then
+        table.insert(config_argv, "--vs_toolset=" .. argv.vs_toolset)
     end
     if argv.vs_runtime then
         table.insert(config_argv, "--vs_runtime=" .. argv.vs_runtime)
@@ -77,7 +86,7 @@ function _require_packages(argv, packages)
         table.insert(config_argv, "--ldflags=" .. argv.ldflags)
     end
     os.vexecv("xmake", config_argv)
-    local require_argv = {"require", "-f", "-y"}
+    local require_argv = {"require", "-f", "-y", "--build"}
     if argv.verbose then
         table.insert(require_argv, "-v")
     end
@@ -89,6 +98,9 @@ function _require_packages(argv, packages)
     end
     if argv.jobs then
         table.insert(require_argv, "--jobs=" .. argv.jobs)
+    end
+    if argv.linkjobs then
+        table.insert(require_argv, "--linkjobs=" .. argv.linkjobs)
     end
     if argv.mode == "debug" and argv.kind == "shared" then
         table.insert(require_argv, "--extra={debug=true,configs={shared=true}}")

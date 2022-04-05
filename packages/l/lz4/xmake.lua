@@ -13,17 +13,29 @@ package("lz4")
         end
     end)
 
+    if is_plat("macosx") then
+        add_extsources("brew::lz4")
+    elseif is_plat("linux") then
+        add_extsources("pacman::lz4")
+    end
+
     on_install(function (package)
-        io.writefile("xmake.lua", [[
+        io.writefile("xmake.lua", ([[
+            set_version("%s")
             add_rules("mode.debug", "mode.release")
             target("lz4")
                 set_kind("$(kind)")
+                add_rules("utils.install.pkgconfig_importfiles", {filename = "liblz4.pc"})
                 add_files("lib/*.c")
                 add_headerfiles("lib/lz4.h", "lib/lz4hc.h", "lib/lz4frame.h")
+                add_defines("XXH_NAMESPACE=LZ4_")
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("LZ4_DLL_EXPORT")
                 end
-        ]])
+                if is_kind("static") then
+                    add_defines("LZ4_HC_STATIC_LINKING_ONLY", "LZ4_STATIC_LINKING_ONLY")
+                end
+        ]]):format(package:version_str()))
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"

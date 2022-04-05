@@ -6,6 +6,10 @@ package("libxxf86vm")
     set_urls("https://www.x.org/archive/individual/lib/libXxf86vm-$(version).tar.bz2")
     add_versions("1.1.4", "afee27f93c5f31c0ad582852c0fb36d50e4de7cd585fcf655e278a633d85cd57")
 
+    if is_plat("linux") then
+        add_extsources("apt::libxxf86vm-dev")
+    end
+
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "libx11", "libxext", "xorgproto")
     end

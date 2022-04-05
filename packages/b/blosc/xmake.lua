@@ -5,7 +5,7 @@ package("blosc")
 
     add_urls("https://github.com/Blosc/c-blosc/archive/v$(version).tar.gz",
              "https://github.com/Blosc/c-blosc")
-
+    add_versions("1.21.1", "f387149eab24efa01c308e4cba0f59f64ccae57292ec9c794002232f7903b55b")
     add_versions("1.20.1", "42c4d3fcce52af9f8e2078f8f57681bfc711706a3330cb72b9b39e05ae18a413")
     add_versions("1.5.0", "208ba4db0e5116421ed2fbbdf2adfa3e1d133d29a6324a0f47cf2d71f3810c92")
 
@@ -34,6 +34,7 @@ package("blosc")
             elseif version:le("1.10") then
                 os.rm(path.join(package:installdir("lib"), "blosc.lib"))
                 os.rm(path.join(package:installdir("lib"), "blosc.dll"))
+                os.mv(path.join(package:installdir("lib"), "libblosc.lib"), path.join(package:installdir("lib"), "blosc.lib"))
             end
         end
     end)
