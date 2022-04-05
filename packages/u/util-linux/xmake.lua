@@ -13,7 +13,7 @@ package("util-linux")
     add_patches("2.36.2", path.join(os.scriptdir(), "patches", "2.36.2", "includes.patch"), "7274762cac2810b5f0d17ecb5ac69c7069e7ff2b880df663b7072628df0867f3")
     
     if is_plat("macosx") then
-        add_patches("2.38", path.join(os.scriptdir(), "patches", "2.38", "macos.patch"), "ab6d203420f34162859a48c6530ae9fdf22168b55030e97246ce148927c1e25c")
+        add_patches("2.38", path.join(os.scriptdir(), "patches", "2.38", "macos.patch"), "ac7bc03976868194904481a7669d92009f2825ebb03fee48d2e882b5e777dea4")
         add_deps("autoconf", "automake", "libtool")
         add_extsources("brew::util-linux")
     elseif is_plat("linux") then

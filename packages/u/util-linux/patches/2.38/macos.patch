@@ -13,19 +13,101 @@ diff --git a/misc-utils/hardlink.c b/misc-utils/hardlink.c
  
  #include <regex.h>		/* regcomp(), regexec() */
  
-diff --git a/lib/Makemodule.am b/lib/Makemodule.am
---- a/lib/Makemodule.am
-+++ b/lib/Makemodule.am
-@@ -56,10 +56,12 @@ endif
- if HAVE_OPENAT
- if HAVE_DIRFD
- libcommon_la_SOURCES += lib/path.c
-+if LINUX
- libcommon_la_SOURCES += lib/sysfs.c
- libcommon_la_SOURCES += lib/procfs.c
- endif
- endif
-+endif
+diff --git a/configure.ac b/configure.ac
+index 3fba95336a..11c86b9a70 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -346,6 +346,7 @@ AC_CHECK_HEADERS([ \
+ 	sys/socket.h \
+ 	sys/sockio.h \
+ 	sys/stat.h \
++	sys/statfs.h \
+ 	sys/swap.h \
+ 	sys/syscall.h \
+ 	sys/sysmacros.h \
+@@ -355,6 +356,7 @@ AC_CHECK_HEADERS([ \
+ 	sys/types.h \
+ 	sys/ucred.h \
+ 	sys/un.h \
++	sys/vfs.h \
+ 	sys/xattr.h \
+ 	unistd.h \
+ 	utmp.h \
+diff --git a/include/statfs_magic.h b/include/statfs_magic.h
+index b6b0225e86..67ad0af259 100644
+--- a/include/statfs_magic.h
++++ b/include/statfs_magic.h
+@@ -1,7 +1,9 @@
+ #ifndef UTIL_LINUX_STATFS_MAGIC_H
+ #define UTIL_LINUX_STATFS_MAGIC_H
  
- EXTRA_LTLIBRARIES += libtcolors.la
- libtcolors_la_CFLAGS = $(AM_CFLAGS)
+-#include <sys/statfs.h>
++#ifdef HAVE_SYS_STATFS_H
++# include <sys/statfs.h>
++#endif
+ 
+ /*
+  * If possible then don't depend on internal libc __SWORD_TYPE type.
+diff --git a/lib/procfs.c b/lib/procfs.c
+index 4d6d25b6d7..0d58857c83 100644
+--- a/lib/procfs.c
++++ b/lib/procfs.c
+@@ -6,9 +6,13 @@
+  */
+ #include <ctype.h>
+ #include <unistd.h>
+-#include <sys/vfs.h>
+ #include <errno.h>
+ 
++#ifdef HAVE_SYS_VFS_H
++# include <sys/vfs.h>
++# include "statfs_magic.h"
++#endif
++
+ #include "c.h"
+ #include "pathnames.h"
+ #include "procfs.h"
+@@ -16,7 +20,6 @@
+ #include "all-io.h"
+ #include "debug.h"
+ #include "strutils.h"
+-#include "statfs_magic.h"
+ 
+ static void procfs_process_deinit_path(struct path_cxt *pc);
+ 
+@@ -356,6 +359,7 @@ int procfs_dirent_match_name(DIR *procfs, struct dirent *d, const char *name)
+ 	return 0;
+ }
+ 
++#ifdef HAVE_SYS_VFS_H
+ /* checks if fd is file in a procfs;
+  * returns 1 if true, 0 if false or couldn't determine */
+ int fd_is_procfs(int fd)
+@@ -375,7 +379,14 @@ int fd_is_procfs(int fd)
+ 	} while (ret != 0);
+ 
+ 	return st.f_type == STATFS_PROC_MAGIC;
++	return 0;
+ }
++#else
++int fd_is_procfs(int fd __attribute__((__unused__)))
++{
++	return 0;
++}
++#endif
+ 
+ static char *strdup_procfs_file(pid_t pid, const char *name)
+ {
+diff --git a/misc-utils/hardlink.c b/misc-utils/hardlink.c
+index dd55af12aa..08af2882c1 100644
+--- a/misc-utils/hardlink.c
++++ b/misc-utils/hardlink.c
+@@ -38,7 +38,7 @@
+ #include <ctype.h>		/* tolower() */
+ #include <sys/ioctl.h>
+ 
+-#if defined(HAVE_LINUX_FIEMAP_H)
++#if defined(HAVE_LINUX_FIEMAP_H) && defined(HAVE_SYS_VFS_H)
+ # include <linux/fs.h>
+ # include <linux/fiemap.h>
+ # ifdef FICLONE
