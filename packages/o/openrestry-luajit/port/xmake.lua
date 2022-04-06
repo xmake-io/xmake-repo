@@ -142,6 +142,7 @@ target("buildvm")
         end
         add_files("src/vm_x64.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X64", {public = true})
+        add_defines("LUAJIT_UNWIND_EXTERNAL", {public = true})
     elseif is_arch("arm64", "arm64-v8a") then
         add_files("src/vm_arm64.dasc")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_ARM64", {public = true})
