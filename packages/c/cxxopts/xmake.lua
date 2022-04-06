@@ -5,6 +5,7 @@ package("cxxopts")
 
     add_urls("https://github.com/jarro2783/cxxopts.git")
     add_urls("https://github.com/jarro2783/cxxopts/archive/$(version).tar.gz")
+    add_versions("V3.0.0", "36f41fa2a46b3c1466613b63f3fa73dc24d912bc90d667147f1e43215a8c6d00")
     add_versions("v2.2.0", "447dbfc2361fce9742c5d1c9cfb25731c977b405f9085a738fbd608626da8a4d")
 
     on_install(function (package)
