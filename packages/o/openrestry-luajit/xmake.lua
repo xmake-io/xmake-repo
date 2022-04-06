@@ -24,7 +24,7 @@ package("openrestry-luajit")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "iphoneos", function (package)
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
