@@ -161,6 +161,9 @@ target("buildvm")
     end
     if is_plat("macosx", "iphoneos", "watchos") then
         add_defines("LUAJIT_OS=LUAJIT_OS_OSX", {public = true})
+        if is_plat("iphoneos", "watchos") then 
+            add_defines("TARGET_OS_IPHONE", {public = true})
+        end
     elseif is_plat("windows") then
         add_defines("LUAJIT_OS=LUAJIT_OS_WINDOWS", {public = true})
     elseif is_plat("linux", "android") then
