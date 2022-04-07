@@ -8,13 +8,10 @@ package("fmi4cpp")
 
     add_patches("0.8.0", path.join(os.scriptdir(), "patches", "0.8.0", "clang_fix.patch"), "dacd893e90298763223b21b0054dad6d6a82c7c36ab0d3d0cc1984a342c01f9f")
     add_patches("0.8.0", path.join(os.scriptdir(), "patches", "0.8.0", "win32_zlib.patch"), "99d14ebf2f1d7b848ab5fc5b659826d50429e59810f13b25953fddfc8f4313b7")
-    if is_plat("macosx") then
-        add_patches("0.8.0", path.join(os.scriptdir(), "patches", "0.8.0", "macos_fix.patch"), "888bc2cef35ef64aa68260a83fda26394028fd1c0dc97a80eba9e464e3a9c35c")
-    end
 
     add_deps("cmake", "boost", "libzip")
 
-    on_install("linux", "windows", "macosx", function (package)
+    on_install("linux", "windows", function (package)
         local configs = {
             "-DFMI4CPP_BUILD_EXAMPLES=OFF"
         }
