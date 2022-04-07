@@ -14,6 +14,7 @@ package("zlibcomplete")
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DZLIBCOMPLETE_EXAMPLES=off")
+        table.insert(configs, "-DZLIBCOMPLETE_DOCS=off")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DZLIBCOMPLETE_SHARED=on")
