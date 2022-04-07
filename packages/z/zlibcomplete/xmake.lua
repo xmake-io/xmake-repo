@@ -10,9 +10,6 @@ package("zlibcomplete")
     add_deps("cmake", "zlib")
 
     on_install(function (package)
-        local zlc_headers_dir = path.join(package:installdir("include"), "zlc")
-        os.mkdir(zlc_headers_dir)
-        os.cp("lib/zlc/*.hpp", zlc_headers_dir)
         local configs = {}
         table.insert(configs, "-DZLIBCOMPLETE_EXAMPLES=off")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -22,6 +19,7 @@ package("zlibcomplete")
           table.insert(configs, "-DZLIBCOMPLETE_STATIC=on")
         -- end
         import("package.tools.cmake").install(package, configs)
+        os.cp("lib/zlc/*.hpp", package:installdir("include", "zlc"))
     end)
 
     on_test(function (package)
