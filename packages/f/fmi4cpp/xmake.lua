@@ -2,7 +2,8 @@ package("fmi4cpp")
     set_homepage("https://github.com/NTNU-IHB/FMI4cpp")
     set_description("A cross-platform FMI 2.0 implementation written in modern C++")
 
-    add_urls("https://github.com/NTNU-IHB/FMI4cpp/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/NTNU-IHB/FMI4cpp/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/NTNU-IHB/FMI4cpp.git")
     add_versions("0.8.0", "78616e9c86a23137a8d3a113fe6420207c3f9ea46442e1c75a01215eb2693bb7")
 
     -- add_patches("0.8.0", path.join(os.scriptdir(), "patches", "0.8.0", "clang_fix.patch"), "8dea69cb8384372ed39a1fad9503d71504c00f27b3e989e387a97aee4fd58658")
