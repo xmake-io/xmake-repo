@@ -9,15 +9,17 @@ package("zlibcomplete")
 
     add_deps("cmake", "zlib")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) 
+
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DZLIBCOMPLETE_EXAMPLES=off")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        -- if package:config("shared") then
-        --   table.insert(configs, "-DZLIBCOMPLETE_SHARED=on")
-        -- else  
-          table.insert(configs, "-DZLIBCOMPLETE_STATIC=on")
-        -- end
+        if package:config("shared") then
+            table.insert(configs, "-DZLIBCOMPLETE_SHARED=on")
+        else
+            table.insert(configs, "-DZLIBCOMPLETE_STATIC=on")
+        end
         import("package.tools.cmake").install(package, configs)
         os.cp("lib/zlc/*.hpp", package:installdir("include", "zlc"))
     end)
