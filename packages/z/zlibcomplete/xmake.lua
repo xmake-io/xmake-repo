@@ -16,11 +16,11 @@ package("zlibcomplete")
         local configs = {}
         table.insert(configs, "-DZLIBCOMPLETE_EXAMPLES=off")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        if package:config("shared") then
-          table.insert(configs, "-DZLIBCOMPLETE_SHARED=on")
-        else  
+        -- if package:config("shared") then
+        --   table.insert(configs, "-DZLIBCOMPLETE_SHARED=on")
+        -- else  
           table.insert(configs, "-DZLIBCOMPLETE_STATIC=on")
-        end
+        -- end
         import("package.tools.cmake").install(package, configs)
     end)
 
