@@ -1,0 +1,38 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1656d5a..882c310 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -60,7 +60,7 @@ if (FMI4CPP_BUILD_TESTS)
+   list(APPEND Boost_COMPONENTS unit_test_framework)
+ endif ()
+ 
+-find_package(Boost 1.65 COMPONENTS ${Boost_COMPONENTS} REQUIRED)
++find_package(Boost 1.65 COMPONENTS ${Boost_COMPONENTS} filesystem REQUIRED)
+ find_package(LIBZIP REQUIRED)
+ 
+ 
+diff --git a/include/fmi4cpp/fs_portability.hpp b/include/fmi4cpp/fs_portability.hpp
+index f0d774f..807e46b 100644
+--- a/include/fmi4cpp/fs_portability.hpp
++++ b/include/fmi4cpp/fs_portability.hpp
+@@ -25,18 +25,10 @@
+ #ifndef FMI4CPP_FS_PORTABILITY_HPP
+ #define FMI4CPP_FS_PORTABILITY_HPP
+ 
+-#if __has_include(<filesystem>)
+-#    include <filesystem>
++#include <boost/filesystem>
+ namespace fmi4cpp
+ {
+-namespace fs = std::filesystem;
++namespace fs = boost::filesystem;
+ }
+-#else
+-#    include <experimental/filesystem>
+-namespace fmi4cpp
+-{
+-namespace fs = std::experimental::filesystem;
+-}
+-#endif
+ 
+ #endif //FMI4CPP_FS_PORTABILITY_HPP

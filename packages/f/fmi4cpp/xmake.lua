@@ -8,6 +8,9 @@ package("fmi4cpp")
 
     add_patches("0.8.0", path.join(os.scriptdir(), "patches", "0.8.0", "clang_fix.patch"), "dacd893e90298763223b21b0054dad6d6a82c7c36ab0d3d0cc1984a342c01f9f")
     add_patches("0.8.0", path.join(os.scriptdir(), "patches", "0.8.0", "win32_zlib.patch"), "99d14ebf2f1d7b848ab5fc5b659826d50429e59810f13b25953fddfc8f4313b7")
+    if is_plat("macosx") then
+        add_patches("0.8.0", path.join(os.scriptdir(), "patches", "0.8.0", "macos_fix.patch"), "e38cc29fd5d6f0954d914a935eecdb0719917e64c14e7d3453f495f51a4461f2")
+    end
 
     add_deps("cmake", "boost", "libzip")
 
