@@ -11,10 +11,6 @@ package("fmi4cpp")
 
     add_deps("cmake", "boost", "libzip")
 
-    if is_plat("windows") then
-        add_syslinks("Advapi32")
-    end
-
     on_install("linux", "windows", function (package)
         local configs = {
             "-DFMI4CPP_BUILD_EXAMPLES=OFF"
