@@ -1,13 +1,8 @@
 package("niftiheader")
     set_kind("library", {headeronly = true})
-    add_urls("https://nifti.nimh.nih.gov/pub/dist/src/nifti2/")
-    add_versions("latest", "")
-
-    on_download(function(package, opt)
-        import("net.http")
-        http.download(opt.url .. "nifti1.h", path.join(opt.sourcedir, "nifti1.h"))
-        http.download(opt.url .. "nifti2.h", path.join(opt.sourcedir, "nifti2.h"))
-    end)
+    set_homepage("https://nifti.nimh.nih.gov/")
+    add_urls("https://github.com/xmake-mirror/nifti2.git")
+    add_versions("0.0.1", "d2461b27888fd5db659edb8b788c7ce6203f703c")
 
     on_install(function(package)
         os.cp("*.h", package:installdir("include"))
