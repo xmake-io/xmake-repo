@@ -5,7 +5,7 @@ package("spirv-headers")
     set_description("SPIR-V Headers")
     set_license("MIT")
 
-    add_urls("https://github.com/KhronosGroup/SPIRV-Headers/archive/$(version).tar.gz"{version = function (version) return version:startswith("v") and version or "sdk-" .. version:gsub("%+", ".") end})
+    add_urls("https://github.com/KhronosGroup/SPIRV-Headers/archive/$(version).tar.gz", {version = function (version) return version:startswith("v") and version or "sdk-" .. version:gsub("%+", ".") end})
     add_versions("1.2.198+0", "3301a23aca0434336a643e433dcacacdd60000ab3dd35dc0078a297c06124a12")
 
     add_deps("cmake")
