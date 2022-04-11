@@ -2,6 +2,7 @@ package("minizip")
 
     set_homepage("https://www.zlib.net/")
     set_description("Mini zip and unzip based on zlib")
+    set_license("zlib")
 
     add_urls("https://github.com/madler/zlib/archive/$(version).tar.gz",
              "https://github.com/madler/zlib.git")
