@@ -1,5 +1,5 @@
 package("lexy")
-    set_kind("library", {headeronly = trye})
+    set_kind("library", {headeronly = true})
     set_homepage("https://lexy.foonathan.net")
     set_description("C++ parsing DSL")
 
