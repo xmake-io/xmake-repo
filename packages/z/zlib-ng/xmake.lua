@@ -10,10 +10,10 @@ package("zlib-ng")
     add_versions("2.0.6", "8258b75a72303b661a238047cb348203d88d9dddf85d480ed885f375916fcab6")
 
     add_deps("cmake")
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", "android", function (package)
         local configs = {"-DZLIB_COMPAT=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DINC_INSTALL_DIR=" .. package:installdir("include"))
         table.insert(configs, "-DLIB_INSTALL_DIR=" .. package:installdir("lib"))
         import("package.tools.cmake").install(package, configs)
