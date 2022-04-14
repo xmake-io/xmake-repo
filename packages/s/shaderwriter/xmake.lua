@@ -23,6 +23,7 @@ package("shaderwriter")
             "-DSDW_BUILD_STATIC_SDW=".. (package:config("shared") and "OFF" or "ON"),
             "-DSDW_GENERATE_SOURCE=OFF",
             "-DSDW_BUILD_VULKAN_LAYER=OFF",
+            "-DSDW_UNITY_BUILD=ON",
             "-DPROJECTS_USE_PRECOMPILED_HEADERS=OFF",
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")
         }
