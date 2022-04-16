@@ -14,11 +14,11 @@ package("crashpad")
         end
     
         if is_arch("x64", "x86_64") then
-            set_urls("http://get.backtrace.io/crashpad/builds/crashpad-release-x86-64-$(version).zip", map_version)
+            set_urls("http://get.backtrace.io/crashpad/builds/crashpad-release-x86-64-$(version).zip", {version = map_version})
             add_versions("2021.8.1", "b3facf8a802dfd12daf4d9fba416f4d4b5df0ae544afa14080662fa978aa18cb")
             add_versions("2022.4.16", "7705073dfff89c376303cacea3a6f8c63322f77566ad5cdbe37060cf3cef9f8b")
         else
-            set_urls("http://get.backtrace.io/crashpad/builds/crashpad-release-x86-$(version).zip", map_version)
+            set_urls("http://get.backtrace.io/crashpad/builds/crashpad-release-x86-$(version).zip", {version = map_version})
             add_versions("2021.8.1", "699fdf741f39da1c68069820ce891b6eb8b48ef29ab399fc1bcf210b67ff8547")
             add_versions("2022.4.16", "c3bffb64d1087198946739dfb30d24b2355e49ddfe90d8e2a75ed373ed6e3377")
         end
