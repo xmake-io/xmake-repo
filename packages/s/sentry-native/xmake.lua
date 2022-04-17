@@ -32,7 +32,7 @@ package("sentry-native")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", function (package)
+    on_install("windows", "linux", "macosx", function (package) -- TODO: to enable android you will need to figure out the order of libs
         local opt = {}
         local configs = {}
         table.insert(configs, "-DSENTRY_BUILD_EXAMPLES=OFF")
