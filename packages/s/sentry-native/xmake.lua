@@ -22,13 +22,21 @@ package("sentry-native")
         add_syslinks("dl", "log")
     elseif is_plat("macosx") then
         add_deps("libcurl")
-        add_frameworks("CoreText", "CoreGraphics", "CoreFoundation", "Foundation")
+        add_frameworks("CoreText", "CoreGraphics", "SystemConfiguration", "CoreFoundation", "Foundation")
         add_syslinks("bsm")
     end
 
     on_load("windows", function (package)
         if not package:config("shared") then
             package:add("defines", "SENTRY_BUILD_STATIC")
+        end
+        
+        if package:config("backend") == "crashpad" then
+            package:add("links", "sentry", "crashpad_client", "crashpad_util", "crashpad_minidump", "crashpad_handler_lib", "mini_chromium", "crashpad_tools", "crashpad_compat", "crashpad_snapshot")
+        elseif package:config("backend") == "breakpad" then
+            package:add("links", "sentry", "breakpad_client")       
+        elseif package:is_plat("linux") then -- linux defaults to breakpad
+            package:add("links", "sentry", "breakpad_client")
         end
     end)
 
@@ -38,13 +46,6 @@ package("sentry-native")
         table.insert(configs, "-DSENTRY_BUILD_EXAMPLES=OFF")
         table.insert(configs, "-DSENTRY_BUILD_TESTS=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-
-        if package:config("backend") == "crashpad" then
-            package:add("links", "sentry", "crashpad_client", "crashpad_util", "crashpad_minidump", "crashpad_handler_lib", "mini_chromium", "crashpad_tools", "crashpad_compat", "crashpad_snapshot")
-        elseif package:config("backend") == "breakpad" then
-            package:add("links", "sentry", "breakpad_client")
-        end
-
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
             table.insert(configs, "-DSENTRY_BUILD_SHARED_LIBS=ON")
@@ -52,13 +53,9 @@ package("sentry-native")
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
             table.insert(configs, "-DSENTRY_BUILD_SHARED_LIBS=OFF")
         end
-
-        if package:config("backend") ~= nil then
+        if package:config("backend") then
             table.insert(configs, "-DSENTRY_BACKEND=" .. package:config("backend"))
-        elseif package:is_plat("linux") then -- linux defaults to breakpad
-            package:add("links", "sentry", "breakpad_client")
         end
-
         if package:is_plat("windows") then
             opt.cxflags = { "/experimental:preprocessor-" } -- fixes <Windows SDK>\um\oaidl.h(487): error C2059: syntax error: '/'
             local vs_runtime = package:config("vs_runtime")
