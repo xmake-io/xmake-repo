@@ -11,7 +11,7 @@ package("sentry-native")
 
     add_deps("cmake")
 
-    add_configs("backend", {description = "Set the backend of sentry to use", default = nil, type = "string"})
+    add_configs("backend", {description = "Set the backend of sentry to use", type = "string"})
 
     if is_plat("windows") then
         add_syslinks("dbghelp", "winhttp", "shlwapi", "advapi32", "version")
