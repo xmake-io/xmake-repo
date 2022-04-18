@@ -61,7 +61,7 @@ package("sentry-native")
             local vs_runtime = package:config("vs_runtime")
             table.insert(configs, "-DSENTRY_BUILD_RUNTIMESTATIC=" .. ((vs_runtime == "MT" or vs_runtime == "MTd") and "ON" or "OFF"))
         elseif package:is_plat("macosx") then
-            opt.shflags = "-framework SystemConfiguration"
+            opt.shflags = {"-framework", "SystemConfiguration"}
         end
         import("package.tools.cmake").install(package, configs, opt)
    end)
