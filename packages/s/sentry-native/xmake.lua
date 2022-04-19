@@ -26,7 +26,7 @@ package("sentry-native")
         add_syslinks("bsm")
     end
 
-    on_load("windows", function (package)
+    on_load("windows", "linux", "macosx", function (package)
         if not package:config("shared") then
             package:add("defines", "SENTRY_BUILD_STATIC")
         end
