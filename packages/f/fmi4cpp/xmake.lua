@@ -11,7 +11,7 @@ package("fmi4cpp")
 
     add_deps("cmake", "boost", "libzip")
 
-    on_install("linux", "windows", function (package)
+    on_install("linux", function (package)
         local configs = {
             "-DFMI4CPP_BUILD_EXAMPLES=OFF"
         }
