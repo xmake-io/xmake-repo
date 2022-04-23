@@ -13,7 +13,8 @@ package("fmi4cpp")
 
     on_install("linux", function (package)
         local configs = {
-            "-DFMI4CPP_BUILD_EXAMPLES=OFF"
+            "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"),
+            "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")
         }
         import("package.tools.cmake").install(package, configs)
     end)
