@@ -12,25 +12,40 @@ package("volk")
 
     add_deps("vulkan-headers")
 
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    add_configs("header_only", {description = "Header only.", default = false, type = "boolean", readonly = true})
 
     if is_plat("linux") then
         add_syslinks("dl")
     end
 
-    on_install("windows", "linux", "macosx", function (package)
-        io.writefile("xmake.lua", [[
-            add_rules("mode.debug", "mode.release")
-            add_requires("vulkan-headers")
-            target("volk")
-                set_kind("static")
-                add_files("volk.c")
-                add_headerfiles("volk.h")
-                add_packages("vulkan-headers")
-                if is_plat("linux") then
-                    add_syslinks("dl")
-                end
-        ]])
+    on_install("windows", "linux", "macosx", "iphoneos", "android", function (package)
+        if not package:config("header_only") then
+            io.writefile("xmake.lua", [[
+                add_rules("mode.debug", "mode.release")
+                add_requires("vulkan-headers")
+                target("volk")
+                    set_kind("static")
+                    add_files("volk.c")
+                    add_headerfiles("volk.h")
+                    add_packages("vulkan-headers")
+                    if is_plat("linux") then
+                        add_syslinks("dl")
+                    end
+            ]])
+        else
+            io.writefile("xmake.lua", [[
+                add_requires("vulkan-headers")
+                target("volk")
+                    set_kind("headeronly")
+                    add_headerfiles("volk.h")
+                    add_packages("vulkan-headers")
+                    if is_plat("linux") then
+                        add_syslinks("dl")
+                    end
+            ]])
+
+            os.cp("volk.c", package:installdir("include"))
+        end
         import("package.tools.xmake").install(package)
     end)
 
