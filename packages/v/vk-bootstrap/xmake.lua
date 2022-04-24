@@ -28,7 +28,7 @@ package("vk-bootstrap")
                     add_syslinks("dl")
                 end
         ]])
-        import("package.tools.xmake").install(package, {"-m release"})
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
