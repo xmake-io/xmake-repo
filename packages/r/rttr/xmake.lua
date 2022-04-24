@@ -27,7 +27,11 @@ package("rttr")
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         local extra_cxflags
         if package:has_tool("cxx", "gcc", "gxx", "clang", "clangxx") then
-            extra_cxflags = "-Wno-error=implicit-const-int-float-conversion"
+            if not package:is_plat("windows") then
+                -- Passing this flag to clang-cl may cause errors.
+                -- gcc does not seem to support -Wno-error options.
+                extra_cxflags = "-Wno-implicit-float-conversion"
+            end
         end
         import("package.tools.cmake").install(package, configs, {cxflags = extra_cxflags})
     end)
