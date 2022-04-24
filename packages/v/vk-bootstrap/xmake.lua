@@ -3,7 +3,10 @@ package("vk-bootstrap")
     set_description("Vulkan Bootstrapping Iibrary.")
     set_license("MIT")
 
-    add_urls("https://github.com/charles-lunarg/vk-bootstrap.git")
+    add_urls("https://github.com/charles-lunarg/vk-bootstrap/archive/refs/tags/$(version).tar.gz",
+         "https://github.com/charles-lunarg/vk-bootstrap.git")
+
+    add_versions("v0.5", "7ec1017d71d48595c078a4488140b230fd9cad1059986a18a507f356bf00e89b")
 
     add_deps("vulkan-headers")
 
