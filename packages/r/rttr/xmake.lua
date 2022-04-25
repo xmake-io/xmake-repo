@@ -25,15 +25,18 @@ package("rttr")
         -- rttr use BUILD_RTTR_DYNAMIC and BUILD_STATIC options to control whether to build dynamic or static libraries.
         table.insert(configs, "-DBUILD_RTTR_DYNAMIC=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
-        local extra_cxflags
+        local cxflags
         if package:has_tool("cxx", "gcc", "gxx", "clang", "clangxx") then
             if not package:is_plat("windows") then
                 -- Passing this flag to clang-cl may cause errors.
                 -- gcc does not seem to support -Wno-error options.
-                extra_cxflags = "-Wno-implicit-float-conversion"
+                cxflags = "-Wno-implicit-float-conversion"
             end
         end
-        import("package.tools.cmake").install(package, configs, {cxflags = extra_cxflags})
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "RTTR_DLL")
+        end
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
