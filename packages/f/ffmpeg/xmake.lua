@@ -85,8 +85,10 @@ package("ffmpeg")
         end
         if package:is_plat("android") then
             import("core.base.option")
-            local bin = get_config("bin")
-            local ndk_sdkver = get_config("ndk_sdkver")
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local bin = ndk:bindir()
+            local ndk_sdkver = ndk:config("ndk_sdkver")
             local arch, cpu, triple, cross_prefix
             if package:is_arch("arm64-v8a") then
                 arch = "arm64"
