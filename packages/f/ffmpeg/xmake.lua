@@ -13,12 +13,14 @@ package("ffmpeg")
     else
         add_urls("https://ffmpeg.org/releases/ffmpeg-$(version).tar.bz2", {alias = "home"})
         add_urls("https://github.com/FFmpeg/FFmpeg/archive/n$(version).zip", {alias = "github"})
-        add_urls("https://git.ffmpeg.org/ffmpeg.git", "https://github.com/FFmpeg/FFmpeg.git")
+        add_urls("https://git.ffmpeg.org/ffmpeg.git", "https://github.com/FFmpeg/FFmpeg.git", {alias = "git"})
         add_versions("home:5.0.1", "28df33d400a1c1c1b20d07a99197809a3b88ef765f5f07dc1ff067fac64c59d6")
         add_versions("home:4.0.2", "346c51735f42c37e0712e0b3d2f6476c86ac15863e4445d9e823fe396420d056")
         add_versions("github:5.0.1", "f9c2e06cafa4381df8d5c9c9e14d85d9afcbc10c516c6a206f821997cc7f6440")
         add_versions("github:4.0.2", "4df1ef0bf73b7148caea1270539ef7bd06607e0ea8aa2fbf1bb34062a097f026")
-
+        add_versions("git:5.0.1", "n5.0.1")
+        add_versions("git:4.0.2", "n4.0.2")
+    
         add_configs("ffprobe",          { description = "Enable ffprobe program.", default = false, type = "boolean"})
         add_configs("ffmpeg",           { description = "Enable ffmpeg program.", default = false, type = "boolean"})
         add_configs("ffplay",           { description = "Enable ffplay program.", default = false, type = "boolean"})
