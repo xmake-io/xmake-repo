@@ -51,5 +51,15 @@ package("volk")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("volkInitialize", {includes = "volk.h"}))
+        local defines
+        if package:config("header_only") then 
+            defines = "VOLK_IMPLEMENTATION"
+        end
+
+        assert(package:check_csnippets({test = format([[
+            #include <volk.h>
+            void test() {
+                volkInitialize();
+            }
+        ]], {configs = {defines = defines}})}))
     end)
