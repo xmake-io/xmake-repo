@@ -8,6 +8,8 @@ package("libomp")
     add_versions("11.1.0", "d187483b75b39acb3ff8ea1b7d98524d95322e3cb148842957e9b0fbb866052e")
     add_versions("12.0.1", "60fe79440eaa9ebf583a6ea7f81501310388c02754dbe7dc210776014d06b091")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
+
     add_deps("cmake")
 
     add_links("omp")
@@ -19,7 +21,7 @@ package("libomp")
     end
 
     on_install("macosx", "linux", "cross", function (package)
-        local configs = {"-DLIBOMP_INSTALL_ALIASES=OFF"}
+        local configs = {"-DLIBOMP_INSTALL_ALIASES=OFF", ""}
         local shared = package:config("shared")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (shared and "ON" or "OFF"))
         table.insert(configs, "-DLIBOMP_ENABLE_SHARED=" .. (shared and "ON" or "OFF"))
