@@ -48,7 +48,7 @@ package("libjpeg-turbo")
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
-        table.insert(configs, "-DCMAKE_INSTALL_LIBDIR=" .. package:installdir("lib"))
+        table.insert(configs, "-DCMAKE_INSTALL_LIBDIR:PATH=lib")
         import("package.tools.cmake").install(package, configs)
     end)
 
