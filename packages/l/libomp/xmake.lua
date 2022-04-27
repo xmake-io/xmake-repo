@@ -21,7 +21,7 @@ package("libomp")
     end
 
     on_install("macosx", "linux", "cross", function (package)
-        local configs = {"-DLIBOMP_INSTALL_ALIASES=OFF", ""}
+        local configs = {"-DLIBOMP_INSTALL_ALIASES=OFF"}
         local shared = package:config("shared")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (shared and "ON" or "OFF"))
         table.insert(configs, "-DLIBOMP_ENABLE_SHARED=" .. (shared and "ON" or "OFF"))
