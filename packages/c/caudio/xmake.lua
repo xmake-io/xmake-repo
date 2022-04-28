@@ -19,7 +19,7 @@ package("caudio")
             "-DCAUDIO_BUILD_SAMPLES=FALSE"
         }
 
-        import("package.tools.cmake").install(package, configs, {buildir = "CMake"})
+        import("package.tools.cmake").install(package, configs, {buildir = "CMake", packagedeps = "openal-soft"})
 
         os.cp("cAudio/include/*.h", package:installdir("include"))
         os.cp("cAudio/Headers/*.h", package:installdir("include"))
