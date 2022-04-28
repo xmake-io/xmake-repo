@@ -9,7 +9,7 @@ package("cli11")
     add_versions("v2.2.0", "d60440dc4d43255f872d174e416705f56ba40589f6eb07727f76376fb8378fd6")
 
     on_install("windows", "linux", "macosx", function (package)
-        os.cp("include/CLI", package:installdir("include"))
+        os.cp("include/**.hpp", package:installdir(path.join("include", "CLI")))
     end)
 
     on_test(function (package)
