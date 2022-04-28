@@ -15,5 +15,5 @@ package("cli11")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             CLI::App app{"Test", "test"};
-        ]]}, {configs = {languages = "cxx17"}, includes = "CLI/CLI.hpp"}))
+        ]]}, {configs = {languages = "cxx11"}, includes = "CLI/CLI.hpp"}))
     end)
