@@ -5,15 +5,12 @@ package("johnnyengine")
 
   add_urls("https://github.com/PucklaMotzer09/JohnnyEngine/archive/refs/tags/$(version).zip",
            "https://github.com/PucklaMotzer09/JohnnyEngine.git")
-  add_versions("1.0.1", "1495d35c84e0141c757d0ea3adf557671c8f4ed4f5680123138d3b77b75de560")
+  add_versions("1.0.1", "53c11b827bea6fe30f9bca27adbd712eec85a0853c0402407930bae78ad54a8f")
 
   add_deps("glew", "libsdl", "libsdl_ttf", "libsdl_mixer", "libsdl_gfx", "box2d", "assimp", "stb", "tmxparser")
 
   on_install("windows", "linux", "macosx", function (package)
-    if package:config("shared") then
-      io.gsub("xmake.lua", "static", "shared")
-    end
-    import("package.tools.xmake").install(package)
+    import("package.tools.xmake").install(package, {kind = (package:config("shared") and "shared" or "static")})
   end)
 
   on_test(function (package)
