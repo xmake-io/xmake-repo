@@ -8,6 +8,12 @@ package("tmxparser")
 
     add_deps("zlib", "tinyxml2")
 
+    on_load("windows", function (package)
+        if package:config("shared") then
+            package:add("links", "tmxparser")
+        end
+    end)
+
     on_install("windows", "macosx", "linux", "mingw", function (package)
         io.gsub("include/Tmx.h.in", "@VERSION_PATCH@", "@VERSION_ALTER@")
         io.writefile("xmake.lua", ([[
