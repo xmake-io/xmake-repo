@@ -14,21 +14,28 @@ package("johnnyengine")
       io.gsub("xmake.lua", "static", "shared")
     end
     import("package.tools.xmake").install(package)
-    os.mkdir(package:installdir("src"))
-    os.cp("src/Geometry.cpp", package:installdir("src"))
-    os.cp("src/Matrix*.cpp", package:installdir("src"))
-    os.cp("src/Vector*.cpp", package:installdir("src"))
   end)
 
   on_test(function (package)
     assert(package:check_cxxsnippets({test = [[
-    #include <Vector2.h>
-    #include <Matrix4.h>
-    #include <Geometry.h>
+    using namespace Johnny;
+
+    class Game : public MainClass {
+    public:
+      Game() {}
+      ~Game() {}
+
+      bool init() override { return true; }
+      bool update() override { return true; }
+      bool render() override { return true; }
+      void quit() override {}
+    };
+
     void test(int argc, char** argv) {
-      Johnny::Vector2<double> v2(1.0, 2.0);
-      auto m4(Johnny::Matrix4<float>::identity());
-      Johnny::Rectangle<int> r(1, 2, 3, 4);
+      Vector2<double> v2(1.0, 2.0);
+      auto m4(Matrix4<float>::identity());
+      Rectangle<int> r(1, 2, 3, 4);
+      Game().run();
     }
   ]]}, {configs = {languages = "cxx11"}, includes = "Johnny.h"}))
   end)
