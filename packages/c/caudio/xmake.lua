@@ -10,7 +10,7 @@ package("caudio")
     add_deps("openal-soft")
     add_links("cAudio", "Vorbis", "Ogg")
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", function (package)
         local dep_dir = (package:is_arch("x64", "x86_64") and "Dependencies64" or "Dependencies")
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"),
