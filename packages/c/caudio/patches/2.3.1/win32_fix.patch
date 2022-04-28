@@ -1,13 +1,13 @@
 diff --git a/CMake/Dependencies.cmake b/CMake/Dependencies.cmake
-index 349082d..ba8a596 100644
+index 349082d..b745b12 100644
 --- a/CMake/Dependencies.cmake
 +++ b/CMake/Dependencies.cmake
-@@ -27,5 +27,5 @@ MACRO_DISPLAY_FEATURE_LOG()
+@@ -27,5 +27,6 @@ MACRO_DISPLAY_FEATURE_LOG()
  
  # Add library and include paths from the dependencies
  include_directories(
--  ${OPENAL_INCLUDE_DIR}
 +  ${OPENAL_INCLUDE_DIR}/../
+   ${OPENAL_INCLUDE_DIR}
  )
 diff --git a/cAudio/include/cAudioString.h b/cAudio/include/cAudioString.h
 index f70d2f0..d8a4815 100644

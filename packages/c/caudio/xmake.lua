@@ -7,7 +7,7 @@ package("caudio")
              "https://github.com/R4stl1n/cAudio.git")
     add_versions("2.3.1", "10f36cd7e1583405ade9001c3782fdf04be09f0f74e56cba23fac3a2b3ed5ae5")
 
-    add_patches("2.3.1", path.join(os.scriptdir(), "patches", "2.3.1", "win32_fix.patch"), "da276f877d7d058f0b4bfcce18c8b9189ba4556c5d9f16f799e3e4afee0bf244")
+    add_patches("2.3.1", path.join(os.scriptdir(), "patches", "2.3.1", "win32_fix.patch"), "92d09b63479e203e59cece12fb5d539ab73f6654228ad44b221361db50639acf")
 
     add_deps("openal-soft")
     add_links("cAudio", "Vorbis", "Ogg")
