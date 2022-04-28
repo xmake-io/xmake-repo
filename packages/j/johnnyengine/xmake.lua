@@ -5,7 +5,7 @@ package("johnnyengine")
 
   add_urls("https://github.com/PucklaMotzer09/JohnnyEngine/archive/refs/tags/$(version).zip",
            "https://github.com/PucklaMotzer09/JohnnyEngine.git")
-  add_versions("1.0.1", "f4c02eb49f3c27095939f2655d2cf6adf2b6a36081dd7e16dfad79b737d1f964")
+  add_versions("1.0.1", "1495d35c84e0141c757d0ea3adf557671c8f4ed4f5680123138d3b77b75de560")
 
   add_deps("glew", "libsdl", "libsdl_ttf", "libsdl_mixer", "libsdl_gfx", "box2d", "assimp", "stb", "tmxparser")
 
