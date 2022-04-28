@@ -14,7 +14,7 @@ package("cryptopp")
 
     add_deps("cmake")
 
-    on_install("windows", "macosx", "linux", "bsd", "iphoneos", "android", function (package)
+    on_install("windows", "macosx", "linux", "bsd", "iphoneos", function (package)
         local cryptopp_cmake = package:resourcedir("cryptopp_cmake")
         os.cp(path.join(cryptopp_cmake, "*", "CMakeLists.txt"), ".")
         os.cp(path.join(cryptopp_cmake, "*", "cryptopp-config.cmake"), ".")
