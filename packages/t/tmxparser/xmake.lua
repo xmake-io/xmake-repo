@@ -23,6 +23,9 @@ package("tmxparser")
                 set_configdir("include")
                 add_configfiles("include/Tmx.h.in", {pattern = "@(.-)@"})
                 add_files("src/**.cpp")
+                if is_plat("windows") and is_kind("shared") then 
+                    add_rules("utils.symbols.export_all") 
+                end 
         ]]):format(package:version_str()))
         local configs = {}
         configs.kind = (package:config("shared") and "shared" or "static")
