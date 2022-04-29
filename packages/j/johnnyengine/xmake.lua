@@ -6,6 +6,9 @@ package("johnnyengine")
   add_urls("https://github.com/PucklaMotzer09/JohnnyEngine/archive/refs/tags/$(version).zip",
            "https://github.com/PucklaMotzer09/JohnnyEngine.git")
   add_versions("1.0.1", "53c11b827bea6fe30f9bca27adbd712eec85a0853c0402407930bae78ad54a8f")
+  if is_plat("windows") then
+    add_patches("1.0.1", path.join(os.scriptdir(), "patches", "1.0.1", "win32_shared_fix.patch"), "98953e412d0230b193a8cacf088561347bdcac1c5813694b2eb07dd49f0e7c66")
+  end
 
   add_deps("glew", "libsdl", "libsdl_ttf", "libsdl_mixer", "libsdl_gfx", "box2d", "assimp", "stb", "tmxparser")
 
