@@ -24,7 +24,7 @@ package("tmxparser")
                 add_configfiles("include/Tmx.h.in", {pattern = "@(.-)@"})
                 add_files("src/**.cpp")
                 if is_plat("windows") and is_kind("shared") then 
-                    add_rules("utils.symbols.export_all") 
+                    add_rules("utils.symbols.export_all", {export_classes = true}) 
                 end 
         ]]):format(package:version_str()))
         local configs = {}
