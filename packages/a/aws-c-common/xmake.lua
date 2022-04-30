@@ -23,3 +23,10 @@ package("aws-c-common")
 
         import("package.tools.cmake").install(package, configs)
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("aws_common_library_init", {includes = "aws/common.h"}))
+        assert(package:has_cfuncs("aws_common_library_clean_up", {includes = "aws/common.h"}))
+        assert(package:has_cfuncs("aws_ring_buffer_init", {includes = "aws/ring_buffer.h"}))
+        assert(package:has_cfuncs("aws_uuid_init", {includes = "aws/uuid.h"}))
+    end)
