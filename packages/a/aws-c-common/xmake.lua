@@ -13,11 +13,10 @@ package("aws-c-common")
     end
 
     on_install("linux", function (package)
-        local shared = package:config("shared")
         local configs = {}
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (shared and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DPERFORM_HEADER_CHECK=ON")
         table.insert(configs, "-DENABLE_NET_TESTS=OFF")
 
@@ -25,8 +24,8 @@ package("aws-c-common")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("aws_common_library_init", {includes = "aws/common.h"}))
-        assert(package:has_cfuncs("aws_common_library_clean_up", {includes = "aws/common.h"}))
-        assert(package:has_cfuncs("aws_ring_buffer_init", {includes = "aws/ring_buffer.h"}))
-        assert(package:has_cfuncs("aws_uuid_init", {includes = "aws/uuid.h"}))
+        assert(package:has_cfuncs("aws_common_library_init", {includes = "aws/common/common.h"}))
+        assert(package:has_cfuncs("aws_common_library_clean_up", {includes = "aws/common/common.h"}))
+        assert(package:has_cfuncs("aws_ring_buffer_init", {includes = "aws/common/ring_buffer.h"}))
+        assert(package:has_cfuncs("aws_uuid_init", {includes = "aws/common/uuid.h"}))
     end)
