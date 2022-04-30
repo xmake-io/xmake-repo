@@ -4,13 +4,17 @@ package("cryptopp")
     set_description("free C++ class library of cryptographic schemes")
 
     add_urls("https://github.com/weidai11/cryptopp/archive/CRYPTOPP_$(version).tar.gz", {version = function (version) return version:gsub("%.", "_") end})
+    add_versions("8.6.0", "9304625f4767a13e0a5f26d0f019d78cf9375604a33e5391c3bf2e81399dfeb8")
+    add_versions("8.5.0", "8f64cf09cf4f61d5d74bca53574b8cc9959186cc0f072a2e6597e4999d6ad5db")
     add_versions("8.4.0", "6687dfc1e33b084aeab48c35a8550b239ee5f73a099a3b6a0918d70b8a89e654")
 
+    add_resources("8.6.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_6_0.tar.gz", "970b20d55dbf9d6335485e72c9f8967d878bf64bbd3de6aa28436beb6799c493")
+    add_resources("8.5.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_5_0.tar.gz", "10685209405e676993873fcf638ade5f8f99d7949afa6b2045289ce9cc6d90ac")
     add_resources("8.4.0", "cryptopp_cmake", "https://github.com/noloader/cryptopp-cmake/archive/CRYPTOPP_8_4_0.tar.gz", "b850070141f6724fce640e4e2cfde433ec5b2d99d4386d29ba9255167bc4b4f0")
 
     add_deps("cmake")
 
-    on_install("windows", "macosx", "linux", "bsd", "iphoneos", "android", function (package)
+    on_install("windows", "macosx", "linux", "bsd", "iphoneos", function (package)
         local cryptopp_cmake = package:resourcedir("cryptopp_cmake")
         os.cp(path.join(cryptopp_cmake, "*", "CMakeLists.txt"), ".")
         os.cp(path.join(cryptopp_cmake, "*", "cryptopp-config.cmake"), ".")

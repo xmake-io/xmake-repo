@@ -59,7 +59,7 @@ package("imgui")
                     add_files("*.cpp", "backends/imgui_impl_glfw.cpp", "backends/imgui_impl_opengl3.cpp")
                     add_packages(%s)
                     add_includedirs(".")
-                    add_headerfiles("*.h", {prefixdir = "imgui"})
+                    add_headerfiles("*.h")
                     add_headerfiles("(backends/imgui_impl_glfw.h)", "(backends/imgui_impl_opengl3.h)")
             ]], pkgs, pkgs)
             if package:version():ge("1.84") then
@@ -74,7 +74,7 @@ package("imgui")
                 target("imgui")
                     set_kind("static")
                     add_files("*.cpp")
-                    add_headerfiles("*.h", {prefixdir = "imgui"})
+                    add_headerfiles("*.h")
             ]]
         end
 

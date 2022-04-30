@@ -6,13 +6,14 @@ package("openssl")
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_$(version).zip", {version = function (version)
         return version:gsub("%.", "_")
     end, excludes = "*/fuzz/*"})
+    add_versions("1.1.1n", "614d69141fd622bc3db2adf7c824eaa19c7e532937b2cd7144b850d692f9f150")
     add_versions("1.1.1m", "dab2287910427d82674618d512ba2571401539ca6ed12ab3c3143a0db9fad542")
     add_versions("1.1.1l", "23d8908e82b63af754018256a4eb02f13965f10067969f6a63f497960c11dbeb")
     add_versions("1.1.1k", "255c038f5861616f67b527434475d226f5fe00522fbd21fafd3df32019edd202")
     add_versions("1.1.1h", "0a976b769bdb26470971a184f5263d0c3256152d5671ed7287cf17acc4698afc")
     add_versions("1.1.0l", "a305d4af4b442ad61ba3d7e82905d09bfbd80424e132e10df4899d064aa47ce2")
     add_versions("1.0.2u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
-    add_versions("1.0.0",   "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
+    add_versions("1.0.0",  "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
     on_fetch("fetch")
 
@@ -33,7 +34,7 @@ package("openssl")
         if package:is_plat("windows", "mingw") then
             package:add("syslinks", "ws2_32", "user32", "crypt32", "advapi32")
         elseif package:is_plat("linux", "cross") then
-            package:add("syslinks", "dl")
+            package:add("syslinks", "pthread", "dl")
         end
         if package:is_plat("linux") then
             package:add("extsources", "apt::libssl-dev")
@@ -83,12 +84,17 @@ package("openssl")
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         local configs = {"--openssldir=" .. package:installdir(),
                          "--prefix=" .. package:installdir()}
+        table.insert(configs, package:config("shared") and "shared" or "no-shared")
         if package:debug() then
             table.insert(configs, "--debug")
         end
         os.vrunv("./config", configs, {envs = buildenvs})
         local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
         import("package.tools.make").install(package, makeconfigs)
+
+        if package:config("shared") then
+            os.tryrm(path.join(package:installdir("lib"), "*.a"))
+        end
     end)
 
     on_install("cross", "android", function (package)

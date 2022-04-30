@@ -5,9 +5,9 @@ package("zlib")
 
     add_urls("https://github.com/madler/zlib/archive/$(version).tar.gz",
              "https://github.com/madler/zlib.git")
-
     add_versions("v1.2.10", "42cd7b2bdaf1c4570e0877e61f2fdc0bce8019492431d054d3d86925e5058dc5")
     add_versions("v1.2.11", "629380c90a77b964d896ed37163f5c3a34f6e6d897311f1df2a7016355c45eff")
+    add_versions("v1.2.12", "d8688496ea40fb61787500e863cc63c9afcbc524468cedeb478068924eb54932")
 
     if is_plat("linux") then
         add_extsources("pacman::zlib", "apt::zlib1g-dev")
@@ -48,6 +48,7 @@ package("zlib")
                     add_defines("_CRT_SECURE_NO_DEPRECATE")
                     add_defines("_CRT_NONSTDC_NO_DEPRECATE")
                     if is_kind("shared") then
+                        add_files("win32/zlib1.rc")
                         add_defines("ZLIB_DLL")
                     end
                 else

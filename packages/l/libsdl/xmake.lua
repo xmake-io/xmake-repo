@@ -19,12 +19,16 @@ package("libsdl")
         add_versions("2.0.12", "00c55a597cebdb9a4eb2723f2ad2387a4d7fd605e222c69b46099b15d5d8b32d")
         add_versions("2.0.14", "232071cf7d40546cde9daeddd0ec30e8a13254c3431be1f60e1cdab35a968824")
         add_versions("2.0.16", "f83651227229e059a570aac26be24f5070352c0d23aaf3d2cfbd3eb2c9599334")
+        add_versions("2.0.18", "d4a56e2ee7c0eae2ef0d511201d3bd38c5ab255662e4b571d4d630762473bf42")
+        add_versions("2.0.20", "5b1512ca6c9d2427bd2147da01e5e954241f8231df12f54a7074dccde416df18")
     else
         set_urls("https://www.libsdl.org/release/SDL2-$(version).zip")
         add_versions("2.0.8", "e6a7c71154c3001e318ba7ed4b98582de72ff970aca05abc9f45f7cbdc9088cb")
         add_versions("2.0.12", "476e84d6fcbc499cd1f4a2d3fd05a924abc165b5d0e0d53522c9604fe5a021aa")
         add_versions("2.0.14", "2c1e870d74e13dfdae870600bfcb6862a5eab4ea5b915144aff8d75a0f9bf046")
         add_versions("2.0.16", "010148866e2226e5469f2879425d28ff7c572c736cb3fb65a0604c3cde6bfab9")
+        add_versions("2.0.18", "2d96cc82020341f7f5957c42001ad526e15fbb7056be8a74dab302483e97aa24")
+        add_versions("2.0.20", "cc8b16a326eb082c1f48ca30fdf471acfd2334b69bd7527e65ac58369013a1ba")
     end
 
     if is_plat("macosx") then

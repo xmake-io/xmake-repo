@@ -2,6 +2,7 @@ package("openblas")
 
     set_homepage("http://www.openblas.net/")
     set_description("OpenBLAS is an optimized BLAS library based on GotoBLAS2 1.13 BSD version.")
+    set_license("BSD-3-Clause")
 
     if is_plat("windows") then
         if is_arch("x64", "x86_64") then

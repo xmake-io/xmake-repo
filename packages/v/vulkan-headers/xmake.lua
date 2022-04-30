@@ -6,6 +6,7 @@ package("vulkan-headers")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/Vulkan-Headers/archive/$(version).tar.gz", {version = function (version) return version:startswith("v") and version or "sdk-" .. version:gsub("%+", ".") end})
+    add_versions("1.3.211+0", "c464bcdc24b7541ac4378a270617a23d4d92699679a73f95dc4b9e1da924810a")
     add_versions("1.2.198+0", "34782c61cad9b3ccf2fa0a31ec397d4fce99490500b4f3771cb1a48713fece80")
     add_versions("1.2.189+1", "ce2eb5995dddd8ff2cee897ab91c30a35d6096d5996fc91cec42bfb37112d3f8")
     add_versions("1.2.182+0", "61c05dc8a24d5a9104ca2cd233cb9febc3455d69a64e404c3535293f3a463d02")
@@ -18,7 +19,7 @@ package("vulkan-headers")
       add_extsources("pacman::vulkan-headers")
     end
 
-    on_install("windows", "linux", "macosx", "android", function (package)
+    on_install("windows", "linux", "macosx", "iphoneos", "android", function (package)
         import("package.tools.cmake").install(package)
     end)
 

@@ -1,7 +1,7 @@
 package("magnum")
 
     set_homepage("https://magnum.graphics/")
-    set_description("Light­weight and mod­u­lar C++11/C++14 graph­ics mid­dle­ware for games and data visu­al­iz­a­tion.")
+    set_description("Lightweight and modular C++11/C++14 graphics middleware for games and data visualization.")
     set_license("MIT")
 
     add_urls("https://github.com/mosra/magnum/archive/refs/tags/$(version).zip",

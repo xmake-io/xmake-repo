@@ -1,0 +1,14 @@
+diff --git a/turbob64.h b/turbob64.h
+index 0149b77..2ddd838 100644
+--- a/turbob64.h
++++ b/turbob64.h
+@@ -24,6 +24,9 @@
+ // Turbo-Base64 - C/C++ include header
+ #ifndef _TURBOB64_H_
+ #define _TURBOB64_H_
++
++#include <stddef.h>
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif

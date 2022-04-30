@@ -5,6 +5,8 @@ package("yyjson")
 
     add_urls("https://github.com/ibireme/yyjson/archive/$(version).tar.gz",
              "https://github.com/ibireme/yyjson.git")
+    add_versions("0.4.0", "061fe713391d7f3f85f13e8bb2752a4cdeb8e70ce20d68e1e9e4332bd0bf64fa")
+    add_versions("0.3.0", "f5ad3e3be40f0307a732c2b8aff9a1ba6014a6b346f3ec0b128459607748e990")    
     add_versions("0.2.0", "43aacdc6bc3876dc1322200c74031b56d8d7838c04e46ca8a8e52e37ea6128da")
 
     on_install(function (package)

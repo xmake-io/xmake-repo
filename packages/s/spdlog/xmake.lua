@@ -5,6 +5,7 @@ package("spdlog")
 
     set_urls("https://github.com/gabime/spdlog/archive/$(version).zip",
              "https://github.com/gabime/spdlog.git")
+    add_versions("v1.10.0", "7be28ff05d32a8a11cfba94381e820dd2842835f7f319f843993101bcab44b66")
     add_versions("v1.9.2", "130bd593c33e2e2abba095b551db6a05f5e4a5a19c03ab31256c38fa218aa0a6")
     add_versions("v1.9.1", "1a383a1d6bf604759c310a0b464a83afc54cc3147192d61c3d0c59695b38ff79")
     add_versions("v1.9.0", "61f751265cfce8fb17f67e18fa1ad00077280c080008252d9e8f0fbab5c30662")
