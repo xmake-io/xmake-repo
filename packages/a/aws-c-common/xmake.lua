@@ -3,7 +3,8 @@ package("aws-c-common")
     set_description("Core c99 package for AWS SDK for C")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/awslabs/aws-c-common/archive/$(version).tar.gz")
+    add_urls("https://github.com/awslabs/aws-c-common/archive/$(version).tar.gz",
+             "https://github.com/awslabs/aws-c-common.git")
     add_versions("v0.6.9", "928a3e36f24d1ee46f9eec360ec5cebfe8b9b8994fe39d4fa74ff51aebb12717")
 
     if is_plat("linux") then
@@ -14,10 +15,7 @@ package("aws-c-common")
         local shared = package:config("shared")
         local configs = {}
 
-        -- Build type
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-
-        -- Configs
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (shared and "ON" or "OFF"))
         table.insert(configs, "-DPERFORM_HEADER_CHECK=ON")
         table.insert(configs, "-DENABLE_NET_TESTS=OFF")
