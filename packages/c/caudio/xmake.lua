@@ -16,17 +16,26 @@ package("caudio")
         local dep_dir = (package:is_arch("x64", "x86_64") and "Dependencies64" or "Dependencies")
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"),
-            "-DCAUDIO_STATIC=" .. (package:config("shared") and "FALSE" or "TRUE"),
+            "-DCAUDIO_STATIC=" .. (package:config("shared") and "OFF" or "ON"),
             "-DCAUDIO_DEPENDENCIES_DIR=" .. dep_dir,
-            "-DCAUDIO_BUILD_SAMPLES=FALSE"
+            "-DCAUDIO_BUILD_SAMPLES=OFF"
         }
-
-        import("package.tools.cmake").install(package, configs, {buildir = "CMake", packagedeps = "openal-soft"})
-
+        local cxflags
+        local shflags
+        if package:is_plat("windows") then
+            io.replace("cAudio/Headers/cOpenALUtil.h", "#if !defined(CAUDIO_PLATFORM_LINUX)", "#if 0", {plain = true})
+            if not package:dep("openal-soft"):config("shared") then
+                cxflags = "-DAL_LIBTYPE_STATIC"
+            end
+            shflags = "winmm.lib"
+        end
+        import("package.tools.cmake").install(package, configs, {buildir = "CMake",
+            cxflags = cxflags, shflags = shflags})
         os.cp("cAudio/include/*.h", package:installdir("include"))
         os.cp("cAudio/Headers/*.h", package:installdir("include"))
         os.cp(path.join(dep_dir, "include/*"), package:installdir("include"))
         os.cp("CMake/include/*.h", package:installdir("include"))
+        os.trycp("CMake/lib/**.lib", package:installdir("lib"))
     end)
 
     on_test(function (package)
