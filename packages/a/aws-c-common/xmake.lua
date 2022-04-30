@@ -8,6 +8,7 @@ package("aws-c-common")
     add_versions("v0.6.9", "928a3e36f24d1ee46f9eec360ec5cebfe8b9b8994fe39d4fa74ff51aebb12717")
 
     if is_plat("linux") then
+        add_deps("cmake")
         add_syslinks("dl", "m", "pthread", "rt")
     end
 
