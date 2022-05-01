@@ -1,0 +1,11 @@
+diff --git a/xmake.lua b/xmake.lua
+index dfad2e0..090d2b1 100644
+--- a/xmake.lua
++++ b/xmake.lua
+@@ -16,3 +16,6 @@ target("johnny-engine")
+     add_files("src/*.cpp")
+     add_headerfiles("include/*.h")
+     add_includedirs("include")
++    if is_plat("windows") and is_kind("shared") then
++        add_rules("utils.symbols.export_all", {export_classes = true})
++    end
