@@ -29,7 +29,9 @@ package("sfml")
     add_configs("window",     {description = "Use the window module", default = true, type = "boolean"})
     add_configs("audio",      {description = "Use the audio module", default = true, type = "boolean"})
     add_configs("network",    {description = "Use the network module", default = true, type = "boolean"})
-    add_configs("main",       {description = "Link to the sfml-main library", default = true, type = "boolean"})
+    if is_plat("windows", "mingw") then
+        add_configs("main",       {description = "Link to the sfml-main library", default = true, type = "boolean"})
+    end
 
     on_load("windows", "linux", "macosx", "mingw", function (package)
         if package:is_plat("windows", "linux") then
@@ -83,9 +85,11 @@ package("sfml")
                 package:add("syslinks", "ws2_32")
             end
         end
+        if package:is_plat("windows", "mingw") and package:config("main") then
+            package:add("links", main_module)
+        end
         package:add("links", a .. "system" .. e)
         if package:is_plat("windows", "mingw") then
-            package:add("links", main_module)
             package:add("syslinks", "winmm")
         end
     end)
