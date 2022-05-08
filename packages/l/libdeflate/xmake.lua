@@ -15,7 +15,7 @@ package("libdeflate")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "android", "mingw", function (package)
+    on_install("windows", "macosx", "linux", "android", "mingw", "bsd", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("deflate")
