@@ -28,6 +28,7 @@ jobs:
           dnf -y install copr-cli make gcc-c++ libatomic
           dnf -y upgrade git
           dnf -y install perl
+          git config --global --add safe.directory /__w/xmake-repo/xmake-repo
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
