@@ -43,6 +43,11 @@ package("ffmpeg")
                 package:add("deps", dep)
             end
         end
+        -- https://www.ffmpeg.org/platform.html#toc-Advanced-linking-configuration
+        if package:config("pic") ~= false then
+            package:add("shflags", "-Wl,-Bsymbolic")
+            package:add("ldflags", "-Wl,-Bsymbolic")
+        end
     end)
 
     on_install("linux", "macosx", "android@linux,macosx", function (package)
@@ -65,6 +70,9 @@ package("ffmpeg")
             table.insert(configs, "--enable-debug")
         else
             table.insert(configs, "--disable-debug")
+        end
+        if package:config("pic") ~= false then
+            table.insert(configs, "--enable-pic")
         end
         if package:is_plat("android") then
             import("core.base.option")

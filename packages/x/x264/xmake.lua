@@ -13,7 +13,7 @@ package("x264")
     on_install("linux", "macosx", function (package)
         local configs = {"--disable-avs", "--disable-lsmash", "--disable-lavf", "--disable-bashcompletion"}
         table.insert(configs, "--enable-" .. (package:configs("shared") and "shared" or "static"))
-        if package:config("pic") then
+        if package:config("pic") ~= false then
             table.insert(configs, "--enable-pic")
         end
         import("package.tools.autoconf").install(package, configs)
