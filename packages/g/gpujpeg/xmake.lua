@@ -9,7 +9,7 @@ package("gpujpeg")
     add_deps("cmake")
     add_deps("cuda", {system = true})
 
-    on_install("linux", "windows", function (package)
+    on_install("linux", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
