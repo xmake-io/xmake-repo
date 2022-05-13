@@ -22,6 +22,7 @@ package("imgui")
     add_versions("v1.75", "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
     add_configs("user_config", {description = "Use user config (disables test!)", default = nil, type = "string"})
+    add_configs("freetype", {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
     add_configs("glfw_opengl3", {description = "Use glfw+opengl3 as backend", default = false, type = "boolean"})
 
     add_includedirs("include", "include/imgui", "include/backends")
@@ -31,6 +32,9 @@ package("imgui")
     end
 
     on_load("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
+        if package:config("freetype") then
+            package:add("deps", "freetype")
+        end
         if package:config("glfw_opengl3") then
             if package:version():lt("1.84") then
                 package:add("deps", "glad")
@@ -44,38 +48,56 @@ package("imgui")
     end)
 
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
-        local xmake_lua
+        local xmake_lua = [[
+            add_rules("mode.debug", "mode.release")
+            add_rules("utils.install.cmake_importfiles")
+        ]]
+        -- add packages
+        local pkgs = {}
         if package:config("glfw_opengl3") then
-            local pkgs = "\"glfw\""
-            if package:version():lt("1.84") then
-                pkgs = pkgs .. ", \"glad\""
+            table.insert(pkgs, "\"glfw\"")
+             if package:version():lt("1.84") then
+               table.insert(pkgs, "\"glad\"")
             end
-            xmake_lua = format([[
-                add_rules("mode.debug", "mode.release")
-                add_rules("utils.install.cmake_importfiles")
-                add_requires(%s)
-                target("imgui")
-                    set_kind("static")
-                    add_files("*.cpp", "backends/imgui_impl_glfw.cpp", "backends/imgui_impl_opengl3.cpp")
-                    add_packages(%s)
-                    add_includedirs(".")
-                    add_headerfiles("*.h")
-                    add_headerfiles("(backends/imgui_impl_glfw.h)", "(backends/imgui_impl_opengl3.h)")
-            ]], pkgs, pkgs)
+        end
+        if package:config("freetype") then 
+            table.insert(pkgs, "\"freetype\"")
+        end
+        if #pkgs ~= 0 then
+            xmake_lua = xmake_lua .. format("add_requires(%s)\n", table.concat(pkgs, ", "))
+        end
+
+        -- target info
+        xmake_lua = xmake_lua .. format([[
+            target("imgui")
+                set_kind("static")
+                add_files("*.cpp")
+                add_headerfiles("*.h")
+                add_includedirs(".")
+        ]])
+        if #pkgs ~= 0 then
+            xmake_lua = xmake_lua .. format("add_packages(%s)\n", table.concat(pkgs, ", "))
+        end
+
+        if package:config("freetype") then
+            xmake_lua = xmake_lua .. [[
+                add_headerfiles("misc/freetype/imgui_freetype.h")
+                add_files("misc/freetype/imgui_freetype.cpp")
+                add_defines("IMGUI_ENABLE_FREETYPE")
+            ]]
+            io.gsub("imconfig.h", "//#define IMGUI_ENABLE_FREETYPE", "#define IMGUI_ENABLE_FREETYPE")
+        end
+
+        if package:config("glfw_opengl3") then
+            xmake_lua = xmake_lua .. [[
+                add_files("backends/imgui_impl_glfw.cpp", "backends/imgui_impl_opengl3.cpp")
+                add_headerfiles("backends/imgui_impl_glfw.h", "backends/imgui_impl_opengl3.h")
+            ]]
             if package:version():ge("1.84") then
-                xmake_lua = xmake_lua .. "add_headerfiles(\"(backends/imgui_impl_opengl3_loader.h)\")\n"
+                xmake_lua = xmake_lua .. "add_headerfiles(\"backends/imgui_impl_opengl3_loader.h\")\n"
             else
                 xmake_lua = xmake_lua .. "add_defines(\"IMGUI_IMPL_OPENGL_LOADER_GLAD\")\n"
             end
-        else
-            xmake_lua = [[
-                add_rules("mode.debug", "mode.release")
-                add_rules("utils.install.cmake_importfiles")
-                target("imgui")
-                    set_kind("static")
-                    add_files("*.cpp")
-                    add_headerfiles("*.h")
-            ]]
         end
 
         local user_config = package:config("user_config")
@@ -85,6 +107,8 @@ package("imgui")
             end
             xmake_lua = xmake_lua .. "add_defines(\"IMGUI_USER_CONFIG=\\\"" .. user_config .. "\\\"\")"
         end
+
+        xmake_lua = xmake_lua .. "target_end()"
 
         io.writefile("xmake.lua", xmake_lua)
         import("package.tools.xmake").install(package)
