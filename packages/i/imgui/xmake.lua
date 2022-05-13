@@ -22,8 +22,9 @@ package("imgui")
     add_versions("v1.75", "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
     add_configs("user_config", {description = "Use user config (disables test!)", default = nil, type = "string"})
-    add_configs("freetype", {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
     add_configs("glfw_opengl3", {description = "Use glfw+opengl3 as backend", default = false, type = "boolean"})
+    add_configs("wchar32", {description = "Use 32-bit for ImWchar (default is 16-bit)", default = true, type = "boolean"})
+    add_configs("freetype", {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
 
     add_includedirs("include", "include/imgui", "include/backends")
 
@@ -77,6 +78,11 @@ package("imgui")
         ]])
         if #pkgs ~= 0 then
             xmake_lua = xmake_lua .. format("add_packages(%s)\n", table.concat(pkgs, ", "))
+        end
+
+        if package:config("wchar32") then
+            xmake_lua = xmake_lua .. [[add_defines("IMGUI_USE_WCHAR32")]]
+            io.gsub("imconfig.h", "//#define IMGUI_USE_WCHAR32", "#define IMGUI_USE_WCHAR32")
         end
 
         if package:config("freetype") then
