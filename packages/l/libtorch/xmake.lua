@@ -15,7 +15,9 @@ package("libtorch")
     add_patches("1.9.x", path.join(os.scriptdir(), "patches", "1.9.0", "gcc11.patch"), "4191bb3296f18f040c230d7c5364fb160871962d6278e4ae0f8bc481f27d8e4b")
     add_patches("1.11.0", path.join(os.scriptdir(), "patches", "1.11.0", "gcc11.patch"), "1404b0bc6ce7433ecdc59d3412e3d9ed507bb5fd2cd59134a254d7d4a8d73012")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
     add_configs("python", {description = "Build python interface.", default = false, type = "boolean"})
+    add_configs("openmp", {description = "Use OpenMP for parallel code.", default = true, type = "boolean"})
     add_configs("cuda",   {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("ninja",  {description = "Use ninja as build tool.", default = false, type = "boolean"})
     add_configs("blas",   {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas", "eigen"}})
@@ -40,6 +42,9 @@ package("libtorch")
     on_load("windows|x64", "macosx", "linux", function (package)
         if package:config("ninja") then
             package:add("deps", "ninja")
+        end
+        if package:config("openmp") then
+            package:add("deps", "openmp")
         end
         if package:config("cuda") then
             package:add("deps", "cuda", {configs = {utils = {"nvrtc", "cudnn", "cufft", "curand", "cublas", "cudart_static"}}})
@@ -105,6 +110,7 @@ package("libtorch")
         os.vrun("python -m pip install typing_extensions pyyaml")
         local configs = {"-DUSE_MPI=OFF",
                          "-DCMAKE_INSTALL_LIBDIR=lib",
+                         "-DBUILD_TEST=OFF",
                          "-DATEN_NO_TEST=ON"}
         if package:config("python") then
             table.insert(configs, "-DBUILD_PYTHON=ON")
@@ -134,6 +140,7 @@ package("libtorch")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_DISTRIBUTED=" .. (package:config("distributed") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DCAFFE2_USE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
