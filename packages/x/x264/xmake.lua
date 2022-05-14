@@ -8,6 +8,7 @@ package("x264")
     add_versions("v2018.09.25", "545de2ffec6ae9a80738de1b2c8cf820249a2530")
 
     add_deps("nasm")
+    add_configs("toolchains", {readonly = true, description = "Set package toolchains only for cross-compilation."})
 
     add_syslinks("pthread", "dl")
     on_install("linux", "macosx", function (package)
