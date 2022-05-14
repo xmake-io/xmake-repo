@@ -23,7 +23,7 @@ package("imgui")
 
     add_configs("user_config", {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("glfw_opengl3", {description = "Use glfw+opengl3 as backend", default = false, type = "boolean"})
-    add_configs("wchar32", {description = "Use 32-bit for ImWchar (default is 16-bit)", default = true, type = "boolean"})
+    add_configs("wchar32", {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
     add_configs("freetype", {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
 
     add_includedirs("include", "include/imgui", "include/backends")
@@ -49,75 +49,16 @@ package("imgui")
     end)
 
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
-        local xmake_lua = [[
-            add_rules("mode.debug", "mode.release")
-            add_rules("utils.install.cmake_importfiles")
-        ]]
-        -- add packages
-        local pkgs = {}
-        if package:config("glfw_opengl3") then
-            table.insert(pkgs, "\"glfw\"")
-             if package:version():lt("1.84") then
-               table.insert(pkgs, "\"glad\"")
-            end
-        end
-        if package:config("freetype") then 
-            table.insert(pkgs, "\"freetype\"")
-        end
-        if #pkgs ~= 0 then
-            xmake_lua = xmake_lua .. format("add_requires(%s)\n", table.concat(pkgs, ", "))
-        end
+        local configs = {
+            wchar32      = package:config("wchar32"),
+            freetype     = package:config("freetype"),
+            glfw_opengl3 = package:config("glfw_opengl3"),
+            user_config  = package:config("user_config"),
+            use_glad     = package:version():lt("1.84") -- this flag will be used if glfw_opengl3 is enabled
+        }
 
-        -- target info
-        xmake_lua = xmake_lua .. format([[
-            target("imgui")
-                set_kind("static")
-                add_files("*.cpp")
-                add_headerfiles("*.h")
-                add_includedirs(".")
-        ]])
-        if #pkgs ~= 0 then
-            xmake_lua = xmake_lua .. format("add_packages(%s)\n", table.concat(pkgs, ", "))
-        end
-
-        if package:config("wchar32") then
-            xmake_lua = xmake_lua .. [[add_defines("IMGUI_USE_WCHAR32")]]
-            io.gsub("imconfig.h", "//#define IMGUI_USE_WCHAR32", "#define IMGUI_USE_WCHAR32")
-        end
-
-        if package:config("freetype") then
-            xmake_lua = xmake_lua .. [[
-                add_headerfiles("misc/freetype/imgui_freetype.h")
-                add_files("misc/freetype/imgui_freetype.cpp")
-                add_defines("IMGUI_ENABLE_FREETYPE")
-            ]]
-            io.gsub("imconfig.h", "//#define IMGUI_ENABLE_FREETYPE", "#define IMGUI_ENABLE_FREETYPE")
-        end
-
-        if package:config("glfw_opengl3") then
-            xmake_lua = xmake_lua .. [[
-                add_files("backends/imgui_impl_glfw.cpp", "backends/imgui_impl_opengl3.cpp")
-                add_headerfiles("backends/imgui_impl_glfw.h", "backends/imgui_impl_opengl3.h")
-            ]]
-            if package:version():ge("1.84") then
-                xmake_lua = xmake_lua .. "add_headerfiles(\"backends/imgui_impl_opengl3_loader.h\")\n"
-            else
-                xmake_lua = xmake_lua .. "add_defines(\"IMGUI_IMPL_OPENGL_LOADER_GLAD\")\n"
-            end
-        end
-
-        local user_config = package:config("user_config")
-        if user_config ~= nil then
-            if is_host("windows") then
-                user_config = user_config:gsub("\\", "\\\\")
-            end
-            xmake_lua = xmake_lua .. "add_defines(\"IMGUI_USER_CONFIG=\\\"" .. user_config .. "\\\"\")"
-        end
-
-        xmake_lua = xmake_lua .. "target_end()"
-
-        io.writefile("xmake.lua", xmake_lua)
-        import("package.tools.xmake").install(package)
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
@@ -135,3 +76,4 @@ package("imgui")
             }
         ]]}, {configs = {languages = "c++11"}, includes = {"imgui.h"}}))
     end)
+
