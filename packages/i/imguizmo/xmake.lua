@@ -10,7 +10,7 @@ package("imguizmo")
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
             local xmake_lua = [[
                 add_rules("mode.debug", "mode.release")
-                add_requires("imgui v1.83")
+                add_requires("imgui v1.83-docking")
 
                 target("imguizmo")
                     set_kind("static")
