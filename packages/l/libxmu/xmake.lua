@@ -13,7 +13,16 @@ package("libxmu")
     add_deps("libxt", "libxext")
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package)
+        local configs = {"--sysconfdir=" .. package:installdir("etc"),
+                         "--localstatedir=" .. package:installdir("var"),
+                         "--disable-dependency-tracking",
+                         "--disable-silent-rules"}
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        if package:config("pic") then
+            table.insert(configs, "--with-pic")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

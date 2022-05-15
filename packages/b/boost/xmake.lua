@@ -96,7 +96,7 @@ package("boost")
         package:add("defines", "BOOST_ALL_NO_LIB")
     end)
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", "windows", "bsd", "cross", function (package)
 
         -- force boost to compile with the desired compiler
         local file = io.open("user-config.jam", "a")
@@ -160,10 +160,6 @@ package("boost")
             table.insert(argv, "cxxflags=-std:c++14")
         else
             table.insert(argv, "cxxflags=-std=c++14")
-            if package:build_getenv("cxx"):find("clang", 1, true) then
-                table.insert(argv, "cxxflags=-stdlib=libc++")
-                table.insert(argv, "linkflags=-stdlib=libc++")
-            end
             if package:config("pic") ~= false then
                 table.insert(argv, "cxxflags=-fPIC")
             end

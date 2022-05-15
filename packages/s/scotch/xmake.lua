@@ -20,7 +20,7 @@ package("scotch")
             local basename
             if package:is_arch("x86_64") then
                 basename = "Make.inc/Makefile.inc.x86-64_pc_linux2"
-            elseif package:is_arch("x86") then
+            elseif package:is_arch("i386", "x86") then
                 basename = "Make.inc/Makefile.inc.i686_pc_linux2"
             end
             os.cp(basename .. (package:config("shared") and ".shlib" or ""), "Makefile.inc")

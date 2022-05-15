@@ -18,6 +18,9 @@ jobs:
             { msystem: MINGW32, kind: shared, arch: i686,   prefix: /mingw32 }
         ]
 
+    concurrency:
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-MSYS2_MINGW-${{ matrix.msystem }}-${{ matrix.kind }}-${{ matrix.arch }}
+        cancel-in-progress: true
     steps:
 
       - uses: actions/checkout@v1
@@ -43,8 +46,8 @@ jobs:
         shell: msys2 {0}
         run: |
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
-            xmake l ./scripts/test.lua -vD -p mingw -a x86_64 -k ${{ matrix.kind }}
+            xmake l ./scripts/test.lua -D -p mingw -a x86_64 -k ${{ matrix.kind }}
           else
-            xmake l ./scripts/test.lua -vD -p mingw -a i386 -k ${{ matrix.kind }}
+            xmake l ./scripts/test.lua -D -p mingw -a i386 -k ${{ matrix.kind }}
           fi
 

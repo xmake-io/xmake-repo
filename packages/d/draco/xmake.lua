@@ -7,6 +7,7 @@ package("draco")
     add_urls("https://github.com/google/draco/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/draco.git")
     add_versions("1.4.1", "83aa5637d36a835103a61f96af7ff04c6d6528e643909466595d51ee715417a9")
+    add_versions("1.5.0", "81a91dcc6f22170a37ef67722bb78d018e642963e6c56e373560445ce7468a20")
 
     add_deps("cmake")
     on_install("windows", "linux", "macosx", function (package)

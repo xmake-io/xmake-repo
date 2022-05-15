@@ -10,7 +10,7 @@ package("tinyobjloader")
 
     add_configs("double", {description = "Use double precision floating numbers.", default = false, type = "boolean"})
     if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     on_load(function (package)
@@ -22,6 +22,7 @@ package("tinyobjloader")
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         io.writefile("xmake.lua", string.format([[
             add_rules("mode.debug", "mode.release")
+            add_rules("utils.install.cmake_importfiles")
             target("tinyobjloader")
                 set_kind("$(kind)")
                 %s

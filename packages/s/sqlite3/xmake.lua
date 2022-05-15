@@ -4,7 +4,10 @@ package("sqlite3")
     set_description("The most used database engine in the world")
 
     set_urls("https://sqlite.org/$(version)", {version = function (version)
-        local year = "2021"
+        local year = "2022"
+        if version:le("3.36") then
+            year = "2021"
+        end
         if version:le("3.24") then
             year = "2018"
         end
@@ -21,6 +24,7 @@ package("sqlite3")
     add_versions("3.35.0+300", "ecbccdd440bdf32c0e1bb3611d635239e3b5af268248d130d0445a32daf0274b")
     add_versions("3.35.0+400", "7771525dff0185bfe9638ccce23faa0e1451757ddbda5a6c853bb80b923a512d")
     add_versions("3.36.0+0", "bd90c3eb96bee996206b83be7065c9ce19aef38c3f4fb53073ada0d0b69bbce3")
+    add_versions("3.37.0+200", "4089a8d9b467537b3f246f217b84cd76e00b1d1a971fe5aca1e30e230e46b2d8")
 
     if is_plat("macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")

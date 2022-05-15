@@ -7,6 +7,7 @@ package("pcl")
     add_urls("https://github.com/PointCloudLibrary/pcl/archive/refs/tags/pcl-$(version).tar.gz",
              "https://github.com/PointCloudLibrary/pcl.git")
     add_versions("1.12.0", "21dfa9a268de9675c1f94d54d9402e4e02120a0aa4215d064436c52b7d5bd48f")
+    add_versions("1.12.1", "dc0ac26f094eafa7b26c3653838494cc0a012bd1bdc1f1b0dc79b16c2de0125a")
 
     add_configs("vtk", {description = "Build with vtk.", default = false, type = "boolean"})
     add_configs("cuda", {description = "Build with cuda.", default = false, type = "boolean"})
@@ -26,11 +27,13 @@ package("pcl")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        io.replace("CMakeLists.txt", "add_compile_options(/bigobj)", "add_compile_options(/bigobj)\nadd_compile_options(/EHsc)", {plain = true})
+        io.replace("CMakeLists.txt", "set(CMAKE_CXX_FLAGS_DEFAULT \"/DWIN32 /D_WINDOWS /W3 /GR /EHsc\")", "set(CMAKE_CXX_FLAGS_DEFAULT \" /DWIN32 /D_WINDOWS /W3 /GR /EHsc\")\nstring(APPEND CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_DEFAULT})", {plain = true})
         io.replace("CMakeLists.txt", "find_package%(FLANN 1.- REQUIRED%)", "find_package(flann CONFIG REQUIRED)")
-        io.replace("cmake/pcl_options.cmake", "set(CMAKE_FIND_LIBRARY_SUFFIXES", "#set(CMAKE_FIND_LIBRARY_SUFFIXES", {plain = true})
+        if package:version():le("1.12.0") then
+            io.replace("cmake/pcl_options.cmake", "set(CMAKE_FIND_LIBRARY_SUFFIXES", "#set(CMAKE_FIND_LIBRARY_SUFFIXES", {plain = true})
+        end
 
-        local configs = {"-DWITH_OPENGL=OFF", "-DWITH_PCAP=OFF", "-DWITH_QT=OFF", "-DBoost_USE_STATIC_LIBS=ON"}
+        local configs = {"-DWITH_OPENGL=OFF", "-DWITH_PCAP=OFF", "-DWITH_QT=OFF", "-DBoost_USE_STATIC_LIBS=ON", "-DPCL_ALLOW_BOTH_SHARED_AND_STATIC_DEPENDENCIES=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPCL_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_VTK=" .. (package:config("vtk") and "ON" or "OFF"))

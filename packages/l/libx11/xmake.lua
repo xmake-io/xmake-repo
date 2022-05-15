@@ -3,15 +3,19 @@ package("libx11")
     set_homepage("https://www.x.org/")
     set_description("X.Org: Core X11 protocol client library")
 
-    set_urls("https://www.x.org/archive/individual/lib/libX11-$(version).tar.bz2")
-    add_versions("1.6.9", "9cc7e8d000d6193fa5af580d50d689380b8287052270f5bb26a5fb6b58b2bed1")
-    add_versions("1.7.0", "36c8f93b6595437c8cfbc9f08618bcb3041cbd303e140a0013f88e4c2977cb54")
+    set_urls("https://www.x.org/archive/individual/lib/libX11-$(version).tar.gz")
+    add_versions("1.6.9", "b8c0930a9b25de15f3d773288cacd5e2f0a4158e194935615c52aeceafd1107b")
+    add_versions("1.7.0", "c48ec61785ec68fc6a9a6aca0a9578393414fe2562e3cc9cca30234345c7b6ac")
+    add_versions("1.7.3", "029acf61e7e760a3150716b145a58ce5052ee953e8cccc8441d4f550c420debb")
 
     if is_plat("linux") then
+        add_syslinks("dl")
         add_extsources("apt::libx11-dev", "pacman::libx11")
     elseif is_plat("macosx") then
         add_extsources("brew::libx11")
     end
+
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
 
     if is_plat("macosx", "linux") then
         add_deps("pkg-config", "util-macros", "xtrans", "libxcb", "xorgproto")
@@ -33,6 +37,11 @@ package("libx11")
                          "--enable-loadable-i18n",
                          "--enable-xthreads",
                          "--enable-specs=no"}
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        if package:config("pic") then
+            table.insert(configs, "--with-pic")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 

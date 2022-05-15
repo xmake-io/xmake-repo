@@ -26,6 +26,7 @@ package("cuda")
         
                 for _, util in ipairs(utils) do
                     if not find_library(util, cuda.linkdirs) then
+                        wprint(format("The library %s for %s is not found!", util, package:arch()))
                         return
                     end
                     table.insert(result.links, util)

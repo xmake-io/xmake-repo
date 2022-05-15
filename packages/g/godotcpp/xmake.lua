@@ -4,9 +4,11 @@ package("godotcpp")
     set_description("C++ bindings for the Godot script API")
 
     set_urls("https://github.com/godotengine/godot-cpp.git")
-    add_versions("3.2", "77d41fa179e40560f1e264ed483638bf51713779")
-    add_versions("3.3", "dfee6f0ca41863eacdd47bd3c1c4afa46cc97fa4")
-    add_versions("3.4", "4efceefe138b2494e3c691e1dead1c60efb621b1")
+    add_versions("3.2",   "77d41fa179e40560f1e264ed483638bf51713779")
+    add_versions("3.3",   "dfee6f0ca41863eacdd47bd3c1c4afa46cc97fa4")
+    add_versions("3.4.0", "4efceefe138b2494e3c691e1dead1c60efb621b1")
+    add_versions("3.4.3", "ced274fbe62c07dd9bb6791a77392f4bdc625152")
+    add_versions("3.4.4", "f4f6fac4c784da8c973ade0dbc64a9d8400ee247")
 
     add_deps("scons")
 

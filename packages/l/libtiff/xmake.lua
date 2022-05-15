@@ -11,9 +11,10 @@ package("libtiff")
 
     add_deps("zlib")
     add_deps("cmake")
+    add_deps("libdeflate")
 
     on_install("windows", "mingw", "macosx", "linux", "bsd", function (package)
-        local configs = {"-Dzstd=OFF", "-Dlzma=OFF", "-Dwebp=OFF", "-Djpeg=OFF", "-Djbig=OFF", "-Dpixarlog=OFF"}
+        local configs = {"-Dzstd=OFF", "-Dlzma=OFF", "-Dwebp=OFF", "-Djpeg=OFF", "-Djbig=OFF", "-Dpixarlog=OFF", "-Dlerc=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("pic") ~= false then
