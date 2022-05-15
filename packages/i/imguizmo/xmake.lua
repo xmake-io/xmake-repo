@@ -3,15 +3,18 @@ package("imguizmo")
     set_homepage("https://github.com/CedricGuillemet/ImGuizmo")
     set_description("Immediate mode 3D gizmo for scene editing and other controls based on Dear Imgui")
 
-    add_urls("https://github.com/CedricGuillemet/ImGuizmo/archive/$(version).tar.gz",
-                 "https://github.com/CedricGuillemet/ImGuizmo.git")
+    add_urls("https://github.com/CedricGuillemet/ImGuizmo.git")
 
-    add_versions("1.83", "e6d05c5ebde802df7f6c342a06bc675bd2aa1c754d2d96755399a182187098a8")
+    add_versions("1.83", "14a91c16e40b585fd96314826fa6d506311dbe5c")
+
+    add_deps("imgui")
 
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
             local xmake_lua = [[
                 add_rules("mode.debug", "mode.release")
-                add_requires("imgui v1.83")
+                set_languages("c++14")
+                
+                add_requires("imgui v1.83-docking")
 
                 target("imguizmo")
                     set_kind("static")
