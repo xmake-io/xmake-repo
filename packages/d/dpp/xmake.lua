@@ -21,7 +21,7 @@ package("dpp")
         end
     end)
 
-    on_install("windows", "linux", "macos", "mingw", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
         configs.mode = package:debug() and "debug" or "release"
