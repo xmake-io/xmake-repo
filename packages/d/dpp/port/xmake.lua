@@ -13,14 +13,14 @@ target("dpp")
     add_defines("DPP_BUILD")
     add_defines("HAVE_VOICE")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_defines("WIN32", "_WINSOCK_DEPRECATED_NO_WARNINGS", "WIN32_LEAN_AND_MEAN")
         add_defines("_CRT_SECURE_NO_WARNINGS", "_CRT_NONSTDC_NO_DEPRECATE")
         add_defines("FD_SETSIZE=1024")
-        add_cxflags("/Zc:preprocessor")
+        if is_plat("windows") then
+            add_cxflags("/Zc:preprocessor")
+        end
         if is_kind("static") then
             add_defines("DPP_STATIC", {public = true})
-        else
-            add_defines("DPP_STATIC")
         end
     end
