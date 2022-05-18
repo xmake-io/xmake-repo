@@ -8,6 +8,10 @@ package("backward-cpp")
              "https://github.com/bombela/backward-cpp.git")
     add_versions("v1.6", "9b07e12656ab9af8779a84e06865233b9e30fadbb063bf94dd81d318081db8c2")
 
+    if is_plat("mingw") then
+        add_patches("v1.6", path.join(os.scriptdir(), "patches", "v1.6", "link_to_imagehlp.patch"), "7f1ca8907cf4d2a768b5234d8092de4709a449df8c0badd6e46ee1e73a19cd04")
+    end
+
     add_deps("cmake")
 
     on_install("linux", "mingw", "macosx", "windows", function (package)
