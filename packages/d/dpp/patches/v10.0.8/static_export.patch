@@ -1,0 +1,48 @@
+diff --git a/include/dpp/export.h b/include/dpp/export.h
+index b7b35b5..838f79d 100644
+--- a/include/dpp/export.h
++++ b/include/dpp/export.h
+@@ -24,25 +24,29 @@
+ // Investigate: MSVC doesn't like this
+ //static_assert(__cplusplus >= 201703L, "D++ Requires a C++17 compatible compiler. Please ensure that you have enabled C++17 in your compiler flags.");
+ 
+-#ifdef DPP_BUILD
++#ifndef DPP_STATIC
+ 
+-	#ifdef _WIN32
+-		#include <dpp/win32_safe_warnings.h>
+-	#endif
++	#ifdef DPP_BUILD
++
++		#ifdef _WIN32
++			#include <dpp/win32_safe_warnings.h>
++		#endif
+ 
+-	#ifdef _WIN32
+-		#define DPP_EXPORT __declspec(dllexport)
++		#ifdef _WIN32
++			#define DPP_EXPORT __declspec(dllexport)
++		#else
++			#define DPP_EXPORT
++		#endif
+ 	#else
+-		#define DPP_EXPORT
++		#ifdef _WIN32
++			#define DPP_EXPORT __declspec(dllimport)
++		#else
++			#define DPP_EXPORT
++		#endif
+ 	#endif
++
+ #else
+-	#ifdef _WIN32
+-		#define DPP_EXPORT __declspec(dllimport)
+-		/* This is required otherwise fmt::format requires additional file linkage to your project */
+-		#define FMT_HEADER_ONLY
+-	#else
+-		#define DPP_EXPORT
+-	#endif
++	#define DPP_EXPORT
+ #endif
+ 
+ #ifndef _WIN32
