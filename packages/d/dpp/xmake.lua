@@ -7,7 +7,7 @@ package("dpp")
              "https://github.com/brainboxdotcc/DPP.git")
 
     add_versions("v10.0.8", "7a16d31841fc67fabcafbc33abb1a6b2ac472202df7e8c48542f77e089de08e3")
-    add_patches("v10.0.8", path.join(os.scriptdir(), "patches", "v10.0.8", "dpp_dependencies.patch"), "0d48824f8029ea7fed89327e61513d6e10b44110e50d577e7023fd756ac787db")
+    add_patches("v10.0.8", path.join(os.scriptdir(), "patches", "v10.0.8", "static_export.patch"), "d18487580faa9af21862bcff30ddfa5d5ab5cda6aa5f779bcc1787a96ca66447")
 
     add_deps("fmt", "nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
 
@@ -22,6 +22,15 @@ package("dpp")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
+        -- fix dpp dependencies
+        for _, file in ipairs(table.join(os.files("include/**.h"), os.files("src/**.cpp"))) do
+            io.replace(file, "#include <dpp/fmt/", "#include <fmt/", {plain = true})
+            io.replace(file, "#include <dpp/nlohmann/", "#include <nlohmann/", {plain = true})
+        end
+        io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp", "#include <nlohmann/json.hpp>", {plain = true})
+        os.rmdir("include/dpp/fmt")
+        os.rmdir("include/dpp/nlohmann")
+
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
