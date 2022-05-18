@@ -19,7 +19,7 @@ package("volk")
         add_syslinks("dl")
     end
 
-    on_install("windows", "linux", "macosx", "iphoneos", "android", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "iphoneos", "android", function (package)
         if not package:config("header_only") then
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
@@ -47,6 +47,7 @@ package("volk")
 
             os.cp("volk.c", package:installdir("include"))
         end
+        
         import("package.tools.xmake").install(package)
     end)
 

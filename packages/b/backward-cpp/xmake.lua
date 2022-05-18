@@ -10,7 +10,7 @@ package("backward-cpp")
 
     add_deps("cmake")
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "mingw", "macosx", "windows", function (package)
         local configs = {"-DBACKWARD_TESTS=OFF"}
         table.insert(configs, "-DBACKWARD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
