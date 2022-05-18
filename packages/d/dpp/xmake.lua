@@ -27,7 +27,7 @@ package("dpp")
             io.replace(file, "#include <dpp/fmt/", "#include <fmt/", {plain = true})
             io.replace(file, "#include <dpp/nlohmann/", "#include <nlohmann/", {plain = true})
         end
-        io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp", "#include <nlohmann/json.hpp>", {plain = true})
+        io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
         os.rmdir("include/dpp/fmt")
         os.rmdir("include/dpp/nlohmann")
 
