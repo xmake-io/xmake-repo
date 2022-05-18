@@ -7,7 +7,7 @@ package("dpp")
              "https://github.com/brainboxdotcc/DPP.git")
 
     add_versions("v10.0.8", "7a16d31841fc67fabcafbc33abb1a6b2ac472202df7e8c48542f77e089de08e3")
-    add_patches("v10.0.8", path.join(os.scriptdir(), "patches", "v10.0.8", "dpp_dependencies.patch"), "3e4b943cca885624dd2f7fe103b4c3abf031e8963b9e9f0e96b90b96188d298e")
+    add_patches("v10.0.8", path.join(os.scriptdir(), "patches", "v10.0.8", "dpp_dependencies.patch"), "0d48824f8029ea7fed89327e61513d6e10b44110e50d577e7023fd756ac787db")
 
     add_deps("fmt", "nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
 
@@ -22,11 +22,8 @@ package("dpp")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
-        local configs = {}
-        configs.kind = package:config("shared") and "shared" or "static"
-        configs.mode = package:debug() and "debug" or "release"
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
