@@ -7,7 +7,7 @@ package("dpp")
              "https://github.com/brainboxdotcc/DPP.git")
 
     add_versions("v10.0.8", "7a16d31841fc67fabcafbc33abb1a6b2ac472202df7e8c48542f77e089de08e3")
-    add_patches("v10.0.8", path.join(os.scriptdir(), "patches", "v10.0.8", "dpp_dependencies.patch"), "a61b4175c65d9e1b366a08eae7ef6b2f567dc3a96e73332c39a76155c0b13e65")
+    add_patches("v10.0.8", path.join(os.scriptdir(), "patches", "v10.0.8", "dpp_dependencies.patch"), "3e4b943cca885624dd2f7fe103b4c3abf031e8963b9e9f0e96b90b96188d298e")
 
     add_deps("fmt", "nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
 
@@ -15,8 +15,8 @@ package("dpp")
         add_syslinks("pthread")
     end
 
-    on_load(function (package)
-        if package:is_plat("windows") and not package:config("shared") then
+    on_load("windows", "mingw", function (package)
+        if not package:config("shared") then
             package:add("defines", "DPP_STATIC")
         end
     end)
