@@ -9,7 +9,11 @@ package("backward-cpp")
     add_versions("v1.6", "9b07e12656ab9af8779a84e06865233b9e30fadbb063bf94dd81d318081db8c2")
 
     if is_plat("mingw") then
-        add_patches("v1.6", path.join(os.scriptdir(), "patches", "v1.6", "link_to_imagehlp.patch"), "c9f86b6b7595dd425a869cf8eb35c34a710668de9eb758c2228fb5a9f4e024ad")
+        add_patches("v1.6", path.join(os.scriptdir(), "patches", "v1.6", "link_to_imagehlp.patch"), "0a135b6d68970ff6609a3eb4deb2b10c317eee15ba980eb178b93402a97c957c")
+
+        if is_arch("i386") then
+            add_patches("v1.6", path.join(os.scriptdir(), "patches", "v1.6", "fix_32bit_ssize_t_typedef.patch"), "fb372fe5934984aecb00b3153f737f63a542ff9359d159a9bcb79c5d54963b42")
+        end
     end
 
     add_deps("cmake")
