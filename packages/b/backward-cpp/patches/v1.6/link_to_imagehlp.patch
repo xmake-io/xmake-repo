@@ -5,7 +5,7 @@ diff -Naur CMakeLists.txt CMakeLists.txt
  add_library(backward ${libtype} backward.cpp)
  target_compile_definitions(backward PUBLIC ${BACKWARD_DEFINITIONS})
  target_include_directories(backward PUBLIC ${BACKWARD_INCLUDE_DIRS})
-+target_link_libraries(backward PUBLIC -limagehlp)
++target_link_libraries(backward PUBLIC -limagehlp -lmsvcr110)
  
  ###############################################################################
  # TESTS
