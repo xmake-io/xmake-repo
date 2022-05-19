@@ -76,7 +76,7 @@ package("arrow")
             package:add("deps", "zstd")
         end
         if package:config("parquet") then
-            package:add("deps", "thrift", configs)
+            package:add("deps", "thrift")
         end
     end)
 
