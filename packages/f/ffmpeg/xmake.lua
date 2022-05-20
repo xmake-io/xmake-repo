@@ -2,7 +2,7 @@ package("ffmpeg")
 
     set_homepage("https://www.ffmpeg.org")
     set_description("A collection of libraries to process multimedia content such as audio, video, subtitles and related metadata.")
-    set_license("LGPL-2.1")
+    set_license("GPL-3.0")
 
     if is_plat("windows", "mingw") then
         add_urls("https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-$(version)-full_build-shared.7z")
@@ -21,6 +21,7 @@ package("ffmpeg")
         add_versions("git:5.0.1", "n5.0.1")
         add_versions("git:4.0.2", "n4.0.2")
     
+        add_configs("gpl",              {description = "Enable GPL code", default = true, type = "boolean"})
         add_configs("ffprobe",          {description = "Enable ffprobe program.", default = false, type = "boolean"})
         add_configs("ffmpeg",           {description = "Enable ffmpeg program.", default = true, type = "boolean"})
         add_configs("ffplay",           {description = "Enable ffplay program.", default = false, type = "boolean"})
@@ -40,7 +41,7 @@ package("ffmpeg")
         add_syslinks("pthread")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("linux", "macosx") then
         add_deps("yasm")
     end
 
@@ -61,6 +62,9 @@ package("ffmpeg")
             package:add("shflags", "-Wl,-Bsymbolic")
             package:add("ldflags", "-Wl,-Bsymbolic")
         end
+        if not package:config("gpl") then
+            package:set("license", "LGPL-3.0")
+        end
     end)
 
     on_install("windows|x64", "mingw|x86_64", function (package)
@@ -71,9 +75,11 @@ package("ffmpeg")
     end)
 
     on_install("linux", "macosx", "android@linux,macosx", function (package)
-        local configs = {"--enable-gpl",
-                         "--enable-version3",
+        local configs = {"--enable-version3",
                          "--disable-doc"}
+        if package:config("gpl") then
+            table.insert(configs, "--enable-gpl")
+        end
         if is_plat("macosx") and macos.version():ge("10.8") then
             table.insert(configs, "--enable-videotoolbox")
         end
@@ -85,6 +91,13 @@ package("ffmpeg")
                     table.insert(configs, "--disable-" .. name)
                 end
             end
+        end
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared")
+            table.insert(configs, "--disable-static")
+        else
+            table.insert(configs, "--enable-static")
+            table.insert(configs, "--disable-shared")
         end
         if package:debug() then
             table.insert(configs, "--enable-debug")
