@@ -21,6 +21,7 @@ package("ffmpeg")
         add_versions("git:5.0.1", "n5.0.1")
         add_versions("git:4.0.2", "n4.0.2")
     
+        add_configs("gpl",              {description = "Enable GPL code", default = true, type = "boolean"})
         add_configs("ffprobe",          {description = "Enable ffprobe program.", default = false, type = "boolean"})
         add_configs("ffmpeg",           {description = "Enable ffmpeg program.", default = true, type = "boolean"})
         add_configs("ffplay",           {description = "Enable ffplay program.", default = false, type = "boolean"})
@@ -61,6 +62,9 @@ package("ffmpeg")
             package:add("shflags", "-Wl,-Bsymbolic")
             package:add("ldflags", "-Wl,-Bsymbolic")
         end
+        if not package:config("gpl") then
+            package:set("license", "LGPL-3.0")
+        end
     end)
 
     on_install("windows|x64", "mingw|x86_64", function (package)
@@ -71,9 +75,11 @@ package("ffmpeg")
     end)
 
     on_install("linux", "macosx", "android@linux,macosx", function (package)
-        local configs = {"--enable-gpl",
-                         "--enable-version3",
+        local configs = {"--enable-version3",
                          "--disable-doc"}
+        if package:config("gpl") then
+            table.insert(configs, "--enable-gpl")
+        end
         if is_plat("macosx") and macos.version():ge("10.8") then
             table.insert(configs, "--enable-videotoolbox")
         end
