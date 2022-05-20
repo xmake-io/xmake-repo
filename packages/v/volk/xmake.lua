@@ -57,10 +57,10 @@ package("volk")
             defines = "VOLK_IMPLEMENTATION"
         end
 
-        assert(package:check_csnippets({test = format([[
+        assert(package:check_csnippets({test = [[
             #include <volk.h>
             void test() {
                 volkInitialize();
             }
-        ]], {configs = {defines = defines}})}))
+        ]]}, {configs = {defines = defines}}))
     end)
