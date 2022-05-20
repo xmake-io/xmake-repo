@@ -41,7 +41,7 @@ package("ffmpeg")
         add_syslinks("pthread")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("linux", "macosx") then
         add_deps("yasm")
     end
 
