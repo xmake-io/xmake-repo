@@ -58,7 +58,7 @@ package("opencv")
     for _, feature in ipairs(features) do
         add_configs(feature, {description = "Include " .. feature .. " support.", default = opencv_is_default(feature), type = "boolean"})
     end
-    add_configs("blas", {description = "Set BLAS vendor.", default = nil, type = "string", values = {"mkl", "openblas"}})
+    add_configs("blas", {description = "Set BLAS vendor.", values = {"mkl", "openblas"}})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("dynamic_parallel", {description = "Dynamically load parallel runtime (TBB etc.).", default = false, type = "boolean"})
 
@@ -175,7 +175,7 @@ package("opencv")
         elseif package:is_plat("mingw") then
             local arch = package:is_arch("x86_64") and "x64" or "x86"
             local linkdir = (package:config("shared") and "lib" or "staticlib")
-            for _, f in ipairs(os.files(path.join(arch, "mingw", linkdir, "lib*.a"))) do
+            for _, f in ipairs(os.files(path.join(package:installdir(), arch, "mingw", linkdir, "lib*.a"))) do
                 if not f:match("libopencv_.+") then
                     package:add("links", path.basename(f):match("lib(.+)"))
                 end
