@@ -86,6 +86,13 @@ package("ffmpeg")
                 end
             end
         end
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared")
+            table.insert(configs, "--disable-static")
+        else
+            table.insert(configs, "--enable-static")
+            table.insert(configs, "--disable-shared")
+        end
         if package:debug() then
             table.insert(configs, "--enable-debug")
         else
