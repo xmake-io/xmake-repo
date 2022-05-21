@@ -16,6 +16,8 @@ package("ordered_map")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <iostream>
+
             void test()
             {
                 tsl::ordered_map<char, int> map = {{'d', 1}, {'a', 2}, {'g', 3}};
