@@ -13,14 +13,15 @@ package("managedc")
     add_versions("1.3.1", "0b14ab3c61682963c71613a73dad6aeb7dd446ff")
     add_versions("1.4.0", "d5e445d4d1aed726226342b15704cb64ffa667c6")
     add_versions("1.4.1", "19ace17f26460e2a2aa6969414b499c2a8f2964d")
+    add_versions("1.4.2", "b12303b3d5d26097554efbd05930b47030fe4711")
 
     on_install(function (package)
         os.cp("src/*.h", package:installdir("include"))
     end)
 
     on_test(function (package)
-         assert(package:has_cxxfuncs("mc_alloc_managed", {includes = "managed.h", configs = {languages = "gnu17"}}))
-         assert(package:has_cxxfuncs("mc_managed_string", {includes = "mstring.h", configs = {languages = "gnu17"}}))
+         assert(package:has_cfuncs("mc_alloc_managed", { includes = "managed.h" }))
+         assert(package:has_cfuncs("mc_managed_string", { includes = "mstring.h" }))
     end)
 
 
