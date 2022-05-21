@@ -17,16 +17,13 @@ package("ordered_map")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
-
             void test()
             {
                 tsl::ordered_map<char, int> map = {{'d', 1}, {'a', 2}, {'g', 3}};
                 map.insert({'b', 4});
                 map['h'] = 5;
                 map['e'] = 6;
-
                 map.erase('a');
-
 
                 // {d, 1} {g, 3} {b, 4} {h, 5} {e, 6}
                 for(const auto& key_value : map) {
