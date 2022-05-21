@@ -13,9 +13,7 @@ package("managedc")
     add_versions("1.3.1", "0b14ab3c61682963c71613a73dad6aeb7dd446ff")
 
     on_install(function (package)
-        local configs = {}
-
-        import("package.tools.xmake").install(package, configs)
+        os.cp("src/*.h", package:installdir("include"))
     end)
 
     on_test(function (package)
