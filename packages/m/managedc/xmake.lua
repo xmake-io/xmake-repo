@@ -19,8 +19,8 @@ package("managedc")
     end)
 
     on_test(function (package)
-         assert(package:has_cfuncs("mc_alloc_managed", { includes = "managed.h" }))
-         assert(package:has_cfuncs("mc_managed_string", { includes = "mstring.h" }))
+         assert(package:has_cxxfuncs("mc_alloc_managed", {includes = "managed.h", configs = {languages = "gnu17"}}))
+         assert(package:has_cxxfuncs("mc_managed_string", {includes = "mstring.h", configs = {languages = "gnu17"}}))
     end)
 
 
