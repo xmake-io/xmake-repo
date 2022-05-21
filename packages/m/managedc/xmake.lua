@@ -11,7 +11,7 @@ package("managedc")
     add_versions("1.2.1", "6c46b8b9764cabf7cf9c0a49e6ee7aa35039f4c1")
     add_versions("1.3.0", "cc900aea02c39e6d5ee7dc38f1b14c3959eca008")
     add_versions("1.3.1", "0b14ab3c61682963c71613a73dad6aeb7dd446ff")
-    add_version("1.4.0", "d5e445d4d1aed726226342b15704cb64ffa667c6")
+    add_versions("1.4.0", "d5e445d4d1aed726226342b15704cb64ffa667c6")
 
     on_install(function (package)
         os.cp("src/*.h", package:installdir("include"))
