@@ -10,6 +10,7 @@ package("openal-soft")
     add_urls("https://github.com/kcat/openal-soft.git")
 
     add_versions("1.21.1", "8ac17e4e3b32c1af3d5508acfffb838640669b4274606b7892aa796ca9d7467f")
+    add_versions("1.22.0", "814831a8013d7365dfd1917b27f1fb6e723f3be3fe1c6a7ff4516425d8392f68")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::openal")
@@ -22,7 +23,7 @@ package("openal-soft")
     add_deps("cmake")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ole32", "shell32", "user32", "winmm")
+        add_syslinks("ole32", "shell32", "user32", "winmm", "kernel32")
     elseif is_plat("linux", "cross") then
         add_syslinks("dl", "pthread")
     elseif is_plat("android") then
