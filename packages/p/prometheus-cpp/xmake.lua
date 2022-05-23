@@ -11,16 +11,19 @@ package("prometheus-cpp")
         pull = {
             description = "Enable pull.",
             deps = {["civetweb"] = {version = "v1.15"}},
+            links = {"prometheus-cpp-pull"},
             default = true,
         },
         push = {
             description = "Enable push.",
             deps = {["libcurl"] = {}},
+            links = {"prometheus-cpp-push"},
             default = true,
         },
         compression = {
             description = "Enable compression.",
             deps = {["zlib"] = {}},
+            links = nil,
             default = true,
         },
     }
@@ -40,8 +43,12 @@ package("prometheus-cpp")
                 for dep, depcfg in pairs(o.deps) do
                     package:add("deps", dep, depcfg)
                 end
+                if o.links then
+                    package:add("links", o.links)
+                end
             end
         end
+        package:add("links", {"prometheus-cpp-core"})
     end)
 
     on_install("linux", function (package)
