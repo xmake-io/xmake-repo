@@ -6,8 +6,8 @@ package("fontconfig")
     set_urls("https://www.freedesktop.org/software/fontconfig/release/fontconfig-$(version).tar.gz")
     add_versions("2.13.1", "9f0d852b39d75fc655f9f53850eb32555394f36104a044bb2b2fc9e66dbbfa7f")
     add_versions("2.13.93", "0f302a18ee52dde0793fe38b266bf269dfe6e0c0ae140e30d72c6cca5dc08db5")
-    add_versions("2.13.94",
-    "246d1640a7e54fba697b28e4445f4d9eb63dda1b511d19986249368ee7191882")
+    add_versions("2.13.94", "246d1640a7e54fba697b28e4445f4d9eb63dda1b511d19986249368ee7191882")
+    add_versions("2.14.0", "b8f607d556e8257da2f3616b4d704be30fd73bd71e367355ca78963f9a7f0434")
 
     add_deps("meson", "pkg-config", "freetype >=2.9", "expat")
     add_deps("python 3.x", {kind = "binary"})
