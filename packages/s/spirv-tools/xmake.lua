@@ -9,6 +9,7 @@ package("spirv-tools")
     add_versions("2020.6", "de2392682df8def7ac666a2a320cd475751badf4790b01c7391b7644ecb550a3")
     add_versions("2021.3", "b6b4194121ee8084c62b20f8d574c32f766e4e9237dfe60b0658b316d19c6b13")
     add_versions("2021.4", "d68de260708dda785d109ff1ceeecde2d2ab71142fa5bf59061bb9f47dd3bb2c")
+    add_versions("2022.2", "909fc7e68049dca611ca2d57828883a86f503b0353ff78bc594eddc65eb882b9")
 
     add_patches("2020.5", "https://github.com/KhronosGroup/SPIRV-Tools/commit/a1d38174b1f7d2651c718ae661886d606cb50a32.patch", "2811faeef3ad53a83e409c8ef9879badcf9dc04fc3d98dbead7313514b819933")
 
