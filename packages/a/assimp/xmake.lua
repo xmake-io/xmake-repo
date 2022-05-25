@@ -83,12 +83,16 @@ package("assimp")
             table.insert(configs, "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF")
         end
 
+        local cxflags
+        if package:is_plat("linux", "macosx", "mingw") and package:version():le("v5.2.4") then
+            cxflags = "-Wno-array-bounds"
+        end
         if package:is_plat("mingw") and package:version():lt("v5.1.5") then
             -- CMAKE_COMPILER_IS_MINGW has been removed: https://github.com/assimp/assimp/pull/4311
             io.replace("CMakeLists.txt", "CMAKE_COMPILER_IS_MINGW", "MINGW", {plain = true})
         end
 
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {cxflags=cxflags})
 
         -- copy pdb
         if package:is_plat("windows") then
