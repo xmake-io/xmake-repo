@@ -6,6 +6,7 @@ package("assimp")
 
     set_urls("https://github.com/assimp/assimp/archive/$(version).zip",
              "https://github.com/assimp/assimp.git")
+    add_versions("v5.2.4", "713e9aa035ae019e5f3f0de1605de308d63538897249a2ba3a2d7d40036ad2b1")
     add_versions("v5.2.3", "9667cfc8ddabd5dd5e83f3aebb99dbf232fce99f17b9fe59540dccbb5e347393")
     add_versions("v5.2.2", "7b833182b89917b3c6e8aee6432b74870fb71f432cc34aec5f5411bd6b56c1b5")
     add_versions("v5.2.1", "636fe5c2cfe925b559b5d89e53a42412a2d2ab49a0712b7d655d1b84c51ed504")
@@ -96,7 +97,7 @@ package("assimp")
             io.replace("CMakeLists.txt", "CMAKE_COMPILER_IS_MINGW", "MINGW", {plain = true})
         end
 
-        import("package.tools.cmake").install(package, configs, {cxflags=cxflags})
+        import("package.tools.cmake").install(package, configs)
 
         -- copy pdb
         if package:is_plat("windows") then
