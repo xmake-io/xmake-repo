@@ -19,6 +19,7 @@ package("assimp")
     add_patches("v5.2.2", path.join(os.scriptdir(), "patches", "5.2.1", "fix_zlib_filefunc_def.patch"), "a9f8a9aa1975888ea751b80c8268296dee901288011eeb1addf518eac40b71b1")
     add_patches("v5.2.3", path.join(os.scriptdir(), "patches", "5.2.1", "fix_zlib_filefunc_def.patch"), "a9f8a9aa1975888ea751b80c8268296dee901288011eeb1addf518eac40b71b1")
     add_patches("v5.2.3", path.join(os.scriptdir(), "patches", "5.2.3", "cmake_static_crt.patch"), "3872a69976055bed9e40814e89a24a3420692885b50e9f9438036e8d809aafb4")
+    add_patches("v5.2.4", path.join(os.scriptdir(), "patches", "5.2.4", "fix_x86_windows_build.patch"), "9a37b6ddb6f8e78d9271644393d32ace1faabc29969ef92f0eaa6ada3e147898")
 
     if not is_host("windows") then
         add_extsources("pkgconfig::assimp")
