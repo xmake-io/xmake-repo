@@ -83,9 +83,13 @@ package("assimp")
             table.insert(configs, "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF")
         end
 
-        local cxflags
-        if package:is_plat("linux", "macosx", "mingw") and package:version():le("v5.2.4") then
-            cxflags = {"-Wno-array-compare", "-Wno-array-bounds"}
+        if package:version():lt("v5.2.4") then
+            -- ASSIMP_WARNINGS_AS_ERRORS is not supported before v5.2.4
+            if package:is_plat("windows") then
+                io.replace("code/CMakeLists.txt", "TARGET_COMPILE_OPTIONS(assimp PRIVATE /W4 /WX)", "", {plain = true})
+            else
+                io.replace("code/CMakeLists.txt", "TARGET_COMPILE_OPTIONS(assimp PRIVATE -Werror)", "", {plain = true})
+            end
         end
         if package:is_plat("mingw") and package:version():lt("v5.1.5") then
             -- CMAKE_COMPILER_IS_MINGW has been removed: https://github.com/assimp/assimp/pull/4311
