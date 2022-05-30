@@ -15,6 +15,8 @@ local function qt_table(package)
     }
 end
 
+local qt_fetch = nil
+
 package("qtbase")
     set_homepage("https://www.qt.io")
     set_description("Qt is the faster, smarter way to create innovative devices, modern UIs & applications for multiple screens. Cross-platform software development at its best.")
@@ -32,6 +34,7 @@ package("qtbase")
     end)
 
     on_fetch(function (package, opt)
+        import("core.base.scheduler")
         import("core.base.semver")
         import("core.cache.localcache")
         import("detect.sdks.find_qt")
@@ -51,18 +54,36 @@ package("qtbase")
             return
         end
 
-        local qt = find_qt()
-        if not qt then
-            return
+        local coroutine_running = scheduler.co_running()
+        if coroutine_running then
+            while qt_fetch ~= nil do
+                scheduler.co_yield()
+            end
         end
 
-        local qtversion = semver.new(qt.sdkver)
-        if not qtversion:ge(package:version()) then
-            return
-        end
-        qt.version = qt.sdkver
-        package:data_set("qt", qt)
-        return qt
+        return try
+        {
+            function ()
+                local qt = find_qt()
+                if not qt then
+                    return
+                end
+
+                local qtversion = semver.new(qt.sdkver)
+                if not qtversion:ge(package:version()) then
+                    return
+                end
+                qt.version = qt.sdkver
+                package:data_set("qt", qt)
+                return qt
+            end,
+            finally
+            {
+                function ()
+                    qt_fetch = nil
+                end
+            }
+        }
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)

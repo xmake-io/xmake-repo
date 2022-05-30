@@ -14,7 +14,7 @@ package("qt6lib")
     end)
 
     on_fetch(function (package)
-        local qt = package:dep("qt6base"):data("qt")
+        local qt = package:dep("qt6base"):fetch()
         if not qt then
             return
         end
