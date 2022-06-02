@@ -36,7 +36,9 @@ package("dpp")
         os.rmdir("include/dpp/nlohmann")
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, {
+            ccache = false -- little fix because it doesn't pass CI check on github
+        })
     end)
 
     on_test(function (package)
