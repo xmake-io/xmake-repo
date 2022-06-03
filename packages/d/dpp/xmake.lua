@@ -36,16 +36,13 @@ package("dpp")
         os.rmdir("include/dpp/nlohmann")
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, {
-            ccache = false -- little fix because it doesn't pass CI check on github
-        })
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 dpp::cluster bot(std::getenv("BOT_TOKEN"));
-            
                 bot.on_ready([&bot](auto event) {
                     if (dpp::run_once<struct register_bot_commands>()) {
                         bot.global_command_create(
@@ -53,7 +50,6 @@ package("dpp")
                         );
                     }
                 });
-            
                 bot.start(false);
             }
         ]]}, {configs = {languages = "c++17"}, includes = "dpp/dpp.h"}))
