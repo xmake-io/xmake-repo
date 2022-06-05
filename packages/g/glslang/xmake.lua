@@ -5,11 +5,14 @@ package("glslang")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/glslang.git")
+    add_versions("1.3.211+0", "9bb8cfffb0eed010e07132282c41d73064a7a609")
     add_versions("1.2.154+1", "bacaef3237c515e40d1a24722be48c0a0b30f75f")
     add_versions("1.2.162+0", "c594de23cdd790d64ad5f9c8b059baae0ee2941d")
     add_versions("1.2.189+1", "2fb89a0072ae7316af1c856f22663fde4928128a")
 
     add_configs("binaryonly", { description = "Only use binary program.", default = false, type = "boolean"})
+    add_configs("exceptions", { description = "Build with exception support.", default = false, type = "boolean"})
+    add_configs("rtti", { description = "Build with RTTI support.", default = false, type = "boolean"})
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("spirv-tools")
@@ -45,6 +48,8 @@ package("glslang")
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         end
+        table.insert(configs, "-DENABLE_EXCEPTIONS=" .. (package:config("exceptions") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = {"spirv-tools"}})
         if not package:config("binaryonly") then
             package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "HLSL", "SPIRV", "SPVRemapper")
