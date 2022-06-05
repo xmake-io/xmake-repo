@@ -11,10 +11,8 @@ package("argh")
     )
     add_versions("v1.3.2", "4b76d8c55e97cc0752feee4f00b99dc58464dd030dea9ba257c0a7d24a84f9dd")
 
-    add_deps("cmake")
-
     on_install(function (package)
-        import("package.tools.cmake").install(package)
+        os.cp("argh.h", package:installdir("include"))
     end)
 
     on_test(function (package)
