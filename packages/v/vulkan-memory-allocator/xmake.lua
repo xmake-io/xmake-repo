@@ -6,6 +6,8 @@ package("vulkan-memory-allocator")
 
     add_urls("https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git")
     add_versions("2021.1.26", "5bd597587352e111cf517f14b12bf4b70aa34b77")
+    add_urls("https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/$(version).tar.gz")
+    add_versions("v3.0.0", "DBB621A7A13FB70B8C34FEF62FBE5128CC5193C7179C9EDACEAD9F110DF79A2F")
 
     add_deps("vulkan-headers")
 
@@ -20,3 +22,4 @@ package("vulkan-memory-allocator")
             }
         ]]}, {includes = "vk_mem_alloc.h"}))
     end)
+
