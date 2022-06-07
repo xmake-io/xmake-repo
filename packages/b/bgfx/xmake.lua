@@ -12,6 +12,7 @@ package("bgfx")
 
     if is_plat("windows") then
         add_syslinks("user32", "gdi32", "psapi")
+        add_includedirs("include", "include/compat/msvc")
     elseif is_plat("macosx") then
         add_frameworks("Metal", "QuartzCore", "Cocoa")
     elseif is_plat("linux") then
