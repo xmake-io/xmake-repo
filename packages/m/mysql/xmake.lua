@@ -4,11 +4,12 @@ package("mysql")
     set_description("Open source relational database management system.")
 
     set_urls("https://cdn.mysql.com/Downloads/MySQL-5.7/mysql-boost-$(version).tar.gz")
+    add_urls("https://github.com/xmake-mirror/mysql-boost/releases/download/$(version)/mysql-boost-$(version).tar.gz")
 
-    add_versions("5.7.29", "00f514124de2bad1ba7b380cbbd46e316cae7fc7bc3a5621456cabf352f27978")
+    add_versions("5.7.36", "99efd49b9bfe44d0ecebedce3db075c5f0e9d4b6fc08cfe0a42b86418e5f06da")
 
     if is_plat("macosx", "linux") then
-        add_deps("cmake", "openssl")
+        add_deps("cmake", "openssl", "ncurses")
     end
     add_includedirs("include/mysql")
 
