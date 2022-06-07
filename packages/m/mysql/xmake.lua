@@ -9,7 +9,7 @@ package("mysql")
     add_versions("5.7.36", "99efd49b9bfe44d0ecebedce3db075c5f0e9d4b6fc08cfe0a42b86418e5f06da")
 
     if is_plat("macosx", "linux") then
-        add_deps("cmake", "openssl")
+        add_deps("cmake", "openssl", "ncurses")
     end
     add_includedirs("include/mysql")
 
