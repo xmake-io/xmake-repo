@@ -3,13 +3,12 @@ package("mysql")
     set_homepage("https://dev.mysql.com/doc/refman/5.7/en/")
     set_description("Open source relational database management system.")
 
-    set_urls("https://cdn.mysql.com/Downloads/MySQL-5.7/mysql-boost-$(version).tar.gz")
-    add_urls("https://github.com/xmake-mirror/mysql-boost/releases/download/$(version)/mysql-boost-$(version).tar.gz")
+    set_urls("https://cdn.mysql.com/archives/mysql-5.7/mysql-boost-$(version).tar.gz")
 
-    add_versions("5.7.36", "99efd49b9bfe44d0ecebedce3db075c5f0e9d4b6fc08cfe0a42b86418e5f06da")
+    add_versions("5.7.29", "00f514124de2bad1ba7b380cbbd46e316cae7fc7bc3a5621456cabf352f27978")
 
     if is_plat("macosx", "linux") then
-        add_deps("cmake", "openssl", "ncurses")
+        add_deps("cmake", "openssl")
     end
     add_includedirs("include/mysql")
 
