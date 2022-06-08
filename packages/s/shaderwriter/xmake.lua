@@ -10,6 +10,7 @@ package("shaderwriter")
     add_versions("2.0", "9e7488290713f88149038ef56fdc4034c3a1dd7f")
     add_versions("2.1", "eec963d7c0d9a88741ed357bcc931a8de763ddb7")
     add_versions("2.2", "eec963d7c0d9a88741ed357bcc931a8de763ddb7")
+    add_versions("2.3", "8e7769ddf4b008b0c7de3140126fcfb30607879e")
 
     add_deps("cmake")
 
@@ -36,7 +37,7 @@ package("shaderwriter")
             {
                 sdw::ComputeWriter writer;
             }
-        ]]}, {configs = {languages = "cxx20"},
+        ]]}, {configs = {languages = "cxx20", cxflags = "-fconcepts"},
             includes = {
                 "CompilerGlsl/compileGlsl.hpp",
                 "CompilerSpirV/compileSpirV.hpp",
