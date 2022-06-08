@@ -5,12 +5,12 @@ package("shaderwriter")
 
     set_urls("https://github.com/DragonJoker/ShaderWriter/archive/refs/tags/$(version).tar.gz",
         "https://github.com/DragonJoker/ShaderWriter.git")
-    add_versions("1.0", "30729d7f610c4ff24e9b46702c9729b3f68b637fc72d38bd1a1664ba39dd9329")
-    add_versions("1.1", "02e25288c238792f79b32ec402e514951709116023277b3dc02072add0352134")
-    add_versions("2.0", "79315247617ebb5a6b15fa3062c3d3bff48b83692a9f13760d53ce98c722fff3")
-    add_versions("2.1", "2821ec26b5969f652c2746ff145d93b2981355d7db417db544b41d6710521059")
-    add_versions("2.2", "a9fca4453be9f8d2b57a6deb5af4679eb10af518bb4db0426292e95238e93c79")
-    add_versions("2.3", "d88ecccb74e02d302bcd40cde4ccf706e249b352494253312f21cca2fedd0113")
+    add_versions("v1.0.0", "30729d7f610c4ff24e9b46702c9729b3f68b637fc72d38bd1a1664ba39dd9329")
+    add_versions("v1.1.0", "02e25288c238792f79b32ec402e514951709116023277b3dc02072add0352134")
+    add_versions("v2.0.0", "79315247617ebb5a6b15fa3062c3d3bff48b83692a9f13760d53ce98c722fff3")
+    add_versions("v2.1.0", "2821ec26b5969f652c2746ff145d93b2981355d7db417db544b41d6710521059")
+    add_versions("v2.2.0", "a9fca4453be9f8d2b57a6deb5af4679eb10af518bb4db0426292e95238e93c79")
+    add_versions("v2.3.0", "d88ecccb74e02d302bcd40cde4ccf706e249b352494253312f21cca2fedd0113")
 
     add_deps("cmake")
 
