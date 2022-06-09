@@ -32,8 +32,9 @@ package("libsdl_gfx")
     add_includedirs("include", "include/SDL2")
 
     on_install("windows", function(package)
-        local vs = import("core.tool.toolchain").load("msvc"):config("vs")
-        if tonumber(vs) < 2019 then
+        import("core.tool.toolchain")
+        local vs = tonumber(toolchain.load("msvc"):config("vs"))
+        if vs < 2019 then
             raise("Your compiler is too old to use this library.")
         end
 
@@ -52,6 +53,9 @@ package("libsdl_gfx")
 
         table.insert(configs, "/property:Configuration=" .. mode)
         table.insert(configs, "/property:Platform=" .. arch)
+        if vs >= 2022 then
+            table.insert(configs, "/p:PlatformToolset=v143")
+        end
         table.insert(configs, "-target:SDL2_gfx")
 
         import("package.tools.msbuild").build(package, configs)
