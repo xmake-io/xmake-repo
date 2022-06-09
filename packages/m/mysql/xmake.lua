@@ -3,12 +3,16 @@ package("mysql")
     set_homepage("https://dev.mysql.com/doc/refman/5.7/en/")
     set_description("Open source relational database management system.")
 
-    set_urls("https://cdn.mysql.com/Downloads/MySQL-5.7/mysql-boost-$(version).tar.gz")
+    set_urls("https://cdn.mysql.com/archives/mysql-5.7/mysql-boost-$(version).tar.gz",
+             "https://github.com/xmake-mirror/mysql-boost/releases/download/$(version)/mysql-boost-$(version).tar.gz")
 
     add_versions("5.7.29", "00f514124de2bad1ba7b380cbbd46e316cae7fc7bc3a5621456cabf352f27978")
 
     if is_plat("macosx", "linux") then
         add_deps("cmake", "openssl")
+        if is_plat("linux") then
+            add_deps("ncurses")
+        end
     end
     add_includedirs("include/mysql")
 
@@ -30,6 +34,15 @@ package("mysql")
                           "-DWITH_SSL=yes",
                           "-DWITH_UNIT_TESTS=OFF",
                           "-DWITHOUT_SERVER=ON"}
+        if package:is_plat("linux") then
+            local curses = package:dep("ncurses"):fetch()
+            if curses then
+                local includedirs = table.wrap(curses.sysincludedirs or curses.includedirs)
+                local libfiles = table.wrap(curses.libfiles)
+                table.insert(configs, "-DCURSES_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
+                table.insert(configs, "-DCURSES_LIBRARY=" .. table.concat(libfiles, ";"))
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
