@@ -20,21 +20,6 @@ package("elfutils")
                          "--disable-debuginfod",
                          "--disable-libdebuginfod"}
         local cflags = {}
-        local ldflags = {}
-        for _, dep in ipairs(package:orderdeps()) do
-            local fetchinfo = dep:fetch()
-            if fetchinfo then
-                for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                    table.insert(cflags, "-I" .. includedir)
-                end
-                for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    table.insert(ldflags, "-L" .. linkdir)
-                end
-                for _, link in ipairs(fetchinfo.links) do
-                    table.insert(ldflags, "-l" .. link)
-                end
-            end
-        end
         if package:config("pic") ~= false then
             table.insert(cflags, "-fPIC")
         end
@@ -42,7 +27,7 @@ package("elfutils")
             io.replace(makefile, "-Wtrampolines", "", {plain = true})
             io.replace(makefile, "-Wimplicit-fallthrough=5", "", {plain = true})
         end
-        import("package.tools.autoconf").install(package, configs, {cflags = cflags, ldflags = ldflags})
+        import("package.tools.autoconf").install(package, configs, {cflags = cflags, packagedeps = "zlib"})
     end)
 
     on_test(function (package)
