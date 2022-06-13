@@ -29,7 +29,8 @@ package("elfutils")
             io.replace(makefile, "-Wtrampolines", "", {plain = true})
             io.replace(makefile, "-Wimplicit-fallthrough=5", "", {plain = true})
         end
-        import("package.tools.autoconf").install(package, configs, {cflags = cflags, packagedeps = "zlib"})
+        import("package.tools.autoconf").install(package, configs, {cflags = cflags,
+            packagedeps = {"zlib", "libintl"}})
     end)
 
     on_test(function (package)
