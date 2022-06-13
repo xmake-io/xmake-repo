@@ -29,6 +29,12 @@ package("elfutils")
             io.replace(makefile, "-Wtrampolines", "", {plain = true})
             io.replace(makefile, "-Wimplicit-fallthrough=5", "", {plain = true})
         end
+        if package:is_plat("android") then
+            table.insert(cflags, "-Wno-error=unused-command-line-argument")
+            table.insert(cflags, "-Wno-error=implicit-function-declaration")
+            table.insert(cflags, "-Wno-error=int-conversion")
+            table.insert(cflags, '-Dprogram_invocation_short_name=\\\"test\\\"')
+        end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags,
             packagedeps = {"zlib", "libintl", "argp-standalone"}})
     end)
