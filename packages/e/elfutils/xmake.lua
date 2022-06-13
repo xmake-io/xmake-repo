@@ -11,7 +11,7 @@ package("elfutils")
 
     add_deps("m4", "zlib")
     if is_plat("android") then
-        add_deps("libintl")
+        add_deps("libintl", "argp-standalone")
     end
 
     on_install("linux", "android", function (package)
@@ -30,7 +30,7 @@ package("elfutils")
             io.replace(makefile, "-Wimplicit-fallthrough=5", "", {plain = true})
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags,
-            packagedeps = {"zlib", "libintl"}})
+            packagedeps = {"zlib", "libintl", "argp-standalone"}})
     end)
 
     on_test(function (package)
