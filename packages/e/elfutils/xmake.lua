@@ -6,12 +6,13 @@ package("elfutils")
 
     set_urls("https://sourceware.org/elfutils/ftp/$(version)/elfutils-$(version).tar.bz2")
     add_versions("0.183", "c3637c208d309d58714a51e61e63f1958808fead882e9b607506a29e5474f2c5")
+    add_versions("0.187", "e70b0dfbe610f90c4d1fe0d71af142a4e25c3c4ef9ebab8d2d72b65159d454c8")
 
     add_patches("0.183", path.join(os.scriptdir(), "patches", "0.183", "configure.patch"), "7a16719d9e3d8300b5322b791ba5dd02986f2663e419c6798077dd023ca6173a")
 
     add_deps("m4", "zlib")
 
-    on_install("linux", function (package)
+    on_install("linux", "android", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
                          "--program-prefix=elfutils-",
