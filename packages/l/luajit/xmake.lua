@@ -4,6 +4,7 @@ package("luajit")
     set_description("A Just-In-Time Compiler (JIT) for the Lua programming language.")
 
     set_urls("http://luajit.org/download/LuaJIT-$(version).tar.gz",
+             "https://github.com/LuaJIT/LuaJIT.git",
              "http://luajit.org/git/luajit-2.0.git",
              "http://repo.or.cz/luajit-2.0.git")
 
