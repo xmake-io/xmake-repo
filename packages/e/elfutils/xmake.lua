@@ -28,7 +28,9 @@ package("elfutils")
         for _, makefile in ipairs(os.files(path.join("*/Makefile.in"))) do
             io.replace(makefile, "-Wtrampolines", "", {plain = true})
             io.replace(makefile, "-Wimplicit-fallthrough=5", "", {plain = true})
-            io.replace(makefile, "-Wno-packed-not-aligned", "", {plain = true})
+            if package:has_tool("cc", "clang") then
+                io.replace(makefile, "-Wno-packed-not-aligned", "", {plain = true})
+            end
         end
         if package:is_plat("android") then
             io.replace("libelf/Makefile.in", "-Wl,--whole-archive $(libelf_so_LIBS) -Wl,--no-whole-archive", "", {plain = true})
