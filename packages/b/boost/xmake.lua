@@ -143,7 +143,7 @@ package("boost")
             "debug-symbols=" .. (package:debug() and "on" or "off"),
             "link=" .. (package:config("shared") and "shared" or "static")
         }
-        if package:is_arch("x64", "x86_64") then
+        if package:is_arch(".+64") then
             table.insert(argv, "address-model=64")
         else
             table.insert(argv, "address-model=32")
