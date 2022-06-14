@@ -33,12 +33,18 @@ package("elfutils")
             end
         end
         if package:is_plat("android") then
-            io.replace("libelf/Makefile.in", "-Wl,--whole-archive $(libelf_so_LIBS) -Wl,--no-whole-archive", "", {plain = true})
+            io.replace("libelf/Makefile.in", "-Wl,--whole-archive $(libelf_so_LIBS) -Wl,--no-whole-archive", "$(libelf_so_LIBS)", {plain = true})
+            io.replace("libdw/Makefile.in", "-Wl,--whole-archive $(libdw_so_LIBS) -Wl,--no-whole-archive", "$(libdw_so_LIBS)", {plain = true})
+            io.replace("libasm/Makefile.in", "-Wl,--whole-archive $(libasm_so_LIBS) -Wl,--no-whole-archive", "$(libasm_so_LIBS)", {plain = true})
+            io.replace("src/Makefile.in", "bin_PROGRAMS = .-subdir", "bin_PROGRAMS =\nsubdir")
             table.insert(cflags, "-Wno-error=conditional-type-mismatch")
             table.insert(cflags, "-Wno-error=unused-command-line-argument")
             table.insert(cflags, "-Wno-error=implicit-function-declaration")
             table.insert(cflags, "-Wno-error=int-conversion")
+            table.insert(cflags, "-Wno-error=gnu-variable-sized-type-not-at-end")
             table.insert(cflags, '-Dprogram_invocation_short_name=\\\"test\\\"')
+            table.insert(cflags, '-D_GNU_SOURCE=1')
+            table.insert(cflags, '-Derror_message_count=0')
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags,
             packagedeps = {"zlib", "libintl", "argp-standalone"}})
