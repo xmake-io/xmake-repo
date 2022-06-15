@@ -72,28 +72,49 @@ package("boost")
         add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
     end
 
-    on_load("windows", function (package)
-        local vs_runtime = package:config("vs_runtime")
-        for _, libname in ipairs(libnames) do
-            local linkname = (package:config("shared") and "boost_" or "libboost_") .. libname
+    on_load(function (package)
+        function get_linkname(package, libname)
+            local linkname
+            if package:is_plat("windows") then
+                linkname = (package:config("shared") and "boost_" or "libboost_") .. libname
+            else
+                linkname = "boost_" .. libname
+            end
             if package:config("multi") then
                 linkname = linkname .. "-mt"
             end
-            if package:config("shared") then
-                if package:debug() then
+            if package:is_plat("windows") then
+                local vs_runtime = package:config("vs_runtime")
+                if package:config("shared") then
+                    if package:debug() then
+                        linkname = linkname .. "-gd"
+                    end
+                elseif vs_runtime == "MT" then
+                    linkname = linkname .. "-s"
+                elseif vs_runtime == "MTd" then
+                    linkname = linkname .. "-sgd"
+                elseif vs_runtime == "MDd" then
                     linkname = linkname .. "-gd"
                 end
-            elseif vs_runtime == "MT" then
-                linkname = linkname .. "-s"
-            elseif vs_runtime == "MTd" then
-                linkname = linkname .. "-sgd"
-            elseif vs_runtime == "MDd" then
-                linkname = linkname .. "-gd"
             end
-            package:add("links", linkname)
+            return linkname
+        end
+        -- we need the fixed link order
+        local sublibs = {log = {"log_setup", "log"}}
+        for _, libname in ipairs(libnames) do
+            local libs = sublibs[libname]
+            if libs then
+                for _, lib in ipairs(libs) do
+                    package:add("links", get_linkname(package, lib))
+                end
+            else
+                package:add("links", get_linkname(package, libname))
+            end
         end
         -- disable auto-link all libs
-        package:add("defines", "BOOST_ALL_NO_LIB")
+        if package:is_plat("windows") then
+            package:add("defines", "BOOST_ALL_NO_LIB")
+        end
     end)
 
     on_install("macosx", "linux", "windows", "bsd", "cross", function (package)
