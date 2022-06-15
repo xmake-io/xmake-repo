@@ -34,8 +34,7 @@ package("boost")
         add_syslinks("pthread", "dl")
     end
 
-    local libnames = {"filesystem",
-                      "fiber",
+    local libnames = {"fiber",
                       "coroutine",
                       "context",
                       "thread",
@@ -59,6 +58,7 @@ package("boost")
                       "graph_parallel",
                       "json",
                       "log",
+                      "filesystem",
                       "math",
                       "mpi",
                       "nowide",
