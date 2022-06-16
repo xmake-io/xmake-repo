@@ -16,7 +16,7 @@ package("h5cpp")
         package:add("deps", "hdf5", { configs = {shared = package:config("shared")} })
     end)
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", function (package)
         os.rm("cmake/FindHDF5.cmake")
         local configs = {
             "-DH5CPP_WITH_BOOST=OFF",
