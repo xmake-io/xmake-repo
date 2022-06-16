@@ -17,23 +17,21 @@ package("hdf5")
         add_syslinks("dl")
     end
     on_install("windows", "macosx", "linux", function (package)
-        local configs = {"-DHDF5_GENERATE_HEADERS=OFF", "-DBUILD_TESTING=OFF", "-DHDF5_BUILD_EXAMPLES=OFF"}
+        local configs = {
+            "-DHDF5_GENERATE_HEADERS=OFF",
+            "-DBUILD_TESTING=OFF",
+            "-DHDF5_BUILD_EXAMPLES=OFF",
+            "-DHDF_PACKAGE_NAMESPACE:STRING=hdf5::",
+            "-DHDF5_MSVC_NAMING_CONVENTION=OFF"
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DONLY_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DHDF5_BUILD_CPP_LIB=" .. (package:config("cpplib") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        if package:is_plat("windows") then
-            -- fix libname to let cmake can find it.
-            for _, libfile in ipairs(os.files(path.join(package:installdir("lib"), "*.lib"))) do
-                local basename = path.basename(libfile)
-                if basename:startswith("lib") then
-                    os.mv(libfile, path.join(path.directory(libfile), basename:sub(4) .. ".lib"))
-                end
-            end
-        end
-        package:addenv("PATH", "bin")
+        package:addenv("HDF5_ROOT", path.join(package:installdir("share"), "cmake"))
+        package:addenv("PATH", package:installdir("bin"))
     end)
 
     on_test(function (package)
