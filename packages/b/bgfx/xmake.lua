@@ -39,7 +39,10 @@ package("bgfx")
             genie = path.join(genie, "linux", "genie")
         end
 
-        local args = {"--with-tools", package:config("shared") and "--with-shared-lib" or nil}
+        local args = {"--with-tools"}
+        if package:config("shared") then
+            table.insert(args, "--with-shared-lib")
+        end
         os.trycp(path.join("include", "bgfx"), package:installdir("include"))
         os.trycp(path.join(bxdir, "include", "*"), package:installdir("include"))
         os.trycp(path.join(bimgdir, "include", "*"), package:installdir("include"))
