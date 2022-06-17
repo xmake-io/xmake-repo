@@ -39,7 +39,7 @@ package("bgfx")
             genie = path.join(genie, "linux", "genie")
         end
 
-        local args = {"--with-tools"}
+        local args = {"--with-tools", package:config("shared") and "--with-shared-lib" or nil}
         os.trycp(path.join("include", "bgfx"), package:installdir("include"))
         os.trycp(path.join(bxdir, "include", "*"), package:installdir("include"))
         os.trycp(path.join(bimgdir, "include", "*"), package:installdir("include"))
@@ -65,6 +65,8 @@ package("bgfx")
             msbuild.build(package, configs)
 
             os.trycp("../../win*_vs*/bin/*.lib|*example*", package:installdir("lib"))
+            os.trycp("../../win*_vs*/bin/*.dll", package:installdir("lib"))
+            os.trycp("../../win*_vs*/bin/*.lib", package:installdir("lib"))
             os.trycp("../../win*_vs*/bin/*.exe", package:installdir("bin"))
         else
             import("package.tools.make")
@@ -94,9 +96,11 @@ package("bgfx")
 
             if package:is_plat("macosx") then
                 os.trycp(".build/" .. target .. "/bin/*.a|*example*", package:installdir("lib"))
+                os.trycp(".build/" .. target .. "/bin/*.so", package:installdir("lib"))
                 os.trycp(".build/" .. target .. "/bin/*|.build/*.*", package:installdir("bin"))
             elseif package:is_plat("linux") then
                 os.trycp(".build/" .. target .. "/bin/*.a|*example*", package:installdir("lib"))
+                os.trycp(".build/" .. target .. "/bin/*.so", package:installdir("lib"))
                 os.trycp(".build/" .. target .. "/bin/*|.build/*.*", package:installdir("bin"))
             end
         end
