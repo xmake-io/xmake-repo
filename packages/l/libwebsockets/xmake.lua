@@ -6,6 +6,7 @@ package("libwebsockets")
     set_urls("https://github.com/warmcat/libwebsockets/archive/$(version).tar.gz",
              "https://github.com/warmcat/libwebsockets.git")
 
+    add_versions("v4.3.2", "6a85a1bccf25acc7e8e5383e4934c9b32a102880d1e4c37c70b27ae2a42406e1")
     add_versions("v4.1.6", "402e9a8df553c9cd2aff5d7a9758e9e5285bf3070c82539082864633db3deb83")
 
     add_deps("cmake")
