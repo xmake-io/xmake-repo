@@ -58,6 +58,8 @@ package("icu4c")
         else
             envs = autoconf.buildenvs(package)
         end
+        -- suppress ar errors when passing --toolchain=clang
+        envs.ARFLAGS = nil
         autoconf.install(package, configs, {envs = envs})
         package:addenv("PATH", "bin")
     end)
