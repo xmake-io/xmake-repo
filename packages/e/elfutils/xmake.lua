@@ -66,7 +66,6 @@ package("elfutils")
             table.insert(cflags, "-Wno-error=gnu-variable-sized-type-not-at-end")
             table.insert(cflags, '-Dprogram_invocation_short_name=\\\"test\\\"')
             table.insert(cflags, '-D_GNU_SOURCE=1')
-            table.insert(cflags, '-Derror_message_count=0')
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags,
             packagedeps = {"zlib", "libintl", "argp-standalone"}})
