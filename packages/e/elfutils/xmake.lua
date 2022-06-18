@@ -9,6 +9,14 @@ package("elfutils")
 
     add_patches("0.183", path.join(os.scriptdir(), "patches", "0.183", "configure.patch"), "7a16719d9e3d8300b5322b791ba5dd02986f2663e419c6798077dd023ca6173a")
 
+    add_configs("libelf",   {description = "Enable libelf", default = true, type = "boolean"})
+    add_configs("libcpu",   {description = "Enable libcpu", default = false, type = "boolean"})
+    add_configs("libebl",   {description = "Enable libebl", default = false, type = "boolean"})
+    add_configs("libdw",    {description = "Enable libdw", default = false, type = "boolean"})
+    add_configs("libdwelf", {description = "Enable libdwelf", default = false, type = "boolean"})
+    add_configs("libdwfl",  {description = "Enable libdwfl", default = false, type = "boolean"})
+    add_configs("libasm",   {description = "Enable libasm", default = false, type = "boolean"})
+
     add_deps("m4", "zlib")
     if is_plat("android") then
         add_deps("libintl", "argp-standalone")
@@ -32,11 +40,21 @@ package("elfutils")
                 io.replace(makefile, "-Wno-packed-not-aligned", "", {plain = true})
             end
         end
+        local subdirs = {}
+        for name, enabled in pairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") then
+                if enabled then
+                    table.insert(subdirs, name)
+                end
+            end
+        end
+        io.replace("Makefile.in", [[SUBDIRS = config lib libelf libcpu backends libebl libdwelf libdwfl libdw \
+	  libasm debuginfod src po doc tests]], "SUBDIRS = lib " .. table.concat(subdirs, " "), {plain = true})
+
         if package:is_plat("android") then
             io.replace("libelf/Makefile.in", "-Wl,--whole-archive $(libelf_so_LIBS) -Wl,--no-whole-archive", "$(libelf_so_LIBS)", {plain = true})
             io.replace("libdw/Makefile.in", "-Wl,--whole-archive $(libdw_so_LIBS) -Wl,--no-whole-archive", "$(libdw_so_LIBS)", {plain = true})
             io.replace("libasm/Makefile.in", "-Wl,--whole-archive $(libasm_so_LIBS) -Wl,--no-whole-archive", "$(libasm_so_LIBS)", {plain = true})
-            io.replace("src/Makefile.in", "bin_PROGRAMS = .-subdir", "bin_PROGRAMS =\nsubdir")
             table.insert(cflags, "-Wno-error=conditional-type-mismatch")
             table.insert(cflags, "-Wno-error=unused-command-line-argument")
             table.insert(cflags, "-Wno-error=implicit-function-declaration")
@@ -48,6 +66,11 @@ package("elfutils")
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags,
             packagedeps = {"zlib", "libintl", "argp-standalone"}})
+        if package:config("shared") then
+            os.rm(path.join(package:installdir("lib"), "*.a"))
+        else
+            os.rm(path.join(package:installdir("lib"), "*.so"))
+        end
     end)
 
     on_test(function (package)
