@@ -22,6 +22,10 @@ package("elfutils")
         add_deps("libintl", "argp-standalone")
     end
 
+    if is_plat("android") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     on_install("linux", "android", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
