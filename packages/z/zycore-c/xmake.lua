@@ -5,10 +5,7 @@ package("zycore-c")
 
     add_urls("https://github.com/zyantific/zycore-c/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zyantific/zycore-c.git")
-<<<<<<< HEAD
     add_versions("v1.1.0", "b5496779b95206763980aad30db10e36a13a10ebaf2e74574cddf2ca744ad227")
-=======
->>>>>>> 0964a50 (add package: zycore-c)
     add_versions("v1.0.0", "aa93d6da992953693754834c130ce193980b7d7137ea2d41c2c1f618c65e4545")
 
     add_deps("cmake")
@@ -21,7 +18,6 @@ package("zycore-c")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DZYCORE_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
