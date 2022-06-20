@@ -18,13 +18,6 @@ package("zydis")
     end)
 
     on_install(function (package)
-        if is_plat("mingw") then
-            local rc_str = io.readfile("resources/VersionInfo.rc", {encoding = "utf16le"})
-            io.writefile("resources/VersionInfo.rc", {encoding = "utf8"})
-        end
-        -- local rc_str = io.readfile("resources/VersionInfo.rc")
-        -- local result = string.convert(rc_str, "utf16le", "utf8")
-        -- io.writefile("resources/VersionInfo.rc", result)
         local configs = {}
         table.insert(configs, "-DZYDIS_BUILD_EXAMPLES=OFF")
         table.insert(configs, "-DZYDIS_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
