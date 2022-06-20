@@ -6,19 +6,22 @@ package("zydis")
     add_urls("https://github.com/zyantific/zydis/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zyantific/zydis.git")
     add_versions("v3.2.1", "349a2d27270e54499b427051dd45f7b6064811b615588414b096cdeeaeb730ad")
+    add_patches("v3.2.1", path.join(os.scriptdir(), "patches", "v3.2.1", "cmake.patch"), "8464810921f507206b8c21618a20de0f5b96cbef7656ebc549079f941f8718fc")
     
+    -- 3.2.1 -> zycore v1.1.0
+    -- 4.0.0 -> zycore v1.2.0
     add_deps("cmake")
     add_deps("zycore-c")
     
     on_install(function (package)
-        os.exec("git clone https://github.com/zyantific/zycore-c dependencies/zycore")
         local configs = {}
         table.insert(configs, "-DZYDIS_BUILD_EXAMPLES=OFF")
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DZYCORE_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DZYDIS_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("shared") then 
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "zycore-c"})
     end)
 
     on_test(function (package)

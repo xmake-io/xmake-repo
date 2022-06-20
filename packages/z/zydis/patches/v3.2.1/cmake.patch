@@ -1,0 +1,84 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9898f42..788d371 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -43,41 +43,52 @@ option(ZYDIS_FUZZ_AFL_FAST
+ option(ZYDIS_LIBFUZZER
+     "Enables LLVM libfuzzer mode and reduces prints in ZydisFuzzIn"
+     OFF)
+-set(ZYDIS_ZYCORE_PATH
+-    "${CMAKE_CURRENT_LIST_DIR}/dependencies/zycore"
+-    CACHE
+-    PATH
+-    "The path to look for Zycore")
+ 
+ # =============================================================================================== #
+-# Dependencies                                                                                    #
++# Exported functions                                                                              #
+ # =============================================================================================== #
+ 
+-# Try to initialize the Zycore submodule using Git
+-if (NOT EXISTS "${ZYDIS_ZYCORE_PATH}/CMakeLists.txt" AND 
+-    "${ZYDIS_ZYCORE_PATH}" STREQUAL "${CMAKE_CURRENT_LIST_DIR}/dependencies/zycore")
+-    find_package(Git QUIET)
+-    if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+-        execute_process(
+-            COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive 
+-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 
+-        )
+-    endif()
++function (zyan_set_common_flags target)
++if (NOT MSVC)
++    target_compile_options("${target}" PRIVATE "-std=c99")
+ endif ()
+ 
+-if (NOT EXISTS "${ZYDIS_ZYCORE_PATH}/CMakeLists.txt")
+-    message(
+-        FATAL_ERROR
+-        "Can't find zycore submodule. Please make sure to clone the repo recursively.\n"
+-        "You can fix this by running\n"
+-        "    git submodule update --init\n"
+-        "or by cloning using\n"
+-        "    git clone --recursive <url>\n"
+-        "Alternatively, you can manually clone zycore to some path and set ZYDIS_ZYCORE_PATH."
+-    )
++if (ZYAN_DEV_MODE)
++    # If in developer mode, be pedantic.
++    if (MSVC)
++        target_compile_options("${target}" PUBLIC "/WX" "/W4")
++    else ()
++        target_compile_options("${target}" PUBLIC "-Wall" "-pedantic" "-Wextra" "-Werror")
++    endif ()
++endif ()
++endfunction ()
++
++function (zyan_set_source_group target)
++if (ZYAN_DEV_MODE)
++    if (((CMAKE_MAJOR_VERSION GREATER 3) OR (CMAKE_MAJOR_VERSION EQUAL 3)) AND
++        ((CMAKE_MINOR_VERSION GREATER 8) OR (CMAKE_MINOR_VERSION EQUAL 8)))
++        # Mirror directory structure in project files
++        get_property("TARGET_SOURCE_FILES" TARGET "${target}" PROPERTY SOURCES)
++        source_group(TREE "${CMAKE_CURRENT_LIST_DIR}" FILES ${TARGET_SOURCE_FILES})
++    endif ()
+ endif ()
++endfunction ()
++
++function (zyan_maybe_enable_wpo target)
++if (ZYAN_WHOLE_PROGRAM_OPTIMIZATION AND MSVC)
++    set_target_properties("${target}" PROPERTIES COMPILE_FLAGS "/GL")
++    set_target_properties("${target}" PROPERTIES LINK_FLAGS_RELEASE "/LTCG")
++endif ()
++endfunction ()
++
++function (zyan_maybe_enable_wpo_for_lib target)
++if (ZYAN_WHOLE_PROGRAM_OPTIMIZATION AND MSVC)
++    set_target_properties("${target}" PROPERTIES COMPILE_FLAGS "/GL")
++    set_target_properties("${target}" PROPERTIES LINK_FLAGS_RELEASE "/LTCG")
++    set_target_properties("${target}" PROPERTIES STATIC_LIBRARY_FLAGS_RELEASE "/LTCG")
++endif ()
++endfunction ()
+ 
+-add_subdirectory(${ZYDIS_ZYCORE_PATH} "zycore" EXCLUDE_FROM_ALL)
+ 
+ # =============================================================================================== #
+ # Library configuration                                                                           #
