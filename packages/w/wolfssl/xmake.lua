@@ -13,7 +13,11 @@ package("wolfssl")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        local ldflags
+        if package:is_plat("android") then
+            ldflags = "-llog"
+        end
+        import("package.tools.cmake").install(package, configs, {ldflags = ldflags})
     end)
 
     on_test(function (package)
