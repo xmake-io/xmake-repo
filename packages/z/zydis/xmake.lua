@@ -10,12 +10,11 @@ package("zydis")
     
     add_deps("cmake")
     on_load(function (package)
-        local version = package:version()
-        if version:eq("v3.2.1") then 
-            package:add("deps", "zycore-c v1.1.0")
-        elseif version:eq("v4.0.0") then 
-            package:add("deps", "zycore-c v1.2.0")
-        end
+        local zycore_c_vers = {
+            ["v3.2.1"] = "v1.1.0",
+            ["v4.0.0"] = "v1.2.0"
+        }
+        package:add("deps", "zycore-c " .. zycore_c_vers[package:version_str()])
     end)
 
     on_install(function (package)
