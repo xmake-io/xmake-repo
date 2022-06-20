@@ -14,7 +14,7 @@ package("zydis")
         os.exec("git clone https://github.com/zyantific/zycore-c dependencies/zycore")
         local configs = {}
         table.insert(configs, "-DZYDIS_BUILD_EXAMPLES=OFF")
-        table.insert(configs, "-DZYDIS_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("shared") then 
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
