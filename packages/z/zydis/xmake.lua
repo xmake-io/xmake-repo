@@ -18,7 +18,7 @@ package("zydis")
         package:add("deps", "zycore-c " .. zycore_c_vers[package:version_str()])
     end)
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", "bsd", "cross", "mingw", "android", function (package)
         local configs = {}
         table.insert(configs, "-DZYDIS_BUILD_EXAMPLES=OFF")
         table.insert(configs, "-DZYDIS_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
