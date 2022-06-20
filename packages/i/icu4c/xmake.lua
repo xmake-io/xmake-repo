@@ -6,6 +6,7 @@ package("icu4c")
     add_urls("https://github.com/unicode-org/icu/releases/download/release-$(version)-src.tgz", {version = function (version)
             return (version:gsub("%.", "-")) .. "/icu4c-" .. (version:gsub("%.", "_"))
         end})
+    add_versions("71.1", "67a7e6e51f61faf1306b6935333e13b2c48abd8da6d2f46ce6adca24b1e21ebf")
     add_versions("70.1", "8d205428c17bf13bb535300669ed28b338a157b1c01ae66d31d0d3e2d47c3fd5")
     add_versions("69.1", "4cba7b7acd1d3c42c44bb0c14be6637098c7faf2b330ce876bc5f3b915d09745")
     add_versions("68.2", "c79193dee3907a2199b8296a93b52c5cb74332c26f3d167269487680d479d625")
@@ -57,6 +58,8 @@ package("icu4c")
         else
             envs = autoconf.buildenvs(package)
         end
+        -- suppress ar errors when passing --toolchain=clang
+        envs.ARFLAGS = nil
         autoconf.install(package, configs, {envs = envs})
         package:addenv("PATH", "bin")
     end)
