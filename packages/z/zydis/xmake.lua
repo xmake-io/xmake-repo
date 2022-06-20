@@ -8,15 +8,19 @@ package("zydis")
     add_versions("v3.2.1", "349a2d27270e54499b427051dd45f7b6064811b615588414b096cdeeaeb730ad")
     add_patches("v3.2.1", path.join(os.scriptdir(), "patches", "v3.2.1", "cmake.patch"), "8464810921f507206b8c21618a20de0f5b96cbef7656ebc549079f941f8718fc")
     
-    -- 3.2.1 -> zycore v1.1.0
-    -- 4.0.0 -> zycore v1.2.0
     add_deps("cmake")
-    add_deps("zycore-c")
-    
+    on_load(function (package)
+        local version = package:version()
+        if version:eq("v3.2.1") then 
+            package:add("deps", "zycore-c v1.1.0")
+        elseif version:eq("v4.0.0") then 
+            package:add("deps", "zycore-c v1.2.0")
+        end
+    end)
+
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DZYDIS_BUILD_EXAMPLES=OFF")
-        table.insert(configs, "-DZYCORE_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DZYDIS_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("shared") then 
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
