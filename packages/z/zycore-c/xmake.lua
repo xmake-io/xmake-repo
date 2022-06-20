@@ -11,9 +11,9 @@ package("zycore-c")
     add_deps("cmake")
 
     on_install(function (package)
-        if package:version():eq("v1.1.0") and is_plat("mingw") then
+        if package:version():eq("v1.1.0") and package:is_plat("mingw") then
             local rc_str = io.readfile("resources/VersionInfo.rc", {encoding = "utf16le"})
-            io.writefile("resources/VersionInfo.rc", {encoding = "utf8"})
+            io.writefile("resources/VersionInfo.rc", rc_str, {encoding = "utf8"})
         end
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
