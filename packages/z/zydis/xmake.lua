@@ -9,6 +9,7 @@ package("zydis")
     add_patches("v3.2.1", path.join(os.scriptdir(), "patches", "v3.2.1", "cmake.patch"), "8464810921f507206b8c21618a20de0f5b96cbef7656ebc549079f941f8718fc")
     
     add_deps("cmake")
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     on_load(function (package)
         local zycore_c_vers = {
             ["v3.2.1"] = "v1.1.0",
