@@ -8,7 +8,6 @@ package("thrust")
              "https://github.com/NVIDIA/thrust.git")
     add_versions("1.17.0", "b02aca5d2325e9128ed9d46785b8e72366f758b873b95001f905f22afcf31bbf")
 
-    add_deps("cmake")
     add_deps("cuda", {system = true})
     
     on_install(function (package)
