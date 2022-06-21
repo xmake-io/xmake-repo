@@ -4,12 +4,14 @@ package("xtensor-io")
     set_homepage("https://github.com/xtensor-stack/xtensor-io")
     set_description("xtensor plugin to read and write images, audio files, numpy (compressed) npz and HDF5")
     set_license("BSD-3-Clause")
+
     add_urls("https://github.com/xtensor-stack/xtensor-io/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xtensor-stack/xtensor-io.git")
     add_versions("0.13.0", "470bedee082adb0ef25ef7b54f9cfd3684e27b8489c42cf7980e0d90c14d04da")
 
     add_deps("cmake")
     add_deps("xtensor")
+    
     on_install("windows", "macosx", "linux", "mingw@windows", function (package)
         import("package.tools.cmake").install(package)
     end)
