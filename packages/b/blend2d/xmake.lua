@@ -21,7 +21,7 @@ package("blend2d")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-        local configs = {"-DBLEND2D_TEST=OFF"}
+        local configs = {"-DBLEND2D_TEST=OFF", "-DBLEND2D_NO_STDCXX=1"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBLEND2D_STATIC=" .. (package:config("shared") and "FALSE" or "TRUE"))
         io.replace("CMakeLists.txt", 'include("${ASMJIT_DIR}/CMakeLists.txt")', "", {plain = true})
