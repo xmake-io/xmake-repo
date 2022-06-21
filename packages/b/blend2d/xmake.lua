@@ -8,6 +8,10 @@ package("blend2d")
 
     add_deps("cmake")
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_load(function (package)
         package:add("deps", "asmjit", {configs = {shared = package:config("shared")}})
     end)
