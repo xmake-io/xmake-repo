@@ -7,12 +7,15 @@ package("blend2d")
     add_versions("2022.05.12", "84987c5f76c1b8f271e8556a4b87bcab78094c70")
 
     add_deps("cmake")
-    add_deps("asmjit")
+
+    on_load(function (package)
+        package:add("deps", "asmjit", {configs = {shared = package:config("shared")}})
+    end)
 
     on_install("windows", "macosx", "linux", function (package)
-        local configs = {}
+        local configs = {"-DBLEND2D_TEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBLEND2D_STATIC=" .. (package:config("shared") and "FALSE" or "TRUE"))
         io.replace("CMakeLists.txt", 'include("${ASMJIT_DIR}/CMakeLists.txt")', "", {plain = true})
         import("package.tools.cmake").install(package, configs, {packagedeps = "asmjit"})
     end)
