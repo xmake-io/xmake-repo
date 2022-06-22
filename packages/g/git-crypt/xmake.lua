@@ -8,11 +8,11 @@ package("git-crypt")
              "https://github.com/AGWA/git-crypt.git")
     add_versions("0.7.0", "2210a89588169ae9a54988c7fdd9717333f0c6053ff704d335631a387bd3bcff")
 
-    if is_plat("linux", "macosx") then
+    if is_plat("linux", "macosx", "mingw@macosx") then
         add_deps("openssl", {host = true})
     end
     
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "mingw@macosx", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("openssl")
