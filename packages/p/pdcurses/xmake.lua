@@ -6,7 +6,7 @@ package("pdcurses")
              "https://github.com/wmcbrine/PDCurses.git")
     add_versions("3.9", "590dbe0f5835f66992df096d3602d0271103f90cf8557a5d124f693c2b40d7ec")
 
-    if is_plat("linux") or is_plat ("macosx") or is_plat("mingw") then
+    if not is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
     
