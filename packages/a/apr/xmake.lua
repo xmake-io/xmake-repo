@@ -7,8 +7,11 @@ package("apr")
              "https://github.com/apache/apr.git")
     add_versions("1.7.0", "a7e2c5e6d60f6c7b1611b31a2f914a3e58f44eded5b064f0bae43ff30b16a4e6")
 
-    if is_plat("macosx", "linux") then 
+    if is_plat("macosx") then 
         add_deps("autoconf", "libtool", "python")
+    elseif is_plat("linux") then
+        add_deps("autoconf", "libtool", "python")
+        add_patches("1.7.0", path.join(os.scriptdir(), "patches", "1.7.0", "common.patch"), "bbfef69c914ca1ab98a9d94fc4794958334ce5f47d8c08c05e0965a48a44c50d")
     elseif is_plat("windows") then 
         add_patches("1.7.0", path.join(os.scriptdir(), "patches", "1.7.0", "nmake.patch"), "27cf110d60678acc790aca1bf81089a504f0f9f2f351d84c64f87591ec922d2b")
     end
