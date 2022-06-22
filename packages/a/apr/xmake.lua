@@ -10,6 +10,9 @@ package("apr")
     if is_plat("macosx", "linux") then 
         add_deps("autoconf", "libtool", "python")
     end
+    if is_plat("windows") then 
+        add_patches("1.7.0", path.join(os.scriptdir(), "patches", "1.7.0", "nmake.patch"), "27cf110d60678acc790aca1bf81089a504f0f9f2f351d84c64f87591ec922d2b")
+    end
     
     on_install("linux", "macosx", "windows", function (package)
         if package:is_plat("linux") then 
