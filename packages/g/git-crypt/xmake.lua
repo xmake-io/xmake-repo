@@ -8,7 +8,9 @@ package("git-crypt")
              "https://github.com/AGWA/git-crypt.git")
     add_versions("0.7.0", "2210a89588169ae9a54988c7fdd9717333f0c6053ff704d335631a387bd3bcff")
 
-    add_deps("openssl")
+    if is_plat("linux", "macosx") then
+        add_deps("openssl", {host = true})
+    end
     
     on_install("linux", "macosx", function (package)
         io.writefile("xmake.lua", [[
@@ -17,10 +19,8 @@ package("git-crypt")
             target("git-crypt")
                 set_kind("binary")
                 add_packages("openssl")
-                add_files("*.cpp")
-                add_headerfiles("*.hpp")
-                remove_files("*-unix.cpp", "*-win32.cpp")
-                remove_headerfiles("*-unix.hpp", "*-win32.hpp")
+                add_files("*.cpp|*-unix.cpp|*-win32.cpp")
+                add_headerfiles("*.hpp|*-unix.hpp|*-win32.hpp")
 
         ]])
         import("package.tools.xmake").install(package)
