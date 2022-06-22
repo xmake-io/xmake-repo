@@ -6,34 +6,24 @@ package("pdcurses")
              "https://github.com/wmcbrine/PDCurses.git")
     add_versions("3.9", "590dbe0f5835f66992df096d3602d0271103f90cf8557a5d124f693c2b40d7ec")
 
-    on_install("linux", "macosx", "mingw", "windows", function (package)
-        -- sdl1 sdl2 dos os2 windows x11
-        os.cd("sdl2")
-        import("package.tools.make").install(package)
-        -- if package:is_plat("linux", "macosx") then
-        --     import("package.tools.make").install(package, {})
-        -- elseif package:is_plat("windows") then
-        --     local configs = {"-f", "Makefile.vc", "WIDE=Y", "UTF8=Y"}
-        --     if package:config("shared") then 
-        --         table.insert(configs, "DLL=Y")
-        --     end
-        --     import("package.tools.nmake").install(package, configs)
-        -- end
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
-        -- local configs = {}
-        -- io.writefile("xmake.lua", [[
-        --     add_rules("mode.release", "mode.debug")
-        --     target("pdcurses")
-        --        set_kind("$(kind)")
-        --        add_files("sdl2/*.h")
-        --        add_files("sdl2/*.c")
-        -- ]])
-        -- if package:config("shared") then
-        --     configs.kind = "shared"
-        -- end
-        -- import("package.tools.xmake").install(package, configs)
+    add_deps("libsdl")
+
+    on_install("linux", "macosx", "mingw", "windows", function (package)
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            add_requires("libsdl")
+            target("pdcurses")
+                set_kind("static")
+                add_files("pdcurses/*.c", "sdl2/*.c")
+                add_includedirs(".", "sdl2")
+                add_headerfiles("*.h", "sdl2/*.h")
+                add_packages("libsdl")
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
-        -- assert(package:has_cfuncs("foo", {includes = "foo.h"}))
+        assert(package:has_cincludes("curses.h"))
     end)
