@@ -14,6 +14,7 @@ package("apr")
     on_install("linux", "macosx", "windows", function (package)
         if package:is_plat("linux") then 
             os.vrunv("sh", {"./buildconf"})
+            io.replace("configure", "RM='$RM'", "RM='$RM -f'")
             os.vrunv("./configure", {"--prefix=" .. package:installdir()})
             import("package.tools.make").install(package)
         elseif package:is_plat("macosx") then 
