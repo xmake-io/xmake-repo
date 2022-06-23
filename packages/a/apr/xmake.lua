@@ -8,7 +8,7 @@ package("apr")
     add_versions("1.7.0", "a7e2c5e6d60f6c7b1611b31a2f914a3e58f44eded5b064f0bae43ff30b16a4e6")
 
     if is_plat("macosx") then 
-        add_deps("autoconf", "libtool", "python")
+        -- add_deps("autoconf", "libtool", "python")
     elseif is_plat("linux") then
         add_deps("autoconf", "libtool", "python")
         add_patches("1.7.0", path.join(os.scriptdir(), "patches", "1.7.0", "common.patch"), "bbfef69c914ca1ab98a9d94fc4794958334ce5f47d8c08c05e0965a48a44c50d")
@@ -22,13 +22,12 @@ package("apr")
             os.vrunv("sh", {"./buildconf"})
             io.replace("configure", "RM='$RM'", "RM='$RM -f'")
         else
-            os.exec("sed -i -e 's/#error .* pid_t/#define APR_PID_T_FMT \"d\"/' configure.in")
+            io.replace("configure.in", "pid_t_fmt='#error Can not determine the proper size for pid_t'", "pid_t_fmt='#define APR_PID_T_FMT \"d\"'")
             os.vrunv("sh", {"./buildconf"})
             table.insert(configs, "CFLAGS=-DAPR_IOVEC_DEFINED")
         end
         import("package.tools.autoconf").install(package, configs)
-        import("package.tools.make").install(package)
-        os.mv(package:installdir("include/apr-1/*"), package:installdir("include"))
+        package:add("includedirs", "include/apr-1")
     end)
 
     on_install("windows", function (package)
@@ -37,7 +36,7 @@ package("apr")
         if package:config("shared") then 
             os.rm(package:installdir("lib/*.lib"))
         else
-            os.rm(package:installdir("lib/*.dll"))
+            os.rm(package:installdir("bin/*.dll"))
         end
     end)
 
