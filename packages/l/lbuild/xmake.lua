@@ -8,11 +8,10 @@ package("lbuild")
 
     add_deps("python 3.x", {kind = "binary"})
 
-    on_install(function (package)local python_version = package:dep("python"):version()
+    on_install(function (package)
         local python_version = package:dep("python"):version()
         local lbuild_version = package:version()
-        print(python_version, lbuild_version)
-        local lbuild_egg = "Lbuild-" .. lbuild_version:major() .. "." .. lbuild_version:minor() .. "." .. lbuild_version:patch() .. "-py" .. python_version:major() .. "." .. python_version:minor() .. ".egg"
+        local lbuild_egg = "lbuild-" .. lbuild_version:major() .. "." .. lbuild_version:minor() .. "." .. lbuild_version:patch() .. "-py" .. python_version:major() .. "." .. python_version:minor() .. ".egg"
         local pyver = ("python%d.%d"):format(python_version:major(), python_version:minor())
         local PYTHONPATH = package:installdir("lib")
         local PYTHONPATH1 = path.join(PYTHONPATH, pyver)
@@ -23,7 +22,8 @@ package("lbuild")
         io.writefile("build/doc/man/lbuild.1", "")
         io.writefile("build/doc/man/lbuild-time.1", "")
         io.writefile("build/doc/man/lbuildign.1", "")
-        
+        io.replace("setup.py", "from lbuild.__init__ import __version__", format("__version__ = '%s'", lbuild_version))
+
         os.vrunv("python", {"setup.py", "install", "--prefix", package:installdir()})
         if package:is_plat("windows") then
             os.mv(package:installdir("Scripts", "*"), package:installdir("bin"))
