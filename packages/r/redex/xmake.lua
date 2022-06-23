@@ -7,7 +7,7 @@ package("redex")
     add_versions("2022.6.23", "802e428923e15b36993106685798e33d64f3e057")
 
     add_deps("cmake")
-    add_deps("boost")
+    add_deps("boost", {configs = {system = true}})
 
     on_install("linux", "macosx", "windows", function (package)
         local configs = {}
