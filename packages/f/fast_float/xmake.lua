@@ -19,5 +19,5 @@ package("fast_float")
                 double result;
                 auto answer = fast_float::from_chars(input.data(), input.data()+input.size(), result);
             }
-        ]]}, {includes = {"chipmunk/chipmunk.h"}}))
+        ]]}, {includes = {"fast_float/fast_float.h"}}))
     end)
