@@ -1,4 +1,5 @@
 package("fast_float")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/fastfloat/fast_float")
     set_description("Fast and exact implementation of the C++ from_chars functions for float and double types: 4x faster than strtod")
     set_license("Apache-2.0")
