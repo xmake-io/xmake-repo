@@ -34,6 +34,11 @@ package("apr")
     on_install("windows", function (package)
         local configs = {"-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")}
         import("package.tools.cmake").install(package, configs)
+        if package:config("shared") then 
+            os.rm(package:installdir("lib/*.lib"))
+        else
+            os.rm(package:installdir("lib/*.dll"))
+        end
     end)
 
     on_test(function (package)
