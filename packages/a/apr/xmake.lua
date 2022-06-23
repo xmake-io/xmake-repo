@@ -30,23 +30,7 @@ package("apr")
             import("package.tools.make").install(package)
             os.mv(package:installdir("include/apr-1/*"), package:installdir("include"))
         elseif package:is_plat("windows") then
-            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
-            local msvc_version
-            if tonumber(vs) == 2019 then
-                msvc_version = "Visual Studio 16 2019"
-            elseif tonumber(vs) == 2022 then
-                msvc_version = "Visual Studio 17 2022"
-            else
-                raise("unsupported msvc version " .. vs)
-            end
-            local arch = os.arch()
-            local configuration = package:debug() and "Debug" or "Release"
-            os.vrun("cmake -G \"" .. msvc_version .. "\" -A " .. arch)
-            import("package.tools.msbuild").build(package, {"apr.sln", "/p:platform=" .. arch, "/p:configuration=" .. configuration})
-            os.mv("*.h", package:installdir("include"))
-            os.mv("include/*.h", package:installdir("include"))
-            os.mv(configuration .. "/*.lib", package:installdir("lib"))
-            os.mv(configuration .. "/*.dll", package:installdir("lib"))
+            import("package.tools.cmake").install(package)
         end
     end)
 
