@@ -16,22 +16,24 @@ package("apr")
         add_deps("cmake")
     end
     
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", function (package)
+        local configs = {}
         if package:is_plat("linux") then 
             os.vrunv("sh", {"./buildconf"})
             io.replace("configure", "RM='$RM'", "RM='$RM -f'")
-            os.vrunv("./configure", {"--prefix=" .. package:installdir()})
-            import("package.tools.make").install(package)
-            os.mv(package:installdir("include/apr-1/*"), package:installdir("include"))
-        elseif package:is_plat("macosx") then 
+        else
             os.exec("sed -i -e 's/#error .* pid_t/#define APR_PID_T_FMT \"d\"/' configure.in")
             os.vrunv("sh", {"./buildconf"})
-            os.exec("./configure CFLAGS=-DAPR_IOVEC_DEFINED --prefix=" .. package:installdir())
-            import("package.tools.make").install(package)
-            os.mv(package:installdir("include/apr-1/*"), package:installdir("include"))
-        elseif package:is_plat("windows") then
-            import("package.tools.cmake").install(package)
+            table.insert(configs, "CFLAGS=-DAPR_IOVEC_DEFINED")
         end
+        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.make").install(package)
+        os.mv(package:installdir("include/apr-1/*"), package:installdir("include"))
+    end)
+
+    on_install("windows", function (package)
+        local configs = {"-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")}
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
