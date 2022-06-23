@@ -10,18 +10,16 @@ package("grpc")
     add_deps("cmake")
     add_deps("abseil", "benchmark", "boringssl", "gtest", "libuv", "protobuf-cpp" "re2", "zlib")
     -- TODO bloaty envoy-api googleapis opencensus-proto opentelemetry xds
-    on_load(function (package)
-        if package:is_plat("linux") then
-            package:add("deps", "autoconf", "libtool", "pkg-config")
-            package:add("extsources", "apt::build-essential")
-        elseif package:is_plat("macosx") then
-            package:add("deps", "autoconf", "automake", "libtool")
-            package:add("extsources", "brew::shtool")
-        elseif package:is_plat("windows") then
-            package:add("deps", "nasm")
-        end
-    end)
-
+    if is_plat("linux") then
+        add_deps("autoconf", "libtool", "pkg-config")
+        add_extsources("apt::build-essential")
+    elseif is_plat("macosx") then
+        add_deps("autoconf", "automake", "libtool")
+        add_extsources("brew::shtool")
+    elseif is_plat("windows") then
+        add_deps("nasm")
+    end
+    
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
