@@ -1,0 +1,34 @@
+name: Wasm (MacOS)
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macOS-latest]
+        kind: [static, shared]
+
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-MingW-macOS-${{ matrix.kind }}
+        cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: branch@dev
+
+      - name: Prepare
+        uses: lovasoa/setup-emscripten@master
+        with:
+          emscripten-version: '1.38.47'
+
+      - name: Tests
+        run: |
+          xmake l ./scripts/test.lua -D -p wasm -k ${{ matrix.kind }}
+
