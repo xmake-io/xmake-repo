@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     concurrency:
-        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-MingW-macOS-${{ matrix.kind }}
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-MingW-Ubuntu-${{ matrix.kind }}
         cancel-in-progress: true
     steps:
       - uses: actions/checkout@v1
@@ -31,7 +31,7 @@ jobs:
           # This is the name of the cache folder.
           # The cache folder will be placed in the build directory,
           #  so make sure it doesn't conflict with anything!
-          actions-cache-folder: 'emsdk-cache'
+          actions-cache-folder: emsdk-cache-${{ matrix.kind }}
 
       - name: Tests
         run: |
