@@ -123,7 +123,7 @@ function _package_is_supported(argv, packagename)
             if package and packagename:split("%s+")[1] == package.name then
                 local arch = argv.arch
                 if not arch and plat ~= os.subhost() then
-                    arch = platform.archs(plat)[1]
+                    arch = table.wrap(platform.archs(plat))[1]
                 end
                 if not arch then
                     arch = os.subarch()
