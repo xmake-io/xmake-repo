@@ -13,7 +13,7 @@ package("premake5")
     on_install("@linux", "@macosx", "@windows", function (package)
         local configs = {"-f", "Bootstrap.mak", package:plat()}
         if package:is_plat("linux", "macosx") then
-            if package:is_plat("linux") and linuxos.name() == "fedora" then 
+            if linuxos.name() == "fedora" then 
                 local flags = {}
                 local depinfo = package:dep("libuuid"):fetch()
                 for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do 
@@ -28,7 +28,7 @@ package("premake5")
                 import("package.tools.make").build(package, configs)
                 io.replace("build/bootstrap/Premake5.make", "INCLUDES +=", "INCLUDES += " .. extrainfo)
                 print(io.readfile("build/bootstrap/Premake5.make"))
-                import("package.tools.make").build(package, {"-C", "build/bootstrap", "-j`getconf _NPROCESSORS_ONLN`", "configs=release"})
+                -- import("package.tools.make").build(package, {"-C", "build/bootstrap", "-j`getconf _NPROCESSORS_ONLN`", "configs=release"})
             else
                 import("package.tools.make").build(package, configs)
             end
