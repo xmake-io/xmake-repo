@@ -14,7 +14,11 @@ package("premake5")
         local configs = {"-f", "Bootstrap.mak"}
         table.insert(configs, package:plat())
         if package:is_plat("linux", "macosx") then
-            import("package.tools.make").build(package, configs)
+            local packagedeps = {}
+            if package:is_plat("linux") and linuxos().name == "fedora" then 
+                table.insert(packagedeps, "libuuid")
+            end
+            import("package.tools.make").build(package, configs, packagedeps)
         else
             import("package.tools.nmake").build(package, configs)
         end
