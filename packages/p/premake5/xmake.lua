@@ -18,7 +18,7 @@ package("premake5")
             local dep = package:dep("libuuid")
             if dep then 
                 local depinfo = dep:fetch()
-                for _, includedir in ipairs(depinfo.includedirs) do 
+                for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do 
                     table.insert(cflags, "-I" .. includedir)
                 end
                 for _, linkdir in ipairs(depinfo.linkdirs) do 
@@ -26,7 +26,7 @@ package("premake5")
                 end
             end
             local extrainfo = table.concat(cflags, " ") .. table.concat(ldflags, " ")
-            io.replace("Bootstrap.mak", "-luuid", extrainfo .. "-luuid")
+            io.replace("Bootstrap.mak", "-luuid", extrainfo .. " -luuid")
             import("package.tools.make").build(package, configs)
         else
             import("package.tools.nmake").build(package, configs)
