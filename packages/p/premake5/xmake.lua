@@ -13,19 +13,27 @@ package("premake5")
     on_install("@linux", "@macosx", "@windows", function (package)
         local configs = {"-f", "Bootstrap.mak", package:plat()}
         if package:is_plat("linux", "macosx") then
-            local flags = {}
-            local dep = package:dep("libuuid")
-            if dep then 
-                local depinfo = dep:fetch()
-                for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do 
-                    table.insert(flags, "-I" .. includedir)
+            if package:is_plat("linux") and linuxos.name() == "fedora" then 
+                local flags = {}
+                local dep = package:dep("libuuid")
+                if dep then 
+                    local depinfo = dep:fetch()
+                    for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do 
+                        table.insert(flags, "-I" .. includedir)
+                    end
+                    for _, linkdir in ipairs(depinfo.linkdirs) do 
+                        table.insert(flags, "-L" .. linkdir)
+                    end
                 end
-                for _, linkdir in ipairs(depinfo.linkdirs) do 
-                    table.insert(flags, "-L" .. linkdir)
-                end
+                local extrainfo = table.concat(flags, " ")
+                io.replace("Bootstrap.mak", "-luuid", extrainfo .. " -luuid")
+                io.replace("Bootstrap.mak", "$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)", "")
+                import("package.tools.make").build(package, configs)
+                io.replace("build/bootstrap/Premake5.make", "INCLUDES +=", "INCLUDES += " .. extrainfo)
+                import("package.tools.make").build(package, {"-C", "build/bootstrap", "-j`getconf _NPROCESSORS_ONLN`", "configs=release"})
+            else
+                import("package.tools.make").build(package, configs)
             end
-            io.replace("Bootstrap.mak", "-luuid", table.concat(flags, " ") .. " -luuid")
-            import("package.tools.make").build(package, configs)
         else
             import("package.tools.nmake").build(package, configs)
         end
