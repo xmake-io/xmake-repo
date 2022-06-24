@@ -8,6 +8,7 @@ package("premake5")
     
     if is_plat("linux") and linuxos.name() == "fedora" then 
         add_deps("libuuid")
+        add_patches("2022.06.21", path.join(os.scriptdir(), "patches", "2022.06.21", "make.path"), "e27ec6aeccbf70b0b84d9d708d5a66aa4d0b4e86e519e7838555e67359f6ed17")
     end
 
     on_install("@linux", "@macosx", "@windows", function (package)
@@ -25,7 +26,7 @@ package("premake5")
                 local extrainfo = table.concat(flags, " ")
                 io.replace("Bootstrap.mak", "-luuid", extrainfo .. " -luuid")
                 -- TODO It doesn't work, wasting 2 hours, fuck...
-                io.replace("Bootstrap.mak", "$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)", "")
+                -- io.replace("Bootstrap.mak", "$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)", "")
                 import("package.tools.make").build(package, configs)
                 io.replace("build/bootstrap/Premake5.make", "INCLUDES +=", "INCLUDES += " .. extrainfo)
                 print(io.readfile("build/bootstrap/Premake5.make"))
