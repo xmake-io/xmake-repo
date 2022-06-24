@@ -3,10 +3,9 @@ package("premake5")
     set_homepage("https://premake.github.io/")
     set_description("Premake")
 
-    set_urls("https://github.com/premake/premake-core/archive/refs/tags/$(version).zip", 
-             "https://github.com/premake/premake-core.git")
-    add_versions("v5.0.0-beta1", "f4d1be74c514f39f2743698d66da92814aa120ccca9b1f0b2a8c63d8fbb57090")
-
+    set_urls("https://github.com/premake/premake-core.git")
+    add_versions("2022.06.21", "1c22240cc86cc3a12075cc0fc8b07ab209f99dd3")
+    
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-f", "Bootstrap.mak"}
         table.insert(configs, package:plat())
