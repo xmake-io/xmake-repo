@@ -5,18 +5,15 @@ package("premake-core")
     add_urls("https://github.com/premake/premake-core.git")
     add_versions("2022.06.21", "1c22240cc86cc3a12075cc0fc8b07ab209f99dd3")
 
-    on_install(function (package)
-        local configs = {}
-        io.writefile("xmake.lua", [[
-            add_rules("mode.release", "mode.debug")
-            target("premake-core")
-               set_kind("$(kind)")
-               add_files("src/*.c")
-        ]])
-        if package:config("shared") then
-            configs.kind = "shared"
+    on_install("linux", "macosx", "windows", function (package)
+        local configs = {"-f", "Bootstrap.mak"}
+        table.insert(configs, package:plat())
+        if package:is_plat("linux", "macosx") then
+            import("package.tools.make").build(package, configs)
+        else
+            import("package.tools.nmake").build(package, configs)
         end
-        import("package.tools.xmake").install(package, configs)
+        os.mv("bin/release/premake5" .. (package:is_plat("windows") and ".exe" or ""), package:installdir("bin"))
     end)
 
     on_test(function (package)
