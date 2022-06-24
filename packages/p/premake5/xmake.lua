@@ -6,6 +6,10 @@ package("premake5")
     set_urls("https://github.com/premake/premake-core.git")
     add_versions("2022.06.21", "1c22240cc86cc3a12075cc0fc8b07ab209f99dd3")
     
+    if is_plat("linux") and linuxos.name() == "fedora" then 
+        add_deps("libuuid")
+    end
+
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"-f", "Bootstrap.mak"}
         table.insert(configs, package:plat())
