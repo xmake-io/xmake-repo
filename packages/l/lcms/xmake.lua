@@ -29,7 +29,7 @@ package("lcms")
         import("package.tools.xmake").install(package, {kind = package:config("shared") and "shared" or "static"})
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "wasm", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
