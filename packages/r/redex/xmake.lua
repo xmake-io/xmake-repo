@@ -20,7 +20,7 @@ package("redex")
         local configs = {"-DBoost_NO_BOOST_CMAKE=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_TYPE=" .. (package:config("shared") and "Shared" or "Static"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "jsoncpp"})
     end)
 
     on_test(function (package)
