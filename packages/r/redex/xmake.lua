@@ -7,10 +7,17 @@ package("redex")
     add_versions("2022.6.23", "802e428923e15b36993106685798e33d64f3e057")
 
     add_deps("cmake")
-    add_deps("boost 1.71.0", {configs = {system = true, regex = true}})
+    add_deps("boost", {configs = {
+        system = true,
+        regex = true,
+        thread = true,
+        iostreams = true,
+        program_options = true}})
+    add_deps("jsoncpp")
 
     on_install("linux", "macosx", "windows", function (package)
-        local configs = {}
+        -- fix find boost issue, @see https://github.com/microsoft/vcpkg/issues/5936
+        local configs = {"-DBoost_NO_BOOST_CMAKE=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_TYPE=" .. (package:config("shared") and "Shared" or "Static"))
         import("package.tools.cmake").install(package, configs)
