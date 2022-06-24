@@ -17,5 +17,5 @@ package("snmalloc")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("snmalloc::DefaultPal::message", {includes = "snmalloc/pal/pal.h"}))
+        assert(package:has_cxxfuncs("snmalloc::DefaultPal::message", {includes = "snmalloc/snmalloc.h"}))
     end)
