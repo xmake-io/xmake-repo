@@ -8,7 +8,7 @@ package("lbuild")
 
     add_deps("python 3.x", {kind = "binary"})
 
-    on_install(function (package)
+    on_install("linux", "macosx", "windows", function (package)
         local python_version = package:dep("python"):version()
         local lbuild_version = package:version()
         local pyver = ("python%d.%d"):format(python_version:major(), python_version:minor())
