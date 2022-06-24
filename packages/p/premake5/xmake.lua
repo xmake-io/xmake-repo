@@ -10,7 +10,7 @@ package("premake5")
         add_deps("libuuid")
     end
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("@linux", "@macosx", "@windows", function (package)
         local configs = {"-f", "Bootstrap.mak"}
         table.insert(configs, package:plat())
         if package:is_plat("linux", "macosx") then
