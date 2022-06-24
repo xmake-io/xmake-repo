@@ -8,7 +8,7 @@ package("premake5")
     
     if is_plat("linux") and linuxos.name() == "fedora" then 
         add_deps("libuuid")
-        add_patches("2022.06.21", path.join(os.scriptdir(), "patches", "2022.06.21", "make.path"), "e27ec6aeccbf70b0b84d9d708d5a66aa4d0b4e86e519e7838555e67359f6ed17")
+        add_patches("2022.06.21", path.join(os.scriptdir(), "patches", "2022.06.21", "make.patch"), "e27ec6aeccbf70b0b84d9d708d5a66aa4d0b4e86e519e7838555e67359f6ed17")
     end
 
     on_install("@linux", "@macosx", "@windows", function (package)
