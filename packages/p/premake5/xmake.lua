@@ -11,28 +11,22 @@ package("premake5")
     end
 
     on_install("@linux", "@macosx", "@windows", function (package)
-        local configs = {"-f", "Bootstrap.mak"}
-        table.insert(configs, package:plat())
+        local configs = {"-f", "Bootstrap.mak", package:plat()}
         if package:is_plat("linux", "macosx") then
             local cflags = {}
             local ldflags = {}
             local dep = package:dep("libuuid")
             if dep then 
                 local depinfo = dep:fetch()
-                for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do 
+                for _, includedir in ipairs(depinfo.includedirs) do 
                     table.insert(cflags, "-I" .. includedir)
                 end
                 for _, linkdir in ipairs(depinfo.linkdirs) do 
                     table.insert(ldflags, "-L" .. linkdir)
                 end
             end
-            if #cflags > 0 then 
-                table.insert(configs, "EXTRA_CFLAGS=" .. table.concat(cflags, " ")) 
-                table.insert(configs, "EXTRA_CXXFLAGS=" .. table.concat(cflags, " "))
-            end
-            if #ldflags > 0 then
-                table.insert(configs, "EXTRA_LDFLAGS=" .. table.concat(ldflags, " "))
-            end
+            local extrainfo = table.concat(cflags, " ") .. table.concat(ldflags, " ")
+            io.replace("Bootstrap.mak", "-luuid", extrainfo .. "-luuid")
             import("package.tools.make").build(package, configs)
         else
             import("package.tools.nmake").build(package, configs)
