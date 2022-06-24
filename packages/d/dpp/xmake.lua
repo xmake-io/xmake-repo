@@ -6,6 +6,10 @@ package("dpp")
     add_urls("https://github.com/brainboxdotcc/DPP/archive/refs/tags/$(version).tar.gz",
              "https://github.com/brainboxdotcc/DPP.git")
 
+    add_versions("v10.0.11", "33463292f3030eabf70ab54ff09475945b4d87a9c6e428c712015cba93a1ed96")
+    add_patches("v10.0.11", path.join(os.scriptdir(), "patches", "v10.0.8", "static_export.patch"), "d18487580faa9af21862bcff30ddfa5d5ab5cda6aa5f779bcc1787a96ca66447")
+    add_patches("v10.0.11", path.join(os.scriptdir(), "patches", "v10.0.10", "permission_include.patch"), "4fdf8e406c7f610453090253bf1640e42c47a06968f65a4a21d01104a2d04fd4")
+
     add_versions("v10.0.10", "2a1c26f606298e5b683d1e140219c434e61c4b22e8510fa2a2d5f7b6758dff95")
     add_patches("v10.0.10", path.join(os.scriptdir(), "patches", "v10.0.8", "static_export.patch"), "d18487580faa9af21862bcff30ddfa5d5ab5cda6aa5f779bcc1787a96ca66447")
     add_patches("v10.0.10", path.join(os.scriptdir(), "patches", "v10.0.10", "permission_include.patch"), "4fdf8e406c7f610453090253bf1640e42c47a06968f65a4a21d01104a2d04fd4")
