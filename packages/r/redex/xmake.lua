@@ -9,6 +9,13 @@ package("redex")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake")
+    add_deps("boost", {configs = {
+        system = true,
+        regex = true,
+        thread = true,
+        iostreams = true,
+        program_options = true}})
+    add_deps("jsoncpp", "zlib")
 
     add_includedirs("include/redex/libredex",
                     "include/redex/libresource",
@@ -17,18 +24,6 @@ package("redex")
                     "include/redex/tools",
                     "include/redex/util",
                     "include/redex/service")
-
-    on_load(function (package)
-        local shared = package:config("shared")
-        package:add("deps", "boost", {configs = {
-            shared = shared,
-            system = true,
-            regex = true,
-            thread = true,
-            iostreams = true,
-            program_options = true}})
-        package:add("deps", "jsoncpp", "zlib", {configs = {shared = shared}})
-    end)
 
     on_install("linux", "macosx", "windows", function (package)
         -- fix find boost issue, @see https://github.com/microsoft/vcpkg/issues/5936
