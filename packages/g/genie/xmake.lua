@@ -11,7 +11,7 @@ package("genie")
         add_versions("1160.0", "0f5133b66d103efbcdf7c0d23f6cb6b353282e38")
     end
 
-    on_install("@windows" function (package)
+    on_install("@windows", function (package)
         os.cp("*", package:installdir("bin"))
     end)
 
