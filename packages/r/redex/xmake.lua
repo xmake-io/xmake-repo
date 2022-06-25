@@ -26,7 +26,7 @@ package("redex")
                     "include/redex/util",
                     "include/redex/service")
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows", "mingw", function (package)
         -- fix find boost issue, @see https://github.com/microsoft/vcpkg/issues/5936
         local configs = {"-DBoost_NO_BOOST_CMAKE=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
