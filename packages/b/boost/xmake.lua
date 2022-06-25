@@ -117,18 +117,18 @@ package("boost")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "bsd", "cross", function (package)
+    on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
 
         -- force boost to compile with the desired compiler
         local file = io.open("user-config.jam", "a")
         if file then
-            if is_plat("macosx") then
+            if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
                 file:print("using darwin : : %s ;", package:build_getenv("ld"))
-            elseif is_plat("windows") then
+            elseif package:is_plat("windows") then
                 file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
             else
-                file:print("using gcc : : %s ;", package:build_getenv("cxx"))
+                file:print("using gcc : : %s ;", package:build_getenv("cxx"):gsub("\\", "/"))
             end
             file:close()
         end
