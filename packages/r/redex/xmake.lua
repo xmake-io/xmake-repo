@@ -13,7 +13,7 @@ package("redex")
         thread = true,
         iostreams = true,
         program_options = true}})
-    add_deps("jsoncpp")
+    add_deps("jsoncpp", "zlib")
 
     add_includedirs("include/redex/libredex",
                     "include/redex/libresource",
