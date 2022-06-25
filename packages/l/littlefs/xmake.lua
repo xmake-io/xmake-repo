@@ -15,7 +15,7 @@ package("littlefs")
                add_files("*.c")
                add_headerfiles("*.h")
                if is_plat("windows") then
-                   add_defines("LFS_NO_ERROR")
+                   add_defines("LFS_NO_ERROR", "LFS_NO_DEBUG", "LFS_NO_WARN")
                end
         ]])
         if package:config("shared") then
