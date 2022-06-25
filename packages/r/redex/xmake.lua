@@ -29,7 +29,7 @@ package("redex")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_TYPE=" .. (package:config("shared") and "Shared" or "Static"))
         if not package:config("shared") then
-            local jsoncpp = package:deps("jsoncpp"):fetch()
+            local jsoncpp = package:dep("jsoncpp"):fetch()
             if jsoncpp and jsoncpp.libfiles then
                 table.insert(configs, "-DJSONCPP_LIBRARY_STATIC=" .. table.unwrap(libfiles):gsub("\\", "/"))
             end
