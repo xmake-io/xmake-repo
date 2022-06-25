@@ -128,7 +128,7 @@ package("boost")
             elseif package:is_plat("windows") then
                 file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
             else
-                file:print("using gcc : : %s ;", package:build_getenv("cxx"))
+                file:print("using gcc : : %s ;", package:build_getenv("cxx"):gsub("\\", "/"))
             end
             file:close()
         end
