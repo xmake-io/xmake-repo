@@ -32,5 +32,5 @@ package("redex")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("DexLoader", {includes = "DexLoader.h"}))
+        assert(package:has_cxxtypes("DexLoader", {includes = "DexLoader.h", configs = {languages = "c++17"}}))
     end)
