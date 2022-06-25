@@ -9,6 +9,10 @@ package("snmalloc")
 
     add_deps("cmake")
 
+    if is_plat("windows") then
+        add_syslinks("onecore")
+    end
+
     on_install("macosx", "windows", "linux", "bsd", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
