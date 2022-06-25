@@ -14,6 +14,9 @@ package("littlefs")
                set_kind("$(kind)")
                add_files("*.c")
                add_headerfiles("*.h")
+               if is_plat("windows") then
+                   add_defines("LFS_NO_ERROR")
+               end
         ]])
         if package:config("shared") then
             configs.kind = "shared"
