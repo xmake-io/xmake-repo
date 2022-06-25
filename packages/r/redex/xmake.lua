@@ -15,6 +15,14 @@ package("redex")
         program_options = true}})
     add_deps("jsoncpp")
 
+    add_includedirs("include/redex/libredex",
+                    "include/redex/libresource",
+                    "include/redex/shared",
+                    "include/redex/sparta",
+                    "include/redex/tools",
+                    "include/redex/util",
+                    "include/redex/service")
+
     on_install("linux", "macosx", "windows", function (package)
         -- fix find boost issue, @see https://github.com/microsoft/vcpkg/issues/5936
         local configs = {"-DBoost_NO_BOOST_CMAKE=ON"}
