@@ -31,7 +31,7 @@ package("redex")
         if not package:config("shared") then
             local jsoncpp = package:dep("jsoncpp"):fetch()
             if jsoncpp and jsoncpp.libfiles then
-                table.insert(configs, "-DJSONCPP_LIBRARY_STATIC=" .. table.unwrap(libfiles):gsub("\\", "/"))
+                table.insert(configs, "-DJSONCPP_LIBRARY_STATIC=" .. table.unwrap(jsoncpp.libfiles):gsub("\\", "/"))
             end
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = "jsoncpp"})
