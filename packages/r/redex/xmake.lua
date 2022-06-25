@@ -28,6 +28,12 @@ package("redex")
         local configs = {"-DBoost_NO_BOOST_CMAKE=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_TYPE=" .. (package:config("shared") and "Shared" or "Static"))
+        if not package:config("shared") then
+            local jsoncpp = package:deps("jsoncpp"):fetch()
+            if jsoncpp and jsoncpp.libfiles then
+                table.insert(configs, "-DJSONCPP_LIBRARY_STATIC=" .. table.unwrap(libfiles):gsub("\\", "/"))
+            end
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = "jsoncpp"})
     end)
 
