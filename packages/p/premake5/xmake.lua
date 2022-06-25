@@ -29,7 +29,7 @@ package("premake5")
                 import("package.tools.make").build(package, configs)
                 io.replace("build/bootstrap/Premake5.make", "INCLUDES +=", "INCLUDES += " .. extrainfo)
                 print(io.readfile("build/bootstrap/Premake5.make"))
-                import("package.tools.make").build(package, {"-C", "build/bootstrap", "-j`getconf _NPROCESSORS_ONLN`", "configs=release"})
+                import("package.tools.make").build(package, {"-C", "build/bootstrap", "configs=release"})
             else
                 import("package.tools.make").build(package, configs)
             end
