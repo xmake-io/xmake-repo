@@ -14,21 +14,19 @@ package("premake5")
         local configs = {"-f", "Bootstrap.mak", package:plat()}
         if package:is_plat("linux", "macosx") then
             if linuxos.name() == "fedora" then 
-                local flags = {}
+                local cflags = {}
+                local ldflags = {}
                 local depinfo = package:dep("libuuid"):fetch()
-                for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do 
-                    table.insert(flags, "-I" .. includedir)
+                for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do
+                    table.insert(cflags, "-I" .. includedir)
                 end
-                for _, linkdir in ipairs(depinfo.linkdirs) do 
-                    table.insert(flags, "-L" .. linkdir)
+                for _, linkdir in ipairs(depinfo.linkdirs) do
+                    table.insert(ldflags, "-L" .. linkdir)
                 end
-                local extrainfo = table.concat(flags, " ")
-                io.replace("Bootstrap.mak", "-luuid", extrainfo .. " -luuid")
+                io.replace("Bootstrap.mak", "-luuid", table.concat(table.join(cflags, ldflags), " ") .. " -luuid")
                 io.replace("Bootstrap.mak", "$(MAKE) -C build/bootstrap -j`getconf _NPROCESSORS_ONLN` config=$(CONFIG)", "", {plain = true})
                 import("package.tools.make").build(package, configs)
-                io.replace("build/bootstrap/Premake5.make", "INCLUDES +=", "INCLUDES += " .. extrainfo)
-                print(io.readfile("build/bootstrap/Premake5.make"))
-                import("package.tools.make").build(package, {"-C", "build/bootstrap", "configs=release"})
+                import("package.tools.make").build(package, {"-C", "build/bootstrap", "configs=release", "CPPFLAGS=" .. table.concat(cflags, " "), "LDFLAGS=" .. table.concat(ldflags, " ")})
             else
                 import("package.tools.make").build(package, configs)
             end
