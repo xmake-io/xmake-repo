@@ -6,6 +6,8 @@ package("redex")
     add_urls("https://github.com/facebook/redex.git")
     add_versions("2022.6.23", "802e428923e15b36993106685798e33d64f3e057")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     add_deps("cmake")
 
     add_includedirs("include/redex/libredex",
