@@ -12,7 +12,7 @@ package("genie")
     end
 
     on_install("@windows", function (package)
-        os.cp("*", package:installdir("bin"))
+        os.cp(package:originfile(), package:installdir("bin"))
     end)
 
     on_install("@macosx", "@linux", function (package)
