@@ -9,7 +9,7 @@ package("snmalloc")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("macosx", "windows", "linux", "bsd", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -19,5 +19,5 @@ package("snmalloc")
 
     on_test(function (package)
         assert(package:has_cxxfuncs("snmalloc::DefaultPal::message(\"\")",
-            {includes = "snmalloc/snmalloc.h", configs = {languages = "c++20"}}))
+            {includes = "snmalloc/snmalloc.h", configs = {languages = "c++20", cxflags = "-mcx16"}}))
     end)
