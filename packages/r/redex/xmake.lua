@@ -9,6 +9,7 @@ package("redex")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake")
+    add_deps("python 3.x", {kind = "binary"})
     add_deps("boost", {configs = {
         system = true,
         regex = true,
