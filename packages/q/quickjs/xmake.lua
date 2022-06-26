@@ -54,7 +54,8 @@ package("quickjs")
             raise("unsupported msvc version " .. msvc_version)
         end
         local kind = package:config("shared") and "SharedLib" or "StaticLib"
-        local arch = package:is_arch("x86") and "x86_64" or "x64"
+        local arch = package:is_arch("x64", "x86_64") and "x86_64" or "x86"
+        local staticruntime = package:config("vs_runtime"):startswith("MT") and "on" or "off"
         -- premake5.lua
         io.writefile("premake5.lua", ([[
             function GenerateCArray(srcFile, dstFile, arrayName, arraySizeName)
@@ -108,6 +109,7 @@ package("quickjs")
             
                 -- Configuration settings
                 configurations { "Debug", "Release" }
+                staticruntime "%s"
             
                 -- Debug configuration
                 filter { "configurations:Debug" }
@@ -160,7 +162,7 @@ package("quickjs")
                     "quickjs-opcode.h"
                 }
             
-        ]]):format(arch, kind))
+        ]]):format(arch, staticruntime, kind))
         -- premake generate sln 
         os.exec("premake5 " .. msvc_version)
         local configuration = package:debug() and "Debug" or "Release"
