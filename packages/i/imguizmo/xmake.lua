@@ -29,3 +29,13 @@ package("imguizmo")
             io.writefile("xmake.lua", xmake_lua)
             import("package.tools.xmake").install(package)
         end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                ImGuiIO& io = ImGui::GetIO();
+                ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = {"imgui.h", "ImGuizmo.h"}}))
+    end)
+
