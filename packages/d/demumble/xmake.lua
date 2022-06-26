@@ -9,7 +9,7 @@ package("demumble")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("@linux", "@macosx", "@windows", function (package)
         import("package.tools.cmake").install(package, {}, {buildir = "build"})
         os.cp("build/demumble", package:installdir("bin"))
     end)
