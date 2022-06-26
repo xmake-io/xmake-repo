@@ -11,7 +11,11 @@ package("demumble")
 
     on_install("@linux", "@macosx", "@windows", function (package)
         import("package.tools.cmake").install(package, {}, {buildir = "build"})
-        os.cp("build/demumble*", package:installdir("bin"))
+        if package:is_plat("windows") then
+            os.cp("build/Release/demumble.exe", package:installdir("bin"))
+        else
+            os.cp("build/demumble", package:installdir("bin"))
+        end
     end)
 
     on_test(function (package)
