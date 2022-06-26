@@ -54,7 +54,6 @@ package("quickjs")
             raise("unsupported msvc version " .. msvc_version)
         end
         local kind = package:config("shared") and "SharedLib" or "StaticLib"
-        local arch = package:is_arch("x64", "x86_64") and "x86_64" or "x86"
         local staticruntime = package:config("vs_runtime"):startswith("MT") and "on" or "off"
         -- premake5.lua
         io.writefile("premake5.lua", ([[
@@ -128,10 +127,6 @@ package("quickjs")
                     characterset ("MBCS")
                     buildoptions { "/std:c++latest" }
             
-                    if _ACTION == "vs2017" then
-                        systemversion("10.0.17763.0")
-                    end
-            
                 filter { }
                     targetdir "bin/%%{cfg.longname}/"
                     defines { "WIN32", "_AMD64_", "__x86_64__" }
@@ -162,7 +157,7 @@ package("quickjs")
                     "quickjs-opcode.h"
                 }
             
-        ]]):format(arch, staticruntime, kind))
+        ]]):format(os.arch(), staticruntime, kind))
         -- premake generate sln 
         os.exec("premake5 " .. msvc_version)
         local configuration = package:debug() and "Debug" or "Release"
