@@ -15,5 +15,5 @@ package("demumble")
     end)
 
     on_test(function (package)
-        os.vrun("demumble _Z4funcPci")
+        os.vrunv("demumble" .. (package:is_plat("windows") and ".exe" or ""), {"_Z4funcPci"})
     end)
