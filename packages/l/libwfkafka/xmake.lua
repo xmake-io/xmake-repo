@@ -7,6 +7,7 @@ package("libwfkafka")
              "https://github.com/sogou/workflow.git")
     add_versions("v0.9.11", "71b5531728d6b4f3666176dbc45d680350518af8")
     add_versions("v0.10.1", "315eb1b1b5411e807e5ecc45ba5aa7db1d4f7c28")
+    add_versions("v0.10.2", "42d87f4f9eaa80e882ccdd71cd81d20899050266")
 
     add_deps("cmake", "openssl", "workflow", "lz4", "zstd", "snappy", "zlib")
 
