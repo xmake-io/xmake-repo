@@ -20,6 +20,8 @@ package("bgfx")
         add_syslinks("GL", "pthread", "dl")
     end
 
+    add_deps("genie")
+
     on_load("windows", "macosx", "linux", function (package)
         local suffix = package:debug() and "Debug" or "Release"
         for _, lib in ipairs({"bgfx", "bimg", "bx"}) do
@@ -30,14 +32,7 @@ package("bgfx")
     on_install("windows", "macosx", "linux", function (package)
         local bxdir = package:resourcefile("bx")
         local bimgdir = package:resourcefile("bimg")
-        local genie = path.join(bxdir, "tools", "bin")
-        if is_host("windows") then
-            genie = path.join(genie, "windows", "genie.exe")
-        elseif is_host("macosx") then
-            genie = path.join(genie, "darwin", "genie")
-        elseif is_host("linux") then
-            genie = path.join(genie, "linux", "genie")
-        end
+        local genie = is_host("windows") and "genie.exe" or "genie"
 
         local args = {"--with-tools"}
         if package:config("shared") then
