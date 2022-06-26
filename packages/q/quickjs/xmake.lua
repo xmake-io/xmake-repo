@@ -11,7 +11,6 @@ package("quickjs")
     elseif is_plat("android") then
         add_syslinks("dl", "m")
     elseif is_plat("windows") then
-        -- add_syslinks("ws2_32")
         add_patches("2021.03.27", path.join(os.scriptdir(), "patches", "2021.03.27", "fix_msvc.patch"), "17377b926d4d9c95566c17cc1d02c388b3113f2a318dfe4f4e806b313cda07c5")
     end
     
