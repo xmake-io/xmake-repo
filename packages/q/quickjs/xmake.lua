@@ -168,7 +168,7 @@ package("quickjs")
         import("package.tools.msbuild").build(package, configs)
         os.mv("quickjs.h", package:installdir("include"))
         os.trymv("bin/" .. configuration .. "/*.lib", package:installdir("lib"))
-        os.trymv("bin/" .. configuration .. "/*.dll", package:installdir("lib"))
+        os.trymv("bin/" .. configuration .. "/*.dll", package:installdir("bin"))
         if not package:config("shared") then 
             os.tryrm(package:installdir("bin/*.dll"))
         end
