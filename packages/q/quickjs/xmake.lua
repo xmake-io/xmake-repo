@@ -5,7 +5,7 @@ package("quickjs")
 
     if is_plat("windows") then
         add_urls("https://github.com/xmake-mirror/quickjs.git")
-        add_versions("2021.03.27", "e330c2fd6e30a7f3d1bcb88e12273b76c0585025")
+        add_versions("2021.03.27", "c83f82dce8988334be6c6a7b9b029eb963e7e310")
     else
         add_urls("https://github.com/bellard/quickjs.git")
         add_versions("2021.03.27", "b5e62895c619d4ffc75c9d822c8d85f1ece77e5b")
