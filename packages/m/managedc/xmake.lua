@@ -10,13 +10,13 @@ package("managedc")
     end)
 
     on_test(function (package)
-         assert(package:check_csnippets({test = [[
+         assert(package:check_cxxsnippets({test = [[
             #include <stdio.h>
             void test() {
                 void* data = mc_alloc_managed(0, 0, 0);
                 printf("data: %p\n", data);
             }
-        ]]}, {configs = {languages = "c11"}, includes = "managed.h"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "managed.h"}))
     end)
 
 
