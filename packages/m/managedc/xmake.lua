@@ -13,7 +13,7 @@ package("managedc")
          assert(package:check_csnippets({test = [[
             #include <stdio.h>
             void test() {
-                void* data = mc_alloc_managed();
+                void* data = mc_alloc_managed(0, 0, 0);
                 printf("data: %p\n", data);
             }
         ]]}, {configs = {languages = "c11"}, includes = "managed.h"}))
