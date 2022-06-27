@@ -5,7 +5,7 @@ package("managedc")
     add_urls("https://github.com/Frityet/ManagedC.git")
     add_versions("1.5.0", "f4cce9c1aee952d603c18b73dc6219ea15b91717")
 
-    on_install(function (package)
+    on_install("linux", "macosx", function (package)
         os.cp("src/*.h", package:installdir("include"))
     end)
 
