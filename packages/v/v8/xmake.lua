@@ -9,6 +9,8 @@ package("v8")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
+    elseif is_plat("windows") then
+        add_syslinks("user32")
     end
 
     add_links("v8_monolith",
@@ -27,7 +29,7 @@ package("v8")
               "cppgc_base",
               "torque_ls_base")
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
 
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
@@ -73,6 +75,10 @@ package("v8")
             configs.cxx = package:build_getenv("cxx")
         else
             configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+        end
+        if package:is_plat("windows") then
+            os.vrunv("python3", {path.join("tools", "clang", "scripts", "update.py")})
+            os.vrunv("python3", {path.join("tools", "dev", "v8gen.py")})
         end
         if package:is_plat("macosx") then
             configs.extra_ldflags = {"-lstdc++"}
