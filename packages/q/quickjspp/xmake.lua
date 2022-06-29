@@ -4,13 +4,11 @@ package("quickjspp")
     set_description("QuickJS C++ wrapper")
 
     add_urls("https://github.com/ftk/quickjspp.git")
-    add_versions("master", "e2555831d4e86486cf307d49bda803ffca9f0f43")
+    add_versions("20220630", "e2555831d4e86486cf307d49bda803ffca9f0f43")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     
-    add_includedirs("include",
-                    "include/quickjs"
-                   )
+    add_includedirs("include", "include/quickjs")
     add_linkdirs("lib/quickjs")
     add_links("quickjs")
 
