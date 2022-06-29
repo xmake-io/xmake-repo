@@ -4,7 +4,7 @@ package("quickjspp")
     set_description("QuickJS C++ wrapper")
 
     add_urls("https://github.com/ftk/quickjspp.git")
-    add_versions("20220630", "e2555831d4e86486cf307d49bda803ffca9f0f43")
+    add_versions("2022.6.30", "e2555831d4e86486cf307d49bda803ffca9f0f43")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     
@@ -13,6 +13,10 @@ package("quickjspp")
     add_links("quickjs")
 
     add_deps("cmake")
+
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
 
     on_install("linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
