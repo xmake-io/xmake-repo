@@ -15,7 +15,7 @@ package("quickjspp")
     add_deps("cmake")
 
     if is_plat("linux") then
-        add_syslinks("pthread")
+        add_syslinks("pthread", "dl", "m")
     end
 
     on_install("linux", "macosx", function (package)
