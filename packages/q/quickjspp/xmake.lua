@@ -7,7 +7,7 @@ package("quickjspp")
     add_versions("2022.6.30", "e2555831d4e86486cf307d49bda803ffca9f0f43")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    
+
     add_includedirs("include", "include/quickjs")
     add_linkdirs("lib/quickjs")
     add_links("quickjs")
@@ -20,6 +20,8 @@ package("quickjspp")
 
     on_install("linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
+        -- TODO, disable lto, maybe we need do it better
+        io.replace("CMakeLists.txt", "set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)", "", {plain = true})
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_TYPE=" .. (package:config("shared") and "Shared" or "Static"))
         import("package.tools.cmake").install(package, configs, {})
@@ -48,6 +50,7 @@ package("quickjspp")
                 js_std_free_handlers(rt);
 
             }
-        ]]}, {configs = {languages = "c++17"}, includes = {"quickjspp.hpp","quickjs/quickjs-libc.h"}}))
+        ]]}, {configs = {languages = "c++17"},
+            includes = {"quickjspp.hpp","quickjs/quickjs-libc.h"}}))
     end)
-            
+
