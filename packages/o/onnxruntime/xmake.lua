@@ -3,7 +3,7 @@ package("onnxruntime")
     set_description("ONNX Runtime: cross-platform, high performance ML inferencing and training accelerator")
     set_license("MIT")
 
-    if is_host("windows") then
+    if is_plat("windows") then
         if is_arch("x64") then
             set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x64-$(version).zip")
             add_versions("1.11.1", "1f127b9d41f445a2d03356c86c125cb79dc3e66d391872c9babe6b444a51a93d")
@@ -11,7 +11,7 @@ package("onnxruntime")
             set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x86-$(version).zip")
             add_versions("1.11.1", "734ee4b76a17c466d5a5e628c27c38eccaf512e0228237cfc3d7a0a408986d1c")
         end
-    elseif is_host("linux") then
+    elseif is_plat("linux") then
         if is_arch("x86_64") then
             set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-linux-x64-$(version).tgz")
             add_versions("1.11.1", "ddc03b5ae325c675ff76a6f18786ce7d310be6eb6f320087f7a0e9228115f24d")
@@ -19,7 +19,7 @@ package("onnxruntime")
             set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-linux-aarch64-$(version).tgz")
             add_versions("1.17.6", "bb9ca658a6a0acc7b9e4288647277a9ce9d86b063a2403a51d5c0d2e4df43603")
         end
-    elseif is_host("macosx") then
+    elseif is_plat("macosx") then
         if is_arch("x86_64") then
             add_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-osx-x86_64-$(version).tgz")
             add_versions("1.11.1", "872e4413d73382db14e892112a0ee319746420f7f3a38121038a2845a97e7b5b")
