@@ -36,7 +36,7 @@ package("onnxruntime")
             package:add("deps", "cuda", {configs = {utils = {"cudart", "nvrtc"}}})
 
             local versions = package:get("versions")
-            if is_plat("windows") and is_arch("x64") then
+            if package:is_plat("windows") and package:is_arch("x64") then
                 versions["1.11.1"] = "a9a10e76fbb4351d4103a4d46dc37690075901ef3bb7304dfa138820c42c547b"
                 package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x64-gpu-$(version).zip")
             end
