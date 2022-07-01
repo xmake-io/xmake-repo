@@ -46,5 +46,5 @@ package("onnxruntime")
                 auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
                 auto tensor = Ort::Value::CreateTensor<float>(memory_info, data.data(), data.size(), shape.data(), shape.size());
             }
-        ]]}, {configs = {languages = "cxx17"}, includes = "onnxruntime_cxx_api.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "onnxruntime_cxx_api.h"}))
     end)
