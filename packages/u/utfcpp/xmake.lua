@@ -18,7 +18,7 @@ package("utfcpp")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
+        local test_snippet = [[
             #define UTF_CPP_CPLUSPLUS 201103L
             #include <utf8cpp/utf8.h>
             void test() {
@@ -26,5 +26,11 @@ package("utfcpp")
                 std::u16string u16line = utf8::utf8to16(line);
                 std::string u8line = utf8::utf16to8(u16line);
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]
+
+        if package:is_plat("windows") then 
+            assert(package:check_cxxsnippets({test = test_snippet}, {configs = {languages = "c++11", cxflags = "/utf-8"}}))
+        else
+            assert(package:check_cxxsnippets({test = test_snippet}, {configs = {languages = "c++11"}}))
+        end
     end)

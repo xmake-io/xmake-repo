@@ -12,7 +12,7 @@ package("benchmark")
     add_versions("1.5.6", "789f85b4810d13ff803834ea75999e41b326405d83d6a538baf01499eda96102")
     add_versions("1.6.0", "1f71c72ce08d2c1310011ea6436b31e39ccab8c2db94186d26657d41747c85d6")
     add_versions("1.6.1", "6132883bc8c9b0df5375b16ab520fac1a85dc9e4cf5be59480448ece74b278d4")
-    
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::benchmark")
     elseif is_plat("linux") then
@@ -28,6 +28,8 @@ package("benchmark")
     end
 
     add_deps("cmake")
+
+    add_links("benchmark_main", "benchmark")
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {"-DBENCHMARK_ENABLE_TESTING=OFF"}

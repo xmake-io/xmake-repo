@@ -71,7 +71,7 @@ function main(opt)
             instance._BASE = package.load_from_repository(basename, nil, basedir, basefile)
         end
         if instance then
-            for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw", "msys", "bsd", "cross"}) do
+            for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw", "msys", "bsd", "wasm", "cross"}) do
                 local archs = platform.archs(plat)
                 if archs then
                     local package_archs = {}
