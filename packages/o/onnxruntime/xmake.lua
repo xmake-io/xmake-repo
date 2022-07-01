@@ -9,7 +9,7 @@ package("onnxruntime")
             add_versions("1.11.1", "1f127b9d41f445a2d03356c86c125cb79dc3e66d391872c9babe6b444a51a93d")
         elseif is_arch("x86") then
             set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x86-$(version).zip")
-            add_versions("1.11.1", "82a72dd60c717e22a3424ccc89eae7933ffbf725ec86b8c82e1c1f88cef00950")
+            add_versions("1.11.1", "734ee4b76a17c466d5a5e628c27c38eccaf512e0228237cfc3d7a0a408986d1c")
         end
     elseif is_host("linux") then
         if is_arch("x86_64") then
