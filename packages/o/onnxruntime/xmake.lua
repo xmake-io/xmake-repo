@@ -3,6 +3,8 @@ package("onnxruntime")
     set_description("ONNX Runtime: cross-platform, high performance ML inferencing and training accelerator")
     set_license("MIT")
 
+    add_configs("gpu", {description = "Enable GPU supports on windows|x64", default = false, type = "boolean"})
+
     if is_plat("windows") then
         if is_arch("x64") then
             set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x64-$(version).zip")
@@ -17,7 +19,7 @@ package("onnxruntime")
             add_versions("1.11.1", "ddc03b5ae325c675ff76a6f18786ce7d310be6eb6f320087f7a0e9228115f24d")
         elseif is_arch("arm64") then
             set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-linux-aarch64-$(version).tgz")
-            add_versions("1.17.6", "bb9ca658a6a0acc7b9e4288647277a9ce9d86b063a2403a51d5c0d2e4df43603")
+            add_versions("1.11.1", "bb9ca658a6a0acc7b9e4288647277a9ce9d86b063a2403a51d5c0d2e4df43603")
         end
     elseif is_plat("macosx") then
         if is_arch("x86_64") then
@@ -28,6 +30,19 @@ package("onnxruntime")
             add_versions("1.11.1", "dc70af1424f173d57477ecf902d4bf4a2d3a110167089037e3866ac2bf3182e3")
         end
     end
+
+    on_load(function (package) 
+        if package:config("gpu") then
+            package:add("deps", "cuda", {configs = {utils = {"cudart", "nvrtc"}}})
+
+            local versions = package:get("versions")
+            if package:is_plat("windows") and package:is_arch("x64") then
+                versions["1.11.1"] = "a9a10e76fbb4351d4103a4d46dc37690075901ef3bb7304dfa138820c42c547b"
+                package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x64-gpu-$(version).zip")
+            end
+            package:set("versions", versions)
+        end
+    end)
 
     on_install("windows", "linux|arm64", "linux|x86_64", "macosx", function (package)
         os.cp("*", package:installdir())
