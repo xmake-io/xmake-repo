@@ -13,7 +13,7 @@ package("wolfssl")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DWOLFSSL_OPENSSLEXTRA=" .. (package:config("openssl_extra",false) and "yes" or "no"))
+        table.insert(configs, "-DWOLFSSL_OPENSSLEXTRA=" .. (package:config("openssl_extra") and "yes" or "no"))
         local ldflags
         if package:is_plat("android") then
             ldflags = "-llog"
