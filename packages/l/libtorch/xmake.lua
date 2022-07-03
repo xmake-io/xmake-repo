@@ -15,6 +15,7 @@ package("libtorch")
 
     add_patches("1.9.x", path.join(os.scriptdir(), "patches", "1.9.0", "gcc11.patch"), "4191bb3296f18f040c230d7c5364fb160871962d6278e4ae0f8bc481f27d8e4b")
     add_patches("1.11.0", path.join(os.scriptdir(), "patches", "1.11.0", "gcc11.patch"), "1404b0bc6ce7433ecdc59d3412e3d9ed507bb5fd2cd59134a254d7d4a8d73012")
+    add_patches("1.12.0", path.join(os.scriptdir(), "patches", "1.12.0", "clang13.patch"), "098c7ca187849f203f20a9dc864ae4cc027710dc327071c346bac983df6a5725")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
     add_configs("python", {description = "Build python interface.", default = false, type = "boolean"})
