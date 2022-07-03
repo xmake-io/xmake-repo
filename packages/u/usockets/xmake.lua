@@ -9,5 +9,10 @@ package("usockets")
              "https://github.com/uNetworking/uSockets.git")
     add_versions("v0.8.1", "3b33b5924a92577854e2326b3e2d393849ec00beb865a1271bf24c0f210cc1d6")
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
+        os.cp("src/*.h", package:installdir("include"))
+    end)
+
+    on_test(function (package)
+        assert(package:has_cxxtypes("us_socket_t", {configs = {languages = "c11"}, includes = "libusockets.h"}))
     end)
