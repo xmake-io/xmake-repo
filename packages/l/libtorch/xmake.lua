@@ -11,6 +11,7 @@ package("libtorch")
     add_versions("v1.9.0", "d69c22dd61a2f006dcfe1e3ea8468a3ecaf931aa")
     add_versions("v1.9.1", "dfbd030854359207cb3040b864614affeace11ce")
     add_versions("v1.11.0", "bc2c6edaf163b1a1330e37a6e34caf8c553e4755")
+    add_versions("v1.12.0", "67ece03c8cd632cce9523cd96efde6f2d1cc8121")
 
     add_patches("1.9.x", path.join(os.scriptdir(), "patches", "1.9.0", "gcc11.patch"), "4191bb3296f18f040c230d7c5364fb160871962d6278e4ae0f8bc481f27d8e4b")
     add_patches("1.11.0", path.join(os.scriptdir(), "patches", "1.11.0", "gcc11.patch"), "1404b0bc6ce7433ecdc59d3412e3d9ed507bb5fd2cd59134a254d7d4a8d73012")
