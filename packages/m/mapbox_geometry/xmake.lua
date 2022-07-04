@@ -9,8 +9,8 @@ package("mapbox_geometry")
              "https://github.com/mapbox/geometry.hpp.git")
     add_versions("1.1.0", "dc9203db94eda6b5377b96edeb4b53109cbf3d29e714d1d50c5cb598f2b39ab4")
     add_versions("2.0.3", "64d1005d4ee9931ac162b853cfb4a7c8a8bda9992ba83211386a6b40955bcc49")
-    add_patches("1.1.0", path.join(os.scriptdir(), "patches", "1.1.0", "pragma.patch"), "91b44cbcbc136e1e37248f5d419b42fc056bfe8e092a3c22ce3e1c387b331ef9")
-    add_patches("2.0.3", path.join(os.scriptdir(), "patches", "1.1.0", "pragma.patch"), "91b44cbcbc136e1e37248f5d419b42fc056bfe8e092a3c22ce3e1c387b331ef9")
+    add_patches("1.1.0", path.join(os.scriptdir(), "patches", "1.1.0", "pragma.patch"), "38667632b6e4a0560edc3be27f3a8cbdf5392c47fec23ba85fc950886e23a01b")
+    add_patches("2.0.3", path.join(os.scriptdir(), "patches", "1.1.0", "pragma.patch"), "38667632b6e4a0560edc3be27f3a8cbdf5392c47fec23ba85fc950886e23a01b")
 
     add_deps("mapbox_variant")
 
