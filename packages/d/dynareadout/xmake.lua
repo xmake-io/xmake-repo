@@ -18,8 +18,8 @@ package("dynareadout")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("binout_open", {includes = "binout.h"}))
+        assert(package:has_cfuncs("binout_open", {includes = "binout.h", configs = {languages = "ansi"}}))
         if package:config("cpp") then
-            assert(package:has_cxxtypes("dro::Binout", {includes = "binout.hpp"}))
+            assert(package:has_cxxtypes("dro::Binout", {includes = "binout.hpp", configs = {languages = "cxx17"}}))
         end
     end)
