@@ -11,10 +11,10 @@ package("cpr")
     add_versions("1.8.3", "0784d4c2dbb93a0d3009820b7858976424c56578ce23dcd89d06a1d0bf5fd8e2")
 
     add_deps("cmake", "libcurl")
-    if is_plat("mingw") then
+    if is_plat("mingw@windows") then
         add_syslinks("pthread")
     end
-    on_install("linux", "macosx", "windows", "mingw", function (package)
+    on_install("linux", "macosx", "windows", "mingw@windows", "mingw@macosx", function (package)
         local configs = {"-DCPR_BUILD_TESTS=OFF", "-DCPR_ENABLE_SSL=ON", "-DCPR_FORCE_USE_SYSTEM_CURL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
