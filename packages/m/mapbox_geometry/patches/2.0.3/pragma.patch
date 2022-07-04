@@ -1,3 +1,4 @@
+diff --git a/include/mapbox/geometry/point.hpp b/include/mapbox/geometry/point.hpp
 index da8d677..4d49ba5 100644
 --- a/include/mapbox/geometry/point.hpp
 +++ b/include/mapbox/geometry/point.hpp
