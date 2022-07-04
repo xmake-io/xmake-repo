@@ -1,5 +1,6 @@
 package("mapbox_earcut")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/mapbox/earcut.hpp")
     set_description("A C++ port of earcut.js, a fast, header-only polygon triangulation library.")
     set_license("ISC")
