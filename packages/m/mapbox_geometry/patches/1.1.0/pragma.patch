@@ -1,7 +1,7 @@
-diff --git "a/include/mapbox/geometry/point.hpp" "b/include/mapbox/geometry/point.hpp"
+diff --git a/include/mapbox/geometry/point.hpp b/include/mapbox/geometry/point.hpp
 index da8d677..4d49ba5 100644
---- "a/include/mapbox/geometry/point.hpp"
-+++ "b/include/mapbox/geometry/point.hpp"
+--- a/include/mapbox/geometry/point.hpp
++++ b/include/mapbox/geometry/point.hpp
 @@ -21,8 +21,10 @@ struct point
      T y;
  };
