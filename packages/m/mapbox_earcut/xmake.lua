@@ -7,7 +7,7 @@ package("mapbox_earcut")
     add_urls("https://github.com/mapbox/earcut.hpp/archive/refs/tags/v$(version).zip",
              "https://github.com/mapbox/earcut.hpp.git")
     add_versions("2.2.3", "010d2fe35938744960dcc0b25076eb541b07bb314a92afbcab14f7f887ceb98d")
-    add_patches("2.2.3", path.join(os.scriptdir(), "patches", "2.2.3", "mingw.patch"), "20a83bb8fdbc98f5ef034172d7b71120c59899bca0c81e9ccaee6d31ecf760d5")
+    add_patches("2.2.3", path.join(os.scriptdir(), "patches", "2.2.3", "mingw.patch"), "ac6ceb3d494d5a553936f6845c2df41d567614e33e389f47fe1520d6070a30e0")
 
     on_install(function (package)
         os.cp("include/mapbox", package:installdir("include"))
