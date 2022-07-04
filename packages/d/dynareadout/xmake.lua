@@ -13,7 +13,6 @@ package("dynareadout")
         local configs = {}
         configs.build_test = "n"
         configs.build_cpp = package:config("cpp") and "y" or "n"
-        configs.kind = package:config("shared") and "shared" or "static"
         import("package.tools.xmake").install(package, configs)
     end)
 
