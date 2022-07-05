@@ -26,21 +26,33 @@ function _find_package(package, opt)
         table.insert(result.links, "mkl_blas95")
         table.insert(result.links, "mkl_lapack95")
     end
+
+    local group = {}
     if rdir == "intel64" then
-        table.insert(result.links, "mkl_intel_" .. suffix)
+        table.insert(group, "mkl_intel_" .. suffix)
     elseif package:is_plat("windows") then
-        table.insert(result.links, "mkl_intel_c")
+        table.insert(group, "mkl_intel_c")
     else
-        table.insert(result.links, "mkl_intel")
+        table.insert(group, "mkl_intel")
     end
 
     local threading = package:config("threading")
     if threading == "tbb" then
-        table.join2(result.links, {"mkl_tbb_thread", "mkl_core"})
+        table.join2(group, {"mkl_tbb_thread", "mkl_core"})
     elseif threading == "seq" then
-        table.join2(result.links, {"mkl_sequential", "mkl_core"})
+        table.join2(group, {"mkl_sequential", "mkl_core"})
     elseif threading == "openmp" then
-        table.join2(result.links, {"mkl_intel_thread", "mkl_core"})
+        table.join2(group, {"mkl_intel_thread", "mkl_core"})
+    end
+
+    if package:has_tool("cc", "gcc", "gxx") then
+        result.ldflags = "-Wl,--start-group "
+        for _, lib in ipairs(group) do
+            result.ldflags = result.ldflags .. "-l" .. lib .. " "
+        end
+        result.ldflags = result.ldflags .. "-Wl,--end-group"
+    else
+        table.join2(result.links, group)
     end
 
     -- find include
