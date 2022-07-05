@@ -14,7 +14,7 @@ package("cpr")
     if is_plat("mingw") then
         add_syslinks("pthread")
     end
-    on_install("linux", "macosx", "windows", "mingw@windows", "mingw@macosx", function (package)
+    on_install("linux", "macosx", "windows", "mingw@windows", function (package)
         local configs = {"-DCPR_BUILD_TESTS=OFF", "-DCPR_ENABLE_SSL=ON", "-DCPR_FORCE_USE_SYSTEM_CURL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
