@@ -6,6 +6,7 @@ package("marl")
     add_urls("https://github.com/google/marl.git")
 
     add_versions("2021.8.18", "49602432d97222eec1e6c8e4f70723c3864c49c1")
+    add_versions("2022.3.02", "9929747c9ba6354691dbacaf14f9b35433871e5b")
 
     add_deps("cmake")
     if is_plat("linux", "bsd") then
