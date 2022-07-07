@@ -53,10 +53,15 @@ package("libcurl")
                             zstd     = "zstd",
                             brotli   = "brotli",
                             libssh2  = "libssh2"}
+        local has_deps = false
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
+                has_deps = true
             end
+        end
+        if has_deps and package:is_plat("linux", "macosx") then
+            package:add("deps", "pkg-config")
         end
     end)
 
