@@ -80,7 +80,7 @@ package("libcurl")
                             zlib     = "CURL_ZLIB",
                             zstd     = "CURL_ZSTD",
                             brotli   = "CURL_BROTLI",
-                            libssh2  = (version:ge("7.81") and "CURL_USE_LIBSSL2" or "CMAKE_USE_LIBSSL2")}
+                            libssh2  = (version:ge("7.81") and "CURL_USE_LIBSSH2" or "CMAKE_USE_LIBSSH2")}
         for name, opt in pairs(configopts) do
             table.insert(configs, "-D" .. opt .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
