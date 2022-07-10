@@ -8,6 +8,10 @@ package("wxwidgets")
 
     add_deps("cmake")
     add_deps("libjpeg", "libpng", "libtiff", "nanosvg", "expat", "zlib")
+    if is_plat("linux") then
+        add_deps("pkg-config")
+        add_deps("gtk+3")
+    end
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {"-DwxBUILD_TESTS=OFF",
@@ -36,7 +40,6 @@ package("wxwidgets")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "wx/wxprec.h"
             #include "wx/wx.h"
             #include "wx/app.h"
             #include "wx/cmdline.h"
