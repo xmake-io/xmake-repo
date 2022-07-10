@@ -7,7 +7,7 @@ package("wxwidgets")
     add_versions("v3.2.0", "43480e3887f32924246eb439520a3a2bc04d7947712de1ea0590c5b58dedadd9")
 
     add_deps("cmake")
-    add_deps("libjpeg", "libpng", "libtiff")
+    add_deps("libjpeg", "libpng", "libtiff", "nanosvg", "expat", "zlib")
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {"-DwxBUILD_TESTS=OFF",
