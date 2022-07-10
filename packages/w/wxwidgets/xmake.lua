@@ -42,6 +42,7 @@ package("wxwidgets")
         os.cp(path.join("lib", dlldir, "*.pdb"), package:installdir("lib"))
         os.cp(path.join("lib", dlldir, "*.dll"), package:installdir("bin"))
         os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
+        os.cp(path.join(package:resourcedir("headers"), "include", "msvc", "wx", "setup.h"), package:installdir("include/wx"))
     end)
 
     on_install("macosx", "linux", function (package)
@@ -61,6 +62,11 @@ package("wxwidgets")
         table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=" .. (package:debug() and "2" or "0"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        if package:is_plat("macosx") then
+            local version = package:version()
+            os.cp(path.join(package:installdir("include", "wx-" .. version:major() .. "." .. version:minor(), "wx", "osx", "setup.h")),
+                  path.join(package:installdir("include", "wx-" .. version:major() .. "." .. version:minor(), "wx")))
+        end
     end)
 
     on_test(function (package)
