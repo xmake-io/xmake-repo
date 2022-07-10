@@ -14,7 +14,14 @@ package("wxwidgets")
                          "-DwxBUILD_SAMPLES=OFF",
                          "-DwxBUILD_DEMOS=OFF",
                          "-DwxBUILD_PRECOMP=OFF",
-                         "-DwxBUILD_BENCHMARKS=OFF"}
+                         "-DwxBUILD_BENCHMARKS=OFF",
+                         "-DwxUSE_REGEX=sys",
+                         "-DwxUSE_ZLIB=sys",
+                         "-DwxUSE_EXPAT=sys",
+                         "-DwxUSE_LIBJPEG=sys",
+                         "-DwxUSE_LIBPNG=sys",
+                         "-DwxUSE_NANOSVG=sys",
+                         "-DwxUSE_LIBTIFF=sys"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=" .. (package:debug() and "2" or "0"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
