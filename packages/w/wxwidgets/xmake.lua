@@ -40,7 +40,7 @@ package("wxwidgets")
         if package:debug() then
             os.cp(path.join("lib", dlldir, "*.pdb"), package:installdir("lib"))
         end
-        os.cp(path.join(package:resourcefile("headers"), "include"), package:installdir())
+        os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
     end)
 
     on_install("macosx", "linux", function (package)
