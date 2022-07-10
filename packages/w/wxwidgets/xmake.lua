@@ -13,6 +13,9 @@ package("wxwidgets")
         add_resources("3.2.0", "headers",
             "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.0/wxWidgets-3.2.0-headers.7z",
             "bd847e20050c52d127f4afe9b00ffe29d87c2f907749bd6bc732c0db05bce4b1")
+
+        add_configs("shared",     {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
     else
         add_urls("https://github.com/wxWidgets/wxWidgets/archive/refs/tags/$(version).tar.gz",
                  "https://github.com/wxWidgets/wxWidgets.git")
@@ -36,10 +39,8 @@ package("wxwidgets")
     on_install("windows", function (package)
         local dlldir = package:is_plat("x64") and "vc14x_x64_dll" or "vc14x_dll"
         os.cp(path.join("lib", dlldir, "*.lib"), package:installdir("lib"))
+        os.cp(path.join("lib", dlldir, "*.pdb"), package:installdir("lib"))
         os.cp(path.join("lib", dlldir, "*.dll"), package:installdir("bin"))
-        if package:debug() then
-            os.cp(path.join("lib", dlldir, "*.pdb"), package:installdir("lib"))
-        end
         os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
     end)
 
@@ -59,12 +60,6 @@ package("wxwidgets")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=" .. (package:debug() and "2" or "0"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            local vs_runtime = package:config("vs_runtime")
-            if vs_runtime then
-                table.insert(configs, "-DwxBUILD_USE_STATIC_RUNTIME=" .. (vs_runtime:startswith("MT") and "ON" or "OFF"))
-            end
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 
