@@ -57,7 +57,7 @@ package("wxwidgets")
             end
             if package:config("shared") then
                 package:add("defines", "WXUSINGDLL")
-                package:add("deps", "libtiff", {shared = true})
+                package:add("deps", "libtiff", {configs = {shared = true}})
             else
                 package:add("deps", "libtiff")
             end
