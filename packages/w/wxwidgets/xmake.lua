@@ -61,6 +61,7 @@ package("wxwidgets")
         os.cp(path.join("lib", dlldir, "*.dll"), package:installdir("bin"))
         os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
         os.cp(path.join(package:resourcedir("headers"), "include", "msvc", "wx", "setup.h"), package:installdir("include/wx"))
+        io.replace(path.join(package:installdir("include"), "wx", "setup.h"), "../../../lib/", "../../lib/", {plain = true})
     end)
 
     on_install("macosx", "linux", function (package)
