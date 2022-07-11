@@ -29,6 +29,11 @@ package("wxwidgets")
         end
     end
 
+    if is_plat("macosx") then
+        add_defines("__WXOSX_COCOA__", "__WXMAC__", "__WXOSX__")
+        add_frameworks("AudioToolbox", "WebKit", "CoreFoundation", "Security", "Carbon", "Cocoa", "IOKit", "QuartzCore")
+    end
+
     on_load(function (package)
         if package:is_plat("macosx", "linux") then
             local version = package:version()
@@ -64,8 +69,9 @@ package("wxwidgets")
         import("package.tools.cmake").install(package, configs)
         if package:is_plat("macosx") then
             local version = package:version()
-            os.cp(path.join(package:installdir("include", "wx-" .. version:major() .. "." .. version:minor(), "wx", "osx", "setup.h")),
-                  path.join(package:installdir("include", "wx-" .. version:major() .. "." .. version:minor(), "wx")))
+            local subdir = "wx-" .. version:major() .. "." .. version:minor()
+            os.cp(path.join(package:installdir("include", subdir, "wx", "osx", "setup.h")),
+                  path.join(package:installdir("include", subdir, "wx")))
         end
     end)
 

@@ -25,8 +25,6 @@ package("libdeflate")
                     add_files("lib/x86/*.c")
                 elseif is_arch("arm.+") then
                     add_files("lib/arm/*.c")
-                else
-                    os.raise("unsupported architecture!")
                 end
                 add_includedirs(".")
                 add_headerfiles("libdeflate.h")
