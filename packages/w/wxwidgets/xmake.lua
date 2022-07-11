@@ -3,7 +3,7 @@ package("wxwidgets")
     set_description("Cross-Platform C++ GUI Library")
 
     if is_plat("windows") then
-        if is_plat("x64") then
+        if is_arch("x64") then
             add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxMSW-$(version)_vc14x_x64_Dev.7z")
             add_versions("3.2.0", "02b7227916b98324f73ae9bed0f1cf27ae3157b4e3a3ded40ee8c0d570f0fd10")
         else
@@ -55,10 +55,11 @@ package("wxwidgets")
     end)
 
     on_install("windows", function (package)
-        local dlldir = package:is_plat("x64") and "vc14x_x64_dll" or "vc14x_dll"
+        local dlldir = package:is_arch("x64") and "vc14x_x64_dll" or "vc14x_dll"
         os.cp(path.join("lib", dlldir, "*.lib"), package:installdir("lib"))
         os.cp(path.join("lib", dlldir, "*.pdb"), package:installdir("lib"))
         os.cp(path.join("lib", dlldir, "*.dll"), package:installdir("bin"))
+        os.cp(path.join("lib", dlldir, "mswud", "wx"), package:installdir("lib", dlldir, "mswud"))
         os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
         os.cp(path.join(package:resourcedir("headers"), "include", "msvc", "wx", "setup.h"), package:installdir("include/wx"))
         io.replace(path.join(package:installdir("include"), "wx", "setup.h"), "../../../lib/", "../../lib/", {plain = true})
