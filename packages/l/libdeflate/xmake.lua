@@ -31,6 +31,9 @@ package("libdeflate")
                 if is_plat("windows") and is_kind("shared") then
                     add_defines("LIBDEFLATE_DLL", "BUILDING_LIBDEFLATE")
                 end
+                if is_plat("linux", "macosx") and is_kind("static") then
+                    add_defines("LIBDEFLATEEXPORT=__attribute__((visibility(\"default\")))")
+                end
         ]])
         import("package.tools.xmake").install(package)
     end)

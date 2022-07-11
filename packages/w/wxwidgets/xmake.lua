@@ -45,14 +45,18 @@ package("wxwidgets")
         if package:is_plat("macosx", "linux") then
             local version = package:version()
             local suffix = version:major() .. "." .. version:minor()
+            local static = package:config("shared") and "" or "-static"
             if package:is_plat("macosx") then
-                package:add("includedirs", path.join("lib", "wx", "include", "osx_cocoa-unicode-static-" .. suffix))
+                package:add("includedirs", path.join("lib", "wx", "include", "osx_cocoa-unicode" .. static .. "-" .. suffix))
             elseif package:is_plat("linux") then
-                package:add("includedirs", path.join("lib", "wx", "include", "gtk3-unicode-static-" .. suffix))
+                package:add("includedirs", path.join("lib", "wx", "include", "gtk3-unicode" .. static .. "-" .. suffix))
             end
             package:add("includedirs", path.join("include", "wx-" .. suffix))
             if package:debug() then
                 package:add("defines", "wxDEBUG_LEVEL=2")
+            end
+            if package:config("shared") then
+                package:add("defines", "WXUSINGDLL")
             end
         end
     end)
