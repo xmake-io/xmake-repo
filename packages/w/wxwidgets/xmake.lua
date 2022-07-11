@@ -25,7 +25,7 @@ package("wxwidgets")
         add_deps("libjpeg", "libpng", "libtiff", "nanosvg", "expat", "zlib")
         if is_plat("linux") then
             add_deps("pkg-config")
-            add_deps("gtk+3")
+            add_deps("gtk+3", "opengl", {optional = true})
         end
     end
 
@@ -33,6 +33,9 @@ package("wxwidgets")
         add_defines("__WXOSX_COCOA__", "__WXMAC__", "__WXOSX__", "__WXMAC_XCODE__")
         add_frameworks("AudioToolbox", "WebKit", "CoreFoundation", "Security", "Carbon", "Cocoa", "IOKit", "QuartzCore")
         add_syslinks("iconv")
+    elseif is_plat("linux") then
+        add_defines("__WXGTK3__", "__WXGTK__")
+        add_syslinks("pthread", "m", "dl")
     elseif is_plat("windows") then
         add_defines("WXUSINGDLL", "__WXMSW__")
     end
@@ -43,6 +46,8 @@ package("wxwidgets")
             local suffix = version:major() .. "." .. version:minor()
             if package:is_plat("macosx") then
                 package:add("includedirs", path.join("lib", "wx", "include", "osx_cocoa-unicode-static-" .. suffix))
+            elseif package:is_plat("linux") then
+                package:add("includedirs", path.join("lib", "wx", "include", "gtk3-unicode-static-" .. suffix))
             end
             package:add("includedirs", path.join("include", "wx-" .. suffix))
         end
@@ -74,12 +79,11 @@ package("wxwidgets")
         table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=" .. (package:debug() and "2" or "0"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        if package:is_plat("macosx") then
-            local version = package:version()
-            local subdir = "wx-" .. version:major() .. "." .. version:minor()
-            os.cp(path.join(package:installdir("include", subdir, "wx", "osx", "setup.h")),
-                  path.join(package:installdir("include", subdir, "wx")))
-        end
+        local version = package:version()
+        local subdir = "wx-" .. version:major() .. "." .. version:minor()
+        local setupdir = package:is_plat("macosx") and "osx" or "gtk"
+        os.cp(path.join(package:installdir("include", subdir, "wx", setupdir, "setup.h")),
+              path.join(package:installdir("include", subdir, "wx")))
     end)
 
     on_test(function (package)
