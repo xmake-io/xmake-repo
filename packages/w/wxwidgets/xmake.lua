@@ -51,6 +51,9 @@ package("wxwidgets")
                 package:add("includedirs", path.join("lib", "wx", "include", "gtk3-unicode-static-" .. suffix))
             end
             package:add("includedirs", path.join("include", "wx-" .. suffix))
+            if package:debug() then
+                package:add("defines", "wxDEBUG_LEVEL=2")
+            end
         end
     end)
 
@@ -79,7 +82,9 @@ package("wxwidgets")
                          "-DwxUSE_NANOSVG=sys",
                          "-DwxUSE_LIBTIFF=sys"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=" .. (package:debug() and "2" or "0"))
+        if package:debug() then
+            table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=2")
+        end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
         local version = package:version()
