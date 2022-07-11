@@ -30,14 +30,19 @@ package("wxwidgets")
     end
 
     if is_plat("macosx") then
-        add_defines("__WXOSX_COCOA__", "__WXMAC__", "__WXOSX__")
+        add_defines("__WXOSX_COCOA__", "__WXMAC__", "__WXOSX__", "__WXMAC_XCODE__")
         add_frameworks("AudioToolbox", "WebKit", "CoreFoundation", "Security", "Carbon", "Cocoa", "IOKit", "QuartzCore")
+        add_syslinks("iconv")
     end
 
     on_load(function (package)
         if package:is_plat("macosx", "linux") then
             local version = package:version()
-            package:add("includedirs", "include/wx-" .. version:major() .. "." .. version:minor())
+            local suffix = version:major() .. "." .. version:minor()
+            if package:is_plat("macosx") then
+                package:add("includedirs", path.join("lib", "wx", "include", "osx_cocoa-unicode-static-" .. suffix))
+            end
+            package:add("includedirs", path.join("include", "wx-" .. suffix))
         end
     end)
 
@@ -87,5 +92,5 @@ package("wxwidgets")
                     fprintf(stderr, "Failed to initialize the wxWidgets library, aborting.");
                 }
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)
