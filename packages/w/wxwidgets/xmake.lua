@@ -25,6 +25,7 @@ package("wxwidgets")
         add_deps("libjpeg", "libpng", "libtiff", "nanosvg", "expat", "zlib")
         if is_plat("linux") then
             add_deps("pkg-config")
+            add_deps("libx11", "libxext", "libxtst")
             add_deps("gtk+3", "opengl", {optional = true})
         end
     end
@@ -37,7 +38,7 @@ package("wxwidgets")
         add_defines("__WXGTK3__", "__WXGTK__")
         add_syslinks("pthread", "m", "dl")
     elseif is_plat("windows") then
-        add_defines("WXUSINGDLL", "__WXMSW__")
+        add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=ud")
     end
 
     on_load(function (package)
