@@ -38,7 +38,7 @@ package("wxwidgets")
         add_defines("__WXGTK3__", "__WXGTK__")
         add_syslinks("pthread", "m", "dl")
     elseif is_plat("windows") then
-        add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=ud")
+        add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=ud", "wxMSVC_VERSION=14x")
     end
 
     on_load(function (package)
