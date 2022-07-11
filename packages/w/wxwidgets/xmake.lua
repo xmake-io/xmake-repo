@@ -33,6 +33,8 @@ package("wxwidgets")
         add_defines("__WXOSX_COCOA__", "__WXMAC__", "__WXOSX__", "__WXMAC_XCODE__")
         add_frameworks("AudioToolbox", "WebKit", "CoreFoundation", "Security", "Carbon", "Cocoa", "IOKit", "QuartzCore")
         add_syslinks("iconv")
+    elseif is_plat("windows") then
+        add_defines("WXUSINGDLL", "__WXMSW__")
     end
 
     on_load(function (package)
