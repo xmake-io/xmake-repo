@@ -19,7 +19,7 @@ package("fmt")
         add_extsources("pacman::fmt")
     else if is_plat("linux") then
         add_extsources("pacman::fmt", "apt::libfmt-dev)
-    ekse if is_plat("macosx") then
+    else if is_plat("macosx") then
         add_extsources("brew::fmt")
     end
 
