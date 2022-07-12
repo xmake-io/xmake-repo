@@ -14,9 +14,9 @@ package("nlohmann_json")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::nlohmann-json")
-    else if is_plat("linux") then
+    elseif is_plat("linux") then
         add_extsources("pacman::nlohmann-json", "apt::nlohmann-json3-dev")
-    else if is_plat("macosx") then
+    elseif is_plat("macosx") then
         add_extsources("brew::nlohmann-json")
     end
 
