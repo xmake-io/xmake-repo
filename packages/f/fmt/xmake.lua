@@ -17,9 +17,9 @@ package("fmt")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::fmt")
-    else if is_plat("linux") then
+    elseif is_plat("linux") then
         add_extsources("pacman::fmt", "apt::libfmt-dev")
-    else if is_plat("macosx") then
+    elseif is_plat("macosx") then
         add_extsources("brew::fmt")
     end
 
