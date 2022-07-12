@@ -14,12 +14,13 @@ package("fmt")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
-    if is_plat("macosx") then
-        add_extsources("brew::fmt")
-    end
-
-    if is_plat("linux") then
+    
+    if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::fmt")
+    else if is_plat("linux") then
+        add_extsources("pacman::fmt", "apt::libfmt-dev)
+    ekse if is_plat("macosx") then
+        add_extsources("brew::fmt")
     end
 
     on_load(function (package)
