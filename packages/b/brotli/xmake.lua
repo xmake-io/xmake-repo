@@ -19,6 +19,14 @@ package("brotli")
 
     add_links("brotlienc", "brotlidec", "brotlicommon")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::brotli")
+    elseif is_plat("linux") then
+        add_extsources("pacman::brotli", "apt::libbrotli-dev)
+    elseif is_plat("macosx") then
+        add_extsources("brew::brotli")
+    end
+
     on_load(function (package)
         package:addenv("PATH", "bin")
     end)
