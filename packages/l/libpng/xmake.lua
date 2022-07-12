@@ -17,6 +17,14 @@ package("libpng")
         add_syslinks("m")
     end
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libpng")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libpng", "apt::libpng-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libpng")
+    end
+
     on_install("windows", "mingw", "android", "iphoneos", "cross", "bsd", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
