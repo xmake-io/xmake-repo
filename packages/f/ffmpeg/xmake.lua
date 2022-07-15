@@ -45,6 +45,14 @@ package("ffmpeg")
         add_deps("yasm")
     end
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::ffmpeg")
+    elseif is_plat("linux") then
+        add_extsources("pacman::ffmpeg")
+    elseif is_plat("macosx") then
+        add_extsources("brew::ffmpeg")
+    end
+
     on_load("linux", "macos", "android", function (package)
         local configdeps = {zlib    = "zlib",
                             bzlib   = "bzip2",
