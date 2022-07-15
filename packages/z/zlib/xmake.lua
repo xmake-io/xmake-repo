@@ -9,7 +9,9 @@ package("zlib")
     add_versions("v1.2.11", "629380c90a77b964d896ed37163f5c3a34f6e6d897311f1df2a7016355c45eff")
     add_versions("v1.2.12", "d8688496ea40fb61787500e863cc63c9afcbc524468cedeb478068924eb54932")
 
-    if is_plat("linux") then
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::zlib")
+    elseif is_plat("linux") then
         add_extsources("pacman::zlib", "apt::zlib1g-dev")
     elseif is_plat("macosx") then
         add_extsources("brew::zlib")

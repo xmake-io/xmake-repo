@@ -21,7 +21,7 @@ function _find_package_on_windows(package, opt)
     if #result.links ~= 2 then
         return
     end
-    table.insert(result.includedirs, find_path("openssl/ssl.h", paths, {suffixes = "include"}))
+    table.insert(result.includedirs, find_path(path.translate("openssl/ssl.h"), paths, {suffixes = "include"}))
     return result
 end
 

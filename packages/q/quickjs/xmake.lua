@@ -3,15 +3,20 @@ package("quickjs")
     set_homepage("https://bellard.org/quickjs/")
     set_description("QuickJS is a small and embeddable Javascript engine")
 
-    add_urls("https://github.com/bellard/quickjs.git")
-    add_versions("2021.03.27", "b5e62895c619d4ffc75c9d822c8d85f1ece77e5b")
+    if is_plat("windows") then
+        add_urls("https://github.com/xmake-mirror/quickjs.git")
+        add_versions("2021.03.27", "c83f82dce8988334be6c6a7b9b029eb963e7e310")
+    else
+        add_urls("https://github.com/bellard/quickjs.git")
+        add_versions("2021.03.27", "b5e62895c619d4ffc75c9d822c8d85f1ece77e5b")
+    end
 
     if is_plat("linux", "macosx", "iphoneos", "cross") then
         add_syslinks("pthread", "dl", "m")
     elseif is_plat("android") then
         add_syslinks("dl", "m")
     end
-
+    
     on_install("linux", "macosx", "iphoneos", "android", "mingw", "cross", function (package)
         io.writefile("xmake.lua", ([[
             add_rules("mode.debug", "mode.release")
@@ -34,6 +39,14 @@ package("quickjs")
         end
         if package:is_plat("cross") then
             io.replace("quickjs.c", "#define CONFIG_PRINTF_RNDN", "")
+        end
+        import("package.tools.xmake").install(package, configs)
+    end)
+
+    on_install("windows", function (package)
+        local configs = {}
+        if package:config("shared") then
+            configs.kind = "shared"
         end
         import("package.tools.xmake").install(package, configs)
     end)

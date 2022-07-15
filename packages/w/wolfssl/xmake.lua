@@ -7,12 +7,15 @@ package("wolfssl")
              "https://github.com/wolfSSL/wolfssl.git")
     add_versions("v5.3.0-stable", "1a3bb310dc01d3e73d9ad91b6ea8249d081016f8eef4ae8f21d3421f91ef1de9")
 
+    add_configs("openssl_extra", {description = "WOLFSSL_OPENSSLEXTRA", default = false, type = "boolean"})
+
     add_deps("cmake")
 
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DWOLFSSL_OPENSSLEXTRA=" .. (package:config("openssl_extra") and "yes" or "no"))
         local ldflags
         if package:is_plat("android") then
             ldflags = "-llog"

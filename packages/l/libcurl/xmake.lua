@@ -53,10 +53,15 @@ package("libcurl")
                             zstd     = "zstd",
                             brotli   = "brotli",
                             libssh2  = "libssh2"}
+        local has_deps = false
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
+                has_deps = true
             end
+        end
+        if has_deps and package:is_plat("linux", "macosx") then
+            package:add("deps", "pkg-config")
         end
     end)
 
@@ -75,7 +80,7 @@ package("libcurl")
                             zlib     = "CURL_ZLIB",
                             zstd     = "CURL_ZSTD",
                             brotli   = "CURL_BROTLI",
-                            libssh2  = (version:ge("7.81") and "CURL_USE_LIBSSL2" or "CMAKE_USE_LIBSSL2")}
+                            libssh2  = (version:ge("7.81") and "CURL_USE_LIBSSH2" or "CMAKE_USE_LIBSSH2")}
         for name, opt in pairs(configopts) do
             table.insert(configs, "-D" .. opt .. "=" .. (package:config(name) and "ON" or "OFF"))
         end

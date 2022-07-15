@@ -1,0 +1,19 @@
+diff --git a/src/dpp/dns.cpp b/src/dpp/dns.cpp
+index a0f106db..3bdd8ce5 100644
+--- a/src/dpp/dns.cpp
++++ b/src/dpp/dns.cpp
+@@ -25,6 +25,7 @@
+ #include <mutex>
+ #include <shared_mutex>
+ #include <dpp/exception.h>
++#include <cstring>
+ 
+ namespace dpp
+ {
+@@ -97,4 +98,4 @@ namespace dpp
+                        return cache_entry;
+                }
+        }
+-};
+\ No newline at end of file
++};
