@@ -52,6 +52,31 @@ package("ffmpeg")
     elseif is_plat("macosx") then
         add_extsources("brew::ffmpeg")
     end
+    
+    if on_fetch then
+        on_fetch("linux", function (package, opt)
+            if opt.system then
+                local result
+                for _, name in ipairs({"libavcodec", "libavdevice", "libavfilter", "libavformat", "libavutil", "libpostproc", "libswresample", "libswscale"}) do
+                    local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
+                    if pkginfo then
+                        if not result then
+                            result = table.copy(pkginfo)
+                        else
+                            local includedirs = pkginfo.sysincludedirs or pkginfo.includedirs
+                            result.links = table.wrap(result.links)
+                            result.linkdirs = table.wrap(result.linkdirs)
+                            result.includedirs = table.wrap(result.includedirs)
+                            table.join2(result.includedirs, includedirs)
+                            table.join2(result.linkdirs, pkginfo.linkdirs)
+                            table.join2(result.links, pkginfo.links)
+                        end
+                    end
+                end
+                return result
+            end
+        end)
+    end
 
     on_load("linux", "macos", "android", function (package)
         local configdeps = {zlib    = "zlib",
