@@ -14,16 +14,12 @@ package("libfswatch")
         add_syslinks("pthread", "dl")
     end
 
-    on_install("linux", "bsd", "macosx", "windows", function (package)
+    on_install("linux", "bsd", "macosx"", function (package)
         local configs = {"-DUSE_NLS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "add_subdirectory(test/src)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(fswatch/src)", "", {plain = true})
-        if package:is_plat("windows") then
-            io.replace("libfswatch/CMakeLists.txt", "find_library(PTHREAD_LIBRARY pthread)", "", {plain = true})
-            io.replace("libfswatch/CMakeLists.txt", "set(EXTRA_LIBS ${EXTRA_LIBS} ${PTHREAD_LIBRARY})", "", {plain = true})
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 
