@@ -10,6 +10,8 @@ package("libfswatch")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreServices")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread", "dl")
     end
 
     on_install("linux", "bsd", "macosx", "windows", function (package)
