@@ -22,6 +22,7 @@ package("libfswatch")
         io.replace("CMakeLists.txt", "add_subdirectory(fswatch/src)", "", {plain = true})
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", "find_library(PTHREAD_LIBRARY pthread)", "", {plain = true})
+            io.replace("CMakeLists.txt", "set(EXTRA_LIBS ${EXTRA_LIBS} ${PTHREAD_LIBRARY})", "", {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
     end)
