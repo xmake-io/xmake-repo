@@ -7,6 +7,7 @@ package("gamenetworkingsockets")
     set_urls("https://github.com/ValveSoftware/GameNetworkingSockets/archive/$(version).tar.gz",
              "https://github.com/ValveSoftware/GameNetworkingSockets.git")
 
+    add_versions("v1.4.1", "1cfb2bf79c51a08ae4e8b7ff5e9c1266b43cfff6f53ecd3e7bc5e3fcb2a22503")
     add_versions("v1.4.0", "eca3b5684dbf81a3a6173741a38aa20d2d0a4d95be05cf88c70e0e50062c407b")
     add_versions("v1.3.0", "f473789ae8a8415dd1f5473793775e68a919d27eba18b9ba7d0a14f254afddf9")
     add_versions("v1.2.0", "768a7cec2491e34c824204c4858351af2866618ceb13a024336dc1df8076bef3")
