@@ -12,11 +12,6 @@ target("gns") -- we need limit path length
     add_packages("protobuf-cpp", "openssl")
     set_basename("gamenetworkingsockets")
 
-    add_defines()
-    add_files("src/common/crypto_openssl.cpp",
-              "src/common/crypto_25519_openssl.cpp",
-              "src/common/opensslwrapper.cpp")
-
     if is_plat("windows") then
         add_syslinks("ws2_32")
         add_defines("WIN32", "_WINDOWS")
@@ -36,6 +31,7 @@ target("gns") -- we need limit path length
                 "OPENSSL_HAS_25519_RAW",
                 "VALVE_CRYPTO_ENABLE_25519",
                 "GOOGLE_PROTOBUF_NO_RTTI",
+                "VALVE_CRYPTO_25519_OPENSSL",
                 "CRYPTO_DISABLE_ENCRYPT_WITH_PASSWORD",
                 "ENABLE_OPENSSLCONNECTION")
 
@@ -52,6 +48,11 @@ target("gns") -- we need limit path length
     add_headerfiles("include/(steam/*.h)")
     add_headerfiles("include/(minbase/*.h)")
     add_headerfiles("src/public/(*/*.h)")
+    
+        -- OpenSSL specific files
+    add_files(  "src/common/crypto_openssl.cpp",
+                "src/common/crypto_25519_openssl.cpp",
+                "src/common/opensslwrapper.cpp")
 
     add_files(  "src/common/steamnetworkingsockets_messages_certs.proto",
                 "src/common/steamnetworkingsockets_messages.proto",
