@@ -33,7 +33,8 @@ target("gns") -- we need limit path length
 
     add_defines("STEAMNETWORKINGSOCKETS_CRYPTO_25519_OPENSSL", 
                 "STEAMNETWORKINGSOCKETS_CRYPTO_VALVEOPENSSL", 
-                "OPENSSL_HAS_25519_RAW""VALVE_CRYPTO_ENABLE_25519",
+                "OPENSSL_HAS_25519_RAW",
+                "VALVE_CRYPTO_ENABLE_25519",
                 "GOOGLE_PROTOBUF_NO_RTTI",
                 "CRYPTO_DISABLE_ENCRYPT_WITH_PASSWORD",
                 "ENABLE_OPENSSLCONNECTION")
