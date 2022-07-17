@@ -22,11 +22,7 @@ package("gamenetworkingsockets")
     on_load("windows", "linux", function(package)
         if not package:config("shared") then
             package:add("defines", "STEAMNETWORKINGSOCKETS_STATIC_LINK")
-            if is_plat("windows") then
-                package:add("deps", "libsodium", "protobuf-cpp")
-            else
-                package:add("deps", "openssl", "protobuf-cpp")
-            end
+            package:add("deps", "openssl", "protobuf-cpp")
         end
     end)
 
