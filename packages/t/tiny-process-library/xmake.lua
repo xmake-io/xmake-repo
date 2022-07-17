@@ -17,5 +17,5 @@ package("tiny-process-library")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("TinyProcessLib::Process", {includes = "process.hpp"}))
+        assert(package:has_cxxtypes("TinyProcessLib::Process", {configs = {languages = "c++11"}, includes = "process.hpp"}))
     end)
