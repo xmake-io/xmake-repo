@@ -3,34 +3,26 @@ set_languages("gnu11")
 
 add_rules("mode.debug", "mode.release")
 
-add_requires("protobuf-cpp")
-if is_plat("windows") then
-    add_requires("libsodium")
-else
-    add_requires("openssl")
-end
+add_requires("protobuf-cpp", "openssl")
 
 target("gns") -- we need limit path length
     set_kind("$(kind)")
 
     add_vectorexts("sse2")
-    add_packages("protobuf-cpp")
+    add_packages("protobuf-cpp", "openssl")
     set_basename("gamenetworkingsockets")
 
+    add_defines()
+    add_files("src/common/crypto_openssl.cpp",
+              "src/common/crypto_25519_openssl.cpp",
+              "src/common/opensslwrapper.cpp")
+
     if is_plat("windows") then
-        add_packages("libsodium")
         add_syslinks("ws2_32")
-        add_defines("WIN32", "_WINDOWS", "STEAMNETWORKINGSOCKETS_CRYPTO_LIBSODIUM", "STEAMNETWORKINGSOCKETS_CRYPTO_25519_LIBSODIUM")
-        add_files(  "src/common/crypto_libsodium.cpp",
-                    "src/common/crypto_25519_libsodium.cpp")
+        add_defines("WIN32", "_WINDOWS")
     else
-        add_packages("openssl")
         add_syslinks("pthread")
-        add_defines("STEAMNETWORKINGSOCKETS_CRYPTO_25519_OPENSSL", "STEAMNETWORKINGSOCKETS_CRYPTO_VALVEOPENSSL", "OPENSSL_HAS_25519_RAW")
         add_defines("POSIX", "LINUX", "GNUC", "GNU_COMPILER")
-        add_files(  "src/common/crypto_openssl.cpp",
-                    "src/common/crypto_25519_openssl.cpp",
-                    "src/common/opensslwrapper.cpp")
     end
 
     if is_kind("shared") then
@@ -39,7 +31,9 @@ target("gns") -- we need limit path length
         add_defines("STEAMNETWORKINGSOCKETS_STATIC_LINK")
     end
 
-    add_defines("VALVE_CRYPTO_ENABLE_25519",
+    add_defines("STEAMNETWORKINGSOCKETS_CRYPTO_25519_OPENSSL", 
+                "STEAMNETWORKINGSOCKETS_CRYPTO_VALVEOPENSSL", 
+                "OPENSSL_HAS_25519_RAW""VALVE_CRYPTO_ENABLE_25519",
                 "GOOGLE_PROTOBUF_NO_RTTI",
                 "CRYPTO_DISABLE_ENCRYPT_WITH_PASSWORD",
                 "ENABLE_OPENSSLCONNECTION")
