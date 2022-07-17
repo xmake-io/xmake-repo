@@ -28,7 +28,7 @@ target("gns") -- we need limit path length
     if is_kind("shared") then
         add_defines("STEAMNETWORKINGSOCKETS_FOREXPORT")
     else
-        add_defines("STEAMNETWORKINGSOCKETS_STATIC_LINK")
+        add_defines("STEAMNETWORKINGSOCKETS_STATIC_LINK", "OPENSSL_USE_STATIC_LIBS")
     end
 
     add_defines("STEAMNETWORKINGSOCKETS_CRYPTO_25519_OPENSSL", 
