@@ -54,7 +54,7 @@ package("ffmpeg")
     end
     
     if on_fetch then
-        on_fetch("mingw", "linux", function (package, opt)
+        on_fetch("linux", function (package, opt)
             if opt.system then
                 local result
                 for _, name in ipairs({"libavcodec", "libavdevice", "libavfilter", "libavformat", "libavutil", "libpostproc", "libswresample", "libswscale"}) do
