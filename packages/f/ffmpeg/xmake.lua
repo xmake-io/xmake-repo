@@ -54,7 +54,7 @@ package("ffmpeg")
     end
     
     if on_fetch then
-        on_fetch("linux", function (package, opt)
+        on_fetch("mingw", "linux", function (package, opt)
             if opt.system then
                 local result
                 for _, name in ipairs({"libavcodec", "libavdevice", "libavfilter", "libavformat", "libavutil", "libpostproc", "libswresample", "libswscale"}) do
@@ -73,6 +73,17 @@ package("ffmpeg")
                         end
                     end
                 end
+                result.includedirs = table.unique(result.includedirs)
+                result.linkdirs = table.unique(result.linkdirs)
+                import("lib.detect.find_programver")
+                
+                local version = find_programver("ffmpeg", {command = "-version"})
+                if(version == nil) then
+                    return
+                end
+                    
+                result.version = version
+                
                 return result
             end
         end)
