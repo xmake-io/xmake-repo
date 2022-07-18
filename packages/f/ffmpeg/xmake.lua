@@ -75,15 +75,13 @@ package("ffmpeg")
                 end
                 result.includedirs = table.unique(result.includedirs)
                 result.linkdirs = table.unique(result.linkdirs)
-                import("lib.detect.find_programver")
                 
+                import("lib.detect.find_programver")
                 local version = find_programver("ffmpeg", {command = "-version"})
                 if(version == nil) then
                     return
                 end
-                    
                 result.version = version:gsub("(.*)%-.*$","%1") --remove -0ubuntu0.22.04.1 on ubuntu
-                
                 return result
             end
         end)
