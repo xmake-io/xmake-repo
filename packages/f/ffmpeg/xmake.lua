@@ -82,7 +82,7 @@ package("ffmpeg")
                     return
                 end
                     
-                result.version = version
+                result.version = version:gsub("(.*)%-.*$","%1") --remove -0ubuntu0.22.04.1 on ubuntu
                 
                 return result
             end
