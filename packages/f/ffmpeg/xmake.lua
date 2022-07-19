@@ -45,6 +45,33 @@ package("ffmpeg")
         add_deps("yasm")
     end
 
+    if on_fetch then
+        on_fetch("mingw", "linux", "macosx", function (package, opt)
+            import("lib.detect.find_tool")
+            if opt.system then
+                local result
+                for _, name in ipairs({"libavcodec", "libavdevice", "libavfilter", "libavformat", "libavutil", "libpostproc", "libswresample", "libswscale"}) do
+                    local pkginfo = package:find_package("pkgconfig::" .. name, opt)
+                    if pkginfo then
+                        pkginfo.version = nil
+                        if not result then
+                            result = pkginfo
+                        else
+                            result = result .. pkginfo
+                        end
+                    else
+                        return
+                    end
+                end
+                local ffmpeg = find_tool("ffmpeg", {check = "-help", version = true, command = "-version", parse = "%d+%.?%d+%.?%d+", force = true})
+                if ffmpeg then
+                    result.version = ffmpeg.version
+                end
+                return result
+            end
+        end)
+    end
+
     on_load("linux", "macos", "android", function (package)
         local configdeps = {zlib    = "zlib",
                             bzlib   = "bzip2",
