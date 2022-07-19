@@ -60,7 +60,7 @@ package("ffmpeg")
                             result = result .. pkginfo
                         end
                     else
-                        return nil
+                        return
                     end
                 end
                 local ffmpeg = find_tool("ffmpeg", {check = "-help", version = true, command = "-version", parse = "%d+%.?%d+%.?%d+", force = true})
