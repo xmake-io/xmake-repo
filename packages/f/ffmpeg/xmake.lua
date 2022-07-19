@@ -45,43 +45,28 @@ package("ffmpeg")
         add_deps("yasm")
     end
 
-    if is_plat("mingw") and is_subhost("msys") then
-        add_extsources("pacman::ffmpeg")
-    elseif is_plat("linux") then
-        add_extsources("pacman::ffmpeg")
-    elseif is_plat("macosx") then
-        add_extsources("brew::ffmpeg")
-    end
-    
     if on_fetch then
-        on_fetch("linux", function (package, opt)
+        on_fetch("mingw", "linux", "macosx", function (package, opt)
+            import("lib.detect.find_tool")
             if opt.system then
                 local result
                 for _, name in ipairs({"libavcodec", "libavdevice", "libavfilter", "libavformat", "libavutil", "libpostproc", "libswresample", "libswscale"}) do
-                    local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
+                    local pkginfo = package:find_package("pkgconfig::" .. name, opt)
                     if pkginfo then
+                        pkginfo.version = nil
                         if not result then
-                            result = table.copy(pkginfo)
+                            result = pkginfo
                         else
-                            local includedirs = pkginfo.sysincludedirs or pkginfo.includedirs
-                            result.links = table.wrap(result.links)
-                            result.linkdirs = table.wrap(result.linkdirs)
-                            result.includedirs = table.wrap(result.includedirs)
-                            table.join2(result.includedirs, includedirs)
-                            table.join2(result.linkdirs, pkginfo.linkdirs)
-                            table.join2(result.links, pkginfo.links)
+                            result = result .. pkginfo
                         end
+                    else
+                        return {}
                     end
                 end
-                result.includedirs = table.unique(result.includedirs)
-                result.linkdirs = table.unique(result.linkdirs)
-                
-                import("lib.detect.find_programver")
-                local version = find_programver("ffmpeg", {command = "-version"})
-                if(version == nil) then
-                    return
+                local ffmpeg = find_tool("ffmpeg", {check = "-help", version = true, command = "-version", parse = "%d+%.?%d+%.?%d+", force = true})
+                if ffmpeg then
+                    result.version = ffmpeg.version
                 end
-                result.version = version:gsub("(.*)%-.*$","%1") --remove -0ubuntu0.22.04.1 on ubuntu
                 return result
             end
         end)
