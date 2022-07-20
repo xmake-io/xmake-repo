@@ -11,6 +11,7 @@ package("imath")
     add_versions("v3.1.2", "f21350efdcc763e23bffd4ded9bbf822e630c15ece6b0697e2fcb42737c08c2d")
     add_versions("v3.1.3", "0bf7ec51162c4d17a4c5b850fb3f6f7a195cff9fa71f4da7735f74d7b5124320")
     add_versions("v3.1.4", "fcca5fbb37d375a252bacd8a29935569bdc28b888f01ef1d9299ca0c9e87c17a")
+    add_versions("v3.1.5", "1e9c7c94797cf7b7e61908aed1f80a331088cc7d8873318f70376e4aed5f25fb")
 
     on_load(function (package)
         if not package.is_built or package:is_built() then

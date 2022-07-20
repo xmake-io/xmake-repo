@@ -2,9 +2,10 @@ package("blosc")
 
     set_homepage("https://www.blosc.org/")
     set_description("A blocking, shuffling and loss-less compression library")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/Blosc/c-blosc/archive/v$(version).tar.gz",
-             "https://github.com/Blosc/c-blosc")
+             "https://github.com/Blosc/c-blosc.git")
     add_versions("1.21.1", "f387149eab24efa01c308e4cba0f59f64ccae57292ec9c794002232f7903b55b")
     add_versions("1.20.1", "42c4d3fcce52af9f8e2078f8f57681bfc711706a3330cb72b9b39e05ae18a413")
     add_versions("1.5.0", "208ba4db0e5116421ed2fbbdf2adfa3e1d133d29a6324a0f47cf2d71f3810c92")

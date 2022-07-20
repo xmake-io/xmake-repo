@@ -12,6 +12,7 @@ package("openexr")
     add_versions("3.1.1", "045254e201c0f87d1d1a4b2b5815c4ae54845af2e6ec0ab88e979b5fdb30a86e")
     add_versions("3.1.3", "6f70a624d1321319d8269a911c4032f24950cde52e76f46e9ecbebfcb762f28c")
     add_versions("3.1.4", "cb019c3c69ada47fe340f7fa6c8b863ca0515804dc60bdb25c942c1da886930b")
+    add_versions("3.1.5", "93925805c1fc4f8162b35f0ae109c4a75344e6decae5a240afdfce25f8a433ec")
 
     add_deps("cmake")
     add_deps("zlib")
@@ -61,7 +62,6 @@ package("openexr")
             end
             table.insert(configs, "-DPYILMBASE_ENABLE=OFF")
         end
-        table.insert(configs, "-DCMAKE_INSTALL_LIBDIR=lib")
         import("package.tools.cmake").install(package, configs)
     end)
 
