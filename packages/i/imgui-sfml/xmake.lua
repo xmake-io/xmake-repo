@@ -21,12 +21,13 @@ package("imgui-sfml")
     end)
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
+        import("lib.detect.find_path")
         local configs = {"-DIMGUI_SFML_FIND_SFML=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local imgui_sourcedir = package:dep("imgui"):cachedir()
         if imgui_sourcedir then
-            local imguidir = import("lib.detect.find_path")("imgui.h", path.join(imgui_sourcedir, "source", "*"))
+            local imguidir = find_path("imgui.h", path.join(imgui_sourcedir, "*")) or find_path("imgui.h", path.join(imgui_sourcedir, "source", "*"))
             if imguidir then
                 table.insert(configs, "-DIMGUI_DIR=" .. imguidir)
             end
