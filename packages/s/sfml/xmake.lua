@@ -25,6 +25,10 @@ package("sfml")
         end
     end
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     add_configs("graphics",   {description = "Use the graphics module", default = true, type = "boolean"})
     add_configs("window",     {description = "Use the window module", default = true, type = "boolean"})
     add_configs("audio",      {description = "Use the audio module", default = true, type = "boolean"})
