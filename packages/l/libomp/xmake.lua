@@ -16,11 +16,7 @@ package("libomp")
         end
     end)
 
-    on_load("macosx", "linux", "cross", function (package)
-        if package:is_built() then
-            package:add("deps", "cmake")
-        end
-    end)
+    add_deps("cmake")
 
     add_links("omp")
     if is_plat("macosx") then
