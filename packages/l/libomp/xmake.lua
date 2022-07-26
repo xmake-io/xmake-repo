@@ -10,6 +10,12 @@ package("libomp")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
 
+    on_fetch("macosx", "linux", function (package, opt)
+        if opt.system then
+            return package:find_package("system::omp", {includes = "omp.h"})
+        end
+    end)
+
     add_deps("cmake")
 
     add_links("omp")
