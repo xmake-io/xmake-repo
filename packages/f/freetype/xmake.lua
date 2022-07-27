@@ -48,7 +48,7 @@ package("freetype")
         add_dep("woff2", "brotli")
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", function (package)
+    on_install(function (package)
         local configs = {"-DCMAKE_INSTALL_LIBDIR=lib"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
