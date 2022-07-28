@@ -28,7 +28,7 @@ package("pcl")
 
     on_install("windows", "linux", "macosx", function (package)
         io.replace("CMakeLists.txt", "set(CMAKE_CXX_FLAGS_DEFAULT \"/DWIN32 /D_WINDOWS /W3 /GR /EHsc\")", "set(CMAKE_CXX_FLAGS_DEFAULT \" /DWIN32 /D_WINDOWS /W3 /GR /EHsc\")\nstring(APPEND CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS_DEFAULT})", {plain = true})
-        io.replace("CMakeLists.txt", "find_package%(FLANN 1.- REQUIRED%)", "find_package(flann CONFIG REQUIRED)")
+        io.replace("cmake/Modules/FindFLANN.cmake", "flann_cpp", "flann")
         if package:version():le("1.12.0") then
             io.replace("cmake/pcl_options.cmake", "set(CMAKE_FIND_LIBRARY_SUFFIXES", "#set(CMAKE_FIND_LIBRARY_SUFFIXES", {plain = true})
         end
