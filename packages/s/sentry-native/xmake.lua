@@ -30,11 +30,12 @@ package("sentry-native")
         if not package:config("shared") then
             package:add("defines", "SENTRY_BUILD_STATIC")
         end
-        
+
         if package:config("backend") == "crashpad" then
             package:add("links", "sentry", "crashpad_client", "crashpad_util", "crashpad_minidump", "crashpad_handler_lib", "mini_chromium", "crashpad_tools", "crashpad_compat", "crashpad_snapshot")
+            package:add("deps", "zlib")
         elseif package:config("backend") == "breakpad" then
-            package:add("links", "sentry", "breakpad_client")       
+            package:add("links", "sentry", "breakpad_client")
         elseif package:is_plat("linux") then -- linux defaults to breakpad
             package:add("links", "sentry", "breakpad_client")
         end
