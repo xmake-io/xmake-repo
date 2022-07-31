@@ -7,7 +7,9 @@ package("openssl")
         return version:gsub("%.", "_")
     end, excludes = "*/fuzz/*"})
     add_versions("1.1.1q", "df86e6adcff1c91a85cef139dd061ea40b7e49005e8be16522cf4864bfcf5eb8")
+    add_patches("1.1.1q", "1.1.1pq.diff", "774243bfbf184f802276209322b60d8483c7c70528fbdec788e584a0b0adde23")
     add_versions("1.1.1p", "7fe975ffe91d8343ebd021059eeea3c6b1d236c3826b3a08ef59fcbe75069f5b")
+    add_patches("1.1.1p", "1.1.1pq.diff", "774243bfbf184f802276209322b60d8483c7c70528fbdec788e584a0b0adde23")
     add_versions("1.1.1o", "1cd761790cf576e7f45c17798c47064f0f6756d4fcdbc1e657b0a4d9c60f3a52")
     add_versions("1.1.1n", "614d69141fd622bc3db2adf7c824eaa19c7e532937b2cd7144b850d692f9f150")
     add_versions("1.1.1m", "dab2287910427d82674618d512ba2571401539ca6ed12ab3c3143a0db9fad542")
@@ -44,10 +46,6 @@ package("openssl")
         if package:is_plat("linux") then
             package:add("extsources", "apt::libssl-dev")
         end
-	if is_plat("macosx") then
-	    add_patches("1.1.1p", "1.1.1pq.diff", "774243bfbf184f802276209322b60d8483c7c70528fbdec788e584a0b0adde23")
-	    add_patches("1.1.1q", "1.1.1pq.diff", "774243bfbf184f802276209322b60d8483c7c70528fbdec788e584a0b0adde23")
-	end
     end)
 
     on_install("windows", function (package)
