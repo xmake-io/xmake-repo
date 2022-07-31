@@ -5,7 +5,9 @@ package("catch2")
     set_description("Catch2 is a multi-paradigm test framework for C++. which also supports Objective-C (and maybe C). ")
     set_license("BSL-1.0")
 
-    add_urls("https://github.com/catchorg/Catch2/archive/refs/tags/v$(version).zip")
+    add_urls("https://github.com/catchorg/Catch2/archive/refs/tags/v$(version).zip",
+             "https://github.com/catchorg/Catch2.git")
+    add_versions("3.1.0", "7219c2ca75a6b2a157b1b162e4ad819fb32585995cac32542a4f72d950dd96f7")
     add_versions("2.13.9", "860e3917f07d7ee75654f86900d50a03acf0047f6fe5ba31d437e1e9cda5b456")
     add_versions("2.13.8", "de0fd1f4c51a1021ffcb33a4d42028545bf1a0665a4ab59ddb839a0cc93f03a5")
     add_versions("2.13.7", "3f3ccd90ad3a8fbb1beeb15e6db440ccdcbebe378dfd125d07a1f9a587a927e9")
@@ -21,8 +23,21 @@ package("catch2")
         add_extsources("brew::catch2")
     end
 
+    on_load(function (package)
+        if package:version():ge("3.0") then
+            package:add("deps", "cmake")
+        end
+    end)
+
     on_install(function (package)
-        os.cp("single_include/catch2", package:installdir("include"))
+        if package:version():ge("3.0") then
+            local configs = {"-DCATCH_INSTALL_DOCS=OFF", "-DCATCH_BUILD_TESTING=OFF", "-DCATCH_BUILD_EXAMPLES=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
+        else
+            os.cp("single_include/catch2", package:installdir("include"))
+        end
     end)
 
     on_test(function (package)
@@ -35,5 +50,5 @@ package("catch2")
                 CHECK(factorial(3) == 6);
                 CHECK(factorial(10) == 3628800);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "catch2/catch.hpp", defines = "CATCH_CONFIG_MAIN "}))
+        ]]}, {configs = {languages = "c++14"}, includes = "catch2/catch.hpp", defines = "CATCH_CONFIG_MAIN"}))
     end)
