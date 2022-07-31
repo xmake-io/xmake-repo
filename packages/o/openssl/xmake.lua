@@ -18,6 +18,8 @@ package("openssl")
     add_versions("1.0.2u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
     add_versions("1.0.0",  "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
+    
+
     on_fetch("fetch")
 
     on_load(function (package)
@@ -42,6 +44,10 @@ package("openssl")
         if package:is_plat("linux") then
             package:add("extsources", "apt::libssl-dev")
         end
+	if is_plat("macosx") then
+	    add_patches("1.1.1p", "1.1.1pq.diff", "774243bfbf184f802276209322b60d8483c7c70528fbdec788e584a0b0adde23")
+	    add_patches("1.1.1q", "1.1.1pq.diff", "774243bfbf184f802276209322b60d8483c7c70528fbdec788e584a0b0adde23")
+	end
     end)
 
     on_install("windows", function (package)
