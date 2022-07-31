@@ -6,6 +6,10 @@ package("openssl")
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_$(version).zip", {version = function (version)
         return version:gsub("%.", "_")
     end, excludes = "*/fuzz/*"})
+    add_versions("1.1.1q", "df86e6adcff1c91a85cef139dd061ea40b7e49005e8be16522cf4864bfcf5eb8")
+    add_patches("1.1.1q", path.join(os.scriptdir(), "patches", "1.1.1q.diff"), "cfe6929f9db2719e695be0b61f8c38fe8132544c5c58ca8d07383bfa6c675b7b")
+    add_versions("1.1.1p", "7fe975ffe91d8343ebd021059eeea3c6b1d236c3826b3a08ef59fcbe75069f5b")
+    add_patches("1.1.1p", path.join(os.scriptdir(), "patches", "1.1.1p.diff"), "f102fed5867e143ae3ace1febd0b2725358c614c86328e68022f1ea21491b42c")
     add_versions("1.1.1o", "1cd761790cf576e7f45c17798c47064f0f6756d4fcdbc1e657b0a4d9c60f3a52")
     add_versions("1.1.1n", "614d69141fd622bc3db2adf7c824eaa19c7e532937b2cd7144b850d692f9f150")
     add_versions("1.1.1m", "dab2287910427d82674618d512ba2571401539ca6ed12ab3c3143a0db9fad542")
@@ -15,6 +19,8 @@ package("openssl")
     add_versions("1.1.0l", "a305d4af4b442ad61ba3d7e82905d09bfbd80424e132e10df4899d064aa47ce2")
     add_versions("1.0.2u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
     add_versions("1.0.0",  "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
+
+    
 
     on_fetch("fetch")
 
