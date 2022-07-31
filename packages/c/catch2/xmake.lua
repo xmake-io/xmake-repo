@@ -41,14 +41,27 @@ package("catch2")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            int factorial(int number) { return number <= 1 ? number : factorial(number - 1) * number; }
+        if package:version():ge("3.0") then
+            assert(package:check_cxxsnippets({test = [[
+                int factorial(int number) { return number <= 1 ? number : factorial(number - 1) * number; }
 
-            TEST_CASE("testing the factorial function") {
-                CHECK(factorial(1) == 1);
-                CHECK(factorial(2) == 2);
-                CHECK(factorial(3) == 6);
-                CHECK(factorial(10) == 3628800);
-            }
-        ]]}, {configs = {languages = "c++14"}, includes = "catch2/catch.hpp", defines = "CATCH_CONFIG_MAIN"}))
+                TEST_CASE("Factorials are computed", "[factorial]") {
+                    REQUIRE(factorial(1) == 1);
+                    REQUIRE(factorial(2) == 2);
+                    REQUIRE(factorial(3) == 6);
+                    REQUIRE(factorial(10) == 3628800);
+                }
+            ]]}, {configs = {languages = "c++14"}, includes = "catch2/catch_test_macros.hpp"}))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                int factorial(int number) { return number <= 1 ? number : factorial(number - 1) * number; }
+
+                TEST_CASE("testing the factorial function") {
+                    CHECK(factorial(1) == 1);
+                    CHECK(factorial(2) == 2);
+                    CHECK(factorial(3) == 6);
+                    CHECK(factorial(10) == 3628800);
+                }
+            ]]}, {configs = {languages = "c++11"}, includes = "catch2/catch.hpp", defines = "CATCH_CONFIG_MAIN"}))
+        end
     end)
