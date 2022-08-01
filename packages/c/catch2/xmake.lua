@@ -1,6 +1,5 @@
 package("catch2")
 
-    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/catchorg/Catch2")
     set_description("Catch2 is a multi-paradigm test framework for C++. which also supports Objective-C (and maybe C). ")
     set_license("BSL-1.0")
