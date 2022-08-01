@@ -3,9 +3,16 @@ package("openssl")
     set_homepage("https://www.openssl.org/")
     set_description("A robust, commercial-grade, and full-featured toolkit for TLS and SSL.")
 
-    add_urls("https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_$(version).zip", {version = function (version)
-        return version:gsub("%.", "_")
+    add_urls("https://github.com/openssl/openssl/archive/refs/tags/$(version).zip", {version = function (version)
+        if version:sub(1,1) == "1" then
+	    return "OpenSSL_"..version:gsub("%.", "_")
+	end
+	if version:sub(1,1) == "3" then
+	    return "openssl-"..version
+	end
     end, excludes = "*/fuzz/*"})
+    add_versions("3.0.5", "4313c91fb0412e6a600493eb7c59bd555c4ff2ea7caa247a98c8456ad6f9fc74")
+    add_patches("3.0.5", path.join(os.scriptdir(), "patches", "3.0.5.diff"), "2c3e73ed63c9cae7b5c6ed9d880adbf4e1ce0a2a7425356d8ffaeb44d92a0894")
     add_versions("1.1.1q", "df86e6adcff1c91a85cef139dd061ea40b7e49005e8be16522cf4864bfcf5eb8")
     add_patches("1.1.1q", path.join(os.scriptdir(), "patches", "1.1.1q.diff"), "cfe6929f9db2719e695be0b61f8c38fe8132544c5c58ca8d07383bfa6c675b7b")
     add_versions("1.1.1p", "7fe975ffe91d8343ebd021059eeea3c6b1d236c3826b3a08ef59fcbe75069f5b")
