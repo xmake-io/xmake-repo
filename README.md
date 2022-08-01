@@ -127,3 +127,12 @@ package("libpng")
     end)
 packages/l/libpng/xmake.lua generated!
 ```
+
+### Test a package in local
+
+```console
+$ xmake l scripts/test.lua --shallow -vD zlib
+$ xmake l scripts/test.lua --shallow -vD -p iphoneos zlib
+$ xmake l scripts/test.lua --shallow -vD -k shared -m debug zlib
+$ xmake l scripts/test.lua --shallow -vD --vs_runtime=MD zlib
+```
