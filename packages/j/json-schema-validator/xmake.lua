@@ -1,0 +1,22 @@
+package("json-schema-validator")
+    set_homepage("https://github.com/pboettch/json-schema-validator")
+    set_description("JSON schema validator for JSON for Modern C++")
+
+    add_urls("https://github.com/pboettch/json-schema-validator/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/pboettch/json-schema-validator.git")
+    add_versions("2.1.0", "83f61d8112f485e0d3f1e72d51610ba3924b179926a8376aef3c038770faf202")
+
+    add_deps("cmake", "nlohmann_json")
+
+    on_install(function (package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DJSON_VALIDATOR_BUILD_EXAMPLES=OFF")
+        table.insert(configs, "-DJSON_VALIDATOR_BUILD_TESTS=OFF")
+        import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cxxincludes("nlohmann/json-schema.hpp"))
+    end)
