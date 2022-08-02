@@ -10,6 +10,10 @@ package("flecs")
 
     add_deps("cmake")
 
+	if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_install("windows", "macosx", "linux", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -19,7 +23,7 @@ package("flecs")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-			#inlcude <pthread.h>
+			#include <pthread.h>
             void test() {
 				flecs::world ecs;
             }
