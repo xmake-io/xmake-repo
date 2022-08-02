@@ -5,8 +5,7 @@ package("flecs")
     set_license("MIT")
 
     add_urls("https://github.com/SanderMertens/flecs.git")
-	add_versions("v3.0.0", "8715faf3276f0970b80c28c2a8911f4ac86633d25ebab3d3c69521942769d7d4")
-    add_versions("v3.0.1-alpha", "9d9a2fbea143a7237ae7020748180d896839e328a5d34bb769808abf904fcbf0")
+    add_versions("v3.0.0", "8715faf3276f0970b80c28c2a8911f4ac86633d25ebab3d3c69521942769d7d4")
     add_versions("v2.4.8", "8b24c11b0513ee6ad3904165ed0927d59cbff2acc9bce0f8f989f493891d7deb")
 
     add_deps("cmake")
