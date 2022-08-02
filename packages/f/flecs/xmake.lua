@@ -23,7 +23,6 @@ package("flecs")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-			#include <pthread.h>
             void test() {
 				flecs::world ecs;
             }
