@@ -10,7 +10,7 @@ package("flecs")
 
     add_deps("cmake")
 
-	if is_plat("linux") then
+    if is_plat("linux") then
         add_syslinks("pthread")
     end
 
@@ -24,7 +24,7 @@ package("flecs")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-				flecs::world ecs;
+                flecs::world ecs;
             }
         ]]}, {configs = {languages = "c++11"}, includes = "flecs.h"}))
     end)
