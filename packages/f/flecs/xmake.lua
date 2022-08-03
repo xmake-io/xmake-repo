@@ -19,10 +19,11 @@ package("flecs")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DFLECS_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DFLECS_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:config("shared") then
-            io.replace("flecs.h", "#define flecs_STATIC", "", {plain = true})
-            if package:is_plat("windows") then
+        if package:is_plat("windows") then
+            if package:config("shared") then
                 package:add("defines", "flecs_EXPORTS")
+            else
+                package:add("defines", "flecs_STATIC")
             end
         end
         import("package.tools.cmake").install(package, configs)
