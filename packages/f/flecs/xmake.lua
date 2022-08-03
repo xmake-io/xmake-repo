@@ -21,6 +21,9 @@ package("flecs")
         table.insert(configs, "-DFLECS_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("shared") then
             io.replace("flecs.h", "#define flecs_STATIC", "", {plain = true})
+            if package:is_plat("windows") then
+                package:add("defines", "flecs_EXPORTS")
+            end
         end
         import("package.tools.cmake").install(package, configs)
     end)
