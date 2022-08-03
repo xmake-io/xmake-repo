@@ -22,7 +22,6 @@ package("flecs")
         table.insert(configs, "-DFLECS_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             if package:config("shared") then
-                package:add("defines", "flecs_EXPORTS=1")
             else
                 package:add("defines", "flecs_STATIC")
             end
