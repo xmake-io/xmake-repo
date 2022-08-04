@@ -8,6 +8,10 @@ package("fast_float")
              "https://github.com/fastfloat/fast_float.git")
     add_versions("v3.4.0", "a242877d2fae81ca412033f5ebf5dbc43cb029c56b4af78e33106b9a69f8f58e")
 
+    if is_plat("wasm") then
+        add_patches("v3.4.0", path.join(os.scriptdir(), "patches", "emscripten_fix.patch"), "482705431f67e6f0a375ed7bfe87d6856e7d13f071db6157e1d5659834b0eb50")
+    end
+
     on_install(function (package)
         os.vcp("include/fast_float", package:installdir("include"))
     end)
