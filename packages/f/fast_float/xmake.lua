@@ -6,6 +6,7 @@ package("fast_float")
 
     add_urls("https://github.com/fastfloat/fast_float/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fastfloat/fast_float.git")
+    add_versions("v3.5.1", "8558bf9c66ccd2f7d03c94461a107f49ad9cf6e4f6c0c84e148fec0aa32b4dd9")
     add_versions("v3.4.0", "a242877d2fae81ca412033f5ebf5dbc43cb029c56b4af78e33106b9a69f8f58e")
 
     if is_plat("wasm") then
