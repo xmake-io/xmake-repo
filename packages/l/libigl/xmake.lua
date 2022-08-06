@@ -18,6 +18,8 @@ package("libigl")
 
     if is_plat("windows") then
         add_syslinks("comdlg32")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
     end
 
     add_deps("cmake", "eigen")
