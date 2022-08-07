@@ -17,7 +17,7 @@ package("taskflow")
         add_syslinks("pthread")
     end
 
-    on_install(function (package)
+    on_install("linux", "macosx", "windows", "iphoneos", "android", "cross", "mingw", "bsd", function (package)
         os.cp("taskflow", package:installdir("include"))
     end)
 
