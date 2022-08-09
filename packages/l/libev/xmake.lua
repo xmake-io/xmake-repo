@@ -8,9 +8,12 @@ package("libev")
              "https://github.com/xmake-mirror/libev.git")
     add_versions("4.33", "507eb7b8d1015fbec5b935f34ebed15bf346bed04a11ab82b8eee848c4205aea")
 
+    add_links("ev")
+
     on_install("macosx", "linux", "iphoneos", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
             table.insert(configs, "--enable-debug")
         end
