@@ -8,17 +8,17 @@ package("json-schema-validator")
 
     add_deps("cmake", "nlohmann_json")
 
-    on_install(function (package)
+    if is_plat("mingw", "windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    on_install("linux", "bsd", "windows", "macosx", "iphoneos", "mingw", "cross", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DJSON_VALIDATOR_BUILD_EXAMPLES=OFF")
         table.insert(configs, "-DJSON_VALIDATOR_BUILD_TESTS=OFF")
         import("package.tools.cmake").install(package, configs)
-    end)
-
-    on_test(function (package)
-        assert(package:has_cxxincludes("nlohmann/json-schema.hpp", {configs = {languages = "c++17"}}))
     end)
 
     on_test(function (package)
