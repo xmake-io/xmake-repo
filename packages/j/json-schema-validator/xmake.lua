@@ -20,3 +20,18 @@ package("json-schema-validator")
     on_test(function (package)
         assert(package:has_cxxincludes("nlohmann/json-schema.hpp", {configs = {languages = "c++17"}}))
     end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+        #include <nlohmann/json-schema.hpp>
+
+        using nlohmann::json;
+        using nlohmann::json_schema::json_validator;
+
+        static json person_schema = R"({})"_json;
+        static void test() {
+            json_validator validator;
+            validator.set_root_schema(person_schema);
+        }
+        ]]}, {configs = {languages = "c++17"}}))
+    end)
