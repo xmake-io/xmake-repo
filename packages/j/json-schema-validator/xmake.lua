@@ -18,5 +18,5 @@ package("json-schema-validator")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("nlohmann/json-schema.hpp"))
+        assert(package:has_cxxincludes("nlohmann/json-schema.hpp", {configs = {languages = "c++17"}}))
     end)
