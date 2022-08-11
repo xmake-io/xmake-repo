@@ -14,6 +14,7 @@ package("linux-tools")
     add_versions("5.0.8",  "11908044e8cce1e093141f8da594708d45d05d0381676ae9aa3d8aeaf7c85435")
     add_versions("5.9.16", "b0d7abae88e5f91893627c645e680a95c818defd1b4fcaf3e2afb4b2b6b4ab86")
     add_versions("5.16.9", "1660e7228ec299c187c19739d115ded97f6b1be05a24986c4c443e7c5e8b744f")
+    add_versions("5.19.1", "f4e27b926ea2c66b808db1f5706254cf92a8899e2108eedb0c3a7d12499aea55")
 
     add_configs("bpftool",     { description = "Enable bpftool.", default = true, type = "boolean"})
 
