@@ -1,5 +1,5 @@
 package("thread-pool")
-	set_kind("library", {headeronly = true})
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/bshoshany/thread-pool")
     set_description("BS::thread_pool: a fast, lightweight, and easy-to-use C++17 thread pool library")
     set_license("MIT")
@@ -14,13 +14,13 @@ package("thread-pool")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({
-			test = [[
-				#include <BS_thread_pool.hpp>
-				static void test() {
-					BS::thread_pool pool;
-					std::future<int> my_future = pool.submit([] { return 42; });
-					std::cout << my_future.get();
-				}
-			]]
-		}, {configs = {languages = "c++17"}, includes = {"BS_thread_pool.hpp"}}))
+            test = [[
+                #include <BS_thread_pool.hpp>
+                static void test() {
+                    BS::thread_pool pool;
+                    std::future<int> my_future = pool.submit([] { return 42; });
+                    std::cout << my_future.get();
+                }
+            ]]
+        }, {configs = {languages = "c++17"}, includes = {"BS_thread_pool.hpp"}}))
     end)
