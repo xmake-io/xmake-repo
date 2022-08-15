@@ -8,7 +8,7 @@ package("nvtt")
              "https://github.com/castano/nvidia-texture-tools.git")
     add_versions("2.1.2", "0187336b0285038fab4f4a6b7654f51beaebab040b6aad53c147c917c5ab519b")
 
-    add_patches("2.1.2", path.join(os.scriptdir(), "patches", "2.1.2", "build.patch"), "27997285bff08bd55c8f3501e8a927c79eb4e4eb02c284e5fdd3045ba8ca8b2e")
+    add_patches("2.1.2", path.join(os.scriptdir(), "patches", "2.1.2", "build.patch"), "ed9b5884d6a644445bd1e3407a6575ca2a72b24a9edb9b01afe5f4f8e7272b8e")
 
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
@@ -23,8 +23,11 @@ package("nvtt")
         if package:config("cuda") then
             package:add("deps", "cuda")
         end
-        if not package:config("shared") then
+        if not package:config("shared") or package:is_plat("windows") then
             package:add("linkdirs", "lib/static")
+        end
+        if package:config("shared") and package:is_plat("windows") then
+            package:add("defines", "NVTT_SHARED=1")
         end
     end)
 
