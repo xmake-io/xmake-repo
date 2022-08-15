@@ -18,6 +18,7 @@ package("nvtt")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     end
+    add_links("nvtt", "nvimage", "nvthread", "bc6h", "bc7", "nvmath", "nvcore", "nvsquish")
     on_load("windows", "macosx", "linux", function (package)
         if package:config("cuda") then
             package:add("deps", "cuda")
@@ -27,7 +28,7 @@ package("nvtt")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "mingw", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DNVTT_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
