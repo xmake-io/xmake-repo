@@ -8,6 +8,7 @@ package("libdeflate")
              "https://github.com/ebiggers/libdeflate.git")
     add_versions("v1.8", "50711ad4e9d3862f8dfb11b97eb53631a86ee3ce49c0e68ec2b6d059a9662f61")
     add_versions("v1.10", "5c1f75c285cd87202226f4de49985dcb75732f527eefba2b3ddd70a8865f2533")
+    add_versions("v1.13", "0d81f197dc31dc4ef7b6198fde570f4e8653c77f4698fcb2163d820a9607c838")
 
     on_load("windows", function (package)
         if package:config("shared") then
