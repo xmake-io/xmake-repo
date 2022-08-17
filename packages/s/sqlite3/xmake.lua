@@ -41,6 +41,9 @@ package("sqlite3")
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("SQLITE_API=__declspec(dllexport)")
                 end
+                if is_plat("macosx", "linux", "bsd") then
+                    add_syslinks("pthread", "dl")
+                end
         ]]
         if is_plat(os.host()) and is_arch(os.arch()) then
             xmake_lua = xmake_lua .. [[
