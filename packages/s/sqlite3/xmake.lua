@@ -31,7 +31,7 @@ package("sqlite3")
     end
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
+        local xmake_lua = [[
             add_rules("mode.debug", "mode.release")
             target("sqlite3")
                 set_kind("$(kind)")
@@ -41,15 +41,22 @@ package("sqlite3")
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("SQLITE_API=__declspec(dllexport)")
                 end
-        ]])
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
+                if is_plat("macosx", "linux", "bsd") then
+                    add_syslinks("pthread", "dl")
+                end
+        ]]
+        if is_plat(os.host()) and is_arch(os.arch()) then
+            xmake_lua = xmake_lua .. [[
+                target("sqlite3_shell")
+                    set_kind("binary")
+                    set_basename("sqlite3")
+                    add_files("shell.c")
+                    add_deps("sqlite3")
+            ]]
         end
-        if not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
-            configs.cxflags = "-fPIC"
-        end
-        import("package.tools.xmake").install(package, configs)
+        io.writefile("xmake.lua", xmake_lua)
+        import("package.tools.xmake").install(package)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)

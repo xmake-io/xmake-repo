@@ -4,8 +4,10 @@ package("simage")
     set_description("Simage is a library capable of loading, manipulating and saving images, creating and saving movies (AVI and MPEG), and loading audio.")
     set_license("MIT")
 
-    add_urls("https://github.com/coin3d/simage/releases/download/v$(version)/simage-$(version)-src.zip")
+    add_urls("https://github.com/coin3d/simage/releases/download/v$(version)/simage-$(version)-src.zip",
+             "https://github.com/coin3d/simage.git")
     add_versions("1.8.1", "308a8712c1f28cf6e662acab2e1fdd263fbfcb11323869806f4fef435653d4d3")
+    add_versions("1.8.3", "48fd116bf8493df08729ad8468ce42d7c9c73ddbb21feff48bf6aac187294f1b")
 
     if is_plat("windows") then
         add_syslinks("gdiplus")
