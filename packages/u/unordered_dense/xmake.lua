@@ -1,5 +1,4 @@
 package("unordered_dense")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/martinus/unordered_dense")
     set_description("A fast & densely stored hashmap and hashset based on robin-hood backward shift deletion.")
@@ -9,9 +8,10 @@ package("unordered_dense")
              "https://github.com/martinus/unordered_dense.git")
     add_versions("v1.1.0", "b47d8590afdc32b306272a6bcb15d5464462f3cd3d44653648924a1e10d1e78c")
 
-    add_deps("meson")
+    add_deps("cmake")
     on_install(function (package)
-        import("package.tools.meson").install(package, {})
+        import("package.tools.cmake").install(package)
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
