@@ -6,6 +6,7 @@ package("armadillo")
     set_license("Apache-2.0")
 
     add_urls("http://sourceforge.net/projects/arma/files/armadillo-$(version).tar.xz")
+    add_versions("11.2.3", "4c2e97ce60707fc1f348f44f7af0cb6d2466d0aad0d0ea4bf5d5dc180e6cba41")
     add_versions("10.8.1", "5087ab5a2268e5ce71798c1afcb6d1fb246463f8dc88a60db49a083600f98332")
     add_versions("10.7.0", "9bf60db6fd237721908747a0e56797b97b7ceae3603f2cca0b012a3b88265d3f")
     add_versions("10.7.3", "aac930d5fbc23dca9453ff3647d03f7d90d9584a4556719ad7bc7adab7db6ff5")
