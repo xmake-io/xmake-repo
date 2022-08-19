@@ -45,7 +45,7 @@ package("sqlite3")
                     add_syslinks("pthread", "dl")
                 end
         ]]
-        if is_plat(os.host()) and is_arch(os.arch()) then
+        if package:is_plat(os.host()) and (package:is_arch(os.arch()) or package:is_plat("windows")) then
             xmake_lua = xmake_lua .. [[
                 target("sqlite3_shell")
                     set_kind("binary")
