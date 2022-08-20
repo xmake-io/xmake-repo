@@ -8,6 +8,7 @@ package("poco")
              "https://github.com/pocoproject/poco.git")
     add_versions("1.11.0", "8a7bfd0883ee95e223058edce8364c7d61026ac1882e29643822ce9b753f3602")
     add_versions("1.11.1", "2412a5819a239ff2ee58f81033bcc39c40460d7a8b330013a687c8c0bd2b4ac0")
+    add_versions("1.12.1", "debc6d5d5eb946bb14e47cffc33db4fffb4f11765f34f8db04e71e866d1af8f9")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -17,7 +18,7 @@ package("poco")
     add_configs("odbc", {description = "Enable odbc support.", default = is_plat("windows"), type = "boolean"})
 
     add_deps("cmake")
-    add_deps("openssl", "pcre", "sqlite3", "expat", "zlib")
+    add_deps("openssl", "sqlite3", "expat", "zlib")
     add_defines("POCO_NO_AUTOMATIC_LIBS")
 
     on_load("windows", "linux", "macosx", function (package)
@@ -27,6 +28,11 @@ package("poco")
         if package:config("mysql") then
             package:add("deps", "mysql")
         end
+        if package:version():ge("1.12.0") then
+            package:add("deps", "pcre2")
+        else
+            package:add("deps", "pcre")
+        end
     end)
 
     on_install("windows", "linux", "macosx", function (package)
@@ -34,6 +40,11 @@ package("poco")
         io.replace("XML/CMakeLists.txt", "EXPAT::EXPAT", "expat::expat")
         io.replace("XML/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED XML_DTD XML_NS")
         io.replace("Foundation/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED PCRE_STATIC")
+        io.replace("Foundation/CMakeLists.txt", "POCO_SOURCES%(SRCS RegExp.-%)", "")
+        if package:version():ge("1.12.0") and package:dep("pcre2"):exists() and not package:dep("pcre2"):config("shared") then
+            io.replace("cmake/FindPCRE2.cmake", "NAMES pcre2-8", "NAMES pcre2-8-static pcre2-8", {plain = true})
+            io.replace("cmake/FindPCRE2.cmake", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"\nINTERFACE_COMPILE_DEFINITIONS PCRE2_STATIC", {plain = true})
+        end
         local configs = {"-DPOCO_UNBUNDLED=ON", "-DENABLE_TESTS=OFF", "-DENABLE_PDF=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

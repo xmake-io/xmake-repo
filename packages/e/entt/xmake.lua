@@ -3,9 +3,11 @@ package("entt")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/skypjack/entt")
     set_description("Gaming meets modern C++ - a fast and reliable entity component system (ECS) and much more.")
+    set_license("MIT")
 
     set_urls("https://github.com/skypjack/entt/archive/$(version).tar.gz",
              "https://github.com/skypjack/entt.git")
+    add_versions("v3.10.3", "315918fc678e89a326ce1c13b0e9d3e53882dd9c58a63fef413325917a5c753b")
     add_versions("v3.10.1", "f7031545130bfc06f5fe6b2f8c87dcbd4c1254fab86657e2788b70dfeea57965")
     add_versions("v3.10.0", "4c716cebf4f2964824da158dd58cc81d9f1e056a083538e22fb03ae2d64805ee")
     add_versions("v3.9.0", "1b06f1f6627c3702486855877bdeab6885f5d821d3dd78862126d4308c627c23")

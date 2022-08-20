@@ -5,11 +5,10 @@ package("sqlite3")
 
     set_urls("https://sqlite.org/$(version)", {version = function (version)
         local year = "2022"
-        if version:le("3.36") then
-            year = "2021"
-        end
         if version:le("3.24") then
             year = "2018"
+        elseif version:le("3.36") then
+            year = "2021"
         end
         local version_str = version:gsub("[.+]", "")
         if #version_str < 7 then
@@ -25,13 +24,14 @@ package("sqlite3")
     add_versions("3.35.0+400", "7771525dff0185bfe9638ccce23faa0e1451757ddbda5a6c853bb80b923a512d")
     add_versions("3.36.0+0", "bd90c3eb96bee996206b83be7065c9ce19aef38c3f4fb53073ada0d0b69bbce3")
     add_versions("3.37.0+200", "4089a8d9b467537b3f246f217b84cd76e00b1d1a971fe5aca1e30e230e46b2d8")
+    add_versions("3.39.0+200", "852be8a6183a17ba47cee0bbff7400b7aa5affd283bf3beefc34fcd088a239de")
 
     if is_plat("macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
     end
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
+        local xmake_lua = [[
             add_rules("mode.debug", "mode.release")
             target("sqlite3")
                 set_kind("$(kind)")
@@ -41,15 +41,22 @@ package("sqlite3")
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("SQLITE_API=__declspec(dllexport)")
                 end
-        ]])
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
+                if is_plat("macosx", "linux", "bsd") then
+                    add_syslinks("pthread", "dl")
+                end
+        ]]
+        if package:is_plat(os.host()) and (package:is_arch(os.arch()) or package:is_plat("windows")) then
+            xmake_lua = xmake_lua .. [[
+                target("sqlite3_shell")
+                    set_kind("binary")
+                    set_basename("sqlite3")
+                    add_files("shell.c")
+                    add_deps("sqlite3")
+            ]]
         end
-        if not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
-            configs.cxflags = "-fPIC"
-        end
-        import("package.tools.xmake").install(package, configs)
+        io.writefile("xmake.lua", xmake_lua)
+        import("package.tools.xmake").install(package)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)

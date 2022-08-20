@@ -10,6 +10,10 @@ package("robin-hood-hashing")
     add_versions("3.11.3", "dcf2b7fa9ef9dd0c67102d94c28e8df3effbe1845e0ed1f31f4772ca5e857fc4")
     add_versions("3.11.5", "7aa183252527ded7f46186c1e2f4efe7d6139a3b7c0869c1b6051bd7260587ed")
 
+    on_load(function (package)
+        wprint("Package deprecated, author reason:\nUnfortunately I do not have time to continue development for this hashmap. I have a worthy successor though, please head over to: ankerl::unordered_dense::{map, set}${clear}")
+    end)
+
     add_deps("cmake")
     on_install(function (package)
         import("package.tools.cmake").install(package, {"-DRH_STANDALONE_PROJECT=OFF"})

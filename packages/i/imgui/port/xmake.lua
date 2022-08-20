@@ -1,10 +1,11 @@
 add_rules("mode.debug", "mode.release")
+set_languages("cxx11")
+
 option("wchar32",      {showmenu = true,  default = false})
 option("freetype",     {showmenu = true,  default = false})
 option("glfw_opengl3", {showmenu = true,  default = false})
 option("user_config",  {showmenu = true,  default = nil, type = "string"})
 option("use_glad",     {showmenu = true,  default = false})
-
 
 if has_config("freetype") then 
     add_requires("freetype")

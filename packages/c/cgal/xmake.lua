@@ -26,14 +26,14 @@ package("cgal")
         add_deps("gmp", "mpfr")
     end
 
-    on_load("windows", function (package)
+    on_load("windows", "mingw", function (package)
         package:add("defines", "CGAL_NO_GMP")
         if not package:config("header_only") then
             raise("Non-header-only version is not supported yet!")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "mingw", "macosx", "linux", function (package)
         if package:version():le("5.3") then
             io.gsub("CMakeLists.txt", "install%(DIRECTORY.-%/demo%/.-%/demo%/.-%)", "")
         end

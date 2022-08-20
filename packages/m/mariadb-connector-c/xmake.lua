@@ -2,6 +2,7 @@ package("mariadb-connector-c")
     set_homepage("https://github.com/mariadb-corporation/mariadb-connector-c")
     set_description("MariaDB Connector/C is used to connect applications developed in C/C++ to MariaDB and MySQL databases.")
     set_license("LGPL-2.1")
+
     add_urls("https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/v$(version).tar.gz")
     add_versions("3.1.13", "361136e9c365259397190109d50f8b6a65c628177792273b4acdb6978942b5e7")
     add_deps("cmake")
@@ -13,6 +14,8 @@ package("mariadb-connector-c")
     end
 
     add_linkdirs("lib/mariadb")
+
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     if is_plat("windows") then
         add_configs("iconv", {description = "Enables character set conversion.", default = false, type = "boolean"})
@@ -47,7 +50,6 @@ package("mariadb-connector-c")
     on_install("bsd", "linux", "windows", function(package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
@@ -57,10 +59,10 @@ package("mariadb-connector-c")
                 end
             end
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end	
         import("package.tools.cmake").install(package, configs)
+        os.trycp(path.join(package:installdir("lib"), "mariadb", "*.dll"), package:installdir("bin"))
+        os.trycp(path.join(package:installdir("lib"), "mariadb", "*.so"), package:installdir("bin"))
+        os.cp(path.join(package:installdir("lib"), "mariadb", "plugin"), package:installdir("bin"))
     end)
 
     on_test(function (package)
