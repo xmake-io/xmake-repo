@@ -7,6 +7,8 @@ package("liblas")
     add_urls("http://download.osgeo.org/liblas/libLAS-$(version).tar.bz2")
     add_versions("1.8.1", "9adb4a98c63b461ed2bc82e214ae522cbd809cff578f28511122efe6c7ea4e76")
 
+    add_patches("1.8.1", path.join(os.scriptdir(), "patches", "1.8.1", "header.patch"), "fde1c186e78472f4eb8902f28b51b18a8b40166379c710b43f89323aac7c3afd")
+
     add_deps("cmake", "libgeotiff")
     add_deps("boost", {configs = {program_options = true,
                                   thread = true,
