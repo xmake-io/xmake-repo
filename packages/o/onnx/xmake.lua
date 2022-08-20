@@ -11,12 +11,12 @@ package("onnx")
     add_deps("cmake")
     add_deps("protobuf-cpp")
 
-    on_load(function (package)
+    on_load("linux", "macosx", "windows", function (package)
         package:add("defines", "ONNX_ML")
         package:add("cxxflags", "-DONNX_NAMESPACE=onnx")
     end)
 
-    on_install(function (package)
+    on_install("linux", "macosx", "windows", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
