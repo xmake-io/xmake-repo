@@ -1,4 +1,4 @@
-package("btree")
+package("frozenca-btree")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/frozenca/BTree")
     set_description("A general-purpose high-performance lightweight STL-like modern C++ B-Tree")
