@@ -7,7 +7,7 @@ package("frozenca-btree")
     add_urls("https://github.com/frozenca/BTree.git")
     add_versions("2022.08.02", "c2318e18194018f092c3e30ddd7385a50216b3a0")
 
-    on_install(function (package)
+    on_install("linux", "windows", function (package)
         os.cp("*.h", package:installdir("include"))
     end)
 
