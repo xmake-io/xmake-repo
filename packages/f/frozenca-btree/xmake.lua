@@ -26,5 +26,5 @@ package("frozenca-btree")
                     btree.insert(4);
                 }
             ]]
-        }, {configs = {languages = "c++20"}}))
+        }, {configs = {languages = "c++20", cxflags = "-fconcepts"}}))
     end)
