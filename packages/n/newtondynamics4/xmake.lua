@@ -11,6 +11,8 @@ package("newtondynamics4")
 
     add_includedirs("include", "include/ndCore", "include/ndCollision", "include/ndNewton")
 
+    add_deps("cmake")
+
     if is_plat("linux", "android") then
         add_syslinks("dl", "pthread")
     end
