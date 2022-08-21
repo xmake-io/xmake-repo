@@ -16,6 +16,7 @@ package("liblas")
                                   iostreams = true,
                                   filesystem = true}})
     on_install("windows", "macosx", "linux", function (package)
+        io.replace("CMakeLists.txt", "JPEG", "PROJ", {plain = true})
         io.replace("src/CMakeLists.txt", "${GDAL_LIBRARY}", "${PROJ_LIBRARIES}", {plain = true})
         local configs = {"-DWITH_TESTS=OFF", "-DWITH_LASZIP=OFF", "-DWITH_GDAL=OFF", "-DBoost_USE_STATIC_LIBS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
