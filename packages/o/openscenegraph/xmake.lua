@@ -25,11 +25,17 @@ package("openscenegraph")
 
     add_deps("cmake")
     add_deps("libjpeg-turbo", "libpng", "giflib", "libtiff")
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
     on_load("windows", "linux", "macosx", function (package)
         for config, dep in pairs(configdeps) do
             if package:config(config) then
                 package:add("deps", config)
             end
+        end
+        if package:is_plat("windows") and not package:config("shared") then
+            package:add("defines", "OSG_LIBRARY_STATIC")
         end
     end)
 
