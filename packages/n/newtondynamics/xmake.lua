@@ -9,5 +9,5 @@ package("newtondynamics")
     on_install("windows", "linux", "macosx", "mingw", function (package)
         -- fixes package:scriptdir() from parent
         local base = package:base()
-        base:script("load")(base)
+        base:script("install")(base)
     end)
