@@ -18,7 +18,7 @@ package("liblas")
     on_install("windows", "macosx", "linux", function (package)
         io.replace("CMakeLists.txt", "JPEG", "PROJ", {plain = true})
         io.replace("src/CMakeLists.txt", "${GDAL_LIBRARY}", "${PROJ_LIBRARIES}", {plain = true})
-        local configs = {"-DWITH_TESTS=OFF", "-DWITH_LASZIP=OFF", "-DWITH_GDAL=OFF", "-DBoost_USE_STATIC_LIBS=ON"}
+        local configs = {"-DWITH_TESTS=OFF", "-DWITH_LASZIP=OFF", "-DWITH_GDAL=OFF", "-DBUILD_OSGEO4W=OFF", "-DBoost_USE_STATIC_LIBS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
