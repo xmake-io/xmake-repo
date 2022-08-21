@@ -1,4 +1,4 @@
-package("newtondynamics3")
+package("newtondynamics")
     set_homepage("http://newtondynamics.com")
     set_description("Newton Dynamics is an integrated solution for real time simulation of physics environments.")
     set_license("zlib")
