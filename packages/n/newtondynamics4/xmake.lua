@@ -61,5 +61,5 @@ package("newtondynamics4")
                 ndWorld world;
                 world.Update(0.01f);
             }
-        ]]}, {includes = "ndNewton/ndNewton.h"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "ndNewton/ndNewton.h"}))
     end)
