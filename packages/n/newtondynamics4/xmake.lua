@@ -30,7 +30,7 @@ package("newtondynamics4")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         os.cd("newton-4.00")
         local configs = {
             "-DNEWTON_BUILD_SANDBOX_DEMOS=OFF", 
