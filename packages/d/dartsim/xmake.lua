@@ -14,7 +14,7 @@ package("dartsim")
                         nlopt = "NLOPT",
                         ode = "ODE",
                         openscenegraph = "OpenSceneGraph",
-                        tinyxml2 = "tinyxml2"
+                        tinyxml2 = "tinyxml2",
                         urdfdom = "urdfdom",
                         octomap = "octomap",
                         spdlog = "spdlog"}
