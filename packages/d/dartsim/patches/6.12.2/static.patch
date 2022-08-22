@@ -1,0 +1,30 @@
+diff --git a/cmake/DARTFindDependencies.cmake b/cmake/DARTFindDependencies.cmake
+index cb42afa..9716b37 100644
+--- a/cmake/DARTFindDependencies.cmake
++++ b/cmake/DARTFindDependencies.cmake
+@@ -13,6 +13,9 @@ endif()
+ dart_find_package(Eigen3)
+ dart_check_required_package(EIGEN3 "eigen3")
+ 
++# zlib
++find_package(ZLIB REQUIRED)
++
+ # CCD
+ dart_find_package(ccd)
+ dart_check_required_package(ccd "libccd")
+diff --git a/dart/CMakeLists.txt b/dart/CMakeLists.txt
+index 076b191..95172c9 100644
+--- a/dart/CMakeLists.txt
++++ b/dart/CMakeLists.txt
+@@ -129,9 +129,10 @@ target_link_libraries(dart
+     ${CMAKE_DL_LIBS}
+     ${PROJECT_NAME}-external-odelcpsolver
+     Eigen3::Eigen
+-    ccd
+     fcl
++    ccd
+     assimp
++    ZLIB::ZLIB
+     Boost::boost
+     Boost::system
+     Boost::filesystem

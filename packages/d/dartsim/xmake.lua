@@ -8,6 +8,8 @@ package("dartsim")
              "https://github.com/dartsim/dart.git")
     add_versions("v6.12.2", "db1b3ef888d37f0dbc567bc291ab2cdb5699172523a58dd5a5fe513ee38f83b0")
 
+    add_patches("v6.12.2", path.join(os.scriptdir(), "patches", "6.12.2", "static.patch"), "9d242fb75d396e360e4b1d01024c2b27fa4012ca7760e0e0e014505666a1f0c3")
+
     add_configs("dartpy", {description = "Build dartpy interface.", default = false, type = "boolean"})
     local configdeps = {bullet3 = "Bullet",
                         freeglut = "GLUT",
@@ -46,12 +48,14 @@ package("dartsim")
             "-DDART_SKIP_flann=ON",
             "-DDART_SKIP_IPOPT=ON",
             "-DDART_SKIP_pagmo=ON",
-            "-DDART_SKIP_DOXYGEN=ON"
+            "-DDART_SKIP_DOXYGEN=ON",
+            "-DBoost_USE_STATIC_LIBS=ON"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DDART_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD"))
+            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DDART_SKIP_" .. dep .. "=" .. (package:config(config) and "OFF" or "ON"))
