@@ -7,11 +7,15 @@ package("newtondynamics4")
              "https://github.com/MADEAPPS/newton-dynamics.git")
 
     add_versions("v4.01", "c92b64f33488c4774debc110418cbc713fd8e07f37b15e4917b92a7a8d5e785a")
-    add_patches("v4.01", path.join(os.scriptdir(), "patches", "v4.01", "cmake.patch"), "005a86d0a97cbc35bb3e4905afe4e6fdc7d8024484d50a8b41dbade601f98149")
+    add_patches("v4.01", path.join(os.scriptdir(), "patches", "v4.01", "cmake.patch"), "a189d6282640b6d46c5f9d0926930bbc2d7bb4f242383fae3521b6b211f569e7")
+
+    add_configs("symbols",  {description = "Enable debug symbols in release", default = false, type = "boolean"})
 
     add_includedirs("include", "include/ndCore", "include/ndCollision", "include/ndNewton")
 
     add_deps("cmake")
+
+    add_links("ndNewton")
 
     if is_plat("linux", "android") then
         add_syslinks("dl", "pthread")
@@ -28,11 +32,25 @@ package("newtondynamics4")
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
         os.cd("newton-4.00")
-        local configs = {"-DNEWTON_BUILD_SANDBOX_DEMOS=OFF", "-DNEWTON_BUILD_TEST=OFF", "-DNEWTON_BUILD_CREATE_SUB_PROJECTS=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        local configs = {
+            "-DNEWTON_BUILD_SANDBOX_DEMOS=OFF", 
+            "-DNEWTON_BUILD_TEST=OFF", 
+            "-DNEWTON_BUILD_CREATE_SUB_PROJECTS=OFF",
+            "-DNEWTON_ENABLE_AVX2_SOLVER=OFF"
+        }
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
             table.insert(configs, "-DNEWTON_BUILD_SHARED_LIBS=ON")
+        else
+            table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
+            table.insert(configs, "-DNEWTON_BUILD_SHARED_LIBS=OFF")
+        end
+        if package:debug() then
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
+        elseif package:config("symbols") then
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=RelWithDebInfo")
+        else
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=Release")
         end
         import("package.tools.cmake").install(package, configs)
     end)
