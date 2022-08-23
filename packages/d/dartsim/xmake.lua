@@ -43,7 +43,7 @@ package("dartsim")
         io.replace("python/CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
         io.replace("python/CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
         io.replace("python/CMakeLists.txt", "add_subdirectory(tutorials)", "", {plain = true})
-        io.replace("cmake/DARTFindBoost.txt", "set(Boost_USE_STATIC_RUNTIME OFF)", "", {plain = true})
+        io.replace("cmake/DARTFindBoost.cmake", "set(Boost_USE_STATIC_RUNTIME OFF)", "", {plain = true})
         local configs = {
             "-DDART_SKIP_lz4=ON",
             "-DDART_SKIP_flann=ON",
