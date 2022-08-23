@@ -18,7 +18,6 @@ package("dartsim")
                         openscenegraph = "OpenSceneGraph",
                         tinyxml2 = "tinyxml2",
                         urdfdom = "urdfdom",
-                        octomap = "octomap",
                         spdlog = "spdlog"}
     for config, dep in pairs(configdeps) do
         add_configs(config, {description = "Enable " .. config .. " support.", default = false, type = "boolean"})
@@ -30,7 +29,7 @@ package("dartsim")
 
     add_deps("cmake")
     add_deps("boost", {configs = {system = true, filesystem = true}})
-    add_deps("assimp", "libccd", "eigen", "fcl", "fmt")
+    add_deps("assimp", "libccd", "eigen", "fcl", "octomap", "fmt")
     on_load("windows", "linux", "macosx", function (package)
         for config, dep in pairs(configdeps) do
             if package:config(config) then
@@ -66,7 +65,6 @@ package("dartsim")
         end
         table.insert(configs, "-DDART_BUILD_DARTPY=" .. (package:config("dartpy") and "ON" or "OFF"))
         table.insert(configs, "-DDART_BUILD_GUI_OSG=" .. (package:config("openscenegraph") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_octomap=" .. (package:config("octomap") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
     end)
 
