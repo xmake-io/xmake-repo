@@ -25,6 +25,7 @@ package("dartsim")
     end
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+        add_cxxflags("/permissive-")
     end
 
     add_deps("cmake")
