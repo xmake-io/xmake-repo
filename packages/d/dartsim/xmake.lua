@@ -64,15 +64,13 @@ package("dartsim")
         table.insert(configs, "-DDART_BUILD_DARTPY=" .. (package:config("dartpy") and "ON" or "OFF"))
         table.insert(configs, "-DDART_BUILD_GUI_OSG=" .. (package:config("openscenegraph") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        print(os.files(package:installdir("include", "**")))
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <dart/dart.hpp>
-            #include <dart/utils/utils.hpp>
             void test() {
-                auto world = utils::SkelParser::readWorld("dart://sample/skel/shapes.skel");
+                simulation::WorldPtr world = simulation::World::create();
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
