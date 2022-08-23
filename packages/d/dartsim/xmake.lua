@@ -43,6 +43,7 @@ package("dartsim")
         io.replace("python/CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
         io.replace("python/CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
         io.replace("python/CMakeLists.txt", "add_subdirectory(tutorials)", "", {plain = true})
+        io.replace("cmake/DARTFindBoost.txt", "set(Boost_USE_STATIC_RUNTIME OFF)", "", {plain = true})
         local configs = {
             "-DDART_SKIP_lz4=ON",
             "-DDART_SKIP_flann=ON",
@@ -54,8 +55,8 @@ package("dartsim")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DDART_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD"))
             table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DDART_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD"))
         end
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DDART_SKIP_" .. dep .. "=" .. (package:config(config) and "OFF" or "ON"))
@@ -63,6 +64,7 @@ package("dartsim")
         table.insert(configs, "-DDART_BUILD_DARTPY=" .. (package:config("dartpy") and "ON" or "OFF"))
         table.insert(configs, "-DDART_BUILD_GUI_OSG=" .. (package:config("openscenegraph") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        print(os.files(package:installdir("include", "**")))
     end)
 
     on_test(function (package)
