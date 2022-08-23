@@ -41,11 +41,12 @@ package("dartsim")
 
     on_install("windows", "linux", "macosx", function (package)
         io.replace("CMakeLists.txt", "if(TARGET dart)", "if(FALSE)", {plain = true})
+        io.replace("dart/CMakeLists.txt", "/LTCG", "", {plain = true})
         io.replace("python/CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
         io.replace("python/CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
         io.replace("python/CMakeLists.txt", "add_subdirectory(tutorials)", "", {plain = true})
         io.replace("cmake/DARTFindBoost.cmake", "set(Boost_USE_STATIC_RUNTIME OFF)", "", {plain = true})
-        io.replace("cmake/DARTFindDependencies.cmake", "dart_find_package(Boost)", "dart_find_package(Boost)\nfind_package(ZLIB REQUIRED)\ntarget_link_libraries(fcl PUBLIC ccd)\ntarget_link_libraries(assimp PUBLIC zlib::zlib)", {plain = true})
+        io.replace("cmake/DARTFindDependencies.cmake", "dart_find_package(Boost)", "dart_find_package(Boost)\nfind_package(ZLIB REQUIRED)\ntarget_link_libraries(fcl INTERFACE ccd)\ntarget_link_libraries(assimp INTERFACE ZLIB::ZLIB)", {plain = true})
         local configs = {
             "-DDART_SKIP_lz4=ON",
             "-DDART_SKIP_flann=ON",
