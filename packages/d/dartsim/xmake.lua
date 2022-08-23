@@ -70,7 +70,7 @@ package("dartsim")
         assert(package:check_cxxsnippets({test = [[
             #include <dart/dart.hpp>
             void test() {
-                simulation::WorldPtr world = simulation::World::create();
+                dart::simulation::WorldPtr world = dart::simulation::World::create();
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
