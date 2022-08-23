@@ -8,7 +8,7 @@ package("dartsim")
              "https://github.com/dartsim/dart.git")
     add_versions("v6.12.2", "db1b3ef888d37f0dbc567bc291ab2cdb5699172523a58dd5a5fe513ee38f83b0")
 
-    add_patches("v6.12.2", path.join(os.scriptdir(), "patches", "6.12.2", "static.patch"), "9d242fb75d396e360e4b1d01024c2b27fa4012ca7760e0e0e014505666a1f0c3")
+    -- add_patches("v6.12.2", path.join(os.scriptdir(), "patches", "6.12.2", "static.patch"), "9d242fb75d396e360e4b1d01024c2b27fa4012ca7760e0e0e014505666a1f0c3")
 
     add_configs("dartpy", {description = "Build dartpy interface.", default = false, type = "boolean"})
     local configdeps = {bullet3 = "Bullet",
@@ -45,6 +45,7 @@ package("dartsim")
         io.replace("python/CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
         io.replace("python/CMakeLists.txt", "add_subdirectory(tutorials)", "", {plain = true})
         io.replace("cmake/DARTFindBoost.cmake", "set(Boost_USE_STATIC_RUNTIME OFF)", "", {plain = true})
+        io.replace("cmake/DARTFindDependencies.cmake", "dart_find_package(Boost)", "dart_find_package(Boost)\nfind_package(ZLIB REQUIRED)\ntarget_link_libraries(fcl PUBLIC ccd)\ntarget_link_libraries(assimp PUBLIC zlib::zlib)", {plain = true})
         local configs = {
             "-DDART_SKIP_lz4=ON",
             "-DDART_SKIP_flann=ON",
@@ -64,6 +65,7 @@ package("dartsim")
         end
         table.insert(configs, "-DDART_BUILD_DARTPY=" .. (package:config("dartpy") and "ON" or "OFF"))
         table.insert(configs, "-DDART_BUILD_GUI_OSG=" .. (package:config("openscenegraph") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_octomap=" .. (package:config("octomap") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
     end)
 
