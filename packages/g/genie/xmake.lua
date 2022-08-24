@@ -1,9 +1,10 @@
 package("genie")
+
     set_kind("binary")
     set_homepage("https://github.com/bkaradzic/GENie")
     set_description("GENie - Project generator tool")
 
-    if is_plat("windows") then
+    if is_host("windows") then
         add_urls("https://raw.githubusercontent.com/bkaradzic/bx/aa5090bbd8c39e84d483f4850a7d9ca7ff9241ed/tools/bin/windows/genie.exe")
         add_versions("1160.0", "a1226a0098f6ff4895a423df17737af90cc0af9effce7cc81fe904c9b2e02e8f")
     else

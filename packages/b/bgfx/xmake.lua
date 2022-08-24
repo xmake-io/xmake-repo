@@ -6,9 +6,12 @@ package("bgfx")
 
     add_urls("https://github.com/bkaradzic/bgfx.git")
     add_versions("7816", "5ecddbf4d51e2dda2a56ae8cafef4810e3a45d87")
+    add_versions("8203", "484a5f0c25b53584a6b7fce0702a6bb580072d81")
 
     add_resources("7816", "bx", "https://github.com/bkaradzic/bx.git", "51f25ba638b9cb35eb2ac078f842a4bed0746d56")
+    add_resources("8203", "bx", "https://github.com/bkaradzic/bx.git", "b9501348c596b68e5e655a8308df5c55f61ecd80")
     add_resources("7816", "bimg", "https://github.com/bkaradzic/bimg.git", "8355d36befc90c1db82fca8e54f38bfb7eeb3530")
+    add_resources("8203", "bimg", "https://github.com/bkaradzic/bimg.git", "663f724186e26caf46494e389ed82409106205fb")
 
     if is_plat("windows") then
         add_syslinks("user32", "gdi32", "psapi")
