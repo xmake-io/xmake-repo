@@ -25,6 +25,7 @@ package("dartsim")
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
         add_cxxflags("/permissive-")
+        add_syslinks("user32")
     end
 
     add_deps("cmake")
@@ -67,7 +68,6 @@ package("dartsim")
         table.insert(configs, "-DDART_BUILD_DARTPY=" .. (package:config("dartpy") and "ON" or "OFF"))
         table.insert(configs, "-DDART_BUILD_GUI_OSG=" .. (package:config("openscenegraph") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        print(io.readfile(path.join(package:installdir("include"), "dart", "config.hpp")))
     end)
 
     on_test(function (package)
