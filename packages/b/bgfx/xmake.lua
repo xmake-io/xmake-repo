@@ -17,7 +17,7 @@ package("bgfx")
         add_syslinks("user32", "gdi32", "psapi")
         add_includedirs("include", "include/compat/msvc")
     elseif is_plat("macosx") then
-        add_frameworks("Metal", "QuartzCore", "Cocoa")
+        add_frameworks("Metal", "QuartzCore", "Cocoa", "IOKit")
     elseif is_plat("linux") then
         add_deps("libx11")
         add_syslinks("GL", "pthread", "dl")
