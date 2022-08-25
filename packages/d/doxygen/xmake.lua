@@ -11,8 +11,17 @@ package("doxygen")
     add_versions("github:1.9.2", "Release_1_9_2")
     add_versions("github:1.9.1", "Release_1_9_1")
 
-    add_deps("cmake", "bison", "flex", {private = true})
-    add_deps("python 3.x", {kind = "binary", private = true})
+    if not is_plat("windows") then
+        add_deps("cmake", "bison", "flex", {private = true})
+        add_deps("python 3.x", {kind = "binary", private = true})
+    end
+
+    on_load("@windows", function (package)
+        if package:is_built() then
+            package:add("deps", "cmake", "bison", "flex")
+            package:add("deps", "python 3.x", {kind = "binary"})
+        end
+    end)
 
     on_install("@windows", "@macosx", "@linux", function (package)
         import("package.tools.cmake").install(package)
