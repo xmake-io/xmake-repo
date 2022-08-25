@@ -16,6 +16,7 @@ package("bgfx")
     if is_plat("windows") then
         add_syslinks("user32", "gdi32", "psapi")
         add_includedirs("include", "include/compat/msvc")
+        add_cxxflags("/Zc:__cplusplus")
     elseif is_plat("macosx") then
         add_frameworks("Metal", "QuartzCore", "Cocoa", "IOKit")
     elseif is_plat("linux") then
@@ -30,6 +31,7 @@ package("bgfx")
         for _, lib in ipairs({"bgfx", "bimg", "bx"}) do
             package:add("links", lib .. suffix)
         end
+        package:add("defines", "BX_CONFIG_DEBUG=" .. (package:debug() and "1" or "0"))
     end)
 
     on_install("windows", "macosx", "linux", function (package)
