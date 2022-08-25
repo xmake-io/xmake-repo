@@ -31,6 +31,7 @@ package("bgfx")
         for _, lib in ipairs({"bgfx", "bimg", "bx"}) do
             package:add("links", lib .. suffix)
         end
+        package:add("defines", "BX_CONFIG_DEBUG=" .. (package:debug() and "1" or "0"))
     end)
 
     on_install("windows", "macosx", "linux", function (package)
