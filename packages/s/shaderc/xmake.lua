@@ -8,6 +8,10 @@ package("shaderc")
              "https://github.com/google/shaderc.git")
     add_versions("v2022.2", "517d36937c406858164673db696dc1d9c7be7ef0960fbf2965bfef768f46b8c0")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake", "python 3.x", {kind = "binary"})
 
     if is_plat("linux") then
@@ -37,6 +41,9 @@ package("shaderc")
         local configs = {"-DSHADERC_ENABLE_EXAMPLES=OFF", "-DSHADERC_SKIP_TESTS=ON", "-DSHADERC_ENABLE_COPYRIGHT_CHECK=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DSHADERC_ENABLE_SHARED_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
