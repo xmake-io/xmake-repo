@@ -100,11 +100,11 @@ package("bgfx")
             if package:is_plat("macosx") then
                 os.trycp(".build/" .. target .. "/bin/*.a|*example*", package:installdir("lib"))
                 os.trycp(".build/" .. target .. "/bin/*.dylib", package:installdir("lib"))
-                os.trycp(".build/" .. target .. "/bin/*|.build/*.*", package:installdir("bin"))
+                os.trycp(".build/" .. target .. "/bin/*|*.*", package:installdir("bin"))
             elseif package:is_plat("linux") then
                 os.trycp(".build/" .. target .. "/bin/*.a|*example*", package:installdir("lib"))
                 os.trycp(".build/" .. target .. "/bin/*.so", package:installdir("lib"))
-                os.trycp(".build/" .. target .. "/bin/*|.build/*.*", package:installdir("bin"))
+                os.trycp(".build/" .. target .. "/bin/*|*.*", package:installdir("bin"))
             end
         end
         package:addenv("PATH", "bin")
