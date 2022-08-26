@@ -106,7 +106,6 @@ package("bgfx")
                 os.trycp(".build/" .. target .. "/bin/*.so", package:installdir("lib"))
                 os.trycp(".build/" .. target .. "/bin/*|*.*", package:installdir("bin"))
             end
-            print(os.files(package:installdir("bin", "**")))
         end
         package:addenv("PATH", "bin")
     end)
