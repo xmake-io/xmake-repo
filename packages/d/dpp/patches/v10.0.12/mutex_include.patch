@@ -1,0 +1,13 @@
+diff --git a/src/dpp/dns.cpp b/src/dpp/dns.cpp
+index dbb2b6f8..7b4db79d 100644
+--- a/src/dpp/dns.cpp
++++ b/src/dpp/dns.cpp
+@@ -24,6 +24,8 @@
+ #include <exception>
+ #include <shared_mutex>
+ #include <dpp/exception.h>
++#include <mutex>
++#include <cstring>
+ 
+ namespace dpp
+ {

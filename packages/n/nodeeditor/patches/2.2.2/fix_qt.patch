@@ -1,0 +1,24 @@
+diff --git a/include/nodes/internal/NodePainterDelegate.hpp b/include/nodes/internal/NodePainterDelegate.hpp
+index d532619..f22496c 100644
+--- a/include/nodes/internal/NodePainterDelegate.hpp
++++ b/include/nodes/internal/NodePainterDelegate.hpp
+@@ -1,6 +1,6 @@
+ #pragma once
+ 
+-#include <QPainter>
++#include <QtGui/QPainter>
+ 
+ #include "NodeGeometry.hpp"
+ #include "NodeDataModel.hpp"
+diff --git a/include/nodes/internal/QStringStdHash.hpp b/include/nodes/internal/QStringStdHash.hpp
+index cc5eb68..5e5e6e9 100644
+--- a/include/nodes/internal/QStringStdHash.hpp
++++ b/include/nodes/internal/QStringStdHash.hpp
+@@ -1,6 +1,6 @@
+ #pragma once
+ 
+-#include <QtGlobal>
++#include <QtCore/QtGlobal>
+ 
+ #if (QT_VERSION < QT_VERSION_CHECK(5, 14, 0))
+ 

@@ -10,6 +10,7 @@ package("openvdb")
     add_versions("8.1.0", "3e09d47331429be7409a3a3c27fdd3c297f96d31d2153febe194e664a99d6183")
     add_versions("8.2.0", "d2e77a0720db79e9c44830423bdb013c24a1cf50994dd61d570b6e0c3e0be699")
     add_versions("9.0.0", "ad3816e8f1931d1d6fdbddcec5a1acd30695d049dd10aa965096b2fb9972b468")
+    add_versions("9.1.0", "914ee417b4607c75c95b53bc73a0599de4157c7d6a32e849e80f24e40fb64181")
 
     add_deps("cmake")
     add_deps("boost", {system = false, configs = {regex = true, system = true, iostreams = true}})
@@ -21,6 +22,7 @@ package("openvdb")
     add_configs("lod", {description = "Command line binary for generating volume mipmaps from an OpenVDB grid.", default = false, type = "boolean"})
     add_configs("render", {description = "Command line binary for ray-tracing OpenVDB grids.", default = false, type = "boolean"})
     add_configs("view", {description = "Command line binary for displaying OpenVDB grids in a GL viewport.", default = false, type = "boolean"})
+    add_configs("ax", {description = "Command line binary for OpenVDB AX.", default = false, type = "boolean"})
     add_configs("nanovdb", {description = "Enable building of NanoVDB Module.", default = false, type = "boolean"})
 
     on_load("macosx", "linux", "windows", function (package)
@@ -78,6 +80,7 @@ package("openvdb")
         table.insert(configs, "-DOPENVDB_BUILD_VDB_PRINT=" .. (package:config("print") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_RENDER=" .. (package:config("render") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_VIEW=" .. (package:config("view") and "ON" or "OFF"))
+        table.insert(configs, "-DOPENVDB_BUILD_AX_BINARIES=" .. (package:config("ax") and "ON" or "OFF"))
         if package:config("simd") then
             table.insert(configs, "-DOPENVDB_SIMD=" .. package:config("simd"))
         end

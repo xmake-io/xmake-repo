@@ -4,23 +4,32 @@ package("flecs")
     set_description("A fast entity component system (ECS) for C & C++")
     set_license("MIT")
 
-    add_urls("https://github.com/SanderMertens/flecs.git")
-    add_versions("v3.0.1-alpha", "9d9a2fbea143a7237ae7020748180d896839e328a5d34bb769808abf904fcbf0")
-    add_versions("v2.4.8", "8b24c11b0513ee6ad3904165ed0927d59cbff2acc9bce0f8f989f493891d7deb")
+    add_urls("https://github.com/SanderMertens/flecs/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/SanderMertens/flecs.git")
+    add_versions("v3.0.0", "ae88da6abc5612d16ab2e6aa4041b035491fc1f2")
+    add_versions("v2.4.8", "9a8040a197e4b5e032524bc7183f68faa7b2f759c67b983b40018a7726561cac")
 
     add_deps("cmake")
+
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
 
     on_install("windows", "macosx", "linux", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DFLECS_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DFLECS_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") and not package:config("shared") then
+            package:add("defines", "flecs_STATIC")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-				flecs::world ecs;
+                flecs::world ecs;
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "flecs.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "flecs.h"}))
     end)

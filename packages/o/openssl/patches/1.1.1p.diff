@@ -1,0 +1,10 @@
+--- openssl-OpenSSL_1_1_1p/test/v3ext.c	2022-07-05 17:08:33.000000000 +0800
++++ openssl-OpenSSL_1_1_1p/test/v3ext.c.ok	2022-08-01 00:57:49.690000000 +0800
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include <stdio.h>
++#include <string.h>
+ #include <openssl/x509.h>
+ #include <openssl/x509v3.h>
+ #include <openssl/pem.h>

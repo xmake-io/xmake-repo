@@ -53,10 +53,15 @@ package("libcurl")
                             zstd     = "zstd",
                             brotli   = "brotli",
                             libssh2  = "libssh2"}
+        local has_deps = false
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
+                has_deps = true
             end
+        end
+        if has_deps and package:is_plat("linux", "macosx") then
+            package:add("deps", "pkg-config")
         end
     end)
 
@@ -75,11 +80,11 @@ package("libcurl")
                             zlib     = "CURL_ZLIB",
                             zstd     = "CURL_ZSTD",
                             brotli   = "CURL_BROTLI",
-                            libssh2  = (version:ge("7.81") and "CURL_USE_LIBSSL2" or "CMAKE_USE_LIBSSL2")}
+                            libssh2  = (version:ge("7.81") and "CURL_USE_LIBSSH2" or "CMAKE_USE_LIBSSH2")}
         for name, opt in pairs(configopts) do
             table.insert(configs, "-D" .. opt .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
@@ -102,10 +107,10 @@ package("libcurl")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        if is_plat("macosx", "iphoneos") then
+        if package:is_plat("macosx", "iphoneos") then
             table.insert(configs, (package:version():ge("7.77") and "--with-secure-transport" or "--with-darwinssl"))
         end
-        if is_plat("mingw") then
+        if package:is_plat("mingw") then
             table.insert(configs, "--with-schannel")
         end
         for _, name in ipairs({"openssl", "mbedtls", "zlib", "brotli", "zstd", "libssh2", "libidn2", "libpsl", "nghttp2"}) do
@@ -113,6 +118,13 @@ package("libcurl")
         end
         table.insert(configs, package:config("cares") and "--enable-ares" or "--disable-ares")
         table.insert(configs, package:config("openldap") and "--enable-ldap" or "--disable-ldap")
+        if package:is_plat("macosx") then
+            local cares = package:dep("c-ares")
+            if cares and not cares:config("shared") then
+                -- we need fix missing `-lresolv` when checking c-ares
+                io.replace("./configure", "PKGCONFIG --libs-only-l libcares", "PKGCONFIG --libs-only-l --static libcares", {plain = true})
+            end
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 

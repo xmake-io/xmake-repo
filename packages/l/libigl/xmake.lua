@@ -18,10 +18,12 @@ package("libigl")
 
     if is_plat("windows") then
         add_syslinks("comdlg32")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
     end
 
     add_deps("cmake", "eigen")
-    on_load("macosx", "linux", "windows", function (package)
+    on_load("macosx", "linux", "windows", "mingw", function (package)
         if not package:config("header_only") then
             raise("Non-header-only version is not supported yet!")
         end
@@ -33,13 +35,13 @@ package("libigl")
         end
     end)
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", "windows", "mingw", function (package)
         if package:config("imgui") then
             local igl_imgui_dir = package:resourcefile("libigl_imgui")
             os.cp(path.join(igl_imgui_dir, "imgui_fonts_droid_sans.h"), package:installdir("include"))
         end
         if package:config("header_only") then
-            os.mv("include/igl", package:installdir("include"))
+            os.cp("include/igl", package:installdir("include"))
             return
         end
         local configs = {"-DLIBIGL_BUILD_TESTS=OFF", "-DLIBIGL_BUILD_TUTORIALS=OFF", "-DLIBIGL_SKIP_DOWNLOAD=ON"}
