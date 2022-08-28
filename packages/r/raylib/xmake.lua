@@ -43,7 +43,7 @@ package("raylib")
     add_deps("opengl", {optional = true})
 
     on_install("macosx|x86_64", function (package)
-        os.cp("include/raylib.h", package:installdir("include"))
+        os.cp("include/*.h", package:installdir("include"))
         os.cp("lib/libraylib.a", package:installdir("lib"))
     end)
 
