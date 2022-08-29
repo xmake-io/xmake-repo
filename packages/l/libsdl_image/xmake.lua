@@ -71,6 +71,7 @@ package("libsdl_image")
                        "-framework", "ImageIO",
                        "-framework", "CoreServices"}
         end
+        os.rm("./configure")
         import("package.tools.autoconf").install(package, configs, {ldflags = exflags, shflags = exflags})
     end)
 
