@@ -52,6 +52,7 @@ package("libsdl_image")
     end)
 
     on_install("macosx", "linux", function (package)
+        local exflags = {}
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
@@ -62,7 +63,15 @@ package("libsdl_image")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
         end
-        import("package.tools.autoconf").install(package, configs)
+        if package:version():eq("2.0.5") then
+            io.replace("Makefile.am", "noinst_PROGRAMS = showimage", "")
+        elseif package:version():gt("2.6") then
+            exflags = {"-framework", "CoreFoundation",
+                       "-framework", "CoreGraphics",
+                       "-framework", "ImageIO",
+                       "-framework", "CoreServices"}
+        end
+        import("package.tools.autoconf").install(package, configs, {ldflags = exflags, shflags = exflags})
     end)
 
     on_test(function (package)
