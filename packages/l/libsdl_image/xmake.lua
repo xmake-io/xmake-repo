@@ -58,6 +58,9 @@ package("libsdl_image")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
         end
+        if libsdl and is_plat("macosx") then
+            table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
+        end
         io.replace("Makefile.am", "noinst_PROGRAMS = showimage.-\n", "\n")
         os.rm("./configure")
         import("package.tools.autoconf").install(package, configs)
