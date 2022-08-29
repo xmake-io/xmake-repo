@@ -2,6 +2,7 @@ package("libsdl_ttf")
 
     set_homepage("https://www.libsdl.org/projects/SDL_ttf/")
     set_description("Simple DirectMedia Layer text rendering library")
+    set_license("zlib")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::SDL2_ttf")
@@ -10,8 +11,6 @@ package("libsdl_ttf")
     elseif is_plat("macosx") then
         add_extsources("brew::sdl2_ttf")
     end
-
-    set_license("zlib")
 
     if is_plat("windows", "mingw") then
         set_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-$(version)-VC.zip")
