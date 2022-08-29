@@ -2,6 +2,7 @@ package("libsdl_image")
 
     set_homepage("http://www.libsdl.org/projects/SDL_image/")
     set_description("Simple DirectMedia Layer image loading library")
+    set_license("zlib")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::SDL2_image")
@@ -10,8 +11,6 @@ package("libsdl_image")
     elseif is_plat("macosx") then
         add_extsources("brew::sdl2_image")
     end
-
-    set_license("zlib")
 
     if is_plat("windows", "mingw") then
         set_urls("https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-$(version)-VC.zip")
@@ -65,7 +64,7 @@ package("libsdl_image")
         end
         if package:version():eq("2.0.5") then
             io.replace("Makefile.am", "noinst_PROGRAMS = showimage", "")
-        elseif package:version():gt("2.6") then
+        elseif package:version():gt("2.6") and package:is_plat("macosx") then
             exflags = {"-framework", "CoreFoundation",
                        "-framework", "CoreGraphics",
                        "-framework", "ImageIO",
