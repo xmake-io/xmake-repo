@@ -3,6 +3,16 @@ package("libsdl_image")
     set_homepage("http://www.libsdl.org/projects/SDL_image/")
     set_description("Simple DirectMedia Layer image loading library")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::SDL2_image")
+    elseif is_plat("linux") then
+        add_extsources("pacman::sdl2_image", "apt::libsdl2-image-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::sdl2_image")
+    end
+
+    set_license("zlib")
+
     if is_plat("windows", "mingw") then
         set_urls("https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-$(version)-VC.zip")
         add_urls("https://github.com/libsdl-org/SDL_image/releases/download/release-$(version)/SDL2_image-devel-$(version)-VC.zip")
@@ -17,14 +27,6 @@ package("libsdl_image")
         add_versions("2.6.0", "2252cdfd5be73cefaf727edc39c2ef3b7682e797acbd3126df117e925d46aaf6")
         add_versions("2.6.1", "cbfea63a46715c63a1db9e41617e550749a95ffd33ef9bd5ba6e58b2bdca6ed3")
         add_versions("2.6.2", "efe3c229853d0d40c35e5a34c3f532d5d9728f0abc623bc62c962bcef8754205")
-    end
-
-    if is_plat("mingw") and is_subhost("msys") then
-        add_extsources("pacman::SDL2_image")
-    elseif is_plat("linux") then
-        add_extsources("pacman::sdl2_image", "apt::libsdl2-image-dev")
-    elseif is_plat("macosx") then
-        add_extsources("brew::sdl2_image")
     end
 
     if is_plat("macosx") then
@@ -50,23 +52,17 @@ package("libsdl_image")
     end)
 
     on_install("macosx", "linux", function (package)
-        local exflags
-        local configs = {"--disable-dependency-tracking"}
+        local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
         end
-        if package:version():eq("2.0.5") then
-            io.replace("Makefile.am", "noinst_PROGRAMS = showimage", "")
-        elseif package:version():gt("2.6") then
-            exflags = {"-framework", "CoreFoundation",
-                       "-framework", "CoreGraphics",
-                       "-framework", "ImageIO",
-                       "-framework", "CoreServices"}
-        end
-        os.rm("./configure")
-        import("package.tools.autoconf").install(package, configs, {ldflags = exflags, shflags = exflags})
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
