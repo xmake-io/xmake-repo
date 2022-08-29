@@ -3,6 +3,16 @@ package("libsdl_ttf")
     set_homepage("https://www.libsdl.org/projects/SDL_ttf/")
     set_description("Simple DirectMedia Layer text rendering library")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::SDL2_ttf")
+    elseif is_plat("linux") then
+        add_extsources("pacman::sdl2_ttf", "apt::libsdl2-ttf-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::sdl2_ttf")
+    end
+
+    set_license("zlib")
+
     if is_plat("windows", "mingw") then
         set_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-devel-$(version)-VC.zip")
         add_urls("https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL2_ttf-devel-$(version)-VC.zip")
@@ -19,21 +29,12 @@ package("libsdl_ttf")
         add_versions("2.20.1", "18d81ab399c8e39adababe8918691830ba6e0d6448e5baa141ee0ddf87ede2dc")
     end
 
-    if is_plat("mingw") and is_subhost("msys") then
-        add_extsources("pacman::SDL2_ttf")
-    elseif is_plat("linux") then
-        add_extsources("pacman::sdl2_ttf", "apt::libsdl2-ttf-dev")
-    elseif is_plat("macosx") then
-        add_extsources("brew::sdl2_ttf")
-    end
-
     add_deps("libsdl")
     if is_plat("linux", "macosx") then
-        add_deps("freetype")
+        add_deps("automake", "autoconf", "freetype")
     end
 
     add_links("SDL2_ttf")
-
     add_includedirs("include", "include/SDL2")
 
     on_install("windows", "mingw", function (package)
@@ -48,11 +49,8 @@ package("libsdl_ttf")
 
     on_install("macosx", "linux", function (package)
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
-        end
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:is_plat("linux") and package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
