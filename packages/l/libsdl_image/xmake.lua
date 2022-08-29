@@ -57,9 +57,8 @@ package("libsdl_image")
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
-        end
-        if libsdl and package:is_plat("macosx") then
-            table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
+        elseif libsdl and package:is_plat("macosx") then
+            table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
         end
         io.replace("Makefile.am", "noinst_PROGRAMS = showimage.-\n", "\n")
         os.rm("./configure")
