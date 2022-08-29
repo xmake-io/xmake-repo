@@ -5,10 +5,18 @@ package("libsdl_image")
 
     if is_plat("windows", "mingw") then
         set_urls("https://www.libsdl.org/projects/SDL_image/release/SDL2_image-devel-$(version)-VC.zip")
+        add_urls("https://github.com/libsdl-org/SDL_image/releases/download/release-$(version)/SDL2_image-devel-$(version)-VC.zip")
         add_versions("2.0.5", "a180f9b75c4d3fbafe02af42c42463cc7bc488e763cfd1ec2ffb75678b4387ac")
+        add_versions("2.6.0", "e8953ec28e689fdef7805d0dc6913b8038dc6e250fe340929e459f367e2e75fa")
+        add_versions("2.6.1", "b431347d039081b3ec065670d3037f106c8683f11491c45776cde7e69965a5f3")
+        add_versions("2.6.2", "f510a58b03ce2b74a68d4e6733c47c1931813ab1736e533ad576f4cecb3a8a4d")
     else
         set_urls("https://www.libsdl.org/projects/SDL_image/release/SDL2_image-$(version).zip")
+        add_urls("https://github.com/libsdl-org/SDL_image/releases/download/release-$(version)/SDL2_image-$(version).zip")
         add_versions("2.0.5", "eee0927d1e7819d57c623fe3e2b3c6761c77c474fe9bc425e8674d30ac049b1c")
+        add_versions("2.6.0", "2252cdfd5be73cefaf727edc39c2ef3b7682e797acbd3126df117e925d46aaf6")
+        add_versions("2.6.1", "cbfea63a46715c63a1db9e41617e550749a95ffd33ef9bd5ba6e58b2bdca6ed3")
+        add_versions("2.6.2", "efe3c229853d0d40c35e5a34c3f532d5d9728f0abc623bc62c962bcef8754205")
     end
 
     if is_plat("mingw") and is_subhost("msys") then

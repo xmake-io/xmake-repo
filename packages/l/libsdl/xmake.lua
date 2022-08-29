@@ -15,6 +15,7 @@ package("libsdl")
 
     if is_plat("windows", "mingw") then
         set_urls("https://www.libsdl.org/release/SDL2-devel-$(version)-VC.zip")
+        add_urls("https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-devel-$(version)-VC.zip")
         add_versions("2.0.8", "68505e1f7c16d8538e116405411205355a029dcf2df738dbbc768b2fe95d20fd")
         add_versions("2.0.12", "00c55a597cebdb9a4eb2723f2ad2387a4d7fd605e222c69b46099b15d5d8b32d")
         add_versions("2.0.14", "232071cf7d40546cde9daeddd0ec30e8a13254c3431be1f60e1cdab35a968824")
@@ -22,8 +23,10 @@ package("libsdl")
         add_versions("2.0.18", "d4a56e2ee7c0eae2ef0d511201d3bd38c5ab255662e4b571d4d630762473bf42")
         add_versions("2.0.20", "5b1512ca6c9d2427bd2147da01e5e954241f8231df12f54a7074dccde416df18")
         add_versions("2.0.22", "32adc96d8b25e5671189f1f38a4fc7deb105fbb1b3ed78ffcb23f5b8f36b3922")
+        add_versions("2.24.0", "97c6e2d17c0baebf4c84ede27ec42e211358f3694b9f558ead3a9c542c4a004e")
     else
         set_urls("https://www.libsdl.org/release/SDL2-$(version).zip")
+        add_urls("https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-$(version).zip")
         add_versions("2.0.8", "e6a7c71154c3001e318ba7ed4b98582de72ff970aca05abc9f45f7cbdc9088cb")
         add_versions("2.0.12", "476e84d6fcbc499cd1f4a2d3fd05a924abc165b5d0e0d53522c9604fe5a021aa")
         add_versions("2.0.14", "2c1e870d74e13dfdae870600bfcb6862a5eab4ea5b915144aff8d75a0f9bf046")
@@ -31,6 +34,7 @@ package("libsdl")
         add_versions("2.0.18", "2d96cc82020341f7f5957c42001ad526e15fbb7056be8a74dab302483e97aa24")
         add_versions("2.0.20", "cc8b16a326eb082c1f48ca30fdf471acfd2334b69bd7527e65ac58369013a1ba")
         add_versions("2.0.22", "9a81ab724e6dcef96c61a4a2ebe7758e5b8bb191794650d276a20d5148fbd50c")
+        add_versions("2.24.0", "4b065503d45652d5f65d807fe98c757c73af2968727945b596861995bc3b69c2")
     end
 
     if is_plat("macosx") then
