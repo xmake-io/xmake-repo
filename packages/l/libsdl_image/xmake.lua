@@ -32,17 +32,16 @@ package("libsdl_image")
         add_frameworks("CoreFoundation", "CoreGraphics", "ImageIO", "CoreServices")
     end
 
-    if is_plat("macosx", "linux") then
-        add_deps("automake", "autoconf")
-    end
     add_deps("libsdl")
 
     add_links("SDL2_image")
     add_includedirs("include", "include/SDL2")
 
-    on_load(function (package)
-        if package:version():ge("2.6") and package:is_plat("macosx", "linux") then
+    on_load("macosx", "linux", function (package)
+        if package:version():ge("2.6") then
             package:add("deps", "cmake")
+        else
+            package:add("deps", "automake", "autoconf")
         end
     end)
 
