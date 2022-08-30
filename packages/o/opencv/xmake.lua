@@ -202,7 +202,7 @@ package("opencv")
             runtest = false
         end
         if runtest then
-            os.vrun("opencv_version")
+            os.vrun((package:debug() and "opencv_version" or "opencv_versiond"))
         end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
