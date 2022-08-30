@@ -30,11 +30,19 @@ package("libsdl_ttf")
 
     add_deps("libsdl")
     if is_plat("linux", "macosx") then
-        add_deps("automake", "autoconf", "freetype")
+        add_deps("freetype")
     end
 
     add_links("SDL2_ttf")
     add_includedirs("include", "include/SDL2")
+
+    on_load("macosx", "linux", function (package)
+        if package:version():ge("2.20") then
+            package:add("deps", "cmake")
+        else
+            package:add("deps", "automake", "autoconf")
+        end
+    end)
 
     on_install("windows", "mingw", function (package)
         local arch = package:arch()
@@ -47,17 +55,24 @@ package("libsdl_ttf")
     end)
 
     on_install("macosx", "linux", function (package)
-        local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:is_plat("linux") and package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
+        if package:version():ge("2.20") then
+            local configs = {"-DSDL2TTF_SAMPLES=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            if libsdl and not libsdl:is_system() then
+                table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
+            end
+            import("package.tools.cmake").install(package, configs)
+        else
+            local configs = {}
+            table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+            table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+            local libsdl = package:dep("libsdl")
+            if libsdl and not libsdl:is_system() then
+                table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
+            end
+            import("package.tools.autoconf").install(package, configs)
         end
-        local libsdl = package:dep("libsdl")
-        if libsdl and not libsdl:is_system() then
-            table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
-        end
-        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
