@@ -40,6 +40,12 @@ package("libsdl_image")
     add_links("SDL2_image")
     add_includedirs("include", "include/SDL2")
 
+    on_load(function (package)
+        if package:version():ge("2.6") and package:is_plat("macosx", "linux") then
+            package:add("deps", "cmake")
+        end
+    end)
+
     on_install("windows", "mingw", function (package)
         local arch = package:arch()
         if package:is_plat("mingw") then
@@ -51,16 +57,27 @@ package("libsdl_image")
     end)
 
     on_install("macosx", "linux", function (package)
-        local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        local libsdl = package:dep("libsdl")
-        if libsdl and not libsdl:is_system() then
-            table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
+        if package:version():ge("2.6") then
+            local configs = {"-DSDL_TEST=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            table.insert(configs, "-DSDL_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+            table.insert(configs, "-DSDL_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+            if libsdl and not libsdl:is_system() then
+                table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
+            end
+            import("package.tools.cmake").install(package, configs)
+        else
+            local configs = {}
+            table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+            table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+            local libsdl = package:dep("libsdl")
+            if libsdl and not libsdl:is_system() then
+                table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
+            end
+            io.replace("Makefile.am", "noinst_PROGRAMS = showimage.-\n", "\n")
+            os.rm("./configure")
+            import("package.tools.autoconf").install(package, configs)
         end
-        io.replace("Makefile.am", "noinst_PROGRAMS = showimage.-\n", "\n")
-        os.rm("./configure")
-        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
