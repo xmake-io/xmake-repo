@@ -16,24 +16,11 @@ package("grpc")
     elseif is_plat("windows") then
         add_deps("nasm")
     end
-    add_deps("openssl")
-    add_links("ssl")
     
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        local fetchinfo = package:dep("openssl"):fetch()
-        print(fetchinfo)
-        for _, includedir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
-            table.insert(cflags, "-I" .. includedir)
-        end
-        for _, linkdir in ipairs(fetchinfo.linkdirs) do 
-            table.insert(ldflags, "-L" .. linkdir)
-        end
-        for _, link in ipairs(fetchinfo.links) do 
-            table.insert(ldflags, "-l" .. link)
-        end
         io.replace("third_party/boringssl-with-bazel/CMakeLists.txt", "target_link_libraries(bssl ssl crypto)", "target_link_libraries(ssl crypto)\ntarget_link_libraries(bssl ssl crypto)", {plain = true})
 
         import("package.tools.cmake").install(package, configs)
