@@ -23,15 +23,8 @@ package("grpc")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("third_party/boringssl-with-bazel/CMakeLists.txt", "target_link_libraries(bssl ssl crypto)", "target_link_libraries(ssl crypto)\ntarget_link_libraries(bssl ssl crypto)", {plain = true})
         if package:is_plat("windows") and package:config("shared") then
-            import("package.tools.cmake").install(package, {"-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")})
-            io.replace(package:buliddir("grp.vcxproj", "upb.lib", "upb.dll", {plain = true})
-            io.replace(package:buliddir("grpc_csharp_plugin.vcxproj", "grpc_plugin_support.lib", "grpc_plugin_support.dll", {plain = true})
-            io.replace(package:buliddir("grpc_node_plugin.vcxproj", "grpc_plugin_support.lib", "grpc_plugin_support.dll", {plain = true})
-            io.replace(package:buliddir("grpc_php_plugin.vcxproj", "grpc_plugin_support.lib", "grpc_plugin_support.dll", {plain = true})
-            io.replace(package:buliddir("grpc_objective_c_plugin.vcxproj", "grpc_plugin_support.lib", "grpc_plugin_support.dll", {plain = true})
-            io.replace(package:buliddir("grpc_cpp_plugin.vcxproj", "grpc_plugin_support.lib", "grpc_plugin_support.dll", {plain = true})
-            io.replace(package:buliddir("grpc_python_plugin.vcxproj", "grpc_plugin_support.lib", "grpc_plugin_support.dll", {plain = true})
-            io.replace(package:buliddir("grpc_ruby_plugin.vcxproj", "grpc_plugin_support.lib", "grpc_plugin_support.dll", {plain = true})
+            io.replace("CMakeLists.txt", "add_library(upb", "add_library(upb SHARED")
+            io.replace("CMakeLists.txt", "add_library(grpc_plugin_support", "add_library(grpc_plugin_support SHARED")
         end
 
         import("package.tools.cmake").install(package, configs)
