@@ -15,6 +15,7 @@ package("grpc")
         add_extsources("brew::shtool")
     elseif is_plat("windows") then
         add_deps("nasm")
+        add_configs("shared", {description = "Download shared libraries.", default = false, type = "boolean", readonly = true})
     end
     
     on_install("linux", "macosx", "windows", function (package)
