@@ -11,6 +11,7 @@ package("dpp")
     -- keep only the latest previous versions.
     -- i.e. if D++ switch to v11.x.x, keep only the latest v10.x.x and delete the rest.
 
+    add_versions("v10.0.18", "0d976673852a5d8e71833d5f6a5b9767ffaf6b6a053d8420fa921adfcb80ab64")
     add_versions("v10.0.17", "7596dcc5602f756709f57d38c7f5b4c743cedb3d808416011ef0ab279cd5391e")
 
     add_versions("v10.0.16", "dc99af06d9c2fdeefde534d99c00cbda4c96bac7d02ee68bcbbc2b47848bb28e")
