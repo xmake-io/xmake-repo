@@ -4,6 +4,7 @@ set_languages("cxx11")
 option("wchar32",      {showmenu = true,  default = false})
 option("freetype",     {showmenu = true,  default = false})
 option("glfw_opengl3", {showmenu = true,  default = false})
+option("glfw_vulkan",  {showmenu = true,  default = false})
 option("user_config",  {showmenu = true,  default = nil, type = "string"})
 option("use_glad",     {showmenu = true,  default = false})
 
@@ -16,6 +17,10 @@ if has_config("glfw_opengl3") then
     if has_config("use_glad") then
         add_requires("glad")
     end
+elseif has_config("glfw_vulkan") then
+    add_requires("glfw")
+    add_requires("vulkansdk")
+    add_requires("vulkan-headers")
 end
 
 target("imgui")
@@ -47,6 +52,11 @@ target("imgui")
         else
             add_headerfiles("backends/imgui_impl_opengl3_loader.h")
         end
+    elseif has_config("glfw_vulkan") then
+        add_files("backends/imgui_impl_vulkan.cpp", "backends/imgui_impl_glfw.cpp")
+        add_headerfiles("backends/imgui_impl_vulkan.h", "backends/imgui_impl_glfw.h")
+        add_packages("glfw")
+        add_packages("vulkan-headers")
     end
 
     if has_config("user_config") then

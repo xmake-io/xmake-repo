@@ -25,6 +25,7 @@ package("imgui")
 
     add_configs("user_config", {description = "Use user config (disables test!)", default = nil, type = "string"})
     add_configs("glfw_opengl3", {description = "Use glfw+opengl3 as backend", default = false, type = "boolean"})
+    add_configs("glfw_vulkan", {description = "Use glfw+vulkan as backend", default = false, type = "boolean"})
     add_configs("wchar32", {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
     add_configs("freetype", {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
 
@@ -44,6 +45,8 @@ package("imgui")
                 package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
             end
             package:add("deps", "glfw")
+        elseif package:config("glfw_vulkan") then
+            package:add("deps", "glfw")
         end
         if package:version_str():find("-docking", 1, true) then
             package:set("urls", {"https://github.com/ocornut/imgui.git"})
@@ -55,6 +58,7 @@ package("imgui")
             wchar32      = package:config("wchar32"),
             freetype     = package:config("freetype"),
             glfw_opengl3 = package:config("glfw_opengl3"),
+            glfw_vulkan  = package:config("glfw_vulkan"),
             user_config  = package:config("user_config"),
             use_glad     = package:version():lt("1.84") -- this flag will be used if glfw_opengl3 is enabled
         }
