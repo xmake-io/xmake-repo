@@ -15,6 +15,7 @@ package("grpc")
         add_extsources("brew::shtool")
     elseif is_plat("windows") then
         add_deps("nasm")
+        add_configs("shared", {description = "Download shared libraries.", default = false, type = "boolean", readonly = true})
     end
     
     on_install("linux", "macosx", "windows", function (package)
@@ -22,10 +23,6 @@ package("grpc")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("third_party/boringssl-with-bazel/CMakeLists.txt", "target_link_libraries(bssl ssl crypto)", "target_link_libraries(ssl crypto)\ntarget_link_libraries(bssl ssl crypto)", {plain = true})
-        if package:is_plat("windows") and package:config("shared") then
-            io.replace("CMakeLists.txt", "add_library(upb", "add_library(upb SHARED")
-            io.replace("CMakeLists.txt", "add_library(grpc_plugin_support", "add_library(grpc_plugin_support SHARED")
-        end
 
         import("package.tools.cmake").install(package, configs)
     end)
