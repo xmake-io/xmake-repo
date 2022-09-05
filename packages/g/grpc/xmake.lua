@@ -23,15 +23,9 @@ package("grpc")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("third_party/boringssl-with-bazel/CMakeLists.txt", "target_link_libraries(bssl ssl crypto)", "target_link_libraries(ssl crypto)\ntarget_link_libraries(bssl ssl crypto)", {plain = true})
-
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            using grpc::Server;
-            using grpc::ServerBuilder;
-            using grpc::ServerContext;
-            using grpc::Status;
-        ]]}, {configs = {languages = "c++11"}, includes = "grpcpp/grpcpp.h"}))
+        assert(package:has_cxxfuncs("grpc_init", {includes = "grpcpp/grpcpp.h"}))
     end)
