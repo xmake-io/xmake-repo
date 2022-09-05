@@ -7,9 +7,6 @@ package("grpc")
     add_versions("v1.46.3", "53d69cc581c5b7305708587f4f1939278477c28a")
 
     add_deps("cmake")
-    if package:config("shared") then
-        add_links("grpc++", "grpc++_reflection", "grpc", "gpr", "upb")
-    end
     if is_plat("linux") then
         add_deps("autoconf", "libtool", "pkg-config")
         add_extsources("apt::build-essential")
@@ -20,6 +17,12 @@ package("grpc")
         add_deps("nasm")
         add_configs("shared", {description = "Download shared libraries.", default = false, type = "boolean", readonly = true})
     end
+
+    on_load(function (package)
+        if package:config("shared") then
+            package:add("links", "grpc++", "grpc++_reflection", "grpc", "gpr", "upb")
+        end
+    end)
     
     on_install("linux", "macosx", "windows", function (package)
         local configs = {}
