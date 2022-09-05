@@ -13,6 +13,7 @@ package("python")
             add_versions("3.9.6", "2918246384dfb233bd8f8c2bcf6aa3688e6834e84ab204f7c962147c468f8d12")
             add_versions("3.9.10", "e2c8e6b792748289ac27ef8462478022c96e24c99c4c3eb97d3afe510d9db646")
             add_versions("3.9.13", "c60ec0da0adf3a31623073d4fa085da62747085a9f23f4348fe43dfe94ea447b")
+            add_versions("3.10.6", "c1a07f7685b5499f58cfad2bb32b394b853ba12b8062e0f7530f2352b0942096")
         else
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
             add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
@@ -22,6 +23,7 @@ package("python")
             add_versions("3.9.6", "57ccd1b1b5fbc62882bd2a6f47df6e830ba39af741acf0a1d2f161eef4e87f2e")
             add_versions("3.9.10", "4cee67e2a529fe363e34f0da57f8e5c3fc036913dc838b17389b2319ead0927e")
             add_versions("3.9.13", "6774fdd872fc55b028becc81b7d79bdcb96c5e0eb1483cfcd38224b921c94d7d")
+            add_versions("3.10.6", "8cbc234939a679687da44c3bbc6d6ce375ea4b84c4fa8dbc1bf5befc43254b58")
         end
     else
         set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
@@ -33,6 +35,7 @@ package("python")
         add_versions("3.9.6", "d0a35182e19e416fc8eae25a3dcd4d02d4997333e4ad1f2eee6010aadc3fe866")
         add_versions("3.9.10", "1aa9c0702edbae8f6a2c95f70a49da8420aaa76b7889d3419c186bfc8c0e571e")
         add_versions("3.9.13", "829b0d26072a44689a6b0810f5b4a3933ee2a0b8a4bfc99d7c5893ffd4f97c44")
+        add_versions("3.10.6", "848cb06a5caa85da5c45bd7a9221bb821e33fc2bdcba088c127c58fad44e6343")
     end
 
     if not is_plat(os.host()) then
