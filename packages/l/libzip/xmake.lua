@@ -19,6 +19,10 @@ package("libzip")
         add_configs(config, {description = "Enable " .. config .. " support.", default = false, type = "boolean"})
     end
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("Advapi32")
+    end
+
     on_load("windows", "macosx", "linux", function (package)
         for config, dep in pairs(configdeps) do
             if package:config(config) then
