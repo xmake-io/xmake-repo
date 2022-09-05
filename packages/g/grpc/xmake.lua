@@ -7,7 +7,7 @@ package("grpc")
     add_versions("v1.46.3", "53d69cc581c5b7305708587f4f1939278477c28a")
 
     add_deps("cmake")
-    add_links("grpc++", "grpc++_reflection", "grpc")
+    add_links("grpc++", "grpc++_reflection", "grpc", "gpr", "upb")
     if is_plat("linux") then
         add_deps("autoconf", "libtool", "pkg-config")
         add_extsources("apt::build-essential")
