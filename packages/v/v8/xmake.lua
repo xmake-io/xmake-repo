@@ -87,7 +87,11 @@ package("v8")
             local xcode = import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
             configs.xcode_sysroot = xcode:config("xcode_sysroot")
         end
-        import("package.tools.gn").build(package, configs, {buildir = "out"})
+        if package:is_plat("linux") or package:is_plat("macosx") then
+            import("package.tools.gn").build(package, configs, {buildir = "out"})
+        else
+            os.vrunv("ninja", "-C .\\out.gn\\" .. target_dir .. " v8_monolith")
+        end
         os.cp("include", package:installdir())
         os.trycp("out/obj/*.a", package:installdir("lib"))
         os.trycp("out/obj/*.lib", package:installdir("lib"))
