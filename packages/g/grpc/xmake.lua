@@ -37,5 +37,5 @@ package("grpc")
         void test() {
             grpc::CompletionQueue q;
         }
-    ]]}, {configs = {languages = "c++11"}, includes = "grpcpp/grpcpp.h"}))
+    ]]}, {configs = {languages = "c++17"}, includes = "grpcpp/grpcpp.h"}))
     end)
