@@ -78,7 +78,7 @@ package("v8")
         end
         if package:is_plat("windows") then
             local v8_arch = package:is_arch("x86", "i386") and "ia32." or "x64."
-            local target_dir = v8_arch .. package:debug() and "debug" or "release"
+            local target_dir = v8_arch .. (package:debug() and "debug" or "release")
             os.vrunv("python3", {path.join("tools", "clang", "scripts", "update.py")})
             os.vrunv("python3", {path.join("tools", "dev", "v8gen.py"), target_dir, "--", "v8_monolithic=true", "v8_use_external_startup_data=false", "use_custom_libcxx=false", "is_component_build=false", "treat_warnings_as_errors=false", "v8_symbol_level=0"})
         end
