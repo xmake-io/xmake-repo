@@ -8,6 +8,7 @@ package("spirv-reflect")
     add_versions("1.2.154+1", "5de48fe8d3ef434e846d64ed758adc5d26335ae5")
     add_versions("1.2.162+0", "481e34d666031eae28423f3b723a1a8c717d7636")
     add_versions("1.2.189+1", "272e050728de8d4a4ce9e7101c1244e6ff56e5b0")
+    add_versions("1.3.224+1", "b68b5a8a5d8ab5fce79e6596f3a731291046393a")
 
     add_deps("spirv-headers")
 

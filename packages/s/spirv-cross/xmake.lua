@@ -8,6 +8,7 @@ package("spirv-cross")
     add_versions("1.2.154+1", "e6f5ce6b8998f551f3400ad743b77be51bbe3019")
     add_versions("1.2.162+0", "6d10da0224bd3214c9a507832e62d9fb6ae9620d")
     add_versions("1.2.189+1", "0e2880ab990e79ce6cc8c79c219feda42d98b1e8")
+    add_versions("1.3.224+1", "61c603f3baa5270e04bcfb6acf83c654e3c57679")
 
     add_deps("cmake")
     add_links("spirv-cross-c", "spirv-cross-cpp", "spirv-cross-reflect", "spirv-cross-msl", "spirv-cross-util", "spirv-cross-hlsl", "spirv-cross-glsl", "spirv-cross-core")

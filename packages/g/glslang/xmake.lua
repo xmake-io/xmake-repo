@@ -5,6 +5,7 @@ package("glslang")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/glslang.git")
+    add_versions("1.3.224+1", "10423ec659d301a0ff2daac8bbf38980abf27590")
     add_versions("1.3.211+0", "9bb8cfffb0eed010e07132282c41d73064a7a609")
     add_versions("1.2.154+1", "bacaef3237c515e40d1a24722be48c0a0b30f75f")
     add_versions("1.2.162+0", "c594de23cdd790d64ad5f9c8b059baae0ee2941d")

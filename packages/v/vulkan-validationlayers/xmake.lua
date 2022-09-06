@@ -8,12 +8,14 @@ package("vulkan-validationlayers")
         add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/download/sdk-$(version)/android-binaries-$(version).tar.gz",
         {version = function (version) return version:gsub("%+", ".") end})
 
+        add_versions("1.3.224+1", "da8ff61ebec3e21ff080779e30258240d5ec2f19f9b495aca83c477a47c1643c")
         add_versions("1.2.198+0", "5436e974d6b3133b3454edf1910f76b9f869db8bbe086859b2abe32fdb539cbc")
         add_versions("1.2.189+1", "b3e69b60a67a17b023825f9eb0ce1aef22e6b59d095afa204d883a9ce3d81021")
     else
         add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/sdk-$(version).tar.gz",
         {version = function (version) return version:gsub("%+", ".") end})
 
+        add_versions("1.3.224+1", "49c00e0119e3bc11e13c0c740e57c76b582b14f754f3779b85508c4d90d9df85")
         add_versions("1.2.198+0", "4a70cc5da26baf873fcf69b081eeeda545515dd66e5904f18fee32b4d275593a")
         add_versions("1.2.189+1", "d169ae71ae3ba12159df355b58f86f5635062c695d1deac9b97d5653561d517d")
         add_versions("1.2.182+0", "e88492143c8b08154807e7ead0ac784365b14464bb5016c2800cbff176ff61e7")
@@ -33,12 +35,15 @@ package("vulkan-validationlayers")
         end
     end
 
+    add_links("")
+
     on_load("windows", "linux", function (package)
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
         if package:version():ge("1.2.189") then
             package:add("deps", "robin-hood-hashing")
         end
+        package:addenv("VK_LAYER_PATH", "lib")
     end)
 
     on_install("windows", "linux", function (package)
@@ -89,7 +94,5 @@ package("vulkan-validationlayers")
             assert(os.isfile(path.join(package:installdir("lib"), "x86", "libVkLayer_khronos_validation.so")))
             assert(os.isfile(path.join(package:installdir("lib"), "armeabi-v7a", "libVkLayer_khronos_validation.so")))
             assert(os.isfile(path.join(package:installdir("lib"), "arm64-v8a", "libVkLayer_khronos_validation.so")))
-        else
-            assert(package:has_cxxfuncs("getLayerOption", {includes = "layers/vk_layer_config.h"}))
         end
     end)
