@@ -22,13 +22,13 @@ package("grpc")
         if package:config("shared") then
             package:add("links", "grpc++", "grpc++_reflection", "grpc", "gpr", "upb")
         end
+        package:add("links", "pthread", "dl", "m", "c")
     end)
     
     on_install("linux", "macosx", "windows", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
         io.replace("third_party/boringssl-with-bazel/CMakeLists.txt", "target_link_libraries(bssl ssl crypto)", "target_link_libraries(ssl crypto)\ntarget_link_libraries(bssl ssl crypto)", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
