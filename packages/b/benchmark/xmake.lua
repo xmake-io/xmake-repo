@@ -30,8 +30,12 @@ package("benchmark")
     end
 
     add_deps("cmake")
-
     add_links("benchmark_main", "benchmark")
+    on_load("windows", function (package)
+        if not package:config("shared") then
+            package:add("defines", "BENCHMARK_STATIC_DEFINE")
+        end
+    end)
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {"-DBENCHMARK_ENABLE_TESTING=OFF"}
