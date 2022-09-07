@@ -10,7 +10,7 @@ package("v8")
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
-        add_syslinks("user32")
+        add_syslinks("user32", "winmm")
     end
 
     add_links("v8_monolith",
