@@ -2,6 +2,7 @@ package("benchmark")
 
     set_homepage("https://github.com/google/benchmark")
     set_description("A microbenchmark support library")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/google/benchmark/archive/v$(version).tar.gz",
              "https://github.com/google/benchmark.git")
@@ -12,6 +13,7 @@ package("benchmark")
     add_versions("1.5.6", "789f85b4810d13ff803834ea75999e41b326405d83d6a538baf01499eda96102")
     add_versions("1.6.0", "1f71c72ce08d2c1310011ea6436b31e39ccab8c2db94186d26657d41747c85d6")
     add_versions("1.6.1", "6132883bc8c9b0df5375b16ab520fac1a85dc9e4cf5be59480448ece74b278d4")
+    add_versions("1.7.0", "3aff99169fa8bdee356eaa1f691e835a6e57b1efeadb8a0f9f228531158246ac")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::benchmark")
@@ -28,8 +30,12 @@ package("benchmark")
     end
 
     add_deps("cmake")
-
     add_links("benchmark_main", "benchmark")
+    on_load("windows", function (package)
+        if not package:config("shared") then
+            package:add("defines", "BENCHMARK_STATIC_DEFINE")
+        end
+    end)
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {"-DBENCHMARK_ENABLE_TESTING=OFF"}
