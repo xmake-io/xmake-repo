@@ -90,7 +90,7 @@ package("v8")
         if package:is_plat("linux") or package:is_plat("macosx") then
             import("package.tools.gn").build(package, configs, {buildir = "out"})
         else
-            os.vrunv("ninja", "-C .\\out.gn\\" .. target_dir .. " v8_monolith")
+            import("package.tools.gn").build(package, configs, {buildir = "out.gn"})
         end
         os.cp("include", package:installdir())
         print("OUT DIR", os.files("out/*"))
