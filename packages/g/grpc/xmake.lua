@@ -15,7 +15,7 @@ package("grpc")
         add_extsources("brew::shtool")
     elseif is_plat("windows") then
         add_deps("nasm")
-        add_configs("shared", {description = "Download shared libraries.", default = false, type = "boolean", readonly = true})
+        add_configs("shared", {description = "Build shared libraries.", default = false, type = "boolean", readonly = true})
     end
 
     on_load("linux", "macosx", function (package)
@@ -35,9 +35,9 @@ package("grpc")
     end)
 
     on_test(function (package)
-    assert(package:check_cxxsnippets({test = [[
-        void test() {
-            grpc::CompletionQueue q;
-        }
-    ]]}, {configs = {languages = "c++11"}, includes = "grpcpp/grpcpp.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                grpc::CompletionQueue q;
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "grpcpp/grpcpp.h"}))
     end)
