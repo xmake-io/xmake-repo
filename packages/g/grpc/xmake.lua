@@ -21,8 +21,9 @@ package("grpc")
     on_load("linux", "macosx", function (package)
         if package:config("shared") then
             package:add("links", "grpc++", "grpc++_reflection", "grpc", "gpr", "upb")
+        else
+            package:add("links", "pthread", "dl", "m", "c")
         end
-        package:add("links", "pthread", "dl", "m", "c")
     end)
     
     on_install("linux", "macosx", "windows", function (package)
