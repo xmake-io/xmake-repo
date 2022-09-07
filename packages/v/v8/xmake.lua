@@ -49,7 +49,7 @@ package("v8")
     "custom_deps": {},
   }]]=])
         if package:is_plat("windows") then
-            os.setenv("DEPOT_TOOLS_WIN_TOOLCAHIN", "0")
+            envs.DEPOT_TOOLS_WIN_TOOLCAHIN = "0"
         end
         local gclient = is_host("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
@@ -91,16 +91,16 @@ package("v8")
             configs.xcode_sysroot = xcode:config("xcode_sysroot")
         end
         if package:is_plat("linux") or package:is_plat("macosx") then
-            import("package.tools.gn").build(package, configs, {buildir = "out"})
+            import("package.tools.gn").build(package, configs, {buildir = "out.gn"})
         else
             import("package.tools.gn").build(package, configs, {buildir = "out.gn"})
         end
         os.cp("include", package:installdir())
-        print("OUT DIR", os.files("out/*"))
-        print("OUT OBJ", os.files("out/obj/*"))
-        os.trycp("out/obj/*.a", package:installdir("lib"))
-        os.trycp("out/obj/*.lib", package:installdir("lib"))
-        os.trycp("out/obj/*.dll", package:installdir("bin"))
+        print("OUT DIR", os.files("out.gn/*"))
+        print("OUT OBJ", os.files("out.gn/obj/*"))
+        os.trycp("out.gn/obj/*.a", package:installdir("lib"))
+        os.trycp("out.gn/obj/*.lib", package:installdir("lib"))
+        os.trycp("out.gn/obj/*.dll", package:installdir("bin"))
     end)
 
     on_test(function (package)
