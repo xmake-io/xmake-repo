@@ -5,12 +5,12 @@ package("v8")
     add_urls("https://github.com/v8/v8.git")
     add_versions("10.0.58", "d75903764c8547b6fc35c7a3fe4991320be03135")
 
-    add_deps("depot_tools")
+    add_deps("depot_tools", "ninja")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
-        add_syslinks("user32", "winmm")
+        add_syslinks("user32", "winmm", "advapi32")
     end
 
     add_links("v8_monolith",
@@ -78,13 +78,13 @@ package("v8")
             configs.cxx = package:build_getenv("cxx")
         else
             configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+            -- configs.is_clang = false
         end
         local v8_arch = package:is_arch("x86", "i386") and "ia32." or "x64."
         local target_dir = v8_arch .. (package:debug() and "debug" or "release")
         if package:is_plat("windows") then
-            -- os.vrunv("python3", {path.join("tools", "clang", "scripts", "update.py")})
-            -- os.vrunv("python3", {path.join("tools", "dev", "v8gen.py"), target_dir, "--", "v8_monolithic=true", "v8_use_external_startup_data=false", "use_custom_libcxx=false", "is_component_build=false", "treat_warnings_as_errors=false", "v8_symbol_level=0"})
-            os.vrunv("python3", {path.join("tools", "dev", "gm.py"), target_dir})
+            -- os.vrunv("python3", {path.join("tools", "dev", "v8gen.py"), target_dir, "--", "v8_monolithic=true", "v8_use_external_startup_data=false", "use_custom_libcxx=false", "is_component_build=false", "treat_warnings_as_errors=false", "v8_symbol_level=0", "v8_static_library=" .. (package:config("shared") and "false" or "true"), "is_clang=false"})
+            -- os.vrunv("python3", {path.join("tools", "dev", "gm.py"), target_dir})
         end
         if package:is_plat("macosx") then
             configs.extra_ldflags = {"-lstdc++"}
