@@ -48,6 +48,9 @@ package("v8")
     "managed": False,
     "custom_deps": {},
   }]]=])
+        if package:is_plat("windows") then
+            os.setenv("DEPOT_TOOLS_WIN_TOOLCAHIN", "0")
+        end
         local gclient = is_host("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
         local configs = {
