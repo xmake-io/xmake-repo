@@ -93,6 +93,8 @@ package("v8")
             os.vrunv("ninja", "-C .\\out.gn\\" .. target_dir .. " v8_monolith")
         end
         os.cp("include", package:installdir())
+        print("OUT DIR", os.files("out/*"))
+        print("OUT OBJ", os.files("out/obj/*"))
         os.trycp("out/obj/*.a", package:installdir("lib"))
         os.trycp("out/obj/*.lib", package:installdir("lib"))
         os.trycp("out/obj/*.dll", package:installdir("bin"))
