@@ -29,7 +29,7 @@ package("v8")
 
     on_load("linux", "macosx", "windows", function(package)
         if package:is_plat("windows") then
-            package:add("deps", "depot_tools", {configs = {"vs_runtime" = (package:config("vs_runtime":startswith("MT") and "MT" or "MD"))}})
+            package:add("deps", "depot_tools", {configs = { vs_runtime = (package:config("vs_runtime"):startswith("MT") and "MT" or "MD")}})
         else
             package:add("deps", "depot_tools")
         end
