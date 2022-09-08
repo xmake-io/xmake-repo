@@ -64,6 +64,7 @@ package("vulkan-loader")
         -- fix pdb issue, cannot open program database v140.pdb
         if package:is_plat("windows") then
             os.mkdir("build/loader/pdb")
+            os.mkdir("build/cube/pdb")
             os.mkdir("build/vulkaninfo/pdb")
         end
         cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs, buildir = "build"})
