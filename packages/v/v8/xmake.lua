@@ -11,6 +11,7 @@ package("v8")
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
         add_syslinks("user32", "winmm", "advapi32", "dbghelp", "shlwapi")
+        add_configs("vs_runtime", {description = "Set vs runtime.", default = "MT", readonly = true})
     end
 
     add_links("v8_monolith",
@@ -55,7 +56,7 @@ package("v8")
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
         local configs = {
             is_official_build = false,
-            is_component_build = package:config("shared"),
+            is_component_build = false,
             is_debug = package:debug(),
             is_shared_library = package:config("shared"),
             symbol_level = 0,
@@ -66,39 +67,13 @@ package("v8")
             v8_use_external_startup_data = false,
             v8_enable_test_features = false,
             v8_enable_i18n_support = false}
-        if package:is_arch("x86", "i386") then
-            configs.target_cpu = "x86"
-        elseif package:is_arch("x64", "x86_64") then
-            configs.target_cpu = "x64"
-        elseif package:is_arch("arm64", "arm64-v8a") then
-            configs.target_cpu = "arm64"
-        end
-        if not package:is_plat("windows") then
-            configs.cc  = package:build_getenv("cc")
-            configs.cxx = package:build_getenv("cxx")
-        else
-            configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
-            configs.is_clang = false
-        end
-        local v8_arch = package:is_arch("x86", "i386") and "ia32." or "x64."
-        local target_dir = v8_arch .. (package:debug() and "debug" or "release")
+
         if package:is_plat("windows") then
-            -- os.vrunv("python3", {path.join("tools", "dev", "v8gen.py"), target_dir, "--", "v8_monolithic=true", "v8_use_external_startup_data=false", "use_custom_libcxx=false", "is_component_build=false", "treat_warnings_as_errors=false", "v8_symbol_level=0", "v8_static_library=" .. (package:config("shared") and "false" or "true"), "is_clang=false"})
-            -- os.vrunv("python3", {path.join("tools", "dev", "gm.py"), target_dir})
+            configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+            configs.is_clang = false 
         end
-        if package:is_plat("macosx") then
-            configs.extra_ldflags = {"-lstdc++"}
-            local xcode = import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
-            configs.xcode_sysroot = xcode:config("xcode_sysroot")
-        end
-        if package:is_plat("linux") or package:is_plat("macosx") then
-            import("package.tools.gn").build(package, configs, {buildir = "out.gn"})
-        else
-            import("package.tools.gn").build(package, configs, {buildir = "out.gn"})
-        end
+        import("package.tools.gn").build(package, configs, {buildir = "out.gn"})
         os.cp("include", package:installdir())
-        print("OUT DIR", os.files("out.gn/*"))
-        print("OUT OBJ", os.files("out.gn/obj/*"))
         os.trycp("out.gn/obj/*.a", package:installdir("lib"))
         os.trycp("out.gn/obj/*.lib", package:installdir("lib"))
         os.trycp("out.gn/obj/*.dll", package:installdir("bin"))
