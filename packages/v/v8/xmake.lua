@@ -5,6 +5,8 @@ package("v8")
     add_urls("https://github.com/v8/v8.git")
     add_versions("10.0.58", "d75903764c8547b6fc35c7a3fe4991320be03135")
 
+    add_deps("depot_tools", "ninja")
+
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
@@ -26,15 +28,6 @@ package("v8")
               "torque_generated_definitions",
               "cppgc_base",
               "torque_ls_base")
-
-    on_load("linux", "macosx", "windows", function(package)
-        if package:is_plat("windows") then
-            package:add("deps", "depot_tools", {configs = { vs_runtime = (package:config("vs_runtime"):startswith("MT") and "MT" or "MD")}})
-        else
-            package:add("deps", "depot_tools")
-        end
-        package:add("deps", "ninja")
-    end)
 
     on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
@@ -84,7 +77,7 @@ package("v8")
             configs.cc  = package:build_getenv("cc")
             configs.cxx = package:build_getenv("cxx")
         else
-            configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+            configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "MT" or "MD")}
             configs.is_clang = false
         end
         local v8_arch = package:is_arch("x86", "i386") and "ia32." or "x64."
