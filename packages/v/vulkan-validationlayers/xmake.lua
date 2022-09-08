@@ -44,6 +44,9 @@ package("vulkan-validationlayers")
             package:add("deps", "robin-hood-hashing")
         end
         package:addenv("VK_LAYER_PATH", "lib")
+        if package.mark_as_pathenv then
+            package:mark_as_pathenv("VK_LAYER_PATH")
+        end
     end)
 
     on_install("windows", "linux", function (package)

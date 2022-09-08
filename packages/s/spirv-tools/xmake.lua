@@ -49,7 +49,7 @@ package("spirv-tools")
         if package:is_plat("windows") then
             import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
         else
-            import("package.tools.cmake").install(package, configs)
+            import("package.tools.cmake").install(package, configs, {cxflags = "-Wno-error=switch"})
         end
         package:add("links", "SPIRV-Tools-link", "SPIRV-Tools-reduce", "SPIRV-Tools-opt")
         if package:config("shared") then
