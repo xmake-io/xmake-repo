@@ -78,7 +78,7 @@ package("v8")
             configs.cxx = package:build_getenv("cxx")
         else
             configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
-            -- configs.is_clang = false
+            configs.is_clang = false
         end
         local v8_arch = package:is_arch("x86", "i386") and "ia32." or "x64."
         local target_dir = v8_arch .. (package:debug() and "debug" or "release")
