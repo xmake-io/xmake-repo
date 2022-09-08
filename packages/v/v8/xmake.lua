@@ -55,7 +55,7 @@ package("v8")
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
         local configs = {
             is_official_build = false,
-            is_component_build = false,
+            is_component_build = package:config("shared"),
             is_debug = package:debug(),
             is_shared_library = package:config("shared"),
             symbol_level = 0,
@@ -77,7 +77,7 @@ package("v8")
             configs.cc  = package:build_getenv("cc")
             configs.cxx = package:build_getenv("cxx")
         else
-            configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "MT" or "MD")}
+            configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
             configs.is_clang = false
         end
         local v8_arch = package:is_arch("x86", "i386") and "ia32." or "x64."
