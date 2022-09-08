@@ -17,11 +17,9 @@ package("cpr")
         add_syslinks("pthread")
     end
     on_install("linux", "macosx", "windows", "mingw@windows", function (package)
-        local configs = {
-                            "-DCPR_BUILD_TESTS=OFF",
-                            "-DCPR_ENABLE_SSL=ON",
-                            "-DCPR_USE_SYSTEM_CURL="..(package:config("system_curl") and "ON" or "OFF")
-                        }
+        local configs = {"-DCPR_BUILD_TESTS=OFF",
+                         "-DCPR_ENABLE_SSL=ON",
+                         "-DCPR_USE_SYSTEM_CURL=" ..(package:config("system_curl") and "ON" or "OFF")}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local shflags
