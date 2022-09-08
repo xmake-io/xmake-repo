@@ -56,7 +56,11 @@ package("vulkan-tools")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
         table.insert(configs, "-DVULKAN_LOADER_INSTALL_DIR=" .. vulkan_loader:installdir())
         table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. glslang:installdir())
-        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs})
+        -- fix pdb issue, cannot open program database v140.pdb
+        if package:is_plat("windows") then
+            os.mkdir("build/vulkaninfo/pdb")
+        end
+        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs, buildir = "build"})
     end)
 
     on_test(function (package)

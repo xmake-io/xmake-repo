@@ -60,6 +60,7 @@ package("vulkan-loader")
 
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
         -- fix pdb issue, cannot open program database v140.pdb
         if package:is_plat("windows") then
