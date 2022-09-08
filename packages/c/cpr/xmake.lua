@@ -10,7 +10,7 @@ package("cpr")
     add_versions("1.7.2", "aa38a414fe2ffc49af13a08b6ab34df825fdd2e7a1213d032d835a779e14176f")
     add_versions("1.8.3", "0784d4c2dbb93a0d3009820b7858976424c56578ce23dcd89d06a1d0bf5fd8e2")
 
-	add_configs("CPR_USE_SYSTEM_CURL", {description = "Sets CPR_USE_SYSTEM_CURL for CMake.", default = true, type = "boolean"})
+    add_configs("system_curl", {description = "Sets CPR_USE_SYSTEM_CURL for CMake.", default = true, type = "boolean"})
 
     add_deps("cmake", "libcurl")
     if is_plat("mingw") then
@@ -18,10 +18,10 @@ package("cpr")
     end
     on_install("linux", "macosx", "windows", "mingw@windows", function (package)
         local configs = {
-			"-DCPR_BUILD_TESTS=OFF",
-			"-DCPR_ENABLE_SSL=ON",
-			"-DCPR_USE_SYSTEM_CURL="..(package:config("CPR_USE_SYSTEM_CURL") and "ON" or "OFF")
-		}
+                            "-DCPR_BUILD_TESTS=OFF",
+                            "-DCPR_ENABLE_SSL=ON",
+                            "-DCPR_USE_SYSTEM_CURL="..(package:config("system_curl") and "ON" or "OFF")
+                        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local shflags
