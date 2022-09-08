@@ -5,7 +5,7 @@ package("v8")
     add_urls("https://github.com/v8/v8.git")
     add_versions("10.0.58", "d75903764c8547b6fc35c7a3fe4991320be03135")
 
-    add_deps("depot_tools", "ninja")
+    add_deps("depot_tools")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
