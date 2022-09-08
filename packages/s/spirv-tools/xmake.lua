@@ -12,6 +12,7 @@ package("spirv-tools")
     add_versions("2022.2", "909fc7e68049dca611ca2d57828883a86f503b0353ff78bc594eddc65eb882b9")
 
     add_patches("2020.5", "https://github.com/KhronosGroup/SPIRV-Tools/commit/a1d38174b1f7d2651c718ae661886d606cb50a32.patch", "2811faeef3ad53a83e409c8ef9879badcf9dc04fc3d98dbead7313514b819933")
+    add_patches("2022.2", path.join(os.scriptdir(), "patches/2022.2/switch-fix.patch"), "a2817e5752ddbaf4f2e520ad0ae683148f234958c5e7f758e416e6b16b0e6269")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("spirv-headers")
@@ -49,7 +50,7 @@ package("spirv-tools")
         if package:is_plat("windows") then
             import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
         else
-            import("package.tools.cmake").install(package, configs, {cxflags = "-Wno-error=switch"})
+            import("package.tools.cmake").install(package, configs)
         end
         package:add("links", "SPIRV-Tools-link", "SPIRV-Tools-reduce", "SPIRV-Tools-opt")
         if package:config("shared") then

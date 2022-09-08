@@ -15,7 +15,7 @@ package("vulkan-tools")
     add_deps("glslang")
     if is_plat("linux") then
         add_extsources("apt::vulkan-tools", "pacman::vulkan-tools")
-        add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
+        add_deps("wayland", "libxrandr", "libxcb", "libxau", "libxdmcp", "libxkbcommon")
     end
 
     on_load("windows|x64", "linux", function (package)

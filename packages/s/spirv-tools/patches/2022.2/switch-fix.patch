@@ -1,0 +1,13 @@
+diff --git a/source/val/validate_builtins.cpp b/source/val/validate_builtins.cpp
+index 57dde8a..a56c9d5 100644
+--- a/source/val/validate_builtins.cpp
++++ b/source/val/validate_builtins.cpp
+@@ -4194,6 +4194,8 @@ spv_result_t BuiltInsValidator::ValidateSingleBuiltInAtDefinition(
+     case SpvBuiltInShadingRateKHR: {
+       return ValidateShadingRateAtDefinition(decoration, inst);
+     }
++    default:
++      break;
+   }
+   return SPV_SUCCESS;
+ }
