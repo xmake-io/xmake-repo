@@ -61,7 +61,11 @@ package("vulkan-loader")
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
-        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs})
+        -- fix pdb issue
+        if package:is_plat("windows") then
+            os.mkdir("build/loader/pdb")
+        end
+        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs, buildir = "build"})
     end)
 
     on_test(function (package)
