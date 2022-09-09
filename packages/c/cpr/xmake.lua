@@ -16,6 +16,8 @@ package("cpr")
     if is_plat("mingw") then
         add_syslinks("pthread")
     end
+    add_links("cpr")
+
     on_install("linux", "macosx", "windows", "mingw@windows", function (package)
         local configs = {"-DCPR_BUILD_TESTS=OFF",
                          "-DCPR_ENABLE_SSL=ON",
