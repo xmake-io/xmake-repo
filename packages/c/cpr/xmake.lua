@@ -21,7 +21,8 @@ package("cpr")
     on_install("linux", "macosx", "windows", "mingw@windows", function (package)
         local configs = {"-DCPR_BUILD_TESTS=OFF",
                          "-DCPR_ENABLE_SSL=ON",
-                         "-DCPR_USE_SYSTEM_CURL=" ..(package:config("system_curl") and "ON" or "OFF")}
+                         "-DCPR_FORCE_USE_SYSTEM_CURL=" .. (package:config("system_curl") and "ON" or "OFF"), -- for old version, < 1.9
+                         "-DCPR_USE_SYSTEM_CURL=" .. (package:config("system_curl") and "ON" or "OFF")}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local shflags
@@ -41,3 +42,4 @@ package("cpr")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
+
