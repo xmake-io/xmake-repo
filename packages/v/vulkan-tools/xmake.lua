@@ -56,11 +56,16 @@ package("vulkan-tools")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
         table.insert(configs, "-DVULKAN_LOADER_INSTALL_DIR=" .. vulkan_loader:installdir())
         table.insert(configs, "-DGLSLANG_INSTALL_DIR=" .. glslang:installdir())
-        -- fix pdb issue, cannot open program database v140.pdb
-        if package:is_plat("windows") then
-            os.mkdir("build/vulkaninfo/pdb")
+        local packagedeps
+        if package:is_plat("linux") then
+            packagedeps = {"wayland", "libxrandr", "libxcb", "libxau", "libxdmcp", "libxkbcommon"}
         end
-        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs, buildir = "build"})
+        -- fix pdb issue, cannot open program database v140.pdb
+        local buildir
+        if package:is_plat("windows") then
+            buildir = "."
+        end
+        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs, buildir = buildir, packagedeps = packagedeps})
     end)
 
     on_test(function (package)

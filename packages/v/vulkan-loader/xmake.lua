@@ -63,12 +63,11 @@ package("vulkan-loader")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
         -- fix pdb issue, cannot open program database v140.pdb
+        local buildir
         if package:is_plat("windows") then
-            os.mkdir("build/loader/pdb")
-            os.mkdir("build/cube/pdb")
-            os.mkdir("build/vulkaninfo/pdb")
+            buildir = "."
         end
-        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs, buildir = "build"})
+        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs, buildir = buildir})
     end)
 
     on_test(function (package)
