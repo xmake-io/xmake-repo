@@ -29,7 +29,7 @@ package("cpr")
         if package:config("shared") and package:is_plat("macosx") then
             shflags = {"-framework", "CoreFoundation", "-framework", "Security", "-framework", "SystemConfiguration"}
         end
-        import("package.tools.cmake").install(package, configs, {shflags = shflags})
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libcurl", shflags = shflags})
     end)
 
     on_test(function (package)
