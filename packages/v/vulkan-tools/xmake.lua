@@ -64,6 +64,7 @@ package("vulkan-tools")
         if package:is_plat("windows") then
             os.mkdir("build/vulkaninfo/pdb")
             os.mkdir("build/icd/pdb")
+            os.mkdir("build/cube/pdb")
         end
         cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs, packagedeps = packagedeps, buildir = "build"})
     end)
