@@ -61,11 +61,11 @@ package("vulkan-tools")
             packagedeps = {"wayland", "libxrandr", "libxcb", "libxau", "libxdmcp", "libxkbcommon"}
         end
         -- fix pdb issue, cannot open program database v140.pdb
-        local buildir
         if package:is_plat("windows") then
-            buildir = "."
+            os.mkdir("build/vulkaninfo/pdb")
+            os.mkdir("build/icd/pdb")
         end
-        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs, buildir = buildir, packagedeps = packagedeps})
+        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs, packagedeps = packagedeps, buildir = "build"})
     end)
 
     on_test(function (package)
