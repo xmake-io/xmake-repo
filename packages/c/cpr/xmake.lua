@@ -20,7 +20,7 @@ package("cpr")
 
     on_install("linux", "macosx", "windows", "mingw@windows", function (package)
         local configs = {"-DCPR_BUILD_TESTS=OFF",
-                         "-DCPR_ENABLE_SSL=ON",
+                         "-DCPR_ENABLE_SSL=OFF",
                          "-DCPR_FORCE_USE_SYSTEM_CURL=" .. (package:config("system_curl") and "ON" or "OFF"), -- for old version, < 1.9
                          "-DCPR_USE_SYSTEM_CURL=" .. (package:config("system_curl") and "ON" or "OFF")}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -29,7 +29,7 @@ package("cpr")
         if package:config("shared") and package:is_plat("macosx") then
             shflags = {"-framework", "CoreFoundation", "-framework", "Security", "-framework", "SystemConfiguration"}
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = "libcurl", shflags = shflags})
+        import("package.tools.cmake").install(package, configs, {shflags = shflags})
     end)
 
     on_test(function (package)
