@@ -59,6 +59,8 @@ package("vulkan-tools")
         local packagedeps
         if package:is_plat("linux") then
             packagedeps = {"wayland", "libxrandr", "libxcb", "libxau", "libxdmcp", "libxkbcommon"}
+            io.replace("cube/CMakeLists.txt", "${XCB_LIBRARIES}", "", {plain = true})
+            io.replace("vulkaninfo/CMakeLists.txt", "${XCB_LIBRARIES}", "", {plain = true})
         end
         -- fix pdb issue, cannot open program database v140.pdb
         if package:is_plat("windows") then
