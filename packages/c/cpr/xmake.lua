@@ -21,9 +21,11 @@ package("cpr")
     on_load(function (package)
         if package:config("ssl") then
             package:add("deps", "libcurl", {configs = {nghttp2 = true, libssh2 = true}})
+            package:add("deps", "libssh2")
         else
             package:add("deps", "libcurl", {configs = {nghttp2 = true}})
         end
+        package:add("deps", "nghttp2")
     end)
 
     on_install("linux", "macosx", "windows", "mingw@windows", function (package)
@@ -37,7 +39,11 @@ package("cpr")
         if package:config("shared") and package:is_plat("macosx") then
             shflags = {"-framework", "CoreFoundation", "-framework", "Security", "-framework", "SystemConfiguration"}
         end
-        import("package.tools.cmake").install(package, configs, {shflags = shflags})
+        local packagedeps = {"libcurl", "nghttp2"}
+        if package:config("ssl") then
+            table.insert(packagedeps, "libssh2")
+        end
+        import("package.tools.cmake").install(package, configs, {shflags = shflags, packagedeps = packagedeps})
     end)
 
     on_test(function (package)
