@@ -10,21 +10,29 @@ package("cpr")
     add_versions("1.7.2", "aa38a414fe2ffc49af13a08b6ab34df825fdd2e7a1213d032d835a779e14176f")
     add_versions("1.8.3", "0784d4c2dbb93a0d3009820b7858976424c56578ce23dcd89d06a1d0bf5fd8e2")
 
-    add_configs("system_curl", {description = "Sets CPR_USE_SYSTEM_CURL for CMake.", default = true, type = "boolean"})
+    add_configs("ssl", {description = "Enable SSL.", default = false, type = "boolean"})
 
-    add_deps("cmake", "libcurl")
+    add_deps("cmake")
     if is_plat("mingw") then
         add_syslinks("pthread")
     end
     add_links("cpr")
+    
+    on_load(function (package)
+        if package:config("ssl") then
+            package:add("deps", "libcurl", {configs = {nghttp2 = true, libssh2 = true}})
+        else
+            package:add("deps", "libcurl", {configs = {nghttp2 = true}})
+        end
+    end)
 
     on_install("linux", "macosx", "windows", "mingw@windows", function (package)
         local configs = {"-DCPR_BUILD_TESTS=OFF",
-                         "-DCPR_ENABLE_SSL=OFF",
-                         "-DCPR_FORCE_USE_SYSTEM_CURL=" .. (package:config("system_curl") and "ON" or "OFF"), -- for old version, < 1.9
-                         "-DCPR_USE_SYSTEM_CURL=" .. (package:config("system_curl") and "ON" or "OFF")}
+                         "-DCPR_FORCE_USE_SYSTEM_CURL=ON",
+                         "-DCPR_USE_SYSTEM_CURL=ON")}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCPR_ENABLE_SSL=" .. (package:config("ssl") and "ON" or "OFF"))
         local shflags
         if package:config("shared") and package:is_plat("macosx") then
             shflags = {"-framework", "CoreFoundation", "-framework", "Security", "-framework", "SystemConfiguration"}
