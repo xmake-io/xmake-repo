@@ -10,7 +10,7 @@ package("cpr")
     add_versions("1.7.2", "aa38a414fe2ffc49af13a08b6ab34df825fdd2e7a1213d032d835a779e14176f")
     add_versions("1.8.3", "0784d4c2dbb93a0d3009820b7858976424c56578ce23dcd89d06a1d0bf5fd8e2")
 
-    add_configs("ssl", {description = "Enable SSL.", default = true, type = "boolean"})
+    add_configs("ssl", {description = "Enable SSL.", default = false, type = "boolean"})
 
     add_deps("cmake")
     if is_plat("mingw") then
