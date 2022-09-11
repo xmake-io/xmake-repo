@@ -18,7 +18,7 @@ package("libcurl")
         add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then
         add_deps("cmake")
-        add_syslinks("advapi32", "crypt32", "wldap32", "winmm", "ws2_32")
+        add_syslinks("advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
     end
 
     add_configs("cares",    {description = "Enable c-ares support.", default = false, type = "boolean"})
