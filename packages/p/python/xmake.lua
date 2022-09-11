@@ -63,7 +63,7 @@ package("python")
         package:addenv("PATH", "Scripts")
     end)
 
-    on_load("@macosx", "@linux", function (package)
+    on_load("@macosx", "@linux", "@bsd", function (package)
 
         -- set includedirs
         local version = package:version()
@@ -112,7 +112,7 @@ package("python")
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx", "@bsd", "@linux", function (package)
 
         -- init configs
         local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
