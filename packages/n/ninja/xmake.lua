@@ -16,7 +16,7 @@ package("ninja")
         add_versions("1.10.1", "0bd650190d4405c15894055e349d9b59d5690b0389551d757c5ed2d3841972d1")
         add_versions("1.10.2", "6fa359f491fac7e5185273c6421a000eea6a2f0febf0ac03ac900bd4d80ed2a5")
         add_versions("1.11.0", "21915277db59756bfc61f6f281c1f5e3897760b63776fd3d360f77dd7364137f")
-    elseif is_host("linux") then
+    elseif is_host("linux", "bsd") then
         add_urls("https://github.com/ninja-build/ninja/archive/v$(version).tar.gz",
                  "https://github.com/ninja-build/ninja.git")
         add_versions("1.9.0", "5d7ec75828f8d3fd1a0c2f31b5b0cea780cdfe1031359228c428c1a48bfcd5b9")
@@ -25,7 +25,7 @@ package("ninja")
         add_versions("1.11.0", "3c6ba2e66400fe3f1ae83deb4b235faf3137ec20bd5b08c29bfc368db143e4c6")
     end
 
-    on_load("linux", function (package)
+    on_load("linux", "bsd", function (package)
         package:add("deps", package:version():ge("1.10.0") and "python" or "python2", {kind = "binary"})
     end)
 
@@ -37,7 +37,7 @@ package("ninja")
         os.cp("./ninja", package:installdir("bin"))
     end)
 
-    on_install("@linux", function (package)
+    on_install("@linux", "@bsd", function (package)
         import("lib.detect.find_tool")
         local python = assert(find_tool("python"), "python not found!")
         os.vrunv(python.program, {"configure.py", "--bootstrap"})

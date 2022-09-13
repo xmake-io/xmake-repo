@@ -11,7 +11,7 @@ package("scons")
 
     add_deps("python 3.x", {kind = "binary"})
 
-    on_install("@windows", "@linux", "@macosx", "@msys", function (package)
+    on_install("@windows", "@linux", "@macosx", "@msys", "@bsd", function (package)
         local python_version = package:dep("python"):version()
         local scons_version = package:version()
         local scons_egg = "SCons-" .. scons_version:major() .. "." .. scons_version:minor() .. "." .. scons_version:patch() .. "-py" .. python_version:major() .. "." .. python_version:minor() .. ".egg"
