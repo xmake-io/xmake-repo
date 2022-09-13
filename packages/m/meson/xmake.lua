@@ -19,9 +19,10 @@ package("meson")
 
     add_deps("ninja", "python 3.x", {kind = "binary"})
 
-    on_install("@macosx", "@linux", "@windows", function (package)
+    on_install("@macosx", "@linux", "@windows", "@bsd", function (package)
         local envs = {PYTHONPATH = package:installdir()}
         local python = package:is_plat("windows") and "python" or "python3"
+        io.replace("setup.cfg", "license_file", "license_files")
         os.vrunv(python, {"-m", "pip", "install", "--target=" .. package:installdir(), "."}, {envs = envs})
         package:addenv("PYTHONPATH", envs.PYTHONPATH)
     end)
