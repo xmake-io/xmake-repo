@@ -4,8 +4,9 @@ package("reproc")
     set_homepage("https://github.com/DaanDeMeyer/reproc")
     set_license("MIT")
 
-    add_urls("https://github.com/DaanDeMeyer/reproc.git")
-    add_versions("v14.2.4", "8aea3aef64c37a7ed0db759a7128a80c2540c808")
+    add_urls("https://github.com/DaanDeMeyer/reproc/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/DaanDeMeyer/reproc.git")
+    add_versions("v14.2.4", "55c780f7faa5c8cabd83ebbb84b68e5e0e09732de70a129f6b3c801e905415dd")
 
     add_deps("cmake")
 
