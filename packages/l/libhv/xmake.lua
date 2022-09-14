@@ -3,7 +3,7 @@ package("libhv")
     set_homepage("https://github.com/ithewei/libhv")
     set_description("Like libevent, libev, and libuv, libhv provides event-loop with non-blocking IO and timer, but simpler api and richer protocols.")
 
-    add_urls("https://github.com/ithewei/libhv/archive/v$(version).zip")
+    add_urls("https://github.com/ithewei/libhv/archive/v$(version).zip", {excludes = {"*/html/*"}})
     add_versions("1.0.0", "39adb77cc7addaba82b69fa9a433041c8288f3d9c773fa360162e3391dcf6a7b")
     add_versions("1.1.0", "a753c268976d9c4f85dcc10be2377bebc36d4cb822ac30345cf13f2a7285dbe3")
     add_versions("1.1.1", "e012d9752fe8fb3f788cb6360cd9abe61d4ccdc1d2085501d85f1068eba8603e")
