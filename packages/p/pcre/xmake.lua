@@ -35,9 +35,10 @@ package("pcre")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", "mingw", function (package)
+    on_install("macosx", "linux", "mingw", "cross", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:config("jit") then
             table.insert(configs, "--enable-jit")
         end
@@ -48,9 +49,6 @@ package("pcre")
         end
         if package:debug() then
             table.insert(configs, "--enable-debug")
-        end
-        if package:is_plat("linux") and package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs)
     end)
