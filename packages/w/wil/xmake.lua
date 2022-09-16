@@ -7,9 +7,7 @@ package("wil")
     add_urls("https://github.com/microsoft/wil.git")
     add_versions("2022.09.16", "5f4caba4e7a9017816e47becdd918fcc872039ba")
 
-    add_deps("cmake")
     on_install("windows", function (package)
-        import("package.tools.cmake").install(package)
         os.cp("include", package:installdir())
     end)
 
