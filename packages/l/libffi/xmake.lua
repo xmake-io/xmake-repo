@@ -15,7 +15,7 @@ package("libffi")
         add_extsources("brew::libffi")
     end
 
-    on_load("macosx", "linux", "bsd", function (package)
+    on_load("macosx", "linux", "bsd", "mingw", function (package)
         if package:gitref() then
             package:add("deps", "autoconf", "automake", "libtool")
         elseif package:version():le("3.2.1") then
@@ -31,7 +31,7 @@ package("libffi")
         })
     end)
 
-    on_install("macosx", "linux", "bsd", function (package)
+    on_install("macosx", "linux", "bsd", "mingw", function (package)
         local configs = {"--disable-silent-rules", "--disable-dependency-tracking"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
