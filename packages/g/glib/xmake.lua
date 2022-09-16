@@ -56,7 +56,7 @@ package("glib")
         end)
     end
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "cross", function (package)
         import("package.tools.meson")
         local configs = {"-Dbsymbolic_functions=false",
                          "-Ddtrace=false",
