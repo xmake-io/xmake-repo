@@ -13,8 +13,10 @@ package("wil")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <windows.h>
+            #include <wil/win32_helpers.h>
             void test() {
                 auto foo = GetModuleInstanceHandle();
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "wil/win32_helpers.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = {"windows.h", "wil/win32_helpers.h"}}))
     end)
