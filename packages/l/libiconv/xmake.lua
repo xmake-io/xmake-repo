@@ -41,7 +41,7 @@ package("libiconv")
         })
     end)
 
-    on_install("macosx", "linux", "android", "mingw@msys", function (package)
+    on_install("macosx", "linux", "cross", "android", "mingw@msys", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings"}
         if not package:is_plat("macosx") then
             table.insert(configs, "--enable-relocatable")
