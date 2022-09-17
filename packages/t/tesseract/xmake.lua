@@ -8,6 +8,8 @@ package("tesseract")
              "https://github.com/tesseract-ocr/tesseract.git")
     add_versions("4.1.1", "2a66ff0d8595bff8f04032165e6c936389b1e5727c3ce5a27b3e059d218db1cb")
     add_versions("4.1.3", "83dc56b544be938983f528c777e4e1d906205b0f6dc0110afc223f2cc1cec6d3")
+    add_versions("5.0.1","5d5cd77e3dbb03f8e4c06289baa77bb299ab859a")
+    add_versions("5.2.0","5ad5325a0aa8effc47ca033625b6a51682f82767")
 
     add_configs("training", {description = "Build training tools.", default = false, type = "boolean"})
 
