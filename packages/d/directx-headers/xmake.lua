@@ -8,12 +8,12 @@ package("directx-headers")
     add_versions("v1.606.4", "fa95f9ab7cd6111a4cbff91f5b440bf79b38179403c9eef22438065b8b08d303")
 
     add_deps("cmake")
-
+    
     on_install("windows", "linux", function (package)
         local configs = {"-DDXHEADERS_BUILD_TEST=OFF", "-DDXHEADERS_BUILD_GOOGLE_TEST=OFF"}
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function (package)
+    on_test("windows", function (package)
         assert(package:has_cxxtypes("ID3D12Device", {configs = {languages = "c++11"}, includes = "directx/d3d12.h"}))
     end)
