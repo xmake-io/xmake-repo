@@ -14,3 +14,6 @@ package("directx-headers")
         import("package.tools.cmake").install(package, configs)
     end)
 
+    on_test(function (package)
+        assert(package:has_cxxtypes("ID3D12Device", {configs = {languages = "c++11"}, includes = "directx/d3d12.h"}))
+    end)
