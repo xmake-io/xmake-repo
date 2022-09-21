@@ -15,5 +15,13 @@ package("directx-headers")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("ID3D12Device", {configs = {languages = "c++11"}, includes = {"directx/d3d12.h"}}))
+        assert(package:check_cxxsnippets({test = [[
+            void test () {
+                auto check_uuid_linkage= [] () {
+                   auto uuid_i_unknown = IID_IUnknown;
+                   return sizeof(uuid_i_unknown);
+                };
+                check_uuid_linkage();
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = {"wsl/winadapter.h", "dxguids/dxguids.h"}}))
     end)
