@@ -48,5 +48,5 @@ package("vulkan-hpp")
                 ai.engineVersion = VK_MAKE_API_VERSION(1,0,0,0);
                 ai.apiVersion = VK_API_VERSION_1_0;
             }
-        ]]}, {includes = "vulkan/vulkan.hpp", configs = {languages = "c++11"} }))
+        ]]}, {includes = "vulkan/vulkan.hpp", configs = {languages = "c++14"} }))
     end)

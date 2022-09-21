@@ -57,6 +57,6 @@ package("fmt")
                 std::string s = fmt::format("{}", "hello");
                 assert(s == "hello");
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "fmt/format.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "fmt/format.h"}))
     end)
 

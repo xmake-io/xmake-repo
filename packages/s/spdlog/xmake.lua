@@ -54,5 +54,5 @@ package("spdlog")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++11"}}))
+        assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++14"}}))
     end)
