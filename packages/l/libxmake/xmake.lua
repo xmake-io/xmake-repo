@@ -9,22 +9,20 @@ package("libxmake")
              "https://gitlab.com/tboox/xmake.git")
 
     add_versions("v2.5.9", "5b50e3f28956cabcaa153624c91781730387ceb7c056f3f9b5306b1c77460d8f")
+    add_versions("v2.7.1", "e44085090641547d8814afcc345d641d8ce1e38b6e05fee7375fc88150c0803d")
 
     add_configs("readline", { description = "Enable readline library.", default = false, type = "boolean"})
 
     add_includedirs("include")
     if is_plat("windows") then
-        add_ldflags("/export:malloc", "/export:free")
+        add_ldflags("/export:malloc", "/export:free", "/export:memmove")
         add_syslinks("kernel32", "user32", "gdi32")
         add_syslinks("ws2_32", "advapi32", "shell32")
     elseif is_plat("android") then
         add_syslinks("m", "c")
     elseif is_plat("macosx") then
         add_ldflags("-all_load", "-pagezero_size 10000", "-image_base 100000000")
-    elseif is_plat("msys") then
-        add_ldflags("-static-libgcc", {force = true})
-        add_syslinks("kernel32", "user32", "gdi32")
-        add_syslinks("ws2_32", "advapi32", "shell32")
+        add_frameworks("CoreFoundation", "CoreServices")
     else
         add_syslinks("pthread", "dl", "m", "c")
     end
@@ -42,7 +40,7 @@ package("libxmake")
         if package:debug() then
             package:add("defines", "__tb_debug__")
         end
-        package:add("links", "lua-cjson")
+        package:add("links", "lua-cjson", "lz4")
         if not package:gitref() and package:version():le("2.5.9") then
             package:add("includedirs", "include/luajit")
             package:add("links", "luajit")
