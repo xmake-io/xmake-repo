@@ -18,6 +18,8 @@ package("libxmake")
         add_ldflags("/export:malloc", "/export:free", "/export:memmove")
         add_syslinks("kernel32", "user32", "gdi32")
         add_syslinks("ws2_32", "advapi32", "shell32")
+        add_ldflags("/LTCG")
+        add_shflags("/LTCG")
     elseif is_plat("android") then
         add_syslinks("m", "c")
     elseif is_plat("macosx") then
