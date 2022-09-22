@@ -12,6 +12,7 @@ package("libxmake")
     add_versions("v2.7.1", "e44085090641547d8814afcc345d641d8ce1e38b6e05fee7375fc88150c0803d")
 
     add_configs("readline", { description = "Enable readline library.", default = false, type = "boolean"})
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_includedirs("include")
     if is_plat("windows") then
