@@ -62,7 +62,8 @@ package("libxmake")
         end
         table.insert(configs, "--readline=" .. (package:config("readline") and "y" or "n"))
         os.cd("core")
-        import("package.tools.xmake").install(package, configs, {cxflags = "-Wno-error=format"})
+        io.replace("xmake.lua", 'set_warnings("all", "error")', "", {plain = true})
+        import("package.tools.xmake").install(package, configs)
         os.cp("../xmake", package:installdir("share"))
     end)
 
