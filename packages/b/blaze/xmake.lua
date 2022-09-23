@@ -6,6 +6,7 @@ package("blaze")
 
     add_urls("https://bitbucket.org/blaze-lib/blaze/downloads/blaze-$(version).tar.gz")
     add_versions("3.8", "dfaae1a3a9fea0b3cc92e78c9858dcc6c93301d59f67de5d388a3a41c8a629ae")
+    add_versions("3.8.1", "a084c6d1acc75e742a1cdcddf93d0cda0d9e3cc4014c246d997a064fa2196d39")
 
     add_patches("3.8", path.join(os.scriptdir(), "patches", "3.8", "fix-vm-build.patch"), "d6e98c62279ab4b6a93b297e63312b974551e3fcfcd51f613bfebd05e7421cf1")
 
