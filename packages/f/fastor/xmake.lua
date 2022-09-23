@@ -5,9 +5,9 @@ package("fastor")
     set_description("A lightweight high performance tensor algebra framework for modern C++")
     set_license("MIT")
 
-    add_urls("https://github.com/romeric/Fastor/archive/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/romeric/Fastor/archive/refs/tags/V$(version).tar.gz",
              "https://github.com/romeric/Fastor.git")
-    add_versions("V0.6.3", "6ee13c75bed1221d0cdc0985d996bb79ae09b6d7e05798f1bb84458c2bdb238b")
+    add_versions("0.6.3", "6ee13c75bed1221d0cdc0985d996bb79ae09b6d7e05798f1bb84458c2bdb238b")
 
     on_install(function (package)
         os.cp("Fastor", package:installdir("include"))
