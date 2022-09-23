@@ -23,5 +23,5 @@ package("fastor")
                 B.random();
                 auto C = Fastor::einsum<Fastor::Index<I,J,K>,Fastor::Index<J,L,M,N>>(A,B);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "Fastor/Fastor.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "Fastor/Fastor.h"}))
     end)
