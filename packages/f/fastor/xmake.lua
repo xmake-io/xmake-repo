@@ -9,7 +9,7 @@ package("fastor")
              "https://github.com/romeric/Fastor.git")
     add_versions("0.6.3", "6ee13c75bed1221d0cdc0985d996bb79ae09b6d7e05798f1bb84458c2bdb238b")
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", "mingw", function (package)
         os.cp("Fastor", package:installdir("include"))
     end)
 
