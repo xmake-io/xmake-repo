@@ -105,7 +105,7 @@ function _generate_package_from_github(reponame)
                 has_autoconf = true
             elseif filename == "meson.build" then
                 has_meson = true
-            elseif filename == "BUILD" then
+            elseif filename == "BUILD" or filename == "BUILD.bazel" then
                 has_bazel = true
             end
         end
