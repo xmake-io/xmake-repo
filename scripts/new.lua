@@ -59,6 +59,7 @@ function _generate_package_from_github(reponame)
     local has_xmake
     local has_cmake
     local has_meson
+    local has_bazel
     local has_autoconf
     local need_autogen
     local latest_release = repoinfo.latestRelease
@@ -104,6 +105,8 @@ function _generate_package_from_github(reponame)
                 has_autoconf = true
             elseif filename == "meson.build" then
                 has_meson = true
+            elseif filename == "BUILD" then
+                has_bazel = true
             end
         end
         os.rm(repodir)
@@ -119,6 +122,9 @@ function _generate_package_from_github(reponame)
     elseif need_autogen then
         file:print("")
         file:print('    add_deps("autoconf", "automake", "libtool")')
+    elseif has_bazel then
+        file:print("")
+        file:print('    add_deps("bazel")')
     end
 
     -- generate install scripts
@@ -141,6 +147,8 @@ function _generate_package_from_github(reponame)
     elseif has_meson then
         file:print('        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))')
         file:print('        import("package.tools.meson").install(package, configs)')
+    elseif has_bazel then
+        file:print('        import("package.tools.bazel").install(package, configs)')
     else
         file:print('        io.writefile("xmake.lua", [[')
         file:print('            add_rules("mode.release", "mode.debug")')
