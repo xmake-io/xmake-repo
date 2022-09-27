@@ -113,10 +113,10 @@ function _require_packages(argv, packages)
     if argv.mode == "debug" then
         extra.debug = true
     end
-    if argv.kind == "shared" then
-        extra.configs = extra.configs or {}
-        extra.configs.shared = true
-    end
+    -- Some packages set shared=true as default, so we need to force set
+    -- shared=false to test static build.
+    extra.configs = extra.configs or {}
+    extra.configs.shared = argv.kind == "shared"
     local configs = argv.configs
     if configs then
         extra.system  = false
