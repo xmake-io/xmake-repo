@@ -172,22 +172,35 @@ package("libtorch")
         end
         cmake.install(package, configs, opt)
 
-        local cp_libs = {
-            -- onnx libs are not installed by cmake but are required if program uses onnx.
-            "libonnx.a", "libonnx_proto.a",
-        }
+        -- These libs are not installed by cmake but are required for static link.
+        local cp_libs = {"libonnx", "libonnx_proto"}
+        if package:version():eq("v1.11.0") then
+            table.insert(cp_libs, "libbreakpad")
+            table.insert(cp_libs, "libbreakpad_common")
+        end
+        local static_lib_suffix = ".a"
+        if package:is_plat("windows") then
+            static_lib_suffix = ".lib"
+        end
         for _, libname in ipairs(cp_libs) do
-            os.trycp(path.join(package:buildir(), "lib", libname), package:installdir("lib"))
+            os.trycp(path.join(package:buildir(), "lib", libname .. static_lib_suffix), package:installdir("lib"))
         end
 
-        -- pytorch sets BUILD_ONEDNN_GRAPH to OFF in CMakeLists.txt, but
-        -- dnnl_graph is still needed for static link.
+        -- Following patches are needed for static link.
         io.replace(
             path.join(package:installdir("share/cmake/Torch/TorchConfig.cmake")),
             "append_torchlib_if_found(dnnl mkldnn)",
             "append_torchlib_if_found(dnnl_graph dnnl mkldnn)",
             {plain = true}
         )
+        if package:version():eq("v1.11.0") then
+            io.replace(
+                path.join(package:installdir("share/cmake/Torch/TorchConfig.cmake")),
+                "append_torchlib_if_found(sleef asmjit)",
+                "append_torchlib_if_found(sleef asmjit)\n  append_torchlib_if_found(breakpad breakpad_common)",
+                {plain = true}
+            )
+        end
     end)
 
     on_test(function (package)
