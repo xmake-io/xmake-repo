@@ -64,7 +64,7 @@ package("mkl")
         end
     end
 
-    add_configs("threading", {description = "Choose threading modal for mkl.", default = "tbb", type = "string", values = {"tbb", "openmp", "seq"}})
+    add_configs("threading", {description = "Choose threading modal for mkl.", default = "tbb", type = "string", values = {"tbb", "openmp", "gomp", "seq"}})
     add_configs("interface", {description = "Choose index integer size for the interface.", default = 32, values = {32, 64}})
 
     on_fetch("fetch")
@@ -73,6 +73,8 @@ package("mkl")
         add_syslinks("pthread", "dl")
     end
     on_load("windows", "macosx", "linux", function (package)
+        -- Refer to [oneAPI Math Kernel Library Link Line Advisor](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html)
+        -- to get the link option for MKL library.
         local suffix = (package:config("interface") == 32 and "lp64" or "ilp64")
         if package:config("interface") == 64 then
             package:add("defines", "MKL_ILP64")
@@ -91,6 +93,10 @@ package("mkl")
                 table.insert(flags, "-lmkl_sequential")
             elseif threading == "openmp" then
                 table.insert(flags, "-lmkl_intel_thread")
+                table.insert(flags, "-lomp")
+            elseif threading == "gomp" then
+                table.insert(flags, "-lmkl_gnu_thread")
+                table.insert(flags, "-lgomp")
             end
             table.insert(flags, "-lmkl_core")
             table.insert(flags, "-Wl,--end-group")
@@ -104,7 +110,9 @@ package("mkl")
             elseif threading == "seq" then
                 package:add("links", "mkl_sequential")
             elseif threading == "openmp" then
-                package:add("links", "mkl_intel_thread")
+                package:add("links", "mkl_intel_thread", "omp")
+            elseif threading == "gomp" then
+                package:add("links", "mkl_gnu_thread", "gomp")
             end
             package:add("links", "mkl_core")
         end
