@@ -65,7 +65,7 @@ package("glib")
                          "-Dtests=false",
                          "-Dinstalled_tests=false",
                          "-Dsystemtap=false",
-                         "-Dselinux=false",
+                         "-Dselinux=disabled",
                          "-Dlibmount=disabled"}
         if package:is_plat("macosx") and package:version():le("2.61.0") then
             table.insert(configs, "-Diconv=native")
