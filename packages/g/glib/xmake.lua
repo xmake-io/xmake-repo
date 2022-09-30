@@ -12,8 +12,15 @@ package("glib")
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
-
-    add_deps("meson", "ninja", "libffi", "pcre")
+    if is_plat("cross") then
+        add_deps("libffi 3.3")
+        add_deps("zlib")
+        add_syslinks("pthread", "dl", "resolv")
+        add_deps("meson", "ninja", "pcre")
+    else
+        add_deps("meson", "ninja", "libffi", "pcre")
+    end
+    
     if is_plat("linux") then
         add_deps("libiconv")
     elseif is_plat("windows", "macosx") then
@@ -56,7 +63,7 @@ package("glib")
         end)
     end
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux","cross", function (package)
         import("package.tools.meson")
         local configs = {"-Dbsymbolic_functions=false",
                          "-Ddtrace=false",
