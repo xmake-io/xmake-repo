@@ -17,7 +17,7 @@ package("commonlibsse-ng")
 
     add_syslinks("version", "user32", "shell32", "ole32", "advapi32")
 
-    on_load(function(package)
+    on_load("windows|x64", function(package)
         if package:config("skyrim_se") then
             package:add("defines", "ENABLE_SKYRIM_SE=1")
         end
@@ -35,7 +35,7 @@ package("commonlibsse-ng")
         package:add("defines", "HAS_SKYRIM_MULTI_TARGETING=1")
     end)
 
-    on_install(function(package)
+    on_install("windows|x64", function(package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
 
         local configs = {}
