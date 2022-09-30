@@ -1,5 +1,6 @@
 package("blaze")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://bitbucket.org/blaze-lib/blaze/")
     set_description("A high performance C++ math library.")
     set_license("BSD-3-Clause")
@@ -24,8 +25,6 @@ package("blaze")
     on_install("windows|x64", "linux", "macosx", function (package)
         io.replace("CMakeLists.txt", "BLAS REQUIRED", "BLAS", {plain = true})
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("blas") == "none" then
             table.insert(configs, "-DUSE_LAPACK=OFF")
             table.insert(configs, "-DBLAZE_BLAS_MODE=OFF")
