@@ -17,6 +17,7 @@ package("libtorch")
     add_patches("1.11.0", path.join(os.scriptdir(), "patches", "1.11.0", "gcc11.patch"), "1404b0bc6ce7433ecdc59d3412e3d9ed507bb5fd2cd59134a254d7d4a8d73012")
     -- Fix compile on macOS. Refer to https://github.com/pytorch/pytorch/pull/80916
     add_patches("1.12.1", path.join(os.scriptdir(), "patches", "1.12.1", "clang.patch"), "cdc3e00b2fea847678b1bcc6b25a4dbd924578d8fb25d40543521a09aab2f7d4")
+    add_patches("1.12.1", path.join(os.scriptdir(), "patches", "1.12.1", "vs2022.patch"), "5a31b9772793c943ca752c92d6415293f7b3863813ca8c5eb9d92a6156afd21d")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
     add_configs("python", {description = "Build python interface.", default = false, type = "boolean"})
