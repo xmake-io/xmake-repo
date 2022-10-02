@@ -71,7 +71,7 @@ package("sfml")
                 package:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
             end
             if package:is_plat("linux") then
-                package:add("deps", "libx11", "libxrandr", "freetype", "eudev")
+                package:add("deps", "libx11", "libxext", "libxrandr", "freetype", "eudev")
                 package:add("deps", "opengl", "glx", {optional = true})
             end
         end
@@ -108,6 +108,9 @@ package("sfml")
             if package:is_plat("windows") and package:config("vs_runtime"):startswith("MT") then
                 table.insert(configs, "-DSFML_USE_STATIC_STD_LIBS=ON")
             end
+        end
+        if package:is_plat("linux") then
+            io.replace("src/SFML/Graphics/CMakeLists.txt", "target_link_libraries(sfml-graphics PRIVATE X11)", "target_link_libraries(sfml-graphics PRIVATE X11 Xext Xrender)", { plain = true})
         end
         table.insert(configs, "-DSFML_BUILD_AUDIO=" .. (package:config("audio") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_GRAPHICS=" .. (package:config("graphics") and "ON" or "OFF"))
