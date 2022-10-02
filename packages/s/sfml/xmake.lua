@@ -61,13 +61,13 @@ package("sfml")
 
         if package:config("graphics") then
             package:add("links", a .. "graphics" .. e)
-            if package:is_plat("mingw") then
+            if package:is_plat("windows", "mingw") and not package:config("shared") then
                 package:add("links", "freetype")
             end
         end
         if package:config("window") or package:config("graphics") then
             package:add("links", a .. "window" .. e)
-            if package:is_plat("windows", "mingw") then
+            if package:is_plat("windows", "mingw") and not package:config("shared") then
                 package:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
             end
             if package:is_plat("linux") then
@@ -77,7 +77,7 @@ package("sfml")
         end
         if package:config("audio") then
             package:add("links", a .. "audio" .. e)
-            if package:is_plat("mingw") then
+            if package:is_plat("windows", "mingw") and not package:config("shared") then
                 package:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
             elseif package:is_plat("linux") then
                 package:add("deps", "libogg", "libflac", "libvorbis", "openal-soft")
@@ -85,7 +85,7 @@ package("sfml")
         end
         if package:config("network") then
             package:add("links", a .. "network" .. e)
-            if package:is_plat("windows", "mingw") then
+            if package:is_plat("windows", "mingw") and not package:config("shared") then
                 package:add("syslinks", "ws2_32")
             end
         end
@@ -131,4 +131,45 @@ package("sfml")
                 c.restart();
             }
         ]]}, {includes = "SFML/System.hpp"}))
+        if package:config("graphics") then
+            assert(package:check_cxxsnippets({test = [[
+                void test(int args, char** argv) {
+                    sf::Text text;
+                    text.setString("Hello world");
+                }
+            ]]}, {includes = "SFML/Graphics.hpp"}))
+        end
+        if package:config("window") or package:config("graphics") then
+            assert(package:check_cxxsnippets({test = [[
+                void test(int args, char** argv) {
+                    sf::Window window(sf::VideoMode(1280, 720), "Title");
+
+                    sf::Event event;
+                    window.pollEvent(event);
+                }
+            ]]}, {includes = "SFML/Window.hpp"}))
+        end
+        if package:config("audio") then
+            assert(package:check_cxxsnippets({test = [[
+                void test(int args, char** argv) {
+                    sf::Music music;
+                    music.openFromFile("music.ogg");
+                    music.play();
+                }
+            ]]}, {includes = "SFML/Audio.hpp"}))
+        end
+        if package:config("network") then
+            assert(package:check_cxxsnippets({test = [[
+                void test(int args, char** argv) {
+                    sf::UdpSocket socket;
+                    socket.bind(54000);
+
+                    char data[100];
+                    std::size_t received;
+                    sf::IpAddress sender;
+                    unsigned short port;
+                    socket.receive(data, 100, received, sender, port);
+                }
+            ]]}, {includes = "SFML/Network.hpp"}))
+        end
     end)
