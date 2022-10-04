@@ -1,0 +1,13 @@
+diff --git CMakeLists.txt
+--- /home/charlie/Documents/CMakeLists_1.txt	2022-10-04 20:01:23.821330724 +0000
++++ /home/charlie/Documents/CMakeLists.txt	2022-10-04 19:46:28.639576320 +0000
+@@ -164,6 +165,9 @@
+   PUBLIC_HEADER "${IMGUI_SFML_PUBLIC_HEADERS}"
+ )
+ 
++# Set minimum required standard
++target_compile_features(ImGui-SFML PUBLIC cxx_std_11)
++
+ if(IMGUI_SFML_BUILD_EXAMPLES)
+   add_subdirectory(examples)
+ endif()
