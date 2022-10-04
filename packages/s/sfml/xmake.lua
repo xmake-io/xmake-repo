@@ -11,7 +11,7 @@ package("sfml")
         if is_arch("x64", "x86_64") then
             set_urls("https://www.sfml-dev.org/files/SFML-$(version)-macOS-clang.tar.gz")
             add_versions("2.5.1", "6af0f14fbd41dc038a00d7709f26fb66bb7ccdfe6187657ef0ef8cba578dcf14")
-        
+
             add_configs("debug", {builtin = true, description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
             add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
         end
@@ -113,7 +113,7 @@ package("sfml")
         if package:is_plat("linux") and package:config("shared") then
             io.replace("src/SFML/Graphics/CMakeLists.txt", "target_link_libraries(sfml-graphics PRIVATE X11)",
                 "target_link_libraries(sfml-graphics PRIVATE X11 Xext Xrender)", {plain = true})
-            packagedeps = {"xext", "xrender"}
+            packagedeps = {"libxext", "libxrender"}
         end
         table.insert(configs, "-DSFML_BUILD_AUDIO=" .. (package:config("audio") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_GRAPHICS=" .. (package:config("graphics") and "ON" or "OFF"))
