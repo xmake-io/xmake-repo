@@ -109,14 +109,17 @@ package("sfml")
                 table.insert(configs, "-DSFML_USE_STATIC_STD_LIBS=ON")
             end
         end
-        if package:is_plat("linux") then
-            io.replace("src/SFML/Graphics/CMakeLists.txt", "target_link_libraries(sfml-graphics PRIVATE X11)", "target_link_libraries(sfml-graphics PRIVATE X11 Xext Xrender)", { plain = true})
+        local packagedeps
+        if package:is_plat("linux") and package:config("shared") then
+            io.replace("src/SFML/Graphics/CMakeLists.txt", "target_link_libraries(sfml-graphics PRIVATE X11)",
+                "target_link_libraries(sfml-graphics PRIVATE X11 Xext Xrender)", {plain = true})
+            packagedeps = {"xext", "xrender"}
         end
         table.insert(configs, "-DSFML_BUILD_AUDIO=" .. (package:config("audio") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_GRAPHICS=" .. (package:config("graphics") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_WINDOW=" .. (package:config("window") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_NETWORK=" .. (package:config("network") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_install("macosx", "mingw", function (package)
