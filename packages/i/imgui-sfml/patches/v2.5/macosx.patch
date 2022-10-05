@@ -1,6 +1,6 @@
-diff --git CMakeLists.txt
---- CMakeLists.txt	2022-10-04 20:01:23.821330724 +0000
-+++ CMakeLists.txt	2022-10-04 19:46:28.639576320 +0000
+diff --git CMakeLists.txt CMakeLists.txt
+--- CMakeLists.txt
++++ CMakeLists.txt
 @@ -164,6 +165,9 @@
    PUBLIC_HEADER "${IMGUI_SFML_PUBLIC_HEADERS}"
  )
