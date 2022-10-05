@@ -7,7 +7,7 @@ package("imgui-sfml")
              "https://github.com/eliasdaler/imgui-sfml.git")
 
     add_versions("v2.5", "3775c9303f656297f2392e91ffae2021e874ee319b4139c60076d6f757ede109")
-    add_patches("v2.5", path.join(os.scriptdir(), "patches", "v2.5", "macosx.patch"), "4b493d45df41b6ce35c13a0434cf61b34886b4bbb315bfd5c2b7c5c9522246f6")
+    add_patches("v2.5", path.join(os.scriptdir(), "patches", "v2.5", "macosx.patch"), "bd43b76c041da5776aac54e946b561ac48ad1ad6f21c51586dfec0a9ab2d7264")
 
     add_deps("cmake")
     add_deps("imgui", {system = false, private = true})
