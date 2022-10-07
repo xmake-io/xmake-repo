@@ -8,6 +8,8 @@ package("glog")
              "https://github.com/google/glog.git")
     add_versions("v0.4.0", "f28359aeba12f30d73d9e4711ef356dc842886968112162bc73002645139c39c")
     add_versions("v0.5.0", "eede71f28371bf39aa69b45de23b329d37214016e2055269b3b5e7cfd40b59f5")
+    add_versions("v0.6.0", "8a83bf982f37bb70825df71a9709fa90ea9f4447fb3c099e1d720a439d88bad6")
+
 
     local configdeps = {gtest = "gtest", gflags = "gflags", unwind = "libunwind"}
     for config, dep in pairs(configdeps) do
