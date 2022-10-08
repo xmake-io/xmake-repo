@@ -1,0 +1,23 @@
+package("dbus")
+    set_homepage("https://www.freedesktop.org/wiki/Software/dbus/")
+    set_description("D-Bus is a message bus system, a simple way for applications to talk to one another.")
+    set_license("MIT")
+
+    add_urls("https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-1.14.2/dbus-dbus-$(version).tar.gz")
+    add_versions("1.14.2", "9ec5aad6310f79149aa04e8c6bd9e5e2cdca47cf3acec2d23ee9fe06ac7e7a62")
+
+    add_deps("expat")
+    
+    on_install("windows", "linux", "cross", function (package)
+        os.vrun("./autogen.sh")
+        local configs = {"--enable-tests=no"}
+        import("package.tools.autoconf").install(package, configs)
+        os.cp(path.join(package:installdir("/lib/dbus-1.0/include/dbus/"), "dbus-arch-deps.h"), path.join(package:installdir("/include/dbus-1.0/dbus/"),"dbus-arch-deps.h"))
+        os.cp(path.join(package:installdir("/include/dbus-1.0/"),"**"),package:installdir("/include/"))
+        os.rm(path.join(package:installdir("/include/dbus-1.0/"),"**"))
+        
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("dbus_get_local_machine_id()", {includes = "dbus/dbus.hhttps://github.com/"}))
+    end)
