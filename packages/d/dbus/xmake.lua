@@ -14,8 +14,6 @@ package("dbus")
         local configs = {"--enable-tests=no"}
         import("package.tools.autoconf").install(package, configs)
     end)
-
-    
     
     on_test(function (package)
         assert(package:has_cfuncs("dbus_get_local_machine_id()", {includes = "dbus/dbus.h"}))
