@@ -10,7 +10,12 @@ package("dbus")
     add_deps("expat")
     add_includedirs("include/dbus-1.0", "lib/dbus-1.0/include")
 
-    on_install("windows", "linux", "cross", function (package)
+    on_install("windows", function (package)
+        local configs = {"--enable-tests=no"}
+        import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_install("linux", "cross", function (package)
         local configs = {"--enable-tests=no"}
         import("package.tools.autoconf").install(package, configs)
     end)
