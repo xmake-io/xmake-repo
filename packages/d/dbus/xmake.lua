@@ -15,6 +15,7 @@ package("dbus")
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DDBUS_BUILD_TESTS=OFF"}
         table.insert(configs, "-DDBUS_SESSION_SOCKET_DIR=./tmp")
+        table.insert(configs, "-DDBUS_ENABLE_XML_DOCS=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         local packagedeps
         if package:is_plat("windows") then
