@@ -12,14 +12,14 @@ package("dbus")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "cross", function (package)
         local configs = {"-DDBUS_BUILD_TESTS=OFF"}
         table.insert(configs, "-DDBUS_SESSION_SOCKET_DIR=./tmp")
-        table.insert(configs, "-DDBUS_ENABLE_XML_DOCS=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         local packagedeps
         if package:is_plat("windows") then
             packagedeps = "expat"
+            table.insert(configs, "-DDBUS_ENABLE_XML_DOCS=OFF")
             io.replace("CMakeLists.txt", "find_package(EXPAT)", "", {plain = true})
             io.replace("CMakeLists.txt", "NOT EXPAT_FOUND", "FALSE", {plain = true})
         end
