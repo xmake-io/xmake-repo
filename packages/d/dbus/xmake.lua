@@ -10,14 +10,12 @@ package("dbus")
     add_deps("expat")
     add_includedirs("include/dbus-1.0", "lib/dbus-1.0/include")
 
-    on_install("windows", function (package)
-        local configs = {"--enable-tests=no"}
+    on_install("windows", "linux", "cross", function (package)
+        local configs = {"-DDBUS_BUILD_TESTS=OFF"}
+        table.insert(configs, "-DDBUS_SESSION_SOCKET_DIR=./tmp")
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-    end)
-
-    on_install("linux", "cross", function (package)
-        local configs = {"--enable-tests=no"}
-        import("package.tools.autoconf").install(package, configs)
     end)
     
     on_test(function (package)
