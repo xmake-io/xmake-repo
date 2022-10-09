@@ -1,5 +1,5 @@
 package("dbus")
- 
+
     set_homepage("https://www.freedesktop.org/wiki/Software/dbus/")
     set_description("D-Bus is a message bus system, a simple way for applications to talk to one another.")
     set_license("MIT")
@@ -10,14 +10,21 @@ package("dbus")
     add_deps("expat", "cmake")
     add_includedirs("include/dbus-1.0", "lib/dbus-1.0/include")
 
-    on_install("windows", "linux", "cross", function (package)
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+
+    on_install("windows", "linux", "cross", "macosx", function (package)
         local configs = {"-DDBUS_BUILD_TESTS=OFF"}
         table.insert(configs, "-DDBUS_SESSION_SOCKET_DIR=./tmp")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        local packagedeps
+        if package:is_plat("windows") then
+            packagedeps = "expat"
+            io.replace("CMakeLists.txt", "find_package(EXPAT)", "", {plain = true})
+            io.replace("CMakeLists.txt", "NOT EXPAT_FOUND", "FALSE", {plain = true})
+        end
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
-    
+
     on_test(function (package)
         assert(package:has_cfuncs("dbus_get_local_machine_id()", {includes = "dbus/dbus.h"}))
     end)
