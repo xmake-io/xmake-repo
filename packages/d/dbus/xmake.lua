@@ -12,7 +12,7 @@ package("dbus")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
-    on_install("windows", "linux", "cross", "macosx", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DDBUS_BUILD_TESTS=OFF"}
         table.insert(configs, "-DDBUS_SESSION_SOCKET_DIR=./tmp")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
