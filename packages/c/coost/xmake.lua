@@ -12,7 +12,7 @@ package("coost")
     end
 
     if is_plat("linux") then
-        add_syslinks("execinfo", "pthread", "dl")
+        add_syslinks("pthread", "dl")
     end
 
     on_load(function (package)
