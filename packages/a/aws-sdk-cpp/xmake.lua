@@ -3,7 +3,7 @@ package("aws-sdk-cpp")
     set_description("AWS SDK for C++")
 
     add_urls("https://github.com/aws/aws-sdk-cpp.git")
-    add_versions("1.9.333", "6ec095fa11379174da20bf1523c93c92503eb8e2")
+    add_versions("1.9.362", "e9372218a2c8fab756ecaa6e4fefcdb33c3670c1")
 
     add_configs("build_only", {description = 'By default, all SDKS are built, if only AWS S3 is required, then set build_only="s3", with multiple SDKS separated by commas.'})
     add_deps("libcurl", "openssl", "zlib")
@@ -11,6 +11,8 @@ package("aws-sdk-cpp")
 
     on_install("linux", "macosx", function (package)
         local configs = {}
+        table.insert(configs, "-DMINIMIZE_SIZE=ON")
+        table.insert(configs, "-DCMAKE_PREFIX_PATH=" .. package:installdir())
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_TESTING=" .. (package:config("enable_testing") and "ON" or "OFF"))
