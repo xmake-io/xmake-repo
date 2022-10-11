@@ -11,6 +11,10 @@ package("coost")
         add_configs(name, {description = "Enable " .. name .. " library.", default = false, type = "boolean"})
     end
 
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl")
+    end
+
     on_load(function (package)
         for _, dep in ipairs({"libcurl", "openssl"}) do
             if package:config(dep) then
