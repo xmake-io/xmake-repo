@@ -11,18 +11,28 @@ package("raygui")
 
     add_deps("raylib 4.x")
 
-    add_defines("RAYGUI_IMPLEMENTATION")
+    add_configs("implemention", { description = "Define implemention.", default = false, type = "boolean"})
+
+    on_load(function (package)
+        if package:config("implemention") then
+            package:add("defines", "RAYGUI_IMPLEMENTATION")
+        end
+    end)
 
     on_install("windows", "linux", "macosx", function (package)
         os.cp("src/*", package:installdir("include"))
     end)
 
     on_test(function (package)
+        local defines
+        if not package:config("implemention") then
+            defines = "RAYGUI_IMPLEMENTATION"
+        end
         assert(package:check_csnippets({test = [[
             #include <raygui.h>
             void test() {
                 InitWindow(100, 100, "hello world!");
                 GuiSetStyle(TEXTBOX, 0, 0);
             }
-        ]]}))
+        ]]}, {configs = {defines = defines}}))
     end)
