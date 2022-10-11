@@ -6,8 +6,9 @@ package("aws-sdk-cpp")
     add_versions("1.9.333", "6ec095fa11379174da20bf1523c93c92503eb8e2")
 
     add_configs("build_only", {description = 'By default, all SDKS are built, if only AWS S3 is required, then set build_only="s3", with multiple SDKS separated by commas.'})
-    add_deps("cmake")
+    add_deps("zlib")
     add_deps("libcurl")
+    add_deps("cmake")
 
     on_install("linux", "macosx", function (package)
         local configs = {}
