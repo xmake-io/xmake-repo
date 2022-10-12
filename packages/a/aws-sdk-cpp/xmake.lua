@@ -10,7 +10,7 @@ package("aws-sdk-cpp")
     add_configs("encryption",  {description = 'If disabled, no platform-default encryption will be included in the library.', default = false, type = "boolean"})
 
     add_deps("zlib")
-    add_deps("cmake", "ninja")
+    add_deps("cmake")
 
     on_load(function (package)
         if package:config("http_client") then
@@ -31,7 +31,7 @@ package("aws-sdk-cpp")
         if package:config("build_only") then
             table.insert(configs, "-DBUILD_ONLY=" .. package:config("build_only"))
         end
-        import("package.tools.cmake").install(package, configs, {cmake_generator = "Ninja"})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
