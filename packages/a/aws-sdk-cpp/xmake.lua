@@ -6,11 +6,11 @@ package("aws-sdk-cpp")
     add_versions("1.9.362", "e9372218a2c8fab756ecaa6e4fefcdb33c3670c1")
 
     add_configs("build_only",  {description = 'By default, all SDKS are built, if only AWS S3 is required, then set build_only="s3", with multiple SDKS separated by commas.'})
-    add_configs("http_client", {description = 'If disabled, no platform-default http client will be included in the library.', default = false, type = "boolean"})
+    add_configs("http_client", {description = 'If disabled, no platform-default http client will be included in the library.', default = true, type = "boolean"})
     add_configs("encryption",  {description = 'If disabled, no platform-default encryption will be included in the library.', default = false, type = "boolean"})
 
     add_deps("zlib")
-    add_deps("cmake")
+    add_deps("cmake", "ninja")
 
     on_load(function (package)
         if package:config("http_client") then
@@ -31,7 +31,7 @@ package("aws-sdk-cpp")
         if package:config("build_only") then
             table.insert(configs, "-DBUILD_ONLY=" .. package:config("build_only"))
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {cmake_generator = "Ninja"})
     end)
 
     on_test(function (package)
