@@ -87,6 +87,9 @@ package("libcurl")
         if package:is_plat("windows") then
             table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
+        if package:is_plat("mingw") and version:le("7.85.0") then
+            io.replace("src/CMakeLists.txt", 'COMMAND ${CMAKE_COMMAND} -E echo "/* built-in manual is disabled, blank function */" > tool_hugehelp.c', "", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
