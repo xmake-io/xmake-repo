@@ -31,7 +31,7 @@ package("aws-sdk-cpp")
         if package:config("build_only") then
             table.insert(configs, "-DBUILD_ONLY=" .. package:config("build_only"))
         end
-        import("package.tools.cmake").install(package, configs, {jobs = 1})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
