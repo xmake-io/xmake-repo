@@ -5,16 +5,29 @@ package("aws-sdk-cpp")
     add_urls("https://github.com/aws/aws-sdk-cpp.git")
     add_versions("1.9.362", "e9372218a2c8fab756ecaa6e4fefcdb33c3670c1")
 
-    add_configs("build_only", {description = 'By default, all SDKS are built, if only AWS S3 is required, then set build_only="s3", with multiple SDKS separated by commas.'})
+    add_configs("build_only",  {description = 'By default, all SDKS are built, if only AWS S3 is required, then set build_only="s3", with multiple SDKS separated by commas.'})
+    add_configs("http_client", {description = 'If disabled, no platform-default http client will be included in the library.', default = false, type = "boolean"})
+    add_configs("encryption",  {description = 'If disabled, no platform-default encryption will be included in the library.', default = false, type = "boolean"})
 
-    add_deps("libcurl", "openssl", "zlib")
+    add_deps("zlib")
     add_deps("cmake")
+
+    on_load(function (package)
+        if package:config("http_client") then
+            package:add("deps", "libcurl")
+        end
+        if package:config("encryption") then
+            package:add("deps", "openssl")
+        end
+    end)
 
     on_install("linux", "macosx", function (package)
         local configs = {"-DENABLE_TESTING=OFF", "-DAUTORUN_UNIT_TESTS=OFF"}
         table.insert(configs, "-DMINIMIZE_SIZE=ON")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DNO_HTTP_CLIENT=" .. (package:config("http_client") and "OFF" or "ON"))
+        table.insert(configs, "-DNO_ENCRYPTION=" .. (package:config("encryption") and "OFF" or "ON"))
         if package:config("build_only") then
             table.insert(configs, "-DBUILD_ONLY=" .. package:config("build_only"))
         end
@@ -31,3 +44,4 @@ package("aws-sdk-cpp")
             ]]
         }, {configs = {languages = "c++11"}}))
     end)
+
