@@ -65,7 +65,7 @@ package("libcurl")
         end
     end)
 
-    on_install("windows", "mingw@windows", function (package)
+    on_install("windows", "mingw", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -90,7 +90,7 @@ package("libcurl")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", "iphoneos", "mingw@macosx", "cross", function (package)
+    on_install("macosx", "linux", "iphoneos", "cross", function (package)
         local configs = {"--disable-silent-rules",
                          "--disable-dependency-tracking",
                          "--without-hyper",
@@ -104,14 +104,8 @@ package("libcurl")
         if package:debug() then
             table.insert(configs, "--enable-debug")
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
         if package:is_plat("macosx", "iphoneos") then
             table.insert(configs, (package:version():ge("7.77") and "--with-secure-transport" or "--with-darwinssl"))
-        end
-        if package:is_plat("mingw") then
-            table.insert(configs, "--with-schannel")
         end
         for _, name in ipairs({"openssl", "mbedtls", "zlib", "brotli", "zstd", "libssh2", "libidn2", "libpsl", "nghttp2"}) do
             table.insert(configs, package:config(name) and "--with-" .. name or "--without-" .. name)
