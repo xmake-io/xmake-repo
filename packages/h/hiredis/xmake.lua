@@ -43,17 +43,20 @@ package("hiredis")
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_SSL=" .. (package:config("openssl") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
 
         -- hiredis cmake builds static and shared library at the same time.
         -- Remove unneeded one after install.
-        if package:config("shared") then 
-            os.tryrm(path.join(package:installdir("lib"), "*.a")) 
-        else 
-            os.tryrm(path.join(package:installdir("lib"), "*.so")) 
-            os.tryrm(path.join(package:installdir("lib"), "*.so.*")) 
-            os.tryrm(path.join(package:installdir("lib"), "*.dylib")) 
-        end 
+        if package:config("shared") then
+            -- maybe is import library, libhiredis.dll.a
+            if not package:is_plat("mingw") then
+                os.tryrm(path.join(package:installdir("lib"), "*.a"))
+            end
+        else
+            os.tryrm(path.join(package:installdir("lib"), "*.so"))
+            os.tryrm(path.join(package:installdir("lib"), "*.so.*"))
+            os.tryrm(path.join(package:installdir("lib"), "*.dylib"))
+        end
     end)
 
     on_test(function (package)
