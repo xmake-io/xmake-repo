@@ -11,21 +11,14 @@ package("effcee")
     add_deps("re2")
 
     on_install("macosx", "linux", "windows", function (package)
-
-        -- add re2 include
-        local fetchinfo = package:dep("re2"):fetch()
-        local cxflags = {}
-        for _, includedir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
-            table.insert(cxflags, "-I" .. includedir)
-        end
-
         io.gsub(path.join("cmake", "setup_build.cmake"), "find_host_package%(", "#")
         io.gsub("CMakeLists.txt", "add_subdirectory%(third_party%)", "#")
         local configs = {"-DEFFCEE_BUILD_SAMPLES=OFF", "-DEFFCEE_BUILD_TESTING=OFF"}
-        table.insert(configs, "-DCMAKE_C_FLAGS=" .. table.concat(cxflags, ";"))
-        table.insert(configs, "-DCMAKE_CXX_FLAGS=" .. table.concat(cxflags, ";"))
-        table.insert(configs, "-DEFFCEE_ENABLE_SHARED_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
-        import("package.tools.cmake").install(package, configs)
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DEFFCEE_ENABLE_SHARED_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
+        end
+        import("package.tools.cmake").install(package, configs, {packagedeps = "re2"})
     end)
 
     on_test(function (package)
