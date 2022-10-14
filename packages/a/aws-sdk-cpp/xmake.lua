@@ -7,7 +7,7 @@ package("aws-sdk-cpp")
 
     add_configs("build_only",  {description = 'By default, all SDKS are built, if only AWS S3 is required, then set build_only="s3", with multiple SDKS separated by commas.'})
     add_configs("http_client", {description = 'If disabled, no platform-default http client will be included in the library.', default = true, type = "boolean"})
-    add_configs("encryption",  {description = 'If disabled, no platform-default encryption will be included in the library.', default = false, type = "boolean"})
+    add_configs("encryption",  {description = 'If disabled, no platform-default encryption will be included in the library.', default = true, type = "boolean"})
 
     add_deps("zlib")
     add_deps("cmake")
@@ -31,6 +31,17 @@ package("aws-sdk-cpp")
         if package:config("build_only") then
             table.insert(configs, "-DBUILD_ONLY=" .. package:config("build_only"))
         end
+
+        io.replace("cmake/Findcrypto.cmake",
+            "if (BUILD_SHARED_LIBS)\n            set(crypto_LIBRARY ${crypto_SHARED_LIBRARY})",
+            [[
+                if (BUILD_SHARED_LIBS)
+                    if (crypto_SHARED_LIBRARY)
+                        set(crypto_LIBRARY ${crypto_SHARED_LIBRARY})
+                    else()
+                        set(crypto_LIBRARY ${crypto_STATIC_LIBRARY})
+                    endif()
+            ]], {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -44,4 +55,3 @@ package("aws-sdk-cpp")
             ]]
         }, {configs = {languages = "c++11"}}))
     end)
-
