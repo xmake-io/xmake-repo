@@ -18,7 +18,7 @@ package("aws-sdk-cpp")
 
     on_load(function (package)
         if package:config("http_client") then
-            package:add("deps", "libcurl")
+            package:add("deps", "libcurl", {configs = {openssl = false}})
         end
         if package:config("encryption") then
             package:add("deps", "openssl")
