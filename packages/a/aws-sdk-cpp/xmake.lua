@@ -15,6 +15,9 @@ package("aws-sdk-cpp")
     on_load(function (package)
         if package:config("http_client") then
             package:add("deps", "libcurl")
+            if is_plat("macosx") then
+                add_frameworks("Foundation", "CoreFoundation", "Security", "SystemConfiguration")
+            end
         end
         if package:config("encryption") then
             package:add("deps", "openssl")
