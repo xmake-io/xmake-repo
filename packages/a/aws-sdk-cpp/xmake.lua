@@ -5,6 +5,10 @@ package("aws-sdk-cpp")
     add_urls("https://github.com/aws/aws-sdk-cpp.git")
     add_versions("1.9.362", "e9372218a2c8fab756ecaa6e4fefcdb33c3670c1")
 
+    if is_plat("macosx") then
+        add_frameworks("SystemConfiguration")
+    end
+
     add_configs("build_only",  {description = 'By default, all SDKS are built, if only AWS S3 is required, then set build_only="s3", with multiple SDKS separated by commas.'})
     add_configs("http_client", {description = 'If disabled, no platform-default http client will be included in the library.', default = true, type = "boolean"})
     add_configs("encryption",  {description = 'If disabled, no platform-default encryption will be included in the library.', default = true, type = "boolean"})
