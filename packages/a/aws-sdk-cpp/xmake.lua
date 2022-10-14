@@ -6,7 +6,7 @@ package("aws-sdk-cpp")
     add_versions("1.9.362", "e9372218a2c8fab756ecaa6e4fefcdb33c3670c1")
 
     if is_plat("macosx") then
-        add_frameworks("SystemConfiguration")
+        add_frameworks("Foundation", "CoreFoundation", "SystemConfiguration")
     end
 
     add_configs("build_only",  {description = 'By default, all SDKS are built, if only AWS S3 is required, then set build_only="s3", with multiple SDKS separated by commas.'})
