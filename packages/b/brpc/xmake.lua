@@ -5,21 +5,17 @@ package("brpc")
     add_urls("https://github.com/apache/incubator-brpc.git")
     add_versions("1.3.0", "a90cf60714941632b2986826336a7c50cbd3d530")
 
-    add_deps("leveldb 1.23")
-    add_deps("gflags 2.2.2")
     add_deps("protobuf-cpp 3.19.4")
-    add_deps("openssl", {system = false})
+    add_deps("leveldb", "gflags", "openssl", "libzip")
     add_deps("cmake")
 
-    on_load(function (package)
-        if package:is_plat("macosx") then
-            package:add("frameworks", "Foundation", "CoreFoundation", "Security", "CoreGraphics", "CoreText")
-            package:add("ldflags", "-Wl,-U,_ProfilerStart", "-Wl,-U,_ProfilerStop")
-        elseif package:is_plat("linux") then
-            package:add("syslinks", "rt")
-            package:add("ldflags", "-static-libstdc++")
-        end
-    end)
+    if is_plat("macosx") then
+        add_frameworks("Foundation", "CoreFoundation", "Security", "CoreGraphics", "CoreText")
+        add_ldflags("-Wl,-U,_ProfilerStart", "-Wl,-U,_ProfilerStop")
+    elseif is_plat("linux") then
+        add_syslinks("rt")
+        add_ldflags("-static-libstdc++")
+    end
 
     on_install("linux", "macosx", function (package)
         local configs = {"-DWITH_DEBUG_SYMBOLS=OFF", "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"}
