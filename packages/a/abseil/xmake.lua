@@ -36,6 +36,12 @@ package("abseil")
         "absl_flags_internal", "absl_low_level_hash", "absl_random_seed_gen_exception",
         "absl_cordz_sample_token", "absl_civil_time")
 
+    on_load(function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "ABSL_CONSUME_DLL")
+        end
+    end)
+
     on_install("macosx", "linux", "windows", function (package)
         local configs = {"-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
