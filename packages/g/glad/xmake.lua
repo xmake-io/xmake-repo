@@ -14,7 +14,8 @@ package("glad")
     end
     on_load("windows", "linux", "macosx", "mingw", function (package)
         if not package.is_built or package:is_built() then
-            package:add("deps", "cmake", "python 3.x", {kind = "binary"})
+            package:add("deps", "cmake")
+            package:add("deps", "python 3.x", {kind = "binary"})
         end
     end)
 
