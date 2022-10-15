@@ -39,6 +39,7 @@ package("abseil")
     on_load(function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ABSL_CONSUME_DLL")
+            package:add("links", "abseil_dll")
         end
     end)
 
@@ -46,9 +47,6 @@ package("abseil")
         local configs = {"-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") and package:config("shared") then
-            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-        end
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
     end)
 
