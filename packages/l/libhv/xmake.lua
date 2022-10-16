@@ -32,6 +32,8 @@ package("libhv")
         add_syslinks("pthread")
     elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
+    elseif is_plat("windows") then
+        add_syslinks("advapi32")
     end
 
     add_deps("cmake")
