@@ -1,7 +1,5 @@
 package("winflexbison")
-
     set_kind("binary")
-
     set_homepage("https://github.com/lexxmark/winflexbison")
     set_description("Win flex-bison is a windows port the Flex (the fast lexical analyser) and Bison (GNU parser generator)")
     set_license("GPL")
@@ -18,16 +16,13 @@ package("winflexbison")
     end)
 
     on_install("windows", function (package)
-        local debugType = (package:debug() and "Debug" or "Release")
+        local mode = (package:debug() and "Debug" or "Release")
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. debugType)
-        table.insert(configs, "-DUSE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. mode)
         import("package.tools.cmake").build(package, configs)
-
         os.mv("custom_build_rules", package:installdir("bin"))
         os.mv("flex/src/FlexLexer.h", package:installdir("include"))
-        os.mv(path.join("bin", debugType, "*"), package:installdir("bin"))
+        os.mv(path.join("bin", mode, "*"), package:installdir("bin"))
         os.cp(path.join(package:installdir("bin"), "win_bison.exe"), path.join(package:installdir("bin"), "bison.exe"))
         os.cp(path.join(package:installdir("bin"), "win_flex.exe"), path.join(package:installdir("bin"), "flex.exe"))
     end)
