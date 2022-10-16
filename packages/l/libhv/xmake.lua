@@ -32,6 +32,8 @@ package("libhv")
         add_syslinks("pthread")
     elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
+    elseif is_plat("windows") then
+        add_syslinks("advapi32")
     end
 
     add_deps("cmake")
@@ -81,6 +83,9 @@ package("libhv")
         if package:is_plat("iphoneos") then
             io.replace("ssl/appletls.c", "ret = SSLSetProtocolVersionEnabled(appletls->session, kSSLProtocolAll, true);",
                 "ret = SSLSetProtocolVersionMin(appletls->session, kTLSProtocol12);", {plain = true})
+        elseif package:is_plat("windows") and package:is_arch("arm.*") then
+            io.replace("base/hplatform.h", "defined(__arm__)", "defined(__arm__) || defined(_M_ARM)", {plain = true})
+            io.replace("base/hplatform.h", "defined(__aarch64__) || defined(__ARM64__)", "defined(__aarch64__) || defined(__ARM64__) || defined(_M_ARM64)", {plain = true})
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
@@ -88,3 +93,4 @@ package("libhv")
     on_test(function(package)
         assert(package:has_cfuncs("hloop_new", {includes = "hv/hloop.h"}))
     end)
+
