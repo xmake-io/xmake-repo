@@ -18,7 +18,7 @@ package("doxygen")
 
     on_load("@windows", function (package)
         if package:is_built() then
-            package:add("deps", "cmake", "bison >= 2.7", "flex")
+            package:add("deps", "cmake", "bison >=2.7", "flex")
             package:add("deps", "python 3.x", {kind = "binary"})
         end
     end)
