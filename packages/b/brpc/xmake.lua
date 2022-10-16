@@ -13,14 +13,19 @@ package("brpc")
         add_frameworks("Foundation", "CoreFoundation", "Security", "CoreGraphics", "CoreText")
         add_ldflags("-Wl,-U,_ProfilerStart", "-Wl,-U,_ProfilerStop")
     elseif is_plat("linux") then
-        add_syslinks("rt")
-        add_ldflags("-static-libstdc++")
+        add_syslinks("rt", "dl")
     end
 
     on_install("linux", "macosx", function (package)
+        io.replace("CMakeLists.txt", "${OPENSSL_CRYPTO_LIBRARY}", "", {plain = true})
+        io.replace("CMakeLists.txt", "list(APPEND DYNAMIC_LIB ${OPENSSL_SSL_LIBRARY})",
+            "list(APPEND DYNAMIC_LIB ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})", {plain = true})
         local configs = {"-DWITH_DEBUG_SYMBOLS=OFF", "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"}
-        table.insert(configs, "-DENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        if not package:config("shared") then
+            os.rm(package:installdir("lib/*.dylib"))
+            os.rm(package:installdir("lib/*.so"))
+        end
     end)
 
     on_test(function (package)
