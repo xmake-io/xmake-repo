@@ -4,7 +4,7 @@ option("webrtc", {default = false, showmenu = true})
 add_rules("mode.debug", "mode.release")
 
 add_requires("protobuf-cpp", "openssl")
-if has_config("webrtc") then 
+if has_config("webrtc") then
     add_requires("abseil")
     target("webrtc-lite")
         add_rules("c++")
@@ -408,7 +408,7 @@ if has_config("webrtc") then
         set_languages("cxx17")
         add_packages("openssl", "abseil")
         add_includedirs("src/external/webrtc")
-    
+
     target("steamwebrtc")
         set_kind("static")
         add_rules("c++")
@@ -441,7 +441,7 @@ target("gns") -- we need limit path length
         add_defines("POSIX", "LINUX", "GNUC", "GNU_COMPILER")
     end
 
-    if has_config("webrtc") then 
+    if has_config("webrtc") then
         add_defines("STEAMWEBRTC_USE_STATIC_LIBS", "STEAMNETWORKINGSOCKETS_ENABLE_ICE")
         add_deps("steamwebrtc")
         add_packages("abseil")
@@ -453,8 +453,8 @@ target("gns") -- we need limit path length
         add_defines("STEAMNETWORKINGSOCKETS_STATIC_LINK", "OPENSSL_USE_STATIC_LIBS")
     end
 
-    add_defines("STEAMNETWORKINGSOCKETS_CRYPTO_25519_OPENSSL", 
-                "STEAMNETWORKINGSOCKETS_CRYPTO_VALVEOPENSSL", 
+    add_defines("STEAMNETWORKINGSOCKETS_CRYPTO_25519_OPENSSL",
+                "STEAMNETWORKINGSOCKETS_CRYPTO_VALVEOPENSSL",
                 "OPENSSL_HAS_25519_RAW",
                 "VALVE_CRYPTO_ENABLE_25519",
                 "GOOGLE_PROTOBUF_NO_RTTI",
@@ -475,8 +475,8 @@ target("gns") -- we need limit path length
     add_headerfiles("include/(steam/*.h)")
     add_headerfiles("include/(minbase/*.h)")
     add_headerfiles("src/public/(*/*.h)")
-    
-        -- OpenSSL specific files
+
+    -- OpenSSL specific files
     add_files(  "src/common/crypto_openssl.cpp",
                 "src/common/crypto_25519_openssl.cpp",
                 "src/common/opensslwrapper.cpp")

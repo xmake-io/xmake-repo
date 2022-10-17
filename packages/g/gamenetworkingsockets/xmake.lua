@@ -19,15 +19,15 @@ package("gamenetworkingsockets")
         add_syslinks("pthread")
     end
 
-    add_configs("webrtc",               {description = "Enable p2p.", default = false, type = "boolean"})
+    add_configs("webrtc", {description = "Enable p2p.", default = false, type = "boolean"})
 
     on_load("windows", "linux", function(package)
         if not package:config("shared") then
             package:add("defines", "STEAMNETWORKINGSOCKETS_STATIC_LINK")
             package:add("deps", "openssl", "protobuf-cpp")
-            if package:config("webrtc") then 
+            if package:config("webrtc") then
                 package:add("deps", "abseil")
-            end 
+            end
         end
     end)
 
