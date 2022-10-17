@@ -1,5 +1,4 @@
 set_languages("gnu11")
-set_policy("build.across_targets_in_parallel", false)
 option("webrtc", {default = false, showmenu = true})
 
 add_rules("mode.debug", "mode.release")
