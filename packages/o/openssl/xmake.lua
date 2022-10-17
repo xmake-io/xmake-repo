@@ -48,7 +48,17 @@ package("openssl")
 
     on_install("windows", function (package)
         local configs = {"Configure"}
-        table.insert(configs, package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A")
+        local target
+        if package:is_arch("x86", "i386") then
+            target = "VC-WIN32"
+        elseif package:is_arch("arm64") then
+            target = "VC-WIN64-ARM"
+        elseif package:is_arch("arm.*") then
+            target = "VC-WIN32-ARM"
+        else
+            target = "VC-WIN64A"
+        end
+        table.insert(configs, target)
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
