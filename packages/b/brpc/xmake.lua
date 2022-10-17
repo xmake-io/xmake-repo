@@ -4,6 +4,7 @@ package("brpc")
 
     add_urls("https://github.com/apache/incubator-brpc.git")
     add_versions("1.3.0", "a90cf60714941632b2986826336a7c50cbd3d530")
+    add_patches("1.3.0", path.join(os.scriptdir(), "patches", "1.3.0", "cmake.patch"), "a71bf46a4a6038a89da3ee9057dea5f452155a2da1f1c9bdcae7ecd0bb5e0510")
 
     add_deps("protobuf-cpp 3.19.4")
     add_deps("leveldb", "gflags", "openssl", "libzip")
@@ -17,9 +18,6 @@ package("brpc")
     end
 
     on_install("linux", "macosx", function (package)
-        io.replace("CMakeLists.txt", "${OPENSSL_CRYPTO_LIBRARY}", "", {plain = true})
-        io.replace("CMakeLists.txt", "list(APPEND DYNAMIC_LIB ${OPENSSL_SSL_LIBRARY})",
-            "list(APPEND DYNAMIC_LIB ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})", {plain = true})
         local configs = {"-DWITH_DEBUG_SYMBOLS=OFF", "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"}
         import("package.tools.cmake").install(package, configs)
         if not package:config("shared") then
