@@ -396,14 +396,14 @@ if has_config("webrtc") then
             add_syslinks("ws2_32", "crypt32", "winmm", "Secur32", "Iphlpapi")
         else
             add_files(
-		        "src/external/webrtc/rtc_base/synchronization/rw_lock_posix.cc",
-		        "src/external/webrtc/rtc_base/ifaddrs_converter.cc"
+                "src/external/webrtc/rtc_base/synchronization/rw_lock_posix.cc",
+                "src/external/webrtc/rtc_base/ifaddrs_converter.cc"
             )
             add_headerfiles(
                 "src/external/webrtc/rtc_base/synchronization/rw_lock_posix.h"
             )
             add_syslinks("pthread")
-	        add_cxflags("-Wno-attributes")
+            add_cxflags("-Wno-attributes")
         end
         set_languages("cxx17")
         add_packages("openssl", "abseil")
