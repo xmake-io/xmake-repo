@@ -2,11 +2,16 @@ package("redis-plus-plus")
     set_homepage("https://github.com/sewenew/redis-plus-plus")
     set_description("Redis client written in C++")
 
-    add_urls("https://github.com/sewenew/redis-plus-plus.git")
-    add_versions("1.3.5", "58084931ed1a056d91fe96da7b9ea81fa023560a")
+    add_urls("https://github.com/sewenew/redis-plus-plus/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/sewenew/redis-plus-plus.git")
+    add_versions("1.3.5", "a49a72fef26ed39d36a278fcc4e4d92822e111697b5992d8f26f70d16edc6c1f")
 
     add_deps("hiredis")
     add_deps("cmake")
+  
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
 
     on_install("linux", "macosx", function (package)
         local configs = {"-DREDIS_PLUS_PLUS_BUILD_TEST=OFF"}
