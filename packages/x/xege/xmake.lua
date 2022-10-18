@@ -24,12 +24,10 @@ package("xege")
         local mode = (package:debug() and "Debug" or "Release")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. mode)
 
-        import("package.tools.cmake").build(package, configs)
+        import("package.tools.cmake").build(package, configs, { buildir = "build" })
 
-        os.cp("**.lib", package:installdir("lib"))
-        os.cp("**.so", package:installdir("lib"))
-        os.cp("**.a", package:installdir("lib"))
-        os.cp("**.dll", package:installdir("bin"))
+        os.trycp("build/" .. mode .. "/*.lib", package:installdir("lib"))
+        os.trycp("build/*.a", package:installdir("lib"))
         os.cp("src/*.h", package:installdir("include"))
     end)
 
