@@ -8,7 +8,7 @@ package("pigz")
 
     add_deps("zlib")
 
-    on_install(function (package)
+    on_install("linux", "macosx", "bsd", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
@@ -16,6 +16,7 @@ package("pigz")
             target("pigz")
                set_kind("binary")
                add_files("**.c")
+               add_syslinks("pthread", "dl")
                add_packages("zlib")
         ]])
         import("package.tools.xmake").install(package, configs)
