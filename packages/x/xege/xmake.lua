@@ -4,8 +4,10 @@ package("xege")
     set_description("Easy Graphics Engine, a lite graphics library in Windows")
     set_license("LGPL-2.1")
 
-    add_urls("https://github.com/wysaid/xege.git", "https://gitee.com/xege/xege.git")
-    add_versions("20.08", "40bca13799e512b14570c41f3d285eca616ca9b1")
+    add_urls("https://github.com/wysaid/xege.git",
+             "https://gitee.com/xege/xege.git")
+    
+    add_versions("v2020.08.31", "40bca13799e512b14570c41f3d285eca616ca9b1")
 
     add_deps("cmake")
 
