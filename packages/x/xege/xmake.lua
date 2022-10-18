@@ -11,10 +11,10 @@ package("xege")
 
     add_deps("cmake")
 
-    if is_arch("X86_64") then
-        add_links("graphics64")
-    elseif is_arch("i386") then
+    if is_arch("x86", "i386", "arm") then
         add_links("graphics")
+    else
+        add_links("graphics64")
     end
 
     add_syslinks("gdiplus", "uuid", "msimg32", "gdi32", "imm32", "ole32", "oleaut32")
