@@ -9,6 +9,8 @@ package("xege")
     
     add_versions("v2020.08.31", "40bca13799e512b14570c41f3d285eca616ca9b1")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     add_deps("cmake")
 
     if is_arch("x86", "i386", "arm") then
@@ -24,7 +26,7 @@ package("xege")
         local mode = (package:debug() and "Debug" or "Release")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. mode)
 
-        import("package.tools.cmake").build(package, configs, { buildir = "build" })
+        import("package.tools.cmake").build(package, configs, {buildir = "build"})
 
         os.trycp("build/" .. mode .. "/*.lib", package:installdir("lib"))
         os.trycp("build/*.a", package:installdir("lib"))
