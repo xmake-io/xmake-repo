@@ -1,16 +1,29 @@
+-- Usage:
+--
+-- add_rules("@commonlibsse-ng/plugin", {
+--     name = "Plugin name",
+--     author = "Author name",
+--     description = "Plugin description",
+--     email = "user@site.com",
+--     options = {
+--         address_library = true,
+--         signature_scanning = false
+--     }
+-- })
+
 rule("plugin")
     add_deps("win.sdk.resource")
 
-    on_config(function(a_target)
+    on_config(function(target)
         import("core.base.semver")
         import("core.project.project")
 
-        a_target:set("kind", "shared")
-        a_target:set("arch", "x64")
+        target:set("kind", "shared")
+        target:set("arch", "x64")
 
-        local version = semver.new(a_target:version())
-        local configs = a_target:extraconf("rules", "@commonlibsse-ng/plugin")
-        local config_dir = path.join("$(buildir)", ".config", a_target:name())
+        local version = semver.new(target:version() or "0.0.0")
+        local configs = target:extraconf("rules", "@commonlibsse-ng/plugin")
+        local config_dir = path.join(target:autogendir(), "rules", "plugin")
 
         local file = io.open(path.join(config_dir, "version.rc"), "w")
         if file then
@@ -34,11 +47,11 @@ rule("plugin")
             file:print("        BLOCK \"040904b0\"")
             file:print("        BEGIN")
             file:print("            VALUE \"FileDescription\", \"%s\"", configs.description or "")
-            file:print("            VALUE \"FileVersion\", \"%s.0\"", a_target:version())
-            file:print("            VALUE \"InternalName\", \"%s\"", configs.name or a_target:name())
-            file:print("            VALUE \"LegalCopyright\", \"%s, %s\"", configs.author or "", a_target:license())
-            file:print("            VALUE \"ProductName\", \"%s\"", project.name())
-            file:print("            VALUE \"ProductVersion\", \"%s.0\"", project.version())
+            file:print("            VALUE \"FileVersion\", \"%s.0\"", target:version() or "0.0.0")
+            file:print("            VALUE \"InternalName\", \"%s\"", configs.name or target:name())
+            file:print("            VALUE \"LegalCopyright\", \"%s, %s\"", configs.author or "", target:license() or "Unknown License")
+            file:print("            VALUE \"ProductName\", \"%s\"", project.name() or "")
+            file:print("            VALUE \"ProductVersion\", \"%s.0\"", project.version() or "0.0.0")
             file:print("        END")
             file:print("    END")
             file:print("    BLOCK \"VarFileInfo\"")
@@ -69,7 +82,7 @@ rule("plugin")
             file:print("")
             file:print("SKSEPluginInfo(")
             file:print("    .Version = { %s, %s, %s, 0 },", version:major(), version:minor(), version:patch())
-            file:print("    .Name = \"%s\"sv,", configs.name or a_target:name())
+            file:print("    .Name = \"%s\"sv,", configs.name or target:name())
             file:print("    .Author = \"%s\"sv,", configs.author or "")
             file:print("    .SupportEmail = \"%s\"sv,", configs.email or "")
             file:print("    .StructCompatibility = SKSE::StructCompatibility::%s,", struct_compat)
@@ -78,13 +91,13 @@ rule("plugin")
             file:close()
         end
 
-        a_target:add("files", path.join(config_dir, "version.rc"))
-        a_target:add("files", path.join(config_dir, "plugin.cpp"))
+        target:add("files", path.join(config_dir, "version.rc"))
+        target:add("files", path.join(config_dir, "plugin.cpp"))
 
-        a_target:add("defines", "UNICODE", "_UNICODE")
+        target:add("defines", "UNICODE", "_UNICODE")
 
-        a_target:add("cxxflags", "/MP", "/permissive-")
-        a_target:add("cxxflags",
+        target:add("cxxflags", "/MP", "/permissive-")
+        target:add("cxxflags",
             "/Zc:alignedNew",
             "/Zc:__cplusplus",
             "/Zc:externConstexpr",
