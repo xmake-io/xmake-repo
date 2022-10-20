@@ -7,7 +7,7 @@ package("sentencepiece")
     add_urls("https://github.com/google/sentencepiece/archive/$(version).tar.gz",
              "https://github.com/google/sentencepiece.git")
 
-    add_versions("v0.1.97", "58f256cf6f01bb86e6fa634a5cc560de5bd1667d")
+    add_versions("v0.1.97", "41c3a07f315e3ac87605460c8bb8d739955bc8e7f478caec4017ef9b7d78669b")
 
 
     add_deps("cmake", "gperftools")
