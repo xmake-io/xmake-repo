@@ -37,8 +37,14 @@ package("libpng")
                     add_defines("PNG_INTEL_SSE_OPT=1")
                     add_vectorexts("sse", "sse2")
                 elseif is_arch("arm.*") then
-                    add_files("arm/*.c", "arm/*.S")
-                    add_defines("PNG_ARM_NEON_OPT=2")
+                    add_files("arm/*.c")
+                    if is_plat("windows") then
+                        add_defines("PNG_ARM_NEON_OPT=1")
+                        add_defines("PNG_ARM_NEON_IMPLEMENTATION=1")
+                    else
+                        add_files("arm/*.S")
+                        add_defines("PNG_ARM_NEON_OPT=2")
+                    end
                 elseif is_arch("mips.*") then
                     add_files("mips/*.c")
                     add_defines("PNG_MIPS_MSA_OPT=2")
