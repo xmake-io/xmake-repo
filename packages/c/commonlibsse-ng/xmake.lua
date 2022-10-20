@@ -46,3 +46,13 @@ package("commonlibsse-ng")
 
         import("package.tools.xmake").install(package, configs)
     end)
+
+    on_test("windows|x64", function(package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <SKSE/SKSE.h>
+
+            SKSEPluginLoad(const SKSE::LoadInterface*) {
+                return true;
+            };
+        ]]}, { configs = { languages = "c++20" } }))
+    end)
