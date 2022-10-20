@@ -46,3 +46,11 @@ package("commonlibsse-ng")
 
         import("package.tools.xmake").install(package, configs)
     end)
+
+    on_test("windows|x64", function(package)
+        assert(package:check_cxxsnippets({test = [[
+            SKSEPluginLoad(const SKSE::LoadInterface*) {
+                return true;
+            };
+        ]]}, { includes = "SKSE/SKSE.h" }))
+    end)
