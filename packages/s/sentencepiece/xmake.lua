@@ -13,7 +13,9 @@ package("sentencepiece")
 
     add_configs("external_abseil", {description = "Use external abseil.", default = false, type = "boolean"})
     add_configs("builtin_protobuf", {description = "Use built-in protobuf.", default = true, type = "boolean"})
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) 
+    end
 
     on_load("windows", "linux", "macosx",function (package) 
         if package:config("external_abseil") then
