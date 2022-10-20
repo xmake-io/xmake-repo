@@ -15,6 +15,7 @@ package("brpc")
         add_ldflags("-Wl,-U,_ProfilerStart", "-Wl,-U,_ProfilerStop")
     elseif is_plat("linux") then
         add_syslinks("rt", "dl")
+        add_ldflags("-static-libstdc++")
     end
 
     on_install("linux", "macosx", function (package)
