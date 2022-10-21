@@ -11,29 +11,27 @@ package("sentencepiece")
 
     add_deps("cmake", "gperftools")
 
-    add_configs("external_abseil", {description = "Use external abseil.", default = false, type = "boolean"})
+    add_configs("external_abseil",  {description = "Use external abseil.", default = false, type = "boolean"})
     add_configs("builtin_protobuf", {description = "Use built-in protobuf.", default = true, type = "boolean"})
     if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) 
+        add_configs("shared",     {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT", readonly = true})
     end
 
-    on_load("windows", "linux", "macosx",function (package) 
+    on_load("windows", "linux", "macosx",function (package)
         if package:config("external_abseil") then
             package:add("deps", "abseil")
         end
-
-        if not package:config("builtin_protobuf") then 
+        if not package:config("builtin_protobuf") then
             package:add("deps", "protobuf-cpp")
         end
     end)
 
     on_install("windows", "linux", "macosx", function (package)
         local configs = {}
-        
         table.insert(configs, "-DSPM_ENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSPM_USE_EXTERNAL_ABSL=" .. (package:config("external_abseil") and "ON" or "OFF"))
         table.insert(configs, "-DSPM_USE_BUILTIN_PROTOBUF=" .. (package:config("builtin_protobuf") and "ON" or "OFF"))
-
         import("package.tools.cmake").install(package, configs)
     end)
 
