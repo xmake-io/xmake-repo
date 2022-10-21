@@ -96,14 +96,9 @@ rule("plugin")
 
         target:add("defines", "UNICODE", "_UNICODE")
 
-        target:add("cxxflags", "/MP", "/permissive-")
-        target:add("cxxflags",
-            "/Zc:alignedNew",
-            "/Zc:__cplusplus",
-            "/Zc:externConstexpr",
-            "/Zc:forScope",
-            "/Zc:hiddenFriend",
-            "/Zc:preprocessor",
-            "/Zc:referenceBinding",
-            "/Zc:ternary")
+        target:add("cxxflags", "/permissive-", "/Zc:alignedNew", "/Zc:__cplusplus", "/Zc:forScope", "/Zc:ternary")
+
+        if target:has_tool("cxx", "cl") then
+            target:add("cxxflags", "/Zc:externConstexpr", "/Zc:hiddenFriend", "/Zc:preprocessor", "/Zc:referenceBinding")
+        end
     end)
