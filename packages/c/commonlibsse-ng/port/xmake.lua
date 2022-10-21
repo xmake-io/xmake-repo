@@ -16,9 +16,6 @@ set_warnings("allextra", "error")
 -- set optimization
 set_optimize("faster")
 
--- set policies
-set_policy("build.optimization.lto", true)
-
 -- add options
 option("skyrim_se")
     set_default(true)
