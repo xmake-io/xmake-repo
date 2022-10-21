@@ -5,7 +5,7 @@ package("imguizmo")
 
     add_urls("https://github.com/CedricGuillemet/ImGuizmo.git")
     add_versions("1.83", "664cf2d73864a36b2a8b5091d33fc4578c885eca")
-    add_versions("1.89WIP", "82e2465b8d029e2d85002905cc4ed5087e2119fe")
+    add_versions("1.89+WIP", "82e2465b8d029e2d85002905cc4ed5087e2119fe")
 
 
     add_deps("imgui")
