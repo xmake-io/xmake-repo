@@ -32,6 +32,9 @@ package("freetype")
     add_configs("zlib", {description = "Support reading gzip-compressed font files", default = false, type = "boolean"})
 
     add_deps("cmake")
+    if is_plat("windows", "mingw") and is_subhost("windows") then
+        add_deps("pkgconf")
+    end
 
     add_includedirs("include/freetype2")
 
