@@ -3,10 +3,10 @@ package("kuba-zip")
     set_homepage("https://github.com/kuba--/zip")
     set_description("A portable, simple zip library written in C")
 
-    add_urls("https://github.com/kuba--/zip/archive/refs/tags/v$(version).tar.gz",
+    add_urls("https://github.com/kuba--/zip/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kuba--/zip.git")
-    add_versions("0.2.2", "f278b1da5e5382c7a1a1db1502cfa1f6df6b1e05e36253d661344d30277f9895")
-    add_versions("0.2.5", "7a57414261361ca991ff8053881343eb6bb6f205")
+    add_versions("v0.2.2", "f278b1da5e5382c7a1a1db1502cfa1f6df6b1e05e36253d661344d30277f9895")
+    add_versions("v0.2.5", "7a57414261361ca991ff8053881343eb6bb6f205")
 
     add_deps("cmake")
     on_load("windows", "mingw@windows", function (package)
