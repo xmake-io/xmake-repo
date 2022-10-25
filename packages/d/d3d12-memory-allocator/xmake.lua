@@ -9,13 +9,14 @@ package("d3d12-memory-allocator")
 
     add_deps("cmake")
 
-    add_syslinks("d3d12", "dxgi", "dxguid")
-
     on_install("windows", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+        if package:config("shared") then
+            os.mv(path.join(package:installdir("lib"), "*.dll"), package:installdir("bin"))
+        end
     end)
 
     on_test("windows", function (package)
@@ -37,5 +38,5 @@ package("d3d12-memory-allocator")
                 D3D12MA::Allocator* allocator;
                 D3D12MA::CreateAllocator(&allocatorDesc, &allocator);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "D3D12MemAlloc.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "D3D12MemAlloc.h"}))
     end)
