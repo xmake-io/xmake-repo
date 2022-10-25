@@ -11,7 +11,7 @@ package("openjpeg")
     add_versions("v2.5.0", "0333806d6adecc6f7a91243b2b839ff4d2053823634d4f6ed7a59bc87409122a")
 
     add_deps("cmake")
-    add_deps("lcms", "libtiff", "libpng", "libjpeg")
+    add_deps("lcms", "libtiff", "libpng")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
@@ -25,13 +25,13 @@ package("openjpeg")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_DOC=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_DOC=OFF", "-DBUILD_CODEC=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"lcms", "libpng", "libtiff", "libjpeg"}})
+        import("package.tools.cmake").install(package, configs)
         package:add("PATH", "bin")
-        
+
         -- fix cmake import files
         local ver = package:version():major() .. "." .. package:version():minor()
         io.gsub(package:installdir("lib", "openjpeg-" .. ver, "OpenJPEGConfig.cmake"), "set%(INC_DIR .-%)", format("set(INC_DIR ${SELF_DIR}/../../include/openjpeg-%s)", ver))
