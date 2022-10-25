@@ -11,7 +11,7 @@ package("openjpeg")
     add_versions("v2.5.0", "0333806d6adecc6f7a91243b2b839ff4d2053823634d4f6ed7a59bc87409122a")
 
     add_deps("cmake")
-    add_deps("lcms", "libtiff", "libpng")
+    add_deps("lcms", "libtiff", "libpng", "libjpeg")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
@@ -29,7 +29,7 @@ package("openjpeg")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"lcms", "libpng", "libtiff", "libjpeg"}})
         package:add("PATH", "bin")
         
         -- fix cmake import files

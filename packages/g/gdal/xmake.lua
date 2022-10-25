@@ -8,7 +8,7 @@ package("gdal")
     add_versions("3.5.1", "7c4406ca010dc8632703a0a326f39e9db25d9f1f6ebaaeca64a963e3fac123d1")
 
     add_configs("apps", {description = "Build PROJ applications.", default = true, type = "boolean"})
-    add_deps("cmake", "proj", "openjpeg")
+    add_deps("cmake")
 
     if is_plat("windows") then
         add_syslinks("wsock32", "ws2_32")
@@ -36,5 +36,4 @@ package("gdal")
             void test(int argc, char** argv) {
                 GDALAllRegister();
             }]]}, {configs = {languages = "c++11"}, includes = "ogrsf_frmts.h"}))
-       
     end)
