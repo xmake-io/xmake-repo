@@ -1,5 +1,4 @@
 package("gdal")
-
     set_homepage("https://gdal.org/")
     set_description("L is a translator library for raster and vector geospatial data formats that is released under an MIT style Open Source License by the Open Source Geospatial Foundation")
     set_license("MIT")
@@ -7,17 +6,12 @@ package("gdal")
     add_urls("https://github.com/OSGeo/gdal/releases/download/v$(version)/gdal-$(version).tar.gz")
     add_versions("3.5.1", "7c4406ca010dc8632703a0a326f39e9db25d9f1f6ebaaeca64a963e3fac123d1")
 
-    add_configs("apps", {description = "Build PROJ applications.", default = true, type = "boolean"})
-    add_deps("cmake")
+    add_configs("apps", {description = "Build PROJ applications.", default = false, type = "boolean"})
+    add_deps("cmake", "proj", "openjpeg")
 
     if is_plat("windows") then
         add_syslinks("wsock32", "ws2_32")
     end
-
-    on_load("windows", "macosx", "linux", function(package)
-        package:add("deps", "openjpeg")
-        package:add("deps", "proj")
-    end)
 
     on_install("windows", "macosx", "linux", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DGDAL_USE_EXTERNAL_LIBS=OFF", "-DGDAL_USE_OPENJPEG=ON",
@@ -25,9 +19,10 @@ package("gdal")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
-
         import("package.tools.cmake").install(package, configs, {packagedeps = {"openjpeg", "proj"}})
-        package:add("PATH", "bin")
+        if package:config("apps") then
+            package:add("PATH", "bin")
+        end
     end)
 
     on_test(function (package)
