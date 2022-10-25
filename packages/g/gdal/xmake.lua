@@ -1,0 +1,29 @@
+package("gdal")
+
+    set_homepage("https://gdal.org/")
+    set_description("L is a translator library for raster and vector geospatial data formats that is released under an MIT style Open Source License by the Open Source Geospatial Foundation")
+    set_license("MIT")
+
+    add_urls("https://github.com/OSGeo/gdal/releases/download/v$(version)/gdal-$(version).tar.gz")
+    add_versions("3.5.1", "7c4406ca010dc8632703a0a326f39e9db25d9f1f6ebaaeca64a963e3fac123d1")
+
+    add_configs("apps", {description = "Build PROJ applications.", default = true, type = "boolean"})
+    add_deps("cmake", "proj")
+
+    if is_plat("windows") then
+        add_syslinks("wsock32", "ws2_32")
+    end
+    
+    on_install("windows", "macosx", "linux", function (package)
+        local configs = {"-DBUILD_TESTING=OFF", "-DGDAL_USE_EXTERNAL_LIBS=OFF", 
+                         "-DBUILD_JAVA_BINDINGS=OFF", "-DBUILD_CSHARP_BINDINGS=OFF", "-DBUILD_PYTHON_BINDINGS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
+
+        import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cxxfuncs("GDALAllRegister", {includes = "ogrsf_frmts.h"}))
+    end)
