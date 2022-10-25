@@ -6,6 +6,7 @@ package("proj")
 
     add_urls("https://download.osgeo.org/proj/proj-$(version).tar.gz")
     add_versions("9.0.1", "737eaacbe7906d0d6ff43f0d9ebedc5c734cccc9e6b8d7beefdec3ab22d9a6a3")
+    add_versions("8.2.1", "76ed3d0c3a348a6693dfae535e5658bbfd47f71cb7ff7eb96d9f12f7e068b1cf")
 
     add_configs("apps", {description = "Build PROJ applications.", default = true, type = "boolean"})
     add_configs("tiff", {description = "Enable TIFF support.", default = false, type = "boolean"})
