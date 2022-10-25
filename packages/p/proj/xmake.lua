@@ -19,12 +19,13 @@ package("proj")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     end
+
     on_load("windows", "macosx", "linux", function (package)
         -- windows@arm64 cann't generate proj.db
         if package:is_plat("windows") and package:is_arch("arm64") then
             io.replace("CMakeLists.txt", "add_subdirectory(data)", "", {plain = true})
         end
-        
+
         if package:config("tiff") then
             package:add("deps", "libtiff")
         end
