@@ -13,7 +13,7 @@ package("gdal")
     if is_plat("windows") then
         add_syslinks("wsock32", "ws2_32")
     end
-    
+
     on_install("windows", "macosx", "linux", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DGDAL_USE_EXTERNAL_LIBS=OFF", 
                          "-DBUILD_JAVA_BINDINGS=OFF", "-DBUILD_CSHARP_BINDINGS=OFF", "-DBUILD_PYTHON_BINDINGS=OFF"}
@@ -25,5 +25,5 @@ package("gdal")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("GDALAllRegister", {includes = "ogrsf_frmts.h"}))
+        assert(package:has_cxxfuncs("GDALAllRegister", {includes = "ogrsf_frmts.h", configs = {languages = "cxx11"}}))
     end)
