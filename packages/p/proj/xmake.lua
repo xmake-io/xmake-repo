@@ -20,6 +20,11 @@ package("proj")
         add_syslinks("pthread")
     end
     on_load("windows", "macosx", "linux", function (package)
+        -- windows@arm64 cann't generate proj.db
+        if is_plat("windows") and is_arch("arm64") then
+            io.replace("CMakeLists.txt", "add_subdirectory(data)", "", {plain = true})
+        end
+        
         if package:config("tiff") then
             package:add("deps", "libtiff")
         end

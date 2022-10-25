@@ -8,22 +8,33 @@ package("gdal")
     add_versions("3.5.1", "7c4406ca010dc8632703a0a326f39e9db25d9f1f6ebaaeca64a963e3fac123d1")
 
     add_configs("apps", {description = "Build PROJ applications.", default = true, type = "boolean"})
-    add_deps("cmake", "proj")
+    add_deps("cmake", "proj", "openjpeg")
 
     if is_plat("windows") then
         add_syslinks("wsock32", "ws2_32")
     end
 
+    on_load("windows", "macosx", "linux", function(package)
+        package:add("deps", "openjpeg")
+        package:add("deps", "proj")
+    end)
+
     on_install("windows", "macosx", "linux", function (package)
-        local configs = {"-DBUILD_TESTING=OFF", "-DGDAL_USE_EXTERNAL_LIBS=OFF", 
+        local configs = {"-DBUILD_TESTING=OFF", "-DGDAL_USE_EXTERNAL_LIBS=OFF", "-DGDAL_USE_OPENJPEG=ON",
                          "-DBUILD_JAVA_BINDINGS=OFF", "-DBUILD_CSHARP_BINDINGS=OFF", "-DBUILD_PYTHON_BINDINGS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
 
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"openjpeg", "proj"}})
+        package:add("PATH", "bin")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("GDALAllRegister", {includes = "ogrsf_frmts.h", configs = {languages = "cxx11"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <ogrsf_frmts.h>
+            void test(int argc, char** argv) {
+                GDALAllRegister();
+            }]]}, {configs = {languages = "c++11"}, includes = "ogrsf_frmts.h"}))
+       
     end)
