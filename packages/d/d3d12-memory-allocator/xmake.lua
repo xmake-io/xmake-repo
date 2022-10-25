@@ -9,7 +9,7 @@ package("d3d12-memory-allocator")
 
     add_deps("cmake")
 
-    on_install("windows", function (package)
+    on_install("windows|x64", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -19,7 +19,7 @@ package("d3d12-memory-allocator")
         end
     end)
 
-    on_test("windows", function (package)
+    on_test("windows|x64", function (package)
         assert(package:check_cxxsnippets({test = [[
             static void test() {
                 IDXGIFactory4* dxgi_factory;
