@@ -6,7 +6,7 @@ package("gdal")
     add_urls("https://github.com/OSGeo/gdal/releases/download/v$(version)/gdal-$(version).tar.gz")
     add_versions("3.5.1", "7c4406ca010dc8632703a0a326f39e9db25d9f1f6ebaaeca64a963e3fac123d1")
 
-    add_configs("apps", {description = "Build PROJ applications.", default = false, type = "boolean"})
+    add_configs("apps", {description = "Build GDAL applications.", default = false, type = "boolean"})
     add_deps("cmake", "proj", "openjpeg")
 
     if is_plat("windows") then
