@@ -21,7 +21,7 @@ package("gdal")
         table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = {"openjpeg", "proj"}})
         if package:config("apps") then
-            package:add("PATH", "bin")
+            package:addenv("PATH", "bin")
         end
     end)
 
