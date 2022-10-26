@@ -3,7 +3,7 @@ package("cuda")
     set_homepage("https://developer.nvidia.com/cuda-zone/")
     set_description("CUDA® is a parallel computing platform and programming model developed by NVIDIA for general computing on graphical processing units (GPUs).")
 
-    add_configs("utils", {description = "enabled cuda utilities.", default = {}, type = "table"})
+    add_configs("utils", {description = "Enabled cuda utilities.", default = {}, type = "table"})
 
     on_load(function (package)
         import("detect.sdks.find_cuda")

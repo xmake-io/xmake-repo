@@ -1,5 +1,6 @@
 package("vulkan-hpp")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/KhronosGroup/Vulkan-Hpp/")
     set_description("Open-Source Vulkan C++ API")
     set_license("Apache-2.0")
@@ -8,11 +9,12 @@ package("vulkan-hpp")
     add_versions("v1.2.180", "bfa6d4765212505c8241a44b97dc5a9ce3aa2969")
     add_versions("v1.2.189", "58ff1da4c03f5f124eb835f41a9dd8fe3c2e8087")
     add_versions("v1.2.198", "d8c9f4f0eee6972622a1c3aabab5ed558d37c1c0")
+    add_versions("v1.3.231", "ef609a2f77dd1756e672712f264e76b64acdba61")
 
     add_deps("cmake")
 
     if is_plat("linux") then
-      add_extsources("pacman::vulkan-headers")
+        add_extsources("pacman::vulkan-headers")
     end
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
