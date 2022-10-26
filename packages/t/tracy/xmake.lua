@@ -8,7 +8,7 @@ package("tracy")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows|x64", "macosx", "linux|x86_64", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
