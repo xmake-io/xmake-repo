@@ -13,7 +13,7 @@ package("gdal")
         add_syslinks("wsock32", "ws2_32")
     end
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x86", "windows|x86_64", "windows|x64", "macosx", "linux", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DGDAL_USE_EXTERNAL_LIBS=OFF", "-DGDAL_USE_OPENJPEG=ON",
                          "-DBUILD_JAVA_BINDINGS=OFF", "-DBUILD_CSHARP_BINDINGS=OFF", "-DBUILD_PYTHON_BINDINGS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
