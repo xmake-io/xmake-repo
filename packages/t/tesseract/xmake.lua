@@ -36,7 +36,7 @@ package("tesseract")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x86", "windows|x64", "macosx", "linux", function (package)
         io.replace("CMakeLists.txt", "find_package(PkgConfig)", "", {plain = true})
         io.replace("src/training/CMakeLists.txt", "find_package(PkgConfig)", "", {plain = true})
         local configs = {"-DSW_BUILD=OFF", "-DBUILD_TESTS=OFF", "-DUSE_SYSTEM_ICU=ON"}
