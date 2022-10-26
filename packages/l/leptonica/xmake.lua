@@ -19,8 +19,8 @@ package("leptonica")
         end
     end)
 
-    on_install("windows", "linux", function (package)
-        local configs = {"-DSW_BUILD=OFF"}
+    on_install("windows", "macosx", "linux", function (package)
+        local configs = {"-DSW_BUILD=OFF", "-DCMAKE_FIND_FRAMEWORK=LAST"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
