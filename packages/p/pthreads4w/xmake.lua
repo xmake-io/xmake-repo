@@ -28,7 +28,7 @@ package("pthreads4w")
         os.cp("*.h", package:installdir("include/pthread"))
         if package:config("shared") then
             os.cp("*.dll", package:installdir("bin"))
-            package:add("PATH", "bin")
+            package:addenv("PATH", "bin")
         end
         if package:debug() then
             os.cp("*.pdb", package:installdir("lib"))
