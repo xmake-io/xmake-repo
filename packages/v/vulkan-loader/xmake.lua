@@ -41,7 +41,7 @@ package("vulkan-loader")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
