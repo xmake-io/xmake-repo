@@ -12,6 +12,8 @@ package("vulkan-loader")
     add_versions("1.2.162+0", "f8f5ec2485e7fdba3f58c1cde5a25145ece1c6a686c91ba4016b28c0af3f21dd")
     add_versions("1.2.154+1", "889e45f7175d915dd0d702013b8021192e181d20f2ad4021c94006088f1edfe5")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+
     if is_plat("linux") then
         add_extsources("apt::libvulkan-dev", "pacman::vulkan-icd-loader")
         add_deps("wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon")
@@ -21,7 +23,7 @@ package("vulkan-loader")
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
         if not package.is_built or package:is_built() then
-            package:add("deps", "cmake", "ninja")
+            package:add("deps", "cmake")
         end
         if package:is_plat("macosx") then
             package:add("links", "vulkan")
@@ -40,28 +42,14 @@ package("vulkan-loader")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        import("package.tools.cmake")
-        local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
-        if package:is_plat("linux") then
-            local includes = {}
-            local linkdirs = {}
-            for _, lib in ipairs({"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}) do
-                local fetchinfo = package:dep(lib):fetch()
-                for _, dir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
-                    table.insert(includes, dir)
-                end
-                for _, dir in ipairs(fetchinfo.linkdirs) do
-                    table.insert(linkdirs, dir)
-                end
-            end
-            envs.C_INCLUDE_PATH = (envs.C_INCLUDE_PATH or "") .. path.envsep() .. path.joinenv(table.unique(includes))
-            envs.LD_LIBRARY_PATH = (envs.LD_LIBRARY_PATH or "") .. path.envsep() .. path.joinenv(table.unique(linkdirs))
-        end
-
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
-        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs})
+        if package:is_plat("linux") then
+            import("package.tools.cmake").install(package, configs, {packagedeps = {"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}})
+        else
+            import("package.tools.cmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)
