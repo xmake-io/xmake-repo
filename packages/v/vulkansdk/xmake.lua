@@ -4,7 +4,7 @@ package("vulkansdk")
     set_description("LunarG Vulkan® SDK")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-    add_configs("utils",  {description = "enabled vulkan utilities.", default = {}, type = "table"})
+    add_configs("utils",  {description = "Enabled vulkan utilities.", default = {}, type = "table"})
 
     on_load(function (package)
         import("detect.sdks.find_vulkansdk")
