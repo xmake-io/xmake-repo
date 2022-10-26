@@ -9,7 +9,7 @@ package("openjpeg")
     add_versions("v2.3.1", "63f5a4713ecafc86de51bfad89cc07bb788e9bba24ebbf0c4ca637621aadb6a9")
     add_versions("v2.4.0", "8702ba68b442657f11aaeb2b338443ca8d5fb95b0d845757968a7be31ef7f16d")
     add_versions("v2.5.0", "0333806d6adecc6f7a91243b2b839ff4d2053823634d4f6ed7a59bc87409122a")
-    add_patches("v2.5.0", path.join(os.scriptdir(), "patches", "2.5.0", "build.patch"), "8e3509cdd0f773499800f1ffb8059d71fb26871cbf744756bff5e04893427238")
+    add_patches("v2.5.0", path.join(os.scriptdir(), "patches", "2.5.0", "build.patch"), "0842372f2f8c941865edeb5ac98b9a05cfa59e66fd6f16e3e014866a6965a7d6")
 
     add_deps("cmake")
     add_deps("lcms", "libtiff", "libpng")
