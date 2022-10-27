@@ -10,6 +10,7 @@ package("onnx")
 
     add_deps("cmake")
     add_deps("protobuf-cpp")
+    add_deps("python")
 
     on_load("linux", "macosx", "windows", function (package)
         package:add("defines", "ONNX_ML")
