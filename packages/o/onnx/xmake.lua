@@ -21,6 +21,7 @@ package("onnx")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. (package:is_plat("windows") and "17" or "11"))
         import("package.tools.cmake").install(package, configs)
     end)
 
