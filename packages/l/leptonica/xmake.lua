@@ -21,7 +21,6 @@ package("leptonica")
 
     on_install("windows", "macosx", "linux", function (package)
         io.replace("CMakeLists.txt", "NOT JP2K", "FALSE", {plain = true})
-        print(io.readfile("CMakeLists.txt"))
         local configs = {"-DSW_BUILD=OFF", "-DCMAKE_FIND_FRAMEWORK=LAST", "-DCMAKE_DISABLE_FIND_PACKAGE_PkgConfig=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
