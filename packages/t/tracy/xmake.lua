@@ -22,5 +22,5 @@ package("tracy")
                 FrameMarkStart("Test start");
                 FrameMarkEnd("Test end");
             }
-        ]]}, {configs = {languages = "c++17"}, includes = {"Tracy.hpp"}}))
+        ]]}, {configs = {languages = "c++17"}, includes = {"tracy/Tracy.hpp"}}))
     end)
