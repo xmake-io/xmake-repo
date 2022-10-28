@@ -14,7 +14,7 @@ package("onnx")
 
     on_load("linux", "macosx", "windows", function (package)
         package:add("defines", "ONNX_ML")
-        package:add("cxxflags", "-DONNX_NAMESPACE=onnx")
+        package:add("defines", "ONNX_NAMESPACE=onnx")
     end)
 
     on_install("linux", "macosx", "windows", function (package)
@@ -22,6 +22,12 @@ package("onnx")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. (package:is_plat("windows") and "17" or "11"))
+        if package:is_plat("windows") then
+            local vs_runtime = package:config("vs_runtime")
+            if vs_runtime then
+                table.insert(configs, "-DONNX_USE_MSVC_STATIC_RUNTIME=" .. (vs_runtime:startswith("MT") and "ON" or "OFF"))
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
