@@ -21,12 +21,11 @@ package("gdal")
         table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
         
         --fix gdal compile on msvc debug mode
-        local opts = {}
-        if package:debug() and is_plat("windows") then
-            opts.cxflags = "/FS"
+        local cxflags
+        if package:debug() and package:is_plat("windows") then
+            cxflags = "/FS"
         end
-        opts.packagedeps = {"openjpeg", "proj"}
-        import("package.tools.cmake").install(package, configs, opts)
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
         if package:config("apps") then
             package:addenv("PATH", "bin")
         end
