@@ -27,10 +27,17 @@ package("onnx")
             if vs_runtime then
                 table.insert(configs, "-DONNX_USE_MSVC_STATIC_RUNTIME=" .. (vs_runtime:startswith("MT") and "ON" or "OFF"))
             end
+            if package:config("shared") then
+                package:add("defines", "PROTOBUF_USE_DLLS")
+            end
         end
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("onnx::ModelProto", {includes = "onnx/proto_utils.h"}))
+        local languages = "c++11"
+        if package:is_plat("windows") then
+            languages = "c++17"
+        end
+        assert(package:has_cxxtypes("onnx::ModelProto", {includes = "onnx/proto_utils.h", configs = {languages = languages}}))
     end)
