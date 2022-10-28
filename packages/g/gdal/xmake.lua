@@ -12,14 +12,6 @@ package("gdal")
     if is_plat("windows") then
         add_syslinks("wsock32", "ws2_32")
     end
-
-    on_load("windows", function (package)
-        --fix gdal compile on msvc debug mode
-        if package:debug() then
-            package:config_set("cxxflags", "/FS")
-            package:config_set("cflags", "/FS")
-        end
-    end)
  
     on_install("windows|x86", "windows|x64", "macosx", "linux", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DGDAL_USE_EXTERNAL_LIBS=OFF", "-DGDAL_USE_OPENJPEG=ON",
@@ -28,7 +20,14 @@ package("gdal")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
         
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"openjpeg", "proj"}})
+        --fix gdal compile on msvc debug mode
+        local opts = {}
+        if package:debug() and is_plat("windows") then
+            opts["cxxflags"] = "/FS"
+            opts["cflags"] = "/FS"
+        end
+        opts["packagedeps"] = {"openjpeg", "proj"}
+        import("package.tools.cmake").install(package, configs, opts)
         if package:config("apps") then
             package:addenv("PATH", "bin")
         end
