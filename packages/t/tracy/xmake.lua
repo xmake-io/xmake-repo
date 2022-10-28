@@ -4,6 +4,7 @@ package("tracy")
 
     add_urls("https://github.com/wolfpld/tracy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wolfpld/tracy.git")
+    add_versions("v0.9", "93a91544e3d88f3bc4c405bad3dbc916ba951cdaadd5fcec1139af6fa56e6bfc")
     add_versions("v0.8.2", "4784eddd89c17a5fa030d408392992b3da3c503c872800e9d3746d985cfcc92a")
 
     add_deps("cmake")
@@ -21,5 +22,5 @@ package("tracy")
                 FrameMarkStart("Test start");
                 FrameMarkEnd("Test end");
             }
-        ]]}, {configs = {languages = "c++17"}, includes = {"Tracy.hpp"}}))
+        ]]}, {configs = {languages = "c++17"}, includes = {"tracy/Tracy.hpp"}}))
     end)
