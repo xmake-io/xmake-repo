@@ -1,6 +1,6 @@
 package("gdal")
     set_homepage("https://gdal.org/")
-    set_description("GDAL is a translator library for raster and vector geospatial data formats that is released under an MIT style Open Source License by the Open Source Geospatial Foundation")
+    set_description("GDAL is a translator library for raster and vector geospatial data formats by the Open Source Geospatial Foundation")
     set_license("MIT")
 
     add_urls("https://github.com/OSGeo/gdal/releases/download/v$(version)/gdal-$(version).tar.gz")
