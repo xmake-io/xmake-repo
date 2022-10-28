@@ -12,12 +12,16 @@ package("onnx")
     add_deps("protobuf-cpp")
     add_deps("python", {kind = "binary"})
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     on_load("linux", "macosx", "windows", function (package)
         package:add("defines", "ONNX_ML")
         package:add("defines", "ONNX_NAMESPACE=onnx")
     end)
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows|x64", "windows|x86", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
