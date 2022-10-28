@@ -47,11 +47,8 @@ package("libjpeg-turbo")
             table.insert(configs, "-DWITH_CRT_DLL=ON")
         end
         if package:is_plat("windows") and package:is_arch("arm64") then
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=arm64")
-            table.insert(configs, "-DCMAKE_GENERATOR_PLATFORM=arm64")
-        end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+            io.replace("CMakeLists.txt", 'message(STATUS "${BITS}-bit build (${CPU_TYPE})")',
+                'set(CPU_TYPE arm64)\nmessage(STATUS "${BITS}-bit build (${CPU_TYPE})")', {plain = true})
         end
         table.insert(configs, "-DCMAKE_INSTALL_LIBDIR:PATH=lib")
         import("package.tools.cmake").install(package, configs)
