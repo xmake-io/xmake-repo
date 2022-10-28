@@ -29,7 +29,7 @@ package("freetype")
     add_configs("bzip2", {description = "Support bzip2 compressed fonts", default = false, type = "boolean"})
     add_configs("png", {description = "Support PNG compressed OpenType embedded bitmaps", default = false, type = "boolean"})
     add_configs("woff2", {description = "Use Brotli library to support decompressing WOFF2 fonts", default = false, type = "boolean"})
-    add_configs("zlib", {description = "Support reading gzip-compressed font files", default = false, type = "boolean"})
+    add_configs("zlib", {description = "Support reading gzip-compressed font files", default = true, type = "boolean"})
     add_configs("harfbuzz", {description = "Support harfbuzz", default = false, type = "boolean"})
 
     add_deps("cmake")
