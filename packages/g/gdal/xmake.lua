@@ -25,7 +25,8 @@ package("gdal")
         if package:debug() and package:is_plat("windows") then
             cxflags = "/FS"
         end
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+        import("package.tools.cmake").install(package, configs,
+            {cxflags = cxflags, packagedeps = {"openjpeg", "proj"}})
         if package:config("apps") then
             package:addenv("PATH", "bin")
         end
