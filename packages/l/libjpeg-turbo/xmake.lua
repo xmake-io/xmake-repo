@@ -47,7 +47,8 @@ package("libjpeg-turbo")
             table.insert(configs, "-DWITH_CRT_DLL=ON")
         end
         if package:is_plat("windows") and package:is_arch("arm64") then
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=arm64")
+            table.insert(configs, "-DCMAKE_GENERATOR_PLATFORM=arm64")
         end
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
