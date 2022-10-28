@@ -23,10 +23,9 @@ package("gdal")
         --fix gdal compile on msvc debug mode
         local opts = {}
         if package:debug() and is_plat("windows") then
-            opts["cxxflags"] = "/FS"
-            opts["cflags"] = "/FS"
+            opts.cxflags = "/FS"
         end
-        opts["packagedeps"] = {"openjpeg", "proj"}
+        opts.packagedeps = {"openjpeg", "proj"}
         import("package.tools.cmake").install(package, configs, opts)
         if package:config("apps") then
             package:addenv("PATH", "bin")
