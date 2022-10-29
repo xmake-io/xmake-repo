@@ -42,7 +42,7 @@ package("spirv-tools")
 
     on_install("linux", "windows", "macosx", "mingw", function (package)
         package:addenv("PATH", "bin")
-        local configs = {"-DSPIRV_SKIP_TESTS=ON"}
+        local configs = {"-DSPIRV_SKIP_TESTS=ON", "-DSPIRV_WERROR=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local spirv = package:dep("spirv-headers")
@@ -61,7 +61,7 @@ package("spirv-tools")
     end)
 
     on_test(function (package)
-        if not package:is_plat("mingw") or is_subhost("msys") then
+        if not (package:is_plat(os.host()) and package:is_arch(os.arch())) then
             os.runv("spirv-as --help")
             os.runv("spirv-opt --help")
         end
