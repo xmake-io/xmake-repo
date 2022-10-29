@@ -58,7 +58,7 @@ package("glslang")
     end)
 
     on_test(function (package)
-        if not package:is_plat("mingw") or is_subhost("msys") then
+        if not package:is_cross() then
             os.vrun("glslangValidator --version")
         end
         if not package:config("binaryonly") then

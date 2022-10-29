@@ -61,7 +61,7 @@ package("spirv-tools")
     end)
 
     on_test(function (package)
-        if package:is_plat(os.host()) and package:is_arch(os.arch()) then
+        if not package:is_cross() then
             os.runv("spirv-as --help")
             os.runv("spirv-opt --help")
         end
