@@ -8,6 +8,7 @@ package("tinygltf")
     add_urls("https://github.com/syoyo/tinygltf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/syoyo/tinygltf.git")
     add_versions("v2.5.0", "5d85bd556b60b1b69527189293cfa4902957d67fabb8582b6532f23a5ef27ec1")
+    add_versions("v2.6.3", "f61e4a501baa7fbf31b18ea0f6815a59204ad0de281f7b04f0168f6bbd17c340")
 
     add_deps("stb", "nlohmann_json")
     on_install(function (package)
