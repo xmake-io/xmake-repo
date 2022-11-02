@@ -6,6 +6,7 @@ package("opensubdiv")
 
     add_urls("https://github.com/PixarAnimationStudios/OpenSubdiv/archive/refs/tags/v$(version).tar.gz", {version = function (version) return version:gsub("%.", "_") end})
     add_versions("3.4.4", "20d49f80a2b778ad4d01f091ad88d8c2f91cf6c7363940c6213241ce6f1048fb")
+    add_versions("3.5.0", "8f5044f453b94162755131f77c08069004f25306fd6dc2192b6d49889efb8095")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
