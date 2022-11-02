@@ -22,7 +22,6 @@ end
 if has_config("glfw_vulkan") then
     add_requires("glfw")
     add_requires("vulkansdk")
-    add_requires("vulkan-headers")
 end
 if has_config("sdl2") then
     add_requires("libsdl >=2.0.17")
@@ -63,7 +62,7 @@ target("imgui")
         add_files("backends/imgui_impl_vulkan.cpp", "backends/imgui_impl_glfw.cpp")
         add_headerfiles("backends/imgui_impl_vulkan.h", "backends/imgui_impl_glfw.h")
         add_packages("glfw")
-        add_packages("vulkan-headers")
+        add_packages("vulkansdk")
     end
     
     if has_config("sdl2") then

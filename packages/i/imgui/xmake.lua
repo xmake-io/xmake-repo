@@ -49,6 +49,7 @@ package("imgui")
         end
         if package:config("glfw_vulkan") then
             package:add("deps", "glfw")
+            package:add("deps", "vulkansdk")
         end
         if package:config("sdl2") then
             package:add("deps", "libsdl >=2.0.17")
