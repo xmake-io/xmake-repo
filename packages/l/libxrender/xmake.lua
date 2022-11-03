@@ -3,8 +3,8 @@ package("libxrender")
     set_homepage("https://www.x.org/")
     set_description("X.Org: Library for the Render Extension to the X11 protocol")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXrender-$(version).tar.bz2")
-    add_versions("0.9.10", "c06d5979f86e64cabbde57c223938db0b939dff49fdb5a793a1d3d0396650949")
+    set_urls("https://www.x.org/archive/individual/lib/libXrender-$(version).tar.gz")
+    add_versions("0.9.11", "6aec3ca02e4273a8cbabf811ff22106f641438eb194a12c0ae93c7e08474b667")
 
     if is_plat("linux") then
         add_extsources("apt::libxrender-dev")

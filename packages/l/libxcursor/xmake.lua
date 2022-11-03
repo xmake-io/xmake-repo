@@ -3,8 +3,8 @@ package("libxcursor")
     set_homepage("https://www.x.org/")
     set_description("X.Org: X Window System Cursor management library")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXcursor-$(version).tar.bz2")
-    add_versions("1.2.0", "3ad3e9f8251094af6fe8cb4afcf63e28df504d46bfa5a5529db74a505d628782")
+    set_urls("https://www.x.org/archive/individual/lib/libXcursor-$(version).tar.gz")
+    add_versions("1.2.1", "77f96b9ad0a3c422cfa826afabaf1e02b9bfbfc8908c5fa1a45094faad074b98")
 
     if is_plat("linux") then
         add_extsources("apt::libxcursor-dev")

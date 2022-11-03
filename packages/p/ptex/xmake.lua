@@ -8,6 +8,7 @@ package("ptex")
              "https://github.com/wdas/ptex.git")
     add_versions("v2.3.2", "30aeb85b965ca542a8945b75285cd67d8e207d23dbb57fcfeaab587bb443402b")
     add_versions("v2.4.1", "664253b84121251fee2961977fe7cf336b71cd846dc235cd0f4e54a0c566084e")
+    add_versions("v2.4.2", "c8235fb30c921cfb10848f4ea04d5b662ba46886c5e32ad5137c5086f3979ee1")
 
     add_deps("zlib")
     if is_plat("linux") then
