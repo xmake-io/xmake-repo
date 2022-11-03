@@ -53,6 +53,8 @@ package("dpp")
 
     add_deps("nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
 
+    add_configs("have_voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = true})
+
     if is_plat("linux", "macosx") then
         add_syslinks("pthread")
     end
@@ -83,6 +85,11 @@ package("dpp")
 	end
         io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
         os.rmdir("include/dpp/nlohmann")
+		
+	if package:config("have_voice") then
+            print(package)
+            package:add("defines", "HAVE_VOICE")
+        end
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
