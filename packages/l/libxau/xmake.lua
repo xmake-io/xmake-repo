@@ -3,8 +3,8 @@ package("libxau")
     set_homepage("https://www.x.org/")
     set_description("X.Org: A Sample Authorization Protocol for X")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXau-$(version).tar.bz2")
-    add_versions("1.0.9", "ccf8cbf0dbf676faa2ea0a6d64bcc3b6746064722b606c8c52917ed00dcb73ec")
+    set_urls("https://www.x.org/archive/individual/lib/libXau-$(version).tar.gz")
+    add_versions("1.0.10", "51a54da42475d4572a0b59979ec107c27dacf6c687c2b7b04e5cf989a7c7e60c")
 
     if is_plat("linux") then
         add_extsources("apt::libxau-dev", "pacman::libxau")
