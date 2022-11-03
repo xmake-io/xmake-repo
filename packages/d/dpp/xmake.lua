@@ -66,7 +66,7 @@ package("dpp")
 
         if package:config("have_voice") then
             package:add("defines", "HAVE_VOICE")
-            packages:add("deps", "libsodium", "libopus")
+            package:add("deps", "libsodium", "libopus")
         end
 
         if package:version():le("v10.0.13") then
