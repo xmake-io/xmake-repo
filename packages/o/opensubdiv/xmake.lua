@@ -38,6 +38,9 @@ package("opensubdiv")
 
     on_install("windows", "macosx", "linux", function (package)
         local configs = {"-DNO_EXAMPLES=ON", "-DNO_TUTORIALS=ON", "-DNO_REGRESSION=ON", "-DNO_DOC=ON", "-DNO_CLEW=ON", "-DNO_TESTS=ON", "-DNO_GLTESTS=ON"}
+        if package:config("glfw") then
+            io.replace("cmake/FindGLFW.cmake", "NOT X11_xf86vmode_FOUND", "FALSE", {plain = true})
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for _, dep in ipairs({"glfw", "ptex", "tbb", "opencl", "cuda"}) do
