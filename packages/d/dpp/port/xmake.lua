@@ -11,7 +11,6 @@ target("dpp")
     add_packages("fmt", "nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
 
     add_defines("DPP_BUILD")
-    add_defines("HAVE_VOICE")
 
     if is_plat("windows", "mingw") then
         add_defines("WIN32", "_WINSOCK_DEPRECATED_NO_WARNINGS", "WIN32_LEAN_AND_MEAN")

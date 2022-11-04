@@ -51,7 +51,9 @@ package("dpp")
     add_versions("v10.0.8", "7a16d31841fc67fabcafbc33abb1a6b2ac472202df7e8c48542f77e089de08e3")
     add_patches("v10.0.8", path.join(os.scriptdir(), "patches", "v10.0.8", "static_export.patch"), "d18487580faa9af21862bcff30ddfa5d5ab5cda6aa5f779bcc1787a96ca66447")
 
-    add_deps("nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
+    add_deps("nlohmann_json", "openssl", "zlib")
+
+    add_configs("have_voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = true})
 
     if is_plat("linux", "macosx") then
         add_syslinks("pthread")
@@ -60,6 +62,11 @@ package("dpp")
     on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "DPP_STATIC")
+        end
+
+        if package:config("have_voice") then
+            package:add("defines", "HAVE_VOICE")
+            package:add("deps", "libsodium", "libopus")
         end
 
         if package:version():le("v10.0.13") then
