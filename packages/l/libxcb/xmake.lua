@@ -1,31 +1,31 @@
 local components = {
-    composite       = { apt_package = "apt::libxcb-composite0-dev", default_value = true },
-    damage          = { apt_package = "apt::libxcb-damage0-dev" , default_value = true},
-    dpms            = { apt_package = "apt::libxcb-dpms0-dev" , default_value = true},
-    dri2            = { apt_package = "apt::libxcb-dri2-0-dev" , default_value = true},
-    dri3            = { apt_package = "apt::libxcb-dri3-dev" , default_value = true},
-    present         = { apt_package = "apt::libxcb-present-dev" , default_value = true},
-    glx             = { apt_package = "apt::libxcb-glx0-dev" , default_value = true},
-    randr           = { apt_package = "apt::libxcb-randr0-dev" , default_value = true},
-    record          = { apt_package = "apt::libxcb-record0-dev" , default_value = true},
-    render          = { apt_package = "apt::libxcb-render0-dev" , default_value = true},
-    resource        = { apt_package = "apt::libxcb-xrm-dev" , default_value = true},
-    screensaver     = { apt_package = "apt::libxcb-screensaver-dev" , default_value = true},
-    shape           = { apt_package = "apt::libxcb-shape0-dev" , default_value = true},
-    shm             = { apt_package = "apt::libxcb-shm0-dev" , default_value = true},
-    sync            = { apt_package = "apt::libxcb-sync0-dev" , default_value = true},
-    xevie           = { apt_package = "apt::libxcb-xevie0-dev" , default_value = true},
-    ["xfree86-dri"] = { apt_package = "apt::libxcb-xfreedri0-dev" , default_value = true},
-    xfixes          = { apt_package = "apt::libxcb-xfixes0-dev" , default_value = true},
-    xinerama        = { apt_package = "apt::libxcb-xinerama0-dev" , default_value = true},
-    xinput          = { apt_package = "apt::libxcb-xinput-dev" , default_value = true},
-    xkb             = { apt_package = "apt::libxcb-xkb-dev" , default_value = true},
-    xprint          = { apt_package = "apt::libxcb-xprint0-dev" , default_value = false},
-    selinux         = { default_value = false},
-    xtest           = { apt_package = "apt::libxcb-xtest0-dev" , default_value = true},
-    xv              = { apt_package = "apt::libxcb-xv0-dev" , default_value = true},
-    xvmc            = { apt_package = "apt::libxcb-xvmc0-dev" , default_value = true},
-    ge              = { default_value = true}
+    composite       = {apt_package = "apt::libxcb-composite0-dev", default_value = true},
+    damage          = {apt_package = "apt::libxcb-damage0-dev" , default_value = true},
+    dpms            = {apt_package = "apt::libxcb-dpms0-dev" , default_value = true},
+    dri2            = {apt_package = "apt::libxcb-dri2-0-dev" , default_value = true},
+    dri3            = {apt_package = "apt::libxcb-dri3-dev" , default_value = true},
+    present         = {apt_package = "apt::libxcb-present-dev" , default_value = true},
+    glx             = {apt_package = "apt::libxcb-glx0-dev" , default_value = true},
+    randr           = {apt_package = "apt::libxcb-randr0-dev" , default_value = true},
+    record          = {apt_package = "apt::libxcb-record0-dev" , default_value = true},
+    render          = {apt_package = "apt::libxcb-render0-dev" , default_value = true},
+    resource        = {apt_package = "apt::libxcb-xrm-dev" , default_value = true},
+    screensaver     = {apt_package = "apt::libxcb-screensaver-dev" , default_value = true},
+    shape           = {apt_package = "apt::libxcb-shape0-dev" , default_value = true},
+    shm             = {apt_package = "apt::libxcb-shm0-dev" , default_value = true},
+    sync            = {apt_package = "apt::libxcb-sync0-dev" , default_value = true},
+    xevie           = {apt_package = "apt::libxcb-xevie0-dev" , default_value = true},
+    ["xfree86-dri"] = {apt_package = "apt::libxcb-xfreedri0-dev" , default_value = true},
+    xfixes          = {apt_package = "apt::libxcb-xfixes0-dev" , default_value = true},
+    xinerama        = {apt_package = "apt::libxcb-xinerama0-dev" , default_value = true},
+    xinput          = {apt_package = "apt::libxcb-xinput-dev" , default_value = true},
+    xkb             = {apt_package = "apt::libxcb-xkb-dev" , default_value = true},
+    xprint          = {apt_package = "apt::libxcb-xprint0-dev" , default_value = false},
+    selinux         = {default_value = false},
+    xtest           = {apt_package = "apt::libxcb-xtest0-dev" , default_value = true},
+    xv              = {apt_package = "apt::libxcb-xv0-dev" , default_value = true},
+    xvmc            = {apt_package = "apt::libxcb-xvmc0-dev" , default_value = true},
+    ge              = {default_value = true}
 }
 
 package("libxcb")
@@ -35,6 +35,7 @@ package("libxcb")
     set_urls("https://xcb.freedesktop.org/dist/libxcb-$(version).tar.gz")
     add_versions("1.13.1", "f09a76971437780a602303170fd51b5f7474051722bc39d566a272d2c4bde1b5")
     add_versions("1.14", "2c7fcddd1da34d9b238c9caeda20d3bd7486456fc50b3cc6567185dbd5b0ad02")
+    add_versions("1.15", "1cb65df8543a69ec0555ac696123ee386321dfac1964a3da39976c9a05ad724d")
 
     for name, opt in pairs(components) do
         add_configs(name, {description = format("Enable %s submodule (default is %s).", name, opt.default_value), default = opt.default_value})
