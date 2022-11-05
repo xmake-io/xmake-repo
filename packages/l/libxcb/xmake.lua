@@ -59,6 +59,7 @@ package("libxcb")
     end)
 
     on_install("macosx", "linux", function (package)
+        import("package.tools.autoconf")
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
@@ -72,7 +73,9 @@ package("libxcb")
         for name, opt in pairs(components) do
             table.insert(configs, format("--enable-%s=%s", name, package:config(name) and "yes" or "no"))
         end
-        import("package.tools.autoconf").install(package, configs)
+        local envs = autoconf.buildenvs()
+        envs.PYTHON = "python3"
+        autoconf.install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
