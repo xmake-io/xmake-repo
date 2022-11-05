@@ -32,7 +32,9 @@ package("pdcurses")
                 add_files("pdcurses/*.c", "$(port)/*.c")
                 add_includedirs(".", "$(port)")
                 add_headerfiles("*.h", "$(port)/*.h")
-                add_defines("PDC_WIDE", "PDC_FORCE_UTF8")
+                if is_config("port", "wincon") then
+                    add_defines("PDC_WIDE", "PDC_FORCE_UTF8")
+                end
                 add_packages("libsdl")
         ]])
         local configs = {}
