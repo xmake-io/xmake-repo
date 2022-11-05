@@ -73,7 +73,7 @@ package("libxcb")
         for name, opt in pairs(components) do
             table.insert(configs, format("--enable-%s=%s", name, package:config(name) and "yes" or "no"))
         end
-        local envs = autoconf.buildenvs()
+        local envs = autoconf.buildenvs(package)
         envs.PYTHON = "python3"
         autoconf.install(package, configs, {envs = envs})
     end)
