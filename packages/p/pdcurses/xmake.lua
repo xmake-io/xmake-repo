@@ -20,35 +20,26 @@ package("pdcurses")
         end
     end)
     
-
     on_install("linux", "macosx", "mingw", "windows", function (package)
-        if package:config("port") == "wincon" then
-            io.writefile("xmake.lua", [[
-                add_rules("mode.debug", "mode.release")
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            option("port", {description = "Set the target port."})
+            if is_config("port", "sdl2") then
                 add_requires("libsdl")
-                target("pdcurses")
-                    set_kind("$(kind)")
-                    add_files("pdcurses/*.c", "wincon/*.c")
-                    add_includedirs(".", "wincon")
-                    add_headerfiles("*.h", "wincon/*.h")
-                    add_defines("PDC_WIDE", "PDC_FORCE_UTF8")
-            ]])
-        else
-            io.writefile("xmake.lua", [[
-                add_rules("mode.debug", "mode.release")
-                add_requires("libsdl")
-                target("pdcurses")
-                    set_kind("$(kind)")
-                    add_files("pdcurses/*.c", "sdl2/*.c")
-                    add_includedirs(".", "sdl2")
-                    add_headerfiles("*.h", "sdl2/*.h")
-                    add_packages("libsdl")
-            ]])
-        end
+            end
+            target("pdcurses")
+                set_kind("$(kind)")
+                add_files("pdcurses/*.c", "$(port)/*.c")
+                add_includedirs(".", "$(port)")
+                add_headerfiles("*.h", "$(port)/*.h")
+                add_defines("PDC_WIDE", "PDC_FORCE_UTF8")
+                add_packages("libsdl")
+        ]])
         local configs = {}
         if package:config("shared") then 
             configs.kind = "shared"
         end
+        configs.port = package:config("port")
         import("package.tools.xmake").install(package, configs)
     end)
 
