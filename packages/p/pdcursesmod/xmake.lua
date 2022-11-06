@@ -13,7 +13,9 @@ package("pdcursesmod")
     add_configs("port", {description = "Set the target port.", default = "sdl2", values = {"sdl2", "wincon"}})
     add_configs("utf8", {description = "Treat all narrow characters as UTF-8.", default = true, type = "boolean"})
 
-    add_syslinks("user32", "advapi32", "winmm")
+    if is_plat("windows", "mingw") then
+        add_syslinks("user32", "advapi32", "winmm")
+    end
 
     on_load(function (package)
         if package:config("port") == "sdl2" then
@@ -51,7 +53,9 @@ package("pdcursesmod")
                     add_defines("PDC_DLL_BUILD")
                 end
                 add_packages("libsdl", "libsdl_ttf")
-                add_syslinks("user32", "advapi32", "winmm")
+                if is_plat("windows", "mingw") then
+                    add_syslinks("user32", "advapi32", "winmm")
+                end
         ]])
         local configs = {}
         if package:config("shared") then 
