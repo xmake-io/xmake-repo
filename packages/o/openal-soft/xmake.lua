@@ -9,8 +9,9 @@ package("openal-soft")
     end})
     add_urls("https://github.com/kcat/openal-soft.git")
 
-    add_versions("1.21.1", "8ac17e4e3b32c1af3d5508acfffb838640669b4274606b7892aa796ca9d7467f")
+    add_versions("1.22.2", "3e58f3d4458f5ee850039b1a6b4dac2343b3a5985a6a2e7ae2d143369c5b8135")
     add_versions("1.22.0", "814831a8013d7365dfd1917b27f1fb6e723f3be3fe1c6a7ff4516425d8392f68")
+    add_versions("1.21.1", "8ac17e4e3b32c1af3d5508acfffb838640669b4274606b7892aa796ca9d7467f")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::openal")
