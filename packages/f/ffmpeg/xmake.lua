@@ -6,6 +6,7 @@ package("ffmpeg")
 
     if is_plat("windows", "mingw") then
         add_urls("https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-$(version)-full_build-shared.7z")
+        add_versions("5.1.2", "d9eb97b72d7cfdae4d0f7eaea59ccffb8c364d67d88018ea715d5e2e193f00e9")
         add_versions("5.0.1", "ded28435b6f04b74f5ef5a6a13761233bce9e8e9f8ecb0eabe936fd36a778b0c")
 
         add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
@@ -14,13 +15,19 @@ package("ffmpeg")
         add_urls("https://ffmpeg.org/releases/ffmpeg-$(version).tar.bz2", {alias = "home"})
         add_urls("https://github.com/FFmpeg/FFmpeg/archive/n$(version).zip", {alias = "github"})
         add_urls("https://git.ffmpeg.org/ffmpeg.git", "https://github.com/FFmpeg/FFmpeg.git", {alias = "git"})
+        add_versions("home:5.1.2", "39a0bcc8d98549f16c570624678246a6ac736c066cebdb409f9502e915b22f2b")
+        add_versions("home:5.1.1", "cd0e16f903421266d5ccddedf7b83b9e5754aef4b9f7a7f06ce9e4c802f0545b")
         add_versions("home:5.0.1", "28df33d400a1c1c1b20d07a99197809a3b88ef765f5f07dc1ff067fac64c59d6")
         add_versions("home:4.0.2", "346c51735f42c37e0712e0b3d2f6476c86ac15863e4445d9e823fe396420d056")
+        add_versions("github:5.1.2", "0c99f3609160f40946e2531804175eea16416320c4b6365ad075e390600539db")
+        add_versions("github:5.1.1", "a886fcc94792764c27c88ebe71dffbe5f0d37df8f06f01efac4833ac080c11bf")
         add_versions("github:5.0.1", "f9c2e06cafa4381df8d5c9c9e14d85d9afcbc10c516c6a206f821997cc7f6440")
         add_versions("github:4.0.2", "4df1ef0bf73b7148caea1270539ef7bd06607e0ea8aa2fbf1bb34062a097f026")
+        add_versions("git:5.1.2", "n5.1.2")
+        add_versions("git:5.1.1", "n5.1.1")
         add_versions("git:5.0.1", "n5.0.1")
         add_versions("git:4.0.2", "n4.0.2")
-    
+
         add_configs("gpl",              {description = "Enable GPL code", default = true, type = "boolean"})
         add_configs("ffprobe",          {description = "Enable ffprobe program.", default = false, type = "boolean"})
         add_configs("ffmpeg",           {description = "Enable ffmpeg program.", default = true, type = "boolean"})
@@ -31,6 +38,8 @@ package("ffmpeg")
         add_configs("libx264",          {description = "Enable libx264 decoder.", default = false, type = "boolean"})
         add_configs("libx265",          {description = "Enable libx265 decoder.", default = false, type = "boolean"})
         add_configs("iconv",            {description = "Enable libiconv library.", default = false, type = "boolean"})
+        add_configs("vaapi",            {description = "Enable vaapi library.", default = false, type = "boolean"})
+        add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
         add_configs("hardcoded-tables", {description = "Enable hardcoded tables.", default = true, type = "boolean"})
     end
 
@@ -130,9 +139,6 @@ package("ffmpeg")
             table.insert(configs, "--enable-debug")
         else
             table.insert(configs, "--disable-debug")
-        end
-        if package:config("pic") ~= false then
-            table.insert(configs, "--enable-pic")
         end
         if package:is_plat("android") then
             import("core.base.option")

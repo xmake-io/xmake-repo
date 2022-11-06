@@ -10,11 +10,12 @@ package("spirv-tools")
     add_versions("2021.3", "b6b4194121ee8084c62b20f8d574c32f766e4e9237dfe60b0658b316d19c6b13")
     add_versions("2021.4", "d68de260708dda785d109ff1ceeecde2d2ab71142fa5bf59061bb9f47dd3bb2c")
     add_versions("2022.2", "909fc7e68049dca611ca2d57828883a86f503b0353ff78bc594eddc65eb882b9")
+    add_versions("2022.4", "a156215a2d7c6c5b267933ed691877a9a66f07d75970da33ce9ad627a71389d7")
 
     add_patches("2020.5", "https://github.com/KhronosGroup/SPIRV-Tools/commit/a1d38174b1f7d2651c718ae661886d606cb50a32.patch", "2811faeef3ad53a83e409c8ef9879badcf9dc04fc3d98dbead7313514b819933")
 
-    add_deps("cmake", "python 3.x", {kind = "binary"})
-    add_deps("spirv-headers")
+    add_deps("cmake", "spirv-headers")
+    add_deps("python 3.x", {kind = "binary"})
     if is_plat("linux") then
         add_extsources("apt::spirv-tools", "pacman::spirv-tools")
     end
@@ -41,7 +42,7 @@ package("spirv-tools")
 
     on_install("linux", "windows", "macosx", "mingw", function (package)
         package:addenv("PATH", "bin")
-        local configs = {"-DSPIRV_SKIP_TESTS=ON"}
+        local configs = {"-DSPIRV_SKIP_TESTS=ON", "-DSPIRV_WERROR=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local spirv = package:dep("spirv-headers")
@@ -60,7 +61,7 @@ package("spirv-tools")
     end)
 
     on_test(function (package)
-        if not package:is_plat("mingw") or is_subhost("msys") then
+        if not package:is_cross() then
             os.runv("spirv-as --help")
             os.runv("spirv-opt --help")
         end

@@ -20,8 +20,6 @@ package("openssl")
     add_versions("1.0.2u", "493f8b34574d0cf8598adbdec33c84b8a06f0617787c3710d20827c01291c09c")
     add_versions("1.0.0",  "9b67e5ad1a4234c1170ada75b66321e914da4f3ebaeaef6b28400173aaa6b378")
 
-    
-
     on_fetch("fetch")
 
     on_load(function (package)
@@ -50,7 +48,17 @@ package("openssl")
 
     on_install("windows", function (package)
         local configs = {"Configure"}
-        table.insert(configs, package:is_arch("x86") and "VC-WIN32" or "VC-WIN64A")
+        local target
+        if package:is_arch("x86", "i386") then
+            target = "VC-WIN32"
+        elseif package:is_arch("arm64") then
+            target = "VC-WIN64-ARM"
+        elseif package:is_arch("arm.*") then
+            target = "VC-WIN32-ARM"
+        else
+            target = "VC-WIN64A"
+        end
+        table.insert(configs, target)
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
@@ -87,7 +95,7 @@ package("openssl")
         import("package.tools.make").make(package, {"install_sw"})
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "bsd", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         local configs = {"--openssldir=" .. package:installdir(),

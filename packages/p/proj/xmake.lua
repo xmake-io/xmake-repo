@@ -6,8 +6,9 @@ package("proj")
 
     add_urls("https://download.osgeo.org/proj/proj-$(version).tar.gz")
     add_versions("9.0.1", "737eaacbe7906d0d6ff43f0d9ebedc5c734cccc9e6b8d7beefdec3ab22d9a6a3")
+    add_versions("8.2.1", "76ed3d0c3a348a6693dfae535e5658bbfd47f71cb7ff7eb96d9f12f7e068b1cf")
 
-    add_configs("apps", {description = "Build PROJ applications.", default = true, type = "boolean"})
+    add_configs("apps", {description = "Build PROJ applications.", default = false, type = "boolean"})
     add_configs("tiff", {description = "Enable TIFF support.", default = false, type = "boolean"})
     add_configs("curl", {description = "Enable Curl support.", default = false, type = "boolean"})
 
@@ -18,6 +19,7 @@ package("proj")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     end
+
     on_load("windows", "macosx", "linux", function (package)
         if package:config("tiff") then
             package:add("deps", "libtiff")
@@ -28,9 +30,16 @@ package("proj")
                 package:add("deps", "openssl")
             end
         end
+        if package:config("apps") then
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_install("windows", "macosx", "linux", function (package)
+        -- windows@arm64 cann't generate proj.db
+        if package:is_plat("windows") and package:is_arch("arm64") then
+            io.replace("CMakeLists.txt", "add_subdirectory(data)", "", {plain = true})
+        end
         if package:config("curl") and package:is_plat("linux") then
             io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl ssl crypto", {plain = true})
         else

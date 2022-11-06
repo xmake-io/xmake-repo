@@ -5,6 +5,7 @@ package("libiconv")
 
     set_urls("https://ftp.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz",
              "https://ftpmirror.gnu.org/libiconv/libiconv-$(version).tar.gz")
+    add_versions("1.17", "8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313")
     add_versions("1.16", "e6a1b1b589654277ee790cce3734f07876ac4ccfaecbee8afa0b649cf529cc04")
     add_versions("1.15", "ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178")
 
@@ -26,7 +27,7 @@ package("libiconv")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", function (package)
+    on_install("windows", "mingw", function (package)
         io.gsub("config.h.in", "%$", "")
         io.gsub("config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         io.gsub("libcharset/config.h.in", "%$", "")
@@ -41,7 +42,7 @@ package("libiconv")
         })
     end)
 
-    on_install("macosx", "linux", "android", "mingw@msys", function (package)
+    on_install("macosx", "linux", "cross", "android", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings"}
         if not package:is_plat("macosx") then
             table.insert(configs, "--enable-relocatable")
@@ -50,9 +51,6 @@ package("libiconv")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
             table.insert(configs, "--enable-debug")
-        end
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
         end
         if package:is_plat("android") then
             io.replace("./configure", "#define gid_t int", "")

@@ -3,8 +3,8 @@ package("libxext")
     set_homepage("https://www.x.org/")
     set_description("X.Org: Library for common extensions to the X11 protocol")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXext-$(version).tar.bz2")
-    add_versions("1.3.4", "59ad6fcce98deaecc14d39a672cf218ca37aba617c9a0f691cac3bcd28edf82b")
+    set_urls("https://www.x.org/archive/individual/lib/libXext-$(version).tar.gz")
+    add_versions("1.3.5", "1a3dcda154f803be0285b46c9338515804b874b5ccc7a2b769ab7fd76f1035bd")
 
     if is_plat("linux") then
         add_extsources("apt::libxext-dev")

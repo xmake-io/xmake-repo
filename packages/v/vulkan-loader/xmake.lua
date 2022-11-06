@@ -5,11 +5,14 @@ package("vulkan-loader")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/Vulkan-Loader/archive/sdk-$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
+    add_versions("1.3.231+1", "5226fbc6a90e4405200c8cfdd5733d5e0c6a64e64dcc614c485ea06e03d66578")
     add_versions("1.2.198+0", "7d5d56296dcd88af84ed0fde969038370cac8600c4ef7e328788b7422d9025bb")
     add_versions("1.2.189+1", "1d9f539154d37cea0ca336341c3b25e73d5a5320f2f9c9c55f8309422fe6ec3c")
     add_versions("1.2.182+0", "7088fb6922a3af41efd0499b8e66e971164da1e583410d29f801f991a31b180c")
     add_versions("1.2.162+0", "f8f5ec2485e7fdba3f58c1cde5a25145ece1c6a686c91ba4016b28c0af3f21dd")
     add_versions("1.2.154+1", "889e45f7175d915dd0d702013b8021192e181d20f2ad4021c94006088f1edfe5")
+
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     if is_plat("linux") then
         add_extsources("apt::libvulkan-dev", "pacman::vulkan-icd-loader")
@@ -20,7 +23,7 @@ package("vulkan-loader")
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "vulkan-headers " .. sdkver)
         if not package.is_built or package:is_built() then
-            package:add("deps", "cmake", "ninja")
+            package:add("deps", "cmake")
         end
         if package:is_plat("macosx") then
             package:add("links", "vulkan")
@@ -38,29 +41,15 @@ package("vulkan-loader")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
-        import("package.tools.cmake")
-        local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
-        if package:is_plat("linux") then
-            local includes = {}
-            local linkdirs = {}
-            for _, lib in ipairs({"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}) do
-                local fetchinfo = package:dep(lib):fetch()
-                for _, dir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
-                    table.insert(includes, dir)
-                end
-                for _, dir in ipairs(fetchinfo.linkdirs) do
-                    table.insert(linkdirs, dir)
-                end
-            end
-            envs.C_INCLUDE_PATH = (envs.C_INCLUDE_PATH or "") .. path.envsep() .. path.joinenv(table.unique(includes))
-            envs.LD_LIBRARY_PATH = (envs.LD_LIBRARY_PATH or "") .. path.envsep() .. path.joinenv(table.unique(linkdirs))
-        end
-
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF"}
         local vulkan_headers = package:dep("vulkan-headers")
         table.insert(configs, "-DVULKAN_HEADERS_INSTALL_DIR=" .. vulkan_headers:installdir())
-        cmake.install(package, configs, {cmake_generator = "Ninja", envs = envs})
+        if package:is_plat("linux") then
+            import("package.tools.cmake").install(package, configs, {packagedeps = {"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}})
+        else
+            import("package.tools.cmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)

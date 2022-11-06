@@ -4,7 +4,9 @@ package("imguizmo")
     set_description("Immediate mode 3D gizmo for scene editing and other controls based on Dear Imgui")
 
     add_urls("https://github.com/CedricGuillemet/ImGuizmo.git")
-    add_versions("1.83", "14a91c16e40b585fd96314826fa6d506311dbe5c")
+    add_versions("1.83", "664cf2d73864a36b2a8b5091d33fc4578c885eca")
+    add_versions("1.89+WIP", "82e2465b8d029e2d85002905cc4ed5087e2119fe")
+
 
     add_deps("imgui")
 

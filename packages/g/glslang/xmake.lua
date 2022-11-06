@@ -5,14 +5,15 @@ package("glslang")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/KhronosGroup/glslang.git")
-    add_versions("1.3.211+0", "9bb8cfffb0eed010e07132282c41d73064a7a609")
     add_versions("1.2.154+1", "bacaef3237c515e40d1a24722be48c0a0b30f75f")
     add_versions("1.2.162+0", "c594de23cdd790d64ad5f9c8b059baae0ee2941d")
     add_versions("1.2.189+1", "2fb89a0072ae7316af1c856f22663fde4928128a")
+    add_versions("1.3.211+0", "9bb8cfffb0eed010e07132282c41d73064a7a609")
+    add_versions("1.3.231+1", "5755de46b07e4374c05fb1081f65f7ae1f8cca81")
 
-    add_configs("binaryonly", { description = "Only use binary program.", default = false, type = "boolean"})
-    add_configs("exceptions", { description = "Build with exception support.", default = false, type = "boolean"})
-    add_configs("rtti", { description = "Build with RTTI support.", default = false, type = "boolean"})
+    add_configs("binaryonly", {description = "Only use binary program.", default = false, type = "boolean"})
+    add_configs("exceptions", {description = "Build with exception support.", default = false, type = "boolean"})
+    add_configs("rtti",       {description = "Build with RTTI support.", default = false, type = "boolean"})
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("spirv-tools")
@@ -57,7 +58,7 @@ package("glslang")
     end)
 
     on_test(function (package)
-        if not package:is_plat("mingw") or is_subhost("msys") then
+        if not package:is_cross() then
             os.vrun("glslangValidator --version")
         end
         if not package:config("binaryonly") then

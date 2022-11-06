@@ -15,8 +15,7 @@ package("libffi")
         add_extsources("brew::libffi")
     end
 
-
-    on_load("macosx", "linux", "iphoneos", function (package)
+    on_load("macosx", "linux", "bsd", "mingw", function (package)
         if package:gitref() then
             package:add("deps", "autoconf", "automake", "libtool")
         elseif package:version():le("3.2.1") then
@@ -24,7 +23,7 @@ package("libffi")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows", "iphoneos", "cross", function (package)
         io.gsub("fficonfig.h.in", "# *undef (.-)\n", "${define %1}\n")
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {
@@ -32,15 +31,12 @@ package("libffi")
         })
     end)
 
-    on_install("macosx", "linux", "iphoneos", function (package)
+    on_install("macosx", "linux", "bsd", "mingw", function (package)
         local configs = {"--disable-silent-rules", "--disable-dependency-tracking"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
             table.insert(configs, "--enable-debug")
-        end
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs)
         if package:is_plat("linux") and package:is_arch("x86_64") then

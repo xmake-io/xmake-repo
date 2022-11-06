@@ -15,6 +15,7 @@ local options =
 ,   {'m', "mode",       "kv", nil, "Set the given mode."                        }
 ,   {'j', "jobs",       "kv", nil, "Set the build jobs."                        }
 ,   {'f', "configs",    "kv", nil, "Set the configs."                           }
+,   {'d', "debugdir",   "kv", nil, "Set the debug source directory."            }
 ,   {nil, "linkjobs",   "kv", nil, "Set the link jobs."                         }
 ,   {nil, "cflags",     "kv", nil, "Set the cflags."                            }
 ,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."                          }
@@ -94,7 +95,12 @@ function _require_packages(argv, packages)
     if argv.diagnosis then
         table.insert(require_argv, "-D")
     end
-    if argv.shallow then
+    local is_debug = false
+    if argv.debugdir then
+        is_debug = true
+        table.insert(require_argv, "--debugdir=" .. argv.debugdir)
+    end
+    if argv.shallow or is_debug then
         table.insert(require_argv, "--shallow")
     end
     if argv.jobs then
@@ -107,10 +113,10 @@ function _require_packages(argv, packages)
     if argv.mode == "debug" then
         extra.debug = true
     end
-    if argv.kind == "shared" then
-        extra.configs = extra.configs or {}
-        extra.configs.shared = true
-    end
+    -- Some packages set shared=true as default, so we need to force set
+    -- shared=false to test static build.
+    extra.configs = extra.configs or {}
+    extra.configs.shared = argv.kind == "shared"
     local configs = argv.configs
     if configs then
         extra.system  = false

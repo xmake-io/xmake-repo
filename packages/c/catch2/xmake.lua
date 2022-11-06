@@ -27,6 +27,7 @@ package("catch2")
     on_load(function (package)
         if package:version():ge("3.0") then
             package:add("deps", "cmake")
+            package:add("links", "Catch2Main", "Catch2")
         else
             package:set("kind", "library", {headeronly = true})
         end

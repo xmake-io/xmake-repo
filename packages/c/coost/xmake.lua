@@ -1,14 +1,18 @@
-package("cocoyaxi")
+package("coost")
+    set_homepage("https://github.com/idealvin/coost")
+    set_description("A tiny boost library in C++11.")
 
-    set_homepage("https://github.com/idealvin/cocoyaxi")
-    set_description("A go-style coroutine library in C++11 and more")
+    add_urls("https://github.com/idealvin/coost/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/idealvin/coost.git")
 
-    add_urls("https://github.com/idealvin/cocoyaxi/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/idealvin/cocoyaxi.git")
-    add_versions("v2.0.3", "c112fafed5e45a3cac27e4b1b5b9f7483df267d510dd03c5dd8272e6405ea61f")
+    add_versions("v3.0.0", "f962201201cd77aaf45f33d72bd012231a31d4310d30e9bb580ffb1e94c8148d")
 
     for _, name in ipairs({"libcurl", "openssl"}) do
         add_configs(name, {description = "Enable " .. name .. " library.", default = false, type = "boolean"})
+    end
+
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl")
     end
 
     on_load(function (package)

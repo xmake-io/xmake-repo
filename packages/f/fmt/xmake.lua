@@ -4,6 +4,7 @@ package("fmt")
     set_description("fmt is an open-source formatting library for C++. It can be used as a safe and fast alternative to (s)printf and iostreams.")
 
     set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip")
+    add_versions("9.1.0", "cceb4cb9366e18a5742128cb3524ce5f50e88b476f1e54737a47ffdf4df4c996")
     add_versions("9.0.0", "fc96dd2d2fdf2bded630787adba892c23cb9e35c6fd3273c136b0c57d4651ad6")    
     add_versions("8.1.1", "23778bad8edba12d76e4075da06db591f3b0e3c6c04928ced4a7282ca3400e5d")
     add_versions("8.0.1", "a627a56eab9554fc1e5dd9a623d0768583b3a383ff70a4312ba68f94c9d415bf")
@@ -56,6 +57,6 @@ package("fmt")
                 std::string s = fmt::format("{}", "hello");
                 assert(s == "hello");
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "fmt/format.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "fmt/format.h"}))
     end)
 

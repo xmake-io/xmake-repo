@@ -29,9 +29,13 @@ package("freetype")
     add_configs("bzip2", {description = "Support bzip2 compressed fonts", default = false, type = "boolean"})
     add_configs("png", {description = "Support PNG compressed OpenType embedded bitmaps", default = false, type = "boolean"})
     add_configs("woff2", {description = "Use Brotli library to support decompressing WOFF2 fonts", default = false, type = "boolean"})
-    add_configs("zlib", {description = "Support reading gzip-compressed font files", default = false, type = "boolean"})
+    add_configs("zlib", {description = "Support reading gzip-compressed font files", default = true, type = "boolean"})
+    add_configs("harfbuzz", {description = "Support harfbuzz", default = false, type = "boolean"})
 
     add_deps("cmake")
+    if is_plat("windows", "mingw") and is_subhost("windows") then
+        add_deps("pkgconf")
+    end
 
     add_includedirs("include/freetype2")
 
@@ -46,6 +50,7 @@ package("freetype")
         add_dep("zlib")
         add_dep("png", "libpng")
         add_dep("woff2", "brotli")
+        add_dep("harfbuzz")
     end)
 
     on_install(function (package)
@@ -74,6 +79,7 @@ package("freetype")
         add_dep({conf = "png", pkg = "libpng", cmakewith = "PNG", cmakeinclude = "PNG_PNG_INCLUDE_DIR", cmakelib = "PNG_LIBRARY"})
         add_dep({conf = "woff2", pkg = "brotli", cmakewith = "BROTLI", cmakedisable = "BrotliDec", cmakeinclude = "BROTLIDEC_INCLUDE_DIRS", cmakelib = "BROTLIDEC_LIBRARIES"})
         add_dep({conf = "zlib", cmakewith = "ZLIB", cmakeinclude = "ZLIB_INCLUDE_DIR", cmakelib = "ZLIB_LIBRARY"})
+        add_dep({conf = "harfbuzz", pkg = "harfbuzz", cmakewith = "HARFBUZZ", cmakedisable = "HarfBuzz", cmakeinclude = "HarfBuzz_INCLUDE_DIR", cmakelib = "HarfBuzz_LIBRARY"})
 
         import("package.tools.cmake").install(package, configs)
     end)

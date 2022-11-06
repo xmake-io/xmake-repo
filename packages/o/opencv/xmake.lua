@@ -151,6 +151,7 @@ package("opencv")
             if package:is_plat("windows", "mingw") then
                 reallink = reallink .. package:version():gsub("%.", "")
             end
+            reallink = reallink .. (package:debug() and "d" or "")
             if xmake.version():le("2.5.7") and package:is_plat("mingw") and package:config("shared") then
                 reallink = reallink .. ".dll"
             end
@@ -202,7 +203,7 @@ package("opencv")
             runtest = false
         end
         if runtest then
-            os.vrun("opencv_version")
+            os.vrun((package:debug() and "opencv_versiond" or "opencv_version"))
         end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>

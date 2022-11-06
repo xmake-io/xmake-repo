@@ -7,6 +7,7 @@ package("libx11")
     add_versions("1.6.9", "b8c0930a9b25de15f3d773288cacd5e2f0a4158e194935615c52aeceafd1107b")
     add_versions("1.7.0", "c48ec61785ec68fc6a9a6aca0a9578393414fe2562e3cc9cca30234345c7b6ac")
     add_versions("1.7.3", "029acf61e7e760a3150716b145a58ce5052ee953e8cccc8441d4f550c420debb")
+    add_versions("1.8.1", "d52f0a7c02a45449f37b0831d99ff936d92eb4ce8b4c97dc17a63cea79ce5a76")
 
     if is_plat("linux") then
         add_syslinks("dl")
