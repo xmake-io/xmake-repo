@@ -8,7 +8,11 @@ package("handy")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
+    on_install("linux", "macosx", "iphoneos", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_HANDY_SHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
