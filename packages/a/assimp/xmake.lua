@@ -85,7 +85,7 @@ package("assimp")
             table.insert(configs, "-DASSIMP_BUILD_ASSIMP_TOOLS=OFF")
         end
 
-        if package:version():lt("v5.2.4") then
+        if not package:gitref() and package:version():lt("v5.2.4") then
             -- ASSIMP_WARNINGS_AS_ERRORS is not supported before v5.2.4
             if package:is_plat("windows") then
                 io.replace("code/CMakeLists.txt", "TARGET_COMPILE_OPTIONS(assimp PRIVATE /W4 /WX)", "", {plain = true})
