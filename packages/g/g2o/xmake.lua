@@ -10,7 +10,7 @@ package("g2o")
 
     add_deps("cmake", "eigen")
 
-    on_install(function (package)
+    on_install("linux", "windows", "macosx", function (package)
         local configs = {"-DG2O_BUILD_APPS=OFF", "-DG2O_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
