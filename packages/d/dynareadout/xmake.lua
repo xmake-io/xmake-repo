@@ -11,6 +11,14 @@ package("dynareadout")
 
     add_configs("cpp", {description = "Build the C++ bindings", default = true, type = "boolean"})
 
+    on_load(function (package)
+        if package:config("cpp") then
+            package:add("links", "d3plot_cpp", "binout_cpp", "binout", "d3plot")
+        else
+            package:add("links", "binout", "d3plot")
+        end
+    end)
+
     on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {}
         configs.build_test = "n"
