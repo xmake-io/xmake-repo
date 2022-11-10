@@ -8,7 +8,7 @@ package("g2o")
     add_urls("https://github.com/RainerKuemmerle/g2o.git")
     add_versions("2020.12.23", "20af80edf8fd237e29bd21859b8fc734e615680e8838824e8b3f120c5f4c1672")
 
-    add_deps("cmake")
+    add_deps("cmake", "eigen")
 
     on_install(function (package)
         local configs = {"-DG2O_BUILD_APPS=OFF", "-DG2O_BUILD_EXAMPLES=OFF"}
