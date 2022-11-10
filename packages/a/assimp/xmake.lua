@@ -47,7 +47,7 @@ package("assimp")
     end
 
     on_load(function (package)
-        if package:version():le("5.1.0") then
+        if not package:gitref() and package:version():le("5.1.0") then
             package:add("deps", "irrxml")
         end
         if package:is_plat("linux", "macosx") and package:config("shared") then
