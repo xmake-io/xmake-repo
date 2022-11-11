@@ -15,7 +15,7 @@ package("hash-library")
                add_files("*.cpp")
                add_headerfiles("(*.h)")
                if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all")
+                    add_rules("utils.symbols.export_all", {export_classes = true})
                end
         ]])
         if package:config("shared") then
