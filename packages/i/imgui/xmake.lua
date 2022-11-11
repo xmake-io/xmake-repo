@@ -67,7 +67,7 @@ package("imgui")
             glfw_vulkan  = package:config("glfw_vulkan"),
             sdl2         = package:config("sdl2"),
             user_config  = package:config("user_config"),
-            use_glad     = package:version():lt("1.84") -- this flag will be used if glfw_opengl3 is enabled
+            use_glad     = package:version() and package:version():lt("1.84") -- this flag will be used if glfw_opengl3 is enabled
         }
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
