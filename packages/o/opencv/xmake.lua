@@ -100,7 +100,9 @@ package("opencv")
             package:add("deps", "cuda", {system = true, configs = {utils = {"cudnn", "cufft", "cublas"}}})
         end
         if package:config("ffmpeg") then
-            package:add("deps", "ffmpeg")
+            if not package:is_plat("windows") or not package:is_arch("x86", "arm64") then
+                package:add("deps", "ffmpeg")
+            end
         end
         if package:is_plat("linux") then
             if package:config("gtk") then
