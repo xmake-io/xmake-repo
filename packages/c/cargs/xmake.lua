@@ -17,5 +17,5 @@ package("cargs")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("foo", {includes = "foo.h"}))
+        assert(package:has_cfuncs("cag_option_prepare", {includes = "cargs.h"}))
     end)
