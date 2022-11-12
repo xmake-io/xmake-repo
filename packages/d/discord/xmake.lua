@@ -11,8 +11,13 @@ package("discord")
 
     set_urls("https://dl-game-sdk.discordapp.net/$(version)/discord_game_sdk.zip")
 
-    on_install("windows", "linux", "macosx", function (package)
-        os.cp("cpp/*.h", package:installdir("include"))
+    add_configs("shared", {description = "Use shared binaries.", default = false, type = "boolean", readonly = true})
+    add_configs("cppapi", {description = "Enable C++ API.", default = true, type = "boolean"})
+
+    on_install("windows|x86", "windows|x64", "linux|x64", "macosx|x86_64", "macosx|arm64", function (package)
+        if package:configs("cppapi") then
+            os.cp("cpp/*.h", package:installdir("include"))
+        end
         os.cp("c/*.h", package:installdir("include"))
 
         local configs = {}
@@ -41,13 +46,12 @@ package("discord")
                 os.cp("lib/x86_64/discord_game_sdk.dylib", package:installdir("lib"))
                 configs.linkdirs = "lib/x86_64"
             end
-            configs.links = "discord_game_sdk"
+            configs.links = "discord_game_sdk.dylib"
         end
 
-        if package:config("shared") then
-            configs.kind = "shared"
+        if package:configs("cppapi") then
+            os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         end
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
 
