@@ -10,6 +10,10 @@ package("cargs")
     add_deps("cmake")
 
     on_install(function (package)
+        -- Disable warnings as errors
+        io.replace("cmake/EnableWarnings.cmake", "[^\n]*WX[^\n]*", "")
+        io.replace("cmake/EnableWarnings.cmake", "[^\n]*Werror[^\n]*", "")
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
