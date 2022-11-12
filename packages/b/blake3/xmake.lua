@@ -13,7 +13,6 @@ package("blake3")
             add_rules("mode.release", "mode.debug")
             target("blake3")
                 set_kind("$(kind)")
-                add_cflags("-O3") -- as advised by BLAKE3-team in README (cryptography)
                 add_files("c/blake3.c", "c/blake3_dispatch.c", "c/blake3_portable.c")
                 add_headerfiles("c/blake3.h")
 
@@ -29,7 +28,7 @@ package("blake3")
                     add_files("c/blake3_neon.c")
 
                     if is_arch("arm64") then
-                        add_cflags("-DBLAKE3_USE_NEON=1")
+                        add_defines("BLAKE3_USE_NEON=1")
                     end
                 end
         ]])
