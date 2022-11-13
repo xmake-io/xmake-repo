@@ -20,11 +20,14 @@ package("blake3")
                     if is_subhost("msys", "cygwin") then
                         add_files("c/*x86-64_windows_gnu.S")
                     elseif is_plat("windows") then
-                        add_files("c/*x86-64_windows_msvc.S")
+                        add_files("c/*x86-64_windows_msvc.asm")
                     else
                         add_files("c/*x86-64_unix.S")
                     end
                 elseif is_arch("arm.*") then
+                    -- only used to build the NEON accelerated routines;
+                    -- correct routine is detected and dispatched at runtime
+                    add_cflags("-mfpu=neon-vfpv4", "-mfloat-abi=hard")
                     add_files("c/blake3_neon.c")
 
                     if is_arch("arm64") then
