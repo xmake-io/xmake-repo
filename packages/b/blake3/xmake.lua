@@ -24,15 +24,9 @@ package("blake3")
                     else
                         add_files("c/*x86-64_unix.S")
                     end
-                elseif is_arch("arm.*") then
-                    -- only used to build the NEON accelerated routines;
-                    -- correct routine is detected and dispatched at runtime
-                    add_cflags("-mfpu=neon-vfpv4", "-mfloat-abi=hard")
+                elseif is_arch("arm64", "arm64-v8a") then
                     add_files("c/blake3_neon.c")
-
-                    if is_arch("arm64") then
-                        add_defines("BLAKE3_USE_NEON=1")
-                    end
+                    add_defines("BLAKE3_USE_NEON=1")
                 end
         ]])
 
