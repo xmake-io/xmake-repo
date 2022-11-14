@@ -103,7 +103,7 @@ package("python")
         end
     end)
 
-    on_install("@windows", "@msys", "@cygwin", function (package)
+    on_install("@windows|x86", "@windows|x64", "@msys", "@cygwin", function (package)
         if package:version():ge("3.0") then
             os.cp("python.exe", path.join(package:installdir("bin"), "python3.exe"))
         else
