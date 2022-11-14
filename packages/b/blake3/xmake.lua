@@ -21,6 +21,10 @@ package("blake3")
                         add_files("c/*x86-64_windows_gnu.S")
                     elseif is_plat("windows") then
                         add_files("c/*x86-64_windows_msvc.asm")
+
+                        if is_kind("shared") then
+                            add_rules("utils.symbols.export_all")
+                        end
                     else
                         add_files("c/*x86-64_unix.S")
                     end
