@@ -14,39 +14,35 @@ package("discord")
     add_configs("shared", {description = "Use shared binaries.", default = false, type = "boolean", readonly = true})
     add_configs("cppapi", {description = "Enable C++ API.", default = true, type = "boolean"})
 
+    add_links("discordcpp")
+
     on_install("windows|x86", "windows|x64", "linux|x64", "macosx|x86_64", "macosx|arm64", function (package)
         if package:configs("cppapi") then
             os.cp("cpp/*.h", package:installdir("include"))
         end
         os.cp("c/*.h", package:installdir("include"))
-
         local configs = {}
         if package:is_plat("windows") then
             if package:is_arch("x64") then
                 os.cp("lib/x86_64/discord_game_sdk.dll", package:installdir("bin"))
                 os.cp("lib/x86_64/discord_game_sdk.dll.lib", package:installdir("lib"))
-                configs.linkdirs = "lib/x86_64"
             else
                 os.cp("lib/x86/discord_game_sdk.dll", package:installdir("bin"))
                 os.cp("lib/x86/discord_game_sdk.dll.lib", package:installdir("lib"))
-                configs.linkdirs = "lib/x86"
             end
-            configs.links = "discord_game_sdk.dll"
+            package:add("links", "discord_game_sdk.dll")
         elseif package:is_plat("linux") then
-                os.cp("lib/x86_64/discord_game_sdk.so", package:installdir("lib"))
-                configs.linkdirs = "lib/x86_64"
-                configs.links = "discord_game_sdk"
+            os.cp("lib/x86_64/discord_game_sdk.so", path.join(package:installdir("lib"), "libdiscord_game_sdk.so"))
+            package:add("links", "discord_game_sdk")
         elseif package:is_plat("macosx") then
             local version = package:version()
             if ((version:major() > 3) or (version:major() == 3 and version:minor() >= 2)) and package:is_arch("arm64") then
-                os.cp("lib/aarch64/discord_game_sdk.dylib", package:installdir("lib"))
-                configs.linkdirs = "lib/aarch64"
+                os.cp("lib/aarch64/discord_game_sdk.dylib", path.join(package:installdir("lib"), "libdiscord_game_sdk.dylib"))
 
             else
-                os.cp("lib/x86_64/discord_game_sdk.dylib", package:installdir("lib"))
-                configs.linkdirs = "lib/x86_64"
+                os.cp("lib/x86_64/discord_game_sdk.dylib", path.join(package:installdir("lib"), "libdiscord_game_sdk.dylib"))
             end
-            configs.links = "discord_game_sdk.dylib"
+            package:add("links", "discord_game_sdk")
         end
 
         if package:configs("cppapi") then
