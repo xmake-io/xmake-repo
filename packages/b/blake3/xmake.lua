@@ -16,7 +16,7 @@ package("blake3")
                 add_files("c/blake3.c", "c/blake3_dispatch.c", "c/blake3_portable.c")
                 add_headerfiles("c/blake3.h")
 
-                if is_arch("x86_64") then
+                if is_arch("x86_64", "x64") then
                     if is_subhost("msys", "cygwin") then
                         add_files("c/*x86-64_windows_gnu.S")
                     elseif is_plat("windows") then
