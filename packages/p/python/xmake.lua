@@ -87,6 +87,18 @@ package("python")
             if not result then
                 result = package:find_tool("python", opt)
             end
+            if result then
+                -- check if pip, setuptools and wheel are installed
+                local ok = try { function () 
+                    os.vrunv(result.program, {"-c", "import pip"})
+                    os.vrunv(result.program, {"-c", "import setuptools"})
+                    os.vrunv(result.program, {"-c", "import wheel"})
+                    return true
+                end}
+                if not ok then
+                    return false
+                end
+            end
             return result
         end
     end)
