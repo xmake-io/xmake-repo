@@ -4,7 +4,7 @@ package("openssl")
     set_description("A robust, commercial-grade, and full-featured toolkit for TLS and SSL.")
 
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_$(version).zip", {version = function (version)
-        return version:gsub("^(%d+)%.(%d+)%.(%d+)-(%a)$", "%1_%2_%3%4")
+        return version:gsub("^(%d+)%.(%d+)%.(%d+)-?(%a*)$", "%1_%2_%3%4")
     end, excludes = "*/fuzz/*"})
     add_versions("1.1.1-q", "df86e6adcff1c91a85cef139dd061ea40b7e49005e8be16522cf4864bfcf5eb8")
     add_patches("1.1.1-q", path.join(os.scriptdir(), "patches", "1.1.1q.diff"), "cfe6929f9db2719e695be0b61f8c38fe8132544c5c58ca8d07383bfa6c675b7b")
