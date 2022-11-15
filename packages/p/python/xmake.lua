@@ -87,11 +87,23 @@ package("python")
             if not result then
                 result = package:find_tool("python", opt)
             end
+            if result then
+                -- check if pip, setuptools and wheel are installed
+                local ok = try { function () 
+                    os.vrunv(result.program, {"-c", "import pip"})
+                    os.vrunv(result.program, {"-c", "import setuptools"})
+                    os.vrunv(result.program, {"-c", "import wheel"})
+                    return true
+                end}
+                if not ok then
+                    return false
+                end
+            end
             return result
         end
     end)
 
-    on_install("@windows", "@msys", "@cygwin", function (package)
+    on_install("@windows|x86", "@windows|x64", "@msys", "@cygwin", function (package)
         if package:version():ge("3.0") then
             os.cp("python.exe", path.join(package:installdir("bin"), "python3.exe"))
         else
