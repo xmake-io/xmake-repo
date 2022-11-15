@@ -150,10 +150,11 @@ package("opencv")
             local modulesdir = assert(find_path("modules", path.join(resourcedir, "*")), "modules not found!")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
         end
+        -- fix https://github.com/opencv/opencv/issues/22418
         if package:config("ffmpeg") and package:version() and package:version():le("4.6") then
             io.replace("modules/videoio/src/ffmpeg_codecs.hpp",
-                "#include <libavcodec/version.h>",
-                "#include <libavformat/avformat.h>\n#include <libavformat/avformat.h>", {plain = true})
+                "#include <libavformat/avformat.h>",
+                "#include <libavcodec/version.h>\n#include <libavformat/avformat.h>", {plain = true})
         end
         import("package.tools.cmake").install(package, configs, {buildir = "bd"})
         for _, link in ipairs({"opencv_phase_unwrapping", "opencv_surface_matching", "opencv_saliency", "opencv_wechat_qrcode", "opencv_mcc", "opencv_face", "opencv_img_hash", "opencv_videostab", "opencv_structured_light", "opencv_intensity_transform", "opencv_ccalib", "opencv_line_descriptor", "opencv_stereo", "opencv_dnn_objdetect", "opencv_dnn_superres", "opencv_fuzzy", "opencv_hfs", "opencv_rapid", "opencv_bgsegm", "opencv_bioinspired", "opencv_rgbd", "opencv_dpm", "opencv_aruco", "opencv_reg", "opencv_tracking", "opencv_datasets", "opencv_xfeatures2d", "opencv_shape", "opencv_barcode", "opencv_superres", "opencv_viz", "opencv_plot", "opencv_quality", "opencv_text", "opencv_cudaoptflow", "opencv_optflow", "opencv_ximgproc", "opencv_xobjdetect", "opencv_xphoto", "opencv_stitching", "opencv_ml", "opencv_photo", "opencv_cudaobjdetect", "opencv_cudalegacy", "opencv_cudabgsegm", "opencv_cudafeatures2d", "opencv_cudastereo", "opencv_cudaimgproc", "opencv_cudafilters", "opencv_cudaarithm", "opencv_cudawarping", "opencv_cudacodec", "opencv_cudev", "opencv_gapi", "opencv_objdetect", "opencv_highgui", "opencv_videoio", "opencv_video", "opencv_calib3d", "opencv_dnn", "opencv_features2d", "opencv_flann", "opencv_imgcodecs", "opencv_imgproc", "opencv_core"}) do
