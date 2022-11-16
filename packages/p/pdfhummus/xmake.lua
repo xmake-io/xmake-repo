@@ -36,6 +36,5 @@ package("pdfhummus")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("PDFWriter.h"))
         assert(package:has_cxxtypes("PDFWriter"))
     end)
