@@ -25,11 +25,14 @@ package("pdfhummus")
         end
         add_dep("libtiff")
         add_dep("libpng")
-        add_dep("libjpeg","libjpeg-turbo")
+        add_dep("libjpeg")
     end)
 
     on_install(function (package)
-        local configs = {"-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"), "-DUSE_BUNDLED=FALSE"}
+        local configs = {}
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DUSE_BUNDLED=FALSE")
         import("package.tools.cmake").install(package, configs)
     end)
 
