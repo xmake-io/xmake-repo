@@ -21,15 +21,11 @@ package("simplethreadpool")
         assert(package:check_cxxsnippets({test = [[
           void test() {
             simplethreadpool::pool p;
-    
             int counter = 0;
-    
             p.push([&] {
                 counter++;
             });
-    
             p.start();
-    
             while (p.busy());
           }
         ]]}, {configs = {languages = "c++17"}, includes = "simplethreadpool/pool.hpp"}))
