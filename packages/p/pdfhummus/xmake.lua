@@ -1,4 +1,3 @@
--- TODO: optional compiling for tiff etc.
 
 package("pdfhummus")
     set_homepage("https://www.pdfhummus.com/")
