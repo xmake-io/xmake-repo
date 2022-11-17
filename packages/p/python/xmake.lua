@@ -42,10 +42,6 @@ package("python")
         set_kind("binary")
     end
 
-    if is_host("macosx", "linux", "bsd") then
-        add_deps("openssl", "ca-certificates", {host = true})
-    end
-
     if is_host("linux", "bsd") then
         add_deps("libffi", "zlib", {host = true})
         add_syslinks("util", "pthread", "dl")
@@ -64,9 +60,18 @@ package("python")
     end)
 
     on_load("@macosx", "@linux", "@bsd", function (package)
+        local version = package:version()
+
+        -- set openssl dep
+        if version:ge("3.10") then
+            -- starting with Python 3.10, Python requires OpenSSL 1.1.1 or newer
+            -- see https://peps.python.org/pep-0644/
+            package:add("deps", "openssl >=1.1.1-a", "ca-certificates", {host = true})
+        else
+            package:add("deps", "openssl", "ca-certificates", {host = true})
+        end
 
         -- set includedirs
-        local version = package:version()
         local pyver = ("python%d.%d"):format(version:major(), version:minor())
         if version:ge("3.0") and version:le("3.8") then
             package:add("includedirs", path.join("include", pyver .. "m"))
