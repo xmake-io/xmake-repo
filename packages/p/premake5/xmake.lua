@@ -1,10 +1,10 @@
 package("premake5")
     set_kind("binary")
     set_homepage("https://premake.github.io/")
-    set_description("Premake")
+    set_description("Premake - Powerfully simple build configuration")
 
     set_urls("https://github.com/premake/premake-core.git")
-    add_versions("2022.06.21", "1c22240cc86cc3a12075cc0fc8b07ab209f99dd3")
+    add_versions("2022.11.17", "1c22240cc86cc3a12075cc0fc8b07ab209f99dd3") -- v5.0.0-beta2
     
     if is_plat("linux") and linuxos.name() == "fedora" then 
         add_deps("libuuid")
