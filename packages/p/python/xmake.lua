@@ -43,7 +43,7 @@ package("python")
     end
 
     if is_host("macosx", "linux", "bsd") then
-        add_deps("openssl", "ca-certificates", {host = true})
+        add_deps("openssl >=1.1.1-a", "ca-certificates", {host = true})
     end
 
     if is_host("linux", "bsd") then
