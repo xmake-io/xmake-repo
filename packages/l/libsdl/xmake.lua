@@ -24,6 +24,7 @@ package("libsdl")
         add_versions("2.0.20", "5b1512ca6c9d2427bd2147da01e5e954241f8231df12f54a7074dccde416df18")
         add_versions("2.0.22", "32adc96d8b25e5671189f1f38a4fc7deb105fbb1b3ed78ffcb23f5b8f36b3922")
         add_versions("2.24.0", "97c6e2d17c0baebf4c84ede27ec42e211358f3694b9f558ead3a9c542c4a004e")
+        add_versions("2.24.2", "fae7f8f1661fc1fb3ece7b58eca3b2aaeb2ed000a0b7766f859ae12511efd11f")
     else
         set_urls("https://www.libsdl.org/release/SDL2-$(version).zip")
         add_urls("https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-$(version).zip")
@@ -35,6 +36,7 @@ package("libsdl")
         add_versions("2.0.20", "cc8b16a326eb082c1f48ca30fdf471acfd2334b69bd7527e65ac58369013a1ba")
         add_versions("2.0.22", "9a81ab724e6dcef96c61a4a2ebe7758e5b8bb191794650d276a20d5148fbd50c")
         add_versions("2.24.0", "4b065503d45652d5f65d807fe98c757c73af2968727945b596861995bc3b69c2")
+        add_versions("2.24.2", "7fae98ac4e7b39eb2511fc27c2e84b220ac69b5296ff41f833b967c891f9d2ac")
     end
 
     if is_plat("macosx") then
@@ -50,11 +52,12 @@ package("libsdl")
     end
     add_includedirs("include", "include/SDL2")
 
-    add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
     add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
     if is_plat("windows", "mingw") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
+    elseif is_plat("linux") then
+        add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
     end
 
     on_load(function (package)
