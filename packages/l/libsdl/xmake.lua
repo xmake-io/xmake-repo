@@ -44,6 +44,7 @@ package("libsdl")
         add_syslinks("iconv")
     elseif is_plat("linux", "bsd") then
         if is_plat("bsd") then
+	    add_deps("libusb")
             add_syslinks("usbhid")
         end
         add_syslinks("pthread", "dl")
