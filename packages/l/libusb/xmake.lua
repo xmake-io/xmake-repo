@@ -25,7 +25,7 @@ package("libusb")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "IOKit")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
