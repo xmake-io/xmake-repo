@@ -141,8 +141,11 @@ package("libsdl")
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        local cflags = {}
+        local opt
         if package:is_plat("linux") then
+            local cflags = {}
+            opt = opt or {}
+            opt.cflags = cflags
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)
                 if dep then
@@ -155,17 +158,10 @@ package("libsdl")
                 end
             end
         elseif package:is_plat("bsd") then
-            local dep = package:dep("libusb")
-            if dep then
-                local depfetch = dep:fetch()
-                if depfetch then
-                    for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
-                        table.join2(cflags, "-I" .. includedir)
-                    end
-                end
-            end
+            opt = opt or {}
+            opt.packagedeps = "libusb"
         end
-        import("package.tools.autoconf").install(package, configs, {cflags = cflags})
+        import("package.tools.autoconf").install(package, configs, opt)
     end)
 
     on_test(function (package)
