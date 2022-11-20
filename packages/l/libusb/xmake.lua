@@ -88,6 +88,9 @@ package("libusb")
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:config("pic") ~= false then
+            table.insert(configs, "--with-pic")
+        end
         local cflags, ldflags
         if package:is_plat("linux") then
             cflags = "-I" .. package:dep("eudev"):installdir("include")
