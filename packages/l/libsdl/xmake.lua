@@ -154,6 +154,16 @@ package("libsdl")
                     end
                 end
             end
+        elseif package:is_plat("bsd") then
+            local dep = package:dep("libusb")
+            if dep then
+                local depfetch = dep:fetch()
+                if depfetch then
+                    for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
+                        table.join2(cflags, "-I" .. includedir)
+                    end
+                end
+            end
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags})
     end)
