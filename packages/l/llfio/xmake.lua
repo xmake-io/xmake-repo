@@ -16,6 +16,7 @@ package("llfio")
     end
     
     add_deps("cmake")
+    add_deps("quickcpplib")
     
     on_install(function (package)
         local configs = {}
