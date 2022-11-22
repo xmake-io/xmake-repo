@@ -13,6 +13,7 @@ package("quickcpplib")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", "include(QuickCppLibMakeStandardTests)", "", {plain = true})
+        io.replace("CMakeLists.txt", "include(QuickCppLibMakeDoxygen)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
