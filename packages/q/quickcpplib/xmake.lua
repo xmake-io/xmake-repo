@@ -16,7 +16,6 @@ package("quickcpplib")
         io.replace("CMakeLists.txt", "include(QuickCppLibMakeDoxygen)", "", {plain = true})
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         local target = "quickcpplib_"
-        
         if package:config("header_only") then
             target = target .. "hl" 
         else 
