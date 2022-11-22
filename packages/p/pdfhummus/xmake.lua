@@ -1,4 +1,3 @@
-
 package("pdfhummus")
     set_homepage("https://www.pdfhummus.com/")
     set_description("High performance library for creating, modiyfing and parsing PDF files in C++ ")
@@ -7,11 +6,11 @@ package("pdfhummus")
     add_urls("https://github.com/galkahana/PDF-Writer/archive/refs/tags/$(version).tar.gz",
              "https://github.com/galkahana/PDF-Writer.git")
     add_versions("4.1", "0C0D860B0ECEA928709B9E4642FA21926EB2F626F702699C3B87AFA2965B4857")
-    
+
     add_deps("cmake")
     add_deps("zlib")
     add_deps("freetype")
-    
+
     add_configs("libtiff", {description = "Supporting tiff image", default = true, type = "boolean"})
     add_configs("libjpeg", {description = "Support DCT encoding", default = true, type = "boolean"})
     add_configs("bzip2", {description = "Support png image", default = true, type = "boolean"})
@@ -36,5 +35,14 @@ package("pdfhummus")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("PDFWriter"))
+        assert(package:check_cxxsnippets({test = [[
+            #include "PDFWriter.h"
+            #include <iostream>
+            using namespace std;
+            using namespace PDFHummus;
+            void test() {
+	 	        PDFWriter pdfWriter;
+                pdfWriter.reset();
+            }
+        ]]}, {configs = {languages = "c++11"}}))
     end)
