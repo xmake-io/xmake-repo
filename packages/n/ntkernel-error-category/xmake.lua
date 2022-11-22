@@ -13,7 +13,6 @@ package("ntkernel-error-category")
     on_install(function (package)
         local configs = {"-DPROJECT_IS_DEPENDENCY=ON", "-DCMAKE_DISABLE_FIND_PACKAGE_Git=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        
         local target = "ntkernel-error-category_"
         if package:config("header_only") then
             target = target .. "hl" 
