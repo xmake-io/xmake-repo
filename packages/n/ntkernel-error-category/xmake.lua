@@ -7,19 +7,18 @@ package("ntkernel-error-category")
              "https://github.com/ned14/ntkernel-error-category.git")
     add_versions("v1.0.0", "481b60ac0b1d2c179120b3e6589884217508b6b5025a25dd6bf47399aa5d2cc5")
 
-    add_configs("header_only", {description = "Use header only version. (not supported atm)", default = false, type = "boolean", readonly = true})
+    add_configs("headeronly", {description = "Use header only version.", default = true, type = "boolean"})
 
-    add_deps("cmake")
     on_install(function (package)
-        local configs = {"-DPROJECT_IS_DEPENDENCY=ON", "-DCMAKE_DISABLE_FIND_PACKAGE_Git=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        local target = "ntkernel-error-category_"
-        if package:config("header_only") then
-            target = target .. "hl" 
-        else 
-            target = target .. (package:config("shared") and "_dl" or "_sl")
+        local configs = {}
+        if package:config("headeronly") then
+            configs.kind = "headeronly"
+            package:add("defines", "NTKERNEL_ERROR_CATEGORY_INLINE")
+        elseif not package:config("configs.shared") then
+            package:add("defines", "NTKERNEL_ERROR_CATEGORY_STATIC")
         end
-        import("package.tools.cmake").install(package, configs, { target = target })
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
