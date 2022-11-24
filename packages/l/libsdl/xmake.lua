@@ -14,8 +14,8 @@ package("libsdl")
     set_license("zlib")
 
     if is_plat("windows", "mingw") then
-        set_urls("https://www.libsdl.org/release/SDL2-devel-$(version)-VC.zip")
-        add_urls("https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-devel-$(version)-VC.zip")
+        set_urls("https://www.libsdl.org/release/SDL2-devel-$(version)-VC.zip",
+                 "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-devel-$(version)-VC.zip")
         add_versions("2.0.8", "68505e1f7c16d8538e116405411205355a029dcf2df738dbbc768b2fe95d20fd")
         add_versions("2.0.12", "00c55a597cebdb9a4eb2723f2ad2387a4d7fd605e222c69b46099b15d5d8b32d")
         add_versions("2.0.14", "232071cf7d40546cde9daeddd0ec30e8a13254c3431be1f60e1cdab35a968824")
@@ -25,9 +25,10 @@ package("libsdl")
         add_versions("2.0.22", "32adc96d8b25e5671189f1f38a4fc7deb105fbb1b3ed78ffcb23f5b8f36b3922")
         add_versions("2.24.0", "97c6e2d17c0baebf4c84ede27ec42e211358f3694b9f558ead3a9c542c4a004e")
         add_versions("2.24.2", "fae7f8f1661fc1fb3ece7b58eca3b2aaeb2ed000a0b7766f859ae12511efd11f")
+        add_versions("2.26.0", "3dd66b8ebd32fc2110fbffccc82ffb6b9838de382aff641a38a66a64d480f5f9")
     else
-        set_urls("https://www.libsdl.org/release/SDL2-$(version).zip")
-        add_urls("https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-$(version).zip")
+        set_urls("https://www.libsdl.org/release/SDL2-$(version).zip",
+                 "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-$(version).zip")
         add_versions("2.0.8", "e6a7c71154c3001e318ba7ed4b98582de72ff970aca05abc9f45f7cbdc9088cb")
         add_versions("2.0.12", "476e84d6fcbc499cd1f4a2d3fd05a924abc165b5d0e0d53522c9604fe5a021aa")
         add_versions("2.0.14", "2c1e870d74e13dfdae870600bfcb6862a5eab4ea5b915144aff8d75a0f9bf046")
@@ -37,6 +38,7 @@ package("libsdl")
         add_versions("2.0.22", "9a81ab724e6dcef96c61a4a2ebe7758e5b8bb191794650d276a20d5148fbd50c")
         add_versions("2.24.0", "4b065503d45652d5f65d807fe98c757c73af2968727945b596861995bc3b69c2")
         add_versions("2.24.2", "7fae98ac4e7b39eb2511fc27c2e84b220ac69b5296ff41f833b967c891f9d2ac")
+        add_versions("2.26.0", "4a181f158f88676816e4993d7e97e7b48ef273aa6f4e2909c6a85497e9af3e9f")
     end
 
     if is_plat("macosx") then
@@ -44,7 +46,7 @@ package("libsdl")
         add_syslinks("iconv")
     elseif is_plat("linux", "bsd") then
         if is_plat("bsd") then
-	        add_deps("libusb")
+            add_deps("libusb")
             add_syslinks("usbhid")
         end
         add_syslinks("pthread", "dl")
