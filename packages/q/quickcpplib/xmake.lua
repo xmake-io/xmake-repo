@@ -13,11 +13,12 @@ package("quickcpplib")
     end)
 
     on_test(function (package)
+        local cxxflags = is_toolchain("clang") and {"-fsized-deallocation"} or {}
         assert(package:check_cxxsnippets({test = [[
             #include <quickcpplib/uint128.hpp>
             void test () {
                 auto bar = QUICKCPPLIB_NAMESPACE::integers128::uint128{};
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++17", cxxflags = cxxflags}}))
     end)
 
