@@ -7,29 +7,26 @@ package("quickcpplib")
     add_urls("https://github.com/ned14/quickcpplib.git")
     add_versions("20221116", "52163d5a198f1d0a2583e683f090778686f9f998")
 
-    add_configs("header_only", {description = "Use header only version. (not supported atm)", default = false, type = "boolean", readonly = true})
-
-    add_deps("cmake")
     on_install(function (package)
-        local configs = {"-DPROJECT_IS_DEPENDENCY=ON"}
-        io.replace("CMakeLists.txt", "include(QuickCppLibMakeStandardTests)", "", {plain = true})
-        io.replace("CMakeLists.txt", "include(QuickCppLibMakeDoxygen)", "", {plain = true})
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        local target = "quickcpplib_"
-        if package:config("header_only") then
-            target = target .. "hl" 
-        else 
-            target = target .. (package:config("shared") and "_dl" or "_sl")
-        end
-        import("package.tools.cmake").install(package, configs, { target = target })
+        io.writefile("xmake.lua", [[
+            target("quickcpplib")
+                set_kind("headeronly")
+                add_headerfiles("include/(quickcpplib/**.hpp)")
+                add_headerfiles("include/(quickcpplib/**.h)")
+                add_headerfiles("include/(quickcpplib/**.ixx)")
+                add_headerfiles("include/(quickcpplib/**.ipp)")
+                add_includedirs("include")
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
+        local cxxflags = package:has_tool("cxx", "clang", "clangxx") and {"-fsized-deallocation"} or {}
         assert(package:check_cxxsnippets({test = [[
             #include <quickcpplib/uint128.hpp>
             void test () {
                 auto bar = QUICKCPPLIB_NAMESPACE::integers128::uint128{};
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++17", cxxflags = cxxflags}}))
     end)
 
