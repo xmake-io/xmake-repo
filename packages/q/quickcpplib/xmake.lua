@@ -19,7 +19,7 @@ package("quickcpplib")
     end)
 
     on_test(function (package)
-        local cxxflags = package:is_toolchain("clang") and {"-fsized-deallocation"} or {}
+        local cxxflags = package:has_tool("cxx", "clang", "clangxx") and {"-fsized-deallocation"} or {}
         assert(package:check_cxxsnippets({test = [[
             #include <quickcpplib/uint128.hpp>
             void test () {
