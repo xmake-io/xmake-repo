@@ -8,12 +8,18 @@ package("quickcpplib")
     add_versions("20221116", "52163d5a198f1d0a2583e683f090778686f9f998")
 
     on_install(function (package)
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        io.writefile("xmake.lua", [[
+            target("quickcpplib")
+                set_kind("headeronly")
+                add_headerfiles("include/(quickcpplib/**.hpp)")
+                add_headerfiles("include/(quickcpplib/**.h)")
+                add_includedirs("include")
+        ]])
         import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
-        local cxxflags = is_toolchain("clang") and {"-fsized-deallocation"} or {}
+        local cxxflags = package:is_toolchain("clang") and {"-fsized-deallocation"} or {}
         assert(package:check_cxxsnippets({test = [[
             #include <quickcpplib/uint128.hpp>
             void test () {

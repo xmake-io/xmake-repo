@@ -1,5 +1,0 @@
-target("quickcpplib")
-    set_kind("headeronly")
-    add_headerfiles("include/(quickcpplib/**.hpp)")
-    add_headerfiles("include/(quickcpplib/**.h)")
-    add_includedirs("include")
