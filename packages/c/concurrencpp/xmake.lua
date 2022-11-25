@@ -21,7 +21,7 @@ package("concurrencpp")
         package:add("includedirs", "include/concurrencpp-" .. package:version_str())
     end)
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("macosx", "windows", function (package)
         assert(package:has_tool("cxx", "clang", "cl"), "compiler not supported!")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
