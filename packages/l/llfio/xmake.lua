@@ -15,6 +15,7 @@ package("llfio")
     add_urls("https://github.com/ned14/llfio.git")
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
+    add_configs("shared", {description = "Use header only version.", default = true, type = "boolean"}, readonly)
 
     for version, commit in pairs(versions) do
         add_versions(version, commit)
@@ -25,12 +26,12 @@ package("llfio")
     on_load(function(package)
         if package:config("headeronly") then
             package:add("defines", "LLFIO_HEADERS_ONLY=1")
-            if is_plat("windows", "mingw") then
+            if package:is_plat("windows", "mingw") then
                 package:add("syslinks", "advapi32", "user32", "wsock32", "ws2_32", "ole32", "shell32")
             end
         else
             if not package:config("shared") then
-                if is_plat("windows", "mingw") then
+                if package:is_plat("windows", "mingw") then
                     package:add("syslinks", "advapi32", "user32", "wsock32", "ws2_32", "ole32", "shell32")
                 end
             end
