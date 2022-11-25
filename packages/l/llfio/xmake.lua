@@ -18,6 +18,7 @@ package("llfio")
         add_versions(version, commit)
     end
 
+    add_cxxflags("/EHsc")
     add_deps("quickcpplib", "outcome", "ntkernel-error-category")
     on_install(function (package)
         local configs = {}
