@@ -1,4 +1,5 @@
 package("outcome")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/ned14/outcome")
     set_description("Provides very lightweight outcome<T> and result<T> (non-Boost edition)")
     set_license("Apache-2.0")
@@ -18,15 +19,24 @@ package("outcome")
         add_versions(version, commit)
     end
 
-    add_deps("cmake")
     add_deps("quickcpplib")
     on_install(function (package)
-        local configs = {"-DOUTCOME_ENABLE_DEPENDENCY_SMOKE_TEST=OFF", "-DCMAKE_DISABLE_FIND_PACKAGE_Git=ON", "-DPROJECT_IS_DEPENDENCY=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs)
+        io.writefile("xmake.lua", [[
+            add_requires("quickcpplib")
+            target("outcome")
+                set_kind("headeronly")
+                add_packages("quickcpplib")
+                add_headerfiles("include/(outcome/**.hpp)")
+                add_headerfiles("include/(outcome/**.ixx)")
+                add_headerfiles("include/(outcome/**.ipp)")
+                add_headerfiles("include/(outcome/**.h)")
+                add_includedirs("include")
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
+        local cxxflags = package:has_tool("cxx", "clang", "clangxx") and {"-fsized-deallocation"} or {}
         assert(package:check_cxxsnippets({test = [[
             #include <outcome/outcome.hpp>
             void test () {
@@ -36,5 +46,5 @@ package("outcome")
                 (void) f;
                 (void) m;
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++17", cxxflags = cxxflags}}))
     end)
