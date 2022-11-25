@@ -15,12 +15,10 @@ package("llfio")
     add_urls("https://github.com/ned14/llfio.git")
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
-    add_configs("shared", {description = "Use header only version.", default = true, type = "boolean"}, readonly)
 
     for version, commit in pairs(versions) do
         add_versions(version, commit)
     end
-
 
     add_deps("quickcpplib", "outcome", "ntkernel-error-category", "openssl")
     on_load(function(package)
@@ -34,6 +32,9 @@ package("llfio")
                 if package:is_plat("windows", "mingw") then
                     package:add("syslinks", "advapi32", "user32", "wsock32", "ws2_32", "ole32", "shell32")
                 end
+                package:add("defines", "LLFIO_STATIC_LINK")
+            else
+                package:add("defines", "LLFIO_DYN_LINK")
             end
             package:add("defines", "LLFIO_HEADERS_ONLY=0")
         end
@@ -63,6 +64,11 @@ package("llfio")
                 end
 
                 if not is_kind("headeronly") then
+                    if is_kind("shared") then
+                        add_defines("LLFIO_DYN_LINK")
+                    else
+                        add_defines("LLFIO_STATIC_LINK")
+                    end
                     add_defines("LLFIO_SOURCE=1")
                     add_files("src/*.cpp")
                 else
