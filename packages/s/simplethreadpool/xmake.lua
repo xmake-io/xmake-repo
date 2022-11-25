@@ -17,7 +17,7 @@ package("simplethreadpool")
         end
     end)
 
-    on_install(function (package)
+    on_install("linux", "macosx", "windows", "bsd", "android", "iphoneos", "cross", function (package)
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
         import("package.tools.xmake").install(package, configs)
