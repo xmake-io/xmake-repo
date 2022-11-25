@@ -36,6 +36,7 @@ package("outcome")
     end)
 
     on_test(function (package)
+        local cxxflags = package:has_tool("cxx", "clang", "clangxx") and {"-fsized-deallocation"} or {}
         assert(package:check_cxxsnippets({test = [[
             #include <outcome/outcome.hpp>
             void test () {
@@ -45,5 +46,5 @@ package("outcome")
                 (void) f;
                 (void) m;
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++17", cxxflags = cxxflags}}))
     end)
