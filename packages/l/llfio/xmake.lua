@@ -14,40 +14,64 @@ package("llfio")
     end})
     add_urls("https://github.com/ned14/llfio.git")
 
+    add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
+
     for version, commit in pairs(versions) do
         add_versions(version, commit)
     end
 
-    add_cxxflags("/EHsc")
-    add_deps("quickcpplib", "outcome", "ntkernel-error-category")
+
+    add_deps("quickcpplib", "outcome", "ntkernel-error-category", "openssl")
+    on_load(function(package)
+        if package:config("headeronly") then
+            package:add("defines", "LLFIO_HEADERS_ONLY=1")
+            if is_plat("windows", "mingw") then
+                package:add("syslinks", "advapi32", "user32", "wsock32", "ws2_32", "ole32", "shell32")
+            end
+        else
+            if not package:config("shared") then
+                if is_plat("windows", "mingw") then
+                    package:add("syslinks", "advapi32", "user32", "wsock32", "ws2_32", "ole32", "shell32")
+                end
+            end
+            package:add("defines", "LLFIO_HEADERS_ONLY=0")
+        end
+    end)
+
     on_install(function (package)
         local configs = {}
-        if package:config("shared") then
+        if package:config("headeronly") then
+            configs.kind = "headeronly"
+        elseif package:config("shared") then
             configs.kind = "shared"
         end
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             set_languages("c++17")
-            add_requires("quickcpplib", "outcome", "ntkernel-error-category")
+            add_requires("quickcpplib", "outcome", "ntkernel-error-category", "openssl")
             target("llfio")
                 set_kind("$(kind)")
-                add_packages("quickcpplib", "outcome", "ntkernel-error-category")
+                add_packages("quickcpplib", "outcome", "ntkernel-error-category", "openssl")
                 add_headerfiles("include/(llfio/**.hpp)")
                 add_headerfiles("include/(llfio/**.ixx)")
                 add_headerfiles("include/(llfio/**.h)")
                 add_includedirs("include")
 
+                if is_plat("windows", "mingw") then
+                    add_syslinks("advapi32", "user32", "wsock32", "ws2_32", "ole32", "shell32")
+                end
+
                 if not is_kind("headeronly") then
                     add_defines("LLFIO_SOURCE=1")
                     add_files("src/*.cpp")
                 else
-                    add_defines("LLFIO_HEADERS_ONLY")
+                    add_defines("LLFIO_HEADERS_ONLY=1")
                     add_headerfiles("include/(llfio/**.ipp)")
                 end
 
                 remove_headerfiles("include/llfio/ntkernel-error-category/**")
         ]])
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
@@ -57,5 +81,5 @@ package("llfio")
                 namespace llfio = LLFIO_V2_NAMESPACE;
                 llfio::file_handle fh = llfio::file({}, "foo").value();
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++17", exceptions = "cxx"}}))
     end)
