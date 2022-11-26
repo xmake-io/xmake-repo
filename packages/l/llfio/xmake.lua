@@ -67,6 +67,7 @@ package("llfio")
     end)
 
     on_test("macosx", "iphoneos", "android", "linux", "windows", "bsd", function (package)
+        local cxxflags = package:has_tool("cxx", "clang", "clangxx") and {"-fsized-deallocation"} or {}
         local version = "17"
         if package:config("cpp20") then
             version = "20"
@@ -77,5 +78,5 @@ package("llfio")
                 namespace llfio = LLFIO_V2_NAMESPACE;
                 llfio::file_handle fh = llfio::file({}, "foo").value();
             }
-        ]]}, {configs = {languages = "c++" .. version, exceptions = "cxx"}}))
+        ]]}, {configs = {languages = "c++" .. version, cxxflags = cxxflags, exceptions = "cxx"}}))
     end)
