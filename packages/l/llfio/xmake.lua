@@ -15,6 +15,8 @@ package("llfio")
     add_urls("https://github.com/ned14/llfio.git")
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
+    add_configs("cpp20", {description = "Use C++20 version.", default = false, type = "boolean"})
+    add_configs("experimental_status_code", {description = "Use experimental_status_code. (not supported atm)", default = false, type = "boolean", readonly})
 
     for version, commit in pairs(versions) do
         add_versions(version, commit)
@@ -23,10 +25,13 @@ package("llfio")
     if is_plat("android") then
         add_defines("QUICKCPPLIB_DISABLE_EXECINFO")
     end
+    if is_plat("windows") then
+        add_defines("LLFIO_LEAN_AND_MEAN")
+    end
+    add_defines("QUICKCPPLIB_USE_STD_BYTE", "QUICKCPPLIB_USE_STD_OPTIONAL")
 
-
-    add_deps("quickcpplib", "outcome", "ntkernel-error-category", "openssl")
-    on_load(function(package)
+    add_deps("quickcpplib", "outcome", "ntkernel-error-category")
+    on_load("macosx", "iphoneos", "android", "linux", "windows", "bsd", function(package)
         if package:config("headeronly") then
             package:add("defines", "LLFIO_HEADERS_ONLY=1")
             if package:is_plat("windows", "mingw") then
@@ -40,58 +45,37 @@ package("llfio")
             end
             package:add("defines", "LLFIO_HEADERS_ONLY=0")
         end
+        if package:config("cpp20") then
+            package:add("defines", "QUICKCPPLIB_USE_STD_SPAN")
+        end
+        if package:config("experimental_status_code") then
+            package:add("defines", "LLFIO_EXPERIMENTAL_STATUS_CODE")
+        end
     end)
 
-    on_install(function (package)
+    on_install("macosx", "iphoneos", "android", "linux", "windows", "bsd", function (package)
         local configs = {}
+        configs.experimental_status_code = package:config("experimental_status_code")
+        configs.cpp20 = package:config("cpp20")
         if package:config("headeronly") then
             configs.kind = "headeronly"
         elseif package:config("shared") then
             configs.kind = "shared"
         end
-        io.writefile("xmake.lua", [[
-            add_rules("mode.debug", "mode.release")
-            set_languages("c++17")
-            add_requires("quickcpplib", "outcome", "ntkernel-error-category", "openssl")
-            target("llfio")
-                set_kind("$(kind)")
-                add_packages("quickcpplib", "outcome", "ntkernel-error-category", "openssl")
-                add_headerfiles("include/(llfio/**.hpp)")
-                add_headerfiles("include/(llfio/**.ixx)")
-                add_headerfiles("include/(llfio/**.h)")
-                add_includedirs("include")
-
-                if is_plat("windows", "mingw") then
-                    add_syslinks("advapi32", "user32", "wsock32", "ws2_32", "ole32", "shell32")
-                end
-                if is_plat("android") then
-                    add_defines("QUICKCPPLIB_DISABLE_EXECINFO")
-                end
-
-                if not is_kind("headeronly") then
-                    if is_kind("shared") then
-                        add_defines("LLFIO_DYN_LINK=1")
-                    else
-                        add_defines("LLFIO_STATIC_LINK=1")
-                    end
-                    add_defines("LLFIO_SOURCE=1")
-                    add_files("src/*.cpp")
-                else
-                    add_defines("LLFIO_HEADERS_ONLY=1")
-                    add_headerfiles("include/(llfio/**.ipp)")
-                end
-
-                remove_headerfiles("include/llfio/ntkernel-error-category/**")
-        ]])
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
 
-    on_test(function (package)
+    on_test("macosx", "iphoneos", "android", "linux", "windows", "bsd", function (package)
+        local version = "17"
+        if package:config("cpp20") then
+            version = "20"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <llfio/llfio.hpp>
             void test () {
                 namespace llfio = LLFIO_V2_NAMESPACE;
                 llfio::file_handle fh = llfio::file({}, "foo").value();
             }
-        ]]}, {configs = {languages = "c++17", exceptions = "cxx"}}))
+        ]]}, {configs = {languages = "c++" .. version, exceptions = "cxx"}}))
     end)
