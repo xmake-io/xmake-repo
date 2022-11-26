@@ -1,11 +1,18 @@
 add_rules("mode.debug", "mode.release")
 
 add_requires("quickcpplib", "outcome", "ntkernel-error-category")
+add_requires("openssl", {optional = true})
 
 option("experimental_status_code")
     set_default(false)
     set_description("Use experimental_status_code.")
     add_defines("LLFIO_EXPERIMENTAL_STATUS_CODE")
+    set_showmenu(true)
+option_end()
+
+option("enable_openssl")
+    set_default(false)
+    set_description("Enable OpenSSL")
     set_showmenu(true)
 option_end()
 
@@ -26,7 +33,13 @@ target("llfio")
     add_headerfiles("include/(llfio/**.h)")
     add_includedirs("include")
 
-    add_options("cpp20", "experimental_status_code")
+    if not has_config("enable_openssl") then
+        add_defines("LLFIO_DISABLE_OPENSSL=1")
+    else
+        add_packages("openssl")
+    end
+
+    add_options("cpp20", "experimental_status_code", "enable_openssl")
 
     if is_plat("windows") then
         add_syslinks("advapi32", "user32", "wsock32", "ws2_32", "ole32", "shell32")

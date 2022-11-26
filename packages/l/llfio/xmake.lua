@@ -16,6 +16,7 @@ package("llfio")
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
     add_configs("cpp20", {description = "Use C++20 version.", default = false, type = "boolean"})
+    add_configs("enable_openssl", {description = "Enable openssl.", default = false, type = "boolean"})
     add_configs("experimental_status_code", {description = "Use experimental_status_code. (not supported atm)", default = false, type = "boolean", readonly})
 
     for version, commit in pairs(versions) do
@@ -50,6 +51,11 @@ package("llfio")
         end
         if package:config("experimental_status_code") then
             package:add("defines", "LLFIO_EXPERIMENTAL_STATUS_CODE")
+        end
+        if package:config("enable_openssl") then
+            package:add("deps", "openssl")
+        else
+            package:add("defines", "LLFIO_DISABLE_OPENSSL=1")
         end
     end)
 
