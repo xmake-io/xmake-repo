@@ -1,7 +1,10 @@
 add_rules("mode.debug", "mode.release")
+set_allowedplats("macosx", "iphoneos", "android", "linux", "windows", "bsd")
 
 add_requires("quickcpplib", "outcome", "ntkernel-error-category")
-add_requires("openssl", {optional = true})
+if has_config("openssl") then
+    add_requires("openssl")
+end
 
 option("experimental_status_code")
     set_default(false)
