@@ -33,6 +33,12 @@ target("llfio")
     add_headerfiles("include/(llfio/**.h)")
     add_includedirs("include")
 
+    on_config(function(target)
+        if target:has_tool("cxx", "clang", "clangxx") then
+            target:add("cxxflags", "-fsized-deallocation")
+        end
+    end)
+
     if not has_config("enable_openssl") then
         add_defines("LLFIO_DISABLE_OPENSSL=1")
     else
