@@ -20,6 +20,11 @@ package("llfio")
         add_versions(version, commit)
     end
 
+    if is_plat("android") then
+        add_defines("QUICKCPPLIB_DISABLE_EXECINFO")
+    end
+
+
     add_deps("quickcpplib", "outcome", "ntkernel-error-category", "openssl")
     on_load(function(package)
         if package:config("headeronly") then
@@ -58,6 +63,9 @@ package("llfio")
 
                 if is_plat("windows", "mingw") then
                     add_syslinks("advapi32", "user32", "wsock32", "ws2_32", "ole32", "shell32")
+                end
+                if is_plat("android") then
+                    add_defines("QUICKCPPLIB_DISABLE_EXECINFO")
                 end
 
                 if not is_kind("headeronly") then
