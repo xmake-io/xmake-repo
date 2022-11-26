@@ -32,9 +32,6 @@ package("llfio")
                 if package:is_plat("windows", "mingw") then
                     package:add("syslinks", "advapi32", "user32", "wsock32", "ws2_32", "ole32", "shell32")
                 end
-                package:add("defines", "LLFIO_STATIC_LINK")
-            else
-                package:add("defines", "LLFIO_DYN_LINK")
             end
             package:add("defines", "LLFIO_HEADERS_ONLY=0")
         end
@@ -65,9 +62,9 @@ package("llfio")
 
                 if not is_kind("headeronly") then
                     if is_kind("shared") then
-                        add_defines("LLFIO_DYN_LINK")
+                        add_defines("LLFIO_DYN_LINK=1")
                     else
-                        add_defines("LLFIO_STATIC_LINK")
+                        add_defines("LLFIO_STATIC_LINK=1")
                     end
                     add_defines("LLFIO_SOURCE=1")
                     add_files("src/*.cpp")
