@@ -76,7 +76,9 @@ package("llfio")
         end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         io.replace("include/llfio/v2.0/detail/impl/posix/process_handle.ipp", "#ifdef __linux__\n  char **environ = __environ;\n#endif",
-            "#ifdef __ANDROID__\n  extern char **environ;\n#elif defined(__linux__)\n  char **environ = __environ;\n#endif", {plain = true})
+            "#ifdef defined(__linux__) && !defined(__ANDROID__)\n  char **environ = __environ;\n#endif", {plain = true})
+        io.replace("include/llfio/v2.0/detail/impl/posix/process_handle.ipp", "#ifdef __FreeBSD__\n#include <sys/sysctl.h>\nextern \"C\" char **environ;\n#endif",
+            "#ifdef __FreeBSD__\n#include <sys/sysctl.h>\nextern \"C\" char **environ;\n#endif\n#ifdef __ANDROID__\n extern \"C\" char **environ;\n#endif", {plain = true})
         import("package.tools.xmake").install(package, configs)
     end)
 
