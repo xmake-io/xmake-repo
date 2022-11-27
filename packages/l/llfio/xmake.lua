@@ -60,6 +60,12 @@ package("llfio")
     end)
 
     on_install("macosx", "iphoneos", "android", "linux", "windows", "bsd", function (package)
+        if package:is_plat("android") then
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 28, "package(llfio): need ndk api level >= 28 for android")
+        end
         local configs = {}
         configs.experimental_status_code = package:config("experimental_status_code")
         configs.cpp20 = package:config("cpp20")
