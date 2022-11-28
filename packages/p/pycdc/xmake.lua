@@ -8,6 +8,7 @@ package("pycdc")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake")
+    add_deps("python", {kind = "binary"})
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {}
