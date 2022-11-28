@@ -32,7 +32,7 @@ package("llfio")
     add_defines("QUICKCPPLIB_USE_STD_BYTE", "QUICKCPPLIB_USE_STD_OPTIONAL")
 
     add_deps("quickcpplib", "outcome", "ntkernel-error-category")
-    on_load("macosx", "iphoneos", "android", "linux", "windows", "bsd", function(package)
+    on_load("macosx", "iphoneos", "android", "linux", "windows", function(package)
         if package:config("headeronly") then
             package:add("defines", "LLFIO_HEADERS_ONLY=1")
             if package:is_plat("windows", "mingw") then
@@ -59,7 +59,7 @@ package("llfio")
         end
     end)
 
-    on_install("macosx", "iphoneos", "android", "linux", "windows", "bsd", function (package)
+    on_install("macosx", "iphoneos", "android", "linux", "windows", function (package)
         if package:is_plat("android") then
             import("core.tool.toolchain")
             local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
@@ -82,7 +82,7 @@ package("llfio")
         import("package.tools.xmake").install(package, configs)
     end)
 
-    on_test("macosx", "iphoneos", "android", "linux", "windows", "bsd", function (package)
+    on_test("macosx", "iphoneos", "android", "linux", "windows", function (package)
         local cxxflags = package:has_tool("cxx", "clang", "clangxx") and {"-fsized-deallocation"} or {}
         local version = "17"
         if package:config("cpp20") then
