@@ -5,22 +5,16 @@ package("dynareadout")
 
     add_urls("https://github.com/PucklaJ/dynareadout/archive/refs/tags/$(version).tar.gz",
              "https://github.com/PucklaJ/dynareadout.git")
-    add_versions("0.1", "833c8516c77ab57c56e942692e1fea2c96c50b7adfebd7f6f633ed43aaf46a56")
-    add_versions("0.2", "47c147f1af092b8f2aad1b883d92e6fa76f0096b911b0d4cca2ed675d4f445bd")
-    add_versions("0.3", "c73949c474460c06add2ccfc4a22c3af066904558436a216f095b820153be670")
-    add_versions("0.4", "6e05daa384eb9163cb23ea9d85afa528d0b781cb939fdd1b2fe4c69dc44452bb")
+    add_versions("22.12", "2e430c718c610d4425e23d4c6c87fe4794bb8c76d3cc015988706dbf5027daa4")
 
     add_configs("cpp",       {description = "Build the C++ bindings",        default = true,  type = "boolean"})
     add_configs("profiling", {description = "Build with profiling features", default = false, type = "boolean"})
 
     on_load(function (package)
         if package:config("cpp") then
-            package:add("links", "d3plot_cpp", "binout_cpp", "binout", "d3plot")
+            package:add("links", "dynareadout_cpp", "dynareadout")
         else
-            package:add("links", "binout", "d3plot")
-        end
-        if package:config("profiling") then
-            package:add("links", "profiling")
+            package:add("links", "dynareadout")
         end
     end)
 
