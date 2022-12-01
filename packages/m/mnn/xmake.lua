@@ -6,7 +6,7 @@ package("mnn")
 
     add_urls("https://github.com/alibaba/MNN/archive/$(version).zip",
              "https://github.com/alibaba/MNN.git")
-             
+
     add_versions("1.2.2", "78698b879f796a84d1aeb02f60ee38f6860dfdd03c27d1649aaaf9e0adfc8630")
     add_versions("1.2.1", "485ae09558ff5626a63d1467ca81ebe0e17fbc60222c386d8f0e857f487c74d0")
 
@@ -26,7 +26,7 @@ package("mnn")
 
     add_links("")
 
-    on_load("windows", "linux", "macosx", "android", function (package) 
+    on_load("windows", "linux", "macosx", "android", function (package)
         local mnn_path = package:installdir("include")
         local mnn_lib_dir = string.sub(mnn_path, 1, string.len(mnn_path) - 7) .. "lib"
         if package:config("shared") then
@@ -34,15 +34,15 @@ package("mnn")
             package:add("shflags", "-L" .. mnn_lib_dir .. " -lmnn")
         else
             if package:is_plat("linux", "android", "cross") then
-                package:add("shflags", " -Wl,--whole-archive " .. mnn_lib_dir .. "/libmnn.a -Wl,--no-whole-archive")
-                package:add("ldflags", " -Wl,--whole-archive " .. mnn_lib_dir .. "/libmnn.a -Wl,--no-whole-archive")
+                package:add("shflags", " -Wl,--whole-archive " .. mnn_lib_dir .. "/libMNN.a -Wl,--no-whole-archive")
+                package:add("ldflags", " -Wl,--whole-archive " .. mnn_lib_dir .. "/libMNN.a -Wl,--no-whole-archive")
             elseif package:is_plat("macosx") then
-                package:add("ldflags", "-Wl,-force_load " .. mnn_lib_dir .. "/libmnn.a")
-                package:add("shflags", "-Wl,-force_load " .. mnn_lib_dir .. "/libmnn.a")
+                package:add("ldflags", "-Wl,-force_load " .. mnn_lib_dir .. "/libMNN.a")
+                package:add("shflags", "-Wl,-force_load " .. mnn_lib_dir .. "/libMNN.a")
             elseif package:is_plat("windows") then
                 package:add("linkdirs", mnn_lib_dir)
-                package:add("shflags", "/WHOLEARCHIVE:mnn")
-                package:add("ldflags", "/WHOLEARCHIVE:mnn")
+                package:add("shflags", "/WHOLEARCHIVE:MNN")
+                package:add("ldflags", "/WHOLEARCHIVE:MNN")
             end
         end
 
@@ -50,7 +50,7 @@ package("mnn")
             package:add("defines", "USING_MNN_DLL")
         end
 
-        if package:is_plat("macosx", "iphoneos") then 
+        if package:is_plat("macosx", "iphoneos") then
             if package:config("MNN_OPENCL") then
                 package:add("frameworks", "OpenCL")
             end
@@ -74,7 +74,7 @@ package("mnn")
         table.insert(configs, "-DMNN_USE_SYSTEM_LIB=" .. (package:config("use_system_lib") and "ON" or "OFF"))
         table.insert(configs, "-DMNN_USE_THREAD_POOL=" .. (package:config("thread_pool") and "ON" or "OFF"))
         table.insert(configs, "-DMNN_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
-        if package:config("thread_pool") and package:config("openmp") then 
+        if package:config("thread_pool") and package:config("openmp") then
             print("Warning: You are using mnn's thread pool, it will disable openmp!")
         end
         for _, name in ipairs({"metal", "opencl", "opengl", "vulkan", "arm82", "onednn", "avx512", "cuda", "tensorrt", "coreml"}) do
