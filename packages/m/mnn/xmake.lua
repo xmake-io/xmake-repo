@@ -65,10 +65,10 @@ package("mnn")
 
     on_install("windows", "linux", "macosx", "android", function (package)
         local configs = {"-DMNN_BUILD_TEST=OFF",
-                        "-DMNN_BUILD_DEMO=OFF",
-                        "-DMNN_SUPPORT_TFLITE_QUAN=ON",
-                        "-DMNN_PORTABLE_BUILD=OFF",
-                        "-DMNN_SEP_BUILD=OFF"}
+                         "-DMNN_BUILD_DEMO=OFF",
+                         "-DMNN_SUPPORT_TFLITE_QUAN=ON",
+                         "-DMNN_PORTABLE_BUILD=OFF",
+                         "-DMNN_SEP_BUILD=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMNN_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMNN_USE_SYSTEM_LIB=" .. (package:config("use_system_lib") and "ON" or "OFF"))
@@ -85,6 +85,12 @@ package("mnn")
         end
         if package:is_plat("windows") then
             table.insert(configs, "-DMNN_WIN_RUNTIME_MT=" .. (package:config("vs_runtime") and "ON" or "OFF"))
+            io.replace("CMakeLists.txt",
+                'SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Zi")',
+                'SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Zi /FS")', {plain = true})
+            io.replace("CMakeLists.txt",
+                'SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")',
+                'SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi /FS")', {plain = true})
         end
         if package:is_plat("android") then
             table.insert(configs, "-DMNN_USE_SSE=OFF")
