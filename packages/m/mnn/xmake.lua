@@ -87,10 +87,10 @@ package("mnn")
             table.insert(configs, "-DMNN_WIN_RUNTIME_MT=" .. (package:config("vs_runtime") and "ON" or "OFF"))
             io.replace("CMakeLists.txt",
                 'SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Zi")',
-                'SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Zi /FS")', {plain = true})
+                'SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")', {plain = true})
             io.replace("CMakeLists.txt",
                 'SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")',
-                'SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi /FS")', {plain = true})
+                'SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")', {plain = true})
         end
         if package:is_plat("android") then
             table.insert(configs, "-DMNN_USE_SSE=OFF")
