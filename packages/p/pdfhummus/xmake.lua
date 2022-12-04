@@ -24,6 +24,9 @@ package("pdfhummus")
         add_dep("libtiff")
         add_dep("libpng")
         add_dep("libjpeg")
+        if package:is_plat("linux") then
+            add_dep("libaesgm")
+        end
     end)
 
     on_install(function (package)
@@ -32,9 +35,7 @@ package("pdfhummus")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DUSE_BUNDLED=FALSE")
 
-        if package:is_plat("linux") then
-            add_deps("libaesgm")
-        else
+        if not package:is_plat("linux") then
             table.insert(configs, "-DFLATPAK=TRUE")
         end
         import("package.tools.cmake").install(package, configs)
