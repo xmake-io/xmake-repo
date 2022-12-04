@@ -34,7 +34,7 @@ package("hdf5")
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DHDF5_BUILD_CPP_LIB=" .. (package:config("cpplib") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        package:addenv("HDF5_ROOT", path.join(package:installdir("share"), "cmake"))
+        package:addenv("HDF5_ROOT", path.join(package:installdir("cmake")))
         package:addenv("PATH", package:installdir("bin"))
     end)
 

@@ -9,7 +9,7 @@ package("libsdl_gfx")
         add_versions("ferzkopp:1.0.4", "b6da07583b7fb8f4d8cee97cac9176b97a287f56a8112e22f38183ecf47b9dcb")
         add_versions("sourceforge:1.0.4", "63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262")
 
-        add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "add-x64-support.patch"), "623ed5796c2771dc959ef0249b46a07762981a98dd25a534977f2614791d61a0")
+        add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "add-x64-support.patch"), "2ea0eda111d95864bbc9aedbf8aa91dd3923208d2816a626dfd6bc173986e426")
         add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "lrint_fix.patch"), "9fb928306fb25293720214377bff2f605f60ea26f43ea5346cf1268c504aff1a")
     elseif is_plat("macosx", "linux") then
         set_urls("https://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-$(version).tar.gz")
