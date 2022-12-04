@@ -13,7 +13,7 @@ package("pdfhummus")
 
     add_configs("libtiff", {description = "Supporting tiff image", default = true, type = "boolean"})
     add_configs("libjpeg", {description = "Support DCT encoding", default = true, type = "boolean"})
-    add_configs("bzip2", {description = "Support png image", default = true, type = "boolean"})
+    add_configs("libpng", {description = "Support png image", default = true, type = "boolean"})
 
     on_load(function (package)
         local function add_dep(conf, pkg)
@@ -31,6 +31,12 @@ package("pdfhummus")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DUSE_BUNDLED=FALSE")
+
+        if package:is_plat("linux") then
+            add_deps("libaesgm")
+        else
+            table.insert(configs, "-DFLATPAK=TRUE")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
