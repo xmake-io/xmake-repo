@@ -34,8 +34,6 @@ target("imgui")
     add_includedirs(".")
 
     if has_config("wchar32") then
-        add_headerfiles("misc/freetype/imgui_freetype.h")
-        add_files("misc/freetype/imgui_freetype.cpp")
         add_defines("IMGUI_USE_WCHAR32")
     end
 
