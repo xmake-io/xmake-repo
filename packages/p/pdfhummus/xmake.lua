@@ -25,7 +25,7 @@ package("pdfhummus")
         add_dep("libpng")
         add_dep("libjpeg")
         if package:is_plat("linux") then
-            add_dep("libaesgm")
+            package:add("deps", "libaesgm")
         end
     end)
 
