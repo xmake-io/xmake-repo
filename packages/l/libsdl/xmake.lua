@@ -13,8 +13,31 @@ package("libsdl")
 
     set_license("zlib")
 
-    set_urls("https://www.libsdl.org/release/SDL2-$(version).zip",
-             "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-$(version).zip")
+    add_urls("https://www.libsdl.org/release/SDL2-$(version).zip",
+             "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-$(version).zip", { alias = "archive" })
+    add_urls("https://github.com/libsdl-org/SDL.git", { alias = "github" })
+    add_versions("archive:2.0.8", "e6a7c71154c3001e318ba7ed4b98582de72ff970aca05abc9f45f7cbdc9088cb")
+    add_versions("archive:2.0.12", "476e84d6fcbc499cd1f4a2d3fd05a924abc165b5d0e0d53522c9604fe5a021aa")
+    add_versions("archive:2.0.14", "2c1e870d74e13dfdae870600bfcb6862a5eab4ea5b915144aff8d75a0f9bf046")
+    add_versions("archive:2.0.16", "010148866e2226e5469f2879425d28ff7c572c736cb3fb65a0604c3cde6bfab9")
+    add_versions("archive:2.0.18", "2d96cc82020341f7f5957c42001ad526e15fbb7056be8a74dab302483e97aa24")
+    add_versions("archive:2.0.20", "cc8b16a326eb082c1f48ca30fdf471acfd2334b69bd7527e65ac58369013a1ba")
+    add_versions("archive:2.0.22", "9a81ab724e6dcef96c61a4a2ebe7758e5b8bb191794650d276a20d5148fbd50c")
+    add_versions("archive:2.24.0", "4b065503d45652d5f65d807fe98c757c73af2968727945b596861995bc3b69c2")
+    add_versions("archive:2.24.2", "7fae98ac4e7b39eb2511fc27c2e84b220ac69b5296ff41f833b967c891f9d2ac")
+    add_versions("archive:2.26.0", "4a181f158f88676816e4993d7e97e7b48ef273aa6f4e2909c6a85497e9af3e9f")
+    add_versions("archive:2.26.1", "c038222fcac6ccc448daaa3febcae93fdac401aed12fd60da3b7939529276b1b")
+    add_versions("github:2.0.8",  "release-2.0.8"")
+    add_versions("github:2.0.12", "release-2.0.12")
+    add_versions("github:2.0.14", "release-2.0.14")
+    add_versions("github:2.0.16", "release-2.0.16")
+    add_versions("github:2.0.18", "release-2.0.18")
+    add_versions("github:2.0.20", "release-2.0.20")
+    add_versions("github:2.0.22", "release-2.0.22")
+    add_versions("github:2.24.0", "release-2.24.0")
+    add_versions("github:2.24.2", "release-2.24.2")
+    add_versions("github:2.26.0", "release-2.26.0")
+    add_versions("github:2.26.1", "release-2.26.1")
 
     if is_plat("macosx") then
         add_frameworks("OpenGL", "CoreVideo", "CoreAudio", "AudioToolbox", "Carbon", "CoreGraphics", "ForceFeedback", "Metal", "AppKit", "IOKit", "CoreFoundation", "Foundation")
