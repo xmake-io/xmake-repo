@@ -14,7 +14,7 @@ package("bzip2")
         add_extsources("brew::bzip2")
     end
 
-    on_install("linux", "macosx", "windows", "android", "iphoneos", "cross", "bsd", "mingw", function (package)
+    on_install(function (package)
         local configs = {}
         if not package:is_plat("cross", "iphoneos", "android") then
             configs.enable_tools = true
