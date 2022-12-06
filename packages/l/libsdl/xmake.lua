@@ -39,6 +39,8 @@ package("libsdl")
     add_versions("github:2.26.0", "release-2.26.0")
     add_versions("github:2.26.1", "release-2.26.1")
 
+    add_deps("cmake")
+
     if is_plat("macosx") then
         add_frameworks("OpenGL", "CoreVideo", "CoreAudio", "AudioToolbox", "Carbon", "CoreGraphics", "ForceFeedback", "Metal", "AppKit", "IOKit", "CoreFoundation", "Foundation")
         add_syslinks("iconv")
