@@ -165,7 +165,7 @@ package("libsdl")
             opt = opt or {}
             opt.packagedeps = "libusb"
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
