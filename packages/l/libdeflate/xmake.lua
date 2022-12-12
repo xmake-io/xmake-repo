@@ -19,6 +19,10 @@ package("libdeflate")
     end)
 
     on_install("windows", "macosx", "linux", "android", "mingw", "bsd", function (package)
+        if package:is_plat("windows") and package:is_arch("arm.*") then
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            assert(tonumber(vs) > 2019, "libdeflate requires Visual Studio 2022 and later for arm targets")
+        end
         local configs = {"-DLIBDEFLATE_BUILD_GZIP=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBDEFLATE_BUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))

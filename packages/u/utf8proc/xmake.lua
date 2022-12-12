@@ -10,13 +10,13 @@ package("utf8proc")
     add_versions("v2.8.0", "a0a60a79fe6f6d54e7d411facbfcc867a6e198608f2cd992490e46f04b1bcecc")
 
     add_deps("cmake")
-    on_load(function (package)
+    on_load("windows", "macosx", "linux", "android", "mingw", "bsd", function (package)
         if not package:config("shared") then
             package:add("defines", "UTF8PROC_STATIC")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", "android", "mingw", "bsd", function (package)
         local configs = {"-DUTF8PROC_ENABLE_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
