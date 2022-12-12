@@ -124,7 +124,7 @@ package("openvdb")
                     /*voxel size=*/0.5, /*width=*/4.0
                 );
             }
-        ]]}, {configs = {languages = "c++14"},
+        ]]}, {configs = {languages = "c++17"},
               includes = {"openvdb/openvdb.h", "openvdb/tools/LevelSetSphere.h"}}))
         if package:version():ge("9.0.0") and package:config("nanovdb") then
             assert(package:check_cxxsnippets({test = [[
@@ -133,7 +133,7 @@ package("openvdb")
                     auto acc = builder.getAccessor();
                     acc.setValue(nanovdb::Coord(1, 2, 3), 1.0f);
                 }
-            ]]}, {configs = {languages = "c++14"},
+            ]]}, {configs = {languages = "c++17"},
                   includes = {"nanovdb/util/GridBuilder.h"}}))
         end
     end)
