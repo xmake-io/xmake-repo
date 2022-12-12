@@ -27,7 +27,7 @@ package("openvdb")
     add_configs("nanovdb", {description = "Enable building of NanoVDB Module.", default = false, type = "boolean"})
     add_configs("nanovdb_tools", {description = "Build NanoVDB command-line tools.", default = false, type = "boolean"})
 
-    on_load("macosx", "linux", "windows", function (package)
+    on_load("macosx", "linux", "windows|x64", "windows|x86", function (package)
         if package:config("with_houdini") == "" then
             package:add("deps", "zlib")
             if package:version():ge("9.0.0") then
@@ -60,7 +60,7 @@ package("openvdb")
         end
     end)
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", "windows|x64", "windows|x86", function (package)
         io.replace("cmake/FindBlosc.cmake", "${BUILD_TYPE} ${_BLOSC_LIB_NAME}", "${BUILD_TYPE} blosc libblosc", {plain = true})
         io.replace("cmake/FindTBB.cmake", "Tbb_${COMPONENT}_LIB_TYPE STREQUAL STATIC", "TRUE", {plain = true})
         local configs = {"-DOPENVDB_BUILD_DOCS=OFF", "-DUSE_PKGCONFIG=OFF", "-DBoost_USE_STATIC_LIBS=ON", "-DUSE_CCACHE=OFF"}
