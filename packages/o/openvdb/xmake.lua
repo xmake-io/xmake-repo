@@ -3,14 +3,15 @@ package("openvdb")
     set_homepage("https://www.openvdb.org/")
     set_description("OpenVDB - Sparse volume data structure and tools")
 
-    add_urls("https://github.com/AcademySoftwareFoundation/openvdb/archive/v$(version).tar.gz",
+    add_urls("https://github.com/AcademySoftwareFoundation/openvdb/archive/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openvdb.git")
-    add_versions("7.1.0", "0c3588c1ca6e647610738654ec2c6aaf41a203fd797f609fbeab1c9f7c3dc116")
-    add_versions("8.0.1", "a6845da7c604d2c72e4141c898930ac8a2375521e535f696c2cd92bebbe43c4f")
-    add_versions("8.1.0", "3e09d47331429be7409a3a3c27fdd3c297f96d31d2153febe194e664a99d6183")
-    add_versions("8.2.0", "d2e77a0720db79e9c44830423bdb013c24a1cf50994dd61d570b6e0c3e0be699")
-    add_versions("9.0.0", "ad3816e8f1931d1d6fdbddcec5a1acd30695d049dd10aa965096b2fb9972b468")
-    add_versions("9.1.0", "914ee417b4607c75c95b53bc73a0599de4157c7d6a32e849e80f24e40fb64181")
+    add_versions("v7.1.0", "0c3588c1ca6e647610738654ec2c6aaf41a203fd797f609fbeab1c9f7c3dc116")
+    add_versions("v8.0.1", "a6845da7c604d2c72e4141c898930ac8a2375521e535f696c2cd92bebbe43c4f")
+    add_versions("v8.1.0", "3e09d47331429be7409a3a3c27fdd3c297f96d31d2153febe194e664a99d6183")
+    add_versions("v8.2.0", "d2e77a0720db79e9c44830423bdb013c24a1cf50994dd61d570b6e0c3e0be699")
+    add_versions("v9.0.0", "ad3816e8f1931d1d6fdbddcec5a1acd30695d049dd10aa965096b2fb9972b468")
+    add_versions("v9.1.0", "914ee417b4607c75c95b53bc73a0599de4157c7d6a32e849e80f24e40fb64181")
+    add_versions("v10.0.1", "887a3391fbd96b20c77914f4fb3ab4b33d26e5fc479aa036d395def5523c622f")
 
     add_deps("cmake")
     add_deps("boost", {system = false, configs = {regex = true, system = true, iostreams = true}})
@@ -24,8 +25,9 @@ package("openvdb")
     add_configs("view", {description = "Command line binary for displaying OpenVDB grids in a GL viewport.", default = false, type = "boolean"})
     add_configs("ax", {description = "Command line binary for OpenVDB AX.", default = false, type = "boolean"})
     add_configs("nanovdb", {description = "Enable building of NanoVDB Module.", default = false, type = "boolean"})
+    add_configs("nanovdb_tools", {description = "Build NanoVDB command-line tools.", default = false, type = "boolean"})
 
-    on_load("macosx", "linux", "windows", function (package)
+    on_load("macosx", "linux", "windows|x64", "windows|x86", function (package)
         if package:config("with_houdini") == "" then
             package:add("deps", "zlib")
             if package:version():ge("9.0.0") then
@@ -58,7 +60,7 @@ package("openvdb")
         end
     end)
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", "windows|x64", "windows|x86", function (package)
         io.replace("cmake/FindBlosc.cmake", "${BUILD_TYPE} ${_BLOSC_LIB_NAME}", "${BUILD_TYPE} blosc libblosc", {plain = true})
         io.replace("cmake/FindTBB.cmake", "Tbb_${COMPONENT}_LIB_TYPE STREQUAL STATIC", "TRUE", {plain = true})
         local configs = {"-DOPENVDB_BUILD_DOCS=OFF", "-DUSE_PKGCONFIG=OFF", "-DBoost_USE_STATIC_LIBS=ON", "-DUSE_CCACHE=OFF"}
@@ -80,7 +82,11 @@ package("openvdb")
         table.insert(configs, "-DOPENVDB_BUILD_VDB_PRINT=" .. (package:config("print") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_RENDER=" .. (package:config("render") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_VIEW=" .. (package:config("view") and "ON" or "OFF"))
-        table.insert(configs, "-DOPENVDB_BUILD_AX_BINARIES=" .. (package:config("ax") and "ON" or "OFF"))
+        if package:version():ge("10.0") then
+            table.insert(configs, "-DOPENVDB_BUILD_VDB_AX=" .. (package:config("ax") and "ON" or "OFF"))
+        else
+            table.insert(configs, "-DOPENVDB_BUILD_AX_BINARIES=" .. (package:config("ax") and "ON" or "OFF"))
+        end
         if package:config("simd") then
             table.insert(configs, "-DOPENVDB_SIMD=" .. package:config("simd"))
         end
@@ -102,6 +108,7 @@ package("openvdb")
         end
         if package:version():ge("9.0.0") then
             table.insert(configs, "-DUSE_NANOVDB=" .. (package:config("nanovdb") and "ON" or "OFF"))
+            table.insert(configs, "-DNANOVDB_BUILD_TOOLS=" .. (package:config("nanovdb_tools") and "ON" or "OFF"))
             table.insert(configs, "-DNANOVDB_USE_CUDA=ON")
         end
         import("package.tools.cmake").install(package, configs)
@@ -117,7 +124,7 @@ package("openvdb")
                     /*voxel size=*/0.5, /*width=*/4.0
                 );
             }
-        ]]}, {configs = {languages = "c++14"},
+        ]]}, {configs = {languages = "c++17"},
               includes = {"openvdb/openvdb.h", "openvdb/tools/LevelSetSphere.h"}}))
         if package:version():ge("9.0.0") and package:config("nanovdb") then
             assert(package:check_cxxsnippets({test = [[
@@ -126,7 +133,7 @@ package("openvdb")
                     auto acc = builder.getAccessor();
                     acc.setValue(nanovdb::Coord(1, 2, 3), 1.0f);
                 }
-            ]]}, {configs = {languages = "c++14"},
+            ]]}, {configs = {languages = "c++17"},
                   includes = {"nanovdb/util/GridBuilder.h"}}))
         end
     end)
