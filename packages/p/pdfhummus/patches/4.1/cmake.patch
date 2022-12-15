@@ -1,0 +1,23 @@
+diff --git a/oldcmake b/newcmake
+index 4f41ab79..0dc877d7 100644
+--- a/oldcmake
++++ b/newcmake
+@@ -31,8 +31,7 @@ if(NOT USE_BUNDLED)
+         # FIXME: Flatpak's Gnome runtime doesn't provide LibAesgm
+         ADD_SUBDIRECTORY (LibAesgm)
+     else (MINGW OR FLATPAK)
+-        FIND_PATH(LIBAESGM_INCLUDE_DIRS aescpp.h /usr/local/include/aes /usr/include/aes)
+-        FIND_LIBRARY(LIBAESGM_LDFLAGS NAMES aesgm PATHS /usr/local/lib${LIB_SUFFIX} /usr/lib${LIB_SUFFIX})
++        find_package (LIBAESGM)
+     endif (MINGW OR FLATPAK)
+ 
+     PKG_CHECK_MODULES(LIBPNG libpng)
+@@ -54,5 +53,4 @@ else(NOT USE_BUNDLED)
+     ADD_SUBDIRECTORY(LibPng)
+     endif(NOT PDFHUMMUS_NO_PNG)
+ endif(NOT USE_BUNDLED)
+-ADD_SUBDIRECTORY(PDFWriter)
+-ADD_SUBDIRECTORY(PDFWriterTestPlayground)
+\ No newline at end of file
++ADD_SUBDIRECTORY(PDFWriter)
+\ No newline at end of file
