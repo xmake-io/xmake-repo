@@ -4,9 +4,11 @@ package("eastl")
     set_description("EASTL stands for Electronic Arts Standard Template Library.")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/electronicarts/EASTL/archive/$(version).tar.gz")
+    set_urls("https://github.com/electronicarts/EASTL/archive/$(version).tar.gz",
+             "https://github.com/electronicarts/EASTL.git")
     add_versions("3.17.03", "50a072066e30fda364d482df6733572d8ca440a33825d81254b59a6ca9f4375a")
     add_versions("3.17.06", "9ebeef26cdf091877ee348450d2711cd0bb60ae435309126c0adf8fec9a01ea5")
+    add_versions("3.18.00", "a3c5b970684be02e81fb16fbf92ed2584e055898704fde87c72d0331afdea12b")
 
     add_deps("cmake")
     add_deps("eabase")
