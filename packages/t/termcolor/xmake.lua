@@ -5,8 +5,8 @@ package("termcolor")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/ikalnytskyi/termcolor/archive/refs/tags/v$(version).zip",
-                     "https://github.com/ikalnytskyi/termcolor.git")
-    add_versions("2.1.0","435994c32557674469404cb1527c283fdcf45746f7df75fd2996bb200d6a759f")
+        "https://github.com/ikalnytskyi/termcolor.git")
+    add_versions("2.1.0", "7b13b2adea95d9abfbbf7e7843da57136e81e806de35f4efe79a832a2bbaf56b")
 
     on_install(function(package)
         os.cp("include/termcolor/termcolor.hpp", package:installdir("include/termcolor"))
