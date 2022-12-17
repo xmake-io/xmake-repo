@@ -55,7 +55,17 @@ package("tbb")
             end
             local configs = {"-DTBB_TEST=OFF", "-DTBB_STRICT=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            if package:is_plat("mingw") then
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
+            end
             import("package.tools.cmake").install(package, configs)
+            if package:is_plat("mingw") then
+                local ext = package:config("shared") and ".dll.a" or ".a"
+                local libfiles = os.files(path.join(package:installdir("lib"), "libtbb%d+" .. ext))
+                if #libfiles > 0 then
+                    os.cp(libfiles[1], path.join(package:installdir("lib"), "libtbb" .. ext))
+                end
+            end
         else
             local configs = {"-j4", "tbb_build_prefix=build_dir"}
             local cfg = package:debug() and "debug" or "release"

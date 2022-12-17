@@ -75,7 +75,10 @@ package("opencv")
 
     on_load("linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
-            local arch = (package:is_arch("x64") and "x64" or "x86")
+            local arch = "x64"
+            if     package:is_arch("x86")   then arch = "x86"
+            elseif package:is_arch("arm64") then arch = "ARM64"
+            end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             local vc_ver = "vc13"
@@ -136,8 +139,12 @@ package("opencv")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            if package:is_arch("arm64") then
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+            end
         elseif package:is_plat("mingw") then
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "x86_64" or "x86"))
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
         end
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then
@@ -158,7 +165,10 @@ package("opencv")
             package:add("links", reallink)
         end
         if package:is_plat("windows") then
-            local arch = package:is_arch("x64") and "x64" or "x86"
+            local arch = "x64"
+            if     package:is_arch("x86")   then arch = "x86"
+            elseif package:is_arch("arm64") then arch = "ARM64"
+            end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             local vc_ver = "vc13"
