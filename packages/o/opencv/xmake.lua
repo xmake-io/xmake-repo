@@ -140,6 +140,8 @@ package("opencv")
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
             if package:is_arch("arm64") then
+                local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+                assert(tonumber(vs) >= 2022, "opencv requires Visual Studio 2022 and later for arm targets")
                 table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
             end
