@@ -61,9 +61,12 @@ package("tbb")
             import("package.tools.cmake").install(package, configs)
             if package:is_plat("mingw") then
                 local ext = package:config("shared") and ".dll.a" or ".a"
-                local libfiles = os.files(path.join(package:installdir("lib"), "libtbb%d+" .. ext))
-                if #libfiles > 0 then
-                    os.cp(libfiles[1], path.join(package:installdir("lib"), "libtbb" .. ext))
+                local libfiles = os.files(path.join(package:installdir("lib"), "libtbb*" .. ext))
+                for _, libfile in ipairs(libfiles) do
+                    if libfile:match(".+libtbb%d+" .. ext) then
+                        os.cp(libfile, path.join(package:installdir("lib"), "libtbb" .. ext))
+                        break
+                    end
                 end
             end
         else
