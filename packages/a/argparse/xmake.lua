@@ -22,4 +22,3 @@ package("argparse")
             }
         ]]}, {configs = {languages = "c++17"}, includes = "argparse/argparse.hpp"}))
     end)
-
