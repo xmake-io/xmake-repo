@@ -6,7 +6,6 @@ package("usd")
              "https://github.com/PixarAnimationStudios/USD.git")
     add_versions("v22.11", "f34826475bb9385a9e94e2fe272cc713f517b987cbea15ee6bbc6b21db19aaae")
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean")
 
     add_deps("cmake", "boost")
     -- usd only support tbb 2022 now https://github.com/PixarAnimationStudios/USD/issues/1471
@@ -14,6 +13,7 @@ package("usd")
 
     if is_plat("windows") then
         add_defines("NOMINMAX")
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
     on_install("linux", "macosx", "windows|x64", function (package)
