@@ -152,10 +152,13 @@ package("libsdl")
             opt.cflags = cflags
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)
+		print("dep", depname)
                 if dep then
                     local depfetch = dep:fetch()
+		    print("depfetch", depfetch)
                     if depfetch then
                         for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
+			    print("includedir", includedir)
                             table.join2(cflags, "-I" .. includedir)
                         end
                     end
@@ -165,6 +168,7 @@ package("libsdl")
             opt = opt or {}
             opt.packagedeps = "libusb"
         end
+	print("opt", opt)
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
