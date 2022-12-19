@@ -147,9 +147,7 @@ package("libsdl")
         table.insert(configs, "-DLIBTYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
         local opt
         if package:is_plat("linux") then
-            local cflags = {}
-            opt = opt or {}
-            opt.cflags = cflags
+            local includedirs = {}
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)
 		print("dep", depname)
@@ -159,10 +157,13 @@ package("libsdl")
                     if depfetch then
                         for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
 			    print("includedir", includedir)
-                            table.join2(cflags, "-I" .. includedir)
+                            table.insert(includedirs, includedir)
                         end
                     end
                 end
+            end
+	    if #includedirs > 0 then
+	    	table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(table.unique(includedirs), ";"))
             end
         elseif package:is_plat("bsd") then
             opt = opt or {}
