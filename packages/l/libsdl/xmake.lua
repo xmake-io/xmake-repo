@@ -150,19 +150,19 @@ package("libsdl")
             local includedirs = {}
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)
-		            print("dep", depname)
+                print("dep", depname)
                 if dep then
                     local depfetch = dep:fetch()
-		                print("depfetch", depfetch)
+                    print("depfetch", depfetch)
                     if depfetch then
                         for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
-			                      print("includedir", includedir)
+                            print("includedir", includedir)
                             table.insert(includedirs, includedir)
                         end
                     end
                 end
             end
-	          if #includedirs > 0 then
+            if #includedirs > 0 then
                 includedirs = table.unique(includedirs)
 
                 local cflags = {}
@@ -171,13 +171,16 @@ package("libsdl")
                 for _, includedir in ipairs(includedirs) do
                     table.insert(cflags, "-I" .. includedir)
                 end
-	    	        table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
+                table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
             end
         elseif package:is_plat("bsd") then
             opt = opt or {}
             opt.packagedeps = "libusb"
+        elseif package:is_plat("wasm") then
+            io.insert("CMakeLists.txt", 1, [[message(STATUS "CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES= ${CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES}")]])
+            io.insert("CMakeLists.txt", 2, [[message(STATUS "CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES= ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")]])
         end
-	      print("opt", opt)
+        print("opt", opt)
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
