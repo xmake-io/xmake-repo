@@ -150,26 +150,34 @@ package("libsdl")
             local includedirs = {}
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)
-		print("dep", depname)
+		            print("dep", depname)
                 if dep then
                     local depfetch = dep:fetch()
-		    print("depfetch", depfetch)
+		                print("depfetch", depfetch)
                     if depfetch then
                         for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
-			    print("includedir", includedir)
+			                      print("includedir", includedir)
                             table.insert(includedirs, includedir)
                         end
                     end
                 end
             end
-	    if #includedirs > 0 then
-	    	table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(table.unique(includedirs), ";"))
+	          if #includedirs > 0 then
+                includedirs = table.unique(includedirs)
+
+                local cflags = {}
+                opt = opt or {}
+                opt.cflags = cflags
+                for _, includedir in ipairs(includedirs) do
+                    table.insert(cflags, "-I" .. includedir)
+                end
+	    	        table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
             end
         elseif package:is_plat("bsd") then
             opt = opt or {}
             opt.packagedeps = "libusb"
         end
-	print("opt", opt)
+	      print("opt", opt)
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
