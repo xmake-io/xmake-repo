@@ -149,10 +149,8 @@ package("libsdl")
             local includedirs = {}
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)
-                print("dep", depname)
                 if dep then
                     local depfetch = dep:fetch()
-                    print("depfetch", depfetch)
                     if depfetch then
                         for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
                             print("includedir", includedir)
@@ -180,7 +178,7 @@ package("libsdl")
             opt = opt or {}
             opt.cflags = {"-sUSE_SDL=0"}
         elseif package:is_plat("cross") then
-            io.replace("include/SDL_config.h.cmake", "#cmakedefine HAVE_SYS_TYPES_H 1", "", { plain = true })
+            io.replace("include/SDL_stdinc.h", "#ifdef HAVE_SYS_TYPES_H", "#if 0", { plain = true })
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
