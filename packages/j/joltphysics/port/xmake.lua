@@ -34,20 +34,18 @@ target("Jolt")
     add_headerfiles("(Jolt/**.h)", "(Jolt/**.inl)")
     add_files("Jolt/**.cpp")
     add_options("cross_platform_deterministic", "debug_renderer", "double_precision", "profile")
-    add_vectorexts("sse2")
 
     if is_plat("windows") then
         add_syslinks("Advapi32")
     elseif is_plat("linux") then
         add_syslinks("pthread")
-    elseif is_plat("wasm") then
-        add_cxflags("-msimd128")
     end
 
     on_config(function (target)
         -- handle instruction sets flags
         if is_arch("x86", "x64", "x86_64") then
             if target:has_tool("cxx", "cl") then
+                target:add("cxflags", "/arch:SSE2", {force = true})
                 if has_config("inst_avx512") then
                     target:add("cxflags", "/arch:AVX512", {force = true})
                 elseif has_config("inst_avx2") then
@@ -84,6 +82,8 @@ target("Jolt")
                     target:add("cxflags", "-msse4.2", "-mpopcnt", {force = true})
                 elseif has_config("inst_sse4_1") then
                     target:add("cxflags", "-msse4.1", {force = true})
+                else
+                    target:add("cxflags", "-msse2", {force = true})
                 end
                 if has_config("inst_lzcnt") then
                     target:add("cxflags", "-mlzcnt", {force = true})
