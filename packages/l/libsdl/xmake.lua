@@ -176,9 +176,11 @@ package("libsdl")
             opt = opt or {}
             opt.packagedeps = "libusb"
         elseif package:is_plat("wasm") then
-            -- emscripten enables USE_SDL by default which will conflict with the current libsdl headers 
+            -- emscripten enables USE_SDL by default which will conflict with the sdl headers 
             opt = opt or {}
             opt.cflags = {"-sUSE_SDL=0"}
+        elseif package:is_plat("cross") then
+            io.replace("include/SDL_config.h.cmake", "#cmakedefine HAVE_SYS_TYPES_H 1", "", { plain = true })
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
