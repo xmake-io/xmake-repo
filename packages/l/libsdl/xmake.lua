@@ -1,5 +1,4 @@
 package("libsdl")
-
     set_homepage("https://www.libsdl.org/")
     set_description("Simple DirectMedia Layer")
 	
@@ -177,10 +176,10 @@ package("libsdl")
             opt = opt or {}
             opt.packagedeps = "libusb"
         elseif package:is_plat("wasm") then
-            io.insert("CMakeLists.txt", 1, [[message(STATUS "CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES= ${CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES}")]])
-            io.insert("CMakeLists.txt", 2, [[message(STATUS "CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES= ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES}")]])
+            -- emscripten enables USE_SDL by default with AUTO_JS_LIBRARIES which will conflict with the current libsdl headers 
+            opt = opt or {}
+            opt.cflags = {"-sAUTO_JS_LIBRARIES=0"}
         end
-        print("opt", opt)
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
