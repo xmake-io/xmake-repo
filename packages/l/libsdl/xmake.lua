@@ -153,7 +153,6 @@ package("libsdl")
                     local depfetch = dep:fetch()
                     if depfetch then
                         for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
-                            print("includedir", includedir)
                             table.insert(includedirs, includedir)
                         end
                     end
@@ -177,8 +176,6 @@ package("libsdl")
             -- emscripten enables USE_SDL by default which will conflict with the sdl headers 
             opt = opt or {}
             opt.cflags = {"-sUSE_SDL=0"}
-        elseif package:is_plat("cross") then
-            io.replace("include/SDL_stdinc.h", "#ifdef HAVE_SYS_TYPES_H", "#if 0", { plain = true })
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
