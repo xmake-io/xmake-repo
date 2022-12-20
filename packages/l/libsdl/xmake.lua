@@ -145,7 +145,7 @@ package("libsdl")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBTYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
         local opt
-        if package:is_plat("linux") then
+        if package:is_plat("linux", "cross") then
             local includedirs = {}
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)
