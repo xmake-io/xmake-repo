@@ -176,9 +176,9 @@ package("libsdl")
             opt = opt or {}
             opt.packagedeps = "libusb"
         elseif package:is_plat("wasm") then
-            -- emscripten enables USE_SDL by default with AUTO_JS_LIBRARIES which will conflict with the current libsdl headers 
+            -- emscripten enables USE_SDL by default which will conflict with the current libsdl headers 
             opt = opt or {}
-            opt.cflags = {"-sAUTO_JS_LIBRARIES=0"}
+            opt.cflags = {"-sUSE_SDL=0"}
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
