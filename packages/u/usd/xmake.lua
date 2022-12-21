@@ -13,7 +13,6 @@ package("usd")
 
     if is_plat("windows") then
         add_defines("NOMINMAX")
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
     on_install("linux", "macosx", "windows|x64", function (package)
@@ -29,6 +28,7 @@ package("usd")
             "-DPXR_BUILD_EXAMPLES=OFF",
             "-DPXR_BUILD_TUTORIALS=OFF",
             "-DPXR_BUILD_USD_TOOLS=OFF",
+            "-DPXR_BUILD_MONOLITHIC=" ..  (package:config("shared") and "OFF" or "ON")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
