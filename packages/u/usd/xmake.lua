@@ -6,6 +6,8 @@ package("usd")
              "https://github.com/PixarAnimationStudios/USD.git")
     add_versions("v22.11", "f34826475bb9385a9e94e2fe272cc713f517b987cbea15ee6bbc6b21db19aaae")
 
+    add_configs("shared", {description = "Build shared binaries.", default = true, type = "boolean", readonly = true})
+    add_configs("monolithic", {description = "Build single shared library", default = false, type = "boolean"})
 
     add_deps("cmake", "boost")
     -- usd only support tbb 2022 now https://github.com/PixarAnimationStudios/USD/issues/1471
@@ -28,7 +30,7 @@ package("usd")
             "-DPXR_BUILD_EXAMPLES=OFF",
             "-DPXR_BUILD_TUTORIALS=OFF",
             "-DPXR_BUILD_USD_TOOLS=OFF",
-            "-DPXR_BUILD_MONOLITHIC=" ..  (package:config("shared") and "OFF" or "ON")
+            "-DPXR_BUILD_MONOLITHIC=" .. (package:config("monolithic") and "ON" or "OFF")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
