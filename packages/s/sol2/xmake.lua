@@ -29,8 +29,7 @@ package("sol2")
     end)
 
     on_install(function (package)
-        local configs = {}
-        import("package.tools.cmake").install(package, configs)
+        os.cp("include/sol",package:installdir("include"))
     end)
 
     on_test(function (package)
