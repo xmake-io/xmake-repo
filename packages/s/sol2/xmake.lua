@@ -34,13 +34,19 @@ package("sol2")
 
     on_install(function (package)
         local configs = {}
-        if package:version() and package:version():ge("3.3") then
-            table.insert(configs, "-DSOL2_BUILD_LUA=FALSE")
-            local lua = package:dep("lua"):fetch()
-            if lua then
-                local includedirs = lua.includedirs or lua.sysincludedirs
-                if includedirs and #includedirs > 0 then
-                    table.insert(configs, "-DLUA_INCLUDE_DIR=" .. includedirs[1])
+        if package:config("includes_lua") then
+            if package:version() and package:version():ge("3.3") then
+                table.insert(configs, "-DSOL2_BUILD_LUA=FALSE")
+                local lua = package:dep("lua"):fetch()
+                if lua then
+                    local includedirs = lua.includedirs or lua.sysincludedirs
+                    if includedirs and #includedirs > 0 then
+                        table.insert(configs, "-DLUA_INCLUDE_DIR=" .. table.concat(includedirs, " "))
+                    end
+                    local libfiles = lua.libfiles
+                    if libfiles then
+                        table.insert(configs, "-DLUA_LIBRARIES=" .. table.concat(libfiles, " "))
+                    end
                 end
             end
         end
