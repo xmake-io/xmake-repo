@@ -1,5 +1,4 @@
 package("wayland")
-
     set_homepage("https://wayland.freedesktop.org/")
     set_description("Wayland is a protocol for a compositor to talk to its clients as well as a C library implementation of that protocol.")
     set_license("MIT")
@@ -15,9 +14,9 @@ package("wayland")
         add_extsources("apt::libwayland-dev", "pacman::wayland")
     end
 
-    add_deps("meson", "libxml2", "libffi", "expat", "bison")
-    on_install("linux", function (package)
+    add_deps("meson", "libxml2", "libffi", "expat", "bison", "pkg-config")
 
+    on_install("linux", function (package)
         -- imports
         import("package.tools.meson")
         import("package.tools.autoconf")
