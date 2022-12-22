@@ -16,6 +16,7 @@ package("stb")
 
     on_install(function (package)
         os.cp("*.h", package:installdir("include"))
+        os.cp("*.c", package:installdir("include"))
     end)
 
     on_test(function (package)
