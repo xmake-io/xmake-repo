@@ -29,7 +29,7 @@ package("sol2")
     end)
 
     on_install(function (package)
-        import("package.tools.cmake").install(package, {})
+        import("package.tools.cmake").install(package)
     end)
 
     on_test(function (package)
