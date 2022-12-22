@@ -97,7 +97,7 @@ package("lua")
     end)
 
     on_test(function (package)
-        if is_plat(os.host()) then
+        if not package:is_cross() then
             os.vrun("lua -e \"print('hello xmake!')\"")
         end
         assert(package:has_cfuncs("lua_getinfo", {includes = "lua.h"}))
