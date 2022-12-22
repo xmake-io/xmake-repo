@@ -29,9 +29,9 @@ package("sol2")
     end)
 
     on_install(function (package)
-		if not package:is_plat("iphoneos") then
-        	import("package.tools.cmake").install(package)
-		end
+        if not package:is_plat("iphoneos") then
+            import("package.tools.cmake").install(package)
+        end
     end)
 
     on_test(function (package)
