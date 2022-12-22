@@ -177,7 +177,6 @@ package("libsdl")
             opt = opt or {}
             opt.cflags = {"-sUSE_SDL=0"}
         end
-        table.insert(configs, "--trace-expand")
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
