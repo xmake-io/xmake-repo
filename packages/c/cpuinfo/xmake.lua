@@ -8,11 +8,6 @@ package("cpuinfo")
 
     add_deps("cmake")
 
-    on_load(function (package)
-        -- use main branch and not master
-        package:version_set("main", "branch")
-    end)
-
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
