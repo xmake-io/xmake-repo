@@ -144,6 +144,8 @@ package("libsdl")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBTYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
+        table.insert(configs, "-DSDL_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DSDL_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         local opt
         if package:is_plat("linux", "cross") then
             local includedirs = {}
