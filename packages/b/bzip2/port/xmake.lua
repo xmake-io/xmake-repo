@@ -19,6 +19,9 @@ target("bz2")
         set_filename("libbz2.dll")
         add_files("libbz2.def")
     end
+    if is_plat("wasm") then
+        add_defines("BZ_STRICT_ANSI")
+    end
 
 if has_config("enable_tools") then
 

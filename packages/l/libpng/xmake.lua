@@ -25,7 +25,7 @@ package("libpng")
         add_extsources("brew::libpng")
     end
 
-    on_install("windows", "mingw", "android", "iphoneos", "cross", "bsd", function (package)
+    on_install("windows", "mingw", "android", "iphoneos", "cross", "bsd", "wasm", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("zlib")
