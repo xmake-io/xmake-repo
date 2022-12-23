@@ -36,5 +36,5 @@ jobs:
       - name: Tests
         run: |
           emcc -v
-          xmake l ./scripts/test.lua -vD -p wasm -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -D -p wasm -k ${{ matrix.kind }}
 
