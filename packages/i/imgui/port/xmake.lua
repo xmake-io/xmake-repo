@@ -10,28 +10,33 @@ option("sdl2_opengl3", {showmenu = true,  default = false})
 option("user_config",  {showmenu = true,  default = nil, type = "string"})
 option("use_glad",     {showmenu = true,  default = false})
 
+-- Renderer backends
+local has_opengl3 = has_config("glfw_opengl3") or has_config("sdl2_opengl3")
+local has_vulkan = has_config("glfw_vulkan")
+local has_sdl_renderer = has_config("sdl2")
+
+-- Platform backends
+local has_glfw = has_config("glfw_opengl3") or has_config("glfw_vulkan")
+local has_sdl2 = has_config("sdl2") or has_config("sdl2_opengl3")
+
 if has_config("freetype") then
     add_requires("freetype")
 end
 
-if has_config("glfw_opengl3") then
-    add_requires("glfw")
-    if has_config("use_glad") then
-        add_requires("glad")
-    end
+if has_opengl3 and has_config("use_glad") then
+    add_requires("glad")
 end
-if has_config("glfw_vulkan") then
-    add_requires("glfw")
+
+if has_vulkan then
     add_requires("vulkansdk")
 end
-if has_config("sdl2") then
-    add_requires("libsdl >=2.0.17")
+
+if has_glfw then
+    add_requires("glfw")
 end
-if has_config("sdl2_opengl3") then
+
+if has_sdl2 then
     add_requires("libsdl >=2.0.17")
-    if has_config("use_glad") then
-        add_requires("glad")
-    end
 end
 
 target("imgui")
@@ -51,10 +56,9 @@ target("imgui")
         add_defines("IMGUI_ENABLE_FREETYPE")
     end
 
-    if has_config("glfw_opengl3") then
-        add_files("backends/imgui_impl_glfw.cpp", "backends/imgui_impl_opengl3.cpp")
-        add_headerfiles("backends/imgui_impl_glfw.h", "backends/imgui_impl_opengl3.h")
-        add_packages("glfw")
+    if has_opengl3 then
+        add_files("backends/imgui_impl_opengl3.cpp")
+        add_headerfiles("backends/imgui_impl_opengl3.h")
         if has_config("use_glad") then
             add_defines("IMGUI_IMPL_OPENGL_LOADER_GLAD")
             add_packages("glad")
@@ -63,29 +67,27 @@ target("imgui")
         end
     end
 
-    if has_config("glfw_vulkan") then
-        add_files("backends/imgui_impl_vulkan.cpp", "backends/imgui_impl_glfw.cpp")
-        add_headerfiles("backends/imgui_impl_vulkan.h", "backends/imgui_impl_glfw.h")
-        add_packages("glfw")
+    if has_vulkan then
+        add_files("backends/imgui_impl_vulkan.cpp")
+        add_headerfiles("backends/imgui_impl_vulkan.h")
         add_packages("vulkansdk")
     end
 
-    if has_config("sdl2") then
-        add_files("backends/imgui_impl_sdl.cpp", "backends/imgui_impl_sdlrenderer.cpp")
-        add_headerfiles("backends/imgui_impl_sdl.h", "backends/imgui_impl_sdlrenderer.h")
-        add_packages("libsdl")
+    if has_sdl_renderer then
+        add_files("backends/imgui_impl_sdlrenderer.cpp")
+        add_headerfiles("backends/imgui_impl_sdlrenderer.h")
     end
 
-    if has_config("sdl2_opengl3") then
-        add_files("backends/imgui_impl_sdl.cpp", "backends/imgui_impl_opengl3.cpp")
-        add_headerfiles("backends/imgui_impl_sdl.h", "backends/imgui_impl_opengl3.h")
+    if has_glfw then
+        add_files("backends/imgui_impl_glfw.cpp")
+        add_headerfiles("backends/imgui_impl_glfw.h")
+        add_packages("glfw")
+    end
+
+    if has_sdl2 then
+        add_files("backends/imgui_impl_sdl.cpp")
+        add_headerfiles("backends/imgui_impl_sdl.h")
         add_packages("libsdl")
-        if has_config("use_glad") then
-            add_defines("IMGUI_IMPL_OPENGL_LOADER_GLAD")
-            add_packages("glad")
-        else
-            add_headerfiles("backends/imgui_impl_opengl3_loader.h")
-        end
     end
 
     if has_config("user_config") then

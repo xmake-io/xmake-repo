@@ -43,25 +43,19 @@ package("imgui")
         if package:config("freetype") then
             package:add("deps", "freetype")
         end
-        if package:config("glfw_opengl3") then
+        if package:config("glfw_opengl3") or package:config("sdl2_opengl3") then
             if package:version():lt("1.84") then
                 package:add("deps", "glad")
                 package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
             end
+        end
+        if package:config("glfw_opengl3") or package:config("glfw_vulkan") then
             package:add("deps", "glfw")
         end
         if package:config("glfw_vulkan") then
-            package:add("deps", "glfw")
             package:add("deps", "vulkansdk")
         end
-        if package:config("sdl2") then
-            package:add("deps", "libsdl >=2.0.17")
-        end
-        if package:config("sdl2_opengl3") then
-            if package:version():lt("1.84") then
-                package:add("deps", "glad")
-                package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
-            end
+        if package:config("sdl2") or package:config("sdl2_opengl3") then
             package:add("deps", "libsdl >=2.0.17")
         end
         if package:version_str():find("-docking", 1, true) then
