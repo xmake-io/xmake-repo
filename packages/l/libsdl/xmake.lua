@@ -64,12 +64,15 @@ package("libsdl")
             end
             package:add("components", "lib")
         else
-            local sdl2lib = package:config("shared") and "SDL2" or "SDL2-static"
+            local sdl2lib = (package:config("shared") or not package:is_plat("windows")) and "SDL2" or "SDL2-static"
             if package:config("use_sdlmain") then
                 package:add("links", "SDL2main", sdl2lib)
                 package:add("defines", "SDL_MAIN_HANDLED")
             else
                 package:add("links", sdl2lib)
+                if package:is_plat("windows", "mingw") then
+                    package:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
+                end
             end
         end
         if package:is_plat("linux") and package:config("with_x") then
@@ -91,7 +94,7 @@ package("libsdl")
         if package:config("shared") then
             component:add("links", "SDL2")
         else
-            component:add("links", "SDL2-static")
+            component:add("links", package:is_plat("windows") and "SDL2-static" or "SDL2")
             if package:is_plat("windows", "mingw") then
                 component:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
             end
