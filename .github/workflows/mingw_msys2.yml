@@ -47,8 +47,8 @@ jobs:
         shell: msys2 {0}
         run: |
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
-            xmake l ./scripts/test.lua -D -p mingw -a x86_64 -k ${{ matrix.kind }}
+            xmake l ./scripts/test.lua -vD -p mingw -a x86_64 -k ${{ matrix.kind }}
           else
-            xmake l ./scripts/test.lua -D -p mingw -a i386 -k ${{ matrix.kind }}
+            xmake l ./scripts/test.lua -vD -p mingw -a i386 -k ${{ matrix.kind }}
           fi
 
