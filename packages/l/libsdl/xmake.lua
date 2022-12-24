@@ -40,16 +40,6 @@ package("libsdl")
 
     add_deps("cmake")
 
-    if is_plat("macosx") then
-        add_frameworks("OpenGL", "CoreVideo", "CoreAudio", "AudioToolbox", "Carbon", "CoreGraphics", "ForceFeedback", "Metal", "AppKit", "IOKit", "CoreFoundation", "Foundation")
-        add_syslinks("iconv")
-    elseif is_plat("linux", "bsd") then
-        if is_plat("bsd") then
-            add_deps("libusb")
-            add_syslinks("usbhid")
-        end
-        add_syslinks("pthread", "dl")
-    end
     add_includedirs("include", "include/SDL2")
 
     add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
@@ -83,11 +73,24 @@ package("libsdl")
             component:add("links", package:is_plat("windows") and "SDL2-static" or "SDL2")
             if package:is_plat("windows", "mingw") then
                 component:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
+            elseif package:is_plat("linux", "bsd") then
+                component:add("syslinks", "pthread", "dl")
+                if package:is_plat("bsd") then 
+                    component:add("syslinks", "usbhid")
+                end
             elseif package:is_plat("android") then
-                component:add("syslinks", "dl", "log", "android", "GLESv1_CM", "GLESv2")
-            elseif package:is_plat("iphoneos") then
-                component:add("frameworks", "OpenGLES", "UIKit")
+                component:add("syslinks", "dl", "log", "android", "GLESv1_CM", "GLESv2", "OpenSLES")
+            elseif package:is_plat("iphoneos", "macosx") then
+                component:add("frameworks", "AudioToolbox", "AVFoundation", "CoreAudio", "CoreVideo", "Foundation", "Metal")
                 component:add("syslinks", "iconv")
+                if package:is_plat("macosx") then
+                    component:add("frameworks", "Cocoa", "Carbon", "ForceFeedback", "IOKit")
+                else
+                    component:add("frameworks", "CoreBluetooth", "CoreGraphics", "CoreMotion", "OpenGLES", "UIKit")
+                    if package:version():ge("2.0.14") then
+                        package:add("frameworks", "CoreHaptics", "GameController")
+                    end
+                end
             end
         end
     end)
