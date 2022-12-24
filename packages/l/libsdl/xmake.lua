@@ -41,7 +41,7 @@ package("libsdl")
     add_deps("cmake")
 
     if is_plat("macosx") then
-        add_frameworks("OpenGL", "CoreVideo", "CoreAudio", "AudioToolbox", "Carbon", "CoreGraphics", "ForceFeedback", "Metal", "AppKit", "IOKit", "CoreFoundation", "Foundation")
+        add_frameworks("OpenGL", "CoreVideo", "CoreAudio", "AudioToolbox", "Carbon", "CoreGraphics", "ForceFeedback", "Metal", "AppKit", "IOKit", "CoreFoundation", "Foundation", "UIKit")
         add_syslinks("iconv")
     elseif is_plat("linux", "bsd") then
         if is_plat("bsd") then
@@ -58,23 +58,10 @@ package("libsdl")
     end
 
     on_load(function (package)
-        if package.components then
-            if package:config("use_sdlmain") then
-                package:add("components", "main")
-            end
-            package:add("components", "lib")
-        else
-            local sdl2lib = (package:config("shared") or not package:is_plat("windows")) and "SDL2" or "SDL2-static"
-            if package:config("use_sdlmain") then
-                package:add("links", "SDL2main", sdl2lib)
-                package:add("defines", "SDL_MAIN_HANDLED")
-            else
-                package:add("links", sdl2lib)
-                if package:is_plat("windows", "mingw") then
-                    package:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
-                end
-            end
+        if package:config("use_sdlmain") then
+            package:add("components", "main")
         end
+        package:add("components", "lib")
         if package:is_plat("linux") and package:config("with_x") then
             package:add("deps", "libxext", {private = true})
         end
@@ -83,7 +70,6 @@ package("libsdl")
         end
     end)
 
-    on_component = on_component or function() end
     on_component("main", function (package, component)
         component:add("links", "SDL2main")
         component:add("defines", "SDL_MAIN_HANDLED")
@@ -97,6 +83,8 @@ package("libsdl")
             component:add("links", package:is_plat("windows") and "SDL2-static" or "SDL2")
             if package:is_plat("windows", "mingw") then
                 component:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
+            elseif package:is_plat("android") then
+                component:add("syslinks", "pthread", "dl", "log", "android", "GLESv1_CM", "GLESv2")
             end
         end
     end)
@@ -152,9 +140,7 @@ package("libsdl")
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DLIBTYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
-        table.insert(configs, "-DSDL_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DSDL_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_TEST=OFF")
         local opt
         if package:is_plat("linux", "cross") then
