@@ -55,9 +55,6 @@ package("libsdl")
         if package:is_plat("linux") and package:config("with_x") then
             package:add("deps", "libxext", {private = true})
         end
-        if package:is_plat("macosx") and package:version():ge("2.0.14") then
-            package:add("frameworks", "CoreHaptics", "GameController")
-        end
     end)
 
     on_component("main", function (package, component)
@@ -81,7 +78,7 @@ package("libsdl")
             elseif package:is_plat("android") then
                 component:add("syslinks", "dl", "log", "android", "GLESv1_CM", "GLESv2", "OpenSLES")
             elseif package:is_plat("iphoneos", "macosx") then
-                component:add("frameworks", "AudioToolbox", "AVFoundation", "CoreAudio", "CoreVideo", "Foundation", "Metal")
+                component:add("frameworks", "AudioToolbox", "AVFoundation", "CoreAudio", "CoreVideo", "Foundation", "Metal", "QuartzCore")
                 component:add("syslinks", "iconv")
                 if package:is_plat("macosx") then
                     component:add("frameworks", "Cocoa", "Carbon", "ForceFeedback", "IOKit")
