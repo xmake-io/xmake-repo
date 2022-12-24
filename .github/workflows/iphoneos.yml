@@ -25,4 +25,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -vD -p iphoneos
+          xmake l ./scripts/test.lua -D -p iphoneos

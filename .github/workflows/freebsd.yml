@@ -38,6 +38,6 @@ jobs:
             export XMAKE_ROOT=y
             cd -
             git config --global --add safe.directory /Users/runner/work/xmake-repo/xmake-repo
-            xmake l ./scripts/test.lua -vD -k ${{ matrix.kind }} -vD
+            xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -vD
 
 
