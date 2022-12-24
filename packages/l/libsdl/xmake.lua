@@ -49,8 +49,6 @@ package("libsdl")
             add_syslinks("usbhid")
         end
         add_syslinks("pthread", "dl")
-    elseif is_plat("windows", "mingw") then
-        add_syslinks("gdi32", "user32", "winmm", "shell32")
     end
     add_includedirs("include", "include/SDL2")
 
@@ -66,11 +64,12 @@ package("libsdl")
             end
             package:add("components", "lib")
         else
+            local sdl2lib = package:config("shared") and "SDL2" or "SDL2-static"
             if package:config("use_sdlmain") then
-                package:add("links", "SDL2main", "SDL2")
+                package:add("links", "SDL2main", sdl2lib)
                 package:add("defines", "SDL_MAIN_HANDLED")
             else
-                package:add("links", "SDL2")
+                package:add("links", sdl2lib)
             end
         end
         if package:is_plat("linux") and package:config("with_x") then
@@ -88,8 +87,15 @@ package("libsdl")
         component:add("deps", "lib")
     end)
 
-    on_component("main", function (package, component)
-        component:add("links", "SDL2")
+    on_component("lib", function (package, component)
+        if package:config("shared") then
+            component:add("links", "SDL2")
+        else
+            component:add("links", "SDL2-static")
+            if package:is_plat("windows", "mingw") then
+                component:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
+            end
+        end
     end)
 
     on_fetch("linux", "macosx", "bsd", function (package, opt)
@@ -146,6 +152,7 @@ package("libsdl")
         table.insert(configs, "-DLIBTYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
         table.insert(configs, "-DSDL_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DSDL_TEST=OFF")
         local opt
         if package:is_plat("linux", "cross") then
             local includedirs = {}
