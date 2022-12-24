@@ -15,7 +15,7 @@ package("cpuinfo")
 
     add_links("cpuinfo", "clog")
 
-    on_install("windows", "linux", "macosx", "bsd", "android", "cross", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "android", function (package)
         local configs = {"-DCPUINFO_BUILD_TOOLS=OFF",
                          "-DCPUINFO_BUILD_UNIT_TESTS=OFF",
                          "-DCPUINFO_BUILD_MOCK_TESTS=OFF",
