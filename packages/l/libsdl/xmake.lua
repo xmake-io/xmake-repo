@@ -41,7 +41,7 @@ package("libsdl")
     add_deps("cmake")
 
     if is_plat("macosx") then
-        add_frameworks("OpenGL", "CoreVideo", "CoreAudio", "AudioToolbox", "Carbon", "CoreGraphics", "ForceFeedback", "Metal", "AppKit", "IOKit", "CoreFoundation", "Foundation", "UIKit")
+        add_frameworks("OpenGL", "CoreVideo", "CoreAudio", "AudioToolbox", "Carbon", "CoreGraphics", "ForceFeedback", "Metal", "AppKit", "IOKit", "CoreFoundation", "Foundation")
         add_syslinks("iconv")
     elseif is_plat("linux", "bsd") then
         if is_plat("bsd") then
@@ -84,7 +84,10 @@ package("libsdl")
             if package:is_plat("windows", "mingw") then
                 component:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
             elseif package:is_plat("android") then
-                component:add("syslinks", "pthread", "dl", "log", "android", "GLESv1_CM", "GLESv2")
+                component:add("syslinks", "dl", "log", "android", "GLESv1_CM", "GLESv2")
+            elseif package:is_plat("iphoneos") then
+                component:add("frameworks", "OpenGLES", "UIKit")
+                component:add("syslinks", "iconv")
             end
         end
     end)
