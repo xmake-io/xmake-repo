@@ -13,8 +13,14 @@ package("cpuinfo")
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT", readonly = true})
     end
 
-    on_install(function (package)
-        local configs = {}
+    add_links("cpuinfo", "clog")
+
+    on_install("windows", "linux", "macosx", "iphoneos", "bsd", "android", "cross", function (package)
+        local configs = {"-DCPUINFO_BUILD_TOOLS=OFF",
+                         "-DCPUINFO_BUILD_UNIT_TESTS=OFF",
+                         "-DCPUINFO_BUILD_MOCK_TESTS=OFF",
+                         "-DCPUINFO_BUILD_BENCHMARKS=OFF",
+                         "-DCPUINFO_BUILD_PKG_CONFIG=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
