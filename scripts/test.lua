@@ -170,9 +170,9 @@ function main(...)
     if #packages == 0 then
         local files = os.iorun("git diff --name-only HEAD^")
         for _, file in ipairs(files:split('\n'), string.trim) do
-            if file:find("packages", 1, true) and path.filename(file) == "xmake.lua" then
+            if file:startswith("packages") then
                 assert(file == file:lower(), "%s must be lower case!", file)
-                local package = path.filename(path.directory(file))
+                local package = file:match("packages/%w/(%S+)/")
                 table.insert(packages, package)
             end
         end
