@@ -20,6 +20,9 @@ package("libcurl")
         add_deps("cmake")
         add_syslinks("advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
     end
+    if package:is_plat("mingw") and version:ge("7.85.0") then
+        add_syslinks("Bcrypt")
+    end
 
     add_configs("cares",    {description = "Enable c-ares support.", default = false, type = "boolean"})
     add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = is_plat("linux", "cross"), type = "boolean"})
