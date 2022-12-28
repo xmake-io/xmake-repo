@@ -72,7 +72,7 @@ package("libcurl")
         table.insert(configs, (package:version():ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
         local version = package:version()
 
-        if is_plat("mingw") and (version:ge("7.85.0")) and not (package:config("shared")) then
+        if package:is_plat("mingw") and version:ge("7.85") then
             package:add("links", "Bcrypt")
         end
             
@@ -109,7 +109,7 @@ package("libcurl")
                          "--without-nghttp3"}
 
         local version = package:version()
-        if is_plat("mingw") and (version:ge("7.85.0")) and not (package:config("shared")) then
+        if package:is_plat("mingw") and version:ge("7.85") then
             package:add("links", "Bcrypt")
         end
                 
