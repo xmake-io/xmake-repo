@@ -108,7 +108,7 @@ package("libcurl")
                          "--without-ngtcp2",
                          "--without-nghttp3"}
 
-        if is_plat("mingw") and package:version:ge("7.85.0") then
+        if is_plat("mingw") and package:version():ge("7.85.0") then
             package:add("links", "Bcrypt")
         end
                 
