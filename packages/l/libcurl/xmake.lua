@@ -20,9 +20,6 @@ package("libcurl")
         add_deps("cmake")
         add_syslinks("advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
     end
-    if is_plat("mingw") and version():ge("7.85.0") then
-        add_syslinks("Bcrypt")
-    end
 
     add_configs("cares",    {description = "Enable c-ares support.", default = false, type = "boolean"})
     add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = is_plat("linux", "cross"), type = "boolean"})
@@ -74,6 +71,11 @@ package("libcurl")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, (package:version():ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
         local version = package:version()
+
+        if is_plat("mingw") and version:ge("7.85.0") then
+            package:add("links", "Bcrypt")
+        end
+            
         local configopts = {cares    = "ENABLE_ARES",
                             openssl  = (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL"),
                             mbedtls  = (version:ge("7.81") and "CURL_USE_MBEDTLS" or "CMAKE_USE_MBEDTLS"),
@@ -105,6 +107,11 @@ package("libcurl")
                          "--without-quiche",
                          "--without-ngtcp2",
                          "--without-nghttp3"}
+
+        if is_plat("mingw") and package:version:ge("7.85.0") then
+            package:add("links", "Bcrypt")
+        end
+                
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
