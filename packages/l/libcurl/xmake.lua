@@ -72,8 +72,8 @@ package("libcurl")
         table.insert(configs, (package:version():ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
         local version = package:version()
 
-        if package:is_plat("mingw") and version:ge("7.85") then
-            package:add("links", "Bcrypt")
+        if (package:is_plat("mingw") and version:ge("7.85")) then
+            package:add("syslinks", "Bcrypt")
         end
             
         local configopts = {cares    = "ENABLE_ARES",
@@ -109,8 +109,8 @@ package("libcurl")
                          "--without-nghttp3"}
 
         local version = package:version()
-        if package:is_plat("mingw") and version:ge("7.85") then
-            package:add("links", "Bcrypt")
+        if (package:is_plat("mingw") and version:ge("7.85")) then
+            package:add("syslinks", "Bcrypt")
         end
                 
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
