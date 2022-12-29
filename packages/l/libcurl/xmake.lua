@@ -71,6 +71,11 @@ package("libcurl")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, (package:version():ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
         local version = package:version()
+
+        if (package:is_plat("mingw") and version:ge("7.85")) then
+            package:add("syslinks", "Bcrypt")
+        end
+            
         local configopts = {cares    = "ENABLE_ARES",
                             openssl  = (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL"),
                             mbedtls  = (version:ge("7.81") and "CURL_USE_MBEDTLS" or "CMAKE_USE_MBEDTLS"),
@@ -102,6 +107,12 @@ package("libcurl")
                          "--without-quiche",
                          "--without-ngtcp2",
                          "--without-nghttp3"}
+
+        local version = package:version()
+        if (package:is_plat("mingw") and version:ge("7.85")) then
+            package:add("syslinks", "Bcrypt")
+        end
+                
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
