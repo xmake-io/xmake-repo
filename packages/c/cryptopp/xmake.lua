@@ -19,7 +19,13 @@ package("cryptopp")
     on_install("windows", "macosx", "linux", "bsd", "iphoneos", function (package)
         local cryptopp_cmake = package:resourcedir("cryptopp_cmake")
         os.cp(path.join(cryptopp_cmake, "*", "CMakeLists.txt"), ".")
-        os.cp(path.join(cryptopp_cmake, "*", "cryptopp-config.cmake"), ".")
+        local version = package:version()
+        
+        if (version:ge("8.7")) then
+            os.cp(path.join(cryptopp_cmake, "*", "CMakePresets.json"), ".")
+        else
+            os.cp(path.join(cryptopp_cmake, "*", "cryptopp-config.cmake"), ".")
+        end
         -- fix unresolved external symbol PadLastBlock
         -- @see https://github.com/weidai11/cryptopp/issues/358
         io.replace("iterhash.h", "CRYPTOPP_NO_VTABLE", "CRYPTOPP_DLL CRYPTOPP_NO_VTABLE")
