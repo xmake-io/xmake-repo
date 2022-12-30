@@ -22,6 +22,10 @@ package("cryptopp")
         local version = package:version()
         
         if (version:ge("8.7")) then
+            if (package:config("shared") then
+                print("ERROR: CryptoC++ 8.7+ does not support shared libraries")
+                return
+            end
             os.cp(path.join(cryptopp_cmake, "*", "CMakePresets.json"), ".")
             os.cp(path.join(cryptopp_cmake, "*", "cmake"), ".")
             os.cp(path.join(cryptopp_cmake, "*", "cryptopp"), ".")
@@ -43,6 +47,12 @@ package("cryptopp")
     end)
 
     on_test(function (package)
+        if (version:ge("8.7")) then
+            if (package:config("shared") then
+                -- cryptopp_cmake for 8.7 does not support shared libraries so there's nothing to test
+                return
+            end
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <cryptopp/cryptlib.h>
             #include <cryptopp/aes.h>
