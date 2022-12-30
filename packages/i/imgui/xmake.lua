@@ -29,6 +29,7 @@ package("imgui")
     add_configs("glfw_opengl3", {description = "Enable glfw+opengl3 backend", default = false, type = "boolean"})
     add_configs("glfw_vulkan", {description = "Enable glfw+vulkan backend", default = false, type = "boolean"})
     add_configs("sdl2", {description = "Enable sdl2 backend", default = false, type = "boolean"})
+    add_configs("sdl2_opengl3", {description = "Enable sdl2+opengl3 backend", default = false, type = "boolean"})
     add_configs("wchar32", {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
     add_configs("freetype", {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
 
@@ -42,18 +43,19 @@ package("imgui")
         if package:config("freetype") then
             package:add("deps", "freetype")
         end
-        if package:config("glfw_opengl3") then
+        if package:config("glfw_opengl3") or package:config("sdl2_opengl3") then
             if package:version():lt("1.84") then
                 package:add("deps", "glad")
                 package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
             end
+        end
+        if package:config("glfw_opengl3") or package:config("glfw_vulkan") then
             package:add("deps", "glfw")
         end
         if package:config("glfw_vulkan") then
-            package:add("deps", "glfw")
             package:add("deps", "vulkansdk")
         end
-        if package:config("sdl2") then
+        if package:config("sdl2") or package:config("sdl2_opengl3") then
             package:add("deps", "libsdl >=2.0.17")
         end
         if package:version_str():find("-docking", 1, true) then
@@ -68,8 +70,9 @@ package("imgui")
             glfw_opengl3 = package:config("glfw_opengl3"),
             glfw_vulkan  = package:config("glfw_vulkan"),
             sdl2         = package:config("sdl2"),
+            sdl2_opengl3 = package:config("sdl2_opengl3"),
             user_config  = package:config("user_config"),
-            use_glad     = package:version() and package:version():lt("1.84") -- this flag will be used if glfw_opengl3 is enabled
+            use_glad     = package:version() and package:version():lt("1.84") -- this flag will be used if glfw_opengl3 or sdl2_opengl3 is enabled
         }
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
