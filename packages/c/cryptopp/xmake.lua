@@ -23,9 +23,9 @@ package("cryptopp")
         
         if (version:ge("8.7")) then
             os.cp(path.join(cryptopp_cmake, "*", "CMakePresets.json"), ".")
-            os.cp(path.join(cryptopp_cmake, "*", "cmake"), ".)
-            os.cp(path.join(cryptopp_cmake, "*", "cryptopp"), ".)
-            os.cp(path.join(cryptopp_cmake, "*", "test"), ".)
+            os.cp(path.join(cryptopp_cmake, "*", "cmake"), ".")
+            os.cp(path.join(cryptopp_cmake, "*", "cryptopp"), ".")
+            os.cp(path.join(cryptopp_cmake, "*", "test"), ".")
         else
             os.cp(path.join(cryptopp_cmake, "*", "cryptopp-config.cmake"), ".")
         end
