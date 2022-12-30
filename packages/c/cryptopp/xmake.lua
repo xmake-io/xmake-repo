@@ -47,6 +47,7 @@ package("cryptopp")
     end)
 
     on_test(function (package)
+        local version = package:version()
         if (version:ge("8.7")) then
             if (package:config("shared")) then
                 -- cryptopp_cmake for 8.7 does not support shared libraries so there's nothing to test
