@@ -23,7 +23,7 @@ package("cryptopp")
         
         if (version:ge("8.7")) then
             if (package:config("shared")) then
-                print("ERROR: CryptoC++ 8.7+ does not support shared libraries")
+                print("ERROR: Crypto++ 8.7+ does not support shared libraries")
                 return
             end
             os.cp(path.join(cryptopp_cmake, "*", "CMakePresets.json"), ".")
