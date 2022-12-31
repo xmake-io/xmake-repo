@@ -29,6 +29,12 @@ package("blake3")
                     else
                         add_files("c/*x86-64_unix.S")
                     end
+                elseif is_arch("x86") then
+                    add_files("c/blake3_portable.c")
+                    add_files("c/blake3_sse2.c")
+                    add_files("c/blake3_sse41.c")
+                    add_files("c/blake3_avx2.c")
+                    add_files("c/blake3_avx512.c")
                 elseif is_arch("arm64", "arm64-v8a") then
                     add_files("c/blake3_neon.c")
                     add_defines("BLAKE3_USE_NEON=1")
