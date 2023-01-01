@@ -35,8 +35,8 @@ package("openssl3")
             package:add("syslinks", "pthread", "dl")
         end
         if package:is_plat("linux", "mingw", "bsd") and package:is_arch("x86_64") then
-	    package:add("linkdirs", "lib64")
-	end
+        package:add("linkdirs", "lib64")
+    end
         if package:is_plat("linux") then
             package:add("extsources", "apt::libssl-dev")
         end
@@ -147,3 +147,4 @@ package("openssl3")
     on_test(function (package)
         assert(package:has_cfuncs("SSL_new", {includes = "openssl/ssl.h"}))
     end)
+
