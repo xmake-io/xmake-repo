@@ -1,5 +1,7 @@
 import("lib.detect.find_path")
+import("lib.detect.find_file")
 import("lib.detect.find_library")
+import("core.base.semver")
 
 -- http://www.slproweb.com/products/Win32OpenSSL.html
 function _find_package_on_windows(package, opt)
@@ -40,6 +42,13 @@ function _find_package_on_windows(package, opt)
     if includedir then
         result.includedirs = result.includedirs or {}
         table.insert(result.includedirs, includedir)
+    end
+    local openssl = find_file("openssl.exe", paths, {suffixes = "bin"})
+    if openssl then
+        local version = try {function () return os.iorunv(openssl, {"version"}) end}
+        if version then
+            result.version = semver.match(version)
+        end
     end
     return result
 end
