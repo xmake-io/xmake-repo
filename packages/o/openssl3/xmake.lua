@@ -35,10 +35,8 @@ package("openssl3")
             package:add("syslinks", "pthread", "dl")
             package:add("rpathdirs", package:installdir("lib", "lib64"))
 	end
-        if package:is_plat("linux") and package:is_arch("x86_64") then
+        if package:is_plat("linux", "mingw", "bsd") and package:is_arch("x86_64") then
 	    package:add("linkdirs", "lib64")
-        else
-	    package:add("linkdirs", "lib")
 	end
         if package:is_plat("linux") then
             package:add("extsources", "apt::libssl-dev")
