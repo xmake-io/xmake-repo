@@ -33,7 +33,7 @@ package("pdfhummus")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DUSE_BUNDLED=FALSE")
 
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libjpeg"})
     end)
 
     on_test(function (package)
