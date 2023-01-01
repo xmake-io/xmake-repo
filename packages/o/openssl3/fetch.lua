@@ -31,7 +31,7 @@ function main(package, opt)
         if package:is_plat("windows", "mingw", "msys") and is_host("windows") then
             result = _find_package_on_windows(package, opt)
         else
-            result = package:find_package("openssl3", opt)
+            result = package:find_package("openssl", opt)
         end
         return result or false
     end
