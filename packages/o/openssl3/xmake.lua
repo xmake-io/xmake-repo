@@ -33,8 +33,7 @@ package("openssl3")
             package:add("syslinks", "ws2_32", "user32", "crypt32", "advapi32")
         elseif package:is_plat("linux", "cross") then
             package:add("syslinks", "pthread", "dl")
-            package:add("rpathdirs", package:installdir("lib", "lib64"))
-	end
+        end
         if package:is_plat("linux", "mingw", "bsd") and package:is_arch("x86_64") then
 	    package:add("linkdirs", "lib64")
 	end
