@@ -29,7 +29,7 @@ package("blake3")
                     else
                         add_files("c/*x86-64_unix.S")
                     end
-                elseif is_arch("x86") then
+                elseif is_arch("x86", "i386") then
                     add_files("c/blake3_portable.c")
                     add_files("c/blake3_sse2.c")
                     add_files("c/blake3_sse41.c")
