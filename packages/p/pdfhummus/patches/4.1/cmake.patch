@@ -1,23 +1,37 @@
-diff --git a/oldcmake b/newcmake
-index 4f41ab79..0dc877d7 100644
---- a/oldcmake
-+++ b/newcmake
-@@ -31,8 +31,7 @@ if(NOT USE_BUNDLED)
-         # FIXME: Flatpak's Gnome runtime doesn't provide LibAesgm
-         ADD_SUBDIRECTORY (LibAesgm)
-     else (MINGW OR FLATPAK)
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4f41ab79..8e80446c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -10,14 +10,14 @@ endif(CMAKE_GENERATOR STREQUAL "Xcode")
+ if(NOT USE_BUNDLED)
+     FIND_PACKAGE(PkgConfig)
+ 
+-    find_package (JPEG)
++    PKG_CHECK_MODULES(JPEG libjpeg)
+     if (NOT JPEG_FOUND)
+         set (PDFHUMMUS_NO_DCT TRUE)
+     endif (NOT JPEG_FOUND)
+ 
+     PKG_CHECK_MODULES(ZLIB zlib REQUIRED)
+ 
+-    PKG_CHECK_MODULES(LIBTIFF libtiff-4)
++    PKG_CHECK_MODULES(LIBTIFF libtiff)
+     if(NOT LIBTIFF_FOUND)
+         SET(PDFHUMMUS_NO_TIFF TRUE)
+     else(NOT LIBTIFF_FOUND)
+@@ -26,14 +26,7 @@ if(NOT USE_BUNDLED)
+ 
+     PKG_CHECK_MODULES(FREETYPE REQUIRED freetype2)
+ 
+-    if (MINGW OR FLATPAK)
+-        # FIXME: Fedora's MinGW environment doesn't provide LibAesgm
+-        # FIXME: Flatpak's Gnome runtime doesn't provide LibAesgm
+-        ADD_SUBDIRECTORY (LibAesgm)
+-    else (MINGW OR FLATPAK)
 -        FIND_PATH(LIBAESGM_INCLUDE_DIRS aescpp.h /usr/local/include/aes /usr/include/aes)
 -        FIND_LIBRARY(LIBAESGM_LDFLAGS NAMES aesgm PATHS /usr/local/lib${LIB_SUFFIX} /usr/lib${LIB_SUFFIX})
-+        find_package (LIBAESGM)
-     endif (MINGW OR FLATPAK)
+-    endif (MINGW OR FLATPAK)
++    ADD_SUBDIRECTORY (LibAesgm)
  
      PKG_CHECK_MODULES(LIBPNG libpng)
-@@ -54,5 +53,4 @@ else(NOT USE_BUNDLED)
-     ADD_SUBDIRECTORY(LibPng)
-     endif(NOT PDFHUMMUS_NO_PNG)
- endif(NOT USE_BUNDLED)
--ADD_SUBDIRECTORY(PDFWriter)
--ADD_SUBDIRECTORY(PDFWriterTestPlayground)
-\ No newline at end of file
-+ADD_SUBDIRECTORY(PDFWriter)
-\ No newline at end of file
+     if(NOT LIBPNG_FOUND)
