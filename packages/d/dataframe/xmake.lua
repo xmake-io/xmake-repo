@@ -7,6 +7,7 @@ package("dataframe")
              "https://github.com/hosseinmoein/DataFrame.git")
 
     add_versions("1.21.0", "a6b07eaaf628225a34e4402c1a6e311430e8431455669ac03691d92f44081172")
+    add_versions("1.22.0", "4b244241cd56893fccb22f7c874588f0d86b444912382ed6e9a4cf95e55ffda2")
 
     add_deps("cmake")
 
