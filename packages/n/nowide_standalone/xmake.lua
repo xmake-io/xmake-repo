@@ -20,6 +20,7 @@ package("nowide_standalone")
             int test(int argc, char **argv)
             {
                 nowide::args _(argc, argv); // Must use an instance!
+                return argc;
             }
         ]]}))
     end)
