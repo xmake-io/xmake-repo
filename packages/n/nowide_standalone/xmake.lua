@@ -8,12 +8,12 @@ package("nowide_standalone")
     add_versions("11.2.0", "1869d176a8af389e4f7416f42bdd15d6a5db3c6e4ae77269ecb071a232304e1d")
 
     add_deps("cmake")
-    
-    if is_plat("windows") then
+
+    if is_plat("windows") or is_plat("mingw") then
         add_syslinks("shell32")
     end
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "mingw", function (package)
         import("package.tools.cmake").install(package)
     end)
 
