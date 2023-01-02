@@ -1,6 +1,4 @@
 package("nowide_standalone")
-
-    set_kind("library")
     set_homepage("https://github.com/boostorg/nowide/tree/standalone")
     set_description("C++ implementation of the Python Numpy library")
     set_license("Boost Software License, Version 1.0")
@@ -11,6 +9,7 @@ package("nowide_standalone")
 
     add_deps("cmake")
     on_install("windows", "macosx", "linux", function (package)
+        package:add("links","shell32")
         import("package.tools.cmake").install(package)
     end)
 
