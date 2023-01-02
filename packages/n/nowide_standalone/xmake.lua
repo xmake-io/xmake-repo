@@ -15,12 +15,5 @@ package("nowide_standalone")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <nowide/args.hpp>
-            int test(int argc, char **argv)
-            {
-                nowide::args _(argc, argv); // Must use an instance!
-                return argc;
-            }
-        ]]}))
+        assert(package:has_cxxtypes("nowide::args",{includes={"nowide/args.hpp","windows.h"}}))
     end)
