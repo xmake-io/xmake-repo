@@ -35,3 +35,12 @@ index 4f41ab79..8e80446c 100644
  
      PKG_CHECK_MODULES(LIBPNG libpng)
      if(NOT LIBPNG_FOUND)
+@@ -54,5 +47,4 @@ else(NOT USE_BUNDLED)
+     ADD_SUBDIRECTORY(LibPng)
+     endif(NOT PDFHUMMUS_NO_PNG)
+ endif(NOT USE_BUNDLED)
+-ADD_SUBDIRECTORY(PDFWriter)
+-ADD_SUBDIRECTORY(PDFWriterTestPlayground)
+\ No newline at end of file
++ADD_SUBDIRECTORY(PDFWriter)
+\ No newline at end of file
