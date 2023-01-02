@@ -8,8 +8,6 @@ package("blake3")
     add_versions("1.3.3", "27d2bc4ee5945ba75434859521042c949463ee7514ff17aaef328e23ef83fec0")
     add_versions("1.3.1", "112becf0983b5c83efff07f20b458f2dbcdbd768fd46502e7ddd831b83550109")
 
-    on_install("mingw|i686")
-
     on_install(function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
@@ -31,7 +29,7 @@ package("blake3")
                     else
                         add_files("c/*x86-64_unix.S")
                     end
-                elseif is_arch("x86", "i386") then
+                elseif is_arch("x86", "i386", "i686") then
                     add_files("c/blake3_portable.c")
                     add_files("c/blake3_sse2.c")
                     add_files("c/blake3_sse41.c")
@@ -49,8 +47,6 @@ package("blake3")
 
         import("package.tools.xmake").install(package, configs)
     end)
-
-    on_test("mingw|i686")
 
     on_test(function (package)
         assert(package:has_cfuncs("blake3_hasher_init", {includes = "blake3.h"}))
