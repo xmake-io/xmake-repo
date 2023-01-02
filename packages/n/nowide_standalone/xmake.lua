@@ -9,7 +9,7 @@ package("nowide_standalone")
 
     add_deps("cmake")
 
-    if is_plat("windows") or is_plat("mingw") then
+    if is_plat("windows", "mingw") then
         add_syslinks("shell32")
     end
 
