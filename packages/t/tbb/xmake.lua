@@ -16,6 +16,7 @@ package("tbb")
         add_versions("2021.3.0", "8f616561603695bbb83871875d2c6051ea28f8187dbe59299961369904d1d49e")
         add_versions("2021.4.0", "021796c7845e155e616f5ecda16daa606ebb4c6f90b996e5c08aebab7a8d3de3")
         add_versions("2021.5.0", "e5b57537c741400cf6134b428fc1689a649d7d38d9bb9c1b6d64f092ea28178a")
+        add_versions("2021.7.0", "2cae2a80cda7d45dc7c072e4295c675fff5ad8316691f26f40539f7e7e54c0cc")
     else
         add_urls("https://github.com/oneapi-src/oneTBB/archive/v$(version).tar.gz")
         add_versions("2020.3", "ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3")
@@ -23,6 +24,7 @@ package("tbb")
         add_versions("2021.3.0", "8f616561603695bbb83871875d2c6051ea28f8187dbe59299961369904d1d49e")
         add_versions("2021.4.0", "021796c7845e155e616f5ecda16daa606ebb4c6f90b996e5c08aebab7a8d3de3")
         add_versions("2021.5.0", "e5b57537c741400cf6134b428fc1689a649d7d38d9bb9c1b6d64f092ea28178a")
+        add_versions("2021.7.0", "2cae2a80cda7d45dc7c072e4295c675fff5ad8316691f26f40539f7e7e54c0cc")
 
         add_patches("2021.2.0", path.join(os.scriptdir(), "patches", "2021.2.0", "gcc11.patch"), "181511cf4878460cb48ac0531d3ce8d1c57626d698e9001a0951c728fab176fb")
         add_patches("2021.5.0", path.join(os.scriptdir(), "patches", "2021.5.0", "i386.patch"), "1a1c11724839cf98b1b8f4d415c0283ec7719c330b11503c578739eb02889ec0")
@@ -53,7 +55,20 @@ package("tbb")
             end
             local configs = {"-DTBB_TEST=OFF", "-DTBB_STRICT=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            if package:is_plat("mingw") then
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
+            end
             import("package.tools.cmake").install(package, configs)
+            if package:is_plat("mingw") then
+                local ext = package:config("shared") and ".dll.a" or ".a"
+                local libfiles = os.files(path.join(package:installdir("lib"), "libtbb*" .. ext))
+                for _, libfile in ipairs(libfiles) do
+                    if libfile:match(".+libtbb%d+" .. ext) then
+                        os.cp(libfile, path.join(package:installdir("lib"), "libtbb" .. ext))
+                        break
+                    end
+                end
+            end
         else
             local configs = {"-j4", "tbb_build_prefix=build_dir"}
             local cfg = package:debug() and "debug" or "release"

@@ -6,8 +6,10 @@ package("highfive")
     add_urls("https://github.com/BlueBrain/HighFive/archive/refs/tags/$(version).tar.gz",
              "https://github.com/BlueBrain/HighFive.git")
 
+    add_versions("v2.6.1", "b5002c1221cf1821e02fb2ab891b0160bac88b43f56655bd844a472106ca3397")
     add_versions("v2.3.1", "41728a1204bdfcdcef8cbc3ddffe5d744c5331434ce3dcef35614b831234fcd7")
 
+    add_patches("v2.6.1", path.join(os.scriptdir(), "patches", "fix-find-hdf5.patch"), "6a37e12f1796394d7691b36561829bf220336ec42a736c103509ac93537a36c9")
     add_patches("v2.3.1", path.join(os.scriptdir(), "patches", "fix-find-hdf5.patch"), "6a37e12f1796394d7691b36561829bf220336ec42a736c103509ac93537a36c9")
 
     add_deps("cmake")

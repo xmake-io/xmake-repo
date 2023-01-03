@@ -21,7 +21,7 @@ package("libogg")
         add_extsources("brew::libogg")
     end
 
-    on_install("windows", "macosx", "linux", "mingw", "iphoneos", "android", "cross", function (package)
+    on_install("windows", "macosx", "linux", "mingw", "iphoneos", "android", "cross", "wasm", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

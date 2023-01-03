@@ -25,7 +25,7 @@ package("libusb")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "IOKit")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
@@ -73,7 +73,7 @@ package("libusb")
         end
     end)
 
-    on_install("mingw", function (package) 
+    on_install("mingw", function (package)
         os.cp("include/libusb-1.0/*.h",package:installdir("include/libusb-1.0"))
         if package:is_arch("x64", "x86_64") then
             os.cp("MinGW64/dll/*", package:installdir("bin"))
@@ -83,8 +83,8 @@ package("libusb")
             os.cp("MinGW32/static/*", package:installdir("lib"))
         end
     end)
-    
-    on_install("macosx", "linux", function (package)
+
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
