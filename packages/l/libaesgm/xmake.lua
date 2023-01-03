@@ -4,18 +4,16 @@ package("libaesgm")
 
     add_urls("https://github.com/xmake-mirror/libaesgm/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xmake-mirror/libaesgm.git")
-    add_versions("2009.04.29", "9912e886c79d65e89612a5bf7d5198ee261eb6d6438af13ca5d0b668f93ba0ce")
+    add_versions("2013.1.1", "102353a486126c91ccab791c3e718d056d8fbb1be488da81b26561bc7ef4f363")
 
-    on_install("linux", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
-            target("libaesgm")
+            target("aesgm")
                 set_kind("$(kind)")
-                add_files("aescrypt.c", "aestab.c", "aeskey.c")
-                add_files("hmac.c", "sha2.c", "sha1.c", "pwd2key.c", "fileenc.c")
+                add_files("*.c")
                 add_headerfiles("*.h")
-                add_defines("USE_SHA256")
         ]])
         if package:config("shared") then
             configs.kind = "shared"
