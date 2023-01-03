@@ -7,7 +7,6 @@ package("pdfhummus")
              "https://github.com/galkahana/PDF-Writer.git")
     add_versions("4.1", "0c0d860b0ecea928709b9e4642fa21926eb2f626f702699c3b87afa2965b4857")
 
-    add_deps("cmake")
     add_deps("freetype", "zlib", "libaesgm")
 
     add_configs("libtiff", {description = "Supporting tiff image", default = false, type = "boolean"})
