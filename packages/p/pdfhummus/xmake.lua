@@ -5,8 +5,7 @@ package("pdfhummus")
 
     add_urls("https://github.com/galkahana/PDF-Writer/archive/refs/tags/$(version).tar.gz",
              "https://github.com/galkahana/PDF-Writer.git")
-    add_versions("4.1", "0C0D860B0ECEA928709B9E4642FA21926EB2F626F702699C3B87AFA2965B4857")
-    add_patches("4.1", path.join(os.scriptdir(), "patches", "4.1", "cmake.patch"), "3b4dccebdd0a63186a86c2428f250e74221a824fd19ff616aa3db846119d3209")
+    add_versions("4.1", "0c0d860b0ecea928709b9e4642fa21926eb2f626f702699c3b87afa2965b4857")
 
     add_deps("cmake")
     add_deps("freetype", "zlib", "libaesgm")
