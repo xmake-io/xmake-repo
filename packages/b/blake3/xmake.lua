@@ -30,6 +30,7 @@ package("blake3")
                         add_files("c/*x86-64_unix.S")
                     end
                 elseif is_arch("x86", "i386", "i686") then
+                    add_cxflags("-msse4.1")
                     add_files("c/blake3_portable.c")
                     add_files("c/blake3_sse2.c")
                     add_files("c/blake3_sse41.c")
