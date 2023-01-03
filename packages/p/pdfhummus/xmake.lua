@@ -11,7 +11,7 @@ package("pdfhummus")
     add_deps("cmake")
     add_deps("freetype", "zlib", "libaesgm")
 
-    add_configs("libtiff", {description = "Supporting tiff image", default = true, type = "boolean"})
+    add_configs("libtiff", {description = "Supporting tiff image", default = false, type = "boolean"})
     add_configs("libjpeg", {description = "Support DCT encoding", default = false, type = "boolean"})
     add_configs("libpng", {description = "Support png image", default = false, type = "boolean"})
 
