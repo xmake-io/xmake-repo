@@ -10,6 +10,7 @@ package("workflow")
     add_versions("v0.10.2", "42d87f4f9eaa80e882ccdd71cd81d20899050266")
     add_versions("v0.10.3", "116e6772cd13b88a3fb8420bcfbef98921252a1a")
     add_versions("v0.10.4", "83d6346ca2c1bcd003f67100a4c77418f8acfed5")
+    add_versions("v0.10.5", "9a5f8de1858a004c525dabbfa943f5753b8f1859")
 
     add_deps("cmake", "openssl")
 
