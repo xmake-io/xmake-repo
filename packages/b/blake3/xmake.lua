@@ -10,6 +10,10 @@ package("blake3")
 
     on_install(function (package)
         local configs = {}
+        if (package:is_plat("msys2") and package:is_arch("i686")) then
+            io.replace("blake3_avx2.c", "return _mm256_loadu_si256((const __m256i *)src);", "return _mm256_loadu_si256((const __m256i_u *)src);", {plain = true})
+        end
+
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("blake3")
@@ -30,7 +34,6 @@ package("blake3")
                         add_files("c/*x86-64_unix.S")
                     end
                 elseif is_arch("x86", "i386", "i686") then
-                    add_cxflags("-msse4.1")
                     add_files("c/blake3_portable.c")
                     add_files("c/blake3_sse2.c")
                     add_files("c/blake3_sse41.c")
