@@ -77,7 +77,7 @@ package("pdfhummus")
             using namespace std;
             using namespace PDFHummus;
             void test() {
-	 	        PDFWriter pdfWriter;
+                PDFWriter pdfWriter;
                 pdfWriter.Reset();
             }
         ]]}, {configs = {languages = "c++11"}}))
