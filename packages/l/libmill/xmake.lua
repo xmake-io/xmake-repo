@@ -2,15 +2,21 @@ package("libmill")
     set_homepage("http://libmill.org")
     set_description("Go-style concurrency in C")
 
-    set_urls("https://github.com/sustrik/libmill/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/sustrik/libmill.git")
+    set_urls("https://github.com/sustrik/libmill.git")
 
-    add_versions("1.18", "ff6903cd05f45c4cc050921d03201a93d2723ab59c480eb924f8f1ca8c6f0614")
+    add_versions("2021.9.9", "e8937e624757663f5379018cae3f2b3e916afb6c")
 
-    add_deps("autoconf", "automake", "libtool")
+    add_deps("cmake")
 
     on_install("macosx", "linux", function (package)
-        import("package.tools.autoconf").install(package)
+        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_PERF=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        import("package.tools.cmake").install(package, configs)
+        if package:config("shared") then
+            os.tryrm(path.join(package:installdir("lib"), "*.a"))
+        else
+            os.tryrm(path.join(package:installdir("lib"), "*.so"))
+        end
     end)
 
     on_test(function (package)
