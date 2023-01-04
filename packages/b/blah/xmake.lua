@@ -12,7 +12,7 @@ package("blah")
     if is_plat("macosx") then
         add_frameworks("ForceFeedback", "CoreVideo", "CoreGraphics", "CoreFoundation", "Foundation", "AppKit", "IOKit")
     elseif is_plat("windows") then
-        add_syslinks("d3d11", "d3dcompiler")
+        add_syslinks("d3d11", "d3dcompiler", "dxguid")
     end
 
     on_install("windows", "macosx", "linux", function (package)
