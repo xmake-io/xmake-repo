@@ -8,13 +8,11 @@ package("blake3")
     add_versions("1.3.3", "27d2bc4ee5945ba75434859521042c949463ee7514ff17aaef328e23ef83fec0")
     add_versions("1.3.1", "112becf0983b5c83efff07f20b458f2dbcdbd768fd46502e7ddd831b83550109")
 
+    on_install("msys2|i686")
+
     on_install(function (package)
         local configs = {}
-        if (package:is_plat("msys2") and package:is_arch("i686")) then
-            io.replace("blake3_avx2.c", "return _mm256_loadu_si256((const __m256i *)src);", "return _mm256_loadu_si256((const __m256i_u *)src);", {plain = true})
-            io.replace("blake3_sse41.c", "x, _mm_set_epi8(", "x, (__m128i)_mm_set_epi8(")
-        end
-
+        
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("blake3")
