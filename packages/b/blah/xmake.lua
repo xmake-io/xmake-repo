@@ -13,6 +13,7 @@ package("blah")
         add_frameworks("ForceFeedback", "CoreVideo", "CoreGraphics", "CoreFoundation", "Foundation", "AppKit", "IOKit")
     elseif is_plat("windows") then
         add_syslinks("d3d11", "d3dcompiler", "dxguid")
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     on_install("windows", "macosx", "linux", function (package)
