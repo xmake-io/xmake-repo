@@ -19,16 +19,12 @@ package("blah")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "if (NOT DEFINED BLAH_SDL2_LIBS)", "IF(FALSE)", {plain = true})
         import("package.tools.cmake").build(package, configs, {buildir = "build", packagedeps = "libsdl"})
-        if package:is_plat("windows") then
-            print(os.files("build/**.lib"))
-            print(os.files("build/**.dll"))
-        end
         os.cp("include", package:installdir())
         os.trycp("build/*.a", package:installdir("lib"))
         os.trycp("build/*.so", package:installdir("lib"))
         os.trycp("build/*.dylib", package:installdir("lib"))
-        os.trycp("build/*.lib", package:installdir("lib"))
-        os.trycp("build/*.dll", package:installdir("bin"))
+        os.trycp("build/*/*.lib", package:installdir("lib"))
+        os.trycp("build/*/*.dll", package:installdir("bin"))
     end)
 
     on_test(function (package)
