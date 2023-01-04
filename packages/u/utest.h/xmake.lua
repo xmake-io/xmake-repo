@@ -6,7 +6,7 @@ package("utest.h")
     add_urls("https://github.com/sheredom/utest.h.git")
     add_versions("2022.09.01", "d5d71b6623e23b3f860c996b31ec7bbfb0943119")
 
-    on_install(function (package)
+    on_install("windows", "linux", "bsd", "macosx", "mingw", "android", "iphoneos", "cross", function (package)
         os.cp("*.h", package:installdir("include"))
     end)
 
