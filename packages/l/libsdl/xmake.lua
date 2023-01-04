@@ -1,7 +1,7 @@
 package("libsdl")
     set_homepage("https://www.libsdl.org/")
     set_description("Simple DirectMedia Layer")
-	
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::SDL2")
     elseif is_plat("linux") then
@@ -72,14 +72,14 @@ package("libsdl")
                 component:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
             elseif package:is_plat("linux", "bsd") then
                 component:add("syslinks", "pthread", "dl")
-                if package:is_plat("bsd") then 
+                if package:is_plat("bsd") then
                     component:add("syslinks", "usbhid")
                 end
             elseif package:is_plat("android") then
                 component:add("syslinks", "dl", "log", "android", "GLESv1_CM", "GLESv2", "OpenSLES")
             elseif package:is_plat("iphoneos", "macosx") then
-                component:add("frameworks", "AudioToolbox", "AVFoundation", "CoreAudio", "CoreVideo", "Foundation", "Metal", "QuartzCore")
-		component:add("syslinks", "iconv")
+                component:add("frameworks", "AudioToolbox", "AVFoundation", "CoreAudio", "CoreVideo", "Foundation", "Metal", "QuartzCore", "CoreFoundation")
+		        component:add("syslinks", "iconv")
                 if package:is_plat("macosx") then
                     component:add("frameworks", "Cocoa", "Carbon", "ForceFeedback", "IOKit")
                 else
@@ -174,7 +174,7 @@ package("libsdl")
             opt = opt or {}
             opt.packagedeps = "libusb"
         elseif package:is_plat("wasm") then
-            -- emscripten enables USE_SDL by default which will conflict with the sdl headers 
+            -- emscripten enables USE_SDL by default which will conflict with the sdl headers
             opt = opt or {}
             opt.cflags = {"-sUSE_SDL=0"}
         end
