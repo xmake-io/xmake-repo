@@ -10,7 +10,7 @@ package("dpp")
     -- Keep all versions with the same major number. If D++ switch to a new major version,
     -- keep only the latest previous versions.
     -- i.e. if D++ switch to v11.x.x, keep only the latest v10.x.x and delete the rest.
-    add_versions("v10.0.22", "a777e0aecc2e13325bae5088ba34bd7dc8ec4f97ed7d456fb8412e891ddd9d2d")
+    add_versions("v10.0.22", "f8da36a9e24012fdff55a988e41d2015235b9e564b3151a1e5158fa1c7e05648")
 
     add_versions("v10.0.21", "8ef2bb75f16b80d742a99c3a18ab5a2a57bce74238518af9b9aca670c2d7034b")
 
