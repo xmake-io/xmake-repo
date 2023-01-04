@@ -7,7 +7,7 @@ package("libmill")
 
     add_versions("1.18", "ff6903cd05f45c4cc050921d03201a93d2723ab59c480eb924f8f1ca8c6f0614")
 
-    add_deps("autoconf", "automake")
+    add_deps("autoconf", "automake", "libtool")
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package)
