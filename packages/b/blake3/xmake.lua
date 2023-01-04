@@ -5,10 +5,12 @@ package("blake3")
 
     add_urls("https://github.com/BLAKE3-team/BLAKE3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/BLAKE3-team/BLAKE3.git")
+    add_versions("1.3.3", "27d2bc4ee5945ba75434859521042c949463ee7514ff17aaef328e23ef83fec0")
     add_versions("1.3.1", "112becf0983b5c83efff07f20b458f2dbcdbd768fd46502e7ddd831b83550109")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw|x86_64", "android", "iphoneos", "cross", function (package)
         local configs = {}
+
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("blake3")
@@ -28,6 +30,12 @@ package("blake3")
                     else
                         add_files("c/*x86-64_unix.S")
                     end
+                elseif is_arch("x86", "i386") then
+                    add_files("c/blake3_portable.c")
+                    add_files("c/blake3_sse2.c")
+                    add_files("c/blake3_sse41.c")
+                    add_files("c/blake3_avx2.c")
+                    add_files("c/blake3_avx512.c")
                 elseif is_arch("arm64", "arm64-v8a") then
                     add_files("c/blake3_neon.c")
                     add_defines("BLAKE3_USE_NEON=1")
