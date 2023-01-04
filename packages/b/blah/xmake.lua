@@ -11,6 +11,8 @@ package("blah")
 
     if is_plat("macosx") then
         add_frameworks("ForceFeedback", "CoreVideo", "CoreGraphics", "CoreFoundation", "Foundation", "AppKit", "IOKit")
+    elseif is_plat("windows") then
+        add_syslinks("d3d11", "d3dcompiler")
     end
 
     on_install("windows", "macosx", "linux", function (package)
@@ -30,14 +32,11 @@ package("blah")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             using namespace Blah;
-
             Batch batch;
-
             int test() {
                 Config config;
                 config.name = "blah app";
-                config.on_render = []()
-                {
+                config.on_render = []() {
                     auto target = App::backbuffer();
                     target->clear(Color::black);
 
