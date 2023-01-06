@@ -7,7 +7,10 @@ package("pdfhummus")
              "https://github.com/galkahana/PDF-Writer.git")
     add_versions("4.1", "0c0d860b0ecea928709b9e4642fa21926eb2f626f702699c3b87afa2965b4857")
 
-    add_deps("freetype", "zlib", "libaesgm")
+    add_deps("freetype", "zlib")
+    if not is_plat("windows","mingw") then
+        add_deps("libaesgm")
+    end
 
     add_configs("libtiff", {description = "Supporting tiff image", default = false, type = "boolean"})
     add_configs("libjpeg", {description = "Support DCT encoding", default = false, type = "boolean"})
@@ -20,8 +23,7 @@ package("pdfhummus")
             end
         end
     end)
-
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "windows", "mingw", "macosx", function (package)
         io.writefile("xmake.lua", [[
             option("libtiff", {description = "Enable libtiff", default = false})
             option("libpng", {description = "Enable libpng", default = false})
@@ -36,14 +38,24 @@ package("pdfhummus")
             if has_config("libjpeg") then
                 add_requires("libjpeg")
             end
-            add_requires("freetype", "zlib", "libaesgm")
+            if not is_plat("windows","mingw") then
+                add_requires("libaesgm")
+            end
+            add_requires("freetype", "zlib")
             target("pdfwriter")
                 set_kind("$(kind)")
                 add_files("PDFWriter/*.cpp")
                 add_headerfiles("(PDFWriter/*.h)")
                 add_packages("freetype")
                 add_packages("libtiff", "libpng", "libjpeg")
-                add_packages("libaesgm", "zlib")
+                add_packages("zlib")
+                if is_plat("windows","mingw") then
+                    add_packages("zlib")
+                    add_files("LibAesgm/*.c")
+                    add_includedirs("LibAesgm")
+                else
+                    add_packages("libaesgm")
+                end
                 if has_package("libtiff") then
                     add_defines("_INCLUDE_TIFF_HEADER")
                     add_cxflags("-Wno-deprecated-declarations")
