@@ -6,7 +6,7 @@ package("libaesgm")
              "https://github.com/xmake-mirror/libaesgm.git")
     add_versions("2013.1.1", "102353a486126c91ccab791c3e718d056d8fbb1be488da81b26561bc7ef4f363")
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "windows", "mingw", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
