@@ -14,6 +14,7 @@ package("linux-headers")
     add_versions("5.9.16", "b0d7abae88e5f91893627c645e680a95c818defd1b4fcaf3e2afb4b2b6b4ab86")
     add_versions("5.10.46", "569122a39c6b325befb9ac1c07da0c53e6363b3baacd82081d131b06c1dc1415")
     add_versions("5.16.9", "1660e7228ec299c187c19739d115ded97f6b1be05a24986c4c443e7c5e8b744f")
+    add_versions("5.19.1", "f4e27b926ea2c66b808db1f5706254cf92a8899e2108eedb0c3a7d12499aea55")
 
     add_configs("driver_modules", {description = "Enable driver modules files.", default = false, type = "boolean"})
 

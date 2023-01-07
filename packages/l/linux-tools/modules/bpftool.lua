@@ -1,5 +1,5 @@
 function load(package)
-    package:add("deps", "libcap", "libelf", "zlib", {host = true})
+    package:add("deps", "libcap", "elfutils", "zlib", {host = true})
     package:add("deps", "python 3.x", {kind = "binary"})
     package:addenv("PATH", "sbin")
 end
