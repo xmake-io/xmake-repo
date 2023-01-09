@@ -38,3 +38,20 @@ package("c-ares")
     end)
     on_install("macosx", "linux", function (package)
         local configs = {}
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared=yes")
+            table.insert(configs, "--enable-static=no")
+        else
+            table.insert(configs, "--enable-shared=no")
+            table.insert(configs, "--enable-static=yes")
+        end
+        if package:config("debug") then
+            table.insert(configs, "--enable-debug")
+        else
+            table.insert(configs, "--disable-debug")
+        end
+        import("package.tools.autoconf").install(package, configs)
+    end)
+    on_test(function (package)
+        assert(package:has_cfuncs("ares_library_init", {includes = "ares.h"}))
+    end)
