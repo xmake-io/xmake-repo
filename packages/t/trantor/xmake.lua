@@ -1,9 +1,7 @@
 package("trantor")
-
     set_homepage("https://github.com/an-tao/trantor/")
     set_description("a non-blocking I/O tcp network lib based on c++14/17")
     set_license("BSD-3-Clause")
-
     add_urls("https://github.com/an-tao/trantor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/an-tao/trantor.git")
     add_versions("v1.3.0", "524589dc9258e1ace3b2f887b835cfbeccab3c5efc4ba94963c59f3528248d9b")
@@ -14,6 +12,8 @@ package("trantor")
     add_versions("v1.5.6", "827aca30e120244a8ede9d07446481328d9a3869228f01fc4978b19301d66e65")
     add_versions("v1.5.7", "42576563afbf1e58c7d68f758cf3fca4d193496d4e3f82c80069d8389a7839d5")
     add_versions("v1.5.8", "705ec0176681be5c99fcc7af37416ece9d65ff4d907bca764cb11471b104fbf8")
+
+    add_patches("v1.5.8", path.join(os.scriptdir(), "patches", "1.5.8", "skip_doc.patch" ),"4124f3cc1e486ad75bc5ec2fa454ea5319d68287d0b1d8cfa3b5ab865f8ca5fd")
 
     add_deps("cmake")
     add_deps("openssl", "c-ares", {optional = true})
@@ -30,7 +30,6 @@ package("trantor")
         end
         import("package.tools.cmake").install(package, configs)
     end)
-
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <thread>
