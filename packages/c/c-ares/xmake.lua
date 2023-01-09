@@ -21,6 +21,7 @@ package("c-ares")
     if is_plat("macosx") then
         add_syslinks("resolv")
     end
+
     on_install("windows", function (package)
         local configs = {"-f", "Makefile.msvc"}
         local cfg = (package:config("shared") and "dll" or "lib") .. "-" .. (package:config("debug") and "debug" or "release")
@@ -36,6 +37,7 @@ package("c-ares")
             package:add("defines", "CARES_STATICLIB")
         end
     end)
+
     on_install("macosx", "linux", function (package)
         local configs = {}
         if package:config("shared") then
@@ -52,6 +54,7 @@ package("c-ares")
         end
         import("package.tools.autoconf").install(package, configs)
     end)
+
     on_test(function (package)
         assert(package:has_cfuncs("ares_library_init", {includes = "ares.h"}))
     end)
