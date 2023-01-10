@@ -12,7 +12,7 @@ package("iverilog")
         add_deps("autoconf", "automake", "libtool", "flex", "bison", "gperf")
     end
 
-    on_install("windows", "mingw", function (package)
+    on_install("windows", function (package)
         os.cp("*", package:installdir())
     end)
 
