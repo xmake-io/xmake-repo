@@ -20,8 +20,7 @@ package("pdfhummus")
             end
         end
     end)
-
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "windows", "mingw", "macosx", function (package)
         io.writefile("xmake.lua", [[
             option("libtiff", {description = "Enable libtiff", default = false})
             option("libpng", {description = "Enable libpng", default = false})
@@ -55,6 +54,10 @@ package("pdfhummus")
                 end
                 if not has_package("libjpeg") then
                     add_defines("PDFHUMMUS_NO_DCT=1")
+                end
+                -- port symbols for linker
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
                 end
         ]])
         local configs = {}
