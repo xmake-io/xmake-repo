@@ -8,7 +8,7 @@ package("iverilog")
 
     add_deps("autoconf", "automake", "libtool", "flex", "bison", "gperf")
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("mingw", "macosx", "linux", function (package)
         local configs = {}
         os.vrunv("sh", {"./autoconf.sh"})
         import("package.tools.autoconf").install(package, configs)
