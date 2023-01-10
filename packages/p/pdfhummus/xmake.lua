@@ -56,6 +56,10 @@ package("pdfhummus")
                 if not has_package("libjpeg") then
                     add_defines("PDFHUMMUS_NO_DCT=1")
                 end
+                -- port symbols for linker
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
         ]])
         local configs = {}
         if package:config("shared") then
