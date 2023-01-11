@@ -24,6 +24,17 @@ package("vulkan-headers")
         import("package.tools.cmake").install(package)
     end)
 
+    on_fetch(function (package, opt)
+        if opt.system then
+            import("detect.sdks.find_vulkansdk")
+
+            local vulkansdk = find_vulkansdk()
+            if vulkansdk then
+                return {includedirs = vulkansdk.includedirs, linkdirs = vulkansdk.linkdirs, links = {}}        
+            end
+        end
+    end)
+
     on_test(function (package)
         assert(package:check_csnippets({test = [[
             void test() {
