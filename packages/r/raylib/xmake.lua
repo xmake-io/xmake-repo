@@ -63,7 +63,7 @@ package("raylib")
         table.insert(configs, "-DPLATFORM=Web")
     end)
 
-    on_install("linux|arm64", "raspberry-pi", function (package)
+    on_install("linux|arm64", "linux|arm64-v8a", "raspberry-pi", function (package)
         table.insert(configs, '-DPLATFORM="Raspberry Pi"')
     end)
 
