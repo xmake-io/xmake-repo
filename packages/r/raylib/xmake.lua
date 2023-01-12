@@ -42,9 +42,14 @@ package("raylib")
     end
     add_deps("opengl", {optional = true})
 
-    add_configs("use_external_glfw", {description = "Link raylib against system GLFW instead of embedded one.", default = "OFF", values = {"OFF", "ON", "IF_POSSIBLE"}})
-    add_configs("platform", {description = "Platform to build for.", default = "Desktop", values = {"Desktop", "Web", "Android", "Raspberry Pi"}})
-    add_configs("opengl_version", {description = "Force a specific OpenGL Version.", default = "OFF", values = {"OFF", "3.3", "2.1", "1.1", "ES 2.0"}})
+    add_configs("external_glfw", {description = "Link raylib against system GLFW instead of embedded one.", default = false, type = "boolean"})
+    add_configs("opengl_version", {description = "Force a specific OpenGL Version.", values = {"3.3", "2.1", "1.1", "ES 2.0"}})
+
+    on_load(function (package)
+        if package:config("external_glfw") then
+            package:add("deps", "glfw")
+        end
+    end)
 
     on_install("macosx|x86_64", function (package)
         os.cp("include/*.h", package:installdir("include"))
@@ -55,10 +60,27 @@ package("raylib")
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCUSTOMIZE_BUILD=ON") -- Needed for the below flags
-        table.insert(configs, "USE_EXTERNAL_GLFW=" .. (package:config("use_external_glfw")))
-        table.insert(configs, "PLATFORM=" .. (package:config("platform")))
+        table.insert(configs, "-DCUSTOMIZE_BUILD=ON")
+
+        table.insert(configs, "USE_EXTERNAL_GLFW=" .. (package:config("external_glfw") and "ON" or "OFF"))
+
+        local platform
+        if package:is_plat("windows", "macosx", "linux") then
+            platform = "Desktop"
+        elseif package:is_plat("android") then
+            platform = "Android"
+        elseif package:is_plat("web") then
+            platform = "Web"
+        elseif package:is_plat("raspberry-pi") then
+            platform = "Raspberry Pi"
+        end
+
+        if platform then
+            table.insert(configs, "PLATFORM=" .. platform)
+        end
+
         table.insert(configs, "OPENGL_VERSION=" .. (package:config("opengl_version")))
+
         import("package.tools.cmake").install(package, configs, {packagedeps = {"libx11", "libxrender", "libxrandr", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext"}})
     end)
 
