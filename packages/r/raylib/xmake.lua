@@ -60,9 +60,14 @@ package("raylib")
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCUSTOMIZE_BUILD=ON")
 
-        table.insert(configs, "USE_EXTERNAL_GLFW=" .. (package:config("external_glfw") and "ON" or "OFF"))
+        if package:config("external_glfw") or package:config("opengl_version") then
+            table.insert(configs, "-DCUSTOMIZE_BUILD=ON")
+        end
+
+        if package:config("external_glfw") then
+            table.insert(configs, "USE_EXTERNAL_GLFW=" .. (package:config("external_glfw") and "ON" or "OFF"))
+        end
 
         local platform
         if package:is_plat("windows", "macosx", "linux") then
@@ -79,7 +84,9 @@ package("raylib")
             table.insert(configs, "PLATFORM=" .. platform)
         end
 
-        table.insert(configs, "OPENGL_VERSION=" .. (package:config("opengl_version")))
+        if package:config("opengl_version") then
+            table.insert(configs, "OPENGL_VERSION=" .. (package:config("opengl_version")))
+        end
 
         import("package.tools.cmake").install(package, configs, {packagedeps = {"libx11", "libxrender", "libxrandr", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext"}})
     end)
