@@ -40,54 +40,36 @@ package("raylib")
         add_syslinks("pthread", "dl", "m")
         add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext")
     end
+
     add_deps("opengl", {optional = true})
 
-    add_configs("external_glfw", {description = "Link raylib against system GLFW instead of embedded one.", default = false, type = "boolean"})
-    add_configs("opengl_version", {description = "Force a specific OpenGL Version.", values = {"3.3", "2.1", "1.1", "ES 2.0"}})
-
-    on_load(function (package)
-        if package:config("external_glfw") then
-            package:add("deps", "glfw")
-        end
-    end)
+    local configs = {"-DBUILD_EXAMPLES=OFF"}
 
     on_install("macosx|x86_64", function (package)
         os.cp("include/*.h", package:installdir("include"))
         os.cp("lib/libraylib.a", package:installdir("lib"))
+        table.insert(configs, "-DPLATFORM=Desktop")
     end)
 
     on_install("windows", "linux", "macosx|arm64", "mingw", function (package)
-        local configs = {"-DBUILD_EXAMPLES=OFF"}
+        table.insert(configs, "-DPLATFORM=Desktop")
+    end)
+
+    on_install("android", function (package)
+        table.insert(configs, "-DPLATFORM=Android")
+    end)
+
+    on_install("web", function (package)
+        table.insert(configs, "-DPLATFORM=Web")
+    end)
+
+    on_install("linux|arm64", "raspberry-pi", function (package)
+        table.insert(configs, '-DPLATFORM="Raspberry Pi"')
+    end)
+
+    on_install(function (package)
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
-        if package:config("external_glfw") or package:config("opengl_version") then
-            table.insert(configs, "-DCUSTOMIZE_BUILD=ON")
-        end
-
-        if package:config("external_glfw") then
-            table.insert(configs, "USE_EXTERNAL_GLFW=" .. (package:config("external_glfw") and "ON" or "OFF"))
-        end
-
-        local platform
-        if package:is_plat("windows", "macosx", "linux") then
-            platform = "Desktop"
-        elseif package:is_plat("android") then
-            platform = "Android"
-        elseif package:is_plat("web") then
-            platform = "Web"
-        elseif package:is_plat("raspberry-pi") then
-            platform = "Raspberry Pi"
-        end
-
-        if platform then
-            table.insert(configs, "PLATFORM=" .. platform)
-        end
-
-        if package:config("opengl_version") then
-            table.insert(configs, "OPENGL_VERSION=" .. (package:config("opengl_version")))
-        end
-
         import("package.tools.cmake").install(package, configs, {packagedeps = {"libx11", "libxrender", "libxrandr", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext"}})
     end)
 
