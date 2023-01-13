@@ -27,10 +27,18 @@ package("verilator")
     on_install("windows", function (package)
         import("package.tools.cmake")
         local configs = {}
+        local cxflags = {}
+        local flex = package:dep("flex"):fetch()
+        if flex then
+            local includedirs = flex.sysincludedirs or flex.includedirs
+            for _, includedir in ipairs(includedirs) do
+                table.insert(cxflags, "-I" .. includedir)
+            end
+        end
         local envs = cmake.buildenvs(package)
         envs.WIN_FLEX_BISON = package:dep("winflexbison"):installdir()
         io.replace("src/CMakeLists.txt", '${ASTGEN} -I"${srcdir}"', '${ASTGEN} -I "${srcdir}"', {plain = true})
-        cmake.install(package, configs, {envs = envs})
+        cmake.install(package, configs, {envs = envs, cxflags = cxflags})
     end)
 
     on_install("linux", "macosx", function (package)
