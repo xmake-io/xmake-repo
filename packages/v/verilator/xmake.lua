@@ -11,7 +11,11 @@ package("verilator")
 --    add_versions("v5.004", "7d193a09eebefdbec8defaabfc125663f10cf6ab0963ccbefdfe704a8a4784d2")
 
     add_deps("bison")
-    add_deps("flex", {kind = "library"})
+    if is_plat("windows") then
+        add_deps("winflexbison", {kind = "library"})
+    else
+        add_deps("flex", {kind = "library"})
+    end
     add_deps("python 3.x", {kind = "binary"})
 
     if is_plat("windows") then
@@ -21,7 +25,11 @@ package("verilator")
     end
 
     on_install("windows", function (package)
-        import("package.tools.cmake").install(package)
+        import("package.tools.cmake")
+        local configs = {}
+        local envs = cmake.buildenvs(package)
+        envs.WIN_FLEX_BISON = package:dep("winflexbison"):installdir()
+        cmake.install(package, configs, {envs = envs})
     end)
 
     on_install("linux", "macosx", function (package)
