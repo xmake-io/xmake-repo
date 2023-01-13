@@ -10,11 +10,11 @@ package("verilator")
     -- wait for next release with cmake
 --    add_versions("v5.004", "7d193a09eebefdbec8defaabfc125663f10cf6ab0963ccbefdfe704a8a4784d2")
 
-    add_deps("bison")
     if is_plat("windows") then
         add_deps("winflexbison", {kind = "library"})
     else
         add_deps("flex", {kind = "library"})
+        add_deps("bison")
     end
     add_deps("python 3.x", {kind = "binary"})
 
