@@ -42,5 +42,8 @@ package("winflexbison")
         end
         if package:config("flex") then
             os.vrun("flex.exe -h")
+            if not package:is_binary() then
+                assert(package:has_cxxtypes("FlexLexer", {includes = "FlexLexer.h"}))
+            end
         end
     end)
