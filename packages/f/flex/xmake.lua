@@ -23,6 +23,7 @@ package("flex")
 
     on_install("windows", function (package)
         os.cp(path.join(package:dep("winflexbison"):installdir(), "*"), package:installdir())
+        os.rm(path.join(package:installdir(), "bin", "bison.exe"))
     end)
 
     on_install("macosx", "linux", "bsd", "android", "iphoneos", "cross", function (package)

@@ -27,6 +27,8 @@ package("bison")
     on_install(function (package)
         if package:is_plat("windows") then
             os.cp(path.join(package:dep("winflexbison"):installdir(), "*"), package:installdir())
+            os.rm(path.join(package:installdir(), "bin", "flex.exe"))
+            os.rm(path.join(package:installdir(), "include", "FlexLexer.h"))
         else
             import("package.tools.autoconf").install(package)
             os.rm(package:installdir("share", "doc"))
