@@ -28,7 +28,7 @@ package("verilator")
         import("package.tools.cmake")
         local configs = {}
         local cxflags = {}
-        local flex = package:dep("flex"):fetch()
+        local flex = package:dep("winflexbison"):fetch()
         if flex then
             local includedirs = flex.sysincludedirs or flex.includedirs
             for _, includedir in ipairs(includedirs) do
