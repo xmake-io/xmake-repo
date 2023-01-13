@@ -28,7 +28,9 @@ package("flex")
 
     on_install("macosx", "linux", "bsd", "android", "iphoneos", "cross", function (package)
         import("package.tools.autoconf").install(package)
-        package:add("links", "")
+        if not package:is_binary() then
+            package:add("links", "")
+        end
     end)
 
     on_test(function (package)
