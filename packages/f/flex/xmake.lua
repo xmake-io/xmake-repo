@@ -28,6 +28,7 @@ package("flex")
 
     on_install("macosx", "linux", "bsd", "android", "iphoneos", "cross", function (package)
         import("package.tools.autoconf").install(package)
+        package:add("links", "")
     end)
 
     on_test(function (package)
@@ -35,6 +36,6 @@ package("flex")
             os.vrun("flex -h")
         end
         if not package:is_binary() then
-            assert(package:has_cxxtypes("FlexLexer", {includes = "FlexLexer.h"}))
+            assert(package:has_cxxincludes("FlexLexer.h"))
         end
     end)
