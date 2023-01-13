@@ -1,5 +1,4 @@
 package("flex")
-
     set_kind("binary")
     set_homepage("https://github.com/westes/flex/")
     set_license("BSD-2-Clause")
@@ -16,7 +15,9 @@ package("flex")
         add_deps("m4")
     end
 
-    on_load("macosx", "linux", "bsd", "android", "iphoneos", "cross", function (package)
+    on_load("macosx", "linux", "bsd", function (package)
+        -- we always set it, because flex may be modified as library
+        -- by add_deps("flex", {kind = "library"})
         package:addenv("PATH", "bin")
     end)
 
@@ -29,5 +30,10 @@ package("flex")
     end)
 
     on_test(function (package)
-        os.vrun("flex -h")
+        if not package:is_cross() then
+            os.vrun("flex -h")
+        end
+        if not package:is_binary() then
+            assert(package:has_cxxtypes("FlexLexer", {includes = "FlexLexer.h"}))
+        end
     end)

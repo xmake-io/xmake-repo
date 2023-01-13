@@ -3,14 +3,15 @@ package("verilator")
     set_homepage("https://verilator.org")
     set_description("Verilator open-source SystemVerilog simulator and lint system")
 
-    add_urls("https://github.com/verilator/verilator/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/verilator/verilator.git")
+--    add_urls("https://github.com/verilator/verilator/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/verilator/verilator.git")
     add_versions("2023.1.10", "5fce23e90d2a721bb712dc9aacde594558489dda")
 
     -- wait for next release with cmake
 --    add_versions("v5.004", "7d193a09eebefdbec8defaabfc125663f10cf6ab0963ccbefdfe704a8a4784d2")
 
-    add_deps("bison", "flex")
+    add_deps("bison")
+    add_deps("flex", {kind = "library"})
     add_deps("python 3.x", {kind = "binary"})
 
     if is_plat("windows") then
@@ -24,8 +25,17 @@ package("verilator")
     end)
 
     on_install("linux", "macosx", function (package)
+        local configs = {}
+        local cxflags = {}
+        local flex = package:dep("flex"):fetch()
+        if flex then
+            local includedirs = flex.sysincludedirs or flex.includedirs
+            for _, includedir in ipairs(includedirs) do
+                table.insert(cxflags, "-I" .. includedir)
+            end
+        end
         os.vrun("autoconf")
-        import("package.tools.autoconf").install(package)
+        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
