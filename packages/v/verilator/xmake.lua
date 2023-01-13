@@ -29,7 +29,7 @@ package("verilator")
         local configs = {}
         local envs = cmake.buildenvs(package)
         envs.WIN_FLEX_BISON = package:dep("winflexbison"):installdir()
-        io.replace("CMakeLists.txt", '${ASTGEN} -I"${srcdir}"', '${ASTGEN} -I "${srcdir}"', {plain = true})
+        io.replace("src/CMakeLists.txt", '${ASTGEN} -I"${srcdir}"', '${ASTGEN} -I "${srcdir}"', {plain = true})
         cmake.install(package, configs, {envs = envs})
     end)
 
