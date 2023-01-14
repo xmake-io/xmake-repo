@@ -58,9 +58,9 @@ package("verilator")
             end
         end
         os.vrun("autoconf")
-        local envs = autoconf.buildenvs(package)
+        local envs = autoconf.buildenvs(package, {cxflags = cxflags})
         envs.VERILATOR_ROOT = nil
-        autoconf.install(package, configs, {cxflags = cxflags, envs = envs})
+        autoconf.install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
