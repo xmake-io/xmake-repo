@@ -22,6 +22,8 @@ package("verilator")
             end
             package:add("deps", "python 3.x", {kind = "binary"})
         end
+        package:mark_as_pathenv("VERILATOR_ROOT")
+        package:addenv("VERILATOR_ROOT", ".")
     end)
 
     on_install("windows", function (package)
@@ -37,6 +39,7 @@ package("verilator")
             end
         end
         local envs = cmake.buildenvs(package)
+        envs.VERILATOR_ROOT = nil
         envs.WIN_FLEX_BISON = winflexbison:installdir()
         io.replace("src/CMakeLists.txt", '${ASTGEN} -I"${srcdir}"', '${ASTGEN} -I "${srcdir}"', {plain = true})
         cmake.install(package, configs, {envs = envs, cxflags = cxflags})
@@ -44,6 +47,7 @@ package("verilator")
     end)
 
     on_install("linux", "macosx", function (package)
+        import("package.tools.autoconf")
         local configs = {}
         local cxflags = {}
         local flex = package:dep("flex"):fetch()
@@ -54,7 +58,9 @@ package("verilator")
             end
         end
         os.vrun("autoconf")
-        import("package.tools.autoconf").install(package, configs, {cxflags = cxflags})
+        local envs = autoconf.buildenvs(package)
+        envs.VERILATOR_ROOT = nil
+        autoconf.install(package, configs, {cxflags = cxflags, envs = envs})
     end)
 
     on_test(function (package)
