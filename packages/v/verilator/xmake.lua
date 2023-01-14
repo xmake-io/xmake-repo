@@ -10,19 +10,19 @@ package("verilator")
     -- wait for next release with cmake
 --    add_versions("v5.004", "7d193a09eebefdbec8defaabfc125663f10cf6ab0963ccbefdfe704a8a4784d2")
 
-    if is_plat("windows") then
-        add_deps("winflexbison", {kind = "library"})
-    else
-        add_deps("flex", {kind = "library"})
-        add_deps("bison")
-    end
-    add_deps("python 3.x", {kind = "binary"})
-
-    if is_plat("windows") then
-        add_deps("cmake")
-    else
-        add_deps("autoconf", "automake", "libtool")
-    end
+    on_load(function (package)
+        if not package:is_precompiled() then
+            if package:is_plat("windows") then
+                package:add("deps", "cmake")
+                package:add("deps", "winflexbison", {kind = "library"})
+            else
+                package:add("deps", "flex", {kind = "library"})
+                package:add("deps", "bison")
+                package:add("deps", "autoconf", "automake", "libtool")
+            end
+            package:add("deps", "python 3.x", {kind = "binary"})
+        end
+    end)
 
     on_install("windows", function (package)
         import("package.tools.cmake")
