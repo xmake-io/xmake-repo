@@ -5,7 +5,7 @@ package("dpp")
 
     add_urls("https://github.com/brainboxdotcc/DPP/archive/refs/tags/$(version).tar.gz",
              "https://github.com/brainboxdotcc/DPP.git")
- 
+
     -- NOTE !
     -- Keep all versions with the same major number. If D++ switch to a new major version,
     -- keep only the latest previous versions.
@@ -55,7 +55,8 @@ package("dpp")
 
     add_deps("nlohmann_json", "openssl", "zlib")
 
-    add_configs("have_voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = true})
+    add_configs("have_voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = true })
+    add_configs("enable_coro", { description = "Enable experimental support of C++ coroutines for the library.", default = false, type = "boolean" })
 
     if is_plat("linux", "macosx") then
         add_syslinks("pthread")
@@ -71,6 +72,10 @@ package("dpp")
             package:add("deps", "libsodium", "libopus")
         end
 
+        if package:config("enable_coro") then
+            package:add("defines", "DPP_CORO")
+        end
+
         if package:version():le("v10.0.13") then
             package:add("deps", "fmt")
         end
@@ -83,21 +88,31 @@ package("dpp")
             io.replace(file, "#include <dpp/nlohmann/", "#include <nlohmann/", {plain = true})
         end
 
-	for _, file in ipairs(os.files("src/**.cpp")) do
-		io.replace(file, "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
-	end
+        for _, file in ipairs(os.files("src/**.cpp")) do
+            io.replace(file, "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
+        end
 
-	if package:version():le("v10.0.14") then
-                os.rmdir("include/dpp/fmt")
-	end
+        if package:version():le("v10.0.14") then
+                    os.rmdir("include/dpp/fmt")
+        end
         io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
         os.rmdir("include/dpp/nlohmann")
 
+        local config = { enable_coro = package:config("enable_coro") }
+
+        if package:config("shared") then
+            configs.kind = "shared"
+        end
+
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
+        local language = "c++17"
+        if package:config("enable_coro") then
+            language = "c++20"
+        end
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 dpp::cluster bot(std::getenv("BOT_TOKEN"));
@@ -110,5 +125,5 @@ package("dpp")
                 });
                 bot.start(false);
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "dpp/dpp.h"}))
+        ]]}, {configs = {languages = language}, includes = "dpp/dpp.h"}))
     end)

@@ -2,11 +2,28 @@ add_rules("mode.debug", "mode.release")
 
 add_requires("fmt", "nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
 
+option("enable_coro")
+    set_default(false)
+option_end()
+
 target("dpp")
     set_kind("$(kind)")
-    set_languages("c++17")
-    add_includedirs("include")
     add_headerfiles("include/(dpp/**.h)")
+    if has_config("enable_coro")
+        set_languages("c++20")
+        add_defines("DPP_CORO", {public = true})
+
+        if is_plat("windows") then
+            add_cxxflags("/await:strict")
+        else
+            add_cxxflags("-fcoroutines")
+        end
+    else
+        set_languages("c++17")
+        remove_headerfiles("include/dpp/cluster_coro_calls.h")
+        remove_headerfiles("include/dpp/coro.h")
+    end
+    add_includedirs("include")
     add_files("src/dpp/**.cpp")
     add_packages("fmt", "nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
 
