@@ -14,6 +14,7 @@ package("workflow")
     end
 
     on_install("linux", "macosx", "android", function (package)
+        os.mkdir(package:installdir("include"))
         os.mkdir(package:installdir("lib"))
         local configs = {}
         if package:config("shared") then
