@@ -10,28 +10,20 @@ package("workflow")
     add_versions("v0.10.2", "42d87f4f9eaa80e882ccdd71cd81d20899050266")
     add_versions("v0.10.3", "116e6772cd13b88a3fb8420bcfbef98921252a1a")
     add_versions("v0.10.4", "83d6346ca2c1bcd003f67100a4c77418f8acfed5")
-    add_versions("v0.10.5", "4216034831c142bb9be9a9ca781dea737c606919")
+    add_versions("v0.10.5", "2cbf7082b1ccfc51028e578109b93d0ff45414df")
 
-    add_deps("cmake", "openssl")
+    add_deps("openssl")
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
 
     on_install("linux", "macosx", "android", function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("android") then
-            io.replace("src/CMakeLists.txt", "add_subdirectory(client)", "add_subdirectory(client)\nlink_libraries(ssl crypto)", {plain = true})
-        end
-        import("package.tools.cmake").install(package, configs, {packagedeps = "openssl"})
+	local configs = {}
         if package:config("shared") then
-            os.tryrm(path.join(package:installdir("lib"), "*.a"))
-        else
-            os.tryrm(path.join(package:installdir("lib"), "*.so"))
-            os.tryrm(path.join(package:installdir("lib"), "*.dylib"))
+            configs.kind = "shared"
         end
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
