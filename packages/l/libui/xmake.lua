@@ -8,49 +8,48 @@ package("libui")
     add_deps("meson", "ninja")
 
     on_install(function (package)
-        import("package.tools.meson").install(package, {
-            "-Dexamples=false",
-            "-Dtests=false",
-            "--default-library="..package:config("shared") and "shared" or "static",
-        })
+        local config = { "-Dexamples=false", "-Dtests=false" }
+        table.insert(config, "--default-library=" .. (package:config("shared") and "shared" or "static"))
+
+        import("package.tools.meson").install(package, config)
     end)
 
     on_test(function (package)
-		assert(package:check_csnippets({test = [[
-#include <stdio.h>
-#include <ui.h>
+        assert(package:check_csnippets({test = [[
+        #include <stdio.h>
+        #include <ui.h>
 
-int onClosing(uiWindow *w, void *data)
-{
-	uiQuit();
-	return 1;
-}
+        int onClosing(uiWindow *w, void *data)
+        {
+            uiQuit();
+            return 1;
+        }
 
-int main(void)
-{
-	uiInitOptions o = {0};
-	const char *err;
-	uiWindow *w;
-	uiLabel *l;
+        void test(void)
+        {
+            uiInitOptions o = {0};
+            const char *err;
+            uiWindow *w;
+            uiLabel *l;
 
-	err = uiInit(&o);
-	if (err != NULL) {
-		fprintf(stderr, "Error initializing libui-ng: %s\n", err);
-		uiFreeInitError(err);
-		return 1;
-	}
+            err = uiInit(&o);
+            if (err != NULL) {
+                fprintf(stderr, "Error initializing libui-ng: %s\n", err);
+                uiFreeInitError(err);
+                return 1;
+            }
 
-	// Create a new window
-	w = uiNewWindow("Hello World!", 300, 30, 0);
-	uiWindowOnClosing(w, onClosing, NULL);
+            // Create a new window
+            w = uiNewWindow("Hello World!", 300, 30, 0);
+            uiWindowOnClosing(w, onClosing, NULL);
 
-	l = uiNewLabel("Hello, World!");
-	uiWindowSetChild(w, uiControl(l));
+            l = uiNewLabel("Hello, World!");
+            uiWindowSetChild(w, uiControl(l));
 
-	uiControlShow(uiControl(w));
-	uiMain();
-	uiUninit();
-	return 0;
-}
-		]]}, { configs = { languages = "c99" }, includes = "ui.h" }))
+            uiControlShow(uiControl(w));
+            uiMain();
+            uiUninit();
+            return 0;
+        }
+        ]]}, { configs = { languages = "c99" }, includes = "ui.h" }))
     end)
