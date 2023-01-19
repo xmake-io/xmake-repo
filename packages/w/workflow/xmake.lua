@@ -33,5 +33,5 @@ package("workflow")
                 server.stop();
             }
         }
-    ]]}, {configs = {languages = "c++11"}, includes = "workflow/WFHttpServer.h"}))
+    ]]}, {configs = {languages = "c++11"}}))
     end)
