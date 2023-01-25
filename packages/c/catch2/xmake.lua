@@ -19,7 +19,7 @@ package("catch2")
     add_versions("v2.9.2", "dc486300de22b0d36ddba1705abb07b9e5780639d824ba172ddf7062b2a1bf8f")
 
     add_configs("cxx17", {description = "Compiles Catch as a C++17 library (requires a C++17 compiler).", default = true, type = "boolean"})
-    add_configs("catch2main",{description = "Use Catch2 entry point", default = true, type = "boolean"})
+    add_configs("catch2main", {description = "Use Catch2 entry point", default = true, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::catch")
