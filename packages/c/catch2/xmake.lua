@@ -30,26 +30,23 @@ package("catch2")
     end
 
     on_load(function (package)
-        package:add("deps", "cmake")
-        if package:config("catch2main") then
-            package:add("components", "main")
-        end
-        package:add("components", "lib")
-        if package:version():lt("3.0") then
+        if package:version():ge("3.0") then
+            package:add("deps", "cmake")
+            if package:config("catch2main") then
+                package:add("components", "main")
+            end
+            package:add("components", "lib")
+        else
             package:set("kind", "library", {headeronly = true})
         end
     end)
 
     on_component("main", function (package, component)
-        if package:version():ge("3.0") then
-            component:add("links", "Catch2Main")
-        end
+        component:add("links", "Catch2Main")
     end)
 
     on_component("lib", function (package, component)
-        if package:version():ge("3.0") then
-            component:add("links", "Catch2")
-        end
+        component:add("links", "Catch2")
     end)
 
     on_install(function (package)
