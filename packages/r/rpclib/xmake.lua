@@ -8,11 +8,12 @@ package("rpclib")
 
     add_deps("cmake")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("wsock32", "ws2_32")
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_install("windows", "linux", "macosx", "bsd", "iphoneos", "wasm", "android", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "bsd", "iphoneos", "wasm", "android", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
