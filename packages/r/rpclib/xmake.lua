@@ -9,7 +9,7 @@ package("rpclib")
     add_deps("cmake")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32")
+        add_syslinks("wsock32", "ws2_32")
     end
 
     on_install("windows", "mingw", "linux", "macosx", "bsd", "iphoneos", "wasm", "android", function (package)
