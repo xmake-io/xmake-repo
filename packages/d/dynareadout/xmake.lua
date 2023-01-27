@@ -6,6 +6,7 @@ package("dynareadout")
     add_urls("https://github.com/PucklaJ/dynareadout/archive/refs/tags/$(version).tar.gz",
              "https://github.com/PucklaJ/dynareadout.git")
     add_versions("22.12", "2e430c718c610d4425e23d4c6c87fe4794bb8c76d3cc015988706dbf5027daa4")
+    add_versions("23.01", "578080c734927cc925e7e91a52317bc3e710965071f1da50853b1e48f81a1c0f")
 
     add_configs("cpp",       {description = "Build the C++ bindings",        default = true,  type = "boolean"})
     add_configs("profiling", {description = "Build with profiling features", default = false, type = "boolean"})
