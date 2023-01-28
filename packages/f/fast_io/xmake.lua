@@ -10,7 +10,7 @@ package("fast_io")
 
     add_versions("2023.1.28", "b99b32ab429eb6256fd8de1e17fe38e4c54eb49c")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "msys", "mingw", function (package)
         os.cp("include", package:installdir())
     end)
 
