@@ -8,8 +8,10 @@ package("fast_io")
     add_urls("https://bitbucket.org/ejsvifq_mabmip/fast_io.git")
     add_urls("https://gitee.com/qabeowjbtkwb/fast_io.git")
 
+    add_versions("2023.1.28", "b99b32ab429eb6256fd8de1e17fe38e4c54eb49c")
+
     on_install(function (package)
-        os.cp("include/*", package:installdir("include"))
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
