@@ -12,5 +12,6 @@ package("olive.c")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("olivec_fill", {includes = "olive.c"}))
+        assert(package:has_cfuncs("olivec_fill", {includes = "olive.c",
+            configs = {defines = "STB_IMAGE_WRITE_IMPLEMENTATION"}}))
     end)
