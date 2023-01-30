@@ -36,7 +36,7 @@ package("libui")
             if (err != NULL) {
                 fprintf(stderr, "Error initializing libui-ng: %s\n", err);
                 uiFreeInitError(err);
-                return 1;
+                return;
             }
 
             // Create a new window
