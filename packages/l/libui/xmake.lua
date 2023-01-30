@@ -49,7 +49,6 @@ package("libui")
             uiControlShow(uiControl(w));
             uiMain();
             uiUninit();
-            return 0;
         }
         ]]}, { configs = { languages = "c99" }, includes = "ui.h" }))
     end)
