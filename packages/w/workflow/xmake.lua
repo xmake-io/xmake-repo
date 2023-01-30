@@ -5,7 +5,7 @@ package("workflow")
 
     add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/workflow.git")
-    add_versions("v0.10.6", "654fe336ebaa8e715aff1975e3276bb5fd637529")
+    add_versions("v0.10.6", "20d2177dda391676235687b03980eb50e9ea11dd")
 
     add_deps("openssl")
 
