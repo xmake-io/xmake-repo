@@ -6,11 +6,10 @@ package("xz")
     set_urls("https://downloads.sourceforge.net/project/lzmautils/xz-$(version).tar.gz",
              "https://tukaani.org/xz/xz-$(version).tar.gz")
     add_versions("5.2.5", "f6f4910fd033078738bd82bfba4f49219d03b17eb0794eb91efbae419f4aba10")
+    add_versions("5.2.10", "eb7a3b2623c9d0135da70ca12808a214be9c019132baaa61c9e1d198d1d9ded3")
+    add_versions("5.4.1", "e4b0f81582efa155ccf27bb88275254a429d44968e488fc94b806f2a61cd3e22")
 
     on_load(function (package)
-        if is_plat(os.host()) then
-            package:addenv("PATH", "bin")
-        end
         if package:is_plat("windows") and not package:config("shared") then
             package:add("defines", "LZMA_API_STATIC")
         end
@@ -61,11 +60,16 @@ package("xz")
             table.insert(configs, "--enable-debug")
         end
         if package:config("shared") then
+            table.insert(configs, "--enable-static=no")
             table.insert(configs, "--enable-shared=yes")
         else
+            table.insert(configs, "--enable-static=yes")
             table.insert(configs, "--enable-shared=no")
         end
         import("package.tools.autoconf").install(package, configs)
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_test(function (package)
