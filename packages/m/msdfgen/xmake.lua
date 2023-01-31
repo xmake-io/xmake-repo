@@ -16,7 +16,7 @@ package("msdfgen")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:is_plat("windows") and package:config("shared") then
+        if package:is_plat("windows", "mingw") and package:config("shared") then
             package:add("defines", "MSDFGEN_PUBLIC=__declspec(dllimport)")
         else
             package:add("defines", "MSDFGEN_PUBLIC=")
