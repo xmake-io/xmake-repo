@@ -23,5 +23,18 @@ package("meshoptimizer")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("meshopt_generateVertexRemap", {includes = "meshoptimizer.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            struct Vertex
+            {
+                float px, py, pz;
+                float nx, ny, nz;
+                float tx, ty;
+            };
+            void test() {
+                size_t total_indices = 0;
+                std::vector<Vertex> vertices(total_indices);
+                std::vector<unsigned int> remap(total_indices);
+                size_t total_vertices = meshopt_generateVertexRemap(&remap[0], NULL, total_indices, &vertices[0], total_indices, sizeof(Vertex));
+            }
+        ]]}, {configs = {language = "cxx11"}, includes = "meshoptimizer.h"}))
     end)
