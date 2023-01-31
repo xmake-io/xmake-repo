@@ -19,13 +19,13 @@ package("ninja")
         add_versions("1.11.0", "21915277db59756bfc61f6f281c1f5e3897760b63776fd3d360f77dd7364137f")
         add_versions("1.11.1", "482ecb23c59ae3d4f158029112de172dd96bb0e97549c4b1ca32d8fad11f873e")
     elseif is_host("linux", "bsd") then
-        add_urls("https://github.com/ninja-build/ninja/archive/refs/tags/$(version).tar.gz",
+        add_urls("https://github.com/ninja-build/ninja/archive/refs/tags/v$(version).tar.gz",
                  "https://github.com/ninja-build/ninja.git")
-        add_versions("v1.9.0", "5d7ec75828f8d3fd1a0c2f31b5b0cea780cdfe1031359228c428c1a48bfcd5b9")
-        add_versions("v1.10.1", "a6b6f7ac360d4aabd54e299cc1d8fa7b234cd81b9401693da21221c62569a23e")
-        add_versions("v1.10.2", "ce35865411f0490368a8fc383f29071de6690cbadc27704734978221f25e2bed")
-        add_versions("v1.11.0", "aa88a3a896e62f8ae1077085390b037c7e32814afe3f53a058afc1713abbfae4")
-        add_versions("v1.11.1", "f6296c2a633704641e56671f4128c8b9d5ee72c2636cbb24597016ad8f2956c1")
+        add_versions("1.9.0", "5d7ec75828f8d3fd1a0c2f31b5b0cea780cdfe1031359228c428c1a48bfcd5b9")
+        add_versions("1.10.1", "a6b6f7ac360d4aabd54e299cc1d8fa7b234cd81b9401693da21221c62569a23e")
+        add_versions("1.10.2", "ce35865411f0490368a8fc383f29071de6690cbadc27704734978221f25e2bed")
+        add_versions("1.11.0", "aa88a3a896e62f8ae1077085390b037c7e32814afe3f53a058afc1713abbfae4")
+        add_versions("1.11.1", "f6296c2a633704641e56671f4128c8b9d5ee72c2636cbb24597016ad8f2956c1")
     end
 
     on_load("linux", "bsd", function (package)
