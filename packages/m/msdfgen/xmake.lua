@@ -45,6 +45,8 @@ package("msdfgen")
 
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", [[set(MSDFGEN_MSVC_RUNTIME "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], [[set(MSDFGEN_MSVC_RUNTIME, "${CMAKE_MSVC_RUNTIME_LIBRARY}")]], {plain = true})
+        elseif package:is_plat("mingw") then
+            io.replace("CMakeLists.txt", [[if(BUILD_SHARED_LIBS AND WIN32)]], [[if(BUILD_SHARED_LIBS AND (WIN32 or MINGW)]], {plain = true})
         end
 
         import("package.tools.cmake").install(package, configs)
