@@ -60,8 +60,10 @@ package("xz")
             table.insert(configs, "--enable-debug")
         end
         if package:config("shared") then
+            table.insert(configs, "--enable-static=no")
             table.insert(configs, "--enable-shared=yes")
         else
+            table.insert(configs, "--enable-static=yes")
             table.insert(configs, "--enable-shared=no")
         end
         import("package.tools.autoconf").install(package, configs)
