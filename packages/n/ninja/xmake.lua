@@ -24,8 +24,8 @@ package("ninja")
         add_versions("1.9.0", "5d7ec75828f8d3fd1a0c2f31b5b0cea780cdfe1031359228c428c1a48bfcd5b9")
         add_versions("1.10.1", "a6b6f7ac360d4aabd54e299cc1d8fa7b234cd81b9401693da21221c62569a23e")
         add_versions("1.10.2", "ce35865411f0490368a8fc383f29071de6690cbadc27704734978221f25e2bed")
-        add_versions("1.11.0", "aa88a3a896e62f8ae1077085390b037c7e32814afe3f53a058afc1713abbfae4")
-        add_versions("1.11.1", "f6296c2a633704641e56671f4128c8b9d5ee72c2636cbb24597016ad8f2956c1")
+        add_versions("1.11.0", "3c6ba2e66400fe3f1ae83deb4b235faf3137ec20bd5b08c29bfc368db143e4c6")
+        add_versions("1.11.1", "31747ae633213f1eda3842686f83c2aa1412e0f5691d1c14dbbcc67fe7400cea")
     end
 
     on_load("linux", "bsd", function (package)
