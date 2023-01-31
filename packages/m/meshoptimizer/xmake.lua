@@ -24,6 +24,7 @@ package("meshoptimizer")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <vector>
             struct Vertex
             {
                 float px, py, pz;
