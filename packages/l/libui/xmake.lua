@@ -12,7 +12,7 @@ package("libui")
     elseif is_plat("windows") then
         add_syslinks("user32", "ole32", "gdi32", "d2d1", "dwrite", "comctl32", "windowscodecs")
     elseif is_plat("linux") then
-        add_deps("glib", "gtk+3")
+        add_deps("gtk+3", "glib")
     end
 
     on_install("linux", "macosx", "windows", function (package)
