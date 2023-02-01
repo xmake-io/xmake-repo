@@ -10,7 +10,7 @@ package("libui")
     if is_plat("macosx") then
         add_frameworks("CoreGraphics", "CoreText", "Foundation", "AppKit")
     elseif is_plat("windows") then
-        add_syslinks("user32", "ole32", "gdi32", "d2d1", "dxguid")
+        add_syslinks("user32", "ole32", "gdi32", "d2d1", "dwrite", "comctl32", "windowscodecs")
     end
 
     on_install("linux", "macosx", "windows", function (package)
