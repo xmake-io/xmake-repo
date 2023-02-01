@@ -6,6 +6,7 @@ package("gmsh")
 
     add_urls("http://gmsh.info/src/gmsh-$(version)-source.tgz")
     add_versions("4.8.4", "760dbdc072eaa3c82d066c5ba3b06eacdd3304eb2a97373fe4ada9509f0b6ace")
+    add_versions("4.11.1", "c5fe1b7cbd403888a814929f2fd0f5d69e27600222a18c786db5b76e8005b365")
 
     add_deps("cmake")
     if is_plat("windows") then
