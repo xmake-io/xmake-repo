@@ -58,35 +58,35 @@ target("imgui")
 
     if has_opengl3 then
         add_files("backends/imgui_impl_opengl3.cpp")
-        add_headerfiles("backends/imgui_impl_opengl3.h")
+        add_headerfiles("(backends/imgui_impl_opengl3.h)")
         if has_config("use_glad") then
             add_defines("IMGUI_IMPL_OPENGL_LOADER_GLAD")
             add_packages("glad")
         else
-            add_headerfiles("backends/imgui_impl_opengl3_loader.h")
+            add_headerfiles("(backends/imgui_impl_opengl3_loader.h)")
         end
     end
 
     if has_vulkan then
         add_files("backends/imgui_impl_vulkan.cpp")
-        add_headerfiles("backends/imgui_impl_vulkan.h")
+        add_headerfiles("(backends/imgui_impl_vulkan.h)")
         add_packages("vulkansdk")
     end
 
     if has_sdl_renderer then
         add_files("backends/imgui_impl_sdlrenderer.cpp")
-        add_headerfiles("backends/imgui_impl_sdlrenderer.h")
+        add_headerfiles("(backends/imgui_impl_sdlrenderer.h)")
     end
 
     if has_glfw then
         add_files("backends/imgui_impl_glfw.cpp")
-        add_headerfiles("backends/imgui_impl_glfw.h")
+        add_headerfiles("(backends/imgui_impl_glfw.h)")
         add_packages("glfw")
     end
 
     if has_sdl2 then
         add_files("backends/imgui_impl_sdl.cpp")
-        add_headerfiles("backends/imgui_impl_sdl.h")
+        add_headerfiles("(backends/imgui_impl_sdl.h)")
         add_packages("libsdl")
     end
 
