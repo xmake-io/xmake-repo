@@ -6,11 +6,13 @@ package("libui")
     add_versions("2022.12.3", "8c82e737eea2f8ab3667e227142abd2fd221f038")
 
     add_deps("meson", "ninja")
-    
+
     if is_plat("macosx") then
         add_frameworks("CoreGraphics", "CoreText", "Foundation", "AppKit")
     elseif is_plat("windows") then
         add_syslinks("user32", "ole32", "gdi32", "d2d1", "dwrite", "comctl32", "windowscodecs")
+    elseif is_plat("linux") then
+        add_deps("glib", "gtk+3")
     end
 
     on_install("linux", "macosx", "windows", function (package)
