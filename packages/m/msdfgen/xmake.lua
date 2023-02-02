@@ -13,6 +13,11 @@ package("msdfgen")
     add_configs("skia", {description = "Build with the Skia library", default = false, type = "boolean"})
     add_configs("standalone", {description = "Build standalone executable", default = false, type = "boolean"})
 
+    -- shared compilation is not supported on mingw/msys2 because of the "export all symbol" CMake feature
+    if is_plat("mingw") and is_subhost("msys") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake")
 
     on_load(function (package)
