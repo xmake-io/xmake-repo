@@ -43,7 +43,7 @@ package("joltphysics")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "iphoneos", "android|arm64-v8a", "wasm", function (package)
+    on_install("windows|x64", "windows|x86", "mingw", "linux", "macosx", "iphoneos", "android|arm64-v8a", "wasm", function (package)
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         configs.cross_platform_deterministic = package:config("cross_platform_deterministic")
