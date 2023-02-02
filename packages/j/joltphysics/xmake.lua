@@ -27,7 +27,7 @@ package("joltphysics")
     -- jolt physics doesn't support dynamic link
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
-    if is_plat("linux", "macosx", "iphoneos", "android", "wasm") then
+    if is_plat("linux", "macosx", "iphoneos", "bsd", "wasm") then
         add_syslinks("pthread")
     end
 
