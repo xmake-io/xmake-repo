@@ -42,7 +42,9 @@ package("gmsh")
     end)
 
     on_test(function (package)
-        os.vrun("gmsh -version")
+        if not package:is_cross() then
+            os.vrun("gmsh -version")
+        end
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 gmsh::initialize();
