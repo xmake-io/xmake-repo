@@ -24,7 +24,7 @@ package("cairo")
     if is_plat("windows") then
         add_syslinks("gdi32", "msimg32", "user32", "ole32")
     elseif is_plat("macosx") then
-        add_frameworks("CoreGraphics", "CoreFoundation", "Foundation")
+        add_frameworks("CoreGraphics", "CoreFoundation", "CoreText", "Foundation")
     end
 
     on_load("windows", function (package)
@@ -33,7 +33,7 @@ package("cairo")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         import("package.tools.meson")
 
         local configs = {
