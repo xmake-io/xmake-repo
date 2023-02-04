@@ -49,7 +49,7 @@ package("llvm")
     add_configs("mlir",              {description = "Enable mlir project.", default = false, type = "boolean"})
     add_configs("flang",             {description = "Enable flang project.", default = false, type = "boolean"})
     add_configs("compiler-rt",       {description = "Enable compiler-rt project.", default = true, type = "boolean"})
-    
+
     add_configs("libunwind",         {description = "Enable libunwind runtime.", default = true, type = "boolean"})
     add_configs("libc",              {description = "Enable libc runtime.", default = false, type = "boolean"})
     add_configs("libcxx",            {description = "Enable libcxx runtime.", default = true, type = "boolean"})
@@ -71,7 +71,18 @@ package("llvm")
 
     on_fetch(function (package, opt)
         if opt.system then
-            local version = try {function() return os.iorunv("llvm-config --version") end}
+            local llvm_config = "llvm-config"
+            if is_host("macosx") then
+                import("lib.detect.find_tool")
+                local llvm = try {function () return os.iorunv("brew", {"--prefix", "llvm"}) end}
+                if llvm then
+                    local ret = find_tool("llvm-config", {paths = path.join(llvm:trim(), "bin")})
+                    if ret then
+                        llvm_config = ret.program
+                    end
+                end
+            end
+            local version = try {function() return os.iorunv(llvm_config, {"--version"}) end}
             if version then
                 return {version = version:trim()}
             end
