@@ -38,7 +38,7 @@ package("python")
         add_versions("3.10.6", "848cb06a5caa85da5c45bd7a9221bb821e33fc2bdcba088c127c58fad44e6343")
     end
 
-    if not is_plat(os.host()) then
+    if not is_plat(os.host()) or not is_arch(os.arch()) then
         set_kind("binary")
     end
 
@@ -86,27 +86,7 @@ package("python")
         package:addenv("PATH", "Scripts")
     end)
 
-    on_fetch(function (package, opt)
-        if opt.system and package:is_binary() then
-            local result = package:find_tool("python3", opt)
-            if not result then
-                result = package:find_tool("python", opt)
-            end
-            if result then
-                -- check if pip, setuptools and wheel are installed
-                local ok = try { function () 
-                    os.vrunv(result.program, {"-c", "import pip"})
-                    os.vrunv(result.program, {"-c", "import setuptools"})
-                    os.vrunv(result.program, {"-c", "import wheel"})
-                    return true
-                end}
-                if not ok then
-                    return false
-                end
-            end
-            return result
-        end
-    end)
+    on_fetch("fetch")
 
     on_install("@windows|x86", "@windows|x64", "@msys", "@cygwin", function (package)
         if package:version():ge("3.0") then
