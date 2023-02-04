@@ -27,7 +27,8 @@ package("libsdl_mixer")
                          "-DSDL2MIXER_FLAC=OFF",
                          "-DSDL2MIXER_OPUS=OFF",
                          "-DSDL2MIXER_MOD=OFF",
-                         "-DSDL2MIXER_MIDI=OFF"}
+                         "-DSDL2MIXER_MIDI=OFF",
+                         "-DSDL3MIXER_CMD=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if libsdl and not libsdl:is_system() then

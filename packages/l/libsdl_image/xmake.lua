@@ -21,9 +21,17 @@ package("libsdl_image")
         add_frameworks("CoreFoundation", "CoreGraphics", "ImageIO", "CoreServices")
     end
 
-    add_deps("cmake", "libsdl")
+    add_deps("cmake")
 
     add_includedirs("include", "include/SDL2")
+
+    on_load(function (package)
+        if package:config("shared") then
+            package:add("deps", "libsdl", { configs = { shared = true }})
+        else
+            package:add("deps", "libsdl")
+        end
+    end)
 
     on_install(function (package)
         local configs = {"-DSDL2IMAGE_SAMPLES=OFF", "-DSDL2IMAGE_TESTS=OFF"}
