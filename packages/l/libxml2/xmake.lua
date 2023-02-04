@@ -39,7 +39,7 @@ package("libxml2")
             if not package:config("iconv") then
                 raise("libxml2 python interface requires iconv to be enabled")
             end
-            package:add("deps", "python 3.x", {system = true})
+            package:add("deps", "python 3.x")
         end
         if package:config("iconv") then
             package:add("deps", "libiconv")
