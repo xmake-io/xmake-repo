@@ -150,7 +150,6 @@ package("libxml2")
             local python = package:dep("python")
             local pythonver = nil
             if python:is_system() then
-                -- before xmake 2.7.7 python:version() is not correct
                 pythonver = import("core.base.semver").new(python:fetch().version)
             else
                 pythonver = python:version()
