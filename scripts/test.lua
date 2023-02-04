@@ -16,6 +16,7 @@ local options =
 ,   {'j', "jobs",       "kv", nil, "Set the build jobs."                        }
 ,   {'f', "configs",    "kv", nil, "Set the configs."                           }
 ,   {'d', "debugdir",   "kv", nil, "Set the debug source directory."            }
+,   {nil, "fetch",      "k",  nil, "Fetch package only."                        }
 ,   {nil, "linkjobs",   "kv", nil, "Set the link jobs."                         }
 ,   {nil, "cflags",     "kv", nil, "Set the cflags."                            }
 ,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."                          }
@@ -108,6 +109,9 @@ function _require_packages(argv, packages)
     end
     if argv.linkjobs then
         table.insert(require_argv, "--linkjobs=" .. argv.linkjobs)
+    end
+    if argv.fetch then
+        table.insert(require_argv, "--fetch")
     end
     local extra = {}
     if argv.mode == "debug" then
