@@ -26,10 +26,9 @@ package("libsdl_image")
     add_includedirs("include", "include/SDL2")
 
     on_install(function (package)
-        local configs = {"-DSDL_TEST=OFF"}
+        local configs = {"-DSDL2IMAGE_SAMPLES=OFF", "-DSDL2IMAGE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DSDL_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
-        table.insert(configs, "-DSDL_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
         end
