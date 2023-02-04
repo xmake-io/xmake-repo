@@ -25,7 +25,7 @@ package("libsdl_gfx")
         add_extsources("brew::sdl2_gfx")
     end
 
-    add_deps("libsdl")
+    add_deps("libsdl", {configs = {shared = true} })
 
     add_links("SDL2_gfx")
 
