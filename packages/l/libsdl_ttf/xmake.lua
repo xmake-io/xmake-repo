@@ -42,7 +42,17 @@ package("libsdl_ttf")
                 end
             end
         end
-        import("package.tools.cmake").install(package, configs, { packagedeps = "freetype" })
+        local freetype = package:dep("freetype")
+        if freetype and not freetype:is_system() then
+            local fetchinfo = freetype:fetch()
+            if fetchinfo then
+                table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
+                table.insert(configs, "-DFREETYPE_LIBRARY=" .. table.concat(fetchinfo.libfiles, ";"))
+            end
+        end
+        -- keep freetype as a packagedeps so its own dependencies are bring along (zlib)
+        local opt = { packagedeps = "freetype" }
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
