@@ -5,13 +5,13 @@ package("litehtml")
     add_urls("https://github.com/litehtml/litehtml.git")
     add_versions("2023.01.05", "1e803393bdc8e586e8eefd4c33973e04994bb288")
 
-    add_deps("cmake")
+    add_deps("cmake", "gumbo-parser")
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DEXTERNAL_GUMBO=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "gumbo-parser"})
         os.cp("include/litehtml.h", package:installdir("include"))
     end)
 
