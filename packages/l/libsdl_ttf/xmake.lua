@@ -47,10 +47,14 @@ package("libsdl_ttf")
             local fetchinfo = freetype:fetch()
             if fetchinfo then
                 table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
-                table.insert(configs, "-DFREETYPE_LIBRARY=" .. table.concat(fetchinfo.libfiles, ";"))
+                for _, libfile in ipairs(fetchinfo.libfiles) do
+                    if libfile:match("freetype%..+$") then
+                        table.insert(configs, "-DFREETYPE_LIBRARY=" .. table.concat(fetchinfo.libfiles, ";"))
+                    end
+                end
             end
         end
-        -- keep freetype as a packagedeps so its own dependencies are bring along (zlib)
+        -- keep freetype as a packagedeps so its own dependencies are bring along (ex: zlib)
         local opt = { packagedeps = "freetype" }
         import("package.tools.cmake").install(package, configs, opt)
     end)
