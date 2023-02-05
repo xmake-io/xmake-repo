@@ -32,8 +32,17 @@ package("libsdl_net")
             table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
             local fetchinfo = libsdl:fetch()
             if fetchinfo then
-                table.insert(configs, "-DSDL2_INCLUDE_DIR=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
-                table.insert(configs, "-DSDL2_LIBRARY=" .. table.concat(fetchinfo.libfiles, ";"))
+                for _, dir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                    if os.isfile(path.join(dir, "SDL_version.h")) then
+                        table.insert(configs, "-DSDL2_INCLUDE_DIR=" .. dir)
+                        break                        
+                    end
+                end
+                for _, libfile in ipairs(fetchinfo.libfiles) do
+                    if libfile:match("SDL2%..+$") or libfile:match("SDL2-static%..+$") then
+                        table.insert(configs, "-DSDL2_LIBRARY=" .. table.concat(fetchinfo.libfiles, ";"))
+                    end
+                end
             end
         end
         import("package.tools.cmake").install(package, configs)
