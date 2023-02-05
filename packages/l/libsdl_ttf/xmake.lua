@@ -37,7 +37,7 @@ package("libsdl_ttf")
                 end
                 for _, libfile in ipairs(fetchinfo.libfiles) do
                     if libfile:match("SDL2%..+$") or libfile:match("SDL2-static%..+$") then
-                        table.insert(configs, "-DSDL2_LIBRARY=" .. table.concat(fetchinfo.libfiles, ";"))
+                        table.insert(configs, "-DSDL2_LIBRARY=" .. libfile)
                     end
                 end
             end
@@ -49,7 +49,8 @@ package("libsdl_ttf")
                 table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
                 for _, libfile in ipairs(fetchinfo.libfiles) do
                     if libfile:match("freetype%..+$") then
-                        table.insert(configs, "-DFREETYPE_LIBRARY=" .. table.concat(fetchinfo.libfiles, ";"))
+                        table.insert(configs, "-DFREETYPE_LIBRARY=" .. libfile)
+                        break
                     end
                 end
             end
