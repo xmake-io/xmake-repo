@@ -16,6 +16,9 @@ package("gumbo-parser")
                 add_headerfiles("src/*.h")
                 if is_plat("windows") then
                     add_includedirs("visualc/include")
+                    if is_kind("shared") then
+                        add_rules("utils.symbols.export_all", {export_classes = true})
+                    end
                 end
         ]])
         local configs = {}
