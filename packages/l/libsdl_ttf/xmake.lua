@@ -42,7 +42,7 @@ package("libsdl_ttf")
                 end
             end
         end
-        import("package.tools.cmake").install(package, configs, { opt = { packagedeps = "freetype" }})
+        import("package.tools.cmake").install(package, configs, { packagedeps = "freetype" })
     end)
 
     on_test(function (package)
