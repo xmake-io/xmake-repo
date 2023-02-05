@@ -30,6 +30,11 @@ package("libsdl_net")
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
+            local fetchinfo = libsdl:fetch()
+            if fetchinfo then
+                table.insert(configs, "-DSDL2_INCLUDE_DIR=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
+                table.insert(configs, "-DSDL2_LIBRARY=" .. table.concat(fetchinfo.libfiles, ";"))
+            end
         end
         import("package.tools.cmake").install(package, configs)
     end)
