@@ -14,6 +14,9 @@ package("gumbo-parser")
                 set_kind("$(kind)")
                 add_files("src/*.c")
                 add_headerfiles("src/*.h")
+                if is_plat("windows") then
+                    add_includedirs("visualc/include")
+                end
         ]])
         local configs = {}
         if package:config("shared") then
