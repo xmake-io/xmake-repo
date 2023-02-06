@@ -47,7 +47,7 @@ package("libsdl_ttf")
         local freetype = package:dep("freetype")
         local opt
         if freetype and not freetype:is_system() then
-            print("freetype not static")
+            print("freetype not system")
             local fetchinfo = freetype:fetch()
             if fetchinfo then
                 table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
@@ -85,7 +85,7 @@ package("libsdl_ttf")
                     local add_dep
                     add_dep = function (dep)
                         print("add_dep", dep:name())
-                        local fetchinfo = freetype:fetch({external = false})
+                        local fetchinfo = dep:fetch({external = false})
                         if fetchinfo then
                             print("fetchinfo ", fetchinfo)
                             shflags = shflags or {}
