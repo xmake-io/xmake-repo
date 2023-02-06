@@ -4,8 +4,10 @@ package("pugixml")
     set_description("Light-weight, simple and fast XML parser for C++ with XPath support")
     set_license("MIT")
 
-    add_urls("https://github.com/zeux/pugixml/archive/v$(version).tar.gz")
-    add_versions("1.11.4", "017139251c122dbff400a507cddc4cb74120a431a50c6c524f30edcc5b331ade")
+    add_urls("https://github.com/zeux/pugixml/archive/$(version).tar.gz",
+             "https://github.com/zeux/pugixml.git")
+    add_versions("v1.11.4", "017139251c122dbff400a507cddc4cb74120a431a50c6c524f30edcc5b331ade")
+    add_versions("v1.13", "5c5ad5d7caeb791420408042a7d88c2c6180781bf218feca259fd9d840a888e1")
 
     add_deps("cmake")
 
