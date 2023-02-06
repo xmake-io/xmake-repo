@@ -93,7 +93,8 @@ package("libxml2")
         import("package.tools.autoconf")
         local configs = {"--disable-dependency-tracking",
                          "--without-lzma",
-                         "--without-zlib"}
+                         "--without-zlib",
+                         "--with-ftp"}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
             table.insert(configs, "--enable-static=no")
