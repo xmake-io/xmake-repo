@@ -47,6 +47,7 @@ package("libsdl_ttf")
         local freetype = package:dep("freetype")
         local opt
         if freetype and not freetype:is_system() then
+            print("freetype not static")
             local fetchinfo = freetype:fetch()
             if fetchinfo then
                 table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
@@ -57,56 +58,61 @@ package("libsdl_ttf")
                     end
                 end
 
-                -- translate paths
-                function _translate_paths(paths)
-                    if is_host("windows") then
-                        if type(paths) == "string" then
-                            return (paths:gsub("\\", "/"))
-                        elseif type(paths) == "table" then
-                            local result = {}
-                            for _, p in ipairs(paths) do
-                                table.insert(result, (p:gsub("\\", "/")))
-                            end
-                            return result
-                        end
-                    end
-                    return paths
-                end
-
-                import("core.tool.linker")
-                function _map_linkflags(package, targetkind, sourcekinds, name, values)
-                    return linker.map_flags(targetkind, sourcekinds, name, values, {target = package})
-                end
-
-                local shflags
-                local add_dep
-                add_dep = function (dep)
-                    local fetchinfo = freetype:fetch({external = false})
-                    if fetchinfo then
-                        shflags = shflags or {}
-                        table.join2(shflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
-                        table.join2(shflags, _map_linkflags(package, "binary", {"cxx"}, "link", fetchinfo.links))
-                        table.join2(shflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks)))
-                        table.join2(shflags, _map_linkflags(package, "binary", {"cxx"}, "framework", fetchinfo.frameworks))
-                        if fetchinfo.static then
-                            for _, inner_dep in ipairs(dep:librarydeps()) do
-                                add_dep(inner_dep)
-                            end
-                        end
-                    end
-                end
-
                 if fetchinfo.static then
+                    print("freetype static")
+                    -- translate paths
+                    function _translate_paths(paths)
+                        if is_host("windows") then
+                            if type(paths) == "string" then
+                                return (paths:gsub("\\", "/"))
+                            elseif type(paths) == "table" then
+                                local result = {}
+                                for _, p in ipairs(paths) do
+                                    table.insert(result, (p:gsub("\\", "/")))
+                                end
+                                return result
+                            end
+                        end
+                        return paths
+                    end
+
+                    import("core.tool.linker")
+                    function _map_linkflags(package, targetkind, sourcekinds, name, values)
+                        return linker.map_flags(targetkind, sourcekinds, name, values, {target = package})
+                    end
+
+                    local shflags
+                    local add_dep
+                    add_dep = function (dep)
+                        print("add_dep", dep:name())
+                        local fetchinfo = freetype:fetch({external = false})
+                        if fetchinfo then
+                            print("fetchinfo ", fetchinfo)
+                            shflags = shflags or {}
+                            table.join2(shflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
+                            table.join2(shflags, _map_linkflags(package, "binary", {"cxx"}, "link", fetchinfo.links))
+                            table.join2(shflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks)))
+                            table.join2(shflags, _map_linkflags(package, "binary", {"cxx"}, "framework", fetchinfo.frameworks))
+                            if fetchinfo.static then
+                                for _, inner_dep in ipairs(dep:librarydeps()) do
+                                    add_dep(inner_dep)
+                                end
+                            end
+                        end
+                    end
+
                     for _, dep in ipairs(freetype:librarydeps()) do
                         add_dep(dep)
                     end
-                end
 
-                if shflags then
-                    opt = { shflags = shflags}
+                    if shflags then
+                        opt = { shflags = shflags}
+                    end
                 end
             end
         end
+        print("configs", configs)
+        print("opt", opt)
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
