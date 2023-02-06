@@ -93,8 +93,7 @@ package("libxml2")
         import("package.tools.autoconf")
         local configs = {"--disable-dependency-tracking",
                          "--without-lzma",
-                         "--without-zlib",
-                         "--with-ftp"}
+                         "--without-zlib"}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
             table.insert(configs, "--enable-static=no")
@@ -122,6 +121,8 @@ package("libxml2")
         local envs = autoconf.buildenvs(package)
         if package:config("python") then
             table.insert(configs, "--with-python")
+            table.insert(configs, "--with-ftp")
+            table.insert(configs, "--with-legacy")
             local python = package:dep("python"):fetch()
             if python then
                 local cflags, ldflags
