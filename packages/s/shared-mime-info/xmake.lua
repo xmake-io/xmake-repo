@@ -11,7 +11,7 @@ package("shared-mime-info")
     if is_plat("linux") then
         add_extsources("apt::shared-mime-info")
     end
-    add_deps("meson", "ninja", "glib", "itstool")
+    add_deps("meson", "ninja", "glib", "libxml2", "pkg-config")
     on_install("macosx", "linux", function (package)
         import("package.tools.meson").install(package)
     end)
