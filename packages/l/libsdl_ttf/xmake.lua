@@ -81,18 +81,18 @@ package("libsdl_ttf")
                         return linker.map_flags(targetkind, sourcekinds, name, values, {target = package})
                     end
 
-                    local shflags
+                    local ldflags
                     local add_dep
                     add_dep = function (dep)
                         print("add_dep", dep:name())
                         local fetchinfo = dep:fetch({external = false})
                         if fetchinfo then
                             print("fetchinfo ", fetchinfo)
-                            shflags = shflags or {}
-                            table.join2(shflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
-                            table.join2(shflags, _map_linkflags(package, "binary", {"cxx"}, "link", fetchinfo.links))
-                            table.join2(shflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks)))
-                            table.join2(shflags, _map_linkflags(package, "binary", {"cxx"}, "framework", fetchinfo.frameworks))
+                            ldflags = ldflags or {}
+                            table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
+                            table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "link", fetchinfo.links))
+                            table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks)))
+                            table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "framework", fetchinfo.frameworks))
                             if fetchinfo.static then
                                 for _, inner_dep in ipairs(dep:librarydeps()) do
                                     add_dep(inner_dep)
@@ -105,8 +105,8 @@ package("libsdl_ttf")
                         add_dep(dep)
                     end
 
-                    if shflags then
-                        opt = { shflags = shflags}
+                    if ldflags then
+                        opt = { ldflags = ldflags}
                     end
                 end
             end
