@@ -7,7 +7,7 @@ package("quadsort")
     add_urls("https://github.com/scandum/quadsort.git")
     add_versions("2023.02.03", "45432056f47137624aa28a07cdf62c5b561575dd")
 
-    on_install(function (package)
+    on_install("macosx", "linux", "bsd", "mingw", "wasm", "android|arm64-v8a", function (package)
         os.cp("src/quadsort.c", package:installdir("include"))
         os.cp("src/quadsort.h", package:installdir("include"))
     end)
