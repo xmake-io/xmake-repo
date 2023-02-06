@@ -1,5 +1,5 @@
 package("libsdl_ttf")
-    set_homepage("https://www.libsdl.org/projects/SDL_ttf/")
+    set_homepage("https://github.com/libsdl-org/SDL_ttf/")
     set_description("Simple DirectMedia Layer text rendering library")
     set_license("zlib")
 
@@ -24,6 +24,7 @@ package("libsdl_ttf")
         local configs = {"-DSDL2TTF_SAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DSDL2TTF_VENDORED=OFF")
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
@@ -42,6 +43,7 @@ package("libsdl_ttf")
                 end
             end
         end
+
         local freetype = package:dep("freetype")
         local opt
         if freetype and not freetype:is_system() then
@@ -54,13 +56,54 @@ package("libsdl_ttf")
                         break
                     end
                 end
-                if fetchinfo.static then
-                    local packagedeps = {}
-                    for _, dep in ipairs(freetype:librarydeps()) do
-                        packagedeps = packagedeps or {}
-                        table.insert(packagedeps, dep:name())
+
+                -- translate paths
+                function _translate_paths(paths)
+                    if is_host("windows") then
+                        if type(paths) == "string" then
+                            return (paths:gsub("\\", "/"))
+                        elseif type(paths) == "table" then
+                            local result = {}
+                            for _, p in ipairs(paths) do
+                                table.insert(result, (p:gsub("\\", "/")))
+                            end
+                            return result
+                        end
                     end
-                    opt = { packagedeps = packagedeps }
+                    return paths
+                end
+
+                import("core.tool.linker")
+                function _map_linkflags(package, targetkind, sourcekinds, name, values)
+                    return linker.map_flags(targetkind, sourcekinds, name, values, {target = package})
+                end
+
+                local shflags
+                local add_dep
+                add_dep = function (dep)
+                    local fetchinfo = freetype:fetch({external = false})
+                    if fetchinfo then
+                        shflags = shflags or {}
+                        table.join2(shflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
+                        table.join2(shflags, _map_linkflags(package, "binary", {"cxx"}, "link", fetchinfo.links))
+                        table.join2(shflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks)))
+                        table.join2(shflags, _map_linkflags(package, "binary", {"cxx"}, "framework", fetchinfo.frameworks))
+                        if fetchinfo.static then
+                            for _, inner_dep in ipairs(dep:librarydeps()) do
+                                add_dep(inner_dep)
+                            end
+                        end
+                    end
+                end
+
+                if fetchinfo.static then
+                    for _, dep in ipairs(freetype:librarydeps()) do
+                        add_dep(dep)
+                    end
+                end
+
+                if shflags then
+                    opt = { shflags = shflags}
                 end
             end
         end
