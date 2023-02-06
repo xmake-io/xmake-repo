@@ -43,6 +43,7 @@ package("libsdl_ttf")
             end
         end
         local freetype = package:dep("freetype")
+        local opt
         if freetype and not freetype:is_system() then
             local fetchinfo = freetype:fetch()
             if fetchinfo then
@@ -53,10 +54,16 @@ package("libsdl_ttf")
                         break
                     end
                 end
+                if fetchinfo.static then
+                    local packagedeps = {}
+                    for _, dep in ipairs(freetype:librarydeps()) do
+                        packagedeps = packagedeps or {}
+                        table.insert(packagedeps, dep:name())
+                    end
+                    opt = { packagedeps = packagedeps }
+                end
             end
         end
-        -- keep freetype as a packagedeps so its own dependencies are bring along (ex: zlib)
-        local opt = { packagedeps = "freetype" }
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
