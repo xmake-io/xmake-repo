@@ -5,9 +5,9 @@ package("fluxsort")
     set_license("MIT")
 
     add_urls("https://github.com/scandum/fluxsort.git")
-    add_versions("2023.02.05", "b978190ed7374b7f84b84504f7f546006588df50")
+    add_versions("2023.02.05", "de6041a9772eed62db5fd2c664b3294ea3037b4b")
 
-    on_install("macosx", "linux", "bsd", "mingw", "wasm", "android|arm64-v8a", function (package)
+    on_install(function (package)
         os.cp("src/fluxsort.c", package:installdir("include"))
         os.cp("src/fluxsort.h", package:installdir("include"))
         os.cp("src/quadsort.c", package:installdir("include"))
