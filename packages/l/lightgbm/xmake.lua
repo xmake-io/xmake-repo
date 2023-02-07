@@ -16,6 +16,9 @@ package("lightgbm")
             package:add("deps", "opencl")
             package:add("deps", "boost", {configs = {filesystem = true, system = true}})
         end
+        if package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx") then
+            package:add("deps", "libomp")
+        end
     end)
 
     on_install("windows|x64", "linux", function (package)
@@ -25,6 +28,20 @@ package("lightgbm")
         table.insert(configs, "-DBUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         if package:is_plat("windows") then
             table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        end
+        if package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx") then
+            local libomp = package:dep("libomp"):fetch()
+            if libomp then
+                local includedirs = table.wrap(libomp.includedirs or libomp.sysincludedirs)
+                local libfiles = table.wrap(libomp.libfiles)
+                if #includedirs > 0 and #libfiles > 0 then
+                    table.insert(configs, "-DOpenMP_C_LIB_NAMES=libomp")
+                    table.insert(configs, "-DOpenMP_C_FLAGS=-I" .. includedirs[1])
+                    table.insert(configs, "-DOpenMP_CXX_LIB_NAMES=libomp")
+                    table.insert(configs, "-DOpenMP_CXX_FLAGS=-I" .. includedirs[1])
+                    table.insert(configs, "-DOpenMP_libomp_LIBRARY=" .. table.concat(libfiles, " "))
+                end
+            end
         end
         import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
