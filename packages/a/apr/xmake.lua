@@ -10,13 +10,13 @@ package("apr")
     if is_plat("linux") then
         add_deps("libtool", "python")
         add_patches("1.7.0", path.join(os.scriptdir(), "patches", "1.7.0", "common.patch"), "bbfef69c914ca1ab98a9d94fc4794958334ce5f47d8c08c05e0965a48a44c50d")
-    elseif is_plat("windows") then 
+    elseif is_plat("windows") then
         add_deps("cmake")
     end
-    
+
     on_install("linux", "macosx", function (package)
         local configs = {}
-        if package:is_plat("linux") then 
+        if package:is_plat("linux") then
             os.vrunv("sh", {"./buildconf"})
             io.replace("configure", "RM='$RM'", "RM='$RM -f'")
         else
@@ -29,9 +29,11 @@ package("apr")
     end)
 
     on_install("windows", function (package)
-        local configs = {"-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")}
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        if not package:config("shared") then 
+        if not package:config("shared") then
             os.rm(package:installdir("bin/*.dll"))
         end
     end)
