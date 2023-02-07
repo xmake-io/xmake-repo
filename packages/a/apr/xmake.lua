@@ -31,10 +31,16 @@ package("apr")
     on_install("windows", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DAPR_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DAPR_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
+        -- libapr-1 is shared, apr-1 is static
         if not package:config("shared") then
-            os.rm(package:installdir("bin/*.dll"))
+            os.rm(package:installdir("lib/lib*.lib"))
+            os.rm(package:installdir("bin/lib*.dll"))
+        else
+            os.rm(package:installdir("lib/apr-1.lib"))
+            os.rm(package:installdir("lib/aprapp-1.lib"))
         end
     end)
 
