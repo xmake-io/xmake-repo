@@ -9,6 +9,10 @@ package("ftxui")
 
     add_deps("cmake")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_links("ftxui-component", "ftxui-dom", "ftxui-screen")
 
     on_install("linux", "windows", "macosx", "bsd", "mingw", function (package)
