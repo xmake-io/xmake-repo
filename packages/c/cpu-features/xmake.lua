@@ -7,6 +7,7 @@ package("cpu-features")
     add_urls("https://github.com/google/cpu_features/archive/$(version).tar.gz",
              "https://github.com/google/cpu_features.git")
     add_versions("v0.6.0", "95a1cf6f24948031df114798a97eea2a71143bd38a4d07d9a758dda3924c1932")
+    add_versions("v0.7.0", "df80d9439abf741c7d2fdcdfd2d26528b136e6c52976be8bd0cd5e45a27262c0")
 
     add_deps("cmake")
 
@@ -21,7 +22,7 @@ package("cpu-features")
     end)
 
     on_test(function (package)
-        if package:is_plat(os.host()) then
+        if not package:is_cross() then
             os.vrun("list_cpu_features")
         end
         assert(package:has_ctypes("CacheLevelInfo", {includes = "cpu_features/cpu_features_cache_info.h"}))
