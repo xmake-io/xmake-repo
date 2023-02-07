@@ -36,6 +36,11 @@ target("bzip2")
             local binarydir = path.join(target:installdir(), "bin")
             os.vcp(path.join(binarydir, "bzip2.exe"), path.join(binarydir, "bzcat.exe"))
             os.vcp(path.join(binarydir, "bzip2.exe"), path.join(binarydir, "bunzip2.exe"))
+        elseif is_subhost("windows") then
+            -- when cross-compiling (ex: android from windows), we need to copy the binaries too
+            local binarydir = path.join(target:installdir(), "bin")
+            os.vcp(path.join(binarydir, "bzip2"), path.join(binarydir, "bzcat"))
+            os.vcp(path.join(binarydir, "bzip2"), path.join(binarydir, "bunzip2"))
         else
             local binarydir = path.join(target:installdir(), "bin")
             os.ln(path.join(binarydir, "bzip2"), path.join(binarydir, "bzcat"))
