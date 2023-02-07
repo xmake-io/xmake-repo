@@ -11,6 +11,8 @@ package("ftxui")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    elseif is_plat("bsd") then
+        add_syslinks("pthread")
     end
 
     add_links("ftxui-component", "ftxui-dom", "ftxui-screen")
