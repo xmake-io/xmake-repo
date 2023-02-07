@@ -9,7 +9,7 @@ package("ftxui")
 
     add_deps("cmake")
 
-    on_install("linux", "windows", "macosx", "bsd", function (package)
+    on_install("linux", "windows", "macosx", "bsd", "mingw", function (package)
         local configs = {"-DFTXUI_BUILD_DOCS=OFF", "-DFTXUI_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
