@@ -110,7 +110,7 @@ target("hpsocket")
         end
         if get_config("hpversion") == "v5.9.1" then
             vs_ver = (vs == "2015" and "100" or "14x")
-        else
+        end
 
         add_includedirs(".")
         add_includedirs(path.join(winBuiltinDependentLibPath, "openssl", vs_ver, "$(arch)", "include"))
