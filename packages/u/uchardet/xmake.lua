@@ -44,7 +44,7 @@ package("uchardet")
     end)
 
     on_test(function (package)
-        if package:is_plat(os.host()) then
+        if not package:is_cross() then
             os.vrun("uchardet -v")
         end
         assert(package:has_cfuncs("uchardet_get_charset", {includes = "uchardet.h"}))
