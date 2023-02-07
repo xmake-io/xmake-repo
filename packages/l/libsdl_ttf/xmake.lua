@@ -106,7 +106,7 @@ package("libsdl_ttf")
                     end
 
                     if ldflags then
-                        opt = { ldflags = ldflags}
+                        opt = { shflags = ldflags, ldflags = ldflags}
                     end
                 end
             end
