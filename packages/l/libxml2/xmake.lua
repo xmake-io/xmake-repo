@@ -121,6 +121,8 @@ package("libxml2")
         local envs = autoconf.buildenvs(package)
         if package:config("python") then
             table.insert(configs, "--with-python")
+            table.insert(configs, "--with-ftp")
+            table.insert(configs, "--with-legacy")
             local python = package:dep("python"):fetch()
             if python then
                 local cflags, ldflags
