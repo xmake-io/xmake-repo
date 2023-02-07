@@ -108,7 +108,7 @@ target("hpsocket")
         elseif vs == "2019" then vs_ver = "16.0"
         elseif vs == "2022" then vs_ver = "17.0"
         end
-        if get_config("version") == "v5.9.1" then
+        if get_config("hpversion") == "v5.9.1" then
             vs_ver = (vs == "2015" and "100" or "14x")
         else
 
