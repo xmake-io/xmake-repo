@@ -10,6 +10,8 @@ package("zlib")
     add_versions("v1.2.12", "d8688496ea40fb61787500e863cc63c9afcbc524468cedeb478068924eb54932")
     add_versions("v1.2.13", "1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428")
 
+    add_configs("zutil", {description = "Export zutil.h api", default = false, type = "boolean"})
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::zlib")
     elseif is_plat("linux") then
@@ -66,6 +68,9 @@ package("zlib")
             configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
+        if package:config("zutil") then
+            os.cp("zutil.h", package:installdir("include"))
+        end
     end)
 
     on_test(function (package)

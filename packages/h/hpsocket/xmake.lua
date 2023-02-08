@@ -70,7 +70,6 @@ package("hpsocket")
     end)
 
     on_install("windows|x64", "windows|x86", "linux", "android", function (package)
-        io.replace("Windows/Src/SocketHelper.h", "<zutil.h>", "<zlib.h>", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
 
         local config = {}
