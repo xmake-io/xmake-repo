@@ -23,7 +23,7 @@ package("rmlui")
             package:add("defines", "RMLUI_STATIC_LIB")
         end
         if package:config("freetype") then
-            package:add("deps", "freetype")
+            package:add("deps", "freetype", "zlib")
         end
         if package:config("lua") then
             package:add("deps", "lua")
@@ -37,7 +37,11 @@ package("rmlui")
         table.insert(configs, "-DNO_FONT_INTERFACE_DEFAULT=" .. (package:config("freetype") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_LUA_BINDINGS=" .. (package:config("lua") and "ON" or "OFF"))
         table.insert(configs, "-DDISABLE_RTTI_AND_EXCEPTIONS=" .. (package:config("rtti") and "OFF" or "ON"))
-        import("package.tools.cmake").install(package, configs)
+        if package:config("freetype") then
+            import("package.tools.cmake").install(package, configs, {packagedeps = {"zlib"}})
+        else
+            import("package.tools.cmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)
@@ -46,5 +50,5 @@ package("rmlui")
             void test() {
                 Rml::Context* context = Rml::CreateContext("default", Rml::Vector2i(640, 480));
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)
