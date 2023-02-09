@@ -47,18 +47,14 @@ package("libsdl_ttf")
         local opt
         if freetype and not freetype:is_system() then
             -- pass freetype ourselves to handle its dependencies properly
-            io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)", "", {plain = true})
+            io.replace("CMakeLists.txt", "set(SDL2TTF_FREETYPE ON)", "set(SDL2TTF_FREETYPE OFF)", {plain = true})
 
-            local fetchinfo = freetype:fetch()
-            if fetchinfo then
-                table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
-                for _, libfile in ipairs(fetchinfo.libfiles) do
-                    if libfile:match("freetype%..+$") then
-                        table.insert(configs, "-DFREETYPE_LIBRARY=" .. libfile)
-                        break
-                    end
-                end
-            end
+            local ldflags
+            opt = {
+                packagedeps = "freetype",
+                shflags = ldflags, 
+                ldflags = ldflags
+            }
 
             -- translate paths
             function _translate_paths(paths)
@@ -81,7 +77,6 @@ package("libsdl_ttf")
                 return linker.map_flags(targetkind, sourcekinds, name, values, {target = package})
             end
 
-            local ldflags
             local add_dep
             add_dep = function (dep)
                 print("add_dep", dep:name())
@@ -102,10 +97,6 @@ package("libsdl_ttf")
             end
 
             add_dep(freetype)
-
-            if ldflags then
-                opt = { shflags = ldflags, ldflags = ldflags}
-            end
         end
         print("configs", configs)
         print("opt", opt)
