@@ -24,7 +24,6 @@ package("libsdl_ttf")
         local configs = {"-DSDL2TTF_SAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DSDL2TTF_VENDORED=OFF")
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
@@ -46,9 +45,12 @@ package("libsdl_ttf")
 
         local freetype = package:dep("freetype")
         local opt
-        if freetype and not freetype:is_system() then
-            print("freetype not system")
-            local fetchinfo = freetype:fetch()
+        if freetype then
+            -- pass freetype ourselves to handle its dependencies properly
+            io.replace("CMakeLists.txt", "set(SDL2TTF_FREETYPE ON)", "set(SDL2TTF_FREETYPE OFF)", {plain = true})
+
+            print("freetype found")
+            --[[local fetchinfo = freetype:fetch()
             if fetchinfo then
                 table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(fetchinfo.includedirs or fetchinfo.sysincludedirs, ";"))
                 for _, libfile in ipairs(fetchinfo.libfiles) do
@@ -57,58 +59,53 @@ package("libsdl_ttf")
                         break
                     end
                 end
+            end]]
 
-                if fetchinfo.static then
-                    print("freetype static")
-                    -- translate paths
-                    function _translate_paths(paths)
-                        if is_host("windows") then
-                            if type(paths) == "string" then
-                                return (paths:gsub("\\", "/"))
-                            elseif type(paths) == "table" then
-                                local result = {}
-                                for _, p in ipairs(paths) do
-                                    table.insert(result, (p:gsub("\\", "/")))
-                                end
-                                return result
-                            end
+            -- translate paths
+            function _translate_paths(paths)
+                if is_host("windows") then
+                    if type(paths) == "string" then
+                        return (paths:gsub("\\", "/"))
+                    elseif type(paths) == "table" then
+                        local result = {}
+                        for _, p in ipairs(paths) do
+                            table.insert(result, (p:gsub("\\", "/")))
                         end
-                        return paths
-                    end
-
-                    import("core.tool.linker")
-                    function _map_linkflags(package, targetkind, sourcekinds, name, values)
-                        return linker.map_flags(targetkind, sourcekinds, name, values, {target = package})
-                    end
-
-                    local ldflags
-                    local add_dep
-                    add_dep = function (dep)
-                        print("add_dep", dep:name())
-                        local fetchinfo = dep:fetch({external = false})
-                        if fetchinfo then
-                            print("fetchinfo ", fetchinfo)
-                            ldflags = ldflags or {}
-                            table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
-                            table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "link", fetchinfo.links))
-                            table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks)))
-                            table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "framework", fetchinfo.frameworks))
-                            if fetchinfo.static then
-                                for _, inner_dep in ipairs(dep:librarydeps()) do
-                                    add_dep(inner_dep)
-                                end
-                            end
-                        end
-                    end
-
-                    for _, dep in ipairs(freetype:librarydeps()) do
-                        add_dep(dep)
-                    end
-
-                    if ldflags then
-                        opt = { shflags = ldflags, ldflags = ldflags}
+                        return result
                     end
                 end
+                return paths
+            end
+
+            import("core.tool.linker")
+            function _map_linkflags(package, targetkind, sourcekinds, name, values)
+                return linker.map_flags(targetkind, sourcekinds, name, values, {target = package})
+            end
+
+            local ldflags
+            local add_dep
+            add_dep = function (dep)
+                print("add_dep", dep:name())
+                local fetchinfo = dep:fetch({external = false})
+                if fetchinfo then
+                    print("fetchinfo ", fetchinfo)
+                    ldflags = ldflags or {}
+                    table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
+                    table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "link", fetchinfo.links))
+                    table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks)))
+                    table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "framework", fetchinfo.frameworks))
+                    if fetchinfo.static then
+                        for _, inner_dep in ipairs(dep:plaindeps()) do
+                            add_dep(inner_dep)
+                        end
+                    end
+                end
+            end
+
+            add_dep(freetype)
+
+            if ldflags then
+                opt = { shflags = ldflags, ldflags = ldflags}
             end
         end
         print("configs", configs)
