@@ -9,7 +9,7 @@ package("libfabric")
     add_versions("1.17.0", "579c0f5ef636c0c72f4d3d6bd4da91a5aed9ac3ac4ea387404c45dbbdee4745d")
 
     if is_plat("linux") then
-        add_syslinks("pthread", "dl", "rt")
+        add_syslinks("pthread", "dl", "rt", "atomic")
         add_extsources("apt::libfabric-dev", "pacman::libfabric")
     end
 
