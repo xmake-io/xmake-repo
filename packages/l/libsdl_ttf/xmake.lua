@@ -46,8 +46,6 @@ package("libsdl_ttf")
         local freetype = package:dep("freetype")
         local opt
         if freetype and not freetype:is_system() then
-            -- pass freetype ourselves to handle its dependencies properly
-            io.replace("CMakeLists.txt", "set(SDL2TTF_FREETYPE ON)", "set(SDL2TTF_FREETYPE OFF)", {plain = true})
 
             local ldflags = {}
             opt = {
@@ -74,10 +72,8 @@ package("libsdl_ttf")
                     return paths
                 end
 
-                import("core.tool.linker")
-                function _map_linkflags(package, targetkind, sourcekinds, name, values)
-                    return linker.map_flags(targetkind, sourcekinds, name, values, {target = package})
-                end
+                local links = {}
+                local linkdirs = {}
 
                 local add_dep
                 add_dep = function (dep)
@@ -85,11 +81,11 @@ package("libsdl_ttf")
                     local fetchinfo = dep:fetch({external = false})
                     if fetchinfo then
                         print("fetchinfo ", fetchinfo)
-                        ldflags = ldflags or {}
-                        table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
-                        table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "link", fetchinfo.links))
-                        table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks)))
-                        table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "framework", fetchinfo.frameworks))
+                        linkdirs = linkdirs or {}
+                        table.join2(linkdirs, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
+                        links = links or {}
+                        table.join2(links, package, "binary", {"cxx"}, "link", fetchinfo.links)
+                        table.join2(links, _translate_paths(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks))
                         if fetchinfo.static then
                             for _, inner_dep in ipairs(dep:plaindeps()) do
                                 add_dep(inner_dep)
@@ -101,11 +97,19 @@ package("libsdl_ttf")
                 for _, dep in ipairs(freetype:plaindeps()) do
                     add_dep(dep)
                 end
+
+                if #links > 0 or #linkdirs > 0 then
+                    local targetconf = string.format("target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype %s)", links)
+                    if #linkdirs > 0 then
+                        targetconf = targetconf .. string.format("\ntarget_link_directories(SDL2_ttf PRIVATE %s)", linkdirs)
+                    end
+                    -- pass freetype ourselves to handle its dependencies properly
+                    io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)", targetconf, {plain = true})
+                end
             end
         end
         print("configs", configs)
         print("opt", opt)
-        table.insert(configs, "--trace")
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
