@@ -56,50 +56,56 @@ package("libsdl_ttf")
                 ldflags = ldflags
             }
 
-            -- translate paths
-            function _translate_paths(paths)
-                if is_host("windows") then
-                    if type(paths) == "string" then
-                        return (paths:gsub("\\", "/"))
-                    elseif type(paths) == "table" then
-                        local result = {}
-                        for _, p in ipairs(paths) do
-                            table.insert(result, (p:gsub("\\", "/")))
-                        end
-                        return result
-                    end
-                end
-                return paths
-            end
-
-            import("core.tool.linker")
-            function _map_linkflags(package, targetkind, sourcekinds, name, values)
-                return linker.map_flags(targetkind, sourcekinds, name, values, {target = package})
-            end
-
-            local add_dep
-            add_dep = function (dep)
-                print("add_dep", dep:name())
-                local fetchinfo = dep:fetch({external = false})
-                if fetchinfo then
-                    print("fetchinfo ", fetchinfo)
-                    ldflags = ldflags or {}
-                    table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
-                    table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "link", fetchinfo.links))
-                    table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks)))
-                    table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "framework", fetchinfo.frameworks))
-                    if fetchinfo.static then
-                        for _, inner_dep in ipairs(dep:plaindeps()) do
-                            add_dep(inner_dep)
+            local freetypefetch = freetype:fetch()
+            if freetypefetch and freetypefetch.static then
+                -- translate paths
+                function _translate_paths(paths)
+                    if is_host("windows") then
+                        if type(paths) == "string" then
+                            return (paths:gsub("\\", "/"))
+                        elseif type(paths) == "table" then
+                            local result = {}
+                            for _, p in ipairs(paths) do
+                                table.insert(result, (p:gsub("\\", "/")))
+                            end
+                            return result
                         end
                     end
+                    return paths
+                end
+
+                import("core.tool.linker")
+                function _map_linkflags(package, targetkind, sourcekinds, name, values)
+                    return linker.map_flags(targetkind, sourcekinds, name, values, {target = package})
+                end
+
+                local add_dep
+                add_dep = function (dep)
+                    print("add_dep", dep:name())
+                    local fetchinfo = dep:fetch({external = false})
+                    if fetchinfo then
+                        print("fetchinfo ", fetchinfo)
+                        ldflags = ldflags or {}
+                        table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
+                        table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "link", fetchinfo.links))
+                        table.join2(ldflags, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks)))
+                        table.join2(ldflags, _map_linkflags(package, "binary", {"cxx"}, "framework", fetchinfo.frameworks))
+                        if fetchinfo.static then
+                            for _, inner_dep in ipairs(dep:plaindeps()) do
+                                add_dep(inner_dep)
+                            end
+                        end
+                    end
+                end
+
+                for _, dep in ipairs(freetype:plaindeps()) do
+                    add_dep(dep)
                 end
             end
-
-            add_dep(freetype)
         end
         print("configs", configs)
         print("opt", opt)
+        table.insert(configs, "--trace")
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
