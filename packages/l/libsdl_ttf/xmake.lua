@@ -44,16 +44,7 @@ package("libsdl_ttf")
         end
 
         local freetype = package:dep("freetype")
-        local opt
         if freetype and not freetype:is_system() then
-
-            local ldflags = {}
-            opt = {
-                packagedeps = "freetype",
-                shflags = ldflags, 
-                ldflags = ldflags
-            }
-
             local freetypefetch = freetype:fetch()
             if freetypefetch and freetypefetch.static then
                 -- translate paths
@@ -99,9 +90,9 @@ package("libsdl_ttf")
                 end
 
                 if #links > 0 or #linkdirs > 0 then
-                    local targetconf = string.format("target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype %s)", links)
+                    local targetconf = string.format("target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype %s)", table.concat(links, " "))
                     if #linkdirs > 0 then
-                        targetconf = targetconf .. string.format("\ntarget_link_directories(SDL2_ttf PRIVATE %s)", linkdirs)
+                        targetconf = targetconf .. string.format("\ntarget_link_directories(SDL2_ttf PRIVATE %s)", table.concat(linkdirs, " "))
                     end
                     -- pass freetype ourselves to handle its dependencies properly
                     io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)", targetconf, {plain = true})
@@ -109,8 +100,8 @@ package("libsdl_ttf")
             end
         end
         print("configs", configs)
-        print("opt", opt)
-        import("package.tools.cmake").install(package, configs, opt)
+        table.insert(configs, "--trace")
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
