@@ -49,7 +49,7 @@ package("libsdl_ttf")
             -- pass freetype ourselves to handle its dependencies properly
             io.replace("CMakeLists.txt", "set(SDL2TTF_FREETYPE ON)", "set(SDL2TTF_FREETYPE OFF)", {plain = true})
 
-            local ldflags
+            local ldflags = {}
             opt = {
                 packagedeps = "freetype",
                 shflags = ldflags, 
