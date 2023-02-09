@@ -82,10 +82,10 @@ package("libsdl_ttf")
                     if fetchinfo then
                         print("fetchinfo ", fetchinfo)
                         linkdirs = linkdirs or {}
-                        table.join2(linkdirs, _translate_paths(_map_linkflags(package, "binary", {"cxx"}, "linkdir", fetchinfo.linkdirs)))
+                        table.join2(linkdirs, _translate_paths(fetchinfo.linkdirs))
                         links = links or {}
-                        table.join2(links, package, "binary", {"cxx"}, "link", fetchinfo.links)
-                        table.join2(links, _translate_paths(package, "binary", {"cxx"}, "syslink", fetchinfo.syslinks))
+                        table.join2(links, fetchinfo.links)
+                        table.join2(links, _translate_paths(fetchinfo.syslinks))
                         if fetchinfo.static then
                             for _, inner_dep in ipairs(dep:plaindeps()) do
                                 add_dep(inner_dep)
