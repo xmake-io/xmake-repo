@@ -26,6 +26,12 @@ package("apr")
             table.insert(configs, "CFLAGS=-DAPR_IOVEC_DEFINED")
         end
         import("package.tools.autoconf").install(package, configs)
+        if package:config("shared") then
+            os.rm(package:installdir("lib/*.a"))
+        else
+            os.tryrm(package:installdir("lib/*.so"))
+            os.tryrm(package:installdir("lib/*.dylib"))
+        end
         package:add("includedirs", "include/apr-1")
     end)
 
