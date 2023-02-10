@@ -83,6 +83,10 @@ package("boost")
             else
                 linkname = "boost_" .. libname
             end
+            if libname == "python" then
+                -- TODO maybe we need improve it, e.g. libboost_python310-mt.a
+                linkname = linkname .. "310"
+            end
             if package:config("multi") then
                 linkname = linkname .. "-mt"
             end
@@ -117,6 +121,9 @@ package("boost")
         -- disable auto-link all libs
         if package:is_plat("windows") then
             package:add("defines", "BOOST_ALL_NO_LIB")
+        end
+        if package:config("python") then
+            package:add("deps", "python 3.10.x")
         end
     end)
 
