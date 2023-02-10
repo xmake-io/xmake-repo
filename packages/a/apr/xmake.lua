@@ -35,12 +35,14 @@ package("apr")
         table.insert(configs, "-DAPR_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
         -- libapr-1 is shared, apr-1 is static
-        if not package:config("shared") then
-            os.rm(package:installdir("lib/lib*.lib"))
-            os.rm(package:installdir("bin/lib*.dll"))
-        else
+        if package:config("shared") then
+            package:add("defines", "APR_DECLARE_EXPORT")
             os.rm(package:installdir("lib/apr-1.lib"))
             os.rm(package:installdir("lib/aprapp-1.lib"))
+        else
+            package:add("defines", "APR_DECLARE_STATIC")
+            os.rm(package:installdir("lib/lib*.lib"))
+            os.rm(package:installdir("bin/lib*.dll"))
         end
     end)
 
