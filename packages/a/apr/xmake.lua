@@ -29,9 +29,10 @@ package("apr")
         if package:config("shared") then
             os.rm(package:installdir("lib/*.a"))
         else
-            os.tryrm(package:installdir("lib/*.so"))
+            os.tryrm(package:installdir("lib/*.so*"))
             os.tryrm(package:installdir("lib/*.dylib"))
         end
+        package:add("links", "apr-1")
         package:add("includedirs", "include/apr-1")
     end)
 
