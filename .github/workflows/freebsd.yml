@@ -25,17 +25,19 @@ jobs:
         uses: vmactions/freebsd-vm@v0
         with:
           usesh: true
+          sync: sshfs
           mem: 4096
           copyback: false
           prepare: pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl
           run: |
             git clone --recurse-submodules https://github.com/xmake-io/xmake.git /tmp/xmake -b dev
             cd /tmp/xmake
+            ./configure
             gmake -j4
             gmake install
             export XMAKE_ROOT=y
             cd -
             git config --global --add safe.directory /Users/runner/work/xmake-repo/xmake-repo
-            xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
+            xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -vD
 
 

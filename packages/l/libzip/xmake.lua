@@ -4,8 +4,13 @@ package("libzip")
     set_description("A C library for reading, creating, and modifying zip archives.")
     set_license("BSD-3-Clause")
 
-    add_urls("https://libzip.org/download/libzip-$(version).tar.gz")
-    add_versions("1.8.0", "30ee55868c0a698d3c600492f2bea4eb62c53849bcf696d21af5eb65f3f3839e")
+    add_urls("https://github.com/nih-at/libzip/releases/download/v$(version)/libzip-$(version).tar.gz",
+             "https://libzip.org/download/libzip-$(version).tar.gz", {version = function (version)
+                 return tostring(version):sub(2)
+         end})
+    add_urls("https://github.com/nih-at/libzip.git")
+    add_versions("v1.8.0", "30ee55868c0a698d3c600492f2bea4eb62c53849bcf696d21af5eb65f3f3839e")
+    add_versions("v1.9.2", "fd6a7f745de3d69cf5603edc9cb33d2890f0198e415255d0987a0cf10d824c6f")
 
     add_deps("cmake", "zlib")
 
@@ -17,6 +22,10 @@ package("libzip")
                         zstd = "zstd"}
     for config, dep in pairs(configdeps) do
         add_configs(config, {description = "Enable " .. config .. " support.", default = false, type = "boolean"})
+    end
+
+    if is_plat("windows", "mingw") then
+        add_syslinks("advapi32")
     end
 
     on_load("windows", "macosx", "linux", function (package)

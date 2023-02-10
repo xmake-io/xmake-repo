@@ -5,6 +5,7 @@ package("spdlog")
 
     set_urls("https://github.com/gabime/spdlog/archive/$(version).zip",
              "https://github.com/gabime/spdlog.git")
+    add_versions("v1.11.0", "33f83c6b86ec0fbbd0eb0f4e980da6767494dc0ad063900bcfae8bc3e9c75f21")
     add_versions("v1.10.0", "7be28ff05d32a8a11cfba94381e820dd2842835f7f319f843993101bcab44b66")
     add_versions("v1.9.2", "130bd593c33e2e2abba095b551db6a05f5e4a5a19c03ab31256c38fa218aa0a6")
     add_versions("v1.9.1", "1a383a1d6bf604759c310a0b464a83afc54cc3147192d61c3d0c59695b38ff79")
@@ -17,9 +18,9 @@ package("spdlog")
     add_versions("v1.4.2", "56b90f0bd5b126cf1b623eeb19bf4369516fa68f036bbc22d9729d2da511fb5a")
     add_versions("v1.3.1", "db6986d0141546d4fba5220944cc1f251bd8afdfc434bda173b4b0b6406e3cd0")
 
-    add_configs("header_only",  {description = "Use header only", default = true, type = "boolean"})
-    add_configs("fmt_external", {description = "Use external fmt library instead of bundled", default = false, type = "boolean"})
-    add_configs("noexcept",     {description = "Compile with -fno-exceptions. Call abort() on any spdlog exceptions", default = false, type = "boolean"})
+    add_configs("header_only",  {description = "Use header only version.", default = true, type = "boolean"})
+    add_configs("fmt_external", {description = "Use external fmt library instead of bundled.", default = false, type = "boolean"})
+    add_configs("noexcept",     {description = "Compile with -fno-exceptions. Call abort() on any spdlog exceptions.", default = false, type = "boolean"})
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -32,7 +33,7 @@ package("spdlog")
         if package:config("fmt_external") then
             package:add("defines", "SPDLOG_FMT_EXTERNAL")
         end
-        if package:version():ge("1.4.0") and not package:config("header_only") then
+        if not package:config("header_only") then
             package:add("deps", "cmake")
         end
         if package:config("fmt_external") then
@@ -41,7 +42,7 @@ package("spdlog")
     end)
 
     on_install(function (package)
-        if package:version():lt("1.4.0") or package:config("header_only") then
+        if (package:version() and package:version():lt("1.4.0")) or package:config("header_only") then
             os.cp("include", package:installdir())
             return
         end
@@ -54,5 +55,5 @@ package("spdlog")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++11"}}))
+        assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++14"}}))
     end)

@@ -4,21 +4,16 @@ package("libxml2")
     set_description("The XML C parser and toolkit of Gnome.")
     set_license("MIT")
 
-    set_urls("http://xmlsoft.org/sources/libxml2-$(version).tar.gz",
-             "https://ftp.osuosl.org/pub/blfs/conglomeration/libxml2/libxml2-$(version).tar.gz")
+    add_urls("https://download.gnome.org/sources/libxml2/$(version).tar.xz", {version = function (version) return format("%d.%d/libxml2-%s", version:major(), version:minor(), version) end})
     add_urls("https://gitlab.gnome.org/GNOME/libxml2.git")
-    add_versions("2.9.9", "94fb70890143e3c6549f265cee93ec064c80a84c42ad0f23e85ee1fd6540a871")
-    add_versions("2.9.10", "aafee193ffb8fe0c82d4afef6ef91972cbaf5feea100edc2f262750611b4be1f")
-    add_versions("2.9.12", "c8d6681e38c56f172892c85ddc0852e1fd4b53b4209e7f4ebf17f7e2eae71d92")
-
-    add_patches("2.9.12", path.join(os.scriptdir(), "patches", "2.9.12", "msvc.patch"), "b978048ad1caf9c63e3b2eee685ea2e586812d80deb1e47b18ad2cae36edd201")
+    add_versions("2.10.3", "5d2cc3d78bec3dbe212a9d7fa629ada25a7da928af432c93060ff5c17ee28a9c")
 
     add_configs("iconv", {description = "Enable libiconv support.", default = false, type = "boolean"})
     add_configs("python", {description = "Enable the python interface.", default = false, type = "boolean"})
 
     add_includedirs("include/libxml2")
     if is_plat("windows") then
-        add_syslinks("ws2_32")
+        add_syslinks("wsock32", "ws2_32")
     else
         add_links("xml2")
     end
@@ -38,13 +33,13 @@ package("libxml2")
             end
         end
         if package:config("python") then
-            if not package:is_plat(os.host()) then
+            if package:is_cross() then
                 raise("libxml2 python interface does not support cross-compilation")
             end
             if not package:config("iconv") then
                 raise("libxml2 python interface requires iconv to be enabled")
             end
-            package:add("deps", "python 3.x", {private = true})
+            package:add("deps", "python 3.x")
         end
         if package:config("iconv") then
             package:add("deps", "libiconv")
@@ -53,7 +48,7 @@ package("libxml2")
 
     on_install("windows", function (package)
         os.cd("win32")
-        local args = {"configure.js", "iso8859x=yes", "zlib=no", "compiler=msvc"}
+        local args = {"configure.js", "iso8859x=yes", "lzma=no", "zlib=no", "compiler=msvc"}
         table.insert(args, "cruntime=/" .. package:config("vs_runtime"))
         table.insert(args, "debug=" .. (package:debug() and "yes" or "no"))
         table.insert(args, "iconv=" .. (package:config("iconv") and "yes" or "no"))
@@ -77,7 +72,8 @@ package("libxml2")
         package:addenv("PATH", package:installdir("bin"))
         if package:config("python") then
             os.cd("../python")
-            io.replace("setup.py", "/opt/include", package:dep("libiconv"):installdir("include"):gsub("\\", "\\\\"), {plain = true})
+            io.replace("libxml_wrap.h", "XML_IGNORE_PEDANTIC_WARNINGS", "XML_IGNORE_DEPRECATION_WARNINGS")
+            io.replace("setup.py", "[xml_includes]", "[xml_includes,\"" .. package:dep("libiconv"):installdir("include"):gsub("\\", "\\\\") .. "\"]", {plain = true})
             io.replace("setup.py", "WITHDLLS = 1", "WITHDLLS = 0", {plain = true})
             if not package:config("shared") then
                 io.replace("setup.py", "libdirs = [", format("libdirs = [\n'%s',", package:dep("libiconv"):installdir("lib"):gsub("\\", "\\\\")), {plain = true})
@@ -87,12 +83,14 @@ package("libxml2")
             else
                 os.cp(path.join(package:installdir("bin"), "libxml2.dll"), path.join(package:installdir("lib"), "site-packages", "libxml2.dll"))
             end
-            os.vrun("python setup.py install --prefix=\"" .. package:installdir() .. "\"")
+            os.mkdir(path.join(package:installdir("lib"), "site-packages"))
+            os.vrunv("python", {"-m", "pip", "install", "--prefix=" .. package:installdir(), "."}, {envs = {PYTHONPATH = path.join(package:installdir("lib"), "site-packages")}})
             package:addenv("PYTHONPATH", path.join(package:installdir("lib"), "site-packages"))
         end
     end)
 
     on_install("macosx", "linux", "iphoneos", "android", function (package)
+        import("package.tools.autoconf")
         local configs = {"--disable-dependency-tracking",
                          "--without-lzma",
                          "--without-zlib"}
@@ -117,34 +115,59 @@ package("libxml2")
         else
             table.insert(configs, "--without-iconv")
         end
-        if package:config("python") then
-            table.insert(configs, "--with-python")
-        else
-            table.insert(configs, "--without-python")
-        end
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        import("package.tools.autoconf").install(package, configs)
+        local envs = autoconf.buildenvs(package)
+        if package:config("python") then
+            table.insert(configs, "--with-python")
+            table.insert(configs, "--with-ftp")
+            table.insert(configs, "--with-legacy")
+            local python = package:dep("python"):fetch()
+            if python then
+                local cflags, ldflags
+                for _, includedir in ipairs(python.sysincludedirs or python.includedirs) do
+                    cflags = (cflags or "") .. " -I" .. includedir
+                end
+                for _, linkdir in ipairs(python.linkdirs) do
+                    ldflags = (ldflags or "") .. " -L" .. linkdir
+                end
+                envs.PYTHON_CFLAGS  = cflags
+                envs.PYTHON_LIBS = ldflags
+            end
+        else
+            table.insert(configs, "--without-python")
+        end
+        autoconf.install(package, configs, {envs = envs})
         package:addenv("PATH", package:installdir("bin"))
         if package:config("python") then
             os.cd("python")
-            io.replace("setup.py", "\"/usr/include\",\n\"/usr/local/include\",\n\"/opt/include\",", "\"" .. package:dep("libiconv"):installdir("include") .. "\",", {plain = true})
+            io.replace("setup.py", "[xml_includes]", "[xml_includes,\"" .. package:dep("libiconv"):installdir("include") .. "\"]", {plain = true})
             if not package:config("shared") then
                 io.replace("setup.py", "libdirs = [", format("libdirs = [\n'%s',", package:dep("libiconv"):installdir("lib")), {plain = true})
                 io.replace("setup.py", "platformLibs = [\"m\",\"z\"]", "platformLibs = [\"iconv\",\"m\"]", {plain = true})
             else
                 io.replace("setup.py", "platformLibs = [\"m\",\"z\"]", "platformLibs = [\"m\"]", {plain = true})
             end
-            os.vrun("python setup.py install --prefix=\"" .. package:installdir() .. "\"")
-            local pythonver = package:dep("python"):version()
+            local python = package:dep("python")
+            local pythonver = nil
+            if python:is_system() then
+                pythonver = import("core.base.semver").new(python:fetch().version)
+            else
+                pythonver = python:version()
+            end
+            os.vrunv("python3", {"-m", "pip", "install", "--prefix=" .. package:installdir(), "."}, {envs = {PYTHONPATH = path.join(package:installdir("lib"), format("python%s.%s", pythonver:major(), pythonver:minor()), "site-packages")}})
             package:addenv("PYTHONPATH", path.join(package:installdir("lib"), format("python%s.%s", pythonver:major(), pythonver:minor()), "site-packages"))
         end
     end)
 
     on_test(function (package)
         if package:config("python") then
-            os.vrun("python3 -c \"import libxml2\"")
+            if package:is_plat("windows") then
+                os.vrun("python -c \"import libxml2\"")
+            else
+                os.vrun("python3 -c \"import libxml2\"")
+            end
         end
         assert(package:has_cfuncs("xmlNewNode", {includes = {"libxml/parser.h", "libxml/tree.h"}}))
     end)

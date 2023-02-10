@@ -12,13 +12,13 @@ package("doxygen")
     add_versions("github:1.9.1", "Release_1_9_1")
 
     if not is_plat("windows") then
-        add_deps("cmake", "bison", "flex", {private = true})
+        add_deps("cmake", "bison >=2.7", "flex", {private = true})
         add_deps("python 3.x", {kind = "binary", private = true})
     end
 
     on_load("@windows", function (package)
         if package:is_built() then
-            package:add("deps", "cmake", "bison", "flex")
+            package:add("deps", "cmake", "bison >=2.7", "flex")
             package:add("deps", "python 3.x", {kind = "binary"})
         end
     end)

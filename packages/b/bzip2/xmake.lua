@@ -1,5 +1,4 @@
 package("bzip2")
-
     set_homepage("https://sourceware.org/bzip2/")
     set_description("Freely available, patent free, high-quality data compressor.")
 
@@ -14,10 +13,10 @@ package("bzip2")
         add_extsources("brew::bzip2")
     end
 
-    on_install("linux", "macosx", "windows", "android", "iphoneos", "cross", "bsd", "mingw", function (package)
+    on_install(function (package)
         local configs = {}
-        if not package:is_plat("cross", "iphoneos", "android") then
-            configs.enable_tools = true
+        configs.enable_tools = true
+        if not package:is_plat("iphoneos", "android") then
             package:addenv("PATH", "bin")
         end
 
@@ -26,7 +25,7 @@ package("bzip2")
     end)
 
     on_test(function (package)
-        if not package:is_plat("cross", "iphoneos", "android") then
+        if not package:is_cross() then
             os.vrun("bunzip2 --help")
             os.vrun("bzcat --help")
             os.vrun("bzip2 --help")

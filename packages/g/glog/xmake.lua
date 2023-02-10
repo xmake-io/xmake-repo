@@ -8,6 +8,7 @@ package("glog")
              "https://github.com/google/glog.git")
     add_versions("v0.4.0", "f28359aeba12f30d73d9e4711ef356dc842886968112162bc73002645139c39c")
     add_versions("v0.5.0", "eede71f28371bf39aa69b45de23b329d37214016e2055269b3b5e7cfd40b59f5")
+    add_versions("v0.6.0", "8a83bf982f37bb70825df71a9709fa90ea9f4447fb3c099e1d720a439d88bad6")
 
     local configdeps = {gtest = "gtest", gflags = "gflags", unwind = "libunwind"}
     for config, dep in pairs(configdeps) do
@@ -15,9 +16,13 @@ package("glog")
     end
 
     add_deps("cmake")
+    
     on_load("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package)
-        if package:is_plat("windows") and package:version():le("0.4") and not package:config("shared") then
-            package:add("defines", "GOOGLE_GLOG_DLL_DECL=")
+        if package:is_plat("windows") then
+            if package:version():le("0.4") and not package:config("shared") then
+                package:add("defines", "GOOGLE_GLOG_DLL_DECL=")
+            end
+            package:add("defines", "GLOG_NO_ABBREVIATED_SEVERITIES")
         end
         for config, dep in pairs(configdeps) do
             if package:config(config) then
@@ -32,9 +37,6 @@ package("glog")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DWITH_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
-        end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
         import("package.tools.cmake").install(package, configs)
     end)

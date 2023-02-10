@@ -9,7 +9,7 @@ package("indicators")
     add_versions("2.2", "08dc0592a1fb5e3a050562961fbaacf4d03dadb76a0eb47f0670e63235d14dc5")
 
     on_install(function (package)
-        os.cp("include/indicators/*.hpp", package:installdir("include/indicators"))
+        os.cp("include/indicators/*", package:installdir("include/indicators"))
     end)
 
     on_test(function (package)

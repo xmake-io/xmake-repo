@@ -69,7 +69,7 @@ package("brotli")
     end)
 
     on_test(function(package)
-        if package:is_plat(os.host()) then
+        if not package:is_cross() then
             os.vrun("brotli --version")
         end
         assert(package:check_csnippets([[

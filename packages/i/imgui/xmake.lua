@@ -6,6 +6,9 @@ package("imgui")
 
     add_urls("https://github.com/ocornut/imgui/archive/$(version).tar.gz",
              "https://github.com/ocornut/imgui.git")
+    add_versions("v1.89-docking", "94e850fd6ff9eceb98fda3147e3ffd4781ad2dc7")
+    add_versions("v1.89", "4038b05bd44c889cf40be999656d3871a0559916708cb52a6ae2fa6fa35c5c60")
+    add_versions("v1.88-docking", "9cd9c2eff99877a3f10a7f9c2a3a5b9c15ea36c6")
     add_versions("v1.88", "9f14c788aee15b777051e48f868c5d4d959bd679fc5050e3d2a29de80d8fd32e")
     add_versions("v1.87-docking", "1ee252772ae9c0a971d06257bb5c89f628fa696a")
     add_versions("v1.87", "b54ceb35bda38766e36b87c25edf7a1cd8fd2cb8c485b245aedca6fb85645a20")
@@ -23,7 +26,10 @@ package("imgui")
     add_versions("v1.75", "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
     add_configs("user_config", {description = "Use user config (disables test!)", default = nil, type = "string"})
-    add_configs("glfw_opengl3", {description = "Use glfw+opengl3 as backend", default = false, type = "boolean"})
+    add_configs("glfw_opengl3", {description = "Enable glfw+opengl3 backend", default = false, type = "boolean"})
+    add_configs("glfw_vulkan", {description = "Enable glfw+vulkan backend", default = false, type = "boolean"})
+    add_configs("sdl2", {description = "Enable sdl2 backend", default = false, type = "boolean"})
+    add_configs("sdl2_opengl3", {description = "Enable sdl2+opengl3 backend", default = false, type = "boolean"})
     add_configs("wchar32", {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
     add_configs("freetype", {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
 
@@ -37,12 +43,20 @@ package("imgui")
         if package:config("freetype") then
             package:add("deps", "freetype")
         end
-        if package:config("glfw_opengl3") then
+        if package:config("glfw_opengl3") or package:config("sdl2_opengl3") then
             if package:version():lt("1.84") then
                 package:add("deps", "glad")
                 package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
             end
+        end
+        if package:config("glfw_opengl3") or package:config("glfw_vulkan") then
             package:add("deps", "glfw")
+        end
+        if package:config("glfw_vulkan") then
+            package:add("deps", "vulkansdk")
+        end
+        if package:config("sdl2") or package:config("sdl2_opengl3") then
+            package:add("deps", "libsdl >=2.0.17")
         end
         if package:version_str():find("-docking", 1, true) then
             package:set("urls", {"https://github.com/ocornut/imgui.git"})
@@ -54,8 +68,11 @@ package("imgui")
             wchar32      = package:config("wchar32"),
             freetype     = package:config("freetype"),
             glfw_opengl3 = package:config("glfw_opengl3"),
+            glfw_vulkan  = package:config("glfw_vulkan"),
+            sdl2         = package:config("sdl2"),
+            sdl2_opengl3 = package:config("sdl2_opengl3"),
             user_config  = package:config("user_config"),
-            use_glad     = package:version():lt("1.84") -- this flag will be used if glfw_opengl3 is enabled
+            use_glad     = package:version() and package:version():lt("1.84") -- this flag will be used if glfw_opengl3 or sdl2_opengl3 is enabled
         }
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")

@@ -7,6 +7,7 @@ package("suitesparse")
              "https://github.com/DrTimothyAldenDavis/SuiteSparse.git")
     add_versions("v5.10.1", "acb4d1045f48a237e70294b950153e48dce5b5f9ca8190e86c2b8c54ce00a7ee")
     add_versions("v5.12.0", "5fb0064a3398111976f30c5908a8c0b40df44c6dd8f0cc4bfa7b9e45d8c647de")
+    add_versions("v5.13.0", "59c6ca2959623f0c69226cf9afb9a018d12a37fab3a8869db5f6d7f83b6b147d")
 
     add_patches("5.x", path.join(os.scriptdir(), "patches", "5.10.1", "msvc.patch"), "8ac61e9acfaa864a2528a14d3a7e6e86f6e6877de2fe93fdc87876737af5bf31")
 

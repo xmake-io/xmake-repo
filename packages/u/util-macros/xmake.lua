@@ -5,6 +5,7 @@ package("util-macros")
 
     set_urls("https://www.x.org/archive/individual/util/util-macros-$(version).tar.bz2")
     add_versions("1.19.2", "d7e43376ad220411499a79735020f9d145fdc159284867e99467e0d771f3e712")
+    add_versions("1.19.3", "0f812e6e9d2786ba8f54b960ee563c0663ddbe2434bf24ff193f5feab1f31971")
 
     add_deps("pkg-config")
 

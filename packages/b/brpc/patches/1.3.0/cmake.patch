@@ -1,0 +1,20 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9edc0a68..8b2ad743 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -210,14 +210,13 @@ set(DYNAMIC_LIB
+     ${CMAKE_THREAD_LIBS_INIT}
+     ${THRIFT_LIB}
+     ${THRIFTNB_LIB}
+-    ${OPENSSL_CRYPTO_LIBRARY}
+     dl
+     z)
+ 
+ if(WITH_MESALINK)
+     list(APPEND DYNAMIC_LIB ${MESALINK_LIB})
+ else()
+-    list(APPEND DYNAMIC_LIB ${OPENSSL_SSL_LIBRARY})
++    list(APPEND DYNAMIC_LIB ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPTO_LIBRARY})
+ endif()
+ 
+ set(BRPC_PRIVATE_LIBS "-lgflags -lprotobuf -lleveldb -lprotoc -lssl -lcrypto -ldl -lz")

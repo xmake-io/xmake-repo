@@ -1,0 +1,12 @@
+diff --git a/cpp/types.h b/cpp/types.h
+index 8c7cc2b..86b63c7 100644
+--- a/cpp/types.h
++++ b/cpp/types.h
+@@ -1,5 +1,7 @@
+ #pragma once
+ 
++#include <cstdint>
++
+ #include "ffi.h"
+ #include "event.h"
+ 

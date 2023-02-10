@@ -15,6 +15,7 @@ package("tbox")
     add_versions("v1.6.6", "13b8fa0b10c2c0ca256878a9c71ed2880980659dffaadd123c079c2126d64548")
     add_versions("v1.6.7", "7bedfc46036f0bb99d4d81b5a344fa8c24ada2372029b6cbe0c2c475469b2b70")
     add_versions("v1.6.9", "31db6cc51af7db76ad5b5da88356982b1e0f1e624c466c749646dd203b68adae")
+    add_versions("v1.7.1", "236493a71ffc9d07111e906fc2630893b88d32c0a5fbb53cd94211f031bd65a1")
 
     add_configs("micro",      {description = "Compile micro core library for the embed system.", default = false, type = "boolean"})
     add_configs("float",      {description = "Enable or disable the float type.", default = true, type = "boolean"})
@@ -33,7 +34,7 @@ package("tbox")
     elseif not is_plat("android") then
         add_syslinks("pthread")
     elseif is_plat("macosx", "iphoneos") then
-        add_frameworks("Foundation")
+        add_frameworks("Foundation", "CoreServices", "CoreFoundation")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread", "m", "dl")
     end
@@ -69,9 +70,6 @@ package("tbox")
             if package:config(name) then
                 configs[name] = true
             end
-        end
-        if not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
-            configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
     end)

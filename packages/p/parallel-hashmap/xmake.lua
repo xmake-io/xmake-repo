@@ -7,11 +7,17 @@ package("parallel-hashmap")
 
     add_urls("https://github.com/greg7mdp/parallel-hashmap/archive/refs/tags/$(version).tar.gz",
              "https://github.com/greg7mdp/parallel-hashmap.git")
+    add_versions("1.35", "308ab6f92e4c6f49304562e352890cf7140de85ce723c097e74fbdec88e0e1ce")
+    add_versions("1.34", "da4939f5948229abe58acc833b111862411d45669310239b8a163bb73d0197aa")
     add_versions("1.33", "f6e4d0508c4d935fa25dcbaec63fbe0d7503435797e275ec109e8a3f1462a4cd")
 
     add_deps("cmake")
     on_install(function (package)
-        import("package.tools.cmake").install(package)
+        local configs = {
+            "-DPHMAP_BUILD_TESTS=OFF",
+            "-DPHMAP_BUILD_EXAMPLES=OFF",
+        }
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function(package)

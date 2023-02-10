@@ -26,6 +26,7 @@ jobs:
           run: |
             git clone --recurse-submodules https://github.com/xmake-io/xmake.git /tmp/xmake -b dev
             cd /tmp/xmake
+            ./configure
             gmake -j4
             gmake install
             export XMAKE_ROOT=y
