@@ -72,7 +72,7 @@ package("boost")
     add_configs("all",          { description = "Enable all library modules support.",  default = false, type = "boolean"})
     add_configs("multi",        { description = "Enable multi-thread support.",  default = true, type = "boolean"})
     for _, libname in ipairs(libnames) do
-        add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem" or libname == "python"), type = "boolean"})
+        add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
     end
 
     on_load(function (package)
@@ -82,6 +82,10 @@ package("boost")
                 linkname = (package:config("shared") and "boost_" or "libboost_") .. libname
             else
                 linkname = "boost_" .. libname
+            end
+            if libname == "python" then
+                -- TODO maybe we need improve it, e.g. libboost_python310-mt.a
+                linkname = linkname .. "310"
             end
             if package:config("multi") then
                 linkname = linkname .. "-mt"
@@ -117,6 +121,9 @@ package("boost")
         -- disable auto-link all libs
         if package:is_plat("windows") then
             package:add("defines", "BOOST_ALL_NO_LIB")
+        end
+        if package:config("python") then
+            package:add("deps", "python 3.10.x")
         end
     end)
 
