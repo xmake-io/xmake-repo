@@ -12,6 +12,7 @@ package("apr")
         add_patches("1.7.0", path.join(os.scriptdir(), "patches", "1.7.0", "common.patch"), "bbfef69c914ca1ab98a9d94fc4794958334ce5f47d8c08c05e0965a48a44c50d")
     elseif is_plat("windows") then
         add_deps("cmake")
+        add_syslinks("wsock32", "ws2_32", "advapi32", "shell32", "rpcrt4")
     end
 
     on_install("linux", "macosx", function (package)
@@ -35,15 +36,17 @@ package("apr")
         table.insert(configs, "-DAPR_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
         -- libapr-1 is shared, apr-1 is static
-        if not package:config("shared") then
-            os.rm(package:installdir("lib/lib*.lib"))
-            os.rm(package:installdir("bin/lib*.dll"))
-        else
+        if package:config("shared") then
+            package:add("defines", "APR_DECLARE_EXPORT")
             os.rm(package:installdir("lib/apr-1.lib"))
             os.rm(package:installdir("lib/aprapp-1.lib"))
+        else
+            package:add("defines", "APR_DECLARE_STATIC")
+            os.rm(package:installdir("lib/lib*.lib"))
+            os.rm(package:installdir("bin/lib*.dll"))
         end
     end)
 
     on_test(function (package)
-        assert(package:has_cincludes("apr.h"))
+        assert(package:has_cfuncs("apr_initialize", {includes = "apr_general.h"}))
     end)
