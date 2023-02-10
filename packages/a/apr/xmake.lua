@@ -45,5 +45,5 @@ package("apr")
     end)
 
     on_test(function (package)
-        assert(package:has_cincludes("apr.h"))
+        assert(package:has_cfuncs("apr_initialize", {includes = "apr_general.h"}))
     end)
