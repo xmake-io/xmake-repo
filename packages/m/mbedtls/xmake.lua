@@ -5,6 +5,8 @@ package("mbedtls")
 
     set_urls("https://github.com/ARMmbed/mbedtls/archive/mbedtls-$(version).zip")
 
+    add_versions("3.3.0", "2181b33c030b043720633dd22cf57a101b70655aeeb6a5dcab055f69ee940e24")
+    add_versions("2.28.2", "e0e2b013a7dc057674939fc514986f031d4d73e7460f873d20783af4fed9ea1f")
     add_versions("2.25.0", "c2aad438a022c8b0349c9c4ce4a0b40d5df26fe6c63b0c85012b739f279aaf56")
     add_versions("2.13.0", "6e747350bc13e8ff51799daa50f74230c6cd8e15977da55dd59f57b23dcf70a6")
     add_versions("2.7.6", "e527d828ab82650102ca8031302e5d4bc68ea887b2d84e43d3da2a80a9e5a2c8")
