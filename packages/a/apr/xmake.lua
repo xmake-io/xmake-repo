@@ -12,6 +12,7 @@ package("apr")
         add_patches("1.7.0", path.join(os.scriptdir(), "patches", "1.7.0", "common.patch"), "bbfef69c914ca1ab98a9d94fc4794958334ce5f47d8c08c05e0965a48a44c50d")
     elseif is_plat("windows") then
         add_deps("cmake")
+        add_syslinks("wsock32", "ws2_32", "advapi32", "shell32", "rpcrt4")
     end
 
     on_install("linux", "macosx", function (package)
