@@ -149,7 +149,7 @@ package("boost")
             "--libdir=" .. package:installdir("lib"),
             "--without-icu"
         }
-        if is_host("windows") then
+        if package:is_plat("windows") then
             import("core.tool.toolchain")
             local runenvs = toolchain.load("msvc"):runenvs()
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
