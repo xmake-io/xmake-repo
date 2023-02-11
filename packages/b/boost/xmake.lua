@@ -153,7 +153,7 @@ package("boost")
             import("core.tool.toolchain")
             local runenvs = toolchain.load("msvc"):runenvs()
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
-        elseif package:is_plat("mingw") and is_subhost("windows") then
+        elseif package:is_plat("mingw") and is_host("windows") then
             os.vrunv("bash", table.join("./bootstrap.sh", bootstrap_argv))
             os.cp("./tools/build/src/engine/b2.exe", "./")
         else
