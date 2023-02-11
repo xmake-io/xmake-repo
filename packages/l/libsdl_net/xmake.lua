@@ -18,7 +18,7 @@ package("libsdl_net")
     add_deps("cmake", "libsdl")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("Iphlpapi", "ws2_32")
+        add_syslinks("iphlpapi", "ws2_32")
     end
 
     add_includedirs("include", "include/SDL2")

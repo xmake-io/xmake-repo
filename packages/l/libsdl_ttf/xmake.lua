@@ -32,7 +32,7 @@ package("libsdl_ttf")
                 for _, dir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
                     if os.isfile(path.join(dir, "SDL_version.h")) then
                         table.insert(configs, "-DSDL2_INCLUDE_DIR=" .. dir)
-                        break                        
+                        break
                     end
                 end
                 for _, libfile in ipairs(fetchinfo.libfiles) do
@@ -42,65 +42,6 @@ package("libsdl_ttf")
                 end
             end
         end
-
-        local freetype = package:dep("freetype")
-        if freetype and not freetype:is_system() then
-            local freetypefetch = freetype:fetch()
-            if freetypefetch and freetypefetch.static then
-                -- translate paths
-                function _translate_paths(paths)
-                    if is_host("windows") then
-                        if type(paths) == "string" then
-                            return (paths:gsub("\\", "/"))
-                        elseif type(paths) == "table" then
-                            local result = {}
-                            for _, p in ipairs(paths) do
-                                table.insert(result, (p:gsub("\\", "/")))
-                            end
-                            return result
-                        end
-                    end
-                    return paths
-                end
-
-                local links = {}
-                local linkdirs = {}
-
-                local add_dep
-                add_dep = function (dep)
-                    print("add_dep", dep:name())
-                    local fetchinfo = dep:fetch({external = false})
-                    if fetchinfo then
-                        print("fetchinfo ", fetchinfo)
-                        linkdirs = linkdirs or {}
-                        table.join2(linkdirs, _translate_paths(fetchinfo.linkdirs))
-                        links = links or {}
-                        table.join2(links, fetchinfo.links)
-                        table.join2(links, _translate_paths(fetchinfo.syslinks))
-                        if fetchinfo.static then
-                            for _, inner_dep in ipairs(dep:plaindeps()) do
-                                add_dep(inner_dep)
-                            end
-                        end
-                    end
-                end
-
-                for _, dep in ipairs(freetype:plaindeps()) do
-                    add_dep(dep)
-                end
-
-                if #links > 0 or #linkdirs > 0 then
-                    local targetconf = string.format("target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype %s)", table.concat(links, " "))
-                    if #linkdirs > 0 then
-                        targetconf = targetconf .. string.format("\ntarget_link_directories(SDL2_ttf PRIVATE %s)", table.concat(linkdirs, " "))
-                    end
-                    -- pass freetype ourselves to handle its dependencies properly
-                    io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)", targetconf, {plain = true})
-                end
-            end
-        end
-        print("configs", configs)
-        table.insert(configs, "--trace")
         import("package.tools.cmake").install(package, configs)
     end)
 
