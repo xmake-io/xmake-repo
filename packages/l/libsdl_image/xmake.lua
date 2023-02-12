@@ -17,8 +17,10 @@ package("libsdl_image")
     add_versions("2.6.1", "cbfea63a46715c63a1db9e41617e550749a95ffd33ef9bd5ba6e58b2bdca6ed3")
     add_versions("2.6.2", "efe3c229853d0d40c35e5a34c3f532d5d9728f0abc623bc62c962bcef8754205")
 
-    if is_plat("macosx") then
+    if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "CoreGraphics", "ImageIO", "CoreServices")
+    elseif is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     add_deps("cmake")

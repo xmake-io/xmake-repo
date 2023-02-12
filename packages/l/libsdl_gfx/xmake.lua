@@ -25,7 +25,7 @@ package("libsdl_gfx")
         add_extsources("brew::sdl2_gfx")
     end
 
-    add_deps("libsdl", {configs = {shared = true} })
+    add_deps("libsdl", {configs = {shared = true}})
 
     add_links("SDL2_gfx")
 
@@ -68,18 +68,13 @@ package("libsdl_gfx")
 
     on_install("macosx", "linux", function (package)
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-        else
-            table.insert(configs, "--enable-shared=no")
-        end
-        if package:is_plat("linux") and package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
         end
+        print("DYLD_LIBRARY_PATH", os.getenv("DYLD_LIBRARY_PATH"))
+        os.exit()
         import("package.tools.autoconf").install(package, configs)
     end)
 

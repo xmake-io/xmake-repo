@@ -42,6 +42,17 @@ package("libsdl_ttf")
                 end
             end
         end
+        local freetype = package:dep("freetype"):fetch()
+        if freetype then
+            local includedirs = table.wrap(freetype.includedirs or freetype.sysincludedirs)
+            if #includedirs > 0 then
+                table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(includedirs, ";"))
+            end
+            local libfiles = table.wrap(freetype.libfiles)
+            if #libfiles > 0 then
+                table.insert(configs, "-DFREETYPE_LIBRARY=" .. table.concat(libfiles, ";"))
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
