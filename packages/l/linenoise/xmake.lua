@@ -7,7 +7,7 @@ package("linenoise")
 
     add_versions("2020.3.12", "97d2850af13c339369093b78abe5265845d78220")
 
-    on_install(function (package)
+    on_install("linux", "macosx", "bsd", "wasm", "android", "cross", "iphoneos", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
