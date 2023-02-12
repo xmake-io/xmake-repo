@@ -5,6 +5,8 @@ package("linenoise")
 
     add_urls("https://github.com/antirez/linenoise.git")
 
+    add_versions("2020.3.12", "97d2850af13c339369093b78abe5265845d78220")
+
     on_install(function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
