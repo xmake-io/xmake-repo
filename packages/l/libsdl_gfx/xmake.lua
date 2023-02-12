@@ -25,11 +25,21 @@ package("libsdl_gfx")
         add_extsources("brew::sdl2_gfx")
     end
 
-    add_deps("libsdl", {configs = {shared = true}})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_links("SDL2_gfx")
 
     add_includedirs("include", "include/SDL2")
+
+    on_load(function (package)
+        if package:config("shared") then
+            package:add("deps", "libsdl", { configs = { shared = true }})
+        else
+            package:add("deps", "libsdl")
+        end
+    end)
 
     on_install("windows|x86", "windows|x64", function(package)
         import("core.tool.toolchain")

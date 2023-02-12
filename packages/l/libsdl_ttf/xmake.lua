@@ -19,9 +19,21 @@ package("libsdl_ttf")
 
     add_patches(">=2.20.0 <=2.20.1", path.join(os.scriptdir(), "patches", "2.20.1", "cmakelists.patch"), "fe04ada62d9ed70029c0efb3c04bfec22fc7596bd6b73a567beb964e61ebd82c")
 
-    add_deps("cmake", "libsdl", "freetype", "zlib")
+    add_deps("cmake", "freetype", "zlib")
 
     add_includedirs("include", "include/SDL2")
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    on_load(function (package)
+        if package:config("shared") then
+            package:add("deps", "libsdl", { configs = { shared = true }})
+        else
+            package:add("deps", "libsdl")
+        end
+    end)
 
     on_install(function (package)
         local configs = {"-DSDL2TTF_SAMPLES=OFF"}

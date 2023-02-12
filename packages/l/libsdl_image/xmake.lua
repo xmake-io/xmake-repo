@@ -47,7 +47,7 @@ package("libsdl_image")
                 for _, dir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
                     if os.isfile(path.join(dir, "SDL_version.h")) then
                         table.insert(configs, "-DSDL2_INCLUDE_DIR=" .. dir)
-                        break                        
+                        break
                     end
                 end
                 for _, libfile in ipairs(fetchinfo.libfiles) do

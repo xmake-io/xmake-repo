@@ -15,13 +15,25 @@ package("libsdl_net")
         add_extsources("brew::sdl2_net")
     end
 
-    add_deps("cmake", "libsdl")
+    add_deps("cmake")
 
     if is_plat("windows", "mingw") then
         add_syslinks("iphlpapi", "ws2_32")
     end
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_includedirs("include", "include/SDL2")
+
+    on_load(function (package)
+        if package:config("shared") then
+            package:add("deps", "libsdl", { configs = { shared = true }})
+        else
+            package:add("deps", "libsdl")
+        end
+    end)
 
     on_install(function (package)
         local configs = {"-DSDL2NET_SAMPLES=OFF"}
@@ -45,6 +57,7 @@ package("libsdl_net")
                 end
             end
         end
+        io.replace("CMakeLists.txt", "find_package(SDL2test)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
