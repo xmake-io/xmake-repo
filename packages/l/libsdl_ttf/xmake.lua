@@ -50,7 +50,7 @@ package("libsdl_ttf")
             end
             local libfiles = table.wrap(freetype.libfiles)
             if #libfiles > 0 then
-                table.insert(configs, "-DFREETYPE_LIBRARY=" .. table.concat(libfiles, ";"))
+                table.insert(configs, "-DFREETYPE_LIBRARY=" .. table.concat(libfiles, " "))
             end
         end
         import("package.tools.cmake").install(package, configs)
