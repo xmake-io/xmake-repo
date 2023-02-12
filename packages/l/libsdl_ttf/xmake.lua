@@ -16,7 +16,7 @@ package("libsdl_ttf")
     add_versions("2.20.0", "04e94fc5ecac3475ab35c1d5cf52650df691867e7e4befcc861bf982a747111a")
     add_versions("2.20.1", "18d81ab399c8e39adababe8918691830ba6e0d6448e5baa141ee0ddf87ede2dc")
 
-    add_deps("cmake", "libsdl", "freetype")
+    add_deps("cmake", "libsdl", "freetype", "zlib")
 
     add_includedirs("include", "include/SDL2")
 
@@ -53,7 +53,10 @@ package("libsdl_ttf")
                 table.insert(configs, "-DFREETYPE_LIBRARY=" .. libfiles[1])
             end
         end
-        import("package.tools.cmake").install(package, configs)
+        io.replace("CMakeLists.txt", "target_link_libraries(SDL3_ttf PRIVATE Freetype::Freetype)",
+            "target_link_libraries(SDL3_ttf PRIVATE Freetype::Freetype z)", {plain = true})
+        import("package.tools.cmake").install(package, configs,
+            {packagedeps = {"freetype", "zlib"}})
     end)
 
     on_test(function (package)
