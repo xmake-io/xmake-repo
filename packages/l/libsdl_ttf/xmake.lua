@@ -11,10 +11,13 @@ package("libsdl_ttf")
         add_extsources("brew::sdl2_ttf")
     end
 
-    add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-$(version).zip",
-             "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL2_ttf-$(version).zip")
-    add_versions("2.20.0", "04e94fc5ecac3475ab35c1d5cf52650df691867e7e4befcc861bf982a747111a")
-    add_versions("2.20.1", "18d81ab399c8e39adababe8918691830ba6e0d6448e5baa141ee0ddf87ede2dc")
+    add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-$(version).tar.gz",
+             "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL2_ttf-$(version).tar.gz")
+    add_versions("2.20.0", "874680232b72839555a558b48d71666b562e280f379e673b6f0c7445ea3b9b8a")
+    add_versions("2.20.1", "78cdad51f3cc3ada6932b1bb6e914b33798ab970a1e817763f22ddbfd97d0c57")
+    add_versions("2.20.2", "9dc71ed93487521b107a2c4a9ca6bf43fb62f6bddd5c26b055e6b91418a22053")
+
+    add_patches(">=2.20.0 <=2.20.1", path.join(os.scriptdir(), "patches", "2.20.1", "cmakelists.patch"), "fe04ada62d9ed70029c0efb3c04bfec22fc7596bd6b73a567beb964e61ebd82c")
 
     add_deps("cmake", "libsdl", "freetype", "zlib")
 
@@ -57,8 +60,8 @@ package("libsdl_ttf")
         if zlib then
             local libfiles = table.wrap(zlib.libfiles)
             if #libfiles > 0 then
-                io.replace("CMakeLists.txt", "target_link_libraries(SDL3_ttf PRIVATE Freetype::Freetype)",
-                    "target_link_libraries(SDL3_ttf PRIVATE Freetype::Freetype " .. libfiles[1].. ")", {plain = true})
+                io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)",
+                    "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype " .. libfiles[1].. ")", {plain = true})
             end
         end
         import("package.tools.cmake").install(package, configs)
