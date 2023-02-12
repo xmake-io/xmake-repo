@@ -53,10 +53,15 @@ package("libsdl_ttf")
                 table.insert(configs, "-DFREETYPE_LIBRARY=" .. libfiles[1])
             end
         end
-        io.replace("CMakeLists.txt", "target_link_libraries(SDL3_ttf PRIVATE Freetype::Freetype)",
-            "target_link_libraries(SDL3_ttf PRIVATE Freetype::Freetype z)", {plain = true})
-        import("package.tools.cmake").install(package, configs,
-            {packagedeps = {"freetype", "zlib"}})
+        local zlib = package:dep("zlib"):fetch()
+        if zlib then
+            local libfiles = table.wrap(zlib.libfiles)
+            if #libfiles > 0 then
+                io.replace("CMakeLists.txt", "target_link_libraries(SDL3_ttf PRIVATE Freetype::Freetype)",
+                    "target_link_libraries(SDL3_ttf PRIVATE Freetype::Freetype " .. libfiles[1].. ")", {plain = true})
+            end
+        end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
