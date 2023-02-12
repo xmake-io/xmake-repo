@@ -60,5 +60,6 @@ package("libsdl_ttf")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("TTF_Init", {includes = "SDL2/SDL_ttf.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("TTF_Init",
+            {includes = "SDL2/SDL_ttf.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)

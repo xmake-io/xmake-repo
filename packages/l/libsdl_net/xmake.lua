@@ -35,7 +35,7 @@ package("libsdl_net")
                 for _, dir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
                     if os.isfile(path.join(dir, "SDL_version.h")) then
                         table.insert(configs, "-DSDL2_INCLUDE_DIR=" .. dir)
-                        break                        
+                        break
                     end
                 end
                 for _, libfile in ipairs(fetchinfo.libfiles) do
@@ -49,5 +49,6 @@ package("libsdl_net")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDLNet_Init", {includes = "SDL2/SDL_net.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("SDLNet_Init",
+            {includes = {"SDL2/SDL.h", "SDL2/SDL_net.h"}, configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)

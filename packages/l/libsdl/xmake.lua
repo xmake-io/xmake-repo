@@ -184,5 +184,6 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("SDL_Init",
+            {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)
