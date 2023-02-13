@@ -11,13 +11,13 @@ package("mcut")
     add_patches("1.1.0", path.join(os.scriptdir(), "patches", "1.1.0", "install.patch"), "438f5b76d8ad58253420844248c5da09404cc7ad4a7a19c174e90aacf714d0f0")
 
     add_deps("cmake")
-    on_load("windows", "macosx", "linux", "mingw", function (package)
+    on_load("windows", function (package)
         if package:config("shared") then
             package:add("defines", "MCUT_SHARED_LIB")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "mingw", function (package)
+    on_install("windows|x86", "windows|x64", "macosx", "linux", "mingw", function (package)
         local configs = {"-DMCUT_BUILD_TESTS=OFF", "-DMCUT_BUILD_TUTORIALS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPES=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DMCUT_BUILD_AS_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
