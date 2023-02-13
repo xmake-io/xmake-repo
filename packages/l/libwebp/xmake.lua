@@ -28,6 +28,7 @@ package("libwebp")
     add_configs("thread",     {description = "Enable threading support.", default = true, type = "boolean"})
 
     add_deps("cmake")
+    add_links("webp", "webpdecoder", "webpencoder", "webpdemux")
 
     if is_plat("macosx") then
         add_extsources("brew::webp")
@@ -39,9 +40,10 @@ package("libwebp")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:version():ge("1.2.3") then
-            package:config_set("sharpyuv", true)
+        if package:config("sharpyuv") or package:version():ge("1.2.3") then
+            package:add("links", "sharpyuv")
         end
+
         for name, enabled in pairs(package:configs()) do
             if name == "thread" then
                 if enabled then
