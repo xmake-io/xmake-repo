@@ -70,7 +70,7 @@ package("libsdl_gfx")
 
         if not package:config("shared") then
             for _, vcxproj in ipairs(os.files("**.vcxproj")) do
-                io.replace(vcxproj, "SDL2.lib", "SDL2-static.lib", {plain = true})
+                io.replace(vcxproj, "SDL2.lib", "SDL2-static.lib;imm32.lib;version.lib;setupapi.lib;winmm.lib", {plain = true})
             end
         end
         import("package.tools.msbuild").build(package, configs)
