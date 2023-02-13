@@ -68,6 +68,11 @@ package("libsdl_gfx")
         end
         table.insert(configs, "-target:SDL2_gfx")
 
+        if not package:config("shared") then
+            for _, vcxproj in ipairs(os.files("**.vcxproj")) do
+                io.replace(vcxproj, "SDL2.lib", "SDL2-static.lib")
+            end
+        end
         import("package.tools.msbuild").build(package, configs)
 
         local build_dir = path.join(arch, mode)
