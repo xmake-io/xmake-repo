@@ -78,8 +78,12 @@ package("libsdl_ttf")
                         end
                     end
                     if #libfiles > 0 then
+                        local libraries = ""
+                        for _, libfile in ipairs(libfiles) do
+                            libraries = libraries .. " " .. (libfile:gsub("\\", "/"))
+                        end
                         io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)",
-                            "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype " .. (libfiles[1]:gsub("\\", "/")) .. ")", {plain = true})
+                            "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype " .. libraries .. ")", {plain = true})
                     end
                 end
             end
