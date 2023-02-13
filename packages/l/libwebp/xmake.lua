@@ -46,7 +46,7 @@ package("libwebp")
                 if package:is_plat("linux", "bsd") then
                     package:add("syslinks", "pthread")
                 end
-            elseif not (package:extraconf("configs", name, "builtin") and name == "use_thread") then
+            elseif not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DWEBP_BUILD_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
