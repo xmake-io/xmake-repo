@@ -63,5 +63,5 @@ package("libsdl_net")
 
     on_test(function (package)
         assert(package:has_cfuncs("SDLNet_Init",
-            {includes = "SDL2/SDL_net.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+            {includes = "SDL2/SDL_net.h", configs = {cxflags = "-sUSE_SDL=0", defines = "SDL_MAIN_HANDLED"}}))
     end)
