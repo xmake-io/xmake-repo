@@ -32,22 +32,18 @@ package("libwebp")
         add_extsources("apt::libwebp-dev", "pacman::libwebp")
     end
 
-    on_load(function (package)
-        if package:configs("use_thread") then
-            add_defines("WEBP_USE_THREAD")
-            if is_plat("linux", "bsd") then
-                add_syslinks("pthread")
-            end
-        end
-    end)
-
     on_install("linux", "macosx", "windows", "mingw", "bsd", "wasm", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         for name, enabled in pairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") and name != "use_thread" then
+            if package:configs("use_thread") then
+                package:add("defines", "WEBP_USE_THREAD")
+                if is_plat("linux", "bsd") then
+                    package:add("syslinks", "pthread")
+                end
+            elseif not (package:extraconf("configs", name, "builtin") and name == "use_thread") then
                 table.insert(configs, "-DWEBP_BUILD_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
