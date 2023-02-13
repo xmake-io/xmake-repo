@@ -17,12 +17,12 @@ package("libwebp")
     add_configs("dwebp",      {description = "Build the dwebp command line tool.", default = false, type = "boolean"})
     add_configs("gif2webp",   {description = "Build the gif2webp conversion tool.", default = false, type = "boolean"})
     add_configs("img2webp",   {description = "Build the img2webp animation tool.", default = false, type = "boolean"})
-    add_configs("vwebp",      {description = "Build the vwebp viewer tool.", default = flase, type = "boolean"})
+    add_configs("vwebp",      {description = "Build the vwebp viewer tool.", default = false, type = "boolean"})
     add_configs("webpinfo",   {description = "Build the webpinfo command line tool.", default = false, type = "boolean"})
     add_configs("libwebpmux", {description = "Build the libwebpmux library.", default = false, type = "boolean"})
     add_configs("webpmux",    {description = "Build the webpmux command line tool.", default = false, type = "boolean"})
     add_configs("extras",     {description = "Build extras.", default = false, type = "boolean"})
-    add_configs("use_thread", {description = "Enable threading support.", default = true, type = "boolean"})
+    add_configs("thread", {description = "Enable threading support.", default = true, type = "boolean"})
 
     add_deps("cmake")
 
@@ -38,9 +38,9 @@ package("libwebp")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         for name, enabled in pairs(package:configs()) do
-            if package:configs("use_thread") then
+            if package:configs("thread") then
                 package:add("defines", "WEBP_USE_THREAD")
-                if is_plat("linux", "bsd") then
+                if package:is_plat("linux", "bsd") then
                     package:add("syslinks", "pthread")
                 end
             elseif not (package:extraconf("configs", name, "builtin") and name == "use_thread") then
