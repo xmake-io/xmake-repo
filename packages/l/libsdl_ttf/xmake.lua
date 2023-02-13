@@ -57,23 +57,31 @@ package("libsdl_ttf")
                 end
             end
         end
-        local freetype = package:dep("freetype"):fetch()
-        if freetype then
-            local includedirs = table.wrap(freetype.includedirs or freetype.sysincludedirs)
-            if #includedirs > 0 then
-                table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(includedirs, ";"))
-            end
-            local libfiles = table.wrap(freetype.libfiles)
-            if #libfiles > 0 then
-                table.insert(configs, "-DFREETYPE_LIBRARY=" .. libfiles[1])
-            end
-        end
-        local zlib = package:dep("zlib"):fetch()
-        if zlib then
-            local libfiles = table.wrap(zlib.libfiles)
-            if #libfiles > 0 then
-                io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)",
-                    "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype " .. (libfiles[1]:gsub("\\", "/")) .. ")", {plain = true})
+        local freetype = package:dep("freetype")
+        if package:config("shared") then
+            local fetchinfo = freetype:fetch()
+            if fetchinfo then
+                local includedirs = table.wrap(fetchinfo.includedirs or fetchinfo.sysincludedirs)
+                if #includedirs > 0 then
+                    table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(includedirs, ";"))
+                end
+                local libfiles = table.wrap(fetchinfo.libfiles)
+                if #libfiles > 0 then
+                    table.insert(configs, "-DFREETYPE_LIBRARY=" .. libfiles[1])
+                end
+                if not freetype:config("shared") then
+                    local libfiles = {}
+                    for _, dep in ipairs(freetype:librarydeps()) do
+                        local depinfo = dep:fetch()
+                        if depinfo then
+                            table.join2(libfiles, depinfo.libfiles)
+                        end
+                    end
+                    if #libfiles > 0 then
+                        io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)",
+                            "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype " .. (libfiles[1]:gsub("\\", "/")) .. ")", {plain = true})
+                    end
+                end
             end
         end
         import("package.tools.cmake").install(package, configs)
