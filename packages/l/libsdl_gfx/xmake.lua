@@ -27,7 +27,6 @@ package("libsdl_gfx")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-        add_cxflags("-sUSE_SDL=0")
     end
 
     add_links("SDL2_gfx")
@@ -89,8 +88,6 @@ package("libsdl_gfx")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
         end
-        print("DYLD_LIBRARY_PATH", os.getenv("DYLD_LIBRARY_PATH"))
-        os.exit()
         import("package.tools.autoconf").install(package, configs)
     end)
 
