@@ -39,12 +39,16 @@ package("libwebp")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
+        if package:version():ge("1.2.3") then
+            package:config_set("sharpyuv", true)
+        end
         for name, enabled in pairs(package:configs()) do
-            if package:configs("thread") then
-                package:add("defines", "WEBP_USE_THREAD")
-                if package:is_plat("linux", "bsd") then
-                    package:add("syslinks", "pthread")
+            if name == "thread" then
+                if enabled then
+                    package:add("defines", "WEBP_USE_THREAD")
+                    if package:is_plat("linux", "bsd") then
+                        package:add("syslinks", "pthread")
+                    end
                 end
             elseif not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DWEBP_BUILD_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
