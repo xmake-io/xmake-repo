@@ -88,6 +88,9 @@ package("libsdl_gfx")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
         end
+        print(os.getenv("LD_LIBRARY_PATH"))
+        print(os.getenv("DYLD_LIBRARY_PATH"))
+        os.execv(path.join(package:dep("libsdl"):installdir("bin"), "sdl2-config"), {"--version"})
         import("package.tools.autoconf").install(package, configs)
     end)
 
