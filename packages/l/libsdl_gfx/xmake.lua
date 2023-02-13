@@ -27,6 +27,7 @@ package("libsdl_gfx")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+        add_cxflags("-sUSE_SDL=0")
     end
 
     add_links("SDL2_gfx")

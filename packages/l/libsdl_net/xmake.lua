@@ -23,6 +23,7 @@ package("libsdl_net")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+        add_cxflags("-sUSE_SDL=0")
     end
 
     add_includedirs("include", "include/SDL2")
@@ -63,5 +64,5 @@ package("libsdl_net")
 
     on_test(function (package)
         assert(package:has_cfuncs("SDLNet_Init",
-            {includes = "SDL2/SDL_net.h", configs = {cxflags = "-sUSE_SDL=0", defines = "SDL_MAIN_HANDLED"}}))
+            {includes = "SDL2/SDL_net.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)

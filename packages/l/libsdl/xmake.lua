@@ -49,6 +49,10 @@ package("libsdl")
         add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
     end
 
+    if is_plat("wasm") then
+        add_cxflags("-sUSE_SDL=0")
+    end
+
     on_load(function (package)
         if package:config("use_sdlmain") then
             package:add("components", "main")
@@ -172,9 +176,6 @@ package("libsdl")
                 end
                 table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
             end
-        elseif package:is_plat("bsd") then
-            opt = opt or {}
-            opt.packagedeps = "libusb"
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with the sdl headers
             opt = opt or {}
