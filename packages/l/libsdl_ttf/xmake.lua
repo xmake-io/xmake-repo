@@ -19,7 +19,7 @@ package("libsdl_ttf")
 
     add_patches(">=2.20.0 <=2.20.1", path.join(os.scriptdir(), "patches", "2.20.1", "cmakelists.patch"), "fe04ada62d9ed70029c0efb3c04bfec22fc7596bd6b73a567beb964e61ebd82c")
 
-    add_deps("cmake", "freetype", "zlib")
+    add_deps("cmake", "freetype")
 
     add_includedirs("include", "include/SDL2")
 
@@ -58,29 +58,27 @@ package("libsdl_ttf")
             end
         end
         local freetype = package:dep("freetype")
-        if package:config("shared") then
-            local fetchinfo = freetype:fetch()
-            if fetchinfo then
-                local includedirs = table.wrap(fetchinfo.includedirs or fetchinfo.sysincludedirs)
-                if #includedirs > 0 then
-                    table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(includedirs, ";"))
+        local fetchinfo = freetype:fetch()
+        if fetchinfo then
+            local includedirs = table.wrap(fetchinfo.includedirs or fetchinfo.sysincludedirs)
+            if #includedirs > 0 then
+                table.insert(configs, "-DFREETYPE_INCLUDE_DIRS=" .. table.concat(includedirs, ";"))
+            end
+            local libfiles = table.wrap(fetchinfo.libfiles)
+            if #libfiles > 0 then
+                table.insert(configs, "-DFREETYPE_LIBRARY=" .. libfiles[1])
+            end
+            if not freetype:config("shared") then
+                local libfiles = {}
+                for _, dep in ipairs(freetype:librarydeps()) do
+                    local depinfo = dep:fetch()
+                    if depinfo then
+                        table.join2(libfiles, depinfo.libfiles)
+                    end
                 end
-                local libfiles = table.wrap(fetchinfo.libfiles)
                 if #libfiles > 0 then
-                    table.insert(configs, "-DFREETYPE_LIBRARY=" .. libfiles[1])
-                end
-                if not freetype:config("shared") then
-                    local libfiles = {}
-                    for _, dep in ipairs(freetype:librarydeps()) do
-                        local depinfo = dep:fetch()
-                        if depinfo then
-                            table.join2(libfiles, depinfo.libfiles)
-                        end
-                    end
-                    if #libfiles > 0 then
-                        io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)",
-                            "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype " .. (libfiles[1]:gsub("\\", "/")) .. ")", {plain = true})
-                    end
+                    io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)",
+                        "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype " .. (libfiles[1]:gsub("\\", "/")) .. ")", {plain = true})
                 end
             end
         end
