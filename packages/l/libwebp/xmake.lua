@@ -25,7 +25,7 @@ package("libwebp")
     add_configs("webpmux",    {description = "Build the webpmux command line tool.", default = false, type = "boolean"})
     add_configs("sharpyuv",   {description = "Build the sharpyuv library, remove since v1.2.3", default = false, type = "boolean"})
     add_configs("extras",     {description = "Build extras.", default = false, type = "boolean"})
-    add_configs("thread", {description = "Enable threading support.", default = true, type = "boolean"})
+    add_configs("thread",     {description = "Enable threading support.", default = true, type = "boolean"})
 
     add_deps("cmake")
 
