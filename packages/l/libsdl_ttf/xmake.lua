@@ -73,7 +73,7 @@ package("libsdl_ttf")
             local libfiles = table.wrap(zlib.libfiles)
             if #libfiles > 0 then
                 io.replace("CMakeLists.txt", "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype)",
-                    "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype " .. (libfiles[1]:gsub("\\", "/")).. ")", {plain = true})
+                    "target_link_libraries(SDL2_ttf PRIVATE Freetype::Freetype " .. (libfiles[1]:gsub("\\", "/")) .. ")", {plain = true})
             end
         end
         import("package.tools.cmake").install(package, configs)
