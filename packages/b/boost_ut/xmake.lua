@@ -1,4 +1,4 @@
-package("ut")
+package("boost_ut")
     set_kind("library", {headeronly = true})
     set_homepage("https://boost-ext.github.io/ut/")
     set_description("UT: C++20 μ(micro)/Unit Testing Framework")
