@@ -1,0 +1,21 @@
+diff --git a/configure b/configure
+index ddcc961..939b7fa 100755
+--- a/configure
++++ b/configure
+@@ -13219,11 +13219,11 @@ int main (int argc, char *argv[])
+ 
+ 
+ _ACEOF
+-if ac_fn_c_try_run "$LINENO"; then :
+-
+-else
+-  no_sdl=yes
+-fi
++#if ac_fn_c_try_run "$LINENO"; then :
++#
++#else
++#  no_sdl=yes
++#fi
+ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+   conftest.$ac_objext conftest.beam conftest.$ac_ext
+ fi

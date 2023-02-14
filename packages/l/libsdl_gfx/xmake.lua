@@ -15,6 +15,10 @@ package("libsdl_gfx")
         set_urls("https://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-$(version).tar.gz")
         add_urls("https://sourceforge.net/projects/sdl2gfx/files/SDL2_gfx-$(version).tar.gz")
         add_versions("1.0.4", "63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262")
+        if is_plat("macosx") then
+            -- fix https://github.com/xmake-io/xmake-repo/pull/1816#issuecomment-1428968880
+            add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "configure.patch"), "11143442a022fe62b85e376c2e158892e8eb3f5cf6df08c01204f5edc01d28c1")
+        end
     end
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -84,13 +88,11 @@ package("libsdl_gfx")
     on_install("macosx", "linux", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
         end
-        print(os.getenv("LD_LIBRARY_PATH"))
-        print(os.getenv("DYLD_LIBRARY_PATH"))
-        os.execv(path.join(package:dep("libsdl"):installdir("bin"), "sdl2-config"), {"--version"})
         import("package.tools.autoconf").install(package, configs)
     end)
 
