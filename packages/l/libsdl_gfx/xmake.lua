@@ -55,7 +55,7 @@ package("libsdl_gfx")
                 if is_plat("windows") and is_kind("shared") then
                     add_defines("DLL_EXPORT")
                 end
-                if is_arch("x86", "x64", "x86_64", "i386") then
+                if is_arch("x86", i386") then
                     add_defines("USE_MMX")
                 end
         ]])
