@@ -9,16 +9,11 @@ package("libsdl_gfx")
         add_versions("ferzkopp:1.0.4", "b6da07583b7fb8f4d8cee97cac9176b97a287f56a8112e22f38183ecf47b9dcb")
         add_versions("sourceforge:1.0.4", "63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262")
 
-        add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "add-x64-support.patch"), "2ea0eda111d95864bbc9aedbf8aa91dd3923208d2816a626dfd6bc173986e426")
         add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "lrint_fix.patch"), "9fb928306fb25293720214377bff2f605f60ea26f43ea5346cf1268c504aff1a")
     elseif is_plat("macosx", "linux") then
         set_urls("https://www.ferzkopp.net/Software/SDL2_gfx/SDL2_gfx-$(version).tar.gz")
         add_urls("https://sourceforge.net/projects/sdl2gfx/files/SDL2_gfx-$(version).tar.gz")
         add_versions("1.0.4", "63e0e01addedc9df2f85b93a248f06e8a04affa014a835c2ea34bfe34e576262")
-        if is_plat("macosx") then
-            -- fix https://github.com/xmake-io/xmake-repo/pull/1816#issuecomment-1428968880
-            add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "configure.patch"), "11143442a022fe62b85e376c2e158892e8eb3f5cf6df08c01204f5edc01d28c1")
-        end
     end
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -33,8 +28,6 @@ package("libsdl_gfx")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_links("SDL2_gfx")
-
     add_includedirs("include", "include/SDL2")
 
     on_load(function (package)
@@ -45,55 +38,30 @@ package("libsdl_gfx")
         end
     end)
 
-    on_install("windows|x86", "windows|x64", function(package)
-        import("core.tool.toolchain")
-        local vs = tonumber(toolchain.load("msvc"):config("vs"))
-        if vs < 2019 then
-            raise("Your compiler is too old to use this library.")
-        end
-
-        local file_name = "SDL2_gfx.vcxproj"
-        local content = io.readfile(file_name)
-        content = content:gsub("%%%(AdditionalIncludeDirectories%)", package:dep("libsdl"):installdir("include", "SDL2") .. ";%%(AdditionalIncludeDirectories)")
-        content = content:gsub("%%%(AdditionalLibraryDirectories%)", package:dep("libsdl"):installdir("lib") .. ";%%(AdditionalLibraryDirectories)")
-        io.writefile(file_name, content)
-
-        -- MSVC trick no longer required since C++11
-        io.replace("SDL2_gfxPrimitives.c", "#if defined(_MSC_VER)", "#if 0", {plain = true})
-
-        local configs = {}
-        local arch = package:is_arch("x86") and "Win32" or "x64"
-        local mode = package:debug() and "Debug" or "Release"
-
-        table.insert(configs, "/property:Configuration=" .. mode)
-        table.insert(configs, "/property:Platform=" .. arch)
-        if vs >= 2022 then
-            table.insert(configs, "/p:PlatformToolset=v143")
-        end
-        table.insert(configs, "-target:SDL2_gfx")
-
-        if not package:config("shared") then
-            for _, vcxproj in ipairs(os.files("**.vcxproj")) do
-                io.replace(vcxproj, "SDL2.lib", "SDL2-static.lib;imm32.lib;version.lib;setupapi.lib;winmm.lib", {plain = true})
+    on_install("windows|x86", "windows|x64", "macosx", "linux", function(package)
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            if is_kind("shared") then
+                add_requires("libsdl", {configs = {shared = true}})
+            else
+                add_requires("libsdl")
             end
-        end
-        import("package.tools.msbuild").build(package, configs)
-
-        local build_dir = path.join(arch, mode)
-        os.cp(path.join(build_dir, "*.lib"), package:installdir("lib"))
-        os.cp(path.join(build_dir, "*.dll"), package:installdir("bin"))
-        os.cp("*.h", package:installdir("include", "SDL2"))
-    end)
-
-    on_install("macosx", "linux", function (package)
+            target("SDL2_gfx")
+                set_kind("$(kind)")
+                add_files("*.c")
+                add_headerfiles("*.h", {prefixdir = "SDL2"})
+                add_packages("libsdl")
+                add_rules("utils.install.pkgconfig_importfiles")
+                if is_arch("x86", "x64", "x86_64", "i386") then
+                    add_defines("USE_MMX")
+                end
+        ]])
         local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        local libsdl = package:dep("libsdl")
-        if libsdl and not libsdl:is_system() then
-            table.insert(configs, "--with-sdl-prefix=" .. libsdl:installdir())
+        if package:config("shared") then
+            configs.kind = "shared"
         end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.xmake").install(package, configs)
+
     end)
 
     on_test(function (package)
