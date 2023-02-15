@@ -13,21 +13,29 @@ package("quake_triangle")
         io.replace("triangle.h", "REAL", package:config("single") and "float" or "double", {plain = true})
         io.replace("triangle.h", "#ifdef ANSI_DECLARATORS", "#if 1", {plain = true})
         io.replace("triangle.h", "VOID", "void", {plain = true})
+        io.replace("triangle.c", "#define VOID int", "#define VOID void", {plain = true})
         local xmake_lua = [[
             add_rules("mode.debug", "mode.release")
-            target("triangle")
+            target("trilibrary")
                 set_kind("static")
                 add_files("triangle.c")
-                add_defines("ANSI_DECLARATORS")
+                add_defines("ANSI_DECLARATORS", "NO_TIMER", "TRILIBRARY")
                 add_headerfiles("triangle.h")
+            target("triangle")
+                add_files("triangle.c")
+                add_defines("ANSI_DECLARATORS", "NO_TIMER")
         ]]
         if package:config("single") then
             xmake_lua = xmake_lua .. "add_defines(\"SINGLE\")"
         end
         io.writefile("xmake.lua", xmake_lua)
         import("package.tools.xmake").install(package)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
+        if not package:is_cross() then
+            os.vrun("triangle -h")
+        end
         assert(package:has_cfuncs("triangulate", {includes = "triangle.h"}))
     end)

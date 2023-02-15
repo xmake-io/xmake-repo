@@ -22,6 +22,7 @@ package("tetgen")
                 add_files("tetgen.cxx", "predicates.cxx")
         ]])
         import("package.tools.xmake").install(package)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
