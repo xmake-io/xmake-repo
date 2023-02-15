@@ -11,7 +11,7 @@ package("immer")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local configs = {
             "-Dimmer_BUILD_TESTS=OFF",
             "-Dimmer_BUILD_EXAMPLES=OFF",
