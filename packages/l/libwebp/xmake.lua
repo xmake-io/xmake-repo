@@ -56,11 +56,7 @@ package("libwebp")
                 table.insert(configs, "-DWEBP_BUILD_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
-        local cxflags
-        if package:is_plat("windows") and package:config("shared") then
-            cxflags = "-DWEBP_EXTERN=__declspec(dllexport)"
-        end
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
