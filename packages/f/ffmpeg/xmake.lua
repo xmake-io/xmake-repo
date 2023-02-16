@@ -94,7 +94,7 @@ package("ffmpeg")
             end
         end
         -- https://www.ffmpeg.org/platform.html#toc-Advanced-linking-configuration
-        if package:config("pic") ~= false then
+        if package:config("pic") ~= false and not package:is_plat("macosx") then
             package:add("shflags", "-Wl,-Bsymbolic")
             package:add("ldflags", "-Wl,-Bsymbolic")
         end
