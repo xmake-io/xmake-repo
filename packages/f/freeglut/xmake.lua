@@ -8,6 +8,8 @@ package("freeglut")
              "https://github.com/FreeGLUTProject/freeglut.git")
     add_versions("v3.4.0", "8aed768c71dd5ec0676216bc25e23fa928cc628c82e54ecca261385ccfcee93a")
 
+    add_patches("v3.4.0", path.join(os.scriptdir(), "patches", "3.4.0", "arm64.patch"), "a96b538e218ca478c7678aad62b724226dcdf11371da58d1287b95dbe241d00e")
+
     add_deps("cmake")
 
     if is_plat("linux") then
@@ -44,6 +46,12 @@ package("freeglut")
                 table.insert(configs, "-DCMAKE_C_FLAGS=-DFREEGLUT_LIB_PRAGMAS=0")
             else
                 table.insert(configs, "-DCMAKE_C_FLAGS=-DFREEGLUT_LIB_PRAGMAS=0 -DFREEGLUT_STATIC=1")
+            end
+            if package:is_arch("arm64") then
+                local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+                assert(tonumber(vs) >= 2022, "freeglut requires Visual Studio 2022 and later for arm targets")
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
             end
         end
         if package:config("pic") ~= false then
