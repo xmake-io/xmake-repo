@@ -8,14 +8,22 @@ package("swig")
     if is_host("windows") then
         add_urls("https://sourceforge.net/projects/swig/files/swigwin/swigwin-$(version)/swigwin-$(version).zip")
         add_versions("4.0.2", "daadb32f19fe818cb9b0015243233fc81584844c11a48436385e87c050346559")
+        add_versions("4.1.1", "2ec3107e24606db535d77ef3dbf246dc6eccbf1d5c868dce365d7f7fb19a1a51")
     else
         add_urls("https://sourceforge.net/projects/swig/files/swig/swig-$(version)/swig-$(version).tar.gz")
         add_versions("4.0.2", "d53be9730d8d58a16bf0cbd1f8ac0c0c3e1090573168bfa151b01eb47fa906fc")
+        add_versions("4.1.1", "2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b")
     end
 
     if is_host("macosx", "linux") then
         add_deps("pcre", {host = true})
     end
+
+    on_fetch(function (package, opt)
+        if opt.system then
+            return package:find_tool("swig")
+        end
+    end)
 
     on_install("@windows", function (package)
         os.cp("*|Doc|Examples", package:installdir())
