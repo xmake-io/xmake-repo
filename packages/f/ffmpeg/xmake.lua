@@ -81,7 +81,7 @@ package("ffmpeg")
         end)
     end
 
-    on_load("linux", "macos", "android", function (package)
+    on_load("linux", "macosx", "android", function (package)
         local configdeps = {zlib    = "zlib",
                             bzlib   = "bzip2",
                             lzma    = "xz",
@@ -116,7 +116,7 @@ package("ffmpeg")
         if package:config("gpl") then
             table.insert(configs, "--enable-gpl")
         end
-        if is_plat("macosx") and macos.version():ge("10.8") then
+        if package:is_plat("macosx") and macos.version():ge("10.8") then
             table.insert(configs, "--enable-videotoolbox")
         end
         for name, enabled in pairs(package:configs()) do
