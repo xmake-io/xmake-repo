@@ -24,5 +24,7 @@ package("stb")
 
     on_test(function (package)
         assert(package:has_cfuncs("stbi_load_from_memory", {includes = "stb/stb_image.h"}))
-        assert(package:has_cfuncs("stb_include_string", {includes = "stb/stb_include.h"}))
+        if package:version():gt("2019.02.07") then
+            assert(package:has_cfuncs("stb_include_string", {includes = "stb/stb_include.h"}))
+        end
     end)
