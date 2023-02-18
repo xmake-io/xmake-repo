@@ -12,15 +12,11 @@ package("partio")
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
-    add_configs("zlib",   {description = "Enable zlib support.", default = false, type = "boolean"})
     add_configs("python", {description = "Enable python support.", default = false, type = "boolean"})
     add_configs("tools",  {description = "Build utility tools.", default = false, type = "boolean"})
 
-    add_deps("cmake")
+    add_deps("cmake", "zlib")
     on_load("windows", "macosx", "linux", function (package)
-        if package:config("zlib") then
-            package:add("deps", "zlib")
-        end
         if package:config("python") then
             package:add("deps", "swig", "python 3.x")
         end
@@ -36,7 +32,6 @@ package("partio")
         local configs = {"-DCMAKE_DISABLE_FIND_PACKAGE_Doxygen=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPARTIO_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_ZLIB=" .. (package:config("zlib") and "OFF" or "ON"))
         table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_SWIG=" .. (package:config("python") and "OFF" or "ON"))
         table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_GLUT=" .. (package:config("tools") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
