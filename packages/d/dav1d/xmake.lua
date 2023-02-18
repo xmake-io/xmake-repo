@@ -16,6 +16,9 @@ package("dav1d")
     on_install("windows", "macosx", "linux|x86_64", function (package)
         local configs = {"-Denable_tests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+        if package:is_plat("windows") and package:is_cross() then
+            table.insert(configs, "-Denable_asm=false") -- arm asm requires bash and gas-preprocessor
+        end
         import("package.tools.meson").install(package, configs)
         package:addenv("PATH", "bin")
     end)
