@@ -13,7 +13,8 @@ package("exprtk")
     elseif is_plat("mingw") then
         add_cxxflags("-Wa,-mbig-obj")
     end
-    on_install(function (package)
+    
+    on_install("windows", "linux", "macosx", "bsd", "iphoneos", "android", "wasm", "cross", function (package)
         os.cp("exprtk.hpp", package:installdir("include"))
     end)
 
