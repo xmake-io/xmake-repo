@@ -21,14 +21,15 @@ package("partio")
             package:add("deps", "swig", "python 3.x")
         end
         if package:config("tools") then
-            package:add("deps", "freeglut")
+            package:add("deps", "freeglut", "opengl")
         end
     end)
 
     on_install("windows", "macosx", "linux", function (package)
         io.gsub("CMakeLists.txt", "add%_subdirectory%(src/tests%)", "")
         io.gsub("CMakeLists.txt", "find%_package%(GLUT REQUIRED%)", "find_package(GLUT)")
-        io.gsub("CMakeLists.txt", "find%_package%(Python(.+) REQUIRED%)", "find_package(Python%1)")
+        io.gsub("CMakeLists.txt", "find%_package%(OpenGL REQUIRED%)", "find_package(OpenGL)")
+        io.gsub("CMakeLists.txt", "find%_package%(Python(.-) REQUIRED%)", "find_package(Python%1)")
         local configs = {"-DCMAKE_DISABLE_FIND_PACKAGE_Doxygen=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPARTIO_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
