@@ -28,21 +28,19 @@ package("spdlog")
 
     on_load(function (package)
         if not package:config("header_only") then
-            package:add("defines", "SPDLOG_COMPILE_LIB")
+            package:add("defines", "SPDLOG_COMPILED_LIB")
+            if package:version():ge("1.4.0") then
+                package:add("deps", "cmake")
+            end
         end
         if package:config("fmt_external") then
             package:add("defines", "SPDLOG_FMT_EXTERNAL")
-        end
-        if not package:config("header_only") then
-            package:add("deps", "cmake")
-        end
-        if package:config("fmt_external") then
             package:add("deps", "fmt", {configs = {header_only = true}})
         end
     end)
 
     on_install(function (package)
-        if (package:version() and package:version():lt("1.4.0")) or package:config("header_only") then
+        if package:version():lt("1.4.0") or package:config("header_only") then
             os.cp("include", package:installdir())
             return
         end
