@@ -14,6 +14,10 @@ package("rlottie")
     add_configs("ccache", {description = "Enable LOTTIE CCACHE SUPPORT", default = false, type = "boolean"})
     add_configs("asan",   {description = "Compile with asan", default = false, type = "boolean"})
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake")
     add_deps("freetype", {configs = {zlib = false}})
     add_deps("rapidjson ~1.1.0", "stb 2019.02.07")
