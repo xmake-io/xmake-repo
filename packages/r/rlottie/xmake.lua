@@ -24,13 +24,13 @@ package("rlottie")
 
     on_install("windows", "linux", "macosx", "android", "iphoneos", "watchos", "wasm", function (package)
         if package:arch("arm.*") then
-            package:add("defines","RAPIDJSON_ENDIAN=" .. string.byte(string.serialize(function() end), 7) == 0x00 and "RAPIDJSON_BIGENDIAN" or "RAPIDJSON_LITTLEENDI    AN    ")
+            package:add("defines","RAPIDJSON_ENDIAN=" .. (string.byte(string.serialize(function() end), 7) == 0x00 and "RAPIDJSON_BIGENDIAN" or "RAPIDJSON_LITTLEENDIAN"))
         end
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
+        table.insert(configs, "-DLIB_INSTALL_DIR=" .. package:installdir("lib"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DLOTTIE_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
