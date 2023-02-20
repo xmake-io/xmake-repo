@@ -19,6 +19,10 @@ package("rlottie")
     add_deps("rapidjson ~1.1.0", "stb 2019.02.07")
 
     on_install("windows", "linux", "macosx", "android", "iphoneos", "watchos", "wasm", function (package)
+        if package:arch("arm.*") then
+            package:add("defines","RAPIDJSON_ENDIAN=" .. string.byte(string.dump(function() end), 7) == 0x00 and "RAPIDJSON_BIGENDIAN" or "RAPIDJSON_LITTLEENDI    AN    ")
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
