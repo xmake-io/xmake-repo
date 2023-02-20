@@ -15,6 +15,10 @@ package("pixman")
     add_versions("git_release:0.42.2", "4191a5084bae000a61e3513b06027b6f8f559d17d61769ed9de27dfb0cec8699")
     add_versions("cairographics:0.42.2", "ea1480efada2fd948bc75366f7c349e1c96d3297d09a3fe62626e38e234a625e")
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("meson", "ninja")
 
     add_includedirs("include", "include/pixman-1")
