@@ -2,12 +2,12 @@ package("rlottie")
     set_homepage("https://github.com/Samsung/rlottie")
     set_description("A platform independent standalone library that plays Lottie Animation. ")
 
-    add_urls("https://github.com/Samsung/rlottie/archive/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/Samsung/rlottie/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/Samsung/rlottie.git")
 
-    add_versions("v0.1", "319d640f094f747e09177df59ca498f0df80c779ba789eeb1fc35da5a1c93414")
-    add_versions("v0.2", "030ccbc270f144b4f3519fb3b86e20dd79fb48d5d55e57f950f12bab9b65216a")
-
+    add_versions("0.1", "319d640f094f747e09177df59ca498f0df80c779ba789eeb1fc35da5a1c93414")
+    add_versions("0.2", "030ccbc270f144b4f3519fb3b86e20dd79fb48d5d55e57f950f12bab9b65216a")
+    add_patches("0.2", path.join(os.scriptdir(), "patches", "0.2", "limit.diff"), "6dc1c00c6ccad770586ec9d84f24d6c35e35dd624df877a71bb5c7bcc32831e9")
     add_configs("module", {description = "Enable LOTTIE MODULE SUPPORT", default = true, type = "boolean"})
     add_configs("thread", {description = "Enable LOTTIE THREAD SUPPORT", default = true, type = "boolean"})
     add_configs("cache",  {description = "Enable LOTTIE CACHE SUPPORT", default = true, type = "boolean"})
