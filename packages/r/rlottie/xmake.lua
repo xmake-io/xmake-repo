@@ -23,8 +23,8 @@ package("rlottie")
     add_deps("rapidjson ~1.1.0", "stb 2019.02.07")
 
     on_install("windows", "linux", "macosx", "android", "iphoneos", "watchos", "wasm", function (package)
-        if package:plat("windows") and package:arch("arm.*") then
-            package:add("defines", "_LITTLE_ENDIAN")
+        if package:is_plat("windows") and package:is_arch("arm.*") then
+            package:add("defines", "RAPIDJSON_ENDIAN=RAPIDJSON_LITTLEENDIAN")
         end
 
         local configs = {}
