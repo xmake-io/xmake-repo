@@ -24,6 +24,7 @@ package("spdlog")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+        add_configs("wchar",  {description = "Support wchar api.", default = false, type = "boolean"})
     end
 
     on_load(function (package)
@@ -37,6 +38,12 @@ package("spdlog")
             package:add("defines", "SPDLOG_FMT_EXTERNAL")
             package:add("deps", "fmt", {configs = {header_only = true}})
         end
+        if package:config("noexcept") then
+            package:add("defines", "SPDLOG_NO_EXCEPTIONS")
+        end
+        if package:config("wchar") then
+            package:add("defines", "SPDLOG_WCHAR_TO_UTF8_SUPPORT")
+        end
     end)
 
     on_install(function (package)
@@ -49,6 +56,7 @@ package("spdlog")
         table.insert(configs, "-DSPDLOG_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_FMT_EXTERNAL=" .. (package:config("fmt_external") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_NO_EXCEPTIONS=" .. (package:config("noexcept") and "ON" or "OFF"))
+        table.insert(configs, "-DSPDLOG_WCHAR_SUPPORT=" .. (package:config("wchar") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
