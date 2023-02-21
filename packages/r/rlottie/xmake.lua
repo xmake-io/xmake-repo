@@ -24,6 +24,8 @@ package("rlottie")
     add_deps("pixman ~0.42.0", "rapidjson ~1.1.0", "stb 2019.02.07")
 
     on_install("windows", "linux", "macosx", "android", "iphoneos", "watchos", "wasm", function (package)
+        package:set("languages", "cxx11")
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
