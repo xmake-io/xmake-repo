@@ -13,6 +13,7 @@ package("toojpeg")
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
+            set_languages("c++11")
             target("toojpeg")
                 set_kind("static")
                 add_files("toojpeg.cpp")
