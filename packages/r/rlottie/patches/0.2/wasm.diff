@@ -1,9 +1,9 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 38a9862..a89989e 100644
+index c111dac..f31d5e0 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -109,7 +109,7 @@ if (NOT LOTTIE_ASAN)
-     elseif(NOT MSVC)
+@@ -103,7 +103,7 @@ if (NOT LOTTIE_ASAN)
+     else()
          target_link_libraries(rlottie
                              PUBLIC
 -                                 "-Wl,--no-undefined"
