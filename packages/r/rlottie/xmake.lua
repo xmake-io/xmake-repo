@@ -16,7 +16,7 @@ package("rlottie")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-        add_patches("0.2", path.join(os.scriptdir(), "patches", "0.2", "wasm.diff"), "e76561ffc6ea8bfc15a32b7e6fe548488e991cc099e9f96b4cc99a4f000317e5")
+        add_patches("0.2", path.join(os.scriptdir(), "patches", "0.2", "wasm.diff"), "7e4b0696d0b8096a35f4c1b58636149b9dbdc5f2bfe9593c3779edc827b001ea")
     end
 
     add_deps("cmake")
