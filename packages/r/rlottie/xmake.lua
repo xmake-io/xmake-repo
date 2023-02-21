@@ -21,16 +21,13 @@ package("rlottie")
 
     add_deps("cmake")
     add_deps("freetype", {configs = {zlib = false}})
-    add_deps("rapidjson ~1.1.0", "stb 2019.02.07")
+    add_deps("pixman ~0.42.0", "rapidjson ~1.1.0", "stb 2019.02.07")
 
     on_install("windows", "linux", "macosx", "android", "iphoneos", "watchos", "wasm", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLIB_INSTALL_DIR=" .. package:installdir("lib"))
-        if package:is_arch("arm.*") then
-            table.insert(configs, "-DARCH=arm")
-        end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DLOTTIE_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
