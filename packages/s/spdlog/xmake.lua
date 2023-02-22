@@ -18,9 +18,10 @@ package("spdlog")
     add_versions("v1.4.2", "56b90f0bd5b126cf1b623eeb19bf4369516fa68f036bbc22d9729d2da511fb5a")
     add_versions("v1.3.1", "db6986d0141546d4fba5220944cc1f251bd8afdfc434bda173b4b0b6406e3cd0")
 
-    add_configs("header_only",  {description = "Use header only version.", default = true, type = "boolean"})
-    add_configs("fmt_external", {description = "Use external fmt library instead of bundled.", default = false, type = "boolean"})
-    add_configs("noexcept",     {description = "Compile with -fno-exceptions. Call abort() on any spdlog exceptions.", default = false, type = "boolean"})
+    add_configs("header_only",     {description = "Use header only version.", default = true, type = "boolean"})
+    add_configs("fmt_external",    {description = "Use external fmt library instead of bundled.", default = false, type = "boolean"})
+    add_configs("fmt_external_ho", {description = "Use external fmt header-only library instead of bundled.", default = false, type = "boolean"})
+    add_configs("noexcept",        {description = "Compile with -fno-exceptions. Call abort() on any spdlog exceptions.", default = false, type = "boolean"})
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -32,8 +33,12 @@ package("spdlog")
             package:add("defines", "SPDLOG_COMPILED_LIB")
             package:add("deps", "cmake")
         end
+        assert(not (package:config("fmt_external") and package:config("fmt_external_ho")), "fmt_external and fmt_external_ho are mutually exclusive")
         if package:config("fmt_external") then
             package:add("defines", "SPDLOG_FMT_EXTERNAL")
+            package:add("deps", "fmt")
+        elseif package:config("fmt_external_ho") then
+            package:add("defines", "SPDLOG_FMT_EXTERNAL_HO")
             package:add("deps", "fmt", {configs = {header_only = true}})
         end
         if package:config("noexcept") then
@@ -53,6 +58,7 @@ package("spdlog")
         local configs = {"-DSPDLOG_BUILD_TESTS=OFF", "-DSPDLOG_BUILD_EXAMPLE=OFF"}
         table.insert(configs, "-DSPDLOG_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_FMT_EXTERNAL=" .. (package:config("fmt_external") and "ON" or "OFF"))
+        table.insert(configs, "-DSPDLOG_FMT_EXTERNAL_HO=" .. (package:config("fmt_external_ho") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_NO_EXCEPTIONS=" .. (package:config("noexcept") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_WCHAR_SUPPORT=" .. (package:config("wchar") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
