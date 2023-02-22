@@ -35,6 +35,8 @@ package("freetype")
     add_deps("cmake")
     if is_plat("windows", "mingw") and is_subhost("windows") then
         add_deps("pkgconf")
+    elseif is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     add_includedirs("include/freetype2")
