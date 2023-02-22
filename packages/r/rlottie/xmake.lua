@@ -22,6 +22,8 @@ package("rlottie")
     add_deps("cmake")
     add_deps("freetype", {configs = {zlib = false}})
     add_deps("pixman ~0.42.0", "rapidjson ~1.1.0", "stb 2019.02.07")
+    
+    add_links("rlottie")
 
     on_install("windows", "linux", "macosx", "android", "iphoneos", "watchos", "wasm", function (package)
         local configs = {}
