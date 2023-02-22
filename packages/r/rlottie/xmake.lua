@@ -36,7 +36,7 @@ package("rlottie")
         end
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "-Wl,--no-undefined", "-Wl")
-        elseif package:is_plat("windows") and not package:config("shared") then
+        elseif package:is_plat("windows") and package:config("static") then
             io.replace("inc/rlottie.h", "#define RLOTTIE_API __declspec(dllimport)", "#define RLOTTIE_API")
         end
         import("package.tools.cmake").install(package, configs)
