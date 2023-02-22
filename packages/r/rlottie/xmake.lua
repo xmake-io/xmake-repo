@@ -16,7 +16,6 @@ package("rlottie")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-        add_patches("0.2", path.join(os.scriptdir(), "patches", "0.2", "wasm.diff"), "46dfc912a6fee937f30f82906ef359ca92d1c9837946377e3ea9b40d933cadeb")
     end
 
     add_deps("cmake")
@@ -34,6 +33,11 @@ package("rlottie")
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DLOTTIE_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
+        end
+        if package:is_plat("wasm") then
+            io.replace("CMakefile.txt", "-Wl,--no-undefined", "-Wl")
+        elseif package:is_plat("windows") and not package:config("shared") then
+            io.replace("inc/rlottie.h", "#define RLOTTIE_API __declspec(dllimport)", "#define RLOTTIE_API")
         end
         import("package.tools.cmake").install(package, configs)
     end)
