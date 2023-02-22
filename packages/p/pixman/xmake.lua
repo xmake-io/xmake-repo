@@ -23,7 +23,7 @@ package("pixman")
 
     add_includedirs("include", "include/pixman-1")
 
-    on_install("windows", "linux", "macosx", "wasm", function (package)
+    on_install("macosx", "linux", "windows|x64", "windows|x86", "wasm", function (package)
         local configs = {
             "-Dopenmp=disabled",
             "-Dlibpng=disabled",
