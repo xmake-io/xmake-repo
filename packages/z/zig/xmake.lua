@@ -7,10 +7,10 @@ package("zig")
     if is_host("macosx") then
         if os.arch() == "arm64" then
             set_urls("https://ziglang.org/download/$(version)/zig-macos-aarch64-$(version).tar.xz")
-            add_versions("0.10.1", "02483550b89d2a3070c2ed003357fd6e6a3059707b8ee3fbc0c67f83ca898437")
+            add_versions("0.10.1", "b9b00477ec5fa1f1b89f35a7d2a58688e019910ab80a65eac2a7417162737656")
         else
             set_urls("https://ziglang.org/download/$(version)/zig-macos-x86_64-$(version).tar.xz")
-            add_versions("0.10.1", "b9b00477ec5fa1f1b89f35a7d2a58688e019910ab80a65eac2a7417162737656")
+            add_versions("0.10.1", "02483550b89d2a3070c2ed003357fd6e6a3059707b8ee3fbc0c67f83ca898437")
         end
     elseif is_host("windows") then
         if os.arch() == "arm64" then
