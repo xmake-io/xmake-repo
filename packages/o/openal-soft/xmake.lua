@@ -39,7 +39,7 @@ package("openal-soft")
         end
     end)
 
-    on_install("windows", "linux", "mingw@linux,msys,windows", "macosx", "android", "iphoneos", "cross", function (package)
+    on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", "cross", function (package)
         local configs = {"-DALSOFT_EXAMPLES=OFF", "-DALSOFT_UTILS=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
