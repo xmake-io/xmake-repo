@@ -43,9 +43,9 @@ package("imgui")
     add_configs("wchar32",     {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
 
     -- deprecated configs (kept for backwards compatibility)
-    add_configs("glfw_opengl3", {description = "Enable glfw+opengl3 backend (deprecated)", default = false, type = "boolean"})
-    add_configs("glfw_vulkan",  {description = "Enable glfw+vulkan backend (deprecated)", default = false, type = "boolean"})
-    add_configs("sdl2_opengl3", {description = "Enable sdl2+opengl3 backend (deprecated)", default = false, type = "boolean"})
+    add_configs("glfw_opengl3", {description = "(deprecated)", default = false, type = "boolean"})
+    add_configs("glfw_vulkan",  {description = "(deprecated)", default = false, type = "boolean"})
+    add_configs("sdl2_opengl3", {description = "(deprecated)", default = false, type = "boolean"})
 
     add_includedirs("include", "include/imgui", "include/backends")
 
