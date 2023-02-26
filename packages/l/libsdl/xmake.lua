@@ -64,16 +64,18 @@ package("libsdl")
     end)
 
     on_component("main", function (package, component)
-        component:add("links", "SDL2main")
+        local libsuffix = package:is_debug() and "d" or ""
+        component:add("links", "SDL2main" .. libsuffix)
         component:add("defines", "SDL_MAIN_HANDLED")
         component:add("deps", "lib")
     end)
 
     on_component("lib", function (package, component)
+        local libsuffix = package:is_debug() and "d" or ""
         if package:config("shared") then
-            component:add("links", "SDL2")
+            component:add("links", "SDL2" .. libsuffix)
         else
-            component:add("links", package:is_plat("windows") and "SDL2-static" or "SDL2")
+            component:add("links", (package:is_plat("windows") and "SDL2-static" or "SDL2") .. libsuffix)
             if package:is_plat("windows", "mingw") then
                 component:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
             elseif package:is_plat("linux", "bsd") then
