@@ -11,6 +11,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         kind: [static, shared]
+        mode: [debug, release]
 
     runs-on: ${{ matrix.os }}
 
@@ -38,4 +39,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -m ${{ matrix.mode }}
