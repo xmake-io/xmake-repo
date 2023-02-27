@@ -1,6 +1,6 @@
 package("libwfkafka")
     set_homepage("https://github.com/sogou/workflow")
-    set_description("C++ Parallel Computing and Asynchronous Networking Engine")
+    set_description("The Kafka Client of C++ Workflow")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
