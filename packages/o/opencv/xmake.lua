@@ -25,6 +25,7 @@ package("opencv")
     add_resources("3.4.9", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz", "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57")
 
     add_configs("bundled", {description = "Build 3rd-party libraries with OpenCV.", default = true, type = "boolean"})
+    add_configs("tesseract", {description = "Enable tesseract on text module", default = false, type = "boolean"})
 
     local features = {"1394",
                       "vtk",
@@ -110,6 +111,10 @@ package("opencv")
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake", "python 3.x", {kind = "binary"})
         end
+
+        if package:config("tesseract") then
+            package:add("deps", "tesseract 4.1.3") -- Opencv need tesseract from the v4 series
+        end
     end)
 
     on_install("linux", "macosx", "windows", "mingw@windows,msys", function (package)
@@ -125,6 +130,10 @@ package("opencv")
                          "-DBUILD_opencv_python2=OFF",
                          "-DBUILD_opencv_python3=OFF",
                          "-DBUILD_JAVA=OFF"}
+
+        if package:config("tesseract") then
+            table.insert(configs, "-DWITH_TESSERACT=ON")
+        end
         if package:config("bundled") then
             table.insert(configs, "-DOPENCV_FORCE_3RDPARTY_BUILD=ON")
         end
