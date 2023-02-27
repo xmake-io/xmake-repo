@@ -62,7 +62,7 @@ package("assimp")
                          "-DASSIMP_BUILD_FRAMEWORK=OFF",
                          "-DASSIMP_INSTALL_PDB=ON",
                          "-DASSIMP_INJECT_DEBUG_POSTFIX=ON",
-                         "-DASSIMP_BUILD_ZLIB=ON",
+                         "-DASSIMP_BUILD_ZLIB=OFF",
                          "-DSYSTEM_IRRXML=ON",
                          "-DASSIMP_WARNINGS_AS_ERRORS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))

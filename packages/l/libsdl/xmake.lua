@@ -49,6 +49,10 @@ package("libsdl")
         add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
     end
 
+    if is_plat("wasm") then
+        add_cxflags("-sUSE_SDL=0")
+    end
+
     on_load(function (package)
         if package:config("use_sdlmain") then
             package:add("components", "main")
@@ -60,16 +64,18 @@ package("libsdl")
     end)
 
     on_component("main", function (package, component)
-        component:add("links", "SDL2main")
+        local libsuffix = package:is_debug() and "d" or ""
+        component:add("links", "SDL2main" .. libsuffix)
         component:add("defines", "SDL_MAIN_HANDLED")
         component:add("deps", "lib")
     end)
 
     on_component("lib", function (package, component)
+        local libsuffix = package:is_debug() and "d" or ""
         if package:config("shared") then
-            component:add("links", "SDL2")
+            component:add("links", "SDL2" .. libsuffix)
         else
-            component:add("links", package:is_plat("windows") and "SDL2-static" or "SDL2")
+            component:add("links", (package:is_plat("windows") and "SDL2-static" or "SDL2") .. libsuffix)
             if package:is_plat("windows", "mingw") then
                 component:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
             elseif package:is_plat("linux", "bsd") then
@@ -172,9 +178,6 @@ package("libsdl")
                 end
                 table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
             end
-        elseif package:is_plat("bsd") then
-            opt = opt or {}
-            opt.packagedeps = "libusb"
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with the sdl headers
             opt = opt or {}
@@ -184,5 +187,6 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("SDL_Init",
+            {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)

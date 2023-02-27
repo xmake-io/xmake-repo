@@ -11,6 +11,7 @@ package("simdjson")
     add_versions("v1.0.0", "fe54be1459b37e88abd438b01968144ed4774699d1272dd47a790b9362c5df42")
     add_versions("v1.1.0", "9effcb21fe48e4bcc9b96031e60c3911c58aa656ad8c78212d269c0db9e0133e")
     add_versions("v3.0.0", "e6dd4bfaad2fd9599e6a026476db39a3bb9529436d3508ac3ae643bc663526c5")
+    add_versions("v3.1.1", "4fcb1c9b1944e2eb8a4a4a22c979e2827165216f859e94d93c846c1261e0e432")
 
     add_configs("threads",      { description = "Enable threads.",     default = true,  type = "boolean"})
     add_configs("noexceptions", { description = "Disable exceptions.", default = false, type = "boolean"})

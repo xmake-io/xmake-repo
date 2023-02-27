@@ -83,6 +83,10 @@ package("boost")
             else
                 linkname = "boost_" .. libname
             end
+            if libname == "python" then
+                -- TODO maybe we need improve it, e.g. libboost_python310-mt.a
+                linkname = linkname .. "310"
+            end
             if package:config("multi") then
                 linkname = linkname .. "-mt"
             end
@@ -118,6 +122,9 @@ package("boost")
         if package:is_plat("windows") then
             package:add("defines", "BOOST_ALL_NO_LIB")
         end
+        if package:config("python") then
+            package:add("deps", "python 3.10.x")
+        end
     end)
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
@@ -142,10 +149,13 @@ package("boost")
             "--libdir=" .. package:installdir("lib"),
             "--without-icu"
         }
-        if is_host("windows") then
+        if package:is_plat("windows") then
             import("core.tool.toolchain")
             local runenvs = toolchain.load("msvc"):runenvs()
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
+        elseif package:is_plat("mingw") and is_host("windows") then
+            os.vrunv("sh", table.join("./bootstrap.sh", bootstrap_argv))
+            os.cp("./tools/build/src/engine/b2.exe", ".")
         else
             os.vrunv("./bootstrap.sh", bootstrap_argv)
         end

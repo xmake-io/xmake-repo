@@ -1,5 +1,4 @@
 package("bzip2")
-
     set_homepage("https://sourceware.org/bzip2/")
     set_description("Freely available, patent free, high-quality data compressor.")
 

@@ -7,6 +7,7 @@ package("meson")
 
     add_urls("https://github.com/mesonbuild/meson/releases/download/$(version)/meson-$(version).tar.gz",
              "https://github.com/mesonbuild/meson.git")
+    add_versions("1.0.0", "aa50a4ba4557c25e7d48446abfde857957dcdf58385fffbe670ba0e8efacce05")
     add_versions("0.62.1", "a0f5caa1e70da12d5e63aa6a9504273759b891af36c8d87de381a4ed1380e845")
     add_versions("0.61.2", "0233a7f8d959079318f6052b0939c27f68a5de86ba601f25c9ee6869fb5f5889")
     add_versions("0.60.1", "5add789c953d984b500858b2851ee3d7add0460cf1a6f852f0a721af17384e13")
@@ -17,7 +18,7 @@ package("meson")
     add_versions("0.56.0", "291dd38ff1cd55fcfca8fc985181dd39be0d3e5826e5f0013bf867be40117213")
     add_versions("0.50.1", "f68f56d60c80a77df8fc08fa1016bc5831605d4717b622c96212573271e14ecc")
 
-    add_deps("ninja", "python 3.x", {kind = "binary"})
+    add_deps("python 3.x", {kind = "binary"})
 
     on_install("@macosx", "@linux", "@windows", function (package)
         local envs = {PYTHONPATH = package:installdir()}

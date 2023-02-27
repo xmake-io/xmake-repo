@@ -14,7 +14,7 @@ package("wayland")
         add_extsources("apt::libwayland-dev", "pacman::wayland")
     end
 
-    add_deps("meson", "libxml2", "libffi", "expat", "bison", "pkg-config")
+    add_deps("meson", "ninja >=1.8.2", "libxml2", "libffi", "expat", "bison", "pkg-config")
 
     on_install("linux", function (package)
         -- imports

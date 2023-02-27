@@ -4,16 +4,13 @@ package("freeglut")
     set_description("A free-software/open-source alternative to the OpenGL Utility Toolkit (GLUT) library.")
     set_license("MIT")
 
-    set_urls("https://github.com/FreeGLUTProject/freeglut/releases/download/v$(version)/freeglut-$(version).tar.gz")
-    add_versions("3.0.0", "2a43be8515b01ea82bcfa17d29ae0d40bd128342f0930cd1f375f1ff999f76a2")
-    add_versions("3.2.1", "d4000e02102acaf259998c870e25214739d1f16f67f99cb35e4f46841399da68")
-    add_versions("3.2.2", "c5944a082df0bba96b5756dddb1f75d0cd72ce27b5395c6c1dde85c2ff297a50")
+    add_urls("https://github.com/FreeGLUTProject/freeglut/archive/refs/tags/$(version).zip",
+             "https://github.com/FreeGLUTProject/freeglut.git")
+    add_versions("v3.4.0", "8aed768c71dd5ec0676216bc25e23fa928cc628c82e54ecca261385ccfcee93a")
 
-    add_patches("3.2.1", path.join(os.scriptdir(), "patches", "3.2.1", "gcc10.patch"), "26cf5026249c9e288080a75a1e9b40b3fa74a4048321cc93907f1476c5a6508b")
+    add_patches("v3.4.0", path.join(os.scriptdir(), "patches", "3.4.0", "arm64.patch"), "a96b538e218ca478c7678aad62b724226dcdf11371da58d1287b95dbe241d00e")
 
-    if is_plat("linux", "windows") then
-        add_deps("cmake")
-    end
+    add_deps("cmake")
 
     if is_plat("linux") then
         add_deps("libx11", "libxi", "libxxf86vm", "libxrandr", "libxrender")
@@ -49,6 +46,12 @@ package("freeglut")
                 table.insert(configs, "-DCMAKE_C_FLAGS=-DFREEGLUT_LIB_PRAGMAS=0")
             else
                 table.insert(configs, "-DCMAKE_C_FLAGS=-DFREEGLUT_LIB_PRAGMAS=0 -DFREEGLUT_STATIC=1")
+            end
+            if package:is_arch("arm64") then
+                local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+                assert(tonumber(vs) >= 2022, "freeglut requires Visual Studio 2022 and later for arm targets")
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
             end
         end
         if package:config("pic") ~= false then

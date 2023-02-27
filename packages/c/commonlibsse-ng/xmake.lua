@@ -14,7 +14,8 @@ package("commonlibsse-ng")
     add_configs("skyrim_vr", {description = "Enable runtime support for Skyrim VR", default = true, type = "boolean"})
     add_configs("skse_xbyak", {description = "Enable trampoline support for Xbyak", default = false, type = "boolean"})
 
-    add_deps("fmt", "rapidcsv", "spdlog")
+    add_deps("fmt", "rapidcsv")
+    add_deps("spdlog", { configs = { header_only = false } })
 
     add_syslinks("version", "user32", "shell32", "ole32", "advapi32")
 

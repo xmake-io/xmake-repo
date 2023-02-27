@@ -3,10 +3,15 @@ package("geant4")
     set_homepage("https://geant4.web.cern.ch/")
     set_description("Geant4 is a toolkit for the simulation of the passage of particles through matter.")
 
-    add_urls("https://geant4-data.web.cern.ch/releases/geant4_$(version).zip", {version = function (version)
-        return format("%02d_%02d_p%02d", version:major(), version:minor(), version:patch())
+    add_urls("https://geant4-data.web.cern.ch/releases/geant4$(version).zip", {version = function (version)
+        if version:ge("11.0") then
+            return "-v" .. version
+        else
+            return format("_%02d_%02d_p%02d", version:major(), version:minor(), version:patch())
+        end
     end})
     add_versions("10.7.2", "c07b358c30b5930afcc32b44e899cf901083539f350f4333d65784c2aaa4af38")
+    add_versions("11.1.0", "8d7df33a4b692493f01a05b82047134a8291d00f113b6a23bdb5253a6527f5a1")
 
     add_deps("cmake")
     add_deps("zlib", "expat", "clhep")
