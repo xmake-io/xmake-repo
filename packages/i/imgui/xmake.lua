@@ -6,6 +6,8 @@ package("imgui")
 
     add_urls("https://github.com/ocornut/imgui/archive/$(version).tar.gz",
              "https://github.com/ocornut/imgui.git")
+    add_versions("v1.89.3-docking", "458a1090314a965dd37b02c918d83077a0142ad5")
+    add_versions("v1.89.3", "3b665fadd5580b7ef494d5d8bb1c12b2ec53ee723034caf43332956381f5d631")
     add_versions("v1.89-docking", "94e850fd6ff9eceb98fda3147e3ffd4781ad2dc7")
     add_versions("v1.89", "4038b05bd44c889cf40be999656d3871a0559916708cb52a6ae2fa6fa35c5c60")
     add_versions("v1.88-docking", "9cd9c2eff99877a3f10a7f9c2a3a5b9c15ea36c6")
@@ -25,13 +27,25 @@ package("imgui")
     add_versions("v1.79", "f1908501f6dc6db8a4d572c29259847f6f882684b10488d3a8d2da31744cd0a4")
     add_versions("v1.75", "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
+    add_configs("dx9",         {description = "Enable the dx9 backend", default = false, type = "boolean"})
+    add_configs("dx10",        {description = "Enable the dx10 backend", default = false, type = "boolean"})
+    add_configs("dx11",        {description = "Enable the dx11 backend", default = false, type = "boolean"})
+    add_configs("dx12",        {description = "Enable the dx12 backend", default = false, type = "boolean"})
+    add_configs("glfw",        {description = "Enable the glfw backend", default = false, type = "boolean"})
+    add_configs("opengl2",     {description = "Enable the opengl2 backend", default = false, type = "boolean"})
+    add_configs("opengl3",     {description = "Enable the opengl3 backend", default = false, type = "boolean"})
+    add_configs("sdl2",        {description = "Enable the sdl2 backend", default = false, type = "boolean"})
+    add_configs("sdlrenderer", {description = "Enable the sdlrenderer backend", default = false, type = "boolean"})
+    add_configs("vulkan",      {description = "Enable the vulkan backend", default = false, type = "boolean"})
+    add_configs("win32",       {description = "Enable the win32 backend", default = false, type = "boolean"})
+    add_configs("freetype",    {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
     add_configs("user_config", {description = "Use user config (disables test!)", default = nil, type = "string"})
-    add_configs("glfw_opengl3", {description = "Enable glfw+opengl3 backend", default = false, type = "boolean"})
-    add_configs("glfw_vulkan", {description = "Enable glfw+vulkan backend", default = false, type = "boolean"})
-    add_configs("sdl2", {description = "Enable sdl2 backend", default = false, type = "boolean"})
-    add_configs("sdl2_opengl3", {description = "Enable sdl2+opengl3 backend", default = false, type = "boolean"})
-    add_configs("wchar32", {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
-    add_configs("freetype", {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
+    add_configs("wchar32",     {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
+
+    -- deprecated configs (kept for backwards compatibility)
+    add_configs("glfw_opengl3", {description = "(deprecated)", default = false, type = "boolean"})
+    add_configs("glfw_vulkan",  {description = "(deprecated)", default = false, type = "boolean"})
+    add_configs("sdl2_opengl3", {description = "(deprecated)", default = false, type = "boolean"})
 
     add_includedirs("include", "include/imgui", "include/backends")
 
@@ -40,23 +54,40 @@ package("imgui")
     end
 
     on_load("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
-        if package:config("freetype") then
-            package:add("deps", "freetype")
+        -- begin: backwards compatibility
+        if package:config("glfw_opengl3") then
+            package:config_set("glfw", true)
+            package:config_set("opengl3", true)
         end
-        if package:config("glfw_opengl3") or package:config("sdl2_opengl3") then
-            if package:version():lt("1.84") then
+        if package:config("glfw_vulkan") then
+            package:config_set("glfw", true)
+            package:config_set("vulkan", true)
+        end
+        if package:config("sdl2_opengl3") then
+            package:config_set("sdl2", true)
+            package:config_set("opengl3", true)
+        end
+        -- end: backwards compatibility
+        if package:config("glfw") then
+            package:add("deps", "glfw")
+        end
+        if package:config("opengl3") then
+            if not package:gitref() and package:version():lt("1.84") then
                 package:add("deps", "glad")
                 package:add("defines", "IMGUI_IMPL_OPENGL_LOADER_GLAD")
             end
         end
-        if package:config("glfw_opengl3") or package:config("glfw_vulkan") then
-            package:add("deps", "glfw")
+        if package:config("sdl2") then
+            package:config_set("sdlrenderer", true) -- backwards compatibility
         end
-        if package:config("glfw_vulkan") then
+        if package:config("sdlrenderer") then
+            package:add("deps", "libsdl >=2.0.17")
+        end
+        if package:config("vulkan") then
             package:add("deps", "vulkansdk")
         end
-        if package:config("sdl2") or package:config("sdl2_opengl3") then
-            package:add("deps", "libsdl >=2.0.17")
+        if package:config("freetype") then
+            package:add("deps", "freetype")
         end
         if package:version_str():find("-docking", 1, true) then
             package:set("urls", {"https://github.com/ocornut/imgui.git"})
@@ -65,14 +96,21 @@ package("imgui")
 
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         local configs = {
-            wchar32      = package:config("wchar32"),
-            freetype     = package:config("freetype"),
-            glfw_opengl3 = package:config("glfw_opengl3"),
-            glfw_vulkan  = package:config("glfw_vulkan"),
-            sdl2         = package:config("sdl2"),
-            sdl2_opengl3 = package:config("sdl2_opengl3"),
-            user_config  = package:config("user_config"),
-            use_glad     = package:version() and package:version():lt("1.84") -- this flag will be used if glfw_opengl3 or sdl2_opengl3 is enabled
+            dx9         = package:config("dx9"),
+            dx10        = package:config("dx10"),
+            dx11        = package:config("dx11"),
+            dx12        = package:config("dx12"),
+            glfw        = package:config("glfw"),
+            opengl2     = package:config("opengl2"),
+            opengl3     = package:config("opengl3"),
+            glad        = package:config("opengl3") and (not package:gitref() and package:version():lt("1.84")),
+            sdl2        = package:config("sdl2"),
+            sdlrenderer = package:config("sdlrenderer"),
+            vulkan      = package:config("vulkan"),
+            win32       = package:config("win32"),
+            freetype    = package:config("freetype"),
+            user_config = package:config("user_config"),
+            wchar32     = package:config("wchar32")
         }
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
@@ -94,4 +132,3 @@ package("imgui")
             }
         ]]}, {configs = {languages = "c++11"}, includes = {"imgui.h"}}))
     end)
-

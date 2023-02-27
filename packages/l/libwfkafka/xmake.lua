@@ -5,6 +5,7 @@ package("libwfkafka")
 
     add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/workflow.git")
+
     add_versions("v0.10.6", "3d32cb4240c7ec6835c5c0f0bbe8fe0cee38a53351b200facd436d5ff3e31bd1")
     
     add_deps("openssl", "workflow", "lz4", "zstd", "snappy", "zlib")
