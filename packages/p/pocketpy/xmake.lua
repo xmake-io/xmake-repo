@@ -8,7 +8,7 @@ package("pocketpy")
 
     add_versions("v0.9.0", "0da63afb3ea4ebb8b686bfe33b4c7556c0a927cd98ccf3c7a3fb4aa216fbf30b")
 
-    on_install("windows", "linux", "macosx", "android", function (package)
+    on_install("windows|x64", "linux", "macosx", "android", function (package)
         os.cp("../pocketpy.h", package:installdir("include"))
     end)
 
