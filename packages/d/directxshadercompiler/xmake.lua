@@ -21,11 +21,11 @@ package("directxshadercompiler")
     end
     
     on_install("windows|x64", "linux|x86_64", function (package)
-        os.mv("bin/x64/*", package:installdir("bin"))
-        os.mv("inc/WinAdapter.h", package:installdir("include/dxc/Support"))
-        os.mv("inc/*", package:installdir("include"))
-        os.mv("lib/x64/*", package:installdir("lib"))
+        os.cp("bin/x64/*", package:installdir("bin"))
+        os.cp("inc/*", package:installdir("include"))
+        os.cp("lib/x64/*", package:installdir("lib"))
         if is_host("linux") then 
+            os.mv(package:installdir("include/WinAdapter.h"), package:installdir("include/dxc/Support"))
             os.vrunv("chmod", {"+x", path.join(package:installdir("bin"), "dxc")})
             os.vrunv("ln", {"-s", path.join(package:installdir("lib"), "libdxcompiler.so"), path.join(package:installdir("lib"), "libdxcompiler.so.3.7")})
         end
@@ -34,5 +34,9 @@ package("directxshadercompiler")
 
     on_test(function (package)
         os.vrun("dxc -help")
-        assert(package:has_cxxfuncs("DxcCreateInstance", {includes = {"dxcapi.h"}}))
+        if is_plat("windows") then
+            assert(package:has_cxxfuncs("DxcCreateInstance", {includes = {"windows.h", "dxcapi.h"}}))
+        elseif is_plat("linux") then
+            assert(package:has_cxxfuncs("DxcCreateInstance", {includes = {"dxcapi.h"}}))
+        end
     end)
