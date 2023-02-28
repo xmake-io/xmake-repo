@@ -24,11 +24,16 @@ package("directxshadercompiler")
         os.cp("bin/x64/*", package:installdir("bin"))
         os.cp("inc/*", package:installdir("include"))
         os.cp("lib/x64/*", package:installdir("lib"))
+
         if is_host("linux") then 
             os.mv(package:installdir("include/WinAdapter.h"), package:installdir("include/dxc/Support"))
             os.vrunv("chmod", {"+x", path.join(package:installdir("bin"), "dxc")})
             os.vrunv("ln", {"-s", path.join(package:installdir("lib"), "libdxcompiler.so"), path.join(package:installdir("lib"), "libdxcompiler.so.3.7")})
+            if package:has_tool("cxx", "clang") then
+                package:add("cxxflags", "-fms-extensions")
+            end
         end
+
         package:addenv("PATH", "bin")
     end)
 
