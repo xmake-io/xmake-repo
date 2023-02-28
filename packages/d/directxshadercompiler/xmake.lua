@@ -17,16 +17,22 @@ package("directxshadercompiler")
     elseif is_host("linux") and os.arch() == "x86_64" then 
         add_urls("https://github.com/microsoft/DirectXShaderCompiler/releases/download/v$(version).tar.gz", {version = function (version) return version .. "/linux_dxc_" .. date[tostring(version)] end})
         add_versions("1.7.2212", "bfb453bd844d52575d2fe0db477701c33db4507e14a89e85128aca8608b5c359")
+        add_extsources("pacman::directx-shader-compiler")
     end
     
-    on_install("windows|x64", "linux|x64", function (package)
-        os.cp("bin/x64/*", package:installdir("bin"))
-        os.cp("inc/*", package:installdir("include"))
-        os.cp("lib/x64/*", package:installdir("lib"))
+    on_install("windows|x64", "linux|x86_64", function (package)
+        os.mv("bin/x64/*", package:installdir("bin"))
+        os.mv("inc/WinAdapter.h", package:installdir("include/dxc/Support"))
+        os.mv("inc/*", package:installdir("include"))
+        os.mv("lib/x64/*", package:installdir("lib"))
+        if is_host("linux") then 
+            os.vrunv("chmod", {"+x", path.join(package:installdir("bin"), "dxc")})
+            os.vrunv("ln", {"-s", path.join(package:installdir("lib"), "libdxcompiler.so"), path.join(package:installdir("lib"), "libdxcompiler.so.3.7")})
+        end
         package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
         os.vrun("dxc -help")
-        assert(package:has_cxxfuncs("DxcCreateInstance", {includes = {"windows.h", "dxcapi.h"}}))
+        assert(package:has_cxxfuncs("DxcCreateInstance", {includes = {"dxcapi.h"}}))
     end)
