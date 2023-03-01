@@ -23,14 +23,15 @@ jobs:
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: branch@dev
+          xmake-version: branch@master
+          actions-cache-folder: '.xmake-cache'
 
       - name: Prepare
         run: |
-          wget -q https://dl.google.com/android/repository/android-ndk-r21-linux-x86_64.zip
-          unzip -q -o ./android-ndk-r21-linux-x86_64.zip
+          wget -q https://dl.google.com/android/repository/android-ndk-r22-linux-x86_64.zip
+          unzip -q -o ./android-ndk-r22-linux-x86_64.zip
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-r21 --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
+          xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-r22 --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
 

@@ -5,25 +5,22 @@ package("libwfkafka")
 
     add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/workflow.git")
-    add_versions("v0.9.11", "71b5531728d6b4f3666176dbc45d680350518af8")
-    add_versions("v0.10.1", "315eb1b1b5411e807e5ecc45ba5aa7db1d4f7c28")
-    add_versions("v0.10.2", "42d87f4f9eaa80e882ccdd71cd81d20899050266")
-    add_versions("v0.10.3", "116e6772cd13b88a3fb8420bcfbef98921252a1a")
 
-    add_deps("cmake", "openssl", "workflow", "lz4", "zstd", "snappy", "zlib")
+    add_versions("v0.10.6", "3d32cb4240c7ec6835c5c0f0bbe8fe0cee38a53351b200facd436d5ff3e31bd1")
+    
+    add_deps("openssl", "workflow", "lz4", "zstd", "snappy", "zlib")
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
 
-    add_links("wfkafka")
-
-    on_install("linux", "macosx", function (package)
-        local configs = {"-DKAFKA=y"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+    on_install("linux", "macosx", "android", function (package)
+        local configs = {}
+        if package:config("shared") then
+            configs.kind = "shared"
+        end
         local packagedeps = {"workflow", "lz4", "zstd", "snappy", "zlib"}
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        import("package.tools.xmake").install(package, configs, {packagedeps = packagedeps})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"), "*.a"))
         else
@@ -35,3 +32,4 @@ package("libwfkafka")
     on_test(function (package)
         assert(package:has_cxxtypes("protocol::KafkaToppar", {configs = {languages = "c++11"}, includes = "workflow/KafkaMessage.h"}))
     end)
+

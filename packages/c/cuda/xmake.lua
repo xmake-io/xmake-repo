@@ -23,7 +23,7 @@ package("cuda")
                 local result = {includedirs = cuda.includedirs, linkdirs = cuda.linkdirs, links = {}}
                 local utils = package:config("utils")
                 table.insert(utils, package:config("shared") and "cudart" or "cudart_static")
-        
+
                 for _, util in ipairs(utils) do
                     if not find_library(util, cuda.linkdirs) then
                         wprint(format("The library %s for %s is not found!", util, package:arch()))

@@ -39,9 +39,8 @@ option("unicode")
 option_end()
 
 option("hpversion")
-    set_default("v5.8.4")
+    set_default("v5.9.1")
     set_showmenu(true)
-    set_values("v5.7.3", "v5.8.4")
     set_category("option")
     set_description("The version of HP-Socket")
 option_end()
@@ -107,6 +106,10 @@ target("hpsocket")
         if     vs == "2015" then vs_ver = "14.0"
         elseif vs == "2017" then vs_ver = "15.0"
         elseif vs == "2019" then vs_ver = "16.0"
+        elseif vs == "2022" then vs_ver = "17.0"
+        end
+        if get_config("hpversion") == "v5.9.1" then
+            vs_ver = (vs == "2015" and "100" or "14x")
         end
 
         add_includedirs(".")

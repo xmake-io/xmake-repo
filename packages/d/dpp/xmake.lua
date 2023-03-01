@@ -5,8 +5,14 @@ package("dpp")
 
     add_urls("https://github.com/brainboxdotcc/DPP/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/brainboxdotcc/DPP.git")
- 
+             
     add_versions("10.0.23", "8f9db61c3586a492ada378235300c509e3bc2fc090cef32de0a8241741038df0")
+ 
+    add_versions("v10.0.22", "f8da36a9e24012fdff55a988e41d2015235b9e564b3151a1e5158fa1c7e05648")
+
+    add_versions("v10.0.21", "8ef2bb75f16b80d742a99c3a18ab5a2a57bce74238518af9b9aca670c2d7034b")
+
+    add_versions("v10.0.20", "c4a7481c714c27d9c1411c668212e433fa5f6631a933676269c866295bd4ef73")
 
     add_versions("10.0.22", "f8da36a9e24012fdff55a988e41d2015235b9e564b3151a1e5158fa1c7e05648")
 
@@ -63,6 +69,11 @@ package("dpp")
         if not package:config("shared") then
             package:add("defines", "DPP_STATIC")
         end
+        if package:config("have_voice") then
+            package:add("defines", "HAVE_VOICE")
+            package:add("deps", "libsodium", "libopus")
+        end
+
         if package:config("have_voice") then
             package:add("defines", "HAVE_VOICE")
             package:add("deps", "libsodium", "libopus")
