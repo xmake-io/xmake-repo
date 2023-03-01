@@ -18,7 +18,7 @@ package("directxshadercompiler")
         add_urls("https://github.com/microsoft/DirectXShaderCompiler.git")
         add_versions("v1.7.2212", "f2643f8699299ab4e77421952e9c24f7483b46896d9f4cc6b4790b22c90d2ff0")
         add_extsources("pacman::directx-shader-compiler")
-        add_deps("ninja")
+        add_deps("cmake", "ninja")
     end
 
     on_install("windows|x64", function (package)
@@ -34,7 +34,7 @@ package("directxshadercompiler")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").build(package, configs, {cmake_generator = "Ninja", buildir = "build"})
+        import("package.tools.cmake").build(package, configs, {buildir = "build"})
 
         if package:has_tool("cxx", "clang") then
             package:add("cxxflags", "-fms-extensions")
