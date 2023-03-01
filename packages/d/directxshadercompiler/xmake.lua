@@ -15,24 +15,34 @@ package("directxshadercompiler")
         add_versions("1.6.2106", "053b2d90c227cae84e7ce636bc4f7c25acd224c31c11a324885acbf5dd8b7aac")
         add_versions("1.7.2212", "ed77c7775fcf1e117bec8b5bb4de6735af101b733d3920dda083496dceef130f")
     elseif is_plat("linux") and is_arch("x86_64") then 
-        add_urls("https://github.com/microsoft/DirectXShaderCompiler/releases/download/v$(version).tar.gz", {version = function (version) return version .. "/linux_dxc_" .. date[tostring(version)] end})
-        add_versions("1.7.2212", "bfb453bd844d52575d2fe0db477701c33db4507e14a89e85128aca8608b5c359")
+        add_urls("https://github.com/microsoft/DirectXShaderCompiler.git")
+        add_versions("v1.7.2212", "f2643f8699299ab4e77421952e9c24f7483b46896d9f4cc6b4790b22c90d2ff0")
+        add_extsources("pacman::directx-shader-compiler")
+        add_deps("ninja")
     end
-    
-    on_install("windows|x64", "linux|x86_64", function (package)
+
+    on_install("windows|x64", function (package)
         os.cp("bin/x64/*", package:installdir("bin"))
         os.cp("inc/*", package:installdir("include"))
         os.cp("lib/x64/*", package:installdir("lib"))
+        package:addenv("PATH", "bin")
+    end)
 
-        if package:is_plat("linux") then 
-            os.mv(package:installdir("include/WinAdapter.h"), package:installdir("include/dxc/Support"))
-            os.vrunv("chmod", {"+x", path.join(package:installdir("bin"), "dxc")})
-            os.vrunv("ln", {"-s", path.join(package:installdir("lib"), "libdxcompiler.so"), path.join(package:installdir("lib"), "libdxcompiler.so.3.7")})
-            if package:has_tool("cxx", "clang") then
-                package:add("cxxflags", "-fms-extensions")
-            end
+    on_install("linux|x86_64", function (package)
+        configs = {
+            "-DLLVM_INCLUDE_UTILS=FALSE",
+            "-C ../cmake/caches/PredefinedParams.cmake"
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").build(package, configs, {cmake_generator = "Ninja", buildir = "build"})
+
+        if package:has_tool("cxx", "clang") then
+            package:add("cxxflags", "-fms-extensions")
         end
-
+        os.cp("build/bin/dxc", package:installdir("bin"))
+        os.cp("include/dxc", package:installdir("include"))
+        os.cp("build/lib/libdxcompiler.so*", package:installdir("lib"))
         package:addenv("PATH", "bin")
     end)
 
@@ -41,6 +51,6 @@ package("directxshadercompiler")
         if package:is_plat("windows") then
             assert(package:has_cxxfuncs("DxcCreateInstance", {includes = {"windows.h", "dxcapi.h"}}))
         elseif package:is_plat("linux") then
-            assert(package:has_cxxfuncs("DxcCreateInstance", {includes = {"dxcapi.h"}}))
+            assert(package:has_cxxfuncs("DxcCreateInstance", {includes = {"dxc/dxcapi.h"}}))
         end
     end)
