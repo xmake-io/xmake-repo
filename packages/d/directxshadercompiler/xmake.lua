@@ -18,7 +18,7 @@ package("directxshadercompiler")
         add_urls("https://github.com/microsoft/DirectXShaderCompiler.git")
         add_versions("v1.7.2212", "f2643f8699299ab4e77421952e9c24f7483b46896d9f4cc6b4790b22c90d2ff0")
         add_extsources("pacman::directx-shader-compiler")
-        add_deps("ninja")
+        add_deps("cmake", "ninja")
     end
 
     on_install("windows|x64", function (package)
