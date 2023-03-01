@@ -8,8 +8,22 @@ package("gdextension")
   
   add_deps("scons")
   add_includedirs("gen/include", "include")
+
+  on_load(function(package)
+    assert(not package:is_arch(
+        "mips",
+        "mip64",
+        "mips64",
+        "mipsel",
+        "mips64el",
+        "riscv",
+        "riscv64",
+        "s390x",
+        "sh4"),
+        "architecture " .. package:arch() .. " is not supported")
+  end)
  
-  on_install("linux", "windows", "macosx", "mingw", "iphoneos", "android", "wasm", function(package)
+  on_install("linux", "windows", "macosx", "mingw", "iphoneos", "android", function(package)
     import("core.base.option")
     import("lib.detect.find_tool")
   
@@ -25,11 +39,11 @@ package("gdextension")
     local arch = package:arch()
     if package:is_arch("x64") then
         arch = "x86_64"
-    elseif package:is_arch("x86") then
+    elseif package:is_arch("x86", "i386") then
         arch = "x86_32"
     elseif package:is_arch("arm64-v8a") then
         arch = "arm64"
-    elseif package:is_arch("arm") then
+    elseif package:is_arch("arm", "armeabi", "armeabi-v7a", "armv7", "armv7s", "armv7k") then
         arch = "arm32"
     elseif package:is_arch("ppc") then
         arch = "ppc32"
@@ -41,6 +55,7 @@ package("gdextension")
       "target=" .. (package:debug() and "template_debug" or "template_release"),
       "platform=" .. platform,
       "arch=" .. arch,
+      "debug_symbols=" .. (package:debug() and "yes" or "no")
     }
     
     local scons = assert(find_tool("scons"), "scons not found")
