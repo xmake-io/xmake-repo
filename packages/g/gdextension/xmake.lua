@@ -9,7 +9,10 @@ package("gdextension")
   add_deps("scons")
   add_includedirs("gen/include", "include")
  
-  on_install("linux", "windows", "macosx", "mingw", "iphoneos", "android", function(package)
+  on_install("linux", "windows", "macosx", "mingw", "iphoneos", "android", "wasm", function(package)
+    import("core.base.option")
+    import("lib.detect.find_tool")
+  
     local platform = package:plat()
     if package:is_plat("mingw") then
         platform = "windows"
@@ -22,17 +25,24 @@ package("gdextension")
     local arch = package:arch()
     if package:is_arch("x64") then
         arch = "x86_64"
+    elseif package:is_arch("x86") then
+        arch = "x86_32"
+    elseif package:is_arch("arm64-v8a") then
+        arch = "arm64"
+    elseif package:is_arch("arm") then
+        arch = "arm32"
+    elseif package:is_arch("ppc") then
+        arch = "ppc32"
     end
     
     local configs = {
-      "-j " .. tostring(os.default_njob()),
+      "-j " .. (option.get("jobs") or tostring(os.default_njob())),
       "use_mingw=" .. (package:is_plat("mingw") and "yes" or "no"),
       "target=" .. (package:debug() and "template_debug" or "template_release"),
       "platform=" .. platform,
       "arch=" .. arch,
     }
     
-    import("lib.detect.find_tool")
     local scons = assert(find_tool("scons"), "scons not found")
     
     os.execv(scons.program, configs)
