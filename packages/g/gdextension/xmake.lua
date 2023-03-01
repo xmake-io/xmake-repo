@@ -4,7 +4,7 @@ package("gdextension")
   set_description("C++ bindings for the Godot 4 script API")
   
   set_urls("https://github.com/godotengine/godot-cpp.git")
-  add_versions("4.0", "2f07eb07eea9e5ef3a6e9f8707f08cec77db579f")
+  add_versions("4.0", "9d1c396c54fc3bdfcc7da4f3abcb52b14f6cce8f")
   
   add_deps("scons")
   add_includedirs("gen/include", "include")
@@ -21,7 +21,7 @@ package("gdextension")
     
     local arch = package:arch()
     if package:is_arch("x64") then
-    	arch = "x86_64"
+        arch = "x86_64"
     end
     
     local configs = {
@@ -29,12 +29,11 @@ package("gdextension")
       "use_mingw=" .. (package:is_plat("mingw") and "yes" or "no"),
       "target=" .. (package:debug() and "template_debug" or "template_release"),
       "platform=" .. platform,
-      "arch=" .. ((package:is_arch("x64") or package:is_arch("x86_64")) and "x86_64" or "x86_32"),
+      "arch=" .. arch,
     }
     
     import("lib.detect.find_tool")
     local scons = assert(find_tool("scons"), "scons not found")
-    -- assert(scons, "scons not found")
     
     os.execv(scons.program, configs)
     os.cp("bin/*." .. (package:is_plat("windows") and "lib" or "a"), package:installdir("lib"))
