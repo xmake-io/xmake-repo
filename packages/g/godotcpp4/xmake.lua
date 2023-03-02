@@ -16,8 +16,6 @@ package("godotcpp4")
                 "mips64",
                 "mipsel",
                 "mips64el",
-                "riscv",
-                "riscv64",
                 "s390x",
                 "sh4"),
                 "architecture " .. package:arch() .. " is not supported")
@@ -37,16 +35,12 @@ package("godotcpp4")
         end
         
         local arch = package:arch()
-        if package:is_arch("x64") then
-                arch = "x86_64"
-        elseif package:is_arch("x86", "i386") then
+        if package:is_arch("x86", "i386") then
                 arch = "x86_32"
         elseif package:is_arch("arm64-v8a") then
                 arch = "arm64"
-        elseif package:is_arch("arm", "armeabi", "armeabi-v7a", "armv7", "armv7s", "armv7k") then
+        elseif package:is_arch("arm", "armeabi", "armeabi-v7a", "armv7s", "armv7k") then
                 arch = "arm32"
-        elseif package:is_arch("ppc") then
-                arch = "ppc32"
         end
         
         local configs = {
