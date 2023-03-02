@@ -24,6 +24,8 @@ package("directxshadercompiler")
         add_deps("cmake", "ninja")
     end
 
+    add_configs("shared", {description = "Using shared binaries.", default = true, type = "boolean", readonly = true})
+
     on_install("windows|x64", function (package)
         os.cp("bin/x64/*", package:installdir("bin"))
         os.cp("inc/*", package:installdir("include"))
