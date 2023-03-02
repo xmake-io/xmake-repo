@@ -36,7 +36,6 @@ package("directxshadercompiler")
             "-C ../cmake/caches/PredefinedParams.cmake"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").build(package, configs, {cmake_generator = "Ninja", buildir = "build"})
 
         if package:has_tool("cxx", "clang") then
