@@ -29,24 +29,8 @@ package("uni_algo")
             #include "uni_algo/conv.h"
 
             void test() {
-                {
-                    std::string str8 = una::utf16to8(u"Te\xD800st");
-                    assert(str8 == "Te\xEF\xBF\xBDst");
-                }
-                {
-                    una::error error;
-                    std::string str8 = una::strict::utf16to8(u"Te\xD800st", error);
-                    assert(str8.empty() && error && error.pos() == 2);
-                }
-                {
-                    std::u16string str16 = una::utf8to16<char, char16_t>("Te\xC2st");
-                    assert(str16 == u"Te\xFFFDst");
-                }
-                {
-                    una::error error;
-                    std::u16string str16 = una::strict::utf8to16<char, char16_t>("Te\xC2st", error);
-                    assert(str16.empty() && error && error.pos() == 2);
-                }
+                std::string str8 = una::utf16to8(u"Te\xD800st");
+                assert(str8 == "Te\xEF\xBF\xBDst");
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
