@@ -24,7 +24,7 @@ package("efsw")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "mingw", "macosx", "bsd", "iphoneos", function (package)
         local configs = {"-DBUILD_TEST_APP=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
