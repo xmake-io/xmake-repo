@@ -8,12 +8,12 @@ package("ruy")
 
     add_deps("cmake", "cpuinfo")
 
+    add_links("ruy")
+
     on_install("windows", "linux", "macosx", "android", function (package)
-        local configs = {}
+        local configs = {"-DRUY_FIND_CPUINFO=ON", "-DRUY_MINIMAL_BUILD=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
-        table.insert(configs, "-DRUY_FIND_CPUINFO=ON")
 
         import("package.tools.cmake").install(package, configs)
     end)
