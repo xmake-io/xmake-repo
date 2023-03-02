@@ -1,4 +1,4 @@
-package("gdextension")
+package("godotcpp4")
 
     set_homepage("https://godotengine.org/")
     set_description("C++ bindings for the Godot 4 script API")
