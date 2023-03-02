@@ -29,9 +29,6 @@ package("godotcpp4")
     end)
  
     on_install("linux", "windows|x64", "windows|x86", "macosx", "mingw", "iphoneos", "android", function(package)
-        import("core.base.option")
-        import("lib.detect.find_tool")
-
         if package:is_plat("windows") then
             io.replace("tools/targets.py", "/MD", "/" .. package:config("vs_runtime"), {plain = true})
         end
@@ -55,17 +52,13 @@ package("godotcpp4")
         end
         
         local configs = {
-            "-j " .. (option.get("jobs") or tostring(os.default_njob())),
-            "use_mingw=" .. (package:is_plat("mingw") and "yes" or "no"),
             "target=" .. (package:is_debug() and "template_debug" or "template_release"),
             "platform=" .. platform,
             "arch=" .. arch,
             "debug_symbols=" .. (package:is_debug() and "yes" or "no")
         }
         
-        local scons = assert(find_tool("scons"), "scons not found")
-        
-        os.execv(scons.program, configs)
+        import("package.tools.scons").build(package, configs)
         os.cp("bin/*." .. (package:is_plat("windows") and "lib" or "a"), package:installdir("lib"))
         os.cp("include/godot_cpp", package:installdir("include"))
         os.cp("gen/include/godot_cpp", path.join(package:installdir("gen"), "include", "godot_cpp"))
