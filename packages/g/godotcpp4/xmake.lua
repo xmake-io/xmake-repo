@@ -19,11 +19,22 @@ package("godotcpp4")
                 "s390x",
                 "sh4"),
                 "architecture " .. package:arch() .. " is not supported")
+
+        if package:is_plat("windows") then
+            package:add("defines", "TYPED_METHOD_BIND", "NOMINMAX")
+        end
+        if package:is_debug() then
+            package:add("defines", "DEBUG_ENABLED", "DEBUG_METHODS_ENABLED")
+        end
     end)
  
     on_install("linux", "windows", "macosx", "mingw", "iphoneos", "android", function(package)
         import("core.base.option")
         import("lib.detect.find_tool")
+
+        if package:is_plat("windows") then
+            io.replace("tools/targets.py", "/MD", "/" .. package:config("vs_runtime"), {plain = true})
+        end
     
         local platform = package:plat()
         if package:is_plat("mingw") then
@@ -46,10 +57,10 @@ package("godotcpp4")
         local configs = {
             "-j " .. (option.get("jobs") or tostring(os.default_njob())),
             "use_mingw=" .. (package:is_plat("mingw") and "yes" or "no"),
-            "target=" .. (package:debug() and "template_debug" or "template_release"),
+            "target=" .. (package:is_debug() and "template_debug" or "template_release"),
             "platform=" .. platform,
             "arch=" .. arch,
-            "debug_symbols=" .. (package:debug() and "yes" or "no")
+            "debug_symbols=" .. (package:is_debug() and "yes" or "no")
         }
         
         local scons = assert(find_tool("scons"), "scons not found")
