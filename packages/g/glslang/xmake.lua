@@ -33,7 +33,7 @@ package("glslang")
         end
     end)
 
-    on_install("linux", "windows", "macosx", "mingw", function (package)
+    on_install(function (package)
         package:addenv("PATH", "bin")
         io.replace("CMakeLists.txt", "ENABLE_OPT OFF", "ENABLE_OPT ON")
         io.replace("StandAlone/CMakeLists.txt", "target_link_libraries(glslangValidator ${LIBRARIES})", [[

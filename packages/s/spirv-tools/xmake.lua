@@ -40,7 +40,7 @@ package("spirv-tools")
         end
     end)
 
-    on_install("linux", "windows", "macosx", "mingw", function (package)
+    on_install(function (package)
         package:addenv("PATH", "bin")
         local configs = {"-DSPIRV_SKIP_TESTS=ON", "-DSPIRV_WERROR=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
