@@ -28,7 +28,7 @@ package("godotcpp4")
         end
     end)
  
-    on_install("linux", "windows", "macosx", "mingw", "iphoneos", "android", function(package)
+    on_install("linux", "windows|x64", "windows|x86", "macosx", "mingw", "iphoneos", "android", function(package)
         import("core.base.option")
         import("lib.detect.find_tool")
 
