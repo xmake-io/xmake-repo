@@ -63,12 +63,12 @@ function main(opt)
     for _, packagedir in ipairs(os.dirs(path.join("packages", "*", "*"))) do
         local packagename = path.filename(packagedir)
         local packagefile = path.join(packagedir, "xmake.lua")
-        local instance = package.load_from_repository(packagename, nil, packagedir, packagefile)
+        local instance = package.load_from_repository(packagename, nil, packagedir, {packagefile = packagefile})
         local basename = instance:get("base")
         if instance and basename then
             local basedir = path.join("packages", basename:sub(1, 1):lower(), basename:lower())
             local basefile = path.join(basedir, "xmake.lua")
-            instance._BASE = package.load_from_repository(basename, nil, basedir, basefile)
+            instance._BASE = package.load_from_repository(basename, nil, basedir, {packagefile = basefile})
         end
         if instance then
             for _, plat in ipairs({"windows", "linux", "macosx", "iphoneos", "android", "mingw", "msys", "bsd", "wasm", "cross"}) do

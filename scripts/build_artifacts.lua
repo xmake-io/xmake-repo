@@ -44,7 +44,7 @@ function main()
            local packagedir = path.directory(file)
            local packagename = path.filename(packagedir)
            if #path.filename(path.directory(packagedir)) == 1 then
-               local instance = package.load_from_repository(packagename, nil, packagedir, file)
+               local instance = package.load_from_repository(packagename, nil, packagedir, {packagefile = file})
                if instance and packages.is_supported(instance, "windows")
                   and (instance.is_headeronly and not instance:is_headeronly()) then
                    local versions = instance:versions()
