@@ -28,10 +28,10 @@ jobs:
 
       - name: Prepare
         run: |
-          wget -q https://dl.google.com/android/repository/android-ndk-r22-linux-x86_64.zip
-          unzip -q -o ./android-ndk-r22-linux-x86_64.zip
+          wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux-x86_64.zip
+          unzip -q -o ./android-ndk-r25-linux-x86_64.zip
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-r22 --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
+          xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-r25 --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
 
