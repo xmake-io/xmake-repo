@@ -3,7 +3,8 @@ package("spirv-tools")
     set_description("SPIR-V Tools")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/KhronosGroup/SPIRV-Tools/archive/$(version).tar.gz")
+    add_urls("https://github.com/KhronosGroup/SPIRV-Tools/archive/$(version).tar.gz",
+             "https://github.com/KhronosGroup/SPIRV-Tools.git")
     add_versions("v2020.5", "947ee994ba416380bd7ccc1c6377ac28a4802a55ca81ccc06796c28e84c00b71")
     add_versions("v2020.6", "de2392682df8def7ac666a2a320cd475751badf4790b01c7391b7644ecb550a3")
     add_versions("v2021.3", "b6b4194121ee8084c62b20f8d574c32f766e4e9237dfe60b0658b316d19c6b13")
