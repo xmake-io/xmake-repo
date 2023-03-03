@@ -1,5 +1,4 @@
 package("glslang")
-
     set_homepage("https://github.com/KhronosGroup/glslang/")
     set_description("Khronos-reference front end for GLSL/ESSL, partial front end for HLSL, and a SPIR-V generator.")
     set_license("Apache-2.0")
@@ -10,6 +9,8 @@ package("glslang")
     add_versions("1.2.189+1", "2fb89a0072ae7316af1c856f22663fde4928128a")
     add_versions("1.3.211+0", "9bb8cfffb0eed010e07132282c41d73064a7a609")
     add_versions("1.3.231+1", "5755de46b07e4374c05fb1081f65f7ae1f8cca81")
+    add_versions("1.3.236+0", "77551c429f86c0e077f26552b7c1c0f12a9f235e")
+    add_versions("1.3.239+0", "ca8d07d0bc1c6390b83915700439fa7719de6a2a")
 
     add_configs("binaryonly", {description = "Only use binary program.", default = false, type = "boolean"})
     add_configs("exceptions", {description = "Build with exception support.", default = false, type = "boolean"})
@@ -33,7 +34,7 @@ package("glslang")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "bsd", "macosx", "android", "iphoneos", "cross", function (package)
+    on_install(function (package)
         package:addenv("PATH", "bin")
         io.replace("CMakeLists.txt", "ENABLE_OPT OFF", "ENABLE_OPT ON")
         io.replace("StandAlone/CMakeLists.txt", "target_link_libraries(glslangValidator ${LIBRARIES})", [[
