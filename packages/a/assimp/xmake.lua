@@ -51,7 +51,7 @@ package("assimp")
             package:add("deps", "irrxml")
         end
         if package:is_plat("linux", "macosx") and package:config("shared") then
-            package:add("links", "assimp")
+            package:add("links", "assimp" .. (package:is_debug() and "d" or ""))
         end
     end)
 
