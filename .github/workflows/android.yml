@@ -33,5 +33,5 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-r25 --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
+          xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-r25c --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
 
