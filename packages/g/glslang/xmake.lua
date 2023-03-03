@@ -45,7 +45,7 @@ package("glslang")
         ]], {plain = true})
         if package:is_plat("wasm") then
             -- wasm-ld doesn't support --no-undefined
-            io.replace("CMakelists.txt", [[add_link_options("-Wl,--no-undefined")]], "", {plain = true})
+            io.replace("CMakeLists.txt", [[add_link_options("-Wl,--no-undefined")]], "", {plain = true})
         end
         local configs = {"-DENABLE_CTEST=OFF", "-DBUILD_EXTERNAL=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
