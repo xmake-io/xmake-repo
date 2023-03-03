@@ -43,6 +43,10 @@ package("glslang")
         io.replace("SPIRV/CMakeLists.txt", "target_link_libraries(SPIRV PRIVATE MachineIndependent SPIRV-Tools-opt)", [[
             target_link_libraries(SPIRV PRIVATE MachineIndependent SPIRV-Tools-opt SPIRV-Tools-link SPIRV-Tools-reduce SPIRV-Tools)
         ]], {plain = true})
+        if package:is_plat("wasm") then
+            -- wasm-ld doesn't support --no-undefined
+            io.replace("CMakelists.txt", [[add_link_options("-Wl,--no-undefined")]], "", {plain = true})
+        end
         local configs = {"-DENABLE_CTEST=OFF", "-DBUILD_EXTERNAL=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:is_plat("windows") then
