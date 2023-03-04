@@ -8,17 +8,28 @@ package("libuuid")
 
     add_versions("1.0.3", "46af3275291091009ad7f1b899de3d0cea0252737550e7919d17237997db5644")
 
-    on_install("linux", "macosx", "android", "iphoneos", "wasm", function(package)
+    on_install("linux", "macosx", "bsd", "android", "iphoneos", "wasm", "cross", function(package)
+        io.writefile("xmake.lua", [[
+            includes("check_cfuncs.lua")
+            add_rules("mode.debug", "mode.release")
+            target("uuid")
+                set_kind("$(kind)")
+                add_files("*.c|test_*.c")
+                add_headerfiles("*.h", {prefixdir = "uuid"})
+                add_rules("utils.install.pkgconfig_importfiles", {filename = "uuid.pc"})
+                check_cfuncs("HAVE_USLEEP", "usleep", {includes = "unistd.h"})
+                check_cfuncs("HAVE_FTRUNCATE", "ftruncate", {includes = "unistd.h"})
+                check_cfuncs("HAVE_GETTIMEOFDAY", "gettimeofday", {includes = "sys/time.h"})
+                check_cfuncs("HAVE_MEMSET", "memset", {includes = "string.h"})
+                check_cfuncs("HAVE_SOCKET", "socket", {includes = "sys/socket.h"})
+                check_cfuncs("HAVE_STRTOUL", "strtoul", {includes = "stdlib.h"})
+                check_cfuncs("HAVE_SRANDOM", "srandom", {includes = "stdlib.h"})
+        ]])
         local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:debug() then
-            table.insert(configs, "--enable-debug")
+        if package:config("shared") then
+            configs.kind = "shared"
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function(package)
