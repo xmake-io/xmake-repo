@@ -4,6 +4,7 @@ package("libuuid")
     set_license("BSD-3-Clause")
 
     set_urls("https://sourceforge.net/projects/libuuid/files/libuuid-$(version).tar.gz",
+             "https://github.com/xmake-mirror/libuuid/releases/download/$(version)/libuuid-$(version).tar.gz",
              "https://git.code.sf.net/p/libuuid/code.git")
 
     add_versions("1.0.3", "46af3275291091009ad7f1b899de3d0cea0252737550e7919d17237997db5644")
