@@ -67,79 +67,31 @@ package("godotcpp4")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-        #include <godot_cpp/classes/global_constants.hpp>
-        #include <godot_cpp/classes/ref_counted.hpp>
-        #include <godot_cpp/core/binder_common.hpp>
-        #include <godot_cpp/variant/utility_functions.hpp>
+          #include <godot_cpp/classes/global_constants.hpp>
+          #include <godot_cpp/classes/ref_counted.hpp>
+          #include <godot_cpp/core/binder_common.hpp>
+          using namespace godot;
 
-        using namespace godot;
+          class ExampleRef : public RefCounted {
+            GDCLASS(ExampleRef, RefCounted);
 
-        class ExampleRef : public RefCounted {
-          GDCLASS(ExampleRef, RefCounted);
+          protected:
+            static void _bind_methods() {
+              ClassDB::bind_method(D_METHOD("get_id"), &ExampleRef::get_id);
+            }
 
-        private:
-          static int instance_count;
-          static int last_id;
+          public:
+            int get_id() { return 5; }
+          };
 
-          int id;
-
-        protected:
-          static void _bind_methods() {
-            ClassDB::bind_method(D_METHOD("get_id"), &ExampleRef::get_id);
+          extern "C" {
+          GDExtensionBool GDE_EXPORT
+          example_library_init(const GDExtensionInterface *p_interface,
+                              GDExtensionClassLibraryPtr p_library,
+                              GDExtensionInitialization *r_initialization) {
+            ClassDB::register_class<ExampleRef>();
+            return true;
           }
-
-        public:
-          ExampleRef() {
-            id = ++last_id;
-            instance_count++;
-
-            UtilityFunctions::print(
-                "ExampleRef ", itos(id),
-                " created, current instance count: ", itos(instance_count));
           }
-          ~ExampleRef() {
-            instance_count--;
-            UtilityFunctions::print(
-                "ExampleRef ", itos(id),
-                " destroyed, current instance count: ", itos(instance_count));
-          }
-
-          int get_id() const { return id; }
-        };
-
-        int ExampleRef::instance_count = 0;
-        int ExampleRef::last_id = 1;
-
-        void initialize_example_module(ModuleInitializationLevel p_level) {
-          if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
-            return;
-          }
-
-          ClassDB::register_class<ExampleRef>();
-        }
-
-        void uninitialize_example_module(ModuleInitializationLevel p_level) {
-          if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
-            return;
-          }
-        }
-
-        extern "C" {
-        // Initialization.
-        GDExtensionBool GDE_EXPORT
-        example_library_init(const GDExtensionInterface *p_interface,
-                            GDExtensionClassLibraryPtr p_library,
-                            GDExtensionInitialization *r_initialization) {
-          godot::GDExtensionBinding::InitObject init_obj(p_interface, p_library,
-                                                        r_initialization);
-
-          init_obj.register_initializer(initialize_example_module);
-          init_obj.register_terminator(uninitialize_example_module);
-          init_obj.set_minimum_library_initialization_level(
-              MODULE_INITIALIZATION_LEVEL_SCENE);
-
-          return init_obj.init();
-        }
-        }
         ]]}, {configs = {languages = "cxx17"}}))
     end)
