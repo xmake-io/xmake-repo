@@ -11,10 +11,26 @@ package("toml++")
     add_versions("v3.2.0", "aeba776441df4ac32e4d4db9d835532db3f90fd530a28b74e4751a2915a55565")
     add_versions("v3.3.0", "fc1a5eb410f3c67e90e5ad1264a1386d020067cfb01b633cc8c0441789aa6cf2")
 
-    add_deps("cmake")
+    add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
+
+    on_load(function (package)
+        if package:config("header_only") then
+            package:add("deps", "cmake")
+        else
+            package:add("deps", "meson", "ninja")
+        end
+    end)
 
     on_install(function (package)
-        import("package.tools.cmake").install(package)
+        if package:config("header_only") then
+            import("package.tools.cmake").install(package)
+        else
+            package:add("defines", "TOML_HEADER_ONLY=0")
+
+            local configs = {"-Dbuild_lib=true"}
+            table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+            import("package.tools.meson").install(package, configs)
+        end
     end)
 
     on_test(function (package)
