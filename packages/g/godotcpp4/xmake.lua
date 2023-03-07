@@ -28,7 +28,7 @@ package("godotcpp4")
         end
     end)
 
-    on_install("linux", "windows|x64", "windows|x86", "macosx", "mingw", "iphoneos", "android", function(package)
+    on_install("linux", "windows|x64", "windows|x86", "macosx", "iphoneos", "android", function(package)
         if package:is_plat("windows") then
             io.replace("tools/targets.py", "/MD", "/" .. package:config("vs_runtime"), {plain = true})
         end
