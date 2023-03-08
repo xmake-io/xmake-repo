@@ -1,5 +1,5 @@
 package("toml++")
-    set_kind("library", {headeronly = true})
+
     set_homepage("https://marzer.github.io/tomlplusplus/")
     set_description("toml++ is a header-only TOML config file parser and serializer for C++17 (and later!).")
 
@@ -15,6 +15,7 @@ package("toml++")
 
     on_load(function (package)
         if package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
             package:add("deps", "cmake")
         else
             package:add("deps", "meson", "ninja")
