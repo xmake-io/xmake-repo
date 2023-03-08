@@ -14,7 +14,7 @@ package("bullet3")
     add_configs("double_precision", {description = "Enable double precision floats", default = false, type = "boolean"})
     add_configs("extras",           {description = "Build the extras", default = false, type = "boolean"})
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
     
@@ -31,10 +31,7 @@ package("bullet3")
         if package:is_plat("windows") then
             table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MD") and "ON" or "OFF"))
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
-
-        os.cp("src/**.h", package:installdir("include", "bullet"), {rootdir = "src"})
-        os.cp(path.join("build", "lib", package:debug() and "Debug" or "Release", "*"), package:installdir("lib"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
