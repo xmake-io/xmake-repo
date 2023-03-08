@@ -1,5 +1,4 @@
 package("bullet3")
-
     set_homepage("http://bulletphysics.org")
     set_description("Bullet Physics SDK.")
     set_license("zlib")
@@ -10,6 +9,7 @@ package("bullet3")
     add_versions("3.05", "e7ef322d8038e397cd6d79145a856cf5b4d558ce091d49b5239d625a46fef0d7")
     add_versions("3.09", "8443894e47167cf7f7b4433a365b428ebeb83ba64d64f2a741ec4d2da4992c3d")
     add_versions("3.24", "1179bcc5cdaf7f73f92f5e8495eaadd6a7216e78cad22f1027e9ce49b7a0bfbe")
+    add_versions("3.25", "b9bc8d1443637a9084e2b585ed582abf2da3ddad7d768acccfe4ee17aca56bf7")
 
     add_configs("double_precision", {description = "Enable double precision floats", default = false, type = "boolean"})
     add_configs("extras",           {description = "Build the extras", default = false, type = "boolean"})
