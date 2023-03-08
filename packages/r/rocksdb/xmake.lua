@@ -13,9 +13,7 @@ package("rocksdb")
     add_deps("jemalloc")
 
     if is_plat("linux") then
-        add_syslinks("pthread")
-        add_syslinks("rt")
-        add_syslinks("dl")
+        add_syslinks("pthread", "rt", "dl")
     end
 
     on_install("linux", "macosx", "bsd" , "mingw", function (package)
