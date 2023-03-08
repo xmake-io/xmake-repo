@@ -45,7 +45,7 @@ package("bullet3")
                 btDbvtBroadphase broadphase;
                 btSequentialImpulseConstraintSolver constraintSolver;
                 btDiscreteDynamicsWorld dynamicWorld(&dispatcher, &broadphase, &constraintSolver, &collisionConfiguration);
-                dynamicsWorld.setGravity(btVector3(0, -10, 0));
+                dynamicWorld.setGravity(btVector3(0, -10, 0));
             }
         ]]}, {includes = "bullet/btBulletDynamicsCommon.h"}))
     end)
