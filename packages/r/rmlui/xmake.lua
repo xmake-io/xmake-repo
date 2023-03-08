@@ -40,6 +40,9 @@ package("rmlui")
 
     on_install("windows", "macosx", "linux", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_SAMPLES=OFF"}
+        if package:is_plat("macosx") and package:is_arch("arm64") then
+            table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=arm64")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DNO_FONT_INTERFACE_DEFAULT=" .. (package:config("freetype") and "OFF" or "ON"))
