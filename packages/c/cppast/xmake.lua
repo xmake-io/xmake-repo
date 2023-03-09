@@ -6,7 +6,7 @@ package("cppast")
     add_versions("2023.02.07", "3fb7c24bc22d129e9f5cce80c7358fd725b94105")
 
     add_deps("cmake", "debug_assert", "tiny-process-library", "type_safe")
-    add_deps("llvm", { kind = "library", components = "clang" })
+    add_deps("llvm", { kind = "library", configs = {clang = true} })
     add_links("cppast")
 
     on_install("linux", function (package)
