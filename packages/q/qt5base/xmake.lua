@@ -1,5 +1,5 @@
 package("qt5base")
-    set_kind("toolchain")
+    set_kind("phony")
     set_homepage("https://www.qt.io")
     set_description("Qt is the faster, smarter way to create innovative devices, modern UIs & applications for multiple screens. Cross-platform software development at its best.")
     set_license("LGPL-3")
@@ -7,7 +7,14 @@ package("qt5base")
     add_versions("5.15.2", "dummy")
     add_versions("5.12.5", "dummy")
 
+    add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
+    add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
+
     add_deps("aqt")
+
+    on_load(function (package)
+        package:addenv("PATH", "bin")
+    end)
 
     on_fetch(function (package, opt)
         import("core.base.semver")
