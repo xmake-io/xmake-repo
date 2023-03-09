@@ -4,9 +4,6 @@ package("qt5base")
     set_description("Qt is the faster, smarter way to create innovative devices, modern UIs & applications for multiple screens. Cross-platform software development at its best.")
     set_license("LGPL-3")
 
-    add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
-    add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
-
     add_versions("5.15.2", "dummy")
     add_versions("5.12.5", "dummy")
 
