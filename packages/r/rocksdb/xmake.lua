@@ -36,7 +36,8 @@ package("rocksdb")
             "-DWITH_TESTS=OFF",
             "-DWITH_BENCHMARK_TOOLS=OFF",
             "-DWITH_CORE_TOOLS=OFF",
-            "-DWITH_TOOLS=OFF"}
+            "-DWITH_TOOLS=OFF",
+            "-DFAIL_ON_WARNINGS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DROCKSDB_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
