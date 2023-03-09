@@ -49,6 +49,10 @@ package("rocksdb")
             io.replace("CMakeLists.txt", "/Zi", "", {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
+        --[[if package:is_plat("windows", "mingw") then
+            os.cp("include", package:installdir())
+        end]]
+        print(os.files(path.join(package:installdir(), "**")))
     end)
 
     on_test(function (package)
