@@ -11,6 +11,7 @@ package("cppast")
 
     on_install("linux", function (package)
         io.replace("CMakeLists.txt", [[ OR (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)]], "", { plain = true })
+        io.replace("src/CMakeLists.txt", "-Werror -Wall -Wextra", "-Wall -Wextra", { plain = true })
         local configs = {"-DCPPAST_BUILD_TOOL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
