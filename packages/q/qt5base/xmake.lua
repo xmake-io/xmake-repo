@@ -1,20 +1,5 @@
-local function qt_table(sdkdir, version)
-    return {
-        version = version,
-        sdkdir = sdkdir,
-        sdkver = version,
-        bindir = path.join(sdkdir, "bin"),
-        includedir = path.join(sdkdir, "include"),
-        libdir = path.join(sdkdir, "lib"),
-        libexecdir = path.join(sdkdir, "libexec"),
-        mkspecsdir = path.join(sdkdir, "mkspecs"),
-        qmldir = path.join(sdkdir, "qml"),
-        pluginsdir = path.join(sdkdir, "plugins")
-    }
-end
-
 package("qt5base")
-    set_kind("phony")
+    set_kind("toolchain")
     set_homepage("https://www.qt.io")
     set_description("Qt is the faster, smarter way to create innovative devices, modern UIs & applications for multiple screens. Cross-platform software development at its best.")
     set_license("LGPL-3")
@@ -37,18 +22,11 @@ package("qt5base")
             return qt
         end
 
-        if os.isfile(package:manifest_file()) then
-            local installdir = package:installdir()
-            local qt = qt_table(installdir, package:version():shortstr())
-            package:data_set("qt", qt)
-            return qt
-        end
-
+        local sdkdir
         if not opt.system then
-            return
+            sdkdir = package:installdir()
         end
-
-        local qt = find_qt()
+        local qt = find_qt(sdkdir, {force = opt.force})
         if not qt then
             return
         end
@@ -193,8 +171,6 @@ package("qt5base")
                 end
             end
         end
-
-        package:data_set("qt", qt_table(installdir, versionstr))
     end)
 
     on_test(function (package)
