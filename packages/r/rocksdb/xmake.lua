@@ -45,6 +45,9 @@ package("rocksdb")
                 table.insert(configs, "-DWITH_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
+        if package:is_plat("windows") then
+            io.replace("CMakeLists.txt", "/Zi", "", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
