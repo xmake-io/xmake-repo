@@ -14,7 +14,6 @@ package("qt5base")
 
     on_fetch(function (package, opt)
         import("core.base.semver")
-        import("core.cache.localcache")
         import("detect.sdks.find_qt")
 
         local qt = package:data("qt")
