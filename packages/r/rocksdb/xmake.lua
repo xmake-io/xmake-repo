@@ -30,7 +30,7 @@ package("rocksdb")
         end
     end)
 
-    on_install(function (package)
+    on_install("linux", "windows", "macosx", "mingw", function (package)
         local configs = {
             "-DWITH_ALL_TESTS=OFF",
             "-DWITH_TESTS=OFF",
