@@ -27,7 +27,7 @@ function main(package, opt)
             if linkdir and includedir then
                 linkdir = linkdir:trim()
                 includedir = includedir:trim()
-                local result = {version = version, linkdirs = linkdir, includedirs = includedir}
+                local result = {version = version, links = {}, linkdirs = linkdir, includedirs = includedir}
                 local components = {}
                 for _, file in ipairs(os.files(path.join(os.scriptdir(), "components", "*.lua"))) do
                     local name = path.basename(file)
@@ -38,6 +38,7 @@ function main(package, opt)
                         if os.isfile(path.join(linkdir, filename_static)) or
                             os.isfile(path.join(linkdir, filename_shared)) then
                             table.insert(links, link)
+                            table.insert(result.links, link)
                         end
                     end
                     if #links > 0 then
