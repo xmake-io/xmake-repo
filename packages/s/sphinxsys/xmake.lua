@@ -62,7 +62,7 @@ package("sphinxsys")
             Real BW = particle_spacing_ref * 4;
             BoundingBox system_domain_bounds(Vec2d(-BW, -BW), Vec2d(DL + BW, DH + BW));
 
-            void test(int argc, char** argv) {
+            void test(int ac, char** av) {
                 SPHSystem sph_system(system_domain_bounds, particle_spacing_ref);
                 sph_system.handleCommandlineOptions(ac, av);
             }
