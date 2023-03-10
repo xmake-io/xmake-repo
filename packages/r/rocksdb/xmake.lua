@@ -18,6 +18,8 @@ package("rocksdb")
 
     if is_plat("linux") then
         add_syslinks("pthread", "rt", "dl")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("shlwapi", "rpcrt4")
     end
 
     on_load(function (package)
@@ -37,7 +39,8 @@ package("rocksdb")
             "-DWITH_BENCHMARK_TOOLS=OFF",
             "-DWITH_CORE_TOOLS=OFF",
             "-DWITH_TOOLS=OFF",
-            "-DFAIL_ON_WARNINGS=OFF"}
+            "-DFAIL_ON_WARNINGS=OFF",
+            "-DROCKSDB_INSTALL_ON_WINDOWS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DROCKSDB_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
@@ -52,11 +55,11 @@ package("rocksdb")
                 table.insert(configs, "-DWITH_MD_LIBRARY=" .. (vs_runtime:startswith("MD") and "ON" or "OFF"))
             end
         end
-        import("package.tools.cmake").install(package, configs)
-        if package:is_plat("windows", "mingw") then
-            os.cp("include", package:installdir())
+        local cxflags
+        if package:is_plat("mingw") then
+            cxflags = "-DMINGW_HAS_SECURE_API"
         end
-        print(os.files(path.join(package:installdir(), "**")))
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
