@@ -47,11 +47,15 @@ package("rocksdb")
         end
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", "/Zi", "", {plain = true})
+            local vs_runtime = package:config("vs_runtime")
+            if vs_runtime then
+                table.insert(configs, "-DWITH_MD_LIBRARY=" .. (vs_runtime:startswith("MD") and "ON" or "OFF"))
+            end
         end
         import("package.tools.cmake").install(package, configs)
-        --[[if package:is_plat("windows", "mingw") then
+        if package:is_plat("windows", "mingw") then
             os.cp("include", package:installdir())
-        end]]
+        end
         print(os.files(path.join(package:installdir(), "**")))
     end)
 
