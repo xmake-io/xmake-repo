@@ -15,8 +15,6 @@ package("sphinxsys")
     add_deps("tbb")
     add_deps("simbody >=3.6.0")
     add_deps("eigen >=3.4")
-    -- We can specify jobs to avoid potential memory overflow on windows.
-    add_deps("ninja")
 
     on_install("windows", "linux", "macosx", function (package)
         -- We need copy source codes to the working directory with short path on windows
@@ -45,7 +43,7 @@ package("sphinxsys")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        import("package.tools.cmake").install(package, configs, {cmake_generator = "Ninja"})
+        import("package.tools.cmake").install(package, configs)
         if oldir then
             os.cd(oldir)
         end
