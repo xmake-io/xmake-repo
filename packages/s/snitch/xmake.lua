@@ -10,6 +10,8 @@ package("snitch")
 
     add_configs("use_main", {description = "Using your own main function", default = false, type = "boolean"})
 
+    add_deps("cmake")
+
     on_install(function (package)
         local configs = {"-DSNITCH_DO_TEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
