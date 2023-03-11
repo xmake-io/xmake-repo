@@ -13,7 +13,7 @@ package("snitch")
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {"-DSNITCH_DO_TEST=OFF"}
+        local configs = {"-DSNITCH_DO_TEST=OFF", "-DSNITCH_CREATE_HEADER_ONLY=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSNITCH_DEFINE_MAIN=" .. (package:config("use_main") and "OFF" or "ON"))
