@@ -11,7 +11,7 @@ package("llama.cpp")
         add_syslinks("pthread")
     end
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
@@ -33,9 +33,6 @@ package("llama.cpp")
         ]])
         if package:config("shared") then
             configs.kind = "shared"
-        end
-        if package:is_plat("windows") then
-            io.replace("ggml.c", "restrict", "")
         end
         import("package.tools.xmake").install(package, configs)
     end)
