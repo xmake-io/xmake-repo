@@ -20,6 +20,7 @@ package("llama.cpp")
                 add_files("*.c")
                 add_headerfiles("(*.h)")
                 set_languages("c11")
+                add_cflags("-pthread")
                 if is_plat("macosx") then
                     add_defines("GGML_USE_ACCELERATE")
                     add_frameworks("Accelerate")
