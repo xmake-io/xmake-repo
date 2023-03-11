@@ -5,7 +5,13 @@ package("llama.cpp")
     add_urls("https://github.com/ggerganov/llama.cpp.git")
     add_versions("2023.03.11", "7d9ed7b25fe17db3fc8848b5116d14682864ce8e")
 
-    on_install(function (package)
+    if is_plat("macosx") then
+        add_frameworks("Accelerate")
+    elseif is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
+    on_install("linux", "macosx", "windows", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
@@ -13,9 +19,23 @@ package("llama.cpp")
                 set_kind("$(kind)")
                 add_files("*.c")
                 add_headerfiles("(*.h)")
+                set_languages("c11")
+                if is_plat("macosx") then
+                    add_defines("GGML_USE_ACCELERATE")
+                    add_frameworks("Accelerate")
+                end
+                if is_arch("x86_64", "x64", "i386", "x86") then
+                    add_vectorexts("avx", "avx2", "sse3")
+                    add_cflags("-mf16c")
+                elseif is_arch("arm.*") then
+                    add_vectorexts("neon")
+                end
         ]])
         if package:config("shared") then
             configs.kind = "shared"
+        end
+        if package:is_plat("windows") then
+            io.replace("ggml.c", "restrict", "")
         end
         import("package.tools.xmake").install(package, configs)
     end)
