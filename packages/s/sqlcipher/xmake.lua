@@ -18,8 +18,6 @@ package("sqlcipher")
     
     if is_plat("iphoneos") then
         add_frameworks("Security")
-    elseif is_plat("windows") then
-        add_deps("openssl", {configs = {shared = true}})
     else
         add_deps("openssl")
     end
@@ -41,13 +39,16 @@ package("sqlcipher")
             package:add("defines", "SQLITE_HAS_CODEC=1")
         end
 
-        if is_plat("iphoneos") then
+        if package:is_plat("iphoneos") then
             package:add("frameworks", "Security")
-            package:add("defines", "SQLITE_TEMP_STORE=3", "SQLCIPHER_CRYPTO_CC")
+            package:add("defines", "SQLCIPHER_CRYPTO_CC")
+            package:add("defines", "SQLITE_TEMP_STORE=" .. package:config("SQLITE_TEMP_STORE"))
         end
     end)
 
     on_install("windows", function (package)
+        os.setenv("NO_TCL", 1)
+        os.setenv("SESSION", 0)
         os.setenv("SQLITE3DLL", "sqlcipher.dll")
         os.setenv("SQLITE3LIB", "sqlcipher.lib")
         os.setenv("SQLITE3EXE", "sqlcipher.exe")
@@ -57,13 +58,15 @@ package("sqlcipher")
         local rtcc_include = " -I" .. p:installdir("include")
         local temp_store = " -DSQLITE_TEMP_STORE=" .. package:config("SQLITE_TEMP_STORE")
         local thread_safe = " -DSQLITE_THREADSAFE=" .. package:config("SQLITE_THREADSAFE")
-        os.setenv("TCC", "TCC = $(TCC) -DSQLITE_HAS_CODEC" .. temp_store .. thread_safe .. rtcc_include)
-        os.setenv("RCC", "RCC = $(RCC) -DSQLITE_HAS_CODEC" .. temp_store .. thread_safe .. rtcc_include)
+        io.replace("Makefile.msc", "TCC = $(TCC) -DSQLITE_TEMP_STORE=1", "TCC = $(TCC) -DSQLITE_HAS_CODEC" .. rtcc_include .. temp_store, {plain = true})
+        io.replace("Makefile.msc", "TCC = $(TCC) -DSQLITE_THREADSAFE=1", "TCC = $(TCC)" .. thread_safe, {plain = true})
+        io.replace("Makefile.msc", "RCC = $(RCC) -DSQLITE_TEMP_STORE=1", "RCC = $(RCC) -DSQLITE_HAS_CODEC" .. rtcc_include .. temp_store, {plain = true})
+        io.replace("Makefile.msc", "RCC = $(RCC) -DSQLITE_THREADSAFE=1", "RCC = $(RCC)" .. thread_safe, {plain = true})
 
-        os.setenv("LTLIBS ", "libcrypto.lib libssl.lib")
-        local rtcc_lib = "/LIBPATH:" .. p:installdir("lib") .. " " .. "libcrypto.lib libssl.lib"
-        os.setenv("LTLIBPATHS", rtcc_lib)
+        os.setenv("LTLIBS ", "advapi32.lib user32.lib ws2_32.lib crypt32.lib wsock32.lib libcrypto.lib libssl.lib")
+        os.setenv("LTLIBPATHS", "/LIBPATH:" .. p:installdir("lib"))
 
+        os.setenv("PLATFORM", package:arch())
         local configs = {"-f", "Makefile.msc"}
         import("package.tools.nmake").build(package, configs)
         os.cp("sqlcipher.dll", package:installdir("bin"))
