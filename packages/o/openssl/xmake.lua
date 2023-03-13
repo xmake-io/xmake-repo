@@ -51,7 +51,7 @@ package("openssl")
     end)
 
     on_install("windows", function (package)
-        local configs = {"Configure"}
+        local configs = {"Configure", "no-tests"}
         local target
         if package:is_arch("x86", "i386") then
             target = "VC-WIN32"
