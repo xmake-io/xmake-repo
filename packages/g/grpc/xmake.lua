@@ -3,9 +3,9 @@ package("grpc")
     set_description("The C based gRPC (C++, Python, Ruby, Objective-C, PHP, C#)")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/grpc/grpc/archive/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/grpc/grpc/archive/refs/tags/$(version).zip",
              "https://github.com/grpc/grpc.git")
-    add_versions("v1.51.3", "feaeeb315133ea5e3b046c2c0231f5b86ef9d297e536a14b73e0393335f8b157")
+    add_versions("v1.51.3", "17720fd0a690e904a468b4b3dae6fa5ec40b0d1f4d418e2ca092e2f92f06fce0")
 
     add_patches("1.51.3", path.join(os.scriptdir(), "patches", "1.51.3", "disable-download-archive.patch"), "90fdd6e4a51cbc9756d1fcdd0f65e665d4b78cfd91fdbeb0228cc4e9c4ba1b73")
     add_patches("1.51.3", path.join(os.scriptdir(), "patches", "1.51.3", "static-linking-in-linux.patch"), "176474919883f93be0c5056098eccad408038663c6c7361f2e049cdf7247a19c")
