@@ -7,14 +7,8 @@ package("sqlcipher")
     add_versions("4.5.3", "5c9d672eba6be4d05a9a8170f70170e537ae735a09c3de444a8ad629b595d5e2")
 
     add_configs("encrypt",  { description = "enable encrypt", default = true, type = "boolean"})
-
-    -- 0: force temporary tables to be in a file, 
-    -- 1: default to file
-    -- 2: default to memory, 
-    -- 3: default to always in memory
-    add_configs("SQLITE_TEMP_STORE",  { description = "use an in-ram database for temporary tables", default = "2", values = {"0", "1", "2" , "3"}})
-    
-    add_configs("SQLITE_THREADSAFE",  { description = "SQLITE_TRHEADSAFE", default = "1", values = {"0", "1", "2"}})
+    add_configs("temp_store",  { description = "use an in-ram database for temporary tables", default = "2", values = {"0", "1", "2" , "3"}})
+    add_configs("threadsafe",  { description = "sqltie thread safe mode", default = "1", values = {"0", "1", "2"}})
     
     if is_plat("iphoneos") then
         add_frameworks("Security")
@@ -42,7 +36,7 @@ package("sqlcipher")
         if package:is_plat("iphoneos") then
             package:add("frameworks", "Security")
             package:add("defines", "SQLCIPHER_CRYPTO_CC")
-            package:add("defines", "SQLITE_TEMP_STORE=" .. package:config("SQLITE_TEMP_STORE"))
+            package:add("defines", "SQLITE_TEMP_STORE=" .. package:config("temp_store"))
         end
     end)
 
@@ -56,8 +50,8 @@ package("sqlcipher")
 
         local p = package:dep("openssl")
         local rtcc_include = " -I" .. p:installdir("include")
-        local temp_store = " -DSQLITE_TEMP_STORE=" .. package:config("SQLITE_TEMP_STORE")
-        local thread_safe = " -DSQLITE_THREADSAFE=" .. package:config("SQLITE_THREADSAFE")
+        local temp_store = " -DSQLITE_TEMP_STORE=" .. package:config("temp_store")
+        local thread_safe = " -DSQLITE_THREADSAFE=" .. package:config("threadsafe")
         io.replace("Makefile.msc", "TCC = $(TCC) -DSQLITE_TEMP_STORE=1", "TCC = $(TCC) -DSQLITE_HAS_CODEC" .. rtcc_include .. temp_store, {plain = true})
         io.replace("Makefile.msc", "TCC = $(TCC) -DSQLITE_THREADSAFE=1", "TCC = $(TCC)" .. thread_safe, {plain = true})
         io.replace("Makefile.msc", "RCC = $(RCC) -DSQLITE_TEMP_STORE=1", "RCC = $(RCC) -DSQLITE_HAS_CODEC" .. rtcc_include .. temp_store, {plain = true})
@@ -147,8 +141,8 @@ package("sqlcipher")
             configs.kind = "shared"
         end
         table.insert(configs, "--encrypt=" .. (package:config("encrypt") and "y" or "n"))
-        table.insert(configs, "--SQLITE_THREADSAFE=" .. package:config("SQLITE_THREADSAFE"))
-        table.insert(configs, "--SQLITE_TEMP_STORE=" .. package:config("SQLITE_TEMP_STORE"))
+        table.insert(configs, "--SQLITE_THREADSAFE=" .. package:config("threadsafe"))
+        table.insert(configs, "--SQLITE_TEMP_STORE=" .. package:config("temp_store"))
         import("package.tools.xmake").install(package, configs)        
     end)
 
