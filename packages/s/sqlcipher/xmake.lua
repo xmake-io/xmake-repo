@@ -38,13 +38,6 @@ package("sqlcipher")
     end)
 
     on_install("windows", function (package)
-        os.setenv("NO_TCL", 1)
-        os.setenv("SESSION", 0)
-        os.setenv("SQLITE3DLL", "sqlcipher.dll")
-        os.setenv("SQLITE3LIB", "sqlcipher.lib")
-        os.setenv("SQLITE3EXE", "sqlcipher.exe")
-        os.setenv("SQLITE3EXEPDB", "/pdb:sqlcipher.pdb")
-
         local p = package:dep("openssl")
         local rtcc_include = " -I" .. p:installdir("include")
         local temp_store = " -DSQLITE_TEMP_STORE=" .. package:config("temp_store")
@@ -54,12 +47,19 @@ package("sqlcipher")
         io.replace("Makefile.msc", "RCC = $(RCC) -DSQLITE_TEMP_STORE=1", "RCC = $(RCC) -DSQLITE_HAS_CODEC" .. rtcc_include .. temp_store, {plain = true})
         io.replace("Makefile.msc", "RCC = $(RCC) -DSQLITE_THREADSAFE=1", "RCC = $(RCC)" .. thread_safe, {plain = true})
 
-        os.setenv("LTLIBS ", "advapi32.lib user32.lib ws2_32.lib crypt32.lib wsock32.lib libcrypto.lib libssl.lib")
-        os.setenv("LTLIBPATHS", "/LIBPATH:" .. p:installdir("lib"))
+        import("package.tools.nmake")
+        local envs = nmake.buildenvs(package)
+        envs.NO_TCL = 1
+        envs.SESSION = 0
+        envs.SQLITE3DLL = "sqlcipher.dll"
+        envs.SQLITE3LIB = "sqlcipher.lib"
+        envs.SQLITE3EXE = "sqlcipher.exe"
+        envs.SQLITE3EXEPDB = "/pdb:sqlcipher.pdb"
+        envs.LTLIBS = "advapi32.lib user32.lib ws2_32.lib crypt32.lib wsock32.lib libcrypto.lib libssl.lib"
+        envs.LTLIBPATHS = "/LIBPATH:" .. p:installdir("lib")
+        envs.PLATFORM = package:arch()
 
-        os.setenv("PLATFORM", package:arch())
-        local configs = {"-f", "Makefile.msc"}
-        import("package.tools.nmake").build(package, configs)
+        nmake.build(package, {"-f", "Makefile.msc"}, {envs = envs})
         os.cp("sqlcipher.dll", package:installdir("bin"))
         os.cp("sqlcipher.pdb", package:installdir("bin"))
         os.cp("sqlcipher.exe", package:installdir("bin"))
@@ -71,61 +71,6 @@ package("sqlcipher")
     on_install("linux", "macosx", "android", "iphoneos", "cross", function (package)
         os.vrunv("./configure", {"--with-crypto-lib=none"})
         import("package.tools.make").build(package, {"sqlite3.c"})
-
-        io.writefile("xmake.lua", [[
-            add_rules("mode.debug", "mode.release")
-            if not is_plat("iphoneos") then
-                add_requires("openssl")
-            end
-
-            option("encrypt")
-                set_default(true)
-            option_end()
-
-            option("SQLITE_THREADSAFE")
-                set_default("2")
-                set_values("0", "1", "2")
-            option_end()
-
-            option("SQLITE_TEMP_STORE")
-                set_default("2")
-                set_values("0", "1", "2")
-            option_end()            
-
-            target("sqlcipher")
-                set_kind("$(kind)")
-                if is_plat("iphoneos") then
-                    add_frameworks("Security")
-                    add_defines("SQLCIPHER_CRYPTO_CC")
-                else
-                    add_packages("openssl")
-                    add_defines("SQLCIPHER_CRYPTO_OPENSSL")
-                end
-                if has_config("encrypt") then
-                    add_defines("SQLITE_HAS_CODEC")
-                end
-                if is_plat("windows") then
-                    add_defines("SQLITE_OS_WIN=1")
-                    if is_kind("shared") then
-                        add_defines("SQLITE_API=__declspec(dllexport)")
-                    end
-                else
-                    add_defines("SQLITE_OS_UNIX=1")
-                end
-                if is_plat("macosx", "linux", "cross") then
-                    add_defines("SQLITE_ENABLE_MATH_FUNCTIONS")
-                    add_syslinks("pthread", "dl", "m")
-                end
-                if is_plat("android") then
-                    add_defines("SQLITE_ENABLE_MATH_FUNCTIONS", "SQLITE_HAVE_ZLIB")
-                    add_syslinks("dl", "m", "z")
-                end                
-                add_defines("NDEBUG", "SQLITE_ENABLE_EXPLAIN_COMMENTS", "SQLITE_ENABLE_DBPAGE_VTAB", "SQLITE_ENABLE_STMTVTAB", "SQLITE_ENABLE_DBSTAT_VTAB", "SQLITE_ENABLE_MATH_FUNCTIONS")
-                add_includedirs(".")
-                add_files("sqlite3.c")
-                add_headerfiles("sqlite3*.h)")
-            target_end()
-        ]])    
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
@@ -133,6 +78,7 @@ package("sqlcipher")
         configs.encrypt = package:config("encrypt")
         configs.SQLITE_THREADSAFE = threadsafe
         configs.SQLITE_TEMP_STORE = temp_store
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)        
     end)
 
