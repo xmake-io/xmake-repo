@@ -18,14 +18,12 @@ package("sqlcipher")
 
     if is_plat("macosx", "linux", "cross") then
         add_syslinks("pthread", "dl", "m")
-    end
-
-    if is_plat("android") then
+    elseif is_plat("android") then
         add_syslinks("dl", "m", "z")
     end
 
     on_load(function (package)
-        if package:is_plat("windows") and package:get("kind") == "shared" then
+        if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "SQLITE_API=__declspec(dllimport)")
         end
 
@@ -34,7 +32,6 @@ package("sqlcipher")
         end
 
         if package:is_plat("iphoneos") then
-            package:add("frameworks", "Security")
             package:add("defines", "SQLCIPHER_CRYPTO_CC")
             package:add("defines", "SQLITE_TEMP_STORE=" .. package:config("temp_store"))
         end
@@ -104,7 +101,7 @@ package("sqlcipher")
                     add_packages("openssl")
                     add_defines("SQLCIPHER_CRYPTO_OPENSSL")
                 end
-                if get_config("encrypt") then
+                if has_config("encrypt") then
                     add_defines("SQLITE_HAS_CODEC")
                 end
                 if is_plat("windows") then
@@ -115,11 +112,6 @@ package("sqlcipher")
                 else
                     add_defines("SQLITE_OS_UNIX=1")
                 end
-                if is_plat("android") then
-                    add_cxflags("-Os")
-                else
-                    set_optimize("fastest")
-                end
                 if is_plat("macosx", "linux", "cross") then
                     add_defines("SQLITE_ENABLE_MATH_FUNCTIONS")
                     add_syslinks("pthread", "dl", "m")
@@ -128,21 +120,19 @@ package("sqlcipher")
                     add_defines("SQLITE_ENABLE_MATH_FUNCTIONS", "SQLITE_HAVE_ZLIB")
                     add_syslinks("dl", "m", "z")
                 end                
-                set_strip("all")
                 add_defines("NDEBUG", "SQLITE_ENABLE_EXPLAIN_COMMENTS", "SQLITE_ENABLE_DBPAGE_VTAB", "SQLITE_ENABLE_STMTVTAB", "SQLITE_ENABLE_DBSTAT_VTAB", "SQLITE_ENABLE_MATH_FUNCTIONS")
-                add_cxflags("-fPIC")
                 add_includedirs(".")
                 add_files("sqlite3.c")
-                add_headerfiles("$(projectdir)/sqlite3*.h)")
+                add_headerfiles("sqlite3*.h)")
             target_end()
         ]])    
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
         end
-        table.insert(configs, "--encrypt=" .. (package:config("encrypt") and "y" or "n"))
-        table.insert(configs, "--SQLITE_THREADSAFE=" .. package:config("threadsafe"))
-        table.insert(configs, "--SQLITE_TEMP_STORE=" .. package:config("temp_store"))
+        configs.encrypt = package:config("encrypt")
+        configs.SQLITE_THREADSAFE = threadsafe
+        configs.SQLITE_TEMP_STORE = temp_store
         import("package.tools.xmake").install(package, configs)        
     end)
 
