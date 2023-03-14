@@ -33,7 +33,6 @@ package("sqlcipher")
 
         if package:is_plat("iphoneos") then
             package:add("defines", "SQLCIPHER_CRYPTO_CC")
-            package:add("defines", "SQLITE_TEMP_STORE=" .. package:config("temp_store"))
         end
     end)
 
