@@ -39,9 +39,23 @@ package("sqlcipher")
 
     on_install("windows", function (package)
         local openssl = package:dep("openssl"):fetch()
-        local includedirs = openssl.includedirs or openssl.sysincludedirs
-        local linkdirs = openssl.linkdirs
-        local rtcc_include = " -I" .. includedirs
+        if openssl == nil then
+            raise("Failed fetch openssl library!")
+        end
+
+        local rtcc_include = ""
+        for _, dir in pairs(openssl.includedirs) do
+            rtcc_include = rtcc_include .. " -I" .. dir
+        end
+        for _, dir in pairs(openssl.sysincludedirs) do
+            rtcc_include = rtcc_include .. " -I" .. dir
+        end
+
+        local libpaths = ""
+        for _, dir in pairs(openssl.linkdirs) do
+            libpaths = libpaths .. " /LIBPATH:" .. linkdirs
+        end
+
         local temp_store = " -DSQLITE_TEMP_STORE=" .. package:config("temp_store")
         local thread_safe = " -DSQLITE_THREADSAFE=" .. package:config("threadsafe")
         io.replace("Makefile.msc", "TCC = $(TCC) -DSQLITE_TEMP_STORE=1", "TCC = $(TCC) -DSQLITE_HAS_CODEC" .. rtcc_include .. temp_store, {plain = true})
@@ -58,7 +72,7 @@ package("sqlcipher")
         envs.SQLITE3EXE = "sqlcipher.exe"
         envs.SQLITE3EXEPDB = "/pdb:sqlcipher.pdb"
         envs.LTLIBS = "advapi32.lib user32.lib ws2_32.lib crypt32.lib wsock32.lib libcrypto.lib libssl.lib"
-        envs.LTLIBPATHS = "/LIBPATH:" .. linkdirs
+        envs.LTLIBPATHS = libpaths
         envs.PLATFORM = package:arch()
 
         nmake.build(package, {"-f", "Makefile.msc"}, {envs = envs})

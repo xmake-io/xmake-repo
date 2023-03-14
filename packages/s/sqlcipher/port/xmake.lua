@@ -20,8 +20,6 @@ option_end()
 
 target("sqlcipher")
     set_kind("$(kind)")
-    add_options("encrypt", "threadsafe", "temp_store")
-
     if has_config("encrypt") then
         add_defines("SQLITE_HAS_CODEC")
     end
@@ -52,8 +50,8 @@ target("sqlcipher")
         add_syslinks("dl", "m", "z")
     end
 
-    add_defines(format("SQLITE_THREADSAFE=%s", get_config("threadsafe")))
-    add_defines(format("SQLITE_TEMP_STORE=%s", get_config("temp_store")))
+    add_defines("SQLITE_THREADSAFE=$(threadsafe)")
+    add_defines("SQLITE_TEMP_STORE=$(temp_store)")
     add_defines("NDEBUG", "SQLITE_ENABLE_EXPLAIN_COMMENTS", "SQLITE_ENABLE_DBPAGE_VTAB", "SQLITE_ENABLE_STMTVTAB", "SQLITE_ENABLE_DBSTAT_VTAB", "SQLITE_ENABLE_MATH_FUNCTIONS")
     add_files("sqlite3.c")
     add_headerfiles("sqlite3*.h)")
