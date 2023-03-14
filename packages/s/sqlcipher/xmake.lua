@@ -38,8 +38,10 @@ package("sqlcipher")
     end)
 
     on_install("windows", function (package)
-        local p = package:dep("openssl")
-        local rtcc_include = " -I" .. p:installdir("include")
+        local openssl = package:dep("openssl"):fetch()
+        local includedirs = openssl.includedirs or openssl.sysincludedirs
+        local linkdirs = openssl.linkdirs
+        local rtcc_include = " -I" .. includedirs
         local temp_store = " -DSQLITE_TEMP_STORE=" .. package:config("temp_store")
         local thread_safe = " -DSQLITE_THREADSAFE=" .. package:config("threadsafe")
         io.replace("Makefile.msc", "TCC = $(TCC) -DSQLITE_TEMP_STORE=1", "TCC = $(TCC) -DSQLITE_HAS_CODEC" .. rtcc_include .. temp_store, {plain = true})
@@ -56,7 +58,7 @@ package("sqlcipher")
         envs.SQLITE3EXE = "sqlcipher.exe"
         envs.SQLITE3EXEPDB = "/pdb:sqlcipher.pdb"
         envs.LTLIBS = "advapi32.lib user32.lib ws2_32.lib crypt32.lib wsock32.lib libcrypto.lib libssl.lib"
-        envs.LTLIBPATHS = "/LIBPATH:" .. p:installdir("lib")
+        envs.LTLIBPATHS = "/LIBPATH:" .. linkdirs
         envs.PLATFORM = package:arch()
 
         nmake.build(package, {"-f", "Makefile.msc"}, {envs = envs})
