@@ -53,7 +53,7 @@ package("sqlcipher")
 
         local libpaths = ""
         for _, dir in pairs(openssl.linkdirs) do
-            libpaths = libpaths .. " /LIBPATH:" .. linkdirs
+            libpaths = libpaths .. " /LIBPATH:" .. dir
         end
 
         local temp_store = " -DSQLITE_TEMP_STORE=" .. package:config("temp_store")
