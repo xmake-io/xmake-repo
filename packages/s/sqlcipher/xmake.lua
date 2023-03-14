@@ -78,8 +78,8 @@ package("sqlcipher")
             configs.kind = "shared"
         end
         configs.encrypt = package:config("encrypt")
-        configs.SQLITE_THREADSAFE = threadsafe
-        configs.SQLITE_TEMP_STORE = temp_store
+        configs.threadsafe = threadsafe
+        configs.temp_store = temp_store
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)        
     end)
