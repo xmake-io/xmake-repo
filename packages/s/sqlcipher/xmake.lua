@@ -39,15 +39,12 @@ package("sqlcipher")
         end
 
         local rtcc_include = ""
-        for _, dir in pairs(openssl.includedirs) do
-            rtcc_include = rtcc_include .. " -I" .. dir
-        end
-        for _, dir in pairs(openssl.sysincludedirs) do
+        for _, dir in ipairs(openssl.sysincludedirs or openssl.includedirs) do
             rtcc_include = rtcc_include .. " -I" .. dir
         end
 
         local libpaths = ""
-        for _, dir in pairs(openssl.linkdirs) do
+        for _, dir in ipairs(openssl.linkdirs) do
             libpaths = libpaths .. " /LIBPATH:" .. dir
         end
 
