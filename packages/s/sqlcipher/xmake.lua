@@ -30,10 +30,6 @@ package("sqlcipher")
         if package:config("encrypt") then
             package:add("defines", "SQLITE_HAS_CODEC=1")
         end
-
-        if package:is_plat("iphoneos") then
-            package:add("defines", "SQLCIPHER_CRYPTO_CC")
-        end
     end)
 
     on_install("windows", function (package)
