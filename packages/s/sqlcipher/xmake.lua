@@ -34,9 +34,7 @@ package("sqlcipher")
 
     on_install("windows", function (package)
         local openssl = package:dep("openssl"):fetch()
-        if openssl == nil then
-            raise("Failed fetch openssl library!")
-        end
+        assert(openssl, "Failed fetch openssl library!")
 
         local rtcc_include = ""
         for _, dir in ipairs(openssl.sysincludedirs or openssl.includedirs) do
