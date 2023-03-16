@@ -17,7 +17,8 @@ package("tclsh")
         os.cd("win")
         import("package.tools.nmake").build(package, {"-f", "makefile.vc", "release"})
         import("package.tools.nmake").build(package, {"-f", "makefile.vc", "install", "INSTALLDIR=" .. package:installdir()})
-        io.replace("makefile.vc", "@move", "@$(COPY)", {plain = true})
+        -- TODO
+        io.replace("makefile.vc", "libtclzip:  core dlls $(TCLSCRIPTZIP)", "libtclzip:  core dlls", {plain = true})
         os.cp(path.join(package:installdir("bin"), "tclsh90.exe"), path.join(package:installdir("bin"), "tclsh.exe"))
     end)
 
