@@ -19,6 +19,7 @@ package("tclsh")
         io.replace("makefile.vc", "libtclzip:  core dlls $(TCLSCRIPTZIP)", "libtclzip:  core dlls", {plain = true})
         import("package.tools.nmake").build(package, {"-f", "makefile.vc", "release"})
         import("package.tools.nmake").build(package, {"-f", "makefile.vc", "install", "INSTALLDIR=" .. package:installdir()})
+        print(os.files(path.join(package:installdir(), "**")))
         os.cp(path.join(package:installdir("bin"), "tclsh90.exe"), path.join(package:installdir("bin"), "tclsh.exe"))
     end)
 
