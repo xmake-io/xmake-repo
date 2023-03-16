@@ -13,7 +13,7 @@ package("sqlcipher")
     if is_plat("iphoneos") then
         add_frameworks("Security")
     else
-        add_deps("openssl")
+        add_deps("openssl", "tclsh")
     end
 
     if is_plat("macosx", "linux", "cross") then
