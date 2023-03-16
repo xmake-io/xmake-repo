@@ -13,6 +13,13 @@ package("tclsh")
         os.cp(path.join(package:installdir("bin"), "tclsh9.0"), path.join(package:installdir("bin"), "tclsh"))
     end)
 
+    on_install("windows", function (package)
+        os.cd("win")
+        import("package.tools.nmake").build(package, {"-f", "makefile.vc", "release"})
+        import("package.tools.nmake").build(package, {"-f", "makefile.vc", "install", "INSTALLDIR=" .. package:installdir()})
+        os.cp(path.join(package:installdir("bin"), "tclsh90.exe"), path.join(package:installdir("bin"), "tclsh.exe"))
+    end)
+
     on_test(function (package)
         local infile = os.tmpfile()
         local outfile = os.tmpfile()
