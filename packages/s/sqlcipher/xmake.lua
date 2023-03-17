@@ -2,18 +2,21 @@ package("sqlcipher")
 
     set_homepage("https://www.zetetic.net/sqlcipher/")
     set_description("SQLCipher is a standalone fork of the SQLite database library that adds 256 bit AES encryption of database files and other security features")
-    
+
     set_urls("https://github.com/sqlcipher/sqlcipher/archive/refs/tags/v$(version).tar.gz")
     add_versions("4.5.3", "5c9d672eba6be4d05a9a8170f70170e537ae735a09c3de444a8ad629b595d5e2")
 
     add_configs("encrypt",  { description = "enable encrypt", default = true, type = "boolean"})
     add_configs("temp_store",  { description = "use an in-ram database for temporary tables", default = "2", values = {"0", "1", "2" , "3"}})
     add_configs("threadsafe",  { description = "sqltie thread safe mode", default = "1", values = {"0", "1", "2"}})
-    
+
     if is_plat("iphoneos") then
         add_frameworks("Security")
     else
-        add_deps("openssl", "tclsh")
+        add_deps("openssl")
+    end
+    if is_host("linux", "macosx") then
+        add_deps("tclsh")
     end
 
     if is_plat("macosx", "linux", "cross") then
@@ -85,7 +88,7 @@ package("sqlcipher")
         configs.threadsafe = threadsafe
         configs.temp_store = temp_store
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, configs)        
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
