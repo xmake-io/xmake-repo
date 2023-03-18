@@ -12,7 +12,7 @@ package("vulkan-memory-allocator-hpp")
     add_deps("vulkan-hpp")
     add_deps("vulkan-memory-allocator")
 
-    on_install("windows", "linux", "mingw", "macosx", "iphoneos", "android", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", function (package)
         os.cp("include", package:installdir())
     end)
 
