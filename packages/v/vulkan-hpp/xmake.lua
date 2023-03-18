@@ -17,7 +17,7 @@ package("vulkan-hpp")
         add_extsources("pacman::vulkan-headers")
     end
 
-    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         local arch_prev
         if package:is_plat("mingw") and package.plat_set then
             arch_prev = package:arch()
