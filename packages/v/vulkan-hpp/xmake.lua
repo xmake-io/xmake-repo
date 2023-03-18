@@ -19,7 +19,7 @@ package("vulkan-hpp")
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         local arch_prev
-        if package:is_plat("mingw") and package.plat_set then
+        if (package:is_plat("mingw") or package:is_cross()) and package.plat_set then
             arch_prev = package:arch()
             package:plat_set(os.host())
             package:arch_set(os.arch())
