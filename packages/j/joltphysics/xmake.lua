@@ -47,6 +47,13 @@ package("joltphysics")
     end)
 
     on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android|arm64-v8a", "wasm", function (package)
+        if package:is_plat("windows") and package:is_arch("arm64") then
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            if tonumber(vs) < 2022 then
+                raise("VS >=2022 is required to compile JoltPhysics on Windows ARM64, please upgrade.")
+            end
+        end
+
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         configs.cross_platform_deterministic = package:config("cross_platform_deterministic")
