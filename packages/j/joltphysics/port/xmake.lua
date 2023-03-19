@@ -27,7 +27,6 @@ if is_mode("asan") then
 end
 
 set_languages("c++17")
-set_policy("build.optimization.lto", true)
 
 target("Jolt")
     set_kind("$(kind)")
