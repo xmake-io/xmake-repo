@@ -17,16 +17,18 @@ package("vulkan-hpp")
         add_extsources("pacman::vulkan-headers")
     end
 
-    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         local arch_prev
-        if package:is_plat("mingw") and package.plat_set then
+        local plat_prev
+        if (package:is_plat("mingw") or package:is_cross()) and package.plat_set then
             arch_prev = package:arch()
+            plat_prev = package:plat()
             package:plat_set(os.host())
             package:arch_set(os.arch())
         end
         import("package.tools.cmake").build(package, {buildir = "build"})
-        if arch_prev then
-            package:plat_set("mingw")
+        if arch_prev and plat_prev then
+            package:plat_set(plat_prev)
             package:arch_set(arch_prev)
         end
         os.mkdir("build")
