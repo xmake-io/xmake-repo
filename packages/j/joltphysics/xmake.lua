@@ -38,16 +38,28 @@ package("joltphysics")
         if package:config("cross_platform_deterministic") then
             package:add("defines", "JPH_CROSS_PLATFORM_DETERMINISTIC")
         end
+        if package:config("debug_renderer") then
+            package:add("defines", "JPH_DEBUG_RENDERER")
+        end
         if package:config("double_precision") then
             package:add("defines", "JPH_DOUBLE_PRECISION")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "mingw", "linux", "macosx", "iphoneos", "android|arm64-v8a", "wasm", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android|arm64-v8a", "wasm", function (package)
+        if package:is_plat("windows") and package:is_arch("arm64") then
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            if tonumber(vs) < 2022 then
+                raise("VS >=2022 is required to compile JoltPhysics on Windows ARM64, please upgrade.")
+            end
+        end
+
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         configs.cross_platform_deterministic = package:config("cross_platform_deterministic")
+        configs.debug_renderer = package:config("debug_renderer")
         configs.double_precision = package:config("double_precision")
+        configs.profile = package:config("profile")
         if is_arch("x86", "x64", "x86_64") then
             configs.inst_avx    = package:config("inst_avx")
             configs.inst_avx2   = package:config("inst_avx2")
