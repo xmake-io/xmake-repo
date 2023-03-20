@@ -10,6 +10,9 @@ package("vulkan-hpp")
     add_versions("v1.2.189", "58ff1da4c03f5f124eb835f41a9dd8fe3c2e8087")
     add_versions("v1.2.198", "d8c9f4f0eee6972622a1c3aabab5ed558d37c1c0")
     add_versions("v1.3.231", "ef609a2f77dd1756e672712f264e76b64acdba61")
+    add_versions("v1.3.236", "4848fc8e6a923757fd451e52b992dfac48e30814")
+    add_versions("v1.3.240", "83adc3fa57b5d5a75ddfb2ce2a0f7fb3abe4bb9c")
+    add_versions("v1.3.244", "1bd3877dcc7f3fbf5a43e4d2f0fcc4ebadf6af85")
 
     add_deps("cmake")
 

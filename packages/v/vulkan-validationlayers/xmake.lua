@@ -8,12 +8,14 @@ package("vulkan-validationlayers")
         add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/download/sdk-$(version)/android-binaries-$(version).tar.gz",
         {version = function (version) return version:gsub("%+", ".") end})
 
+        add_versions("1.3.239+0", "4b785942639c1c0cf1b6ccb7e05fc7a9022ff13a8298e304c3a38595ab26d8fd")
         add_versions("1.2.198+0", "5436e974d6b3133b3454edf1910f76b9f869db8bbe086859b2abe32fdb539cbc")
         add_versions("1.2.189+1", "b3e69b60a67a17b023825f9eb0ce1aef22e6b59d095afa204d883a9ce3d81021")
     else
         add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/sdk-$(version).tar.gz",
         {version = function (version) return version:gsub("%+", ".") end})
 
+        add_versions("1.3.239+0", "7aa7fb46e25e5ef0144d29c92122b631dc7c7c6804a6339f195b368ad53328e4")
         add_versions("1.2.198+0", "4a70cc5da26baf873fcf69b081eeeda545515dd66e5904f18fee32b4d275593a")
         add_versions("1.2.189+1", "d169ae71ae3ba12159df355b58f86f5635062c695d1deac9b97d5653561d517d")
         add_versions("1.2.182+0", "e88492143c8b08154807e7ead0ac784365b14464bb5016c2800cbff176ff61e7")
