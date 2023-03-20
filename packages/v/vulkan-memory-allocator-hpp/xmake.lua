@@ -9,11 +9,15 @@ package("vulkan-memory-allocator-hpp")
     add_versions("v3.0.0", '2f062b1631af64519d09e7b319c2ba06d7de3c9c5589fb7109a3f4e341cee2b7')
     add_versions("v3.0.1", '4b50f38f2f6246e6ee23e046a430f5a17df932a9f0c2137d16c4a26a472ec99b')
 
-    add_deps("vulkan-hpp")
     add_deps("vulkan-memory-allocator")
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         os.cp("include", package:installdir())
+        if package:version():ge("3.0.1") then
+            package:add("deps", "vulkan-hpp >= 1.3.234")
+        else
+            package:add("deps", "vulkan-hpp < 1.3.234")
+        end
     end)
 
     on_test(function (package)
