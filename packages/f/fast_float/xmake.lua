@@ -8,13 +8,15 @@ package("fast_float")
              "https://github.com/fastfloat/fast_float.git")
     add_versions("v3.5.1", "8558bf9c66ccd2f7d03c94461a107f49ad9cf6e4f6c0c84e148fec0aa32b4dd9")
     add_versions("v3.4.0", "a242877d2fae81ca412033f5ebf5dbc43cb029c56b4af78e33106b9a69f8f58e")
+    add_versions("v3.10.1", "d162c21c1dc538dbc6b3bb6d1317a7808f2eccef78638445630533f5bed902ee")
 
     if is_plat("wasm") then
         add_patches("v3.4.0", path.join(os.scriptdir(), "patches", "emscripten_fix.patch"), "482705431f67e6f0a375ed7bfe87d6856e7d13f071db6157e1d5659834b0eb50")
     end
 
+    add_deps("cmake")
     on_install(function (package)
-        os.vcp("include/fast_float", package:installdir("include"))
+        import("package.tools.cmake").install(package)
     end)
 
     on_test(function (package)
