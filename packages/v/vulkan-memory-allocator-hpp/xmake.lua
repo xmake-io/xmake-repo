@@ -13,7 +13,7 @@ package("vulkan-memory-allocator-hpp")
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         os.cp("include", package:installdir())
-        if package:version():ge("3.0.1") then
+        if package:gitref() or package:version():ge("3.0.1") then
             package:add("deps", "vulkan-hpp >= 1.3.234")
         else
             package:add("deps", "vulkan-hpp < 1.3.234")
