@@ -17,6 +17,7 @@ local options =
 ,   {'f', "configs",    "kv", nil, "Set the configs."                           }
 ,   {'d', "debugdir",   "kv", nil, "Set the debug source directory."            }
 ,   {nil, "fetch",      "k",  nil, "Fetch package only."                        }
+,   {nil, "precompiled","k",  nil, "Attemp to install the precompiled package." }
 ,   {nil, "linkjobs",   "kv", nil, "Set the link jobs."                         }
 ,   {nil, "cflags",     "kv", nil, "Set the cflags."                            }
 ,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."                          }
@@ -89,7 +90,10 @@ function _require_packages(argv, packages)
         table.insert(config_argv, "--ldflags=" .. argv.ldflags)
     end
     os.vexecv("xmake", config_argv)
-    local require_argv = {"require", "-f", "-y", "--build"}
+    local require_argv = {"require", "-f", "-y"}
+    if not argv.precompiled then
+        table.insert(require_argv, "--build")
+    end
     if argv.verbose then
         table.insert(require_argv, "-v")
     end
