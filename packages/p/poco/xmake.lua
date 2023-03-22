@@ -23,6 +23,9 @@ package("poco")
     add_deps("cmake")
     add_deps("openssl", "sqlite3", "expat", "zlib")
     add_defines("POCO_NO_AUTOMATIC_LIBS")
+    if is_plat("windows") then
+        add_syslinks("iphlpapi")
+    end
 
     on_load("windows", "linux", "macosx", function (package)
         if package:config("postgresql") then
