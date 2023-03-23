@@ -65,9 +65,11 @@ package("mariadb-connector-c")
             end
         end
         import("package.tools.cmake").install(package, configs)
-        os.trycp(path.join(package:installdir("lib"), "mariadb", "*.dll"), package:installdir("bin"))
-        os.trycp(path.join(package:installdir("lib"), "mariadb", "*.so"), package:installdir("bin"))
-        os.cp(path.join(package:installdir("lib"), "mariadb", "plugin"), package:installdir("bin"))
+        if package:config("shared") then    
+            os.trycp(path.join(package:installdir("lib"), "mariadb", "*.dll"), package:installdir("bin"))
+            os.trycp(path.join(package:installdir("lib"), "mariadb", "*.so"), package:installdir("bin"))
+            os.cp(path.join(package:installdir("lib"), "mariadb", "plugin"), package:installdir("bin"))
+        end
     end)
 
     on_test(function (package)
