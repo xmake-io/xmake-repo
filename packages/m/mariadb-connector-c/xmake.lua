@@ -4,7 +4,7 @@ package("mariadb-connector-c")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/v$(version).tar.gz")
-    add_versions("3.1.13", "361136e9c365259397190109d50f8b6a65c628177792273b4acdb6978942b5e7")
+    add_versions("3.3.4", "ea6a23850d6a2f6f2e0d9e9fdb7d94fe905a4317f73842272cf121ed25903e1f")
     add_deps("cmake")
 
     add_linkdirs("lib/mariadb")
@@ -20,7 +20,7 @@ package("mariadb-connector-c")
         add_configs("mysqlcompat", {description = "Creates libmysql* symbolic links.", default = false, type = "boolean"})
     end
 
-    add_configs("ssl", {description = "Enables use of TLS/SSL library.", default = true, type = "boolean"})
+    add_configs("ssl", {description = "Enables use of TLS/SSL library.", default = not is_plat("bsd"), type = "boolean", readonly = is_plat("bsd")})
     add_configs("dyncol", {description = "Enables support of dynamic columns.", default = true, type = "boolean"})
     add_configs("curl", {description = "Enables use of curl.", default = true, type = "boolean"})
     add_configs("external_zlib", {description = "Enables use of external zlib.", default = false, type = "boolean"})
@@ -52,9 +52,6 @@ package("mariadb-connector-c")
     on_install("bsd", "linux", "windows", function(package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        if package:is_arch("arm64") and package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
-        end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
