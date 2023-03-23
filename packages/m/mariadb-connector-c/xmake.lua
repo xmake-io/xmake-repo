@@ -7,15 +7,9 @@ package("mariadb-connector-c")
     add_versions("3.1.13", "361136e9c365259397190109d50f8b6a65c628177792273b4acdb6978942b5e7")
     add_deps("cmake")
 
-    if is_plat("windows") then
-        add_links("libmariadb")
-    else
-        add_links("mariadb")
-    end
-
     add_linkdirs("lib/mariadb")
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
 
     if is_plat("windows") then
         add_configs("iconv", {description = "Enables character set conversion.", default = false, type = "boolean"})
@@ -38,6 +32,19 @@ package("mariadb-connector-c")
     add_configs("unit_tests", {description = "Build test suite.", default = false, type = "boolean"})
 
     on_load(function (package)
+        if package:config("shared") then
+            if is_plat("windows") then
+                package:add("links", "libmariadb")
+            else
+                package:add("links", "mariadb")
+            end
+        else
+            package:add("links", "mariadbclient")
+            if is_plat("windows") then
+                package:add("syslinks", "Secur32", "ShLwApi")
+            end
+        end
+
         local configdeps = {external_zlib  = "zlib",
                             ssl            = "openssl"}
         for name, dep in pairs(configdeps) do
