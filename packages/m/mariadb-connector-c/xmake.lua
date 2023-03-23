@@ -20,10 +20,7 @@ package("mariadb-connector-c")
         add_configs("mysqlcompat", {description = "Creates libmysql* symbolic links.", default = false, type = "boolean"})
     end
 
-    if not is_plat("bsd") then
-        add_configs("ssl", {description = "Enables use of TLS/SSL library.", default = true, type = "boolean"})
-    end
-
+    add_configs("ssl", {description = "Enables use of TLS/SSL library.", default = true, type = "boolean"})
     add_configs("dyncol", {description = "Enables support of dynamic columns.", default = true, type = "boolean"})
     add_configs("curl", {description = "Enables use of curl.", default = true, type = "boolean"})
     add_configs("external_zlib", {description = "Enables use of external zlib.", default = false, type = "boolean"})
@@ -55,6 +52,9 @@ package("mariadb-connector-c")
     on_install("bsd", "linux", "windows", function(package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        if package:is_arch("arm64") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=arm64")
+        end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
