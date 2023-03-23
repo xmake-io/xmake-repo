@@ -9,8 +9,6 @@ package("mariadb-connector-c")
 
     add_linkdirs("lib/mariadb")
 
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean"})
-
     if is_plat("windows") then
         add_configs("iconv", {description = "Enables character set conversion.", default = false, type = "boolean"})
         add_configs("msi", {description = "Build MSI installation package.", default = false, type = "boolean"})
