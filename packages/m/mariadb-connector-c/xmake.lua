@@ -4,7 +4,10 @@ package("mariadb-connector-c")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/v$(version).tar.gz")
+
+    add_versions("3.1.13", "361136e9c365259397190109d50f8b6a65c628177792273b4acdb6978942b5e7")
     add_versions("3.3.4", "ea6a23850d6a2f6f2e0d9e9fdb7d94fe905a4317f73842272cf121ed25903e1f")
+
     add_deps("cmake")
 
     add_linkdirs("lib/mariadb")
