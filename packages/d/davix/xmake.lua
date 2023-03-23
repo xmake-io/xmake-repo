@@ -11,7 +11,7 @@ package("davix")
 
     add_deps("python 3.x", {kind = "binary"})
     add_deps("cmake", "openssl", "libcurl", "libxml2")
-    add_deps("util-linux", {configs = {libuuid = true}})
+    add_deps("util-linux", {configs = {libuuid = true, libblkid = true}})
     add_includedirs("include/davix")
     if is_plat("linux") then
         add_syslinks("pthread")
