@@ -52,8 +52,8 @@ package("mariadb-connector-c")
     on_install("bsd", "linux", "windows", function(package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        if package:is_arch("arm64") then
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=arm64")
+        if package:is_arch("arm64") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
         end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
