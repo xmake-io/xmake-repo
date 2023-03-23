@@ -33,14 +33,14 @@ package("mariadb-connector-c")
 
     on_load(function (package)
         if package:config("shared") then
-            if is_plat("windows") then
+            if package:is_plat("windows") then
                 package:add("links", "libmariadb")
             else
                 package:add("links", "mariadb")
             end
         else
             package:add("links", "mariadbclient")
-            if is_plat("windows") then
+            if package:is_plat("windows") then
                 package:add("syslinks", "Secur32", "ShLwApi")
             end
         end
