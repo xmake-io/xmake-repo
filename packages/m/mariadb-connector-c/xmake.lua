@@ -41,7 +41,7 @@ package("mariadb-connector-c")
         else
             package:add("links", "mariadbclient")
             if package:is_plat("windows") then
-                package:add("syslinks", "Secur32", "ShLwApi")
+                package:add("syslinks", "secur32", "shlwapi")
             end
         end
 
