@@ -52,6 +52,7 @@ package("dartsim")
             "-DDART_SKIP_IPOPT=ON",
             "-DDART_SKIP_pagmo=ON",
             "-DDART_SKIP_DOXYGEN=ON",
+            "-DDART_TREAT_WARNINGS_AS_ERRORS=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
