@@ -45,6 +45,7 @@ package("dartsim")
         io.replace("python/CMakeLists.txt", "add_subdirectory(tutorials)", "", {plain = true})
         io.replace("cmake/DARTFindDependencies.cmake", "dart_check_required_package(assimp \"assimp\")", "dart_check_required_package(assimp \"assimp\")\nfind_package(ZLIB)\ntarget_link_libraries(assimp INTERFACE ZLIB::ZLIB)", {plain = true})
         io.replace("cmake/DARTFindDependencies.cmake", "dart_check_required_package(fcl \"fcl\")", "dart_check_required_package(fcl \"fcl\")\ntarget_link_libraries(fcl INTERFACE ccd)", {plain = true})
+        io.replace("cmake/DARTFindDependencies.cmake", "check_cxx_source_compiles%(\".-\"(.-DEFINED)%)", "set(%1 1)")
         local configs = {
             "-DDART_SKIP_lz4=ON",
             "-DDART_SKIP_flann=ON",
