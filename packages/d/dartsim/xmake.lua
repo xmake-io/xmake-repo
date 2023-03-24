@@ -28,7 +28,7 @@ package("dartsim")
 
     add_deps("cmake")
     add_deps("assimp", "libccd", "eigen", "fcl", "octomap", "fmt")
-    on_load("windows", "linux", "macosx", function (package)
+    on_load("windows|x64", "linux", "macosx", function (package)
         for config, dep in pairs(configdeps) do
             if package:config(config) then
                 package:add("deps", config)
@@ -36,7 +36,7 @@ package("dartsim")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|x64", "linux", "macosx", function (package)
         io.replace("CMakeLists.txt", "/GL", "", {plain = true})
         io.replace("CMakeLists.txt", "if(TARGET dart)", "if(FALSE)", {plain = true})
         io.replace("dart/CMakeLists.txt", "/LTCG", "", {plain = true})
