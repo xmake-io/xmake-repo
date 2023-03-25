@@ -20,7 +20,7 @@ package("flatbuffers")
             table.insert(configs, "-DFLATBUFFERS_BUILD_FLATHASH=OFF")
         end
         import("package.tools.cmake").install(package, configs)
-        if not package:is_plat("cross") then
+        if not package:is_cross() then
             package:addenv("PATH", "bin")
         end
     end)
