@@ -22,7 +22,7 @@ package("nativefiledialog-extended")
         if package:config("portal") then
             package:add("deps", "dbus")
         else
-            package:add("deps", "gtk-3")
+            package:add("deps", "gtk+3")
         end
     end)
 
