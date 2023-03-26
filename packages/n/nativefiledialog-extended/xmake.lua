@@ -16,7 +16,7 @@ package("nativefiledialog-extended")
     if is_plat("windows") then
         add_syslinks("shell32", "ole32")
     elseif is_plat("macosx") then
-        add_frameworks("AppKit")
+        add_frameworks("AppKit", "UniformTypeIdentifiers")
     end
     on_load("linux", function (package)
         if package:config("portal") then
