@@ -40,6 +40,9 @@ package("catch2")
 
     on_component("main", function (package, component)
         component:add("links", "Catch2Main")
+        if package:is_plat("windows") then
+            component:add("ldflags", "-subsystem:console")
+        end
     end)
 
     on_component("lib", function (package, component)
