@@ -38,6 +38,10 @@ package("nng")
         add_syslinks("pthread")
     end
 
+    if is_plat("windows") then 
+        add_syslinks("ws2_32", "advapi32")
+    end
+
     on_load(function (package)
         if not package:config("shared") then
             package:add("defines", "NNG_STATIC_LIB")
