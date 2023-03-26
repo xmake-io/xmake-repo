@@ -30,6 +30,7 @@ package("nativefiledialog-extended")
         local configs = {"-DNFD_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DNFD_PORTAL=" .. (package:config("portal") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 

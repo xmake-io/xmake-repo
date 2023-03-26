@@ -22,7 +22,7 @@ package("dbus")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     on_install("windows", "linux", "macosx", "cross", function (package)
-        local configs = {"-DDBUS_BUILD_TESTS=OFF", "-DDBUS_ENABLE_XML_DOCS=OFF"}
+        local configs = {"-DDBUS_BUILD_TESTS=OFF", "-DDBUS_ENABLE_DOXYGEN_DOCS=OFF", "-DDBUS_ENABLE_XML_DOCS=OFF"}
         table.insert(configs, "-DDBUS_SESSION_SOCKET_DIR=" .. package:installdir("socket"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         local packagedeps
