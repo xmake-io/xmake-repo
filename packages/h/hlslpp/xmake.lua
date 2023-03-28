@@ -8,7 +8,7 @@ package("hlslpp")
     add_versions("3.1", "6f933e43bf8150a41d76a188377e59007897dc87e96be30608e7f2007605d5c4")
     add_versions("3.2.3", "132149d25306cdc56a87c1d6a4a93d3200de4864b5d27d758d235ce4ace64498")
 
-    on_install(function (package)
+    on_install("linux", "macosx", "bsd", "windows", "android", "iphoneos", function (package)
         os.cp("include", package:installdir())
     end)
 
