@@ -19,5 +19,16 @@ package("pulsar")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("pulsar::Client", {includes = "pulsar/Client.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <iostream>
+            #include <pulsar/Client.h>
+
+            void test(int argc, char** argv) {
+                try {
+                    pulsar::Client client {"some_invalid_svc_url"};
+                } catch (std::invalid_argument) {
+                    std::cout << "invalid argument" << std::endl;
+                }
+            }
+        ]]}, {configs = {languages = "cxx11"}}))
     end)
