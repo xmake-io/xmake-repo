@@ -10,6 +10,7 @@ package("mono")
     add_versions("6.12.0+182", "57366a6ab4f3b5ecf111d48548031615b3a100db87c679fc006e8c8a4efd9424")
 
     add_includedirs("include/mono-2.0")
+    add_deps("cmake")
 
     on_install("macosx", "linux", function (package)
         local configs = {"--disable-silent-rules", "--enable-nls=no"}
