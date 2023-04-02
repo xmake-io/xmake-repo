@@ -15,7 +15,7 @@ package("dotnet")
         if os.arch() == "x86_64" then
             set_urls("https://download.visualstudio.microsoft.com/download/pr/bda88810-e1a6-4cf0-8139-7fd7fe7b2c7a/7a9ffa3e12e5f1c3d8b640e326c1eb14/dotnet-sdk-7.0.202-linux-x64.tar.gz")
             add_versions("7.0.202", "405f15e437582be260460f48eda9dfe613fd87b2557667f20d6ecfa34b09c221")
-        elseif os.arch() == "arm64" or os.arch() == "arm64-v8a" then
+        elseif is_arch("arm64", "arm64-v8a") then
             set_urls("https://download.visualstudio.microsoft.com/download/pr/c1fd11b0-186a-4aa1-a578-bb1b6613886e/b67e1c9d6d90b1c99b23935273921fa1/dotnet-sdk-7.0.202-linux-arm64.tar.gz")
             add_versions("7.0.202", "5a5d29f3f7515f6df888047eeb9571a2fa06b728a97e30536b1473d2abce0b32")
         end
@@ -38,7 +38,7 @@ package("dotnet")
             os.cp(path.join(out_path, "nethost.dll"), package:installdir("bin"))
             os.cp(path.join(out_path, "nethost.lib"), package:installdir("lib"))
         elseif package:is_plat("linux") then
-            local is_arm = package:is_arch("arm64") or package:is_arch("arm64-v8a")
+            local is_arm = package:is_arch("arm64", "arm64-v8a")
             out_path = path.join(out_path, "Microsoft.NETCore.App.Host.linux-" .. (is_arm and "arm64" or "x64"), "7.0.4", "runtimes", "linux-" .. (is_arm and "arm64" or "x64"), "native")
 
             if package:config("shared") then
