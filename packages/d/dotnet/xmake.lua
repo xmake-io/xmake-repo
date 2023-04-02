@@ -29,7 +29,7 @@ package("dotnet")
         end
     end
 
-    on_install("windows|x86", "windows|x64", "linux|x64", "linux|arm64", "macosx|x86_64", "macosx|arm64", function (package)
+    on_install("windows|x86", "windows|x64", "linux|x64", "linux|x86_64", "linux|arm64", "linux|arm64-v8a", "macosx|x86_64", "macosx|arm64", function (package)
 
         local out_path = "packs"
         if package:is_plat("windows") then
