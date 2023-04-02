@@ -40,13 +40,19 @@ package("dotnet")
         elseif package:is_plat("linux") then
             out_path = path.join(out_path, "Microsoft.NETCore.App.Host.linux-" .. (package:is_arch("arm64") and "arm64" or "x64"), "7.0.4", "runtimes", "linux-" .. (package:is_arch("arm64") and "arm64" or "x64"), "native")
 
-            os.cp(path.join(out_path, "*.so"), package:installdir("bin"))
-            os.cp(path.join(out_path, "*.a"), package:installdir("lib"))
+            if package:config("shared") then
+                os.cp(path.join(out_path, "*.so"), package:installdir("lib"))
+            else
+                os.cp(path.join(out_path, "*.a"), package:installdir("lib"))
+            end
         elseif package:is_plat("macosx") then
             out_path = path.join(out_path, "Microsoft.NETCore.App.Host.osx-" .. (package:is_arch("arm64") and "arm64" or "x64"), "7.0.4", "runtimes", "osx-" .. (package:is_arch("arm64") and "arm64" or "x64"), "native")
 
-            os.cp(path.join(out_path, "*.dylib"), package:installdir("bin"))
-            os.cp(path.join(out_path, "*.a"), package:installdir("lib"))
+            if package:config("shared") then
+                os.cp(path.join(out_path, "*.dylib"), package:installdir("lib"))
+            else
+                os.cp(path.join(out_path, "*.a"), package:installdir("lib"))
+            end
         end
 
         os.cp(path.join(out_path, "*.h"), package:installdir("include"))
