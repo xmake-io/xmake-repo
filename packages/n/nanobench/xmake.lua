@@ -7,13 +7,8 @@ package("nanobench")
              "https://github.com/martinus/nanobench.git")
     add_versions("v4.3.11", "53a5a913fa695c23546661bf2cd22b299e10a3e994d9ed97daf89b5cada0da70")
 
-    add_deps("cmake")
-
     on_install(function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        os.cp("src/include/nanobench.h", package:installdir("include"))
     end)
 
     on_test(function (package)
