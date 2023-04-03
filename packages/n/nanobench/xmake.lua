@@ -1,4 +1,5 @@
 package("nanobench")
+    set_kind("library", {headeronly = true})
     set_homepage("https://nanobench.ankerl.com")
     set_description("Simple, fast, accurate single-header microbenchmarking functionality for C++11/14/17/20")
     set_license("MIT")
