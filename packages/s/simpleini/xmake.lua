@@ -8,7 +8,28 @@ package("simpleini")
              "https://github.com/brofield/simpleini.git")
     add_versions("v4.19", "dc10df3fa363be2c57627d52cbb1b5ddd0689d474bf13908e822c1522df8377e")
 
-    add_deps("convertutf", {optional = true})
+    add_configs("convert", {description = "Unicode converter to use.", default = "", type = "string", values = {"", "none", "generic", "icu", "win32"}})
+
+    on_load(function (package)
+        if package:config("convert") == "" then
+            if package:is_plat("windows") then
+                package:config_set("convert", "win32")
+            else
+                package:config_set("convert", "generic")
+            end
+        end
+        if package:config("convert") == "none" then
+            package:add("define", "SI_NO_CONVERSION")
+        elseif package:config("convert") == "generic" then
+            package:add("define", "SI_CONVERT_GENERIC")
+            package:add("deps", "convertutf")
+        elseif package:config("convert") == "icu" then
+            package:add("define", "SI_CONVERT_ICU")
+            package:add("deps", "icu4c")
+        elseif package:config("convert") == "win32" then
+            package:add("define", "SI_CONVERT_WIN32")
+        end
+    end)
 
     on_install(function (package)
         os.cp("SimpleIni.h", package:installdir("include"))
