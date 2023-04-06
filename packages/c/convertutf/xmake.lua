@@ -13,7 +13,7 @@ package("convertutf")
                 set_languages("c99")
                 add_files("ConvertUTF.c")
                 add_headerfiles("ConvertUTF.h")
-                if is_kind("shared") then
+                if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all")
                 end
         ]])
