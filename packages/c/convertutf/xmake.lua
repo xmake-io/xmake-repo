@@ -13,8 +13,13 @@ package("convertutf")
                 set_languages("c99")
                 add_files("ConvertUTF.c")
                 add_headerfiles("ConvertUTF.h")
+                if is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
+                end
         ]])
-        import("package.tools.xmake").install(package)
+        local configs = {}
+        configs.kind = package:config("shared") and "shared" or "static"
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
