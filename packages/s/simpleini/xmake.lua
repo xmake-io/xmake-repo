@@ -19,15 +19,15 @@ package("simpleini")
             end
         end
         if package:config("convert") == "none" then
-            package:add("define", "SI_NO_CONVERSION")
+            package:add("defines", "SI_NO_CONVERSION")
         elseif package:config("convert") == "generic" then
-            package:add("define", "SI_CONVERT_GENERIC")
+            package:add("defines", "SI_CONVERT_GENERIC")
             package:add("deps", "convertutf")
         elseif package:config("convert") == "icu" then
-            package:add("define", "SI_CONVERT_ICU")
+            package:add("defines", "SI_CONVERT_ICU")
             package:add("deps", "icu4c")
         elseif package:config("convert") == "win32" then
-            package:add("define", "SI_CONVERT_WIN32")
+            package:add("defines", "SI_CONVERT_WIN32")
         end
     end)
 
