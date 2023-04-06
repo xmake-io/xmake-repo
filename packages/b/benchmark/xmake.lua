@@ -14,6 +14,7 @@ package("benchmark")
     add_versions("1.6.0", "1f71c72ce08d2c1310011ea6436b31e39ccab8c2db94186d26657d41747c85d6")
     add_versions("1.6.1", "6132883bc8c9b0df5375b16ab520fac1a85dc9e4cf5be59480448ece74b278d4")
     add_versions("1.7.0", "3aff99169fa8bdee356eaa1f691e835a6e57b1efeadb8a0f9f228531158246ac")
+    add_versions("1.7.1", "6430e4092653380d9dc4ccb45a1e2dc9259d581f4866dc0759713126056bc1d7")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::benchmark")
@@ -38,7 +39,7 @@ package("benchmark")
     end)
 
     on_install("macosx", "linux", "windows", function (package)
-        local configs = {"-DBENCHMARK_ENABLE_TESTING=OFF"}
+        local configs = {"-DBENCHMARK_ENABLE_TESTING=OFF", "-DBENCHMARK_INSTALL_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)

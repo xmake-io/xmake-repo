@@ -36,6 +36,8 @@ package("nng")
 
     if is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("windows") then 
+        add_syslinks("ws2_32", "advapi32")
     end
 
     on_load(function (package)
