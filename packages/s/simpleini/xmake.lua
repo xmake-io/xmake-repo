@@ -8,10 +8,10 @@ package("simpleini")
              "https://github.com/brofield/simpleini.git")
     add_versions("v4.19", "dc10df3fa363be2c57627d52cbb1b5ddd0689d474bf13908e822c1522df8377e")
 
-    add_configs("convert", {description = "Unicode converter to use.", default = "", type = "string", values = {"", "none", "generic", "icu", "win32"}})
+    add_configs("convert", {description = "Unicode converter to use.", type = "string", values = {"none", "generic", "icu", "win32"}})
 
     on_load(function (package)
-        if package:config("convert") == "" then
+        if package:config("convert") == nil then
             if package:is_plat("windows") then
                 package:config_set("convert", "win32")
             else
