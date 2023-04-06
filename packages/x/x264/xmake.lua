@@ -19,6 +19,11 @@ package("x264")
         if package:config("pic") ~= false then
             table.insert(configs, "--enable-pic")
         end
+        if package:is_plat("wasm") then
+            table.insert(configs, "--host=i686-gnu")
+            table.insert(configs, "--disable-asm")
+            table.insert(configs, "--disable-cli")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
