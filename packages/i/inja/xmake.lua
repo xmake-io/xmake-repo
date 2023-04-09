@@ -24,5 +24,5 @@ package("inja")
                 data["name"] = "world";
                 env.render("Hello {{ name }}!", data);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"inja/inja.hpp"}}))
+        ]]}, {configs = {languages = "c++17"}, includes = {"inja/inja.hpp"}}))
     end)
