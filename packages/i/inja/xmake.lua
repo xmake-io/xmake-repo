@@ -16,9 +16,9 @@ package("inja")
     end)
 
     on_test(function (package)
-        local cxx_std = "c++11"
-        if package:version() == nil or package:version():satisfies(">=3.4.0") then
-            cxx_std = "c++17"
+        local cxx_std = "c++17"
+        if package:version() and package:version():le("3.4.0") then
+            cxx_std = "c++11"
         end
         assert(package:check_cxxsnippets({test = [[
             using namespace inja;
