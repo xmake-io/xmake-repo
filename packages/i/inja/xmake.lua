@@ -16,9 +16,8 @@ package("inja")
     end)
 
     on_test(function (package)
-        import("core.base.semver")
         local cxx_std = "c++11"
-        if semver.satisfies(package:version_str(), ">=3.4.0") then
+        if package:version() == nil or package:version():satisfies(">=3.4.0") then
             cxx_std = "c++17"
         end
         assert(package:check_cxxsnippets({test = [[
