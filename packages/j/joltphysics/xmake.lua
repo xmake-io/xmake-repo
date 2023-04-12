@@ -6,6 +6,8 @@ package("joltphysics")
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrouwe/JoltPhysics.git")
     add_versions("v2.0.1", "96ae2e8691c4802e56bf2587da30f2cc86b8abe82a78bc2398065bd87dd718af")
+    add_patches("v2.0.1", "https://github.com/jrouwe/JoltPhysics/commit/86a8f27aba3968713196635d8ab5234c96b73dc9.patch", "f6d368787ae7259dfbece7e8f1c1ba6af4d39f0f7c09a0f15186882bd827ed15")
+    add_patches("v2.0.1", "https://github.com/jrouwe/JoltPhysics/commit/4e457165ee019fb9002b53ffa9a5f95b99b22113.patch", "cbc59db0a0c786d473a05e84ed6f980c5288e531af44923864648c4471ccbd88")
 
     add_configs("cross_platform_deterministic", { description = "Turns on behavior to attempt cross platform determinism", default = false, type = "boolean" })
     add_configs("debug_renderer", { description = "Adds support to draw lines and triangles, used to be able to debug draw the state of the world", default = true, type = "boolean" })
@@ -46,14 +48,7 @@ package("joltphysics")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android|arm64-v8a", "wasm", function (package)
-        if package:is_plat("windows") and package:is_arch("arm64") then
-            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
-            if tonumber(vs) < 2022 then
-                raise("VS >=2022 is required to compile JoltPhysics on Windows ARM64, please upgrade.")
-            end
-        end
-
+    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm", function (package)
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         configs.cross_platform_deterministic = package:config("cross_platform_deterministic")
