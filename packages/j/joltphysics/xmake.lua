@@ -6,6 +6,8 @@ package("joltphysics")
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrouwe/JoltPhysics.git")
     add_versions("v2.0.1", "96ae2e8691c4802e56bf2587da30f2cc86b8abe82a78bc2398065bd87dd718af")
+    -- patches for Android/ARMv7 and VS2019 ARM64 support
+    add_patches("v2.0.1", "https://github.com/jrouwe/JoltPhysics/commit/27b2c3293ea6bde6e3d6168b11d41c337f1a0913.patch", "43b3d38ea5a01c281ad7b580859acaf0b30eac9a7bdc271a54199fcc88b8d491")
     add_patches("v2.0.1", "https://github.com/jrouwe/JoltPhysics/commit/86a8f27aba3968713196635d8ab5234c96b73dc9.patch", "f6d368787ae7259dfbece7e8f1c1ba6af4d39f0f7c09a0f15186882bd827ed15")
     add_patches("v2.0.1", "https://github.com/jrouwe/JoltPhysics/commit/4e457165ee019fb9002b53ffa9a5f95b99b22113.patch", "cbc59db0a0c786d473a05e84ed6f980c5288e531af44923864648c4471ccbd88")
 
