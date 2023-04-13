@@ -75,7 +75,7 @@ package("libcurl")
         local version = package:version()
 
         if (package:is_plat("mingw") and version:ge("7.85")) then
-            package:add("syslinks", "Bcrypt")
+            package:add("syslinks", "bcrypt")
         end
 
         local configopts = {cares    = "ENABLE_ARES",
@@ -101,7 +101,7 @@ package("libcurl")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", "iphoneos", "cross", function (package)
+    on_install("macosx", "linux", "cross", function (package)
         local configs = {"--disable-silent-rules",
                          "--disable-dependency-tracking",
                          "--without-hyper",
