@@ -3,7 +3,8 @@ package("s7")
     set_homepage("https://ccrma.stanford.edu/software/snd/snd/s7.html")
     set_description("s7 is a Scheme interpreter intended as an extension language for other applications.")
 
-    add_urls("https://cm-gitlab.stanford.edu/bil/s7.git")
+    add_urls("https://github.com/xmake-mirror/s7.git",
+             "https://cm-gitlab.stanford.edu/bil/s7.git")
 
     add_versions("2023.04.13", "505f98d69be3d9c48e096d6787d2f85c27cb3924")
 
