@@ -27,7 +27,7 @@ package("s7")
     end)
 
     on_test(function(package)
-        if not package:is_cross() then
+        if (not package:is_cross()) and (not is_plat("iphoneos", "android")) then
             local file = os.tmpfile() .. ".scm"
             io.writefile(file, [[
                 (display "Hello World!")

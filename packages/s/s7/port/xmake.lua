@@ -36,5 +36,7 @@ target("s7") do
     if is_mode("debug") then
         add_defines("S7_DEBUGGING")
     end
-    add_ldflags("-static", "-static-libgcc", {force = true})
+    if not is_plat("macosx", "iphoneos", "android") then
+        add_ldflags("-static", "-static-libgcc", {force = true})
+    end
 end
