@@ -31,6 +31,7 @@ package("libcurl")
     add_configs("zstd",     {description = "Enable zstd support.", default = false, type = "boolean"})
     add_configs("brotli",   {description = "Enable brotli support.", default = false, type = "boolean"})
     add_configs("libssh2",  {description = "Use libSSH2 library.", default = false, type = "boolean"})
+    add_configs("libpsl",   {description = "Use libpsl library.", default = false, type = "boolean"})
 
     if not is_plat("windows", "mingw@windows") then
         add_configs("libpsl",   {description = "Use libpsl for Public Suffix List.", default = false, type = "boolean"})
@@ -52,7 +53,8 @@ package("libcurl")
                             zlib     = "zlib",
                             zstd     = "zstd",
                             brotli   = "brotli",
-                            libssh2  = "libssh2"}
+                            libssh2  = "libssh2",
+                            libpsl   = "libpsl"}
         local has_deps = false
         for name, dep in pairs(configdeps) do
             if package:config(name) then
@@ -73,9 +75,9 @@ package("libcurl")
         local version = package:version()
 
         if (package:is_plat("mingw") and version:ge("7.85")) then
-            package:add("syslinks", "Bcrypt")
+            package:add("syslinks", "bcrypt")
         end
-            
+
         local configopts = {cares    = "ENABLE_ARES",
                             openssl  = (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL"),
                             mbedtls  = (version:ge("7.81") and "CURL_USE_MBEDTLS" or "CMAKE_USE_MBEDTLS"),
@@ -85,7 +87,8 @@ package("libcurl")
                             zlib     = "CURL_ZLIB",
                             zstd     = "CURL_ZSTD",
                             brotli   = "CURL_BROTLI",
-                            libssh2  = (version:ge("7.81") and "CURL_USE_LIBSSH2" or "CMAKE_USE_LIBSSH2")}
+                            libssh2  = (version:ge("7.81") and "CURL_USE_LIBSSH2" or "CMAKE_USE_LIBSSH2"),
+                            libpsl   = "CURL_USE_LIBPSL"}
         for name, opt in pairs(configopts) do
             table.insert(configs, "-D" .. opt .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
@@ -98,7 +101,7 @@ package("libcurl")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", "iphoneos", "cross", function (package)
+    on_install("macosx", "linux", "cross", function (package)
         local configs = {"--disable-silent-rules",
                          "--disable-dependency-tracking",
                          "--without-hyper",
@@ -112,7 +115,7 @@ package("libcurl")
         if (package:is_plat("mingw") and version:ge("7.85")) then
             package:add("syslinks", "Bcrypt")
         end
-                
+
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
