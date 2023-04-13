@@ -3,21 +3,11 @@ package("s7")
     set_homepage("https://ccrma.stanford.edu/software/snd/snd/s7.html")
     set_description("s7 is a Scheme interpreter intended as an extension language for other applications.")
 
-    -- they use daily tarball as offical download link.
-    -- gitlab service of s7 is unstable
-    set_urls( --"https://cm-gitlab.stanford.edu/bil/s7.git",
-             "https://ccrma.stanford.edu/software/s7/s7.tar.gz") 
+    add_urls("https://cm-gitlab.stanford.edu/bil/s7.git")
 
-    add_versions("latest", "9dcf2c81c7dda7fdf299b7ce1df7cca3ebde9500bdcf6b845fc02c943b8b9cae")
-
-    add_links("libs7")
+    add_versions("2023.04.13", "505f98d69be3d9c48e096d6787d2f85c27cb3924")
 
     add_configs("gmp", {description = "enable gmp support", default = false, type = "boolean"})
-
-    -- on_load(function (package)
-    --     package:addenv("PATH", "bin")
-    -- end)
-
 
     on_load(function (package)
         if package:config("gmp") then
@@ -39,7 +29,7 @@ package("s7")
             io.writefile("test.scm", [[
                 (display "Hello World!")
             ]])
-            os.vrunv("s7",{"test.scm"})
+            os.vrunv("s7", {"test.scm"})
         end
         assert(package:check_csnippets([[
             static s7_pointer old_add;           /* the original "+" function for non-string cases */

@@ -1,15 +1,13 @@
+add_rules("mode.release", "mode.debug")
 
-set_allowedmodes("debug","release")
-option("gmp")do
-    set_default(false)
-    add_defines("WITH_GMP")
-end
+option("gmp", {default = false, defines = "WITH_GMP"})
 
 if is_config("gmp", true) then
     add_requires("gmp")
 end
 
 target("libs7") do
+    set_basename("s7")
     set_optimize("faster")
     add_files("s7.c")
     add_headerfiles("s7.h")
@@ -19,9 +17,7 @@ target("libs7") do
     if is_plat("windows") then
         set_languages("c11")
     end
-    if is_config("gmp", true) then
-        add_packages("gmp")
-    end
+    add_packages("gmp")
     if is_mode("debug") then
         add_defines("S7_DEBUGGING")
     end
@@ -38,11 +34,9 @@ target("s7") do
     if is_plat("windows") then
         set_languages("c11")
     end
-    if is_config("gmp", true) then
-        add_packages("gmp")
-    end
+    add_packages("gmp")
     if is_mode("debug") then
         add_defines("S7_DEBUGGING")
     end
-    add_ldflags({"-static", "-static-libgcc"})
+    add_ldflags("-static", "-static-libgcc", {force = true})
 end
