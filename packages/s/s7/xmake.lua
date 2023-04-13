@@ -10,6 +10,7 @@ package("s7")
     add_configs("gmp", {description = "enable gmp support", default = false, type = "boolean"})
 
     on_load(function (package)
+        package:addenv("PATH", "bin")
         if package:config("gmp") then
             package:add("deps", "gmp")
         end

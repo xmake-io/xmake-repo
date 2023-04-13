@@ -2,18 +2,17 @@ add_rules("mode.release", "mode.debug")
 
 option("gmp", {default = false, defines = "WITH_GMP"})
 
-if is_config("gmp", true) then
+if has_config("gmp") then
     add_requires("gmp")
 end
 
 target("libs7") do
+    set_kind("$(kind)")
     set_basename("s7")
-    set_optimize("faster")
     add_files("s7.c")
     add_headerfiles("s7.h")
     add_includedirs(".", {public = true})
     add_options("gmp")
-    set_kind("$(kind)")
     if is_plat("windows") then
         set_languages("c11")
     end
@@ -24,13 +23,12 @@ target("libs7") do
 end
 
 target("s7") do
-    set_optimize("faster")
+    set_kind("binary")
     add_defines("WITH_MAIN")
     add_files("s7.c")
     add_headerfiles("s7.h")
     add_includedirs(".", {public = true})
     add_options("gmp")
-    set_kind("binary")
     if is_plat("windows") then
         set_languages("c11")
     end
