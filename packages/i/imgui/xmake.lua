@@ -6,6 +6,10 @@ package("imgui")
 
     add_urls("https://github.com/ocornut/imgui/archive/$(version).tar.gz",
              "https://github.com/ocornut/imgui.git")
+    add_versions("v1.89.5-docking", "0ea3b87bd63ecbf359585b7c235839146e84dedb")
+    add_versions("v1.89.5", "eab371005c86dd029523a0c4ba757840787163740d45c1f4e5a110eb21820546")
+    add_versions("v1.89.4-docking", "9e30fb0ec1b44dc1b041db6bdd53b130b2a18509")
+    add_versions("v1.89.4", "69f1e83adcab3fdd27b522f5075f407361b0d3875e3522b13d33bc2ae2c7d48c")
     add_versions("v1.89.3-docking", "192196711a7d0d7c2d60454d42654cf090498a74")
     add_versions("v1.89.3", "3b665fadd5580b7ef494d5d8bb1c12b2ec53ee723034caf43332956381f5d631")
     add_versions("v1.89-docking", "94e850fd6ff9eceb98fda3147e3ffd4781ad2dc7")
@@ -27,20 +31,21 @@ package("imgui")
     add_versions("v1.79", "f1908501f6dc6db8a4d572c29259847f6f882684b10488d3a8d2da31744cd0a4")
     add_versions("v1.75", "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
-    add_configs("dx9",         {description = "Enable the dx9 backend", default = false, type = "boolean"})
-    add_configs("dx10",        {description = "Enable the dx10 backend", default = false, type = "boolean"})
-    add_configs("dx11",        {description = "Enable the dx11 backend", default = false, type = "boolean"})
-    add_configs("dx12",        {description = "Enable the dx12 backend", default = false, type = "boolean"})
-    add_configs("glfw",        {description = "Enable the glfw backend", default = false, type = "boolean"})
-    add_configs("opengl2",     {description = "Enable the opengl2 backend", default = false, type = "boolean"})
-    add_configs("opengl3",     {description = "Enable the opengl3 backend", default = false, type = "boolean"})
-    add_configs("sdl2",        {description = "Enable the sdl2 backend", default = false, type = "boolean"})
-    add_configs("sdlrenderer", {description = "Enable the sdlrenderer backend", default = false, type = "boolean"})
-    add_configs("vulkan",      {description = "Enable the vulkan backend", default = false, type = "boolean"})
-    add_configs("win32",       {description = "Enable the win32 backend", default = false, type = "boolean"})
-    add_configs("freetype",    {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
-    add_configs("user_config", {description = "Use user config (disables test!)", default = nil, type = "string"})
-    add_configs("wchar32",     {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
+    add_configs("dx9",              {description = "Enable the dx9 backend", default = false, type = "boolean"})
+    add_configs("dx10",             {description = "Enable the dx10 backend", default = false, type = "boolean"})
+    add_configs("dx11",             {description = "Enable the dx11 backend", default = false, type = "boolean"})
+    add_configs("dx12",             {description = "Enable the dx12 backend", default = false, type = "boolean"})
+    add_configs("glfw",             {description = "Enable the glfw backend", default = false, type = "boolean"})
+    add_configs("opengl2",          {description = "Enable the opengl2 backend", default = false, type = "boolean"})
+    add_configs("opengl3",          {description = "Enable the opengl3 backend", default = false, type = "boolean"})
+    add_configs("sdl2",             {description = "Enable the sdl2 backend with sdlrenderer", default = false, type = "boolean"})
+    add_configs("sdl2_no_renderer", {description = "Enable the sdl2 backend without sdlrenderer", default = false, type = "boolean"})
+    add_configs("sdlrenderer",      {description = "Enable the sdlrenderer backend", default = false, type = "boolean"})
+    add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
+    add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
+    add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
+    add_configs("user_config",      {description = "Use user config (disables test!)", default = nil, type = "string"})
+    add_configs("wchar32",          {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
 
     -- deprecated configs (kept for backwards compatibility)
     add_configs("glfw_opengl3", {description = "(deprecated)", default = false, type = "boolean"})
@@ -80,6 +85,9 @@ package("imgui")
         if package:config("sdl2") then
             package:config_set("sdlrenderer", true) -- backwards compatibility
         end
+        if package:config("sdl2_no_renderer") then
+            package:add("deps", "libsdl")
+        end
         if package:config("sdlrenderer") then
             package:add("deps", "libsdl >=2.0.17")
         end
@@ -96,21 +104,22 @@ package("imgui")
 
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         local configs = {
-            dx9         = package:config("dx9"),
-            dx10        = package:config("dx10"),
-            dx11        = package:config("dx11"),
-            dx12        = package:config("dx12"),
-            glfw        = package:config("glfw"),
-            opengl2     = package:config("opengl2"),
-            opengl3     = package:config("opengl3"),
-            glad        = package:config("opengl3") and (not package:gitref() and package:version():lt("1.84")),
-            sdl2        = package:config("sdl2"),
-            sdlrenderer = package:config("sdlrenderer"),
-            vulkan      = package:config("vulkan"),
-            win32       = package:config("win32"),
-            freetype    = package:config("freetype"),
-            user_config = package:config("user_config"),
-            wchar32     = package:config("wchar32")
+            dx9              = package:config("dx9"),
+            dx10             = package:config("dx10"),
+            dx11             = package:config("dx11"),
+            dx12             = package:config("dx12"),
+            glfw             = package:config("glfw"),
+            opengl2          = package:config("opengl2"),
+            opengl3          = package:config("opengl3"),
+            glad             = package:config("opengl3") and (not package:gitref() and package:version():lt("1.84")),
+            sdl2             = package:config("sdl2"),
+            sdl2_no_renderer = package:config("sdl2_no_renderer"),
+            sdlrenderer      = package:config("sdlrenderer"),
+            vulkan           = package:config("vulkan"),
+            win32            = package:config("win32"),
+            freetype         = package:config("freetype"),
+            user_config      = package:config("user_config"),
+            wchar32          = package:config("wchar32")
         }
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")

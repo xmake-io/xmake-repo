@@ -1,21 +1,22 @@
 add_rules("mode.debug", "mode.release")
 set_languages("cxx11")
 
-option("dx9",         {showmenu = true,  default = false})
-option("dx10",        {showmenu = true,  default = false})
-option("dx11",        {showmenu = true,  default = false})
-option("dx12",        {showmenu = true,  default = false})
-option("glfw",        {showmenu = true,  default = false})
-option("opengl2",     {showmenu = true,  default = false})
-option("opengl3",     {showmenu = true,  default = false})
-option("glad",        {showmenu = true,  default = false})
-option("sdl2",        {showmenu = true,  default = false})
-option("sdlrenderer", {showmenu = true,  default = false})
-option("vulkan",      {showmenu = true,  default = false})
-option("win32",       {showmenu = true,  default = false})
-option("freetype",    {showmenu = true,  default = false})
-option("user_config", {showmenu = true,  default = nil, type = "string"})
-option("wchar32",     {showmenu = true,  default = false})
+option("dx9",              {showmenu = true,  default = false})
+option("dx10",             {showmenu = true,  default = false})
+option("dx11",             {showmenu = true,  default = false})
+option("dx12",             {showmenu = true,  default = false})
+option("glfw",             {showmenu = true,  default = false})
+option("opengl2",          {showmenu = true,  default = false})
+option("opengl3",          {showmenu = true,  default = false})
+option("glad",             {showmenu = true,  default = false})
+option("sdl2",             {showmenu = true,  default = false})
+option("sdl2_no_renderer", {showmenu = true,  default = false})
+option("sdlrenderer",      {showmenu = true,  default = false})
+option("vulkan",           {showmenu = true,  default = false})
+option("win32",            {showmenu = true,  default = false})
+option("freetype",         {showmenu = true,  default = false})
+option("user_config",      {showmenu = true,  default = nil, type = "string"})
+option("wchar32",          {showmenu = true,  default = false})
 
 if has_config("glfw") then
     add_requires("glfw")
@@ -27,7 +28,7 @@ end
 
 if has_config("sdlrenderer") then
     add_requires("libsdl >=2.0.17")
-elseif has_config("sdl2") then
+elseif has_config("sdl2") or has_config("sdl2_no_renderer") then
     add_requires("libsdl")
 end
 
@@ -87,7 +88,7 @@ target("imgui")
         end
     end
 
-    if has_config("sdl2") then
+    if has_config("sdl2") or has_config("sdl2_no_renderer") then
         if os.exists("backends/imgui_impl_sdl2.cpp") then
             add_files("backends/imgui_impl_sdl2.cpp")
             add_headerfiles("(backends/imgui_impl_sdl2.h)")
