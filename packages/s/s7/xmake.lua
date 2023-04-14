@@ -17,7 +17,7 @@ package("s7")
         end
     end)
 
-    on_install("android", "bsd", "cross", "cygwin", "haiku", "linux", "macosx", "mingw", "msys", "wasm", "windows", function (package)
+    on_install("bsd", "cross", "cygwin", "haiku", "linux", "macosx", "mingw", "msys", "wasm", "windows", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         if package:config("shared") then
@@ -27,7 +27,7 @@ package("s7")
     end)
 
     on_test(function(package)
-        if (not package:is_cross()) and (not is_plat("iphoneos", "android")) then
+        if not package:is_cross() then
             local file = os.tmpfile() .. ".scm"
             io.writefile(file, [[
                 (display "Hello World!")
