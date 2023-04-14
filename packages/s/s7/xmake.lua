@@ -17,7 +17,7 @@ package("s7")
         end
     end)
 
-    on_install(function (package)
+    on_install("android", "bsd", "cross", "cygwin", "haiku", "linux", "macosx", "mingw", "msys", "wasm", "windows", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         if package:config("shared") then
