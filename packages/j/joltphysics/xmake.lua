@@ -41,6 +41,7 @@ package("joltphysics")
         local version = package:version()
         if not version or version:ge("3.0.0") then
             package:add("deps", "cmake")
+            package:add("defines", "JPH_OBJECT_LAYER_BITS=" .. package:config("object_layer_bits"))
         end
         if package:is_plat("windows") and not package:config("shared") then
             package:add("syslinks", "Advapi32")
@@ -54,30 +55,28 @@ package("joltphysics")
         if package:config("double_precision") then
             package:add("defines", "JPH_DOUBLE_PRECISION")
         end
-        package:add("defines", "JPH_OBJECT_LAYER_BITS=" .. package:config("object_layer_bits"))
     end)
 
     on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm", function (package)
-        -- cmake had no install target/support for custom msvc runtime until 3.0.0
+        -- Jolt CMakeLists had no install target/support for custom msvc runtime until 3.0.0
         local version = package:version()
         if not version or version:ge("3.0.0") then
             os.cd("Build")
             local configs = {
+                "-DENABLE_ALL_WARNINGS=OFF",
                 "-DINTERPROCEDURAL_OPTIMIZATION=OFF",
                 "-DTARGET_UNIT_TESTS=OFF",
                 "-DTARGET_HELLO_WORLD=OFF",
                 "-DTARGET_PERFORMANCE_TEST=OFF",
                 "-DTARGET_SAMPLES=OFF",
                 "-DTARGET_VIEWER=OFF",
-                "-DENABLE_ALL_WARNINGS=OFF"
+                "-DUSE_STATIC_MSVC_RUNTIME_LIBRARY=OFF"
             }
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DCROSS_PLATFORM_DETERMINISTIC=" .. (package:config("cross_platform_deterministic") and "ON" or "OFF"))
             table.insert(configs, "-DDOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
-            table.insert(configs, "-DGENERATE_DEBUG_SYMBOLS=" .. ((package:debug() or package:config("GENERATE_DEBUG_SYMBOLS")) and "ON" or "OFF"))
-            table.insert(configs, "-DINTERPROCEDURAL_OPTIMIZATION=OFF")
+            table.insert(configs, "-DGENERATE_DEBUG_SYMBOLS=" .. ((package:debug() or package:config("with_symbols")) and "ON" or "OFF"))
             table.insert(configs, "-DOBJECT_LAYER_BITS=" .. package:config("object_layer_bits"))
-            table.insert(configs, "-DUSE_STATIC_MSVC_RUNTIME_LIBRARY=OFF")
             table.insert(configs, "-DUSE_AVX=" .. (package:config("inst_avx") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_AVX2=" .. (package:config("inst_avx2") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_AVX512=" .. (package:config("inst_avx512") and "ON" or "OFF"))
