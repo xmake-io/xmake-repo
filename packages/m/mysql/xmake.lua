@@ -3,18 +3,28 @@ package("mysql")
     set_homepage("https://dev.mysql.com/doc/refman/5.7/en/")
     set_description("Open source relational database management system.")
 
-    set_urls("https://cdn.mysql.com/archives/mysql-5.7/mysql-boost-$(version).tar.gz",
-             "https://github.com/xmake-mirror/mysql-boost/releases/download/$(version)/mysql-boost-$(version).tar.gz")
+    if is_plat("windows") then
+        if is_arch("x86") then
+            set_urls("https://downloads.mysql.com/archives/get/p/19/file/mysql-connector-c-$(version)-win32.zip")
+            add_versions("6.1.11", "a32487407bc0c4e217d8839892333fb0cb39153194d2788f226e9c5b9abdd928")
+        elseif is_arch("x64") then
+            set_urls("https://downloads.mysql.com/archives/get/p/19/file/mysql-connector-c-$(version)-winx64.zip")
+            add_versions("6.1.11", "3555641cea2da60435ab7f1681a94d1aa97341f1a0f52193adc82a83734818ca")
+        end
+    else 
+        set_urls("https://cdn.mysql.com/archives/mysql-5.7/mysql-boost-$(version).tar.gz",
+                "https://github.com/xmake-mirror/mysql-boost/releases/download/$(version)/mysql-boost-$(version).tar.gz")
+        add_versions("5.7.29", "00f514124de2bad1ba7b380cbbd46e316cae7fc7bc3a5621456cabf352f27978")
+    end
 
-    add_versions("5.7.29", "00f514124de2bad1ba7b380cbbd46e316cae7fc7bc3a5621456cabf352f27978")
-
+    
     if is_plat("macosx", "linux") then
+        package:add_includedirs("include/mysql")
         add_deps("cmake", "openssl")
         if is_plat("linux") then
             add_deps("ncurses")
         end
     end
-    add_includedirs("include/mysql")
 
     on_install("macosx", "linux", function (package)
         -- https://bugs.mysql.com/bug.php?id=87348
@@ -44,6 +54,11 @@ package("mysql")
             end
         end
         import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_install("windows", function (package)
+        os.cp("include/*", package:installdir("include"))
+        os.cp("lib/*", package:installdir("lib"))
     end)
 
     on_test(function (package)
