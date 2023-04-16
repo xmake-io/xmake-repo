@@ -57,8 +57,8 @@ package("mysql")
     end)
 
     on_install("windows", function (package)
-        os.cp("include/*", package:installdir("include"))
-        os.cp("lib/*", package:installdir("lib"))
+        os.cp("include", package:installdir())
+        os.cp("lib", package:installdir())
     end)
 
     on_test(function (package)
