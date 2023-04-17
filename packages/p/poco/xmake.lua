@@ -76,10 +76,6 @@ package("poco")
                 table.insert(configs, "-DMYSQL_INCLUDE_DIR=" .. table.concat(libmysql.includedirs or libmysql.sysincludedirs, ";"))
                 table.insert(configs, "-DMYSQL_LIBRARY=" .. table.concat(libmysql.libfiles or {}, ";"))
             end
-            
-            for _, f in ipairs(table.join(os.files("Data/MySQL/src/*.cpp"), os.files("Data/MySQL/include/Poco/Data/MySQL/*.h"))) do
-                io.replace(f, "mysql/mysql.h", "mysql.h", {plain = true})
-            end
         end
 
         -- warning: only works on windows sdk 10.0.18362.0 and later
