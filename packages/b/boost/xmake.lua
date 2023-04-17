@@ -152,10 +152,14 @@ package("boost")
         if package:is_plat("windows") then
             import("core.tool.toolchain")
             local runenvs = toolchain.load("msvc"):runenvs()
+            -- for bootstrap.bat, all other arguments are useless
+            bootstrap_argv = { "msvc" }
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
         elseif package:is_plat("mingw") and is_host("windows") then
-            os.vrunv("sh", table.join("./bootstrap.sh", bootstrap_argv))
-            os.cp("./tools/build/src/engine/b2.exe", ".")
+            bootstrap_argv = { "gcc" }
+            os.vrunv("bootstrap.bat", bootstrap_argv)
+            -- todo looking for better solution to fix the confict between user-config.jam and project-config.jam
+            io.replace("project-config.jam", "using[^\n]+", "")
         else
             os.vrunv("./bootstrap.sh", bootstrap_argv)
         end
