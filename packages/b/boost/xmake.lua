@@ -200,6 +200,9 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "cxxflags=-std:c++14")
+            table.insert(argv, "toolset=msvc")
+        elseif package:is_plat("mingw") then
+            table.insert(argv, "toolset=gcc")
         else
             table.insert(argv, "cxxflags=-std=c++14")
             if package:config("pic") ~= false then
