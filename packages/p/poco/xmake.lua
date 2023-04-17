@@ -74,19 +74,12 @@ package("poco")
             local libmysql = package:dep("mysql"):fetch()
             if libmysql then
                 table.insert(configs, "-DMYSQL_INCLUDE_DIR=" .. table.concat(libmysql.includedirs or libmysql.sysincludedirs, ";"))
-                table.insert(configs, "-DMYSQL_LIBRARY=" .. table.concat(libmysql.libfiles, ";"))
+                table.insert(configs, "-DMYSQL_LIBRARY=" .. table.concat(libmysql.libfiles or {}, ";"))
             end
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", "mysql/mysql.h", "mysql.h",{plain = true})
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/Binder.h", "mysql/mysql.h", "mysql.h",{plain = true})
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/ResultMetadata.h", "mysql/mysql.h", "mysql.h",{plain = true})
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQLException.h", "mysql/mysql.h", "mysql.h",{plain = true})
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/SessionHandle.h", "mysql/mysql.h", "mysql.h",{plain = true})
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/StatementExecutor.h", "mysql/mysql.h", "mysql.h",{plain = true})
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/Utility.h", "mysql/mysql.h", "mysql.h",{plain = true})
-            io.replace("Data/MySQL/src/Connector.cpp", "mysql/mysql.h", "mysql.h",{plain = true})
-            io.replace("Data/MySQL/src/MySQLException.cpp", "mysql/mysql.h", "mysql.h",{plain = true})
-            io.replace("Data/MySQL/src/StatementExecutor.cpp", "mysql/mysql.h", "mysql.h",{plain = true})
-            io.replace("Data/MySQL/src/Utility.cpp", "mysql/mysql.h", "mysql.h",{plain = true})
+            
+            for _, f in ipairs(table.join(os.files("Data/MySQL/src/*.cpp"), os.files("Data/MySQL/include/Poco/Data/MySQL/*.h"))) do
+                io.replace(f, "mysql/mysql.h", "mysql.h", {plain = true})
+            end
         end
 
         -- warning: only works on windows sdk 10.0.18362.0 and later
