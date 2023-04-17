@@ -4,7 +4,6 @@ package("mysql")
     set_description("Open source relational database management system.")
 
     if is_plat("windows") then
-        add_configs("static", {description = "Build static library.", default = false, type = "boolean"})
         if is_arch("x86") then
             set_urls("https://downloads.mysql.com/archives/get/p/19/file/mysql-connector-c-$(version)-win32.zip")
             add_versions("6.1.11", "a32487407bc0c4e217d8839892333fb0cb39153194d2788f226e9c5b9abdd928")
@@ -59,14 +58,14 @@ package("mysql")
 
     on_install("windows", function (package)
         os.cp("include", package:installdir())
-        if package:config("static") then
-            package:add("syslinks", "Advapi32")
-            package:add("syslinks", "msvcrt")
-            os.cp("lib/vs14/mysqlclient.lib", package:installdir("lib"))
-        else
+        if package:config("shared") then
             os.cp("lib", package:installdir())
             os.rm(package:installdir() .. "lib" .. "/vs12")
-            os.rm(package:installdir() .. "lib" .. "/vs14")
+            os.rm(package:installdir() .. "lib" .. "/vs14")  
+        else
+            package:add("syslinks", "advapi32")
+            package:add("syslinks", "msvcrt")
+            os.cp("lib/vs14/mysqlclient.lib", package:installdir("lib"))
         end
     end)
 
