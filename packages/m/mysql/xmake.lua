@@ -16,10 +16,8 @@ package("mysql")
                  "https://github.com/xmake-mirror/mysql-boost/releases/download/$(version)/mysql-boost-$(version).tar.gz")
         add_versions("5.7.29", "00f514124de2bad1ba7b380cbbd46e316cae7fc7bc3a5621456cabf352f27978")
     end
-
     
     if is_plat("macosx", "linux") then
-        add_includedirs("include/mysql")
         add_deps("cmake", "openssl")
         if is_plat("linux") then
             add_deps("ncurses")
