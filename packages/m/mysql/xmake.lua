@@ -26,6 +26,8 @@ package("mysql")
         end
     end
 
+    add_includedirs("include", "include/mysql")
+
     on_install("macosx", "linux", function (package)
         -- https://bugs.mysql.com/bug.php?id=87348
         -- Fixes: "ADD_SUBDIRECTORY given source
