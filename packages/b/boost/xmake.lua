@@ -134,7 +134,12 @@ package("boost")
         if file then
             if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
-                file:print("using darwin : : %s ;", package:build_getenv("ld"))
+                -- and we need `xcrun -sdk macosx clang++` to make b2 to get `-isysroot` automatically
+                local cc = package:build_getenv("ld")
+                if cc and cc:find("clang", 1, true) and cc:find("Xcode", 1, true) then
+                    cc = "xcrun -sdk macosx clang++"
+                end
+                file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
                 file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
             else
