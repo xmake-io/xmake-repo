@@ -44,7 +44,7 @@ package("sqlpp11")
             local libmysql = package:dep("mysql"):fetch()
             if libmysql then
                 table.insert(configs, "-DMySQL_INCLUDE_DIR=" .. table.concat(libmysql.includedirs or libmysql.sysincludedirs, ";"))
-                table.insert(configs, "-DMySQL_LIBRARY=" .. table.concat(libmysql.libfiles, ";"))
+                table.insert(configs, "-DMySQL_LIBRARY=" .. table.concat(libmysql.libfiles or {}, ";"))
             end
         end
         import("package.tools.cmake").install(package, configs)
