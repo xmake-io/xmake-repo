@@ -57,7 +57,7 @@ package("mysql")
     end)
 
     on_install("windows", function (package)
-        os.cp("include", package:installdir())
+        os.cp("include/*", package:installdir("include/mysql"))
         if package:config("shared") then
             os.cp("lib/libmysql.lib", package:installdir("lib"))
             os.cp("lib/libmysql.dll", package:installdir("bin"))
