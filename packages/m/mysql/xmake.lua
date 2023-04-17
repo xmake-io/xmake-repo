@@ -58,7 +58,14 @@ package("mysql")
 
     on_install("windows", function (package)
         os.cp("include", package:installdir())
-        os.cp("lib", package:installdir())
+        if package:config("shared") then
+            os.cp("lib/libmysql.lib", package:installdir("lib"))
+            os.cp("lib/libmysql.dll", package:installdir("bin"))
+        else
+            package:add("syslinks", "advapi32")
+            package:add("syslinks", "msvcrt")
+            os.cp("lib/vs14/mysqlclient.lib", package:installdir("lib"))
+        end
     end)
 
     on_test(function (package)
