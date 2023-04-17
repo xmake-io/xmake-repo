@@ -11,20 +11,20 @@ package("mysql")
             set_urls("https://downloads.mysql.com/archives/get/p/19/file/mysql-connector-c-$(version)-winx64.zip")
             add_versions("6.1.11", "3555641cea2da60435ab7f1681a94d1aa97341f1a0f52193adc82a83734818ca")
         end
-    else 
+    else
         set_urls("https://cdn.mysql.com/archives/mysql-5.7/mysql-boost-$(version).tar.gz",
                  "https://github.com/xmake-mirror/mysql-boost/releases/download/$(version)/mysql-boost-$(version).tar.gz")
         add_versions("5.7.29", "00f514124de2bad1ba7b380cbbd46e316cae7fc7bc3a5621456cabf352f27978")
     end
 
-    
     if is_plat("macosx", "linux") then
-        add_includedirs("include/mysql")
         add_deps("cmake", "openssl")
         if is_plat("linux") then
             add_deps("ncurses")
         end
     end
+
+    add_includedirs("include", "include/mysql")
 
     on_install("macosx", "linux", function (package)
         -- https://bugs.mysql.com/bug.php?id=87348
@@ -57,7 +57,7 @@ package("mysql")
     end)
 
     on_install("windows", function (package)
-        os.cp("include", package:installdir())
+        os.cp("include/*", package:installdir("include/mysql"))
         if package:config("shared") then
             os.cp("lib/libmysql.lib", package:installdir("lib"))
             os.cp("lib/libmysql.dll", package:installdir("bin"))
