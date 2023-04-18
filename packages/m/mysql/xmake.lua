@@ -4,6 +4,7 @@ package("mysql")
     set_description("Open source relational database management system.")
 
     if is_plat("windows") then
+        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
         if is_arch("x86") then
             set_urls("https://downloads.mysql.com/archives/get/p/19/file/mysql-connector-c-$(version)-win32.zip")
             add_versions("6.1.11", "a32487407bc0c4e217d8839892333fb0cb39153194d2788f226e9c5b9abdd928")
