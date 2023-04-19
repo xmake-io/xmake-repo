@@ -30,6 +30,11 @@ package("mysql")
     add_includedirs("include", "include/mysql")
 
     on_load("macosx", "linux", "windows", function(package) 
+        import("core.tool.toolchain")
+        local vs = tonumber(toolchain.load("msvc"):config("vs"))
+        if vs > 2019 then
+            raise("Your compiler is too new to build this library.")
+        end
         if package:version():ge("8.0.0") then
             package:add("deps", "boost 1.77.0")
             package:add("deps", "openssl 1.1.1-t")
