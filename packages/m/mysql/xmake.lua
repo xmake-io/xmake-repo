@@ -45,7 +45,7 @@ package("mysql")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows", function (package) 
         io.gsub("CMakeLists.txt", "ADD_SUBDIRECTORY%(storage/ndb%)", "")
         local configs = { "-DCOMPILATION_COMMENT=XMake",
                         "-DDEFAULT_CHARSET=utf8",
@@ -89,37 +89,36 @@ package("mysql")
             os.rm(package:installdir("lib/libmysql.lib"))
             os.rm(package:installdir("bin/libmysql.dll"))
         end
-    end
+    end)
 
     on_install("macosx", "linux", function (package)
-            -- https://bugs.mysql.com/bug.php?id=87348
-            -- Fixes: "ADD_SUBDIRECTORY given source
-            -- 'storage/ndb' which is not an existing"
-            io.gsub("CMakeLists.txt", "ADD_SUBDIRECTORY%(storage/ndb%)", "")
-            local configs = { "-DCOMPILATION_COMMENT=XMake",
-                              "-DDEFAULT_CHARSET=utf8",
-                              "-DDEFAULT_COLLATION=utf8_general_ci",
-                              "-DINSTALL_DOCDIR=share/doc/#{name}",
-                              "-DINSTALL_INCLUDEDIR=include/mysql",
-                              "-DINSTALL_INFODIR=share/info",
-                              "-DINSTALL_MANDIR=share/man",
-                              "-DINSTALL_MYSQLSHAREDIR=share/mysql",
-                              "-DWITH_BOOST=../boost",
-                              "-DWITH_EDITLINE=" .. (is_plat("macosx") and "system" or "bundled"),
-                              "-DWITH_SSL=yes",
-                              "-DWITH_UNIT_TESTS=OFF",
-                              "-DWITHOUT_SERVER=ON"}
-            if package:is_plat("linux") then
-                local curses = package:dep("ncurses"):fetch()
-                if curses then
-                    local includedirs = table.wrap(curses.sysincludedirs or curses.includedirs)
-                    local libfiles = table.wrap(curses.libfiles)
-                    table.insert(configs, "-DCURSES_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
-                    table.insert(configs, "-DCURSES_LIBRARY=" .. table.concat(libfiles, ";"))
-                end
+        -- https://bugs.mysql.com/bug.php?id=87348
+        -- Fixes: "ADD_SUBDIRECTORY given source
+        -- 'storage/ndb' which is not an existing"
+        io.gsub("CMakeLists.txt", "ADD_SUBDIRECTORY%(storage/ndb%)", "")
+        local configs = { "-DCOMPILATION_COMMENT=XMake",
+                            "-DDEFAULT_CHARSET=utf8",
+                            "-DDEFAULT_COLLATION=utf8_general_ci",
+                            "-DINSTALL_DOCDIR=share/doc/#{name}",
+                            "-DINSTALL_INCLUDEDIR=include/mysql",
+                            "-DINSTALL_INFODIR=share/info",
+                            "-DINSTALL_MANDIR=share/man",
+                            "-DINSTALL_MYSQLSHAREDIR=share/mysql",
+                            "-DWITH_BOOST=../boost",
+                            "-DWITH_EDITLINE=" .. (is_plat("macosx") and "system" or "bundled"),
+                            "-DWITH_SSL=yes",
+                            "-DWITH_UNIT_TESTS=OFF",
+                            "-DWITHOUT_SERVER=ON"}
+        if package:is_plat("linux") then
+            local curses = package:dep("ncurses"):fetch()
+            if curses then
+                local includedirs = table.wrap(curses.sysincludedirs or curses.includedirs)
+                local libfiles = table.wrap(curses.libfiles)
+                table.insert(configs, "-DCURSES_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
+                table.insert(configs, "-DCURSES_LIBRARY=" .. table.concat(libfiles, ";"))
             end
-            import("package.tools.cmake").install(package, configs)
         end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
