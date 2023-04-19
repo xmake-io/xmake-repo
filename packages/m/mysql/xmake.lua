@@ -1,5 +1,4 @@
 package("mysql")
-    -- need vs 2019
 
     set_homepage("https://dev.mysql.com/doc/refman/5.7/en/")
     set_description("Open source relational database management system.")
@@ -19,7 +18,6 @@ package("mysql")
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT"})
     end
     
-
     if is_plat("macosx", "linux", "windows") then
         add_deps("cmake", "openssl")
         if is_plat("linux") then
@@ -45,24 +43,24 @@ package("mysql")
         end
     end)
 
-    on_install("windows", function (package) 
+    on_install("windows", function (package)
         io.gsub("CMakeLists.txt", "ADD_SUBDIRECTORY%(storage/ndb%)", "")
-        local configs = { "-DCOMPILATION_COMMENT=XMake",
-                        "-DDEFAULT_CHARSET=utf8",
-                        "-DDEFAULT_COLLATION=utf8_general_ci",
-                        "-DINSTALL_DOCDIR=share/doc/#{name}",
-                        "-DINSTALL_INCLUDEDIR=include/mysql",
-                        "-DINSTALL_INFODIR=share/info",
-                        "-DINSTALL_MANDIR=share/man",
-                        "-DINSTALL_MYSQLSHAREDIR=share/mysql",
-                        "-DWITH_EDITLINE=" .. (is_plat("macosx") and "system" or "bundled"),
-                        "-DWITH_UNIT_TESTS=OFF",
-                        "-DDISABLE_SHARED=" .. (package:config("shared") and "OFF" or "ON"),
-                        "-DWITH_LZ4='system'",
-                        "-DWITH_ZSTD='system'",
-                        "-DWITH_ZLIB='system'",
-                        "-DWINDOWS_RUNTIME_MD=" .. (package:config("vs_runtime"):startswith("MD") and "ON" or "OFF"),
-                        "-DWITHOUT_SERVER=ON"}
+        local configs = {"-DCOMPILATION_COMMENT=XMake",
+                         "-DDEFAULT_CHARSET=utf8",
+                         "-DDEFAULT_COLLATION=utf8_general_ci",
+                         "-DINSTALL_DOCDIR=share/doc/#{name}",
+                         "-DINSTALL_INCLUDEDIR=include/mysql",
+                         "-DINSTALL_INFODIR=share/info",
+                         "-DINSTALL_MANDIR=share/man",
+                         "-DINSTALL_MYSQLSHAREDIR=share/mysql",
+                         "-DWITH_EDITLINE=" .. (is_plat("macosx") and "system" or "bundled"),
+                         "-DWITH_UNIT_TESTS=OFF",
+                         "-DDISABLE_SHARED=" .. (package:config("shared") and "OFF" or "ON"),
+                         "-DWITH_LZ4='system'",
+                         "-DWITH_ZSTD='system'",
+                         "-DWITH_ZLIB='system'",
+                         "-DWINDOWS_RUNTIME_MD=" .. (package:config("vs_runtime"):startswith("MD") and "ON" or "OFF"),
+                         "-DWITHOUT_SERVER=ON"}
         io.replace("cmake/ssl.cmake","IF(NOT OPENSSL_APPLINK_C)","IF(FALSE AND NOT OPENSSL_APPLINK_C)", {plain = true})
         for _, removelib in ipairs({"icu", "libevent", "re2", "rapidjson", "protobuf", "libedit"}) do
             io.replace("CMakeLists.txt", "MYSQL_CHECK_" .. string.upper(removelib) .. "()\n", "", {plain = true})
@@ -96,19 +94,19 @@ package("mysql")
         -- Fixes: "ADD_SUBDIRECTORY given source
         -- 'storage/ndb' which is not an existing"
         io.gsub("CMakeLists.txt", "ADD_SUBDIRECTORY%(storage/ndb%)", "")
-        local configs = { "-DCOMPILATION_COMMENT=XMake",
-                            "-DDEFAULT_CHARSET=utf8",
-                            "-DDEFAULT_COLLATION=utf8_general_ci",
-                            "-DINSTALL_DOCDIR=share/doc/#{name}",
-                            "-DINSTALL_INCLUDEDIR=include/mysql",
-                            "-DINSTALL_INFODIR=share/info",
-                            "-DINSTALL_MANDIR=share/man",
-                            "-DINSTALL_MYSQLSHAREDIR=share/mysql",
-                            "-DWITH_BOOST=../boost",
-                            "-DWITH_EDITLINE=" .. (is_plat("macosx") and "system" or "bundled"),
-                            "-DWITH_SSL=yes",
-                            "-DWITH_UNIT_TESTS=OFF",
-                            "-DWITHOUT_SERVER=ON"}
+        local configs = {"-DCOMPILATION_COMMENT=XMake",
+                         "-DDEFAULT_CHARSET=utf8",
+                         "-DDEFAULT_COLLATION=utf8_general_ci",
+                         "-DINSTALL_DOCDIR=share/doc/#{name}",
+                         "-DINSTALL_INCLUDEDIR=include/mysql",
+                         "-DINSTALL_INFODIR=share/info",
+                         "-DINSTALL_MANDIR=share/man",
+                         "-DINSTALL_MYSQLSHAREDIR=share/mysql",
+                         "-DWITH_BOOST=../boost",
+                         "-DWITH_EDITLINE=" .. (is_plat("macosx") and "system" or "bundled"),
+                         "-DWITH_SSL=yes",
+                         "-DWITH_UNIT_TESTS=OFF",
+                         "-DWITHOUT_SERVER=ON"}
         if package:is_plat("linux") then
             local curses = package:dep("ncurses"):fetch()
             if curses then
