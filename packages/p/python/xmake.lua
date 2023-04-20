@@ -24,10 +24,10 @@ package("python")
             add_versions("3.9.10", "4cee67e2a529fe363e34f0da57f8e5c3fc036913dc838b17389b2319ead0927e")
             add_versions("3.9.13", "6774fdd872fc55b028becc81b7d79bdcb96c5e0eb1483cfcd38224b921c94d7d")
             add_versions("3.10.6", "8cbc234939a679687da44c3bbc6d6ce375ea4b84c4fa8dbc1bf5befc43254b58")
+            add_versions("3.11.0", "c8faf060580012764f7708d26772f8543b1293dbd71a8addc28425be19a5bfd0")
         end
     else
-        set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
-                 "https://github.com/xmake-mirror/cpython/releases/download/v$(version)/Python-$(version).tgz")
+        add_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
         add_versions("2.7.18", "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814")
         add_versions("3.7.9", "39b018bc7d8a165e59aa827d9ae45c45901739b0bbb13721e4f973f3521c166a")
         add_versions("3.8.10", "b37ac74d2cbad2590e7cd0dd2b3826c29afe89a734090a87bf8c03c45066cb65")
@@ -36,6 +36,7 @@ package("python")
         add_versions("3.9.10", "1aa9c0702edbae8f6a2c95f70a49da8420aaa76b7889d3419c186bfc8c0e571e")
         add_versions("3.9.13", "829b0d26072a44689a6b0810f5b4a3933ee2a0b8a4bfc99d7c5893ffd4f97c44")
         add_versions("3.10.6", "848cb06a5caa85da5c45bd7a9221bb821e33fc2bdcba088c127c58fad44e6343")
+        -- add_versions("3.11.0", "64424e96e2457abbac899b90f9530985b51eef2905951febd935f0e73414caeb")
     end
 
     if not is_plat(os.host()) or not is_arch(os.arch()) then
