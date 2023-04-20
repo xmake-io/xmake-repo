@@ -38,7 +38,7 @@ package("boost")
         add_syslinks("pthread", "dl")
     end
 
-    add_configs("pyver", {description = "python version x.y, etc. 3.10",  default = ""})
+    add_configs("pyver", {description = "python version x.y, etc. 3.10",  default = "3.10"})
     local libnames = {"fiber",
                       "coroutine",
                       "context",
