@@ -38,6 +38,8 @@ package("python")
         add_versions("3.10.6", "848cb06a5caa85da5c45bd7a9221bb821e33fc2bdcba088c127c58fad44e6343")
     end
 
+    add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
+
     if not is_plat(os.host()) or not is_arch(os.arch()) then
         set_kind("binary")
     end
@@ -84,6 +86,10 @@ package("python")
         package:addenv("PYTHONPATH", PYTHONPATH)
         package:addenv("PATH", "bin")
         package:addenv("PATH", "Scripts")
+
+        if package:config("headeronly") then
+            package:add("links", "")
+        end
     end)
 
     on_fetch("fetch")
@@ -256,7 +262,7 @@ package("python")
         os.vrun("python -c \"import pip\"")
         os.vrun("python -c \"import setuptools\"")
         os.vrun("python -c \"import wheel\"")
-        if package:kind() ~= "binary" then
+        if package:kind() ~= "binary" and not package:config("headeronly") then
             assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
         end
     end)

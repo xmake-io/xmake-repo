@@ -10,6 +10,7 @@ package("boost")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
+    add_versions("1.82.0", "a6e1ab9b0860e6a2881dd7b21fe9f737a095e5f33a3a874afc6a345228597ee6")
     add_versions("1.81.0", "71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa")
     add_versions("1.80.0", "1e19565d82e43bc59209a168f5ac899d3ba471d55c7610c677d4ccf2c9c500c0")
     add_versions("1.79.0", "475d589d51a7f8b3ba2ba4eda022b170e562ca3b760ee922c146b6c65856ef39")
@@ -37,6 +38,7 @@ package("boost")
         add_syslinks("pthread", "dl")
     end
 
+    add_configs("pyver", {description = "python version x.y, etc. 3.10",  default = ""})
     local libnames = {"fiber",
                       "coroutine",
                       "context",
@@ -76,6 +78,18 @@ package("boost")
     end
 
     on_load(function (package)
+        function get_python_version(package)
+            local pyver = package:config("pyver")
+            if pyver == "" then
+                local python = package:find_tool("python3", {version = true})
+                if not python then
+                    python = package:find_tool("python", {version = true})
+                end
+                assert(python, "Python not found, please install it first, or set config 'pyver'!")
+                pyver = python.version:match("%d+.%d+")
+            end
+            return pyver
+        end
         function get_linkname(package, libname)
             local linkname
             if package:is_plat("windows") then
@@ -84,9 +98,8 @@ package("boost")
                 linkname = "boost_" .. libname
             end
             if libname == "python" then
-                -- TODO maybe we need improve it, e.g. libboost_python310-mt.a
-                linkname = linkname .. "310"
-            end
+                linkname = linkname .. get_python_version(package):gsub("%p+", "")
+            end            
             if package:config("multi") then
                 linkname = linkname .. "-mt"
             end
@@ -122,8 +135,13 @@ package("boost")
         if package:is_plat("windows") then
             package:add("defines", "BOOST_ALL_NO_LIB")
         end
+
         if package:config("python") then
-            package:add("deps", "python 3.10.x")
+            if not package:config("shared") then
+                print(package:config("shared"))
+                package:add("defines", "BOOST_PYTHON_STATIC_LIB")
+            end
+            package:add("deps", "python " .. get_python_version(package) .. ".x", {configs = {headeronly=true}})
         end
     end)
 
@@ -189,6 +207,9 @@ package("boost")
 
         if package:config("lto") then
             table.insert(argv, "lto=on")
+        end
+        if package:is_arch("aarch64", "arm+.*") then
+            table.insert(argv, "architecture=arm")
         end
         if package:is_arch(".+64.*") then
             table.insert(argv, "address-model=64")
