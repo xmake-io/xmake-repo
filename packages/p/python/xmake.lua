@@ -36,7 +36,6 @@ package("python")
         add_versions("3.9.10", "1aa9c0702edbae8f6a2c95f70a49da8420aaa76b7889d3419c186bfc8c0e571e")
         add_versions("3.9.13", "829b0d26072a44689a6b0810f5b4a3933ee2a0b8a4bfc99d7c5893ffd4f97c44")
         add_versions("3.10.6", "848cb06a5caa85da5c45bd7a9221bb821e33fc2bdcba088c127c58fad44e6343")
-        -- add_versions("3.11.0", "64424e96e2457abbac899b90f9530985b51eef2905951febd935f0e73414caeb")
     end
 
     if not is_plat(os.host()) or not is_arch(os.arch()) then
