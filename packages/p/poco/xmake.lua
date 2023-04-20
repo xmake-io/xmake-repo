@@ -71,7 +71,7 @@ package("poco")
         end
         
         if package:config("mysql") then
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '#pragma comment(lib, "")', {plain = true})
+            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '', {plain = true})
             local libmysql = package:dep("mysql"):fetch()
             if libmysql then
                 table.insert(configs, "-DMYSQL_INCLUDE_DIR=" .. table.concat(libmysql.includedirs or libmysql.sysincludedirs, ";"))
