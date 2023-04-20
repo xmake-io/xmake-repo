@@ -134,7 +134,12 @@ package("boost")
         if file then
             if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
-                file:print("using darwin : : %s ;", package:build_getenv("ld"))
+                -- and we need `xcrun -sdk macosx clang++` to make b2 to get `-isysroot` automatically
+                local cc = package:build_getenv("ld")
+                if cc and cc:find("clang", 1, true) and cc:find("Xcode", 1, true) then
+                    cc = "xcrun -sdk macosx clang++"
+                end
+                file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
                 file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
             else
@@ -152,10 +157,14 @@ package("boost")
         if package:is_plat("windows") then
             import("core.tool.toolchain")
             local runenvs = toolchain.load("msvc"):runenvs()
+            -- for bootstrap.bat, all other arguments are useless
+            bootstrap_argv = { "msvc" }
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
         elseif package:is_plat("mingw") and is_host("windows") then
-            os.vrunv("sh", table.join("./bootstrap.sh", bootstrap_argv))
-            os.cp("./tools/build/src/engine/b2.exe", ".")
+            bootstrap_argv = { "gcc" }
+            os.vrunv("bootstrap.bat", bootstrap_argv)
+            -- todo looking for better solution to fix the confict between user-config.jam and project-config.jam
+            io.replace("project-config.jam", "using[^\n]+", "")
         else
             os.vrunv("./bootstrap.sh", bootstrap_argv)
         end
@@ -196,6 +205,9 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "cxxflags=-std:c++14")
+            table.insert(argv, "toolset=msvc")
+        elseif package:is_plat("mingw") then
+            table.insert(argv, "toolset=gcc")
         else
             table.insert(argv, "cxxflags=-std=c++14")
             if package:config("pic") ~= false then
