@@ -71,7 +71,9 @@ package("poco")
         end
         
         if package:config("mysql") then
-            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '#pragma comment(lib, "mysqlclient")', {plain = true})
+            if not package:config("shared") then
+                io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '#pragma comment(lib, "mysqlclient")', {plain = true})
+            end
             local libmysql = package:dep("mysql"):fetch()
             if libmysql then
                 table.insert(configs, "-DMYSQL_INCLUDE_DIR=" .. table.concat(libmysql.includedirs or libmysql.sysincludedirs, ";"))
