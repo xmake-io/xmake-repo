@@ -78,7 +78,7 @@ package("mysql")
             os.cp(package:installdir("lib/libmysql.dll"), package:installdir("bin"))
         else
             os.rm(package:installdir("lib/libmysql.lib"))
-            os.rm(package:installdir("bin/libmysql.dll"))
+            os.rm(package:installdir("lib/libmysql.dll"))
         end
     end)
 
