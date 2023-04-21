@@ -41,7 +41,7 @@ package("x264")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_install("windows", "linux", "macosx", "wasm", function (package)
+    on_install("linux", "macosx", "wasm", function (package)
         local configs = {}
         table.insert(configs, "--enable-" .. (package:config("shared") and "shared" or "static"))
         if package:is_plat("wasm") then
