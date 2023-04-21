@@ -88,7 +88,7 @@ package("python")
         package:addenv("PATH", "Scripts")
 
         if package:config("headeronly") then
-            package:add("links", "")
+            package:set("links", "")
         end
     end)
 

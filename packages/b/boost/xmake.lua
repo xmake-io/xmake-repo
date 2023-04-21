@@ -38,7 +38,7 @@ package("boost")
         add_syslinks("pthread", "dl")
     end
 
-    add_configs("pyver", {description = "python version x.y, etc. 3.10",  default = "3.10"})
+    add_configs("pyver", {description = "python version x.y, etc. 3.10", default = "3.10"})
     local libnames = {"fiber",
                       "coroutine",
                       "context",
@@ -78,18 +78,6 @@ package("boost")
     end
 
     on_load(function (package)
-        function get_python_version(package)
-            local pyver = package:config("pyver")
-            if pyver == "" then
-                local python = package:find_tool("python3", {version = true})
-                if not python then
-                    python = package:find_tool("python", {version = true})
-                end
-                assert(python, "Python not found, please install it first, or set config 'pyver'!")
-                pyver = python.version:match("%d+.%d+")
-            end
-            return pyver
-        end
         function get_linkname(package, libname)
             local linkname
             if package:is_plat("windows") then
@@ -98,7 +86,7 @@ package("boost")
                 linkname = "boost_" .. libname
             end
             if libname == "python" then
-                linkname = linkname .. get_python_version(package):gsub("%p+", "")
+                linkname = linkname .. package:config("pyver"):gsub("%p+", "")
             end            
             if package:config("multi") then
                 linkname = linkname .. "-mt"
@@ -138,10 +126,9 @@ package("boost")
 
         if package:config("python") then
             if not package:config("shared") then
-                print(package:config("shared"))
                 package:add("defines", "BOOST_PYTHON_STATIC_LIB")
             end
-            package:add("deps", "python " .. get_python_version(package) .. ".x", {configs = {headeronly=true}})
+            package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
     end)
 
