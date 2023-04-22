@@ -35,6 +35,9 @@ package("libhv")
         add_frameworks("CoreFoundation", "Security")
     elseif is_plat("windows") then
         add_syslinks("advapi32")
+    elseif is_plat("mingw") then
+        add_syslinks("ws2_32")
+        add_syslinks("pthread")
     end
 
     add_deps("cmake")
@@ -54,7 +57,7 @@ package("libhv")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", function(package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
