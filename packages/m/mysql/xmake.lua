@@ -44,9 +44,9 @@ package("mysql")
     end)
 
     on_install("mingw", function (package)
-        os.cp("mysql/8.0.31/ad611e3230894c35896b2ccae5be9c7e/lib", package:installdir())
-        os.cp("mysql/8.0.31/ad611e3230894c35896b2ccae5be9c7e/include", package:installdir())
-        os.cp("mysql/8.0.31/ad611e3230894c35896b2ccae5be9c7e/lib/libmysql.dll", package:installdir("bin"))
+        os.cp("mysql/*/*/lib", package:installdir())
+        os.cp("mysql/*/*/include", package:installdir())
+        os.cp("mysql/*/*/lib/libmysql.dll", package:installdir("bin"))
     end)
 
     on_install("windows", function (package)
