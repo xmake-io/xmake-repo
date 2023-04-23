@@ -170,12 +170,13 @@ package("boost")
         end
         os.vrun("./b2 headers")
 
+        local njobs = import("core.base.option").get("jobs") or tostring(os.default_njob())
         local argv =
         {
             "--prefix=" .. package:installdir(),
             "--libdir=" .. package:installdir("lib"),
             "-d2",
-            "-j4",
+            format("-j%s", njobs),
             "--hash",
             "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
