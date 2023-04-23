@@ -16,6 +16,13 @@ package("mysql")
         add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean"})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT"})
     end
+
+    if is_plat("mingw") then
+        set_urls("https://github.com/xmake-mirror/build-artifacts/releases/download/mysql-$(version)/windows-x64-vc143-ad611e3230894c35896b2ccae5be9c7e.7z")
+        add_versions("8.0.31", "543681279f679b0873bf241ab0ccc434f15e6e53a6fa06ce2f4d5aea1162ab52")
+
+        add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly=true})
+    end
     
     if is_plat("macosx", "linux", "windows") then
         add_deps("cmake", "openssl")
@@ -26,7 +33,7 @@ package("mysql")
 
     add_includedirs("include", "include/mysql")
 
-    on_load("windows", function(package) 
+    on_load("windows", "mingw", function(package) 
         if package:version():ge("8.0.0") then
             package:add("deps", "boost")
             package:add("deps", "openssl 1.1.1-t")
@@ -34,6 +41,12 @@ package("mysql")
             package:add("deps", "zstd")
             package:add("deps", "lz4")
         end
+    end)
+
+    on_install("mingw", function (package)
+        os.cp("mysql/8.0.31/ad611e3230894c35896b2ccae5be9c7e/lib", package:installdir())
+        os.cp("mysql/8.0.31/ad611e3230894c35896b2ccae5be9c7e/include", package:installdir())
+        os.cp("mysql/8.0.31/ad611e3230894c35896b2ccae5be9c7e/lib/libmysql.dll", package:installdir("bin"))
     end)
 
     on_install("windows", function (package)
