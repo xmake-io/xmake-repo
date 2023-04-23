@@ -33,10 +33,6 @@ package("libcurl")
     add_configs("libssh2",  {description = "Use libSSH2 library.", default = false, type = "boolean"})
     add_configs("libpsl",   {description = "Use libpsl library.", default = false, type = "boolean"})
 
-    if not is_plat("windows", "mingw@windows") then
-        add_configs("libpsl",   {description = "Use libpsl for Public Suffix List.", default = false, type = "boolean"})
-    end
-
     on_load(function (package)
         if package:is_plat("windows", "mingw") then
             if not package:config("shared") then
@@ -53,8 +49,7 @@ package("libcurl")
                             zlib     = "zlib",
                             zstd     = "zstd",
                             brotli   = "brotli",
-                            libssh2  = "libssh2",
-                            libpsl   = "libpsl"}
+                            libssh2  = "libssh2"}
         local has_deps = false
         for name, dep in pairs(configdeps) do
             if package:config(name) then
