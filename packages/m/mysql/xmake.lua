@@ -12,16 +12,17 @@ package("mysql")
     if is_plat("windows") then
         set_urls("https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-$(version).tar.gz")
         add_versions("8.0.31", "67bb8cba75b28e95c7f7948563f01fb84528fcbb1a35dba839d4ce44fe019baa")
-
-        add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean"})
-        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT"})
     end
 
     if is_plat("mingw") then
-        set_urls("https://github.com/xmake-mirror/build-artifacts/releases/download/mysql-$(version)/windows-x64-vc143-ad611e3230894c35896b2ccae5be9c7e.7z")
-        add_versions("8.0.31", "543681279f679b0873bf241ab0ccc434f15e6e53a6fa06ce2f4d5aea1162ab52")
-
         add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly=true})
+        if is_arch("i386") then
+            set_urls("https://github.com/xmake-mirror/mysql/releases/download/$(version)/mysql_$(version)_x86.zip")
+            add_versions("8.0.31", "fd626cae72b1f697b941cd3a2ea9d93507e689adabb1c2c11d465f01f4b07cb9")
+        else
+            set_urls("https://github.com/xmake-mirror/mysql/releases/download/$(version)/mysql_$(version)_x64.zip")
+            add_versions("8.0.31", "26312cfa871c101b7a55cea96278f9d14d469455091c4fd3ffaaa67a2d1aeea5")
+        end
     end
     
     if is_plat("macosx", "linux", "windows") then
@@ -44,9 +45,9 @@ package("mysql")
     end)
 
     on_install("mingw", function (package)
-        os.cp("mysql/*/*/lib", package:installdir())
-        os.cp("mysql/*/*/include", package:installdir())
-        os.cp("mysql/*/*/lib/libmysql.dll", package:installdir("bin"))
+        os.cp("lib", package:installdir())
+        os.cp("include", package:installdir())
+        os.cp("lib/libmysql.dll", package:installdir("bin"))
     end)
 
     on_install("windows", function (package)
