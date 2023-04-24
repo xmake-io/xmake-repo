@@ -128,6 +128,7 @@ package("boost")
     end)
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
+        import("core.base.option")
 
         -- force boost to compile with the desired compiler
         local file = io.open("user-config.jam", "a")
@@ -170,13 +171,13 @@ package("boost")
         end
         os.vrun("./b2 headers")
 
-        local njobs = import("core.base.option").get("jobs") or tostring(os.default_njob())
+        local njobs = option.get("jobs") or tostring(os.default_njob())
         local argv =
         {
             "--prefix=" .. package:installdir(),
             "--libdir=" .. package:installdir("lib"),
             "-d2",
-            format("-j%s", njobs),
+            "-j" .. njobs,
             "--hash",
             "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
