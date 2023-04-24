@@ -21,9 +21,6 @@ package("quill")
 
     on_install(function (package)
         local configs = {"-DQUILL_ENABLE_INSTALL=ON"}
-        if is_plat("windows") then
-            table.insert(configs, "-DCMAKE_CXX_FLAGS=/utf-8")
-        end
         if package:config("fmt_external") then
             table.insert(configs, "-DQUILL_FMT_EXTERNAL=ON")
         end
