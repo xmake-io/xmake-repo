@@ -45,6 +45,10 @@ else
         targetarch = "ARM"
     elseif is_arch("arm64") then
         targetarch = "ARM64"
+    elseif is_arch("mips64") then
+        targetarch = "MIPS64"
+    elseif is_arch("riscv") then
+        targetarch = "RISCV"
     end
 end
 set_configvar("TARGET", targetarch)
@@ -147,13 +151,21 @@ target("ffi")
         add_includedirs("src/x86")
         add_headerfiles("src/x86/ffitarget.h")
     elseif is_arch("arm") then
-        add_files("src/arm/ffi.c", "src/arm/sysv.S")
+        add_files("src/arm/ffi.c")
+        add_files(is_plat("windows") and "src/arm/sysv_msvc_arm32.S" or "src/arm/sysv.S")
         add_includedirs("src/arm")
         add_headerfiles("src/arm/ffitarget.h")
     elseif is_arch("arm64") then
-        add_files("src/aarch64/ffi.c", "src/aarch64/sysv.S")
+        add_files("src/aarch64/ffi.c")
+        add_files(is_plat("windows") and "src/aarch64/win64_armasm.S" or "src/aarch64/sysv.S")
         add_includedirs("src/aarch64")
         add_headerfiles("src/aarch64/ffitarget.h")
+    elseif is_arch("mips64") then
+        add_files("src/mips/ffi.c", "src/mips/n32.S")
+        add_headerfiles("src/mips/ffitarget.h")
+    elseif is_arch("riscv") then
+        add_files("src/riscv/ffi.c", "src/riscv/sysv.S")
+        add_headerfiles("src/riscv/ffitarget.h")
     end
     before_build(function (target)
         io.replace("include/ffi.h", "!defined FFI_BUILDING", target:is_static() and "0" or "1", {plain = true})
