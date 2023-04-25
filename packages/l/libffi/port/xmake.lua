@@ -92,7 +92,6 @@ end
 rule("asm.preprocess")
     set_extensions(".S")
     on_buildcmd_file(function (target, batchcmds, sourcefile, opt)
-        import("core.tool.toolchain")
         import("lib.detect.find_tool")
 
         local rootdir = path.join(target:autogendir(), "rules", "asm.preprocess")
@@ -101,14 +100,15 @@ rule("asm.preprocess")
         local sourcefile_cx = target:autogenfile(sourcefile, {rootdir = rootdir, filename = filename})
 
         -- preprocessing
-        local envs = toolchain.load("msvc"):runenvs()
+        local envs = target:toolchain("msvc"):runenvs()
         local cl = find_tool("cl", {envs = envs})
-        batchcmds:execv(cl.program, {"/nologo", "/EP", "/Iinclude", "/I" .. path.directory(sourcefile_or), sourcefile_or}, {stdout = sourcefile_cx})
+        batchcmds:execv(cl.program, {"/nologo", "/EP", "/Iinclude",
+            "/I" .. path.directory(sourcefile_or), sourcefile_or}, {envs = envs, stdout = sourcefile_cx})
 
         local objectfile = target:objectfile(sourcefile_cx)
         table.insert(target:objectfiles(), objectfile)
 
-        batchcmds:show_progress(opt.progress, "${color.build.object}compiling.%s %s", get_config("mode"), sourcefile_cx)
+        batchcmds:show_progress(opt.progress, "${color.build.object}compiling.$(mode) %s", sourcefile_cx)
         batchcmds:compile(sourcefile_cx, objectfile)
 
         batchcmds:add_depfiles(sourcefile)
