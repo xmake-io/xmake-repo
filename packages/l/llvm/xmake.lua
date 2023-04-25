@@ -89,6 +89,7 @@ package("llvm")
 
     on_install("macosx", "windows", "msys", "bsd", function (package)
         os.cp("*", package:installdir())
+        package:addenv("PATH", "bin")
     end)
 
     on_install("linux", function (package)
