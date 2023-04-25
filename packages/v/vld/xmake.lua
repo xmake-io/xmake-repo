@@ -25,5 +25,5 @@ package("vld")
     end)
 
     on_test(function (package)
-        assert(package:has_ctypes("VLD_BOOL", {includes = "vld.h"}))
+        assert(package:has_cfuncs("VLDDisable", {includes = "vld.h", configs = {defines = "VLD_FORCE_ENABLE"}}))
     end)
