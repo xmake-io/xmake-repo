@@ -47,6 +47,10 @@ package("joltphysics")
         if package:is_plat("windows") and not package:config("shared") then
             package:add("syslinks", "Advapi32")
         end
+        package:add("defines", "JPH_PROFILE_ENABLED")
+        if package:is_plat("windows") then
+            package:add("defines", "JPH_FLOATING_POINT_EXCEPTIONS_ENABLED")
+        end
         if package:config("cross_platform_deterministic") then
             package:add("defines", "JPH_CROSS_PLATFORM_DETERMINISTIC")
         end
