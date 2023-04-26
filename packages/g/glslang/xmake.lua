@@ -46,6 +46,10 @@ package("glslang")
         io.replace("SPIRV/CMakeLists.txt", "target_link_libraries(SPIRV PRIVATE MachineIndependent SPIRV-Tools-opt)", [[
             target_link_libraries(SPIRV PRIVATE MachineIndependent SPIRV-Tools-opt SPIRV-Tools-link SPIRV-Tools-reduce SPIRV-Tools)
         ]], {plain = true})
+        -- glslang will add a debug lib postfix for win32 platform, disable this to fix compilation issues under windows
+        io.replace("CMakeLists.txt", 'set(CMAKE_DEBUG_POSTFIX "d")', [[
+            message(WARNING "Disabled CMake Debug Postfix for xmake package generation")
+        ]], {plain = true})
         if package:is_plat("wasm") then
             -- wasm-ld doesn't support --no-undefined
             io.replace("CMakeLists.txt", [[add_link_options("-Wl,--no-undefined")]], "", {plain = true})
@@ -54,6 +58,9 @@ package("glslang")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
+            if package:debug() then
+                table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+            end
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         end
