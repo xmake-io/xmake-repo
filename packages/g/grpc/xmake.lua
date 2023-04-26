@@ -28,6 +28,9 @@ package("grpc")
         add_syslinks("pthread", "dl", "m")
     end
 
+    add_links("grpc++", "grpc", "gpr")
+    add_links("address_sorting", "upb") --TODO we should add seperate package deps
+
     on_install("linux", "macosx", "windows", function (package)
         local configs = {
             "-DCMAKE_CXX_STANDARD=17", -- abseil need c++17
@@ -51,5 +54,5 @@ package("grpc")
             void test() {
                 grpc::CompletionQueue q;
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "grpcpp/grpcpp.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "grpcpp/grpcpp.h"}))
     end)
