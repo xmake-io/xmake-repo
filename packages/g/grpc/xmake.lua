@@ -28,7 +28,8 @@ package("grpc")
         add_syslinks("pthread", "dl", "m")
     end
 
-    add_links("grpc++", "grpc", "gpr")
+    add_links("grpc++", "grpc++_unsecure", "grpc++_alts", "grpc++_reflection", "grpc++_error_details", "grpcpp_channelz")
+    add_links("grpc", "grpc_unsecure", "grpc_plugin_support", "gpr")
     add_links("address_sorting", "upb") --TODO we should add seperate package deps
 
     on_install("linux", "macosx", "windows", function (package)
