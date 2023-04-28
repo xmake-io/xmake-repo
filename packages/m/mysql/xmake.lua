@@ -12,9 +12,17 @@ package("mysql")
     if is_plat("windows") then
         set_urls("https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-$(version).tar.gz")
         add_versions("8.0.31", "67bb8cba75b28e95c7f7948563f01fb84528fcbb1a35dba839d4ce44fe019baa")
+    end
 
-        add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean"})
-        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT"})
+    if is_plat("mingw") then
+        add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly=true})
+        if is_arch("i386") then
+            set_urls("https://github.com/xmake-mirror/mysql/releases/download/$(version)/mysql_$(version)_x86.zip")
+            add_versions("8.0.31", "fd626cae72b1f697b941cd3a2ea9d93507e689adabb1c2c11d465f01f4b07cb9")
+        else
+            set_urls("https://github.com/xmake-mirror/mysql/releases/download/$(version)/mysql_$(version)_x64.zip")
+            add_versions("8.0.31", "26312cfa871c101b7a55cea96278f9d14d469455091c4fd3ffaaa67a2d1aeea5")
+        end
     end
     
     if is_plat("macosx", "linux", "windows") then
@@ -26,7 +34,7 @@ package("mysql")
 
     add_includedirs("include", "include/mysql")
 
-    on_load("windows", function(package) 
+    on_load("windows", "mingw", function(package) 
         if package:version():ge("8.0.0") then
             package:add("deps", "boost")
             package:add("deps", "openssl 1.1.1-t")
@@ -34,6 +42,12 @@ package("mysql")
             package:add("deps", "zstd")
             package:add("deps", "lz4")
         end
+    end)
+
+    on_install("mingw", function (package)
+        os.cp("lib", package:installdir())
+        os.cp("include", package:installdir())
+        os.cp("lib/libmysql.dll", package:installdir("bin"))
     end)
 
     on_install("windows", function (package)

@@ -14,6 +14,9 @@ package("cpuinfo")
     end
 
     add_links("cpuinfo", "clog")
+    if is_plat("linux", "macosx", "bsd") then
+        add_syslinks("pthread")
+    end
 
     on_install("windows", "linux", "macosx", "bsd", "android", function (package)
         local configs = {"-DCPUINFO_BUILD_TOOLS=OFF",
