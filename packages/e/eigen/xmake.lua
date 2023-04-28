@@ -20,7 +20,7 @@ package("eigen")
         add_extsources("brew::eigen")
     end
 
-    add_configs("headeronly", {description = "Use header only version.", default = true, type = "boolean"})
+    add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_includedirs("include")
