@@ -36,7 +36,7 @@ package("icu4c")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "mingw", function (package)
         import("package.tools.autoconf")
 
         os.cd("source")
