@@ -45,6 +45,10 @@ else
         targetarch = "ARM"
     elseif is_arch("arm64") then
         targetarch = "ARM64"
+    elseif is_arch("mips64") then
+        targetarch = "MIPS64"
+    elseif is_arch("riscv") then
+        targetarch = "RISCV"
     end
 end
 set_configvar("TARGET", targetarch)
@@ -88,7 +92,6 @@ end
 rule("asm.preprocess")
     set_extensions(".S")
     on_buildcmd_file(function (target, batchcmds, sourcefile, opt)
-        import("core.tool.toolchain")
         import("lib.detect.find_tool")
 
         local rootdir = path.join(target:autogendir(), "rules", "asm.preprocess")
@@ -97,14 +100,15 @@ rule("asm.preprocess")
         local sourcefile_cx = target:autogenfile(sourcefile, {rootdir = rootdir, filename = filename})
 
         -- preprocessing
-        local envs = toolchain.load("msvc"):runenvs()
+        local envs = target:toolchain("msvc"):runenvs()
         local cl = find_tool("cl", {envs = envs})
-        batchcmds:execv(cl.program, {"/nologo", "/EP", "/Iinclude", "/I" .. path.directory(sourcefile_or), sourcefile_or}, {stdout = sourcefile_cx})
+        batchcmds:execv(cl.program, {"/nologo", "/EP", "/Iinclude",
+            "/I" .. path.directory(sourcefile_or), sourcefile_or}, {envs = envs, stdout = sourcefile_cx})
 
         local objectfile = target:objectfile(sourcefile_cx)
         table.insert(target:objectfiles(), objectfile)
 
-        batchcmds:show_progress(opt.progress, "${color.build.object}compiling.%s %s", get_config("mode"), sourcefile_cx)
+        batchcmds:show_progress(opt.progress, "${color.build.object}compiling.$(mode) %s", sourcefile_cx)
         batchcmds:compile(sourcefile_cx, objectfile)
 
         batchcmds:add_depfiles(sourcefile)
@@ -147,13 +151,21 @@ target("ffi")
         add_includedirs("src/x86")
         add_headerfiles("src/x86/ffitarget.h")
     elseif is_arch("arm") then
-        add_files("src/arm/ffi.c", "src/arm/sysv.S")
+        add_files("src/arm/ffi.c")
+        add_files(is_plat("windows") and "src/arm/sysv_msvc_arm32.S" or "src/arm/sysv.S")
         add_includedirs("src/arm")
         add_headerfiles("src/arm/ffitarget.h")
     elseif is_arch("arm64") then
-        add_files("src/aarch64/ffi.c", "src/aarch64/sysv.S")
+        add_files("src/aarch64/ffi.c")
+        add_files(is_plat("windows") and "src/aarch64/win64_armasm.S" or "src/aarch64/sysv.S")
         add_includedirs("src/aarch64")
         add_headerfiles("src/aarch64/ffitarget.h")
+    elseif is_arch("mips64") then
+        add_files("src/mips/ffi.c", "src/mips/n32.S")
+        add_headerfiles("src/mips/ffitarget.h")
+    elseif is_arch("riscv") then
+        add_files("src/riscv/ffi.c", "src/riscv/sysv.S")
+        add_headerfiles("src/riscv/ffitarget.h")
     end
     before_build(function (target)
         io.replace("include/ffi.h", "!defined FFI_BUILDING", target:is_static() and "0" or "1", {plain = true})
