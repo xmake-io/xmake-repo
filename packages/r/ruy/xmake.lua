@@ -9,6 +9,10 @@ package("ruy")
     add_deps("cpuinfo")
 
     add_configs("profiler", { description = "Enable ruy's built-in profiler (harms performance)", default = false, type = "boolean" })
+    if is_plat("windows") then
+        add_configs("shared",     {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT", readonly = true})
+    end
 
     on_install("windows", "linux", "macosx", "android", function (package)
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
