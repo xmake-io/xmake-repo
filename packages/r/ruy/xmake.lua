@@ -8,8 +8,6 @@ package("ruy")
 
     add_deps("cpuinfo")
 
-    -- Ruy is supposed to be build in static 
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("profiler", { description = "Enable ruy's built-in profiler (harms performance)", default = false, type = "boolean" })
 
     on_install("windows", "linux", "macosx", "android", function (package)

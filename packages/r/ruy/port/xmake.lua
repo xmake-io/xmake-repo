@@ -6,7 +6,7 @@ option("profiler", { default = false, description = "Enable ruy's built-in profi
 set_languages("cxx14")
 
 target("ruy")
-    set_kind("static")
+    set_kind("$(kind)")
 
     add_files("ruy/**.cc")
     remove_files("ruy/test*.cc", "ruy/*test.cc")
@@ -25,16 +25,14 @@ target("ruy")
 
     add_packages("cpuinfo")
 
-    on_load(function (target) 
-        if is_arch("arm.*") then
-            target:add("cxflags", "-mfpu=neon")
-        end
+    if is_arch("arm.*") then
+        add_cxxflags("-mfpu=neon")
+    end
 
-        if not is_plat("windows") then 
-            target:add("cxflags", "-Wall", "-Wextra", "-Wc++14-compat", "-Wundef")
-        end
+    if not is_plat("windows") then 
+        add_cxflags("cxflags", "-Wall", "-Wextra", "-Wc++14-compat", "-Wundef")
+    end
 
-        if has_config("profiler") then
-            target:add("defines", "RUY_PROFILE")
-        end
-    end)
+    if has_config("profiler") then
+        add_defines("RUY_PROFILE")
+    end
