@@ -26,7 +26,7 @@ target("ruy")
     add_packages("cpuinfo")
 
     if is_arch("arm.*") then
-        set_vectorexts("neon")
+        add_vectorexts("neon")
     end
 
     if not is_plat("windows") then 
