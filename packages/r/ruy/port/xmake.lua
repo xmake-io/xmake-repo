@@ -3,6 +3,7 @@ add_requires("cpuinfo")
 
 option("profiler", { default = false, description = "Enable ruy's built-in profiler (harms performance)" })
 
+set_languages("cxx14")
 
 target("ruy")
     set_kind("static")
