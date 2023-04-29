@@ -26,11 +26,11 @@ target("ruy")
     add_packages("cpuinfo")
 
     if is_arch("arm.*") then
-        add_cxxflags("-mfpu=neon")
+        set_vectorexts("neon")
     end
 
     if not is_plat("windows") then 
-        add_cxflags("cxflags", "-Wall", "-Wextra", "-Wc++14-compat", "-Wundef")
+        set_warnings("all", "extra")
     end
 
     if has_config("profiler") then
