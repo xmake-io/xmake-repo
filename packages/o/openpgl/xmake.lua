@@ -4,18 +4,22 @@ package("openpgl")
     set_description("Intel(R) Open Path Guiding Library")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/OpenPathGuidingLibrary/openpgl/archive/refs/tags/v(version).tar.gz",
+    add_urls("https://github.com/OpenPathGuidingLibrary/openpgl/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/OpenPathGuidingLibrary/openpgl.git")
+
     add_versions("0.5.0", "1ec806d434d45e43e098f82ee9be0cb74928343898c57490b34ff80584e9805a")
 
     add_configs("avx512", {description = "Enable AVX512", default = false, type = "boolean"})
-    add_configs("neon", {description = "Enable NEON", default = false, type = "boolean"})
+    add_configs("neon",   {description = "Enable NEON", default = false, type = "boolean"})
     add_configs("neon2x", {description = "Enable double pumped NEON", default = false, type = "boolean"})
 
     add_deps("cmake", "tbb", "embree")
 
     on_install("windows", "linux", function (package)
         local configs = {}
+        if package:arch():startswith("arm") then
+            table.insert(configs, "-DBUILD_TBB_FROM_SOURCE=ON")
+        end
         if package:config("avx512") then
             table.insert(configs, "-DOPENPGL_ISA_AVX512=ON")
         end
