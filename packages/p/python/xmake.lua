@@ -49,6 +49,10 @@ package("python")
         set_kind("binary")
     end
 
+    if is_plat("macosx", "linux") then
+        add_deps("gettext")
+    end
+
     if is_host("linux", "bsd") then
         add_deps("libffi", "zlib", {host = true, private = true})
         add_syslinks("util", "pthread", "dl")
