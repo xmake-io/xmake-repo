@@ -15,11 +15,8 @@ package("openpgl")
 
     add_deps("cmake", "tbb", "embree")
 
-    on_install("windows", "linux", function (package)
+    on_install("linux", "windows|x64", "windows|x86", function (package)
         local configs = {}
-        if package:arch():startswith("arm") then
-            table.insert(configs, "-DBUILD_TBB_FROM_SOURCE=ON")
-        end
         if package:config("avx512") then
             table.insert(configs, "-DOPENPGL_ISA_AVX512=ON")
         end
