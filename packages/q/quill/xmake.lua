@@ -8,12 +8,17 @@ package("quill")
 
     add_versions("2.8.0", "0461a6c314e3d882f3b9ada487ef1bf558925272509ee41a9fd25f7776db6075")
 
+    if is_plat("macosx") then
+        add_extsources("brew::quill")
+    end
+
     add_configs("fmt_external", {description = "Use external fmt library instead of bundled.", default = false, type = "boolean"})
     add_configs("noexcept", {description = "Build without exceptions with -fno-exceptions flag", default = false, type = "boolean"})
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake")
 
-    on_load("windows", "linux", "macosx", function (package)
+    on_load(function (package)
         if package:config("fmt_external") then
             package:add("deps", "fmt")
             package:add("defines", "QUILL_FMT_EXTERNAL")
@@ -23,7 +28,7 @@ package("quill")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DQUILL_ENABLE_INSTALL=ON"}
         if package:config("fmt_external") then
             table.insert(configs, "-DQUILL_FMT_EXTERNAL=ON")
