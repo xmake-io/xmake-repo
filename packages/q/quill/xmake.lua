@@ -5,6 +5,7 @@ package("quill")
 
     set_urls("https://github.com/odygrd/quill/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/odygrd/quill.git")
+
     add_versions("2.8.0", "0461a6c314e3d882f3b9ada487ef1bf558925272509ee41a9fd25f7776db6075")
 
     add_configs("fmt_external", {description = "Use external fmt library instead of bundled.", default = false, type = "boolean"})
@@ -12,14 +13,14 @@ package("quill")
 
     add_deps("cmake")
 
-    on_load(function (package)
+    on_load("windows", "linux", "macosx", function (package)
         if package:config("fmt_external") then
             package:add("deps", "fmt")
             package:add("defines", "QUILL_FMT_EXTERNAL")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DQUILL_ENABLE_INSTALL=ON"}
         if package:config("fmt_external") then
             table.insert(configs, "-DQUILL_FMT_EXTERNAL=ON")
