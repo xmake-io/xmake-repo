@@ -14,7 +14,6 @@ package("quill")
 
     add_configs("fmt_external", {description = "Use external fmt library instead of bundled.", default = false, type = "boolean"})
     add_configs("noexcept", {description = "Build without exceptions with -fno-exceptions flag", default = false, type = "boolean"})
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake")
 
@@ -22,9 +21,6 @@ package("quill")
         if package:config("fmt_external") then
             package:add("deps", "fmt")
             package:add("defines", "QUILL_FMT_EXTERNAL")
-        end
-        if package:config("shared") then
-            package:add("defines", "FMT_EXPORT")
         end
     end)
 
@@ -37,7 +33,14 @@ package("quill")
             table.insert(configs, "-DQUILL_NO_EXCEPTIONS=ON")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("shared") then
+            table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
+            if package:is_plat("windows") or package:is_plat("mingw") then
+                table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+            end
+        else
+            table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
