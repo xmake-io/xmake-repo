@@ -17,10 +17,16 @@ package("icu4c")
     add_patches("69.1", path.join(os.scriptdir(), "patches", "69.1", "replace-py-3.patch"), "ae27a55b0e79a8420024d6d349a7bae850e1dd403a8e1131e711c405ddb099b9")
     add_patches("70.1", path.join(os.scriptdir(), "patches", "70.1", "replace-py-3.patch"), "6469739da001721122b62af513370ed62901caf43af127de3f27ea2128830e35")
     if is_plat("mingw") then
-    add_patches("72.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "16e508d4d65fa51d7e39f900058036ad04dcd7bf841d085303d6e72901d7b4cd")
+        add_patches("72.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
     end
 
-    add_links("icuuc", "icutu", "icui18n", "icuio", "icudata")
+    add_links("icuuc", "icutu", "icui18n", "icuio")
+    if is_plat("mingw") then
+        add_links("icudt")
+    else
+        add_links("icudata")
+    end
+
     if is_plat("linux") then
         add_syslinks("dl")
     end
@@ -54,6 +60,9 @@ package("icu4c")
         else
             table.insert(configs, "--disable-shared")
             table.insert(configs, "--enable-static")
+        end
+        if package:is_plat("mingw") then
+            table.insert(configs, "--with-data-packaging=dll")
         end
 
         local envs = {}
