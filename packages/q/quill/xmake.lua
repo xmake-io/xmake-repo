@@ -18,6 +18,9 @@ package("quill")
             package:add("deps", "fmt")
             package:add("defines", "QUILL_FMT_EXTERNAL")
         end
+        if package:config("shared") then
+            package:add("defines", "FMT_EXPORT")
+        end
     end)
 
     on_install("windows", "linux", "macosx", function (package)
