@@ -17,7 +17,7 @@ package("icu4c")
     add_patches("69.1", path.join(os.scriptdir(), "patches", "69.1", "replace-py-3.patch"), "ae27a55b0e79a8420024d6d349a7bae850e1dd403a8e1131e711c405ddb099b9")
     add_patches("70.1", path.join(os.scriptdir(), "patches", "70.1", "replace-py-3.patch"), "6469739da001721122b62af513370ed62901caf43af127de3f27ea2128830e35")
     if is_plat("mingw") then
-    add_patches("72.1", path.join(os.scriptdir(), "patches", "72.1", "0021-mingw-static-libraries-without-s.patch"), "d8612f40b1731d9a94290afcf80c896184a2f15b8ae8f23b3643c64f6cabfa2f")
+    add_patches("72.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "16e508d4d65fa51d7e39f900058036ad04dcd7bf841d085303d6e72901d7b4cd")
     end
 
     add_links("icuuc", "icutu", "icui18n", "icuio", "icudata")
