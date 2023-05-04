@@ -45,7 +45,7 @@ package("icu4c")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", "mingw", function (package)
+    on_install("macosx", "linux", "mingw@windows", function (package)
         import("package.tools.autoconf")
 
         os.cd("source")
@@ -62,12 +62,6 @@ package("icu4c")
             table.insert(configs, "--enable-static")
         end
         if package:is_plat("mingw") then
-            local triples =
-                {
-                    i386   = "i686-w64-mingw32",
-                    x86_64 = "x86_64-w64-mingw32"
-                }
-            table.insert(configs, "--build=" .. (triples[package:arch()] or triples.i386))
             table.insert(configs, "--with-data-packaging=dll")
         end
 
