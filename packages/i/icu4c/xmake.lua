@@ -62,6 +62,12 @@ package("icu4c")
             table.insert(configs, "--enable-static")
         end
         if package:is_plat("mingw") then
+            local triples =
+                {
+                    i386   = "i686-w64-mingw32",
+                    x86_64 = "x86_64-w64-mingw32"
+                }
+            table.insert(configs, "--build=" .. (triples[package:arch()] or triples.i386))
             table.insert(configs, "--with-data-packaging=dll")
         end
 
