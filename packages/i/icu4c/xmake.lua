@@ -36,8 +36,6 @@ package("icu4c")
 
     on_install("windows", function (package)
         local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
-        table.insert(configs, "/p:Configuration=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
         import("package.tools.msbuild").build(package, configs)
         os.cp("include", package:installdir())
         os.cp("bin*/*", package:installdir("bin"))
@@ -62,14 +60,6 @@ package("icu4c")
             table.insert(configs, "--enable-static")
         end
         if package:is_plat("mingw") then
-            if is_host("macosx") then
-                local triples =
-                    {
-                        i386   = "i686-w64-mingw32",
-                        x86_64 = "x86_64-w64-mingw32"
-                    }
-                table.insert(configs, "--target=" .. (triples[package:arch()] or triples.i386))
-            end
             table.insert(configs, "--with-data-packaging=dll")
         end
 
