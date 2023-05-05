@@ -62,7 +62,7 @@ package("icu4c")
             table.insert(configs, "--enable-static")
         end
         if package:is_plat("mingw") then
-            if package:is_host("macosx") then
+            if is_host("macosx") then
                 local triples =
                     {
                         i386   = "i686-w64-mingw32",
