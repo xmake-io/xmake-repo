@@ -13,6 +13,8 @@ package("shaderwriter")
     add_versions("2.3", "8e7769ddf4b008b0c7de3140126fcfb30607879e")
     add_versions("2.4", "ec31f19f88fe15af476b48da7499aac9d4089a8f")
     add_versions("2.5", "4b456bb6f36103936f4862edff397af943a40621")
+    add_versions("2.6", "ab06f63bb941ac60437120e3221c024555a2bcaa")
+    add_versions("2.6.1", "047ca8f5a2d2ad2fa569bd53a8325939a9d17f6c")
 
     add_deps("cmake")
 
@@ -28,6 +30,7 @@ package("shaderwriter")
             "-DSDW_BUILD_VULKAN_LAYER=OFF",
             "-DSDW_UNITY_BUILD=ON",
             "-DPROJECTS_USE_PRECOMPILED_HEADERS=OFF",
+            "-DPROJECTS_ALLOW_DEBUG_INSTALL_HEADERS=ON",
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")
         }
         import("package.tools.cmake").install(package, configs)

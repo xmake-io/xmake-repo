@@ -11,7 +11,7 @@ package("flatbuffers")
     add_versions("v23.1.21", "48597d6a6f8ca67a02ae8d8494b3bfc9136eb93da60a538d5bfc024f7c564f97")
 
     add_deps("cmake")
-    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function(package)
+    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", "cross", function(package)
         local configs = {"-DFLATBUFFERS_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DFLATBUFFERS_BUILD_SHAREDLIB=" .. (package:config("shared") and "ON" or "OFF"))
@@ -20,7 +20,9 @@ package("flatbuffers")
             table.insert(configs, "-DFLATBUFFERS_BUILD_FLATHASH=OFF")
         end
         import("package.tools.cmake").install(package, configs)
-        package:addenv("PATH", "bin")
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_test(function(package)

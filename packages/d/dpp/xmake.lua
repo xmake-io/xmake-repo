@@ -5,11 +5,9 @@ package("dpp")
 
     add_urls("https://github.com/brainboxdotcc/DPP/archive/refs/tags/$(version).tar.gz",
              "https://github.com/brainboxdotcc/DPP.git")
- 
-    -- NOTE !
-    -- Keep all versions with the same major number. If D++ switch to a new major version,
-    -- keep only the latest previous versions.
-    -- i.e. if D++ switch to v11.x.x, keep only the latest v10.x.x and delete the rest.
+             
+    add_versions("v10.0.23", "8f9db61c3586a492ada378235300c509e3bc2fc090cef32de0a8241741038df0")
+
     add_versions("v10.0.22", "f8da36a9e24012fdff55a988e41d2015235b9e564b3151a1e5158fa1c7e05648")
 
     add_versions("v10.0.21", "8ef2bb75f16b80d742a99c3a18ab5a2a57bce74238518af9b9aca670c2d7034b")
@@ -61,9 +59,13 @@ package("dpp")
         add_syslinks("pthread")
     end
 
-    on_load("windows", "mingw", function (package)
+    on_load(function (package)
         if not package:config("shared") then
             package:add("defines", "DPP_STATIC")
+        end
+        if package:config("have_voice") then
+            package:add("defines", "HAVE_VOICE")
+            package:add("deps", "libsodium", "libopus")
         end
 
         if package:config("have_voice") then
@@ -74,22 +76,30 @@ package("dpp")
         if package:version():le("v10.0.13") then
             package:add("deps", "fmt")
         end
+
+        if package:version():ge("v10.0.23") then
+            package:add("defines", "DPP_USE_EXTERNAL_JSON")
+        end
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
         -- fix dpp dependencies
         for _, file in ipairs(table.join(os.files("include/**.h"), os.files("src/**.cpp"))) do
             io.replace(file, "#include <dpp/fmt/", "#include <fmt/", {plain = true})
-            io.replace(file, "#include <dpp/nlohmann/", "#include <nlohmann/", {plain = true})
+
+            if package:version():lt("v10.0.23") then
+                io.replace(file, "#include <dpp/nlohmann/", "#include <nlohmann/", {plain = true})
+            end
         end
 
-	for _, file in ipairs(os.files("src/**.cpp")) do
-		io.replace(file, "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
-	end
+        for _, file in ipairs(os.files("src/**.cpp")) do
+            io.replace(file, "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
+        end
 
-	if package:version():le("v10.0.14") then
-                os.rmdir("include/dpp/fmt")
-	end
+        if package:version():le("v10.0.14") then
+            os.rmdir("include/dpp/fmt")
+        end
+
         io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
         os.rmdir("include/dpp/nlohmann")
 

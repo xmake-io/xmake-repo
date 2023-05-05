@@ -23,6 +23,9 @@ package("poco")
     add_deps("cmake")
     add_deps("openssl", "sqlite3", "expat", "zlib")
     add_defines("POCO_NO_AUTOMATIC_LIBS")
+    if is_plat("windows") then
+        add_syslinks("iphlpapi")
+    end
 
     on_load("windows", "linux", "macosx", function (package)
         if package:config("postgresql") then
@@ -65,6 +68,15 @@ package("poco")
         end
         for _, lib in ipairs({"mysql", "postgresql", "odbc"}) do
             table.insert(configs, "-DENABLE_DATA_" .. lib:upper() .. "=" .. (package:config(lib) and "ON" or "OFF"))
+        end
+        
+        if package:config("mysql") then
+            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '', {plain = true})
+            local libmysql = package:dep("mysql"):fetch()
+            if libmysql then
+                table.insert(configs, "-DMYSQL_INCLUDE_DIR=" .. table.concat(libmysql.includedirs or libmysql.sysincludedirs, ";"))
+                table.insert(configs, "-DMYSQL_LIBRARY=" .. table.concat(libmysql.libfiles or {}, ";"))
+            end
         end
 
         -- warning: only works on windows sdk 10.0.18362.0 and later

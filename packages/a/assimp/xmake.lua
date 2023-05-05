@@ -51,11 +51,11 @@ package("assimp")
             package:add("deps", "irrxml")
         end
         if package:is_plat("linux", "macosx") and package:config("shared") then
-            package:add("links", "assimp")
+            package:add("links", "assimp" .. (package:is_debug() and "d" or ""))
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install(function (package)
         local configs = {"-DASSIMP_BUILD_SAMPLES=OFF",
                          "-DASSIMP_BUILD_TESTS=OFF",
                          "-DASSIMP_BUILD_DOCS=OFF",

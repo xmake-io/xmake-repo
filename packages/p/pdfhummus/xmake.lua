@@ -3,9 +3,11 @@ package("pdfhummus")
     set_description("High performance library for creating, modiyfing and parsing PDF files in C++ ")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/galkahana/PDF-Writer/archive/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/galkahana/PDF-Writer/archive/refs/tags/v$(version).tar.gz",
+             "https://github.com/galkahana/PDF-Writer/archive/refs/tags/$(version).tar.gz",
              "https://github.com/galkahana/PDF-Writer.git")
     add_versions("4.1", "0c0d860b0ecea928709b9e4642fa21926eb2f626f702699c3b87afa2965b4857")
+    add_versions("4.5.6", "72a4f3fbbc39d4f169911454e9977ef8dd882bd5c0a305bd3133347903cff705")
 
     add_deps("freetype", "zlib", "libaesgm")
 

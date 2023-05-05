@@ -19,7 +19,7 @@ package("cmake")
         add_versions("3.24.1", "71bb8db69826d74c395a3c3bbf8b773dbe9f54a2c7331266ba70da303e9c97a1")
         add_versions("3.24.2", "efb11a78c064dd7c54a50b8da247254d252112c402c6e48cb7db3f9c84a4e5ad")
     elseif is_host("linux") then
-        if os.arch() == "arm64" then
+        if os.arch():find("arm64.*") then
             add_urls("https://cmake.org/files/v$(version)-aarch64.tar.gz", {version = function (version)
                     return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version .. (version:ge("3.20") and "-linux" or "-Linux")
                 end})

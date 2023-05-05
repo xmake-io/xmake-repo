@@ -37,6 +37,7 @@ package("boost")
         add_syslinks("pthread", "dl")
     end
 
+    add_configs("pyver", {description = "python version x.y, etc. 3.10", default = "3.10"})
     local libnames = {"fiber",
                       "coroutine",
                       "context",
@@ -84,9 +85,8 @@ package("boost")
                 linkname = "boost_" .. libname
             end
             if libname == "python" then
-                -- TODO maybe we need improve it, e.g. libboost_python310-mt.a
-                linkname = linkname .. "310"
-            end
+                linkname = linkname .. package:config("pyver"):gsub("%p+", "")
+            end            
             if package:config("multi") then
                 linkname = linkname .. "-mt"
             end
@@ -122,19 +122,29 @@ package("boost")
         if package:is_plat("windows") then
             package:add("defines", "BOOST_ALL_NO_LIB")
         end
+
         if package:config("python") then
-            package:add("deps", "python 3.10.x")
+            if not package:config("shared") then
+                package:add("defines", "BOOST_PYTHON_STATIC_LIB")
+            end
+            package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
     end)
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
+        import("core.base.option")
 
         -- force boost to compile with the desired compiler
         local file = io.open("user-config.jam", "a")
         if file then
             if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
-                file:print("using darwin : : %s ;", package:build_getenv("ld"))
+                -- and we need `xcrun -sdk macosx clang++` to make b2 to get `-isysroot` automatically
+                local cc = package:build_getenv("ld")
+                if cc and cc:find("clang", 1, true) and cc:find("Xcode", 1, true) then
+                    cc = "xcrun -sdk macosx clang++"
+                end
+                file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
                 file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
             else
@@ -152,21 +162,26 @@ package("boost")
         if package:is_plat("windows") then
             import("core.tool.toolchain")
             local runenvs = toolchain.load("msvc"):runenvs()
+            -- for bootstrap.bat, all other arguments are useless
+            bootstrap_argv = { "msvc" }
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
         elseif package:is_plat("mingw") and is_host("windows") then
-            os.vrunv("sh", table.join("./bootstrap.sh", bootstrap_argv))
-            os.cp("./tools/build/src/engine/b2.exe", ".")
+            bootstrap_argv = { "gcc" }
+            os.vrunv("bootstrap.bat", bootstrap_argv)
+            -- todo looking for better solution to fix the confict between user-config.jam and project-config.jam
+            io.replace("project-config.jam", "using[^\n]+", "")
         else
             os.vrunv("./bootstrap.sh", bootstrap_argv)
         end
         os.vrun("./b2 headers")
 
+        local njobs = option.get("jobs") or tostring(os.default_njob())
         local argv =
         {
             "--prefix=" .. package:installdir(),
             "--libdir=" .. package:installdir("lib"),
             "-d2",
-            "-j4",
+            "-j" .. njobs,
             "--hash",
             "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
@@ -180,6 +195,9 @@ package("boost")
 
         if package:config("lto") then
             table.insert(argv, "lto=on")
+        end
+        if package:is_arch("aarch64", "arm+.*") then
+            table.insert(argv, "architecture=arm")
         end
         if package:is_arch(".+64.*") then
             table.insert(argv, "address-model=64")
@@ -196,6 +214,9 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "cxxflags=-std:c++14")
+            table.insert(argv, "toolset=msvc")
+        elseif package:is_plat("mingw") then
+            table.insert(argv, "toolset=gcc")
         else
             table.insert(argv, "cxxflags=-std=c++14")
             if package:config("pic") ~= false then

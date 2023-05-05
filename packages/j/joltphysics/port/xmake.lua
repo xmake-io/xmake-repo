@@ -10,10 +10,10 @@ option("inst_avx2", { default = false, description = "Enable AVX2 CPU instructio
 option("inst_avx512", { default = false, description = "Enable AVX512F+AVX512VL CPU instructions (x86/x64 only)" })
 option("inst_f16c", { default = false, description = "Enable half float CPU instructions (x86/x64 only)" })
 option("inst_fmadd", { default = false, description = "Enable fused multiply add CPU instructions (x86/x64 only)" })
-option("inst_lzcnt", { default = false, description = "Enable the lzcnt CPU instruction (x86/x64 only" })
-option("inst_sse4_1", { default = false, description = "Enable SSE4.1 CPU instructions (x86/x64 only" })
-option("inst_sse4_2", { default = false, description = "Enable SSE4.2 CPU instructions (x86/x64 only" })
-option("inst_tzcnt", { default = false, description = "Enable the tzcnt CPU instruction (x86/x64 only" })
+option("inst_lzcnt", { default = false, description = "Enable the lzcnt CPU instruction (x86/x64 only)" })
+option("inst_sse4_1", { default = false, description = "Enable SSE4.1 CPU instructions (x86/x64 only)" })
+option("inst_sse4_2", { default = false, description = "Enable SSE4.2 CPU instructions (x86/x64 only)" })
+option("inst_tzcnt", { default = false, description = "Enable the tzcnt CPU instruction (x86/x64 only)" })
 
 if has_config("cross_platform_deterministic") then
     set_fpmodels("precise")

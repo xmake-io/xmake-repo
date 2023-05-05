@@ -20,7 +20,10 @@ package("meson")
 
     add_deps("python 3.x", {kind = "binary"})
 
-    on_install("@macosx", "@linux", "@windows", function (package)
+    -- https://github.com/xmake-io/xmake-repo/issues/1937
+    set_policy("package.precompiled", false)
+
+    on_install("@macosx", "@linux", "@windows", "@msys", function (package)
         local envs = {PYTHONPATH = package:installdir()}
         local python = package:is_plat("windows") and "python" or "python3"
         os.vrunv(python, {"-m", "pip", "install", "--target=" .. package:installdir(), "."}, {envs = envs})
