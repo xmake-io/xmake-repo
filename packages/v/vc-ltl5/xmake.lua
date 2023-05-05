@@ -16,7 +16,7 @@ package("vc-ltl5")
         "10.0.10240.0",
         "10.0.19041.0",
     }
-    add_configs("min_version", {description = "Windows Target Platform Min Version", default = "6.0.6000.0", type = "string", values = min_version_list})
+    add_configs("min_version", {description = "Windows Target Platform Min Version", default = "10.0.10240.0", type = "string", values = min_version_list})
     add_configs("xp", {description = "Support windows xp", default = false, type = "boolean"})
     add_configs("subsystem", {description = "Windows xp subsystem", default = "console", type = "string", values = {"console", "windows"}})
     add_configs("clean_import", {description = "Clean Import", default = false, type = "boolean"})
