@@ -15,6 +15,7 @@ package("units")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <units.h>
+            #include <cassert>
             static void test() {
                 constexpr units::angle::degree_t deg1{90};
                 constexpr units::angle::degree_t deg2{60};
