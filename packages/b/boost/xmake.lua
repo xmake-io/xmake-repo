@@ -37,6 +37,7 @@ package("boost")
         add_syslinks("pthread", "dl")
     end
 
+    add_configs("pyver", {description = "python version x.y, etc. 3.10", default = "3.10"})
     local libnames = {"fiber",
                       "coroutine",
                       "context",
@@ -84,9 +85,8 @@ package("boost")
                 linkname = "boost_" .. libname
             end
             if libname == "python" then
-                -- TODO maybe we need improve it, e.g. libboost_python310-mt.a
-                linkname = linkname .. "310"
-            end
+                linkname = linkname .. package:config("pyver"):gsub("%p+", "")
+            end            
             if package:config("multi") then
                 linkname = linkname .. "-mt"
             end
@@ -122,8 +122,12 @@ package("boost")
         if package:is_plat("windows") then
             package:add("defines", "BOOST_ALL_NO_LIB")
         end
+
         if package:config("python") then
-            package:add("deps", "python 3.10.x")
+            if not package:config("shared") then
+                package:add("defines", "BOOST_PYTHON_STATIC_LIB")
+            end
+            package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
     end)
 
@@ -191,6 +195,9 @@ package("boost")
 
         if package:config("lto") then
             table.insert(argv, "lto=on")
+        end
+        if package:is_arch("aarch64", "arm+.*") then
+            table.insert(argv, "architecture=arm")
         end
         if package:is_arch(".+64.*") then
             table.insert(argv, "address-model=64")

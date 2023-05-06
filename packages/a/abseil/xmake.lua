@@ -37,6 +37,10 @@ package("abseil")
         "absl_strerror", "absl_examine_stack", "absl_low_level_hash", "absl_random_seed_gen_exception", "absl_civil_time",
         "absl_crc_cord_state", "absl_crc32c", "absl_crc_cpu_detect", "absl_crc_internal")
 
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation")
+    end
+
     on_load(function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ABSL_CONSUME_DLL")
