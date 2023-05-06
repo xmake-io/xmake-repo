@@ -17,7 +17,7 @@ package("icu4c")
     add_patches("69.1", path.join(os.scriptdir(), "patches", "69.1", "replace-py-3.patch"), "ae27a55b0e79a8420024d6d349a7bae850e1dd403a8e1131e711c405ddb099b9")
     add_patches("70.1", path.join(os.scriptdir(), "patches", "70.1", "replace-py-3.patch"), "6469739da001721122b62af513370ed62901caf43af127de3f27ea2128830e35")
     if is_plat("mingw") then
-        add_patches("72.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "818d55c3114328e9a93932c81a78602e33888f90caed83ce094e776af0e97b09")
+        add_patches("72.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
     end
 
     add_links("icuuc", "icutu", "icui18n", "icuio")
@@ -45,7 +45,7 @@ package("icu4c")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", "mingw", function (package)
+    on_install("macosx", "linux", "mingw@msys", function (package)
         import("package.tools.autoconf")
 
         os.cd("source")
