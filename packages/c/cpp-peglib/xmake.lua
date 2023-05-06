@@ -11,7 +11,9 @@ package("cpp-peglib")
     add_versions("1.8.3", "3de8aeb44a262f9c2478e2a7e7bc2bb9426a2bdd176cf0654ff5a3d291c77b73")
 
     on_install(function (package)
-        package:add("cxxflags", "/Zc:__cplusplus", {tools = "cl"})
+        if is_plat("windows") then
+            package:add("cxxflags", "/Zc:__cplusplus")
+        end
         os.cp("peglib.h", package:installdir("include"))
     end)
 
