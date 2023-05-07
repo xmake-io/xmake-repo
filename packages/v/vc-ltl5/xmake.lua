@@ -19,7 +19,7 @@ package("vc-ltl5")
     add_configs("min_version", {description = "Windows Target Platform Min Version", default = "10.0.10240.0", type = "string", values = min_version_list})
     add_configs("xp", {description = "Support windows xp", default = false, type = "boolean"})
     add_configs("subsystem", {description = "Windows xp subsystem", default = "console", type = "string", values = {"console", "windows"}})
-    add_configs("clean_import", {description = "Do not use ucrt apiset, such as api-ms-win-crt-time-l1-1-0.dll (for geeks)", default = true, type = "boolean"})
+    add_configs("clean_import", {description = "Do not use ucrt apiset, such as api-ms-win-crt-time-l1-1-0.dll (for geeks)", default = false, type = "boolean"})
     add_configs("openmp", {description = "Use openmp library", default = false, type = "boolean", readonly = true})
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
 
@@ -54,9 +54,11 @@ package("vc-ltl5")
         end
 
         local bindir = "TargetPlatform/" .. package:config("min_version")
-        -- maybe unused?
-        -- os.cp("TargetPlatform/header/*.h", package:installdir("include"))
-        -- os.cp(bindir .. "/header/*.h", package:installdir("include"))
+
+        os.cp("TargetPlatform/header", package:installdir("include"), {rootdir = "TargetPlatform"})
+        os.cp(bindir .. "/header", package:installdir("include"), {rootdir = "TargetPlatform"})
+        package:add("includedirs", path.join("include", "header"))
+        package:add("includedirs", path.join("include", package:config("min_version"), "header"))
 
         local libdir = path.join(bindir, "lib", platform)
         assert(os.isdir(libdir), "The architecture is not supported in this version")
@@ -65,7 +67,8 @@ package("vc-ltl5")
         local clean_import_dir = libdir .. "/CleanImport"
         if package:config("clean_import") and os.isdir(clean_import_dir) then
             os.cp(clean_import_dir, package:installdir("lib"))
-            package:add("linkdirs", package:installdir("lib") .. "/CleanImport")
+            package:add("linkdirs", path.join("lib", "CleanImport"))
+            package:add("linkdirs", "lib")
         end
     end)
 
