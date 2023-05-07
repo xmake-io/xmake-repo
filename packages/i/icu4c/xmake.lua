@@ -20,11 +20,11 @@ package("icu4c")
         add_patches("72.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
     end
 
-    add_links("icuuc", "icutu", "icui18n", "icuio")
+    add_links("icutu", "icuio")
     if is_plat("mingw") then
-        add_links("icudt")
+        add_links("icuin", "icuuc", "icudt")
     else
-        add_links("icudata")
+        add_links("icui18n", "icuuc", "icudata")
     end
 
     if is_plat("linux") then
