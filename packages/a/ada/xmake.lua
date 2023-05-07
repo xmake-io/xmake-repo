@@ -27,7 +27,6 @@ package("ada")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <ada.h>
-
             void test() {
                 auto url = ada::parse<ada::url_aggregator>("https://xmake.io");
             }
