@@ -25,21 +25,18 @@ package("taskflow")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <assert.h>
+            #include <taskflow/taskflow.hpp>
+            #include <taskflow/algorithm/for_each.hpp>
             static void test() {
-
                 tf::Executor executor;
                 tf::Taskflow taskflow;
-
                 std::vector<int> range(10);
                 std::iota(range.begin(), range.end(), 0);
-
                 taskflow.for_each(range.begin(), range.end(), [&] (int i) {
-                  printf("for_each on container item: %d\n", i);
+                    printf("for_each on container item: %d\n", i);
                 });
-
-                executor.run(taskflow).get();
+                executor.run(taskflow).wait();
             }
-        ]]}, {configs = {languages = "c++1z"}, includes = "taskflow/taskflow.hpp"}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
 
