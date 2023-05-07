@@ -24,7 +24,7 @@ package("openblas")
             add_versions("0.3.19", "478cbaeb9364b4681a7c982626e637a5a936514a45e12b6f0caddbcb9483b795")
             add_versions("0.3.20", "0ee249246af7ce2fd66f86cb9350f5f5a7b97496b9b997bfd0680048dd194158")
             add_versions("0.3.21", "936416a0fec5506af9cf040c9de5c7edbd0ff18b53431799d1a43e47f9eba64e")
-            add_versions("0.3.23", "53e019385d8730a36943c5e3816d5994b448c8cfd9f3a9a55bc2f189f09dc821")
+            -- add_versions("0.3.23", "53e019385d8730a36943c5e3816d5994b448c8cfd9f3a9a55bc2f189f09dc821")
         end
 
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
@@ -59,7 +59,7 @@ package("openblas")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows|x64", "windows|x86", function (package)
         os.mv(path.join("bin", "libopenblas.dll"), package:installdir("bin"))
         os.mv("include", package:installdir())
         os.mv(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
