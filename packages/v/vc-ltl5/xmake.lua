@@ -21,7 +21,8 @@ package("vc-ltl5")
     add_configs("subsystem", {description = "Windows xp subsystem", default = "console", type = "string", values = {"console", "windows"}})
     add_configs("clean_import", {description = "Do not use ucrt apiset, such as api-ms-win-crt-time-l1-1-0.dll (for geeks)", default = false, type = "boolean"})
     add_configs("openmp", {description = "Use openmp library", default = false, type = "boolean", readonly = true})
-    add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
+    add_configs("shared", {description = "Use vs_runtime", default = true, type = "boolean", readonly = true})
+    add_configs("debug", {description = "Use vs_runtime", default = true, type = "boolean", readonly = true})
 
     on_load(function (package)
         if package:config("xp") then
@@ -69,6 +70,17 @@ package("vc-ltl5")
             os.cp(clean_import_dir, package:installdir("lib"))
             package:add("linkdirs", path.join("lib", "CleanImport"))
             package:add("linkdirs", "lib")
+        end
+
+        -- https://learn.microsoft.com/en-us/cpp/c-runtime-library/crt-library-features
+        local vs_runtime = package:config("vs_runtime")
+        local is_debug = vs_runtime:endswith("d")
+        if vs_runtime:startswith("MT") then
+            package:add("links", "libucrt" .. (is_debug and "d" or ""))
+            package:add("links", "libvcruntime" .. (is_debug and "d" or ""))
+        elseif vs_runtime:startswith("MD") then
+            package:add("links", "ucrt" .. (is_debug and "d" or ""))
+            package:add("links", "vcruntime" .. (is_debug and "d" or ""))
         end
     end)
 
