@@ -19,8 +19,9 @@ package("vc-ltl5")
     add_configs("min_version", {description = "Windows Target Platform Min Version", default = "10.0.10240.0", type = "string", values = min_version_list})
     add_configs("xp", {description = "Support windows xp", default = false, type = "boolean"})
     add_configs("subsystem", {description = "Windows xp subsystem", default = "console", type = "string", values = {"console", "windows"}})
-    add_configs("clean_import", {description = "Clean Import", default = false, type = "boolean"})
+    add_configs("clean_import", {description = "Do not use ucrt apiset, such as api-ms-win-crt-time-l1-1-0.dll (for geeks)", default = true, type = "boolean"})
     add_configs("openmp", {description = "Use openmp library", default = false, type = "boolean", readonly = true})
+    add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
 
     on_load(function (package)
         if package:config("xp") then
@@ -64,6 +65,7 @@ package("vc-ltl5")
         local clean_import_dir = libdir .. "/CleanImport"
         if package:config("clean_import") and os.isdir(clean_import_dir) then
             os.cp(clean_import_dir, package:installdir("lib"))
+            package:add("linkdirs", package:installdir("lib") .. "/CleanImport")
         end
     end)
 
@@ -71,9 +73,8 @@ package("vc-ltl5")
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
 
-            int main() {
+            void test() {
                 std::cout << "Hello World!";
-                return 0;
             }
         ]]}))
     end)
