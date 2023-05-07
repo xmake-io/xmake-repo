@@ -126,7 +126,7 @@ package("openblas")
             end
         end
         make.build(package, configs)
-        make.make(package, table.join("install", "PREFIX=" .. package:installdir(), configs))
+        make.make(package, table.join("install", "PREFIX=" .. package:installdir():gsub("\\", "/"), configs))
     end)
 
     on_test(function (package)
