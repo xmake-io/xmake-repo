@@ -16,7 +16,13 @@ package("b2")
 
     on_install("@macosx", "@linux", "@bsd", "@msys", "@cygwin", function (package)
         os.vrun("sh ./bootstrap.sh")
-        os.vrunv("./b2", {"install", "--prefix=" .. package:installdir()})
+        local configs = {"install", "--prefix=" .. package:installdir()}
+        if package:has_tool("cc", "gcc", "gxx") then
+            table.insert(configs, "toolset=gcc")
+        elseif package:has_tool("cc", "clang", "clangxx") then
+            table.insert(configs, "toolset=clang")
+        end
+        os.vrunv("./b2", configs)
         package:addenv("PATH", ".")
     end)
 
