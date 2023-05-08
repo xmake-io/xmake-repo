@@ -15,7 +15,7 @@ package("b2")
     end)
 
     on_install("@macosx", "@linux", "@bsd", "@msys", "@cygwin", function (package)
-        os.vrun("./bootstrap.sh")
+        os.vrun("sh ./bootstrap.sh")
         os.vrunv("./b2", {"install", "--prefix=" .. package:installdir()})
         package:addenv("PATH", ".")
     end)
