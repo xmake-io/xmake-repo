@@ -35,19 +35,13 @@ package("libffi")
 
     on_install("macosx", "linux", "bsd", "mingw", function (package)
         local configs = {"--disable-silent-rules", "--disable-dependency-tracking"}
+        table.insert(configs, "--libdir=" .. package:installdir("lib"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
             table.insert(configs, "--enable-debug")
         end
         import("package.tools.autoconf").install(package, configs)
-        if package:is_plat("linux") and package:is_arch("x86_64") then
-            local lib64 = path.join(package:installdir(), "lib64")
-            if os.isdir(lib64) then
-                package:add("links", "ffi")
-                package:add("linkdirs", "lib64")
-            end
-        end
     end)
 
     on_test(function (package)

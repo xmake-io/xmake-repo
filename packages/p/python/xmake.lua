@@ -124,6 +124,8 @@ package("python")
 
         -- init configs
         local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
+        table.insert(configs, "--libdir=" .. package:installdir("lib"))
+        table.insert(configs, "--with-platlibdir=" .. package:installdir("lib"))
         table.insert(configs, "--datadir=" .. package:installdir("share"))
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
