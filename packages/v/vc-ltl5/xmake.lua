@@ -18,15 +18,17 @@ package("vc-ltl5")
         "10.0.19041.0",
     }
 
-    local default_min_version
-    if is_arch("x64", "x86") then
-        default_min_version = "6.0.6000.0"
-    elseif is_arch("arm") then
-        default_min_version = "6.2.9200.0"
-    elseif is_arch("arm64") then
-        default_min_version = "10.0.10240.0"
-    else
-        raise("Unsupported architecture!")
+    local default_min_version = "6.0.6000.0"
+    if is_plat("windows") then
+        if is_arch("x64", "x86") then
+            default_min_version = "6.0.6000.0"
+        elseif is_arch("arm") then
+            default_min_version = "6.2.9200.0"
+        elseif is_arch("arm64") then
+            default_min_version = "10.0.10240.0"
+        else
+            raise("Unsupported architecture!")
+        end
     end
 
     add_configs("min_version", {description = "Windows Target Platform Min Version", default = default_min_version, type = "string", values = min_version_list})
@@ -36,7 +38,7 @@ package("vc-ltl5")
     add_configs("shared", {description = "Use vs_runtime", default = true, type = "boolean", readonly = true})
     add_configs("debug", {description = "Use vs_runtime", default = true, type = "boolean", readonly = true})
 
-    on_load(function (package)
+    on_load("windows", function (package)
         import("core.tool.toolchain")
         -- check vs version
         local vs = toolchain.load("msvc"):config("vs")
