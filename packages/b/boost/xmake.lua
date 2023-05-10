@@ -4,7 +4,7 @@ package("boost")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
 
-    add_urls("https://github.com/boostorg/boost/archive/refs/tags/boost-$(version).tar.gz"
+    add_urls("https://github.com/boostorg/boost/archive/refs/tags/boost-$(version).tar.gz")
 
     add_versions("1.81.0", "5eb488cd517a5e0dc3dafdbc3e8151bcb49c851a1a8ec3b73c7d69733ca75e54")
     add_versions("1.80.0", "b1547a8b2aa159f15c0393323dd6d7e4d2eea7634c9a471442d989a406c0b51a")
