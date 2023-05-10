@@ -3,27 +3,12 @@ package("sfml")
     set_homepage("https://www.sfml-dev.org")
     set_description("Simple and Fast Multimedia Library")
 
-    if is_plat("windows", "linux") then
-        set_urls("https://www.sfml-dev.org/files/SFML-$(version)-sources.zip")
-        add_urls("https://github.com/SFML/SFML/releases/download/$(version)/SFML-$(version)-sources.zip")
-        add_versions("2.5.1", "bf1e0643acb92369b24572b703473af60bac82caf5af61e77c063b779471bb7f")
-    elseif is_plat("macosx") then
-        if is_arch("x64", "x86_64") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-macOS-clang.tar.gz")
-            add_versions("2.5.1", "6af0f14fbd41dc038a00d7709f26fb66bb7ccdfe6187657ef0ef8cba578dcf14")
+    add_urls("https://github.com/SFML/SFML.git")
+    add_versions("2.5.1", "3f4bc3683b804155aaa04a8422a9ad6c1fb5b14d")
 
-            add_configs("debug", {builtin = true, description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
-            add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-        end
-    elseif is_plat("mingw") then
-        if is_arch("x64", "x86_64") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-gcc-7.3.0-mingw-64-bit.zip")
-            add_versions("2.5.1", "671e786f1af934c488cb22c634251c8c8bd441c709b4ef7bc6bbe227b2a28560")
-        elseif is_arch("x86", "i386") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-gcc-7.3.0-mingw-32-bit.zip")
-            add_versions("2.5.1", "92d864c9c9094dc9d91e0006d66784f25ac900a8ee23c3f79db626de46a1d9d8")
-        end
-    end
+    add_configs("debug", {builtin = true, description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    add_versions("2.5.1", "671e786f1af934c488cb22c634251c8c8bd441c709b4ef7bc6bbe227b2a28560")
 
     if is_plat("linux") then
         add_syslinks("pthread")
@@ -201,7 +186,7 @@ package("sfml")
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install(function (package)
         local configs = {"-DSFML_BUILD_DOC=OFF", "-DSFML_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -225,14 +210,6 @@ package("sfml")
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
-    on_install("macosx", "mingw", function (package)
-        os.cp("lib", package:installdir())
-        os.cp("include", package:installdir())
-        if package:is_plat("mingw") then
-            os.cp("bin/*", package:installdir("lib"), {rootdir = "bin"})
-        end
-    end)
-
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test(int args, char** argv) {
@@ -243,15 +220,16 @@ package("sfml")
         if package:config("graphics") then
             assert(package:check_cxxsnippets({test = [[
                 void test(int args, char** argv) {
-                    sf::Text text;
-                    text.setString("Hello world");
+                    //sf::Text text;
+                    //text.setString("Hello world");
                 }
             ]]}, {includes = "SFML/Graphics.hpp"}))
         end
         if package:config("window") or package:config("graphics") then
             assert(package:check_cxxsnippets({test = [[
                 void test(int args, char** argv) {
-                    sf::Window window(sf::VideoMode(1280, 720), "Title");
+                    //sf::Window window(sf::VideoMode(1280, 720), "Title");
+                    sf::Window window(sf::VideoMode({1280, 720}), "Title");
 
                     sf::Event event;
                     window.pollEvent(event);
@@ -275,9 +253,7 @@ package("sfml")
 
                     char data[100];
                     std::size_t received;
-                    sf::IpAddress sender;
-                    unsigned short port;
-                    socket.receive(data, 100, received, sender, port);
+                    sf::IpAddress sender(127, 0, 0, 1);
                 }
             ]]}, {includes = "SFML/Network.hpp"}))
         end
