@@ -32,7 +32,12 @@ package("fmt")
             package:add("deps", "cmake")
         end
         if package:config("shared") then
-            package:add("defines", "FMT_EXPORT")
+            local version = package:version()
+            if version and version:ge("10") then
+                package:add("defines", "FMT_LIB_EXPORT")
+            else
+                package:add("defines", "FMT_EXPORT")
+            end
         end
     end)
 
