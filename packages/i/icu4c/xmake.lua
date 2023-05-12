@@ -6,6 +6,7 @@ package("icu4c")
     add_urls("https://github.com/unicode-org/icu/releases/download/release-$(version)-src.tgz", {version = function (version)
             return (version:gsub("%.", "-")) .. "/icu4c-" .. (version:gsub("%.", "_"))
         end})
+    add_versions("73.1", "a457431de164b4aa7eca00ed134d00dfbf88a77c6986a10ae7774fc076bb8c45")
     add_versions("72.1", "a2d2d38217092a7ed56635e34467f92f976b370e20182ad325edea6681a71d68")
     add_versions("71.1", "67a7e6e51f61faf1306b6935333e13b2c48abd8da6d2f46ce6adca24b1e21ebf")
     add_versions("70.1", "8d205428c17bf13bb535300669ed28b338a157b1c01ae66d31d0d3e2d47c3fd5")
@@ -21,7 +22,7 @@ package("icu4c")
     end
 
     add_links("icutu", "icuio")
-    if is_plat("mingw") then
+    if is_plat("mingw", "windows") then
         add_links("icuin", "icuuc", "icudt")
     else
         add_links("icui18n", "icuuc", "icudata")
