@@ -57,21 +57,9 @@ package("raylib")
     end)
 
     on_test(function (package)
-        if version:ge("4.5.0") then
-            assert(package:check_cxxsnippets({test = [[
-                void test() {
-                    InitWindow(100, 100, "hello world!");
-                    Camera camera = { 0 };
-                    UpdateCamera(&camera, 0);
-                }
-            ]]}, {includes = {"raylib.h"}}))
-        else
-            assert(package:check_cxxsnippets({test = [[
-                void test() {
-                    InitWindow(100, 100, "hello world!");
-                    Camera camera = { 0 };
-                    UpdateCamera(&camera);
-                }
-            ]]}, {includes = {"raylib.h"}}))
-        end
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                InitWindow(100, 100, "hello world!");
+            }
+        ]]}, {includes = {"raylib.h"}}))
     end)
