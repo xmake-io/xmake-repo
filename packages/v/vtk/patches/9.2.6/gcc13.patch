@@ -37,3 +37,14 @@ diff --git a/Rendering/Matplotlib/vtkMatplotlibMathTextUtilities.h b/Rendering/M
  
  struct _object;
  typedef struct _object PyObject;
+diff --git a/ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp b/ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp
+--- a/ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp
++++ b/ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp
+@@ -33,6 +33,7 @@
+ 
+ #include <vector>
+ #include <string>
++#include <cstdint>
+ 
+ #define CPL_DLL
+ 
