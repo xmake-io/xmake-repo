@@ -14,6 +14,7 @@ package("vtk")
     add_versions("9.2.6", "06fc8d49c4e56f498c40fcb38a563ed8d4ec31358d0101e8988f0bb4d539dd12")
 
     add_patches("9.0.3", path.join(os.scriptdir(), "patches", "9.0.3", "limits.patch"), "3bebcd1cac52462b0cf84c8232c3426202c75c944784252b215b4416cbe111db")
+    add_patches("9.2.6", path.join(os.scriptdir(), "patches", "9.2.6", "gcc13.patch"), "fbe447d523c26b433a6a97400cf6af66fca1c9d246d702be9dd2a90b02e27382")
 
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
