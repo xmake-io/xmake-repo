@@ -23,6 +23,7 @@ package("vtk")
     elseif is_plat("linux") then
         add_syslinks("dl", "pthread")
     end
+    add_defines("kiss_fft_scalar=double", "DIY_NO_THREADS", "GLEW_STATIC", "VTK_HAS_OGGTHEORA_SUPPORT")
     on_load("windows", "macosx", "linux", function (package)
         local ver = package:version():major() .. "." .. package:version():minor()
         package:add("includedirs", "include/vtk-" .. ver)
@@ -35,7 +36,7 @@ package("vtk")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         local configs = {"-DVTK_BUILD_TESTING=OFF", "-DVTK_BUILD_EXAMPLES=OFF", "-DVTK_ENABLE_WRAPPING=OFF", "-DCMAKE_CXX_STANDARD=14"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
