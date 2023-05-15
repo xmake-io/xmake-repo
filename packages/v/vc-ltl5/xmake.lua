@@ -66,8 +66,12 @@ package("vc-ltl5")
     end)
 
     on_install("windows", function (package)
-        local platform
+        import("core.base.semver")
+
         local min_version = package:config("min_version")
+        assert(semver.match(min_version):ge(semver.match(default_min_version)), "The version does not support current architecture")
+
+        local platform
         if package:is_arch("x86") then
             platform = "Win32"
         elseif package:is_arch("x64") then
@@ -98,16 +102,15 @@ package("vc-ltl5")
             package:add("linkdirs", "lib")
         end
 
-        -- https://learn.microsoft.com/en-us/cpp/c-runtime-library/crt-library-features
-        local vs_runtime = package:config("vs_runtime")
-        local is_debug = vs_runtime:endswith("d")
-        if vs_runtime:startswith("MT") then
-            package:add("links", "libucrt" .. (is_debug and "d" or ""))
-            package:add("links", "libvcruntime" .. (is_debug and "d" or ""))
-        elseif vs_runtime:startswith("MD") then
-            package:add("links", "ucrt" .. (is_debug and "d" or ""))
-            package:add("links", "vcruntime" .. (is_debug and "d" or ""))
-        end
+        -- We do not need links, but xmake needs at least one links to add linkdirs
+        package:add("links", "vc-ltl5")
+        io.writefile("lib.cpp", [[]])
+        io.writefile("xmake.lua", [[
+            target("vc-ltl5")
+                set_kind("static")
+                add_files("lib.cpp")
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
