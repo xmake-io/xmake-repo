@@ -11,6 +11,7 @@ package("glslang")
     add_versions("1.3.231+1", "5755de46b07e4374c05fb1081f65f7ae1f8cca81")
     add_versions("1.3.236+0", "77551c429f86c0e077f26552b7c1c0f12a9f235e")
     add_versions("1.3.239+0", "ca8d07d0bc1c6390b83915700439fa7719de6a2a")
+    add_versions("1.3.246+1", "14e5a04e70057972eef8a40df422e30a3b70e4b5")
 
     add_configs("binaryonly", {description = "Only use binary program.", default = false, type = "boolean"})
     add_configs("exceptions", {description = "Build with exception support.", default = false, type = "boolean"})
