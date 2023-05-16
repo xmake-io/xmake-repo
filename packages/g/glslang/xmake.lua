@@ -13,6 +13,8 @@ package("glslang")
     add_versions("1.3.239+0", "ca8d07d0bc1c6390b83915700439fa7719de6a2a")
     add_versions("1.3.246+1", "14e5a04e70057972eef8a40df422e30a3b70e4b5")
 
+    add_patches("1.3.246+1", "https://github.com/KhronosGroup/glslang/commit/1e4955adbcd9b3f5eaf2129e918ca057baed6520.patch", "47893def550f1684304ef7c49da38f0a8fe35c190a3452d3bf58370b3ee7165d")
+
     add_configs("binaryonly", {description = "Only use binary program.", default = false, type = "boolean"})
     add_configs("exceptions", {description = "Build with exception support.", default = false, type = "boolean"})
     add_configs("rtti",       {description = "Build with RTTI support.", default = false, type = "boolean"})
