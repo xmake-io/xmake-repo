@@ -57,19 +57,25 @@ package("vc-ltl5")
 
     on_install("windows", function (package)
         import("core.base.semver")
+
         -- Automatically adapt version
         local min_version = package:config("min_version")
         local semver_min_version = semver.match(min_version)
-        if semver_min_version:ge(semver.match("10.0.19041.0")) then
-            min_version = "10.0.19041.0"
-        elseif semver_min_version:ge(semver.match("10.0.10240.0")) then
-            min_version = "10.0.10240.0"
-        elseif semver_min_version:ge(semver.match("6.2.9200.0")) then
-            min_version = "6.2.9200.0"
-        elseif semver_min_version:ge(semver.match("6.0.6000.0")) then
-            min_version = "6.0.6000.0"
+        if semver_min_version then
+            if semver_min_version:ge("10.0.19041") then
+                min_version = "10.0.19041.0"
+            elseif semver_min_version:ge("10.0.10240") then
+                min_version = "10.0.10240.0"
+            elseif semver_min_version:ge("6.2.9200") then
+                min_version = "6.2.9200.0"
+            elseif semver_min_version:ge("6.0.6000") then
+                min_version = "6.0.6000.0"
+            else
+                min_version = "5.1.2600.0"
+            end
         else
-            min_version = "5.1.2600.0"
+            cprint("${color.warning}Invalid min_version, use default min_version")
+            min_version = default_min_version
         end
 
         local platform
