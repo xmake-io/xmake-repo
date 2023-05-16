@@ -8,16 +8,6 @@ package("vc-ltl5")
     add_versions("5.0.6", "e406f829f75d59c34ee1e34cb6e994eb7db0810123ae7196499f26df88bc0a6f")
     add_versions("5.0.7", "08555aca30b2f77a484534be0799cfed05bfdeb1d1e461d91576264d7123e687")
 
-    local min_version_list =
-    {
-        "5.1.2600.0",
-        "5.2.3790.0",
-        "6.0.6000.0",
-        "6.2.9200.0",
-        "10.0.10240.0",
-        "10.0.19041.0",
-    }
-
     local default_min_version = "6.0.6000.0"
     if is_plat("windows") then
         if is_arch("x64", "x86") then
@@ -31,7 +21,7 @@ package("vc-ltl5")
         end
     end
 
-    add_configs("min_version", {description = "Windows Target Platform Min Version", default = default_min_version, type = "string", values = min_version_list})
+    add_configs("min_version", {description = "Windows Target Platform Min Version", default = default_min_version, type = "string"})
     add_configs("subsystem", {description = "Windows xp subsystem", default = "windows", type = "string", values = {"console", "windows"}})
     add_configs("clean_import", {description = "Do not use ucrt apiset, such as api-ms-win-crt-time-l1-1-0.dll (for geeks)", default = false, type = "boolean"})
     add_configs("openmp", {description = "Use openmp library", default = false, type = "boolean", readonly = true})
@@ -67,9 +57,20 @@ package("vc-ltl5")
 
     on_install("windows", function (package)
         import("core.base.semver")
-
+        -- Automatically adapt version
         local min_version = package:config("min_version")
-        assert(semver.match(min_version):ge(semver.match(default_min_version)), "The version does not support current architecture")
+        local semver_min_version = semver.match(min_version)
+        if semver_min_version:ge(semver.match("10.0.19041.0")) then
+            min_version = "10.0.19041.0"
+        elseif semver_min_version:ge(semver.match("10.0.10240.0")) then
+            min_version = "10.0.10240.0"
+        elseif semver_min_version:ge(semver.match("6.2.9200.0")) then
+            min_version = "6.2.9200.0"
+        elseif semver_min_version:ge(semver.match("6.0.6000.0")) then
+            min_version = "6.0.6000.0"
+        else
+            min_version = "5.1.2600.0"
+        end
 
         local platform
         if package:is_arch("x86") then
@@ -94,23 +95,28 @@ package("vc-ltl5")
         local libdir = path.join(bindir, "lib", platform)
         assert(os.isdir(libdir), "The architecture is not supported in this version")
         os.cp(libdir .. "/*.*", package:installdir("lib"))
-
-        local clean_import_dir = libdir .. "/CleanImport"
-        if package:config("clean_import") and os.isdir(clean_import_dir) then
-            os.cp(clean_import_dir, package:installdir("lib"))
-            package:add("linkdirs", path.join("lib", "CleanImport"))
-            package:add("linkdirs", "lib")
-        end
-
         -- We do not need links, but xmake needs at least one links to add linkdirs
         package:add("links", "vc-ltl5")
-        io.writefile("lib.cpp", [[]])
+        io.writefile("lib.cpp", "")
         io.writefile("xmake.lua", [[
             target("vc-ltl5")
                 set_kind("static")
                 add_files("lib.cpp")
         ]])
         import("package.tools.xmake").install(package)
+
+        local clean_import_dir = libdir .. "/CleanImport"
+        if package:config("clean_import") and os.isdir(clean_import_dir) then
+            os.cp(clean_import_dir, package:installdir("lib"))
+            package:add("linkdirs", "lib/CleanImport")
+            package:add("linkdirs", "lib")
+            -- We need at least one links in CleanImport dir
+            package:add("links", "vc-ltl5-CleanImport")
+            local old = os.cd(package:installdir("lib"))
+            os.cp("vc-ltl5.lib", "CleanImport")
+            os.mv("CleanImport/vc-ltl5.lib", "CleanImport/vc-ltl5-CleanImport.lib")
+            os.cd(old)
+        end
     end)
 
     on_test(function (package)
