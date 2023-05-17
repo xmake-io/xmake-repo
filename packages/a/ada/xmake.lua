@@ -1,6 +1,6 @@
 package("ada")
 
-    set_homepage("https://ada-url.github.io/ada")
+    set_homepage("https://www.ada-url.com")
     set_description("WHATWG-compliant and fast URL parser written in modern C++")
     set_license("Apache-2.0", "MIT")
 
@@ -8,6 +8,8 @@ package("ada")
              "https://github.com/ada-url/ada.git")
 
     add_versions("2.3.1", "298992ec0958979090566c7835ea60c14f5330d6372ee092ef6eee1d2e6ac079")
+    add_versions("2.4.0", "14624f1dfd966fee85272688064714172ff70e6e304a1e1850f352a07e4c6dc7")
+    add_versions("2.4.1", "e9359937e7aeb8e5889515c0a9e22cd5da50e9b053038eb092135a0e64888fe7")
 
     add_deps("cmake")
 
