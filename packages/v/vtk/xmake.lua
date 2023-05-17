@@ -20,7 +20,7 @@ package("vtk")
 
     add_deps("cmake")
     if is_plat("windows") then
-        add_syslinks("gdi32", "user32", "shell32", "opengl32", "vfw32", "comctl32", "wsock32", "advapi32")
+        add_syslinks("gdi32", "user32", "shell32", "opengl32", "vfw32", "comctl32", "wsock32", "advapi32", "ws2_32", "psapi", "dbghelp")
     elseif is_plat("linux") then
         add_syslinks("dl", "pthread")
     end
