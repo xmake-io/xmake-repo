@@ -18,7 +18,7 @@ package("spdlog")
     add_versions("v1.4.2", "56b90f0bd5b126cf1b623eeb19bf4369516fa68f036bbc22d9729d2da511fb5a")
     add_versions("v1.3.1", "db6986d0141546d4fba5220944cc1f251bd8afdfc434bda173b4b0b6406e3cd0")
 
-    add_patches("v1.11.0", path.join(os.scriptdir(), "patches", "v1.11.0", "fmt10.patch"), "793b0f974ddc8d4a09b448e8850e39ba66aaa426eb25b0616d5cefaadee41f66")
+    add_patches("v1.11.0", path.join(os.scriptdir(), "patches", "v1.11.0", "fmt10.patch"), "61efa804845141ffa86532d9be7103d4dc8185e96de69d5efca42ebd7058e13d")
 
     add_configs("header_only",     {description = "Use header only version.", default = true, type = "boolean"})
     add_configs("std_format",      {description = "Use std::format instead of fmt library.", default = false, type = "boolean"})
