@@ -1,5 +1,4 @@
 package("meson")
-
     set_kind("binary")
     set_homepage("https://mesonbuild.com/")
     set_description("Fast and user friendly build system.")
@@ -19,7 +18,7 @@ package("meson")
     add_versions("0.56.0", "291dd38ff1cd55fcfca8fc985181dd39be0d3e5826e5f0013bf867be40117213")
     add_versions("0.50.1", "f68f56d60c80a77df8fc08fa1016bc5831605d4717b622c96212573271e14ecc")
 
-    add_deps("python 3.x", {kind = "binary"})
+    add_deps("python 3.x", { kind = "binary", system = false })
 
     -- https://github.com/xmake-io/xmake-repo/issues/1937
     set_policy("package.precompiled", false)
