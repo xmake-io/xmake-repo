@@ -32,4 +32,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D --toolchain=clang -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -vD --toolchain=clang -k ${{ matrix.kind }}
