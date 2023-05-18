@@ -43,7 +43,7 @@ option_end()
 
 -- add packages
 add_requires("fmt", "rapidcsv")
-add_requires("spdlog", { configs = { header_only = false } })
+add_requires("spdlog", { configs = { header_only = false, fmt_external = true } })
 
 if has_config("skse_xbyak") then
     add_requires("xbyak")
