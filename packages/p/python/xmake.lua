@@ -176,26 +176,6 @@ package("python")
             xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver")
             target_minver = target_minver or get_config("target_minver")
 
-            -- TODO will be deprecated after xmake v2.5.1
-            xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver_macosx")
-            if not xcode_dir or not xcode_sdkver then
-                -- maybe on cross platform, we need find xcode envs manually
-                local xcode = import("detect.sdks.find_xcode")(nil, {force = true, plat = package:plat(), arch = package:arch()})
-                if xcode then
-                    xcode_dir = xcode.sdkdir
-                    xcode_sdkver = xcode.sdkver
-                end
-            end
-
-            -- TODO will be deprecated after xmake v2.5.1
-            target_minver = target_minver or get_config("target_minver_macosx")
-            if not target_minver then
-                local macos_ver = macos.version()
-                if macos_ver then
-                    target_minver = macos_ver:major() .. "." .. macos_ver:minor()
-                end
-            end
-
             if xcode_dir and xcode_sdkver then
                 -- help Python's build system (setuptools/pip) to build things on SDK-based systems
                 -- the setup.py looks at "-isysroot" to get the sysroot (and not at --sysroot)
@@ -244,7 +224,11 @@ package("python")
 
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
-        import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
+        import("package.tools.autoconf")
+        local envs = autoconf.buildenvs(package)
+        envs.PYTHONHOME = ""
+        envs.PYTHONPATH = ""
+        autoconf.configure(package, configs, {envs = envs})
         os.vrunv("make", {"-j4", "PYTHONAPPSDIR=" .. package:installdir()})
         os.vrunv("make", {"install", "-j4", "PYTHONAPPSDIR=" .. package:installdir()})
         if package:version():ge("3.0") then
@@ -256,12 +240,13 @@ package("python")
         local python = path.join(package:installdir("bin"), "python")
         local version = package:version()
         local pyver = ("python%d.%d"):format(version:major(), version:minor())
-        local envs = {
+        envs = {
             PATH = package:installdir("bin"),
             PYTHONPATH = package:installdir("lib", pyver, "site-packages"),
             LD_LIBRARY_PATH = package:installdir("lib")
         }
         os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"}, {envs = envs})
+        os.vrunv(python, {"-m", "pip", "install", "--upgrade", "setuptools"}, {envs = envs})
         os.vrunv(python, {"-m", "pip", "install", "wheel"}, {envs = envs})
     end)
 
