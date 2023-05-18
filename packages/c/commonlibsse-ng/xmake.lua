@@ -16,7 +16,7 @@ package("commonlibsse-ng")
     add_configs("skse_xbyak", {description = "Enable trampoline support for Xbyak", default = false, type = "boolean"})
 
     add_deps("fmt", "rapidcsv")
-    add_deps("spdlog", { configs = { header_only = false } })
+    add_deps("spdlog", { configs = { header_only = false, fmt_external = true } })
 
     add_syslinks("version", "user32", "shell32", "ole32", "advapi32")
 
