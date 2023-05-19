@@ -33,7 +33,9 @@ package("sqlitecpp")
         table.insert(configs, "-DSQLITECPP_USE_STACK_PROTECTION=" .. (package:config("stack_protection") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DSQLITECPP_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        if is_plat("windows") then
+            table.insert(configs, "-DSQLITECPP_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
