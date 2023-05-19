@@ -44,5 +44,5 @@ package("sqlitecpp")
             void test() {
                 SQLite::Database db("example.db3");
             }
-        ]]}, {includes = {"SQLiteCpp/Database.h"}}))
+        ]]}, {configs = {languages = "c++11"}, includes = {"SQLiteCpp/Database.h"}}))
     end)
