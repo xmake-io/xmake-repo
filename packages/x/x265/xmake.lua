@@ -19,7 +19,7 @@ package("x265")
         add_syslinks("pthread", "dl")
     end
 
-    on_install("windows|x86", "windows|x64", "mingw", "linux", "macosx", "cross", function (package)
+    on_install("windows|x86", "windows|x64", "mingw", "linux", "bsd", "macosx", "cross", function (package)
         os.cd("source")
         if package:is_plat("android") then
             io.replace("CMakeLists.txt", "list(APPEND PLATFORM_LIBS pthread)", "", { plain = true })
