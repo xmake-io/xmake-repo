@@ -8,7 +8,13 @@ package("sqlitecpp")
 
     add_versions("3.2.1", "70c67d5680c47460f82a7abf8e6b0329bf2fb10795a982a6d8abc06adb42d693")
 
-    add_configs("sqlite3_external", { description = "Use external sqlite3 library instead of bundled.", default = true, type = "boolean", readonly = true})
+    if is_plat("android", "wasm") then
+        add_configs("sqlite3_external", { description = "Use external sqlite3 library instead of bundled.", default = false, type = "boolean", readonly = true})
+    elseif is_plat("linux", "macosx", "msys", "bsd") then
+        add_configs("sqlite3_external", { description = "Use external sqlite3 library instead of bundled.", default = true, type = "boolean", readonly = true})
+    else
+        add_configs("sqlite3_external", { description = "Use external sqlite3 library instead of bundled.", default = false, type = "boolean"})
+    end
     add_configs("column_metadata", { description = "Enable Column::getColumnOriginName(). Require support from sqlite3 library.", default = false, type = "boolean"})
     add_configs("assert_handled", { description = "Enable the user definition of a assertion_failed() handler.", default = false, type = "boolean"})
     add_configs("has_codec", { description = "Enable database encryption API. Not available in the public release of SQLite.", default = false, type = "boolean"})
