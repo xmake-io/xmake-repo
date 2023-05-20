@@ -10,7 +10,7 @@ package("sqlitecpp")
 
     if is_plat("android", "wasm") then
         add_configs("sqlite3_external", { description = "Use external sqlite3 library instead of bundled.", default = false, type = "boolean", readonly = true})
-    elseif is_plat("linux", "macosx", "msys", "bsd") then
+    elseif is_plat("linux", "macosx", "mingw", "msys", "bsd", "cross") then
         add_configs("sqlite3_external", { description = "Use external sqlite3 library instead of bundled.", default = true, type = "boolean", readonly = true})
     else
         add_configs("sqlite3_external", { description = "Use external sqlite3 library instead of bundled.", default = false, type = "boolean"})
