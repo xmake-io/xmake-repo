@@ -7,7 +7,7 @@ package("yy-thunks")
     add_urls("https://github.com/Chuyu-Team/YY-Thunks/releases/download/v$(version)/YY-Thunks-$(version)-Binary.zip")
     add_versions("1.0.7", "3607a79ac37f141cbcbf00aaea8d82a4c2628d81d8dad9e2a4dce4c8c17a025b")
 
-    on_install("windows", function (package)
+    on_install("windows|x64", "windows|x86", function (package)
         import("core.tool.toolchain")
 
         -- check vs version
