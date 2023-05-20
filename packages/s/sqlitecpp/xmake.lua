@@ -8,22 +8,36 @@ package("sqlitecpp")
 
     add_versions("3.2.1", "70c67d5680c47460f82a7abf8e6b0329bf2fb10795a982a6d8abc06adb42d693")
 
-    add_deps("cmake")
-
+    add_configs("sqlite3_external", { description = "Use external sqlite3 library instead of bundled.", default = true, type = "boolean", readonly = true})
     add_configs("column_metadata", { description = "Enable Column::getColumnOriginName(). Require support from sqlite3 library.", default = false, type = "boolean"})
     add_configs("assert_handled", { description = "Enable the user definition of a assertion_failed() handler.", default = false, type = "boolean"})
     add_configs("has_codec", { description = "Enable database encryption API. Not available in the public release of SQLite.", default = false, type = "boolean"})
     add_configs("legacy_struct", { description = "EFallback to forward declaration of legacy struct sqlite3_value (pre SQLite 3.19)", default = false, type = "boolean"})
     add_configs("ommit_load_extension", { description = "Enable ommit load extension.", default = false, type = "boolean"})
-    add_configs("filesystem", { description = "Enable the support for std::filesystem (C++17)", default = true, type = "boolean"})
+    add_configs("filesystem", { description = "Disable the support for std::filesystem (C++17)", default = false, type = "boolean"})
     if is_plat("mingw") then
         add_configs("stack_protection", { description = "Enable stack protection for MySQL.", default = true, type = "boolean", readonly = true})
     else
         add_configs("stack_protection", { description = "Enable stack protection for MySQL.", default = true, type = "boolean"})
     end
 
+    add_deps("cmake")
+
+    on_load(function (package)
+        if package:config("sqlite3_external") then
+            package:add("deps", "sqlite3")
+        end
+    end)
+
     on_install(function (package)
-        local configs = {"-DSQLITECPP_BUILD_EXAMPLES=OFF", "-DSQLITECPP_BUILD_TESTS=OFF"}
+        local configs =
+        {
+            "-DSQLITECPP_BUILD_EXAMPLES=OFF",
+            "-DSQLITECPP_BUILD_TESTS=OFF",
+            "-DSQLITECPP_RUN_CPPLINT=OFF",
+            "-DSQLITECPP_RUN_CPPCHECK=OFF",
+        }
+        table.insert(configs, "-DSQLITECPP_INTERNAL_SQLITE=" .. (package:config("sqlite3_external") and "OFF" or "ON"))
         table.insert(configs, "-DSQLITE_ENABLE_COLUMN_METADATA=" .. (package:config("column_metadata") and "ON" or "OFF"))
         table.insert(configs, "-DSQLITE_ENABLE_ASSERT_HANDLER=" .. (package:config("assert_handled") and "ON" or "OFF"))
         table.insert(configs, "-DSQLITE_HAS_CODEC=" .. (package:config("has_codec") and "ON" or "OFF"))
