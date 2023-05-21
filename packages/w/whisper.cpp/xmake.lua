@@ -43,9 +43,15 @@ package("whisper.cpp")
         table.insert(configs, "-DWHISPER_PERF=" .. (package:config("perf") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        io.replace("CMakeLists.txt", "lib/static", "lib", {plain = true})
+        io.replace("CMakeLists.txt", "MATCHES", "STREQUAL", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("whisper.h"))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                whisper_context * ctx = whisper_init_from_file("ggml-base.en.bin");
+            }
+        ]]}, {includes = {"whisper.h"}}))
     end)
