@@ -8,6 +8,8 @@ package("whisper.cpp")
 
     add_versions("1.4.2", "1b988dcc77fca55f188dbc4e472f971a80854c1d44309cf3eaab9d5677f175e1")
 
+    add_patches("1.4.2", path.join(os.scriptdir(), "patches", "1.4.2", "fix.patch"), "1330bdbb769aad37f0de6998ac9b0107423ec62385bbfb0a89a98c226daace48")
+
     add_configs("avx", { description = "Enable AVX", default = true, type = "boolean"})
     add_configs("avx2", { description = "Enable AVX2", default = true, type = "boolean"})
     add_configs("fma", { description = "Enable FMA", default = true, type = "boolean"})
@@ -43,15 +45,13 @@ package("whisper.cpp")
         table.insert(configs, "-DWHISPER_PERF=" .. (package:config("perf") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        io.replace("CMakeLists.txt", "lib/static", "lib", {plain = true})
-        io.replace("CMakeLists.txt", "MATCHES", "STREQUAL", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                whisper_context * ctx = whisper_init_from_file("ggml-base.en.bin");
+                whisper_context* ctx = whisper_init_from_file("ggml-base.en.bin");
             }
         ]]}, {includes = {"whisper.h"}}))
     end)
