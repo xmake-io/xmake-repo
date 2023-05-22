@@ -27,7 +27,7 @@ package("whisper.cpp")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "linux", "mingw", "msys", "android", "wasm", function (package)
         local configs = {"-DWHISPER_BUILD_TESTS=OFF", "-DWHISPER_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DWHISPER_NO_AVX=" .. (package:config("avx") and "OFF" or "ON"))
         table.insert(configs, "-DWHISPER_NO_AVX2=" .. (package:config("avx2") and "OFF" or "ON"))
