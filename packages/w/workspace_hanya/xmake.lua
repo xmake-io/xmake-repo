@@ -11,7 +11,7 @@ package("workspace_hanya")
     add_deps("cmake")
     
     on_load("linux", function (package) 
-        io.replace("install(DIRECTORY ${LIB_HEADER} DESTINATION ${INSTALL_INCLUDEDIR}/${LIB_NAME})", "install(DIRECTORY ${LIB_HEADER} DESTINATION ${LIB_NAME})", {plain = true})
+        io.replace("CMakeLists.txt", "install(DIRECTORY ${LIB_HEADER} DESTINATION ${INSTALL_INCLUDEDIR}/${LIB_NAME})", "install(DIRECTORY ${LIB_HEADER} DESTINATION ${LIB_NAME})", {plain = true})
     end)
 
     if is_plat("linux") then
