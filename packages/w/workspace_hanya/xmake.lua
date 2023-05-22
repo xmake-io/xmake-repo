@@ -9,16 +9,15 @@ package("workspace_hanya")
     add_versions("2023.5.8", "d53b4f6a2900db328168ca7b496edc976308e4e6")
 
     add_deps("cmake")
-    
-    on_load("linux", function (package) 
-        io.replace("CMakeLists.txt", "install(DIRECTORY ${LIB_HEADER} DESTINATION ${INSTALL_INCLUDEDIR}/${LIB_NAME})", "install(DIRECTORY ${LIB_HEADER} DESTINATION ${LIB_NAME})", {plain = true})
-    end)
 
     if is_plat("linux") then
         add_syslinks("pthread")
     end
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
+        if is_plat("linux") then
+            io.replace("CMakeLists.txt", "install(DIRECTORY ${LIB_HEADER} DESTINATION ${INSTALL_INCLUDEDIR}/${LIB_NAME})", "install(DIRECTORY ${LIB_HEADER} DESTINATION ${LIB_NAME})", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs)
         os.cp("include", package:installdir())
     end)
