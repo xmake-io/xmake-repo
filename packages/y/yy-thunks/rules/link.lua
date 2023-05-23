@@ -35,11 +35,10 @@ rule("2k")
     after_link(function (target, opt)
         import("core.project.depend")
         import("lib.detect.find_tool")
-        import("core.tool.toolchain")
         import("utils.progress")
 
         depend.on_changed(function()
-            local msvc = toolchain.load("msvc", {plat = target:plat(), arch = target:arch()})
+            local msvc = target:toolchain("msvc")
             local editbin = assert(find_tool("editbin", {envs = msvc:runenvs()}), "editbin not found!")
 
             -- osversion -> Major/Minor OperatingSystemVersion
