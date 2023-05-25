@@ -42,6 +42,7 @@ package("util-linux")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
+        package:addenv("PATH", "sbin")
     end)
 
     on_install("macosx", "linux", function (package)
