@@ -4,9 +4,9 @@ package("lightningscanner")
     set_description("A lightning-fast memory signature/pattern scanner, capable of scanning gigabytes of data per second.")
     set_license("MIT")
 
-    add_urls("https://github.com/localcc/LightningScanner/archive/refs/tags/v$(version).tar.gz",
-        "https://github.com/localcc/LightningScanner.git")
-    add_versions("1.0.0", "v1.0.0")
+    add_urls("https://github.com/localcc/LightningScanner/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/localcc/LightningScanner.git")
+    add_versions("v1.0.0", "30052ca62fee13ca28d500802298822ac6d32252")
 
     add_deps("cmake")
 
