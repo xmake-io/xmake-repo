@@ -9,6 +9,7 @@ package("dynareadout")
     add_versions("23.01", "578080c734927cc925e7e91a52317bc3e710965071f1da50853b1e48f81a1c0f")
     add_versions("23.02", "054949a8774089fc217d7c0ec02996b53d331794c41941ed5006b90715bb4d30")
     add_versions("23.04", "929efad70c68931f35c76336ea8b23bf2da46022d5fd570f4efc06d776a94604")
+    add_versions("23.05", "d33bb3acf6f62f7801c58755efbd49bfec2def37aee5397a17e2c38d8216bff6")
 
     add_configs("cpp",       {description = "Build the C++ bindings",        default = true,  type = "boolean"})
     add_configs("profiling", {description = "Build with profiling features", default = false, type = "boolean"})
