@@ -48,5 +48,5 @@ package("s7")
                     return(s7_apply_function(sc, old_string_append, args));
                 return(s7_apply_function(sc, old_add, args));
             }
-        ]], {includes = "s7.h"}))
+        ]], {configs = {links = {"dl", "s7"}}, includes = "s7.h"}))
     end)
