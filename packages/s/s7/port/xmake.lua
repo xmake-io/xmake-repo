@@ -39,4 +39,7 @@ target("s7") do
     if not is_plat("macosx") then
         add_ldflags("-static", "-static-libgcc", {force = true})
     end
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl")
+    end
 end
