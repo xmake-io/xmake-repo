@@ -19,4 +19,10 @@ package("sfgui")
         table.insert(configs, "-DSFML_STATIC_LIBRARIES=YES")
         import("package.tools.cmake").install(package, configs)
     end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            auto button1 = sfg::Button::Create();
+        ]]}, { includes = { "SFGUI/SFGUI.hpp", "SFGUI/Widgets.hpp" } }))
+    end)
 package_end()
