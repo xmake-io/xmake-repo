@@ -34,11 +34,6 @@ package("s7")
             ]])
             os.vrunv("s7", {file})
         end
-        if is_plat("linux") then
-            local configs = {syslinks = {"dl"}}
-        else
-            local configs = {}
-        end
         assert(package:check_csnippets([[
             static s7_pointer old_add;           /* the original "+" function for non-string cases */
             static s7_pointer old_string_append; /* same, for "string-append" */
@@ -53,5 +48,5 @@ package("s7")
                     return(s7_apply_function(sc, old_string_append, args));
                 return(s7_apply_function(sc, old_add, args));
             }
-        ]], {configs = configs, includes = "s7.h"}))
+        ]], {configs = {links = {"dl", "s7"}}, includes = "s7.h"}))
     end)
