@@ -17,6 +17,10 @@ package("s7")
         end
     end)
 
+    if is_plat("linux") then
+        add_syslinks("pthread", "dl")
+    end
+
     on_install("bsd", "cross", "cygwin", "linux", "macosx", "mingw", "msys", "wasm", "windows", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
