@@ -14,6 +14,9 @@ package("ncurses")
 
     add_configs("widec", {description = "Compile with wide-char/UTF-8 code.", default = true, type = "boolean"})
 
+    if is_plat("linux") then
+        add_extsources("apt::libncurses-dev")
+    end
     on_load(function (package)
         if package:config("widec") then
             package:add("links", "ncursesw", "formw", "panelw", "menuw")
