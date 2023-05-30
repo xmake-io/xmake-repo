@@ -42,6 +42,10 @@ package("libffi")
             table.insert(configs, "--enable-debug")
         end
         import("package.tools.autoconf").install(package, configs)
+        -- @see https://github.com/xmake-io/xmake-repo/pull/2085#issuecomment-1567654930
+        if os.isdir(path.join(package:installdir(), "lib64")) then
+            package:add("linkdirs", "lib", "lib64")
+        end
     end)
 
     on_test(function (package)
