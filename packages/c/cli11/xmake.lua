@@ -4,6 +4,10 @@ package("cli11")
     set_description("CLI11 is a command line parser for C++11 and beyond that provides a rich feature set with a simple and intuitive interface.")
     set_license("BSD")
 
+    if not is_host("windows") then
+        add_extsources("pkgconfig::CLI11")
+    end
+
     add_urls("https://github.com/CLIUtils/CLI11/archive/refs/tags/$(version).tar.gz",
              "https://github.com/CLIUtils/CLI11.git")
     add_versions("v2.3.2", "aac0ab42108131ac5d3344a9db0fdf25c4db652296641955720a4fbe52334e22")
