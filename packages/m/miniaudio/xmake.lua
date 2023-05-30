@@ -3,7 +3,7 @@ package("miniaudio")
     set_homepage("https://miniaud.io")
     set_description("Single file audio playback and capture library written in C.")
 
-    set_urls("https://github.com/mackron/miniaudio/archive/refs/tags/${version}.tar.gz",
+    set_urls("https://github.com/mackron/miniaudio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mackron/miniaudio.git")
     add_versions("0.11.15", "24a6d38fe69cd42d91f6c1ad211bb559f6c89768c4671fa05b8027f5601d5457")
     add_versions("0.11.16", "13320464820491c61bd178b95818fecb7cd0e68f9677d61e1345df6be8d4d77e")
