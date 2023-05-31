@@ -7,6 +7,8 @@ package("quill")
              "https://github.com/odygrd/quill.git")
 
     add_versions("2.8.0", "0461a6c314e3d882f3b9ada487ef1bf558925272509ee41a9fd25f7776db6075")
+    add_versions("2.9.0", "dec64c0fbb4bfbafe28fdeeeefac10206285bf2be4a42ec5dfb7987ca4ccb372")
+    add_versions("2.9.1", "921e053118136f63cebb2ca1d7e42456fd0bf9626facb755884709092753c054")
 
     if is_plat("macosx") then
         add_extsources("brew::quill")
@@ -19,6 +21,10 @@ package("quill")
     end
 
     add_deps("cmake")
+
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
 
     on_load(function (package)
         if package:config("fmt_external") then
