@@ -10,7 +10,7 @@ option("opengl2",          {showmenu = true,  default = false})
 option("opengl3",          {showmenu = true,  default = false})
 option("glad",             {showmenu = true,  default = false})
 option("sdl2",             {showmenu = true,  default = false})
-option("sdlrenderer2",     {showmenu = true,  default = false})
+option("sdl2_renderer",    {showmenu = true,  default = false})
 option("vulkan",           {showmenu = true,  default = false})
 option("win32",            {showmenu = true,  default = false})
 option("freetype",         {showmenu = true,  default = false})
@@ -25,7 +25,7 @@ if has_config("glad") then
     add_requires("glad")
 end
 
-if has_config("sdlrenderer2") then
+if has_config("sdl2_renderer") then
     add_requires("libsdl >=2.0.17")
 elseif has_config("sdl2") then
     add_requires("libsdl")
@@ -98,7 +98,7 @@ target("imgui")
         add_packages("libsdl")
     end
 
-    if has_config("sdlrenderer2") then
+    if has_config("sdl2_renderer") then
         if os.exists("backends/imgui_impl_sdlrenderer2.cpp") then
             add_files("backends/imgui_impl_sdlrenderer2.cpp")
             add_headerfiles("(backends/imgui_impl_sdlrenderer2.h)")

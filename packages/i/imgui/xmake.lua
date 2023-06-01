@@ -40,9 +40,9 @@ package("imgui")
     add_configs("glfw",             {description = "Enable the glfw backend", default = false, type = "boolean"})
     add_configs("opengl2",          {description = "Enable the opengl2 backend", default = false, type = "boolean"})
     add_configs("opengl3",          {description = "Enable the opengl3 backend", default = false, type = "boolean"})
-    add_configs("sdl2",             {description = "Enable the sdl2 backend with sdlrenderer", default = false, type = "boolean"})
-    add_configs("sdl2_no_renderer", {description = "Enable the sdl2 backend without sdlrenderer", default = false, type = "boolean"})
-    add_configs("sdlrenderer2",     {description = "Enable the sdlrenderer2 backend", default = false, type = "boolean"})
+    add_configs("sdl2",             {description = "Enable the sdl2 backend with sdl2_renderer", default = false, type = "boolean"})
+    add_configs("sdl2_no_renderer", {description = "Enable the sdl2 backend without sdl2_renderer", default = false, type = "boolean"})
+    add_configs("sdl2_renderer",    {description = "Enable the sdl2 renderer backend", default = false, type = "boolean"})
     add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
     add_configs("win32",            {description = "Enable the win32 backend", default = false, type = "boolean"})
     add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
@@ -63,11 +63,8 @@ package("imgui")
 
     on_load("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         -- begin: backwards compatibility
-        if package:config("sdl2") then
-            package:config_set("sdlrenderer2", true)
-        end
-        if package:config("sdlrenderer") then
-            package:config_set("sdlrenderer2", true)
+        if package:config("sdl2") or package:config("sdlrenderer") then
+            package:config_set("sdl2_renderer", true)
         end
         if package:config("glfw_opengl3") then
             package:config_set("glfw", true)
@@ -94,7 +91,7 @@ package("imgui")
         if package:config("sdl2_no_renderer") then
             package:add("deps", "libsdl")
         end
-        if package:config("sdlrenderer2") then
+        if package:config("sdl2_renderer") then
             package:add("deps", "libsdl >=2.0.17")
         end
         if package:config("vulkan") then
@@ -119,7 +116,7 @@ package("imgui")
             opengl3          = package:config("opengl3"),
             glad             = package:config("opengl3") and (not package:gitref() and package:version():lt("1.84")),
             sdl2             = package:config("sdl2") or package:config("sdl2_no_renderer"),
-            sdlrenderer2     = package:config("sdlrenderer2"),
+            sdl2_renderer    = package:config("sdl2_renderer"),
             vulkan           = package:config("vulkan"),
             win32            = package:config("win32"),
             freetype         = package:config("freetype"),
