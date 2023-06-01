@@ -14,13 +14,13 @@ package("kokkos")
 
     add_deps("cmake")
     add_links("kokkoscontainers", "kokkossimd", "kokkoscore")
-    on_load("windows", "macosx", "linux", function (package)
+    on_load("windows|x64", "macosx", "linux", function (package)
         if package:config("cuda") then
             package:add("deps", "cuda")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "macosx", "linux", function (package)
         local configs = {"-DKokkos_ENABLE_SERIAL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
