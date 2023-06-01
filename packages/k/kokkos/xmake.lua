@@ -13,7 +13,7 @@ package("kokkos")
     end
     add_configs("threads", {description = "Enable thread support.", default = true, type = "boolean"})
     add_configs("cuda",    {description = "Enable CUDA support.", default = false, type = "boolean"})
-    add_configs("arch",    {description = "Enable architecture-specific optimizations.", default = (is_plat("windows") and "none" or "native"), type = "string"})
+    add_configs("arch",    {description = "Enable architecture-specific optimizations.", default = (is_plat("windows") and nil or "native"), type = "string"})
 
     add_deps("cmake")
     add_links("kokkoscontainers", "kokkossimd", "kokkoscore")
@@ -29,7 +29,7 @@ package("kokkos")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DKokkos_ENABLE_THREADS=" .. (package:config("threads") and "ON" or "OFF"))
         table.insert(configs, "-DKokkos_ENABLE_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
-        if package:config("arch") ~= "none" then
+        if package:config("arch") ~= nil then
             table.insert(configs, "-DKokkos_ARCH_" .. package:config("arch"):upper() .. "=ON")
         end
         import("package.tools.cmake").install(package, configs)
