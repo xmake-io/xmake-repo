@@ -34,7 +34,7 @@ package("kokkos-kernels")
         assert(package:check_cxxsnippets({test = [[
             #include <Kokkos_Core.hpp>
             #include <KokkosSparse_MatrixPrec.hpp>
-            #incldue <KokkosSparse_IOUtils.hpp>
+            #include <KokkosSparse_IOUtils.hpp>
             void test() {
                 using EXSP = Kokkos::DefaultExecutionSpace;
                 using MESP = typename EXSP::memory_space;
