@@ -8,6 +8,9 @@ package("kokkos")
              "https://github.com/kokkos/kokkos.git")
     add_versions("4.0.01", "bb942de8afdd519fd6d5d3974706bfc22b6585a62dd565c12e53bdb82cd154f0")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
     add_configs("threads", {description = "Enable thread support.", default = true, type = "boolean"})
     add_configs("cuda",    {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("arch",    {description = "Enable architecture-specific optimizations.", default = (is_plat("windows") and "none" or "native"), type = "string"})

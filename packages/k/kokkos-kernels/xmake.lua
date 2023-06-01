@@ -8,6 +8,9 @@ package("kokkos-kernels")
              "https://github.com/kokkos/kokkos-kernels.git")
     add_versions("4.0.01", "3f493fcb0244b26858ceb911be64092fbf7785616ad62c81abde0ea1ce86688a")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
     add_deps("cmake")
@@ -21,6 +24,12 @@ package("kokkos-kernels")
     end)
 
     on_install("windows|x64", "macosx", "linux", function (package)
+        if package:is_plat("windows") then
+            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            if tonumber(vs) < 2022 then
+                raise("Your compiler is too old to use this library.")
+            end
+        end
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
