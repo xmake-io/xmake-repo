@@ -13,7 +13,7 @@ package("kokkos")
     end
     add_configs("threads", {description = "Enable thread support.", default = true, type = "boolean"})
     add_configs("cuda",    {description = "Enable CUDA support.", default = false, type = "boolean"})
-    add_configs("arch",    {description = "Enable architecture-specific optimizations.", default = (is_plat("windows") and nil or "native"), type = "string"})
+    add_configs("arch",    {description = "Enable architecture-specific optimizations.", default = (is_plat("macosx", "linux") and "native" or nil), type = "string"})
 
     add_deps("cmake")
     add_links("kokkoscontainers", "kokkossimd", "kokkoscore")
