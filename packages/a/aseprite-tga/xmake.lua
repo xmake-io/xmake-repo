@@ -8,6 +8,7 @@ package("aseprite-tga")
     add_versions("2023.6.2", "d537510d98bc9706675746d132fa460639254a78")
 
     on_install(function (package)
+        local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("aseprite-tga")
@@ -16,10 +17,13 @@ package("aseprite-tga")
                 add_headerfiles("tga.h")
                 set_languages("c++11")
                 if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all")
+                    add_rules("utils.symbols.export_all", {export_classes = true})
                 end
         ]])
-        import("package.tools.xmake").install(package)
+        if package:config("shared") then
+            configs.kind = "shared"
+        end
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
