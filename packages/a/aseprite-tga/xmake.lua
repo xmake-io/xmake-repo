@@ -8,7 +8,6 @@ package("aseprite-tga")
     add_versions("2023.6.2", "d537510d98bc9706675746d132fa460639254a78")
 
     on_install(function (package)
-        local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("aseprite-tga")
@@ -20,6 +19,7 @@ package("aseprite-tga")
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
         ]])
+        local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
         end
