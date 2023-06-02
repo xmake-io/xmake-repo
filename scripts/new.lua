@@ -8,59 +8,23 @@ import("devel.git")
 import("utils.archive")
 
 local options = {
-    {
-        nil,
-        "repo",
-        "v",
-        nil,
-        "Set repository name.",
-        "e.g. ",
-        "  - github:xmake-io/xmake",
-        "  - gitlab:xmake-io/xmake",
-    },
+    {nil, "repo", "v", nil, "Set repository name.",
+                            "e.g. ",
+                            "  - github:xmake-io/xmake",
+                            "  - gitlab:xmake-io/xmake"}
 }
-
---[[
-   {
-        host: string,
-        data: {
-             name: string,
-             description: string,
-             homepageUrl: string,
-             sshUrl: string,
-             url: string,
-             licenseInfo: {
-                 key: string,
-                 name: string,
-                 nickname: string,
-             },
-             latestRelease: {
-                 name: string,
-                 tagName: string,
-                 url: string,
-                 publishedAt: string
-             }
-        }
-   }
-]]
 
 -- Function to get Gitlab data
 local function get_gitlab_data(reponame)
     -- Ensure 'glab' tool is available
     local glab = assert(find_tool("glab"), "glab not found!")
 
-    -- Get the host
     local host = os.iorunv(glab.program, { "config", "get", "host" }):trim()
-
-    -- Build the GraphQL query
     local graphql_query = 'query={ project(fullPath: "' .. reponame .. '") { description webUrl sshUrlToRepo name } }'
-
-    -- Execute the query and get repository info
     local repoinfo = os.iorunv(glab.program, { "api", "graphql", "-f", graphql_query })
 
     local data = {}
     if repoinfo then
-        -- Decode the response JSON
         repoinfo = json.decode(repoinfo)
 
         if repoinfo.data and repoinfo.data.project then
@@ -78,7 +42,6 @@ local function get_gitlab_data(reponame)
         end
     end
 
-    -- Return host and data
     return { host = host, data = data }
 end
 
@@ -101,7 +64,6 @@ local function get_github_data(reponame)
 end
 
 local function generate_package(reponame, get_data)
-    -- Retrieve repository data
     local repo_data = get_data(reponame)
     local data = repo_data.data
     local host = repo_data.host
@@ -112,15 +74,14 @@ local function generate_package(reponame, get_data)
     local file = io.open(packagefile, "w")
 
     -- Define package and homepage
-    file:write(string.format('package("%s")\n', packagename))
+    file:print('package("%s")', packagename)
     local homepage = data.homepageUrl and data.homepageUrl ~= "" and data.homepageUrl or data.url
     if homepage then
-        file:write(string.format('    set_homepage("%s")\n', homepage))
+        file:print('    set_homepage("%s")', homepage)
     end
 
-    -- Define package description
     local description = data.description or ("The " .. packagename .. " package")
-    file:write(string.format('    set_description("%s")\n', description))
+    file:print('    set_description("%s")', description)
 
     -- Define license if available
     if type(data.licenseInfo) == "table" and data.licenseInfo.key then
@@ -133,11 +94,11 @@ local function generate_package(reponame, get_data)
         }
         local license = licenses[data.licenseInfo.key]
         if license then
-            file:write(string.format('    set_license("%s")\n', license))
+            file:print('    set_license("%s")', license)
         end
     end
 
-    file:write("\n")
+    file:print("")
 
     -- Define package URLs and versions
     local repodir
@@ -150,20 +111,20 @@ local function generate_package(reponame, get_data)
         local tmpfile = os.tmpfile({ ramdisk = false }) .. ".tar.gz"
         repodir = tmpfile .. ".dir"
 
-        file:write(string.format('    add_urls("https://%s/%s/-/archive/$(version).tar.gz",\n', host, reponame))
-        file:write(string.format('             "%s")\n', giturl))
+        file:print('    add_urls("https://%s/%s/-/archive/$(version).tar.gz', host, reponame)
+        file:print('             "%s")\n', giturl)
 
         print(string.format("downloading %s", url))
         http.download(url, tmpfile)
 
-        file:write(string.format('    add_versions("%s", "%s")\n', latest_release.tagName, hash.sha256(tmpfile)))
+        file:print('    add_versions("%s", "%s")', latest_release.tagName, hash.sha256(tmpfile))
         archive.extract(tmpfile, repodir)
         os.rm(tmpfile)
     else
         local giturl = string.format("git@%s:%s.git", host, reponame)
         repodir = os.tmpfile({ ramdisk = false })
 
-        file:write(string.format('    add_urls("%s")\n', giturl))
+        file:print('    add_urls("%s")', giturl)
 
         print(string.format("downloading %s", giturl))
         git.clone(giturl, { outputdir = repodir, depth = 1 })
@@ -181,148 +142,155 @@ local function generate_package(reponame, get_data)
         })
 
         if version then
-            file:write(string.format('    add_versions("%s", "%s")\n', version:trim(), commit))
+            file:print('    add_versions("%s", "%s")', version:trim(), commit)
         end
     end
 
-    -- Detect build system
+    local build_systems = {
+        ["xmake.lua"] = {
+            deps = {},
+            install = function(configs, package)
+                return [=[
+        io.writefile("xmake.lua", [[
+            add_rules("mode.release", "mode.debug")
+            target("%s")
+            set_kind("$(kind)")
+            add_files("src/*.c")
+            add_headerfiles("src/(*.h)")
+        ]])
+        if package:config("shared") then
+            configs.kind = "shared"
+        end
+        import("package.tools.xmake").install(package, configs)]=]
+            end,
+        },
+        ["CMakeLists.txt"] = {
+            deps = {"cmake"},
+            install = function(configs, package)
+                return [[
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)]]
+            end,
+        },
+        ["configure"] = {
+            deps = {"autoconf", "automake", "libtool"},
+            install = function(configs, package)
+                return [[
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        import("package.tools.autoconf").install(package, configs)]]
+            end,
+        },
+        ["autogen.sh"] = {
+            deps = {"autoconf", "automake", "libtool"},
+            install = function(configs, package)
+                return [[
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        import("package.tools.autoconf").install(package, configs)]]
+            end,
+        },
+        ["configure.ac"] = {
+            deps = {"autoconf", "automake", "libtool"},
+            install = function(configs, package)
+                return [[
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        import("package.tools.autoconf").install(package, configs)]]
+            end,
+        },
+        ["meson.build"] = {
+            deps = {"meson", "ninja"},
+            install = function(configs, package)
+                return [[
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+        import("package.tools.meson").install(package, configs)]]
+            end,
+        },
+        ["BUILD"] = {
+            deps = {"bazel"},
+            install = function(configs, package)
+                return 'import("package.tools.bazel").install(package, configs)'
+            end,
+        },
+        ["BUILD.bazel"] = {
+            deps = {"bazel"},
+            install = function(configs, package)
+                return 'import("package.tools.bazel").install(package, configs)'
+            end,
+        },
+    }
+
+    -- detect build system
+    local build_system = nil
     if repodir then
         local files = os.files(path.join(repodir, "*")) or {}
         table.join2(files, os.files(path.join(repodir, "*", "*")))
-
-        local build_systems = {
-            ["xmake.lua"] = function()
-                has_xmake = true
-            end,
-            ["CMakeLists.txt"] = function()
-                has_cmake = true
-            end,
-            ["configure"] = function()
-                has_autoconf = true
-            end,
-            ["autogen.sh"] = function()
-                has_autoconf, need_autogen = true, true
-            end,
-            ["configure.ac"] = function()
-                has_autoconf, need_autogen = true, true
-            end,
-            ["meson.build"] = function()
-                has_meson = true
-            end,
-            ["BUILD"] = function()
-                has_bazel = true
-            end,
-            ["BUILD.bazel"] = function()
-                has_bazel = true
-            end,
-        }
-
         for _, file in ipairs(files) do
             local filename = path.filename(file)
-            local action = build_systems[filename]
-            if action then
-                action()
+            if build_systems[filename] then
+                build_system = build_systems[filename]
+                break
             end
         end
-
         os.rm(repodir)
     end
 
-    -- Define actions for build systems
-    local build_systems_actions = {
-        ["cmake"] = function()
-            file:print('    add_deps("cmake")')
-            file:print(
-                '        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))'
-            )
-            file:print(
-                '        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))'
-            )
-            file:print('        import("package.tools.cmake").install(package, configs)')
-        end,
-        ["meson"] = function()
-            file:print('    add_deps("meson", "ninja")')
-            file:print(
-                '        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))'
-            )
-            file:print('        import("package.tools.meson").install(package, configs)')
-        end,
-        ["autogen"] = function()
-            file:print('    add_deps("autoconf", "automake", "libtool")')
-            file:print(
-                '        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))'
-            )
-            file:print("        if package:debug() then")
-            file:print('            table.insert(configs, "--enable-debug")')
-            file:print("        end")
-            file:print('        import("package.tools.autoconf").install(package, configs)')
-        end,
-        ["bazel"] = function()
-            file:print('    add_deps("bazel")')
-            file:print('        import("package.tools.bazel").install(package, configs)')
-        end,
-    }
-
-    -- Execute build system specific code
-    if build_systems_actions[has_build_system] then
-        build_systems_actions[has_build_system]()
+    -- add dependencies
+    if build_system then
+        file:print('')
+        for _, dep in ipairs(build_system.deps) do
+            file:print('    add_deps("' .. dep .. '")')
+        end
     end
 
-    -- Default to xmake if no known build system is found
-    if not has_build_system then
-        file:print('        io.writefile("xmake.lua", [[')
-        file:print('            add_rules("mode.release", "mode.debug")')
-        file:print('            target("%s")', packagename)
-        file:write('                set_kind("$(kind)")\n')
-        file:print('                add_files("src/*.c")')
-        file:print('                add_headerfiles("src/(*.h)")')
-        file:print("        ]])")
-        file:print('        if package:config("shared") then')
-        file:print('            configs.kind = "shared"')
-        file:print("        end")
-        file:print('        import("package.tools.xmake").install(package, configs)')
+    -- generate install scripts
+    -- file:print('')
+    file:print('    on_install(function (package)')
+    file:print('        local configs = {}')
+    if build_system then
+        file:print(build_system.install(configs, package))
     end
+    file:print('    end)')
 
-    file:print("    end)")
-
-    -- Generate test scripts
-    file:print("")
-    file:print("    on_test(function (package)")
+    -- generate test scripts
+    file:print('')
+    file:print('    on_test(function (package)')
     file:print('        assert(package:has_cfuncs("foo", {includes = "foo.h"}))')
-    file:print("    end)")
-
+    file:print('    end)')
+    
     file:close()
     io.cat(packagefile)
     cprint("${bright}%s generated!", packagefile)
+
 end
 
 function main(...)
-    -- Parse the options
     local opt = option.parse(table.pack(...), options, "New a package.", "", "Usage: xmake l scripts/new.lua [options]")
-
-    -- Extract the repository
     local repo = opt.repo
 
-    -- Ensure repository is provided
     if not repo then
         error("Repository name must be set!")
     end
 
     local reponame = repo:sub(8)
 
-    -- Check if the repository is from GitHub
     if repo:startswith("github:") then
-        -- _generate_package_from_github(reponame)
         generate_package(reponame, get_github_data)
         return
     end
 
-    -- Check if the repository is from GitLab
     if repo:startswith("gitlab:") then
         generate_package(reponame, get_gitlab_data)
         return
     end
 
-    -- If the repository is neither from GitHub nor GitLab, raise an error
     error("Unsupported repository source. Only 'github' and 'gitlab' are supported.")
 end
