@@ -6,7 +6,7 @@ package("wfrest")
     add_urls("https://github.com/wfrest/wfrest/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wfrest/wfrest.git")
 
-    add_versions("v0.9.3", "56a67286b4b8c126fb71d53cf8e06e5a8e84eab8fab637fd29f1288adc7e4b49")
+    add_versions("v0.9.3", "9be3c5fb53de3e0067af78b60d312a24ac9fcae70a8f7f47b95bbe38edabbe15")
 
     add_deps("openssl")
     add_deps("workflow")
