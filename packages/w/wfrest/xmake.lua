@@ -21,7 +21,14 @@ package("wfrest")
         if package:config("shared") then
             configs.kind = "shared"
         end
-        import("package.tools.xmake").install(package, configs)
+        local packagedeps = {"workflow"}
+        import("package.tools.xmake").install(package, configs, {packagedeps = packagedeps})
+        if package:config("shared") then
+            os.tryrm(path.join(package:installdir("lib"), "*.a"))
+        else
+            os.tryrm(path.join(package:installdir("lib"), "*.so"))
+            os.tryrm(path.join(package:installdir("lib"), "*.dylib"))
+        end
     end)
 
     on_test(function (package)
