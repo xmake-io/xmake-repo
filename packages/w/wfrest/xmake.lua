@@ -6,11 +6,9 @@ package("wfrest")
     add_urls("https://github.com/wfrest/wfrest/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wfrest/wfrest.git")
 
-    add_versions("v0.9.3", "9be3c5fb53de3e0067af78b60d312a24ac9fcae70a8f7f47b95bbe38edabbe15")
+    add_versions("v0.9.3", "1bd0047484e81e23c7a8ab7ba41634109169c37d80aeb2c480728214db42878e")
 
-    add_deps("openssl")
-    add_deps("workflow")
-    add_deps("zlib")
+    add_deps("openssl", "workflow", "zlib")
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
@@ -21,14 +19,7 @@ package("wfrest")
         if package:config("shared") then
             configs.kind = "shared"
         end
-        local packagedeps = {"workflow"}
-        import("package.tools.xmake").install(package, configs, {packagedeps = packagedeps})
-        if package:config("shared") then
-            os.tryrm(path.join(package:installdir("lib"), "*.a"))
-        else
-            os.tryrm(path.join(package:installdir("lib"), "*.so"))
-            os.tryrm(path.join(package:installdir("lib"), "*.dylib"))
-        end
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
