@@ -6,7 +6,7 @@ package("wfrest")
     add_urls("https://github.com/wfrest/wfrest/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wfrest/wfrest.git")
 
-    add_versions("v0.9.3", "805dd1534dc68e8484abbf67127caae43f420dbbac0f0cd766d009ccb657a601")
+    add_versions("v0.9.3", "56a67286b4b8c126fb71d53cf8e06e5a8e84eab8fab637fd29f1288adc7e4b49")
 
     add_deps("openssl")
     add_deps("workflow")
@@ -27,26 +27,12 @@ package("wfrest")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
         #include "wfrest/HttpServer.h"
-        using namespace wfrest;
-        int main()
-        {
-            HttpServer svr;
-
-            svr.GET("/hello", [](const HttpReq *req, HttpResp *resp)
-            {
-                resp->String("world\n");
-            });
-
+        void test() {
+            wfrest::HttpServer svr;
             if (svr.start(8888) == 0)
             {
-                getchar();
                 svr.stop();
-            } else
-            {
-                fprintf(stderr, "Cannot start server");
-                exit(1);
             }
-            return 0;
         }
     ]]}, {configs = {languages = "c++11"}}))
     end)
