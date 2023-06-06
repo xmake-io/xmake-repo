@@ -21,7 +21,7 @@ package("swisseph")
                 "swecl.c",
                 "swehel.c"
             )
-            add_headerfiles("*.h")
+            add_headerfiles("*.h", {prefixdir = "swisseph"})
         ]])
         local configs = {}
         if package:config("shared") then
@@ -31,5 +31,5 @@ package("swisseph")
     end)
 
     on_test("linux", "macosx", function (package)
-        assert(package:has_cfuncs("swe_version", {includes = {"swephexp.h", "sweph.h"}}))
+        assert(package:has_cfuncs("swe_version", {includes = {"swisseph/swephexp.h", "swisseph/sweph.h"}}))
     end)
