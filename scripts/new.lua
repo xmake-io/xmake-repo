@@ -1,6 +1,7 @@
 import("core.base.option")
 import("core.base.semver")
 import("core.base.json")
+import("core.base.hashset")
 import("lib.detect.find_tool")
 import("lib.detect.find_file")
 import("net.http")
@@ -14,21 +15,18 @@ local options = {
                             "  - gitlab:xmake-io/xmake"}
 }
 
--- Function to get Gitlab data
-local function get_gitlab_data(reponame)
-    -- Ensure 'glab' tool is available
+-- function to get Gitlab data
+function get_gitlab_data(reponame)
     local glab = assert(find_tool("glab"), "glab not found!")
-
-    local host = os.iorunv(glab.program, { "config", "get", "host" }):trim()
+    local host = os.iorunv(glab.program, {"config", "get", "host"}):trim()
     local graphql_query = 'query={ project(fullPath: "' .. reponame .. '") { description webUrl sshUrlToRepo name } }'
-    local repoinfo = os.iorunv(glab.program, { "api", "graphql", "-f", graphql_query })
+    local repoinfo = os.iorunv(glab.program, {"api", "graphql", "-f", graphql_query})
 
     local data = {}
     if repoinfo then
         repoinfo = json.decode(repoinfo)
-
         if repoinfo.data and repoinfo.data.project then
-            -- Extract required data and restructure it
+            -- extract required data and restructure it
             local project_data = repoinfo.data.project
             data = {
                 description = project_data.description,
@@ -41,12 +39,10 @@ local function get_gitlab_data(reponame)
             repoinfo.data.project = data
         end
     end
-
-    return { host = host, data = data }
+    return {host = host, data = data}
 end
 
 local function get_github_data(reponame)
-    -- get repository info
     local gh = assert(find_tool("gh"), "gh not found!")
     local host = "github.com"
     local data = os.iorunv(gh.program, {
@@ -59,21 +55,20 @@ local function get_github_data(reponame)
     if data then
         data = json.decode(data)
     end
-
-    return { data = data, host = host }
+    return {data = data, host = host}
 end
 
-local function generate_package(reponame, get_data)
+function generate_package(reponame, get_data)
     local repo_data = get_data(reponame)
     local data = repo_data.data
     local host = repo_data.host
 
-    -- Generate package header
+    -- generate package header
     local packagename = assert(data.name, "package name not found!"):lower()
     local packagefile = path.join("packages", string.sub(packagename, 1, 1), packagename, "xmake.lua")
     local file = io.open(packagefile, "w")
 
-    -- Define package and homepage
+    -- define package and homepage
     file:print('package("%s")', packagename)
     local homepage = data.homepageUrl and data.homepageUrl ~= "" and data.homepageUrl or data.url
     if homepage then
@@ -83,7 +78,7 @@ local function generate_package(reponame, get_data)
     local description = data.description or ("The " .. packagename .. " package")
     file:print('    set_description("%s")', description)
 
-    -- Define license if available
+    -- define license if available
     if type(data.licenseInfo) == "table" and data.licenseInfo.key then
         local licenses = {
             ["apache-2.0"] = "Apache-2.0",
@@ -97,10 +92,9 @@ local function generate_package(reponame, get_data)
             file:print('    set_license("%s")', license)
         end
     end
-
     file:print("")
 
-    -- Define package URLs and versions
+    -- define package URLs and versions
     local repodir
     local has_xmake, has_cmake, has_meson, has_bazel, has_autoconf, need_autogen
     local latest_release = data.latestRelease
@@ -114,7 +108,7 @@ local function generate_package(reponame, get_data)
         file:print('    add_urls("https://%s/%s/-/archive/$(version).tar.gz', host, reponame)
         file:print('             "%s")\n', giturl)
 
-        print(string.format("downloading %s", url))
+        print("downloading %s", url)
         http.download(url, tmpfile)
 
         file:print('    add_versions("%s", "%s")', latest_release.tagName, hash.sha256(tmpfile))
@@ -126,11 +120,11 @@ local function generate_package(reponame, get_data)
 
         file:print('    add_urls("%s")', giturl)
 
-        print(string.format("downloading %s", giturl))
+        print("downloading %s", giturl)
         git.clone(giturl, { outputdir = repodir, depth = 1 })
 
         local commit = git.lastcommit({ repodir = repodir })
-        local version = try({
+        local version = try {
             function()
                 return os.iorunv("git", {
                     "log",
@@ -138,9 +132,8 @@ local function generate_package(reponame, get_data)
                     "--date=format:%Y.%m.%d",
                     "--format=%ad",
                 }, { curdir = repodir })
-            end,
-        })
-
+            end
+        }
         if version then
             file:print('    add_versions("%s", "%s")', version:trim(), commit)
         end
@@ -154,9 +147,9 @@ local function generate_package(reponame, get_data)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("%s")
-            set_kind("$(kind)")
-            add_files("src/*.c")
-            add_headerfiles("src/(*.h)")
+                set_kind("$(kind)")
+                add_files("src/*.c")
+                add_headerfiles("src/(*.h)")
         ]])
         if package:config("shared") then
             configs.kind = "shared"
@@ -173,29 +166,7 @@ local function generate_package(reponame, get_data)
         import("package.tools.cmake").install(package, configs)]]
             end,
         },
-        ["configure"] = {
-            deps = {"autoconf", "automake", "libtool"},
-            install = function(configs, package)
-                return [[
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:debug() then
-            table.insert(configs, "--enable-debug")
-        end
-        import("package.tools.autoconf").install(package, configs)]]
-            end,
-        },
-        ["autogen.sh"] = {
-            deps = {"autoconf", "automake", "libtool"},
-            install = function(configs, package)
-                return [[
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:debug() then
-            table.insert(configs, "--enable-debug")
-        end
-        import("package.tools.autoconf").install(package, configs)]]
-            end,
-        },
-        ["configure.ac"] = {
+        ["configure,configure.ac,autogen.sh"] = {
             deps = {"autoconf", "automake", "libtool"},
             install = function(configs, package)
                 return [[
@@ -214,18 +185,12 @@ local function generate_package(reponame, get_data)
         import("package.tools.meson").install(package, configs)]]
             end,
         },
-        ["BUILD"] = {
+        ["BUILD,BUILD.bazel"] = {
             deps = {"bazel"},
             install = function(configs, package)
                 return 'import("package.tools.bazel").install(package, configs)'
             end,
-        },
-        ["BUILD.bazel"] = {
-            deps = {"bazel"},
-            install = function(configs, package)
-                return 'import("package.tools.bazel").install(package, configs)'
-            end,
-        },
+        }
     }
 
     -- detect build system
@@ -235,24 +200,31 @@ local function generate_package(reponame, get_data)
         table.join2(files, os.files(path.join(repodir, "*", "*")))
         for _, file in ipairs(files) do
             local filename = path.filename(file)
-            if build_systems[filename] then
-                build_system = build_systems[filename]
-                break
+            for k, v in pairs(build_systems) do
+                local filenames = hashset.from(k:split(","))
+                if filenames:has(filename) then
+                    build_system = v
+                    break
+                end
             end
         end
         os.rm(repodir)
+    end
+    if not build_system then
+        build_system = build_systems["xmake.lua"]
     end
 
     -- add dependencies
     if build_system then
         file:print('')
-        for _, dep in ipairs(build_system.deps) do
-            file:print('    add_deps("' .. dep .. '")')
+        local deps = table.wrap(build_system.deps)
+        if deps and #deps > 0 then
+            file:print('    add_deps("' .. table.concat(deps, '", ') .. '")')
         end
     end
 
     -- generate install scripts
-    -- file:print('')
+    file:print('')
     file:print('    on_install(function (package)')
     file:print('        local configs = {}')
     if build_system then
@@ -265,21 +237,15 @@ local function generate_package(reponame, get_data)
     file:print('    on_test(function (package)')
     file:print('        assert(package:has_cfuncs("foo", {includes = "foo.h"}))')
     file:print('    end)')
-    
     file:close()
+
     io.cat(packagefile)
     cprint("${bright}%s generated!", packagefile)
-
 end
 
 function main(...)
     local opt = option.parse(table.pack(...), options, "New a package.", "", "Usage: xmake l scripts/new.lua [options]")
-    local repo = opt.repo
-
-    if not repo then
-        error("Repository name must be set!")
-    end
-
+    local repo = assert(opt.repo, "repository name must be set!")
     local reponame = repo:sub(8)
 
     if repo:startswith("github:") then
@@ -292,5 +258,5 @@ function main(...)
         return
     end
 
-    error("Unsupported repository source. Only 'github' and 'gitlab' are supported.")
+    raise("unsupported repository source. only 'github' and 'gitlab' are supported.")
 end
