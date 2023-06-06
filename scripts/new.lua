@@ -102,10 +102,10 @@ function generate_package(reponame, get_data)
     if type(latest_release) == "table" then
         local url = string.format("https://%s/%s/archive/refs/tags/%s.tar.gz", host, reponame, latest_release.tagName)
         local giturl = string.format("https://%s/%s.git", host, reponame)
-        local tmpfile = os.tmpfile({ ramdisk = false }) .. ".tar.gz"
+        local tmpfile = os.tmpfile({ramdisk = false}) .. ".tar.gz"
         repodir = tmpfile .. ".dir"
 
-        file:print('    add_urls("https://%s/%s/-/archive/$(version).tar.gz",', host, reponame)
+        file:write('    add_urls("https://' .. host .. '/' .. reponame .. '/-/archive/$(version).tar.gz",\n')
         file:print('             "%s")\n', giturl)
 
         print("downloading %s", url)
@@ -161,7 +161,7 @@ function generate_package(reponame, get_data)
             deps = {"cmake"},
             install = function(configs, package)
                 return [[
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)]]
             end,
@@ -171,7 +171,7 @@ function generate_package(reponame, get_data)
             install = function(configs, package)
                 return [[
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
         import("package.tools.autoconf").install(package, configs)]]
@@ -219,7 +219,7 @@ function generate_package(reponame, get_data)
         file:print('')
         local deps = table.wrap(build_system.deps)
         if deps and #deps > 0 then
-            file:print('    add_deps("' .. table.concat(deps, '", ') .. '")')
+            file:print('    add_deps("' .. table.concat(deps, '", "') .. '")')
         end
     end
 
@@ -260,4 +260,3 @@ function main(...)
 
     raise("unsupported repository source. only 'github' and 'gitlab' are supported.")
 end
-
