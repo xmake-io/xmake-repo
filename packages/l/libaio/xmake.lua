@@ -10,7 +10,7 @@ package("libaio")
 
     on_install("linux", function (package)
         io.replace("Makefile", "prefix=/usr", "prefix=" .. package:installdir())
-        import("package.tools.make").make(package)
+        import("package.tools.make").make(package, {})
         import("package.tools.make").make(package, {"install"})
     end)
 
