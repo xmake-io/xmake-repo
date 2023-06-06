@@ -105,7 +105,7 @@ function generate_package(reponame, get_data)
         local tmpfile = os.tmpfile({ ramdisk = false }) .. ".tar.gz"
         repodir = tmpfile .. ".dir"
 
-        file:print('    add_urls("https://%s/%s/-/archive/$(version).tar.gz', host, reponame)
+        file:print('    add_urls("https://%s/%s/-/archive/$(version).tar.gz",', host, reponame)
         file:print('             "%s")\n', giturl)
 
         print("downloading %s", url)
@@ -260,3 +260,4 @@ function main(...)
 
     raise("unsupported repository source. only 'github' and 'gitlab' are supported.")
 end
+
