@@ -14,7 +14,7 @@ package("rsm-mmio")
                 add_files("src/**.cpp")
                 add_includedirs("include/")
                 add_headerfiles("include/(**.hpp)")
-        ]])
+        ]]) 
         import("package.tools.xmake").install(package)
     end)
 
