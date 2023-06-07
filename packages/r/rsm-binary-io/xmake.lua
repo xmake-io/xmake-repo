@@ -1,6 +1,7 @@
 package("rsm-binary-io")
     set_homepage("https://github.com/Ryan-rsm-McKenzie/binary_io")
     set_description("A binary i/o library for C++, without the agonizing pain")
+    set_license("MIT")
 
     add_urls("https://github.com/Ryan-rsm-McKenzie/binary_io/archive/refs/tags/$(version).tar.gz")
     add_versions("2.0.5", "4cc904ef02f77e04756cbdf01372629b0f04d859f06ee088d854468abdd4b840")
