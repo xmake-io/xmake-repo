@@ -86,7 +86,7 @@ package("boost")
             end
             if libname == "python" then
                 linkname = linkname .. package:config("pyver"):gsub("%p+", "")
-            end            
+            end
             if package:config("multi") then
                 linkname = linkname .. "-mt"
             end
@@ -107,7 +107,8 @@ package("boost")
             return linkname
         end
         -- we need the fixed link order
-        local sublibs = {log = {"log_setup", "log"}}
+        local sublibs = {log = {"log_setup", "log"},
+                         stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
         for _, libname in ipairs(libnames) do
             local libs = sublibs[libname]
             if libs then
