@@ -12,12 +12,17 @@ package("rsm-mmio")
             add_rules("mode.debug", "mode.release")
             set_languages("c++17")
             target("rsm-mmio")
-                set_kind("static")
+                set_kind("$(kind)")
                 add_files("src/**.cpp")
                 add_includedirs("include/")
                 add_headerfiles("include/(**.hpp)")
-        ]]) 
-        import("package.tools.xmake").install(package)
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
+                end
+        ]])
+        local configs = {}
+        configs.kind = package:config("shared") and "shared" or "static"
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
