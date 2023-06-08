@@ -17,7 +17,7 @@ package("rsm-mmio")
                 add_includedirs("include/")
                 add_headerfiles("include/(**.hpp)")
                 if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all")
+                    add_rules("utils.symbols.export_all", {export_classes = true})
                 end
         ]])
         local configs = {}
@@ -27,7 +27,7 @@ package("rsm-mmio")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            void test(int argc, char** argv) {
+            void test() {
                 mmio::mapped_file_source f;
                 assert(!f.is_open());
             }
