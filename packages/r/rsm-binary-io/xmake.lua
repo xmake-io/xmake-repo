@@ -17,7 +17,7 @@ package("rsm-binary-io")
                 add_includedirs("include/")
                 add_headerfiles("include/(**.hpp)")
                 if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all")
+                    add_rules("utils.symbols.export_all", {export_classes = true})
                 end
         ]])
         local configs = {}
