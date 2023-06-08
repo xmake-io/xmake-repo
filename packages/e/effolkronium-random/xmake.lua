@@ -4,7 +4,8 @@ package("effolkronium-random")
     set_description("Random for modern C++ with convenient API")
     set_license("MIT")
 
-    add_urls("https://github.com/effolkronium/random/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/effolkronium/random/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/effolkronium/random.git")
     add_versions("v1.4.1", "ec6beb67496ad2ce722d311d3fa5efb7e847dac5fd1c16b8920b51562fe20f53")
 
     on_install(function (package)
