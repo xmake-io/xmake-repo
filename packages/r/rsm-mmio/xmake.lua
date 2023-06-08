@@ -3,7 +3,8 @@ package("rsm-mmio")
     set_description("A cross-platform memory-mapped io library for C++")
     set_license("MIT")
 
-    add_urls("https://github.com/Ryan-rsm-McKenzie/mmio/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/Ryan-rsm-McKenzie/mmio/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/Ryan-rsm-McKenzie/mmio.git")
     add_versions("2.0.0", "360dddf74a97bd0a7eb41378cc59f2a69871dabfd36c55bf027429ac54930d5b")
 
     on_install(function (package)
