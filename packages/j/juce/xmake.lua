@@ -15,7 +15,7 @@ package("juce")
         package:add("includedirs", "include/JUCE-" .. package:version() .. "/modules")
         if package:is_plat("linux") and package:config("extras") then
             for _, pkg in ipairs({"freetype", "libxext","libxrandr", "libxinerama", "libxcursor"}) do
-                package:add("deps", pkg, {private = true})
+                package:add("deps", pkg)
             end
         end
     end)
@@ -25,7 +25,7 @@ package("juce")
         if package:is_plat("linux") and package:config("extras") then
             import("package.tools.cmake").install(package, configs, {packagedeps = {"freetype", "libxext", "libxrender", "libxrandr", "libxinerama", "libxcursor"}})
         else
-            import("package.tools.cmake").install(package, configs)
+            import("package.tools.cmake").install(package, configs, {envs = os.getenvs()})
         end
         if package:config("extras") then
             package:addenv("PATH", "bin/JUCE-" .. package:version())
@@ -34,10 +34,11 @@ package("juce")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <iostream>
             #define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED
-            #include <juce_core/juce_core.cpp>
+            #include <juce_core/juce_core.h>
             void test() {
-                auto randomInt = juce::Random::getSystemRandom().nextInt();
+                std::cout << "Hello JUCE" << juce::newLine;
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
