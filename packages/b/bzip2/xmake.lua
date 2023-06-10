@@ -15,7 +15,7 @@ package("bzip2")
 
     on_install(function (package)
         local configs = {}
-        configs.enable_tools = true
+        configs.enable_tools = not package:is_plat("wasm")
         if not package:is_plat("iphoneos", "android") then
             package:addenv("PATH", "bin")
         end
