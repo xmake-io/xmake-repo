@@ -11,7 +11,7 @@ package("liboai")
     add_deps("nlohmann_json")
     add_deps("libcurl", {configs = {openssl = true, zlib = true}})
 
-    on_install("windows", "linux", "macosx", "mingw", "cross", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
