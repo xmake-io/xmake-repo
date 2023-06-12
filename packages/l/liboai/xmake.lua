@@ -19,7 +19,7 @@ package("liboai")
             add_requires("libcurl", {configs = {openssl = true, zlib = true}})
             target("oai")
                 set_kind("$(kind)")
-                set_languages("c++20")
+                set_languages("c++17")
                 add_files("liboai/**.cpp")
                 add_includedirs("liboai/include")
                 add_headerfiles("liboai/include/(**.h)")
@@ -47,5 +47,5 @@ package("liboai")
                     "256x256"
                 );
             }
-        ]]}, {configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
