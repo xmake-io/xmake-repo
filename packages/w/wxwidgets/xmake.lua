@@ -49,7 +49,7 @@ package("wxwidgets")
     end
 
     add_links(
-        "links", "wxbase32u", "wxbase32u_net", "wxbase32u_xml", "wxexpat",
+        "wxbase32u", "wxbase32u_net", "wxbase32u_xml", "wxexpat",
         "wxjpeg", "wxmsw32u_adv", "wxmsw32u_aui", "wxmsw32u_core", "wxmsw32u_gl",
         "wxmsw32u_html", "wxmsw32u_media", "wxmsw32u_propgrid", "wxmsw32u_qa", "wxmsw32u_ribbon",
         "wxmsw32u_richtext", "wxmsw32u_stc", "wxmsw32u_webview", "wxmsw32u_xrc",
