@@ -84,10 +84,8 @@ package("wxwidgets")
 
     on_install("windows", function (package)
         local dlldir = package:is_arch("x64") and "vc14x_x64_dll" or "vc14x_dll"
-        local libarr = {"wxbase32u.lib","wxbase32u_net.lib","wxbase32u_xml.lib","wxexpat.lib","wxjpeg.lib","wxmsw32u_adv.lib","wxmsw32u_aui.lib","wxmsw32u_core.lib","wxmsw32u_gl.lib","wxmsw32u_html.lib","wxmsw32u_media.lib","wxmsw32u_propgrid.lib","wxmsw32u_qa.lib","wxmsw32u_ribbon.lib","wxmsw32u_richtext.lib","wxmsw32u_stc.lib","wxmsw32u_webview.lib","wxmsw32u_xrc.lib","wxpng.lib","wxregexu.lib","wxscintilla.lib","wxtiff.lib","wxzlib.lib"}
-        for _, v in pairs(libarr) do
-            os.cp(path.join("lib", dlldir, v), package:installdir("lib"))
-        end
+        os.cp(path.join("lib", dlldir, "*.lib"), package:installdir("lib"))
+        package:add("links","wxbase32u","wxbase32u_net","wxbase32u_xml","wxexpat","wxjpeg","wxmsw32u_adv","wxmsw32u_aui","wxmsw32u_core","wxmsw32u_gl","wxmsw32u_html","wxmsw32u_media","wxmsw32u_propgrid","wxmsw32u_qa","wxmsw32u_ribbon","wxmsw32u_richtext","wxmsw32u_stc","wxmsw32u_webview","wxmsw32u_xrc","wxpng","wxregexu","wxscintilla","wxtiff","wxzlib")
         os.cp(path.join(package:resourcedir("releaseDLL"),"lib", dlldir, "*.dll"), package:installdir("bin"))
         os.cp(path.join("lib", dlldir, "mswu", "wx"), package:installdir("lib", dlldir, "mswu"))
         os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
