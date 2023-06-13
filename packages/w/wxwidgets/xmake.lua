@@ -48,6 +48,14 @@ package("wxwidgets")
         end
     end
 
+    add_links(
+        "links", "wxbase32u", "wxbase32u_net", "wxbase32u_xml", "wxexpat",
+        "wxjpeg", "wxmsw32u_adv", "wxmsw32u_aui", "wxmsw32u_core", "wxmsw32u_gl",
+        "wxmsw32u_html", "wxmsw32u_media", "wxmsw32u_propgrid", "wxmsw32u_qa", "wxmsw32u_ribbon",
+        "wxmsw32u_richtext", "wxmsw32u_stc", "wxmsw32u_webview", "wxmsw32u_xrc",
+        "wxpng", "wxregexu", "wxscintilla", "wxtiff", "wxzlib"
+    )
+
     if is_plat("macosx") then
         add_defines("__WXOSX_COCOA__", "__WXMAC__", "__WXOSX__", "__WXMAC_XCODE__")
         add_frameworks("AudioToolbox", "WebKit", "CoreFoundation", "Security", "Carbon", "Cocoa", "IOKit", "QuartzCore")
@@ -85,7 +93,6 @@ package("wxwidgets")
     on_install("windows", function (package)
         local dlldir = package:is_arch("x64") and "vc14x_x64_dll" or "vc14x_dll"
         os.cp(path.join("lib", dlldir, "*.lib"), package:installdir("lib"))
-        package:add("links","wxbase32u","wxbase32u_net","wxbase32u_xml","wxexpat","wxjpeg","wxmsw32u_adv","wxmsw32u_aui","wxmsw32u_core","wxmsw32u_gl","wxmsw32u_html","wxmsw32u_media","wxmsw32u_propgrid","wxmsw32u_qa","wxmsw32u_ribbon","wxmsw32u_richtext","wxmsw32u_stc","wxmsw32u_webview","wxmsw32u_xrc","wxpng","wxregexu","wxscintilla","wxtiff","wxzlib")
         os.cp(path.join(package:resourcedir("releaseDLL"),"lib", dlldir, "*.dll"), package:installdir("bin"))
         os.cp(path.join("lib", dlldir, "mswu", "wx"), package:installdir("lib", dlldir, "mswu"))
         os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
