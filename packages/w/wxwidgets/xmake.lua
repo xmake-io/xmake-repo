@@ -33,7 +33,7 @@ package("wxwidgets")
 
         add_configs("shared",     {description = "Build shared library.", default = true, type = "boolean", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
-        add_configs("debug", {description = "Enable debug symbols.", default = "false", readonly = true})
+        add_configs("debug",      {description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
     else
         add_urls("https://github.com/wxWidgets/wxWidgets/archive/refs/tags/$(version).tar.gz",
                  "https://github.com/wxWidgets/wxWidgets.git")
