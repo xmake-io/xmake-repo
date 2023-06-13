@@ -16,6 +16,20 @@ package("wxwidgets")
 
         add_configs("shared",     {description = "Build shared library.", default = true, type = "boolean", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
+    elseif is_plat("mingw") then
+        if is_arch("x86_64") then
+            add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxMSW-$(version)_gcc1210_x64_Dev.7z")
+            add_versions("3.2.0", "7b43b1ae295be86840d7afef3ac78b7ddeb9d866a185958d1953e66c20b5f2e4")
+        else
+            add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxMSW-$(version)_gcc1210_Dev.7z")
+            add_versions("3.2.0", "f80f49233560dc3a9b48ac2b890f565a517bc381aab2afe7e3fba944487f10bb")
+        end
+        add_resources("3.2.0", "headers",
+            "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.0/wxWidgets-3.2.0-headers.7z",
+            "bd847e20050c52d127f4afe9b00ffe29d87c2f907749bd6bc732c0db05bce4b1")
+
+        add_configs("shared",     {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
     else
         add_urls("https://github.com/wxWidgets/wxWidgets/archive/refs/tags/$(version).tar.gz",
                  "https://github.com/wxWidgets/wxWidgets.git")
@@ -38,6 +52,8 @@ package("wxwidgets")
         add_syslinks("pthread", "m", "dl")
     elseif is_plat("windows") then
         add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=ud", "wxMSVC_VERSION=14x")
+    elseif is_plat("mingw") then
+        add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=ud")
     end
 
     on_load(function (package)
@@ -71,6 +87,16 @@ package("wxwidgets")
         os.cp(path.join("lib", dlldir, "mswud", "wx"), package:installdir("lib", dlldir, "mswud"))
         os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
         os.cp(path.join(package:resourcedir("headers"), "include", "msvc", "wx", "setup.h"), package:installdir("include/wx"))
+        io.replace(path.join(package:installdir("include"), "wx", "setup.h"), "../../../lib/", "../../lib/", {plain = true})
+    end)
+
+    on_install("mingw", function (package)
+        local dlldir = package:is_arch("x86_64") and "gcc1210_x64_dll" or "gcc1210_dll"
+        os.cp(path.join(dlldir, "*.a"), package:installdir("lib"))
+        os.cp(path.join(dlldir, "*.dll"), package:installdir("bin"))
+        os.cp(path.join(dlldir, "mswud", "wx"), package:installdir("lib", dlldir, "mswud"))
+        os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
+        os.cp(path.join(package:resourcedir("headers"), "include", "wx", "msw", "setup.h"), package:installdir("include/wx"))
         io.replace(path.join(package:installdir("include"), "wx", "setup.h"), "../../../lib/", "../../lib/", {plain = true})
     end)
 
