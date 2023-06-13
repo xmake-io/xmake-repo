@@ -6,9 +6,15 @@ package("wxwidgets")
         if is_arch("x64") then
             add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxMSW-$(version)_vc14x_x64_Dev.7z")
             add_versions("3.2.0", "02b7227916b98324f73ae9bed0f1cf27ae3157b4e3a3ded40ee8c0d570f0fd10")
+            add_resources("3.2.0", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.0/wxMSW-3.2.0_vc14x_x64_ReleaseDLL.7z",
+                "81d6512843a715fd4ba03b227a473701c90fae42406b88f0cc7ca022ec47dc51")
         else
             add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxMSW-$(version)_vc14x_Dev.7z")
             add_versions("3.2.0", "0cd2387edcf1f26924d59efcc3ea4c8a00783ee01bf396756dabdd7967e4b37b")
+            add_resources("3.2.0", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.0/wxMSW-3.2.0_vc14x_ReleaseDLL.7z",
+                "b168c9225f17168c7ece551c499d043bffc121d32408edf1905648482002110b")
         end
         add_resources("3.2.0", "headers",
             "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.0/wxWidgets-3.2.0-headers.7z",
@@ -16,6 +22,7 @@ package("wxwidgets")
 
         add_configs("shared",     {description = "Build shared library.", default = true, type = "boolean", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
+        add_configs("debug", {description = "Enable debug symbols.", default = "false", readonly = true})
     else
         add_urls("https://github.com/wxWidgets/wxWidgets/archive/refs/tags/$(version).tar.gz",
                  "https://github.com/wxWidgets/wxWidgets.git")
@@ -37,7 +44,7 @@ package("wxwidgets")
         add_defines("__WXGTK3__", "__WXGTK__")
         add_syslinks("pthread", "m", "dl")
     elseif is_plat("windows") then
-        add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=ud", "wxMSVC_VERSION=14x")
+        add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=u", "wxMSVC_VERSION=14x")
     end
 
     on_load(function (package)
@@ -65,10 +72,12 @@ package("wxwidgets")
 
     on_install("windows", function (package)
         local dlldir = package:is_arch("x64") and "vc14x_x64_dll" or "vc14x_dll"
-        os.cp(path.join("lib", dlldir, "*.lib"), package:installdir("lib"))
-        os.cp(path.join("lib", dlldir, "*.pdb"), package:installdir("lib"))
-        os.cp(path.join("lib", dlldir, "*.dll"), package:installdir("bin"))
-        os.cp(path.join("lib", dlldir, "mswud", "wx"), package:installdir("lib", dlldir, "mswud"))
+        local libarr = {"wxbase32u.lib","wxbase32u_net.lib","wxbase32u_xml.lib","wxexpat.lib","wxjpeg.lib","wxmsw32u_adv.lib","wxmsw32u_aui.lib","wxmsw32u_core.lib","wxmsw32u_gl.lib","wxmsw32u_html.lib","wxmsw32u_media.lib","wxmsw32u_propgrid.lib","wxmsw32u_qa.lib","wxmsw32u_ribbon.lib","wxmsw32u_richtext.lib","wxmsw32u_stc.lib","wxmsw32u_webview.lib","wxmsw32u_xrc.lib","wxpng.lib","wxregexu.lib","wxscintilla.lib","wxtiff.lib","wxzlib.lib"}
+        for _, v in pairs(libarr) do
+            os.cp(path.join("lib", dlldir, v), package:installdir("lib"))
+        end
+        os.cp(path.join(package:resourcedir("releaseDLL"),"lib", dlldir, "*.dll"), package:installdir("bin"))
+        os.cp(path.join("lib", dlldir, "mswu", "wx"), package:installdir("lib", dlldir, "mswu"))
         os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
         os.cp(path.join(package:resourcedir("headers"), "include", "msvc", "wx", "setup.h"), package:installdir("include/wx"))
         io.replace(path.join(package:installdir("include"), "wx", "setup.h"), "../../../lib/", "../../lib/", {plain = true})
