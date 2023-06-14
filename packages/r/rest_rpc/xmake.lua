@@ -15,7 +15,7 @@ package("rest_rpc")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "rest_rpc.hpp"
-            int main(){
+            void test() {
                 rest_rpc::rpc_client client("127.0.0.1", 9000);
                 client.connect();
                 int result = client.call<int>("add", 1, 2);
