@@ -1,5 +1,5 @@
 package("sqlite_orm")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/fnc12/sqlite_orm")
     set_description("SQLite ORM light header only library for modern C++")
 
@@ -29,7 +29,7 @@ package("sqlite_orm")
                 int id;
                 std::string name;
             };
-            int main(){
+            void test() {
                 auto storage = make_storage("db.sqlite",
                                             make_table("users",
                                                     make_column("id", &User::id, primary_key().autoincrement()),
