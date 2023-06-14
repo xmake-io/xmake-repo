@@ -1,5 +1,5 @@
 package("rest_rpc")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/qicosmos/rest_rpc")
     set_description("c++11, high performance, cross platform, easy to use rpc framework.")
 
@@ -18,9 +18,7 @@ package("rest_rpc")
             int main(){
                 rest_rpc::rpc_client client("127.0.0.1", 9000);
                 client.connect();
-
                 int result = client.call<int>("add", 1, 2);
-
                 client.run();
             }
         ]]}))
