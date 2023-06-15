@@ -12,7 +12,7 @@ package("rest_rpc")
         add_syslinks("Ws2_32")
     end
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", "mingw", function (package)
         os.cp("include", package:installdir())
     end)
 
