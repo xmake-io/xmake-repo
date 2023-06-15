@@ -84,7 +84,7 @@ package("cmake")
         add_versions("3.22.1", "0e998229549d7b3f368703d20e248e7ee1f853910d42704aa87918c213ea82c0")
         add_versions("3.24.1", "4931e277a4db1a805f13baa7013a7757a0cbfe5b7932882925c7061d9d1fa82b")
         add_versions("3.24.2", "0d9020f06f3ddf17fb537dc228e1a56c927ee506b486f55fe2dc19f69bf0c8db")
-        add_versions("3.26.4", "914cda29d02da8288c68b97368e4861f4b058eea7016d07af61876667a88f4fe")
+        add_versions("3.26.4", "313b6880c291bd4fe31c0aa51d6e62659282a521e695f30d5cc0d25abbd5c208")
     end
 
     if is_plat("mingw") and is_subhost("msys") then
