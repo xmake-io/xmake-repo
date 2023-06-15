@@ -1,5 +1,6 @@
 package("workspace_hanya")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/CodingHanYa/workspace")
     set_description("Workspace is a lightweight asynchronous execution framework based on C++11")
     set_license("Apache-2.0")
