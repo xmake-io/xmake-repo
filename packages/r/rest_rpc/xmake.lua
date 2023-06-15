@@ -9,7 +9,7 @@ package("rest_rpc")
     add_deps("asio", "msgpack-cxx")
 
     if is_plat("mingw") then
-        add_syslinks("Ws2_32")
+        add_syslinks("ws2_32")
     end
 
     on_install("windows", "macosx", "linux", "mingw", function (package)
