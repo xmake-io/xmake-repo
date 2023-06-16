@@ -23,13 +23,11 @@ package("libjxl")
     add_configs("openexr", {description = "Build JPEGXL with support for OpenEXR if available.", default = false, type = "boolean"})
     add_configs("skcms", {description = "Build with skcms instead of lcms2.", default = false, type = "boolean"})
     add_configs("tcmalloc", {description = "Build JPEGXL using gperftools (tcmalloc) allocator.", default = false, type = "boolean"})
-    if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-    end
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "wasm", function (package)
         local configs =
         {
             "-DBUILD_TESTING=OFF",
