@@ -31,7 +31,7 @@ package("libjxl")
 
     add_links("jxl", "jxl_threads", "brotlienc", "brotlidec", "brotlicommon")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "wasm", function (package)
         local configs =
         {
             "-DBUILD_TESTING=OFF",
