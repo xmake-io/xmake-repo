@@ -5,6 +5,8 @@ package("libjxl")
     set_license("BSD-3-Clause")
 
     set_urls("https://github.com/libjxl/libjxl.git")
+    add_urls("https://gitlab.com/wg1/jpeg-xl.git")
+
     add_versions("v0.8.2", "954b460768c08a147abf47689ad69b0e7beff65e")
 
     if is_plat("linux") then
@@ -27,7 +29,9 @@ package("libjxl")
 
     add_deps("cmake")
 
-    on_install("windows", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "wasm", function (package)
+    add_links("jxl", "jxl_threads", "brotlienc", "brotlidec", "brotlicommon")
+
+    on_install(function (package)
         local configs =
         {
             "-DBUILD_TESTING=OFF",
