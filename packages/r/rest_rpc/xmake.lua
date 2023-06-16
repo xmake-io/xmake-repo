@@ -25,5 +25,5 @@ package("rest_rpc")
                 int result = client.call<int>("add", 1, 2);
                 client.run();
             }
-        ]]}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)
