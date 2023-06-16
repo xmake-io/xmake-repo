@@ -4,8 +4,8 @@ package("libjxl")
     set_description("JPEG XL image format reference implementation")
     set_license("BSD-3-Clause")
 
-    set_urls("https://github.com/libjxl/libjxl.git")
-    add_urls("https://gitlab.com/wg1/jpeg-xl.git")
+    add_urls("https://github.com/libjxl/libjxl.git",
+             "https://gitlab.com/wg1/jpeg-xl.git")
 
     add_versions("v0.8.2", "954b460768c08a147abf47689ad69b0e7beff65e")
 
