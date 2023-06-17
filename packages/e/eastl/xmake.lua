@@ -7,6 +7,7 @@ package("eastl")
     add_urls("https://github.com/electronicarts/EASTL/archive/$(version).tar.gz")
     add_versions("3.17.03", "50a072066e30fda364d482df6733572d8ca440a33825d81254b59a6ca9f4375a")
     add_versions("3.17.06", "9ebeef26cdf091877ee348450d2711cd0bb60ae435309126c0adf8fec9a01ea5")
+    add_versions("3.21.12", "2a4d77e5eda23ec52fea8b22abbf2ea8002f38396d2a3beddda3ff2e17f7db2e")
 
     add_deps("cmake")
     add_deps("eabase")
