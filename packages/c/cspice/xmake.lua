@@ -1,5 +1,4 @@
 package("cspice")
-    set_kind("library")
     set_homepage("https://naif.jpl.nasa.gov/naif/toolkit.html")
     set_description("An Observation Geometry System for Space Science Missions")
 
@@ -12,14 +11,17 @@ package("cspice")
     end
 
     on_install("linux", "macosx", function (package)
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-
-        local configs = {buildir = "xbuild", vers = package:version_str()}
-
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            target("cspice")
+                set_kind("$(kind)")
+                add_headerfiles("include/*.h")
+                add_files("src/cspice/*.c")
+        ]])
+        local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
         end
-
         import("package.tools.xmake").install(package, configs)
     end)
 
