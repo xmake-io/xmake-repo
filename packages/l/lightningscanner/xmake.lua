@@ -10,7 +10,7 @@ package("lightningscanner")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
         local configs = { "-DLIGHTNING_SCANNER_INSTALL=ON", "-DLIGHTNING_SCANNER_BUILD_BENCH=OFF", "-DLIGHTNING_SCANNER_BUILD_DOCS=OFF", "-DLIGHTNING_SCANNER_BUILD_TESTS=OFF" }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
