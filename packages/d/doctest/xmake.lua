@@ -1,5 +1,6 @@
 package("doctest")
 
+    set_kind("library", {headeronly = true})
     set_homepage("http://bit.ly/doctest-docs")
     set_description("The fastest feature-rich C++11/14/17/20 single-header testing framework for unit tests and TDD")
 
