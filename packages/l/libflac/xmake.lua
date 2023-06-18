@@ -7,6 +7,7 @@ package("libflac")
     set_urls("https://github.com/xiph/flac/archive/$(version).tar.gz",
              "https://github.com/xiph/flac.git")
 
+    add_versions("1.4.2", "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5")
     add_versions("1.3.3", "668cdeab898a7dd43cf84739f7e1f3ed6b35ece2ef9968a5c7079fe9adfe1689")
     add_patches("1.3.3", path.join(os.scriptdir(), "patches", "1.3.3", "cmake.patch"), "49baa40ab70d63e74cfc3f0cc2f13824545a618ceaeffdd51d3333d90b37fd32")
     
