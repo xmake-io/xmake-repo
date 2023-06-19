@@ -10,7 +10,7 @@ package("sonic-cpp")
     add_cxxflags("-march=haswell")
 
     on_install("linux", function (package)
-        os.cp("include/sonic", package:installdir("include"))
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
