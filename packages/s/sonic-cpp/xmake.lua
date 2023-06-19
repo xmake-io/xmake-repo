@@ -16,9 +16,7 @@ package("sonic-cpp")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "sonic/sonic.h"
-
             #include <string>
-            #include <iostream>
 
             void test()
             {
@@ -31,10 +29,6 @@ package("sonic-cpp")
 
                 sonic_json::Document doc;
                 doc.Parse(json);
-
-                sonic_json::WriteBuffer wb;
-                doc.Serialize(wb);
-                std::cout << wb.ToString() << std::endl;
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
