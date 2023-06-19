@@ -43,6 +43,7 @@ package("libflac")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+        table.insert(configs, "-DINSTALL_MANPAGES=OFF")
 
         -- fix, undefined reference to `__memset_chk'
         -- @see https://github.com/msys2/MINGW-packages/issues/5803
