@@ -24,6 +24,9 @@ package("imgui-sfml")
         else
             package:add("deps", "sfml")
         end
+        if package:is_plat("windows", "mingw") and package:config("shared") then
+            package:add("defines", "IMGUI_SFML_SHARED_LIB=1")
+        end
     end)
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
@@ -46,6 +49,9 @@ package("imgui-sfml")
                 add_defines("IMGUI_USER_CONFIG=\"imconfig-SFML.h\"")
                 if is_plat("windows", "mingw") then
                     add_syslinks("imm32")
+                    if is_kind("shared") then
+                        add_defines("IMGUI_SFML_SHARED_LIB=1", "IMGUI_SFML_EXPORTS")
+                    end
                 end
                 add_rules("utils.install.pkgconfig_importfiles")
                 add_rules("utils.install.cmake_importfiles")
