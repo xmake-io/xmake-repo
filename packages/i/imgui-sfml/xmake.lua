@@ -16,6 +16,8 @@ package("imgui-sfml")
         add_syslinks("imm32")
     end
 
+    add_links("ImGui-SFML")
+
     on_load(function(package)
         if package:is_plat("linux") and package:config("shared") then
             package:add("deps", "sfml", {configs = {shared = true}})
