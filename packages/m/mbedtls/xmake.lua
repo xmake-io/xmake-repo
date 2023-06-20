@@ -14,6 +14,10 @@ package("mbedtls")
 
     add_links("mbedtls", "mbedx509", "mbedcrypto")
 
+    if is_plat("windows") then
+        add_syslinks("advapi32")
+    end
+
     on_install(function (package)
         local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_PROGRAMS=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
