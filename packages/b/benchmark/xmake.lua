@@ -55,5 +55,5 @@ package("benchmark")
             }
             BENCHMARK(BM_empty);
             BENCHMARK(BM_empty)->ThreadPerCpu();
-        ]]}, {configs = {languages = "c++11"}, includes = "benchmark/benchmark.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "benchmark/benchmark.h"}))
     end)
