@@ -20,6 +20,7 @@ package("trantor")
     add_deps("cmake")
     add_deps("openssl", "c-ares", {optional = true})
     if is_plat("windows") or is_plat("mingw") then
+	    add_patches("v1.5.8", path.join(os.scriptdir(), "patches", "1.5.8", "fix-win-off_t.patch" ),"f0d7fbfc98085ed8b5f6c7504be29b18ddcd6fe4e14e3551396a643fc4574dc0")
         add_syslinks("ws2_32")
     elseif is_plat("linux") then
         add_syslinks("pthread")
