@@ -19,9 +19,9 @@ package("cpp-ipc")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBIPC_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
-            table.insert(configs, "-DLIBIPC_USE_STATIC_CRT=MD")
+            table.insert(configs, "-DLIBIPC_USE_STATIC_CRT=OFF")
         else
-            table.insert(configs, "-DLIBIPC_USE_STATIC_CRT=MT")
+            table.insert(configs, "-DLIBIPC_USE_STATIC_CRT=ON")
         end
         import("package.tools.cmake").install(package, configs)
     end)
