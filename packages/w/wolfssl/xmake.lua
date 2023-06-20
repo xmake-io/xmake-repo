@@ -6,6 +6,7 @@ package("wolfssl")
     add_urls("https://github.com/wolfSSL/wolfssl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wolfSSL/wolfssl.git")
     add_versions("v5.3.0-stable", "1a3bb310dc01d3e73d9ad91b6ea8249d081016f8eef4ae8f21d3421f91ef1de9")
+    add_versions("v5.6.2-stable", "eb252f6ca8d8dcc2a05926dfafbc42250fea78e5e07b4689c3fc26ad69d2dd73")
 
     add_configs("openssl_extra", {description = "WOLFSSL_OPENSSLEXTRA", default = false, type = "boolean"})
 
