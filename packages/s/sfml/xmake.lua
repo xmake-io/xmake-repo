@@ -209,15 +209,15 @@ package("sfml")
             end
         end
         local packagedeps
-        if package:is_plat("linux") and package:config("shared") then
-            io.replace("src/SFML/Graphics/CMakeLists.txt", "target_link_libraries(sfml-graphics PRIVATE X11)",
-                "target_link_libraries(sfml-graphics PRIVATE X11 Xext Xrender)", {plain = true})
-            packagedeps = {"libxext", "libxrender"}
-        end
         table.insert(configs, "-DSFML_BUILD_AUDIO=" .. (package:config("audio") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_GRAPHICS=" .. (package:config("graphics") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_WINDOW=" .. (package:config("window") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_NETWORK=" .. (package:config("network") and "ON" or "OFF"))
+
+        if package:is_plat("windows") and not package:is_arch("x64", "x86_64", "x86", "i386") then
+            table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
+        end
+
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
