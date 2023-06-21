@@ -13,12 +13,22 @@ package("sfml")
         add_versions("2.5.1", "bf1e0643acb92369b24572b703473af60bac82caf5af61e77c063b779471bb7f")
         add_versions("2.6.0", "dc477fc7266641709046bd38628c909f5748bd2564b388cf6c750a9e20cdfef1")
     elseif is_plat("mingw") then
+        set_urls("https://www.sfml-dev.org/files/SFML-$(version)", {version = function (version)
+            local arch_str = is_arch("x64", "x86_64") and "64-bit" or "32-bit"
+
+            if version:le("2.5.1") then
+                return version .. "-windows-gcc-7.3.0-mingw-" .. arch_str .. ".zip"
+            else
+                return version .. "-windows-gcc-13.1.0-mingw-" .. arch_str .. ".zip"
+            end
+        end})
+
         if is_arch("x64", "x86_64") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-gcc-7.3.0-mingw-64-bit.zip")
             add_versions("2.5.1", "671e786f1af934c488cb22c634251c8c8bd441c709b4ef7bc6bbe227b2a28560")
+            add_versions("2.6.0", "6860f9da5fca995e9e152ee0d63207093513f61d5521a13607704fc25284f790")
         elseif is_arch("x86", "i386") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-gcc-7.3.0-mingw-32-bit.zip")
             add_versions("2.5.1", "92d864c9c9094dc9d91e0006d66784f25ac900a8ee23c3f79db626de46a1d9d8")
+            add_versions("2.6.0", "411d7c0b8a7e351b7c550e4a6d9c45f82cf36dd7550218e7e16a2e1ca6bf407f")
         end
     end
 
@@ -126,74 +136,26 @@ package("sfml")
             package:add("defines", "SFML_STATIC")
         end
 
-        -- enable components when xmake >=2.7.3
-        if package.components then
-            if package:is_plat("linux") then
-                if package:config("window") or package:config("graphics") then
-                    package:add("deps", "libx11", "libxext", "libxrandr", "libxrender", "freetype", "eudev")
-                    package:add("deps", "opengl", "glx", {optional = true})
-                end
-                if package:config("audio") then
-                    package:add("deps", "libogg", "libflac", "libvorbis", "openal-soft")
-                end
-            end
-            package:add("components", "system")
-            for _, component in ipairs({"graphics", "window", "audio", "network"}) do
-                if package:config(component) then
-                    package:add("components", component)
-                end
-            end
-            if package:is_plat("windows", "mingw") and package:config("main") then
-                package:add("components", "main")
-            end
-        else
-            local e = package:config("shared") and "" or "-s"
-            if package:debug() then
-                e = e .. "-d"
-            end
-            local a = "sfml-"
-            local main_module = a .. "main"
-            if package:debug() then
-                main_module = main_module .. "-d"
-            end
-
-            if package:config("graphics") then
-                package:add("links", a .. "graphics" .. e)
-                if package:is_plat("windows", "mingw") and not package:config("shared") then
-                    package:add("links", "freetype")
-                end
-            end
+        if package:is_plat("linux") then
             if package:config("window") or package:config("graphics") then
-                package:add("links", a .. "window" .. e)
-                if package:is_plat("windows", "mingw") and not package:config("shared") then
-                    package:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
-                end
-                if package:is_plat("linux") then
-                    package:add("deps", "libx11", "libxext", "libxrandr", "libxrender", "freetype", "eudev")
-                    package:add("deps", "opengl", "glx", {optional = true})
-                end
+                package:add("deps", "libx11", "libxcursor", "libxext", "libxrandr", "libxrender", "freetype", "eudev")
+                package:add("deps", "opengl", "glx", {optional = true})
             end
-            if package:config("audio") then
-                package:add("links", a .. "audio" .. e)
-                if package:is_plat("windows", "mingw") and not package:config("shared") then
-                    package:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
-                elseif package:is_plat("linux") then
-                    package:add("deps", "libogg", "libflac", "libvorbis", "openal-soft")
-                end
+        end
+
+        if package:config("audio") then
+            package:add("deps", "libogg", "libflac", "libvorbis", "openal-soft")
+        end
+
+        package:add("components", "system")
+        for _, component in ipairs({"graphics", "window", "audio", "network"}) do
+            if package:config(component) then
+                package:add("components", component)
             end
-            if package:config("network") then
-                package:add("links", a .. "network" .. e)
-                if package:is_plat("windows", "mingw") and not package:config("shared") then
-                    package:add("syslinks", "ws2_32")
-                end
-            end
-            if package:is_plat("windows", "mingw") and package:config("main") then
-                package:add("links", main_module)
-            end
-            package:add("links", a .. "system" .. e)
-            if package:is_plat("windows", "mingw") then
-                package:add("syslinks", "winmm")
-            end
+        end
+
+        if package:is_plat("windows", "mingw") and package:config("main") then
+            package:add("components", "main")
         end
     end)
 
@@ -214,6 +176,7 @@ package("sfml")
         table.insert(configs, "-DSFML_BUILD_WINDOW=" .. (package:config("window") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_NETWORK=" .. (package:config("network") and "ON" or "OFF"))
 
+        -- SFML doesn't provide prebuilt ARM binaries for the dependencies on Windows
         if package:is_plat("windows") and not package:is_arch("x64", "x86_64", "x86", "i386") then
             table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
         end
