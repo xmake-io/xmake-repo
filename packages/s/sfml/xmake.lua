@@ -10,7 +10,12 @@ package("sfml")
     elseif is_plat("windows", "linux", "macosx") then
         set_urls("https://www.sfml-dev.org/files/SFML-$(version)-sources.zip")
         add_urls("https://github.com/SFML/SFML/releases/download/$(version)/SFML-$(version)-sources.zip")
-        add_versions("2.5.1", "bf1e0643acb92369b24572b703473af60bac82caf5af61e77c063b779471bb7f")
+
+        -- Before 2.6.0 only x86 is supported for Mac
+        if not (is_plat("macosx") and is_arch("arm.*")) then
+            add_versions("2.5.1", "bf1e0643acb92369b24572b703473af60bac82caf5af61e77c063b779471bb7f")
+        end
+
         add_versions("2.6.0", "dc477fc7266641709046bd38628c909f5748bd2564b388cf6c750a9e20cdfef1")
     elseif is_plat("mingw") then
         set_urls("https://www.sfml-dev.org/files/SFML-$(version)", {version = function (version)
@@ -136,9 +141,13 @@ package("sfml")
             package:add("defines", "SFML_STATIC")
         end
 
+        if package:config("graphics") then
+            package:add("deps", "freetype")
+        end
+
         if package:is_plat("linux") then
             if package:config("window") or package:config("graphics") then
-                package:add("deps", "libx11", "libxcursor", "libxext", "libxrandr", "libxrender", "freetype", "eudev")
+                package:add("deps", "libx11", "libxcursor", "libxext", "libxrandr", "libxrender", "eudev")
                 package:add("deps", "opengl", "glx", {optional = true})
             end
         end
