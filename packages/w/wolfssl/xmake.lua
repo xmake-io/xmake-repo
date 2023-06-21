@@ -23,6 +23,9 @@ package("wolfssl")
 
 
     on_install("linux", "macos", "mingw", function (package)
+        local cmake_cflags = 'set(CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused -Werror ${CMAKE_C_FLAGS}")'
+        local new_cmake_cflags = 'set(CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused ${CMAKE_C_FLAGS}")'
+        io.replace("CMakeLists.txt", cmake_cflags, new_cmake_cflags, {plain = true})
         local configs = {"-DWOLFSSL_EXAMPLES=no", "-DWOLFSSL_CRYPT_TESTS=no"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
