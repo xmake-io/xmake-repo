@@ -3,43 +3,34 @@ package("sfml")
     set_homepage("https://www.sfml-dev.org")
     set_description("Simple and Fast Multimedia Library")
 
-    if is_plat("windows", "linux") then
+    if is_plat("windows", "linux", "macosx") then
         set_urls("https://www.sfml-dev.org/files/SFML-$(version)-sources.zip")
         add_urls("https://github.com/SFML/SFML/releases/download/$(version)/SFML-$(version)-sources.zip")
-        add_versions("2.5.1", "bf1e0643acb92369b24572b703473af60bac82caf5af61e77c063b779471bb7f")
-    elseif is_plat("macosx") then
-        if is_arch("x64", "x86_64") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-macOS-clang.tar.gz")
-            add_versions("2.5.1", "6af0f14fbd41dc038a00d7709f26fb66bb7ccdfe6187657ef0ef8cba578dcf14")
-
-            add_configs("debug", {builtin = true, description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
-            add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-        end
+        add_versions("2.6.0", "dc477fc7266641709046bd38628c909f5748bd2564b388cf6c750a9e20cdfef1")
     elseif is_plat("mingw") then
         if is_arch("x64", "x86_64") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-gcc-7.3.0-mingw-64-bit.zip")
-            add_versions("2.5.1", "671e786f1af934c488cb22c634251c8c8bd441c709b4ef7bc6bbe227b2a28560")
+            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-gcc-13.1.0-mingw-64-bit.zip")
+            add_versions("2.6.0", "6860f9da5fca995e9e152ee0d63207093513f61d5521a13607704fc25284f790")
         elseif is_arch("x86", "i386") then
-            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-gcc-7.3.0-mingw-32-bit.zip")
-            add_versions("2.5.1", "92d864c9c9094dc9d91e0006d66784f25ac900a8ee23c3f79db626de46a1d9d8")
+            set_urls("https://www.sfml-dev.org/files/SFML-$(version)-windows-gcc-13.1.0-mingw-32-bit.zip")
+            add_versions("2.6.0", "411d7c0b8a7e351b7c550e4a6d9c45f82cf36dd7550218e7e16a2e1ca6bf407f")
         end
     end
-
-    if is_plat("linux") then
+    
+    if is_plat("macosx") then
+        add_configs("debug", {builtin = true, description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+        add_extsources("brew::sfml/sfml-all")
+    elseif is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("windows", "mingw") then
+        add_configs("main", {description = "Link to the sfml-main library", default = true, type = "boolean"})
     end
 
     add_configs("graphics",   {description = "Use the graphics module", default = true, type = "boolean"})
     add_configs("window",     {description = "Use the window module", default = true, type = "boolean"})
     add_configs("audio",      {description = "Use the audio module", default = true, type = "boolean"})
     add_configs("network",    {description = "Use the network module", default = true, type = "boolean"})
-    if is_plat("windows", "mingw") then
-        add_configs("main",       {description = "Link to the sfml-main library", default = true, type = "boolean"})
-    end
-
-    if is_plat("macosx") then
-        add_extsources("brew::sfml/sfml-all")
-    end
 
     on_component = on_component or function() end
     on_component("graphics", function (package, component)
@@ -122,7 +113,7 @@ package("sfml")
     end)
 
     on_load("windows", "linux", "macosx", "mingw", function (package)
-        if package:is_plat("windows", "linux") then
+        if package:is_plat("windows", "linux", "macosx") then
             package:add("deps", "cmake")
         end
 
@@ -201,7 +192,7 @@ package("sfml")
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DSFML_BUILD_DOC=OFF", "-DSFML_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -225,7 +216,7 @@ package("sfml")
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
-    on_install("macosx", "mingw", function (package)
+    on_install("mingw", function (package)
         os.cp("lib", package:installdir())
         os.cp("include", package:installdir())
         if package:is_plat("mingw") then
