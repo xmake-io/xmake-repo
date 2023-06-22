@@ -9,18 +9,21 @@ package("wolfssl")
     add_versions("5.6.2", "eb252f6ca8d8dcc2a05926dfafbc42250fea78e5e07b4689c3fc26ad69d2dd73")
     add_versions("5.3.0", "1a3bb310dc01d3e73d9ad91b6ea8249d081016f8eef4ae8f21d3421f91ef1de9")
     
-
     add_configs("openssl_extra", {description = "WOLFSSL_OPENSSLEXTRA", default = false, type = "boolean"})
 
     add_deps("cmake")
 
     on_install("windows", function (package)
         local configs = {"wolfssl64.sln"}
-        table.insert(configs, "/p:Configuration=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
-        import("package.tools.msbuild").build(package, configs)
+        local debug_str = package:debug() and "Debug" or "Release"
+        local plat_str = package:is_arch("x64") and "x64" or "Win32"
+        table.insert(configs, "/p:Configuration=" .. debug_str)
+        table.insert(configs, "/p:Platform=" .. plat_str)
+        table.insert(configs, "-t:wolfssl")
+        import("package.tools.msbuild").build(package, configs, {upgrade={"wolfssl64.sln", "wolfssl.vcxproj"}})
+        os.cp("wolfssl", package:installdir("include"))
+        os.cp(path.join(debug_str, plat_str, "*"), package:installdir("lib"))
     end)
-
 
     on_install("linux", "macos", "mingw", function (package)
         local cmake_cflags = 'set(CMAKE_C_FLAGS "-Wall -Wextra -Wno-unused -Werror ${CMAKE_C_FLAGS}")'
