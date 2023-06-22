@@ -13,7 +13,7 @@ jobs:
         kind: [static, shared]
 
     runs-on: ${{ matrix.os }}
-    container: fedora:rawhide
+    container: fedora:latest
 
     concurrency:
         group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Fedora-${{ matrix.kind }}
