@@ -8,11 +8,11 @@ package("webui")
              "https://github.com/webui-dev/webui.git")
     add_versions("2.3.0", "14be57405b12cf434daade2310178534240866e3169c7213a6fa0e4a6c6f9f27")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("user32", "advapi32")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "mingw", "msys", "android", "cross", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -22,7 +22,7 @@ package("webui")
                 add_files("src/webui.c", {defines = "WEBUI_LOG"})
                 add_headerfiles("include/webui.h", "include/webui.hpp")
                 add_includedirs("include", "src/civetweb")
-                if is_plat("windows") then
+                if is_plat("windows", "mingw") then
                     add_syslinks("user32", "advapi32")
                 end
         ]])
@@ -36,7 +36,7 @@ package("webui")
         assert(package:check_cxxsnippets({test = [[
             #include <webui.hpp>
             void test() {
-                auto my_window = webui_new_window();
+                size_t my_window = webui_new_window();
                 webui_show(my_window, "<html>Hello</html>");
                 webui_wait();
             }
