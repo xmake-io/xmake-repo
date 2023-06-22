@@ -15,14 +15,14 @@ package("wolfssl")
 
     on_install("windows", function (package)
         local configs = {"wolfssl64.sln"}
-        local debug_str = package:debug() and "Debug" or "Release"
-        local plat_str = package:is_arch("x64") and "x64" or "Win32"
-        table.insert(configs, "/p:Configuration=" .. debug_str)
-        table.insert(configs, "/p:Platform=" .. plat_str)
+        local mode = package:debug() and "Debug" or "Release"
+        local arch = package:is_arch("x64") and "x64" or "Win32"
+        table.insert(configs, "/p:Configuration=" .. mode)
+        table.insert(configs, "/p:Platform=" .. arch)
         table.insert(configs, "-t:wolfssl")
-        import("package.tools.msbuild").build(package, configs, {upgrade={"wolfssl64.sln", "wolfssl.vcxproj"}})
+        import("package.tools.msbuild").build(package, configs, {upgrade = {"wolfssl64.sln", "wolfssl.vcxproj"}})
         os.cp("wolfssl", package:installdir("include"))
-        os.cp(path.join(debug_str, plat_str, "*"), package:installdir("lib"))
+        os.cp(path.join(mode, arch, "*"), package:installdir("lib"))
     end)
 
     on_install("linux", "macos", "mingw", function (package)
