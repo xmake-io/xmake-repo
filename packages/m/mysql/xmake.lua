@@ -3,13 +3,7 @@ package("mysql")
     set_homepage("https://dev.mysql.com/doc/refman/5.7/en/")
     set_description("Open source relational database management system.")
 
-    if is_plat("macosx", "linux") then
-        set_urls("https://cdn.mysql.com/archives/mysql-5.7/mysql-boost-$(version).tar.gz",
-                 "https://github.com/xmake-mirror/mysql-boost/releases/download/$(version)/mysql-boost-$(version).tar.gz")
-        add_versions("5.7.29", "00f514124de2bad1ba7b380cbbd46e316cae7fc7bc3a5621456cabf352f27978")
-    end
-
-    if is_plat("windows") then
+    if is_plat("windows", "macosx", "linux") then
         set_urls("https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-$(version).tar.gz")
         add_versions("8.0.31", "67bb8cba75b28e95c7f7948563f01fb84528fcbb1a35dba839d4ce44fe019baa")
     end
@@ -26,7 +20,7 @@ package("mysql")
     end
     
     if is_plat("macosx", "linux", "windows") then
-        add_deps("cmake", "openssl")
+        add_deps("cmake")
         if is_plat("linux") then
             add_deps("ncurses")
         end
@@ -34,7 +28,7 @@ package("mysql")
 
     add_includedirs("include", "include/mysql")
 
-    on_load("windows", "mingw", function(package) 
+    on_load("windows", "mingw", "linux", "macosx", function(package) 
         if package:version():ge("8.0.0") then
             package:add("deps", "boost")
             package:add("deps", "openssl 1.1.1-t")
@@ -50,7 +44,7 @@ package("mysql")
         os.cp("lib/libmysql.dll", package:installdir("bin"))
     end)
 
-    on_install("windows", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         io.gsub("CMakeLists.txt", "ADD_SUBDIRECTORY%(storage/ndb%)", "")
         local configs = {"-DCOMPILATION_COMMENT=XMake",
                          "-DDEFAULT_CHARSET=utf8",
@@ -66,7 +60,7 @@ package("mysql")
                          "-DWITH_LZ4='system'",
                          "-DWITH_ZSTD='system'",
                          "-DWITH_ZLIB='system'",
-                         "-DWINDOWS_RUNTIME_MD=" .. (package:config("vs_runtime"):startswith("MD") and "ON" or "OFF"),
+                         "-DWINDOWS_RUNTIME_MD=" .. (is_plat("windows") and package:config("vs_runtime"):startswith("MD") and "ON" or "OFF"),
                          "-DWITHOUT_SERVER=ON"}
         io.replace("cmake/ssl.cmake","IF(NOT OPENSSL_APPLINK_C)","IF(FALSE AND NOT OPENSSL_APPLINK_C)", {plain = true})
         for _, removelib in ipairs({"icu", "libevent", "re2", "rapidjson", "protobuf", "libedit"}) do
@@ -94,36 +88,6 @@ package("mysql")
             os.rm(package:installdir("lib/libmysql.lib"))
             os.rm(package:installdir("lib/libmysql.dll"))
         end
-    end)
-
-    on_install("macosx", "linux", function (package)
-        -- https://bugs.mysql.com/bug.php?id=87348
-        -- Fixes: "ADD_SUBDIRECTORY given source
-        -- 'storage/ndb' which is not an existing"
-        io.gsub("CMakeLists.txt", "ADD_SUBDIRECTORY%(storage/ndb%)", "")
-        local configs = {"-DCOMPILATION_COMMENT=XMake",
-                         "-DDEFAULT_CHARSET=utf8",
-                         "-DDEFAULT_COLLATION=utf8_general_ci",
-                         "-DINSTALL_DOCDIR=share/doc/#{name}",
-                         "-DINSTALL_INCLUDEDIR=include/mysql",
-                         "-DINSTALL_INFODIR=share/info",
-                         "-DINSTALL_MANDIR=share/man",
-                         "-DINSTALL_MYSQLSHAREDIR=share/mysql",
-                         "-DWITH_BOOST=../boost",
-                         "-DWITH_EDITLINE=" .. (is_plat("macosx") and "system" or "bundled"),
-                         "-DWITH_SSL=yes",
-                         "-DWITH_UNIT_TESTS=OFF",
-                         "-DWITHOUT_SERVER=ON"}
-        if package:is_plat("linux") then
-            local curses = package:dep("ncurses"):fetch()
-            if curses then
-                local includedirs = table.wrap(curses.sysincludedirs or curses.includedirs)
-                local libfiles = table.wrap(curses.libfiles)
-                table.insert(configs, "-DCURSES_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
-                table.insert(configs, "-DCURSES_LIBRARY=" .. table.concat(libfiles, ";"))
-            end
-        end
-        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
