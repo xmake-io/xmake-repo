@@ -6,9 +6,6 @@ package("mysql")
     if is_plat("windows", "macosx", "linux") then
         set_urls("https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-$(version).tar.gz")
         add_versions("8.0.31", "67bb8cba75b28e95c7f7948563f01fb84528fcbb1a35dba839d4ce44fe019baa")
-        if linuxos.name() == "archlinux" then
-            add_configs("shared", {description = "Build shared binaries.", default = true, type = "boolean", readonly=true})
-        end
     end
 
     if is_plat("mingw") then
@@ -106,8 +103,7 @@ package("mysql")
         assert(package:check_cxxsnippets({test = [[
             #include <mysql.h>
             void test() {
-                MYSQL s; 
-                mysql_init(&s);
+                MYSQL s;
             }
         ]]}))
     end)
