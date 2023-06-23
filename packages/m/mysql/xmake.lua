@@ -130,7 +130,8 @@ package("mysql")
         assert(package:check_cxxsnippets({test = [[
             #include <mysql.h>
             void test() {
-                MYSQL* s = mysql_init();
+                MYSQL s; 
+                mysql_init(&s);
             }
         ]]}))
     end)
