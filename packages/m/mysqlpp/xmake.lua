@@ -9,7 +9,7 @@ package("mysqlpp")
 
     add_deps("mysql")
 
-    on_install(function (package)
+    on_install("windows", "mingw", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         if package:config("shared") then
@@ -17,6 +17,16 @@ package("mysqlpp")
         end
         import("package.tools.xmake").install(package, configs)
         os.mv(package:installdir("include/*.h"), package:installdir("include/mysql++/"))
+    end)
+
+    on_install("linux", function (package)
+        os.vrunv("./configure", 
+                {"--enable-shared", 
+                 "--with-mysql=" .. package:dep("mysql"):installdir(),
+                 "--prefix=" .. package:installdir()
+                })
+        os.vrunv("make", {"-j4"})
+        os.vrunv("make", {"install"})
     end)
 
     on_test(function (package)
