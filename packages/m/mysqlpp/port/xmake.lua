@@ -7,7 +7,6 @@ target("mysqlpp")
     add_packages("mysql", "zlib", "zstd")
     add_headerfiles("lib/*.h")
     if is_plat("windows") then
-        add_syslinks("advapi32")
         add_defines("_USRDLL","DLL_EXPORTS","UNICODE","_UNICODE","MYSQLPP_MAKING_DLL","HAVE_MYSQL_SSL_SET")
     elseif is_plat("mingw") then
         add_syslinks("pthread")
