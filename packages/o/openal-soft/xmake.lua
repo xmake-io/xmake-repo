@@ -41,6 +41,10 @@ package("openal-soft")
     end)
 
     on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", "cross", function (package)
+        if is_plat("linux") and linuxos.name() == "fedora" then 
+            -- https://github.com/kcat/openal-soft/issues/864
+            io.replace("CMakeLists.txt", "if(HAVE_GCC_PROTECTED_VISIBILITY)", "if(0)", {plain = true})
+        end
         local configs = {"-DALSOFT_EXAMPLES=OFF", "-DALSOFT_UTILS=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
