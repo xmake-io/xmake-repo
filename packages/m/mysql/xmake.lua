@@ -6,6 +6,9 @@ package("mysql")
     if is_plat("windows", "macosx", "linux") then
         set_urls("https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-$(version).tar.gz")
         add_versions("8.0.31", "67bb8cba75b28e95c7f7948563f01fb84528fcbb1a35dba839d4ce44fe019baa")
+        if linuxos.name() == "archlinux" then
+            add_configs("shared", {description = "Build shared binaries.", default = true, type = "boolean", readonly=true})
+        end
     end
 
     if is_plat("mingw") then
@@ -81,12 +84,21 @@ package("mysql")
         io.replace("libbinlogevents/CMakeLists.txt", "INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/libbinlogevents/include)", "MY_INCLUDE_SYSTEM_DIRECTORIES(LZ4)\nINCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/libbinlogevents/include)", {plain = true})
         io.replace("cmake/install_macros.cmake", "  INSTALL_DEBUG_SYMBOLS(","  # INSTALL_DEBUG_SYMBOLS(", {plain = true})
         import("package.tools.cmake").install(package, configs)
-        if package:config("shared") then
-            os.rm(package:installdir("lib/mysqlclient.lib"))
-            os.cp(package:installdir("lib/libmysql.dll"), package:installdir("bin"))
+        if is_plat("windows") then
+            if package:config("shared") then
+                os.rm(package:installdir("lib/mysqlclient.lib"))
+                os.cp(package:installdir("lib/libmysql.dll"), package:installdir("bin"))
+            else
+                os.rm(package:installdir("lib/libmysql.lib"))
+                os.rm(package:installdir("lib/libmysql.dll"))
+            end
         else
-            os.rm(package:installdir("lib/libmysql.lib"))
-            os.rm(package:installdir("lib/libmysql.dll"))
+            if package:config("shared") then
+                os.rm(package:installdir("lib/*.a"))
+                os.cp(package:installdir("lib/*.so.*"), package:installdir("bin"))
+            else
+                os.rm(package:installdir("lib/*.so.*"))
+            end
         end
     end)
 
