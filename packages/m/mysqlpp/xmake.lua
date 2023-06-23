@@ -20,13 +20,11 @@ package("mysqlpp")
     end)
 
     on_install("linux", function (package)
-        os.vrunv("./configure", 
-                {"--enable-shared", 
-                 "--with-mysql=" .. package:dep("mysql"):installdir(),
-                 "--prefix=" .. package:installdir()
-                })
-        os.vrunv("make", {"-j4"})
-        os.vrunv("make", {"install"})
+        local configs = {}
+        table.insert(configs, "--enable-shared")
+        table.insert(configs, "--with-mysql=" .. package:dep("mysql"):installdir())
+        table.insert(configs, "--prefix=" .. package:installdir())
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
