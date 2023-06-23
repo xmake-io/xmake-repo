@@ -7,6 +7,8 @@ package("mysqlpp")
 
     add_configs("shared", {description = "Build shared binaries.", default = true, type = "boolean", readonly = true})
 
+    add_deps("mysql")
+
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
