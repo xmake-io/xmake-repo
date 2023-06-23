@@ -57,7 +57,7 @@ package("mysql")
                          "-DINSTALL_INFODIR=share/info",
                          "-DINSTALL_MANDIR=share/man",
                          "-DINSTALL_MYSQLSHAREDIR=share/mysql",
-                         "-DWITH_EDITLINE=" .. (is_plat("macosx") and "system" or "bundled"),
+                         "-DWITH_EDITLINE=bundled",
                          "-DWITH_UNIT_TESTS=OFF",
                          "-DDISABLE_SHARED=" .. (package:config("shared") and "OFF" or "ON"),
                          "-DWITH_LZ4='system'",
