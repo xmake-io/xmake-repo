@@ -10,6 +10,7 @@ package("wolfssl")
     add_versions("5.3.0", "1a3bb310dc01d3e73d9ad91b6ea8249d081016f8eef4ae8f21d3421f91ef1de9")
     
     add_configs("openssl_extra", {description = "WOLFSSL_OPENSSLEXTRA", default = false, type = "boolean"})
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake")
 
