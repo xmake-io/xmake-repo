@@ -11,7 +11,9 @@ package("flecs")
 
     add_deps("cmake")
 
-    if is_plat("linux") then
+    if is_plat("windows") then
+        add_syslinks("wsock32", "ws2_32")
+    elseif is_plat("linux") then
         add_syslinks("pthread")
     end
 
@@ -24,8 +26,9 @@ package("flecs")
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DFLECS_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
-        table.insert(configs, "-DFLECS_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DFLECS_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DFLECS_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DFLECS_PIC=" .. (package:config("pic") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
