@@ -16,7 +16,7 @@ package("mysqlpp")
             configs.kind = "shared"
         end
         import("package.tools.xmake").install(package, configs)
-        os.cp(path.join("lib", "*.h"), package:installdir("include/mysql++/"))
+        os.cp(path.join("lib", "*.h"), package:installdir(path.join("include", "mysql++")))
     end)
 
     on_install("linux", function (package)
