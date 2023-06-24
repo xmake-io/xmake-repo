@@ -36,9 +36,9 @@ package("mysql")
             package:add("deps", "zstd")
             package:add("deps", "lz4")
         else
-            add_deps("openssl")
-            if is_plat("linux") then
-                add_deps("ncurses")
+            package:add("deps", "openssl")
+            if package:is_plat("linux") then
+                package:add("deps", "ncurses")
             end
         end
     end)
