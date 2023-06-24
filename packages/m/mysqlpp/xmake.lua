@@ -16,7 +16,7 @@ package("mysqlpp")
             configs.kind = "shared"
         end
         import("package.tools.xmake").install(package, configs)
-        os.mv(package:installdir("include/*.h"), package:installdir("include/mysql++/"))
+        os.cp(path.join("lib", "*.h"), package:installdir("include/mysql++/"))
     end)
 
     on_install("linux", function (package)
@@ -27,7 +27,6 @@ package("mysqlpp")
             table.insert(configs, "--with-mysql=" .. package:dep("mysql"):installdir())
         end
         import("package.tools.autoconf").install(package, configs)
-        os.cp(path.join("lib", "*.h"), package:installdir("include/mysql++/"))
     end)
 
     on_test(function (package)
