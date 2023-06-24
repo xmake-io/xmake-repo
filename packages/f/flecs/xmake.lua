@@ -11,7 +11,7 @@ package("flecs")
 
     add_deps("cmake")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("wsock32", "ws2_32")
     elseif is_plat("linux") then
         add_syslinks("pthread")
