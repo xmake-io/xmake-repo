@@ -10,7 +10,6 @@ target("mysqlpp")
     add_files("lib/ssqls2.cpp", "lib/stadapter.cpp", "lib/tcp_connection.cpp", "lib/transaction.cpp", "lib/type_info.cpp")
     add_files("lib/uds_connection.cpp", "lib/utility.cpp", "lib/vallist.cpp", "lib/wnp_connection.cpp")    
     add_packages("mysql", "zlib", "zstd")
-    add_headerfiles("lib/*.h")
     if is_plat("windows") then
         add_syslinks("advapi32")
         add_defines("_USRDLL", "DLL_EXPORTS", "UNICODE", "_UNICODE", "MYSQLPP_MAKING_DLL", "HAVE_MYSQL_SSL_SET")
