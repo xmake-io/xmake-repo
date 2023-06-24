@@ -46,7 +46,7 @@ package("mysql")
     on_install("mingw", function (package)
         os.cp("lib", package:installdir())
         os.cp("include", package:installdir())
-        os.cp("lib/libmysql.dll"), package:installdir("bin"))
+        os.cp("lib/libmysql.dll", package:installdir("bin"))
     end)
 
     on_install("windows", "linux", "macosx", function (package)
