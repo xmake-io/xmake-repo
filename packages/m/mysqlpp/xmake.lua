@@ -22,9 +22,12 @@ package("mysqlpp")
     on_install("linux", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared")
-        table.insert(configs, "--with-mysql=" .. package:dep("mysql"):installdir())
-        table.insert(configs, "--prefix=" .. package:installdir())
+        local mysql = package:dep("mysql")
+        if mysql and not mysql:is_system() then
+            table.insert(configs, "--with-mysql=" .. package:dep("mysql"):installdir())
+        end
         import("package.tools.autoconf").install(package, configs)
+        os.cp(path.join("lib", "*.h"), package:installdir("include/mysql++/"))
     end)
 
     on_test(function (package)
