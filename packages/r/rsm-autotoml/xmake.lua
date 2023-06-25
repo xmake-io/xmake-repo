@@ -12,6 +12,7 @@ package("rsm-autotoml")
     on_install(function (package)
         io.replace("include/AutoTOML.hpp", "string_t = toml::string", "string_t = std::string", {plain = true})
         io.replace("include/AutoTOML.hpp", "~ISetting() = 0 {}", "~ISetting() = default;", {plain = true})
+        io.replace("include/AutoTOML.hpp", "node.as<", "node.template as<", {plain = true})
         os.cp("include/AutoTOML.hpp", package:installdir("include"))
     end)
 
