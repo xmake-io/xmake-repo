@@ -18,8 +18,8 @@ package("qt5webkit")
         assert(package:check_cxxsnippets({test = [[
             int test(int argc, char** argv) {
                 QtWebView::initialize();
-                QApplication app (argc, argv);
+                QGuiApplication  app (argc, argv);
                 return app.exec();
             }
-        ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = {"QApplication", "QWebView"}}))
+        ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = {"QGuiApplication", "QWebView"}}))
     end)
