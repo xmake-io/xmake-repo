@@ -1,8 +1,9 @@
-name: Monkey (Linux)
+name: Sync
 
 on:
-  schedule: # execute every 1 hours
-    - cron: "0 */1 * * *"
+  pull_request:
+    branches:
+      - sync
 
 jobs:
   build:
