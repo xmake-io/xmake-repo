@@ -154,11 +154,9 @@ package("boost")
                     msvc_ver = string.sub(vs_toolset, 1, i2 + 1)
                 end
 
-                -- Specifying a version will disable b2 from using tools
+                -- Specifying a version will disable b2 from forcing tools
                 -- from the latest installed msvc version.
-                -- Useful when VS version doesn't match msvc version.
-                -- e.g vs_toolset 14.1 on Visual Studio 2022
-                file:print("using msvc : %s : ;", msvc_ver)
+                file:print("using msvc : %s : \"%s\" ;", msvc_ver, (package:build_getenv("cxx"):gsub("\\", "\\\\")))
             else
                 file:print("using gcc : : %s ;", package:build_getenv("cxx"):gsub("\\", "/"))
             end
