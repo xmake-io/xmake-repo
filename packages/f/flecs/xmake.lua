@@ -18,7 +18,7 @@ package("flecs")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     elseif is_plat("bsd") then
-        add_syslinks("execinfo")
+        add_syslinks("execinfo", "pthread")
     end
 
     on_load("windows", "mingw", function (package)
