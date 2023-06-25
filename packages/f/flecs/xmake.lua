@@ -9,6 +9,8 @@ package("flecs")
     add_versions("v3.0.0", "8715faf3276f0970b80c28c2a8911f4ac86633d25ebab3d3c69521942769d7d4")
     add_versions("v2.4.8", "9a8040a197e4b5e032524bc7183f68faa7b2f759c67b983b40018a7726561cac")
 
+    add_patches("v3.2.4", path.join(os.scriptdir(), "patches", "v3.2.4", "freebsd_http_include.patch"), "39d7f2795b8c64b76d7f2aa6c3c5a10383df1234ff1bb441d62fd8fcaab8174b")
+
     add_deps("cmake")
 
     if is_plat("windows", "mingw") then
