@@ -157,8 +157,8 @@ package("boost")
                 local vs_toolset = msvc:config("vs_toolset")
                 local msvc_ver = ""
                 if vs_toolset then
-                    local i1, i2 = vs_toolset:find("%.")
-                    msvc_ver = string.sub(vs_toolset, 1, i2 + 1)
+                    local i = vs_toolset:find("%.")
+                    msvc_ver = i and vs_toolset:sub(1, i + 1)
                 end
 
                 -- Specifying a version will disable b2 from forcing tools
