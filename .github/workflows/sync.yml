@@ -1,4 +1,4 @@
-name: Monkey (Linux)
+name: Sync
 
 on:
   schedule: # execute every 1 hours
