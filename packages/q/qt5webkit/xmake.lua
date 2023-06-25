@@ -21,5 +21,5 @@ package("qt5webkit")
                 QGuiApplication  app (argc, argv);
                 return app.exec();
             }
-        ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = {"QGuiApplication", "QWebView"}}))
+        ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = {"QGuiApplication", "QWebView/QWebView"}}))
     end)
