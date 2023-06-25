@@ -51,18 +51,18 @@ package("assimp")
             package:add("deps", "irrxml")
         end
         if package:is_plat("linux", "macosx") and package:config("shared") then
-            package:add("links", "assimp")
+            package:add("links", "assimp" .. (package:is_debug() and "d" or ""))
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install(function (package)
         local configs = {"-DASSIMP_BUILD_SAMPLES=OFF",
                          "-DASSIMP_BUILD_TESTS=OFF",
                          "-DASSIMP_BUILD_DOCS=OFF",
                          "-DASSIMP_BUILD_FRAMEWORK=OFF",
                          "-DASSIMP_INSTALL_PDB=ON",
                          "-DASSIMP_INJECT_DEBUG_POSTFIX=ON",
-                         "-DASSIMP_BUILD_ZLIB=ON",
+                         "-DASSIMP_BUILD_ZLIB=OFF",
                          "-DSYSTEM_IRRXML=ON",
                          "-DASSIMP_WARNINGS_AS_ERRORS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))

@@ -4,8 +4,9 @@ package("mpfr")
     set_description("The MPFR library is a C library for multiple-precision floating-point computations with correct rounding.")
     set_license("LGPL-3.0")
 
-    add_urls("https://www.mpfr.org/mpfr-current/mpfr-$(version).tar.gz")
+    add_urls("https://www.mpfr.org/mpfr-$(version)/mpfr-$(version).tar.gz")
     add_versions("4.1.0", "3127fe813218f3a1f0adf4e8899de23df33b4cf4b4b3831a5314f78e65ffa2d6")
+    add_versions("4.2.0", "f1cc1c6bb14d18f0c61cc416e083f5e697b6e0e3cf9630b9b33e8e483fc960f0")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::mpfr")

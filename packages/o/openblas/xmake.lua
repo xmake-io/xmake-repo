@@ -15,6 +15,7 @@ package("openblas")
             add_versions("0.3.19", "d85b09d80bbb40442d608fa60353ccec5f112cebeccd805c0e139057e26d1795")
             add_versions("0.3.20", "cacfb8563e2a98260e35a09c92fd3b7383a9cd1367444edfa1b46cb0225ee9c3")
             add_versions("0.3.21", "ecf1853ce92696fb8531c941c50e983ea8fa673c118a87298a075c045d52a3ca")
+            add_versions("0.3.23", "9255020dcd6e10e037550b04aa7b85b2a2c610c2a479be79b26105eb81fe253b")
         elseif is_arch("x86") then
             add_urls("https://github.com/xianyi/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version)-x86.zip")
             add_versions("0.3.15", "bcde933737b477813eaac290de5cb8756d3b42199e8ef5f44b23ae5f06fe0834")
@@ -36,6 +37,7 @@ package("openblas")
         add_versions("0.3.19", "947f51bfe50c2a0749304fbe373e00e7637600b0a47b78a51382aeb30ca08562")
         add_versions("0.3.20", "8495c9affc536253648e942908e88e097f2ec7753ede55aca52e5dead3029e3c")
         add_versions("0.3.21", "f36ba3d7a60e7c8bcc54cd9aaa9b1223dd42eaf02c811791c37e8ca707c241ca")
+        add_versions("0.3.23", "5d9491d07168a5d00116cdc068a40022c3455bf9293c7cb86a65b1054d7e5114")
 
         add_configs("fortran", {description = "Compile with fortran enabled.", default = is_plat("linux"), type = "boolean"})
         add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean"})
@@ -56,7 +58,7 @@ package("openblas")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows|x64", "windows|x86", function (package)
         os.mv(path.join("bin", "libopenblas.dll"), package:installdir("bin"))
         os.mv("include", package:installdir())
         os.mv(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
@@ -123,7 +125,7 @@ package("openblas")
             end
         end
         make.build(package, configs)
-        make.make(package, table.join("install", "PREFIX=" .. package:installdir(), configs))
+        make.make(package, table.join("install", "PREFIX=" .. package:installdir():gsub("\\", "/"), configs))
     end)
 
     on_test(function (package)

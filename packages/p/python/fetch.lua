@@ -10,7 +10,7 @@ function _find_binary(package, opt)
     end
     if result then
         -- check if pip, setuptools and wheel are installed
-        local ok = try { function () 
+        local ok = try { function ()
             os.vrunv(result.program, {"-c", "import pip"})
             os.vrunv(result.program, {"-c", "import setuptools"})
             os.vrunv(result.program, {"-c", "import wheel"})
@@ -29,7 +29,7 @@ function _find_library(package, opt)
     opt.paths = opt.paths or {}
     table.insert(opt.paths, "$(env PATH)")
     table.insert(opt.paths, "$(env CONDA_PREFIX)")
-    
+
     -- find python
     local program = find_program("python3", opt)
     if not program then
@@ -64,14 +64,15 @@ function _find_library(package, opt)
         includepath = find_path("Python.h", {path.directory(exepath)}, {suffixes = {"include/python" .. pyver}})
     end
 
-    -- return
     if libpath and includepath then
         local result = {
             version = version,
-            link = libpath.link,
-            linkdirs = {libpath.linkdir},
-            includedirs = {includepath}
+            includedirs = includepath
         }
+        if not package:config("headeronly") then
+            result.links = libpath.link
+            result.linkdirs = libpath.linkdir
+        end        
         return result
     end
 end

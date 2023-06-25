@@ -9,6 +9,7 @@ package("openal-soft")
     end})
     add_urls("https://github.com/kcat/openal-soft.git")
 
+    add_versions("1.23.1", "dfddf3a1f61059853c625b7bb03de8433b455f2f79f89548cbcbd5edca3d4a4a")
     add_versions("1.22.2", "3e58f3d4458f5ee850039b1a6b4dac2343b3a5985a6a2e7ae2d143369c5b8135")
     add_versions("1.22.0", "814831a8013d7365dfd1917b27f1fb6e723f3be3fe1c6a7ff4516425d8392f68")
     add_versions("1.21.1", "8ac17e4e3b32c1af3d5508acfffb838640669b4274606b7892aa796ca9d7467f")
@@ -39,7 +40,11 @@ package("openal-soft")
         end
     end)
 
-    on_install("windows", "linux", "mingw@linux,msys,windows", "macosx", "android", "iphoneos", "cross", function (package)
+    on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", "cross", function (package)
+        if is_plat("linux") and linuxos.name() == "fedora" then 
+            -- https://github.com/kcat/openal-soft/issues/864
+            io.replace("CMakeLists.txt", "if(HAVE_GCC_PROTECTED_VISIBILITY)", "if(0)", {plain = true})
+        end
         local configs = {"-DALSOFT_EXAMPLES=OFF", "-DALSOFT_UTILS=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")

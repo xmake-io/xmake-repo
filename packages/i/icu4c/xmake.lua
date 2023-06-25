@@ -6,6 +6,7 @@ package("icu4c")
     add_urls("https://github.com/unicode-org/icu/releases/download/release-$(version)-src.tgz", {version = function (version)
             return (version:gsub("%.", "-")) .. "/icu4c-" .. (version:gsub("%.", "_"))
         end})
+    add_versions("73.1", "a457431de164b4aa7eca00ed134d00dfbf88a77c6986a10ae7774fc076bb8c45")
     add_versions("72.1", "a2d2d38217092a7ed56635e34467f92f976b370e20182ad325edea6681a71d68")
     add_versions("71.1", "67a7e6e51f61faf1306b6935333e13b2c48abd8da6d2f46ce6adca24b1e21ebf")
     add_versions("70.1", "8d205428c17bf13bb535300669ed28b338a157b1c01ae66d31d0d3e2d47c3fd5")
@@ -16,8 +17,18 @@ package("icu4c")
 
     add_patches("69.1", path.join(os.scriptdir(), "patches", "69.1", "replace-py-3.patch"), "ae27a55b0e79a8420024d6d349a7bae850e1dd403a8e1131e711c405ddb099b9")
     add_patches("70.1", path.join(os.scriptdir(), "patches", "70.1", "replace-py-3.patch"), "6469739da001721122b62af513370ed62901caf43af127de3f27ea2128830e35")
+    if is_plat("mingw") then
+        add_patches("72.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
+        add_patches("73.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
+    end
 
-    add_links("icuuc", "icutu", "icui18n", "icuio", "icudata")
+    add_links("icutu", "icuio")
+    if is_plat("mingw", "windows") then
+        add_links("icuin", "icuuc", "icudt")
+    else
+        add_links("icui18n", "icuuc", "icudata")
+    end
+
     if is_plat("linux") then
         add_syslinks("dl")
     end
@@ -36,7 +47,7 @@ package("icu4c")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "mingw@msys", function (package)
         import("package.tools.autoconf")
 
         os.cd("source")
@@ -51,6 +62,9 @@ package("icu4c")
         else
             table.insert(configs, "--disable-shared")
             table.insert(configs, "--enable-static")
+        end
+        if package:is_plat("mingw") then
+            table.insert(configs, "--with-data-packaging=dll")
         end
 
         local envs = {}

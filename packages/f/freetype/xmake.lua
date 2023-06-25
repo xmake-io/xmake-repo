@@ -6,6 +6,7 @@ package("freetype")
     set_urls("https://downloads.sourceforge.net/project/freetype/freetype2/$(version)/freetype-$(version).tar.gz",
              "https://download.savannah.gnu.org/releases/freetype/freetype-$(version).tar.gz",
              "https://gitlab.freedesktop.org/freetype/freetype.git")
+    add_versions("2.13.0", "a7aca0e532a276ea8d85bd31149f0a74c33d19c8d287116ef8f5f8357b4f1f80")
     add_versions("2.12.1", "efe71fd4b8246f1b0b1b9bfca13cfff1c9ad85930340c27df469733bbb620938")
     add_versions("2.11.1", "f8db94d307e9c54961b39a1cc799a67d46681480696ed72ecf78d4473770f09b")
     add_versions("2.11.0", "a45c6b403413abd5706f3582f04c8339d26397c4304b78fa552f2215df64101f")
@@ -35,6 +36,8 @@ package("freetype")
     add_deps("cmake")
     if is_plat("windows", "mingw") and is_subhost("windows") then
         add_deps("pkgconf")
+    elseif is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     add_includedirs("include/freetype2")

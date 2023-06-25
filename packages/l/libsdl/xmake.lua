@@ -27,6 +27,10 @@ package("libsdl")
     add_versions("archive:2.26.0", "4a181f158f88676816e4993d7e97e7b48ef273aa6f4e2909c6a85497e9af3e9f")
     add_versions("archive:2.26.1", "c038222fcac6ccc448daaa3febcae93fdac401aed12fd60da3b7939529276b1b")
     add_versions("archive:2.26.2", "31510e53266c9e4730070ec20543c25642a85db7f678445cd9cfc61c7b6eb94b")
+    add_versions("archive:2.26.3", "3e46df1eb1be30448cf7c7f3fc0991980f0ef867c2412ab7bc925b631e5dc09c")
+    add_versions("archive:2.26.4", "f22fd1410a4b4345f2da679b372629da38f644a686660f1ebadc5e0cb05a7369")
+    add_versions("archive:2.26.5", "d88362fc3ee350a037e31381db00df764a294244bac8e427b8c67c6ca4d7e6fd")
+    add_versions("archive:2.28.0", "a3fd9394093e08ae47233353c1efb07b28514fe63d7caed34b7811e8a17e5731")
     add_versions("github:2.0.8",  "release-2.0.8")
     add_versions("github:2.0.12", "release-2.0.12")
     add_versions("github:2.0.14", "release-2.0.14")
@@ -39,6 +43,10 @@ package("libsdl")
     add_versions("github:2.26.0", "release-2.26.0")
     add_versions("github:2.26.1", "release-2.26.1")
     add_versions("github:2.26.2", "release-2.26.2")
+    add_versions("github:2.26.3", "release-2.26.3")
+    add_versions("github:2.26.4", "release-2.26.4")
+    add_versions("github:2.26.5", "release-2.26.5")
+    add_versions("github:2.28.0", "release-2.28.0")
 
     add_deps("cmake")
 
@@ -47,6 +55,10 @@ package("libsdl")
     add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
     if is_plat("linux") then
         add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
+    end
+
+    if is_plat("wasm") then
+        add_cxflags("-sUSE_SDL=0")
     end
 
     on_load(function (package)
@@ -60,16 +72,18 @@ package("libsdl")
     end)
 
     on_component("main", function (package, component)
-        component:add("links", "SDL2main")
+        local libsuffix = package:is_debug() and "d" or ""
+        component:add("links", "SDL2main" .. libsuffix)
         component:add("defines", "SDL_MAIN_HANDLED")
         component:add("deps", "lib")
     end)
 
     on_component("lib", function (package, component)
+        local libsuffix = package:is_debug() and "d" or ""
         if package:config("shared") then
-            component:add("links", "SDL2")
+            component:add("links", "SDL2" .. libsuffix)
         else
-            component:add("links", package:is_plat("windows") and "SDL2-static" or "SDL2")
+            component:add("links", (package:is_plat("windows") and "SDL2-static" or "SDL2") .. libsuffix)
             if package:is_plat("windows", "mingw") then
                 component:add("syslinks", "user32", "gdi32", "winmm", "imm32", "ole32", "oleaut32", "version", "uuid", "advapi32", "setupapi", "shell32")
             elseif package:is_plat("linux", "bsd") then
@@ -172,9 +186,6 @@ package("libsdl")
                 end
                 table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
             end
-        elseif package:is_plat("bsd") then
-            opt = opt or {}
-            opt.packagedeps = "libusb"
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with the sdl headers
             opt = opt or {}
@@ -184,5 +195,6 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("SDL_Init",
+            {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)

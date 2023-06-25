@@ -13,6 +13,7 @@ package("hdf5")
     add_versions("1.12.2", "2a89af03d56ce7502dcae18232c241281ad1773561ec00c0f0e8ee2463910f14")
     add_versions("1.13.2", "01643fa5b37dba7be7c4db6bbf3c5d07adf5c1fa17dbfaaa632a279b1b2f06da")
     add_versions("1.13.3", "83c7c06671f975cee6944b0b217f95005faa55f79ea5532cf4ac268989866af4")
+    add_versions("1.14.0", "a571cc83efda62e1a51a0a912dd916d01895801c5025af91669484a1575a6ef4")
 
     add_configs("cpplib", {description = "Build HDF5 C++ Library", default = false, type = "boolean"})
 

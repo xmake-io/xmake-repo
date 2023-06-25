@@ -13,7 +13,7 @@ package("x264")
     add_syslinks("pthread", "dl")
     on_install("linux", "macosx", function (package)
         local configs = {"--disable-avs", "--disable-lsmash", "--disable-lavf", "--disable-bashcompletion"}
-        table.insert(configs, "--enable-" .. (package:configs("shared") and "shared" or "static"))
+        table.insert(configs, "--enable-" .. (package:config("shared") and "shared" or "static"))
         if package:config("pic") ~= false then
             table.insert(configs, "--enable-pic")
         end

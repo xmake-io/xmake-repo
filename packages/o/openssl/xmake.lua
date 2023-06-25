@@ -51,7 +51,7 @@ package("openssl")
     end)
 
     on_install("windows", function (package)
-        local configs = {"Configure"}
+        local configs = {"Configure", "no-tests"}
         local target
         if package:is_arch("x86", "i386") then
             target = "VC-WIN32"
@@ -109,8 +109,7 @@ package("openssl")
             table.insert(configs, "--debug")
         end
         os.vrunv("./config", configs, {envs = buildenvs})
-        local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
-        import("package.tools.make").build(package, makeconfigs)
+        import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"), "*.a"))
@@ -147,8 +146,7 @@ package("openssl")
                          "--prefix=" .. package:installdir()}
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         os.vrunv("./Configure", configs, {envs = buildenvs})
-        local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
-        import("package.tools.make").build(package, makeconfigs)
+        import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
     end)
 

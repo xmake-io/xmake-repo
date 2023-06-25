@@ -11,11 +11,12 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         kind: [static, shared]
+        mode: [debug, release]
 
     runs-on: ${{ matrix.os }}
 
     concurrency:
-        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Linux-${{ matrix.kind }}
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Linux-${{ matrix.kind }}-${{ matrix.mode }}
         cancel-in-progress: true
     steps:
       - uses: actions/checkout@v1
@@ -38,4 +39,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -m ${{ matrix.mode }}
