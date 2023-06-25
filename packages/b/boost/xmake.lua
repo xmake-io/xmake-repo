@@ -147,7 +147,18 @@ package("boost")
                 end
                 file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
-                file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
+                local vs_toolset = import("core.tool.toolchain").load("msvc"):config("vs_toolset")
+                local msvc_ver = ""
+                if vs_toolset then
+                    local i1, i2 = vs_toolset:find("%.")
+                    msvc_ver = string.sub(vs_toolset, 1, i2 + 1)
+                end
+
+                -- Specifying a version will disable b2 from using tools
+                -- from the latest installed msvc version.
+                -- Useful when VS version doesn't match msvc version.
+                -- e.g vs_toolset 14.1 on Visual Studio 2022
+                file:print("using msvc : %s : ;", msvc_ver)
             else
                 file:print("using gcc : : %s ;", package:build_getenv("cxx"):gsub("\\", "/"))
             end
@@ -160,9 +171,11 @@ package("boost")
             "--libdir=" .. package:installdir("lib"),
             "--without-icu"
         }
+
+        local runenvs = nil
         if package:is_plat("windows") then
             import("core.tool.toolchain")
-            local runenvs = toolchain.load("msvc"):runenvs()
+            runenvs = toolchain.load("msvc"):runenvs()
             -- for bootstrap.bat, all other arguments are useless
             bootstrap_argv = { "msvc" }
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
@@ -184,6 +197,7 @@ package("boost")
             "-d2",
             "-j" .. njobs,
             "--hash",
+            "-q", -- quit on first error
             "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
             "-sNO_LZMA=1",
@@ -191,7 +205,9 @@ package("boost")
             "install",
             "threading=" .. (package:config("multi") and "multi" or "single"),
             "debug-symbols=" .. (package:debug() and "on" or "off"),
-            "link=" .. (package:config("shared") and "shared" or "static")
+            "link=" .. (package:config("shared") and "shared" or "static"),
+            "variant="..(package:is_debug() and "debug" or "release"),
+            "runtime-debugging="..(package:is_debug() and "on" or "off")
         }
 
         if package:config("lto") then
@@ -229,7 +245,7 @@ package("boost")
                 table.insert(argv, "--with-" .. libname)
             end
         end
-        os.vrunv("./b2", argv)
+        os.vrunv("./b2", argv, {envs = runenvs})
     end)
 
     on_test(function (package)
