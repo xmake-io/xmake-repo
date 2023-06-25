@@ -134,7 +134,14 @@ package("boost")
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         import("core.base.option")
+        import("core.tool.toolchain")
 
+        -- get msvc
+        local msvc
+        if package:is_plat("windows") then
+            msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+        end
+        
         -- force boost to compile with the desired compiler
         local file = io.open("user-config.jam", "a")
         if file then
@@ -147,7 +154,7 @@ package("boost")
                 end
                 file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
-                local vs_toolset = import("core.tool.toolchain").load("msvc"):config("vs_toolset")
+                local vs_toolset = msvc:config("vs_toolset")
                 local msvc_ver = ""
                 if vs_toolset then
                     local i1, i2 = vs_toolset:find("%.")
@@ -170,10 +177,9 @@ package("boost")
             "--without-icu"
         }
 
-        local runenvs = nil
+        local runenvs
         if package:is_plat("windows") then
-            import("core.tool.toolchain")
-            runenvs = toolchain.load("msvc"):runenvs()
+            runenvs = msvc:runenvs()
             -- for bootstrap.bat, all other arguments are useless
             bootstrap_argv = { "msvc" }
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
