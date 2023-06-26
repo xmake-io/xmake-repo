@@ -220,8 +220,8 @@ package("boost")
             "threading=" .. (package:config("multi") and "multi" or "single"),
             "debug-symbols=" .. (package:debug() and "on" or "off"),
             "link=" .. (package:config("shared") and "shared" or "static"),
-            "variant="..(package:is_debug() and "debug" or "release"),
-            "runtime-debugging="..(package:is_debug() and "on" or "off")
+            "variant=" .. (package:is_debug() and "debug" or "release"),
+            "runtime-debugging=" .. (package:is_debug() and "on" or "off")
         }
 
         if package:config("lto") then
@@ -245,7 +245,7 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "cxxflags=-std:c++14")
-            table.insert(argv, "toolset="..(is_clang_cl and "clang-win" or "msvc"))
+            table.insert(argv, "toolset=" .. (is_clang_cl and "clang-win" or "msvc"))
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
         else
