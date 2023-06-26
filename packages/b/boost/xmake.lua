@@ -134,6 +134,16 @@ package("boost")
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         import("core.base.option")
+        import("core.tool.toolchain")
+
+        -- get msvc
+        local msvc
+        if package:is_plat("windows") then
+            msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+        end
+
+        local is_clang_cl = false
+        local cxx = package:build_getenv("cxx")
 
         -- force boost to compile with the desired compiler
         local file = io.open("user-config.jam", "a")
@@ -147,9 +157,25 @@ package("boost")
                 end
                 file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
-                file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
+                local vs_toolset = msvc:config("vs_toolset")
+                local toolset = "msvc"
+                local msvc_ver = ""
+
+                if cxx:find("clang%-cl$") or cxx:find("clang%-cl%.exe$") then
+                    toolset = "clang-win"
+                    cxx = cxx:gsub("(clang%-cl)$", "%1.exe", 1)
+                    msvc_ver = ""
+                    is_clang_cl = true
+                elseif vs_toolset then
+                    local i = vs_toolset:find("%.")
+                    msvc_ver = i and vs_toolset:sub(1, i + 1)
+                end
+
+                -- Specifying a version will disable b2 from forcing tools
+                -- from the latest installed msvc version.
+                file:print("using %s : %s : \"%s\" ;", toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
             else
-                file:print("using gcc : : %s ;", package:build_getenv("cxx"):gsub("\\", "/"))
+                file:print("using gcc : : %s ;", cxx:gsub("\\", "/"))
             end
             file:close()
         end
@@ -160,9 +186,10 @@ package("boost")
             "--libdir=" .. package:installdir("lib"),
             "--without-icu"
         }
+
+        local runenvs
         if package:is_plat("windows") then
-            import("core.tool.toolchain")
-            local runenvs = toolchain.load("msvc"):runenvs()
+            runenvs = msvc:runenvs()
             -- for bootstrap.bat, all other arguments are useless
             bootstrap_argv = { "msvc" }
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
@@ -184,6 +211,7 @@ package("boost")
             "-d2",
             "-j" .. njobs,
             "--hash",
+            "-q", -- quit on first error
             "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
             "-sNO_LZMA=1",
@@ -191,7 +219,9 @@ package("boost")
             "install",
             "threading=" .. (package:config("multi") and "multi" or "single"),
             "debug-symbols=" .. (package:debug() and "on" or "off"),
-            "link=" .. (package:config("shared") and "shared" or "static")
+            "link=" .. (package:config("shared") and "shared" or "static"),
+            "variant=" .. (package:is_debug() and "debug" or "release"),
+            "runtime-debugging=" .. (package:is_debug() and "on" or "off")
         }
 
         if package:config("lto") then
@@ -215,7 +245,7 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "cxxflags=-std:c++14")
-            table.insert(argv, "toolset=msvc")
+            table.insert(argv, "toolset=" .. (is_clang_cl and "clang-win" or "msvc"))
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
         else
@@ -229,7 +259,7 @@ package("boost")
                 table.insert(argv, "--with-" .. libname)
             end
         end
-        os.vrunv("./b2", argv)
+        os.vrunv("./b2", argv, {envs = runenvs})
     end)
 
     on_test(function (package)
