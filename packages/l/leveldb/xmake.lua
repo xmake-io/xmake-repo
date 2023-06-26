@@ -9,6 +9,7 @@ package("leveldb")
     add_versions("1.23", "9a37f8a6174f09bd622bc723b55881dc541cd50747cbd08831c2a82d620f6d76")
 
     add_deps("cmake")
+    add_deps("snappy")
     if is_plat("linux") then
         add_syslinks("pthread")
     end

@@ -7,6 +7,7 @@ package("sokol")
 
     add_urls("https://github.com/floooh/sokol.git")
     add_versions("2022.02.10", "e8931e4399a0eb4bf026120d7bdb89825815af9e")
+    add_versions("2023.01.27", "dc6814bdecd277366a650b6b0b744b52bb9131e5")
 
     on_install(function (package)
         os.cp("*.h", package:installdir("include"))

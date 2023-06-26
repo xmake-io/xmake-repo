@@ -25,6 +25,7 @@ package("opencv")
     add_resources("3.4.9", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz", "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57")
 
     add_configs("bundled", {description = "Build 3rd-party libraries with OpenCV.", default = true, type = "boolean"})
+    add_configs("tesseract", {description = "Enable tesseract on text module", default = false, type = "boolean"})
 
     local features = {"1394",
                       "vtk",
@@ -75,7 +76,10 @@ package("opencv")
 
     on_load("linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
-            local arch = (package:is_arch("x64") and "x64" or "x86")
+            local arch = "x64"
+            if     package:is_arch("x86")   then arch = "x86"
+            elseif package:is_arch("arm64") then arch = "ARM64"
+            end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             local vc_ver = "vc13"
@@ -107,6 +111,10 @@ package("opencv")
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake", "python 3.x", {kind = "binary"})
         end
+
+        if package:config("tesseract") then
+            package:add("deps", "tesseract 4.1.3") -- Opencv need tesseract from the v4 series
+        end
     end)
 
     on_install("linux", "macosx", "windows", "mingw@windows,msys", function (package)
@@ -122,6 +130,10 @@ package("opencv")
                          "-DBUILD_opencv_python2=OFF",
                          "-DBUILD_opencv_python3=OFF",
                          "-DBUILD_JAVA=OFF"}
+
+        if package:config("tesseract") then
+            table.insert(configs, "-DWITH_TESSERACT=ON")
+        end
         if package:config("bundled") then
             table.insert(configs, "-DOPENCV_FORCE_3RDPARTY_BUILD=ON")
         end
@@ -136,8 +148,14 @@ package("opencv")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            if package:is_arch("arm64") then
+                local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+                assert(tonumber(vs) >= 2022, "opencv requires Visual Studio 2022 and later for arm targets")
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+            end
         elseif package:is_plat("mingw") then
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "x86_64" or "x86"))
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
         end
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then
@@ -158,7 +176,10 @@ package("opencv")
             package:add("links", reallink)
         end
         if package:is_plat("windows") then
-            local arch = package:is_arch("x64") and "x64" or "x86"
+            local arch = "x64"
+            if     package:is_arch("x86")   then arch = "x86"
+            elseif package:is_arch("arm64") then arch = "ARM64"
+            end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             local vc_ver = "vc13"
@@ -197,12 +218,7 @@ package("opencv")
     end)
 
     on_test(function (package)
-        -- bin path envs will be missing for precompiled artifacts in old xmake version
-        local runtest = true
-        if package.is_built and not package:is_built() and xmake.version():le("2.5.6") then
-            runtest = false
-        end
-        if runtest then
+        if not package:is_cross() then
             os.vrun((package:debug() and "opencv_versiond" or "opencv_version"))
         end
         assert(package:check_cxxsnippets({test = [[

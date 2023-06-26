@@ -7,8 +7,12 @@ package("coost")
 
     add_versions("v3.0.0", "f962201201cd77aaf45f33d72bd012231a31d4310d30e9bb580ffb1e94c8148d")
 
-    for _, name in ipairs({"libcurl", "openssl"}) do
-        add_configs(name, {description = "Enable " .. name .. " library.", default = false, type = "boolean"})
+    for _, name in ipairs({"libcurl", "openssl", "libbacktrace"}) do
+        local default = false
+        if name == "libbacktrace" and is_plat("linux") then
+            default = true
+        end
+        add_configs(name, {description = "Enable " .. name .. " library.", default = default, type = "boolean"})
     end
 
     if is_plat("linux") then
@@ -31,6 +35,12 @@ package("coost")
         for _, name in ipairs({"libcurl", "openssl"}) do
             if package:config(name) then
                 configs["with_" .. name] = true
+            end
+        end
+        if package:is_plat("windows") then
+            local vs_runtime = package:config("vs_runtime")
+            if vs_runtime then
+                io.replace("xmake.lua", "set_runtimes%(.-%)", "set_runtimes(\"" .. vs_runtime .. "\")")
             end
         end
         import("package.tools.xmake").install(package, configs)

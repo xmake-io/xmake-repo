@@ -19,7 +19,11 @@ package("libiconv")
 
     on_fetch("macosx", "linux", function (package, opt)
         if opt.system then
-            return package:find_package("system::iconv", {includes = "iconv.h"})
+            if package:is_plat("linux") then
+                return {} -- on linux libiconv is already a part of glibc
+            else
+                return package:find_package("system::iconv", {includes = "iconv.h"}) or package:find_package("system::intl", {includes = "iconv.h"})
+            end
         end
     end)
 
@@ -64,6 +68,12 @@ package("libiconv")
         if package:is_plat("macosx", "linux") then
             os.vrun("iconv --version")
         end
-        assert(package:has_cfuncs("iconv_open(0, 0);", {includes = "iconv.h"}))
+        assert(package:check_csnippets({test = [[
+            #include "iconv.h"
+            void test() {
+                char charset[5] = "12345";
+                iconv_t cd = iconv_open("WCHAR_T", charset);
+            }
+        ]]}))
     end)
 

@@ -9,7 +9,7 @@ package("protobuf-c")
     -- fix "error: no type named 'Reflection' in 'google::protobuf::Message'"
     -- see https://github.com/protobuf-c/protobuf-c/pull/342
     -- and https://github.com/protobuf-c/protobuf-c/issues/356
-    add_patches("1.3.1", "https://github.com/protobuf-c/protobuf-c/pull/342.patch", "050306bae86af55f90606613d3c362c3c93af779aa6be3e639c6a1df3c228c87")
+    add_patches("1.3.1", path.join(os.scriptdir(), "patches", "1.3.1", "342.patch"), "ab78f9eeff2840cacf5b6b143d284e50e43166ec2cbfa78cd47fd8db1e387c6d")
 
     add_deps("protobuf-cpp")
     if is_plat("windows") then
@@ -64,6 +64,9 @@ package("protobuf-c")
     end)
 
     on_test(function (package)
+        if package:is_cross() then
+            return
+        end
         io.writefile("test.proto", [[
             syntax = "proto3";
             package test;

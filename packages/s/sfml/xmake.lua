@@ -37,6 +37,90 @@ package("sfml")
         add_configs("main",       {description = "Link to the sfml-main library", default = true, type = "boolean"})
     end
 
+    if is_plat("macosx") then
+        add_extsources("brew::sfml/sfml-all")
+    end
+
+    on_component = on_component or function() end
+    on_component("graphics", function (package, component)
+        local e = package:config("shared") and "" or "-s"
+        if package:debug() then
+            e = e .. "-d"
+        end
+        component:add("links", "sfml-graphics" .. e)
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
+            component:add("links", "freetype")
+            component:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
+        end
+        component:add("deps", "window", "system")
+        component:add("extsources", "brew::sfml/sfml-graphics")
+    end)
+
+    on_component("window", function (package, component)
+        local e = package:config("shared") and "" or "-s"
+        if package:debug() then
+            e = e .. "-d"
+        end
+        component:add("links", "sfml-window" .. e)
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
+            component:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
+        end
+        component:add("deps", "system")
+        component:add("extsources", "brew::sfml/sfml-window")
+    end)
+
+    on_component("audio", function (package, component)
+        local e = package:config("shared") and "" or "-s"
+        if package:debug() then
+            e = e .. "-d"
+        end
+        component:add("links", "sfml-audio" .. e)
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
+            component:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
+        end
+        component:add("deps", "system")
+        component:add("extsources", "brew::sfml/sfml-audio")
+    end)
+
+    on_component("network", function (package, component)
+        local e = package:config("shared") and "" or "-s"
+        if package:debug() then
+            e = e .. "-d"
+        end
+        component:add("links", "sfml-network" .. e)
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
+            component:add("syslinks", "ws2_32")
+        end
+        component:add("deps", "system")
+        component:add("extsources", "brew::sfml/sfml-network")
+        component:add("extsources", "apt::sfml-network")
+    end)
+
+    on_component("system", function (package, component)
+        local e = package:config("shared") and "" or "-s"
+        if package:debug() then
+            e = e .. "-d"
+        end
+        component:add("links", "sfml-system" .. e)
+        if package:is_plat("windows", "mingw") then
+            component:add("syslinks", "winmm")
+        end
+        if package:is_plat("windows", "mingw") and package:config("main") then
+            component:add("deps", "main")
+        end
+        component:add("extsources", "brew::sfml/sfml-system")
+    end)
+
+    on_component("main", function (package, component)
+        if package:is_plat("windows", "mingw") then
+            local main_module = "sfml-main"
+            if package:debug() then
+                main_module = main_module .. "-d"
+            end
+            component:add("links", main_module)
+        end
+    end)
+
     on_load("windows", "linux", "macosx", "mingw", function (package)
         if package:is_plat("windows", "linux") then
             package:add("deps", "cmake")
@@ -46,55 +130,74 @@ package("sfml")
             package:add("defines", "SFML_STATIC")
         end
 
-        local e = ""
-        local a = "sfml-"
-        if not package:config("shared") then
-            e = "-s"
-        end
-        if package:debug() then
-            e = e .. "-d"
-        end
-        local main_module = a .. "main"
-        if package:debug() then
-            main_module = main_module .. "-d"
-        end
-
-        if package:config("graphics") then
-            package:add("links", a .. "graphics" .. e)
-            if package:is_plat("windows", "mingw") and not package:config("shared") then
-                package:add("links", "freetype")
-            end
-        end
-        if package:config("window") or package:config("graphics") then
-            package:add("links", a .. "window" .. e)
-            if package:is_plat("windows", "mingw") and not package:config("shared") then
-                package:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
-            end
+        -- enable components when xmake >=2.7.3
+        if package.components then
             if package:is_plat("linux") then
-                package:add("deps", "libx11", "libxext", "libxrandr", "libxrender", "freetype", "eudev")
-                package:add("deps", "opengl", "glx", {optional = true})
+                if package:config("window") or package:config("graphics") then
+                    package:add("deps", "libx11", "libxext", "libxrandr", "libxrender", "freetype", "eudev")
+                    package:add("deps", "opengl", "glx", {optional = true})
+                end
             end
-        end
-        if package:config("audio") then
-            package:add("links", a .. "audio" .. e)
-            if package:is_plat("windows", "mingw") and not package:config("shared") then
-                package:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
-            elseif package:is_plat("linux") then
+            if package:config("audio") then
                 package:add("deps", "libogg", "libflac", "libvorbis", "openal-soft")
             end
-        end
-        if package:config("network") then
-            package:add("links", a .. "network" .. e)
-            if package:is_plat("windows", "mingw") and not package:config("shared") then
-                package:add("syslinks", "ws2_32")
+            package:add("components", "system")
+            for _, component in ipairs({"graphics", "window", "audio", "network"}) do
+                if package:config(component) then
+                    package:add("components", component)
+                end
             end
-        end
-        if package:is_plat("windows", "mingw") and package:config("main") then
-            package:add("links", main_module)
-        end
-        package:add("links", a .. "system" .. e)
-        if package:is_plat("windows", "mingw") then
-            package:add("syslinks", "winmm")
+            if package:is_plat("windows", "mingw") and package:config("main") then
+                package:add("components", "main")
+            end
+        else
+            local e = package:config("shared") and "" or "-s"
+            if package:debug() then
+                e = e .. "-d"
+            end
+            local a = "sfml-"
+            local main_module = a .. "main"
+            if package:debug() then
+                main_module = main_module .. "-d"
+            end
+
+            if package:config("graphics") then
+                package:add("links", a .. "graphics" .. e)
+                if package:is_plat("windows", "mingw") and not package:config("shared") then
+                    package:add("links", "freetype")
+                end
+            end
+            if package:config("window") or package:config("graphics") then
+                package:add("links", a .. "window" .. e)
+                if package:is_plat("windows", "mingw") and not package:config("shared") then
+                    package:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
+                end
+                if package:is_plat("linux") then
+                    package:add("deps", "libx11", "libxext", "libxrandr", "libxrender", "freetype", "eudev")
+                    package:add("deps", "opengl", "glx", {optional = true})
+                end
+            end
+            if package:config("audio") then
+                package:add("links", a .. "audio" .. e)
+                if package:is_plat("windows", "mingw") and not package:config("shared") then
+                    package:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
+                elseif package:is_plat("linux") then
+                    package:add("deps", "libogg", "libflac", "libvorbis", "openal-soft")
+                end
+            end
+            if package:config("network") then
+                package:add("links", a .. "network" .. e)
+                if package:is_plat("windows", "mingw") and not package:config("shared") then
+                    package:add("syslinks", "ws2_32")
+                end
+            end
+            if package:is_plat("windows", "mingw") and package:config("main") then
+                package:add("links", main_module)
+            end
+            package:add("links", a .. "system" .. e)
+            if package:is_plat("windows", "mingw") then
+                package:add("syslinks", "winmm")
+            end
         end
     end)
 
@@ -179,3 +282,5 @@ package("sfml")
             ]]}, {includes = "SFML/Network.hpp"}))
         end
     end)
+package_end()
+

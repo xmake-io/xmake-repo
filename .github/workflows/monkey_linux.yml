@@ -17,12 +17,12 @@ jobs:
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: branch@dev
+          xmake-version: branch@master
 
       - name: Installation
         run: |
           # TODO we will remove it later
-          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev
+          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev p7zip
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 60
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60
           sudo update-alternatives --install /usr/bin/cpp cpp /usr/bin/cpp-9 60

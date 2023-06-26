@@ -28,7 +28,7 @@ package("tinyxml2")
                 add_headerfiles("tinyxml2.h")
                 add_files("tinyxml2.cpp")
         ]])
-        import("package.tools.xmake").install(package, {kind = package:configs("shared")  and "shared" or "static"})
+        import("package.tools.xmake").install(package, {kind = package:config("shared")  and "shared" or "static"})
     end)
 
     on_test(function (package)

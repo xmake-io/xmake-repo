@@ -6,6 +6,7 @@ package("opensubdiv")
 
     add_urls("https://github.com/PixarAnimationStudios/OpenSubdiv/archive/refs/tags/v$(version).tar.gz", {version = function (version) return version:gsub("%.", "_") end})
     add_versions("3.4.4", "20d49f80a2b778ad4d01f091ad88d8c2f91cf6c7363940c6213241ce6f1048fb")
+    add_versions("3.5.0", "8f5044f453b94162755131f77c08069004f25306fd6dc2192b6d49889efb8095")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -14,6 +15,7 @@ package("opensubdiv")
     add_configs("glfw",   {description = "Enable components depending on GLFW.", default = true, type = "boolean"})
     add_configs("ptex",   {description = "Enable components depending on Ptex.", default = true, type = "boolean"})
     add_configs("tbb",    {description = "Enable components depending on TBB.", default = false, type = "boolean"})
+    add_configs("openmp", {description = "Enable OpenMP backend.", default = false, type = "boolean"})
     add_configs("opencl", {description = "Enable OpenCL backend.", default = false, type = "boolean"})
     add_configs("cuda",   {description = "Enable CUDA backend.", default = false, type = "boolean"})
 
@@ -27,7 +29,7 @@ package("opensubdiv")
                 package:add("deps", dep)
             end
         end
-        for _, dep in ipairs({"opencl", "cuda"}) do
+        for _, dep in ipairs({"openmp", "opencl", "cuda"}) do
             if package:config(dep) then
                 package:add("deps", dep, {system = true})
             end
@@ -36,11 +38,15 @@ package("opensubdiv")
 
     on_install("windows", "macosx", "linux", function (package)
         local configs = {"-DNO_EXAMPLES=ON", "-DNO_TUTORIALS=ON", "-DNO_REGRESSION=ON", "-DNO_DOC=ON", "-DNO_CLEW=ON", "-DNO_TESTS=ON", "-DNO_GLTESTS=ON"}
+        if package:config("glfw") then
+            io.replace("cmake/FindGLFW.cmake", "NOT X11_xf86vmode_FOUND", "FALSE", {plain = true})
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for _, dep in ipairs({"glfw", "ptex", "tbb", "opencl", "cuda"}) do
-            table.insert(configs, "-DNO_" .. dep:upper() .. "=" .. (package:config(dep) and "ON" or "OFF"))
+            table.insert(configs, "-DNO_" .. dep:upper() .. "=" .. (package:config(dep) and "OFF" or "ON"))
         end
+        table.insert(configs, "-DNO_OMP=" .. (package:config("openmp") and "OFF" or "ON"))
         if package:is_plat("windows") then
             local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
             if vs_sdkver then

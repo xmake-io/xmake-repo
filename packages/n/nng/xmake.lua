@@ -36,6 +36,8 @@ package("nng")
 
     if is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("windows") then 
+        add_syslinks("ws2_32", "advapi32")
     end
 
     on_load(function (package)
@@ -48,7 +50,7 @@ package("nng")
     end)
 
     add_deps("cmake")
-    on_install("windows", "linux", "macosx", "android", "iphoneos", function(package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "cross", function(package)
         local configs = {"-DNNG_TESTS=OFF", "-DNNG_ENABLE_NNGCAT=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do

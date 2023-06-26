@@ -7,6 +7,8 @@ package("cpp-httplib")
              "https://github.com/yhirose/cpp-httplib.git")
     add_versions("0.8.5", "57d2a7e67ae6944292cd08cb16083463a93c7c139f6698560e872ade63b9b463")
     add_versions("0.9.2", "87131d53c14b921ca1a4fae0d5d4081c218dd18004b768a8069de29b130ab6bc")
+    add_versions("0.12.1", "bd2e98842208df1c6c19f5446b7b0fe8f094ad7c931db0fefe52055c496c9d13")
+    add_versions("0.12.6", "bdeb6be5f30cce0544204ed50bcb9b15ca0f9b360c148cbf75f0664584ac92d9")
 
     add_configs("ssl",  { description = "Requires OpenSSL", default = false, type = "boolean"})
     add_configs("zlib",  { description = "Requires Zlib", default = false, type = "boolean"})
