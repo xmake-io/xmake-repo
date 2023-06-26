@@ -3,7 +3,8 @@ package("fmt")
     set_homepage("https://fmt.dev")
     set_description("fmt is an open-source formatting library for C++. It can be used as a safe and fast alternative to (s)printf and iostreams.")
 
-    set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip")
+    set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip",
+             "https://github.com/fmtlib/fmt.git")
     add_versions("10.0.0", "4943cb165f3f587f26da834d3056ee8733c397e024145ca7d2a8a96bb71ac281")
     add_versions("9.1.0", "cceb4cb9366e18a5742128cb3524ce5f50e88b476f1e54737a47ffdf4df4c996")
     add_versions("9.0.0", "fc96dd2d2fdf2bded630787adba892c23cb9e35c6fd3273c136b0c57d4651ad6")    
