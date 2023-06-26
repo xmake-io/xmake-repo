@@ -1,5 +1,5 @@
 package("crow")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/CrowCpp/Crow")
     set_description("A Fast and Easy to use microframework for the web.")
     set_license("BSD 3-Clause")
@@ -9,7 +9,6 @@ package("crow")
 
     add_configs("zlib", {description = "ZLib for HTTP Compression", default = true, type = "boolean"})
     add_configs("ssl", {description = "OpenSSL for HTTPS support", default = true, type = "boolean"})
-
 
     add_deps("cmake", "asio")
 
