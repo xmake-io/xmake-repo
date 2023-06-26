@@ -73,7 +73,7 @@ package("qt5lib")
         }
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         local qt = package:dep("qt5base"):data("qt")
         assert(qt, "qt5base is required")
     end)
