@@ -23,15 +23,16 @@ package("crow")
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DCROW_BUILD_EXAMPLES=OFF", "-DCROW_BUILD_TESTS=OFF"}
-        table.insert(configs, "-DCROW_ENABLE_DEBUG=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         local features
-        if package:config("zlib") then
+        if package:config("zlib") and package:config("ssl") then
+            features = "compression;ssl"
+        elseif package:config("zlib") and not package:config("ssl") then
             features = "compression"
+        elseif package:config("zlib") and not package:config("ssl") then
+            features = "ssl"
         end
-        if package:config("ssl") then
-            features = "ssl;" .. features
-        end
-        if features ~= nil then
+        if features then
             table.insert(configs, '-DCROW_FEATURES="' .. features .. '"')
         end
         import("package.tools.cmake").install(package, configs)
