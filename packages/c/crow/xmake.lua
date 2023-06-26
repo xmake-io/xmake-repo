@@ -29,7 +29,7 @@ package("crow")
             features = "compression;ssl"
         elseif package:config("zlib") and not package:config("ssl") then
             features = "compression"
-        elseif package:config("zlib") and not package:config("ssl") then
+        elseif package:config("ssl") and not package:config("zlib") then
             features = "ssl"
         end
         if features then
