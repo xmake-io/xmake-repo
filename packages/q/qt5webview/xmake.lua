@@ -10,6 +10,10 @@ package("qt5webview")
         package:set("kind", "library")
     end)
 
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "android", "iphoneos", function (package)
+        package:base():script("install")(package)
+    end)
+
     on_test(function (package)
         local cxflags
         if not package:is_plat("windows") then
