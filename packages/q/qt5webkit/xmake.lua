@@ -4,7 +4,7 @@ package("qt5webkit")
 
     on_load(function (package)
         package:add("deps", "qt5core", "qt5gui", {debug = package:is_debug(), version = package:version_str()})
-        package:data_set("libname", "WebKit")
+        package:data_set("libname", "WebView")
 
         package:base():script("load")(package)
         package:set("kind", "library")
