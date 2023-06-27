@@ -98,10 +98,20 @@ package("assimp")
             io.replace("CMakeLists.txt", "CMAKE_COMPILER_IS_MINGW", "MINGW", {plain = true})
         end
 
-        table.insert(configs, "--trace")
-        table.insert(configs, "--trace-expand")
+        -- Assimp CMakeLists doesn't find minizip on Windows
+        local ldflags
+        local minizip = package:dep("minizip")
+        if minizip and not minizip:is_system() then
+            local fetchinfo = minizip:fetch({external = false})
+            if fetchinfo then
+                ldflags = {}
+                for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                    table.insert(ldflags, "/LIBPATH:" .. linkdir:gsub("\\", "/"))
+                end
+            end
+        end
 
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {ldflags = ldflags})
 
         -- copy pdb
         if package:is_plat("windows") then
