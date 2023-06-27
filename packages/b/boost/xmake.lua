@@ -138,11 +138,21 @@ package("boost")
 
         -- get msvc
         local msvc
+        local is_clang_tc = false
         if package:is_plat("windows") then
-            msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            import("core.base.global")
+            import("core.project.config")
+
+            -- Boost's bootstrap.bat needs the runenvs from the toolchain to locate cl
+            local tc_name = config.get("toolchain") or global.get("toolchain") or "msvc"
+            msvc = toolchain.load(tc_name, {plat = package:plat(), arch = package:arch()})
+
+            if tc_name == "clang-cl" then
+                is_clang_tc = true
+            end
         end
 
-        local is_clang_cl = false
+        local win_toolset
         local cxx = package:build_getenv("cxx")
 
         -- force boost to compile with the desired compiler
@@ -158,14 +168,13 @@ package("boost")
                 file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
                 local vs_toolset = msvc:config("vs_toolset")
-                local toolset = "msvc"
                 local msvc_ver = ""
+                win_toolset = "msvc"
 
-                if cxx:find("clang%-cl$") or cxx:find("clang%-cl%.exe$") then
-                    toolset = "clang-win"
+                if is_clang_tc or cxx:find("clang%-cl$") or cxx:find("clang%-cl%.exe$") then
+                    win_toolset = "clang-win"
                     cxx = cxx:gsub("(clang%-cl)$", "%1.exe", 1)
                     msvc_ver = ""
-                    is_clang_cl = true
                 elseif vs_toolset then
                     local i = vs_toolset:find("%.")
                     msvc_ver = i and vs_toolset:sub(1, i + 1)
@@ -173,7 +182,7 @@ package("boost")
 
                 -- Specifying a version will disable b2 from forcing tools
                 -- from the latest installed msvc version.
-                file:print("using %s : %s : \"%s\" ;", toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
+                file:print("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
             else
                 file:print("using gcc : : %s ;", cxx:gsub("\\", "/"))
             end
@@ -245,7 +254,7 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "cxxflags=-std:c++14")
-            table.insert(argv, "toolset=" .. (is_clang_cl and "clang-win" or "msvc"))
+            table.insert(argv, "toolset=" .. win_toolset)
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
         else
