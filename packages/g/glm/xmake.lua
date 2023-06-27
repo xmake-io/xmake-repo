@@ -18,5 +18,5 @@ package("glm")
             void test() {
                 glm::mat4 proj = glm::perspective(glm::radians(45.f), 1.33f, 0.1f, 10.f);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"glm/mat4x4.hpp", "glm/ext/matrix_clip_space.hpp"}}))
+        ]]}, {configs = {languages = "c++14"}, includes = {"glm/mat4x4.hpp", "glm/ext/matrix_clip_space.hpp"}}))
     end)

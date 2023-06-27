@@ -5,7 +5,7 @@ package("matplotplusplus")
     set_license("MIT")
 
     add_urls("https://github.com/alandefreitas/matplotplusplus/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/alandefreitas/matplotplus.git")
+             "https://github.com/alandefreitas/matplotplusplus.git")
     add_versions("v1.1.0", "5c3a1bdfee12f5c11fd194361040fe4760f57e334523ac125ec22b2cb03f27bb")
 
     local configdeps = {jpeg   = "libjpeg-turbo",

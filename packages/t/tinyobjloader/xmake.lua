@@ -4,9 +4,10 @@ package("tinyobjloader")
     set_description("Tiny but powerful single file wavefront obj loader")
     set_license("MIT")
 
-    add_urls("https://github.com/tinyobjloader/tinyobjloader/archive/v$(version).tar.gz",
-             "https://github.com/tinyobjloader/tinyobjloader.git")
-    add_versions("1.0.7", "b9d08b675ba54b9cb00ffc99eaba7616d0f7e6f6b8947a7e118474e97d942129")
+    add_urls("https://github.com/tinyobjloader/tinyobjloader/archive/$(version).tar.gz")
+    add_urls("https://github.com/tinyobjloader/tinyobjloader.git")
+    add_versions("v1.0.7", "b9d08b675ba54b9cb00ffc99eaba7616d0f7e6f6b8947a7e118474e97d942129")
+    add_versions("v2.0.0rc10", "e1bc2e5547b562d33ca4a90b581717984a70d58113d83208dbc97c82e137b9fe")
 
     add_configs("double", {description = "Use double precision floating numbers.", default = false, type = "boolean"})
     if is_plat("windows") then

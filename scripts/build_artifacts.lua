@@ -2,6 +2,17 @@ import("core.package.package")
 import("core.base.semver")
 import("packages")
 
+-- load package
+function _load_package(packagename, packagedir, packagefile)
+    local funcinfo = debug.getinfo(package.load_from_repository)
+    if funcinfo and funcinfo.nparams == 3 then -- >= 2.7.8
+        return package.load_from_repository(packagename, packagedir, {packagefile = packagefile})
+    else
+        -- deprecated
+        return package.load_from_repository(packagename, nil, packagedir, packagefile)
+    end
+end
+
 function build_artifacts(name, versions)
     local buildinfo = {name = name, versions = versions}
     print(buildinfo)
@@ -44,7 +55,7 @@ function main()
            local packagedir = path.directory(file)
            local packagename = path.filename(packagedir)
            if #path.filename(path.directory(packagedir)) == 1 then
-               local instance = package.load_from_repository(packagename, nil, packagedir, file)
+               local instance = _load_package(packagename, packagedir, file)
                if instance and packages.is_supported(instance, "windows")
                   and (instance.is_headeronly and not instance:is_headeronly()) then
                    local versions = instance:versions()

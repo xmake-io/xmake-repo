@@ -13,7 +13,15 @@ package("libogg")
         add_deps("make")
     end
 
-    on_install("windows", "macosx", "linux", "mingw", "iphoneos", "android", "cross", function (package)
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libogg")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libogg", "apt::libogg-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libogg")
+    end
+
+    on_install("windows", "macosx", "linux", "mingw", "iphoneos", "android", "cross", "wasm", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

@@ -8,6 +8,14 @@ package("libomp")
     add_versions("11.1.0", "d187483b75b39acb3ff8ea1b7d98524d95322e3cb148842957e9b0fbb866052e")
     add_versions("12.0.1", "60fe79440eaa9ebf583a6ea7f81501310388c02754dbe7dc210776014d06b091")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
+
+    on_fetch("macosx", "linux", function (package, opt)
+        if opt.system then
+            return package:find_package("system::omp", {includes = "omp.h"})
+        end
+    end)
+
     add_deps("cmake")
 
     add_links("omp")

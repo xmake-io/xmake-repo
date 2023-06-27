@@ -12,14 +12,17 @@ package("glad")
     if is_plat("linux") then
         add_syslinks("dl")
     end
-    on_load("windows", "linux", "macosx", function (package)
+    on_load("windows", "linux", "macosx", "mingw", function (package)
         if not package.is_built or package:is_built() then
-            package:add("deps", "cmake", "python 3.x", {kind = "binary"})
+            package:add("deps", "cmake")
+            package:add("deps", "python 3.x", {kind = "binary"})
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DGLAD_INSTALL=ON", "-DGLAD_REPRODUCIBLE=ON"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
         end

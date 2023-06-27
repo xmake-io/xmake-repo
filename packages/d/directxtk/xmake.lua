@@ -28,6 +28,9 @@ package("directxtk")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        -- fix path issue with spaces
+        io.replace("Src/Shaders/CompileShaders.cmd", " %1.hlsl ", " \"%1.hlsl\" ", {plain = true})
+        io.replace("Src/Shaders/CompileShaders.cmd", " %1.fx ", " \"%1.fx\" ", {plain = true})
         import("package.tools.cmake").install(package, configs)
         os.cp("Inc/*", package:installdir("include"))
     end)

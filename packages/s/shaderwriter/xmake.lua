@@ -9,6 +9,12 @@ package("shaderwriter")
     add_versions("1.1", "e7ddabe2b9ec6279951f4dcfe6a803d42d0e9052")
     add_versions("2.0", "9e7488290713f88149038ef56fdc4034c3a1dd7f")
     add_versions("2.1", "eec963d7c0d9a88741ed357bcc931a8de763ddb7")
+    add_versions("2.2", "eec963d7c0d9a88741ed357bcc931a8de763ddb7")
+    add_versions("2.3", "8e7769ddf4b008b0c7de3140126fcfb30607879e")
+    add_versions("2.4", "ec31f19f88fe15af476b48da7499aac9d4089a8f")
+    add_versions("2.5", "4b456bb6f36103936f4862edff397af943a40621")
+    add_versions("2.6", "ab06f63bb941ac60437120e3221c024555a2bcaa")
+    add_versions("2.6.1", "047ca8f5a2d2ad2fa569bd53a8325939a9d17f6c")
 
     add_deps("cmake")
 
@@ -22,7 +28,9 @@ package("shaderwriter")
             "-DSDW_BUILD_STATIC_SDW=".. (package:config("shared") and "OFF" or "ON"),
             "-DSDW_GENERATE_SOURCE=OFF",
             "-DSDW_BUILD_VULKAN_LAYER=OFF",
+            "-DSDW_UNITY_BUILD=ON",
             "-DPROJECTS_USE_PRECOMPILED_HEADERS=OFF",
+            "-DPROJECTS_ALLOW_DEBUG_INSTALL_HEADERS=ON",
             "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release")
         }
         import("package.tools.cmake").install(package, configs)
@@ -34,7 +42,7 @@ package("shaderwriter")
             {
                 sdw::ComputeWriter writer;
             }
-        ]]}, {configs = {languages = "cxx20"},
+        ]]}, {configs = {languages = "cxx20", cxflags = "-fconcepts"},
             includes = {
                 "CompilerGlsl/compileGlsl.hpp",
                 "CompilerSpirV/compileSpirV.hpp",

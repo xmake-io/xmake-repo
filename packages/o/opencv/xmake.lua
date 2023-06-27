@@ -6,6 +6,7 @@ package("opencv")
 
     add_urls("https://github.com/opencv/opencv/archive/$(version).tar.gz",
              "https://github.com/opencv/opencv.git")
+    add_versions("4.6.0", "1ec1cba65f9f20fe5a41fda1586e01c70ea0c9a6d7b67c9e13edf0cfe2239277")
     add_versions("4.5.5", "a1cfdcf6619387ca9e232687504da996aaa9f7b5689986b8331ec02cb61d28ad")
     add_versions("4.5.4", "c20bb83dd790fc69df9f105477e24267706715a9d3c705ca1e7f613c7b3bad3d")
     add_versions("4.5.3", "77f616ae4bea416674d8c373984b20c8bd55e7db887fd38c6df73463a0647bab")
@@ -14,6 +15,7 @@ package("opencv")
     add_versions("4.2.0", "9ccb2192d7e8c03c58fee07051364d94ed7599363f3b0dce1c5e6cc11c1bb0ec")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
+    add_resources("4.6.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.6.0.tar.gz", "1777d5fd2b59029cf537e5fd6f8aa68d707075822f90bde683fcde086f85f7a7")
     add_resources("4.5.5", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.5.tar.gz", "a97c2eaecf7a23c6dbd119a609c6d7fae903e5f9ff5f1fe678933e01c67a6c11")
     add_resources("4.5.4", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.4.tar.gz", "ad74b440b4539619dc9b587995a16b691246023d45e34097c73e259f72de9f81")
     add_resources("4.5.3", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.3.tar.gz", "73da052fd10e73aaba2560eaff10cc5177e2dcc58b27f8aedf7c649e24c233bc")
@@ -23,6 +25,7 @@ package("opencv")
     add_resources("3.4.9", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/3.4.9.tar.gz", "dc7d95be6aaccd72490243efcec31e2c7d3f21125f88286186862cf9edb14a57")
 
     add_configs("bundled", {description = "Build 3rd-party libraries with OpenCV.", default = true, type = "boolean"})
+    add_configs("tesseract", {description = "Enable tesseract on text module", default = false, type = "boolean"})
 
     local features = {"1394",
                       "vtk",
@@ -58,13 +61,14 @@ package("opencv")
     for _, feature in ipairs(features) do
         add_configs(feature, {description = "Include " .. feature .. " support.", default = opencv_is_default(feature), type = "boolean"})
     end
-    add_configs("blas", {description = "Set BLAS vendor.", default = nil, type = "string", values = {"mkl", "openblas"}})
+    add_configs("blas", {description = "Set BLAS vendor.", values = {"mkl", "openblas"}})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("dynamic_parallel", {description = "Dynamically load parallel runtime (TBB etc.).", default = false, type = "boolean"})
 
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL", "Accelerate")
     elseif is_plat("linux") then
+        add_extsources("pacman::opencv", "apt::libopencv-dev")
         add_syslinks("pthread", "dl")
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32")
@@ -72,7 +76,10 @@ package("opencv")
 
     on_load("linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
-            local arch = (package:is_arch("x64") and "x64" or "x86")
+            local arch = "x64"
+            if     package:is_arch("x86")   then arch = "x86"
+            elseif package:is_arch("arm64") then arch = "ARM64"
+            end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             local vc_ver = "vc13"
@@ -104,6 +111,10 @@ package("opencv")
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake", "python 3.x", {kind = "binary"})
         end
+
+        if package:config("tesseract") then
+            package:add("deps", "tesseract 4.1.3") -- Opencv need tesseract from the v4 series
+        end
     end)
 
     on_install("linux", "macosx", "windows", "mingw@windows,msys", function (package)
@@ -119,6 +130,10 @@ package("opencv")
                          "-DBUILD_opencv_python2=OFF",
                          "-DBUILD_opencv_python3=OFF",
                          "-DBUILD_JAVA=OFF"}
+
+        if package:config("tesseract") then
+            table.insert(configs, "-DWITH_TESSERACT=ON")
+        end
         if package:config("bundled") then
             table.insert(configs, "-DOPENCV_FORCE_3RDPARTY_BUILD=ON")
         end
@@ -133,8 +148,14 @@ package("opencv")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            if package:is_arch("arm64") then
+                local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+                assert(tonumber(vs) >= 2022, "opencv requires Visual Studio 2022 and later for arm targets")
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+            end
         elseif package:is_plat("mingw") then
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "x86_64" or "x86"))
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
         end
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then
@@ -148,13 +169,17 @@ package("opencv")
             if package:is_plat("windows", "mingw") then
                 reallink = reallink .. package:version():gsub("%.", "")
             end
+            reallink = reallink .. (package:debug() and "d" or "")
             if xmake.version():le("2.5.7") and package:is_plat("mingw") and package:config("shared") then
                 reallink = reallink .. ".dll"
             end
             package:add("links", reallink)
         end
         if package:is_plat("windows") then
-            local arch = package:is_arch("x64") and "x64" or "x86"
+            local arch = "x64"
+            if     package:is_arch("x86")   then arch = "x86"
+            elseif package:is_arch("arm64") then arch = "ARM64"
+            end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             local vc_ver = "vc13"
@@ -174,7 +199,7 @@ package("opencv")
         elseif package:is_plat("mingw") then
             local arch = package:is_arch("x86_64") and "x64" or "x86"
             local linkdir = (package:config("shared") and "lib" or "staticlib")
-            for _, f in ipairs(os.files(path.join(arch, "mingw", linkdir, "lib*.a"))) do
+            for _, f in ipairs(os.files(path.join(package:installdir(), arch, "mingw", linkdir, "lib*.a"))) do
                 if not f:match("libopencv_.+") then
                     package:add("links", path.basename(f):match("lib(.+)"))
                 end
@@ -193,13 +218,8 @@ package("opencv")
     end)
 
     on_test(function (package)
-        -- bin path envs will be missing for precompiled artifacts in old xmake version
-        local runtest = true
-        if package.is_built and not package:is_built() and xmake.version():le("2.5.6") then
-            runtest = false
-        end
-        if runtest then
-            os.vrun("opencv_version")
+        if not package:is_cross() then
+            os.vrun((package:debug() and "opencv_versiond" or "opencv_version"))
         end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>

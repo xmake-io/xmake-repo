@@ -1,0 +1,15 @@
+diff --git a/include/dpp/permissions.h b/include/dpp/permissions.h
+index 1ce84a2..0ba9e64 100644
+--- a/include/dpp/permissions.h
++++ b/include/dpp/permissions.h
+@@ -21,6 +21,10 @@
+ #pragma once
+ #include <dpp/export.h>
+ 
++#include <cstdint>
++#include <type_traits>
++#include <dpp/nlohmann/json_fwd.hpp>
++
+ namespace dpp {
+ 
+ /**

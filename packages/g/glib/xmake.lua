@@ -56,7 +56,7 @@ package("glib")
         end)
     end
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "cross", function (package)
         import("package.tools.meson")
         local configs = {"-Dbsymbolic_functions=false",
                          "-Ddtrace=false",
@@ -65,6 +65,7 @@ package("glib")
                          "-Dtests=false",
                          "-Dinstalled_tests=false",
                          "-Dsystemtap=false",
+                         "-Dselinux=disabled",
                          "-Dlibmount=disabled"}
         if package:is_plat("macosx") and package:version():le("2.61.0") then
             table.insert(configs, "-Diconv=native")

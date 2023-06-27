@@ -1,7 +1,7 @@
 package("corrade")
 
     set_homepage("https://magnum.graphics/corrade/")
-    set_description("Cor­rade is a mul­ti­plat­form util­i­ty li­brary writ­ten in C++11/C++14.")
+    set_description("Corrade is a multiplatform utility library written in C++11/C++14.")
     set_license("MIT")
 
     add_urls("https://github.com/mosra/corrade/archive/refs/tags/$(version).zip",

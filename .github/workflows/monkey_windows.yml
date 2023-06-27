@@ -10,7 +10,7 @@ jobs:
       matrix:
         os: [windows-latest]
         kind: [static, shared]
-        arch: [x64, x86]
+        arch: [x64, x86, arm64]
         vs_runtime: [MT, MD]
 
     runs-on: ${{ matrix.os }}
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: branch@dev
+          xmake-version: branch@master
 
       - name: Configure Pagefile
         uses: al-cheb/configure-pagefile-action@v1.2

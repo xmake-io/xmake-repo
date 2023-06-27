@@ -1,9 +1,22 @@
 add_rules("mode.debug", "mode.release")
 
+option("vers")
+    set_default("")
+    set_showmenu(true)
+option_end()
+
+if has_config("vers") then
+    set_version(get_config("vers"))
+end
+
 target("brotlienc")
     set_kind("$(kind)")
     add_deps("brotlicommon")
-    add_rules("utils.install.pkgconfig_importfiles", {filename = "libbrotlienc.pc"})
+    local links = {"brotlienc"}
+    if is_kind("static") then
+        table.insert(links, "brotlicommon")
+    end
+    add_rules("utils.install.pkgconfig_importfiles", {filename = "libbrotlienc.pc", links = links})
     add_includedirs("c/include", {public = true})
     add_files("c/enc/*.c")
     if is_kind("shared") and is_plat("windows") then
@@ -14,7 +27,11 @@ target("brotlienc")
 target("brotlidec")
     set_kind("$(kind)")
     add_deps("brotlicommon")
-    add_rules("utils.install.pkgconfig_importfiles", {filename = "libbrotlidec.pc"})
+    local links = {"brotlidec"}
+    if is_kind("static") then
+        table.insert(links, "brotlicommon")
+    end
+    add_rules("utils.install.pkgconfig_importfiles", {filename = "libbrotlidec.pc", links = links})
     add_includedirs("c/include", {public = true})
     add_files("c/dec/*.c")
     if is_kind("shared") and is_plat("windows") then

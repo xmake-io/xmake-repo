@@ -18,6 +18,7 @@ package("newtondynamics")
     end
 
     on_load(function (package)
+        wprint("newtondynamics package has been renamed to newtondynamics3 due to release of v4, please update your dependency to newtondynamics3 or newtondynamics4")
         if package:is_plat("windows") and not package:config("shared") then
             package:add("defines", "_NEWTON_STATIC_LIB")
         end

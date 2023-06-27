@@ -1,11 +1,11 @@
 package("libpng")
-
     set_homepage("http://www.libpng.org/pub/png/libpng.html")
     set_description("The official PNG reference library")
     set_license("libpng-2.0")
 
     set_urls("https://github.com/glennrp/libpng/archive/$(version).zip",
              "https://github.com/glennrp/libpng.git")
+    add_versions("v1.6.40", "ab3f88779f0661bbb07c60e778fda782216bff70355d86848fbf6a327084563a")
     add_versions("v1.6.37", "c2c50c13a727af73ecd3fc0167d78592cf5e0bca9611058ca414b6493339c784")
     add_versions("v1.6.36", "6274d3f761cc80f7f6e2cde6c07bed10c00bc4ddd24c4f86e25eb51affa1664d")
     add_versions("v1.6.35", "3d22d46c566b1761a0e15ea397589b3a5f36ac09b7c785382e6470156c04247f")
@@ -17,7 +17,15 @@ package("libpng")
         add_syslinks("m")
     end
 
-    on_install("windows", "mingw", "android", "iphoneos", "cross", "bsd", function (package)
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libpng")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libpng", "apt::libpng-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libpng")
+    end
+
+    on_install("windows", "mingw", "android", "iphoneos", "cross", "bsd", "wasm", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("zlib")
@@ -29,8 +37,14 @@ package("libpng")
                     add_defines("PNG_INTEL_SSE_OPT=1")
                     add_vectorexts("sse", "sse2")
                 elseif is_arch("arm.*") then
-                    add_files("arm/*.c", "arm/*.S")
-                    add_defines("PNG_ARM_NEON_OPT=2")
+                    add_files("arm/*.c")
+                    if is_plat("windows") then
+                        add_defines("PNG_ARM_NEON_OPT=1")
+                        add_defines("PNG_ARM_NEON_IMPLEMENTATION=1")
+                    else
+                        add_files("arm/*.S")
+                        add_defines("PNG_ARM_NEON_OPT=2")
+                    end
                 elseif is_arch("mips.*") then
                     add_files("mips/*.c")
                     add_defines("PNG_MIPS_MSA_OPT=2")

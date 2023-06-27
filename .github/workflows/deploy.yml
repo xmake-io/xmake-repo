@@ -17,7 +17,8 @@ jobs:
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
-          xmake-version: branch@dev
+          xmake-version: latest
+          actions-cache-folder: '.xmake-cache'
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2

@@ -7,16 +7,16 @@
 
   <div>
     <a href="https://github.com/xmake-io/xmake-repo/actions?query=workflow%3AWindows">
-      <img src="https://img.shields.io/github/workflow/status/xmake-io/xmake-repo/Windows/dev.svg?style=flat-square&logo=windows" alt="github-ci" />
+      <img src="https://img.shields.io/github/actions/workflow/status/xmake-io/xmake-repo/windows.yml?branch=dev&style=flat-square&logo=windows" alt="github-ci" />
     </a>
     <a href="https://github.com/xmake-io/xmake-repo/actions?query=workflow%3ALinux">
-      <img src="https://img.shields.io/github/workflow/status/xmake-io/xmake-repo/Linux/dev.svg?style=flat-square&logo=linux" alt="github-ci" />
+      <img src="https://img.shields.io/github/actions/workflow/status/xmake-io/xmake-repo/ubuntu.yml?branch=dev&style=flat-square&logo=linux" alt="github-ci" />
     </a>
     <a href="https://github.com/xmake-io/xmake-repo/actions?query=workflow%3AmacOS">
-      <img src="https://img.shields.io/github/workflow/status/xmake-io/xmake-repo/macOS/dev.svg?style=flat-square&logo=apple" alt="github-ci" />
+      <img src="https://img.shields.io/github/actions/workflow/status/xmake-io/xmake-repo/macos.yml?branch=dev&style=flat-square&logo=apple" alt="github-ci" />
     </a>
     <a href="https://github.com/xmake-io/xmake-repo/actions?query=workflow%3AAndroid">
-      <img src="https://img.shields.io/github/workflow/status/xmake-io/xmake-repo/Android/dev.svg?style=flat-square&logo=android" alt="github-ci" />
+      <img src="https://img.shields.io/github/actions/workflow/status/xmake-io/xmake-repo/android.yml?branch=dev&style=flat-square&logo=android" alt="github-ci" />
     </a>
   </div>
   <div>
@@ -126,4 +126,13 @@ package("libpng")
         assert(package:has_cfuncs("foo", {includes = "foo.h"}))
     end)
 packages/l/libpng/xmake.lua generated!
+```
+
+### Test a package in local
+
+```console
+$ xmake l scripts/test.lua --shallow -vD zlib
+$ xmake l scripts/test.lua --shallow -vD -p iphoneos zlib
+$ xmake l scripts/test.lua --shallow -vD -k shared -m debug zlib
+$ xmake l scripts/test.lua --shallow -vD --vs_runtime=MD zlib
 ```

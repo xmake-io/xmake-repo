@@ -1,0 +1,37 @@
+diff --git a/CMake/Dependencies.cmake b/CMake/Dependencies.cmake
+index 349082d..b745b12 100644
+--- a/CMake/Dependencies.cmake
++++ b/CMake/Dependencies.cmake
+@@ -27,5 +27,6 @@ MACRO_DISPLAY_FEATURE_LOG()
+ 
+ # Add library and include paths from the dependencies
+ include_directories(
++  ${OPENAL_INCLUDE_DIR}/../
+   ${OPENAL_INCLUDE_DIR}
+ )
+diff --git a/cAudio/include/cAudioString.h b/cAudio/include/cAudioString.h
+index f70d2f0..d8a4815 100644
+--- a/cAudio/include/cAudioString.h
++++ b/cAudio/include/cAudioString.h
+@@ -49,8 +49,8 @@ namespace cAudio
+         static int id = 0;
+         static char buffer[8][1024];
+         id = ++id & 0x7;
+-
+-        int buff_size = WideCharToMultiByte(CP_UTF8, 0, str.c_str(), (int)(str.size() < 1023 ? str.size() : 1023), buffer[id], 1023, 0, false);
++	    std::wstring widestr(str.begin(), str.end());
++        int buff_size = WideCharToMultiByte(CP_UTF8, 0, widestr.c_str(), (int)(str.size() < 1023 ? str.size() : 1023), buffer[id], 1023, 0, false);
+         buffer[id][buff_size] = 0;
+         buffer[id][1023] = 0;
+         return buffer[id];
+@@ -61,7 +61,9 @@ namespace cAudio
+         int str_len = (int)strlen(str);
+         int buf_size = MultiByteToWideChar(CP_UTF8, 0, str, str_len, 0, 0);
+         cAudioString s(buf_size, L'\0');
+-        MultiByteToWideChar(CP_UTF8, 0, str, str_len, &s[0], buf_size);
++	    std::wstring widestr(s.begin(), s.end());
++        MultiByteToWideChar(CP_UTF8, 0, str, str_len, &widestr[0], buf_size);
++	    s = std::string(widestr.begin(), widestr.end());
+         return s;
+     }
+     

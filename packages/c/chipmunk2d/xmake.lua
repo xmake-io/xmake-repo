@@ -25,7 +25,7 @@ package("chipmunk2d")
         add_syslinks("pthread", "m")
     end
 
-    on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", function (package)
+    on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
         local configs = {"-DBUILD_DEMOS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then

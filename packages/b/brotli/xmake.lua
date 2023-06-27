@@ -19,6 +19,14 @@ package("brotli")
 
     add_links("brotlienc", "brotlidec", "brotlicommon")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::brotli")
+    elseif is_plat("linux") then
+        add_extsources("pacman::brotli", "apt::libbrotli-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::brotli")
+    end
+
     on_load(function (package)
         package:addenv("PATH", "bin")
     end)
@@ -50,7 +58,7 @@ package("brotli")
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        local configs = {buildir = "xbuild"}
+        local configs = {buildir = "xbuild", vers = package:version_str()}
         if package:config("shared") then
             configs.kind = "shared"
         end
@@ -61,7 +69,7 @@ package("brotli")
     end)
 
     on_test(function(package)
-        if package:is_plat(os.host()) then
+        if not package:is_cross() then
             os.vrun("brotli --version")
         end
         assert(package:check_csnippets([[

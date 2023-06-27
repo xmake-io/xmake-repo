@@ -9,6 +9,7 @@ package("cgal")
     add_versions("5.2.1", "ccdea67db79153417504f50c534cea3bb6b0e9754e7f32fb753fc19005114db0")
     add_versions("5.3", "49ccfb6b72a78d03ab026c6502099ba9358cf604d9d1f51c33e90b314635fe35")
     add_versions("5.4", "dbca692666866df5979ef14264570b85a00f21cb77a9f9420ec0823ce8fae473")
+    add_versions("5.5.2", "77b17ba5d43fe844c0eca7fb7eff7d5687174b037290c390f1251ef44cc4909b")
 
     add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
     
@@ -26,14 +27,14 @@ package("cgal")
         add_deps("gmp", "mpfr")
     end
 
-    on_load("windows", function (package)
+    on_load("windows", "mingw", function (package)
         package:add("defines", "CGAL_NO_GMP")
         if not package:config("header_only") then
             raise("Non-header-only version is not supported yet!")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "mingw", "macosx", "linux", function (package)
         if package:version():le("5.3") then
             io.gsub("CMakeLists.txt", "install%(DIRECTORY.-%/demo%/.-%/demo%/.-%)", "")
         end

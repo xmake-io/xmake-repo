@@ -16,6 +16,8 @@ package("raylib")
         add_versions("3.5.0", "9b9be75fe1b231225c91a6fcf5ed9c24cbf03c6193f917e40e4655ef27f281e2")
         add_versions("3.7.0", "439dc1851dd1b7f385f4caf4f5c7191dda90add9d8d531e5e74702315e432003")
         add_versions("4.0.0", "be73734815a7ef4eb3130f4a2ecaabb2059602745ae6ce1173201a74034c2ec9")
+        add_versions("4.2.0", "5f79c103b82c577698b01c7b2c166d0c2b51615886b7fabdc671199f0aaf4b38")
+        add_versions("4.5.0", "63deb87ffc32e5eb2023ba763aaea2cb5f41bd37bbc07760651efe251bd76f3d")
     else
         add_urls("https://github.com/raysan5/raylib/archive/$(version).tar.gz",
                  "https://github.com/raysan5/raylib.git")
@@ -24,6 +26,8 @@ package("raylib")
         add_versions("3.5.0", "761985876092fa98a99cbf1fef7ca80c3ee0365fb6a107ab901a272178ba69f5")
         add_versions("3.7.0", "7bfdf2e22f067f16dec62b9d1530186ddba63ec49dbd0ae6a8461b0367c23951")
         add_versions("4.0.0", "11f6087dc7bedf9efb3f69c0c872f637e421d914e5ecea99bbe7781f173dc38c")
+        add_versions("4.2.0", "676217604a5830cb4aa31e0ede0e4233c942e2fc5c206691bded58ebcd82a590")
+        add_versions("4.5.0", "163378604f2293ea5ebf3238f50c8926addde72d1a6bc8998ac2e96074ba8af8")
     end
 
     if not (is_plat("macosx") and is_arch("x86_64")) then
@@ -32,7 +36,7 @@ package("raylib")
 
     if is_plat("macosx") then
         add_frameworks("CoreVideo", "CoreGraphics", "AppKit", "IOKit", "CoreFoundation", "Foundation")
-    elseif is_plat("windows") then
+    elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "winmm", "shell32")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl", "m")
@@ -41,11 +45,11 @@ package("raylib")
     add_deps("opengl", {optional = true})
 
     on_install("macosx|x86_64", function (package)
-        os.cp("include/raylib.h", package:installdir("include"))
+        os.cp("include/*.h", package:installdir("include"))
         os.cp("lib/libraylib.a", package:installdir("lib"))
     end)
 
-    on_install("windows", "linux", "macosx|arm64", function (package)
+    on_install("windows", "linux", "macosx|arm64", "mingw", function (package)
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -56,8 +60,6 @@ package("raylib")
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 InitWindow(100, 100, "hello world!");
-                Camera camera = { 0 };
-                UpdateCamera(&camera);
             }
         ]]}, {includes = {"raylib.h"}}))
     end)

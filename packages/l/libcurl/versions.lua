@@ -1,4 +1,9 @@
 function add_versions_list()
+    add_versions("8.0.1", "9b6b1e96b748d04b968786b6bdf407aa5c75ab53a3d37c1c8c81cdb736555ccf")
+    add_versions("7.87.0", "5d6e128761b7110946d1276aff6f0f266f2b726f5e619f7e0a057a474155f307")
+    add_versions("7.86.0", "f5ca69db03eea17fa8705bdfb1a9f58d76a46c9010518109bb38f313137e0a28")
+    add_versions("7.85.0", "21a7e83628ee96164ac2b36ff6bf99d467c7b0b621c1f7e317d8f0d96011539c")
+    add_versions("7.84.0", "702fb26e73190a3bd77071aa146f507b9817cc4dfce218d2ab87f00cd3bc059d")
     add_versions("7.82.0", "46d9a0400a33408fd992770b04a44a7434b3036f2e8089ac28b57573d59d371f")
     add_versions("7.81.0", "1e7a38d7018ec060f1f16df839854f0889e94e122c4cfa5d3a37c2dc56f1e258")
     add_versions("7.80.0", "dd0d150e49cd950aff35e16b628edf04927f0289df42883750cf952bb858189c")
@@ -52,4 +57,6 @@ function add_versions_list()
     add_versions("7.33.0", "0afde4cd949e2658eddc3cda675b19b165eea1af48ac5f3e1ec160792255d1b3")
     add_versions("7.32.0", "8e3db42548e01407cb2f1407660c0f528b89ec7afda6264442fc2b229b95223b")
     add_versions("7.31.0", "a73b118eececff5de25111f35d1d0aafe1e71afdbb83082a8e44d847267e3e08")
+
+    add_patches("7.84.0", path.join(os.scriptdir(), "patches", "7.84.0", "sched.patch"), "e79f56f840cbc6996a153f19d9266bd46fe4154e6b494c8ee0478cb5b87662d3")
 end

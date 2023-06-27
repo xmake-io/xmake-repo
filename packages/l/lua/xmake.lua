@@ -16,7 +16,7 @@ package("lua")
     add_versions("v5.2.3", "13c2fb97961381f7d06d5b5cea55b743c163800896fd5c5e2356201d3619002d")
     add_versions("v5.1.1", "c5daeed0a75d8e4dd2328b7c7a69888247868154acbda69110e97d4a6e17d1f0")
     add_versions("v5.1.5", "2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333")
-    
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::lua", "pacman::lua51")
     elseif is_plat("linux") then
@@ -61,6 +61,7 @@ package("lua")
                 set_kind(kind)
                 set_basename("lua")
                 add_headerfiles(sourcedir .. "*.h", {prefixdir = "lua"})
+                add_headerfiles(sourcedir .. "lua.hpp", {prefixdir = "lua"})
                 add_files(sourcedir .. "*.c|lua.c|luac.c|onelua.c")
                 add_defines("LUA_COMPAT_5_2", "LUA_COMPAT_5_1")
                 if is_plat("linux", "bsd", "cross") then
@@ -86,7 +87,7 @@ package("lua")
                 end
         ]], sourcedir,
             package:config("shared") and "shared" or "static",
-            is_plat(os.host()) and "true" or "false"))
+            package:is_cross() and "false" or "true"))
 
         local configs = {}
         if package:config("shared") then
@@ -97,7 +98,7 @@ package("lua")
     end)
 
     on_test(function (package)
-        if is_plat(os.host()) then
+        if not package:is_cross() then
             os.vrun("lua -e \"print('hello xmake!')\"")
         end
         assert(package:has_cfuncs("lua_getinfo", {includes = "lua.h"}))

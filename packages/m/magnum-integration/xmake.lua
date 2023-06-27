@@ -1,7 +1,7 @@
 package("magnum-integration")
 
     set_homepage("https://magnum.graphics/")
-    set_description("Integration libraries for magnum, Light­weight and mod­u­lar C++11/C++14 graph­ics mid­dle­ware for games and data visu­al­iz­a­tion.")
+    set_description("Integration libraries for magnum, Lightweight and modular C++11/C++14 graphics middleware for games and data visualization.")
     set_license("MIT")
 
     add_urls("https://github.com/mosra/magnum-integration/archive/refs/tags/$(version).zip",
@@ -33,11 +33,7 @@ package("magnum-integration")
         for _, integration in ipairs(integrations) do
             table.insert(configs, "-DWITH_" .. integration:upper() .. "=" .. (package:config(integration) and "ON" or "OFF"))
         end
-        local packagedeps = {}
-        if package:config("imgui") then
-            table.insert(packagedeps, "imgui")
-        end
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)

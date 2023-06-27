@@ -9,6 +9,9 @@ package("v8")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
+    elseif is_plat("windows") then
+        add_syslinks("user32", "winmm", "advapi32", "dbghelp", "shlwapi")
+        add_configs("vs_runtime", {description = "Set vs runtime.", default = "MT", readonly = true})
     end
 
     add_links("v8_monolith",
@@ -27,7 +30,7 @@ package("v8")
               "cppgc_base",
               "torque_ls_base")
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
 
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
@@ -46,6 +49,9 @@ package("v8")
     "managed": False,
     "custom_deps": {},
   }]]=])
+        if package:is_plat("windows") then
+            envs.DEPOT_TOOLS_WIN_TOOLCAHIN = "0"
+        end
         local gclient = is_host("windows") and "gclient.bat" or "gclient"
         os.vrunv(gclient, {"sync", "-v"}, {envs = envs})
         local configs = {
@@ -61,29 +67,16 @@ package("v8")
             v8_use_external_startup_data = false,
             v8_enable_test_features = false,
             v8_enable_i18n_support = false}
-        if package:is_arch("x86", "i386") then
-            configs.target_cpu = "x86"
-        elseif package:is_arch("x64", "x86_64") then
-            configs.target_cpu = "x64"
-        elseif package:is_arch("arm64", "arm64-v8a") then
-            configs.target_cpu = "arm64"
-        end
-        if not package:is_plat("windows") then
-            configs.cc  = package:build_getenv("cc")
-            configs.cxx = package:build_getenv("cxx")
-        else
+
+        if package:is_plat("windows") then
             configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+            configs.is_clang = false 
         end
-        if package:is_plat("macosx") then
-            configs.extra_ldflags = {"-lstdc++"}
-            local xcode = import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
-            configs.xcode_sysroot = xcode:config("xcode_sysroot")
-        end
-        import("package.tools.gn").build(package, configs, {buildir = "out"})
+        import("package.tools.gn").build(package, configs, {buildir = "out.gn"})
         os.cp("include", package:installdir())
-        os.trycp("out/obj/*.a", package:installdir("lib"))
-        os.trycp("out/obj/*.lib", package:installdir("lib"))
-        os.trycp("out/obj/*.dll", package:installdir("bin"))
+        os.trycp("out.gn/obj/*.a", package:installdir("lib"))
+        os.trycp("out.gn/obj/*.lib", package:installdir("lib"))
+        os.trycp("out.gn/obj/*.dll", package:installdir("bin"))
     end)
 
     on_test(function (package)

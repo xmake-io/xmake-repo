@@ -138,9 +138,10 @@ target("buildvm")
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X86", {public = true})
     elseif is_arch("x64", "x86_64") then
         if has_config("gc64") then
-            add_files("src/vm_x64.dasc")
             add_defines("LUAJIT_ENABLE_GC64", {public = true})
+            add_files("src/vm_x64.dasc")
         else
+            -- @see https://github.com/xmake-io/xmake-repo/issues/1264
             add_files("src/vm_x86.dasc")
         end
         add_defines("LUAJIT_TARGET=LUAJIT_ARCH_X64", {public = true})

@@ -6,6 +6,7 @@ package("llhttp")
 
     add_urls("https://github.com/nodejs/llhttp/archive/release/$(version).tar.gz")
     add_versions("v3.0.0", "02931556e69f8d075edb5896127099e70a093c104a994a57b4d72c85b48d25b0")
+    add_versions("v8.1.0", "9da0d23453e8e242cf3b2bc5d6fb70b1517b8a70520065fcbad6be787e86638e")
 
     on_install(function (package)
         io.writefile("xmake.lua", [[

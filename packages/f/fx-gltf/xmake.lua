@@ -9,6 +9,7 @@ package("fx-gltf")
     add_urls("https://github.com/jessey-git/fx-gltf.git")
 
     add_versions("v1.2.0", "d8eaceba72ea6574b982c7b0d2328fd3f8ad519db4a37cf63cd3f8020d7722bf")
+    add_versions("v2.0.0", "d044d191f9f6c956bdbaf548d960ae9831fd13dfdc4c82fceefa90cb02a68091")
 
     add_deps("nlohmann_json")
 

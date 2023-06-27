@@ -16,7 +16,7 @@ package("librdkafka")
     -- lz4_ext means using external lz4 library instead of librdkafka's bundled one.
     -- When lz4_ext is disabled, we still need to link with external lz4 library.
     local config_default = {lz4_ext = true}
-    local configdeps = {lz4_ext = "lz4", sasl = "cyrus-sasl", ssl = "openssl", zlib = "zlib", zstd = "std"}
+    local configdeps = {lz4_ext = "lz4", sasl = "cyrus-sasl", ssl = "openssl", zlib = "zlib", zstd = "zstd"}
     for config, dep in pairs(configdeps) do
         add_configs(config, {description = "Enable " .. config .. " support.", default = config_default[config] or false, type = "boolean"})
     end
@@ -36,11 +36,6 @@ package("librdkafka")
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
-                if name == "sasl" then
-                    package:add("syslinks", "sasl2")
-                else
-                    package:add("syslinks", dep)
-                end
             end
         end
     end)
@@ -58,6 +53,13 @@ package("librdkafka")
             table.insert(configs, "-DWITH_" .. config:upper()  .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:version():startswith("v1.8.2") then
+            io.replace(path.join(package:installdir("lib"), "cmake", "RdKafka", "RdKafkaConfig.cmake"),
+                "find_dependency(LZ4)",
+                'list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_LIST_DIR}")\n  find_dependency(LZ4)\n  list(REMOVE_AT CMAKE_MODULE_PATH 0)',
+                {plain = true})
+        end
     end)
 
     on_test(function (package)

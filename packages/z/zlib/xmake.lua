@@ -5,11 +5,16 @@ package("zlib")
 
     add_urls("https://github.com/madler/zlib/archive/$(version).tar.gz",
              "https://github.com/madler/zlib.git")
-
     add_versions("v1.2.10", "42cd7b2bdaf1c4570e0877e61f2fdc0bce8019492431d054d3d86925e5058dc5")
     add_versions("v1.2.11", "629380c90a77b964d896ed37163f5c3a34f6e6d897311f1df2a7016355c45eff")
+    add_versions("v1.2.12", "d8688496ea40fb61787500e863cc63c9afcbc524468cedeb478068924eb54932")
+    add_versions("v1.2.13", "1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428")
 
-    if is_plat("linux") then
+    add_configs("zutil", {description = "Export zutil.h api", default = false, type = "boolean"})
+
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::zlib")
+    elseif is_plat("linux") then
         add_extsources("pacman::zlib", "apt::zlib1g-dev")
     elseif is_plat("macosx") then
         add_extsources("brew::zlib")
@@ -48,6 +53,7 @@ package("zlib")
                     add_defines("_CRT_SECURE_NO_DEPRECATE")
                     add_defines("_CRT_NONSTDC_NO_DEPRECATE")
                     if is_kind("shared") then
+                        add_files("win32/zlib1.rc")
                         add_defines("ZLIB_DLL")
                     end
                 else
@@ -62,6 +68,9 @@ package("zlib")
             configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)
+        if package:config("zutil") then
+            os.cp("zutil.h", package:installdir("include"))
+        end
     end)
 
     on_test(function (package)

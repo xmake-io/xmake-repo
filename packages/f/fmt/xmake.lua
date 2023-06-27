@@ -3,7 +3,11 @@ package("fmt")
     set_homepage("https://fmt.dev")
     set_description("fmt is an open-source formatting library for C++. It can be used as a safe and fast alternative to (s)printf and iostreams.")
 
-    set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip")
+    set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip",
+             "https://github.com/fmtlib/fmt.git")
+    add_versions("10.0.0", "4943cb165f3f587f26da834d3056ee8733c397e024145ca7d2a8a96bb71ac281")
+    add_versions("9.1.0", "cceb4cb9366e18a5742128cb3524ce5f50e88b476f1e54737a47ffdf4df4c996")
+    add_versions("9.0.0", "fc96dd2d2fdf2bded630787adba892c23cb9e35c6fd3273c136b0c57d4651ad6")    
     add_versions("8.1.1", "23778bad8edba12d76e4075da06db591f3b0e3c6c04928ced4a7282ca3400e5d")
     add_versions("8.0.1", "a627a56eab9554fc1e5dd9a623d0768583b3a383ff70a4312ba68f94c9d415bf")
     add_versions("8.0.0", "36016a75dd6e0a9c1c7df5edb98c93a3e77dabcf122de364116efb9f23c6954a")
@@ -14,12 +18,12 @@ package("fmt")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
-    if is_plat("macosx") then
-        add_extsources("brew::fmt")
-    end
-
-    if is_plat("linux") then
+    if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::fmt")
+    elseif is_plat("linux") then
+        add_extsources("pacman::fmt", "apt::libfmt-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::fmt")
     end
 
     on_load(function (package)
@@ -29,7 +33,12 @@ package("fmt")
             package:add("deps", "cmake")
         end
         if package:config("shared") then
-            package:add("defines", "FMT_EXPORT")
+            local version = package:version()
+            if version and version:ge("10") then
+                package:add("defines", "FMT_LIB_EXPORT")
+            else
+                package:add("defines", "FMT_EXPORT")
+            end
         end
     end)
 
@@ -54,6 +63,6 @@ package("fmt")
                 std::string s = fmt::format("{}", "hello");
                 assert(s == "hello");
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "fmt/format.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "fmt/format.h"}))
     end)
 

@@ -3,7 +3,7 @@ package("libhv")
     set_homepage("https://github.com/ithewei/libhv")
     set_description("Like libevent, libev, and libuv, libhv provides event-loop with non-blocking IO and timer, but simpler api and richer protocols.")
 
-    add_urls("https://github.com/ithewei/libhv/archive/v$(version).zip")
+    add_urls("https://github.com/ithewei/libhv/archive/v$(version).zip", {excludes = {"*/html/*"}})
     add_versions("1.0.0", "39adb77cc7addaba82b69fa9a433041c8288f3d9c773fa360162e3391dcf6a7b")
     add_versions("1.1.0", "a753c268976d9c4f85dcc10be2377bebc36d4cb822ac30345cf13f2a7285dbe3")
     add_versions("1.1.1", "e012d9752fe8fb3f788cb6360cd9abe61d4ccdc1d2085501d85f1068eba8603e")
@@ -11,6 +11,9 @@ package("libhv")
     add_versions("1.2.2", "a15ec12cd77d1fb745a74465b8bdee5a45247e854371db9d0863573beca08466")
     add_versions("1.2.3", "c30ace04597a0558ce957451d64acc7cd3260d991dc21628e048c8dec3028f34")
     add_versions("1.2.4", "389fa60f0d6697b5267ddc69de00e4844f1d8ac8ee4d2ad3742850589c20d46e")
+    add_versions("1.2.6", "dd5ed854f5cdc0bdd3a3310a9f0452ec194e2907006551aebbb603825a989ed1")
+    add_versions("1.3.0", "e7a129dcabb541baeb8599e419380df6aa98afc6e04874ac88a6d2bdb5a973a5")
+    add_versions("1.3.1", "66fb17738bc51bee424b6ddb1e3b648091fafa80c8da6d75626d12b4188e0bdc")
 
     add_configs("protocol",    {description = "compile protocol", default = false, type = "boolean"})
     add_configs("http",        {description = "compile http", default = true, type = "boolean"})
@@ -31,6 +34,11 @@ package("libhv")
         add_syslinks("pthread")
     elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
+    elseif is_plat("windows") then
+        add_syslinks("advapi32")
+    elseif is_plat("mingw") then
+        add_syslinks("ws2_32")
+        add_syslinks("pthread")
     end
 
     add_deps("cmake")
@@ -50,7 +58,7 @@ package("libhv")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", function(package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
@@ -80,6 +88,9 @@ package("libhv")
         if package:is_plat("iphoneos") then
             io.replace("ssl/appletls.c", "ret = SSLSetProtocolVersionEnabled(appletls->session, kSSLProtocolAll, true);",
                 "ret = SSLSetProtocolVersionMin(appletls->session, kTLSProtocol12);", {plain = true})
+        elseif package:is_plat("windows") and package:is_arch("arm.*") then
+            io.replace("base/hplatform.h", "defined(__arm__)", "defined(__arm__) || defined(_M_ARM)", {plain = true})
+            io.replace("base/hplatform.h", "defined(__aarch64__) || defined(__ARM64__)", "defined(__aarch64__) || defined(__ARM64__) || defined(_M_ARM64)", {plain = true})
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
@@ -87,3 +98,4 @@ package("libhv")
     on_test(function(package)
         assert(package:has_cfuncs("hloop_new", {includes = "hv/hloop.h"}))
     end)
+

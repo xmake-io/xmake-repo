@@ -4,8 +4,8 @@ package("xerces-c")
     set_description("Xerces-C++ is a validating XML parser written in a portable subset of C++.")
     set_license("Apache-2.0")
 
-    add_urls("https://downloads.apache.org/xerces/c/3/sources/xerces-c-$(version).zip")
-    add_versions("3.2.3", "4a3a23ed859cff886e50ee8b30e3223c603fbcad86d1ba5a11f29da692b825ce")
+    add_urls("https://dlcdn.apache.org//xerces/c/3/sources/xerces-c-$(version).zip")
+    add_versions("3.2.4", "563a668b331ca5d1fc08ed52e5f62a13508b47557f88a068ad1db6f68e1f2eb2")
 
     add_deps("cmake")
     if is_plat("windows") then

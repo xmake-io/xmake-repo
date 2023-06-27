@@ -8,7 +8,7 @@ package("tmxparser")
 
     add_deps("zlib", "tinyxml2")
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "mingw", function (package)
         io.gsub("include/Tmx.h.in", "@VERSION_PATCH@", "@VERSION_ALTER@")
         io.writefile("xmake.lua", ([[
             set_version("%s")
@@ -23,12 +23,13 @@ package("tmxparser")
                 set_configdir("include")
                 add_configfiles("include/Tmx.h.in", {pattern = "@(.-)@"})
                 add_files("src/**.cpp")
+                if is_plat("windows") and is_kind("shared") then 
+                    add_rules("utils.symbols.export_all", {export_classes = true}) 
+                end 
         ]]):format(package:version_str()))
         local configs = {}
-        if not package:is_plat("windows") then
-            configs.kind = (package:config("shared") and "shared" or "static")
-        end
-        if package:is_plat("linux") and package:config("pic") ~= false then
+        configs.kind = (package:config("shared") and "shared" or "static")
+        if package:is_plat("linux", "mingw") and package:config("pic") ~= false then
             configs.cxflags = "-fPIC"
         end
         import("package.tools.xmake").install(package, configs)

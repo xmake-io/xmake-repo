@@ -1,0 +1,26 @@
+diff --git a/include/fmi4cpp/fmi2/xml/model_variables.hpp b/include/fmi4cpp/fmi2/xml/model_variables.hpp
+index 8e3b342..cd70e62 100644
+--- a/include/fmi4cpp/fmi2/xml/model_variables.hpp
++++ b/include/fmi4cpp/fmi2/xml/model_variables.hpp
+@@ -41,8 +41,6 @@ private:
+     const std::vector<scalar_variable> variables_;
+ 
+ public:
+-    model_variables();
+-
+     explicit model_variables(std::vector<scalar_variable>  variables);
+ 
+     [[nodiscard]] size_t size() const;
+diff --git a/src/fmi4cpp/fmi2/xml/model_variables.cpp b/src/fmi4cpp/fmi2/xml/model_variables.cpp
+index d262aa9..a6643f7 100644
+--- a/src/fmi4cpp/fmi2/xml/model_variables.cpp
++++ b/src/fmi4cpp/fmi2/xml/model_variables.cpp
+@@ -30,8 +30,6 @@
+ 
+ using namespace fmi4cpp::fmi2;
+ 
+-model_variables::model_variables() = default;
+-
+ model_variables::model_variables(std::vector<scalar_variable> variables)
+     : variables_(std::move(variables))
+ {}
