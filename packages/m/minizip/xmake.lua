@@ -8,7 +8,7 @@ package("minizip")
     add_versions("v1.2.10", "42cd7b2bdaf1c4570e0877e61f2fdc0bce8019492431d054d3d86925e5058dc5")
     add_versions("v1.2.11", "629380c90a77b964d896ed37163f5c3a34f6e6d897311f1df2a7016355c45eff")
     add_versions("v1.2.12", "d8688496ea40fb61787500e863cc63c9afcbc524468cedeb478068924eb54932")
-    add_versions("v1.2.13", "b3a24de97a8fdbc835b9833169501030b8977031bcb54b3b3ac13740f846ab30")
+    add_versions("v1.2.13", "1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428")
 
     add_deps("zlib")
 
@@ -21,6 +21,7 @@ package("minizip")
             add_requires("zlib")
             target("minizip")
                 set_kind("$(kind)")
+                set_version("$(version)")
                 add_files("zip.c", "unzip.c", "mztools.c", "ioapi.c")
                 add_headerfiles("crypt.h", "zip.h", "unzip.h", "ioapi.h", "mztools.h")
                 add_packages("zlib")
@@ -30,6 +31,7 @@ package("minizip")
                 end
         ]])
         local configs = {}
+        configs.version = package:version()
         if package:config("shared") then
             configs.kind = "shared"
         elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then

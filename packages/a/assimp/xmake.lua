@@ -98,6 +98,11 @@ package("assimp")
             io.replace("CMakeLists.txt", "CMAKE_COMPILER_IS_MINGW", "MINGW", {plain = true})
         end
 
+        -- looks like Assimp doesn't find minizip libraries without this
+        if package:is_plat("windows") and package:config("shared") then
+            table.insert(configs, "-DCMAKE_FIND_LIBRARY_SUFFIXES=.lib")
+        end
+
         import("package.tools.cmake").install(package, configs)
 
         -- copy pdb
