@@ -100,7 +100,9 @@ package("assimp")
 
         -- looks like Assimp doesn't find minizip libraries without this
         if package:is_plat("windows") and package:config("shared") then
-            table.insert(configs, "-DCMAKE_FIND_LIBRARY_SUFFIXES=.lib")
+            io.replace("CMakeLists.txt", [[MESSAGE(STATUS "Shared libraries enabled")]], [[
+                MESSAGE(STATUS "Shared libraries enabled")
+                SET(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})]])
         end
 
         import("package.tools.cmake").install(package, configs)
