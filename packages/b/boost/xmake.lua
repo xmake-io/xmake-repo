@@ -140,11 +140,8 @@ package("boost")
         local msvc
         local is_clang_tc = false
         if package:is_plat("windows") then
-            import("core.base.global")
-            import("core.project.config")
-
             -- Boost's bootstrap.bat needs the runenvs from the toolchain to locate cl
-            local tc_name = config.get("toolchain") or global.get("toolchain") or "msvc"
+            local tc_name = package:config("toolchains") or "msvc"
             msvc = toolchain.load(tc_name, {plat = package:plat(), arch = package:arch()})
 
             if tc_name == "clang-cl" then
