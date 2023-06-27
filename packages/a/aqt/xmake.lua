@@ -4,11 +4,11 @@ package("aqt")
     set_description("aqt: Another (unofficial) Qt CLI Installer on multi-platforms")
     set_license("MIT")
 
-    if is_host("windows") then
+    if is_host("windows") and (os.arch() == "x64" or os.arch() == "x86") then
         add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
 
-        if is_arch("x86") then
+        if os.arch() == "x86" then
             add_urls("https://github.com/miurahr/aqtinstall/releases/download/v$(version)/aqt_x86_signed.exe", { alias = "signed" })
             add_urls("https://github.com/miurahr/aqtinstall/releases/download/v$(version)/aqt_x86.exe", { alias = "regular" })
             add_versions("signed:3.1.6", "dc675b64caceaacaf2d2bd711fb7a005ab2bcf7f6a28702e52408965f65718ec")
@@ -29,7 +29,7 @@ package("aqt")
     end
 
     on_install("@macosx", "@linux", "@windows", "@msys", function (package)
-        if is_host("windows") then
+        if is_host("windows") and (os.arch() == "x64" or os.arch() == "x86") then
             os.mv(package:originfile(), path.join(package:installdir("bin"), "aqt.exe"))
         else
             -- ensurepip has been dropped in recent releases
