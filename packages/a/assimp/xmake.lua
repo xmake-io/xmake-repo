@@ -98,7 +98,7 @@ package("assimp")
             io.replace("CMakeLists.txt", "CMAKE_COMPILER_IS_MINGW", "MINGW", {plain = true})
         end
 
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"minizip", "zlib"}})
 
         -- copy pdb
         if package:is_plat("windows") then
