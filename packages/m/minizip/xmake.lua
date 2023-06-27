@@ -31,7 +31,6 @@ package("minizip")
                 end
         ]]):format(package:version_str()))
         local configs = {}
-        configs.version = package:version()
         if package:config("shared") then
             configs.kind = "shared"
         elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
