@@ -14,14 +14,14 @@ package("minizip")
 
     on_install(function (package)
         os.cd(path.join("contrib", "minizip"))
-        io.writefile("xmake.lua", [[
+        io.writefile("xmake.lua", ([[
+            set_version("%s")
             add_rules("mode.debug", "mode.release")
             add_rules("utils.install.cmake_importfiles")
             add_rules("utils.install.pkgconfig_importfiles")
             add_requires("zlib")
             target("minizip")
                 set_kind("$(kind)")
-                set_version("$(version)")
                 add_files("zip.c", "unzip.c", "mztools.c", "ioapi.c")
                 add_headerfiles("crypt.h", "zip.h", "unzip.h", "ioapi.h", "mztools.h")
                 add_packages("zlib")
@@ -29,7 +29,7 @@ package("minizip")
                     add_files("iowin32.c")
                     add_headerfiles("iowin32.h")
                 end
-        ]])
+        ]]):format(package:version_str()))
         local configs = {}
         configs.version = package:version()
         if package:config("shared") then
