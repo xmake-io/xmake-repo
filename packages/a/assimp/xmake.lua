@@ -102,6 +102,7 @@ package("assimp")
         if package:is_plat("windows") and package:config("shared") then
             io.replace("CMakeLists.txt", [[MESSAGE(STATUS "Shared libraries enabled")]], [[
                 MESSAGE(STATUS "Shared libraries enabled")
+                SET(LINK_SEARCH_START_STATIC TRUE)
                 SET(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} ${CMAKE_FIND_LIBRARY_SUFFIXES})]])
         end
 
