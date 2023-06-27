@@ -10,6 +10,7 @@ package("libxmake")
 
     add_versions("v2.5.9", "5b50e3f28956cabcaa153624c91781730387ceb7c056f3f9b5306b1c77460d8f")
     add_versions("v2.7.1", "e44085090641547d8814afcc345d641d8ce1e38b6e05fee7375fc88150c0803d")
+    add_versions("v2.7.9", "9b42d8634833f4885b05b89429dd60044dca99232f6096320b8d857fb33d2aef")
 
     add_configs("readline", { description = "Enable readline library.", default = false, type = "boolean"})
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -29,6 +30,7 @@ package("libxmake")
     else
         add_syslinks("pthread", "dl", "m", "c")
     end
+    add_defines("LUA_COMPAT_5_1", "LUA_COMPAT_5_2", "LUA_COMPAT_5_3")
 
     on_load(function (package)
         package:add("links", "xmake", "tbox", "sv", "lcurses")
