@@ -29,7 +29,7 @@ package("minizip")
                     add_files("iowin32.c")
                     add_headerfiles("iowin32.h")
                 end
-        ]]):format(package:version_str()))
+        ]]):format(package:version_str():sub(2)))
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
