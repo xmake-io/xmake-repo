@@ -51,13 +51,17 @@ package("grpc")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <iostream>
-            void test() {
-                grpc::CompletionQueue q;
-                std::string server_address("192.168.28.109:9010");
-                auto channel = grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials());
-                std::cout << &channel << std::endl;
-            }
-        ]]}, {configs = {languages = "c++17"}, includes = "grpcpp/grpcpp.h"}))
+        if package:is_binary() then
+            assert(os.isfile(path.join(package:installdir(), "bin", "grpc_cpp_plugin")))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                #include <iostream>
+                void test() {
+                    grpc::CompletionQueue q;
+                    std::string server_address("192.168.28.109:9010");
+                    auto channel = grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials());
+                    std::cout << &channel << std::endl;
+                }
+            ]]}, {configs = {languages = "c++17"}, includes = "grpcpp/grpcpp.h"}))
+        end
     end)
