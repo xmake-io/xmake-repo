@@ -32,6 +32,10 @@ package("grpc")
     add_links("grpc", "grpc_unsecure", "grpc_plugin_support", "gpr")
     add_links("address_sorting", "upb") --TODO we should add seperate package deps
 
+    on_load(function (package)
+        package:addenv("PATH", "bin")
+    end)
+
     on_install("linux", "macosx", "windows", function (package)
         local configs = {
             "-DCMAKE_CXX_STANDARD=17", -- abseil need c++17
