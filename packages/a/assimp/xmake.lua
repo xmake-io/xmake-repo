@@ -40,7 +40,7 @@ package("assimp")
     add_configs("asan",                  {description = "Enable AddressSanitizer.", default = false, type = "boolean"})
     add_configs("ubsan",                 {description = "Enable Undefined Behavior sanitizer.", default = false, type = "boolean"})
 
-    add_deps("cmake", "zlib")
+    add_deps("cmake", "minizip", "zlib")
 
     if is_plat("windows") then
         add_syslinks("advapi32")
