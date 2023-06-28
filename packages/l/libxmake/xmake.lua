@@ -30,9 +30,7 @@ package("libxmake")
 
     on_load(function (package)
         package:add("links", "xmake", "tbox", "sv", "lcurses")
-        if package:is_plat("windows") then
-            package:add("links", "pdcurses")
-        else
+        if not package:is_plat("windows") then
             package:add("deps", "ncurses")
         end
         if package:debug() then
@@ -41,9 +39,6 @@ package("libxmake")
         package:add("links", "lua-cjson", "lz4")
         package:add("links", "lua")
         package:add("includedirs", "include/lua")
-        if package:has_cfuncs("readline", {links = "readline", includes = "readline/readline.h"}) then
-            package:add("syslinks", "readline")
-        end
     end)
 
     on_install("linux", "macosx", "windows", function (package)
@@ -59,6 +54,9 @@ package("libxmake")
 typedef __int8 int8_t;]], '#if defined(_MSC_VER) && (_MSC_VER < 1600)\ntypedef __int8 int8_t;', {plain = true})
         import("package.tools.xmake").install(package, configs)
         os.cp("../xmake", package:installdir("share"))
+        if package:is_plat("linux", "macosx") and package:has_cfuncs("readline", {links = "readline", includes = "readline/readline.h"}) then
+            package:add("syslinks", "readline")
+        end
     end)
 
     on_test(function (package)
