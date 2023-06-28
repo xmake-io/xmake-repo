@@ -12,7 +12,6 @@ package("libxmake")
     add_versions("v2.7.1", "e44085090641547d8814afcc345d641d8ce1e38b6e05fee7375fc88150c0803d")
     add_versions("v2.7.9", "9b42d8634833f4885b05b89429dd60044dca99232f6096320b8d857fb33d2aef")
 
-    add_configs("readline", { description = "Enable readline library.", default = false, type = "boolean"})
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_includedirs("include")
@@ -60,7 +59,6 @@ package("libxmake")
         if not package:gitref() and package:version():le("2.5.9") then
             io.replace("core/src/luajit/xmake.lua", "set_default(false)", "", {plain = true})
         end
-        table.insert(configs, "--readline=" .. (package:config("readline") and "y" or "n"))
         os.cd("core")
         io.replace("xmake.lua", 'set_warnings("all", "error")', "", {plain = true})
         import("package.tools.xmake").install(package, configs)
