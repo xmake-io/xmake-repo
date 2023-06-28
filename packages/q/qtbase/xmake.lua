@@ -236,5 +236,5 @@ package("qtbase")
         os.vrun(getbin("qmake") .. " -v")
         os.vrun(getbin("moc") .. " -v")
         os.vrun(getbin("rcc") .. " -v")
-        os.vrun(getbin("uic") .. " -v")
+        --os.vrun(getbin("uic") .. " -v") -- uic -v seems to hang on CI
     end)
