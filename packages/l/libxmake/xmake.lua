@@ -23,9 +23,8 @@ package("libxmake")
         add_syslinks("m", "c")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreServices")
-        add_syslinks("readline")
     else
-        add_syslinks("readline", "pthread", "dl", "m", "c")
+        add_syslinks("pthread", "dl", "m", "c")
     end
     add_defines("LUA_COMPAT_5_1", "LUA_COMPAT_5_2", "LUA_COMPAT_5_3")
 
