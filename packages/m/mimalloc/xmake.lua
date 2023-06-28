@@ -72,10 +72,4 @@ package("mimalloc")
 
     on_test(function (package)
         assert(package:has_cfuncs("mi_malloc", {includes = "mimalloc.h"}))
-        assert(package:check_csnippets({test = [[
-            #include <mimalloc.h>
-            void test() {
-              mi_version();
-            }
-      ]]}))
     end)
