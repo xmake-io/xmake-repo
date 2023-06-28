@@ -41,6 +41,9 @@ package("libxmake")
         package:add("links", "lua-cjson", "lz4")
         package:add("links", "lua")
         package:add("includedirs", "include/lua")
+        if package:has_cfuncs("readline", {links = "readline", includes = "readline/readline.h"}) then
+            package:add("syslinks", "readline")
+        end
     end)
 
     on_install("linux", "macosx", "windows", function (package)
