@@ -40,13 +40,8 @@ package("libxmake")
             package:add("defines", "__tb_debug__")
         end
         package:add("links", "lua-cjson", "lz4")
-        if not package:gitref() and package:version():le("2.5.9") then
-            package:add("includedirs", "include/luajit")
-            package:add("links", "luajit")
-        else
-            package:add("includedirs", "include/lua")
-            package:add("links", "lua")
-        end
+        package:add("links", "lua")
+        package:add("includedirs", "include/lua")
     end)
 
     on_install("linux", "macosx", "windows", function (package)
