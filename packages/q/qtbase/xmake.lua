@@ -204,7 +204,7 @@ package("qtbase")
     end)
 
     on_test(function (package)
-        local qt = assert(package:data("qt"))
+        local qt = assert(package:fetch())
 
         local function getbin(name)
             if is_host("windows") then
