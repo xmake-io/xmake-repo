@@ -134,27 +134,18 @@ package("boost")
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         import("core.base.option")
-        import("core.tool.toolchain")
 
-        -- get msvc
-        local msvc
-        local is_clang_tc = false
+        -- get toolchain
+        local toolchain
         if package:is_plat("windows") then
-            -- Boost's bootstrap.bat needs the runenvs from the toolchain to locate cl
-            local tc_name = package:config("toolchains") or "msvc"
-            msvc = toolchain.load(tc_name, {plat = package:plat(), arch = package:arch()})
-
-            if tc_name == "clang-cl" then
-                is_clang_tc = true
-            end
+            toolchain = package:toolchain("clang-cl") or package:toolchain("msvc")
         end
 
-        local win_toolset
-        local cxx = package:build_getenv("cxx")
-
         -- force boost to compile with the desired compiler
+        local win_toolset
         local file = io.open("user-config.jam", "a")
         if file then
+            local cxx = package:build_getenv("cxx")
             if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
                 -- and we need `xcrun -sdk macosx clang++` to make b2 to get `-isysroot` automatically
@@ -164,11 +155,10 @@ package("boost")
                 end
                 file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
-                local vs_toolset = msvc:config("vs_toolset")
+                local vs_toolset = toolchain:config("vs_toolset")
                 local msvc_ver = ""
                 win_toolset = "msvc"
-
-                if is_clang_tc or cxx:find("clang%-cl$") or cxx:find("clang%-cl%.exe$") then
+                if toolchain:name() == "clang-cl" then
                     win_toolset = "clang-win"
                     cxx = cxx:gsub("(clang%-cl)$", "%1.exe", 1)
                     msvc_ver = ""
@@ -195,7 +185,7 @@ package("boost")
 
         local runenvs
         if package:is_plat("windows") then
-            runenvs = msvc:runenvs()
+            runenvs = toolchain:runenvs()
             -- for bootstrap.bat, all other arguments are useless
             bootstrap_argv = { "msvc" }
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
