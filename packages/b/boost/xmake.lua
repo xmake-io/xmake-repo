@@ -138,7 +138,8 @@ package("boost")
         -- get toolchain
         local toolchain
         if package:is_plat("windows") then
-            toolchain = package:toolchain("clang-cl") or package:toolchain("msvc") or import("core.tool.toolchain").load("msvc")
+            toolchain = package:toolchain("clang-cl") or package:toolchain("msvc") or
+                import("core.tool.toolchain").load("msvc", {plat = package:plat(), arch = package:arch()})
         end
 
         -- force boost to compile with the desired compiler
