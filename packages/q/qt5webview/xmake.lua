@@ -7,7 +7,6 @@ package("qt5webview")
         package:data_set("libname", "WebView")
 
         package:base():script("load")(package)
-        package:set("kind", "library")
     end)
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "android", "iphoneos", function (package)

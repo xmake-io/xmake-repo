@@ -201,10 +201,22 @@ package("qtbase")
                 end
             end
         end
+        package:data_set("qt", {
+            version = versionstr,
+            sdkdir = installdir,
+            sdkver = versionstr,
+            bindir = path.join(installdir, "bin"),
+            includedir = path.join(installdir, "include"),
+            libdir = path.join(installdir, "lib"),
+            libexecdir = path.join(installdir, "libexec"),
+            mkspecsdir = path.join(installdir, "mkspecs"),
+            qmldir = path.join(installdir, "qml"),
+            pluginsdir = path.join(installdir, "plugins")
+        })
     end)
 
     on_test(function (package)
-        local qt = assert(package:fetch())
+        local qt = assert(package:data("qt"))
 
         local function getbin(name)
             if is_host("windows") then
