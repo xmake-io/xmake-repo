@@ -57,11 +57,6 @@ package("libxmake")
 
     on_install("linux", "macosx", "windows", function (package)
         local configs = {"--onlylib=y"}
-        if package:is_plat("windows") then
-            table.insert(configs, "--pdcurses=" .. (package:config("curses") and "y" or "n"))
-        else
-            table.insert(configs, "--curses=" .. (package:config("curses") and "y" or "n"))
-        end
         if not package:gitref() and package:version():le("2.5.9") then
             io.replace("core/src/luajit/xmake.lua", "set_default(false)", "", {plain = true})
         end
