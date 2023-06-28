@@ -1,4 +1,5 @@
 package("cpp-lazy")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/MarcDirven/cpp-lazy")
     set_description("A fast C++11/14/17/20 header only library for lazy evaluation and function tools")
     

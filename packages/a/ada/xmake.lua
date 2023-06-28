@@ -2,7 +2,7 @@ package("ada")
 
     set_homepage("https://www.ada-url.com")
     set_description("WHATWG-compliant and fast URL parser written in modern C++")
-    set_license("Apache-2.0", "MIT")
+    set_license("Apache-2.0")
 
     set_urls("https://github.com/ada-url/ada/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/ada-url/ada.git")

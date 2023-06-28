@@ -34,8 +34,8 @@ package("libffi")
     end)
 
     on_install("macosx", "linux", "bsd", "mingw", function (package)
-        local configs = {"--disable-silent-rules", "--disable-dependency-tracking"}
-        table.insert(configs, "--libdir=" .. package:installdir("lib"):gsub("\\", "/"))
+        -- https://github.com/libffi/libffi/issues/127
+        local configs = {"--disable-silent-rules", "--disable-dependency-tracking", "--disable-multi-os-directory"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then

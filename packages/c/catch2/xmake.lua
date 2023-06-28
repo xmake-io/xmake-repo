@@ -39,14 +39,22 @@ package("catch2")
     end)
 
     on_component("main", function (package, component)
-        component:add("links", "Catch2Main")
+        local link = "Catch2Main"
+        if package:is_debug() then
+            link = link.."d"
+        end
+        component:add("links", link)
         if package:is_plat("windows") then
             component:add("ldflags", "-subsystem:console")
         end
     end)
 
     on_component("lib", function (package, component)
-        component:add("links", "Catch2")
+        local link = "Catch2"
+        if package:is_debug() then
+            link = link.."d"
+        end
+        component:add("links", link)
     end)
 
     on_install(function (package)
