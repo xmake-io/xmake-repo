@@ -15,6 +15,12 @@ package("sqlpp11")
     add_configs("postgresql_connector", { description = "Enable PostgreSQL connector.", default = false, type = "boolean"})
     add_configs("mysql_connector",      { description = "Enable MySQL connector.", default = false, type = "boolean"})
 
+    on_load("windows", "linux", "macosx", function (package)
+        if package:config("mysql_connector") then
+            package:add("deps", "mysql")
+        end
+    end)
+
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -35,6 +41,11 @@ package("sqlpp11")
         -- TODO we need add MySQL deps
         if package:config("mysql_connector") then
             table.insert(configs, "-DBUILD_MYSQL_CONNECTOR=ON")
+            local libmysql = package:dep("mysql"):fetch()
+            if libmysql then
+                table.insert(configs, "-DMySQL_INCLUDE_DIR=" .. table.concat(libmysql.includedirs or libmysql.sysincludedirs, ";"))
+                table.insert(configs, "-DMySQL_LIBRARY=" .. table.concat(libmysql.libfiles or {}, ";"))
+            end
         end
         import("package.tools.cmake").install(package, configs)
     end)

@@ -5,6 +5,7 @@ package("mimalloc")
     set_license("MIT")
 
     set_urls("https://github.com/microsoft/mimalloc/archive/v$(version).zip")
+    add_versions("2.1.2", "86281c918921c1007945a8a31e5ad6ae9af77e510abfec20d000dd05d15123c7")
     add_versions("2.0.7", "ddb32937aabddedd0d3a57bf68158d4e53ecf9e051618df3331a67182b8b0508")
     add_versions("2.0.6", "23e7443d0b4d7aa945779ea8a806e4e109c0ed62d740953d3656cddea7e04cf8")
     add_versions("2.0.5", "e8d4e031123e82081325a5131ac57d954f5123b6a13653a6d984cbc3b8488bd9")
@@ -33,7 +34,7 @@ package("mimalloc")
         add_syslinks("atomic")
     end
 
-    on_install("macosx", "windows", "linux", "android", function (package)
+    on_install("macosx", "windows", "linux", "android", "mingw", function (package)
         local configs = {"-DMI_OVERRIDE=OFF"}
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
@@ -58,7 +59,11 @@ package("mimalloc")
         if package:is_plat("windows") then
             os.trycp("build/**.dll", package:installdir("bin"))
             os.trycp("build/**.lib", package:installdir("lib"))
+        elseif package:is_plat("mingw") then
+            os.trycp("build/**.dll", package:installdir("bin"))
+            os.trycp("build/**.a", package:installdir("lib"))
         else
+            os.trycp("build/*.so", package:installdir("bin"))
             os.trycp("build/*.so", package:installdir("lib"))
             os.trycp("build/*.a", package:installdir("lib"))
         end

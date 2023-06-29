@@ -12,6 +12,8 @@ package("libhv")
     add_versions("1.2.3", "c30ace04597a0558ce957451d64acc7cd3260d991dc21628e048c8dec3028f34")
     add_versions("1.2.4", "389fa60f0d6697b5267ddc69de00e4844f1d8ac8ee4d2ad3742850589c20d46e")
     add_versions("1.2.6", "dd5ed854f5cdc0bdd3a3310a9f0452ec194e2907006551aebbb603825a989ed1")
+    add_versions("1.3.0", "e7a129dcabb541baeb8599e419380df6aa98afc6e04874ac88a6d2bdb5a973a5")
+    add_versions("1.3.1", "66fb17738bc51bee424b6ddb1e3b648091fafa80c8da6d75626d12b4188e0bdc")
 
     add_configs("protocol",    {description = "compile protocol", default = false, type = "boolean"})
     add_configs("http",        {description = "compile http", default = true, type = "boolean"})
@@ -34,6 +36,9 @@ package("libhv")
         add_frameworks("CoreFoundation", "Security")
     elseif is_plat("windows") then
         add_syslinks("advapi32")
+    elseif is_plat("mingw") then
+        add_syslinks("ws2_32")
+        add_syslinks("pthread")
     end
 
     add_deps("cmake")
@@ -53,7 +58,7 @@ package("libhv")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", function(package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
