@@ -11,9 +11,6 @@ package("qt5lib")
     add_versions("5.12.5", "dummy")
 
     on_load(function (package)
-        if package.is_template then
-            package:set("kind", "template")
-        end
         package:add("deps", "qt5base", {debug = package:is_debug(), version = package:version_str()})
     end)
 
