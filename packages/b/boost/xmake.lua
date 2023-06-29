@@ -134,20 +134,19 @@ package("boost")
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         import("core.base.option")
-        import("core.tool.toolchain")
 
-        -- get msvc
-        local msvc
+        -- get toolchain
+        local toolchain
         if package:is_plat("windows") then
-            msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            toolchain = package:toolchain("clang-cl") or package:toolchain("msvc") or
+                import("core.tool.toolchain").load("msvc", {plat = package:plat(), arch = package:arch()})
         end
 
-        local is_clang_cl = false
-        local cxx = package:build_getenv("cxx")
-
         -- force boost to compile with the desired compiler
+        local win_toolset
         local file = io.open("user-config.jam", "a")
         if file then
+            local cxx = package:build_getenv("cxx")
             if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
                 -- and we need `xcrun -sdk macosx clang++` to make b2 to get `-isysroot` automatically
@@ -157,15 +156,13 @@ package("boost")
                 end
                 file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
-                local vs_toolset = msvc:config("vs_toolset")
-                local toolset = "msvc"
+                local vs_toolset = toolchain:config("vs_toolset")
                 local msvc_ver = ""
-
-                if cxx:find("clang%-cl$") or cxx:find("clang%-cl%.exe$") then
-                    toolset = "clang-win"
+                win_toolset = "msvc"
+                if toolchain:name() == "clang-cl" then
+                    win_toolset = "clang-win"
                     cxx = cxx:gsub("(clang%-cl)$", "%1.exe", 1)
                     msvc_ver = ""
-                    is_clang_cl = true
                 elseif vs_toolset then
                     local i = vs_toolset:find("%.")
                     msvc_ver = i and vs_toolset:sub(1, i + 1)
@@ -173,7 +170,7 @@ package("boost")
 
                 -- Specifying a version will disable b2 from forcing tools
                 -- from the latest installed msvc version.
-                file:print("using %s : %s : \"%s\" ;", toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
+                file:print("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
             else
                 file:print("using gcc : : %s ;", cxx:gsub("\\", "/"))
             end
@@ -189,7 +186,7 @@ package("boost")
 
         local runenvs
         if package:is_plat("windows") then
-            runenvs = msvc:runenvs()
+            runenvs = toolchain:runenvs()
             -- for bootstrap.bat, all other arguments are useless
             bootstrap_argv = { "msvc" }
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
@@ -245,7 +242,7 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "cxxflags=-std:c++14")
-            table.insert(argv, "toolset=" .. (is_clang_cl and "clang-win" or "msvc"))
+            table.insert(argv, "toolset=" .. win_toolset)
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
         else
