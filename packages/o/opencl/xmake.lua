@@ -8,6 +8,8 @@ package("opencl")
 
     add_configs("vendor", {description = "Set OpenCL Vendor.", default = nil, type = "string", values = {"nvidia", "intel", "amd"}})
 
+    set_policy("platform.longpaths", true)
+    
     on_fetch(function (package, opt)
         if opt.system then
             import("lib.detect.find_path")
