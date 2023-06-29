@@ -68,6 +68,8 @@ package("opencl")
         end
     end)
 
-    on_install(function (package)
-        import("package.tools.cmake").install(package, {"-DOPENCL_SDK_BUILD_SAMPLES=OFF"})
+    on_install("windows", "linux","macosx","android",function (package)
+        local configs = {"-DOPENCL_SDK_BUILD_SAMPLES=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        import("package.tools.cmake").install(package, configs)
     end)
