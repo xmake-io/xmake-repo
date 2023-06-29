@@ -15,7 +15,12 @@ package("x265")
     add_configs("hdr10_plus", {description = "Enable dynamic HDR10 compilation", default = false, type = "boolean"})
     add_configs("svt_hevc", {description = "Enable SVT HEVC Encoder", default = false, type = "boolean"})
 
-    add_deps("cmake", "nasm >=2.13")
+    add_deps("cmake")
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    else
+        add_deps("nasm >=2.13")
+    end
 
     if is_plat("macosx") then
         add_syslinks("c++")
@@ -23,10 +28,13 @@ package("x265")
         add_syslinks("pthread", "dl")
     end
 
-    on_install("windows|x86", "windows|x64", "mingw", "linux", "bsd", "macosx", "cross", function (package)
+    on_install("windows|x86", "windows|x64", "mingw", "linux", "bsd", "macosx", "wasm", "cross", function (package)
         os.cd("source")
         if package:is_plat("android") then
             io.replace("CMakeLists.txt", "list(APPEND PLATFORM_LIBS pthread)", "", { plain = true })
+        end
+        if package:is_plat("wasm") then
+            io.replace("CMakeLists.txt", "X86 AND NOT X64", "FALSE")
         end
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
