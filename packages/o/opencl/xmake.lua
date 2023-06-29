@@ -3,6 +3,9 @@ package("opencl")
     set_homepage("https://opencl.org/")
     set_description("OpenCL is an open, royalty-free industry standard that makes much faster computations possible through parallel computing.")
 
+    set_urls("https://github.com/KhronosGroup/OpenCL-SDK.git")
+    add_versions("v2023.04.17", "ae7fcae82fe0b7bcc272e43fc324181b2d544eea")
+
     add_configs("vendor", {description = "Set OpenCL Vendor.", default = nil, type = "string", values = {"nvidia", "intel", "amd"}})
 
     on_fetch(function (package, opt)
@@ -63,4 +66,8 @@ package("opencl")
                 end
             end
         end
+    end)
+
+    on_install(function (package)
+        import("package.tools.cmake").install(package, {"-DOPENCL_SDK_BUILD_SAMPLES=OFF"})
     end)
