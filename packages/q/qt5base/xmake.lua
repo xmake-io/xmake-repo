@@ -43,7 +43,7 @@ package("qt5base")
         return qt
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         import("core.base.semver")
         import("core.project.config")
         import("core.tool.toolchain")

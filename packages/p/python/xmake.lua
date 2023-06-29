@@ -14,6 +14,8 @@ package("python")
             add_versions("3.9.10", "e2c8e6b792748289ac27ef8462478022c96e24c99c4c3eb97d3afe510d9db646")
             add_versions("3.9.13", "c60ec0da0adf3a31623073d4fa085da62747085a9f23f4348fe43dfe94ea447b")
             add_versions("3.10.6", "c1a07f7685b5499f58cfad2bb32b394b853ba12b8062e0f7530f2352b0942096")
+            add_versions("3.10.11", "7fac6ed9a58623f31610024d2c4d6abb33fac0cf741ec1a5285d056b5933012e")
+            add_versions("3.11.3", "992648876ecca6cfbe122dc2d9c358c9029d9fdb83ee6edd6e54926bf0360da6")
         else
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
             add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
@@ -24,10 +26,11 @@ package("python")
             add_versions("3.9.10", "4cee67e2a529fe363e34f0da57f8e5c3fc036913dc838b17389b2319ead0927e")
             add_versions("3.9.13", "6774fdd872fc55b028becc81b7d79bdcb96c5e0eb1483cfcd38224b921c94d7d")
             add_versions("3.10.6", "8cbc234939a679687da44c3bbc6d6ce375ea4b84c4fa8dbc1bf5befc43254b58")
+            add_versions("3.10.11", "96663f508643c1efec639733118d4a8382c5c895b82ad1362caead17b643260e")
+            add_versions("3.11.3", "708c4e666989b3b00057eaea553a42b23f692c4496337a91d17aced931280dc4")
         end
     else
-        set_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz",
-                 "https://github.com/xmake-mirror/cpython/releases/download/v$(version)/Python-$(version).tgz")
+        add_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
         add_versions("2.7.18", "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814")
         add_versions("3.7.9", "39b018bc7d8a165e59aa827d9ae45c45901739b0bbb13721e4f973f3521c166a")
         add_versions("3.8.10", "b37ac74d2cbad2590e7cd0dd2b3826c29afe89a734090a87bf8c03c45066cb65")
@@ -36,14 +39,18 @@ package("python")
         add_versions("3.9.10", "1aa9c0702edbae8f6a2c95f70a49da8420aaa76b7889d3419c186bfc8c0e571e")
         add_versions("3.9.13", "829b0d26072a44689a6b0810f5b4a3933ee2a0b8a4bfc99d7c5893ffd4f97c44")
         add_versions("3.10.6", "848cb06a5caa85da5c45bd7a9221bb821e33fc2bdcba088c127c58fad44e6343")
+        add_versions("3.10.11", "f3db31b668efa983508bd67b5712898aa4247899a346f2eb745734699ccd3859")
+        add_versions("3.11.3", "1a79f3df32265d9e6625f1a0b31c28eb1594df911403d11f3320ee1da1b3e048")
     end
+
+    add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
 
     if not is_plat(os.host()) or not is_arch(os.arch()) then
         set_kind("binary")
     end
 
     if is_host("linux", "bsd") then
-        add_deps("libffi", "zlib", {host = true})
+        add_deps("libffi", "zlib", {host = true, private = true})
         add_syslinks("util", "pthread", "dl")
     end
 
@@ -84,6 +91,10 @@ package("python")
         package:addenv("PYTHONPATH", PYTHONPATH)
         package:addenv("PATH", "bin")
         package:addenv("PATH", "Scripts")
+
+        if package:config("headeronly") then
+            package:set("links", "")
+        end
     end)
 
     on_fetch("fetch")
@@ -113,6 +124,8 @@ package("python")
 
         -- init configs
         local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
+        table.insert(configs, "--libdir=" .. package:installdir("lib"))
+        table.insert(configs, "--with-platlibdir=lib")
         table.insert(configs, "--datadir=" .. package:installdir("share"))
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
@@ -232,6 +245,7 @@ package("python")
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
         import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
+        os.vrunv("make", {"-j4", "PYTHONAPPSDIR=" .. package:installdir()})
         os.vrunv("make", {"install", "-j4", "PYTHONAPPSDIR=" .. package:installdir()})
         if package:version():ge("3.0") then
             os.cp(path.join(package:installdir("bin"), "python3"), path.join(package:installdir("bin"), "python"))
@@ -256,7 +270,7 @@ package("python")
         os.vrun("python -c \"import pip\"")
         os.vrun("python -c \"import setuptools\"")
         os.vrun("python -c \"import wheel\"")
-        if package:kind() ~= "binary" then
+        if package:kind() ~= "binary" and not package:config("headeronly") then
             assert(package:has_cfuncs("PyModule_New", {includes = "Python.h"}))
         end
     end)

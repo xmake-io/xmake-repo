@@ -5,6 +5,8 @@ package("sentry-native")
     set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
+    add_versions("0.6.4", "e00278bf9a4821bb4008985a5a552a84aba6ebb06d3f9e828082fcbf06b04a38")
+    add_versions("0.6.3", "6b515c17a9b860ea47c6a5fd7abdfdc89b4b8cbc654c23a8bb42a39bfcb87ad9")
     add_versions("0.5.0", "87e67ad783a7ec4476b0eb4742bd40fe5a1e2435")
     add_versions("0.4.15", "ae3ac4efa76d431d8734d7b0b1bf9bbedaf2cbdb18dfc5c95e2411a67808cf29")
     add_versions("0.4.4", "fe6c711d42861e66e53bfd7ee0b2b226027c64446857f0d1bbb239ca824a3d8d")
@@ -42,7 +44,7 @@ package("sentry-native")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package) -- TODO: to enable android you will need to figure out the order of libs
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package) -- TODO: to enable android you will need to figure out the order of libs
         local opt = {}
         local configs = {}
         table.insert(configs, "-DSENTRY_BUILD_EXAMPLES=OFF")

@@ -69,6 +69,15 @@ package("poco")
         for _, lib in ipairs({"mysql", "postgresql", "odbc"}) do
             table.insert(configs, "-DENABLE_DATA_" .. lib:upper() .. "=" .. (package:config(lib) and "ON" or "OFF"))
         end
+        
+        if package:config("mysql") then
+            io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '', {plain = true})
+            local libmysql = package:dep("mysql"):fetch()
+            if libmysql then
+                table.insert(configs, "-DMYSQL_INCLUDE_DIR=" .. table.concat(libmysql.includedirs or libmysql.sysincludedirs, ";"))
+                table.insert(configs, "-DMYSQL_LIBRARY=" .. table.concat(libmysql.libfiles or {}, ";"))
+            end
+        end
 
         -- warning: only works on windows sdk 10.0.18362.0 and later
         import("package.tools.cmake").install(package, configs)

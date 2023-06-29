@@ -137,9 +137,9 @@ package("sfml")
                     package:add("deps", "libx11", "libxext", "libxrandr", "libxrender", "freetype", "eudev")
                     package:add("deps", "opengl", "glx", {optional = true})
                 end
-                if package:config("audio") then
-                    package:add("deps", "libogg", "libflac", "libvorbis", "openal-soft")
-                end
+            end
+            if package:config("audio") then
+                package:add("deps", "libogg", "libflac", "libvorbis", "openal-soft")
             end
             package:add("components", "system")
             for _, component in ipairs({"graphics", "window", "audio", "network"}) do

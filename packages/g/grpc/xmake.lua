@@ -28,6 +28,14 @@ package("grpc")
         add_syslinks("pthread", "dl", "m")
     end
 
+    add_links("grpc++", "grpc++_unsecure", "grpc++_alts", "grpc++_reflection", "grpc++_error_details", "grpcpp_channelz")
+    add_links("grpc", "grpc_unsecure", "grpc_plugin_support", "gpr")
+    add_links("address_sorting", "upb") --TODO we should add seperate package deps
+
+    on_load(function (package)
+        package:addenv("PATH", "bin")
+    end)
+
     on_install("linux", "macosx", "windows", function (package)
         local configs = {
             "-DCMAKE_CXX_STANDARD=17", -- abseil need c++17
@@ -47,9 +55,17 @@ package("grpc")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                grpc::CompletionQueue q;
-            }
-        ]]}, {configs = {languages = "c++11"}, includes = "grpcpp/grpcpp.h"}))
+        if package:is_binary() then
+            assert(os.isfile(path.join(package:installdir(), "bin", "grpc_cpp_plugin")))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                #include <iostream>
+                void test() {
+                    grpc::CompletionQueue q;
+                    std::string server_address("192.168.28.109:9010");
+                    auto channel = grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials());
+                    std::cout << &channel << std::endl;
+                }
+            ]]}, {configs = {languages = "c++17"}, includes = "grpcpp/grpcpp.h"}))
+        end
     end)
