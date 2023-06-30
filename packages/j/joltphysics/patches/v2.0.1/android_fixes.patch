@@ -1,0 +1,60 @@
+From 27b2c3293ea6bde6e3d6168b11d41c337f1a0913 Mon Sep 17 00:00:00 2001
+From: Jorrit Rouwe <jrouwe@gmail.com>
+Date: Sat, 18 Feb 2023 10:41:45 +0100
+Subject: [PATCH] Upgrading android project (#437)
+
+---
+ Build/Android/UnitTests/build.gradle                   | 1 +
+ Build/Android/UnitTests/src/main/AndroidManifest.xml   | 3 +--
+ Build/Android/build.gradle                             | 2 +-
+ Build/Android/gradle/wrapper/gradle-wrapper.properties | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Build/Android/UnitTests/build.gradle b/Build/Android/UnitTests/build.gradle
+index 1565ff485..d429825a6 100644
+--- a/Build/Android/UnitTests/build.gradle
++++ b/Build/Android/UnitTests/build.gradle
+@@ -43,6 +43,7 @@ android {
+     buildFeatures {
+         viewBinding true
+     }
++    namespace 'com.joltphysics.unittests'
+ }
+ 
+ dependencies {
+diff --git a/Build/Android/UnitTests/src/main/AndroidManifest.xml b/Build/Android/UnitTests/src/main/AndroidManifest.xml
+index f8662a355..e31e98364 100644
+--- a/Build/Android/UnitTests/src/main/AndroidManifest.xml
++++ b/Build/Android/UnitTests/src/main/AndroidManifest.xml
+@@ -1,6 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.joltphysics.unittests">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ 
+     <application
+         android:allowBackup="true"
+diff --git a/Build/Android/build.gradle b/Build/Android/build.gradle
+index 7b2734da3..04bc67d84 100644
+--- a/Build/Android/build.gradle
++++ b/Build/Android/build.gradle
+@@ -5,7 +5,7 @@ buildscript {
+         mavenCentral()
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:7.2.2'
++        classpath 'com.android.tools.build:gradle:7.4.1'
+ 
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+diff --git a/Build/Android/gradle/wrapper/gradle-wrapper.properties b/Build/Android/gradle/wrapper/gradle-wrapper.properties
+index 8d8786327..7e62b17ac 100644
+--- a/Build/Android/gradle/wrapper/gradle-wrapper.properties
++++ b/Build/Android/gradle/wrapper/gradle-wrapper.properties
+@@ -1,5 +1,5 @@
+ distributionBase=GRADLE_USER_HOME
+-distributionUrl=https\://services.gradle.org/distributions/gradle-7.3.3-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-bin.zip
+ distributionPath=wrapper/dists
+ zipStorePath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
