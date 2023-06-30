@@ -9,7 +9,9 @@ package("bvh")
     add_versions("2023.6.30", "578b1e8035743d0a97fcac802de81622c54f28e3")
 
     on_install(function (package)
-        package:add("cxxflags", "-march=native")
+        if not package:is_plat("cross") then
+            package:add("cxxflags", "-march=native")
+        end
         os.cp("src/bvh", package:installdir("include"))
     end)
 
