@@ -11,7 +11,6 @@ package("libvpx")
     add_versions("1.12.0", "f1acc15d0fd0cb431f4bf6eac32d5e932e40ea1186fe78e074254d6d003957bb")
     add_versions("1.13.0", "cb2a393c9c1fae7aba76b950bb0ad393ba105409fe1a147ccd61b0aaa1501066")
 
-    add_deps("autoconf", "automake")
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -19,7 +18,7 @@ package("libvpx")
         add_deps("yasm")
     end
 
-    on_install(function (package)
+    on_install("linux", "macosx", "mingw", "freebsd", "wasm", "cross", function (package)
         local configs = {}
         table.insert(configs, "--enable-" .. (package:config("shared") and "shared" or "static"))
         if package:is_plat("wasm") then
