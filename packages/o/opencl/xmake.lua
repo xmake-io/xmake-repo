@@ -18,6 +18,10 @@ package("opencl")
     
     add_configs("vendor", {description = "Set OpenCL Vendor.", default = nil, type = "string", values = {"nvidia", "intel", "amd"}})
 
+    if not is_plat("windows") then
+        add_deps("cmake")
+    end
+
     on_fetch(function (package, opt)
         if opt.system then
             import("lib.detect.find_path")
