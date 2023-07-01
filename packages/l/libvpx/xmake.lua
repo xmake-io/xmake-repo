@@ -18,13 +18,30 @@ package("libvpx")
         add_deps("yasm")
     end
 
-    on_install("linux", "macosx", "mingw", "freebsd", "wasm", "cross", function (package)
+    on_install("linux", "macosx", "mingw", "freebsd", "cross", function (package)
         local configs = {}
         table.insert(configs, "--enable-" .. (package:config("shared") and "shared" or "static"))
-        if package:is_plat("wasm") then
-            table.insert(configs, "--target=generic-gnu")
+        if package:is_cross() then
+            table.insert(configs, "--target=" .. package:targetarch() .. "-" .. package:targetos())
         end
-        import("package.tools.autoconf").install(package, configs)
+        table.insert(configs, "--prefix=" .. package:installdir())
+
+        local source_dir = os.curdir()
+        os.cd("$(buildir)")
+        os.vrunv(path.join(source_dir, "configure"), configs)
+        import("package.tools.make").install(package)
+    end)
+
+    on_install("wasm", function (package)
+        local configs = {}
+        table.join2(configs, {"--target=generic-gnu", "--disable-install-bins"})
+        table.insert(configs, "--prefix=" .. package:installdir())
+        
+        local source_dir = os.curdir()
+        os.cd("$(buildir)")
+        os.vrunv("emconfigure " .. path.join(source_dir, "/configure"), configs)
+
+        import("package.tools.make").install(package)
     end)
 
     on_test(function (package)
