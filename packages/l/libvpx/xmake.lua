@@ -32,7 +32,7 @@ package("libvpx")
 
     on_load(function (package)
         if is_arch("x86.*") then
-            if package:is_plat("freebsd") or (pacakge:is_plat("linux") and linuxos.name == "fedora") then
+            if package:is_plat("freebsd") or (package:is_plat("linux") and linuxos.name == "fedora") then
                 add_deps("nasm")
             else
                 add_deps("yasm")
