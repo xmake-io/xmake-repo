@@ -12,13 +12,24 @@ package("svt-av1")
     add_deps("cmake", "yasm", "libtool")
     add_syslinks("pthread")
 
+    on_load(function (package)
+        if is_arch("x86.*") then
+            if package:is_plat("freebsd") or (pacakge:is_plat("linux") and linuxos.name == "fedora") then
+                add_deps("nasm")
+            else
+                add_deps("yasm")
+            end
+        end
+    end)
+
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLIB_INSTALL_DIR=" .. package:installdir("lib"))
         if package:is_plat("wasm") then
-            package:add("ldflags", "-fno-stack-protector")
+            io.replace("CMakeLists.txt", "if(MINGW)", "if(TRUE)\n    check_both_flags_add(-pthread)\n  elseif(MINGW)", {plain = true})
+            --package:add("ldflags", "-fstack-protector")
         end
         import("package.tools.cmake").install(package, configs)
     end)

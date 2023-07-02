@@ -12,10 +12,6 @@ package("libvpx")
     add_versions("1.12.0", "f1acc15d0fd0cb431f4bf6eac32d5e932e40ea1186fe78e074254d6d003957bb")
     add_versions("1.13.0", "cb2a393c9c1fae7aba76b950bb0ad393ba105409fe1a147ccd61b0aaa1501066")
 
-    if is_arch("x86.*") then
-        add_deps("yasm")
-    end
-
     add_configs("examples",         {description = "examples", default = false, type = "boolean"})
     add_configs("tools",            {description = "tools", default = false, type = "boolean"})
     add_configs("docs",             {description = "documentation", default = false, type = "boolean"})
@@ -33,6 +29,16 @@ package("libvpx")
     if is_plat("wasm") then
         add_configs("shared",  {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
+
+    on_load(function (package)
+        if is_arch("x86.*") then
+            if package:is_plat("freebsd") or (pacakge:is_plat("linux") and linuxos.name == "fedora") then
+                add_deps("nasm")
+            else
+                add_deps("yasm")
+            end
+        end
+    end)
 
     on_install("linux", "macosx", "mingw", "freebsd", "wasm", "cross", function (package)
         local configs = {}
