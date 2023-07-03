@@ -37,7 +37,7 @@ package("zeromq")
     end)
 
     on_install("linux", "macosx", function (package)
-        local configs = {"--disable-dependency-tracking", "--without-docs", "--enable-libbsd=no", "--libzmq_werror=no"}
+        local configs = {"--disable-dependency-tracking", "--without-docs", "--enable-libbsd=no", "--disable-Werror"}
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-libunwind=" .. (package:config("libunwind") and "yes" or "no"))
