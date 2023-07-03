@@ -32,6 +32,7 @@ package("svt-av1")
         table.insert(configs, "-DLIB_INSTALL_DIR=" .. package:installdir("lib"))
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "if(MINGW)", "if(TRUE)\n    check_both_flags_add(-pthread)\n  elseif(MINGW)", {plain = true})
+            io.replace("CMakeLists.txt", "set(CMAKE_EXE_LINKER_FLAGS \"${CMAKE_EXE_LINKER_FLAGS} -z noexecstack -z relro -z now\")",  "", {plain = true})
             io.replace(path.join(os.curdir(), "Source", "Lib", "Decoder", "CMakeLists.txt"), "list(APPEND PLATFORM_LIBS Threads::Threads)", "", {plain = true})
             io.replace(path.join(os.curdir(), "Source", "Lib", "Encoder", "CMakeLists.txt"), "list(APPEND PLATFORM_LIBS Threads::Threads)", "", {plain = true})
         end
