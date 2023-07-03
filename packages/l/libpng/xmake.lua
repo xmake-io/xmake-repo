@@ -3,8 +3,17 @@ package("libpng")
     set_description("The official PNG reference library")
     set_license("libpng-2.0")
 
-    set_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/glennrp/libpng.git")
+    
+    add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz")
+    add_urls(
+        "http://mirrors.ustc.edu.cn/ubuntu/pool/main/libp/libpng1.6/libpng1.6_$(version).orig.tar.gz",
+        "http://mirrors.ustc.edu.cn/debian/pool/main/libp/libpng1.6/libpng1.6_$(version).orig.tar.gz",
+        {
+            alias = "deb-src",
+            version = function (version) return string.sub(version, 2, string.len(version)) end
+        }
+    )
+    add_urls("https://github.com/glennrp/libpng.git")
     add_versions("v1.6.40", "62d25af25e636454b005c93cae51ddcd5383c40fa14aa3dae8f6576feb5692c2")
     add_versions("v1.6.37", "ca74a0dace179a8422187671aee97dd3892b53e168627145271cad5b5ac81307")
     add_versions("v1.6.36", "5bef5a850a9255365a2dc344671b7e9ef810de491bd479c2506ac3c337e2d84f")
