@@ -17,7 +17,7 @@ package("svt-av1")
 
     on_load(function (package)
         if package:is_targetarch("x64", "x86_64") then
-            if is_host("windows") or package:is_plat("freebsd") or (package:is_plat("linux") and linuxos.name() == "fedora") then
+            if is_host("windows") or package:is_plat("freebsd") or (os:is_host("linux") and linuxos.name() == "fedora") then
                 package:add("deps", "nasm")
             else
                 package:add("deps", "yasm")
