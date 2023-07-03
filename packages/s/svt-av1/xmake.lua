@@ -9,8 +9,11 @@ package("svt-av1")
     add_versions("1.5.0", "64e27b024eb43e4ba4e7b85584e0497df534043b2ce494659532c585819d0333")
     add_versions("1.6.0", "3bc207247568ac713245063555082bfc905edc31df3bf6355e3b194cb73ad817")
 
-    add_deps("cmake", "yasm", "libtool")
-    add_syslinks("pthread")
+    if is_plat("wasm") then
+        add_configs("shared",  {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    add_deps("cmake", "yasm")
 
     on_load(function (package)
         if is_arch("x86.*") then
@@ -29,7 +32,6 @@ package("svt-av1")
         table.insert(configs, "-DLIB_INSTALL_DIR=" .. package:installdir("lib"))
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "if(MINGW)", "if(TRUE)\n    check_both_flags_add(-pthread)\n  elseif(MINGW)", {plain = true})
-            --package:add("ldflags", "-fstack-protector")
         end
         import("package.tools.cmake").install(package, configs)
     end)
