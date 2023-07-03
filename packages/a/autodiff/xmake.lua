@@ -5,10 +5,10 @@ package("autodiff")
     set_description("automatic differentiation made easier for C++")
     set_license("MIT")
 
-    add_urls("https://github.com/autodiff/autodiff/archive/refs/tags/v$(version).tar.gz",
+    add_urls("https://github.com/autodiff/autodiff/archive/refs/tags/$(version).tar.gz",
              "https://github.com/autodiff/autodiff.git")
 
-    add_versions("1.0.3", "21b57ce60864857913cacb856c3973ae10f7539b6bb00bcc04f85b2f00db0ce2")
+    add_versions("v1.0.3", "21b57ce60864857913cacb856c3973ae10f7539b6bb00bcc04f85b2f00db0ce2")
 
     add_deps("cmake", "eigen")
 
