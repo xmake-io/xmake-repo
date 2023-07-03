@@ -13,7 +13,7 @@ package("svt-av1")
         add_configs("shared",  {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("cmake", "yasm")
+    add_deps("cmake")
 
     on_load(function (package)
         if package:is_targetarch("x64", "x86_64") then
@@ -32,6 +32,7 @@ package("svt-av1")
         table.insert(configs, "-DLIB_INSTALL_DIR=" .. package:installdir("lib"))
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "if(MINGW)", "if(TRUE)\n    check_both_flags_add(-pthread)\n  elseif(MINGW)", {plain = true})
+            io.replace(path.join("Source", "Lib", "Decoder", "CMakeLists.txt"), "list(APPEND PLATFORM_LIBS Threads::Threads)", "", {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
     end)
