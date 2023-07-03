@@ -138,10 +138,6 @@ package("qtbase")
         end
 
         local installdir = package:installdir()
-        print("host", host)
-        print("target", target)
-        print("versionstr", versionstr)
-        print("arch", arch)
         os.vrunv("aqt", {"install-qt", "-O", installdir, host, target, versionstr, arch})
 
         -- move files to root
@@ -149,7 +145,7 @@ package("qtbase")
         os.rmdir(path.join(installdir, versionstr))
 
         -- special case for cross-compilation since we need binaries we can run on the host
-        if (package:is_plat("mingw") and not is_host("windows")) then
+        if package:is_plat("mingw") and not is_host("windows") then
             local runhost
             if is_host("linux") then
                 runhost = "linux"
@@ -187,15 +183,23 @@ package("qtbase")
             for folder, tools in pairs(tool_folders) do
                 for _, file in pairs(os.files(path.join(installdir, "bin_host", versionstr, "*", folder, "*"))) do
                     local filename = path.filename(file)
-                    if (tools[filename]) then
+                    if tools[filename] then
                         local targetpath = path.join(installdir, folder, filename)
                         os.rm(targetpath)
-                        os.ln(file, targetpath)
+                        if is_host("windows") then
+                            os.cp(file, targetpath)
+                        else
+                            os.ln(file, targetpath)
+                        end
 
                         -- some tools like CMake will try to run moc.exe even on Linux, trick them (ln bin/moc.exe => bin_host/bin/moc)
                         if package:is_plat("mingw") then
                             os.rm(targetpath .. ".exe")
-                            os.ln(file, targetpath .. ".exe")
+                            if is_host("windows") then
+                                os.cp(file, targetpath .. ".exe")
+                            else
+                                os.ln(file, targetpath .. ".exe")
+                            end
                         end
                     end
                 end
