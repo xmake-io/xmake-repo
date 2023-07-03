@@ -84,7 +84,7 @@ package("boost")
             else
                 linkname = "boost_" .. libname
             end
-            if libname == "python" then
+            if libname == "python" or libname == "numpy" then
                 linkname = linkname .. package:config("pyver"):gsub("%p+", "")
             end
             if package:config("multi") then
@@ -103,11 +103,16 @@ package("boost")
                 elseif vs_runtime == "MDd" then
                     linkname = linkname .. "-gd"
                 end
+            else
+                if package:debug() then
+                    linkname = linkname .. "-d"
+                end
             end
             return linkname
         end
         -- we need the fixed link order
         local sublibs = {log = {"log_setup", "log"},
+                         python = {"python", "numpy"},
                          stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
         for _, libname in ipairs(libnames) do
             local libs = sublibs[libname]
