@@ -11,6 +11,7 @@ package("emscripten")
     add_deps("python")
 
     on_install("windows", "macosx", "linux", function (package)
+
         import("lib.detect.find_directory")
 		-- copy to installdir
         os.cp("*", package:installdir())
@@ -25,20 +26,27 @@ package("emscripten")
         os.vrunv(py, {path.join(installdir, "emsdk.py"), "activate", version})
 
         -- setup env
-        local node = find_directory("bin", {path.join(installdir, "node", "**")})
         package:addenv("PATH", node)
         package:addenv("PATH", path.join(installdir, "upstream", "emscripten"))
         package:addenv("PATH", installdir)
         package:addenv("EMSDK", installdir)
     
         local exe = package:is_plat("windows") and ".exe" or ""
+        local node = find_directory("bin", {path.join(installdir, "node", "**")})
+        if node then
+            package:addenv("PATH", node)
+            package:addenv("EMSDK_NODE", path.join(node, "node" .. exe))
+        end
 
-        package:addenv("EMSDK_NODE", path.join(node, "node" .. exe))
         if package:is_plat("windows") then
             local python = find_directory("*", path.join(installdir, "python"))
-            package:addenv("EMSDK_PYTHON", path.join(python, "python" .. exe))
+            if python then
+                package:addenv("EMSDK_PYTHON", path.join(python, "python" .. exe))
+            end
             local java = find_directory("*", path.join(installdir, "java"))
-            package:addenv("JAVA_HOME", java)
+            if java then
+                package:addenv("JAVA_HOME", java)
+            end
         end
     end)
 
