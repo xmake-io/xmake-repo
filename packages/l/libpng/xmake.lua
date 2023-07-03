@@ -6,8 +6,8 @@ package("libpng")
     
     add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz")
     add_urls(
-        "http://mirrors.ustc.edu.cn/ubuntu/pool/main/libp/libpng1.6/libpng1.6_$(version).orig.tar.gz",
-        "http://mirrors.ustc.edu.cn/debian/pool/main/libp/libpng1.6/libpng1.6_$(version).orig.tar.gz",
+        "https://mirrors.ustc.edu.cn/ubuntu/pool/main/libp/libpng1.6/libpng1.6_$(version).orig.tar.gz",
+        "https://mirrors.ustc.edu.cn/debian/pool/main/libp/libpng1.6/libpng1.6_$(version).orig.tar.gz",
         {
             alias = "deb-src",
             version = function (version) return string.sub(version, 2, string.len(version)) end
