@@ -16,8 +16,8 @@ package("svt-av1")
     add_deps("cmake", "yasm")
 
     on_load(function (package)
-        if is_arch("x86.*") then
-            if package:is_plat("freebsd") or (package:is_plat("linux") and linuxos.name == "fedora") then
+        if package:is_targetarch("x64", "x86_64") then
+            if package:is_plat("windows") or package:is_plat("freebsd") or (package:is_plat("linux") and linuxos.name == "fedora") then
                 package:add("deps", "nasm")
             else
                 package:add("deps", "yasm")
