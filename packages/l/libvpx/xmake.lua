@@ -32,10 +32,16 @@ package("libvpx")
 
     on_load(function (package)
         if package:is_targetarch("x64", "x86_64") then
-            if package:is_plat("freebsd") or (os.is_host("linux") and linuxos.name == "fedora") then
+            if package:is_plat("freebsd") then
                 package:add("deps", "nasm")
             else
                 package:add("deps", "yasm")
+            end
+            if (os.is_host("linux") and linuxos.name() == "fedora") then
+                -- configure script uses which to detect yasm
+                cprint("${blue}installing which...${clear}")
+                os.run("dnf install which -y")
+                cprint("${green}done${clear}")
             end
         end
     end)
