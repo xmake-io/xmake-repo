@@ -30,6 +30,8 @@ package("libvpx")
         add_configs("shared",  {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    add_deps("which")
+
     on_load(function (package)
         if package:is_targetarch("x64", "x86_64") then
             if package:is_plat("freebsd") then
@@ -37,16 +39,10 @@ package("libvpx")
             else
                 package:add("deps", "yasm")
             end
-            if (os.is_host("linux") and linuxos.name() == "fedora") then
-                -- configure script uses which to detect yasm
-                cprint("${blue}installing which...${clear}")
-                os.run("dnf install which -y")
-                cprint("${green}done${clear}")
-            end
         end
     end)
 
-    on_install("linux", "macosx", "mingw", "freebsd", "wasm", "cross", function (package)
+    on_install("@freebsd", "@linux", "@macosx", "mingw", "wasm", function (package)
         local configs = {}
         table.insert(configs, "--prefix=" .. package:installdir())
         for name, enabled in pairs(package:configs()) do
