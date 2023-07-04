@@ -3,7 +3,8 @@ package("clblast")
     set_description("Tuned OpenCL BLAS ")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/CNugteren/CLBlast/archive/$(version).tar.gz", "https://github.com/CNugteren/CLBlast.git")
+    add_urls("https://github.com/CNugteren/CLBlast/archive/$(version).tar.gz",
+             "https://github.com/CNugteren/CLBlast.git")
     add_versions("1.6.0", "9bff8219f753262e2c3bb38eb74264dce8772f626ed59d0765851a4269532888")
 
     add_configs("tuners", { description = "Enable compilation of the tuners", default = false, type = "boolean" })
@@ -29,25 +30,21 @@ package("clblast")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package) 
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package) 
         local configs = {}
-
-        local vs_runtime = package:config("vs_runtime") 
-        if vs_runtime == "MT" or vs_runtime == "MTd" then
-            table.insert(configs,"-DOVERRIDE_MSVC_FLAGS_TO_MT=ON")
-        end
-
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
         table.insert(configs, "-DTUNERS=" .. (package:config("tuners") and "ON" or "OFF"))
         table.insert(configs, "-DVERBOSE=" .. (package:config("verbose") and "ON" or "OFF"))
         table.insert(configs, "-DAMD_SI_EMPTY_KERNEL_WORKAROUND=" .. (package:config("workaround") and "ON" or "OFF"))
-
         table.insert(configs, "-DOPENCL=" .. (package:config("opencl") and "ON" or "OFF"))
         table.insert(configs, "-DCUDA=" .. (package:config("cuda") and "ON" or "OFF"))
-
         table.insert(configs, "-DNETLIB=" .. (package:config("cuda") and "ON" or "OFF"))
         table.insert(configs, "-DNETLIB_PERSISTENT_OPENCL=" .. (package:config("cuda") and "ON" or "OFF"))
+        
+        if package:config("vs_runtime"):startswith("MT") then
+            table.insert(configs,"-DOVERRIDE_MSVC_FLAGS_TO_MT=ON")
+        end
+
         import("package.tools.cmake").install(package, configs)
     end)
