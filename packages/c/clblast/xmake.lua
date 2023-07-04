@@ -41,8 +41,8 @@ package("clblast")
         table.insert(configs, "-DCUDA=" .. (package:config("cuda") and "ON" or "OFF"))
         table.insert(configs, "-DNETLIB=" .. (package:config("cuda") and "ON" or "OFF"))
         table.insert(configs, "-DNETLIB_PERSISTENT_OPENCL=" .. (package:config("cuda") and "ON" or "OFF"))
-        
-        if package:config("vs_runtime"):startswith("MT") then
+
+        if package:is_plat("windows") and package:config("vs_runtime"):startswith("MT") then
             table.insert(configs,"-DOVERRIDE_MSVC_FLAGS_TO_MT=ON")
         end
 
