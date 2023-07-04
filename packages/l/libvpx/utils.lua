@@ -48,7 +48,7 @@ function get_target(package)
     end
 
     local os
-    if package:is_targetos("iphoneos") then
+    if package:is_targetos("iphoneos", "ios") then
         if package:is_targetarch("x64", "x86", "x86_64") then
             os = "iphonesimulator"
         else
