@@ -36,7 +36,7 @@ package("libvpx")
 
     on_load(function (package)
         if package:is_targetarch("x64", "x86_64") then
-            if package:is_plat("freebsd") then
+            if package:is_plat("bsd", "mingw") then
                 package:add("deps", "nasm")
             else
                 package:add("deps", "yasm")
