@@ -69,13 +69,14 @@ function get_target(package)
         cc = "vs"
     end
 
+    cprint("${green}info: ${clear}looking for target platform match ${blue}" .. os .. " " .. arch .. " " .. cc .. "${clear}")
     local matched_plats
     matched_plats = _filter(platforms, function (p) return p[1] == arch end)
     local tmp = _filter(matched_plats, function (p) return p[2] == os end)
     matched_plats = #tmp == 0 and _filter(matched_plats, function (p) return p[2] and  p[2]:startswith(os) end) or tmp
     tmp = nil
     if #matched_plats == 0 then
-        cprint("${yellow}warning: ${clear}no matching platform for ${blue}" .. os .. " " .. arch .. " " .. cc .. "${clear}, use " .. default_plat)
+        cprint("${yellow}warning: ${clear}no matching platform, use " .. default_plat)
     end
     local result = _join(_find(platforms, function(p) return p[3] == cc end) or _find(platforms, function(p) return p[3] and p[3]:startswith(cc) end) or matched_plats[1], "-")
     cprint("${green}info: ${clear}use target platform ${blue}" .. result .. "${clear}")
