@@ -7,6 +7,8 @@ package("taskflow")
 
     add_urls("https://github.com/taskflow/taskflow.git")
     add_urls("https://github.com/taskflow/taskflow/archive/$(version).tar.gz")
+    add_versions("v3.6.0", "5a1cd9cf89f93a97fcace58fd73ed2fc8ee2053bcb43e047acb6bc121c3edf4c")
+    add_versions("v3.5.0", "33c44e0da7dfda694d2b431724d6c8fd25a889ad0afbb4a32e8da82e2e9c2a92")
     add_versions("v3.4.0", "8f449137d3f642b43e905aeacdf1d7c5365037d5e1586103ed4f459f87cecf89")
     add_versions("v3.3.0", "66b891f706ba99a5ca5ed239d520ad6943ebe94728d1c89e07a939615a6488ef")
     add_versions("v3.2.0", "26c37a494789fedc5de8d1f8452dc8a7774a220d02c14d5b19efe0dfe0359c0c")
@@ -23,21 +25,18 @@ package("taskflow")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <assert.h>
+            #include <taskflow/taskflow.hpp>
+            #include <taskflow/algorithm/for_each.hpp>
             static void test() {
-
                 tf::Executor executor;
                 tf::Taskflow taskflow;
-
                 std::vector<int> range(10);
                 std::iota(range.begin(), range.end(), 0);
-
                 taskflow.for_each(range.begin(), range.end(), [&] (int i) {
-                  printf("for_each on container item: %d\n", i);
+                    printf("for_each on container item: %d\n", i);
                 });
-
-                executor.run(taskflow).get();
+                executor.run(taskflow).wait();
             }
-        ]]}, {configs = {languages = "c++1z"}, includes = "taskflow/taskflow.hpp"}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
 

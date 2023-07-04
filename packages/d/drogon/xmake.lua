@@ -37,7 +37,7 @@ package("drogon")
     add_deps("trantor", "jsoncpp", "brotli", "zlib")
 
     if is_plat("windows") then
-        add_syslinks("ws2_32", "rpcrt4", "crypt32", "advapi32")
+        add_syslinks("ws2_32", "rpcrt4", "crypt32", "advapi32", "iphlpapi")
     else
         add_deps("libuuid")
         if is_plat("linux") then

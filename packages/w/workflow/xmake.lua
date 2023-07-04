@@ -6,7 +6,8 @@ package("workflow")
     add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/workflow.git")
 
-    add_versions("v0.10.6", "3d32cb4240c7ec6835c5c0f0bbe8fe0cee38a53351b200facd436d5ff3e31bd1")
+    add_versions("v0.10.6", "5701ef31518a7927e61b26cd6cc1d699cb43393bf1ffc77fa61e73e64d2dd28e")
+    add_versions("v0.10.7", "aa9806983f32174597549db4a129e2ee8a3d1f005923fcbb924906bc70c0e123")
 
     add_deps("openssl")
 
@@ -34,5 +35,5 @@ package("workflow")
                 server.stop();
             }
         }
-    ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)

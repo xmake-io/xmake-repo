@@ -7,8 +7,9 @@ package("octomap")
     add_urls("https://github.com/OctoMap/octomap/archive/refs/tags/$(version).tar.gz",
              "https://github.com/OctoMap/octomap.git")
     add_versions("v1.9.7", "3e9ac020686ceb4e17e161bffc5a0dafd9cccab33adeb9adee59a61c418ea1c1")
+    add_versions("v1.9.8", "417af6da4e855e9a83b93458aa98b01a2c88f880088baad2b59d323ce162586e")
 
-    add_patches("v1.9.7", path.join(os.scriptdir(), "patches", "1.9.7", "build.patch"), "396b7b28c754f876c8552da93abf463f31bd65e327f454e75b8a5c10bb62ded4")
+    add_patches("1.9.x", path.join(os.scriptdir(), "patches", "1.9.7", "build.patch"), "396b7b28c754f876c8552da93abf463f31bd65e327f454e75b8a5c10bb62ded4")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})

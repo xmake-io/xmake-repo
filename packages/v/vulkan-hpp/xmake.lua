@@ -10,6 +10,10 @@ package("vulkan-hpp")
     add_versions("v1.2.189", "58ff1da4c03f5f124eb835f41a9dd8fe3c2e8087")
     add_versions("v1.2.198", "d8c9f4f0eee6972622a1c3aabab5ed558d37c1c0")
     add_versions("v1.3.231", "ef609a2f77dd1756e672712f264e76b64acdba61")
+    add_versions("v1.3.236", "4848fc8e6a923757fd451e52b992dfac48e30814")
+    add_versions("v1.3.240", "83adc3fa57b5d5a75ddfb2ce2a0f7fb3abe4bb9c")
+    add_versions("v1.3.244", "1bd3877dcc7f3fbf5a43e4d2f0fcc4ebadf6af85")
+    add_versions("v1.3.254", "9f89f760a661ff5d7e1e5cc93de13eb4026307b5")
 
     add_deps("cmake")
 
@@ -17,16 +21,18 @@ package("vulkan-hpp")
         add_extsources("pacman::vulkan-headers")
     end
 
-    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         local arch_prev
-        if package:is_plat("mingw") and package.plat_set then
+        local plat_prev
+        if (package:is_plat("mingw") or package:is_cross()) and package.plat_set then
             arch_prev = package:arch()
+            plat_prev = package:plat()
             package:plat_set(os.host())
             package:arch_set(os.arch())
         end
         import("package.tools.cmake").build(package, {buildir = "build"})
-        if arch_prev then
-            package:plat_set("mingw")
+        if arch_prev and plat_prev then
+            package:plat_set(plat_prev)
             package:arch_set(arch_prev)
         end
         os.mkdir("build")

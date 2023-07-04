@@ -61,6 +61,7 @@ package("lua")
                 set_kind(kind)
                 set_basename("lua")
                 add_headerfiles(sourcedir .. "*.h", {prefixdir = "lua"})
+                add_headerfiles(sourcedir .. "lua.hpp", {prefixdir = "lua"})
                 add_files(sourcedir .. "*.c|lua.c|luac.c|onelua.c")
                 add_defines("LUA_COMPAT_5_2", "LUA_COMPAT_5_1")
                 if is_plat("linux", "bsd", "cross") then

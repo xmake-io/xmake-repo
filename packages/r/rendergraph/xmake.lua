@@ -6,6 +6,7 @@ package("rendergraph")
 
     set_urls("https://github.com/DragonJoker/RenderGraph/archive/refs/tags/$(version).tar.gz",
          "https://github.com/DragonJoker/RenderGraph.git")
+    add_versions("v1.3.0", "b9c68b6949c7b60ffb49f9b9997432aac5baec69")
     add_versions("v1.2.0", "3f434cc347048656f02bfb87b0ce69ac02b9b18af4262d221c0d4b0ecf1b7bae")
     add_versions("v1.1.0", "b2fb87cdc0cdec94d4e2a9139533e5f72c0fadfe090c085308edbb84084b4a0c")
     add_versions("v1.0.0", "73814e89f854adb1287c33ea8d89f56ef7822977b5e974218a9a826d76a18e67")

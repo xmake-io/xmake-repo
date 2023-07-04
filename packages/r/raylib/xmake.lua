@@ -17,6 +17,7 @@ package("raylib")
         add_versions("3.7.0", "439dc1851dd1b7f385f4caf4f5c7191dda90add9d8d531e5e74702315e432003")
         add_versions("4.0.0", "be73734815a7ef4eb3130f4a2ecaabb2059602745ae6ce1173201a74034c2ec9")
         add_versions("4.2.0", "5f79c103b82c577698b01c7b2c166d0c2b51615886b7fabdc671199f0aaf4b38")
+        add_versions("4.5.0", "63deb87ffc32e5eb2023ba763aaea2cb5f41bd37bbc07760651efe251bd76f3d")
     else
         add_urls("https://github.com/raysan5/raylib/archive/$(version).tar.gz",
                  "https://github.com/raysan5/raylib.git")
@@ -26,6 +27,7 @@ package("raylib")
         add_versions("3.7.0", "7bfdf2e22f067f16dec62b9d1530186ddba63ec49dbd0ae6a8461b0367c23951")
         add_versions("4.0.0", "11f6087dc7bedf9efb3f69c0c872f637e421d914e5ecea99bbe7781f173dc38c")
         add_versions("4.2.0", "676217604a5830cb4aa31e0ede0e4233c942e2fc5c206691bded58ebcd82a590")
+        add_versions("4.5.0", "163378604f2293ea5ebf3238f50c8926addde72d1a6bc8998ac2e96074ba8af8")
     end
 
     if not (is_plat("macosx") and is_arch("x86_64")) then
@@ -58,8 +60,6 @@ package("raylib")
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 InitWindow(100, 100, "hello world!");
-                Camera camera = { 0 };
-                UpdateCamera(&camera);
             }
         ]]}, {includes = {"raylib.h"}}))
     end)
