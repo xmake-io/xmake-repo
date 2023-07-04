@@ -79,7 +79,7 @@ function get_target(package)
     if #matched_plats == 0 then
         cprint("${yellow}warning: ${clear}no matching platform, use " .. default_plat)
     end
-    local result = _join(_find(platforms, function(p) return p[3] == cc end) or _find(platforms, function(p) return p[3] and p[3]:startswith(cc) end) or matched_plats[1], "-")
+    local result = _join(_find(matched_plats, function(p) return p[3] == cc end) or _find(matched_plats, function(p) return p[3] and p[3]:startswith(cc) end) or matched_plats[1], "-")
     cprint("${green}info: ${clear}use target platform ${blue}" .. result .. "${clear}")
     return result
 end
