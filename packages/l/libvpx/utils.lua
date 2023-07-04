@@ -62,7 +62,7 @@ function get_target(package)
         os = package:targetos()
     end
 
-    local cc = path.basename(compiler.compcmd("foo.c")):split(" ", {plain = true})[1]:lower()
+    local cc = path.basename(compiler.compcmd("foo.c"):split(" ", {plain = true})[1]):lower()
     if cc == "clang" or cc == "emcc" or cc:endswith("-gcc") then
         cc = "gcc"
     elseif cc == "cl" then
