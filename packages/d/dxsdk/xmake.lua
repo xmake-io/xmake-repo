@@ -29,7 +29,7 @@ package("dxsdk")
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             static void test() {
-                std::cout << D3DX_SDK_VERSION << "\n";
+                std::cout << D3DXCreateSprite(nullptr,nullptr) << "\n";
             }
         ]]}, {includes = "d3dx9.h"}))
     end)
