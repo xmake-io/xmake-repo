@@ -19,6 +19,7 @@ function _find(array, callback)
 end
 
 function _join(array, separator)
+    print(array)
     local result = ""
     for idx, val in ipairs(array) do
         rusult = result .. val
