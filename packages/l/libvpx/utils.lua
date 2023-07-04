@@ -27,6 +27,7 @@ function _join(array, separator)
             result = result .. separator
         end
     end
+    print(result)
     return result
 end
 
