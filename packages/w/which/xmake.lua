@@ -13,8 +13,8 @@ package("which")
     add_versions("2.20", "d417b65c650d88ad26a208293c1c6e3eb60d4b6d847f01ff8f66aca63e2857f8")
     add_versions("2.21", "f4a245b94124b377d8b49646bf421f9155d36aa7614b6ebf83705d3ffc76eaad")
 
-    on_install("@freebsd", "@linux", "@macosx", "mingw", "which", function (package)
-        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--disable-gtk", "--disable-silent-rules"})
+    on_install("@bsd", "@linux", "@macosx", function (package)
+        import("package.tools.autoconf").install(package)
     end)
 
     on_test(function (package)

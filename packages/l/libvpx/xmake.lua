@@ -30,7 +30,82 @@ package("libvpx")
         add_configs("shared",  {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("which")
+    if is_host("freebsd", "linux", "macosx") then
+        add_deps("which")
+    end
+
+    -- array utils
+    function filter(array, filter)
+      local result = {}
+      for idx, val in ipairs(array) do
+          if filter(val, idx, array) then
+            table.insert(result, val)
+          end
+      end
+      return result
+    end
+
+    function find(array, filter)
+      for idx, val in ipairs(array) do
+          if filter(val, idx, array) then
+              return val
+          end
+      end
+      return nil
+    end
+
+    function get_target(package)
+        import("core.tool.compiler")
+        local default_plat = "generic-gnu"
+
+        local platforms = {}
+        for plat in io.readfile("configure"):gmatch("all_platforms=\"%${all_platforms} ([%a%d-]-)\"") do
+            table.insert(targets, plat:split("-", {plain = true}))
+        end
+
+        local arch = package:targetarch()
+        if arch:startswith("arm64") then
+            arch = "arm64"
+        elseif arch == "armeabi-v7a" then
+            arch = "armv7"
+        elseif arch == "x64" then
+            arch = "x86_64"
+        end
+
+        local os
+        if package:is_targetos("iphoneos") then
+            if package:is_targetarch("x64", "x86", "x86_64") then
+                os = "iphonesimulator"
+            else
+                os = "darwin"
+            end
+        elseif package:is_targetos("macosx", "watchos") then
+            os = "darwin"
+        elseif package:is_targetos("cygwin", "mingw", "windows") then
+            os = "win"
+        else
+            os = package:targetos()
+        end
+
+        local cc = path.basename(compiler.compcmd("foo.c")):split(" ", {plain = true})[1]:lower()
+        if cc == "clang" or cc == "emcc" then
+            cc = "gcc"
+        elseif cc == "cl" then
+            cc = "vs"
+        end
+
+        local matched_plats
+        matched_plats = filter(platforms, function (p) return p[1] == arch end)
+        local tmp = filter(matched_plats, function (p) return p[2] == os end)
+        matched_plats = #tmp == 0 and filter(matched_plats, function (p) return p[2]:startswith(plat) end) or tmp
+        tmp = nil
+        if #matched_plats == 0 then
+            cprint("${yellow}warning: ${clear}no matching platform for " .. os .. "-" .. arch " " .. cc .. ", use " .. default_plat)
+        end
+        local result = find(platforms, function(p) return p[3] == cc end) or find(platforms, function(p) return p[3]:startswith(cc) end) or platforms[1]
+        cprint("${green}info: ${clear}use target platform ${blue}" .. result .. "${clear}")
+        return result
+    end
 
     on_load(function (package)
         if package:is_targetarch("x64", "x86_64") then
@@ -42,7 +117,7 @@ package("libvpx")
         end
     end)
 
-    on_install("@freebsd", "@linux", "@macosx", "mingw", "wasm", function (package)
+    on_install("@bsd", "@linux", "@macosx", "mingw", "wasm", function (package)
         local configs = {}
         table.insert(configs, "--prefix=" .. package:installdir())
         for name, enabled in pairs(package:configs()) do
@@ -54,7 +129,7 @@ package("libvpx")
         if package:is_plat("wasm") then
             table.join2(configs, {"--target=generic-gnu", "--disable-install-bins"})
         elseif package:is_cross() then
-            table.insert(configs, "--target=" .. package:targetarch() .. "-" .. package:targetos())
+            table.insert(configs, "--target=" .. get_target(package))
         end
 
         local source_dir = os.curdir()
