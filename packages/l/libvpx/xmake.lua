@@ -60,6 +60,9 @@ package("libvpx")
             table.insert(configs, "--target=" .. utils.get_target(package))
         end
 
+        if package:is_plat("bsd") then
+            io.replace("configure", "diff --version", "diff", {plain = true})
+        end
         local source_dir = os.curdir()
         os.cd("$(buildir)")
         if package:is_plat("wasm") then
