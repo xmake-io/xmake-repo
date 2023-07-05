@@ -61,7 +61,7 @@ package("libvpx")
         end
 
         if package:is_plat("bsd") then
-            io.replace("configure", "diff --version", "diff", {plain = true})
+            io.replace("configure", "diff --version", "which diff", {plain = true})
         end
         local source_dir = os.curdir()
         os.cd("$(buildir)")
