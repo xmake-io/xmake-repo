@@ -32,6 +32,7 @@ package("qtbase")
             return
         end
 
+        print("qt", qt)
         local qtversion = semver.new(qt.sdkver)
         if not qtversion:ge(package:version()) then
             return
