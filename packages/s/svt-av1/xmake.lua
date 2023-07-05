@@ -16,8 +16,8 @@ package("svt-av1")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:is_targetarch("x64", "x86_64") then
-            if is_host("windows") or package:is_plat("freebsd") then
+        if package:is_targetarch("x64", "x86", "x86_64") then
+            if is_host("windows") or package:is_plat("bsd") then
                 package:add("deps", "nasm")
             else
                 package:add("deps", "yasm")

@@ -33,13 +33,15 @@ package("libvpx")
     add_deps("which", {optional = true})
 
     on_load(function (package)
-        if package:is_targetarch("x64", "x86_64") then
+        if package:is_targetarch("x64", "x86", "x86_64") then
             if package:is_plat("bsd", "mingw") then
                 package:add("deps", "nasm")
             else
                 package:add("deps", "yasm")
             end
-        end
+        elseif package:is_targetarch("arm.*") then
+            package:add("vectorexts", "neon")
+        end 
     end)
 
     on_install("@bsd", "@linux", "@macosx", "mingw", "wasm", function (package)
