@@ -15,6 +15,8 @@ package("clblast")
     add_configs("netlib", { description = "Enable compilation of the CBLAS Netlib API", default = false, type = "boolean" })
     add_configs("netlib_persistent_opencl", { description = "Makes OpenCL device and context in the CBLAS Netlib API static", default = false, type = "boolean" })
 
+    add_deps("cmake")
+
     if is_plat("linux") then
         add_extsources("apt::libclblast-dev")
     elseif is_plat("macosx") then
