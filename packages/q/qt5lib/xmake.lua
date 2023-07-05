@@ -1,4 +1,5 @@
 package("qt5lib")
+    set_kind("template")
     set_homepage("https://www.qt.io")
     set_description("Qt is the faster, smarter way to create innovative devices, modern UIs & applications for multiple screens. Cross-platform software development at its best.")
     set_license("LGPL-3")
@@ -10,14 +11,11 @@ package("qt5lib")
     add_versions("5.12.5", "dummy")
 
     on_load(function (package)
-        if package.is_template then
-            package:set("kind", "template")
-        end
         package:add("deps", "qt5base", {debug = package:is_debug(), version = package:version_str()})
     end)
 
     on_fetch(function (package)
-        local qt = package:dep("qt5base"):data("qt")
+        local qt = package:dep("qt5base"):fetch()
         if not qt then
             return
         end
@@ -74,6 +72,6 @@ package("qt5lib")
     end)
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
-        local qt = package:dep("qt5base"):data("qt")
+        local qt = package:dep("qt5base"):fetch()
         assert(qt, "qt5base is required")
     end)
