@@ -30,9 +30,7 @@ package("libvpx")
         add_configs("shared",  {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_host("freebsd", "linux", "macosx") then
-        add_deps("which")
-    end
+    add_deps("which", {optional = true})
 
     on_load(function (package)
         if package:is_targetarch("x64", "x86_64") then

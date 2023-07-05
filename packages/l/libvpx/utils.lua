@@ -21,8 +21,8 @@ end
 function _join(array, separator)
     local result = ""
     for idx, val in ipairs(array) do
-        rusult = result .. val
-        if not idx == #array then
+        result = result .. val
+        if not (idx == #array) then
             result = result .. separator
         end
     end
@@ -35,7 +35,7 @@ function get_target(package)
 
     local platforms = {}
     for plat in io.readfile("configure"):gmatch("all_platforms=\"%${all_platforms} ([%a%d-_]-)\"") do
-        table.insert(platforms, plat:split("-", {plain = true}):slice(1, 3))
+        table.insert(platforms, table.slice(plat:split("-", {plain = true}), 1, 3))
     end
 
     local arch = package:targetarch()
