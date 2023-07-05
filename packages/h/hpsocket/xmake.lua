@@ -11,7 +11,7 @@ package("hpsocket")
 
     local configs = {{name = "udp",    package = "kcp"},
                      {name = "http",   package = "http_parser"},
-                     {name = "zlib",   package = is_plat("android", "windows") and "" or "zlib"},
+                     {name = "zlib",   package = is_plat("android") and "" or "zlib"},
                      {name = "brotli", package = "brotli"},
                      {name = "ssl",    package = ""},
                      {name = "iconv",  package = ""}}
