@@ -6,6 +6,8 @@ package("entt")
 
     set_urls("https://github.com/skypjack/entt/archive/$(version).tar.gz",
              "https://github.com/skypjack/entt.git")
+    add_versions("v3.12.2", "3f3e43988218daecc0530ccaf45e960f7f7416e1fcf2c69799160c18b6a2fee3")
+    add_versions("v3.12.1", "7dc4fc74cc32c1ec74b37419140d9334563bb22ab1b92ad9be580703da05b8ac")
     add_versions("v3.11.1", "0ac010f232d3089200c5e545bcbd6480cf68b705de6930d8ff7cdb0a29f5b47b")
     add_versions("v3.11.0", "7cca2bd4d4aeef6c5bdbe06b9e047e7f2519ebaff901207cc81ac71a2bbe185e")
     add_versions("v3.10.3", "315918fc678e89a326ce1c13b0e9d3e53882dd9c58a63fef413325917a5c753b")

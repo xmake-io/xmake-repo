@@ -1,5 +1,6 @@
 package("cereal")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://uscilab.github.io/cereal/index.html")
     set_description("cereal is a header-only C++11 serialization library.")
     set_license("BSD-3-Clause")

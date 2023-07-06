@@ -37,6 +37,12 @@ package("coost")
                 configs["with_" .. name] = true
             end
         end
+        if package:is_plat("windows") then
+            local vs_runtime = package:config("vs_runtime")
+            if vs_runtime then
+                io.replace("xmake.lua", "set_runtimes%(.-%)", "set_runtimes(\"" .. vs_runtime .. "\")")
+            end
+        end
         import("package.tools.xmake").install(package, configs)
     end)
 

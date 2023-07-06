@@ -35,5 +35,5 @@ package("workflow")
                 server.stop();
             }
         }
-    ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)

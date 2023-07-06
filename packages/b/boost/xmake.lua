@@ -84,9 +84,9 @@ package("boost")
             else
                 linkname = "boost_" .. libname
             end
-            if libname == "python" then
+            if libname == "python" or libname == "numpy" then
                 linkname = linkname .. package:config("pyver"):gsub("%p+", "")
-            end            
+            end
             if package:config("multi") then
                 linkname = linkname .. "-mt"
             end
@@ -103,11 +103,17 @@ package("boost")
                 elseif vs_runtime == "MDd" then
                     linkname = linkname .. "-gd"
                 end
+            else
+                if package:debug() then
+                    linkname = linkname .. "-d"
+                end
             end
             return linkname
         end
         -- we need the fixed link order
-        local sublibs = {log = {"log_setup", "log"}}
+        local sublibs = {log = {"log_setup", "log"},
+                         python = {"python", "numpy"},
+                         stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
         for _, libname in ipairs(libnames) do
             local libs = sublibs[libname]
             if libs then
@@ -134,9 +140,18 @@ package("boost")
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         import("core.base.option")
 
+        -- get toolchain
+        local toolchain
+        if package:is_plat("windows") then
+            toolchain = package:toolchain("clang-cl") or package:toolchain("msvc") or
+                import("core.tool.toolchain").load("msvc", {plat = package:plat(), arch = package:arch()})
+        end
+
         -- force boost to compile with the desired compiler
+        local win_toolset
         local file = io.open("user-config.jam", "a")
         if file then
+            local cxx = package:build_getenv("cxx")
             if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
                 -- and we need `xcrun -sdk macosx clang++` to make b2 to get `-isysroot` automatically
@@ -146,9 +161,23 @@ package("boost")
                 end
                 file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
-                file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
+                local vs_toolset = toolchain:config("vs_toolset")
+                local msvc_ver = ""
+                win_toolset = "msvc"
+                if toolchain:name() == "clang-cl" then
+                    win_toolset = "clang-win"
+                    cxx = cxx:gsub("(clang%-cl)$", "%1.exe", 1)
+                    msvc_ver = ""
+                elseif vs_toolset then
+                    local i = vs_toolset:find("%.")
+                    msvc_ver = i and vs_toolset:sub(1, i + 1)
+                end
+
+                -- Specifying a version will disable b2 from forcing tools
+                -- from the latest installed msvc version.
+                file:print("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
             else
-                file:print("using gcc : : %s ;", package:build_getenv("cxx"):gsub("\\", "/"))
+                file:print("using gcc : : %s ;", cxx:gsub("\\", "/"))
             end
             file:close()
         end
@@ -159,9 +188,10 @@ package("boost")
             "--libdir=" .. package:installdir("lib"),
             "--without-icu"
         }
+
+        local runenvs
         if package:is_plat("windows") then
-            import("core.tool.toolchain")
-            local runenvs = toolchain.load("msvc"):runenvs()
+            runenvs = toolchain:runenvs()
             -- for bootstrap.bat, all other arguments are useless
             bootstrap_argv = { "msvc" }
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
@@ -183,6 +213,7 @@ package("boost")
             "-d2",
             "-j" .. njobs,
             "--hash",
+            "-q", -- quit on first error
             "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
             "-sNO_LZMA=1",
@@ -190,7 +221,9 @@ package("boost")
             "install",
             "threading=" .. (package:config("multi") and "multi" or "single"),
             "debug-symbols=" .. (package:debug() and "on" or "off"),
-            "link=" .. (package:config("shared") and "shared" or "static")
+            "link=" .. (package:config("shared") and "shared" or "static"),
+            "variant=" .. (package:is_debug() and "debug" or "release"),
+            "runtime-debugging=" .. (package:is_debug() and "on" or "off")
         }
 
         if package:config("lto") then
@@ -214,7 +247,7 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "cxxflags=-std:c++14")
-            table.insert(argv, "toolset=msvc")
+            table.insert(argv, "toolset=" .. win_toolset)
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
         else
@@ -228,7 +261,7 @@ package("boost")
                 table.insert(argv, "--with-" .. libname)
             end
         end
-        os.vrunv("./b2", argv)
+        os.vrunv("./b2", argv, {envs = runenvs})
     end)
 
     on_test(function (package)
