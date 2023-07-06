@@ -146,7 +146,7 @@ package("qtbase")
         os.rmdir(path.join(installdir, versionstr))
 
         -- special case for cross-compilation since we need binaries we can run on the host
-        if package:is_plat("mingw") and not is_host("windows") then
+        if package:is_cross() then
             local runhost
             if is_host("linux") then
                 runhost = "linux"
