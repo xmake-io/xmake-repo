@@ -7,6 +7,10 @@ package("libaesgm")
     add_versions("2013.1.1", "102353a486126c91ccab791c3e718d056d8fbb1be488da81b26561bc7ef4f363")
 
     on_install("linux", "macosx", "windows", "mingw", function (package)
+        if package:is_plat("windows", "mingw") and package:is_arch("arm*") then
+            -- Windows is always little endian
+            io.replace("brg_endian.h", "      defined( __VMS )     || defined( _M_X64 )", "      defined( __VMS )     || defined( _M_X64 ) || defined(_WIN32)", { plain = true })
+        end
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
