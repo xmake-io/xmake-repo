@@ -27,7 +27,7 @@ package("pkgconf")
     end)
 
     on_install("@windows", function(package)
-        import("package.tools.meson").install(package, {"-Dtests=false"})
+        import("package.tools.meson").install(package, {"-Dtests=disabled"})
         local bindir = package:installdir("bin")
         os.cp(path.join(bindir, "pkgconf.exe"), path.join(bindir, "pkg-config.exe"))
     end)
