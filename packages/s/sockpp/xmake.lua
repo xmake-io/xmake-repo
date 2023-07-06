@@ -1,5 +1,4 @@
 package("sockpp")
-
     set_homepage("https://github.com/fpagliughi/sockpp")
     set_description("Modern C++ socket library")
     set_license("BSD-3-Clause")
@@ -9,7 +8,7 @@ package("sockpp")
 
     add_versions("v0.8.1", "a8aedff8bd8c1da530b91be650352008fddabc9f1df0d19701d76cbc359c8651")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
 
@@ -27,9 +26,6 @@ package("sockpp")
             "-DSOCKPP_BUILD_TESTS=OFF",
             "-DSOCKPP_BUILD_DOCUMENTATION=OFF",
         }
-        if package:is_plat("linux") then
-            table.insert(configs, "-DSOCKPP_BUILD_CAN=" .. (package:config("can") and "ON" or "OFF"))
-        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DSOCKPP_BUILD_SHARED=ON")
@@ -37,6 +33,9 @@ package("sockpp")
         else
             table.insert(configs, "-DSOCKPP_BUILD_SHARED=OFF")
             table.insert(configs, "-DSOCKPP_BUILD_STATIC=ON")
+        end
+        if package:is_plat("linux") then
+            table.insert(configs, "-DSOCKPP_BUILD_CAN=" .. (package:config("can") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)
