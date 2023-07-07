@@ -43,6 +43,7 @@ package("icu4c")
         if package:is_cross() then
             -- icu build requires native pkgdata.exe
             local configs = {path.join("source", "allinone", "allinone.sln")}
+            table.insert(configs, "/target:genrb")
             table.insert(configs, "/target:pkgdata")
             table.insert(configs, "/p:Configuration=Release")
             table.insert(configs, "/p:Platform=" .. os.arch())
