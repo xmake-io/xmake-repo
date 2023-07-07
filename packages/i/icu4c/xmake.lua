@@ -46,6 +46,7 @@ package("icu4c")
         import("package.tools.msbuild")
         local projectfiles = os.files("source/**.vcxproj")
         table.insert(projectfiles, path.join("source", "allinone", "allinone.sln"))
+        print(projectfiles)
         if package:is_cross() then
             -- icu build requires native tools
             local configs = {path.join("source", "allinone", "allinone.sln")}
@@ -56,7 +57,7 @@ package("icu4c")
         local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
         msbuild.build(package, configs, {upgrade = projectfiles})
 
-        local suffix = (package:is_plat("arm") and "ARM" or "")
+        local suffix = package:is_plat("arm") and "ARM" or ""
         if package:is_plat("*64") then
             suffix = suffix .. "64"
         end
