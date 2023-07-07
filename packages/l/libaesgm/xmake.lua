@@ -9,7 +9,11 @@ package("libaesgm")
     on_install("linux", "macosx", "windows", "mingw", function (package)
         if package:is_plat("windows", "mingw") and package:is_arch("arm*") then
             -- Windows is always little endian
-            io.replace("brg_endian.h", "      defined( __VMS )     || defined( _M_X64 )", "      defined( __VMS )     || defined( _M_X64 ) || defined(_WIN32)", { plain = true })
+            io.replace("brg_endian.h", [[
+#elif 0     /* **** EDIT HERE IF NECESSARY **** */
+#  define PLATFORM_BYTE_ORDER IS_LITTLE_ENDIAN]], [[
+#elif 1     /* Edited: Windows ARM is little endian */
+#  define PLATFORM_BYTE_ORDER IS_LITTLE_ENDIAN]], { plain = true })
         end
         local configs = {}
         io.writefile("xmake.lua", [[
