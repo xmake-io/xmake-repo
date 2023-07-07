@@ -29,35 +29,39 @@ package("icu4c")
     end
     
     if is_plat("linux") then
-        package:add("syslinks", "dl")
+        add_syslinks("dl")
     end
 
     on_load(function (package)
         local libsuffix = package:is_debug() and "d" or ""
-        package:add("links", "icutu"..libsuffix, "icuio"..libsuffix)
-        if is_plat("mingw", "windows") then
-            package:add("links", "icuin"..libsuffix, "icuuc"..libsuffix, "icudt"..libsuffix)
+        package:add("links", "icutu" .. libsuffix, "icuio" .. libsuffix)
+        if package:is_plat("mingw", "windows") then
+            package:add("links", "icuin" .. libsuffix, "icuuc" .. libsuffix, "icudt" .. libsuffix)
         else
-            package:add("links", "icui18n"..libsuffix, "icuuc"..libsuffix, "icudata"..libsuffix)
+            package:add("links", "icui18n" .. libsuffix, "icuuc" .. libsuffix, "icudata" .. libsuffix)
         end
     end)
 
     on_install("windows", function (package)
         import("package.tools.msbuild")
         if package:is_cross() then
-            -- icu build requires native pkgdata.exe
+            -- icu build requires native tools
             local configs = {path.join("source", "allinone", "allinone.sln")}
-            table.insert(configs, "/target:genrb")
-            table.insert(configs, "/target:pkgdata")
             table.insert(configs, "/p:Configuration=Release")
             table.insert(configs, "/p:Platform=" .. os.arch())
             msbuild.build(package, configs)
         end
         local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
         msbuild.build(package, configs)
+
+        local suffix = (package:is_plat("arm") and "ARM" or "")
+        if package:is_plat("*64") then
+            suffix = suffix .. "64"
+        end
+
         os.cp("include", package:installdir())
-        os.cp("bin*/*", package:installdir("bin"))
-        os.cp("lib*/*", package:installdir("lib"))
+        os.cp("bin" .. suffix .. "/*", package:installdir("bin"))
+        os.cp("lib" .. suffix .. "/*", package:installdir("lib"))
         package:addenv("PATH", "bin")
     end)
 
