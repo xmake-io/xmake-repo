@@ -21,6 +21,7 @@ package("icu4c")
     if is_plat("mingw") then
         add_patches("72.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
         add_patches("73.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
+        add_patches("73.2", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
     end
 
     add_links("icutu", "icuio")
@@ -39,8 +40,6 @@ package("icu4c")
 
     on_install("windows", function (package)
         local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
-        table.insert(configs, "/p:Configuration=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
         import("package.tools.msbuild").build(package, configs)
         os.cp("include", package:installdir())
         os.cp("bin*/*", package:installdir("bin"))
