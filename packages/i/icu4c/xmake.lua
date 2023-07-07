@@ -39,8 +39,17 @@ package("icu4c")
     end
 
     on_install("windows", function (package)
+        import("package.tools.msbuild")
+        if package:is_cross() then
+            -- icu build requires native pkgdata.exe
+            local configs = {path.join("source", "allinone", "allinone.sln")}
+            table.insert(configs, "/target:pkgdata")
+            table.insert(configs, "/p:Configuration=Release")
+            table.insert(configs, "/p:Platform=" .. os.arch())
+            msbuild.build(package, configs)
+        end
         local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
-        import("package.tools.msbuild").build(package, configs)
+        msbuild.build(package, configs)
         os.cp("include", package:installdir())
         os.cp("bin*/*", package:installdir("bin"))
         os.cp("lib*/*", package:installdir("lib"))
