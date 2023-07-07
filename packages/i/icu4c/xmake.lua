@@ -24,19 +24,23 @@ package("icu4c")
         add_patches("73.2", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
     end
 
-    add_links("icutu", "icuio")
-    if is_plat("mingw", "windows") then
-        add_links("icuin", "icuuc", "icudt")
-    else
-        add_links("icui18n", "icuuc", "icudata")
-    end
-
-    if is_plat("linux") then
-        add_syslinks("dl")
-    end
     if is_plat("windows") then
         add_deps("python 3.x", {kind = "binary"})
     end
+
+    on_load(function (package)
+        local libsuffix = package:is_debug() and "d" or ""
+        package:add("links", "icutu"..libsuffix, "icuio"..libsuffix)
+        if is_plat("mingw", "windows") then
+            package:add("links", "icuin"..libsuffix, "icuuc"..libsuffix, "icudt"..libsuffix)
+        else
+            package:add("links", "icui18n"..libsuffix, "icuuc"..libsuffix, "icudata"..libsuffix)
+        end
+    
+        if is_plat("linux") then
+            package:add("syslinks", "dl")
+        end
+    end)
 
     on_install("windows", function (package)
         import("package.tools.msbuild")
