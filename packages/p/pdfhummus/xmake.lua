@@ -9,6 +9,7 @@ package("pdfhummus")
     add_versions("4.1", "0c0d860b0ecea928709b9e4642fa21926eb2f626f702699c3b87afa2965b4857")
     add_versions("4.5.6", "72a4f3fbbc39d4f169911454e9977ef8dd882bd5c0a305bd3133347903cff705")
     add_versions("4.5.7", "191f39dcc61522c50a3bee96b3f0ccef208c27968fd22d5ab474acb512c24d10")
+    add_versions("4.5.8", "b19b4853774551d34187087aaafa89fcba69215acbb4747dbdf0025a3f780b89")
 
     add_deps("freetype", "zlib", "libaesgm")
 
