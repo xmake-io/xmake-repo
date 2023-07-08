@@ -77,8 +77,9 @@ package("libvpx")
                 function(errors)
                     cprint("${red}error: ${clear}confiure failed!")
                     print(errors)
-                    cprint("${blue}full configure logs:{clear}")
-                    io.cat(path.join(source_dir, "config.log"))
+                    cprint("${blue}full configure logs:${clear}")
+                    io.cat("config.log")
+                    error(errors)
                 end
             }
         }
