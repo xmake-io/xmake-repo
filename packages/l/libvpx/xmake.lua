@@ -44,7 +44,7 @@ package("libvpx")
         end 
     end)
 
-    on_install("@bsd", "@linux", "@macosx", "mingw", "wasm", function (package)
+    on_install("@bsd", "@linux", "@macosx", "wasm", function (package)
         local configs = {}
         table.insert(configs, "--prefix=" .. package:installdir())
         for name, enabled in pairs(package:configs()) do
@@ -65,11 +65,23 @@ package("libvpx")
         end
         local source_dir = os.curdir()
         os.cd("$(buildir)")
-        if package:is_plat("wasm") then
-            os.vrunv("emconfigure " .. path.join(source_dir, "/configure"), configs)
-        else
-            os.vrunv(path.join(source_dir, "configure"), configs)
-        end
+        try {
+            function()
+                if package:is_plat("wasm") then
+                    os.vrunv("emconfigure " .. path.join(source_dir, "/configure"), configs)
+                else
+                    os.vrunv(path.join(source_dir, "configure"), configs)
+                end
+            end,
+            catch {
+                function(errors)
+                    cprint("${red}error: ${clear}confiure failed!")
+                    print(errors)
+                    cprint("${blue}full configure logs:{clear}")
+                    io.cat(path.join(source_dir, "config.log"))
+                end
+            }
+        }
         import("package.tools.make").install(package)
     end)
 
