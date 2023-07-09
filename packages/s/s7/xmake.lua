@@ -18,7 +18,7 @@ package("s7")
     end)
 
     if is_plat("linux") then
-        add_syslinks("pthread", "dl")
+        add_syslinks("pthread", "dl", "m")
     end
 
     on_install("bsd", "cross", "cygwin", "linux", "macosx", "mingw", "msys", "wasm", "windows", function (package)
