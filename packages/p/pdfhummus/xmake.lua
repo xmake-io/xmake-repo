@@ -18,7 +18,7 @@ package("pdfhummus")
     add_configs("libpng", {description = "Support png image", default = false, type = "boolean"})
 
     if is_plat("linux") then
-        add_syslinks("m", "stdc++")
+        add_syslinks("m")
     end
 
     on_load(function (package)
