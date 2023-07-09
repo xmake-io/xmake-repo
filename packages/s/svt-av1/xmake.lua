@@ -39,6 +39,7 @@ package("svt-av1")
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=AMD64")
         elseif package:is_plat("android") and package:is_targetarch("arm64.*") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=aarch64")
+            io.replace("CMakeLists.txt", "CMAKE_C_COMPILER_ID MATCHES \"Clang\" AND UNIX AND NOT APPLE", "FALSE", {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
     end)
