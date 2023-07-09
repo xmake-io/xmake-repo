@@ -17,6 +17,8 @@ package("pdfhummus")
     add_configs("libjpeg", {description = "Support DCT encoding", default = false, type = "boolean"})
     add_configs("libpng", {description = "Support png image", default = false, type = "boolean"})
 
+    add_syslinks("m", "stdc++")
+
     on_load(function (package)
         for _, dep in ipairs({"libtiff", "libpng", "libjpeg"}) do
             if package:config(dep) then
