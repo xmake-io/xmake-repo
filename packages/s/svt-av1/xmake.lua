@@ -37,6 +37,8 @@ package("svt-av1")
             io.replace(path.join(os.curdir(), "Source", "Lib", "Encoder", "CMakeLists.txt"), "list(APPEND PLATFORM_LIBS Threads::Threads)", "", {plain = true})
         elseif package:is_plat("mingw") and package:is_arch("x64", "x86_64") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=AMD64")
+        elseif package:is_plat("android") and package:is_arch("arm64.*") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=aarch64")
         end
         import("package.tools.cmake").install(package, configs)
     end)
