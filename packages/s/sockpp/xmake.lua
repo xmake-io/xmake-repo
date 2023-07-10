@@ -8,6 +8,8 @@ package("sockpp")
 
     add_versions("v0.8.1", "a8aedff8bd8c1da530b91be650352008fddabc9f1df0d19701d76cbc359c8651")
 
+    add_patches("0.8.1", path.join(os.scriptdir(), "patches", "0.8.1", "strerror.patch"), "8de819ba185c644254633d1de609e2c571c6c6f1aa7d2ac4329676ecf96fa556")
+
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
