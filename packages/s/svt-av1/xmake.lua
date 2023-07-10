@@ -47,7 +47,7 @@ package("svt-av1")
             io.replace("Source/Lib/Decoder/CMakeLists.txt", "set(LIBS_PRIVATE \"-lpthread -lm\")", "set(LIBS_PRIVATE \"-lm\")", {plain = true})
             io.replace("Source/Lib/Encoder/CMakeLists.txt", "list(APPEND PLATFORM_LIBS Threads::Threads)", "", {plain = true})
             io.replace("Source/Lib/Encoder/CMakeLists.txt", "set(LIBS_PRIVATE \"-lpthread -lm\")", "set(LIBS_PRIVATE \"-lm\")", {plain = true})
-            io.replace("Source/Lib/Common/Codecs/EbThreads.h", "#if defined(__linux__)", "#if 0", {plain = true})
+            io.replace("Source/Lib/Common/Codec/EbThreads.h", "#if defined(__linux__)", "#if 0", {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
     end)
