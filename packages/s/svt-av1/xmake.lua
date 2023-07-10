@@ -13,7 +13,7 @@ package("svt-av1")
         add_configs("shared",  {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_plat("linux", "wasm") then
+    if is_plat("bsd", "linux", "wasm") then
         add_syslinks("pthread")
     end
 
