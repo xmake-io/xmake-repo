@@ -48,5 +48,5 @@ package("svt-av1")
     end)
 
     on_test(function (package)
-        assert(package:has_ctypes("EbAv1PictureType", {includes = "svt-av1/EbSvtAv1.h"}))
+        assert(package:has_cfuncs("svt_av1_enc_init_handle", {includes = "svt-av1/EbSvtAv1Enc.h"}))
     end)
