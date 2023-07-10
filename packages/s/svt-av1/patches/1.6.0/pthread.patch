@@ -1,0 +1,61 @@
+diff --git a/Source/Lib/Common/Codec/EbThreads.c b/Source/Lib/Common/Codec/EbThreads.c
+index ea403ae..4f99818 100644
+--- a/Source/Lib/Common/Codec/EbThreads.c
++++ b/Source/Lib/Common/Codec/EbThreads.c
+@@ -121,11 +121,13 @@ EbHandle svt_create_thread(void *thread_function(void *), void *thread_context)
+      * the thread priority will __always__ fail the thread sanitizer.
+      * https://github.com/google/sanitizers/issues/1088
+      */
++#if 0
+     if (!EB_THREAD_SANITIZER_ENABLED && !geteuid()) {
+         if (pthread_setschedparam(*th, SCHED_FIFO, &(struct sched_param){.sched_priority = 99}))
+             SVT_WARN("Failed to set thread priority\n");
+         // ignore if this failed
+     }
++#endif
+     thread_handle = th;
+ #endif // _WIN32
+ 
+diff --git a/Source/Lib/Common/Codec/EbThreads.h b/Source/Lib/Common/Codec/EbThreads.h
+index 8506c7f..6ed7125 100644
+--- a/Source/Lib/Common/Codec/EbThreads.h
++++ b/Source/Lib/Common/Codec/EbThreads.h
+@@ -83,7 +83,6 @@ extern EbErrorType svt_destroy_mutex(EbHandle mutex_handle);
+     do {                                                                                             \
+         pointer = svt_create_thread(thread_function, thread_context);                                \
+         EB_ADD_MEM(pointer, 1, EB_THREAD);                                                           \
+-        pthread_setaffinity_np(*((pthread_t *)pointer), sizeof(cpu_set_t), &svt_aom_group_affinity); \
+     } while (0)
+ #else
+ #define EB_CREATE_THREAD(pointer, thread_function, thread_context)    \
+diff --git a/Source/Lib/Decoder/Codec/EbDecHandle.c b/Source/Lib/Decoder/Codec/EbDecHandle.c
+index 952d889..4c1b954 100644
+--- a/Source/Lib/Decoder/Codec/EbDecHandle.c
++++ b/Source/Lib/Decoder/Codec/EbDecHandle.c
+@@ -76,10 +76,6 @@ EbErrorType svt_aom_decode_multiple_obu(EbDecHandle *dec_handle_ptr, uint8_t **d
+                                         uint32_t is_annexb);
+ 
+ static void dec_switch_to_real_time() {
+-#if !defined(_WIN32)
+-    if (!geteuid())
+-        (void)pthread_setschedparam(pthread_self(), SCHED_FIFO, &(struct sched_param){.sched_priority = 99});
+-#endif
+ }
+ 
+ /***********************************
+diff --git a/Source/Lib/Encoder/Globals/EbEncHandle.c b/Source/Lib/Encoder/Globals/EbEncHandle.c
+index be068d9..1ddc2a6 100644
+--- a/Source/Lib/Encoder/Globals/EbEncHandle.c
++++ b/Source/Lib/Encoder/Globals/EbEncHandle.c
+@@ -312,11 +312,6 @@ void svt_aom_init_intra_predictors_internal(void);
+ void svt_av1_init_me_luts(void);
+ 
+ static void enc_switch_to_real_time(){
+-#if !defined(_WIN32)
+-    if (!geteuid())
+-        (void)pthread_setschedparam(
+-            pthread_self(), SCHED_FIFO, &(struct sched_param){.sched_priority = 99});
+-#endif
+ }
+ #define SINGLE_CORE_COUNT       1
+ #define CONS_CORE_COUNT         16
