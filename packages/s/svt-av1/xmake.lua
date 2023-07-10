@@ -13,6 +13,10 @@ package("svt-av1")
         add_configs("shared",  {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    if is_plat("linux", "wasm") then
+        add_syslinks("pthread")
+    end
+
     add_deps("cmake")
 
     on_load(function (package)
