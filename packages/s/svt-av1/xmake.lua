@@ -39,6 +39,9 @@ package("svt-av1")
             io.replace("CMakeLists.txt", "set(CMAKE_EXE_LINKER_FLAGS \"${CMAKE_EXE_LINKER_FLAGS} -z noexecstack -z relro -z now\")",  "", {plain = true})
             io.replace("Source/Lib/Decoder/CMakeLists.txt", "list(APPEND PLATFORM_LIBS Threads::Threads)", "", {plain = true})
             io.replace("Source/Lib/Encoder/CMakeLists.txt", "list(APPEND PLATFORM_LIBS Threads::Threads)", "", {plain = true})
+            io.replace("Source/Lib/Decoder/Codec/EbDecHandle.c", "!geteuid()", "0", {plain = true})
+            io.replace("Source/Lib/Common/Codec/EbThreads.c", "!geteuid()", "0", {plain = true})
+            io.replace("Source/Lib/Encoder/Globals/EbEncHandle.c", "!geteuid()", "0", {plain = true})
         elseif package:is_plat("mingw") and package:is_arch("x64", "x86_64") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=AMD64")
         elseif package:is_plat("android") then
