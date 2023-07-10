@@ -39,6 +39,8 @@ package("svt-av1")
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=AMD64")
         elseif package:is_plat("android") then
             io.replace("CMakeLists.txt", "CMAKE_C_COMPILER_ID MATCHES \"Clang\" AND UNIX AND NOT APPLE", "FALSE", {plain = true})
+            io.replace(path.join(os.curdir(), "Source", "Lib", "Decoder", "CMakeLists.txt"), "set(LIBS_PRIVATE \"-lpthread -lm\")", "set(LIBS_PRIVATE \"-lm\")", {plain = true})
+            io.replace(path.join(os.curdir(), "Source", "Lib", "Encoder", "CMakeLists.txt"), "set(LIBS_PRIVATE \"-lpthread -lm\")", "set(LIBS_PRIVATE \"-lm\")", {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
     end)
