@@ -9,14 +9,13 @@ package("svt-av1")
     add_versions("1.5.0", "64e27b024eb43e4ba4e7b85584e0497df534043b2ce494659532c585819d0333")
     add_versions("1.6.0", "3bc207247568ac713245063555082bfc905edc31df3bf6355e3b194cb73ad817")
 
-    add_configs("build-enc",     {description = "Build Encoder lib and app", default = true, type = "boolean"})
-    add_configs("build-dec",     {description = "Build Decoder lib and app", default = true, type = "boolean"})
-    add_configs("svt-av1-lto",   {description = "Attempt to enable Link Time Optimization if available", default = false, type = "boolean"})
-    add_configs("enable-avx512", {description = "Enable building avx512 code", default = false, type = "boolean"})
+    add_configs("encoder",  {description = "Build Encoder lib", default = true, type = "boolean"})
+    add_configs("decoder",  {description = "Build Decoder lib", default = true, type = "boolean"})
+    add_configs("avx512",   {description = "Enable building avx512 code", default = false, type = "boolean"})
 
     if not is_plat("windows") then
-        add_configs("svt-av1-pgo", {description = "Enable profile guided optimization. Creates the RunPGO and CompilePGO targets", default = false, type = "boolean"})
-        add_configs("native",      {description = "Build for native performance (march=native)", default = false, type = "boolean"})
+        add_configs("pgo",     {description = "Enable profile guided optimization. Creates the RunPGO and CompilePGO targets", default = false, type = "boolean"})
+        add_configs("native",  {description = "Build for native performance (march=native)", default = false, type = "boolean"})
     end
 
     if is_plat("wasm") then
@@ -46,11 +45,12 @@ package("svt-av1")
         local configs = {"-DBUILD_TESTING=OFF", "-DCOVERAGE=OFF", "-DBUILD_APPS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        for name, enabled in pairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") then
-                table.insert(configs, "-D" .. name:upper():gsub("-", "_") .. "=" .. (enabled and "ON" or "OFF"))
-            end
-        end
+        table.insert(configs, "-DBUILD_ENC=" .. (package:config("encoder") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_DEC=" .. (package:config("decoder") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_AVX512=" .. (package:config("avx512") and "ON" or "OFF"))
+        table.insert(configs, "-DSVT_AV1_LTO=" .. (package:config("lto") and "ON" or "OFF"))
+        table.insert(configs, "-DSVT_AV1_PGO=" .. (package:config("pgo") and "ON" or "OFF"))
+        table.insert(configs, "-DNATIVE=" .. (package:config("native") and "ON" or "OFF"))
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "if(MINGW)", "if(TRUE)\n    check_both_flags_add(-pthread)\n  elseif(MINGW)", {plain = true})
             io.replace("CMakeLists.txt", "set(CMAKE_EXE_LINKER_FLAGS \"${CMAKE_EXE_LINKER_FLAGS} -z noexecstack -z relro -z now\")",  "", {plain = true})
@@ -75,3 +75,4 @@ package("svt-av1")
     on_test(function (package)
         assert(package:has_cfuncs("svt_av1_enc_init_handle", {includes = "svt-av1/EbSvtAv1Enc.h"}))
     end)
+
