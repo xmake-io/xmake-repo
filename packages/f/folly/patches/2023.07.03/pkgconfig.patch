@@ -1,0 +1,58 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -122,8 +122,6 @@ set(
+   "${CMAKE_CURRENT_SOURCE_DIR}:${CMAKE_CURRENT_BINARY_DIR}"
+ )
+ 
+-include(GNUInstallDirs)
+-
+ set(CMAKE_THREAD_PREFER_PTHREAD ON)
+ set(THREADS_PREFER_PTHREAD_FLAG ON)
+ find_package(Threads REQUIRED)
+@@ -394,11 +392,6 @@ apply_folly_compile_options_to_target(folly_base)
+ # Add the generated files to the correct source group.
+ source_group("folly" FILES ${CMAKE_CURRENT_BINARY_DIR}/folly/folly-config.h)
+ 
+-# Generate pkg-config variables from folly_deps before we add our own
+-# build/install-time include directory generator expressions
+-include(GenPkgConfig)
+-gen_pkgconfig_vars(FOLLY_PKGCONFIG folly_deps)
+-
+ target_include_directories(folly_deps
+   BEFORE
+   INTERFACE
+@@ -489,33 +482,6 @@ install(
+   COMPONENT dev
+ )
+ 
+-# Generate a pkg-config file so that downstream projects that don't use
+-# CMake can depend on folly using pkg-config.
+-configure_file(
+-  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/libfolly.pc.in
+-  ${CMAKE_CURRENT_BINARY_DIR}/libfolly.pc.gen
+-  @ONLY
+-)
+-
+-# Specify target to allow resolving generator expressions requiring
+-# a target for CMake >=3.19. See #1414.
+-# VERSION_GREATER_EQUAL isn't available before CMake 3.7.
+-if(NOT CMAKE_VERSION VERSION_LESS 3.19)
+-  set(target_arg TARGET folly_deps)
+-endif()
+-
+-file(
+-  GENERATE
+-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libfolly.pc
+-  INPUT ${CMAKE_CURRENT_BINARY_DIR}/libfolly.pc.gen
+-  ${target_arg}
+-)
+-install(
+-  FILES ${CMAKE_CURRENT_BINARY_DIR}/libfolly.pc
+-  DESTINATION ${LIB_INSTALL_DIR}/pkgconfig
+-  COMPONENT dev
+-)
+-
+ option(BUILD_TESTS "If enabled, compile the tests." OFF)
+ option(BUILD_BENCHMARKS "If enabled, compile the benchmarks." OFF)
+ option(BUILD_BROKEN_TESTS "If enabled, compile tests that are known to be broken." OFF)
