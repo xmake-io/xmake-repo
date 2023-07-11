@@ -14,6 +14,8 @@ package("libwebp")
     add_versions("v1.2.4", "dfe7bff3390cd4958da11e760b65318f0a48c32913e4d5bc5e8d55abaaa2d32e")
     add_versions("v1.3.0", "dc9860d3fe06013266c237959e1416b71c63b36f343aae1d65ea9c94832630e1")
 
+    add_patches(">=1.1.0 <1.3.0", path.join(os.scriptdir(), "patches", "0001-fix-dll-export.patch"), "81d92d800dd7b57704a0e4db3b7155184fe8bb6bc0a925a699a8a0868629f60c")
+
     add_configs("anim_utils", {description = "Build animation utilities.", default = false, type = "boolean"})
     add_configs("cwebp",      {description = "Build the cwebp command line tool.", default = false, type = "boolean"})
     add_configs("dwebp",      {description = "Build the dwebp command line tool.", default = false, type = "boolean"})
@@ -43,6 +45,9 @@ package("libwebp")
         if package:config("sharpyuv") or package:version():ge("1.2.3") then
             package:add("links", "sharpyuv")
         end
+        if package:config("libwebpmux") then
+            package:add("links", "webpmux")
+        end
 
         for name, enabled in pairs(package:configs()) do
             if name == "thread" then
@@ -61,4 +66,7 @@ package("libwebp")
 
     on_test(function (package)
         assert(package:has_cfuncs("WebPGetEncoderVersion", {includes = "webp/encode.h"}))
+        if package:config("libwebpmux") and package:version():ge("1.2.1") then
+            assert(package:has_cfuncs("WebPGetMuxVersion", {includes = "webp/mux.h"}))
+        end
     end)
