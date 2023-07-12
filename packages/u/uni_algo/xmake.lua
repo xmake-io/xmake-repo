@@ -5,7 +5,6 @@ package("uni_algo")
 
     add_urls("https://github.com/uni-algo/uni-algo/archive/refs/tags/$(version).tar.gz",
              "https://github.com/uni-algo/uni-algo.git")
-
     add_versions("v0.7.1", "9ff1f03d6ffd81df7a2a21df353502db55d198a940da0aef0546b37ca934fdfb")
     add_versions("v0.8.0", "657f124f4fb4705f948e9c0835ec88484ee4745d7b19cb2ddb772119a7ea024e")
     add_versions("v0.8.1", "11192280fa435a9d68131d5368d2b314201d7089e6d2f38f29a8591c9aafa776")
