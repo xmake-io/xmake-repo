@@ -15,5 +15,7 @@ package("cimg")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("cimg_library::CImg<>", {includes = "CImg.h"}))
+        assert(package:has_cxxtypes("cimg_library::CImg<>", {
+            includes = "CImg.h", configs = {defines = "cimg_display=0"}
+        }))
     end)
