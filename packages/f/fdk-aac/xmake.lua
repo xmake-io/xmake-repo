@@ -16,7 +16,14 @@ package("fdk-aac")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         if package:is_plat("android") then
-            io.writefile(path.join(package:installdir("include", "log"), "log.h"), "#include <cstdint>\ninline int android_errorWriteLog(int, const char*) { return 0; };\ninline int android_errorWriteWithInfoLog(int tag, const char* subTag,int32_t uid, const char* data,uint32_t dataLen) {return 0;};")
+            io.writefile(path.join("include", "log", "log.h"), [[#include <cstdint>
+            inline int android_errorWriteLog(int, const char*) {
+              return 0;
+            };
+            inline int android_errorWriteWithInfoLog(int tag, const char* subTag,int32_t uid, const char* data,uint32_t dataLen) {
+              return 0;
+            };]])
+            table.insert(configs, "-DINCLUDE_DIRECTORIES=" .. path.join(os.curdir(), "include"))
         end
         import("package.tools.cmake").install(package, configs)
     end)
