@@ -1,6 +1,7 @@
 package("fdk-aac")
     set_homepage("https://sourceforge.net/projects/opencore-amr/")
     set_description("A standalone library of the Fraunhofer FDK AAC code from Android.")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/mstorsjo/fdk-aac.git")
