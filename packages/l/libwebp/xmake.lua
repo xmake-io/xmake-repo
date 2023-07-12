@@ -38,7 +38,7 @@ package("libwebp")
         add_extsources("apt::libwebp-dev", "pacman::libwebp")
     end
 
-    on_load("linux", "macosx", "windows", "mingw", "bsd", "wasm", function (package)
+    on_load(function (package)
         for _, l in ipairs({"webp", "webpdecoder", "webpencoder", "webpdemux"}) do
             if package:version():ge("1.3") then
                 package:add("links", (package:is_plat("windows") and "lib" or "") .. l)
