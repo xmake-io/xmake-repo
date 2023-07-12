@@ -7,8 +7,11 @@ package("fxdiv")
     add_urls("https://github.com/Maratyszcza/FXdiv.git")
     add_versions("2020.12.09", "63058eff77e11aa15bf531df5dd34395ec3017c8")
 
+    add_deps("cmake")
+
     on_install("windows", "macosx", "linux", function(package)
-        os.cp("include", package:installdir())
+        local configs = {"-DFXDIV_BUILD_TESTS=OFF", "-DFXDIV_BUILD_BENCHMARKS=OFF"}
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function(package)
