@@ -17,7 +17,7 @@ package("cgltf")
         assert(package:check_cxxsnippets({test = [[
             #define CGLTF_IMPLEMENTATION
             #include <cgltf.h>
-            void main() {
+            int main() {
                 cgltf_node node{};
                 cgltf_float matrix[16];
                 cgltf_node_transform_local(&node, matrix);
