@@ -261,6 +261,11 @@ package("boost")
                 table.insert(argv, "--with-" .. libname)
             end
         end
+
+        if package:is_plat("linux") then
+            table.insert(argv, "pch=off")
+        end
+
         os.vrunv("./b2", argv, {envs = runenvs})
     end)
 
