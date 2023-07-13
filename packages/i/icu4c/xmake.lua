@@ -27,13 +27,13 @@ package("icu4c")
     if is_plat("windows") then
         add_deps("python 3.x", {kind = "binary"})
     end
-    
+
     if is_plat("linux") then
         add_syslinks("dl")
     end
 
     on_load(function (package)
-        local libsuffix = package:is_debug() and "d" or ""
+        local libsuffix = package:is_debug() and package:is_plat("mingw", "windows") and "d" or ""
         package:add("links", "icutu" .. libsuffix, "icuio" .. libsuffix)
         if package:is_plat("mingw", "windows") then
             package:add("links", "icuin" .. libsuffix, "icuuc" .. libsuffix, "icudt" .. libsuffix)
