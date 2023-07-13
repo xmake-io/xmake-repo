@@ -46,7 +46,7 @@ package("libiconv")
         })
     end)
 
-    on_install("macosx", "linux", "cross", "android", function (package)
+    on_install("macosx", "linux", "bsd", "cross", "android",  "wasm", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings"}
         if not package:is_plat("macosx") then
             table.insert(configs, "--enable-relocatable")
@@ -65,7 +65,7 @@ package("libiconv")
     end)
 
     on_test(function (package)
-        if package:is_plat("macosx", "linux") then
+        if package:is_plat("macosx", "linux", "bsd") then
             os.vrun("iconv --version")
         end
         assert(package:check_csnippets({test = [[
