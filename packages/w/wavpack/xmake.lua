@@ -11,7 +11,8 @@ package("wavpack")
     add_versions("5.5.0",  "b3d11ba35d12c7d2ed143036478b6f9f4bdac993d84b5ed92615bc6b60697b8a")
     add_versions("5.6.0",  "44043e8ffe415548d5723e9f4fc6bda5e1f429189491c5fb3df08b8dcf28df72")
 
-    add_deps("cmake", "libiconv", "openssl")
+    add_deps("cmake")
+    add_deps("libiconv", "openssl", {optional = true})
 
     on_install("windows", "linux", "bsd", "macosx", "mingw", "android", "wasm", function (package)
         local configs = {"-DWAVPACK_INSTALL_CMAKE_MODULE=OFF", "-DWAVPACK_INSTALL_DOCS=OFF", "-DWAVPACK_INSTALL_PKGCONFIG_MODULE=OFF"}
