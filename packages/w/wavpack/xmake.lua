@@ -14,6 +14,10 @@ package("wavpack")
     add_deps("cmake")
     add_deps("libiconv", "openssl", {optional = true})
 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     on_install("windows", "linux", "bsd", "macosx", "mingw", "android", "wasm", function (package)
         local configs = {"-DWAVPACK_INSTALL_CMAKE_MODULE=OFF", "-DWAVPACK_INSTALL_DOCS=OFF", "-DWAVPACK_INSTALL_PKGCONFIG_MODULE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))

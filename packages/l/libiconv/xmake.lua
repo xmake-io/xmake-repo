@@ -15,6 +15,8 @@ package("libiconv")
     elseif is_plat("android") then
         add_patches("1.x", path.join(os.scriptdir(), "patches", "1.16", "makefile.in.patch"),
             "d09e4212040f5adf1faa5cf5a9a18f6f79d4cdce9affb05f2e75df2ea3b3d686")
+    elseif is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     on_fetch("macosx", "linux", function (package, opt)
@@ -46,7 +48,7 @@ package("libiconv")
         })
     end)
 
-    on_install("macosx", "linux", "bsd", "cross", "android","wasm", function (package)
+    on_install("macosx", "linux", "bsd", "cross", "android", "wasm", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings"}
         if not package:is_plat("macosx") then
             table.insert(configs, "--enable-relocatable")
