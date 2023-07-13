@@ -67,8 +67,12 @@ package("elfutils")
             table.insert(cflags, '-Dprogram_invocation_short_name=\\\"test\\\"')
             table.insert(cflags, '-D_GNU_SOURCE=1')
         end
+        local packagedeps = {"zlib"}
+        if package:is_plat("android") then
+            table.join2(packagedeps, "libintl", "argp-standalone")
+        end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags,
-            packagedeps = {"zlib", "libintl", "argp-standalone"}})
+            packagedeps = packagedeps})
         if package:config("shared") then
             os.rm(path.join(package:installdir("lib"), "*.a"))
         else
