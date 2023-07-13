@@ -15,7 +15,11 @@ package("cimg")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("cimg_library::CImg<>", {
-            includes = "CImg.h", configs = {defines = "cimg_display=0"}
-        }))
+        assert(package:has_cxxsnippets({test = [[
+            int main() {
+                cimg_library::CImg<uint8_t> img{ 128, 128, 1, 3 };
+                img.fill(32);
+                img.noise(128);
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "CImg.h"}))
     end)
