@@ -45,8 +45,7 @@ package("icu4c")
     on_install("windows", function (package)
         import("package.tools.msbuild")
         local projectfiles = os.files("source/**.vcxproj")
-        table.insert(projectfiles, path.join("source", "allinone", "allinone.sln"))
-        print(projectfiles)
+        table.join2(projectfiles, path.join("source", "allinone", "allinone.sln"), os.files("source/**.props"))
         if package:is_cross() then
             -- icu build requires native tools
             local configs = {path.join("source", "allinone", "allinone.sln")}
