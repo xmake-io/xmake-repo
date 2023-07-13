@@ -25,7 +25,7 @@ package("cimg")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             int main() {
-                cimg_library::CImg<uint8_t> img{ 128, 128, 1, 3 };
+                cimg_library::CImg<unsigned char> img{ 128, 128, 1, 3 };
                 img.fill(32);
                 img.noise(128);
             }
