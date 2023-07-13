@@ -76,8 +76,6 @@ package("boost")
         add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
     end
 
-    add_configs("pch", {description="Enable precompiled header.", default=true, type="boolean"})
-
     on_load(function (package)
         function get_linkname(package, libname)
             local linkname
@@ -264,8 +262,10 @@ package("boost")
             end
         end
 
-        table.insert(argv, "pch=" ..(package:config("pch") and "on" or "off"))
-
+        if is_plat("linux") then
+            table.insert(argv, "pch=off")
+        end
+        
         os.vrunv("./b2", argv, {envs = runenvs})
     end)
 
