@@ -6,6 +6,7 @@ package("icu4c")
     add_urls("https://github.com/unicode-org/icu/releases/download/release-$(version)-src.tgz", {version = function (version)
             return (version:gsub("%.", "-")) .. "/icu4c-" .. (version:gsub("%.", "_"))
         end})
+    add_versions("73.2", "818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1")
     add_versions("73.1", "a457431de164b4aa7eca00ed134d00dfbf88a77c6986a10ae7774fc076bb8c45")
     add_versions("72.1", "a2d2d38217092a7ed56635e34467f92f976b370e20182ad325edea6681a71d68")
     add_versions("71.1", "67a7e6e51f61faf1306b6935333e13b2c48abd8da6d2f46ce6adca24b1e21ebf")
@@ -20,30 +21,49 @@ package("icu4c")
     if is_plat("mingw") then
         add_patches("72.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
         add_patches("73.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
+        add_patches("73.2", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
     end
 
-    add_links("icutu", "icuio")
-    if is_plat("mingw", "windows") then
-        add_links("icuin", "icuuc", "icudt")
-    else
-        add_links("icui18n", "icuuc", "icudata")
+    if is_plat("windows") then
+        add_deps("python 3.x", {kind = "binary"})
     end
 
     if is_plat("linux") then
         add_syslinks("dl")
     end
-    if is_plat("windows") then
-        add_deps("python 3.x", {kind = "binary"})
-    end
+
+    on_load(function (package)
+        local libsuffix = package:is_debug() and package:is_plat("mingw", "windows") and "d" or ""
+        package:add("links", "icutu" .. libsuffix, "icuio" .. libsuffix)
+        if package:is_plat("mingw", "windows") then
+            package:add("links", "icuin" .. libsuffix, "icuuc" .. libsuffix, "icudt" .. libsuffix)
+        else
+            package:add("links", "icui18n" .. libsuffix, "icuuc" .. libsuffix, "icudata" .. libsuffix)
+        end
+    end)
 
     on_install("windows", function (package)
+        import("package.tools.msbuild")
+        local projectfiles = os.files("source/**.vcxproj")
+        table.join2(projectfiles, path.join("source", "allinone", "allinone.sln"), os.files("source/**.props"))
+        if package:is_cross() then
+            -- icu build requires native tools
+            local configs = {path.join("source", "allinone", "allinone.sln")}
+            table.insert(configs, "/p:Configuration=Release")
+            table.insert(configs, "/p:Platform=" .. os.arch())
+            msbuild.build(package, configs, {upgrade = projectfiles})
+        end
         local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
-        table.insert(configs, "/p:Configuration=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
-        import("package.tools.msbuild").build(package, configs)
+        msbuild.build(package, configs, {upgrade = projectfiles})
+
+        local suffix = package:is_plat("arm") and "ARM" or ""
+        if package:is_plat("*64") then
+            suffix = suffix .. "64"
+        end
+
         os.cp("include", package:installdir())
-        os.cp("bin*/*", package:installdir("bin"))
-        os.cp("lib*/*", package:installdir("lib"))
+        os.cp("bin" .. suffix .. "/*", package:installdir("bin"))
+        os.cp("lib" .. suffix .. "/*", package:installdir("lib"))
         package:addenv("PATH", "bin")
     end)
 

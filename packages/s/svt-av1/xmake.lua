@@ -1,6 +1,7 @@
 package("svt-av1")
     set_homepage("https://gitlab.com/AOMediaCodec/SVT-AV1")
     set_description("Scalable Video Technology for AV1 (SVT-AV1 Encoder and Decoder)")
+    set_license("BSD-2-clause")
 
     add_urls("https://gitlab.com/AOMediaCodec/SVT-AV1.git",
              "https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v$(version)/SVT-AV1-v$(version).tar.gz")
