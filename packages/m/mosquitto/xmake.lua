@@ -27,11 +27,8 @@ package("mosquitto")
     end
     add_configs("dlt", {description = "Include DLT support", default = false, type = "boolean"})
  
-    add_configs("cpp", {description = "Build C++ library", default = true, type = "boolean"})
-    add_configs("clients", {description = "Build clients", default = false, type = "boolean"})
+    add_configs("lib_cpp", {description = "Build C++ library", default = true, type = "boolean"})
     add_configs("broker", {description = "Build broker", default = false, type = "boolean"})
-    add_configs("apps", {description = "Build apps", default = false, type = "boolean"})
-    add_configs("plugins", {description = "Build plugins", default = false , type = "boolean"})
  
     add_deps("cmake")
  
@@ -84,14 +81,14 @@ package("mosquitto")
             "threading",
             "dlt",
  
-            "cpp",
+            "lib_cpp",
             "clients",
             "broker", 
             "apps",  
             "plugins", 
         }
 
-        for _,value in pairs(configs_list) do
+        for _, value in ipairs(configs_list) do
             table.insert(configs, "-DWITH_" .. value:upper() .. "=" .. (package:config(value) and "ON" or "OFF"))
         end
  
@@ -104,7 +101,6 @@ package("mosquitto")
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
     
- 
     on_test(function (package)
         assert(package:check_csnippets({test = [[
             #include <mosquitto.h>
@@ -113,4 +109,3 @@ package("mosquitto")
             }
         ]]}))
     end)
- 
