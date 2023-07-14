@@ -12,7 +12,9 @@ package("wavpack")
     add_versions("5.6.0",  "44043e8ffe415548d5723e9f4fc6bda5e1f429189491c5fb3df08b8dcf28df72")
 
     add_deps("cmake")
-    add_deps("libiconv", "openssl", {optional = true})
+    if not is_plat("windows") then
+        add_deps("libiconv", "openssl", {optional = true})
+    end
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
