@@ -62,33 +62,11 @@ package("mosquitto")
     end)
  
     on_install("windows", "linux", "macosx", function (package)
-        local configs ={"-DDOCUMENTATION=OFF"}
+        local configs ={"-DDOCUMENTATION=OFF", "-DWITH_CLIENTS=OFF", "-DWITH_APPS=OFF", "-DWITH_PLUGINS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DWITH_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))
  
-        local configs_list =
-        {
-            "tls",
-            "cjson",
-            "bundled_deps",
-            "websockets",
- 
-            "tls_psk",
-            "ec",
-            "unix_sockets",
-            "socks",
-            "srv",
-            "threading",
-            "dlt",
- 
-            "lib_cpp",
-            "clients",
-            "broker", 
-            "apps",  
-            "plugins", 
-        }
-
-        for _, value in ipairs(configs_list) do
+        for _, value in ipairs(package:configs()) do
             table.insert(configs, "-DWITH_" .. value:upper() .. "=" .. (package:config(value) and "ON" or "OFF"))
         end
  
