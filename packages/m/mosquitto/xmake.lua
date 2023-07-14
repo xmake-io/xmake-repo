@@ -66,8 +66,10 @@ package("mosquitto")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DWITH_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))
  
-        for _, value in ipairs(package:configs()) do
-            table.insert(configs, "-DWITH_" .. value:upper() .. "=" .. (package:config(value) and "ON" or "OFF"))
+        for name, value in pairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") then
+                table.insert(configs, "-DWITH_" .. name:upper() .. "=" .. (value and "ON" or "OFF"))
+            end
         end
  
         local packagedeps = {}
