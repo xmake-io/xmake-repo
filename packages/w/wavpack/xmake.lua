@@ -11,6 +11,10 @@ package("wavpack")
     add_versions("5.5.0",  "b3d11ba35d12c7d2ed143036478b6f9f4bdac993d84b5ed92615bc6b60697b8a")
     add_versions("5.6.0",  "44043e8ffe415548d5723e9f4fc6bda5e1f429189491c5fb3df08b8dcf28df72")
 
+    add_configs("legacy",  {description = "Decode legacy (< 4.0) WavPack files", default = false, type = "boolean"})
+    add_configs("threads", {description = "Enable support for threading in libwavpack", default = true, type = "boolean"})
+    add_configs("dsd",     {description = "Enable support for WavPack DSD files", default = true, type = "boolean"})
+
     add_deps("cmake")
     if not is_plat("windows") then
         add_deps("libiconv", "openssl", {optional = true})
@@ -24,6 +28,13 @@ package("wavpack")
         local configs = {"-DWAVPACK_INSTALL_CMAKE_MODULE=OFF", "-DWAVPACK_INSTALL_DOCS=OFF", "-DWAVPACK_INSTALL_PKGCONFIG_MODULE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        for name, enabled in pairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") then
+                table.insert(configs, "-DWAVPACK_ENABLE_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
+            end
+        end
+
         import("package.tools.cmake").install(package, configs)
     end)
 
