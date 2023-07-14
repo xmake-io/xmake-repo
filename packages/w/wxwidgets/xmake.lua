@@ -117,6 +117,19 @@ package("wxwidgets")
             table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=2")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("linux") then
+            local gtk = package:dep("gtk+3"):fetch()
+            if gtk then
+                local includedirs = gtk.includedirs or gtk.sysincludedirs
+                if includedirs then
+                    table.insert(configs, "-DGTK3_INCLUDE_DIRS=" .. table.concat(table.wrap(includedirs), ";"))
+                end
+                local links = gtk.links
+                if links then
+                    table.insert(configs, "-DGTK3_LIBRARIES=" .. table.concat(table.wrap(links), ";"))
+                end
+            end
+        end
         import("package.tools.cmake").install(package, configs)
         local version = package:version()
         local subdir = "wx-" .. version:major() .. "." .. version:minor()
