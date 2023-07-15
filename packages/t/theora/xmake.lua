@@ -18,7 +18,7 @@ package("theora")
     end
 
     on_install("@bsd", "@linux", "@macosx", "wasm", function (package)
-        local configs = {"--disable-spec", "--disable-libtool-lock" ,"--disable-oggtest", "--disable-vorbistest", "--disable-sdltest", "--disable-examples"}
+        local configs = {"--disable-spec", "--disable-oggtest", "--disable-vorbistest", "--disable-sdltest", "--disable-examples"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_plat("wasm") then
             table.join2(configs, {"--disable-asm", "--host=i686-linux", "--enable-fast-install=no"})
@@ -26,8 +26,6 @@ package("theora")
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        os.vrun("aclocal")
-        os.vrun("libtoolize --force")
         import("package.tools.autoconf").install(package, configs)
     end)
 
