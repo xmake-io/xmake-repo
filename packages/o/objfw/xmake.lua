@@ -1,4 +1,4 @@
-package("objfw")
+package("objfw-local")
     set_homepage("https://objfw.nil.im")
     set_description("[Official Mirror] A portable framework for the Objective-C language.")
 
@@ -12,13 +12,38 @@ package("objfw")
         add_frameworks("CoreFoundation")
     end
 
-    on_install("linux", "macosx", function (package)
-        local configs = {"--without-tls"}
+    add_configs("tls", {
+        description = "Enable TLS support.",
+        default = true,
+        type = "boolean"
+    })
+
+    add_configs("arc", {
+        description = "Enable Automatic Reference Counting (ARC) support.",
+        default = true,
+        type = "boolean"
+    })
+
+    on_install("linux", "macosx", "msys", function (package)
+        local configs = {}
+        table.insert(configs, (package:config("tls") and "" or "--without-tls"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
         import("package.tools.autoconf").install(package, configs)
+    end)
+
+    on_load(function (package)
+        local tool = import("lib.detect.find_tool")
+
+        local objfwcfg = tool("objfw-config")
+
+        local objcflags = os.iorunv(objfwcfg.program, { "--objcflags", (package:config("arc") and "--arc" or "") })
+        local ldflags = os.iorunv(objfwcfg.program, { "--ldflags" })
+
+        package:add("mflags", objcflags)
+        package:add("ldflags", ldflags)
     end)
 
     on_test(function (package)
