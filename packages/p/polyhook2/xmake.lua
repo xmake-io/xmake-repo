@@ -9,7 +9,7 @@ package("polyhook2")
 
     add_configs("shared_deps", {description = "Use shared library for dependency", default = false, type = "boolean"})
 
-    on_install("windows|x86", "windows|x64", "linux|i386", "linux|x86_64", "macosx|i386", "macosx|x86_64", function (package)
+    on_install("windows|x86", "windows|x64", "linux|i386", "linux|x86_64", function (package)
         local configs = {}
         table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
