@@ -35,12 +35,21 @@ package("objfw-local")
 
         local tool = import("lib.detect.find_tool")
 
-        --use the built objfw-config
-        local objfwcfg = tool("objfw-config")
-        print("Found objfwconfig: ", objfwcfg)
+        local objfwcfg = tool("objfw-config", { paths = { package:installdir("bin") } }).program
 
-        local objcflags = os.iorunv(objfwcfg.program, { "--objcflags", (package:config("arc") and "--arc" or "") })
-        local ldflags = os.iorunv(objfwcfg.program, { "--ldflags" })
+        local objcflags_str = os.iorunv(objfwcfg, { "--objcflags", (package:config("arc") and "--arc" or "") })
+        local ldflags_str = os.iorunv(objfwcfg, { "--ldflags" })
+
+        local objcflags = {}
+        local ldflags = {}
+
+        for flag in objcflags_str:gmatch("%S+") do
+            table.insert(objcflags, flag)
+        end
+
+        for flag in ldflags_str:gmatch("%S+") do
+            table.insert(ldflags, flag)
+        end
 
         package:add("mflags", objcflags)
         package:add("ldflags", ldflags)
