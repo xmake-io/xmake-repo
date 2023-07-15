@@ -24,5 +24,5 @@ package("mint")
     end)
 
     on_test(function (package)
-        assert(package:has_cincludes("MINT.h"))
+        assert(package:has_cfuncs("NtCreateProcess", {includes = "MINT.h"}))
     end)
