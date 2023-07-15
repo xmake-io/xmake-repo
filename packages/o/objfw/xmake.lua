@@ -1,6 +1,6 @@
-package("objfw")
+package("objfw-local")
     set_homepage("https://objfw.nil.im")
-    set_description("Portable framework for the Objective-C language.")
+    set_description("[Official Mirror] A portable framework for the Objective-C language.")
 
     add_urls("https://github.com/ObjFW/ObjFW.git")
     add_versions("2023.03.18", "86cec7d17dd323407f30fc5947e0e92cc307e869")
@@ -32,12 +32,12 @@ package("objfw")
             table.insert(configs, "--enable-debug")
         end
         import("package.tools.autoconf").install(package, configs)
-    end)
 
-    on_load(function (package)
         local tool = import("lib.detect.find_tool")
 
+        --use the built objfw-config
         local objfwcfg = tool("objfw-config")
+        print("Found objfwconfig: ", objfwcfg)
 
         local objcflags = os.iorunv(objfwcfg.program, { "--objcflags", (package:config("arc") and "--arc" or "") })
         local ldflags = os.iorunv(objfwcfg.program, { "--ldflags" })
