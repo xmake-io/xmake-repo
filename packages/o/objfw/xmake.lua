@@ -1,6 +1,6 @@
-package("objfw-local")
+package("objfw")
     set_homepage("https://objfw.nil.im")
-    set_description("[Official Mirror] A portable framework for the Objective-C language.")
+    set_description("Portable framework for the Objective-C language.")
 
     add_urls("https://github.com/ObjFW/ObjFW.git")
     add_versions("2023.03.18", "86cec7d17dd323407f30fc5947e0e92cc307e869")
