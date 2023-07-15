@@ -50,14 +50,14 @@ package("icu4c")
             -- icu build requires native tools
             local configs = {path.join("source", "allinone", "allinone.sln")}
             table.insert(configs, "/p:Configuration=Release")
-            table.insert(configs, "/p:Platform=" .. os.arch())
+            table.insert(configs, "/p:Platform=" .. package:arch())
             msbuild.build(package, configs, {upgrade = projectfiles})
         end
         local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
         msbuild.build(package, configs, {upgrade = projectfiles})
 
-        local suffix = package:is_plat("arm") and "ARM" or ""
-        if package:is_plat("*64") then
+        local suffix = package:is_plat("arm.*") and "ARM" or ""
+        if package:is_arch(".*64") then
             suffix = suffix .. "64"
         end
 
