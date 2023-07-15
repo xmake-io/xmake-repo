@@ -5,15 +5,22 @@ package("polyhook2")
 
     add_urls("https://github.com/stevemk14ebr/PolyHook_2_0.git")
 
-    add_configs("shared_deps", {description = "Use shared library for dependency", default = false, type = "boolean"})
-
     on_install("windows|x86", "windows|x64", "linux|i386", "linux|x86_64", "macosx|i386", "macosx|x86_64", function (package)
         local configs = {}
         table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DPOLYHOOK_BUILD_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            local static_runtime = package:config("vs_runtime"):startswith("MT")
+            table.insert(configs, "-DPOLYHOOK_BUILD_STATIC_RUNTIME=" .. (static_runtime and "ON" or "OFF"))
+            if not static_runtime then
+                table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_ASMTK=ON")
+                table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_ASMJIT=ON")
+            end
+        end
         if package:config("shared_deps") then
-            table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_ASMTK=ON")
-            table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_ASMJIT=ON")
+            if not package:is_plat("windows") then
+                table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_ASMTK=ON")
+                table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_ASMJIT=ON")
+            end
             table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_ZYDIS=ON")
         end
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
