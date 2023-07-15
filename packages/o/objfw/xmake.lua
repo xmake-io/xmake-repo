@@ -24,7 +24,7 @@ package("objfw-local")
         type = "boolean"
     })
 
-    on_install("linux", "macosx", "msys", function (package)
+    on_install("linux", "macosx", "cygwin", function (package)
         local configs = {}
         table.insert(configs, (package:config("tls") and "" or "--without-tls"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
