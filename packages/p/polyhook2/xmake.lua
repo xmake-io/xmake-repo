@@ -28,6 +28,7 @@ package("polyhook2")
             table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_ZYDIS=ON")
         end
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        package:add("links", "PolyHook_2", "asmtk", "asmjit", "Zycore", "Zydis")
     end)
 
     on_test(function (package)
