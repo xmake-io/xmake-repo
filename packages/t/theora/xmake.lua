@@ -12,21 +12,22 @@ package("theora")
     add_versions("1.1.1", "316ab9438310cf65c38aa7f5e25986b9d27e9aec771668260c733817ecf26dff")
 
     add_deps("libogg")
-    if is_plat("bsd", "linux", "macosx") then
-        add_deps("autoconf", "automake", "libtool")
-    elseif is_plat("wasm") then
+    add_deps("autoconf", "automake", "libtool")
+    if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     on_install("@bsd", "@linux", "@macosx", "wasm", function (package)
-        local configs = {"--disable-libtool-lock" ,"--disable-oggtest", "--disable-vorbistest", "--disable-sdltest", "--disable-examples"}
+        local configs = {"--disable-spec", "--disable-libtool-lock" ,"--disable-oggtest", "--disable-vorbistest", "--disable-sdltest", "--disable-examples"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_plat("wasm") then
-            table.insert(configs, "--disable-asm")
+            table.join2(configs, {"--disable-asm", "--host=i686-linux", "--enable-fast-install=no"})
         end
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
+        os.vrun("aclocal")
+        os.vrun("libtoolize --force")
         import("package.tools.autoconf").install(package, configs)
     end)
 
