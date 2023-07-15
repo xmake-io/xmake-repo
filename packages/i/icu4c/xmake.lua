@@ -56,7 +56,7 @@ package("icu4c")
         local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
         msbuild.build(package, configs, {upgrade = projectfiles})
 
-        local suffix = package:is_plat("arm") and "ARM" or ""
+        local suffix = package:is_plat("arm.*") and "ARM" or ""
         if package:is_arch(".*64") then
             suffix = suffix .. "64"
         end
