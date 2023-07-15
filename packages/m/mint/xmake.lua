@@ -11,6 +11,8 @@ package("mint")
 
     add_configs("namespace", {description = "use separate namespace", default = false, type = "boolean"})
 
+    add_syslinks("ntdll")
+
     on_load(function (package)
         if package:config("namespace") then
             package:add("defines", "MINT_USE_SEPARATE_NAMESPACE")
