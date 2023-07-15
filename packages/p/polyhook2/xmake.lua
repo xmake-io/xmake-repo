@@ -4,6 +4,8 @@ package("polyhook2")
     set_license("MIT")
 
     add_urls("https://github.com/stevemk14ebr/PolyHook_2_0.git")
+    
+    add_versions("2023.7.15", "0d4d90e35ecc8ead9940c23cd29e7d8952b1bcb6")
 
     on_install("windows|x86", "windows|x64", "linux|i386", "linux|x86_64", "macosx|i386", "macosx|x86_64", function (package)
         local configs = {}
