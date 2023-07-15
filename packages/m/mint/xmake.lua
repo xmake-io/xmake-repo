@@ -1,7 +1,7 @@
 package("mint")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/Chuyu-Team/MINT")
-    set_description("Argh! A minimalist argument handler.")
+    set_description("Mouri's Internal NT API Collections")
     set_license("MIT")
 
     add_urls("https://github.com/Chuyu-Team/MINT/archive/refs/tags/$(version).tar.gz",
