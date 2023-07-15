@@ -57,7 +57,7 @@ package("icu4c")
         msbuild.build(package, configs, {upgrade = projectfiles})
 
         local suffix = package:is_plat("arm") and "ARM" or ""
-        if package:is_plat("*64") then
+        if package:is_arch(".*64") then
             suffix = suffix .. "64"
         end
 
