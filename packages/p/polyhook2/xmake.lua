@@ -9,6 +9,8 @@ package("polyhook2")
 
     add_configs("shared_deps", {description = "Use shared library for dependency", default = false, type = "boolean"})
 
+    add_deps("cmake")
+
     on_install("windows|x86", "windows|x64", "linux|i386", "linux|x86_64", function (package)
         local configs = {}
         table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
