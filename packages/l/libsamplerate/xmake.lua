@@ -18,9 +18,7 @@ package("libsamplerate")
         table.insert(configs, "-DBUILD_TESTING=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
         table.insert(configs, "-DLIBSAMPLERATE_EXAMPLES=OFF")
-
         import("package.tools.cmake").install(package, configs)
     end)
 
