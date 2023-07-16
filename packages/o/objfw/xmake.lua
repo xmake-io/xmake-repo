@@ -34,7 +34,7 @@ package("objfw")
 
     add_configs("arc", { description = "Enable Automatic Reference Counting (ARC) support.", default = true, type = "boolean" })
 
-    on_install("linux", "macosx", "cygwin", function (package)
+    on_install("linux", "macosx", "cygwin", "mingw", function (package)
         local configs = {}
         table.insert(configs, (package:config("tls") and "" or "--without-tls"))
 
