@@ -37,25 +37,34 @@ package("objfw")
     on_install("linux", "macosx", "cygwin", function (package)
         local configs = {}
         table.insert(configs, (package:config("tls") and "" or "--without-tls"))
+
+        local function config(cfg)
+            if package:config(cfg) then
+                table.insert(configs, "--enable-" .. cfg)
+            else
+                table.insert(configs, "--disable-" .. cfg)
+            end
+        end
+
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
 
-        table.insert(configs, "--disable-threads=" .. (package:config("threads") and "no" or "yes"))
-        table.insert(configs, "--disable-compiler-tls=" .. (package:config("compiler-tls") and "no" or "yes"))
-        table.insert(configs, "--disable-files=" .. (package:config("files") and "no" or "yes"))
-        table.insert(configs, "--disable-sockets=" .. (package:config("sockets") and "no" or "yes"))
+        config("threads")
+        config("compiler-tls")
+        config("files")
+        config("sockets")
 
-        table.insert(configs, "--disable-codepage-437=" .. (package:config("codepage-437") and "no" or "yes"))
-        table.insert(configs, "--disable-codepage-850=" .. (package:config("codepage-850") and "no" or "yes"))
-        table.insert(configs, "--disable-codepage-858=" .. (package:config("codepage-858") and "no" or "yes"))
-        table.insert(configs, "--disable-iso-8859-2=" .. (package:config("iso-8859-2") and "no" or "yes"))
-        table.insert(configs, "--disable-iso-8859-3=" .. (package:config("iso-8859-3") and "no" or "yes"))
-        table.insert(configs, "--disable-iso-8859-15=" .. (package:config("iso-8859-15") and "no" or "yes"))
-        table.insert(configs, "--disable-koi8-r=" .. (package:config("koi8-r") and "no" or "yes"))
-        table.insert(configs, "--disable-koi8-u=" .. (package:config("koi8-u") and "no" or "yes"))
-        table.insert(configs, "--disable-mac-roman=" .. (package:config("mac-roman") and "no" or "yes"))
-        table.insert(configs, "--disable-windows-1251=" .. (package:config("windows-1251") and "no" or "yes"))
-        table.insert(configs, "--disable-windows-1252=" .. (package:config("windows-1252") and "no" or "yes"))
+        config("codepage-437")
+        config("codepage-858")
+        config("codepage-850")
+        config("iso-8859-3")
+        config("iso-8859-2")
+        config("koi8-r")
+        config("koi8-u")
+        config("iso-8859-15")
+        config("mac-roman")
+        config("windows-1251")
+        config("windows-1252")
 
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
