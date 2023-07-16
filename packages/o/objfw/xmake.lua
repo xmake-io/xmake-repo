@@ -40,7 +40,7 @@ package("objfw")
 
     on_install("linux", "macosx", "cygwin", "mingw", function (package)
         local configs = {}
-        table.insert(configs, (package:config("tls") and "" or "--without-tls"))
+        table.insert(configs, (package:config("tls") and "--with-tls" or "--without-tls"))
 
         local function config(cfg)
             if package:config(cfg) then
