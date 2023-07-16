@@ -39,13 +39,13 @@ package("libwebp")
 
     on_load(function (package)
         local links = {"webpdecoder", "webpencoder", "webpdemux"}
-        if package:config("sharpyuv") or package:version():ge("1.2.3") then
-            table.insert(links, "sharpyuv")
-        end
         if package:config("libwebpmux") then
             table.insert(links, "webpmux")
         end
         table.insert(links, "webp")
+        if package:config("sharpyuv") or package:version():ge("1.2.3") then
+            table.insert(links, "sharpyuv")
+        end
 
         for _, l in ipairs(links) do
             if package:version():ge("1.3") then
