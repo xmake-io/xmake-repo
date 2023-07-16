@@ -22,7 +22,7 @@ package("theora")
         import("package.tools.make").install(package, {})
     end)
 
-    on_install("@bsd", "@linux", "@macosx", "wasm", function (package)
+    on_install("bsd", "linux", "macosx", "wasm", function (package)
         local configs = {"--disable-spec", "--disable-oggtest", "--disable-vorbistest", "--disable-sdltest", "--disable-examples"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_plat("wasm") then
