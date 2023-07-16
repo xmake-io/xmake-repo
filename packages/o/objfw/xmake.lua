@@ -12,13 +12,37 @@ package("objfw")
         add_frameworks("CoreFoundation")
     end
 
-    on_install("linux", "macosx", function (package)
-        local configs = {"--without-tls"}
+    add_configs("tls", { description = "Enable TLS support.", default = true, type = "boolean" })
+
+    add_configs("arc", { description = "Enable Automatic Reference Counting (ARC) support.", default = true, type = "boolean" })
+
+    on_install("linux", "macosx", "cygwin", function (package)
+        local configs = {}
+        table.insert(configs, (package:config("tls") and "" or "--without-tls"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
         import("package.tools.autoconf").install(package, configs)
+
+        local objfwcfg = import("lib.detect.find_tool").("objfw-config", { paths = { package:installdir("bin") } }).program
+
+        local objcflags_str = os.iorunv(objfwcfg, { "--objcflags", (package:config("arc") and "--arc" or "") })
+        local ldflags_str = os.iorunv(objfwcfg, { "--ldflags" })
+
+        local objcflags = {}
+        local ldflags = {}
+
+        for flag in objcflags_str:gmatch("%S+") do
+            table.insert(objcflags, flag)
+        end
+
+        for flag in ldflags_str:gmatch("%S+") do
+            table.insert(ldflags, flag)
+        end
+
+        package:add("mflags", objcflags)
+        package:add("ldflags", ldflags)
     end)
 
     on_test(function (package)
