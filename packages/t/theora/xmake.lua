@@ -29,8 +29,8 @@ package("theora")
 
         local libtool_ver = package:dep("libtool"):version_str()
         io.replace("autogen.sh", "cd $olddir", [[cd $olddir
-                   echo 'sed -i "s/macro_version=.*/macro_version=]] .. libtool_ver .. [[/" $srcdir/libtool' >> $srcdir/configure
-                   echo 'sed -i "s/macro_revision=.*/macro_revision=]] .. libtool_ver .. [[/" $srcdir/libtool' >> $srcdir/configure
+                   echo "]] .. os.programfile() .. [[ l -c 'io.replace(\"$srcdir/libtool\", \"macro_version=%g*\", \"macro_version=]] .. libtool_ver .. [[\")'" >> $srcdir/configure
+                   echo "]] .. os.programfile() .. [[ l -c 'io.replace(\"$srcdir/libtool\", \"macro_revision=%g*\", \"macro_revision=]] .. libtool_ver .. [[\")'" >> $srcdir/configure
                    ]], {plain = true})
 
         import("package.tools.autoconf").install(package, configs)
