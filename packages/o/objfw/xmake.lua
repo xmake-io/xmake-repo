@@ -16,7 +16,7 @@ package("objfw")
     add_configs("rpath", { description = "Enable rpath.", default = true, type = "boolean" })
     --On macOS, you must use the system's runtime
     add_configs("runtime", { description = "Use the included runtime, not recommended for macOS!", default = not is_plat("macosx"), type = "boolean" })
-    add_configs("seluid24", { description = "Use 24 bit instead of 16 but for selector UIDs.", default = false, type = "boolean" })
+    add_configs("seluid24", { description = "Use 24 bit instead of 16 bit for selector UIDs.", default = false, type = "boolean" })
     add_configs("unicode-tables", { description = "Enable Unicode tables.", default = true, type = "boolean" })
 
     add_configs("codepage-437", { description = "Enable codepage 437 support.", default = true, type = "boolean" })
