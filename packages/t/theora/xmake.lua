@@ -17,7 +17,12 @@ package("theora")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_install("@bsd", "@linux", "@macosx", "mingw", "wasm", function (package)
+    on_install("mingw", function (packgae)
+        os.cd("win32/xmingw32")
+        import("package.tools.make").install(package, {})
+    end)
+
+    on_install("@bsd", "@linux", "@macosx", "wasm", function (package)
         local configs = {"--disable-spec", "--disable-oggtest", "--disable-vorbistest", "--disable-sdltest", "--disable-examples"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_plat("wasm") then

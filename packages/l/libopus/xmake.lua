@@ -27,7 +27,7 @@ package("libopus")
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         table.insert(configs, "-DAVX_SUPPORTED=" .. (package:config("avx") and "ON" or "OFF"))
         table.insert(configs, "-DOPUS_X86_MAY_HAVE_AVX=" .. (package:config("check_avx") and "ON" or "OFF"))
-        if package:is_plat("mingw") or package:is_plat("wasm") then
+        if package:is_plat("mingw", "wasm") then
             -- Disable stack protection on MinGW and wasm since it causes link errors
             table.insert(configs, "-DOPUS_STACK_PROTECTOR=OFF")
         elseif package:is_plat("android") then
