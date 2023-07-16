@@ -30,7 +30,6 @@ package("libwebp")
     add_configs("thread",     {description = "Enable threading support.", default = true, type = "boolean"})
 
     add_deps("cmake")
-    add_links("webp", "webpdecoder", "webpencoder", "webpdemux")
 
     if is_plat("macosx") then
         add_extsources("brew::webp")
@@ -39,7 +38,16 @@ package("libwebp")
     end
 
     on_load(function (package)
-        for _, l in ipairs({"webp", "webpdecoder", "webpencoder", "webpdemux"}) do
+        local links = {"webpdecoder", "webpencoder", "webpdemux"}
+        if package:config("sharpyuv") or package:version():ge("1.2.3") then
+            table.insert(links, "sharpyuv")
+        end
+        if package:config("libwebpmux") then
+            table.insert(links, "webpmux")
+        end
+        table.insert(links, "webp")
+
+        for _, l in ipairs(links) do
             if package:version():ge("1.3") then
                 package:add("links", (package:is_plat("windows") and "lib" or "") .. l)
             else
@@ -52,13 +60,6 @@ package("libwebp")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        local lib_prefix = (package:version():ge("1.3") and package:is_plat("windows")) and "lib" or ""
-        if package:config("sharpyuv") or package:version():ge("1.2.3") then
-            package:add("links", lib_prefix .. "sharpyuv")
-        end
-        if package:config("libwebpmux") then
-            package:add("links", lib_prefix .. "webpmux")
-        end
 
         for name, enabled in pairs(package:configs()) do
             if name == "thread" then
