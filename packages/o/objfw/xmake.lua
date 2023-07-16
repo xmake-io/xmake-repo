@@ -13,7 +13,10 @@ package("objfw")
     end
 
     add_configs("tls", { description = "Enable TLS support.", default = true, type = "boolean" })
+    add_configs("rpath", { description = "Enable rpath.", default = true, type = "boolean" })
+    add_configs("runtime", { description = "Use the included runtime.", default = true, type = "boolean" })
     add_configs("seluid24", { description = "Use 24 bit instead of 16 but for selector UIDs.", default = true, type = "boolean" })
+    add_configs("unicode-tables", { description = "Enable Unicode tables.", default = true, type = "boolean" })
 
     add_configs("codepage-437", { description = "Enable codepage 437 support.", default = true, type = "boolean" })
     add_configs("codepage-850", { description = "Enable codepage 850 support.", default = true, type = "boolean" })
@@ -53,6 +56,10 @@ package("objfw")
         config("compiler-tls")
         config("files")
         config("sockets")
+        config("runtime")
+        config("seluid24")
+        config("unicode-tables")
+        config("rpath")
 
         config("codepage-437")
         config("codepage-858")
