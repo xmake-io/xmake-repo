@@ -12,7 +12,7 @@ package("objfw")
         add_frameworks("CoreFoundation")
     end
 
-    add_configs("tls", { description = "Enable TLS support.", default = true, type = "boolean" })
+    add_configs("tls", { description = "Enable TLS support.", default = true, values = { true, false, "yes", "no", "openssl", "gnutls", "securetransport" } })
     add_configs("rpath", { description = "Enable rpath.", default = true, type = "boolean" })
     --On macOS, you must use the system's runtime
     add_configs("runtime", { description = "Use the included runtime, not recommended for macOS!", default = not is_plat("macosx"), type = "boolean" })
@@ -40,7 +40,10 @@ package("objfw")
 
     on_install("linux", "macosx", "cygwin", "mingw", function (package)
         local configs = {}
-        table.insert(configs, (package:config("tls") and "--with-tls" or "--without-tls"))
+
+        local tls = package:config("tls")
+        tls = tls == true and "yes" or tls == false and "no" or tls
+        table.insert(configs, "--enable-tls=" .. tls)
 
         local function config(cfg)
             if package:config(cfg) then
