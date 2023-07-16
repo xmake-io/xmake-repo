@@ -30,6 +30,8 @@ package("libopus")
         if package:is_plat("mingw") or package:is_plat("wasm") then
             -- Disable stack protection on MinGW and wasm since it causes link errors
             table.insert(configs, "-DOPUS_STACK_PROTECTOR=OFF")
+        elseif package:is_plat("android") then
+            table.insert(configs, "-DRUNTIME_CPU_CAPABILITY_DETECTION=OFF")
         end
         import("package.tools.cmake").install(package, configs)
     end)
