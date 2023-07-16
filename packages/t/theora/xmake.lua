@@ -12,12 +12,15 @@ package("theora")
     add_versions("1.1.1", "316ab9438310cf65c38aa7f5e25986b9d27e9aec771668260c733817ecf26dff")
 
     add_deps("libogg")
-    add_deps("autoconf", "automake", "libtool")
+    if is_plat("bsd", "linux", "macosx", "wasm") then
+        add_deps("autoconf", "automake", "libtool")
+    end
+
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_install("mingw", function (packgae)
+    on_install("mingw", function (package)
         os.cd("win32/xmingw32")
         import("package.tools.make").install(package, {})
     end)
