@@ -28,7 +28,7 @@ package("theora")
         table.insert(configs, project .. ".sln")
         table.insert(configs, "-t:" .. project)
         table.insert(configs, "-p:AdditionalIncludeDirectories=" .. package:dep("libogg"):installdir("lib"))
-        import("package.tools.msbuild").install(package, configs, {upgrade = {project .. ".sln"}})
+        import("package.tools.msbuild").build(package, configs, {upgrade = {project .. ".sln"}})
     end)
 
     on_install("mingw", function (package)
