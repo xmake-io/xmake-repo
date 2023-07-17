@@ -6,6 +6,8 @@ package("bdwgc")
              "https://github.com/ivmai/bdwgc.git")
 
     add_versions("v8.2.4", "18e63ab1428bd52e691da107a6a56651c161210b11fbe22e2aa3c31f7fa00ca5")
+
+
     add_deps("cmake")
     on_install(function (package)
         local configs = {}
@@ -13,11 +15,10 @@ package("bdwgc")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
-
     on_test(function (package)
         assert(package:has_cfuncs({test=[[
         
-        int main()
+        void main()
         {
             GC_INIT();
         
@@ -29,5 +30,5 @@ package("bdwgc")
             return 0;
         }
 
-        ]]}),{configs = {includes = "gc"}})
+        ]]}),{configs = {includes = "gc.h"}})
     end)
