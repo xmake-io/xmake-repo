@@ -21,7 +21,7 @@ package("dbus")
     add_includedirs("include/dbus-1.0", "lib/dbus-1.0/include")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-    add_configs("system_bus_address", {description = "D-Bus system bus address.", default = nil, type = "string"})
+    add_configs("system_bus_address", {description = "D-Bus system bus address.", type = "string"})
 
     on_install("windows", "linux", "macosx", "cross", function (package)
         local configs = {"-DDBUS_BUILD_TESTS=OFF", "-DDBUS_ENABLE_DOXYGEN_DOCS=OFF", "-DDBUS_ENABLE_XML_DOCS=OFF"}
@@ -29,7 +29,7 @@ package("dbus")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
 
         local system_bus_address = package:config("system_bus_address")
-        if system_bus_address ~= nil then
+        if system_bus_address then
             table.insert(configs, "-DDBUS_SYSTEM_BUS_DEFAULT_ADDRESS=" .. system_bus_address)
         end
 
