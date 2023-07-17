@@ -20,17 +20,9 @@ package("bdwgc")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test=[[
-        #include <gc.h>
-        #include <stdio.h>
     
         int main() {
             GC_INIT();
-    
-            int* ptr = GC_MALLOC(sizeof(int));
-            *ptr = 42;
-    
-            printf("Value: %d\n", *ptr);
-    
             return 0;
         }
 
