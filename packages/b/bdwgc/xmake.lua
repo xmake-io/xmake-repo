@@ -42,5 +42,5 @@ package("bdwgc")
         
           return 0;
         }
-        ]]},{configs = {languages = "c++17"},includes = "gc/gc_cpp"}))
+        ]]},{configs = {languages = "c++11"},includes = "gc/gc_cpp"}))
     end)
