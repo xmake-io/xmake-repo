@@ -13,6 +13,7 @@ package("polyhook2")
 
     on_install("windows|x86", "windows|x64", "linux|i386", "linux|x86_64", function (package)
         local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             local static_runtime = package:config("vs_runtime"):startswith("MT")
