@@ -20,8 +20,6 @@ package("bdwgc")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test=[[
-            #include <gc/gc_cpp.h>
-
         class MyClass {
           int* data;
         
@@ -44,5 +42,5 @@ package("bdwgc")
         
           return 0;
         }
-        ]]}))
+        ]]},{configs = {languages = "c++17"},includes = "gc/gc_cpp"}))
     end)
