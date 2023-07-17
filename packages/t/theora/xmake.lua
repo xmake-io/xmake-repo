@@ -25,10 +25,23 @@ package("theora")
 
         local configs = {}
         local project = package:config("shared") and "libtheora_dynamic" or "libtheora_static"
+
+        local libogg = package:dep("libogg"):fetch()
+        local includedirs = libogg.sysincludedirs or libogg.includedirs
+        local libdirs = {}
+        for _, dir in ipairs(libogg.linkdirs) do
+            table.insert(libdirs, path.directory(dir))
+        end
+        libdirs = table.unique(libdirs)
+
+        os.mv("libtheora\\" .. project .. ".vcproj", "libtheora\\".. project .. ".vcxproj")
+        io.replace(project .. ".sln", ".vcproj", ".vcxproj", {plain = true})
+
         table.insert(configs, project .. ".sln")
         table.insert(configs, "-t:" .. project)
-        table.insert(configs, "-p:AdditionalIncludeDirectories=" .. package:dep("libogg"):installdir("lib"))
-        import("package.tools.msbuild").build(package, configs, {upgrade = {project .. ".sln", path.join("libtheora", project .. ".vcproj")}})
+        table.insert(configs, "-p:AdditionalIncludeDirectories=\"" .. table.concat(includedirs, ";") .. "\"")
+        table.insert(configs, "-p:AdditionalLibraryDirectories=\"" .. table.concat(libdirs, ";") .. "\"")
+        import("package.tools.msbuild").build(package, configs, {upgrade = {project .. ".sln", "libtheora\\" .. project .. ".vcxproj"}})
     end)
 
     on_install("mingw", function (package)
