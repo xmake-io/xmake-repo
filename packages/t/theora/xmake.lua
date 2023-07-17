@@ -20,9 +20,21 @@ package("theora")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    on_install("windows", function (package)
+        os.cd(path.join("win32", "vs2010"))
+
+        local configs = {}
+        local project = package:config("shared") and "libtheora_dynamic" or "libtheora_static"
+        table.insert(configs, project .. ".sln")
+        table.insert(configs, "-t:" .. project)
+        table.insert(configs, "-p:AdditionalIncludeDirectories=" .. package:dep("libogg"):installdir("lib"))
+        import("package.tools.msbuild").install(package, configs, {upgrade = {project .. ".sln"}})
+    end)
+
     on_install("mingw", function (package)
         os.cd("win32/xmingw32")
-        import("package.tools.make").install(package, {})
+        io.replace("Makefile", "LIBS = -logg -lvorbis -lvorbisenc", "LIBS = -logg -L " .. package:dep("libogg"):install_dir("lib"), {plain = true})
+        import("package.tools.make").install(package)
     end)
 
     on_install("bsd", "linux", "macosx", "wasm", function (package)
