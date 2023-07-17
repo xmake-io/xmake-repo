@@ -15,6 +15,7 @@ package("bdwgc")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
+
     on_test(function (package)
         assert(package:has_cfuncs({test=[[
         void test()
