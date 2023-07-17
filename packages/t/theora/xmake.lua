@@ -21,7 +21,7 @@ package("theora")
     end
 
     on_install("windows", function (package)
-        os.cd(path.join("win32", "vs2010"))
+        os.cd(path.join("win32", "VS2005"))
 
         local configs = {}
         local project = package:config("shared") and "libtheora_dynamic" or "libtheora_static"
