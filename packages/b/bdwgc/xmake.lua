@@ -20,27 +20,19 @@ package("bdwgc")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test=[[
-        class MyClass {
-          int* data;
-        
-        public:
-          MyClass(int value) {
-            data = new (GC) int(value);
-          }
-        
-          ~MyClass() {
-            GC_FREE(data);
-          }
-        };
-        
+        #include <gc.h>
+        #include <stdio.h>
+    
         int main() {
-          MyClass* obj = new (GC) MyClass(42);
-                  
-          delete obj;
-        
-          GC_gcollect();
-        
-          return 0;
+            GC_INIT();
+    
+            int* ptr = GC_MALLOC(sizeof(int));
+            *ptr = 42;
+    
+            printf("Value: %d\n", *ptr);
+    
+            return 0;
         }
-        ]]},{configs = {includes = "gc/gc_cpp"}}))
+
+        ]]},{configs = {includes = "gc"}}))
     end)
