@@ -16,7 +16,7 @@ package("bdwgc")
     end)
     on_test(function (package)
         assert(package:has_cfuncs({test=[[
-        void main()
+        void test()
         {
             GC_INIT();
             int *ptr = GC_MALLOC(sizeof(int));
