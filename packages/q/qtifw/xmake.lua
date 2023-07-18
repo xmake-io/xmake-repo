@@ -37,13 +37,10 @@ package("qtifw")
             raise("unhandled plat " .. package:plat())
         end
 
-        local versionstr = package:version()
-        if versionstr == "latest" then
-            versionstr = "4.6.0"
-        elseif versionstr == nil then
-            versionstr = "4.6.0"
+        local version = package:version()
+        if version == nil then
+            version = semver.new("4.6.0")
         end
-        local version = semver.new(versionstr)
 
         local installdir = package:installdir()
         os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", "qt.tools.ifw." .. version:major() .. version:minor()})
@@ -54,18 +51,16 @@ package("qtifw")
     end)
 
     on_test(function (package)
-
-        local function getbin(name)
+        local function assertbin(name)
             if is_host("windows") then
                 name = name .. ".exe"
             end
             local exec = path.join(package:installdir(), "bin", name)
             assert(os.isexec(exec), name .. " not found!")
-            return exec
         end
 
-        os.vrun(getbin("binarycreator") .. " --help")
-        os.vrun(getbin("archivegen") .. " --help")
-        os.vrun(getbin("devtools") .. " --help")
-        getbin("repogen")
+        os.vrun("binarycreator --help")
+        os.vrun("archivegen --help")
+        os.vrun("devtool --help")
+        assertbin("repogen")
     end)
