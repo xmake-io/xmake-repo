@@ -21,27 +21,21 @@ package("theora")
     end
 
     on_install("windows", function (package)
-        os.cd(path.join("win32", "VS2005"))
-
+        os.cd("win32/VS2005")
         local configs = {}
         local project = package:config("shared") and "libtheora_dynamic" or "libtheora_static"
-
         local libogg = package:dep("libogg"):fetch()
-        local includedirs = libogg.sysincludedirs or libogg.includedirs
-        local libdirs = {}
-        for _, dir in ipairs(libogg.linkdirs) do
-            table.insert(libdirs, path.directory(dir))
+        if libogg then
+            local includedirs = libogg.sysincludedirs or libogg.includedirs
+            local libdirs = libogg.linkdirs
+            table.insert(configs, "-p:AdditionalIncludeDirectories=\"" .. table.concat(includedirs, ";") .. "\"")
+            table.insert(configs, "-p:AdditionalLibraryDirectories=\"" .. table.concat(libdirs, ";") .. "\"")
         end
-        libdirs = table.unique(libdirs)
-
-        os.mv("libtheora\\" .. project .. ".vcproj", "libtheora\\".. project .. ".vcxproj")
+        os.mv("libtheora/" .. project .. ".vcproj", "libtheora/" .. project .. ".vcxproj")
         io.replace(project .. ".sln", ".vcproj", ".vcxproj", {plain = true})
-
         table.insert(configs, project .. ".sln")
         table.insert(configs, "-t:" .. project)
-        table.insert(configs, "-p:AdditionalIncludeDirectories=\"" .. table.concat(includedirs, ";") .. "\"")
-        table.insert(configs, "-p:AdditionalLibraryDirectories=\"" .. table.concat(libdirs, ";") .. "\"")
-        import("package.tools.msbuild").build(package, configs, {upgrade = {project .. ".sln", "libtheora\\" .. project .. ".vcxproj"}})
+        import("package.tools.msbuild").build(package, configs, {upgrade = {project .. ".sln", "libtheora/" .. project .. ".vcxproj"}})
     end)
 
     on_install("mingw", function (package)
