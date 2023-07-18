@@ -1,4 +1,4 @@
-package("objfw")
+package("objfw-local")
     set_homepage("https://objfw.nil.im")
     set_description("Portable framework for the Objective-C language.")
 
@@ -82,8 +82,8 @@ package("objfw")
         local objcflags = {}
         local objcxxflags = {}
         local objfwcfg = path.join(package:installdir("bin"), "objfw-config")
-        local objcflags_str = os.iorunv(objfwcfg, {"--cflags --cppflags --objcflags", (package:config("arc") and "--arc" or "")})
-        local objcxxflags_str = os.iorunv(objfwcfg, {"--cxxflags --cppflags --objcflags", (package:config("arc") and "--arc" or "")})
+        local objcflags_str = os.iorunv(objfwcfg, {"--cflags", "--cppflags", "--objcflags", (package:config("arc") and "--arc" or "")})
+        local objcxxflags_str = os.iorunv(objfwcfg, {"--cxxflags", "--cppflags", "--objcflags", (package:config("arc") and "--arc" or "")})
         local ldflags_str = os.iorunv(objfwcfg, {"--ldflags"})
         for _, flag in ipairs(objcflags_str:split("%s+")) do
             table.insert(objcflags, flag)
