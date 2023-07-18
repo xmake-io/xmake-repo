@@ -18,15 +18,12 @@ package("bdwgc")
 
     on_test(function (package)
         assert(package:has_cfuncs({test=[[
-        void test()
-        {
+        void test() {
             GC_INIT();
             int *ptr = GC_MALLOC(sizeof(int));
             *ptr = 42;
             printf("Value: %d\n", *ptr);
-                    
             return 0;
         }
-
         ]]}),{configs = {includes = "gc.h"}})
     end)
