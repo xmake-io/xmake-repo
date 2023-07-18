@@ -39,7 +39,7 @@ package("objfw")
 
     add_configs("arc", { description = "Enable Automatic Reference Counting (ARC) support.", default = true, type = "boolean" })
 
-    on_install("linux", "macosx", "cygwin", "mingw", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {}
         local tls = package:config("tls")
         if type(tls) == "boolean" then
