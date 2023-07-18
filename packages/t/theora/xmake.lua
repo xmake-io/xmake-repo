@@ -46,13 +46,15 @@ target("theoraenc")
               "lib/mcenc.c",
               "lib/rate.c",
               "lib/tokenize.c")
+    local asmdir = is_plat("windows") and "x86_vc" or "x86"
     if is_arch("x86") then
         add_defines("OC_X86_ASM")
-        add_files("lib/x86/*.c|sse2fdct.c")
+        add_files("lib/" .. asmdir .. "/*.c|sse2fdct.c")
     elseif is_arch("x64", "x86_64") then
         add_defines("OC_X86_ASM", "OC_X86_64_ASM")
-        add_files("lib/x86/*.c")
+        add_files("lib/" .. asmdir .. "/*.c")
     end
+
 target("theoradec")
     add_files("lib/apiwrapper.c",
 	            "lib/bitpack.c",
@@ -67,17 +69,18 @@ target("theoradec")
               "lib/internal.c",
               "lib/quant.c",
               "lib/state.c")
+    local asmdir = is_plat("windows") and "x86_vc" or "x86"
     if is_arch("x64", "x86.*") then
         add_defines("OC_X86_ASM")
-        add_files("lib/x86/mmxidct.c",
-                  "lib/x86/mmxfrag.c",
-                  "lib/x86/mmxstate.c",
-                  "lib/x86/x86state.c")
-        if os.exists("lib/x86/.sse2idctc") then
-            add_files("lib/x86/sse2idct.c")
+        add_files("lib/" .. asmdir .. "/mmxidct.c",
+                  "lib/" .. asmdir .. "/mmxfrag.c",
+                  "lib/" .. asmdir .. "/mmxstate.c",
+                  "lib/" .. asmdir .. "/x86state.c")
+        if os.exists("lib/" .. asmdir .. "/sse2idct.c") then
+            add_files("lib/" .. asmdir .. "/sse2idct.c")
         end
-        if os.exists("lib/x86/x86cpu.c") then
-            add_files("lib/x86/x86cpu.c")
+        if os.exists("lib/" .. asmdir .. "/x86cpu.c") then
+            add_files("lib/" .. asmdir .. "/x86cpu.c")
         end
         if is_arch("x64", "x86_64") then
             add_defines("OC_X86_64_ASM")
