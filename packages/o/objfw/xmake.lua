@@ -14,7 +14,7 @@ package("objfw")
         add_frameworks("CoreFoundation")
     end
 
-    add_configs("tls", { description = "Enable TLS support.", default = true, values = { true, false, "openssl", "gnutls", "securetransport" } })
+    add_configs("tls", { description = "Enable TLS support.", default = false, values = { true, false, "openssl", "gnutls", "securetransport" } })
     add_configs("rpath", { description = "Enable rpath.", default = true, type = "boolean" })
     add_configs("runtime", { description = "Use the included runtime, not recommended for macOS!", default = not is_plat("macosx"), type = "boolean" })
     add_configs("seluid24", { description = "Use 24 bit instead of 16 bit for selector UIDs.", default = false, type = "boolean" })
@@ -38,6 +38,21 @@ package("objfw")
     add_configs("sockets", { description = "Enable sockets.", default = true, type = "boolean" })
 
     add_configs("arc", { description = "Enable Automatic Reference Counting (ARC) support.", default = true, type = "boolean" })
+
+    on_load(function (package)
+        local tls = package:config("tls")
+        if type(tls) == "boolean" then
+            if tls then
+                package:add("deps", "openssl")
+            end
+        elseif tls then
+            if tls == "openssl" then
+                package:add("deps", "openssl")
+            else
+                raise("no package %s for glfw!", tls)
+            end
+        end
+    end)
 
     on_install("linux", "macosx", function (package)
         local configs = {}
