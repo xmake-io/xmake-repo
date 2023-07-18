@@ -27,7 +27,7 @@ package("libjpeg-turbo")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", function (package)
+    on_install("windows", "linux", "macosx", "android", "mingw", function (package)
         local configs = {}
         local jpeg = package:config("jpeg")
         if jpeg == "7" then
@@ -45,6 +45,9 @@ package("libjpeg-turbo")
         end
         if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
             table.insert(configs, "-DWITH_CRT_DLL=ON")
+        end
+        if package:is_plat("mingw") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch())
         end
         if package:is_plat("windows") and package:is_arch("arm64") then
             io.replace("CMakeLists.txt", 'message(STATUS "${BITS}-bit build (${CPU_TYPE})")',
