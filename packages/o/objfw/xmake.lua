@@ -95,7 +95,7 @@ package("objfw-local")
             table.insert(ldflags, flag)
         end
         package:add("mflags", objcflags)
-        package:add("mmflags", objcxxflags)
+        package:add("mxxflags", objcxxflags)
         package:add("ldflags", ldflags)
     end)
 
