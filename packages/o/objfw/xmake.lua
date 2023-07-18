@@ -49,7 +49,7 @@ package("objfw")
             if tls == "openssl" then
                 package:add("deps", "openssl")
             else
-                raise("no package %s for glfw!", tls)
+                raise("no package %s for objfw!", tls)
             end
         end
     end)
@@ -80,16 +80,22 @@ package("objfw")
 
         local ldflags = {}
         local objcflags = {}
+        local objcxxflags = {}
         local objfwcfg = path.join(package:installdir("bin"), "objfw-config")
-        local objcflags_str = os.iorunv(objfwcfg, {"--objcflags", (package:config("arc") and "--arc" or "")})
+        local objcflags_str = os.iorunv(objfwcfg, {"--cflags --cppflags --objcflags", (package:config("arc") and "--arc" or "")})
+        local objcxxflags_str = os.iorunv(objfwcfg, {"--cxxflags --cppflags --objcflags", (package:config("arc") and "--arc" or "")})
         local ldflags_str = os.iorunv(objfwcfg, {"--ldflags"})
         for _, flag in ipairs(objcflags_str:split("%s+")) do
             table.insert(objcflags, flag)
+        end
+        for _, flag in ipairs(objcxxflags_str:split("%s+")) do
+            table.insert(objcxxflags, flag)
         end
         for _, flag in ipairs(ldflags_str:split("%s+")) do
             table.insert(ldflags, flag)
         end
         package:add("mflags", objcflags)
+        package:add("mmflags", objcxxflags)
         package:add("ldflags", ldflags)
     end)
 
