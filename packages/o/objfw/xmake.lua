@@ -1,4 +1,4 @@
-package("objfw-local")
+package("objfw")
     set_homepage("https://objfw.nil.im")
     set_description("Portable framework for the Objective-C language.")
 
@@ -95,6 +95,8 @@ package("objfw-local")
             table.insert(ldflags, flag)
         end
         package:add("mflags", objcflags)
+
+        --does not work?
         package:add("mxxflags", objcxxflags)
         package:add("ldflags", ldflags)
     end)
