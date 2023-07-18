@@ -7,6 +7,7 @@ package("dbus")
     add_urls("https://gitlab.freedesktop.org/dbus/dbus/-/archive/dbus-$(version)/dbus-dbus-$(version).tar.gz")
     add_versions("1.14.2", "9ec5aad6310f79149aa04e8c6bd9e5e2cdca47cf3acec2d23ee9fe06ac7e7a62")
     add_versions("1.14.6", "2533742eb324fa7fbb093a3ed0ff436c7eb11861fd6a31e9b857fc4878f01831")
+    add_versions("1.14.8", "273718fe5150a1a44fe77abcf442dc64082f7375fdc15fcbd80b84316f897326")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::dbus")
@@ -20,11 +21,18 @@ package("dbus")
     add_includedirs("include/dbus-1.0", "lib/dbus-1.0/include")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    add_configs("system_bus_address", {description = "D-Bus system bus address.", type = "string"})
 
     on_install("windows", "linux", "macosx", "cross", function (package)
         local configs = {"-DDBUS_BUILD_TESTS=OFF", "-DDBUS_ENABLE_DOXYGEN_DOCS=OFF", "-DDBUS_ENABLE_XML_DOCS=OFF"}
         table.insert(configs, "-DDBUS_SESSION_SOCKET_DIR=" .. package:installdir("socket"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+
+        local system_bus_address = package:config("system_bus_address")
+        if system_bus_address then
+            table.insert(configs, "-DDBUS_SYSTEM_BUS_DEFAULT_ADDRESS=" .. system_bus_address)
+        end
+
         local packagedeps
         if package:is_plat("windows") then
             packagedeps = "expat"
