@@ -5,7 +5,9 @@ package("objfw")
     add_urls("https://github.com/ObjFW/ObjFW.git")
     add_versions("2023.03.18", "86cec7d17dd323407f30fc5947e0e92cc307e869")
 
-    add_deps("autoconf", "automake", "libtool")
+    if is_plat("linux", "macosx") then
+        add_deps("autoconf", "automake", "libtool")
+    end
 
     if is_plat("macosx") then
         add_syslinks("objc")
