@@ -11,26 +11,27 @@ package("theora")
     add_versions("1.1.0", "726e6e157f711011f7377773ce5ee233f7b73a425bf4ad192e4f8a8a71cf21d6")
     add_versions("1.1.1", "316ab9438310cf65c38aa7f5e25986b9d27e9aec771668260c733817ecf26dff")
 
-    add_deps("libogg", "scons")
+    add_deps("libogg")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     on_install(function (package)
-        io.write("xmake.lua", [[set_project("theora")
-set_kind("shared")
+        io.writefile("xmake.lua", [[set_project("theora")
+set_kind("$(kind)")
 add_rules("mode.debug", "mode.release")
 add_requires("libogg")
 add_packages("libogg")
 add_includedirs("include")
 add_headerfiles("include/(theora/*.h)")
-add_cflags("-g", "-O2", "-Wall", "-Wno-parentheses")
+add_cflags("-g", "-O3", "-Wall", "-Wno-parentheses")
 target("theoraenc")
     add_files("lib/apiwrapper.c",
               "lib/fragment.c",
               "lib/idct.c",
               "lib/internal.c",
+              "lib/info.c",
               "lib/state.c",
               "lib/quant.c",
               "lib/analyze.c",
@@ -82,7 +83,13 @@ target("theoradec")
             add_defines("OC_X86_64_ASM")
         end
     end]])
-        import("package.tools.xmake").install(package)
+        local configs = {}
+        if package:config("shared") then
+            configs.kind = "shared"
+        elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
+        end
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
