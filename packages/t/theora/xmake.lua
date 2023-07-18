@@ -10,6 +10,7 @@ package("theora")
     add_versions("1.0", "bfaaa9dc04b57b44a3152c2132372c72a20d69e5fc6c9cc8f651cc1bc2434006")
     add_versions("1.1.0", "726e6e157f711011f7377773ce5ee233f7b73a425bf4ad192e4f8a8a71cf21d6")
     add_versions("1.1.1", "316ab9438310cf65c38aa7f5e25986b9d27e9aec771668260c733817ecf26dff")
+    add_patches("<=1.1.1", path.join(os.scriptdir(), "patches", "1.1.1", "msvc.patch"), "5651ba1d86ca5964582f02113048eecaf39f3465d68425d97f13a1273fed7906")
 
     add_deps("libogg")
     if is_plat("bsd", "linux", "macosx", "wasm") then
@@ -21,9 +22,10 @@ package("theora")
     end
 
     on_install("windows", function (package)
-        os.cd("win32/VS2005")
+        os.cd("win32/VS2010")
         local configs = {}
         local project = package:config("shared") and "libtheora_dynamic" or "libtheora_static"
+        local projectfiles = table.join(project .. ".sln", os.files("**.vcxproj"), os.files("**.props"))
         local libogg = package:dep("libogg"):fetch()
         if libogg then
             local includedirs = libogg.sysincludedirs or libogg.includedirs
@@ -31,11 +33,9 @@ package("theora")
             table.insert(configs, "-p:AdditionalIncludeDirectories=\"" .. table.concat(includedirs, ";") .. "\"")
             table.insert(configs, "-p:AdditionalLibraryDirectories=\"" .. table.concat(libdirs, ";") .. "\"")
         end
-        os.mv("libtheora/" .. project .. ".vcproj", "libtheora/" .. project .. ".vcxproj")
-        io.replace(project .. ".sln", ".vcproj", ".vcxproj", {plain = true})
         table.insert(configs, project .. ".sln")
         table.insert(configs, "-t:" .. project)
-        import("package.tools.msbuild").build(package, configs, {upgrade = {project .. ".sln", "libtheora/" .. project .. ".vcxproj"}})
+        import("package.tools.msbuild").build(package, configs, {upgrade = projectfiles})
     end)
 
     on_install("mingw", function (package)
