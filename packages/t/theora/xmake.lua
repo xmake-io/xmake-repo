@@ -50,7 +50,7 @@ target("theoraenc")
     if is_arch("x86") then
         add_defines("OC_X86_ASM")
         add_files("lib/" .. asmdir .. "/*.c|sse2fdct.c")
-    elseif is_arch("x64", "x86_64") then
+    elseif is_arch("x64", "x86_64") and not is_plat("windows") then
         add_defines("OC_X86_ASM", "OC_X86_64_ASM")
         add_files("lib/" .. asmdir .. "/*.c")
     end
@@ -70,7 +70,7 @@ target("theoradec")
               "lib/quant.c",
               "lib/state.c")
     local asmdir = is_plat("windows") and "x86_vc" or "x86"
-    if is_arch("x64", "x86.*") then
+    if is_arch("x86") or (not is_plat("windows") and is_arch("x86", "x86_64")) then
         add_defines("OC_X86_ASM")
         add_files("lib/" .. asmdir .. "/mmxidct.c",
                   "lib/" .. asmdir .. "/mmxfrag.c",
