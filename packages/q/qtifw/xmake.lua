@@ -5,6 +5,9 @@ package("qtifw")
     set_license("GPL-3")
 
     add_deps("aqt")
+    if is_host("linux") then
+        add_deps("libxcb")
+    end
 
     on_install("@linux", "@windows", "@macosx", function (package)
         import("core.base.semver")
