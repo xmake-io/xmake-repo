@@ -26,12 +26,6 @@ package("fribidi")
         end
     end)
 
-    on_install("windows", "wasm", function (package)
-        local configs = {"-Ddocs=false", "-Dtests=false"}
-        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs)
-    end)
-
     on_install("macosx", "linux", "bsd", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
@@ -40,6 +34,12 @@ package("fribidi")
             table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs)
+    end)
+
+    on_install(function (package)
+        local configs = {"-Ddocs=false", "-Dtests=false"}
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+        import("package.tools.meson").install(package, configs)
     end)
 
     on_test(function (package)
