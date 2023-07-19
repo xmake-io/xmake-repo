@@ -78,26 +78,18 @@ package("objfw")
         end
         import("package.tools.autoconf").install(package, configs)
 
+        local mflags = {}
+        local mxxflags = {}
         local ldflags = {}
-        local objcflags = {}
-        local objcxxflags = {}
         local objfwcfg = path.join(package:installdir("bin"), "objfw-config")
-        local objcflags_str = os.iorunv(objfwcfg, {"--cflags", "--cppflags", "--objcflags", (package:config("arc") and "--arc" or "")})
-        local objcxxflags_str = os.iorunv(objfwcfg, {"--cxxflags", "--cppflags", "--objcflags", (package:config("arc") and "--arc" or "")})
+        local mflags_str = os.iorunv(objfwcfg, {"--cflags", "--cppflags", "--objcflags", (package:config("arc") and "--arc" or "")})
+        local mxxflags_str = os.iorunv(objfwcfg, {"--cxxflags", "--cppflags", "--objcflags", (package:config("arc") and "--arc" or "")})
         local ldflags_str = os.iorunv(objfwcfg, {"--ldflags"})
-        for _, flag in ipairs(objcflags_str:split("%s+")) do
-            table.insert(objcflags, flag)
-        end
-        for _, flag in ipairs(objcxxflags_str:split("%s+")) do
-            table.insert(objcxxflags, flag)
-        end
-        for _, flag in ipairs(ldflags_str:split("%s+")) do
-            table.insert(ldflags, flag)
-        end
-        package:add("mflags", objcflags)
-
-        --does not work?
-        package:add("mxxflags", objcxxflags)
+        table.join2(mflags, mflags_str:split("%s+"))
+        table.join2(mxxflags, mxxflags_str:split("%s+"))
+        table.join2(ldflags, ldflags_str:split("%s+"))
+        package:add("mflags", mflags)
+        package:add("mxxflags", mxxflags)
         package:add("ldflags", ldflags)
     end)
 
