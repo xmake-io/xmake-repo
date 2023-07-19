@@ -4,10 +4,10 @@ package("qtifw")
     set_description("The Qt Installer Framework provides a set of tools and utilities to create installers for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS.")
     set_license("GPL-3")
 
-    add_deps("aqt")
     if is_host("linux") then
         add_deps("libxcb")
     end
+    add_deps("aqt")
 
     on_install("@linux", "@windows", "@macosx", "@msys", function (package)
         import("core.base.semver")
@@ -26,7 +26,7 @@ package("qtifw")
         end
 
         local target
-        if package:is_plat("windows", "mingw", "linux", "macosx") then
+        if package:is_plat("windows", "mingw", "msys", "linux", "macosx") then
             target = "desktop"
         else
             raise("unhandled plat " .. package:plat())
