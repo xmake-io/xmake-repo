@@ -44,7 +44,7 @@ target("theoraenc")
 
 target("theoradec")
     add_files("lib/apiwrapper.c",
-	            "lib/bitpack.c",
+	          "lib/bitpack.c",
               "lib/decapiwrapper.c",
               "lib/decinfo.c",
               "lib/decode.c",
