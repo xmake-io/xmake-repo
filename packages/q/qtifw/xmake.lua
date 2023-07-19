@@ -6,17 +6,13 @@ package("qtifw")
 
     add_deps("aqt")
 
-    on_load(function (package)
-        package:addenv("PATH", "bin")
-    end)
-
-    on_install(function (package)
+    on_install("@linux", "@windows", "@macosx", function (package)
         import("core.base.semver")
         import("core.project.config")
         import("core.tool.toolchain")
 
         local host
-        if is_host("windows") or package:is_plat("mingw") then
+        if is_host("windows") then
             host = "windows"
         elseif is_host("linux") then
             host = "linux"
@@ -37,15 +33,9 @@ package("qtifw")
             raise("unhandled plat " .. package:plat())
         end
 
-        local version = package:version()
-        if version == nil then
-            version = semver.new("4.6.0")
-        end
-
+        local version = package:version() or semver.new("4.6.0")
         local installdir = package:installdir()
         os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", "qt.tools.ifw." .. version:major() .. version:minor()})
-
-        -- move files to root
         os.mv(path.join(installdir, "Tools", "*", version:major() .. "." .. version:minor(), "*"), installdir)
         os.rmdir(path.join(installdir, "Tools"))
     end)
@@ -58,7 +48,6 @@ package("qtifw")
             local exec = path.join(package:installdir(), "bin", name)
             assert(os.isexec(exec), name .. " not found!")
         end
-
         os.vrun("binarycreator --help")
         os.vrun("archivegen --help")
         os.vrun("devtool --help")
