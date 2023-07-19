@@ -8,6 +8,8 @@ package("qt6lib")
     add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
 
     add_versions("6.3.0", "dummy")
+    add_versions("6.5.1", "dummy")
+    add_versions("6.6.0", "dummy")
 
     on_load(function (package)
         package:add("deps", "qt6base", {debug = package:is_debug(), version = package:version_str()})
@@ -70,7 +72,7 @@ package("qt6lib")
         }
     end)
 
-    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "mingw|x86_64", "android", "iphoneos", function (package)
+    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "mingw|x86_64", function (package)
         local qt = package:dep("qt6base"):data("qt")
         assert(qt, "qt6base is required")
     end)

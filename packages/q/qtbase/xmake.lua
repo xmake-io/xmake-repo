@@ -32,7 +32,6 @@ package("qtbase")
             return
         end
 
-        print("qt", qt)
         local qtversion = semver.new(qt.sdkver)
         if not qtversion:ge(package:version()) then
             return
@@ -149,7 +148,7 @@ package("qtbase")
         if package:is_cross() then
             local runhost
             if is_host("windows") or package:is_plat("mingw") then
-                host = "windows"
+                runhost = "windows"
             elseif is_host("linux") then
                 runhost = "linux"
             elseif is_host("macosx") then
