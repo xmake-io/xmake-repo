@@ -10,7 +10,7 @@ package("fribidi")
     add_versions("1.0.12", "0cd233f97fc8c67bb3ac27ce8440def5d3ffacf516765b91c2cc654498293495")
     add_versions("1.0.13", "7fa16c80c81bd622f7b198d31356da139cc318a63fc7761217af4130903f54a2")
 
-    if is_plat("windows", "wasm") then
+    if not is_plat("macosx", "linux", "bsd") then
         add_deps("meson", "ninja")
     elseif is_plat("linux") then
         add_extsources("apt::libfribidi-dev", "pacman::fribidi")
