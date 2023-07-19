@@ -8,11 +8,16 @@ package("fribidi")
     add_versions("1.0.10", "7f1c687c7831499bcacae5e8675945a39bacbad16ecaa945e9454a32df653c01")
     add_versions("1.0.11", "30f93e9c63ee627d1a2cedcf59ac34d45bf30240982f99e44c6e015466b4e73d")
     add_versions("1.0.12", "0cd233f97fc8c67bb3ac27ce8440def5d3ffacf516765b91c2cc654498293495")
+    add_versions("1.0.13", "7fa16c80c81bd622f7b198d31356da139cc318a63fc7761217af4130903f54a2")
 
-    if is_plat("windows") then
+    if is_plat("windows", "wasm") then
         add_deps("meson", "ninja")
     elseif is_plat("linux") then
         add_extsources("apt::libfribidi-dev", "pacman::fribidi")
+    end
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     on_load("windows", function (package)
@@ -21,13 +26,13 @@ package("fribidi")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows", "wasm", function (package)
         local configs = {"-Ddocs=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
