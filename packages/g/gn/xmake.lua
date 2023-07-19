@@ -24,7 +24,7 @@ package("gn")
         end
     end
 
-    on_install("@windows", "@linux", "@macosx", function (package)
+    on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         os.cp("gn*", package:installdir("bin"))
     end)
 
