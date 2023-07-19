@@ -148,7 +148,9 @@ package("qtbase")
         -- special case for cross-compilation since we need binaries we can run on the host
         if package:is_cross() then
             local runhost
-            if is_host("linux") then
+            if is_host("windows") or package:is_plat("mingw") then
+                host = "windows"
+            elseif is_host("linux") then
                 runhost = "linux"
             elseif is_host("macosx") then
                 runhost = "mac"
@@ -228,6 +230,7 @@ package("qtbase")
 
         os.vrun(getbin("qmake") .. " -v")
         os.vrun(getbin("moc") .. " -v")
-        os.vrun(getbin("rcc") .. " -v")
+        -- rcc -v and uic -v seems to hang CI forever
+        --os.vrun(getbin("rcc") .. " -v") -- rcc -v hangs CI 
         --os.vrun(getbin("uic") .. " -v") -- uic -v seems to hang on CI
     end)
