@@ -9,13 +9,13 @@ package("qtifw")
         add_deps("libxcb")
     end
 
-    on_install("@linux", "@windows", "@macosx", function (package)
+    on_install("@linux", "@windows", "@macosx", "@msys", function (package)
         import("core.base.semver")
         import("core.project.config")
         import("core.tool.toolchain")
 
         local host
-        if is_host("windows") then
+        if is_host("windows", "msys") then
             host = "windows"
         elseif is_host("linux") then
             host = "linux"
@@ -28,10 +28,6 @@ package("qtifw")
         local target
         if package:is_plat("windows", "mingw", "linux", "macosx") then
             target = "desktop"
-        elseif package:is_plat("android") then
-            target = "android"
-        elseif package:is_plat("iphoneos") then
-            target = "ios"
         else
             raise("unhandled plat " .. package:plat())
         end
