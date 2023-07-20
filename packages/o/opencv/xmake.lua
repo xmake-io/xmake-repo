@@ -29,39 +29,11 @@ package("opencv")
     add_configs("bundled", {description = "Build 3rd-party libraries with OpenCV.", default = true, type = "boolean"})
     add_configs("tesseract", {description = "Enable tesseract on text module", default = false, type = "boolean"})
 
-    local features = {"1394",
-                      "vtk",
-                      "eigen",
-                      "ffmpeg",
-                      "gstreamer",
-                      "gtk",
-                      "ipp",
-                      "halide",
-                      "vulkan",
-                      "jasper",
-                      "openjpeg",
-                      "jpeg",
-                      "webp",
-                      "openexr",
-                      "opengl",
-                      "png",
-                      "tbb",
-                      "tiff",
-                      "itt",
-                      "protobuf",
-                      "quirc"}
+    local features = {"1394", "vtk", "eigen", "ffmpeg", "gstreamer", "gtk", "ipp", "halide", "vulkan", "jasper", "openjpeg", "jpeg", "webp", "openexr", "opengl", "png", "tbb", "openmp", "tiff", "itt", "protobuf", "quirc", "obsensor"}
     local default_features = {"1394", "eigen", "ffmpeg", "jpeg", "opengl", "png", "protobuf", "quirc", "webp", "tiff"}
-    local function opencv_is_default(feature)
-        for _, df in ipairs(default_features) do
-            if feature == df then
-                return true
-            end
-        end
-        return false
-    end
 
     for _, feature in ipairs(features) do
-        add_configs(feature, {description = "Include " .. feature .. " support.", default = opencv_is_default(feature), type = "boolean"})
+        add_configs(feature, {description = "Include " .. feature .. " support.", default = table.contains(default_features, feature), type = "boolean"})
     end
     add_configs("blas", {description = "Set BLAS vendor.", values = {"mkl", "openblas"}})
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
@@ -221,7 +193,11 @@ package("opencv")
 
     on_test(function (package)
         if not package:is_cross() then
-            os.vrun((package:debug() and "opencv_versiond" or "opencv_version"))
+            if package:debug() and package:is_plat("windows", "mingw") then
+                os.vrun("opencv_versiond")
+            else
+                os.vrun("opencv_version")
+            end
         end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
