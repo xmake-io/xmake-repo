@@ -11,7 +11,13 @@ package("qtifw")
     end
     add_deps("aqt")
 
-    on_install("linux,windows,macosx,mingw,msys@linux,windows,macosx,msys", function (package)
+    on_install(
+        "linux@linux,windows,macosx,msys", 
+        "windows@linux,windows,macosx,msys", 
+        "macosx@linux,windows,macosx,msys", 
+        "mingw@linux,windows,macosx,msys", 
+        "msys@linux,windows,macosx,msys", 
+    function (package)
         import("core.base.semver")
         import("core.project.config")
         import("core.tool.toolchain")
