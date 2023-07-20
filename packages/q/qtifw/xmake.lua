@@ -7,10 +7,11 @@ package("qtifw")
     if is_host("linux") then
         add_deps("xcb-util-wm")
         add_deps("xcb-util-image")
+        add_deps("xcb-util-keysyms")
     end
     add_deps("aqt")
 
-    on_install("@linux", "@windows", "@macosx", "@msys", function (package)
+    on_install("linux,windows,macosx,mingw,msys@linux,windows,macosx,msys", function (package)
         import("core.base.semver")
         import("core.project.config")
         import("core.tool.toolchain")
