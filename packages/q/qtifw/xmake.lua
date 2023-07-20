@@ -6,6 +6,7 @@ package("qtifw")
 
     if is_host("linux") then
         add_deps("xcb-util-wm")
+        add_deps("xcb-util-image")
     end
     add_deps("aqt")
 
