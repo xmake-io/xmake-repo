@@ -5,7 +5,7 @@ package("qtifw")
     set_license("GPL-3")
 
     if is_host("linux") then
-        add_deps("libxcb")
+        add_deps("xcb-util-wm")
     end
     add_deps("aqt")
 
