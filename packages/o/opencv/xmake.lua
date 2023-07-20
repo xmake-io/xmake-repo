@@ -142,10 +142,7 @@ package("opencv")
             local reallink = link
             if package:is_plat("windows", "mingw") then
                 reallink = reallink .. package:version():gsub("%.", "")
-            end
-            reallink = reallink .. (package:debug() and "d" or "")
-            if xmake.version():le("2.5.7") and package:is_plat("mingw") and package:config("shared") then
-                reallink = reallink .. ".dll"
+                reallink = reallink .. (package:debug() and "d" or "")
             end
             package:add("links", reallink)
         end
