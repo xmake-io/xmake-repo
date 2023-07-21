@@ -5,8 +5,9 @@ package("qtifw")
     set_license("GPL-3")
 
     if is_host("linux") then
-        add_deps("fontconfig")
-        add_deps("libxcb")
+        add_deps("fontconfig", {configs = {shared = true}})
+        add_deps("libxcb", {configs = {shared = true}})
+        add_deps("libxkbcommon")
         add_deps("xcb-util-wm")
         add_deps("xcb-util-image")
         add_deps("xcb-util-keysyms")
