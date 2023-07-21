@@ -5,7 +5,8 @@ package("freetype")
 
     set_urls("https://downloads.sourceforge.net/project/freetype/freetype2/$(version)/freetype-$(version).tar.gz",
              "https://download.savannah.gnu.org/releases/freetype/freetype-$(version).tar.gz",
-             "https://gitlab.freedesktop.org/freetype/freetype.git")
+             "https://gitlab.freedesktop.org/freetype/freetype.git",
+             "https://github.com/freetype/freetype.git")
     add_versions("2.13.0", "a7aca0e532a276ea8d85bd31149f0a74c33d19c8d287116ef8f5f8357b4f1f80")
     add_versions("2.12.1", "efe71fd4b8246f1b0b1b9bfca13cfff1c9ad85930340c27df469733bbb620938")
     add_versions("2.11.1", "f8db94d307e9c54961b39a1cc799a67d46681480696ed72ecf78d4473770f09b")
@@ -62,7 +63,11 @@ package("freetype")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local function add_dep(opt)
             if package:config(opt.conf) then
-                table.insert(configs, "-DFT_WITH_" .. opt.cmakewith .. "=ON")
+                if package:version():ge("2.11.1") then
+                    table.insert(configs, "-DFT_REQUIRED_" .. opt.cmakewith .. "=ON")
+                else
+                    table.insert(configs, "-DFT_WITH_" .. opt.cmakewith .. "=ON")
+                end
 
                 local lib = package:dep(opt.pkg or opt.conf)
                 if lib and not lib:is_system() then
@@ -75,7 +80,11 @@ package("freetype")
                     end
                 end
             else
-                table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (opt.cmakedisable or opt.cmakewith) .. "=ON")
+                if package:version():ge("2.11.1") then
+                    table.insert(configs, "-DFT_DISABLE_" .. opt.cmakewith .. "=ON")
+                else
+                    table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (opt.cmakedisable or opt.cmakewith) .. "=ON")
+                end
             end
         end
         add_dep({conf = "bzip2", cmakewith = "BZIP2", cmakedisable = "BZip2", cmakeinclude = "BZIP2_INCLUDE_DIR"})
