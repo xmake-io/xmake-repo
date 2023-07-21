@@ -5,9 +5,12 @@ package("qtifw")
     set_license("GPL-3")
 
     if is_host("linux") then
+        add_deps("fontconfig")
+        add_deps("libxcb")
         add_deps("xcb-util-wm")
         add_deps("xcb-util-image")
         add_deps("xcb-util-keysyms")
+        add_deps("xcb-util-renderutil")
     end
     add_deps("aqt")
 
