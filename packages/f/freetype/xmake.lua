@@ -64,7 +64,7 @@ package("freetype")
         local function add_dep(opt)
             if package:config(opt.conf) then
                 if package:version():ge("2.11.1") then
-                    table.insert(configs, "-DFT_REQUIRED_" .. opt.cmakewith .. "=ON")
+                    table.insert(configs, "-DFT_REQUIRE_" .. opt.cmakewith .. "=ON")
                 else
                     table.insert(configs, "-DFT_WITH_" .. opt.cmakewith .. "=ON")
                 end
