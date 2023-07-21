@@ -6,7 +6,7 @@ package("qtifw")
 
     if is_host("linux") then
         add_deps("fontconfig", {configs = {shared = true}})
-        add_deps("freetype", {configs = {shared = true}})
+        add_deps("freetype>=2.9", {configs = {shared = true}})
         add_deps("libxcb", {configs = {shared = true}})
         add_deps("libxkbcommon", {configs = {shared = true}})
         add_deps("xcb-util-wm", {configs = {shared = true}})
