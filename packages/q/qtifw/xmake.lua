@@ -8,16 +8,7 @@ package("qtifw")
 
     add_deps("aqt")
 
-    on_install(
-        "linux@windows,macosx,msys", 
-        "windows@windows,macosx,msys", 
-        "macosx@windows,macosx,msys", 
-        "mingw@windows,macosx,msys", 
-        "msys@windows,macosx,msys", 
-    function (package)
-        import("core.base.semver")
-        import("core.project.config")
-        import("core.tool.toolchain")
+    on_install("windows", "mingw", "macosx", function (package)
 
         local host
         if is_host("windows", "msys") then
