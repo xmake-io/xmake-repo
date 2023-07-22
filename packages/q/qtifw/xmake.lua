@@ -4,24 +4,16 @@ package("qtifw")
     set_description("The Qt Installer Framework provides a set of tools and utilities to create installers for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS.")
     set_license("GPL-3")
 
-    if is_host("linux") then
-        add_deps("fontconfig", {configs = {shared = true}})
-        add_deps("freetype>=2.9", {configs = {shared = true}})
-        add_deps("libxcb", {configs = {shared = true}})
-        add_deps("libxkbcommon", {configs = {shared = true}})
-        add_deps("xcb-util-wm", {configs = {shared = true}})
-        add_deps("xcb-util-image", {configs = {shared = true}})
-        add_deps("xcb-util-keysyms", {configs = {shared = true}})
-        add_deps("xcb-util-renderutil", {configs = {shared = true}})
-    end
+    add_versions("4.6.0", "dummy")
+
     add_deps("aqt")
 
     on_install(
-        "linux@linux,windows,macosx,msys", 
-        "windows@linux,windows,macosx,msys", 
-        "macosx@linux,windows,macosx,msys", 
-        "mingw@linux,windows,macosx,msys", 
-        "msys@linux,windows,macosx,msys", 
+        "linux@windows,macosx,msys", 
+        "windows@windows,macosx,msys", 
+        "macosx@windows,macosx,msys", 
+        "mingw@windows,macosx,msys", 
+        "msys@windows,macosx,msys", 
     function (package)
         import("core.base.semver")
         import("core.project.config")
@@ -38,14 +30,8 @@ package("qtifw")
             raise("unhandled host " .. os.host())
         end
 
-        local target
-        if package:is_plat("windows", "mingw", "msys", "linux", "macosx") then
-            target = "desktop"
-        else
-            raise("unhandled plat " .. package:plat())
-        end
-
-        local version = package:version() or semver.new("4.6.0")
+        local target = "desktop"
+        local version = package:version()
         local installdir = package:installdir()
         os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", "qt.tools.ifw." .. version:major() .. version:minor()})
         os.mv(path.join(installdir, "Tools", "*", version:major() .. "." .. version:minor(), "*"), installdir)
