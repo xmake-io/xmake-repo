@@ -8,7 +8,7 @@ package("qtifw")
 
     add_deps("aqt")
 
-    on_install("windows", "mingw", "macosx", function (package)
+    on_install("@windows", "@msys", "@macosx", function (package)
 
         local host
         if is_host("windows", "msys") then
