@@ -5,6 +5,7 @@ package("nativefiledialog-extended")
     
     add_urls("https://github.com/btzy/nativefiledialog-extended/archive/refs/tags/$(version).zip",
              "https://github.com/btzy/nativefiledialog-extended.git")
+    add_versions("v1.1.0", "5827d17b6bddc8881406013f419c534e8459b38f34c2f266d9c1da8a7a7464bc")
     add_versions("v1.0.2", "1d2c4c50fb1e3ad8caa5ad9c3df54725c3a49a6d4a21d773a20b93ebeb5780f1")
 
     add_configs("portal", {description = "Use xdg-desktop-portal instead of GTK.", default = true, type = "boolean"})
