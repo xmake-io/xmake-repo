@@ -8,7 +8,7 @@ package("directx-headers")
              "https://github.com/microsoft/DirectX-Headers.git")
     add_versions("v1.610.0", "ce8036d57e4b3b87167bf82a0236fc09cba4ffa7088322912b8ce82f284555db")
 
-    add_patches("1.610.0", path.join(os.scriptdir(), "patches", "1.610.0", "mingw.patch"), "7d6dff68c82a9e525088270cc718e9f810338d8cdf8bb716b3a769e660bb5352")
+    add_patches("1.610.0", path.join(os.scriptdir(), "patches", "1.610.0", "mingw.patch"), "7409d90adb1513e8683cc6d16aba1a3e73643c3e04b9af70474a5b13323be0fb")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 

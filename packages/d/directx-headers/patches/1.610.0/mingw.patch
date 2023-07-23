@@ -1,7 +1,17 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9f90c8d..5ce5651 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -45,6 +45,12 @@ if (NOT WIN32)
+@@ -39,19 +39,25 @@ target_include_directories(DirectX-Headers SYSTEM PUBLIC
+ )
+ target_include_directories(DirectX-Headers PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/directx)
+ 
++add_library(DirectX-Guids STATIC src/dxguids.cpp)
++target_link_libraries(DirectX-Guids PRIVATE DirectX-Headers)
++
+ # For non-Windows targets, also add the WSL stubs to the include path
+ if (NOT WIN32)
+     target_include_directories(DirectX-Headers SYSTEM PUBLIC
          "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/wsl/stubs>"
          "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/wsl/stubs>"
      )
@@ -14,3 +24,10 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
  endif()
  
  add_library(Microsoft::DirectX-Headers ALIAS DirectX-Headers)
+ 
+-add_library(DirectX-Guids STATIC src/dxguids.cpp)
+-target_link_libraries(DirectX-Guids PRIVATE DirectX-Headers)
+-
+ add_library(Microsoft::DirectX-Guids ALIAS DirectX-Guids)
+ 
+ if (DXHEADERS_INSTALL)
