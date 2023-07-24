@@ -28,6 +28,13 @@ package("cpuinfo")
         table.insert(configs, "-DCPUINFO_LIBRARY_TYPE=" .. (package:config("shared") and "shared" or "static"))
         if package:is_plat("windows") then
             table.insert(configs, "-DCPUINFO_RUNTIME_TYPE=" .. (package:config("vs_runtime"):startswith("MT") and "static" or "shared"))
+            local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
+            if vs_sdkver then
+                local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
+                assert(tonumber(build_ver) >= 18362, "cpuinfo requires Windows SDK to be at least 10.0.18362.0")
+                table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
+                table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
+            end
         end
         import("package.tools.cmake").install(package, configs)
     end)
@@ -37,7 +44,7 @@ package("cpuinfo")
             #include <iostream>
             void test(int args, char** argv) {
                 cpuinfo_initialize();
-                std::cout << "Running on %s CPU " << cpuinfo_get_package(0)->name;
+                std::cout << "Running on CPU " << cpuinfo_get_package(0)->name;
             }
         ]]}, {configs = {languages = "c++11"}, includes = "cpuinfo.h"}))
     end)
