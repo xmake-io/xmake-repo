@@ -12,7 +12,9 @@ package("cpuinfo")
     end
 
     add_deps("cmake")
-    if is_plat("linux", "macosx", "bsd") then
+    if is_plat("windows") then
+        add_syslinks("advapi32")
+    elseif is_plat("linux", "macosx", "bsd") then
         add_syslinks("pthread")
     end
 
