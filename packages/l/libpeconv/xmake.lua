@@ -8,7 +8,7 @@ package("libpeconv")
     add_deps("cmake")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("kernel32")
+        add_syslinks("kernel32", "ntdll")
     end
 
     on_install("windows", "mingw", function (package)
