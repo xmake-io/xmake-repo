@@ -5,7 +5,7 @@ package("osmanip")
 
     add_urls("https://github.com/JustWhit3/osmanip/archive/refs/tags/$(version).tar.gz",
              "https://github.com/JustWhit3/osmanip.git")
-    add_versions("v4.6.0", "13230b91b482371e2f5f68adefd5abf98ec9a4e249fa734697ede17ffe60d423")
+    add_versions("v4.6.1", "5454cb0caced1fb9af90666001f2874786a33e6830024cb41c99a5b4ab966f1c")
 
     add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
 
