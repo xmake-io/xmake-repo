@@ -10,6 +10,10 @@ package("zltoolkit")
     add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
     add_configs("openssl", {description = "Enable openssl support.", default = false, type = "boolean"})
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake")
 
     on_load(function(package)
@@ -29,17 +33,12 @@ package("zltoolkit")
         io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
         io.replace("CMakeLists.txt", "$ENV{HOME}/${PROJECT_NAME}/lib", "lib", {plain = true})
         io.replace("CMakeLists.txt", "$ENV{HOME}/${PROJECT_NAME}/include", "include", {plain = true})
-        io.replace("CMakeLists.txt", "if(NOT IOS AND NOT ANDROID AND NOT WIN32)", "if(TRUE)", {plain = true})
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
-        print(os.files("build/**.lib"))
-        print(os.files("build/**.dll"))
-        print(os.files("build/**.h"))
+        import("package.tools.cmake").install(package, configs)
         if package:config("shared") then
             os.rm(path.join(package:installdir("lib"), "*.a"))
         else
             os.rm(path.join(package:installdir("lib"), "*.so"))
             os.rm(path.join(package:installdir("lib"), "*.dylib"))
-            os.rm(path.join(package:installdir("bin"), "*.dll"))
         end
     end)
 
