@@ -2,7 +2,7 @@ package("libpeconv")
     set_homepage("https://hasherezade.github.io/libpeconv")
     set_description("A library to load, manipulate, dump PE files. See also: https://github.com/hasherezade/libpeconv_tpl")
 
-    add_urls("git@github.com:hasherezade/libpeconv.git")
+    add_urls("https://github.com/hasherezade/libpeconv.git")
     add_versions("2023.05.31", "709a9b40fa6420c6cd7aa1145b0ff1a154858358")
 
     add_deps("cmake")
