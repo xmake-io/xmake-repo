@@ -6,9 +6,11 @@ package("zltoolkit")
     set_urls("https://github.com/ZLMediaKit/ZLToolKit.git")
 
     add_versions("2023.7.8", "e4744a0a523817356f2ec995ee5a732264c31629")
-    
+
     add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
     add_configs("openssl", {description = "Enable openssl support.", default = false, type = "boolean"})
+
+    add_deps("cmake")
 
     on_load(function(package)
         local configdeps = {"mysql", "openssl"}
@@ -18,21 +20,14 @@ package("zltoolkit")
             end
         end
     end)
-    add_deps("cmake")
 
-    on_install(function (package)
-        local configs = {
-            "-DENABLE_MYSQL=" .. (package:config("mysql") and "ON" or "OFF"),
-            "-DENABLE_OPENSSL=" .. (package:config("openssl") and "ON" or "OFF"),
-            "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"),
-            "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF")
-        }
+    on_install("linux", "windows", "macosx", function (package)
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_MYSQL=" .. (package:config("mysql") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_OPENSSL=" .. (package:config("openssl") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        if package:is_plat("windows") then
-            os.mv("C:/ZLToolKit/include", package:installdir())
-            os.mv("C:/ZLToolKit/lib/*", package:installdir("lib"))
-            os.rm("C:/ZLToolKit")
-        end
     end)
 
     on_test(function (package)
@@ -42,5 +37,5 @@ package("zltoolkit")
                 mINI ini;
                 ini[".dot"] = "dot-value";
             }
-        ]]}, {configs = {languages = "cxx11"}, includes = {"Util/mini.h"}}))
+        ]]}, {configs = {languages = "c++11"}, includes = {"Util/mini.h"}}))
     end)
