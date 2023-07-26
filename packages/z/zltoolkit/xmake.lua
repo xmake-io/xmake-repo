@@ -27,7 +27,15 @@ package("zltoolkit")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_MYSQL=" .. (package:config("mysql") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_OPENSSL=" .. (package:config("openssl") and "ON" or "OFF"))
+        io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
+        if package:config("shared") then
+            os.rm(path.join(package:installdir("lib"), "*.a"))
+        else
+            os.rm(path.join(package:installdir("lib"), "*.so"))
+            os.rm(path.join(package:installdir("lib"), "*.dylib"))
+            os.rm(path.join(package:installdir("bin"), "*.dll"))
+        end
     end)
 
     on_test(function (package)
