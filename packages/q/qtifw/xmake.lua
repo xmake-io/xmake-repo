@@ -8,6 +8,12 @@ package("qtifw")
 
     add_deps("aqt")
 
+    on_fetch(function (package, opt)
+        if opt.system then
+            return import("lib.detect.find_tool")("binarycreator", {check = "--help"})
+        end
+    end)
+
     on_install("@windows", "@msys", "@macosx", function (package)
 
         local host
