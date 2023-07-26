@@ -28,7 +28,10 @@ package("zltoolkit")
         table.insert(configs, "-DENABLE_MYSQL=" .. (package:config("mysql") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_OPENSSL=" .. (package:config("openssl") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        print(os.files("build/**.lib"))
+        print(os.files("build/**.dll"))
+        print(os.files("build/**.h"))
         if package:config("shared") then
             os.rm(path.join(package:installdir("lib"), "*.a"))
         else
