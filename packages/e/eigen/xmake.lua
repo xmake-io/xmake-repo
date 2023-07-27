@@ -20,12 +20,18 @@ package("eigen")
         add_extsources("brew::eigen")
     end
 
+    add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
+
     add_deps("cmake")
     add_includedirs("include")
     add_includedirs("include/eigen3")
 
-    on_install("macosx", "linux", "windows", "mingw", function (package)
-        import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
+    on_install(function (package)
+        if package:config("headeronly") then
+            os.cp("Eigen", path.join(package:installdir("include"), "eigen3", "Eigen"))
+        else
+            import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
+        end
     end)
 
     on_test(function (package)
