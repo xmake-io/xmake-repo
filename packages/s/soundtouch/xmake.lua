@@ -26,6 +26,9 @@ package("soundtouch")
         if package:is_arch("arm.*") then
             table.insert(configs, "-DNEON=" .. (package:config("neon") and "ON" or "OFF"))
         end
+        if package:is_plat("wasm") then
+            io.replace("CMakeLists.txt", "-Ofast", "", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -33,7 +36,7 @@ package("soundtouch")
         assert(package:check_cxxsnippets({test = [[
             #include <soundtouch/SoundTouch.h>
             void test() {
-                soundtouch::SoundTouch sound{};
+                soundtouch::SoundTouch sound;
             }
         ]]}))
     end)
