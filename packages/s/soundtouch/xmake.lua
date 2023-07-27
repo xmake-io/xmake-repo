@@ -25,8 +25,7 @@ package("soundtouch")
         table.insert(configs, "-DOPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         if package:is_arch("arm.*") then
             table.insert(configs, "-DNEON=" .. (package:config("neon") and "ON" or "OFF"))
-        end
-        if package:is_plat("wasm") then
+        elseif package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "-Ofast", "", {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
