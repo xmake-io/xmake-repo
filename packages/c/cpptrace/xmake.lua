@@ -10,7 +10,7 @@ package("cpptrace")
 
     add_deps("cmake")
 
-    if is_plat("windows", "mingw") then
+    if is_plat("windows") then
         add_syslinks("dbghelp")
     end
 
