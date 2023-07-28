@@ -10,6 +10,10 @@ package("cpptrace")
 
     add_deps("cmake")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("dbghelp")
+    end
+
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
