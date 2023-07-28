@@ -20,6 +20,7 @@ package("fribidi")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    add_includedirs("include", "include/fribidi")
     on_load("windows", function (package)
         if not package:config("shared") then
             package:add("defines", "FRIBIDI_LIB_STATIC")
