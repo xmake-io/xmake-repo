@@ -4,7 +4,7 @@ package("unity_test")
     set_license("MIT")
 
     add_urls("https://github.com/ThrowTheSwitch/Unity/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/ThrowTheSwitch/Unity")
+             "https://github.com/ThrowTheSwitch/Unity.git")
 
     add_versions("v2.5.2", "3786de6c8f389be3894feae4f7d8680a02e70ed4dbcce36109c8f8646da2671a")
     add_versions("v2.5.1", "5ce08ef62f5f64d18f8137b3eaa6d29199ee81d1fc952cef0eea96660a2caf47")
