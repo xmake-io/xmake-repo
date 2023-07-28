@@ -115,7 +115,7 @@ function generate_package(reponame, get_data)
         archive.extract(tmpfile, repodir)
         os.rm(tmpfile)
     else
-        local giturl = string.format("git@%s:%s.git", host, reponame)
+        local giturl = string.format("https://%s/%s.git", host, reponame)
         repodir = os.tmpfile({ ramdisk = false })
 
         file:print('    add_urls("%s")', giturl)
