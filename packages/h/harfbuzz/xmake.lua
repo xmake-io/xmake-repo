@@ -36,7 +36,7 @@ package("harfbuzz")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "wasm", function (package)
+    on_install(function (package)
         import("package.tools.meson")
 
         local configs = {"-Dtests=disabled", "-Ddocs=disabled", "-Dbenchmark=disabled", "-Dcairo=disabled", "-Dglib=disabled", "-Dgobject=disabled"}
