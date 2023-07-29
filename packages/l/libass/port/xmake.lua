@@ -1,5 +1,4 @@
 set_project("libass")
-set_languages("gnu99")
 add_requires("freetype", "fribidi", "harfbuzz")
 
 includes("check_cfuncs.lua")
