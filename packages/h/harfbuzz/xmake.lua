@@ -59,6 +59,17 @@ package("harfbuzz")
                     end
                 end
             end
+        elseif package:is_plat("bsd") then
+            local cmake_prfixes = {}
+            for _, dep in ipairs(package:orderdeps()) do
+                local fetchinfo = dep:fetch()
+                if fetchinfo then
+                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                        table.join(cmake_prefixes, includedir)
+                    end
+                end
+            end
+            envs.CMAKE_PREFIX_PATH = path.joinenv(cmake_prefixes)
         end
         meson.install(package, configs, {envs = envs})
     end)

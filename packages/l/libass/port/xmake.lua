@@ -28,6 +28,7 @@ target("ass")
     add_files("libass/*.c|ass_fontconfig.c|ass_directwrite.c|ass_coretext.c",
               "libass/c/*.c")
     add_includedirs("libass", "libass/c", "$(buildir)")
+    add_syslinks("m")
     add_configfiles("config.h.in")
     configvar_check_cfuncs("HAVE_STRDUP", "strdup", {includes = "string.h"})
     configvar_check_cfuncs("HAVE_STRNDUP", "strndup", {includes = "string.h"})
