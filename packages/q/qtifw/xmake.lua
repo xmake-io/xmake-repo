@@ -31,7 +31,7 @@ package("qtifw")
         local version = package:version()
         local installdir = package:installdir()
         local qtifw_version = "qt.tools.ifw." .. version:major() .. version:minor()
-        if is_host("windows") and (not is_host("msys")) then
+        if is_host("windows") and (not is_plat("msys")) then
             os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", qtifw_version, "--external", "7z"})
         else
             os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", qtifw_version})
