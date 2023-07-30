@@ -6,7 +6,7 @@ package("serial")
     add_urls("https://github.com/wjwwood/serial.git")
     add_versions("2022.3.9", "69e0372cf0d3796e84ce9a09aff1d74496f68720")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("advapi32", "setupapi")
     elseif is_plat("linux") then
         add_syslinks("rt", "pthread")
@@ -14,7 +14,7 @@ package("serial")
         add_frameworks("IOKit", "Foundation")
     end
 
-    on_install("windows", "linux", "macosx", "cross", "wasm", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "cross", "wasm", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -23,11 +23,11 @@ package("serial")
                 add_files("src/serial.cc")
                 add_includedirs("include")
                 add_headerfiles("include/(serial/*.h)")
-                if is_plat("windows") then
+                if is_plat("windows", "mingw") then
                     add_files("src/impl/win.cc")
                     add_files("src/impl/list_ports/list_ports_win.cc")
                     add_syslinks("advapi32", "setupapi")
-                    if is_kind("shared") then
+                    if is_plat("windows") and is_kind("shared") then
                         add_rules("utils.symbols.export_all", {export_classes = true})
                     end
                 else
