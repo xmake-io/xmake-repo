@@ -6,10 +6,12 @@ package("serial")
     add_urls("https://github.com/wjwwood/serial.git")
     add_versions("2022.3.9", "69e0372cf0d3796e84ce9a09aff1d74496f68720")
 
-    if is_plat("linux") then
-        add_syslinks("rt", "pthread")
-    elseif is_plat("windows") then
+    if is_plat("windows") then
         add_syslinks("advapi32", "setupapi")
+    elseif is_plat("linux") then
+        add_syslinks("rt", "pthread")
+    elseif is_plat("macosx") then
+        add_frameworks("IOKit", "Foundation")
     end
 
     on_install(function (package)
@@ -25,10 +27,14 @@ package("serial")
                     add_files("src/impl/win.cc")
                     add_files("src/impl/list_ports/list_ports_win.cc")
                     add_syslinks("advapi32", "setupapi")
+                    if is_kind("shared") then
+                        add_rules("utils.symbols.export_all", {export_classes = true})
+                    end
                 else
                     add_files("src/impl/unix.cc")
                     if is_plat("macosx") then
                         add_files("src/impl/list_ports/list_ports_osx.cc")
+                        add_frameworks("IOKit", "Foundation")
                     else
                         add_files("src/impl/list_ports/list_ports_linux.cc")
                         if is_plat("linux") then
