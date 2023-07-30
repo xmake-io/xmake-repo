@@ -6,7 +6,7 @@ package("qtifw")
 
     add_versions("4.6.0", "dummy")
 
-    add_deps("aqt", "7z")
+    add_deps("aqt")
 
     on_fetch(function (package, opt)
         if opt.system then
@@ -31,7 +31,11 @@ package("qtifw")
         local version = package:version()
         local installdir = package:installdir()
         local qtifw_version = "qt.tools.ifw." .. version:major() .. version:minor()
-        os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", qtifw_version, "--external", "7z"})
+        if is_host("windows") and (not is_host("msys")) then
+            os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", qtifw_version, "--external", "7z"})
+        else
+            os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", qtifw_version})
+        end
         os.mv(path.join(installdir, "Tools", "*", version:major() .. "." .. version:minor(), "*"), installdir)
         os.rmdir(path.join(installdir, "Tools"))
     end)
