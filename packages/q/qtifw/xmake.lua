@@ -30,7 +30,12 @@ package("qtifw")
         local target = "desktop"
         local version = package:version()
         local installdir = package:installdir()
-        os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", "qt.tools.ifw." .. version:major() .. version:minor()})
+        local qtifw_version = "qt.tools.ifw." .. version:major() .. version:minor()
+        if is_host("windows") and (not is_subhost("msys")) then
+            os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", qtifw_version, "--external", "7z"})
+        else
+            os.vrunv("aqt", {"install-tool", "-O", installdir, host, target, "tools_ifw", qtifw_version})
+        end
         os.mv(path.join(installdir, "Tools", "*", version:major() .. "." .. version:minor(), "*"), installdir)
         os.rmdir(path.join(installdir, "Tools"))
     end)
