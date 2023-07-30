@@ -17,7 +17,7 @@ package("libmodbus")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "mingw", "msys", "cross", function (package)
         if (not is_host("windows")) and (not is_subhost("msys", "cygwin")) then
             import("package.tools.autoconf").install(package, {"--disable-tests"})
             return
