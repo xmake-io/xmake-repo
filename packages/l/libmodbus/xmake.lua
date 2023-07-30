@@ -12,23 +12,24 @@ package("libmodbus")
     end
 
     on_load(function (package)
-        if not is_plat("windows", "mingw") then
+        if (not is_host("windows")) and (not is_subhost("msys", "cygwin")) then
             package:add("deps", "autoconf", "automake", "libtool")
         end
     end)
 
     on_install(function (package)
-        import("package.tools.autoconf").install(package, {"--disable-tests"})
-    end)
+        if (not is_host("windows")) and (not is_subhost("msys", "cygwin")) then
+            import("package.tools.autoconf").install(package, {"--disable-tests"})
+            return
+        end
 
-    on_install("windows", "mingw", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("modbus")
                 set_kind("$(kind)")
                 add_files("src/*.c")
-                add_headerfiles("src/*.h")
+                add_headerfiles("src/*.h", {prefixdir = "modbus"})
 
                 add_syslinks("ws2_32")
                 add_includedirs("src/win32")
@@ -52,11 +53,13 @@ package("libmodbus")
         if package:config("shared") then
             configs.kind = "shared"
         else
-            io.replace("src/modbus.h", "#  define MODBUS_API __declspec(dllimport)", "#  define MODBUS_API", {plain = true})
+            if is_plat("windows") then
+                io.replace("src/modbus.h", "#  define MODBUS_API __declspec(dllimport)", "#  define MODBUS_API", {plain = true})
+            end
         end
         import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("modbus_new_tcp", {includes = "modbus.h"}))
+        assert(package:has_cfuncs("modbus_new_tcp", {includes = "modbus/modbus.h"}))
     end)
