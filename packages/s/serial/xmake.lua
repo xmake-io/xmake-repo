@@ -14,7 +14,7 @@ package("serial")
         add_frameworks("IOKit", "Foundation")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "cross", "wasm", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
