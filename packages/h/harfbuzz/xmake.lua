@@ -23,11 +23,13 @@ package("harfbuzz")
     add_includedirs("include", "include/harfbuzz")
     if is_plat("macosx") then
         add_frameworks("CoreText", "CoreFoundation", "CoreGraphics")
+    elseif is_plat("bsd") then
+        add_configs("freetype", {description = "Enable freetype interop helpers.", default = false, type = "boolean", readonly = true})
     elseif is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_load("windows", "linux", "macosx", "bsd", "wasm", function (package)
+    on_load(function (package)
         if package:config("icu") then
             package:add("deps", "icu4c")
         end
@@ -59,17 +61,6 @@ package("harfbuzz")
                     end
                 end
             end
-        elseif package:is_plat("bsd") then
-            local cmake_prfixes = {}
-            for _, dep in ipairs(package:orderdeps()) do
-                local fetchinfo = dep:fetch()
-                if fetchinfo then
-                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                        table.join(cmake_prefixes, includedir)
-                    end
-                end
-            end
-            envs.CMAKE_PREFIX_PATH = path.joinenv(cmake_prefixes)
         end
         meson.install(package, configs, {envs = envs})
     end)
