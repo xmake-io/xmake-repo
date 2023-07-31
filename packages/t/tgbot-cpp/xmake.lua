@@ -19,7 +19,7 @@ package("tgbot-cpp")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "cross", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "cross", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_requires("openssl", "zlib")
