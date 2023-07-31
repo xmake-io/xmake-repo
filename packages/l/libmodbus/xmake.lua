@@ -19,6 +19,7 @@ package("libmodbus")
 
     on_install("windows", "linux", "macosx", "mingw", "msys", "cross", function (package)
         if (not is_host("windows")) and (not is_subhost("msys", "cygwin")) then
+            os.vrun("./autogen.sh")
             import("package.tools.autoconf").install(package, {"--disable-tests"})
             return
         end
