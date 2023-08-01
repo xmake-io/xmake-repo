@@ -7,6 +7,14 @@ package("libmodbus")
              "https://github.com/stephane/libmodbus.git")
     add_versions("v3.1.10", "e93503749cd89fda4c8cf1ee6371a3a9cc1f0a921c165afbbc4fd96d4813fa1a")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libmodbus")
+    elseif is_plat("linux") then
+        add_extsources("pacman::libmodbus", "apt::libmodbus")
+    elseif is_plat("macosx") then
+        add_extsources("brew::libmodbus")
+    end
+
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
@@ -19,7 +27,6 @@ package("libmodbus")
 
     on_install("windows", "linux", "macosx", "mingw", "msys", "cross", function (package)
         if (not is_host("windows")) and (not is_subhost("msys", "cygwin")) then
-            os.vrun("./autogen.sh")
             import("package.tools.autoconf").install(package, {"--disable-tests"})
             return
         end
