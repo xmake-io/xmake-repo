@@ -61,7 +61,7 @@ package("libmodbus")
         if package:config("shared") then
             configs.kind = "shared"
         else
-            if is_plat("windows") then
+            if package:is_plat("windows") then
                 io.replace("src/modbus.h", "#  define MODBUS_API __declspec(dllimport)", "#  define MODBUS_API", {plain = true})
             end
         end
