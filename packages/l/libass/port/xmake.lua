@@ -43,6 +43,13 @@ target("ass")
             else
                 add_defines("ARCH_X86_64=1", "BITMODE=64")
             end
+            if is_plat("windows") and is_arch("x86") then
+               add_defines("PREFIX")
+            elseif is_plat("macosx") then
+                add_defines("PREFIX", "STACK_ALIGNMENT=16")
+            elseif is_plat("linux") then
+                add_defines("STACK_ALIGNMENT=16")
+            end
         elseif is_arch("arm64.*", "aarch64") then
             add_files("libass/aarch64/*.S")
             add_defines("ARCH_AARCH64")
