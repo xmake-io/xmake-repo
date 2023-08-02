@@ -9,8 +9,10 @@ package("cubeb")
     add_configs("speex", {description = "Bundle the speex library", default = false, type = "boolean"})
     add_configs("lazy_load", {description = "Lazily load shared libraries", default = true, type = "boolean"})
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("user32", "winmm", "ole32", "avrt", "ksuser")
+    elseif is_plat("macosx") then
+        add_frameworks("CoreFoundation", "CoreAudio", "AudioToolbox")
     end
 
     add_deps("cmake")
