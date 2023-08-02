@@ -10,7 +10,7 @@ package("cubeb")
     add_configs("lazy_load", {description = "Lazily load shared libraries", default = true, type = "boolean"})
 
     if is_plat("windows", "mingw") then
-        add_syslinks("user32", "winmm", "ole32", "avrt", "ksuser")
+        add_syslinks("user32", "winmm", "ole32", "avrt", "ksuser", "uuid")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreAudio", "AudioToolbox")
     end
