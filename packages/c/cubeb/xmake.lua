@@ -17,7 +17,7 @@ package("cubeb")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "wasm", "cross", function (package)
         local configs =
         {
             "-DBUILD_TESTS=OFF",
