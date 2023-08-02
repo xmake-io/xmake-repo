@@ -13,13 +13,14 @@ package("cubeb")
         add_syslinks("user32", "winmm", "ole32", "avrt", "ksuser", "uuid")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreAudio", "AudioToolbox")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     add_deps("cmake")
 
     on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "wasm", "cross", function (package)
-        local configs =
-        {
+        local configs = {
             "-DBUILD_TESTS=OFF",
             "-DBUILD_RUST_LIBS=OFF",
             "-DBUILD_TOOLS=OFF",
