@@ -27,6 +27,7 @@ package("imgui-file-dialog")
             add_rules("mode.debug", "mode.release")
             target("imgui-file-dialog")
                 set_kind("$(kind)")
+                set_languages("c++11")
                 add_files("ImGuiFileDialog.cpp")
                 add_headerfiles("ImGuiFileDialog.h", "ImGuiFileDialogConfig.h")
                 add_packages("imgui")
@@ -46,5 +47,5 @@ package("imgui-file-dialog")
             void test() {
                 ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".cpp,.h,.hpp", ".");
             }
-        ]]}))
+        ]], {configs = {languages = "c++11"}}}))
     end)
