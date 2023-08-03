@@ -10,20 +10,26 @@ package("imgui-file-dialog")
 
     add_deps("imgui")
 
-    on_load("windows", function (package)
-        package:add("deps", "dirent")
+    on_load(function (package)
+        if package:is_plat("windows") then
+            package:add("deps", "dirent")
+        end
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
-            add_requires("imgui", "dirent")
+            add_requires("imgui")
+            if is_plat("windows") then
+                add_requires("dirent")
+                add_packages("dirent")
+            end
             add_rules("mode.debug", "mode.release")
             target("imgui-file-dialog")
                 set_kind("$(kind)")
                 add_files("ImGuiFileDialog.cpp")
                 add_headerfiles("ImGuiFileDialog.h", "ImGuiFileDialogConfig.h")
-                add_packages("imgui", "dirent")
+                add_packages("imgui")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
