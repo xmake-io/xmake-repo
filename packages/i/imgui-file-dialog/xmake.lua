@@ -8,12 +8,14 @@ package("imgui-file-dialog")
 
     add_versions("v0.6.5", "3fac0f2cfc92b3f2c806e6743236467d0f691e54b1747a3955b82ef28b13e2fa")
 
+    if is_plat("mingw") then
+        add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("imgui")
 
-    on_load(function (package)
-        if package:is_plat("windows") then
-            package:add("deps", "dirent")
-        end
+    on_load("windows", function (package)
+        package:add("deps", "dirent")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "android", function (package)
@@ -35,9 +37,6 @@ package("imgui-file-dialog")
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
         ]])
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
         import("package.tools.xmake").install(package, configs)
     end)
 
