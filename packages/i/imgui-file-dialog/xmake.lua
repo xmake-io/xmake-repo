@@ -13,10 +13,9 @@ package("imgui-file-dialog")
     end
 
     add_deps("imgui")
-
-    on_load("windows", function (package)
-        package:add("deps", "dirent")
-    end)
+    if is_plat("windows") then
+        add_deps("dirent")
+    end
 
     on_install("windows", "linux", "macosx", "mingw", "android", function (package)
         local configs = {}
