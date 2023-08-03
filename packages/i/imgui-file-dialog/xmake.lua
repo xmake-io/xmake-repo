@@ -10,10 +10,8 @@ package("imgui-file-dialog")
 
     add_deps("imgui")
 
-    on_load(function (package)
-        if package:is_plat("windows") then
-            package:add("deps", "dirent")
-        end
+    on_load("windows", function (package)
+        package:add("deps", "dirent")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
