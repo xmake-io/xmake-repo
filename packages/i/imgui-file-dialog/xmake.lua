@@ -16,7 +16,7 @@ package("imgui-file-dialog")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "android", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_requires("imgui")
@@ -47,5 +47,5 @@ package("imgui-file-dialog")
             void test() {
                 ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".cpp,.h,.hpp", ".");
             }
-        ]], {configs = {languages = "c++11"}}}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)
