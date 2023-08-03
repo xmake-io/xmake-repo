@@ -8,9 +8,15 @@ package("imgui-file-dialog")
 
     add_versions("v0.6.5", "3fac0f2cfc92b3f2c806e6743236467d0f691e54b1747a3955b82ef28b13e2fa")
 
-    add_deps("imgui", "dirent")
+    add_deps("imgui")
 
-    on_install("windows", function (package)
+    on_load(function (package)
+        if package:is_plat("windows") then
+            package:add("deps", "dirent")
+        end
+    end)
+
+    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_requires("imgui", "dirent")
