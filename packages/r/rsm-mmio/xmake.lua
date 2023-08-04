@@ -24,7 +24,7 @@ package("rsm-mmio")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            void test() {
+            int main() {
                 mmio::mapped_file_source f;
                 assert(!f.is_open());
             }
