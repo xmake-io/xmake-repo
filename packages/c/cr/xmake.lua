@@ -7,7 +7,7 @@ package("cr")
     add_urls("https://github.com/fungos/cr.git")
     add_versions("2022.11.06", "0e7fef63555cf73c70e4d9ae42f8a6e9cefb8e69")
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "msys", "android", "iphoneos", "cross", function (package)
         os.cp("cr.h", package:installdir("include"))
     end)
 
