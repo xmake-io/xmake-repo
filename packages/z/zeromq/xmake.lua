@@ -1,7 +1,7 @@
 package("zeromq")
     set_homepage("https://zeromq.org/")
     set_description("High-performance, asynchronous messaging library")
-    set_license("GPL-3.0")
+    set_license("MPL-2.0")
 
     set_urls("https://github.com/zeromq/libzmq/releases/download/v$(version)/zeromq-$(version).tar.gz",
              "https://github.com/zeromq/libzmq.git")
