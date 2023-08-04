@@ -15,14 +15,12 @@ package("rsm-binary-io")
             add_rules("mode.debug", "mode.release")
             set_languages("c++20")
             target("rsm-binary-io")
-                set_kind("$(kind)")
+                set_kind("static")
                 add_files("src/**.cpp")
                 add_includedirs("include/")
                 add_headerfiles("include/(**.hpp)")
         ]])
-        local configs = {}
-        configs.kind = package:config("shared") and "shared" or "static"
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
