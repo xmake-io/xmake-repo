@@ -5,6 +5,7 @@ package("rsm-binary-io")
 
     add_urls("https://github.com/Ryan-rsm-McKenzie/binary_io/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Ryan-rsm-McKenzie/binary_io.git")
+    add_versions("2.0.6", "88354a25064f3da58bdcb24049ca23d7d8f4fb3e12496f397937a65d1943f114")
     add_versions("2.0.5", "4cc904ef02f77e04756cbdf01372629b0f04d859f06ee088d854468abdd4b840")
 
     on_install(function (package)
@@ -27,7 +28,7 @@ package("rsm-binary-io")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            void test(int argc, char** argv) {
+            int main() {
                 binary_io::span_istream s;
                 assert(s.tell() == 0);
             }
