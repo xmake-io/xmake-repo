@@ -25,7 +25,7 @@ package("rsm-binary-io")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            int main() {
+            void test() {
                 binary_io::span_istream s;
                 assert(s.tell() == 0);
             }
