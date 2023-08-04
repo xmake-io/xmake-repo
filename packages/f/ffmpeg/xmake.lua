@@ -104,9 +104,9 @@ package("ffmpeg")
     end)
 
     on_install("windows|x64", "mingw|x86_64", function (package)
-        os.mv("bin", package:installdir())
-        os.mv("include", package:installdir())
-        os.mv("lib", package:installdir())
+        os.cp("bin", package:installdir())
+        os.cp("include", package:installdir())
+        os.cp("lib", package:installdir())
         package:addenv("PATH", "bin")
     end)
 
