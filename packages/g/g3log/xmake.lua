@@ -1,6 +1,7 @@
 package("g3log")
     set_homepage("http://github.com/KjellKod/g3log")
     set_description("G3log is  an asynchronous, \"crash safe\", logger that is easy to use with default logging sinks or you can add your own.  G3log is made with plain C++14 (C++11 support up to release 1.3.2)  with no external libraries (except gtest used for unit tests). G3log is made to be cross-platform, currently running on OSX, Windows and several Linux distros.  See Readme below for details of usage.")
+    set_license("Unlicense")
 
     add_urls("https://github.com/KjellKod/g3log/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KjellKod/g3log.git")
@@ -18,13 +19,13 @@ package("g3log")
         add_configs("vectored_exception_handling", {description = "Vectored exception / crash handling with improved stack trace", default = true, type = "boolean"})
     end
 
-    if is_plat("windows") then
+    if is_plat("linux") then
         add_syslinks("pthread")
     end
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "iphoneos", function (package)
         local configs =
         {
             "-DADD_FATAL_EXAMPLE=OFF",
