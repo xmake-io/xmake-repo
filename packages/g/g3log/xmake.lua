@@ -20,15 +20,13 @@ package("g3log")
         add_configs("vectored_exception_handling", {description = "Vectored exception / crash handling with improved stack trace", default = true, type = "boolean"})
     end
 
-    if is_plat("linux", "bsd") then
+    if is_plat("linux") then
         add_syslinks("pthread")
-    elseif is_plat("mingw") then
-        add_syslinks("dbghelp")
     end
 
     add_deps("cmake")
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "iphoneos", function (package)
+    on_install("windows", "linux", "macosx", "iphoneos", function (package)
         local configs =
         {
             "-DADD_FATAL_EXAMPLE=OFF",
