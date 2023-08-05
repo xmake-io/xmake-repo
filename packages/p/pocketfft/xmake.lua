@@ -1,7 +1,7 @@
 package("pocketfft")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/mreineck/pocketfft")
-    set_description("Fork of https://gitlab.mpcdf.mpg.de/mtr/pocketfft to simplify external contributions")
+    set_description("FFT implementation based on FFTPack, but with several improvements")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/mreineck/pocketfft.git")
