@@ -8,7 +8,8 @@ package("g3log")
 
     add_versions("2.3", "a27dc3ff0d962cc6e0b4e60890b4904e664b0df16393d27e14c878d7de09b505")
 
-    add_configs("log_level", {description = "Turn ON/OFF log levels. An disabled level will not push logs of that level to the sink. By default dynamic logging is disabled", default = false, type = "boolean"})
+    add_configs("ios", {description = "iOS version of library.", default = false, type = "boolean", readonly = true})
+    add_configs("log_level", {description    = "Turn ON/OFF log levels. An disabled level will not push logs of that level to the sink. By default dynamic logging is disabled", default = false, type = "boolean"})
     add_configs("debug_to_dbug", {description = "Use DBUG logging level instead of DEBUG. By default DEBUG is the debugging level", default = false, type = "boolean"})
     add_configs("funcsig", {description = "Windows __FUNCSIG__ to expand `Function` location of the LOG call instead of the default __FUNCTION__", default = false, type = "boolean"})
     add_configs("pretty_function", {description = "Windows __PRETTY_FUNCTION__ to expand `Function` location of the LOG call instead of the default __FUNCTION__", default = false, type = "boolean"})
@@ -19,7 +20,7 @@ package("g3log")
         add_configs("vectored_exception_handling", {description = "Vectored exception / crash handling with improved stack trace", default = true, type = "boolean"})
     end
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     elseif is_plat("mingw") then
         add_syslinks("dbghelp")
@@ -37,7 +38,7 @@ package("g3log")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DG3_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DG3_IOS_LIB=" .. (package:is_plat("iphoneos") and "ON" or "OFF"))
+        table.insert(configs, "-DG3_IOS_LIB=" .. (package:config("ios") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_DYNAMIC_LOGGING_LEVELS=" .. (package:config("log_level") and "ON" or "OFF"))
         table.insert(configs, "-DCHANGE_G3LOG_DEBUG_TO_DBUG=" .. (package:config("debug_to_dbug") and "ON" or "OFF"))
         table.insert(configs, "-DWINDOWS_FUNCSIG=" .. (package:config("funcsig") and "ON" or "OFF"))
