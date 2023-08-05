@@ -2,6 +2,7 @@ package("pocketfft")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/mreineck/pocketfft")
     set_description("Fork of https://gitlab.mpcdf.mpg.de/mtr/pocketfft to simplify external contributions")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/mreineck/pocketfft.git")
     add_versions("2023.02.14", "076cb3d2536b7c5d0629093ad886e10ac05f3623")
