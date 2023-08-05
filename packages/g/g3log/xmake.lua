@@ -21,6 +21,8 @@ package("g3log")
 
     if is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("mingw") then
+        add_syslinks("dbghelp")
     end
 
     add_deps("cmake")
