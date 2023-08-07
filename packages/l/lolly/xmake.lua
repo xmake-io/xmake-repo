@@ -14,11 +14,14 @@ package("lolly")
         end
         import("package.tools.xmake").install(package, configs)
     end)
+    
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "string.hpp"
             void test() {
                 string s("hello");
             }
-        ]]}, {configs = {languages = "c++11"}})))
+        ]]}, {configs = {languages = "c++17"}, includes = "log4cplus/log4cplus.h"}))
+    end)
+
 package_end()
