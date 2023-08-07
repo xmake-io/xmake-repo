@@ -7,16 +7,14 @@ package("lolly")
 
     add_versions("v1.0.1", "69ebde6df3e5b4b9473f018d105f48f4abb179ff")
 
-    add_deps("nowide_standalone")
     if is_plat("mingw", "windows") then
+        add_deps("nowide_standalone")
         add_configs("nowide_standalone", {description = "nowide", default = true, type = "boolean"})
     end
 
     on_load(function (package)
-        for _, dep in ipairs({"nowide_standalone"}) do
-            if package:config(dep) then
-                package:add("deps", dep)
-            end
+        if is_plat("mingw", "windows") then
+            package:add("deps", "nowide_standalone")
         end
     end)
 
