@@ -21,7 +21,7 @@ package("lolly")
             void test() {
                 string s("hello");
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)
 
 package_end()
