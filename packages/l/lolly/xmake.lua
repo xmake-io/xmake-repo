@@ -1,6 +1,6 @@
 package("lolly")
     set_homepage("https://github.com/XmacsLabs/lolly")
-    set_description("Lolly is a C++ library")
+    set_description("Lolly is an alternative to the C++ Standard Library.")
 
     add_urls("https://github.com/XmacsLabs/lolly.git")
     add_urls("https://gitee.com/XmacsLabs/lolly.git")
