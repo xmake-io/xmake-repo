@@ -1,0 +1,14 @@
+diff --git a/CefViewCore/CefConfig.cmake b/CefViewCore/CefConfig.cmake
+index d1bb979..7fdb28b 100644
+--- a/CefViewCore/CefConfig.cmake
++++ b/CefViewCore/CefConfig.cmake
+@@ -1,7 +1,7 @@
+ #
+ # The link for downloading the CEF binary sdk
+ #
+-set(CEF_SDK_VERSION
++option(CEF_SDK_VERSION
+ 
+   # "89.0.12+g2b76680+chromium-89.0.4389.90" # GOOD
+   # "91.1.23+g04c8d56+chromium-91.0.4472.164" # GOOD
+--
