@@ -21,15 +21,6 @@ package("lolly")
     end)
 
     on_install("linux", "macosx", "mingw", "wasm", function (package)
-        io.writefile("xmake.lua", [[
-            option("nowide_standalone", {description = "nowide", default = false})
-            add_rules("mode.debug", "mode.release")
-            if has_config("nowide_standalone") then
-                add_requires("nowide_standalone")
-            end
-            target("lolly")
-                set_kind("static")
-        ]])
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
