@@ -1,6 +1,6 @@
 package("bluez")
     set_homepage("http://www.bluez.org")
-    set_description("BlueZ Bluetooth library for Linux")
+    set_description("Library for the Bluetooth protocol stack for Linux")
     set_license("GPL-2.0")
 
     add_urls("https://git.kernel.org/pub/scm/bluetooth/bluez.git")
