@@ -21,7 +21,7 @@ package("lolly")
             void test() {
                 string s("hello");
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "log4cplus/log4cplus.h"}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
 
 package_end()
