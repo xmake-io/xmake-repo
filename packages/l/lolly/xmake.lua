@@ -10,13 +10,8 @@ package("lolly")
     if is_plat("mingw", "windows") then
         add_deps("nowide_standalone")
         add_configs("nowide_standalone", {description = "nowide", default = true, type = "boolean"})
+        package:add("deps", "nowide_standalone")
     end
-
-    on_load(function (package)
-        if is_plat("mingw", "windows") then
-            package:add("deps", "nowide_standalone")
-        end
-    end)
 
     on_install("linux", "macosx", "mingw", "wasm", function (package)
         local configs = {}
