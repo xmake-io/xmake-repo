@@ -17,5 +17,5 @@ package("notcurses")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("foo", {includes = "foo.h"}))
+        assert(package:has_cfuncs("notcurses_version", {includes = "notcurses.h"}))
     end)
