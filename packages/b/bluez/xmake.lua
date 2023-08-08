@@ -25,3 +25,7 @@ package("bluez")
 
         import("package.tools.xmake").install(package, configs)
     end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("str2ba", {includes = "bluetooth/bluetooth.h"}))
+    end)
