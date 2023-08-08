@@ -7,13 +7,14 @@ package("bluez")
     add_versions("5.68", "d764f78f27653bc1df71c462e9aca7a18bc75f9f")
 
     on_install("linux", function (package)
-        io.writefile("xmake.lua", format([[
-            target("bluez2")
+        os.cp("lib/*.h", "bluetooth/")
+        io.writefile("xmake.lua", [[
+            target("bluez")
                 set_kind("$(kind)")
                 add_files("lib/*.c")
-                add_includedirs("%s", ".")
+                add_includedirs(".")
                 add_headerfiles("lib/(*.h)", {prefixdir = "bluetooth"})
-        ]], package:installdir("include")))
+        ]])
 
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
