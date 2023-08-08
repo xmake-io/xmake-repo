@@ -2,7 +2,7 @@ package("notcurses")
     set_homepage("https://nick-black.com/dankwiki/index.php/Notcurses")
     set_description("blingful character graphics/TUI library. definitely not curses.")
 
-    add_urls("https://github.com/dankamongmen/notcurses/archives/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/dankamongmen/notcurses/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dankamongmen/notcurses.git")
 
     add_versions("v3.0.9", "e5cc02aea82814b843cdf34dedd716e6e1e9ca440cf0f899853ca95e241bd734")
