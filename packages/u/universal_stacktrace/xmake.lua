@@ -22,5 +22,5 @@ package("universal_stacktrace")
             void test() {
                 ust::generate();
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"ust/ust.hpp"}}))
+        ]]}, {includes = {"ust/ust.hpp"}}))
     end)
