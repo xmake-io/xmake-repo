@@ -12,6 +12,7 @@ package("universal_stacktrace")
     end
 
     on_install("linux", "macosx", "windows", function (package)
+        io.replace("ust/ust.hpp", "#include <vector>", "#include <vector>\n#include <cstring>", {plain = true})
         os.cp("ust", package:installdir("include"))
     end)
 
