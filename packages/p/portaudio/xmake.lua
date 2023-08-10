@@ -40,14 +40,14 @@ package("portaudio")
         table.insert(configs, "-DPA_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DPA_USE_SKELETON=" .. (package:config("skeleton") and "ON" or "OFF"))
         table.insert(configs, "-DPA_USE_ASIO=" .. (package:config("asio") and "ON" or "OFF"))
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             table.insert(configs, "-DPA_DLL_LINK_WITH_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
             table.insert(configs, "-DPA_USE_DS=" .. (package:config("direct_sound") and "ON" or "OFF"))
             table.insert(configs, "-DPA_USE_WMME=" .. (package:config("wmme") and "ON" or "OFF"))
             table.insert(configs, "-DPA_USE_WASAPI=" .. (package:config("wasapi") and "ON" or "OFF"))
             table.insert(configs, "-DPA_USE_WDMKS=" .. (package:config("wdmks") and "ON" or "OFF"))
             table.insert(configs, "-DPA_USE_WDMKS_DEVICE_INFO=" .. (package:config("wdmks_devcie_info") and "ON" or "OFF"))
-        elseif is_plat("linux") then
+        elseif package:is_plat("linux") then
             table.insert(configs, "-DPA_ALSA_DYNAMIC=" .. (package:config("alsa_dynamic") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
