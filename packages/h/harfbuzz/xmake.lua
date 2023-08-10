@@ -15,7 +15,6 @@ package("harfbuzz")
     add_versions("6.0.0", "6d753948587db3c7c3ba8cc4f8e6bf83f5c448d2591a9f7ec306467f3a4fe4fa")
     add_versions("7.3.0", "7cefc6cc161e9d5c88210dafc43bc733ca3e383fd3dd4f1e6178f81bd41cfaae")
     add_versions("8.0.1", "d54ca67b6a0bf732b66a343566446d7f93df2bb850133f886c0082fb618a06b2")
-
     add_configs("icu", {description = "Enable ICU library unicode functions.", default = false, type = "boolean"})
     add_configs("freetype", {description = "Enable freetype interop helpers.", default = true, type = "boolean"})
 
@@ -27,6 +26,8 @@ package("harfbuzz")
         add_configs("freetype", {description = "Enable freetype interop helpers.", default = false, type = "boolean", readonly = true})
     elseif is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    elseif is_plat("android") then
+        add_patches(">=2.8.0", path.join(os.scriptdir(), "patches", "2.8.0", "android.patch"), "6f765a7cc3f0ba7420c139d5cfab363433b933d5192d7182f7788996b81fa434")
     end
 
     on_load(function (package)
