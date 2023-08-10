@@ -1,5 +1,5 @@
 package("portaudio")
-    set_homepage("https://github.com/PortAudio/portaudio")
+    set_homepage("http://www.portaudio.com")
     set_description("PortAudio is a cross-platform, open-source C language library for real-time audio input and output.")
 
     add_urls("https://github.com/PortAudio/portaudio.git")
@@ -19,7 +19,7 @@ package("portaudio")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("user32", "winmm", "advapi32")
+        add_syslinks("user32", "winmm", "advapi32", "ole32", "setupapi")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreAudio", "AudioToolbox", "AudioUnit", "CoreServices")
     elseif is_plat("linux", "bsd") then
@@ -28,7 +28,7 @@ package("portaudio")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "wasm", "cross", function (package)
         local configs = {"-DPA_BUILD_TESTS=OFF", "-DPA_BUILD_EXAMPLES=OFF"}
         if package:is_debug() then
             table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
