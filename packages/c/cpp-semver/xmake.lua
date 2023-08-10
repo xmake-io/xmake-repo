@@ -15,10 +15,11 @@ package("cpp-semver")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <iostream>
             #include <semver/semver.hpp>
             void test() {
-                auto version = semver::version(3, 5, 2, "alpha", "build");
-                auto version = semver::version::parse("3.5.2-alpha+build");
+                auto v1 = semver::version(3, 5, 2, "alpha", "build");
+                auto v2 = semver::version::parse("3.5.2-alpha+build");
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
