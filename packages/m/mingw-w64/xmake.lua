@@ -19,7 +19,7 @@ package("mingw-w64")
             local mingw = import("detect.sdks.find_mingw")()
             if mingw then
                 package:addenv("PATH", mingw.bindir)
-                return true
+                return mingw
             end
         end
     end)

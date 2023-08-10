@@ -33,6 +33,14 @@ package("libcurl")
     add_configs("libssh2",  {description = "Use libSSH2 library.", default = false, type = "boolean"})
     add_configs("libpsl",   {description = "Use libpsl library.", default = false, type = "boolean"})
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::curl")
+    elseif is_plat("linux") then
+        add_extsources("pacman::curl", "apt::libcurl4-gnutls-dev", "apt::libcurl4-nss-dev", "apt::libcurl4-openssl-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::curl")
+    end
+
     on_load(function (package)
         if package:is_plat("windows", "mingw") then
             if not package:config("shared") then
