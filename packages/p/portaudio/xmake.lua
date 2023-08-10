@@ -1,0 +1,58 @@
+package("portaudio")
+    set_homepage("https://github.com/PortAudio/portaudio")
+    set_description("PortAudio is a cross-platform, open-source C language library for real-time audio input and output.")
+
+    add_urls("https://github.com/PortAudio/portaudio.git")
+
+    add_versions("2023.08.05", "95a5c4ba645e01b32f70458f8ddcd92edd62f982")
+
+    add_configs("skeleton", {description = "Use skeleton host API", default = false, type = "boolean"})
+    add_configs("asio", {description = "Enable support for ASIO", default = false, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("direct_sound", {description = "Enable support for DirectSound", default = true, type = "boolean"})
+        add_configs("wmme", {description = "Enable support for WMME", default = true, type = "boolean"})
+        add_configs("wasapi", {description = "Enable support for WASAPI", default = true, type = "boolean"})
+        add_configs("wdmks", {description = "Enable support for WDMKS", default = true, type = "boolean"})
+        add_configs("wdmks_devcie_info", {description = "Use WDM/KS API for device info", default = true, type = "boolean"})
+    elseif is_plat("linux") then
+        add_configs("alsa_dynamic", {description = "Enable dynamically loading libasound with dlopen using PaAlsa_SetLibraryPathName", default = false, type = "boolean"})
+    end
+
+    if is_plat("windows", "mingw") then
+        add_syslinks("user32", "winmm", "advapi32")
+    elseif is_plat("macosx") then
+        add_frameworks("CoreFoundation", "CoreAudio", "AudioToolbox", "AudioUnit", "CoreServices")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
+    add_deps("cmake")
+
+    on_install(function (package)
+        local configs = {"-DPA_BUILD_TESTS=OFF", "-DPA_BUILD_EXAMPLES=OFF"}
+        if package:is_debug() then
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
+            table.insert(configs, "-DPA_ENABLE_DEBUG_OUTPUT=ON")
+        else
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=Release")
+            table.insert(configs, "-DPA_ENABLE_DEBUG_OUTPUT=OFF")
+        end
+        table.insert(configs, "-DPA_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DPA_USE_SKELETON=" .. (package:config("skeleton") and "ON" or "OFF"))
+        table.insert(configs, "-DPA_USE_ASIO=" .. (package:config("asio") and "ON" or "OFF"))
+        if is_plat("windows") then
+            table.insert(configs, "-DPA_DLL_LINK_WITH_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DPA_USE_DS=" .. (package:config("direct_sound") and "ON" or "OFF"))
+            table.insert(configs, "-DPA_USE_WMME=" .. (package:config("wmme") and "ON" or "OFF"))
+            table.insert(configs, "-DPA_USE_WASAPI=" .. (package:config("wasapi") and "ON" or "OFF"))
+            table.insert(configs, "-DPA_USE_WDMKS=" .. (package:config("wdmks") and "ON" or "OFF"))
+            table.insert(configs, "-DPA_USE_WDMKS_DEVICE_INFO=" .. (package:config("wdmks_devcie_info") and "ON" or "OFF"))
+        elseif is_plat("linux") then
+            table.insert(configs, "-DPA_ALSA_DYNAMIC=" .. (package:config("alsa_dynamic") and "ON" or "OFF"))
+        end
+        import("package.tools.cmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("Pa_Initialize", {includes = "portaudio.h"}))
+    end)
