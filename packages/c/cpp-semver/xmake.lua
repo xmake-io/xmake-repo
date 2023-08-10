@@ -10,6 +10,7 @@ package("cpp-semver")
     add_versions("v0.3.1", "9168cc815d8b9a5b3d73d2a158efec467eff844f1cab929bc145312cfc3958ae")
 
     on_install(function (package)
+        io.replace("include/semver/semver.hpp", "#include <vector>", "#include <vector>\n#include <cstdint>", {plain = true})
         os.cp("include", package:installdir())
     end)
 
