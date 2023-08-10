@@ -34,7 +34,7 @@ target("ass")
     configvar_check_cfuncs("HAVE_STRNDUP", "strndup", {includes = "string.h"})
     if has_config("asm") then
         if is_arch("x64", "x86", "x86_64") then
-            set_toolchains("nasm")
+            set_toolset("as", "nasm")
             add_files("libass/x86/*.asm|utils.asm|x86inc.asm")
             add_includedirs("libass/x86")
             add_defines("ARCH_X86=1", "private_prefix=ass")
@@ -91,4 +91,3 @@ target("ass")
         end)
     end
     add_headerfiles("libass/ass.h", "libass/ass_types.h", {prefix = "include/libass"})
-
