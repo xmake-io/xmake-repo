@@ -42,15 +42,15 @@ package("rtaudio")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DRTAUDIO_API_ASIO=" .. (package:config("asio") and "ON" or "OFF"))
         table.insert(configs, "-DRTAUDIO_API_JACK=" .. (package:config("jack") and "ON" or "OFF"))
-        if is_plat("windows") then
+        if package:is_plat("windows") then
             table.insert(configs, "-DRTAUDIO_API_DS=" .. (package:config("direct_sound") and "ON" or "OFF"))
             table.insert(configs, "-DRTAUDIO_API_WASAPI=" .. (package:config("wasapi") and "ON" or "OFF"))
-        elseif is_plat("linux") then
+        elseif package:is_plat("linux") then
             table.insert(configs, "-DRTAUDIO_API_ALSA=" .. (package:config("alsa") and "ON" or "OFF"))
             table.insert(configs, "-DRTAUDIO_API_PULSE=" .. (package:config("pulseaudio") and "ON" or "OFF"))
-        elseif is_plat("macosx") then
+        elseif package:is_plat("macosx") then
             table.insert(configs, "-DRTAUDIO_API_CORE=" .. (package:config("coreaudio") and "ON" or "OFF"))
-        elseif is_plat("bsd") then
+        elseif package:is_plat("bsd") then
             table.insert(configs, "-DRTAUDIO_API_OSS=" .. (package:config("oss") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
