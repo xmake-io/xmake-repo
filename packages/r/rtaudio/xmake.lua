@@ -11,14 +11,14 @@ package("rtaudio")
     add_configs("jack", {description = "Build JACK audio server API ", default = false, type = "boolean"})
     if is_plat("windows") then
         add_configs("direct_sound", {description = "Build DirectSound API", default = false, type = "boolean"})
-        add_configs("wasapi", {description = "Build WASAPI API", default = true, type = "boolean"})
+        add_configs("wasapi", {description = "Build WASAPI API", default = false, type = "boolean"})
     elseif is_plat("linux") then
-        add_configs("alsa", {description = "Build ALSA API", default = true, type = "boolean"})
+        add_configs("alsa", {description = "Build ALSA API", default = false, type = "boolean"})
         add_configs("pulseaudio", {description = "Build PulseAudio API", default = false, type = "boolean"})
     elseif is_plat("macosx") then
-        add_configs("coreaudio", {description = "Build CoreAudio API", default = true, type = "boolean"})
+        add_configs("coreaudio", {description = "Build CoreAudio API", default = false, type = "boolean"})
     elseif is_plat("bsd") then
-        add_configs("oss", {description = "Build OSS4 API", default = true, type = "boolean"})
+        add_configs("oss", {description = "Build OSS4 API", default = false, type = "boolean"})
     end
 
     if is_plat("windows", "mingw") then
