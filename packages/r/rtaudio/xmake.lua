@@ -57,9 +57,9 @@ package("rtaudio")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("rtaudio_version", {includes = "rtaudio_c.h"}))
+        assert(package:has_cfuncs("rtaudio_version", {includes = "rtaudio/rtaudio_c.h"}))
         assert(package:check_cxxsnippets({test = [[
-            #include <RtAudio.h>
+            #include <rtaudio/RtAudio.h>
             void test() {
                 RtAudio::DeviceInfo info;
             }
