@@ -19,7 +19,7 @@ package("sheenbidi")
                 add_includedirs("Headers")
                 add_headerfiles("Headers/*.h", {prefixdir = "SheenBidi"})
         ]])
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
