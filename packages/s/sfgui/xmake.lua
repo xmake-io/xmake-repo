@@ -1,16 +1,12 @@
 package("sfgui")
     set_homepage("https://github.com/TankOs/SFGUI")
     set_description("Simple and Fast Graphical User Interface")
+    set_license("zlib")
 
     add_deps("sfml")
 
-    if is_plat("windows", "linux") then
-        set_urls("https://github.com/TankOs/SFGUI/archive/refs/tags/$(version).zip")
-        add_versions("0.4.0", "4B23FC069E322221E5F6B7689EFF767EBC9C50CD88EF52E2165982BF683EC42D")
-    elseif is_plat("macosx") then
-        set_urls("https://github.com/TankOs/SFGUI/archive/refs/tags/$(version).tar.gz")
-        add_versions("0.4.0", "2DFE95A2ECFED12AB2D4C591FBF6B10D16BBDEDEC2530545B4C2140AB01C05DC")
-    end
+    set_urls("https://github.com/TankOs/SFGUI.git")
+    add_versions("0.4.0", "83471599284b2a23027b9ab4514684a6eeb08a19")
     
     on_install(function (package)
         local configs = {}
@@ -25,4 +21,3 @@ package("sfgui")
             auto button1 = sfg::Button::Create();
         ]]}, { includes = { "SFGUI/SFGUI.hpp", "SFGUI/Widgets.hpp" } }))
     end)
-package_end()
