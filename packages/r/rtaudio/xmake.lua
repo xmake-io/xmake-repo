@@ -31,7 +31,7 @@ package("rtaudio")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", function (package)
         local configs = {"-DRTAUDIO_BUILD_PYTHON=OFF"}
         if package:is_debug() then
             table.insert(configs, "-DCMAKE_BUILD_TYPE=ON")
