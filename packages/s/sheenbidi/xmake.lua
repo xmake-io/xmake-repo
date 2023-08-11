@@ -8,12 +8,18 @@ package("sheenbidi")
 
     add_versions("v2.6", "f538f51a7861dd95fb9e3f4ad885f39204b5c670867019b5adb7c4b410c8e0d9")
 
-    add_deps("meson", "ninja")
-
     on_install(function (package)
-        local configs = {}
-        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs)
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            set_languages("c11")
+            target("raqm")
+                set_kind("$(kind)")
+                add_files("Source/SheenBidi.c")
+                add_defines("SB_CONFIG_UNITY")
+                add_includedirs("Headers")
+                add_headerfiles("Headers/*.h", {prefixdir = "SheenBidi"})
+        ]])
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
