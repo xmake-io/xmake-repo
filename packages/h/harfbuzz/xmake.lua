@@ -18,7 +18,11 @@ package("harfbuzz")
     add_configs("icu", {description = "Enable ICU library unicode functions.", default = false, type = "boolean"})
     add_configs("freetype", {description = "Enable freetype interop helpers.", default = true, type = "boolean"})
 
-    add_deps("meson", "ninja")
+    if is_plat("android") then
+        add_deps("cmake")
+    else
+        add_deps("meson", "ninja")
+    end
     add_includedirs("include", "include/harfbuzz")
     if is_plat("macosx") then
         add_frameworks("CoreText", "CoreFoundation", "CoreGraphics")
