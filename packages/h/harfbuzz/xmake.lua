@@ -45,8 +45,8 @@ package("harfbuzz")
         local configs = {"-DHB_HAVE_GLIB=OFF", "-DHB_HAVE_GOBJECT=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DHB_HAVE_FREETYPE=" .. package:config("freetype") and "ON" or "OFF")
-        table.insert(configs, "-DHB_HAVE_ICU=" .. package:config("icu") and "ON" or "OFF")
+        table.insert(configs, "-DHB_HAVE_FREETYPE=" .. (package:config("freetype") and "ON" or "OFF"))
+        table.insert(configs, "-DHB_HAVE_ICU=" .. (package:config("icu") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
