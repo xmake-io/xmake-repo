@@ -47,6 +47,12 @@ package("harfbuzz")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHB_HAVE_FREETYPE=" .. (package:config("freetype") and "ON" or "OFF"))
         table.insert(configs, "-DHB_HAVE_ICU=" .. (package:config("icu") and "ON" or "OFF"))
+        if package:config("freetype") then
+            local freetype = package:dep("freetype"):fetch()
+            if freetype then
+                table.insert(configs, "-DFREETYPE_DIR=" .. freetype.sysincludedirs or freetype.includedirs)
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
