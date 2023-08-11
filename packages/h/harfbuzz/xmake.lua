@@ -15,6 +15,7 @@ package("harfbuzz")
     add_versions("6.0.0", "6d753948587db3c7c3ba8cc4f8e6bf83f5c448d2591a9f7ec306467f3a4fe4fa")
     add_versions("7.3.0", "7cefc6cc161e9d5c88210dafc43bc733ca3e383fd3dd4f1e6178f81bd41cfaae")
     add_versions("8.0.1", "d54ca67b6a0bf732b66a343566446d7f93df2bb850133f886c0082fb618a06b2")
+
     add_configs("icu", {description = "Enable ICU library unicode functions.", default = false, type = "boolean"})
     add_configs("freetype", {description = "Enable freetype interop helpers.", default = true, type = "boolean"})
 
@@ -26,7 +27,7 @@ package("harfbuzz")
     add_includedirs("include", "include/harfbuzz")
     if is_plat("macosx") then
         add_frameworks("CoreText", "CoreFoundation", "CoreGraphics")
-    elseif is_plat("bsd") then
+    elseif is_plat("bsd", "android") then
         add_configs("freetype", {description = "Enable freetype interop helpers.", default = false, type = "boolean", readonly = true})
     elseif is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -47,12 +48,6 @@ package("harfbuzz")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHB_HAVE_FREETYPE=" .. (package:config("freetype") and "ON" or "OFF"))
         table.insert(configs, "-DHB_HAVE_ICU=" .. (package:config("icu") and "ON" or "OFF"))
-        if package:config("freetype") then
-            local freetype = package:dep("freetype"):fetch()
-            if freetype then
-                table.insert(configs, "-DFREETYPE_DIR=" .. freetype.sysincludedirs or freetype.includedirs)
-            end
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 
