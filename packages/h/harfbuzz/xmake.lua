@@ -26,8 +26,6 @@ package("harfbuzz")
         add_configs("freetype", {description = "Enable freetype interop helpers.", default = false, type = "boolean", readonly = true})
     elseif is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    elseif is_plat("android") then
-        add_patches(">=2.8.0", path.join(os.scriptdir(), "patches", "2.8.0", "android.patch"), "6f765a7cc3f0ba7420c139d5cfab363433b933d5192d7182f7788996b81fa434")
     end
 
     on_load(function (package)
@@ -37,6 +35,15 @@ package("harfbuzz")
         if package:config("freetype") then
             package:add("deps", "freetype")
         end
+    end)
+
+    on_install("android", function (package)
+        local configs = {"-DHB_HAVE_GLIB=OFF", "-DHB_HAVE_GOBJECT=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DHB_HAVE_FREETYPE=" .. package:config("freetype") and "ON" or "OFF")
+        table.insert(configs, "-DHB_HAVE_ICU=" .. package:config("icu") and "ON" or "OFF")
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_install(function (package)
