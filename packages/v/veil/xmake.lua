@@ -16,5 +16,5 @@ package("veil")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("NtReadFile", {includes = "veil.h"}))
+        assert(package:has_cxxfuncs("NtReadFile", {includes = "veil.h"}))
     end)
