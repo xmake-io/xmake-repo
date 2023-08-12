@@ -28,7 +28,9 @@ target("ass")
     add_files("libass/*.c|ass_fontconfig.c|ass_directwrite.c|ass_coretext.c",
               "libass/c/*.c")
     add_includedirs("libass", "libass/c", "$(buildir)")
-    add_syslinks("m")
+    if not is_plat("windows") then
+        add_syslinks("m")
+    end
     add_configfiles("config.h.in")
     configvar_check_cfuncs("HAVE_STRDUP", "strdup", {includes = "string.h"})
     configvar_check_cfuncs("HAVE_STRNDUP", "strndup", {includes = "string.h"})
@@ -58,14 +60,17 @@ target("ass")
     if has_config("system-font-provider") then
         on_config(function (target)
             -- directwrite
-            if target:is_plat("windows") and target:has_cincludes("dwrite_c.h") then
+            if target:is_plat("windows", "mingw") and target:has_cincludes("dwrite_c.h") then
                 if target:check_csnippets([[#include <winapifamily.h>
                 #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
                 #error Win32 desktop APIs are available
                 #endif]]) then
                     target:add("syslinks", "dwrite")
                 else
-                    target:add("syslinks", "gdi")
+                    target:add("syslinks", "gdi32")
+                end
+                if target:kind() == "shared" then
+                    target:add("syslinks", "user32")
                 end
                 target:add("files", "libass/ass_directwrite.c")
                 target:add("defines", "CONFIG_DIRECTWRITE")
