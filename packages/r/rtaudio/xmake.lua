@@ -22,7 +22,7 @@ package("rtaudio")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("winmm", "ole32", "mfplat", "mfuuid", "ksuser", "wmcodecdspuuid")
+        add_syslinks("winmm", "ole32", "mfplat", "mfuuid", "ksuser", "wmcodecdspuuid", "user32", "dsound")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreAudio")
     elseif is_plat("linux", "bsd") then
