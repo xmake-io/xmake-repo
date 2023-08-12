@@ -3,10 +3,15 @@ package("directxtex")
     set_description("DirectXTex texture processing library")
     set_license("MIT")
 
-    add_urls("https://github.com/microsoft/DirectXTex/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/microsoft/DirectXTex.git")
+    local tag =
+    {
+        ["2023.06"] = "jun2023",
+    }
 
-    add_versions("jun2023", "51f0ff3bee0d1015c110e0c92ebdd9704aa6acd91185328fd92f10b9558f4c62")
+    add_urls("https://github.com/microsoft/DirectXTex/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/microsoft/DirectXTex.git", {version = function (version) return tag[tostring(version)] end})
+
+    add_versions("2023.06", "51f0ff3bee0d1015c110e0c92ebdd9704aa6acd91185328fd92f10b9558f4c62")
 
     add_configs("dx11", {description = "Build with DirectX11 Runtime support", default = true, type = "boolean"})
     add_configs("dx12", {description = "Build with DirectX12 Runtime support", default = true, type = "boolean"})
@@ -42,7 +47,7 @@ package("directxtex")
         if package:config("openexr") then
             table.insert(packagedeps, "openexr")
         end
-        import("package.tools.cmake").install(package, configs, packagedeps)
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
