@@ -35,6 +35,7 @@ target("ass")
     if has_config("asm") then
         if is_arch("x64", "x86", "x86_64") then
             add_toolchains("nasm")
+            set_toolset("as", "nasm")
             add_files("libass/x86/*.asm|utils.asm|x86inc.asm")
             add_includedirs("libass/x86")
             add_defines("ARCH_X86=1", "private_prefix=ass")
