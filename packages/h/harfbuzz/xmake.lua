@@ -83,6 +83,7 @@ package("harfbuzz")
             import("lib.detect.find_tool")
             local pkgconf = find_tool("pkgconf")
             print("pkgconf", pkgconf)
+            os.execv("pkgconf --version")
             print(envs)
             print(os.getenv("PATH"))
         end
