@@ -26,6 +26,9 @@ package("harfbuzz")
         add_deps("cmake")
     else
         add_deps("meson", "ninja")
+        if is_plat("windows") then
+            add_deps("pkgconf")
+        end
     end
     add_includedirs("include", "include/harfbuzz")
     if is_plat("macosx") then
@@ -77,9 +80,6 @@ package("harfbuzz")
                         envs.LIB = (envs.LIB or "") .. path.envsep() .. linkdir
                     end
                 end
-            end
-            if package:config("shared") then
-                ldflags = "z.lib"
             end
         end
         meson.install(package, configs, {envs = envs, ldflags = ldflags})
