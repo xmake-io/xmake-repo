@@ -67,7 +67,6 @@ package("harfbuzz")
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dicu=" .. (package:config("icu") and "enabled" or "disabled"))
         table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))
-        local ldflags
         local envs = meson.buildenvs(package)
         if package:is_plat("windows") then
             for _, dep in ipairs(package:orderdeps()) do
@@ -81,8 +80,12 @@ package("harfbuzz")
                     end
                 end
             end
+            local pkgconf = find_tool("pkgconf")
+            print("pkgconf", pkgconf)
+            print(envs)
+            print(os.getenv("PATH"))
         end
-        meson.install(package, configs, {envs = envs, ldflags = ldflags})
+        meson.install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
