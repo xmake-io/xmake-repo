@@ -22,7 +22,7 @@ package("directxtex")
     add_configs("prebuild_shader", {description = "Use externally built HLSL shaders", default = false, type = "boolean"})
     add_configs("openexr", {description = "Build with OpenEXR support", default = false, type = "boolean"})
 
-    add_deps("cmake")
+    add_deps("cmake", "directxmath")
 
     on_load(function (package)
         if package:config("openexr") then
