@@ -64,10 +64,10 @@ package("harfbuzz")
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dicu=" .. (package:config("icu") and "enabled" or "disabled"))
         table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))
+        local ldflags
         local envs = meson.buildenvs(package)
         if package:is_plat("windows") then
             for _, dep in ipairs(package:orderdeps()) do
-                print("dep", dep:name())
                 local fetchinfo = dep:fetch()
                 if fetchinfo then
                     for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
@@ -78,9 +78,11 @@ package("harfbuzz")
                     end
                 end
             end
+            if package:config("shared") then
+                ldflags = "z.lib"
+            end
         end
-        print(envs)
-        meson.install(package, configs, {envs = envs})
+        meson.install(package, configs, {envs = envs, ldflags = ldflags})
     end)
 
     on_test(function (package)
