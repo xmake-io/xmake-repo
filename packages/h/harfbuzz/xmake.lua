@@ -60,8 +60,6 @@ package("harfbuzz")
         local configs = {"-Dtests=disabled", "-Ddocs=disabled", "-Dbenchmark=disabled", "-Dcairo=disabled", "-Dglib=disabled", "-Dgobject=disabled"}
         if package:is_plat("macosx") then
             table.insert(configs, "-Dcoretext=enabled")
-        elseif package:is_plat("windows") and package:config("shared") then
-            io.replace("meson.build", "msvc_args = [", "msvc_args = [\n'z.lib',", {plain = true})
         end
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dicu=" .. (package:config("icu") and "enabled" or "disabled"))
@@ -69,6 +67,7 @@ package("harfbuzz")
         local envs = meson.buildenvs(package)
         if package:is_plat("windows") then
             for _, dep in ipairs(package:orderdeps()) do
+                print("dep", dep:name())
                 local fetchinfo = dep:fetch()
                 if fetchinfo then
                     for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
@@ -80,6 +79,7 @@ package("harfbuzz")
                 end
             end
         end
+        print(envs)
         meson.install(package, configs, {envs = envs})
     end)
 
