@@ -22,7 +22,10 @@ package("directxtex")
     add_configs("prebuild_shader", {description = "Use externally built HLSL shaders", default = false, type = "boolean"})
     add_configs("openexr", {description = "Build with OpenEXR support", default = false, type = "boolean"})
 
-    add_deps("cmake", "directxmath")
+    add_deps("cmake")
+    if is_plat("mingw") then
+        add_deps("directx-headers")
+    end
 
     on_load(function (package)
         if package:config("openexr") then
@@ -30,7 +33,7 @@ package("directxtex")
         end
     end)
 
-    on_install("windows", "mingw", "msys", function (package)
+    on_install("windows", "mingw", function (package)
         local configs = {"-DBUILD_TOOLS=OFF", "-DBUILD_SAMPLE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -42,12 +45,7 @@ package("directxtex")
         table.insert(configs, "-DENABLE_CODE_ANALYSIS=" .. (package:config("code_analysis") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_PREBUILT_SHADERS=" .. (package:config("prebuild_shader") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_OPENEXR_SUPPORT=" .. (package:config("openexr") and "ON" or "OFF"))
-
-        local packagedeps = {}
-        if package:config("openexr") then
-            table.insert(packagedeps, "openexr")
-        end
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
