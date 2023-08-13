@@ -17,6 +17,10 @@ package("hpx")
     add_configs("context", {description = "Enable Boost. Context for task context switching", default = false})
     add_configs("cpu_count", {description = "Set the maximum CPU count supported by HPX", default = "64"})
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     add_deps("cmake", "hwloc", "asio >=1.12.0")
 
     on_load("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
@@ -42,7 +46,7 @@ package("hpx")
         table.insert(configs, "-DHPX_WITH_PARCELPORT_LCI=" .. (package:config("lci") and "ON" or "OFF"))
         table.insert(configs, "-DHPX_WITH_APEX=" .. (package:config("apex") and "ON" or "OFF"))
         table.insert(configs, "-DHPX_WITH_GENERIC_CONTEXT_COROUTINES=" .. (package:config("context") and "ON" or "OFF"))
-        table.insert(configs, "-DHPX_WITH_MAX_CPU_COUNT=" .. (package:config("cpu_count") and "ON" or "OFF"))
+        table.insert(configs, "-DHPX_WITH_MAX_CPU_COUNT=" .. package:config("cpu_count"))
         import("package.tools.cmake").install(package, configs)
     end)
 
