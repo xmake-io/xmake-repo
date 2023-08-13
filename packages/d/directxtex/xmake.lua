@@ -24,7 +24,7 @@ package("directxtex")
 
     add_deps("cmake")
     if is_plat("mingw") then
-        add_deps("directx-headers")
+        add_deps("directx-headers", "directxmath")
     end
 
     on_load(function (package)
