@@ -1,5 +1,5 @@
 package("yy-thunks")
-
+    set_kind("binary")
     set_homepage("https://github.com/Chuyu-Team/YY-Thunks")
     set_description("Fix DecodePointer, EncodePointer,RegDeleteKeyEx etc. APIs not found in Windows XP RTM.")
     set_license("MIT")
@@ -12,7 +12,7 @@ package("yy-thunks")
 
         -- check vs version
         local vs = toolchain.load("msvc"):config("vs")
-        if tonumber(vs) < 2005 then
+        if vs and tonumber(vs) < 2005 then
             raise("YY-Thunks only supports VS2008 or later versions")
         end
 
