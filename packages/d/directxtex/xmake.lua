@@ -23,9 +23,6 @@ package("directxtex")
     add_configs("openexr", {description = "Build with OpenEXR support", default = false, type = "boolean"})
 
     add_deps("cmake")
-    if is_plat("mingw") then
-        add_deps("directx-headers", "directxmath")
-    end
 
     on_load(function (package)
         if package:config("openexr") then
@@ -33,7 +30,7 @@ package("directxtex")
         end
     end)
 
-    on_install("windows", "mingw", function (package)
+    on_install("windows", function (package)
         local configs = {"-DBUILD_TOOLS=OFF", "-DBUILD_SAMPLE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
