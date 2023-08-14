@@ -1,14 +1,18 @@
 package("optick")
-
     set_homepage("https://optick.dev")
     set_description("C++ Profiler For Games (API)")
+    set_license("MIT")
 
-    add_urls("https://github.com/bombomby/optick/archive/refs/tags/$(version).0.tar.gz")
-    add_versions("1.3.1", "3670f44219f4d99a6d630c8364c6757d26d7226b0cfd007ee589186397362cc9")
+    add_urls("https://github.com/bombomby/optick/archive/refs/tags/$(version).0.tar.gz", {alias="archive"})
+    add_urls("https://github.com/bombomby/optick.git", {alias="git"})
+    add_versions("archive:1.4.0", "8ff386246542654f96a4c1bcc61b7f2f0e498731ed11cd44401baf0c89789b18")
+    add_versions("archive:1.3.1", "3670f44219f4d99a6d630c8364c6757d26d7226b0cfd007ee589186397362cc9")
+    add_versions("git:1.4.0", "1.4.0.0")
+    add_versions("git:1.3.1", "1.3.1.0")
     
     add_configs("vulkan", {description = "Built-in support for Vulkan",     default = false, type = "boolean"})
     add_configs("d3d12",  {description = "Built-in support for DirectX 12", default = false, type = "boolean"})
-    
+
     if is_plat("windows") then
         add_syslinks("Advapi32")
     end
@@ -17,7 +21,7 @@ package("optick")
 
     on_install("windows", "linux", "android", function (package)
         local configs = {}
-        table.insert(configs, "-DOPTICK_INSTALL_TARGETS=OFF")
+        table.insert(configs, "-DOPTICK_INSTALL_TARGETS=ON")
         table.insert(configs, "-DOPTICK_BUILD_GUI_APP=OFF")
         table.insert(configs, "-DOPTICK_BUILD_CONSOLE_SAMPLE=OFF")
         table.insert(configs, "-DOPTICK_USE_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
@@ -27,12 +31,7 @@ package("optick")
             io.replace("CMakeLists.txt", "SHARED", "STATIC")
         end
 
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
-
-        os.trycp("build/libOptickCore." .. (package:config("shared") and "so" or "a"), path.join(package:installdir(), "lib"))
-        os.trycp("build/OptickCore." .. (package:config("shared") and "dll" or "lib"), path.join(package:installdir(), "lib"))
-        os.rm("src/*.cpp")
-        os.cp("src", path.join(package:installdir(), "include"), {rootdir = "src"})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
