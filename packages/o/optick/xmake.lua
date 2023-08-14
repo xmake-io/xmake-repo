@@ -19,7 +19,7 @@ package("optick")
     
     add_deps("cmake")
 
-    on_install("windows", "linux", "android", function (package)
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "-DOPTICK_INSTALL_TARGETS=ON")
         table.insert(configs, "-DOPTICK_BUILD_GUI_APP=OFF")
