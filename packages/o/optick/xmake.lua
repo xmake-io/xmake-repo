@@ -43,5 +43,5 @@ package("optick")
                     v *= v * v + (float)i;
                 }
             }
-        ]]}, {includes = "optick.h"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "optick.h"}))
     end)
