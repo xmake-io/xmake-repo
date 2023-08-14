@@ -5,7 +5,8 @@ package("freetype")
 
     add_urls("https://downloads.sourceforge.net/project/freetype/freetype2/$(version)/freetype-$(version).tar.gz",
              "https://download.savannah.gnu.org/releases/freetype/freetype-$(version).tar.gz", {alias="archive"})
-    add_urls("https://gitlab.freedesktop.org/freetype/freetype.git", {alias = "git"})
+    add_urls("https://gitlab.freedesktop.org/freetype/freetype.git",
+             "https://github.com/freetype/freetype.git", {alias = "git"})
 
     add_versions("archive:2.13.1", "0b109c59914f25b4411a8de2a506fdd18fa8457eb86eca6c7b15c19110a92fa5")
     add_versions("archive:2.13.0", "a7aca0e532a276ea8d85bd31149f0a74c33d19c8d287116ef8f5f8357b4f1f80")
@@ -72,7 +73,11 @@ package("freetype")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local function add_dep(opt)
             if package:config(opt.conf) then
-                table.insert(configs, "-DFT_WITH_" .. opt.cmakewith .. "=ON")
+                if package:version():ge("2.11.1") then
+                    table.insert(configs, "-DFT_REQUIRE_" .. opt.cmakewith .. "=ON")
+                else
+                    table.insert(configs, "-DFT_WITH_" .. opt.cmakewith .. "=ON")
+                end
 
                 local lib = package:dep(opt.pkg or opt.conf)
                 if lib and not lib:is_system() then
@@ -85,7 +90,11 @@ package("freetype")
                     end
                 end
             else
-                table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (opt.cmakedisable or opt.cmakewith) .. "=ON")
+                if package:version():ge("2.11.1") then
+                    table.insert(configs, "-DFT_DISABLE_" .. opt.cmakewith .. "=ON")
+                else
+                    table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. (opt.cmakedisable or opt.cmakewith) .. "=ON")
+                end
             end
         end
         add_dep({conf = "bzip2", cmakewith = "BZIP2", cmakedisable = "BZip2", cmakeinclude = "BZIP2_INCLUDE_DIR"})
