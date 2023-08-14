@@ -82,11 +82,15 @@ package("harfbuzz")
             end
             import("lib.detect.find_tool")
             import("lib.detect.find_program")
+            
+            local pkgconf0 = find_tool("pkgconf")
+            print("pkgconf0", pkgconf0)
+            
             local pkgconf1 = find_tool("pkgconf", {force = true})
-            print("pkgconf1", pkgconf)
+            print("pkgconf1", pkgconf1)
             
             local pkgconf2 = find_program("pkgconf", {force = true})
-            print("pkgconf2", pkgconf)
+            print("pkgconf2", pkgconf2)
         
             os.execv("pkgconf --version")
             print(envs)
