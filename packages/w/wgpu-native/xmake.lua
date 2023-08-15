@@ -24,6 +24,8 @@ package("wgpu-native")
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
     end
 
+    add_includedirs("include", "include/webgpu")
+
     on_load("windows", function (package)
         if not package:config("shared") then
             package:add("syslinks", "Advapi32", "bcrypt", "d3dcompiler", "NtDll", "User32", "Userenv", "WS2_32")
@@ -38,7 +40,7 @@ package("wgpu-native")
     end)
 
     on_install("windows|x64", "windows|x86", "linux|x86_64", "macosx|x86_64", "macosx|arm64", function (package)
-        os.cp("*.h", package:installdir("include"))
+        os.cp("*.h", package:installdir("include", "webgpu"))
         if package:is_plat("windows") then
             if package:config("shared") then
                 os.cp("wgpu_native.dll", package:installdir("bin"))
