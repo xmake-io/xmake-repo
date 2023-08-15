@@ -1,5 +1,4 @@
 package("vc-ltl5")
-    set_kind("binary")
     set_homepage("https://github.com/Chuyu-Team/VC-LTL5")
     set_description("Shared to msvcrt.dll or ucrtbase.dll and optimize the C/C++ application file size")
     set_license("EPL-2.0")
