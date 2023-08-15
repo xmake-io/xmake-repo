@@ -1,5 +1,4 @@
 package("yy-thunks")
-    set_kind("binary")
     set_homepage("https://github.com/Chuyu-Team/YY-Thunks")
     set_description("Fix DecodePointer, EncodePointer,RegDeleteKeyEx etc. APIs not found in Windows XP RTM.")
     set_license("MIT")
