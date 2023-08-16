@@ -13,6 +13,11 @@ package("sonic-cpp")
         os.cp("include", package:installdir())
     end)
 
+    on_install("mingw", function (package)
+        io.replace("include/sonic/dom/type.h", "#include \"sonic/macro.h\"", "#include \"sonic/macro.h\"\ntypedef unsigned int uint;", {plain = true})
+        os.cp("include", package:installdir())
+    end)
+
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "sonic/sonic.h"
