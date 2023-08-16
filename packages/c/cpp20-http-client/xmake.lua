@@ -11,14 +11,14 @@ package("cpp20-http-client")
         add_syslinks("ws2_32", "crypt32")
     else
         add_deps("openssl")
-        if is_plat("linux") then
-            add_syslinks("pthread")
-        end
     end
 
     on_install("windows", "linux", "macosx", "bsd", "android", "cross", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
+            if not is_plat("windows") then
+                add_requires("openssl")
+            end
             set_languages("c++20")
             target("cpp20-http-client")
                 set_kind("$(kind)")
@@ -32,10 +32,7 @@ package("cpp20-http-client")
                         add_rules("utils.symbols.export_all", {export_classes = true})
                     end
                 else
-                    add_deps("openssl")
-                    if is_plat("linux") then
-                        add_syslinks("pthread")
-                    end
+                    add_packages("openssl")
                 end
         ]])
         import("package.tools.xmake").install(package, configs)
