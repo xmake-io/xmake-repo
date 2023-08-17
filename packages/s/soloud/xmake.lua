@@ -1,16 +1,11 @@
--- Examples:
--- https://github.com/xmake-io/xmake-repo/tree/master/packages/n/newtondynamics
--- https://github.com/xmake-io/xmake-repo/blob/dev/packages/z/zlib/xmake.lua
--- https://github.com/tboox/benchbox
-
 package("soloud")
     set_description("SoLoud is an easy to use, free, portable c/c++ audio engine for games.")
     
-    add_urls("https://sol.gfxile.net/soloud/soloud_20200207_lite.zip")
-    add_versions("20200207", "a6fa8e5b7d26b03e21947307d45869e33f0d233639258bd5bf4bea73f88e709d")
-    
     set_homepage("https://sol.gfxile.net/soloud/")
     set_license("zlib")
+    
+    add_urls("https://github.com/jarikomppa/soloud/archive/refs/tags/RELEASE_20200207.zip")
+    add_versions("20200207", "ad3a6ee2020150e33e72911ce46bbfe26f9c84ec08ff8d7f22680ce4970f7fd3")
     
     -- linux needs to link with libpthread and libdl
     if is_plat("linux") then
@@ -36,21 +31,16 @@ package("soloud")
                 -- compile the miniaudio backend
                 -- hide the symbols from the included miniaudio
                 -- to avoid conflicts with xrepo miniaudio.
-                -- we can't use xrepo's miniaudio. it's too new.
+                -- we can't use xrepo's miniaudio. it's too new (0.11.x versus 0.10.x).
                 add_files("src/backend/miniaudio/*.c*", {symbols="hidden"})
                 
-                before_install(function (package)
-                    os.cp("include", package:installdir())
-                end)
+                add_headerfiles("include/(**.h)")
         ]])
         
         import("package.tools.xmake").install(package)
-        -- Copy headers
-        -- os.cp("include", package:installdir())
     end)
     
     on_test(function (package)
-        -- check includes and interfaces
         assert(package:has_cxxincludes("soloud.h"))
         assert(package:has_cxxtypes("SoLoud::Soloud", {includes = "soloud.h"}))
         assert(package:check_cxxsnippets({test = [[
