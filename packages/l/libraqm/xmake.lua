@@ -16,7 +16,7 @@ package("libraqm")
         package:add("deps", (package:config("sheenbidi") and "sheenbidi" or "fribidi"))
     end)
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
         local ver = package:version()
         io.writefile("xmake.lua", format([[
             add_requires("harfbuzz", {configs = {icu = false, freetype = true}})
