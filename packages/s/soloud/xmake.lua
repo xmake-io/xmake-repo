@@ -7,14 +7,23 @@ package("soloud")
          {version = function (version) return version:gsub("%.", "") end})
     add_versions("2020.02.07", "ad3a6ee2020150e33e72911ce46bbfe26f9c84ec08ff8d7f22680ce4970f7fd3")
     
+    -- for now we only support the miniaudio backend
+    add_deps("miniaudio")
+    add_patches("2020.02.07", path.join(os.scriptdir(), "patches", "miniaudio_v11.patch"), "d98b6727a159c3dccd45de872b321a1c180bc353af08d4bdce4e298f4de14f21")
+    
     -- linux needs to link with libpthread and libdl
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
     
     on_install(function (package)
+        -- remove the miniaudio.h that comes with soloud. we have it as an xrepo dependency.
+        os.rm("src/backend/miniaudio/miniaudio.h")
+        
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
+            
+            add_requires("miniaudio")
             
             target("soloud")
                 set_kind("$(kind)")
@@ -22,6 +31,7 @@ package("soloud")
                 
                 -- for now we'll only support the miniaudio backend
                 add_defines("WITH_MINIAUDIO")
+                add_packages("miniaudio")
                 
                 add_includedirs("include", {public = true})
                 
@@ -29,10 +39,7 @@ package("soloud")
                 add_files("src/**.cpp|tools/**.cpp|backend/**.cpp")
                 add_files("src/**.c|tools/**.c|backend/**.c")
                 -- compile the miniaudio backend
-                -- hide the symbols from the included miniaudio
-                -- to avoid conflicts with xrepo miniaudio.
-                -- we can't use xrepo's miniaudio. it's too new (0.11.x versus 0.10.x).
-                add_files("src/backend/miniaudio/*.c*", {symbols="hidden"})
+                add_files("src/backend/miniaudio/*.c*")
                 
                 add_headerfiles("include/(**.h)")
         ]])
@@ -41,8 +48,6 @@ package("soloud")
     end)
     
     on_test(function (package)
-        assert(package:has_cxxincludes("soloud.h"))
-        assert(package:has_cxxtypes("SoLoud::Soloud", {includes = "soloud.h"}))
         assert(package:check_cxxsnippets({test = [[
             void test(int args, char** argv) {
                 SoLoud::Soloud soloud;
