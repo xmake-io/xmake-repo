@@ -1,11 +1,11 @@
 package("soloud")
     set_description("SoLoud is an easy to use, free, portable c/c++ audio engine for games.")
-    
-    set_homepage("https://sol.gfxile.net/soloud/")
+    set_homepage("https://github.com/jarikomppa/soloud")
     set_license("zlib")
     
-    add_urls("https://github.com/jarikomppa/soloud/archive/refs/tags/RELEASE_20200207.zip")
-    add_versions("20200207", "ad3a6ee2020150e33e72911ce46bbfe26f9c84ec08ff8d7f22680ce4970f7fd3")
+    add_urls("https://github.com/jarikomppa/soloud/archive/refs/tags/RELEASE_$(version).zip",
+         {version = function (version) return version:gsub("%.", "") end})
+    add_versions("2020.02.07", "ad3a6ee2020150e33e72911ce46bbfe26f9c84ec08ff8d7f22680ce4970f7fd3")
     
     -- linux needs to link with libpthread and libdl
     if is_plat("linux") then
