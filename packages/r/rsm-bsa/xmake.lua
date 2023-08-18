@@ -13,11 +13,12 @@ package("rsm-bsa")
     add_deps("rsm-mmio", "rsm-binary-io", "lz4", "zlib")
     if is_plat("windows") then
         add_deps("directxtex")
+        add_syslinks("ole32")
     end
 
     on_load(function (package)
         if package:config("xmem") then
-            package:add("deps", "reproc", "expected-lite", "xbyak")
+            package:add("deps", "reproc", "expected-lite", "xbyak", "taywee_args")
         end
     end)
 
@@ -30,21 +31,36 @@ package("rsm-bsa")
             add_requires("rsm-mmio", "rsm-binary-io", "lz4", "zlib")
             if is_plat("windows") then
                 add_requires("directxtex")
-                if is_kind("shared") then
-                    add_rules("utils.symbols.export_all", {export_classes = true})
-                end
             end
+            set_configvar("PROJECT_VERSION_MAJOR", %d)
+            set_configvar("PROJECT_VERSION_MINOR", %d)
+            set_configvar("PROJECT_VERSION_PATCH", %d)
+            set_configvar("PROJECT_VERSION", "%s")
             if has_config("xmem") then
-                add_requires("reproc", "expected-lite", "xbyak")
+                add_requires("reproc", "expected-lite", "xbyak", "taywee_args")
 
                 target("rsm-bsa-common")
                     set_kind("$(kind)")
                     add_files("extras/xmem/src/bsa/**.cpp")
                     add_includedirs("extras/xmem/src", {public = true})
                     add_headerfiles("extras/xmem/src/(bsa/**.hpp)")
-                    add_packages("rsm-binary-io", "rsm-mmio", "expected-lite", "xbyak")
-            end
+                    add_packages("rsm-binary-io", "rsm-mmio", "expected-lite", "xbyak", {public = true})
+                    if is_plat("windows") and is_kind("shared") then
+                        add_rules("utils.symbols.export_all", {export_classes = true})
+                    end
 
+                target("xmem")
+                    set_kind("binary")
+                    set_arch("x86")
+                    add_files("extras/xmem/src/main.cpp")
+                    add_files("extras/xmem/src/version.rc")
+                    add_includedirs("include")
+                    add_deps("rsm-bsa-common")
+                    add_packages("taywee_args")
+                    set_configdir("extras/xmem/src")
+                    add_configfiles("extras/xmem/cmake/version.rc.in", {pattern = "@(.-)@"})
+                    set_configvar("PROJECT_NAME", "bsa")
+            end
             target("rsm-bsa")
                 set_kind("$(kind)")
                 add_files("src/**.cpp")
@@ -53,13 +69,13 @@ package("rsm-bsa")
                 add_installfiles("visualizers/*.natvis", {prefixdir = "include/natvis"})
                 set_configdir("include/bsa")
                 add_configfiles("cmake/project_version.hpp.in", {pattern = "@(.-)@"})
-                set_configvar("PROJECT_VERSION_MAJOR", %d)
-                set_configvar("PROJECT_VERSION_MINOR", %d)
-                set_configvar("PROJECT_VERSION_PATCH", %d)
-                set_configvar("PROJECT_VERSION", "%s")
                 add_packages("rsm-mmio", "rsm-binary-io", "lz4", "zlib")
                 if is_plat("windows") then
                     add_packages("directxtex")
+                    add_syslinks("ole32")
+                    if is_kind("shared") then
+                        add_rules("utils.symbols.export_all", {export_classes = true})
+                    end
                 end
                 if has_config("xmem") then
                     add_deps("rsm-bsa-common")
