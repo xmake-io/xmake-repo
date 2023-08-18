@@ -18,5 +18,5 @@ package("kahip")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("kaffpa", {includes = "kaHIP_interface.h"}))
+        assert(package:has_cxxfuncs("kaffpa", {includes = "kaHIP_interface.h"}))
     end)
