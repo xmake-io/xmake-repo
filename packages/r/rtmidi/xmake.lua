@@ -16,7 +16,7 @@ package("rtmidi")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     elseif is_plat("android") then
-        add_syslinks("amidi")
+        add_syslinks("amidi", "jvm")
     end
 
     add_deps("cmake")
