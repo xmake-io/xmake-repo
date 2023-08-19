@@ -7,18 +7,14 @@ package("zmqpb")
              "https://github.com/SFGrenade/ZmqPb.git")
     add_versions("0.1", "4a34ec92faa381306356e84e2a2000093d8f76cfa037db1f4cd0adb0205faebb")
 
-    on_load(function (package)
-        package:set("installdir", path.join(os.scriptdir(), package:plat(), package:arch(), package:mode()))
-    end)
-
-    on_fetch(function (package)
-        local result = {}
-        local libfiledir = (package:config("shared") and package:is_plat("windows", "mingw")) and "bin" or "lib"
-        result.links = "ZmqPb"
-        result.linkdirs = package:installdir("lib")
-        result.includedirs = package:installdir("include")
-        result.libfiles = path.join(package:installdir(libfiledir), "ZmqPb.lib")
-        return result
+    on_install(function (package)
+        local configs = {}
+        if package:config("shared") then
+            configs.kind = "shared"
+        elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
+            configs.cxflags = "-fPIC"
+        end
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
