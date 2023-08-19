@@ -17,7 +17,7 @@ package("tbb")
         add_versions("2021.4.0", "021796c7845e155e616f5ecda16daa606ebb4c6f90b996e5c08aebab7a8d3de3")
         add_versions("2021.5.0", "e5b57537c741400cf6134b428fc1689a649d7d38d9bb9c1b6d64f092ea28178a")
         add_versions("2021.7.0", "2cae2a80cda7d45dc7c072e4295c675fff5ad8316691f26f40539f7e7e54c0cc")
-        add_versions("2021.10.0", "d517205d6cc2f80a56500a7f7e1428d47e7cfc55ea66675027024c7b90047ecb")
+        add_versions("2021.10.0", "487023a955e5a3cc6d3a0d5f89179f9b6c0ae7222613a7185b0227ba0c83700b")
     else
         add_urls("https://github.com/oneapi-src/oneTBB/archive/v$(version).tar.gz")
         add_versions("2020.3", "ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3")
@@ -58,6 +58,8 @@ package("tbb")
             local configs = {"-DTBB_TEST=OFF", "-DTBB_STRICT=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             if package:is_plat("mingw") then
+                io.replace("cmake/compilers/Clang.cmake", "NOT APPLE", "FALSE", {plain = true})
+                io.replace("cmake/compilers/GNU.cmake", "NOT APPLE", "FALSE", {plain = true})
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
             end
             import("package.tools.cmake").install(package, configs)
