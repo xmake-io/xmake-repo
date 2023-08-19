@@ -16,12 +16,12 @@ package("rtmidi")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     elseif is_plat("android") then
-        add_syslinks("amidi", "jvm")
+        add_syslinks("amidi")
     end
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "iphoneos", "cross", "wasm", function (package)
         local configs = {"-DRTMIDI_BUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
