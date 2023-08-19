@@ -11,6 +11,10 @@ package("restinio")
     add_versions("0.6.18", "16fa041f4603746c6cd0f29ab126d02d220034535e7019c6ca1b8b9f58bfeee0")
     add_versions("0.6.19", "5a739cac8f3148e7e94f05bb08f5cf569dd31f6f3ea2b893eddfffb0a155eb52")
 
+    if is_plat("mingw") then
+        add_syslinks("ws2_32", "mswsock")
+    end
+
     add_deps("cmake",
              "asio",
              "http_parser",
@@ -25,7 +29,7 @@ package("restinio")
                 "RESTINIO_EXTERNAL_STRING_VIEW_LITE",
                 "RESTINIO_EXTERNAL_VARIANT_LITE")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", function (package)
         os.cd("dev/restinio")
         local configs =
         {
