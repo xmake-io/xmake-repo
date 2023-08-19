@@ -17,5 +17,5 @@ package("optional-lite")
             nonstd::optional<int> test() {
                 return nonstd::nullopt;
             }
-        ]]}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)
