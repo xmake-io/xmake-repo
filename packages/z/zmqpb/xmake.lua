@@ -20,3 +20,12 @@ package("zmqpb")
         result.libfiles = path.join(package:installdir(libfiledir), "ZmqPb.lib")
         return result
     end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                ZmqPb::ReqRep network( "tcp://127.0.0.1", 13337, false );
+                network.run();
+            }
+        ]]}, {configs = {languages = "c++14"}, includes = "zmqPb/reqRep.hpp"}))
+    end)
