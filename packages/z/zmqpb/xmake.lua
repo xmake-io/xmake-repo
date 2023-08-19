@@ -11,7 +11,7 @@ package("zmqpb")
     add_deps("fmt")
     add_deps("protobuf-cpp")
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", function (package)
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
