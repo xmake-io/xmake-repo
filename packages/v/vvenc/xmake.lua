@@ -14,7 +14,7 @@ package("vvenc")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", function (package)
         local configs = {}
         if package:is_debug() then
             table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
