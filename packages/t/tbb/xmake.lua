@@ -58,8 +58,8 @@ package("tbb")
             local configs = {"-DTBB_TEST=OFF", "-DTBB_STRICT=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             if package:is_plat("mingw") then
-                io.replace("cmake/compilers/Clang.cmake", "NOT APPLE", "FALSE", {plain = true})
-                io.replace("cmake/compilers/GNU.cmake", "NOT APPLE", "FALSE", {plain = true})
+                io.replace("cmake/compilers/Clang.cmake", "-Wl,-z,relro,-z,now,-z,noexecstack", "", {plain = true})
+                io.replace("cmake/compilers/GNU.cmake", "-Wl,-z,relro,-z,now,-z,noexecstack", "", {plain = true})
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
             end
             import("package.tools.cmake").install(package, configs)

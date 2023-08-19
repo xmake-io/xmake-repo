@@ -37,11 +37,16 @@ package("libuv")
     end
 
     on_load("windows", function (package)
-        package:add("links", "uv" .. (package:config("shared") and "" or "_a"))
+        local version = package:version()
+        if version:ge("1.45") then
+            package:add("links", package:config("shared") and "uv" or "libuv")
+        else
+            package:add("links", package:config("shared") and "uv" or "uv_a")
+        end
         if package:config("shared") then
             package:add("defines", "USING_UV_SHARED")
         end
-        if package:version():ge("1.40") and package:version():lt("1.44") then
+        if version:ge("1.40") and version:lt("1.44") then
             package:add("linkdirs", path.join("lib", package:debug() and "Debug" or "Release"))
         end
     end)
