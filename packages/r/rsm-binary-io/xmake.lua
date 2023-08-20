@@ -21,14 +21,12 @@ package("rsm-binary-io")
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
         ]])
-        local configs = {}
-        configs.kind = package:config("shared") and "shared" or "static"
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            void test(int argc, char** argv) {
+            void test() {
                 binary_io::span_istream s;
                 assert(s.tell() == 0);
             }
