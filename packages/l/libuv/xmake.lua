@@ -33,7 +33,7 @@ package("libuv")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows", "mingw") then
-        add_syslinks("advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "kernel32", "gdi32", "winspool", "shell32", "ole32", "oleaut32", "uuid", "comdlg32")
+        add_syslinks("advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "shell32", "ole32", "uuid", "dbghelp")
     end
 
     on_load("windows", function (package)
