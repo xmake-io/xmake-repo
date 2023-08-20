@@ -8,6 +8,9 @@ package("clean-test")
 
     if is_plat("linux") then
         add_syslinks("pthread")
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    elseif is_plat("macosx", "iphoneos") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
     add_deps("cmake")
