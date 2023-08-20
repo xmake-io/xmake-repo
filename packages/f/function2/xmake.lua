@@ -23,5 +23,5 @@ package("function2")
             void test() {
                 fu2::function<void() const> fun = [] {};
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)
