@@ -13,6 +13,8 @@ package("restinio")
 
     if is_plat("mingw") then
         add_syslinks("ws2_32", "mswsock")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     add_deps("cmake",
