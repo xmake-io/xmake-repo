@@ -21,7 +21,7 @@ package("cimgui")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
         local envs = {}
         -- codegen script
         local args = {"generator.lua"}
