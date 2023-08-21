@@ -15,7 +15,7 @@ package("clean-test")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "linux", "bsd", "mingw", "msys", "cross", function (package)
         local configs = {"-DCLEANTEST_TEST=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DCLEANTEST_BUILD_STATIC=OFF")
