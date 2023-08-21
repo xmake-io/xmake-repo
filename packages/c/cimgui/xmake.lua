@@ -9,7 +9,7 @@ package("cimgui")
     add_configs("imgui", {description = "Use xmake-repo imgui", default = false, type = "boolean", readonly = true})
     add_configs("target", {description = "options as words in one string: internal for imgui_internal generation, freetype for freetype generation, comments for comments generation, nochar to skip char* function version, noimstrv to skip imstrv", default = "internal noimstrv", type = "string"})
 
-    add_deps("luajit", {kind = "binary"})
+    add_deps("luajit")
 
     on_load(function (package)
         if package:config("imgui") then
