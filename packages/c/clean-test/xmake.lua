@@ -6,7 +6,7 @@ package("clean-test")
     add_urls("https://github.com/clean-test/clean-test.git")
     add_versions("2023.05.15", "d99321c97ba51c26397114ce535be4d1d9174693")
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     elseif is_plat("macosx", "iphoneos") then
