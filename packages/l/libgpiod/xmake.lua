@@ -8,7 +8,7 @@ package("libgpiod")
     add_versions("v2.0", "1e4dbbe8b3f32adf8818f1b0dfd322876aa9477c")
     add_versions("v1.6.4", "9ae6a5ffa77462fee4fc34c24a7c2459a2a5851f")
 
-    add_deps("autoconf", "automake", "libtool","pkg-config")
+    add_deps("autoconf", "automake", "libtool", "pkg-config")
     add_cxxflags("--std=c++17")
 
     on_install("macos", "linux", function (package)
