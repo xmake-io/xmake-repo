@@ -17,6 +17,10 @@ package("fmt")
     add_versions("6.0.0", "b4a16b38fa171f15dbfb958b02da9bbef2c482debadf64ac81ec61b5ac422440")
     add_versions("5.3.0", "4c0741e10183f75d7d6f730b8708a99b329b2f942dad5a9da3385ab92bb4a15c")
 
+    add_patches("10.1.0",
+                path.join(os.scriptdir(), "patches", "10.1.0", "utf8.patch" ),
+                "3280569bced9ec08933f0ea37b6a4fef4538944d9046fe197ad63e22d1357cd4")
+
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
