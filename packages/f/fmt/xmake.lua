@@ -19,7 +19,7 @@ package("fmt")
 
     add_patches("10.1.0",
                 path.join(os.scriptdir(), "patches", "10.1.0", "utf8.patch" ),
-                "3a220336b7968db6285e201651f999410a0c0b72474d0b523efc7f6bf0d4e036")
+                "3280569bced9ec08933f0ea37b6a4fef4538944d9046fe197ad63e22d1357cd4")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
