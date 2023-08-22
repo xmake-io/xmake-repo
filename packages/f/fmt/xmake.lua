@@ -17,6 +17,10 @@ package("fmt")
     add_versions("6.0.0", "b4a16b38fa171f15dbfb958b02da9bbef2c482debadf64ac81ec61b5ac422440")
     add_versions("5.3.0", "4c0741e10183f75d7d6f730b8708a99b329b2f942dad5a9da3385ab92bb4a15c")
 
+    add_patches("10.1.0",
+                path.join(os.scriptdir(), "patches", "10.1.0", "utf8.patch" ),
+                "3a220336b7968db6285e201651f999410a0c0b72474d0b523efc7f6bf0d4e036")
+
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -49,9 +53,6 @@ package("fmt")
             return
         end
         io.gsub("CMakeLists.txt", "MASTER_PROJECT AND CMAKE_GENERATOR MATCHES \"Visual Studio\"", "0")
-        if package:is_plat("windows") then
-            io.gsub("include/fmt/format.h", "\"�\"", "\"\\uFFFD\"")
-        end
         local configs = {"-DFMT_TEST=OFF", "-DFMT_DOC=OFF", "-DFMT_FUZZ=OFF", "-DCMAKE_CXX_VISIBILITY_PRESET=default"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
