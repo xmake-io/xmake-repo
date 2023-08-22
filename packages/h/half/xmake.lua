@@ -4,10 +4,10 @@ package("half")
     set_description("C++ library for half precision floating point arithmetics")
     set_license("MIT")
 
-    add_urls("https://sourceforge.com/projects/half/files/half/$(version)/half-$(version).zip")
+    add_urls("https://downloads.sourceforge.net/project/half/half/$(version)/half-$(version).zip")
     add_versions("2.2.0", "1d1d9e482fb95fcd7cab0953a4bd35e00b86578f11cb6939a067811a055a563b")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "iphoneos", "android", "bsd", function (package)
         os.cp("include", package:installdir())
     end)
 
