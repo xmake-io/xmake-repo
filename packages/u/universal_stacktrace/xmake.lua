@@ -11,7 +11,7 @@ package("universal_stacktrace")
         add_syslinks("dbghelp")
     end
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows", "mingw", function (package)
         io.replace("ust/ust.hpp", "#include <vector>", "#include <vector>\n#include <cstring>", {plain = true})
         io.replace("ust/ust.hpp", "#include <DbgHelp.h>\n#include <windows.h>", "#include <windows.h>\n#include <DbgHelp.h>", {plain = true})
         os.cp("ust", package:installdir("include"))
