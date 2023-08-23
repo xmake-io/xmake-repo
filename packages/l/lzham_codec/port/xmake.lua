@@ -59,21 +59,22 @@ target("lzham_codec")
     add_includedirs("lzhamcomp", "lzhamdecomp")
     if is_arch("x86_64") then 
         add_defines("__x86_64__")
-    elseif is_arch("x86", "i386") then 
+    elseif is_arch("i386") then 
         add_defines("__i386__")
+    end
+    if is_plat("mingw") then
+        if is_arch("x86_64") then
+            add_defines("__MINGW64__")
+        else
+            add_defines("__MINGW32__")
+        end
     end
     if is_plat("windows") then
         add_defines("WIN32", "__WIN32__")
-        if is_arch("x64") then
+        if is_arch("arm64") then
+            add_defines("__AARCH64__")
+        elseif is_arch("x64") then
             add_defines("_WIN64")
-        end
-        add_files("lzhamcomp/lzham_win32_threading.cpp")
-        add_headerfiles("lzhamcomp/lzham_win32_threading.h")
-    elseif is_plat("mingw") then
-        if is_arch("x64", "x86_64", "arm64") then
-            add_defines("__MINGW64__")
-        elseif is_arch("x86", "i386") then
-            add_defines("__MINGW32__")
         end
         add_files("lzhamcomp/lzham_win32_threading.cpp")
         add_headerfiles("lzhamcomp/lzham_win32_threading.h")
