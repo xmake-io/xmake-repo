@@ -13,6 +13,13 @@ package("lzham_codec")
 
     on_test(function (package)
         assert(package:has_cfuncs("lzham_compress_init", {includes = "lzham_static_lib.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <lzham_static_lib.h>
+            void test() {
+                lzham_static_lib lzham_lib;
+                lzham_lib.load();
+            }
+        ]]}))
     end)
 
 package_end()

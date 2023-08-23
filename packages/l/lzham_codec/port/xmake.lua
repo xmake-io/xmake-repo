@@ -63,10 +63,9 @@ target("lzham_codec")
         add_defines("__i386__")
     end
     if is_plat("windows") then
+        add_defines("WIN32", "__WIN32__")
         if is_arch(".+64") then
-            add_defines("__WIN32__", "_WIN64")
-        else
-            add_defines("__WIN32__", "WIN32")
+            add_defines("_WIN64")
         end
         add_files("lzhamcomp/lzham_win32_threading.cpp")
         add_headerfiles("lzhamcomp/lzham_win32_threading.h")
