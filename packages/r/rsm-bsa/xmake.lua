@@ -25,7 +25,7 @@ package("rsm-bsa")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", "cross", "wasm", function (package)
+    on_install("windows", "linux", function (package)
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
 
         local configs = {}
