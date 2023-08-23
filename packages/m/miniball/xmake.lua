@@ -14,10 +14,9 @@ package("miniball")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            using namespace Miniball;
             using Point = std::list<std::vector<double>>;
             using Coord = std::vector<double>;
-            using MB = Miniball<CoordAccessor<Point::const_iterator, Coord::const_iterator>>;
+            using MB = Miniball::Miniball<Miniball::CoordAccessor<Point::const_iterator, Coord::const_iterator>>;
             void test() {
                 Point p{ { 0, 0 }, { 1, 0 }, { 0, 1 } };
                 MB mb{ 2, p.begin(), p.end() };
