@@ -3,8 +3,10 @@ package("rsm-bsa")
     set_description("C++ library for working with the Bethesda archive file format")
     set_license("MIT")
 
-    add_urls("https://github.com/Ryan-rsm-McKenzie/bsa.git")
-    add_versions("2023.06.19", "938c6b5c960f5ba9c4f457f34a41665fd38023e0")
+    add_urls("https://github.com/Ryan-rsm-McKenzie/bsa/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/Ryan-rsm-McKenzie/bsa.git")
+
+    add_versions("4.0.3", "d77729c08c0a383727eef14fc0612286269b960373bbc91b8625688d6be73fbf")
 
     add_configs("xmem", {description = "build support for the xmem codec proxy", default = false, type = "boolean", readonly = true})
 
