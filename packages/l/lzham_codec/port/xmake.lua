@@ -59,12 +59,12 @@ target("lzham_codec")
     add_includedirs("lzhamcomp", "lzhamdecomp")
     if is_arch("x86_64") then 
         add_defines("__x86_64__")
-    elseif is_arch("i386") then 
+    elseif is_arch("x86", "i386") then 
         add_defines("__i386__")
     end
     if is_plat("windows") then
         add_defines("WIN32", "__WIN32__")
-        if is_arch(".+64") then
+        if is_arch("x64") then
             add_defines("_WIN64")
         end
         add_files("lzhamcomp/lzham_win32_threading.cpp")
@@ -81,15 +81,18 @@ target("lzham_codec")
         add_syslinks("pthread")
         if is_plat("linux") then 
             add_defines("__linux__")
-        elseif is_plat("macosx") then 
-            add_defines("__APPLE__")
-            add_defines("__MACH__")
-        elseif is_plat("iphoneos") then
-            add_defines("__APPLE__")
         elseif is_plat("freebsd") then 
             add_defines("__FreeBSD__")
         end
-        
+        if is_plat("macosx", "iphoneos") then
+            add_defines("__APPLE__")
+            add_defines("__MACH__")
+            if is_plat("macosx") then
+                add_defines("TARGET_OS_MAC")
+            else
+                add_defines("TARGET_OS_IPHONE")
+            end
+        end
         add_files("lzhamcomp/lzham_pthreads_threading.cpp")
         add_headerfiles("lzhamcomp/lzham_pthreads_threading.h")
     end

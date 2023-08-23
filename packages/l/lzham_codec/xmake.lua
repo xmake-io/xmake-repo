@@ -8,6 +8,8 @@ package("lzham_codec")
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        io.replace("lzhamdecomp/lzham_symbol_codec.h", [[#include "lzham_prefix_coding.h"]], [[#include "lzham_prefix_coding.h"
+#include <cstdint>]], {plain = true})
         import("package.tools.xmake").install(package, {kind = package:config("shared") and "shared" or "static"})
     end)
 
