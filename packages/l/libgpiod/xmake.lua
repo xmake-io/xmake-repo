@@ -10,7 +10,7 @@ package("libgpiod")
 
     add_deps("autoconf-archive", "automake", "libtool", "pkg-config")
 
-    on_install("macosx", "linux", function (package)
+    on_install("linux", function (package)
         local configs = {"--enable-tools=yes", "--enable-bindings-cxx"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
