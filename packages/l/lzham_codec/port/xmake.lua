@@ -73,7 +73,6 @@ target("lzham_codec")
     if is_plat("windows") then
         add_defines("WIN32", "__WIN32__")
         if is_arch("arm64") then
-            add_defines("__GNUC__")
             add_defines("__AARCH64__")
         elseif is_arch("x64") then
             add_defines("_WIN64")
