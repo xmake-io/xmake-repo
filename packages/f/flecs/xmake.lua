@@ -5,6 +5,7 @@ package("flecs")
 
     add_urls("https://github.com/SanderMertens/flecs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SanderMertens/flecs.git")
+    add_versions("v3.2.6", "ce3843eecfab359c8293366149bb0c0068ae8140583dd43d8337a8feccd7cb28")
     add_versions("v3.2.5", "d487aa39818978b5aaf94d96bdffe14ddee68c2fd969a765ce0b3561d6d574df")
     add_versions("v3.2.4", "0b65426053418911cae1c3f347748fba6eb7d4ae8860ce7fcc91ef25f386d4a1")
     add_versions("v3.0.0", "8715faf3276f0970b80c28c2a8911f4ac86633d25ebab3d3c69521942769d7d4")
