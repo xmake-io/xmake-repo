@@ -25,5 +25,3 @@ package("lzham_codec")
             }
         ]]}))
     end)
-
-package_end()

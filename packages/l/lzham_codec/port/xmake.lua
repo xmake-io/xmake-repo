@@ -63,15 +63,17 @@ target("lzham_codec")
         add_defines("__i386__")
     end
     if is_plat("mingw") then
-        if is_arch("x86_64") then
-            add_defines("__MINGW64__")
-        else
+        add_defines("__GNUC__")
+        if is_arch("i386", "x86") then
             add_defines("__MINGW32__")
+        else
+            add_defines("__MINGW64__")
         end
     end
     if is_plat("windows") then
         add_defines("WIN32", "__WIN32__")
         if is_arch("arm64") then
+            add_defines("__GNUC__")
             add_defines("__AARCH64__")
         elseif is_arch("x64") then
             add_defines("_WIN64")
