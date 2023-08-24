@@ -5,7 +5,7 @@ package("protobuf-c")
 
     add_urls("https://github.com/protobuf-c/protobuf-c/releases/download/v$(version)/protobuf-c-$(version).tar.gz")
     add_versions("1.3.1", "51472d3a191d6d7b425e32b612e477c06f73fe23e07f6a6a839b11808e9d2267")
-    add_versions("1.4.1", "4CC4FACD508172F3E0A4D3A8736225D472418AEE35B4AD053384B137B220339F")
+    add_versions("1.4.1", "4cc4facd508172f3e0a4d3a8736225d472418aee35b4ad053384b137b220339f")
 
     -- fix "error: no type named 'Reflection' in 'google::protobuf::Message'"
     -- see https://github.com/protobuf-c/protobuf-c/pull/342
