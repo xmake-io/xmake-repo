@@ -8,10 +8,20 @@ package("emmylua_debugger")
 
     add_versions("1.6.2", "80bfee98542a0ffe41459c5c77137e3628e931b5912a6b5e13f60b9ca67dd7c7")
 
+    add_configs("luasrc", {description = "Use lua source.", default = true, type = "boolean"})
+    add_configs("luaver", {description = "Set lua version.", default = "5.4", type = "string"})
+
     add_deps("cmake")
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {}
+        if package:config("luasrc") then
+            table.insert(configs, "-DEMMY_USE_LUA_SOURCE=ON")
+        end
+        local luaver = package:config("luaver")
+        if luaver then
+            table.insert(configs, "-DEMMY_LUA_VERSION=" .. (luaver:gsub("%.", "")))
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", "set(CMAKE_INSTALL_PREFIX install)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
