@@ -8,7 +8,7 @@ package("libgpiod")
     add_versions("v2.0", "a0f835c4ca4a2a3ca021090b574235ba58bb9fd612d8a6051fb1350054e04fdd")
     add_versions("v1.6.4", "9f920260c46b155f65cba8796dcf159e4ba56950b85742af357d75a1af709e68")
 
-    add_deps("autoconf", "automake", "libtool", "pkg-config")
+    add_deps("autoconf-archive", "automake", "libtool", "pkg-config")
 
     on_install("macosx", "linux", function (package)
         local configs = {"--enable-tools=yes", "--enable-bindings-cxx"}
