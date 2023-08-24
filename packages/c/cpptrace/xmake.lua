@@ -3,7 +3,7 @@ package("cpptrace")
     set_description("Lightweight, zero-configuration-required, and cross-platform stacktrace library for C++")
     set_license("MIT")
 
-    add_urls("https://github.com/jeremy-rifkin/cpptrace/-/archive/$(version).tar.gz",
+    add_urls("https://github.com/jeremy-rifkin/cpptrace/archive/refs/tags/archive/$(version).tar.gz",
              "https://github.com/jeremy-rifkin/cpptrace.git")
 
     add_versions("v0.1", "411bf19e079b550c50e6d39c82e3cb8d4a7dd2e9a8107a8f1843929c4b4e63de")
