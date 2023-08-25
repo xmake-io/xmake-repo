@@ -50,6 +50,7 @@ package("emmylua_debugger")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", "set(CMAKE_INSTALL_PREFIX install)", "", {plain = true})
+        io.replace("emmy_hook/src/dllmain.cpp", "#if WIN32", "#ifdef _MSC_VER")
         import("package.tools.cmake").install(package, configs, {packagedeps = "lua", cxflags = cxflags})
     end)
 
