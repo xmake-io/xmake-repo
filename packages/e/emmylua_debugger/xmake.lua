@@ -7,6 +7,7 @@ package("emmylua_debugger")
              "https://github.com/EmmyLua/EmmyLuaDebugger.git")
 
     add_versions("1.6.2", "80bfee98542a0ffe41459c5c77137e3628e931b5912a6b5e13f60b9ca67dd7c7")
+    add_versions("2023.08.25", "602402ffdd430cd9c2c86f1bff4d05688a07d785")
 
     add_configs("luasrc", {description = "Use lua source.", default = true, type = "boolean"})
     add_configs("luaver", {description = "Set lua version.", default = "5.4", type = "string"})
