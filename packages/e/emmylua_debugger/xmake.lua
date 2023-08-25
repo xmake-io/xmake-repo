@@ -7,22 +7,14 @@ package("emmylua_debugger")
              "https://github.com/EmmyLua/EmmyLuaDebugger.git")
 
     add_versions("1.6.2", "80bfee98542a0ffe41459c5c77137e3628e931b5912a6b5e13f60b9ca67dd7c7")
+    add_versions("2023.08.25", "2b2485d2a4bf6fce80aa05d7f93cf1bfad58a1e8")
 
     add_configs("luasrc", {description = "Use lua source.", default = true, type = "boolean"})
-    add_configs("luaver", {description = "Set lua version.", default = "5.4.6", type = "string"})
+    add_configs("luaver", {description = "Set lua version.", default = "5.4", type = "string"})
 
     add_deps("cmake")
 
     on_load(function (package)
-        if package:config("luasrc") then
-            local luaver = package:config("luaver")
-            if luaver then
-                package:add("deps", "lua " .. luaver)
-            else
-                package:add("deps", "lua")
-            end
-        end
-
         local suffix
         if package:is_plat("macosx") then
             suffix = ".dylib"
@@ -38,10 +30,8 @@ package("emmylua_debugger")
     on_install("macosx", "linux", "windows", function (package)
         import("core.base.semver")
         local configs = {}
-        local cxflags
         if package:config("luasrc") then
-            cxflags = "-DEMMY_USE_LUA_SOURCE=1"
-            table.insert(configs, "-DEMMY_COMPILE_AS_LIB=ON")
+            table.insert(configs, "-DEMMY_USE_LUA_SOURCE=ON")
         end
         local luaver = package:config("luaver")
         if luaver then
@@ -50,8 +40,7 @@ package("emmylua_debugger")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", "set(CMAKE_INSTALL_PREFIX install)", "", {plain = true})
-        io.replace("emmy_hook/src/dllmain.cpp", "#if WIN32", "#ifdef _MSC_VER")
-        import("package.tools.cmake").install(package, configs, {packagedeps = "lua", cxflags = cxflags})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
