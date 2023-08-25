@@ -17,6 +17,8 @@ package("libremidi")
         add_syslinks("winmm")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreMIDI", "CoreAudio")
+    elseif is_plat("iphoneos") then
+        add_frameworks("CoreMIDI")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
