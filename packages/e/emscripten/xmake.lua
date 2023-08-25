@@ -24,10 +24,8 @@ package("emscripten")
     on_install("windows", "macosx", "linux", function (package)
         import("lib.detect.find_directory")
 
-		-- copy to installdir
-        os.cp("*", package:installdir())
-
         -- installation
+        os.cp("*", package:installdir())
         local version = package:version():rawstr()
         local installdir = package:installdir()
         local py = package:is_plat("windows") and "python" or "python3"
