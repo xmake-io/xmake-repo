@@ -6,26 +6,23 @@ package("cimgui")
     add_urls("https://github.com/cimgui/cimgui.git")
     add_versions("2023.08.02", "a21e28e74027796d983f8c8d4a639a4e304251f2")
 
-    add_configs("imgui", {description = "Use xmake-repo imgui", default = false, type = "boolean", readonly = true})
+    add_configs("imgui", {description = "imgui version", default = "v1.89", type = "string"})
     add_configs("target", {description = "options as words in one string: internal for imgui_internal generation, freetype for freetype generation, comments for comments generation, nochar to skip char* function version, noimstrv to skip imstrv", default = "internal noimstrv", type = "string"})
 
     add_deps("luajit")
 
     on_load(function (package)
-        if package:config("imgui") then
-            package:add("deps", "imgui")
-        else
-            if package:is_plat("windows") then
-                package:add("syslinks", "imm32")
-            end
+        if package:is_plat("windows") then
+            package:add("syslinks", "imm32")
         end
     end)
 
     on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
+        os.vrun("git -c core.fsmonitor=false submodule foreach --recursive git checkout " .. package:config("imgui"))
+
         local envs = {}
-        -- codegen script
         local args = {"generator.lua"}
-        -- get compiler
+
         if package:is_plat("windows") then
             import("package.tools.msbuild")
 
@@ -42,17 +39,13 @@ package("cimgui")
         end
 
         table.insert(args, package:config("target"))
-        -- add CFLAGS
+
         table.join2(args, table.wrap(package:config("cflags")))
         table.join2(args, table.wrap(package:config("cxflags")))
         for _, define in ipairs(table.wrap(package:config("defines"))) do
             table.insert(args, "-D" .. define)
         end
 
-        if package:config("imgui") then
-            envs.IMGUI_PATH = package:dep("imgui"):installdir("include")
-        end
-        -- codegen
         os.vrunv("luajit", args, {envs = envs, curdir = "generator"})
 
         io.writefile("xmake.lua", [[
