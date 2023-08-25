@@ -1,5 +1,5 @@
 diff --git a/lzhamdecomp/lzham_platform.h b/lzhamdecomp/lzham_platform.h
-index 01704be..7627db1 100644
+index 01704be..c434d6c 100644
 --- a/lzhamdecomp/lzham_platform.h
 +++ b/lzhamdecomp/lzham_platform.h
 @@ -24,7 +24,11 @@ void lzham_fail(const char* pExp, const char* pFile, unsigned line);
@@ -21,7 +21,7 @@ index 01704be..7627db1 100644
  #if LZHAM_USE_MSVC_INTRINSICS
 -   #if LZHAM_PLATFORM_PC_X64
 +   #if defined(__AARCH64__)
-+      __asm__ __volatile__("yield");
++      asm volatile("yield");
 +   #elif LZHAM_PLATFORM_PC_X64
        _mm_pause();
     #else
