@@ -24,7 +24,7 @@ package("eigen")
     add_includedirs("include")
     add_includedirs("include/eigen3")
 
-    on_install("macosx", "linux", "windows", "mingw", function (package)
+    on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
     end)
 
