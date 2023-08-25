@@ -9,11 +9,43 @@ package("cimgui")
     add_configs("imgui", {description = "imgui version", default = "v1.89", type = "string"})
     add_configs("target", {description = "options as words in one string: internal for imgui_internal generation, freetype for freetype generation, comments for comments generation, nochar to skip char* function version, noimstrv to skip imstrv", default = "internal noimstrv", type = "string"})
 
+    add_configs("glfw",             {description = "Enable the glfw backend", default = false, type = "boolean"})
+    add_configs("opengl2",          {description = "Enable the opengl2 backend", default = false, type = "boolean"})
+    add_configs("opengl3",          {description = "Enable the opengl3 backend", default = false, type = "boolean"})
+    add_configs("sdl2",             {description = "Enable the sdl2 backend", default = false, type = "boolean"})
+    add_configs("vulkan",           {description = "Enable the vulkan backend", default = false, type = "boolean"})
+    add_configs("freetype",         {description = "Use FreeType to build and rasterize the font atlas", default = false, type = "boolean"})
+    add_configs("wchar32",          {description = "Use 32-bit for ImWchar (default is 16-bit)", default = false, type = "boolean"})
+
+    if is_plat("windows") then
+        add_syslinks("imm32")
+    end
+
+    add_defines("IMGUI_DISABLE_OBSOLETE_FUNCTIONS=1")
+
     add_deps("luajit")
 
     on_load(function (package)
-        if package:is_plat("windows") then
-            package:add("syslinks", "imm32")
+        if package:config("sdl2") then
+            package:add("deps", "libsdl")
+            package:add("defines", "CIMGUI_USE_SDL2")
+        end
+        if package:config("opengl2") then
+            package:add("defines", "CIMGUI_USE_OPENGL2")
+        end
+        if package:config("opengl3") then
+            package:add("defines", "CIMGUI_USE_OPENGL3")
+        end
+        if package:config("glfw") then
+            package:add("deps", "glfw")
+            package:add("defines", "CIMGUI_USE_GLFW")
+        end
+        if package:config("vulkan") then
+            package:add("deps", "vulkansdk")
+        end
+        if package:config("freetype") then
+            package:add("deps", "freetype")
+            package:add("defines", "CIMGUI_FREETYPE=1")
         end
     end)
 
@@ -46,17 +78,36 @@ package("cimgui")
             table.insert(args, "-D" .. define)
         end
 
+        local configs = {
+            glfw     = package:config("glfw"),
+            opengl2  = package:config("opengl2"),
+            opengl3  = package:config("opengl3"),
+            sdl2     = package:config("sdl2"),
+            vulkan   = package:config("vulkan"),
+            freetype = package:config("freetype"),
+            wchar32  = package:config("wchar32")
+        }
+
+        if configs.sdl2 then
+            table.insert(args, "sdl")
+        end
+        if configs.glfw then
+            table.insert(args, "glfw")
+        end
+        if configs.vulkan then
+            table.insert(args, "vulkan")
+        end
+        if configs.opengl2 then
+            table.insert(args, "opengl2")
+        end
+        if configs.opengl3 then
+            table.insert(args, "opengl3")
+        end
+
         os.vrunv("luajit", args, {envs = envs, curdir = "generator"})
 
-        io.writefile("xmake.lua", [[
-            add_rules("mode.debug", "mode.release")
-            set_languages("c++11")
-            target("cimgui")
-                set_kind("$(kind)")
-                add_files("cimgui.cpp", "imgui/*.cpp")
-                add_headerfiles("cimgui.h", "generator/output/cimgui_impl.h")
-        ]])
-        import("package.tools.xmake").install(package)
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
