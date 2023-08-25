@@ -13,6 +13,7 @@ package("emmylua_debugger")
     add_configs("luaver", {description = "Set lua version.", default = "5.4", type = "string"})
 
     add_deps("cmake")
+    add_deps("lua 5.4.6")
 
     on_install("macosx", "linux", "windows", function (package)
         local configs = {}
