@@ -9,7 +9,7 @@ package("emmylua_debugger")
     add_versions("1.6.2", "80bfee98542a0ffe41459c5c77137e3628e931b5912a6b5e13f60b9ca67dd7c7")
 
     add_configs("luasrc", {description = "Use lua source.", default = true, type = "boolean"})
-    add_configs("luaver", {description = "Set lua version.", default = "5.4.4", type = "string"})
+    add_configs("luaver", {description = "Set lua version.", default = "5.4.6", type = "string"})
 
     add_deps("cmake")
 
@@ -22,6 +22,17 @@ package("emmylua_debugger")
                 package:add("deps", "lua")
             end
         end
+
+        local suffix
+        if package:is_plat("macosx") then
+            suffix = ".dylib"
+        elseif package:is_plat("windows") then
+            suffix = ".dll"
+        else
+            suffix = ".so"
+        end
+        package:addenv("EMMYLUA_DEBUGGER", "bin/emmy_core" .. suffix)
+        package:mark_as_pathenv("EMMYLUA_DEBUGGER")
     end)
 
     on_install("macosx", "linux", "windows", function (package)
@@ -43,13 +54,5 @@ package("emmylua_debugger")
     end)
 
     on_test(function (package)
-        local suffix
-        if package:is_plat("macosx") then
-            suffix = ".dylib"
-        elseif package:is_plat("windows") then
-            suffix = ".dll"
-        else
-            suffix = ".so"
-        end
-        assert(os.isfile(path.join(package:installdir("bin"), "emmy_core" .. suffix)))
+        assert(os.isfile(os.getenv("EMMYLUA_DEBUGGER")))
     end)
