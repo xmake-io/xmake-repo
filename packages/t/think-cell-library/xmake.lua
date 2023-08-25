@@ -14,7 +14,7 @@ package("think-cell-library")
             add_rules("mode.debug", "mode.release")
             add_requires("boost >=1.75")
             add_packages("boost")
-            set_languages("c++20")
+            set_languages("c++latest")
             target("think-cell-library")
                 set_kind("$(kind)")
                 add_files("tc/**.cpp")
@@ -38,5 +38,5 @@ package("think-cell-library")
                     [&](auto const& n) {}
                 );
             }
-        ]]}, {configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = "c++latest"}}))
     end)
