@@ -11,11 +11,11 @@ package("emscripten")
     add_deps("python")
 
     on_install("windows", "macosx", "linux", function (package)
-
         import("lib.detect.find_directory")
+
 		-- copy to installdir
         os.cp("*", package:installdir())
-	
+
         -- installation
         local version = package:version():rawstr()
         local installdir = package:installdir()
@@ -30,7 +30,7 @@ package("emscripten")
         package:addenv("PATH", path.join(installdir, "upstream", "emscripten"))
         package:addenv("PATH", installdir)
         package:addenv("EMSDK", installdir)
-    
+
         local exe = package:is_plat("windows") and ".exe" or ""
         local node = find_directory("bin", {path.join(installdir, "node", "**")})
         if node then
