@@ -13,10 +13,13 @@ package("lexbor")
 
     add_deps("cmake")
 
-    if is_plat("macosx") then
-        add_extsources("brew::lexbor")
-    elseif is_plat("linux", "bsd") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread", "m")
+        if is_plat("linux") then
+            add_extsources("apt::liblexbor-dev")
+        end
+    elseif is_plat("macosx") then
+        add_extsources("brew::lexbor")
     end
 
     on_install(function (package)
