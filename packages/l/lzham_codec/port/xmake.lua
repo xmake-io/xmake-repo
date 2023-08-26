@@ -1,4 +1,11 @@
 add_rules("mode.debug", "mode.release")
+
+if has_config("mimalloc") then
+    add_requires("mimalloc")
+    add_packages("mimalloc")
+    add_defines("ASSERT_USE_MIMALLOC")
+end
+
 target("lzham_codec")
     set_kind("$(kind)")
     set_languages("cxx14")
