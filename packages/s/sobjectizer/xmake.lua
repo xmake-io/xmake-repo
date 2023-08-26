@@ -8,8 +8,8 @@ package("sobjectizer")
 
     add_versions("5.8.0", "de2b4ae0e817a108dae6d6787c79ed84c33bd447842b5fdcb780f6697b4c2d49")
 
-    if is_plat("linux") then
-        add_syslinks("pthread")
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread", "m")
     end
 
     add_deps("cmake")
@@ -21,6 +21,7 @@ package("sobjectizer")
             table.insert(configs, "-DSOBJECTIZER_BUILD_STATIC=OFF")
             table.insert(configs, "-DSOBJECTIZER_BUILD_SHARED=ON")
         else
+            package:add("defines", "SO_5_STATIC_LIB")
             table.insert(configs, "-DSOBJECTIZER_BUILD_STATIC=ON")
             table.insert(configs, "-DSOBJECTIZER_BUILD_SHARED=OFF")
         end
