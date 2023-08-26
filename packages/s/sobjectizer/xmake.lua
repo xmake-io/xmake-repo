@@ -2,8 +2,8 @@ package("sobjectizer")
     set_homepage("https://stiffstream.com/en/products/sobjectizer.html")
     set_description("An implementation of Actor, Publish-Subscribe, and CSP models in one rather small C++ framework. With performance, quality, and stability proved by years in the production.")
 
-    add_urls("https://github.com/Stiffstream/sobjectizer/archive/refs/tags/$(version).tar.gz"
-    , {version = function (version) return "v." .. version end})
+    add_urls("https://github.com/Stiffstream/sobjectizer/archive/refs/tags/$(version).tar.gz",
+        {version = function (version) return "v." .. version end})
     add_urls("https://github.com/Stiffstream/sobjectizer.git")
 
     add_versions("5.8.0", "de2b4ae0e817a108dae6d6787c79ed84c33bd447842b5fdcb780f6697b4c2d49")
