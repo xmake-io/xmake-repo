@@ -6,16 +6,20 @@ package("lexbor")
     add_urls("https://github.com/lexbor/lexbor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lexbor/lexbor.git")
 
+    add_versions("v2.2.0", "0583bad09620adea71980cff7c44b61a90019aa151d66d2fe298c679b554c57d")
     add_versions("v2.3.0", "522ad446cd01d89cb870c6561944674e897f8ada523f234d5be1f8d2d7d236b7")
 
     add_configs("thread", {description = "Build with Threads", default = false, type = "boolean"})
 
     add_deps("cmake")
 
-    if is_plat("macosx") then
-        add_extsources("brew::lexbor")
-    elseif is_plat("linux", "bsd") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread", "m")
+        if is_plat("linux") then
+            add_extsources("apt::liblexbor-dev")
+        end
+    elseif is_plat("macosx") then
+        add_extsources("brew::lexbor")
     end
 
     on_install(function (package)
