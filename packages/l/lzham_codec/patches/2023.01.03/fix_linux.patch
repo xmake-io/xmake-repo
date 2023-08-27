@@ -1,0 +1,24 @@
+diff --git a/lzhamdecomp/lzham_huffman_codes.cpp b/lzhamdecomp/lzham_huffman_codes.cpp
+index 11bdbd4..75884cc 100644
+--- a/lzhamdecomp/lzham_huffman_codes.cpp
++++ b/lzhamdecomp/lzham_huffman_codes.cpp
+@@ -2,6 +2,7 @@
+ // LZHAM is in the Public Domain. Please see the Public Domain declaration at the end of include/lzham.h
+ #include "lzham_core.h"
+ #include "lzham_huffman_codes.h"
++#include <cstdint>
+ 
+ namespace lzham
+ {
+diff --git a/lzhamdecomp/lzham_symbol_codec.h b/lzhamdecomp/lzham_symbol_codec.h
+index 306d59b..af773d5 100644
+--- a/lzhamdecomp/lzham_symbol_codec.h
++++ b/lzhamdecomp/lzham_symbol_codec.h
+@@ -2,6 +2,7 @@
+ // LZHAM is in the Public Domain. Please see the Public Domain declaration at the end of include/lzham.h
+ #pragma once
+ #include "lzham_prefix_coding.h"
++#include <cstdint>
+ 
+ namespace lzham
+ {
