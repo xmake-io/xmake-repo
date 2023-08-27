@@ -1,5 +1,7 @@
 add_rules("mode.debug", "mode.release")
 
+option("mimalloc", {default = false, "Use mimalloc"})
+
 if has_config("mimalloc") then
     add_requires("mimalloc")
     add_packages("mimalloc")
