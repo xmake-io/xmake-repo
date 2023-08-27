@@ -25,7 +25,9 @@ package("lzham_codec")
         if package:config("mimalloc") then
             package:add("defines", "ASSERT_USE_MIMALLOC")
         end
-        import("package.tools.xmake").install(package)
+        local configs = {}
+        configs.mimalloc = package:config("mimalloc")
+        import("package.tools.xmake").install(package, configs)
     end)
     
     on_test(function (package)
