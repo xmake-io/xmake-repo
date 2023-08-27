@@ -8,6 +8,7 @@ package("emscripten")
     add_versions("3.1.42", "c2260b4f28f53b411032de0955a6fe6b6bcf3edd")
     add_versions("3.1.25", "92d9023adc4dbc66424df9483cee302c68817d3c")
     add_versions("3.1.14", "517e02fac88b48c74da14b1cf7c6d51e489a5793")
+    add_versions("1.39.8", "1458145cf4f3db0fb548343e6acab267eef8e4ef")
 
     add_deps("python")
 
