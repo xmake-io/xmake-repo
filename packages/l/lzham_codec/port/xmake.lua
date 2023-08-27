@@ -1,16 +1,15 @@
 add_rules("mode.debug", "mode.release")
 
-option("mimalloc", {default = false, "Use mimalloc"})
+option("mimalloc", {default = false, showmenu = true, description = "Use mimalloc"})
 
 if has_config("mimalloc") then
     add_requires("mimalloc")
-    add_packages("mimalloc")
-    add_defines("ASSERT_USE_MIMALLOC")
 end
 
 target("lzham_codec")
     set_kind("$(kind)")
     set_languages("cxx14")
+    add_options("mimalloc")
     add_files(
         "lzhamlib/lzham_lib.cpp",
 
@@ -66,6 +65,12 @@ target("lzham_codec")
     )
     add_includedirs("include", {public = true})
     add_includedirs("lzhamcomp", "lzhamdecomp")
+    
+    if has_config("mimalloc") then
+        add_packages("mimalloc")
+        add_defines("ASSERT_USE_MIMALLOC")
+    end
+
     if is_arch("x86_64") then 
         add_defines("__x86_64__")
     elseif is_arch("i386") then 

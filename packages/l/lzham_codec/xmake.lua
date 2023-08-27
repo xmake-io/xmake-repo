@@ -22,11 +22,11 @@ package("lzham_codec")
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        local configs = {}
         if package:config("mimalloc") then
             package:add("defines", "ASSERT_USE_MIMALLOC")
+            configs.mimalloc = true
         end
-        local configs = {}
-        configs.mimalloc = package:config("mimalloc")
         import("package.tools.xmake").install(package, configs)
     end)
     
