@@ -1,5 +1,4 @@
 package("qr-code-generator")
-    set_kind("library", {headeronly = true})
     set_homepage("https://www.nayuki.io/page/qr-code-generator-library")
     set_description("High-quality QR Code generator library in Java, TypeScript/JavaScript, Python, Rust, C++, C.")
 
