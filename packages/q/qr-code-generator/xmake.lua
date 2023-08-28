@@ -1,4 +1,4 @@
-package("qr-code-generator")
+package("qr-code-generator-cpp")
     set_homepage("https://www.nayuki.io/page/qr-code-generator-library")
     set_description("High-quality QR Code generator library in Java, TypeScript/JavaScript, Python, Rust, C++, C.")
 
@@ -10,7 +10,7 @@ package("qr-code-generator")
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
-            target("qr-code-generator")
+            target("qr-code-generator-cpp")
                 set_kind("$(kind)")
                 set_languages("cxx11")
                 add_files("cpp/qrcodegen.cpp")
