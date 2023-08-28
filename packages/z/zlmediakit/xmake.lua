@@ -3,7 +3,8 @@ package("zlmediakit")
     set_description("WebRTC/RTSP/RTMP/HTTP/HLS/HTTP-FLV/WebSocket-FLV/HTTP-TS/HTTP-fMP4/WebSocket-TS/WebSocket-fMP4/GB28181/SRT server and client framework based on C++11")
     set_license("MIT")
 
-    add_urls("https://github.com/ZLMediaKit/ZLMediaKit.git","https://gitee.com/xia-chu/ZLMediaKit.git")
+    add_urls("https://github.com/ZLMediaKit/ZLMediaKit.git",
+             "https://gitee.com/xia-chu/ZLMediaKit.git")
     add_versions("2023.8.26", "895e93cb6aae82f9fd6f19b0980c28062b6b9d2f")
 
     add_configs("c_api", {description = "Enable C API SDK.", default = false, type = "boolean"})
