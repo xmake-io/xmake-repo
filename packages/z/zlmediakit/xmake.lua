@@ -3,7 +3,8 @@ package("zlmediakit")
     set_description("WebRTC/RTSP/RTMP/HTTP/HLS/HTTP-FLV/WebSocket-FLV/HTTP-TS/HTTP-fMP4/WebSocket-TS/WebSocket-fMP4/GB28181/SRT server and client framework based on C++11")
     set_license("MIT")
 
-    add_urls("https://github.com/ZLMediaKit/ZLMediaKit.git")
+    add_urls("https://github.com/ZLMediaKit/ZLMediaKit.git",
+             "https://gitee.com/xia-chu/ZLMediaKit.git", {submodules = false})
     add_versions("2023.8.26", "895e93cb6aae82f9fd6f19b0980c28062b6b9d2f")
 
     add_configs("c_api", {description = "Enable C API SDK.", default = false, type = "boolean"})
@@ -22,6 +23,7 @@ package("zlmediakit")
     add_configs("faac", {description = "Enable FAAC.", default = false, type = "boolean"})
 
     add_deps("cmake")
+    add_deps("zltoolkit")
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
         local configdeps = {
@@ -42,7 +44,9 @@ package("zlmediakit")
         for name, item in pairs(configdeps) do
             table.insert(configs, "-D" .. item .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
-        import("package.tools.cmake").install(package, configs)
+        io.replace("CMakeLists.txt", "add_subdirectory(3rdpart)", "", {plain = true})
+        io.replace("srt/CMakeLists.txt", "ZLMediaKit::ToolKit", "", {plain = true})
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"zltoolkit"}})
 
         if package:config("shared") then
             if package:is_plat("windows") then
@@ -60,7 +64,6 @@ package("zlmediakit")
         end
 
         os.cp("src/**.h", package:installdir("include"), {rootdir = "src"})
-        os.cp("3rdpart/ZLToolKit/src/**.h", package:installdir("include"), {rootdir = "3rdpart/ZLToolKit/src"})
     end)
 
     on_test(function (package)
