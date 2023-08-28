@@ -16,11 +16,11 @@ package("zlmediakit")
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
     add_configs("mem_debug", {description = "Enable Memory Debug.", default = false, type = "boolean"})
 
-    add_configs("jemalloc", {description = "Enable static linking to the jemalloc library.", default = false, type = "boolean"})  -- Requires jemalloc
-    add_configs("ffmpeg", {description = "Enable FFMPEG.", default = false, type = "boolean"})  -- Requires ffmpeg
-    add_configs("mysql", {description = "Enable MySQL.", default = false, type = "boolean"})    -- Requires mysql
-    add_configs("x264", {description = "Enable libx264.", default = false, type = "boolean"})   -- Requires libx264
-    add_configs("faac", {description = "Enable FAAC.", default = false, type = "boolean"})  -- Requires libfaac
+    add_configs("jemalloc", {description = "Enable static linking to the jemalloc library.", default = false, type = "boolean"})
+    add_configs("ffmpeg", {description = "Enable FFMPEG.", default = false, type = "boolean"})
+    add_configs("mysql", {description = "Enable MySQL.", default = false, type = "boolean"})
+    add_configs("x264", {description = "Enable libx264.", default = false, type = "boolean"})
+    add_configs("faac", {description = "Enable FAAC.", default = false, type = "boolean"})
 
     add_deps("cmake")
 
