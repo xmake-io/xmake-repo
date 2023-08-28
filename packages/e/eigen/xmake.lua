@@ -1,4 +1,4 @@
-package("eigen-local")
+package("eigen")
 
     set_kind("library", {headeronly = true})
     set_homepage("https://eigen.tuxfamily.org/")
