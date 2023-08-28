@@ -25,7 +25,7 @@ package("zlmediakit")
     add_deps("cmake")
     add_deps("zltoolkit")
 
-    on_install("macosx", "linux", "windows", "mingw", function (package)
+    on_install("macosx", "linux", "windows", function (package)
         local configdeps = {
             c_api = "ENABLE_API",
             c_static_api = "ENABLE_API_STATIC_LIB",
