@@ -9,8 +9,15 @@ package("qr-code-generator")
     add_versions("v1.8.0", "2ec0a4d33d6f521c942eeaf473d42d5fe139abcfa57d2beffe10c5cf7d34ae60")
 
     on_install(function (package)
-        os.cp("cpp/qrcodegen.cpp", package:installdir("include"))
-        os.cp("cpp/qrcodegen.hpp", package:installdir("include"))
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            target("qr-code-generator")
+                set_kind("$(kind)")
+                set_languages("cxx11")
+                add_files("cpp/qrcodegen.cpp")
+                add_headerfiles("cpp/qrcodegen.hpp")
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
