@@ -179,6 +179,8 @@ package("boost")
                 -- from the latest installed msvc version.
                 file:print("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
             else
+                cxx = cxx:gsub("gcc$", "g++")
+                cxx = cxx:gsub("clang$", "clang++")
                 file:print("using gcc : : %s ;", cxx:gsub("\\", "/"))
             end
             file:close()
