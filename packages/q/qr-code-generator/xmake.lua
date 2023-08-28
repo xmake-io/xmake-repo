@@ -29,5 +29,5 @@ package("qr-code-generator")
                 const QrCode::Ecc errCorLvl = QrCode::Ecc::LOW;
                 const QrCode qr = QrCode::encodeText(text, errCorLvl);
             }
-        ]]}))
+        ]]}, {configs = {languages = "cxx11"}}))
     end)
