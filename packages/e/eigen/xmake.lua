@@ -1,4 +1,4 @@
-package("eigen")
+package("eigen-local")
 
     set_kind("library", {headeronly = true})
     set_homepage("https://eigen.tuxfamily.org/")
@@ -20,11 +20,17 @@ package("eigen")
         add_extsources("brew::eigen")
     end
 
+    add_configs("header_only",     {description = "Use header only version.", default = true, type = "boolean"})
+
     add_deps("cmake")
     add_includedirs("include")
     add_includedirs("include/eigen3")
 
     on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
+        if package:config("header_only") then
+            os.cp("Eigen", package:installdir() .. "/include/eigen3/Eigen")
+            return
+        end
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
     end)
 
