@@ -24,10 +24,9 @@ package("qr-code-generator-c")
             #include "qrcodegen.h"
 
             void test() {
-                const char *text = "Hello, world!";                // User-supplied text
-                enum qrcodegen_Ecc errCorLvl = qrcodegen_Ecc_LOW;  // Error correction level
+                const char *text = "Hello, world!";
+                enum qrcodegen_Ecc errCorLvl = qrcodegen_Ecc_LOW;
                 
-                // Make and print the QR Code symbol
                 uint8_t qrcode[qrcodegen_BUFFER_LEN_MAX];
                 uint8_t tempBuffer[qrcodegen_BUFFER_LEN_MAX];
                 qrcodegen_encodeText(text, tempBuffer, qrcode, errCorLvl,
