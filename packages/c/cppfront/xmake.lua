@@ -6,6 +6,12 @@ package("cppfront")
     add_urls("https://github.com/hsutter/cppfront.git")
     add_versions("2023.08.29", "b757afd9b0051a40278706cdfc57971e371e4e32")
 
+    on_fetch(function (package, opt)
+        if opt.system then
+            return package:find_tool("cppfront", {check = "-h"})
+        end
+    end)
+
     on_install("windows", "linux", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
