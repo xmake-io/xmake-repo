@@ -20,12 +20,13 @@ package("cppfront")
     end)
 
     on_test(function (package)
-        io.writefile("main.cpp2", [[main: () -> int =
-    println("Hello world!\n");
+        io.writefile("main.cpp2", [[
+        main: () -> int =
+            println("Hello world!\n");
 
-println: (msg: _) -> int = {
-    std::cout << "msg: " << msg;
-    return 0;
-}]])
+        println: (msg: _) -> int = {
+            std::cout << "msg: " << msg;
+            return 0;
+        }]])
         os.vrun("cppfront -o main.cpp main.cpp2")
     end)
