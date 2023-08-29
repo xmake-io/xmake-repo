@@ -9,6 +9,7 @@ package("quill")
     add_versions("2.8.0", "0461a6c314e3d882f3b9ada487ef1bf558925272509ee41a9fd25f7776db6075")
     add_versions("2.9.0", "dec64c0fbb4bfbafe28fdeeeefac10206285bf2be4a42ec5dfb7987ca4ccb372")
     add_versions("2.9.1", "921e053118136f63cebb2ca1d7e42456fd0bf9626facb755884709092753c054")
+    add_versions("3.3.1", "f929d54a115b45c32dd2acd1a9810336d35c31fde9f5581c51ad2b80f980d0d1")
 
     if is_plat("macosx") then
         add_extsources("brew::quill")
