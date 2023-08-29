@@ -1,5 +1,5 @@
 package("cppfront")
-    set_kind("binary")
+    set_kind("toolchain")
     set_homepage("https://github.com/hsutter/cppfront")
     set_description("A personal experimental C++ Syntax 2 -> Syntax 1 compiler")
 
@@ -23,6 +23,7 @@ package("cppfront")
                set_languages("c++20")
         ]])
         import("package.tools.xmake").install(package, configs)
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
