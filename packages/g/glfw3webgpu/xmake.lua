@@ -8,8 +8,7 @@ package("glfw3webgpu")
 
     add_versions("v1.0.1", "b98c63f1905f0e4cf99229de8b7e5c2693fdf3b8d684b5a43d60f21f67d33e6b")
 
-    add_deps("wgpu-native")
-    add_deps("glfw")
+    add_deps("wgpu-native", "glfw")
 
     if is_plat("macosx", "iphoneos") then
         add_frameworks("Metal", "Foundation")
@@ -22,8 +21,7 @@ package("glfw3webgpu")
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
 
-            add_requires("wgpu-native")
-            add_requires("glfw")
+            add_requires("wgpu-native", "glfw")
 
             target("glfw3webgpu")
                 set_kind("$(kind)")
@@ -40,6 +38,10 @@ package("glfw3webgpu")
                     add_files("glfw3webgpu.m")
                 else
                     add_files("glfw3webgpu.c")
+                end
+                
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
                 end
         ]])
 
