@@ -14,7 +14,7 @@ package("glfw3webgpu")
         add_frameworks("Metal", "Foundation")
     end
 
-    on_install(function (package)
+    on_install("windows|x64", "windows|x86", "linux|x86_64", "macosx|x86_64", "macosx|arm64", function (package)
         if package:is_plat("macosx", "iphoneos") then
             os.mv("glfw3webgpu.c", "glfw3webgpu.m")
         end
