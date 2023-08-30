@@ -8,7 +8,7 @@ package("c-blosc2")
 
     add_versions("v2.10.2", "069785bc14c006c7dab40ea0c620bdf3eb8752663fd55c706d145bceabc2a31d")
 
-    add_configs("lz4", {description = "Enable LZ4 support.", default = false, type = "boolean"})
+    add_configs("lz4", {description = "Enable LZ4 support.", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable Zlib support.", default = false, type = "boolean"})
     add_configs("zstd", {description = "Enable Zstd support.", default = false, type = "boolean"})
     add_configs("plugins", {description = "Build plugins programs from the blosc compression library", default = false, type = "boolean"})
