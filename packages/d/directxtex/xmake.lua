@@ -25,6 +25,9 @@ package("directxtex")
     add_configs("openexr", {description = "Build with OpenEXR support", default = false, type = "boolean"})
 
     add_deps("cmake")
+    if is_plat("linux") then
+        add_deps("directxmath")
+    end
 
     on_load(function (package)
         if package:config("openexr") then

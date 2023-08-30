@@ -14,7 +14,7 @@ package("directxmath")
 
     add_deps("cmake")
     add_includedirs("include/directxmath")
-    on_install("windows", "mingw", function (package)
+    on_install("windows", "mingw", "linux", function (package)
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
     end)
 
