@@ -7,7 +7,7 @@ set_languages("c++20")
 
 add_requires("rsm-mmio", "rsm-binary-io", "lz4", "zlib")
 
-if is_plat("windows") then
+if is_plat("windows", "linux") then
     add_requires("directxtex")
 end
 
@@ -78,11 +78,13 @@ target("rsm-bsa")
 
     add_packages("rsm-mmio", "rsm-binary-io", "lz4", "zlib")
 
-    if is_plat("windows") then
+    if is_plat("windows", "linux") then
         add_packages("directxtex")
-        add_syslinks("ole32")
-        if is_kind("shared") then
-            add_rules("utils.symbols.export_all", {export_classes = true})
+        if is_plat("windows") then
+            add_syslinks("ole32")
+            if is_kind("shared") then
+                add_rules("utils.symbols.export_all", {export_classes = true})
+            end
         end
     end
 

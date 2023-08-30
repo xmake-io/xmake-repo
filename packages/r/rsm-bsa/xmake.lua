@@ -6,14 +6,16 @@ package("rsm-bsa")
     add_urls("https://github.com/Ryan-rsm-McKenzie/bsa/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Ryan-rsm-McKenzie/bsa.git")
 
-    add_versions("4.0.3", "d77729c08c0a383727eef14fc0612286269b960373bbc91b8625688d6be73fbf")
+    add_versions("4.1.0", "c2942eb1adc35114a256720a917cfae833aa98482da3b38f9d652762d1c281b2")
 
     add_configs("xmem", {description = "build support for the xmem codec proxy", default = false, type = "boolean", readonly = true})
 
     add_deps("rsm-mmio", "rsm-binary-io", "lz4", "zlib")
-    if is_plat("windows") then
+    if is_plat("windows", "linux") then
         add_deps("directxtex")
-        add_syslinks("ole32")
+        if is_plat("windows") then
+            add_syslinks("ole32")
+        end
     end
 
     on_load(function (package)
