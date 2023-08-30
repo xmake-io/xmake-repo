@@ -20,7 +20,9 @@ package("luabridge3")
             #include <luabridge3/LuaBridge/detail/Errors.h>
             void test()
             {
-                typedef luabridge::ErrorCode __type_luabridge__ErrorCode;
+                luabridge::ErrorCode errorCode;
+                const luabridge::detail::ErrorCategory& category = luabridge::detail::ErrorCategory::getInstance();
+                category.name();
             }
         ]]}))
     end)
