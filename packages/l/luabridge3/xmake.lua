@@ -24,6 +24,6 @@ package("luabridge3")
                 const luabridge::detail::ErrorCategory& category = luabridge::detail::ErrorCategory::getInstance();
                 category.name();
             }
-        ]]}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
 
