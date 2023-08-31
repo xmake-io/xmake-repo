@@ -12,9 +12,15 @@ package("directxmath")
     add_urls("https://github.com/microsoft/DirectXMath.git")
     add_versions("2022.12", "2ed0ae7d7fe5d11ad11f6d3d9b31ce686024a551cf82ade723de86aa7b4b57e1")
 
+    add_resources("2022.12", "headers", "https://raw.githubusercontent.com/dotnet/runtime/2201016c1e13bdb9abf49e2e38cadf4ee0568df2/src/coreclr/pal/inc/rt/sal.h", "7dae281adc3a09a691291fb90526f05e4f9ef8b16d7f33d716ba690f7241a492")
+
     add_deps("cmake")
     add_includedirs("include/directxmath")
+
     on_install("windows", "mingw", "linux", function (package)
+        if package:is_plat("linux") then
+            os.cp("../resources/headers/sal.h", package:installdir("include"))
+        end
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
     end)
 
