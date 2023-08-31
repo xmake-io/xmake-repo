@@ -34,8 +34,10 @@ package("tbox")
         add_syslinks("ws2_32", "pthread")
     elseif is_plat("macosx", "iphoneos") then
         add_frameworks("Foundation", "CoreServices", "CoreFoundation")
-    elseif is_plat("linux", "bsd") then
+    elseif is_plat("linux") then
         add_syslinks("pthread", "m", "dl")
+    elseif is_plat("bsd") then
+        add_syslinks("execinfo", "pthread", "m", "dl")
     elseif not is_plat("android") then
         add_syslinks("pthread")
     end
