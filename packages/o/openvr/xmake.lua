@@ -11,6 +11,8 @@ package("openvr")
     add_deps("cmake")
     if is_plat("windows") then
         add_syslinks("shell32")
+    elseif is_plat("macosx") then
+        add_frameworks("Foundation")
     end
     on_load("windows", function (package)
         if not package:config("shared") then
