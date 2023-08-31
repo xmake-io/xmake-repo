@@ -26,5 +26,9 @@ package("directx-headers")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("CD3DX12FeatureSupport", {configs = {languages = "cxx14"}, includes = "directx/d3dx12.h"}))
+        if package:is_plat("windows", "mingw") then
+            assert(package:has_cxxtypes("CD3DX12FeatureSupport", {configs = {languages = "cxx14"}, includes = "directx/d3dx12.h"}))
+        else
+            assert(package:has_cxxtypes("BoolStruct", {configs = {languages = "cxx14"}, includes = "wsl/wrladapter.h"}))
+        end
     end)
