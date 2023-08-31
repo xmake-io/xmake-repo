@@ -29,6 +29,6 @@ package("directx-headers")
         if package:is_plat("windows", "mingw") then
             assert(package:has_cxxtypes("CD3DX12FeatureSupport", {configs = {languages = "cxx14"}, includes = "directx/d3dx12.h"}))
         else
-            assert(package:has_cxxtypes("IDXCoreAdapter", {configs = {languages = "cxx14"}, includes = "directx/dxcore_interface.h"}))
+            assert(package:has_cxxincludes("wsl/winadapter.h", {configs = {languages = "cxx14"}}))
         end
     end)
