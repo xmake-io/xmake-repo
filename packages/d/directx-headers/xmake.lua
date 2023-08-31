@@ -16,7 +16,7 @@ package("directx-headers")
     if is_plat("mingw") then
         add_defines("__REQUIRED_RPCNDR_H_VERSION__=475")
     elseif is_plat("linux") then
-        add_includedirs("include/wsl/stubs")
+        add_includedirs("include", "include/wsl/stubs")
     end
 
     on_install("windows", "mingw", "linux", function (package)
