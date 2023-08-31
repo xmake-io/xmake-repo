@@ -17,7 +17,7 @@ package("directx-headers")
         add_defines("__REQUIRED_RPCNDR_H_VERSION__=475")
     end
 
-    on_install("windows", "mingw", function (package)
+    on_install("windows", "mingw", "linux", function (package)
         local configs = {"-DDXHEADERS_BUILD_TEST=OFF", "-DDXHEADERS_BUILD_GOOGLE_TEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)

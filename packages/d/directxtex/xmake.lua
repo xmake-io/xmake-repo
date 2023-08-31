@@ -26,7 +26,7 @@ package("directxtex")
 
     add_deps("cmake")
     if is_plat("linux") then
-        add_deps("directxmath")
+        add_deps("directxmath", "directx-headers")
     end
 
     on_load(function (package)
