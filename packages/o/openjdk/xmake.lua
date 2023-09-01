@@ -37,12 +37,22 @@ package("openjdk")
                     links = {"jvm", "jawt"}
                 }
 
-                if package:is_plat("windows") then
+                if package:is_plat("windows", "mingw") then
                     package:addenv("PATH", path.join(sdkdir, "bin"))
                     table.insert(result.includedirs, path.join(sdkdir, "include", "win32"))
                 end
                 return result
             end
+        end
+    end)
+
+    on_install("windows|x64", "linux|x86_64", "linux|arm64", "macosx|x86_64", "macosx|arm64", "mingw|x86_64", function (package)
+        os.cp("bin", package:installdir())
+        os.cp("include", package:installdir())
+        os.cp("lib", package:installdir())
+        if package:is_plat("windows", "mingw") then
+            package:addenv("PATH", "bin")
+            package:add("includedirs", "include", "include/win32")
         end
     end)
 
