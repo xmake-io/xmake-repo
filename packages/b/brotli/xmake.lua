@@ -1,6 +1,7 @@
 package("brotli")
     set_homepage("https://github.com/google/brotli")
     set_description("Brotli compression format.")
+    set_license("MIT")
 
     set_urls("https://github.com/google/brotli/archive/$(version).tar.gz",
              "https://github.com/google/brotli.git")
