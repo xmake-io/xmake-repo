@@ -4,7 +4,7 @@ package("protobuf-cpp")
     set_description("Google's data interchange format for cpp")
 
     function get_url(version)
-        if version:major() == "3" then
+        if version:get() == "3" then
             return format("v%s/protobuf-cpp-%s.zip", version, version)
         end
         return format("v%s/protobuf-%s.zip", version, version)
@@ -47,7 +47,7 @@ package("protobuf-cpp")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        let version = package:version()
+        local version = package:version()
         if version:major() ~= "3" then
             os.cd(format("protobuf-%s", version))
         end
