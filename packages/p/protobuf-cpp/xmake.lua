@@ -55,7 +55,6 @@ package("protobuf-cpp")
         end
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
         os.trycp("build/Release/protoc.exe", package:installdir("bin"))
-        os.trycp("build/protoc.exe", package:installdir("bin"))
     end)
 
     on_test(function (package)
