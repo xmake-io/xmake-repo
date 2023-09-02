@@ -3,7 +3,14 @@ package("protobuf-cpp")
     set_homepage("https://developers.google.com/protocol-buffers/")
     set_description("Google's data interchange format for cpp")
 
-    add_urls("https://github.com/protocolbuffers/protobuf/releases/download/v$(version)/protobuf-cpp-$(version).zip")
+    function get_url(version)
+        if version:get("major") == "3" then
+            return "protobuf-cpp-" .. version
+        end
+        return "protobuf-" .. version
+    end
+
+    add_urls("https://github.com/protocolbuffers/protobuf/releases/download/v$(version)/$(version).zip", {version = get_url})
     add_versions("3.8.0", "91ea92a8c37825bd502d96af9054064694899c5c7ecea21b8d11b1b5e7e993b5")
 	add_versions("3.12.0", "da826a3c48a9cae879928202d6fe06afb15aaee129e9035d6510cc776ddfa925")
     add_versions("3.12.3", "74da289e0d0c24b2cb097f30fdc09fa30754175fd5ebb34fae4032c6d95d4ce3")
