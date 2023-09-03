@@ -11,7 +11,7 @@ package("mpg123")
         add_syslinks("m")
     end
 
-    on_install(function (package)
+    on_install("linux", "macosx", "android", "iphoneos", "bsd", "cross", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:debug() then
