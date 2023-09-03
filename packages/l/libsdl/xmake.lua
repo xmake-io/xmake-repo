@@ -61,6 +61,7 @@ package("libsdl")
     add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
     if is_plat("linux") then
         add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
+        add_configs("with_wayland", {description = "Enables Wayland support (requires it on the system)", default = true, type = "boolean"})
     end
 
     if is_plat("wasm") then
@@ -74,6 +75,9 @@ package("libsdl")
         package:add("components", "lib")
         if package:is_plat("linux") and package:config("with_x") then
             package:add("deps", "libxext", {private = true})
+        end
+        if package:is_plat("linux") and package:config("with_wayland") then
+            package:add("deps", "wayland", {private = true})
         end
     end)
 
@@ -192,6 +196,9 @@ package("libsdl")
                 end
                 table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
             end
+        if package:config("with_wayland") then
+            opt.envs = {PKG_CONFIG_PATH = package:dep("wayland"):installdir("lib", "pkgconfig")}
+        end
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with the sdl headers
             opt = opt or {}
