@@ -3,15 +3,15 @@ package("sfml")
     set_description("Simple and Fast Multimedia Library")
     set_license("zlib")
 
-    add_urls("https://github.com/SFML/SFML/releases/download/$(version)/SFML-$(version)-sources.zip",
-             "https://www.sfml-dev.org/files/SFML-$(version)-sources.zip")
+    add_urls("https://github.com/SFML/SFML/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/SFML/SFML.git")
 
     -- Before 2.6.0 only x86 is supported for Mac
     if not is_plat("macosx") or not is_arch("arm.*") then
-        add_versions("2.5.1", "bf1e0643acb92369b24572b703473af60bac82caf5af61e77c063b779471bb7f")
+        add_versions("2.5.1", "438c91a917cc8aa19e82c6f59f8714da353c488584a007d401efac8368e1c785")
     end
 
-    add_versions("2.6.0", "dc477fc7266641709046bd38628c909f5748bd2564b388cf6c750a9e20cdfef1")
+    add_versions("2.6.0", "0c3f84898ea1db07dc46fa92e85038d8c449e3c8653fe09997383173de96bc06")
 
     add_configs("graphics",   {description = "Use the graphics module", default = true, type = "boolean"})
     add_configs("window",     {description = "Use the window module", default = true, type = "boolean"})
@@ -172,15 +172,15 @@ package("sfml")
                 table.insert(configs, "-DSFML_USE_STATIC_STD_LIBS=ON")
             end
         end
-        local packagedeps
         table.insert(configs, "-DSFML_BUILD_AUDIO=" .. (package:config("audio") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_GRAPHICS=" .. (package:config("graphics") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_WINDOW=" .. (package:config("window") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_NETWORK=" .. (package:config("network") and "ON" or "OFF"))
-
-        -- SFML doesn't provide prebuilt ARM binaries for the dependencies on Windows
-        if package:is_plat("windows") and not package:is_arch("x64", "x86_64", "x86", "i386") then
-            table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
+        
+        table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
+        local packagedeps = {}
+        if package:config("audio") then
+            table.insert(packagedeps, "openal-soft")
         end
 
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
