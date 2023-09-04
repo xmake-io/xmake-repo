@@ -7,26 +7,28 @@ package("sfml")
              "https://www.sfml-dev.org/files/SFML-$(version)-sources.zip")
 
     -- Before 2.6.0 only x86 is supported for Mac
-    if not is_plat("macosx") or not is_arch("arm.*")) then
+    if not is_plat("macosx") or not is_arch("arm.*") then
         add_versions("2.5.1", "bf1e0643acb92369b24572b703473af60bac82caf5af61e77c063b779471bb7f")
     end
 
     add_versions("2.6.0", "dc477fc7266641709046bd38628c909f5748bd2564b388cf6c750a9e20cdfef1")
 
-    if is_plat("macosx") then
-        add_extsources("brew::sfml/sfml-all")
-    elseif is_plat("linux") then
-        add_syslinks("pthread")
-    elseif is_plat("windows", "mingw") then
-        add_configs("main", {description = "Link to the sfml-main library", default = true, type = "boolean"})
-    end
-
     add_configs("graphics",   {description = "Use the graphics module", default = true, type = "boolean"})
     add_configs("window",     {description = "Use the window module", default = true, type = "boolean"})
     add_configs("audio",      {description = "Use the audio module", default = true, type = "boolean"})
     add_configs("network",    {description = "Use the network module", default = true, type = "boolean"})
+    if is_plat("windows", "mingw") then
+        add_configs("main", {description = "Link to the sfml-main library", default = true, type = "boolean"})
+    end
 
-    on_component = on_component or function() end
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
+    if is_plat("macosx") then
+        add_extsources("brew::sfml/sfml-all")
+    end
+
     on_component("graphics", function (package, component)
         local e = package:config("shared") and "" or "-s"
         if package:debug() then
