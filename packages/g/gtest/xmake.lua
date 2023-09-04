@@ -5,6 +5,7 @@ package("gtest")
 
     add_urls("https://github.com/google/googletest/archive/release-$(version).zip", {alias = "archive"})
     add_urls("https://github.com/google/googletest.git", {alias = "github"})
+    add_urls("https://github.com/google/googletest/archive/refs/tags/$(version).zip", {alias = "archive_tag"})
     add_versions("github:1.8.1", "release-1.8.1")
     add_versions("archive:1.8.1", "927827c183d01734cc5cfef85e0ff3f5a92ffe6188e0d18e909c5efebf28a0c7")
     add_versions("github:1.10.0", "release-1.10.0")
@@ -15,6 +16,10 @@ package("gtest")
     add_versions("archive:1.12.0", "ce7366fe57eb49928311189cb0e40e0a8bf3d3682fca89af30d884c25e983786")
     add_versions("github:1.12.1", "release-1.12.1")
     add_versions("archive:1.12.1", "24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2")
+    add_versions("github:1.13.0", "release-1.13.0")
+    add_versions("archive_tag:1.13.0", "ffa17fbc5953900994e2deec164bb8949879ea09b411e07f215bfbb1f87f4632")
+    add_versions("github:1.14.0", "release-1.14.0")
+    add_versions("archive_tag:1.14.0", "1f357c27ca988c3f7c6b4bf68a9395005ac6761f034046e9dde0896e3aba00e4")
 
     add_configs("main",  {description = "Link to the gtest_main entry point.", default = false, type = "boolean"})
     add_configs("gmock", {description = "Link to the googlemock library.", default = true, type = "boolean"})
@@ -27,14 +32,14 @@ package("gtest")
         io.writefile("xmake.lua", [[
             target("gtest")
                 set_kind("static")
-                set_languages("cxx11")
+                set_languages("cxx14")
                 add_files("googletest/src/gtest-all.cc")
                 add_includedirs("googletest/include", "googletest")
                 add_headerfiles("googletest/include/(**.h)")
 
             target("gtest_main")
                 set_kind("static")
-                set_languages("cxx11")
+                set_languages("cxx14")
                 set_default(]] .. tostring(package:config("main")) .. [[)
                 add_files("googletest/src/gtest_main.cc")
                 add_includedirs("googletest/include", "googletest")
@@ -42,7 +47,7 @@ package("gtest")
 
             target("gmock")
                 set_kind("static")
-                set_languages("cxx11")
+                set_languages("cxx14")
                 set_default(]] .. tostring(package:config("gmock")) .. [[)
                 add_files("googlemock/src/gmock-all.cc")
                 add_includedirs("googlemock/include", "googlemock", "googletest/include", "googletest")
@@ -61,7 +66,7 @@ package("gtest")
               EXPECT_EQ(6, factorial(3));
               EXPECT_EQ(3628800, factorial(10));
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "gtest/gtest.h"}))
+        ]]}, {configs = {languages = "c++14"}, includes = "gtest/gtest.h"}))
 
         if package:config("gmock") then
             assert(package:check_cxxsnippets({test = [[
@@ -93,6 +98,6 @@ package("gtest")
 
                     EXPECT_TRUE(b_obj.b_foo());
                 }
-            ]]}, {configs = {languages = "c++11"}, includes = {"gtest/gtest.h", "gmock/gmock.h"}}))
+            ]]}, {configs = {languages = "c++14"}, includes = {"gtest/gtest.h", "gmock/gmock.h"}}))
         end
     end)
