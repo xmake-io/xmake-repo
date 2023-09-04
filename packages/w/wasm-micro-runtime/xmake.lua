@@ -30,7 +30,7 @@ package("wasm-micro-runtime")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:config("libc") == "wasi" then
+        if package:config("libc") == "uvwasi" then
             package:add("deps", "uvwasi")
         end
     end)
