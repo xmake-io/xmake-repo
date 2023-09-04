@@ -176,12 +176,14 @@ package("sfml")
         table.insert(configs, "-DWARNINGS_AS_ERRORS=OFF")
         
         table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
-        local packagedeps = {}
+        local packagedeps
         if package:config("audio") then
+            packagedeps = packagedeps or {}
             table.insert(packagedeps, "openal-soft")
         end
         if package:config("graphics") then
-            table.insert(packagedeps, "freetype")
+            packagedeps = packagedeps or {}
+            table.insert(packagedeps, "freetype", "zlib")
         end
 
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
