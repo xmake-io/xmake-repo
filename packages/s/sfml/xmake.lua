@@ -176,6 +176,7 @@ package("sfml")
         table.insert(configs, "-DSFML_BUILD_GRAPHICS=" .. (package:config("graphics") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_WINDOW=" .. (package:config("window") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_NETWORK=" .. (package:config("network") and "ON" or "OFF"))
+        table.insert(configs, "-DWARNINGS_AS_ERRORS=OFF")
         
         table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
         local packagedeps = {}
