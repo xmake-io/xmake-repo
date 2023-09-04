@@ -22,35 +22,65 @@ package("wasm-micro-runtime")
     add_configs("ref_types", {description = "Enable reference types", default = false, type = "boolean"})
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws_32")
+        add_syslinks("ws2_32")
     elseif is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
     end
 
     add_deps("cmake")
 
+    on_load(function (package)
+        if package:config("libc") == "wasi" then
+            package:add("deps", "uvwasi")
+        end
+    end)
+
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "1" or "0"))
 
-        -- table.insert(configs, "-DWAMR_BUILD_INTERP=" .. (package:config("interp") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_FAST_INTERP=" .. (package:config("fast_interp") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_AOT=" .. (package:config("aot") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_JIT=" .. (package:config("jit") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_FAST_JIT=" .. (package:config("fast_jit") and "ON" or "OFF"))
+        table.insert(configs, "-DWAMR_BUILD_INTERP=" .. (package:config("interp") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_FAST_INTERP=" .. (package:config("fast_interp") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_AOT=" .. (package:config("aot") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_JIT=" .. (package:config("jit") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_FAST_JIT=" .. (package:config("fast_jit") and "1" or "0"))
 
-        -- table.insert(configs, "-DWAMR_BUILD_LIBC_BUILTIN=" .. ((package:config("libc") == "builtin") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_LIBC_WASI=" .. ((package:config("libc") == "wasi") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_LIBC_UVWASI=" .. ((package:config("libc") == "uvwasi") and "ON" or "OFF"))
+        table.insert(configs, "-DWAMR_BUILD_LIBC_BUILTIN=" .. ((package:config("libc") == "builtin") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_LIBC_WASI=" .. ((package:config("libc") == "wasi") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_LIBC_UVWASI=" .. ((package:config("libc") == "uvwasi") and "1" or "0"))
 
-        -- table.insert(configs, "-DWAMR_BUILD_MULTI_MODULE=" .. (package:config("multi_module") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_MINI_LOADER=" .. (package:config("mini_loader") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_LIB_PTHREAD=" .. (package:config("pthread") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_LIB_WASI_THREADS=" .. (package:config("wasi_threads") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_SIMD=" .. (package:config("simd") and "ON" or "OFF"))
-        -- table.insert(configs, "-DWAMR_BUILD_REF_TYPES=" .. (package:config("ref_types") and "ON" or "OFF"))
+        table.insert(configs, "-DWAMR_BUILD_MULTI_MODULE=" .. (package:config("multi_module") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_MINI_LOADER=" .. (package:config("mini_loader") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_LIB_PTHREAD=" .. (package:config("pthread") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_LIB_WASI_THREADS=" .. (package:config("wasi_threads") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_SIMD=" .. (package:config("simd") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_REF_TYPES=" .. (package:config("ref_types") and "1" or "0"))
+
+        local plat
+        if package:is_plat("windows", "mingw") then
+            plat = "windows"
+        elseif package:is_plat("linux") then
+            plat = "linux"
+        elseif package:is_plat("macosx") then
+            plat = "drawin"
+        elseif package:is_plat("bsd") then
+            plat = "freebsd"
+        elseif package:is_plat("android") then
+            plat = "android"
+        elseif package:is_plat("iphoneos") then
+            plat = "ios"
+        elseif package:is_plat("linux") then
+            plat = "linux"
+        end
+
+        os.cp("core/iwasm/include", package:installdir())
+        if plat then
+            os.cd("product-mini/platforms/" .. plat)
+        end
         import("package.tools.cmake").install(package, configs)
+
+        os.trymv(package:installdir("lib", "*.dll"), package:installdir("bin"))
     end)
 
     on_test(function (package)
