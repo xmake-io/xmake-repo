@@ -35,10 +35,10 @@ package("wasm-micro-runtime")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "android", "iphoneos", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "1" or "0"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         table.insert(configs, "-DWAMR_BUILD_INTERP=" .. (package:config("interp") and "1" or "0"))
         table.insert(configs, "-DWAMR_BUILD_FAST_INTERP=" .. (package:config("fast_interp") and "1" or "0"))
@@ -63,15 +63,13 @@ package("wasm-micro-runtime")
         elseif package:is_plat("linux") then
             plat = "linux"
         elseif package:is_plat("macosx") then
-            plat = "drawin"
+            plat = "darwin"
         elseif package:is_plat("bsd") then
             plat = "freebsd"
         elseif package:is_plat("android") then
             plat = "android"
         elseif package:is_plat("iphoneos") then
             plat = "ios"
-        elseif package:is_plat("linux") then
-            plat = "linux"
         end
 
         os.cp("core/iwasm/include", package:installdir())
