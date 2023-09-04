@@ -13,6 +13,7 @@ option("sdl2",             {showmenu = true,  default = false})
 option("sdl2_renderer",    {showmenu = true,  default = false})
 option("vulkan",           {showmenu = true,  default = false})
 option("win32",            {showmenu = true,  default = false})
+option("wgpu",             {showmenu = true,  default = false})
 option("freetype",         {showmenu = true,  default = false})
 option("user_config",      {showmenu = true,  default = nil, type = "string"})
 option("wchar32",          {showmenu = true,  default = false})
@@ -33,6 +34,10 @@ end
 
 if has_config("vulkan") then
     add_requires("vulkansdk")
+end
+
+if has_config("wgpu") then
+    add_requires("wgpu-native")
 end
 
 if has_config("freetype") then
@@ -118,6 +123,12 @@ target("imgui")
     if has_config("win32") then
         add_files("backends/imgui_impl_win32.cpp")
         add_headerfiles("(backends/imgui_impl_win32.h)")
+    end
+    
+    if has_config("wgpu") then
+        add_files("backends/imgui_impl_wgpu.cpp")
+        add_headerfiles("(backends/imgui_impl_wgpu.h)")
+        add_packages("wgpu-native")
     end
 
     if has_config("freetype") then
