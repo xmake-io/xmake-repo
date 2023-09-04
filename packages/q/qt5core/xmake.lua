@@ -1,5 +1,6 @@
 package("qt5core")
     set_base("qt5lib")
+    set_kind("library")
 
     on_load(function (package)
         package:data_set("libname", "Core")
@@ -11,7 +12,6 @@ package("qt5core")
         end
 
         package:base():script("load")(package)
-        package:set("kind", "library")
     end)
 
     on_test(function (package)

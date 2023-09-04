@@ -49,7 +49,7 @@ package("toml++")
                     cpp = 17
                 )"sv;
 
-                toml::table tbl = toml::parse(some_toml);
+                auto tbl = toml::parse(some_toml);
                 std::cout << tbl << "\n";
             }
         ]]}, {configs = {languages = "c++17"}, includes = "toml++/toml.h"}))

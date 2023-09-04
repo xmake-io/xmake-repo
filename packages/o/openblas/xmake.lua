@@ -59,9 +59,9 @@ package("openblas")
     end)
 
     on_install("windows|x64", "windows|x86", function (package)
-        os.mv(path.join("bin", "libopenblas.dll"), package:installdir("bin"))
-        os.mv("include", package:installdir())
-        os.mv(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
+        os.cp(path.join("bin", "libopenblas.dll"), package:installdir("bin"))
+        os.cp("include", package:installdir())
+        os.cp(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
         package:addenv("PATH", "bin")
     end)
 

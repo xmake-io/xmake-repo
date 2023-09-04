@@ -10,6 +10,8 @@ package("boost")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
+    add_versions("1.83.0", "6478edfe2f3305127cffe8caf73ea0176c53769f4bf1585be237eb30798c3b8e")
+    add_versions("1.82.0", "a6e1ab9b0860e6a2881dd7b21fe9f737a095e5f33a3a874afc6a345228597ee6")
     add_versions("1.81.0", "71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa")
     add_versions("1.80.0", "1e19565d82e43bc59209a168f5ac899d3ba471d55c7610c677d4ccf2c9c500c0")
     add_versions("1.79.0", "475d589d51a7f8b3ba2ba4eda022b170e562ca3b760ee922c146b6c65856ef39")
@@ -84,7 +86,7 @@ package("boost")
             else
                 linkname = "boost_" .. libname
             end
-            if libname == "python" then
+            if libname == "python" or libname == "numpy" then
                 linkname = linkname .. package:config("pyver"):gsub("%p+", "")
             end
             if package:config("multi") then
@@ -103,11 +105,16 @@ package("boost")
                 elseif vs_runtime == "MDd" then
                     linkname = linkname .. "-gd"
                 end
+            else
+                if package:debug() then
+                    linkname = linkname .. "-d"
+                end
             end
             return linkname
         end
         -- we need the fixed link order
         local sublibs = {log = {"log_setup", "log"},
+                         python = {"python", "numpy"},
                          stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
         for _, libname in ipairs(libnames) do
             local libs = sublibs[libname]
@@ -135,9 +142,18 @@ package("boost")
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         import("core.base.option")
 
+        -- get toolchain
+        local toolchain
+        if package:is_plat("windows") then
+            toolchain = package:toolchain("clang-cl") or package:toolchain("msvc") or
+                import("core.tool.toolchain").load("msvc", {plat = package:plat(), arch = package:arch()})
+        end
+
         -- force boost to compile with the desired compiler
+        local win_toolset
         local file = io.open("user-config.jam", "a")
         if file then
+            local cxx = package:build_getenv("cxx")
             if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
                 -- and we need `xcrun -sdk macosx clang++` to make b2 to get `-isysroot` automatically
@@ -147,9 +163,25 @@ package("boost")
                 end
                 file:print("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
-                file:print("using msvc : : \"%s\" ;", (package:build_getenv("cxx"):gsub("\\", "\\\\")))
+                local vs_toolset = toolchain:config("vs_toolset")
+                local msvc_ver = ""
+                win_toolset = "msvc"
+                if toolchain:name() == "clang-cl" then
+                    win_toolset = "clang-win"
+                    cxx = cxx:gsub("(clang%-cl)$", "%1.exe", 1)
+                    msvc_ver = ""
+                elseif vs_toolset then
+                    local i = vs_toolset:find("%.")
+                    msvc_ver = i and vs_toolset:sub(1, i + 1)
+                end
+
+                -- Specifying a version will disable b2 from forcing tools
+                -- from the latest installed msvc version.
+                file:print("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
             else
-                file:print("using gcc : : %s ;", package:build_getenv("cxx"):gsub("\\", "/"))
+                cxx = cxx:gsub("gcc$", "g++")
+                cxx = cxx:gsub("clang$", "clang++")
+                file:print("using gcc : : %s ;", cxx:gsub("\\", "/"))
             end
             file:close()
         end
@@ -160,9 +192,10 @@ package("boost")
             "--libdir=" .. package:installdir("lib"),
             "--without-icu"
         }
+
+        local runenvs
         if package:is_plat("windows") then
-            import("core.tool.toolchain")
-            local runenvs = toolchain.load("msvc"):runenvs()
+            runenvs = toolchain:runenvs()
             -- for bootstrap.bat, all other arguments are useless
             bootstrap_argv = { "msvc" }
             os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
@@ -184,6 +217,7 @@ package("boost")
             "-d2",
             "-j" .. njobs,
             "--hash",
+            "-q", -- quit on first error
             "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
             "-sNO_LZMA=1",
@@ -191,7 +225,9 @@ package("boost")
             "install",
             "threading=" .. (package:config("multi") and "multi" or "single"),
             "debug-symbols=" .. (package:debug() and "on" or "off"),
-            "link=" .. (package:config("shared") and "shared" or "static")
+            "link=" .. (package:config("shared") and "shared" or "static"),
+            "variant=" .. (package:is_debug() and "debug" or "release"),
+            "runtime-debugging=" .. (package:is_debug() and "on" or "off")
         }
 
         if package:config("lto") then
@@ -215,7 +251,7 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "cxxflags=-std:c++14")
-            table.insert(argv, "toolset=msvc")
+            table.insert(argv, "toolset=" .. win_toolset)
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
         else
@@ -229,7 +265,12 @@ package("boost")
                 table.insert(argv, "--with-" .. libname)
             end
         end
-        os.vrunv("./b2", argv)
+
+        if package:is_plat("linux") then
+            table.insert(argv, "pch=off")
+        end
+
+        os.vrunv("./b2", argv, {envs = runenvs})
     end)
 
     on_test(function (package)

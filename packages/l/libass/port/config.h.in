@@ -1,0 +1,12 @@
+/* found CoreText framework */
+#undef CONFIG_CORETEXT
+
+/* found DirectWrite and GDI (Win32) */
+#undef CONFIG_DIRECTWRITE
+
+/* found libpng via pkg-config */
+#undef CONFIG_LIBPNG
+#define CONFIG_SOURCEVERSION "commit: ${GIT_TAG}${GIT_COMMIT_LONG}"
+${define HAVE_STRDUP}
+${define HAVE_STRNDUP}
+

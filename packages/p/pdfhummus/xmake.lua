@@ -3,17 +3,25 @@ package("pdfhummus")
     set_description("High performance library for creating, modiyfing and parsing PDF files in C++ ")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/galkahana/PDF-Writer/archive/refs/tags/v$(version).tar.gz",
-             "https://github.com/galkahana/PDF-Writer/archive/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/galkahana/PDF-Writer/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/galkahana/PDF-Writer/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/galkahana/PDF-Writer.git")
+    add_versions("v4.5.10", "c185707d0ec87da390a1c458a191327b82404184f9ef57d4680831f894b01d84")
+    add_versions("v4.5.9", "a875e3466227e99191a665240503842865967fe5c0a450190a5a967a29be0d14")
+    add_versions("v4.5.8", "b19b4853774551d34187087aaafa89fcba69215acbb4747dbdf0025a3f780b89")
+    add_versions("v4.5.7", "191f39dcc61522c50a3bee96b3f0ccef208c27968fd22d5ab474acb512c24d10")
+    add_versions("v4.5.6", "72a4f3fbbc39d4f169911454e9977ef8dd882bd5c0a305bd3133347903cff705")
     add_versions("4.1", "0c0d860b0ecea928709b9e4642fa21926eb2f626f702699c3b87afa2965b4857")
-    add_versions("4.5.6", "72a4f3fbbc39d4f169911454e9977ef8dd882bd5c0a305bd3133347903cff705")
 
     add_deps("freetype", "zlib", "libaesgm")
 
     add_configs("libtiff", {description = "Supporting tiff image", default = false, type = "boolean"})
     add_configs("libjpeg", {description = "Support DCT encoding", default = false, type = "boolean"})
     add_configs("libpng", {description = "Support png image", default = false, type = "boolean"})
+
+    if is_plat("linux") then
+        add_syslinks("m")
+    end
 
     on_load(function (package)
         for _, dep in ipairs({"libtiff", "libpng", "libjpeg"}) do

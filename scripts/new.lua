@@ -105,7 +105,7 @@ function generate_package(reponame, get_data)
         local tmpfile = os.tmpfile({ramdisk = false}) .. ".tar.gz"
         repodir = tmpfile .. ".dir"
 
-        file:write('    add_urls("https://' .. host .. '/' .. reponame .. '/-/archive/$(version).tar.gz",\n')
+        file:write('    add_urls("https://' .. host .. '/' .. reponame .. '/archive/refs/tags/$(version).tar.gz",\n')
         file:print('             "%s")\n', giturl)
 
         print("downloading %s", url)
@@ -115,7 +115,7 @@ function generate_package(reponame, get_data)
         archive.extract(tmpfile, repodir)
         os.rm(tmpfile)
     else
-        local giturl = string.format("git@%s:%s.git", host, reponame)
+        local giturl = string.format("https://%s/%s.git", host, reponame)
         repodir = os.tmpfile({ ramdisk = false })
 
         file:print('    add_urls("%s")', giturl)
@@ -142,6 +142,7 @@ function generate_package(reponame, get_data)
     local build_systems = {
         ["xmake.lua"] = {
             deps = {},
+            priority = 1,
             install = function(configs, package)
                 return [=[
         io.writefile("xmake.lua", [[
@@ -159,6 +160,7 @@ function generate_package(reponame, get_data)
         },
         ["CMakeLists.txt"] = {
             deps = {"cmake"},
+            priority = 2,
             install = function(configs, package)
                 return [[
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -168,6 +170,7 @@ function generate_package(reponame, get_data)
         },
         ["configure,configure.ac,autogen.sh"] = {
             deps = {"autoconf", "automake", "libtool"},
+            priority = 3,
             install = function(configs, package)
                 return [[
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
@@ -179,6 +182,7 @@ function generate_package(reponame, get_data)
         },
         ["meson.build"] = {
             deps = {"meson", "ninja"},
+            priority = 4,
             install = function(configs, package)
                 return [[
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
@@ -187,14 +191,16 @@ function generate_package(reponame, get_data)
         },
         ["BUILD,BUILD.bazel"] = {
             deps = {"bazel"},
+            priority = 5,
             install = function(configs, package)
-                return 'import("package.tools.bazel").install(package, configs)'
+                return [[
+        import("package.tools.bazel").install(package, configs)]]
             end,
         }
     }
 
     -- detect build system
-    local build_system = nil
+    local build_system_detected = {}
     if repodir then
         local files = os.files(path.join(repodir, "*")) or {}
         table.join2(files, os.files(path.join(repodir, "*", "*")))
@@ -203,12 +209,16 @@ function generate_package(reponame, get_data)
             for k, v in pairs(build_systems) do
                 local filenames = hashset.from(k:split(","))
                 if filenames:has(filename) then
-                    build_system = v
-                    break
+                    table.insert(build_system_detected, v)
                 end
             end
         end
         os.rm(repodir)
+    end
+    local build_system
+    if #build_system_detected > 0 then
+        table.sort(build_system_detected, function (a, b) return a.priority < b.priority end)
+        build_system = build_system_detected[1]
     end
     if not build_system then
         build_system = build_systems["xmake.lua"]

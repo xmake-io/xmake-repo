@@ -8,6 +8,7 @@ package("workflow")
 
     add_versions("v0.10.6", "5701ef31518a7927e61b26cd6cc1d699cb43393bf1ffc77fa61e73e64d2dd28e")
     add_versions("v0.10.7", "aa9806983f32174597549db4a129e2ee8a3d1f005923fcbb924906bc70c0e123")
+    add_versions("v0.10.8", "bb5654e8011822d4251a7a433cbe4c5ecfd2c65c8f997a8196685742d24bcaf0")
 
     add_deps("openssl")
 
@@ -35,5 +36,5 @@ package("workflow")
                 server.stop();
             }
         }
-    ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)

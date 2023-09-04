@@ -19,7 +19,6 @@ package("qt5network")
         end
 
         package:base():script("load")(package)
-        package:set("kind", "library")
     end)
 
     on_test(function (package)
