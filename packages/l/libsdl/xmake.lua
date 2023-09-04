@@ -58,10 +58,17 @@ package("libsdl")
 
     add_includedirs("include", "include/SDL2")
 
+    add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+
+    -- @note deprecated
     add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+
     if is_plat("linux") then
+        add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
+        add_configs("wayland", {description = "Enables Wayland support", default = true, type = "boolean"})
+
+        -- @note deprecated
         add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
-        add_configs("with_wayland", {description = "Enables Wayland support (requires it on the system)", default = true, type = "boolean"})
     end
 
     if is_plat("wasm") then
@@ -69,14 +76,14 @@ package("libsdl")
     end
 
     on_load(function (package)
-        if package:config("use_sdlmain") then
+        if package:config("sdlmain") or package:config("use_sdlmain") then
             package:add("components", "main")
         end
         package:add("components", "lib")
-        if package:is_plat("linux") and package:config("with_x") then
+        if package:is_plat("linux") and (package:config("x11") or package:config("with_x")) then
             package:add("deps", "libxext", {private = true})
         end
-        if package:is_plat("linux") and package:config("with_wayland") then
+        if package:is_plat("linux") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
         end
     end)
