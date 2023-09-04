@@ -70,7 +70,7 @@ package("sfml")
         component:add("links", "sfml-audio" .. e)
         component:add("deps", "system")
         component:add("extsources", "brew::sfml/sfml-audio")
-        if not package:config("shared") and package:is_plat("windows", "mingw"then
+        if not package:config("shared") and package:is_plat("windows", "mingw") then
             component:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
         end
     end)
