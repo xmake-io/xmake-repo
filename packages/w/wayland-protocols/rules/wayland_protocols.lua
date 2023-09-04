@@ -3,22 +3,19 @@
 --[[
     if is_plat("linux") then
         add_rules("wayland-protocols@wayland.protocols")
-
         on_load(function(target)
             local pkg = target:pkg("wayland-protocols")
             local wayland_protocols_dir = path.join(target:pkg("wayland-protocols"):installdir() or "/usr", "share", "wayland-protocols")
             assert(wayland_protocols_dir, "wayland protocols directory not found")
 
             local protocols = {path.join("stable", "xdg-shell", "xdg-shell.xml"),
-                                path.join("unstable", "xdg-decoration", "xdg-decoration-unstable-v1.xml")}
-
+                               path.join("unstable", "xdg-decoration", "xdg-decoration-unstable-v1.xml")}
             for _, protocol in ipairs(protocols) do
                 target:add("files", path.join(wayland_protocols_dir, protocol))
             end
         end)
     end
-]]--
-
+]]
 rule("wayland.protocols")
     set_extensions(".xml")
 
