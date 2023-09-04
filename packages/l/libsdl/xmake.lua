@@ -110,7 +110,7 @@ package("libsdl")
                     component:add("frameworks", "Cocoa", "Carbon", "ForceFeedback", "IOKit")
                 else
                     component:add("frameworks", "CoreBluetooth", "CoreGraphics", "CoreMotion", "OpenGLES", "UIKit")
-		end
+		        end
                 if package:version():ge("2.0.14") then
                     package:add("frameworks", "CoreHaptics", "GameController")
                 end
@@ -196,9 +196,6 @@ package("libsdl")
                 end
                 table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
             end
-        if package:config("with_wayland") then
-            opt.envs = {PKG_CONFIG_PATH = package:dep("wayland"):installdir("lib", "pkgconfig")}
-        end
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with the sdl headers
             opt = opt or {}
