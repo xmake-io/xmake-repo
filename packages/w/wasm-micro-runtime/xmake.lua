@@ -35,10 +35,13 @@ package("wasm-micro-runtime")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "android", "iphoneos", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "android", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") and package:config("shared") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
 
         table.insert(configs, "-DWAMR_BUILD_INTERP=" .. (package:config("interp") and "1" or "0"))
         table.insert(configs, "-DWAMR_BUILD_FAST_INTERP=" .. (package:config("fast_interp") and "1" or "0"))
@@ -73,9 +76,7 @@ package("wasm-micro-runtime")
         end
 
         os.cp("core/iwasm/include", package:installdir())
-        if plat then
-            os.cd("product-mini/platforms/" .. plat)
-        end
+        os.cd("product-mini/platforms/" .. plat)
         import("package.tools.cmake").install(package, configs)
 
         os.trymv(package:installdir("lib", "*.dll"), package:installdir("bin"))
