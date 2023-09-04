@@ -21,10 +21,6 @@ package("sfml")
         add_configs("main", {description = "Link to the sfml-main library", default = true, type = "boolean"})
     end
 
-    if is_plat("linux") then
-        add_syslinks("pthread")
-    end
-
     if is_plat("macosx") then
         add_extsources("brew::sfml/sfml-all")
     end
@@ -35,12 +31,12 @@ package("sfml")
             e = e .. "-d"
         end
         component:add("links", "sfml-graphics" .. e)
-        if package:is_plat("windows", "mingw") and not package:config("shared") then
+        component:add("deps", "window", "system")
+        component:add("extsources", "brew::sfml/sfml-graphics")
+        if not package:config("shared") and package:is_plat("windows", "mingw")  then
             component:add("links", "freetype")
             component:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
         end
-        component:add("deps", "window", "system")
-        component:add("extsources", "brew::sfml/sfml-graphics")
     end)
 
     on_component("window", function (package, component)
@@ -49,11 +45,21 @@ package("sfml")
             e = e .. "-d"
         end
         component:add("links", "sfml-window" .. e)
-        if package:is_plat("windows", "mingw") and not package:config("shared") then
-            component:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
-        end
         component:add("deps", "system")
         component:add("extsources", "brew::sfml/sfml-window")
+        if not package:config("shared") then
+            if package:is_plat("windows", "mingw") then
+                component:add("syslinks", "gdi32")
+            elseif package:is_plat("linux") then
+                component:add("syslinks", "UDev", "dl")
+            elseif package:is_plat("bsd") then
+                component:add("syslinks", "usbhid")
+            elseif package:is_plat("macosx") then
+                component:add("frameworks", "Foundation", "AppKit", "IOKit", "Carbon")
+            elseif package:is_plat("iphoneos") then
+                component:add("frameworks", "Foundation", "UIKit", "CoreGraphics", "QuartzCore", "CoreMotion")
+            end
+        end
     end)
 
     on_component("audio", function (package, component)
@@ -62,11 +68,11 @@ package("sfml")
             e = e .. "-d"
         end
         component:add("links", "sfml-audio" .. e)
-        if package:is_plat("windows", "mingw") and not package:config("shared") then
-            component:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
-        end
         component:add("deps", "system")
         component:add("extsources", "brew::sfml/sfml-audio")
+        if not package:config("shared") and package:is_plat("windows", "mingw"then
+            component:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
+        end
     end)
 
     on_component("network", function (package, component)
@@ -75,12 +81,12 @@ package("sfml")
             e = e .. "-d"
         end
         component:add("links", "sfml-network" .. e)
-        if package:is_plat("windows", "mingw") and not package:config("shared") then
-            component:add("syslinks", "ws2_32")
-        end
         component:add("deps", "system")
         component:add("extsources", "brew::sfml/sfml-network")
         component:add("extsources", "apt::sfml-network")
+        if not package:config("shared") and package:is_plat("windows", "mingw") then
+            component:add("syslinks", "ws2_32")
+        end
     end)
 
     on_component("system", function (package, component)
@@ -96,6 +102,17 @@ package("sfml")
             component:add("deps", "main")
         end
         component:add("extsources", "brew::sfml/sfml-system")
+        if not package:config("shared") then
+            if package:is_plat("windows", "mingw") then
+                component:add("syslinks", "winmm")
+            elseif package:is_plat("linux") then
+                component:add("syslinks", "rt", "pthread")
+            elseif package:is_plat("bsd") then
+                component:add("syslinks", "pthread")
+            elseif package:is_plat("macosx") then
+                component:add("syslinks", "pthread")
+            end
+        end
     end)
 
     on_component("main", function (package, component)
