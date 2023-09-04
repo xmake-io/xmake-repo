@@ -61,6 +61,7 @@ package("libsdl")
     add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
     if is_plat("linux") then
         add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
+        add_configs("with_wayland", {description = "Enables Wayland support (requires it on the system)", default = true, type = "boolean"})
     end
 
     if is_plat("wasm") then
@@ -74,6 +75,9 @@ package("libsdl")
         package:add("components", "lib")
         if package:is_plat("linux") and package:config("with_x") then
             package:add("deps", "libxext", {private = true})
+        end
+        if package:is_plat("linux") and package:config("with_wayland") then
+            package:add("deps", "wayland", {private = true})
         end
     end)
 
@@ -106,7 +110,7 @@ package("libsdl")
                     component:add("frameworks", "Cocoa", "Carbon", "ForceFeedback", "IOKit")
                 else
                     component:add("frameworks", "CoreBluetooth", "CoreGraphics", "CoreMotion", "OpenGLES", "UIKit")
-		end
+		        end
                 if package:version():ge("2.0.14") then
                     package:add("frameworks", "CoreHaptics", "GameController")
                 end
