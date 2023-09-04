@@ -34,7 +34,6 @@ package("sfml")
         component:add("deps", "window", "system")
         component:add("extsources", "brew::sfml/sfml-graphics")
         if not package:config("shared") and package:is_plat("windows", "mingw")  then
-            component:add("links", "freetype")
             component:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
         end
     end)
@@ -107,9 +106,7 @@ package("sfml")
                 component:add("syslinks", "winmm")
             elseif package:is_plat("linux") then
                 component:add("syslinks", "rt", "pthread")
-            elseif package:is_plat("bsd") then
-                component:add("syslinks", "pthread")
-            elseif package:is_plat("macosx") then
+            elseif package:is_plat("bsd", "macosx") then
                 component:add("syslinks", "pthread")
             end
         end
@@ -182,6 +179,9 @@ package("sfml")
         local packagedeps = {}
         if package:config("audio") then
             table.insert(packagedeps, "openal-soft")
+        end
+        if package:config("graphics") then
+            table.insert(packagedeps, "freetype")
         end
 
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
