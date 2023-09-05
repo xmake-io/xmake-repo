@@ -183,7 +183,7 @@ package("sfml")
             table.insert(packagedeps, "openal-soft")
             ldflags = ldflags or {}
             if package:is_plat("windows", "mingw") then
-                table.insert(ldflags, package:is_plat("windows") and "winmm.lib" or "-lwinmm.lib")
+                table.insert(ldflags, package:is_plat("windows") and "winmm.lib" or "-lwinmm")
             end
         end
         if package:config("graphics") then
