@@ -11,12 +11,12 @@ package("wasm-micro-runtime")
     add_configs("interp", {description = "Enable interpreter", default = true, type = "boolean"})
     add_configs("fast_interp", {description = "Enable fast interpreter", default = false, type = "boolean"})
     add_configs("aot", {description = "Enable AOT", default = false, type = "boolean"})
-    add_configs("jit", {description = "Enable JIT", default = false, type = "boolean"})
-    add_configs("fast_jit", {description = "Enable Fast JIT", default = false, type = "boolean"})
+    -- TODO: improve llvm
+    add_configs("jit", {description = "Enable JIT", default = false, type = "boolean", readonly = true})
+    add_configs("fast_jit", {description = "Enable Fast JIT", default = false, type = "boolean", readonly = true})
     add_configs("libc", {description = "Choose libc", default = "builtin", type = "string", values = {"builtin", "wasi", "uvwasi"}})
     add_configs("multi_module", {description = "Enable multiple modules", default = false, type = "boolean"})
     add_configs("mini_loader", {description = "Enable wasm mini loader", default = false, type = "boolean"})
-    add_configs("pthread", {description = "Enable pthread library", default = false, type = "boolean"})
     add_configs("wasi_threads", {description = "Enable wasi threads library", default = false, type = "boolean"})
     add_configs("simd", {description = "Enable SIMD", default = false, type = "boolean"})
     add_configs("ref_types", {description = "Enable reference types", default = false, type = "boolean"})
@@ -32,6 +32,9 @@ package("wasm-micro-runtime")
     on_load(function (package)
         if package:config("libc") == "uvwasi" then
             package:add("deps", "uvwasi")
+        end
+        if package:config("jit", "fast_jit") then
+            package:add("deps", "llvm")
         end
     end)
 
@@ -55,7 +58,6 @@ package("wasm-micro-runtime")
 
         table.insert(configs, "-DWAMR_BUILD_MULTI_MODULE=" .. (package:config("multi_module") and "1" or "0"))
         table.insert(configs, "-DWAMR_BUILD_MINI_LOADER=" .. (package:config("mini_loader") and "1" or "0"))
-        table.insert(configs, "-DWAMR_BUILD_LIB_PTHREAD=" .. (package:config("pthread") and "1" or "0"))
         table.insert(configs, "-DWAMR_BUILD_LIB_WASI_THREADS=" .. (package:config("wasi_threads") and "1" or "0"))
         table.insert(configs, "-DWAMR_BUILD_SIMD=" .. (package:config("simd") and "1" or "0"))
         table.insert(configs, "-DWAMR_BUILD_REF_TYPES=" .. (package:config("ref_types") and "1" or "0"))
