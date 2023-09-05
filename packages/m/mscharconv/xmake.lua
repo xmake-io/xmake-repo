@@ -16,22 +16,11 @@ package("mscharconv")
                 double pi = 3.14159265359;
                 char pi_str[256];
                 auto [p, ec] = msstl::to_chars(pi_str, pi_str + sizeof(pi_str), pi);
-
-                if (ec != std::errc{}) {
-                    std::cerr << "Error converting \"" << pi << "\" to string\n";
-                }
-
-                *p = 0; // terminate string
-                std::cout << "Got string " << pi_str << "\n";
             }
             void test2(){
                 std::string_view pi_str = "3.14159 is pi";
                 double pi;
                 auto [p, ec] = msstl::from_chars(pi_str.data(), pi_str.data() + pi_str.length(), pi);
-                if (ec != std::errc{}) {
-                    std::cerr << "Error converting \"" << pi_str << "\" to double\n";
-                }
-                std::cout << "Got double " << pi << ". The rest is \"" << p << "\".\n";
             }
         ]]}, {configs = {languages = "cxx17"}, includes = {"msstl/charconv.hpp", "iostream", "string_view"}}))
     end)
