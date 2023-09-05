@@ -174,28 +174,16 @@ package("sfml")
         
         table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
         local packagedeps
-        local ldflags
         if package:config("audio") then
             packagedeps = packagedeps or {}
             table.insert(packagedeps, "openal-soft")
-            if package:is_plat("windows", "mingw") then
-                ldflags = ldflags or {}
-                table.insert(ldflags, package:is_plat("windows") and "winmm.lib" or "-lwinmm")
-            end
         end
         if package:config("graphics") then
             packagedeps = packagedeps or {}
             table.insert(packagedeps, "freetype")
-            table.insert(packagedeps, "zlib")
-        end
-        if package:config("window") or package:config("graphics") then
-            if package:is_plat("linux") then
-                packagedeps = packagedeps or {}
-                table.insert(packagedeps, "libxrender")
-            end
         end
 
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps, ldflags = ldflags})
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
