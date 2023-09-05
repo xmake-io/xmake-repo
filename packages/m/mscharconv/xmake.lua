@@ -12,32 +12,26 @@ package("mscharconv")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            int test(){
+            void test(){
                 double pi = 3.14159265359;
                 char pi_str[256];
                 auto [p, ec] = msstl::to_chars(pi_str, pi_str + sizeof(pi_str), pi);
 
                 if (ec != std::errc{}) {
                     std::cerr << "Error converting \"" << pi << "\" to string\n";
-                    return 1;
                 }
 
                 *p = 0; // terminate string
                 std::cout << "Got string " << pi_str << "\n";
-                return 0;
             }
-        ]]}, {configs = {languages = "cxx17"}, includes = {"msstl/charconv.hpp", "iostream", "string_view"}}))
-        assert(package:check_cxxsnippets({test = [[
-            int test(){
+            void test2(){
                 std::string_view pi_str = "3.14159 is pi";
                 double pi;
                 auto [p, ec] = msstl::from_chars(pi_str.data(), pi_str.data() + pi_str.length(), pi);
                 if (ec != std::errc{}) {
                     std::cerr << "Error converting \"" << pi_str << "\" to double\n";
-                    return 1;
                 }
                 std::cout << "Got double " << pi << ". The rest is \"" << p << "\".\n";
-                return 0;
             }
         ]]}, {configs = {languages = "cxx17"}, includes = {"msstl/charconv.hpp", "iostream", "string_view"}}))
     end)
