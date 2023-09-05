@@ -50,7 +50,7 @@ package("sfml")
             if package:is_plat("windows", "mingw") then
                 component:add("syslinks", "gdi32")
             elseif package:is_plat("linux") then
-                component:add("syslinks", "UDev", "dl")
+                component:add("syslinks", "dl")
             elseif package:is_plat("bsd") then
                 component:add("syslinks", "usbhid")
             elseif package:is_plat("macosx") then
@@ -177,9 +177,14 @@ package("sfml")
         
         table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
         local packagedeps
+        local ldflags
         if package:config("audio") then
             packagedeps = packagedeps or {}
             table.insert(packagedeps, "openal-soft")
+            ldflags = ldflags or {}
+            if package:is_plat("windows", "mingw") then
+                table.insert(ldflags, package:is_plat("windows") and "winmm.lib" or "-lwinmm.lib")
+            end
         end
         if package:config("graphics") then
             packagedeps = packagedeps or {}
@@ -187,7 +192,7 @@ package("sfml")
             table.insert(packagedeps, "zlib")
         end
 
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps, ldflags = ldflags})
     end)
 
     on_test(function (package)
