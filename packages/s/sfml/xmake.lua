@@ -33,9 +33,6 @@ package("sfml")
         component:add("links", "sfml-graphics" .. e)
         component:add("deps", "window", "system")
         component:add("extsources", "brew::sfml/sfml-graphics")
-        if not package:config("shared") and package:is_plat("windows", "mingw")  then
-            component:add("syslinks", "opengl32", "gdi32", "user32", "advapi32")
-        end
     end)
 
     on_component("window", function (package, component)
@@ -181,8 +178,8 @@ package("sfml")
         if package:config("audio") then
             packagedeps = packagedeps or {}
             table.insert(packagedeps, "openal-soft")
-            ldflags = ldflags or {}
             if package:is_plat("windows", "mingw") then
+                ldflags = ldflags or {}
                 table.insert(ldflags, package:is_plat("windows") and "winmm.lib" or "-lwinmm")
             end
         end
@@ -190,6 +187,12 @@ package("sfml")
             packagedeps = packagedeps or {}
             table.insert(packagedeps, "freetype")
             table.insert(packagedeps, "zlib")
+        end
+        if package:config("window") or package:config("graphics") then
+            if package:is_plat("linux") then
+                packagedeps = packagedeps or {}
+                table.insert(packagedeps, "libxrender")
+            end
         end
 
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps, ldflags = ldflags})
