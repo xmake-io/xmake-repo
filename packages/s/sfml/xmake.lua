@@ -181,6 +181,7 @@ package("sfml")
         if package:config("graphics") then
             packagedeps = packagedeps or {}
             table.insert(packagedeps, "freetype")
+            table.insert(packagedeps, "zlib")
         end
 
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
