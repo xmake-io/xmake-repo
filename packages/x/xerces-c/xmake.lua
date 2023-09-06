@@ -42,5 +42,5 @@ package("xerces-c")
                 }
                 XMLPlatformUtils::Terminate();
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "xercesc/util/PlatformUtils.hpp"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "xercesc/util/PlatformUtils.hpp"}))
     end)
