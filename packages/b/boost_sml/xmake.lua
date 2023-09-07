@@ -25,5 +25,5 @@ package("boost_sml")
             void test() {
                 auto event2 = sml::event<e2>;
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++20"}}))
     end)
