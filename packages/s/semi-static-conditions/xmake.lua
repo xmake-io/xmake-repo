@@ -6,7 +6,7 @@ package("semi-static-conditions")
     add_urls("https://github.com/maxlucuta/semi-static-conditions.git")
     add_versions("2023.09.05", "5fbb086c00e06bd530defe8845fc28d24a28d8fc")
 
-    on_install(function (package)
+    on_install("windows", "linux", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             set_languages("c++17")
