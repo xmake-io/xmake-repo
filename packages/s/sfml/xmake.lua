@@ -161,10 +161,38 @@ package("sfml")
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
             -- Fix missing system libs
-            if package:is_plat("windows", "mingw") then
-                local file = io.open("src/SFML/Audio/CMakeLists.txt", "a")
-                file:print("target_link_libraries(OpenAL INTERFACE winmm)")
-                file:close()
+            if package:config("audio") then
+                if package:is_plat("windows", "mingw") then
+                    local file = io.open("src/SFML/Audio/CMakeLists.txt", "a")
+                    file:print("target_link_libraries(OpenAL INTERFACE winmm)")
+                    file:close()
+                end
+            end
+            if package:config("graphics") then
+                local freetype = package:dep("freetype")
+                if freetype then
+                    local fetchinfo = freetype:fetch()
+                    if fetchinfo then
+                        if not freetype:config("shared") then
+                            local libfiles = {}
+                            for _, dep in ipairs(freetype:librarydeps()) do
+                                local depinfo = dep:fetch()
+                                if depinfo then
+                                    table.join2(libfiles, depinfo.libfiles)
+                                end
+                            end
+                            if #libfiles > 0 then
+                                local libraries = {}
+                                for _, libfile in ipairs(libfiles) do
+                                    table.insert(libraries, libfile:gsub("\\", "/"))
+                                end
+                                local file = io.open("src/SFML/Graphics/CMakeLists.txt", "a")
+                                file:print("target_link_libraries(Freetype INTERFACE " .. table.join(libraries, " ") .. ")")
+                                file:close()
+                            end
+                        end
+                    end
+                end
             end
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
