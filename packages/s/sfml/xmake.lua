@@ -160,6 +160,12 @@ package("sfml")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
+            -- Fix missing system libs
+            if package:is_plat("windows", "mingw") then
+                local file = io.open("src/SFML/Audio/CMakeLists.txt", "a")
+                file:print("target_link_libraries(OpenAL PRIVATE winmm)")
+                file:close()
+            end
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
             if package:is_plat("windows") and package:config("vs_runtime"):startswith("MT") then
