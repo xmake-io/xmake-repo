@@ -184,7 +184,7 @@ package("sfml")
                             if #libfiles > 0 then
                                 local libraries = {}
                                 for _, libfile in ipairs(libfiles) do
-                                    table.insert(libraries, libfile:gsub("\\", "/"))
+                                    table.insert(libraries, (libfile:gsub("\\", "/")))
                                 end
                                 local file = io.open("src/SFML/Graphics/CMakeLists.txt", "a")
                                 file:print("target_link_libraries(Freetype INTERFACE " .. table.join(libraries, " ") .. ")")
