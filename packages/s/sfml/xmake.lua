@@ -163,7 +163,7 @@ package("sfml")
             -- Fix missing system libs
             if package:is_plat("windows", "mingw") then
                 local file = io.open("src/SFML/Audio/CMakeLists.txt", "a")
-                file:print("target_link_libraries(OpenAL PRIVATE winmm)")
+                file:print("target_link_libraries(OpenAL INTERFACE winmm)")
                 file:close()
             end
         else
