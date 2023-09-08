@@ -187,7 +187,7 @@ package("sfml")
                                     table.insert(libraries, (libfile:gsub("\\", "/")))
                                 end
                                 local file = io.open("src/SFML/Graphics/CMakeLists.txt", "a")
-                                file:print("target_link_libraries(Freetype INTERFACE " .. table.join(libraries, " ") .. ")")
+                                file:print("target_link_libraries(Freetype INTERFACE " .. table.concat(libraries, " ") .. ")")
                                 file:close()
                             end
                         end
