@@ -28,7 +28,7 @@ package("coost")
         end
     end)
 
-    on_install("macosx", "linux", "windows", function (package)
+    on_install("macosx", "linux", "windows|x64", "windows|x86", function (package)
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
