@@ -5,6 +5,7 @@ package("coost")
     add_urls("https://github.com/idealvin/coost/archive/refs/tags/$(version).tar.gz",
              "https://github.com/idealvin/coost.git")
 
+    add_versions("v3.0.1", "f2285d59dc8317dd2494d7628a56f10de9b814d90b86aedf93a3305f94c6ae1a")
     add_versions("v3.0.0", "f962201201cd77aaf45f33d72bd012231a31d4310d30e9bb580ffb1e94c8148d")
 
     for _, name in ipairs({"libcurl", "openssl", "libbacktrace"}) do
