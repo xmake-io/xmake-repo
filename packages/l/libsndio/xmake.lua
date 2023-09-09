@@ -8,6 +8,8 @@ package("libsndio")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
+    add_deps("libsoundio")
+
     on_install("linux", "bsd", "macosx", function (package)
         local configs = {}
         import("package.tools.autoconf").install(package, configs)
