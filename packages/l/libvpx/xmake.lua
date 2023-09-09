@@ -26,9 +26,21 @@ package("libvpx")
     add_configs("vp9-postproc",     {description = "vp9 specific postprocessing", default = false, type = "boolean"})
     add_configs("vp9-highbitdepth", {description = "use VP9 high bit depth (10/12) profiles", default = false, type = "boolean"})
 
+    add_deps("yasm")
     if is_plat("wasm") then
         add_configs("shared",  {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     on_install(function (package)
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        os.cp(path.join(package:scriptdir(), "port", "xmake"), "xmake")
+        local configs = {}
+        if package:config("shared") then
+            configs.kind = "shared"
+        end
+        import("package.tools.xmake").install(package)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("vpx_codec_enc_init_ver", {includes = "vpx/vpx_encoder.h"}))
     end)

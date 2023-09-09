@@ -1,0 +1,15 @@
+#ifndef VPX_CONFIG_H
+#define VPX_CONFIG_H
+
+${define INLINE}
+#ifndef INLINE
+#define INLINE
+#endif
+${define RESTRICT}
+#ifndef RESTRICT
+#define RESTRICT
+#endif
+
+#define CONFIG_OS_SUPPORT 1
+#define CONFIG_RATE_CTRL 0
+#endif /* VPX_CONFIG_H */
