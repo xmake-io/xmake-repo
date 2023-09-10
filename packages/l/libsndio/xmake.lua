@@ -13,8 +13,11 @@ package("libsndio")
     end
 
     on_install("linux", "bsd", "macosx", function (package)
+        import("package.tools.autoconf")
         local configs = {}
-        import("package.tools.autoconf").install(package, configs, {packagedeps = "alsa-lib"})
+        local buildenvs = autoconf.buildenvs(package, {packagedeps = "alsa-lib"})
+        autoconf.configure(package, configs, {envs = buildenvs})
+        os.vrunv("make", {"install"}, {envs = buildenvs})
     end)
 
     on_test(function (package)
