@@ -14,7 +14,7 @@ package("libsndio")
 
     on_install("linux", "bsd", "macosx", function (package)
         local configs = {}
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.autoconf").install(package, configs, {packagedeps = "alsa-lib"})
     end)
 
     on_test(function (package)
