@@ -44,6 +44,7 @@ package("protobuf-cpp")
         if package:config("zlib") then
             package:add("deps", "zlib")
         end
+        package:add("deps", "abseil")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
@@ -63,7 +64,7 @@ package("protobuf-cpp")
         if package:config("zlib") then
             table.insert(configs, "-Dprotobuf_WITH_ZLIB=ON")
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs, {buildir = "build", packagedeps = "abseil"})
         os.trycp("build/Release/protoc.exe", package:installdir("bin"))
     end)
 
