@@ -17,6 +17,7 @@ package("libsndio")
         local configs = {}
         local buildenvs = autoconf.buildenvs(package, {packagedeps = "alsa-lib"})
         autoconf.configure(package, configs, {envs = buildenvs})
+        os.vrunv("make", {}, {envs = buildenvs})
         os.vrunv("make", {"install"}, {envs = buildenvs})
     end)
 
