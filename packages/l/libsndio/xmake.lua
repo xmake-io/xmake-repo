@@ -8,11 +8,13 @@ package("libsndio")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
-    add_deps("libsoundio")
+    if is_plat("linux") then
+        add_deps("alsa-lib")
+    end
 
     on_install("linux", "bsd", "macosx", function (package)
         local configs = {}
-        import("package.tools.autoconf").install(package, configs, {packagedeps = "libsoundio"})
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
