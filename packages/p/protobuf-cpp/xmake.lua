@@ -58,7 +58,7 @@ package("protobuf-cpp")
             end
         end
         table.insert(configs, "-Dprotobuf_WITH_ZLIB=ON")
-        import("package.tools.cmake").install(package, configs, {buildir = "build", packagedeps = {"abseil", "zlib"})
+        import("package.tools.cmake").install(package, configs, {buildir = "build", packagedeps = {"abseil", "zlib"}})
         os.trycp("build/Release/protoc.exe", package:installdir("bin"))
     end)
 
