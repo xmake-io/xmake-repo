@@ -10,10 +10,17 @@ package("alsa-lib")
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:is_debug() then
+            table.insert(configs, "--enable-debug")
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("snd_ctl_card_info_alloca(0)", {includes = "alsa/asoundlib.h"}))
+        assert(package:check_csnippets({test = [[
+            void test() {
+                snd_ctl_card_info_t *info;
+                snd_ctl_card_info_alloca(&info);
+            }
+        ]]}, {includes = {"alsa/asoundlib.h"}}))
     end)
-
