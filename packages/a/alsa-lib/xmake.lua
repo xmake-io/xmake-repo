@@ -7,7 +7,7 @@ package("alsa-lib")
     add_versions("1.2.10", "c86a45a846331b1b0aa6e6be100be2a7aef92efd405cf6bac7eef8174baa920e")
 
     on_install("linux", function (package)
-        local configs = {}
+        local configs = {"--without-versioned"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:is_debug() then
