@@ -48,7 +48,7 @@ package("spirv-tools")
             -- highest sdk version
             sdkver = versiontosdk[1][2]
         end
-        package:add("deps", "vulkan-headers >=" .. sdkver)
+        package:add("deps", "spirv-headers >=" .. sdkver)
     end)
 
     on_fetch("macosx", function (package, opt)
