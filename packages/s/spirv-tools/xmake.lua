@@ -39,7 +39,7 @@ package("spirv-tools")
         if version then
             for _, vers in ipairs(versiontosdk) do
                 if version:ge(vers[1]) then
-                    sdkver = package:version():split("%+")[1]
+                    sdkver = vers[2]:split("%+")[1]
                     break
                 end
             end
