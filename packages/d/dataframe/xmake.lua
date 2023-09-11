@@ -8,6 +8,7 @@ package("dataframe")
 
     add_versions("1.21.0", "a6b07eaaf628225a34e4402c1a6e311430e8431455669ac03691d92f44081172")
     add_versions("1.22.0", "4b244241cd56893fccb22f7c874588f0d86b444912382ed6e9a4cf95e55ffda2")
+    add_versions("2.0.0", "df46ab60153f75ef0a1ab269e6b107ec34fdc467993c3984029d7deb5e0fab6c")
 
     add_deps("cmake")
     
