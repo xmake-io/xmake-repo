@@ -134,7 +134,7 @@ package("sfml")
 
         if package:is_plat("linux") then
             if package:config("window") or package:config("graphics") then
-                package:add("deps", "libx11", "libxcursor", "libxext", "libxrandr", "libxrender", "eudev")
+                package:add("deps", "libx11", "libxcursor", "libxrandr", "libxrender", "libxfixes", "libxext", "eudev")
                 package:add("deps", "opengl", "glx", {optional = true})
             end
         end
@@ -194,6 +194,29 @@ package("sfml")
                     end
                 end
             end
+            if package:config("window") and package:is_plat("linux") then
+                local libfiles = {}
+                for _, name in ipairs({"libx11", "libxcursor", "libxrandr", "libxrender", "libxfixes", "libxext"}) do
+                    local dep = package:dep(name)
+                    if dep then
+                        local fetchinfo = dep:fetch()
+                        if fetchinfo then
+                            table.join2(libfiles, fetchinfo.libfiles)
+                            print(fetchinfo.libfiles)
+                        end
+                    end
+                end
+                if #libfiles > 0 then
+                    libfiles = table.reverse_unique(libfiles)
+                    local libraries = {}
+                    for _, libfile in ipairs(libfiles) do
+                        table.insert(libraries, (libfile:gsub("\\", "/")))
+                    end
+                    local file = io.open("src/SFML/Window/CMakeLists.txt", "a")
+                    file:print("target_link_libraries(sfml-window PRIVATE " .. table.concat(libraries, " ") .. ")")
+                    file:close()
+                end
+            end
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
             if package:is_plat("windows") and package:config("vs_runtime"):startswith("MT") then
@@ -205,7 +228,6 @@ package("sfml")
         table.insert(configs, "-DSFML_BUILD_WINDOW=" .. (package:config("window") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_NETWORK=" .. (package:config("network") and "ON" or "OFF"))
         table.insert(configs, "-DWARNINGS_AS_ERRORS=OFF")
-        
         table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
         local packagedeps
         if package:config("audio") then
