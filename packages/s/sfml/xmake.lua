@@ -202,7 +202,6 @@ package("sfml")
                         local fetchinfo = dep:fetch()
                         if fetchinfo then
                             table.join2(libfiles, fetchinfo.libfiles)
-                            print(fetchinfo.libfiles)
                         end
                     end
                 end
