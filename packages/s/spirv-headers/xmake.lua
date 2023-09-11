@@ -12,6 +12,7 @@ package("spirv-headers")
     add_versions("1.3.239+0", "fdaf6670e311cd1c08ae90bf813e89dd31630205bc60030ffd25fb0af39b51fe")
     add_versions("1.3.246+1", "71668e18ef7b318b06f8c466f46abad965b2646eaa322594cd015c2ac87133e6")
     add_versions("1.3.250+1", "d5f8c4b7906baf9c51aedbbb2dd942009e8658e3340c6e64699518666a03e043")
+    add_versions("1.3.260+1", "32b4c6ae6a2fa9b56c2c17233c8056da47e331f76e117729925825ea3e77a739")
 
     add_deps("cmake")
     on_install(function (package)

@@ -7,7 +7,8 @@ package("vulkan-headers")
     add_urls("https://github.com/KhronosGroup/Vulkan-Headers.git")
     add_urls("https://github.com/KhronosGroup/Vulkan-Headers/archive/$(version).tar.gz", {version = function (version) return version:startswith("v") and version or "sdk-" .. version:gsub("%+", ".") end})
 
-    -- when adding a new sdk version, please also update vulkan-loader, spirv-headers, glslang and volk packages
+    -- when adding a new sdk version, please also update vulkan-loader, spirv-headers, spirv-reflect, glslang and volk packages
+    add_versions("1.3.260+1", "7a25ebdb6325e626dc5d33bc937b289ccce7ddb7b0ac1a1b1d5d7ff33b6715d3")
     add_versions("1.3.250+1", "e5b563a415e73725bcf471b7e3e837804ed3703b47cce4553db5e7e73821c5ee")
     add_versions("1.3.246+1", "f9fa6a05ac1e059cd6f8f3a21705fb5bc093743d97315b7acf3bc20921abc27c")
     add_versions("1.3.239+0", "865fa8e8e8314fcca60777a92f50bd0cf612205a36e719d6975482d3366f619e")
