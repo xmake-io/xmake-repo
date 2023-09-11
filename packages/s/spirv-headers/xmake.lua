@@ -14,7 +14,10 @@ package("spirv-headers")
     add_versions("1.3.250+1", "d5f8c4b7906baf9c51aedbbb2dd942009e8658e3340c6e64699518666a03e043")
     add_versions("1.3.261+1", "32b4c6ae6a2fa9b56c2c17233c8056da47e331f76e117729925825ea3e77a739")
 
+    add_patches("1.3.261+1", "https://github.com/KhronosGroup/SPIRV-Headers/commit/b846bb75cefbe6ea45f020c56468d73d63cf5646.patch", "4ac2195f20c7535010531b2130ec9ada0c314c058bf7e745232d0b32b7b51bf8")
+
     add_deps("cmake")
+
     on_install(function (package)
         import("package.tools.cmake").install(package, {"-DSPIRV_HEADERS_SKIP_EXAMPLES=ON"})
     end)
