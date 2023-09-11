@@ -13,7 +13,7 @@ package("openal-soft")
     add_versions("1.22.2", "3e58f3d4458f5ee850039b1a6b4dac2343b3a5985a6a2e7ae2d143369c5b8135")
     add_versions("1.22.0", "814831a8013d7365dfd1917b27f1fb6e723f3be3fe1c6a7ff4516425d8392f68")
     add_versions("1.21.1", "8ac17e4e3b32c1af3d5508acfffb838640669b4274606b7892aa796ca9d7467f")
-    
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::openal")
     elseif is_plat("linux") then
@@ -21,8 +21,11 @@ package("openal-soft")
     elseif is_plat("macosx") then
         add_extsources("brew::openal-soft")
     end
-    
+
     add_deps("cmake")
+    if is_plat("linux") then
+        add_deps("libsndio")
+    end
 
     if is_plat("windows", "mingw") then
         add_syslinks("ole32", "shell32", "user32", "winmm", "kernel32")
@@ -41,7 +44,7 @@ package("openal-soft")
     end)
 
     on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", "cross", function (package)
-        if is_plat("linux") and linuxos.name() == "fedora" then 
+        if is_plat("linux") and linuxos.name() == "fedora" then
             -- https://github.com/kcat/openal-soft/issues/864
             io.replace("CMakeLists.txt", "if(HAVE_GCC_PROTECTED_VISIBILITY)", "if(0)", {plain = true})
         end
