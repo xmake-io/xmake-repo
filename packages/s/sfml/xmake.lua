@@ -45,7 +45,7 @@ package("sfml")
         component:add("extsources", "brew::sfml/sfml-window")
         if not package:config("shared") then
             if package:is_plat("windows", "mingw") then
-                component:add("syslinks", "opengl32", "gdi32", "advapi32")
+                component:add("syslinks", "opengl32", "gdi32", "advapi32", "User32")
             elseif package:is_plat("linux") then
                 component:add("syslinks", "dl")
             elseif package:is_plat("bsd") then
