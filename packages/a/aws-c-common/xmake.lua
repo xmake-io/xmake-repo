@@ -9,7 +9,7 @@ package("aws-c-common")
     add_versions("v0.9.3", "389eaac7f64d7d5a91ca3decad6810429eb5a65bbba54798b9beffcb4d1d1ed6")
 
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
-    if is_plat("windows") then
+    if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
