@@ -3,18 +3,17 @@ package("spirv-tools")
     set_description("SPIR-V Tools")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/KhronosGroup/SPIRV-Tools/archive/$(version).tar.gz",
-             "https://github.com/KhronosGroup/SPIRV-Tools.git")
-    add_versions("v2020.5", "947ee994ba416380bd7ccc1c6377ac28a4802a55ca81ccc06796c28e84c00b71")
-    add_versions("v2020.6", "de2392682df8def7ac666a2a320cd475751badf4790b01c7391b7644ecb550a3")
-    add_versions("v2021.3", "b6b4194121ee8084c62b20f8d574c32f766e4e9237dfe60b0658b316d19c6b13")
-    add_versions("v2021.4", "d68de260708dda785d109ff1ceeecde2d2ab71142fa5bf59061bb9f47dd3bb2c")
-    add_versions("v2022.2", "909fc7e68049dca611ca2d57828883a86f503b0353ff78bc594eddc65eb882b9")
-    add_versions("v2022.4", "a156215a2d7c6c5b267933ed691877a9a66f07d75970da33ce9ad627a71389d7")
-    add_versions("v2023.1", "f3d8245aeb89f098c01dddaa566f9c0f2aab4a3d62a9020afaeb676b5e7e64d4")
-    add_versions("v2023.2", "7416cc8a98a10c32bacc36a39930b0c5b2a484963df5d68f388ed7ffee1faad3")
-
-    add_patches("v2020.5", "https://github.com/KhronosGroup/SPIRV-Tools/commit/a1d38174b1f7d2651c718ae661886d606cb50a32.patch", "2811faeef3ad53a83e409c8ef9879badcf9dc04fc3d98dbead7313514b819933")
+    add_urls("https://github.com/KhronosGroup/SPIRV-Tools.git")
+    add_versions("1.2.154+1", "sdk-1.2.154.1")
+    add_versions("1.2.162+0", "sdk-1.2.162.0")
+    add_versions("1.2.189+1", "sdk-1.2.189.1")
+    add_versions("1.3.211+0", "sdk-1.3.211.0")
+    add_versions("1.3.231+1", "sdk-1.3.231.1")
+    add_versions("1.3.236+0", "sdk-1.3.236.0")
+    add_versions("1.3.239+0", "sdk-1.3.239.0")
+    add_versions("1.3.246+1", "sdk-1.3.246.1")
+    add_versions("1.3.250+1", "sdk-1.3.250.1")
+    add_versions("1.3.261+1", "sdk-1.3.261.1")
 
     add_deps("cmake >=3.17.2")
     add_deps("python 3.x", {kind = "binary"})
@@ -23,32 +22,8 @@ package("spirv-tools")
     end
 
     on_load(function (package)
-        local versiontosdk = {
-            -- spirv-tools version - min spirv-headers version (most recent spirv-headers version when that spirv-tools version was released)
-            { "v2023.2", "1.3.243+0" },
-            { "v2023.1", "1.3.239+0" },
-            { "v2022.4", "1.3.236+0" },
-            { "v2022.3", "1.3.224+1" },
-            { "v2022.2", "1.3.211+0" },
-            { "v2022.1", "1.3.204+1" },
-            { "v2021.4", "1.2.198+0" },
-        }
-
-        local version = package:version()
-        local sdkver
-        if version then
-            for _, vers in ipairs(versiontosdk) do
-                if version:ge(vers[1]) then
-                    sdkver = vers[2]:split("%+")[1]
-                    break
-                end
-            end
-        end
-        if not sdkver then
-            -- highest sdk version
-            sdkver = versiontosdk[1][2]
-        end
-        package:add("deps", "spirv-headers >=" .. sdkver)
+        local sdkver = package:version():split("%+")[1]
+        package:add("deps", "spirv-headers " .. sdkver)
     end)
 
     on_fetch("macosx", function (package, opt)
