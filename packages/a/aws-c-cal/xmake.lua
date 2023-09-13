@@ -14,6 +14,9 @@ package("aws-c-cal")
     add_deps("cmake", "aws-c-common")
 
     on_load(function (package)
+        if not package:is_plat("windows", "mingw", "msys", "macosx") then
+            package:config_set("openssl", true)
+        end
         if package:config("openssl") then
             package:add("deps", "openssl")
         end
