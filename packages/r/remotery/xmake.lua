@@ -14,11 +14,11 @@ package("remotery")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "winmm")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread", "m")
     end
 
-    on_install(function (package)
+    on_install("windows|x64", "linux", "macosx", "bsd", "mingw|x86_64", "msys", "android", "iphoneos", "cross", function (package)
         local configs = {}
         if package:config("cuda") then
             configs.cuda = true

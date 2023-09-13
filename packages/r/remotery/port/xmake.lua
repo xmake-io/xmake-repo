@@ -35,6 +35,6 @@ target("remotery")
         if is_plat("windows") and is_kind("shared") then
             add_rules("utils.symbols.export_all")
         end
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread", "m")
     end
