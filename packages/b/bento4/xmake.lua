@@ -16,7 +16,7 @@ package("bento4")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <bento4/AP4.h>
+            #include <bento4/Ap4.h>
             void test() {
                 AP4_Result x = AP4::Initialize();
             }
