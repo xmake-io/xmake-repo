@@ -77,6 +77,15 @@ function _require_packages(argv, packages)
     if argv.vs_runtime then
         table.insert(config_argv, "--vs_runtime=" .. argv.vs_runtime)
     end
+    if argv.xcode_sdkver then
+        table.insert(config_argv, "--xcode_sdkver=" .. argv.xcode_sdkver)
+    end
+    if argv.target_minver then
+        table.insert(config_argv, "--target_minver=" .. argv.target_minver)
+    end
+    if argv.appledev then
+        table.insert(config_argv, "--appledev=" .. argv.appledev)
+    end
     if argv.mingw then
         table.insert(config_argv, "--mingw=" .. argv.mingw)
     end
