@@ -22,7 +22,7 @@ package("aws-c-cal")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "android", "iphoneos", "cross", "wasm", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "cross", function (package)
         local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         if package:is_plat("windows") then
             cmakedir = cmakedir:gsub("\\", "/")
