@@ -33,7 +33,7 @@ package("vulkan-validationlayers")
         end
     end
 
-    on_load("windows", "linux", function (package)
+    on_load("windows", "linux", "macosx", function (package)
         local sdkver = package:version():split("%+")[1]
         package:add("deps", "glslang " .. sdkver)
         package:add("deps", "spirv-headers " .. sdkver)
@@ -44,7 +44,7 @@ package("vulkan-validationlayers")
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         import("package.tools.cmake")
 
         local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
@@ -74,7 +74,7 @@ package("vulkan-validationlayers")
             table.insert(configs, "-DROBIN_HOOD_HASHING_INSTALL_DIR=" .. package:dep("robin-hood-hashing"):installdir())
         end
 
-        if package:is_plat("windows") then
+        if package:is_plat("windows", "macosx") then
             cmake.install(package, configs, {buildir = os.tmpfile() .. ".dir"})
         elseif package:is_plat("linux") then
             cmake.install(package, configs, {buildir = os.tmpfile() .. ".dir", cmake_generator = "Ninja", envs = envs})
@@ -93,6 +93,6 @@ package("vulkan-validationlayers")
             assert(os.isfile(path.join(package:installdir("lib"), "armeabi-v7a", "libVkLayer_khronos_validation.so")))
             assert(os.isfile(path.join(package:installdir("lib"), "arm64-v8a", "libVkLayer_khronos_validation.so")))
         else
-            assert(package:has_cxxfuncs("getLayerOption", {includes = "layers/vk_layer_config.h"}))
+            assert(package:has_cxxfuncs("getLayerOption", {includes = "layers/vk_layer_config.h", configs = {languages = "cxx17"}}))
         end
     end)
