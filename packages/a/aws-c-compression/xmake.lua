@@ -9,6 +9,9 @@ package("aws-c-compression")
     add_versions("v0.2.17", "703d1671e395ea26f8b0b70d678ed471421685a89e127f8aa125e2b2ecedb0e0")
 
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake", "aws-c-common")
 
