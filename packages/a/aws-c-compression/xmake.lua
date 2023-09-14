@@ -13,12 +13,15 @@ package("aws-c-compression")
     add_deps("cmake", "aws-c-common")
 
     on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "android", "iphoneos", "cross", "wasm", function (package)
-        local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
+        local aws_cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
+        local config_cmakedir = package:dep("aws-c-common"):installdir("lib", "aws-c-common", "cmake")
         if package:is_plat("windows") then
-            cmakedir = cmakedir:gsub("\\", "/")
+            aws_cmakedir = aws_cmakedir:gsub("\\", "/")
+            config_cmakedir = config_cmakedir:gsub("\\", "/")
         end
+        local module_path = aws_cmakedir .. ";" .. config_cmakedir
 
-        local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_MODULE_PATH=" .. cmakedir}
+        local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_MODULE_PATH=" .. module_path}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
