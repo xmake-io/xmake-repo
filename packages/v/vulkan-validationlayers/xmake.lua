@@ -4,7 +4,7 @@ package("vulkan-validationlayers")
     set_license("Apache-2.0")
 
     if is_plat("android") then
-        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/download/sdk-$(version)/android-binaries-$(version).tar.gz", {version = function (version) return version:ge("1.3.261") and "sdk-" or "" .. version:gsub("%+", ".") end})
+        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/download/sdk-$(version)/android-binaries-$(version).tar.gz", {version = function (version) return (version:ge("1.3.261") and "sdk-" or "") .. version:gsub("%+", ".") end})
 
         add_versions("1.2.198+0", "5436e974d6b3133b3454edf1910f76b9f869db8bbe086859b2abe32fdb539cbc")
         add_versions("1.2.189+1", "b3e69b60a67a17b023825f9eb0ce1aef22e6b59d095afa204d883a9ce3d81021")
