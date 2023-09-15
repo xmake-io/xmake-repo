@@ -7,6 +7,7 @@ package("libarchive")
     add_urls("https://libarchive.org/downloads/libarchive-$(version).tar.gz")
     add_versions("3.5.1", "9015d109ec00bb9ae1a384b172bf2fc1dff41e2c66e5a9eeddf933af9db37f5a")
     add_versions("3.5.2", "5f245bd5176bc5f67428eb0aa497e09979264a153a074d35416521a5b8e86189")
+    add_versions("3.6.2", "ba6d02f15ba04aba9c23fd5f236bb234eab9d5209e95d1c4df85c44d5f19b9b3")
 
     add_deps("cmake")
     add_deps("zlib", "bzip2", "lz4", "zstd")
