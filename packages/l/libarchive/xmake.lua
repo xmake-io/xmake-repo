@@ -13,6 +13,10 @@ package("libarchive")
     add_deps("cmake")
     add_deps("zlib", "bzip2", "lz4", "zstd")
 
+    if is_plat("windows") then
+        add_syslinks("advapi32")
+    end
+
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DENABLE_TEST=OFF",
                          "-DENABLE_CAT=OFF",
