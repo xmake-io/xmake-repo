@@ -12,6 +12,7 @@ package("libarchive")
 
     add_deps("cmake")
     add_deps("zlib", "bzip2", "lz4", "zstd")
+
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DENABLE_TEST=OFF",
                          "-DENABLE_CAT=OFF",
@@ -28,6 +29,9 @@ package("libarchive")
                          "-DENABLE_LIBB2=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if not package:config("shared") then
+            package:add("defines", "LIBARCHIVE_STATIC")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
