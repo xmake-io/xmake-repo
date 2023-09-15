@@ -10,7 +10,7 @@ package("cutlass")
 
     on_install(function (package)
         local source = os.dirs("cutlass*")
-        if source then
+        if source and #source ~= 0 then
             os.cd(source[1])
         end
         os.cp("include", package:installdir())
