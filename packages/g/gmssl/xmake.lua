@@ -8,6 +8,10 @@ package("gmssl")
 
     add_versions("v3.1.0", "a3cdf5df87b07df33cb9e30c35de658fd0c06d5909d4428f4abd181d02567cde")
 
+    if is_plat("mingw", "msys") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     elseif is_plat("linux") then
