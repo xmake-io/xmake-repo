@@ -42,11 +42,12 @@ function add_arch_files(target, prefix, arch, fullarch, all_exts)
         end
     end
     for _, ext in ipairs(exts) do
-        for _, file in ipairs(table.join(os.files(path.join(prefix, arch, "**_" .. ext .. ".*|*.h")),
-            os.files(path.join(prefix, arch, "**_" .. arch .. ".*|*.h")),
-            os.files(path.join(prefix, arch, "**_" .. fullarch .. ".*|*.h")),
-            os.files(path.join(prefix, "generic", "*.*|*.h")))) do
-            target:add("files", file)
+        for _, file in ipairs(table.join(os.files(path.join(prefix, arch, "**_" .. ext .. ".*")),
+            os.files(path.join(prefix, arch, "**_" .. arch .. ".*")),
+            os.files(path.join(prefix, arch, "**_" .. fullarch .. ".*")), os.files(path.join(prefix, "generic", "*")))) do
+            if path.extension(file) ~= ".h" then
+                target:add("files", file)
+            end
         end
     end
 end

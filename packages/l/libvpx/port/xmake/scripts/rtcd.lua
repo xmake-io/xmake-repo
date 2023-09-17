@@ -117,6 +117,19 @@ static void setup_rtcd_internal(void)
 }
 #endif
 ]]
+    },
+    unknown = {
+        prefix = [[
+#include "vpx_config.h"
+
+#ifdef RTCD_C
+static void setup_rtcd_internal(void)
+{
+]],
+        suffix = [[
+}
+#endif
+]]
     }
 }
 
@@ -275,6 +288,7 @@ function _write_header(output, arch, all_exts, functions, aliases, decls)
     file:write(setup[arch].prefix)
     file:write(rtcd_content)
     file:write(setup[arch].suffix)
+    file:write("void " .. path.basename(output):gsub("%-", "_") .. "();\n") -- avoid emscripten/emscripten-core#2175
     file:write(common_buttom)
     file:close()
 end

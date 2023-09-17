@@ -5,7 +5,35 @@ includes("check_csnippets.lua")
 add_moduledirs("xmake/scripts")
 add_imports("core.project.project", "lib.detect.find_tool", "rtcd", "utils")
 add_rules("asm", "mode.debug", "mode.release")
+set_languages("gnu89")
 set_config("buildir", "xmake_build")
+
+local arch, fullarch
+if is_arch("x86") then
+    arch = "x86"
+    fullarch = "x86"
+elseif is_arch("x64", "x86_64") then
+    arch = "x86"
+    fullarch = "x86_64"
+elseif is_arch("aarch64.*", "armv8.*") then
+    arch = "arm"
+    fullarch = "aarch64"
+elseif is_arch("arm.*") then
+    arch = "arm"
+    fullarch = "arm"
+elseif is_arch("loongarch.*") then
+    arch = "loongarch"
+    fullarch = "loongarch"
+elseif is_arch("mips.*") then
+    arch = "mips"
+    fullarch = "mips"
+elseif is_arch("ppc.*", "powerpc.*") then
+    arch = "ppc"
+    fullarch = "ppc"
+else
+    arch = "unknown"
+    fullarch = ""
+end
 
 option("vp8", function()
     add_deps("vp8-encoder", "vp8-decoder")
@@ -151,6 +179,11 @@ end)
 option("runtime-cpu-detect", function()
     set_description("runtime cpu detection")
     set_default(true)
+    after_check(function(opt)
+        if arch == "unknown" then
+            opt:enable(false)
+        end
+    end)
 end)
 
 option("multi-res-encoding", function()
@@ -178,34 +211,6 @@ option("libyuv", function()
     set_description("enable libyuv")
     set_default(false)
 end)
-
--- platform extendtions
-local arch, fullarch
-
-if is_arch("x86") then
-    arch = "x86"
-    fullarch = "x86"
-elseif is_arch("x64", "x86_64") then
-    arch = "x86"
-    fullarch = "x86_64"
-elseif is_arch("aarch64.*", "armv8.*") then
-    arch = "arm"
-    fullarch = "aarch64"
-elseif is_arch("arm.*") then
-    arch = "arm"
-    fullarch = "arm"
-elseif is_arch("loongarch.*") then
-    arch = "loongarch"
-    fullarch = "loongarch"
-elseif is_arch("mips.*") then
-    arch = "mips"
-    fullarch = "mips"
-elseif is_arch("ppc.*", "powerpc.*") then
-    arch = "ppc"
-    fullarch = "ppc"
-else
-    arch = "unknown"
-end
 
 local exts = {
     x86 = {{
@@ -308,10 +313,6 @@ on_load(function(target)
             else
                 target:add("cxflags", "-mfloat-abi=soft")
             end
-        end
-
-        if project.option("pic") or vformat("$(kind)") == "shared" then
-            -- target:add("cxflags", "-fPIC")
         end
     end
 end)
