@@ -9,7 +9,7 @@ package("xproperty")
 
     add_deps("cmake", "xtl")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         import("package.tools.cmake").install(package)
     end)
 
