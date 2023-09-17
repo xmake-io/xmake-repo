@@ -35,5 +35,5 @@ package("gmssl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("http_get", {includes = "gmssl/http.h"}))
+        assert(package:has_cfuncs("base64_encode_init", {includes = "gmssl/base64.h"}))
     end)
