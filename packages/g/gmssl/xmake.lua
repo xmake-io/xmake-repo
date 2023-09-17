@@ -1,6 +1,6 @@
 package("gmssl")
-    set_homepage("http://gmssl.org")
-    set_description("支持国密SM2/SM3/SM4/SM9/SSL的密码工具箱")
+    set_homepage("https://github.com/guanzhi/GmSSL")
+    set_description("Password Toolkit supporting National secret chip SM2/SM3/SM4/SM9/SSL")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/guanzhi/GmSSL/archive/refs/tags/$(version).tar.gz",
