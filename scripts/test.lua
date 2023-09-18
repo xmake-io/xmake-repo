@@ -18,6 +18,7 @@ local options =
 ,   {'d', "debugdir",       "kv", nil, "Set the debug source directory."            }
 ,   {nil, "fetch",          "k",  nil, "Fetch package only."                        }
 ,   {nil, "precompiled",    "k",  nil, "Attemp to install the precompiled package." }
+,   {nil, "remote",         "k",  nil, "Test package on the remote server."         }
 ,   {nil, "linkjobs",       "kv", nil, "Set the link jobs."                         }
 ,   {nil, "cflags",         "kv", nil, "Set the cflags."                            }
 ,   {nil, "cxxflags",       "kv", nil, "Set the cxxflags."                          }
@@ -224,6 +225,12 @@ function main(...)
     os.exec("xmake create test")
     os.cd("test")
     print(os.curdir())
+    -- do action for remote?
+    if argv.remote then
+        os.cp(path.join(repodir, "packages"), "xmake-repo/packages")
+        os.exec("xmake service --connect")
+        repodir = path.join(os.curdir(), "xmake-repo")
+    end
     os.exec("xmake repo --add local-repo %s", repodir)
     os.exec("xmake repo -l")
 
