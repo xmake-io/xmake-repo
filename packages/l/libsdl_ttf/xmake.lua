@@ -11,7 +11,7 @@ package("libsdl_ttf")
         add_extsources("brew::sdl2_ttf")
     end
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-$(version).zip",
                  "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL2_ttf-$(version).zip")
         add_versions("2.20.0", "04e94fc5ecac3475ab35c1d5cf52650df691867e7e4befcc861bf982a747111a")
