@@ -12,8 +12,10 @@ package("aws-c-io")
 
     if is_plat("windows") then
         add_syslinks("advapi32", "crypt32", "secur32", "ncrypt")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd", "cross") then
         add_deps("s2n-tls")
+    elseif is_plat("macosx") then
+        add_frameworks("Security")
     end
 
     add_deps("cmake", "aws-c-common", "aws-c-cal")
