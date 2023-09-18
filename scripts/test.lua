@@ -219,17 +219,23 @@ function main(...)
     local workdir = path.join(os.tmpdir(), "xmake-repo")
     print(packages)
     os.setenv("XMAKE_STATS", "false")
-    os.tryrm(workdir)
-    os.mkdir(workdir)
-    os.cd(workdir)
-    os.exec("xmake create test")
+    if not os.isfile(path.join(workdir, "test", "xmake.lua")) then
+        os.tryrm(workdir)
+        os.mkdir(workdir)
+        os.cd(workdir)
+        os.exec("xmake create test")
+    else
+        os.cd(workdir)
+    end
     os.cd("test")
     print(os.curdir())
     -- do action for remote?
+    os.exec("xmake service --disconnect")
     if argv.remote then
+        os.tryrm("xmake-repo")
         os.cp(path.join(repodir, "packages"), "xmake-repo/packages")
         os.exec("xmake service --connect")
-        repodir = path.join(os.curdir(), "xmake-repo")
+        repodir = "xmake-repo"
     end
     os.exec("xmake repo --add local-repo %s", repodir)
     os.exec("xmake repo -l")
