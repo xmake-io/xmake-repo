@@ -9,6 +9,9 @@ package("aws-c-sdkutils")
     add_versions("v0.1.12", "c876c3ce2918f1181c24829f599c8f06e29733f0bd6556d4c4fb523390561316")
 
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake", "aws-c-common")
 
