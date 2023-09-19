@@ -31,7 +31,9 @@ package("spdlog")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
         add_configs("wchar",  {description = "Support wchar api.", default = false, type = "boolean"})
     end
-
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
     on_load(function (package)
         if not package:config("header_only") then
             package:add("defines", "SPDLOG_COMPILED_LIB")
@@ -72,8 +74,9 @@ package("spdlog")
     end)
 
     on_test(function (package)
-        local lang = package:config("std_format") and "c++20" or "c++14"
-        local link = is_plat("linux") and {"spdlog", "pthread"} or {}
-
-        assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h",configs = {languages = lang, links = link}}))
+        if package:config("std_format") then
+            assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++20"}}))
+        else
+            assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++14"}}))
+        end
     end)
