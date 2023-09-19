@@ -31,7 +31,9 @@ package("spdlog")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
         add_configs("wchar",  {description = "Support wchar api.", default = false, type = "boolean"})
     end
-
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
     on_load(function (package)
         if not package:config("header_only") then
             package:add("defines", "SPDLOG_COMPILED_LIB")
