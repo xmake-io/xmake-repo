@@ -72,9 +72,8 @@ package("spdlog")
     end)
 
     on_test(function (package)
-        if package:config("std_format") then
-            assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++20"}}))
-        else
-            assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++14"}}))
-        end
+        local lang = package:config("std_format") and "c++20" or "c++14"
+        local link = is_plat("linux") and {"spdlog", "pthread"} or {}
+
+        assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h",configs = {languages = lang, links = link}}))
     end)
