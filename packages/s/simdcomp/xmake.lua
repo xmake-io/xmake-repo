@@ -6,7 +6,7 @@ package("simdcomp")
     add_urls("https://github.com/lemire/simdcomp.git")
     add_versions("2023.08.19", "009c67807670d16f8984c0534aef0e630e5465a4")
 
-    on_install(function(package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", function(package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("simdcomp")
