@@ -16,7 +16,7 @@ package("highs")
 
     add_deps("cmake", "zlib >=1.2.3")
 
-    on_install(function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "mingw", "msys", "iphoneos", "cross", "wasm", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DCI=OFF", "-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
