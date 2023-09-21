@@ -20,6 +20,7 @@ package("pkg-config")
         io.replace("config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         import("package.tools.xmake").install(package, {
             plat = os.host(),
+            arch = os.arch(),
             vers = package:version_str(),
             ["enable-define-prefix"] = is_host("windows", "mingw"),
             ["enable-indirect-deps"] = package:config("enable-indirect-deps")
