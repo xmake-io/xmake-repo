@@ -12,13 +12,13 @@ package("alembic")
     if is_plat("linux") then
         add_syslinks("m")
     end
-    on_load("windows", "mingw", function (package)
+    on_load("windows", function (package)
         if package:config("shared") then
             package:add("defines", "ALEMBIC_DLL")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "mingw", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DALEMBIC_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
