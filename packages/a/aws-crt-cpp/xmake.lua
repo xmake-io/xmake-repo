@@ -36,5 +36,5 @@ package("aws-crt-cpp")
             void test() {
                 Aws::Crt::ApiHandle apiHandle;
             }
-        ]]}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)
