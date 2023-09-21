@@ -19,35 +19,17 @@ if has_config("vers") then
     set_configvar("PACKAGE_STRING", "gettext-runtime " .. get_config("vers"))
 end
 
-option("relocatable")
-    set_default(true)
-    set_showmenu(true)
-option_end()
-if has_config("relocatable") then
-    add_defines("ENABLE_RELOCATABLE=1")
-    set_configvar("ENABLE_RELOCATABLE", 1)
-end
-
 option("enable-define-prefix")
     set_default(false)
     set_showmenu(true)
 option_end()
-if has_config("enable-define-prefix") then
-    add_defines("ENABLE_DEFINE_PREFIX=1")
-    set_configvar("ENABLE_DEFINE_PREFIX", 1)
-end
+set_configvar("ENABLE_DEFINE_PREFIX", has_config("enable-define-prefix"))
 
 option("enable-indirect-deps")
     set_default(false)
     set_showmenu(true)
 option_end()
-if has_config("enable-indirect-deps") then
-    add_defines("ENABLE_INDIRECT_DEPS=1")
-    set_configvar("ENABLE_INDIRECT_DEPS", 1)
-else
-    add_defines("ENABLE_INDIRECT_DEPS=0")
-    set_configvar("ENABLE_INDIRECT_DEPS", 0)
-end
+set_configvar("ENABLE_INDIRECT_DEPS", has_config("enable-indirect-deps"))
 
 includes("check_cincludes.lua")
 
