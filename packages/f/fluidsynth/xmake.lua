@@ -11,10 +11,11 @@ package("fluidsynth")
     add_deps("cmake")
     add_deps("glib")
     add_deps("libiconv")
+    if is_plat("windows") then
+        add_deps("libintl")
+    end
 
     on_install("windows", "linux", "macosx", function (package)
-        io.gsub("cmake_admin/FindGLib2.cmake", "\"Intl::Intl\"", "")
-        io.gsub("cmake_admin/FindGLib2.cmake", "find_package%(Intl QUIET%)", "")
         io.gsub("cmake_admin/FindGLib2.cmake", "list%(APPEND _glib2_link_libraries \"pcre\"%)", "")
         import("package.tools.cmake").install(package)
     end)
