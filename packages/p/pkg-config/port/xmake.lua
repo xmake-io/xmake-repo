@@ -23,13 +23,13 @@ option("enable-define-prefix")
     set_default(false)
     set_showmenu(true)
 option_end()
-set_configvar("ENABLE_DEFINE_PREFIX", has_config("enable-define-prefix") or false)
+set_configvar("ENABLE_DEFINE_PREFIX", has_config("enable-define-prefix") or 0)
 
 option("enable-indirect-deps")
     set_default(false)
     set_showmenu(true)
 option_end()
-set_configvar("ENABLE_INDIRECT_DEPS", has_config("enable-indirect-deps") or false)
+set_configvar("ENABLE_INDIRECT_DEPS", has_config("enable-indirect-deps") or 0)
 
 includes("check_cincludes.lua")
 
