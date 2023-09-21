@@ -13,16 +13,26 @@ package("pkg-config")
         default = true, type = "boolean"})
 
     add_deps("glib")
-    on_install("@windows", "@macosx", "@linux", "@bsd", function (package)
+    on_install("@windows", "@macosx", "@linux", function (package)
         -- on linux libintl is already a part of libc
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         io.replace("config.h.in", "$", "", {plain = true})
         io.replace("config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         import("package.tools.xmake").install(package, {
+            plat = os.host(),
             vers = package:version_str(),
             ["enable-define-prefix"] = is_host("windows", "mingw"),
             ["enable-indirect-deps"] = package:config("enable-indirect-deps")
         })
+    end)
+
+    on_install("@bsd", function (package)
+        local pcpath = {"/usr/local/lib/pkgconfig", "/usr/lib/pkgconfig"}
+        if package:is_plat("linux") and package:is_arch("x86_64") then
+            table.insert(pcpath, "/usr/lib64/pkgconfig")
+            table.insert(pcpath, "/usr/lib/x86_64-linux-gnu/pkgconfig")
+        end
+        import("package.tools.autoconf").install(package, {"--disable-debug", "--disable-host-tool", "--with-internal-glib", ["with-pc-path"] = table.concat(pcpath, ':')})
     end)
 
     on_test(function (package)
