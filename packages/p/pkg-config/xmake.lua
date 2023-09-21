@@ -20,9 +20,9 @@ package("pkg-config")
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         io.replace("config.h.in", "$", "", {plain = true})
         io.replace("config.h.in", "# ?undef (.-)\n", "${define %1}\n")
+        package:plat_set(os.host())
+        package:arch_set(os.arch())
         import("package.tools.xmake").install(package, {
-            plat = os.host(),
-            arch = os.arch(),
             vers = package:version_str(),
             ["enable-define-prefix"] = is_host("windows", "mingw"),
             ["enable-indirect-deps"] = package:config("enable-indirect-deps")
