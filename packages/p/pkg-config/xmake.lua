@@ -12,7 +12,9 @@ package("pkg-config")
         description = "Link library to all dependent libraries, not only directly needed ones",
         default = true, type = "boolean"})
 
-    add_deps("glib")
+    if not is_host("bsd") then
+        add_deps("glib")
+    end
     on_install("@windows", "@macosx", "@linux", function (package)
         -- on linux libintl is already a part of libc
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
