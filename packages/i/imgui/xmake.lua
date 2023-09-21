@@ -1,16 +1,15 @@
 package("imgui")
-
     set_homepage("https://github.com/ocornut/imgui")
     set_description("Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies")
     set_license("MIT")
 
     add_urls("https://github.com/ocornut/imgui/archive/$(version).tar.gz",
              "https://github.com/ocornut/imgui.git")
-    add_versions("v1.89.9-docking", "c6e0284ac58b3f205c95365478888f7b53b077e2")
+    add_versions("v1.89.9-docking", "v1.89.9-docking")
     add_versions("v1.89.9", "1acc27a778b71d859878121a3f7b287cd81c29d720893d2b2bf74455bf9d52d6")
-    add_versions("v1.89.8-docking", "f8704cd085c4347f835c21dc12a3951924143872")
+    add_versions("v1.89.8-docking", "v1.89.8-docking")
     add_versions("v1.89.8", "6680ccc32430009a8204291b1268b2367d964bd6d1b08a4e0358a017eb8e8c9e")
-    add_versions("v1.89.7-docking", "dc3e531ff28450bff73fde0163b1d076b6bb5605")
+    add_versions("v1.89.7-docking", "v1.89.7-docking")
     add_versions("v1.89.7", "115ee9e242af98a884302ac0f6ca3b2b26b1f10c660205f5e7ad9f1d1c96d269")
     add_versions("v1.89.6-docking", "823a1385a269d923d35b82b2f470f3ae1fa8b5a3")
     add_versions("v1.89.6", "e95d1cba1481e66386acda3e7da19cd738da86c6c2a140a48fa55046e5f6e208")
@@ -86,6 +85,9 @@ package("imgui")
             package:config_set("opengl3", true)
         end
         -- end: backwards compatibility
+        if package:config("shared") and is_plat("windows", "mingw") then
+            package:add("defines", "IMGUI_API=__declspec(dllimport)")
+        end
         if package:config("glfw") then
             package:add("deps", "glfw")
         end
