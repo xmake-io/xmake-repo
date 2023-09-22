@@ -32,6 +32,12 @@ package("wgpu-native")
         end
     end)
 
+    on_load("linux", function (package)
+        if not package:config("shared") then
+            package:add("syslinks", "dl", "pthread")
+        end
+    end)
+
     on_load("macosx", function (package)
         if not package:config("shared") then
             package:add("syslinks", "objc")
