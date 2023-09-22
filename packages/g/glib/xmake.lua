@@ -21,11 +21,7 @@ package("glib")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
-    add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0")
-    if not is_plat("windows", "macosx") then
-        add_links("intl")
-    end
-
+    add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0", "intl")
     if is_plat("macosx") then
         add_syslinks("iconv")
         add_frameworks("Foundation", "CoreFoundation")
