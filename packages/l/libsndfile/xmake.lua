@@ -4,10 +4,10 @@ package("libsndfile")
     set_description("A C library for reading and writing sound files containing sampled audio data.")
     set_license("LGPL-2.1")
 
-    add_urls("https://github.com/libsndfile/libsndfile/archive/$(version).tar.gz",
+    add_urls("https://github.com/libsndfile/libsndfile/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libsndfile/libsndfile.git")
-    add_versions("v1.0.30", "5942b963d1db3ed8ab1ffb85708322aa9637df76d9fe84e1dfe49a97a90e8f47")
-    add_versions("1.0.31", "a8cfb1c09ea6e90eff4ca87322d4168cdbe5035cb48717b40bf77e751cc02163")
+    add_versions("1.2.2", "ffe12ef8add3eaca876f04087734e6e8e029350082f3251f565fa9da55b52121")
+    add_versions("1.0.31", "8cdee0acb06bb0a3c1a6ca524575643df8b1f3a55a0893b4dd9f829d08263785")
 
     add_deps("cmake", "libflac", "libopus", "libvorbis", "libogg")
 
