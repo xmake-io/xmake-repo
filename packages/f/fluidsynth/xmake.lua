@@ -12,43 +12,20 @@ package("fluidsynth")
     end
 
     -- Some libraries are required for build with our default config settings.
-    local configfeats = {
-        ["enable-aufile"] = {
-            lib = nil,
-            desc = "Compile support for sound file output",
-            default = true
-        },
-        ["enable-libsndfile"] = {
-            lib = "libsndfile",
-            desc = "Compile libsndfile support",
-            default = true
-        },
-        ["enable-dbus"] = {
-            lib = "dbus",
-            desc = "Compile DBUS support ",
-            default = not is_plat("windows")
-        },
-        ["enable-sdl2"] = {
-            lib = "libsdl",
-            desc = "Compile SDL2 audio support ",
-            default = false
-        },
-        ["enable-readline"] = {
-            lib = "readline",
-            desc = "Compile readline lib line editing ",
-            default = false
-        },
-        ["enable-threads"] = {
-            lib = nil,
-            desc = "enable multi-threading support (such as parallel voice synthesis)",
-            default = true
-        },
-        ["enable-openmp"] = {
-            lib = "openmp",
-            desc = "enable OpenMP support (parallelization of soundfont decoding, vectorization of voice mixing, etc.)",
-            default = false
-        },
-    }
+    add_configs("aufile", {description = "Compile support for sound file output", default = true, type = "boolean"})
+    add_configs("dbus", {description = "Compile DBUS support", default = not is_plat("windows"), type = "boolean"})
+    add_configs("jack", {description = "Compile JACK support", default = false, type = "boolean"})
+    add_configs("libsndfile", {description = "Compile libsndfile support", default = true, type = "boolean"})
+    add_configs("opensles", {description = "compile OpenSLES support", default = false, type = "boolean"})
+    add_configs("network", {description = "Enable network support (requires BSD or WIN sockets)", default = false, type = "boolean"})
+    add_configs("sdl2", {description = "Compile SDL2 audio support ", default = false, type = "boolean"})
+    if is_plat("linux") then
+        add_configs("pulseaudio", {description = "Compile PulseAudio support", default = false, type = "boolean"})
+    end
+    add_configs("readline", {description = "Compile support for sound file output", default = false, type = "boolean"})
+    add_configs("threads", {description = "Enable multi-threading support (such as parallel voice synthesis)", default = true, type = "boolean"})
+    add_configs("openmp", {description = "Enable OpenMP support (parallelization of soundfont decoding, vectorization of voice mixing, etc.)", default = false, type = "boolean"})
+
     for config, info in pairs(configdeps) do
         add_configs(config, {description = info.desc, default = info.default, type = "boolean"})
     end
@@ -68,17 +45,30 @@ package("fluidsynth")
     end
 
     on_load(function (package)
+        local configdeps = {
+            dbus = "dbus",
+            libsndfile = "libsndfile",
+            openmp = "openmp",
+            readline = "readline",
+            sdl2 = "libsdl"
+        }
         for config, info in pairs(configdeps) do
             if package:config(config) then
-                package:add("deps", info.lib)
+                package:add("deps", info)
             end
+        end
+        if package:config("opensles") then
+            package:add("links", "OpenSLES")
         end
     end)
 
     on_install("windows", "linux", "macosx", function (package)
         local configs = {}
-        for config, info in pairs(configdeps) do
-            table.insert(configs, "-D" .. config .. "=" .. (package:config(config) and "ON" or "OFF"))
+        local configopts = {
+            "aufile", "dbus", "jack", "libsndfile", "opensles", "network", "sdl2", "readline", "pulseaudio", "threads", "openmp"
+        }
+        for _, config in ipairs(configopts) do
+            table.insert(configs, "-Denable-" .. config .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
