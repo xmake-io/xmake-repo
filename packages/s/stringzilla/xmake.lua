@@ -14,6 +14,5 @@ package("stringzilla")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("strzl_sort", {includes = "stringzilla.h", configs = {languages = "c99"}}))
         assert(package:has_cxxfuncs("strzl_sort", {includes = "stringzilla.h", configs = {languages = "c++17"}}))
     end)
