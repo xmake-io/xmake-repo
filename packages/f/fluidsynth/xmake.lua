@@ -11,15 +11,62 @@ package("fluidsynth")
         add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "find-intl.patch"), "d6a8f4f162845b47b9cd772863b196775577f90fe5421f9de2ec72becbb087f3")
     end
 
+    -- Some libraries are required for build with our default config settings.
+    local configfeats = {
+        "enable-libsndfile" = {
+            lib = "libsndfile",
+            desc = "Compile libsndfile support",
+            default = true
+        },
+        "enable-libinstpatch" = {
+            lib = "libinstpatch",
+            desc = "Use libinstpatch to load DLS and GIG files",
+            default = true
+        },
+        "enable-dbus" = {
+            lib = "dbus",
+            desc = "Compile DBUS support ",
+            default = not is_plat("windows")
+        },
+        "enable-sdl2" = {
+            lib = "libsdl",
+            desc = "Compile SDL2 audio support ",
+            default = true
+        },
+    }
+    for config, info in pairs(configdeps) do
+        add_configs(config, {description = info.desc, default = info.default, type = "boolean"})
+    end
+
     add_deps("cmake")
     add_deps("glib")
     add_deps("libiconv")
-    if not is_plat("linux") then
+    if is_plat("windows") then
         add_deps("libintl")
+        add_deps("pkgconf")
+        add_syslinks("ws2_32")
+    elseif is_plat("linux") then
+        add_deps("pkg-config")
+    else
+        add_deps("libintl")
+        add_deps("pkg-config")
     end
-    add_deps("pkgconf")
+
+    on_load(function (package)
+        for config, info in pairs(configdeps) do
+            if package:config(config) then
+                package:add("deps", info.lib)
+            end
+        end
+    end)
 
     on_install("windows", "linux", "macosx", function (package)
+        local configs = {}
+        for config, info in pairs(configdeps) do
+            table.insert(configs, "-D" .. config .. "=" .. (package:config(config) and "ON" or "OFF"))
+        end
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package)
     end)
 
