@@ -13,25 +13,40 @@ package("fluidsynth")
 
     -- Some libraries are required for build with our default config settings.
     local configfeats = {
-        "enable-libsndfile" = {
+        ["enable-aufile"] = {
+            lib = nil,
+            desc = "Compile support for sound file output",
+            default = true
+        },
+        ["enable-libsndfile"] = {
             lib = "libsndfile",
             desc = "Compile libsndfile support",
             default = true
         },
-        "enable-libinstpatch" = {
-            lib = "libinstpatch",
-            desc = "Use libinstpatch to load DLS and GIG files",
-            default = true
-        },
-        "enable-dbus" = {
+        ["enable-dbus"] = {
             lib = "dbus",
             desc = "Compile DBUS support ",
             default = not is_plat("windows")
         },
-        "enable-sdl2" = {
+        ["enable-sdl2"] = {
             lib = "libsdl",
             desc = "Compile SDL2 audio support ",
+            default = false
+        },
+        ["enable-readline"] = {
+            lib = "readline",
+            desc = "Compile readline lib line editing ",
+            default = false
+        },
+        ["enable-threads"] = {
+            lib = nil,
+            desc = "enable multi-threading support (such as parallel voice synthesis)",
             default = true
+        },
+        ["enable-openmp"] = {
+            lib = "openmp",
+            desc = "enable OpenMP support (parallelization of soundfont decoding, vectorization of voice mixing, etc.)",
+            default = false
         },
     }
     for config, info in pairs(configdeps) do
