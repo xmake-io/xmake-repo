@@ -24,7 +24,7 @@ package("libsndfile")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        if package:is_plat("windows") then
+        if package:is_plat("windows", "mingw") then
 
             -- libsndfile doesn't build well with a static libFLAC, this fixes it
             if not package:dep("libflac"):config("shared") then
