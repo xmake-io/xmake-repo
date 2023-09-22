@@ -13,7 +13,7 @@ package("aws-crt-cpp")
     add_deps("cmake", "aws-c-common", "aws-c-io", "aws-checksums", "aws-c-event-stream",
              "aws-c-http", "aws-c-mqtt", "aws-c-auth", "aws-c-s3")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "cross", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", function (package)
         local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         if package:is_plat("windows") then
             cmakedir = cmakedir:gsub("\\", "/")
