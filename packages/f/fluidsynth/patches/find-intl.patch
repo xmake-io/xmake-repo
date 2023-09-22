@@ -1,8 +1,8 @@
 diff --git a/cmake_admin/FindGLib2.cmake b/cmake_admin/FindGLib2.cmake
-index f6fa6f1..7ce1dde 100644
+index f6fa6f1..b7821bf 100644
 --- a/cmake_admin/FindGLib2.cmake
 +++ b/cmake_admin/FindGLib2.cmake
-@@ -64,6 +64,10 @@ find_library(
+@@ -64,6 +64,14 @@ find_library(
    NAMES "gobject-2.0"
    HINTS "${PC_GOBJECT2_LIBDIR}")
  
@@ -10,10 +10,14 @@ index f6fa6f1..7ce1dde 100644
 +  Intl_LIBRARY
 +  NAMES "intl")
 +
++find_library(
++  Pcre_LIBRARY
++  NAMES "pcre")
++
  # GLib stores its config in lib/glib-2.0/include
  get_filename_component(_glib2_libdir "${GLib2_glib-2_LIBRARY}" PATH)
  find_path(
-@@ -102,12 +106,15 @@ find_package_handle_standard_args(
+@@ -102,12 +110,15 @@ find_package_handle_standard_args(
                  "GLib2_INCLUDE_DIRS"
    VERSION_VAR "GLib2_VERSION")
  
@@ -29,19 +33,46 @@ index f6fa6f1..7ce1dde 100644
    else()
      find_package(Intl QUIET)
      find_package(Iconv QUIET)
-@@ -142,11 +149,6 @@ if(GLib2_glib-2_LIBRARY AND NOT TARGET GLib2::glib-2)
-       set(CMAKE_REQUIRED_INCLUDES ${_backup_includes})
-       set(CMAKE_REQUIRED_LIBRARIES ${_backup_libraries})
+@@ -118,36 +129,9 @@ if(GLib2_glib-2_LIBRARY AND NOT TARGET GLib2::glib-2)
+       list(APPEND _glib2_link_libraries "Threads::Threads")
      endif()
+     list(APPEND _glib2_link_libraries ${MATH_LIBRARY})
+-
+-    # Glib can link to either PCRE 1 or 2
+-    find_library(
+-      _pcre2_8bit_library
+-      NAMES "pcre2-8"
+-      HINTS "${PC_GLIB2_LIBDIR}")
+-    if(_pcre2_8bit_library)
+-      include(CheckCSourceCompiles)
+-      set(_backup_includes ${CMAKE_REQUIRED_INCLUDES})
+-      set(_backup_libraries ${CMAKE_REQUIRED_LIBRARIES})
+-      set(_backup_libdir ${CMAKE_REQUIRED_LIBRARIES})
+-      set(CMAKE_REQUIRED_INCLUDES "${GLib2_INCLUDE_DIRS}")
+-      set(CMAKE_REQUIRED_LIBRARIES
+-          "${GLib2_glib-2_LIBRARY}" "${_glib2_link_libraries}"
+-          "${_pcre2_8bit_library}")
+-      check_c_source_compiles(
+-        "#include <glib.h>
+-    int main(){
+-      g_regex_error_quark();
+-    }"
+-        GLIB2_USES_PCRE2)
+-      set(CMAKE_REQUIRED_INCLUDES ${_backup_includes})
+-      set(CMAKE_REQUIRED_LIBRARIES ${_backup_libraries})
+-    endif()
 -    if(GLIB2_USES_PCRE2)
 -      list(APPEND _glib2_link_libraries "${_pcre2_8bit_library}")
 -    else()
 -      list(APPEND _glib2_link_libraries "pcre")
 -    endif()
    endif()
++  get_filename_component(_pcre_path "${Pcre_LIBRARY}" DIRECTORY)
++  list(APPEND _glib2_link_directories "${_pcre_path}")
  
    # pkg_check_modules consider these as LDFLAGS_OTHER rather instead of
-@@ -172,6 +174,7 @@ if(GLib2_gthread-2_LIBRARY AND NOT TARGET GLib2::gthread-2)
+   # libraries
+@@ -172,6 +156,7 @@ if(GLib2_gthread-2_LIBRARY AND NOT TARGET GLib2::gthread-2)
    if(PC_GTHREAD2_FOUND)
      get_target_properties_from_pkg_config("${GLib2_gthread-2_LIBRARY}"
                                            "PC_GTHREAD2" "_gthread2")
@@ -49,7 +80,7 @@ index f6fa6f1..7ce1dde 100644
    else()
      set(_gthread2_link_libraries "Threads::Threads" "GLib2::glib-2")
    endif()
-@@ -191,6 +194,7 @@ if(GLib2_gmodule-2_LIBRARY AND NOT TARGET GLib2::gmodule-2)
+@@ -191,6 +176,7 @@ if(GLib2_gmodule-2_LIBRARY AND NOT TARGET GLib2::gmodule-2)
    if(PC_GMODULE2_FOUND)
      get_target_properties_from_pkg_config("${GLib2_gmodule-2_LIBRARY}"
                                            "PC_GMODULE2" "_gmodule2")
@@ -57,7 +88,7 @@ index f6fa6f1..7ce1dde 100644
    else()
      set(_gmodule2_link_libraries "GLib2::glib-2")
    endif()
-@@ -210,6 +214,7 @@ if(GLib2_gobject-2_LIBRARY AND NOT TARGET GLib2::gobject-2)
+@@ -210,6 +196,7 @@ if(GLib2_gobject-2_LIBRARY AND NOT TARGET GLib2::gobject-2)
    if(PC_GOBJECT2_FOUND)
      get_target_properties_from_pkg_config("${GLib2_gobject-2_LIBRARY}"
                                            "PC_OBJECT2" "_gobject2")

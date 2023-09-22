@@ -8,7 +8,7 @@ package("fluidsynth")
              "https://github.com/FluidSynth/fluidsynth.git")
     add_versions("v2.3.3", "0ab6f1aae1c7652b9249de2d98070313f3083046fddd673277556f1cca65568e")
     if not is_plat("linux") then
-        add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "find-intl.patch"), "2A577B9D2F81CDF944AE5B0F90F54015720C2DFA15658F29CC6934ADDF6ED982")
+        add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "find-intl.patch"), "2E8C9BE56378E1BD74F8F3B3FDAD333CABC11DD60C8BB243E0B6A2445B2E916D")
     end
 
     add_deps("cmake")
