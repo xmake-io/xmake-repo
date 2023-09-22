@@ -93,3 +93,14 @@ package("opencl")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
+
+    on_test(function (package) 
+        assert(package:check_csnippets({test = [[
+            #include <stddef.h>
+            #include <CL/cl.h>
+            void test () {
+                cl_uint num_platforms;
+                clGetPlatformIDs(0, NULL, &num_platforms);  
+            }
+        ]]}, {configs = {languages = "c11"}}))
+    end)
