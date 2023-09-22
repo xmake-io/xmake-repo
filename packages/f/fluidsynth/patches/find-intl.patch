@@ -1,0 +1,67 @@
+diff --git a/cmake_admin/FindGLib2.cmake b/cmake_admin/FindGLib2.cmake
+index f6fa6f1..7ce1dde 100644
+--- a/cmake_admin/FindGLib2.cmake
++++ b/cmake_admin/FindGLib2.cmake
+@@ -64,6 +64,10 @@ find_library(
+   NAMES "gobject-2.0"
+   HINTS "${PC_GOBJECT2_LIBDIR}")
+ 
++find_library(
++  Intl_LIBRARY
++  NAMES "intl")
++
+ # GLib stores its config in lib/glib-2.0/include
+ get_filename_component(_glib2_libdir "${GLib2_glib-2_LIBRARY}" PATH)
+ find_path(
+@@ -102,12 +106,15 @@ find_package_handle_standard_args(
+                 "GLib2_INCLUDE_DIRS"
+   VERSION_VAR "GLib2_VERSION")
+ 
++get_filename_component(_intl_path "${Intl_LIBRARY}" DIRECTORY)
++
+ # Create the targets
+ if(GLib2_glib-2_LIBRARY AND NOT TARGET GLib2::glib-2)
+   # Handle transitive dependencies
+   if(PC_GLIB2_FOUND)
+     get_target_properties_from_pkg_config("${GLib2_glib-2_LIBRARY}" "PC_GLIB2"
+                                           "_glib2")
++    list(APPEND _glib2_link_directories "${_intl_path}")
+   else()
+     find_package(Intl QUIET)
+     find_package(Iconv QUIET)
+@@ -142,11 +149,6 @@ if(GLib2_glib-2_LIBRARY AND NOT TARGET GLib2::glib-2)
+       set(CMAKE_REQUIRED_INCLUDES ${_backup_includes})
+       set(CMAKE_REQUIRED_LIBRARIES ${_backup_libraries})
+     endif()
+-    if(GLIB2_USES_PCRE2)
+-      list(APPEND _glib2_link_libraries "${_pcre2_8bit_library}")
+-    else()
+-      list(APPEND _glib2_link_libraries "pcre")
+-    endif()
+   endif()
+ 
+   # pkg_check_modules consider these as LDFLAGS_OTHER rather instead of
+@@ -172,6 +174,7 @@ if(GLib2_gthread-2_LIBRARY AND NOT TARGET GLib2::gthread-2)
+   if(PC_GTHREAD2_FOUND)
+     get_target_properties_from_pkg_config("${GLib2_gthread-2_LIBRARY}"
+                                           "PC_GTHREAD2" "_gthread2")
++    list(APPEND _glib2_link_directories "${_intl_path}")
+   else()
+     set(_gthread2_link_libraries "Threads::Threads" "GLib2::glib-2")
+   endif()
+@@ -191,6 +194,7 @@ if(GLib2_gmodule-2_LIBRARY AND NOT TARGET GLib2::gmodule-2)
+   if(PC_GMODULE2_FOUND)
+     get_target_properties_from_pkg_config("${GLib2_gmodule-2_LIBRARY}"
+                                           "PC_GMODULE2" "_gmodule2")
++    list(APPEND _glib2_link_directories "${_intl_path}")
+   else()
+     set(_gmodule2_link_libraries "GLib2::glib-2")
+   endif()
+@@ -210,6 +214,7 @@ if(GLib2_gobject-2_LIBRARY AND NOT TARGET GLib2::gobject-2)
+   if(PC_GOBJECT2_FOUND)
+     get_target_properties_from_pkg_config("${GLib2_gobject-2_LIBRARY}"
+                                           "PC_OBJECT2" "_gobject2")
++    list(APPEND _glib2_link_directories "${_intl_path}")
+   else()
+     find_package(libffi QUIET)
+     set(_gobject2_link_libraries "libffi" "GLib2::glib-2")
