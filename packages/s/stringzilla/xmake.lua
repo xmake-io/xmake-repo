@@ -9,7 +9,7 @@ package("stringzilla")
 
     add_versions("v1.2.2", "2e17c49965841647a1c371247f53b2f576e5fb32fe4b84a080d425b12f17703c")
 
-    on_install("windows|x64", "windows|x86", "linux", "mingw", "msys", function (package)
+    on_install("windows|x64", "linux|x86_64", "mingw|x86_64", "msys", function (package)
         os.cp("stringzilla/stringzilla.h", package:installdir("include"))
     end)
 
