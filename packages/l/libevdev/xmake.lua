@@ -9,13 +9,11 @@ package("libevdev")
 
     add_includedirs("include/libevdev-1.0")
 
-
     add_deps("meson", "ninja", "pkg-config")
     on_install("linux", function (package)
         import("package.tools.meson").build(package, {"-Dtests=disabled", "-Ddocumentation=disabled"}, {buildir = "out"})
         import("package.tools.ninja").install(package, {}, {buildir = "out"})
     end)
-
 
     on_test(function (package)
         assert(package:check_csnippets({test = [[
