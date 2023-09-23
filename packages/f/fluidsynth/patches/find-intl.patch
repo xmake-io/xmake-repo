@@ -1,17 +1,16 @@
-diff --git a/cmake_admin/FindFLAC.cmake b/cmake_admin/FindFLAC.cmake
-index 2de2f41..2aa09b6 100644
---- a/cmake_admin/FindFLAC.cmake
-+++ b/cmake_admin/FindFLAC.cmake
-@@ -61,7 +61,9 @@ else()
-   if(NOT TARGET "Ogg::ogg")
-     find_package(Ogg QUIET)
-   endif()
-+  if(HAS_LIBM)
-   set(_flac_link_libraries "Ogg::ogg" ${MATH_LIBRARY})
-+  endif(HAS_LIBM)
- endif()
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 986b594..77e6d2b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -356,6 +356,8 @@ endif ( WIN32 )
+ # Check for threads and math
+ find_package ( Threads REQUIRED )
  
- if(PC_FLAC++_FOUND)
++unset ( HAS_LIBM CACHE )
++unset ( MATH_LIBRARY CACHE )
+ find_library ( HAS_LIBM NAMES "m" )
+ if ( HAS_LIBM )
+   set ( MATH_LIBRARY "m" )
 diff --git a/cmake_admin/FindGLib2.cmake b/cmake_admin/FindGLib2.cmake
 index f6fa6f1..cb910f6 100644
 --- a/cmake_admin/FindGLib2.cmake
@@ -118,17 +117,3 @@ index f6fa6f1..cb910f6 100644
    else()
      find_package(libffi QUIET)
      set(_gobject2_link_libraries "libffi" "GLib2::glib-2")
-diff --git a/cmake_admin/FindVorbis.cmake b/cmake_admin/FindVorbis.cmake
-index 0865c3e..b4d9786 100644
---- a/cmake_admin/FindVorbis.cmake
-+++ b/cmake_admin/FindVorbis.cmake
-@@ -67,7 +67,9 @@ else()
-   if(NOT TARGET Ogg::ogg)
-     find_package(Ogg QUIET)
-   endif()
-+  if(HAS_LIBM)
-   set(_vorbis_link_libraries "Ogg::ogg" ${MATH_LIBRARY})
-+  endif(HAS_LIBM)
- endif()
- 
- # Extract additional flags if pkg-config is available
