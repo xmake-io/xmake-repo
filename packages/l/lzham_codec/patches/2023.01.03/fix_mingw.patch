@@ -1,0 +1,12 @@
+diff --git a/lzhamdecomp/lzham_vector.h b/lzhamdecomp/lzham_vector.h
+index badc540..1c5331e 100644
+--- a/lzhamdecomp/lzham_vector.h
++++ b/lzhamdecomp/lzham_vector.h
+@@ -1,6 +1,7 @@
+ // File: lzham_vector.h
+ // LZHAM is in the Public Domain. Please see the Public Domain declaration at the end of include/lzham.h
+ #pragma once
++#include <string.h>
+ 
+ namespace lzham
+ {

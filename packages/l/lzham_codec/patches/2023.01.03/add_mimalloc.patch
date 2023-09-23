@@ -1,0 +1,30 @@
+diff --git a/lzhamdecomp/lzham_core.h b/lzhamdecomp/lzham_core.h
+index 2e55362..abb8f71 100644
+--- a/lzhamdecomp/lzham_core.h
++++ b/lzhamdecomp/lzham_core.h
+@@ -241,7 +241,9 @@ const bool c_lzham_big_endian_platform = !c_lzham_little_endian_platform;
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <math.h>
+-#if !defined(__APPLE__) && !defined(__FreeBSD__)
++#ifdef ASSERT_USE_MIMALLOC
++   #include "mimalloc-override.h"
++#elif !defined(__APPLE__) && !defined(__FreeBSD__)
+ #include <malloc.h>
+ #endif
+ #include <stdarg.h>
+diff --git a/lzhamdecomp/lzham_mem.cpp b/lzhamdecomp/lzham_mem.cpp
+index e8163fa..e82a5d2 100644
+--- a/lzhamdecomp/lzham_mem.cpp
++++ b/lzhamdecomp/lzham_mem.cpp
+@@ -2,7 +2,9 @@
+ // LZHAM is in the Public Domain. Please see the Public Domain declaration at the end of include/lzham.h
+ #include "lzham_core.h"
+ 
+-#ifdef __APPLE__
++#ifdef ASSERT_USE_MIMALLOC
++   #include "mimalloc-override.h"
++#elif defined(__APPLE__)
+    #include <malloc/malloc.h>
+ #elif defined(__FreeBSD__) || defined(__NetBSD__)
+    #include <malloc_np.h>

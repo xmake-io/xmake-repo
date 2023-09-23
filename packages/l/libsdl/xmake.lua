@@ -32,6 +32,8 @@ package("libsdl")
     add_versions("archive:2.26.5", "d88362fc3ee350a037e31381db00df764a294244bac8e427b8c67c6ca4d7e6fd")
     add_versions("archive:2.28.0", "a3fd9394093e08ae47233353c1efb07b28514fe63d7caed34b7811e8a17e5731")
     add_versions("archive:2.28.1", "b34b6f5a4d38191491724698a62241f0264c8a56c7d550fd49d1daf49261ae46")
+    add_versions("archive:2.28.2", "22383a6b242bac072f949d2b3854cf04c6856cae7a87eaa78c60dd733b71e41e")
+    add_versions("archive:2.28.3", "2308d4e4cd5852b3b81934dcc94603454834c14bef49de1cb1230c37ea6dc15c")
     add_versions("github:2.0.8",  "release-2.0.8")
     add_versions("github:2.0.12", "release-2.0.12")
     add_versions("github:2.0.14", "release-2.0.14")
@@ -49,13 +51,23 @@ package("libsdl")
     add_versions("github:2.26.5", "release-2.26.5")
     add_versions("github:2.28.0", "release-2.28.0")
     add_versions("github:2.28.1", "release-2.28.1")
+    add_versions("github:2.28.2", "release-2.28.2")
+    add_versions("github:2.28.3", "release-2.28.3")
 
     add_deps("cmake")
 
     add_includedirs("include", "include/SDL2")
 
+    add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+
+    -- @note deprecated
     add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+
     if is_plat("linux") then
+        add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
+        add_configs("wayland", {description = "Enables Wayland support", default = true, type = "boolean"})
+
+        -- @note deprecated
         add_configs("with_x", {description = "Enables X support (requires it on the system)", default = true, type = "boolean"})
     end
 
@@ -64,12 +76,15 @@ package("libsdl")
     end
 
     on_load(function (package)
-        if package:config("use_sdlmain") then
+        if package:config("sdlmain") or package:config("use_sdlmain") then
             package:add("components", "main")
         end
         package:add("components", "lib")
-        if package:is_plat("linux") and package:config("with_x") then
+        if package:is_plat("linux") and (package:config("x11") or package:config("with_x")) then
             package:add("deps", "libxext", {private = true})
+        end
+        if package:is_plat("linux") and package:config("wayland") then
+            package:add("deps", "wayland", {private = true})
         end
     end)
 
@@ -102,7 +117,7 @@ package("libsdl")
                     component:add("frameworks", "Cocoa", "Carbon", "ForceFeedback", "IOKit")
                 else
                     component:add("frameworks", "CoreBluetooth", "CoreGraphics", "CoreMotion", "OpenGLES", "UIKit")
-		end
+		        end
                 if package:version():ge("2.0.14") then
                     package:add("frameworks", "CoreHaptics", "GameController")
                 end

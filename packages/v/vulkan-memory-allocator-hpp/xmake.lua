@@ -8,6 +8,7 @@ package("vulkan-memory-allocator-hpp")
              "https://github.com/YaaZ/VulkanMemoryAllocator-Hpp.git")
     add_versions("v3.0.0", '2f062b1631af64519d09e7b319c2ba06d7de3c9c5589fb7109a3f4e341cee2b7')
     add_versions("v3.0.1-1", '0e0c374751d5ca6123d0ae0df756693f0674412d7c758ec4a39a5a9dcc412911')
+    add_versions("v3.0.1-3", '66a3d4be3bc1404c844b5a36aadeb6b366878e7cf1efe899eb0a0095f3871aae')
 
     add_deps("vulkan-memory-allocator")
 

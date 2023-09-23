@@ -4,14 +4,12 @@ package("zlib")
     set_description("A Massively Spiffy Yet Delicately Unobtrusive Compression Library")
 
     add_urls("https://github.com/madler/zlib/archive/$(version).tar.gz")
-    add_urls("https://mirrors.ustc.edu.cn/debian/pool/main/z/zlib/zlib_$(version).dfsg.orig.tar.gz", {
-        version = function (version) return version:sub(2) end
-    })
     add_urls("https://github.com/madler/zlib.git")
     add_versions("v1.2.10", "42cd7b2bdaf1c4570e0877e61f2fdc0bce8019492431d054d3d86925e5058dc5")
     add_versions("v1.2.11", "629380c90a77b964d896ed37163f5c3a34f6e6d897311f1df2a7016355c45eff")
     add_versions("v1.2.12", "d8688496ea40fb61787500e863cc63c9afcbc524468cedeb478068924eb54932")
     add_versions("v1.2.13", "1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428")
+    add_versions("v1.3", "b5b06d60ce49c8ba700e0ba517fa07de80b5d4628a037f4be8ad16955be7a7c0")
 
     add_configs("zutil", {description = "Export zutil.h api", default = false, type = "boolean"})
 
