@@ -1,6 +1,5 @@
 package("libevdev")
 
-    set_kind("library")
     set_homepage("https://www.freedesktop.org/wiki/Software/libevdev/")
     set_description("libevdev is a wrapper library for evdev devices. it moves the common tasks when dealing with evdev devices into a library and provides a library interface to the callers, thus avoiding erroneous ioctls, etc. The eventual goal is that libevdev wraps all ioctls available to evdev devices, thus making direct access unnecessary.")
     set_license("MIT")
@@ -13,7 +12,7 @@ package("libevdev")
 
     add_deps("meson", "ninja", "pkg-config")
     on_install("linux", function (package)
-        import("package.tools.meson").build(package, {"-Dtests=disabled"}, {buildir = "out"})
+        import("package.tools.meson").build(package, {"-Dtests=disabled", "-Ddocumentation=disabled"}, {buildir = "out"})
         import("package.tools.ninja").install(package, {}, {buildir = "out"})
     end)
 
