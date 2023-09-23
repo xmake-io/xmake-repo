@@ -8,8 +8,6 @@ package("boost_di")
 
     add_versions("v1.3.0", "853e02ade9bf39f2863b470350c3ef55caffc3090d7d9a503724ff480c8d7eff")
 
-    add_deps("cmake")
-
     on_install(function (package)
         os.cp("include", package:installdir())
     end)
