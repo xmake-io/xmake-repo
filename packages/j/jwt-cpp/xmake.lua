@@ -21,7 +21,7 @@ package("jwt-cpp")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "cross", function (package)
         if package:config("picojson") then
             io.replace("include/jwt-cpp/jwt.h", "picojson/picojson.h", "picojson.h", {plain = true})
             io.replace("include/jwt-cpp/traits/kazuho-picojson/traits.h", "picojson/picojson.h", "picojson.h", {plain = true})
