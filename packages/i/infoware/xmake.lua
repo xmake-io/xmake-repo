@@ -26,7 +26,7 @@ package("infoware")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "mingw", "msys", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "mingw|x86_64", "msys", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
