@@ -11,6 +11,22 @@ index 986b594..77e6d2b 100644
  find_library ( HAS_LIBM NAMES "m" )
  if ( HAS_LIBM )
    set ( MATH_LIBRARY "m" )
+diff --git a/cmake_admin/FindFLAC.cmake b/cmake_admin/FindFLAC.cmake
+index 2de2f41..54a4f6b 100644
+--- a/cmake_admin/FindFLAC.cmake
++++ b/cmake_admin/FindFLAC.cmake
+@@ -57,11 +57,6 @@ find_library(
+ # Handle transitive dependencies
+ if(PC_FLAC_FOUND)
+   get_target_properties_from_pkg_config("${FLAC_LIBRARY}" "PC_FLAC" "_flac")
+-else()
+-  if(NOT TARGET "Ogg::ogg")
+-    find_package(Ogg QUIET)
+-  endif()
+-  set(_flac_link_libraries "Ogg::ogg" ${MATH_LIBRARY})
+ endif()
+ 
+ if(PC_FLAC++_FOUND)
 diff --git a/cmake_admin/FindGLib2.cmake b/cmake_admin/FindGLib2.cmake
 index f6fa6f1..b7821bf 100644
 --- a/cmake_admin/FindGLib2.cmake
