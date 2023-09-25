@@ -50,6 +50,10 @@ package("assimp")
         if not package:gitref() and package:version():le("5.1.0") then
             package:add("deps", "irrxml")
         end
+        if package:gitref() or package:version():ge("5.3.0") then
+            package:add("deps", "utfcpp")
+            package:add("defines", "ASSIMP_USE_HUNTER")
+        end
         if package:is_plat("linux", "macosx") and package:config("shared") then
             package:add("links", "assimp" .. (package:is_debug() and "d" or ""))
         end
