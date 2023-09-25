@@ -7,8 +7,8 @@ package("fluidsynth")
     add_urls("https://github.com/FluidSynth/fluidsynth/archive/refs/tags/$(version).zip",
              "https://github.com/FluidSynth/fluidsynth.git")
     add_versions("v2.3.3", "0ab6f1aae1c7652b9249de2d98070313f3083046fddd673277556f1cca65568e")
-    if not is_plat("linux") then
-        add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "find-intl.patch"), "afe563d3319e14af0d20ab2802e34b163faa4a96e89b15b84949afd6943e1add")
+    if is_plat("windows") then
+        add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "find-intl.patch"), "ec641cb7c8c6a2496e21a129f25c9bf7f892932804e2b079b4a23fc28b701a08")
     end
 
     -- Some libraries are required for build with our default config settings.

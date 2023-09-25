@@ -12,7 +12,7 @@ index 986b594..77e6d2b 100644
  if ( HAS_LIBM )
    set ( MATH_LIBRARY "m" )
 diff --git a/cmake_admin/FindGLib2.cmake b/cmake_admin/FindGLib2.cmake
-index f6fa6f1..cb910f6 100644
+index f6fa6f1..b7821bf 100644
 --- a/cmake_admin/FindGLib2.cmake
 +++ b/cmake_admin/FindGLib2.cmake
 @@ -64,6 +64,14 @@ find_library(
@@ -30,7 +30,7 @@ index f6fa6f1..cb910f6 100644
  # GLib stores its config in lib/glib-2.0/include
  get_filename_component(_glib2_libdir "${GLib2_glib-2_LIBRARY}" PATH)
  find_path(
-@@ -102,52 +110,28 @@ find_package_handle_standard_args(
+@@ -102,12 +110,15 @@ find_package_handle_standard_args(
                  "GLib2_INCLUDE_DIRS"
    VERSION_VAR "GLib2_VERSION")
  
@@ -46,12 +46,9 @@ index f6fa6f1..cb910f6 100644
    else()
      find_package(Intl QUIET)
      find_package(Iconv QUIET)
-     list(APPEND _glib2_link_libraries "Intl::Intl" "Iconv::Iconv")
--    if(WIN32)
--      list(APPEND _glib2_link_libraries "ws2_32" "winmm")
--    else()
--      list(APPEND _glib2_link_libraries "Threads::Threads")
--    endif()
+@@ -118,36 +129,9 @@ if(GLib2_glib-2_LIBRARY AND NOT TARGET GLib2::glib-2)
+       list(APPEND _glib2_link_libraries "Threads::Threads")
+     endif()
      list(APPEND _glib2_link_libraries ${MATH_LIBRARY})
 -
 -    # Glib can link to either PCRE 1 or 2
@@ -83,11 +80,6 @@ index f6fa6f1..cb910f6 100644
 -      list(APPEND _glib2_link_libraries "pcre")
 -    endif()
    endif()
-+  if(WIN32)
-+    list(APPEND _glib2_link_libraries "ws2_32" "winmm")
-+  else()
-+    list(APPEND _glib2_link_libraries "Threads::Threads")
-+  endif()
 +  get_filename_component(_pcre_path "${Pcre_LIBRARY}" DIRECTORY)
 +  list(APPEND _glib2_link_directories "${_pcre_path}")
  
