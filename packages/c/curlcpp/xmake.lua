@@ -8,13 +8,15 @@ package("curlcpp")
 
     add_versions("3.1", "ba7aeed9fde9e5081936fbe08f7a584e452f9ac1199e5fabffbb3cfc95e85f4b")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     if is_plat("macosx") then
         add_extsources("brew::curlcpp")
     end
 
     add_deps("cmake", "libcurl >=7.34.0")
 
-    on_install("windows", "linux", "macosx", "mingw", "cross", function (package)
+    on_install("windows", "linux", "macosx", "cross", function (package)
         local configs = {"-DBUILD_TEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
