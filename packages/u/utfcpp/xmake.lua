@@ -1,5 +1,4 @@
 package("utfcpp")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/nemtrif/utfcpp")
     set_description("UTF8-CPP: UTF-8 with C++ in a Portable Way")
@@ -15,6 +14,9 @@ package("utfcpp")
     add_extsources("apt::libutfcpp-dev", "pacman::utf8cpp")
 
     add_deps("cmake")
+
+    add_includedirs("include", "include/utf8cpp")
+
     on_install(function (package)
         local configs = {"-DUTF8_TESTS=OFF", "-DUTF8_INSTALL=ON", "-DUTF8_SAMPLES=OFF"}
         import("package.tools.cmake").install(package, configs)
