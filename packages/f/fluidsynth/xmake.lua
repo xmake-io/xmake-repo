@@ -26,10 +26,6 @@ package("fluidsynth")
     add_configs("threads", {description = "Enable multi-threading support (such as parallel voice synthesis)", default = true, type = "boolean"})
     add_configs("openmp", {description = "Enable OpenMP support (parallelization of soundfont decoding, vectorization of voice mixing, etc.)", default = false, type = "boolean"})
 
-    for config, info in pairs(configdeps) do
-        add_configs(config, {description = info.desc, default = info.default, type = "boolean"})
-    end
-
     add_deps("cmake")
     add_deps("glib")
     add_deps("libiconv")
