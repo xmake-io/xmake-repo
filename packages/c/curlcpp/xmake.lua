@@ -12,31 +12,24 @@ package("curlcpp")
         add_extsources("brew::curlcpp")
     end
 
-    add_deps("cmake", "libcurl >=7.34.0")
+    add_deps("libcurl >=7.34.0")
 
     on_install("windows", "linux", "macosx", "cross", function (package)
-        if package:config("shared") then
-            io.writefile("xmake.lua", [[
-                add_requires("libcurl >=7.34.0")
-                add_rules("mode.debug", "mode.release")
-                set_languages("c++11")
-                target("curlcpp")
-                    set_kind("$(kind)")
-                    add_files("src/*.cpp")
-                    add_includedirs("include")
-                    add_headerfiles("include/*.h", {prefixdir = "curlcpp"})
-                    if is_plat("windows") and is_kind("shared") then
-                        add_rules("utils.symbols.export_all", {export_classes = true})
-                    end
-                    add_packages("libcurl")
-            ]])
-            import("package.tools.xmake").install(package)
-        else
-            local configs = {"-DBUILD_TEST=OFF"}
-            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-            import("package.tools.cmake").install(package, configs)
-        end
+        io.writefile("xmake.lua", [[
+            add_requires("libcurl >=7.34.0")
+            add_rules("mode.debug", "mode.release")
+            set_languages("c++11")
+            target("curlcpp")
+                set_kind("$(kind)")
+                add_files("src/*.cpp")
+                add_includedirs("include")
+                add_headerfiles("include/*.h", {prefixdir = "curlcpp"})
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
+                add_packages("libcurl")
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
