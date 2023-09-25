@@ -109,3 +109,25 @@ index f6fa6f1..b7821bf 100644
    else()
      find_package(libffi QUIET)
      set(_gobject2_link_libraries "libffi" "GLib2::glib-2")
+diff --git a/cmake_admin/FindSndFile.cmake b/cmake_admin/FindSndFile.cmake
+index d77333b..f179b76 100644
+--- a/cmake_admin/FindSndFile.cmake
++++ b/cmake_admin/FindSndFile.cmake
+@@ -92,7 +92,7 @@ elseif(_sndfile_library)
+     set(CMAKE_REQUIRED_INCLUDES "${SndFile_INCLUDE_DIR}")
+     set(CMAKE_REQUIRED_LIBRARIES "${_sndfile_library}")
+ 
+-    set(_optional_libs "MPG123::libmpg123" "mp3lame::mp3lame" "FLAC::FLAC"
++    set(_optional_libs "FLAC::FLAC"
+                        "Opus::opus" "Vorbis::vorbisenc" "Ogg::ogg")
+     foreach(_target ${_optional_libs})
+       if(TARGET "${_target}")
+@@ -123,7 +123,7 @@ int main() {
+       SNDFILE_SUPPORTS_MPEG)
+ 
+     set(SndFile_WITH_EXTERNAL_LIBS ${SNDFILE_SUPPORTS_VORBIS})
+-    set(SndFile_WITH_MPEG ${SNDFILE_SUPPORTS_MPEG})
++    set(SndFile_WITH_MPEG FALSE)
+     set(CMAKE_REQUIRED_INCLUDES ${_backup_includes})
+     set(CMAKE_REQUIRED_LIBRARIES ${_backup_libraries})
+   else()
