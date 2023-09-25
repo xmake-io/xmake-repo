@@ -3,8 +3,9 @@ package("assimp")
     set_description("Portable Open-Source library to import various well-known 3D model formats in a uniform manner")
     set_license("BSD-3-Clause")
 
-    set_urls("https://github.com/assimp/assimp/archive/$(version).zip",
+    set_urls("https://github.com/assimp/assimp/archive/refs/tags/$(version).zip",
              "https://github.com/assimp/assimp.git")
+    add_versions("v5.3.1", "f4020735fe4601de9d85cb335115568cce0e027a65e546dd8895081696d624bd")
     add_versions("v5.3.0", "cccbd20522b577613096b0b157f62c222f844bc177356b8301cd74eee3fecadb")
     add_versions("v5.2.5", "5384877d53be7b5bbf50c26ab3f054bec91b3df8614372dcd7240f44f61c509b")
     add_versions("v5.2.4", "713e9aa035ae019e5f3f0de1605de308d63538897249a2ba3a2d7d40036ad2b1")
@@ -47,12 +48,14 @@ package("assimp")
     end
 
     on_load(function (package)
-        if not package:gitref() and package:version():le("5.1.0") then
-            package:add("deps", "irrxml")
-        end
-        if package:gitref() or package:version():ge("5.3.0") then
-            package:add("deps", "utfcpp")
-            package:add("defines", "ASSIMP_USE_HUNTER")
+        if not package:gitref() then
+            if package:version():le("5.1.0") then
+                package:add("deps", "irrxml")
+            end
+            if package:version():eq("5.3.0") then
+                package:add("deps", "utfcpp")
+                package:add("defines", "ASSIMP_USE_HUNTER")
+            end
         end
         if package:is_plat("linux", "macosx") and package:config("shared") then
             package:add("links", "assimp" .. (package:is_debug() and "d" or ""))
