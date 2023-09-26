@@ -138,7 +138,7 @@ package("assimp")
             if fetchinfo then
                 local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
                 if includedirs and #includedirs > 0 then
-                    table.insert(configs, "-DZLIB_INCLUDE_DIRS=" .. table.concat(includedirs, " "))
+                    table.insert(configs, "-DZLIB_INCLUDE_DIR=" .. table.concat(includedirs, " "))
                 end
                 local libfiles = fetchinfo.libfiles
                 if libfiles then
