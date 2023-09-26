@@ -142,7 +142,7 @@ package("assimp")
                 end
                 local libfiles = fetchinfo.libfiles
                 if libfiles then
-                    table.insert(configs, "-DZLIB_LIBRARIES=" .. table.concat(libfiles, " "))
+                    table.insert(configs, "-DZLIB_LIBRARY=" .. table.concat(libfiles, " "))
                 end
             end
         end
