@@ -126,8 +126,8 @@ package("assimp")
         end
 
         local zlib = package:dep("zlib")
-        if zlib and not minizip:is_system() then
-            local fetchinfo = minizip:fetch({external = false})
+        if zlib and not zlib:is_system() then
+            local fetchinfo = zlib:fetch({external = false})
             if fetchinfo then
                 local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
                 if includedirs and #includedirs > 0 then
