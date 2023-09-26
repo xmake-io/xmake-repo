@@ -63,6 +63,13 @@ package("assimp")
     end)
 
     on_install(function (package)
+        if package:is_plat("android") then
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(assimp): need ndk api level >= 26 for android")
+        end
+
         local configs = {"-DASSIMP_BUILD_SAMPLES=OFF",
                          "-DASSIMP_BUILD_TESTS=OFF",
                          "-DASSIMP_BUILD_DOCS=OFF",
@@ -135,7 +142,7 @@ package("assimp")
                 end
                 local libfiles = fetchinfo.libfiles
                 if libfiles then
-                    table.insert(configs, "-ZLIB_LIBRARIES=" .. table.concat(libfiles, " "))
+                    table.insert(configs, "-DZLIB_LIBRARIES=" .. table.concat(libfiles, " "))
                 end
             end
         end
