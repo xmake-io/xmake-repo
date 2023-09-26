@@ -8,19 +8,21 @@ package("libsigcplusplus")
 
     add_versions("3.4.0", "445d889079041b41b368ee3b923b7c71ae10a54da03bc746f2d0723e28ba2291")
 
-    add_configs("build_deprecated_api", {description = "Build deprecated API and include it in the library", default = false, type = "boolean"})
+    add_configs("deprecated_api", {description = "Build deprecated API and include it in the library", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
     add_includedirs("include/sigc++-3.0", "lib/sigc++-3.0/include")
 
     on_install(function (package)
         local configs = {"-Dvalidation=false", "-Dbuild-examples=false", "-Dbuild-tests=false"}
-        table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("build_deprecated_api") and "true" or "false"))
+        table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         if package:config("shared") then
             table.insert(configs, "-Ddefault_library=shared")
         else
             table.insert(configs, "-Ddefault_library=static")
-            package:add("defines", "SIGC_BUILD")
+            if package:is_plat("windows") then
+                package:add("defines", "SIGC_BUILD")
+            end
         end
         import("package.tools.meson").install(package, configs)
     end)
