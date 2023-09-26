@@ -7,11 +7,11 @@ package("fluidsynth")
     add_urls("https://github.com/FluidSynth/fluidsynth/archive/refs/tags/$(version).zip",
              "https://github.com/FluidSynth/fluidsynth.git")
     add_versions("v2.3.3", "0ab6f1aae1c7652b9249de2d98070313f3083046fddd673277556f1cca65568e")
+
     if is_plat("windows", "macosx") then
-        add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "find-intl.patch"), "DAFDB8F11957ED2F396832FE3B63933E8A32B96D8C836166B2FEFACF3F918A9D")
+        add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "find-intl.patch"), "dafdb8f11957ed2f396832fe3b63933e8a32b96d8c836166b2fefacf3f918a9d")
     end
 
-    -- Some libraries are required for build with our default config settings.
     add_configs("aufile", {description = "Compile support for sound file output", default = true, type = "boolean"})
     add_configs("dbus", {description = "Compile DBUS support", default = not is_plat("windows"), type = "boolean"})
     add_configs("jack", {description = "Compile JACK support", default = false, type = "boolean"})
@@ -25,6 +25,9 @@ package("fluidsynth")
     add_configs("readline", {description = "Compile support for sound file output", default = false, type = "boolean"})
     add_configs("threads", {description = "Enable multi-threading support (such as parallel voice synthesis)", default = true, type = "boolean"})
     add_configs("openmp", {description = "Enable OpenMP support (parallelization of soundfont decoding, vectorization of voice mixing, etc.)", default = false, type = "boolean"})
+    if is_plat("macosx") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
     add_deps("glib")
@@ -69,12 +72,17 @@ package("fluidsynth")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package)
+        if package:is_plat("macosx") then
+            local headersdir = package:installdir("Library/Frameworks/FluidSynth.framework/Headers")
+            os.cp(path.join(headersdir, "**.h"), package:installdir("include"), {rootdir = headersdir})
+            os.cp(path.join(package:installdir("Library/Frameworks/FluidSynth.framework"), "FluidSynth"),
+                path.join(package:installdir("lib"), "libFluidSynth.dylib"))
+        end
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            void test() 
-            {
+            void test() {
                 fluid_settings_t* settings = new_fluid_settings();
                 fluid_synth_t* synth = new_fluid_synth(settings);
                 delete_fluid_synth(synth);
