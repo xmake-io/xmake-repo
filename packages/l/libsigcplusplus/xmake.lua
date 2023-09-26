@@ -9,11 +9,14 @@ package("libsigcplusplus")
     add_versions("3.4.0", "445d889079041b41b368ee3b923b7c71ae10a54da03bc746f2d0723e28ba2291")
 
     add_configs("deprecated_api", {description = "Build deprecated API and include it in the library", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("meson", "ninja")
     add_includedirs("include/sigc++-3.0", "lib/sigc++-3.0/include")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "iphoneos", "cross", "wasm", function (package)
         local configs = {"-Dvalidation=false", "-Dbuild-examples=false", "-Dbuild-tests=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         if package:config("shared") then
