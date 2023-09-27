@@ -6,8 +6,9 @@ package("hiredis")
 
     add_urls("https://github.com/redis/hiredis/archive/refs/tags/$(version).tar.gz",
              "https://github.com/redis/hiredis.git")
-    add_versions('v1.0.2', 'e0ab696e2f07deb4252dda45b703d09854e53b9703c7d52182ce5a22616c3819')
-    add_versions('v1.1.0', 'fe6d21741ec7f3fc9df409d921f47dfc73a4d8ff64f4ac6f1d95f951bf7f53d6')
+    add_versions("v1.0.2", "e0ab696e2f07deb4252dda45b703d09854e53b9703c7d52182ce5a22616c3819")
+    add_versions("v1.1.0", "fe6d21741ec7f3fc9df409d921f47dfc73a4d8ff64f4ac6f1d95f951bf7f53d6")
+    add_versions("v1.2.0", "82ad632d31ee05da13b537c124f819eb88e18851d9cb0c30ae0552084811588c")
 
     if is_plat("windows", "mingw") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
