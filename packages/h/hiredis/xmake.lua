@@ -42,6 +42,7 @@ package("hiredis")
             "-DENABLE_SSL_TESTS=OFF",
         }
 
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_SSL=" .. (package:config("openssl") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
