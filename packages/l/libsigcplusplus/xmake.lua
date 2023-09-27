@@ -16,7 +16,7 @@ package("libsigcplusplus")
     add_deps("meson", "ninja")
     add_includedirs("include/sigc++-3.0", "lib/sigc++-3.0/include")
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "iphoneos", "cross", "wasm", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "msys", "iphoneos", "cross", "wasm", function (package)
         local configs = {"-Dvalidation=false", "-Dbuild-examples=false", "-Dbuild-tests=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
         if package:config("shared") then
