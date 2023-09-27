@@ -1,5 +1,4 @@
 package("hiredis")
-
     set_homepage("https://github.com/redis/hiredis")
     set_description("Minimalistic C client for Redis >= 1.2")
     set_license("BSD-3-Clause")
@@ -26,7 +25,7 @@ package("hiredis")
     end)
 
     on_install(function (package)
-        if package:version():eq("v1.0.2") or package:version():eq("v1.1.0") then
+        if package:version() and package:version():lt("1.2.0") then
             io.replace("CMakeLists.txt",
                 "TARGET_INCLUDE_DIRECTORIES(hiredis PUBLIC $<INSTALL_INTERFACE:.>",
                 "TARGET_INCLUDE_DIRECTORIES(hiredis PUBLIC $<INSTALL_INTERFACE:include>",
@@ -47,17 +46,19 @@ package("hiredis")
         table.insert(configs, "-DENABLE_SSL=" .. (package:config("openssl") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
 
-        -- hiredis cmake builds static and shared library at the same time.
-        -- Remove unneeded one after install.
-        if package:config("shared") then
-            -- maybe is import library, libhiredis.dll.a
-            if not package:is_plat("mingw") then
-                os.tryrm(path.join(package:installdir("lib"), "*.a"))
+        if package:version() and package:version():lt("1.2.0") then
+            -- hiredis cmake builds static and shared library at the same time.
+            -- Remove unneeded one after install.
+            if package:config("shared") then
+                -- maybe is import library, libhiredis.dll.a
+                if not package:is_plat("mingw") then
+                    os.tryrm(path.join(package:installdir("lib"), "*.a"))
+                end
+            else
+                os.tryrm(path.join(package:installdir("lib"), "*.so"))
+                os.tryrm(path.join(package:installdir("lib"), "*.so.*"))
+                os.tryrm(path.join(package:installdir("lib"), "*.dylib"))
             end
-        else
-            os.tryrm(path.join(package:installdir("lib"), "*.so"))
-            os.tryrm(path.join(package:installdir("lib"), "*.so.*"))
-            os.tryrm(path.join(package:installdir("lib"), "*.dylib"))
         end
     end)
 
