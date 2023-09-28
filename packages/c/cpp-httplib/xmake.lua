@@ -9,7 +9,6 @@ package("cpp-httplib")
     add_versions("0.9.2", "87131d53c14b921ca1a4fae0d5d4081c218dd18004b768a8069de29b130ab6bc")
     add_versions("0.12.1", "bd2e98842208df1c6c19f5446b7b0fe8f094ad7c931db0fefe52055c496c9d13")
     add_versions("0.12.6", "bdeb6be5f30cce0544204ed50bcb9b15ca0f9b360c148cbf75f0664584ac92d9")
-    add_versions("0.14.0", "80cf0227582baaf9d635951defcdd0d97e384909849625ae6ed6477f74990554")
 
     add_configs("ssl",  { description = "Requires OpenSSL", default = false, type = "boolean"})
     add_configs("zlib",  { description = "Requires Zlib", default = false, type = "boolean"})
