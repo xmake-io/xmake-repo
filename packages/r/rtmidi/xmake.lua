@@ -8,10 +8,10 @@ package("rtmidi")
     add_versions("6.0.0", "ef7bcda27fee6936b651c29ebe9544c74959d0b1583b716ce80a1c6fea7617f0")
 
     if is_plat("linux") then
-        add_configs("alsa", {default = false, showmenu = true, description = "Use alsa api on linux.", values={true, false}})
+        add_configs("alsa", {default = false, showmenu = true, description = "Use alsa api on linux.", type = "boolean"})
     end
     if is_plat("linux", "macosx", "bsd") then
-        add_configs("jack", {default = false, showmenu = true, description = "Use jack api on posix.", values={true, false}})
+        add_configs("jack", {default = false, showmenu = true, description = "Use jack api on posix.", type = "boolean"})
     end
 
     if is_plat("windows", "mingw") then
