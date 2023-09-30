@@ -9,8 +9,8 @@ package("rtmidi")
 
     if is_plat("linux") then
         add_configs("alsa", {default = false, description = "Use alsa api on linux.", type = "boolean"})
-        add_configs("jack", {default = false, description = "Use jack api on posix.", type = "boolean"})
-    elseif is_plat("macosx", "bsd") then
+    end
+    if is_plat("linux", "macosx", "bsd") then
         add_configs("jack", {default = false, description = "Use jack api on posix.", type = "boolean"})
     end
 
