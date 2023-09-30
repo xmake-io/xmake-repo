@@ -11,7 +11,13 @@ package("cista")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows|x64", "windows|x86","linux", "macosx", "bsd", "android", "iphoneos", "cross", function (package)
+        if package:is_plat("android") then
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(cista): need ndk api level > 21 for android")
+        end
         import("package.tools.cmake").install(package, {"-DCISTA_INSTALL=ON"})
     end)
 
