@@ -19,12 +19,15 @@ package("cpp-httplib")
     on_load(function (package)
         if package:config("ssl") then
             package:add("deps", "openssl")
+            package:add("defines", "CPPHTTPLIB_OPENSSL_SUPPORT")
         end
         if package:config("zlib") then
             package:add("deps", "zlib")
+            package:add("defines", "CPPHTTPLIB_ZLIB_SUPPORT")
         end
         if package:config("brotli") then
             package:add("deps", "brotli")
+            package:add("defines", "CPPHTTPLIB_BROTLI_SUPPORT")
         end
     end)
 
