@@ -1,0 +1,52 @@
+package("xlsxio")
+    set_homepage("https://github.com/brechtsanders/xlsxio")
+    set_description("XLSX I/O - C library for reading and writing .xlsx files")
+    set_license("MIT")
+
+    add_urls("https://github.com/brechtsanders/xlsxio/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/brechtsanders/xlsxio.git")
+
+    add_versions("0.2.34", "726e3bc3cf571ac20e5c39b1f192f3793d24ebfdeaadcd210de74aa1ec100bb6")
+
+    add_configs("libzip", {description = "Use libzip instead of Minizip", default = false, type = "boolean"})
+    add_configs("minizip_ng", {description = "Use Minizip NG", default = false, type = "boolean"})
+    add_configs("wide", {description = "Also build UTF-16 library (libxlsxio_readw)", default = false, type = "boolean"})
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
+    add_deps("expat")
+
+    on_load(function (package)
+        if package:config("libzip") then
+            package:add("deps", "libzip")
+        elseif package:config("minizip_ng") then
+            package:add("deps", "minizip-ng", {configs = {zlib = true}})
+        else
+            package:add("deps", "minizip")
+        end
+    end)
+
+    on_install(function (package)
+        local configs = {}
+        if package:config("libzip") then
+            configs.libzip = true
+        elseif package:config("minizip_ng") then
+            configs.minizip_ng = true
+        end
+        if package:config("wide") then
+            package:add("defines", "XML_UNICODE")
+            configs.wide = true
+        end
+        package:add("defines", "BUILD_XLSXIO_" .. (package:config("shared") and "SHARED" or "STATIC"))
+
+        io.replace("lib/xlsxio_read.c", "minizip/", "", {plain = true})
+        io.replace("lib/xlsxio_write.c", "minizip/", "", {plain = true})
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
+    end)
+
+    on_test(function (package)
+        assert(package:has_cfuncs("xlsxioread_open", {includes = "xlsxio_read.h"}))
+    end)
