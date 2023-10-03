@@ -24,9 +24,9 @@ package("libsndfile")
         table.insert(configs, "-DBUILD_TESTING=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DENABLE_MPEG=OFF")
 
         if package:is_plat("windows", "mingw") then
-
             -- libsndfile doesn't build well with a static libFLAC, this fixes it
             if not package:dep("libflac"):config("shared") then
                 local cmake = io.open("CMakeLists.txt", "a")
