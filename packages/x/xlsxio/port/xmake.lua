@@ -1,3 +1,5 @@
+set_allowedplats("windows", "linux", "macosx", "mingw", "cross")
+
 option("libzip", {showmenu = true,  default = false})
 option("minizip_ng", {showmenu = true,  default = false})
 option("wide", {showmenu = true,  default = false})
