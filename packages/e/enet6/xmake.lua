@@ -6,6 +6,7 @@ package("enet6")
     add_urls("https://github.com/SirLynix/enet6/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SirLynix/enet6.git")
 
+    add_versions("v6.0.2", "e4678f2d22ea689b7de66bffb553c9f60d429051f44ca6177e8364eb960c7503")
     add_versions("v6.0.1", "8df91f35d2edc78113924de95946680175007e249c3afd401ec4ad9a1e9572d9")
     add_versions("v6.0.0", "4a6358fcf81a0011d7342349d60941201f88c1c88f124f583a502e4591030a88")
 
