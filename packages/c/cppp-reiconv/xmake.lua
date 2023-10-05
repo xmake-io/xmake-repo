@@ -50,3 +50,22 @@ package("cppp-reiconv")
         table.insert(configs, "-DENABLE_TEST=OFF")
         import("package.tools.cmake").install(package, configs)
     end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+        #include <cppp/reiconv.hpp>
+        #include <iostream>
+        #include <cstdlib>
+        using namespace cppp::base::reiconv;
+
+        static void test()
+        {
+            iconv_t cd = iconv_open("UTF-8", "UTF-8");
+            if(cd == (iconv_t)(-1))
+            {
+                abort();
+            }
+            iconv_close(cd);
+        }
+    ]]}, {configs = {languages = "c++14"}}))
+    end)
