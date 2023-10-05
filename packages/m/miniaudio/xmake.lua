@@ -10,6 +10,10 @@ package("miniaudio")
     add_versions("0.11.17", "4b139065f7068588b73d507d24e865060e942eb731f988ee5a8f1828155b9480")
     add_versions("0.11.18", "85ca916266d809b39902e180a6d16f82caea9c2ea1cea6d374413641b7ba48c3")
 
+    if is_plat("iphoneos", "macosx") then
+        add_defines("MA_NO_RUNTIME_LINKING")
+        add_frameworks("AudioToolbox", "CoreAudio", "AudioUnit", "AVFoundation", "CoreFoundation", "Foundation")
+    end
 
     on_install(function (package)
         os.cp("miniaudio.h", package:installdir("include"))
