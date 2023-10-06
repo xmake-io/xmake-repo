@@ -1,5 +1,5 @@
 package("cppp-reiconv")
-    add_deps("cmake", "python")
+
     set_homepage("https://github.com/cppp-project/cppp-reiconv")
     set_description("A character set conversion library based on GNU LIBICONV.")
 
@@ -7,7 +7,7 @@ package("cppp-reiconv")
 
     add_versions("v2.1.0", "3e539785a437843793c5ce2f8a72cb08f2b543cba11635b06db25cfc6d9cc3a4")
 
-    add_deps("cmake")
+    add_deps("cmake", "python")
 
     on_install(function (package)
         local configs = {}
@@ -25,10 +25,10 @@ package("cppp-reiconv")
         #include <cstdlib>
         using namespace cppp::base::reiconv;
 
-        static void test()
+        void test()
         {
             iconv_t cd = iconv_open("UTF-8", "UTF-8");
-            if(cd == (iconv_t)(-1))
+            if (cd == (iconv_t)(-1))
             {
                 abort();
             }
