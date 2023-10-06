@@ -10,13 +10,8 @@ package("eve")
     add_versions("2023.02.15", "7a5fb59c0e6ef3bef3e8b36d62e138d31e7f2a9f1bdfe95a8e96512b207f84c5")
 
     on_install(function (package)
-        local includedir
-        if package:gitref() then
-            includedir = "include"
-        else
-            includedir = path.join("eve-" .. package:version(), "include")
-        end
-        os.cp(includedir, package:installdir())
+        print(os.filedirs("*"))
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
