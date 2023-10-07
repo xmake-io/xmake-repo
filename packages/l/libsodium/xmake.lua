@@ -42,7 +42,7 @@ package("libsodium")
         os.vcp("bin/**/libsodium.pdb", package:installdir(package:config("shared") and "bin" or "lib"))
     end)
 
-    on_install("linux", "macosx", "mingw", "bsd", "android", "iphoneos", "wasm", function (package)
+    on_install("linux", "macosx", "mingw", "bsd", "android", "iphoneos", "wasm", "cross", function (package)
         import("package.tools.autoconf").install(package)
     end)
 
