@@ -17,14 +17,14 @@ package("libbigwig")
 
     add_deps("cmake")
 
-    on_load("linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", "wasm", function (package)
+    on_load(function (package)
         if package:config("curl") then
             package:add("deps", "libcurl")
         end
         package:add("deps", (package:config("zlib_ng") and "zlib-ng" or "zlib"))
     end)
 
-    on_install(function (package)
+    on_install("linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
