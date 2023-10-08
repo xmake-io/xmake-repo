@@ -13,7 +13,7 @@ function _load_package(packagename, packagedir, packagefile)
     end
 end
 
-function build_artifacts(name, versions)
+function _build_artifacts(name, versions)
     local buildinfo = {name = name, versions = versions}
     print(buildinfo)
     os.tryrm("build-artifacts")
@@ -47,10 +47,12 @@ function build_artifacts(name, versions)
     os.cd(oldir)
 end
 
-function main()
+function _get_latest_modified_packages()
+    local instances = {}
     local files = os.iorun("git diff --name-only HEAD^")
-    for _, file in ipairs(files:split('\n'), string.trim) do
-       if file:find("packages", 1, true) and path.filename(file) == "xmake.lua" then
+    for _, file in ipairs(files:split('\n')) do
+        file = file:trim()
+        if file:find("packages", 1, true) and path.filename(file) == "xmake.lua" then
            assert(file == file:lower(), "%s must be lower case!", file)
            local packagedir = path.directory(file)
            local packagename = path.filename(packagedir)
@@ -58,14 +60,55 @@ function main()
                local instance = _load_package(packagename, packagedir, file)
                if instance and packages.is_supported(instance, "windows")
                   and (instance.is_headeronly and not instance:is_headeronly()) then
-                   local versions = instance:versions()
-                   if versions and #versions > 0 then
-                       table.sort(versions, function (a, b) return semver.compare(a, b) > 0 end)
-                       local version_latest = versions[1]
-                       build_artifacts(instance:name(), table.wrap(version_latest))
-                   end
+                  table.insert(instances, instance)
                end
             end
+       end
+    end
+    return instances
+end
+
+function _get_packagedeps_in_latest_24h()
+    local instances = {}
+    local list = os.iorun("git log --since=\"24 hours ago\" --oneline")
+    local lines = list:split('\n')
+    if #lines > 0 then
+        local line = lines[#lines]
+        local commit = line:split(" ")[1]
+        if commit and #commit == 8 then
+            local files = os.iorun("git diff --name-only " .. commit .. "^")
+            print(files)
+            for _, file in ipairs(files:split('\n')) do
+                file = file:trim()
+                if file:find("packages", 1, true) and path.filename(file) == "xmake.lua" then
+                   assert(file == file:lower(), "%s must be lower case!", file)
+                   local packagedir = path.directory(file)
+                   local packagename = path.filename(packagedir)
+                   if #path.filename(path.directory(packagedir)) == 1 then
+                       local instance = _load_package(packagename, packagedir, file)
+                       if instance and packages.is_supported(instance, "windows")
+                          and (instance.is_headeronly and not instance:is_headeronly()) then
+                          table.insert(instances, instance)
+                       end
+                    end
+               end
+            end
+        end
+    end
+    for _, instance in ipairs(instances) do
+        print(instance:name())
+    end
+end
+
+function main()
+    --_get_packagedeps_in_latest_24h()
+    local instances = _get_latest_modified_packages()
+    for _, instance in ipairs(instances) do
+       local versions = instance:versions()
+       if versions and #versions > 0 then
+           table.sort(versions, function (a, b) return semver.compare(a, b) > 0 end)
+           local version_latest = versions[1]
+           _build_artifacts(instance:name(), table.wrap(version_latest))
        end
     end
 end
