@@ -8,7 +8,8 @@ package("nsis")
 
     on_load(function (package)
         if not package:is_precompiled() then
-            package:add("deps", "scons", "zlib")
+            package:add("deps", "scons")
+            package:add("deps", "zlib", {system = false})
         end
     end)
 
