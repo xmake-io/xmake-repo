@@ -13,11 +13,11 @@ package("nsis")
     on_load(function (package)
         if not package:is_precompiled() then
             package:add("deps", "scons")
-            package:add("deps", "zlib", {system = false, configs = {shared = true}})
+            package:add("deps", "zlib", {system = false, host = true, configs = {shared = true}})
         end
     end)
 
-    on_install("@windows", "@msys", function (package)
+    on_install("@windows|x64", "@windows|x86", "@msys", function (package)
         local zlib_installdir = package:dep("zlib"):installdir()
         os.cp(path.join(zlib_installdir, "lib", "zlib.lib"), path.join(package:installdir("lib"), "zdll.lib"))
         os.cp(path.join(zlib_installdir, "bin", "zlib.dll"), path.join(package:installdir("bin"), "zlib.dll"))
