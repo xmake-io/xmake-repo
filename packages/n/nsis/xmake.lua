@@ -24,6 +24,7 @@ package("nsis")
         os.cp(path.join(zlib_installdir, "include", "*.h"), package:installdir("include"))
         local configs = {
             "NSIS_MAX_STRLEN=8192",
+            "TARGET_ARCH=" .. package:arch(),
             "PREFIX=" .. package:installdir(),
             "ZLIB_W32=" .. package:installdir(),
             "install-compiler", "install-stubs"}
