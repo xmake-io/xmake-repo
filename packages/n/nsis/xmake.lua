@@ -13,15 +13,19 @@ package("nsis")
     on_load(function (package)
         if not package:is_precompiled() then
             package:add("deps", "scons")
-            package:add("deps", "zlib", {system = false})
+            package:add("deps", "zlib", {shared = true, system = false})
         end
     end)
 
-    on_install("@windows", "@msys", "@macosx", "@linux", function (package)
+    on_install("@windows", "@msys", function (package)
+        local zlib_installdir = package:dep("zlib"):installdir()
+        os.cp(path.join(zlib_installdir, "lib", "zlib.lib"), path.join(package:installdir("lib"), "zdll.lib"))
+        os.cp(path.join(zlib_installdir, "bin", "zlib.dll"), path.join(package:installdir("bin"), "zlib.dll"))
+        os.cp(path.join(zlib_installdir, "include", "*.h"), package:installdir("include"))
         local configs = {
             "NSIS_MAX_STRLEN=8192",
             "PREFIX=" .. package:installdir(),
-            "ZLIB_W32=" .. package:dep("zlib"):installdir(),
+            "ZLIB_W32=" .. package:installdir(),
             "install-compiler", "install-stubs"}
         import("package.tools.scons").build(package, configs)
     end)
