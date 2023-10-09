@@ -57,6 +57,7 @@ package("libxlsxwriter")
 
         local packagedeps
         if package:is_plat("wasm") then
+            table.insert(configs, "-DUSE_SYSTEM_MINIZIP=ON")
             if package:version():le("1.1.5") then
                 io.replace("CMakeLists.txt", [[find_package(ZLIB REQUIRED "1.0")]], "", {plain = true})
                 io.replace("CMakeLists.txt", [[find_package(MINIZIP REQUIRED "1.0")]], "", {plain = true})
