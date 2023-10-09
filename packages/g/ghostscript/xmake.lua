@@ -16,7 +16,7 @@ package("ghostscript")
         add_defines("__WIN32__", "_Windows")
     end
 
-    on_install("windows", function (package)
+    on_install("windows|x64", "windows|x86", function (package)
         local configs = {"-f", "psi/msvc.mak", "COMP=cl"}
         if package:is_arch("x64") then
             table.insert(configs, "WIN64=1")
