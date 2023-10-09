@@ -1,0 +1,32 @@
+name: Sync Packagerefs
+
+on:
+  schedule: # execute every 24 hours
+    - cron: "0 */24 * * *"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: latest
+          actions-cache-folder: '.xmake-cache'
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          name: id_rsa # optional
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Build artifacts for packagerefs
+        run: |
+          xmake l scripts/build_artifacts.lua true
+
