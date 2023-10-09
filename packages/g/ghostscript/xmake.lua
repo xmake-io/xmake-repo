@@ -8,6 +8,7 @@ package("ghostscript")
         return format("gs%s/ghostscript-%s", version:gsub("%.", ""), version)
     end})
     add_versions("9.55.0", "31e2064be67e15b478a8da007d96d6cd4d2bee253e5be220703a225f7f79a70b")
+    add_versions("10.0.0", "a57764d70caf85e2fc0b0f59b83b92e25775631714dcdb97cc6e0cea414bb5a3")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
@@ -15,7 +16,7 @@ package("ghostscript")
         add_defines("__WIN32__", "_Windows")
     end
 
-    on_install("windows", function (package)
+    on_install("windows|x64", "windows|x86", function (package)
         local configs = {"-f", "psi/msvc.mak", "COMP=cl"}
         if package:is_arch("x64") then
             table.insert(configs, "WIN64=1")
@@ -55,7 +56,6 @@ package("ghostscript")
             program = package:is_arch("x64") and "gswin64c" or "gswin32c"
         else
             program = "gsc"
-            assert(package:has_cfuncs("gs_rotate", {includes = "gscoord.h"}))
         end
         os.vrunv(program, {"--version"})
         assert(package:has_cxxfuncs("gsapi_new_instance", {includes = "iapi.h"}))
