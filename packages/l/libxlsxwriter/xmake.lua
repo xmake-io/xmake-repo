@@ -16,7 +16,7 @@ package("libxlsxwriter")
     add_configs("dtoa", {description = "Use the locale independent third party Milo Yip DTOA library", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("minizip", "zlib")
+    add_deps("zlib")
 
     on_load(function (package)
         if package:is_plat("android") then
@@ -28,10 +28,13 @@ package("libxlsxwriter")
         if package:config("openssl_md5") then
             package:add("deps", "openssl")
         end
+        if not package:is_plat("linux", "bsd", "mingw") then
+            package:add("deps", "minizip")
+        end
     end)
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF", "-DUSE_SYSTEM_MINIZIP=ON"}
+        local configs = {"-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
@@ -62,7 +65,11 @@ package("libxlsxwriter")
                 io.replace("CMakeLists.txt", [[find_package(MINIZIP "1.0" REQUIRED)]], "", {plain = true})
             end
             packagedeps = {"minizip", "zlib"}
+        elseif package:is_plat("linux", "bsd", "mingw") then
+            table.insert(configs, "-DUSE_SYSTEM_MINIZIP=OFF")
+            io.replace("CMakeLists.txt", [["1.0"]], "", {plain = true})
         else
+            table.insert(configs, "-DUSE_SYSTEM_MINIZIP=ON")
             if package:version():le("1.1.5") then
                 io.replace("CMakeLists.txt", [[find_package(ZLIB REQUIRED "1.0")]], "find_package(ZLIB REQUIRED)", {plain = true})
                 io.replace("CMakeLists.txt", [[find_package(MINIZIP REQUIRED "1.0")]], "", {plain = true})
