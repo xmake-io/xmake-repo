@@ -21,6 +21,9 @@ package("ghostscript")
         if package:is_arch("x64") then
             table.insert(configs, "WIN64=1")
         end
+        if package:is_arch("arm64") then
+            table.insert(configs, "DONT_HAVE_SSE2=1")
+        end
         local vs = import("core.tool.toolchain").load("msvc"):config("vs")
         local vs_toolset = import("core.tool.toolchain").load("msvc"):config("vs_toolset")
         local vc_ver = "13"
