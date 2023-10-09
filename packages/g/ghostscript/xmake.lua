@@ -8,6 +8,7 @@ package("ghostscript")
         return format("gs%s/ghostscript-%s", version:gsub("%.", ""), version)
     end})
     add_versions("9.55.0", "31e2064be67e15b478a8da007d96d6cd4d2bee253e5be220703a225f7f79a70b")
+    add_versions("10.0.0", "a57764d70caf85e2fc0b0f59b83b92e25775631714dcdb97cc6e0cea414bb5a3")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
