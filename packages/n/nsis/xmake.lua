@@ -17,7 +17,7 @@ package("nsis")
         end
     end)
 
-    on_install("@windows", "@msys", function (package)
+    on_install("@windows", "@msys", "@macosx", "@linux", function (package)
         local configs = {
             "NSIS_MAX_STRLEN=8192",
             "PREFIX=" .. package:installdir(),
@@ -27,5 +27,5 @@ package("nsis")
     end)
 
     on_test(function (package)
-        os.runv("makensis.exe", {"/CMDHELP"})
+        os.runv("makensis", {"/CMDHELP"})
     end)
