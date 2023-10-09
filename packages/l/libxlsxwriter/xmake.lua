@@ -49,16 +49,30 @@ package("libxlsxwriter")
         table.insert(configs, "-DIOAPI_NO_64=" .. (package:config("64") and "OFF" or "ON"))
         table.insert(configs, "-DUSE_DTOA_LIBRARY=" .. (package:config("dtoa") and "ON" or "OFF"))
 
-        if package:version():le("1.1.5") then
-            io.replace("CMakeLists.txt", [[find_package(ZLIB REQUIRED "1.0")]], "", {plain = true})
-            io.replace("CMakeLists.txt", [[find_package(MINIZIP REQUIRED "1.0")]], "", {plain = true})
-        else
-            io.replace("CMakeLists.txt", [[find_package(ZLIB "1.0" REQUIRED)]], "", {plain = true})
-            io.replace("CMakeLists.txt", [[find_package(MINIZIP "1.0" REQUIRED)]], "", {plain = true})
-        end
         io.replace("include/xlsxwriter/packager.h", "minizip/", "", {plain = true})
         io.replace("src/packager.c", "minizip/", "", {plain = true})
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"minizip", "zlib"}})
+
+        local packagedeps
+        if package:is_plat("wasm") then
+            if package:version():le("1.1.5") then
+                io.replace("CMakeLists.txt", [[find_package(ZLIB REQUIRED "1.0")]], "", {plain = true})
+                io.replace("CMakeLists.txt", [[find_package(MINIZIP REQUIRED "1.0")]], "", {plain = true})
+            else
+                io.replace("CMakeLists.txt", [[find_package(ZLIB "1.0" REQUIRED)]], "", {plain = true})
+                io.replace("CMakeLists.txt", [[find_package(MINIZIP "1.0" REQUIRED)]], "", {plain = true})
+            end
+            packagedeps = {"minizip", "zlib"}
+        else
+            if package:version():le("1.1.5") then
+                io.replace("CMakeLists.txt", [[find_package(ZLIB REQUIRED "1.0")]], "find_package(ZLIB REQUIRED)", {plain = true})
+                io.replace("CMakeLists.txt", [[find_package(MINIZIP REQUIRED "1.0")]], "", {plain = true})
+            else
+                io.replace("CMakeLists.txt", [[find_package(ZLIB "1.0" REQUIRED)]], "find_package(ZLIB REQUIRED)", {plain = true})
+                io.replace("CMakeLists.txt", [[find_package(MINIZIP "1.0" REQUIRED)]], "", {plain = true})
+            end
+            packagedeps = {"minizip"}
+        end
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
