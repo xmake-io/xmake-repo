@@ -13,7 +13,7 @@ package("nsis")
     on_load(function (package)
         if not package:is_precompiled() then
             package:add("deps", "scons")
-            package:add("deps", "zlib", {shared = true, system = false})
+            package:add("deps", "zlib", {system = false, configs = {shared = true}})
         end
     end)
 
