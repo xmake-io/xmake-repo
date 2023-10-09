@@ -145,7 +145,7 @@ function _get_packagerefs_in_latest_24h()
     end
     local result = {}
     for _, packageref in packagerefs:keys() do
-        if #result < 64 then
+        if #result < 24 then
             table.insert(result, packageref)
         end
     end
