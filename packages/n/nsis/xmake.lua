@@ -22,9 +22,13 @@ package("nsis")
         os.cp(path.join(zlib_installdir, "lib", "zlib.lib"), path.join(package:installdir("lib"), "zdll.lib"))
         os.cp(path.join(zlib_installdir, "bin", "zlib.dll"), path.join(package:installdir("bin"), "zlib.dll"))
         os.cp(path.join(zlib_installdir, "include", "*.h"), package:installdir("include"))
+        local arch = package:arch()
+        if arch == "x64" then
+            arch = "amd64"
+        end
         local configs = {
             "NSIS_MAX_STRLEN=8192",
-            "TARGET_ARCH=" .. package:arch(),
+            "TARGET_ARCH=" .. arch,
             "PREFIX=" .. package:installdir(),
             "ZLIB_W32=" .. package:installdir(),
             "install-compiler", "install-stubs"}
