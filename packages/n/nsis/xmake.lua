@@ -8,12 +8,16 @@ package("nsis")
 
     on_load(function (package)
         if not package:is_precompiled() then
-            package:add("deps", "scons")
+            package:add("deps", "scons", "zlib")
         end
     end)
 
     on_install("@windows", "@msys", function (package)
-        local configs = {"NSIS_MAX_STRLEN=8192", "PREFIX=" .. package:installdir(), "install-compiler", "install-stubs"}
+        local configs = {
+            "NSIS_MAX_STRLEN=8192",
+            "PREFIX=" .. package:installdir(),
+            "ZLIB_W32=" .. package:dep("zlib"):installdir()
+            "install-compiler", "install-stubs"}
         import("package.tools.scons").build(package, configs)
     end)
 
