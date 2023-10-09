@@ -18,7 +18,7 @@ package("gdk-pixbuf")
         add_extsources("brew::gdk-pixbuf")
         add_syslinks("resolv")
         add_patches("2.42.6", path.join(os.scriptdir(), "patches", "2.42.6", "macosx.patch"), "ad2705a5a9aa4b90fb4588bb567e95f5d82fccb6a5d463cd07462180e2e418eb")
-    elseif is_plat("linux") then 
+    elseif is_plat("linux") then
         add_extsources("pacman::gdk-pixbuf2")
     end
 

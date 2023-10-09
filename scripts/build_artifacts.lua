@@ -1,6 +1,7 @@
 import("core.package.package")
 import("core.base.semver")
-import("packages")
+import("core.base.hashset")
+import("packages", {alias = "packages_util"})
 
 -- load package
 function _load_package(packagename, packagedir, packagefile)
@@ -48,6 +49,7 @@ function _build_artifacts(name, versions)
 end
 
 function _get_latest_modified_packages()
+    print("find latest modified packages ..")
     local instances = {}
     local files = os.iorun("git diff --name-only HEAD^")
     for _, file in ipairs(files:split('\n')) do
@@ -58,17 +60,56 @@ function _get_latest_modified_packages()
            local packagename = path.filename(packagedir)
            if #path.filename(path.directory(packagedir)) == 1 then
                local instance = _load_package(packagename, packagedir, file)
-               if instance and packages.is_supported(instance, "windows")
+               if instance and packages_util.is_supported(instance, "windows")
                   and (instance.is_headeronly and not instance:is_headeronly()) then
                   table.insert(instances, instance)
+                  print("  > %s", instance:name())
                end
             end
        end
     end
+    print("%d found", #instances)
     return instances
 end
 
-function _get_packagedeps_in_latest_24h()
+function _get_all_packages()
+    local packages = _g.packages
+    if not packages then
+        packages = {}
+        for _, packagedir in ipairs(os.dirs(path.join("packages", "*", "*"))) do
+            local packagename = path.filename(packagedir)
+            local packagefile = path.join(packagedir, "xmake.lua")
+            local instance = _load_package(packagename, packagedir, packagefile)
+            local basename = instance:get("base")
+            if instance and basename then
+                local basedir = path.join("packages", basename:sub(1, 1):lower(), basename:lower())
+                local basefile = path.join(basedir, "xmake.lua")
+                instance._BASE = _load_package(basename, basedir, basefile)
+            end
+            if instance and packages_util.is_supported(instance, "windows")
+              and (instance.is_headeronly and not instance:is_headeronly()) then
+                table.insert(packages, instance)
+            end
+        end
+        _g.packages = packages
+    end
+    return packages
+end
+
+function _get_packagerefs_of(instance)
+    local packagerefs = {}
+    local packages = _get_all_packages()
+    for _, packageref in ipairs(packages) do
+        local deps = packageref:get("deps")
+        if deps and table.contains(table.wrap(deps), instance:name()) then
+            table.insert(packagerefs, packageref)
+        end
+    end
+    return packagerefs
+end
+
+function _get_packagerefs_in_latest_24h()
+    print("find packagerefs in latest 24h ..")
     local instances = {}
     local list = os.iorun("git log --since=\"24 hours ago\" --oneline")
     local lines = list:split('\n')
@@ -77,7 +118,6 @@ function _get_packagedeps_in_latest_24h()
         local commit = line:split(" ")[1]
         if commit and #commit == 8 then
             local files = os.iorun("git diff --name-only " .. commit .. "^")
-            print(files)
             for _, file in ipairs(files:split('\n')) do
                 file = file:trim()
                 if file:find("packages", 1, true) and path.filename(file) == "xmake.lua" then
@@ -86,7 +126,7 @@ function _get_packagedeps_in_latest_24h()
                    local packagename = path.filename(packagedir)
                    if #path.filename(path.directory(packagedir)) == 1 then
                        local instance = _load_package(packagename, packagedir, file)
-                       if instance and packages.is_supported(instance, "windows")
+                       if instance and packages_util.is_supported(instance, "windows")
                           and (instance.is_headeronly and not instance:is_headeronly()) then
                           table.insert(instances, instance)
                        end
@@ -95,14 +135,26 @@ function _get_packagedeps_in_latest_24h()
             end
         end
     end
+    local packagerefs = hashset.new()
     for _, instance in ipairs(instances) do
-        print(instance:name())
+        print("%s: ", instance:name())
+        for _, packageref in ipairs(_get_packagerefs_of(instance)) do
+            packagerefs:insert(packageref)
+            print("  -> %s", packageref:name())
+        end
     end
+    local result = {}
+    for _, packageref in packagerefs:keys() do
+        if #result < 64 then
+            table.insert(result, packageref)
+        end
+    end
+    print("%d found", #result)
+    return result
 end
 
-function main()
-    --_get_packagedeps_in_latest_24h()
-    local instances = _get_latest_modified_packages()
+function main(updaterefs)
+    local instances = updaterefs and _get_packagerefs_in_latest_24h() or _get_latest_modified_packages()
     for _, instance in ipairs(instances) do
        local versions = instance:versions()
        if versions and #versions > 0 then
