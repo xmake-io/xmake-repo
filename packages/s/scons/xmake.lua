@@ -34,7 +34,7 @@ package("scons")
         end
 
         os.vrunv("python", {"setup.py", "install", "--prefix", package:installdir()})
-        if package:is_plat("windows") then
+        if is_host("windows", "msys") then
             os.mv(package:installdir("Scripts", "*"), package:installdir("bin"))
             os.rmdir(package:installdir("Scripts"))
         end
