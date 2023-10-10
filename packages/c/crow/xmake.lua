@@ -6,6 +6,7 @@ package("crow")
 
     set_urls("https://github.com/CrowCpp/Crow.git")
     add_versions("2023.06.26", "13a91a1941fbabfc289dddcdeab08b80193f7c6c")
+    add_versions("2023.07.22", "4f3f5deaaa01825c63c83431bfa96ccec195f741")
 
     add_configs("zlib", {description = "ZLib for HTTP Compression", default = true, type = "boolean"})
     add_configs("ssl", {description = "OpenSSL for HTTPS support", default = true, type = "boolean"})
