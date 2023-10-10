@@ -29,6 +29,16 @@ package("tmx")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DWANT_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
         table.insert(configs, "-DWANT_ZSTD=" .. (package:config("zstd") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            local cxflags = table.wrap(package:config("cxflags"))
+            table.insert(cxflags, "-DLIBXML_STATIC");
+            package:config_set("cxflags", cxflags)
+            if package:config("shared") then
+                local shflags = table.wrap(package:config("shflags"))
+                table.insert(shflags, "ws2_32.lib");
+                package:config_set("shflags", shflags)
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
