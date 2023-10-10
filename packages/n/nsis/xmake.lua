@@ -10,22 +10,22 @@ package("nsis")
 
     add_versions("v3.09", "4d2ce0d2fecc28bd2d8a0108152339f091e9d1f35342dac0eb4594157435292b")
 
-    add_resources("3.x", "uac", "https://nsis.sourceforge.io/mediawiki/images/8/8f/UAC.zip", "20e3192af5598568887c16d88de59a52c2ce4a26e42c5fb8bee8105dcbbd1760")
-
     on_load(function (package)
         if not package:is_precompiled() then
             package:add("deps", "scons")
-            package:add("deps", "zlib", {system = false, host = true, configs = {shared = true}})
+            package:add("resources", "3.x", "uac", "https://nsis.sourceforge.io/mediawiki/images/8/8f/UAC.zip", "20e3192af5598568887c16d88de59a52c2ce4a26e42c5fb8bee8105dcbbd1760")
+            package:add("resources", "3.x", "zlib", "https://downloads.sourceforge.net/project/libpng/zlib/1.2.8/zlib128-dll.zip", "a03fd15af45e91964fb980a30422073bc3f3f58683e9fdafadad3f7db10762b1")
         end
     end)
 
-    on_install("@windows|x64", "@windows|x86", function (package)
-        local zlib_installdir = package:dep("zlib"):installdir()
-        os.cp(path.join(zlib_installdir, "lib", "zlib.lib"), path.join(package:installdir("lib"), "zdll.lib"))
-        os.cp(path.join(zlib_installdir, "bin", "zlib.dll"), path.join(package:installdir("bin"), "zlib.dll"))
-        os.cp(path.join(zlib_installdir, "include", "*.h"), package:installdir("include"))
+    on_install("@windows|x64", "@windows|x86", "@macosx", "@linux", function (package)
+        local zlib = package:resourcedir("zlib")
+        os.cp(path.join(zlib, "include"), package:installdir())
+        os.cp(path.join(zlib, "lib"), package:installdir())
+        os.cp(path.join(zlib, "zlib1.dll"), package:installdir())
+        os.cp(path.join(zlib, "zlib1.dll"), package:installdir("bin"))
         local arch = package:arch()
-        if arch == "x64" then
+        if arch == "x64" or arch == "x86_64" then
             arch = "amd64"
         end
         local configs = {
@@ -41,3 +41,4 @@ package("nsis")
     on_test(function (package)
         os.runv("makensis", {"/CMDHELP"})
     end)
+
