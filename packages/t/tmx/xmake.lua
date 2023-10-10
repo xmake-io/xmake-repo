@@ -29,6 +29,11 @@ package("tmx")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DWANT_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
         table.insert(configs, "-DWANT_ZSTD=" .. (package:config("zstd") and "ON" or "OFF"))
+        if package:config("zstd") then
+            table.insert(configs, "-DZSTD_PREFER_STATIC=" .. (package:dep("zstd"):config("shared") and "OFF" or "ON"))
+        end
+
+        local packagedeps
         if package:is_plat("windows") then
             local cxflags = table.wrap(package:config("cxflags"))
             table.insert(cxflags, "-DLIBXML_STATIC");
@@ -38,8 +43,12 @@ package("tmx")
                 table.insert(shflags, "ws2_32.lib");
                 package:config_set("shflags", shflags)
             end
+        elseif package:is_plat("android") then
+            packagedeps = {"libxml2"}
+            io.replace("CMakeLists.txt", "find_package(LibXml2 REQUIRED)", "", {plain = true})
+            io.replace("CMakeLists.txt", "target_link_libraries(tmx LibXml2::LibXml2)", "", {plain = true})
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
