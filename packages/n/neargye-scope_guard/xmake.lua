@@ -1,4 +1,4 @@
-package("scope_guard")
+package("neargye-scope_guard")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/Neargye/scope_guard")
     set_description("Scope Guard & Defer C++")
