@@ -28,5 +28,7 @@ jobs:
 
       - name: Build artifacts for packagerefs
         run: |
+          git config --global user.email "waruqi@gmail.com"
+          git config --global user.name "ruki"
           xmake l scripts/build_artifacts.lua true
 

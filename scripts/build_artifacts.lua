@@ -98,11 +98,13 @@ end
 
 function _get_packagerefs_of(instance)
     local packagerefs = {}
-    local packages = _get_all_packages()
-    for _, packageref in ipairs(packages) do
-        local deps = packageref:get("deps")
-        if deps and table.contains(table.wrap(deps), instance:name()) then
-            table.insert(packagerefs, packageref)
+    if instance:is_library() then
+        local packages = _get_all_packages()
+        for _, packageref in ipairs(packages) do
+            local deps = packageref:get("deps")
+            if deps and table.contains(table.wrap(deps), instance:name()) then
+                table.insert(packagerefs, packageref)
+            end
         end
     end
     return packagerefs
@@ -155,6 +157,7 @@ end
 
 function main(updaterefs)
     local instances = updaterefs and _get_packagerefs_in_latest_24h() or _get_latest_modified_packages()
+    os.exit()
     for _, instance in ipairs(instances) do
        local versions = instance:versions()
        if versions and #versions > 0 then
