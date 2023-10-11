@@ -34,21 +34,19 @@ package("tmx")
         end
 
         local packagedeps
+        local cxflags
+        local shflags
         if package:is_plat("windows") then
-            local cxflags = table.wrap(package:config("cxflags"))
-            table.insert(cxflags, "-DLIBXML_STATIC");
-            package:config_set("cxflags", cxflags)
+            cxflags = {"-DLIBXML_STATIC"}
             if package:config("shared") then
-                local shflags = table.wrap(package:config("shflags"))
-                table.insert(shflags, "ws2_32.lib");
-                package:config_set("shflags", shflags)
+                shflags = {"ws2_32.lib"}
             end
         elseif package:is_plat("android") then
             packagedeps = {"libxml2"}
             io.replace("CMakeLists.txt", "find_package(LibXml2 REQUIRED)", "", {plain = true})
             io.replace("CMakeLists.txt", "target_link_libraries(tmx LibXml2::LibXml2)", "", {plain = true})
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps, cxflags = cxflags, shflags = shflags})
     end)
 
     on_test(function (package)
