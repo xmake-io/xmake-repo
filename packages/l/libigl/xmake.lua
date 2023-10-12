@@ -15,6 +15,7 @@ package("libigl")
     add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
     add_configs("cgal", {description = "Use CGAL library.", default = false, type = "boolean"})
     add_configs("imgui", {description = "Use imgui with libigl.", default = false, type = "boolean"})
+    add_configs("embree", {description = "Use embree library.", default = false, type = "boolean"})
 
     if is_plat("windows") then
         add_syslinks("comdlg32")
@@ -32,6 +33,10 @@ package("libigl")
         end
         if package:config("imgui") then
             package:add("deps", "imgui", {configs = {glfw_opengl3 = true}})
+            package:add("deps", "glad")
+        end
+        if package:config("embree") then
+            package:add("deps", "embree")
         end
     end)
 
@@ -71,4 +76,32 @@ package("libigl")
                 igl::cotmatrix(V,F,L);
             }
         ]]}, {configs = {languages = "c++14"}, includes = {"igl/cotmatrix.h", "Eigen/Dense", "Eigen/Sparse"}}))
+
+        if package:config("imgui") then 
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    Eigen::MatrixXd V;
+                    Eigen::MatrixXi F;
+                    igl::opengl::glfw::Viewer viewer;
+                    viewer.data().set_mesh(V, F);
+                    viewer.launch();
+                }
+            ]]}, {configs = {languages = "c++14"}, includes = {"igl/opengl/glfw/Viewer.h", "Eigen/Dense", "Eigen/Sparse"}}))
+        end
+
+        if package:config("embree") then
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    Eigen::MatrixXf V;
+                    Eigen::MatrixXi F;
+                    igl::embree::EmbreeIntersector ei;
+                    ei.init(V,F);
+
+                    igl::Hit hit{};
+                    Eigen::Vector3f look_from{1.0f, 1.0f, 1.0f}, dir{1.0f, 1.0f, 1.0f};
+                    bool is_hit = ei.intersectRay(look_from, dir, hit);
+                }
+            ]]}, {configs = {languages = "c++14"}, includes = {"igl/embree/EmbreeIntersector.h", "igl/Hit.h", "Eigen/Dense", "Eigen/Sparse"}}))
+        end
+
     end)
