@@ -14,8 +14,9 @@ package("oatpp-websocket")
     end
 
     add_deps("cmake")
+    add_deps("oatpp")
+
     on_load(function (package)
-        package:add("deps", "oatpp")
         package:add("includedirs", path.join("include", "oatpp-" .. package:version_str(), "oatpp-websocket"))
         package:add("linkdirs", path.join("lib", "oatpp-" .. package:version_str()))
     end)
