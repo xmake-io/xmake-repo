@@ -2,9 +2,12 @@ package("libnet")
     set_homepage("https://codedocs.xyz/libnet/libnet/")
     set_description("A portable framework for low-level network packet construction")
 
-    add_urls("https://github.com/libnet/libnet/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/libnet/libnet.git")
-    add_versions("v1.2", "b7a371a337d242c017f3471d70bea2963596bec5bd3bd0e33e8517550e2311ef")
+    add_urls("https://github.com/libnet/libnet/releases/download/$(version).tar.gz", {version = function (version)
+        return version .. "/libnet-" .. (version:gsub("v", ""))
+    end})
+    add_urls("https://github.com/libnet/libnet.git")
+
+    add_versions("v1.3", "ad1e2dd9b500c58ee462acd839d0a0ea9a2b9248a1287840bc601e774fb6b28f")
 
     on_load(function (package)
         if package:gitref() then
