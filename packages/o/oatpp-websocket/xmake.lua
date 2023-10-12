@@ -1,6 +1,6 @@
 package("oatpp-websocket")
     set_homepage("https://oatpp.io/")
-    set_description("Provides WebSocket functionality for oatpp applications.")
+    set_description("It provides WebSocket functionality for oatpp applications.")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/oatpp/oatpp-websocket/archive/$(version).tar.gz",
