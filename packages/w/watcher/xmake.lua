@@ -15,7 +15,7 @@ package("watcher")
         add_frameworks("CoreFoundation", "CoreServices")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", function (package)
         os.cp("include", package:installdir())
     end)
 
