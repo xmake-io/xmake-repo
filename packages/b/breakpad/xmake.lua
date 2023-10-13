@@ -34,8 +34,17 @@ package("breakpad")
 
     on_test(function (package)
         local plat
+        local snippets
         if package:is_plat("windows") then
             plat = "windows"
+            snippets = [[
+                void test() {
+                    std::wstring name, dump_path;
+                    google_breakpad::CrashGenerationServer crash_server(
+                        name, nullptr, nullptr, nullptr, nullptr, nullptr,
+                        nullptr, nullptr, nullptr, nullptr, true, &dump_path);
+                }
+            ]]
         elseif package:is_plat("linux") then
             plat = "linux"
         elseif package:is_plat("macosx") then
@@ -46,11 +55,6 @@ package("breakpad")
             plat = "linux"
         end
 
-        local header = "client/" .. plat .. "/handler/exception_handler.h"
-        assert(package:check_cxxsnippets({test = [[
-            #include <client/windows/handler/exception_handler.h>
-            void test() {
-                google_breakpad::MinidumpDescriptor descriptor("path/to/cache");
-            }
-        ]]}, {configs = {languages = "c++11"}, includes = header}))
+        local header = "client/" .. plat .. "/crash_generation/crash_generation_server.h"
+        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = "c++11"}, includes = header}))
     end)
