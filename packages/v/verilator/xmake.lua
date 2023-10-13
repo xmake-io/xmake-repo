@@ -26,7 +26,7 @@ package("verilator")
 
     on_install("windows", function (package)
         import("package.tools.cmake")
-        local configs = {}
+        local configs = {"-DDEBUG_AND_RELEASE_AND_COVERAGE=OFF"}
         local cxflags = {}
         local winflexbison = package:dep("winflexbison")
         local flex = winflexbison:fetch()
