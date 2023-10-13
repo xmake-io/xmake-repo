@@ -46,7 +46,7 @@ package("verilator")
 
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf")
-        local configs = {}
+        local configs = {"-DDEBUG_AND_RELEASE_AND_COVERAGE=OFF"}
         local cxflags = {}
         local flex = package:dep("flex"):fetch()
         if flex then
