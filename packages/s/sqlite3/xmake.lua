@@ -9,6 +9,8 @@ package("sqlite3")
             year = "2018"
         elseif version:le("3.36") then
             year = "2021"
+        elseif version:le("3.43") then
+            year = "2023"
         end
         local version_str = version:gsub("[.+]", "")
         if #version_str < 7 then
@@ -25,6 +27,7 @@ package("sqlite3")
     add_versions("3.36.0+0", "bd90c3eb96bee996206b83be7065c9ce19aef38c3f4fb53073ada0d0b69bbce3")
     add_versions("3.37.0+200", "4089a8d9b467537b3f246f217b84cd76e00b1d1a971fe5aca1e30e230e46b2d8")
     add_versions("3.39.0+200", "852be8a6183a17ba47cee0bbff7400b7aa5affd283bf3beefc34fcd088a239de")
+    add_versions("3.43.0+200", "6d422b6f62c4de2ca80d61860e3a3fb693554d2f75bb1aaca743ccc4d6f609f0")
 
     if is_plat("macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
