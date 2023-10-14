@@ -1,4 +1,5 @@
 function add_versions_list()
+    add_versions("8.4.0", "e5250581a9c032b1b6ed3cf2f9c114c811fc41881069e9892d115cc73f9e88c6")
     add_versions("8.0.1", "9b6b1e96b748d04b968786b6bdf407aa5c75ab53a3d37c1c8c81cdb736555ccf")
     add_versions("7.87.0", "5d6e128761b7110946d1276aff6f0f266f2b726f5e619f7e0a057a474155f307")
     add_versions("7.86.0", "f5ca69db03eea17fa8705bdfb1a9f58d76a46c9010518109bb38f313137e0a28")
