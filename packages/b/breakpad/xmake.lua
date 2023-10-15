@@ -38,19 +38,22 @@ package("breakpad")
                     google_breakpad::ExceptionHandler handler(dump_path, nullptr, nullptr, nullptr, 0);
                 }
             ]]
+        elseif package:is_plat("macosx") then
+            plat = "mac"
+            snippets = [[
+                void test() {
+                    std::string dump_path;
+                    google_breakpad::ExceptionHandler handler(
+                        dump_path, nullptr, nullptr, nullptr, false, nullptr);
+                }
+            ]]
         else
+            plat = "linux"
             snippets = [[
                 void test() {
                     google_breakpad::MinidumpDescriptor descriptor("/tmp");
                 }
             ]]
-            if package:is_plat("macosx") then
-                plat = "mac"
-            elseif package:is_plat("android") then
-                plat = "android"
-            else
-                plat = "linux"
-            end
         end
 
         local header = "client/" .. plat .. "/handler/exception_handler.h"
