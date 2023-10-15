@@ -8,6 +8,10 @@ package("breakpad")
 
     add_versions("v2023.01.27", "f187e8c203bd506689ce4b32596ba821e1e2f034a83b8e07c2c635db4de3cc0b")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
+    end
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::breakpad")
     end
@@ -20,7 +24,9 @@ package("breakpad")
         add_frameworks("CoreFoundation")
     end
 
-    on_install(function (package)
+    add_deps("libdisasm")
+
+    on_install("windows|x64", "windows|x86", function (package)
         io.replace("src/processor/disassembler_x86.h", "third_party/", "", {plain = true})
         io.replace("src/processor/exploitability_win.cc", "third_party/", "", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
