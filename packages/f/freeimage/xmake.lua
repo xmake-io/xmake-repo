@@ -17,7 +17,7 @@ package("freeimage")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         if package:is_plat("windows") and package:is_arch("x86") then
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             if tonumber(vs) < 2019 then
