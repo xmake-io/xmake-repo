@@ -30,6 +30,8 @@ package("openmp")
                 local flagname = toolkind == "cxx" and "cxxflags" or "cflags"
                 if package:has_tool(toolkind, "cl") then
                     result[flagname] = (package:config("experimental") and "/openmp:experimental" or "/openmp")
+                elseif package:has_tool(toolkind, "clang_cl") then
+                    result[flagname] = "-Xclang" .. (package:config("experimental") and "/openmp:experimental" or "/openmp")
                 elseif package:has_tool(toolkind, "clang", "clangxx") then
                     if package:is_plat("macosx") then
                         result[flagname] = "-Xpreprocessor -fopenmp"
