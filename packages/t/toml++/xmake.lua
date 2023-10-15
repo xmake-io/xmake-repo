@@ -10,6 +10,7 @@ package("toml++")
     add_versions("v3.1.0", "dae72714fc356ca1b019298d9e6275cc41ba95546ae722ccdb6795e92f47762e")
     add_versions("v3.2.0", "aeba776441df4ac32e4d4db9d835532db3f90fd530a28b74e4751a2915a55565")
     add_versions("v3.3.0", "fc1a5eb410f3c67e90e5ad1264a1386d020067cfb01b633cc8c0441789aa6cf2")
+    add_versions("v3.4.0", "8517f65938a4faae9ccf8ebb36631a38c1cadfb5efa85d9a72e15b9e97d25155")
 
     add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
 
