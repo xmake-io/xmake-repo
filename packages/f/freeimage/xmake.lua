@@ -9,6 +9,7 @@ package("freeimage")
     add_versions("3.18.0", "f41379682f9ada94ea7b34fe86bf9ee00935a3147be41b6569c9605a53e438fd")
 
     add_patches("3.18.0", path.join(os.scriptdir(), "patches", "3.18.0", "libjxr.patch"), "fddbb9fa736da383f54352dc0ab848d083d9279b66cc6ac53910236144ad75ab")
+	add_patches("3.18.0", path.join(os.scriptdir(), "patches", "3.18.0", "openexr.patch"), "990660523c4ba6dfe8498ad090394bdb0797769803c8a6a99f79d96947ddbe57")
 
     on_load("windows", function (package)
         if not package:config("shared") then
