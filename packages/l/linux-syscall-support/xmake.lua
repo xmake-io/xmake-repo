@@ -7,9 +7,9 @@ package("linux-syscall-support")
     add_versions("v2022.10.12", "9719c1e1e676814c456b55f5f070eabad6709d31")
 
     on_install("linux", function (package)
-        os.cp("linux_syscall_support.h", package:installdir("include"))
+        os.cp("linux_syscall_support.h", package:installdir("include/lss"))
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("sys_open", {includes = "linux_syscall_support.h"}))
+        assert(package:has_cfuncs("sys_open", {includes = "lss/linux_syscall_support.h"}))
     end)
