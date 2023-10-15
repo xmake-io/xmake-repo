@@ -5,7 +5,6 @@ set_languages("c++17")
 
 add_requires("libdisasm")
 
-
 target("breakpad")
     set_kind("$(kind)")
 
@@ -68,6 +67,7 @@ target("breakpad")
                       "src/common/mac/*.cc",
                       "src/client/mac/crash_generation/*.cc",
                       "src/client/mac/handler/*.cc")
+            remove_files("src/common/mac/*test*.cc")
             add_headerfiles("src/(common/mac/*.h)",
                             "src/(client/mac/crash_generation/*.h)",
                             "src/(client/mac/handler/*.h)")
@@ -85,7 +85,7 @@ target("breakpad")
         end
     end
 
-    on_load(function (target)
+    on_config(function (target)
         if target:is_plat("windows") then
             local msvc = target:toolchain("msvc")
             if msvc then
