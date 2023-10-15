@@ -61,27 +61,31 @@ target("breakpad")
             if is_kind("shared") then
                 add_rules("utils.symbols.export_all", {export_classes = true})
             end
-        elseif is_plat("macosx") then
-            add_defines("HAVE_MACH_O_NLIST_H")
-            add_files("src/common/mac/MachIPC.mm",
-                      "src/common/mac/*.cc",
-                      "src/client/mac/crash_generation/*.cc",
-                      "src/client/mac/handler/*.cc")
-            remove_files("src/common/mac/*test*.cc")
-            add_headerfiles("src/(common/mac/*.h)",
-                            "src/(client/mac/crash_generation/*.h)",
-                            "src/(client/mac/handler/*.h)")
-
-            add_frameworks("CoreFoundation")
         else
-            add_defines("HAVE_A_OUT_H")
-            add_files("src/client/linux/**.cc", "src/common/linux/**.cc")
-            remove_files("src/client/linux/sender/*test*.cc",
-                         "src/client/linux/handler/*test*.cc",
-                         "src/client/linux/microdump_writer/*test*.cc",
-                         "src/client/linux/minidump_writer/*test*.cc")
-            add_headerfiles("src/(client/linux/**.h)", "src/(common/linux/**.h)")
-            add_syslinks("pthread")
+            add_files("src/common/dwarf/*.cc|src/common/dwarf/*test*.cc")
+            add_headerfiles("src/(common/dwarf/*.h)")
+            if is_plat("macosx") then
+                add_defines("HAVE_MACH_O_NLIST_H")
+                add_files("src/common/mac/MachIPC.mm",
+                        "src/common/mac/*.cc",
+                        "src/client/mac/crash_generation/*.cc",
+                        "src/client/mac/handler/*.cc")
+                remove_files("src/common/mac/*test*.cc")
+                add_headerfiles("src/(common/mac/*.h)",
+                                "src/(client/mac/crash_generation/*.h)",
+                                "src/(client/mac/handler/*.h)")
+
+                add_frameworks("CoreFoundation")
+            else
+                add_defines("HAVE_A_OUT_H")
+                add_files("src/client/linux/**.cc", "src/common/linux/**.cc")
+                remove_files("src/client/linux/sender/*test*.cc",
+                            "src/client/linux/handler/*test*.cc",
+                            "src/client/linux/microdump_writer/*test*.cc",
+                            "src/client/linux/minidump_writer/*test*.cc")
+                add_headerfiles("src/(client/linux/**.h)", "src/(common/linux/**.h)")
+                add_syslinks("pthread")
+            end
         end
     end
 
