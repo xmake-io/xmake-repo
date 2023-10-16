@@ -15,7 +15,7 @@ package("uuid_v4")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "mingw", "msys", function (package)
         if package:version():gt("1.0.0") then
             import("package.tools.cmake").install(package)
         else
