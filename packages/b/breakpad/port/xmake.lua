@@ -32,7 +32,9 @@ target("breakpad")
         remove_headerfiles("src/processor/*test*.h", "src/processor/synth_minidump.h")
 
         add_files("src/common/*.cc", "src/client/*.cc")
-        remove_files("src/common/*test*.cc", "src/client/*test*.cc")
+        remove_files("src/common/*test*.cc",
+                     "src/client/*test*.cc",
+                     "src/client/minidump_file_writer.cc")
         add_headerfiles("src/(common/*.h)", "src/(client/*.h)")
         remove_headerfiles("src/common/*test*.h", "src/client/*test*.h")
 
@@ -50,8 +52,7 @@ target("breakpad")
                          "src/common/path_helper.cc",
                          "src/common/stabs_to_module.cc",
                          "src/common/stabs_reader.cc",
-                         "src/common/dwarf*.cc",
-                         "src/client/minidump_file_writer.cc")
+                         "src/common/dwarf*.cc")
             add_headerfiles("src/(common/windows/*.h)",
                             "src/(client/windows/common/*.h)",
                             "src/(client/windows/crash_generation/*.h)",
