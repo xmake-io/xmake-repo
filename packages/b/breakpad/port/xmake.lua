@@ -90,10 +90,10 @@ target("breakpad")
             else
                 add_defines("HAVE_A_OUT_H")
                 add_files("src/client/linux/**.cc", "src/common/linux/**.cc")
-                remove_files("src/client/linux/sender/*test*.cc",
-                            "src/client/linux/handler/*test*.cc",
-                            "src/client/linux/microdump_writer/*test*.cc",
-                            "src/client/linux/minidump_writer/*test*.cc")
+                remove_files("src/client/linux/sender/*.cc",
+                             "src/client/linux/handler/*test*.cc",
+                             "src/client/linux/microdump_writer/*test*.cc",
+                             "src/client/linux/minidump_writer/*test*.cc")
                 add_headerfiles("src/(client/linux/**.h)", "src/(common/linux/**.h)")
                 add_syslinks("pthread")
             end
