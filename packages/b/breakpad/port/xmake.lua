@@ -70,10 +70,12 @@ target("breakpad")
                 add_rules("utils.symbols.export_all", {export_classes = true})
             end
         else
-            -- add_files("src/common/dwarf/*.cc")
-            -- remove_files("src/common/dwarf/*test*.cc")
-            -- add_headerfiles("src/(common/dwarf/*.h)")
-            -- remove_headerfiles("src/common/dwarf/*test*.h")
+            add_files("src/common/dwarf/*.cc")
+            remove_files("src/common/dwarf/*test*.cc",
+                         "src/common/dwarf/functioninfo.cc")
+            add_headerfiles("src/(common/dwarf/*.h)")
+            remove_headerfiles("src/common/dwarf/*test*.h",
+                               "src/common/dwarf/functioninfo.h")
 
             if is_plat("macosx") then
                 add_defines("HAVE_MACH_O_NLIST_H")
