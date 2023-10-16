@@ -88,9 +88,9 @@ package("libsdl")
         if package:is_plat("linux") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
         end
-        --if package:is_plat("wasm") and (package:gitref() or package:version():ge("2.28.4")) then
-        --    package:add("ldflags", "-sDEFAULT_LIBRARY_FUNCS_TO_INCLUDE=$stringToUTF8,$UTF8ToString")
-        --end
+        if package:is_plat("wasm") and (package:gitref() or package:version():ge("2.28.4")) then
+            package:add("ldflags", "-sDEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[$stringToUTF8,$UTF8ToString]")
+        end
     end)
 
     on_component("main", function (package, component)
@@ -217,5 +217,5 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED", ldflags = "-sDEFAULT_LIBRARY_FUNCS_TO_INCLUDE=$stringToUTF8,$UTF8ToString"}}))
+        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
     end)
