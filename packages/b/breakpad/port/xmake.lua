@@ -4,13 +4,20 @@ add_rules("mode.debug", "mode.release")
 set_languages("c++17")
 
 add_requires("libdisasm")
+if is_plat("linux") then
+    add_requires("linux-syscall-support")
+end
 
 target("breakpad")
     set_kind("$(kind)")
 
     add_includedirs("src")
     add_headerfiles("src/(google_breakpad/**.h)")
+
     add_packages("libdisasm")
+    if is_plat("linux") then
+        add_packages("linux-syscall-support")
+    end
 
     if is_plat("android") then
         add_files("android/google_breakpad/Android.mk")
