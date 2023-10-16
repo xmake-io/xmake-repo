@@ -33,8 +33,7 @@ target("breakpad")
 
         add_files("src/common/*.cc", "src/client/*.cc")
         remove_files("src/common/*test*.cc",
-                     "src/client/*test*.cc",
-                     "src/client/minidump_file_writer.cc")
+                     "src/client/*test*.cc")
         add_headerfiles("src/(common/*.h)", "src/(client/*.h)")
         remove_headerfiles("src/common/*test*.h", "src/client/*test*.h")
 
@@ -52,7 +51,8 @@ target("breakpad")
                          "src/common/path_helper.cc",
                          "src/common/stabs_to_module.cc",
                          "src/common/stabs_reader.cc",
-                         "src/common/dwarf*.cc")
+                         "src/common/dwarf*.cc",
+                         "src/client/minidump_file_writer.cc")
             add_headerfiles("src/(common/windows/*.h)",
                             "src/(client/windows/common/*.h)",
                             "src/(client/windows/crash_generation/*.h)",
@@ -63,7 +63,8 @@ target("breakpad")
                                "src/common/stabs_to_module.h",
                                "src/common/stabs_reader.h",
                                "src/common/dwarf*.h",
-                               "src/client/minidump_file_writer.h")
+                               "src/client/minidump_file_writer.h",
+                               "src/client/minidump_file_writer-inl.h")
 
             add_syslinks("wininet", "dbghelp", "imagehlp")
             if is_kind("shared") then
