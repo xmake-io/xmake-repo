@@ -26,7 +26,7 @@ package("verilator")
 
     on_install("windows", function (package)
         import("package.tools.cmake")
-        local configs = {"-DDEBUG_AND_RELEASE_AND_COVERAGE=OFF"}
+        local configs = {}
         local cxflags = {}
         local winflexbison = package:dep("winflexbison")
         local flex = winflexbison:fetch()
@@ -46,7 +46,7 @@ package("verilator")
 
     on_install("linux", "macosx", function (package)
         import("package.tools.autoconf")
-        local configs = {"-DDEBUG_AND_RELEASE_AND_COVERAGE=OFF"}
+        local configs = {}
         local cxflags = {}
         local flex = package:dep("flex"):fetch()
         if flex then
