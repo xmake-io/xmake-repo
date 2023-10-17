@@ -32,8 +32,18 @@ package("doxygen")
     end)
 
     on_install("@windows", "@macosx", "@linux", function (package)
+        local configs = {}
+        local cxflags = {}
+        if package:is_plat("windows") then
+            -- these 2 flags are required to make doxygen compile on windows
+            table.insert(cxflags, "/utf-8")
+            table.insert(cxflags, "/DGHC_WITH_EXCEPTIONS")
+
+            table.insert(cxflags, "/EHsc")  -- to reduce warnings
+        end
+
         os.rm("templates/*/PaxHeader")
-        import("package.tools.cmake").install(package)
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
