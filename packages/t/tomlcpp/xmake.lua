@@ -11,6 +11,7 @@ package("tomlcpp")
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_requires("tomlc99")
+            set_languages("c++14")
             add_rules("mode.release", "mode.debug")
             target("tomlcpp")
                 set_kind("$(kind)")
