@@ -10,7 +10,14 @@ package("libfyaml")
 
     add_deps("cmake")
 
-    on_install("linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", "wasm", function (package)
+    on_install("linux", "macosx", "android", "iphoneos", "cross", function (package)
+        if package:is_plat("android") then
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(libfyaml): need ndk api level > 21 for android")
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
