@@ -22,7 +22,7 @@ package("oatpp-websocket")
     end)
 
     on_install("linux", "macosx", "windows|x64", function (package)
-        local configs = {"-DOATPP_BUILD_TESTS=OFF" , "-DOATPP_LINK_TEST_LIBRARY=OFF"}
+        local configs = {"-DOATPP_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
