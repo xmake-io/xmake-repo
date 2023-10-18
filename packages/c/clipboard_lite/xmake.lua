@@ -15,7 +15,7 @@ package("clipboard_lite")
         add_frameworks("CoreFoundation", "Cocoa")
     end
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install("windows", "macosx", "mingw", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             if is_plat("linux") then
