@@ -15,13 +15,38 @@ package("clipboard_lite")
         add_frameworks("CoreFoundation", "Cocoa")
     end
 
-    add_deps("cmake")
+    on_install("windows", "linux", "macosx", "mingw", function (package)
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            if is_plat("linux") then
+                add_requires("libx11")
+            end
+            set_languages("c++14")
+            target("clipboard_lite")
+                set_kind("$(kind)")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
 
-    on_install(function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+                add_files("src/*.cpp")
+                add_includedirs("include")
+                add_headerfiles("include/Clipboard_Lite.h")
+                if is_plat("windows", "mingw") then
+                    add_files("src/windows/*.cpp")
+                    add_includedirs("include/windows")
+                    add_syslinks("user32", "gdi32", "shlwapi")
+                elseif is_plat("linux") then
+                    add_files("src/linux/*.cpp")
+                    add_includedirs("include/linux")
+                    add_syslinks("pthread")
+                    add_packages("libx11")
+                elseif is_plat("macosx") then
+                    add_files("src/ios/*.mm")
+                    add_includedirs("include/ios")
+                    add_frameworks("CoreFoundation", "Cocoa")
+                end
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
