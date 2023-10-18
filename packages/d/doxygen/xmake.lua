@@ -38,7 +38,6 @@ package("doxygen")
             -- these 2 flags are required to make doxygen compile on windows
             table.insert(cxflags, "/utf-8")
             table.insert(cxflags, "/DGHC_WITH_EXCEPTIONS")
-
             table.insert(cxflags, "/EHsc")  -- to reduce warnings
         end
 
