@@ -8,7 +8,7 @@ package("amqp-cpp")
 
     add_versions("v4.3.26", "2baaab702f3fd9cce40563dc1e23f433cceee7ec3553bd529a98b1d3d7f7911c")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     elseif is_plat("linux") then
         add_configs("tcp", {description = "Build TCP module.", default = false, type = "boolean"})
