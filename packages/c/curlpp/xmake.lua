@@ -9,16 +9,10 @@ package("curlpp")
     add_deps("libcurl")
 
     on_install("windows", "linux", "macosx", "mingw", "cross", function (package)
-        local curl = package:dep("libcurl")
-        local curl_configs = curl:requireinfo().configs
-        if curl_configs then
-            curl_configs = string.serialize(curl_configs, {strip = true, indent = false})
-        end
-
         io.writefile("xmake.lua", ([[
             set_languages("c++11")
             add_rules("mode.debug", "mode.release")
-            add_requires("libcurl %s", {configs = %s})
+            add_requires("libcurl")
             target("curlpp")
                 set_kind("$(kind)")
                 add_files("src/**.cpp")
@@ -28,7 +22,7 @@ package("curlpp")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
-        ]]):format(curl:version_str(), curl_configs))
+        ]]))
         import("package.tools.xmake").install(package)
     end)
 
