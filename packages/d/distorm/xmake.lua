@@ -6,6 +6,7 @@ package("distorm")
     add_versions("2021.12.18", "7a02caa1a936f0a653fc75f1aaea9bd3fa654603")
 
     on_install(function (package)
+        io.replace("src/textdefs.c", "RSHORT(&s->p[i]) = RSHORT(&TextBTable[(*buf) * 2]);", "s->p[i] = TextBTable[(*buf) * 2];s->p[i + 1] = TextBTable[(*buf) * 2 + 1];", {plain = true})
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("distorm")
