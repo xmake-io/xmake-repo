@@ -8,11 +8,10 @@ package("microprofile")
 
     add_versions("v4.0", "59cd3ee7afd3ce5cfeb7599db62ccc0611818985a8e649353bec157122902a5c")
 
-    
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "advapi32", "shell32")
         add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
@@ -33,7 +32,7 @@ package("microprofile")
                         add_rules("utils.symbols.export_all", {export_classes = true})
                     end
                 elseif is_plat("linux") then
-                    add_syslinks("pthread")
+                    add_syslinks("pthread", "bsd")
                 end
                 add_packages("stb")
         ]])
