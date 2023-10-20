@@ -26,8 +26,12 @@ package("wintoast")
         #include "wintoastlib.h"
         using namespace WinToastLib;
         void test() {
-            WinToastTemplate templ = WinToastTemplate(WinToastTemplate::Text01);
-            templ.setTextField(L"Hello World", WinToastTemplate::FirstLine);
+            if (WinToast::isCompatible()) {
+                WinToastTemplate templ = WinToastTemplate(WinToastTemplate::Text01);
+                templ.setTextField(L"Hello World", WinToastTemplate::FirstLine);
+            } else {
+                std::cout << "Error, your system in not supported!" << std::endl;
+            }
         }
         ]]}, {configs = {languages = "c++11"}}))
     end)
