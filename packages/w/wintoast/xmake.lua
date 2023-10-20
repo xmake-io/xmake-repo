@@ -16,6 +16,9 @@ package("wintoast")
                 add_headerfiles("include/(wintoastlib.h)")
                 add_files("src/wintoastlib.cpp")
                 add_includedirs("include")
+                if not is_mode("debug") then
+                    add_defines("NDEBUG")
+                end
         ]])
         local configs = {}
         import("package.tools.xmake").install(package, configs)
