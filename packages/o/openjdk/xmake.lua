@@ -54,11 +54,16 @@ package("openjdk")
         if package:is_plat("windows", "mingw") then
             plat = "win32"
             package:addenv("PATH", package:installdir("bin"))
-        elseif package:is_plat("linux") then
-            plat = "linux"
-        elseif package:is_plat("macosx") then
-            plat = "darwin"
-            os.cd("Contents/Home")
+            package:addenv("PATH", package:installdir("bin", "server"))
+        else
+            package:add("linkdirs", package:installdir("lib"))
+            package:add("linkdirs", package:installdir("lib", "server"))
+            if package:is_plat("linux") then
+                plat = "linux"
+            elseif package:is_plat("macosx") then
+                plat = "darwin"
+                os.cd("Contents/Home")
+            end
         end
 
         os.cp("bin", package:installdir())
