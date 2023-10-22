@@ -63,7 +63,7 @@ package("drogon")
         end
     end)
 
-    on_install("windows|x64", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
 
         local configs = {"-DBUILD_EXAMPLES=OFF"}
