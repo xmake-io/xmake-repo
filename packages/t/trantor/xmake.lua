@@ -28,6 +28,9 @@ package("trantor")
     end
 
     on_install("windows", "macosx", "linux", "mingw@windows", function (package)
+        io.replace("CMakeLists.txt", "\"${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/Findc-ares.cmake\"", "", {plain = true})
+        io.replace("CMakeLists.txt", "find_package(c-ares)", "find_package(c-ares CONFIG)", {plain = true})
+        io.replace("CMakeLists.txt", "c-ares_lib", "c-ares::cares", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("pic") ~= false then
