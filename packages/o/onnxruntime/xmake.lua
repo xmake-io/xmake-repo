@@ -3,7 +3,7 @@ package("onnxruntime")
     set_description("ONNX Runtime: cross-platform, high performance ML inferencing and training accelerator")
     set_license("MIT")
 
-    add_configs("gpu", {description = "Enable GPU supports on windows|x64", default = false, type = "boolean"})
+    add_configs("gpu", {description = "Enable GPU supports on windows|x64 and linux|x86_64", default = false, type = "boolean"})
 
     if is_plat("windows") then
         if is_arch("x64") then
@@ -46,6 +46,10 @@ package("onnxruntime")
                 versions["1.11.1"] = "a9a10e76fbb4351d4103a4d46dc37690075901ef3bb7304dfa138820c42c547b"
                 versions["1.16.1"] = "b841f8e8d9a0556bfc5228ff1488395fa041fafe8d16a62e25a254d000d51888"
                 package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x64-gpu-$(version).zip")
+            elseif package:is_plat("linux") and package:is_arch("x86_64") then
+                versions["1.11.1"] = "31c392b5804a57bbcf2550a29a76af8641bfbd8a0f68b7e354d876689fe667f2"
+                versions["1.16.1"] = "474d5d74b588d54aa3e167f38acc9b1b8d20c292d0db92299bdc33a81eb4492d"
+                package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-linux-x64-gpu-$(version).tgz")
             end
             package:set("versions", versions)
         end
