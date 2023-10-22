@@ -38,11 +38,10 @@ package("openjdk")
             if os.isdir(sdkdir) then
                 local result = {}
                 if package:is_plat("windows", "mingw") then
-                    result.includedirs = {path.join(sdkdir, "include")}
+                    result.includedirs = {path.join(sdkdir, "include"), path.join(sdkdir, "include", "win32")}
                     result.linkdirs = path.join(sdkdir, "lib")
                     result.links = {"jvm", "jawt"}
-                    package:addenv("PATH", path.join(sdkdir, "bin"))
-                    table.insert(result.includedirs, path.join(sdkdir, "include", "win32"))
+                    package:addenv("PATH", path.join(sdkdir, "bin"), path.join(sdkdir, "bin", "server"))
                 end
                 return result
             end
@@ -53,11 +52,9 @@ package("openjdk")
         local plat
         if package:is_plat("windows", "mingw") then
             plat = "win32"
-            package:addenv("PATH", package:installdir("bin"))
-            package:addenv("PATH", package:installdir("bin", "server"))
+            package:addenv("PATH", package:installdir("bin"), package:installdir("bin", "server"))
         else
-            package:add("linkdirs", package:installdir("lib"))
-            package:add("linkdirs", package:installdir("lib", "server"))
+            package:add("linkdirs", package:installdir("lib"), package:installdir("lib", "server"))
             if package:is_plat("linux") then
                 plat = "linux"
             elseif package:is_plat("macosx") then
