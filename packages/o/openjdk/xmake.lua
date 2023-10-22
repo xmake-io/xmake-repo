@@ -70,6 +70,7 @@ package("openjdk")
         os.cp("conf", package:installdir())
 
         package:add("includedirs", "include", path.join("include", plat))
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
