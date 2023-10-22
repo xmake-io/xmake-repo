@@ -52,9 +52,9 @@ package("openjdk")
         local plat
         if package:is_plat("windows", "mingw") then
             plat = "win32"
-            package:addenv("PATH", package:installdir("bin"), package:installdir("bin", "server"))
+            package:addenv("PATH", "bin/server")
         else
-            package:add("linkdirs", package:installdir("lib"), package:installdir("lib", "server"))
+            package:add("linkdirs", "lib", "lib/server")
             if package:is_plat("linux") then
                 plat = "linux"
             elseif package:is_plat("macosx") then
