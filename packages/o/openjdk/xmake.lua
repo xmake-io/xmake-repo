@@ -8,7 +8,7 @@ package("openjdk")
         add_versions("20.0.2", "7e5870fd2e19b87cbd1981c4ff7203897384c2eb104977f40ce4951b40ab433e")
     elseif is_host("linux") then
         if is_arch("x86_64") then
-            add_urls("https://download.java.net/java/GA/jdk$(version)/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-$(version)_linux-x64_bin.tar.gz.sha256")
+            add_urls("https://download.java.net/java/GA/jdk$(version)/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-$(version)_linux-x64_bin.tar.gz")
             add_versions("20.0.2", "beaf61959c2953310595e1162b0c626aef33d58628771033ff2936609661956c")
         elseif is_arch("arm64") then
             add_urls("https://download.java.net/java/GA/jdk$(version)/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-$(version)_linux-aarch64_bin.tar.gz")
@@ -71,6 +71,6 @@ package("openjdk")
     end)
 
     on_test(function (package)
-        os.vrun("java --version")
+        os.vrun("java -version")
         assert(package:has_cfuncs("JNI_CreateJavaVM", {includes = "jni.h"}))
     end)
