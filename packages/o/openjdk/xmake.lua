@@ -38,8 +38,8 @@ package("openjdk")
             if os.isdir(sdkdir) then
                 local result = {}
                 if package:is_plat("windows", "mingw") then
-                    result.includedirs = {path.join(sdkdir, "include")},
-                    result.linkdirs = path.join(sdkdir, "lib"),
+                    result.includedirs = {path.join(sdkdir, "include")}
+                    result.linkdirs = path.join(sdkdir, "lib")
                     result.links = {"jvm", "jawt"}
                     package:addenv("PATH", path.join(sdkdir, "bin"))
                     table.insert(result.includedirs, path.join(sdkdir, "include", "win32"))
