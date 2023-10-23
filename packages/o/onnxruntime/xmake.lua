@@ -62,10 +62,10 @@ package("onnxruntime")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <array>
-
+            #include <cstdint>
             void test() {
                 std::array<float, 2> data = {0.0f, 0.0f};
-                std::array<std::int64_t, 1> shape{2};
+                std::array<int64_t, 1> shape{2};
 
                 Ort::Env env;
 
