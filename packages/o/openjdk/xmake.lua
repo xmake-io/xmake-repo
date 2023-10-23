@@ -53,7 +53,7 @@ package("openjdk")
         {
             ["20.0.2"] = "0.9.0rc4"
         }
-        package:add("deps", "alsa-lib " .. versions[package:version()])
+        package:add("deps", "alsa-lib " .. versions[tostring(package:version())])
     end)
 
     on_install("windows|x64", "linux|x86_64", "linux|arm64", "macosx|x86_64", "macosx|arm64", "mingw|x86_64", function (package)
