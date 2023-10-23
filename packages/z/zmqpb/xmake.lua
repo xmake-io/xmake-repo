@@ -13,7 +13,7 @@ package("zmqpb")
     add_deps("protobuf-cpp")
 
     on_load("windows", "macosx", "linux", function (package)
-        if package:version():lt("0.3") then
+        if not package:gitref() and package:version():lt("0.3") then
             package:add("deps", "fmt")
         end
     end)
@@ -24,7 +24,7 @@ package("zmqpb")
     end)
 
     on_test(function (package)
-        if package:version():ge("0.3") then
+        if package:gitref() or package:version():ge("0.3") then
             assert(package:check_cxxsnippets({test = [[
                 void test() {
                     ZmqPb::ReqRep network( "tcp://127.0.0.1:13337", false );
