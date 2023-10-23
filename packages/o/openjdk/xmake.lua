@@ -28,6 +28,7 @@ package("openjdk")
 
     if is_plat("linux") then
         add_extsources("pacman::jdk-openjdk")
+        add_deps("alsa-lib")
     elseif is_plat("macosx") then
         add_extsources("brew::openjdk")
     end
