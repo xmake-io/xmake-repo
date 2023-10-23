@@ -34,7 +34,7 @@ package("drogon")
     add_configs("sqlite3", {description = "Enable sqlite3 support.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("trantor", "jsoncpp", "brotli", "zlib")
+    add_deps("trantor", "jsoncpp", "brotli")
 
     if is_plat("windows") then
         add_syslinks("ws2_32", "rpcrt4", "crypt32", "advapi32", "iphlpapi")
@@ -57,9 +57,13 @@ package("drogon")
                 package:add("deps", dep)
             end
         end
+        
+        if not table.contains(package:get("deps"), "mysql") then
+            package:add("deps", "zlib")
+        end
     end)
 
-    on_install("windows|x64", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
 
         local configs = {"-DBUILD_EXAMPLES=OFF"}
