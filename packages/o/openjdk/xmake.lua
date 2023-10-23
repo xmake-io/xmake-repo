@@ -28,7 +28,6 @@ package("openjdk")
 
     if is_plat("linux") then
         add_extsources("pacman::jdk-openjdk")
-        add_deps("alsa-lib")
     elseif is_plat("macosx") then
         add_extsources("brew::openjdk")
     end
@@ -46,6 +45,12 @@ package("openjdk")
                 end
                 return result
             end
+        end
+    end)
+
+    on_load("linux", function (package)
+        if package:version():eq("20.0.2") then
+            package:add("deps", "alsa-lib 0.9.0rc4")
         end
     end)
 
