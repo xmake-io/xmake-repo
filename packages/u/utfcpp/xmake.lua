@@ -6,6 +6,7 @@ package("utfcpp")
 
     add_urls("https://github.com/nemtrif/utfcpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nemtrif/utfcpp.git")
+    add_versions("v4.0.0", "ac44d9652aa2ee64d405c1705718f26b385337a9b8cf20bf2b2aac6435a16c1e")
     add_versions("v3.2.5", "14fd1b3c466814cb4c40771b7f207b61d2c7a0aa6a5e620ca05c00df27f25afd")
     add_versions("v3.2.4", "fde21a4c519eed25f095a1cd8490167409cc70d7b5e9c38756142e588ccb7c7e")
     add_versions("v3.2.3", "3ba9b0dbbff08767bdffe8f03b10e596ca351228862722e4c9d4d126d2865250")
