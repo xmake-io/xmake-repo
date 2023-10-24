@@ -26,7 +26,7 @@ package("utfcpp")
     on_test(function (package)
         local test_snippet = [[
             #define UTF_CPP_CPLUSPLUS 201103L
-            #include <utf8cpp/utf8.h>
+            #include <utf8.h>
             void test() {
                 std::string line("你好，世界");
                 std::u16string u16line = utf8::utf8to16(line);
