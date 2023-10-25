@@ -34,7 +34,7 @@ package("drogon")
     add_configs("sqlite3", {description = "Enable sqlite3 support.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("trantor", "jsoncpp", "brotli")
+    add_deps("trantor", "jsoncpp", "brotli", "zlib")
 
     if is_plat("windows") then
         add_syslinks("ws2_32", "rpcrt4", "crypt32", "advapi32", "iphlpapi")
@@ -47,7 +47,7 @@ package("drogon")
 
     on_load(function(package)
         local configdeps = {c_ares     = "c-ares",
-                            mysql      = "mysql",
+                            mysql      = "mariadb-connector-c",
                             openssl    = "openssl",
                             postgresql = "postgresql",
                             sqlite3    = "sqlite3"}
@@ -58,13 +58,11 @@ package("drogon")
             end
         end
         
-        if not table.contains(package:get("deps"), "mysql") then
-            package:add("deps", "zlib")
-        end
     end)
 
     on_install("windows", "macosx", "linux", function (package)
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
+        io.replace("cmake_modules/FindMySQL.cmake", "PATH_SUFFIXES mysql", "PATH_SUFFIXES mysql mariadb", {plain = true})
 
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
