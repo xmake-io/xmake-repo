@@ -67,12 +67,12 @@ package("mariadb-connector-c")
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") then
-            for _, lib in pairs(os.files(path.join(package:installdir("lib"), "mariadb", "*.lib"))) do
-                os.ln(lib, path.join(package:installdir("lib"), path.filename(lib)))
+            for _, lib in ipairs(os.files(path.join(package:installdir("lib"), "mariadb", "*.lib"))) do
+                os.trycp(lib, path.join(package:installdir("lib"), path.filename(lib)))
             end
         else
-            for _, lib in pairs(os.files(path.join(package:installdir("lib"), "mariadb", "*.a"))) do
-                os.ln(lib, path.join(package:installdir("lib"), path.filename(lib)))
+            for _, lib in ipairs(os.files(path.join(package:installdir("lib"), "mariadb", "*.a"))) do
+                os.trycp(lib, path.join(package:installdir("lib"), path.filename(lib)))
             end
         end
         if package:config("shared") then    
