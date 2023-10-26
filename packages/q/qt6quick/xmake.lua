@@ -17,19 +17,13 @@ package("qt6quick")
             cxflags = "-fPIC"
         end
         assert(package:check_cxxsnippets({test = [[
-            int test(int argc, char** argv) {
-                #if QT_VERSION >= 0x50601
-                    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-                #endif
-
-                    QGuiApplication app(argc, argv);
-
-                    QQmlApplicationEngine engine;
-                    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-                    if (engine.rootObjects().isEmpty())
-                        return -1;
-
-                    return app.exec();
+            int test(int argc, char** argv) 
+            {                
+                QGuiApplication app(argc, argv);
+                QQuickView view;
+                view.setSource(QUrl::fromLocalFile("MyItem.qml"));
+                view.show();
+                return app.exec();
             }
-        ]]}, {configs = {languages = "c++17", cxflags = cxflags}, includes = {"QGuiApplication", "QQmlApplicationEngine"}}))
+        ]]}, {configs = {languages = "c++17", cxflags = cxflags}, includes = {"QGuiApplication", "QQuickView"}}))
     end)
