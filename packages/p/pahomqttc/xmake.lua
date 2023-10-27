@@ -20,6 +20,6 @@ package("pahomqttc")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("MQTTClient_message", {includes = "MQTTClient.h"}))
+        assert(package:has_cfuncs("MQTTClient_connect", {includes = "MQTTClient.h"}))
     end)   
-package_end()
+    
