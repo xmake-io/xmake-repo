@@ -23,5 +23,4 @@ package("pahomqttcpp")
 
     on_test(function (package)
         assert(package:has_cxxtypes("mqtt::message", {includes = "mqtt/message.h"}))
-    end)    
-package_end()
+    end)
