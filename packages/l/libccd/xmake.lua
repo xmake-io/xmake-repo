@@ -23,6 +23,11 @@ package("libccd")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCCD_HIDE_ALL_SYMBOLS=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DENABLE_DOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
+
+        io.replace("src/CMakeLists.txt", "  find_library(LIBM_LIBRARY NAMES m)", "", {plain = true})
+        io.replace("src/CMakeLists.txt", "  if(NOT LIBM_LIBRARY)", "if(OFF)", {plain = true})
+        io.replace("src/CMakeLists.txt", "  target_link_libraries(ccd \"${LIBM_LIBRARY}\")", "  target_link_libraries(ccd -lm)", {plain = true})
+
         import("package.tools.cmake").install(package, configs)
     end)
 
