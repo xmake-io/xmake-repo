@@ -16,6 +16,10 @@ package("pahomqttcpp")
         local configs = {"-DPAHO_BUILD_SAMPLES=FALSE",
                         "-DPAHO_WITH_SSL=FALSE",
                         "-DPAHO_BUILD_DOCUMENTATION=FALSE"}
+        if is_plat("windows") then
+            table.insert(configs, "-DPAHO_MQTT_C_LIBRARIES=" .. pahomqttc:installdir("lib"))
+            table.insert(configs, "-DPAHO_MQTT_C_INCLUDE_DIRS=" .. pahomqttc:installdir("include"))
+        end
         table.insert(configs, "-DCMAKE_PREFIX_PATH=" .. pahomqttc:installdir())
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
