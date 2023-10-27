@@ -20,11 +20,6 @@ package("pahomqttc")
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets({test = [[
-                #include <MQTTClient.h>
-                void test() {              
-                    MQTTClient c;
-                }
-        ]]}, {configs = {languages = "c11"}}))
+        assert(package:has_cfuncs("MQTTClient_connect", {includes = "MQTTClient.h"}))
     end)   
     
