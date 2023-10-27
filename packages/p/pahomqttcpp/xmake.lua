@@ -21,6 +21,11 @@ package("pahomqttcpp")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function (package)
-        assert(package:has_cxxtypes("mqtt::message", {includes = "mqtt/message.h"}))
+    on_test(function (package) 
+        assert(package:check_cxxsnippets({test = [[
+            #include <mqtt/client.h>
+            void test() {
+                mqtt::client cli{"localhost", "some_id"};
+            }
+        ]]}, {configs = {languages = "c++11"}}))
     end)
