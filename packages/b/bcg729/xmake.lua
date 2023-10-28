@@ -10,9 +10,17 @@ package("bcg729")
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {}
+        local configs = {"-DENABLE_TESTS=OFF"}
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("shared") then
+            table.insert(configs, "-DENABLE_SHARED=ON")
+            table.insert(configs, "-DENABLE_STATIC=OFF")
+        else
+            table.insert(configs, "-DENABLE_SHARED=OFF")
+            table.insert(configs, "-DENABLE_STATIC=ON")
+        end
+
         import("package.tools.cmake").install(package, configs)
     end)
 
