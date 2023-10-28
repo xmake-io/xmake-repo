@@ -95,9 +95,7 @@ rule("wayland.protocols")
         end
         if client then
             local clientfile = path.join(outputdir, client:format(basename))
-
             local client_args = {"client-header", sourcefile, clientfile}
-
             batchcmds:show_progress(opt.progress, "${color.build.object}generating.wayland.protocol.client %s", basename)
             batchcmds:vexecv(wayland_scanner.program, client_args)
         end
@@ -106,22 +104,18 @@ rule("wayland.protocols")
         local server = target:extraconf("rules", rule_name, "server")
         if server then
             local serverfile = path.join(outputdir, server:format(basename))
-
             local server_args = {"server-header", sourcefile, serverfile}
-
             batchcmds:show_progress(opt.progress, "${color.build.object}generating.wayland.protocol.server %s", basename)
             batchcmds:vexecv(wayland_scanner.program, server_args)
         end
 
         -- Generate code
-        local code = target:extraconf("rules", rule_name, "code") or "%s.c"
-        local codefile = path.join(outputdir, code:format(basename))
-
         local public = target:extraconf("rules", rule_name, "public")
         local visibility = public and "public" or "private"
 
+        local code = target:extraconf("rules", rule_name, "code") or "%s.c"
+        local codefile = path.join(outputdir, code:format(basename))
         local code_args = {visibility .. "-code", sourcefile, codefile}
-
         batchcmds:show_progress(opt.progress, "${color.build.object}generating.wayland.protocol.%s %s", visibility, basename)
         batchcmds:vexecv(wayland_scanner.program, code_args)
 
