@@ -122,7 +122,7 @@ rule("wayland.protocols")
         local codefile = path.join(outputdir, code:format(basename))
 
         local public = target:extraconf("rules", rule_name, "public")
-        visibility = public and "public" or "private"
+        local visibility = public and "public" or "private"
 
         local code_args = {visibility .. "-code", sourcefile, codefile}
 
