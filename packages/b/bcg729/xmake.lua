@@ -17,7 +17,6 @@ package("bcg729")
 
     on_install(function (package)
         local configs = {"-DENABLE_TESTS=OFF"}
-
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DENABLE_SHARED=ON")
