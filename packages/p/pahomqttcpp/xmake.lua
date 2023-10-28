@@ -25,9 +25,9 @@ package("pahomqttcpp")
                 table.insert(configs, "-DPAHO_MQTT_C_INCLUDE_DIRS=" .. table.concat(includedirs, " "))
             end
 
-            local linkdirs = pahomqttc.libfiles
-            if linkdirs then
-                table.insert(configs, "-DPAHO_MQTT_C_LIBRARIES=" .. table.concat(linkdirs, " "))
+            local libfiles = pahomqttc.libfiles
+            if libfiles then
+                table.insert(configs, "-DPAHO_MQTT_C_LIBRARIES=" .. table.concat(libfiles, " "))
             end
         end
         
