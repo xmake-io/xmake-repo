@@ -11,7 +11,7 @@ package("pahomqttcpp")
     add_deps("cmake")
     add_deps("pahomqttc")
 
-    on_install("windows", "linux", "macos", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         
         local configs = {"-DPAHO_WITH_SSL=FALSE"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -25,7 +25,7 @@ package("pahomqttcpp")
                 table.insert(configs, "-DPAHO_MQTT_C_INCLUDE_DIRS=" .. table.concat(includedirs, " "))
             end
 
-            local linkdirs = pahomqttc.linkdirs
+            local linkdirs = pahomqttc.libfiles
             if linkdirs then
                 table.insert(configs, "-DPAHO_MQTT_C_LIBRARIES=" .. table.concat(linkdirs, " "))
             end
