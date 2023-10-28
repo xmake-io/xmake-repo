@@ -1,6 +1,6 @@
 package("bcg729")
     set_homepage("http://linphone.org")
-    set_description(" Linphone.org mirror for bcg729 (git://git.linphone.org/bcg729.git)")
+    set_description("Bcg729 is an opensource implementation of both encoder and decoder of the ITU G729 Annex A/B speech codec.")
 
     add_urls("https://github.com/BelledonneCommunications/bcg729.git")
     add_versions("1.0.4", "9ada79d7ff53815e85432e7442810a2fd49dbd0e")
