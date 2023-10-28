@@ -22,10 +22,7 @@ package("wayland-protocols")
     end
 
     on_install("linux", function (package)
-        local configs = {
-            "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"),
-            "-Dtests=false",
-        }
+        local configs = {"-Dtests=false"}
         import("package.tools.meson").install(package, configs)
     end)
 
