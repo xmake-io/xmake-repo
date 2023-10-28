@@ -98,5 +98,11 @@ package("libhv")
 
     on_test(function(package)
         assert(package:has_cfuncs("hloop_new", {includes = "hv/hloop.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include "hv/hv.h"
+            void test() {
+                const char* version = hv_compile_version();
+            }
+        ]]}))
     end)
 
