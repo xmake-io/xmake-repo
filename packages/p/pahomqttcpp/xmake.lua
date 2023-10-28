@@ -14,11 +14,8 @@ package("pahomqttcpp")
     on_install("windows", "linux", "macos", function (package)
         local pahomqttc = package:dep("pahomqttc")
         
-        local configs = {"-DPAHO_BUILD_SAMPLES=FALSE",
-                         "-DPAHO_WITH_SSL=FALSE",
-                         "-DPAHO_BUILD_DOCUMENTATION=FALSE"}
-        table.insert(configs, "-DCMAKE_PREFIX_PATH=" .. pahomqttc:installdir())
-        if is_plat("windows") then
+        local configs = {"-DPAHO_WITH_SSL=FALSE"}
+        if package:is_plat("windows") then
             table.insert(configs, "-DPAHO_MQTT_C_LIBRARIES=" .. pahomqttc:installdir("lib"))
             table.insert(configs, "-DPAHO_MQTT_C_INCLUDE_DIRS=" .. pahomqttc:installdir("include"))
         end
