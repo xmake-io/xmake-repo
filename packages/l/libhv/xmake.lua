@@ -54,7 +54,7 @@ package("libhv")
         elseif package:config("nghttp2") then
             -- TODO
         end
-        if package:is_plat("windows") and not package:config("shared") then
+        if not package:config("shared") then
             package:add("defines", "HV_STATICLIB")
         end
     end)
