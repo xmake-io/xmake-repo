@@ -12,18 +12,25 @@ package("pahomqttcpp")
     add_deps("pahomqttc")
 
     on_install("windows", "linux", "macos", function (package)
-        local pahomqttc = package:dep("pahomqttc")
         
-        local configs = {"-DPAHO_BUILD_SAMPLES=FALSE",
-                         "-DPAHO_WITH_SSL=FALSE",
-                         "-DPAHO_BUILD_DOCUMENTATION=FALSE"}
-        table.insert(configs, "-DCMAKE_PREFIX_PATH=" .. pahomqttc:installdir())
-        if is_plat("windows") then
-            table.insert(configs, "-DPAHO_MQTT_C_LIBRARIES=" .. pahomqttc:installdir("lib"))
-            table.insert(configs, "-DPAHO_MQTT_C_INCLUDE_DIRS=" .. pahomqttc:installdir("include"))
-        end
+        local configs = {"-DPAHO_WITH_SSL=FALSE"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        if package:is_plat("windows") then
+            local pahomqttc = package:dep("pahomqttc"):fetch()
+
+            local includedirs = pahomqttc.includedirs or pahomqttc.sysincludedirs
+            if includedirs and #includedirs > 0 then
+                table.insert(configs, "-DPAHO_MQTT_C_INCLUDE_DIRS=" .. table.concat(includedirs, " "))
+            end
+
+            local linkdirs = pahomqttc.linkdirs
+            if linkdirs then
+                table.insert(configs, "-DPAHO_MQTT_C_LIBRARIES=" .. table.concat(linkdirs, " "))
+            end
+        end
+        
         import("package.tools.cmake").install(package, configs)
     end)
 
