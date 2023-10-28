@@ -1,8 +1,8 @@
--- Generate source files from wayland protocol files
--- for example
+-- Generate source files from wayland protocol files.
+-- Example:
 --[[
     if is_plat("linux") then
-        add_rules("wayland-protocols@wayland.protocols")
+        add_rules("@wayland-protocols/wayland.protocols")
         on_load(function(target)
             local pkg = target:pkg("wayland-protocols")
             local wayland_protocols_dir = path.join(target:pkg("wayland-protocols"):installdir() or "/usr", "share", "wayland-protocols")
@@ -14,39 +14,68 @@
         end)
     end
 ]]
+-- Options:
+--[[
+    add_rules("@wayland-protocols/wayland.protocols", {
+        outputdir = "...",  -- Path for generated files, default is `path.join(target:autogendir(), "rules", "wayland.protocols")`
+        client = "...",     -- Path format for client protocol header files, default is `"%s.h"`, set to `false` to disable its generation
+        server = "...",     -- Path format for server protocol header files, default is `nil`
+        code = "...",       -- Path format for code files, default is `"%s.c"`
+        public = false,     -- Visibility for headers and symbols in generated code, can be `false` or `true`, default is `false`
+    })
+]]
+
 rule("wayland.protocols")
     set_extensions(".xml")
-
-    on_load(function(target)
-        if target:rule("c++.build") then
-            local rule = target:rule("c++.build"):clone()
-            rule:add("deps", "wayland.protocols", {order = true})
-            target:rule_add(rule)
-        end
-    end)
 
     on_config(function(target)
         import("core.base.option")
 
-        local outputdir = target:extraconf("rules", "wayland.protocols", "outputdir") or path.join(target:autogendir(), "rules", "wayland.protocols")
+        local rule_name = "@wayland-protocols/wayland.protocols"
+
+        if target:rule("c++.build") then
+            local rule = target:rule("c++.build"):clone()
+            rule:add("deps", rule_name, {order = true})
+            target:rule_add(rule)
+        end
+
+        local public = target:extraconf("rules", rule_name, "public")
+
+        local outputdir = target:extraconf("rules", rule_name, "outputdir") or path.join(target:autogendir(), "rules", "wayland.protocols")
         if not os.isdir(outputdir) then
             os.mkdir(outputdir)
         end
-        target:add("includedirs", outputdir)
+        target:add("includedirs", outputdir, {public = public})
 
         local dryrun = option.get("dry-run")
-        local sourcebatches = target:sourcebatches()
-        if not dryrun and sourcebatches["wayland.protocols"] and sourcebatches["wayland.protocols"].sourcefiles then
-            for _, protocol in ipairs(sourcebatches["wayland.protocols"].sourcefiles) do
-                local clientfile = path.join(outputdir, path.basename(protocol) .. ".h")
-                local privatefile = path.join(outputdir, path.basename(protocol) .. ".c")
+        local sourcebatches = target:sourcebatches()[rule_name]
+        if not dryrun and sourcebatches and sourcebatches.sourcefiles then
+            local client = target:extraconf("rules", rule_name, "client")
+            if client == nil then
+                client = "%s.h"
+            end
+            local server = target:extraconf("rules", rule_name, "server")
+            for _, protocol in ipairs(sourcebatches.sourcefiles) do
+                local basename = path.basename(protocol)
 
-                -- for c++ module dependency discovery
-                if not os.exists(clientfile) then
-                    os.touch(clientfile)
+                -- For C++ module dependency discovery
+                if client then
+                    local clientfile = path.join(outputdir, client:format(basename))
+                    if not os.exists(clientfile) then
+                        os.touch(clientfile)
+                    end
+                end
+                if server then
+                    local serverfile = path.join(outputdir, server:format(basename))
+                    if not os.exists(serverfile) then
+                        os.touch(serverfile)
+                    end
                 end
 
-                target:add("files", privatefile, {always_added = true})
+                -- Add code file to target
+                local code = target:extraconf("rules", rule_name, "code") or "%s.c"
+                local codefile = path.join(outputdir, code:format(basename))
+                target:add("files", codefile, {always_added = true})
             end
         end
     end)
@@ -54,27 +83,53 @@ rule("wayland.protocols")
     before_buildcmd_file(function(target, batchcmds, sourcefile, opt)
         import("lib.detect.find_tool")
 
-        local outputdir = target:extraconf("rules", "wayland.protocols", "outputdir") or path.join(target:autogendir(), "rules", "wayland.protocols")
+        local rule_name = "@wayland-protocols/wayland.protocols"
+
+        local outputdir = target:extraconf("rules", rule_name, "outputdir") or path.join(target:autogendir(), "rules", "wayland.protocols")
 
         local wayland_scanner = find_tool("wayland-scanner")
         assert(wayland_scanner, "wayland-scanner not found! please install wayland package")
 
-        local clientfile = path.join(outputdir, path.basename(sourcefile) .. ".h")
-        local privatefile = path.join(outputdir, path.basename(sourcefile) .. ".c")
+        local basename = path.basename(sourcefile)
 
-        local client_flag = "client-header"
-        local private_flag = "private-code"
+        -- Generate client protocol header
+        local client = target:extraconf("rules", rule_name, "client")
+        if client == nil then
+            client = "%s.h"
+        end
+        if client then
+            local clientfile = path.join(outputdir, client:format(basename))
 
-        local client_flags = {client_flag, sourcefile, clientfile}
-        local private_flags = {private_flag, sourcefile, privatefile}
+            local client_args = {"client-header", sourcefile, clientfile}
 
-        batchcmds:show_progress(opt.progress, "${color.build.object}generating.wayland.protocol.client %s", path.basename(sourcefile))
-        batchcmds:vexecv(wayland_scanner.program, client_flags)
+            batchcmds:show_progress(opt.progress, "${color.build.object}generating.wayland.protocol.client %s", basename)
+            batchcmds:vexecv(wayland_scanner.program, client_args)
+        end
 
-        batchcmds:show_progress(opt.progress, "${color.build.object}generating.wayland.protocol.private %s", path.basename(sourcefile))
-        batchcmds:vexecv(wayland_scanner.program, private_flags)
+        -- Generate server protocol header
+        local server = target:extraconf("rules", rule_name, "server")
+        if server then
+            local serverfile = path.join(outputdir, server:format(basename))
+
+            local server_args = {"server-header", sourcefile, serverfile}
+
+            batchcmds:show_progress(opt.progress, "${color.build.object}generating.wayland.protocol.server %s", basename)
+            batchcmds:vexecv(wayland_scanner.program, server_args)
+        end
+
+        -- Generate code
+        local code = target:extraconf("rules", rule_name, "code") or "%s.c"
+        local codefile = path.join(outputdir, code:format(basename))
+
+        local public = target:extraconf("rules", rule_name, "public")
+        visibility = public and "public" or "private"
+
+        local code_args = {visibility .. "-code", sourcefile, codefile}
+
+        batchcmds:show_progress(opt.progress, "${color.build.object}generating.wayland.protocol.%s %s", visibility, basename)
+        batchcmds:vexecv(wayland_scanner.program, code_args)
 
         batchcmds:add_depfiles(sourcefile)
-        batchcmds:set_depmtime(os.mtime(privatefile))
-        batchcmds:set_depcache(target:dependfile(privatefile))
+        batchcmds:set_depmtime(os.mtime(codefile))
+        batchcmds:set_depcache(target:dependfile(codefile))
     end)
