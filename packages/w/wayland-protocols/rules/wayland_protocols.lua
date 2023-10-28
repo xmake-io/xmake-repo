@@ -61,15 +61,11 @@ rule("wayland.protocols")
                 -- For C++ module dependency discovery
                 if client then
                     local clientfile = path.join(outputdir, client:format(basename))
-                    if not os.exists(clientfile) then
-                        os.touch(clientfile)
-                    end
+                    os.touch(clientfile)
                 end
                 if server then
                     local serverfile = path.join(outputdir, server:format(basename))
-                    if not os.exists(serverfile) then
-                        os.touch(serverfile)
-                    end
+                    os.touch(serverfile)
                 end
 
                 -- Add code file to target
