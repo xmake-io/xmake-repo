@@ -9,6 +9,12 @@ package("bcg729")
 
     add_deps("cmake")
 
+    on_load(function (package)
+        if not package:config("shared") then
+            package:add("defines", "BCG729_STATIC")
+        end
+    end)
+
     on_install(function (package)
         local configs = {"-DENABLE_TESTS=OFF"}
 
