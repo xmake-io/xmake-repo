@@ -38,7 +38,7 @@ package("libhv")
     elseif is_plat("windows") then
         add_syslinks("crypt32", "advapi32")
     elseif is_plat("mingw") then
-        add_syslinks("crypt32", "ws2_32")
+        add_syslinks("crypt32", "ws2_32", "secur32")
         add_syslinks("pthread")
     end
 
