@@ -15,7 +15,7 @@ package("srtp")
     add_deps("openssl")
 
     on_install("windows", "linux", "macosx", "android", "cross", "bsd", "mingw", function (package)
-        local configs = {"-DLIBSRTP_TEST_APPS=OFF", "-DBUILD_WITH_WARNINGS=OFF"}
+        local configs = {"-DLIBSRTP_TEST_APPS=OFF", "-DTEST_APPS=OFF", "-DBUILD_WITH_WARNINGS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
