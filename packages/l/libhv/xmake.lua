@@ -36,9 +36,9 @@ package("libhv")
     elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
     elseif is_plat("windows") then
-        add_syslinks("advapi32")
+        add_syslinks("crypt32", "advapi32")
     elseif is_plat("mingw") then
-        add_syslinks("ws2_32")
+        add_syslinks("crypt32", "ws2_32")
         add_syslinks("pthread")
     end
 
