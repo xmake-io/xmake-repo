@@ -11,16 +11,10 @@ package("opencore-amr")
     on_install("linux", "macosx", "android", "iphoneos", "bsd", "cross", "wasm", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:debug() then
+        if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        if package:is_plat("linux") and package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-
-        local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        buildenvs.CXX = package:tool("cxx")
-        import("package.tools.autoconf").install(package, configs, {envs = buildenvs})
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
