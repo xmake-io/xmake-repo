@@ -4,13 +4,13 @@ package("sqlite3")
     set_description("The most used database engine in the world")
 
     set_urls("https://sqlite.org/$(version)", {version = function (version)
-        local year = "2022"
+        local year = "2023"
         if version:le("3.24") then
             year = "2018"
         elseif version:le("3.36") then
             year = "2021"
-        elseif version:le("3.43") then
-            year = "2023"
+        elseif version:le("3.42") then
+            year = "2022"
         end
         local version_str = version:gsub("[.+]", "")
         if #version_str < 7 then
