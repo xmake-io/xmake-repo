@@ -8,7 +8,7 @@ package("opencore-amr")
 
     add_deps("autoconf", "automake", "libtool")
 
-    on_install("linux", "macosx", "android", "iphoneos", "bsd", "cross", "wasm", function (package)
+    on_install("linux", "macosx", "android", "iphoneos", "bsd", "cross", "mingw", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_debug() then
