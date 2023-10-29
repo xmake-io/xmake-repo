@@ -102,7 +102,8 @@ package("libhv")
             #include "hv/hv.h"
             void test() {
                 const char* version = hv_compile_version();
-            }, {configs = {languages = "c++11"} }
-        ]]}))
+                printf("%s\n", version);
+            }
+        ]]}, {configs = {languages = "c++11"}}))
     end)
 
