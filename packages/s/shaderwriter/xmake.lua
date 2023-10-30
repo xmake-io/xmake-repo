@@ -15,6 +15,7 @@ package("shaderwriter")
     add_versions("2.5", "4b456bb6f36103936f4862edff397af943a40621")
     add_versions("2.6", "ab06f63bb941ac60437120e3221c024555a2bcaa")
     add_versions("2.6.1", "047ca8f5a2d2ad2fa569bd53a8325939a9d17f6c")
+    add_versions("2.7", "c8af31d7589c729c450c8d08f56677bd2d355cfb")
 
     add_deps("cmake")
 
