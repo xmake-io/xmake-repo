@@ -24,7 +24,10 @@ package("libfacedetection")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_arch("arm.*") then
             table.insert(configs, "-DENABLE_NEON=" .. (package:config("neon") and "ON" or "OFF"))
+            table.insert(configs, "-DENABLE_AVX512=OFF")
+            table.insert(configs, "-DENABLE_AVX2=OFF")
         else
+            table.insert(configs, "-DENABLE_NEON=OFF")
             table.insert(configs, "-DENABLE_AVX512=" .. (package:config("avx512") and "ON" or "OFF"))
             table.insert(configs, "-DENABLE_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
         end
