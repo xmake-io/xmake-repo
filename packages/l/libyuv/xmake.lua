@@ -9,7 +9,7 @@ package("libyuv")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "android", "cross", "bsd", "mingw", function (package)
         local configs = {"-DTEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         
