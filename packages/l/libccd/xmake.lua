@@ -10,19 +10,24 @@ package("libccd")
 
     add_configs("double_precision", {description = "Enable double precision floating-point arithmetic.", default = false, type = "boolean"})
 
-    on_load("windows", "macosx", "linux", function (package)
+    on_load("windows", "macosx", "linux", "mingw", "cross", function (package)
         if not package.is_built or package:is_built() then
             package:add("deps", "cmake")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "mingw", "cross", function (package)
         io.replace("src/ccd/ccd_export.h", "def CCD_STATIC_DEFINE", package:config("shared") and " 0" or " 1", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCCD_HIDE_ALL_SYMBOLS=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DENABLE_DOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
+
+        io.replace("src/CMakeLists.txt", "  find_library(LIBM_LIBRARY NAMES m)", "", {plain = true})
+        io.replace("src/CMakeLists.txt", "  if(NOT LIBM_LIBRARY)", "if(OFF)", {plain = true})
+        io.replace("src/CMakeLists.txt", "  target_link_libraries(ccd \"${LIBM_LIBRARY}\")", "  target_link_libraries(ccd -lm)", {plain = true})
+
         import("package.tools.cmake").install(package, configs)
     end)
 
