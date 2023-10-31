@@ -16,11 +16,11 @@ package("libyuv")
         io.replace("CMakeLists.txt", "INSTALL ( PROGRAMS ${CMAKE_BINARY_DIR}/yuvconvert			DESTINATION bin )", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
         
-        if is_plat("macosx", "linux") then
+        if package:is_plat("macosx", "linux") then
             if package:config("shared") then 
-                os.tryrm(package:installdir("lib","*.a"))
+                os.tryrm(package:installdir("lib", "*.a"))
             else 
-                os.tryrm(package:installdir("lib","*.so"))
+                os.tryrm(package:installdir("lib", "*.so"))
             end
         end
     end)
