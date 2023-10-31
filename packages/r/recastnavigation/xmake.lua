@@ -8,6 +8,7 @@ package("recastnavigation")
              "https://github.com/recastnavigation/recastnavigation.git")
 
     add_versions("1.5.1", "c541b56bab7543d7c741a3153af9a9024165b607de21503b90c9a399e626947a")
+    add_versions("1.6.0", "6dc1667f580357e8a2154c28b7867bea7e8ad3a7")
 
     on_install(function (package)
         local configs = {}
