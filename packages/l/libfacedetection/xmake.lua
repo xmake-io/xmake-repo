@@ -8,12 +8,9 @@ package("libfacedetection")
 
     add_versions("v3.0", "66dc6b47b11db4bf4ef73e8b133327aa964dbd8b2ce9e0ef4d1e94ca08d40b6a")
 
-    if is_arch("arm.*") then
-        add_configs("neon", {description = "Use neon", default = true, type = "boolean"})
-    else
-        add_configs("avx512", {description = "Use avx512", default = false, type = "boolean"})
-        add_configs("avx2", {description = "Use avx2", default = true, type = "boolean"})
-    end
+    add_configs("neon", {description = "Use neon", default = is_arch("arm.*"), type = "boolean"})
+    add_configs("avx512", {description = "Use avx512", default = false, type = "boolean"})
+    add_configs("avx2", {description = "Use avx2", default = not is_arch("arm.*"), type = "boolean"})
     add_configs("openmp", {description = "Use openmp", default = false, type = "boolean"})
 
     add_deps("cmake")
