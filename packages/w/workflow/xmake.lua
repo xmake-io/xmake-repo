@@ -12,7 +12,6 @@ package("workflow")
     add_versions("v0.10.9", "10f695aeb5da87ae138e3bcd2fa10c18aac782b0da20f11b2fd0b7b091d06767")
     add_versions("v0.11.1", "06968ed4e43f6676811b620d09eb5c32ac57252305e7e28def6efde8ef1ceb19")
 
-
     add_deps("openssl")
 
     if is_plat("linux") then
