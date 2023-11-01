@@ -226,9 +226,9 @@ function generate_package(reponame, get_data)
 
     -- add dependencies
     if build_system then
-        file:print('')
         local deps = table.wrap(build_system.deps)
         if deps and #deps > 0 then
+            file:print('')
             file:print('    add_deps("' .. table.concat(deps, '", "') .. '")')
         end
     end
