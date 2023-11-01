@@ -1,0 +1,25 @@
+diff --git a/src/plugins/cairo/libdecor-cairo-blur.h b/src/plugins/cairo/libdecor-cairo-blur.h
+index d48e9dd..25ecfef 100644
+--- a/src/plugins/cairo/libdecor-cairo-blur.h
++++ b/src/plugins/cairo/libdecor-cairo-blur.h
+@@ -1,6 +1,6 @@
+ #pragma once
+ 
+-#include <cairo/cairo.h>
++#include <cairo.h>
+ 
+ int
+ blur_surface(cairo_surface_t *surface, int margin);
+diff --git a/src/plugins/cairo/libdecor-cairo.c b/src/plugins/cairo/libdecor-cairo.c
+index cfc3c83..ffa5d63 100644
+--- a/src/plugins/cairo/libdecor-cairo.c
++++ b/src/plugins/cairo/libdecor-cairo.c
+@@ -40,7 +40,7 @@
+ #include "utils.h"
+ #include "cursor-settings.h"
+ 
+-#include <cairo/cairo.h>
++#include <cairo.h>
+ #include <pango/pangocairo.h>
+ 
+ #include "libdecor-cairo-blur.h"
