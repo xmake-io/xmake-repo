@@ -5,11 +5,8 @@ package("libdecor")
 
     add_urls("https://gitlab.freedesktop.org/libdecor/libdecor/-/archive/$(version)/libdecor-$(version).tar.gz")
     add_versions("0.1.0", "1d5758cb49dcb9ceaa979ad14ceb6cdf39282af5ce12ebe6073dd193d6b2fb5e")
-    add_patches("0.1.0", path.join(os.scriptdir(), "patches", "0.1.0", "include.patch"), "019fcf7cf04c0d89cec879342ecb7911fd99333b68b7f6d4409fb641917a3f5e")
     add_versions("0.1.1", "82adece5baeb6194292b0d1a91b4b3d10da41115f352a5e6c5844b20b88a0512")
-    add_patches("0.1.1", path.join(os.scriptdir(), "patches", "0.1.1", "include.patch"), "56de33e118c0d4312c9297bc6b72836b08865205f9e9c9778cbd1107142fd0eb")
     add_versions("0.2.0", "455acc1e1af43657fadbc79a9bac41e2d465ad1abdf1a6f8405e461350046f22")
-    add_patches("0.2.0", path.join(os.scriptdir(), "patches", "0.2.0", "include.patch"), "63fdd1084278cbc5757463deb4c97c8ad71e0d38d300af251956510f98630534")
 
     if is_plat("linux") then 
         add_extsources("apt::libdecor-0-dev", "pacman::libdecor")
@@ -32,6 +29,11 @@ package("libdecor")
     end)
 
     on_install("linux", function (package)
+        -- fix #include <cairo/cairo.h>
+        for _, srcfile in ipairs(os.files(path.join(package:installdir("src"), "**"))) do
+            io.replace(srcfile, "#include <cairo/cairo.h>", "#include <cairo.h>", {plain = true})
+        end
+
         local configs = {
             "-Ddemo=false",
             "-Ddbus=" .. (package:config("dbus") and "enabled" or "disabled"),
