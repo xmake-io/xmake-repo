@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macOS-latest-xlarge]
+        os: [macOS-latest-large]
         kind: [static, shared]
 
     runs-on: ${{ matrix.os }}
