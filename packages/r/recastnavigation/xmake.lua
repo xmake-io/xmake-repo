@@ -4,11 +4,11 @@ package("recastnavigation")
     set_description("Navigation-mesh Toolset for Games")
     set_license("zlib")
 
-    set_urls("https://github.com/recastnavigation/recastnavigation/archive/refs/tags/$(version).zip",
+    set_urls("https://github.com/recastnavigation/recastnavigation/archive/refs/tags/$(version).tar.gz",
              "https://github.com/recastnavigation/recastnavigation.git")
 
-    add_versions("1.5.1", "c541b56bab7543d7c741a3153af9a9024165b607de21503b90c9a399e626947a")
-    add_versions("1.6.0", "6dc1667f580357e8a2154c28b7867bea7e8ad3a7")
+    add_versions("1.5.1", "fdd0d9ac656993cb34d02d3c6c41e3a3311c1da79b84bbedca71c5d629f915fc")
+    add_versions("v1.6.0", "d48ca0121962fa0639502c0f56c4e3ae72f98e55d88727225444f500775c0074")
 
     on_install(function (package)
         local configs = {}
