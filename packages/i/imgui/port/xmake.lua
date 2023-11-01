@@ -45,10 +45,14 @@ if has_config("freetype") then
 end
 
 target("imgui")
-    set_kind("static")
+    set_kind("$(kind)")
     add_files("*.cpp", "misc/cpp/*.cpp")
     add_headerfiles("*.h", "(misc/cpp/*.h)")
     add_includedirs(".", "misc/cpp")
+
+    if is_kind("shared") and is_plat("windows", "mingw") then
+        add_defines("IMGUI_API=__declspec(dllexport)")
+    end
 
     if has_config("dx9") then
         add_files("backends/imgui_impl_dx9.cpp")

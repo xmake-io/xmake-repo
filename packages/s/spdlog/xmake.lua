@@ -30,6 +30,8 @@ package("spdlog")
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
         add_configs("wchar",  {description = "Support wchar api.", default = false, type = "boolean"})
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     on_load(function (package)

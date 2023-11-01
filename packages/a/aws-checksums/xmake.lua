@@ -3,29 +3,28 @@ package("aws-checksums")
     set_description("Cross platform HW accelerated CRC32c and CRC32 with fallback to efficient SW implementations - C interface with language bindings for AWS SDKs")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/awslabs/aws-checksums/archive/$(version).tar.gz",
+    add_urls("https://github.com/awslabs/aws-checksums/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-checksums.git")
-    add_versions("v0.1.12", "394723034b81cc7cd528401775bc7aca2b12c7471c92350c80a0e2fb9d2909fe")
 
-    if is_plat("linux") then
-        add_deps("cmake")
-    end
+    add_versions("v0.1.17", "83c1fbae826631361a529e9565e64a942c412baaec6b705ae5da3f056b97b958")
 
-    on_load(function (package)
-        if package:config("shared") then
-            package:add("deps", "aws-c-common", {configs = {shared = true}})
-        else
-            package:add("deps", "aws-c-common")
+    add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
+
+    add_deps("cmake", "aws-c-common")
+
+    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "cross", function (package)
+        local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
+        if package:is_plat("windows") then
+            cmakedir = cmakedir:gsub("\\", "/")
         end
-    end)
 
-    on_install("linux", function (package)
-        local configs = {}
-        local common_cmake_dir = package:dep("aws-c-common"):installdir("lib", "cmake")
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_MODULE_PATH=" .. cmakedir}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        io.replace("CMakeLists.txt", "list(APPEND CMAKE_MODULE_PATH ${AWS_MODULE_PATH})",
-            "list(APPEND CMAKE_MODULE_PATH \"" .. common_cmake_dir .. "\")", {plain = true})
+        table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 

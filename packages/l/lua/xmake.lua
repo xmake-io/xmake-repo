@@ -55,6 +55,8 @@ package("lua")
         end
 
         io.writefile("xmake.lua", format([[
+            add_rules("mode.release", "mode.debug")
+
             local sourcedir = "%s"
             local kind = "%s"
             local enabled = %s

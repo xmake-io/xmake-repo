@@ -30,7 +30,7 @@ package("aqt")
 
     on_install("@macosx", "@linux", "@windows", "@msys", function (package)
         if is_host("windows") and (os.arch() == "x64" or os.arch() == "x86") then
-            os.mv(package:originfile(), path.join(package:installdir("bin"), "aqt.exe"))
+            os.cp(package:originfile(), path.join(package:installdir("bin"), "aqt.exe"))
         else
             -- ensurepip has been dropped in recent releases
             try {function () os.vrunv("python3", {"-m", "ensurepip"}) end}

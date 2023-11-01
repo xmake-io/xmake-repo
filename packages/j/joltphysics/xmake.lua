@@ -42,6 +42,10 @@ package("joltphysics")
         add_syslinks("pthread")
     end
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::jolt-physics")
+    end
+
     on_load(function (package)
         local version = package:version()
         if not version or version:ge("3.0.0") then
