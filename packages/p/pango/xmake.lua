@@ -37,7 +37,9 @@ package("pango")
         io.replace("meson.build", "dependency('gi-docgen'", "dependency(''", {plain = true})
         io.replace("meson.build", "fallback: ['gi-docgen', 'dummy_dep']", "fallback: ['dummy_dep']", {plain = true})
 
-        meson.install(package, configs, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib"}})
+        local packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib"}
+        local cflags = {"-Wno-error=array-bounds"}
+        meson.install(package, configs, {packagedeps = packagedeps, cflags = cflags})
     end)
 
     on_test(function (package)
