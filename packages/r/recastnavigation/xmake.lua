@@ -12,9 +12,6 @@ package("recastnavigation")
 
     on_install(function (package)
         local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
