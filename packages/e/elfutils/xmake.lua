@@ -81,6 +81,7 @@ package("elfutils")
             os.rm(path.join(package:installdir("lib"), "*.so"))
             os.tryrm(path.join(package:installdir("lib"), "*.so.*"))
         end
+        os.trycp("libelf/elf.h", package:installdir("include"))
     end)
 
     on_test(function (package)
