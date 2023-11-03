@@ -5,8 +5,9 @@ package("zlmediakit")
 
     add_urls("https://github.com/ZLMediaKit/ZLMediaKit.git",
              "https://gitee.com/xia-chu/ZLMediaKit.git", {submodules = false})
+    add_versions("2023.11.3", "9f28384cd998f6ed6faf53b6d8ee3c9780c34bc5")         
     add_versions("2023.8.26", "895e93cb6aae82f9fd6f19b0980c28062b6b9d2f")
-
+    
     add_configs("c_api", {description = "Enable C API SDK.", default = false, type = "boolean"})
     add_configs("c_static_api", {description = "Enable mk_api static lib.", default = false, type = "boolean"})
 
@@ -16,6 +17,8 @@ package("zlmediakit")
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
     add_configs("mem_debug", {description = "Enable Memory Debug.", default = false, type = "boolean"})
 
+    add_configs("webrtc", {description = "ENABLE WEBRTC.", default = false, type = "boolean"})
+    add_configs("srt", {description = "ENABLE SRT.", default = false, type = "boolean"})
     add_configs("jemalloc", {description = "Enable static linking to the jemalloc library.", default = false, type = "boolean"})
     add_configs("ffmpeg", {description = "Enable FFMPEG.", default = false, type = "boolean"})
     add_configs("mysql", {description = "Enable MySQL.", default = false, type = "boolean"})
@@ -23,7 +26,15 @@ package("zlmediakit")
     add_configs("faac", {description = "Enable FAAC.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("zltoolkit")
+
+    on_load("macosx", "linux", "windows", function(package) 
+        if package:config("webrtc") or package:config("srt") then
+            package:add("deps", "srtp")
+            package:add("deps", "zltoolkit", {configs = {openssl = true}})
+        else
+            package:add("deps", "zltoolkit")
+        end
+    end)
 
     on_install("macosx", "linux", "windows", function (package)
         local configdeps = {
@@ -33,6 +44,8 @@ package("zlmediakit")
             server_lib = "ENABLE_SERVER_LIB",
             asan = "ENABLE_ASAN",
             mem_debug = "ENABLE_MEM_DEBUG",
+            webrtc = "ENABLE_WEBRTC",
+            srt = "ENABLE_SRT",
             jemalloc = "ENABLE_JEMALLOC_STATIC",
             ffmpeg = "ENABLE_FFMPEG",
             mysql = "ENABLE_MYSQL",
@@ -46,6 +59,7 @@ package("zlmediakit")
         end
         io.replace("CMakeLists.txt", "add_subdirectory(3rdpart)", "", {plain = true})
         io.replace("srt/CMakeLists.txt", "ZLMediaKit::ToolKit", "", {plain = true})
+        io.replace("webrtc/CMakeLists.txt", "ZLMediaKit::ToolKit", "", {plain = true})
         import("package.tools.cmake").install(package, configs, {packagedeps = {"zltoolkit"}})
 
         if package:config("shared") then

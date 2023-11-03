@@ -5,7 +5,7 @@ package("zltoolkit")
 
     set_urls("https://github.com/ZLMediaKit/ZLToolKit.git",
              "https://gitee.com/xia-chu/ZLToolKit.git")
-
+    add_versions("2023.11.3", "0b907a864891cac59de925693e9a666e8a9869e1")         
     add_versions("2023.8.26", "a4b8b5e00aac6251254a513c7759605c0ba35f90")
     add_versions("2023.7.8", "e4744a0a523817356f2ec995ee5a732264c31629")
 
