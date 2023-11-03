@@ -29,7 +29,7 @@ package("zlmediakit")
 
     on_load("macosx", "linux", "windows", function(package) 
         if package:config("webrtc") or package:config("srt") then
-            package:add("deps", "srtp")
+            package:add("deps", "srtp", {configs = {openssl = true}})
             package:add("deps", "zltoolkit", {configs = {openssl = true}})
         else
             package:add("deps", "zltoolkit")
