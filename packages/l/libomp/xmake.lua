@@ -12,7 +12,7 @@ package("libomp")
 
     on_fetch("macosx", "linux", function (package, opt)
         if opt.system then
-            return package:find_package("system::omp", {includes = "omp.h"})
+            return package:find_package("system::omp", {includes = "omp.h"}) or package:find_package("system::omp5", {includes = "omp.h"})
         end
     end)
 
