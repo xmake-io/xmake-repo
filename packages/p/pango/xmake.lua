@@ -37,6 +37,8 @@ package("pango")
         io.replace("meson.build", "dependency('gi-docgen'", "dependency(''", {plain = true})
         io.replace("meson.build", "fallback: ['gi-docgen', 'dummy_dep']", "fallback: ['dummy_dep']", {plain = true})
 
+        -- fix unexpected -Werror=unused-but-set-variable error, see https://gitlab.gnome.org/GNOME/pango/-/issues/693
+        io.replace("meson.build", "'-Werror=unused-but-set-variable',", "", {plain = true})
         -- fix unexpected -Werror=array-bounds error, see https://gitlab.gnome.org/GNOME/pango/-/issues/740
         io.replace("meson.build", "'-Werror=array-bounds',", "", {plain = true})
 
