@@ -80,7 +80,7 @@ package("dpp")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         -- fix dpp dependencies
         for _, file in ipairs(table.join(os.files("include/**.h"), os.files("src/**.cpp"))) do
             io.replace(file, "#include <dpp/fmt/", "#include <fmt/", {plain = true})
