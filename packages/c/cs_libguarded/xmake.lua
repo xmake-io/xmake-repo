@@ -10,7 +10,7 @@ package("cs_libguarded")
     add_deps("cmake")
 
     on_install(function (package)
-        import("package.tools.cmake").install(package)
+        import("package.tools.cmake").install(package, {"-DCMAKE_INSTALL_INCLUDEDIR=include"})
     end)
 
     on_test(function (package)
