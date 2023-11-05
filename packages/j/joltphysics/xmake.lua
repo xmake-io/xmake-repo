@@ -36,9 +36,6 @@ package("joltphysics")
         add_configs("inst_tzcnt", { description = "Enable the tzcnt CPU instruction (x86/x64 only)", default = false, type = "boolean" })
     end
 
-    -- jolt physics doesn't support dynamic link
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-
     if is_plat("linux", "macosx", "iphoneos", "bsd", "wasm") then
         add_syslinks("pthread")
     end
@@ -64,6 +61,9 @@ package("joltphysics")
         end
         if package:config("double_precision") then
             package:add("defines", "JPH_DOUBLE_PRECISION")
+        end
+        if package:is_plat("windows", "mingw") and package:config("shared") then
+            package:add("defines", "JPH_SHARED_LIBRARY")
         end
     end)
 
