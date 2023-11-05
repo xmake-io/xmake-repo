@@ -5,7 +5,7 @@ package("joltphysics")
 
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrouwe/JoltPhysics.git")
-    add_versions("v4.0.0+0", "515933138c6b16d661452fb907a8a9bbb71cb848")
+    add_versions("v4.0.0+0", "4e038d190b7e97df01e6a81c8f74551fe487a09d")
     add_versions("v3.0.1", "7ebb40bf2dddbcf0515984582aaa197ddd06e97581fd55b98cb64f91b243b8a6")
     add_versions("v3.0.0", "f8d756ae3471a32f2ee7e07475df2f7a34752f0fdd05e9a7ed2e7ce3dcdcd574")
     add_versions("v2.0.1", "96ae2e8691c4802e56bf2587da30f2cc86b8abe82a78bc2398065bd87dd718af")
@@ -67,7 +67,7 @@ package("joltphysics")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm", function (package)
+    on_install(function (package)
         -- Jolt CMakeLists had no install target/support for custom msvc runtime until 3.0.0
         local version = package:version()
         if not version or version:ge("3.0.0") then
