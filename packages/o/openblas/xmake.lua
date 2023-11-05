@@ -54,7 +54,7 @@ package("openblas")
     end
     on_load("macosx", "linux", "mingw@windows,msys", function (package)
         if package:config("fortran") then
-            package:add("syslinks", "gfortran")
+            package:add("deps", "gfortran", {system = true})
         end
         if package:config("openmp") then
             package:add("deps", "openmp")
@@ -72,6 +72,9 @@ package("openblas")
         import("lib.detect.find_tool")
         import("package.tools.make")
         local configs = {}
+        if package:is_plat("linux") then
+            table.insert(configs, "CC=" .. package:build_getenv("cc"))
+        end
         if package:debug() then table.insert(configs, "DEBUG=1") end
         if package:config("openmp") then table.insert(configs, "USE_OPENMP=1") end
         if not package:config("shared") then
@@ -83,8 +86,6 @@ package("openblas")
             local fortran = find_tool("gfortran")
             if fortran then
                 table.insert(configs, "FC=" .. fortran.program)
-            else
-                raise("gfortran not found!")
             end
         else
             table.insert(configs, "NO_FORTRAN=1")
@@ -97,11 +98,12 @@ package("openblas")
                 package:addenv("PATH", "bin")
             end
         else
+            local cflags
+            local ldflags
             if package:config("openmp") then
                 local openmp = package:dep("openmp"):fetch()
                 if openmp then
-                    local ldflags
-                    local cflags = openmp.cflags
+                    cflags = openmp.cflags
                     local libomp = package:dep("libomp")
                     if libomp then
                         local fetchinfo = libomp:fetch()
@@ -118,13 +120,21 @@ package("openblas")
                             end
                         end
                     end
-                    if cflags then
-                        io.replace("Makefile.system", "-fopenmp", cflags, {plain = true})
-                    end
-                    if ldflags then
-                        table.insert(configs, "LDFLAGS=" .. ldflags)
+                end
+            end
+            if package:config("fortran") then
+                local gfortran = package:dep("gfortran"):fetch()
+                if gfortran then
+                    for _, linkdir in ipairs(gfortran.linkdirs) do
+                        ldflags = (ldflags or "") .. " -Wl,-L" .. linkdir
                     end
                 end
+            end
+            if cflags then
+                io.replace("Makefile.system", "-fopenmp", cflags, {plain = true})
+            end
+            if ldflags then
+                table.insert(configs, "LDFLAGS=" .. ldflags)
             end
         end
         make.build(package, configs)
