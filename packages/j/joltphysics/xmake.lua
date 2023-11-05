@@ -62,7 +62,7 @@ package("joltphysics")
         if package:config("double_precision") then
             package:add("defines", "JPH_DOUBLE_PRECISION")
         end
-        if package:is_plat("windows", "mingw") and package:config("shared") then
+        if package:config("shared") then
             package:add("defines", "JPH_SHARED_LIBRARY")
         end
     end)
