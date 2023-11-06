@@ -8,6 +8,8 @@ package("gnu-gsl")
              "https://ftpmirror.gnu.org/gsl/gsl-$(version).tar.gz")
     add_versions("2.7", "efbbf3785da0e53038be7907500628b466152dbc3c173a87de1b5eba2e23602b")
 
+    add_configs("host", {description = "to cross compile add --host", default = "", type = "string"})
+
     add_links("gsl", "gslcblas")
     on_install("macosx", "linux", function (package)
         local configs = {"--disable-dependency-tracking"}
@@ -15,6 +17,9 @@ package("gnu-gsl")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
+        end
+        if package:config("host") ~= "" then
+            table.insert(configs, "--host=" .. package:config("host"))
         end
         import("package.tools.autoconf").install(package, configs, {cppflags = cppflags, ldflags = ldflags})
     end)

@@ -23,6 +23,9 @@ package("libusb")
         end
     end
 
+
+    add_configs("host", {description = "to cross compile add --host", default = "", type = "string"})
+
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "IOKit")
     elseif is_plat("linux", "bsd") then
@@ -95,6 +98,9 @@ package("libusb")
         if package:is_plat("linux") then
             cflags = "-I" .. package:dep("eudev"):installdir("include")
             ldflags = "-L" .. package:dep("eudev"):installdir("lib")
+        end
+        if package:config("host") ~= "" then
+            table.insert(configs, "--host=" .. package:config("host"))
         end
         import("package.tools.autoconf").install(package, configs, {cflags = cflags, ldflags = ldflags})
     end)

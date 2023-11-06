@@ -6,6 +6,8 @@ package("eudev")
     add_urls("https://dev.gentoo.org/~blueness/eudev/eudev-$(version).tar.gz")
     add_versions("3.2.9", "89618619084a19e1451d373c43f141b469c9fd09767973d73dd268b92074d4fc")
 
+    add_configs("host", {description = "to cross compile add --host", default = "", type = "string"})
+
     if is_plat("linux") then
         add_deps("autoconf", "automake", "libtool", "pkg-config", "gperf")
     end
@@ -19,6 +21,9 @@ package("eudev")
         end
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
+        end
+        if package:config("host") ~= "" then
+            table.insert(configs, "--host=" .. package:config("host"))
         end
         import("package.tools.autoconf").install(package, configs)
     end)
