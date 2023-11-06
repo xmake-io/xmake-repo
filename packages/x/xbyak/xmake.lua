@@ -1,8 +1,7 @@
 package("xbyak")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/herumi/xbyak")
-    set_description("A JIT assembler for x86(IA-32)/x64(AMD64, x86-64) MMX/SSE/SSE2/SSE3/SSSE3/SSE4/FPU/AVX/AVX2/AVX-512 by C++ header")
+    set_description("JIT assembler for x86(IA-32)/x64(AMD64, x86-64) MMX/SSE/SSE2/SSE3/SSSE3/SSE4/FPU/AVX/AVX2/AVX-512")
 
     set_urls("https://github.com/herumi/xbyak/archive/$(version).zip",
              "https://github.com/herumi/xbyak.git")
