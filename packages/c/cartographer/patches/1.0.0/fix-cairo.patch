@@ -1,0 +1,39 @@
+diff --git a/cartographer/io/draw_trajectories.h b/cartographer/io/draw_trajectories.h
+index e519698..0dd479e 100644
+--- a/cartographer/io/draw_trajectories.h
++++ b/cartographer/io/draw_trajectories.h
+@@ -17,7 +17,7 @@
+ #ifndef CARTOGRAPHER_IO_DRAW_TRAJECTORIES_H_
+ #define CARTOGRAPHER_IO_DRAW_TRAJECTORIES_H_
+ 
+-#include "cairo/cairo.h"
++#include "cairo.h"
+ #include "cartographer/io/color.h"
+ #include "cartographer/mapping/proto/trajectory.pb.h"
+ #include "cartographer/transform/rigid_transform.h"
+diff --git a/cartographer/io/image.h b/cartographer/io/image.h
+index 54059f1..f875c43 100644
+--- a/cartographer/io/image.h
++++ b/cartographer/io/image.h
+@@ -20,7 +20,7 @@
+ #include <cstdint>
+ #include <vector>
+ 
+-#include "cairo/cairo.h"
++#include "cairo.h"
+ #include "cartographer/common/port.h"
+ #include "cartographer/io/color.h"
+ #include "cartographer/io/file_writer.h"
+diff --git a/cartographer/io/submap_painter.h b/cartographer/io/submap_painter.h
+index 9bbcab9..6dd5026 100644
+--- a/cartographer/io/submap_painter.h
++++ b/cartographer/io/submap_painter.h
+@@ -18,7 +18,7 @@
+ #define CARTOGRAPHER_IO_SUBMAP_PAINTER_H_
+ 
+ #include "Eigen/Geometry"
+-#include "cairo/cairo.h"
++#include "cairo.h"
+ #include "cartographer/io/image.h"
+ #include "cartographer/mapping/id.h"
+ #include "cartographer/mapping/proto/serialization.pb.h"
