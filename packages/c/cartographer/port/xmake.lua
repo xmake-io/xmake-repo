@@ -18,17 +18,9 @@ target("cartographer")
     add_packages("protobuf-cpp", {public = true})
     add_rules("protobuf.cpp")
 
-    add_files("cartographer/**.proto")
-    for _, protofile in ipairs(os.files("cartographer/**.proto")) do
-        print(protofile)
-        if not protofile:endswith("_service.proto") then
-            print(protofile .. " is added")
-            add_files(protofile, {proto_rootdir = ".", proto_autogendir = path.join(os.projectdir(), "build", "proto"), proto_public = true})
-        else
-            print(protofile .. " is ignored")
-        end
-    end
-    add_files("cartographer/transform/proto/transform.proto", {proto_rootdir = ".", proto_autogendir = path.join(os.projectdir(), "build", "proto"), proto_public = true})
+    add_files("cartographer/**.proto", {proto_autogendir = path.join(os.projectdir(), "build", "proto"), proto_public = true})
+    remove_files("cartographer/**_service.proto")
+    
     add_headerfiles("$(buildir)/proto/cartographer/**.h")
     add_files("$(buildir)/proto/cartographer/**.cc")
     add_includedirs("$(buildir)/proto")
