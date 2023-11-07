@@ -1,4 +1,4 @@
-name: OpenBSD
+name: FreeBSD
 
 on:
   pull_request:
@@ -16,13 +16,13 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     concurrency:
-        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-OpenBSD-${{ matrix.kind }}
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-FreeBSD-${{ matrix.kind }}
         cancel-in-progress: true
     steps:
       - uses: actions/checkout@v1
 
       - name: Tests
-        uses: vmactions/openbsd-vm@v0
+        uses: vmactions/freebsd-vm@v1
         with:
           usesh: true
           sync: sshfs
