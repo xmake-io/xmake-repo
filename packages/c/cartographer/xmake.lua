@@ -8,7 +8,6 @@ package("cartographer")
 
     add_versions("1.0.0", "474a410bf6457eb8a0fd92ea412d7889fb013051e625d3ee25e8d65e4113fd6c")
 
-    add_patches("1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "fix-cairo.patch"), "5dee5835f3739ce0e6dc69f6da0195ade92db04065926ea7f00ddf198f8b95c7")
     add_patches("1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "fix-build-error.patch"), "a4bb53d6f098c77a397d72c244d4283af1f9eec8a4ca7a7fa28de77b06d1201e")
     
     add_deps("cmake")
@@ -17,6 +16,9 @@ package("cartographer")
     add_deps("cairo", "eigen", "lua", "protobuf-cpp")
 
     on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
+        for _, headerfile in ipairs(os.files("cartographer/**.h")) do
+            io.replace(headerfile, "cairo/cairo.h", "cairo.h", {plain = true})
+        end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         if is_plat("windows") then
