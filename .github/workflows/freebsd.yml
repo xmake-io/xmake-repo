@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macOS-12]
+        os: [ubuntu-latest]
         kind: [static, shared]
 
     runs-on: ${{ matrix.os }}
