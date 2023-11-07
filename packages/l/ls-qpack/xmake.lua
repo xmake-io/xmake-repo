@@ -10,13 +10,20 @@ package("ls-qpack")
 
     add_patches("v2.5.3", path.join(os.scriptdir(), "patches", "v2.5.3", "fix-cmake-install.patch"), "7d819b620b5e2bd34ef58a91bf20d882883c7525def9f9f80313b64cba5e5239")
 
+    if not is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     add_deps("cmake")
     add_deps("xxhash")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", "cross", function (package)
         local configs = {"-DLSQPACK_TESTS=OFF", "-DLSQPACK_BIN=OFF", "-DLSQPACK_XXH=OFF",}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") and package:config("shared") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = "xxhash"})
     end)
 
