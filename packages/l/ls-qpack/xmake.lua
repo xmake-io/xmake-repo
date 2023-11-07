@@ -8,7 +8,7 @@ package("ls-qpack")
 
     add_versions("v2.5.3", "075a05efee27961eac5ac92a12a6e28a61bcd6c122a0276938ef993338577337")
 
-    add_patches("v2.5.3", path.join(os.scriptdir(), "patches", "v2.5.3", "fix-CMakeLists.txt-install-library-target.patch"), "7d819b620b5e2bd34ef58a91bf20d882883c7525def9f9f80313b64cba5e5239")
+    add_patches("v2.5.3", path.join(os.scriptdir(), "patches", "v2.5.3", "fix-cmake-install.patch"), "7d819b620b5e2bd34ef58a91bf20d882883c7525def9f9f80313b64cba5e5239")
 
     add_deps("cmake")
     add_deps("xxhash")
