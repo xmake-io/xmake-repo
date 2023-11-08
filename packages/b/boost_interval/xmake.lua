@@ -3,10 +3,11 @@ package("boost_interval")
     set_homepage("http://boost.org/libs/numeric/interval/doc")
     set_description("interval: Boost.org numeric interval library")
 
-    add_urls("https://github.com/boostorg/interval/archive/refs/tags/boost-$(version).tar.gz",
-             "https://github.com/boostorg/interval.git")
+    add_urls("https://github.com/boostorg/interval/archive/refs/tags/boost-$(version).tar.gz")
 
-    add_versions("1.83.0", "c0685b68dd44cc46574cce86c4e17c0f611b15e195be9848dfd0769a0a207628")
+    add_versions("1.83.0", "64a9bba500c95f085b52c5c62870fe7b0613550e")
+
+    add_deps("boost_limits")
 
     on_install(function (package)
         os.cp("include", package:installdir())
