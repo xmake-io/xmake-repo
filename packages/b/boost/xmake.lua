@@ -56,8 +56,6 @@ package("boost")
                       "date_time",
                       "locale",
                       "iostreams",
-                      "icl",
-                      "interval",
                       "program_options",
                       "test",
                       "chrono",
