@@ -65,7 +65,7 @@ package("zlmediakit")
         os.cp("3rdpart/ZLToolKit/src/**.h", package:installdir("include"), {rootdir = "3rdpart/ZLToolKit/src"})
     end)
 
-    add_linkorders("zlmediakit","zltoolkit","flv","mov","mpeg","webrtc","srtp2","ssl","crypto")
+    add_linkorders("zlmediakit", "zltoolkit", "flv", "mov", "mpeg", "webrtc", "srtp2", "ssl", "crypto")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
