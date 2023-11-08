@@ -1,4 +1,4 @@
-package("boost_di")
+package("boost_interval")
     set_kind("library", {headeronly = true})
     set_homepage("http://boost.org/libs/numeric/interval/doc")
     set_description("interval: Boost.org numeric interval library")
