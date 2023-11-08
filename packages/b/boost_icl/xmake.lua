@@ -7,7 +7,7 @@ package("boost_icl")
              "https://github.com/boostorg/icl/archive/refs/tags/boost-$(version).tar.gz",
              "https://github.com/boostorg/icl.git")
 
-    add_versions("v1.83.0", "e6c06ddee1e2320f11c4ec5cd2661c4abe9bca53")
+    add_versions("1.83.0", "e6c06ddee1e2320f11c4ec5cd2661c4abe9bca53")
 
     on_install(function (package)
         os.cp("include", package:installdir())
@@ -18,7 +18,7 @@ package("boost_icl")
             #include <boost/icl/interval_set.hpp>
             
             void test() {
-                interval_set<int> mySet;
+                boost::icl::interval_set<int> mySet;
                 mySet.insert(42);
                 bool has_answer = contains(mySet, 42);
             }
