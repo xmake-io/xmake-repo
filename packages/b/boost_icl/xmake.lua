@@ -3,12 +3,12 @@ package("boost_icl")
     set_homepage("http://boost.org/libs/icl")
     set_description("icl: Boost interval container library")
 
-    add_urls("https://github.com/boostorg/icl/archive/refs/tags/boost-$(version).zip",
-             "https://github.com/boostorg/icl/archive/refs/tags/boost-$(version).tar.gz",
-             "https://github.com/boostorg/icl.git")
+    add_urls("https://github.com/boostorg/icl/archive/refs/tags/boost-$(version).tar.gz")
 
-    add_versions("1.83.0", "e6c06ddee1e2320f11c4ec5cd2661c4abe9bca53")
+    add_versions("1.83.0", "c36fe676d8785f1d884014394d29f3f41ccecabc")
 
+    add_deps("boost_assert")
+    
     on_install(function (package)
         os.cp("include", package:installdir())
     end)
