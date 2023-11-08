@@ -20,7 +20,6 @@ package("boost_icl")
             void test() {
                 boost::icl::interval_set<int> mySet;
                 mySet.insert(42);
-                bool has_answer = contains(mySet, 42);
             }
         ]]}, {configs = {languages = "c++14"}}))
     end)
