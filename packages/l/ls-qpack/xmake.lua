@@ -17,7 +17,7 @@ package("ls-qpack")
     add_deps("cmake")
     add_deps("xxhash")
 
-    on_install("windows", "linux", "macosx", "bsd", "android", "iphoneos", "cross", function (package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", function (package)
         local configs = {"-DLSQPACK_TESTS=OFF", "-DLSQPACK_BIN=OFF", "-DLSQPACK_XXH=OFF",}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
