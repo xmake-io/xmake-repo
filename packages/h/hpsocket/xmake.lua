@@ -8,6 +8,7 @@ package("hpsocket")
     add_versions("v5.7.3", "e653f3c15ded3a4b622ab9a4a52a477c7aa40f5b86398c6b75f5a732a55496a0")
     add_versions("v5.8.4", "6fd207b84e41174c06d27c0df7244584eb07fbac0a7e49d7429103071184a451")
     add_versions("v5.9.1", "d40a3d0b4f0d2773ae61d32ed95df655aa6ccf5ae22c40ef38bfc88882b2478b")
+    add_versions("v5.9.3", "a8b237e294c3e6c2314111d508e419155c812f2469feec161756c6591a2d683e")
 
     local configs = {{name = "udp",    package = "kcp"},
                      {name = "http",   package = "http_parser"},
