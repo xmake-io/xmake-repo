@@ -30,7 +30,6 @@ package("nsis")
         end
         local configs = {
             "NSIS_MAX_STRLEN=8192",
-            "TARGET_ARCH=" .. arch,
             "PREFIX=" .. package:installdir(),
             "ZLIB_W32=" .. package:installdir(),
             "DOCTYPES=web",
