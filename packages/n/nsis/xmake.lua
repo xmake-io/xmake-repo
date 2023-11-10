@@ -33,8 +33,9 @@ package("nsis")
             "TARGET_ARCH=" .. arch,
             "PREFIX=" .. package:installdir(),
             "ZLIB_W32=" .. package:installdir(),
-            "install-compiler", "install-stubs"}
-        import("package.tools.scons").build(package, configs)
+            "DOCTYPES=web",
+            "dist"}
+        import("package.tools.scons").build(package, configs, {jobs = 1})
         os.cp(path.join(package:resourcedir("uac"), "UAC.nsh"), path.join(package:installdir(), "Include"))
     end)
 
