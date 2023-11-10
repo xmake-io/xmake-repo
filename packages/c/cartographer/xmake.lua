@@ -9,7 +9,8 @@ package("cartographer")
     add_versions("1.0.0", "474a410bf6457eb8a0fd92ea412d7889fb013051e625d3ee25e8d65e4113fd6c")
 
     add_patches("1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "fix-build-error.patch"), "a4bb53d6f098c77a397d72c244d4283af1f9eec8a4ca7a7fa28de77b06d1201e")
-    
+    add_patches(">=1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "remove-config_h.patch"), "494c5d16dc36fd40f2145993aecf62c0a934bc86e228ca9bedc18291707829ac")
+        
     add_deps("cmake")
     add_deps("boost", {configs = {shared = true, iostreams = true}})
     add_deps("ceres-solver", {configs = {suitesparse = true}})
@@ -33,5 +34,5 @@ package("cartographer")
             void test() {
                 cartographer::mapping::PoseGraph pose_graph;
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)
