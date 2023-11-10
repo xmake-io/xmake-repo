@@ -33,11 +33,12 @@ package("nsis")
             "TARGET_ARCH=" .. arch,
             "PREFIX=" .. package:installdir(),
             "ZLIB_W32=" .. package:installdir(),
-            "SKIPUTILS=NSIS Menu",
+ --           "SKIPUTILS=NSIS Menu",
+            "IGNORETESTS=Examples/makensis.nsi",
             "DOCTYPES=web",
             "dist"}
-        io.replace("Examples/SConscript", "env.DistributeExamples(examples)", "", {plain = true})
-        io.replace("Examples/SConscript", "env.DistributeExamples(mui_examples, path='Modern UI')", "", {plain = true})
+ --       io.replace("Examples/SConscript", "env.DistributeExamples(examples)", "", {plain = true})
+ --       io.replace("Examples/SConscript", "env.DistributeExamples(mui_examples, path='Modern UI')", "", {plain = true})
         os.vrunv("scons", configs)
         os.cp(path.join(package:resourcedir("uac"), "UAC.nsh"), path.join(package:installdir(), "Include"))
     end)
