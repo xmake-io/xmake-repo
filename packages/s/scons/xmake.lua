@@ -34,6 +34,7 @@ package("scons")
         end
 
         -- fix ml64 support for x64
+        -- @see https://stackoverflow.com/questions/58919970/building-x64-nsis-using-vs2012
         io.replace("SCons/Tool/masm.py", "'ml'", "'ml64' if env.get('TARGET_ARCH')=='amd64' else 'ml'", {plain = true})
         os.vrunv("python", {"setup.py", "install", "--prefix", package:installdir()})
         if is_host("windows", "msys") then

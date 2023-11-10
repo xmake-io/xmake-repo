@@ -35,7 +35,6 @@ package("nsis")
             "ZLIB_W32=" .. package:installdir(),
             "DOCTYPES=web",
             "dist"}
-        io.replace("Contrib/System/SConscript", "if conf.TryCompile('END', '.S'):", "if True:", {plain = true})
         os.vrunv("scons", configs)
         os.cp(path.join(package:resourcedir("uac"), "UAC.nsh"), path.join(package:installdir(), "Include"))
     end)
