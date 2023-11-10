@@ -35,7 +35,7 @@ package("nsis")
             "ZLIB_W32=" .. package:installdir(),
             "DOCTYPES=web",
             "dist"}
-        import("package.tools.scons").build(package, configs, {jobs = 1})
+        os.vrunv("scons", configs)
         os.cp(path.join(package:resourcedir("uac"), "UAC.nsh"), path.join(package:installdir(), "Include"))
     end)
 
