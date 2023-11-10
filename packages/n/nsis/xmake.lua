@@ -33,6 +33,7 @@ package("nsis")
             "TARGET_ARCH=" .. arch,
             "PREFIX=" .. package:installdir(),
             "ZLIB_W32=" .. package:installdir(),
+            "SKIPUTILS=\"NSIS Menu\"",
             "DOCTYPES=web",
             "dist"}
         os.vrunv("scons", configs)
