@@ -41,6 +41,8 @@ package("abseil")
         add_frameworks("CoreFoundation")
     end
 
+    add_configs("cxx17", {description = "Use C++ 17 to compile Abseil", default = true, type = "boolean"})
+
     on_load(function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ABSL_CONSUME_DLL")
@@ -49,13 +51,20 @@ package("abseil")
     end)
 
     on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
-        local configs = {"-DCMAKE_CXX_STANDARD=17"}
+        local configs = {}
+        if package:config("cxx17") then
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
     end)
 
     on_test(function (package)
+        local configs = {}
+        if package:config("cxx17") then
+            configs.languages = "cxx17"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             #include <string>
@@ -69,5 +78,5 @@ package("abseil")
                 auto a = absl::SimpleAtoi("123", &result);
                 std::cout << "Joined string: " << s << "\\n";
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = configs}))
     end)
