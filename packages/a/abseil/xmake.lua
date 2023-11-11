@@ -63,7 +63,7 @@ package("abseil")
     on_test(function (package)
         local configs = {}
         if package:config("cxx17") then
-            configs["languages"] = "cxx17"
+            configs.languages = "cxx17"
         end
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
