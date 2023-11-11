@@ -2,11 +2,15 @@ package("cairo")
 
     set_homepage("https://cairographics.org/")
     set_description("Vector graphics library with cross-device output support.")
+    set_license("MPL-1.1")
 
     add_urls("https://gitlab.freedesktop.org/cairo/cairo/-/archive/$(version)/cairo-$(version).tar.gz")
     add_urls("https://gitlab.freedesktop.org/cairo/cairo.git")
     add_versions("1.17.6", "a2227afc15e616657341c42af9830c937c3a6bfa63661074eabef13600e8936f")
     add_versions("1.17.8", "b4ed6d33037171d4c6594345b42d81796f335a6995fdf5638db0d306c17a0d3e")
+    add_versions("1.18.0", "39a78afdc33a435c0f2ab53a5ec2a693c3c9b6d2ec9783ceecb2b94d54d942b0")
+
+    add_patches("1.18.0", path.join(os.scriptdir(), "patches", "1.18.0", "alloca.patch"), "55f8577929537d43eed9f74241560821001b6c8613d6a7a21cff83f8431c6a70")
 
     add_deps("meson", "ninja")
     add_deps("libpng", "pixman", "zlib", "freetype", "glib")
