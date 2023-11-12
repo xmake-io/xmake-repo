@@ -27,32 +27,26 @@ package("openjdk")
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
 
     if is_plat("linux") then
-        add_extsources("pacman::jdk-openjdk")
+        add_extsources("pacman::jdk-openjdk", "apt::default-jdk")
     elseif is_plat("macosx") then
         add_extsources("brew::openjdk")
     end
 
-    on_fetch(function (package, opt)
+    on_fetch("windows", "mingw", function (package, opt)
         if opt.system then
             local sdkdir = os.getenv("JAVA_HOME")
             if os.isdir(sdkdir) then
                 local result = {}
-                if package:is_plat("windows", "mingw") then
-                    result.includedirs = {path.join(sdkdir, "include"), path.join(sdkdir, "include", "win32")}
-                    result.linkdirs = path.join(sdkdir, "lib")
-                    result.links = {"jvm", "jawt"}
-                    package:addenv("PATH", path.join(sdkdir, "bin"), path.join(sdkdir, "bin", "server"))
-                end
+                result.includedirs = {path.join(sdkdir, "include"), path.join(sdkdir, "include", "win32")}
+                result.linkdirs = path.join(sdkdir, "lib")
+                result.links = {"jvm", "jawt"}
+                package:addenv("PATH", path.join(sdkdir, "bin"), path.join(sdkdir, "bin", "server"))
                 return result
             end
         end
     end)
 
-    on_load("linux", function (package)
-        package:add("deps", "alsa-lib")
-    end)
-
-    on_install("windows|x64", "linux|x86_64", "linux|arm64", "macosx|x86_64", "macosx|arm64", "mingw|x86_64", function (package)
+    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "macosx|arm64", "mingw|x86_64", function (package)
         local plat
         if package:is_plat("windows", "mingw") then
             plat = "win32"
