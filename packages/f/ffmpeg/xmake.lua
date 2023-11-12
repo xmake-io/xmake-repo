@@ -5,7 +5,9 @@ package("ffmpeg")
     set_license("GPL-3.0")
 
     if is_plat("windows", "mingw") then
-        add_urls("https://www.gyan.dev/ffmpeg/builds/packages/ffmpeg-$(version)-full_build-shared.7z")
+        add_urls("https://github.com/xmake-mirror/ffmpeg-releases/releases/download/releases/ffmpeg-$(version)-full_build-shared.7z")
+        add_versions("6.1.0", "6eab95d8cd00b4601ce443ff3aeab5f477c581379c633742f5df30856a95158d")
+        add_versions("6.0.0", "a852648944cdf4ce3aeebf16d750a036fe67ab657b82eb43f9f7fdcc7bef3af7")
         add_versions("5.1.2", "d9eb97b72d7cfdae4d0f7eaea59ccffb8c364d67d88018ea715d5e2e193f00e9")
         add_versions("5.0.1", "ded28435b6f04b74f5ef5a6a13761233bce9e8e9f8ecb0eabe936fd36a778b0c")
 
