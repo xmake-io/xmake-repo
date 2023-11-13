@@ -17,6 +17,7 @@ package("seasocks")
     end
 
     add_deps("cmake")
+    add_deps("python", {kind="binary"})
 
     on_load(function (package)
         if package:config("deflate") then
@@ -24,11 +25,14 @@ package("seasocks")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "bsd", function (package)
         local configs = {"-DUNITTESTS=OFF", "-DSEASOCKS_EXAMPLE_APP=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DSEASOCKS_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DDEFLATE_SUPPORT=" .. (package:config("deflate") and "ON" or "OFF"))
+        if package:is_plat("windows") and package:config("shared") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
