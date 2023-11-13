@@ -6,7 +6,7 @@ add_requires("abseil", "cairo", "eigen", "glog", "lua", "protobuf-cpp")
 
 target("cartographer")
     set_kind("$(kind)")
-    set_languages("cxx14")
+    set_languages("cxx17")
 
     add_packages(
         "abseil",
