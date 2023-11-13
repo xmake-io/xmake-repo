@@ -21,7 +21,10 @@ target("cartographer")
     add_packages("protobuf-cpp", {public = true})
     add_rules("protobuf.cpp")
 
-    add_files("cartographer/**.proto", {proto_rootdir = "$(scriptdir)", proto_public = true})
+    add_files("cartographer/**.proto", {proto_rootdir = "cartographer", proto_autogendir = path.join(os.projectdir(), "build", "proto") , proto_public = true})
+    add_headerfiles("$(buildir)/proto/**.h")
+    add_includedirs("$(buildir)/proto")
+
     remove_files("cartographer/**_service.proto")
 
     add_headerfiles("(cartographer/**.h)")

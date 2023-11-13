@@ -14,11 +14,14 @@ package("cartographer")
     add_deps("cmake")
     add_deps("boost", {configs = {shared = true, iostreams = true}})
     add_deps("ceres-solver", {configs = {suitesparse = true}})
-    add_deps("cairo", "eigen", "lua", "protobuf-cpp")
+    add_deps("abseil", "cairo", "eigen", "lua", "protobuf-cpp")
 
     on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         for _, headerfile in ipairs(os.files("cartographer/**.h")) do
             io.replace(headerfile, "cairo/cairo.h", "cairo.h", {plain = true})
+        end
+        for _, protofile in ipairs(os.files("cartographer/**.proto")) do
+            io.replace(protofile, [[import "cartographer/]], [[import "]], {plain = true})
         end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
