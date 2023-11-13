@@ -16,7 +16,7 @@ package("nsis")
         os.cp("*", package:installdir())
         os.cp(path.join(package:resourcedir("strlen_8192"), "*"), package:installdir())
         os.cp(path.join(package:resourcedir("uac"), "UAC.nsh"), path.join(package:installdir(), "Include"))
-        package:add("PATH", "Plugins/x86-unicode")
+        package:addenv("PATH", "Plugins/x86-unicode")
     end)
 
     on_test(function (package)
