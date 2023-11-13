@@ -16,6 +16,8 @@ package("nsis")
         os.cp("*", package:installdir())
         os.cp(path.join(package:resourcedir("strlen_8192"), "*"), package:installdir())
         os.cp(path.join(package:resourcedir("uac"), "UAC.nsh"), path.join(package:installdir(), "Include"))
+        os.cp(path.join(package:resourcedir("uac"), "Plugins", "x86-ansi", "*.dll"), path.join(package:installdir(), "Plugins", "x86-ansi"))
+        os.cp(path.join(package:resourcedir("uac"), "Plugins", "x86-unicode", "*.dll"), path.join(package:installdir(), "Plugins", "x86-unicode"))
         package:addenv("PATH", "Plugins/x86-unicode")
     end)
 
