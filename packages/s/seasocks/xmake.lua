@@ -17,7 +17,7 @@ package("seasocks")
     end
 
     add_deps("cmake")
-    add_deps("python", {kind="binary"})
+    add_deps("python", {kind = "binary"})
 
     on_load(function (package)
         if package:config("deflate") then
