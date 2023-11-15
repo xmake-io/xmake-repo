@@ -24,7 +24,8 @@ package("mbedtls")
 
     on_install(function (package)
         local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_PROGRAMS=OFF", "-DMBEDTLS_FATAL_WARNINGS=OFF"}
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_STATIC_MBEDTLS_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
     end)
 
