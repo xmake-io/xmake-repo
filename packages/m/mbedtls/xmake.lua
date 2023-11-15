@@ -3,6 +3,11 @@ package("mbedtls")
     set_description("An SSL library")
     set_license("Apache-2.0")
 
+    if is_plat("windows") then
+        # https://github.com/Mbed-TLS/mbedtls/issues/1130
+        add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean", readonly = true})
+    end
+
     add_urls("https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/$(version).zip", {version = function (version)
         return version:ge("v2.23.0") and version or ("mbedtls-" .. tostring(version):sub(2))
     end})
@@ -20,8 +25,6 @@ package("mbedtls")
     add_links("mbedtls", "mbedx509", "mbedcrypto")
 
     if is_plat("windows") then
-        # https://github.com/Mbed-TLS/mbedtls/issues/1130
-        add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean", readonly = true})
         add_syslinks("advapi32", "bcrypt")
     end
 
