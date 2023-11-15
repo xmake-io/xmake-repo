@@ -24,20 +24,19 @@ package("mbedtls")
     end
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", "wasm", function (package)
-        package:config_set("shared", true)
         local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_PROGRAMS=OFF", "-DMBEDTLS_FATAL_WARNINGS=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=ON")
             table.insert(configs, "-DUSE_STATIC_MBEDTLS_LIBRARY=OFF")
             if package:is_plat("windows") then
                 table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-                io.replace("library/constant_time_impl.h", "extern volatile", "volatile", {plain = true})
-                io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", "const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", {plain = true})
-                io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", "const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", {plain = true})
+                io.replace("library/constant_time_impl.h", "extern volatile", "__declspec(dllimport) volatile", {plain = true})
+                io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", "__declspec(dllimport) const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", {plain = true})
+                io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", "__declspec(dllimport) const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", {plain = true})
             elseif package:is_plat("mingw") then
-                io.replace("library/constant_time_impl.h", "inline volatile", "volatile", {plain = true})
-                io.replace("include/mbedtls/x509_crt.h", "inline const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", "const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", {plain = true})
-                io.replace("include/mbedtls/x509_crt.h", "inline const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", "const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", {plain = true})
+                io.replace("library/constant_time_impl.h", "__attribute__ ((dllimport)) volatile", "volatile", {plain = true})
+                io.replace("include/mbedtls/x509_crt.h", "__attribute__ ((dllimport)) const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", "const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", {plain = true})
+                io.replace("include/mbedtls/x509_crt.h", "__attribute__ ((dllimport)) const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", "const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", {plain = true})
             end
         else
             table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=OFF")
