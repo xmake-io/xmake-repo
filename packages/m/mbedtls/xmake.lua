@@ -4,7 +4,6 @@ package("mbedtls")
     set_license("Apache-2.0")
 
     if is_plat("windows") then
-        # https://github.com/Mbed-TLS/mbedtls/issues/1130
         add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean", readonly = true})
     end
 
