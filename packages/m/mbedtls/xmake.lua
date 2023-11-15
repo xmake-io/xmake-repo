@@ -3,10 +3,6 @@ package("mbedtls")
     set_description("An SSL library")
     set_license("Apache-2.0")
 
-    if is_plat("windows") then
-        add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean", readonly = true})
-    end
-
     add_urls("https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/$(version).zip", {version = function (version)
         return version:ge("v2.23.0") and version or ("mbedtls-" .. tostring(version):sub(2))
     end})
@@ -27,10 +23,26 @@ package("mbedtls")
         add_syslinks("advapi32", "bcrypt")
     end
 
-    on_install(function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", "wasm", function (package)
+        package:config_set("shared", true)
         local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_PROGRAMS=OFF", "-DMBEDTLS_FATAL_WARNINGS=OFF"}
-        table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DUSE_STATIC_MBEDTLS_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
+        if package:config("shared") then
+            table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=ON")
+            table.insert(configs, "-DUSE_STATIC_MBEDTLS_LIBRARY=OFF")
+            if package:is_plat("windows") then
+                table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+                io.replace("library/constant_time_impl.h", "extern volatile", "volatile", {plain = true})
+                io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", "const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", {plain = true})
+                io.replace("include/mbedtls/x509_crt.h", "extern const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", "const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", {plain = true})
+            elseif package:is_plat("mingw") then
+                io.replace("library/constant_time_impl.h", "inline volatile", "volatile", {plain = true})
+                io.replace("include/mbedtls/x509_crt.h", "inline const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", "const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_suiteb;", {plain = true})
+                io.replace("include/mbedtls/x509_crt.h", "inline const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", "const mbedtls_x509_crt_profile mbedtls_x509_crt_profile_default;", {plain = true})
+            end
+        else
+            table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=OFF")
+            table.insert(configs, "-DUSE_STATIC_MBEDTLS_LIBRARY=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -45,4 +57,3 @@ package("mbedtls")
             }
         ]]}, {includes = "mbedtls/aes.h"}))
     end)
-
