@@ -20,7 +20,9 @@ package("mbedtls")
     add_links("mbedtls", "mbedx509", "mbedcrypto")
 
     if is_plat("windows") then
-        add_syslinks("advapi32")
+        # https://github.com/Mbed-TLS/mbedtls/issues/1130
+        add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean", readonly = true})
+        add_syslinks("advapi32", "bcrypt")
     end
 
     on_install(function (package)
@@ -32,5 +34,13 @@ package("mbedtls")
 
     on_test(function (package)
         assert(package:has_cfuncs("mbedtls_ssl_init", {includes = "mbedtls/ssl.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                mbedtls_aes_context ctx;
+
+                unsigned char key[32]; 
+                mbedtls_aes_setkey_enc(&ctx, key, 256);
+            }
+        ]]}, {includes = "mbedtls/aes.h"}))
     end)
 
