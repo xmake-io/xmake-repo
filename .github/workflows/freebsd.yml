@@ -30,6 +30,8 @@ jobs:
           copyback: false
           prepare: pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl
           run: |
+            git config --global --add safe.directory /home/runner/work/xmake-repo/xmake-repo
+            cd /home/runner/work/xmake-repo/xmake-repo
             git clone --recurse-submodules https://github.com/xmake-io/xmake.git /tmp/xmake -b dev
             cd /tmp/xmake
             ./configure
@@ -37,10 +39,6 @@ jobs:
             gmake install
             export XMAKE_ROOT=y
             cd -
-            git config --global --add safe.directory /Users/runner/work/xmake-repo/xmake-repo
-            git clone https://github.com/xmake-io/xmake-repo.git /tmp/xmake-repo -b dev
-            git config --global --add safe.directory /tmp/xmake-repo
-            cd /tmp/xmake-repo
             xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -vD
 
 
