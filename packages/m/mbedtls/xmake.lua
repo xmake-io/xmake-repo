@@ -19,8 +19,8 @@ package("mbedtls")
 
     add_links("mbedtls", "mbedx509", "mbedcrypto")
 
-    if is_plat("windows") then
-        add_syslinks("advapi32", "bcrypt")
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32", "advapi32", "bcrypt")
     end
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", "wasm", function (package)
