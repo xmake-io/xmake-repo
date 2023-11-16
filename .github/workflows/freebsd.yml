@@ -31,7 +31,6 @@ jobs:
           prepare: pkg install -y git curl unzip gmake llvm gsed bash perl5 openssl
           run: |
             git config --global --add safe.directory /home/runner/work/xmake-repo/xmake-repo
-            cd /home/runner/work/xmake-repo/xmake-repo
             git clone --recurse-submodules https://github.com/xmake-io/xmake.git /tmp/xmake -b dev
             cd /tmp/xmake
             ./configure
