@@ -35,6 +35,8 @@ package("matio")
         table.insert(configs, "-DMATIO_EXTENDED_SPARSE=" .. (package:config("extended_sparse") and "ON" or "OFF"))
         table.insert(configs, "-DMATIO_MAT73=" .. (package:config("mat73") and "ON" or "OFF"))
         table.insert(configs, "-DMATIO_DEFAULT_FILE_VERSION=" .. package:config("default_file_version"))
+        io.replace("CMakeLists.txt", "include(cmake/tools.cmake)", "", {plain = true})
+        io.replace("CMakeLists.txt", "include(cmake/test.cmake)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
