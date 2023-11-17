@@ -4,8 +4,8 @@ package("acl-server")
     set_description("A powerful multi-platform network communication library and service framework")
     set_license("LGPL-3.0")
 
-    set_urls("https://github.com/acl-dev/acl.git")
-    add_versions("2023.11.17", "1d9386a73d0317850be27d5a94381e8c4b9ffd26")
+    set_urls("https://github.com/acl-dev/acl/archive/refs/tags/v$(version).tar.gz")
+    add_versions("3.6.1-6", "7bafe00fe6b9601953b95b4d9a80f3421fac44365d452de31936c98517c5a23a")
 
     on_install(function (package)
         import("package.tools.xmake").install(package)
