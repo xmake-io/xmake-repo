@@ -9,6 +9,7 @@ package("freeimage")
     add_versions("3.18.0", "f41379682f9ada94ea7b34fe86bf9ee00935a3147be41b6569c9605a53e438fd")
 
     add_patches("3.18.0", path.join(os.scriptdir(), "patches", "3.18.0", "libjxr.patch"), "fddbb9fa736da383f54352dc0ab848d083d9279b66cc6ac53910236144ad75ab")
+	add_patches("3.18.0", path.join(os.scriptdir(), "patches", "3.18.0", "openexr.patch"), "051940ec58fd5ae85b65c67b83fd46eda807c9039f0f5207769ac871350af830")
 
     on_load("windows", function (package)
         if not package:config("shared") then
@@ -16,7 +17,7 @@ package("freeimage")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         if package:is_plat("windows") and package:is_arch("x86") then
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             if tonumber(vs) < 2019 then

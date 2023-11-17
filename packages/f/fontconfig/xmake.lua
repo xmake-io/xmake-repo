@@ -9,7 +9,7 @@ package("fontconfig")
     add_versions("2.13.94", "246d1640a7e54fba697b28e4445f4d9eb63dda1b511d19986249368ee7191882")
     add_versions("2.14.0", "b8f607d556e8257da2f3616b4d704be30fd73bd71e367355ca78963f9a7f0434")
 
-    add_deps("meson", "pkg-config", "freetype >=2.9", "expat")
+    add_deps("meson", "pkg-config", "freetype >=2.9", "expat", "ninja >=1.8.2")
     add_deps("python 3.x", {kind = "binary"})
     if is_plat("macosx") then
         add_deps("gettext")

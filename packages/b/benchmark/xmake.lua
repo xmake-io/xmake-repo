@@ -4,7 +4,7 @@ package("benchmark")
     set_description("A microbenchmark support library")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/google/benchmark/archive/v$(version).tar.gz",
+    add_urls("https://github.com/google/benchmark/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/google/benchmark.git")
     add_versions("1.5.2", "dccbdab796baa1043f04982147e67bb6e118fe610da2c65f88912d73987e700c")
     add_versions("1.5.3", "e4fbb85eec69e6668ad397ec71a3a3ab165903abe98a8327db920b94508f720e")
@@ -49,9 +49,7 @@ package("benchmark")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void BM_empty(benchmark::State& state) {
-              for (auto _ : state) {
-                benchmark::DoNotOptimize(state.iterations());
-              }
+              for (auto _ : state) {}
             }
             BENCHMARK(BM_empty);
             BENCHMARK(BM_empty)->ThreadPerCpu();

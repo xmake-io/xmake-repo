@@ -13,7 +13,14 @@ package("xerces-c")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreServices")
     end
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "android", function (package)
+        if package:is_plat("android") then
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(xerces-c): need ndk api level >= 26 for android")
+        end
+
         local configs = {"-Dnetwork=OFF", "-DCMAKE_DISABLE_FIND_PACKAGE_ICU=ON", "-DCMAKE_DISABLE_FIND_PACKAGE_CURL=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -35,5 +42,5 @@ package("xerces-c")
                 }
                 XMLPlatformUtils::Terminate();
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "xercesc/util/PlatformUtils.hpp"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "xercesc/util/PlatformUtils.hpp"}))
     end)

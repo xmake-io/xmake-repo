@@ -6,6 +6,7 @@ package("xxhash")
 
     add_urls("https://github.com/Cyan4973/xxHash/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Cyan4973/xxHash.git")
+    add_versions("v0.8.2", "baee0c6afd4f03165de7a4e67988d16f0f2b257b51d0e3cb91909302a26a79c4")
     add_versions("v0.8.1", "3bb6b7d6f30c591dd65aaaff1c8b7a5b94d81687998ca9400082c739a690436c")
     add_versions("v0.8.0", "7054c3ebd169c97b64a92d7b994ab63c70dd53a06974f1f630ab782c28db0f4f")
 

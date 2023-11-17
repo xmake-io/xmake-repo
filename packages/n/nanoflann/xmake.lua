@@ -9,6 +9,7 @@ package("nanoflann")
              "https://github.com/jlblancoc/nanoflann.git")
     add_versions("v1.3.2", "e100b5fc8d72e9426a80312d852a62c05ddefd23f17cbb22ccd8b458b11d0bea")
     add_versions("v1.4.2", "97fce650eb644a359a767af526cab9ba31842e53790a7279887e1ae2fffe7319")
+    add_versions("v1.5.0", "89aecfef1a956ccba7e40f24561846d064f309bc547cc184af7f4426e42f8e65")
 
     add_deps("cmake")
     on_install(function (package)

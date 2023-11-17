@@ -13,6 +13,7 @@ package("ordered_map")
 
     on_install(function (package)
         os.cp("include/tsl", package:installdir("include"))
+        os.cp("tsl-ordered-map.natvis", package:installdir("include", "tsl"))
     end)
 
     on_test(function (package)

@@ -40,6 +40,6 @@ target("s7") do
         add_ldflags("-static", "-static-libgcc", {force = true})
     end
     if is_plat("linux") then
-        add_syslinks("pthread", "dl")
+        add_syslinks("pthread", "dl", "m")
     end
 end

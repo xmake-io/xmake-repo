@@ -26,12 +26,15 @@ package("drogon")
     add_patches("1.8.0",   path.join(os.scriptdir(), "patches", "1.8.0", "redis.patch" ), "cf09beb4f07fd970ef4ad8911eec71ce7c94609ad9fbf1626b5ca8fcd070e09e")
     add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "resolv.patch"), "e9b6b320c70d17024931be8481f7b6413681216113466b5d6699431bb98d50e2")
     add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "config.patch"), "67a921899a24c1646be6097943cc2ed8228c40f177493451f011539c6df0ed76")
+    add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "check.patch"), "e4731995bb754f04e1bb813bfe3dfb480a850fbbd5cdb48d5a53b32b4ed8669c")
+    add_patches(">=1.8.2 <1.8.5", path.join(os.scriptdir(), "patches", "1.8.2", "gcc13.patch"), "d2842a734df52c590ab950414c7a95a1ac1be48f8680f909d0eeba5f36087cb0")
 
     add_configs("c_ares", {description = "Enable async DNS query support.", default = false, type = "boolean"})
     add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
     add_configs("openssl", {description = "Enable openssl support.", default = true, type = "boolean"})
     add_configs("postgresql", {description = "Enable postgresql support.", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Enable sqlite3 support.", default = false, type = "boolean"})
+    add_configs("redis", {description = "Enable redis support.", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("trantor", "jsoncpp", "brotli", "zlib")
@@ -47,20 +50,23 @@ package("drogon")
 
     on_load(function(package)
         local configdeps = {c_ares     = "c-ares",
-                            mysql      = "mysql",
+                            mysql      = "mariadb-connector-c",
                             openssl    = "openssl",
                             postgresql = "postgresql",
-                            sqlite3    = "sqlite3"}
+                            sqlite3    = "sqlite3",
+                            redis      = "hiredis"}
 
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
             end
         end
+        
     end)
 
-    on_install("windows|x64", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
+        io.replace("cmake_modules/FindMySQL.cmake", "PATH_SUFFIXES mysql", "PATH_SUFFIXES mysql mariadb", {plain = true})
 
         local configs = {"-DBUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))

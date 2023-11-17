@@ -35,7 +35,7 @@ package("gtest")
             target("gtest_main")
                 set_kind("static")
                 set_languages("cxx11")
-                set_default(]] .. tostring(package:config("gtest_main")) .. [[)
+                set_default(]] .. tostring(package:config("main")) .. [[)
                 add_files("googletest/src/gtest_main.cc")
                 add_includedirs("googletest/include", "googletest")
                 add_headerfiles("googletest/include/(**.h)")
@@ -63,34 +63,36 @@ package("gtest")
             }
         ]]}, {configs = {languages = "c++11"}, includes = "gtest/gtest.h"}))
 
-        assert(package:check_cxxsnippets({test = [[
-            using ::testing::AtLeast;
+        if package:config("gmock") then
+            assert(package:check_cxxsnippets({test = [[
+                using ::testing::AtLeast;
 
-            class A {
-            public:
-                virtual void a_foo() { return; }
-            };
+                class A {
+                public:
+                    virtual void a_foo() { return; }
+                };
 
-            class mock_A : public A {
-            public:
-                MOCK_METHOD0(a_foo, void());
-            };
+                class mock_A : public A {
+                public:
+                    MOCK_METHOD0(a_foo, void());
+                };
 
-            class B {
-            public:
-                A* target;
-                B(A* param) : target(param) {}
+                class B {
+                public:
+                    A* target;
+                    B(A* param) : target(param) {}
 
-                bool b_foo() { target->a_foo(); return true; }
-            };
+                    bool b_foo() { target->a_foo(); return true; }
+                };
 
-            TEST(test_code, step1) {
-                mock_A a_obj;
-                B b_obj(&a_obj);
+                TEST(test_code, step1) {
+                    mock_A a_obj;
+                    B b_obj(&a_obj);
 
-                EXPECT_CALL(a_obj, a_foo()).Times(AtLeast(1));
+                    EXPECT_CALL(a_obj, a_foo()).Times(AtLeast(1));
 
-                EXPECT_TRUE(b_obj.b_foo());
-            }
-        ]]}, {configs = {languages = "c++11"}, includes = {"gtest/gtest.h", "gmock/gmock.h"}}))
+                    EXPECT_TRUE(b_obj.b_foo());
+                }
+            ]]}, {configs = {languages = "c++11"}, includes = {"gtest/gtest.h", "gmock/gmock.h"}}))
+        end
     end)

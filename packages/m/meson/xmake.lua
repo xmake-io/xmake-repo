@@ -24,7 +24,7 @@ package("meson")
     -- https://github.com/xmake-io/xmake-repo/issues/1937
     set_policy("package.precompiled", false)
 
-    on_install("@macosx", "@linux", "@windows", "@msys", function (package)
+    on_install("@macosx", "@linux", "@bsd", "@windows", "@msys", function (package)
         local envs = {PYTHONPATH = package:installdir()}
         local python = package:is_plat("windows") and "python" or "python3"
         os.vrunv(python, {"-m", "pip", "install", "--target=" .. package:installdir(), "."}, {envs = envs})

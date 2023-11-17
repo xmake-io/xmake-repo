@@ -10,12 +10,12 @@ function _find_binary(package, opt)
     end
     if result then
         -- check if pip, setuptools and wheel are installed
-        local ok = try { function ()
-            os.vrunv(result.program, {"-c", "import pip"})
-            os.vrunv(result.program, {"-c", "import setuptools"})
-            os.vrunv(result.program, {"-c", "import wheel"})
+        local ok = try { function()
+            os.vrunv(result.program, { "-c", "import pip" })
+            os.vrunv(result.program, { "-c", "import setuptools" })
+            os.vrunv(result.program, { "-c", "import wheel" })
             return true
-        end}
+        end }
         if not ok then
             return false
         end
@@ -23,7 +23,6 @@ function _find_binary(package, opt)
 end
 
 function _find_library(package, opt)
-
     -- init search options
     opt = opt or {}
     opt.paths = opt.paths or {}
@@ -35,10 +34,11 @@ function _find_library(package, opt)
     if not program then
         program = find_program("python", opt)
     end
+
     local version = nil
     if program then
-        opt.command = function ()
-            local outs, errs = os.iorunv(program, {"--version"})
+        opt.command = function()
+            local outs, errs = os.iorunv(program, { "--version" })
             return ((outs or "") .. (errs or "")):trim()
         end
         version = find_programver(program, opt)
@@ -54,14 +54,16 @@ function _find_library(package, opt)
     local includepath = nil
     if package:is_plat("windows") then
         link = format("python" .. table.concat(table.slice(version:split("%."), 1, 2), ""))
-        libpath = find_library(link, {exepath}, {suffixes = {"libs"}})
+        local out = try { function () return os.iorunv(program, { "-c", "import sys; print(sys.base_prefix, end='')" }) end }
+        libpath = find_library(link, { exepath, out }, { suffixes = { "libs" } })
         linkdirs = {}
-        includepath = find_path("Python.h", {exepath}, {suffixes = {"include"}})
+        includepath = find_path("Python.h", { exepath, out }, { suffixes = { "include" } })
     else
         local pyver = table.concat(table.slice(version:split("%."), 1, 2), ".")
         link = format("python" .. pyver)
-        libpath = find_library(link, {path.directory(exepath)}, {suffixes = {"lib", "lib64", "lib/x86_64-linux-gnu"}})
-        includepath = find_path("Python.h", {path.directory(exepath)}, {suffixes = {"include/python" .. pyver}})
+        local out = try { function () return os.iorunv(program, { "-c", "import sys; print(sys.base_prefix, end='')" }) end }
+        libpath = find_library(link, { path.directory(exepath), out }, { suffixes = { "lib", "lib64", "lib/x86_64-linux-gnu" } })
+        includepath = find_path("Python.h", { path.directory(exepath), out }, { suffixes = { "include/python" .. pyver } })
     end
 
     if libpath and includepath then
@@ -72,7 +74,7 @@ function _find_library(package, opt)
         if not package:config("headeronly") then
             result.links = libpath.link
             result.linkdirs = libpath.linkdir
-        end        
+        end
         return result
     end
 end
