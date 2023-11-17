@@ -23,7 +23,7 @@ package("mbedtls")
         add_syslinks("ws2_32", "advapi32", "bcrypt")
     end
 
-    on_install("windows|x86", "windows|x64", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", "wasm", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "bsd", "mingw", "android", "iphoneos", "cross", "wasm", function (package)
         local configs = {"-DENABLE_TESTING=OFF", "-DENABLE_PROGRAMS=OFF", "-DMBEDTLS_FATAL_WARNINGS=OFF"}
         if package:config("shared") then
             table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=ON")
@@ -38,7 +38,11 @@ package("mbedtls")
             table.insert(configs, "-DUSE_SHARED_MBEDTLS_LIBRARY=OFF")
             table.insert(configs, "-DUSE_STATIC_MBEDTLS_LIBRARY=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+        local cxflags
+        if package:is_plat("mingw") and package:is_arch("i386") then
+            cxflags = {"-maes", "-msse2", "-mpclmul"}
+        end
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
