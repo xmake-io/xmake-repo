@@ -1,4 +1,4 @@
-package("acl-framework")
+package("acl-server")
 
     set_homepage("https://github.com/acl-dev/acl")
     set_description("A powerful multi-platform network communication library and service framework")
