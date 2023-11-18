@@ -8,7 +8,7 @@ package("libco")
     
     add_syslinks("pthread")
     
-    on_install("macosx", "linux", function (package)
+    on_install("linux", function (package)
         local configs = {}
         import("package.tools.make").make(package, configs)
         if package:config("shared") then
