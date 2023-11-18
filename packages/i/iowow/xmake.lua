@@ -14,7 +14,7 @@ package("iowow")
 
     add_deps("cmake")
 
-    on_install("linux", "macosx", "bsd", "android", "iphoneos", "cross", function (package)
+    on_install("linux", "macosx", "bsd", "cross", function (package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DPACKAGE_TGZ=OFF", "-DPACKAGE_ZIP=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
