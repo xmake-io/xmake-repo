@@ -157,7 +157,6 @@ end
 
 function main(updaterefs)
     local instances = updaterefs and _get_packagerefs_in_latest_24h() or _get_latest_modified_packages()
-    os.exit()
     for _, instance in ipairs(instances) do
        local versions = instance:versions()
        if versions and #versions > 0 then

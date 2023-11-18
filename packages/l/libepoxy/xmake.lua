@@ -8,6 +8,7 @@ package("libepoxy")
         return format("%d.%d/libepoxy-%s", version:major(), version:minor(), version)
     end})
     add_versions("1.5.9", "d168a19a6edfdd9977fef1308ccf516079856a4275cf876de688fb7927e365e4")
+    add_versions("1.5.10", "072cda4b59dd098bba8c2363a6247299db1fa89411dc221c8b81b8ee8192e623")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 

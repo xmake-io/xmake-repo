@@ -230,7 +230,9 @@ function main(...)
     os.cd("test")
     print(os.curdir())
     -- do action for remote?
-    os.exec("xmake service --disconnect")
+    if os.isdir("xmake-repo") then
+        os.exec("xmake service --disconnect")
+    end
     if argv.remote then
         os.tryrm("xmake-repo")
         os.cp(path.join(repodir, "packages"), "xmake-repo/packages")
