@@ -6,7 +6,6 @@ package("libco")
     add_urls("https://github.com/Tencent/libco.git")
     add_versions("v1.0", "dc6aafcc5e643d3b454a58acdc78e223634bbd1e")
     
-    add_deps("make")
     add_syslinks("pthread")
     
     on_install("macosx", "linux", function (package)
