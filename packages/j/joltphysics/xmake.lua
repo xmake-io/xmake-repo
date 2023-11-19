@@ -74,7 +74,7 @@ package("joltphysics")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm", "bsd", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm",  function (package)
         -- Jolt CMakeLists had no install target/support for custom msvc runtime until 3.0.0
         local version = package:version()
         if not version or version:ge("3.0.0") then
