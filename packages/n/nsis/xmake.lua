@@ -14,7 +14,8 @@ package("nsis")
 
     on_fetch(function (package, opt)
         if opt.system then
-            return package:find_tool("makensis", table.join({check = "/CMDHELP"}, opt))
+            -- we need return false to disable fallback fetch, it will stuck when call `nsis --version`
+            return package:find_tool("makensis", table.join({check = "/CMDHELP"}, opt)) or false
         end
     end)
 
