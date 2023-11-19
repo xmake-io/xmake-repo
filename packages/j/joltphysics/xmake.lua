@@ -87,7 +87,8 @@ package("joltphysics")
                 "-DTARGET_PERFORMANCE_TEST=OFF",
                 "-DTARGET_SAMPLES=OFF",
                 "-DTARGET_VIEWER=OFF",
-                "-DUSE_STATIC_MSVC_RUNTIME_LIBRARY=OFF"
+                "-DUSE_STATIC_MSVC_RUNTIME_LIBRARY=OFF",
+                "-DOVERRIDE_CXX_FLAGS=OFF"
             }
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
