@@ -12,6 +12,12 @@ package("nsis")
     add_resources("3.09", "uac", "https://github.com/xmake-mirror/nsis/releases/download/v309/UAC.zip", "20e3192af5598568887c16d88de59a52c2ce4a26e42c5fb8bee8105dcbbd1760")
     add_resources("3.09", "strlen_8192", "https://github.com/xmake-mirror/nsis/releases/download/v309/nsis-3.09-strlen_8192.zip", "9e3b8e77c97a46747201f95f89eba26714dd9c6dc06830c3934b3f5fbdb1beca")
 
+    on_fetch(function (package, opt)
+        if opt.system then
+            return package:find_tool("makensis", table.join({check = "/CMDHELP"}, opt))
+        end
+    end)
+
     on_install("@windows|x64", "@windows|x86", function (package)
         os.cp("*", package:installdir())
         os.cp(path.join(package:resourcedir("strlen_8192"), "*"), package:installdir())
