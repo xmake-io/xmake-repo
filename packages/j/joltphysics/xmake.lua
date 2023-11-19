@@ -5,6 +5,7 @@ package("joltphysics")
 
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrouwe/JoltPhysics.git")
+    add_versions("v4.0.1", "e0bb4fa07047ca9c38bd71262427ad2972a7f45f8dff74587f73457f3b60df82")
     add_versions("v4.0.0", "f8449ec72ffaadf423eeb80e0814f3ba14227bcf7f06cb9f3cbcfb3499a57b33")
     add_versions("v3.0.1", "7ebb40bf2dddbcf0515984582aaa197ddd06e97581fd55b98cb64f91b243b8a6")
     add_versions("v3.0.0", "f8d756ae3471a32f2ee7e07475df2f7a34752f0fdd05e9a7ed2e7ce3dcdcd574")
@@ -73,7 +74,7 @@ package("joltphysics")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm", "bsd", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm",  function (package)
         -- Jolt CMakeLists had no install target/support for custom msvc runtime until 3.0.0
         local version = package:version()
         if not version or version:ge("3.0.0") then
@@ -86,7 +87,8 @@ package("joltphysics")
                 "-DTARGET_PERFORMANCE_TEST=OFF",
                 "-DTARGET_SAMPLES=OFF",
                 "-DTARGET_VIEWER=OFF",
-                "-DUSE_STATIC_MSVC_RUNTIME_LIBRARY=OFF"
+                "-DUSE_STATIC_MSVC_RUNTIME_LIBRARY=OFF",
+                "-DOVERRIDE_CXX_FLAGS=OFF"
             }
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
