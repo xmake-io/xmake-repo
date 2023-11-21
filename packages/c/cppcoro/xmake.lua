@@ -11,7 +11,7 @@ package("cppcoro")
         add_syslinks("synchronization", "ws2_32", "mswsock")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", function (package)
         import("package.tools.cmake").install(package)
     end)
 
