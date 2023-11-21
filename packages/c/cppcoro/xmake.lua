@@ -7,6 +7,8 @@ package("cppcoro")
     add_versions("2020.10.13", "a87e97fe5b6091ca9f6de4637736b8e0d8b109cf")
     add_versions("2023.11.23", "e86216e4fa6145f0184b5fef79230e9d4dc3aa77")
 
+    add_deps("cmake")
+
     if is_plat("windows") then
         add_syslinks("synchronization", "ws2_32", "mswsock")
     end
