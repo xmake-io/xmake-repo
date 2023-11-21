@@ -12,17 +12,24 @@ package("davix")
 
     add_deps("python 3.x", {kind = "binary"})
     add_deps("cmake", "openssl", "libcurl", "libxml2")
-    add_deps("util-linux", {configs = {libuuid = true, libblkid = true}})
+    add_deps("util-linux", {configs = {libuuid = true}})
     add_includedirs("include/davix")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
     on_install("macosx", "linux", function (package)
-        local configs = {"-DDAVIX_TESTS=OFF", "-DEMBEDDED_LIBCURL=OFF", "-DLIB_SUFFIX="}
+        local configs = {"-DDAVIX_TESTS=OFF", "-DEMBEDDED_LIBCURL=OFF", "-DLIB_SUFFIX=", "-DUUID_LIBRARY=uuid"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DSHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSTATIC_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"libcurl", "util-linux"}})
+        local utlinux = package:dep("util-linux"):fetch()
+        if utlinux then
+            for _, dir in ipairs(utlinux.includedirs or utlinux.sysincludedirs) do
+                table.insert(configs, "-DUUID_INCLUDE_DIR=" .. dir)
+                break
+            end
+        end
+        import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
     end)
 
