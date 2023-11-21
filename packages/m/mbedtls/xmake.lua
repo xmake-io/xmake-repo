@@ -15,6 +15,8 @@ package("mbedtls")
     add_versions("v2.13.0", "6e747350bc13e8ff51799daa50f74230c6cd8e15977da55dd59f57b23dcf70a6")
     add_versions("v2.7.6", "e527d828ab82650102ca8031302e5d4bc68ea887b2d84e43d3da2a80a9e5a2c8")
 
+    add_patches("3.5.1", path.join(os.scriptdir(), "patches", "3.5.1", "aesni-mingw-i386.patch"), "4b5c5de69930049242cc1d6a84185881a936a27773ecaf975290ac591f38a41d")
+
     add_deps("cmake")
 
     add_links("mbedtls", "mbedx509", "mbedcrypto")
