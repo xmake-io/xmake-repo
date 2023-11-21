@@ -33,6 +33,9 @@ package("fontconfig")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
+        if package:is_plat("windows") then
+            io.replace("meson.build", "c_args = []", "c_args = ['-DXML_STATIC']", {plain = true})
+        end
         local configs = {
             "-Dtests=disabled",
             "-Dtools=disabled",
