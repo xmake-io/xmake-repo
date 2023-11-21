@@ -34,6 +34,7 @@ package("drogon")
     add_configs("openssl", {description = "Enable openssl support.", default = true, type = "boolean"})
     add_configs("postgresql", {description = "Enable postgresql support.", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Enable sqlite3 support.", default = false, type = "boolean"})
+    add_configs("redis", {description = "Enable redis support.", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("trantor", "jsoncpp", "brotli", "zlib")
@@ -52,7 +53,8 @@ package("drogon")
                             mysql      = "mariadb-connector-c",
                             openssl    = "openssl",
                             postgresql = "postgresql",
-                            sqlite3    = "sqlite3"}
+                            sqlite3    = "sqlite3",
+                            redis      = "hiredis"}
 
         for name, dep in pairs(configdeps) do
             if package:config(name) then

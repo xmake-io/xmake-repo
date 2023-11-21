@@ -18,6 +18,7 @@ package("harfbuzz")
     add_versions("8.0.1", "d54ca67b6a0bf732b66a343566446d7f93df2bb850133f886c0082fb618a06b2")
     add_versions("8.1.0", "8d544f1b74797b7b4d88f586e3b9202528b3e8c17968d28b7cdde02041bff5a0")
     add_versions("8.1.1", "b16e6bc0fc7e6a218583f40c7d201771f2e3072f85ef6e9217b36c1dc6b2aa25")
+    add_versions("8.3.0", "6a093165442348d99f3307480ea87ed83bdabaf642cdd9548cff6b329e93bfac")
 
     add_configs("icu", {description = "Enable ICU library unicode functions.", default = false, type = "boolean"})
     add_configs("freetype", {description = "Enable freetype interop helpers.", default = true, type = "boolean"})

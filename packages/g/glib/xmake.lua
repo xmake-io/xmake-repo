@@ -1,29 +1,35 @@
 package("glib")
 
-    set_homepage("https://developer.gnome.org/glib/")
-    set_description("Core application library for C.")
+    set_homepage("https://docs.gtk.org/glib/")
+    set_description("Low-level core library that forms the basis for projects such as GTK+ and GNOME.")
+    set_license("LGPL-2.1")
 
-    set_urls("https://github.com/GNOME/glib/archive/refs/tags/$(version).tar.gz",
-             "https://gitlab.gnome.org/GNOME/glib/-/archive/$(version)/glib-$(version).tar.gz",
-             "https://gitlab.gnome.org/GNOME/glib.git")
-    add_versions("2.71.0", "10cdfa2893b7ccf6a95b25644ec51e2c609274a5af3ad8e743d6dc35434fdf11")
+    add_urls("https://download.gnome.org/sources/glib/2.78/glib-2.78.1.tar.xz", {alias = "home", version = function (version)
+        return format("%d.%d/glib-%s", version:major(), version:minor(), version)
+    end})
+    add_urls("https://gitlab.gnome.org/GNOME/glib/-/archive/$(version)/glib-$(version).tar.gz", {alias = "gitlab"})
+    add_urls("https://gitlab.gnome.org/GNOME/glib.git")
+    add_versions("home:2.71.0", "926816526f6e4bba9af726970ff87be7dac0b70d5805050c6207b7bb17ea4fca")
+    add_versions("home:2.78.1", "915bc3d0f8507d650ead3832e2f8fb670fce59aac4d7754a7dab6f1e6fed78b2")
     add_patches("2.71.0", path.join(os.scriptdir(), "patches", "2.71.0", "macosx.patch"), "a0c928643e40f3a3dfdce52950486c7f5e6f6e9cfbd76b20c7c5b43de51d6399")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
-    add_deps("meson", "ninja", "libffi", "pcre")
+    add_deps("meson", "ninja", "libffi", "zlib")
     if is_plat("linux") then
         add_deps("libiconv")
-    elseif is_plat("windows", "macosx") then
+    elseif is_plat("macosx") then
+        add_deps("libiconv", {system = true})
+        add_deps("libintl")
+    elseif is_plat("windows") then
         add_deps("libintl")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
-    add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0", "intl")
+    add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0")
     if is_plat("macosx") then
-        add_syslinks("iconv")
         add_frameworks("Foundation", "CoreFoundation")
         add_extsources("brew::glib")
     elseif is_plat("linux") then
@@ -31,30 +37,36 @@ package("glib")
         add_extsources("apt::libglib2.0-dev", "pacman::glib2")
     end
 
-    if on_fetch then
-        on_fetch("macosx", "linux", function (package, opt)
-            if opt.system and package.find_package then
-                local result
-                for _, name in ipairs({"gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0"}) do
-                    local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
-                    if pkginfo then
-                        if not result then
-                            result = table.copy(pkginfo)
-                        else
-                            local includedirs = pkginfo.sysincludedirs or pkginfo.includedirs
-                            result.links = table.wrap(result.links)
-                            result.linkdirs = table.wrap(result.linkdirs)
-                            result.includedirs = table.wrap(result.includedirs)
-                            table.join2(result.includedirs, includedirs)
-                            table.join2(result.linkdirs, pkginfo.linkdirs)
-                            table.join2(result.links, pkginfo.links)
-                        end
+    on_fetch("macosx", "linux", function (package, opt)
+        if opt.system and package.find_package then
+            local result
+            for _, name in ipairs({"gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0"}) do
+                local pkginfo = package.find_package and package:find_package("pkgconfig::" .. name, opt)
+                if pkginfo then
+                    if not result then
+                        result = table.copy(pkginfo)
+                    else
+                        local includedirs = pkginfo.sysincludedirs or pkginfo.includedirs
+                        result.links = table.wrap(result.links)
+                        result.linkdirs = table.wrap(result.linkdirs)
+                        result.includedirs = table.wrap(result.includedirs)
+                        table.join2(result.includedirs, includedirs)
+                        table.join2(result.linkdirs, pkginfo.linkdirs)
+                        table.join2(result.links, pkginfo.links)
                     end
                 end
-                return result
             end
-        end)
-    end
+            return result
+        end
+    end)
+
+    on_load("windows", "macosx", "linux", "cross", function (package)
+        if package:version():ge("2.74.0") then
+            package:add("deps", "pcre2")
+        else
+            package:add("deps", "pcre")
+        end
+    end)
 
     on_install("windows", "macosx", "linux", "cross", function (package)
         import("package.tools.meson")
@@ -69,7 +81,7 @@ package("glib")
                          "-Dlibmount=disabled"}
         if package:is_plat("macosx") and package:version():le("2.61.0") then
             table.insert(configs, "-Diconv=native")
-        elseif package:is_plat("windows") then
+        elseif package:is_plat("windows") and package:version():le("2.74.0") then
             table.insert(configs, "-Diconv=external")
         end
         table.insert(configs, "-Dglib_debug=" .. (package:debug() and "enabled" or "disabled"))

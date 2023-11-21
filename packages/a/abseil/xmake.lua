@@ -69,5 +69,5 @@ package("abseil")
                 auto a = absl::SimpleAtoi("123", &result);
                 std::cout << "Joined string: " << s << "\\n";
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "cxx17"}}))
     end)

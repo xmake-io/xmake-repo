@@ -12,6 +12,7 @@ package("magic_enum")
     add_versions("v0.8.1", "6b948d1680f02542d651fc82154a9e136b341ce55c5bf300736b157e23f9df11")
     add_versions("v0.8.2", "62bd7034bbbfc3d7806001767d5775ab42f3ff33bb38366e1ceb21102f0dff9a")
     add_versions("v0.9.0", "2fb2f602b4660f8af539ee00958132a397e138bda19aa1ceae546de3a143386b")
+    add_versions("v0.9.5", "44ad80db5a72f5047e01d90e18315751d9ac90c0ab42cbea7a6f9ec66a4cd679")
 
     add_deps("cmake")
 
