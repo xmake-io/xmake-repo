@@ -18,7 +18,7 @@ package("davix")
         add_syslinks("pthread")
     end
     on_install("macosx", "linux", function (package)
-        local configs = {"-DDAVIX_TESTS=OFF", "-DEMBEDDED_LIBCURL=OFF", "-DLIB_SUFFIX=", "-DUUID_LIBRARY=uuid"}
+        local configs = {"-DDAVIX_TESTS=OFF", "-DEMBEDDED_LIBCURL=OFF", "-DLIB_SUFFIX="}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DSHARED_LIBRARY=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSTATIC_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
@@ -28,8 +28,12 @@ package("davix")
                 table.insert(configs, "-DUUID_INCLUDE_DIR=" .. dir)
                 break
             end
+            for _, dir in ipairs(utlinux.linkdirs) do
+                table.insert(configs, "-DUUID_LIBRARY=" .. dir .. "/libuuid.a")
+                break
+            end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libcurl"})
         package:addenv("PATH", "bin")
     end)
 
