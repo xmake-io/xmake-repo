@@ -24,9 +24,9 @@ package("glib")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
-    add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0", "libg-2.0")
+    add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0")
     if is_plat("windows") then
-        add_syslinks("user32", "shell32", "ole32", "ws2_32")
+        add_syslinks("user32", "shell32", "ole32", "ws2_32", "shlwapi")
     elseif is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation")
         add_extsources("brew::glib")
