@@ -43,7 +43,10 @@ package("pango")
         -- fix unexpected -Werror=array-bounds errors, see https://gitlab.gnome.org/GNOME/pango/-/issues/740
         io.replace("meson.build", "'-Werror=array-bounds',", "", {plain = true})
 
-        meson.install(package, configs, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "libintl"}})
+        local envs = meson.buildenvs(package, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "libintl"}})
+        -- workaround for https://github.com/xmake-io/xmake/issues/4412
+        envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath")
+        meson.install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
