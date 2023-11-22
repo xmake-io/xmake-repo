@@ -45,7 +45,7 @@ package("pango")
 
         local envs = meson.buildenvs(package, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "libintl"}})
         -- workaround for https://github.com/xmake-io/xmake/issues/4412
-        envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath")
+        envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath:")
         meson.install(package, configs, {envs = envs})
     end)
 
