@@ -12,9 +12,10 @@ package("qtpromise")
     add_deps("qt6core")
 
     on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "mingw|x86_64", function (package)
-        io.replace("include/QtPromise", "../src/", "", {plain = true})
+        io.replace("include/QtPromise", "../src/qtpromise/", "", {plain = true})
         os.cp("include", package:installdir())
-        os.cp("src/qtpromise", package:installdir("include"))
+        os.cp("src/qtpromise/*.h", package:installdir("include"))
+        os.cp("src/qtpromise/*.inl", package:installdir("include"))
     end)
 
     on_test(function (package)
