@@ -14,7 +14,7 @@ package("jnipp")
 
     add_deps("openjdk")
 
-    on_install(function (package)
+    on_install("windows|x64", "macosx|x86_64", "macosx|arm64", "mingw|x86_64", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("openjdk")
