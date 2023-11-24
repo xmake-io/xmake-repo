@@ -24,8 +24,11 @@ package("jnipp")
                 add_files("jnipp.cpp")
                 add_headerfiles("jnipp.h")
                 add_packages("openjdk")
-                if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all", {export_classes = true})
+                if is_plat("windows") then
+                    add_syslinks("advapi32")
+                    if is_kind("shared") then
+                        add_rules("utils.symbols.export_all", {export_classes = true})
+                    end
                 end
         ]])
         import("package.tools.xmake").install(package)
