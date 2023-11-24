@@ -205,6 +205,7 @@ target("luajit")
               "src/lib_os.c",
               "src/lib_package.c",
               "src/lib_debug.c",
+              "src/lib_jit.c",
               "src/lib_ffi.c",
               "src/lib_buffer.c", {rules = {"buildvm", override = true}})
 
