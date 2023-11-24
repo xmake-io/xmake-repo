@@ -20,7 +20,7 @@ package("make")
 
     on_install("@windows", function(package)
         import("core.tool.toolchain")
-        local runenvs = toolchain.load("msvc"):runenvs()
+        local runenvs = toolchain.load("msvc", {plat = "windows", arch = os.arch()}):runenvs()
         os.vrunv("build_w32.bat", {}, {envs = runenvs})
         os.cp("WinRel/gnumake.exe", path.join(package:installdir("bin"), "make.exe"))
     end)
