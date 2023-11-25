@@ -5,8 +5,9 @@ package("binutils")
     set_description("GNU binary tools for native development")
     set_license("GPL-2.0")
 
-    set_urls("https://ftp.gnu.org/gnu/binutils/binutils-$(version).tar.xz",
-             "https://ftpmirror.gnu.org/binutils/binutils-$(version).tar.xz")
+    set_urls("https://ftpmirror.gnu.org/binutils/binutils-$(version).tar.xz",
+             "https://ftp.gnu.org/gnu/binutils/binutils-$(version).tar.xz")
+    add_versions("2.41", "ae9a5789e23459e59606e6714723f2d3ffc31c03174191ef0d015bdf06007450")
     add_versions("2.38", "e316477a914f567eccc34d5d29785b8b0f5a10208d36bbacedcc39048ecfe024")
     add_versions("2.34", "f00b0e8803dc9bab1e2165bd568528135be734df3fabf8d0161828cd56028952")
     
