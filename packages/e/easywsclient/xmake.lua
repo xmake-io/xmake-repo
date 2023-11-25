@@ -7,6 +7,10 @@ package("easywsclient")
     add_versions("2021.01.12", "afc1d8cfc584e0f1f4a77e8c0ce3e979d9fe7ce2")
     add_patches("2021.01.12", path.join(os.scriptdir(), "patches", "2021.01.12", "add_cstdint.patch"), "d54b84663763b90e00a3198b33d7998a4067573805ab090be8dfd6eac8af8706")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32")
+    end
+
     on_install(function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
@@ -18,6 +22,9 @@ package("easywsclient")
                 add_headerfiles("(easywsclient.hpp)")
                 if is_plat("windows") then
                     add_defines("_WIN32")
+                end
+                if is_plat("windows", "mingw") then
+                    add_syslinks("ws2_32")
                 end
         ]])
         import("package.tools.xmake").install(package, configs)
