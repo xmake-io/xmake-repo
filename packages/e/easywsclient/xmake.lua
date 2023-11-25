@@ -7,7 +7,6 @@ package("easywsclient")
     add_versions("2021.01.12", "afc1d8cfc584e0f1f4a77e8c0ce3e979d9fe7ce2")
     add_patches("2021.01.12", path.join(os.scriptdir(), "patches", "2021.01.12", "add_cstdint.patch"), "babddf02e9eae42cc11e5458478f207837a402c425b31dafd2ef63a29b7d6744")
     add_patches("2021.01.12", path.join(os.scriptdir(), "patches", "2021.01.12", "move_import.patch"), "9265412268390cbfcb799f40324c3e255ae6fc01c292e749c131f1c3c19e32bd")
-    add_patches("2021.01.12", path.join(os.scriptdir(), "patches", "2021.01.12", "remove_pragma_comment_ws2_32.patch"), "b6964a71d458ba61f7bccd31e9957d359e7e385602f4c7aac2a6d3dadd517858")
 
     if is_plat("mingw") then
         add_syslinks("ws2_32")
