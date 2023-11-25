@@ -5,7 +5,7 @@ package("easywsclient")
 
     add_urls("https://github.com/dhbaird/easywsclient.git")
     add_versions("2021.01.12", "afc1d8cfc584e0f1f4a77e8c0ce3e979d9fe7ce2")
-    add_patches("2021.01.12", path.join(os.scriptdir(), "patches", "2021.01.12", "fix_linux.patch"), "18712e9cd793ea256b5b4ad22e281f22251b50b6570cb8b0f969f4438e363035")
+    add_patches("2021.01.12", path.join(os.scriptdir(), "patches", "2021.01.12", "fix_linux.patch"), "6f8bdce2f6729ea0298b03a0e1d8f9d2fbe6a8cdb83725e5e4aefbc7f62f10d9")
 
     on_install(function (package)
         local configs = {}
