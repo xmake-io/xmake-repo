@@ -1,12 +1,38 @@
-diff --git a/easywsclient.hpp b/easywsclient.hpp
-index 08c4a7b..bfcfa99 100644
---- a/easywsclient.hpp
-+++ b/easywsclient.hpp
-@@ -8,6 +8,7 @@
- // wget https://raw.github.com/dhbaird/easywsclient/master/easywsclient.hpp
- // wget https://raw.github.com/dhbaird/easywsclient/master/easywsclient.cpp
+diff --git a/easywsclient.cpp b/easywsclient.cpp
+index 0c98098..bc9217a 100644
+--- a/easywsclient.cpp
++++ b/easywsclient.cpp
+@@ -26,17 +26,6 @@
+     #ifndef snprintf
+         #define snprintf _snprintf_s
+     #endif
+-    #if _MSC_VER >=1600
+-        // vs2010 or later
+-        #include <stdint.h>
+-    #else
+-        typedef __int8 int8_t;
+-        typedef unsigned __int8 uint8_t;
+-        typedef __int32 int32_t;
+-        typedef unsigned __int32 uint32_t;
+-        typedef __int64 int64_t;
+-        typedef unsigned __int64 uint64_t;
+-    #endif
+     #define socketerrno WSAGetLastError()
+     #define SOCKET_EAGAIN_EINPROGRESS WSAEINPROGRESS
+     #define SOCKET_EWOULDBLOCK WSAEWOULDBLOCK
+@@ -52,7 +41,6 @@
+     #include <sys/time.h>
+     #include <sys/types.h>
+     #include <unistd.h>
+-    #include <stdint.h>
+     #ifndef _SOCKET_T_DEFINED
+         typedef int socket_t;
+         #define _SOCKET_T_DEFINED
+@@ -72,6 +60,7 @@
  
-+#include <cstdint>
- #include <string>
  #include <vector>
+ #include <string>
++#include <stdint.h>
+ 
+ #include "easywsclient.hpp"
  
