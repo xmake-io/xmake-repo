@@ -18,8 +18,11 @@ package("make")
         add_extsources("brew::make")
     end
 
-    on_install("@windows", function(package)
-        local runenvs = package:toolchain("msvc"):runenvs()
+    on_install("@windows", function (package)
+        import("core.tool.toolchain")
+        local msvc = package:toolchain("msvc") or
+            toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+        local runenvs = msvc:runenvs()
         os.vrunv("build_w32.bat", {}, {envs = runenvs})
         os.cp("WinRel/gnumake.exe", path.join(package:installdir("bin"), "make.exe"))
     end)
