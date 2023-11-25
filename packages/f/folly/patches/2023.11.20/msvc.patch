@@ -1,0 +1,11 @@
+diff --git a/CMake/FollyCompilerMSVC.cmake b/CMake/FollyCompilerMSVC.cmake
+--- a/CMake/FollyCompilerMSVC.cmake
++++ b/CMake/FollyCompilerMSVC.cmake
+@@ -326,3 +326,7 @@ function(apply_folly_compile_options_to_target THETARGET)
+ endfunction()
+ 
+ list(APPEND FOLLY_LINK_LIBRARIES Iphlpapi.lib Ws2_32.lib)
++
++# Portability compiler defines
++add_compile_definitions(GLOG_NO_ABBREVIATED_SEVERITIES)
++add_compile_definitions(NOMINMAX)
