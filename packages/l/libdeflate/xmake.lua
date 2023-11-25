@@ -11,7 +11,7 @@ package("libdeflate")
     add_versions("v1.13", "0d81f197dc31dc4ef7b6198fde570f4e8653c77f4698fcb2163d820a9607c838")
     add_versions("v1.15", "58b95040df7383dc0413defb700d9893c194732474283cc4c8f144b00a68154b")
     add_versions("v1.17", "fa4615af671513fa2a53dc2e7a89ff502792e2bdfc046869ef35160fcc373763")
-    add_versions("v1.19", "d9bb9bdd8cc5a8c1f7f6226fa0053dd72861e15f366e7ff7d0d191eac16d66f3")
+    add_versions("v1.19", "27bf62d71cd64728ff43a9feb92f2ac2f2bf748986d856133cc1e51992428c25")
 
     add_deps("cmake")
     on_load("windows", function (package)
