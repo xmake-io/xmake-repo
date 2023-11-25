@@ -1,0 +1,12 @@
+diff --git a/easywsclient.cpp b/easywsclient.cpp
+index 0c98098..4a6572f 100644
+--- a/easywsclient.cpp
++++ b/easywsclient.cpp
+@@ -9,7 +9,6 @@
+     #include <fcntl.h>
+     #include <WinSock2.h>
+     #include <WS2tcpip.h>
+-    #pragma comment( lib, "ws2_32" )
+     #include <stdio.h>
+     #include <stdlib.h>
+     #include <string.h>
