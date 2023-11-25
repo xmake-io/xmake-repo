@@ -1,5 +1,5 @@
 diff --git a/easywsclient.cpp b/easywsclient.cpp
-index 0c98098..bfdd641 100644
+index 0c98098..750d513 100644
 --- a/easywsclient.cpp
 +++ b/easywsclient.cpp
 @@ -26,17 +26,6 @@
@@ -28,11 +28,15 @@ index 0c98098..bfdd641 100644
      #ifndef _SOCKET_T_DEFINED
          typedef int socket_t;
          #define _SOCKET_T_DEFINED
-@@ -72,6 +60,7 @@
+diff --git a/easywsclient.hpp b/easywsclient.hpp
+index 08c4a7b..df60500 100644
+--- a/easywsclient.hpp
++++ b/easywsclient.hpp
+@@ -10,6 +10,7 @@
  
- #include <vector>
  #include <string>
+ #include <vector>
 +#include <cstdint>
  
- #include "easywsclient.hpp"
+ namespace easywsclient {
  
