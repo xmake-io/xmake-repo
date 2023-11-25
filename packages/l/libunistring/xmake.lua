@@ -4,7 +4,7 @@ package("libunistring")
     set_description("This library provides functions for manipulating Unicode strings and for manipulating C strings according to the Unicode standard.")
     set_license("GPL-3.0")
 
-    add_urls("https://ftpmirror.gnu.org/gnu/libunistring/libunistring-$(version).tar.gz"
+    add_urls("https://ftpmirror.gnu.org/gnu/libunistring/libunistring-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/libunistring/libunistring-$(version).tar.gz")
     add_versions("0.9.10", "a82e5b333339a88ea4608e4635479a1cfb2e01aafb925e1290b65710d43f610b")
     add_versions("1.1", "a2252beeec830ac444b9f68d6b38ad883db19919db35b52222cf827c385bdb6a")
