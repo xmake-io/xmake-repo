@@ -1,14 +1,12 @@
 diff --git a/easywsclient.hpp b/easywsclient.hpp
-index 08c4a7b..ed9db1d 100644
+index 08c4a7b..bfcfa99 100644
 --- a/easywsclient.hpp
 +++ b/easywsclient.hpp
-@@ -8,6 +8,9 @@
+@@ -8,6 +8,7 @@
  // wget https://raw.github.com/dhbaird/easywsclient/master/easywsclient.hpp
  // wget https://raw.github.com/dhbaird/easywsclient/master/easywsclient.cpp
  
-+#ifndef _WIN32
-+    #include <cstdint>
-+#endif
++#include <cstdint>
  #include <string>
  #include <vector>
  
