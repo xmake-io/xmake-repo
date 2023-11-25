@@ -19,6 +19,8 @@ package("binutils")
         add_extsources("brew::binutils")
     end
 
+    add_deps("bison")
+
     on_install("@linux", "@macosx", "@msys", function (package)
         local configs = {"--disable-debug",
                          "--disable-dependency-tracking",
