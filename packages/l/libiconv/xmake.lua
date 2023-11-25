@@ -50,9 +50,6 @@ package("libiconv")
 
     on_install("macosx", "linux", "bsd", "cross", "android", "wasm", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings", "--enable-relocatable"}
-        if package:is_plat("macosx") then
-            table.insert(configs, "--without-libintl-prefix")
-        end
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
@@ -67,7 +64,7 @@ package("libiconv")
     end)
 
     on_test(function (package)
-        if package:is_plat("macosx", "linux", "bsd") then
+        if package:is_plat("linux", "bsd") or (package:is_plat("macosx") and not package:config("shared")) then
             os.vrun("iconv --version")
         end
         assert(package:check_csnippets({test = [[
