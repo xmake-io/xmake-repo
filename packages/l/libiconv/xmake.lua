@@ -24,7 +24,7 @@ package("libiconv")
             if package:is_plat("linux") then
                 return {} -- on linux libiconv is already a part of glibc
             else
-                return package:find_package("system::iconv", {includes = "iconv.h"}) or package:find_package("system::intl", {includes = "iconv.h"})
+                return package:find_package("system::iconv", {includes = "iconv.h"})
             end
         end
     end)
@@ -49,9 +49,9 @@ package("libiconv")
     end)
 
     on_install("macosx", "linux", "bsd", "cross", "android", "wasm", function (package)
-        local configs = {"--disable-dependency-tracking", "--enable-extra-encodings"}
-        if not package:is_plat("macosx") then
-            table.insert(configs, "--enable-relocatable")
+        local configs = {"--disable-dependency-tracking", "--enable-extra-encodings", "--enable-relocatable"}
+        if package:is_plat("macosx") then
+            table.insert(configs, "--without-libintl-prefix")
         end
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
