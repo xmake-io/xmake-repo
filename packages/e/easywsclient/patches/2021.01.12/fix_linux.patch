@@ -1,0 +1,12 @@
+diff --git a/easywsclient.cpp b/easywsclient.cpp
+index 0c98098..a79fd41 100644
+--- a/easywsclient.cpp
++++ b/easywsclient.cpp
+@@ -53,6 +53,7 @@
+     #include <sys/types.h>
+     #include <unistd.h>
+     #include <stdint.h>
++    #include <cstdint>
+     #ifndef _SOCKET_T_DEFINED
+         typedef int socket_t;
+         #define _SOCKET_T_DEFINED
