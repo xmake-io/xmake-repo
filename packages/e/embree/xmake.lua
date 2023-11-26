@@ -20,9 +20,11 @@ package("embree")
     if is_plat("windows") then
         add_syslinks("advapi32")
     end
-    add_links("embree3", "embree_sse42", "embree_avx", "embree_avx2", "embree_avx512", "tasking", "simd", "lexers", "math", "sys")
 
     on_install("macosx", "linux", "windows|x64", "windows|x86", function (package)
+        if package:version():lt("4.0.0") then
+            package:add("links", "embree3", "embree_sse42", "embree_avx", "embree_avx2", "embree_avx512", "tasking", "simd", "lexers", "math", "sys")
+        end
         io.replace("common/tasking/CMakeLists.txt", "include(installTBB)", "", {plain = true})
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_DOC=OFF", "-DEMBREE_TUTORIALS=OFF", "-DEMBREE_ISPC_SUPPORT=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
