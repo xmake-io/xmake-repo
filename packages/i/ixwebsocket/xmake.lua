@@ -18,10 +18,6 @@ package("ixwebsocket")
     end
     add_configs("ssl", {description = "Enable SSL", default = default_ssl, type = "string", values = {"openssl", "mbedtls"}})
 
-    if is_plat("wasm") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
-
     add_configs("use_tls", {description = "Use TLS", default = false, type = "boolean"})
 
     add_deps("zlib")
