@@ -23,7 +23,7 @@ package("ixwebsocket")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("zlib v1.2.13")
+    add_deps("zlib")
     if is_plat("windows") then
         add_syslinks("ws2_32")
     elseif is_plat("macosx") then
@@ -46,6 +46,22 @@ package("ixwebsocket")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_TLS=" .. (package:config("use_tls") and "ON" or "OFF"))
+        
+        local zlib = package:dep("zlib")
+        if zlib and not zlib:is_system() then
+            local fetchinfo = zlib:fetch({external = false})
+            if fetchinfo then
+                local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                if includedirs and #includedirs > 0 then
+                    table.insert(configs, "-DZLIB_INCLUDE_DIR=" .. table.concat(includedirs, " "))
+                end
+                local libfiles = fetchinfo.libfiles
+                if libfiles then
+                    table.insert(configs, "-DZLIB_LIBRARY=" .. table.concat(libfiles, " "))
+                end
+            end
+        end
+
         import("package.tools.cmake").install(package, configs)
     end)
 
