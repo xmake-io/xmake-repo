@@ -33,9 +33,10 @@ package("easywsclient")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <memory>
             #include "easywsclient.hpp"
             void test() {
-                easywsclient::WebSocket::pointer ws = easywsclient::WebSocket::create_dummy();
+                std::unique_ptr<easywsclient::WebSocket> ws(easywsclient::WebSocket::from_url("ws://echo.websocket.org"));
                 ws->send("Hello World!");
             }
         ]]}), {configs = {languages = "cxx11"}})
