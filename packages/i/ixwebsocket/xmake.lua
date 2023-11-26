@@ -63,7 +63,7 @@ package("ixwebsocket")
         end
 
         if is_plat("wasm") then
-            table.insert(configs, [[-DPLATFORM_NAME="unknown platform"]])
+            io.replace("ixwebsocket/IXUserAgent.cpp", "[[ss << " " << PLATFORM_NAME]]", [[ss << " " << "unknown platform"]], {plain = true})
         end
 
         import("package.tools.cmake").install(package, configs)
