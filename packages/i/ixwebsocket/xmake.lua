@@ -25,6 +25,8 @@ package("ixwebsocket")
         add_syslinks("ws2_32")
     elseif is_plat("macosx") then
         add_frameworks("Foundation", "Security")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
     add_deps("cmake")
 
