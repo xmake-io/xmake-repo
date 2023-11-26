@@ -42,9 +42,7 @@ package("ixwebsocket")
         local configs = {"-DCMAKE_CXX_STANDARD=11"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-
         table.insert(configs, "-DUSE_TLS=" .. (package:config("use_tls") and "ON" or "OFF"))
-
         import("package.tools.cmake").install(package, configs)
     end)
 
