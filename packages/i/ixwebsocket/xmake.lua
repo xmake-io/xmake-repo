@@ -38,7 +38,7 @@ package("ixwebsocket")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", function (package)
+    on_install(function (package)
         local configs = {"-DCMAKE_CXX_STANDARD=11"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
