@@ -33,8 +33,8 @@ target("cartographer")
     remove_files("cartographer/io/serialization_format_migration.cc")
     remove_headerfiles("cartographer/io/serialization_format_migration.h")
 
-    remove_headerfiles("**/fake_*.h", "**/*test_helpers*.h", "**/mock*.h")
-    remove_files("**/fake_*.cc", "**/*test_helpers*.cc", "**/mock*.cc", "**/*_main.cc", "**/*_test.cc")
+    remove_headerfiles("**/fake_*.h", "**/*test*.h", "**/mock*.h")
+    remove_files("**/fake_*.cc", "**/mock*.cc", "**/*_main.cc", "**/*_test.cc")
 
     -- BUILD_GRPC is not enabled
     remove_headerfiles("cartographer/cloud/**.h")

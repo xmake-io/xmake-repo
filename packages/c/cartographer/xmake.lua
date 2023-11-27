@@ -26,6 +26,7 @@ package("cartographer")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         if is_plat("windows") then
+            io.replace("cartographer/common/thread_pool.cc", "#include <unistd.h>", "", {plain = true})
             package:add("defines", "NOMINMAX")
         end
         import("package.tools.xmake").install(package, configs)
