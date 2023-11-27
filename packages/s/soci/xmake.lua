@@ -29,7 +29,7 @@ package("soci")
     end)
 
     on_install(function (package)
-        local configs = {"-DSOCI_TESTS=OFF"}
+        local configs = {"-DSOCI_TESTS=OFF", "-DSOCI_CXX11=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DSOCI_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSOCI_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
