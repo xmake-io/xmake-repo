@@ -21,7 +21,7 @@ target("cartographer")
     add_packages("protobuf-cpp", {public = true})
     add_rules("protobuf.cpp")
 
-    add_files("cartographer/**.proto", {proto_rootdir = "cartographer", proto_autogendir = path.join(os.projectdir(), "build", "proto") , proto_public = true})
+    add_files("cartographer/**.proto", {proto_rootdir = "cartographer", proto_autogendir = path.join("$(buildir)", "proto") , proto_public = true})
     add_headerfiles("$(buildir)/proto/**.h")
     add_includedirs("$(buildir)/proto")
 
@@ -34,7 +34,7 @@ target("cartographer")
     remove_headerfiles("cartographer/io/serialization_format_migration.h")
 
     remove_headerfiles("**/fake_*.h", "**/*test*.h", "**/mock*.h")
-    remove_files("**/fake_*.cc", "**/mock*.cc", "**/*_main.cc", "**/*_test.cc")
+    remove_files("**/fake_*.cc", "**/mock*.cc", "**/*_main.cc", "**/*test*.cc")
 
     -- BUILD_GRPC is not enabled
     remove_headerfiles("cartographer/cloud/**.h")
@@ -42,3 +42,7 @@ target("cartographer")
     remove_files("cartographer/cloud/proto/**.proto")
 
     add_includedirs(".")
+
+    if is_plat("windows") then
+        add_defines("NOMINMAX")
+    end

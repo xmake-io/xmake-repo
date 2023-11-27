@@ -9,7 +9,6 @@ package("cartographer")
     add_versions("1.0.0", "474a410bf6457eb8a0fd92ea412d7889fb013051e625d3ee25e8d65e4113fd6c")
 
     add_patches("1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "fix-build-error.patch"), "a4bb53d6f098c77a397d72c244d4283af1f9eec8a4ca7a7fa28de77b06d1201e")
-    add_patches(">=1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "remove-config_h.patch"), "494c5d16dc36fd40f2145993aecf62c0a934bc86e228ca9bedc18291707829ac")
         
     add_deps("cmake")
     add_deps("boost", {configs = {shared = true, iostreams = true}})
@@ -24,10 +23,11 @@ package("cartographer")
             io.replace(protofile, [[import "cartographer/]], [[import "]], {plain = true})
         end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        io.replace("cartographer/common/configuration_file_resolver.cc", [[#include "cartographer/common/config.h"]], "", {plain = true})
+        io.replace("cartographer/common/configuration_file_resolver.cc", [[configuration_files_directories_.push_back(kConfigurationFilesDirectory);]], "", {plain = true})
         local configs = {}
         if is_plat("windows") then
             io.replace("cartographer/common/thread_pool.cc", "#include <unistd.h>", "", {plain = true})
-            package:add("defines", "NOMINMAX")
         end
         import("package.tools.xmake").install(package, configs)
     end)
