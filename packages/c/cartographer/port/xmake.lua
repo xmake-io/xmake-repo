@@ -22,8 +22,12 @@ target("cartographer")
     add_rules("protobuf.cpp")
 
     add_files("cartographer/**.proto", {proto_rootdir = "cartographer", proto_autogendir = path.join("$(buildir)", "proto") , proto_public = true})
-    add_headerfiles("$(buildir)/proto/**.h")
-    add_includedirs("$(buildir)/proto")
+    
+    add_includedirs("$(buildir)/proto/cartographer")
+    add_includedirs("$(buildir)/proto", { public = true })
+
+    add_headerfiles("$(buildir)/proto/(cartographer/**.h)")
+    add_headerfiles("$(buildir)/proto/cartographer/(**.h)")
 
     remove_files("cartographer/**_service.proto")
 
@@ -41,7 +45,7 @@ target("cartographer")
     remove_files("cartographer/cloud/**.cc")
     remove_files("cartographer/cloud/proto/**.proto")
 
-    add_includedirs(".")
+    add_includedirs(".", { public = true })
 
     if is_plat("windows") then
         add_defines("NOMINMAX")

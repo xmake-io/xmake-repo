@@ -34,9 +34,9 @@ package("cartographer")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <cartographer/mapping/pose_graph.h>
+            #include "cartographer/mapping/proto/map_builder_options.pb.h"
             void test() {
-                cartographer::mapping::PoseGraph pose_graph;
+                cartographer::mapping::proto::MapBuilderOptions map_builder_options;
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
