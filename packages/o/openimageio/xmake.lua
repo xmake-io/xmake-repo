@@ -7,7 +7,7 @@ package("openimageio")
     add_urls("https://github.com/OpenImageIO/oiio/archive/refs/tags/v$(version).zip", {version = function (version) return version:gsub("%+", ".") end})
     add_versions("2.2.19+0", "30a494ccfc2ee951fabbdf308d1b59eddb1a21aa5276887fe6a6fc874454794e")
     add_versions("2.3.10+1", "48ce9b9c3e815885f5634438fed3e240ad186fd9e30d392e17564b5e9eebb089")
-    add_versions("2.3.13+0", "4b42e10c93e9954fc89287b9a187c78539c49d16c2947fc140b1452860a54c26")
+    add_versions("2.3.13+0", "2677eafa752e090d8cc35981125672d7cc6cadd9b22c8b00b4bd090d2747d9f1")
 
     add_deps("cmake")
     add_deps("boost", {configs = {filesystem = true, system = true, thread = true}})
