@@ -37,5 +37,5 @@ package("cartographer")
             void test() {
                 cartographer::mapping::PoseGraph pose_graph;
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
