@@ -10,6 +10,7 @@ package("libtasn1")
     add_versions("4.19.0", "1613f0ac1cf484d6ec0ce3b8c06d56263cc7242f1c23b30d82d23de345a63f7a")
 
     on_install("macosx", "linux", function (package)
+        package:addenv("PATH", "bin")
         local configs = {"--disable-doc", "--disable-dependency-tracking"}
         if package:config("shared") then
             table.insert(configs, "--enable-shared")
