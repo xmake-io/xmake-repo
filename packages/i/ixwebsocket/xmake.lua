@@ -39,6 +39,15 @@ package("ixwebsocket")
         elseif package:config("ssl") == "mbedtls" then
             package:add("deps", "mbedtls")
         end
+        if package:config("use_tls") then
+            if is_plat("windows") then
+                if not package:dep("openssl") then
+                    package:add("deps", "mbedtls")
+                end
+            elseif not package:dep("mbedtls") then
+                package:add("deps", "openssl")
+            end
+        end
     end)
 
     on_install(function (package)
@@ -46,13 +55,11 @@ package("ixwebsocket")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_TLS=" .. (package:config("use_tls") and "ON" or "OFF"))
-        if package:config("ssl") then
-            if package:config("ssl") == "openssl" then
-                table.insert(configs, "-DUSE_OPEN_SSL=1")
-            elseif package:config("ssl") == "mbedtls" then
-                table.insert(configs, "-DUSE_MBED_TLS=1")
-            end 
-        end
+        if package:dep("openssl") then
+            table.insert(configs, "-DUSE_OPEN_SSL=1")
+        elseif package:dep("mbedtls") then
+            table.insert(configs, "-DUSE_MBED_TLS=1")
+        end 
 
         local zlib = package:dep("zlib")
         if zlib and not zlib:is_system() then
@@ -74,6 +81,7 @@ package("ixwebsocket")
         end
 
         io.replace("ixwebsocket/IXSocketMbedTLS.cpp", [[/* errorMsg */]], [[errorMsg]], {plain = true})
+        
         import("package.tools.cmake").install(package, configs)
     end)
 
