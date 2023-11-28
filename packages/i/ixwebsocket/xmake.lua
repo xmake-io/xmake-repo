@@ -89,7 +89,7 @@ package("ixwebsocket")
         assert(package:check_cxxsnippets({test = [[
             #include <ixwebsocket/IXNetSystem.h>
             #include <ixwebsocket/IXWebSocket.h>
-            void test () {
+            void test() {
                 ix::initNetSystem();
                 ix::WebSocket webSocket;
                 std::string url("wss://echo.websocket.org");
