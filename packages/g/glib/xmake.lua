@@ -67,7 +67,6 @@ package("glib")
     end)
 
     on_install("windows", "macosx", "linux", "cross", function (package)
-        import("package.tools.meson")
         local configs = {"-Dbsymbolic_functions=false",
                          "-Ddtrace=false",
                          "-Dman=false",
@@ -92,21 +91,7 @@ package("glib")
         if package:is_plat("windows") then
             io.gsub("meson.build", "dependency%('libffi',", "dependency('libffi', modules: ['libffi::ffi'],")
         end
-        local envs = meson.buildenvs(package)
-        if package:is_plat("windows") then
-            for _, dep in ipairs(package:orderdeps()) do
-                local fetchinfo = dep:fetch()
-                if fetchinfo then
-                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                        envs.INCLUDE = (envs.INCLUDE or "") .. path.envsep() .. includedir
-                    end
-                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                        envs.LIB = (envs.LIB or "") .. path.envsep() .. linkdir
-                    end
-                end
-            end
-        end
-        meson.install(package, configs, {envs = envs})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv", "libffi", "zlib"}})
         package:addenv("PATH", "bin")
     end)
 
