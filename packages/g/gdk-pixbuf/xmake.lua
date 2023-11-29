@@ -6,7 +6,7 @@ package("gdk-pixbuf")
 
     add_urls("https://download.gnome.org/sources/gdk-pixbuf/$(version).tar.xz", {alias = "home", version = function (version)
         return format("%d.%d/gdk-pixbuf-%s", version:major(), version:minor(), version)
-    end})
+    end, excludes = "*/tests/*"})
     add_urls("https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/archive/$(version)/gdk-pixbuf-$(version).tar.gz",
              "https://gitlab.gnome.org/GNOME/gdk-pixbuf.git")
     add_versions("home:2.42.10", "ee9b6c75d13ba096907a2e3c6b27b61bcd17f5c7ebeab5a5b439d2f2e39fe44b")
@@ -24,8 +24,10 @@ package("gdk-pixbuf")
     elseif is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "AppKit")
         add_extsources("brew::gdk-pixbuf")
+        add_deps("libiconv", {system = true})
         add_syslinks("resolv")
     elseif is_plat("linux") then
+        add_deps("libiconv")
         add_extsources("pacman::gdk-pixbuf2")
     end
 
@@ -48,7 +50,7 @@ package("gdk-pixbuf")
                          "-Dtests=false",
                          "-Dinstalled_tests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libjpeg-turbo", "libpng", "libtiff", "glib", "pcre2", "libintl"}})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libjpeg-turbo", "libpng", "libtiff", "glib", "pcre2", "libintl", "libiconv"}})
     end)
 
     on_test(function (package)

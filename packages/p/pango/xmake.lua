@@ -10,13 +10,17 @@ package("pango")
     add_versions("1.50.3", "4a8b0cf33d5f9ecaa9cd99dd72703d5c4c53bc58df64dd9538493bb4356ab691")
 
     add_deps("meson", "ninja")
-    add_deps("fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "pcre2")
+    add_deps("fontconfig", "freetype", "fribidi", "cairo", "glib", "pcre2")
+    add_deps("harfbuzz", {configs = {glib = true}})
     if is_plat("windows") then
         add_deps("libintl")
     elseif is_plat("macosx") then
+        add_deps("libintl")
+        add_deps("libiconv", {system = true})
         add_extsources("brew::pango")
         add_frameworks("CoreFoundation")
     elseif is_plat("linux") then
+        add_deps("libiconv")
         add_deps("xorgproto")
         add_extsources("apt::libpango-1.0-0", "pacman::pango")
     end
@@ -43,7 +47,7 @@ package("pango")
         -- fix unexpected -Werror=array-bounds errors, see https://gitlab.gnome.org/GNOME/pango/-/issues/740
         io.replace("meson.build", "'-Werror=array-bounds',", "", {plain = true})
 
-        local envs = meson.buildenvs(package, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "pcre2", "libintl"}})
+        local envs = meson.buildenvs(package, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "pcre2", "libintl", "libiconv"}})
         -- workaround for https://github.com/xmake-io/xmake/issues/4412
         envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath:")
         meson.install(package, configs, {envs = envs})
