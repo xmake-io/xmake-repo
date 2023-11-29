@@ -29,6 +29,10 @@ package("libjpeg-turbo")
     end)
 
     on_install("windows", "linux", "macosx", "android", "mingw", function (package)
+        if package:is_plat("windows") and not package:config("shared") then
+            io.replace("release/libjpeg.pc.in", "-ljpeg", "-ljpeg-static", {plain = true})
+            io.replace("release/libturbojpeg.pc.in", "-lturbojpeg", "-lturbojpeg-static", {plain = true})
+        end
         local configs = {}
         local jpeg = package:config("jpeg")
         if jpeg == "7" then
