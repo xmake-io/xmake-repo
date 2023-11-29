@@ -59,7 +59,9 @@ package("gtk4")
                          "-Dbuild-tests=false",
                          "-Dbuild-testsuite=false",
                          "-Dbuild-examples=false",
-                         "-Dbuild-demos=false"}
+                         "-Dbuild-demos=false",
+                         "-Dmedia-gstreamer=disabled",
+                         "-Dmedia-ffmpeg=disabled"}
         table.insert(configs, "-Dx11-backend=" .. (package:config("x11") and "true" or "false"))
         table.insert(configs, "-Dwayland-backend=" .. (package:config("wayland") and "true" or "false"))
         import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv", "pcre2"}})
