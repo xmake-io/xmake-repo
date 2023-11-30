@@ -9,7 +9,7 @@ package("popt")
     add_versions("1.19", "c25a4838fc8e4c1c8aacb8bd620edb3084a3d63bf8987fdad3ca2758c63240f9")
 
     if is_plat("macosx") then
-        add_deps("libintl")
+        add_deps("libintl", "libiconv")
     end
 
     on_install("linux", "macosx", function (package)
