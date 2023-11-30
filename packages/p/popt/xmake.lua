@@ -3,9 +3,10 @@ package("popt")
     set_description("C library for parsing command line parameters")
     set_license("MIT")
 
-    add_urls("https://github.com/rpm-software-management/popt/archive/refs/tags/popt-$(version)-release.tar.gz")
+    add_urls("http://ftp.rpm.org/popt/releases/popt-1.x/popt-$(version).tar.gz",
+             "https://ftp.osuosl.org/pub/rpm/popt/releases/popt-1.x/popt-$(version).tar.gz")
 
-    add_versions("1.19", "6eb40d650526cb9fe63eb4415bcecdf9cf306f7556e77eff689abc5a44670060")
+    add_versions("1.19", "c25a4838fc8e4c1c8aacb8bd620edb3084a3d63bf8987fdad3ca2758c63240f9")
 
     if is_plat("macosx") then
         add_deps("libintl")
