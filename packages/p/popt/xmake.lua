@@ -7,7 +7,9 @@ package("popt")
 
     add_versions("1.19", "6eb40d650526cb9fe63eb4415bcecdf9cf306f7556e77eff689abc5a44670060")
 
-    add_deps("libintl")
+    if is_plat("macosx") then
+        add_deps("libintl")
+    end
 
     on_install("linux", "macosx", function (package)
         local configs = {}
