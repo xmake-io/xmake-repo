@@ -8,11 +8,16 @@ package("stringzilla")
              "https://github.com/ashvardanian/StringZilla.git")
 
     add_versions("v1.2.2", "2e17c49965841647a1c371247f53b2f576e5fb32fe4b84a080d425b12f17703c")
+    add_versions("v2.0.3", "6b52a7b4eb8383cbcf83608eaa08e5ba588a378449439b73584713a16d8920e3")
 
-    on_install("windows|x64", "linux|x86_64", "mingw|x86_64", "msys", function (package)
+    on_install(function (package)
         os.cp("stringzilla/stringzilla.h", package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("strzl_sort", {includes = "stringzilla.h", configs = {languages = "c++17"}}))
+        if package:version():gt("2.0.0") then
+            assert(package:has_cfuncs("sz_sort", {includes = "stringzilla.h"}))
+        else
+            assert(package:has_cxxfuncs("strzl_sort", {includes = "stringzilla.h", configs = {languages = "c++17"}}))
+        end
     end)

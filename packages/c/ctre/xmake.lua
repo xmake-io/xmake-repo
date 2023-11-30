@@ -5,6 +5,10 @@ package("ctre")
 
     set_urls("https://github.com/hanickadot/compile-time-regular-expressions/archive/refs/tags/v$(version).zip")
     add_versions("3.4.1", "099d6503cddd8e086b71247321ac64d91976136aa727d0de3ad5f9fd1897c5c7")
+    add_versions("3.5", "335180eaa44d60cec0fec445bafad78509f03c6e8a8bd9d24591d4d38333f78d")
+    add_versions("3.6", "f99f9c8bd3154d76305ef4fbde2c6622ed309c5a3401168732048fbc31e93f5d")
+    add_versions("3.7.2", "1dbcd96d279b5be27e9c90d2952533db10bc0e5d8ff6224a3c6d538fd94ab18f")
+    add_versions("3.8.1", "7c7a936145defe56e886bac7731ea16a52de65d73bda2b56702d0d0a61101c76")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 

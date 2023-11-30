@@ -8,6 +8,7 @@ package("immer")
     add_urls("https://github.com/arximboldi/immer/archive/refs/tags/$(version).tar.gz",
              "https://github.com/arximboldi/immer.git")
     add_versions("v0.8.0", "4ed9e86a525f293e0ba053107b937d88b032674ec6e5db958816f2e412677fde")
+    add_versions("v0.8.1", "de8411c84830864604bb685dc8f2e3c0dbdc40b95b2f6726092f7dcc85e75209")
 
     add_deps("cmake")
 
