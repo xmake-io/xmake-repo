@@ -67,7 +67,7 @@ package("wxwidgets")
         add_deps("cmake")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib")
         if is_plat("linux") then
-            add_deps("libx11", "libxext", "libxtst")
+            add_deps("libx11", "libxext", "libxtst", "libxkbcommon")
             add_deps("gtk+3", "opengl", {optional = true})
         end
     end
@@ -158,7 +158,10 @@ package("wxwidgets")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "wx/wx.h"
+            #include <wx/wxprec.h>
+            #ifndef WX_PRECOMP
+                #include <wx/wx.h>
+            #endif
             #include "wx/app.h"
             #include "wx/cmdline.h"
             void test() {
