@@ -1,6 +1,6 @@
 package("asio2")
 
-    set_kind("library", {headeronly = true})
+    set_kind("library")
     set_homepage("https://github.com/zhllxt/asio2")
     set_description("Header only c++ network library, based on asio, support tcp,udp,http,websocket,rpc,ssl,icmp,serial_port.")
     set_license("BSL-1.0")
