@@ -1,6 +1,6 @@
 package("asio2")
 
-    set_kind("library")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/zhllxt/asio2")
     set_description("Header only c++ network library, based on asio, support tcp,udp,http,websocket,rpc,ssl,icmp,serial_port.")
     set_license("BSL-1.0")
@@ -10,7 +10,6 @@ package("asio2")
 
     add_deps("asio", "cereal", "fmt", "openssl3")
     add_deps("spdlog", { configs = { header_only = false, fmt_external = true } })
-
 
     on_install("windows", "linux", "macosx", "mingw", "bsd", function (package)
         os.cp(path.join("include", "*"), package:installdir("include"))
