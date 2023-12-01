@@ -141,10 +141,12 @@ package("wxwidgets")
             table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=2")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        local libgtk3 = package:dep("gtk+3"):fetch()
-        if libgtk3 then
-            table.insert(configs, "-DGTK3_INCLUDE_DIRS=" .. table.concat(libgtk3.sysincludedirs, ";"))
-            table.insert(configs, "-DGTK3_LIBRARIES=" .. table.concat(libgtk3.links, ";"))
+        if package:is_plat("linux") then
+            local libgtk3 = package:dep("gtk+3"):fetch()
+            if libgtk3 then
+                table.insert(configs, "-DGTK3_INCLUDE_DIRS=" .. table.concat(libgtk3.sysincludedirs, ";"))
+                table.insert(configs, "-DGTK3_LIBRARIES=" .. table.concat(libgtk3.links, ";"))
+            end
         end
         import("package.tools.cmake").install(package, configs)
         local version = package:version()
