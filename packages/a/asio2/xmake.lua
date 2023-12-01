@@ -8,9 +8,12 @@ package("asio2")
     add_urls("https://github.com/zhllxt/asio2.git")
     add_versions("2023.05.09", "ac8c79964d79020091e38fcbb4ae9dccccb3b03c")
 
+    add_deps("asio", "cereal", "fmt", "openssl3")
+    add_deps("spdlog", { configs = { header_only = false, fmt_external = true } })
+
+
     on_install("windows", "linux", "macosx", "mingw", "bsd", function (package)
-            os.cp(path.join("3rd" , "*"), package:installdir("include"))
-            os.cp(path.join("include", "*"), package:installdir("include"))
+        os.cp(path.join("include", "*"), package:installdir("include"))
     end)
 
     on_test(function (package)
