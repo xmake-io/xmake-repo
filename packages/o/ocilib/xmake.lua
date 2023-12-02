@@ -28,6 +28,5 @@ package("ocilib")
             void test() {
                 ocilib::Environment::Initialize();
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)
- 
