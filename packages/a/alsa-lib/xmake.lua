@@ -6,6 +6,10 @@ package("alsa-lib")
 
     add_versions("1.2.10", "c86a45a846331b1b0aa6e6be100be2a7aef92efd405cf6bac7eef8174baa920e")
 
+    if is_plat("linux") then
+        add_extsources("pacman::alsa-lib", "apt::libasound2-dev")
+    end
+
     on_install("linux", function (package)
         local configs = {"--without-versioned"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
