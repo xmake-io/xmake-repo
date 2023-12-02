@@ -27,11 +27,8 @@ package("openjdk")
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
 
     if is_plat("linux") then
-        add_deps("freetype", {configs = {shared = true}})
         add_deps("alsa-lib", {configs = {shared = true}})
-        add_deps("libxrender", {configs = {shared = true}})
-        add_deps("libxi", {configs = {shared = true}})
-        add_deps("libxtst")
+        add_deps("freetype", "libxtst", "libxi", "libxrender")
         add_extsources("pacman::jdk-openjdk", "apt::default-jdk")
     elseif is_plat("macosx") then
         add_extsources("brew::openjdk")
