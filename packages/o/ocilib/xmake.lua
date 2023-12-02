@@ -17,6 +17,9 @@ package("ocilib")
         if not package:config("shared") then
             package:add("defines", "OCI_LIB_LOCAL_COMPILE")
         end
+        io.replace("include/ocilibcpp/detail/core/SmartHandle.hpp",
+            ".Set<SmartHandle*>",
+            ".template Set<SmartHandle*>", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
@@ -28,5 +31,5 @@ package("ocilib")
             void test() {
                 ocilib::Environment::Initialize();
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)
