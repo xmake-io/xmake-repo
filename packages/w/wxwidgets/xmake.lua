@@ -154,6 +154,10 @@ package("wxwidgets")
         local setupdir = package:is_plat("macosx") and "osx" or "gtk"
         os.cp(path.join(package:installdir("include", subdir, "wx", setupdir, "setup.h")),
               path.join(package:installdir("include", subdir, "wx")))
+        local lib_suffix = version:major() .. "." .. version:minor()
+        if package:is_plat("linux") then
+            package:add("links", "wx_gtk3u_xrc-" .. lib_suffix, "wx_gtk3u_html-" .. lib_suffix, "wx_gtk3u_qa-" .. lib_suffix, "wx_gtk3u_core-" .. lib_suffix, "wx_baseu_xml-" .. lib_suffix, "wx_baseu_net-" .. lib_suffix, "wx_baseu-" .. lib_suffix)
+        end
     end)
 
     on_test(function (package)
