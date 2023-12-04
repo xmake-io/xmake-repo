@@ -67,8 +67,7 @@ package("wxwidgets")
         add_deps("cmake")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib")
         if is_plat("linux") then
-            add_deps("libx11", "libxext", "libxtst", "libxkbcommon")
-            add_deps("gtk+3", "opengl", {optional = true})
+            add_deps("gtk+3", "opengl")
         end
     end
 
@@ -78,7 +77,7 @@ package("wxwidgets")
         add_syslinks("iconv")
     elseif is_plat("linux") then
         add_defines("__WXGTK3__", "__WXGTK__")
-        add_syslinks("pthread", "m", "dl")
+        add_syslinks("pthread", "m", "dl", "X11")
     elseif is_plat("windows") then
         add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=u", "wxMSVC_VERSION=14x")
         add_links(
