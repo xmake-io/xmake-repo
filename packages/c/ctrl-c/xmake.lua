@@ -6,8 +6,6 @@ package("ctrl-c")
     add_urls("https://github.com/evgenykislov/ctrl-c.git")
     add_versions("2023.09.02", "98b39d689ecb1a7193a3647c9a7d58a521892f9b")
 
-    add_deps("cmake")
-
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
