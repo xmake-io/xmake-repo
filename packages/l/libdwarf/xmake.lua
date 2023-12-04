@@ -8,8 +8,7 @@ package("libdwarf")
     add_versions("0.8.0", "771814a66b5aadacd8381b22d8a03b9e197bd35c202d27e19fb990e9b6d27b17")
 
     add_deps("cmake")
-    add_deps("zlib")
-
+    add_deps("zlib", "zstd")
     if is_plat("mingw") then
         add_links("dwarf")
     end
@@ -20,6 +19,7 @@ package("libdwarf")
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_NON_SHARED=" .. (package:config("shared") and "OFF" or "ON"))
 
+        io.replace("CMakeLists.txt", "add_subdirectory(src/bin/dwarfdump)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
