@@ -77,7 +77,8 @@ package("wxwidgets")
         add_syslinks("iconv")
     elseif is_plat("linux") then
         add_defines("__WXGTK3__", "__WXGTK__")
-        add_syslinks("pthread", "m", "dl", "X11")
+        add_syslinks("pthread", "m", "dl")
+        add_syslinks("X11", "Xext", "Xtst", "xkbcommon")
     elseif is_plat("windows") then
         add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=u", "wxMSVC_VERSION=14x")
         add_links(
