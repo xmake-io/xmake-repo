@@ -11,6 +11,7 @@ package("cpptrace")
 
 
     add_deps("cmake")
+    add_deps("zlib")
 
     if is_plat("windows") then
         add_syslinks("dbghelp")
