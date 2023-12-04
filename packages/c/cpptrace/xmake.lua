@@ -21,6 +21,7 @@ package("cpptrace")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        package:add("links", "cpptrace")
         import("package.tools.cmake").install(package, configs)
     end)
 
