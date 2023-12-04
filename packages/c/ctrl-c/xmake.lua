@@ -36,6 +36,7 @@ package("ctrl-c")
                 std::function<bool(enum CtrlCLibrary::CtrlSignal)> _exit = [](CtrlCLibrary::CtrlSignal signal) -> bool {
                     return true;
                 };
+                CtrlCLibrary::SetCtrlCHandler(_exit);
             }
         ]]}, {configs = {languages = "cxx11"}}))
     end)
