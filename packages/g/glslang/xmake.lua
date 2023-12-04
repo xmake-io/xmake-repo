@@ -14,6 +14,7 @@ package("glslang")
     add_versions("1.3.246+1", "14e5a04e70057972eef8a40df422e30a3b70e4b5")
     add_versions("1.3.250+1", "d1517d64cfca91f573af1bf7341dc3a5113349c0")
     add_versions("1.3.261+1", "76b52ebf77833908dc4c0dd6c70a9c357ac720bd")
+    add_versions("1.3.268+0", "36d08c0d940cf307a23928299ef52c7970d8cee6")
 
     add_patches("1.3.246+1", "https://github.com/KhronosGroup/glslang/commit/1e4955adbcd9b3f5eaf2129e918ca057baed6520.patch", "47893def550f1684304ef7c49da38f0a8fe35c190a3452d3bf58370b3ee7165d")
 
@@ -71,6 +72,7 @@ package("glslang")
         end
         table.insert(configs, "-DENABLE_EXCEPTIONS=" .. (package:config("exceptions") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
+        table.insert(configs, "-DALLOW_EXTERNAL_SPIRV_TOOLS=ON")
         import("package.tools.cmake").install(package, configs, {packagedeps = {"spirv-tools"}})
         if not package:config("binaryonly") then
             package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "HLSL", "SPIRV", "SPVRemapper")
