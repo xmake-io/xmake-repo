@@ -23,7 +23,7 @@ jobs:
         run: |
           pacman -Syu --noconfirm --needed openssl
           pacman -Sy --noconfirm --needed glibc git base-devel perl make unzip p7zip
-          pacman -Sy --noconfirm --needed mesa gcc-fortran glu libc++
+          pacman -Sy --noconfirm --needed mesa gcc-fortran glu libc++ gtk3
           git config --global --add safe.directory /__w/xmake/xmake
           git config --global --add safe.directory /__w/xmake-repo/xmake-repo
       - uses: actions/checkout@v1
