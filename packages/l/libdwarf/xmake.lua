@@ -19,6 +19,10 @@ package("libdwarf")
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_NON_SHARED=" .. (package:config("shared") and "OFF" or "ON"))
 
+        if package:is_plat("mingw") and not package:config("shared") then
+            package:add("defines", "LIBDWARF_STATIC=1")
+        end
+
         io.replace("CMakeLists.txt", "add_subdirectory(src/bin/dwarfdump)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
