@@ -3,10 +3,12 @@ package("cpptrace")
     set_description("Lightweight, zero-configuration-required, and cross-platform stacktrace library for C++")
     set_license("MIT")
 
-    add_urls("https://github.com/jeremy-rifkin/cpptrace/archive/refs/tags/archive/$(version).tar.gz",
+    add_urls("https://github.com/jeremy-rifkin/cpptrace/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jeremy-rifkin/cpptrace.git")
 
-    add_versions("v0.1", "411bf19e079b550c50e6d39c82e3cb8d4a7dd2e9a8107a8f1843929c4b4e63de")
+    add_versions("v0.1", "244bdf092ba7b9493102b8bb926be4ab355c40d773d4f3ee2774ccb761eb1dda")
+    add_versions("v0.3.1", "3c4c5b3406c2b598e5cd2a8cb97f9e8e1f54d6df087a0e62564e6fb68fed852d")
+
 
     add_deps("cmake")
 
@@ -24,7 +26,7 @@ package("cpptrace")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                cpptrace::print_trace();
+                cpptrace::generate_trace().print();
             }
         ]]}, {configs = {languages = "c++11"}, includes = {"cpptrace/cpptrace.hpp"}}))
     end)
