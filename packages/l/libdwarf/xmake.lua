@@ -10,6 +10,10 @@ package("libdwarf")
     add_deps("cmake")
     add_deps("zlib")
 
+    if is_plat("mingw") then
+        add_links("dwarf")
+    end
+
     on_install("linux", "macosx", "mingw", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
