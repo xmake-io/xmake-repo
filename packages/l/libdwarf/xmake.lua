@@ -8,6 +8,7 @@ package("libdwarf")
     add_versions("0.8.0", "771814a66b5aadacd8381b22d8a03b9e197bd35c202d27e19fb990e9b6d27b17")
 
     add_deps("cmake")
+    add_deps("zlib")
 
     on_install("linux", "macosx", "mingw", function (package)
         local configs = {}
@@ -16,31 +17,8 @@ package("libdwarf")
         table.insert(configs, "-DBUILD_NON_SHARED=" .. (package:config("shared") and "OFF" or "ON"))
 
         import("package.tools.cmake").install(package, configs)
-        os.cp(path.join("src", "lib", "libdwarf", "*.h"), path.join(package:installdir("include"), "libdwarf"))
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include "libdwarf/libdwarf.h"
-            #include "libdwarf/libdwarf_private.h"
-            #include <stddef.h>
-            #include "libdwarf/dwarf_string.h"
-
-            void test() {
-                    struct dwarfstring_s g;
-                    char *d = 0;
-                    const char *expstr = "";
-                    int res = 0;
-                    unsigned long biglen = 0;
-                    const char *bigstr = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-                        "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
-                        "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
-                        "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
-                        "ccccccbbbbbyyyybbbbbbbbbbbbccc";
-                    const char *mediumstr = "1234567890aaaaabbbbbb0123";
-
-                    dwarfstring_constructor(&g);
-            }
-        ]]}))
+        assert(package:has_cfuncs("dwarf_debug_addr_by_index", {includes = "libdwarf/libdwarf.h"}))
     end)
