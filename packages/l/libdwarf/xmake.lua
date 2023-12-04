@@ -32,13 +32,13 @@ package("libdwarf")
                     const char *expstr = "";
                     int res = 0;
                     unsigned long biglen = 0;
-                    char *bigstr = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    const char *bigstr = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                         "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
                         "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
                         "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
                         "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
                         "ccccccbbbbbyyyybbbbbbbbbbbbccc";
-                    char *mediumstr = "1234567890aaaaabbbbbb0123";
+                    const char *mediumstr = "1234567890aaaaabbbbbb0123";
 
                     dwarfstring_constructor(&g);
             }
