@@ -4,7 +4,7 @@ package("libdwarf")
     set_homepage("https://www.prevanders.net/dwarf.html")
     set_description("Libdwarf is a C library intended to simplify reading (and writing) applications using DWARF2, DWARF3, DWARF4 and DWARF5")
 
-    add_urls("https://www.prevanders.net/libdwarf-$(version).tar.xz")
+    add_urls("https://github.com/davea42/libdwarf-code/releases/download/v$(version)/libdwarf-$(version).tar.xz")
     add_versions("0.8.0", "771814a66b5aadacd8381b22d8a03b9e197bd35c202d27e19fb990e9b6d27b17")
 
     add_deps("cmake")
