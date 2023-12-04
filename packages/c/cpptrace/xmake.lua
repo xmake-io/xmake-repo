@@ -9,11 +9,15 @@ package("cpptrace")
     add_versions("v0.1", "244bdf092ba7b9493102b8bb926be4ab355c40d773d4f3ee2774ccb761eb1dda")
     add_versions("v0.3.1", "3c4c5b3406c2b598e5cd2a8cb97f9e8e1f54d6df087a0e62564e6fb68fed852d")
 
-
     add_deps("cmake")
     add_deps("zlib")
 
     if is_plat("windows") then
+        add_syslinks("dbghelp")
+    elseif is_plat("linux", "macosx") then
+        add_deps("libdwarf")
+    elseif is_plat("mingw") then
+        add_deps("libdwarf")
         add_syslinks("dbghelp")
     end
 
