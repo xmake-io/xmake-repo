@@ -13,6 +13,7 @@ package("paul_thread-pool")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <thread>
             #include <thread_pool/thread_pool.h>
 
             void test()
