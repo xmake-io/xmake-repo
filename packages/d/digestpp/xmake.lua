@@ -18,5 +18,5 @@ package("digestpp")
             void test() {
                 std::cout << digestpp::blake2b().absorb("The quick brown fox jumps over the lazy dog").hexdigest();
             }
-        ]]}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
