@@ -7,7 +7,7 @@ package("paul_thread-pool")
     add_urls("https://github.com/DeveloperPaul123/thread-pool/archive/refs/tags/$(version).zip")
     add_versions("0.6.2", "a2b722560449da53faf4753288a5fb2074d88b1fa9bba257c85425b3e48ecb2c")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         os.cp("include", package:installdir())
     end)
 
