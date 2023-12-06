@@ -7,7 +7,7 @@ package("args")
     add_urls("https://github.com/Taywee/args/archive/refs/tags/$(version).tar.gz")
     add_versions("6.4.6", "41ed136bf9b216bf5f18b1de2a8d22a870381657e8427d6621918520b6e2239c")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         os.cp("args.hxx", package:installdir("include"))
     end)
 
