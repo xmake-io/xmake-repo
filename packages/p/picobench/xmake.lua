@@ -13,6 +13,8 @@ package("picobench")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <vector>
+            #include <cstdlib>
             #include "picobench/picobench.hpp"
             static void rand_vector(picobench::state& s)
             {
