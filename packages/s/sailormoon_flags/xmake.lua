@@ -1,4 +1,4 @@
-package("flags")
+package("sailormoon_flags")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/sailormoon/flags")
     set_description("Simple, extensible, header-only C++17 argument parser released into the public domain.")
