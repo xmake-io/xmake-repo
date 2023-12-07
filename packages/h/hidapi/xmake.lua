@@ -18,7 +18,7 @@ package("hidapi")
         add_deps("pkg-config")
     end
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         local configs = {
             "-DHIDAPI_WITH_TESTS=OFF",
             "-DHIDAPI_BUILD_PP_DATA_DUMP=OFF",
