@@ -14,9 +14,11 @@ package("hidapi")
         add_deps("libusb")
     elseif is_plat("macosx") then
         add_frameworks("IOKit", "CoreFoundation", "AppKit")
+    elseif is_plat("bsd") then
+        add_deps("pkg-config")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", function (package)
         local configs = {
             "-DHIDAPI_WITH_TESTS=OFF",
             "-DHIDAPI_BUILD_PP_DATA_DUMP=OFF",
