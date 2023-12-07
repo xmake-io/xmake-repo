@@ -2,6 +2,7 @@ package("libusb")
 
     set_homepage("https://libusb.info")
     set_description("A cross-platform library to access USB devices.")
+    set_license("LGPL-2.0")
 
     if is_plat("mingw") then
         add_urls("https://github.com/libusb/libusb/releases/download/$(version).7z", {version = function (version)
@@ -27,6 +28,11 @@ package("libusb")
         add_frameworks("CoreFoundation", "IOKit")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
+        if is_plat("linux") then
+            add_extsources("apt::libusb-dev", "pacman::libusb")
+        end
+    elseif is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libusb")
     end
 
     on_fetch("linux", "macosx", function(package, opt)

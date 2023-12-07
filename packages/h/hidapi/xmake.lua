@@ -12,6 +12,8 @@ package("hidapi")
 
     if is_plat("linux") then
         add_deps("libusb")
+    elseif is_plat("macosx") then
+        add_frameworks("IOKit", "CoreFoundation", "AppKit")
     end
 
     on_install(function (package)
