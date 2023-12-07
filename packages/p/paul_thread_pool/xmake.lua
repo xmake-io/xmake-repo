@@ -1,4 +1,4 @@
-package("paul_thread-pool")
+package("paul_thread_pool")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/DeveloperPaul123/thread-pool")
     set_description("A modern, fast, lightweight thread pool library based on C++20")
