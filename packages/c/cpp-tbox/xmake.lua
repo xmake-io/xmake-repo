@@ -9,12 +9,24 @@ package("cpp-tbox")
     add_configs("mqtt", {description = "Enable mosquitto", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("dbus", "mosquitto", "nlohmann_json")
+    add_deps("dbus", "nlohmann_json")
+
+    on_load(function (package)
+        if package:config("mqtt") then
+            add_deps("mosquitto")
+        end
+    end)
 
     on_install("linux", function (package)
         local configs = {"-DCMAKE_ENABLE_TEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DTBOX_ENABLE_MQTT=" .. (package:config("mqtt") and "ON" or "OFF"))
+        io.replace("modules/util/base64.cpp", "#include <cstring>", "#include <cstring>\n#include <cstdint>", {plain = true})
+        io.replace("modules/terminal/types.h", "#include <vector>", "#include <vector>\n#include <cstdint>", {plain = true})
+        io.replace("modules/crypto/md5.h", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+        io.replace("modules/flow/action_executor.h", "#include <deque>", "#include <deque>\n#include <array>", {plain = true})
+        io.replace("modules/alarm/3rd-party/ccronexpr.cpp", 'int res = sprintf(str, "%d", num);', 'int res = snprintf(str, CRON_NUM_OF_DIGITS(num) + 1, "%d", num);', {plain = true})
+
         import("package.tools.cmake").install(package, configs)
     end)
 
