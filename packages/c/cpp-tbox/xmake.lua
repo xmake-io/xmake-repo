@@ -26,7 +26,9 @@ package("cpp-tbox")
         io.replace("modules/crypto/md5.h", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
         io.replace("modules/flow/action_executor.h", "#include <deque>", "#include <deque>\n#include <array>", {plain = true})
         io.replace("modules/alarm/3rd-party/ccronexpr.cpp", 'int res = sprintf(str, "%d", num);', 'int res = snprintf(str, CRON_NUM_OF_DIGITS(num) + 1, "%d", num);', {plain = true})
-
+        io.replace("modules/flow/action_executor.h", "#include <deque>", "#include <deque>\n#include <array>", {plain = true})
+        io.replace("modules/eventx/timer_pool.cpp", "int cb_level_ = 0;", "", {plain = true})
+        io.replace("modules/eventx/timer_pool.cpp", "TBOX_ASSERT(cb_level_ == 0);", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
