@@ -25,7 +25,7 @@ package("libusb")
 
     add_deps("cmake")
 
-    on_install("windows", "linux", "macosx", "bsd", "msys", "android", "iphoneos", "cross", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "msys", "android", function (package)
         local dir = package:resourcefile("libusb-cmake")
         os.cp(path.join(dir, "CMakeLists.txt"), os.curdir())
         os.cp(path.join(dir, "config.h.in"), os.curdir())
@@ -36,7 +36,12 @@ package("libusb")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local packagedeps = {}
+        if package:is_plat("linux") then
+            table.insert(packagedeps, "eudev")
+        end
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
