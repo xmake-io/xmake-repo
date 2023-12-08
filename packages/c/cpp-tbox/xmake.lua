@@ -8,7 +8,6 @@ package("cpp-tbox")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("mqtt", {description = "Enable mosquitto", default = false, type = "boolean"})
 
-
     add_deps("cmake")
     add_deps("dbus", "mosquitto", "nlohmann_json")
 
