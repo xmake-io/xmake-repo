@@ -31,5 +31,5 @@ package("alsa-lib")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("snd_ctl_card_info_alloca", {includes = "alsa/asoundlib.h"}))
+        assert(package:has_cfuncs("snd_pcm_open", {includes = "alsa/asoundlib.h"}))
     end)
