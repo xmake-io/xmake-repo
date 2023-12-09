@@ -13,6 +13,7 @@ package("re2")
     add_versions("2023.11.01", "4e6593ac3c71de1c0f322735bc8b0492a72f66ffccfad76e259fa21c41d27d8a")
 
     add_deps("cmake")
+    add_deps("abseil")
 
     if is_plat("linux") then
         add_syslinks("pthread")
