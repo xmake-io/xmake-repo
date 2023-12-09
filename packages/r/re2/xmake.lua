@@ -37,5 +37,5 @@ package("re2")
                 assert(s == "ruby");
                 assert(i == 1234);
             }
-        ]]}, {configs = {languages = "c++14"}, includes = "re2/re2.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "re2/re2.h"}))
     end)
