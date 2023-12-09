@@ -19,7 +19,7 @@ package("re2")
         add_syslinks("pthread")
     end
 
-    on_install(function (package)
+    on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
         local configs = {"-DRE2_BUILD_TESTING=OFF", "-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
