@@ -32,7 +32,7 @@ package("mysql")
         if package:version():ge("8.0.0") then
             package:add("deps", "boost")
             package:add("deps", "openssl 1.1.1-t")
-            package:add("deps", "zlib v1.2.13")
+            package:add("deps", "zlib")
             package:add("deps", "zstd")
             package:add("deps", "lz4")
         else
