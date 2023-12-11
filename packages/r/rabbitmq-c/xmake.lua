@@ -8,11 +8,8 @@ package("rabbitmq-c")
 
     add_versions("v0.11.0", "fad876075cbcf9a2f3dff27be66391f69117d5068529ba1d53e67fe59c2d88e1")
 
-    if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean"})
-    elseif is_plat("macosx", "linux") then
-        add_deps("autoconf", "automake", "pkg-config")
-    end
+    add_deps("cmake")
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean"})
     add_configs("tools", {description = "Build the command line tools.", default = false, type = "boolean"})
     add_configs("ssl", {description = "Build rabbitmq-c with SSL support.", default = false, type = "boolean"})
 
@@ -28,6 +25,9 @@ package("rabbitmq-c")
     on_load(function (package)
         if package:config("ssl") then
             package:add("deps", "openssl")
+        end
+        if package:config("tools") then
+            package:addenv("PATH", "bin")
         end
     end)
 
