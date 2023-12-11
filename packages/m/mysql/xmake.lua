@@ -49,7 +49,7 @@ package("mysql")
         os.cp("lib/libmysql.dll", package:installdir("bin"))
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         if package:version():ge("8.0.0") then
             io.gsub("CMakeLists.txt", "ADD_SUBDIRECTORY%(storage/ndb%)", "")
             local configs = {"-DCOMPILATION_COMMENT=XMake",
