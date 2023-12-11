@@ -27,6 +27,8 @@ package("openjdk")
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
 
     if is_plat("linux") then
+        add_deps("alsa-lib", {configs = {shared = true, versioned = false}})
+        add_deps("freetype", "libxtst", "libxi", "libxrender")
         add_extsources("pacman::jdk-openjdk", "apt::default-jdk")
     elseif is_plat("macosx") then
         add_extsources("brew::openjdk")
@@ -46,7 +48,7 @@ package("openjdk")
         end
     end)
 
-    on_install("windows|x64", "macosx|x86_64", "macosx|arm64", "mingw|x86_64", function (package)
+    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "macosx|arm64", "mingw|x86_64", function (package)
         local plat
         if package:is_plat("windows", "mingw") then
             plat = "win32"

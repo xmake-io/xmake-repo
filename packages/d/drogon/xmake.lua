@@ -14,6 +14,7 @@ package("drogon")
     add_versions("v1.8.0", "bc6503cf213ed961d4a5e9fd7cb8e75b6b11045a67840ea2241e57321dd8711b")
     add_versions("v1.8.1", "9665f001355cc72a5a9db941ae349cec50959d18bf44eb6c09311bf9c78336a4")
     add_versions("v1.8.2", "1182cab00c33e400eac617c6dbf44fa2f358e1844990b6b8c5c87783024f9971")
+    add_versions("v1.9.1", "0f8bab22e02681d05787c88cbef5d04b105f6644ebf7cf29898d0a52ebe959e4")
 
     add_patches("1.4.1", path.join(os.scriptdir(), "patches", "1.4.1", "trantor.patch"), "7f9034a27bb63de8dedb80dd9f246ea7aa7724c87f2c0d0054f4b6097ea2a862")
     add_patches("1.4.1", path.join(os.scriptdir(), "patches", "1.4.1", "resolv.patch" ), "a1054822bf91f5f06de8bca9b1bd8859233228159a8ff8014ce6329d6c000f26")
@@ -24,10 +25,11 @@ package("drogon")
     add_patches(">=1.7.3 <1.8.0", path.join(os.scriptdir(), "patches", "1.7.3", "trantor.patch"), "27e479dd0e3f8adc75c9c21fe895937f727c3102e5bfb21ac3289d6ad2795b7a")
     add_patches(">=1.7.3 <1.8.0", path.join(os.scriptdir(), "patches", "1.7.3", "resolv.patch" ), "49694f090e169a5c0e524726e8b85ad0bac76c05ed633c60e986849c2e5adb85")
     add_patches("1.8.0",   path.join(os.scriptdir(), "patches", "1.8.0", "redis.patch" ), "cf09beb4f07fd970ef4ad8911eec71ce7c94609ad9fbf1626b5ca8fcd070e09e")
-    add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "resolv.patch"), "e9b6b320c70d17024931be8481f7b6413681216113466b5d6699431bb98d50e2")
+    add_patches(">=1.8.0 <1.8.4", path.join(os.scriptdir(), "patches", "1.8.0", "resolv.patch"), "e9b6b320c70d17024931be8481f7b6413681216113466b5d6699431bb98d50e2")
     add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "config.patch"), "67a921899a24c1646be6097943cc2ed8228c40f177493451f011539c6df0ed76")
     add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "check.patch"), "e4731995bb754f04e1bb813bfe3dfb480a850fbbd5cdb48d5a53b32b4ed8669c")
     add_patches(">=1.8.2 <1.8.5", path.join(os.scriptdir(), "patches", "1.8.2", "gcc13.patch"), "d2842a734df52c590ab950414c7a95a1ac1be48f8680f909d0eeba5f36087cb0")
+    add_patches("1.9.1", path.join(os.scriptdir(), "patches", "1.9.1", "resolv.patch"), "2b511e60fe99062396accab6b25d0092e111a83db11cffc23ce8e790370d017c")
 
     add_configs("c_ares", {description = "Enable async DNS query support.", default = false, type = "boolean"})
     add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
@@ -35,6 +37,7 @@ package("drogon")
     add_configs("postgresql", {description = "Enable postgresql support.", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Enable sqlite3 support.", default = false, type = "boolean"})
     add_configs("redis", {description = "Enable redis support.", default = false, type = "boolean"})
+    add_configs("yaml", {description = "Enable yaml support.", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("trantor", "jsoncpp", "brotli", "zlib")
@@ -54,7 +57,8 @@ package("drogon")
                             openssl    = "openssl",
                             postgresql = "postgresql",
                             sqlite3    = "sqlite3",
-                            redis      = "hiredis"}
+                            redis      = "hiredis",
+                            yaml       = "yaml-cpp"}
 
         for name, dep in pairs(configdeps) do
             if package:config(name) then
@@ -69,6 +73,10 @@ package("drogon")
         io.replace("cmake_modules/FindMySQL.cmake", "PATH_SUFFIXES mysql", "PATH_SUFFIXES mysql mariadb", {plain = true})
 
         local configs = {"-DBUILD_EXAMPLES=OFF"}
+        local version = package:version()
+        if version:ge("1.8.4") then
+            table.insert(configs, "-DUSE_SUBMODULE=OFF")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
 
         -- no support for windows shared library
@@ -78,19 +86,15 @@ package("drogon")
 
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
-                if enabled then
                     if name == "sqlite3" then
-                        table.insert(configs, "-DBUILD_SQLITE=ON")
+                        table.insert(configs, "-DBUILD_SQLITE=" .. (enabled and "ON" or "OFF"))
+                    elseif name == "yaml" then
+                        if version:ge("1.8.4") then
+                            table.insert(configs, "-DBUILD_YAML_CONFIG=" .. (enabled and "ON" or "OFF"))
+                        end
                     else
-                        table.insert(configs, "-DBUILD_" .. name:upper() .. "=ON")
+                        table.insert(configs, "-DBUILD_" .. name:upper() .. "="  .. (enabled and "ON" or "OFF"))
                     end
-                else
-                    if name == "sqlite3" then
-                        table.insert(configs, "-DBUILD_SQLITE=OFF")
-                    else
-                        table.insert(configs, "-DBUILD_" .. name:upper() .. "=OFF")
-                    end
-                end
             end
         end
 
