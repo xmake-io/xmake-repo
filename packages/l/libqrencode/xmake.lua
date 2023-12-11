@@ -9,7 +9,6 @@ package("libqrencode")
     add_deps("cmake")
     add_deps("libpng")
 
-
     on_install(function (package)
         local configs = {"-DWITH_TOOLS=OFF", "-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
