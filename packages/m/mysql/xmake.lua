@@ -31,7 +31,7 @@ package("mysql")
     on_load("windows", "mingw", "linux", "macosx", function(package) 
         if package:version():ge("8.0.0") then
             package:add("deps", "boost")
-            package:add("deps", "openssl 1.1.1-t")
+            package:add("deps", "openssl")
             package:add("deps", "zlib")
             package:add("deps", "zstd")
             package:add("deps", "lz4")
