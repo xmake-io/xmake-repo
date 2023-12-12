@@ -79,10 +79,6 @@ package("dpp")
         if package:version():ge("v10.0.23") then
             package:add("defines", "DPP_USE_EXTERNAL_JSON")
         end
-
-        if package:version():ge("v10.0.29") and package:is_plat("windows") then
-            package:add("cxxflags", "/bigobj /Gy")
-        end
     end)
 
     on_install("windows", "linux", "macosx", function (package)
@@ -102,12 +98,18 @@ package("dpp")
         if package:version():le("v10.0.14") then
             os.rmdir("include/dpp/fmt")
         end
-
+        
+        local cxflags
+        if package:version():ge("v10.0.29") and package:is_plat("windows") then
+            cxflags  = {"/bigobj", "/Gy"}
+        end
+        
         io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
         os.rmdir("include/dpp/nlohmann")
 
+        local configs = {}
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
