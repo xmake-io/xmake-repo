@@ -80,7 +80,7 @@ package("dpp")
             package:add("defines", "DPP_USE_EXTERNAL_JSON")
         end
 
-        if package:version():ge("v10.0.29") and is_plat("windows") then
+        if package:version():ge("v10.0.29") and package:is_plat("windows") then
             package:add("cxxflags", "/bigobj /Gy")
         end
     end)
