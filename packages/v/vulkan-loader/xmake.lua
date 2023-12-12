@@ -3,7 +3,15 @@ package("vulkan-loader")
     set_description("This project provides the Khronos official Vulkan ICD desktop loader for Windows, Linux, and MacOS.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/KhronosGroup/Vulkan-Loader/archive/sdk-$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
+    add_urls("https://github.com/KhronosGroup/Vulkan-Loader/archive/$(version).tar.gz", {version = function (version) 
+        local prefix = "sdk-"
+        if version:gt("1.3.261+1") then
+            prefix = "vulkan-sdk-"
+        end
+         return prefix .. version:gsub("%+", ".")
+    end})
+
+    add_versions("1.3.268+0", "404fa621f1ab2731bcc68bcbff64d8c6de322faad2d87f9198641bd37255fd39")
     add_versions("1.3.261+1", "f85f0ea57b63750d4ddaf6c8649df781c4777006daa3cd772b01e7b5ed02f3f2")
     add_versions("1.3.250+1", "b982ec5fae9af6364816a7c5fcf4d3e5c29bfdca35f4b12ee1f90e492e41adc2")
     add_versions("1.3.246+1", "5ffb79b83ec539233ee793dd3c50aa241bd9bd67103d45d3f4b657f1620b7553")
