@@ -79,6 +79,10 @@ package("dpp")
         if package:version():ge("v10.0.23") then
             package:add("defines", "DPP_USE_EXTERNAL_JSON")
         end
+
+        if package:version():ge("v10.0.29") and is_plat("windows") then
+            package:add("cxxflags", "/bigobj /Gy")
+        end
     end)
 
     on_install("windows", "linux", "macosx", function (package)
