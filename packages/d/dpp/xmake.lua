@@ -99,17 +99,15 @@ package("dpp")
             os.rmdir("include/dpp/fmt")
         end
         
-        local cxflags
-        if package:version():ge("v10.0.29") and package:is_plat("windows") then
-            cxflags  = {"/bigobj", "/Gy"}
-        end
-        
         io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
         os.rmdir("include/dpp/nlohmann")
 
         local configs = {}
+        if package:version():ge("v10.0.29") and package:is_plat("windows") then
+            configs.cxflags = "/bigobj /Gy"
+        end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, configs, {cxflags = cxflags})
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
