@@ -24,7 +24,7 @@ package("symengine")
         package:add("deps", package:config("integer_class"))
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "cross", function (package)
         local configs = {"-DBUILD_TESTS=OFF", "-DBUILD_BENCHMARKS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -47,6 +47,6 @@ package("symengine")
                 Expression x("x");
                 auto ex = pow(x+sqrt(Expression(2)), 6);
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
         assert(package:has_cfuncs("basic_new_stack", {includes = "symengine/cwrapper.h"}))
     end)
