@@ -4,7 +4,7 @@ package("cpp-tbox")
     set_license("MIT")
 
     add_urls("https://github.com/cpp-main/cpp-tbox.git")
-    add_versions("2023.12.13", "fa93ce5bc1eef20dbf4b5b975f12dc96171e0b6e")
+    add_versions("2023.12.13", "1666e59a1ff2407a692d619691d744d52c1c057d")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("mqtt", {description = "Enable mosquitto", default = false, type = "boolean"})
 
@@ -21,12 +21,6 @@ package("cpp-tbox")
         local configs = {"-DCMAKE_ENABLE_TEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DTBOX_ENABLE_MQTT=" .. (package:config("mqtt") and "ON" or "OFF"))
-        io.replace("modules/util/base64.cpp", "#include <cstring>", "#include <cstring>\n#include <cstdint>", {plain = true})
-        io.replace("modules/terminal/types.h", "#include <vector>", "#include <vector>\n#include <cstdint>", {plain = true})
-        io.replace("modules/crypto/md5.h", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
-        io.replace("modules/flow/action_executor.h", "#include <deque>", "#include <deque>\n#include <array>", {plain = true})
-        io.replace("modules/alarm/3rd-party/ccronexpr.cpp", 'int res = sprintf(str, "%d", num);', 'int res = snprintf(str, CRON_NUM_OF_DIGITS(num) + 1, "%d", num);', {plain = true})
-        io.replace("modules/flow/action_executor.h", "#include <deque>", "#include <deque>\n#include <array>", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
