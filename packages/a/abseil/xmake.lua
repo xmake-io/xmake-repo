@@ -14,29 +14,9 @@ package("abseil")
     add_versions("20230125.2", "9a2b5752d7bfade0bdeee2701de17c9480620f8b237e1964c1b9967c75374906")
     add_versions("20230802.1", "987ce98f02eefbaf930d6e38ab16aa05737234d7afbab2d5c4ea7adbe50c28ed")
 
-    add_deps("cmake")
+    add_patches("20230802.1", path.join(os.scriptdir(), "patches", "20230802.1", "20230802.1-0001-fix-mingw.patch"), "3e7033ab9962fb394e048ebfb12e6f6bb36e92484430221e49ae4505d5a0b8cb")
 
-    add_links(
-        "absl_status", "absl_cord",
-        "absl_flags", "absl_flags_parse", "absl_flags_internal", "absl_flags_reflection", "absl_flags_marshalling",
-        "absl_flags_commandlineflag_internal", "absl_synchronization", "absl_time", "absl_hash", "absl_city", "absl_time_zone",
-        "absl_spinlock_wait", "absl_failure_signal_handler", "absl_bad_optional_access", "absl_flags_commandlineflag",
-        "absl_random_internal_pool_urbg",
-        "absl_cordz_info", "absl_cord_internal", "absl_cordz_functions", "absl_cordz_handle", "absl_cordz_sample_token",
-        "absl_base", "absl_bad_any_cast_impl", "absl_periodic_sampler", "absl_random_distributions",
-        "absl_flags_usage_internal", "absl_random_seed_sequences",
-        "absl_throw_delegate", "absl_stacktrace", "absl_symbolize", "absl_debugging_internal",
-        "absl_flags_private_handle_accessor",
-        "absl_strings", "absl_flags_config", "absl_malloc_internal", "absl_str_format_internal",
-        "absl_flags_usage", "absl_strings_internal", "absl_flags_program_name", "absl_int128",
-        "absl_scoped_set_env", "absl_raw_hash_set", "absl_random_internal_seed_material",
-        "absl_random_internal_randen", "absl_random_internal_randen_slow", "absl_random_internal_randen_hwaes_impl",
-        "absl_random_internal_randen_hwaes",
-        "absl_graphcycles_internal", "absl_exponential_biased", "absl_bad_variant_access", "absl_statusor",
-        "absl_random_internal_distribution_test_util", "absl_random_internal_platform",
-        "absl_hashtablez_sampler", "absl_demangle_internal", "absl_leak_check", "absl_log_severity", "absl_raw_logging_internal",
-        "absl_strerror", "absl_examine_stack", "absl_low_level_hash", "absl_random_seed_gen_exception", "absl_civil_time",
-        "absl_crc_cord_state", "absl_crc32c", "absl_crc_cpu_detect", "absl_crc_internal")
+    add_deps("cmake")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation")
@@ -50,7 +30,7 @@ package("abseil")
     end)
 
     on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
-        local configs = {"-DCMAKE_CXX_STANDARD=17"}
+        local configs = {"-DCMAKE_CXX_STANDARD=14"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
@@ -70,5 +50,5 @@ package("abseil")
                 auto a = absl::SimpleAtoi("123", &result);
                 std::cout << "Joined string: " << s << "\\n";
             }
-        ]]}, {configs = {languages = "cxx17"}}))
+        ]]}, {configs = {languages = "cxx14"}}))
     end)
