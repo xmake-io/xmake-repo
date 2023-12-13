@@ -4,7 +4,7 @@ package("cpp-tbox")
     set_license("MIT")
 
     add_urls("https://github.com/cpp-main/cpp-tbox.git")
-    add_versions("2023.10.20", "63fc6130364854705429f568b393366f422ce733")
+    add_versions("2023.12.13", "fa93ce5bc1eef20dbf4b5b975f12dc96171e0b6e")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("mqtt", {description = "Enable mosquitto", default = false, type = "boolean"})
 
@@ -14,9 +14,6 @@ package("cpp-tbox")
     on_load(function (package)
         if package:config("mqtt") then
             add_deps("mosquitto")
-        end
-        if package:toolchain("clang") then
-            package:add("cxxflags", "-Wno-unused-private-field")
         end
     end)
 
