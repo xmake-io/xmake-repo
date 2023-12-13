@@ -5,23 +5,34 @@ package("cpp-tbox")
 
     add_urls("https://github.com/cpp-main/cpp-tbox.git")
     add_versions("2023.12.13", "1666e59a1ff2407a692d619691d744d52c1c057d")
-    add_configs("mqtt", {description = "Enable mosquitto", default = false, type = "boolean"})
 
-    add_deps("cmake")
-    add_deps("dbus", "nlohmann_json")
-
-    on_load(function (package)
-        if package:config("mqtt") then
-            add_deps("mosquitto")
-        end
-    end)
+    add_deps("dbus", "nlohmann_json", "mosquitto")
 
     on_install("linux", function (package)
-        local configs = {"-DCMAKE_ENABLE_TEST=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DTBOX_ENABLE_MQTT=" .. (package:config("mqtt") and "ON" or "OFF"))
-        table.insert(configs, "-DTBOX_BUILD_LIB_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
-        import("package.tools.cmake").install(package, configs)
+        local cflags = {}
+        local depinfo = package:dep("mosquitto"):fetch()
+        for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do
+            table.insert(cflags, "-I" .. includedir)
+        end
+        io.replace("build_env.mk", "CCFLAGS := -I$(STAGING_INCLUDE)", "CCFLAGS := -I$(STAGING_INCLUDE) " .. table.concat(cflags, " "), {plain=true})
+        local configs = {"3rd-party", "modules"}
+        if not package:debug() then
+            table.insert(configs, "RELEASE=1")
+        else
+            table.insert(configs, "RELEASE=0")
+        end
+        if package:config("shared") then
+            table.insert(configs, "ENABLE_SHARED_LIB=yes")
+            table.insert(configs, "ENABLE_STATIC_LIB=no")
+            table.insert(configs, "INSTALL_DIR=" .. package:installdir())
+            table.insert(configs, "STAGING_DIR=" .. package:installdir())
+        else
+            table.insert(configs, "ENABLE_SHARED_LIB=no")
+            table.insert(configs, "ENABLE_STATIC_LIB=yes")
+            table.insert(configs, "STAGING_DIR=" .. package:installdir())
+        end
+        
+        import("package.tools.make").make(package, configs)
     end)
 
     on_test(function (package)
