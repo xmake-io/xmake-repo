@@ -15,7 +15,7 @@ package("cpp-tbox")
         if package:config("mqtt") then
             add_deps("mosquitto")
         end
-        if toolchain:name() == "clang" then
+        if package:toolchain("clang") then
             package:add("cxxflags", "-Wno-unused-private-field")
         end
     end)
