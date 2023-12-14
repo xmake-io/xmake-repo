@@ -30,11 +30,7 @@ package("libgd")
                 package:add("deps", dep)
             end
         end
-        if package:is_plat("windows") and not package:config("shared") then
-            package:add("defines", "BGDWIN32")
-            package:add("defines", "NONDLL")
-        end
-        if package:is_plat("mingw") and not package:config("shared") then
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "BGDWIN32")
             package:add("defines", "NONDLL")
         end
