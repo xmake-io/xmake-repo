@@ -30,9 +30,6 @@ package("symengine")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_SYMENGINE_TEUCHOS=" .. (package:config("teuchos") and "ON" or "OFF"))
-        if package:config("shared") and package:config("teuchos") then
-            package:add("links", "teuchos", "symengine")
-        end
         if package:config("integer_class") == "boost" then
             table.insert(configs, "-DINTEGER_CLASS=boostmp")
         else
@@ -42,6 +39,10 @@ package("symengine")
             table.insert(configs, "-DMSVC_USE_MT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        if os.isfile(package:installdir("lib/libteuchos.a")) then
+            package:add("links", "teuchos", "symengine")
+        end
     end)
 
     on_test(function (package)
