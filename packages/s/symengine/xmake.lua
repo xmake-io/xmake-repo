@@ -9,6 +9,7 @@ package("symengine")
     add_versions("v0.11.2", "f6972acd6a65354f6414e69460d2e175729470632bdac05919bc2f7f32e48cbd")
 
     add_configs("integer_class", {description = "Integer class for symengine. Either gmp, gmpxx, flint or piranha", default = "boost", type = "string", values = {"boost", "gmp"}})
+    add_configs("teuchos", {description = "Build with teuchos", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("m")
@@ -17,7 +18,7 @@ package("symengine")
     add_deps("cmake")
 
     on_load(function (package)
-        -- Unsupported gmp now
+        -- Unsupported gmp
         if package:is_plat("windows") then
             package:config_set("integer_class", "boost")
         end
@@ -28,6 +29,10 @@ package("symengine")
         local configs = {"-DBUILD_TESTS=OFF", "-DBUILD_BENCHMARKS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_SYMENGINE_TEUCHOS=" .. (package:config("teuchos") and "ON" or "OFF"))
+        if package:config("shared") and package:config("teuchos") then
+            package:add("links", "teuchos", "symengine")
+        end
         if package:config("integer_class") == "boost" then
             table.insert(configs, "-DINTEGER_CLASS=boostmp")
         else
