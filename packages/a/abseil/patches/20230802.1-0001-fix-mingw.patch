@@ -1,5 +1,7 @@
---- a/absl/synchronization/internal/pthread_waiter.h
-+++ b/absl/synchronization/internal/pthread_waiter.h
+diff --git a/abseil-cpp-20230802.1/absl/synchronization/internal/pthread_waiter.h b/abseil-cpp-20230802.1.p/absl/synchronization/internal/pthread_waiter.h
+index 206aefa..23db76a 100644
+--- a/abseil-cpp-20230802.1/absl/synchronization/internal/pthread_waiter.h
++++ b/abseil-cpp-20230802.1.p/absl/synchronization/internal/pthread_waiter.h
 @@ -16,7 +16,7 @@
  #ifndef ABSL_SYNCHRONIZATION_INTERNAL_PTHREAD_WAITER_H_
  #define ABSL_SYNCHRONIZATION_INTERNAL_PTHREAD_WAITER_H_
@@ -17,8 +19,10 @@
 +#endif  // !defined(_WIN32) && !defined(__MINGW32__)
  
  #endif  // ABSL_SYNCHRONIZATION_INTERNAL_PTHREAD_WAITER_H_
---- a/absl/synchronization/internal/win32_waiter.h
-+++ b/absl/synchronization/internal/win32_waiter.h
+diff --git a/abseil-cpp-20230802.1/absl/synchronization/internal/win32_waiter.h b/abseil-cpp-20230802.1.p/absl/synchronization/internal/win32_waiter.h
+index 87eb617..fdab264 100644
+--- a/abseil-cpp-20230802.1/absl/synchronization/internal/win32_waiter.h
++++ b/abseil-cpp-20230802.1.p/absl/synchronization/internal/win32_waiter.h
 @@ -20,7 +20,8 @@
  #include <sdkddkver.h>
  #endif
