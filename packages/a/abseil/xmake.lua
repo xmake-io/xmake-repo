@@ -14,7 +14,7 @@ package("abseil")
     add_versions("20230125.2", "9a2b5752d7bfade0bdeee2701de17c9480620f8b237e1964c1b9967c75374906")
     add_versions("20230802.1", "987ce98f02eefbaf930d6e38ab16aa05737234d7afbab2d5c4ea7adbe50c28ed")
 
-    add_patches("20230802.1", path.join(os.scriptdir(), "patches", "20230802.1-0001-fix-mingw.patch"), "3e7033ab9962fb394e048ebfb12e6f6bb36e92484430221e49ae4505d5a0b8cb")
+    add_patches("20230802.1", path.join(os.scriptdir(), "patches", "20230802.1-0001-fix-mingw.patch"), "efa0cb652ac54c0c89eab9af8fa6ec6c5d289b61e0ceaec9b86d77a9aa02f80a")
 
     add_deps("cmake")
 
