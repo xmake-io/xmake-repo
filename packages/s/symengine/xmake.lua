@@ -41,7 +41,7 @@ package("symengine")
         import("package.tools.cmake").install(package, configs)
 
         if os.isfile(package:installdir("lib/libteuchos.a")) then
-            package:add("links", "teuchos", "symengine")
+            package:add("links", "symengine", "teuchos")
         end
     end)
 
