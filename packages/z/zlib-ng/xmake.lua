@@ -14,7 +14,7 @@ package("zlib-ng")
     on_install("windows", "macosx", "linux", "android", "mingw", function (package)
         if package:version():ge("2.1.5") then
             if package:is_plat("android") or package:is_arch("arm.*") then
-                assert(1, "This version is not supported")
+                assert(0, "This version is not supported android or arm.")
             end
         end
         local configs = {"-DZLIB_COMPAT=ON"}
