@@ -11,12 +11,16 @@ package("zlib-ng")
     add_versions("2.1.5", "3f6576971397b379d4205ae5451ff5a68edf6c103b2f03c4188ed7075fbb5f04")
 
     add_deps("cmake")
-    on_install("windows", "macosx", "linux", "android", "mingw", function (package)
+
+    on_load(function (package)
         if package:version():eq("2.1.5") then
             if package:is_plat("android") or package:is_arch("arm.*") then
                 raise("zlib-ng 2.1.5 not support android and arm.")
             end
         end
+    end)
+
+    on_install("windows", "macosx", "linux", "android", "mingw", function (package)
         local configs = {"-DZLIB_COMPAT=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
