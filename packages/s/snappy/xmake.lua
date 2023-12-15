@@ -21,6 +21,9 @@ package("snappy")
     on_install("windows", "linux", "macosx", "mingw", "android", function (package)
         if package:version():eq("1.1.10") then
             io.replace("snappy.cc", "(op + deferred_length) < op_limit_min_slop);", "static_cast<ptrdiff_t>(op + deferred_length) < op_limit_min_slop);", {plain = true})
+            if package:is_plat("android") then
+                assert(0, "1.1.10 not support android now")
+            end
         end
         local configs = {"-DSNAPPY_BUILD_TESTS=OFF", "-DSNAPPY_BUILD_BENCHMARKS=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
