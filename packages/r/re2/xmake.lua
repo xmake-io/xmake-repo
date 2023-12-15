@@ -13,29 +13,51 @@ package("re2")
     add_versions("2023.11.01", "4e6593ac3c71de1c0f322735bc8b0492a72f66ffccfad76e259fa21c41d27d8a")
 
     add_deps("cmake")
-    add_deps("abseil")
 
     if is_plat("linux") then
         add_syslinks("pthread")
     end
 
-    on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
-        local configs = {"-DRE2_BUILD_TESTING=OFF", "-DCMAKE_CXX_STANDARD=17"}
+    on_load(function (package)
+        if package:version():eq("2023.11.01") then
+            package:add("deps", "abseil 20230802.1")
+        end
+    end)
+
+    on_install(function (package)
+        local configs = {"-DRE2_BUILD_TESTING=OFF"}
+        if package:version():eq("2023.11.01") then
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <string>
-            #include <cassert>
-            void test() {
-                int i;
-                std::string s;
-                assert(RE2::FullMatch("ruby:1234", "(\\w+):(\\d+)", &s, &i));
-                assert(s == "ruby");
-                assert(i == 1234);
-            }
-        ]]}, {configs = {languages = "c++17"}, includes = "re2/re2.h"}))
+        if package:version():eq("2023.11.01") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <string>
+                #include <cassert>
+                void test() {
+                    int i;
+                    std::string s;
+                    assert(RE2::FullMatch("ruby:1234", "(\\w+):(\\d+)", &s, &i));
+                    assert(s == "ruby");
+                    assert(i == 1234);
+                }
+            ]]}, {configs = {languages = "c++17"}, includes = "re2/re2.h"}))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                #include <string>
+                #include <cassert>
+                void test() {
+                    int i;
+                    std::string s;
+                    assert(RE2::FullMatch("ruby:1234", "(\\w+):(\\d+)", &s, &i));
+                    assert(s == "ruby");
+                    assert(i == 1234);
+                }
+            ]]}, {configs = {languages = "c++11"}, includes = "re2/re2.h"}))
+        end
     end)
