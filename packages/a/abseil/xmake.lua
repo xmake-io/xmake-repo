@@ -16,10 +16,14 @@ package("abseil")
 
     add_deps("cmake")
 
-    add_linkgroups("absl_log_internal_check_op", "absl_log_internal_conditions", "absl_log_internal_format", 
-                "absl_log_internal_globals", "absl_log_internal_log_sink_set", "absl_log_internal_message", 
-                "absl_log_internal_nullguard", "absl_log_internal_proto", {name = "log_internal", group = true})
-    add_linkorders("absl_strings_internal", "linkgroup::log_internal")
+    add_linkorders("absl_strings", "absl_base")
+    add_linkorders("absl_strings_internal", "absl_base")
+    add_linkorders("absl_str_format_internal", "absl_base")
+    add_linkorders("absl_flags", "absl_base")
+    add_linkorders("absl_synchronization", "absl_base")
+    add_linkorders("absl_hash", "absl_base")
+    add_linkorders("absl_city", "absl_base")
+    add_linkorders("absl_time", "absl_base")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation")
