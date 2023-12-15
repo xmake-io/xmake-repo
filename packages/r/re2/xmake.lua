@@ -14,6 +14,8 @@ package("re2")
 
     add_deps("cmake")
 
+    add_linkorders("absl_synchronization", "absl_kernel_timeout_internal")
+
     if is_plat("linux") then
         add_syslinks("pthread")
     end
