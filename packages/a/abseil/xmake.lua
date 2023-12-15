@@ -47,6 +47,9 @@ package("abseil")
             package:add("defines", "ABSL_CONSUME_DLL")
             package:add("links", "abseil_dll")
         end
+        if package:version():eq("20230802.1") and package:is_plat("mingw") then
+            raise("abseil 20230802.1 not support mingw")
+        end
     end)
 
     on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
