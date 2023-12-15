@@ -45,7 +45,7 @@ package("hpsocket")
                 package:add("syslinks", "crypt32")
             end
             if package:version():eq("5.9.3") then
-                package:add("deps", "zlib")
+                package:add("deps", "zlib-ng")
             end
         elseif package:is_plat("linux") then
             package:add("syslinks", "pthread", "dl", "rt")
