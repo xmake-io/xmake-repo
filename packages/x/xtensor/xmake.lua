@@ -11,6 +11,7 @@ package("xtensor")
     add_versions("0.24.0", "37738aa0865350b39f048e638735c05d78b5331073b6329693e8b8f0902df713")
     add_versions("0.24.1", "dd1bf4c4eba5fbcf386abba2627fcb4a947d14a806c33fde82d0cc1194807ee4")
     add_versions("0.24.3", "3acde856b9fb8cf4e2a7b66726da541275d40ab9b002e618ad985ab97f08ca4f")
+    add_versions("0.24.7", "0fbbd524dde2199b731b6af99b16063780de6cf1d0d6cb1f3f4d4ceb318f3106")
 
     add_deps("cmake")
     add_deps("xtl", "xsimd")
