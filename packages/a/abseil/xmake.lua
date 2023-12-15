@@ -24,6 +24,10 @@ package("abseil")
     add_linkorders("absl_hash", "absl_base")
     add_linkorders("absl_city", "absl_base")
     add_linkorders("absl_time", "absl_base")
+    add_linkorders("absl_strings", "absl_raw_logging_internal")
+    add_linkorders("absl_strings_internal", "absl_raw_logging_internal")
+    add_linkorders("absl_str_format_internal", "absl_raw_logging_internal")
+
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation")
