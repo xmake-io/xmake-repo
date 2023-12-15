@@ -18,13 +18,16 @@ package("snappy")
     add_configs("avx2", {description = "Use the AVX2 instruction set", default = false, type = "boolean"})
     add_configs("bmi2", {description = "Use the BMI2 instruction set", default = false, type = "boolean"})
 
-    on_install("windows", "linux", "macosx", "mingw", "android", function (package)
-        if package:version():eq("1.1.10") then
+    on_load(function (package)
+         if package:version():eq("1.1.10") then
             io.replace("snappy.cc", "(op + deferred_length) < op_limit_min_slop);", "static_cast<ptrdiff_t>(op + deferred_length) < op_limit_min_slop);", {plain = true})
             if package:is_plat("android") then
-                assert(false, "snappy 1.1.10 not support android.")
+                raise("snappy 1.1.10 not support android.")
             end
         end
+    end)
+
+    on_install("windows", "linux", "macosx", "mingw", "android", function (package)
         local configs = {"-DSNAPPY_BUILD_TESTS=OFF", "-DSNAPPY_BUILD_BENCHMARKS=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSNAPPY_REQUIRE_AVX=" .. (package:config("avx") and "ON" or "OFF"))
