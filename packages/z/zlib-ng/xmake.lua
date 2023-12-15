@@ -13,7 +13,7 @@ package("zlib-ng")
     add_deps("cmake")
     on_install("windows", "macosx", "linux", "android", "mingw", function (package)
         if package:version():ge("2.1.5") then
-            if package:is_plat("android") or package:is_arch("arm64") then
+            if package:is_plat("android") or package:is_arch("arm.*") then
                 assert(1, "This version is not supported")
             end
         end
