@@ -44,7 +44,9 @@ package("hpsocket")
             if not package:config("no_ssl") then
                 package:add("syslinks", "crypt32")
             end
-            package:add("deps", "zlib")
+            if package:version():eq("5.9.3") then
+                package:add("deps", "zlib")
+            end
         elseif package:is_plat("linux") then
             package:add("syslinks", "pthread", "dl", "rt")
         elseif package:is_plat("android") then
