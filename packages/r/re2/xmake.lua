@@ -25,7 +25,7 @@ package("re2")
             end
             package:add("deps", "abseil 20230802.1")
             package:add("linkorders", "absl_synchronization", "absl_kernel_timeout_internal")
-            package:add("linkorders", "absl_str_format_internal", "absl_strings_internal")
+            package:add("linkorders", "absl_str_format_internal", "absl_strings")
         end
     end)
 
