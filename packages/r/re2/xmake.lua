@@ -14,7 +14,6 @@ package("re2")
 
     add_deps("cmake")
 
-    add_linkorders("absl_synchronization", "absl_kernel_timeout_internal")
 
     if is_plat("linux") then
         add_syslinks("pthread")
@@ -23,6 +22,7 @@ package("re2")
     on_load(function (package)
         if package:version():eq("2023.11.01") then
             package:add("deps", "abseil 20230802.1")
+            package:add("linkorders", "absl_synchronization", "absl_kernel_timeout_internal")
         end
     end)
 
