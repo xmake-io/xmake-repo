@@ -12,13 +12,12 @@ package("zlib-ng")
 
 
     add_deps("cmake")
-    on_install("windows", "macosx", "linux", "android", "mingw", function (package)
+    on_install("windows|x64", "windows|x86", "macosx", "linux", "mingw", function (package)
         local configs = {"-DZLIB_COMPAT=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DINC_INSTALL_DIR=" .. package:installdir("include"))
         table.insert(configs, "-DLIB_INSTALL_DIR=" .. package:installdir("lib"))
-        io.replace(path.join("arch", "arm", "slide_hash_armv6.c"), "#if defined(ARM_SIMD)", "#if defined(ARM_SIMD)\n#include <arm_acle.h>")
         import("package.tools.cmake").install(package, configs)
     end)
 
