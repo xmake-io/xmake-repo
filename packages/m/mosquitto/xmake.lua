@@ -60,6 +60,9 @@ package("mosquitto")
                 package:add("deps", value)
             end
         end
+        if package:version():eq("2.0.18") and package:is_plat("windows") and package:is_arch("arm.*") then
+            raise("mosquitto 2.0.18 not support windows arm")
+        end
     end)
  
     on_install("windows", "linux", "macosx", function (package)
