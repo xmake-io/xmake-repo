@@ -27,6 +27,10 @@ package("abseil")
     add_linkorders("absl_strings", "absl_raw_logging_internal")
     add_linkorders("absl_strings_internal", "absl_raw_logging_internal")
     add_linkorders("absl_str_format_internal", "absl_raw_logging_internal")
+    add_linkorders("absl_str_format_internal", "absl_strings")
+    add_linkorders("absl_base", "absl_time")
+    add_linkorders("absl_kernel_timeout_internal", "absl_time")
+    add_linkorders("absl_synchronization", "absl_stacktrace")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation")
@@ -36,6 +40,9 @@ package("abseil")
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ABSL_CONSUME_DLL")
             package:add("links", "abseil_dll")
+        end
+        if package:version():eq("20230802.1") then
+            package:add("linkorders", "absl_synchronization", "absl_kernel_timeout_internal")
         end
     end)
 
