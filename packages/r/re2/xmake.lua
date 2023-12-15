@@ -24,11 +24,6 @@ package("re2")
                 raise("re2 2023.11.01 only support macosx linux windows mingw cross")
             end
             package:add("deps", "abseil 20230802.1")
-            package:add("linkorders", "absl_synchronization", "absl_kernel_timeout_internal")
-            package:add("linkorders", "absl_str_format_internal", "absl_strings")
-            package:add("linkorders", "absl_base", "absl_time")
-            package:add("linkorders", "absl_kernel_timeout_internal", "absl_time")
-            package:add("linkorders", "absl_synchronization", "absl_stacktrace")
         end
     end)
 
