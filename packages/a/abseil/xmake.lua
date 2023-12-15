@@ -31,6 +31,7 @@ package("abseil")
     add_linkorders("absl_base", "absl_time")
     add_linkorders("absl_kernel_timeout_internal", "absl_time")
     add_linkorders("absl_synchronization", "absl_stacktrace")
+    add_linkorders("absl_time", "absl_time_zone")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation")
