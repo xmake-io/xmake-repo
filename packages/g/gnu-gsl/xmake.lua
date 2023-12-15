@@ -4,8 +4,8 @@ package("gnu-gsl")
     set_description("The GNU Scientific Library (GSL) is a numerical library for C and C++ programmers.")
     set_license("GPL-3.0")
 
-    add_urls("https://ftp.gnu.org/gnu/gsl/gsl-$(version).tar.gz",
-             "https://ftpmirror.gnu.org/gsl/gsl-$(version).tar.gz")
+    add_urls("https://ftpmirror.gnu.org/gsl/gsl-$(version).tar.gz",
+             "https://ftp.gnu.org/gnu/gsl/gsl-$(version).tar.gz")
     add_versions("2.7", "efbbf3785da0e53038be7907500628b466152dbc3c173a87de1b5eba2e23602b")
 
     add_links("gsl", "gslcblas")

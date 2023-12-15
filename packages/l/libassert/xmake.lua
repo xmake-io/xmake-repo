@@ -6,7 +6,7 @@ package("libassert")
     add_urls("https://github.com/jeremy-rifkin/libassert/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jeremy-rifkin/libassert.git")
 
-    add_versions("v1.2", "332F96181F4BDBD95EF5FCD6484782BA2D89B50FD5189BC2A33FD524962F6771")
+    add_versions("v1.2", "332f96181f4bdbd95ef5fcd6484782ba2d89b50fd5189bc2a33fd524962f6771")
 
     add_configs("decompose", {description = "Enables expression decomposition of && and || (this prevents short circuiting)", default = false, type = "boolean"})
     add_configs("lowercase", {description = "Enables assert alias for ASSERT", default = false, type = "boolean"})

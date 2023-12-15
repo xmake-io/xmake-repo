@@ -12,6 +12,7 @@ package("openvdb")
     add_versions("v9.0.0", "ad3816e8f1931d1d6fdbddcec5a1acd30695d049dd10aa965096b2fb9972b468")
     add_versions("v9.1.0", "914ee417b4607c75c95b53bc73a0599de4157c7d6a32e849e80f24e40fb64181")
     add_versions("v10.0.1", "887a3391fbd96b20c77914f4fb3ab4b33d26e5fc479aa036d395def5523c622f")
+    add_versions("v10.1.0", "2746236e29659a0d35ab90d832f7c7987dd2537587a1a2f9237d9c98afcd5817")
 
     add_deps("cmake")
     add_deps("boost", {system = false, configs = {regex = true, system = true, iostreams = true}})
@@ -62,8 +63,9 @@ package("openvdb")
 
     on_install("macosx", "linux", "windows|x64", "windows|x86", function (package)
         io.replace("cmake/FindBlosc.cmake", "${BUILD_TYPE} ${_BLOSC_LIB_NAME}", "${BUILD_TYPE} blosc libblosc", {plain = true})
+        io.replace("cmake/FindBlosc.cmake", "lz4 snappy zlib zstd", "lz4", {plain = true})
         io.replace("cmake/FindTBB.cmake", "Tbb_${COMPONENT}_LIB_TYPE STREQUAL STATIC", "TRUE", {plain = true})
-        local configs = {"-DOPENVDB_BUILD_DOCS=OFF", "-DUSE_PKGCONFIG=OFF", "-DBoost_USE_STATIC_LIBS=ON", "-DUSE_CCACHE=OFF"}
+        local configs = {"-DOPENVDB_BUILD_DOCS=OFF", "-DUSE_PKGCONFIG=OFF", "-DBoost_USE_STATIC_LIBS=ON", "-DUSE_CCACHE=OFF", "-DBLOSC_USE_EXTERNAL_SOURCES=ON"}
         if package:config("shared") then
             table.insert(configs, "-DOPENVDB_CORE_SHARED=ON")
             table.insert(configs, "-DOPENVDB_CORE_STATIC=OFF")

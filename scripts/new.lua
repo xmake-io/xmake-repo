@@ -105,7 +105,7 @@ function generate_package(reponame, get_data)
         local tmpfile = os.tmpfile({ramdisk = false}) .. ".tar.gz"
         repodir = tmpfile .. ".dir"
 
-        file:write('    add_urls("https://' .. host .. '/' .. reponame .. '/-/archive/$(version).tar.gz",\n')
+        file:write('    add_urls("https://' .. host .. '/' .. reponame .. '/archive/refs/tags/$(version).tar.gz",\n')
         file:print('             "%s")\n', giturl)
 
         print("downloading %s", url)
@@ -226,9 +226,9 @@ function generate_package(reponame, get_data)
 
     -- add dependencies
     if build_system then
-        file:print('')
         local deps = table.wrap(build_system.deps)
         if deps and #deps > 0 then
+            file:print('')
             file:print('    add_deps("' .. table.concat(deps, '", "') .. '")')
         end
     end

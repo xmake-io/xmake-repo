@@ -130,6 +130,8 @@ package("opencv")
             end
         elseif package:is_plat("mingw") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
+        elseif package:is_plat("macosx") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "ARM64"))
         end
         local resourcedir = package:resourcedir("opencv_contrib")
         if resourcedir then

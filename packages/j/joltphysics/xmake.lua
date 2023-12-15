@@ -5,9 +5,13 @@ package("joltphysics")
 
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrouwe/JoltPhysics.git")
+    add_versions("v4.0.1", "e0bb4fa07047ca9c38bd71262427ad2972a7f45f8dff74587f73457f3b60df82")
+    add_versions("v4.0.0", "f8449ec72ffaadf423eeb80e0814f3ba14227bcf7f06cb9f3cbcfb3499a57b33")
     add_versions("v3.0.1", "7ebb40bf2dddbcf0515984582aaa197ddd06e97581fd55b98cb64f91b243b8a6")
     add_versions("v3.0.0", "f8d756ae3471a32f2ee7e07475df2f7a34752f0fdd05e9a7ed2e7ce3dcdcd574")
     add_versions("v2.0.1", "96ae2e8691c4802e56bf2587da30f2cc86b8abe82a78bc2398065bd87dd718af")
+    -- patch for visibility attributes (fixes compilation in shared mode on GCC <13)
+    add_patches("v4.0.0", "https://github.com/jrouwe/JoltPhysics/commit/b084d8f9054d78cb50bc851cc4db505462c4c634.patch", "a8f5da0bc5d4a1011771016be2ad1cdb00d4c40dd0909ef6ae4a1d1c95e8e251")
     -- patch for missing standard include (fixes Fedora compilation)
     add_patches("v3.0.1", path.join(os.scriptdir(), "patches", "v3.0.1", "fix_fedora.patch"), "12be1294669852a9f15cb01a636fde72fb5f36b59cbcc1d4f931d76c454c3150")
     add_patches("v3.0.0", path.join(os.scriptdir(), "patches", "v3.0.1", "fix_fedora.patch"), "12be1294669852a9f15cb01a636fde72fb5f36b59cbcc1d4f931d76c454c3150")
@@ -35,11 +39,12 @@ package("joltphysics")
         add_configs("inst_tzcnt", { description = "Enable the tzcnt CPU instruction (x86/x64 only)", default = false, type = "boolean" })
     end
 
-    -- jolt physics doesn't support dynamic link
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-
     if is_plat("linux", "macosx", "iphoneos", "bsd", "wasm") then
         add_syslinks("pthread")
+    end
+
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::jolt-physics")
     end
 
     on_load(function (package)
@@ -64,9 +69,12 @@ package("joltphysics")
         if package:config("double_precision") then
             package:add("defines", "JPH_DOUBLE_PRECISION")
         end
+        if package:config("shared") then
+            package:add("defines", "JPH_SHARED_LIBRARY")
+        end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm",  function (package)
         -- Jolt CMakeLists had no install target/support for custom msvc runtime until 3.0.0
         local version = package:version()
         if not version or version:ge("3.0.0") then
@@ -79,9 +87,11 @@ package("joltphysics")
                 "-DTARGET_PERFORMANCE_TEST=OFF",
                 "-DTARGET_SAMPLES=OFF",
                 "-DTARGET_VIEWER=OFF",
-                "-DUSE_STATIC_MSVC_RUNTIME_LIBRARY=OFF"
+                "-DUSE_STATIC_MSVC_RUNTIME_LIBRARY=OFF",
+                "-DOVERRIDE_CXX_FLAGS=OFF"
             }
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DCROSS_PLATFORM_DETERMINISTIC=" .. (package:config("cross_platform_deterministic") and "ON" or "OFF"))
             table.insert(configs, "-DDOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
             table.insert(configs, "-DGENERATE_DEBUG_SYMBOLS=" .. ((package:debug() or package:config("symbols")) and "ON" or "OFF"))

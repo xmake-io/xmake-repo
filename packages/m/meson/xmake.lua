@@ -6,6 +6,7 @@ package("meson")
 
     add_urls("https://github.com/mesonbuild/meson/releases/download/$(version)/meson-$(version).tar.gz",
              "https://github.com/mesonbuild/meson.git")
+    add_versions("1.3.0",  "4ba253ef60e454e23234696119cbafa082a0aead0bd3bbf6991295054795f5dc")
     add_versions("1.1.1",  "d04b541f97ca439fb82fab7d0d480988be4bd4e62563a5ca35fadb5400727b1c")
     add_versions("1.1.0",  "d9616c44cd6c53689ff8f05fc6958a693f2e17c3472a8daf83cee55dabff829f")
     add_versions("1.0.0",  "aa50a4ba4557c25e7d48446abfde857957dcdf58385fffbe670ba0e8efacce05")
@@ -24,7 +25,7 @@ package("meson")
     -- https://github.com/xmake-io/xmake-repo/issues/1937
     set_policy("package.precompiled", false)
 
-    on_install("@macosx", "@linux", "@windows", "@msys", function (package)
+    on_install("@macosx", "@linux", "@bsd", "@windows", "@msys", function (package)
         local envs = {PYTHONPATH = package:installdir()}
         local python = package:is_plat("windows") and "python" or "python3"
         os.vrunv(python, {"-m", "pip", "install", "--target=" .. package:installdir(), "."}, {envs = envs})
