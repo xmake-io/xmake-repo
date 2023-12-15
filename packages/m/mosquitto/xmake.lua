@@ -63,6 +63,9 @@ package("mosquitto")
     end)
  
     on_install("windows", "linux", "macosx", function (package)
+        if package:is_plat("windows") then
+            io.replace("CMakeLists.txt", 'add_definitions("-D_CRT_SECURE_NO_WARNINGS")', 'add_definitions("-D_CRT_SECURE_NO_WARNINGS")\nadd_definitions("-DWIN32")', {plain = true})
+        end
         local configs ={"-DDOCUMENTATION=OFF", "-DWITH_CLIENTS=OFF", "-DWITH_APPS=OFF", "-DWITH_PLUGINS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DWITH_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))
