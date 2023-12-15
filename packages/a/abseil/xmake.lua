@@ -30,7 +30,7 @@ package("abseil")
             package:add("defines", "ABSL_CONSUME_DLL")
             package:add("links", "abseil_dll")
         end
-    end) 
+    end)
 
     on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
         if package:version():eq("20230802.1") and package:is_plat("mingw") then
