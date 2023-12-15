@@ -4,11 +4,11 @@ package("snappy")
     set_description("A fast compressor/decompressor")
 
     set_urls("https://github.com/google/snappy/archive/$(version).tar.gz",
-             "https://github.com/google/snappy.git")
+             "https://github.com/google/snappy.git", {alias = github})
 
     add_versions("1.1.8", "16b677f07832a612b0836178db7f374e414f94657c138e6993cbfc5dcc58651f")
     add_versions("1.1.9", "75c1fbb3d618dd3a0483bff0e26d0a92b495bbe5059c8b4f1c962b478b6e06e7")
-    add_versions("1.1.10", "49d831bffcc5f3d01482340fe5af59852ca2fe76c3e05df0e67203ebbe0f1d90")
+    add_versions("github:2023.07.13", "27f34a580be4a3becf5f8c0cba13433f53c21337")
 
     add_patches("1.1.9", path.join(os.scriptdir(), "patches", "1.1.9", "inline.patch"), "ed6b247d19486ab3f08f268269133193d7cdadd779523c5e69b5e653f82d535b")
 
