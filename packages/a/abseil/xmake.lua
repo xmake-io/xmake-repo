@@ -58,8 +58,7 @@ package("abseil")
             "absl_random_internal_distribution_test_util", "absl_random_internal_platform",
             "absl_random_internal_pool_urbg", "absl_random_internal_randen",
             "absl_random_internal_randen_hwaes", "absl_random_internal_randen_hwaes_impl",
-            "absl_random_internal_randen_slow", "absl_random_internal_seed_material",
-            )
+            "absl_random_internal_randen_slow", "absl_random_internal_seed_material")
         elseif package:version():lt("20230802.1") then
             add_links(
             "absl_status", "absl_cord",
