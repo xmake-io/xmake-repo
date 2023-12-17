@@ -13,7 +13,7 @@ package("vulkan-headers")
         return version:startswith("v") and version or prefix .. version:gsub("%+", ".")
     end})
 
-    -- when adding a new sdk version, please also update vulkan-loader, spirv-headers, spirv-reflect, glslang and volk packages
+    -- when adding a new sdk version, please also update vulkan-loader, vulkan-utility-libraries, spirv-headers, spirv-reflect, glslang and volk packages
     add_versions("1.3.268+0", "94993cbe2b1a604c0d5d9ea37a767e1aba4d771d2bfd4ddceefd66243095164f")
     add_versions("1.3.261+1", "7a25ebdb6325e626dc5d33bc937b289ccce7ddb7b0ac1a1b1d5d7ff33b6715d3")
     add_versions("1.3.250+1", "e5b563a415e73725bcf471b7e3e837804ed3703b47cce4553db5e7e73821c5ee")
