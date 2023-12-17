@@ -15,7 +15,7 @@ package("vulkan-utility-libraries")
     add_deps("cmake")
     add_deps("vulkan-headers")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "cross", function (package)
         local configs = {"-DBUILD_TESTS=OFF", "-DUPDATE_DEPS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
