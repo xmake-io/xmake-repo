@@ -7,6 +7,7 @@ package("flann")
     add_urls("https://github.com/flann-lib/flann/archive/refs/tags/$(version).tar.gz",
              "https://github.com/flann-lib/flann.git")
     add_versions("1.9.1", "b23b5f4e71139faa3bcb39e6bbcc76967fbaf308c4ee9d4f5bfbeceaa76cc5d3")
+    add_versions("1.9.2", "e26829bb0017f317d9cc45ab83ddcb8b16d75ada1ae07157006c1e7d601c8824")
 
     add_patches("1.9.1", path.join(os.scriptdir(), "patches", "1.9.1", "cuda10.patch"), "087492b422362f42c83b320296d9af7b22023cf20d81ea7bd99efabd1535f7d6")
 
