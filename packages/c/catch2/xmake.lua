@@ -6,6 +6,7 @@ package("catch2")
 
     add_urls("https://github.com/catchorg/Catch2/archive/refs/tags/$(version).zip",
              "https://github.com/catchorg/Catch2.git")
+    add_versions("v3.5.0", "82079168b2304cfd0dfc70338f0c4b3caa4f3ef76b2643110d3f74a632252fc6")
     add_versions("v3.4.0", "cd175f5b7e62c29558d4c17d2b94325ee0ab6d0bf1a4b3d61bc8dbcc688ea3c2")
     add_versions("v3.3.2", "802a1d7f98f8e38a7913b596c5e3356ea76c544acb7c695bfd394544556359f3")
     add_versions("v3.2.1", "bfee681eaa920c6ddbe05c1eef1912440d38c5f9a7924f68a6aa219ed1a39c0f")
@@ -25,17 +26,21 @@ package("catch2")
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::catch")
     elseif is_plat("linux") then
-        add_extsources("pacman::catch2-git", "apt::catch2")
-    elseif is_plat("macosx") then
-        add_extsources("brew::catch2")
+        add_extsources("pacman::catch2", "apt::catch2")
     end
 
     on_load(function (package)
         if package:version():ge("3.0") then
             package:add("deps", "cmake")
             package:add("components", "main", "lib")
+            if package:is_plat("macosx") then
+                package:add("extsources", "brew::catch2/catch2-with-main")
+            end
         else
             package:set("kind", "library", {headeronly = true})
+            if package:is_plat("macosx") then
+                package:add("extsources", "brew::catch2")
+            end
         end
     end)
 

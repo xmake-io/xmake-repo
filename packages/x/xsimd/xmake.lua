@@ -11,6 +11,7 @@ package("xsimd")
     add_versions("8.0.3", "d1d41253c4f82eaf2f369d7fcb4142e35076cf8675b9d94caa06ecf883024344")
     add_versions("8.0.5", "0e1b5d973b63009f06a3885931a37452580dbc8d7ca8ad40d4b8c80d2a0f84d7")
     add_versions("9.0.1", "b1bb5f92167fd3a4f25749db0be7e61ed37e0a5d943490f3accdcd2cd2918cc0")
+    add_versions("10.0.0", "73f818368b3a4dad92fab1b2933d93694241bd2365a6181747b2df1768f6afdd")
 
     if is_plat("windows") then
         add_cxxflags("/arch:AVX2")

@@ -23,6 +23,7 @@ jobs:
         with:
           xmake-version: branch@master
           actions-cache-folder: '.xmake-cache'
+          actions-cache-key: 'ubuntu_clang'
 
       - name: Installation
         run: |

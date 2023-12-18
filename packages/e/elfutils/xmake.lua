@@ -12,11 +12,7 @@ package("elfutils")
     add_patches("0.189", path.join(os.scriptdir(), "patches", "0.189", "configure.patch"), "b4016a97e6aaad92b15fad9a594961b1fc77a6d054ebadedef9bb3a55e99a8f8")
 
     add_configs("libelf",   {description = "Enable libelf", default = true, type = "boolean"})
-    add_configs("libcpu",   {description = "Enable libcpu", default = false, type = "boolean"})
-    add_configs("libebl",   {description = "Enable libebl", default = false, type = "boolean"})
-    add_configs("libdw",    {description = "Enable libdw", default = false, type = "boolean"})
-    add_configs("libdwelf", {description = "Enable libdwelf", default = false, type = "boolean"})
-    add_configs("libdwfl",  {description = "Enable libdwfl", default = false, type = "boolean"})
+    add_configs("libdw",    {description = "Enable libdw", default = true, type = "boolean"})
     add_configs("libasm",   {description = "Enable libasm", default = false, type = "boolean"})
 
     add_deps("m4", "zlib")
@@ -36,23 +32,23 @@ package("elfutils")
                          "--disable-debuginfod",
                          "--disable-libdebuginfod"}
         local cflags = {}
-        if package:config("pic") ~= false then
-            table.insert(cflags, "-fPIC")
-        end
         for _, makefile in ipairs(os.files(path.join("*/Makefile.in"))) do
             io.replace(makefile, "-Wtrampolines", "", {plain = true})
             io.replace(makefile, "-Wimplicit-fallthrough=5", "", {plain = true})
+            io.replace(makefile, "-Werror", "", {plain = true})
             if package:has_tool("cc", "clang") then
                 io.replace(makefile, "-Wno-packed-not-aligned", "", {plain = true})
             end
         end
         local subdirs = {}
-        for name, enabled in pairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") then
-                if enabled then
-                    table.insert(subdirs, name)
-                end
-            end
+        if package:config("libelf") then
+            table.insert(subdirs, "libelf")
+        end
+        if package:config("libdw") then
+            table.join2(subdirs, "libcpu", "backends", "libebl", "libdwelf", "libdwfl", "libdw")
+        end
+        if package:config("libasm") then
+            table.insert(subdirs, "libasm")
         end
         io.replace("Makefile.in", [[SUBDIRS = config lib libelf libcpu backends libebl libdwelf libdwfl libdw \
 	  libasm debuginfod src po doc tests]], "SUBDIRS = lib " .. table.concat(subdirs, " "), {plain = true})
