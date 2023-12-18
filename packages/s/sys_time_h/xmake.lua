@@ -12,7 +12,7 @@ package("sys_time_h")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
+        assert(package:check_csnippets({test = [[
             #include <sys/time.h>
                     
             void test() {
