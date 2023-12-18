@@ -16,21 +16,6 @@ package("abseil")
 
     add_deps("cmake")
 
-    add_linkorders("absl_strings", "absl_base")
-    add_linkorders("absl_strings", "absl_raw_logging_internal")
-    add_linkorders("absl_strings_internal", "absl_base")
-    add_linkorders("absl_strings_internal", "absl_raw_logging_internal")
-    add_linkorders("absl_str_format_internal", "absl_base")
-    add_linkorders("absl_str_format_internal", "absl_raw_logging_internal")
-    add_linkorders("absl_str_format_internal", "absl_strings")
-    add_linkorders("absl_flags", "absl_base")
-    add_linkorders("absl_synchronization", "absl_base")
-    add_linkorders("absl_synchronization", "absl_stacktrace")
-    add_linkorders("absl_hash", "absl_city")
-    add_linkorders("absl_base", "absl_time")
-    add_linkorders("absl_kernel_timeout_internal", "absl_time")
-    add_linkorders("absl_time", "absl_time_zone")
-
     if is_plat("macosx") then
         add_frameworks("CoreFoundation")
     end
@@ -38,10 +23,6 @@ package("abseil")
     on_load(function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ABSL_CONSUME_DLL")
-            package:add("links", "abseil_dll")
-        end
-        if package:version():eq("20230802.1") then
-            package:add("linkorders", "absl_synchronization", "absl_kernel_timeout_internal")
         end
     end)
 
@@ -54,6 +35,31 @@ package("abseil")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
+
+        -- get links and ensure link order
+        import("core.base.graph")
+        local dag = graph.new(true)
+        local pkgconfigdir = package:installdir("lib", "pkgconfig")
+        for _, pcfile in ipairs(os.files(path.join(pkgconfigdir, "*.pc"))) do
+            local link = path.basename(pcfile)
+            local content = io.readfile(pcfile)
+            for _, line in ipairs(content:split("\n")) do
+                if line:startswith("Requires: ") then
+                    local requires = line:sub(10):split(",")
+                    for _, dep in ipairs(requires) do
+                        dep = dep:split("=")[1]:trim()
+                        dag:add_edge(link, dep)
+                    end
+                end
+            end
+        end
+        local links = dag:topological_sort()
+        package:add("links", links)
+
+        local cycle = dag:find_cycle()
+        if cycle then
+            wprint("cycle links found", cycle)
+        end
     end)
 
     on_test(function (package)
