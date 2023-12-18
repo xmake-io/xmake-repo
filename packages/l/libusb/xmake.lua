@@ -25,6 +25,8 @@ package("libusb")
 
     add_deps("cmake")
 
+    add_includedirs("include", "include/libusb-1.0")
+
     on_install("windows", "linux", "macosx", "bsd", "msys", "android", function (package)
         local dir = package:resourcefile("libusb-cmake")
         os.cp(path.join(dir, "CMakeLists.txt"), os.curdir())
