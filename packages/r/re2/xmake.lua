@@ -23,7 +23,7 @@ package("re2")
             if not package:is_plat("macosx", "linux", "windows", "mingw", "cross") then
                 raise("re2 2023.11.01 only support macosx linux windows mingw cross")
             end
-            package:add("deps", "abseil 20230802.1")
+            package:add("deps", "abseil")
         end
     end)
 
