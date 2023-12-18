@@ -12,11 +12,5 @@ package("unistd_h")
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets({test = [[
-            #include <unistd.h>
-                    
-            void test() {
-                struct stat s;
-            }
-        ]]}))
+        assert(package:has_cfuncs("access", {includes = "unistd.h"}))
     end)
