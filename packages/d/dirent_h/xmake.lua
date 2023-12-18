@@ -12,11 +12,5 @@ package("dirent_h")
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets({test = [[
-            #include <dirent.h>
-                    
-            void test() {
-                DIR* d;
-            }
-        ]]}))
+        assert(package:has_cfuncs("opendir", {includes = "dirent.h"}))
     end)
