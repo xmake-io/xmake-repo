@@ -2,6 +2,7 @@ package("lz4")
 
     set_homepage("https://www.lz4.org/")
     set_description("LZ4 - Extremely fast compression")
+    set_license("BSD-2-Clause")
 
     set_urls("https://github.com/lz4/lz4/archive/$(version).tar.gz",
              "https://github.com/lz4/lz4.git")

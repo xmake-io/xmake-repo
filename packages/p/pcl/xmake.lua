@@ -8,6 +8,7 @@ package("pcl")
              "https://github.com/PointCloudLibrary/pcl.git")
     add_versions("1.12.0", "21dfa9a268de9675c1f94d54d9402e4e02120a0aa4215d064436c52b7d5bd48f")
     add_versions("1.12.1", "dc0ac26f094eafa7b26c3653838494cc0a012bd1bdc1f1b0dc79b16c2de0125a")
+    add_versions("1.13.1", "8ab98a9db371d822de0859084a375a74bdc7f31c96d674147710cf4101b79621")
 
     add_configs("vtk", {description = "Build with vtk.", default = false, type = "boolean"})
     add_configs("cuda", {description = "Build with cuda.", default = false, type = "boolean"})
