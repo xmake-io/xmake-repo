@@ -23,7 +23,6 @@ package("mailio")
             "-DMAILIO_DYN_LINK_TESTS=OFF",
         }
 
-        table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:dep("boost"):config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:version():le("0.23.0") then
@@ -31,6 +30,8 @@ package("mailio")
             io.replace("CMakeLists.txt", " unit_test_framework", "", {plain = true})
         end
         if package:is_plat("windows") then
+        table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:dep("boost"):config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:dep("boost"):config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
             io.replace("CMakeLists.txt", "if (MSVC)",
             "if (MSVC)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
         end
