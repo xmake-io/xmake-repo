@@ -10,7 +10,8 @@ package("cpp-dump")
     add_versions("v0.5.0", "31fa8b03c9ee820525137be28f37b36e2abe7fd91df7d67681cb894db2230fe6")
 
     on_install(function (package)
-        os.cp("*", package:installdir("include/cpp-dump"))
+        os.cp("hpp", package:installdir("include/cpp-dump"))
+        os.cp("dump.hpp", package:installdir("include/cpp-dump"))
     end)
 
     on_test(function (package)
