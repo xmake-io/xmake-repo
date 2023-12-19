@@ -8,8 +8,10 @@ package("mailio")
 
     add_versions("0.23.0", "9fc3f1f803a85170c2081cbbef2e301473a400683fc1dffefa2d6707598206a5")
 
-    if is_plat("linux", "bsd") then
+    if is_plat("linux") then
         add_syslinks("m")
+    elseif is_plat("linux") then
+        add_syslinks("m", "pthread")
     end
 
     add_deps("cmake")
@@ -30,10 +32,12 @@ package("mailio")
             io.replace("CMakeLists.txt", " unit_test_framework", "", {plain = true})
         end
         if package:is_plat("windows") then
-        table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:dep("boost"):config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-        table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:dep("boost"):config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:dep("boost"):config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
             io.replace("CMakeLists.txt", "if (MSVC)",
             "if (MSVC)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
+        elseif package:is_plat("mingw") then
+            io.replace("CMakeLists.txt", "if(MINGW)",
+            "if (MINGW)\n    target_link_libraries(${PROJECT_NAME} crypt32)", {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
     end)
