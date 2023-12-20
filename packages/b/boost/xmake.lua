@@ -75,7 +75,7 @@ package("boost")
     add_configs("all",          { description = "Enable all library modules support.",  default = false, type = "boolean"})
     add_configs("multi",        { description = "Enable multi-thread support.",  default = true, type = "boolean"})
     for _, libname in ipairs(libnames) do
-        add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
+        add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem" or libname == "iostreams"), type = "boolean"})
     end
 
     on_load(function (package)
@@ -137,6 +137,10 @@ package("boost")
             end
             package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
+
+        -- if package:config("iostreams") then
+        --     package:add("deps", "zlib")
+        -- end
     end)
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
@@ -290,6 +294,15 @@ package("boost")
                 #include <boost/date_time/gregorian/gregorian.hpp>
                 static void test() {
                     boost::gregorian::date d(2010, 1, 30);
+                }
+            ]]}, {configs = {languages = "c++14"}}))
+        end
+
+        if package:config("iostreams") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <boost/iostreams/filter/zlib.hpp>
+                static void test() {
+                    boost::iostreams::zlib_compressor();
                 }
             ]]}, {configs = {languages = "c++14"}}))
         end
