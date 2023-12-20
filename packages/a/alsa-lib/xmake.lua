@@ -14,6 +14,10 @@ package("alsa-lib")
         add_extsources("pacman::alsa-lib", "apt::libasound2-dev")
     end
 
+    if not is_plat("windows") then
+        add_deps("autoconf", "automake", "libtool")
+    end
+
     on_install("linux", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
