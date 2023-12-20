@@ -13,7 +13,7 @@ package("ftxui")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    else is_plat("linux", "bsd") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
