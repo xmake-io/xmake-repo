@@ -11,7 +11,7 @@ package("ktx-software")
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {"-DKTX_FEATURE_TESTS=OFF"}
+        local configs = {"-DKTX_FEATURE_TESTS=OFF", "-DKTX_WERROR=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DKTX_FEATURE_STATIC_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
         if package:is_plat("windows") then
