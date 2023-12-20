@@ -139,9 +139,9 @@ package("boost")
             package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
 
-        if package:config("iostreams") then
-            package:add("deps", "zlib")
-        end
+        -- if package:config("iostreams") then
+        --     package:add("deps", "zlib")
+        -- end
     end)
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
@@ -258,20 +258,20 @@ package("boost")
             "runtime-debugging=" .. (package:is_debug() and "on" or "off")
         }
 
-        local zlib = package:dep("zlib")
-        if zlib and not zlib:is_system() then
-            local fetchinfo = zlib:fetch({external = false})
-            if fetchinfo then
-                local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
-                if includedirs and #includedirs > 0 then
-                    table.insert(argv, "define=ZLIB_INCLUDE_DIR=" .. table.concat(includedirs, " "))
-                end
-                local libfiles = fetchinfo.libfiles
-                if libfiles then
-                    table.insert(argv, "define=ZLIB_LIBRARY=" .. table.concat(libfiles, " "))
-                end
-            end
-        end
+        -- local zlib = package:dep("zlib")
+        -- if zlib and not zlib:is_system() then
+        --     local fetchinfo = zlib:fetch({external = false})
+        --     if fetchinfo then
+        --         local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+        --         if includedirs and #includedirs > 0 then
+        --             table.insert(argv, "define=ZLIB_INCLUDE_DIR=" .. table.concat(includedirs, " "))
+        --         end
+        --         local libfiles = fetchinfo.libfiles
+        --         if libfiles then
+        --             table.insert(argv, "define=ZLIB_LIBRARY=" .. table.concat(libfiles, " "))
+        --         end
+        --     end
+        -- end
 
         if package:config("lto") then
             table.insert(argv, "lto=on")
