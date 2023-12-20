@@ -24,5 +24,5 @@ package("smoothcpp")
                 bool a = (scpp::to_lower("aAaAAbb") == "aaaaabb");
                 std::cout << a << std::endl;
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
