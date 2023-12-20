@@ -5,7 +5,7 @@ package("smoothcpp")
     set_license("MIT")
 
     set_urls("https://github.com/heheda123123/smoothcpp.git")
-    add_versions("2023.12.20", "13c5d67b748f3f8bbb91fac881e288ffce3d83ab")
+    add_versions("2023.12.20", "1ac3b09aaf2c4529d5f2bc1f4a6689c77228f02a")
 
     on_install("windows", "mingw", "linux", "macosx", function (package)
         local configs = {}
