@@ -27,7 +27,7 @@ package("abseil")
     end)
 
     on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
-        if package:version():eq("20230802.1") and package:is_plat("mingw") then
+        if package:version() and package:version():eq("20230802.1") and package:is_plat("mingw") then
             io.replace(path.join("absl", "synchronization", "internal", "pthread_waiter.h"), "#ifndef _WIN32", "#if !defined(_WIN32) && !defined(__MINGW32__)", {plain = true})
             io.replace(path.join("absl", "synchronization", "internal", "win32_waiter.h"), "#if defined(_WIN32) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", "#if defined(_WIN32) && !defined(__MINGW32__) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", {plain = true})
         end
