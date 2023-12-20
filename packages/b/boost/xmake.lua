@@ -139,9 +139,9 @@ package("boost")
             package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
 
-        -- if package:config("iostreams") then
-        --     package:add("deps", "zlib")
-        -- end
+        if package:config("iostreams") then
+            package:add("deps", "zlib")
+        end
     end)
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
