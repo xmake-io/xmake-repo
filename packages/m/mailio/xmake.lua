@@ -10,7 +10,7 @@ package("mailio")
 
     if is_plat("linux") then
         add_syslinks("m")
-    elseif is_plat("linux") then
+    elseif is_plat("bsd") then
         add_syslinks("m", "pthread")
     end
 
