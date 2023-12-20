@@ -5,7 +5,7 @@ package("smoothcpp")
     set_license("MIT")
 
     set_urls("https://github.com/heheda123123/smoothcpp.git")
-    add_versions("2023.12.20", "6e9a0700856f8779287bd19f43295d5d942490a9")
+    add_versions("2023.12.20", "13c5d67b748f3f8bbb91fac881e288ffce3d83ab")
 
     on_install("windows", "mingw", "linux", "macosx", function (package)
         local configs = {}
@@ -24,5 +24,5 @@ package("smoothcpp")
                 bool a = (scpp::to_lower("aAaAAbb") == "aaaaabb");
                 std::cout << a << std::endl;
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)
