@@ -15,7 +15,7 @@ package("alsa-lib")
     end
 
     if not is_plat("windows") then
-        add_deps("autoconf", "automake", "libtool")
+        add_deps("autoconf", "automake", "libtool", "m4")
     end
 
     on_install("linux", function (package)
