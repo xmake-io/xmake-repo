@@ -10,14 +10,14 @@ package("gstreamer")
     -- add_versions("github:1.22.8", "ebe085820a32f135d9a5a3442b2cb2238d8ce1d3bc66f4d6bfbc11d0873dbecc")
 
     add_deps("meson", "ninja")
-    add_deps("glib")
+    add_deps("glib", {configs = {shared = true}})
     if is_plat("windows") then
         add_deps("winflexbison")
     else
         add_deps("flex", "bison")
     end
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", "cross", function (package)
         local configs = {
             "-Dtools=disabled",
             "-Dexamples=disabled",
