@@ -4,13 +4,20 @@ add_rules("mode.debug", "mode.release")
 set_languages("c++17")
 
 add_requires("libdisasm")
+if is_plat("linux") then
+    add_requires("linux-syscall-support")
+end
 
 target("breakpad")
     set_kind("$(kind)")
 
     add_includedirs("src")
     add_headerfiles("src/(google_breakpad/**.h)")
+
     add_packages("libdisasm")
+    if is_plat("linux") then
+        add_packages("linux-syscall-support")
+    end
 
     if is_plat("android") then
         add_files("android/google_breakpad/Android.mk")
@@ -25,7 +32,8 @@ target("breakpad")
         remove_headerfiles("src/processor/*test*.h", "src/processor/synth_minidump.h")
 
         add_files("src/common/*.cc", "src/client/*.cc")
-        remove_files("src/common/*test*.cc", "src/client/*test*.cc")
+        remove_files("src/common/*test*.cc",
+                     "src/client/*test*.cc")
         add_headerfiles("src/(common/*.h)", "src/(client/*.h)")
         remove_headerfiles("src/common/*test*.h", "src/client/*test*.h")
 
@@ -55,7 +63,8 @@ target("breakpad")
                                "src/common/stabs_to_module.h",
                                "src/common/stabs_reader.h",
                                "src/common/dwarf*.h",
-                               "src/client/minidump_file_writer.h")
+                               "src/client/minidump_file_writer.h",
+                               "src/client/minidump_file_writer-inl.h")
 
             add_syslinks("wininet", "dbghelp", "imagehlp")
             if is_kind("shared") then
@@ -63,16 +72,18 @@ target("breakpad")
             end
         else
             add_files("src/common/dwarf/*.cc")
-            remove_files("src/common/dwarf/*test*.cc")
+            remove_files("src/common/dwarf/*test*.cc",
+                         "src/common/dwarf/functioninfo.cc")
             add_headerfiles("src/(common/dwarf/*.h)")
-            remove_headerfiles("src/common/dwarf/*test*.h")
+            remove_headerfiles("src/common/dwarf/*test*.h",
+                               "src/common/dwarf/functioninfo.h")
 
             if is_plat("macosx") then
                 add_defines("HAVE_MACH_O_NLIST_H")
                 add_files("src/common/mac/MachIPC.mm",
-                        "src/common/mac/*.cc",
-                        "src/client/mac/crash_generation/*.cc",
-                        "src/client/mac/handler/*.cc")
+                          "src/common/mac/*.cc",
+                          "src/client/mac/crash_generation/*.cc",
+                          "src/client/mac/handler/*.cc")
                 remove_files("src/common/mac/*test*.cc")
                 add_headerfiles("src/(common/mac/*.h)",
                                 "src/(client/mac/crash_generation/*.h)",
@@ -81,11 +92,12 @@ target("breakpad")
                 add_frameworks("CoreFoundation")
             else
                 add_defines("HAVE_A_OUT_H")
-                add_files("src/client/linux/**.cc", "src/common/linux/**.cc")
-                remove_files("src/client/linux/sender/*test*.cc",
-                            "src/client/linux/handler/*test*.cc",
-                            "src/client/linux/microdump_writer/*test*.cc",
-                            "src/client/linux/minidump_writer/*test*.cc")
+                add_files("src/client/linux/**.cc", "src/common/linux/*.cc")
+                remove_files("src/client/linux/sender/*.cc",
+                             "src/client/linux/handler/*test*.cc",
+                             "src/client/linux/microdump_writer/*test*.cc",
+                             "src/client/linux/minidump_writer/*test*.cc",
+                             "src/common/linux/*test*.cc")
                 add_headerfiles("src/(client/linux/**.h)", "src/(common/linux/**.h)")
                 add_syslinks("pthread")
             end
