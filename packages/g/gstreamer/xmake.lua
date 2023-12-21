@@ -44,7 +44,7 @@ package("gstreamer")
         }
         table.insert(configs, "-Dgst_debug=" .. (package:is_debug() and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        table.insert(configs, "-Dlibunwind=" .. (package:config("libunwind") and "true" or "false"))
+        table.insert(configs, "-Dlibunwind=" .. (package:config("libunwind") and "enabled" or "disabled"))
         local packagedeps = {}
         if not package:dep("glib"):config("shared") then
             table.insert(packagedeps, "libiconv")
