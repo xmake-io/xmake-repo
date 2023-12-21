@@ -18,7 +18,12 @@ package("pybind11")
 
     add_deps("cmake", "python 3.x")
     on_install("windows", "macosx", "linux", function (package)
-        import("package.tools.cmake").install(package, {"-DPYBIND11_TEST=OFF"})
+        local configs = {"-DPYBIND11_TEST=OFF"}
+        local pythonpath, err = os.iorun("python -c \"import sys; print(sys.executable)\"")
+        if pythonpath then
+            table.insert(configs, "-DPYTHON_EXECUTABLE=" .. pythonpath)
+        end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
