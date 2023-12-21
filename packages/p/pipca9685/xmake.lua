@@ -15,6 +15,8 @@ package("pipca9685")
                 set_kind("$(kind)")
                 set_languages("cxx14")
 
+                add_syslinks("i2c")
+
                 add_includedirs("include")
                 add_files("src/*.cpp")
                 remove_files("src/PCA9685-Python.cpp")
