@@ -15,12 +15,11 @@ package("microsoft-detours")
                 set_kind("$(kind)")
                 add_files("src/*.cpp|uimports.cpp")
                 add_headerfiles("src/*.h")
-                add_defines("WIN32_LEAN_AND_MEAN", "_WIN32_WINNT=0x501")
+                add_defines("WIN32_LEAN_AND_MEAN")
                 if is_mode("debug") then
                     add_defines("DETOUR_DEBUG=1")
                 end
         ]])
-        package:add("defines", "WIN32_LEAN_AND_MEAN", "_WIN32_WINNT=0x501")
         if package:config("shared") then
             configs.kind = "shared"
         end
