@@ -6,6 +6,8 @@ package("pipca9685")
     add_urls("https://github.com/barulicm/PiPCA9685.git")
     add_versions("2022.07.03", "a9edfc9df0ac00a616f0ef2801804b17e4742471")
 
+    add_syslinks("i2c")
+    
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
