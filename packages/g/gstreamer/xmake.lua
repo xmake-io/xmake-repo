@@ -9,6 +9,14 @@ package("gstreamer")
     add_versions("home:1.22.8", "ad4e3db1771139b1db17b1afa7c05db083ae0100bd4da244b71f162dcce41bfc")
     -- add_versions("github:1.22.8", "ebe085820a32f135d9a5a3442b2cb2238d8ce1d3bc66f4d6bfbc11d0873dbecc")
 
+    if is_plat("linux") then
+        add_extsources("pacman::gstreamer", "apt::libgstreamer1.0-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::gstreamer")
+    elseif is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::gstreamer")
+    end
+
     add_deps("meson", "ninja")
     add_deps("glib", {configs = {shared = true}})
     if is_plat("windows") then
@@ -16,6 +24,8 @@ package("gstreamer")
     else
         add_deps("flex", "bison")
     end
+
+    add_includedirs("gstreamer-1.0")
 
     on_install("windows", "macosx", "linux", "cross", function (package)
         local configs = {
