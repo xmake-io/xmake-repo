@@ -7,7 +7,7 @@ package("pipca9685")
     add_versions("2022.07.03", "a9edfc9df0ac00a616f0ef2801804b17e4742471")
 
     add_syslinks("i2c")
-    
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -17,6 +17,7 @@ package("pipca9685")
 
                 add_includedirs("include")
                 add_files("src/*.cpp")
+                remove_files("src/PCA9685-Python.cpp")
                 add_headerfiles("include/(PiPCA9685/PCA9685.h)")
                 add_headerfiles("src/*.h")
         ]])
