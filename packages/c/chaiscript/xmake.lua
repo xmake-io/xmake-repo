@@ -1,5 +1,6 @@
 package("chaiscript")
 
+    set_kind("library", {headeronly = true})
     set_homepage("http://chaiscript.com")
     set_description("Header-only C++ embedded scripting language loosely based on ECMA script.")
     set_license("BSD-3-Clause")

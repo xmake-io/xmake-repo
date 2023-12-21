@@ -8,7 +8,7 @@ package("libpsl")
     add_versions("0.21.1", "ac6ce1e1fbd4d0254c4ddb9d37f1fa99dec83619c1253328155206b896210d4c")
 
     add_deps("meson", "ninja")
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
     on_load("windows", function (package)
@@ -17,7 +17,7 @@ package("libpsl")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "mingw", function (package)
         io.replace("meson.build", "subdir('tests')", "", {plain = true})
         io.replace("meson.build", "subdir('fuzz')", "", {plain = true})
         if package:is_plat("windows") and not package:config("shared") then

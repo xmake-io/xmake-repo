@@ -12,9 +12,8 @@ package("qt5gui")
             package:data_set("links", "qtharfbuzz")
             package:data_set("syslinks", {"qtlibpng", "z"})
         end
-    
+
         package:base():script("load")(package)
-        package:set("kind", "library")
     end)
 
     on_test(function (package)

@@ -1,26 +1,32 @@
 package("dynareadout")
 
     set_homepage("https://github.com/PucklaJ/dynareadout")
-    set_description("Ansi C library for parsing binary output files of LS Dyna (d3plot, binout)")
+    set_description("High-Performance C/C++ library for parsing binary output files and key files of LS Dyna (d3plot, binout, input deck)")
 
     add_urls("https://github.com/PucklaJ/dynareadout/archive/refs/tags/$(version).tar.gz",
              "https://github.com/PucklaJ/dynareadout.git")
-    add_versions("0.1", "833c8516c77ab57c56e942692e1fea2c96c50b7adfebd7f6f633ed43aaf46a56")
-    add_versions("0.2", "47c147f1af092b8f2aad1b883d92e6fa76f0096b911b0d4cca2ed675d4f445bd")
-    add_versions("0.3", "c73949c474460c06add2ccfc4a22c3af066904558436a216f095b820153be670")
-    add_versions("0.4", "6e05daa384eb9163cb23ea9d85afa528d0b781cb939fdd1b2fe4c69dc44452bb")
+    add_versions("22.12",   "2e430c718c610d4425e23d4c6c87fe4794bb8c76d3cc015988706dbf5027daa4")
+    add_versions("23.01",   "578080c734927cc925e7e91a52317bc3e710965071f1da50853b1e48f81a1c0f")
+    add_versions("23.02",   "054949a8774089fc217d7c0ec02996b53d331794c41941ed5006b90715bb4d30")
+    add_versions("23.04",   "929efad70c68931f35c76336ea8b23bf2da46022d5fd570f4efc06d776a94604")
+    add_versions("23.05",   "d33bb3acf6f62f7801c58755efbd49bfec2def37aee5397a17e2c38d8216bff6")
+    add_versions("23.06",   "515f0b0d20c46e00f393fb9bb0f2baf303244d39e35a080741276681eb454926")
+    add_versions("23.07",   "6db52a13771cdb7613b97cf0d2bcffdb87ce0cce4cba7e6d80330977b2ac6210")
+    add_versions("23.08",   "5be972426f67ce63a7ac3beaf3866b824abbc9c15af2d47d1fea21687417b493")
+    add_versions("23.09",   "a62e0575521aacf3f567dfd578d6edc51edc07d4b744e5b5ae5d30f662be424b")
+    add_versions("23.10",   "834d356e80019a7288001c2796c9ce14c2a8e5494c1051fae402f4503b10c1e5")
+    add_versions("23.10.1", "6ebb6e9d9b3db637476cc9bd5342e4779be175f87225261da35c9270790e77d7")
+    add_versions("23.11",   "2222bea87af9289dbc1a52adc5f09058863c503003e94193ca9388eff9e4ff04")
 
-    add_configs("cpp",       {description = "Build the C++ bindings",        default = true,  type = "boolean"})
-    add_configs("profiling", {description = "Build with profiling features", default = false, type = "boolean"})
+    add_configs("cpp",         {description = "Build the C++ bindings",                       default = true,  type = "boolean"})
+    add_configs("profiling",   {description = "Build with profiling features",                default = false, type = "boolean"})
+    add_configs("thread_safe", {description = "Build with synchronisation for thread safety", default = true,  type = "boolean"})
 
     on_load(function (package)
         if package:config("cpp") then
-            package:add("links", "d3plot_cpp", "binout_cpp", "binout", "d3plot")
+            package:add("links", "dynareadout_cpp", "dynareadout")
         else
-            package:add("links", "binout", "d3plot")
-        end
-        if package:config("profiling") then
-            package:add("links", "profiling")
+            package:add("links", "dynareadout")
         end
     end)
 
@@ -29,6 +35,7 @@ package("dynareadout")
         configs.build_test = "n"
         configs.build_cpp = package:config("cpp") and "y" or "n"
         configs.profiling = package:config("profiling") and "y" or "n"
+        configs.thread_safe = package:config("thread_safe") and "y" or "n"
         import("package.tools.xmake").install(package, configs)
     end)
 
@@ -50,5 +57,9 @@ package("dynareadout")
                     END_PROFILING("dynareadout_test_profiling.txt");
                 }
             ]]}, {includes = "profiling.h", configs = {languages = "ansi"}}))
+        end
+        if package:config("thread_safe") then
+            assert(package:has_cfuncs("sync_create", {includes = "sync.h", configs = {languages = "ansi"}}))
+            assert(package:has_cfuncs("sync_lock",   {includes = "sync.h", configs = {languages = "ansi"}}))
         end
     end)

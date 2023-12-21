@@ -42,7 +42,8 @@ target("zlib")
         if is_arch(".+64") then
             add_defines("INFLATE_CHUNK_READ_64LE")
         end
-    elseif is_arch("arm.*") then
+    -- arm optimization disabled on windows, see http://crbug.com/v8/10012.
+    elseif is_arch("arm.*") and not is_plat("windows") then
         add_defines("ADLER32_SIMD_NEON", "INFLATE_CHUNK_SIMD_NEON")
         add_files("adler32_simd.c", "contrib/optimizations/inffast_chunk.c", "contrib/optimizations/inflate.c")
         if is_arch(".+64") then

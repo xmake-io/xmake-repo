@@ -1,0 +1,17 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 832d8672..9e6cfcb6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -447,7 +447,11 @@ IF(WIN32)
+         # doesn't hurt for older compilers:
+         # http://public.kitware.com/Bug/view.php?id=11240#c22768
+         IF (CMAKE_CL_64)
+-            SET_TARGET_PROPERTIES(freeglut_static PROPERTIES STATIC_LIBRARY_FLAGS "/machine:x64")
++            IF ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "ARM64")
++                SET_TARGET_PROPERTIES(freeglut_static PROPERTIES STATIC_LIBRARY_FLAGS "/machine:ARM64")
++            ELSE()
++                SET_TARGET_PROPERTIES(freeglut_static PROPERTIES STATIC_LIBRARY_FLAGS "/machine:x64")
++            ENDIF()
+         ENDIF()
+     ENDIF()
+ ELSE()

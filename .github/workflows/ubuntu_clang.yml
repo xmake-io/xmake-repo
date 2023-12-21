@@ -23,13 +23,14 @@ jobs:
         with:
           xmake-version: branch@master
           actions-cache-folder: '.xmake-cache'
+          actions-cache-key: 'ubuntu_clang'
 
       - name: Installation
         run: |
           # TODO we will remove it later
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev clang libc++-dev
+          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev clang libomp-dev libc++-dev p7zip
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D --toolchain=clang -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -vD --toolchain=clang -k ${{ matrix.kind }}

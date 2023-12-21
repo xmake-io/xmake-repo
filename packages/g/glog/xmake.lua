@@ -16,7 +16,11 @@ package("glog")
     end
 
     add_deps("cmake")
-    
+
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     on_load("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package)
         if package:is_plat("windows") then
             if package:version():le("0.4") and not package:config("shared") then

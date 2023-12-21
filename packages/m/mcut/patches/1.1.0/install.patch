@@ -1,0 +1,34 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a5b1074..5767427 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -297,25 +297,10 @@ endif()
+ 
+ # TODO: package documentation files
+ 
+-if(MCUT_BUILD_AS_SHARED_LIB)
+-	#
+-	# dynamic libs
+-	#
+-
+-	install(TARGETS ${mpn_shared_lib_name}
+-			LIBRARY
+-			DESTINATION lib/mpn/shared
+-			COMPONENT dynamic_libraries)
+-else()
+-	#
+-	# static libs
+-	#
+-	
+-	install(TARGETS ${mpn_static_lib_name}
+-			ARCHIVE
+-			DESTINATION lib/mpn/static
+-			COMPONENT static_libraries)
+-endif()
++install(TARGETS ${target_name}
++			RUNTIME DESTINATION bin
++			LIBRARY DESTINATION lib
++           ARCHIVE DESTINATION lib)
+ 
+ #
+ # headers

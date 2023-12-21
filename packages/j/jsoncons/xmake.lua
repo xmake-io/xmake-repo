@@ -1,5 +1,6 @@
 package("jsoncons")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://danielaparker.github.io/jsoncons/")
     set_description("A C++, header-only library for constructing JSON and JSON-like data formats, with JSON Pointer, JSON Patch, JSONPath, JMESPath, CSV, MessagePack, CBOR, BSON, UBJSON")
 
@@ -7,6 +8,7 @@ package("jsoncons")
              "https://github.com/danielaparker/jsoncons.git")
 
     add_versions("v0.158.0", "7ad7cc0e9c74df495dd16b818758ec2e2a5b7fef8f1852841087fd5e8bb6a6cb")
+    add_versions("v0.170.2", "81ac768eecb8cf2613a09a9d081294895d7afd294b841166b4e1378f0acfdd6e")
 
     on_install(function (package)
         os.cp("include", package:installdir())

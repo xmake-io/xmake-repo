@@ -3,7 +3,11 @@ package("fmt")
     set_homepage("https://fmt.dev")
     set_description("fmt is an open-source formatting library for C++. It can be used as a safe and fast alternative to (s)printf and iostreams.")
 
-    set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip")
+    set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip",
+             "https://github.com/fmtlib/fmt.git")
+    add_versions("10.1.1", "b84e58a310c9b50196cda48d5678d5fa0849bca19e5fdba6b684f0ee93ed9d1b")
+    add_versions("10.1.0", "d725fa83a8b57a3cedf238828fa6b167f963041e8f9f7327649bddc68ae316f4")
+    add_versions("10.0.0", "4943cb165f3f587f26da834d3056ee8733c397e024145ca7d2a8a96bb71ac281")
     add_versions("9.1.0", "cceb4cb9366e18a5742128cb3524ce5f50e88b476f1e54737a47ffdf4df4c996")
     add_versions("9.0.0", "fc96dd2d2fdf2bded630787adba892c23cb9e35c6fd3273c136b0c57d4651ad6")    
     add_versions("8.1.1", "23778bad8edba12d76e4075da06db591f3b0e3c6c04928ced4a7282ca3400e5d")
@@ -14,9 +18,12 @@ package("fmt")
     add_versions("6.0.0", "b4a16b38fa171f15dbfb958b02da9bbef2c482debadf64ac81ec61b5ac422440")
     add_versions("5.3.0", "4c0741e10183f75d7d6f730b8708a99b329b2f942dad5a9da3385ab92bb4a15c")
 
+    add_patches("10.1.0",
+                path.join(os.scriptdir(), "patches", "10.1.0", "utf8.patch" ),
+                "3280569bced9ec08933f0ea37b6a4fef4538944d9046fe197ad63e22d1357cd4")
+
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
-    
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::fmt")
     elseif is_plat("linux") then
@@ -32,7 +39,12 @@ package("fmt")
             package:add("deps", "cmake")
         end
         if package:config("shared") then
-            package:add("defines", "FMT_EXPORT")
+            local version = package:version()
+            if version and version:ge("10") then
+                package:add("defines", "FMT_LIB_EXPORT")
+            else
+                package:add("defines", "FMT_EXPORT")
+            end
         end
     end)
 

@@ -5,12 +5,12 @@ add_requires("fmt", "nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
 target("dpp")
     set_kind("$(kind)")
     set_languages("c++17")
-    add_includedirs("include")
+    add_includedirs("include", "include/dpp")
     add_headerfiles("include/(dpp/**.h)")
     add_files("src/dpp/**.cpp")
     add_packages("fmt", "nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
 
-    add_defines("DPP_BUILD")
+    add_defines("DPP_BUILD", "DPP_USE_EXTERNAL_JSON")
 
     if is_plat("windows", "mingw") then
         add_defines("WIN32", "_WINSOCK_DEPRECATED_NO_WARNINGS", "WIN32_LEAN_AND_MEAN")

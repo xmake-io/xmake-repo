@@ -1,0 +1,34 @@
+From 1ffb6c77389111de72985a92bf1519352d86ada4 Mon Sep 17 00:00:00 2001
+From: fenlog <bakurise@qq.com>
+Date: Tue, 20 Jun 2023 11:34:06 +0800
+Subject: [PATCH] fix off_t(windows is long, not longlong)
+
+---
+ trantor/net/inner/TcpConnectionImpl.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/trantor/net/inner/TcpConnectionImpl.cc b/trantor/net/inner/TcpConnectionImpl.cc
+index 22f90c9..633050e 100644
+--- a/trantor/net/inner/TcpConnectionImpl.cc
++++ b/trantor/net/inner/TcpConnectionImpl.cc
+@@ -1477,7 +1477,7 @@ void TcpConnectionImpl::sendFile(FILE *fp, size_t offset, size_t length)
+     BufferNodePtr node = std::make_shared<BufferNode>();
+     node->sendFp_ = fp;
+ #endif
+-    node->offset_ = static_cast<off_t>(offset);
++    node->offset_ = offset;
+     node->fileBytesToSend_ = length;
+     if (loop_->isInLoopThread())
+     {
+@@ -1758,7 +1758,7 @@ void TcpConnectionImpl::sendFileInLoop(const BufferNodePtr &filePtr)
+             if (nSend >= 0)
+             {
+                 filePtr->fileBytesToSend_ -= nSend;
+-                filePtr->offset_ += static_cast<off_t>(nSend);
++                filePtr->offset_ += nSend;
+                 if (static_cast<size_t>(nSend) < static_cast<size_t>(n))
+                 {
+                     if (!ioChannelPtr_->isWriting())
+-- 
+2.37.1.windows.1
+

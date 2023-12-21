@@ -17,7 +17,7 @@ package("discord")
     add_links("discordcpp")
 
     on_install("windows|x86", "windows|x64", "linux|x64", "macosx|x86_64", "macosx|arm64", function (package)
-        if package:configs("cppapi") then
+        if package:config("cppapi") then
             os.cp("cpp/*.h", package:installdir("include"))
         end
         os.cp("c/*.h", package:installdir("include"))
@@ -45,7 +45,7 @@ package("discord")
             package:add("links", "discord_game_sdk")
         end
 
-        if package:configs("cppapi") then
+        if package:config("cppapi") then
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         end
         import("package.tools.xmake").install(package, configs)

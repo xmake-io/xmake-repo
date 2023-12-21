@@ -8,7 +8,7 @@ package("nngpp")
 
     add_deps("nng")
     add_deps("cmake")
-    on_install("windows", "linux", "macosx", "android", "iphoneos", function (package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package)
         import("package.tools.cmake").install(package, configs)
     end)
 

@@ -7,7 +7,7 @@ package("sophus")
 
     add_urls("https://github.com/strasdat/Sophus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/strasdat/Sophus.git")
-    add_versions("v22.10", "270709b83696da179447cf743357e36a8b9bc8eed5ff4b9d66d33fe691010bad")
+    add_versions("1.22.10", "eb1da440e6250c5efc7637a0611a5b8888875ce6ac22bf7ff6b6769bbc958082")
 
     add_configs("basic_logging", {description = "Use basic logging (in ensure and test macros).", default = false, type = "boolean"})
 

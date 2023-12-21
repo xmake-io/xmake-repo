@@ -6,6 +6,11 @@ package("openssl")
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_$(version).zip", {version = function (version)
         return version:gsub("^(%d+)%.(%d+)%.(%d+)-?(%a*)$", "%1_%2_%3%4")
     end, excludes = "*/fuzz/*"})
+    add_versions("1.1.1-w", "c543d84c06e909bfa862d5256f6d9dad502352a580b1193ae262874e4be4d7f7")
+    add_versions("1.1.1-t", "9422774f3ce0f9cb4db5d862efbf43b4fcc096b37b4ac7157e7c5172113a8a22")
+    add_patches("1.1.1-t", path.join(os.scriptdir(), "patches", "1.1.1t.diff"), "8009edde46e5577213212ec68f8a40451ceb514fddd892240b1465213b7d2d11")
+    add_versions("1.1.1-s", "aa76dc0488bc67f5c964d085e37a0f5f452e45c68967816a336fa00f537f5cc5")
+    add_versions("1.1.1-r", "20af2fac5dff04e71c2f2d6729ee84befbea741e3aaeba18a1a541e04f3f1997")
     add_versions("1.1.1-q", "df86e6adcff1c91a85cef139dd061ea40b7e49005e8be16522cf4864bfcf5eb8")
     add_patches("1.1.1-q", path.join(os.scriptdir(), "patches", "1.1.1q.diff"), "cfe6929f9db2719e695be0b61f8c38fe8132544c5c58ca8d07383bfa6c675b7b")
     add_versions("1.1.1-p", "7fe975ffe91d8343ebd021059eeea3c6b1d236c3826b3a08ef59fcbe75069f5b")
@@ -47,7 +52,7 @@ package("openssl")
     end)
 
     on_install("windows", function (package)
-        local configs = {"Configure"}
+        local configs = {"Configure", "no-tests"}
         local target
         if package:is_arch("x86", "i386") then
             target = "VC-WIN32"
@@ -105,8 +110,7 @@ package("openssl")
             table.insert(configs, "--debug")
         end
         os.vrunv("./config", configs, {envs = buildenvs})
-        local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
-        import("package.tools.make").build(package, makeconfigs)
+        import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"), "*.a"))
@@ -143,8 +147,7 @@ package("openssl")
                          "--prefix=" .. package:installdir()}
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         os.vrunv("./Configure", configs, {envs = buildenvs})
-        local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
-        import("package.tools.make").build(package, makeconfigs)
+        import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
     end)
 

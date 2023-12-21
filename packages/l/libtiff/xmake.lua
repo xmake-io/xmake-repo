@@ -9,6 +9,7 @@ package("libtiff")
     add_versions("v4.2.0", "f87463ac8984b43e8dd84a04c14816f5f217796d9f1f459756239c499857e75a")
     add_versions("v4.3.0", "5abe48cb2ea469fefb36d85718ddb1b9f28f95c87063e006696c83f23f5b8e41")
     add_versions("v4.4.0", "d118fc97748333ae6c53302ea06584148b72e128e924253d346b802d2a80a567")
+    add_versions("v4.6.0", "fdd1a2a35b20734a5232527a81d7365eb66e54732bfc44474a3124bcb85221c7")
 
     add_configs("tools",      {description = "build TIFF tools", default = false, type = "boolean"})
     add_configs("zlib",       {description = "use zlib (required for Deflate compression)", default = false, type = "boolean"})

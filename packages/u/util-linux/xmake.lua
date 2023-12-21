@@ -1,13 +1,16 @@
 package("util-linux")
 
-    set_homepage("https://github.com/karelzak/util-linux")
+    set_homepage("https://github.com/util-linux/util-linux")
     set_description("Collection of Linux utilities.")
+    set_license("GPL-2.0")
 
     set_urls("https://www.kernel.org/pub/linux/utils/util-linux/v$(version).tar.xz", {version = function (version)
         return format("%s.%s/util-linux-%s", version:major(), version:minor(), version)
     end})
     add_versions("2.32.1", "86e6707a379c7ff5489c218cfaf1e3464b0b95acf7817db0bc5f179e356a67b2")
     add_versions("2.36.2", "f7516ba9d8689343594356f0e5e1a5f0da34adfbc89023437735872bb5024c5f")
+    add_versions("2.39",   "32b30a336cda903182ed61feb3e9b908b762a5e66fe14e43efb88d37162075cb")
+    add_versions("2.39.2", "87abdfaa8e490f8be6dde976f7c80b9b5ff9f301e1b67e3899e1f05a59a1531f")
 
     add_patches("2.36.2", path.join(os.scriptdir(), "patches", "2.36.2", "includes.patch"), "7274762cac2810b5f0d17ecb5ac69c7069e7ff2b880df663b7072628df0867f3")
 
@@ -18,12 +21,15 @@ package("util-linux")
         add_deps("ncurses", "zlib")
     end
 
+    add_configs("nls",                {description = "Enable Native Language Support.", default = false, type = "boolean"})
     add_configs("ipcs",               {description = "Enable ipcs.", default = false, type = "boolean"})
     add_configs("ipcrm",              {description = "Enable ipcrm.", default = false, type = "boolean"})
     add_configs("wall",               {description = "Enable wall.", default = false, type = "boolean"})
     add_configs("libuuid",            {description = "Enable libuuid.", default = false, type = "boolean"})
+    add_configs("libblkid",           {description = "Enable libblkid.", default = false, type = "boolean"})
     add_configs("libmount",           {description = "Enable libmount.", default = false, type = "boolean"})
     add_configs("libsmartcols",       {description = "Enable libsmartcols.", default = false, type = "boolean"})
+    add_configs("libfdisk",           {description = "Enable libfdisk.", default = false, type = "boolean"})
     add_configs("use-tty-group",      {description = "Enable use-tty-group.", default = false, type = "boolean"})
     add_configs("kill",               {description = "Enable kill.", default = false, type = "boolean"})
     add_configs("cal",                {description = "Enable cal.", default = false, type = "boolean"})
@@ -37,7 +43,11 @@ package("util-linux")
     add_configs("makeinstall-setuid", {description = "Enable makeinstall-setuid.", default = false, type = "boolean"})
 
     on_load(function (package)
+        if package:is_plat("macosx") and package:config("nls") then
+            package:add("deps", "libintl")
+        end
         package:addenv("PATH", "bin")
+        package:addenv("PATH", "sbin")
     end)
 
     on_install("macosx", "linux", function (package)

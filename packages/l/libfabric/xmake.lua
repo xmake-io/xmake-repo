@@ -6,9 +6,10 @@ package("libfabric")
 
     add_urls("https://github.com/ofiwg/libfabric/releases/download/v$(version)/libfabric-$(version).tar.bz2")
     add_versions("1.13.0", "0c68264ae18de5c31857724c754023351614330bd61a50b40cef2b5e8f63ab28")
+    add_versions("1.17.0", "579c0f5ef636c0c72f4d3d6bd4da91a5aed9ac3ac4ea387404c45dbbdee4745d")
 
     if is_plat("linux") then
-        add_syslinks("pthread", "dl", "rt")
+        add_syslinks("pthread", "dl", "rt", "atomic")
         add_extsources("apt::libfabric-dev", "pacman::libfabric")
     end
 

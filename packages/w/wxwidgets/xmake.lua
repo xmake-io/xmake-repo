@@ -6,26 +6,68 @@ package("wxwidgets")
         if is_arch("x64") then
             add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxMSW-$(version)_vc14x_x64_Dev.7z")
             add_versions("3.2.0", "02b7227916b98324f73ae9bed0f1cf27ae3157b4e3a3ded40ee8c0d570f0fd10")
+            add_resources("3.2.0", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.0/wxMSW-3.2.0_vc14x_x64_ReleaseDLL.7z",
+                "81d6512843a715fd4ba03b227a473701c90fae42406b88f0cc7ca022ec47dc51")
+            add_versions("3.2.2", "b5d36e3ac9e01dc1a024344a0a28f9b99bdba75bafa119e1a626d8cc6fdef63d")
+            add_resources("3.2.2", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2/wxMSW-3.2.2_vc14x_x64_ReleaseDLL.7z",
+                "34e11c8d493e4f2856441942a88296864243db320e3f9057633d50b89a4f2848")
+            add_versions("3.2.3", "b8a6be72378d9947e303d7075a58c9bbc161d5debd25a187b654373b4d204873")
+            add_resources("3.2.3", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.3/wxMSW-3.2.3_vc14x_x64_ReleaseDLL.7z",
+                "ee0fde533b7ac8eac6ec112da2e3a488675aa8c1dda483eb8a9a2d4f8e5bb734")
+            add_versions("3.2.4", "b8be152f08031aed2bfeffd17d8409209c38667859094b319818e08f7a4ad065")
+            add_resources("3.2.4", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxMSW-3.2.4_vc14x_x64_ReleaseDLL.7z",
+                "0f9108e64f98978580fee2d4b3a53451ab4333e4b47dde45b82e7867d0bbfc2c")
         else
             add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxMSW-$(version)_vc14x_Dev.7z")
             add_versions("3.2.0", "0cd2387edcf1f26924d59efcc3ea4c8a00783ee01bf396756dabdd7967e4b37b")
+            add_resources("3.2.0", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.0/wxMSW-3.2.0_vc14x_ReleaseDLL.7z",
+                "b168c9225f17168c7ece551c499d043bffc121d32408edf1905648482002110b")
+            add_versions("3.2.2", "7150112bece62f4eccd68d3b0eba11b5a1da0f773e864bdecb9840ce76160847")
+            add_resources("3.2.2", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2/wxMSW-3.2.2_vc14x_ReleaseDLL.7z",
+                "1a8d387fae963d2242b0fc628699d34bb6141751fb05dec8fa9c0e2784833426")
+            add_versions("3.2.3", "8961f24abb16362a542140912f3c6cb75b8f95111816311ecf5b00ea1e0c55f3")
+            add_resources("3.2.3", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.3/wxMSW-3.2.3_vc14x_ReleaseDLL.7z",
+                "b1b22d43509c2e1fe427d038210076dcb1d9953e5fef09ffa04e49f49c78a9a7")
+            add_versions("3.2.4", "efa6bf76d42373e7930af18a176e5e52fbdd43f5da41b9bf6cd3b347d820f8b7")
+            add_resources("3.2.4", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxMSW-3.2.4_vc14x_ReleaseDLL.7z",
+                "240308cb9ffb718ab2f1298238c6e6aea7708cb16aca5801a03bffee6f9ef673")
         end
         add_resources("3.2.0", "headers",
             "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.0/wxWidgets-3.2.0-headers.7z",
             "bd847e20050c52d127f4afe9b00ffe29d87c2f907749bd6bc732c0db05bce4b1")
+        add_resources("3.2.2", "headers",
+            "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.2/wxWidgets-3.2.2-headers.7z",
+            "affad097f2c274f796bf08494c1624d999d75727e73959bce5a3d366aeebc721")
+        add_resources("3.2.3", "headers",
+            "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.3/wxWidgets-3.2.3-headers.7z",
+            "a610f1a044b93f4d8d5439c67fc42b3feb168d854bc4725aa2b5ff4569d89a06")
+        add_resources("3.2.4", "headers",
+            "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxWidgets-3.2.4-headers.7z",
+            "b8c4fd1a62c104c65089a088670d80e827b3893b7425c1cab8d7e49879797326")
 
         add_configs("shared",     {description = "Build shared library.", default = true, type = "boolean", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
+        add_configs("debug",      {description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
     else
         add_urls("https://github.com/wxWidgets/wxWidgets/archive/refs/tags/$(version).tar.gz",
                  "https://github.com/wxWidgets/wxWidgets.git")
         add_versions("v3.2.0", "43480e3887f32924246eb439520a3a2bc04d7947712de1ea0590c5b58dedadd9")
+        add_versions("v3.2.2", "2a4ec4d1af3f22fbfd0a40b051385a5d82628d9f28bae8427f5c30d72bdaade7")
+        add_versions("v3.2.3", "0eb9499c06778c6746dbd4aee2a124f1995a5db331e282d15237b0046c1788af")
+        add_versions("v3.2.4", "b358b7f59f5b7cb934265120d114e5fd510a8b40802d00a111a85911eb5100d1")
 
         add_deps("cmake")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib")
         if is_plat("linux") then
-            add_deps("libx11", "libxext", "libxtst")
-            add_deps("gtk+3", "opengl", {optional = true})
+            add_deps("gtk+3", "opengl")
         end
     end
 
@@ -36,8 +78,16 @@ package("wxwidgets")
     elseif is_plat("linux") then
         add_defines("__WXGTK3__", "__WXGTK__")
         add_syslinks("pthread", "m", "dl")
+        add_syslinks("X11", "Xext", "Xtst", "xkbcommon")
     elseif is_plat("windows") then
-        add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=ud", "wxMSVC_VERSION=14x")
+        add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=u", "wxMSVC_VERSION=14x")
+        add_links(
+            "wxbase32u", "wxbase32u_net", "wxbase32u_xml", "wxexpat",
+            "wxjpeg", "wxmsw32u_adv", "wxmsw32u_aui", "wxmsw32u_core", "wxmsw32u_gl",
+            "wxmsw32u_html", "wxmsw32u_media", "wxmsw32u_propgrid", "wxmsw32u_qa", "wxmsw32u_ribbon",
+            "wxmsw32u_richtext", "wxmsw32u_stc", "wxmsw32u_webview", "wxmsw32u_xrc",
+            "wxpng", "wxregexu", "wxscintilla", "wxtiff", "wxzlib"
+        )
     end
 
     on_load(function (package)
@@ -66,9 +116,8 @@ package("wxwidgets")
     on_install("windows", function (package)
         local dlldir = package:is_arch("x64") and "vc14x_x64_dll" or "vc14x_dll"
         os.cp(path.join("lib", dlldir, "*.lib"), package:installdir("lib"))
-        os.cp(path.join("lib", dlldir, "*.pdb"), package:installdir("lib"))
-        os.cp(path.join("lib", dlldir, "*.dll"), package:installdir("bin"))
-        os.cp(path.join("lib", dlldir, "mswud", "wx"), package:installdir("lib", dlldir, "mswud"))
+        os.cp(path.join(package:resourcedir("releaseDLL"),"lib", dlldir, "*.dll"), package:installdir("bin"))
+        os.cp(path.join("lib", dlldir, "mswu", "wx"), package:installdir("lib", dlldir, "mswu"))
         os.cp(path.join(package:resourcedir("headers"), "include"), package:installdir())
         os.cp(path.join(package:resourcedir("headers"), "include", "msvc", "wx", "setup.h"), package:installdir("include/wx"))
         io.replace(path.join(package:installdir("include"), "wx", "setup.h"), "../../../lib/", "../../lib/", {plain = true})
@@ -92,17 +141,31 @@ package("wxwidgets")
             table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=2")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("linux") then
+            local libgtk3 = package:dep("gtk+3"):fetch()
+            if libgtk3 then
+                table.insert(configs, "-DGTK3_INCLUDE_DIRS=" .. table.concat(libgtk3.sysincludedirs, ";"))
+                table.insert(configs, "-DGTK3_LIBRARIES=" .. table.concat(libgtk3.links, ";"))
+            end
+        end
         import("package.tools.cmake").install(package, configs)
         local version = package:version()
         local subdir = "wx-" .. version:major() .. "." .. version:minor()
         local setupdir = package:is_plat("macosx") and "osx" or "gtk"
         os.cp(path.join(package:installdir("include", subdir, "wx", setupdir, "setup.h")),
               path.join(package:installdir("include", subdir, "wx")))
+        local lib_suffix = version:major() .. "." .. version:minor()
+        if package:is_plat("linux") then
+            package:add("links", "wx_gtk3u_xrc-" .. lib_suffix, "wx_gtk3u_html-" .. lib_suffix, "wx_gtk3u_qa-" .. lib_suffix, "wx_gtk3u_core-" .. lib_suffix, "wx_baseu_xml-" .. lib_suffix, "wx_baseu_net-" .. lib_suffix, "wx_baseu-" .. lib_suffix)
+        end
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "wx/wx.h"
+            #include <wx/wxprec.h>
+            #ifndef WX_PRECOMP
+                #include <wx/wx.h>
+            #endif
             #include "wx/app.h"
             #include "wx/cmdline.h"
             void test() {

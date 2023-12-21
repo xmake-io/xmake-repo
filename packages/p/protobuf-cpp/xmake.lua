@@ -5,6 +5,7 @@ package("protobuf-cpp")
 
     add_urls("https://github.com/protocolbuffers/protobuf/releases/download/v$(version)/protobuf-cpp-$(version).zip")
     add_versions("3.8.0", "91ea92a8c37825bd502d96af9054064694899c5c7ecea21b8d11b1b5e7e993b5")
+	add_versions("3.12.0", "da826a3c48a9cae879928202d6fe06afb15aaee129e9035d6510cc776ddfa925")
     add_versions("3.12.3", "74da289e0d0c24b2cb097f30fdc09fa30754175fd5ebb34fae4032c6d95d4ce3")
     add_versions("3.13.0", "f7b99f47822b0363175a6751ab59ccaa4ee980bf1198f11a4c3cef162698dde3")
     add_versions("3.14.0", "87d6e96166cf5cafc16f2bcfa91c0b54f48bab38538285bee1b9331d992569fa")
@@ -16,9 +17,9 @@ package("protobuf-cpp")
     add_patches("3.17.3", path.join(os.scriptdir(), "patches", "3.17.3", "field_access_listener.patch"), "ac9bdf49611b01e563fe74b2aaf1398214129454c3e18f1198245549eb281e85")
     add_patches("3.19.4", path.join(os.scriptdir(), "patches", "3.19.4", "vs_runtime.patch"), "8e73e585d29f3b9dca3c279df0b11b3ee7651728c07f51381a69e5899b93c367")
 
-    if is_plat("windows") then
-        add_deps("cmake")
-    end
+    add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
+
+    add_deps("cmake")
 
     if is_plat("windows") then
         add_links("libprotobuf")
@@ -32,33 +33,27 @@ package("protobuf-cpp")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
+        if package:config("zlib") then
+            package:add("deps", "zlib")
+        end
     end)
 
-    on_install("windows", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         os.cd("cmake")
+        io.replace("CMakeLists.txt", "set(protobuf_DEBUG_POSTFIX \"d\"", "set(protobuf_DEBUG_POSTFIX \"\"", {plain = true})
         local configs = {"-Dprotobuf_BUILD_TESTS=OFF", "-Dprotobuf_BUILD_PROTOC_BINARIES=ON"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-Dprotobuf_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-        if package:config("shared") then
-            package:add("defines", "PROTOBUF_USE_DLLS")
+        if package:is_plat("windows") then
+            table.insert(configs, "-Dprotobuf_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            if package:config("shared") then
+                package:add("defines", "PROTOBUF_USE_DLLS")
+            end
         end
-        import("package.tools.cmake").install(package, configs)
-        os.cp("build_*/Release/protoc.exe", package:installdir("bin"))
-    end)
-
-    on_install("linux", "macosx", function (package)
-        local configs = {}
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
+        if package:config("zlib") then
+            table.insert(configs, "-Dprotobuf_WITH_ZLIB=ON")
         end
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-            table.insert(configs, "--enable-static=no")
-        else
-            table.insert(configs, "--enable-static=yes")
-            table.insert(configs, "--enable-shared=no")
-        end
-        import("package.tools.autoconf").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        os.trycp("build/Release/protoc.exe", package:installdir("bin"))
     end)
 
     on_test(function (package)

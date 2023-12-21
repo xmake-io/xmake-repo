@@ -6,6 +6,8 @@ package("uriparser")
 
     add_urls("https://github.com/uriparser/uriparser/archive/refs/tags/uriparser-$(version).tar.gz")
     add_versions("0.9.5", "dece5067b4517c4b16cde332c491b4b3508249d2a8f4ba393229575d3c5241c0")
+    add_versions("0.9.6", "defaf550bf6fe05e89afb9814dccc6bd643a3b0a8308801a2c04b76682b87383")
+    add_versions("0.9.7", "8e19250654a204af0858408b55dc78941382a8c824bf38fc7f2a95ca6e16d7a0")
 
     add_deps("cmake")
     on_load(function (package)

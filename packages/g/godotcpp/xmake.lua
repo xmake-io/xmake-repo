@@ -9,6 +9,10 @@ package("godotcpp")
     add_versions("3.4.0", "4efceefe138b2494e3c691e1dead1c60efb621b1")
     add_versions("3.4.3", "ced274fbe62c07dd9bb6791a77392f4bdc625152")
     add_versions("3.4.4", "f4f6fac4c784da8c973ade0dbc64a9d8400ee247")
+    add_versions("3.4.5", "a2b2e101f840e11359821d17b027d0b4aa1d9ddc")
+    add_versions("3.5", "867374da404887337909e8b7b9de5a8acbc47569")
+    add_versions("3.5.1", "316b91c5f5d89d82ae935513c28df78f9e238e8b")
+    add_versions("3.5.2", "76d6ad5d8db23b086b175d785812744d2bacf62a")
 
     add_deps("scons")
 

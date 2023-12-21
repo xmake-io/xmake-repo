@@ -5,6 +5,7 @@ package("lz4")
 
     set_urls("https://github.com/lz4/lz4/archive/$(version).tar.gz",
              "https://github.com/lz4/lz4.git")
+    add_versions("v1.9.4", "0b0e3aa07c8c063ddf40b082bdf7e37a1562bda40a0ff5272957f3e987e0e54b")
     add_versions("v1.9.3", "030644df4611007ff7dc962d981f390361e6c97a34e5cbc393ddfbe019ffe2c1")
 
     on_load("windows", function (package)
@@ -16,7 +17,7 @@ package("lz4")
     if is_plat("macosx") then
         add_extsources("brew::lz4")
     elseif is_plat("linux") then
-        add_extsources("pacman::lz4")
+        add_extsources("pacman::lz4", "apt::liblz4-dev")
     end
 
     on_install(function (package)

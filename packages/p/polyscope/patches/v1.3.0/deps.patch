@@ -1,0 +1,84 @@
+diff --git a/deps/CMakeLists.txt b/deps/CMakeLists.txt
+index 4084142..dd6b111 100644
+--- a/deps/CMakeLists.txt
++++ b/deps/CMakeLists.txt
+@@ -3,23 +3,21 @@ cmake_minimum_required(VERSION 3.5)
+ if("${POLYSCOPE_BACKEND_OPENGL3_GLFW}")
+ 
+   ## Glad
+-  add_subdirectory(glad)
+ 
+   ## GLFW
+   set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+   set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+   set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+   set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+-  add_subdirectory(glfw)
++  find_package(glfw3 REQUIRED)
+ endif()
+ 
+ if("${POLYSCOPE_BACKEND_OPENGL_MOCK}")
+ endif()
+ 
+ ## Imgui
+-add_subdirectory(imgui)
+ 
+ ## Argparse
+ 
+ ## STB stuff
+-add_subdirectory(stb)
++add_library(stb OBJECT stb_impl.cpp)
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 5e5ab62..21410ce 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -49,7 +49,7 @@ if("${POLYSCOPE_BACKEND_OPENGL3_GLFW}")
+ 
+   # Link settings
+   list(APPEND BACKEND_LIBS
+-    glfw ${GLFW_LIBRARIES}
++    ${GLFW_LIBRARIES}
+   )
+ 
+   if(APPLE)
+@@ -283,13 +283,8 @@ add_definitions(-DNOMINMAX)
+ 
+ # Include settings
+ target_include_directories(polyscope PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+-target_include_directories(polyscope PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../deps/glm")
+-#target_include_directories(polyscope PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../deps/args") # not used, polyscope generates no apps directly
+-target_include_directories(polyscope PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../deps/happly")
+-target_include_directories(polyscope PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../deps/json/include")
+-target_include_directories(polyscope PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../deps/stb")
+-target_include_directories(polyscope PRIVATE "${BACKEND_INCLUDE_DIRS}")
+         
+ # Link settings
+ target_link_libraries(polyscope PUBLIC imgui)
+ target_link_libraries(polyscope PRIVATE "${BACKEND_LIBS}" stb)
++install(TARGETS polyscope LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+diff --git a/src/polyscope.cpp b/src/polyscope.cpp
+index d270e36..1887ef1 100644
+--- a/src/polyscope.cpp
++++ b/src/polyscope.cpp
+@@ -14,7 +14,7 @@
+ 
+ #include "stb_image.h"
+ 
+-#include "json/json.hpp"
++#include "nlohmann/json.hpp"
+ using json = nlohmann::json;
+ 
+ 
+diff --git a/src/view.cpp b/src/view.cpp
+index 6b93f88..31b73ee 100644
+--- a/src/view.cpp
++++ b/src/view.cpp
+@@ -6,7 +6,7 @@
+ 
+ #include "imgui.h"
+ 
+-#include "json/json.hpp"
++#include "nlohmann/json.hpp"
+ using json = nlohmann::json;
+ 
+ namespace polyscope {

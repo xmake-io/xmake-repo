@@ -6,30 +6,36 @@ import("packages", {alias = "get_packages"})
 -- the options
 local options =
 {
-    {'v', "verbose",    "k",  nil, "Enable verbose information."                }
-,   {'D', "diagnosis",  "k",  nil, "Enable diagnosis information."              }
-,   {nil, "shallow",    "k",  nil, "Only install the root packages."            }
-,   {'k', "kind",       "kv", nil, "Enable static/shared library."              }
-,   {'p', "plat",       "kv", nil, "Set the given platform."                    }
-,   {'a', "arch",       "kv", nil, "Set the given architecture."                }
-,   {'m', "mode",       "kv", nil, "Set the given mode."                        }
-,   {'j', "jobs",       "kv", nil, "Set the build jobs."                        }
-,   {'f', "configs",    "kv", nil, "Set the configs."                           }
-,   {'d', "debugdir",   "kv", nil, "Set the debug source directory."            }
-,   {nil, "linkjobs",   "kv", nil, "Set the link jobs."                         }
-,   {nil, "cflags",     "kv", nil, "Set the cflags."                            }
-,   {nil, "cxxflags",   "kv", nil, "Set the cxxflags."                          }
-,   {nil, "ldflags",    "kv", nil, "Set the ldflags."                           }
-,   {nil, "ndk",        "kv", nil, "Set the Android NDK directory."             }
-,   {nil, "ndk_sdkver", "kv", nil, "Set the Android NDK platform sdk version."  }
-,   {nil, "sdk",        "kv", nil, "Set the SDK directory of cross toolchain."  }
-,   {nil, "vs",         "kv", nil, "Set the VS Compiler version."               }
-,   {nil, "vs_sdkver",  "kv", nil, "Set the Windows SDK version."               }
-,   {nil, "vs_toolset", "kv", nil, "Set the Windows Toolset version."           }
-,   {nil, "vs_runtime", "kv", nil, "Set the VS Runtime library."                }
-,   {nil, "mingw",      "kv", nil, "Set the MingW directory."                   }
-,   {nil, "toolchain",  "kv", nil, "Set the toolchain name."                    }
-,   {nil, "packages",   "vs", nil, "The package list."                          }
+    {'v', "verbose",        "k",  nil, "Enable verbose information."                }
+,   {'D', "diagnosis",      "k",  nil, "Enable diagnosis information."              }
+,   {nil, "shallow",        "k",  nil, "Only install the root packages."            }
+,   {'k', "kind",           "kv", nil, "Enable static/shared library."              }
+,   {'p', "plat",           "kv", nil, "Set the given platform."                    }
+,   {'a', "arch",           "kv", nil, "Set the given architecture."                }
+,   {'m', "mode",           "kv", nil, "Set the given mode."                        }
+,   {'j', "jobs",           "kv", nil, "Set the build jobs."                        }
+,   {'f', "configs",        "kv", nil, "Set the configs."                           }
+,   {'d', "debugdir",       "kv", nil, "Set the debug source directory."            }
+,   {nil, "fetch",          "k",  nil, "Fetch package only."                        }
+,   {nil, "precompiled",    "k",  nil, "Attemp to install the precompiled package." }
+,   {nil, "remote",         "k",  nil, "Test package on the remote server."         }
+,   {nil, "linkjobs",       "kv", nil, "Set the link jobs."                         }
+,   {nil, "cflags",         "kv", nil, "Set the cflags."                            }
+,   {nil, "cxxflags",       "kv", nil, "Set the cxxflags."                          }
+,   {nil, "ldflags",        "kv", nil, "Set the ldflags."                           }
+,   {nil, "ndk",            "kv", nil, "Set the Android NDK directory."             }
+,   {nil, "ndk_sdkver",     "kv", nil, "Set the Android NDK platform sdk version."  }
+,   {nil, "sdk",            "kv", nil, "Set the SDK directory of cross toolchain."  }
+,   {nil, "vs",             "kv", nil, "Set the VS Compiler version."               }
+,   {nil, "vs_sdkver",      "kv", nil, "Set the Windows SDK version."               }
+,   {nil, "vs_toolset",     "kv", nil, "Set the Windows Toolset version."           }
+,   {nil, "vs_runtime",     "kv", nil, "Set the VS Runtime library."                }
+,   {nil, "xcode_sdkver",   "kv", nil, "The SDK Version for Xcode"                  }
+,   {nil, "target_minver",  "kv", nil, "The Target Minimal Version"                 }
+,   {nil, "appledev",       "kv", nil, "The Apple Device Type"                      }
+,   {nil, "mingw",          "kv", nil, "Set the MingW directory."                   }
+,   {nil, "toolchain",      "kv", nil, "Set the toolchain name."                    }
+,   {nil, "packages",       "vs", nil, "The package list."                          }
 }
 
 
@@ -72,6 +78,15 @@ function _require_packages(argv, packages)
     if argv.vs_runtime then
         table.insert(config_argv, "--vs_runtime=" .. argv.vs_runtime)
     end
+    if argv.xcode_sdkver then
+        table.insert(config_argv, "--xcode_sdkver=" .. argv.xcode_sdkver)
+    end
+    if argv.target_minver then
+        table.insert(config_argv, "--target_minver=" .. argv.target_minver)
+    end
+    if argv.appledev then
+        table.insert(config_argv, "--appledev=" .. argv.appledev)
+    end
     if argv.mingw then
         table.insert(config_argv, "--mingw=" .. argv.mingw)
     end
@@ -88,7 +103,10 @@ function _require_packages(argv, packages)
         table.insert(config_argv, "--ldflags=" .. argv.ldflags)
     end
     os.vexecv("xmake", config_argv)
-    local require_argv = {"require", "-f", "-y", "--build"}
+    local require_argv = {"require", "-f", "-y"}
+    if not argv.precompiled then
+        table.insert(require_argv, "--build")
+    end
     if argv.verbose then
         table.insert(require_argv, "-v")
     end
@@ -108,6 +126,9 @@ function _require_packages(argv, packages)
     end
     if argv.linkjobs then
         table.insert(require_argv, "--linkjobs=" .. argv.linkjobs)
+    end
+    if argv.fetch then
+        table.insert(require_argv, "--fetch")
     end
     local extra = {}
     if argv.mode == "debug" then
@@ -170,9 +191,9 @@ function main(...)
     if #packages == 0 then
         local files = os.iorun("git diff --name-only HEAD^")
         for _, file in ipairs(files:split('\n'), string.trim) do
-            if file:find("packages", 1, true) and path.filename(file) == "xmake.lua" then
+            if file:startswith("packages") then
                 assert(file == file:lower(), "%s must be lower case!", file)
-                local package = path.filename(path.directory(file))
+                local package = file:match("packages/%w/(%S+)/")
                 table.insert(packages, package)
             end
         end
@@ -198,12 +219,26 @@ function main(...)
     local workdir = path.join(os.tmpdir(), "xmake-repo")
     print(packages)
     os.setenv("XMAKE_STATS", "false")
-    os.tryrm(workdir)
-    os.mkdir(workdir)
-    os.cd(workdir)
-    os.exec("xmake create test")
+    if not os.isfile(path.join(workdir, "test", "xmake.lua")) then
+        os.tryrm(workdir)
+        os.mkdir(workdir)
+        os.cd(workdir)
+        os.exec("xmake create test")
+    else
+        os.cd(workdir)
+    end
     os.cd("test")
     print(os.curdir())
+    -- do action for remote?
+    if os.isdir("xmake-repo") then
+        os.exec("xmake service --disconnect")
+    end
+    if argv.remote then
+        os.tryrm("xmake-repo")
+        os.cp(path.join(repodir, "packages"), "xmake-repo/packages")
+        os.exec("xmake service --connect")
+        repodir = "xmake-repo"
+    end
     os.exec("xmake repo --add local-repo %s", repodir)
     os.exec("xmake repo -l")
 

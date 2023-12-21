@@ -7,6 +7,7 @@ package("asio")
 
     add_urls("https://sourceforge.net/projects/asio/files/asio/$(version) (Stable)/asio-$(version).tar.gz", {alias = "sourceforge"})
     add_urls("https://github.com/chriskohlhoff/asio/archive/refs/tags/asio-$(version).tar.gz", {alias = "github", version = function (version) return version:gsub("%.", "-") end})
+    add_versions("github:1.28.0", "226438b0798099ad2a202563a83571ce06dd13b570d8fded4840dbc1f97fa328")
     add_versions("github:1.24.0", "cbcaaba0f66722787b1a7c33afe1befb3a012b5af3ad7da7ff0f6b8c9b7a8a5b")
     add_versions("github:1.21.0", "5d2d2dcb7bfb39bff941cabbfc8c27ee322a495470bf0f3a7c5238648cf5e6a9")
     add_versions("sourceforge:1.20.0", "4cd5cd0ad97e752a4075f02778732a3737b587f5eeefab59cd98dc43b0dcadb3")

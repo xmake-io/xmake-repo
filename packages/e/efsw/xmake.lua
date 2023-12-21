@@ -5,6 +5,9 @@ package("efsw")
 
     set_urls("https://github.com/SpartanJ/efsw/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SpartanJ/efsw.git")
+    add_versions("1.3.1", "3c0efe023258712d25644977227f07cf7edf7e5dc00ffa8d88733f424fa6af86")
+    add_versions("1.3.0", "e190b72f23d92c42e1a0dab9bb6354a56f75c7535fd1f3e3a10b1c317e05f8f6")
+    add_versions("1.2.0", "66d8631deeb2af50511e84cae7e745134e6a22811c93246e39e7001af887a7db")
     add_versions("1.1.0", "a67566d642510e3f571cc0f98d520bd806150362a51cfbc47366ed6c9890722f")
 
     add_deps("cmake")
@@ -21,7 +24,7 @@ package("efsw")
         end
     end)
 
-    on_install("windows", "linux", "mingw", "macosx", "bsd", function (package)
+    on_install("windows", "linux", "mingw", "macosx", "bsd", "iphoneos", function (package)
         local configs = {"-DBUILD_TEST_APP=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))

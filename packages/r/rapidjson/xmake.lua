@@ -12,6 +12,10 @@ package("rapidjson")
     add_versions("v1.1.0-arrow", "1a803826f1197b5e30703afe4b9c0e7dd48074f5")
 
     on_install(function (package)
+        if package:is_plat("windows") and package:is_arch("arm.*") then
+            package:add("defines", "RAPIDJSON_ENDIAN=RAPIDJSON_LITTLEENDIAN")
+        end
+
         os.cp(path.join("include", "*"), package:installdir("include"))
     end)
 

@@ -4,8 +4,9 @@ package("linux-headers")
     set_description("Header files of the Linux kernel")
     set_license("GPL-2.0-only")
 
-    add_urls("https://cdn.kernel.org/pub/linux/kernel/$(version).tar.xz",
+    add_urls("https://mirror.bjtu.edu.cn/kernel/linux/kernel/$(version).tar.xz",
              "https://mirrors.edge.kernel.org/pub/linux/kernel/$(version).tar.xz",
+             "https://cdn.kernel.org/pub/linux/kernel/$(version).tar.xz",
              {version = function (version)
                  return "v" .. version:major() .. ".x/linux-" .. version
              end})
@@ -14,6 +15,7 @@ package("linux-headers")
     add_versions("5.9.16", "b0d7abae88e5f91893627c645e680a95c818defd1b4fcaf3e2afb4b2b6b4ab86")
     add_versions("5.10.46", "569122a39c6b325befb9ac1c07da0c53e6363b3baacd82081d131b06c1dc1415")
     add_versions("5.16.9", "1660e7228ec299c187c19739d115ded97f6b1be05a24986c4c443e7c5e8b744f")
+    add_versions("5.15", "57b2cf6991910e3b67a1b3490022e8a0674b6965c74c12da1e99d138d1991ee8")
 
     add_configs("driver_modules", {description = "Enable driver modules files.", default = false, type = "boolean"})
 

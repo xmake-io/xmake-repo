@@ -1,9 +1,12 @@
 package("uchardet")
+
     set_homepage("https://www.freedesktop.org/wiki/Software/uchardet/")
     set_description("uchardet is an encoding detector library, which takes a sequence of bytes in an unknown character encoding without any additional information, and attempts to determine the encoding of the text. ")
-    add_urls("https://www.freedesktop.org/software/uchardet/releases/uchardet-$(version).tar.xz")
+    set_license("MPL-1.1")
 
+    add_urls("https://www.freedesktop.org/software/uchardet/releases/uchardet-$(version).tar.xz")
     add_versions("0.0.7", "3fc79408ae1d84b406922fa9319ce005631c95ca0f34b205fad867e8b30e45b1")
+    add_versions("0.0.8", "e97a60cfc00a1c147a674b097bb1422abd9fa78a2d9ce3f3fdcc2e78a34ac5f0")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
@@ -41,7 +44,7 @@ package("uchardet")
     end)
 
     on_test(function (package)
-        if package:is_plat(os.host()) then
+        if not package:is_cross() then
             os.vrun("uchardet -v")
         end
         assert(package:has_cfuncs("uchardet_get_charset", {includes = "uchardet.h"}))

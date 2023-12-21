@@ -7,6 +7,8 @@ package("vk-bootstrap")
              "https://github.com/charles-lunarg/vk-bootstrap.git")
 
     add_versions("v0.5", "7ec1017d71d48595c078a4488140b230fd9cad1059986a18a507f356bf00e89b")
+    add_versions("v0.6", "95dedaa5cedf7a271f051d91b24b3b6c78aa3c5b2bc3cf058554c92748a421b2")
+    add_versions("v0.7", "7b2c30a4c46514cc5b20d2bebab25c495df39574b9e117c760d1cfe19f71d9aa")
 
     add_deps("vulkan-headers")
 

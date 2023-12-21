@@ -1,0 +1,53 @@
+diff --git a/src/exception.cpp b/src/exception.cpp
+index 7cb010d..e9f1da1 100644
+--- a/src/exception.cpp
++++ b/src/exception.cpp
+@@ -57,30 +57,30 @@ sys_error::sys_error(int err) : runtime_error(error_str(err)), errno_(err)
+ 
+ std::string sys_error::error_str(int err)
+ {
+-	char buf[1024];
+-	buf[0] = '\x0';
++    char buf[1024];
++    buf[0] = '\x0';
+ 
+-	#if defined(_WIN32)
+-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+-			NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+-			buf, sizeof(buf), NULL);
++    #if defined(_WIN32)
++        FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
++            NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
++            buf, sizeof(buf), NULL);
+     #else
+-    	#ifdef _GNU_SOURCE
+-			#if !defined(__GLIBC__)
+-			// use the XSI standard behavior.
+-				int e = strerror_r(err, buf, sizeof(buf));
+-				auto s = strerror(e);
+-				return s ? std::string(s) : std::string();
+-			#else
+-			// assume GNU exception
+-				auto s = strerror_r(err, buf, sizeof(buf));
+-				return s ? std::string(s) : std::string();
+-			#endif
++        #ifdef _GNU_SOURCE
++            #if defined(__GLIBC__) || (defined(__ANDROID_API__) && __ANDROID_API__ >= 23)
++                // assume GNU exception
++                auto s = strerror_r(err, buf, sizeof(buf));
++                return s ? std::string(s) : std::string();
++            #else
++                // use the XSI standard behavior.
++                int e = strerror_r(err, buf, sizeof(buf));
++                auto s = strerror(e);
++                return s ? std::string(s) : std::string();
++            #endif
+         #else
+             ignore_result(strerror_r(err, buf, sizeof(buf)));
+         #endif
+     #endif
+-	return std::string(buf);
++    return std::string(buf);
+ }
+ 
+ /////////////////////////////////////////////////////////////////////////////

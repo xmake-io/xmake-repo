@@ -4,12 +4,14 @@ package("pugixml")
     set_description("Light-weight, simple and fast XML parser for C++ with XPath support")
     set_license("MIT")
 
-    add_urls("https://github.com/zeux/pugixml/archive/v$(version).tar.gz")
-    add_versions("1.11.4", "017139251c122dbff400a507cddc4cb74120a431a50c6c524f30edcc5b331ade")
+    add_urls("https://github.com/zeux/pugixml/archive/$(version).tar.gz",
+             "https://github.com/zeux/pugixml.git")
+    add_versions("v1.11.4", "017139251c122dbff400a507cddc4cb74120a431a50c6c524f30edcc5b331ade")
+    add_versions("v1.13", "5c5ad5d7caeb791420408042a7d88c2c6180781bf218feca259fd9d840a888e1")
 
     add_deps("cmake")
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

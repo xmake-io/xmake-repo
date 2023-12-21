@@ -36,8 +36,8 @@ jobs:
       - name: Tests
         run: |
           if ("${{ matrix.os }}" -eq "windows-2019") {
-            xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --vs_sdkver=10.0.19041.0 --linkjobs=2
+            xmake l ./scripts/test.lua -vD -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --vs_sdkver=10.0.19041.0 --linkjobs=2
           } else {
-            xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --linkjobs=2
+            xmake l ./scripts/test.lua -vD -a ${{ matrix.arch }} -k ${{ matrix.kind }} --vs_runtime=${{ matrix.vs_runtime }} --linkjobs=2
           }
 
