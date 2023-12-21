@@ -18,14 +18,14 @@ package("gstreamer")
     end
 
     add_deps("meson", "ninja")
-    add_deps("glib", {configs = {shared = true}})
+    add_deps("glib")
     if is_plat("windows") then
         add_deps("winflexbison")
     else
         add_deps("flex", "bison")
     end
 
-    add_includedirs("gstreamer-1.0")
+    add_includedirs("include", "include/gstreamer-1.0")
 
     on_install("windows", "macosx", "linux", "cross", function (package)
         local configs = {
@@ -35,7 +35,11 @@ package("gstreamer")
             "-Dtests=disabled",
         }
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs)
+        local packagedeps = {}
+        if not package:dep("glib"):config("shared") then
+            table.insert(packagedeps, "libiconv")
+        end
+        import("package.tools.meson").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
