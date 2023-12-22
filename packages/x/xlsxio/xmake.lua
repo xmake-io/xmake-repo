@@ -45,8 +45,6 @@ package("xlsxio")
         end
         package:add("defines", "BUILD_XLSXIO_" .. (package:config("shared") and "SHARED" or "STATIC"))
 
-        io.replace("lib/xlsxio_read.c", "minizip/", "", {plain = true})
-        io.replace("lib/xlsxio_write.c", "minizip/", "", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
