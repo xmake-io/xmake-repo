@@ -7,7 +7,7 @@ package("pca9685")
 
     add_versions("2017.12.07", "6f9794d888f77b863884c3eac933b75a07101347")
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("pca9685")
