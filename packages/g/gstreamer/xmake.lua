@@ -52,6 +52,9 @@ package("gstreamer")
         if package:is_plat("macosx") then
             table.insert(packagedeps, "libintl")
         end
+        if package:is_plat("windows") then
+            table.insert(packagedeps, "glib")
+        end
         import("package.tools.meson").install(package, configs, {packagedeps = packagedeps})
     end)
 
