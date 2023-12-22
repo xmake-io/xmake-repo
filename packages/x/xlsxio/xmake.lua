@@ -26,9 +26,9 @@ package("xlsxio")
         end
 
         if package:config("wide") then
-            package:add("expat", {configs = {char_type = "wchar_t"}})
+            package:add("deps", "expat", {configs = {char_type = "wchar_t"}})
         else
-            package:add("expat")
+            package:add("deps", "expat")
         end
     end)
 
