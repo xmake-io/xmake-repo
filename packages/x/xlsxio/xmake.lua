@@ -16,8 +16,6 @@ package("xlsxio")
         add_syslinks("pthread")
     end
 
-    add_deps("expat")
-
     on_load(function (package)
         if package:config("libzip") then
             package:add("deps", "libzip")
@@ -25,6 +23,12 @@ package("xlsxio")
             package:add("deps", "minizip-ng", {configs = {zlib = true}})
         else
             package:add("deps", "minizip")
+        end
+
+        if package:config("wide") then
+            package:add("expat", {configs = {char_type = "wchar_t"}})
+        else
+            package:add("expat")
         end
     end)
 
