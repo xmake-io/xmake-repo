@@ -2,10 +2,11 @@ package("cppgpio")
     set_homepage("https://github.com/JoachimSchurig/CppGPIO")
     set_description("C++14 GPIO library for embedded systems on Linux")
 
-    add_urls("https://github.com/JoachimSchurig/CppGPIO/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/JoachimSchurig/CppGPIO.git")
+    set_urls("https://github.com/JoachimSchurig/CppGPIO.git")
 
-    add_versions("v1.0.2", "53172c0f02516861bca1d1095d9275d569427ec99d63ca2b21ab8d42589c6bb1")
+    add_versions("2022.02.20", "f76e8fc8f8fa8d8b5643ba9dfac44de7664c9c23")
+    add_versions("2016.04.04", "2653a5876df8d23041eddc56e57ebd5e3ac167d1")
+    add_versions("2016.03.11", "ba6fc634ebe2b519dba98dd11dc36dbda331ecc0")
 
     on_install("linux", function (package)
         io.writefile("xmake.lua", [[
