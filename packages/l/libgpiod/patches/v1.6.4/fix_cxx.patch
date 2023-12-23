@@ -1,48 +1,48 @@
 diff --git a/bindings/cxx/chip.cpp b/bindings/cxx/chip.cpp
-index 54c85da..757c334 100644
+index 54c85da..737c14f 100644
 --- a/bindings/cxx/chip.cpp
 +++ b/bindings/cxx/chip.cpp
-@@ -7,6 +7,7 @@
+@@ -6,6 +6,7 @@
+  */
  
  #include <functional>
- #include <gpiod.hpp>
 +#include <gpiod.h>
+ #include <gpiod.hpp>
  #include <map>
  #include <system_error>
- #include <utility>
 diff --git a/bindings/cxx/iter.cpp b/bindings/cxx/iter.cpp
-index b1acc8c..c2378f5 100644
+index b1acc8c..26291cd 100644
 --- a/bindings/cxx/iter.cpp
 +++ b/bindings/cxx/iter.cpp
-@@ -6,6 +6,7 @@
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2017-2018 Bartosz Golaszewski <bartekgola@gmail.com>
   */
  
- #include <gpiod.hpp>
 +#include <gpiod.h>
+ #include <gpiod.hpp>
  #include <system_error>
  
- namespace gpiod {
 diff --git a/bindings/cxx/line.cpp b/bindings/cxx/line.cpp
-index 859ff55..fa03d12 100644
+index 859ff55..2e9da4f 100644
 --- a/bindings/cxx/line.cpp
 +++ b/bindings/cxx/line.cpp
-@@ -6,6 +6,7 @@
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2017-2018 Bartosz Golaszewski <bartekgola@gmail.com>
   */
  
- #include <gpiod.hpp>
 +#include <gpiod.h>
+ #include <gpiod.hpp>
  #include <array>
  #include <map>
- #include <system_error>
 diff --git a/bindings/cxx/line_bulk.cpp b/bindings/cxx/line_bulk.cpp
-index e77baa2..30a0a30 100644
+index e77baa2..3c8a5a0 100644
 --- a/bindings/cxx/line_bulk.cpp
 +++ b/bindings/cxx/line_bulk.cpp
-@@ -6,6 +6,7 @@
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2017-2018 Bartosz Golaszewski <bartekgola@gmail.com>
   */
  
- #include <gpiod.hpp>
 +#include <gpiod.h>
+ #include <gpiod.hpp>
  #include <map>
  #include <system_error>
- 

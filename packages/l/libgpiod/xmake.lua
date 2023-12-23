@@ -8,16 +8,13 @@ package("libgpiod")
     -- add_versions("v2.0", "a0f835c4ca4a2a3ca021090b574235ba58bb9fd612d8a6051fb1350054e04fdd")
     add_versions("v1.6.4", "9f920260c46b155f65cba8796dcf159e4ba56950b85742af357d75a1af709e68")
    
-    add_patches("v1.6.4", path.join(os.scriptdir(), "patches", "v1.6.4", "fix_cxx.patch"), "8c06d26b3cf4c2acf2bf742b2445083c080832c2c85b50e5d62ae03107f101c1")
+    add_patches("v1.6.4", path.join(os.scriptdir(), "patches", "v1.6.4", "fix_cxx.patch"), "5a56708fe2ba98dac0aadac1246d4fd55d8f34870e85fdc3430fc0a7899b1bcf")
 
     add_configs("enable_bindings_cxx", {description = "Enable C++ bindings", default = true, type = "boolean"})
     add_configs("enable_tools", {description = "Enable tools", default = true, type = "boolean"})
 
     on_install("linux", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        for _, file in ipairs(os.files("bindings/cxx/*.cpp")) do
-            io.replace(file, "::gpiod", "gpiod", {plain = true})
-        end
         local configs = {}
         if package:config("enable_bindings_cxx") then
             configs.enable_bindings_cxx = true
