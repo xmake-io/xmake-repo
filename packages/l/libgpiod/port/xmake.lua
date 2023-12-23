@@ -19,13 +19,6 @@ target("libgpiod")
         target:add("defines", "GPIOD_VERSION_STR=" .. version)
     end)
 
-configvar_check_csnippets("PROGRAM_INVOCATION_NAME", [[#define _GNU_SOURCE
-#include <errno.h>
-extern char *program_invocation_name;]])
-configvar_check_csnippets("PROGRAM_INVOCATION_SHORT_NAME", [[#define _GNU_SOURCE
-#include <errno.h>
-extern char *program_invocation_short_name;]])
-
 for _, tool_file in ipairs(os.files("tools/*.c")) do
     local name = path.basename(tool_file)
     if name ~= "tools-common" then
@@ -36,6 +29,8 @@ for _, tool_file in ipairs(os.files("tools/*.c")) do
             add_headerfiles("tools/tools-common.h")
             add_files("tools/tools-common.c")
 
+            add_defines("program_invocation_short_name=\"" .. name .. "\"")
+            add_defines("program_invocation_name=\"" .. name .. "\"")
             add_deps("libgpiod")
     end
 end
