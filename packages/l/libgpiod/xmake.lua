@@ -12,7 +12,7 @@ package("libgpiod")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         
         local configure = io.readfile("configure.ac")
-        local version = configure:match("AC_INIT%(%[libgpiod%], %[([0-9.]*)%]%)")
+        local version = configure:match("AC_INIT%(%[libgpiod%], %[([0-9%.]+)%]%)")
         print("version: " .. version)
         package:add("defines", "GPIOD_VERSION_STR=" .. version)
 

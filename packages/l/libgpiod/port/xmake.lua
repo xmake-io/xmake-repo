@@ -12,7 +12,11 @@ target("libgpiod")
     add_includedirs("include", {public = true})
     add_includedirs("bindings/cxx", {public = true})
 
-target("gpiod")
-    set_kind("binary")
-    add_files("tools/*.c")
-    add_deps("libgpiod")
+for _, tool_file in ipairs(os.files("tools/*.c")) do
+    local name = path.basename(tool_file)
+    target(name)
+        set_kind("binary")
+        add_files("tools/" .. name .. ".c")
+        add_defines("program_invocation_name=" .. name)
+        add_deps("libgpiod")
+end
