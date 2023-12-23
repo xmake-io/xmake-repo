@@ -3,13 +3,13 @@ option("enable_tools", {default = true, showmenu = true, description = "Enable t
 
 target("libgpiod")
     set_kind("$(kind)")
-    -- set_languages("cxx11")
+    set_languages("cxx11")
+
+    add_includedirs("include", {public = true})
 
     add_headerfiles("include/(gpiod.h)")
     add_headerfiles("lib/uapi/*.h")
     add_files("lib/*.c")
-
-    add_includedirs("include", {public = true})
 
     before_build(function (target)
         local configure = io.readfile("configure.ac")
@@ -23,11 +23,11 @@ if has_config("enable_bindings_cxx") then
         set_languages("cxx17")
         add_deps("libgpiod")
 
+        add_includedirs("bindings/cxx", {public = true})
+    
         add_headerfiles("bindings/cxx/(gpiod.hpp)")
         add_headerfiles("bindings/cxx/(gpiodcxx/**.hpp)")
         add_files("bindings/cxx/*.cpp")
-    
-        add_includedirs("bindings/cxx", {public = true})
 end
 
 if has_config("enable_tools") then
