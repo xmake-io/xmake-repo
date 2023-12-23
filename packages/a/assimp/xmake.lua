@@ -118,17 +118,11 @@ package("assimp")
         end
 
         -- Assimp CMakeLists doesn't find minizip on Windows
-        local ldflags
+        local packagedeps
         if package:is_plat("windows") then
             local minizip = package:dep("minizip")
             if minizip and not minizip:is_system() then
-                local fetchinfo = minizip:fetch({external = false})
-                if fetchinfo then
-                    ldflags = {}
-                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                        table.insert(ldflags, "/LIBPATH:" .. linkdir:gsub("\\", "/"))
-                    end
-                end
+                packagedeps = table.join2(packagedeps or {}, "minizip")
             end
         end
 
@@ -147,7 +141,7 @@ package("assimp")
             end
         end
 
-        import("package.tools.cmake").install(package, configs, {ldflags = ldflags, shflags = ldflags})
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
 
         -- copy pdb
         if package:is_plat("windows") then
