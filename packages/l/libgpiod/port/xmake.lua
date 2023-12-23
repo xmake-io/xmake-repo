@@ -7,7 +7,7 @@ target("libgpiod")
 
     add_headerfiles("bindings/cxx/(gpiod.hpp)")
     add_headerfiles("bindings/cxx/(gpiodcxx/**.hpp)")
-    add_files("bindings/cxx/**.cpp")
+    add_files("bindings/cxx/*.cpp")
    
     add_includedirs("include", {public = true})
     add_includedirs("bindings/cxx", {public = true})
