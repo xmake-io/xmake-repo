@@ -141,7 +141,7 @@ package("assimp")
             end
         end
 
-        import("package.tools.cmake").install(package, configs, {ldflags = ldflags, shflags = ldflags})
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
 
         -- copy pdb
         if package:is_plat("windows") then
