@@ -29,7 +29,7 @@ for _, tool_file in ipairs(os.files("tools/*.c")) do
             add_headerfiles("tools/tools-common.h")
             add_files("tools/tools-common.c")
 
-            add_defines("program_invocation_name=" .. name)
+            add_defines("program_invocation_name=\"" .. name .. "\"")
             add_deps("libgpiod")
     end
 end
