@@ -29,6 +29,7 @@ if has_config("enable_bindings_cxx") then
         add_includedirs("bindings/cxx", {public = true})
         
         add_deps("libgpiod")
+        add_links("libgpiod")
 end
 
 if has_config("enable_tools") then
