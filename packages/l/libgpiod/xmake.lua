@@ -8,7 +8,7 @@ package("libgpiod")
     -- add_versions("v2.0", "a0f835c4ca4a2a3ca021090b574235ba58bb9fd612d8a6051fb1350054e04fdd")
     add_versions("v1.6.4", "9f920260c46b155f65cba8796dcf159e4ba56950b85742af357d75a1af709e68")
    
-    add_patches("v1.6.4", path.join(os.scriptdir(), "patches", "v1.6.4", "fix_cxx.patch"), "9ff7bf4682f5a08400d4954c8dadfb8bb9fe46201beb0d4cc9cbfb121616013a")
+    add_patches("v1.6.4", path.join(os.scriptdir(), "patches", "v1.6.4", "fix_cxx.patch"), "dc96e7fa1cb22fff4e78e8ea5d767aae089bca88a0a8b9d5a074fbeab1c29b73")
 
     add_configs("enable_bindings_cxx", {description = "Enable C++ bindings", default = true, type = "boolean"})
     add_configs("enable_tools", {description = "Enable tools", default = true, type = "boolean"})
