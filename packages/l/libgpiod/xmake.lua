@@ -8,13 +8,6 @@ package("libgpiod")
     add_versions("v2.0", "a0f835c4ca4a2a3ca021090b574235ba58bb9fd612d8a6051fb1350054e04fdd")
     add_versions("v1.6.4", "9f920260c46b155f65cba8796dcf159e4ba56950b85742af357d75a1af709e68")
 
-    on_load("linux", function (package)
-        local configure = io.readfile("configure.ac")
-        local version = configure:match("AC_INIT%(%[libgpiod%], %[([0-9%.]+)%]%)")
-        print("version: " .. version)
-        package:add("defines", "GPIOD_VERSION_STR=" .. version)
-    end)
-
     on_install("linux", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)

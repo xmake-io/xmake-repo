@@ -12,6 +12,13 @@ target("libgpiod")
     add_includedirs("include", {public = true})
     add_includedirs("bindings/cxx", {public = true})
 
+    before_build(function (target)
+        local configure = io.readfile("configure.ac")
+        local version = configure:match("AC_INIT%(%[libgpiod%], %[([0-9%.]+)%]%)")
+        print("version: " .. version)
+        package:add("defines", "GPIOD_VERSION_STR=" .. version)
+    end)
+
 for _, tool_file in ipairs(os.files("tools/*.c")) do
     local name = path.basename(tool_file)
     target(name)
