@@ -13,8 +13,9 @@ package("libgpiod")
         
         local configure = io.readfile("configure.ac")
         local version = configure:match("AC_INIT%(%[libgpiod%], %[(.+)%]%)")
-        package:add("defines", "GPIOD_VERSION_STR=" .. version .. "")
-        
+        print("version: " .. version)
+        package:add("defines", "GPIOD_VERSION_STR=" .. version)
+
         import("package.tools.xmake").install(package)
         package:addenv("PATH", "bin")
     end)
