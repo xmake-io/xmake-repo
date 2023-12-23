@@ -3,7 +3,7 @@ option("enable_tools", {default = true, showmenu = true, description = "Enable t
 
 target("libgpiod")
     set_kind("$(kind)")
-    set_languages("c89")
+    set_languages("c99")
 
     add_headerfiles("include/(gpiod.h)")
     add_headerfiles("lib/uapi/*.h")
