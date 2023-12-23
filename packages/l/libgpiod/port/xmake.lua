@@ -16,7 +16,7 @@ target("libgpiod")
         local configure = io.readfile("configure.ac")
         local version = configure:match("AC_INIT%(%[libgpiod%], %[([0-9%.]+)%]%)")
         print("version: " .. version)
-        package:add("defines", "GPIOD_VERSION_STR=" .. version)
+        add_defines("GPIOD_VERSION_STR=" .. version)
     end)
 
 for _, tool_file in ipairs(os.files("tools/*.c")) do
