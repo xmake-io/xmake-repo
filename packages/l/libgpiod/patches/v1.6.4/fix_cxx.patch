@@ -1,0 +1,60 @@
+diff --git a/bindings/cxx/chip.cpp b/bindings/cxx/chip.cpp
+index 54c85da..757c334 100644
+--- a/bindings/cxx/chip.cpp
++++ b/bindings/cxx/chip.cpp
+@@ -7,6 +7,7 @@
+ 
+ #include <functional>
+ #include <gpiod.hpp>
++#include <gpiod.h>
+ #include <map>
+ #include <system_error>
+ #include <utility>
+diff --git a/bindings/cxx/gpiod.hpp b/bindings/cxx/gpiod.hpp
+index 8dfc172..d56d501 100644
+--- a/bindings/cxx/gpiod.hpp
++++ b/bindings/cxx/gpiod.hpp
+@@ -10,7 +10,6 @@
+ 
+ #include <bitset>
+ #include <chrono>
+-#include <gpiod.h>
+ #include <memory>
+ #include <string>
+ #include <vector>
+diff --git a/bindings/cxx/iter.cpp b/bindings/cxx/iter.cpp
+index b1acc8c..c2378f5 100644
+--- a/bindings/cxx/iter.cpp
++++ b/bindings/cxx/iter.cpp
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <gpiod.hpp>
++#include <gpiod.h>
+ #include <system_error>
+ 
+ namespace gpiod {
+diff --git a/bindings/cxx/line.cpp b/bindings/cxx/line.cpp
+index 859ff55..fa03d12 100644
+--- a/bindings/cxx/line.cpp
++++ b/bindings/cxx/line.cpp
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <gpiod.hpp>
++#include <gpiod.h>
+ #include <array>
+ #include <map>
+ #include <system_error>
+diff --git a/bindings/cxx/line_bulk.cpp b/bindings/cxx/line_bulk.cpp
+index e77baa2..30a0a30 100644
+--- a/bindings/cxx/line_bulk.cpp
++++ b/bindings/cxx/line_bulk.cpp
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <gpiod.hpp>
++#include <gpiod.h>
+ #include <map>
+ #include <system_error>
+ 
