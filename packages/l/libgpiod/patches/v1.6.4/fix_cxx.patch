@@ -10,18 +10,6 @@ index 54c85da..757c334 100644
  #include <map>
  #include <system_error>
  #include <utility>
-diff --git a/bindings/cxx/gpiod.hpp b/bindings/cxx/gpiod.hpp
-index 8dfc172..d56d501 100644
---- a/bindings/cxx/gpiod.hpp
-+++ b/bindings/cxx/gpiod.hpp
-@@ -10,7 +10,6 @@
- 
- #include <bitset>
- #include <chrono>
--#include <gpiod.h>
- #include <memory>
- #include <string>
- #include <vector>
 diff --git a/bindings/cxx/iter.cpp b/bindings/cxx/iter.cpp
 index b1acc8c..c2378f5 100644
 --- a/bindings/cxx/iter.cpp
