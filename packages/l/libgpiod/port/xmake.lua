@@ -2,8 +2,8 @@ target("libgpiod")
     set_kind("$(kind)")
 
     add_headerfiles("include/(gpiod.h)")
+    add_headerfiles("lib/uapi/*.h")
     add_files("lib/*.c")
-    add_files("lib/uapi/*.h")
 
     add_headerfiles("bindings/cxx/(gpiod.hpp)")
     add_headerfiles("bindings/cxx/(gpiodcxx/**.hpp)")
