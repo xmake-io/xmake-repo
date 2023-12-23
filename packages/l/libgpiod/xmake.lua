@@ -38,7 +38,6 @@ package("libgpiod")
                 #include <gpiod.hpp>
                 void test() {
                     gpiod::chip chip("/dev/null");
-                    chip.close();
                 }
             ]]}, {configs = {languages = "c++17"}}))
         end
