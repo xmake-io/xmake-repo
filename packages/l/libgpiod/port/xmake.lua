@@ -1,3 +1,6 @@
+option("enable_bindings_cxx", {default = true, showmenu = true, description = "Enable C++ bindings"})
+option("enable_tools", {default = true, showmenu = true, description = "Enable tools"})
+
 target("libgpiod")
     set_kind("$(kind)")
 
@@ -13,30 +16,34 @@ target("libgpiod")
         target:add("defines", "GPIOD_VERSION_STR=\"" .. version .. "\"")
     end)
 
-target("libgpiod_cxx")
-    set_kind("$(kind)")
-    set_languages("cxx17")
+if has_config("enable_bindings_cxx") then
+    target("libgpiod_cxx")
+        set_kind("$(kind)")
+        set_languages("cxx17")
 
-    add_headerfiles("bindings/cxx/(gpiod.hpp)")
-    add_headerfiles("bindings/cxx/(gpiodcxx/**.hpp)")
-    add_files("bindings/cxx/*.cpp")
-   
-    add_includedirs("bindings/cxx", {public = true})
+        add_headerfiles("bindings/cxx/(gpiod.hpp)")
+        add_headerfiles("bindings/cxx/(gpiodcxx/**.hpp)")
+        add_files("bindings/cxx/*.cpp")
+    
+        add_includedirs("bindings/cxx", {public = true})
 
-    add_deps("libgpiod")
+        add_deps("libgpiod")
+end
 
-for _, tool_file in ipairs(os.files("tools/*.c")) do
-    local name = path.basename(tool_file)
-    if name ~= "tools-common" then
-        target(name)
-            set_kind("binary")
+if has_config("enable_tools") then
+    for _, tool_file in ipairs(os.files("tools/*.c")) do
+        local name = path.basename(tool_file)
+        if name ~= "tools-common" then
+            target(name)
+                set_kind("binary")
 
-            add_files("tools/" .. name .. ".c")
-            add_headerfiles("tools/tools-common.h")
-            add_files("tools/tools-common.c")
+                add_files("tools/" .. name .. ".c")
+                add_headerfiles("tools/tools-common.h")
+                add_files("tools/tools-common.c")
 
-            add_defines("program_invocation_short_name=\"" .. name .. "\"")
-            add_defines("program_invocation_name=\"" .. name .. "\"")
-            add_deps("libgpiod")
+                add_defines("program_invocation_short_name=\"" .. name .. "\"")
+                add_defines("program_invocation_name=\"" .. name .. "\"")
+                add_deps("libgpiod")
+        end
     end
 end

@@ -8,8 +8,18 @@ package("libgpiod")
     add_versions("v2.0", "a0f835c4ca4a2a3ca021090b574235ba58bb9fd612d8a6051fb1350054e04fdd")
     add_versions("v1.6.4", "9f920260c46b155f65cba8796dcf159e4ba56950b85742af357d75a1af709e68")
 
+    add_configs("enable_bindings_cxx", {description = "Enable C++ bindings", default = true, type = "boolean"})
+    add_configs("enable_tools", {description = "Enable tools", default = true, type = "boolean"})
+
     on_install("linux", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        local configs = {}
+        if package:config("enable_bindings_cxx") then
+            configs.enable_bindings_cxx = true
+        end
+        if package:config("enable_tools") then
+            configs.enable_tools = true
+        end
         import("package.tools.xmake").install(package)
         package:addenv("PATH", "bin")
     end)
