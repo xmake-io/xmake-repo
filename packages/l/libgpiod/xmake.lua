@@ -11,7 +11,7 @@ package("libgpiod")
     add_deps("autoconf-archive", "automake", "libtool", "pkg-config")
 
     on_install("linux", function (package)
-        local configs = {"--enable-tools=yes", "--enable-bindings-cxx"}
+        local configs = {"--enable-tools=yes", "--enable-bindings-cxx=yes"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         import("package.tools.autoconf").install(package, configs)
@@ -20,5 +20,12 @@ package("libgpiod")
 
     on_test(function (package)
         os.runv("gpiodetect")
-        assert(package:has_cfuncs("gpiod_api_version", {includes = "gpiod.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <gpiod.hpp>
+            #include <gpiod.h>
+            void test() {
+                gpiod_api_version();
+                gpiod::api_version;
+            }
+        ]]}, {configs = {languages = "c++11"}}))
     end)
