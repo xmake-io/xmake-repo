@@ -23,7 +23,11 @@ for _, tool_file in ipairs(os.files("tools/*.c")) do
     local name = path.basename(tool_file)
     target(name)
         set_kind("binary")
+        
         add_files("tools/" .. name .. ".c")
+        add_headerfiles("tools/tools-common.h")
+        add_files("tools/tools-common.c")
+
         add_defines("program_invocation_name=" .. name)
         add_deps("libgpiod")
 end
