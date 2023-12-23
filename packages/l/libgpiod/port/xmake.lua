@@ -3,6 +3,7 @@ option("enable_tools", {default = true, showmenu = true, description = "Enable t
 
 target("libgpiod")
     set_kind("$(kind)")
+    set_languages("c89")
 
     add_headerfiles("include/(gpiod.h)")
     add_headerfiles("lib/uapi/*.h")
@@ -20,6 +21,7 @@ if has_config("enable_bindings_cxx") then
     target("libgpiod_cxx")
         set_kind("$(kind)")
         set_languages("cxx17")
+        add_deps("libgpiod")
 
         add_headerfiles("bindings/cxx/(gpiod.hpp)")
         add_headerfiles("bindings/cxx/(gpiodcxx/**.hpp)")
@@ -27,7 +29,6 @@ if has_config("enable_bindings_cxx") then
     
         add_includedirs("bindings/cxx", {public = true})
 
-        add_deps("libgpiod")
 end
 
 if has_config("enable_tools") then
@@ -36,6 +37,7 @@ if has_config("enable_tools") then
         if name ~= "tools-common" then
             target(name)
                 set_kind("binary")
+                add_deps("libgpiod")
 
                 add_files("tools/" .. name .. ".c")
                 add_headerfiles("tools/tools-common.h")
@@ -43,7 +45,6 @@ if has_config("enable_tools") then
 
                 add_defines("program_invocation_short_name=\"" .. name .. "\"")
                 add_defines("program_invocation_name=\"" .. name .. "\"")
-                add_deps("libgpiod")
         end
     end
 end
