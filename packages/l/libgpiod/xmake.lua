@@ -8,13 +8,9 @@ package("libgpiod")
     add_versions("v2.0", "a0f835c4ca4a2a3ca021090b574235ba58bb9fd612d8a6051fb1350054e04fdd")
     add_versions("v1.6.4", "9f920260c46b155f65cba8796dcf159e4ba56950b85742af357d75a1af709e68")
 
-    add_deps("autoconf-archive", "automake", "libtool", "pkg-config")
-
     on_install("linux", function (package)
-        local configs = {"--enable-tools=yes", "--enable-bindings-cxx=yes"}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        import("package.tools.autoconf").install(package, configs)
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package)
         package:addenv("PATH", "bin")
     end)
 
