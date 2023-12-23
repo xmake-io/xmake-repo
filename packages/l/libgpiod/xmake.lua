@@ -25,17 +25,21 @@ package("libgpiod")
     end)
 
     on_test(function (package)
-        os.runv("gpiodetect")
         assert(package:check_cxxsnippets({test = [[
             #include <gpiod.h>
             void test() {
                 gpiod_api_version();
             }
         ]]}, {configs = {languages = "c++11"}}))
-        assert(package:check_cxxsnippets({test = [[
-            #include <gpiod.hpp>
-            void test() {
-                gpiod::api_version;
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+        if package:config("enable_bindings_cxx") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <gpiod.hpp>
+                void test() {
+                    gpiod::api_version;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+        if package:config("enable_tools") then
+            os.runv("gpiodetect")
+        end
     end)
