@@ -10,6 +10,11 @@ package("libgpiod")
 
     on_install("linux", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        
+        local configure = io.readfile("configure.ac")
+        local version = configure:match("AC_INIT%(%[libgpiod%], %[(.+)%]%)")
+        package:add("defines", "GPIOD_VERSION_STR=" .. version .. "")
+        
         import("package.tools.xmake").install(package)
         package:addenv("PATH", "bin")
     end)
