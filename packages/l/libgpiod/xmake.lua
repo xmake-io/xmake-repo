@@ -15,6 +15,9 @@ package("libgpiod")
 
     on_install("linux", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        for _, file in ipairs(os.files("bindings/cxx/*.cpp")) do
+            io.replace(file, "::gpiod", "gpiod", {plain = true})
+        end
         local configs = {}
         if package:config("enable_bindings_cxx") then
             configs.enable_bindings_cxx = true

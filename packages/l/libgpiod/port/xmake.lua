@@ -28,7 +28,6 @@ if has_config("enable_bindings_cxx") then
         add_files("bindings/cxx/*.cpp")
     
         add_includedirs("bindings/cxx", {public = true})
-
 end
 
 if has_config("enable_tools") then
