@@ -12,7 +12,7 @@ target("libgpiod")
 
     before_build(function (target)
         local configure = io.readfile("configure.ac")
-        local version = configure:match("AC_INIT%(%[libgpiod%], %[([0-9%.]+)%]%)")
+        local version = configure:match("AC_INIT%(%[libgpiod%], %[?([0-9%.]+)%]?%)")
         target:add("defines", "GPIOD_VERSION_STR=\"" .. version .. "\"")
     end)
 
