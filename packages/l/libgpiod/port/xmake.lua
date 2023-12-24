@@ -28,7 +28,7 @@ if has_config("enable_bindings_cxx") then
 
         add_includedirs("bindings/cxx", {public = true})
 
-        add_deps("libgpiod")
+        add_deps("gpiod")
 end
 
 if has_config("enable_tools") then
@@ -45,7 +45,7 @@ if has_config("enable_tools") then
                 add_defines("program_invocation_short_name=\"" .. name .. "\"")
                 add_defines("program_invocation_name=\"" .. name .. "\"")
                 
-                add_deps("libgpiod")
+                add_deps("gpiod")
         end
     end
 end
