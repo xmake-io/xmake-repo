@@ -33,17 +33,13 @@ if has_config("enable_tools") then
             target(name)
                 set_kind("binary")
                 add_files("tools/" .. name .. ".c")
+
                 add_headerfiles("tools/tools-common.h")
                 add_files("tools/tools-common.c")
 
                 add_defines("program_invocation_short_name=\"" .. name .. "\"")
                 add_defines("program_invocation_name=\"" .. name .. "\"")
-
-                before_build(function (target)
-                    local configure = io.readfile("configure.ac")
-                    local version = configure:match("AC_INIT%(%[libgpiod%], %[?([0-9%.]+)%]?%)")
-                    target:add("defines", "GPIOD_VERSION_STR=\"" .. version .. "\"")
-                end)
+                
                 add_deps("libgpiod")
         end
     end
