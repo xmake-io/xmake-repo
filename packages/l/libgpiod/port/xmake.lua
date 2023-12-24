@@ -12,6 +12,7 @@ target("libgpiod")
     add_includedirs("include", {public = true})
 
     if has_config("enable_bindings_cxx") then
+        set_languages("cxx17")
         add_headerfiles("bindings/cxx/(gpiod.hpp)")
         add_headerfiles("bindings/cxx/(gpiodcxx/**.hpp)")
         add_files("bindings/cxx/*.cpp")
