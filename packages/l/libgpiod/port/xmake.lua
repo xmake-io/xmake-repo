@@ -37,8 +37,9 @@ if has_config("enable_tools") then
         if name ~= "tools-common" then
             target(name)
                 set_kind("binary")
-                add_files("tools/" .. name .. ".c")
+                set_languages("cxx11")
 
+                add_files("tools/" .. name .. ".c")
                 add_headerfiles("tools/tools-common.h")
                 add_files("tools/tools-common.c")
 
