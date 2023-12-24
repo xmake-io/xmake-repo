@@ -2,7 +2,7 @@ add_rules("mode.debug", "mode.release")
 
 add_requires("boost", {configs = {iostreams = true}})
 add_requires("ceres-solver", {configs = {suitesparse = true}})
-add_requires("abseil", "cairo", "eigen", "glog", "lua", "protobuf-cpp")
+add_requires("abseil", "cairo", "eigen", "glog", "lua", "protobuf-cpp", "zlib")
 
 target("cartographer")
     set_kind("$(kind)")
@@ -15,7 +15,8 @@ target("cartographer")
         "cairo", 
         "eigen",
         "glog",
-        "lua"
+        "lua",
+        "zlib"
     )
     
     add_packages("protobuf-cpp", {public = true})

@@ -13,7 +13,7 @@ package("cartographer")
     add_deps("cmake")
     add_deps("boost", {configs = {shared = true, iostreams = true}})
     add_deps("ceres-solver", {configs = {suitesparse = true}})
-    add_deps("abseil", "cairo", "eigen", "lua", "protobuf-cpp")
+    add_deps("abseil", "cairo", "eigen", "lua", "protobuf-cpp", "zlib")
 
     on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         for _, headerfile in ipairs(os.files("cartographer/**.h")) do
