@@ -11,20 +11,31 @@ target("libgpiod")
 
     add_includedirs("include", {public = true})
 
-    if has_config("enable_bindings_cxx") then
-        set_languages("cxx17")
-        add_headerfiles("bindings/cxx/(gpiod.hpp)")
-        add_headerfiles("bindings/cxx/(gpiodcxx/**.hpp)")
-        add_files("bindings/cxx/*.cpp")
-   
-        add_includedirs("bindings/cxx", {public = true})
-    end
-
     before_build(function (target)
         local configure = io.readfile("configure.ac")
         local version = configure:match("AC_INIT%(%[libgpiod%], %[?([0-9%.]+)%]?%)")
         target:add("defines", "GPIOD_VERSION_STR=\"" .. version .. "\"")
     end)
+
+if has_config("enable_bindings_cxx") then
+    target("gpiodcxx")
+        set_kind("$(kind)")
+        set_languages("cxx17")
+
+        add_headerfiles("bindings/cxx/(gpiod.hpp)")
+        add_headerfiles("bindings/cxx/(gpiodcxx/**.hpp)")
+        add_files("bindings/cxx/*.cpp")
+
+        add_includedirs("bindings/cxx", {public = true})
+
+        before_build(function (target)
+            local configure = io.readfile("configure.ac")
+            local version = configure:match("AC_INIT%(%[libgpiod%], %[?([0-9%.]+)%]?%)")
+            target:add("defines", "GPIOD_VERSION_STR=\"" .. version .. "\"")
+        end)
+        
+        add_deps("libgpiod")
+end
 
 if has_config("enable_tools") then
     for _, tool_file in ipairs(os.files("tools/*.c")) do
