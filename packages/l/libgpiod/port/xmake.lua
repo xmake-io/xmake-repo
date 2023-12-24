@@ -22,13 +22,23 @@ if has_config("enable_bindings_cxx") then
         set_kind("$(kind)")
         set_languages("cxx17")
 
+        add_headerfiles("include/(gpiod.h)")
+        add_headerfiles("lib/uapi/*.h")
+        add_files("lib/*.c")
+        
+        add_includedirs("include")
+
         add_headerfiles("bindings/cxx/(gpiod.hpp)")
         add_headerfiles("bindings/cxx/(gpiodcxx/**.hpp)")
         add_files("bindings/cxx/*.cpp")
 
         add_includedirs("bindings/cxx", {public = true})
 
-        add_deps("gpiod")
+        before_build(function (target)
+            local configure = io.readfile("configure.ac")
+            local version = configure:match("AC_INIT%(%[libgpiod%], %[?([0-9%.]+)%]?%)")
+            target:add("defines", "GPIOD_VERSION_STR=\"" .. version .. "\"")
+        end)
 end
 
 if has_config("enable_tools") then
