@@ -24,6 +24,7 @@ package("libgpiod")
             configs.enable_tools = true
         end
         import("package.tools.xmake").install(package)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
