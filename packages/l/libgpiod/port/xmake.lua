@@ -1,7 +1,7 @@
 option("enable_bindings_cxx", {default = true, showmenu = true, description = "Enable C++ bindings"})
 option("enable_tools", {default = true, showmenu = true, description = "Enable tools"})
 
-target("libgpiod")
+target("gpiod")
     set_kind("$(kind)")
     set_languages("cxx11")
 
