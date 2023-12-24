@@ -7,6 +7,8 @@ package("pigpio")
 
     add_versions("v79", "c5337c0b7ae888caf0262a6f476af0e2ab67065f7650148a0b21900b8d1eaed7")
 
+    add_syslinks("pthread")
+
     add_deps("cmake")
 
     on_install("linux", function (package)
