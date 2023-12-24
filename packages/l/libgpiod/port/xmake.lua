@@ -31,11 +31,6 @@ if has_config("enable_tools") then
         if name ~= "tools-common" then
             target(name)
                 set_kind("binary")
-
-                add_headerfiles("include/(gpiod.h)")
-                add_headerfiles("lib/uapi/*.h")
-                add_files("lib/*.c")
-
                 add_files("tools/" .. name .. ".c")
                 add_headerfiles("tools/tools-common.h")
                 add_files("tools/tools-common.c")
@@ -48,6 +43,7 @@ if has_config("enable_tools") then
                     local version = configure:match("AC_INIT%(%[libgpiod%], %[?([0-9%.]+)%]?%)")
                     target:add("defines", "GPIOD_VERSION_STR=\"" .. version .. "\"")
                 end)
+                add_deps("libgpiod")
         end
     end
 end
