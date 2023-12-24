@@ -31,7 +31,7 @@ package("libgpiod")
                 struct gpiod_chip *chip;
                 chip = gpiod_chip_open("/dev/null");
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c11"}}))
         if package:config("enable_bindings_cxx") then
             assert(package:check_cxxsnippets({test = [[
                 #include <gpiod.hpp>
