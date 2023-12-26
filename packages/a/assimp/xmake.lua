@@ -107,10 +107,9 @@ package("assimp")
                 io.replace(cmakefile, "-Werror", "", {plain = true})
             end
         end
-        if not package:gitref() and package:version():eq("v5.2.5") then
-            -- Remove /WX from CMakeLists for MSVC: https://github.com/assimp/assimp/pull/5183
-            io.replace("CMakeLists.txt", "ADD_COMPILE_OPTIONS(/bigobj /W4 /WX )", "ADD_COMPILE_OPTIONS(/bigobj)", {plain = true})
-            io.replace("CMakeLists.txt", "ADD_COMPILE_OPTIONS(/MP /bigobj /W4 /WX)", "ADD_COMPILE_OPTIONS(/MP /bigobj)", {plain = true})
+        -- fix cmake_install failed
+        if not package:gitref() and package:version():ge("v5.3.0") and package:is_plat("windows") and package:is_debug() then
+            io.replace("code/CMakeLists.txt", "IF(GENERATOR_IS_MULTI_CONFIG)", "IF(TRUE)", {plain = true})
         end
         if package:is_plat("mingw") and package:version():lt("v5.1.5") then
             -- CMAKE_COMPILER_IS_MINGW has been removed: https://github.com/assimp/assimp/pull/4311
