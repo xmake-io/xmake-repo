@@ -21,10 +21,10 @@ package("llvm")
     elseif is_plat("macosx") then
         if is_arch("x86_64") then
                 set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version).tar.xz", {version = function (version)
-                if version:lt("15.0.7") then
-                    return version .. "/clang+llvm-" .. version .. "-x86_64-apple-darwin21.0"
-                else
+                if version:lt("15.0") then
                     return version .. "/clang+llvm-" .. version .. "-x86_64-apple-darwin"
+                else
+                    return version .. "/clang+llvm-" .. version .. "-x86_64-apple-darwin21.0"
                 end
             end})
             add_versions("11.0.0", "b93886ab0025cbbdbb08b46e5e403a462b0ce034811c929e96ed66c2b07fe63a")
