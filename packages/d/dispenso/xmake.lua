@@ -18,10 +18,13 @@ package("dispenso")
     add_deps("cmake")
     add_deps("concurrentqueue")
 
-    on_install(function (package)
+    on_install("windows|x64", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", "wasm", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DDISPENSO_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
+
+        io.replace("dispenso/CMakeLists.txt", "-Werror", "", {plain = true})
+        io.replace("dispenso/CMakeLists.txt", "Synchronization", "Synchronization winmm", {plain = true})
         import("package.tools.cmake").install(package, configs)
 
         os.tryrm(package:installdir("include/dispenso/third-party"))
