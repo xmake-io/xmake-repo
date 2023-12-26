@@ -20,12 +20,17 @@ package("llvm")
         end
     elseif is_plat("macosx") then
         if is_arch("x86_64") then
-            set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-apple-darwin.tar.xz")
-            set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-arm64-apple-darwin21.0.tar.xz", {version = "15.0.7"})
+                set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version).tar.xz", {version = function (version)
+                if version:lt("15.0.7") then
+                    return version .. "/clang+llvm-" .. version .. "-x86_64-apple-darwin21.0"
+                else
+                    return version .. "/clang+llvm-" .. version .. "-x86_64-apple-darwin"
+                end
+            end})
             add_versions("11.0.0", "b93886ab0025cbbdbb08b46e5e403a462b0ce034811c929e96ed66c2b07fe63a")
             add_versions("13.0.0", "d051234eca1db1f5e4bc08c64937c879c7098900f7a0370f3ceb7544816a8b09")
             add_versions("14.0.0", "cf5af0f32d78dcf4413ef6966abbfd5b1445fe80bba57f2ff8a08f77e672b9b3")
-            add_versions("15.0.7", "d16b6d536364c5bec6583d12dd7e6cf841b9f508c4430d9ee886726bd9983f1c") -- this is an exception
+            add_versions("15.0.7", "d16b6d536364c5bec6583d12dd7e6cf841b9f508c4430d9ee886726bd9983f1c")
         elseif is_arch("arm64") then
             set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-arm64-apple-darwin21.0.tar.xz")
             add_versions("15.0.0", "cfd5c3fa07d7fccea0687f5b4498329a6172b7a15bbc45b547d0ac86bd3452a5")
