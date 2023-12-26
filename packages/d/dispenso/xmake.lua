@@ -33,5 +33,5 @@ package("dispenso")
             void test() {
                 dispenso::ThreadPool& threadPool = dispenso::globalThreadPool();
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)
