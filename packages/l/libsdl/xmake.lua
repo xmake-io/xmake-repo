@@ -226,6 +226,7 @@ package("libsdl")
             #endif
             int main(int argc, char** argv) {
                 SDL_Init(0);
+                return 0;
             }
         ]]}));
     end)
