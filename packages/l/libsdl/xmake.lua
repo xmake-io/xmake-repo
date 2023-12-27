@@ -97,7 +97,7 @@ package("libsdl")
     on_component("main", function (package, component)
         local libsuffix = package:is_debug() and "d" or ""
         component:add("links", "SDL2main" .. libsuffix)
-        if package:is_plat("windows") then
+        if package:is_plat("windows", "mingw") then
             component:add("ldflags", "-subsystem:windows")
         end
         component:add("deps", "lib")
@@ -223,7 +223,7 @@ package("libsdl")
         local defines = {}
         local ldflags = {}
         if package:config("sdlmain") or package:config("use_sdlmain") then
-            if package:is_plat("windows") then
+            if package:is_plat("windows", "mingw") then
                 table.insert(ldflags, "-subsystem:windows")
             end
         else
