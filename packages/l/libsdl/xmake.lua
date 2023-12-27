@@ -64,9 +64,6 @@ package("libsdl")
 
     add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
 
-    -- @note deprecated
-    add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
-
     if is_plat("linux") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
         add_configs("wayland", {description = "Enables Wayland support", default = true, type = "boolean"})
@@ -83,7 +80,7 @@ package("libsdl")
         if package:config("sdlmain") or package:config("use_sdlmain") then
             package:add("components", "main")
         else
-            component:add("defines", "SDL_MAIN_HANDLED")
+            package:add("defines", "SDL_MAIN_HANDLED")
         end
         package:add("components", "lib")
         if package:is_plat("linux") and (package:config("x11") or package:config("with_x")) then
@@ -97,8 +94,10 @@ package("libsdl")
     on_component("main", function (package, component)
         local libsuffix = package:is_debug() and "d" or ""
         component:add("links", "SDL2main" .. libsuffix)
-        if package:is_plat("windows", "mingw") then
+        if package:is_plat("windows") then
             component:add("ldflags", "-subsystem:windows")
+        elseif package:is_plat("mingw") then
+            component:add("ldflags", "-Wl,-subsystem,windows")
         end
         component:add("deps", "lib")
     end)
@@ -220,15 +219,5 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        local defines = {}
-        local ldflags = {}
-        if package:config("sdlmain") or package:config("use_sdlmain") then
-            if package:is_plat("windows", "mingw") then
-                table.insert(ldflags, "-subsystem:windows")
-            end
-        else
-            table.insert(defines, "SDL_MAIN_HANDLED")
-        end
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h",
-            configs = {defines = defines}}))
+        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h"}))
     end)
