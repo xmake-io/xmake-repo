@@ -62,7 +62,7 @@ package("libsdl")
 
     add_includedirs("include", "include/SDL2")
 
-    add_configs("sdlmain", {description = "Use SDL_main entry point", default = false, type = "boolean"})
+    add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
 
     if is_plat("linux") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
@@ -219,5 +219,11 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <SDL2/SDL.h>
+            #undef main
+            int main(int argc, char** argv) {
+                SDL_Init(0);
+            }
+        ]]}));
     end)
