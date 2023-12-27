@@ -223,7 +223,7 @@ package("libsdl")
             #include <SDL2/SDL.h>
             #if defined(__MINGW32__) || defined(__MINGW64__)
             #   undef main
-            end
+            #endif
             int main(int argc, char** argv) {
                 SDL_Init(0);
             }
