@@ -82,6 +82,8 @@ package("libsdl")
     on_load(function (package)
         if package:config("sdlmain") or package:config("use_sdlmain") then
             package:add("components", "main")
+        else
+            component:add("defines", "SDL_MAIN_HANDLED")
         end
         package:add("components", "lib")
         if package:is_plat("linux") and (package:config("x11") or package:config("with_x")) then
@@ -95,7 +97,9 @@ package("libsdl")
     on_component("main", function (package, component)
         local libsuffix = package:is_debug() and "d" or ""
         component:add("links", "SDL2main" .. libsuffix)
-        component:add("defines", "SDL_MAIN_HANDLED")
+        if package:is_plat("windows") then
+            component:add("ldflags", "-subsystem:windows")
+        end
         component:add("deps", "lib")
     end)
 
@@ -216,5 +220,15 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        local defines = {}
+        local ldflags = {}
+        if package:config("sdlmain") or package:config("use_sdlmain") then
+            if package:is_plat("windows") then
+                table.insert(ldflags, "-subsystem:windows")
+            end
+        else
+            table.insert(defines, "SDL_MAIN_HANDLED")
+        end
+        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h",
+            configs = {defines = defines}}))
     end)
