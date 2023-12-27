@@ -221,7 +221,9 @@ package("libsdl")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <SDL2/SDL.h>
-            #undef main
+            #if defined(__MINGW32__) || defined(__MINGW64__)
+            #   undef main
+            end
             int main(int argc, char** argv) {
                 SDL_Init(0);
             }
