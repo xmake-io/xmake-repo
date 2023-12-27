@@ -5,8 +5,6 @@ package("muduo")
     add_urls("https://github.com/chenshuo/muduo.git")
     add_versions("2022.11.01", "f29ca0ebc2f3b0ab61c1be08482a5524334c3d6f")
 
-    add_configs("optional_deps", {description = "add optional deps", default = false, type = "boolean"})
-
     add_deps("cmake")
     add_deps("boost")
 
