@@ -62,7 +62,11 @@ package("libsdl")
 
     add_includedirs("include", "include/SDL2")
 
-    add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+    if is_plat("android") then
+        add_configs("sdlmain", {description = "Use SDL_main entry point", default = false, type = "boolean", readonly = true})
+    else
+        add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+    end
 
     if is_plat("linux") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
