@@ -10,7 +10,7 @@ package("libdwarf")
 
     add_deps("cmake")
     add_deps("zlib", "zstd")
-    if is_plat("mingw") or is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_links("dwarf")
     end
 
@@ -20,7 +20,7 @@ package("libdwarf")
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_NON_SHARED=" .. (package:config("shared") and "OFF" or "ON"))
 
-        if (package:is_plat("mingw") or package:is_plat("windows")) and not package:config("shared") then
+        if is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "LIBDWARF_STATIC=1")
         end
 
