@@ -3,11 +3,18 @@ package("vulkan-headers")
     set_homepage("https://github.com/KhronosGroup/Vulkan-Headers/")
     set_description("Vulkan Header files and API registry")
     set_license("Apache-2.0")
-
+                    
     add_urls("https://github.com/KhronosGroup/Vulkan-Headers.git")
-    add_urls("https://github.com/KhronosGroup/Vulkan-Headers/archive/$(version).tar.gz", {version = function (version) return version:startswith("v") and version or "sdk-" .. version:gsub("%+", ".") end})
+    add_urls("https://github.com/KhronosGroup/Vulkan-Headers/archive/$(version).tar.gz", {version = function (version)
+        local prefix = "sdk-"
+        if version:gt("1.3.261+1") then
+            prefix = "vulkan-sdk-"
+        end
+        return version:startswith("v") and version or prefix .. version:gsub("%+", ".")
+    end})
 
-    -- when adding a new sdk version, please also update vulkan-loader, spirv-headers, spirv-reflect, glslang and volk packages
+    -- when adding a new sdk version, please also update vulkan-loader, vulkan-utility-libraries, spirv-headers, spirv-reflect, glslang and volk packages
+    add_versions("1.3.268+0", "94993cbe2b1a604c0d5d9ea37a767e1aba4d771d2bfd4ddceefd66243095164f")
     add_versions("1.3.261+1", "7a25ebdb6325e626dc5d33bc937b289ccce7ddb7b0ac1a1b1d5d7ff33b6715d3")
     add_versions("1.3.250+1", "e5b563a415e73725bcf471b7e3e837804ed3703b47cce4553db5e7e73821c5ee")
     add_versions("1.3.246+1", "f9fa6a05ac1e059cd6f8f3a21705fb5bc093743d97315b7acf3bc20921abc27c")

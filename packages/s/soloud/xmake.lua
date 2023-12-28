@@ -12,8 +12,6 @@ package("soloud")
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
-    elseif is_plat("macosx", "iphoneos") then
-        add_frameworks("AudioToolbox", "AVFoundation", "CoreFoundation", "Foundation")
     end
 
     on_install(function (package)
@@ -40,7 +38,6 @@ package("soloud")
                 add_files("src/**.c|tools/**.c|backend/**.c")
 
                 if is_plat("iphoneos", "macosx") then
-                    add_frameworks("AudioToolbox", "AVFoundation", "CoreFoundation", "Foundation")
                     add_files("src/backend/miniaudio/*.mm")
                 else
                     add_files("src/backend/miniaudio/*.cpp")

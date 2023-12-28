@@ -6,6 +6,11 @@ package("utfcpp")
 
     add_urls("https://github.com/nemtrif/utfcpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nemtrif/utfcpp.git")
+    add_versions("v4.0.4", "7c8a403d0c575d52473c8644cd9eb46c6ba028d2549bc3e0cdc2d45f5cfd78a0")
+    add_versions("v4.0.3", "05e7d023b2bf606777442efc49038e0efce317596582db15adf5c776e237a326")
+    add_versions("v4.0.2", "d3c032650cd30823b7ebbebbe91f39d8c0e91221b2e3e92b93ca425478f986f2")
+    add_versions("v4.0.1", "9014342a716258da00b97bf8c201a2edc4d72d2025cd8d62f0650ac627038f95")
+    add_versions("v4.0.0", "ac44d9652aa2ee64d405c1705718f26b385337a9b8cf20bf2b2aac6435a16c1e")
     add_versions("v3.2.5", "14fd1b3c466814cb4c40771b7f207b61d2c7a0aa6a5e620ca05c00df27f25afd")
     add_versions("v3.2.4", "fde21a4c519eed25f095a1cd8490167409cc70d7b5e9c38756142e588ccb7c7e")
     add_versions("v3.2.3", "3ba9b0dbbff08767bdffe8f03b10e596ca351228862722e4c9d4d126d2865250")
@@ -25,7 +30,7 @@ package("utfcpp")
     on_test(function (package)
         local test_snippet = [[
             #define UTF_CPP_CPLUSPLUS 201103L
-            #include <utf8cpp/utf8.h>
+            #include <utf8.h>
             void test() {
                 std::string line("你好，世界");
                 std::u16string u16line = utf8::utf8to16(line);

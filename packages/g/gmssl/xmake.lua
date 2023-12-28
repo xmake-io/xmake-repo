@@ -13,7 +13,7 @@ package("gmssl")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32")
+        add_syslinks("ws2_32", "advapi32")
     elseif is_plat("linux") then
         add_syslinks("dl")
     elseif is_plat("macosx") then

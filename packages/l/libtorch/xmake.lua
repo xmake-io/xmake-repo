@@ -12,6 +12,7 @@ package("libtorch")
     add_versions("v1.9.1", "dfbd030854359207cb3040b864614affeace11ce")
     add_versions("v1.11.0", "bc2c6edaf163b1a1330e37a6e34caf8c553e4755")
     add_versions("v1.12.1", "664058fa83f1d8eede5d66418abff6e20bd76ca8")
+    add_versions("v2.1.0", "7bcf7da3a268b435777fe87c7794c382f444e86d")
 
     add_patches("1.9.x", path.join(os.scriptdir(), "patches", "1.9.0", "gcc11.patch"), "4191bb3296f18f040c230d7c5364fb160871962d6278e4ae0f8bc481f27d8e4b")
     add_patches("1.11.0", path.join(os.scriptdir(), "patches", "1.11.0", "gcc11.patch"), "1404b0bc6ce7433ecdc59d3412e3d9ed507bb5fd2cd59134a254d7d4a8d73012")
@@ -72,9 +73,10 @@ package("libtorch")
 
     on_install("windows|x64", "macosx", "linux", function (package)
         import("package.tools.cmake")
+        import("core.tool.toolchain")
 
         if package:is_plat("windows") then
-            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            local vs = toolchain.load("msvc"):config("vs")
             if tonumber(vs) < 2019 then
                 raise("Your compiler is too old to use this library.")
             end
@@ -113,22 +115,26 @@ package("libtorch")
 
         -- some patches to the third-party cmake files
         io.replace("third_party/fbgemm/CMakeLists.txt", "PRIVATE FBGEMM_STATIC", "PUBLIC FBGEMM_STATIC", {plain = true})
-        -- Workaround to compile with GCC-12.
-        -- Refer to [this pytorch issue](https://github.com/pytorch/pytorch/issues/77939).
-        io.replace("third_party/fbgemm/CMakeLists.txt",
-            'string(APPEND CMAKE_CXX_FLAGS " -Werror")',
-            'string(APPEND CMAKE_CXX_FLAGS " -Werror")\n  string(APPEND CMAKE_CXX_FLAGS " -Wno-uninitialized")',
-            {plain = true}
-        )
         io.replace("third_party/protobuf/cmake/install.cmake", "install%(DIRECTORY.-%)", "")
-        if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
-            io.replace("third_party/fbgemm/CMakeLists.txt", "MT", "MD", {plain = true})
+        if package:is_plat("windows") then
+            if package:config("vs_runtime"):startswith("MD") then
+                io.replace("third_party/fbgemm/CMakeLists.txt", "MT", "MD", {plain = true})
+                io.replace("c10/macros/Macros.h", "extern \"C\" {\nC10_IMPORT", "extern \"C\" {\n__declspec(dllimport)", {plain = true})
+            else
+                io.replace("CMakeLists.txt", "\"NOT BUILD_SHARED_LIBS\" OFF", "\"NOT BUILD_SHARED_LIBS\" ON", {plain = true})
+                io.replace("c10/macros/Macros.h", "extern \"C\" {\nC10_IMPORT", "extern \"C\" {", {plain = true})
+            end
         end
 
         -- prepare python
-        os.vrun("python -m pip install typing_extensions pyyaml")
+        if package:is_plat("windows") then
+            os.vrun("python -m pip install typing_extensions pyyaml")
+        else
+            os.vrun("python3 -m pip install typing_extensions pyyaml")
+        end
         local configs = {"-DUSE_MPI=OFF",
-                         "-DCMAKE_INSTALL_LIBDIR=lib",
+                         "-DUSE_NUMA=OFF",
+                         "-DUSE_MAGMA=OFF",
                          "-DBUILD_TEST=OFF",
                          "-DATEN_NO_TEST=ON"}
         if package:config("python") then
@@ -140,7 +146,7 @@ package("libtorch")
         end
 
         -- prepare for installation
-        local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
+        local envs = cmake.buildenvs(package)
         if not package:is_plat("macosx") then
             if package:config("blas") == "mkl" then
                 table.insert(configs, "-DBLAS=MKL")
@@ -163,8 +169,18 @@ package("libtorch")
         table.insert(configs, "-DUSE_DISTRIBUTED=" .. (package:config("distributed") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_SYSTEM_PYBIND11=" .. (package:config("pybind11") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_CUSTOM_PROTOBUF=" .. (package:config("protobuf-cpp") and "OFF" or "ON"))
+        local pythonpath, err = os.iorun("python -c \"import sys; print(sys.executable)\"")
+        table.insert(configs, "-DPYTHON_EXECUTABLE=" .. pythonpath)
         if package:is_plat("windows") then
             table.insert(configs, "-DCAFFE2_USE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DCPUINFO_RUNTIME_TYPE=" .. (package:config("vs_runtime"):startswith("MT") and "static" or "shared"))
+            local vs_sdkver = toolchain.load("msvc"):config("vs_sdkver")
+            if vs_sdkver then
+                local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
+                assert(tonumber(build_ver) >= 18362, "libtorch requires Windows SDK to be at least 10.0.18362.0")
+                table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
+                table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
+            end
         end
 
         local opt = {envs = envs}
@@ -211,5 +227,5 @@ package("libtorch")
                 auto b = torch::tensor({1, 2, 3});
                 auto c = torch::dot(a, b);
             }
-        ]]}, {configs = {languages = "c++14"}, includes = "torch/torch.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "torch/torch.h"}))
     end)
