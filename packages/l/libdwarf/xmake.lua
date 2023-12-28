@@ -1,6 +1,5 @@
 package("libdwarf")
 
-    set_kind("library")
     set_homepage("https://www.prevanders.net/dwarf.html")
     set_description("Libdwarf is a C library intended to simplify reading (and writing) applications using DWARF2, DWARF3, DWARF4 and DWARF5")
 
@@ -14,7 +13,7 @@ package("libdwarf")
         add_links("dwarf")
     end
 
-    on_install("linux", "macosx", "mingw", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
