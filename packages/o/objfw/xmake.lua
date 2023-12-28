@@ -2,11 +2,13 @@ package("objfw")
     set_homepage("https://objfw.nil.im")
     set_description("Portable framework for the Objective-C language.")
 
-    add_urls("https://github.com/ObjFW/ObjFW.git")
-    add_versions("1.0.0", "8d19ba9c8f1955673569e10919025624975e896f")
-    add_versions("1.0.1", "c2b00c50bbfbd9028a452df4ee89b8802748c747")
-    add_versions("1.0.2", "0f38d7b4c2d514c5fd2018daec24fb95dd8897bb")
-    add_versions("1.0.3", "3d46fe3a7f89bdeeb1def38a3ef1594489949c52")
+    add_urls("https://objfw.nil.im/downloads/objfw-$(version).tar.gz")
+    add_versions("1.0.0", "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0")
+    add_versions("1.0.1", "953fd8a7819fdbfa3b3092b06ac7f43a74bac736c120a40f2e3724f218d215f1")
+    add_versions("1.0.2", "b680be08bfade376d17958f3ceadaf223ac5d08df71a4bd787a42640a86db7cb")
+    add_versions("1.0.3", "1c81d7d03578b2d9084fc5d8722d4eaa4bdc2f3f09ce41231e7ceab8212fae17")
+    add_versions("1.0.4", "c62c61fc3f1b2d5c1d78369c602a6e82b32ade5c8ec0e9c410646d1554bf1e26")
+    add_versions("1.0.5", "798bda0590970fea10d5c8064e98088bb9960b3bc0475d92db443b0df9f205c4")
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
