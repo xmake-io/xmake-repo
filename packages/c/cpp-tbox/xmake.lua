@@ -16,7 +16,7 @@ package("cpp-tbox")
         end
     end)
 
-    on_install("linux", function (package)
+    on_install("linux", "cross", function (package)
         local configs = {"-DCMAKE_ENABLE_TEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DTBOX_ENABLE_MQTT=" .. (package:config("mqtt") and "ON" or "OFF"))
