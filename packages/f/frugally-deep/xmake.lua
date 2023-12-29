@@ -22,10 +22,16 @@ package("frugally-deep")
     end)
 
     on_test(function (package)
+        local cxflags
+        if package:is_plat("windows") then
+            cxflags = "/bigobj"
+        else
+            cxflags = "-Wa,-mbig-obj"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <fdeep/fdeep.hpp>
             void test() {
                 const auto model = fdeep::load_model("fdeep_model.json");
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++14", cxflags = cxflags}}))
     end)
