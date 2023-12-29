@@ -23,9 +23,7 @@ package("frugally-deep")
 
     on_test(function (package)
         local cxflags
-        if package:is_plat("windows") then
-            cxflags = "/bigobj"
-        else
+        if package:is_plat("mingw") then
             cxflags = "-Wa,-mbig-obj"
         end
         assert(package:check_cxxsnippets({test = [[
