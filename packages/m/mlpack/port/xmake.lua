@@ -3,7 +3,7 @@ add_rules("mode.debug", "mode.release")
 option("openmp", {default = false, showmenu = true, description = "Enable OpenMP"})
 
 if has_config("openmp") then
-    add_requires("openmp")
+    add_requires("openmp", {configs = { feature = "llvm" }})
 end
 
 add_requires("armadillo", "cereal", "ensmallen", "stb")

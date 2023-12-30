@@ -13,13 +13,13 @@ package("mlpack")
         add_syslinks("m", "pthread")
     end
 
-    add_configs("openmp", {description = "Enable OpenMP", default = false, type = "boolean"})
+    add_configs("openmp", {description = "Enable OpenMP", default = true, type = "boolean"})
     
     add_deps("armadillo", "cereal", "ensmallen", "stb")
 
     on_load(function(package)
         if package:config("openmp") then
-            package:add("deps", "openmp")
+            package:add("deps", "openmp", {configs = { feature = "llvm" }})
         end
     end)
 
