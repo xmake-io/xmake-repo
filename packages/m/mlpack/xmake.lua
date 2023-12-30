@@ -11,10 +11,6 @@ package("mlpack")
 
     if is_plat("linux") then
         add_syslinks("m", "pthread")
-    elseif is_plat("windows") then
-        add_cxxflags("/bigobj")
-    elseif is_plat("mingw") then
-        add_cxxflags("-Wa,-mbig-obj")
     end
 
     add_deps("armadillo", "cereal", "ensmallen", "stb")
