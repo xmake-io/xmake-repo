@@ -19,7 +19,7 @@ package("mlpack")
 
     add_deps("armadillo", "cereal", "ensmallen", "stb")
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
