@@ -11,6 +11,7 @@ add_requires("armadillo", "cereal", "ensmallen", "stb")
 target("mlpack")
     set_kind("headeronly")
     set_languages("cxx17")
+    add_options("openmp")
 
     add_packages("armadillo", "cereal", "ensmallen", "stb")
 
