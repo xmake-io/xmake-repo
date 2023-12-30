@@ -19,17 +19,19 @@ package("mlpack")
 
     on_load(function(package)
         if package:config("openmp") then
-            package:add("deps", "openmp", {configs = { feature = "llvm" }})
+            if is_plat("windows") then
+                package:add("deps", "openmp", {configs = { feature = "llvm" }})
+            else
+                package:add("deps", "openmp")
+            end
         end
     end)
 
     on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        local configs = {}
-        if package:config("openmp") then
-            configs.openmp = true
-        end
-        import("package.tools.xmake").install(package, configs)
+        os.cp("src/mlpack/methods", package:installdir("include/mlpack"))
+        os.cp("src/mlpack/core", package:installdir("include/mlpack"))
+        os.cp("src/mlpack/*.hpp", package:installdir("include/mlpack"))
+        os.cp("src/mlpack.hpp", package:installdir("include"))
     end)
 
     on_test(function (package)
