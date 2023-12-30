@@ -2,6 +2,7 @@ package("mlpack")
     set_kind("library", {headeronly = true})
     set_homepage("https://www.mlpack.org/")
     set_description("mlpack: a fast, header-only C++ machine learning library")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/mlpack/mlpack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mlpack/mlpack.git")
