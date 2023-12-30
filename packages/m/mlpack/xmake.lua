@@ -17,7 +17,7 @@ package("mlpack")
         add_cxxflags("-Wa,-mbig-obj")
     end
 
-    add_deps("armadillo", "cereal", "ensmallen")
+    add_deps("armadillo", "cereal", "ensmallen", "stb")
 
     on_install("windows", "macosx", "linux", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
