@@ -30,9 +30,7 @@ package("mlpack")
             void test() {
                 arma::mat data;
                 arma::rowvec responses;
-                
                 LinearRegression lr(data, responses);
-
                 arma::vec parameters = lr.Parameters();
             }
         ]]}, {configs = {languages = "cxx17"}}))
