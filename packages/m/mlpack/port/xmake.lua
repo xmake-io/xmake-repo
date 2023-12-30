@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
 
-option("openmp", {default = false, showmenu = true, description = "Enable OpenMP"})
+option("openmp", {default = true, showmenu = true, description = "Enable OpenMP"})
 
 if has_config("openmp") then
     add_requires("openmp", {configs = { feature = "llvm" }})
