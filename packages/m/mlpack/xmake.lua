@@ -13,10 +13,22 @@ package("mlpack")
         add_syslinks("m", "pthread")
     end
 
+    add_configs("openmp", {description = "Enable OpenMP", default = false, type = "boolean"})
+    
     add_deps("armadillo", "cereal", "ensmallen", "stb")
+
+    on_load(function(package)
+        if package:config("openmp") then
+            package:add("deps", "openmp")
+        end
+    end)
 
     on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        local configs = {}
+        if package:config("openmp") then
+            configs.openmp = true
+        end
         import("package.tools.xmake").install(package, configs)
     end)
 
