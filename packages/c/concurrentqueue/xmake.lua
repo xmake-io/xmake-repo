@@ -26,6 +26,13 @@ package("concurrentqueue")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
+        io.writefile(path.join(package:installdir("include"), "concurrentqueue", "concurrentqueue.h"), [[
+#pragma once
+
+#pragma message please update include <concurrentqueue/concurrentqueue.h> to <concurrentqueue.h>
+#include "moodycamel/concurrentqueue.h"
+        ]])
+
         if package:config("c_api") then
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
