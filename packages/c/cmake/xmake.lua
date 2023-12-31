@@ -1,5 +1,4 @@
 package("cmake")
-
     set_kind("binary")
     set_homepage("https://cmake.org")
     set_description("A cross-platform family of tool designed to build, test and package software")
@@ -106,7 +105,7 @@ package("cmake")
     end)
 
     on_install("@bsd", function (package)
-        os.vrunv("sh", {"./bootstrap", "--prefix=" .. package:installdir()})
+        os.vrunv("sh", {"./bootstrap", "--parallel=4", "--prefix=" .. package:installdir()})
         import("package.tools.make").install(package)
     end)
 
