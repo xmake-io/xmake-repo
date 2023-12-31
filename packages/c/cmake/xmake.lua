@@ -29,7 +29,6 @@ package("cmake")
                 end})
             add_versions("3.24.2", "5f1c0d49bac89915b5c68811c2430e5de6c8e606785b9f2919eabee86c2f12b4")
             add_versions("3.26.4", "1c9843c92f40bee1a16baa12871693d3e190c9a222259a89e406d4d9aae6cf74")
-            add_versions("3.26.4", "1c9843c92f40bee1a16baa12871693d3e190c9a222259a89e406d4d9aae6cf74")
             add_versions("3.28.1", "e84d88e46ed8c85fbe259bcd4ca07df7a928df87e84013e0da34d91b01a25d71")
         else
             add_urls("https://cmake.org/files/v$(version)-x86_64.tar.gz", {version = function (version)
@@ -83,10 +82,10 @@ package("cmake")
             add_versions("3.28.1", "e9591cfdb1d394eee84acdecf880cbd91cf0707dfd0d58bf3796b88475f46cb9")
         elseif os.arch() == "arm64" then
             add_urls("https://cmake.org/files/v$(version).zip", {excludes = {"*/doc/*"}, version = function (version)
-                    return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version .. "-windows-arm64")
+                    return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version .. "-windows-arm64"
                 end})
             add_urls("https://github.com/Kitware/CMake/releases/download/v$(version).zip", {excludes = {"*/doc/*"}, version = function (version)
-                    return version .. "/cmake-" .. version .. "-windows-arm64")
+                    return version .. "/cmake-" .. version .. "-windows-arm64"
                 end})
             add_versions("3.28.1", "a839b8d32c11b24f078142b5b8c3361a955ebc65788f0f0353b2121fe2f74e49")
         end
@@ -97,7 +96,6 @@ package("cmake")
         add_versions("3.22.1", "0e998229549d7b3f368703d20e248e7ee1f853910d42704aa87918c213ea82c0")
         add_versions("3.24.1", "4931e277a4db1a805f13baa7013a7757a0cbfe5b7932882925c7061d9d1fa82b")
         add_versions("3.24.2", "0d9020f06f3ddf17fb537dc228e1a56c927ee506b486f55fe2dc19f69bf0c8db")
-        add_versions("3.26.4", "313b6880c291bd4fe31c0aa51d6e62659282a521e695f30d5cc0d25abbd5c208")
         add_versions("3.26.4", "313b6880c291bd4fe31c0aa51d6e62659282a521e695f30d5cc0d25abbd5c208")
         add_versions("3.28.1", "15e94f83e647f7d620a140a7a5da76349fc47a1bfed66d0f5cdee8e7344079ad")
     end
