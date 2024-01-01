@@ -119,7 +119,8 @@ package("cmake")
     end)
 
     on_install("@bsd", function (package)
-        os.vrunv("sh", {"./bootstrap", "--parallel=6", "--prefix=" .. package:installdir()})
+        import("core.base.option")
+        os.vrunv("sh", {"./bootstrap", "--parallel=" .. (option.get("jobs") or tostring(os.default_njob())), "--prefix=" .. package:installdir()})
         import("package.tools.make").install(package)
     end)
 
