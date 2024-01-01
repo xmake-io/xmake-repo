@@ -44,7 +44,7 @@ package("doxygen")
         end
 
         os.rm("templates/*/PaxHeader")
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags, jobs = 1})
     end)
 
     on_test(function (package)
