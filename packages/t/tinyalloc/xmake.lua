@@ -13,9 +13,6 @@ package("tinyalloc")
                 set_kind("$(kind)")
                 add_files("tinyalloc.c")
                 add_headerfiles("tinyalloc.h")
-                if is_mode("debug") then
-                    add_defines("TA_DEBUG")
-                end
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all")
                 end
