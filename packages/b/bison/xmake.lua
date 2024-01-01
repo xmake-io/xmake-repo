@@ -5,7 +5,8 @@ package("bison")
     set_license("GPL-3.0")
 
     if not is_plat("windows") then
-        add_urls("http://ftp.gnu.org/gnu/bison/bison-$(version).tar.gz")
+        add_urls("http://ftpmirror.gnu.org/gnu/bison/bison-$(version).tar.gz",
+                 "http://ftp.gnu.org/gnu/bison/bison-$(version).tar.gz")
     end
 
     add_versions("3.7.4", "fbabc7359ccd8b4b36d47bfe37ebbce44805c052526d5558b95eda125d1677e2")

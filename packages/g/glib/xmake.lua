@@ -4,18 +4,14 @@ package("glib")
     set_description("Low-level core library that forms the basis for projects such as GTK+ and GNOME.")
     set_license("LGPL-2.1")
 
-    add_urls("https://download.gnome.org/sources/glib/2.78/glib-2.78.1.tar.xz", {alias = "home", version = function (version)
+    add_urls("https://download.gnome.org/sources/glib/$(version).tar.xz", {alias = "home", version = function (version)
         return format("%d.%d/glib-%s", version:major(), version:minor(), version)
-    end})
+    end, excludes = {"*/COPYING"}})
     add_urls("https://gitlab.gnome.org/GNOME/glib/-/archive/$(version)/glib-$(version).tar.gz", {alias = "gitlab"})
     add_urls("https://gitlab.gnome.org/GNOME/glib.git")
     add_versions("home:2.71.0", "926816526f6e4bba9af726970ff87be7dac0b70d5805050c6207b7bb17ea4fca")
     add_versions("home:2.78.1", "915bc3d0f8507d650ead3832e2f8fb670fce59aac4d7754a7dab6f1e6fed78b2")
     add_patches("2.71.0", path.join(os.scriptdir(), "patches", "2.71.0", "macosx.patch"), "a0c928643e40f3a3dfdce52950486c7f5e6f6e9cfbd76b20c7c5b43de51d6399")
-
-    if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-    end
 
     add_deps("meson", "ninja", "libffi", "zlib")
     if is_plat("linux") then
@@ -29,7 +25,9 @@ package("glib")
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
     add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0")
-    if is_plat("macosx") then
+    if is_plat("windows") then
+        add_syslinks("user32", "shell32", "ole32", "ws2_32", "shlwapi")
+    elseif is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation")
         add_extsources("brew::glib")
     elseif is_plat("linux") then
@@ -69,7 +67,6 @@ package("glib")
     end)
 
     on_install("windows", "macosx", "linux", "cross", function (package)
-        import("package.tools.meson")
         local configs = {"-Dbsymbolic_functions=false",
                          "-Ddtrace=false",
                          "-Dman=false",
@@ -94,21 +91,7 @@ package("glib")
         if package:is_plat("windows") then
             io.gsub("meson.build", "dependency%('libffi',", "dependency('libffi', modules: ['libffi::ffi'],")
         end
-        local envs = meson.buildenvs(package)
-        if package:is_plat("windows") then
-            for _, dep in ipairs(package:orderdeps()) do
-                local fetchinfo = dep:fetch()
-                if fetchinfo then
-                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                        envs.INCLUDE = (envs.INCLUDE or "") .. path.envsep() .. includedir
-                    end
-                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                        envs.LIB = (envs.LIB or "") .. path.envsep() .. linkdir
-                    end
-                end
-            end
-        end
-        meson.install(package, configs, {envs = envs})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv", "libffi", "zlib"}})
         package:addenv("PATH", "bin")
     end)
 

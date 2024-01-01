@@ -3,8 +3,8 @@ package("libiconv")
     set_homepage("https://www.gnu.org/software/libiconv")
     set_description("Character set conversion library.")
 
-    set_urls("https://ftp.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz",
-             "https://ftpmirror.gnu.org/libiconv/libiconv-$(version).tar.gz")
+    set_urls("https://ftpmirror.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz",
+             "https://ftp.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz")
     add_versions("1.17", "8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313")
     add_versions("1.16", "e6a1b1b589654277ee790cce3734f07876ac4ccfaecbee8afa0b649cf529cc04")
     add_versions("1.15", "ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178")
@@ -24,7 +24,7 @@ package("libiconv")
             if package:is_plat("linux") then
                 return {} -- on linux libiconv is already a part of glibc
             else
-                return package:find_package("system::iconv", {includes = "iconv.h"}) or package:find_package("system::intl", {includes = "iconv.h"})
+                return package:find_package("system::iconv", {includes = "iconv.h"})
             end
         end
     end)
@@ -49,10 +49,7 @@ package("libiconv")
     end)
 
     on_install("macosx", "linux", "bsd", "cross", "android", "wasm", function (package)
-        local configs = {"--disable-dependency-tracking", "--enable-extra-encodings"}
-        if not package:is_plat("macosx") then
-            table.insert(configs, "--enable-relocatable")
-        end
+        local configs = {"--disable-dependency-tracking", "--enable-extra-encodings", "--enable-relocatable"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
@@ -67,7 +64,7 @@ package("libiconv")
     end)
 
     on_test(function (package)
-        if package:is_plat("macosx", "linux", "bsd") then
+        if package:is_plat("linux", "bsd") or (package:is_plat("macosx") and not package:config("shared")) then
             os.vrun("iconv --version")
         end
         assert(package:check_csnippets({test = [[

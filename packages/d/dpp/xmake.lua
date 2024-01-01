@@ -6,6 +6,7 @@ package("dpp")
     add_urls("https://github.com/brainboxdotcc/DPP/archive/refs/tags/$(version).tar.gz",
              "https://github.com/brainboxdotcc/DPP.git")
 
+    add_versions("v10.0.29", "a37e91fbdabee20cb0313700588db4077abf0ebabafe386457d999d22d2d0682")
     add_versions("v10.0.28", "aa0c16a1583f649f28ec7739c941e9f2bf9c891c0b87ef8278420618f8bacd46")
     add_versions("v10.0.27", "525a5c10a5fdd69996f48826ea1c37a3f08ba934c95e4cb9738afd209a2ecdb7")
     add_versions("v10.0.26", "038e95c3ef8228957bf2a84d4ff73ca1dd95ecb2cf7478ca57137d5d99f7e709")
@@ -97,12 +98,16 @@ package("dpp")
         if package:version():le("v10.0.14") then
             os.rmdir("include/dpp/fmt")
         end
-
+        
         io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
         os.rmdir("include/dpp/nlohmann")
 
+        local configs = {}
+        if package:version():ge("v10.0.29") and package:is_plat("windows") then
+            configs.cxflags = "/bigobj /Gy"
+        end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)

@@ -3,8 +3,8 @@ package("autoconf-archive")
     set_description("A mirror of the GNU Autoconf Archive, a collection of more than 500 macros for GNU Autoconf that have been contributed as free software by friendly supporters of the cause from all over the Internet.")
     set_license("GPL-3.0-or-later")
 
-    add_urls("https://ftp.gnu.org/gnu/autoconf-archive/autoconf-archive-$(version).tar.xz",
-             "https://ftpmirror.gnu.org/autoconf-archive/autoconf-archive-$(version).tar.xz")
+    add_urls("https://ftpmirror.gnu.org/autoconf-archive/autoconf-archive-$(version).tar.xz",
+             "https://ftp.gnu.org/gnu/autoconf-archive/autoconf-archive-$(version).tar.xz")
     add_versions("2023.02.20", "71d4048479ae28f1f5794619c3d72df9c01df49b1c628ef85fde37596dc31a33")
 
     add_deps("autoconf")

@@ -24,6 +24,7 @@ jobs:
         with:
           xmake-version: branch@master
           actions-cache-folder: '.xmake-cache'
+          actions-cache-key: 'ubuntu'
 
       - name: Installation
         run: |

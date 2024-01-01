@@ -3,9 +3,9 @@ package("util-macros")
     set_homepage("https://www.x.org/")
     set_description("X.Org: Set of autoconf macros used to build other xorg packages")
 
-    set_urls("https://www.x.org/archive/individual/util/util-macros-$(version).tar.bz2")
-    add_versions("1.19.2", "d7e43376ad220411499a79735020f9d145fdc159284867e99467e0d771f3e712")
-    add_versions("1.19.3", "0f812e6e9d2786ba8f54b960ee563c0663ddbe2434bf24ff193f5feab1f31971")
+    set_urls("https://www.x.org/archive/individual/util/util-macros-$(version).tar.gz")
+    add_versions("1.19.3", "624bb6c3a4613d18114a7e3849a3d70f2d7af9dc6eabeaba98060d87e3aef35b")
+    add_versions("1.20.0", "8daf36913d551a90fd1013cb078401375dabae021cb4713b9b256a70f00eeb74")
 
     add_deps("pkg-config")
 

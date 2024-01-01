@@ -6,6 +6,7 @@ package("libressl")
     add_urls("https://ftp.openbsd.org/pub/OpenBSD/LibreSSL/libressl-$(version).tar.gz")
     add_versions("3.4.2", "cb82ca7d547336917352fbd23db2fc483c6c44d35157b32780214ec74197b3ce")
     add_versions("3.7.3", "7948c856a90c825bd7268b6f85674a8dcd254bae42e221781b24e3f8dc335db3")
+    add_versions("3.8.2", "6d4b8d5bbb25a1f8336639e56ec5088052d43a95256697a85c4ce91323c25954")
 
     if is_plat("windows") then
         add_deps("cmake")

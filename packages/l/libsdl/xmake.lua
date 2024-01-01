@@ -62,10 +62,11 @@ package("libsdl")
 
     add_includedirs("include", "include/SDL2")
 
-    add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
-
-    -- @note deprecated
-    add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+    if is_plat("android") then
+        add_configs("sdlmain", {description = "Use SDL_main entry point", default = false, type = "boolean", readonly = true})
+    else
+        add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+    end
 
     if is_plat("linux") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
@@ -82,6 +83,8 @@ package("libsdl")
     on_load(function (package)
         if package:config("sdlmain") or package:config("use_sdlmain") then
             package:add("components", "main")
+        else
+            package:add("defines", "SDL_MAIN_HANDLED")
         end
         package:add("components", "lib")
         if package:is_plat("linux") and (package:config("x11") or package:config("with_x")) then
@@ -95,7 +98,12 @@ package("libsdl")
     on_component("main", function (package, component)
         local libsuffix = package:is_debug() and "d" or ""
         component:add("links", "SDL2main" .. libsuffix)
-        component:add("defines", "SDL_MAIN_HANDLED")
+        if package:is_plat("windows") then
+            component:add("ldflags", "-subsystem:windows")
+            component:add("syslinks", "shell32")
+        elseif package:is_plat("mingw") then
+            component:add("ldflags", "-Wl,-subsystem,windows")
+        end
         component:add("deps", "lib")
     end)
 
@@ -216,5 +224,14 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <SDL2/SDL.h>
+            #if defined(__MINGW32__) || defined(__MINGW64__)
+            #   undef main
+            #endif
+            int main(int argc, char** argv) {
+                SDL_Init(0);
+                return 0;
+            }
+        ]]}));
     end)
