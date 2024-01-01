@@ -63,5 +63,5 @@ package("raylib")
             void test() {
                 InitWindow(100, 100, "hello world!");
             }
-        ]]}, {includes = {"raylib.h"}}))
+        ]]}, {includes = {"raylib.h"}, configs = {languages = "cxx11"}}))
     end)
