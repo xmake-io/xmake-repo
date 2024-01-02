@@ -144,8 +144,12 @@ package("imgui")
     end)
 
     on_test(function (package)
-        local user_config = package:config("user_config")
-        assert(user_config ~= nil or package:check_cxxsnippets({test = [[
+        if package:config("user_config") ~= nil then return end
+        local includes = {"imgui.h"}
+        if package:config("sdl2_renderer") or package:config("sdl2_no_renderer") then
+            table.insert(includes, "SDL.h")
+        end
+        assert(package:check_cxxsnippets({test = [[
             void test() {
                 IMGUI_CHECKVERSION();
                 ImGui::CreateContext();
@@ -156,5 +160,5 @@ package("imgui")
                 ImGui::Render();
                 ImGui::DestroyContext();
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"imgui.h"}}))
+        ]]}, {configs = {languages = "c++11"}, includes = includes}))
     end)
