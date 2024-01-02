@@ -21,7 +21,7 @@ package("libiconv")
 
     on_fetch("macosx", "linux", function (package, opt)
         if opt.system then
-            if package:is_plat("linux") then
+            if package:is_plat("linux") and package:has_tool("cc", "gcc", "gxx") then
                 return {} -- on linux libiconv is already a part of glibc
             else
                 return package:find_package("system::iconv", {includes = "iconv.h"})
