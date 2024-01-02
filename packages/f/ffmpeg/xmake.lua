@@ -169,6 +169,16 @@ package("ffmpeg")
                 cpu = "armv7-a"
                 triple = "armv7a-linux-androideabi"
                 cross_prefix = path.join(bin, "arm-linux-androideabi-")
+            elseif package:is_arch("x86") then
+                arch = "x86_android"
+                cpu = "x86"
+                triple = "i686-linux-android"
+                cross_prefix = path.join(bin, "i686-linux-android-")
+             elseif package:is_arch("x86_64") then
+                arch = "x86_64_android"
+                cpu = "x86_64"
+                triple = "x86_64-linux-android"
+                cross_prefix = path.join(bin, "x86_64-linux-android-")
             else
                 raise("unknown arch(%s) for android!", package:arch())
             end
@@ -193,6 +203,9 @@ package("ffmpeg")
             table.insert(configs, "--cpu=" .. cpu)
             table.insert(configs, "--cc=" .. path.join(bin, triple .. ndk_sdkver .. "-clang"))
             table.insert(configs, "--cxx=" .. path.join(bin, triple .. ndk_sdkver .. "-clang++"))
+            table.insert(configs, "--ar=" .. path.join(bin, "llvm-ar"))
+            table.insert(configs, "--ranlib=" .. path.join(bin, "llvm-ranlib"))
+            table.insert(configs, "--strip=" .. path.join(bin, "llvm-strip"))
             table.insert(configs, "--extra-cflags=" .. table.concat(cflags, ' '))
             table.insert(configs, "--extra-cxxflags=" .. table.concat(cxxflags, ' '))
             table.insert(configs, "--sysroot=" .. sysroot)
