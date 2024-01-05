@@ -41,7 +41,9 @@ package("astc-encoder")
         table.insert(configs, "-DASTCENC_CLI=" .. (package:config("cli") and "ON" or "OFF"))
 
         import("package.tools.cmake").install(package, configs)
+
         os.cp("Source/astcenc.h", package:installdir("include"))
+        package:add("linkdirs", "bin")
         if package:config("cli") then
             package:addenv("PATH", "bin")
         end
