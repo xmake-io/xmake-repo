@@ -43,9 +43,11 @@ package("astc-encoder")
         import("package.tools.cmake").install(package, configs)
 
         os.cp("Source/astcenc.h", package:installdir("include"))
-        package:add("linkdirs", "bin")
+        if package:config("shared") then
+            package:add("linkdirs", "bin")
+        end
         if package:config("cli") then
-            local exe_prefix = package:is_plat("windows") and ".exe" or "astcenc-native"
+            local exe_prefix = package:is_plat("windows") and ".exe" or ""
             os.mv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
             package:addenv("PATH", "bin")
         end
@@ -61,6 +63,6 @@ package("astc-encoder")
             }
         ]]}, {configs = {languages = "c++14"}}))
         if package:config("cli") then
-            os.vrun("astcenc -help")
+            os.vrun("astcenc-native -help")
         end
     end)
