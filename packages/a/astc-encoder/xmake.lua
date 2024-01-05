@@ -21,10 +21,6 @@ package("astc-encoder")
     add_configs("invariance", {description = "Enable astcenc floating point invariance", default = true, type = "boolean"})
     add_configs("cli", {description = "Enable build of astcenc command line tools", default = true, type = "boolean"})
 
-    if is_plat("linux") then
-        add_syslinks("pthread")
-    end
-
     add_deps("cmake")
 
     on_install(function (package)
@@ -53,9 +49,6 @@ package("astc-encoder")
         if package:config("cli") then
             local exe_prefix = package:is_plat("windows") and ".exe" or ""
             os.mv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
-            if package:is_plat("linux") then
-                os.vrunv("chmod", {"+x", path.join(package:installdir("bin"), "astcenc")})
-            end
             package:addenv("PATH", "bin")
         end
     end)
