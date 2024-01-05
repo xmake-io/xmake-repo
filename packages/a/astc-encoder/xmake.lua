@@ -21,6 +21,10 @@ package("astc-encoder")
     add_configs("invariance", {description = "Enable astcenc floating point invariance", default = true, type = "boolean"})
     add_configs("cli", {description = "Enable build of astcenc command line tools", default = true, type = "boolean"})
 
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    end
+
     add_deps("cmake")
 
     on_install(function (package)
