@@ -63,6 +63,6 @@ package("astc-encoder")
             }
         ]]}, {configs = {languages = "c++14"}}))
         if package:config("cli") then
-            os.vrun("astcenc-native -help")
+            os.vrun("astcenc -help")
         end
     end)
