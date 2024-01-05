@@ -42,6 +42,9 @@ package("astc-encoder")
 
         import("package.tools.cmake").install(package, configs)
         os.cp("Source/astcenc.h", package:installdir("include"))
+        if package:config("cli") then
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_test(function (package)
@@ -54,6 +57,6 @@ package("astc-encoder")
             }
         ]]}, {configs = {languages = "c++14"}}))
         if package:config("cli") then
-            os.vrun("astcenc -help")
+            os.vrun("astcenc-native -help")
         end
     end)
