@@ -45,6 +45,8 @@ package("astc-encoder")
         os.cp("Source/astcenc.h", package:installdir("include"))
         package:add("linkdirs", "bin")
         if package:config("cli") then
+            local exe_prefix = package:is_plat("windows") and ".exe" or "astcenc-native"
+            os.mv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
             package:addenv("PATH", "bin")
         end
     end)
@@ -59,6 +61,6 @@ package("astc-encoder")
             }
         ]]}, {configs = {languages = "c++14"}}))
         if package:config("cli") then
-            os.vrun("astcenc-native -help")
+            os.vrun("astcenc -help")
         end
     end)
