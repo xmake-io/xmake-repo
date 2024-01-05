@@ -39,7 +39,7 @@ package("astc-encoder")
         table.insert(configs, "-DASTCENC_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DASTCENC_INVARIANCE=" .. (package:config("invariance") and "ON" or "OFF"))
         table.insert(configs, "-DASTCENC_CLI=" .. (package:config("cli") and "ON" or "OFF"))
-        
+
         import("package.tools.cmake").install(package, configs)
         os.cp("Source/astcenc.h", package:installdir("include"))
     end)
@@ -53,4 +53,7 @@ package("astc-encoder")
                 astcenc_error status = astcenc_context_alloc(config, 1, &context);
             }
         ]]}, {configs = {languages = "c++14"}}))
+        if package:config("cli") then
+            os.vrun("astcenc -help")
+        end
     end)
