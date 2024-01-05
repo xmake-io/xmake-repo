@@ -49,6 +49,9 @@ package("astc-encoder")
         if package:config("cli") then
             local exe_prefix = package:is_plat("windows") and ".exe" or ""
             os.mv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
+            if package:is_plat("linux") then
+                os.vrunv("chmod", {"+x", path.join(package:installdir("bin"), "astcenc")})
+            end
             package:addenv("PATH", "bin")
         end
     end)
