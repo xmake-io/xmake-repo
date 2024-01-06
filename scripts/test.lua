@@ -34,6 +34,7 @@ local options =
 ,   {nil, "target_minver",  "kv", nil, "The Target Minimal Version"                 }
 ,   {nil, "appledev",       "kv", nil, "The Apple Device Type"                      }
 ,   {nil, "mingw",          "kv", nil, "Set the MingW directory."                   }
+,   {nil, "cross",          "kv", nil, "Set cross toolchains prefix."               }
 ,   {nil, "toolchain",      "kv", nil, "Set the toolchain name."                    }
 ,   {nil, "packages",       "vs", nil, "The package list."                          }
 }
@@ -89,6 +90,9 @@ function _require_packages(argv, packages)
     end
     if argv.mingw then
         table.insert(config_argv, "--mingw=" .. argv.mingw)
+    end
+    if argv.cross then
+        table.insert(config_argv, "--cross=" .. argv.cross)
     end
     if argv.toolchain then
         table.insert(config_argv, "--toolchain=" .. argv.toolchain)
