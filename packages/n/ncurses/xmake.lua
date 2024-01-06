@@ -27,9 +27,15 @@ package("ncurses")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", function (package)
-        local configs = {"--without-manpages", "--enable-sigwinch", "--with-gpm=no"}
-        table.insert(configs, "--with-debug=" .. (package:debug() and "yes" or "no"))
+    on_install(function (package)
+        local configs = {"--with-debug=" .. (package:debug() and "yes" or "no"),
+                         "--without-manpages",
+                         "--enable-sigwinch",
+                         "--with-gpm=no",
+                         "--without-ada",
+                         "--without-progs",
+                         "--without-tack",
+                         "--without-tests"}
         if package:config("widec") then
             table.insert(configs, "--enable-widec")
         end
