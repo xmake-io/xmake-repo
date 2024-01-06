@@ -14,8 +14,12 @@ package("ncurses")
 
     add_configs("widec", {description = "Compile with wide-char/UTF-8 code.", default = true, type = "boolean"})
 
-    if is_plat("linux") then
-        add_extsources("apt::libncurses-dev")
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::ncurses")
+    elseif is_plat("linux") then
+        add_extsources("apt::libncurses-dev", "pacman::ncurses")
+    elseif is_plat("macosx") then
+        add_extsources("brew::ncurses")
     end
     on_load(function (package)
         if package:config("widec") then
