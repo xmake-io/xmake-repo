@@ -7,8 +7,10 @@ package("sockpp")
              "https://github.com/fpagliughi/sockpp.git")
 
     add_versions("v0.8.1", "a8aedff8bd8c1da530b91be650352008fddabc9f1df0d19701d76cbc359c8651")
+    add_versions("v0.8.3", "dcacfae173ae4a1e535078d3023d338c3eb170193fe1b82bc04138e9c02470ef")
+    add_versions("v1.0.0", "818477fae6eb29b9daacef71a3d0c494de9e48f6fd267a7fc5a4c332db211bc5")
 
-    add_patches("0.8.1", path.join(os.scriptdir(), "patches", "0.8.1", "strerror.patch"), "8de819ba185c644254633d1de609e2c571c6c6f1aa7d2ac4329676ecf96fa556")
+    add_patches(">=0.8.1", path.join(os.scriptdir(), "patches", "0.8.1", "strerror.patch"), "161796afa58b838a504cbee14f3db8b1bba451b54acb3165503966cad527cafe")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")

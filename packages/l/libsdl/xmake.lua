@@ -81,8 +81,13 @@ package("libsdl")
     end
 
     on_load(function (package)
-        if package:config("sdlmain") or package:config("use_sdlmain") then
+        if package:config("sdlmain") then
             package:add("components", "main")
+            if package:is_plat("mingw") then
+                -- MinGW requires linking mingw32 before SDL2main
+                local libsuffix = package:is_debug() and "d" or ""
+                package:add("linkorders", "mingw32", "SDL2main" .. libsuffix)
+            end
         else
             package:add("defines", "SDL_MAIN_HANDLED")
         end
@@ -102,7 +107,8 @@ package("libsdl")
             component:add("ldflags", "-subsystem:windows")
             component:add("syslinks", "shell32")
         elseif package:is_plat("mingw") then
-            component:add("ldflags", "-Wl,-subsystem,windows")
+            component:add("syslinks", "mingw32")
+            component:add("ldflags", "-mwindows")
         end
         component:add("deps", "lib")
     end)
@@ -226,9 +232,6 @@ package("libsdl")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <SDL2/SDL.h>
-            #if defined(__MINGW32__) || defined(__MINGW64__)
-            #   undef main
-            #endif
             int main(int argc, char** argv) {
                 SDL_Init(0);
                 return 0;

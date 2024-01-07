@@ -10,12 +10,13 @@ jobs:
     strategy:
       matrix:
         os: [macOS-latest]
+        arch: [x86_64, arm64]
         kind: [static, shared]
 
     runs-on: ${{ matrix.os }}
 
     concurrency:
-        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-macOS-${{ matrix.kind }}
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-macOS-${{ matrix.arch }}-${{ matrix.kind }}
         cancel-in-progress: true
     steps:
       - uses: actions/checkout@v1
@@ -28,5 +29,5 @@ jobs:
         run: |
           wget https://curl.haxx.se/ca/cacert.pem -O /tmp/cacert.pem
           export CURL_CA_BUNDLE=/tmp/cacert.pem
-          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }}
 

@@ -1,11 +1,12 @@
 package("rendergraph")
 
     set_homepage("https://github.com/DragonJoker/RenderGraph/")
-    set_description("Vulkan render graph management library. .")
+    set_description("Vulkan render graph management library.")
     set_license("MIT")
 
     set_urls("https://github.com/DragonJoker/RenderGraph/archive/refs/tags/$(version).tar.gz",
          "https://github.com/DragonJoker/RenderGraph.git")
+    add_versions("v1.4.0", "0009eac85885231069f7ba644d22a801e71505cc")
     add_versions("v1.3.0", "b9c68b6949c7b60ffb49f9b9997432aac5baec69")
     add_versions("v1.2.0", "3f434cc347048656f02bfb87b0ce69ac02b9b18af4262d221c0d4b0ecf1b7bae")
     add_versions("v1.1.0", "b2fb87cdc0cdec94d4e2a9139533e5f72c0fadfe090c085308edbb84084b4a0c")
@@ -23,7 +24,7 @@ package("rendergraph")
                 set_kind("$(kind)")
                 add_includedirs("include")
                 add_files("source/RenderGraph/**.cpp")
-                set_languages("c++20")
+                set_languages("c++17")
                 if is_plat("windows") then
                     if is_kind("shared") then
                         add_defines("RenderGraph_EXPORTS")
@@ -48,7 +49,7 @@ package("rendergraph")
                 crg::ResourceHandler handler;
                 crg::FrameGraph graph{ handler, "test" };
             }
-        ]]}, {configs = {languages = "cxx20"},
+        ]]}, {configs = {languages = "cxx17"},
             includes = {
                 "RenderGraph/FrameGraph.hpp",
                 "RenderGraph/ResourceHandler.hpp"}}))

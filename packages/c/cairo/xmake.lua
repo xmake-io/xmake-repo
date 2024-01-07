@@ -15,9 +15,10 @@ package("cairo")
     add_configs("freetype",   {description = "Enable freetype support.", default = true, type = "boolean"})
     add_configs("fontconfig", {description = "Enable fontconfig support.", default = true, type = "boolean"})
     add_configs("xlib",       {description = "Enable x11 surface backend.", default = is_plat("linux"), type = "boolean"})
+    add_configs("glib",       {description = "Enable glib dependency.", default = false, type = "boolean"})
 
     add_deps("meson", "ninja")
-    add_deps("libpng", "pixman", "zlib", "glib")
+    add_deps("libpng", "pixman", "zlib")
     if is_plat("windows") then
         add_deps("pkgconf", "libintl")
     elseif is_plat("macosx") then
@@ -51,6 +52,9 @@ package("cairo")
         if package:config("xlib") then
             package:add("deps", "libx11", "libxrender", "libxext")
         end
+        if package:config("glib") then
+            package:add("deps", "glib")
+        end
     end)
 
     on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
@@ -63,12 +67,12 @@ package("cairo")
             "-Dgtk2-utils=disabled",
             "-Dpng=enabled",
             "-Dzlib=enabled",
-            "-Dglib=enabled"
         }
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dfreetype=" .. (package:config("freetype") and "enabled" or "disabled"))
         table.insert(configs, "-Dfontconfig=" .. (package:config("fontconfig") and "enabled" or "disabled"))
         table.insert(configs, "-Dxlib=" .. (package:config("xlib") and "enabled" or "disabled"))
+        table.insert(configs, "-Dglib=" .. (package:config("glib") and "enabled" or "disabled"))
         io.replace("meson.build", "subdir('fuzzing')", "", {plain = true})
         io.replace("meson.build", "subdir('docs')", "", {plain = true})
         io.replace("meson.build", "'CoreFoundation'", "'CoreFoundation', 'Foundation'", {plain = true})
