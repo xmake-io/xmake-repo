@@ -11,9 +11,10 @@ package("cartographer")
     add_patches("1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "fix-build-error.patch"), "a4bb53d6f098c77a397d72c244d4283af1f9eec8a4ca7a7fa28de77b06d1201e")
         
     add_deps("cmake")
-    add_deps("boost", {configs = {shared = true, iostreams = true}})
+    add_deps("zlib")
+    add_deps("boost", {configs = {iostreams = true}})
     add_deps("ceres-solver", {configs = {suitesparse = true}})
-    add_deps("abseil", "cairo", "eigen", "lua", "protobuf-cpp", "zlib")
+    add_deps("abseil", "cairo", "eigen", "lua", "protobuf-cpp")
 
     on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         for _, headerfile in ipairs(os.files("cartographer/**.h")) do
