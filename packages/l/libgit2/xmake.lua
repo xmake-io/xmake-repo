@@ -20,7 +20,7 @@ package("libgit2")
         add_deps("pcre")
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
-        add_syslinks("ole32", "rpcrt4", "winhttp")
+        add_syslinks("ole32", "rpcrt4", "winhttp", "ws2_32", "user32", "crypt32", "advapi32")
     end
 
     on_install("macosx", "linux", "windows|x64", "windows|x86", "iphoneos", function (package)
