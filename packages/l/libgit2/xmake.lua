@@ -6,6 +6,7 @@ package("libgit2")
 
     set_urls("https://github.com/libgit2/libgit2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libgit2/libgit2.git")
+    add_versions("v1.7.1", "17d2b292f21be3892b704dddff29327b3564f96099a1c53b00edc23160c71327")
     add_versions("v1.3.0", "192eeff84596ff09efb6b01835a066f2df7cd7985e0991c79595688e6b36444e")
 
     add_deps("cmake")
