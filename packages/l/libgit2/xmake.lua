@@ -29,6 +29,10 @@ package("libgit2")
                          "-DBUILD_EXAMPLES=OFF",
                          "-DBUILD_FUZZERS=OFF",
                          "-DUSE_SSH=OFF"}
+        if package:is_plat("linux") and linuxos.name() == "fedora" then
+            table.insert(configs, "-DUSE_SHA256=Builtin")
+            table.insert(configs, "-DUSE_SHA1=CollisionDetection")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("android", "iphoneos") then
