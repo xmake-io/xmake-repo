@@ -126,7 +126,6 @@ package("openssl")
             table.insert(configs, target_plat .. "-" .. target_arch)
             if package:is_plat("cross", "android") then
                 table.insert(configs, "-DOPENSSL_NO_HEARTBEATS")
-                table.insert(configs, "no-shared")
                 table.insert(configs, "no-threads")
             end
         end
