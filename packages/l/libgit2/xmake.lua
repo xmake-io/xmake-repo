@@ -17,18 +17,19 @@ package("libgit2")
         add_deps("openssl", "zlib")
     end
     if is_plat("linux") then
-        add_deps("pcre")
+        add_deps("pcre2")
         add_syslinks("pthread", "dl")
     elseif is_plat("windows") then
         add_syslinks("ole32", "rpcrt4", "winhttp")
     end
 
-    on_install("macosx", "linux", "windows|x64", "windows|x86", "iphoneos", function (package)
+    on_install("macosx", "linux", "windows", "android", "iphoneos", function (package)
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DBUILD_CLAR=OFF",
                          "-DBUILD_EXAMPLES=OFF",
                          "-DBUILD_FUZZERS=OFF",
                          "-DBUILD_CLI=OFF",
+                         "-DREGEX_BACKEND=pcre2",
                          "-DUSE_SSH=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
