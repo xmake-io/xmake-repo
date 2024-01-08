@@ -102,26 +102,27 @@ package("openssl")
 
     on_install("linux", "macosx", "bsd", "cross", "android", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
-        local buildenvs = import("package.tools.autoconf").buildenvs(package)
         local configs = {}
         if package:is_cross() then
-            local target_arch = "generic32"
-            if package:is_arch("x86_64") then
-                target_arch = "x86_64"
-            elseif package:is_arch("i386", "x86") then
-                target_arch = "x86"
-            elseif package:is_arch("arm64", "arm64-v8a") then
-                target_arch = "aarch64"
-            elseif package:is_arch("arm.*") then
-                target_arch = "armv4"
-            elseif package:is_arch(".*64") then
-                target_arch = "generic64"
-            end
-    
-            local target_plat = "linux"
+            local target_plat, target_arch
             if package:is_plat("macosx") then
                 target_plat = "darwin64"
                 target_arch = package:is_arch("arm64") and "aarch64" or "x86_64-cc"
+            else
+                target_plat = "linux"
+                if package:is_arch("x86_64") then
+                    target_arch = "x86_64"
+                elseif package:is_arch("i386", "x86") then
+                    target_arch = "x86"
+                elseif package:is_arch("arm64", "arm64-v8a") then
+                    target_arch = "aarch64"
+                elseif package:is_arch("arm.*") then
+                    target_arch = "armv4"
+                elseif package:is_arch(".*64") then
+                    target_arch = "generic64"
+                else
+                    target_arch = "generic32"
+                end
             end
             table.insert(configs, target_plat .. "-" .. target_arch)
             if package:is_plat("cross", "android") then
@@ -135,7 +136,8 @@ package("openssl")
         if package:debug() then
             table.insert(configs, "--debug")
         end
-        os.vrunv("./config", configs, {envs = buildenvs})
+        local buildenvs = import("package.tools.autoconf").buildenvs(package)
+        os.vrunv(package:is_cross() and "./Configure" or "config", configs, {envs = buildenvs})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
