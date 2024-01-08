@@ -107,7 +107,7 @@ package("openssl")
             local target_plat, target_arch
             if package:is_plat("macosx") then
                 target_plat = "darwin64"
-                target_arch = package:is_arch("arm64") and "aarch64" or "x86_64-cc"
+                target_arch = package:is_arch("arm64") and "arm64-cc" or "x86_64-cc"
             else
                 target_plat = "linux"
                 if package:is_arch("x86_64") then
