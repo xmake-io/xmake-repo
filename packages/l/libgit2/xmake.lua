@@ -23,7 +23,7 @@ package("libgit2")
         add_syslinks("ole32", "rpcrt4", "winhttp")
     end
 
-    on_install("macosx", "linux", "windows", "android", "iphoneos", function (package)
+    on_install("macosx", "linux", "windows|x64", "windows|x86", "iphoneos", function (package)
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DBUILD_CLAR=OFF",
                          "-DBUILD_EXAMPLES=OFF",
