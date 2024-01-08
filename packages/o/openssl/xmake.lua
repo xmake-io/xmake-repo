@@ -137,7 +137,7 @@ package("openssl")
             table.insert(configs, "--debug")
         end
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        os.vrunv(package:is_cross() and "./Configure" or "config", configs, {envs = buildenvs})
+        os.vrunv(package:is_cross() and "./Configure" or "./config", configs, {envs = buildenvs})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
