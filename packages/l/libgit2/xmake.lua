@@ -41,6 +41,7 @@ package("libgit2")
                 table.insert(configs, "-DSTATIC_CRT=OFF")
             end
             io.replace("CMakeLists.txt", "/GL", "", {plain = true})
+            io.replace("cmake/DefaultCFlags.cmake", "/GL", "", {plain = true}) -- for 1.7.1
         end
         import("package.tools.cmake").install(package, configs)
     end)
