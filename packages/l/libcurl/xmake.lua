@@ -96,7 +96,7 @@ package("libcurl")
             table.insert(configs, "-D" .. opt .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
         if package:is_plat("macosx", "iphoneos") then
-            table.insert(configs, (package:version():ge("7.65") and "-DCURL_USE_SECTRANSP" or "-DCMAKE_USE_DARWINSSL"))
+            table.insert(configs, (package:version():ge("7.65") and "-DCURL_USE_SECTRANSP=ON" or "-DCMAKE_USE_DARWINSSL=ON"))
         end
         if package:is_plat("windows") then
             table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
