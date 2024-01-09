@@ -293,7 +293,7 @@ package("boost")
             table.insert(argv, "pch=off")
         end
 
-        os.vrunv("./b2", argv, {envs = runenvs})
+        os.vrunv("./b2", argv, {envs = runenvs, stdout = "boost-log.txt"}) -- disable redundant output
     end)
 
     on_test(function (package)
