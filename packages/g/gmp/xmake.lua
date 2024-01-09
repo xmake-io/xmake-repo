@@ -4,9 +4,11 @@ package("gmp")
     set_description("GMP is a free library for arbitrary precision arithmetic, operating on signed integers, rational numbers, and floating-point numbers.")
     set_license("LGPL-3.0")
 
+    add_urls("https://ftpmirror.gnu.org/gmp/gmp-$(version).tar.xz")
+    add_urls("https://ftp.gnu.org/gnu/gmp/gmp-$(version).tar.xz")
     add_urls("https://gmplib.org/download/gmp/gmp-$(version).tar.xz")
     add_versions("6.2.1", "fd4829912cddd12f84181c3451cc752be224643e87fac497b69edddadc49b4f2")
-
+    add_versions("6.3.0", "a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::gmp")

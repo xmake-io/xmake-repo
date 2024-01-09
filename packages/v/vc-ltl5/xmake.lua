@@ -1,5 +1,4 @@
 package("vc-ltl5")
-
     set_homepage("https://github.com/Chuyu-Team/VC-LTL5")
     set_description("Shared to msvcrt.dll or ucrtbase.dll and optimize the C/C++ application file size")
     set_license("EPL-2.0")
@@ -7,6 +6,7 @@ package("vc-ltl5")
     add_urls("https://github.com/Chuyu-Team/VC-LTL5/releases/download/v$(version)/VC-LTL-$(version)-Binary.7z")
     add_versions("5.0.6", "e406f829f75d59c34ee1e34cb6e994eb7db0810123ae7196499f26df88bc0a6f")
     add_versions("5.0.7", "08555aca30b2f77a484534be0799cfed05bfdeb1d1e461d91576264d7123e687")
+    add_versions("5.0.9", "71a3099978ff3dc83fe8e2ebddf104e2f916d13cd10fb01fe02317ebc7fb02d9")
 
     local default_min_version = "6.0.6000.0"
     if is_plat("windows") then
@@ -32,7 +32,7 @@ package("vc-ltl5")
         import("core.tool.toolchain")
         -- check vs version
         local vs = toolchain.load("msvc"):config("vs")
-        if tonumber(vs) < 2015 then
+        if vs and tonumber(vs) < 2015 then
             cprint("${color.warning}vc-ltl5 only supports vc14.0 or later versions")
         end
         -- is xp?

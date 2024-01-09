@@ -4,23 +4,25 @@ package("boost")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
 
-    add_urls("https://boostorg.jfrog.io/artifactory/main/release/$(version).tar.bz2", {version = function (version)
-            return version .. "/source/boost_" .. (version:gsub("%.", "_"))
-        end})
-    add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {version = function (version)
+    add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version).tar.gz")
+    add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {alias = "mirror", version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
-    add_versions("1.81.0", "71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa")
-    add_versions("1.80.0", "1e19565d82e43bc59209a168f5ac899d3ba471d55c7610c677d4ccf2c9c500c0")
-    add_versions("1.79.0", "475d589d51a7f8b3ba2ba4eda022b170e562ca3b760ee922c146b6c65856ef39")
-    add_versions("1.78.0", "8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc")
-    add_versions("1.77.0", "fc9f85fc030e233142908241af7a846e60630aa7388de9a5fafb1f3a26840854")
-    add_versions("1.76.0", "f0397ba6e982c4450f27bf32a2a83292aba035b827a5623a14636ea583318c41")
-    add_versions("1.75.0", "953db31e016db7bb207f11432bef7df100516eeb746843fa0486a222e3fd49cb")
-    add_versions("1.74.0", "83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1")
-    add_versions("1.73.0", "4eb3b8d442b426dc35346235c8733b5ae35ba431690e38c6a8263dce9fcbb402")
-    add_versions("1.72.0", "59c9b274bc451cf91a9ba1dd2c7fdcaf5d60b1b3aa83f2c9fa143417cc660722")
-    add_versions("1.70.0", "430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778")
+
+    add_versions("1.84.0", "4d27e9efed0f6f152dc28db6430b9d3dfb40c0345da7342eaa5a987dde57bd95")
+    add_versions("1.83.0", "0c6049764e80aa32754acd7d4f179fd5551d8172a83b71532ae093e7384e98da")
+    add_versions("1.82.0", "b62bd839ea6c28265af9a1f68393eda37fab3611425d3b28882d8e424535ec9d")
+    add_versions("1.81.0", "121da556b718fd7bd700b5f2e734f8004f1cfa78b7d30145471c526ba75a151c")
+    add_versions("mirror:1.80.0", "1e19565d82e43bc59209a168f5ac899d3ba471d55c7610c677d4ccf2c9c500c0")
+    add_versions("mirror:1.79.0", "475d589d51a7f8b3ba2ba4eda022b170e562ca3b760ee922c146b6c65856ef39")
+    add_versions("mirror:1.78.0", "8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc")
+    add_versions("mirror:1.77.0", "fc9f85fc030e233142908241af7a846e60630aa7388de9a5fafb1f3a26840854")
+    add_versions("mirror:1.76.0", "f0397ba6e982c4450f27bf32a2a83292aba035b827a5623a14636ea583318c41")
+    add_versions("mirror:1.75.0", "953db31e016db7bb207f11432bef7df100516eeb746843fa0486a222e3fd49cb")
+    add_versions("mirror:1.74.0", "83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1")
+    add_versions("mirror:1.73.0", "4eb3b8d442b426dc35346235c8733b5ae35ba431690e38c6a8263dce9fcbb402")
+    add_versions("mirror:1.72.0", "59c9b274bc451cf91a9ba1dd2c7fdcaf5d60b1b3aa83f2c9fa143417cc660722")
+    add_versions("mirror:1.70.0", "430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::boost")
@@ -140,17 +142,7 @@ package("boost")
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         import("core.base.option")
 
-        -- get toolchain
-        local toolchain
-        if package:is_plat("windows") then
-            toolchain = package:toolchain("clang-cl") or package:toolchain("msvc") or
-                import("core.tool.toolchain").load("msvc", {plat = package:plat(), arch = package:arch()})
-        end
-
-        -- force boost to compile with the desired compiler
-        local win_toolset
-        local file = io.open("user-config.jam", "a")
-        if file then
+        function get_compiler(package, toolchain)
             local cxx = package:build_getenv("cxx")
             if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
@@ -159,11 +151,11 @@ package("boost")
                 if cc and cc:find("clang", 1, true) and cc:find("Xcode", 1, true) then
                     cc = "xcrun -sdk macosx clang++"
                 end
-                file:print("using darwin : : %s ;", cc)
+                return format("using darwin : : %s ;", cc)
             elseif package:is_plat("windows") then
                 local vs_toolset = toolchain:config("vs_toolset")
                 local msvc_ver = ""
-                win_toolset = "msvc"
+                local win_toolset = "msvc"
                 if toolchain:name() == "clang-cl" then
                     win_toolset = "clang-win"
                     cxx = cxx:gsub("(clang%-cl)$", "%1.exe", 1)
@@ -175,10 +167,29 @@ package("boost")
 
                 -- Specifying a version will disable b2 from forcing tools
                 -- from the latest installed msvc version.
-                file:print("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
+                return format("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
             else
-                file:print("using gcc : : %s ;", cxx:gsub("\\", "/"))
+                cxx = cxx:gsub("gcc$", "g++")
+                cxx = cxx:gsub("clang$", "clang++")
+                return format("using gcc : : %s ;", cxx:gsub("\\", "/"))
             end
+        end
+
+        -- get host toolchain
+        import("core.tool.toolchain")
+        local host_toolchain
+        if package:is_plat("windows") then
+            host_toolchain = toolchain.load("msvc", {plat = "windows", arch = os.arch()})
+            if not host_toolchain:check() then
+                host_toolchain = toolchain.load("clang-cl", {plat = "windows", arch = os.arch()})
+            end
+            assert(host_toolchain:check(), "host msvc or clang-cl not found!")
+        end
+
+        -- force boost to compile with the desired compiler
+        local file = io.open("user-config.jam", "w")
+        if file then
+            file:write(get_compiler(package, host_toolchain))
             file:close()
         end
 
@@ -189,12 +200,10 @@ package("boost")
             "--without-icu"
         }
 
-        local runenvs
         if package:is_plat("windows") then
-            runenvs = toolchain:runenvs()
             -- for bootstrap.bat, all other arguments are useless
             bootstrap_argv = { "msvc" }
-            os.vrunv("bootstrap.bat", bootstrap_argv, {envs = runenvs})
+            os.vrunv("bootstrap.bat", bootstrap_argv, {envs = host_toolchain:runenvs()})
         elseif package:is_plat("mingw") and is_host("windows") then
             bootstrap_argv = { "gcc" }
             os.vrunv("bootstrap.bat", bootstrap_argv)
@@ -202,6 +211,24 @@ package("boost")
             io.replace("project-config.jam", "using[^\n]+", "")
         else
             os.vrunv("./bootstrap.sh", bootstrap_argv)
+        end
+
+        -- get build toolchain
+        local build_toolchain
+        local build_toolset
+        local runenvs
+        if package:is_plat("windows") then
+            build_toolchain = package:toolchain("clang-cl") or package:toolchain("msvc") or
+                toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            assert(build_toolchain:check(), "build toolchain not found!")
+            build_toolset = build_toolchain:name() == "clang-cl" and "clang-win" or "msvc"
+            runenvs = build_toolchain:runenvs()
+        end
+
+        local file = io.open("user-config.jam", "w")
+        if file then
+            file:write(get_compiler(package, build_toolchain))
+            file:close()
         end
         os.vrun("./b2 headers")
 
@@ -247,7 +274,7 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "cxxflags=-std:c++14")
-            table.insert(argv, "toolset=" .. win_toolset)
+            table.insert(argv, "toolset=" .. build_toolset)
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
         else

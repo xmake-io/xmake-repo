@@ -3,7 +3,6 @@ package("libpng")
     set_description("The official PNG reference library")
     set_license("libpng-2.0")
 
-    
     add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz")
     add_urls("https://mirrors.ustc.edu.cn/debian/pool/main/libp/libpng1.6/libpng1.6_$(version).orig.tar.gz", {
         version = function (version) return version:sub(2) end

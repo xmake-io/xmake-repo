@@ -4,7 +4,8 @@ package("which")
     set_homepage("https://www.gnu.org/software/which/")
     set_description("shows the full path of (shell) commands")
 
-    add_urls("https://ftp.gnu.org/gnu/which/which-$(version).tar.gz",
+    add_urls("https://ftpmirror.gnu.org/gnu/which/which-$(version).tar.gz",
+             "https://ftp.gnu.org/gnu/which/which-$(version).tar.gz",
              "https://carlowood.github.io/which/which-$(version).tar.gz",
              "https://mirrors.ustc.edu.cn/gnu/which/which-$(version).tar.gz")
     add_versions("2.16", "0ac8502e9985a3ac6b0e2aa4f2a60f91cad0dc0cca6dc9c1c142ebba4b8dd664")

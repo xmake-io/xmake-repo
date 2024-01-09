@@ -14,6 +14,7 @@ package("libhv")
     add_versions("1.2.6", "dd5ed854f5cdc0bdd3a3310a9f0452ec194e2907006551aebbb603825a989ed1")
     add_versions("1.3.0", "e7a129dcabb541baeb8599e419380df6aa98afc6e04874ac88a6d2bdb5a973a5")
     add_versions("1.3.1", "66fb17738bc51bee424b6ddb1e3b648091fafa80c8da6d75626d12b4188e0bdc")
+    add_versions("1.3.2", "61d6d5fadf13d81c111df4514e0e61062fead21c2a8b6c4caf7706f9b002fae1")
 
     add_configs("protocol",    {description = "compile protocol", default = false, type = "boolean"})
     add_configs("http",        {description = "compile http", default = true, type = "boolean"})
@@ -35,9 +36,9 @@ package("libhv")
     elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
     elseif is_plat("windows") then
-        add_syslinks("advapi32")
+        add_syslinks("crypt32", "advapi32")
     elseif is_plat("mingw") then
-        add_syslinks("ws2_32")
+        add_syslinks("crypt32", "ws2_32", "secur32")
         add_syslinks("pthread")
     end
 
@@ -53,7 +54,7 @@ package("libhv")
         elseif package:config("nghttp2") then
             -- TODO
         end
-        if package:is_plat("windows") and not package:config("shared") then
+        if not package:config("shared") then
             package:add("defines", "HV_STATICLIB")
         end
     end)
@@ -97,5 +98,12 @@ package("libhv")
 
     on_test(function(package)
         assert(package:has_cfuncs("hloop_new", {includes = "hv/hloop.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include "hv/hv.h"
+            void test() {
+                const char* version = hv_compile_version();
+                printf("%s\n", version);
+            }
+        ]]}, {configs = {languages = "c++11"}}))
     end)
 

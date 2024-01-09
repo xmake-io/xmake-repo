@@ -4,7 +4,7 @@ package("openmp")
     set_description("The OpenMP API specification for parallel programming")
 
     add_configs("runtime",      {description = "Set OpenMP runtime for gcc/clang like compilers.", default = "default", type = "string", values = {"default", "custom"}})
-    add_configs("experimental", {description = "Enable experimental OpenMP feature for msvc.", default = false, type = boolean})
+    add_configs("feature",      {description = "Set OpenMP feature for msvc.", default = "default", type = "string", values = {"default", "experimental", "llvm"}})
 
     on_load(function (package)
         if package.has_tool then
@@ -28,8 +28,15 @@ package("openmp")
         if package.has_tool then
             for _, toolkind in ipairs({"cc", "cxx"}) do
                 local flagname = toolkind == "cxx" and "cxxflags" or "cflags"
-                if package:has_tool(toolkind, "cl") then
-                    result[flagname] = (package:config("experimental") and "/openmp:experimental" or "/openmp")
+                if package:has_tool(toolkind, "cl", "clang_cl") then
+                    if package:config("feature") == "default" then
+                        result[flagname] = "/openmp"
+                    else
+                        result[flagname] = "/openmp:" .. package:config("feature")
+                    end
+                    if package:has_tool(toolkind, "clang_cl") then
+                        result.links = "libomp"
+                    end
                 elseif package:has_tool(toolkind, "clang", "clangxx") then
                     if package:is_plat("macosx") then
                         result[flagname] = "-Xpreprocessor -fopenmp"

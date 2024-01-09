@@ -4,7 +4,8 @@ package("autoconf")
     set_homepage("https://www.gnu.org/software/autoconf/autoconf.html")
     set_description("An extensible package of M4 macros that produce shell scripts to automatically configure software source code packages.")
 
-    add_urls("http://ftp.gnu.org/gnu/autoconf/autoconf-$(version).tar.gz",
+    add_urls("http://ftpmirror.gnu.org/gnu/autoconf/autoconf-$(version).tar.gz",
+             "http://ftp.gnu.org/gnu/autoconf/autoconf-$(version).tar.gz",
              "https://mirrors.ustc.edu.cn/gnu/autoconf/autoconf-$(version).tar.gz",
              "git://git.sv.gnu.org/autoconf")
     add_versions("2.68", "eff70a2916f2e2b3ed7fe8a2d7e63d72cf3a23684b56456b319c3ebce0705d99")

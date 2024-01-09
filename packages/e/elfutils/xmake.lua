@@ -6,15 +6,13 @@ package("elfutils")
 
     set_urls("https://sourceware.org/elfutils/ftp/$(version)/elfutils-$(version).tar.bz2")
     add_versions("0.183", "c3637c208d309d58714a51e61e63f1958808fead882e9b607506a29e5474f2c5")
+    add_versions("0.189", "39bd8f1a338e2b7cd4abc3ff11a0eddc6e690f69578a57478d8179b4148708c8")
 
     add_patches("0.183", path.join(os.scriptdir(), "patches", "0.183", "configure.patch"), "7a16719d9e3d8300b5322b791ba5dd02986f2663e419c6798077dd023ca6173a")
+    add_patches("0.189", path.join(os.scriptdir(), "patches", "0.189", "configure.patch"), "b4016a97e6aaad92b15fad9a594961b1fc77a6d054ebadedef9bb3a55e99a8f8")
 
     add_configs("libelf",   {description = "Enable libelf", default = true, type = "boolean"})
-    add_configs("libcpu",   {description = "Enable libcpu", default = false, type = "boolean"})
-    add_configs("libebl",   {description = "Enable libebl", default = false, type = "boolean"})
-    add_configs("libdw",    {description = "Enable libdw", default = false, type = "boolean"})
-    add_configs("libdwelf", {description = "Enable libdwelf", default = false, type = "boolean"})
-    add_configs("libdwfl",  {description = "Enable libdwfl", default = false, type = "boolean"})
+    add_configs("libdw",    {description = "Enable libdw", default = true, type = "boolean"})
     add_configs("libasm",   {description = "Enable libasm", default = false, type = "boolean"})
 
     add_deps("m4", "zlib")
@@ -34,23 +32,23 @@ package("elfutils")
                          "--disable-debuginfod",
                          "--disable-libdebuginfod"}
         local cflags = {}
-        if package:config("pic") ~= false then
-            table.insert(cflags, "-fPIC")
-        end
         for _, makefile in ipairs(os.files(path.join("*/Makefile.in"))) do
             io.replace(makefile, "-Wtrampolines", "", {plain = true})
             io.replace(makefile, "-Wimplicit-fallthrough=5", "", {plain = true})
+            io.replace(makefile, "-Werror", "", {plain = true})
             if package:has_tool("cc", "clang") then
                 io.replace(makefile, "-Wno-packed-not-aligned", "", {plain = true})
             end
         end
         local subdirs = {}
-        for name, enabled in pairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") then
-                if enabled then
-                    table.insert(subdirs, name)
-                end
-            end
+        if package:config("libelf") then
+            table.insert(subdirs, "libelf")
+        end
+        if package:config("libdw") then
+            table.join2(subdirs, "libcpu", "backends", "libebl", "libdwelf", "libdwfl", "libdw")
+        end
+        if package:config("libasm") then
+            table.insert(subdirs, "libasm")
         end
         io.replace("Makefile.in", [[SUBDIRS = config lib libelf libcpu backends libebl libdwelf libdwfl libdw \
 	  libasm debuginfod src po doc tests]], "SUBDIRS = lib " .. table.concat(subdirs, " "), {plain = true})
@@ -77,7 +75,9 @@ package("elfutils")
             os.rm(path.join(package:installdir("lib"), "*.a"))
         else
             os.rm(path.join(package:installdir("lib"), "*.so"))
+            os.tryrm(path.join(package:installdir("lib"), "*.so.*"))
         end
+        os.trycp("libelf/elf.h", package:installdir("include"))
     end)
 
     on_test(function (package)

@@ -10,6 +10,10 @@ package("moltenvk")
     add_versions("1.1.5", "2cdcb8dbf2acdcd8cbe70b109dadc05a901038c84970afbe4863e5e23f33deae")
     add_versions("1.2.0", "6e7af2dad0530b2b404480dbe437ca4670c6615cc2ec6cf6a20ed04d9d75e0bd")
 
+    if is_plat("macosx") then
+        add_extsources("brew::molten-vk")
+    end   
+
     on_fetch("macosx", function (package, opt)
         if opt.system then
             import("lib.detect.find_path")

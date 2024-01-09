@@ -7,6 +7,7 @@ package("async_simple")
     add_urls("https://github.com/alibaba/async_simple/archive/refs/tags/$(version).tar.gz",
              "https://github.com/alibaba/async_simple.git")
     add_versions("1.1", "32d1ea16dfc1741206b6e4a3fbe532eeb1c378619766c1abe11a9efc53109c10")
+    add_versions("1.2", "a59a2674ac2b0a3997b90873b2bf0fbe4d96fdedbe6a2628c16c92a65a3fa39a")
 
     add_configs("aio", {description = "default not open aio", default = false, type = "boolean"})
     add_configs("modules", {description = "default not use modules", default = false, type = "boolean"})
@@ -23,7 +24,7 @@ package("async_simple")
         if package:config("shared") then
             os.rm(package:installdir("lib/libasync_simple.a"))
         else
-            os.rm(package:installdir("lib/libasync_simple.so"))
+            os.rm(package:installdir("lib/*.so*"))
         end
     end)
 

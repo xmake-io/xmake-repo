@@ -6,6 +6,7 @@ package("tinyfiledialogs")
 
     add_urls("https://git.code.sf.net/p/tinyfiledialogs/code.git")
     add_versions("3.8.8", "d89567798fb1b989c6fc46a61698e4734760e0bf")
+    add_versions("3.15.1", "776ad52d7b7057f330caa74f00e5e9d9eae85631")
 
     if is_plat("windows") then
         add_syslinks("comdlg32", "ole32", "user32", "shell32")

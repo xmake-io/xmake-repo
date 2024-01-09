@@ -12,6 +12,7 @@ package("cpr")
     add_versions("1.9.4", "2fbb27716c010d8a28e52d5bc8f108e0d073ca3b3f5a48a2696b0231ea5196d5")
     add_versions("1.10.2", "044e98079032f7abf69c4c82f90ee2b4e4a7d2f28245498a5201ad6e8d0b1d08")
     add_versions("1.10.3", "d7f2574bd9dae8adb0ce6cf1afab119b509c297fffcb4204a1bb3e4e731074f2")
+    add_versions("1.10.5", "c8590568996cea918d7cf7ec6845d954b9b95ab2c4980b365f582a665dea08d8")
 
     add_configs("ssl", {description = "Enable SSL.", default = false, type = "boolean"})
 

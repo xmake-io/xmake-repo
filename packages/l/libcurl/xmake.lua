@@ -22,7 +22,7 @@ package("libcurl")
     end
 
     add_configs("cares",    {description = "Enable c-ares support.", default = false, type = "boolean"})
-    add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = is_plat("linux", "cross"), type = "boolean"})
+    add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = is_plat("linux", "android", "cross"), type = "boolean"})
     add_configs("mbedtls",  {description = "Enable mbedTLS for SSL/TLS.", default = false, type = "boolean"})
     add_configs("nghttp2",  {description = "Use Nghttp2 library.", default = false, type = "boolean"})
     add_configs("openldap", {description = "Use OpenLDAP library.", default = false, type = "boolean"})

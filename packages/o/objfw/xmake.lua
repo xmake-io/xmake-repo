@@ -2,8 +2,13 @@ package("objfw")
     set_homepage("https://objfw.nil.im")
     set_description("Portable framework for the Objective-C language.")
 
-    add_urls("https://github.com/ObjFW/ObjFW.git")
-    add_versions("2023.03.18", "86cec7d17dd323407f30fc5947e0e92cc307e869")
+    add_urls("https://objfw.nil.im/downloads/objfw-$(version).tar.gz")
+    add_versions("1.0.0", "55f7d9e99b8e2d4e0e193b2f0275501e6d9c1ebd29cadbea6a0da48a8587e3e0")
+    add_versions("1.0.1", "953fd8a7819fdbfa3b3092b06ac7f43a74bac736c120a40f2e3724f218d215f1")
+    add_versions("1.0.2", "b680be08bfade376d17958f3ceadaf223ac5d08df71a4bd787a42640a86db7cb")
+    add_versions("1.0.3", "1c81d7d03578b2d9084fc5d8722d4eaa4bdc2f3f09ce41231e7ceab8212fae17")
+    add_versions("1.0.4", "c62c61fc3f1b2d5c1d78369c602a6e82b32ade5c8ec0e9c410646d1554bf1e26")
+    add_versions("1.0.5", "798bda0590970fea10d5c8064e98088bb9960b3bc0475d92db443b0df9f205c4")
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
@@ -14,7 +19,7 @@ package("objfw")
         add_frameworks("CoreFoundation")
     end
 
-    add_configs("tls", { description = "Enable TLS support.", default = false, values = { true, false, "openssl", "gnutls", "securetransport" } })
+    add_configs("tls", { description = "Enable TLS support.", default = (is_plat("macosx") and "securetransport" or "openssl"), values = { true, false, "openssl", "gnutls", "securetransport" } })
     add_configs("rpath", { description = "Enable rpath.", default = true, type = "boolean" })
     add_configs("runtime", { description = "Use the included runtime, not recommended for macOS!", default = not is_plat("macosx"), type = "boolean" })
     add_configs("seluid24", { description = "Use 24 bit instead of 16 bit for selector UIDs.", default = false, type = "boolean" })
@@ -48,8 +53,10 @@ package("objfw")
         elseif tls then
             if tls == "openssl" then
                 package:add("deps", "openssl")
-            else
-                raise("no package %s for objfw!", tls)
+            elseif tls == "securetransport" then
+                package:add("frameworks", "Security")
+            elseif tls == "gnutls" then
+                package:add("deps", "gnutls")
             end
         end
     end)
@@ -60,14 +67,11 @@ package("objfw")
         if type(tls) == "boolean" then
             tls = tls and "yes" or "no"
         end
-        table.insert(configs, "--enable-tls=" .. tls)
-        if package:is_debug() then
-            table.insert(configs, "--enable-debug")
-        end
+        table.insert(configs, "--with-tls=" .. tls)
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         for name, enabled in pairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") then
+            if not package:extraconf("configs", name, "builtin") and name ~= "arc" then
                 name = name:gsub("_", "-")
                 if enabled then
                     table.insert(configs, "--enable-" .. name)
@@ -76,6 +80,30 @@ package("objfw")
                 end
             end
         end
+
+        -- SecureTransport must be handled by system so we don't worry about providing CFLAGS and LDFLAGS
+        local ssl = package:dep("openssl") or package:dep("gnutls")
+        local is_gnu = ssl and ssl:name() == "gnutls"
+        if ssl then
+            import("lib.detect.find_library")
+            import("lib.detect.find_path")
+
+            local libssl = find_library(is_gnu and "gnutls" or "ssl", { ssl:installdir("lib"), "/usr/lib/", "/usr/lib64/", "/usr/local/lib" })
+            if not libssl then
+                libssl = find_library(is_gnu and "gnutls" or "ssl")
+            end
+
+            local ssl_incdir = find_path(is_gnu and "gnutls/gnutls.h" or "openssl/ssl.h", { ssl:installdir("include"), "/usr/include/", "/usr/local/include" })
+
+            if libssl then
+                print("Using SSL "..ssl:name().." from "..libssl.linkdir..", include dir: "..ssl_incdir)
+                table.insert(configs, "CPPFLAGS=-I"..ssl_incdir)
+                table.insert(configs, "LDFLAGS=-L"..libssl.linkdir)
+            else
+                print("No SSL library found, using system default")
+            end
+        end
+
         import("package.tools.autoconf").install(package, configs)
 
         local mflags = {}
@@ -88,17 +116,26 @@ package("objfw")
         table.join2(mflags, mflags_str:split("%s+"))
         table.join2(mxxflags, mxxflags_str:split("%s+"))
         table.join2(ldflags, ldflags_str:split("%s+"))
+
+        print("MFlags: ", mflags)
+        print("MXXFlags: ", mxxflags)
+        print("LDFlags: ", ldflags)
         package:add("mflags", mflags)
         package:add("mxxflags", mxxflags)
         package:add("ldflags", ldflags)
+
+        if package:config("runtime") then
+            package:add("links", {"objfw", "objfwrt", (package:config("tls") and "objfwtls" or nil)})
+        else
+            package:add("links", {"objfw", (package:config("tls") and "objfwtls" or nil)})
+        end
     end)
 
     on_test(function (package)
         assert(package:check_msnippets({test = [[
-            #include <stdio.h>
             void test() {
                 OFString* string = @"hello";
-                printf("%s\n", [string UTF8String]);
+                [OFStdOut writeLine: string];
             }
         ]]}, {includes = {"ObjFW/ObjFW.h"}}))
     end)
