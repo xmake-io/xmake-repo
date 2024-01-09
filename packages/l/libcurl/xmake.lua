@@ -71,11 +71,11 @@ package("libcurl")
     end)
 
     on_install("windows", "mingw", "linux", "macosx", "android", "iphoneos", "cross", function (package)
+        local version = package:version()
+
         local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, (package:version():ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
-        local version = package:version()
 
         if (package:is_plat("mingw") and version:ge("7.85")) then
             package:add("syslinks", "bcrypt")
@@ -95,8 +95,11 @@ package("libcurl")
         for name, opt in pairs(configopts) do
             table.insert(configs, "-D" .. opt .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
+        if package:is_plat("windows", "mingw") then
+            table.insert(configs, (version:ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
+        end
         if package:is_plat("macosx", "iphoneos") then
-            table.insert(configs, (package:version():ge("7.65") and "-DCURL_USE_SECTRANSP=ON" or "-DCMAKE_USE_DARWINSSL=ON"))
+            table.insert(configs, (version:ge("7.65") and "-DCURL_USE_SECTRANSP=ON" or "-DCMAKE_USE_DARWINSSL=ON"))
         end
         if package:is_plat("windows") then
             table.insert(configs, "-DCURL_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
