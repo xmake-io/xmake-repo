@@ -85,7 +85,6 @@ package("libcurl")
                             openssl  = (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL"),
                             mbedtls  = (version:ge("7.81") and "CURL_USE_MBEDTLS" or "CMAKE_USE_MBEDTLS"),
                             nghttp2  = "USE_NGHTTP2",
-                            openldap = "CURL_USE_OPENLDAP",
                             libidn2  = "USE_LIBIDN2",
                             zlib     = "CURL_ZLIB",
                             zstd     = "CURL_ZSTD",
@@ -94,6 +93,9 @@ package("libcurl")
                             libpsl   = "CURL_USE_LIBPSL"}
         for name, opt in pairs(configopts) do
             table.insert(configs, "-D" .. opt .. "=" .. (package:config(name) and "ON" or "OFF"))
+        end
+        if not package:config("openldap") then
+            table.insert(configs, "-DCURL_DISABLE_LDAP=ON")
         end
         if package:is_plat("windows", "mingw") then
             table.insert(configs, (version:ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
