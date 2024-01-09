@@ -29,7 +29,7 @@ package("libpng")
         add_extsources("brew::libpng")
     end
 
-    on_install("windows", "mingw", "android", "iphoneos", "cross", "bsd", "wasm", function (package)
+    on_install("windows", "mingw", "macosx|arm64", "android", "iphoneos", "cross", "bsd", "wasm", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("zlib")
@@ -76,27 +76,17 @@ package("libpng")
         import("package.tools.xmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx|x86_64", "linux", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        local cppflags = {}
-        local ldflags = {}
-        for _, dep in ipairs(package:orderdeps()) do
-            local fetchinfo = dep:fetch()
-            if fetchinfo then
-                for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                    table.insert(cppflags, "-I" .. includedir)
-                end
-                for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    table.insert(ldflags, "-L" .. linkdir)
-                end
-            end
+        if not package:dep("zlib"):is_system() then
+            table.insert(configs, "--with-zlib-prefix=" .. package:dep("zlib"):installdir())
         end
-        import("package.tools.autoconf").install(package, configs, {cppflags = cppflags, ldflags = ldflags})
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
