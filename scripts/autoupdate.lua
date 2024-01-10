@@ -38,9 +38,13 @@ end
 
 function _update_version(instance, version, shasum)
     local branch = "autoupdate-" .. instance:name() .. "-" .. version
+    local branch_current = os.iorun("git branch --show-current"):trim()
     os.exec("git stash")
+    os.exec("git branch -D %s", branch)
     os.exec("git branch %s", branch)
     os.exec("git checkout %s", branch)
+    os.exec("git reset --hard HEAD")
+    os.exec("git checkout %s", branch_current)
     os.exec("git stash pop")
 end
 
