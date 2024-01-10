@@ -49,7 +49,7 @@ function main()
             local checkupdate = import("checkupdate", {rootdir = path.directory(checkupdate_filepath), anonymous = true})
             local version, shasum = checkupdate(instance)
             if version and shasum then
-                cprint("package(%s): new version ${bright}%s${clear} found, shasum: ${bright}%s", version, shasum)
+                cprint("package(%s): new version ${bright}%s${clear} found, shasum: ${bright}%s", instance:name(), version, shasum)
                 count = count + 1
             end
         end
