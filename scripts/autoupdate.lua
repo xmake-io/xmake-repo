@@ -46,15 +46,22 @@ function _update_version(instance, version, shasum)
     local scriptfile = path.join(instance:scriptdir(), "xmake.lua")
     if os.isfile(scriptfile) then
         local inserted = false
+        local version_current
         io.gsub(scriptfile, "add_versions%(\"(.-)\",%s+\"(.-)\"%)", function (v, h)
+            if not version_current or sermver.compare(v, version_current) > 0 then
+                version_current = v
+            end
             if not inserted then
                 inserted = true
                 return string.format('add_versions("%s", "%s")\n    add_versions("%s", "%s")', version, shasum, v, h)
             end
         end)
+        local body = string.format("New version of %s detected (package version: %s, last github version: %s)",
+            instance:name(), version_current, version)
+        os.exec("git add .")
+        os.exec("git commit -a -m \"Update %s to %s\"", instance:name(), version)
+        os.exec("gh pr create --title \"Auto-update %s to %s\" --body \"%s\"", instance:name(), version, body)
     end
-    os.exec("git add .")
-    os.exec("git commit -a -m \"Update %s to %s\"", instance:name(), version)
     os.exec("git reset --hard HEAD")
     os.exec("git checkout %s", branch_current)
     os.exec("git stash pop")
