@@ -40,7 +40,7 @@ function _update_version(instance, version, shasum)
     local branch = "autoupdate-" .. instance:name() .. "-" .. version
     local branch_current = os.iorun("git branch --show-current"):trim()
     local repourl = "https://github.com/xmake-io/xmake-repo.git"
-    os.vexec("git stash")
+    os.vexec("git reset --hard HEAD")
     os.vexec("git branch -D %s", branch)
     os.vexec("git checkout dev")
     os.vexec("git pull %s dev", repourl)
@@ -68,7 +68,6 @@ function _update_version(instance, version, shasum)
     end
     os.vexec("git reset --hard HEAD")
     os.vexec("git checkout %s", branch_current)
-    os.vexec("git stash pop")
 end
 
 function main(maxcount)
