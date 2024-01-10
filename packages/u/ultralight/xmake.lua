@@ -17,11 +17,13 @@ package("ultralight")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     on_install("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
-        if linuxos.name() ~= "ubuntu" and linuxos.name() ~= "debian" or (linuxos.version():major() < 9 and linuxos.version():minor() < 5) then
-            print("Ultralight is officially supported on Ubuntu/Debian 9.5+. use it at your own risks")
+        if package:is_plat("linux") then
+            if linuxos.name() ~= "ubuntu" and linuxos.name() ~= "debian" or (linuxos.version():major() < 9 and linuxos.version():minor() < 5) then
+                print("Ultralight is officially supported on Ubuntu/Debian 9.5+. use it at your own risks")
+            end
         end
         os.cp("include", package:installdir())
-        if package:is_plat("macos") == false then
+        if not package:is_plat("macosx") then
             os.cp("lib", package:installdir())
             os.cp("bin", package:installdir())
         end
