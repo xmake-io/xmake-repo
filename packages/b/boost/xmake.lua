@@ -315,11 +315,8 @@ package("boost")
             table.insert(argv, "pch=off")
         end
 
-        local ok = try { function ()
-            os.vrunv("./b2", argv, {envs = runenvs, stdout = "boost-log.txt"}) -- disable redundant output
-            return true
-        end }
-        if not ok then
+        local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})
+        if ok ~= 0 then
             raise("boost build failed, please check log in " .. path.join(os.curdir(), "boost-log.txt"))
         end
     end)
