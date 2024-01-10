@@ -1,12 +1,29 @@
-function _check_version_from_github(package, url)
+function _check_version_from_github_tags(package, url)
     -- TODO
     -- return version, shasum
 end
 
+function _check_version_from_github_releases(package, url)
+    local repourl = url:match("https://github%.com/.-/.-/")
+    if repourl then
+        print("checking version from %s ..", repourl)
+        local list = try {function() return os.iorunv("gh", {"release", "list", "--exclude-drafts", "--exclude-pre-releases", "-R", repourl}) end}
+        if not list then
+            list = os.iorunv("gh", {"release", "list", "-R", repourl})
+        end
+        if list then
+            for _, line in ipairs(list:split("\n")) do
+                local splitinfo = line:split("%s+")[2]
+                print(line)
+            end
+        end
+    end
+end
+
 function main(package)
     local checkers = {
-        ["https://github%.com/.-/.-/archive/refs/tags/.*"] = _check_version_from_github,
-        ["https://github%.com/.-/.-/releases/download/.*"] = _check_version_from_github
+        ["https://github%.com/.-/.-/archive/refs/tags/.*"] = _check_version_from_github_tags,
+        ["https://github%.com/.-/.-/releases/download/.*"] = _check_version_from_github_releases
     }
     for _, url in ipairs(package:urls()) do
         for pattern, checker in pairs(checkers) do
