@@ -37,16 +37,9 @@ function _get_all_packages()
     return packages
 end
 
-function _update_version(instance, version, shasum)
+function _is_pending(instance, version)
     local branch = "autoupdate-" .. instance:name() .. "-" .. version
-    local branch_current = os.iorun("git branch --show-current"):trim()
     local repourl = "https://github.com/xmake-io/xmake-repo.git"
-    os.vexec("git reset --hard HEAD")
-    os.execv("git", {"branch", "-D", branch}, {try = true})
-    os.vexec("git checkout dev")
-    os.vexec("git pull %s dev", repourl)
-    os.vexec("git branch %s", branch)
-    os.vexec("git checkout %s", branch)
     local is_pending = false
     local remote_branches = os.iorun("git ls-remote --head %s", repourl)
     if remote_branches then
@@ -58,6 +51,19 @@ function _update_version(instance, version, shasum)
             end
         end
     end
+    return is_pending
+end
+
+function _update_version(instance, version, shasum)
+    local branch = "autoupdate-" .. instance:name() .. "-" .. version
+    local branch_current = os.iorun("git branch --show-current"):trim()
+    local repourl = "https://github.com/xmake-io/xmake-repo.git"
+    os.vexec("git reset --hard HEAD")
+    os.execv("git", {"branch", "-D", branch}, {try = true})
+    os.vexec("git checkout dev")
+    os.vexec("git pull %s dev", repourl)
+    os.vexec("git branch %s", branch)
+    os.vexec("git checkout %s", branch)
     local scriptfile = path.join(instance:scriptdir(), "xmake.lua")
     if os.isfile(scriptfile) and not is_pending then
         local inserted = false
@@ -94,7 +100,7 @@ function main(maxcount)
         if os.isfile(checkupdate_filepath) and count < maxcount then
             local checkupdate = import("checkupdate", {rootdir = path.directory(checkupdate_filepath), anonymous = true})
             local version, shasum = checkupdate(instance)
-            if version and shasum then
+            if version and shasum and not _is_pending(instance, version) then
                 cprint("package(%s): new version ${bright}%s${clear} found, shasum: ${bright}%s", instance:name(), version, shasum)
                 _update_version(instance, version, shasum)
                 count = count + 1
