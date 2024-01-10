@@ -60,7 +60,7 @@ function _update_version(instance, version, shasum)
             instance:name(), version_current, version)
         os.exec("git add .")
         os.exec("git commit -a -m \"Update %s to %s\"", instance:name(), version)
-        os.exec("gh pr create --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo", instance:name(), version, body)
+        os.exec("gh pr create --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo -B dev -H %s", instance:name(), version, body, branch)
     end
     os.exec("git reset --hard HEAD")
     os.exec("git checkout %s", branch_current)
