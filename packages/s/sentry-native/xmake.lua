@@ -51,7 +51,7 @@ package("sentry-native")
         if backend == "crashpad" then
             package:add("links", "sentry", "crashpad_client", "crashpad_util", "crashpad_minidump", "crashpad_handler_lib", "mini_chromium", "crashpad_tools", "crashpad_compat", "crashpad_snapshot")
             package:add("deps", "zlib")
-        elseif backend == "breadpad"
+        elseif backend == "breadpad" then
             package:add("links", "sentry", "breakpad_client")
         end
     end)
