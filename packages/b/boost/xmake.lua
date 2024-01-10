@@ -264,6 +264,7 @@ package("boost")
         else
             table.insert(argv, "address-model=32")
         end
+        local cxxflags
         if package:is_plat("windows") then
             local vs_runtime = package:config("vs_runtime")
             if package:config("shared") then
@@ -273,15 +274,36 @@ package("boost")
             else
                 table.insert(argv, "runtime-link=shared")
             end
-            table.insert(argv, "cxxflags=-std:c++14")
             table.insert(argv, "toolset=" .. build_toolset)
+            cxxflags = "-std:c++14"
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
-        else
-            table.insert(argv, "cxxflags=-std=c++14")
-            if package:config("pic") ~= false then
-                table.insert(argv, "cxxflags=-fPIC")
+        elseif package:is_plat("macosx") then
+            table.insert(argv, "toolset=darwin")
+
+            -- fix macosx arm64 build issue https://github.com/microsoft/vcpkg/pull/18529
+            cxxflags = "-std=c++14 -arch " .. package:arch()
+            local xcode = package:toolchain("xcode") or import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
+            if xcode:check() then
+                local xcode_dir = xcode:config("xcode")
+                local xcode_sdkver = xcode:config("xcode_sdkver")
+                local target_minver = xcode:config("target_minver")
+                if xcode_dir and xcode_sdkver then
+                    local xcode_sdkdir = xcode_dir .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode_sdkver .. ".sdk"
+                    cxxflags = cxxflags .. " -isysroot " .. xcode_sdkdir
+                end
+                if target_minver then
+                    cxxflags = cxxflags .. " -mmacosx-version-min=" .. target_minver
+                end
             end
+        else
+            cxxflags = "-std=c++14"
+            if package:config("pic") ~= false then
+                cxxflags = cxxflags .. " -fPIC"
+            end
+        end
+        if cxxflags then
+            table.insert(argv, "cxxflags=" .. cxxflags)
         end
         for _, libname in ipairs(libnames) do
             if package:config("all") or package:config(libname) then
@@ -293,7 +315,10 @@ package("boost")
             table.insert(argv, "pch=off")
         end
 
-        os.vrunv("./b2", argv, {envs = runenvs})
+        local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})
+        if ok ~= 0 then
+            raise("boost build failed, please check log in " .. path.join(os.curdir(), "boost-log.txt"))
+        end
     end)
 
     on_test(function (package)
