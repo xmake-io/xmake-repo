@@ -39,10 +39,11 @@ end
 function _update_version(instance, version, shasum)
     local branch = "autoupdate-" .. instance:name() .. "-" .. version
     local branch_current = os.iorun("git branch --show-current"):trim()
+    local repourl = "https://github.com/xmake-io/xmake-repo.git"
     os.vexec("git stash")
     os.vexec("git branch -D %s", branch)
     os.vexec("git checkout dev")
-    os.vexec("git pull origin dev")
+    os.vexec("git pull %s dev", repourl)
     os.vexec("git branch %s", branch)
     os.vexec("git checkout %s", branch)
     local scriptfile = path.join(instance:scriptdir(), "xmake.lua")
@@ -62,6 +63,7 @@ function _update_version(instance, version, shasum)
             instance:name(), version_current, version)
         os.vexec("git add .")
         os.vexec("git commit -a -m \"Update %s to %s\"", instance:name(), version)
+        os.vexec("git push %s %s:%s", repourl, branch, branch)
         os.vexec("gh pr create --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo -B dev -H %s", instance:name(), version, body, branch)
     end
     os.vexec("git reset --hard HEAD")
