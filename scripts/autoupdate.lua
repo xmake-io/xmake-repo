@@ -42,7 +42,7 @@ function _update_version(instance, version, shasum)
     local branch_current = os.iorun("git branch --show-current"):trim()
     local repourl = "https://github.com/xmake-io/xmake-repo.git"
     os.vexec("git reset --hard HEAD")
-    os.vexec("git branch -D %s", branch)
+    os.execv("git", {"branch", "-D", branch}, {try = true})
     os.vexec("git checkout dev")
     os.vexec("git pull %s dev", repourl)
     os.vexec("git branch %s", branch)
@@ -51,6 +51,7 @@ function _update_version(instance, version, shasum)
     local remote_branches = os.iorun("git ls-remote --head %s", repourl)
     if remote_branches then
         for _, remote_branch in ipairs(remote_branches:split("\n")) do
+            remote_branch = remote_branch:split("%s")[2]
             if remote_branch == "refs/heads/" .. branch then
                 is_pending = true
                 break
