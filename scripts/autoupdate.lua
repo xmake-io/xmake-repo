@@ -1,6 +1,7 @@
 import("core.package.package")
 import("core.base.semver")
 import("core.base.hashset")
+import("devel.git")
 import("packages", {alias = "packages_util"})
 
 function _load_package(packagename, packagedir, packagefile)
@@ -46,8 +47,18 @@ function _update_version(instance, version, shasum)
     os.vexec("git pull %s dev", repourl)
     os.vexec("git branch %s", branch)
     os.vexec("git checkout %s", branch)
+    local is_pending = false
+    local remote_branches = os.iorun("git ls-remote --head %s", repourl)
+    if remote_branches then
+        for _, remote_branch in ipairs(remote_branches:split("\n")) do
+            if remote_branch == "refs/heads/" .. branch then
+                is_pending = true
+                break
+            end
+        end
+    end
     local scriptfile = path.join(instance:scriptdir(), "xmake.lua")
-    if os.isfile(scriptfile) then
+    if os.isfile(scriptfile) and not is_pending then
         local inserted = false
         local version_current
         io.gsub(scriptfile, "add_versions%(\"(.-)\",%s+\"(.-)\"%)", function (v, h)
