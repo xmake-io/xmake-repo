@@ -39,12 +39,12 @@ end
 function _update_version(instance, version, shasum)
     local branch = "autoupdate-" .. instance:name() .. "-" .. version
     local branch_current = os.iorun("git branch --show-current"):trim()
-    os.exec("git stash")
-    os.exec("git branch -D %s", branch)
-    os.exec("git checkout dev")
-    os.exec("git pull origin dev")
-    os.exec("git branch %s", branch)
-    os.exec("git checkout %s", branch)
+    os.vexec("git stash")
+    os.vexec("git branch -D %s", branch)
+    os.vexec("git checkout dev")
+    os.vexec("git pull origin dev")
+    os.vexec("git branch %s", branch)
+    os.vexec("git checkout %s", branch)
     local scriptfile = path.join(instance:scriptdir(), "xmake.lua")
     if os.isfile(scriptfile) then
         local inserted = false
@@ -60,13 +60,13 @@ function _update_version(instance, version, shasum)
         end)
         local body = string.format("New version of %s detected (package version: %s, last github version: %s)",
             instance:name(), version_current, version)
-        os.exec("git add .")
-        os.exec("git commit -a -m \"Update %s to %s\"", instance:name(), version)
-        os.exec("gh pr create --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo -B dev -H %s", instance:name(), version, body, branch)
+        os.vexec("git add .")
+        os.vexec("git commit -a -m \"Update %s to %s\"", instance:name(), version)
+        os.vexec("gh pr create --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo -B dev -H %s", instance:name(), version, body, branch)
     end
-    os.exec("git reset --hard HEAD")
-    os.exec("git checkout %s", branch_current)
-    os.exec("git stash pop")
+    os.vexec("git reset --hard HEAD")
+    os.vexec("git checkout %s", branch_current)
+    os.vexec("git stash pop")
 end
 
 function main(maxcount)
