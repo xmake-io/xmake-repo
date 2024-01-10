@@ -36,9 +36,17 @@ function _get_all_packages()
     return packages
 end
 
-function main()
+function _update_version(instance, version, shasum)
+    local branch = "autoupdate-" .. instance:name() .. "-" .. version
+    os.exec("git stash")
+    os.exec("git branch %s", branch)
+    os.exec("git checkout %s", branch)
+    os.exec("git stash pop")
+end
+
+function main(maxcount)
     local count = 0
-    local maxcount = 6
+    local maxcount = tonumber(maxcount or 10)
     local instances = _get_all_packages()
     for _, instance in ipairs(instances) do
         local checkupdate_filepath = path.join(instance:scriptdir(), "checkupdate.lua")
@@ -50,6 +58,7 @@ function main()
             local version, shasum = checkupdate(instance)
             if version and shasum then
                 cprint("package(%s): new version ${bright}%s${clear} found, shasum: ${bright}%s", instance:name(), version, shasum)
+                _update_version(instance, version, shasum)
                 count = count + 1
             end
         end

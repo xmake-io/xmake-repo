@@ -28,6 +28,34 @@ function _is_valid_version(version)
     return true
 end
 
+function _get_version_and_shasum(package, url, version_latest)
+    if version_latest then
+        local has_prefix_v = false
+        for _, version in ipairs(package:versions()) do
+            if version:startswith("v") then
+                has_prefix_v = true
+            end
+            if semver.compare(version, version_latest) >= 0 then
+                version_latest = nil
+                break
+            end
+        end
+        if version_latest then
+            if has_prefix_v and not version_latest:startswith("v") then
+                version_latest = "v" .. version_latest
+            elseif not has_prefix_v and version_latest:startswith("v") then
+                version_latest = version_latest:sub(2)
+            end
+        end
+    end
+    if version_latest then
+        local shasum = shasum_of(package, url, version_latest)
+        if shasum then
+            return version_latest, shasum
+        end
+    end
+end
+
 function _check_version_from_github_tags(package, url)
     local repourl = url:match("https://github%.com/.-/.-/")
     if repourl then
@@ -40,29 +68,7 @@ function _check_version_from_github_tags(package, url)
             end
         end
         if version_latest then
-            local has_prefix_v = false
-            for _, version in ipairs(package:versions()) do
-                if version:startswith("v") then
-                    has_prefix_v = true
-                end
-                if semver.compare(version, version_latest) >= 0 then
-                    version_latest = nil
-                    break
-                end
-            end
-            if version_latest then
-                if has_prefix_v and not version_latest:startswith("v") then
-                    version_latest = "v" .. version_latest
-                elseif not has_prefix_v and version_latest:startswith("v") then
-                    version_latest = version_latest:sub(2)
-                end
-            end
-        end
-        if version_latest then
-            local shasum = shasum_of(package, url, version_latest)
-            if shasum then
-                return version_latest, shasum
-            end
+            return _get_version_and_shasum(package, url, version_latest)
         end
     end
 end
@@ -86,29 +92,7 @@ function _check_version_from_github_releases(package, url)
                 end
             end
             if version_latest then
-                local has_prefix_v = false
-                for _, version in ipairs(package:versions()) do
-                    if version:startswith("v") then
-                        has_prefix_v = true
-                    end
-                    if semver.compare(version, version_latest) >= 0 then
-                        version_latest = nil
-                        break
-                    end
-                end
-                if version_latest then
-                    if has_prefix_v and not version_latest:startswith("v") then
-                        version_latest = "v" .. version_latest
-                    elseif not has_prefix_v and version_latest:startswith("v") then
-                        version_latest = version_latest:sub(2)
-                    end
-                end
-            end
-            if version_latest then
-                local shasum = shasum_of(package, url, version_latest)
-                if shasum then
-                    return version_latest, shasum
-                end
+                return _get_version_and_shasum(package, url, version_latest)
             end
         end
     end
@@ -117,7 +101,7 @@ end
 function main(package)
     local checkers = {
         ["https://github%.com/.-/.-/archive/refs/tags/.*"] = _check_version_from_github_tags,
---        ["https://github%.com/.-/.-/releases/download/.*"] = _check_version_from_github_releases
+        ["https://github%.com/.-/.-/releases/download/.*"] = _check_version_from_github_releases
     }
     for _, url in ipairs(package:urls()) do
         for pattern, checker in pairs(checkers) do
