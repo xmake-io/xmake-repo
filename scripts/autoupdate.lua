@@ -39,7 +39,7 @@ end
 
 function _is_pending(instance, version)
     local branch = "autoupdate-" .. instance:name() .. "-" .. version
-    local repourl = "https://github.com/xmake-io/xmake-repo.git"
+    local repourl = "git@github.com:xmake-io/xmake-repo.git"
     local is_pending = false
     local remote_branches = os.iorun("git ls-remote --head %s", repourl)
     if remote_branches then
@@ -57,7 +57,7 @@ end
 function _update_version(instance, version, shasum)
     local branch = "autoupdate-" .. instance:name() .. "-" .. version
     local branch_current = os.iorun("git branch --show-current"):trim()
-    local repourl = "https://github.com/xmake-io/xmake-repo.git"
+    local repourl = "git@github.com:xmake-io/xmake-repo.git"
     os.vexec("git reset --hard HEAD")
     os.execv("git", {"branch", "-D", branch}, {try = true})
     os.vexec("git checkout dev")
