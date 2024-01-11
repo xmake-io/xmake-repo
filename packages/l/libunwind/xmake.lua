@@ -14,6 +14,7 @@ package("libunwind")
         return version:gsub("v", "")
     end})
     add_urls("https://github.com/libunwind/libunwind.git")
+    add_versions("v1.7.2", "a18a6a24307443a8ace7a8acc2ce79fbbe6826cd0edf98d6326d0225d6a5d6e6")
     add_versions("v1.5", "90337653d92d4a13de590781371c604f9031cdb50520366aa1e3a91e1efb1017")
     add_versions("v1.6.2", "4a6aec666991fb45d0889c44aede8ad6eb108071c3554fcdff671f9c94794976")
 
