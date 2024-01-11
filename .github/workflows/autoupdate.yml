@@ -24,7 +24,7 @@ jobs:
           echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
           sudo apt update
           sudo apt install -y gh unzip zip
-          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+          echo ${{ secrets.XMAKE_REPO_TOKEN }} | gh auth login --with-token
           git config --global user.email "waruqi@gmail.com"
           git config --global user.name "ruki"
 
@@ -37,6 +37,6 @@ jobs:
 
       - name: Auto-update packages
         run: |
-          xmake l -vD scripts/autoupdate.lua 1
+          xmake l -vD scripts/autoupdate.lua 3
 
 
