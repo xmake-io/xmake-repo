@@ -6,6 +6,7 @@ package("libsigcplusplus")
     add_urls("https://github.com/libsigcplusplus/libsigcplusplus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libsigcplusplus/libsigcplusplus.git")
 
+    add_versions("3.6.0", "bbe81e4f6d8acb41a9795525a38c0782751dbc4af3d78a9339f4a282e8a16c38")
     add_versions("3.4.0", "445d889079041b41b368ee3b923b7c71ae10a54da03bc746f2d0723e28ba2291")
 
     add_configs("deprecated_api", {description = "Build deprecated API and include it in the library", default = false, type = "boolean"})
