@@ -94,12 +94,14 @@ function main(maxcount)
     local count = 0
     local maxcount = tonumber(maxcount or 10)
     local instances = _get_all_packages()
-    for _, instance in ipairs(instances) do
+    math.randomseed(os.time())
+    while count < maxcount do
+        local instance = instances[math.random(#instances)]
         local checkupdate_filepath = path.join(instance:scriptdir(), "checkupdate.lua")
         if not os.isfile(checkupdate_filepath) then
             checkupdate_filepath = path.join(os.scriptdir(), "checkupdate.lua")
         end
-        if os.isfile(checkupdate_filepath) and count < maxcount then
+        if os.isfile(checkupdate_filepath) then
             local checkupdate = import("checkupdate", {rootdir = path.directory(checkupdate_filepath), anonymous = true})
             local version, shasum = checkupdate(instance)
             if version and shasum and not _is_pending(instance, version) then

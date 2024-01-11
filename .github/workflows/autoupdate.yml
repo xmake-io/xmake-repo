@@ -3,9 +3,6 @@ name: Auto-update packages
 on:
   schedule: # execute every 24 hours
     - cron: "0 */24 * * *"
-  pull_request:
-    branches:
-      - dev
 
 jobs:
   build:
@@ -40,6 +37,6 @@ jobs:
 
       - name: Auto-update packages
         run: |
-          xmake l -vD scripts/autoupdate.lua 1
+          xmake l -vD scripts/autoupdate.lua 3
 
 
