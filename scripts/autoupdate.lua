@@ -39,7 +39,7 @@ end
 
 function _is_pending(instance, version)
     local branch = "autoupdate-" .. instance:name() .. "-" .. version
-    local repourl = "https://github.com/xmake-io/xmake-repo.git"
+    local repourl = "git@github.com:xmake-io/xmake-repo.git"
     local is_pending = false
     local remote_branches = os.iorun("git ls-remote --head %s", repourl)
     if remote_branches then
@@ -57,8 +57,9 @@ end
 function _update_version(instance, version, shasum)
     local branch = "autoupdate-" .. instance:name() .. "-" .. version
     local branch_current = os.iorun("git branch --show-current"):trim()
-    local repourl = "https://github.com/xmake-io/xmake-repo.git"
+    local repourl = "git@github.com:xmake-io/xmake-repo.git"
     os.vexec("git reset --hard HEAD")
+    os.vexec("git clean -fdx")
     os.execv("git", {"branch", "-D", branch}, {try = true})
     os.vexec("git checkout dev")
     os.vexec("git pull %s dev", repourl)
@@ -69,7 +70,7 @@ function _update_version(instance, version, shasum)
         local inserted = false
         local version_current
         io.gsub(scriptfile, "add_versions%(\"(.-)\",%s+\"(.-)\"%)", function (v, h)
-            if not version_current or sermver.compare(v, version_current) > 0 then
+            if not version_current or semver.compare(v, version_current) > 0 then
                 version_current = v
             end
             if not inserted then
@@ -82,7 +83,8 @@ function _update_version(instance, version, shasum)
         os.vexec("git add .")
         os.vexec("git commit -a -m \"Update %s to %s\"", instance:name(), version)
         os.vexec("git push %s %s:%s", repourl, branch, branch)
-        os.vexec("gh pr create --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo -B dev -H %s", instance:name(), version, body, branch)
+        os.vexec("gh pr create --label \"auto-update\" --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo -B dev -H %s",
+            instance:name(), version, body, branch)
     end
     os.vexec("git reset --hard HEAD")
     os.vexec("git checkout %s", branch_current)
