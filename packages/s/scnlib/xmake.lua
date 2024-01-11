@@ -4,6 +4,7 @@ package("scnlib")
     set_description("scnlib is a modern C++ library for replacing scanf and std::istream")
 
     set_urls("https://github.com/eliaskosunen/scnlib/archive/refs/tags/v$(version).zip")
+    add_versions("1.1.3", "48bc9c70399b6727a2ae529adaa0607b0e035f11869ea462d95a931df0896254")
     add_versions("1.1.2", "72bf304662b03e00de5b438b9d4697a081e786d589e067817c356174fb2cb06c")
     add_versions("0.4", "49a84f1439e52666532fbd5da3fa1d652622fc7ac376070e330e15c528d38190")
 
