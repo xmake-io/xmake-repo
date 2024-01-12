@@ -23,10 +23,8 @@ package("ultralight")
             end
         end
         os.cp("include", package:installdir())
-        if not package:is_plat("macosx") then
-            os.cp("lib", package:installdir())
-            os.cp("bin", package:installdir())
-        end
+        os.trycp("lib", package:installdir())
+        os.trycp("bin", package:installdir())
     end)
 
     on_test(function (package)
