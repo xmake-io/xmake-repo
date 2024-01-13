@@ -7,6 +7,7 @@ package("function2")
     add_urls("https://github.com/Naios/function2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Naios/function2.git")
 
+    add_versions("4.2.4", "6081d0f7011ddb8555bd846caf1245d4bce62d83fee1403b9d247b66ed617a67")
     add_versions("4.1.0", "c3aaeaf93bf90c0f4505a18f1094b51fe28881ce202c3bf78ec4efb336c51981")
     add_versions("4.2.0", "fd1194b236e55f695c3a0c17f2440d6965b800c9309d0d5937e0185bcfe7ae6e")
     add_versions("4.2.1", "dfaf12f6cc4dadc4fc7051af7ac57be220c823aaccfd2fecebcb45a0a03a6eb0")
