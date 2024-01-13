@@ -29,7 +29,7 @@ package("agg")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-Dagg_USE_FREETYPE=" .. (package:config("freetype") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"libx11", "libxext"}})
     end)
 
     on_test(function (package)
