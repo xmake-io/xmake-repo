@@ -6,6 +6,7 @@ package("imgui-file-dialog")
     add_urls("https://github.com/aiekick/ImGuiFileDialog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aiekick/ImGuiFileDialog.git")
 
+    add_versions("v0.6.6", "75420f6eaf74fb1fa22042713f573858d8549366e7741baaf91128eb065b4b47")
     add_versions("v0.6.5", "3fac0f2cfc92b3f2c806e6743236467d0f691e54b1747a3955b82ef28b13e2fa")
 
     if is_plat("mingw") then
