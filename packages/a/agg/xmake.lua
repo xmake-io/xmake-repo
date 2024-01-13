@@ -12,9 +12,7 @@ package("agg")
     add_configs("freetype", {description = "Use Freetype library.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake")
-    if is_plat("macosx") then
-        add_frameworks("Carbon")
-    elseif is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux") then
         add_deps("libx11", "libxext")
     end
     add_links("aggctrl", "aggplatform", "agg")
@@ -29,7 +27,7 @@ package("agg")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-Dagg_USE_FREETYPE=" .. (package:config("freetype") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"libx11", "libxext"}})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
