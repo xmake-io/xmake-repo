@@ -65,7 +65,7 @@ package("libcurl")
                 has_deps = true
             end
         end
-        if has_deps and package:is_plat("linux", "macosx") then
+        if has_deps and package:is_plat("linux", "macosx", "android") then
             package:add("deps", "pkg-config")
         end
     end)
