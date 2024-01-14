@@ -70,7 +70,7 @@ package("libcurl")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "android", "iphoneos", "cross", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "cross", function (package)
         local version = package:version()
 
         local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF"}
@@ -109,13 +109,44 @@ package("libcurl")
         if package:is_plat("mingw") and version:le("7.85.0") then
             io.replace("src/CMakeLists.txt", 'COMMAND ${CMAKE_COMMAND} -E echo "/* built-in manual is disabled, blank function */" > tool_hugehelp.c', "", {plain = true})
         end
-        local opt
-        if package:config("openssl") then
-            opt = opt or {}
-            opt.packagedeps = opt.packagedeps or {}
-            table.insert(opt.packagedeps, "openssl")
-        end
         import("package.tools.cmake").install(package, configs, opt)
+    end)
+
+    on_install("android", function (package)
+        local configs = {"--disable-silent-rules",
+                         "--disable-dependency-tracking",
+                         "--without-hyper",
+                         "--without-libgsasl",
+                         "--without-librtmp",
+                         "--without-quiche",
+                         "--without-ngtcp2",
+                         "--without-nghttp3"}
+
+        local version = package:version()
+        if (package:is_plat("mingw") and version:ge("7.85")) then
+            package:add("syslinks", "Bcrypt")
+        end
+
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        if package:is_plat("macosx", "iphoneos") then
+            table.insert(configs, (package:version():ge("7.77") and "--with-secure-transport" or "--with-darwinssl"))
+        end
+        for _, name in ipairs({"openssl", "mbedtls", "zlib", "brotli", "zstd", "libssh2", "libidn2", "libpsl", "nghttp2"}) do
+            table.insert(configs, package:config(name) and "--with-" .. name or "--without-" .. name)
+        end
+        table.insert(configs, package:config("cares") and "--enable-ares" or "--disable-ares")
+        table.insert(configs, package:config("openldap") and "--enable-ldap" or "--disable-ldap")
+        if package:is_plat("macosx") then
+            local cares = package:dep("c-ares")
+            if cares and not cares:config("shared") then
+                -- we need fix missing `-lresolv` when checking c-ares
+                io.replace("./configure", "PKGCONFIG --libs-only-l libcares", "PKGCONFIG --libs-only-l --static libcares", {plain = true})
+            end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
