@@ -111,6 +111,7 @@ package("libcurl")
         end
         local opt
         if package:config("openssl") then
+            opt = opt or {}
             opt.packagedeps = opt.packagedeps or {}
             table.insert(opt.packagedeps, "openssl")
         end
