@@ -14,7 +14,7 @@ package("onednn")
     add_configs("gpu_runtime", {description = "Defines the offload runtime for GPU engines.", default = "none", type = "string", values = {"none", "ocl", "dpcpp"}})
 
     add_deps("cmake")
-    on_load("windows|x64", "macosx", "linux|x86_64", function (package)
+    on_load("windows|x64", "macosx|x86_64", "linux|x86_64", function (package)
         local cpu_runtime = package:config("cpu_runtime")
         if cpu_runtime == "omp" then
             package:add("deps", "openmp")
