@@ -146,6 +146,7 @@ package("libcurl")
                 -- we need fix missing `-lresolv` when checking c-ares
                 io.replace("./configure", "PKGCONFIG --libs-only-l libcares", "PKGCONFIG --libs-only-l --static libcares", {plain = true})
             end
+        end
         import("package.tools.autoconf").install(package, configs)
     end)
 
