@@ -65,7 +65,7 @@ package("libcurl")
                 has_deps = true
             end
         end
-        if has_deps and package:is_plat("linux", "macosx", "android") then
+        if has_deps and package:is_plat("linux", "macosx") then
             package:add("deps", "pkg-config")
         end
     end)
@@ -96,6 +96,12 @@ package("libcurl")
         end
         if not package:config("openldap") then
             table.insert(configs, "-DCURL_DISABLE_LDAP=ON")
+        end
+        if package:config("openssl") then
+            local openssl = package:dep("openssl")
+            if openssl and not openssl:is_system() then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+            end
         end
         if package:is_plat("windows", "mingw") then
             table.insert(configs, (version:ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
