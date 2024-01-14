@@ -8,7 +8,7 @@ package("corrade")
              "https://github.com/mosra/corrade.git")
     add_versions("v2020.06", "d89a06128c334920d91fecf23cc1df48fd6be26543dc0ed81b2f819a92d70e72")
 
-    add_patches("2020.06", "patches/2020.06/msvc.patch", "2606eded31cb52456c9a9d73e32468605150f1ffc7ae57bf2d04a250328fe710")
+    add_patches("2020.06", "patches/2020.06/msvc.patch", "af90c9bad846a2cbe834fe270860446f6329636f9b9b7ad23454cf479c1dc05f")
 
     if is_plat("windows") then
         add_syslinks("shell32")
