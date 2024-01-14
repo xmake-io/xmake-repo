@@ -24,3 +24,47 @@ index d6326cf..6eedae0 100644
  }
  
  }}
+diff --git a/src/Magnum/MeshTools/Concatenate.cpp b/src/Magnum/MeshTools/Concatenate.cpp
+index 38a7bc1..c20eeb9 100644
+--- a/src/Magnum/MeshTools/Concatenate.cpp
++++ b/src/Magnum/MeshTools/Concatenate.cpp
+@@ -73,7 +73,7 @@ Trade::MeshData concatenate(Containers::Array<char>&& indexData, const UnsignedI
+         attribute = Trade::MeshAttributeData{
+             attribute.name(), attribute.format(),
+             Containers::StridedArrayView1D<void>{vertexData,
+-                vertexData + attribute.offset(vertexData),
++                vertexData.data() + attribute.offset(vertexData),
+                 vertexCount, attribute.stride()},
+             attribute.arraySize()};
+     }
+@@ -130,7 +130,7 @@ Trade::MeshData concatenate(Containers::Array<char>&& indexData, const UnsignedI
+         /* Otherwise, if we need an index buffer (meaning at least one of the
+            meshes is indexed), generate a trivial index buffer */
+         } else if(!indices.empty()) {
+-            std::iota(indices + indexOffset, indices + indexOffset + mesh.vertexCount(), UnsignedInt(vertexOffset));
++            std::iota(indices.data() + indexOffset, indices.data() + indexOffset + mesh.vertexCount(), UnsignedInt(vertexOffset));
+             indexOffset += mesh.vertexCount();
+         }
+ 
+diff --git a/src/Magnum/MeshTools/Interleave.cpp b/src/Magnum/MeshTools/Interleave.cpp
+index b98c589..c16fd74 100644
+--- a/src/Magnum/MeshTools/Interleave.cpp
++++ b/src/Magnum/MeshTools/Interleave.cpp
+@@ -224,7 +224,7 @@ Trade::MeshData interleavedLayout(Trade::MeshData&& data, const UnsignedInt vert
+         attribute = Trade::MeshAttributeData{
+             attribute.name(), attribute.format(),
+             Containers::StridedArrayView1D<void>{vertexData,
+-                vertexData + attribute.offset(vertexData),
++                vertexData.data() + attribute.offset(vertexData),
+                 vertexCount, attribute.stride()},
+             attribute.arraySize()};
+     }
+@@ -261,7 +261,7 @@ Trade::MeshData interleave(Trade::MeshData&& data, const Containers::ArrayView<c
+             indexData = Containers::Array<char>{data.indexData().size()};
+             Utility::copy(data.indexData(), indexData);
+             indices = Trade::MeshIndexData{data.indexType(),
+-                Containers::ArrayView<const void>{indexData + data.indexOffset(), data.indices().size()[0]*data.indices().size()[1]}};
++                Containers::ArrayView<const void>{indexData.data() + data.indexOffset(), data.indices().size()[0]*data.indices().size()[1]}};
+         }
+     }
+ 
