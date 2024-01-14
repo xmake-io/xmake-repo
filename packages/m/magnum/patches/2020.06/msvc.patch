@@ -1,0 +1,26 @@
+diff --git a/src/Magnum/GL/Buffer.cpp b/src/Magnum/GL/Buffer.cpp
+index 5fa02c2..038e001 100644
+--- a/src/Magnum/GL/Buffer.cpp
++++ b/src/Magnum/GL/Buffer.cpp
+@@ -419,7 +419,7 @@ void Buffer::bindImplementationMulti(const Target target, const GLuint firstInde
+         }
+     }
+ 
+-    glBindBuffersRange(GLenum(target), firstIndex, buffers.size(), ids, offsetsSizes, offsetsSizes + buffers.size());
++    glBindBuffersRange(GLenum(target), firstIndex, buffers.size(), ids, offsetsSizes, offsetsSizes.data() + buffers.size());
+ }
+ #endif
+ 
+diff --git a/src/Magnum/Implementation/ImageProperties.h b/src/Magnum/Implementation/ImageProperties.h
+index d6326cf..6eedae0 100644
+--- a/src/Magnum/Implementation/ImageProperties.h
++++ b/src/Magnum/Implementation/ImageProperties.h
+@@ -70,7 +70,7 @@ template<UnsignedInt dimensions, class T, class Image, class Data> Containers::S
+ 
+     static_assert(sizeof(decltype(image.data().front())) == 1,
+         "pointer arithmetic expects image data type to have 1 byte");
+-    return {data.suffix(properties.first[dimensions - 1]), data + properties.first.sum(), size, stride};
++    return {data.suffix(properties.first[dimensions - 1]), data.data() + properties.first.sum(), size, stride};
+ }
+ 
+ }}

@@ -8,6 +8,8 @@ package("magnum")
              "https://github.com/mosra/magnum.git")
     add_versions("v2020.06", "78c52bc403cec27b98d8d87186622ca57f8d70ffd64342fe4094c720b7d3b0e3")
 
+    add_patches("2020.06", "patches/2020.06/msvc.patch", "bee86e2eb637c44b6c5b2dbcbb273138dbc26e8df11af31716f4f0c884bf8cdc")
+
     add_configs("audio",         {description = "Build audio module.", default = false, type = "boolean"})
     add_configs("vulkan",        {description = "Build vulkan module.", default = false, type = "boolean"})
     add_configs("deprecated",    {description = "Include deprecated APIs in the build.", default = true, type = "boolean"})
