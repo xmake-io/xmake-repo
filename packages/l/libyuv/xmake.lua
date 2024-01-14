@@ -18,9 +18,9 @@ package("libyuv")
         
         if package:is_plat("macosx", "linux") then
             if package:config("shared") then 
-                os.tryrm(package:installdir("lib", "*.a"))
-            else 
                 os.tryrm(package:installdir("lib", "*.so"))
+            else
+                os.tryrm(package:installdir("lib", "*.a"))
             end
         end
     end)
