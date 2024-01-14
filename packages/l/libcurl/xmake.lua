@@ -97,20 +97,6 @@ package("libcurl")
         if not package:config("openldap") then
             table.insert(configs, "-DCURL_DISABLE_LDAP=ON")
         end
-        if package:config("openssl") then
-            local openssl = package:dep("openssl")
-            if openssl and not openssl:is_system() then
-                local fetchinfo = openssl:fetch()
-                local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
-                if includedirs and #includedirs > 0 then
-                    table.insert(configs, "-DOPENSSL_INCLUDE_DIR=" .. table.concat(includedirs, " "))
-                end
-                local libfiles = fetchinfo.libfiles
-                if libfiles then
-                    table.insert(configs, "-DOPENSSL_CRYPTO_LIBRARY=" .. table.concat(libfiles, " "))
-                end
-            end
-        end
         if package:is_plat("windows", "mingw") then
             table.insert(configs, (version:ge("7.80") and "-DCURL_USE_SCHANNEL=ON" or "-DCMAKE_USE_SCHANNEL=ON"))
         end
@@ -123,7 +109,12 @@ package("libcurl")
         if package:is_plat("mingw") and version:le("7.85.0") then
             io.replace("src/CMakeLists.txt", 'COMMAND ${CMAKE_COMMAND} -E echo "/* built-in manual is disabled, blank function */" > tool_hugehelp.c', "", {plain = true})
         end
-        import("package.tools.cmake").install(package, configs)
+        local opt
+        if package:config("openssl") then
+            opt.packagedeps = opt.packagedeps or {}
+            table.insert(opt.packagedeps, "openssl")
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
