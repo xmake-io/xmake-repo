@@ -2,9 +2,11 @@ package("spdlog")
 
     set_homepage("https://github.com/gabime/spdlog")
     set_description("Fast C++ logging library.")
+    set_license("MIT")
 
-    set_urls("https://github.com/gabime/spdlog/archive/$(version).zip",
+    add_urls("https://github.com/gabime/spdlog/archive/refs/tags/$(version).zip",
              "https://github.com/gabime/spdlog.git")
+    add_versions("v1.13.0", "9f6763bb76fff7db371f5733626c83352edd7c57899501ab00248fafad9cc504")
     add_versions("v1.12.0", "6174bf8885287422a6c6a0312eb8a30e8d22bcfcee7c48a6d02d1835d7769232")
     add_versions("v1.11.0", "33f83c6b86ec0fbbd0eb0f4e980da6767494dc0ad063900bcfae8bc3e9c75f21")
     add_versions("v1.10.0", "7be28ff05d32a8a11cfba94381e820dd2842835f7f319f843993101bcab44b66")
