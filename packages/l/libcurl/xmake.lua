@@ -100,7 +100,15 @@ package("libcurl")
         if package:config("openssl") then
             local openssl = package:dep("openssl")
             if openssl and not openssl:is_system() then
-                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+                local fetchinfo = openssl:fetch()
+                local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                if includedirs and #includedirs > 0 then
+                    table.insert(configs, "-DOPENSSL_INCLUDE_DIR=" .. table.concat(includedirs, " "))
+                end
+                local libfiles = fetchinfo.libfiles
+                if libfiles then
+                    table.insert(configs, "-DOPENSSL_CRYPTO_LIBRARY=" .. table.concat(libfiles, " "))
+                end
             end
         end
         if package:is_plat("windows", "mingw") then
