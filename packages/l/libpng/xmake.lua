@@ -4,9 +4,6 @@ package("libpng")
     set_license("libpng-2.0")
 
     add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz")
-    add_urls("https://mirrors.ustc.edu.cn/debian/pool/main/libp/libpng1.6/libpng1.6_$(version).orig.tar.gz", {
-        version = function (version) return version:sub(2) end
-    })
     add_urls("https://github.com/glennrp/libpng.git")
 
     add_versions("v1.6.40", "62d25af25e636454b005c93cae51ddcd5383c40fa14aa3dae8f6576feb5692c2")
