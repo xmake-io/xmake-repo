@@ -1,4 +1,5 @@
 add_rules("mode.debug", "mode.release")
+add_rules("utils.install.cmake_importfiles")
 set_languages("cxx11")
 
 option("dx9",              {showmenu = true,  default = false})

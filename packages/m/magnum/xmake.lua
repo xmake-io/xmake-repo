@@ -39,10 +39,6 @@ package("magnum")
     end
 
     add_deps("cmake", "corrade", "opengl")
-    add_links("MagnumAnyAudioImporter", "MagnumAnyImageConverter", "MagnumAnyImageImporter", "MagnumAnySceneConverter", "MagnumAnySceneImporter", "MagnumMagnumFont", "MagnumMagnumFontConverter", "MagnumObjImporter", "MagnumTgaImageConverter", "MagnumTgaImporter", "MagnumWavAudioImporter")
-    add_links("MagnumCglContext", "MagnumEglContext", "MagnumGlxContext", "MagnumWglContext", "MagnumOpenGLTester", "MagnumVulkanTester")
-    add_links("MagnumAndroidApplication", "MagnumEmscriptenApplication", "MagnumGlfwApplication", "MagnumGlxApplication", "MagnumSdl2Application", "MagnumXEglApplication", "MagnumWindowlessCglApplication", "MagnumWindowlessEglApplication", "MagnumWindowlessGlxApplication", "MagnumWindowlessIosApplication", "MagnumWindowlessWglApplication", "MagnumWindowlessWindowsEglApplication")
-    add_links("MagnumAudio", "MagnumDebugTools", "MagnumGL", "MagnumMeshTools", "MagnumPrimitives", "MagnumSceneGraph", "MagnumShaders", "MagnumText", "MagnumTextureTools", "MagnumTrade", "MagnumVk", "Magnum")
     on_load("windows", "linux", "macosx", function (package)
         if package:config("audio") then
             package:add("deps", "openal-soft", {configs = {shared = true}})
@@ -58,6 +54,14 @@ package("magnum")
         end
         if package:config("glx") then
             package:add("deps", "libx11")
+        end
+        local links = {"MagnumAnyAudioImporter", "MagnumAnyImageConverter", "MagnumAnyImageImporter", "MagnumAnySceneConverter", "MagnumAnySceneImporter", "MagnumMagnumFont", "MagnumMagnumFontConverter", "MagnumObjImporter", "MagnumTgaImageConverter", "MagnumTgaImporter", "MagnumWavAudioImporter"}
+        table.join2(links, {"MagnumCglContext", "MagnumEglContext", "MagnumGlxContext", "MagnumWglContext", "MagnumOpenGLTester", "MagnumVulkanTester"})
+        table.join2(links, {"MagnumAndroidApplication", "MagnumEmscriptenApplication", "MagnumGlfwApplication", "MagnumGlxApplication", "MagnumSdl2Application", "MagnumXEglApplication", "MagnumWindowlessCglApplication", "MagnumWindowlessEglApplication", "MagnumWindowlessGlxApplication", "MagnumWindowlessIosApplication", "MagnumWindowlessWglApplication", "MagnumWindowlessWindowsEglApplication"})
+        table.join2(links, {"MagnumAudio", "MagnumDebugTools", "MagnumGL", "MagnumMeshTools", "MagnumPrimitives", "MagnumSceneGraph", "MagnumShaders", "MagnumText", "MagnumTextureTools", "MagnumTrade", "MagnumVk", "Magnum"})
+        local postfix = package:debug() and "-d" or ""
+        for _, link in ipairs(links) do
+            package:add("links", link .. postfix)
         end
     end)
 
