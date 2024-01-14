@@ -54,7 +54,7 @@ package("magnum")
             package:add("deps", "glfw")
         end
         if package:config("sdl2") then
-            package:add("deps", "libsdl")
+            package:add("deps", "libsdl", {configs = {sdlmain = false}})
         end
         if package:config("glx") then
             package:add("deps", "libx11")
@@ -62,6 +62,8 @@ package("magnum")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
+        io.replace("modules/FindSDL2.cmake", "SDL2-2.0 SDL2", "SDL2-2.0 SDL2 SDL2-static", {plain = true})
+        io.replace("modules/FindSDL2.cmake", "${_SDL2_LIBRARY_PATH_SUFFIX}", "lib ${_SDL2_LIBRARY_PATH_SUFFIX}", {plain = true})
         local configs = {"-DBUILD_TESTS=OFF", "-DLIB_SUFFIX="}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
