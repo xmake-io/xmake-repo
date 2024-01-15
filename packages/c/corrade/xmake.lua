@@ -27,9 +27,10 @@ package("corrade")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCORRADE_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
-        table.insert(configs, "-DWITH_RC=" .. (package:is_cross() and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
-        if not package:is_cross() then
+        if package:is_cross() then
+            os.rm(path.join(package:installdir("bin"), "*"))
+        else
             package:addenv("PATH", "bin")
         end
     end)
