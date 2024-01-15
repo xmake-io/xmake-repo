@@ -3,7 +3,7 @@ package("imgui")
     set_description("Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies")
     set_license("MIT")
 
-    add_urls("https://github.com/ocornut/imgui/archive/$(version).tar.gz",
+    add_urls("https://github.com/ocornut/imgui/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ocornut/imgui.git")
     add_versions("v1.90-docking", "v1.90-docking")
     add_versions("v1.90", "170986e6a4b83d165bfc1d33c2c5a5bc2d67e5b97176287485c51a2299249296")
@@ -38,6 +38,9 @@ package("imgui")
     add_versions("v1.81", "f7c619e03a06c0f25e8f47262dbc32d61fd033d2c91796812bf0f8c94fca78fb")
     add_versions("v1.80", "d7e4e1c7233409018437a646680316040e6977b9a635c02da93d172baad94ce9")
     add_versions("v1.79", "f1908501f6dc6db8a4d572c29259847f6f882684b10488d3a8d2da31744cd0a4")
+    add_versions("v1.78", "f70bbb17581ee2bd42fda526d9c3dc1a5165f3847ff047483d4d7980e166f9a3")
+    add_versions("v1.77", "c0dae830025d4a1a169df97409709f40d9dfa19f8fc96b550052224cbb238fa8")
+    add_versions("v1.76", "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75", "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
     add_configs("dx9",              {description = "Enable the dx9 backend", default = false, type = "boolean"})
