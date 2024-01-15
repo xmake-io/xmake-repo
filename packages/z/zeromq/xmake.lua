@@ -43,6 +43,7 @@ package("zeromq")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-libunwind=" .. (package:config("libunwind") and "yes" or "no"))
+        table.insert(configs, "--libdir=" .. package:installdir("lib"))
         if package:config("pic") then
             table.insert(configs, "--with-pic")
         end
