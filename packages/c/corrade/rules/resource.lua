@@ -6,6 +6,7 @@
 -- add_files("resources.conf", {rule = "@corrade/resource", single = false})
 
 rule("resource")
+    set_extensions(".conf")
     on_buildcmd_file(function (target, batchcmds, sourcefile, opt)
         import("core.base.option")
         import("lib.detect.find_program")
@@ -13,7 +14,7 @@ rule("resource")
         batchcmds:show_progress(opt.progress, "${color.build.object}compiling.corrade %s", sourcefile)
 
         -- get corrade-rc program
-        local corrade = find_program("corrade-rc", {paths = {path.join(target:pkg("corrade"):installdir(), "bin"), "$(env PATH)"}, check = "-h"})
+        local corrade = find_program("corrade-rc", {check = "-h"})
         assert(corrade, "corrade-rc not found! please check your corrade installation.")
 
         -- generate source file

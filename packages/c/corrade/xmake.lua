@@ -16,16 +16,28 @@ package("corrade")
         add_syslinks("dl")
     end
     add_deps("cmake")
+    on_load("windows", "linux", "macosx", function (package)
+        if package:is_cross() then
+            package:add("deps", "corrade", {host = true, private = true})
+        end
+    end)
+
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF", "-DLIB_SUFFIX="}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCORRADE_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DWITH_RC=" .. (package:is_cross() and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
-        package:addenv("PATH", "bin")
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_test(function (package)
-        os.vrun("corrade-rc --help")
+        if not package:is_cross() then
+            os.vrun("corrade-rc --help")
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <string>
             void test() {
