@@ -6,7 +6,8 @@ package("filament")
 
     if is_plat("windows") and is_arch("x64") then
         add_urls("https://github.com/google/filament/releases/download/v$(version)/filament-v$(version)-windows.tgz")
-        add_versions("1.9.23", "8f5728dd944c052f991bfb15d18cd6fc8f678d0cbd37bb066d76bf682ab789c8")
+        add_versions("1.49.3", "f465e45033b928a92e5b4a5a3b6534022f5428bfdb8016c953204f63842ac55c")
+    add_versions("1.9.23", "8f5728dd944c052f991bfb15d18cd6fc8f678d0cbd37bb066d76bf682ab789c8")
         add_versions("1.20.3", "0a3fdd5fe8662a02117f3de51dcbea3b260cff716a7cffa407ca939727d7b634")
         add_versions("1.32.0", "6372895cd7729df722bb0529a1ceb086aee3e532268d541db88aba4a252cde4e")
     elseif is_plat("macosx") and is_arch("x86_64") then
