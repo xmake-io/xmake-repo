@@ -6,7 +6,7 @@ package("mds")
 
     add_urls("https://github.com/chen-qingyu/MyDataStructure/archive/refs/tags/v$(version).zip",
              "https://github.com/chen-qingyu/MyDataStructure.git")
-    add_versions("1.1.0", "70c985b335137c443e6cb170337d2476fd32bab663193f398c7078c4e6916f0d")
+    add_versions("1.1.0", "537a1260ebdeeb1db9f94a3c44e628c04a70e4d26d5eb72f4206765717d6d680")
 
     on_install(function (package)
         os.cp("sources/*.hpp", package:installdir("include/mds"))
