@@ -6,6 +6,7 @@ package("kokkos")
 
     add_urls("https://github.com/kokkos/kokkos/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kokkos/kokkos.git")
+    add_versions("4.2.00", "ac08765848a0a6ac584a0a46cd12803f66dd2a2c2db99bb17c06ffc589bf5be8")
     add_versions("4.0.01", "bb942de8afdd519fd6d5d3974706bfc22b6585a62dd565c12e53bdb82cd154f0")
 
     if is_plat("windows") then
