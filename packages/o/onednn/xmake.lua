@@ -27,7 +27,7 @@ package("onednn")
         end
     end)
 
-    on_install("windows|x64", "macosx", "linux|x86_64", function (package)
+    on_install("windows|x64", "macosx|x86_64", "linux|x86_64", function (package)
         local configs = {"-DDNNL_BUILD_TESTS=OFF", "-DDNNL_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DDNNL_LIBRARY_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
