@@ -12,7 +12,7 @@ package("cartographer")
         
     add_deps("cmake")
     add_deps("zlib")
-    add_deps("boost 1.83.0", {configs = {iostreams = true}})
+    add_deps("boost", {configs = {iostreams = true}})
     add_deps("ceres-solver", {configs = {suitesparse = true}})
     add_deps("abseil", "cairo", "eigen", "lua", "protobuf-cpp")
 
