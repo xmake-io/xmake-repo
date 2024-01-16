@@ -11,3 +11,16 @@ package("mds")
     on_install(function (package)
         os.cp("sources/*.hpp", package:installdir("include/mds"))
     end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <cassert>
+            using namespace mds;
+            void test() {
+                Map<String, List<Integer>> map = {{"first", {123, 456}}, {"second", {789}}, {"second", {0}}, {"third", {"12345678987654321", 5}}};
+                assert(map.size() == 3);
+                assert(map.keys() == Set<String>({"first", "second", "third"}));
+                assert(map["third"][-1].factorial() == 120);
+            }
+        ]]}, {configs = {languages = "c++17"}, includes = "mds/mds.hpp"}))
+    end)
