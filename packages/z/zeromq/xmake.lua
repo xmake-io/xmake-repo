@@ -43,7 +43,7 @@ package("zeromq")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-libunwind=" .. (package:config("libunwind") and "yes" or "no"))
-        table.insert(configs, "--libdir=lib") .. package:installdir("lib"))
+        table.insert(configs, "--libdir=" .. package:installdir("lib"))
         import("package.tools.autoconf").install(package, configs)
     end)
 
