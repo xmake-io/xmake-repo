@@ -5,6 +5,7 @@ package("lightgbm")
     set_license("MIT")
 
     add_urls("https://github.com/microsoft/LightGBM/releases/download/v$(version)/lightgbm-$(version).tar.gz")
+    add_versions("4.2.0", "8a4d051df2ab2218998a16f7712e843ee9e96d8b09ffbfcc18533da127e0da02")
     add_versions("3.3.2", "5d25d16e77c844c297ece2044df57651139bc3c8ad8c4108916374267ac68b64")
     add_versions("3.2.1", "bd98e3b501b4c24dc127f4ad93e467f42923fe3eefa99e143b5b93158f024395")
 
