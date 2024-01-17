@@ -16,7 +16,7 @@ package("libcurl")
     if is_plat("macosx", "iphoneos") then
         add_frameworks("Security", "CoreFoundation", "SystemConfiguration")
     elseif is_plat("linux") then
-        add_syslinks("pthread")
+        add_syslinks("pthread", "dl")
     elseif is_plat("windows", "mingw") then
         add_syslinks("advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
     end
