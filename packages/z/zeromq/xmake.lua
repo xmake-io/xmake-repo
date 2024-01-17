@@ -38,14 +38,12 @@ package("zeromq")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx|x86_64", function (package)
         local configs = {"--disable-dependency-tracking", "--without-docs", "--enable-libbsd=no", "--disable-Werror"}
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-libunwind=" .. (package:config("libunwind") and "yes" or "no"))
-        if package:config("pic") then
-            table.insert(configs, "--with-pic")
-        end
+        table.insert(configs, "--libdir=" .. package:installdir("lib"))
         import("package.tools.autoconf").install(package, configs)
     end)
 
