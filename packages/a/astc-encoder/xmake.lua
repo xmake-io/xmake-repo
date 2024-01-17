@@ -47,7 +47,7 @@ package("astc-encoder")
             package:add("linkdirs", "bin")
         end
         if package:config("cli") then
-            local exe_prefix = package:is_plat("windows") and ".exe" or ""
+            local exe_prefix = package:is_plat("mingw", "windows") and ".exe" or ""
             os.mv(path.join(package:installdir("bin"), "astcenc-native" .. exe_prefix), path.join(package:installdir("bin"), "astcenc" .. exe_prefix))
             package:addenv("PATH", "bin")
         end
