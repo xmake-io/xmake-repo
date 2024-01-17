@@ -1,0 +1,39 @@
+diff --git a/cartographer/common/math.h b/cartographer/common/math.h
+index c4a77ef..0248f66 100644
+--- a/cartographer/common/math.h
++++ b/cartographer/common/math.h
+@@ -17,6 +17,10 @@
+ #ifndef CARTOGRAPHER_COMMON_MATH_H_
+ #define CARTOGRAPHER_COMMON_MATH_H_
+ 
++#ifndef M_PI
++#define M_PI 3.14159265358979323846
++#endif
++
+ #include <cmath>
+ #include <vector>
+ 
+diff --git a/cartographer/common/thread_pool.cc b/cartographer/common/thread_pool.cc
+index bc3c743..c61704d 100644
+--- a/cartographer/common/thread_pool.cc
++++ b/cartographer/common/thread_pool.cc
+@@ -16,7 +16,6 @@
+ 
+ #include "cartographer/common/thread_pool.h"
+ 
+-#include <unistd.h>
+ #include <algorithm>
+ #include <chrono>
+ #include <numeric>
+diff --git a/cartographer/mapping/pose_graph_interface.h b/cartographer/mapping/pose_graph_interface.h
+index 6483ef4..6456720 100644
+--- a/cartographer/mapping/pose_graph_interface.h
++++ b/cartographer/mapping/pose_graph_interface.h
+@@ -18,6 +18,7 @@
+ #define CARTOGRAPHER_MAPPING_POSE_GRAPH_INTERFACE_H_
+ 
+ #include <vector>
++#include <array>
+ 
+ #include "cartographer/common/optional.h"
+ #include "cartographer/mapping/id.h"
