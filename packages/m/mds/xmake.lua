@@ -6,6 +6,7 @@ package("mds")
 
     add_urls("https://github.com/chen-qingyu/MyDataStructure/archive/refs/tags/v$(version).zip",
              "https://github.com/chen-qingyu/MyDataStructure.git")
+    add_versions("1.1.1", "5d724a373d6906ef98c30cc0ea39ed2220d5bae09f48dd24a42e5dbfc3a04573")
     add_versions("1.1.0", "537a1260ebdeeb1db9f94a3c44e628c04a70e4d26d5eb72f4206765717d6d680")
 
     on_install(function (package)
