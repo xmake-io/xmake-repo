@@ -24,7 +24,6 @@ package("metis")
         io.gsub(path.join("include", "metis.h"), "//#define REALTYPEWIDTH %d+", "#define REALTYPEWIDTH " .. real_width)
         io.replace(path.join(package:resourcefile("gklib"), "gk_arch.h"), "gk_ms_stdint.h", "stdint.h", {plain = true})
         io.replace(path.join(package:resourcefile("gklib"), "gk_arch.h"), "gk_ms_inttypes.h", "inttypes.h", {plain = true})
-        io.replace(path.join(package:resourcefile("gklib"), "gk_arch.h"), "gk_ms_stat.h", "sys/stat.h", {plain = true})
 
         local configs = {}
         table.insert(configs, "-DDEBUG=" .. (package:debug() and "ON" or "OFF"))
