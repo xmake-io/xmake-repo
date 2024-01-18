@@ -37,6 +37,7 @@ package("ormpp")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <iostream>
+            using namespace ormpp;
             struct student {
             std::string name;
             int age;
