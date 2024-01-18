@@ -13,7 +13,7 @@ package("ormpp")
     add_configs("postgresql", {description = "Using postgresql", default = false, type = "boolean"})
     add_configs("sqlite", {description = "Using sqlite", default = false, type = "boolean"})
 
-    on_load(function(package) 
+    on_load("windows", "macosx", "linux", function(package) 
         local configs = {
             mysql = "ORMPP_ENABLE_MYSQL",
             postgresql = "ORMPP_ENABLE_PG",
