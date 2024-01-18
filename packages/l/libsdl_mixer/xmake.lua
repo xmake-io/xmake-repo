@@ -65,5 +65,5 @@ package("libsdl_mixer")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("Mix_Init", {includes = "SDL2/SDL_mixer.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("Mix_Init", {includes = {"SDL2/SDL_main.h", "SDL2/SDL_mixer.h"}}))
     end)

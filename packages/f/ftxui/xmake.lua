@@ -13,13 +13,13 @@ package("ftxui")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    elseif is_plat("bsd") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
     add_links("ftxui-component", "ftxui-dom", "ftxui-screen")
 
-    on_install("linux", "windows", "macosx", "bsd", "mingw", function (package)
+    on_install("linux", "windows", "macosx", "bsd", "mingw", "cross", function (package)
         local configs = {"-DFTXUI_BUILD_DOCS=OFF", "-DFTXUI_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

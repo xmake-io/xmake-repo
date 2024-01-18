@@ -35,6 +35,7 @@ jobs:
         with:
           xmake-version: branch@master
           actions-cache-folder: '.xmake-cache'
+          actions-cache-key: 'fedora'
 
       - name: Tests
         env:

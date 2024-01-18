@@ -4,9 +4,6 @@ package("libpng")
     set_license("libpng-2.0")
 
     add_urls("https://github.com/glennrp/libpng/archive/refs/tags/$(version).tar.gz")
-    add_urls("https://mirrors.ustc.edu.cn/debian/pool/main/libp/libpng1.6/libpng1.6_$(version).orig.tar.gz", {
-        version = function (version) return version:sub(2) end
-    })
     add_urls("https://github.com/glennrp/libpng.git")
 
     add_versions("v1.6.40", "62d25af25e636454b005c93cae51ddcd5383c40fa14aa3dae8f6576feb5692c2")
@@ -29,7 +26,7 @@ package("libpng")
         add_extsources("brew::libpng")
     end
 
-    on_install("windows", "mingw", "android", "iphoneos", "cross", "bsd", "wasm", function (package)
+    on_install("windows", "mingw", "macosx|arm64", "android", "iphoneos", "cross", "bsd", "wasm", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("zlib")
@@ -76,27 +73,17 @@ package("libpng")
         import("package.tools.xmake").install(package, configs)
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx|x86_64", "linux", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        local cppflags = {}
-        local ldflags = {}
-        for _, dep in ipairs(package:orderdeps()) do
-            local fetchinfo = dep:fetch()
-            if fetchinfo then
-                for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                    table.insert(cppflags, "-I" .. includedir)
-                end
-                for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    table.insert(ldflags, "-L" .. linkdir)
-                end
-            end
+        if not package:dep("zlib"):is_system() then
+            table.insert(configs, "--with-zlib-prefix=" .. package:dep("zlib"):installdir())
         end
-        import("package.tools.autoconf").install(package, configs, {cppflags = cppflags, ldflags = ldflags})
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

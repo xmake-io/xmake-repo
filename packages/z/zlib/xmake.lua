@@ -21,9 +21,18 @@ package("zlib")
         add_extsources("brew::zlib")
     end
 
+    on_fetch(function (package, opt)
+        if xmake:version():lt("2.8.7") then return end -- disable system find if the bug is present
+        if opt.system then
+            if not package:is_plat("windows", "mingw") then
+                return package:find_package("system::z", {includes = "zlib.h"})
+            end
+        end
+    end)
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
-            includes("check_cincludes.lua")
+            includes("@builtin/check")
             add_rules("mode.debug", "mode.release")
             target("zlib")
                 set_kind("$(kind)")

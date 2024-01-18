@@ -5,6 +5,7 @@ package("pystring")
 
     add_urls("https://github.com/imageworks/pystring.git")
     add_versions("2020.02.04", "281419de2f91f9e0f2df6acddfea3b06a43436be")
+    add_versions("2023.07.23", "76a2024e132bcc83bec1ecfebeacd5d20d490bfe")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 

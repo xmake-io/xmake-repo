@@ -61,5 +61,5 @@ package("libsdl_image")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("IMG_Init", {includes = "SDL2/SDL_image.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("IMG_Init", {includes = {"SDL2/SDL_main.h", "SDL2/SDL_image.h"}}))
     end)

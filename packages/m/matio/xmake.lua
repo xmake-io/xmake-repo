@@ -37,7 +37,13 @@ package("matio")
         table.insert(configs, "-DMATIO_DEFAULT_FILE_VERSION=" .. package:config("default_file_version"))
         io.replace("CMakeLists.txt", "include(cmake/tools.cmake)", "", {plain = true})
         io.replace("CMakeLists.txt", "include(cmake/test.cmake)", "", {plain = true})
-        import("package.tools.cmake").install(package, configs)
+
+        local packagedeps = {}
+        if package:config("hdf5") then
+            table.insert(packagedeps, "hdf5")
+        end
+
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)

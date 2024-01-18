@@ -47,6 +47,7 @@ package("libsdl_ttf")
         local configs = {"-DSDL2TTF_SAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DSDL2TTF_VENDORED=OFF")
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
@@ -100,6 +101,5 @@ package("libsdl_ttf")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("TTF_Init",
-            {includes = "SDL2/SDL_ttf.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:has_cfuncs("TTF_Init", {includes = {"SDL2/SDL_main.h", "SDL2/SDL_ttf.h"}}))
     end)

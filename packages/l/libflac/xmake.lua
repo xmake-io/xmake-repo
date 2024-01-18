@@ -9,10 +9,10 @@ package("libflac")
     add_versions("1.4.3", "0a4bb82a30609b606650d538a804a7b40205366ce8fc98871b0ecf3fbb0611ee")
     add_versions("1.4.2", "8e8e0406fb9e1d177bb4ba8cfed3ca3935d37144eac8f0219a03e8c1ed5cc18e")
     add_versions("1.3.3", "668cdeab898a7dd43cf84739f7e1f3ed6b35ece2ef9968a5c7079fe9adfe1689")
-    add_patches("1.4.3", path.join(os.scriptdir(), "patches", "1.4.2", "cmake.patch"), "0a99382d5d7bd33078572b6cc3af08ee7e5e3618c80754a5fdc400bd69f4e470")
-    add_patches("1.4.2", path.join(os.scriptdir(), "patches", "1.4.2", "cmake.patch"), "0a99382d5d7bd33078572b6cc3af08ee7e5e3618c80754a5fdc400bd69f4e470")
-    add_patches("1.3.3", path.join(os.scriptdir(), "patches", "1.3.3", "cmake.patch"), "49baa40ab70d63e74cfc3f0cc2f13824545a618ceaeffdd51d3333d90b37fd32")
-    
+    add_patches("1.4.3", "patches/1.4.2/cmake.patch", "0a99382d5d7bd33078572b6cc3af08ee7e5e3618c80754a5fdc400bd69f4e470")
+    add_patches("1.4.2", "patches/1.4.2/cmake.patch", "0a99382d5d7bd33078572b6cc3af08ee7e5e3618c80754a5fdc400bd69f4e470")
+    add_patches("1.3.3", "patches/1.3.3/cmake.patch", "49baa40ab70d63e74cfc3f0cc2f13824545a618ceaeffdd51d3333d90b37fd32")
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::flac")
     elseif is_plat("linux") then
