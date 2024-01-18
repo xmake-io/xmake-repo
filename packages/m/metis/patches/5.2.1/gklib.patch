@@ -44,14 +44,17 @@ index a15d19a..7fb5cd0 100644
  add_subdirectory("libmetis")
 -add_subdirectory("programs")
 diff --git a/libmetis/CMakeLists.txt b/libmetis/CMakeLists.txt
-index fc6cec6..9fc6c28 100644
+index fc6cec6..e713c2c 100644
 --- a/libmetis/CMakeLists.txt
 +++ b/libmetis/CMakeLists.txt
-@@ -5,7 +5,7 @@ include_directories(.)
+@@ -5,7 +5,10 @@ include_directories(.)
  file(GLOB metis_sources *.c)
  
  # Build libmetis.
 -add_library(metis ${METIS_LIBRARY_TYPE} ${metis_sources})
++if (MSVC)
++  set(GKlib_sources ${GKlib_sources} ${GKLIB_PATH}/win32/adapt.c)
++endif (MSVC)
 +add_library(metis ${METIS_LIBRARY_TYPE} ${metis_sources} ${GKlib_sources})
  
  if(METIS_INSTALL)
