@@ -6,6 +6,7 @@ package("kuba-zip")
     add_urls("https://github.com/kuba--/zip/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kuba--/zip.git")
 
+    add_versions("v0.3.1", "775b8a44b53e72a55c13839bf507219c2cf30b26f62e70f1a20bb727db54438f")
     add_versions("v0.2.2", "f278b1da5e5382c7a1a1db1502cfa1f6df6b1e05e36253d661344d30277f9895")
     add_versions("v0.2.5", "e052f6cbe6713f69f8caec61214fda4e5ae5150d1fcba02c9e79f1a05d939305")
     add_versions("v0.2.6", "6a00e10dc5242f614f76f1bd1d814726a41ee6e3856ef3caf7c73de0b63acf0b")
