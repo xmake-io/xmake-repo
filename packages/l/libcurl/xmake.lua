@@ -16,7 +16,7 @@ package("libcurl")
     if is_plat("macosx", "iphoneos") then
         add_frameworks("Security", "CoreFoundation", "SystemConfiguration")
     elseif is_plat("linux") then
-        add_syslinks("pthread", "dl")
+        add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then
         add_syslinks("advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
     end
@@ -108,6 +108,10 @@ package("libcurl")
         end
         if package:is_plat("mingw") and version:le("7.85.0") then
             io.replace("src/CMakeLists.txt", 'COMMAND ${CMAKE_COMMAND} -E echo "/* built-in manual is disabled, blank function */" > tool_hugehelp.c', "", {plain = true})
+        end
+        if package:is_plat("linux", "cross") then
+            io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto dl)", {plain = true})
+            io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES} dl)", {plain = true})
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
