@@ -5,9 +5,10 @@ package("ormpp")
     set_description("modern C++ ORM, C++17, support mysql, postgresql,sqlite")
     set_license("Apache-2.0")
 
-    set_urls("https://github.com/qicosmos/ormpp.git")
+    set_urls("https://github.com/qicosmos/ormpp/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/qicosmos/ormpp.git")
 
-    add_versions("v0.1.1", "12abd7a420baf412e32898d3f000f020cdb3f006")
+    add_versions("v0.1.1", "a3c93599950a4c5822ebd0750ac7964c59c9b3f84f638525f01578bac6d898c2")
 
     add_configs("mysql", {description = "Using mysql", default = false, type = "boolean"})
     add_configs("postgresql", {description = "Using postgresql", default = false, type = "boolean"})
@@ -30,21 +31,19 @@ package("ormpp")
 
     on_install(function (package)
         os.cp("include/*", package:installdir("include"))
-        os.cp("frozen/**", package:installdir("include/frozen"),{rootdir="frozen"})
-        os.cp("iguana/**", package:installdir("include/iguana"),{rootdir="iguana"})
+        os.cp("frozen/**", package:installdir("include/frozen"), {rootdir = "frozen"})
+        os.cp("iguana/**", package:installdir("include/iguana"), {rootdir = "iguana"})
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <iostream>
             using namespace ormpp;
             struct student {
-            std::string name;
-            int age;
-            int id;
+                std::string name;
+                int age;
+                int id;
             };
             REGISTER_AUTO_KEY(student, id)
-            REFLECTION_WITH_NAME(student, "t_student", id, name, age)
-            
+            REFLECTION_WITH_NAME(student, "t_student", id, name, age)        
         ]]}, {configs = {languages = "c++17"}, includes = { "dbng.hpp"} }))
     end)
