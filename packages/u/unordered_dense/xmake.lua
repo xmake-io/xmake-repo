@@ -13,11 +13,31 @@ package("unordered_dense")
     add_versions("v4.0.4", "b34a8c942963e3a647f1bbc192a6391cd56d7ae615b2ddc1601c1779b5792206")
     add_versions("v4.4.0", "3976399793e8cb4db1409ce15610fbd9e5e406ced4745f262d393a9311efbd88")
 
+    add_configs("with_cxx20_module", {description = "Build with C++20 module support.", default = false, type = "boolean"})
 
-    add_deps("cmake")
+    on_load(function (package)
+        if not package:config("with_cxx20_module") then
+            package:add("deps", "cmake")
+        end
+    end)
+
     on_install(function (package)
-        import("package.tools.cmake").install(package)
-        os.cp("include", package:installdir())
+        if not package:config("with_cxx20_module") then
+            import("package.tools.cmake").install(package)
+            os.cp("include", package:installdir())
+        else
+            os.cp("src/ankerl.unordered_dense.cpp", "src/ankerl.unordered_dense.cppm")
+            io.writefile("xmake.lua", [[ 
+                target("unordered_dense")
+                    set_kind("static")
+                    set_languages("c++20")
+                    add_headerfiles("include/(**.h)")
+                    add_includedirs("include")
+                    add_files("src/**.cppm", {public = true})
+            ]])
+            local configs = {}
+            import("package.tools.xmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)
