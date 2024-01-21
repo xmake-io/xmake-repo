@@ -11,6 +11,7 @@ package("unordered_dense")
     add_versions("v2.0.2", "d4be48c164fa2f49deb55354b33c335688da3bd4b2299b3a46b8092602f67556")
     add_versions("v3.0.0", "e73452d7c1e274b4a15b553c0904f1de4bcfa61b00514acd1eaad7deac805ef0")
     add_versions("v4.0.4", "b34a8c942963e3a647f1bbc192a6391cd56d7ae615b2ddc1601c1779b5792206")
+    add_versions("v4.4.0", "3976399793e8cb4db1409ce15610fbd9e5e406ced4745f262d393a9311efbd88")
 
 
     add_deps("cmake")
