@@ -30,8 +30,12 @@ package("vulkan-headers")
 
     add_deps("cmake")
 
-    if is_plat("linux") then
+    if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::vulkan-headers")
+    elseif is_plat("linux") then
+        add_extsources("apt::libvulkan-dev", "pacman::vulkan-headers")
+    elseif is_plat("macosx") then
+        add_extsources("brew::vulkan-headers")
     end
 
     on_install(function (package)
