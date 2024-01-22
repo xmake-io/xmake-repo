@@ -232,7 +232,8 @@ package("libsdl")
             #include <SDL2/SDL.h>
             int main(int argc, char** argv) {
                 SDL_Init(0);
+                SDL_Quit();
                 return 0;
             }
-        ]]}));
+        ]]}, configs = {defines = "SDL_MAIN_HANDLED"}));
     end)
