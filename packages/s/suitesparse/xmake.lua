@@ -18,7 +18,7 @@ package("suitesparse")
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("blas", {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas", "apple"}})
     add_configs("blas_static", {description = "Use static BLAS library.", default = true, type = "boolean"})
-    add_configs("graphblas", {description = "Set GraphBLAS module.", default = "none", type = "string", values = {"none", "shared", "static"}})
+    add_configs("graphblas", {description = "Set GraphBLAS module. (It is shared by default above 7.4.0)", default = "none", type = "string", values = {"none", "shared", "static"}})
 
     add_deps("metis")
     if not is_plat("windows") then
@@ -45,12 +45,10 @@ package("suitesparse")
             package:add("deps", package:config("blas"))
         end
         if package:version():ge("7.4.0") then
+            package:config_set("graphblas", package:config("graphblas") == "none" and "shared" or "static")
             local suffix = ""
             if package:is_plat("windows") and not package:config("shared") then
                 suffix = "_static"
-            end
-            if package:config("graphblas") ~= "none" then
-                package:add("links", "graphblas" .. suffix)
             end
             for _, lib in ipairs({"lagraphx", "lagraph", "graphblas", "spex", "spqr", "rbio", "ParU", "umfpack", "ldl", "klu", "klu_cholmod", "cxsparse", "cholmod", "colamd", "ccolamd", "camd", "btf", "amd", "suitesparse_mongoose", "suitesparseconfig"}) do
                 package:add("links", lib .. suffix)
