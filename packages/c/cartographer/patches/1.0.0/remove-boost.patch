@@ -1,10 +1,12 @@
 diff --git a/cartographer/common/port.h b/cartographer/common/port.h
-index 338861f..a38cf0b 100644
+index 338861f..252c566 100644
 --- a/cartographer/common/port.h
 +++ b/cartographer/common/port.h
-@@ -20,10 +20,10 @@
+@@ -19,11 +19,12 @@
+ 
  #include <cinttypes>
  #include <cmath>
++#include <cstring>
  #include <string>
 +#include <stdexcept>
 +#include <functional>
@@ -16,7 +18,7 @@ index 338861f..a38cf0b 100644
  
  namespace cartographer {
  
-@@ -48,22 +48,54 @@ inline int64 RoundToInt64(const double x) { return std::lround(x); }
+@@ -48,22 +49,54 @@ inline int64 RoundToInt64(const double x) { return std::lround(x); }
  
  inline void FastGzipString(const std::string& uncompressed,
                             std::string* compressed) {
