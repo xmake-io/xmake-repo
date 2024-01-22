@@ -19,11 +19,9 @@ package("squirrel")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
-            table.insert(configs, "-DDISABLE_DYNAMIC=OFF")
             table.insert(configs, "-DDISABLE_STATIC=ON")
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
-            table.insert(configs, "-DDISABLE_DYNAMIC=ON")
             table.insert(configs, "-DDISABLE_STATIC=OFF")
         end
         import("package.tools.cmake").install(package, configs)
