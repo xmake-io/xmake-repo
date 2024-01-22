@@ -26,9 +26,13 @@ package("vulkan-loader")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
-    if is_plat("linux") then
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::vulkan-loader")
+    elseif is_plat("linux") then
         add_extsources("apt::libvulkan-dev", "pacman::vulkan-icd-loader")
         add_deps("wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon")
+    elseif is_plat("macosx") then
+        add_extsources("brew::vulkan-loader")
     end
 
     on_load("windows", "linux", "macosx", function (package)
