@@ -104,11 +104,9 @@ package("libsdl")
         local libsuffix = package:is_debug() and "d" or ""
         component:add("links", "SDL2main" .. libsuffix)
         if package:is_plat("windows") then
-            component:add("ldflags", "-subsystem:windows")
             component:add("syslinks", "shell32")
         elseif package:is_plat("mingw") then
             component:add("syslinks", "mingw32")
-            component:add("ldflags", "-mwindows")
         end
         component:add("deps", "lib")
     end)
