@@ -12,7 +12,15 @@ package("urdfdom")
     add_patches("1.0.4", path.join(os.scriptdir(), "patches", "1.0.4", "build.patch"), "1f51148afccef7b9bf079ef4137c12d578fb7a76f7aed6e282ca2ceaf4a188ba")
 
     add_deps("cmake")
-    add_deps("urdfdom-headers", "console-bridge", "tinyxml")
+    add_deps("urdfdom-headers", "console-bridge")
+    on_load("windows", "linux", "macosx", function (package)
+        if package:version():ge("4.0.0") then
+            package:add("deps", "tinyxml2")
+        else
+            package:add("deps", "tinyxml")
+        end
+    end)
+
     on_install("windows", "linux", "macosx", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
