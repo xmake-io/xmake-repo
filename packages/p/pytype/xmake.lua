@@ -7,6 +7,7 @@ package("pytype")
              "https://github.com/chen-qingyu/Pytype.git")
 
     add_versions("v1.0.0", "406f808edf4da1901c0a7a3c188c17b206c17211e03eda30fe9af38b644fbb52")
+    add_versions("v1.1.0", "7c287114d98542bcca022b84fa8497c67311a99219134fce3b645881851b4c03")
 
     on_install(function (package)
         os.cp("sources/*.hpp", package:installdir("include/pytype"))
