@@ -21,12 +21,24 @@ package("vk-bootstrap")
     end
 
     on_install("windows", "linux", "macosx", function (package)
+        local version = package:version()
+        local language_version
+
+        if version == nil then
+            language_version = "cxx17"
+        else
+            if version:ge("1.3.212") then
+                language_version = "cxx17"
+            else
+                language_version = "cxx14"
+            end
+        end
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("vulkan-headers")
             target("vk-bootstrap")
                 set_kind("static")
-                ]] .. (package:version():ge("1.3.212") and "set_languages(\"cxx17\")" or "set_languages(\"cxx14\")") .. [[
+                ]] .. language_version .. [[
                 add_files("src/VkBootstrap.cpp")
                 add_headerfiles("src/VkBootstrap.h")
                 add_headerfiles("src/VkBootstrapDispatch.h")
