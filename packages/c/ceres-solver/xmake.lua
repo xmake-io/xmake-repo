@@ -35,7 +35,7 @@ package("ceres-solver")
         end
         table.insert(configs, "-DSUITESPARSE=" .. (package:config("suitesparse") and "ON" or "OFF"))
         table.insert(configs, "-DCXSPARSE=" .. (package:config("suitesparse") and "ON" or "OFF"))
-        if package:config("suitesparse") then
+        if package:version():ge("2.2.0") and package:config("suitesparse") then
             import("package.tools.cmake").install(package, configs, {packagedeps = {"openmp", "libomp"}})
         else
             import("package.tools.cmake").install(package, configs)
