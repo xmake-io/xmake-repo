@@ -53,7 +53,10 @@ package("suitesparse")
                 package:add("links", lib .. suffix)
             end
         else
-            for _, lib in ipairs({"graphblas", "SPQR", "UMFPACK", "LDL", "KLU", "CXSparse", "CHOLMOD", "COLAMD", "CCOLAMD", "CAMD", "BTF", "AMD", "suitesparseconfig"}) do
+            if package:config("graphblas") then
+                package:add("links", "GraphBLAS")
+            end
+            for _, lib in ipairs({"SPQR", "UMFPACK", "LDL", "KLU", "CXSparse", "CHOLMOD", "COLAMD", "CCOLAMD", "CAMD", "BTF", "AMD", "suitesparseconfig"}) do
                 package:add("links", lib)
             end
         end
