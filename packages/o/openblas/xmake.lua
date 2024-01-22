@@ -78,6 +78,12 @@ package("openblas")
         if package:is_plat("linux") then
             table.insert(configs, "CC=" .. package:build_getenv("cc"))
         end
+        if package:is_plat("macosx") and package:is_arch("arm64") then
+            table.insert(configs, "TARGET=VORTEX")
+            table.insert(configs, "BINARY=64")
+            table.insert(configs, "CFLAGS=-arch arm64")
+            table.insert(configs, "LDFLAGS=-arch arm64")
+        end
         if package:debug() then table.insert(configs, "DEBUG=1") end
         if package:config("openmp") then table.insert(configs, "USE_OPENMP=1") end
         if not package:config("shared") then
@@ -96,9 +102,6 @@ package("openblas")
         if package:is_plat("mingw") then
             if package:is_arch("i386", "x86") then
                 table.insert(configs, "BINARY=32")
-            end
-            if package:config("shared") then
-                package:addenv("PATH", "bin")
             end
         else
             local cflags
