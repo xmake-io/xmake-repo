@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
 
-add_requires("ceres-solver 2.1.0", {configs = {suitesparse = true}})
+add_requires("ceres-solver", {configs = {suitesparse = true}})
 add_requires("abseil", "cairo", "eigen", "glog", "lua", "protobuf-cpp", "zlib")
 
 target("cartographer")

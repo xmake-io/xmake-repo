@@ -17,9 +17,11 @@ package("ceres-solver")
     add_deps("cmake", "eigen", "glog", "gflags")
     on_load("windows", "linux", "macosx", function (package)
         if package:config("suitesparse") then
-            package:add("deps", "suitesparse", {configs = {blas = package:config("blas")}})
             if package:version():ge("2.2.0") then
+                package:add("deps", "suitesparse", {configs = {blas = package:config("blas")}})
                 package:add("deps", "openmp")
+            else
+                package:add("deps", "suitesparse 5.x", {configs = {blas = package:config("blas")}})
             end
         end
     end)
