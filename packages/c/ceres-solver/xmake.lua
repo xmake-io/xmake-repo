@@ -26,7 +26,7 @@ package("ceres-solver")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_DOCUMENTATION=OFF", "-DBUILD_EXAMPLES=OFF", "-DBUILD_BENCHMARKS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

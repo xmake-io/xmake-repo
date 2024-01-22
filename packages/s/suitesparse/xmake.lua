@@ -63,7 +63,7 @@ package("suitesparse")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         if package:version():ge("7.4.0") then
             local configs = {"-DSUITESPARSE_DEMOS=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
