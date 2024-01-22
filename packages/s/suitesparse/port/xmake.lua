@@ -162,14 +162,7 @@ target_end()
 
 if has_config("graphblas") then
 target("GraphBLAS")
-    set_kind("static")
-    add_files("GraphBLAS/Source/*.c", "GraphBLAS/Source/Generated/*.c")
-    add_includedirs("GraphBLAS/Include", "GraphBLAS/Source", "GraphBLAS/Source/Template", "GraphBLAS/Source/Generated")
-    add_headerfiles("GraphBLAS/Include/*.h")
-target_end()
-else
-target("GraphBLAS")
-    set_kind("shared")
+    set_kind("$(kind)")
     add_files("GraphBLAS/Source/*.c", "GraphBLAS/Source/Generated/*.c")
     add_includedirs("GraphBLAS/Include", "GraphBLAS/Source", "GraphBLAS/Source/Template", "GraphBLAS/Source/Generated")
     add_headerfiles("GraphBLAS/Include/*.h")
