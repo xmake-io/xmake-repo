@@ -23,15 +23,10 @@ package("vk-bootstrap")
     on_install("windows", "linux", "macosx", function (package)
         local version = package:version()
         local language_version
-
-        if version == nil then
+        if not version or version:ge("1.3.270") then
             language_version = "cxx17"
         else
-            if version:ge("1.3.270") then
-                language_version = "cxx17"
-            else
-                language_version = "cxx14"
-            end
+            language_version = "cxx14"
         end
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -52,7 +47,8 @@ package("vk-bootstrap")
 
     on_test(function (package)
         local configs = {}
-        if package:version():ge("1.3.270") then
+        local version = package:version()
+        if not version or version:ge("1.3.270") then
             configs.languages = "cxx17"
         else
             configs.languages = "cxx14"
