@@ -8,7 +8,7 @@ add_rules("mode.debug", "mode.release")
 option("with_cuda", {default = false, showmenu = true, description = "Build with CUDA support."})
 option("with_blas", {default = "mkl", showmenu = true, description = "Choose BLAS vendor.", values={"mkl", "openblas"}})
 option("complex",   {default = false, showmenu = true, description = "Build with complex number support."})
-option("graphblas", {default = false, showmenu = true, description = "Build GraphBLAS module."})
+option("graphblas", {default = "none", showmenu = true, description = "Set GraphBLAS module.", values={"none", "shared", "static"}})
 
 -- set dependencies
 add_requires("metis")
@@ -160,9 +160,10 @@ target("SPQR")
     end
 target_end()
 
-if has_config("graphblas") then
+local graphblas_kind = get_config("graphblas")
+if graphblas_kind ~= "none" then
 target("GraphBLAS")
-    set_kind("$(kind)")
+    set_kind(graphblas_kind)
     add_files("GraphBLAS/Source/*.c", "GraphBLAS/Source/Generated/*.c")
     add_includedirs("GraphBLAS/Include", "GraphBLAS/Source", "GraphBLAS/Source/Template", "GraphBLAS/Source/Generated")
     add_headerfiles("GraphBLAS/Include/*.h")

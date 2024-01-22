@@ -18,7 +18,7 @@ package("suitesparse")
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("blas", {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas", "apple"}})
     add_configs("blas_static", {description = "Use static BLAS library.", default = true, type = "boolean"})
-    add_configs("graphblas", {description = "Enable static GraphBLAS module.", default = false, type = "boolean"})
+    add_configs("graphblas", {description = "Set GraphBLAS module.", default = "none", type = "string", values = {"none", "shared", "static"}})
 
     add_deps("metis")
     if not is_plat("windows") then
@@ -49,11 +49,14 @@ package("suitesparse")
             if package:is_plat("windows") and not package:config("shared") then
                 suffix = "_static"
             end
+            if package:config("graphblas") ~= "none" then
+                package:add("links", "graphblas" .. suffix)
+            end
             for _, lib in ipairs({"lagraphx", "lagraph", "graphblas", "spex", "spqr", "rbio", "ParU", "umfpack", "ldl", "klu", "klu_cholmod", "cxsparse", "cholmod", "colamd", "ccolamd", "camd", "btf", "amd", "suitesparse_mongoose", "suitesparseconfig"}) do
                 package:add("links", lib .. suffix)
             end
         else
-            if package:config("graphblas") then
+            if package:config("graphblas") ~= "none" then
                 package:add("links", "GraphBLAS")
             end
             for _, lib in ipairs({"SPQR", "UMFPACK", "LDL", "KLU", "CXSparse", "CHOLMOD", "COLAMD", "CCOLAMD", "CAMD", "BTF", "AMD", "suitesparseconfig"}) do
