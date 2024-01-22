@@ -42,14 +42,18 @@ package("nodeeditor")
         end
         local includes
         if package:version():ge("3.0") then
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    QtNodes::DataFlowGraphModel model(std::make_shared<QtNodes::NodeDelegateModelRegistry>());
+                }
+            ]]}, {configs = {languages = "c++17", cxflags = cxflags}, includes = {"QtNodes/NodeDelegateModelRegistry", "QtNodes/DataFlowGraphModel"}}))
             includes = {"QtNodes/FlowScene", "QtNodes/FlowView"}
         else
-            includes = {"nodes/FlowScene", "nodes/FlowView"}
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    QtNodes::FlowScene scene(std::make_shared<QtNodes::DataModelRegistry>());
+                    QtNodes::FlowView view(&scene);
+                }
+            ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = {"nodes/FlowScene", "nodes/FlowView"}}))
         end
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                QtNodes::FlowScene scene(std::make_shared<QtNodes::DataModelRegistry>());
-                QtNodes::FlowView view(&scene);
-            }
-        ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = includes}))
     end)
