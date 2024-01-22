@@ -14,7 +14,7 @@ package("urdfdom-headers")
 
     add_deps("cmake")
     on_install(function (package)
-        import("package.tools.cmake").install(package)
+        import("package.tools.cmake").install(package, {"-DAPPEND_PROJECT_NAME_TO_INCLUDEDIR=OFF"})
     end)
 
     on_test(function (package)
