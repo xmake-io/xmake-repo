@@ -1,10 +1,13 @@
 diff --git a/cartographer/common/port.h b/cartographer/common/port.h
-index 338861f..a13742c 100644
+index 338861f..a38cf0b 100644
 --- a/cartographer/common/port.h
 +++ b/cartographer/common/port.h
-@@ -21,9 +21,7 @@
+@@ -20,10 +20,10 @@
+ #include <cinttypes>
  #include <cmath>
  #include <string>
++#include <stdexcept>
++#include <functional>
  
 -#include <boost/iostreams/device/back_inserter.hpp>
 -#include <boost/iostreams/filter/gzip.hpp>
@@ -13,11 +16,10 @@ index 338861f..a13742c 100644
  
  namespace cartographer {
  
-@@ -47,23 +45,55 @@ inline int64 RoundToInt64(const float x) { return std::lround(x); }
- inline int64 RoundToInt64(const double x) { return std::lround(x); }
+@@ -48,22 +48,54 @@ inline int64 RoundToInt64(const double x) { return std::lround(x); }
  
  inline void FastGzipString(const std::string& uncompressed,
--                           std::string* compressed) {
+                            std::string* compressed) {
 -  boost::iostreams::filtering_ostream out;
 -  out.push(
 -      boost::iostreams::gzip_compressor(boost::iostreams::zlib::best_speed));
@@ -25,7 +27,6 @@ index 338861f..a13742c 100644
 -  boost::iostreams::write(out,
 -                          reinterpret_cast<const char*>(uncompressed.data()),
 -                          uncompressed.size());
-+                           std::string& compressed) {
 +    z_stream zs;
 +    memset(&zs, 0, sizeof(zs));
 +
@@ -44,20 +45,19 @@ index 338861f..a13742c 100644
 +
 +        ret = deflate(&zs, Z_FINISH);
 +
-+        compressed.append(buffer, sizeof(buffer) - zs.avail_out);
++        compressed->append(buffer, sizeof(buffer) - zs.avail_out);
 +    } while (zs.avail_out == 0);
 +
 +    deflateEnd(&zs);
  }
  
  inline void FastGunzipString(const std::string& compressed,
--                             std::string* decompressed) {
+                              std::string* decompressed) {
 -  boost::iostreams::filtering_ostream out;
 -  out.push(boost::iostreams::gzip_decompressor());
 -  out.push(boost::iostreams::back_inserter(*decompressed));
 -  boost::iostreams::write(out, reinterpret_cast<const char*>(compressed.data()),
 -                          compressed.size());
-+                             std::string& decompressed) {
 +    z_stream zs;
 +    memset(&zs, 0, sizeof(zs));
 +
@@ -76,7 +76,7 @@ index 338861f..a13742c 100644
 +
 +        ret = inflate(&zs, Z_NO_FLUSH);
 +
-+        decompressed.append(buffer, sizeof(buffer) - zs.avail_out);
++        decompressed->append(buffer, sizeof(buffer) - zs.avail_out);
 +    } while (zs.avail_out == 0);
 +
 +    inflateEnd(&zs);

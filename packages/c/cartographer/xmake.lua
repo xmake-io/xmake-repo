@@ -9,7 +9,7 @@ package("cartographer")
     add_versions("1.0.0", "474a410bf6457eb8a0fd92ea412d7889fb013051e625d3ee25e8d65e4113fd6c")
 
     add_patches("1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "fix-build-error.patch"), "a4bb53d6f098c77a397d72c244d4283af1f9eec8a4ca7a7fa28de77b06d1201e")
-    add_patches("1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "remove-boost.patch"), "d50b03106410ef680b26f1acc5bb3bc4f3077087af966a0c461b629b49a6617c")
+    add_patches("1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "remove-boost.patch"), "6ab61cc1965ac49f974a3feb822c5fc46295ee874b4e62b59aeaaaa71bac4397")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -17,7 +17,7 @@ package("cartographer")
 
     add_deps("cmake")
     add_deps("zlib")
-    add_deps("ceres-solver", {configs = {suitesparse = true}})
+    add_deps("ceres-solver 2.1.0", {configs = {suitesparse = true}})
     add_deps("abseil", "cairo", "eigen", "lua", "protobuf-cpp")
 
     on_install("windows|x64", "windows|x86", "macosx|x86_64", "linux", function (package)
