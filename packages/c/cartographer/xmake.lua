@@ -20,7 +20,7 @@ package("cartographer")
     add_deps("ceres-solver 2.1.0", {configs = {suitesparse = true}})
     add_deps("abseil", "cairo", "eigen", "lua", "protobuf-cpp")
 
-    on_install("windows", "macosx|x86_64", "linux", function (package)
+    on_install("windows|x64", "windows|x86", "macosx|x86_64", "linux", function (package)
         for _, headerfile in ipairs(os.files("cartographer/**.h")) do
             io.replace(headerfile, "cairo/cairo.h", "cairo.h", {plain = true})
         end
