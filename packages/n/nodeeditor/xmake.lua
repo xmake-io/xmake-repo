@@ -40,6 +40,12 @@ package("nodeeditor")
         if not package:is_plat("windows") then
             cxflags = "-fPIC"
         end
+        local includes
+        if package:version():ge("3.0") then
+            includes = {"QtNodes/FlowScene", "QtNodes/FlowView"}
+        else
+            includes = {"nodes/FlowScene", "nodes/FlowView"}
+        end
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 QtNodes::FlowScene scene(std::make_shared<QtNodes::DataModelRegistry>());
