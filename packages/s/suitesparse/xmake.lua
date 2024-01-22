@@ -8,9 +8,7 @@ package("suitesparse")
     add_versions("v5.10.1", "acb4d1045f48a237e70294b950153e48dce5b5f9ca8190e86c2b8c54ce00a7ee")
     add_versions("v5.12.0", "5fb0064a3398111976f30c5908a8c0b40df44c6dd8f0cc4bfa7b9e45d8c647de")
     add_versions("v5.13.0", "59c6ca2959623f0c69226cf9afb9a018d12a37fab3a8869db5f6d7f83b6b147d")
-    if not is_plat("windows") or (is_plat("windows") and is_arch("x64")) then
-        add_versions("v7.5.1", "dccfb5f75aa83fe2edb4eb2462fc984a086c82bad8433f63c31048d84b565d74")
-    end
+    add_versions("v7.5.1", "dccfb5f75aa83fe2edb4eb2462fc984a086c82bad8433f63c31048d84b565d74")
 
     add_patches("5.x", path.join(os.scriptdir(), "patches", "5.10.1", "msvc.patch"), "8ac61e9acfaa864a2528a14d3a7e6e86f6e6877de2fe93fdc87876737af5bf31")
 
@@ -18,7 +16,7 @@ package("suitesparse")
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("blas", {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas", "apple"}})
     add_configs("blas_static", {description = "Use static BLAS library.", default = true, type = "boolean"})
-    add_configs("graphblas", {description = "Set GraphBLAS module. (It is shared by default above 7.4.0)", default = "none", type = "string", values = {"none", "shared", "static"}})
+    add_configs("graphblas", {description = "Enable static GraphBLAS module.", default = false, type = "boolean"})
 
     add_deps("metis")
     if not is_plat("windows") then
@@ -45,7 +43,6 @@ package("suitesparse")
             package:add("deps", package:config("blas"))
         end
         if package:version():ge("7.4.0") then
-            package:config_set("graphblas", package:config("graphblas") == "none" and "shared" or "static")
             local suffix = ""
             if package:is_plat("windows") and not package:config("shared") then
                 suffix = "_static"
@@ -54,16 +51,13 @@ package("suitesparse")
                 package:add("links", lib .. suffix)
             end
         else
-            if package:config("graphblas") ~= "none" then
-                package:add("links", "GraphBLAS")
-            end
             for _, lib in ipairs({"SPQR", "UMFPACK", "LDL", "KLU", "CXSparse", "CHOLMOD", "COLAMD", "CCOLAMD", "CAMD", "BTF", "AMD", "suitesparseconfig"}) do
                 package:add("links", lib)
             end
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|x64", "macosx", "linux", function (package)
         if package:version():ge("7.4.0") then
             local configs = {"-DSUITESPARSE_DEMOS=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
