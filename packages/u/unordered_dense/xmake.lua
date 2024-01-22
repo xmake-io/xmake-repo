@@ -13,16 +13,16 @@ package("unordered_dense")
     add_versions("v4.0.4", "b34a8c942963e3a647f1bbc192a6391cd56d7ae615b2ddc1601c1779b5792206")
     add_versions("v4.4.0", "3976399793e8cb4db1409ce15610fbd9e5e406ced4745f262d393a9311efbd88")
 
-    add_configs("with_cxx20_module", {description = "Build with C++20 module support.", default = false, type = "boolean"})
+    add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
 
     on_load(function (package)
-        if not package:config("with_cxx20_module") then
+        if not package:config("modules") then
             package:add("deps", "cmake")
         end
     end)
 
     on_install(function (package)
-        if not package:config("with_cxx20_module") then
+        if not package:config("modules") then
             import("package.tools.cmake").install(package)
             os.cp("include", package:installdir())
         else
