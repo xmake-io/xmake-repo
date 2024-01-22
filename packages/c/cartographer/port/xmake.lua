@@ -1,6 +1,5 @@
 add_rules("mode.debug", "mode.release")
 
-add_requires("boost", {configs = {iostreams = true}})
 add_requires("ceres-solver", {configs = {suitesparse = true}})
 add_requires("abseil", "cairo", "eigen", "glog", "lua", "protobuf-cpp", "zlib")
 
@@ -10,7 +9,6 @@ target("cartographer")
 
     add_packages(
         "abseil",
-        "boost", 
         "ceres-solver", 
         "cairo", 
         "eigen",

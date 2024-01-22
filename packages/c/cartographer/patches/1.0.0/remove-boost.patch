@@ -1,0 +1,85 @@
+diff --git a/cartographer/common/port.h b/cartographer/common/port.h
+index 338861f..a13742c 100644
+--- a/cartographer/common/port.h
++++ b/cartographer/common/port.h
+@@ -21,9 +21,7 @@
+ #include <cmath>
+ #include <string>
+ 
+-#include <boost/iostreams/device/back_inserter.hpp>
+-#include <boost/iostreams/filter/gzip.hpp>
+-#include <boost/iostreams/filtering_stream.hpp>
++#include <zlib.h>
+ 
+ namespace cartographer {
+ 
+@@ -47,23 +45,55 @@ inline int64 RoundToInt64(const float x) { return std::lround(x); }
+ inline int64 RoundToInt64(const double x) { return std::lround(x); }
+ 
+ inline void FastGzipString(const std::string& uncompressed,
+-                           std::string* compressed) {
+-  boost::iostreams::filtering_ostream out;
+-  out.push(
+-      boost::iostreams::gzip_compressor(boost::iostreams::zlib::best_speed));
+-  out.push(boost::iostreams::back_inserter(*compressed));
+-  boost::iostreams::write(out,
+-                          reinterpret_cast<const char*>(uncompressed.data()),
+-                          uncompressed.size());
++                           std::string& compressed) {
++    z_stream zs;
++    memset(&zs, 0, sizeof(zs));
++
++    if (deflateInit(&zs, Z_BEST_SPEED) != Z_OK)
++        throw std::runtime_error("deflateInit failed while compressing.");
++
++    zs.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(uncompressed.data()));
++    zs.avail_in = static_cast<uInt>(uncompressed.size());
++
++    int ret;
++    char buffer[4096];
++
++    do {
++        zs.next_out = reinterpret_cast<Bytef*>(buffer);
++        zs.avail_out = sizeof(buffer);
++
++        ret = deflate(&zs, Z_FINISH);
++
++        compressed.append(buffer, sizeof(buffer) - zs.avail_out);
++    } while (zs.avail_out == 0);
++
++    deflateEnd(&zs);
+ }
+ 
+ inline void FastGunzipString(const std::string& compressed,
+-                             std::string* decompressed) {
+-  boost::iostreams::filtering_ostream out;
+-  out.push(boost::iostreams::gzip_decompressor());
+-  out.push(boost::iostreams::back_inserter(*decompressed));
+-  boost::iostreams::write(out, reinterpret_cast<const char*>(compressed.data()),
+-                          compressed.size());
++                             std::string& decompressed) {
++    z_stream zs;
++    memset(&zs, 0, sizeof(zs));
++
++    if (inflateInit(&zs) != Z_OK)
++        throw std::runtime_error("inflateInit failed while decompressing.");
++
++    zs.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(compressed.data()));
++    zs.avail_in = static_cast<uInt>(compressed.size());
++
++    int ret;
++    char buffer[4096];
++
++    do {
++        zs.next_out = reinterpret_cast<Bytef*>(buffer);
++        zs.avail_out = sizeof(buffer);
++
++        ret = inflate(&zs, Z_NO_FLUSH);
++
++        decompressed.append(buffer, sizeof(buffer) - zs.avail_out);
++    } while (zs.avail_out == 0);
++
++    inflateEnd(&zs);
+ }
+ 
+ }  // namespace common
