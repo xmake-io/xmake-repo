@@ -8,6 +8,7 @@ package("urdfdom-headers")
     add_urls("https://github.com/ros/urdfdom_headers/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ros/urdfdom_headers.git")
     add_versions("1.0.5", "76a68657c38e54bb45bddc4bd7d823a3b04edcd08064a56d8e7d46b9912035ac")
+    add_versions("1.1.1", "b2ee5bffa51eea4958f64479b4fa273881d82a3bfa1d98686a16f8d8ca6c2350")
 
     add_patches("1.0.5", path.join(os.scriptdir(), "patches", "1.0.5", "export.patch"), "c7c15c0fba7b618c4ff9207a561caae70374e642a779fb346f2c084d5da6ed8b")
 
