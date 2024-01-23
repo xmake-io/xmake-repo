@@ -21,11 +21,11 @@ package("squirrel")
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
             table.insert(configs, "-DDISABLE_STATIC=OFF")
         end
-        local opt
+        local cxflags
         if package:is_plat("iphoneos") then
-            opt = {cxflags = "-DIOS"}
+            cxflags = "-DIOS"
         end
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
         os.cp("include", package:installdir())
     end)
 
