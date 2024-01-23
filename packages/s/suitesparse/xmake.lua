@@ -16,7 +16,8 @@ package("suitesparse")
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("blas", {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas", "apple"}})
     add_configs("blas_static", {description = "Use static BLAS library.", default = true, type = "boolean"})
-    add_configs("graphblas", {description = "Enable static GraphBLAS module.", default = false, type = "boolean"})
+    add_configs("graphblas", {description = "Enable GraphBLAS module.", default = not is_arch("x86"), type = "boolean"})
+    add_configs("graphblas_static", {description = "Enable static GraphBLAS module.", default = false, type = "boolean"})
 
     add_deps("metis")
     if not is_plat("windows") then
@@ -32,11 +33,6 @@ package("suitesparse")
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
-        if package:config("cuda") then
-            package:add("deps", "cuda", {system = true, configs = {utils = {"cublas"}}})
-            package:add("links", "GPUQREngine")
-            package:add("links", "SuiteSparse_GPURuntime")
-        end
         if package:config("blas") == "apple" then
             package:add("frameworks", "Accelerate")
         else
@@ -46,31 +42,43 @@ package("suitesparse")
             local suffix = ""
             if package:is_plat("windows") and not package:config("shared") then
                 suffix = "_static"
+                if package:config("graphblas") then
+                    package:add("links", "graphblas" .. (package:config("graphblas_static") and "_static" or ""))
+                end
             end
             for _, lib in ipairs({"lagraphx", "lagraph", "graphblas", "spex", "spqr", "rbio", "ParU", "umfpack", "ldl", "klu", "klu_cholmod", "cxsparse", "cholmod", "colamd", "ccolamd", "camd", "btf", "amd", "suitesparse_mongoose", "suitesparseconfig"}) do
                 package:add("links", lib .. suffix)
             end
         else
+            if package:config("cuda") then
+                package:add("deps", "cuda", {system = true, configs = {utils = {"cublas"}}})
+                package:add("links", "GPUQREngine")
+                package:add("links", "SuiteSparse_GPURuntime")
+            end
             for _, lib in ipairs({"SPQR", "UMFPACK", "LDL", "KLU", "CXSparse", "CHOLMOD", "COLAMD", "CCOLAMD", "CAMD", "BTF", "AMD", "suitesparseconfig"}) do
                 package:add("links", lib)
             end
         end
     end)
 
-    on_install("windows|x64", "macosx", "linux", function (package)
+    on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         if package:version():ge("7.4.0") then
             local configs = {"-DSUITESPARSE_DEMOS=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
-            table.insert(configs, "-DGRAPHBLAS_BUILD_STATIC_LIBS=" .. (package:config("graphblas") and "ON" or "OFF"))
+            table.insert(configs, "-DGRAPHBLAS_BUILD_STATIC_LIBS=" .. (package:config("graphblas_static") and "ON" or "OFF"))
             table.insert(configs, "-DSUITESPARSE_USE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
             table.insert(configs, "-DSUITESPARSE_USE_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
             local bla_vendor = {mkl = "Intel10_64lp", openblas = "OpenBLAS", apple = "Apple"}
             table.insert(configs, "-DBLA_VENDOR=" .. bla_vendor[package:config("blas")])
             table.insert(configs, "-DBLA_STATIC=" .. (package:config("blas_static") and "ON" or "OFF"))
             if package:is_plat("windows") then
-                table.insert(configs, "-DSUITESPARSE_ENABLE_PROJECTS=suitesparse_config;mongoose;amd;btf;camd;ccolamd;colamd;cholmod;cxsparse;ldl;klu;umfpack;paru;rbio;spqr;graphblas;lagraph") -- remove spex since it does not support windows
+                if package:config("graphblas") then
+                    table.insert(configs, "-DSUITESPARSE_ENABLE_PROJECTS=suitesparse_config;mongoose;amd;btf;camd;ccolamd;colamd;cholmod;cxsparse;ldl;klu;umfpack;paru;rbio;spqr;graphblas;lagraph") -- remove spex since it does not support windows
+                else
+                    table.insert(configs, "-DSUITESPARSE_ENABLE_PROJECTS=suitesparse_config;mongoose;amd;btf;camd;ccolamd;colamd;cholmod;cxsparse;ldl;klu;umfpack;paru;rbio;spqr")
+                end
                 local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
                 if vs_sdkver then
                     local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
@@ -78,6 +86,8 @@ package("suitesparse")
                     table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
                     table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
                 end
+            elseif not package:config("graphblas") then
+                table.insert(configs, "-DSUITESPARSE_ENABLE_PROJECTS=suitesparse_config;mongoose;amd;btf;camd;ccolamd;colamd;cholmod;cxsparse;ldl;klu;umfpack;paru;rbio;spqr;spex")
             end
             import("package.tools.cmake").install(package, configs)
         else
@@ -86,6 +96,7 @@ package("suitesparse")
             configs.with_blas = package:config("blas")
             configs.with_cuda = package:config("cuda")
             configs.graphblas = package:config("graphblas")
+            configs.graphblas_static = package:config("graphblas_static")
             import("package.tools.xmake").install(package, configs)
         end
     end)
