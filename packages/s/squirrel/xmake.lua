@@ -11,10 +11,7 @@ package("squirrel")
 
     add_deps("cmake")
 
-    on_install(function (package)
-        if package:is_plat("iphoneos") then
-            package:build_addenv("defines", "IOS")
-        end
+    on_install("windows", "mingw", "linux", "bsd", "macosx", "android", "iphoneos", "cross", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -24,7 +21,11 @@ package("squirrel")
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
             table.insert(configs, "-DDISABLE_STATIC=OFF")
         end
-        import("package.tools.cmake").install(package, configs)
+        local opt
+        if package:is_plat("iphoneos") then
+            opt = {cxflags = "-DIOS"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
         os.cp("include", package:installdir())
     end)
 
