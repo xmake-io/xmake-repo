@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     concurrency:
-        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Windows-${{ matrix.os }}-${{ matrix.kind }}-${{ matrix.arch }}-${{ matrix.runtime }}
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Windows-${{ matrix.os }}-${{ matrix.kind }}-${{ matrix.arch }}-${{ matrix.runtimes }}
         cancel-in-progress: true
     steps:
       - uses: actions/checkout@v1
