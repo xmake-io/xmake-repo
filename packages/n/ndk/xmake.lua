@@ -1,5 +1,4 @@
 package("ndk")
-
     set_kind("toolchain")
     set_homepage("https://developer.android.com/ndk")
     set_description("Android NDK toolchain.")
@@ -21,6 +20,7 @@ package("ndk")
         add_versions("22.0", "d37fc69cd81e5660234a686e20adef39bc0244086e4d66525a40af771c020718")
         add_versions("26.0", "ad73c0370f0b0a87d1671ed2fd5a9ac9acfd1eb5c43a7fbfbd330f85d19dd632")
     elseif is_host("macosx") then
+        local versions = {["21"] = "r21e", ["22"] = "r22"}
         set_urls("https://dl.google.com/android/repository/android-ndk-$(version)-darwin-x86_64.zip", {version = function (version)
             return versions[tostring(version:major())]
         end})
