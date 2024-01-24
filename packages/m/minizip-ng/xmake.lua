@@ -30,7 +30,7 @@ package("minizip-ng")
         if package:version():ge("4.0") then
             if package:is_plat("macosx") then
                 package:add("deps", "openssl")
-            elseif package:is_plat("windows") then
+            elseif package:is_plat("windows", "mingw") then
                 package:add("syslinks", "Bcrypt")
             end
         end
