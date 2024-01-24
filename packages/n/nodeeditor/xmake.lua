@@ -22,7 +22,7 @@ package("nodeeditor")
         end
     end)
 
-    on_install("windows", "linux", "mingw", "macosx", function (package)
+    on_install("windows", "linux", "mingw", "macosx|x86_64", function (package)
         local qt = package:dep("qt5core"):fetch().qtdir
 
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTING=OFF"}
