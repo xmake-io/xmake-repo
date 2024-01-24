@@ -23,7 +23,7 @@ package("minizip-ng")
     elseif is_plat("linux", "android") then
         add_deps("openssl")
     elseif is_plat("windows", "mingw") then
-        add_syslinks("crypt32", "advapi32")
+        add_syslinks("crypt32", "advapi32", "Bcrypt")
     end
 
     on_load(function (package)
