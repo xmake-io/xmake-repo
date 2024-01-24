@@ -23,10 +23,17 @@ package("minizip-ng")
     elseif is_plat("linux", "android") then
         add_deps("openssl")
     elseif is_plat("windows", "mingw") then
-        add_syslinks("crypt32", "advapi32", "Bcrypt")
+        add_syslinks("crypt32", "advapi32")
     end
 
     on_load(function (package)
+        if package:version():ge("4.0") then
+            if package:is_plat("macosx") then
+                package:add("deps", "openssl")
+            elseif package:is_plat("windows") then
+                package:add("syslinks", "Bcrypt")
+            end
+        end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
