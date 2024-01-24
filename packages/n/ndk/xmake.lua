@@ -21,7 +21,7 @@ package("ndk")
         add_versions("26.0", "ad73c0370f0b0a87d1671ed2fd5a9ac9acfd1eb5c43a7fbfbd330f85d19dd632")
     elseif is_host("macosx") then
         local versions = {["21"] = "r21e-darwin-x86_64", ["22"] = "r22-darwin-x86_64", ["26"] = "r26b-darwin"}
-        set_urls("https://dl.google.com/android/repository/android-ndk-$(version)-darwin.zip", {version = function (version)
+        set_urls("https://dl.google.com/android/repository/android-ndk-$(version).zip", {version = function (version)
             return versions[tostring(version:major())]
         end})
         add_versions("21.0", "437278103a3db12632c05b1be5c41bbb8522791a67e415cc54411a65366f499d")
