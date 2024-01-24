@@ -5,6 +5,7 @@ package("mxml")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/michaelrsweet/mxml/releases/download/v3.3/mxml-3.3.zip")
+    add_versions("3.3.1", "fca59b0d7fae2b9165c223cdce68e45dbf41e21e5e53190d8b214218b8353380")
     add_versions("3.3", "fca59b0d7fae2b9165c223cdce68e45dbf41e21e5e53190d8b214218b8353380")
 
     if is_plat("macosx", "linux") then
