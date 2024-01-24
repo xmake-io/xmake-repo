@@ -4,16 +4,17 @@ package("ndk")
     set_homepage("https://developer.android.com/ndk")
     set_description("Android NDK toolchain.")
 
-    local versions = {["21"] = "r21e", ["22"] = "r22", ["26"] = "r26b"}
     if is_host("windows") then
-        set_urls("https://dl.google.com/android/repository/android-ndk-$(version)-windows-x86_64.zip", {version = function (version)
+        local versions = {["21"] = "r21e-windows-x86_64", ["22"] = "r22-windows-x86_64", ["26"] = "r26b-windows"}
+        set_urls("https://dl.google.com/android/repository/android-ndk-$(version).zip", {version = function (version)
             return versions[tostring(version:major())]
         end})
         add_versions("21.0", "f71307c5c572e2c163d602b3704b8bc024bec0c43ba2800de36bd10f3a21492b")
         add_versions("22.0", "5a0eafa83c8bba3c76e8427aa3d83d169215f62963a277b1914a3651aa47f751")
         add_versions("26.0", "a478d43d4a45d0d345cda6be50d79642b92fb175868d9dc0dfc86181d80f691e")
     elseif is_host("linux") then
-        set_urls("https://dl.google.com/android/repository/android-ndk-$(version)-linux-x86_64.zip", {version = function (version)
+        local versions = {["21"] = "r21e-linux-x86_64", ["22"] = "r22-linux-x86_64", ["26"] = "r26b-linux"}
+        set_urls("https://dl.google.com/android/repository/android-ndk-$(version).zip", {version = function (version)
             return versions[tostring(version:major())]
         end})
         add_versions("21.0", "ad7ce5467e18d40050dc51b8e7affc3e635c85bd8c59be62de32352328ed467e")
