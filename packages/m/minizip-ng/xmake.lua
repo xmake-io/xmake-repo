@@ -16,6 +16,7 @@ package("minizip-ng")
     add_configs("zstd",  {description = "Enable zstd comppressression library.", default = false, type = "boolean"})
 
     add_deps("cmake")
+
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Security")
         add_syslinks("iconv")
@@ -48,5 +49,9 @@ package("minizip-ng")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("zipOpen", {includes = {"mz.h", "mz_compat.h"}}))
+        if package:version():ge("4.0") then
+            assert(package:has_cfuncs("zipOpen", {includes = {"minizip/mz.h", "minizip/mz_compat.h"}}))
+        else
+            assert(package:has_cfuncs("zipOpen", {includes = {"mz.h", "mz_compat.h"}}))
+        end
     end)
