@@ -6,7 +6,7 @@ package("pytype")
     add_urls("https://github.com/chen-qingyu/pytype-cpp/archive/refs/tags/$(version).tar.gz", 
              "https://github.com/chen-qingyu/pytype-cpp.git")
 
-    add_versions("v1.3.0", "4f0b2efe2acb6fb678d2fcd54105fef815973d0dde17662ee8c92a10a1dc8b4f")
+    add_versions("v1.3.1", "7729a9492caebaff63281e993d22b1f4ca4d488664dada59bfc765002ff7e7de")
 
     on_install(function (package)
         os.cp("sources/*.hpp", package:installdir("include/pytype"))
