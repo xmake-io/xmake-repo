@@ -9,6 +9,8 @@ package("quickjs")
     else
         add_urls("https://github.com/bellard/quickjs.git")
         add_versions("2021.03.27", "b5e62895c619d4ffc75c9d822c8d85f1ece77e5b")
+        add_versions("2023.12.09", "daa35bc1e5d43192098af9b51caeb4f18f73f9f9")
+        add_versions("2024.01.13", "d6c7d169de6fb2c90cd2bd2226ba9dafdef883ce")
     end
 
     if is_plat("linux", "macosx", "iphoneos", "cross") then
@@ -43,7 +45,7 @@ package("quickjs")
         import("package.tools.xmake").install(package, configs)
     end)
 
-    on_install("windows", function (package)
+    on_install("windows|x86", "windows|x64", function (package)
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
