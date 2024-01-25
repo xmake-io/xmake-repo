@@ -36,6 +36,17 @@ target("cartographer")
     remove_files("cartographer/io/serialization_format_migration.cc")
     remove_headerfiles("cartographer/io/serialization_format_migration.h")
 
+    remove_files("cartographer/io/internal/pbstream_migrate.cc", "cartographer/io/internal/pbstream_info.cc")
+    remove_headerfiles("cartographer/io/internal/pbstream_migrate.h", "cartographer/io/internal/pbstream_info.h")
+
+    remove_files(
+        "cartographer/io/pbstream_main.cc",
+        "cartographer/io/migrate_serialization_format_main.cc",
+        "cartographer/ground_truth/compute_relations_metrics_main.cc",
+        "cartographer/ground_truth/autogenerate_ground_truth_main.cc",
+        "cartographer/common/print_configuration_main.cc"
+    )
+
     remove_headerfiles("**/fake_*.h", "**/*test*.h", "**/mock*.h")
     remove_files("**/fake_*.cc", "**/mock*.cc", "**/*_main.cc", "**/*test*.cc")
 
