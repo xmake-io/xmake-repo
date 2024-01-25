@@ -27,10 +27,10 @@ package("cartographer")
         for _, headerfile in ipairs(os.files("cartographer/**.h")) do
             io.replace(headerfile, "cairo/cairo.h", "cairo.h", {plain = true})
         end
-        for _, headerfile in ipairs(table.join(os.files("cartographer/**.cc"), os.files("cartographer/**.h"))) do
-            io.replace(headerfile, "LOCKS_EXCLUDED", "ABSL_LOCKS_EXCLUDED", {plain = true})
-            io.replace(headerfile, "GUARDED_BY", "ABSL_GUARDED_BY", {plain = true})
-            io.replace(headerfile, "EXCLUSIVE_LOCKS_REQUIRED", "ABSL_EXCLUSIVE_LOCKS_REQUIRED", {plain = true})
+        for _, file in ipairs(table.join(os.files("cartographer/**.cc"), os.files("cartographer/**.h"))) do
+            io.replace(file, "LOCKS_EXCLUDED", "ABSL_LOCKS_EXCLUDED", {plain = true})
+            io.replace(file, "GUARDED_BY", "ABSL_GUARDED_BY", {plain = true})
+            io.replace(file, "EXCLUSIVE_LOCKS_REQUIRED", "ABSL_EXCLUSIVE_LOCKS_REQUIRED", {plain = true})
         end
         for _, protofile in ipairs(os.files("cartographer/**.proto")) do
             io.replace(protofile, [[import "cartographer/]], [[import "]], {plain = true})
