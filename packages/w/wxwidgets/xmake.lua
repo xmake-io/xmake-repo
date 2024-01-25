@@ -67,7 +67,7 @@ package("wxwidgets")
         add_deps("cmake")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib")
         if is_plat("linux") then
-            add_deps("gtk+3", "opengl")
+            add_deps("gtk+3", "gspell", "opengl")
         end
     end
 
