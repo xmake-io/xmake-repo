@@ -5,10 +5,11 @@ set_languages("cxx14")
 add_rules("mode.debug", "mode.release")
 
 -- initialize options
-option("with_cuda", {default = false, showmenu = true, description = "Build with CUDA support."})
-option("with_blas", {default = "mkl", showmenu = true, description = "Choose BLAS vendor.", values={"mkl", "openblas"}})
-option("complex",   {default = false, showmenu = true, description = "Build with complex number support."})
-option("graphblas", {default = false, showmenu = true, description = "Build GraphBLAS module."})
+option("with_cuda",        {default = false, showmenu = true, description = "Build with CUDA support."})
+option("with_blas",        {default = "mkl", showmenu = true, description = "Choose BLAS vendor.", values={"mkl", "openblas"}})
+option("complex",          {default = false, showmenu = true, description = "Build with complex number support."})
+option("graphblas",        {default = false, showmenu = true, description = "Build GraphBLAS module."})
+option("graphblas_static", {default = false, showmenu = true, description = "Build static GraphBLAS module."})
 
 -- set dependencies
 add_requires("metis")
@@ -161,6 +162,7 @@ target("SPQR")
 target_end()
 
 if has_config("graphblas") then
+if has_config("graphblas_static") then
 target("GraphBLAS")
     set_kind("static")
     add_files("GraphBLAS/Source/*.c", "GraphBLAS/Source/Generated/*.c")
@@ -174,6 +176,7 @@ target("GraphBLAS")
     add_includedirs("GraphBLAS/Include", "GraphBLAS/Source", "GraphBLAS/Source/Template", "GraphBLAS/Source/Generated")
     add_headerfiles("GraphBLAS/Include/*.h")
 target_end()
+end
 end
 
 if has_config("with_cuda") then
