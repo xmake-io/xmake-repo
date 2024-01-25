@@ -45,7 +45,7 @@ package("quickjs")
         import("package.tools.xmake").install(package, configs)
     end)
 
-    on_install("windows", function (package)
+    on_install("windows|x86", "windows|x64", function (package)
         local configs = {}
         if package:config("shared") then
             configs.kind = "shared"
