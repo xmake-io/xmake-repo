@@ -25,3 +25,15 @@ index 68551f1..6055485 100644
  
  #include "absl/types/optional.h"
  #include "cartographer/mapping/id.h"
+diff --git a/cartographer/mapping/value_conversion_tables.h b/cartographer/mapping/value_conversion_tables.h
+index 56924f0..f67854f 100644
+--- a/cartographer/mapping/value_conversion_tables.h
++++ b/cartographer/mapping/value_conversion_tables.h
+@@ -19,6 +19,7 @@
+ 
+ #include <map>
+ #include <vector>
++#include <memory>
+ 
+ #include "cartographer/common/port.h"
+ #include "glog/logging.h"

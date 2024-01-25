@@ -11,7 +11,7 @@ package("cartographer")
 
     add_patches("1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "fix-build-error.patch"), "a4bb53d6f098c77a397d72c244d4283af1f9eec8a4ca7a7fa28de77b06d1201e")
     add_patches("1.0.0", path.join(os.scriptdir(), "patches", "1.0.0", "remove-boost.patch"), "bd0666bbf4eff2f4fda0c6bd55c960fd60af848f7d750a9c1efaffda2abc1e9b")
-    add_patches("2.0.0", path.join(os.scriptdir(), "patches", "2.0.0", "fix-build-error.patch"), "b31a6b48a9aeb0e97d746df05c959a58446ed232f3e27a19227766604dae9ff2")
+    add_patches("2.0.0", path.join(os.scriptdir(), "patches", "2.0.0", "fix-build-error.patch"), "5b59ffeb1ef339759e8def5c3a4e4793d5efc9d2af6feb782cae09afd3dd7a04")
     add_patches("2.0.0", path.join(os.scriptdir(), "patches", "2.0.0", "remove-boost.patch"), "9b323141681748e3191c9964c7774bbb5acf17292dda76554763da4999a6358e")
 
     if is_plat("windows") then
