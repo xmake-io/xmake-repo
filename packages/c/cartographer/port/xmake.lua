@@ -44,7 +44,8 @@ target("cartographer")
         "cartographer/io/migrate_serialization_format_main.cc",
         "cartographer/ground_truth/compute_relations_metrics_main.cc",
         "cartographer/ground_truth/autogenerate_ground_truth_main.cc",
-        "cartographer/common/print_configuration_main.cc"
+        "cartographer/common/print_configuration_main.cc",
+        "cartographer/cloud/map_builder_server_main.cc"
     )
 
     remove_headerfiles("**/fake_*.h", "**/*test*.h", "**/mock*.h")
