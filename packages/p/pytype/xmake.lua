@@ -1,6 +1,6 @@
 package("pytype")
     set_kind("library", {headeronly = true})
-    set_homepage("https://github.com/chen-qingyu/Pytype")
+    set_homepage("https://github.com/chen-qingyu/pytype-cpp")
     set_description("A C++ type library that is as easy to use as Python built-in types.")
 
     add_urls("https://github.com/chen-qingyu/pytype-cpp/archive/refs/tags/$(version).tar.gz", 
