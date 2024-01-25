@@ -30,7 +30,6 @@ package("libelf")
             table.insert(cxflags, "-D__libelf_u64_t=uint64_t")
             table.insert(cxflags, "-D__libelf_i64_t=int64_t")
             package:add("defines", "__LIBELF64=1")
-            package:add("defines", "__LIBELF64_LINUX=1")
             package:add("defines", "__libelf_u64_t=uint64_t")
             package:add("defines", "__libelf_i64_t=int64_t")
         end
