@@ -39,9 +39,6 @@ package("cartographer")
         io.replace("cartographer/common/configuration_file_resolver.cc", [[#include "cartographer/common/config.h"]], "", {plain = true})
         io.replace("cartographer/common/configuration_file_resolver.cc", [[configuration_files_directories_.push_back(kConfigurationFilesDirectory);]], "", {plain = true})
         local configs = {}
-        if is_plat("windows") then
-            io.replace("cartographer/common/thread_pool.cc", "#include <unistd.h>", "", {plain = true})
-        end
         import("package.tools.xmake").install(package, configs)
     end)
 
