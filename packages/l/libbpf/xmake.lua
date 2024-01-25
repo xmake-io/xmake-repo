@@ -11,14 +11,6 @@ package("libbpf")
 
     add_includedirs("include", "include/uapi")
 
-    on_load("android", function (package)
-        import("core.tool.toolchain")
-        local ndk_sdkver = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()}):config("ndk_sdkver")
-        if ndk_sdkver and tonumber(ndk_sdkver) < 23 then
-            package:add("deps", "memorymapping")
-        end
-    end)
-
     on_install("linux", "android", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -35,11 +27,6 @@ package("libbpf")
                 end
         ]])
         local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        elseif package:config("pic") ~= false then
-            configs.cxflags = "-fPIC"
-        end
         import("package.tools.xmake").install(package, configs)
     end)
 
