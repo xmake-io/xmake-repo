@@ -7,7 +7,9 @@ package("glpk")
 
     add_versions("5.0", "4a1013eebb50f728fc601bdd833b0b2870333c3b3e5a816eeba921d95bec6f15")
 
-    add_extsources("apt::libglpk-dev")
+    if is_plat("linux") then
+        add_extsources("apt::libglpk-dev")
+    end
 
     if is_plat("macosx", "linux") then
         add_deps("autoconf", "automake", "libtool", "pkg-config")
