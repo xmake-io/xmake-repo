@@ -21,6 +21,10 @@ package("glpk")
         assert(package:check_cxxsnippets({test = [[
             #include <glpk.h>
             int main() {
+              glp_prob* prob = glp_create_prob();
+              if (prob) {
+                glp_delete_prob(prob);
+              }
               return 0;
             }
         ]]}))
