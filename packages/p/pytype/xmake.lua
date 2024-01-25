@@ -3,11 +3,10 @@ package("pytype")
     set_homepage("https://github.com/chen-qingyu/Pytype")
     set_description("A C++ type library that is as easy to use as Python built-in types.")
 
-    add_urls("https://github.com/chen-qingyu/Pytype/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/chen-qingyu/Pytype.git")
+    add_urls("https://github.com/chen-qingyu/pytype-cpp/archive/refs/tags/$(version).tar.gz", 
+             "https://github.com/chen-qingyu/pytype-cpp.git")
 
-    add_versions("v1.0.0", "406f808edf4da1901c0a7a3c188c17b206c17211e03eda30fe9af38b644fbb52")
-    add_versions("v1.1.0", "7c287114d98542bcca022b84fa8497c67311a99219134fce3b645881851b4c03")
+    add_versions("v1.3.0", "4f0b2efe2acb6fb678d2fcd54105fef815973d0dde17662ee8c92a10a1dc8b4f")
 
     on_install(function (package)
         os.cp("sources/*.hpp", package:installdir("include/pytype"))
