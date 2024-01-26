@@ -12,7 +12,7 @@ package("ormpp")
 
     add_configs("mysql", {description = "Using mysql", default = false, type = "boolean"})
     add_configs("postgresql", {description = "Using postgresql", default = false, type = "boolean"})
-    add_configs("sqlite", {description = "Using sqlite", default = false, type = "boolean"})
+    add_configs("sqlite3", {description = "Using sqlite", default = false, type = "boolean"})
 
     on_load("windows", "macosx", "linux", function(package) 
         local configs = {
