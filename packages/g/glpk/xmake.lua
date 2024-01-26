@@ -13,11 +13,11 @@ package("glpk")
         add_extsources("apt::libglpk-dev")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx|x86_64", "linux") then
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx|x86_64", "linux", function (package)
         import("package.tools.autoconf").install(package)
     end)
 
