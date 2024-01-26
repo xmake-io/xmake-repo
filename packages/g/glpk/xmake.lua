@@ -7,25 +7,24 @@ package("glpk")
 
     add_versions("5.0", "4a1013eebb50f728fc601bdd833b0b2870333c3b3e5a816eeba921d95bec6f15")
 
-    add_configs("shared", {description = "Build shared binaries", default = false, type = "boolean"})
-
     if is_plat("linux") then
         add_extsources("apt::libglpk-dev")
     end
 
-    if is_plat("macosx|x86_64", "linux") then
-        add_deps("autoconf", "automake", "libtool", "pkg-config")
-    end
-
     on_install("macosx|x86_64", "linux", function (package)
-        import("package.tools.autoconf").install(package)
+        local configs = {}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_install("windows", function (package)
-        os.cd(is_arch("x64", "x86_64") and "w64" or "w32")
+        os.cd("w64") -- Makefiles are the same in w64 and w32 directory
         os.cp("config_VC", "config.h")
         local version = package:version()
         local basename = string.format("glpk_%d_%d", version:major(), version:minor())
+         -- glp_netgen_prob is not defined, but should be disabled
+         -- see: https://www.mail-archive.com/bug-glpk@gnu.org/msg01020.html
         io.replace(basename .. ".def", "glp_netgen_prob\n", "", {plain = true})
         import("package.tools.nmake").build(package, {"/f", package:config("shared") and "makefile_VC_DLL" or "makefile_VC"})
 
