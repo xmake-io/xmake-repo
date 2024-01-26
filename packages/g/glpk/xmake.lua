@@ -7,7 +7,7 @@ package("glpk")
 
     add_versions("5.0", "4a1013eebb50f728fc601bdd833b0b2870333c3b3e5a816eeba921d95bec6f15")
 
-    add_configs("shared", {description = "Build shared binaries", default = false, type = "boolean", readonly = true})
+    add_configs("shared", {description = "Build shared binaries", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_extsources("apt::libglpk-dev")
