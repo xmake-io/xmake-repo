@@ -7,6 +7,8 @@ package("glpk")
 
     add_versions("5.0", "4a1013eebb50f728fc601bdd833b0b2870333c3b3e5a816eeba921d95bec6f15")
 
+    add_configs("shared", {description = "Build shared binaries", default = false, type = "boolean", readonly = true})
+
     if is_plat("linux") then
         add_extsources("apt::libglpk-dev")
     end
@@ -17,6 +19,22 @@ package("glpk")
 
     on_install("macosx", "linux", function (package)
         import("package.tools.autoconf").install(package)
+    end)
+
+    on_install("windows", function (package)
+        os.cd(is_arch("x64", "x86_64") and "w64" or "w32")
+        os.cp("config_VC", "config.h")
+        import("package.tools.nmake").build(package, {"/f", package:config("shared") and "makefile_VC_DLL" or "makefile_VC"})
+
+        if package:config("shared") then
+            os.cp("glpk_5_0.dll", package:installdir("bin"))
+            os.cp("glpk_5_0.lib", package:installdir("lib"))
+        else
+            os.cp("glpk.lib", package:installdir("lib"))
+        end
+
+        os.cd("..")
+        os.cp("src/glpk.h", package:installdir("include"))
     end)
 
     on_test(function (package)
