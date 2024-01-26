@@ -6,6 +6,7 @@ package("whisper.cpp")
     set_urls("https://github.com/ggerganov/whisper.cpp/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/ggerganov/whisper.cpp.git")
 
+    add_versions("1.5.4", "06eed84de310fdf5408527e41e863ac3b80b8603576ba0521177464b1b341a3a")
     add_versions("1.4.2", "1b988dcc77fca55f188dbc4e472f971a80854c1d44309cf3eaab9d5677f175e1")
 
     add_patches("1.4.2", path.join(os.scriptdir(), "patches", "1.4.2", "fix.patch"), "1330bdbb769aad37f0de6998ac9b0107423ec62385bbfb0a89a98c226daace48")
