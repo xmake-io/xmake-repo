@@ -18,7 +18,7 @@ package("ormpp")
         local configs = {
             mysql = "ORMPP_ENABLE_MYSQL",
             postgresql = "ORMPP_ENABLE_PG",
-            sqlite = "ORMPP_ENABLE_SQLITE3"
+            sqlite3 = "ORMPP_ENABLE_SQLITE3"
         }
     
         for config, define in pairs(configs) do
