@@ -48,15 +48,18 @@ package("libjpeg-turbo")
             table.insert(configs, "-DENABLE_SHARED=OFF")
             table.insert(configs, "-DENABLE_STATIC=ON")
         end
-        if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
-            table.insert(configs, "-DWITH_CRT_DLL=ON")
-        end
         if package:is_plat("mingw") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch())
         end
-        if package:is_plat("windows") and package:is_arch("arm64") then
-            io.replace("CMakeLists.txt", 'message(STATUS "${BITS}-bit build (${CPU_TYPE})")',
-                'set(CPU_TYPE arm64)\nmessage(STATUS "${BITS}-bit build (${CPU_TYPE})")', {plain = true})
+        if package:is_plat("windows") then
+            local runtime = package:config("runtimes") or package:config("vs_runtime")
+            if runtime and runtime:startswith("MD") then
+                table.insert(configs, "-DWITH_CRT_DLL=ON")
+            end
+            if package:is_arch("arm64") then
+                io.replace("CMakeLists.txt", 'message(STATUS "${BITS}-bit build (${CPU_TYPE})")',
+                    'set(CPU_TYPE arm64)\nmessage(STATUS "${BITS}-bit build (${CPU_TYPE})")', {plain = true})
+            end
         end
         import("package.tools.cmake").install(package, configs)
     end)
