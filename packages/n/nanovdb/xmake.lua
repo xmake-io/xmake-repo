@@ -22,7 +22,7 @@ package("nanovdb")
         local optix = package:dep("optix"):fetch()
         table.insert(configs, "-DOptiX_ROOT=" .. path.directory(optix.sysincludedirs[1]))
         if package:is_plat("windows") then
-            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. ((package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) and "ON" or "OFF"))
             table.insert(configs, "-DCMAKE_CUDA_FLAGS_DEBUG=-Xcompiler /" .. package:config("vs_runtime"))
             table.insert(configs, "-DCMAKE_CUDA_FLAGS_RELEASE=-Xcompiler /" .. package:config("vs_runtime"))
         end

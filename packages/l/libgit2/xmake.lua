@@ -35,7 +35,7 @@ package("libgit2")
         if package:is_plat("android", "iphoneos") then
             table.insert(configs, "-DUSE_HTTPS=OFF")
         elseif package:is_plat("windows") then
-            if package:config("vs_runtime"):startswith("MT") then
+            if (package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) then
                 table.insert(configs, "-DSTATIC_CRT=ON")
             else
                 table.insert(configs, "-DSTATIC_CRT=OFF")

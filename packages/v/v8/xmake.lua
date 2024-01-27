@@ -69,7 +69,7 @@ package("v8")
             v8_enable_i18n_support = false}
 
         if package:is_plat("windows") then
-            configs.extra_cflags = {(package:config("vs_runtime"):startswith("MT") and "/MT" or "/MD")}
+            configs.extra_cflags = {((package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) and "/MT" or "/MD")}
             configs.is_clang = false 
         end
         import("package.tools.gn").build(package, configs, {buildir = "out.gn"})

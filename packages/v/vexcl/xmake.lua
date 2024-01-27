@@ -25,7 +25,7 @@ package("vexcl")
     on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DVEXCL_BUILD_TESTS=OFF", "-DVEXCL_BUILD_EXAMPLES=OFF", "-DBoost_USE_STATIC_LIBS=ON"}
         if package:is_plat("windows") then
-            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. ((package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)

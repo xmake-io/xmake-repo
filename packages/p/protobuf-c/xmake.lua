@@ -39,7 +39,7 @@ package("protobuf-c")
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
         end
-        if package:config("vs_runtime"):startswith("MT") then
+        if (package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) then
             table.insert(configs, "-DMSVC_STATIC_BUILD=ON")
         else
             table.insert(configs, "-DMSVC_STATIC_BUILD=OFF")

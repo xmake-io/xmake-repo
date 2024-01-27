@@ -218,7 +218,7 @@ package("sfml")
             end
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
-            if package:is_plat("windows") and package:config("vs_runtime"):startswith("MT") then
+            if package:is_plat("windows") and (package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) then
                 table.insert(configs, "-DSFML_USE_STATIC_STD_LIBS=ON")
             end
         end

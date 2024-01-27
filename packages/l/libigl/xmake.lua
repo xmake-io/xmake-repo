@@ -56,7 +56,7 @@ package("libigl")
             table.insert(configs, "-DLIBIGL_USE_STATIC_LIBRARY=ON")
         end
         if package:is_plat("windows") then
-            table.insert(configs, "-DIGL_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DIGL_STATIC_RUNTIME=" .. ((package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)

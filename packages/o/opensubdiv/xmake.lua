@@ -55,7 +55,7 @@ package("opensubdiv")
                 table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
                 table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
             end
-            table.insert(configs, "-DMSVC_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DMSVC_STATIC_CRT=" .. ((package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
         if package:config("shared") then

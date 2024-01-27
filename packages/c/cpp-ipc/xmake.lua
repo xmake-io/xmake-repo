@@ -18,7 +18,7 @@ package("cpp-ipc")
         local configs = {"-DLIBIPC_BUILD_TESTS=OFF", "-DLIBIPC_BUILD_DEMOS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBIPC_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
+        if package:is_plat("windows") and (package:config("runtimes") and package:has_runtime("MD", "MDd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MD")) then
             table.insert(configs, "-DLIBIPC_USE_STATIC_CRT=OFF")
         else
             table.insert(configs, "-DLIBIPC_USE_STATIC_CRT=ON")

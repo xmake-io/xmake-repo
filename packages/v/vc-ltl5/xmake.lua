@@ -37,7 +37,7 @@ package("vc-ltl5")
         end
         -- is xp?
         if package:config("min_version"):startswith("5") then
-            if package:config("vs_runtime"):startswith("MD") then
+            if (package:config("runtimes") and package:has_runtime("MD", "MDd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MD")) then
                 package:add("cxflags", "/Zc:threadSafeInit-")
             end
 

@@ -25,7 +25,7 @@ package("z3")
         if not package:config("shared") then
             table.insert(args, "--staticlib")
         end
-        if package:config("vs_runtime"):startswith("MT") then
+        if (package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) then
             table.insert(args, "--staticbin")
         end
         os.vrunv("python", args)

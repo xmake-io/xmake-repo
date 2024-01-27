@@ -30,7 +30,7 @@ package("embree")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DEMBREE_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DUSE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DUSE_STATIC_RUNTIME=" .. ((package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) and "ON" or "OFF"))
         end
         if package:is_plat("macosx") and package:is_arch("x86_64") and not package:config("shared") then
             table.insert(configs, "-DEMBREE_MAX_ISA=DEFAULT")

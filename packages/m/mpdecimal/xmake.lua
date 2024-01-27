@@ -18,7 +18,7 @@ package("mpdecimal")
             local oldir = os.cd(library)
             os.mv("Makefile.vc", "Makefile")
             io.replace("Makefile", "/MD", "/MD /DMPDEC_DLL", {plain = true})
-            if package:config("vs_runtime"):startswith("MT") then
+            if (package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) then
                 io.replace("Makefile", "/MD", "/MT", {plain = true})
             else
                 io.replace("Makefile", "/MT", "/MD", {plain = true})

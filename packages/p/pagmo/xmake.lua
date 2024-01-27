@@ -31,7 +31,7 @@ package("pagmo")
             table.insert(configs, "-DPAGMO_WITH_" .. dep .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
         if package:is_plat("windows") then
-            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. ((package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)

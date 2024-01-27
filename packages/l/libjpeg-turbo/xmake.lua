@@ -48,7 +48,7 @@ package("libjpeg-turbo")
             table.insert(configs, "-DENABLE_SHARED=OFF")
             table.insert(configs, "-DENABLE_STATIC=ON")
         end
-        if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
+        if package:is_plat("windows") and (package:config("runtimes") and package:has_runtime("MD", "MDd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MD")) then
             table.insert(configs, "-DWITH_CRT_DLL=ON")
         end
         if package:is_plat("mingw") then

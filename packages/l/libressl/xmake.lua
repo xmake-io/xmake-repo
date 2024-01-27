@@ -18,7 +18,7 @@ package("libressl")
         local configs = {"-DLIBRESSL_TESTS=OFF", "-DLIBRESSL_APPS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DUSE_STATIC_MSVC_RUNTIMES=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_STATIC_MSVC_RUNTIMES=" .. ((package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 

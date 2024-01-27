@@ -45,7 +45,7 @@ package("g3log")
         table.insert(configs, "-DG3_LOG_FULL_FILENAME=" .. (package:config("full_filename") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_FATAL_SIGNALHANDLING=" .. (package:config("fatal_signal_handling") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DG3_SHARED_RUNTIME=" .. (package:config("vs_runtime"):startswith("MD") and "ON" or "OFF"))
+            table.insert(configs, "-DG3_SHARED_RUNTIME=" .. ((package:config("runtimes") and package:has_runtime("MD", "MDd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MD")) and "ON" or "OFF"))
             table.insert(configs, "-DENABLE_VECTORED_EXCEPTIONHANDLING=" .. (package:config("vectored_exception_handling") and "ON" or "OFF"))
             table.insert(configs, "-DDEBUG_BREAK_AT_FATAL_SIGNAL=" .. (package:is_debug() and "ON" or "OFF"))
         end

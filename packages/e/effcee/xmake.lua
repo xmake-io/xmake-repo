@@ -16,7 +16,7 @@ package("effcee")
         local configs = {"-DEFFCEE_BUILD_SAMPLES=OFF", "-DEFFCEE_BUILD_TESTING=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DEFFCEE_ENABLE_SHARED_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
+            table.insert(configs, "-DEFFCEE_ENABLE_SHARED_CRT=" .. ((package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) and "OFF" or "ON"))
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = "re2"})
     end)

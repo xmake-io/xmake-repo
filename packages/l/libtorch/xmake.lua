@@ -119,7 +119,7 @@ package("libtorch")
         io.replace("third_party/fbgemm/CMakeLists.txt", "PRIVATE FBGEMM_STATIC", "PUBLIC FBGEMM_STATIC", {plain = true})
         io.replace("third_party/protobuf/cmake/install.cmake", "install%(DIRECTORY.-%)", "")
         if package:is_plat("windows") then
-            if package:config("vs_runtime"):startswith("MD") then
+            if (package:config("runtimes") and package:has_runtime("MD", "MDd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MD")) then
                 io.replace("third_party/fbgemm/CMakeLists.txt", "MT", "MD", {plain = true})
                 io.replace("c10/macros/Macros.h", "extern \"C\" {\nC10_IMPORT", "extern \"C\" {\n__declspec(dllimport)", {plain = true})
             else

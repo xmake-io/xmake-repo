@@ -23,7 +23,7 @@ package("yaml-cpp")
         local configs = {"-DYAML_CPP_BUILD_TESTS=OFF"}
         table.insert(configs, "-DYAML_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DYAML_MSVC_SHARED_RT=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
+            table.insert(configs, "-DYAML_MSVC_SHARED_RT=" .. ((package:config("runtimes") and package:has_runtime("MT", "MTd")) or (package:config("vs_config") and package:config("vs_config"):startswith("MT")) and "OFF" or "ON"))
         end
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
         package:addenv("PATH", "bin")
