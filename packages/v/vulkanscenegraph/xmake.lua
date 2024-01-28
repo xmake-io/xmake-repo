@@ -7,6 +7,7 @@ package("vulkanscenegraph")
     add_urls("https://github.com/vsg-dev/VulkanSceneGraph/archive/refs/tags/VulkanSceneGraph-$(version).tar.gz",
              "https://github.com/vsg-dev/VulkanSceneGraph.git")
     add_versions("1.0.2", "526acd58d6e3a3bd3c3169996e0616d5c4a01e793dc064e8d20217791743bab5")
+    add_versions("1.1.0", "ec5e1db9ec4082598b6d56fb5812fdf552e5a6b49792cb80f29bcb8a23fe7cac")
 
     add_deps("cmake", "vulkansdk")
     on_load("windows", function (package)
