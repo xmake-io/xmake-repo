@@ -6,6 +6,7 @@ package("lightningscanner")
 
     add_urls("https://github.com/localcc/LightningScanner/archive/refs/tags/$(version).tar.gz",
              "https://github.com/localcc/LightningScanner.git")
+    add_versions("v1.0.2", "09d2f0d8b84e64542bce6096922efb8c7a6683038f2f11321931928a815055ac")
     add_versions("v1.0.0", "30052ca62fee13ca28d500802298822ac6d32252")
 
     add_deps("cmake")
