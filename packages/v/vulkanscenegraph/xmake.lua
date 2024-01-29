@@ -26,6 +26,7 @@ package("vulkanscenegraph")
     on_install("windows", "macosx", "linux", function (package)
         io.replace("CMakeLists.txt", "vsg_add_target_clobber()", "", {plain = true})
         io.replace("CMakeLists.txt", "vsg_add_target_uninstall()", "", {plain = true})
+        io.replace("CMakeLists.txt", "set(Vulkan_MIN_VERSION 1.1.70.0)", "set(Vulkan_MIN_VERSION 1.1.70)", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
