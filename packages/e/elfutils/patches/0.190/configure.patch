@@ -1,7 +1,7 @@
 diff --git a/configure b/configure
 index acc483f..4a3e0a4 100755
---- a/elfutils-0.189/configure
-+++ b/elfutils-0.190/configure
+--- a/configure
++++ b/configure
 @@ -1,6 +1,6 @@
  #! /bin/sh
  # Guess values for system-dependent variables and create Makefiles.
