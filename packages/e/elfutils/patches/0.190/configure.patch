@@ -1,4 +1,4 @@
-diff --git a/elfutils-0.189/configure b/elfutils-0.190/configure
+diff --git a/configure b/configure
 index acc483f..4a3e0a4 100755
 --- a/elfutils-0.189/configure
 +++ b/elfutils-0.190/configure
