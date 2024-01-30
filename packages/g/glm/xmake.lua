@@ -10,7 +10,7 @@ package("glm")
     add_versions("1.0.0", "e51f6c89ff33b7cfb19daafb215f293d106cd900f8d681b9b1295312ccadbd23")
     add_versions("0.9.9+8", "7d508ab72cb5d43227a3711420f06ff99b0a0cb63ee2f93631b162bfe1fe9592")
 
-    add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
+    add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
     add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "14", type = "string", values = {"98", "11", "14", "17", "20"}})
 
     on_load(function (package)
