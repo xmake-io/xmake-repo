@@ -20,5 +20,5 @@ package("linalg")
             float3 n = cross(b-a, c-a);
             return {n, -dot(n,a)};
         }
-    ]]}, {configs = {languages = "c++17"}, includes = "linalg.h"}))
+    ]]}, {configs = {languages = "c++11"}, includes = "linalg.h"}))
     end)
