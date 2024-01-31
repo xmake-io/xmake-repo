@@ -6,6 +6,7 @@ package("faiss")
 
     add_urls("https://github.com/facebookresearch/faiss/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebookresearch/faiss.git")
+    add_versions("v20180223", "799e73d0d961b70995c1f55f4ba8186e227cfa56a2d1406f82b9bc21cfec916e")
     add_versions("v1.7.0", "f86d346ac9f409ee30abe37e52f6cce366b7f60d3924d65719f40aa07ceb4bec")
 
     add_deps("cmake")
