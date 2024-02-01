@@ -1,20 +1,21 @@
 package("faiss")
-
     set_homepage("https://github.com/facebookresearch/faiss/")
     set_description("A library for efficient similarity search and clustering of dense vectors.")
     set_license("MIT")
 
     add_urls("https://github.com/facebookresearch/faiss/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebookresearch/faiss.git")
-    add_versions("v20180223", "799e73d0d961b70995c1f55f4ba8186e227cfa56a2d1406f82b9bc21cfec916e")
+    add_versions("v1.7.4", "d9a7b31bf7fd6eb32c10b7ea7ff918160eed5be04fe63bb7b4b4b5f2bbde01ad")
     add_versions("v1.7.0", "f86d346ac9f409ee30abe37e52f6cce366b7f60d3924d65719f40aa07ceb4bec")
 
     add_deps("cmake")
     add_deps("cuda", {system = true, optional = true})
     add_deps("mkl", "cuda", {system = true, optional = true})
+
     if is_plat("linux") then
         add_syslinks("pthread")
     end
+
     on_load("windows|x64", "linux", function (package)
         if not find_package("mkl") then
             package:add("deps", "openblas")
