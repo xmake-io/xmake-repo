@@ -34,7 +34,7 @@ package("mimalloc")
         add_syslinks("atomic")
     end
 
-    on_install("macosx", "windows", "linux", "android", "mingw", function (package)
+    on_install("macosx", "windows", "linux", "android", "mingw", "wasm", function (package)
         local configs = {"-DMI_OVERRIDE=OFF"}
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
