@@ -6,6 +6,7 @@ package("krb5")
     add_urls("https://kerberos.org/dist/krb5/$(version).tar.gz", {version = function (version)
         return format("%d.%d/krb5-%s", version:major(), version:minor(), version)
     end})
+    add_versions("1.21.2", "9560941a9d843c0243a71b17a7ac6fe31c7cebb5bce3983db79e52ae7e850491")
     add_versions("1.19.2", "10453fee4e3a8f8ce6129059e5c050b8a65dab1c257df68b99b3112eaa0cdf6a")
 
     add_configs("tls", {description = "Enable TLS/OpenSSL support.", default = false, type = "boolean"})
