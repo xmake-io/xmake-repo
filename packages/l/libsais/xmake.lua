@@ -15,6 +15,8 @@ package("libsais")
             target("libsais")
                set_kind("$(kind)")
                add_files("src/*.c")
+               add_includedirs("include")
+               add_headerfiles("include/(*.h)")
                add_headerfiles("src/(*.h)")
         ]])
         if package:config("shared") then
