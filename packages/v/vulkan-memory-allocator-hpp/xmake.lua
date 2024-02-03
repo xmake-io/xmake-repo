@@ -16,30 +16,40 @@ package("vulkan-memory-allocator-hpp")
     add_deps("vulkan-memory-allocator")
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
-        if package:config("use_vulkanheaders") then
-            if package:gitref() or package:version():ge("3.0.1") then
-                package:add("deps", "vulkan-headers >= 1.3.234")
-            else
-                package:add("deps", "vulkan-headers < 1.3.234")
-            end
-        else
-            if package:gitref() or package:version():ge("3.0.1") then
-                package:add("deps", "vulkan-hpp >= 1.3.234")
-            else
-                package:add("deps", "vulkan-hpp < 1.3.234")
-            end
-        end
         if not package:config("modules") then
+            if package:config("use_vulkanheaders") then
+                if package:gitref() or package:version():ge("3.0.1") then
+                    package:add("deps", "vulkan-headers >= 1.3.234")
+                else
+                    package:add("deps", "vulkan-headers < 1.3.234")
+                end
+            else
+                if package:gitref() or package:version():ge("3.0.1") then
+                    package:add("deps", "vulkan-hpp >= 1.3.234")
+                else
+                    package:add("deps", "vulkan-hpp < 1.3.234")
+                end
+            end
             os.cp("include", package:installdir())
         else
-            io.writefile("xmake.lua", [[ 
+            local vulkan_dep
+            if package:config("use_vulkanheaders") then
+                vulkan_dep = "vulkan-headers"
+                package:add("deps", "vulkan-headers >= 1.3.275")
+            else
+                vulkan_dep = "vulkan-hpp"
+                package:add("deps", "vulkan-hpp >= 1.3.275")
+            end
+            io.writefile("xmake.lua", format([[
+                add_requires("vulkan-memory-allocator", "%s >= 1.3.275")
                 target("vulkan-memory-allocator-hpp")
                     set_kind("static")
                     set_languages("c++20")
                     add_headerfiles("include/(**.hpp)")
                     add_includedirs("include")
-                    add_files("src/**.cppm", {public = true})
-            ]])
+                    add_files("src/*.cppm", {public = true})
+                    add_packages("vulkan-memory-allocator", "%s")
+            ]], vulkan_dep, vulkan_dep))
             local configs = {}
             import("package.tools.xmake").install(package, configs)
         end
