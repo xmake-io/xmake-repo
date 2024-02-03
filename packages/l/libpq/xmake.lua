@@ -15,7 +15,7 @@ package("libpq")
         add_deps("flex", "bison")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx|x86_64", "linux", function (package)
         local configs = {"--with-openssl", "--without-readline"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
