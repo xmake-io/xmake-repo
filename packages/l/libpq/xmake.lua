@@ -9,7 +9,7 @@ package("libpq")
     add_versions("16.1", "58250fee449f5fd0b5de5c1b0205e8aa8c9a4e3a8cead64ef8a3ca3c9fc2c6e9")
     add_versions("14.1", "14809c9f669851ab89b344a50219e85b77f3e93d9df9e255b9781d8d60fcfbc9")
 
-    add_deps("icu4c", {configs={shared=true}})
+    add_deps("icu4c", {configs = {shared = true}})
     add_deps("krb5", "openssl", "zlib")
     if is_plat("linux") then
         add_deps("flex", "bison")
