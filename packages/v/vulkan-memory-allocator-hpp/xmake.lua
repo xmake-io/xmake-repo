@@ -11,20 +11,26 @@ package("vulkan-memory-allocator-hpp")
     add_versions("v3.0.1-3", '66a3d4be3bc1404c844b5a36aadeb6b366878e7cf1efe899eb0a0095f3871aae')
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
+    add_configs("use_vulkanheaders", {description = "Use vulkan-headers package instead of vulkan-hpp.", default = false, type = "boolean"})
 
     add_deps("vulkan-memory-allocator")
 
-    on_load(function (package)
-        if package:gitref() or package:version():ge("3.0.1") then
-            package:add("deps", "vulkan-hpp >= 1.3.234")
-        else
-            package:add("deps", "vulkan-hpp < 1.3.234")
-        end
-    end)
-
     on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+        if package:config("use_vulkanheaders") then
+            if package:gitref() or package:version():ge("3.0.1") then
+                package:add("deps", "vulkan-headers >= 1.3.234")
+            else
+                package:add("deps", "vulkan-headers < 1.3.234")
+            end
+        else
+            if package:gitref() or package:version():ge("3.0.1") then
+                package:add("deps", "vulkan-hpp >= 1.3.234")
+            else
+                package:add("deps", "vulkan-hpp < 1.3.234")
+            end
+        end
         if not package:config("modules") then
-                os.cp("include", package:installdir())
+            os.cp("include", package:installdir())
         else
             io.writefile("xmake.lua", [[ 
                 target("vulkan-memory-allocator-hpp")
@@ -34,9 +40,9 @@ package("vulkan-memory-allocator-hpp")
                     add_includedirs("include")
                     add_files("src/**.cppm", {public = true})
             ]])
+            local configs = {}
+            import("package.tools.xmake").install(package, configs)
         end
-        local configs = {}
-        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
