@@ -117,5 +117,13 @@ package("libsdl_ttf")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("TTF_Init", {includes = {"SDL2/SDL_main.h", "SDL2/SDL_ttf.h"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <SDL2/SDL.h>
+            #include <SDL2/SDL_ttf.h>
+            int main(int argc, char** argv) {
+                TTF_Init();
+                TTF_Quit();
+                return 0;
+            }
+        ]]}, {configs = {defines = "SDL_MAIN_HANDLED"}}));
     end)

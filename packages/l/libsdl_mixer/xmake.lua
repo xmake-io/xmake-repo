@@ -76,5 +76,13 @@ package("libsdl_mixer")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("Mix_Init", {includes = {"SDL2/SDL_main.h", "SDL2/SDL_mixer.h"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <SDL2/SDL.h>
+            #include <SDL2/SDL_mixer.h>
+            int main(int argc, char** argv) {
+                Mix_Init(MIX_INIT_OGG);
+                Mix_Quit();
+                return 0;
+            }
+        ]]}, {configs = {defines = "SDL_MAIN_HANDLED"}}));
     end)

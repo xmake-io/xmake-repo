@@ -53,7 +53,11 @@ package("libsdl_image")
     on_install(function (package)
         local configs = {"-DSDL2IMAGE_SAMPLES=OFF", "-DSDL2IMAGE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:version():le("2.6.2") then
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        else
+            table.insert(configs, "-DPNG_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        end
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
@@ -76,5 +80,13 @@ package("libsdl_image")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("IMG_Init", {includes = {"SDL2/SDL_main.h", "SDL2/SDL_image.h"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <SDL2/SDL.h>
+            #include <SDL2/SDL_image.h>
+            int main(int argc, char** argv) {
+                IMG_Init(IMG_INIT_PNG);
+                IMG_Quit();
+                return 0;
+            }
+        ]]}, {configs = {defines = "SDL_MAIN_HANDLED"}}));
     end)

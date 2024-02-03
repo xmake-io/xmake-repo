@@ -67,5 +67,13 @@ package("libsdl_net")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDLNet_Init", {includes = {"SDL2/SDL_main.h", "SDL2/SDL_net.h"}, configs = {cxflags = "-sUSE_SDL=0"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <SDL2/SDL.h>
+            #include <SDL2/SDL_net.h>
+            int main(int argc, char** argv) {
+                SDLNet_Init();
+                SDLNet_Quit();
+                return 0;
+            }
+        ]]}, {configs = {defines = "SDL_MAIN_HANDLED"}}));
     end)
