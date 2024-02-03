@@ -10,15 +10,33 @@ package("vulkan-memory-allocator-hpp")
     add_versions("v3.0.1-1", '0e0c374751d5ca6123d0ae0df756693f0674412d7c758ec4a39a5a9dcc412911')
     add_versions("v3.0.1-3", '66a3d4be3bc1404c844b5a36aadeb6b366878e7cf1efe899eb0a0095f3871aae')
 
+    add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
+
     add_deps("vulkan-memory-allocator")
 
-    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
-        os.cp("include", package:installdir())
+    on_load(function (package)
         if package:gitref() or package:version():ge("3.0.1") then
             package:add("deps", "vulkan-hpp >= 1.3.234")
         else
             package:add("deps", "vulkan-hpp < 1.3.234")
         end
+    end)
+
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+        if not package:config("modules") then
+                os.cp("include", package:installdir())
+        else
+            io.writefile("xmake.lua", [[ 
+                target("vulkan-memory-allocator-hpp")
+                    set_kind("static")
+                    set_languages("c++20")
+                    add_headerfiles("include/(**.hpp)")
+                    add_includedirs("include")
+                    add_files("src/**.cppm", {public = true})
+            ]])
+        end
+        local configs = {}
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
