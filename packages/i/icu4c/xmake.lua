@@ -76,8 +76,13 @@ package("icu4c")
             table.insert(configs, "--enable-debug")
             table.insert(configs, "--disable-release")
         end
-        table.insert(configs, "--enable-static")
-        table.insert(configs, "--enable-shared")
+        if package:config("shared") then
+            table.insert(configs, "--enable-shared")
+            table.insert(configs, "--disable-static")
+        else
+            table.insert(configs, "--disable-shared")
+            table.insert(configs, "--enable-static")
+        end
         if package:is_plat("mingw") then
             table.insert(configs, "--with-data-packaging=dll")
         end
