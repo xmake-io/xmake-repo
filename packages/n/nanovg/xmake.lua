@@ -15,7 +15,7 @@ package("nanovg")
                 set_kind("$(kind)")
                 add_files("src/*.c")
                 add_headerfiles("src/(*.h)")
-                if is_plat("windows") or is_plat("mingw") and is_kind("shared") then
+                if is_plat("windows", "mingw") and is_kind("shared") then
                     add_rules("utils.symbols.export_all")
                 end
         ]])
