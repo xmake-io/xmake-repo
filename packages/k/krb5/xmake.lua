@@ -20,7 +20,7 @@ package("krb5")
         end
     end)
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx|x86_64", "linux", function (package)
         os.cd("src")
         local configs = {"--disable-dependency-tracking", "--with-system-verto"}
         table.insert(configs, "--with-tls-impl=" .. (package:config("tls") and "openssl" or "no"))
