@@ -50,5 +50,5 @@ package("vulkan-memory-allocator-hpp")
             void test() {
                 int version = VMA_VULKAN_VERSION;
             }
-        ]]}, {includes = "vk_mem_alloc.hpp", configs = {languages = "c++11"} }))
+        ]]}, {includes = "vk_mem_alloc.hpp", configs = {languages = "c++14"} }))
     end)
