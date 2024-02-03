@@ -21,6 +21,8 @@ package("libpq")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:is_plat("macosx") then
             table.insert(configs, "--with-gssapi")
+            table.insert(configs, "--with-includes=" .. package:dep("krb5"):installdir("include"))
+            table.insert(configs, "--with-libraries=" .. package:dep("krb5"):installdir("lib"))
         end
         if package:debug() then
             table.insert(configs, "--enable-debug")
