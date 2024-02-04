@@ -4,12 +4,9 @@ package("libsdl_net")
     set_license("zlib")
 
     add_urls("https://www.libsdl.org/projects/SDL_net/release/SDL2_net-$(version).zip",
-             "https://github.com/libsdl-org/SDL_net/releases/download/release-$(version)/SDL2_net-$(version).zip", { alias = "archive" })
-    add_urls("https://github.com/libsdl-org/SDL_net.git", { alias = "github" })
-    add_versions("archive:2.2.0", "1eec3a9d43df019d7916a6ecce32f2a3ad5248c82c9c237948afc712399be36d")
-    add_versions("github:2.0.0",  "release-2.0.0")
-    add_versions("github:2.0.1",  "release-2.0.1")
-    add_versions("github:2.2.0",  "release-2.2.0")
+             "https://github.com/libsdl-org/SDL_net/releases/download/release-$(version)/SDL2_net-$(version).zip")
+    add_urls("https://github.com/libsdl-org/SDL_net.git")
+    add_versions("2.2.0", "1eec3a9d43df019d7916a6ecce32f2a3ad5248c82c9c237948afc712399be36d")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::SDL2_net")
