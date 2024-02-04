@@ -13,6 +13,8 @@ package("vulkan-headers")
         return version:startswith("v") and version or prefix .. version:gsub("%+", ".")
     end})
 
+    add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
+
     -- when adding a new sdk version, please also update vulkan-hpp, vulkan-loader, vulkan-utility-libraries, spirv-headers, spirv-reflect, glslang and volk packages
     add_versions("1.3.275+0", "fcd2136a9feb0402820b334d8242773462cc47ed397aa20c8f4d04f7ea18d810")
     add_versions("1.3.268+0", "94993cbe2b1a604c0d5d9ea37a767e1aba4d771d2bfd4ddceefd66243095164f")
@@ -29,18 +31,35 @@ package("vulkan-headers")
     add_versions("1.2.162+0", "eb0f6a79ac38e137f55a0e13641140e63b765c8ec717a65bf3904614ef754365")
     add_versions("1.2.154+0", "a0528ade4dd3bd826b960ba4ccabc62e92ecedc3c70331b291e0a7671b3520f9")
 
-    add_deps("cmake")
-
-    if is_plat("mingw") and is_subhost("msys") then
-        add_extsources("pacman::vulkan-headers")
-    elseif is_plat("linux") then
-        add_extsources("apt::libvulkan-dev", "pacman::vulkan-headers")
-    elseif is_plat("macosx") then
-        add_extsources("brew::vulkan-headers")
-    end
+    on_load(function (package)
+        if not package:config("modules") then
+            package:add("deps", "cmake")
+            if package:is_plat("mingw") and is_subhost("msys") then
+                package:add("extsources", "pacman::vulkan-headers")
+            elseif package:is_plat("linux") then
+                package:add("extsources", "apt::libvulkan-dev")
+            elseif package:is_plat("macosx") then
+                package:add("extsources", "brew::vulkan-headers")
+            end
+        end
+    end)
 
     on_install(function (package)
-        import("package.tools.cmake").install(package)
+        if not package:config("modules") then
+            import("package.tools.cmake").install(package)
+        else
+            io.writefile("xmake.lua", [[ 
+                target("vulkan-headers")
+                    set_kind("static")
+                    set_languages("c++20")
+                    add_headerfiles("include/(**.h)")
+                    add_headerfiles("include/(**.hpp)")
+                    add_includedirs("include")
+                    add_files("include/**.cppm", {public = true})
+            ]])
+            local configs = {}
+            import("package.tools.xmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)

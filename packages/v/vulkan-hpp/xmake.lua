@@ -19,11 +19,17 @@ package("vulkan-hpp")
     add_versions("v1.3.272", "e621db07719c0c1c738ad39ef400737a750bb23a")
     add_versions("v1.3.275", "1a24b015830c116632a0723f3ccfd1f06009ce12")
 
-    add_deps("cmake")
+    add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
 
-    if is_plat("linux") then
-        add_extsources("pacman::vulkan-headers")
-    end
+    on_load(function (package)
+        if not package:config("modules") then
+            package:add("deps", "cmake")
+            if package:is_plat("linux") then
+                package:add("extsources", "pacman::vulkan-headers")
+            end
+        end
+    end)
+
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
         local arch_prev
@@ -46,8 +52,25 @@ package("vulkan-hpp")
             os.cp(path.join("**", "VulkanHppGenerator"), "build")
         end
         os.runv(path.join("build", "VulkanHppGenerator"))
-        os.cp("Vulkan-Headers/include", package:installdir())
-        os.cp("vulkan/*.hpp", package:installdir(path.join("include", "vulkan")))
+        if not package:config("modules") then
+            os.cp("Vulkan-Headers/include", package:installdir())
+            os.cp("vulkan/*.hpp", package:installdir(path.join("include", "vulkan")))
+        else
+            io.writefile("xmake.lua", [[ 
+                target("vulkan-hpp")
+                    set_kind("static")
+                    set_languages("c++20")
+                    add_headerfiles("Vulkan-Headers/include/(**.h)")
+                    add_headerfiles("Vulkan/(**.h)")
+                    add_headerfiles("Vulkan-Headers/include/(**.hpp)")
+                    add_headerfiles("Vulkan/(**.hpp)")
+                    add_includedirs("Vulkan")
+                    add_includedirs("Vulkan-Headers/include")
+                    add_files("Vulkan/vulkan.cppm", {public = true})
+            ]])
+            local configs = {}
+            import("package.tools.xmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)
