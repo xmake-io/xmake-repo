@@ -27,9 +27,9 @@ package("libpq")
                 if #includedirs > 0 then
                     table.insert(configs, "--with-includes=" .. table.concat(includedirs, ":"))
                 end
-                local libfiles = table.wrap(libinfo.libfiles)
-                if #libfiles > 0 then
-                    table.insert(configs, "--with-libraries=" .. table.concat(libfiles, ":"))
+                local linkdirs = table.wrap(libinfo.linkdirs)
+                if #linkdirs > 0 then
+                    table.insert(configs, "--with-libraries=" .. table.concat(linkdirs, ":"))
                 end
             end
         end
