@@ -35,7 +35,6 @@ package("libsdl_mixer")
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
-    add_configs("wavpack", {description = "Enable WavPack support.", default = true, type = "boolean", readonly = true}) -- default true because it's true in the cmakelists
 
     on_load(function (package)
         if package:config("shared") then
@@ -43,23 +42,23 @@ package("libsdl_mixer")
         else
             package:add("deps", "libsdl")
         end
-        if package:version():ge("2.8.0") and package:config("wavpack") then
-            package:add("deps", "wavpack")
-        end
     end)
 
     on_install(function (package)
-        local configs = {"-DSDL2MIXER_SAMPLES=OFF",
-                         "-DSDL2MIXER_FLAC=OFF",
-                         "-DSDL2MIXER_OPUS=OFF",
-                         "-DSDL2MIXER_MOD=OFF",
-                         "-DSDL2MIXER_MIDI=OFF",
-                         "-DSDL2MIXER_CMD=OFF"}
+        local configs = {
+                            "-DSDL2MIXER_CMD=OFF",
+                            "-DSDL2MIXER_FLAC=OFF",
+                            "-DSDL2MIXER_GME=OFF",
+                            "-DSDL2MIXER_MIDI=OFF",
+                            "-DSDL2MIXER_MOD=OFF",
+                            "-DSDL2MIXER_MP3=ON", -- was on by not being here
+                            "-DSDL2MIXER_OPUS=OFF",
+                            "-DSDL2MIXER_SAMPLES=OFF",
+                            "-DSDL2MIXER_WAVE=ON", -- was on by not being here
+                            "-DSDL2MIXER_WAVPACK=OFF",
+                        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:version():ge("2.8.0") then
-            table.insert(configs, "-DSDL2MIXER_WAVPACK=" .. (package:config("wavpack") and "ON" or "OFF"))
-        end
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
@@ -68,7 +67,7 @@ package("libsdl_mixer")
                 for _, dir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
                     if os.isfile(path.join(dir, "SDL_version.h")) then
                         table.insert(configs, "-DSDL2_INCLUDE_DIR=" .. dir)
-                        break                        
+                        break
                     end
                 end
                 for _, libfile in ipairs(fetchinfo.libfiles) do
