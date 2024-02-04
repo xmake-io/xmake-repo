@@ -13,7 +13,6 @@ package("libsdl_image")
 
     add_urls("https://www.libsdl.org/projects/SDL_image/release/SDL2_image-$(version).zip",
              "https://github.com/libsdl-org/SDL_image/releases/download/release-$(version)/SDL2_image-$(version).zip")
-    add_urls("https://github.com/libsdl-org/SDL_image.git", { alias = "github" })
     add_versions("2.6.0", "2252cdfd5be73cefaf727edc39c2ef3b7682e797acbd3126df117e925d46aaf6")
     add_versions("2.6.1", "cbfea63a46715c63a1db9e41617e550749a95ffd33ef9bd5ba6e58b2bdca6ed3")
     add_versions("2.6.2", "efe3c229853d0d40c35e5a34c3f532d5d9728f0abc623bc62c962bcef8754205")
