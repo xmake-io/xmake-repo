@@ -17,7 +17,6 @@ package("libsdl_ttf")
     add_versions("2.20.0", "04e94fc5ecac3475ab35c1d5cf52650df691867e7e4befcc861bf982a747111a")
     add_versions("2.20.1", "18d81ab399c8e39adababe8918691830ba6e0d6448e5baa141ee0ddf87ede2dc")
     add_versions("2.20.2", "aa6256bfcffd8381a75b3a2a2384ac12109b5b148e72722a19b0ede54c4051dc")
-    add_versions("2.22.2", "5766070145111cb047807fa3f91c2c6b81bc1008d63817e100417959b42a2484")
 
     add_patches(">=2.20.0 <=2.20.1", path.join(os.scriptdir(), "patches", "2.20.1", "cmakelists.patch"), "fe04ada62d9ed70029c0efb3c04bfec22fc7596bd6b73a567beb964e61ebd82c")
 
