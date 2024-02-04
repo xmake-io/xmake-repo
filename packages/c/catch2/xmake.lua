@@ -53,7 +53,11 @@ package("catch2")
         end
         component:add("links", link)
         if package:is_plat("windows") then
-            component:add("ldflags", "-subsystem:console")
+            if package:has_tool("cxx", "cl") then
+                component:add("ldflags", "-subsystem:console")
+            elseif package:has_tool("cxx", "clang", "clangxx") then
+                component:add("ldflags", "-Wl,/subsystem:console")
+            end
         end
     end)
 
