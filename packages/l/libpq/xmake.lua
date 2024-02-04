@@ -23,14 +23,14 @@ package("libpq")
             table.insert(configs, "--with-gssapi")
             local libinfo = package:dep("krb5"):fetch()
             if libinfo then
-              local include_dir = libinfo.sysincludedir or libinfo.includedir
-              table.insert(configs, "--with-includes=" .. include_dir)
-              local libraries = ""
-              for _, linkdir in ipairs(libinfo.linkdirs) do
-                libraries = libraries .. linkdir .. ":"
-              end
-              libraries = libraries:sub(1, -2) -- Remove the last ":"
-              table.insert(configs, "--with-libraries=" .. libraries)
+                local includedirs = table.wrap(libinfo.sysincludedirs or libinfo.includedirs)
+                if #includedirs > 0 then
+                    table.insert(configs, "--with-includes=" .. table.concat(includedirs, ":"))
+                end
+                local libfiles = table.wrap(libinfo.libfiles)
+                if #libfiles > 0 then
+                    table.insert(configs, "--with-libraries=" .. table.concat(libfiles, ":"))
+                end
             end
         end
         if package:debug() then
