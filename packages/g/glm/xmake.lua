@@ -26,16 +26,16 @@ package("glm")
 
     on_install(function (package)
         if not package:config("modules") then
-                if package:config("header_only") then
-                    os.cp("glm", package:installdir("include"))
-                else
-                    io.replace("CMakeLists.txt", "NOT GLM_DISABLE_AUTO_DETECTION", "FALSE")
-                    local configs = {"-DGLM_BUILD_TESTS=OFF"}
-                    table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-                    table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-                    table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"))
-                    import("package.tools.cmake").install(package, configs)
-                end
+            if package:config("header_only") then
+                os.cp("glm", package:installdir("include"))
+            else
+                io.replace("CMakeLists.txt", "NOT GLM_DISABLE_AUTO_DETECTION", "FALSE")
+                local configs = {"-DGLM_BUILD_TESTS=OFF"}
+                table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+                table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+                table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"))
+                import("package.tools.cmake").install(package, configs)
+            end
         else
             io.writefile("xmake.lua", [[ 
                 target("glm")
