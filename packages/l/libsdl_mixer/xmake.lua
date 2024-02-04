@@ -35,12 +35,16 @@ package("libsdl_mixer")
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
+    add_configs("wavpack", {description = "Enable WavPack support.", default = true, type = "boolean", readonly = true}) -- default true because it's true in the cmakelists
 
     on_load(function (package)
         if package:config("shared") then
             package:add("deps", "libsdl", { configs = { shared = true }})
         else
             package:add("deps", "libsdl")
+        end
+        if package:version():ge("2.8.0") and package:config("wavpack") then
+            package:add("deps", "wavpack")
         end
     end)
 
@@ -53,6 +57,9 @@ package("libsdl_mixer")
                          "-DSDL2MIXER_CMD=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:version():ge("2.8.0") then
+            table.insert(configs, "-DSDL2MIXER_WAVPACK=" .. (package:config("wavpack") and "ON" or "OFF"))
+        end
         local libsdl = package:dep("libsdl")
         if libsdl and not libsdl:is_system() then
             table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
