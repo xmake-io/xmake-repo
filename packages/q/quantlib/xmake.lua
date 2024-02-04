@@ -5,7 +5,7 @@ package("quantlib")
     add_urls("https://github.com/lballabio/QuantLib/releases/download/v$(version)/QuantLib-$(version).tar.gz",
              "https://github.com/lballabio/QuantLib.git")
 
-    add_versions("1.33", "f973831d951b815a30392113c7cab7b66e6e2ea05dd12e3cb7c3b7ca3b20b081")
+    add_versions("1.33", "4810d789261eb36423c7d277266a6ee3b28a3c05af1ee0d45544ca2e0e8312bd")
 
     add_deps("cmake")
     add_deps("boost")
