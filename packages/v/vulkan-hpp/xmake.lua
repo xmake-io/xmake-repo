@@ -24,7 +24,7 @@ package("vulkan-hpp")
     on_load(function (package)
         if not package:config("modules") then
             package:add("deps", "cmake")
-            if is_plat("linux") then
+            if package:is_plat("linux") then
                 package:add("extsources", "pacman::vulkan-headers")
             end
         end
