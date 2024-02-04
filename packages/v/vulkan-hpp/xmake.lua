@@ -53,23 +53,23 @@ package("vulkan-hpp")
         end
         os.runv(path.join("build", "VulkanHppGenerator"))
         if not package:config("modules") then
-                os.cp("Vulkan-Headers/include", package:installdir())
-                os.cp("vulkan/*.hpp", package:installdir(path.join("include", "vulkan")))
+            os.cp("Vulkan-Headers/include", package:installdir())
+            os.cp("vulkan/*.hpp", package:installdir(path.join("include", "vulkan")))
         else
-                io.writefile("xmake.lua", [[ 
-                    target("vulkan-hpp")
-                        set_kind("static")
-                        set_languages("c++20")
-                        add_headerfiles("Vulkan-Headers/include/(**.h)")
-                        add_headerfiles("Vulkan/(**.h)")
-                        add_headerfiles("Vulkan-Headers/include/(**.hpp)")
-                        add_headerfiles("Vulkan/(**.hpp)")
-                        add_includedirs("Vulkan")
-                        add_includedirs("Vulkan-Headers/include")
-                        add_files("Vulkan/vulkan.cppm", {public = true})
-                ]])
-                local configs = {}
-                import("package.tools.xmake").install(package, configs)
+            io.writefile("xmake.lua", [[ 
+                target("vulkan-hpp")
+                    set_kind("static")
+                    set_languages("c++20")
+                    add_headerfiles("Vulkan-Headers/include/(**.h)")
+                    add_headerfiles("Vulkan/(**.h)")
+                    add_headerfiles("Vulkan-Headers/include/(**.hpp)")
+                    add_headerfiles("Vulkan/(**.hpp)")
+                    add_includedirs("Vulkan")
+                    add_includedirs("Vulkan-Headers/include")
+                    add_files("Vulkan/vulkan.cppm", {public = true})
+            ]])
+            local configs = {}
+            import("package.tools.xmake").install(package, configs)
         end
     end)
 
