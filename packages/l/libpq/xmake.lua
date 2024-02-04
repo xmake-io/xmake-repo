@@ -24,9 +24,13 @@ package("libpq")
             local libinfo = package:dep("krb5"):fetch()
             if libinfo then
               local include_dir = libinfo.sysincludedir or libinfo.includedir
-              local lib_dir = libinfo.syslibdir or libinfo.libdir
               table.insert(configs, "--with-includes=" .. include_dir)
-              table.insert(configs, "--with-libraries=" .. lib_dir)
+              local libraries = ""
+              for _, linkdir in ipairs(libinfo.linkdirs) do
+                libraries = libraries .. linkdir .. ":"
+              end
+              libraries = libraries:sub(1, -2) -- Remove the last ":"
+              table.insert(configs, "--with-libraries=" .. libraries)
             end
         end
         if package:debug() then
