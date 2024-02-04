@@ -42,7 +42,7 @@ package("mimalloc")
         table.insert(configs, "-DMI_BUILD_TESTS=OFF")
         table.insert(configs, "-DMI_BUILD_OBJECT=OFF")
         if package:is_plat("wasm") then
-            table.insert(configs, "-D__wasm__")
+            io.replace("src/prim/prim.c", "__wasi__", "__EMSCRIPTEN__", {plain = true})
         end
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
         if package:version():le("2.0.1") and package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
