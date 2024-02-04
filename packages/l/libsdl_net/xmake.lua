@@ -5,7 +5,6 @@ package("libsdl_net")
 
     add_urls("https://www.libsdl.org/projects/SDL_net/release/SDL2_net-$(version).zip",
              "https://github.com/libsdl-org/SDL_net/releases/download/release-$(version)/SDL2_net-$(version).zip")
-    add_urls("https://github.com/libsdl-org/SDL_net.git")
     add_versions("2.2.0", "1eec3a9d43df019d7916a6ecce32f2a3ad5248c82c9c237948afc712399be36d")
 
     if is_plat("mingw") and is_subhost("msys") then
