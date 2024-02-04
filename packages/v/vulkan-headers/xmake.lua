@@ -34,11 +34,11 @@ package("vulkan-headers")
     on_load(function (package)
         if not package:config("modules") then
             package:add("deps", "cmake")
-            if is_plat("mingw") and is_subhost("msys") then
+            if package:is_plat("mingw") and is_subhost("msys") then
                 package:add("extsources", "pacman::vulkan-headers")
-            elseif is_plat("linux") then
+            elseif package:is_plat("linux") then
                 package:add("extsources", "apt::libvulkan-dev")
-            elseif is_plat("macosx") then
+            elseif package:is_plat("macosx") then
                 package:add("extsources", "brew::vulkan-headers")
             end
         end
