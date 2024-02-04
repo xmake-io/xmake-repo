@@ -46,19 +46,19 @@ package("vulkan-headers")
 
     on_install(function (package)
         if not package:config("modules") then
-                import("package.tools.cmake").install(package)
+            import("package.tools.cmake").install(package)
         else
-                io.writefile("xmake.lua", [[ 
-                    target("vulkan-headers")
-                        set_kind("static")
-                        set_languages("c++20")
-                        add_headerfiles("include/(**.h)")
-                        add_headerfiles("include/(**.hpp)")
-                        add_includedirs("include")
-                        add_files("include/**.cppm", {public = true})
-                ]])
-                local configs = {}
-                import("package.tools.xmake").install(package, configs)
+            io.writefile("xmake.lua", [[ 
+                target("vulkan-headers")
+                    set_kind("static")
+                    set_languages("c++20")
+                    add_headerfiles("include/(**.h)")
+                    add_headerfiles("include/(**.hpp)")
+                    add_includedirs("include")
+                    add_files("include/**.cppm", {public = true})
+            ]])
+            local configs = {}
+            import("package.tools.xmake").install(package, configs)
         end
     end)
 
