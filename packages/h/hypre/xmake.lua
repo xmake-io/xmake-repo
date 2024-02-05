@@ -1,5 +1,4 @@
 package("hypre")
-
     set_homepage("https://computing.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods")
     set_description("Parallel solvers for sparse linear systems featuring multigrid methods.")
     set_license("Apache-2.0")
@@ -16,11 +15,12 @@ package("hypre")
     end
 
     add_deps("cmake")
+
     on_load("windows", "macosx", "linux", function (package)
         package:add("deps", package:config("blas"))
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         os.cd("src")
         local configs = {"-DHYPRE_WITH_MPI=OFF", "-DHYPRE_BUILD_EXAMPLES=OFF", "-DHYPRE_BUILD_TESTS=OFF", "-DHYPRE_USING_HYPRE_BLAS=OFF", "-DHYPRE_USING_HYPRE_LAPACK=OFF"}
         table.insert(configs, "-DHYPRE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
