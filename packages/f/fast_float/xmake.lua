@@ -31,5 +31,5 @@ package("fast_float")
                 double result;
                 auto answer = fast_float::from_chars(input.data(), input.data()+input.size(), result);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"fast_float/fast_float.h"}}))
+        ]]}, {configs = {languages = "c++14"}, includes = {"fast_float/fast_float.h"}}))
     end)
