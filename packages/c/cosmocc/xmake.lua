@@ -18,5 +18,5 @@ package("cosmocc")
     end)
 
     on_test(function (package)
-        os.vrunv("cosmocc", {"--version"}, {shell = true})
+        os.vrunv("sh", {"cosmocc", "--version"})
     end)
