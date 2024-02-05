@@ -29,5 +29,5 @@ package("hypre")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("HYPRE_Init", {includes = "HYPRE_utilities.h"}))
+        assert(package:has_cfuncs(package:version():ge("v2.29.0") and "HYPRE_Initialize" or "HYPRE_Init", {includes = "HYPRE_utilities.h"}))
     end)
