@@ -44,10 +44,10 @@ package("openblas")
         add_versions("0.3.26", "4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68")
     end
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"}) -- windows locked to true
-    add_configs("lapack", {description = "Build LAPACK", default = true, type = "boolean"}) -- windows locked to true
-    add_configs("dynamic-arch", {description = "Enable dynamic arch dispatch", default = true, type = "boolean"}) -- windows locked to true
-    add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean"})
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
+    add_configs("lapack", {description = "Build LAPACK", default = true, type = "boolean", readonly = is_plat("windows")})
+    add_configs("dynamic-arch", {description = "Enable dynamic arch dispatch", default = true, type = "boolean", readonly = is_plat("windows")})
+    add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean", readonly = is_plat("windows")})
 
     if is_plat("linux") then
         add_extsources("apt::libopenblas-dev", "pacman::libopenblas") -- remove ?
