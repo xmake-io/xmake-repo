@@ -8,13 +8,7 @@ package("cosmocc")
     add_versions("3.2.4", "d2fa6dbf6f987310494581deff5b915dbdc5ca701f20f7613bb0dcf1de2ee511")
 
     on_install("macosx", "windows", "linux", "bsd", "mingw", "cygwin", "msys", function (package)
-        if is_host("windows") then
-            os.cp("bin/*", package:installdir("bin"))
-            os.rm("bin")
-            os.cp("*", package:installdir())
-        else
-            os.cp("*", package:installdir(), {symlink = true})
-        end
+        os.cp("*", package:installdir(), {symlink = true})
     end)
 
     on_test(function (package)
