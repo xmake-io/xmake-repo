@@ -7,10 +7,11 @@ package("cosmocc")
              "https://github.com/xmake-mirror/cosmopolitan/releases/download/$(version)/cosmocc-$(version).zip")
     add_versions("3.2.4", "d2fa6dbf6f987310494581deff5b915dbdc5ca701f20f7613bb0dcf1de2ee511")
 
-    on_install("macosx", "windows", "linux", "bsd", "mingw", "cygwin", "msys", function (package)
+    on_install("@macosx", "@linux", "@bsd", "@cygwin", "@msys", function (package)
         os.cp("*", package:installdir(), {symlink = true})
     end)
 
     on_test(function (package)
-        os.vrunv("sh", {"cosmocc", "--version"})
+        local cosmocc = path.join(package:installdir("bin"), "cosmocc")
+        os.vrunv(cosmocc, {"--version"}, {shell = true})
     end)
