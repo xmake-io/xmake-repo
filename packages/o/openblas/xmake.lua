@@ -29,8 +29,6 @@ package("openblas")
             add_versions("0.3.24", "92f8e0c73e1eec3c428b210fbd69b91e966f8cf1f998f3b60a52f024b2bf9d27")
             add_versions("0.3.26", "9c3d48c3c21cd2341d642a63ee8a655205587befdab46462df7e0104d6771f67")
         end
-
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     else
         add_urls("https://github.com/OpenMathLib/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version).tar.gz")
         add_versions("0.3.12", "65a7d3a4010a4e3bd5c0baa41a234797cd3a1735449a4a5902129152601dc57b")
@@ -44,107 +42,52 @@ package("openblas")
         add_versions("0.3.23", "5d9491d07168a5d00116cdc068a40022c3455bf9293c7cb86a65b1054d7e5114")
         add_versions("0.3.24", "ceadc5065da97bd92404cac7254da66cc6eb192679cf1002098688978d4d5132")
         add_versions("0.3.26", "4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68")
-
-        add_configs("fortran", {description = "Compile with fortran enabled.", default = is_plat("linux"), type = "boolean"})
-        add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean"})
     end
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"}) -- windows locked to true
+    add_configs("lapack", {description = "Build LAPACK", default = true, type = "boolean"}) -- windows locked to true
+    add_configs("dynamic-arch", {description = "Enable dynamic arch dispatch", default = true, type = "boolean"}) -- windows locked to true
+    add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean"})
+
     if is_plat("linux") then
-        add_extsources("apt::libopenblas-dev", "pacman::libopenblas")
+        add_extsources("apt::libopenblas-dev", "pacman::libopenblas") -- remove ?
         add_syslinks("pthread")
     elseif is_plat("macosx") then
         add_frameworks("Accelerate")
     end
+
     on_load("macosx", "linux", "mingw@windows,msys", function (package)
-        if package:config("fortran") then
-            package:add("deps", "gfortran", {system = true})
-        end
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
     end)
 
+    on_load("windows|x64", "windows|x86", function (package)
+        package:add("defines", "HAVE_LAPACK_CONFIG_H") -- https://github.com/OpenMathLib/OpenBLAS/issues/4466
+    end)
+
     on_install("windows|x64", "windows|x86", function (package)
-        os.cp(path.join("bin", "libopenblas.dll"), package:installdir("bin"))
+        os.cp("bin", package:installdir())
         os.cp("include", package:installdir())
-        os.cp(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
+        os.cp("lib", package:installdir())
         package:addenv("PATH", "bin")
     end)
 
     on_install("macosx", "linux", "mingw@windows,msys", function (package)
-        import("lib.detect.find_tool")
-        import("package.tools.make")
         local configs = {}
-        if package:is_plat("linux") then
-            table.insert(configs, "CC=" .. package:build_getenv("cc"))
-        end
-        if package:is_plat("macosx") and package:is_arch("arm64") then
-            table.insert(configs, "TARGET=VORTEX")
-            table.insert(configs, "BINARY=64")
-            table.insert(configs, "CFLAGS=-arch arm64")
-            table.insert(configs, "LDFLAGS=-arch arm64")
-        end
-        if package:debug() then table.insert(configs, "DEBUG=1") end
-        if package:config("openmp") then table.insert(configs, "USE_OPENMP=1") end
-        if not package:config("shared") then
-            table.insert(configs, "NO_SHARED=1")
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DDYNAMIC_ARCH=" .. (package:config("dynamic-arch") and "ON" or "OFF"))
+        if (package:config("lapack")) then
+            table.join2(configs, {"-DC_LAPACK=ON", "-DBUILD_LAPACK_DEPRECATED=OFF", "-DBUILD_TESTING=OFF"})
         else
-            table.insert(configs, "NO_STATIC=1")
+            table.insert(configs, "-DBUILD_WITHOUT_LAPACK=ON")
         end
-        if package:config("fortran") then
-            local fortran = find_tool("gfortran")
-            if fortran then
-                table.insert(configs, "FC=" .. fortran.program)
-            end
-        else
-            table.insert(configs, "NO_FORTRAN=1")
-        end
-        if package:is_plat("mingw") then
-            if package:is_arch("i386", "x86") then
-                table.insert(configs, "BINARY=32")
-            end
-        else
-            local cflags
-            local ldflags
-            if package:config("openmp") then
-                local openmp = package:dep("openmp"):fetch()
-                if openmp then
-                    cflags = openmp.cflags
-                    local libomp = package:dep("libomp")
-                    if libomp then
-                        local fetchinfo = libomp:fetch()
-                        if fetchinfo then
-                            local includedirs = fetchinfo.sysincludedirs or fetchinfo.includedirs
-                            for _, includedir in ipairs(includedirs) do
-                                cflags = (cflags or "") .. " -I" .. includedir
-                            end
-                            for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                                ldflags = (ldflags or "") .. " -Wl,-L" .. linkdir
-                            end
-                            for _, link in ipairs(fetchinfo.links) do
-                                ldflags = (ldflags or "") .. " -Wl,-l" .. link
-                            end
-                        end
-                    end
-                end
-            end
-            if package:config("fortran") then
-                local gfortran = package:dep("gfortran"):fetch()
-                if gfortran then
-                    for _, linkdir in ipairs(gfortran.linkdirs) do
-                        ldflags = (ldflags or "") .. " -Wl,-L" .. linkdir
-                    end
-                end
-            end
-            if cflags then
-                io.replace("Makefile.system", "-fopenmp", cflags, {plain = true})
-            end
-            if ldflags then
-                table.insert(configs, "LDFLAGS=" .. ldflags)
-            end
-        end
-        make.build(package, configs)
-        make.make(package, table.join("install", "PREFIX=" .. package:installdir():gsub("\\", "/"), configs))
+        import("package.tools.cmake").build(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+
+        -- better way to do this ?
+        os.mv(package:installdir() .. "/include/openblas/*" , package:installdir("include"))
+        os.rm(package:installdir("include/openblas"))
     end)
 
     on_test(function (package)
@@ -152,8 +95,21 @@ package("openblas")
             void test() {
                 double A[6] = {1.0,2.0,1.0,-3.0,4.0,-1.0};
                 double B[6] = {1.0,2.0,1.0,-3.0,4.0,-1.0};
-                double C[9] = {.5,.5,.5,.5,.5,.5,.5,.5,.5};
+                double C[9] = {0.8,0.2,0.5,-0.3,0.5,0.2,0.1,0.4,0.1};
+
                 cblas_dgemm(CblasColMajor,CblasNoTrans,CblasTrans,3,3,2,1,A,3,B,3,2,C,3);
             }
-        ]]}, {includes = "cblas.h"}))
+        ]]}, {includes = {"cblas.h"}}))
+
+        if (package:config("lapack")) then
+            assert(package:check_csnippets({test = [[
+                void test() {
+                    double A[9] = {0.8,0.2,0.5,-0.3,0.5,0.2,0.1,0.4,0.1};
+                    double x[3] = {1.0,2.0,3.0};
+                    lapack_int ipiv[3];
+
+                    LAPACKE_dgesv(LAPACK_COL_MAJOR, 3, 1, A, 3, ipiv, x, 3);
+                }
+            ]]}, {includes = {"lapacke.h"}}))
+        end
     end)
