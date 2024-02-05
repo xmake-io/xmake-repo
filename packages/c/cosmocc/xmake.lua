@@ -12,9 +12,5 @@ package("cosmocc")
     end)
 
     on_test(function (package)
-        if package:is_arch("x86_64", "x64") then
-            os.vrun("x86_64-linux-cosmo-gcc --version")
-        elseif package:is_arch("arm64") then
-            os.vrun("aarch64-linux-cosmo-gcc --version")
-        end
+        os.vrunv("cosmocc", {"--version"}, {shell = true})
     end)
