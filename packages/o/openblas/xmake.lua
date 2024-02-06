@@ -46,7 +46,7 @@ package("openblas")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
     add_configs("lapack", {description = "Build LAPACK", default = true, type = "boolean", readonly = is_plat("windows")})
-    add_configs("dynamic-arch", {description = "Enable dynamic arch dispatch", default = true, type = "boolean", readonly = is_plat("windows")})
+    add_configs("dynamic-arch", {description = "Enable dynamic arch dispatch", default = not is_plat("macosx"), type = "boolean", readonly = is_plat("windows")})
     add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean", readonly = is_plat("windows")})
     
     if not is_plat("windows") then
