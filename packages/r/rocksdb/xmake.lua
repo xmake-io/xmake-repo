@@ -4,6 +4,7 @@ package("rocksdb")
 
     add_urls("https://github.com/facebook/rocksdb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebook/rocksdb.git")
+    add_versions("v8.10.0", "2dc107551cc864dbcf7908fdee96f2318cbb680df2b3fe1f85b0d545c2b5673b")
     add_versions("v7.10.2", "4619ae7308cd3d11cdd36f0bfad3fb03a1ad399ca333f192b77b6b95b08e2f78")
 
     add_deps("cmake")
