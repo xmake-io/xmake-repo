@@ -48,12 +48,15 @@ package("openblas")
     add_configs("lapack", {description = "Build LAPACK", default = true, type = "boolean", readonly = is_plat("windows")})
     add_configs("dynamic-arch", {description = "Enable dynamic arch dispatch", default = true, type = "boolean", readonly = is_plat("windows")})
     add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean", readonly = is_plat("windows")})
-
+    
+    if not is_plat("windows") then
+        add_deps("cmake")
+    end
     if is_plat("linux") then
         add_extsources("apt::libopenblas-dev", "pacman::libopenblas") -- remove ?
         add_syslinks("pthread")
     elseif is_plat("macosx") then
-        add_frameworks("Accelerate")
+        add_frameworks("Accelerate") -- remove ?
     end
 
     on_load("macosx", "linux", function (package)
