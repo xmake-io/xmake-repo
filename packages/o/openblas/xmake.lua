@@ -101,6 +101,10 @@ package("openblas")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DDYNAMIC_ARCH=" .. (package:config("dynamic-arch") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
+        if package:is_plat("macosx") and package:is_arch("arm64") then -- manual target for apple arm64
+            table.insert(configs, "-DTARGET=VORTEX") 
+            table.insert(configs, "-DBINARY=64")
+        end
         if (package:config("lapack")) then
             table.join2(configs, {"-DC_LAPACK=ON", "-DBUILD_LAPACK_DEPRECATED=OFF"})
         else
