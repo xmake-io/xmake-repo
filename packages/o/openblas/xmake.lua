@@ -55,10 +55,8 @@ package("openblas")
     if is_plat("linux") then
         add_extsources("apt::libopenblas-dev", "pacman::libopenblas") -- remove ?
         add_syslinks("pthread")
-    elseif is_plat("macosx") then
-        add_frameworks("Accelerate") -- remove ?
     end
-
+  
     on_load("macosx", "linux", function (package)
         if package:config("openmp") then
             package:add("deps", "openmp")
@@ -83,6 +81,7 @@ package("openblas")
         table.insert(configs, "-DUSE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         if package:is_plat("macosx") and package:is_arch("arm64") then
             table.insert(configs, "-DTARGET=VORTEX") -- manual target for apple arm64
+            table.insert(configs, "-DBINARY=64") -- manual binary for apple arm64
         end
         if (package:config("lapack")) then
             table.join2(configs, {"-DC_LAPACK=ON", "-DBUILD_LAPACK_DEPRECATED=OFF"})
