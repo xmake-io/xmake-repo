@@ -45,7 +45,7 @@ package("openblas")
     end
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
-    add_configs("lapack", {description = "Build LAPACK", default = true, type = "boolean", readonly = is_plat("windows")})
+    add_configs("lapack", {description = "Build LAPACK", default = false, type = "boolean", readonly = is_plat("windows")})
     add_configs("dynamic-arch", {description = "Enable dynamic arch dispatch", default = true, type = "boolean", readonly = is_plat("windows")})
     add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean", readonly = is_plat("windows")})
 
@@ -56,7 +56,7 @@ package("openblas")
         add_frameworks("Accelerate")
     end
 
-    on_load("macosx", "linux", "mingw@windows,msys", function (package)
+    on_load("macosx", "linux", function (package)
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
@@ -73,12 +73,13 @@ package("openblas")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", "mingw@windows,msys", function (package)
-        local configs = {}
+    on_install("macosx", "linux", function (package)
+        local configs = {"-DCMAKE_BUILD_TYPE=Release", "-DBUILD_TESTING=OFF", "-DNOFORTRAN=ON"} -- necessary 
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DDYNAMIC_ARCH=" .. (package:config("dynamic-arch") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         if (package:config("lapack")) then
-            table.join2(configs, {"-DC_LAPACK=ON", "-DBUILD_LAPACK_DEPRECATED=OFF", "-DBUILD_TESTING=OFF"})
+            table.join2(configs, {"-DC_LAPACK=ON", "-DBUILD_LAPACK_DEPRECATED=OFF"})
         else
             table.insert(configs, "-DBUILD_WITHOUT_LAPACK=ON")
         end
