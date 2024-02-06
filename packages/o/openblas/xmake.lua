@@ -54,9 +54,9 @@ package("openblas")
     })
     add_configs("dynamic-arch", {
         description = "Enable dynamic arch dispatch",
-        default = not is_plat("macosx"),
+        default = (is_plat("linux") or is_plat("windows")),
         type = "boolean",
-        readonly = (is_plat("windows") or is_plat("macosx"))
+        readonly = not is_plat("linux")
     })
     add_configs("openmp",  {
         description = "Compile with OpenMP enabled.",
