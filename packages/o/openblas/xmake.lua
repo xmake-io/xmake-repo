@@ -1,9 +1,9 @@
 package("openblas")
-
     set_homepage("http://www.openblas.net/")
     set_description("OpenBLAS is an optimized BLAS library based on GotoBLAS2 1.13 BSD version.")
     set_license("BSD-3-Clause")
 
+    -- Versions
     if is_plat("windows") then
         if is_arch("x64", "x86_64") then
             add_urls("https://github.com/OpenMathLib/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version)-x64.zip")
@@ -44,11 +44,23 @@ package("openblas")
         add_versions("0.3.26", "4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68")
     end
 
+    -- Configs
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
     add_configs("lapack", {description = "Build LAPACK", default = true, type = "boolean", readonly = is_plat("windows")})
-    add_configs("dynamic-arch", {description = "Enable dynamic arch dispatch", default = not is_plat("macosx"), type = "boolean", readonly = is_plat("windows")})
-    add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean", readonly = is_plat("windows")})
+    add_configs("dynamic-arch", {
+        description = "Enable dynamic arch dispatch",
+        default = not is_plat("macosx"),
+        type = "boolean",
+        readonly = (is_plat("windows") or is_plat("macosx"))
+    })
+    add_configs("openmp",  {
+        description = "Compile with OpenMP enabled.",
+        default = (is_plat("windows") or is_plat("linux")),
+        type = "boolean",
+        readonly = not is_plat("linux")
+    })
     
+    -- Dependencies
     if not is_plat("windows") then
         add_deps("cmake")
     end
@@ -57,7 +69,7 @@ package("openblas")
         add_syslinks("pthread")
     end
   
-    on_load("macosx", "linux", function (package)
+    on_load("linux", function (package)
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
@@ -67,6 +79,7 @@ package("openblas")
         package:add("defines", "HAVE_LAPACK_CONFIG_H") -- https://github.com/OpenMathLib/OpenBLAS/issues/4466
     end)
 
+    -- Build and Install
     on_install("windows|x64", "windows|x86", function (package)
         os.cp("bin", package:installdir())
         os.cp("include", package:installdir())
@@ -74,8 +87,12 @@ package("openblas")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", function (package)
-        local configs = {"-DCMAKE_BUILD_TYPE=Release", "-DBUILD_TESTING=OFF", "-DNOFORTRAN=ON"} -- necessary 
+    on_install("macosx", "linux", "android", function (package)
+        local configs = {
+            "-DCMAKE_BUILD_TYPE=Release", -- needed for linux clang https://github.com/OpenMathLib/OpenBLAS/issues/2634
+            "-DBUILD_TESTING=OFF", -- force no lapack test suite
+            "-DNOFORTRAN=ON" -- force no lapack test suite
+        }
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DDYNAMIC_ARCH=" .. (package:config("dynamic-arch") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
@@ -96,6 +113,7 @@ package("openblas")
         os.rm(package:installdir("include/openblas"))
     end)
 
+    -- Tests
     on_test(function (package)
         assert(package:check_csnippets({test = [[
             void test() {
