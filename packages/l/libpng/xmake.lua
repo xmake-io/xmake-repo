@@ -27,7 +27,7 @@ package("libpng")
         add_extsources("brew::libpng")
     end
 
-    on_install("windows", "mingw", "macosx|arm64", "android", "iphoneos", "cross", "bsd", "wasm", function (package)
+    on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("zlib")
@@ -72,19 +72,6 @@ package("libpng")
         end
         os.cp("scripts/pnglibconf.h.prebuilt", "pnglibconf.h")
         import("package.tools.xmake").install(package, configs)
-    end)
-
-    on_install("macosx|x86_64", "linux", function (package)
-        local configs = {}
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-        if not package:dep("zlib"):is_system() then
-            table.insert(configs, "--with-zlib-prefix=" .. package:dep("zlib"):installdir())
-        end
-        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
