@@ -46,7 +46,12 @@ package("openblas")
 
     -- Configs
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
-    add_configs("lapack", {description = "Build LAPACK", default = true, type = "boolean", readonly = is_plat("windows")})
+    add_configs("lapack", {
+        description = "Build LAPACK",
+        default = not is_plat("android"),
+        type = "boolean",
+        readonly = (is_plat("windows") or is_plat("android"))
+    })
     add_configs("dynamic-arch", {
         description = "Enable dynamic arch dispatch",
         default = not is_plat("macosx"),
@@ -103,6 +108,7 @@ package("openblas")
         if (package:config("lapack")) then
             table.join2(configs, {"-DC_LAPACK=ON", "-DBUILD_LAPACK_DEPRECATED=OFF"})
         else
+            table.insert(configs, "-DONLY_CBLAS=ON")
             table.insert(configs, "-DBUILD_WITHOUT_LAPACK=ON")
         end
         import("package.tools.cmake").build(package, configs, {buildir = "build"})
