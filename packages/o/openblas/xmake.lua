@@ -3,7 +3,6 @@ package("openblas")
     set_description("OpenBLAS is an optimized BLAS library based on GotoBLAS2 1.13 BSD version.")
     set_license("BSD-3-Clause")
 
-    -- Versions
     if is_plat("windows") then
         if is_arch("x64", "x86_64") then
             add_urls("https://github.com/OpenMathLib/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version)-x64.zip")
@@ -44,33 +43,16 @@ package("openblas")
         add_versions("0.3.26", "4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68")
     end
 
-    -- Configs
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
-    add_configs("lapack", {
-        description = "Build LAPACK",
-        default = not is_plat("android"),
-        type = "boolean",
-        readonly = (is_plat("windows") or is_plat("android"))
-    })
-    add_configs("dynamic-arch", {
-        description = "Enable dynamic arch dispatch",
-        default = (is_plat("linux") or is_plat("windows")),
-        type = "boolean",
-        readonly = not is_plat("linux")
-    })
-    add_configs("openmp",  {
-        description = "Compile with OpenMP enabled.",
-        default = (is_plat("windows") or is_plat("linux")),
-        type = "boolean",
-        readonly = not is_plat("linux")
-    })
+    add_configs("lapack", {description = "Build LAPACK", default = not is_plat("android"), type = "boolean", readonly = (is_plat("windows") or is_plat("android"))})
+    add_configs("dynamic-arch", {description = "Enable dynamic arch dispatch", default = (is_plat("linux") or is_plat("windows")), type = "boolean", readonly = not is_plat("linux")})
+    add_configs("openmp", {description = "Compile with OpenMP enabled.", default = (is_plat("windows") or is_plat("linux")), type = "boolean", readonly = not is_plat("linux")})
     
-    -- Dependencies
     if not is_plat("windows") then
         add_deps("cmake")
     end
     if is_plat("linux") then
-        add_extsources("apt::libopenblas-dev", "pacman::libopenblas") -- remove ?
+        add_extsources("apt::libopenblas-dev", "pacman::libopenblas")
         add_syslinks("pthread")
     end
   
@@ -81,10 +63,9 @@ package("openblas")
     end)
 
     on_load("windows|x64", "windows|x86", function (package)
-        package:add("defines", "HAVE_LAPACK_CONFIG_H") -- https://github.com/OpenMathLib/OpenBLAS/issues/4466
+        package:add("defines", "HAVE_LAPACK_CONFIG_H")
     end)
 
-    -- Build and Install
     on_install("windows|x64", "windows|x86", function (package)
         os.cp("bin", package:installdir())
         os.cp("include", package:installdir())
@@ -93,19 +74,15 @@ package("openblas")
     end)
 
     on_install("macosx", "linux", "android", function (package)
-        local configs = {
-            "-DCMAKE_BUILD_TYPE=Release", -- needed for linux clang https://github.com/OpenMathLib/OpenBLAS/issues/2634
-            "-DBUILD_TESTING=OFF", -- force no lapack test suite
-            "-DNOFORTRAN=ON" -- force no lapack test suite
-        }
+        local configs = {"-DCMAKE_BUILD_TYPE=Release", "-DBUILD_TESTING=OFF", "-DNOFORTRAN=ON"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DDYNAMIC_ARCH=" .. (package:config("dynamic-arch") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
-        if package:is_plat("macosx") and package:is_arch("arm64") then -- manual target for apple arm64
+        if package:is_plat("macosx") and package:is_arch("arm64") then
             table.insert(configs, "-DTARGET=VORTEX") 
             table.insert(configs, "-DBINARY=64")
         end
-        if (package:config("lapack")) then
+        if package:config("lapack") then
             table.join2(configs, {"-DC_LAPACK=ON", "-DBUILD_LAPACK_DEPRECATED=OFF"})
         else
             table.insert(configs, "-DONLY_CBLAS=ON")
@@ -114,12 +91,10 @@ package("openblas")
         import("package.tools.cmake").build(package, configs, {buildir = "build"})
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
 
-        -- better way to do this ?
         os.mv(package:installdir() .. "/include/openblas/*" , package:installdir("include"))
         os.rm(package:installdir("include/openblas"))
     end)
 
-    -- Tests
     on_test(function (package)
         assert(package:check_csnippets({test = [[
             void test() {
@@ -131,7 +106,7 @@ package("openblas")
             }
         ]]}, {includes = {"cblas.h"}}))
 
-        if (package:config("lapack")) then
+        if package:config("lapack") then
             assert(package:check_csnippets({test = [[
                 void test() {
                     double A[9] = {0.8,0.2,0.5,-0.3,0.5,0.2,0.1,0.4,0.1};
