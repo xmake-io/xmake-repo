@@ -74,7 +74,11 @@ package("libxcb")
         for name, opt in pairs(components) do
             table.insert(configs, format("--enable-%s=%s", name, package:config(name) and "yes" or "no"))
         end
-        import("package.tools.autoconf").install(package, configs)
+        if package:is_plat("macosx") and package:is_cross() then
+            import("package.tools.autoconf").install(package, configs, {cflags = "-arch " .. package:arch(), shflags = "-arch " .. package:arch()})
+        else
+            import("package.tools.autoconf").install(package, configs)
+        end
     end)
 
     on_test(function (package)
