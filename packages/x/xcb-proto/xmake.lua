@@ -20,9 +20,6 @@ package("xcb-proto")
                          "--disable-silent-rules",
                          "PYTHON=python3"}
         import("package.tools.autoconf").install(package, configs)
-        local version = package:dep("python"):version()
-        local pyver = ("python%d.%d"):format(version:major(), version:minor())
-        package:addenv("PYTHONPATH", path.join(package:installdir("lib"), pyver, "site-packages"))
     end)
 
     on_test(function (package)
