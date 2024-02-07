@@ -45,7 +45,7 @@ package("openblas")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
     add_configs("lapack", {description = "Build LAPACK", default = not is_plat("android"), type = "boolean", readonly = (is_plat("windows") or is_plat("android"))})
-    add_configs("dynamic_arch", {description = "Enable dynamic arch dispatch", default = (is_plat("linux") or is_plat("windows") or is_plat("mingw")), type = "boolean", readonly = not is_plat("linux")})
+    add_configs("dynamic_arch", {description = "Enable dynamic arch dispatch", default = (is_plat("linux") or is_plat("windows")), type = "boolean", readonly = not is_plat("linux")})
     add_configs("openmp", {description = "Compile with OpenMP enabled.", default = (is_plat("windows") or is_plat("linux")), type = "boolean", readonly = not is_plat("linux")})
     add_configs("fortran", {description = "Compile with Fortran enabled.", default = false, type = "boolean", readonly = (is_plat("windows") or is_plat("android"))})
     
@@ -57,10 +57,9 @@ package("openblas")
         add_syslinks("pthread")
     end
   
-    on_load("linux", function (package)
-        if package:config("openmp") then
-            package:add("deps", "openmp")
-        end
+    on_load("linux", "macosx", "mingw", function (package)
+        if package:config("openmp") then package:add("deps", "openmp") end
+        if package:config("fortran") then package:add("deps", "gfortran", {system = true}) end
     end)
 
     on_load("windows|x64", "windows|x86", function (package)
@@ -82,6 +81,7 @@ package("openblas")
         table.insert(configs, "-DNOFORTRAN=" .. (package:config("fortran") and "OFF" or "ON"))
         if package:is_plat("mingw") then
             table.insert(configs, "-DTARGET=GENERIC")
+            if package:is_arch("i386", "x86") then table.insert(configs, "BINARY=32") end
         end
         if package:is_plat("macosx") and package:is_arch("arm64") then
             table.insert(configs, "-DTARGET=VORTEX") 
