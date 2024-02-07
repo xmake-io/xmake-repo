@@ -47,8 +47,8 @@ jobs:
           Set-Item -Path Env:Path -Value ($Env:XMAKE_PROGRAM_DIR + ";" + $Env:Path)
           xmake --version
           if ("${{ matrix.os }}" -eq "windows-2019") {
-            xmake l ./scripts/test.lua -vD -a ${{ matrix.arch }} -k ${{ matrix.kind }} --runtimes=${{ matrix.runtimes }} --vs_sdkver=10.0.19041.0 --linkjobs=2 cosmocc
+            xmake l ./scripts/test.lua -vD -a ${{ matrix.arch }} -k ${{ matrix.kind }} --runtimes=${{ matrix.runtimes }} --vs_sdkver=10.0.19041.0 --linkjobs=2
           } else {
-            xmake l ./scripts/test.lua -vD -a ${{ matrix.arch }} -k ${{ matrix.kind }} --runtimes=${{ matrix.runtimes }} --linkjobs=2 cosmocc
+            xmake l ./scripts/test.lua -vD -a ${{ matrix.arch }} -k ${{ matrix.kind }} --runtimes=${{ matrix.runtimes }} --linkjobs=2
           }
 
