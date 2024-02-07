@@ -34,6 +34,7 @@ package("zlib")
     on_install(function (package)
         io.writefile("xmake.lua", [[
             includes("@builtin/check")
+            includes("check_cincludes.lua")
             add_rules("mode.debug", "mode.release")
             target("zlib")
                 set_kind("$(kind)")
