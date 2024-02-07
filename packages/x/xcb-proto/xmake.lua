@@ -23,6 +23,11 @@ package("xcb-proto")
     end)
 
     on_test(function (package)
-        local envs = {PKG_CONFIG_PATH = path.join(package:installdir(), "lib", "pkgconfig")}
+        local envs
+        if package:version():le("1.15") then
+            envs = {PKG_CONFIG_PATH = path.join(package:installdir(), "lib", "pkgconfig")}
+        else
+            envs = {PKG_CONFIG_PATH = path.join(package:installdir(), "share", "pkgconfig")}
+        end
         os.vrunv("pkg-config", {"--exists", "xcb-proto"}, {envs = envs})
     end)
