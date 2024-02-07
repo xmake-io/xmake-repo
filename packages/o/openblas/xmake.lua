@@ -81,7 +81,7 @@ package("openblas")
         table.insert(configs, "-DNOFORTRAN=" .. (package:config("fortran") and "OFF" or "ON"))
         if package:is_plat("mingw") then
             table.insert(configs, "-DTARGET=GENERIC")
-            if package:is_arch("i386", "x86") then table.insert(configs, "BINARY=32") end
+            if package:is_arch("i386", "x86") then table.insert(configs, "-DBINARY=32") end
         end
         if package:is_plat("macosx") and package:is_arch("arm64") then
             table.insert(configs, "-DTARGET=VORTEX") 
