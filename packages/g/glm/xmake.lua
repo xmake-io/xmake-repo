@@ -15,7 +15,7 @@ package("glm")
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
 
     on_load(function (package)
-        if not package:config("modules") then
+        if package:config("modules") then
             package:config_set("header_only", false)
             package:config_set("cxx_standard", "20")
         end
