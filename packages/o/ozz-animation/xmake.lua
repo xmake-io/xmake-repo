@@ -17,7 +17,13 @@ package("ozz-animation")
 
     add_deps("cmake")
 
+    add_links("ozz_animation", "ozz_animation_offline", "ozz_geometry", "ozz_options", "ozz_base")
+
     on_install(function (package)
+        if package:is_plat("windows") and package:is_arch("arm.*") then
+            io.replace("build-utils/cmake/compiler_settings.cmake", "add_compile_options(/WX)", "", {plain = true})
+        end
+
         local configs =
         {
             "-Dozz_build_tools=OFF",
