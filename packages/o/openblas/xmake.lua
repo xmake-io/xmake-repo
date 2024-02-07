@@ -80,6 +80,9 @@ package("openblas")
         table.insert(configs, "-DDYNAMIC_ARCH=" .. (package:config("dynamic_arch") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DNOFORTRAN=" .. (package:config("fortran") and "OFF" or "ON"))
+        if package:is_plat("mingw") then
+            table.insert(configs, "-DTARGET=GENERIC")
+        end
         if package:is_plat("macosx") and package:is_arch("arm64") then
             table.insert(configs, "-DTARGET=VORTEX") 
             table.insert(configs, "-DBINARY=64")
@@ -91,8 +94,7 @@ package("openblas")
             table.insert(configs, "-DONLY_CBLAS=ON")
             table.insert(configs, "-DBUILD_WITHOUT_LAPACK=ON")
         end
-        import("package.tools.cmake").build(package, configs, {buildir = "build"})
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs)
 
         os.mv(package:installdir() .. "/include/openblas/*" , package:installdir("include"))
         os.rm(package:installdir("include/openblas"))
