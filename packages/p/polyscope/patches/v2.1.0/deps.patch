@@ -56,6 +56,18 @@ index 8af2b5a..a8be07c 100644
  
  #include "simple_dot_mesh_parser.h"
  #include "surface_mesh_io.h"
+diff --git a/include/polyscope/internal.h b/include/polyscope/internal.h
+index d339e77..c875248 100644
+--- a/include/polyscope/internal.h
++++ b/include/polyscope/internal.h
+@@ -2,6 +2,7 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
+ #include <string>
+ 
+ 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
 index 77e6dbd..3b2d98c 100644
 --- a/src/CMakeLists.txt
