@@ -45,8 +45,9 @@ package("openblas")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
     add_configs("lapack", {description = "Build LAPACK", default = not is_plat("android"), type = "boolean", readonly = (is_plat("windows") or is_plat("android"))})
-    add_configs("dynamic-arch", {description = "Enable dynamic arch dispatch", default = (is_plat("linux") or is_plat("windows")), type = "boolean", readonly = not is_plat("linux")})
+    add_configs("dynamic_arch", {description = "Enable dynamic arch dispatch", default = (is_plat("linux") or is_plat("windows")), type = "boolean", readonly = not is_plat("linux")})
     add_configs("openmp", {description = "Compile with OpenMP enabled.", default = (is_plat("windows") or is_plat("linux")), type = "boolean", readonly = not is_plat("linux")})
+    add_configs("fortran", {description = "Compile with Fortran enabled.", default = false, type = "boolean", readonly = (is_plat("windows") or is_plat("android"))})
     
     if not is_plat("windows") then
         add_deps("cmake")
@@ -69,21 +70,23 @@ package("openblas")
     on_install("windows|x64", "windows|x86", function (package)
         os.cp("bin", package:installdir())
         os.cp("include", package:installdir())
-        os.cp("lib", package:installdir())
+        os.cp(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", "android", function (package)
-        local configs = {"-DCMAKE_BUILD_TYPE=Release", "-DBUILD_TESTING=OFF", "-DNOFORTRAN=ON"}
+    on_install("macosx", "linux", "android", "mingw", function (package)
+        local configs = {"-DCMAKE_BUILD_TYPE=Release", "-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DDYNAMIC_ARCH=" .. (package:config("dynamic-arch") and "ON" or "OFF"))
+        table.insert(configs, "-DDYNAMIC_ARCH=" .. (package:config("dynamic_arch") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
+        table.insert(configs, "-DNOFORTRAN=" .. (package:config("fortran") and "OFF" or "ON"))
         if package:is_plat("macosx") and package:is_arch("arm64") then
             table.insert(configs, "-DTARGET=VORTEX") 
             table.insert(configs, "-DBINARY=64")
         end
         if package:config("lapack") then
-            table.join2(configs, {"-DC_LAPACK=ON", "-DBUILD_LAPACK_DEPRECATED=OFF"})
+            if not package:config("fortran") then table.insert(configs, "-DC_LAPACK=ON") end
+            table.insert(configs, "-DBUILD_LAPACK_DEPRECATED=OFF")
         else
             table.insert(configs, "-DONLY_CBLAS=ON")
             table.insert(configs, "-DBUILD_WITHOUT_LAPACK=ON")
