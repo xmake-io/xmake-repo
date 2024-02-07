@@ -61,11 +61,6 @@ package("libpng")
                 end
         ]])
         local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        elseif not package:is_plat("windows", "mingw") and package:config("pic") ~= false then
-            configs.cxflags = "-fPIC"
-        end
         if package:is_plat("android") and package:is_arch("armeabi-v7a") then
             io.replace("arm/filter_neon.S", ".func", ".hidden", {plain = true})
             io.replace("arm/filter_neon.S", ".endfunc", "", {plain = true})
