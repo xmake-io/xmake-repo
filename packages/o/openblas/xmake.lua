@@ -57,7 +57,7 @@ package("openblas")
         add_syslinks("pthread")
     end
   
-    on_load("linux", "macosx", "mingw", function (package)
+    on_load("linux", "macosx", "mingw@msys", function (package)
         if package:config("openmp") then package:add("deps", "openmp") end
         if package:config("fortran") then package:add("deps", "gfortran", {system = true}) end
     end)
@@ -73,7 +73,7 @@ package("openblas")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("macosx", "linux", "android", "mingw", function (package)
+    on_install("macosx", "linux", "android", "mingw@msys", function (package)
         local configs = {"-DCMAKE_BUILD_TYPE=Release", "-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DDYNAMIC_ARCH=" .. (package:config("dynamic_arch") and "ON" or "OFF"))
