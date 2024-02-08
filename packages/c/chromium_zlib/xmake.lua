@@ -8,6 +8,7 @@ package("chromium_zlib")
     add_urls("https://chromium.googlesource.com/chromium/src/third_party/zlib.git")
     add_versions("2022.02.22", "6f44c22c1f003bd20011062abec283678842567c")
     add_versions("2023.03.14", "5edb52d4302d7aef232d585ec9ae27ef5c3c5438")
+    add_versions("2024.01.29", "646b7f569718921d7d4b5b8e22572ff6c76f2596")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
