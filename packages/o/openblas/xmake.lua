@@ -47,7 +47,7 @@ package("openblas")
     add_configs("lapack", {description = "Build LAPACK", default = not is_plat("android"), type = "boolean", readonly = (is_plat("windows") or is_plat("android"))})
     add_configs("dynamic_arch", {description = "Enable dynamic arch dispatch", default = (is_plat("linux") or is_plat("windows") or is_plat("mingw")), type = "boolean", readonly = not is_plat("linux")})
     add_configs("openmp", {description = "Compile with OpenMP enabled.", default = (is_plat("windows") or is_plat("linux") or is_plat("mingw")), type = "boolean", readonly = not is_plat("linux")})
-    add_configs("fortran", {description = "Compile with Fortran enabled.", default = is_plat("mingw"), type = "boolean", readonly = (is_plat("windows") or is_plat("android"))})
+    add_configs("fortran", {description = "Compile with Fortran enabled.", default = false, type = "boolean", readonly = (is_plat("windows") or is_plat("android"))})
     
     if not is_plat("windows") then
         add_deps("cmake")
