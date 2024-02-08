@@ -2,8 +2,9 @@ package("openvdb")
 
     set_homepage("https://www.openvdb.org/")
     set_description("OpenVDB - Sparse volume data structure and tools")
+    set_license("MPL-2.0")
 
-    add_urls("https://github.com/AcademySoftwareFoundation/openvdb/archive/$(version).tar.gz",
+    add_urls("https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openvdb.git")
     add_versions("v7.1.0", "0c3588c1ca6e647610738654ec2c6aaf41a203fd797f609fbeab1c9f7c3dc116")
     add_versions("v8.0.1", "a6845da7c604d2c72e4141c898930ac8a2375521e535f696c2cd92bebbe43c4f")
@@ -13,9 +14,10 @@ package("openvdb")
     add_versions("v9.1.0", "914ee417b4607c75c95b53bc73a0599de4157c7d6a32e849e80f24e40fb64181")
     add_versions("v10.0.1", "887a3391fbd96b20c77914f4fb3ab4b33d26e5fc479aa036d395def5523c622f")
     add_versions("v10.1.0", "2746236e29659a0d35ab90d832f7c7987dd2537587a1a2f9237d9c98afcd5817")
+    add_versions("v11.0.0", "6314ff1db057ea90050763e7b7d7ed86d8224fcd42a82cdbb9c515e001b96c74")
 
     add_deps("cmake")
-    add_deps("boost", {system = false, configs = {regex = true, system = true, iostreams = true}})
+    add_deps("boost >1.73", {configs = {regex = true, system = true, iostreams = true}})
 
     add_configs("with_houdini", {description = "Location of Houdini installation. Set to enable built with Houdini.", default = "", type = "string"})
     add_configs("with_maya", {description = "Location of Maya installation. Set to enable built with Maya.", default = "", type = "string"})
