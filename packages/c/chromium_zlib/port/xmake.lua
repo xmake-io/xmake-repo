@@ -42,32 +42,32 @@ target("zlib")
         if is_arch(".+64") then
             add_defines("INFLATE_CHUNK_READ_64LE")
         end
-    -- arm optimization disabled on windows, see http://crbug.com/v8/10012.
+    -- arm optimization disabled on windows, see https://github.com/xmake-mirror/chromium_zlib/blob/zlib/BUILD.gn#L73.
     elseif is_arch("arm.*") and not is_plat("windows") then
         add_defines("ADLER32_SIMD_NEON", "INFLATE_CHUNK_SIMD_NEON")
         add_files("adler32_simd.c", "contrib/optimizations/inffast_chunk.c", "contrib/optimizations/inflate.c")
         if is_arch(".+64") then
             add_defines("INFLATE_CHUNK_READ_64LE")
         end
-        if not is_plat("iphoneos") then
-            -- ARM v8 architecture
-            add_defines("CRC32_ARMV8_CRC32")
-            if not is_plat("windows", "android") then
-                add_cflags("-march=armv8-a+crc")
-            end
-            if is_plat("android") then
-                add_defines("ARMV8_OS_ANDROID")
-            elseif is_plat("linux") then
-                add_defines("ARMV8_OS_LINUX")
-            elseif is_plat("windows") then
-                add_defines("ARMV8_OS_WINDOWS")
-            elseif is_plat("macosx") then
-                add_defines("ARMV8_OS_MACOS")
-            else
-                os.raise("Unsupported ARM OS")
-            end
-            add_files("crc32_simd.c")
+        -- ARM v8 architecture
+        add_defines("CRC32_ARMV8_CRC32")
+        if not is_plat("windows", "macosx", "android", "iphoneos") then
+            add_cflags("-march=armv8-a+aes+crc")
         end
+        if is_plat("android") then
+            add_defines("ARMV8_OS_ANDROID")
+        elseif is_plat("linux") then
+            add_defines("ARMV8_OS_LINUX")
+        elseif is_plat("windows") then
+            add_defines("ARMV8_OS_WINDOWS")
+        elseif is_plat("macosx") then
+            add_defines("ARMV8_OS_MACOS")
+        elseif is_plat("iphoneos") then
+            add_defines("ARMV8_OS_IOS")
+        else
+            os.raise("Unsupported ARM OS")
+        end
+        add_files("crc32_simd.c")
     else
         add_defines("CPU_NO_SIMD")
         add_files("inflate.c")
@@ -85,7 +85,7 @@ target("minizip")
     if is_plat("windows") then
         add_files("contrib/minizip/iowin32.c")
         add_headerfiles("contrib/minizip/iowin32.h")
-    elseif is_plat("macosx", "iphoneos") then
+    elseif is_plat("macosx", "android", "iphoneos") then
         add_defines("USE_FILE32API")
     end
 
