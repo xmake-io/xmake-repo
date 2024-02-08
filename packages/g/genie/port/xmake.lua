@@ -16,7 +16,7 @@ target("genie")
     end)
     add_files("src/host/*.c")
     add_defines("LUA_COMPAT_MODULE")
-    if is_plat("windows", "mingw") then
+    if is_plat("windows", "mingw", "msys") then
         add_syslinks("ole32")
     elseif is_plat("macosx") then
         add_defines("LUA_USE_MACOSX")
