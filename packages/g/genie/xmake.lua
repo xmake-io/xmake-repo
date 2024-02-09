@@ -10,9 +10,11 @@ package("genie")
     add_versions("1165", "5461c5ab94d0365c40031fef8f459b9c21b4d37a")
     add_versions("1170", "22cc907a4351db46c55f73e6aa901f1b2f0c52ad")
 
+    add_configs("debug", {description = "Enable debug scripts.", default = false, type = "boolean", readonly = true})
+
     on_install("@windows", "@msys", "@macosx", "@linux", function (package)
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, {mode = "release"})
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
