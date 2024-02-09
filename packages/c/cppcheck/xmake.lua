@@ -4,7 +4,7 @@ package("cppcheck")
     add_versions("2.13.0", "8229afe1dddc3ed893248b8a723b428dc221ea014fbc76e6289840857c03d450")
 
     add_deps("cmake")
-    on_install(function (package)
+    on_install("windows|x64", "macosx", "linux", "mingw", function (package)
         import("package.tools.cmake").install(package, {})
     end)
 
