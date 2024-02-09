@@ -60,6 +60,8 @@ package("libsdl")
     add_versions("github:2.28.5", "release-2.28.5")
     add_versions("github:2.30.0", "release-2.30.0")
 
+    add_patches("2.30.0", "https://github.com/libsdl-org/SDL/commit/6a83588fdda0f70465ecd8b0231e753f434abeb1.patch", "f23b5c2035cb271559de45b76cb279dc72adfd89b24c7ec055ea1f99ab9bf606")
+
     add_deps("cmake")
 
     add_includedirs("include", "include/SDL2")
