@@ -8,7 +8,7 @@ package("cppcheck")
 
     add_deps("cmake")
 
-    on_install("windows|x64", "macosx", "linux", "mingw", function (package)
+    on_install("windows|x64", "macosx", "linux", "msys", function (package)
         import("package.tools.cmake").install(package)
     end)
 
