@@ -16,7 +16,7 @@ package("apr")
         add_syslinks("wsock32", "ws2_32", "advapi32", "shell32", "rpcrt4")
     end
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx|x86_64", function (package)
         local configs = {}
         if package:is_plat("linux") then
             os.vrunv("sh", {"./buildconf"})
