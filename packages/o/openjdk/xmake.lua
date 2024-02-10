@@ -19,7 +19,7 @@ package("openjdk")
             add_urls("https://download.java.net/java/GA/jdk$(version)/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-$(version)_macos-x64_bin.tar.gz")
             add_versions("20.0.2", "c65ba92b73d8076e2a10029a0674d40ce45c3e0183a8063dd51281e92c9f43fc")
         elseif is_arch("arm64") then
-            add_urls("https://download.java.net/java/GA/jdk$(version)/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-$(version)_macos-x64_bin.tar.gz")
+            add_urls("https://download.java.net/java/GA/jdk$(version)/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-$(version)_macos-aarch64_bin.tar.gz")
             add_versions("20.0.2", "2e6522bb574f76cd3f81156acd59115a014bf452bbe4107f0d31ff9b41b3da57")
         end
     end
