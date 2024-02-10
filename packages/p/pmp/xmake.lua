@@ -36,5 +36,5 @@ package("pmp")
                 v2 = mesh.add_vertex(pmp::Point(0, 1, 0));
                 v3 = mesh.add_vertex(pmp::Point(0, 0, 1));
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "pmp/SurfaceMesh.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "pmp/SurfaceMesh.h"}))
     end)
