@@ -92,7 +92,8 @@ package("dotnet")
     on_install("windows|x86", "windows|x64", "linux|x64", "linux|x86_64", "linux|arm64", "linux|arm64-v8a", "macosx|x86_64", "macosx|x64", "macosx|arm64", function (package)
 
         -- The division by 100 is intentional...
-        local version_str = package:version():major() .. "." .. package:version():minor() .. "." .. (package:version():patch() / 100)
+        print(package:version():patch())
+        local version_str = package:version():major() .. "." .. package:version():minor() .. "." .. package:version():patch()[1]
         local out_path = "packs"
         if package:is_plat("windows") then
             out_path = path.join(out_path, "Microsoft.NETCore.App.Host.win-" .. (package:is_arch("x64") and "x64" or "x86"), version_str, "runtimes", "win-" .. (package:is_arch("x64") and "x64" or "x86"), "native")
