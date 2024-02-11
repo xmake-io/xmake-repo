@@ -93,13 +93,13 @@ package("dotnet")
 
         local out_path = "packs"
         if package:is_plat("windows") then
-            out_path = path.join(out_path, "Microsoft.NETCore.App.Host.win-" .. (package:is_arch("x64") and "x64" or "x86"), "7.0.4", "runtimes", "win-" .. (package:is_arch("x64") and "x64" or "x86"), "native")
+            out_path = path.join(out_path, "Microsoft.NETCore.App.Host.win-" .. (package:is_arch("x64") and "x64" or "x86"), package:version_str(), "runtimes", "win-" .. (package:is_arch("x64") and "x64" or "x86"), "native")
             
             os.cp(path.join(out_path, "nethost.dll"), package:installdir("bin"))
             os.cp(path.join(out_path, "nethost.lib"), package:installdir("lib"))
         elseif package:is_plat("linux") then
             local is_arm = package:is_arch("arm64", "arm64-v8a")
-            out_path = path.join(out_path, "Microsoft.NETCore.App.Host.linux-" .. (is_arm and "arm64" or "x64"), "7.0.4", "runtimes", "linux-" .. (is_arm and "arm64" or "x64"), "native")
+            out_path = path.join(out_path, "Microsoft.NETCore.App.Host.linux-" .. (is_arm and "arm64" or "x64"), package:version_str(), "runtimes", "linux-" .. (is_arm and "arm64" or "x64"), "native")
 
             if package:config("shared") then
                 os.cp(path.join(out_path, "*.so"), package:installdir("lib"))
@@ -107,7 +107,7 @@ package("dotnet")
                 os.cp(path.join(out_path, "*.a"), package:installdir("lib"))
             end
         elseif package:is_plat("macosx") then
-            out_path = path.join(out_path, "Microsoft.NETCore.App.Host.osx-" .. (package:is_arch("arm64") and "arm64" or "x64"), "7.0.4", "runtimes", "osx-" .. (package:is_arch("arm64") and "arm64" or "x64"), "native")
+            out_path = path.join(out_path, "Microsoft.NETCore.App.Host.osx-" .. (package:is_arch("arm64") and "arm64" or "x64"), package:version_str(), "runtimes", "osx-" .. (package:is_arch("arm64") and "arm64" or "x64"), "native")
 
             if package:config("shared") then
                 os.cp(path.join(out_path, "*.dylib"), package:installdir("lib"))
