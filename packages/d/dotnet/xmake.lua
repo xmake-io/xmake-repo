@@ -106,7 +106,7 @@ package("dotnet")
         local version_str = package:version_str()
         local out_path = "packs"
         if package:is_plat("windows") then
-            out_path = path.join(out_path, "Microsoft.NETCore.App.Host.win-" .. (package:is_arch("x64") and "x64" or (package:is_arch("arm64") and "arm64" or "x86"), version_str, "runtimes", "win-" .. (package:is_arch("x64") and "x64" or "x86"), "native")
+            out_path = path.join(out_path, "Microsoft.NETCore.App.Host.win-" .. (package:is_arch("x64") and "x64" or (package:is_arch("arm64") and "arm64" or "x86")), version_str, "runtimes", "win-" .. (package:is_arch("x64") and "x64" or "x86"), "native")
             
             os.cp(path.join(out_path, "nethost.dll"), package:installdir("bin"))
             os.cp(path.join(out_path, "nethost.lib"), package:installdir("lib"))
