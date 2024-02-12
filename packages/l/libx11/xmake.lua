@@ -27,7 +27,7 @@ package("libx11")
         add_deps("gnu-sed")
     end
 
-    on_install("macosx|x86_64", "linux", function (package)
+    on_install("macosx", "linux", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
