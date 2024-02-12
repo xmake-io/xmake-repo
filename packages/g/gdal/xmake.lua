@@ -4,6 +4,7 @@ package("gdal")
     set_license("MIT")
 
     add_urls("https://github.com/OSGeo/gdal/releases/download/v$(version)/gdal-$(version).tar.gz")
+    add_versions("3.8.3", "f7a30387a8239e9da26200f787a02136df2ee6473e86b36d05ad682761a049ea")
     add_versions("3.5.1", "7c4406ca010dc8632703a0a326f39e9db25d9f1f6ebaaeca64a963e3fac123d1")
 
     add_configs("apps", {description = "Build GDAL applications.", default = false, type = "boolean"})
