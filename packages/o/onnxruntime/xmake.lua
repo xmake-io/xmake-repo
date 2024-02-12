@@ -57,6 +57,15 @@ package("onnxruntime")
 
     on_install("windows", "linux|arm64", "linux|x86_64", "macosx", function (package)
         os.cp("*", package:installdir())
+        if package:is_plat("windows") then
+            local bin_dir = path.join(package:installdir(),"bin")
+            local lib_dir = path.join(package:installdir(),"lib")
+            os.mkdir(bin_dir)
+            for _, dll_file_path in ipairs(os.files(lib_dir .. "/*.dll")) do
+                local file_name = path.filename(dll_file_path)
+                os.mv(dll_file_path, path.join(bin_dir, file_name))
+            end
+        end
     end)
 
     on_test(function (package)
