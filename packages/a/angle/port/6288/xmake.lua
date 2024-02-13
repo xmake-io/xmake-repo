@@ -1209,7 +1209,7 @@ target("GLESv2")
         end
     end
     after_install(function (target) 
-        if target:is_plat("windows") and is_kind("shared") then
+        if target:is_plat("windows") and target:kind() == "shared" then
             local vcvars = import("core.tool.toolchain").load("msvc"):config("vcvars")
             local winsdkdir = vcvars["WindowsSdkDir"]
             local d3dcompiler = path.join(winsdkdir, "Redist", "D3D", target:arch(), "d3dcompiler_47.dll")
