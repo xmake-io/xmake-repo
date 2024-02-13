@@ -5,7 +5,8 @@ set_languages("c99", "c++17")
 add_rules("mode.debug", "mode.release")
 
 add_requires("python 3.x", {kind = "binary"})
-add_requires("chromium_zlib")
+add_requires("zlib")
+-- add_requires("chromium_zlib")
 
 function angle_define_option(name, opt)
 local opt = opt or {}
@@ -960,8 +961,6 @@ end
 target("ANGLE")
     if is_plat("windows") then
         set_basename("libANGLE")
-        add_defines("WIN32_LEAN_AND_MEAN", "NOMINMAX", {public = true})
-        add_syslinks("user32", "gdi32")
     end
     set_kind("static")
     add_defines("LIBANGLE_IMPLEMENTATION")
@@ -981,7 +980,7 @@ target("ANGLE")
     add_files(angle_frame_capture_mock)
     add_files(angle_version_info)
     add_files(xxhash_sources)
-    -- add_files(zlib_wrapper_sources) -- use chromium_zlib directly
+    add_files(zlib_wrapper_sources)
 
     -- gpuinfo util
     add_files(libangle_gpu_info_util_sources)
@@ -1111,8 +1110,8 @@ target("ANGLE")
     add_defines("ANGLE_OUTSIDE_WEBKIT")
     add_defines("ANGLE_ENABLE_SHARE_CONTEXT_LOCK=1", "ANGLE_ENABLE_CONTEXT_MUTEX=1")
     add_packages("python")
-    -- add_packages("zlib")
-    add_packages("chromium_zlib")
+    add_packages("zlib")
+    -- add_packages("chromium_zlib")
     if has_config("with_capture") then
         add_defines("ANGLE_CAPTURE_ENABLED=1")
         add_files("src/libANGLE/capture/serialize_mock.cpp")
@@ -1134,7 +1133,8 @@ target("ANGLE")
     end
     if is_plat("windows") then
         add_defines("ANGLE_IS_WIN")
-        add_cflags("/wd4530")
+        add_defines("WIN32_LEAN_AND_MEAN", "NOMINMAX", {public = true})
+        add_syslinks("user32", "gdi32")
     elseif is_plat("macosx") then
         set_values("objc++.build.arc", false)
         add_files(libangle_mac_sources)
@@ -1171,7 +1171,7 @@ target("ANGLE")
         end
 
         -- add android syslinks
-        if is_plat("android") then
+        if target:is_plat("android") then
             local ndk = toolchain.load("ndk")
             local ndk_sdkver = ndk:config("ndk_sdkver")
             if ndk_sdkver and tonumber(ndk_sdkver) >= 26 then
@@ -1179,14 +1179,6 @@ target("ANGLE")
             else
                 target:add("syslinks", "android")
             end
-        end
-    end)
-    after_install(function (target) 
-        if target:is_plat("windows") then
-            local vcvars = import("core.tool.toolchain").load("msvc"):config("vcvars")
-            local winsdkdir = vcvars["WindowsSdkDir"]
-            local d3dcompiler = path.join(winsdkdir, "Redist", "D3D", target:arch(), "d3dcompiler_47.dll")
-            os.cp(d3dcompiler, path.join(target:installdir(), "bin"))
         end
     end)
 
@@ -1216,6 +1208,14 @@ target("GLESv2")
                 "GL_API=__attribute__((visibility(\"default\")))")
         end
     end
+    after_install(function (target) 
+        if target:is_plat("windows") and is_kind("shared") then
+            local vcvars = import("core.tool.toolchain").load("msvc"):config("vcvars")
+            local winsdkdir = vcvars["WindowsSdkDir"]
+            local d3dcompiler = path.join(winsdkdir, "Redist", "D3D", target:arch(), "d3dcompiler_47.dll")
+            os.cp(d3dcompiler, path.join(target:installdir(), "bin"))
+        end
+    end)
 
 target("EGL")
     set_kind("$(kind)")

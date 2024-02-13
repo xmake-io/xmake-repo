@@ -7,8 +7,10 @@ package("angle")
     add_urls("https://github.com/google/angle/archive/refs/heads/chromium/$(version).zip")
     add_versions("6288", "0d3bcf5bfd9eecd2b1635a6220a18f52a27ae5823928d4b6b083c54c163f963b")
 
+    add_resources(">=6288", "chromium_zlib", "https://github.com/xmake-mirror/chromium_zlib.git", "646b7f569718921d7d4b5b8e22572ff6c76f2596")
+
     add_deps("python 3.x", {kind = "binary"})
-    add_deps("chromium_zlib")
+    add_deps("zlib")
     add_deps("opengl")
     if is_plat("windows") then
         add_links("libEGL", "libGLESv2", "libANGLE")
@@ -31,6 +33,8 @@ package("angle")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
+        local zlib_dir = package:resourcefile("chromium_zlib")
+        os.cp(path.join(zlib_dir, "google"), "third_party/zlib")
         os.cp(path.join(os.scriptdir(), "port", package:version_str(), "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
