@@ -964,7 +964,6 @@ target("ANGLE")
         add_syslinks("user32", "gdi32")
     end
     set_kind("static")
-    add_packages("chromium_zlib")
     add_defines("LIBANGLE_IMPLEMENTATION")
     add_defines("GL_GLES_PROTOTYPES=0", "EGL_EGL_PROTOTYPES=0")
     add_includedirs("src", "include", "$(buildir)/gen/angle", {public = true})
@@ -1187,7 +1186,7 @@ target("ANGLE")
             local vcvars = import("core.tool.toolchain").load("msvc"):config("vcvars")
             local winsdkdir = vcvars["WindowsSdkDir"]
             local d3dcompiler = path.join(winsdkdir, "Redist", "D3D", target:arch(), "d3dcompiler_47.dll")
-            os.cp(d3dcompiler, target:installdir("bin"))
+            os.cp(d3dcompiler, path.join(target:installdir(), "bin"))
         end
     end)
 
