@@ -23,7 +23,7 @@ package("pseudo-double")
         ]])
         package:add("defines", "PSEUDO_DOUBLE_EXP_BITS=" .. package:config("pseudo_double_exp_bits"))
         package:add("defines", "PD_ERROR_CHECK=" .. (package:config("pd_error_check") and "1" or "0"))
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
