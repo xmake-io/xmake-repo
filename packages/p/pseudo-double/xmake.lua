@@ -38,7 +38,7 @@ package("pseudo-double")
                     if target:has_tool("gcc", "gxx") then
                         target:add("defines", "__GNUC__")
                     elseif target:has_tool("cc", "cxx", "clang", "clangxx") then
-                        target:add("cxflags", "clang::-std=c++1y", {force = true})
+                        target:add("cxflags", "clang::-std=c++11", {force = true})
                         target:add("defines", "__clang__")
                     end
                 end)
