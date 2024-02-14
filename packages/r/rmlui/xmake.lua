@@ -6,6 +6,7 @@ package("rmlui")
 
     add_urls("https://github.com/mikke89/RmlUi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mikke89/RmlUi.git")
+    add_versions("5.1", "0d28177118f0777e42864b2b7ddfc2937e81eb0dc4c52fc034c71a0c93516626")
     add_versions("5.0", "1f6eac0e140c35275df32088579fc3a0087fa523082c21c28d5066bd6d18882a")
 
     add_configs("freetype", {description = "Building with the default FreeType font engine.", default = true, type = "boolean"})
