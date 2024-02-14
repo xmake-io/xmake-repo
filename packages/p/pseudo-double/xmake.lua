@@ -7,7 +7,7 @@ package("pseudo-double")
     add_versions("2024.01.17", "275b244eee40b987a209927d7942d4bf83d91c95")
 
     add_configs("pseudo_double_exp_bits", {description = "This sets the number of bits in the exponent, defaulting to 16 if not set.", default = "16", type = "string", values = {"8", "16", "32"}})
-    add_configs("pd_error_check", {description = "This enables error checking in the library, defaulting to 0 if not set.", default = true, type = "boolean"})
+    add_configs("pd_error_check", {description = "This enables error checking in the library, defaulting to true if not set.", default = true, type = "boolean"})
 
 
     on_install(function (package)
