@@ -18,8 +18,11 @@ package("pseudo-double")
             add_rules("mode.release", "mode.debug")
             target("pseudo-double")
                 set_kind("$(kind)")
-                set_languages("cxx11")
-                add_cxxflags("clang::-std=c++11", {force = true})
+                if is_plat("macosx") then
+                    set_languages("cxx14")
+                else
+                    set_languages("cxx11")
+                end
                 add_files("pseudo_double.c", "pseudo_double.cpp")
                 add_headerfiles("(pseudo_double.h)", "(PseudoDouble.h)")
         ]])
