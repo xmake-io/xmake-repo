@@ -15,6 +15,7 @@ package("chromium_zlib")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
+    add_links("compression_utils_portable", "minizip", "z", "zlib")
 
     on_install(function (package)
         for _, f in ipairs(table.join(os.files("contrib/minizip/*.c"), os.files("contrib/minizip/*.h"))) do
