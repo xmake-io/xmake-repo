@@ -12,6 +12,10 @@ package("pseudo-double")
     add_configs("pseudo_double_exp_bits", {description = "This sets the number of bits in the exponent, defaulting to 16 if not set.", default = "16", type = "string", values = {"8", "16", "32"}})
     add_configs("pd_error_check", {description = "This enables error checking in the library, defaulting to true if not set.", default = true, type = "boolean"})
 
+    if is_plat("linux") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+    
     on_install("windows|x64", "linux|x86_64", "bsd", "android|arm64*", "cross", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
