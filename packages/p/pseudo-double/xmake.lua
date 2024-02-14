@@ -1,6 +1,7 @@
 package("pseudo-double")
     set_homepage("https://github.com/royward/pseudo-double")
     set_description("A relatively fast C and C++ 64 bit floating point library written using only integer operations for cross platform consistency. Tested with gcc/clang/Visual Studio, on x86-64/ARMv8 (64 bit)")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/royward/pseudo-double.git")
     add_versions("2024.01.17", "275b244eee40b987a209927d7942d4bf83d91c95")
