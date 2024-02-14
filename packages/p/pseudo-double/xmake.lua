@@ -30,7 +30,7 @@ package("pseudo-double")
                     add_defines("__APPLE__")
                 end
 
-                set_languages("cxx11")
+                set_languages("c++11")
                 add_files("pseudo_double.c", "pseudo_double.cpp")
                 add_headerfiles("(pseudo_double.h)", "(PseudoDouble.h)")
                 
