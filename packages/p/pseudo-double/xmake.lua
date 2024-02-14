@@ -9,8 +9,7 @@ package("pseudo-double")
     add_configs("pseudo_double_exp_bits", {description = "This sets the number of bits in the exponent, defaulting to 16 if not set.", default = "16", type = "string", values = {"8", "16", "32"}})
     add_configs("pd_error_check", {description = "This enables error checking in the library, defaulting to true if not set.", default = true, type = "boolean"})
 
-
-    on_install(function (package)
+    on_install("windows|x64", "linux|x86_64", "bsd", "android|arm64*", "cross", function (package)
         local configs = {}
         io.replace("pseudo_double.h", "#include <stdint.h>", "#include <stdint.h>\n#include <stdbool.h>", {plain = true})
         io.replace("PseudoDouble.h", "#include <stdexcept>", "#include <stdexcept>\n#include <string>", {plain = true})
@@ -18,11 +17,10 @@ package("pseudo-double")
             add_rules("mode.release", "mode.debug")
             target("pseudo-double")
                 set_kind("$(kind)")
-                if is_plat("macosx") then
-                    set_languages("cxx14")
-                else
-                    set_languages("cxx11")
+                if is_plat("windows") then
+                    add_defines("_MSC_VER")
                 end
+                set_languages("cxx11")
                 add_files("pseudo_double.c", "pseudo_double.cpp")
                 add_headerfiles("(pseudo_double.h)", "(PseudoDouble.h)")
         ]])
