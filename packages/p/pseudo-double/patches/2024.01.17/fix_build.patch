@@ -1,0 +1,37 @@
+diff --git a/PseudoDouble.h b/PseudoDouble.h
+index 631ec43..384b238 100644
+--- a/PseudoDouble.h
++++ b/PseudoDouble.h
+@@ -32,6 +32,7 @@
+ #define PSEUDO_DOUBLE_CPP_H
+ 
+ #include <stdexcept>
++#include <string>
+ 
+ #ifndef PD_DO_ERROR_OVERFLOW
+ #define PD_DO_ERROR_OVERFLOW throw std::overflow_error("overflow");
+@@ -58,8 +59,10 @@ public:
+ 	inline PseudoDouble(uint32_t f) {val=uint64_to_pdi(f);}
+ 	inline PseudoDouble(uint64_t f) {val=uint64_to_pdi(f);}
+ #ifndef _MSC_VER // windows
+-	inline PseudoDouble(long long f) { val = int64_to_pdi(f); }
+-	inline PseudoDouble(unsigned long long f) {val=uint64_to_pdi(f);}
++	#ifndef __APPLE__
++		inline PseudoDouble(long long f) { val = int64_to_pdi(f); }
++		inline PseudoDouble(unsigned long long f) {val=uint64_to_pdi(f);}
++	#endif
+ #endif
+ 	inline operator double() const {return pdi_to_double(val);}
+ 	inline operator int16_t() const {return static_cast<int16_t>(pdi_to_int64(val));}
+diff --git a/pseudo_double.h b/pseudo_double.h
+index f1a3522..c5c80a2 100644
+--- a/pseudo_double.h
++++ b/pseudo_double.h
+@@ -31,6 +31,7 @@
+ #define PSEUDO_DOUBLE_H
+ 
+ #include <stdint.h>
++#include <stdbool.h>
+ 
+ #ifdef _MSC_VER
+ #include <intrin.h>

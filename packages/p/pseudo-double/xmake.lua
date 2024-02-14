@@ -4,7 +4,10 @@ package("pseudo-double")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/royward/pseudo-double.git")
+
     add_versions("2024.01.17", "275b244eee40b987a209927d7942d4bf83d91c95")
+
+    add_patches("2024.01.17", path.join(os.scriptdir(), "patches", "2024.01.17", "fix_build.patch"), "56d2f8071d7c87eca26b3ee272cc9eaf3afb8cc17a1ca912bb8b8f7e156d92df")
 
     add_configs("pseudo_double_exp_bits", {description = "This sets the number of bits in the exponent, defaulting to 16 if not set.", default = "16", type = "string", values = {"8", "16", "32"}})
     add_configs("pd_error_check", {description = "This enables error checking in the library, defaulting to true if not set.", default = true, type = "boolean"})
@@ -13,16 +16,18 @@ package("pseudo-double")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_install(--[["windows|x64", "linux|x86_64", "bsd", "android|arm64*", "cross", ]]function (package)
+    on_install("windows|x64", "linux|x86_64", "bsd", "android|arm64*", "cross", function (package)
         local configs = {}
-        io.replace("pseudo_double.h", "#include <stdint.h>", "#include <stdint.h>\n#include <stdbool.h>", {plain = true})
-        io.replace("PseudoDouble.h", "#include <stdexcept>", "#include <stdexcept>\n#include <string>", {plain = true})
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("pseudo-double")
                 set_kind("$(kind)")
+
                 if is_plat("windows") then
                     add_defines("_MSC_VER")
+                end
+                if is_plat("macosx") then
+                    add_defines("__APPLE__")
                 end
 
                 set_languages("cxx11")
