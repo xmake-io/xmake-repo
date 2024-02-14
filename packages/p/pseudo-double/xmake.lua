@@ -13,6 +13,7 @@ package("pseudo-double")
     on_install(function (package)
         local configs = {}
         io.replace("pseudo_double.h", "#include <stdint.h>", "#include <stdint.h>\n#include <stdbool.h>", {plain = true})
+        io.replace("PseudoDouble.h", "#include <stdexcept>", "#include <stdexcept>\n#include <string>", {plain = true})
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("pseudo-double")
