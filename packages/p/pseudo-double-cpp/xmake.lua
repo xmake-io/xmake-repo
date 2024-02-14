@@ -14,7 +14,7 @@ package("pseudo-double-cpp")
         package:add("deps", "pseudo-double-c", {configs = {shared = package:config("shared"), pseudo_double_exp_bits = package:config("pseudo_double_exp_bits"), pd_error_check = package:config("pd_error_check")}})
     end)
 
-    on_install("windows|x64", "linux|x86_64", "bsd", "android|arm64*", "cross", function (package)
+    on_install("windows|x64", "linux|x86_64", "bsd", "android|arm64*", function (package)
         local configs = {}
         io.replace("PseudoDouble.h", "#include <stdexcept>", "#include <stdexcept>\n#include <string>", {plain = true})
         io.writefile("xmake.lua", [[
