@@ -16,7 +16,7 @@ package("pseudo-double")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_install("windows|x64", "linux|x86_64", "bsd", "android|arm64*", "cross", function (package)
+    on_install(--[["windows|x64", "linux|x86_64", "bsd", "android|arm64*", "cross", ]]function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
