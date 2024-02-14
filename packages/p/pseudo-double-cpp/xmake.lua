@@ -31,14 +31,6 @@ package("pseudo-double-cpp")
 
                 add_files("pseudo_double.cpp")
                 add_headerfiles("(PseudoDouble.h)")
-                
-                on_config(function (target)
-                    if target:has_tool("gcc", "gxx") then
-                        target:add("defines", "__GNUC__")
-                    elseif target:has_tool("cc", "cxx", "clang", "clangxx") then
-                        target:add("defines", "__clang__")
-                    end
-                end)
         ]])
         import("package.tools.xmake").install(package)
     end)
