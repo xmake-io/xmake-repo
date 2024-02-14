@@ -7,14 +7,10 @@ package("pseudo-double")
 
     add_versions("2024.01.17", "275b244eee40b987a209927d7942d4bf83d91c95")
 
-    add_patches("2024.01.17", path.join(os.scriptdir(), "patches", "2024.01.17", "fix_build.patch"), "56d2f8071d7c87eca26b3ee272cc9eaf3afb8cc17a1ca912bb8b8f7e156d92df")
+    add_patches("2024.01.17", path.join(os.scriptdir(), "patches", "2024.01.17", "fix_build.patch"), "0fa2351c6c2ecc8fbd7e0037c8f1708a3f49153c1ddbb618d302ae256ff32652")
 
     add_configs("pseudo_double_exp_bits", {description = "This sets the number of bits in the exponent, defaulting to 16 if not set.", default = "16", type = "string", values = {"8", "16", "32"}})
     add_configs("pd_error_check", {description = "This enables error checking in the library, defaulting to true if not set.", default = true, type = "boolean"})
-
-    if is_plat("linux") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
 
     on_install(--[["windows|x64", "linux|x86_64", "bsd", "android|arm64*", "cross", ]]function (package)
         local configs = {}
@@ -38,7 +34,6 @@ package("pseudo-double")
                     if target:has_tool("gcc", "gxx") then
                         target:add("defines", "__GNUC__")
                     elseif target:has_tool("cc", "cxx", "clang", "clangxx") then
-                        target:add("cflags", "-Wno-error=reserved-user-defined-literal")
                         target:add("defines", "__clang__")
                     end
                 end)

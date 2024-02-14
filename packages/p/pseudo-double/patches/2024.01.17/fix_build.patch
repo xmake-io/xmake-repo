@@ -1,5 +1,5 @@
 diff --git a/PseudoDouble.h b/PseudoDouble.h
-index 631ec43..384b238 100644
+index 631ec43..a4cd4f8 100644
 --- a/PseudoDouble.h
 +++ b/PseudoDouble.h
 @@ -32,6 +32,7 @@
@@ -23,6 +23,15 @@ index 631ec43..384b238 100644
  #endif
  	inline operator double() const {return pdi_to_double(val);}
  	inline operator int16_t() const {return static_cast<int16_t>(pdi_to_int64(val));}
+@@ -145,7 +148,7 @@ inline PseudoDouble PD_create_fixed10(int64_t x, int32_t e) {return PseudoDouble
+ inline PseudoDouble PD_create_fixed2(int64_t x, int32_t e) {return PseudoDouble::create(int64fixed2_to_pdi(x,e));}
+ inline int64_t PD_get_fixed2(PseudoDouble x, int32_t e) {return pdi_to_int64fixed2(x.val,e);}
+ inline PseudoDouble PD_from_string(std::string str) {return PseudoDouble::create(string_to_pdi(str.c_str()));}
+-inline PseudoDouble operator "" _pd(const char* str, std::size_t) {return PseudoDouble::create(string_to_pdi(str));}
++inline PseudoDouble operator ""_pd(const char* str, std::size_t) {return PseudoDouble::create(string_to_pdi(str));}
+ 
+ const static PseudoDouble PD_HALF=PD_create_fixed2(1,-1);
+ const static PseudoDouble PD_QUARTER=PD_create_fixed2(1,-2);
 diff --git a/pseudo_double.h b/pseudo_double.h
 index f1a3522..c5c80a2 100644
 --- a/pseudo_double.h
