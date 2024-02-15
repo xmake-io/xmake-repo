@@ -10,7 +10,7 @@ package("pseudo-double-c")
     add_configs("pseudo_double_exp_bits", {description = "This sets the number of bits in the exponent, defaulting to 16 if not set.", default = "16", type = "string", values = {"8", "16", "32"}})
     add_configs("pd_error_check", {description = "This enables error checking in the library, defaulting to true if not set.", default = true, type = "boolean"})
 
-    on_install("windows|x64", "linux|x86_64", "macos", "bsd", "android|arm64*", "wasm", function (package)
+    on_install("windows|x64", "linux|x86_64", "macosx", "bsd", "android|arm64*", "wasm", function (package)
         local configs = {}
         io.replace("pseudo_double.h", "#include <stdint.h>", "#include <stdint.h>\n#include <stdbool.h>", {plain = true})
         io.writefile("xmake.lua", [[
