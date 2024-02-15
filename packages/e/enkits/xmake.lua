@@ -6,6 +6,7 @@ package("enkits")
 
     add_urls("https://github.com/dougbinks/enkiTS/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dougbinks/enkiTS.git")
+    add_versions("v1.11", "b57a782a6a68146169d29d180d3553bfecb9f1a0e87a5159082331920e7d297e")
     add_versions("v1.10", "578f285fc7c2744bf831548f35b855c6ab06c0d541d08c9cc50b6b72a250811a")
 
     add_deps("cmake")
