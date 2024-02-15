@@ -15,24 +15,12 @@ package("pseudo-double-cpp")
     end)
 
     on_install("windows|x64", "linux|x86_64", "bsd", "android|arm64*", function (package)
-        local configs = {}
         io.replace("PseudoDouble.h", "#include <stdexcept>", "#include <stdexcept>\n#include <string>", {plain = true})
-        io.writefile("xmake.lua", [[
-            add_rules("mode.release", "mode.debug")
-            add_requires("pseudo-double-c")
-            target("pseudo-double-cpp")
-                set_kind("$(kind)")
-                set_languages("c++11")
-                add_packages("pseudo-double-c")
-
-                if is_plat("windows") then
-                    add_defines("_MSC_VER")
-                end
-
-                add_files("pseudo_double.cpp")
-                add_headerfiles("(PseudoDouble.h)")
-        ]])
-        import("package.tools.xmake").install(package)
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        local configs = {}
+        configs.pseudo_double_exp_bits = package:config("pseudo_double_exp_bits")
+        configs.pd_error_check = package:config("pd_error_check")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
