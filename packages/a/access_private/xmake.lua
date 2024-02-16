@@ -13,6 +13,8 @@ package("access_private")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <access_private.hpp>
+
             class A {
                 int m_i = 3;
                 int m_f(int p) { return 14 * p; }
