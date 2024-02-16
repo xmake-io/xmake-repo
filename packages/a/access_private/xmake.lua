@@ -7,8 +7,6 @@ package("access_private")
     add_urls("https://github.com/martong/access_private.git")
     add_versions("2024.02.01", "9e47d135067ecfe569158b2f42ead9c6db9aaedf")
 
-    add_deps("cmake")
-
     on_install(function (package)
         os.cp("include", package:installdir())
     end)
