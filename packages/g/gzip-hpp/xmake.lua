@@ -12,6 +12,7 @@ package("gzip-hpp")
     add_deps("zlib")
    
     on_install(function (package)
+        io.replace("include/gzip/utils.hpp", "#include <cstdlib>", "#include <cstdlib>\n#include <stdint.h>", {plain = true})
         os.cp("include", package:installdir())
     end)
 
