@@ -21,7 +21,7 @@ package("cpptrace")
         add_syslinks("dbghelp")
     end
 
-    if get_config("kind") == "static" then
+    if package:config("static") then
         add_defines("CPPTRACE_STATIC_DEFINE", {public = true})
     end
 
