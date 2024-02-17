@@ -21,6 +21,10 @@ package("cpptrace")
         add_syslinks("dbghelp")
     end
 
+    if get_config("kind") == "static" then
+        add_defines("CPPTRACE_STATIC_DEFINE", {public = true})
+    end
+
     on_install("linux", "macosx", "windows", "mingw", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
