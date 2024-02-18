@@ -21,15 +21,24 @@ package("libpq")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:is_plat("macosx") then
             table.insert(configs, "--with-gssapi")
-            local libinfo = package:dep("krb5"):fetch()
-            if libinfo then
-                local includedirs = table.wrap(libinfo.sysincludedirs or libinfo.includedirs)
+            local libinfo_krb5 = package:dep("krb5"):fetch()
+            local libinfo_icu4c = package:dep("icu4c"):fetch()
+            if libinfo_krb5 or libinfo_icu4c then
+                local includedirs_krb5 = table.wrap(libinfo_krb5.sysincludedirs or libinfo_krb5.includedirs)
+                local includedirs_icu4c = table.wrap(libinfo_icu4c.sysincludedirs or libinfo_icu4c.includedirs)
+                local includedirs = table.join(includedirs_krb5, includedirs_icu4c)
                 if #includedirs > 0 then
                     table.insert(configs, "--with-includes=" .. table.concat(includedirs, ":"))
                 end
-                local linkdirs = table.wrap(libinfo.linkdirs)
+                local linkdirs_krb5 = table.wrap(libinfo_krb5.linkdirs)
+                local linkdirs_icu4c = table.wrap(libinfo_icu4c.linkdirs)
+                local linkdirs = table.join(linkdirs_krb5, linkdirs_icu4c)
                 if #linkdirs > 0 then
                     table.insert(configs, "--with-libraries=" .. table.concat(linkdirs, ":"))
+                end
+                if libinfo_icu4c then
+                    os.setenv("ICU_CFLAGS", "-I" .. includedirs_icu4c[1])
+                    os.setenv("ICU_LIBS", "-L" .. linkdirs_icu4c[1])
                 end
             end
         end

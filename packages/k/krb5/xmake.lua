@@ -13,7 +13,7 @@ package("krb5")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
 
     add_deps("bison", "libverto")
-    add_links("k5crypto", "kdb5", "krad", "gssapi_krb5", "krb5support", "krb5", "gssrpc", "verto", "com_err")
+    add_links("libverto", "k5crypto", "kdb5", "krad", "gssapi_krb5", "krb5support", "krb5", "gssrpc", "verto", "com_err")
     on_load("macosx", "linux", function (package)
         if package:config("tls") then
             package:add("deps", "openssl")
@@ -22,7 +22,7 @@ package("krb5")
 
     on_install("macosx|x86_64", "linux", function (package)
         os.cd("src")
-        local configs = {"--disable-dependency-tracking", "--with-system-verto"}
+        local configs = {"--disable-dependency-tracking"}
         table.insert(configs, "--with-tls-impl=" .. (package:config("tls") and "openssl" or "no"))
         local cppflags = {}
         local ldflags = {}
