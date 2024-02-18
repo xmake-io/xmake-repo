@@ -19,9 +19,13 @@ target("bz2")
         set_filename("libbz2.dll")
         add_files("libbz2.def")
     end
-    if is_plat("wasm") or has_tool("cc", "clang", "clangxx") then
+    if is_plat("wasm") then
         add_defines("BZ_STRICT_ANSI")
     end
+    if has_tool("cc", "clang", "clangxx") then
+        add_cflags("-Wno-error=int-conversion")
+    end
+
 
 if has_config("enable_tools") then
 
