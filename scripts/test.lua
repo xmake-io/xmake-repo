@@ -199,7 +199,7 @@ function main(...)
         for _, file in ipairs(files:split('\n'), string.trim) do
             if file:startswith("packages") then
                 assert(file == file:lower(), "%s must be lower case!", file)
-                local package = file:match("packages/%w/(%S+)/")
+                local package = file:match("packages/%w/(%S-)/")
                 table.insert(packages, package)
             end
         end
