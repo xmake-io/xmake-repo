@@ -6,10 +6,8 @@ package("rmlui")
     add_urls("https://github.com/mikke89/RmlUi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mikke89/RmlUi.git")
 
-    add_versions("5.1", "0d28177118f0777e42864b2b7ddfc2937e81eb0dc4c52fc034c71a0c93516626")             
+    add_versions("5.1", "0d28177118f0777e42864b2b7ddfc2937e81eb0dc4c52fc034c71a0c93516626")
     add_versions("5.0", "1f6eac0e140c35275df32088579fc3a0087fa523082c21c28d5066bd6d18882a")
-
-    add_patches("5.1", "https://github.com/mikke89/RmlUi/commit/313cbab6570a45fba1a08534da7c3b46b812fa48.patch", "cc6290c36fa5c145f300d934a894be154fcda857133b3ab1671192739106c5e5")
 
     add_configs("freetype", {description = "Building with the default FreeType font engine.", default = true, type = "boolean"})
     add_configs("lua",      {description = "Build Lua bindings.", default = false, type = "boolean"})
@@ -44,6 +42,10 @@ package("rmlui")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
+        if package:is_plat("linux") then
+            io.replace("Include/RmlUi/Core/Types.h", "#include <cstdlib>", "#include <cstdlib>\n#include <cstdint>\n", {plain = true})
+        end
+
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_SAMPLES=OFF"}
         if package:is_plat("macosx") and package:is_arch("arm64") then
             table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=arm64")
