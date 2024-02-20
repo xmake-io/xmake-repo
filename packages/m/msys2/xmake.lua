@@ -8,9 +8,15 @@ package("msys2")
         end})
     add_versions("2024.01.13", "04456a44a956d3c0b5f9b6c754918bf3a8c3d87c858be7a0c94c9171ab13c58c")
 
+    add_configs("msystem", {description = "Set msys2 system.", type = "string", values = {"MSYS", "MINGW32", "MINGW64", "UCRT64", "CLANG32", "CLANG64", "CLANGARM64"}})
+
     on_install("@windows", function (package)
         os.cp("*", package:installdir())
         package:addenv("PATH", "usr/bin")
+        local msystem = package:config("msystem")
+        if msystem then
+            package:addenv("MSYSTEM", msystem)
+        end
     end)
 
     on_test(function (package)
