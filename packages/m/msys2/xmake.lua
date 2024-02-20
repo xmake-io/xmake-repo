@@ -9,8 +9,11 @@ package("msys2")
     add_versions("2024.01.13", "04456a44a956d3c0b5f9b6c754918bf3a8c3d87c858be7a0c94c9171ab13c58c")
 
     on_install("@windows", function (package)
-        print(os.files("**"))
+        os.cp("*", package:installdir())
+        package:addenv("PATH", "usr/bin")
     end)
 
     on_test(function (package)
+        os.vrun("sh --version")
+        os.vrun("bash --version")
     end)
