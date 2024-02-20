@@ -10,7 +10,7 @@ package("msys2")
 
     add_configs("msystem", {description = "Set msys2 system.", type = "string", values = {"MSYS", "MINGW32", "MINGW64", "UCRT64", "CLANG32", "CLANG64", "CLANGARM64"}})
 
-    on_install("@windows", function (package)
+    on_install("@windows|x86_64", function (package)
         os.cp("*", package:installdir())
         package:addenv("PATH", "usr/bin")
         local msystem = package:config("msystem")
