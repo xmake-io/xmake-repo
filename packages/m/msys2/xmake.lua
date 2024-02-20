@@ -21,5 +21,7 @@ package("msys2")
 
     on_test(function (package)
         os.vrun("sh --version")
-        os.vrun("bash --version")
+        os.vrun("perl --version")
+        os.vrun("ls -l")
+        os.vrun("grep --version")
     end)
