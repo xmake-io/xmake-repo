@@ -183,6 +183,12 @@ package("ffmpeg")
             else
                 raise("unknown arch(%s) for android!", package:arch())
             end
+            local function _translate_path(p)
+                if p and is_host("windows") then
+                    return p:gsub("\\", "/")
+                end
+                return p
+            end
             local sysroot  = path.join(path.directory(bin), "sysroot")
             local cflags   = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cflags")), table.wrap(get_config("cxflags")), get_config("cflags"))
             local cxxflags = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cxxflags")), table.wrap(get_config("cxflags")), get_config("cxxflags"))
@@ -202,16 +208,16 @@ package("ffmpeg")
             table.insert(configs, "--disable-avdevice")
             table.insert(configs, "--arch=" .. arch)
             table.insert(configs, "--cpu=" .. cpu)
-            table.insert(configs, "--cc=" .. path.join(bin, triple .. ndk_sdkver .. "-clang"))
-            table.insert(configs, "--cxx=" .. path.join(bin, triple .. ndk_sdkver .. "-clang++"))
-            table.insert(configs, "--ar=" .. path.join(bin, "llvm-ar"))
-            table.insert(configs, "--ranlib=" .. path.join(bin, "llvm-ranlib"))
-            table.insert(configs, "--strip=" .. path.join(bin, "llvm-strip"))
+            table.insert(configs, "--cc=" .. _translate_path(path.join(bin, triple .. ndk_sdkver .. "-clang")))
+            table.insert(configs, "--cxx=" .. _translate_path(path.join(bin, triple .. ndk_sdkver .. "-clang++")))
+            table.insert(configs, "--ar=" .. _translate_path(path.join(bin, "llvm-ar")))
+            table.insert(configs, "--ranlib=" .. _translate_path(path.join(bin, "llvm-ranlib")))
+            table.insert(configs, "--strip=" .. _translate_path(path.join(bin, "llvm-strip")))
             table.insert(configs, "--extra-cflags=" .. table.concat(cflags, ' '))
             table.insert(configs, "--extra-cxxflags=" .. table.concat(cxxflags, ' '))
-            table.insert(configs, "--sysroot=" .. sysroot)
+            table.insert(configs, "--sysroot=" .. _translate_path(sysroot))
             table.insert(configs, "--cross-prefix=" .. cross_prefix)
-            table.insert(configs, "--prefix=" .. package:installdir())
+            table.insert(configs, "--prefix=" .. _translate_path(package:installdir()))
             os.vrunv("./configure", configs, {shell = true})
             local argv = {"-j4"}
             if option.get("verbose") then
