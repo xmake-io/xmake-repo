@@ -15,8 +15,19 @@ package("msys2-base")
         -- disable key refresh
         io.replace("etc/post-install/07-pacman-key.post", "--refresh-keys", "--version", {plain = true})
 
+        -- install files
         os.cp("*", package:installdir())
         package:addenv("PATH", "usr/bin")
+
+        -- updating packages
+        local pacman = path.join(package:installdir("usr/bin"), "pacman.exe")
+        os.vrunv(pacman, {"-Syuu", "--overwrite", "*"})
+
+        -- killing remaining tasks
+        os.vrunv("taskkill", {"/F", "/FI", "MODULES eq msys-2.0.dll"})
+
+        -- final system upgrade
+        os.vrunv(pacman, {"-Syuu", "--overwrite", "*"})
     end)
 
     on_test(function (package)

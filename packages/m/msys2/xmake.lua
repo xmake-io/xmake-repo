@@ -14,10 +14,10 @@ package("msys2")
             package:addenv("MSYSTEM", msystem)
             local pacman = path.join(msys2_base:installdir("usr/bin"), "pacman.exe")
             if msystem == "MINGW64" then
-                os.vrunv(pacman, {"--noconfirm", "-S", "--needed", "mingw-w64-x86_64-toolchain"})
+                os.vrunv(pacman, {"--noconfirm", "-S", "--needed", "--overwrite", "*", "mingw-w64-x86_64-toolchain"})
                 package:addenv("PATH", msys2_base:installdir("mingw64/bin"))
             elseif msystem == "MINGW32" then
-                os.vrunv(pacman, {"--noconfirm", "-S", "--needed", "mingw-w64-i686-toolchain"})
+                os.vrunv(pacman, {"--noconfirm", "-S", "--needed", "--overwrite", "*", "mingw-w64-i686-toolchain"})
                 package:addenv("PATH", msys2_base:installdir("mingw32/bin"))
             end
         end
