@@ -7,15 +7,13 @@ on:
 
 jobs:
   build:
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        os: windows-2022
         arch: [armeabi-v7a, arm64-v8a]
         ndk: ["r22", "r26c"]
         ndk_sdkver: ["29"]
-
-    runs-on: ${{ matrix.os }}
 
     concurrency:
         group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Android-Windows-${{ matrix.arch }}-${{ matrix.ndk }}-${{ matrix.ndk_sdkver }}
