@@ -11,6 +11,14 @@ package("msys2")
         local msystem = package:config("msystem")
         if msystem then
             package:addenv("MSYSTEM", msystem)
+            local pacman = path.join(package:installdir("usr/bin"), "pacman.exe")
+            if msystem == "MINGW64" then
+                os.vrunv(pacman, {"--noconfirm", "-S", "--needed", "mingw-w64-x86_64-toolchain"})
+                package:addenv("PATH", "mingw64/bin")
+            elseif msystem == "MINGW32" then
+                os.vrunv(pacman, {"--noconfirm", "-S", "--needed", "mingw-w64-i686-toolchain"})
+                package:addenv("PATH", "mingw32/bin")
+            end
         end
     end)
 
@@ -20,4 +28,12 @@ package("msys2")
         os.vrun("ls -l")
         os.vrun("grep --version")
         os.vrun("uname -a")
+        local msystem = package:config("msystem")
+        if msystem then
+            if msystem == "MINGW64" then
+                os.vrun("x86_64-w64-mingw32-gcc --version")
+            elseif msystem == "MINGW32" then
+                os.vrun("i686-w64-mingw32-gcc --version")
+            end
+        end
     end)
