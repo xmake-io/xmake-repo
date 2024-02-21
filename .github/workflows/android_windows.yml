@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: windows-latest
+        os: windows-2022
         arch: [armeabi-v7a, arm64-v8a]
         ndk: ["r22", "r26c"]
         ndk_sdkver: ["29"]
