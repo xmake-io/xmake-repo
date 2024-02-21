@@ -19,6 +19,10 @@ package("msys2-base")
         os.cp("*", package:installdir())
         package:addenv("PATH", "usr/bin")
 
+        -- starting MSYS2 for the first time
+        local uname = path.join(package:installdir("usr/bin"), "uname.exe")
+        os.vrunv(uname, {"-a"})
+
         -- updating packages
         local pacman = path.join(package:installdir("usr/bin"), "pacman.exe")
         try { function () os.vrunv(pacman, {"-Syuu", "--overwrite", "*"}) end}
