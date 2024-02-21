@@ -212,7 +212,7 @@ package("ffmpeg")
             table.insert(configs, "--sysroot=" .. sysroot)
             table.insert(configs, "--cross-prefix=" .. cross_prefix)
             table.insert(configs, "--prefix=" .. package:installdir())
-            os.vrunv("./configure", configs)
+            os.vrunv("./configure", configs, {shell = true})
             local argv = {"-j4"}
             if option.get("verbose") then
                 table.insert(argv, "V=1")
