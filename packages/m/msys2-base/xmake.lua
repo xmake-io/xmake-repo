@@ -21,7 +21,7 @@ package("msys2-base")
 
         -- updating packages
         local pacman = path.join(package:installdir("usr/bin"), "pacman.exe")
-        os.vrunv(pacman, {"-Syuu", "--overwrite", "*"})
+        try { function () os.vrunv(pacman, {"-Syuu", "--overwrite", "*"}) end}
 
         -- killing remaining tasks
         os.vrunv("taskkill", {"/F", "/FI", "MODULES eq msys-2.0.dll"})
