@@ -11,8 +11,12 @@ package("msys2")
     add_configs("msystem", {description = "Set msys2 system.", type = "string", values = {"MSYS", "MINGW32", "MINGW64", "UCRT64", "CLANG32", "CLANG64", "CLANGARM64"}})
 
     on_install("@windows|x64", function (package)
+        -- reduce time required to install packages by disabling pacman's disk space checking
+        io.gsub("etc/pacman.conf", "^CheckSpace", "#CheckSpace")
+
         os.cp("*", package:installdir())
         package:addenv("PATH", "usr/bin")
+
         local msystem = package:config("msystem")
         if msystem then
             package:addenv("MSYSTEM", msystem)
@@ -20,10 +24,9 @@ package("msys2")
     end)
 
     on_test(function (package)
-        print(os.getenv("PATH"))
         os.vrun("sh --version")
         os.vrun("perl --version")
         os.vrun("ls -l")
         os.vrun("grep --version")
-        os.vrun("bash --version")
+        os.vrun("uname -a")
     end)
