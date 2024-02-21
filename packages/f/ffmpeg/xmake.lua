@@ -61,32 +61,30 @@ package("ffmpeg")
         add_deps("yasm")
     end
 
-    if on_fetch then
-        on_fetch("mingw", "linux", "macosx", function (package, opt)
-            import("lib.detect.find_tool")
-            if opt.system then
-                local result
-                for _, name in ipairs({"libavcodec", "libavdevice", "libavfilter", "libavformat", "libavutil", "libpostproc", "libswresample", "libswscale"}) do
-                    local pkginfo = package:find_package("pkgconfig::" .. name, opt)
-                    if pkginfo then
-                        pkginfo.version = nil
-                        if not result then
-                            result = pkginfo
-                        else
-                            result = result .. pkginfo
-                        end
+    on_fetch("mingw", "linux", "macosx", function (package, opt)
+        import("lib.detect.find_tool")
+        if opt.system then
+            local result
+            for _, name in ipairs({"libavcodec", "libavdevice", "libavfilter", "libavformat", "libavutil", "libpostproc", "libswresample", "libswscale"}) do
+                local pkginfo = package:find_package("pkgconfig::" .. name, opt)
+                if pkginfo then
+                    pkginfo.version = nil
+                    if not result then
+                        result = pkginfo
                     else
-                        return
+                        result = result .. pkginfo
                     end
+                else
+                    return
                 end
-                local ffmpeg = find_tool("ffmpeg", {check = "-help", version = true, command = "-version", parse = "%d+%.?%d+%.?%d+", force = true})
-                if ffmpeg then
-                    result.version = ffmpeg.version
-                end
-                return result
             end
-        end)
-    end
+            local ffmpeg = find_tool("ffmpeg", {check = "-help", version = true, command = "-version", parse = "%d+%.?%d+%.?%d+", force = true})
+            if ffmpeg then
+                result.version = ffmpeg.version
+            end
+            return result
+        end
+    end)
 
     on_load("linux", "macosx", "android", function (package)
         local configdeps = {zlib    = "zlib",
@@ -108,6 +106,9 @@ package("ffmpeg")
         if not package:config("gpl") then
             package:set("license", "LGPL-3.0")
         end
+        if package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
+            package:add("deps", "msys2")
+        end
     end)
 
     on_install("windows|x64", "mingw|x86_64", function (package)
@@ -122,7 +123,7 @@ package("ffmpeg")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("linux", "macosx", "android@linux,macosx", function (package)
+    on_install("linux", "macosx", "android", function (package)
         local configs = {"--enable-version3",
                          "--disable-doc"}
         if package:config("gpl") then
