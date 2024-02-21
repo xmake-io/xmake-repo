@@ -8,16 +8,17 @@ package("msys2")
     add_configs("msystem", {description = "Set msys2 system.", type = "string", values = {"MSYS", "MINGW32", "MINGW64", "UCRT64", "CLANG32", "CLANG64", "CLANGARM64"}})
 
     on_install("@windows|x64", function (package)
+        local msys2_base = package:dep("msys2-base")
         local msystem = package:config("msystem")
         if msystem then
             package:addenv("MSYSTEM", msystem)
-            local pacman = path.join(package:installdir("usr/bin"), "pacman.exe")
+            local pacman = path.join(msys2_base:installdir("usr/bin"), "pacman.exe")
             if msystem == "MINGW64" then
                 os.vrunv(pacman, {"--noconfirm", "-S", "--needed", "mingw-w64-x86_64-toolchain"})
-                package:addenv("PATH", "mingw64/bin")
+                package:addenv("PATH", msys2_base:installdir("mingw64/bin"))
             elseif msystem == "MINGW32" then
                 os.vrunv(pacman, {"--noconfirm", "-S", "--needed", "mingw-w64-i686-toolchain"})
-                package:addenv("PATH", "mingw32/bin")
+                package:addenv("PATH", msys2_base:installdir("mingw32/bin"))
             end
         end
     end)
