@@ -171,7 +171,7 @@ package("boost")
             else
                 cxx = cxx:gsub("gcc$", "g++")
                 cxx = cxx:gsub("clang$", "clang++")
-                return format("using gcc : : %s ;", cxx:gsub("\\", "/"))
+                return format("using gcc : : \"%s\" ;", cxx:gsub("\\", "/"))
             end
         end
 
