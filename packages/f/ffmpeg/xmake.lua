@@ -3,52 +3,41 @@ package("ffmpeg")
     set_description("A collection of libraries to process multimedia content such as audio, video, subtitles and related metadata.")
     set_license("GPL-3.0")
 
-    if is_plat("windows", "mingw") then
-        add_urls("https://github.com/xmake-mirror/ffmpeg-releases/releases/download/releases/ffmpeg-$(version)-full_build-shared.7z")
-        add_versions("6.1", "6eab95d8cd00b4601ce443ff3aeab5f477c581379c633742f5df30856a95158d")
-        add_versions("6.0", "a852648944cdf4ce3aeebf16d750a036fe67ab657b82eb43f9f7fdcc7bef3af7")
-        add_versions("5.1.2", "d9eb97b72d7cfdae4d0f7eaea59ccffb8c364d67d88018ea715d5e2e193f00e9")
-        add_versions("5.0.1", "ded28435b6f04b74f5ef5a6a13761233bce9e8e9f8ecb0eabe936fd36a778b0c")
+    add_urls("https://ffmpeg.org/releases/ffmpeg-$(version).tar.bz2", {alias = "home"})
+    add_urls("https://github.com/FFmpeg/FFmpeg/archive/n$(version).zip", {alias = "github"})
+    add_urls("https://git.ffmpeg.org/ffmpeg.git", "https://github.com/FFmpeg/FFmpeg.git", {alias = "git"})
+    add_versions("home:6.1", "eb7da3de7dd3ce48a9946ab447a7346bd11a3a85e6efb8f2c2ce637e7f547611")
+    add_versions("home:6.0.1", "2c6e294569d1ba8e99cbf1acbe49e060a23454228a540a0f45d679d72ec69a06")
+    add_versions("home:5.1.2", "39a0bcc8d98549f16c570624678246a6ac736c066cebdb409f9502e915b22f2b")
+    add_versions("home:5.1.1", "cd0e16f903421266d5ccddedf7b83b9e5754aef4b9f7a7f06ce9e4c802f0545b")
+    add_versions("home:5.0.1", "28df33d400a1c1c1b20d07a99197809a3b88ef765f5f07dc1ff067fac64c59d6")
+    add_versions("home:4.0.2", "346c51735f42c37e0712e0b3d2f6476c86ac15863e4445d9e823fe396420d056")
+    add_versions("github:6.1", "7da07ff7e30bca95c0593db20442becba13ec446dd9c3331ca3d1b40eecd3c93")
+    add_versions("github:6.0.1", "2acb5738a1b4b262633ac2d646340403ae47120d9eb289ecad23fc90093c0d6c")
+    add_versions("github:5.1.2", "0c99f3609160f40946e2531804175eea16416320c4b6365ad075e390600539db")
+    add_versions("github:5.1.1", "a886fcc94792764c27c88ebe71dffbe5f0d37df8f06f01efac4833ac080c11bf")
+    add_versions("github:5.0.1", "f9c2e06cafa4381df8d5c9c9e14d85d9afcbc10c516c6a206f821997cc7f6440")
+    add_versions("github:4.0.2", "4df1ef0bf73b7148caea1270539ef7bd06607e0ea8aa2fbf1bb34062a097f026")
+    add_versions("git:6.1", "n6.1")
+    add_versions("git:6.0.1", "n6.0.1")
+    add_versions("git:5.1.2", "n5.1.2")
+    add_versions("git:5.1.1", "n5.1.1")
+    add_versions("git:5.0.1", "n5.0.1")
+    add_versions("git:4.0.2", "n4.0.2")
 
-        add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
-        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
-    else
-        add_urls("https://ffmpeg.org/releases/ffmpeg-$(version).tar.bz2", {alias = "home"})
-        add_urls("https://github.com/FFmpeg/FFmpeg/archive/n$(version).zip", {alias = "github"})
-        add_urls("https://git.ffmpeg.org/ffmpeg.git", "https://github.com/FFmpeg/FFmpeg.git", {alias = "git"})
-        add_versions("home:6.1", "eb7da3de7dd3ce48a9946ab447a7346bd11a3a85e6efb8f2c2ce637e7f547611")
-        add_versions("home:6.0.1", "2c6e294569d1ba8e99cbf1acbe49e060a23454228a540a0f45d679d72ec69a06")
-        add_versions("home:5.1.2", "39a0bcc8d98549f16c570624678246a6ac736c066cebdb409f9502e915b22f2b")
-        add_versions("home:5.1.1", "cd0e16f903421266d5ccddedf7b83b9e5754aef4b9f7a7f06ce9e4c802f0545b")
-        add_versions("home:5.0.1", "28df33d400a1c1c1b20d07a99197809a3b88ef765f5f07dc1ff067fac64c59d6")
-        add_versions("home:4.0.2", "346c51735f42c37e0712e0b3d2f6476c86ac15863e4445d9e823fe396420d056")
-        add_versions("github:6.1", "7da07ff7e30bca95c0593db20442becba13ec446dd9c3331ca3d1b40eecd3c93")
-        add_versions("github:6.0.1", "2acb5738a1b4b262633ac2d646340403ae47120d9eb289ecad23fc90093c0d6c")
-        add_versions("github:5.1.2", "0c99f3609160f40946e2531804175eea16416320c4b6365ad075e390600539db")
-        add_versions("github:5.1.1", "a886fcc94792764c27c88ebe71dffbe5f0d37df8f06f01efac4833ac080c11bf")
-        add_versions("github:5.0.1", "f9c2e06cafa4381df8d5c9c9e14d85d9afcbc10c516c6a206f821997cc7f6440")
-        add_versions("github:4.0.2", "4df1ef0bf73b7148caea1270539ef7bd06607e0ea8aa2fbf1bb34062a097f026")
-        add_versions("git:6.1", "n6.1")
-        add_versions("git:6.0.1", "n6.0.1")
-        add_versions("git:5.1.2", "n5.1.2")
-        add_versions("git:5.1.1", "n5.1.1")
-        add_versions("git:5.0.1", "n5.0.1")
-        add_versions("git:4.0.2", "n4.0.2")
-
-        add_configs("gpl",              {description = "Enable GPL code", default = true, type = "boolean"})
-        add_configs("ffprobe",          {description = "Enable ffprobe program.", default = false, type = "boolean"})
-        add_configs("ffmpeg",           {description = "Enable ffmpeg program.", default = true, type = "boolean"})
-        add_configs("ffplay",           {description = "Enable ffplay program.", default = false, type = "boolean"})
-        add_configs("zlib",             {description = "Enable zlib compression library.", default = false, type = "boolean"})
-        add_configs("lzma",             {description = "Enable liblzma compression library.", default = false, type = "boolean"})
-        add_configs("bzlib",            {description = "Enable bzlib compression library.", default = false, type = "boolean"})
-        add_configs("libx264",          {description = "Enable libx264 decoder.", default = false, type = "boolean"})
-        add_configs("libx265",          {description = "Enable libx265 decoder.", default = false, type = "boolean"})
-        add_configs("iconv",            {description = "Enable libiconv library.", default = false, type = "boolean"})
-        add_configs("vaapi",            {description = "Enable vaapi library.", default = false, type = "boolean"})
-        add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
-        add_configs("hardcoded-tables", {description = "Enable hardcoded tables.", default = true, type = "boolean"})
-    end
+    add_configs("gpl",              {description = "Enable GPL code", default = true, type = "boolean"})
+    add_configs("ffprobe",          {description = "Enable ffprobe program.", default = false, type = "boolean"})
+    add_configs("ffmpeg",           {description = "Enable ffmpeg program.", default = true, type = "boolean"})
+    add_configs("ffplay",           {description = "Enable ffplay program.", default = false, type = "boolean"})
+    add_configs("zlib",             {description = "Enable zlib compression library.", default = false, type = "boolean"})
+    add_configs("lzma",             {description = "Enable liblzma compression library.", default = false, type = "boolean"})
+    add_configs("bzlib",            {description = "Enable bzlib compression library.", default = false, type = "boolean"})
+    add_configs("libx264",          {description = "Enable libx264 decoder.", default = false, type = "boolean"})
+    add_configs("libx265",          {description = "Enable libx265 decoder.", default = false, type = "boolean"})
+    add_configs("iconv",            {description = "Enable libiconv library.", default = false, type = "boolean"})
+    add_configs("vaapi",            {description = "Enable vaapi library.", default = false, type = "boolean"})
+    add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
+    add_configs("hardcoded-tables", {description = "Enable hardcoded tables.", default = true, type = "boolean"})
 
     add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
     if is_plat("macosx") then
@@ -57,8 +46,12 @@ package("ffmpeg")
         add_syslinks("pthread")
     end
 
-    if is_plat("linux", "macosx") then
-        add_deps("yasm")
+    if is_plat("windows") then
+        add_deps("msys2")
+    end
+
+    if is_plat("windows", "mingw", "linux", "macosx") then
+        add_deps("nasm")
     end
 
     on_fetch("mingw", "linux", "macosx", function (package, opt)
@@ -111,26 +104,11 @@ package("ffmpeg")
         end
     end)
 
-    on_install("windows|x64", "mingw|x86_64", function (package)
-        os.cp("bin", package:installdir())
-        os.cp("include", package:installdir())
-        if package:is_plat("windows") then
-            os.cp("lib/*.def", package:installdir("lib"))
-            os.cp("lib/*.lib", package:installdir("lib"))
-        else
-            os.cp("lib/*.a", package:installdir("lib"))
-        end
-        package:addenv("PATH", "bin")
-    end)
-
-    on_install("linux", "macosx", "android", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "android", function (package)
         local configs = {"--enable-version3",
                          "--disable-doc"}
         if package:config("gpl") then
             table.insert(configs, "--enable-gpl")
-        end
-        if package:is_plat("macosx") and macos.version():ge("10.8") then
-            table.insert(configs, "--enable-videotoolbox")
         end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
@@ -153,7 +131,74 @@ package("ffmpeg")
         else
             table.insert(configs, "--disable-debug")
         end
-        if package:is_plat("android") then
+        -- plat config
+        if package:is_plat("windows") then
+            table.insert(configs, "--target-os=win32")
+            table.insert(configs, "--enable-w32threads")
+            table.insert(configs, "--enable-d3d11va")
+            table.insert(configs, "--enable-dxva2")
+            table.insert(configs, "--enable-mediafoundation")
+            table.insert(configs, "--toolchain=msvc")
+        elseif package:is_plat("mingw") then
+            if package:is_arch("x86") then
+                table.insert(configs, "--target-os=mingw32")
+            elseif package:is_arch("x86_64") then
+                table.insert(configs, "--target-os=mingw64")
+            else
+                raise("unknown mingw arch " .. package:arch())
+            end
+        elseif package:is_plat("linux") then
+            table.insert(configs, "--target-os=linux")
+            table.insert(configs, "--enable-pthreads")
+        elseif package:is_plat("macosx", "iphoneos") then
+            table.insert(configs, "--target-os=darwin")
+            table.insert(configs, "--enable-appkit")
+            table.insert(configs, "--enable-audiotoolbox")
+            if macos.version():ge("10.7") then
+                table.insert(configs, "--enable-avfoundation")
+            end
+            if macos.version():ge("10.8") then
+                table.insert(configs, "--enable-videotoolbox")
+            end
+            if macos.version():ge("10.11") then
+                table.insert(configs, "--enable-coreimage")
+            end
+        elseif package:is_plat("android") then
+            table.insert(configs, "--target-os=android")
+            table.insert(configs, "--enable-neon")
+            table.insert(configs, "--enable-asm")
+            table.insert(configs, "--enable-jni")
+            if package:is_arch("arm64-v8a") then
+                table.insert(cflags, "-mfpu=neon")
+                table.insert(cflags, "-mfloat-abi=hard")
+            else
+                table.insert(cflags, "-mfpu=neon")
+                table.insert(cflags, "-mfloat-abi=soft")
+            end
+        else
+            raise("unexpected platform")
+        end
+
+        -- build
+        if package:is_plat("windows") then
+            os.vrunv("pacman", {"-S", "--noconfirm", "--needed", "diffutils"}) -- required for configure
+            os.vrunv("pacman", {"-S", "--noconfirm", "--needed", "make"})
+            import("core.base.option")
+            import("core.tool.toolchain")
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            assert(msvc:check(), "vs not found!")
+            local envs = os.joinenvs(msvc:runenvs())
+
+            table.insert(configs, "--prefix=" .. package:installdir())
+            os.vrunv("sh", table.join("./configure", configs), {envs = envs})
+            local njobs = option.get("jobs") or tostring(os.default_njob())
+            local argv = {"-j" .. njobs}
+            if option.get("verbose") then
+                table.insert(argv, "V=1")
+            end
+            os.vrunv("make", argv, {envs = envs})
+            os.vrun("make install")
+        elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")
             local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
@@ -193,17 +238,6 @@ package("ffmpeg")
             local cflags   = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cflags")), table.wrap(get_config("cxflags")), get_config("cflags"))
             local cxxflags = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cxxflags")), table.wrap(get_config("cxflags")), get_config("cxxflags"))
             assert(os.isdir(sysroot), "we do not support old version ndk!")
-            if package:is_arch("arm64-v8a") then
-                table.insert(cflags, "-mfpu=neon")
-                table.insert(cflags, "-mfloat-abi=soft")
-            else
-                table.insert(cflags, "-mfpu=neon")
-                table.insert(cflags, "-mfloat-abi=soft")
-            end
-            table.insert(configs, "--enable-neon")
-            table.insert(configs, "--enable-asm")
-            table.insert(configs, "--enable-jni")
-            table.insert(configs, "--target-os=android")
             table.insert(configs, "--enable-cross-compile")
             table.insert(configs, "--disable-avdevice")
             table.insert(configs, "--arch=" .. arch)
@@ -215,12 +249,12 @@ package("ffmpeg")
             table.insert(configs, "--strip=" .. _translate_path(path.join(bin, "llvm-strip")))
             table.insert(configs, "--extra-cflags=" .. table.concat(cflags, ' '))
             table.insert(configs, "--extra-cxxflags=" .. table.concat(cxxflags, ' '))
-            table.insert(configs, "--sysroot=" .. _translate_path(sysroot))
-            table.insert(configs, "--cross-prefix=" .. _translate_path(cross_prefix))
-            table.insert(configs, "--prefix=" .. _translate_path(package:installdir()))
+            table.insert(configs, "--sysroot=" .. sysroot)
+            table.insert(configs, "--cross-prefix=" .. cross_prefix)
+            table.insert(configs, "--prefix=" .. package:installdir())
             os.vrunv("./configure", configs, {shell = true})
-            local njob = option.get("jobs") or tostring(os.default_njob())
-            local argv = {"-j" .. njob}
+            local njobs = option.get("jobs") or tostring(os.default_njob())
+            local argv = {"-j" .. njobs}
             if option.get("verbose") or is_host("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
