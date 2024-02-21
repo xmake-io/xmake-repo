@@ -12,6 +12,9 @@ package("msys2-base")
         -- reduce time required to install packages by disabling pacman's disk space checking
         io.gsub("etc/pacman.conf", "^CheckSpace", "#CheckSpace")
 
+        -- disable key refresh
+        io.replace("etc/post-install/07-pacman-key.post", "--refresh-keys", "--version", {plain = true})
+
         os.cp("*", package:installdir())
         package:addenv("PATH", "usr/bin")
     end)
