@@ -168,15 +168,14 @@ package("ffmpeg")
             table.insert(configs, "--enable-neon")
             table.insert(configs, "--enable-asm")
             table.insert(configs, "--enable-jni")
-            if package:is_arch("arm64-v8a") then
-                table.insert(cflags, "-mfpu=neon")
-                table.insert(cflags, "-mfloat-abi=hard")
-            else
-                table.insert(cflags, "-mfpu=neon")
-                table.insert(cflags, "-mfloat-abi=soft")
-            end
         else
             raise("unexpected platform")
+        end
+
+        if package:is_cross() then
+            table.insert(configs, "--enable-cross-compile")
+            table.insert(configs, "--arch=" .. package:targetarch())
+            configs.host = "" -- prevents xmake to add a --host=xx parameter (unsupported by ffmpeg configure script)
         end
 
         -- build
@@ -196,8 +195,8 @@ package("ffmpeg")
             if option.get("verbose") then
                 table.insert(argv, "V=1")
             end
-            os.vrunv("make", argv, {envs = envs})
-            os.vrun("make install")
+            os.vrunv("sh", table.join({"-c", "make"}, argv), {envs = envs})
+            os.vrunv("sh", {"-c", "make", "install"})
         elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")
@@ -238,6 +237,13 @@ package("ffmpeg")
             local cflags   = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cflags")), table.wrap(get_config("cxflags")), get_config("cflags"))
             local cxxflags = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cxxflags")), table.wrap(get_config("cxflags")), get_config("cxxflags"))
             assert(os.isdir(sysroot), "we do not support old version ndk!")
+            if package:is_arch("arm64-v8a") then
+                table.insert(cflags, "-mfpu=neon")
+                table.insert(cflags, "-mfloat-abi=hard")
+            else
+                table.insert(cflags, "-mfpu=neon")
+                table.insert(cflags, "-mfloat-abi=soft")
+            end
             table.insert(configs, "--enable-cross-compile")
             table.insert(configs, "--disable-avdevice")
             table.insert(configs, "--arch=" .. arch)
@@ -261,11 +267,6 @@ package("ffmpeg")
             os.vrunv("make", argv)
             os.vrun("make install")
         else
-            if package:is_cross() then
-                table.insert(configs, "--enable-cross-compile")
-                table.insert(configs, "--arch=" .. package:targetarch())
-                configs.host = "" -- prevents xmake to add a --host=xx parameter
-            end
             import("package.tools.autoconf").install(package, configs)
         end
         package:addenv("PATH", "bin")
