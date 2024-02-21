@@ -7,6 +7,10 @@ package("cosmocc")
              "https://github.com/xmake-mirror/cosmopolitan/releases/download/$(version)/cosmocc-$(version).zip")
     add_versions("3.2.4", "d2fa6dbf6f987310494581deff5b915dbdc5ca701f20f7613bb0dcf1de2ee511")
 
+    on_load("@windows|x64", function (package)
+        package:add("deps", "msys2")
+    end)
+
     on_install("@windows", "@macosx", "@linux", "@bsd", "@cygwin", "@msys", function (package)
         if is_host("windows") then
             import("lib.detect.find_tool")
