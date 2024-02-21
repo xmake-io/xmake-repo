@@ -20,18 +20,17 @@ package("msys2-base")
         package:addenv("PATH", "usr/bin")
 
         -- starting MSYS2 for the first time
-        local uname = path.join(package:installdir("usr/bin"), "uname.exe")
-        os.vrunv(uname, {"-a"})
+        local bash = path.join(package:installdir("usr/bin"), "bash.exe")
+        os.vrunv(bash, {"-leo", "pipefail", "-c", "uname -a"})
 
         -- updating packages
-        local pacman = path.join(package:installdir("usr/bin"), "pacman.exe")
-        try { function () os.vrunv(pacman, {"-Syuu", "--overwrite", "*"}) end}
+        try { function () os.vrunv(bash, {"-leo", "pipefail", "-c", "pacman --noconfirm -Syuu --overwrite *"}) end}
 
         -- killing remaining tasks
         os.vrunv("taskkill", {"/F", "/FI", "MODULES eq msys-2.0.dll"})
 
         -- final system upgrade
-        os.vrunv(pacman, {"-Syuu", "--overwrite", "*"})
+        os.vrunv(bash, {"-leo", "pipefail", "-c", "pacman --noconfirm -Syuu --overwrite *"})
     end)
 
     on_test(function (package)
