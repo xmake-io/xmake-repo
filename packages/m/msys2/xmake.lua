@@ -6,6 +6,7 @@ package("msys2")
     add_deps("msys2-base")
 
     add_configs("msystem", {description = "Set msys2 system.", type = "string", values = {"MSYS", "MINGW32", "MINGW64", "UCRT64", "CLANG32", "CLANG64", "CLANGARM64"}})
+    add_configs("pathtype", {description = "Set path type.", default = "inherit", type = "string", values = {"inherit"}})
 
     set_policy("package.precompiled", false)
 
@@ -23,6 +24,11 @@ package("msys2")
                 package:addenv("PATH", msys2_base:installdir("mingw32/bin"))
             end
         end
+        local pathtype = package:config("pathtype")
+        if pathtype then
+            package:addenv("MSYS2_PATH_TYPE", pathtype)
+        end
+        package:addenv("CHERE_INVOKING", "1")
     end)
 
     on_test(function (package)
