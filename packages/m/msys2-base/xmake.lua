@@ -8,6 +8,8 @@ package("msys2-base")
         end})
     add_versions("2024.01.13", "04456a44a956d3c0b5f9b6c754918bf3a8c3d87c858be7a0c94c9171ab13c58c")
 
+    set_policy("package.precompiled", false)
+
     on_install("@windows|x64", function (package)
         -- reduce time required to install packages by disabling pacman's disk space checking
         io.gsub("etc/pacman.conf", "^CheckSpace", "#CheckSpace")

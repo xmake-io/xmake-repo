@@ -7,6 +7,8 @@ package("msys2")
 
     add_configs("msystem", {description = "Set msys2 system.", type = "string", values = {"MSYS", "MINGW32", "MINGW64", "UCRT64", "CLANG32", "CLANG64", "CLANGARM64"}})
 
+    set_policy("package.precompiled", false)
+
     on_install("@windows|x64", function (package)
         local msys2_base = package:dep("msys2-base")
         local msystem = package:config("msystem")
