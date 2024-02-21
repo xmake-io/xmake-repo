@@ -219,7 +219,8 @@ package("ffmpeg")
             table.insert(configs, "--cross-prefix=" .. cross_prefix)
             table.insert(configs, "--prefix=" .. _translate_path(package:installdir()))
             os.vrunv("./configure", configs, {shell = true})
-            local argv = {"-j4"}
+            local njob = option.get("jobs") or tostring(os.default_njob())
+            local argv = {"-j" .. njob}
             if option.get("verbose") then
                 table.insert(argv, "V=1")
             end
