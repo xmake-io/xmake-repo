@@ -186,6 +186,9 @@ package("ffmpeg")
             assert(msvc:check(), "vs not found!")
             local envs = os.joinenvs(msvc:runenvs())
 
+            local msys2 = package:dep("msys2-base")
+            local bash = path.join(msys2:installdir(), "/usr/bin/bash.exe")
+
             table.insert(configs, "--prefix=" .. package:installdir())
             os.vrunv("./configure", configs, {shell = true, envs = envs})
             local njobs = option.get("jobs") or tostring(os.default_njob())
@@ -193,8 +196,8 @@ package("ffmpeg")
             if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
-            os.vrunv("sh", table.join({"-c", "make"}, argv), {envs = envs})
-            os.vrunv("sh", table.join({"-c", "make", "install"}, argv))
+            os.vrunv(bash, table.join({"-c", "make"}, argv), {envs = envs})
+            os.vrunv(bash, table.join({"-c", "make", "install"}, argv))
         elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")
