@@ -107,7 +107,7 @@ package("ffmpeg")
             package:set("license", "LGPL-3.0")
         end
         if is_subhost("windows") and os.arch() == "x64" then
-            package:add("deps", "msys2", {configs = {make = true, diffutils = true}})
+            package:add("deps", "msys2", {configs = {gcc = true, basedevel = true}})
         end
     end)
 

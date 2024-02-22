@@ -9,7 +9,9 @@ package("msys2")
     add_configs("pathtype", {description = "Set path type.", default = "inherit", type = "string", values = {"inherit"}})
 
     add_configs("make", {description = "Install gnumake.", default = false, type = "boolean"})
+    add_configs("gcc", {description = "Install gcc.", default = false, type = "boolean"})
     add_configs("diffutils", {description = "Install diffutils.", default = false, type = "boolean"})
+    add_configs("basedevel", {description = "Install base-devel.", default = false, type = "boolean"})
 
     set_policy("package.precompiled", false)
 
@@ -34,9 +36,11 @@ package("msys2")
         package:addenv("CHERE_INVOKING", "1")
 
         -- install additional packages
-        local packages = {"make", "diffutils"}
-        for _, packagename in ipairs(packages) do
-            if package:config(packagename) then
+        local packages = {"gcc", "make", "diffutils", basedevel = "base-devel"}
+        for k, v in pairs(packages) do
+            local configname = type(k) == "number" and v or k
+            local packagename = v
+            if package:config(configname) then
                 os.vrunv(bash, {"-leo", "pipefail", "-c", "pacman --noconfirm -S --needed --overwrite * " .. packagename})
             end
         end
