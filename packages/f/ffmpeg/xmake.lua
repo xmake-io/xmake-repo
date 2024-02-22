@@ -195,7 +195,7 @@ package("ffmpeg")
             -- Windows has a bash.exe which conflict with msys2 bash.exe, we need absolute path
             --local msys2 = package:dep("msys2-base")
             --local bash = path.join(msys2:installdir(), "/usr/bin/bash.exe")
-            envs.SHELL = "sh.exe"
+            envs.SHELL = "sh"
 
             table.insert(configs, "--prefix=" .. package:installdir())
             os.vrunv("sh", table.join("./configure", configs), {envs = envs})
@@ -204,7 +204,6 @@ package("ffmpeg")
             if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
-            table.insert(argv, "-d")
             os.vrunv("make", argv, {envs = envs})
             os.vrun("make install", {envs = envs})
         elseif package:is_plat("android") then
