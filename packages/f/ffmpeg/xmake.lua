@@ -187,19 +187,19 @@ package("ffmpeg")
             local envs = os.joinenvs(msvc:runenvs())
 
             -- Windows has a bash.exe which conflict with msys2 bash.exe, we need absolute path
-            local msys2 = package:dep("msys2-base")
-            local bash = path.join(msys2:installdir(), "/usr/bin/bash.exe")
-            envs.SHELL = bash
+            --local msys2 = package:dep("msys2-base")
+            --local bash = path.join(msys2:installdir(), "/usr/bin/bash.exe")
+            envs.SHELL = "sh"
 
             table.insert(configs, "--prefix=" .. package:installdir())
-            os.vrunv("./configure", configs, {shell = true, envs = envs})
-            local njobs = option.get("jobs") or tostring(os.default_njob())
-            local argv = {"-j" .. njobs}
+            os.vrunv("sh", table.join("./configure", configs), {envs = envs})
+            local njob = option.get("jobs") or tostring(os.default_njob())
+            local argv = {"-j" .. njob}
             if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
-            os.vrunv(bash, {"-c", "make " .. table.concat(argv, " ")}, {envs = envs})
-            os.vrunv(bash, {"-c", "make install"}, {envs = envs})
+            os.vrunv("sh", {"-c", "make " .. table.concat(argv, " ")}, {envs = envs})
+            os.vrunv("sh", {"-c", "make install"}, {envs = envs})
         elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")
@@ -245,7 +245,7 @@ package("ffmpeg")
                 table.insert(cflags, "-mfloat-abi=hard")
             else
                 table.insert(cflags, "-mfpu=neon")
-                table.insert(cflags, "-mfloat-abi=soft")
+                table.insert(cflags, "-mfloat-abi=softp")
             end
             table.insert(configs, "--enable-cross-compile")
             table.insert(configs, "--disable-avdevice")
@@ -258,12 +258,12 @@ package("ffmpeg")
             table.insert(configs, "--strip=" .. _translate_path(path.join(bin, "llvm-strip")))
             table.insert(configs, "--extra-cflags=" .. table.concat(cflags, ' '))
             table.insert(configs, "--extra-cxxflags=" .. table.concat(cxxflags, ' '))
-            table.insert(configs, "--sysroot=" .. sysroot)
-            table.insert(configs, "--cross-prefix=" .. cross_prefix)
-            table.insert(configs, "--prefix=" .. package:installdir())
+            table.insert(configs, "--sysroot=" .. _translate_path(sysroot))
+            table.insert(configs, "--cross-prefix=" .. _translate_path(cross_prefix))
+            table.insert(configs, "--prefix=" .. _translate_path(package:installdir()))
             os.vrunv("./configure", configs, {shell = true})
-            local njobs = option.get("jobs") or tostring(os.default_njob())
-            local argv = {"-j" .. njobs}
+            local njob = option.get("jobs") or tostring(os.default_njob())
+            local argv = {"-j" .. njob}
             if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
