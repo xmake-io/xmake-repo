@@ -54,5 +54,5 @@ jobs:
           $Env:XMAKE_PROGRAM_DIR = $(Resolve-Path ./xmakesrc/xmake)
           Set-Item -Path Env:Path -Value ($Env:XMAKE_PROGRAM_DIR + ";" + $Env:Path)
           xmake --version
-          xmake l ./scripts/test.lua -vD -p android --ndk=D:/a/xmake-repo/xmake-repo/ndk/android-ndk-${{ matrix.ndk }} --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
+          xmake l ./scripts/test.lua -D -p android --ndk=D:/a/xmake-repo/xmake-repo/ndk/android-ndk-${{ matrix.ndk }} --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
 

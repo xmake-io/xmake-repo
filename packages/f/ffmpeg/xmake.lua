@@ -221,7 +221,7 @@ package("ffmpeg")
             os.vrunv("./configure", configs, {shell = true})
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
-            if option.get("verbose") then
+            if true then--option.get("verbose") then
                 table.insert(argv, "V=1")
             end
             os.vrunv("make", argv)
