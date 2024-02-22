@@ -220,9 +220,6 @@ package("ffmpeg")
             table.insert(configs, "--prefix=" .. _translate_path(package:installdir()))
             os.vrunv("./configure", configs, {shell = true})
             local njob = option.get("jobs") or tostring(os.default_njob())
-            if is_host("windows") then
-                njob = "1"
-            end
             local argv = {"-j" .. njob}
             if option.get("verbose") then
                 table.insert(argv, "V=1")
