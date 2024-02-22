@@ -186,10 +186,12 @@ package("ffmpeg")
             assert(msvc:check(), "vs not found!")
             local envs = os.joinenvs(msvc:runenvs())
 
+            print(os.getenv("PATH"))
             os.vrun("awk --version")
             os.vrun("make --version")
             os.vrun("which awk")
             os.vrun("which make")
+            print(envs.PATH)
 
             -- Windows has a bash.exe which conflict with msys2 bash.exe, we need absolute path
             --local msys2 = package:dep("msys2-base")
@@ -203,6 +205,7 @@ package("ffmpeg")
             if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
+            table.insert(argv, "-d")
             os.vrunv("make", argv, {envs = envs})
             os.vrun("make install", {envs = envs})
         elseif package:is_plat("android") then
