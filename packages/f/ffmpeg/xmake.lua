@@ -221,7 +221,7 @@ package("ffmpeg")
             os.vrunv("./configure", configs, {shell = true})
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
-            if true then--option.get("verbose") then
+            if option.get("verbose") or is_host("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
             os.vrunv("make", argv)
