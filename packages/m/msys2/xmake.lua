@@ -8,14 +8,17 @@ package("msys2")
     add_configs("msystem", {description = "Set msys2 system.", type = "string", values = {"MSYS", "MINGW32", "MINGW64", "UCRT64", "CLANG32", "CLANG64", "CLANGARM64"}})
     add_configs("pathtype", {description = "Set path type.", default = "inherit", type = "string", values = {"inherit"}})
 
+    add_configs("make", {description = "Install gnumake.", default = false, type = "boolean"})
+    add_configs("diffutils", {description = "Install diffutils.", default = false, type = "boolean"})
+
     set_policy("package.precompiled", false)
 
     on_install("@windows|x64", function (package)
+        local bash = path.join(msys2_base:installdir("usr/bin"), "bash.exe")
         local msys2_base = package:dep("msys2-base")
         local msystem = package:config("msystem")
         if msystem then
             package:addenv("MSYSTEM", msystem)
-            local bash = path.join(msys2_base:installdir("usr/bin"), "bash.exe")
             if msystem == "MINGW64" then
                 os.vrunv(bash, {"-leo", "pipefail", "-c", "pacman --noconfirm -S --needed --overwrite * mingw-w64-x86_64-toolchain"})
                 package:addenv("PATH", msys2_base:installdir("mingw64/bin"))
@@ -29,6 +32,14 @@ package("msys2")
             package:addenv("MSYS2_PATH_TYPE", pathtype)
         end
         package:addenv("CHERE_INVOKING", "1")
+
+        -- install additional packages
+        local packages = {"make", "diffutils"}
+        for _, packagename in ipairs(packages) do
+            if package:config(packagename) then
+                os.vrunv(bash, {"-leo", "pipefail", "-c", "pacman --noconfirm -S --needed --overwrite * " .. packagename})
+            end
+        end
     end)
 
     on_test(function (package)

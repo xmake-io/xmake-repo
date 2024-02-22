@@ -106,8 +106,8 @@ package("ffmpeg")
         if not package:config("gpl") then
             package:set("license", "LGPL-3.0")
         end
-        if package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
-            package:add("deps", "msys2")
+        if is_subhost("windows") and os.arch() == "x64" then
+            package:add("deps", "msys2", {configs = {make = true, diffutils = true}})
         end
     end)
 
@@ -224,7 +224,8 @@ package("ffmpeg")
             if true then--option.get("verbose") then
                 table.insert(argv, "V=1")
             end
-            os.vrunv("make", argv)
+            os.execv("make", argv)
+            --os.vrunv("make", argv)
             os.vrun("make install")
         else
             if package:is_cross() then
