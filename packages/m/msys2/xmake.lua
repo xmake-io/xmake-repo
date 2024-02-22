@@ -14,8 +14,8 @@ package("msys2")
     set_policy("package.precompiled", false)
 
     on_install("@windows|x64", function (package)
-        local bash = path.join(msys2_base:installdir("usr/bin"), "bash.exe")
         local msys2_base = package:dep("msys2-base")
+        local bash = path.join(msys2_base:installdir("usr/bin"), "bash.exe")
         local msystem = package:config("msystem")
         if msystem then
             package:addenv("MSYSTEM", msystem)
