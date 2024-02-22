@@ -186,8 +186,10 @@ package("ffmpeg")
             assert(msvc:check(), "vs not found!")
             local envs = os.joinenvs(msvc:runenvs())
 
+            -- Windows has a bash.exe which conflict with msys2 bash.exe, we need absolute path
             local msys2 = package:dep("msys2-base")
             local bash = path.join(msys2:installdir(), "/usr/bin/bash.exe")
+            envs.SHELL = bash
 
             table.insert(configs, "--prefix=" .. package:installdir())
             os.vrunv("./configure", configs, {shell = true, envs = envs})
@@ -197,7 +199,7 @@ package("ffmpeg")
                 table.insert(argv, "V=1")
             end
             os.vrunv(bash, {"-c", "make " .. table.concat(argv, " ")}, {envs = envs})
-            os.vrunv(bash, {"-c", "make", "install"})
+            os.vrunv(bash, {"-c", "make install"}, {envs = envs})
         elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")
