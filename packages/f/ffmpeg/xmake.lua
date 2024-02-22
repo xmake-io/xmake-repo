@@ -187,6 +187,9 @@ package("ffmpeg")
             local envs = os.joinenvs(msvc:runenvs())
 
             os.vrun("awk --version")
+            os.vrun("make --version")
+            os.vrun("which awk")
+            os.vrun("which make")
 
             -- Windows has a bash.exe which conflict with msys2 bash.exe, we need absolute path
             --local msys2 = package:dep("msys2-base")
