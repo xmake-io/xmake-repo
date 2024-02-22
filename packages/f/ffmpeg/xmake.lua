@@ -196,8 +196,8 @@ package("ffmpeg")
             if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
-            os.vrunv(bash, table.join({"-c", "make"}, argv), {envs = envs})
-            os.vrunv(bash, table.join({"-c", "make", "install"}, argv))
+            os.vrunv(bash, {"-c", "make " .. table.concat(argv, " ")}, {envs = envs})
+            os.vrunv(bash, {"-c", "make", "install"})
         elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")
