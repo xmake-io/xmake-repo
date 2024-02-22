@@ -224,8 +224,7 @@ package("ffmpeg")
             if true then--option.get("verbose") then
                 table.insert(argv, "V=1")
             end
-            os.execv("make", argv)
-            --os.vrunv("make", argv)
+            os.vrunv("make", argv)
             os.vrun("make install")
         else
             if package:is_cross() then
