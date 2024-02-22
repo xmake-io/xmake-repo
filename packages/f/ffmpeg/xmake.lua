@@ -46,10 +46,6 @@ package("ffmpeg")
         add_syslinks("pthread")
     end
 
-    if is_plat("windows") then
-        add_deps("msys2")
-    end
-
     if is_plat("windows", "mingw", "linux", "macosx") then
         add_deps("nasm")
     end
@@ -79,7 +75,7 @@ package("ffmpeg")
         end
     end)
 
-    on_load("linux", "macosx", "android", function (package)
+    on_load(function (package)
         local configdeps = {zlib    = "zlib",
                             bzlib   = "bzip2",
                             lzma    = "xz",
@@ -92,15 +88,19 @@ package("ffmpeg")
             end
         end
         -- https://www.ffmpeg.org/platform.html#toc-Advanced-linking-configuration
-        if package:config("pic") ~= false and not package:is_plat("macosx") then
+        if package:config("pic") ~= false and not package:is_plat("windows", "macosx") then
             package:add("shflags", "-Wl,-Bsymbolic")
             package:add("ldflags", "-Wl,-Bsymbolic")
         end
         if not package:config("gpl") then
             package:set("license", "LGPL-3.0")
         end
-        if is_subhost("windows") and os.arch() == "x64" then
-            package:add("deps", "msys2", {configs = {msystem = "MINGW64", mingw64_gcc = true, base_devel = true}})
+        if is_subhost("windows") and is_arch("x64") then
+            if package:is_plat("windows", "mingw") then
+                package:add("deps", "msys2", {configs = {msystem = "MINGW64", make = true, diffutils = true}})
+            else
+                package:add("deps", "msys2", {configs = {msystem = "MINGW64", mingw64_gcc = true, base_devel = true}})
+            end
         end
     end)
 
@@ -180,8 +180,6 @@ package("ffmpeg")
 
         -- build
         if package:is_plat("windows") then
-            os.vrunv("pacman", {"-S", "--noconfirm", "--needed", "diffutils"}) -- required for configure
-            os.vrunv("pacman", {"-S", "--noconfirm", "--needed", "make"})
             import("core.base.option")
             import("core.tool.toolchain")
             local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
@@ -189,14 +187,14 @@ package("ffmpeg")
             local envs = os.joinenvs(msvc:runenvs())
 
             table.insert(configs, "--prefix=" .. package:installdir())
-            os.vrunv("sh", table.join("./configure", configs), {envs = envs})
+            os.vrunv("./configure", configs, {shell = true, envs = envs})
             local njobs = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njobs}
-            if option.get("verbose") then
+            if option.get("verbose") or is_host("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
-            os.vrunv("sh", table.join({"-c", "make"}, argv), {envs = envs})
-            os.vrunv("sh", {"-c", "make", "install"})
+            os.vrunv("make", argv, {envs = envs})
+            os.vrun("make install")
         elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")

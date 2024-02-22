@@ -63,9 +63,13 @@ package("msys2")
         local msystem = package:config("msystem")
         if msystem then
             if msystem == "MINGW64" then
-                os.vrun("x86_64-w64-mingw32-gcc --version")
+                if package:config("mingw64_gcc") or package:config("mingw64_toolchain") then
+                    os.vrun("x86_64-w64-mingw32-gcc --version")
+                end
             elseif msystem == "MINGW32" then
-                os.vrun("i686-w64-mingw32-gcc --version")
+                if package:config("mingw32_gcc") or package:config("mingw32_toolchain") then
+                    os.vrun("i686-w64-mingw32-gcc --version")
+                end
             end
         end
     end)
