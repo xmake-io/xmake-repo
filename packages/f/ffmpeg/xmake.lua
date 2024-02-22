@@ -184,13 +184,12 @@ package("ffmpeg")
             import("core.tool.toolchain")
             local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             assert(msvc:check(), "vs not found!")
-            local envs = os.joinenvs(msvc:runenvs())
+            local envs = os.joinenvs(os.getenvs(), msvc:runenvs()) -- keep msys2 envs in front
 
-            print(os.getenv("PATH"))
-            os.vrun("awk --version")
-            os.vrun("make --version")
-            os.vrun("which awk")
-            os.vrun("which make")
+            os.vrun("awk --version", {envs = envs})
+            os.vrun("make --version", {envs = envs})
+            os.vrun("which awk", {envs = envs})
+            os.vrun("which make", {envs = envs})
             print(envs.PATH)
 
             -- Windows has a bash.exe which conflict with msys2 bash.exe, we need absolute path
