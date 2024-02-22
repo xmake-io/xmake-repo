@@ -11,7 +11,9 @@ package("msys2")
     add_configs("make", {description = "Install gnumake.", default = false, type = "boolean"})
     add_configs("gcc", {description = "Install gcc.", default = false, type = "boolean"})
     add_configs("diffutils", {description = "Install diffutils.", default = false, type = "boolean"})
-    add_configs("basedevel", {description = "Install base-devel.", default = false, type = "boolean"})
+    add_configs("base_devel", {description = "Install base-devel.", default = false, type = "boolean"})
+    add_configs("mingw64_gcc", {description = "Install mingw64 gcc.", default = false, type = "boolean"})
+    add_configs("mingw32_gcc", {description = "Install mingw32 gcc.", default = false, type = "boolean"})
 
     set_policy("package.precompiled", false)
 
@@ -36,7 +38,11 @@ package("msys2")
         package:addenv("CHERE_INVOKING", "1")
 
         -- install additional packages
-        local packages = {"gcc", "make", "diffutils", basedevel = "base-devel"}
+        local packages = {
+            "gcc", "make", "diffutils",
+            base_devel = "base-devel",
+            mingw32_gcc = "mingw-w64-i686-gcc",
+            mingw64_gcc = "mingw-w64-x86_64-gcc"}
         for k, v in pairs(packages) do
             local configname = type(k) == "number" and v or k
             local packagename = v
