@@ -95,7 +95,7 @@ package("ffmpeg")
         if not package:config("gpl") then
             package:set("license", "LGPL-3.0")
         end
-        if is_subhost("windows") and is_arch("x64") then
+        if is_subhost("windows") and os.arch() == "x64" then
             if package:is_plat("windows", "mingw") then
                 package:add("deps", "msys2", {configs = {msystem = "MINGW64", make = true, diffutils = true}})
             else
@@ -107,6 +107,7 @@ package("ffmpeg")
     on_install("windows", "mingw", "linux", "macosx", "android", function (package)
         local configs = {"--enable-version3",
                          "--disable-doc"}
+        configs.host = "" -- prevents xmake to add a --host=xx parameter (unsupported by ffmpeg configure script)
         if package:config("gpl") then
             table.insert(configs, "--enable-gpl")
         end
@@ -140,7 +141,7 @@ package("ffmpeg")
             table.insert(configs, "--enable-mediafoundation")
             table.insert(configs, "--toolchain=msvc")
         elseif package:is_plat("mingw") then
-            if package:is_arch("x86") then
+            if package:is_arch("x86", "i386", "i686") then
                 table.insert(configs, "--target-os=mingw32")
             elseif package:is_arch("x86_64") then
                 table.insert(configs, "--target-os=mingw64")
@@ -175,7 +176,6 @@ package("ffmpeg")
         if package:is_cross() then
             table.insert(configs, "--enable-cross-compile")
             table.insert(configs, "--arch=" .. package:targetarch())
-            configs.host = "" -- prevents xmake to add a --host=xx parameter (unsupported by ffmpeg configure script)
         end
 
         -- build
@@ -190,11 +190,11 @@ package("ffmpeg")
             os.vrunv("./configure", configs, {shell = true, envs = envs})
             local njobs = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njobs}
-            if option.get("verbose") or is_host("windows") then -- we always need enable it on windows, otherwise it will fail.
+            if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
-            os.vrunv("make", argv, {envs = envs})
-            os.vrun("make install")
+            os.vrunv("sh", table.join({"-c", "make"}, argv), {envs = envs})
+            os.vrunv("sh", table.join({"-c", "make", "install"}, argv))
         elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")
@@ -259,7 +259,7 @@ package("ffmpeg")
             os.vrunv("./configure", configs, {shell = true})
             local njobs = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njobs}
-            if option.get("verbose") or is_host("windows") then -- we always need enable it on windows, otherwise it will fail.
+            if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
             os.vrunv("make", argv)

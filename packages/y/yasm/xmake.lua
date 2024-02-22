@@ -4,7 +4,7 @@ package("yasm")
     set_description("Modular BSD reimplementation of NASM.")
 
     if is_host("windows") then
-        if is_arch("x64") then
+        if os.arch() == "x64" then
             add_urls("https://github.com/yasm/yasm/releases/download/v$(version)/vsyasm-$(version)-win64.zip",
                      "http://www.tortall.net/projects/yasm/releases/vsyasm-$(version)-win64.zip")
             add_versions("1.3.0", "6d991ca77e3827aade0091c87c89cb4c9fa6ad097afcea95ea736482bae707e2")
