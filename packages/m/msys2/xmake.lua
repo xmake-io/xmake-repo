@@ -13,7 +13,9 @@ package("msys2")
     add_configs("diffutils", {description = "Install diffutils.", default = false, type = "boolean"})
     add_configs("base_devel", {description = "Install base-devel.", default = false, type = "boolean"})
     add_configs("mingw64_gcc", {description = "Install mingw64 gcc.", default = false, type = "boolean"})
+    add_configs("mingw64_toolchain", {description = "Install mingw64 toolchain.", default = false, type = "boolean"})
     add_configs("mingw32_gcc", {description = "Install mingw32 gcc.", default = false, type = "boolean"})
+    add_configs("mingw32_toolchain", {description = "Install mingw32 toolchain.", default = false, type = "boolean"})
 
     set_policy("package.precompiled", false)
 
@@ -24,10 +26,8 @@ package("msys2")
         if msystem then
             package:addenv("MSYSTEM", msystem)
             if msystem == "MINGW64" then
-                os.vrunv(bash, {"-leo", "pipefail", "-c", "pacman --noconfirm -S --needed --overwrite * mingw-w64-x86_64-toolchain"})
                 package:addenv("PATH", msys2_base:installdir("mingw64/bin"))
             elseif msystem == "MINGW32" then
-                os.vrunv(bash, {"-leo", "pipefail", "-c", "pacman --noconfirm -S --needed --overwrite * mingw-w64-i686-toolchain"})
                 package:addenv("PATH", msys2_base:installdir("mingw32/bin"))
             end
         end
@@ -42,7 +42,9 @@ package("msys2")
             "gcc", "make", "diffutils",
             base_devel = "base-devel",
             mingw32_gcc = "mingw-w64-i686-gcc",
-            mingw64_gcc = "mingw-w64-x86_64-gcc"}
+            mingw32_toolchain = "mingw-w64-i686-toolchain",
+            mingw64_gcc = "mingw-w64-x86_64-gcc",
+            mingw64_toolchain = "mingw-w64-x86_64-toolchain"}
         for k, v in pairs(packages) do
             local configname = type(k) == "number" and v or k
             local packagename = v
