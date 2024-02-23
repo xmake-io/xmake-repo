@@ -44,11 +44,11 @@ package("ffmpeg")
         add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
     elseif is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("Ole32", "Secur32", "ws2_32")
     end
 
-    if is_plat("windows", "mingw", "linux", "macosx") then
-        add_deps("nasm")
-    end
+    add_deps("nasm")
 
     on_fetch("mingw", "linux", "macosx", function (package, opt)
         import("lib.detect.find_tool")
@@ -185,19 +185,19 @@ package("ffmpeg")
             local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             assert(msvc:check(), "vs not found!")
             local envs = os.joinenvs(os.getenvs(), msvc:runenvs()) -- keep msys2 envs in front
-
-            os.vrun("awk --version", {envs = envs})
-            os.vrun("make --version", {envs = envs})
-            os.vrun("which awk", {envs = envs})
-            os.vrun("which make", {envs = envs})
-            print(envs.PATH)
-
-            -- Windows has a bash.exe which conflict with msys2 bash.exe, we need absolute path
-            --local msys2 = package:dep("msys2-base")
-            --local bash = path.join(msys2:installdir(), "/usr/bin/bash.exe")
             envs.SHELL = "sh"
 
             table.insert(configs, "--prefix=" .. package:installdir())
+
+            local cflags = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cflags")), table.wrap(get_config("cxflags")), get_config("cflags"))
+            local runtime = package:config("runtime") or package:config("vs_runtime")
+            if runtime then
+                table.insert(cflags, "/" .. runtime)
+            end
+            if #cflags > 0 then
+                table.insert(configs, "--extra-cflags=" .. table.concat(cflags, ' '))
+            end
+
             os.vrunv("sh", table.join("./configure", configs), {envs = envs})
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
@@ -253,7 +253,6 @@ package("ffmpeg")
                 table.insert(cflags, "-mfpu=neon")
                 table.insert(cflags, "-mfloat-abi=softp")
             end
-            table.insert(configs, "--enable-cross-compile")
             table.insert(configs, "--disable-avdevice")
             table.insert(configs, "--arch=" .. arch)
             table.insert(configs, "--cpu=" .. cpu)
