@@ -51,7 +51,10 @@ package("x264")
     on_install("windows", "mingw", "linux", "macosx", "wasm", function (package)
         local configs = {}
         table.insert(configs, "--enable-" .. (package:config("shared") and "shared" or "static"))
-        if package:is_plat("wasm") then
+        if package:is_plat("mingw") then
+            -- todo: fix a way to make it work
+            package:config_set("asm", false)
+        elseif package:is_plat("wasm") then
             table.insert(configs, "--host=i686-gnu")
             package:config_set("asm", false)
             package:config_set("cli", false)
@@ -86,23 +89,7 @@ package("x264")
             os.vrunv("make", argv, {envs = envs})
             os.vrunv("make", {"install"}, {envs = envs})
         else
-            local envs = import("package.tools.autoconf").buildenvs(package)
-            if package:is_plat("mingw") then
-                envs.AS = "nasm"
-            end
-            try
-            {
-                function ()
-                    import("package.tools.autoconf").install(package, configs, {envs = envs})
-                end,
-                catch
-                {
-                    function (errors)
-                        print(io.readfile("config.log"))
-                        raise(errors)
-                    end
-                }
-            }
+            import("package.tools.autoconf").install(package, configs)
         end
     end)
 
