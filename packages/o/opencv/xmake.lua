@@ -59,7 +59,9 @@ package("opencv")
                     local dir = path.join(includedir, "opencv4")
                     if os.isdir(dir) then
                         result.includedirs = table.wrap(result.includedirs)
+                        result.sysincludedirs = table.wrap(result.sysincludedirs)
                         table.insert(result.includedirs, dir)
+                        table.insert(result.sysincludedirs, dir)
                     end
                 end
             end
