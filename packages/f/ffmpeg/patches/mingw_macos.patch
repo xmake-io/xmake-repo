@@ -1,12 +1,14 @@
 --- configure	2024-02-23 22:19:29.947666000 +0100
-+++ configure_mingw	2024-02-23 22:19:44.615971200 +0100
-@@ -5686,13 +5686,10 @@
++++ configure_mingw	2024-02-23 22:31:06.431948800 +0100
+@@ -5685,14 +5685,8 @@
+         # for dynamicbase (ASLR).  Using -pie does retain the reloc section
          # however ld then forgets what the entry point should be (oops) so we
          # have to manually (re)set it.
-         if enabled x86_32; then
+-        if enabled x86_32; then
 -            disabled debug && add_ldexeflags -Wl,--pic-executable,-e,_mainCRTStartup
-         elif enabled x86_64; then
+-        elif enabled x86_64; then
 -            disabled debug && add_ldexeflags -Wl,--pic-executable,-e,mainCRTStartup
++        if enabled x86_64; then
              check_ldflags -Wl,--high-entropy-va # binutils 2.25
 -            # Set image base >4GB for extra entropy with HEASLR
 -            add_ldexeflags -Wl,--image-base,0x140000000
