@@ -69,7 +69,7 @@ package("x264")
         if package:is_plat("windows") then
             import("core.base.option")
             import("core.tool.toolchain")
-            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             assert(msvc:check(), "msvs not found!")
             local envs = os.joinenvs(os.getenvs(), msvc:runenvs()) -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
             envs.CC = path.filename(package:build_getenv("cc"))
@@ -86,7 +86,19 @@ package("x264")
             os.vrunv("make", argv, {envs = envs})
             os.vrunv("make", {"install"}, {envs = envs})
         else
-            import("package.tools.autoconf").install(package, configs)
+            try
+            {
+                function ()
+                    import("package.tools.autoconf").install(package, configs)
+                end,
+                catch
+                {
+                    function (errors)
+                        print(io.readfile("config.log"))
+                        raise(errors)
+                    end
+                }
+            }
         end
     end)
 
