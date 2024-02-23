@@ -31,7 +31,7 @@ package("dynareadout")
         else
             package:add("links", "dynareadout")
         end
-        if is_plat("macosx") then
+        if package:is_plat("macosx") then
             package:add("deps", "boost")
         end
     end)
