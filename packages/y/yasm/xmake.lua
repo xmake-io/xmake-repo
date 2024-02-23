@@ -6,11 +6,11 @@ package("yasm")
 
     if is_host("windows") then
         if os.arch() == "x64" then
-            add_urls("https://github.com/yasm/yasm/releases/download/v1.3.0/yasm-$(version)-win64.exe"
+            add_urls("https://github.com/yasm/yasm/releases/download/v$(version)/yasm-$(version)-win64.exe",
                      "http://www.tortall.net/projects/yasm/releases/yasm-$(version)-win64.exe")
             add_versions("1.3.0", "d160b1d97266f3f28a71b4420a0ad2cd088a7977c2dd3b25af155652d8d8d91f")
         else
-            add_urls("https://github.com/yasm/yasm/releases/download/v1.3.0/yasm-$(version)-win32.exe"
+            add_urls("https://github.com/yasm/yasm/releases/download/v$(version)/yasm-$(version)-win32.exe",
                      "http://www.tortall.net/projects/yasm/releases/yasm-$(version)-win32.exe")
             add_versions("1.3.0", "db8ef9348ae858354cee4cc2f99e0f36de8a47a121de4cfeea5a16d45dd5ac1b")
         end
