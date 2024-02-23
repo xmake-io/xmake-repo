@@ -8,7 +8,7 @@ package("ffmpeg")
     add_urls("https://git.ffmpeg.org/ffmpeg.git", "https://github.com/FFmpeg/FFmpeg.git", {alias = "git"})
 
     if is_plat("windows") and is_arch("arm", "arm64") then
-        add_resources(">=1.0.0", "gas-preprocessor/gas-preprocessor.pl", "https://raw.githubusercontent.com/FFmpeg/gas-preprocessor/master/gas-preprocessor.pl", "17a14de55348547d5de5c2448dee0ab6d193d138a1326b6a5235617c3f2c2f82")
+        add_resources(">=1.0.0", "gas-preprocessor.pl", "https://raw.githubusercontent.com/FFmpeg/gas-preprocessor/master/gas-preprocessor.pl", "17a14de55348547d5de5c2448dee0ab6d193d138a1326b6a5235617c3f2c2f82")
     end
 
     add_versions("home:6.1", "eb7da3de7dd3ce48a9946ab447a7346bd11a3a85e6efb8f2c2ce637e7f547611")
@@ -191,12 +191,13 @@ package("ffmpeg")
             envs.SHELL = "sh"
 
             if package:is_arch("arm", "arm64") then
+                os.mkdir("gas-preprocessor")
+                os.vmv("gas-preprocessor.pl", path.join("gas-preprocessor", "gas-preprocessor.pl"))
                 envs.PATH = path.join(os.curdir(), "gas-preprocessor") .. path.envsep() .. envs.PATH
             end
 
             table.insert(configs, "--prefix=" .. package:installdir())
             os.vrunv("sh", table.join("./configure", configs), {envs = envs})
-            print(io.readfile("ffbuild/config.log"))
 
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
@@ -282,6 +283,10 @@ package("ffmpeg")
             os.vrunv("make", argv)
             os.vrun("make install")
         else
+            -- cross (mingw from macOS)
+            if package:is_plat("mingw") then
+                print(io.readfile("ffbuild/config.log"))
+            end
             import("package.tools.autoconf").install(package, configs)
         end
         package:addenv("PATH", "bin")
