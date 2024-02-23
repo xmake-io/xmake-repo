@@ -26,7 +26,7 @@ package("ffmpeg")
     add_versions("git:5.0.1", "n5.0.1")
     add_versions("git:4.0.2", "n4.0.2")
 
-    if is_plat("mingw") and is_host("macos") then
+    if is_plat("mingw") and is_host("macosx") then
         -- looks like MinGW on macOS doesn't support -Wl,--pic-executable
         add_patches(">=1.0.0", path.join(os.scriptdir(), "patches", "mingw_macos.patch"))
     end
