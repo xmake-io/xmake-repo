@@ -109,7 +109,7 @@ package("ffmpeg")
         local configs = {"--enable-version3",
                          "--disable-doc"}
         configs.host = "" -- prevents xmake to add a --host=xx parameter (unsupported by ffmpeg configure script)
-        for name, enabled in pairs(package:configs()) do
+        for name, enabled in table.orderpairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
                     table.insert(configs, "--enable-" .. name)
@@ -195,7 +195,9 @@ package("ffmpeg")
             end
             os.vrunv("make", argv, {envs = envs})
             os.vrun("make install", {envs = envs})
-            if not package:config("shared") then
+            if package:config("shared") then
+                os.vmv(package:installdir("bin", "*.lib"), package:installdir("lib"))
+            else
                 -- rename files from libxx.a to xx.lib
                 for _, libfile in ipairs(os.files(package:installdir("lib", "*.a"))) do
                     os.vmv(libfile, libfile:gsub("^(.+[\\/])lib(.+)%.a$", "%1%2.lib"))
