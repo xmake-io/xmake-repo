@@ -186,14 +186,14 @@ package("ffmpeg")
         if package:is_plat("windows") then
             import("core.base.option")
             import("core.tool.toolchain")
-            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             assert(msvc:check(), "vs not found!")
             local envs = os.joinenvs(os.getenvs(), msvc:runenvs()) -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
             envs.SHELL = "sh"
 
             if package:is_arch("arm", "arm64") then
-                -- for gas-preprocessor.pl
-                envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
+                -- add gas-preprocessor.pl to the PATH
+                envs.PATH = path.joinenv({path.join(os.programdir(), "scripts"), envs.PATH})
             end
 
             table.insert(configs, "--prefix=" .. package:installdir())
@@ -207,6 +207,7 @@ package("ffmpeg")
             os.vrunv("make", argv, {envs = envs})
             os.vrunv("make", {"install"}, {envs = envs})
             if package:config("shared") then
+                -- move .lib from bin/ to lib/
                 os.vmv(package:installdir("bin", "*.lib"), package:installdir("lib"))
             else
                 -- rename files from libxx.a to xx.lib
