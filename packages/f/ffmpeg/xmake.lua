@@ -201,7 +201,7 @@ package("ffmpeg")
 
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
-            if option.get("verbose") then -- we always need enable it on windows, otherwise it will fail.
+            if option.get("verbose") then
                 table.insert(argv, "V=1")
             end
             os.vrunv("make", argv, {envs = envs})
@@ -285,7 +285,7 @@ package("ffmpeg")
         else
             if package:is_plat("mingw") and package:is_cross() then
                 -- looks like MinGW on macOS doesn't support -Wl,--pic-executable
-                io.replace("configure", "add_ldexeflags -Wl,--pic-executable,-e,_mainCRTStartup", "add_ldexeflags -Wl,-e,_mainCRTStartup")
+                io.replace("configure", "add_ldexeflags -Wl,--pic-executable,-e,_mainCRTStartup", "add_ldexeflags -Wl,-e,_mainCRTStartup", {plain=true})
             end
             try
             {
