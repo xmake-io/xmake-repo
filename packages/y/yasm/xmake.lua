@@ -11,12 +11,12 @@ package("yasm")
         else
             add_urls("https://github.com/yasm/yasm/releases/download/$(version)/vsyasm-$(version)-win32.zip",
                      "http://www.tortall.net/projects/yasm/releases/vsyasm-$(version)-win32.zip")
-            add_versions("1.3.0", "ff4585e2a03e7015b0b1d406d4231267c2d3733968ffc6fc633e586c85c16da5")
+            add_versions("1.3.0", "FF4585E2A03E7015B0B1D406D4231267C2D3733968FFC6FC633E586C85C16DA5")
         end
     else
         add_urls("https://www.tortall.net/projects/yasm/releases/yasm-$(version).tar.gz",
                  "https://ftp.openbsd.org/pub/OpenBSD/distfiles/yasm-$(version).tar.gz")
-        add_versions("1.3.0", "FF4585E2A03E7015B0B1D406D4231267C2D3733968FFC6FC633E586C85C16DA5")
+        add_versions("1.3.0", "3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f")
     end
 
     on_install("@windows", "@mingw", "@msys", function (package)
