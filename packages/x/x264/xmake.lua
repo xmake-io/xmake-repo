@@ -77,7 +77,8 @@ package("x264")
 
             table.insert(configs, "--toolchain=msvc")
             table.insert(configs, "--prefix=" .. package:installdir())
-            os.vrunv("sh", table.join("./configure", configs), {envs = envs})
+            os.vrunv("./configure", configs, {shell = true, envs = envs})
+            local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
             if option.get("verbose") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
