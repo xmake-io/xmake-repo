@@ -20,10 +20,10 @@ package("yasm")
     end
 
     on_install("@windows", "@mingw", "@msys", function (package)
-        os.mv("vsyasm.exe", "yasm.exe")
+        os.cp("vsyasm.exe", "yasm.exe")
         os.cp("*", package:installdir("bin"))
     end)
-    
+
     on_install("@linux", "@macosx", function (package)
         local configs = {"--disable-python"}
         if package:debug() then
@@ -35,4 +35,3 @@ package("yasm")
     on_test(function (package)
         os.vrun("yasm --version")
     end)
-    
