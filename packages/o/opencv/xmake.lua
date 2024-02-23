@@ -53,15 +53,13 @@ package("opencv")
 
     on_fetch("macosx", function (package, opt)
         if opt.system then
-            local result = package:find_package("brew::" .. "opencv", opt)
+            local result = package:find_package("brew::opencv", opt)
             if result then
-                if package:version():ge("4.0") then
-                    if type(result.sysincludedirs) == "string" then
-                        result.sysincludedirs = path.join(result.sysincludedirs, "opencv4")
-                    else
-                        for i, dir in ipairs(result.sysincludedirs) do
-                            result.sysincludedirs[i] = path.join(dir, "opencv4")
-                        end
+                for _, includedir in ipairs(result.sysincludedirs or result.includedirs) do
+                    local dir = path.join(includedir, "opencv4")
+                    if os.isdir(dir) then
+                        result.includedirs = table.wrap(result.includedirs)
+                        table.insert(result.includedirs, dir)
                     end
                 end
             end
