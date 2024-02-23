@@ -242,7 +242,7 @@ package("ffmpeg")
                 table.insert(cflags, "-mfloat-abi=hard")
             else
                 table.insert(cflags, "-mfpu=neon")
-                table.insert(cflags, "-mfloat-abi=softp")
+                table.insert(cflags, "-mfloat-abi=soft")
             end
             table.insert(configs, "--disable-avdevice")
             table.insert(configs, "--arch=" .. arch)
