@@ -45,7 +45,7 @@ package("ffmpeg")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then
-        add_syslinks("Ole32", "Secur32", "ws2_32")
+        add_syslinks("Mfplat", "Ole32", "Secur32", "ws2_32")
     end
 
     add_deps("nasm")
@@ -188,17 +188,8 @@ package("ffmpeg")
             envs.SHELL = "sh"
 
             table.insert(configs, "--prefix=" .. package:installdir())
-
-            local cflags = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cflags")), table.wrap(get_config("cxflags")), get_config("cflags"))
-            local runtime = package:config("runtime") or package:config("vs_runtime")
-            if runtime then
-                table.insert(cflags, "/" .. runtime)
-            end
-            if #cflags > 0 then
-                table.insert(configs, "--extra-cflags=" .. table.concat(cflags, ' '))
-            end
-
             os.vrunv("sh", table.join("./configure", configs), {envs = envs})
+
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
             if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
