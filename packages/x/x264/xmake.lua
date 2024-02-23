@@ -86,10 +86,14 @@ package("x264")
             os.vrunv("make", argv, {envs = envs})
             os.vrunv("make", {"install"}, {envs = envs})
         else
+            local envs = import("package.tools.autoconf").buildenvs(package)
+            if package:is_plat("mingw") then
+                envs.AS = "nasm"
+            end
             try
             {
                 function ()
-                    import("package.tools.autoconf").install(package, configs)
+                    import("package.tools.autoconf").install(package, configs, {envs = envs})
                 end,
                 catch
                 {
