@@ -45,7 +45,7 @@ package("ffmpeg")
     elseif is_plat("linux") then
         add_syslinks("pthread")
     elseif is_plat("windows", "mingw") then
-        add_syslinks("Mfplat", "Ole32", "Secur32", "ws2_32")
+        add_syslinks("Bcrypt", "Mfplat", "mfuuid", "Ole32", "Secur32", "Strmiids", "ws2_32")
     end
 
     add_deps("nasm")
