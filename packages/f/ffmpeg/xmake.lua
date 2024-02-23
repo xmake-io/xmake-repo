@@ -283,11 +283,19 @@ package("ffmpeg")
             os.vrunv("make", argv)
             os.vrun("make install")
         else
-            -- cross (mingw from macOS)
-            if package:is_plat("mingw") then
-                print(io.readfile("ffbuild/config.log"))
-            end
-            import("package.tools.autoconf").install(package, configs)
+            try
+            {
+                function ()
+                    import("package.tools.autoconf").install(package, configs)
+                end,
+                catch
+                {
+                    function (errors)
+                        print(io.readfile("ffbuild/config.log"))
+                        raise(errors)
+                    end
+                }
+            }
         end
         package:addenv("PATH", "bin")
     end)
