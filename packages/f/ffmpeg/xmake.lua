@@ -44,8 +44,6 @@ package("ffmpeg")
         add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
     elseif is_plat("linux") then
         add_syslinks("pthread")
-    elseif is_plat("windows", "mingw") then
-        add_syslinks("Bcrypt", "Mfplat", "mfuuid", "Ole32", "Secur32", "Strmiids", "ws2_32")
     end
 
     add_deps("nasm")
@@ -95,6 +93,9 @@ package("ffmpeg")
         if not package:config("gpl") then
             package:set("license", "LGPL-3.0")
         end
+        if is_plat("windows", "mingw") and not package:config("shared") then
+            package:add("syslinks", "Bcrypt", "Mfplat", "mfuuid", "Ole32", "Secur32", "Strmiids", "User32", "ws2_32")
+        end
         if is_subhost("windows") and os.arch() == "x64" then
             if package:is_plat("windows", "mingw") then
                 package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}})
@@ -108,9 +109,6 @@ package("ffmpeg")
         local configs = {"--enable-version3",
                          "--disable-doc"}
         configs.host = "" -- prevents xmake to add a --host=xx parameter (unsupported by ffmpeg configure script)
-        if package:config("gpl") then
-            table.insert(configs, "--enable-gpl")
-        end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
@@ -184,7 +182,7 @@ package("ffmpeg")
             import("core.tool.toolchain")
             local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             assert(msvc:check(), "vs not found!")
-            local envs = os.joinenvs(os.getenvs(), msvc:runenvs()) -- keep msys2 envs in front
+            local envs = os.joinenvs(os.getenvs(), msvc:runenvs()) -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
             envs.SHELL = "sh"
 
             table.insert(configs, "--prefix=" .. package:installdir())
@@ -192,11 +190,17 @@ package("ffmpeg")
 
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
-            if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
+            if option.get("verbose") then -- we always need enable it on windows, otherwise it will fail.
                 table.insert(argv, "V=1")
             end
             os.vrunv("make", argv, {envs = envs})
             os.vrun("make install", {envs = envs})
+            if not package:config("shared") then
+                -- rename files from libxx.a to xx.lib
+                for _, libfile in ipairs(os.files(package:installdir("lib", "*.a"))) do
+                    os.vmv(libfile, libfile:gsub("^(.+[\\/])lib(.+)%.a$", "%1%2.lib"))
+                end
+            end
         elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")
