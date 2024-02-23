@@ -26,6 +26,11 @@ package("ffmpeg")
     add_versions("git:5.0.1", "n5.0.1")
     add_versions("git:4.0.2", "n4.0.2")
 
+    if is_plat("mingw") and is_host("macos") then
+        -- looks like MinGW on macOS doesn't support -Wl,--pic-executable
+        add_patches(">=1.0.0", path.join(os.scriptdir(), "patches", "mingw_macos.patch"))
+    end
+
     add_configs("gpl",              {description = "Enable GPL code", default = true, type = "boolean"})
     add_configs("ffprobe",          {description = "Enable ffprobe program.", default = false, type = "boolean"})
     add_configs("ffmpeg",           {description = "Enable ffmpeg program.", default = true, type = "boolean"})
@@ -278,10 +283,6 @@ package("ffmpeg")
             os.vrunv("make", argv)
             os.vrun("make install")
         else
-            if package:is_plat("mingw") and package:is_cross() then
-                -- looks like MinGW on macOS doesn't support -Wl,--pic-executable
-                io.replace("configure", "add_ldexeflags -Wl,--pic-executable,-e,_mainCRTStartup", "add_ldexeflags -Wl,-e,_mainCRTStartup", {plain = true})
-            end
             try
             {
                 function ()
