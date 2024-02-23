@@ -31,6 +31,9 @@ package("dynareadout")
         else
             package:add("links", "dynareadout")
         end
+        if is_plat("macosx") then
+            package:add("deps", "boost")
+        end
     end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
