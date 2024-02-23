@@ -1,10 +1,9 @@
 package("x264")
-
     set_homepage("https://www.videolan.org/developers/x264.html")
     set_description("A free software library and application for encoding video streams into the H.264/MPEG-4 AVC compression format.")
 
-    add_urls("https://code.videolan.org/videolan/x264.git")
-    add_urls("https://github.com/mirror/x264.git")
+    add_urls("https://code.videolan.org/videolan/x264.git",
+             "https://github.com/mirror/x264.git")
     add_versions("v2023.04.04", "eaa68fad9e5d201d42fde51665f2d137ae96baf0")
     add_versions("v2021.09.29", "66a5bc1bd1563d8227d5d18440b525a09bcf17ca")
     add_versions("v2018.09.25", "545de2ffec6ae9a80738de1b2c8cf820249a2530")
@@ -35,13 +34,21 @@ package("x264")
 
     add_configs("toolchains", {readonly = true, description = "Set package toolchains only for cross-compilation."})
 
-    add_syslinks("pthread", "dl")
+    if is_plat("linux", "macosx") then
+        add_syslinks("pthread", "dl")
+    end
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_install("linux", "macosx", "wasm", function (package)
+    on_load("windows", "mingw", function (package)
+        if is_subhost("windows") and os.arch() == "x64" then
+            package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}})
+        end
+    end)
+
+    on_install("windows", "mingw", "linux", "macosx", "wasm", function (package)
         local configs = {}
         table.insert(configs, "--enable-" .. (package:config("shared") and "shared" or "static"))
         if package:is_plat("wasm") then
@@ -59,7 +66,27 @@ package("x264")
                 end
             end
         end
-        import("package.tools.autoconf").install(package, configs)
+        if package:is_plat("windows") then
+            import("core.base.option")
+            import("core.tool.toolchain")
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            assert(msvc:check(), "msvs not found!")
+            local envs = os.joinenvs(os.getenvs(), msvc:runenvs()) -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
+            envs.CC = path.filename(package:build_getenv("cc"))
+            envs.SHELL = "sh"
+
+            table.insert(configs, "--toolchain=msvc")
+            table.insert(configs, "--prefix=" .. package:installdir())
+            os.vrunv("sh", table.join("./configure", configs), {envs = envs})
+            local argv = {"-j" .. njob}
+            if option.get("verbose") then -- we always need enable it on windows, otherwise it will fail.
+                table.insert(argv, "V=1")
+            end
+            os.vrunv("make", argv, {envs = envs})
+            os.vrunv("make", {"install"}, {envs = envs})
+        else
+            import("package.tools.autoconf").install(package, configs)
+        end
     end)
 
     on_test(function (package)
