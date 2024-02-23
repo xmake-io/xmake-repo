@@ -1,14 +1,18 @@
---- configure	2023-11-11 00:36:22.000000000 +0100
-+++ configure_mingw	2024-02-23 20:20:11.436767000 +0100
-@@ -5686,9 +5686,9 @@
+--- configure	2024-02-23 21:39:04.355659000 +0100
++++ configure_mingw	2024-02-23 21:39:07.690936300 +0100
+@@ -5686,13 +5686,10 @@
          # however ld then forgets what the entry point should be (oops) so we
          # have to manually (re)set it.
          if enabled x86_32; then
--            disabled debug && add_ldexeflags -Wl,--pic-executable,-e,_mainCRTStartup
-+            disabled debug && add_ldexeflags -Wl,-e,_mainCRTStartup
+-            disabled debug && add_ldexeflags -Wl,-e,_mainCRTStartup
++            disabled debug && add_ldexeflags -Wl,--pic-executable,-e,_mainCRTStartup
          elif enabled x86_64; then
--            disabled debug && add_ldexeflags -Wl,--pic-executable,-e,mainCRTStartup
-+            disabled debug && add_ldexeflags -Wl,-e,mainCRTStartup
+-            disabled debug && add_ldexeflags -Wl,-e,mainCRTStartup
++            disabled debug && add_ldexeflags -Wl,--pic-executable,-e,mainCRTStartup
              check_ldflags -Wl,--high-entropy-va # binutils 2.25
-             # Set image base >4GB for extra entropy with HEASLR
-             add_ldexeflags -Wl,--image-base,0x140000000
+-            # Set image base >4GB for extra entropy with HEASLR
+-            add_ldexeflags -Wl,--image-base,0x140000000
+-            append SHFLAGS -Wl,--image-base,0x180000000
+         fi
+         ;;
+     win32|win64)
