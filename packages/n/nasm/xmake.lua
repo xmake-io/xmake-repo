@@ -1,4 +1,5 @@
 package("nasm")
+
     set_kind("binary")
     set_homepage("https://www.nasm.us/")
     set_description("Netwide Assembler (NASM) is an 80x86 assembler.")
