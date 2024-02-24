@@ -55,14 +55,18 @@ package("opencv")
         if opt.system then
             local result = package:find_package("brew::opencv", opt)
             if result then
-                for _, includedir in ipairs(result.sysincludedirs or result.includedirs) do
+                local includedirs = table.wrap(result.sysincludedirs or result.includedirs)
+                for _, includedir in ipairs(includedirs) do
                     local dir = path.join(includedir, "opencv4")
                     if os.isdir(dir) then
-                        result.includedirs = table.wrap(result.includedirs)
-                        result.sysincludedirs = table.wrap(result.sysincludedirs)
-                        table.insert(result.includedirs, dir)
-                        table.insert(result.sysincludedirs, dir)
+                        table.insert(includedirs, dir)
                     end
+                end
+                if result.sysincludedirs then
+                    result.sysincludedirs = includedirs
+                end
+                if result.includedirs then
+                    result.includedirs = includedirs
                 end
             end
             return result
