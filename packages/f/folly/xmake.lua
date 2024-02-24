@@ -27,7 +27,7 @@ package("folly")
     add_deps("cmake")
     add_deps("boost", {configs = {context = true, filesystem = true, program_options = true, regex = true, system = true, thread = true}})
     add_deps("libevent", {configs = {openssl = true}})
-    add_deps("double-conversion", "gflags", "glog", "zlib", "fmt")
+    add_deps("double-conversion", "gflags", "glog", "zlib", "fmt", "snappy", "libsodium")
     add_deps("bzip2", "lz4", "zstd", {optional = true})
     if is_plat("linux") then
         add_syslinks("pthread")
