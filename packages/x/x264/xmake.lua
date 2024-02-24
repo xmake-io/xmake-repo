@@ -83,8 +83,8 @@ package("x264")
             os.vrunv("./configure", configs, {shell = true, envs = envs})
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
-            if option.get("verbose") then -- we always need enable it on windows, otherwise it will fail.
-                table.insert(argv, "V=1")
+            if option.get("verbose") then
+               table.insert(argv, "V=1")
             end
             os.vrunv("make", argv, {envs = envs})
             os.vrunv("make", {"install"}, {envs = envs})
