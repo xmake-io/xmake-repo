@@ -200,7 +200,7 @@ package("boost")
             "--without-icu"
         }
 
-        if package:toolchain("clang") or package:toolchain("llvm") then
+        if package:has_tool("cxx", "clang", "clangxx") then
             table.insert(bootstrap_argv, "--with-toolset=clang")
         end
 
@@ -307,7 +307,7 @@ package("boost")
                 cxxflags = cxxflags .. " -fPIC"
             end
         end
-        if package:runtimes("c++_shared", "c++_static") then
+        if package.has_runtime and package:has_runtime("c++_shared", "c++_static") then
             if cxxflags then
                 cxxflags = cxxflags .. " -stdlib=libc++"
             else
@@ -319,7 +319,7 @@ package("boost")
                 linkflags = "-stdlib=libc++"
             end
 
-            if package:runtimes("c++_static") then
+            if package.has_runtime and package:has_runtime("c++_static") then
                 linkflags = linkflags .. " -static-libstdc++"
             end
         end
