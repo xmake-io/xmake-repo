@@ -7,6 +7,10 @@ package("ffmpeg")
     add_urls("https://github.com/FFmpeg/FFmpeg/archive/n$(version).zip", {alias = "github"})
     add_urls("https://git.ffmpeg.org/ffmpeg.git", "https://github.com/FFmpeg/FFmpeg.git", {alias = "git"})
 
+    if is_plat("windows") and is_arch("arm", "arm64") then
+        add_resources(">=1.0.0", "gas-preprocessor", "https://raw.githubusercontent.com/FFmpeg/gas-preprocessor/master/gas-preprocessor.pl", "17a14de55348547d5de5c2448dee0ab6d193d138a1326b6a5235617c3f2c2f82")
+    end
+
     add_versions("home:6.1", "eb7da3de7dd3ce48a9946ab447a7346bd11a3a85e6efb8f2c2ce637e7f547611")
     add_versions("home:6.0.1", "2c6e294569d1ba8e99cbf1acbe49e060a23454228a540a0f45d679d72ec69a06")
     add_versions("home:5.1.2", "39a0bcc8d98549f16c570624678246a6ac736c066cebdb409f9502e915b22f2b")
@@ -190,7 +194,9 @@ package("ffmpeg")
                 -- add gas-preprocessor.pl to the PATH
                 -- note: gas-preprocessor.pl in xmake/scripts was too old when this package was updated
                 -- see https://github.com/xmake-io/xmake/pull/4767 and use it later
-                envs.PATH = path.joinenv({path.join(os.scriptdir(), "scripts"), envs.PATH})
+                os.mkdir("gas-preprocessor")
+                os.vmv(package:resourcefile("gas-preprocessor"), path.join("gas-preprocessor", "gas-preprocessor.pl"))
+                envs.PATH = path.join(os.curdir(), "gas-preprocessor") .. path.envsep() .. envs.PATH
             end
 
             table.insert(configs, "--prefix=" .. package:installdir())
