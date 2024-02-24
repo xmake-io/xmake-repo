@@ -16,7 +16,7 @@ package("benchmark")
     add_versions("1.7.0", "3aff99169fa8bdee356eaa1f691e835a6e57b1efeadb8a0f9f228531158246ac")
     add_versions("1.7.1", "6430e4092653380d9dc4ccb45a1e2dc9259d581f4866dc0759713126056bc1d7")
     add_versions("1.8.0", "ea2e94c24ddf6594d15c711c06ccd4486434d9cf3eca954e2af8a20c88f9f172")
-    add_versions("1.8.3", "6bc180a57d23d4d9515519f92b0c83d61b05b5bab188961f36ac7b06b0d9e9ce") 
+    add_versions("1.8.3", "6bc180a57d23d4d9515519f92b0c83d61b05b5bab188961f36ac7b06b0d9e9ce")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::benchmark")
