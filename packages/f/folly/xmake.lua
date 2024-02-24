@@ -34,6 +34,7 @@ package("folly")
     end
 
     on_install("windows|x64", "linux", "macosx", function (package)
+        io.replace("CMakeLists.txt", "${CMAKE_SYSTEM_PROCESSOR}", "\"${CMAKE_SYSTEM_PROCESSOR}\"", {plain = true})
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_LibDwarf=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_Libiberty=ON",
