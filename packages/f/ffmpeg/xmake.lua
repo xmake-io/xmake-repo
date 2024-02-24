@@ -26,11 +26,6 @@ package("ffmpeg")
     add_versions("git:5.0.1", "n5.0.1")
     add_versions("git:4.0.2", "n4.0.2")
 
-    if is_plat("mingw") and is_host("macosx") then
-        -- looks like MinGW on macOS doesn't support -Wl,--pic-executable
-        add_patches(">=1.0.0", path.join(os.scriptdir(), "patches", "mingw_macos.patch"))
-    end
-
     add_configs("gpl",              {description = "Enable GPL code", default = true, type = "boolean"})
     add_configs("ffprobe",          {description = "Enable ffprobe program.", default = false, type = "boolean"})
     add_configs("ffmpeg",           {description = "Enable ffmpeg program.", default = true, type = "boolean"})
@@ -111,7 +106,7 @@ package("ffmpeg")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "android", function (package)
+    on_install("windows", "mingw@windows,linux,cygwin,msys", "linux", "macosx", "android", function (package)
         local configs = {"--enable-version3",
                          "--disable-doc"}
         configs.host = "" -- prevents xmake to add a --host=xx parameter (unsupported by ffmpeg configure script)
@@ -284,19 +279,7 @@ package("ffmpeg")
             os.vrunv("make", argv)
             os.vrun("make install")
         else
-            try
-            {
-                function ()
-                    import("package.tools.autoconf").install(package, configs)
-                end,
-                catch
-                {
-                    function (errors)
-                        print(io.readfile("ffbuild/config.log"))
-                        raise(errors)
-                    end
-                }
-            }
+            import("package.tools.autoconf").install(package, configs)
         end
         package:addenv("PATH", "bin")
     end)
