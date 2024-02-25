@@ -6,6 +6,7 @@ package("highfive")
     add_urls("https://github.com/BlueBrain/HighFive/archive/refs/tags/$(version).tar.gz",
              "https://github.com/BlueBrain/HighFive.git")
 
+    add_versions("v2.9.0", "6301def8ceb9f4d7a595988612db288b448a3c0546f6c83417dab38c64994d7e")
     add_versions("v2.6.1", "b5002c1221cf1821e02fb2ab891b0160bac88b43f56655bd844a472106ca3397")
     add_versions("v2.3.1", "41728a1204bdfcdcef8cbc3ddffe5d744c5331434ce3dcef35614b831234fcd7")
 
