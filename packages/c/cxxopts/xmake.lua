@@ -7,7 +7,7 @@ package("cxxopts")
 
     add_urls("https://github.com/jarro2783/cxxopts.git")
     add_urls("https://github.com/jarro2783/cxxopts/archive/$(version).tar.gz")
-    add_versions("v3.2.0", "d5b32ee2dbd7aa4fa3528b5c3a81d7d57f7b962208c95c9ae35a553f43beaca3")
+    add_versions("v3.2.0", "9f43fa972532e5df6c5fd5ad0f5bac606cdec541ccaf1732463d8070bbb7f03b")
     add_versions("v3.1.1", "523175f792eb0ff04f9e653c90746c12655f10cb70f1d5e6d6d9491420298a08")
     add_versions("v3.0.0", "36f41fa2a46b3c1466613b63f3fa73dc24d912bc90d667147f1e43215a8c6d00")
     add_versions("v2.2.0", "447dbfc2361fce9742c5d1c9cfb25731c977b405f9085a738fbd608626da8a4d")
