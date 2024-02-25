@@ -200,6 +200,10 @@ package("boost")
             "--without-icu"
         }
 
+        if package:has_tool("cxx", "clang", "clangxx") then
+            table.insert(bootstrap_argv, "--with-toolset=clang")
+        end
+
         if package:is_plat("windows") then
             -- for bootstrap.bat, all other arguments are useless
             bootstrap_argv = { "msvc" }
@@ -265,6 +269,7 @@ package("boost")
             table.insert(argv, "address-model=32")
         end
         local cxxflags
+        local linkflags
         if package:is_plat("windows") then
             local vs_runtime = package:config("vs_runtime")
             if package:config("shared") then
@@ -302,8 +307,18 @@ package("boost")
                 cxxflags = cxxflags .. " -fPIC"
             end
         end
+        if package.has_runtime and package:has_runtime("c++_shared", "c++_static") then
+            cxxflags = (cxxflags or "") .. " -stdlib=libc++"
+            linkflags = (linkflags or "") .. " -stdlib=libc++"
+            if package:has_runtime("c++_static") then
+                linkflags = linkflags .. " -static-libstdc++"
+            end
+        end
         if cxxflags then
             table.insert(argv, "cxxflags=" .. cxxflags)
+        end
+        if linkflags then
+            table.insert(argv, "linkflags=" .. linkflags)
         end
         for _, libname in ipairs(libnames) do
             if package:config("all") or package:config(libname) then
