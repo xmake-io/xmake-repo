@@ -308,18 +308,9 @@ package("boost")
             end
         end
         if package.has_runtime and package:has_runtime("c++_shared", "c++_static") then
-            if cxxflags then
-                cxxflags = cxxflags .. " -stdlib=libc++"
-            else
-                cxxflags = "-stdlib=libc++"
-            end
-            if linkflags then
-                linkflags = linkflags .. " -stdlib=libc++"
-            else
-                linkflags = "-stdlib=libc++"
-            end
-
-            if package.has_runtime and package:has_runtime("c++_static") then
+            cxxflags = (cxxflags or "") .. " -stdlib=libc++"
+            linkflags = (linkflags or "") .. " -stdlib=libc++"
+            if package:has_runtime("c++_static") then
                 linkflags = linkflags .. " -static-libstdc++"
             end
         end
