@@ -135,7 +135,7 @@ package("ffmpeg")
         else
             table.insert(configs, "--disable-debug")
         end
-        -- plat config
+        
         if package:is_plat("windows") then
             table.insert(configs, "--target-os=win32")
             table.insert(configs, "--enable-w32threads")
@@ -181,7 +181,6 @@ package("ffmpeg")
             table.insert(configs, "--arch=" .. package:targetarch())
         end
 
-        -- build
         if package:is_plat("windows") then
             import("core.base.option")
             import("core.tool.toolchain")
