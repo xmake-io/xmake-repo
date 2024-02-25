@@ -16,6 +16,7 @@ package("python")
             add_versions("3.10.6", "c1a07f7685b5499f58cfad2bb32b394b853ba12b8062e0f7530f2352b0942096")
             add_versions("3.10.11", "7fac6ed9a58623f31610024d2c4d6abb33fac0cf741ec1a5285d056b5933012e")
             add_versions("3.11.3", "992648876ecca6cfbe122dc2d9c358c9029d9fdb83ee6edd6e54926bf0360da6")
+            add_versions("3.11.8", "f5e399d12b00a4f73dc3078b7b4fe900e1de6821aa3e31d1c27c6ef4e33e95d9")
         else
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
             add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
@@ -28,6 +29,7 @@ package("python")
             add_versions("3.10.6", "8cbc234939a679687da44c3bbc6d6ce375ea4b84c4fa8dbc1bf5befc43254b58")
             add_versions("3.10.11", "96663f508643c1efec639733118d4a8382c5c895b82ad1362caead17b643260e")
             add_versions("3.11.3", "708c4e666989b3b00057eaea553a42b23f692c4496337a91d17aced931280dc4")
+            add_versions("3.11.8", "2be5fdc87a96659b75f2acd9f4c4a7709fcfccb7a81cd0bd11e9c0e08380e55c")
         end
     else
         add_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
@@ -41,6 +43,7 @@ package("python")
         add_versions("3.10.6", "848cb06a5caa85da5c45bd7a9221bb821e33fc2bdcba088c127c58fad44e6343")
         add_versions("3.10.11", "f3db31b668efa983508bd67b5712898aa4247899a346f2eb745734699ccd3859")
         add_versions("3.11.3", "1a79f3df32265d9e6625f1a0b31c28eb1594df911403d11f3320ee1da1b3e048")
+        add_versions("3.11.8", "d3019a613b9e8761d260d9ebe3bd4df63976de30464e5c0189566e1ae3f61889")
     end
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
@@ -111,12 +114,8 @@ package("python")
         os.cp("libs/*", package:installdir("lib"))
         os.cp("*", package:installdir())
         local python = path.join(package:installdir("bin"), "python.exe")
-        if package:version():eq("3.9.10") then
-            -- https://github.com/xmake-io/xmake-repo/issues/1013
-            os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip==21.3.1"})
-        else
-            os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"})
-        end
+        os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"})
+        os.vrunv(python, {"-m", "pip", "install", "--upgrade", "setuptools"})
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
@@ -175,26 +174,6 @@ package("python")
             xcode_dir = xcode_dir or get_config("xcode")
             xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver")
             target_minver = target_minver or get_config("target_minver")
-
-            -- TODO will be deprecated after xmake v2.5.1
-            xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver_macosx")
-            if not xcode_dir or not xcode_sdkver then
-                -- maybe on cross platform, we need find xcode envs manually
-                local xcode = import("detect.sdks.find_xcode")(nil, {force = true, plat = package:plat(), arch = package:arch()})
-                if xcode then
-                    xcode_dir = xcode.sdkdir
-                    xcode_sdkver = xcode.sdkver
-                end
-            end
-
-            -- TODO will be deprecated after xmake v2.5.1
-            target_minver = target_minver or get_config("target_minver_macosx")
-            if not target_minver then
-                local macos_ver = macos.version()
-                if macos_ver then
-                    target_minver = macos_ver:major() .. "." .. macos_ver:minor()
-                end
-            end
 
             if xcode_dir and xcode_sdkver then
                 -- help Python's build system (setuptools/pip) to build things on SDK-based systems
@@ -262,6 +241,7 @@ package("python")
             LD_LIBRARY_PATH = package:installdir("lib")
         }
         os.vrunv(python, {"-m", "pip", "install", "--upgrade", "--force-reinstall", "pip"}, {envs = envs})
+        os.vrunv(python, {"-m", "pip", "install", "--upgrade", "setuptools"}, {envs = envs})
         os.vrunv(python, {"-m", "pip", "install", "wheel"}, {envs = envs})
     end)
 

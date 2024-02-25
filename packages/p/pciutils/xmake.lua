@@ -6,6 +6,7 @@ package("pciutils")
 
     add_urls("https://mj.ucw.cz/download/linux/pci/pciutils-$(version).tar.gz")
     add_versions("3.7.0", "08c27e01030d1fcc700d02bc2ea66c638f58a3d150e45e58852aa82ad4160d84")
+    add_versions("3.10.0", "7deabe38ae5fa88a96a8c4947975cf31c591506db546e9665a10dddbf350ead0")
 
     if is_plat("macosx") then
         add_frameworks("IOKit")

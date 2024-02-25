@@ -7,6 +7,7 @@ package("opencl-headers")
 
     add_urls("https://github.com/KhronosGroup/OpenCL-Headers/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KhronosGroup/OpenCL-Headers.git")
+    add_versions("v2023.12.14", "407d5e109a70ec1b6cd3380ce357c21e3d3651a91caae6d0d8e1719c69a1791d")
     add_versions("v2021.06.30", "6640d590c30d90f89351f5e3043ae6363feeb19ac5e64bc35f8cfa1a6cd5498e")
 
     add_deps("cmake")

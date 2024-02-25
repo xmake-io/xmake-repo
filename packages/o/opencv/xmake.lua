@@ -6,6 +6,7 @@ package("opencv")
 
     add_urls("https://github.com/opencv/opencv/archive/$(version).tar.gz",
              "https://github.com/opencv/opencv.git")
+    add_versions("4.9.0", "ddf76f9dffd322c7c3cb1f721d0887f62d747b82059342213138dc190f28bc6c")
     add_versions("4.8.0", "cbf47ecc336d2bff36b0dcd7d6c179a9bb59e805136af6b9670ca944aef889bd")
     add_versions("4.6.0", "1ec1cba65f9f20fe5a41fda1586e01c70ea0c9a6d7b67c9e13edf0cfe2239277")
     add_versions("4.5.5", "a1cfdcf6619387ca9e232687504da996aaa9f7b5689986b8331ec02cb61d28ad")
@@ -16,6 +17,7 @@ package("opencv")
     add_versions("4.2.0", "9ccb2192d7e8c03c58fee07051364d94ed7599363f3b0dce1c5e6cc11c1bb0ec")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
+    add_resources("4.9.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.9.0.tar.gz", "8952c45a73b75676c522dd574229f563e43c271ae1d5bbbd26f8e2b6bc1a4dae")
     add_resources("4.8.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.8.0.tar.gz", "b4aef0f25a22edcd7305df830fa926ca304ea9db65de6ccd02f6cfa5f3357dbb")
     add_resources("4.6.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.6.0.tar.gz", "1777d5fd2b59029cf537e5fd6f8aa68d707075822f90bde683fcde086f85f7a7")
     add_resources("4.5.5", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.5.5.tar.gz", "a97c2eaecf7a23c6dbd119a609c6d7fae903e5f9ff5f1fe678933e01c67a6c11")
@@ -41,12 +43,35 @@ package("opencv")
 
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL", "Accelerate")
+        add_extsources("brew::opencv")
     elseif is_plat("linux") then
         add_extsources("pacman::opencv", "apt::libopencv-dev")
         add_syslinks("pthread", "dl")
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32")
     end
+
+    on_fetch("macosx", function (package, opt)
+        if opt.system then
+            local result = package:find_package("brew::opencv", opt)
+            if result then
+                local includedirs = table.wrap(result.sysincludedirs or result.includedirs)
+                for _, includedir in ipairs(includedirs) do
+                    local dir = path.join(includedir, "opencv4")
+                    if os.isdir(dir) then
+                        table.insert(includedirs, dir)
+                    end
+                end
+                if result.sysincludedirs then
+                    result.sysincludedirs = includedirs
+                end
+                if result.includedirs then
+                    result.includedirs = includedirs
+                end
+            end
+            return result
+        end
+    end)
 
     on_load("linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then

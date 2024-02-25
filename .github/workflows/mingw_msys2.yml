@@ -33,7 +33,7 @@ jobs:
       - name: Prepare
         shell: msys2 {0}
         run: |
-          git clone https://github.com/xmake-io/xmake.git --recurse-submodules -b dev
+          git clone https://github.com/xmake-io/xmake.git --recurse-submodules -b master
           cd xmake
           ./configure
           make -j4

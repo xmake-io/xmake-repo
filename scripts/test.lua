@@ -29,7 +29,8 @@ local options =
 ,   {nil, "vs",             "kv", nil, "Set the VS Compiler version."               }
 ,   {nil, "vs_sdkver",      "kv", nil, "Set the Windows SDK version."               }
 ,   {nil, "vs_toolset",     "kv", nil, "Set the Windows Toolset version."           }
-,   {nil, "vs_runtime",     "kv", nil, "Set the VS Runtime library."                }
+,   {nil, "vs_runtime",     "kv", nil, "Set the VS Runtime library (deprecated)."   }
+,   {nil, "runtimes",       "kv", nil, "Set the Runtime libraries."                 }
 ,   {nil, "xcode_sdkver",   "kv", nil, "The SDK Version for Xcode"                  }
 ,   {nil, "target_minver",  "kv", nil, "The Target Minimal Version"                 }
 ,   {nil, "appledev",       "kv", nil, "The Apple Device Type"                      }
@@ -75,8 +76,13 @@ function _require_packages(argv, packages)
     if argv.vs_toolset then
         table.insert(config_argv, "--vs_toolset=" .. argv.vs_toolset)
     end
-    if argv.vs_runtime then
-        table.insert(config_argv, "--vs_runtime=" .. argv.vs_runtime)
+    local runtimes = argv.runtimes or argv.vs_runtime
+    if runtimes then
+        if is_host("windows") then
+            table.insert(config_argv, "--vs_runtime=" .. runtimes)
+        else
+            table.insert(config_argv, "--runtimes=" .. runtimes)
+        end
     end
     if argv.xcode_sdkver then
         table.insert(config_argv, "--xcode_sdkver=" .. argv.xcode_sdkver)
@@ -193,7 +199,7 @@ function main(...)
         for _, file in ipairs(files:split('\n'), string.trim) do
             if file:startswith("packages") then
                 assert(file == file:lower(), "%s must be lower case!", file)
-                local package = file:match("packages/%w/(%S+)/")
+                local package = file:match("packages/%w/(%S-)/")
                 table.insert(packages, package)
             end
         end
