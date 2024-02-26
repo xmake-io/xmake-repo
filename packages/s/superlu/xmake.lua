@@ -6,6 +6,7 @@ package("superlu")
 
     add_urls("https://github.com/xiaoyeli/superlu/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xiaoyeli/superlu.git")
+    add_versions("v6.0.1", "6c5a3a9a224cb2658e9da15a6034eed44e45f6963f5a771a6b4562f7afb8f549")
     add_versions("v5.2.2", "470334a72ba637578e34057f46948495e601a5988a602604f5576367e606a28c")
     add_versions("v5.3.0", "3e464afa77335de200aeb739074a11e96d9bef6d0b519950cfa6684c4be1f350")
 
