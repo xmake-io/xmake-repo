@@ -10,6 +10,7 @@ package("duckdb")
     on_install("macosx", "linux", "windows", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
+            set_languages("c++11")
             target("duckdb")
                 set_kind("shared")
                 add_files("duckdb.cpp")
@@ -27,5 +28,5 @@ package("duckdb")
             DuckDB db(nullptr);
             Connection con(db);
           }
-      ]]}))
+      ]]}, {configs = {languages = "cxx11"}}))
     end)
