@@ -15,7 +15,7 @@ package("snmalloc")
         add_syslinks("onecore")
     end
 
-    on_install("macosx", "windows", "linux", "bsd", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", function (package)
         local configs = {"-DSNMALLOC_BUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
