@@ -7,7 +7,7 @@ package("duckdb")
              "https://github.com/duckdb/duckdb.git")
     add_versions("v0.10.0", "385e27aa67712813e4a07389465c4c5c45c431d97cddd35713b8a306d2a86f2d")
 
-    on_install("macosx", "linux", "mingw", function (package)
+    on_install("macosx", "linux", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             set_languages("c++17")
