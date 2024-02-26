@@ -7,6 +7,7 @@ package("cxxopts")
 
     add_urls("https://github.com/jarro2783/cxxopts.git")
     add_urls("https://github.com/jarro2783/cxxopts/archive/$(version).tar.gz")
+    add_versions("v3.2.1", "841f49f2e045b9c6365997c2a8fbf76e6f215042dda4511a5bb04bc5ebc7f88a")
     add_versions("v3.2.0", "9f43fa972532e5df6c5fd5ad0f5bac606cdec541ccaf1732463d8070bbb7f03b")
     add_versions("v3.1.1", "523175f792eb0ff04f9e653c90746c12655f10cb70f1d5e6d6d9491420298a08")
     add_versions("v3.0.0", "36f41fa2a46b3c1466613b63f3fa73dc24d912bc90d667147f1e43215a8c6d00")
@@ -38,4 +39,3 @@ package("cxxopts")
             }
         ]]}, {configs = {languages = "c++14"}, includes = "cxxopts.hpp"}))
     end)
-
