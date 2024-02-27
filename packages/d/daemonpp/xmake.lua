@@ -34,7 +34,7 @@ package("daemonpp")
                 }
             };
 
-            void test() {
+            int test(int argc, char* argv[]) {
                 my_daemon dmn;
                 dmn.set_name("my_daemon");
                 dmn.set_update_duration(3s);
