@@ -6,6 +6,7 @@ package("webui")
 
     set_urls("https://github.com/webui-dev/webui/archive/refs/tags/$(version).tar.gz",
              "https://github.com/webui-dev/webui.git")
+    add_versions("2.4.2", "c51967bbab472655d04e28ce1668ee4adda1f320e05f98c14f071b2cdf61228b")
     add_versions("2.3.0", "14be57405b12cf434daade2310178534240866e3169c7213a6fa0e4a6c6f9f27")
 
     if is_plat("windows") then
