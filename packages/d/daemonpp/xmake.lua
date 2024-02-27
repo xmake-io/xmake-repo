@@ -40,6 +40,7 @@ package("daemonpp")
                 dmn.set_update_duration(3s);
                 dmn.set_cwd("/");
                 dmn.run(argc, argv);
+                return 0;
             }
         ]]}, {configs = {languages = "cxx11"}}))
     end)
