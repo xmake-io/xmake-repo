@@ -15,8 +15,8 @@ package("daemonpp")
         assert(package:check_cxxsnippets({test = [[
             #include <chrono>
             #include <daemon.hpp>
+
             using namespace daemonpp;
-            using namespace std::chrono_literals;
 
             class my_daemon : public daemon
             {
@@ -38,7 +38,7 @@ package("daemonpp")
             int test(int argc, const char* argv[]) {
                 my_daemon dmn;
                 dmn.set_name("my_daemon");
-                dmn.set_update_duration(3s);
+                dmn.set_update_duration(std::chrono::seconds(3));
                 dmn.set_cwd("/");
                 dmn.run(argc, argv);
                 return 0;
