@@ -1,19 +1,18 @@
 package("vulkan-validationlayers")
-
     set_homepage("https://github.com/KhronosGroup/Vulkan-ValidationLayers/")
     set_description("Vulkan Validation Layers")
     set_license("Apache-2.0")
 
     if is_plat("android") then
-        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/download/sdk-$(version)/android-binaries-$(version).tar.gz",
-        {version = function (version) return version:gsub("%+", ".") end})
+        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/download/sdk-$(version)/android-binaries-$(version).tar.gz", {version = function (version) return (version:ge("1.3.261") and "sdk-" or "") .. version:gsub("%+", ".") end})
 
         add_versions("1.2.198+0", "5436e974d6b3133b3454edf1910f76b9f869db8bbe086859b2abe32fdb539cbc")
         add_versions("1.2.189+1", "b3e69b60a67a17b023825f9eb0ce1aef22e6b59d095afa204d883a9ce3d81021")
+        add_versions("1.3.261+1", "ebb324859653e15fb4a9cf7cd1b3252d1aeab370d15e19f9d0c4b7330aef790c")
     else
-        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/sdk-$(version).tar.gz",
-        {version = function (version) return version:gsub("%+", ".") end})
+        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/sdk-$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
 
+        add_versions("1.3.261+1", "1372d522f297bb3fb386802b1aa4b7f885a9e1e969a6a3c6e9b29d381357f21d")
         add_versions("1.2.198+0", "4a70cc5da26baf873fcf69b081eeeda545515dd66e5904f18fee32b4d275593a")
         add_versions("1.2.189+1", "d169ae71ae3ba12159df355b58f86f5635062c695d1deac9b97d5653561d517d")
         add_versions("1.2.182+0", "e88492143c8b08154807e7ead0ac784365b14464bb5016c2800cbff176ff61e7")
@@ -23,7 +22,7 @@ package("vulkan-validationlayers")
         add_patches("1.2.154+0", "https://github.com/KhronosGroup/Vulkan-ValidationLayers/commit/9d3ef3258715573b17e8195855c76626600998be.patch", "1fa39483c345fbfb43b925e8410a55e58fa8a9776f9e5443c6e4ec994a554749")
 
         add_deps("cmake")
-        add_deps("glslang", "spirv-headers", "spirv-tools")
+
         if is_plat("windows") then
             add_syslinks("Advapi32")
         elseif is_plat("linux") then
@@ -33,15 +32,18 @@ package("vulkan-validationlayers")
         end
     end
 
-    on_load("windows", "linux", function (package)
+    on_load("windows", "linux", "macosx", function (package)
         local sdkver = package:version():split("%+")[1]
+        package:add("deps", "glslang " .. sdkver)
+        package:add("deps", "spirv-headers " .. sdkver)
+        package:add("deps", "spirv-tools " .. sdkver)
         package:add("deps", "vulkan-headers " .. sdkver)
         if package:version():ge("1.2.189") then
             package:add("deps", "robin-hood-hashing")
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         import("package.tools.cmake")
 
         local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
@@ -71,7 +73,7 @@ package("vulkan-validationlayers")
             table.insert(configs, "-DROBIN_HOOD_HASHING_INSTALL_DIR=" .. package:dep("robin-hood-hashing"):installdir())
         end
 
-        if package:is_plat("windows") then
+        if package:is_plat("windows", "macosx") then
             cmake.install(package, configs, {buildir = os.tmpfile() .. ".dir"})
         elseif package:is_plat("linux") then
             cmake.install(package, configs, {buildir = os.tmpfile() .. ".dir", cmake_generator = "Ninja", envs = envs})
@@ -90,6 +92,6 @@ package("vulkan-validationlayers")
             assert(os.isfile(path.join(package:installdir("lib"), "armeabi-v7a", "libVkLayer_khronos_validation.so")))
             assert(os.isfile(path.join(package:installdir("lib"), "arm64-v8a", "libVkLayer_khronos_validation.so")))
         else
-            assert(package:has_cxxfuncs("getLayerOption", {includes = "layers/vk_layer_config.h"}))
+            assert(package:has_cxxfuncs("getLayerOption", {includes = "layers/vk_layer_config.h", configs = {languages = "cxx17"}}))
         end
     end)
