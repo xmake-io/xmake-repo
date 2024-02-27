@@ -15,6 +15,7 @@ package("daemonpp")
         assert(package:check_cxxsnippets({test = [[
             #include <daemon.hpp>
             using namespace daemonpp;
+            using namespace std::chrono_literals;
 
             class my_daemon : public daemon
             {
