@@ -78,7 +78,7 @@ package("inih")
 
                 int main()
                 {
-                    INIReader reader("../examples/test.ini");
+                    INIReader reader("test.ini");
                     if (reader.ParseError() < 0) {
                         std::cout << "Can't load 'test.ini'\n";
                         return 1;
