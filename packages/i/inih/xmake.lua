@@ -54,7 +54,7 @@ package("inih")
                 return 1;
             }
 
-            int main(int argc, char* argv[])
+            int test(int argc, char* argv[])
             {
                 configuration config;
                 config.version = 0;
@@ -76,7 +76,7 @@ package("inih")
                 #include <iostream>
                 #include "INIReader.h"
 
-                int main()
+                int test()
                 {
                     INIReader reader("test.ini");
                     if (reader.ParseError() < 0) {
