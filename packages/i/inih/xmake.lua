@@ -7,8 +7,6 @@ package("inih")
 
     add_versions("r58", "e79216260d5dffe809bda840be48ab0eec7737b2bb9f02d2275c1b46344ea7b7")
 
-    add_deps("meson", "ninja")
-
     add_configs("ini_parser", {description = "compile and (if selected) install INIReader", default = true, type = "boolean"})
     add_configs("heap", {description = "allocate memory on the heap using malloc instead using a fixed-sized line buffer on the stack", default = false, type = "boolean"})
     add_configs("max_line_length", {description = "maximum line length in bytes", default = "200", type = "string"})
