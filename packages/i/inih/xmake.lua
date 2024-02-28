@@ -9,16 +9,16 @@ package("inih")
 
     add_deps("meson", "ninja")
 
-    add_configs("with_ini_parser", {description = "compile and (if selected) install INIReader", default = true, type = "boolean"})
-    add_configs("use_heap", {description = "allocate memory on the heap using malloc instead using a fixed-sized line buffer on the stack", default = false, type = "boolean"})
+    add_configs("ini_parser", {description = "compile and (if selected) install INIReader", default = true, type = "boolean"})
+    add_configs("heap", {description = "allocate memory on the heap using malloc instead using a fixed-sized line buffer on the stack", default = false, type = "boolean"})
     add_configs("max_line_length", {description = "maximum line length in bytes", default = "200", type = "string"})
     add_configs("allow_realloc", {description = "allow initial malloc size to grow to max line length (when using the heap)", default = false, type = "boolean"})
 
     on_install(function (package)
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
-        configs.with_ini_parser = package:config("with_ini_parser")
-        configs.use_heap = package:config("use_heap")
+        configs.ini_parser = package:config("ini_parser")
+        configs.heap = package:config("heap")
         configs.max_line_length = package:config("max_line_length")
         configs.allow_realloc = package:config("allow_realloc")
         import("package.tools.xmake").install(package, configs)

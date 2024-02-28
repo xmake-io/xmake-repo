@@ -1,7 +1,7 @@
 add_rules("mode.debug", "mode.release")
 
-option("with_ini_parser", {description = "compile and (if selected) install INIReader", default = true, type = "boolean"})
-option("use_heap", {description = "allocate memory on the heap using malloc instead using a fixed-sized line buffer on the stack", default = false, type = "boolean"})
+option("ini_parser", {description = "compile and (if selected) install INIReader", default = true, type = "boolean"})
+option("heap", {description = "allocate memory on the heap using malloc instead using a fixed-sized line buffer on the stack", default = false, type = "boolean"})
 option("max_line_length", {description = "maximum line length in bytes", default = "200", type = "string"})
 option("allow_realloc", {description = "allow initial malloc size to grow to max line length (when using the heap)", default = false, type = "boolean"})
 
@@ -12,12 +12,12 @@ target("inih")
     add_files("ini.c")
     add_headerfiles("(ini.h)")
 
-    if has_config("with_ini_parser") then
+    if has_config("ini_parser") then
         add_files("cpp/INIReader.cpp")
         add_headerfiles("(cpp/INIReader.h)")
     end
 
-    if has_config("use_heap") then
+    if has_config("heap") then
         add_defines("INI_USE_STACK=0")
     end
 
