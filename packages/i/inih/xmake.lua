@@ -2,8 +2,8 @@ package("inih")
     set_homepage("https://github.com/benhoyt/inih")
     set_description("Simple .INI file parser in C, good for embedded systems")
 
-    add_urls("https://github.com/benhoyt/inih/archive/refs/tags/r$(version).tar.gz",
-             "https://github.com/benhoyt/inih.git")
+    add_urls("https://github.com/benhoyt/inih/archive/refs/tags/$(version).tar.gz", {version = function (version) return "r" .. version end})
+    add_urls("https://github.com/benhoyt/inih.git")
 
     add_versions("58", "e79216260d5dffe809bda840be48ab0eec7737b2bb9f02d2275c1b46344ea7b7")
 
