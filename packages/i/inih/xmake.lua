@@ -69,7 +69,7 @@ package("inih")
             }
         ]]}, {configs = {languages = "cxx11"}}))
 
-        if package:config("with_ini-parser") then
+        if package:config("ini_parser") then
             assert(package:check_cxxsnippets({test = [[
                 #include <iostream>
                 #include "INIReader.h"
