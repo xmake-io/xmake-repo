@@ -6,14 +6,12 @@ package("directxtex")
     local tag =
     {
         ["2023.06"] = "jun2023",
-        ["2024.02"] = "feb2024"
     }
 
     add_urls("https://github.com/microsoft/DirectXTex/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/DirectXTex.git", {version = function (version) return tag[tostring(version)] end})
 
     add_versions("2023.06", "51f0ff3bee0d1015c110e0c92ebdd9704aa6acd91185328fd92f10b9558f4c62")
-    add_versions("2024.02", "cb21e7bbb8f552da4ada89fa1f7225e6283ebcd69e4501653b75ade1768cc6a6")
 
     if is_plat("windows") then
         add_configs("dx11", {description = "Build with DirectX11 Runtime support", default = true, type = "boolean"})
