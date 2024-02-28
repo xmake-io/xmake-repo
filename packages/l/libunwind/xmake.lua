@@ -26,7 +26,7 @@ package("libunwind")
 
     add_defines("_GNU_SOURCE=1")
 
-    on_load("android|arm64@linux,macosx", "linux", "bsd", "cross", function (package)
+    on_load("android", "linux", "bsd", "cross", function (package)
         if package:config("minidebuginfo") then
             package:add("deps", "lzma")
         end
@@ -35,7 +35,7 @@ package("libunwind")
         end
     end)
 
-    on_install("android", "linux", "bsd", "cross", function (package)
+    on_install("android|arm64@linux,macosx", "linux", "bsd", "cross", function (package)
         if package:is_plat("bsd") then
             io.replace("src/setjmp/siglongjmp.c", "&wp[JB_MASK]", "(unw_word_t)&wp[JB_MASK]", {plain = true})
         end
