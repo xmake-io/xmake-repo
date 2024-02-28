@@ -8,13 +8,13 @@ package("daemonpp")
     add_versions("2023.05.01", "0989a8296e1f8b4075db7deb0c3474a5d3780954")
 
     on_install("linux", function (package)
-        os.cp("include", package:installdir())
+        os.cp("include", package:installdir("include/daemonpp"))
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <chrono>
-            #include <daemon.hpp>
+            #include <daemonpp/daemon.hpp>
 
             using namespace daemonpp;
 
