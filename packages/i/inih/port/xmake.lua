@@ -14,7 +14,7 @@ target("inih")
 
     if has_config("ini_parser") then
         add_files("cpp/INIReader.cpp")
-        add_headerfiles("(cpp/INIReader.h)")
+        add_headerfiles("cpp/(INIReader.h)")
     end
 
     if has_config("heap") then
