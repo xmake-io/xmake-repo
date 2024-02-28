@@ -9,19 +9,19 @@ package("inih")
 
     add_deps("meson", "ninja")
 
-    add_configs("with_ini-parser", {description = "compile and (if selected) install INIReader", default = true, type = "boolean"})
+    add_configs("with_ini_parser", {description = "compile and (if selected) install INIReader", default = true, type = "boolean"})
     add_configs("use_heap", {description = "allocate memory on the heap using malloc instead using a fixed-sized line buffer on the stack", default = false, type = "boolean"})
     add_configs("max_line_length", {description = "maximum line length in bytes", default = "200", type = "string"})
     add_configs("allow_realloc", {description = "allow initial malloc size to grow to max line length (when using the heap)", default = false, type = "boolean"})
 
     on_install(function (package)
+        os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
-        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        table.insert(configs, "-Dwith_INIReader=" .. (package:config("with_ini-parser") and "true" or "false"))
-        table.insert(configs, "-Duse_heap=" .. (package:config("use_heap") and "true" or "false"))
-        table.insert(configs, "-Dmax_line_length=" .. package:config("max_line_length"))
-        table.insert(configs, "-Dallow_realloc=" .. (package:config("allow_realloc") and "true" or "false"))
-        import("package.tools.meson").install(package, configs)
+        configs.with_ini_parser = package:config("with_ini_parser")
+        configs.use_heap = package:config("use_heap")
+        configs.max_line_length = package:config("max_line_length")
+        configs.allow_realloc = package:config("allow_realloc")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
