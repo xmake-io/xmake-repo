@@ -13,7 +13,6 @@ package("glfw")
     add_versions("3.3.7", "fd21a5f65bcc0fc3c76e0f8865776e852de09ef6fbc3620e09ce96d2b2807e04")
     add_versions("3.3.8", "f30f42e05f11e5fc62483e513b0488d5bceeab7d9c5da0ffe2252ad81816c713")
     add_versions("3.3.9", "a7e7faef424fcb5f83d8faecf9d697a338da7f7a906fc1afbc0e1879ef31bd53")
-    add_versions("3.4", "c038d34200234d071fae9345bc455e4a8f2f544ab60150765d7704e08f3dac01")
 
     add_configs("glfw_include", {description = "Choose submodules enabled in glfw", default = "none", type = "string", values = {"none", "vulkan", "glu", "glext", "es2", "es3"}})
 
