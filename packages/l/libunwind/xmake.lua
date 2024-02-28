@@ -26,7 +26,7 @@ package("libunwind")
 
     add_defines("_GNU_SOURCE=1")
 
-    on_load("android@linux,macosx", "linux", "bsd", "cross", function (package)
+    on_load("android|arm64@linux,macosx", "linux", "bsd", "cross", function (package)
         if package:config("minidebuginfo") then
             package:add("deps", "lzma")
         end
