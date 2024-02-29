@@ -8,7 +8,7 @@ package("libntl")
              "https://github.com/libntl/ntl.git")
     add_versions("v11.5.1", "ef578fa8b6c0c64edd1183c4c303b534468b58dd3eb8df8c9a5633f984888de5")
 
-    add_deps("gmp")
+    add_deps("gmp", "strawberry-perl")
 
     on_install("linux", "bsd", "macosx", "mingw", function (package)
         local gmpdir = package:dep("gmp"):installdir()
@@ -17,7 +17,7 @@ package("libntl")
             "PREFIX=" .. package:installdir(),
             "GMP_PREFIX=" .. gmpdir,
             "SHARED=" .. (package:config("shared") and "on" or "off")
-        })
+        }, {shell = true})
         local make = package:is_plat("mingw") and "mingw32-make" or "make"
         os.vrunv(make, {})
         os.vrunv(make, {"install"})
