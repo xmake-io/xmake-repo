@@ -10,13 +10,13 @@ package("libntl")
 
     add_deps("gmp")
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx|native", "linux|native", function (package)
         local gmpdir = package:dep("gmp"):installdir()
         local compiler = package:build_getenv("cxx")
         if package:is_plat("macosx") then
             local cc = package:build_getenv("ld")
             if cc and cc:find("clang", 1, true) and cc:find("Xcode", 1, true) then
-                compiler = "xcrun -sdk macosx clang++"
+                compiler = "xcrun --sdk macosx clang++"
             end
         else
             compiler = compiler:gsub("gcc$", "g++")
