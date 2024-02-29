@@ -20,7 +20,7 @@ package("mecab")
             #include <memory>
             #include <mecab.h>
             static void test() {
-                std::unique_ptr<MeCab::Tagger> tagger{ MeCab::createTagger() };
+                std::unique_ptr<MeCab::Tagger> tagger{ MeCab::createTagger("") };
                 assert(tagger != nullptr);
             }
         ]]}, {configs = {languages = "c++17"}}))
