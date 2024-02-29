@@ -8,9 +8,13 @@ package("libntl")
              "https://github.com/libntl/ntl.git")
     add_versions("v11.5.1", "ef578fa8b6c0c64edd1183c4c303b534468b58dd3eb8df8c9a5633f984888de5")
 
-    add_deps("gmp", "strawberry-perl")
+    add_deps("gmp")
 
-    on_install("linux", "bsd", "macosx", "mingw", function (package)
+    if is_plat("mingw") then
+        add_deps("strawberry-perl")
+    end
+
+    on_install("linux", "bsd", "macosx", "mingw@windows,msys", function (package)
         local gmpdir = package:dep("gmp"):installdir()
         os.cd("src")
         os.vrunv("./configure", {
