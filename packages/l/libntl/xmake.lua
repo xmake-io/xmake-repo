@@ -16,8 +16,10 @@ package("libntl")
         compiler = compiler:gsub("gcc$", "g++")
         compiler = compiler:gsub("clang$", "clang++")
         os.cd("src")
+        -- debugging
+        io.replace("DoConfig", "die \"Goodbye!\";", "system(\"cat CompilerOutput.log\"); die \"Goodbye!\";")
         os.vrunv("./configure", {
-            "CXX=" .. compiler,
+            "CXX=" .. "afads",
             "PREFIX=" .. package:installdir(),
             "GMP_PREFIX=" .. gmpdir,
             "SHARED=" .. (package:config("shared") and "on" or "off")
