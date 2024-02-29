@@ -11,32 +11,45 @@ package("libntl")
     add_deps("gmp")
 
     on_install("macosx|native", "linux|native", function (package)
-        local gmpdir = package:dep("gmp"):installdir()
+        local cxxflags = table.wrap(package:build_getenv("cxxflags"))
+        local ldflags = table.wrap(package:build_getenv("ldflags"))
+        local gmp = package:dep("gmp"):fetch()
+        if gmp then
+            for _, includedir in ipairs(gmp.includedirs or gmp.sysincludedirs) do
+                table.insert(cxxflags, "-I" .. includedir)
+            end
+            for _, linkdir in ipairs(gmp.linkdirs) do
+                table.insert(ldflags, "-Wl,-L" .. linkdir)
+            end
+        end
+
         local compiler = package:build_getenv("cxx")
         if package:is_plat("macosx") then
             local cc = package:build_getenv("ld")
             if cc and cc:find("clang", 1, true) and cc:find("Xcode", 1, true) then
                 compiler = "xcrun --sdk macosx clang++"
             end
-        else
-            compiler = compiler:gsub("gcc$", "g++")
-            compiler = compiler:gsub("clang$", "clang++")
         end
+        compiler = compiler:gsub("gcc$", "g++")
+        compiler = compiler:gsub("clang$", "clang++")
+
         os.cd("src")
         os.vrunv("./configure", {
             "CXX=" .. compiler,
-            "CXXFLAGS=" .. table.concat(table.wrap(package:build_getenv("cxxflags")), " "),
+            "CXXFLAGS=" .. table.concat(cxxflags, " "),
             "AR=" .. (package:build_getenv("ar") or "ar"),
             "ARFLAGS=" .. table.concat(table.wrap(package:build_getenv("arflags") or "ruv"), " "),
             "RANLIB=" .. (package:build_getenv("ranlib") or "ranlib"),
-            "LDFLAGS=" .. table.concat(table.wrap(package:build_getenv("ldflags")), " "),
+            "LDFLAGS=" .. table.concat(ldflags, " "),
             "CPPFLAGS=" .. table.concat(table.wrap(package:build_getenv("cppflags")), " "),
             "PREFIX=" .. package:installdir(),
-            "GMP_PREFIX=" .. gmpdir,
             "SHARED=" .. (package:config("shared") and "on" or "off")
         }, {shell = true})
         os.vrunv("make", {})
         os.vrunv("make", {"install"})
+        if package:config("shared") then
+            os.rm(path.join(package:installdir(), "lib", "libntl.a"))
+        end
     end)
 
     on_test(function (package)
