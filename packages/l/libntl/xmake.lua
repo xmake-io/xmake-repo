@@ -11,16 +11,10 @@ package("libntl")
     add_deps("gmp")
 
     on_install("macosx|native", "linux|native", function (package)
-        local cxxflags = table.wrap(package:build_getenv("cxxflags"))
-        local ldflags = table.wrap(package:build_getenv("ldflags"))
-        local gmp = package:dep("gmp"):fetch()
-        if gmp then
-            for _, includedir in ipairs(gmp.includedirs or gmp.sysincludedirs) do
-                table.insert(cxxflags, "-I" .. includedir)
-            end
-            for _, linkdir in ipairs(gmp.linkdirs) do
-                table.insert(ldflags, "-Wl,-L" .. linkdir)
-            end
+        local gmp = package:dep("gmp")
+        local gmp_prefix = "";
+        if gmp and not gmp:is_system() then
+            gmp_prefix = gmp:installdir()
         end
 
         local compiler = package:build_getenv("cxx")
@@ -36,13 +30,14 @@ package("libntl")
         os.cd("src")
         os.vrunv("./configure", {
             "CXX=" .. compiler,
-            "CXXFLAGS=" .. table.concat(cxxflags, " "),
+            "CXXFLAGS=" .. table.concat(table.wrap(package:build_getenv("cxxflags")), " "),
             "AR=" .. (package:build_getenv("ar") or "ar"),
             "ARFLAGS=" .. table.concat(table.wrap(package:build_getenv("arflags") or "ruv"), " "),
             "RANLIB=" .. (package:build_getenv("ranlib") or "ranlib"),
-            "LDFLAGS=" .. table.concat(ldflags, " "),
+            "LDFLAGS=" .. table.concat(table.wrap(package:build_getenv("ldflags")), " "),
             "CPPFLAGS=" .. table.concat(table.wrap(package:build_getenv("cppflags")), " "),
             "PREFIX=" .. package:installdir(),
+            "GMP_PREFIX=" .. gmp_prefix,
             "SHARED=" .. (package:config("shared") and "on" or "off")
         }, {shell = true})
         os.vrunv("make", {})
