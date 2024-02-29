@@ -24,3 +24,4 @@ package("mecab")
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
+
