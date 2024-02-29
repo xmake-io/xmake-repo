@@ -18,7 +18,6 @@ package("libntl")
         os.cd("src")
         os.vrunv("./configure", {
             "CXX=" .. compiler,
-            "LDFLAGS=\"-lstdc++\"",
             "PREFIX=" .. package:installdir(),
             "GMP_PREFIX=" .. gmpdir,
             "SHARED=" .. (package:config("shared") and "on" or "off")
