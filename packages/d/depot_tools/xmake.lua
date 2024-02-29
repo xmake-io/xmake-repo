@@ -6,6 +6,7 @@ package("depot_tools")
     add_urls("https://github.com/xmake-mirror/depot_tools.git",
              "https://chromium.googlesource.com/chromium/tools/depot_tools.git")
     add_versions("2022.2.1", "8a6d00f116d6de9d5c4e92acb519fd0859c6449a")
+    add_versions("2024.2.29", "50de666ba40a4808daf9791fece3d8a43228a1de")
 
     on_load(function (package)
         package:addenv("PATH", ".")
