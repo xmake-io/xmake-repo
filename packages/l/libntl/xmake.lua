@@ -1,6 +1,5 @@
 package("libntl")
 
-
     set_homepage("https://libntl.org/")
     set_description("NTL: A Library for doing Number Theory")
     set_license("LGPL-2.1")
