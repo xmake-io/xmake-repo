@@ -17,6 +17,7 @@ package("mecab")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <cassert>
+            #include <memory>
             #include <mecab.h>
             static void test() {
                 std::unique_ptr<MeCab::Tagger> tagger{ MeCab::createTagger() };
