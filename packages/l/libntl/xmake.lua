@@ -23,8 +23,6 @@ package("libntl")
             compiler = compiler:gsub("clang$", "clang++")
         end
         os.cd("src")
-        -- debugging
-        io.replace("DoConfig", "die \"Goodbye!\";", "system(\"cat CompilerOutput.log\"); die \"Goodbye!\";")
         os.vrunv("./configure", {
             "CXX=" .. compiler,
             "CXXFLAGS=" .. table.concat(table.wrap(package:build_getenv("cxxflags")), " "),
