@@ -22,16 +22,12 @@ package("daemonpp")
             {
             public:
                 void on_start(const dconfig& cfg) override {
-                    dlog::info("my_daemon::on_start(): my_daemon version: " + cfg.get("version") + " started successfully!");
                 }
                 void on_update() override {
-                    dlog::info("my_daemon::on_update()");
                 }
                 void on_stop() override {
-                    dlog::info("my_daemon::on_stop()");
                 }
                 void on_reload(const dconfig& cfg) override {
-                    dlog::info("my_daemon::on_reload(): new daemon version from updated config: " + cfg.get("version"));
                 }
             };
 
