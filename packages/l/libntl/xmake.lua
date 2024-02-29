@@ -19,7 +19,7 @@ package("libntl")
         -- debugging
         io.replace("DoConfig", "die \"Goodbye!\";", "system(\"cat CompilerOutput.log\"); die \"Goodbye!\";")
         os.vrunv("./configure", {
-            "CXX=" .. "afads",
+            "CXX=" .. compiler,
             "PREFIX=" .. package:installdir(),
             "GMP_PREFIX=" .. gmpdir,
             "SHARED=" .. (package:config("shared") and "on" or "off")
