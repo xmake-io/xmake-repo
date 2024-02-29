@@ -13,8 +13,15 @@ package("libntl")
     on_install("macosx", "linux", function (package)
         local gmpdir = package:dep("gmp"):installdir()
         local compiler = package:build_getenv("cxx")
-        compiler = compiler:gsub("gcc$", "g++")
-        compiler = compiler:gsub("clang$", "clang++")
+        if package:is_plat("macosx") then
+            local cc = package:build_getenv("ld")
+            if cc and cc:find("clang", 1, true) and cc:find("Xcode", 1, true) then
+                compiler = "xcrun -sdk macosx clang++"
+            end
+        else
+            compiler = compiler:gsub("gcc$", "g++")
+            compiler = compiler:gsub("clang$", "clang++")
+        end
         os.cd("src")
         -- debugging
         io.replace("DoConfig", "die \"Goodbye!\";", "system(\"cat CompilerOutput.log\"); die \"Goodbye!\";")
@@ -22,7 +29,7 @@ package("libntl")
             "CXX=" .. compiler,
             "CXXFLAGS=" .. table.concat(table.wrap(package:build_getenv("cxxflags")), " "),
             "AR=" .. (package:build_getenv("ar") or "ar"),
-            "ARFLAGS=" .. table.concat(table.wrap(package:build_getenv("arflags")), " "),
+            "ARFLAGS=" .. table.concat(table.wrap(package:build_getenv("arflags") or "ruv"), " "),
             "RANLIB=" .. (package:build_getenv("ranlib") or "ranlib"),
             "LDFLAGS=" .. table.concat(table.wrap(package:build_getenv("ldflags")), " "),
             "CPPFLAGS=" .. table.concat(table.wrap(package:build_getenv("cppflags")), " "),
