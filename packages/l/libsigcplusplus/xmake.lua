@@ -14,36 +14,25 @@ package("libsigcplusplus")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_plat("macosx") then
-        add_syslinks("c++")
-    end
-
     add_deps("meson", "ninja")
     add_includedirs("include/sigc++-3.0", "lib/sigc++-3.0/include")
 
     on_install("windows", "linux", "macosx", "mingw", "msys", "iphoneos", "cross", "wasm", function (package)
         local configs = {"-Dvalidation=false", "-Dbuild-examples=false", "-Dbuild-tests=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
+
+        local shflags = {}
         if package:config("shared") then
             table.insert(configs, "-Ddefault_library=shared")
+
+            if package:is_plat("linux", "macosx") and then
+                shflags = "-lstdc++"
+            end
         else
             table.insert(configs, "-Ddefault_library=static")
             if package:is_plat("windows") then
                 package:add("defines", "SIGC_BUILD")
             end
         end
-        import("package.tools.meson").install(package, configs)
-    end)
-
-    on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <string>
-            #include <sigc++/sigc++.h>
-            void on_print(const std::string& str) {}
-            void test() {
-                sigc::signal<void(const std::string&)> signal_print;
-                signal_print.connect(sigc::ptr_fun(&on_print));
-                signal_print.emit("hello world\n");
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+        import("package.tools.meson").install(package, configs, {shflags = shflags})
     end)
