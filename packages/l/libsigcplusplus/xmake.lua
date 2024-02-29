@@ -14,6 +14,10 @@ package("libsigcplusplus")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    if is_plat("macosx") then
+        add_syslinks("c++")
+    end
+
     add_deps("meson", "ninja")
     add_includedirs("include/sigc++-3.0", "lib/sigc++-3.0/include")
 
