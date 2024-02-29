@@ -25,7 +25,7 @@ package("libsigcplusplus")
         if package:config("shared") then
             table.insert(configs, "-Ddefault_library=shared")
 
-            if package:is_plat("linux", "macosx") and then
+            if package:is_plat("linux", "macosx") then
                 shflags = "-lstdc++"
             end
         else
