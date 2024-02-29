@@ -13,3 +13,12 @@ package("mecab")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         import("package.tools.autoconf").install(package, {"--with-charset=utf-8"})
     end)
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <mecab.h>
+            static void test() {
+                std::unique_ptr<MeCab::Tagger> tagger{ MeCab::createTagger() };
+                assert(tagger != nullptr);
+            }
+        ]]}, {configs = {languages = "c++17"}}))
+    end)
