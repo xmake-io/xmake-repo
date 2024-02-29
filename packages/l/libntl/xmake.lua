@@ -20,12 +20,12 @@ package("libntl")
         io.replace("DoConfig", "die \"Goodbye!\";", "system(\"cat CompilerOutput.log\"); die \"Goodbye!\";")
         os.vrunv("./configure", {
             "CXX=" .. compiler,
-            "CXXFLAGS=" .. package:build_getenv("cxxflags")
-            "AR=" .. package:build_getenv("ar"),
-            "ARFLAGS=" .. package:build_getenv("arflags"),
-            "RANLIB=" .. package:build_getenv("ranlib"),
-            "LDFLAGS=" .. package:build_getenv("ldflags"),
-            "CPPFLAGS=" .. package:build_getenv("cppflags"),
+            "CXXFLAGS=" .. (package:build_getenv("cxxflags") or ""),
+            "AR=" .. (package:build_getenv("ar") or "ar"),
+            "ARFLAGS=" .. (package:build_getenv("arflags") or "ruv"),
+            "RANLIB=" .. (package:build_getenv("ranlib") or "ranlib"),
+            "LDFLAGS=" .. (package:build_getenv("ldflags") or ""),
+            "CPPFLAGS=" .. (package:build_getenv("cppflags") or ""),
             "PREFIX=" .. package:installdir(),
             "GMP_PREFIX=" .. gmpdir,
             "SHARED=" .. (package:config("shared") and "on" or "off")
