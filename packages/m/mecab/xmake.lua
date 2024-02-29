@@ -9,6 +9,7 @@ package("mecab")
     end
     on_install("macosx", "linux", function (package)
         os.cd("mecab")
+        local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         import("package.tools.autoconf").install(package, {"--with-charset=utf-8"})
