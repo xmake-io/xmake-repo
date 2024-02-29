@@ -12,9 +12,13 @@ package("libntl")
 
     on_install("macosx", "linux", function (package)
         local gmpdir = package:dep("gmp"):installdir()
+        local compiler = package:build_getenv("cxx")
+        compiler = compiler:gsub("gcc$", "g++")
+        compiler = compiler:gsub("clang$", "clang++")
         os.cd("src")
         os.vrunv("./configure", {
-            "CXX=" .. package:build_getenv("cxx"),
+            "CXX=" .. compiler,
+            "LDFLAGS=\"-lstdc++\"",
             "PREFIX=" .. package:installdir(),
             "GMP_PREFIX=" .. gmpdir,
             "SHARED=" .. (package:config("shared") and "on" or "off")
