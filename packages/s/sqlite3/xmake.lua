@@ -39,6 +39,7 @@ package("sqlite3")
     on_install(function (package)
         local xmake_lua = [[
             add_rules("mode.debug", "mode.release")
+            set_encodings("utf-8")
             target("sqlite3")
                 set_kind("$(kind)")
                 add_files("sqlite3.c")
