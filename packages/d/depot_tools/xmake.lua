@@ -9,7 +9,7 @@ package("depot_tools")
     add_versions("2024.2.29", "50de666ba40a4808daf9791fece3d8a43228a1de")
 
     if is_plat("windows") then
-        add_deps("ninja") -- ninja is required on windows
+        add_deps("ninja")
     end
 
     on_load(function (package)
