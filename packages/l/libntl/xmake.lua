@@ -10,21 +10,17 @@ package("libntl")
 
     add_deps("gmp")
 
-    if is_plat("mingw") then
-        add_deps("strawberry-perl")
-    end
-
-    on_install("linux", "bsd", "macosx", "mingw@windows,msys", function (package)
+    on_install("macosx", "linux", function (package)
         local gmpdir = package:dep("gmp"):installdir()
         os.cd("src")
         os.vrunv("./configure", {
+            "CXX=" .. package:build_getenv("cxx"),
             "PREFIX=" .. package:installdir(),
             "GMP_PREFIX=" .. gmpdir,
             "SHARED=" .. (package:config("shared") and "on" or "off")
         }, {shell = true})
-        local make = package:is_plat("mingw") and "mingw32-make" or "make"
-        os.vrunv(make, {})
-        os.vrunv(make, {"install"})
+        os.vrunv("make", {})
+        os.vrunv("make", {"install"})
     end)
 
     on_test(function (package)
