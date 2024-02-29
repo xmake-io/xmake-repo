@@ -1,5 +1,5 @@
 package("microsoft-gsl")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/microsoft/GSL")
     set_description("Guidelines Support Library")
     set_license("MIT")
