@@ -19,8 +19,12 @@ package("linux-tools")
     add_configs("bpftool",     { description = "Enable bpftool.", default = true, type = "boolean"})
 
     -- wait for xmake 2.8.8
-    -- add_patches("6.7.6", "https://cdn.kernel.org/pub/linux/kernel/v6.x/patch-6.7.6.xz",
-    --  "a394326aa325f8a930a4ce33c69ba7b8b454aef1107a4d3c2a8ae12908615fc4")
+    --[[
+    add_deps("patch")
+
+    add_patches("6.7.6", "https://cdn.kernel.org/pub/linux/kernel/v6.x/patch-6.7.6.xz",
+        "a394326aa325f8a930a4ce33c69ba7b8b454aef1107a4d3c2a8ae12908615fc4")
+    ]]
 
 
     local modules = {"bpftool"}
