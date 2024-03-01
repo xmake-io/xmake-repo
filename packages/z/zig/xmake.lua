@@ -37,7 +37,7 @@ package("zig")
             add_versions("0.10.1", "6699f0e7293081b42428f32c9d9c983854094bd15fee5489f12c4cf4518cc380")
             add_versions("0.11.0", "2d00e789fec4f71790a6e7bf83ff91d564943c5ee843c5fd966efc474b423047")
         end
-    elseif is_host("freebsd") then
+    elseif is_host("bsd") then
         if os.arch() == "x86_64" then
             set_urls("https://ziglang.org/download/$(version)/zig-freebsd-x86_64-$(version).tar.xz")
             add_versions("0.11.0", "ea430327f9178377b79264a1d492868dcff056cd76d43a6fb00719203749e958")
