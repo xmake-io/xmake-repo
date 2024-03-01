@@ -8,6 +8,10 @@ package("depot_tools")
     add_versions("2022.2.1", "8a6d00f116d6de9d5c4e92acb519fd0859c6449a")
     add_versions("2024.2.29", "50de666ba40a4808daf9791fece3d8a43228a1de")
 
+    -- we use external ninja instead of depot_tools/ninja which eating ram until VM exhaustion (16GB)
+    -- https://github.com/xmake-io/xmake-repo/pull/3368#issuecomment-1973298057
+    add_deps("ninja", {private = true})
+
     on_load(function (package)
         package:addenv("PATH", ".")
         package:addenv("PATH", "python-bin")
@@ -18,6 +22,10 @@ package("depot_tools")
 
     on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
+        local ninja = package:dep("ninja"):fetch()
+        if ninja and ninja.program then
+            os.trycp(ninja.program, os.curdir())
+        end
         os.cp("*", package:installdir())
         os.cd(package:installdir())
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
