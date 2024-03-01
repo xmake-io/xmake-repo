@@ -8,10 +8,6 @@ package("depot_tools")
     add_versions("2022.2.1", "8a6d00f116d6de9d5c4e92acb519fd0859c6449a")
     add_versions("2024.2.29", "50de666ba40a4808daf9791fece3d8a43228a1de")
 
-    if is_plat("windows") then
-        add_deps("ninja")
-    end
-
     on_load(function (package)
         package:addenv("PATH", ".")
         package:addenv("PATH", "python-bin")
@@ -33,11 +29,16 @@ package("depot_tools")
             envs.HTTPS_PROXY = proxy
             envs.ALL_PROXY = proxy
         end
+        envs.PATH = table.join(os.curdir(), path.splitenv(os.getenv("PATH")))
+        -- skip to check and update obsolete URL
+        io.replace("./update_depot_tools",
+            'CANONICAL_GIT_URL="https://chromium.googlesource.com/chromium/tools/depot_tools.git"',
+            'CANONICAL_GIT_URL="https://github.com/xmake-mirror/depot_tools.git"', {plain = true})
         -- we need fetch some files when running gclient for the first time
         if is_host("windows") then
             os.vrunv("gclient.bat", {"--verbose"}, {envs = envs})
         else
-            os.vrunv("sh", {"./gclient", "--verbose"}, {envs = envs})
+            os.vrunv("./gclient", {"--verbose"}, {shell = true, envs = envs})
         end
   end)
 
