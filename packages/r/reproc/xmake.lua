@@ -25,13 +25,13 @@ package("reproc")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DREPROC++=" .. (package:config("c++") and "ON" or "OFF"))
         table.insert(configs, "-DREPROC_MULTITHREADED=" .. (package:config("multithreaded") and "ON" or "OFF"))
-
-        if package:config("multithreaded") and not is_plat("windows", "android") then
+        
+        if package:config("multithreaded") and not package:is_plat("windows", "android") then
             package:add("syslinks", "pthread")
         end
 
-        import("package.tools.cmake").install(package, configs, { buildir = "build" })
-        package:add("linkorders", { "reproc++", "reproc" })
+        import("package.tools.cmake").install(package, configs)
+        package:add("linkorders", {"reproc++", "reproc"})
     end)
 
     on_test(function(package)
