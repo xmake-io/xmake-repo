@@ -44,7 +44,7 @@ package("zig")
         end
     end
 
-    on_install("@macosx", "@linux", "@windows", "@msys", "@freebsd", function (package)
+    on_install("@macosx", "@linux", "@windows", "@msys", "@bsd", function (package)
         os.cp("*", package:installdir())
         package:addenv("PATH", ".")
     end)
