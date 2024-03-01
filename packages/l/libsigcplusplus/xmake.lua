@@ -48,3 +48,4 @@ package("libsigcplusplus")
                  signal_print.emit("hello world\n"); 
              } 
          ]]}, {configs = {languages = "c++17"}}))
+    end)
