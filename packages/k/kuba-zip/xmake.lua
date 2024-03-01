@@ -16,7 +16,7 @@ package("kuba-zip")
     on_install("windows", "macosx", "linux", "mingw", function (package)
         import("lib.detect.check_sizeof")
 
-        if check_sizeof("size_t", {includes = "stddef.h"}) == 4 then
+        if package.check_sizeof and (package:check_sizeof("size_t", {includes = "stddef.h"}) == 4) then
             -- patch "error: comparison is always false due to limited range of data type [-Werror=type-limits]"
             io.replace("src/miniz.h", "((mz_uint64)buf_size > 0xFFFFFFFF) ||", "", {plain = true})
         end
