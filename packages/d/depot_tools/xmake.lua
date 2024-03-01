@@ -9,7 +9,6 @@ package("depot_tools")
     add_versions("2024.2.29", "50de666ba40a4808daf9791fece3d8a43228a1de")
 
     -- we use external ninja instead of depot_tools/ninja which eating ram until VM exhaustion (16GB)
-    -- https://github.com/xmake-io/xmake-repo/pull/3368#issuecomment-1973298057
     add_deps("ninja", {private = true})
 
     on_load(function (package)
