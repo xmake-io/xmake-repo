@@ -36,3 +36,15 @@ package("libsigcplusplus")
         end
         import("package.tools.meson").install(package, configs, {shflags = shflags})
     end)
+
+    on_test(function (package) 
+         assert(package:check_cxxsnippets({test = [[ 
+             #include <string> 
+             #include <sigc++/sigc++.h> 
+             void on_print(const std::string& str) {} 
+             void test() { 
+                 sigc::signal<void(const std::string&)> signal_print; 
+                 signal_print.connect(sigc::ptr_fun(&on_print)); 
+                 signal_print.emit("hello world\n"); 
+             } 
+         ]]}, {configs = {languages = "c++17"}}))
