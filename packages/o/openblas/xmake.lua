@@ -57,7 +57,7 @@ package("openblas")
     end
     on_load("macosx", "linux", "mingw@windows,msys", function (package)
         if package:config("fortran") then
-            package:add("deps", "gfortran", {system = true})
+            package:add("deps", "gfortran")
         end
         if package:config("openmp") then
             package:add("deps", "openmp")
