@@ -15,7 +15,7 @@ target("memplumber")
     
     if is_plat("linux", "macosx") then
         add_packages("libbacktrace")
-    elseif is_plat("windows") then
+    elseif is_plat("windows", "mingw") then
         add_defines("_WIN32")
     end
     
