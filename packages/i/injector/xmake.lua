@@ -6,7 +6,7 @@ package("injector")
     add_urls("https://github.com/kubo/injector.git")
     add_versions("2024.02.18", "c719b4f6b3bde75fd18d4d0c6b752a68dce593aa")
 
-    if is_plat("windows", "mingw") then
+    if is_plat("mingw") then
         add_syslinks("advapi32", "dbghelp", "psapi")
     end
 

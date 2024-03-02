@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
 
-if is_plat("windows", "mingw") then
+if is_plat("mingw") then
     add_syslinks("advapi32", "dbghelp", "psapi")
 end
 
