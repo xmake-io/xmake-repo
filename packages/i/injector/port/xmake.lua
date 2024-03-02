@@ -25,3 +25,8 @@ target("injector")
     elseif is_plat("linux") then
         add_files("src/linux/*.c", "src/linux/*.S")
     end
+    on_config(function (target)
+        if target:has_tool("gcc", "gxx") then
+            target:add("defines", "__USE_GNU")
+        end
+    end)
