@@ -5,7 +5,7 @@ option("multi_line_entries", {description = "support for multi-line entries in t
 option("utf_8_bom", {description = "allow a UTF-8 BOM sequence (0xEF 0xBB 0xBF) at the start of INI files", default = true, type = "boolean"})
 option("inline_comments", {description = "allow inline comments with the comment prefix character", default = true, type = "boolean"})
 option("inline_comment_prefix", {description = "allow inline comments with the comment prefix character", default = ";", type = "string"})
-option("start_of_line_comment_prefix", {description = "character(s) to start a comment at the beginning of a line", default = ";#'", type = "string"})
+option("start_of_line_comment_prefix", {description = "character(s) to start a comment at the beginning of a line", default = ";#", type = "string"})
 option("allow_no_value", {description = "allow name with no value", default = false, type = "boolean"})
 option("stop_on_first_error", {description = "stop parsing after an error", default = false, type = "boolean"})
 option("report_line_numbers", {description = "report line number on ini_handler callback", default = false, type = "boolean"})
