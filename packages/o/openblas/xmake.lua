@@ -56,10 +56,11 @@ package("openblas")
         add_frameworks("Accelerate")
     end
     on_load("macosx", "linux", "mingw@windows,msys", function (package)
+        if package:config("fortran") then
+            package:add("deps", "gfortran")
+        end
         if package:config("openmp") then
             package:add("deps", "openmp")
-        else
-            package:add("deps", "gfortran")
         end
     end)
 
