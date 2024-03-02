@@ -14,12 +14,7 @@ package("kuba-zip")
     add_deps("cmake")
 
     on_install("windows", "macosx", "linux", "mingw", function (package)
-        import("lib.detect.check_sizeof")
-
-        if package.check_sizeof and (package:check_sizeof("size_t", {includes = "stddef.h"}) == 4) then
-            -- patch "error: comparison is always false due to limited range of data type [-Werror=type-limits]"
-            io.replace("src/miniz.h", "((mz_uint64)buf_size > 0xFFFFFFFF) ||", "", {plain = true})
-        end
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
 
         local configs = {"-DCMAKE_DISABLE_TESTING=ON", "-DZIP_BUILD_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
