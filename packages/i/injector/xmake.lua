@@ -23,5 +23,5 @@ package("injector")
                 injector_t *injector;
                 injector_attach(&injector, 1234);
             }
-        ]]}, {configs = {languages = "c"}}))
+        ]]}))
     end)
