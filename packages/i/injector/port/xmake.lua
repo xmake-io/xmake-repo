@@ -1,3 +1,6 @@
+if is_plat("windows", "mingw") then
+    add_syslinks("advapi32", "dbghelp", "psapi")
+end
 target("injector")
     set_kind("$(kind)")
     set_languages("c")
