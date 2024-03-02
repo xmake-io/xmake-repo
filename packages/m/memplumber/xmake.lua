@@ -13,27 +13,10 @@ package("memplumber")
     add_configs("collect_static_var_data", {description = "Collect data also on static variable memory allocation", default = false, type = "boolean"})
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
-            add_rules("mode.debug", "mode.release")
-            option("collect_static_var_data", {description = "Collect data also on static variable memory allocation", default = false, type = "boolean"})
-            if is_plat("linux", "macosx") then
-                add_requires("libbacktrace")
-            end
-            target("memplumber")
-                set_kind("$(kind)")
-                set_languages("cxx11")
-                if is_plat("linux", "macosx") then
-                    add_packages("libbacktrace")
-                elseif is_plat("windows") then
-                    add_defines("_WIN32")
-                end
-                add_files("memplumber.cpp")
-                add_headerfiles("(memplumber.h)", "memplumber-internals.h")
-                if has_config("collect_static_var_data") then
-                    add_defines("COLLECT_STATIC_VAR_DATA")
-                end
-        ]])
+        io.replace("memplumber.cpp", "unsigned long", "uintptr_t")
+        os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
+        configs.collect_static_var_data = package:config("collect_static_var_data")
         import("package.tools.xmake").install(package, configs)
     end)
 
