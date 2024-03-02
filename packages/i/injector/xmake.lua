@@ -20,13 +20,13 @@ package("injector")
 
     on_install("linux", function (package)
         os.cd("src/linux")
-        os.vrunv("make", {"install", "PREFIX=" .. package:installdir()})
+        os.vrunv("make", {"install", "all", "PREFIX=" .. package:installdir()})
         os.cp("include/*.h", package:installdir("include"))
     end)
 
     on_install("macosx",function (package)
         os.cd("src/macos")
-        os.vrunv("make", {"install", "PREFIX=" .. package:installdir()})
+        os.vrunv("make", {"install", "all", "PREFIX=" .. package:installdir()})
         os.cp("include/*.h", package:installdir("include"))
     end)
 
