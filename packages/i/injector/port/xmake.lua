@@ -12,8 +12,10 @@ target("injector")
     add_includedirs("include", {public = true})
 
     if is_arch("arm.*") then
-        add_defines("__arm__", "_M_ARMT")
-        if is_arch("arm64") then
+        add_defines("__arm__")
+        if is_arch("arm") then
+            add_defines("_M_ARMT")
+        elseif is_arch("arm64") then
             add_defines("__arm64__", "__aarch64__", "_M_ARM64")
         end
     elseif is_arch("x86_64") then 
