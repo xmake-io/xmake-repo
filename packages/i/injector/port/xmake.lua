@@ -21,9 +21,9 @@ target("injector")
     elseif is_plat("macosx") then
         add_headerfiles("src/macos/*.h")
         add_files("src/macos/*.c")
-        add_defines("__linux__")
     elseif is_plat("linux") then
         add_files("src/linux/*.c", "src/linux/*.S")
+        add_defines("__linux__")
     end
     on_config(function (target)
         if target:has_tool("gcc", "gxx") then
