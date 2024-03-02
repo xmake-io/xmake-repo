@@ -6,7 +6,7 @@ package("memplumber")
     add_urls("https://github.com/seladb/MemPlumber.git")
     add_versions("2022.01.27", "ff04d339b034c40f72e09653c6a0340c0bb05d3b")
 
-    if is_plat("linux", "macosx") then
+    if is_plat("android", "linux", "macosx") then
         add_deps("libbacktrace")
     end
 
