@@ -22,6 +22,8 @@ target("injector")
         add_defines("__x86_64__")
     elseif is_arch("x86") then
         add_defines("__i386__", "_M_IX86")
+    elseif is_arch("x64") then
+        add_defines("_M_AMD64")
     end
 
     if is_plat("windows", "mingw") then
