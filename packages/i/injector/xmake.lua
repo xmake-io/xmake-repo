@@ -6,34 +6,10 @@ package("injector")
     add_urls("https://github.com/kubo/injector.git")
     add_versions("2024.02.18", "c719b4f6b3bde75fd18d4d0c6b752a68dce593aa")
 
-    on_install("windows", function (package)
-        io.replace("Makefile.win32", "cd cmd && $(MAKE_CMD)", "", {plain = true})
-        import("package.tools.nmake").build(package, {"-f", "Makefile.win32"})
-        os.cp("include/*.h", package:installdir("include"))
-        if package:config("shared") then
-            os.cp("src/windows/injector.dll", package:installdir("bin"))
-            os.cp("src/windows/injector.lib", package:installdir("lib"))
-        else
-            os.cp("src/windows/injector-static.lib", package:installdir("lib"))
-        end
-    end)
-
-    on_install("linux", function (package)
-        os.cd("src/linux")
-        os.vrunv("make", {"PREFIX=" .. package:installdir()})
-        os.cp("include/*.h", package:installdir("include"))
-    end)
-
-    on_install("macosx",function (package)
-        os.cd("src/macos")
-        os.vrunv("make", {"PREFIX=" .. package:installdir()})
-        os.cp("include/*.h", package:installdir("include"))
-    end)
-
-    on_install("mingw",function (package)
-        os.cd("src/windows")
-        os.vrunv("make", {"PREFIX=" .. package:installdir()})
-        os.cp("include/*.h", package:installdir("include"))
+    on_install("windows", "linux", "macosx", "mingw", function (package)
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        local configs = {}
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
