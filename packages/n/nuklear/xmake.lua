@@ -8,6 +8,7 @@ package("nuklear")
     add_urls("https://github.com/Immediate-Mode-UI/Nuklear/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Immediate-Mode-UI/Nuklear.git")
 
+    add_versions("4.12.0", "4cb80084d20d20561548a2941b6d1eb7c30e6f0b9405e0d5df84bae3c1d7bbaf")
     add_versions("4.10.5", "6c80cbd0612447421fa02ad92f4207da2cd019a14d94885dfccac1aadc57926a")
 
     on_load("mingw", function (package)
