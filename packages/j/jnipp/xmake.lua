@@ -18,7 +18,7 @@ package("jnipp")
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("openjdk")
-            set_languages("c++11")
+            set_languages("c++14")
             target("jnipp")
                 set_kind("$(kind)")
                 add_files("jnipp.cpp")
@@ -42,5 +42,5 @@ package("jnipp")
                 jni::Class Integer = jni::Class("java/lang/Integer");
                 jni::Object i = Integer.newInstance("1000");
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++14"}}))
     end)
