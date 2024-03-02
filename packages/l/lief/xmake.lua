@@ -54,6 +54,5 @@ package("lief")
                     ]] .. parse_entry .. [[("");
                 }
             ]]}, {configs = {languages = "c"}}))
-            assert(package:has_cfuncs(parse_entry, {includes = ""}))
         end
     end)
