@@ -15,9 +15,11 @@ target("injector")
     elseif is_arch("x86") then
         add_defines("__i386__", "_M_IX86")
     end
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_files("src/windows/*.c")
-        add_defines("_WIN32")
+        if is_plat("windows") then
+            add_defines("_WIN32")
+        end
     elseif is_plat("macosx") then
         add_headerfiles("src/macos/*.h")
         add_files("src/macos/*.c")
