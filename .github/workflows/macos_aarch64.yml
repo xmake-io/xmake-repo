@@ -1,4 +1,4 @@
-name: macOS
+name: macOS (arm64)
 
 on:
   pull_request:
