@@ -9,7 +9,7 @@ package("depot_tools")
     add_versions("2024.2.29", "50de666ba40a4808daf9791fece3d8a43228a1de")
 
     -- we use external ninja instead of depot_tools/ninja which eating ram until VM exhaustion (16GB)
-    add_deps("ninja", {private = true})
+    add_deps("ninja", {private = true, system = false})
 
     on_load(function (package)
         package:addenv("PATH", ".")
@@ -21,9 +21,9 @@ package("depot_tools")
 
     on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
-        local ninja = package:dep("ninja"):fetch()
-        if ninja and ninja.program then
-            os.trycp(ninja.program, os.curdir())
+        local ninja = path.join(package:dep("ninja"):installdir("bin"), "ninja" .. (is_host("windows") and ".exe" or ""))
+        if ninja and os.isfile(ninja) then
+            os.trycp(ninja, os.curdir())
         end
         os.cp("*", package:installdir())
         os.cd(package:installdir())
