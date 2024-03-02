@@ -8,11 +8,11 @@ package("inih")
     add_versions("58", "e79216260d5dffe809bda840be48ab0eec7737b2bb9f02d2275c1b46344ea7b7")
 
     add_configs("ini_parser", {description = "compile and (if selected) install INIReader", default = true, type = "boolean"})
-    add_configs("multi-line_entries", {description = "support for multi-line entries in the style of Python's ConfigParser", default = true, type = "boolean"})
-    add_configs("utf-8_bom", {description = "allow a UTF-8 BOM sequence (0xEF 0xBB 0xBF) at the start of INI files", default = true, type = "boolean"})
+    add_configs("multi_line_entries", {description = "support for multi-line entries in the style of Python's ConfigParser", default = true, type = "boolean"})
+    add_configs("utf_8_bom", {description = "allow a UTF-8 BOM sequence (0xEF 0xBB 0xBF) at the start of INI files", default = true, type = "boolean"})
     add_configs("inline_comments", {description = "allow inline comments with the comment prefix character", default = true, type = "boolean"})
     add_configs("inline_comment_prefix", {description = "allow inline comments with the comment prefix character", default = ";", type = "string"})
-    add_configs("start-of-line_comment_prefix", {description = "character(s) to start a comment at the beginning of a line", default = ";#'", type = "string"})
+    add_configs("start_of_line_comment_prefix", {description = "character(s) to start a comment at the beginning of a line", default = ";#'", type = "string"})
     add_configs("allow_no_value", {description = "allow name with no value", default = false, type = "boolean"})
     add_configs("stop_on_first_error", {description = "stop parsing after an error", default = false, type = "boolean"})
     add_configs("report_line_numbers", {description = "report line number on ini_handler callback", default = false, type = "boolean"})
@@ -25,20 +25,11 @@ package("inih")
     on_install(function (package)
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
-        configs.ini_parser = package:config("ini_parser")
-        configs["multi-line_entries"] = package:config("multi-line_entries")
-        configs["utf-8_bom"] = package:config("utf-8_bom")
-        configs.inline_comments = package:config("inline_comments")
-        configs.inline_comment_prefix = package:config("inline_comment_prefix")
-        configs["start-of-line_comment_prefix"] = package:config("start-of-line_comment_prefix")
-        configs.allow_no_value = package:config("allow_no_value")
-        configs.stop_on_first_error = package:config("stop_on_first_error")
-        configs.report_line_numbers = package:config("report_line_numbers")
-        configs.call_handler_on_new_section = package:config("call_handler_on_new_section")
-        configs.heap = package:config("heap")
-        configs.max_line_length = package:config("max_line_length")
-        configs.initial_malloc_size = package:config("initial_malloc_size")
-        configs.allow_realloc = package:config("allow_realloc")
+        for name, config_value in table.orderpairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") then
+                configs[name] = config_value
+            end
+        end
         import("package.tools.xmake").install(package, configs)
     end)
 

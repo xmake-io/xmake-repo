@@ -1,11 +1,11 @@
 add_rules("mode.debug", "mode.release")
 
 option("ini_parser", {description = "compile and (if selected) install INIReader", default = true, type = "boolean"})
-option("multi-line_entries", {description = "support for multi-line entries in the style of Python's ConfigParser", default = true, type = "boolean"})
-option("utf-8_bom", {description = "allow a UTF-8 BOM sequence (0xEF 0xBB 0xBF) at the start of INI files", default = true, type = "boolean"})
+option("multi_line_entries", {description = "support for multi-line entries in the style of Python's ConfigParser", default = true, type = "boolean"})
+option("utf_8_bom", {description = "allow a UTF-8 BOM sequence (0xEF 0xBB 0xBF) at the start of INI files", default = true, type = "boolean"})
 option("inline_comments", {description = "allow inline comments with the comment prefix character", default = true, type = "boolean"})
 option("inline_comment_prefix", {description = "allow inline comments with the comment prefix character", default = ";", type = "string"})
-option("start-of-line_comment_prefix", {description = "character(s) to start a comment at the beginning of a line", default = ";#'", type = "string"})
+option("start_of_line_comment_prefix", {description = "character(s) to start a comment at the beginning of a line", default = ";#'", type = "string"})
 option("allow_no_value", {description = "allow name with no value", default = false, type = "boolean"})
 option("stop_on_first_error", {description = "stop parsing after an error", default = false, type = "boolean"})
 option("report_line_numbers", {description = "report line number on ini_handler callback", default = false, type = "boolean"})
@@ -32,10 +32,10 @@ target("inih")
         add_headerfiles("cpp/(INIReader.h)")
     end
 
-    if not has_config("utf-8_bom") then add_defines("INI_ALLOW_BOM=0") end
+    if not has_config("utf_8_bom") then add_defines("INI_ALLOW_BOM=0") end
     if not has_config("inline_comments") then add_defines("INI_ALLOW_INLINE_COMMENTS=0") end
     if has_config("inline_comment_prefix") then add_defines([[INI_INLINE_COMMENT_PREFIXES="]] .. get_config("inline_comment_prefix") .. [["]]) end
-    if has_config("start-of-line_comment_prefix") then add_defines([[INI_START_COMMENT_PREFIXES="]] .. get_config("start-of-line_comment_prefix") .. [["]]) end
+    if has_config("start_of_line_comment_prefix") then add_defines([[INI_START_COMMENT_PREFIXES="]] .. get_config("start_of_line_comment_prefix") .. [["]]) end
     if has_config("allow_no_value") then add_defines("INI_ALLOW_NO_VALUE=1") end
     if has_config("stop_on_first_error") then add_defines("INI_STOP_ON_FIRST_ERROR=1") end
     if has_config("report_line_numbers") then add_defines("INI_HANDLER_LINENO=1") end
