@@ -6,17 +6,14 @@ target("injector")
     if is_arch("arm.*") then
         add_defines("__arm__")
         if is_arch("arm64") then
-            add_defines("_M_ARM64")
-            add_defines("__arm64__")
-            add_defines("__aarch64__")
+            add_defines("__arm64__", "__aarch64__", "_M_ARM64")
         elseif is_arch("arm32") then
             add_defines("_M_ARMT")
         end
     elseif is_arch("x86_64") then 
         add_defines("__x86_64__")
     elseif is_arch("x86") then
-        add_defines("_M_IX86")
-        add_defines("__i386__")
+        add_defines("__i386__", "_M_IX86")
     end
     if is_plat("windows") then
         add_files("src/windows/*.c")
