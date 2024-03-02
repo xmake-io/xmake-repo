@@ -18,9 +18,21 @@ package("injector")
         end
     end)
 
-    on_install("linux", "macosx", "mingw",function (package)
-        io.replace("Makefile", "cd cmd && $(MAKE)", "", {plain = true})
-        os.vrunv("make", {"PREFIX=" .. package:installdir()})
+    on_install("linux", function (package)
+        os.cd("src/linux")
+        os.vrunv("make", {"install", "PREFIX=" .. package:installdir()})
+        os.cp("include/*.h", package:installdir("include"))
+    end)
+
+    on_install("macosx",function (package)
+        os.cd("src/macos")
+        os.vrunv("make", {"install", "PREFIX=" .. package:installdir()})
+        os.cp("include/*.h", package:installdir("include"))
+    end)
+
+    on_install("mingw",function (package)
+        os.cd("src/windows")
+        os.vrunv("make", {"install", "all", "PREFIX=" .. package:installdir()})
         os.cp("include/*.h", package:installdir("include"))
     end)
 
