@@ -17,7 +17,7 @@ package("ucx")
     end)
 
     on_install("linux", function (package)
-        local configs = {"--disable-doxygen-doc", "--without-java", "--without-rte", "--without-fuse3", "--without-gdrcopy", "--without-rdmacm", "--without-knem", "--without-xpmem", "--without-ugni"}
+        local configs = {"--disable-doxygen-doc", "--without-go", "--without-java", "--without-rte", "--without-fuse3", "--without-gdrcopy", "--without-rdmacm", "--without-knem", "--without-xpmem", "--without-ugni"}
         if package:config("cuda") then
             local cuda = package:dep("cuda"):fetch()
             table.insert(configs, "--with-cuda=" .. path.directory(cuda.sysincludedirs[1]))
