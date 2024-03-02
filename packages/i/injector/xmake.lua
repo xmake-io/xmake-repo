@@ -11,17 +11,16 @@ package("injector")
         import("package.tools.nmake").build(package, {"-f", "Makefile.win32"})
         os.cp("include/*.h", package:installdir("include"))
         if package:config("shared") then
-            os.cp("*.dll", package:installdir("bin"))
-            os.cp("*.dll.lib", package:installdir("lib"))
+            os.cp("src/windows/injector.dll", package:installdir("bin"))
+            os.cp("src/windows/injector.lib", package:installdir("lib"))
         else
-            os.cp("*.lib|*.dll.lib", package:installdir("lib"))
+            os.cp("src/windows/injector-static.lib", package:installdir("lib"))
         end
     end)
 
     on_install("linux", "macosx", "mingw",function (package)
         io.replace("Makefile", "cd cmd && $(MAKE)", "", {plain = true})
-        os.vrunv("make", {})
-        os.vrunv("make", {"install"})
+        os.vrunv("make", {"PREFIX=" .. package:installdir()})
         os.cp("include/*.h", package:installdir("include"))
     end)
 
