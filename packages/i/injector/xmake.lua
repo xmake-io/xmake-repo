@@ -6,12 +6,13 @@ package("injector")
     add_urls("https://github.com/kubo/injector.git")
     add_versions("2024.02.18", "c719b4f6b3bde75fd18d4d0c6b752a68dce593aa")
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
-        if is_plat("windows") then
-            import("package.tools.nmake").build(package, {"-f", "Makefile.win32"})
-        elseif is_plat("linux", "macosx", "mingw") then
-            os.vrunv("make", {})
-        end
+    on_install("windows", function (package)
+        import("package.tools.nmake").build(package, {"-f", "Makefile.win32"})
+        os.cp("include/*.h", package:installdir("include"))
+    end)
+
+    on_install("linux", "macosx", "mingw", function (package)
+        os.vrunv("make", {})
         os.cp("include/*.h", package:installdir("include"))
     end)
 
