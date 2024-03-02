@@ -1,5 +1,4 @@
 package("injector")
-    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/kubo/injector")
     set_description("Library for injecting a shared library into a Linux or Windows process")
     set_license("LGPL-2.1")
@@ -11,11 +10,18 @@ package("injector")
         io.replace("Makefile.win32", "cd cmd && $(MAKE_CMD)", "", {plain = true})
         import("package.tools.nmake").build(package, {"-f", "Makefile.win32"})
         os.cp("include/*.h", package:installdir("include"))
+        if package:config("shared") then
+            os.cp("*.dll", package:installdir("bin"))
+            os.cp("*.dll.lib", package:installdir("lib"))
+        else
+            os.cp("*.lib|*.dll.lib", package:installdir("lib"))
+        end
     end)
 
     on_install("linux", "macosx", "mingw",function (package)
         io.replace("Makefile", "cd cmd && $(MAKE)", "", {plain = true})
         os.vrunv("make", {})
+        os.vrunv("make", {"install"})
         os.cp("include/*.h", package:installdir("include"))
     end)
 
