@@ -31,7 +31,7 @@ package("gfortran")
                         table.insert(paths, path.join("/usr/lib", target))
                         table.insert(paths, path.join("/usr/lib/gcc", target, vmajor))
                         table.insert(paths, path.join(installdir, "lib", target, vmajor))
-                        if is_plat("macosx") then
+                        if package:is_plat("macosx") then
                             table.insert(paths, path.join("/opt/homebrew/Cellar/gcc", version, "/lib/gcc", vmajor))
                         end
                     end
