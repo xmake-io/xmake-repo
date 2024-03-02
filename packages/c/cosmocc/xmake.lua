@@ -6,6 +6,7 @@ package("cosmocc")
     add_urls("https://cosmo.zip/pub/cosmocc/cosmocc-$(version).zip",
              "https://github.com/xmake-mirror/cosmopolitan/releases/download/$(version)/cosmocc-$(version).zip")
     add_versions("3.2.4", "d2fa6dbf6f987310494581deff5b915dbdc5ca701f20f7613bb0dcf1de2ee511")
+    add_versions("3.3.2", "a695012ffbeac5e26e3c4a740debc15273f47e9a8bdc55e8b76a623154d5914b")
 
     on_load("@windows|x64", function (package)
         package:add("deps", "msys2")
