@@ -1,11 +1,16 @@
+add_rules("mode.debug", "mode.release")
+
 if is_plat("windows", "mingw") then
     add_syslinks("advapi32", "dbghelp", "psapi")
 end
+
 target("injector")
     set_kind("$(kind)")
     set_languages("c")
+
     add_headerfiles("include/(*.h)")
     add_includedirs("include", {public = true})
+
     if is_arch("arm.*") then
         add_defines("__arm__")
         if is_arch("arm64") then
@@ -18,6 +23,7 @@ target("injector")
     elseif is_arch("x86") then
         add_defines("__i386__", "_M_IX86")
     end
+
     if is_plat("windows", "mingw") then
         add_files("src/windows/*.c")
         if is_plat("windows") then
