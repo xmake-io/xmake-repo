@@ -14,7 +14,7 @@ package("injector")
     end)
 
     on_install("linux", "macosx", "mingw",function (package)
-        io.replace("Makefile", "cd cmd && $(MAKE_CMD)", "", {plain = true})
+        io.replace("Makefile", "cd cmd && $(MAKE)", "", {plain = true})
         os.vrunv("make", {})
         os.cp("include/*.h", package:installdir("include"))
     end)
