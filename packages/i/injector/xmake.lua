@@ -1,4 +1,5 @@
 package("injector")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/kubo/injector")
     set_description("Library for injecting a shared library into a Linux or Windows process")
     set_license("LGPL-2.1")
