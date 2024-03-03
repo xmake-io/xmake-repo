@@ -21,7 +21,11 @@ package("stringzilla")
     add_versions("v3.4.1", "062587d0ec08b62bba888b1ec0dcb42a68a53043af7ae6b4d0185381543c1297")
 
     on_install(function (package)
-        os.cp("stringzilla/stringzilla.h", package:installdir("include"))
+        if package:version():gt("2.0.4") then
+            os.cp("include/stringzilla/stringzilla.h", package:installdir("include"))
+        else
+            os.cp("stringzilla/stringzilla.h", package:installdir("include"))
+        end
     end)
 
     on_test(function (package)
