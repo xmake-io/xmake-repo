@@ -84,9 +84,9 @@ function _update_version(instance, version, shasum)
             instance:name(), version_current, version)
         os.vexec("git add .")
         os.vexec("git commit -a -m \"Update %s to %s\"", instance:name(), version)
-        --os.vexec("git push %s %s:%s", repourl, branch, branch)
-        --os.vexec("gh pr create --label \"auto-update\" --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo -B dev -H %s",
-        --    instance:name(), version, body, branch)
+        os.vexec("git push %s %s:%s", repourl, branch, branch)
+        os.vexec("gh pr create --label \"auto-update\" --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo -B dev -H %s",
+            instance:name(), version, body, branch)
     end
     os.vexec("git reset --hard HEAD")
     os.vexec("git checkout %s", branch_current)
