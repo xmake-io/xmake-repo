@@ -1,5 +1,4 @@
 package("lightgbm")
-
     set_homepage("https://github.com/microsoft/LightGBM")
     set_description("LightGBM is a gradient boosting framework that uses tree based learning algorithms.")
     set_license("MIT")
@@ -12,6 +11,7 @@ package("lightgbm")
     add_configs("gpu", {description = "Enable GPU-accelerated training.", default = false, type = "boolean"})
 
     add_deps("cmake")
+
     on_load("windows|x64", "linux", function (package)
         if package:config("gpu") then
             package:add("deps", "opencl")
@@ -23,7 +23,10 @@ package("lightgbm")
     end)
 
     on_install("windows|x64", "linux", function (package)
-        os.cd("compile")
+        if package:version():lt("4.2.0") then
+            os.cd("compile")
+        end
+
         local configs = {"-DBoost_USE_STATIC_LIBS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
