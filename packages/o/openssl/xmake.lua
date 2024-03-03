@@ -49,6 +49,13 @@ package("openssl")
         if package:is_plat("linux") then
             package:add("extsources", "apt::libssl-dev")
         end
+        if is_subhost("windows") and os.arch() == "x64" then
+            if package:is_plat("windows", "mingw") then
+                package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}})
+            else
+                package:add("deps", "msys2", {configs = {msystem = "MINGW64", mingw64_gcc = true, base_devel = true}})
+            end
+        end
     end)
 
     on_install("windows", function (package)
