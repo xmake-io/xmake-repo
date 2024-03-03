@@ -8,11 +8,12 @@ package("fizz")
 
     add_deps("cmake", "folly", "libsodium")
 
-    on_install("linux", function (package)
+    on_install("linux", "macosx|x86_64", function (package)
+        os.cd("fizz")
         local configs = { "-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF" }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package .. "fizz", configs)
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
