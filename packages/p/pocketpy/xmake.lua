@@ -6,6 +6,7 @@ package("pocketpy")
 
     add_urls("https://github.com/blueloveTH/pocketpy/releases/download/$(version)/pocketpy.h")
 
+    add_versions("v1.4.0", "bc07d48714737bb0fffffef92e2bbfbfe4544fcf825ff4b7154342b409db91d7")
     add_versions("v0.9.0", "0da63afb3ea4ebb8b686bfe33b4c7556c0a927cd98ccf3c7a3fb4aa216fbf30b")
 
     on_install("windows|x64", "linux", "macosx", "android", function (package)
