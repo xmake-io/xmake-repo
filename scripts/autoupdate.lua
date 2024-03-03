@@ -14,22 +14,24 @@ function _load_package(packagename, packagedir, packagefile)
     end
 end
 
-function _get_all_packages()
+function _get_all_packages(pattern)
     local packages = _g.packages
     if not packages then
         packages = {}
         for _, packagedir in ipairs(os.dirs(path.join("packages", "*", "*"))) do
             local packagename = path.filename(packagedir)
-            local packagefile = path.join(packagedir, "xmake.lua")
-            local instance = _load_package(packagename, packagedir, packagefile)
-            local basename = instance:get("base")
-            if instance and basename then
-                local basedir = path.join("packages", basename:sub(1, 1):lower(), basename:lower())
-                local basefile = path.join(basedir, "xmake.lua")
-                instance._BASE = _load_package(basename, basedir, basefile)
-            end
-            if instance then
-                table.insert(packages, instance)
+            if not pattern or packagename:match(pattern) then
+                local packagefile = path.join(packagedir, "xmake.lua")
+                local instance = _load_package(packagename, packagedir, packagefile)
+                local basename = instance:get("base")
+                if instance and basename then
+                    local basedir = path.join("packages", basename:sub(1, 1):lower(), basename:lower())
+                    local basefile = path.join(basedir, "xmake.lua")
+                    instance._BASE = _load_package(basename, basedir, basefile)
+                end
+                if instance then
+                    table.insert(packages, instance)
+                end
             end
         end
         _g.packages = packages
@@ -82,33 +84,40 @@ function _update_version(instance, version, shasum)
             instance:name(), version_current, version)
         os.vexec("git add .")
         os.vexec("git commit -a -m \"Update %s to %s\"", instance:name(), version)
-        os.vexec("git push %s %s:%s", repourl, branch, branch)
-        os.vexec("gh pr create --label \"auto-update\" --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo -B dev -H %s",
-            instance:name(), version, body, branch)
+        --os.vexec("git push %s %s:%s", repourl, branch, branch)
+        --os.vexec("gh pr create --label \"auto-update\" --title \"Auto-update %s to %s\" --body \"%s\" -R xmake-io/xmake-repo -B dev -H %s",
+        --    instance:name(), version, body, branch)
     end
     os.vexec("git reset --hard HEAD")
     os.vexec("git checkout %s", branch_current)
 end
 
-function main(maxcount)
+function main(pattern)
     local count = 0
-    local maxcount = tonumber(maxcount or 10)
-    local instances = _get_all_packages()
+    local maxcount = 3
+    local instances = _get_all_packages(pattern)
     math.randomseed(os.time())
-    while count < maxcount do
-        local instance = instances[math.random(#instances)]
+    while count < maxcount and #instances > 0 do
+        local idx = math.random(#instances)
+        local instance = instances[idx]
         local checkupdate_filepath = path.join(instance:scriptdir(), "checkupdate.lua")
         if not os.isfile(checkupdate_filepath) then
             checkupdate_filepath = path.join(os.scriptdir(), "checkupdate.lua")
         end
+        local updated = false
         if os.isfile(checkupdate_filepath) then
             local checkupdate = import("checkupdate", {rootdir = path.directory(checkupdate_filepath), anonymous = true})
             local version, shasum = checkupdate(instance)
             if version and shasum and not _is_pending(instance, version) then
                 cprint("package(%s): new version ${bright}%s${clear} found, shasum: ${bright}%s", instance:name(), version, shasum)
                 _update_version(instance, version, shasum)
-                count = count + 1
+                updated = true
             end
+        end
+        if updated then
+            count = count + 1
+        else
+            table.remove(instances, idx)
         end
     end
 end

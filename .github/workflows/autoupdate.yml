@@ -37,6 +37,6 @@ jobs:
 
       - name: Auto-update packages
         run: |
-          xmake l -vD scripts/autoupdate.lua 3
+          xmake l -vD scripts/autoupdate.lua
 
 
