@@ -8,6 +8,7 @@ package("libcurl")
     add_urls("https://github.com/curl/curl/releases/download/curl-$(version).tar.bz2",
              {version = function (version) return (version:gsub("%.", "_")) .. "/curl-" .. version end})
     add_versionfiles("versions.txt")
+    set_xmakever("2.8.7")
 
     add_deps("cmake")
 
