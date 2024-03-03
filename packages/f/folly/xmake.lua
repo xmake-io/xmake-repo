@@ -33,7 +33,7 @@ package("folly")
         add_syslinks("pthread")
     end
 
-    on_install("windows|x64", "linux", "macosx|x86_64", function (package)
+    on_install("windows|x64", "linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_LibDwarf=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_Libiberty=ON",
@@ -41,7 +41,8 @@ package("folly")
                          "-DCMAKE_DISABLE_FIND_PACKAGE_LibURCU=ON",
                          "-DLIBAIO_FOUND=OFF",
                          "-DLIBURCU_FOUND=OFF",
-                         "-DBOOST_LINK_STATIC=ON"}
+                         "-DBOOST_LINK_STATIC=ON",
+                         "-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
