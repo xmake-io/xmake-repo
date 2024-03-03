@@ -9,7 +9,7 @@ package("fizz")
 
     add_deps("cmake", "folly", "libsodium")
 
-    on_install("linux", function (package)
+    on_install("linux", "macosx", function (package)
         os.cd("fizz")
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DBUILD_EXAMPLES=OFF",
@@ -20,5 +20,5 @@ package("fizz")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("fizz/server/AsyncFizzServer.h"))
+        assert(package:has_cxxincludes("fizz/server/AsyncFizzServer.h", {configs = {languages = "c++17"}}))
     end)
