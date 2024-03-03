@@ -67,9 +67,9 @@ function _update_version(instance, version, shasum)
     os.vexec("git pull %s dev", repourl)
     os.vexec("git branch %s", branch)
     os.vexec("git checkout %s", branch)
+    local inserted = false
     local scriptfile = path.join(instance:scriptdir(), "xmake.lua")
-    if os.isfile(scriptfile) and not is_pending then
-        local inserted = false
+    if os.isfile(scriptfile) then
         local version_current
         io.gsub(scriptfile, "add_versions%(\"(.-)\",%s+\"(.-)\"%)", function (v, h)
             if not version_current or semver.compare(v, version_current) > 0 then
@@ -80,6 +80,21 @@ function _update_version(instance, version, shasum)
                 return string.format('add_versions("%s", "%s")\n    add_versions("%s", "%s")', version, shasum, v, h)
             end
         end)
+    else
+        -- TODO
+        local versionfiles = instance:get("versionfiles")
+        if versionfiles then
+            for _, versionfile in ipairs(table.wrap(versionfiles)) do
+                if not os.isfile(versionfile) then
+                    versionfile = path.join(instance:scriptdir(), versionfile)
+                end
+                if os.isfile(versionfile) then
+                    print("versionfile", versionfile)
+                end
+            end
+        end
+    end
+    if inserted then
         local body = string.format("New version of %s detected (package version: %s, last github version: %s)",
             instance:name(), version_current, version)
         os.vexec("git add .")
