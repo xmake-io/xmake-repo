@@ -9,9 +9,9 @@ package("fizz")
 
     add_deps("cmake", "folly", "libsodium")
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", function (package)
         os.cd("fizz")
-        local configs = { "-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF", "-DCMAKE_CXX_STANDARD=14" }
+        local configs = { "-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF", "-DCMAKE_CXX_STANDARD=17" }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
