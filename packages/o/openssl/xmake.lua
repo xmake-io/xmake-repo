@@ -28,7 +28,7 @@ package("openssl")
     on_fetch("fetch")
 
     on_load(function (package)
-        if package:is_plat("windows") and (not package.is_built or package:is_built()) then
+        if is_subhost("windows") and not package:is_precompiled() then
             package:add("deps", "nasm")
             -- the perl executable found in GitForWindows will fail to build OpenSSL
             -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
@@ -144,7 +144,11 @@ package("openssl")
             table.insert(configs, "--debug")
         end
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        os.vrunv(package:is_cross() and "./Configure" or "./config", configs, {shell = true, envs = buildenvs})
+        if package:is_cross() then
+            os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
+        else
+            os.vrunv("./config", configs, {shell = true, envs = buildenvs})
+        end
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
