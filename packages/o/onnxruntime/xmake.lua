@@ -18,6 +18,9 @@ package("onnxruntime")
             add_versions("1.16.1", "60b476cde62d424fc9bf87ec3bf275cf40af76bdb25022581f3ecaf4af5992a1")
             add_versions("1.17.0", "3f3214f99165d3282cc5647c5a18451aaaaf326599c7e98913ce6c50e50c6463")
             add_versions("1.17.1", "9404130825474bd36b2538ed925d6b5f2cf1fb6a443f3e125054ae3470019291")
+        elseif is_arch("arm64") then
+            set_urls("https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-arm64-$(version).zip")
+            add_versions("1.17.1", "47782cebcab0fd7a1f0a3f0676b088c1bc0f4fbf21666f6fe57570dc362fa5a8")
         end
     elseif is_plat("linux") then
         if is_arch("x86_64") then
