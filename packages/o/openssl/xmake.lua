@@ -131,7 +131,7 @@ package("openssl")
             end
         end
         table.insert(configs, "--openssldir=" .. package:installdir():gsub("\\", "/"))
-        table.insert(configs, "--prefix=" .. package:installdir():gsub("\\"), "/")
+        table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         if package:debug() then
             table.insert(configs, "--debug")
