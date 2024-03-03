@@ -27,7 +27,7 @@ package("lightgbm")
             os.cd("compile")
         end
 
-        local configs = {"-DBoost_USE_STATIC_LIBS=ON"}
+        local configs = {"-DBoost_USE_STATIC_LIBS=ON", "-DBUILD_CLI=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         if package:is_plat("windows") then
