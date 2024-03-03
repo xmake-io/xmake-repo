@@ -21,6 +21,10 @@ package("highfive")
                          "-DHIGHFIVE_EXAMPLES=OFF",
                          "-DHIGHFIVE_BUILD_DOCS=OFF",
                          "-DHIGHFIVE_USE_BOOST=OFF"}
+        local hdf5 = package:dep("hdf5")
+        if hdf5 and not hdf5:is_system() then
+            table.insert(configs, "-DHDF5_ROOT=" .. hdf5:installdir())
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
