@@ -20,7 +20,8 @@ package("stringzilla")
     add_versions("v3.4.0", "b9f15c00079844b7eb82e613bab59a89204bdb9b1bacd1ef485fa74c8ef7ec77")
     add_versions("v3.4.1", "062587d0ec08b62bba888b1ec0dcb42a68a53043af7ae6b4d0185381543c1297")
 
-    on_install(function (package)
+
+    on_install("android|!armeabi-v7a",function (package)
         if package:version():gt("2.0.4") then
             os.cp("include/stringzilla/stringzilla.h", package:installdir("include"))
         else
