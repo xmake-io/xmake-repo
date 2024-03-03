@@ -1,16 +1,17 @@
 package("lightgbm")
-
     set_homepage("https://github.com/microsoft/LightGBM")
     set_description("LightGBM is a gradient boosting framework that uses tree based learning algorithms.")
     set_license("MIT")
 
     add_urls("https://github.com/microsoft/LightGBM/releases/download/v$(version)/lightgbm-$(version).tar.gz")
+    add_versions("4.2.0", "8a4d051df2ab2218998a16f7712e843ee9e96d8b09ffbfcc18533da127e0da02")
     add_versions("3.3.2", "5d25d16e77c844c297ece2044df57651139bc3c8ad8c4108916374267ac68b64")
     add_versions("3.2.1", "bd98e3b501b4c24dc127f4ad93e467f42923fe3eefa99e143b5b93158f024395")
 
     add_configs("gpu", {description = "Enable GPU-accelerated training.", default = false, type = "boolean"})
 
     add_deps("cmake")
+
     on_load("windows|x64", "linux", function (package)
         if package:config("gpu") then
             package:add("deps", "opencl")
@@ -22,8 +23,11 @@ package("lightgbm")
     end)
 
     on_install("windows|x64", "linux", function (package)
-        os.cd("compile")
-        local configs = {"-DBoost_USE_STATIC_LIBS=ON"}
+        if package:version():lt("4.2.0") then
+            os.cd("compile")
+        end
+
+        local configs = {"-DBoost_USE_STATIC_LIBS=ON", "-DBUILD_CLI=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         if package:is_plat("windows") then
