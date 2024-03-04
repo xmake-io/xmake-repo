@@ -25,7 +25,6 @@ package("mint")
         if package:version():ge("2024.0") then
             os.cp("Mint/**", package:installdir("include"))
         else
-            raise()
             os.cp("MINT.h", package:installdir("include"))
         end
     end)
