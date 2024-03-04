@@ -10,7 +10,7 @@ package("webui")
     add_versions("2.3.0", "14be57405b12cf434daade2310178534240866e3169c7213a6fa0e4a6c6f9f27")
 
     if is_plat("windows") then
-        add_syslinks("user32", "advapi32")
+        add_syslinks("user32", "advapi32", "shell32")
     elseif is_plat("mingw") then
         add_syslinks("ws2_32")
     end
@@ -25,7 +25,7 @@ package("webui")
                 add_headerfiles("include/webui.h", "include/webui.hpp")
                 add_includedirs("include", "src/civetweb")
                 if is_plat("windows") then
-                    add_syslinks("user32", "advapi32")
+                    add_syslinks("user32", "advapi32", "shell32")
                 elseif is_plat("mingw") then
                     add_syslinks("ws2_32")
                 end
