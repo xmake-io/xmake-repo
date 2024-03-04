@@ -12,7 +12,7 @@ package("daw_json_link")
 
     add_deps("cmake")
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android@linux,macosx", "iphoneos", "cross", function (package)
         if package:is_plat("android") then
             import("core.tool.toolchain")
             local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
