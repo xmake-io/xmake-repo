@@ -80,8 +80,8 @@ function _update_version(instance, version, shasum)
                 return string.format('add_versions("%s", "%s")\n    add_versions("%s", "%s")', version, shasum, v, h)
             end
         end)
-    else
-        -- TODO
+    end
+    if not inserted then
         local versionfiles = instance:get("versionfiles")
         if versionfiles then
             for _, versionfile in ipairs(table.wrap(versionfiles)) do
@@ -89,7 +89,8 @@ function _update_version(instance, version, shasum)
                     versionfile = path.join(instance:scriptdir(), versionfile)
                 end
                 if os.isfile(versionfile) then
-                    print("versionfile", versionfile)
+                    io.insert(versionfile, 1, string.format("%s %s", version, shasum))
+                    inserted = true
                 end
             end
         end
@@ -131,8 +132,7 @@ function main(pattern)
         end
         if updated then
             count = count + 1
-        else
-            table.remove(instances, idx)
         end
+        table.remove(instances, idx)
     end
 end
