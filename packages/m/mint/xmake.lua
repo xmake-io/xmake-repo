@@ -7,6 +7,7 @@ package("mint")
     add_urls("https://github.com/Chuyu-Team/MINT/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Chuyu-Team/MINT.git")
     
+    add_versions("2024.1", "3d77d9df1c724c98b6251f8c5c25cdf131143a80a226614a668d779db05d25e5")
     add_versions("2023.0","cb5a87c0af09243444a71bd04b267e0656d815cecd9512062ecd5680f6610b94")
 
     add_configs("namespace", {description = "use separate namespace", default = false, type = "boolean"})
