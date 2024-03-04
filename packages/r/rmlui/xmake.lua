@@ -1,11 +1,12 @@
 package("rmlui")
-
     set_homepage("https://mikke89.github.io/RmlUiDoc/")
     set_description("RmlUi is the C++ user interface library based on the HTML and CSS standards.")
     set_license("MIT")
 
     add_urls("https://github.com/mikke89/RmlUi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mikke89/RmlUi.git")
+
+    add_versions("5.1", "0d28177118f0777e42864b2b7ddfc2937e81eb0dc4c52fc034c71a0c93516626")
     add_versions("5.0", "1f6eac0e140c35275df32088579fc3a0087fa523082c21c28d5066bd6d18882a")
 
     add_configs("freetype", {description = "Building with the default FreeType font engine.", default = true, type = "boolean"})
@@ -14,12 +15,14 @@ package("rmlui")
     add_configs("svg",      {description = "Build with SVG plugin enabled.", default = false, type = "boolean"})
     add_configs("lottie",   {description = "Build with Lottie plugin enabled.", default = false, type = "boolean"})
 
-    add_deps("cmake")
     if is_plat("windows") then
         add_syslinks("shlwapi", "imm32")
     elseif is_plat("macosx") then
         add_frameworks("Cocoa")
     end
+
+    add_deps("cmake")
+
     on_load("windows", "macosx", "linux", function (package)
         if not package:config("shared") then
             package:add("defines", "RMLUI_STATIC_LIB")
@@ -39,6 +42,10 @@ package("rmlui")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
+        if package:is_plat("linux") then
+            io.replace("Include/RmlUi/Core/Types.h", "#include <cstdlib>", "#include <cstdlib>\n#include <cstdint>\n", {plain = true})
+        end
+
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_SAMPLES=OFF"}
         if package:is_plat("macosx") and package:is_arch("arm64") then
             table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=arm64")

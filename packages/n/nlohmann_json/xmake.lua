@@ -48,5 +48,5 @@ package("nlohmann_json")
                 json data;
                 data["name"] = "world";
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"nlohmann/json.hpp"}}))
+        ]]}, {configs = {languages = "c++14"}, includes = {"nlohmann/json.hpp"}}))
     end)

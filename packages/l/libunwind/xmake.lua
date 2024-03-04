@@ -1,7 +1,7 @@
 package("libunwind")
-
     set_homepage("https://www.nongnu.org/libunwind/")
     set_description("A portable and efficient C programming interface (API) to determine the call-chain of a program.")
+    set_license("MIT")
 
     add_urls("https://github.com/libunwind/libunwind/releases/download/$(version).tar.gz", {version = function (version)
         if version:eq("v1.5") then
@@ -14,9 +14,11 @@ package("libunwind")
         return version:gsub("v", "")
     end})
     add_urls("https://github.com/libunwind/libunwind.git")
+
     add_versions("v1.8.0", "b6b3df40a0970c8f2865fb39aa2af7b5d6f12ad6c5774e266ccca4d6b8b72268")
-    add_versions("v1.5", "90337653d92d4a13de590781371c604f9031cdb50520366aa1e3a91e1efb1017")
+    add_versions("v1.7.2", "a18a6a24307443a8ace7a8acc2ce79fbbe6826cd0edf98d6326d0225d6a5d6e6")
     add_versions("v1.6.2", "4a6aec666991fb45d0889c44aede8ad6eb108071c3554fcdff671f9c94794976")
+    add_versions("v1.5", "90337653d92d4a13de590781371c604f9031cdb50520366aa1e3a91e1efb1017")
 
     add_patches("1.8.0", "https://github.com/dotnet/runtime/pull/96969/commits/d63c235756d4c46b061bd503a2c47207df6b3324.patch", "67570927819698125aa8fd8f144baefd5682b2129d4556b370918d9a1c4766d2")
 
@@ -36,7 +38,11 @@ package("libunwind")
         end
     end)
 
-    on_install("android", "linux", "bsd", "cross", function (package)
+    on_install("android|arm64@linux,macosx", "linux", "bsd", "cross", function (package)
+        if package:is_plat("bsd") then
+            io.replace("src/setjmp/siglongjmp.c", "&wp[JB_MASK]", "(unw_word_t)&wp[JB_MASK]", {plain = true})
+        end
+
         local configs = {"--enable-coredump=no", "--disable-tests"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))

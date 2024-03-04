@@ -32,5 +32,5 @@ package("ordered_map")
                     std::cout << "{" << key_value.first << ", " << key_value.second << "}" << std::endl;
                 }
             }
-        ]]}, {configs = {languages = "c++11"}, includes = { "tsl/ordered_map.h"} }))
+        ]]}, {configs = {languages = "c++14"}, includes = { "tsl/ordered_map.h"} }))
     end)

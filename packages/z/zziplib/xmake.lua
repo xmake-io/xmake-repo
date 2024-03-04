@@ -7,6 +7,7 @@ package("zziplib")
     add_urls("https://github.com/gdraheim/zziplib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/gdraheim/zziplib.git")
     add_versions("v0.13.72", "93ef44bf1f1ea24fc66080426a469df82fa631d13ca3b2e4abaeab89538518dc")
+    add_versions("v0.13.73", "2aa9d317f70060101064863e4e8fe698c32301e2d293d2b4964608cf2d5b2d8b")
 
     add_deps("cmake", "zlib")
     on_install("windows", "macosx", "linux", function (package)

@@ -53,6 +53,7 @@ jobs:
           git push all master
 
       - name: Build artifacts
+        if: ${{ github.repository }} == "xmake-io/xmake-repo"
         run: |
           xmake l scripts/build_artifacts.lua
 

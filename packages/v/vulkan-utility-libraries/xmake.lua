@@ -3,9 +3,11 @@ package("vulkan-utility-libraries")
     set_description("Utility libraries for Vulkan developers")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/KhronosGroup/Vulkan-Utility-Libraries/archive/refs/tags/v1.3.268.tar.gz",
+    add_urls("https://github.com/KhronosGroup/Vulkan-Utility-Libraries/archive/refs/tags/v1.3.275.tar.gz",
+             "https://github.com/KhronosGroup/Vulkan-Utility-Libraries/archive/refs/tags/v1.3.268.tar.gz",
              "https://github.com/KhronosGroup/Vulkan-Utility-Libraries.git")
 
+    add_versions("v1.3.275", "96d3ec7bda7b6e9fabbb471c570104a7b1cb56928d097dd0441c96129468b888")
     add_versions("v1.3.268", "990de84b66094b647ae420ba13356b79d69e1c6f95532f40466457d51a9d127d")
 
     if is_plat("windows") then

@@ -78,7 +78,11 @@ function _require_packages(argv, packages)
     end
     local runtimes = argv.runtimes or argv.vs_runtime
     if runtimes then
-        table.insert(config_argv, "--vs_runtime=" .. runtimes)
+        if is_host("windows") then
+            table.insert(config_argv, "--vs_runtime=" .. runtimes)
+        else
+            table.insert(config_argv, "--runtimes=" .. runtimes)
+        end
     end
     if argv.xcode_sdkver then
         table.insert(config_argv, "--xcode_sdkver=" .. argv.xcode_sdkver)
@@ -195,7 +199,7 @@ function main(...)
         for _, file in ipairs(files:split('\n'), string.trim) do
             if file:startswith("packages") then
                 assert(file == file:lower(), "%s must be lower case!", file)
-                local package = file:match("packages/%w/(%S+)/")
+                local package = file:match("packages/%w/(%S-)/")
                 table.insert(packages, package)
             end
         end

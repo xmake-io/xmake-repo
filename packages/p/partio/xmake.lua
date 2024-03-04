@@ -8,6 +8,7 @@ package("partio")
              "https://github.com/wdas/partio.git")
     add_versions("v1.14.0", "f98874b781e92ab9b5d0575cabc437d27274cd91cb581f80960918efa491f902")
     add_versions("v1.14.6", "53a5754d6b2fc3e184953d985c233118ef0ab87169f34e3aec4a7e6d20cd9bd4")
+    add_versions("v1.17.1", "5d00fbfc55817acb310bcaf61212a78b2c602e08b839060dfee69570b4b82464")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -30,7 +31,7 @@ package("partio")
         io.gsub("CMakeLists.txt", "find%_package%(GLUT REQUIRED%)", "find_package(GLUT)")
         io.gsub("CMakeLists.txt", "find%_package%(OpenGL REQUIRED%)", "find_package(OpenGL)")
         io.gsub("CMakeLists.txt", "find%_package%(Python(.-) REQUIRED%)", "find_package(Python%1)")
-        local configs = {"-DCMAKE_DISABLE_FIND_PACKAGE_Doxygen=ON"}
+        local configs = {"-DPARTIO_GTEST_ENABLED=OFF", "-DCMAKE_DISABLE_FIND_PACKAGE_Doxygen=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPARTIO_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_SWIG=" .. (package:config("python") and "OFF" or "ON"))

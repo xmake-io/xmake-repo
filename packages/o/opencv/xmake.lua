@@ -43,12 +43,35 @@ package("opencv")
 
     if is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "CoreGraphics", "AppKit", "OpenCL", "Accelerate")
+        add_extsources("brew::opencv")
     elseif is_plat("linux") then
         add_extsources("pacman::opencv", "apt::libopencv-dev")
         add_syslinks("pthread", "dl")
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "user32", "glu32", "opengl32", "advapi32", "comdlg32", "ws2_32")
     end
+
+    on_fetch("macosx", function (package, opt)
+        if opt.system then
+            local result = package:find_package("brew::opencv", opt)
+            if result then
+                local includedirs = table.wrap(result.sysincludedirs or result.includedirs)
+                for _, includedir in ipairs(includedirs) do
+                    local dir = path.join(includedir, "opencv4")
+                    if os.isdir(dir) then
+                        table.insert(includedirs, dir)
+                    end
+                end
+                if result.sysincludedirs then
+                    result.sysincludedirs = includedirs
+                end
+                if result.includedirs then
+                    result.includedirs = includedirs
+                end
+            end
+            return result
+        end
+    end)
 
     on_load("linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then

@@ -20,6 +20,7 @@ package("volk")
     add_versions("1.3.250+1", "673241c6561fb4965f873d7fcdece17d950b24c77d6cf41466e47bdc2af67b81")
     add_versions("1.3.261+1", "052866c6cbff9efdf1e73e71c1d65070c36863730c95a4e93833500b4d894d69")
     add_versions("1.3.268+0", "f1d30fac1cdc17a8fdc8c69f371663547f92db99cfd612962190bb1e2c8ce74d")
+    add_versions("1.3.275+0", "b68d24e139190e49e5eafd72894f6e85c80472b8745bddc6ef91d6bf339df813")
 
     add_deps("vulkan-headers")
 
