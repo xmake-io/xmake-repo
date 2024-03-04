@@ -110,7 +110,7 @@ end
 
 function main(pattern)
     local count = 0
-    local maxcount = 3
+    local maxcount = 5
     local instances = _get_all_packages(pattern)
     math.randomseed(os.time())
     while count < maxcount and #instances > 0 do
