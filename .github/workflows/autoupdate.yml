@@ -36,7 +36,7 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: Auto-update packages
-        if: env.XMAKE_REPO_TOKEN != ''
+        if: ${{ github.repository }} == "xmake-io/xmake-repo"
         run: |
           xmake l -vD scripts/autoupdate.lua
 
