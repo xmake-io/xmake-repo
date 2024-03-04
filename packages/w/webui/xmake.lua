@@ -20,7 +20,7 @@ package("webui")
             import("core.tool.toolchain")
             local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
             local ndk_sdkver = ndk:config("ndk_sdkver")
-            if ndk_sdkver < 24 then
+            if tonumber(ndk_sdkver) < 24 then
                 -- https://github.com/marzer/tomlplusplus/pull/205
                 io.replace("src/civetweb/civetweb.c", "ftello", "ftell", {plain = true})
                 io.replace("src/civetweb/civetweb.c", "fseeko", "fseek", {plain = true})
