@@ -19,7 +19,7 @@ package("liburing")
         if package:config("pic") ~= false then
             cflags = "-fPIC"
         end
-        import("package.tools.autoconf").install(package, {}, {makeconfigs = {CFLAGS = cflags}})
+        import("package.tools.autoconf").install(package, {"--use-libc"}, {makeconfigs = {CFLAGS = cflags}})
     end)
 
     on_test(function (package)
