@@ -16,6 +16,17 @@ package("webui")
     end
 
     on_install("windows", "linux", "macosx", "mingw", "msys", "android", "cross", function (package)
+        if package:is_plat("android") and package:is_arch("armeabi-v7a") then
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            if ndk_sdkver < 24 then
+                -- https://github.com/marzer/tomlplusplus/pull/205
+                io.replace("src/civetweb/civetweb.c", "ftello", "ftell", {plain = true})
+                io.replace("src/civetweb/civetweb.c", "fseeko", "fseek", {plain = true})
+            end
+        end
+
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("webui")
