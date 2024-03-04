@@ -1,3 +1,5 @@
+includes(path.join(os.scriptdir(), "versions.lua"))
+
 package("libcurl")
     set_homepage("https://curl.haxx.se/")
     set_description("The multiprotocol file transfer library.")
@@ -7,8 +9,11 @@ package("libcurl")
              "http://curl.mirror.anstey.ca/curl-$(version).tar.bz2")
     add_urls("https://github.com/curl/curl/releases/download/curl-$(version).tar.bz2",
              {version = function (version) return (version:gsub("%.", "_")) .. "/curl-" .. version end})
-    add_versionfiles("versions.txt")
-    set_xmakever("2.8.7")
+    if add_versionfiles then
+        add_versionfiles("versions.txt")
+    else
+        add_versions_list()
+    end
 
     add_deps("cmake")
 
