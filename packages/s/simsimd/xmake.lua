@@ -1,5 +1,5 @@
 package("simsimd")
-    set_kind("library")
+    set_kind("library", {headeronly = true})
     set_homepage("https://ashvardanian.com/posts/simsimd-faster-scipy/")
     set_description("Vector Similarity Functions 3x-200x Faster than SciPy and NumPy — for Python, JavaScript, Rust, and C 11, supporting f64, f32, f16, i8, and binary vectors using SIMD for both x86 AVX2 & AVX-512 and Arm NEON & SVE 📐")
     set_license("Apache-2.0")
@@ -9,17 +9,15 @@ package("simsimd")
 
     add_versions("v3.9.0", "8e79b628ba89beebc7c4c853323db0e10ebb6f85bcda2641e1ebaf77cfbda7f9")
 
-    add_deps("cmake")
-
     on_install(function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        os.cp("include", package:installdir())
-        import("package.tools.cmake").install(package, configs)
+        os.cp("include/simsimd/spatial.h", package:installdir("include"))
+        os.cp("include/simsimd/probability.h", package:installdir("include"))
+        os.cp("include/simsimd/simsimd.h", package:installdir("include"))
+        os.cp("include/simsimd/binary.h", package:installdir("include"))
+        os.cp("include/simsimd/complex.h", package:installdir("include"))
+        os.cp("include/simsimd/types.h", package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("simsimd_capabilities", {includes = "simsimd/simsimd.h"}))
-        assert(package:has_cxxfuncs("simsimd_capabilities", {includes = "simsimd/simsimd.h", configs = {languages = "c++17"}}))
+        assert(package:has_cfuncs("simsimd_capabilities", {includes = "simsimd.h"}))
     end)
