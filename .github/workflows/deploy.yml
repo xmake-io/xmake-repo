@@ -53,6 +53,7 @@ jobs:
           git push all master
 
       - name: Build artifacts
+        if: env.XMAKE_REPO_TOKEN != ''
         run: |
           xmake l scripts/build_artifacts.lua
 

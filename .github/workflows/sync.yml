@@ -43,6 +43,7 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: Update
+        if: env.XMAKE_REPO_TOKEN != ''
         run: |
           export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
           xmake l -vD ./scripts/sync.lua

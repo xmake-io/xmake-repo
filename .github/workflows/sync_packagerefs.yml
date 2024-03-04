@@ -26,6 +26,7 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: Build artifacts for packagerefs
+        if: env.XMAKE_REPO_TOKEN != ''
         run: |
           git config --global user.email "waruqi@gmail.com"
           git config --global user.name "ruki"
