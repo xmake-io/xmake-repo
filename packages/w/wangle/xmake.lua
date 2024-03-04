@@ -1,4 +1,4 @@
-package("fizz")
+package("wangle")
     set_homepage("https://github.com/facebook/wangle")
     set_description("Wangle is a framework providing a set of common client/server abstractions for building services in a consistent, modular, and composable way.")
     set_license("Apache-2.0")
