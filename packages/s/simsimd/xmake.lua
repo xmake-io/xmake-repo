@@ -1,4 +1,5 @@
 package("simsimd")
+    set_kind("library", {headeronly = true})
     set_homepage("https://ashvardanian.com/posts/simsimd-faster-scipy/")
     set_description("Vector Similarity Functions 3x-200x Faster than SciPy and NumPy — for Python, JavaScript, Rust, and C 11, supporting f64, f32, f16, i8, and binary vectors using SIMD for both x86 AVX2 & AVX-512 and Arm NEON & SVE 📐")
     set_license("Apache-2.0")
