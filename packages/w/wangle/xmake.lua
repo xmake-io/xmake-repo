@@ -10,7 +10,7 @@ package("wangle")
 
     add_deps("cmake", "folly", "fizz")
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", function (package)
         os.cd("wangle")
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DBUILD_EXAMPLES=OFF",
