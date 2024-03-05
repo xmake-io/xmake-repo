@@ -8,7 +8,6 @@ package("mvfst")
     add_versions("2024.03.04", "06922633d6ee2f01e77f66812c87517ebbf06bbb56552a61ba1f7a3b757dc15a")
 
     add_deps("cmake", "folly", "fizz")
-    add_deps("boost", {configs = {iostreams = true, system = true, thread = true, filesystem = true, regex = true, context = true}})
 
     on_install("linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF",
