@@ -110,7 +110,7 @@ package("openssl3")
         end
     end)
 
-    on_install("cross", "android", function (package)
+    on_install("cross", function (package)
 
         local target_arch = "generic32"
         if package:is_arch("x86_64") then
