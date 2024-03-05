@@ -4,9 +4,11 @@ package("libevent")
     set_description("libevent – an event notification library")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/libevent/libevent/releases/download/release-$(version)-stable/libevent-$(version)-stable.tar.gz")
+    add_urls("https://github.com/libevent/libevent/releases/download/release-$(version)/libevent-$(version).tar.gz")
+    add_urls("https://github.com/libevent/libevent/archive/refs/tags/release-$(version).tar.gz")
     add_urls("https://github.com/libevent/libevent.git")
-    add_versions("2.1.12", "92e6de1be9ec176428fd2367677e61ceffc2ee1cb119035037a27d346b0403bb")
+    add_versions("2.1.12-stable", "92e6de1be9ec176428fd2367677e61ceffc2ee1cb119035037a27d346b0403bb")
+    add_versions("2.2.1-alpha", "86ca388821e81d960c696d52a29631bbeda153f0b12edae9c8f844cd61c79776")
 
     add_configs("openssl", {description = "Build with OpenSSL library.", default = false, type = "boolean"})
     add_configs("mbedtls", {description = "Build with mbedtls library.", default = false, type = "boolean"})
@@ -19,7 +21,7 @@ package("libevent")
 
     on_load(function (package)
         if package:config("openssl") then
-            package:add("deps", "openssl")
+            package:add("deps", "openssl3")
         end
         if package:config("mbedtls") then
             package:add("deps", "mbedtls")

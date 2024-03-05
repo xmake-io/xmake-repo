@@ -4,6 +4,7 @@ package("openssl3")
     set_description("A robust, commercial-grade, and full-featured toolkit for TLS and SSL.")
 
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/openssl-$(version).zip")
+    add_versions("3.2.1", "538cf4e3c575e32d1cfbf3ab0c456192ede571201c7e9bcf2287bda57862a750")
     add_versions("3.0.7", "fcb37203c6bf7376cfd3aeb0be057937b7611e998b6c0d664abde928c8af3eb7")
     add_versions("3.0.6", "9b45be41df0d6e9cf9e340a64525177662f22808ac69aee6bfb29c511284dae4")
     add_versions("3.0.5", "4313c91fb0412e6a600493eb7c59bd555c4ff2ea7caa247a98c8456ad6f9fc74")
