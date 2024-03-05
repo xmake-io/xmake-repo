@@ -47,5 +47,13 @@ package("glog")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("glog/logging.h"))
+        assert(package:check_cxxsnippets({test = [[
+            #include <glog/logging.h>
+            void YourFailureFunction() {
+            }
+
+            void test() {
+                google::InstallFailureFunction(&YourFailureFunction);
+            }
+        ]]}))
     end)
