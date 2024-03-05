@@ -6,6 +6,7 @@ package("fizz")
     add_urls("https://github.com/facebookincubator/fizz/releases/download/v$(version).00/fizz-v$(version).00.zip",
              "https://github.com/facebookincubator/fizz.git")
     add_versions("2024.02.26", "fa389dca0c49e14e83e089f07f896bf616757b3c70723ddfac7be2e3fd1f312f")
+    add_versions("2024.03.04", "1a7da63780ae1bbcc00f9a317911e814a49f84e4d9009254328ea0a5e121817f")
 
     add_deps("cmake", "folly", "libsodium")
 
