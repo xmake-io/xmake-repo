@@ -10,14 +10,24 @@ package("simsimd")
     add_versions("v3.9.0", "8e79b628ba89beebc7c4c853323db0e10ebb6f85bcda2641e1ebaf77cfbda7f9")
 
     on_install(function (package)
-        os.cp("include/simsimd/spatial.h", package:installdir("include"))
-        os.cp("include/simsimd/probability.h", package:installdir("include"))
-        os.cp("include/simsimd/simsimd.h", package:installdir("include"))
-        os.cp("include/simsimd/binary.h", package:installdir("include"))
-        os.cp("include/simsimd/complex.h", package:installdir("include"))
-        os.cp("include/simsimd/types.h", package:installdir("include"))
+        os.cp("include/simsimd/", package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("simsimd_capabilities", {includes = "simsimd.h"}))
-    end)
+        local cxflags
+        if not package:is_plat("iphoneos") then
+            cxflags = {"-march=native"}
+        end
+        if package:is_plat("linux", "macosx") and package:config("cc") == "gcc" then
+            table.insert(cxflags, "-fmax-errors=1")
+            table.insert(cxflags, "-Wno-tautological-constant-compare")
+        else
+            table.insert(cxflags, "-pedantic")
+            table.insert(cxflags, "-ferror-limit=1")
+        end
+
+        assert(package:has_cfuncs(
+            "simsimd_capabilities",
+            {includes = "simsimd/simsimd.h",
+            configs = {languages = "c11", cxflags = cxflags, {force = true}}}))
+        end)
