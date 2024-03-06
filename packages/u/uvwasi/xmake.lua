@@ -20,7 +20,7 @@ package("uvwasi")
         if package:version():ge("0.0.20") then
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-            if package:is_plat("windows") package:config("shared") then
+            if package:is_plat("windows") and package:config("shared") then
                 table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
             end
             import("package.tools.cmake").install(package, configs, {packagedeps = "libuv"})
