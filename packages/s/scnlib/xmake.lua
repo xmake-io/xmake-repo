@@ -18,7 +18,7 @@ package("scnlib")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         if package:config("header_only") then
             os.cp("include/scn", package:installdir("include"))
             return
