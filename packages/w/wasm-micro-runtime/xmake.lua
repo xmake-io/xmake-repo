@@ -3,12 +3,11 @@ package("wasm-micro-runtime")
     set_description("WebAssembly Micro Runtime (WAMR)")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/bytecodealliance/wasm-micro-runtime/archive/refs/tags/WAMR-$(version).tar.gz", {alias = "archive", excludes = {"*/language-bindings/python/LICENSE"}})
-    add_urls("https://github.com/bytecodealliance/wasm-micro-runtime.git", {alias = "github"})
+    add_urls("https://github.com/bytecodealliance/wasm-micro-runtime/archive/refs/tags/WAMR-$(version).tar.gz", {excludes = {"*/language-bindings/python/LICENSE"}})
+    add_urls("https://github.com/bytecodealliance/wasm-micro-runtime.git")
 
-    add_versions("archive:1.2.3", "85057f788630dc1b8c371f5443cc192627175003a8ea63c491beaff29a338346")
-    add_versions("github:1.2.3", "fa2f29fd8ab3f72e3efb551d19cb6b214ead91f8")
-    
+    add_versions("1.2.3", "85057f788630dc1b8c371f5443cc192627175003a8ea63c491beaff29a338346")
+
     add_configs("interp", {description = "Enable interpreter", default = true, type = "boolean"})
     add_configs("fast_interp", {description = "Enable fast interpreter", default = false, type = "boolean"})
     add_configs("aot", {description = "Enable AOT", default = false, type = "boolean"})
@@ -25,6 +24,8 @@ package("wasm-micro-runtime")
     add_configs("simd", {description = "Enable SIMD", default = false, type = "boolean"})
     add_configs("ref_types", {description = "Enable reference types", default = false, type = "boolean"})
 
+    add_patches("1.2.3", path.join(os.scriptdir(), "patches", "1.2.3", "cmake-uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
+
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     elseif is_plat("linux", "bsd") then
@@ -34,7 +35,7 @@ package("wasm-micro-runtime")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:config("libc") == "uvwasi" then
+        if package:config("libc") == "uvwasi" or package:config("libc_uvwasi") then
             package:add("deps", "uvwasi")
         end
         if package:config("jit", "fast_jit") then
@@ -44,6 +45,12 @@ package("wasm-micro-runtime")
 
     on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "android", function (package)
         local configs = {}
+        local packagedeps = {}
+        if package:config("libc_uvwasi") then
+            table.insert(packagedeps, "libuv")
+            table.insert(packagedeps, "uvwasi")
+        end
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and package:config("shared") then
@@ -83,7 +90,7 @@ package("wasm-micro-runtime")
 
         os.cp("core/iwasm/include", package:installdir())
         os.cd("product-mini/platforms/" .. plat)
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
 
         os.trymv(package:installdir("lib", "*.dll"), package:installdir("bin"))
     end)
