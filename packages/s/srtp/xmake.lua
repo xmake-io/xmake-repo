@@ -5,6 +5,7 @@ package("srtp")
 
     add_urls("https://github.com/cisco/libsrtp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cisco/libsrtp.git")
+    add_versions("v2.6", "f1886f72eff1d8aa82ada40b2fc3d342a3ecaf0f8988cb63d4af234fccf2253d")
     add_versions("v2.5.0", "8a43ef8e9ae2b665292591af62aa1a4ae41e468b6d98d8258f91478735da4e09")
 
     add_configs("openssl", {description = "Enable OpenSSL crypto engine", default = false, type = "boolean"})
