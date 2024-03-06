@@ -1,5 +1,4 @@
 package("ada")
-
     set_homepage("https://www.ada-url.com")
     set_description("WHATWG-compliant and fast URL parser written in modern C++")
     set_license("Apache-2.0")
@@ -22,8 +21,8 @@ package("ada")
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        io.replace("CMakeLists.txt", "  add_subdirectory(singleheader)", "", {plain = true})
-        io.replace("CMakeLists.txt", "  add_subdirectory(tools)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(singleheader)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(tools)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
