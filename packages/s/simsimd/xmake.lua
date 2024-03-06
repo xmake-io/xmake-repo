@@ -9,6 +9,12 @@ package("simsimd")
 
     add_versions("v3.9.0", "8e79b628ba89beebc7c4c853323db0e10ebb6f85bcda2641e1ebaf77cfbda7f9")
 
+    if is_plat("windows") then
+        add_cxxflags("/arch:AVX2")
+    else
+        add_cxxflags("-march=native")
+    end
+
     on_install(function (package)
         os.cp("include", package:installdir())
     end)
