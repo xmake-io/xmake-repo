@@ -54,10 +54,15 @@ function _find_library(package, opt)
     local includepath = nil
     if package:is_plat("windows") then
         link = format("python" .. table.concat(table.slice(version:split("%."), 1, 2), ""))
+        print("python program: " .. program .. ", version: " .. version .. ", link: " .. link .. ", exepath: " .. exepath)
+
         local out = try { function () return os.iorunv(program, { "-c", "import sys; print(sys.base_prefix, end='')" }) end }
+        print("python base_prefix: " .. out)
         libpath = find_library(link, { exepath, out }, { suffixes = { "libs" } })
+        print("python libpath: " .. libpath.link)
         linkdirs = {}
         includepath = find_path("Python.h", { exepath, out }, { suffixes = { "include" } })
+        print("python includepath: " .. includepath)
     else
         local pyver = table.concat(table.slice(version:split("%."), 1, 2), ".")
         link = format("python" .. pyver)
