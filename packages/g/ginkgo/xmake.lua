@@ -24,7 +24,7 @@ package("ginkgo")
         -- TODO: add hip and sycl
     end)
 
-    on_install("windows|!x86", "macosx", "linux", function (package)
+    on_install("windows|x64", "windows|arm64", "macosx", "linux", function (package)
         local configs = {"-DGINKGO_BUILD_TESTS=OFF", "-DGINKGO_BUILD_EXAMPLES=OFF", "-DGINKGO_BUILD_BENCHMARKS=OFF", "-DGINKGO_BUILD_REFERENCE=ON", "-DGINKGO_BUILD_MPI=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
