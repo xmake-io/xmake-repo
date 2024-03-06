@@ -7,7 +7,7 @@ package("proxygen")
              "https://github.com/facebook/proxygen.git")
     add_versions("2024.03.04", "c3586cd8a3978dd88ea73b7dc217b0ce9f3bae51f5a2e554135daaf772215e8d")
 
-    add_deps("cmake", "folly", "fizz", "wangle", "mvfst")
+    add_deps("cmake", "folly", "fizz", "wangle", "mvfst", "gperf")
 
     on_install("linux", function (package)
         local configs = {"-DBUILD_TESTS=OFF",
