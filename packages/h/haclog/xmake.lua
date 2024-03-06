@@ -13,13 +13,24 @@ package("haclog")
         add_syslinks("pthread")
     end
 
-    add_deps("cmake")
+    on_load(function (package)
+        if package:is_cross() then
+            package:add("deps", "meson", "ninja")
+        else
+            package:add("deps", "cmake")
+        end
+    end)
 
     on_install("windows", "linux", "macosx", "android", "cross", function (package)
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        if package:is_cross() then
+            table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+            import("package.tools.meson").install(package, configs)
+        else
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
+        end
     end)
 
     on_test(function (package)
