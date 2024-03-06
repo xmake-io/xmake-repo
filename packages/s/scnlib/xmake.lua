@@ -29,7 +29,7 @@ package("scnlib")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <scn/scn.h>
+            #include <scn/scan.h>
             #include <cstdio>
 
             static void test() {
@@ -37,5 +37,5 @@ package("scnlib")
                 scn::prompt("What's your favorite number? ", "{}", i);
                 printf("Oh, cool, %d!", i);
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "scn/scn.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "scn/scan.h"}))
     end)
