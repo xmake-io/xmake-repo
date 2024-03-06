@@ -30,13 +30,12 @@ package("scnlib")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <scn/scan.h>
+            #include <cstdio>
 
-            int main()
+            void test()
             {
                 if (const auto result =
                         scn::prompt<int>("What's your favorite number? ", "{}")) {
-                    // `result` is true, we have a successful read.
-                    // Read the single parsed value with result->value()
                     std::printf("%d, interesting\n", result->value());
                 }
                 else {
