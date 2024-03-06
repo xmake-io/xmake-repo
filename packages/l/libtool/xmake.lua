@@ -21,7 +21,7 @@ package("libtool")
 
     on_install("@macosx", "@linux", "@bsd", function (package)
         import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--enable-ltdl-install"})
-        if package:is_host("macosx") then
+        if package:is_plat("macosx") then
             local bindir = package:installdir("bin")
             os.ln(path.join(bindir, "libtoolize"), path.join(bindir, "glibtoolize"))
         end
