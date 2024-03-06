@@ -14,6 +14,7 @@ package("imath")
     add_versions("v3.1.4", "fcca5fbb37d375a252bacd8a29935569bdc28b888f01ef1d9299ca0c9e87c17a")
     add_versions("v3.1.5", "1e9c7c94797cf7b7e61908aed1f80a331088cc7d8873318f70376e4aed5f25fb")
     add_versions("v3.1.9", "f1d8aacd46afed958babfced3190d2d3c8209b66da451f556abd6da94c165cf3")
+    add_versions("v3.1.11", "9057849585e49b8b85abe7cc1e76e22963b01bfdc3b6d83eac90c499cd760063")
 
     add_includedirs("include", "include/Imath")
     on_load(function (package)
