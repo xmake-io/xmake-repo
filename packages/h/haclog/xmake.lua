@@ -14,7 +14,7 @@ package("haclog")
     end
 
     on_load(function (package)
-        if package:is_cross() then
+        if package:is_plat("cross") then
             package:add("deps", "meson", "ninja")
         else
             package:add("deps", "cmake")
@@ -23,7 +23,7 @@ package("haclog")
 
     on_install("windows", "linux", "macosx", "android", "cross", function (package)
         local configs = {}
-        if package:is_cross() then
+        if package:is_plat("cross") then
             table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
             import("package.tools.meson").install(package, configs)
         else
