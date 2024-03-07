@@ -36,7 +36,8 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
 
       - name: Auto-update packages
+        if: ${{ github.repository }} == "xmake-io/xmake-repo"
         run: |
-          xmake l -vD scripts/autoupdate.lua 3
+          xmake l -vD scripts/autoupdate.lua
 
 

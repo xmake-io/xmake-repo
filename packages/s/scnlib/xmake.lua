@@ -4,6 +4,7 @@ package("scnlib")
     set_description("scnlib is a modern C++ library for replacing scanf and std::istream")
 
     set_urls("https://github.com/eliaskosunen/scnlib/archive/refs/tags/v$(version).zip")
+    add_versions("2.0.2", "b9d691f218ca17c6f3457ecd795b62820815c021b0d607fba12d55dbb7aa2197")
     add_versions("1.1.2", "72bf304662b03e00de5b438b9d4697a081e786d589e067817c356174fb2cb06c")
     add_versions("0.4", "49a84f1439e52666532fbd5da3fa1d652622fc7ac376070e330e15c528d38190")
 
@@ -17,7 +18,7 @@ package("scnlib")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         if package:config("header_only") then
             os.cp("include/scn", package:installdir("include"))
             return
@@ -28,13 +29,18 @@ package("scnlib")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <scn/scn.h>
+            #include <scn/scan.h>
             #include <cstdio>
 
-            static void test() {
-                int i;
-                scn::prompt("What's your favorite number? ", "{}", i);
-                printf("Oh, cool, %d!", i);
+            void test()
+            {
+                if (const auto result =
+                        scn::prompt<int>("What's your favorite number? ", "{}")) {
+                    std::printf("%d, interesting\n", result->value());
+                }
+                else {
+                    std::puts("Well, never mind then.");
+                }
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "scn/scn.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "scn/scan.h"}))
     end)
