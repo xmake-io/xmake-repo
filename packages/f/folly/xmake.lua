@@ -55,6 +55,7 @@ package("folly")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <cassert>
+
             void test() {
                 folly::CpuId id;
                 assert(folly::kIsArchAmd64 == id.mmx());
