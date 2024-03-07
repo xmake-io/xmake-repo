@@ -6,6 +6,7 @@ package("ixwebsocket")
     add_urls("https://github.com/machinezone/IXWebSocket/archive/refs/tags/$(version).tar.gz",
              "https://github.com/machinezone/IXWebSocket.git")
 
+    add_versions("v11.4.5", "c5fc225edec32bf7d583e55347ef2c9c4940d005c13ef5e848354a85602f5fd6")
     add_versions("v11.4.4", "9ef7fba86a91ce18693451466ddc54b1e0c4a7dc4466c3028d888d6d55dde539")
 
     local default_ssl = nil
