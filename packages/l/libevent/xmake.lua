@@ -8,7 +8,7 @@ package("libevent")
     add_urls("https://github.com/libevent/libevent.git")
     add_versions("2.1.12", "92e6de1be9ec176428fd2367677e61ceffc2ee1cb119035037a27d346b0403bb")
 
-    add_configs("openssl", {description = "Build with OpenSSL library.", default = true, type = "boolean"})
+    add_configs("openssl", {description = "Build with OpenSSL library.", default = false, type = "boolean"})
     add_configs("mbedtls", {description = "Build with mbedtls library.", default = false, type = "boolean"})
 
     add_deps("cmake")
