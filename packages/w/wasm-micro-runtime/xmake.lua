@@ -65,11 +65,7 @@ package("wasm-micro-runtime")
                         end
 
                         if fetchinfo.links[1] then
-                            local links = fetchinfo.links[1]
-                            for _, link in ipairs(fetchinfo.syslinks) do
-                                links = links .. " " .. link
-                            end
-                            table.insert(configs, "-D" .. dep:upper() .. "_LIBRARIES=" .. links)
+                            table.insert(configs, "-D" .. dep:upper() .. "_LIBRARIES=" .. fetchinfo.links[1])
                         end
                     end
                 end
