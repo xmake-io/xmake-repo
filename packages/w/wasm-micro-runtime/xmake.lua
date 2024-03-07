@@ -49,6 +49,11 @@ package("wasm-micro-runtime")
         if package:config("libc_uvwasi") then
             table.insert(packagedeps, "libuv")
             table.insert(packagedeps, "uvwasi")
+
+            local libuv = package:dep("libuv"):fetch()
+            local uvwasi = package:dep("uvwasi"):fetch()
+            table.insert(configs, "-DLIBUV_LIBRARIES=" .. libuv.links[1])
+            table.insert(configs, "-DUVWASI_LIBRARIES=" .. uvwasi.links[1])
         end
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
