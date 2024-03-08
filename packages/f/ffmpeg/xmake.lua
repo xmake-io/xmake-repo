@@ -135,7 +135,7 @@ package("ffmpeg")
         else
             table.insert(configs, "--disable-debug")
         end
-        
+
         if package:is_plat("windows") then
             table.insert(configs, "--target-os=win32")
             table.insert(configs, "--enable-w32threads")
