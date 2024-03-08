@@ -13,7 +13,7 @@ package("json-schema-validator")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_host("windows") and set_policy then
+    if is_host("windows") then
         set_policy("platform.longpaths", true)
     end
 
