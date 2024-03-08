@@ -13,6 +13,10 @@ package("json-schema-validator")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    if is_host("windows") and set_policy then
+        set_policy("platform.longpaths", true)
+    end
+
     on_install("linux", "bsd", "windows", "macosx", "iphoneos", "mingw", "cross", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
