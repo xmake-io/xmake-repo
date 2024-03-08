@@ -202,7 +202,7 @@ package("ffmpeg")
 
             -- add gas-preprocessor to PATH
             if package:is_arch("arm", "arm64") then
-                envs.PATH = path.joinenv(envs.PATH, path.join(os.programdir(), "scripts"))
+                envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
             end
 
             table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
