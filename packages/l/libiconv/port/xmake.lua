@@ -223,7 +223,6 @@ target("iconv")
     if is_kind("shared") then
         add_defines("BUILDING_LIBICONV", "BUILDING_DLL")
     end
-    add_rules("utils.install.pkgconfig_importfiles", {filename = "iconv.pc"})
     set_configdir(".")
     set_configvar("DLL_VARIABLE", (is_plat("windows") and is_kind("shared")) and "__declspec(dllimport)" or "")
     add_configfiles("(include/iconv.h.build.in)", {filename = "iconv.h", pattern = "@(.-)@", variables = {EILSEQ = ""}})
