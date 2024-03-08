@@ -178,43 +178,53 @@ package("ffmpeg")
         end
 
         if package:is_plat("windows") then
-            import("core.base.option")
-            import("core.tool.toolchain")
-            local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-            assert(msvc:check(), "vs not found!")
-            local buildenvs = import("package.tools.autoconf").buildenvs(package)
-            -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
-            local envs = os.joinenvs(os.getenvs(), msvc:runenvs())
-            -- fix PKG_CONFIG_PATH for checking deps, e.g. x264, x265 ..
-            -- @see https://github.com/xmake-io/xmake-repo/issues/3442
-            local pkg_config_path = buildenvs.PKG_CONFIG_PATH
-            if pkg_config_path then
-                local paths = {}
-                for _, p in ipairs(path.splitenv(pkg_config_path)) do
-                    p = p:gsub("\\", "/")
-                    -- c:\, C:\ -> /c/
-                    p = p:gsub("^(%w):", function (drive) return "/" .. drive:lower() end)
-                    table.insert(paths, p)
+            if path.cygwin then -- xmake 2.8.9
+                import("package.tools.autoconf")
+                local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
+                -- add gas-preprocessor to PATH
+                if package:is_arch("arm", "arm64") then
+                    envs.PATH = path.joinenv(envs.PATH, path.join(os.programdir(), "scripts"))
                 end
-                envs.PKG_CONFIG_PATH = table.concat(paths, ":")
-            end
-            envs.SHELL = "sh"
+                autoconf.install(package, configs, {envs = envs})
+            else
+                import("core.base.option")
+                import("core.tool.toolchain")
+                local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+                assert(msvc:check(), "vs not found!")
+                local buildenvs = import("package.tools.autoconf").buildenvs(package)
+                -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
+                local envs = os.joinenvs(os.getenvs(), msvc:runenvs())
+                -- fix PKG_CONFIG_PATH for checking deps, e.g. x264, x265 ..
+                -- @see https://github.com/xmake-io/xmake-repo/issues/3442
+                local pkg_config_path = buildenvs.PKG_CONFIG_PATH
+                if pkg_config_path then
+                    local paths = {}
+                    for _, p in ipairs(path.splitenv(pkg_config_path)) do
+                        p = p:gsub("\\", "/")
+                        -- c:\, C:\ -> /c/
+                        p = p:gsub("^(%w):", function (drive) return "/" .. drive:lower() end)
+                        table.insert(paths, p)
+                    end
+                    envs.PKG_CONFIG_PATH = table.concat(paths, ":")
+                end
+                envs.SHELL = "sh"
 
-            -- add gas-preprocessor to PATH
-            if package:is_arch("arm", "arm64") then
-                envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
-            end
+                -- add gas-preprocessor to PATH
+                if package:is_arch("arm", "arm64") then
+                    envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
+                end
 
-            table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
-            os.vrunv("./configure", configs, {shell = true, envs = envs})
+                table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
+                os.vrunv("./configure", configs, {shell = true, envs = envs})
 
-            local njob = option.get("jobs") or tostring(os.default_njob())
-            local argv = {"-j" .. njob}
-            if option.get("verbose") then
-                table.insert(argv, "V=1")
+                local njob = option.get("jobs") or tostring(os.default_njob())
+                local argv = {"-j" .. njob}
+                if option.get("verbose") then
+                    table.insert(argv, "V=1")
+                end
+                os.vrunv("make", argv, {envs = envs})
+                os.vrunv("make", {"install"}, {envs = envs})
             end
-            os.vrunv("make", argv, {envs = envs})
-            os.vrunv("make", {"install"}, {envs = envs})
             if package:config("shared") then
                 -- move .lib from bin/ to lib/
                 os.vmv(package:installdir("bin", "*.lib"), package:installdir("lib"))
