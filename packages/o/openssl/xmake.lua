@@ -65,8 +65,8 @@ package("openssl")
         end
         table.insert(configs, target)
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
-        table.insert(configs, "--prefix=" .. package:installdir())
-        table.insert(configs, "--openssldir=" .. package:installdir())
+        table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
+        table.insert(configs, "--openssldir=" .. package:installdir():gsub("\\", "/"))
         os.vrunv("perl", configs)
         import("package.tools.nmake").install(package)
     end)
@@ -130,12 +130,8 @@ package("openssl")
                 table.insert(configs, "no-threads")
             end
         end
-        local installdir = package:installdir()
-        if not is_plat("android") then
-            installdir = installdir:gsub("\\", "/")
-        end
-        table.insert(configs, "--openssldir=" .. installdir)
-        table.insert(configs, "--prefix=" .. installdir)
+        table.insert(configs, "--openssldir=" .. package:installdir():gsub("\\", "/"))
+        table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         if package:debug() then
             table.insert(configs, "--debug")
