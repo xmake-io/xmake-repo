@@ -11,7 +11,7 @@ package("ixwebsocket")
 
     local default_ssl = nil
     if not is_plat("windows") then
-        if is_plat("android", "iphoneos", "wasm") then
+        if is_plat("iphoneos", "wasm") then
             default_ssl = "mbedtls"
         else
             default_ssl = "openssl"
