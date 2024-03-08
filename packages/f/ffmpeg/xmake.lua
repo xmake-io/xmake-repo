@@ -186,7 +186,11 @@ package("ffmpeg")
             import("core.tool.toolchain")
             local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             assert(msvc:check(), "vs not found!")
-            local envs = os.joinenvs(os.getenvs(), msvc:runenvs()) -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
+            -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
+            local envs = os.joinenvs(os.getenvs(), msvc:runenvs())
+            -- fix PKG_CONFIG_PATH for checking deps, e.g. x264, x265 ..
+            -- @see https://github.com/xmake-io/xmake-repo/issues/3442
+            envs.PKG_CONFIG_PATH = buildenvs.PKG_CONFIG_PATH:gsub("\\", "/"):gsub("^(%w):", "/%1"):gsub(";", ":")
             envs.SHELL = "sh"
 
             if package:is_arch("arm", "arm64") then
@@ -198,7 +202,7 @@ package("ffmpeg")
                 envs.PATH = path.join(os.curdir(), "gas-preprocessor") .. path.envsep() .. envs.PATH
             end
 
-            table.insert(configs, "--prefix=" .. package:installdir())
+            table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
             os.vrunv("./configure", configs, {shell = true, envs = envs})
 
             local njob = option.get("jobs") or tostring(os.default_njob())
