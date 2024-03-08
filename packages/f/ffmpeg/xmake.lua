@@ -191,8 +191,16 @@ package("ffmpeg")
             local envs = os.joinenvs(os.getenvs(), msvc:runenvs())
             -- fix PKG_CONFIG_PATH for checking deps, e.g. x264, x265 ..
             -- @see https://github.com/xmake-io/xmake-repo/issues/3442
-            if buildenvs and buildenvs.PKG_CONFIG_PATH then
-                envs.PKG_CONFIG_PATH = buildenvs.PKG_CONFIG_PATH:gsub("\\", "/"):gsub("^(%w):", "/%1"):gsub(";", ":")
+            local pkg_config_path = buildenvs.PKG_CONFIG_PATH
+            if pkg_config_path then
+                local paths = {}
+                for _, p in ipairs(path.splitenv(pkg_config_path)) do
+                    p = p:gsub("\\", "/")
+                    -- c:\, C:\ -> /c/
+                    p = p:gsub("^(%w):", function (drive) return "/" .. drive:lower() end)
+                    table.insert(paths, p)
+                end
+                envs.PKG_CONFIG_PATH = table.concat(paths, ":")
             end
             envs.SHELL = "sh"
 
