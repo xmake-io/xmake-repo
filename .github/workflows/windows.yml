@@ -36,6 +36,7 @@ jobs:
       - name: Tests
         run: |
           New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+          git config --system core.longpaths true
           git clone https://github.com/xmake-io/xmake.git --recurse-submodules -b master xmakesrc
           cd xmakesrc/core
           xmake
