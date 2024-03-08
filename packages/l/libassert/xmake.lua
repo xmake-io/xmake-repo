@@ -6,6 +6,7 @@ package("libassert")
     add_urls("https://github.com/jeremy-rifkin/libassert/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jeremy-rifkin/libassert.git")
 
+    add_versions("v1.2.2", "68206b43bc4803357ba7d366574b4631bd327c46ab76ddef6ff9366784fa6b3c")
     add_versions("v1.2", "332f96181f4bdbd95ef5fcd6484782ba2d89b50fd5189bc2a33fd524962f6771")
 
     add_configs("decompose", {description = "Enables expression decomposition of && and || (this prevents short circuiting)", default = false, type = "boolean"})
