@@ -186,11 +186,14 @@ package("ffmpeg")
             import("core.tool.toolchain")
             local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             assert(msvc:check(), "vs not found!")
+            local buildenvs = import("package.tools.autoconf").buildenvs(package)
             -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
             local envs = os.joinenvs(os.getenvs(), msvc:runenvs())
             -- fix PKG_CONFIG_PATH for checking deps, e.g. x264, x265 ..
             -- @see https://github.com/xmake-io/xmake-repo/issues/3442
-            envs.PKG_CONFIG_PATH = buildenvs.PKG_CONFIG_PATH:gsub("\\", "/"):gsub("^(%w):", "/%1"):gsub(";", ":")
+            if buildenvs and buildenvs.PKG_CONFIG_PATH then
+                envs.PKG_CONFIG_PATH = buildenvs.PKG_CONFIG_PATH:gsub("\\", "/"):gsub("^(%w):", "/%1"):gsub(";", ":")
+            end
             envs.SHELL = "sh"
 
             if package:is_arch("arm", "arm64") then
