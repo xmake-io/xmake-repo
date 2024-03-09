@@ -6,6 +6,7 @@ package("alembic")
 
     add_urls("https://github.com/alembic/alembic/archive/refs/tags/$(version).tar.gz",
              "https://github.com/alembic/alembic.git")
+    add_versions("1.8.6", "c572ebdea3a5f0ce13774dd1fceb5b5815265cd1b29d142cf8c144b03c131c8c")
     add_versions("1.8.5", "180a12f08d391cd89f021f279dbe3b5423b1db751a9898540c8059a45825c2e9")
 
     add_deps("cmake", "imath")

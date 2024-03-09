@@ -1,5 +1,4 @@
 package("hopscotch-map")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/Tessil/hopscotch-map")
     set_description("A C++ implementation of a fast hash map and hash set using hopscotch hashing")
@@ -12,6 +11,7 @@ package("hopscotch-map")
 
     on_install(function (package)
         os.cp("include/tsl", package:installdir("include"))
+        os.cp("tsl-hopscotch-map.natvis", package:installdir("include", "tsl"))
     end)
 
     on_test(function (package)

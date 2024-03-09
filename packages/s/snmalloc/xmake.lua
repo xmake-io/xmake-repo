@@ -5,6 +5,8 @@ package("snmalloc")
 
     add_urls("https://github.com/microsoft/snmalloc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/snmalloc.git")
+
+    add_versions("0.6.2", "e0486ccf03eac5dd8acbb66ea8ad33bec289572a51614acdf7117397e4f1af8c")
     add_versions("0.6.0", "de1bfb86407d5aac9fdad88319efdd5593ca2f6c61fc13371c4f34aee0b6664f")
 
     add_deps("cmake")
@@ -13,8 +15,8 @@ package("snmalloc")
         add_syslinks("onecore")
     end
 
-    on_install("macosx", "windows", "linux", "bsd", function (package)
-        local configs = {}
+    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", function (package)
+        local configs = {"-DSNMALLOC_BUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local cxflags

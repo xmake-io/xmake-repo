@@ -12,13 +12,13 @@ package("ormpp")
 
     add_configs("mysql", {description = "Using mysql", default = false, type = "boolean"})
     add_configs("postgresql", {description = "Using postgresql", default = false, type = "boolean"})
-    add_configs("sqlite", {description = "Using sqlite", default = false, type = "boolean"})
+    add_configs("sqlite3", {description = "Using sqlite3", default = false, type = "boolean"})
 
     on_load("windows", "macosx", "linux", function(package) 
         local configs = {
             mysql = "ORMPP_ENABLE_MYSQL",
             postgresql = "ORMPP_ENABLE_PG",
-            sqlite = "ORMPP_ENABLE_SQLITE3"
+            sqlite3 = "ORMPP_ENABLE_SQLITE3"
         }
     
         for config, define in pairs(configs) do

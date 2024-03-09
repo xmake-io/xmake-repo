@@ -6,6 +6,8 @@ package("catch2")
 
     add_urls("https://github.com/catchorg/Catch2/archive/refs/tags/$(version).zip",
              "https://github.com/catchorg/Catch2.git")
+    add_versions("v3.5.3", "2de1868288b26a19c2aebfc3fe53a748ec3ec5fc32cc742dfccaf6c685a0dc07")
+    add_versions("v3.5.2", "85fcc78d0c3387b15ad82f22a94017b29e4fe7c1cf0a05c3dd465b2746eef73f")
     add_versions("v3.5.1", "b422fcd526a95e6057839f93a18099261bdc8c595f932ed4b1a978b358b3f1ed")
     add_versions("v3.5.0", "82079168b2304cfd0dfc70338f0c4b3caa4f3ef76b2643110d3f74a632252fc6")
     add_versions("v3.4.0", "cd175f5b7e62c29558d4c17d2b94325ee0ab6d0bf1a4b3d61bc8dbcc688ea3c2")
@@ -52,7 +54,11 @@ package("catch2")
         end
         component:add("links", link)
         if package:is_plat("windows") then
-            component:add("ldflags", "-subsystem:console")
+            if package:has_tool("cxx", "cl") then
+                component:add("ldflags", "-subsystem:console")
+            elseif package:has_tool("cxx", "clang", "clangxx") then
+                component:add("ldflags", "-Wl,/subsystem:console")
+            end
         end
     end)
 

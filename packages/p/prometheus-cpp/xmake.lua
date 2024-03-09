@@ -5,6 +5,7 @@ package("prometheus-cpp")
 
     add_urls("https://github.com/jupp0r/prometheus-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jupp0r/prometheus-cpp.git")
+    add_versions("v1.2.1", "190734c4d8d0644c2af327ff8b5ef86cd7ea9074a48d777112394f558dd014f7")
     add_versions("v1.0.0", "07018db604ea3e61f5078583e87c80932ea10c300d979061490ee1b7dc8e3a41")
 
     add_configs("pull",        {description = "Enable Pull.", default = true, type = "boolean"})

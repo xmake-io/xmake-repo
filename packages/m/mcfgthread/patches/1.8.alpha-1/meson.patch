@@ -1,0 +1,118 @@
+diff --git a/meson.build b/meson.build
+index 024f1fb..b2fccd7 100644
+--- a/meson.build
++++ b/meson.build
+@@ -277,18 +277,25 @@ mcfgthread_version_o = import('windows').compile_resources(
+       args: [ '-I.', '-c65001' ],
+       depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
+ 
+-lib_mcfgthread_dll = shared_library('mcfgthread',
+-      c_pch: 'mcfgthread/xprecompiled.h',
+-      c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables', '-DDLL_EXPORT' ],
+-      link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
+-                   '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1',
+-                   '-Wl,--exclude-all-symbols', '-Wl,--kill-at' ],
+-      sources: [ mcfgthread_src, mcfgthread_version_o ],
+-      dependencies: [ dep_kernel32, dep_ntdll ],
+-      soversion: ver.get('abi_major'),
+-      version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
+-      install: true)
++if get_option('default_library') == 'shared'
++  lib_mcfgthread_dll = shared_library('mcfgthread',
++        c_pch: 'mcfgthread/xprecompiled.h',
++        c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables', '-DDLL_EXPORT' ],
++        link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
++                    '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1',
++                    '-Wl,--exclude-all-symbols', '-Wl,--kill-at' ],
++        sources: [ mcfgthread_src, mcfgthread_version_o ],
++        dependencies: [ dep_kernel32, dep_ntdll ],
++        soversion: ver.get('abi_major'),
++        version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
++        install: true)
+ 
++  import('pkgconfig').generate(lib_mcfgthread_dll,
++        name: 'mcfgthread',
++        url: 'https://github.com/lhmouse/mcfgthread',
++        description: 'Cornerstone library for C++11 threading on mingw-w64',
++        libraries: '-lntdll')
++elif get_option('default_library') == 'static'
+ lib_mcfgthread_a = static_library('mcfgthread',
+       c_pch: 'mcfgthread/xprecompiled.h',
+       c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
+@@ -296,35 +303,38 @@ lib_mcfgthread_a = static_library('mcfgthread',
+       sources: [ mcfgthread_src ],
+       install: true)
+ 
+-import('pkgconfig').generate(lib_mcfgthread_dll,
+-      name: 'mcfgthread',
+-      url: 'https://github.com/lhmouse/mcfgthread',
+-      description: 'Cornerstone library for C++11 threading on mingw-w64',
+-      libraries: '-lntdll')
++  import('pkgconfig').generate(lib_mcfgthread_a,
++        name: 'mcfgthread',
++        url: 'https://github.com/lhmouse/mcfgthread',
++        description: 'Cornerstone library for C++11 threading on mingw-w64',
++        libraries: '-lntdll')
++endif
+ 
+ #===========================================================
+ # Rules for tests
+ #===========================================================
+-foreach src: test_src
+-  test(src, executable(src.replace('.c', '').underscorify(), src,
+-                       link_with: lib_mcfgthread_a))
+-endforeach
++if get_option('build-test')
++  foreach src: test_src
++    test(src, executable(src.replace('.c', '').underscorify(), src,
++                        link_with: lib_mcfgthread_a))
++  endforeach
+ 
+-# Specialized: -ladvapi32 -lntdll
+-test('test/memory.c', executable('test_memory_c',
+-             'test/memory.c',
+-              dependencies: [ dep_advapi32, dep_ntdll ],
+-              link_with: lib_mcfgthread_a))
++  # Specialized: -ladvapi32 -lntdll
++  test('test/memory.c', executable('test_memory_c',
++              'test/memory.c',
++                dependencies: [ dep_advapi32, dep_ntdll ],
++                link_with: lib_mcfgthread_a))
+ 
+-# Specialized: -std=c89 -Wpedantic
+-test('test/gthr_c89_pedantic.c', executable('test_gthr_c89_pedantic_c',
+-             'test/gthr_c89_pedantic.c',
+-              c_args: [ '-std=c89', '-Werror=declaration-after-statement',
+-                        '-Wpedantic', '-Wno-variadic-macros', '-Wno-long-long' ],
+-              link_with: lib_mcfgthread_a))
++  # Specialized: -std=c89 -Wpedantic
++  test('test/gthr_c89_pedantic.c', executable('test_gthr_c89_pedantic_c',
++              'test/gthr_c89_pedantic.c',
++                c_args: [ '-std=c89', '-Werror=declaration-after-statement',
++                          '-Wpedantic', '-Wno-variadic-macros', '-Wno-long-long' ],
++                link_with: lib_mcfgthread_a))
+ 
+-# Specialized: -std=c99 -Wpedantic
+-test('test/c11_c99_pedantic.c', executable('test_c11_c99_pedantic_c',
+-             'test/c11_c99_pedantic.c',
+-              c_args: [ '-std=c99', '-Wpedantic' ],
+-              link_with: lib_mcfgthread_a))
++  # Specialized: -std=c99 -Wpedantic
++  test('test/c11_c99_pedantic.c', executable('test_c11_c99_pedantic_c',
++              'test/c11_c99_pedantic.c',
++                c_args: [ '-std=c99', '-Wpedantic' ],
++                link_with: lib_mcfgthread_a))
++endif
+\ No newline at end of file
+diff --git a/meson.options b/meson.options
+index d0342f8..b45d572 100644
+--- a/meson.options
++++ b/meson.options
+@@ -15,3 +15,7 @@
+ option('enable-debug-checks',
+        type: 'boolean', value: false,
+        description: 'enable run-time assertions')
++
++option('build-test',
++       type: 'boolean', value: false,
++       description: 'Build unit test')
