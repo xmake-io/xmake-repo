@@ -21,7 +21,6 @@ package("tgbot-cpp")
     end)
 
     on_install("windows", "linux", "macosx", "mingw", "cross", function (package)
-        local configs = {}
         io.writefile("xmake.lua", [[
             add_requires("openssl", "zlib")
             add_requires("boost", {configs = {system = true}})
@@ -34,7 +33,7 @@ package("tgbot-cpp")
                 add_files("src/**.cpp")
                 add_includedirs("include")
                 add_headerfiles("include/(tgbot/**.h)")
-                set_languages("c++14")
+                set_languages("c++17")
                 if is_plat("windows") then
                     add_defines("_WIN32_WINNT=0x0601", "WIN32_LEAN_AND_MEAN", "NOMINMAX")
                 end
@@ -50,10 +49,7 @@ package("tgbot-cpp")
                     add_defines("HAVE_CURL")
                 end
         ]])
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
@@ -62,5 +58,5 @@ package("tgbot-cpp")
             void test() {
                 TgBot::Bot bot("PLACE YOUR TOKEN HERE");
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
