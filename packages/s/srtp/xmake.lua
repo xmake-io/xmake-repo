@@ -15,7 +15,7 @@ package("srtp")
     add_deps("cmake")
     add_deps("openssl")
 
-    on_install("windows", "linux", "macosx", "android", "cross", "bsd", "mingw", function (package)
+    on_install("windows", "linux", "macosx", "android@linux,macosx", "cross", "bsd", "mingw", function (package)
         local configs =
         {
             "-DLIBSRTP_TEST_APPS=OFF",
