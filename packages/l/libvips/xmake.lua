@@ -14,6 +14,10 @@ package("libvips")
     add_deps("glib", "expat")
 
     on_install("windows", "macosx", "linux", "cross", function (package)
+        io.replace("meson.build", "subdir('tools')", "", {plain = true})
+        io.replace("meson.build", "subdir('test')", "", {plain = true})
+        io.replace("meson.build", "subdir('fuzz')", "", {plain = true})
+
         local configs = {"-Dexamples=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dcplusplus=" .. (package:config("c++") and "true" or "false"))
