@@ -12,7 +12,7 @@ package("tgbot-cpp")
     add_configs("curl", {description = "Use curl-based http client CurlHttpClient", default = false, type = "boolean"})
 
     add_deps("openssl", "zlib")
-    add_deps("boost", {configs = {system = true, exception = true}})
+    add_deps("boost", {configs = {system = true}})
 
     on_load(function (package)
         if package:config("curl") then
@@ -23,7 +23,7 @@ package("tgbot-cpp")
     on_install("windows", "linux", "macosx", "mingw", "cross", function (package)
         io.writefile("xmake.lua", [[
             add_requires("openssl", "zlib")
-            add_requires("boost", {configs = {system = true, exception = true}})
+            add_requires("boost", {configs = {system = true}})
             if has_config("curl") then
                 add_requires("libcurl", {configs = {openssl = true}})
             end
@@ -34,6 +34,7 @@ package("tgbot-cpp")
                 add_includedirs("include")
                 add_headerfiles("include/(tgbot/**.h)")
                 set_languages("c++17")
+                set_exceptions("cxx")
                 if is_plat("windows") then
                     add_defines("_WIN32_WINNT=0x0601", "WIN32_LEAN_AND_MEAN", "NOMINMAX")
                 end
