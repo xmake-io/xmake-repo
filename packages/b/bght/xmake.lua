@@ -8,9 +8,8 @@ package("bght")
     add_urls("https://github.com/owensgroup/BGHT.git")
     add_versions("2024.03.06", "fd58966b20f76c7cd1aa1bdae58e28f6e3a7d242")
 
-    add_deps("cmake")
-    on_install("windows", "linux", function (package)
-        import("package.tools.cmake").install(package, {"-Dbuild_benchmarks=OFF", "-Dbuild_tests=OFF", "-Dbuild_examples=OFF"})
+    on_install(function (package)
+        os.cp("include/bght", package:installdir("include"))
     end)
 
     on_test(function (package)
