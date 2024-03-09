@@ -45,33 +45,11 @@ package("wasm-micro-runtime")
 
     on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "android", function (package)
         local configs = {}
-        local opt = {}
+        local packagedeps = {}
         if package:config("libc_uvwasi") then
-            if package:is_plat("windows") then
-                opt.packagedeps = {}
-                table.insert(opt.packagedeps, "libuv")
-                table.insert(opt.packagedeps, "uvwasi")
-            else
-                local cxflags = {}
-                local ldflags = {}
-                for _, dep in ipairs({"libuv", "uvwasi"}) do
-                    local fetchinfo = package:dep(dep):fetch()
-                    if fetchinfo then
-                        for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                            table.insert(cxflags, "-I" .. includedir)
-                        end
-                        for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                            table.insert(ldflags, "-L" .. linkdir)
-                        end
-
-                        if fetchinfo.links[1] then
-                            table.insert(configs, "-D" .. dep:upper() .. "_LIBRARIES=" .. fetchinfo.links[1])
-                        end
-                    end
-                end
-                opt.cxflags = cxflags
-                opt.ldflags = ldflags
-            end
+            -- link order(-luvwasi -llibuv)
+            table.insert(packagedeps, "uvwasi")
+            table.insert(packagedeps, "libuv")
         end
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -113,7 +91,7 @@ package("wasm-micro-runtime")
 
         os.cp("core/iwasm/include", package:installdir())
         os.cd("product-mini/platforms/" .. plat)
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
 
         os.trymv(package:installdir("lib", "*.dll"), package:installdir("bin"))
     end)
