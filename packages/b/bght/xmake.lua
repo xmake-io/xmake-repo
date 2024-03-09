@@ -13,5 +13,5 @@ package("bght")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("bght/bcht.hpp"))
+        assert(os.isfile(path.join(package:installdir("include"), "bght", "bcht.hpp")))
     end)
