@@ -45,18 +45,6 @@ package("wasm-micro-runtime")
 
     on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "android", function (package)
         local configs = {}
-        local packagedeps = {}
-        if package:config("libc_uvwasi") then
-            packagedeps = {"uvwasi", "libuv"}
-            if not package:is_plat("windows") then
-                local uvwasi = package:dep("uvwasi"):fetch().links[1]
-                local libuv = package:dep("libuv"):fetch().links[1]
-                if uvwasi and libuv then
-                    table.insert(configs, "-DUV_A_LIBS=" .. uvwasi .. " " .. libuv)
-                end
-            end
-        end
-
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and package:config("shared") then
@@ -92,6 +80,18 @@ package("wasm-micro-runtime")
             plat = "android"
         elseif package:is_plat("iphoneos") then
             plat = "ios"
+        end
+
+        local packagedeps = {}
+        if package:config("libc_uvwasi") then
+            packagedeps = {"uvwasi", "libuv"}
+            if not package:is_plat("windows") then
+                local uvwasi = package:dep("uvwasi"):fetch().links[1]
+                local libuv = package:dep("libuv"):fetch().links[1]
+                if uvwasi and libuv then
+                    table.insert(configs, format("-DUV_A_LIBS=-l%s -l%s", uvwasi, libuv))
+                end
+            end
         end
 
         os.cp("core/iwasm/include", package:installdir())
