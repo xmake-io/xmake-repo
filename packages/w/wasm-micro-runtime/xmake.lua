@@ -47,9 +47,14 @@ package("wasm-micro-runtime")
         local configs = {}
         local packagedeps = {}
         if package:config("libc_uvwasi") then
-            -- link order(-luvwasi -llibuv)
-            table.insert(packagedeps, "uvwasi")
-            table.insert(packagedeps, "libuv")
+            packagedeps = {"uvwasi", "libuv"}
+            if not package:is_plat("windows") then
+                local uvwasi = package:dep("uvwasi"):fetch().links[1]
+                local libuv = package:dep("libuv"):fetch().links[1]
+                if uvwasi and libuv then
+                    table.insert(configs, "-DUV_A_LIBS=" .. uvwasi .. " " .. libuv)
+                end
+            end
         end
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
