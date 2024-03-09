@@ -21,7 +21,7 @@ package("libvips")
         local configs = {"-Dexamples=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dcplusplus=" .. (package:config("c++") and "true" or "false"))
-        import("package.tools.meson").install(package, configs)
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv"}})
     end)
 
     on_test(function (package)
