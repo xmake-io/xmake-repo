@@ -38,7 +38,7 @@ package("wasm-micro-runtime")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:is_plat("windows") and package:config("libc") == "uvwasi" or package:config("libc_uvwasi") then
+        if package:is_plat("windows") and (package:config("libc") == "uvwasi" or package:config("libc_uvwasi")) then
             package:add("deps", "uvwasi")
         end
         if package:config("jit", "fast_jit") then
@@ -86,7 +86,7 @@ package("wasm-micro-runtime")
         end
 
         local packagedeps
-        if package:config("libc_uvwasi") and package:is_plat("windows") then
+        if package:is_plat("windows") and (package:config("libc") == "uvwasi" or package:config("libc_uvwasi")) then
             packagedeps = {"uvwasi", "libuv"}
         end
 
