@@ -74,12 +74,13 @@ package("x264")
             import("core.tool.toolchain")
             local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             assert(msvc:check(), "msvs not found!")
-            local envs = os.joinenvs(os.getenvs(), msvc:runenvs()) -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
+            -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
+            local envs = os.joinenvs(os.getenvs(), msvc:runenvs())
             envs.CC = path.filename(package:build_getenv("cc"))
             envs.SHELL = "sh"
 
             table.insert(configs, "--toolchain=msvc")
-            table.insert(configs, "--prefix=" .. package:installdir())
+            table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
             os.vrunv("./configure", configs, {shell = true, envs = envs})
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}

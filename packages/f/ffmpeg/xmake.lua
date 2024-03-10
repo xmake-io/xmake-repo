@@ -7,10 +7,6 @@ package("ffmpeg")
     add_urls("https://github.com/FFmpeg/FFmpeg/archive/n$(version).zip", {alias = "github"})
     add_urls("https://git.ffmpeg.org/ffmpeg.git", "https://github.com/FFmpeg/FFmpeg.git", {alias = "git"})
 
-    if is_plat("windows") and is_arch("arm", "arm64") then
-        add_resources(">=1.0.0", "gas-preprocessor", "https://raw.githubusercontent.com/FFmpeg/gas-preprocessor/master/gas-preprocessor.pl", "17a14de55348547d5de5c2448dee0ab6d193d138a1326b6a5235617c3f2c2f82")
-    end
-
     add_versions("home:6.1", "eb7da3de7dd3ce48a9946ab447a7346bd11a3a85e6efb8f2c2ce637e7f547611")
     add_versions("home:6.0.1", "2c6e294569d1ba8e99cbf1acbe49e060a23454228a540a0f45d679d72ec69a06")
     add_versions("home:5.1.2", "39a0bcc8d98549f16c570624678246a6ac736c066cebdb409f9502e915b22f2b")
@@ -135,7 +131,7 @@ package("ffmpeg")
         else
             table.insert(configs, "--disable-debug")
         end
-        
+
         if package:is_plat("windows") then
             table.insert(configs, "--target-os=win32")
             table.insert(configs, "--enable-w32threads")
@@ -182,32 +178,53 @@ package("ffmpeg")
         end
 
         if package:is_plat("windows") then
-            import("core.base.option")
-            import("core.tool.toolchain")
-            local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-            assert(msvc:check(), "vs not found!")
-            local envs = os.joinenvs(os.getenvs(), msvc:runenvs()) -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
-            envs.SHELL = "sh"
+            if path.cygwin then -- xmake 2.8.9
+                import("package.tools.autoconf")
+                local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
+                -- add gas-preprocessor to PATH
+                if package:is_arch("arm", "arm64") then
+                    envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
+                end
+                autoconf.install(package, configs, {envs = envs})
+            else
+                import("core.base.option")
+                import("core.tool.toolchain")
+                local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+                assert(msvc:check(), "vs not found!")
+                local buildenvs = import("package.tools.autoconf").buildenvs(package)
+                -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
+                local envs = os.joinenvs(os.getenvs(), msvc:runenvs())
+                -- fix PKG_CONFIG_PATH for checking deps, e.g. x264, x265 ..
+                -- @see https://github.com/xmake-io/xmake-repo/issues/3442
+                local pkg_config_path = buildenvs.PKG_CONFIG_PATH
+                if pkg_config_path then
+                    local paths = {}
+                    for _, p in ipairs(path.splitenv(pkg_config_path)) do
+                        p = p:gsub("\\", "/")
+                        -- c:\, C:\ -> /c/
+                        p = p:gsub("^(%w):", function (drive) return "/" .. drive:lower() end)
+                        table.insert(paths, p)
+                    end
+                    envs.PKG_CONFIG_PATH = table.concat(paths, ":")
+                end
+                envs.SHELL = "sh"
 
-            if package:is_arch("arm", "arm64") then
-                -- add gas-preprocessor.pl to the PATH
-                -- note: gas-preprocessor.pl in xmake/scripts was too old when this package was updated
-                -- see https://github.com/xmake-io/xmake/pull/4767 and use it later
-                os.mkdir("gas-preprocessor")
-                os.vmv(package:resourcefile("gas-preprocessor"), path.join("gas-preprocessor", "gas-preprocessor.pl"))
-                envs.PATH = path.join(os.curdir(), "gas-preprocessor") .. path.envsep() .. envs.PATH
+                -- add gas-preprocessor to PATH
+                if package:is_arch("arm", "arm64") then
+                    envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
+                end
+
+                table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
+                os.vrunv("./configure", configs, {shell = true, envs = envs})
+
+                local njob = option.get("jobs") or tostring(os.default_njob())
+                local argv = {"-j" .. njob}
+                if option.get("verbose") then
+                    table.insert(argv, "V=1")
+                end
+                os.vrunv("make", argv, {envs = envs})
+                os.vrunv("make", {"install"}, {envs = envs})
             end
-
-            table.insert(configs, "--prefix=" .. package:installdir())
-            os.vrunv("./configure", configs, {shell = true, envs = envs})
-
-            local njob = option.get("jobs") or tostring(os.default_njob())
-            local argv = {"-j" .. njob}
-            if option.get("verbose") then
-                table.insert(argv, "V=1")
-            end
-            os.vrunv("make", argv, {envs = envs})
-            os.vrunv("make", {"install"}, {envs = envs})
             if package:config("shared") then
                 -- move .lib from bin/ to lib/
                 os.vmv(package:installdir("bin", "*.lib"), package:installdir("lib"))
