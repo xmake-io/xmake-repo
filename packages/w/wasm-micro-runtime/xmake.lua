@@ -8,6 +8,7 @@ package("wasm-micro-runtime")
 
     add_versions("1.2.3", "85057f788630dc1b8c371f5443cc192627175003a8ea63c491beaff29a338346")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     add_configs("interp", {description = "Enable interpreter", default = true, type = "boolean"})
     add_configs("fast_interp", {description = "Enable fast interpreter", default = false, type = "boolean"})
     add_configs("aot", {description = "Enable AOT", default = false, type = "boolean"})
@@ -86,10 +87,10 @@ package("wasm-micro-runtime")
         if package:config("libc_uvwasi") then
             packagedeps = {"uvwasi", "libuv"}
             if not package:is_plat("windows") then
-                local uvwasi = package:dep("uvwasi"):fetch().links[1]
-                local libuv = package:dep("libuv"):fetch().links[1]
+                local uvwasi = package:dep("uvwasi"):fetch().libfiles[1]
+                local libuv = package:dep("libuv"):fetch().libfiles[1]
                 if uvwasi and libuv then
-                    table.insert(configs, format("-DUV_A_LIBS=-l%s -l%s", uvwasi, libuv))
+                    table.insert(configs, format("-DUV_A_LIBS=%s %s", uvwasi, libuv))
                 end
             end
         end
