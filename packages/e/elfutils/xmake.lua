@@ -15,7 +15,7 @@ package("elfutils")
     add_configs("libdw",    {description = "Enable libdw", default = true, type = "boolean"})
     add_configs("libasm",   {description = "Enable libasm", default = false, type = "boolean"})
 
-    add_deps("m4", "zlib")
+    add_deps("m4", "zstd", "zlib")
     if is_plat("android") then
         add_deps("libintl", "argp-standalone")
     end
