@@ -12,7 +12,9 @@ package("wasm-micro-runtime")
     -- add_patches("1.3.2", path.join(os.scriptdir(), "patches", "1.3.2", "cmake.patch"), "cf0e992bdf3fe03f7dc03624fd757444291a5286b1ceef6532bbf3f9567f394b")
     add_patches("1.2.3", path.join(os.scriptdir(), "patches", "1.2.3", "cmake.patch"), "97d99509997b86d24a84cd1b2eca0d4dace7b460d5cb85bc23881d02e7ef08ed")
 
-    add_patches("1.2.3", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
+    if is_plat("windows", "linux", "macosx") then
+        add_patches("1.2.3", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
+    end
 
     add_configs("interp", {description = "Enable interpreter", default = true, type = "boolean"})
     add_configs("fast_interp", {description = "Enable fast interpreter", default = false, type = "boolean"})
@@ -20,7 +22,7 @@ package("wasm-micro-runtime")
     -- TODO: improve llvm
     add_configs("jit", {description = "Enable JIT", default = false, type = "boolean", readonly = true})
     add_configs("fast_jit", {description = "Enable Fast JIT", default = false, type = "boolean", readonly = true})
-    add_configs("libc", {description = "Choose libc", default = "builtin", type = "string", values = {"builtin", "wasi", "uvwasi"}})
+    add_configs("libc", {description = "Choose libc", default = "uvwasi", type = "string", values = {"builtin", "wasi", "uvwasi"}})
     add_configs("libc_builtin", {description = "Enable builtin libc", default = false, type = "boolean"})
     add_configs("libc_wasi", {description = "Enable wasi libc", default = false, type = "boolean"})
     add_configs("libc_uvwasi", {description = "Enable uvwasi libc", default = true, type = "boolean"})
@@ -39,7 +41,8 @@ package("wasm-micro-runtime")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:config("libc_uvwasi") or package:config("libc") == "uvwasi" then
+        if package:is_plat("windows", "linux", "macosx") and
+            (package:config("libc_uvwasi") or package:config("libc") == "uvwasi") then
             package:add("deps", "uvwasi")
         end
         if package:config("jit", "fast_jit") then
@@ -61,9 +64,9 @@ package("wasm-micro-runtime")
         table.insert(configs, "-DWAMR_BUILD_JIT=" .. (package:config("jit") and "1" or "0"))
         table.insert(configs, "-DWAMR_BUILD_FAST_JIT=" .. (package:config("fast_jit") and "1" or "0"))
 
-        table.insert(configs, "-DWAMR_BUILD_LIBC_BUILTIN=" .. (package:config("libc_builtin") and "1" or "0"))
-        table.insert(configs, "-DWAMR_BUILD_LIBC_WASI=" .. (package:config("libc_wasi") and "1" or "0"))
-        table.insert(configs, "-DWAMR_BUILD_LIBC_UVWASI=" .. (package:config("libc_uvwasi") and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_LIBC_BUILTIN=" .. ((package:config("libc_builtin") or package:config("libc") == "builtin" ) and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_LIBC_WASI=" .. ((package:config("libc_wasi") or package:config("libc") == "wasi" ) and "1" or "0"))
+        table.insert(configs, "-DWAMR_BUILD_LIBC_UVWASI=" .. ((package:config("libc_uvwasi") or package:config("libc") == "uvwasi" ) and "1" or "0"))
 
         table.insert(configs, "-DWAMR_BUILD_MULTI_MODULE=" .. (package:config("multi_module") and "1" or "0"))
         table.insert(configs, "-DWAMR_BUILD_MINI_LOADER=" .. (package:config("mini_loader") and "1" or "0"))
@@ -72,7 +75,8 @@ package("wasm-micro-runtime")
         table.insert(configs, "-DWAMR_BUILD_REF_TYPES=" .. (package:config("ref_types") and "1" or "0"))
 
         local packagedeps
-        if package:config("libc_uvwasi") or package:config("libc") == "uvwasi" then
+        if package:is_plat("windows", "linux", "macosx") and
+            (package:config("libc_uvwasi") or package:config("libc") == "uvwasi") then
             packagedeps = {"uvwasi", "libuv"}
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
