@@ -90,7 +90,7 @@ package("wasm-micro-runtime")
 
         if package:is_plat("macosx") then
             io.replace("CMakeLists.txt", "add_library(vmlib ${WAMR_RUNTIME_LIB_SOURCE})",
-            "check_pie_supported()\nadd_library(vmlib ${WAMR_RUNTIME_LIB_SOURCE})\nset_target_properties (vmlib PROPERTIES POSITION_INDEPENDENT_CODE ON)",
+            "add_library(vmlib ${WAMR_RUNTIME_LIB_SOURCE})\nset_target_properties (vmlib PROPERTIES POSITION_INDEPENDENT_CODE ON)",
             {plain = true})
         end
 
