@@ -8,7 +8,6 @@ package("wasm-micro-runtime")
 
     add_versions("1.2.3", "85057f788630dc1b8c371f5443cc192627175003a8ea63c491beaff29a338346")
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     add_configs("interp", {description = "Enable interpreter", default = true, type = "boolean"})
     add_configs("fast_interp", {description = "Enable fast interpreter", default = false, type = "boolean"})
     add_configs("aot", {description = "Enable AOT", default = false, type = "boolean"})
@@ -25,7 +24,7 @@ package("wasm-micro-runtime")
     add_configs("simd", {description = "Enable SIMD", default = false, type = "boolean"})
     add_configs("ref_types", {description = "Enable reference types", default = false, type = "boolean"})
 
-    if is_plat("windows") then
+    if is_plat("windows", "linux", "macosx") then
         add_patches("1.2.3", path.join(os.scriptdir(), "patches", "1.2.3", "cmake-uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
     end
 
@@ -38,7 +37,8 @@ package("wasm-micro-runtime")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:is_plat("windows") and (package:config("libc") == "uvwasi" or package:config("libc_uvwasi")) then
+        if package:is_plat("windows", "linux", "macosx") and
+            (package:config("libc") == "uvwasi" or package:config("libc_uvwasi")) then
             package:add("deps", "uvwasi")
         end
         if package:config("jit", "fast_jit") then
@@ -85,13 +85,28 @@ package("wasm-micro-runtime")
             plat = "ios"
         end
 
-        local packagedeps
-        if package:is_plat("windows") and (package:config("libc") == "uvwasi" or package:config("libc_uvwasi")) then
-            packagedeps = {"uvwasi", "libuv"}
-        end
-
         os.cp("core/iwasm/include", package:installdir())
         os.cd("product-mini/platforms/" .. plat)
+
+        if package:is_plat("macosx") then
+            io.replace("CMakeLists.txt", "add_library(vmlib ${WAMR_RUNTIME_LIB_SOURCE})",
+            "check_pie_supported()\nadd_library(vmlib ${WAMR_RUNTIME_LIB_SOURCE})\nset_target_properties (vmlib PROPERTIES POSITION_INDEPENDENT_CODE ON)",
+            {plain = true})
+        end
+
+        local packagedeps
+        if package:is_plat("windows", "linux", "macosx") and
+            (package:config("libc") == "uvwasi" or package:config("libc_uvwasi")) then
+            packagedeps = {"uvwasi", "libuv"}
+            if package:is_plat("linux", "macosx") then
+                local uvwasi = package:dep("uvwasi"):fetch().links[1]
+                local libuv = package:dep("libuv"):fetch().links[1]
+                if uvwasi and libuv then
+                    table.insert(configs, format("-DUV_A_LIBS=-l%s -l%s", uvwasi, libuv))
+                end
+            end
+        end
+
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
 
         os.trymv(package:installdir("lib", "*.dll"), package:installdir("bin"))
