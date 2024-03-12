@@ -24,7 +24,7 @@ package("wasm-micro-runtime")
     add_configs("libc", {description = "Choose libc", default = "builtin", type = "string", values = {"builtin", "wasi", "uvwasi"}})
     add_configs("libc_builtin", {description = "Enable builtin libc", default = false, type = "boolean"})
     add_configs("libc_wasi", {description = "Enable wasi libc", default = false, type = "boolean"})
-    add_configs("libc_uvwasi", {description = "Enable uvwasi libc", default = true, type = "boolean"})
+    add_configs("libc_uvwasi", {description = "Enable uvwasi libc", default = false, type = "boolean"})
     add_configs("multi_module", {description = "Enable multiple modules", default = false, type = "boolean"})
     add_configs("mini_loader", {description = "Enable wasm mini loader", default = false, type = "boolean"})
     add_configs("wasi_threads", {description = "Enable wasi threads library", default = false, type = "boolean"})
@@ -53,10 +53,7 @@ package("wasm-micro-runtime")
     end)
 
     on_install("windows", "linux", "macosx", "bsd", "android", function (package)
-        local configs = {}
-        if package:version():lt("1.3.2") and package:is_plat("windows", "android") then
-            table.insert(configs, "-DWAMR_BUILD_INVOKE_NATIVE_GENERAL=1")
-        end
+        local configs = {"-DWAMR_BUILD_INVOKE_NATIVE_GENERAL=1"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and (not package:config("shared")) then
