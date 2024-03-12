@@ -6,6 +6,7 @@ package("fbthrift")
     add_urls("https://github.com/facebook/fbthrift/archive/refs/tags/v$(version).00.tar.gz",
              "https://github.com/facebook/fbthrift.git")
     add_versions("2024.03.04", "b4981e2ec827fdf2992cb834a6c3da7d475c9dd374b8ada333d4f578b5107460")
+    add_versions("2024.03.11", "decfd7e211d61159778501d3847673d0212303999bbfa15913b0c05567641b84")
 
     add_deps("cmake", "folly", "fizz", "wangle", "mvfst", "zstd", "python")
 

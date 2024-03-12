@@ -6,6 +6,7 @@ package("mvfst")
     add_urls("https://github.com/facebook/mvfst/archive/refs/tags/v$(version).00.tar.gz",
              "https://github.com/facebook/mvfst.git")
     add_versions("2024.03.04", "06922633d6ee2f01e77f66812c87517ebbf06bbb56552a61ba1f7a3b757dc15a")
+    add_versions("2024.03.11", "4ba28efd162f83c7a330fab811f128490a787ef91d6366c6df9fc1f70e9b423d")
 
     add_deps("cmake", "folly", "fizz")
 
