@@ -52,7 +52,10 @@ package("wasm-micro-runtime")
     end)
 
     on_install("windows", "linux", "macosx", "bsd", "android", function (package)
-        local configs = {"-DWAMR_BUILD_INVOKE_NATIVE_GENERAL=1"}
+        local configs = {}
+        if package:version():lt("1.3.2") and package:is_plat("windows") then
+            table.insert(configs, "-DWAMR_BUILD_INVOKE_NATIVE_GENERAL=1")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and (not package:config("shared")) then
