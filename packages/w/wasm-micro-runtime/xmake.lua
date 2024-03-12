@@ -6,15 +6,14 @@ package("wasm-micro-runtime")
     add_urls("https://github.com/bytecodealliance/wasm-micro-runtime/archive/refs/tags/WAMR-$(version).tar.gz", {excludes = {"*/language-bindings/python/LICENSE"}})
     add_urls("https://github.com/bytecodealliance/wasm-micro-runtime.git")
 
-    -- add_versions("1.3.2", "58961ba387ed66ace2dd903597f1670a42b8154a409757ae6f06f43fe867a98c")
+    add_versions("1.3.2", "58961ba387ed66ace2dd903597f1670a42b8154a409757ae6f06f43fe867a98c")
     add_versions("1.2.3", "85057f788630dc1b8c371f5443cc192627175003a8ea63c491beaff29a338346")
 
-    -- add_patches("1.3.2", path.join(os.scriptdir(), "patches", "1.3.2", "cmake.patch"), "cf0e992bdf3fe03f7dc03624fd757444291a5286b1ceef6532bbf3f9567f394b")
-    add_patches("1.2.3", path.join(os.scriptdir(), "patches", "1.2.3", "cmake.patch"), "5e061812f637bb83d96a878d058b5e19165a3d3846fa6f9684a811d0fd326e9a")
+    add_patches("1.3.2", path.join(os.scriptdir(), "patches", "1.3.2", "cmake.patch"), "cf0e992bdf3fe03f7dc03624fd757444291a5286b1ceef6532bbf3f9567f394b")
+    add_patches("1.2.3", path.join(os.scriptdir(), "patches", "1.2.3", "cmake.patch"), "97d99509997b86d24a84cd1b2eca0d4dace7b460d5cb85bc23881d02e7ef08ed")
 
-    if is_plat("windows", "linux", "macosx") then
-        add_patches("1.2.3", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
-    end
+    add_patches("1.3.2", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
+    add_patches("1.2.3", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
 
     add_configs("interp", {description = "Enable interpreter", default = true, type = "boolean"})
     add_configs("fast_interp", {description = "Enable fast interpreter", default = false, type = "boolean"})
@@ -44,6 +43,8 @@ package("wasm-micro-runtime")
         if package:config("libc_uvwasi") or package:config("libc") == "uvwasi" then
             if package:is_plat("windows", "linux", "macosx") then
                 package:add("deps", "uvwasi")
+            else
+                raise("xrepo(uvwasi) only support windows/linux/macosx")
             end
         end
         if package:config("jit", "fast_jit") then

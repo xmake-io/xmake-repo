@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fbea2616..aec8194b 100644
+index fbea2616..a1952ca8 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -108,16 +108,12 @@ endif ()
@@ -31,10 +31,9 @@ index fbea2616..aec8194b 100644
  set_target_properties (iwasm_static PROPERTIES OUTPUT_NAME vmlib)
  target_include_directories(iwasm_static INTERFACE ${WAMR_ROOT_DIR}/core/iwasm/include)
 -target_link_libraries (iwasm_static INTERFACE ${LLVM_AVAILABLE_LIBS} ${UV_A_LIBS} -lm -ldl -lpthread)
-+target_link_libraries (iwasm_static PRIVATE ${LLVM_AVAILABLE_LIBS} ${UV_A_LIBS})
++target_link_libraries (iwasm_static INTERFACE ${LLVM_AVAILABLE_LIBS} ${UV_A_LIBS})
  if (WAMR_BUILD_WASM_CACHE EQUAL 1)
--  target_link_libraries(iwasm_static INTERFACE boringssl_crypto)
-+  target_link_libraries(iwasm_static PRIVATE boringssl_crypto)
+   target_link_libraries(iwasm_static INTERFACE boringssl_crypto)
  endif ()
  
  install (TARGETS iwasm_static ARCHIVE DESTINATION lib)
@@ -54,15 +53,14 @@ index fbea2616..aec8194b 100644
  set_target_properties (iwasm_shared PROPERTIES OUTPUT_NAME iwasm)
  target_include_directories(iwasm_shared INTERFACE ${WAMR_ROOT_DIR}/core/iwasm/include)
 -target_link_libraries (iwasm_shared INTERFACE ${LLVM_AVAILABLE_LIBS} ${UV_A_LIBS} -lm -ldl -lpthread)
-+target_link_libraries (iwasm_shared PRIVATE ${LLVM_AVAILABLE_LIBS} ${UV_A_LIBS})
++target_link_libraries (iwasm_shared INTERFACE ${LLVM_AVAILABLE_LIBS} ${UV_A_LIBS})
  if (WAMR_BUILD_WASM_CACHE EQUAL 1)
--  target_link_libraries(iwasm_shared INTERFACE boringssl_crypto)
-+  target_link_libraries(iwasm_shared PRIVATE boringssl_crypto)
-+endif ()
-+if (WIN32)
-+target_link_libraries (iwasm_shared ntdll)
+   target_link_libraries(iwasm_shared INTERFACE boringssl_crypto)
  endif ()
 -
++if (WIN32)
++target_link_libraries (iwasm_shared ntdll)
++endif ()
  if (MINGW)
    target_link_libraries (iwasm_shared -lWs2_32)
  endif ()
