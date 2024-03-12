@@ -6,6 +6,7 @@ package("proxygen")
     add_urls("https://github.com/facebook/proxygen/archive/refs/tags/v$(version).00.tar.gz",
              "https://github.com/facebook/proxygen.git")
     add_versions("2024.03.04", "c3586cd8a3978dd88ea73b7dc217b0ce9f3bae51f5a2e554135daaf772215e8d")
+    add_versions("2024.03.11", "39d357650d1fdfb3b34c17eb21ccd8e709fb6c2a391ddfc37bb0c5476a111210")
 
     add_deps("cmake", "folly", "fizz", "wangle", "mvfst", "gperf", "python")
 

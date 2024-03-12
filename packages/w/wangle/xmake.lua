@@ -7,6 +7,7 @@ package("wangle")
              "https://github.com/facebook/wangle.git")
     add_versions("2024.02.26", "762d24613d17899b3a943285f54c20e680d382ab3d6889aeb0cf92092238d733")
     add_versions("2024.03.04", "9f9e45dd7afb9aa071f9e6bfe83ccdf67cae7b6cc0a2b6db774fb68ab3152974")
+    add_versions("2024.03.11", "ad9fc14426c9463b9469848214e095fc1793779045bd9685c2d4d0432cb49674")
 
     add_deps("cmake", "folly", "fizz")
 
