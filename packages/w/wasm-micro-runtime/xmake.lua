@@ -79,6 +79,9 @@ package("wasm-micro-runtime")
             (package:config("libc_uvwasi") or package:config("libc") == "uvwasi") then
             packagedeps = {"uvwasi", "libuv"}
         end
+        if package:is_plat("android") then
+            table.insert(configs, "-DWAMR_BUILD_PLATFORM=android")
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
