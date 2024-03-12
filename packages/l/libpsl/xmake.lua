@@ -5,6 +5,7 @@ package("libpsl")
     set_license("MIT")
 
     add_urls("https://github.com/rockdaboot/libpsl/releases/download/$(version)/libpsl-$(version).tar.gz")
+    add_versions("0.21.5", "1dcc9ceae8b128f3c0b3f654decd0e1e891afc6ff81098f227ef260449dae208")
     add_versions("0.21.1", "ac6ce1e1fbd4d0254c4ddb9d37f1fa99dec83619c1253328155206b896210d4c")
 
     add_deps("meson", "ninja")
