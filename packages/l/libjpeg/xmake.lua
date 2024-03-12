@@ -14,7 +14,7 @@ package("libjpeg")
     if is_plat("linux") then
         add_extsources("apt::libjpeg-dev")
     elseif is_plat("macosx") then
-        add_extsources("brew::jpeg")
+        add_extsources("brew::jpeg/libjpeg")
     end
 
     on_install(function (package)
