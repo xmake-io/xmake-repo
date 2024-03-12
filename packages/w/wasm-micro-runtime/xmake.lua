@@ -12,9 +12,7 @@ package("wasm-micro-runtime")
     -- add_patches("1.3.2", path.join(os.scriptdir(), "patches", "1.3.2", "cmake.patch"), "cf0e992bdf3fe03f7dc03624fd757444291a5286b1ceef6532bbf3f9567f394b")
     add_patches("1.2.3", path.join(os.scriptdir(), "patches", "1.2.3", "cmake.patch"), "97d99509997b86d24a84cd1b2eca0d4dace7b460d5cb85bc23881d02e7ef08ed")
 
-    if is_plat("windows", "linux", "macosx") then
-        add_patches("1.2.3", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
-    end
+    add_patches("1.2.3", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
 
     add_configs("interp", {description = "Enable interpreter", default = true, type = "boolean"})
     add_configs("fast_interp", {description = "Enable fast interpreter", default = false, type = "boolean"})
@@ -22,10 +20,10 @@ package("wasm-micro-runtime")
     -- TODO: improve llvm
     add_configs("jit", {description = "Enable JIT", default = false, type = "boolean", readonly = true})
     add_configs("fast_jit", {description = "Enable Fast JIT", default = false, type = "boolean", readonly = true})
-    add_configs("libc", {description = "Choose libc", default = "uvwasi", type = "string", values = {"builtin", "wasi", "uvwasi"}})
+    add_configs("libc", {description = "Choose libc", default = "builtin", type = "string", values = {"builtin", "wasi", "uvwasi"}})
     add_configs("libc_builtin", {description = "Enable builtin libc", default = false, type = "boolean"})
     add_configs("libc_wasi", {description = "Enable wasi libc", default = false, type = "boolean"})
-    add_configs("libc_uvwasi", {description = "Enable uvwasi libc", default = true, type = "boolean"})
+    add_configs("libc_uvwasi", {description = "Enable uvwasi libc", default = false, type = "boolean"})
     add_configs("multi_module", {description = "Enable multiple modules", default = false, type = "boolean"})
     add_configs("mini_loader", {description = "Enable wasm mini loader", default = false, type = "boolean"})
     add_configs("wasi_threads", {description = "Enable wasi threads library", default = false, type = "boolean"})
@@ -41,9 +39,12 @@ package("wasm-micro-runtime")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:is_plat("windows", "linux", "macosx") and
-            (package:config("libc_uvwasi") or package:config("libc") == "uvwasi") then
-            package:add("deps", "uvwasi")
+        if package:config("libc_uvwasi") or package:config("libc") == "uvwasi" then
+            if package:is_plat("windows", "linux", "macosx") then
+                package:add("deps", "uvwasi")
+            else
+                raise("uvwasi only support windows/linux/macosx now!")
+            end
         end
         if package:config("jit", "fast_jit") then
             package:add("deps", "llvm")
@@ -75,9 +76,10 @@ package("wasm-micro-runtime")
         table.insert(configs, "-DWAMR_BUILD_REF_TYPES=" .. (package:config("ref_types") and "1" or "0"))
 
         local packagedeps
-        if package:is_plat("windows", "linux", "macosx") and
-            (package:config("libc_uvwasi") or package:config("libc") == "uvwasi") then
-            packagedeps = {"uvwasi", "libuv"}
+        if package:config("libc_uvwasi") or package:config("libc") == "uvwasi" then
+            if package:is_plat("windows", "linux", "macosx") then
+                packagedeps = {"uvwasi", "libuv"}
+            end
         end
         if package:is_plat("android") then
             table.insert(configs, "-DWAMR_BUILD_PLATFORM=android")
