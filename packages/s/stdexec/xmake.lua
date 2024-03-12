@@ -9,7 +9,7 @@ package("stdexec")
 
     add_deps("cmake")
 
-    on_install("linux", function (package)
+    on_install("linux", "macos", function (package)
         local configs = {"-DSTDEXEC_BUILD_EXAMPLES=OFF", "-DSTDEXEC_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
