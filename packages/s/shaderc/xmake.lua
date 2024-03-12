@@ -6,6 +6,7 @@ package("shaderc")
 
     add_urls("https://github.com/google/shaderc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/shaderc.git")
+    add_versions("v2024.0", "c761044e4e204be8e0b9a2d7494f08671ca35b92c4c791c7049594ca7514197f")
     add_versions("v2022.2", "517d36937c406858164673db696dc1d9c7be7ef0960fbf2965bfef768f46b8c0")
 
     if is_plat("windows") then
