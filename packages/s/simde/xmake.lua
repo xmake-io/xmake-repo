@@ -6,6 +6,7 @@ package("simde")
 
     set_urls("https://github.com/simd-everywhere/simde/releases/download/v$(version)/simde-amalgamated-$(version).tar.xz")
 
+    add_versions("0.7.6", "703eac1f2af7de1f7e4aea2286130b98e1addcc0559426e78304c92e2b4eb5e1")
     add_versions("0.7.2", "544c8aac764f0e24e444b1a7842d0314fa0231802d3b1b2020a03677b5be6142")
 
     on_install(function (package)
