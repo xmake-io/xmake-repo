@@ -40,6 +40,9 @@ package("wasm-micro-runtime")
     add_deps("cmake")
 
     on_load(function (package)
+        if package:is_plat("windows") and winos.version():le("10.0.17763") then
+            package:add("patches", "1.3.2", path.join(os.scriptdir(), "patches", "ntapi.patch"), "436c3f6bbb536a362e277d654ef8dc74e0d757dd815de2d89209bd2a9ac2f114")
+        end
         if package:config("libc_uvwasi") or package:config("libc") == "uvwasi" then
             if package:is_plat("windows", "linux", "macosx") then
                 package:add("deps", "uvwasi")
