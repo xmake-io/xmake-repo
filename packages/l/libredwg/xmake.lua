@@ -1,6 +1,6 @@
 package("libredwg")
     set_homepage("https://github.com/LibreDWG/libredwg")
-    set_description("This is a library to allow reading data from a DWG file. That's a very important acquisiton, which may improve a lot the ability of the free software comunity to develop more features in the field of computer technical drawing (CAD). ")
+    set_description("This is a library to allow reading data from a DWG file.")
 
     add_urls("https://github.com/LibreDWG/libredwg.git")
     add_versions("0.13.3", "97c7225596c17430b82fd0161e7eff6beb5b1034")
@@ -15,5 +15,5 @@ package("libredwg")
     end)
 
     on_test(function (package)
-      assert(package:has_cincludes("dwg.h"))
+        assert(package:has_cfuncs("dwg_rgb_palette_index", {includes = "dwg.h"}))
     end)
