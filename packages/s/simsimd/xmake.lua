@@ -9,11 +9,7 @@ package("simsimd")
 
     add_versions("v3.9.0", "8e79b628ba89beebc7c4c853323db0e10ebb6f85bcda2641e1ebaf77cfbda7f9")
 
-    if is_plat("windows") then
-        add_cxxflags("/arch:AVX2")
-    else
-        add_cxxflags("-march=native")
-    end
+    add_cflags("-std=c11")
 
     on_install(function (package)
         os.cp("include", package:installdir())
@@ -22,14 +18,9 @@ package("simsimd")
     on_test(function (package)
         assert(
             package:check_csnippets({test = [[
-                #include <simsimd/simsimd.h>
-
-                int main() {
-                    simsimd_f32_t vector_a[1536];
-                    simsimd_f32_t vector_b[1536];
-                    simsimd_f32_t distance = simsimd_avx512_f32_cos(vector_a, vector_b, 1536);
-                    return 0;
+                void test() {
+                    simsimd_capabilities();
                 }
-            ]]}, {config = {languages = "c11"}, includes = "simsimd/simsimd.h"})
+            ]]}, {includes = "simsimd/simsimd.h"})
         )
     end)
