@@ -5,6 +5,7 @@ package("openh264")
     set_license("BSD-2-Clause")
 
     add_urls("https://github.com/cisco/openh264/archive/refs/tags/$(version).tar.gz")
+    add_versions("v2.4.1", "8ffbe944e74043d0d3fb53d4a2a14c94de71f58dbea6a06d0dc92369542958ea")
     add_versions("v2.1.1", "af173e90fce65f80722fa894e1af0d6b07572292e76de7b65273df4c0a8be678")
 
     add_deps("meson", "ninja", "nasm")
