@@ -2,10 +2,12 @@ package("libredwg")
     set_homepage("https://github.com/LibreDWG/libredwg")
     set_description("This is a library to allow reading data from a DWG file. That's a very important acquisiton, which may improve a lot the ability of the free software comunity to develop more features in the field of computer technical drawing (CAD). ")
 
-    add_urls("https://github.com/LibreDWG/libredwg.git")
-    add_versions("0.13.3", "97c7225596c17430b82fd0161e7eff6beb5b1034")
+    add_urls("https://github.com/LibreDWG/libredwg/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/LibreDWG/libredwg.git")
+    add_versions("0.13.3", "870a5cf0f55ebf16436f73a2d757eadc0f56ca94449437a42408c87b84c4278b")
 
     add_deps("cmake")
+    add_deps("jsmn")
 
     on_install("windows", "linux", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DDISABLE_WERROR=ON"}
