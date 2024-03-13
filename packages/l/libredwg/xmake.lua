@@ -8,7 +8,7 @@ package("libredwg")
     add_deps("cmake")
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DDISABLE_WERROR=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
