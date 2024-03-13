@@ -20,5 +20,16 @@ package("simsimd")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("simsimd_capabilities", {includes = "simsimd/simsimd.h"}))
+        assert(
+            package:check_csnippets({test = [[
+                #include <simsimd/simsimd.h>
+
+                int main() {
+                    simsimd_f32_t vector_a[1536];
+                    simsimd_f32_t vector_b[1536];
+                    simsimd_f32_t distance = simsimd_avx512_f32_cos(vector_a, vector_b, 1536);
+                    return 0;
+                }
+            ]]}, {config = {languages = "c11"}, includes = "simsimd/simsimd.h"})
+        )
     end)
