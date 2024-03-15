@@ -9,11 +9,7 @@ package("libkmod")
     add_versions("v31", "16c40aaa50fc953035b4811b29ce3182f220e95f3c9e5eacb4b07b1abf85f003")
     add_versions("v30", "1fa3974abd80b992d61324bcc04fa65ea96cfe2e9e1150f48394833030c4b583")
 
-    on_load(function (package)
-        if not package:has_cfuncs("basename", {includes = "libgen.h"}) then
-            package:add("patches", "31", path.join(os.scriptdir(), "patches", "31", "basename.patch"), "83d07e169882cc91f3af162912ae97cd4b62ff48876ca83b0317c40a388773ad")
-        end
-    end)
+    add_patches("31", path.join(os.scriptdir(), "patches", "31", "basename.patch"), "83d07e169882cc91f3af162912ae97cd4b62ff48876ca83b0317c40a388773ad")
 
     on_install("linux", "android", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
