@@ -5,6 +5,7 @@ package("bdwgc")
     add_urls("https://github.com/ivmai/bdwgc/-/archive/$(version).tar.gz",
              "https://github.com/ivmai/bdwgc.git")
 
+    add_versions("v8.2.6", "3bfc2b1dd385bfb46d2dab029211a66249a309795b6893f4e00554904999e40a")
     add_versions("v8.2.4", "18e63ab1428bd52e691da107a6a56651c161210b11fbe22e2aa3c31f7fa00ca5")
 
     add_deps("cmake")
