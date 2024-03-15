@@ -48,7 +48,7 @@ package("libtorch")
         set_policy("platform.longpaths", true)
     end
 
-    on_load("windows|x64", "macosx|x86_64", "linux", function (package)
+    on_load("windows|x64", "macosx", "linux", function (package)
         if package:config("ninja") then
             package:add("deps", "ninja")
         end
@@ -73,7 +73,7 @@ package("libtorch")
         end
     end)
 
-    on_install("windows|x64", "macosx|x86_64", "linux", function (package)
+    on_install("windows|x64", "macosx", "linux", function (package)
         import("package.tools.cmake")
         import("core.tool.toolchain")
 
