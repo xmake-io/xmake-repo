@@ -18,12 +18,6 @@ package("snappy")
     add_configs("avx2", {description = "Use the AVX2 instruction set", default = false, type = "boolean"})
     add_configs("bmi2", {description = "Use the BMI2 instruction set", default = false, type = "boolean"})
 
-    on_load(function (package)
-        if package:version():eq("1.1.10") and package:is_plat("android") then
-            raise("snappy 1.1.10 not support android.")
-        end
-    end)
-
     on_install("windows", "linux", "macosx", "mingw", "android", function (package)
         if package:version():eq("1.1.10") then
             io.replace("snappy.cc", "(op + deferred_length) < op_limit_min_slop);", "static_cast<ptrdiff_t>(op + deferred_length) < op_limit_min_slop);", {plain = true})
