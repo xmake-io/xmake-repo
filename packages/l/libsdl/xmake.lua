@@ -36,6 +36,8 @@ package("libsdl")
     add_versions("archive:2.28.3", "2308d4e4cd5852b3b81934dcc94603454834c14bef49de1cb1230c37ea6dc15c")
     add_versions("archive:2.28.4", "b53b9b42e731a33552d0a533316a88009b423c16a8a3a418df9ffe498c37da3d")
     add_versions("archive:2.28.5", "97bd14ee0ec67494d2b93f1a4f7da2bf891103c57090d96fdcc2b019d885c76a")
+    add_versions("archive:2.30.0", "80b0c02b6018630cd40639ac9fc8e5c1d8eec14d8fe3e6dfa76343e3ba8b78d9")
+    add_versions("archive:2.30.1", "c15ded54e9f32f8a1f9ed3e3dc072837a320ed23c5d0e95b7c18ecbe05c1187b")
     add_versions("github:2.0.8",  "release-2.0.8")
     add_versions("github:2.0.12", "release-2.0.12")
     add_versions("github:2.0.14", "release-2.0.14")
@@ -57,6 +59,10 @@ package("libsdl")
     add_versions("github:2.28.3", "release-2.28.3")
     add_versions("github:2.28.4", "release-2.28.4")
     add_versions("github:2.28.5", "release-2.28.5")
+    add_versions("github:2.30.0", "release-2.30.0")
+    add_versions("github:2.30.1", "release-2.30.1")
+
+    add_patches("2.30.0", path.join(os.scriptdir(), "patches", "2.30.0", "fix_mingw.patch"), "ab54eebc2e58d88653b257bc5b48a232c5fb0e6fad5d63661b6388215a7b0cd0")
 
     add_deps("cmake")
 
@@ -104,11 +110,9 @@ package("libsdl")
         local libsuffix = package:is_debug() and "d" or ""
         component:add("links", "SDL2main" .. libsuffix)
         if package:is_plat("windows") then
-            component:add("ldflags", "-subsystem:windows")
             component:add("syslinks", "shell32")
         elseif package:is_plat("mingw") then
             component:add("syslinks", "mingw32")
-            component:add("ldflags", "-mwindows")
         end
         component:add("deps", "lib")
     end)
@@ -236,5 +240,5 @@ package("libsdl")
                 SDL_Init(0);
                 return 0;
             }
-        ]]}));
+        ]]}, {configs = {defines = "SDL_MAIN_HANDLED"}}));
     end)

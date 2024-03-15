@@ -5,11 +5,16 @@ package("json-schema-validator")
     add_urls("https://github.com/pboettch/json-schema-validator/archive/refs/tags/$(version).tar.gz",
              "https://github.com/pboettch/json-schema-validator.git")
     add_versions("2.1.0", "83f61d8112f485e0d3f1e72d51610ba3924b179926a8376aef3c038770faf202")
+    add_versions("2.3.0", "2c00b50023c7d557cdaa71c0777f5bcff996c4efd7a539e58beaa4219fa2a5e1")
 
     add_deps("cmake", "nlohmann_json")
 
     if is_plat("mingw", "windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    if is_host("windows") then
+        set_policy("platform.longpaths", true)
     end
 
     on_install("linux", "bsd", "windows", "macosx", "iphoneos", "mingw", "cross", function (package)

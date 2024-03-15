@@ -1,4 +1,4 @@
-name: macOS
+name: macOS (arm64)
 
 on:
   pull_request:
@@ -8,9 +8,10 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        os: [macOS-latest]
-        arch: [x86_64, arm64]
+        os: [macos-14]
+        arch: [arm64]
         kind: [static, shared]
 
     runs-on: ${{ matrix.os }}
@@ -30,4 +31,3 @@ jobs:
           wget https://curl.haxx.se/ca/cacert.pem -O /tmp/cacert.pem
           export CURL_CA_BUNDLE=/tmp/cacert.pem
           xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }}
-

@@ -6,6 +6,7 @@ package("ls-qpack")
     add_urls("https://github.com/litespeedtech/ls-qpack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/litespeedtech/ls-qpack.git")
 
+    add_versions("v2.5.4", "56b96190a1943d75ef8d384b13cd4592a72e3e2d84284f78d7f8adabbc717f3e")
     add_versions("v2.5.3", "075a05efee27961eac5ac92a12a6e28a61bcd6c122a0276938ef993338577337")
 
     add_patches("v2.5.3", path.join(os.scriptdir(), "patches", "v2.5.3", "fix-cmake-install.patch"), "7d819b620b5e2bd34ef58a91bf20d882883c7525def9f9f80313b64cba5e5239")

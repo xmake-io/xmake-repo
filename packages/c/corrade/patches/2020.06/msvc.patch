@@ -1,0 +1,67 @@
+diff --git a/src/Corrade/Containers/GrowableArray.h b/src/Corrade/Containers/GrowableArray.h
+index f866bea..4bb8b12 100644
+--- a/src/Corrade/Containers/GrowableArray.h
++++ b/src/Corrade/Containers/GrowableArray.h
+@@ -1166,13 +1166,13 @@ template<class T, class Allocator> void arrayResize(Array<T>& array, NoInitT, co
+ template<class T, class Allocator> void arrayResize(Array<T>& array, DefaultInitT, const std::size_t size) {
+     const std::size_t prevSize = array.size();
+     arrayResize<T, Allocator>(array, NoInit, size);
+-    Implementation::arrayConstruct(DefaultInit, array + prevSize, array.end());
++    Implementation::arrayConstruct(DefaultInit, array.data() + prevSize, array.end());
+ }
+ 
+ template<class T, class Allocator> void arrayResize(Array<T>& array, ValueInitT, const std::size_t size) {
+     const std::size_t prevSize = array.size();
+     arrayResize<T, Allocator>(array, NoInit, size);
+-    Implementation::arrayConstruct(ValueInit, array + prevSize, array.end());
++    Implementation::arrayConstruct(ValueInit, array.data() + prevSize, array.end());
+ }
+ 
+ template<class T, class Allocator, class... Args> void arrayResize(Array<T>& array, DirectInitT, const std::size_t size, Args&&... args) {
+diff --git a/src/Corrade/Utility/Format.cpp b/src/Corrade/Utility/Format.cpp
+index 1d4c23c..7fe825f 100644
+--- a/src/Corrade/Utility/Format.cpp
++++ b/src/Corrade/Utility/Format.cpp
+@@ -383,7 +383,7 @@ std::size_t formatInto(const Containers::ArrayView<char>& buffer, const char* co
+             CORRADE_ASSERT(data.size() <= buffer.size(),
+                 "Utility::formatInto(): buffer too small, expected at least" << bufferOffset + data.size() << "but got" << bufferOffset + buffer.size(), );
+             /* strncpy() would stop on \0 characters */
+-            std::memcpy(buffer + bufferOffset, data, data.size());
++            std::memcpy(buffer.data() + bufferOffset, data, data.size());
+         }
+         bufferOffset += data.size();
+     }, [&buffer, &bufferOffset](BufferFormatter& formatter, int precision, FormatType type) {
+diff --git a/src/Corrade/Utility/String.cpp b/src/Corrade/Utility/String.cpp
+index 1b05870..0cdd472 100644
+--- a/src/Corrade/Utility/String.cpp
++++ b/src/Corrade/Utility/String.cpp
+@@ -129,7 +129,7 @@ bool beginsWith(Containers::ArrayView<const char> string, const Containers::Arra
+ bool endsWith(Containers::ArrayView<const char> string, const Containers::ArrayView<const char> suffix) {
+     if(string.size() < suffix.size()) return false;
+ 
+-    return std::strncmp(string + string.size() - suffix.size(), suffix, suffix.size()) == 0;
++    return std::strncmp(string.data() + string.size() - suffix.size(), suffix, suffix.size()) == 0;
+ }
+ 
+ std::string stripPrefix(std::string string, const Containers::ArrayView<const char> prefix) {
+diff --git a/src/Corrade/Utility/TweakableParser.cpp b/src/Corrade/Utility/TweakableParser.cpp
+index 4991991..993d107 100644
+--- a/src/Corrade/Utility/TweakableParser.cpp
++++ b/src/Corrade/Utility/TweakableParser.cpp
+@@ -37,12 +37,12 @@ namespace Corrade { namespace Utility {
+ namespace {
+     std::pair<const char*, int> integerBase(Containers::ArrayView<const char> value) {
+         if(String::viewBeginsWith(value, "0x") || String::viewBeginsWith(value, "0X"))
+-            return {value + 2, 16};
++            return {value.data() + 2, 16};
+         if(String::viewBeginsWith(value, "0b") || String::viewBeginsWith(value, "0B"))
+-            return {value + 2, 2};
++            return {value.data() + 2, 2};
+         if(String::viewBeginsWith(value, "0"))
+-            return {value + 1, 8};
+-        return {value, 10};
++            return {value.data() + 1, 8};
++        return {value.data(), 10};
+     }
+ }
+ 

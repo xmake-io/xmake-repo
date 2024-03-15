@@ -5,6 +5,7 @@ package("zeromq")
 
     set_urls("https://github.com/zeromq/libzmq/releases/download/v$(version)/zeromq-$(version).tar.gz",
              "https://github.com/zeromq/libzmq.git")
+    add_versions("4.3.5", "6653ef5910f17954861fe72332e68b03ca6e4d9c7160eb3a8de5a5a913bfab43")
     add_versions("4.3.2", "ebd7b5c830d6428956b67a0454a7f8cbed1de74b3b01e5c33c5378e22740f763")
     add_versions("4.3.4", "c593001a89f5a85dd2ddf564805deb860e02471171b3f204944857336295c3e5")
 
@@ -38,14 +39,12 @@ package("zeromq")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx|x86_64", function (package)
         local configs = {"--disable-dependency-tracking", "--without-docs", "--enable-libbsd=no", "--disable-Werror"}
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-libunwind=" .. (package:config("libunwind") and "yes" or "no"))
-        if package:config("pic") then
-            table.insert(configs, "--with-pic")
-        end
+        table.insert(configs, "--libdir=" .. package:installdir("lib"))
         import("package.tools.autoconf").install(package, configs)
     end)
 

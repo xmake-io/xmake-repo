@@ -2,10 +2,11 @@ package("rapidjson")
 
     set_homepage("https://github.com/Tencent/rapidjson")
     set_description("RapidJSON is a JSON parser and generator for C++.")
+    set_license("MIT")
 
     set_urls("https://github.com/Tencent/rapidjson/archive/$(version).zip",
              "https://github.com/Tencent/rapidjson.git")
-
+    add_versions("2023.12.6", "6089180ecb704cb2b136777798fa1be303618975")
     add_versions("2022.7.20", "27c3a8dc0e2c9218fe94986d249a12b5ed838f1d")
     add_versions("v1.1.0", "8e00c38829d6785a2dfb951bb87c6974fa07dfe488aa5b25deec4b8bc0f6a3ab")
     -- This commit is used in arrow 7.0.0 https://github.com/apache/arrow/blob/release-7.0.0/cpp/thirdparty/versions.txt#L80
