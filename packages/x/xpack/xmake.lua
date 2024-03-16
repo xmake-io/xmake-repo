@@ -9,10 +9,9 @@ package("xpack")
 
     add_versions("v1.0.5", "ea8693dd3a53d54e0c1e3c9e6e06f31ff7f593f7f8cf8fb4889f5c3354dbae8e")
 
-    add_deps("rapidjson")
+    add_deps("rapidjson", "rapidxml")
 
     on_install(function (package)
-        os.cp("rapidxml", package:installdir("include"))
         os.cp("*.h", package:installdir("include", "xpack"))
     end)
 
