@@ -5,6 +5,7 @@ package("libheif")
     set_license("LGPL-3.0")
 
     add_urls("https://github.com/strukturag/libheif/releases/download/v$(version)/libheif-$(version).tar.gz")
+    add_versions("1.17.6", "8390baf4913eda0a183e132cec62b875fb2ef507ced5ddddc98dfd2f17780aee")
     add_versions("1.12.0", "e1ac2abb354fdc8ccdca71363ebad7503ad731c84022cf460837f0839e171718")
 
     add_deps("cmake")
