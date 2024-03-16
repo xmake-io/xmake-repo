@@ -16,7 +16,7 @@ package("angelscript")
 
     add_deps("cmake")
 
-    on_install("windows", "linux", "android", "msys", "mingw", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "android", "msys", "mingw", function (package)
         os.cd("angelscript/projects/cmake")
         local configs = {}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
