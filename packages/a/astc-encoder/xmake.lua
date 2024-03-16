@@ -6,6 +6,7 @@ package("astc-encoder")
     add_urls("https://github.com/ARM-software/astc-encoder/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ARM-software/astc-encoder.git")
 
+    add_versions("4.7.0", "a57c81f79055aa7c9f8c82ac5464284e3df9bba682895dee09fa35bd1fdbab93")
     add_versions("4.6.1", "a73c7afadb2caba00339a8f715079d43f9b7e75cf57463477e5ac36ef7defd26")
 
     add_configs("avx2", {description = "Enable astcenc builds for AVX2 SIMD", default = false, type = "boolean"})
