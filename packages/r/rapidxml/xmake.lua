@@ -9,7 +9,7 @@ package("rapidxml")
     add_versions("1.13", "c3f0b886374981bb20fabcf323d755db4be6dba42064599481da64a85f5b3571")
 
     on_install(function (package)
-        os.vcp("**.hpp", package:installdir("include"))
+        os.vcp("**.hpp", package:installdir("include/rapidxml"))
     end)
 
     on_test(function (package)
@@ -18,5 +18,5 @@ package("rapidxml")
                 rapidxml::xml_document<> doc;
                 doc.parse<0>("");
             }
-        ]]}, { includes = "rapidxml.hpp" }))
+        ]]}, { includes = "rapidxml/rapidxml.hpp" }))
     end)
