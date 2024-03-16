@@ -4,9 +4,12 @@ package("libopus")
     set_description("Modern audio compression for the internet.")
 
     set_urls("https://gitlab.xiph.org/xiph/opus/-/archive/v$(version)/opus-v$(version).tar.gz",
+             "https://downloads.xiph.org/releases/opus/opus-$(version).tar.gz",
              "https://gitlab.xiph.org/xiph/opus.git",
              "https://github.com/xiph/opus.git")
 
+    add_versions("1.5.1", "b84610959b8d417b611aa12a22565e0a3732097c6389d19098d844543e340f85")
+    add_versions("1.5", "d8230bbeb99e6d558645aaad25d79de8f4f28fdcc55f8af230050586d62c4f2c")
     add_versions("1.4", "cf7c31577c384e1dc17a6f57e8460e520d135ab9e0b9068543dd657e25e7da1f")
     add_versions("1.3.1", "a4ef56e2c8fce5dba63f6db1f671e3fa5b18299d953975b6636fee211ddc882a")
     add_patches("1.3.1", path.join(os.scriptdir(), "patches", "1.3.1", "cmake.patch"), "79fba5086d7747d0441f7f156b88e932b662e2d2ccd825279a5a396a2840d3a2")
