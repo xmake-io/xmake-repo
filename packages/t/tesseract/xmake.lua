@@ -4,12 +4,13 @@ package("tesseract")
     set_description("Tesseract Open Source OCR Engine")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/tesseract-ocr/tesseract/archive/$(version).tar.gz",
+    add_urls("https://github.com/tesseract-ocr/tesseract/archive/refs/tags/$(version).tar.gz",
              "https://github.com/tesseract-ocr/tesseract.git")
     add_versions("4.1.1", "2a66ff0d8595bff8f04032165e6c936389b1e5727c3ce5a27b3e059d218db1cb")
     add_versions("4.1.3", "83dc56b544be938983f528c777e4e1d906205b0f6dc0110afc223f2cc1cec6d3")
     add_versions("5.0.1", "b5b0e561650ed67feb1e9de38d4746121d302ae4c876c95b99b8b6f9f89d5c58")
     add_versions("5.2.0", "eba4deb2f92a3f89a6623812074af8c53b772079525b3c263aa70bbf7b748b3c")
+    add_versions("5.3.4", "141afc12b34a14bb691a939b4b122db0d51bd38feda7f41696822bacea7710c7")
 
     add_configs("training",   {description = "Build training tools.", default = false, type = "boolean"})
     add_configs("libarchive", {description = "Enable build with libarchive.", default = false, type = "boolean"})
