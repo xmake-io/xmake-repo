@@ -26,9 +26,15 @@ package("libheif")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-        local configs = {"-DWITH_EXAMPLES=OFF",
-                         "-DWITH_AOM=OFF",
-                         "-DWITH_RAV1E=OFF"}
+        local configs =
+        {
+            "-DWITH_EXAMPLES=OFF",
+            -- TODO: package dep
+            "-DWITH_AOM=OFF",
+            "-DWITH_RAV1E=OFF",
+            "-DWITH_LIBSHARPYUV=OFF"
+        }
+        io.replace("CMakeLists.txt", "find_package(AOM)", "", {plain = true})
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for _, conf in ipairs(configdeps) do
