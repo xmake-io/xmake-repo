@@ -100,6 +100,7 @@ target("CommonLibSSE")
     add_cxxflags("cl::/wd4266") -- 'function' : no override available for virtual member function from base 'type'; function is hidden
     add_cxxflags("cl::/wd4371") -- 'classname': layout of class may have changed from a previous version of the compiler due to better packing of member 'member'
     add_cxxflags("cl::/wd4514") -- 'function' : unreferenced inline function has been removed
+    add_cxxflags("cl::/wd4530") -- C++ exception handler used, but unwind semantics are not enabled
     add_cxxflags("cl::/wd4582") -- 'type': constructor is not implicitly called
     add_cxxflags("cl::/wd4583") -- 'type': destructor is not implicitly called
     add_cxxflags("cl::/wd4623") -- 'derived class' : default constructor was implicitly defined as deleted because a base class default constructor is inaccessible or deleted
