@@ -10,7 +10,6 @@ package("simsimd")
     add_versions("v3.9.0", "8e79b628ba89beebc7c4c853323db0e10ebb6f85bcda2641e1ebaf77cfbda7f9")
 
     on_install(function (package)
-        io.replace("include/simsimd/spatial.h", "_vec = vdotq_s32", "_vec = (int32x4_t)vdotq_s32", {plain = true})
         os.cp("include", package:installdir())
         if not package:has_ctypes("_Float16") then
             package:add("defines", "SIMSIMD_NATIVE_F16=0")
