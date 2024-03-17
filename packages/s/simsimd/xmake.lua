@@ -11,7 +11,7 @@ package("simsimd")
 
     on_install(function (package)
         if package:is_plat("iphoneos") then
-            io.replace("simsimd/spatial.h", "_vec = vdotq_s32", "_vec = (int32x4_t)vdotq_s32", {plain = true})
+            io.replace("include/simsimd/spatial.h", "_vec = vdotq_s32", "_vec = (int32x4_t)vdotq_s32", {plain = true})
         end
         os.cp("include", package:installdir())
         if not package:has_ctypes("_Float16") then
