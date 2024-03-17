@@ -10,7 +10,8 @@ package("snappy")
     add_versions("1.1.9", "75c1fbb3d618dd3a0483bff0e26d0a92b495bbe5059c8b4f1c962b478b6e06e7")
     add_versions("1.1.10", "49d831bffcc5f3d01482340fe5af59852ca2fe76c3e05df0e67203ebbe0f1d90")
 
-    add_patches("1.1.9", path.join(os.scriptdir(), "patches", "1.1.9", "inline.patch"), "ed6b247d19486ab3f08f268269133193d7cdadd779523c5e69b5e653f82d535b")
+    add_patches("1.1.9", "patches/1.1.9/inline.patch", "ed6b247d19486ab3f08f268269133193d7cdadd779523c5e69b5e653f82d535b")
+    add_patches("1.1.10", "patches/1.1.10/cmake.patch", "d4883111dcfab81ea35ac1e4e157e55105cec02a0ba804458405be25cbf7b6bb")
 
     add_deps("cmake")
 
