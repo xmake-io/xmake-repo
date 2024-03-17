@@ -19,7 +19,7 @@ package("xaudio2redist")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            static void test() {
+            void test() {
                 IXAudio2* pXAudio2;
                 XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
                 pXAudio2->Release();
