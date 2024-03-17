@@ -7,6 +7,7 @@ package("stringzilla")
     add_urls("https://github.com/ashvardanian/StringZilla/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ashvardanian/StringZilla.git")
 
+    add_versions("v3.6.2", "5e6905348afb4ea55195e20b684abf8ad1e1373dbe2680d1d238cb27f59020b8")
     add_versions("v1.2.2", "2e17c49965841647a1c371247f53b2f576e5fb32fe4b84a080d425b12f17703c")
     add_versions("v2.0.3", "6b52a7b4eb8383cbcf83608eaa08e5ba588a378449439b73584713a16d8920e3")
     add_versions("v2.0.4", "440d3d586f8cfe96bc7648f01f2d3c514c4e2dc22446caeb50599383d1970ed2")
