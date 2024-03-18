@@ -3,6 +3,7 @@ package("brpc")
     set_description("brpc is an Industrial-grade RPC framework using C++ Language, which is often used in high performance system such as Search, Storage, Machine learning, Advertisement, Recommendation etc.")
 
     add_urls("https://github.com/apache/brpc/archive/refs/tags/$(version).tar.gz")
+    add_versions("1.8.0", "13ffb2f1f57c679379a20367c744b3e597614a793ec036cd7580aae90798019d")
     add_versions("1.7.0", "48668cbc943edd1b72551e99c58516249d15767b46ea13a843eb8df1d3d1bc42")
     add_patches("1.7.0", path.join(os.scriptdir(), "patches", "1.7.0", "cmake.patch"), "801920d6fcd20f3da68c1846dc22d26d2d320e48b06b6b5bd38bbed11e5ebd2c")
     add_versions("1.6.1", "d9eb93683b0e4cb583aacdf2357c3e3e613fbf797c4fafd0eae1d09d5ea50964")
