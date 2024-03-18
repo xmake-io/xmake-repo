@@ -1,6 +1,7 @@
 package("pulsar")
     set_homepage("https://github.com/apache/pulsar-client-cpp")
     set_description("Pulsar C++ client library")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/apache/pulsar-client-cpp/archive/refs/tags/v$(version).tar.gz")
 
@@ -16,6 +17,7 @@ package("pulsar")
         else
             configs = table.join(configs, {"-DBUILD_STATIC_LIB=ON", "-DBUILD_DYNAMIC_LIB=OFF"})
         end
+        io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
         import("package.tools.cmake").install(package, configs, {packagedeps = {"zstd", "snappy"}})
     end)
 
