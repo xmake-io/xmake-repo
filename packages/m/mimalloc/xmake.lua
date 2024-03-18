@@ -34,13 +34,16 @@ package("mimalloc")
         add_syslinks("atomic")
     end
 
-    on_install("macosx", "windows", "linux", "android", "mingw", function (package)
+    on_install("macosx", "windows", "linux", "android", "mingw", "wasm", function (package)
         local configs = {"-DMI_OVERRIDE=OFF"}
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
         table.insert(configs, "-DMI_BUILD_TESTS=OFF")
         table.insert(configs, "-DMI_BUILD_OBJECT=OFF")
+        if package:is_plat("wasm") then
+            io.replace("src/prim/prim.c", "__wasi__", "__EMSCRIPTEN__", {plain = true})
+        end
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
         if package:version():le("2.0.1") and package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
             io.replace("CMakeLists.txt", "-redirect.", "-redirect32.", {plain = true})
