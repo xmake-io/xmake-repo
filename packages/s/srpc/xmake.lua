@@ -11,7 +11,7 @@ package("srpc")
     add_deps("cmake", "protobuf-cpp")
     add_deps("workflow", "snappy", "lz4", "zlib")
 
-    on_install(function (package)
+    on_install("linux", "macosx", "android", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
