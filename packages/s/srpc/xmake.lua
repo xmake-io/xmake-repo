@@ -9,7 +9,7 @@ package("srpc")
     add_versions("v0.10.2", "da570f3522e9dfec9c396632044fcb51b5ddc5c854ba7824d1770de138f469fb")
 
     add_deps("cmake", "protobuf-cpp")
-    add_deps("workflow", "snappy", "lz4")
+    add_deps("workflow", "snappy", "lz4", "zlib")
 
     on_install(function (package)
         local configs = {}
@@ -18,7 +18,7 @@ package("srpc")
         os.rm("third_party")
         io.replace("CMakeLists.txt", 'check_include_file_cxx("workflow/Workflow.h" WORKFLOW_INSTALLED)',
             "set(WORKFLOW_INSTALLED TRUE)", {plain = true})
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"workflow", "snappy", "lz4"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"workflow", "snappy", "lz4", "zlib"}})
         package:addenv("PATH", "bin")
     end)
 
