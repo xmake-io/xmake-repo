@@ -11,14 +11,21 @@ package("srpc")
     add_deps("cmake", "protobuf-cpp")
     add_deps("workflow", "snappy", "lz4", "zlib")
 
-    on_install("linux", "macosx", "android", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         os.rm("third_party")
         io.replace("CMakeLists.txt", 'check_include_file_cxx("workflow/Workflow.h" WORKFLOW_INSTALLED)',
             "set(WORKFLOW_INSTALLED TRUE)", {plain = true})
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"workflow", "snappy", "lz4", "zlib"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps = {
+            "workflow", "snappy", "lz4", "zlib"}})
+        if package:config("shared") then
+            os.rm(path.join(package:installdir("lib"), "*.a"))
+        else
+            os.tryrm(path.join(package:installdir("lib"), "*.dylib"))
+            os.tryrm(path.join(package:installdir("lib"), "*.so"))
+        end
         package:addenv("PATH", "bin")
     end)
 
