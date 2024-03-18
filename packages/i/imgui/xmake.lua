@@ -172,5 +172,5 @@ package("imgui")
                 ImGui::Render();
                 ImGui::DestroyContext();
             }
-        ]]}, {configs = {languages = "c++11"}, includes = includes}))
+        ]]}, {configs = {languages = "c++14"}, includes = includes}))
     end)
