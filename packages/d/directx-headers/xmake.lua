@@ -6,6 +6,7 @@ package("directx-headers")
 
     add_urls("https://github.com/microsoft/DirectX-Headers/archive/refs/tags/$(version).zip",
              "https://github.com/microsoft/DirectX-Headers.git")
+    add_versions("v1.613.0", "38852327d998e54d9faac93be28c1f8b6489442832eb380004e2fecedd907eef")
     add_versions("v1.610.0", "ce8036d57e4b3b87167bf82a0236fc09cba4ffa7088322912b8ce82f284555db")
 
     add_patches("1.610.0", path.join(os.scriptdir(), "patches", "1.610.0", "mingw.patch"), "7409d90adb1513e8683cc6d16aba1a3e73643c3e04b9af70474a5b13323be0fb")
