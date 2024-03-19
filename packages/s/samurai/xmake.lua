@@ -12,7 +12,7 @@ package("samurai")
 
     add_deps("xtensor", "highfive", "pugixml", "fmt")
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|!arm64", "linux", "macosx|!arm64", function (package)
         os.cp("include", package:installdir())
     end)
 
