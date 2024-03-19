@@ -19,6 +19,7 @@ package("highway")
         table.insert(configs, "-DHWY_ENABLE_CONTRIB=" .. (package:config("contrib") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
         os.tryrm(package:installdir("lib/*hwy_test*"))
+        os.tryrm(package:installdir("bin/*hwy_test*"))
     end)
 
     on_test(function (package)
