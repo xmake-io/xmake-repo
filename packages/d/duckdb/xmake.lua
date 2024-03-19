@@ -6,6 +6,7 @@ package("duckdb")
     add_urls("https://github.com/duckdb/duckdb/releases/download/$(version)/libduckdb-src.zip",
              "https://github.com/duckdb/duckdb.git")
     add_versions("v0.10.0", "385e27aa67712813e4a07389465c4c5c45c431d97cddd35713b8a306d2a86f2d")
+    add_versions("v0.10.1", "70EC6FFEFD9A04BF9FCDC1A4949611F9633F10F0E3B9CEAD1425B926A54D0F89")
 
     on_install("macosx", "linux", function (package)
         io.writefile("xmake.lua", [[
