@@ -19,7 +19,7 @@ package("aws-c-sdkutils")
     on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "android", "iphoneos", "cross", "wasm", function (package)
         local aws_cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         local aws_c_common_configdir = package:dep("aws-c-common"):installdir("lib", "aws-c-common", "cmake")
-        if package:is_plat("windows") then
+        if is_host("windows") then
             aws_cmakedir = aws_cmakedir:gsub("\\", "/")
             aws_c_common_configdir = aws_c_common_configdir:gsub("\\", "/")
         end
