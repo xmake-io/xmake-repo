@@ -39,9 +39,8 @@ package("tesseract")
 
     on_install("windows|x86", "windows|x64", "macosx", "linux", function (package)
         if package:version():eq("5.3.4") then
-            local leptonica_cmake = package:dep("leptonica"):installdir("lib/cmake/leptonica/LeptonicaTargets.cmake")
-            io.replace(leptonica_cmake, [[\$<LINK_ONLY:openjp2>]], "", {plain = true})
-            io.replace(leptonica_cmake, [[\$<LINK_ONLY:WebP::webp>;\$<LINK_ONLY:WebP::libwebpmux>]], "", {plain = true})
+            local leptonica_cmake = package:dep("leptonica"):installdir("lib/cmake/leptonica/LeptonicaConfig.cmake")
+            io.replace(leptonica_cmake, "if ()", "if (1)", {plain = true})
         end
 
         io.replace("CMakeLists.txt", "find_package(PkgConfig)", "", {plain = true})
@@ -56,7 +55,7 @@ package("tesseract")
         table.insert(configs, "-DDISABLE_ARCHIVE=" .. (package:config("libarchive") and "OFF" or "ON"))
         table.insert(configs, "-DDISABLE_CURL=" .. (package:config("libcurl") and "OFF" or "ON"))
         table.insert(configs, "-DENABLE_OPENCL=" .. (package:config("opencl") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"openjpeg", "libwebp"}})
+        import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
     end)
 
