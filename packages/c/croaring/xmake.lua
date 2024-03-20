@@ -7,6 +7,7 @@ package("croaring")
              "https://github.com/RoaringBitmap/CRoaring.git")
 
     add_versions("v2.0.4", "3c962c196ba28abf2639067f2e2fd25879744ba98152a4e0e74556ca515eda33")
+    add_versions("v3.0.0", "25183bc54ab650d964256d547869a34573a13d06f7e6a369b79e77f5c1feb8ba")
 
     add_configs("exceptions", {description = "Enable exception-throwing interface", default = false, type = "boolean"})
     add_configs("x64", {description = "Enable x64 optimizations even if hardware supports it (this disables AVX)", default = false, type = "boolean"})
