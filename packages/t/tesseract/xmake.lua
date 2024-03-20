@@ -38,10 +38,16 @@ package("tesseract")
     end)
 
     on_install("windows|x86", "windows|x64", "macosx", "linux", function (package)
+        if package:version():eq("5.3.4") then
+            local leptonica_cmake = package:dep("leptonica"):installdir("lib/cmake/leptonica/LeptonicaTargets.cmake")
+            io.replace(leptonica_cmake, [[\$<LINK_ONLY:openjp2>]], "", {plain = true})
+            io.replace(leptonica_cmake, [[\$<LINK_ONLY:WebP::webp>;\$<LINK_ONLY:WebP::libwebpmux>]], "", {plain = true})
+        end
+
         io.replace("CMakeLists.txt", "find_package(PkgConfig)", "", {plain = true})
         io.replace("src/training/CMakeLists.txt", "find_package(PkgConfig)", "", {plain = true})
         local configs = {"-DSW_BUILD=OFF", "-DBUILD_TESTS=OFF", "-DUSE_SYSTEM_ICU=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DWIN32_MT_BUILD=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
@@ -50,7 +56,7 @@ package("tesseract")
         table.insert(configs, "-DDISABLE_ARCHIVE=" .. (package:config("libarchive") and "OFF" or "ON"))
         table.insert(configs, "-DDISABLE_CURL=" .. (package:config("libcurl") and "OFF" or "ON"))
         table.insert(configs, "-DENABLE_OPENCL=" .. (package:config("opencl") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"openjpeg", "libwebp"}})
         package:addenv("PATH", "bin")
     end)
 
