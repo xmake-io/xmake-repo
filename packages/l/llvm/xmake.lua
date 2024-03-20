@@ -89,7 +89,7 @@ package("llvm")
         os.cp("*", package:installdir())
     end)
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("linux", "macosx|x86_64", "bsd", function (package)
         local projects = {
             "bolt",
             "clang",
