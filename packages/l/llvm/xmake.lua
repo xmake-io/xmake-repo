@@ -129,7 +129,10 @@ package("llvm")
             table.insert(configs, "-DLLVM_ENABLE_LIBCXX=OFF")
             table.insert(configs, "-DCLANG_DEFAULT_CXX_STDLIB=libstdc++")
             -- enable llvm gold plugin for LTO
-            table.insert(configs, "-DLLVM_BINUTILS_INCDIR=" .. package:dep("binutils"):installdir("include"))
+            local binutils = package:dep("binutils")
+            if binutils then
+                table.insert(configs, "-DLLVM_BINUTILS_INCDIR=" .. binutils:installdir("include"))
+            end
         end
         os.cd("llvm")
         import("package.tools.cmake").install(package, configs)
