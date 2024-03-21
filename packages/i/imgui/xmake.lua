@@ -158,8 +158,10 @@ package("imgui")
     on_test(function (package)
         if package:config("user_config") ~= nil then return end
         local includes = {"imgui.h"}
+        local defines
         if package:config("sdl2_renderer") or package:config("sdl2_no_renderer") then
             table.insert(includes, "SDL.h")
+            defines = "SDL_MAIN_HANDLED"
         end
         assert(package:check_cxxsnippets({test = [[
             void test() {
@@ -172,5 +174,5 @@ package("imgui")
                 ImGui::Render();
                 ImGui::DestroyContext();
             }
-        ]]}, {configs = {languages = "c++14"}, includes = includes}))
+        ]]}, {configs = {languages = "c++11", defines = defines}, includes = includes}))
     end)
