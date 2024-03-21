@@ -6,6 +6,7 @@ package("libenvpp")
     add_urls("https://github.com/ph3at/libenvpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ph3at/libenvpp.git")
 
+    add_versions("v1.4.0", "3f9a4a4b62abc06522de76e3a999cc3cd6b60299dc26b28ccc2183aa614f10cd")
     add_versions("v1.1.0", "c373a6867ed915ffdacbbebfa017e03c0797dc4c2eb173659f607024e9cfbac9")
 
     add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = true})
