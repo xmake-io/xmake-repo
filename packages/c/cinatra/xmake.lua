@@ -8,6 +8,7 @@ package("cinatra")
     add_urls("https://github.com/qicosmos/cinatra/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/qicosmos/cinatra.git")
 
+    add_versions("0.8.9", "007dc38aceedf42d03a9c05dc9aa6d2f303456ae7ce1100800df7a565b83b510")
     add_versions("0.8.0", "4e14d5206408eccb43b3e810d3a1fe228fbc7496ded8a16b041ed12cbcce4479")
 
     add_configs("ssl", {description = "Enable SSL", default = false, type = "boolean"})
