@@ -6,6 +6,7 @@ package("unity_test")
     add_urls("https://github.com/ThrowTheSwitch/Unity/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ThrowTheSwitch/Unity.git")
 
+    add_versions("v2.6.0", "aa4c9fb1ae5fc5242f914c65f3557e817e40cb37f04a31e5ff76d1ab89dbf674")
     add_versions("v2.5.2", "3786de6c8f389be3894feae4f7d8680a02e70ed4dbcce36109c8f8646da2671a")
     add_versions("v2.5.1", "5ce08ef62f5f64d18f8137b3eaa6d29199ee81d1fc952cef0eea96660a2caf47")
     add_versions("v2.5.0", "d470165dc46652cf73fda54e2650b483b94a7e24ccf793ded28615729b2f41ed")
