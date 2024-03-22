@@ -28,11 +28,16 @@ package("leptonica")
             package:add("defines", "LIBLEPT_IMPORTS")
         end
 
+        local packagedeps = {"libtiff"}
+        if package:is_plat("windows") and package:is_arch("x86") then
+            table.insert(packagedeps, "openjpeg")
+        end
+
         io.replace("CMakeLists.txt", "NOT JP2K", "FALSE", {plain = true})
         local configs = {"-DSW_BUILD=OFF", "-DCMAKE_FIND_FRAMEWORK=LAST", "-DCMAKE_DISABLE_FIND_PACKAGE_PkgConfig=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = "libtiff"})
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
 
         local leptonica_cmake = package:installdir("lib/cmake/leptonica/LeptonicaConfig.cmake")
         io.replace(leptonica_cmake, "if ()", "if (1)", {plain = true})
