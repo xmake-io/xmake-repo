@@ -5,9 +5,6 @@ package("libopus")
 
     add_urls("https://downloads.xiph.org/releases/opus/opus-$(version).tar.gz",
              {alias = "home"})
-    add_urls("https://gitlab.xiph.org/xiph/opus/-/archive/v$(version)/opus-v$(version).tar.gz",
-             "https://gitlab.xiph.org/xiph/opus.git",
-             {alias = "gitlab"})
     add_urls("https://github.com/xiph/opus/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/xiph/opus.git",
              {alias = "github"})
@@ -16,11 +13,6 @@ package("libopus")
     add_versions("home:1.5", "d8230bbeb99e6d558645aaad25d79de8f4f28fdcc55f8af230050586d62c4f2c")
     add_versions("home:1.4", "c9b32b4253be5ae63d1ff16eea06b94b5f0f2951b7a02aceef58e3a3ce49c51f")
     add_versions("home:1.3.1", "65b58e1e25b2a114157014736a3d9dfeaad8d41be1c8179866f144a2fb44ff9d")
-
-    add_versions("gitlab:1.5.1", "e759a2ece89da2fe039c578d53a5ba36786b19c6c568504fe11d8435369fa42a")
-    add_versions("gitlab:1.2", "5b920873a8d747af72692f933d5f9f10e414827e15ead338528b3c59bf42185f")
-    add_versions("gitlab:1.4", "cf7c31577c384e1dc17a6f57e8460e520d135ab9e0b9068543dd657e25e7da1f")
-    add_versions("gitlab:1.3.1", "a4ef56e2c8fce5dba63f6db1f671e3fa5b18299d953975b6636fee211ddc882a")
 
     add_versions("github:1.5.1", "7ce44ef3d335a3268f26be7d53bb3bed7205b34eaf80bf92a99e69d490afe9d9")
     add_versions("github:1.5", "d7de528957dde0ba40e9dec9e25b679232bfaf19fb6a02ed8358845007d7075e")
