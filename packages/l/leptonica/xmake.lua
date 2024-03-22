@@ -34,6 +34,8 @@ package("leptonica")
         local packagedeps = {"libtiff"}
         if package:is_plat("windows") and package:is_arch("x86") then
             table.insert(packagedeps, "openjpeg")
+        elseif package:is_plat("macosx") then
+            io.replace("src/CMakeLists.txt", "${TIFF_LIBRARIES}", [[""]], {plain = true})
         end
 
         io.replace("CMakeLists.txt", "NOT JP2K", "FALSE", {plain = true})
