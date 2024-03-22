@@ -1,18 +1,18 @@
 package("yasm")
-
     set_kind("binary")
     set_homepage("https://yasm.tortall.net/")
     set_description("Modular BSD reimplementation of NASM.")
+    set_license("BSD-2-Clause")
 
     if is_host("windows") then
         if os.arch() == "x64" then
-            add_urls("https://github.com/yasm/yasm/releases/download/$(version)/vsyasm-$(version)-win64.zip",
-                     "http://www.tortall.net/projects/yasm/releases/vsyasm-$(version)-win64.zip")
-            add_versions("1.3.0", "6D991CA77E3827AADE0091C87C89CB4C9FA6AD097AFCEA95EA736482BAE707E2")
+            add_urls("https://github.com/yasm/yasm/releases/download/v$(version)/yasm-$(version)-win64.exe",
+                     "http://www.tortall.net/projects/yasm/releases/yasm-$(version)-win64.exe")
+            add_versions("1.3.0", "d160b1d97266f3f28a71b4420a0ad2cd088a7977c2dd3b25af155652d8d8d91f")
         else
-            add_urls("https://github.com/yasm/yasm/releases/download/$(version)/vsyasm-$(version)-win32.zip",
-                     "http://www.tortall.net/projects/yasm/releases/vsyasm-$(version)-win32.zip")
-            add_versions("1.3.0", "FF4585E2A03E7015B0B1D406D4231267C2D3733968FFC6FC633E586C85C16DA5")
+            add_urls("https://github.com/yasm/yasm/releases/download/v$(version)/yasm-$(version)-win32.exe",
+                     "http://www.tortall.net/projects/yasm/releases/yasm-$(version)-win32.exe")
+            add_versions("1.3.0", "db8ef9348ae858354cee4cc2f99e0f36de8a47a121de4cfeea5a16d45dd5ac1b")
         end
     else
         add_urls("https://www.tortall.net/projects/yasm/releases/yasm-$(version).tar.gz",
@@ -21,10 +21,9 @@ package("yasm")
     end
 
     on_install("@windows", "@mingw", "@msys", function (package)
-        os.mv("vsyasm.exe", "yasm.exe")
-        os.cp("*", package:installdir("bin"))
+        os.mv("*.exe", package:installdir("bin", "yasm.exe"))
     end)
-    
+
     on_install("@linux", "@macosx", function (package)
         local configs = {"--disable-python"}
         if package:debug() then
@@ -36,4 +35,3 @@ package("yasm")
     on_test(function (package)
         os.vrun("yasm --version")
     end)
-    
