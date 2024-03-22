@@ -50,7 +50,13 @@ package("tesseract")
         table.insert(configs, "-DDISABLE_ARCHIVE=" .. (package:config("libarchive") and "OFF" or "ON"))
         table.insert(configs, "-DDISABLE_CURL=" .. (package:config("libcurl") and "OFF" or "ON"))
         table.insert(configs, "-DENABLE_OPENCL=" .. (package:config("opencl") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local packagedeps = {}
+        if package:is_plat("macosx") then
+            table.insert(packagedeps, "libtiff")
+        end
+
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
         package:addenv("PATH", "bin")
     end)
 
