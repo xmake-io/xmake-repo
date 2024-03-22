@@ -112,6 +112,9 @@ function main(pattern)
     local count = 0
     local maxcount = 5
     local instances = _get_all_packages(pattern)
+    if #instances < maxcount then
+        maxcount = #instances
+    end
     math.randomseed(os.time())
     while count < maxcount and #instances > 0 do
         local idx = math.random(#instances)
