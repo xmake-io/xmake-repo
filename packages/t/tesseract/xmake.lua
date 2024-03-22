@@ -38,11 +38,6 @@ package("tesseract")
     end)
 
     on_install("windows|x86", "windows|x64", "macosx", "linux", function (package)
-        if package:version():eq("5.3.4") then
-            local leptonica_cmake = package:dep("leptonica"):installdir("lib/cmake/leptonica/LeptonicaConfig.cmake")
-            io.replace(leptonica_cmake, "if ()", "if (1)", {plain = true})
-        end
-
         io.replace("CMakeLists.txt", "find_package(PkgConfig)", "", {plain = true})
         io.replace("src/training/CMakeLists.txt", "find_package(PkgConfig)", "", {plain = true})
         local configs = {"-DSW_BUILD=OFF", "-DBUILD_TESTS=OFF", "-DUSE_SYSTEM_ICU=ON"}
