@@ -16,7 +16,10 @@ package("leptonica")
     add_deps("zlib", "libtiff", "libpng", "libjpeg", "giflib", "openjpeg")
 
     on_load("windows", function (package)
-        local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
+        import("core.tool.toolchain")
+
+        local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+        local vs_sdkver = msvc:config("vs_sdkver")
         if vs_sdkver then
             local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
             assert(tonumber(build_ver) ~= 17763, "Unsupported Windows SDK 10.0.17763.0")
