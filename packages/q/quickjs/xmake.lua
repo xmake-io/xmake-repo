@@ -46,7 +46,7 @@ package("quickjs")
         io.writefile("xmake.lua", ([[
             add_rules("mode.debug", "mode.release")
             target("quickjs")
-                set_kind("shared")
+                set_kind("$(kind)")
                 add_files("quickjs*.c", "cutils.c", "lib*.c")
                 add_headerfiles("quickjs-libc.h")
                 add_headerfiles("quickjs.h")
@@ -54,9 +54,15 @@ package("quickjs")
                 set_languages("c99")
                 add_defines("CONFIG_VERSION=\"%s\"", "_GNU_SOURCE")
                 add_defines("CONFIG_BIGNUM","__USE_MINGW_ANSI_STDIO", "__MINGW__COMPILE__")
-                add_syslinks("pthread")
-                add_shflags("-Wl,--output-def,quickjs.def")
                 set_prefixname("")
+                if is_kind("shared") then
+                    add_shflags("-Wl,--output-def,quickjs.def")
+                    add_shflags("-static-libgcc", "-static-libstdc++")
+                    add_shflags("-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic")
+                else
+                    set_extension(".lib")
+                    add_syslinks("pthread")
+                end
         ]]):format(package:version_str()))
 
         local arch_prev = package:arch()
@@ -69,15 +75,26 @@ package("quickjs")
         package:plat_set(plat_prev)
         package:arch_set(arch_prev)
 
-        import("core.tool.toolchain")
-        import("lib.detect.find_tool")
+        if package:config("shared") then
+            import("core.tool.toolchain")
+            import("lib.detect.find_tool")
 
-        local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-        local lib_tool = assert(find_tool("lib", {envs = msvc:runenvs()}), "MSVC lib not found!")
+            local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            local lib_tool = assert(find_tool("lib", {envs = msvc:runenvs()}), "lib.exe not found!")
+            local arch = "/Machine:" .. (package:is_arch("x64") and "x64" or "x86")
 
-        os.vrunv(lib_tool.program, {"/Def:quickjs.def"})
-        os.vcp("quickjs.lib", package:installdir("lib"))
-        os.rm(package:installdir("lib", "quickjs.dll.a"))
+            os.vrunv(lib_tool.program, {arch, "/Def:quickjs.def"})
+            os.vcp("quickjs.lib", package:installdir("lib"))
+            os.rm(package:installdir("lib", "quickjs.dll.a"))
+        else
+            local mingw = import("detect.sdks.find_mingw")()
+            local bindir = mingw.bindir
+            if mingw and bindir then
+                os.vcp(path.join(bindir, "libgcc_s_seh-1.dll"), package:installdir("bin"))
+                os.vcp(path.join(bindir, "libwinpthread-1.dll"), package:installdir("bin"))
+                os.vcp(path.join(bindir, "libstdc++-6.dll"), package:installdir("bin"))
+            end
+        end
     end)
 
     on_test(function (package)
