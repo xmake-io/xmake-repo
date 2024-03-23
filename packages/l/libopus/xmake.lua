@@ -18,7 +18,7 @@ package("libopus")
     add_versions("github:1.5", "d7de528957dde0ba40e9dec9e25b679232bfaf19fb6a02ed8358845007d7075e")
     add_versions("github:1.4", "659e6b223e42a51b0a898632b9a5f406ccd5c2e00aa526ddd1264789774b94e5")
     add_versions("github:1.3.1", "4834a8944c33a7ecab5cad9454eeabe4680ca1842cb8f5a2437572dbf636de8f")
-    --add_patches("1.3.1", path.join(os.scriptdir(), "patches", "1.3.1", "cmake.patch"), "79fba5086d7747d0441f7f156b88e932b662e2d2ccd825279a5a396a2840d3a2")
+    add_patches("1.3.1", path.join(os.scriptdir(), "patches", "1.3.1", "cmake.patch"), "79fba5086d7747d0441f7f156b88e932b662e2d2ccd825279a5a396a2840d3a2")
 
     add_configs("avx", { description = "AVX supported", default = true, type = "boolean" })
     add_configs("check_avx", { description = "Does runtime check for AVX support", default = true, type = "boolean" })
