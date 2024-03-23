@@ -23,7 +23,7 @@ package("quickjs")
         io.writefile("xmake.lua", ([[
             add_rules("mode.debug", "mode.release")
             target("quickjs")
-                set_kind("shared")
+                set_kind("$(kind)")
                 add_files("quickjs*.c", "cutils.c", "lib*.c")
                 add_headerfiles("quickjs-libc.h")
                 add_headerfiles("quickjs.h")
@@ -43,9 +43,6 @@ package("quickjs")
     end)
 
     on_install("windows|x86", "windows|x64", function (package)
-        import("core.tool.toolchain")
-        import("lib.detect.find_tool")
-
         io.writefile("xmake.lua", ([[
             add_rules("mode.debug", "mode.release")
             target("quickjs")
@@ -71,6 +68,9 @@ package("quickjs")
 
         package:plat_set(plat_prev)
         package:arch_set(arch_prev)
+
+        import("core.tool.toolchain")
+        import("lib.detect.find_tool")
 
         local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
         local lib_tool = assert(find_tool("lib", {envs = msvc:runenvs()}), "MSVC lib not found!")
