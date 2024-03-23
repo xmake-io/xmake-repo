@@ -6,7 +6,7 @@ package("quickjs")
     add_versions("2021.03.27", "b5e62895c619d4ffc75c9d822c8d85f1ece77e5b")
     add_versions("2023.12.09", "daa35bc1e5d43192098af9b51caeb4f18f73f9f9")
     add_versions("2024.01.13", "d6c7d169de6fb2c90cd2bd2226ba9dafdef883ce")
-    
+
     if is_plat("windows") then
         add_deps("mingw-w64")
         add_patches("2024.01.13", "patches/2024.01.13/msvc.patch", "4e3b6a346a2b55455cba832d543876daba9f7fce6011ba9f858b2de31f0fd0e8")
@@ -18,7 +18,7 @@ package("quickjs")
     elseif is_plat("android") then
         add_syslinks("dl", "m")
     end
-    
+
     on_install("linux", "macosx", "iphoneos", "android", "mingw", "cross", function (package)
         io.writefile("xmake.lua", ([[
             add_rules("mode.debug", "mode.release")
@@ -58,7 +58,7 @@ package("quickjs")
                 if is_kind("shared") then
                     add_shflags("-Wl,--output-def,quickjs.def")
                     add_shflags("-static-libgcc", "-static-libstdc++")
-                    add_shflags("-Wl,-Bstatic -lstdc++ -lpthread -Wl,-Bdynamic")
+                    add_shflags("-Wl,-Bstatic -lpthread -Wl,-Bdynamic")
                 else
                     set_extension(".lib")
                     add_syslinks("pthread")
@@ -94,6 +94,8 @@ package("quickjs")
                 os.vcp(path.join(bindir, "libwinpthread-1.dll"), package:installdir("bin"))
                 os.vcp(path.join(bindir, "libstdc++-6.dll"), package:installdir("bin"))
             end
+
+            -- TODO: export .def and generate .lib
         end
     end)
 
