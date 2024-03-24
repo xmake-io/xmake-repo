@@ -10,7 +10,7 @@ package("sparse-map")
 
     add_versions("v0.6.2", "7020c21e8752e59d72e37456cd80000e18671c803890a3e55ae36b295eba99f6")
 
-    on_install(function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", function (package)
         os.cp("include/*", package:installdir("include"))
     end)
 
