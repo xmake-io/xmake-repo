@@ -8,7 +8,6 @@ package("quickjs")
     add_versions("2024.01.13", "d6c7d169de6fb2c90cd2bd2226ba9dafdef883ce")
 
     if is_plat("windows") then
-        add_deps("mingw-w64")
         add_patches("2024.01.13", "patches/2024.01.13/msvc.patch", "4e3b6a346a2b55455cba832d543876daba9f7fce6011ba9f858b2de31f0fd0e8")
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
@@ -18,6 +17,14 @@ package("quickjs")
     elseif is_plat("android") then
         add_syslinks("dl", "m")
     end
+
+    on_load("windows", function (package)
+        if package:is_arch("x64") then
+            package:add("deps", "mingw-w64")
+        else
+            package:add("deps", "llvm-mingw")
+        end
+    end)
 
     on_install("linux", "macosx", "iphoneos", "android", "mingw", "cross", function (package)
         io.writefile("xmake.lua", ([[
@@ -42,7 +49,7 @@ package("quickjs")
         import("package.tools.xmake").install(package, configs)
     end)
 
-    on_install("windows|x86", "windows|x64", function (package)
+    on_install("windows", function (package)
         io.writefile("xmake.lua", ([[
             add_rules("mode.debug", "mode.release")
             target("quickjs")
@@ -76,14 +83,9 @@ package("quickjs")
         package:arch_set(arch_prev)
 
         if package:config("shared") then
-            import("core.tool.toolchain")
-            import("lib.detect.find_tool")
+            import("utils.platform.gnu2mslib")
 
-            local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-            local lib_tool = assert(find_tool("lib", {envs = msvc:runenvs()}), "lib.exe not found!")
-            local arch = "/Machine:" .. (package:is_arch("x64") and "x64" or "x86")
-
-            os.vrunv(lib_tool.program, {arch, "/Def:quickjs.def"})
+            gnu2mslib("quickjs.lib", "quickjs.def", {plat = package:plat(), arch = package:arch()})
             os.vcp("quickjs.lib", package:installdir("lib"))
             os.rm(package:installdir("lib", "quickjs.dll.a"))
         else
