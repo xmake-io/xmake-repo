@@ -8,6 +8,7 @@ package("microsoft-proxy")
     add_urls("https://github.com/microsoft/proxy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/proxy.git")
 
+    add_versions("2.2.1", "096f0b2d793dffc54d41def2bca0ced594b6b8efe35ac5ae27db35802e742b96")
     add_versions("1.1.1", "6852b135f0bb6de4dc723f76724794cff4e3d0d5706d09d0b2a4f749f309055d")
 
     on_install(function (package)
