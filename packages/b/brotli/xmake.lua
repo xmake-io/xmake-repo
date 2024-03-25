@@ -71,7 +71,21 @@ package("brotli")
 
     on_test(function(package)
         if not package:is_cross() then
-            os.vrun("brotli --version")
+            local envs
+            if package:is_plat("windows") then
+                import("core.tool.toolchain")
+                local msvc = toolchain.load("msvc")
+                if msvc and msvc:check() then
+                    envs = msvc:runenvs()
+                end
+            elseif package:is_plat("mingw") then
+                import("core.tool.toolchain")
+                local mingw = toolchain.load("mingw")
+                if mingw and mingw:check() then
+                    envs = mingw:runenvs()
+                end
+            end
+            os.vrunv("brotli", {"--version"}, envs)
         end
         assert(package:check_csnippets([[
             void test() {
