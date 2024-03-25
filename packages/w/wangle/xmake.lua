@@ -9,6 +9,7 @@ package("wangle")
     add_versions("2024.03.04", "9f9e45dd7afb9aa071f9e6bfe83ccdf67cae7b6cc0a2b6db774fb68ab3152974")
     add_versions("2024.03.11", "ad9fc14426c9463b9469848214e095fc1793779045bd9685c2d4d0432cb49674")
     add_versions("2024.03.18", "578986898b3464ed9bd2e392a08d07604b68b2251322518c1f819c965eebe8f2")
+    add_versions("2024.03.25", "3de926ff92e59f5185e89e5e9365925530e5e57fd70f8e5107938149ce2fe140")
 
     add_deps("cmake", "folly", "fizz")
 

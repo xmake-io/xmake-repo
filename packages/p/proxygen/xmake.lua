@@ -8,6 +8,7 @@ package("proxygen")
     add_versions("2024.03.04", "c3586cd8a3978dd88ea73b7dc217b0ce9f3bae51f5a2e554135daaf772215e8d")
     add_versions("2024.03.11", "39d357650d1fdfb3b34c17eb21ccd8e709fb6c2a391ddfc37bb0c5476a111210")
     add_versions("2024.03.18", "7731c5eea71f1ab3182a1a54329abae983ac63794f86768762a0136587dfd979")
+    add_versions("2024.03.25", "b11c8da4dbcbbdde8d9504f2edd3eb537bdf959eccc07a8333d1936965437abc")
 
     add_deps("cmake", "folly", "fizz", "wangle", "mvfst", "gperf", "python")
 
