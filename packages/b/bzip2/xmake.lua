@@ -26,9 +26,23 @@ package("bzip2")
 
     on_test(function (package)
         if not package:is_cross() then
-            os.vrun("bunzip2 --help")
-            os.vrun("bzcat --help")
-            os.vrun("bzip2 --help")
+            local envs
+            if package:is_plat("windows") then
+                import("core.tool.toolchain")
+                local msvc = toolchain.load("msvc")
+                if msvc and msvc:check() then
+                    envs = msvc:runenvs()
+                end
+            elseif package:is_plat("mingw") then
+                import("core.tool.toolchain")
+                local mingw = toolchain.load("mingw")
+                if mingw and mingw:check() then
+                    envs = mingw:runenvs()
+                end
+            end
+            os.vrun("bunzip2 --help", {envs = envs})
+            os.vrun("bzcat --help", {envs = envs})
+            os.vrun("bzip2 --help", {envs = envs})
         end
 
         assert(package:has_cfuncs("BZ2_bzCompressInit", {includes = "bzlib.h"}))
