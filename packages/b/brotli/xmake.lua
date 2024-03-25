@@ -85,7 +85,7 @@ package("brotli")
                     envs = mingw:runenvs()
                 end
             end
-            os.vrunv("brotli", {"--version"}, envs)
+            os.vrunv("brotli", {"--version"}, {envs = envs})
         end
         assert(package:check_csnippets([[
             void test() {
