@@ -4,6 +4,7 @@ package("v8")
 
     add_urls("https://github.com/v8/v8.git")
     add_versions("10.0.58", "d75903764c8547b6fc35c7a3fe4991320be03135")
+    add_versions("12.4.111", "ea012d232c66229b2d4f3f2a268aa999d668972b")
 
     add_deps("depot_tools")
 
