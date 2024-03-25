@@ -40,9 +40,9 @@ package("bzip2")
                     envs = mingw:runenvs()
                 end
             end
-            os.vrun("bunzip2 --help", {envs = envs})
-            os.vrun("bzcat --help", {envs = envs})
-            os.vrun("bzip2 --help", {envs = envs})
+            os.vrunv("bunzip2", {"--help"}, {envs = envs})
+            os.vrunv("bzcat", {"--help"}, {envs = envs})
+            os.vrunv("bzip2", {"--help"}, {envs = envs})
         end
 
         assert(package:has_cfuncs("BZ2_bzCompressInit", {includes = "bzlib.h"}))
