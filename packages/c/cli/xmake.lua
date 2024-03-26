@@ -5,6 +5,7 @@ package("cli")
 
     add_urls("https://github.com/daniele77/cli/archive/refs/tags/$(version).tar.gz",
              "https://github.com/daniele77/cli.git")
+    add_versions("v2.1.0", "dfc9fc7c72a6cdfdf852d89f151699b57460ff49775a8ff27d2a69477649acf9")
     add_versions("v2.0.0", "0fac3c9fab4527e6141f8fae92dabbd575b6cc71c42c3de76cb28725df68919a")
 
     add_deps("cmake")
