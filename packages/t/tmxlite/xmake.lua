@@ -12,17 +12,7 @@ package("tmxlite")
 
     on_install(function (package)
         os.cd("tmxlite")
-        local configs = {
-            "-DENABLE_ALL_WARNINGS=OFF",
-            "-DINTERPROCEDURAL_OPTIMIZATION=OFF",
-            "-DTARGET_UNIT_TESTS=OFF",
-            "-DTARGET_HELLO_WORLD=OFF",
-            "-DTARGET_PERFORMANCE_TEST=OFF",
-            "-DTARGET_SAMPLES=OFF",
-            "-DTARGET_VIEWER=OFF",
-            "-DUSE_STATIC_MSVC_RUNTIME_LIBRARY=OFF",
-            "-DOVERRIDE_CXX_FLAGS=OFF"
-        }
+        local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DTMXLITE_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DUSE_EXTLIBS=ON")
