@@ -5,6 +5,7 @@ package("zydis")
 
     add_urls("https://github.com/zyantific/zydis/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zyantific/zydis.git")
+    add_versions("v4.0.0", "14e991fd97b021e15c77a4726a0ae8a4196d6521ab505acb5c51fc2f9be9530a")
     add_versions("v3.2.1", "349a2d27270e54499b427051dd45f7b6064811b615588414b096cdeeaeb730ad")
     add_patches("v3.2.1", path.join(os.scriptdir(), "patches", "v3.2.1", "cmake.patch"), "8464810921f507206b8c21618a20de0f5b96cbef7656ebc549079f941f8718fc")
     
