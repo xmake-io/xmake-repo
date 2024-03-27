@@ -6,6 +6,7 @@ package("zycore-c")
     add_urls("https://github.com/zyantific/zycore-c/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zyantific/zycore-c.git")
 
+    add_versions("v1.4.0", "b5ff45647c59be733e746c3a0d3c8d8a81f9e46f868af88e65b0e581b1171855")
     add_versions("v1.3.0", "547ed2902332b25e5a8eeb97d0fb268cb39c156bb04e70d66c28b25712b60346")
     add_versions("v1.2.0", "6389ecee0c8176de9d61d40f2d3801d2371012ba415dc899665de4949ca4b35d")
     add_versions("v1.1.0", "b5496779b95206763980aad30db10e36a13a10ebaf2e74574cddf2ca744ad227")
@@ -14,7 +15,7 @@ package("zycore-c")
     add_deps("cmake")
 
     on_install("!wasm", function (package)
-        if package:version():gt("1.1.0") and package:version():lt("1.3.0") and package:is_plat("mingw") then
+        if package:version():ge("1.1.0") and package:version():le("1.2.0") and package:is_plat("mingw") then
             local rc_str = io.readfile("resources/VersionInfo.rc", {encoding = "utf16le"})
             io.writefile("resources/VersionInfo.rc", rc_str, {encoding = "utf8"})
         end
