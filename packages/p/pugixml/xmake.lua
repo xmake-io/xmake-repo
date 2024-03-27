@@ -1,5 +1,4 @@
 package("pugixml")
-
     set_homepage("https://pugixml.org/")
     set_description("Light-weight, simple and fast XML parser for C++ with XPath support")
     set_license("MIT")
@@ -12,7 +11,7 @@ package("pugixml")
 
     add_deps("cmake")
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
