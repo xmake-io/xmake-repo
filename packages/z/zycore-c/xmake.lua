@@ -12,8 +12,8 @@ package("zycore-c")
 
     add_deps("cmake")
 
-    on_install(function (package)
-        if package:version():eq("v1.1.0") and package:is_plat("mingw") then
+    on_install("!wasm", function (package)
+        if package:version():gt("v1.1.0") and package:is_plat("mingw") then
             local rc_str = io.readfile("resources/VersionInfo.rc", {encoding = "utf16le"})
             io.writefile("resources/VersionInfo.rc", rc_str, {encoding = "utf8"})
         end
