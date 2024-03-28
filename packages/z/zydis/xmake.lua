@@ -6,6 +6,7 @@ package("zydis")
     add_urls("https://github.com/zyantific/zydis/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zyantific/zydis.git")
 
+    add_versions("v4.1.0", "31f23de8abb4cc2efa0fd0e827bbabcaa0f3d00fcaed8598e05295ba7b3806ad")
     add_versions("v4.0.0", "14e991fd97b021e15c77a4726a0ae8a4196d6521ab505acb5c51fc2f9be9530a")
     add_versions("v3.2.1", "349a2d27270e54499b427051dd45f7b6064811b615588414b096cdeeaeb730ad")
 
@@ -24,7 +25,8 @@ package("zydis")
     on_load(function (package)
         local zycore_c_vers = {
             ["v3.2.1"] = "v1.1.0",
-            ["v4.0.0"] = "v1.4.0"
+            ["v4.0.0"] = "v1.4.0",
+            ["v4.1.0"] = "v1.4.0",
         }
         package:add("deps", "zycore-c " .. zycore_c_vers[package:version_str()])
 
