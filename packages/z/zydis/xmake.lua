@@ -52,6 +52,10 @@ package("zydis")
             package:add("defines", "ZYDIS_STATIC_BUILD")
         end
 
+        if package:version():ge("4.1.0") then
+            io.replace("CMakeLists.txt", "set(ZYDIS_ROOT_PROJECT ON)", "", {plain = true})
+        end
+
         local configs = {"-DZYAN_SYSTEM_ZYCORE=ON"}
         table.insert(configs, "-DZYDIS_BUILD_EXAMPLES=OFF")
         table.insert(configs, "-DZYDIS_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
