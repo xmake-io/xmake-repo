@@ -18,6 +18,21 @@ package("tmxlite")
         table.insert(configs, "-DUSE_EXTLIBS=ON")
         table.insert(configs, "-DUSE_ZSTD=ON")
 
+        local pugixml = package:dep("pugixml")
+        if pugixml and not pugixml:is_system() then
+            local fetchinfo = pugixml:fetch({external = false})
+            if fetchinfo then
+                local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                if includedirs and #includedirs > 0 then
+                    table.insert(configs, "-DPUGIXML_INCLUDE_DIR=" .. table.concat(includedirs, " "))
+                end
+                local libfiles = fetchinfo.libfiles
+                if libfiles then
+                    table.insert(configs, "-DPUGIXML_LIBRARY=" .. table.concat(libfiles, " "))
+                end
+            end
+        end
+
         import("package.tools.cmake").install(package, configs)
     end)
 
