@@ -26,12 +26,13 @@ package("zydis")
         local zycore_c_vers = {
             ["v3.2.1"] = "v1.1.0",
             ["v4.0.0"] = "v1.4.0",
-            ["v4.1.0"] = "v1.4.0",
+            ["v4.1.0"] = "v1.5.0",
         }
         package:add("deps", "zycore-c " .. zycore_c_vers[package:version_str()])
 
         if package:is_plat("android") then
             package:add("patches", "4.0.0", "patches/v4.0.0/cmake.patch", "061b2286e8e96178294f8b25e0c570bf65f8739848ea1de57dd36be710001da4")
+            package:add("patches", "4.1.0", "patches/v4.1.0/cmake.patch", "68f0b5d8e043503f26be441cf2f920a215cf1eb1b59205933c3653468f3ccd94")
         end
     end)
 
