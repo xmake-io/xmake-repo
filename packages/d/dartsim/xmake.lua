@@ -6,6 +6,7 @@ package("dartsim")
 
     add_urls("https://github.com/dartsim/dart/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dartsim/dart.git")
+    add_versions("v6.13.2", "02699a8f807276231c80ffc5dbc3f66dc1c3612364340c91bcad63a837c01576")
     add_versions("v6.13.0", "4da3ff8cee056252a558b05625a5ff29b21e71f2995e6d7f789abbf6261895f7")
 
     add_configs("dartpy", {description = "Build dartpy interface.", default = false, type = "boolean"})
