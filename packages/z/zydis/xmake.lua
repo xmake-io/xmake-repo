@@ -29,7 +29,7 @@ package("zydis")
         package:add("deps", "zycore-c " .. zycore_c_vers[package:version_str()])
 
         if package:is_plat("android") then
-            package:add("patches", "4.0.0", "patches/v4.0.0/cmake.patch"), "061b2286e8e96178294f8b25e0c570bf65f8739848ea1de57dd36be710001da4")
+            package:add("patches", "4.0.0", "patches/v4.0.0/cmake.patch", "061b2286e8e96178294f8b25e0c570bf65f8739848ea1de57dd36be710001da4")
         end
     end)
 
