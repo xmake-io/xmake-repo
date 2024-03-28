@@ -21,12 +21,22 @@ package("zydis")
     end)
 
     on_install("windows", "macosx", "linux", "bsd", "cross", "mingw", "android", function (package)
+        if package:is_plat("mingw") and package:version():ge("3.2.1") then
+            local rc_str = io.readfile("resources/VersionInfo.rc", {encoding = "utf16le"})
+            io.writefile("resources/VersionInfo.rc", rc_str, {encoding = "utf8"})
+        elseif package:is_plat("macosx") then
+            if package:version():eq("3.2.1") then
+                io.replace("include/Zydis/ShortString.h", "#pragma pack(push, 1)","", {plain = true})
+                io.replace("include/Zydis/ShortString.h", "#pragma pack(pop)","", {plain = true})
+            elseif package:version():eq("4.0.0") then
+                io.replace("include/Zydis/ShortString.h", "#   pragma pack(push, 1)","", {plain = true})
+                io.replace("include/Zydis/ShortString.h", "#   pragma pack(pop)","", {plain = true})
+            end
+        end
+
         local configs = {}
         table.insert(configs, "-DZYDIS_BUILD_EXAMPLES=OFF")
         table.insert(configs, "-DZYDIS_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:config("shared") then 
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         import("package.tools.cmake").install(package, configs, {packagedeps = "zycore-c"})
     end)
 
