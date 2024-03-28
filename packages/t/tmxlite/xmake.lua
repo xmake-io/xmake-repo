@@ -10,7 +10,7 @@ package("tmxlite")
 
     add_deps("cmake", "pugixml", "zlib", "zstd")
 
-    on_install("!android,!wasm", function (package)
+    on_install("windows", "mingw", "linux", "macos", "bsd", "iphoneos", "cross", function (package)
         os.cd("tmxlite")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
