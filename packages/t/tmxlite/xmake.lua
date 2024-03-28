@@ -10,31 +10,13 @@ package("tmxlite")
 
     add_deps("cmake", "pugixml", "zlib", "zstd")
 
-    on_install("!android", "!wasm", function (package)
+    on_install("!android,!wasm", function (package)
         os.cd("tmxlite")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DTMXLITE_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DUSE_EXTLIBS=ON")
         table.insert(configs, "-DUSE_ZSTD=ON")
-
-        for _, depname in ipairs({"pugixml", "zlib", "zstd"}) do
-            local dep = package:dep(depname)
-            if dep and not dep:is_system() then
-                local fetchinfo = dep:fetch({external = false})
-                if fetchinfo then
-                    local cmakeprefix = "-D" .. depname:upper()
-                    local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
-                    if includedirs and #includedirs > 0 then
-                        table.insert(configs, cmakeprefix .. "_INCLUDE_DIR=" .. table.concat(includedirs, " "))
-                    end
-                    local libfiles = fetchinfo.libfiles
-                    if libfiles then
-                        table.insert(configs, cmakeprefix .. "_LIBRARY=" .. table.concat(libfiles, " "))
-                    end
-                end
-            end
-        end
 
         import("package.tools.cmake").install(package, configs)
     end)
