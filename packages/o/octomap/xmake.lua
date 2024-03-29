@@ -6,6 +6,7 @@ package("octomap")
 
     add_urls("https://github.com/OctoMap/octomap/archive/refs/tags/$(version).tar.gz",
              "https://github.com/OctoMap/octomap.git")
+    add_versions("v1.10.0", "8da2576ec6a0993e8900db7f91083be8682d8397a7be0752c85d1b7dd1b8e992")
     add_versions("v1.9.7", "3e9ac020686ceb4e17e161bffc5a0dafd9cccab33adeb9adee59a61c418ea1c1")
     add_versions("v1.9.8", "417af6da4e855e9a83b93458aa98b01a2c88f880088baad2b59d323ce162586e")
 
