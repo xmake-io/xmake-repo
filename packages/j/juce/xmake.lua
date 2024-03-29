@@ -37,7 +37,7 @@ package("juce")
                 macosx = {"CoreAudio", "CoreMIDI", "AudioToolbox", "AVFoundation"},
                 linux = {"alsa"},
                 mingw = {"winmm"}
-            }
+            },
             deps = {"juce_audio_basics", "juce_events"}
         },
         juce_audio_formats = {
@@ -46,7 +46,7 @@ package("juce")
             links = {
                 iphoneos = {"AudioToolbox", "QuartzCore"},
                 macosx = {"CoreAudio", "CoreMIDI", "QuartzCore", "AudioToolbox"},
-            }
+            },
             deps = {"juce_audio_basics", "juce_events"}
         },
         juce_audio_plugin_client = {
@@ -200,6 +200,7 @@ package("juce")
         ]], package:config("utf"))
         for modulename, options in pairs(modules) do
             local links = options.links or {}
+            local sysLinks = '"' .. table.concat(links[os.host()] or {}, '", "') .. '"'
             for _, link in ipairs(links[os.host()] or {}) do
                 package:add("links", link)
             end
@@ -216,7 +217,7 @@ package("juce")
                         end
                         add_syslinks(%s)
                     end
-                ]], modulename, '"' .. table.concat(links[os.host()], '", "') .. '"')
+                ]], modulename, sysLinks)
             end
         end
 
