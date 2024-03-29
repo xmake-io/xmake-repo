@@ -6,6 +6,7 @@ package("imgui-sfml")
     add_urls("https://github.com/eliasdaler/imgui-sfml/archive/refs/tags/$(version).tar.gz",
              "https://github.com/eliasdaler/imgui-sfml.git")
 
+    add_versions("v2.6", "b1195ca1210dd46c8049cfc8cae7f31cd34f1591da7de1c56297b277ac9c5cc0")
     add_versions("v2.5", "3775c9303f656297f2392e91ffae2021e874ee319b4139c60076d6f757ede109")
 
     add_deps("cmake")
