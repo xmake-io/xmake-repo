@@ -6,6 +6,7 @@ package("highs")
     add_urls("https://github.com/ERGO-Code/HiGHS/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ERGO-Code/HiGHS.git")
 
+    add_versions("v1.7.0", "d10175ad66e7f113ac5dc00c9d6650a620663a6884fbf2942d6eb7a3d854604f")
     add_versions("v1.5.3", "ce1a7d2f008e60cc69ab06f8b16831bd0fcd5f6002d3bbebae9d7a3513a1d01d")
 
     if is_plat("linux", "bsd") then
