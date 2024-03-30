@@ -13,7 +13,7 @@ package("dataframe")
     add_deps("cmake")
     
     on_install("windows", "macosx", "linux", function (package)
-        local configs = {}
+        local configs = {"-DCMAKE_CXX_STANDARD=20"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
@@ -34,5 +34,5 @@ package("dataframe")
                 ULDataFrame ul_df1;
                 ul_df1.load_index(std::move(idx_col1));
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = "c++20"}}))
     end)
