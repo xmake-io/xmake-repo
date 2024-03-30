@@ -6,6 +6,7 @@ package("libavif")
 
     add_urls("https://github.com/AOMediaCodec/libavif/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AOMediaCodec/libavif.git")
+    add_versions("v1.0.4", "dc56708c83a4b934a8af2b78f67f866ba2fb568605c7cf94312acf51ee57d146")
     add_versions("v0.9.1", "8526f3fff34a05a51d7c703cdcf1d0d38c939b5b6dd4bb7d3a3405ddad88186c")
 
     add_configs("dav1d", {description = "Use the dav1d codec for decoding.", default = false, type = "boolean"})
