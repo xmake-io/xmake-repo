@@ -6,6 +6,7 @@ package("opencolorio")
 
     add_urls("https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/OpenColorIO.git")
+    add_versions("v2.3.2", "6bbf4e7fa4ea2f743a238cb22aff44890425771a2f57f62cece1574e46ceec2f")
     add_versions("v2.1.0", "81fc7853a490031632a69c73716bc6ac271b395e2ba0e2587af9995c2b0efb5f")
     add_versions("v2.1.1", "16ebc3e0f21f72dbe90fe60437eb864f4d4de9c255ef8e212f837824fc9b8d9c")
 
