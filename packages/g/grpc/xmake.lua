@@ -6,6 +6,7 @@ package("grpc")
     add_urls("https://github.com/grpc/grpc/archive/refs/tags/$(version).zip",
              "https://github.com/grpc/grpc.git")
     add_versions("v1.51.3", "17720fd0a690e904a468b4b3dae6fa5ec40b0d1f4d418e2ca092e2f92f06fce0")
+    add_versions("v1.62.1", "f672a3a3b370f2853869745110dabfb6c13af93e17ffad4676a0b95b5ec204af")
 
     add_patches("1.51.3", path.join(os.scriptdir(), "patches", "1.51.3", "disable-download-archive.patch"), "90fdd6e4a51cbc9756d1fcdd0f65e665d4b78cfd91fdbeb0228cc4e9c4ba1b73")
     add_patches("1.51.3", path.join(os.scriptdir(), "patches", "1.51.3", "static-linking-in-linux.patch"), "176474919883f93be0c5056098eccad408038663c6c7361f2e049cdf7247a19c")
@@ -39,6 +40,7 @@ package("grpc")
     on_install("linux", "macosx", "windows", function (package)
         local configs = {
             "-DCMAKE_CXX_STANDARD=17", -- abseil need c++17
+            "-DCMAKE_CXX_STANDARD_REQUIRED=TRUE",
             "-DgRPC_BUILD_TESTS=OFF",
             "-DgRPC_ZLIB_PROVIDER=package",
             "-DgRPC_ABSL_PROVIDER=package",
@@ -51,21 +53,13 @@ package("grpc")
             "-DgRPC_PROTOBUF_PACKAGE_TYPE=CONFIG"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"abseil", "protobuf-cpp"}})
     end)
 
     on_test(function (package)
         if package:is_binary() then
             assert(os.isfile(path.join(package:installdir(), "bin", "grpc_cpp_plugin")))
         else
-            assert(package:check_cxxsnippets({test = [[
-                #include <iostream>
-                void test() {
-                    grpc::CompletionQueue q;
-                    std::string server_address("192.168.28.109:9010");
-                    auto channel = grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials());
-                    std::cout << &channel << std::endl;
-                }
-            ]]}, {configs = {languages = "c++17"}, includes = "grpcpp/grpcpp.h"}))
+            assert(package:has_cxxincludes("grpcpp/grpcpp.h", {configs = {languages = "c++17"}}))
         end
     end)
