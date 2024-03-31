@@ -34,9 +34,20 @@ package("cpptrace")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                cpptrace::generate_trace().print();
-            }
-        ]]}, {configs = {languages = "c++11"}, includes = {"cpptrace/cpptrace.hpp"}}))
+        local code
+        if package:version():le("0.1") then
+            code = [[
+                void test() {
+                    cpptrace::print_trace();
+                }
+            ]]
+        else
+            code = [[
+                void test() {
+                    cpptrace::generate_trace().print();
+                }
+            ]]
+        end
+
+        assert(package:check_cxxsnippets({test = code}, {configs = {languages = "c++11"}, includes = {"cpptrace/cpptrace.hpp"}}))
     end)
