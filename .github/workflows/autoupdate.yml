@@ -39,5 +39,3 @@ jobs:
         if: ${{ github.repository }} == "xmake-io/xmake-repo"
         run: |
           xmake l -vD scripts/autoupdate.lua
-
-

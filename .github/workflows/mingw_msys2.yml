@@ -51,4 +51,3 @@ jobs:
           else
             xmake l ./scripts/test.lua -vD -p mingw -a i386 -k ${{ matrix.kind }}
           fi
-

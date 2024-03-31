@@ -56,4 +56,3 @@ jobs:
         if: ${{ github.repository }} == "xmake-io/xmake-repo"
         run: |
           xmake l scripts/build_artifacts.lua
-
