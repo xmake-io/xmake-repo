@@ -75,5 +75,5 @@ package("protobuf-cpp")
             }
         ]])
         os.vrun("protoc test.proto --cpp_out=.")
-        assert(package:check_cxxsnippets({test = io.readfile("test.pb.cc")}, {configs = {includedirs = {".", package:installdir("include")}, languages = "c++11"}}))
+        assert(package:check_cxxsnippets({test = io.readfile("test.pb.cc")}, {configs = {includedirs = {".", package:installdir("include")}, languages = "c++17"}}))
     end)
