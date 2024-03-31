@@ -21,7 +21,7 @@ package("protobuf-cpp")
 
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
 
-    add_deps("cmake")
+    add_deps("cmake", "abseil")
 
     if is_plat("windows") then
         add_links("libprotobuf")
@@ -43,7 +43,9 @@ package("protobuf-cpp")
     on_install("windows", "linux", "macosx", function (package)
         -- os.cd("cmake")
         io.replace("CMakeLists.txt", "set(protobuf_DEBUG_POSTFIX \"d\"", "set(protobuf_DEBUG_POSTFIX \"\"", {plain = true})
-        local configs = {"-Dprotobuf_BUILD_TESTS=OFF", "-Dprotobuf_BUILD_PROTOC_BINARIES=ON"}
+        local configs = {"-Dprotobuf_BUILD_TESTS=OFF",
+                         "-Dprotobuf_BUILD_PROTOC_BINARIES=ON",
+                         "-Dprotobuf_ABSL_PROVIDER=package"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-Dprotobuf_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
