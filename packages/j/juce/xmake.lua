@@ -113,6 +113,8 @@ package("juce")
             component:add("syslinks", "rt", "dl", "pthread")
         elseif package:is_plat("mingw") then
             component:add("syslinks", "uuid", "wsock32", "wininet", "version", "ole32", "ws2_32", "oleaut32", "imm32", "comdlg32", "shlwapi", "rpcrt4", "winmm")
+        elseif package:is_plat("windows") then
+            component:add("syslinks", "kernel32", "user32", "shell32", "gdi32", "vfw32", "comdlg32", "winmm", "wininet", "rpcrt4", "ole32", "advapi32", "ws2_32", "Version", "Imm32", "Shlwapi")
         end
     end)
 
@@ -185,13 +187,16 @@ package("juce")
         end
     end)
 
-    on_install(function (package)
-        package:add("defines", "JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED")
+    on_load(function (package)
         for _, modulename in ipairs(modules) do
             if package:config(modulename) then
                 package:add("components", modulename)
             end
         end
+    end)
+
+    on_install(function (package)
+        package:add("defines", "JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED")
         local configs = {
             kind = package:config("shared") and "shared" or "static"
         }
@@ -203,6 +208,7 @@ package("juce")
     end)
 
     on_test(function (package)
+        --always test juce core
         assert(package:check_cxxsnippets({test = [[
             #include <juce_core/juce_core.h>
             void test() {
@@ -210,4 +216,184 @@ package("juce")
                 std::cout << str << std::endl;
             }
         ]]}, {configs = {languages = "c++17"}}))
+
+        if package:configs("juce_analytics") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_Analytics.h>
+                void test() {
+                    juce::Analytics::getInstance();
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package:configs("juce_audio_basics") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_AudioFormatReader.h>
+                void test() {
+                    juce::AudioFormatReader;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_audio_devices") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_AudioIODeviceType.h>
+                void test() {
+                    juce::AudioIODeviceType;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_audio_formats") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_AudioFormat.h>
+                void test() {
+                    juce::AudioFormat;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_audio_plugin_client") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_AudioProcessor.h>
+                void test() {
+                    juce::AudioProcessor;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_audio_processors") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_AudioProcessorGraph.h>
+                void test() {
+                    juce::AudioProcessorGraph;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_audio_utils") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_AudioThumbnail.h>
+                void test() {
+                    juce::AudioThumbnail;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_box2d") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_Box2D.h>
+                void test() {
+                    juce::Box2D;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_cryptography") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_Cryptography.h>
+                void test() {
+                    juce::Cryptography;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_data_structures") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_DataStructures.h>
+                void test() {
+                    juce::DataStructures;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_dsp") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_DSP.h>
+                void test() {
+                    juce::dsp;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_events") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_Events.h>
+                void test() {
+                    juce::Events;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_graphics") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_Graphics.h>
+                void test() {
+                    juce::Graphics;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_gui_basics") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_GUIBasics.h>
+                void test() {
+                    juce::GUIBasics;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_gui_extra") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_GUIExtra.h>
+                void test() {
+                    juce::GUIExtra;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_midi_ci") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_MidiCI.h>
+                void test() {
+                    juce::MidiCI;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_opengl") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_OpenGL.h>
+                void test() {
+                    juce::OpenGL;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_osc") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_OSC.h>
+                void test() {
+                    juce::OSC;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_product_unlocking") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_ProductUnlocking.h>
+                void test() {
+                    juce::ProductUnlocking;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
+
+        if package::config("juce_video") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <juce_Video.h>
+                void test() {
+                    juce::Video;
+                }
+            ]]}, {configs = {languages = "c++17"}}))
+        end
     end)
