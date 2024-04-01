@@ -11,6 +11,12 @@ package("libjpeg")
 
     add_configs("headeronly", {description = "Install headerfiles only.", default = false, type = "boolean"})
 
+    if is_plat("linux") then
+        add_extsources("apt::libjpeg-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::jpeg/libjpeg")
+    end
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")

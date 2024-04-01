@@ -13,6 +13,7 @@ package("abseil")
     add_versions("20220623.0", "4208129b49006089ba1d6710845a45e31c59b0ab6bff9e5788a87f55c5abd602")
     add_versions("20230125.2", "9a2b5752d7bfade0bdeee2701de17c9480620f8b237e1964c1b9967c75374906")
     add_versions("20230802.1", "987ce98f02eefbaf930d6e38ab16aa05737234d7afbab2d5c4ea7adbe50c28ed")
+    add_versions("20240116.1", "3c743204df78366ad2eaf236d6631d83f6bc928d1705dd0000b872e53b73dc6a")
 
     add_deps("cmake")
 
@@ -31,7 +32,7 @@ package("abseil")
             io.replace(path.join("absl", "synchronization", "internal", "pthread_waiter.h"), "#ifndef _WIN32", "#if !defined(_WIN32) && !defined(__MINGW32__)", {plain = true})
             io.replace(path.join("absl", "synchronization", "internal", "win32_waiter.h"), "#if defined(_WIN32) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", "#if defined(_WIN32) && !defined(__MINGW32__) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", {plain = true})
         end
-        local configs = {"-DCMAKE_CXX_STANDARD=17"}
+        local configs = {"-DCMAKE_CXX_STANDARD=17", "-DABSL_ENABLE_INSTALL=ON", "-DABSL_PROPAGATE_CXX_STD=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
@@ -64,17 +65,17 @@ package("abseil")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include "absl/strings/numbers.h"
+            #include "absl/strings/str_join.h"
             #include <iostream>
             #include <string>
             #include <vector>
-            #include "absl/strings/numbers.h"
-            #include "absl/strings/str_join.h"
-            void test () {
-                std::vector<std::string> v = {"foo","bar","baz"};
-                std::string s = absl::StrJoin(v, "-");
-                int result = 0;
-                auto a = absl::SimpleAtoi("123", &result);
-                std::cout << "Joined string: " << s << "\\n";
+            void test() {
+              std::vector<std::string> v = {"foo", "bar", "baz"};
+              std::string s = absl::StrJoin(v, "-");
+              int result = 0;
+              auto a = absl::SimpleAtoi("123", &result);
+              std::cout << "Joined string: " << s << "\\n";
             }
         ]]}, {configs = {languages = "cxx17"}}))
     end)

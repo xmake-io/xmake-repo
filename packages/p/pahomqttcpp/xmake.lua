@@ -6,6 +6,7 @@ package("pahomqttcpp")
     add_urls("https://github.com/eclipse/paho.mqtt.cpp/archive/refs/tags/$(version).zip",
              "https://github.com/eclipse/paho.mqtt.cpp.git")
 
+    add_versions("v1.3.2", "e01f43cf0ba35efa666503c7adb2786d4a6f7fe6eb44ce5311ac4785a0ce8a98")
     add_versions("v1.2.0", "90c4d8ae4f56bb706120fddcc5937cd0a0360b6f39d5cd5574a5846c0f923473")
     
     add_deps("cmake")

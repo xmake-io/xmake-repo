@@ -5,6 +5,7 @@ package("libspng")
 
     set_urls("https://github.com/randy408/libspng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/randy408/libspng.git")
+    add_versions("v0.7.4", "47ec02be6c0a6323044600a9221b049f63e1953faf816903e7383d4dc4234487")
     add_versions("v0.7.1", "0726a4914ad7155028f3baa94027244d439cd2a2fbe8daf780c2150c4c951d8e")
 
     add_deps("zlib")

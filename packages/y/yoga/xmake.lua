@@ -6,6 +6,8 @@ package("yoga")
     add_urls("https://github.com/facebook/yoga/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebook/yoga.git")
 
+    add_versions("v3.0.2", "73a81c51d9ceb5b95cd3abcafeb4c840041801d59f5048dacce91fbaab0cc6f9")
+    add_versions("v3.0.0", "da4739061315fd5b6442e0658c2541db24ded359f41525359d5e61edb2f45297")
     add_versions("v2.0.1", "4c80663b557027cdaa6a836cc087d735bb149b8ff27cbe8442fc5e09cec5ed92")
 
     add_configs("shared", {description = "Build shared binaries", default = false, type = "boolean", readonly = true})

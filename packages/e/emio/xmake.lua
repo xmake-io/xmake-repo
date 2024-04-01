@@ -6,6 +6,7 @@ package("emio")
     add_urls("https://github.com/viatorus/emio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/viatorus/emio.git")
 
+    add_versions("0.7.0", "1ef5304964eee109c13477f2d84822ee474612475049a377b59e33a5fe05d7eb")
     add_versions("0.4.0", "847198a37fbf9dcc00ac85fbc64b283e41a018f53c39363129a4bdb9939338a6")
 
     add_deps("cmake")

@@ -13,6 +13,7 @@ package("libtorch")
     add_versions("v1.11.0", "bc2c6edaf163b1a1330e37a6e34caf8c553e4755")
     add_versions("v1.12.1", "664058fa83f1d8eede5d66418abff6e20bd76ca8")
     add_versions("v2.1.0", "7bcf7da3a268b435777fe87c7794c382f444e86d")
+    add_versions("v2.1.2", "a8e7c98cb95ff97bb30a728c6b2a1ce6bff946eb")
 
     add_patches("1.9.x", path.join(os.scriptdir(), "patches", "1.9.0", "gcc11.patch"), "4191bb3296f18f040c230d7c5364fb160871962d6278e4ae0f8bc481f27d8e4b")
     add_patches("1.11.0", path.join(os.scriptdir(), "patches", "1.11.0", "gcc11.patch"), "1404b0bc6ce7433ecdc59d3412e3d9ed507bb5fd2cd59134a254d7d4a8d73012")
@@ -20,12 +21,13 @@ package("libtorch")
     add_patches("1.12.1", path.join(os.scriptdir(), "patches", "1.12.1", "clang.patch"), "cdc3e00b2fea847678b1bcc6b25a4dbd924578d8fb25d40543521a09aab2f7d4")
     add_patches("1.12.1", path.join(os.scriptdir(), "patches", "1.12.1", "vs2022.patch"), "5a31b9772793c943ca752c92d6415293f7b3863813ca8c5eb9d92a6156afd21d")
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
-    add_configs("python", {description = "Build python interface.", default = false, type = "boolean"})
-    add_configs("openmp", {description = "Use OpenMP for parallel code.", default = true, type = "boolean"})
-    add_configs("cuda",   {description = "Enable CUDA support.", default = false, type = "boolean"})
-    add_configs("ninja",  {description = "Use ninja as build tool.", default = false, type = "boolean"})
-    add_configs("blas",   {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas", "eigen"}})
+    add_configs("shared",   {description = "Build shared library.", default = true, type = "boolean"})
+    add_configs("python",   {description = "Build python interface.", default = false, type = "boolean"})
+    add_configs("openmp",   {description = "Use OpenMP for parallel code.", default = true, type = "boolean"})
+    add_configs("cuda",     {description = "Enable CUDA support.", default = false, type = "boolean"})
+    -- https://github.com/pytorch/pytorch/issues/24186 only ninja is supported on windows
+    add_configs("ninja",    {description = "Use ninja as build tool.", default = is_plat("windows"), type = "boolean"})
+    add_configs("blas",     {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas", "eigen"}})
     add_configs("pybind11", {description = "Use pybind11 from xrepo.", default = false, type = "boolean"})
     add_configs("protobuf-cpp", {description = "Use protobuf from xrepo.", default = false, type = "boolean"})
     if not is_plat("macosx") then
@@ -46,7 +48,7 @@ package("libtorch")
         set_policy("platform.longpaths", true)
     end
 
-    on_load("windows|x64", "macosx", "linux", function (package)
+    on_load("windows|x64", "macosx|x86_64", "linux", function (package)
         if package:config("ninja") then
             package:add("deps", "ninja")
         end
@@ -71,7 +73,7 @@ package("libtorch")
         end
     end)
 
-    on_install("windows|x64", "macosx", "linux", function (package)
+    on_install("windows|x64", "macosx|x86_64", "linux", function (package)
         import("package.tools.cmake")
         import("core.tool.toolchain")
 

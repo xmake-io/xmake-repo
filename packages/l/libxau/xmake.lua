@@ -5,6 +5,7 @@ package("libxau")
 
     set_urls("https://www.x.org/archive/individual/lib/libXau-$(version).tar.gz")
     add_versions("1.0.10", "51a54da42475d4572a0b59979ec107c27dacf6c687c2b7b04e5cf989a7c7e60c")
+    add_versions("1.0.11", "3a321aaceb803577a4776a5efe78836eb095a9e44bbc7a465d29463e1a14f189")
 
     if is_plat("linux") then
         add_extsources("apt::libxau-dev", "pacman::libxau")

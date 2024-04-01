@@ -29,8 +29,15 @@ jobs:
         run: |
           # TODO we will remove it later
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev clang libomp-dev libc++-dev p7zip
+          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev p7zip
+
+      - name: Installation Clang Toolchain
+        run: |
+          # https://apt.llvm.org/
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 17 all
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -vD --toolchain=clang -k ${{ matrix.kind }}
+          xmake l ./scripts/test.lua -vD --toolchain=clang-17 -k ${{ matrix.kind }}

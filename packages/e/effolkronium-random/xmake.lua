@@ -6,6 +6,7 @@ package("effolkronium-random")
 
     add_urls("https://github.com/effolkronium/random/archive/refs/tags/$(version).tar.gz",
              "https://github.com/effolkronium/random.git")
+    add_versions("v1.5.0", "c05a042f8daf54913e3a836e10a213bbbeaf09a89630649bd0011fe65eff50d9")
     add_versions("v1.4.1", "ec6beb67496ad2ce722d311d3fa5efb7e847dac5fd1c16b8920b51562fe20f53")
 
     on_install(function (package)
