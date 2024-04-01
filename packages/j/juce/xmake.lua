@@ -235,7 +235,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_audio_devices") then
+        if package:config("juce_audio_devices") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioIODeviceType.h>
                 void test() {
@@ -244,7 +244,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_audio_formats") then
+        if package:config("juce_audio_formats") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioFormat.h>
                 void test() {
@@ -253,7 +253,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_audio_plugin_client") then
+        if package:config("juce_audio_plugin_client") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioProcessor.h>
                 void test() {
@@ -262,7 +262,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_audio_processors") then
+        if package:config("juce_audio_processors") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioProcessorGraph.h>
                 void test() {
@@ -271,7 +271,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_audio_utils") then
+        if package:config("juce_audio_utils") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioThumbnail.h>
                 void test() {
@@ -280,7 +280,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_box2d") then
+        if package:config("juce_box2d") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Box2D.h>
                 void test() {
@@ -289,7 +289,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_cryptography") then
+        if package:config("juce_cryptography") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Cryptography.h>
                 void test() {
@@ -298,7 +298,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_data_structures") then
+        if package:config("juce_data_structures") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_DataStructures.h>
                 void test() {
@@ -307,7 +307,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_dsp") then
+        if package:config("juce_dsp") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_DSP.h>
                 void test() {
@@ -316,7 +316,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_events") then
+        if package:config("juce_events") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Events.h>
                 void test() {
@@ -325,7 +325,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_graphics") then
+        if package:config("juce_graphics") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Graphics.h>
                 void test() {
@@ -334,7 +334,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_gui_basics") then
+        if package:config("juce_gui_basics") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_GUIBasics.h>
                 void test() {
@@ -343,7 +343,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_gui_extra") then
+        if package:config("juce_gui_extra") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_GUIExtra.h>
                 void test() {
@@ -352,7 +352,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_midi_ci") then
+        if package:config("juce_midi_ci") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_MidiCI.h>
                 void test() {
@@ -361,7 +361,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_opengl") then
+        if package:config("juce_opengl") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_OpenGL.h>
                 void test() {
@@ -370,7 +370,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_osc") then
+        if package:config("juce_osc") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_OSC.h>
                 void test() {
@@ -379,7 +379,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_product_unlocking") then
+        if package:config("juce_product_unlocking") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_ProductUnlocking.h>
                 void test() {
@@ -388,7 +388,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package::config("juce_video") then
+        if package:config("juce_video") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Video.h>
                 void test() {
