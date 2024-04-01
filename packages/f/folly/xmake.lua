@@ -38,7 +38,7 @@ package("folly")
         add_syslinks("pthread")
     end
 
-    on_install("linux", "macosx", "windows|x64", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_LibDwarf=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_Libiberty=ON",
