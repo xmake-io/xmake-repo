@@ -7,6 +7,7 @@ package("reactiveplusplus")
     add_urls("https://github.com/victimsnino/ReactivePlusPlus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/victimsnino/ReactivePlusPlus.git")
 
+    add_versions("v2.1.1", "0b962478d7c973a1f74062ce7f8d24c2fdcd2733031b1f014e65d252d59ebe6a")
     add_versions("v0.2.3", "9542419f8d7da98126ba2c6ae08fab287b4b3798d89cf75ed9bed2a9e3ec1678")
 
     add_deps("cmake")
