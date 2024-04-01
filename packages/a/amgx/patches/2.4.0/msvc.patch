@@ -1,0 +1,27 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7bc0f1b9..7b0b606e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,6 +30,7 @@ cmake_minimum_required (VERSION 3.18)
+ project (AMG LANGUAGES C CXX CUDA)
+ 
+ find_package(MPI)
++find_package(OpenMP)
+ 
+ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cmake" ${CMAKE_MODULE_PATH})
+ 
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index b7fbef7d..0d77ddc7 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -107,9 +107,7 @@ ELSE()
+     set(libs_all CUDA::cusparse CUDA::cublas rt dl)
+ ENDIF()
+ 
+-add_dependencies(amgx_tests_launcher amgx_tests_library)
+-
+-target_link_libraries(amgx_tests_launcher amgxsh ${libs_all} OpenMP::OpenMP_C)
++target_link_libraries(amgx_tests_launcher amgx_tests_library amgxsh ${libs_all} OpenMP::OpenMP_C)
+ 
+ if(MPI_FOUND)
+     target_link_libraries(amgx_tests_launcher MPI::MPI_CXX)
