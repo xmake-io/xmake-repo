@@ -1,5 +1,4 @@
 package("chipmunk2d")
-
     set_homepage("https://chipmunk-physics.net/")
     set_description("A fast and lightweight 2D game physics library.")
     set_license("MIT")
@@ -23,6 +22,8 @@ package("chipmunk2d")
 
     if is_plat("linux") then
         add_syslinks("pthread", "m")
+    elseif is_plat("android") then
+        add_syslinks("log", "m")
     end
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
