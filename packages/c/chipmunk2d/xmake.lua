@@ -8,7 +8,7 @@ package("chipmunk2d")
 
     add_versions("archive:7.0.3", "1e6f093812d6130e45bdf4cb80280cb3c93d1e1833d8cf989d554d7963b7899a")
     add_versions("github:7.0.3", "87340c216bf97554dc552371bbdecf283f7c540e")
-    add_patches("7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "08e80020880e9bf3c61b48d41537d953e7bf6a63797eb8bcd6b78ba038b79d8f")
+    add_patches("7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "d0bbefe66852cdadb974dce24d4383c356bc3fa88656739ff1d5baf4e3792a96")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::chipmunk")
