@@ -217,7 +217,7 @@ package("juce")
             }
         ]]}, {configs = {languages = "c++17"}}))
 
-        if package:configs("juce_analytics") then
+        if package:config("juce_analytics") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Analytics.h>
                 void test() {
@@ -226,7 +226,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:configs("juce_audio_basics") then
+        if package:config("juce_audio_basics") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioFormatReader.h>
                 void test() {
