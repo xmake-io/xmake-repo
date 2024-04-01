@@ -67,14 +67,24 @@ package("libremidi")
     end)
 
     on_test(function (package)
-        -- TODO: v4 version will break api
-        assert(package:check_cxxsnippets({test = [[
-            #include <libremidi/libremidi.hpp>
-            void test() {
-                libremidi::midi_in midi;
-                for (int i = 0, N = midi.get_port_count(); i < N; i++) {
-                    std::string name = midi.get_port_name(i);
+        local code
+        if package:version():lt("4.0.0") then
+            code = [[
+                void test() {
+                    libremidi::midi_in midi;
+                    for (int i = 0, N = midi.get_port_count(); i < N; i++) {
+                        std::string name = midi.get_port_name(i);
+                    }
                 }
-            }
-        ]]}, {configs = {languages = "c++20"}}))
+            ]]
+        else
+            code = [[
+                void test() {
+                    libremidi::observer obs;
+                    for(const libremidi::input_port& port : obs.get_input_ports()) {}
+                }
+            ]]
+        end
+
+        assert(package:check_cxxsnippets({test = code}, {configs = {languages = "c++20"}, includes = {"libremidi/libremidi.hpp"}}))
     end)
