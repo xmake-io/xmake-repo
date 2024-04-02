@@ -25,5 +25,12 @@ package("audiofile")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("AudioFile.h"))
+        assert(package:check_cxxsnippets({test = [[
+            #include <AudioFile.h>
+
+            void test () {
+                AudioFile<float> audioFile;
+                audioFile.load("somerandomfile.wav");
+            }
+        ]]}, {configs = {languages = "c++17"}}))
     end)
