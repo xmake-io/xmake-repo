@@ -111,7 +111,6 @@ package("juce")
             component:add("frameworks", "Cocoa", "Foundation", "IOKit", "Security")
         elseif package:is_plat("linux") then
             component:add("syslinks", "rt", "dl", "pthread")
-            component:add("deps", "curl")
         elseif package:is_plat("mingw") then
             component:add("syslinks", "uuid", "wsock32", "wininet", "version", "ole32", "ws2_32", "oleaut32", "imm32", "comdlg32", "shlwapi", "rpcrt4", "winmm")
         elseif package:is_plat("windows") then
@@ -193,6 +192,9 @@ package("juce")
             if package:config(modulename) then
                 package:add("components", modulename)
             end
+        end
+        if package:is_plat("linux") then
+            package:add("deps", "libcurl")
         end
     end)
 
