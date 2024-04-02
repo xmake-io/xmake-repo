@@ -1,65 +1,133 @@
 add_rules("mode.debug", "mode.release")
 
-option("juce_analytics",            {showmenu = true,  default = false})
-option("juce_audio_basics",         {showmenu = true,  default = false})
-option("juce_audio_devices",        {showmenu = true,  default = false})
-option("juce_audio_formats",        {showmenu = true,  default = false})
-option("juce_audio_plugin_client",  {showmenu = true,  default = false})
-option("juce_audio_processors",     {showmenu = true,  default = false})
-option("juce_audio_utils",          {showmenu = true,  default = false})
-option("juce_box2d",                {showmenu = true,  default = false})
-option("juce_core",                 {showmenu = true,  default = true})
-option("juce_cryptography",         {showmenu = true,  default = false})
-option("juce_data_structures",      {showmenu = true,  default = false})
-option("juce_dsp",                  {showmenu = true,  default = false})
-option("juce_events",               {showmenu = true,  default = false})
-option("juce_graphics",             {showmenu = true,  default = false})
-option("juce_gui_basics",           {showmenu = true,  default = false})
-option("juce_gui_extra",            {showmenu = true,  default = false})
-option("juce_midi_ci",              {showmenu = true,  default = false})
-option("juce_opengl",               {showmenu = true,  default = false})
-option("juce_osc",                  {showmenu = true,  default = false})
-option("juce_product_unlocking",    {showmenu = true,  default = false})
-option("juce_video",                 {showmenu = true,  default = false})
-option("utf8",                      {showmenu = true,  default = "8"})
-
+option("utf", {showmenu = true,  default = "8"})
 
 local modules = {
-    "juce_analytics",
-    "juce_audio_basics",
-    "juce_audio_devices",
-    "juce_audio_formats",
-    "juce_audio_plugin_client",
-    "juce_audio_processors",
-    "juce_audio_utils",
-    "juce_box2d",
-    "juce_core",
-    "juce_cryptography",
-    "juce_data_structures",
-    "juce_dsp",
-    "juce_events",
-    "juce_graphics",
-    "juce_gui_basics",
-    "juce_gui_extra",
-    "juce_midi_ci",
-    "juce_opengl",
-    "juce_osc",
-    "juce_product_unlocking",
-    "juce_video"
+    juce_analytics = {},
+    juce_audio_basics = {
+        links = {
+            iphoneos = {"Accelerate"},
+            macosx = {"Accelerate"},
+        },
+    },
+    juce_audio_devices = {
+        links = {
+            iphoneos = {"CoreAudio", "CoreMIDI", "AudioToolbox"},
+            macosx = {"CoreAudio", "CoreMIDI", "AudioToolbox", "AVFoundation"},
+            linux = {"alsa"},
+            mingw = {"winmm"}
+        }
+    },
+    juce_audio_formats = {
+        links = {
+            iphoneos = {"AudioToolbox", "QuartzCore"},
+            macosx = {"CoreAudio", "CoreMIDI", "QuartzCore", "AudioToolbox"},
+        }
+    },
+    juce_audio_plugin_client = {},
+    juce_audio_processors = {
+        links = {
+            iphoneos = {"AudioToolbox"},
+            macosx = {"CoreAudio", "CoreMIDI", "AudioToolbox"},
+        },
+    },
+    juce_audio_utils = {
+        links = {
+            iphoneos = {"CoreAudioKit"},
+            macosx = {"CoreAudioKit", "DiscRecording"},
+        },
+    },
+    juce_box2d = {},
+    juce_core = {
+        links = {
+            windows = {"kernel32", "user32", "shell32", "gdi32", "vfw32", "comdlg32", "winmm", "wininet", "rpcrt4", "ole32", "advapi32", "ws2_32", "Version", "Imm32", "Shlwapi"},
+            linux = {"rt", "dl", "pthread"},
+            macosx = {"Cocoa", "Foundation", "IOKit", "Security"},
+            iphoneos = {"Foundation"},
+            mingw = {"uuid", "wsock32", "wininet", "version", "ole32", "ws2_32", "oleaut32", "imm32", "comdlg32", "shlwapi", "rpcrt4", "winmm"}
+        },
+        packages = {
+            "libcurl"
+        }
+    },
+    juce_cryptography = {},
+    juce_data_structures = {},
+    juce_dsp = {
+        links = {
+            iphoneos = {"Accelerate"},
+            macosx = {"Accelerate"},
+        },
+    },
+    juce_events = {},
+    juce_graphics = {
+        links = {
+            iphoneos = {"CoreGraphics", "CoreImage", "CoreText", "QuartzCore"},
+            macosx = {"Cocoa", "QuartzCore"},
+            linux = {"freetype2"}
+        },
+    },
+    juce_gui_basics = {
+        links = {
+            iphoneos = {"CoreServices", "UIKit", "Metal", "MetalKit"},
+            macosx = {"Cocoa", "QuartzCore", "Metal", "MetalKit"},
+            linux = {"freetype2"},
+            mingw = {"dxgi"}
+        },
+    },
+    juce_gui_extra = {
+        links = {
+            iphoneos = {"WebKit", "UserNotifications"},
+            macosx = {"WebKit", "UserNotifications"},
+        },
+    },
+    juce_midi_ci = {},
+    juce_opengl = {
+        links = {
+            iphoneos = {"OpenGLES"},
+            macosx = {"OpenGL"},
+            linux = {"hl"},
+            mingw = {"opengl32"}
+        },
+    },
+    juce_osc = {},
+    juce_product_unlocking = {},
+    juce_video = {
+        links = {
+            iphoneos = {"AVKit", "AVFoundation", "CoreMedia"},
+            macosx = {"AVKit", "AVFoundation", "CoreMedia"},
+        },
+    }
 }
+
+for modulename, config in pairs(modules) do
+    option(modulename, {showmenu = true,  default = false})
+    if config.packages then
+        for _, package in ipairs(config.packages) do
+            add_requires(package)
+        end
+    end
+end
 
 target("juce")
     set_kind("$(kind)")
     set_languages("cxx17")
-
     add_defines("JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED", {public = true})
-    add_defines("JUCE_STRING_UTF_TYPE=8", {public = true})
+
+    if has_config("utf") then
+        add_defines("JUCE_STRING_UTF_TYPE=" .. get_config("utf") , {public = true})
+    else
+        add_defines("JUCE_STRING_UTF_TYPE=8", {public = true})
+    end
 
     if is_kind("shared") then
         add_defines("JUCE_DLL_BUILD")
     end
 
-    for _, module in ipairs(modules) do
+    if is_mode('debug') then
+        set_symbols('debug')
+    end
+
+    for module, options in pairs(modules) do
         if has_config(module) then
             add_files("modules/" .. module .. "/" .. module .. ".cpp")
             add_includedirs("modules/", { public = true })
@@ -67,6 +135,16 @@ target("juce")
             for _, dir in ipairs(os.dirs("modules/" .. module .. "/**")) do
                 add_includedirs(dir, { public = true })
                 add_headerfiles("modules/(" .. dir:gsub("modules\\", "") .. "/*.h)")
+            end
+
+            if options.links then
+                add_links(options.links)
+            end
+
+            if options.packages then
+                for _, package in ipairs(options.packages) do
+                    add_packages(package)
+                end
             end
         end
     end

@@ -201,7 +201,8 @@ package("juce")
     on_install(function (package)
         package:add("defines", "JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED")
         local configs = {
-            kind = package:config("shared") and "shared" or "static"
+            kind = package:config("shared") and "shared" or "static",
+            utf = package:config("utf")
         }
         for _, modulename in ipairs(modules) do
             configs[modulename] = package:config(modulename)
