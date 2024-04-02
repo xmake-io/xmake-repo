@@ -6,6 +6,7 @@ package("ozz-animation")
     add_urls("https://github.com/guillaumeblanc/ozz-animation/archive/refs/tags/$(version).tar.gz",
              "https://github.com/guillaumeblanc/ozz-animation.git")
 
+    add_versions("0.15.0", "2a995b921e4244c419f1c3a4dc4aa0805c0dc40fa32244a24cf64125e87161ae")
     add_versions("0.14.3", "1ab7d2fbf4c5a79aafac43cbd41ac9cff1e7f750248bee5141da5ee2d893cefe")
     add_versions("0.14.2", "52938e5a699b2c444dfeb2375facfbb7b1e3d405b424e361ad1a27391a53b89a")
 
