@@ -6,6 +6,7 @@ package("dispenso")
     add_urls("https://github.com/facebookincubator/dispenso/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebookincubator/dispenso.git")
 
+    add_versions("v1.2.0", "a44d9cf2f9234f5cbdbe4050fd26e63f3266b64955731651adf04dbb7f6b31df")
     add_versions("v1.1.0", "581f95c16cd479692bc89448d0648f6ce24162454308c544c4d35bf5e9efe5c8")
 
     if is_plat("linux", "bsd") then
