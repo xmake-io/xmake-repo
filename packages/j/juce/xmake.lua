@@ -38,7 +38,7 @@ package("juce")
         "juce_video"
     }
 
-    for _, modulename in pairs(modules) do
+    for _, modulename in ipairs(modules) do
         add_configs(modulename, {description = format("Enable %s module", modulename:gsub("_", " ")), default = modulename == "juce_core" and true or false, type = "boolean", readonly = modulename == "juce_core" and true or false})
     end
 
@@ -208,7 +208,6 @@ package("juce")
     end)
 
     on_test(function (package)
-        --always test juce core
         assert(package:check_cxxsnippets({test = [[
             #include <juce_core/juce_core.h>
             void test() {
