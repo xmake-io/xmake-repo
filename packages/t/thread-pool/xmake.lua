@@ -6,6 +6,7 @@ package("thread-pool")
 
     add_urls("https://github.com/bshoshany/thread-pool/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bshoshany/thread-pool.git")
+    add_versions("v4.1.0", "be7abecbc420bb87919eeef729b13ff7c29d5ce547bdae284923296c695415bd")
     add_versions("v3.3.0", "b76c0103c7ed07c137bd5b1988b9c09da280bbbad37588a096d2954c8d996e0f")
 
     on_install(function (package)
