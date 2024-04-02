@@ -132,9 +132,14 @@ target("juce")
             add_files("modules/" .. module .. "/" .. module .. ".cpp")
             add_includedirs("modules/", { public = true })
             add_headerfiles("modules/(" .. module .. "/" .. module .. ".h)")
+
             for _, dir in ipairs(os.dirs("modules/" .. module .. "/**")) do
                 add_includedirs(dir, { public = true })
-                add_headerfiles("modules/(" .. dir:gsub("modules\\", "") .. "/*.h)")
+            end
+
+            for _, dir in ipairs(os.files("modules/" .. module .. "/**.h")) do
+                dir = dir:gsub("\\", "/"):gsub("modules/", "")
+                add_headerfiles("modules/(" .. dir .. ")")
             end
 
             if options.links then

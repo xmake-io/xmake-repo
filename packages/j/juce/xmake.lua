@@ -104,7 +104,6 @@ package("juce")
     end)
 
     on_component("juce_core", function (package, component)
-        component:add("deps", "juce_audio_processors", "juce_audio_formats", "juce_audio_devices")
         if package:is_plat("iphoneos") then
             component:add("frameworks", "Foundation")
         elseif package:is_plat("macosx") then
