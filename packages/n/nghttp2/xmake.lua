@@ -1,5 +1,4 @@
 package("nghttp2")
-
     set_homepage("http://nghttp2.org/")
     set_description("nghttp2 is an implementation of HTTP/2 and its header compression algorithm HPACK in C.")
     set_license("MIT")
@@ -24,6 +23,8 @@ package("nghttp2")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
         if package:is_plat("windows") then
             table.insert(configs, "-DENABLE_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
