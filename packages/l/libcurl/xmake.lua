@@ -134,7 +134,7 @@ package("libcurl")
                                     if libname:startswith("lib") then
                                         libname = libname:sub(4)
                                     end
-                                    for suffix, opt in pairs(libconfig) do
+                                    for opt, suffix in pairs(libconfig) do
                                         if libname:endswith(suffix) then
                                             table.insert(configs, "-D" .. opt .. "=" .. libfile:gsub("\\", "/"))
                                         end
@@ -150,9 +150,9 @@ package("libcurl")
                 end
             end
         end
-        handledependency("brotli", "brotli", "BROTLI_INCLUDE_DIR", {brotlicommon = "BROTLICOMMON_LIBRARY", brotlidec = "BROTLIDEC_LIBRARY"})
-        handledependency("openssl", "openssl", "OPENSSL_INCLUDE_DIR", {crypto = "OPENSSL_CRYPTO_LIBRARY", ssl = "OPENSSL_SSL_LIBRARY"})
-        handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {mbedtls = "MBEDTLS_LIBRARY", mbedx509 = "MBEDX509_LIBRARY", mbedcrypto = "MBEDCRYPTO_LIBRARY"})
+        handledependency("brotli", "brotli", "BROTLI_INCLUDE_DIR", {BROTLICOMMON_LIBRARY = "brotlicommon", BROTLIDEC_LIBRARY = "brotlidec"})
+        handledependency("openssl", "openssl", "OPENSSL_INCLUDE_DIR", {OPENSSL_CRYPTO_LIBRARY = "crypto", OPENSSL_SSL_LIBRARY = "ssl"})
+        handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {MBEDTLS_LIBRARY = "mbedtls", MBEDX509_LIBRARY = "mbedx509", MBEDCRYPTO_LIBRARY = "mbedcrypto"})
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
         table.insert(configs, "--trace-expand")
