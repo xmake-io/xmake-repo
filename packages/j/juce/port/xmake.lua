@@ -5,13 +5,13 @@ option("utf", {showmenu = true,  default = "8"})
 local modules = {
     juce_analytics = {},
     juce_audio_basics = {
-        links = {
+        syslinks = {
             iphoneos = {"Accelerate"},
             macosx = {"Accelerate"},
         },
     },
     juce_audio_devices = {
-        links = {
+        syslinks = {
             iphoneos = {"CoreAudio", "CoreMIDI", "AudioToolbox"},
             macosx = {"CoreAudio", "CoreMIDI", "AudioToolbox", "AVFoundation"},
             linux = {"alsa"},
@@ -19,27 +19,27 @@ local modules = {
         }
     },
     juce_audio_formats = {
-        links = {
+        syslinks = {
             iphoneos = {"AudioToolbox", "QuartzCore"},
             macosx = {"CoreAudio", "CoreMIDI", "QuartzCore", "AudioToolbox"},
         }
     },
     juce_audio_plugin_client = {},
     juce_audio_processors = {
-        links = {
+        syslinks = {
             iphoneos = {"AudioToolbox"},
             macosx = {"CoreAudio", "CoreMIDI", "AudioToolbox"},
         },
     },
     juce_audio_utils = {
-        links = {
+        syslinks = {
             iphoneos = {"CoreAudioKit"},
             macosx = {"CoreAudioKit", "DiscRecording"},
         },
     },
     juce_box2d = {},
     juce_core = {
-        links = {
+        syslinks = {
             windows = {"kernel32", "user32", "shell32", "gdi32", "vfw32", "comdlg32", "winmm", "wininet", "rpcrt4", "ole32", "advapi32", "ws2_32", "Version", "Imm32", "Shlwapi"},
             linux = {"rt", "dl", "pthread"},
             macosx = {"Cocoa", "Foundation", "IOKit", "Security"},
@@ -53,21 +53,21 @@ local modules = {
     juce_cryptography = {},
     juce_data_structures = {},
     juce_dsp = {
-        links = {
+        syslinks = {
             iphoneos = {"Accelerate"},
             macosx = {"Accelerate"},
         },
     },
     juce_events = {},
     juce_graphics = {
-        links = {
+        syslinks = {
             iphoneos = {"CoreGraphics", "CoreImage", "CoreText", "QuartzCore"},
             macosx = {"Cocoa", "QuartzCore"},
             linux = {"freetype2"}
         },
     },
     juce_gui_basics = {
-        links = {
+        syslinks = {
             iphoneos = {"CoreServices", "UIKit", "Metal", "MetalKit"},
             macosx = {"Cocoa", "QuartzCore", "Metal", "MetalKit"},
             linux = {"freetype2"},
@@ -75,14 +75,14 @@ local modules = {
         },
     },
     juce_gui_extra = {
-        links = {
+        syslinks = {
             iphoneos = {"WebKit", "UserNotifications"},
             macosx = {"WebKit", "UserNotifications"},
         },
     },
     juce_midi_ci = {},
     juce_opengl = {
-        links = {
+        syslinks = {
             iphoneos = {"OpenGLES"},
             macosx = {"OpenGL"},
             linux = {"hl"},
@@ -92,7 +92,7 @@ local modules = {
     juce_osc = {},
     juce_product_unlocking = {},
     juce_video = {
-        links = {
+        syslinks = {
             iphoneos = {"AVKit", "AVFoundation", "CoreMedia"},
             macosx = {"AVKit", "AVFoundation", "CoreMedia"},
         },
@@ -142,8 +142,10 @@ target("juce")
                 add_headerfiles("modules/(" .. dir .. ")")
             end
 
-            if options.links then
-                add_links(options.links)
+            if options.syslinks and options.syslinks[os.host()] then
+                for _, syslinks in ipairs(options.syslinks[os.host()]) do
+                    add_syslinks(syslinks)
+                end
             end
 
             if options.packages then
