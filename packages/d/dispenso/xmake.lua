@@ -25,6 +25,7 @@ package("dispenso")
         table.insert(configs, "-DDISPENSO_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
 
         io.replace("dispenso/CMakeLists.txt", "-Werror", "", {plain = true})
+        io.replace("dispenso/CMakeLists.txt", "/WX", "", {plain = true})
         io.replace("dispenso/CMakeLists.txt", "Synchronization", "Synchronization winmm", {plain = true})
         import("package.tools.cmake").install(package, configs)
 
