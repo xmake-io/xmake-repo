@@ -144,7 +144,11 @@ target("juce")
 
             if options.syslinks and options.syslinks[os.host()] then
                 for _, syslinks in ipairs(options.syslinks[os.host()]) do
-                    add_syslinks(syslinks)
+                    if is_plat("macosx") or is_plat("iphoneos") then
+                        add_frameworks(syslinks)
+                    else
+                        add_syslinks(syslinks)
+                    end
                 end
             end
 
