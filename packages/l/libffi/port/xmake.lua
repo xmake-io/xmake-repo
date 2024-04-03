@@ -172,5 +172,7 @@ end
         add_headerfiles("src/wasm32/ffitarget.h")
     end
     before_build(function (target)
-        io.replace("include/ffi.h", "!defined FFI_BUILDING", target:is_static() and "0" or "1", {plain = true})
+        if target:version():le("v3.4.4") then
+            io.replace("include/ffi.h", "!defined FFI_BUILDING", target:is_static() and "0" or "1", {plain = true})
+        end
     end)
