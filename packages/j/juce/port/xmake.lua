@@ -46,6 +46,10 @@ local modules = {
             iphoneos = {"Foundation"},
             mingw = {"uuid", "wsock32", "wininet", "version", "ole32", "ws2_32", "oleaut32", "imm32", "comdlg32", "shlwapi", "rpcrt4", "winmm"}
         },
+        flags = {
+            macosx = {"x", "objective-c++"},
+            iphoneos = {"x", "objective-c++"}
+        },
         packages = {
             "libcurl"
         }
@@ -144,11 +148,13 @@ target("juce")
 
             if options.syslinks and options.syslinks[os.host()] then
                 for _, syslinks in ipairs(options.syslinks[os.host()]) do
-                    if is_plat("macosx") or is_plat("iphoneos") then
-                        add_frameworks(syslinks)
-                    else
                         add_syslinks(syslinks)
-                    end
+                end
+            end
+
+            if options.flags and options.flags[os.host()] then
+                for _, flags in ipairs(options.flags[os.host()]) do
+                        add_cxxflags(flags)
                 end
             end
 
