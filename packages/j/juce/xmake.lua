@@ -38,10 +38,6 @@ package("juce")
         "video"
     }
 
-    for _, modulename in ipairs(modules) do
-        add_configs(modulename, {description = format("Enable %s module", modulename:gsub("_", " ")), default = modulename == "core" and true or false, type = "boolean", readonly = modulename == "core" and true or false})
-    end
-
     add_configs("utf", {description = "Set the character encoding type", default = "8", values = {"8", "16", "32"}})
 
     on_component("analytics", function (package, component)
@@ -202,9 +198,6 @@ package("juce")
         local configs = {
             utf = package:config("utf")
         }
-        for _, modulename in ipairs(modules) do
-            configs["juce_" .. modulename] = package:config(modulename)
-        end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
@@ -220,7 +213,7 @@ package("juce")
 
         if package:config("analytics") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_Analytics.h>
+                #include <juce_analytics/juce_Analytics.h>
                 void test() {
                     juce::Analytics::getInstance();
                 }
@@ -229,7 +222,7 @@ package("juce")
 
         if package:config("audio_basics") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_AudioFormatReader.h>
+                #include <juce_audio_basics/juce_AudioFormatReader.h>
                 void test() {
                     juce::AudioFormatReader;
                 }
@@ -238,7 +231,7 @@ package("juce")
 
         if package:config("audio_devices") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_AudioIODeviceType.h>
+                #include <juce_audio_devices/juce_AudioIODeviceType.h>
                 void test() {
                     juce::AudioIODeviceType;
                 }
@@ -247,7 +240,7 @@ package("juce")
 
         if package:config("audio_formats") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_AudioFormat.h>
+                #include <juce_audio_formats/juce_AudioFormat.h>
                 void test() {
                     juce::AudioFormat;
                 }
@@ -256,7 +249,7 @@ package("juce")
 
         if package:config("audio_plugin_client") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_AudioProcessor.h>
+                #include <juce_audio_plugin_client/juce_AudioProcessor.h>
                 void test() {
                     juce::AudioProcessor;
                 }
@@ -265,7 +258,7 @@ package("juce")
 
         if package:config("audio_processors") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_AudioProcessorGraph.h>
+                #include <juce_audio_processors/juce_AudioProcessorGraph.h>
                 void test() {
                     juce::AudioProcessorGraph;
                 }
@@ -274,7 +267,7 @@ package("juce")
 
         if package:config("audio_utils") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_AudioThumbnail.h>
+                #include <juce_audio_utils/juce_AudioThumbnail.h>
                 void test() {
                     juce::AudioThumbnail;
                 }
@@ -283,7 +276,7 @@ package("juce")
 
         if package:config("box2d") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_Box2D.h>
+                #include <juce_box2d/juce_Box2D.h>
                 void test() {
                     juce::Box2D;
                 }
@@ -292,7 +285,7 @@ package("juce")
 
         if package:config("cryptography") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_Cryptography.h>
+                #include <juce_cryptography/juce_Cryptography.h>
                 void test() {
                     juce::Cryptography;
                 }
@@ -301,7 +294,7 @@ package("juce")
 
         if package:config("data_structures") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_DataStructures.h>
+                #include <juce_data_structures/juce_DataStructures.h>
                 void test() {
                     juce::DataStructures;
                 }
@@ -310,7 +303,7 @@ package("juce")
 
         if package:config("dsp") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_DSP.h>
+                #include <juce_dsp/juce_DSP.h>
                 void test() {
                     juce::dsp;
                 }
@@ -319,7 +312,7 @@ package("juce")
 
         if package:config("events") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_Events.h>
+                #include <juce_events/juce_Events.h>
                 void test() {
                     juce::Events;
                 }
@@ -328,7 +321,7 @@ package("juce")
 
         if package:config("graphics") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_Graphics.h>
+                #include <juce_graphics/juce_Graphics.h>
                 void test() {
                     juce::Graphics;
                 }
@@ -337,7 +330,7 @@ package("juce")
 
         if package:config("gui_basics") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_GUIBasics.h>
+                #include <juce_gui_basics/juce_GUIBasics.h>
                 void test() {
                     juce::GUIBasics;
                 }
@@ -346,7 +339,7 @@ package("juce")
 
         if package:config("gui_extra") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_GUIExtra.h>
+                #include <juce_gui_extra/juce_GUIExtra.h>
                 void test() {
                     juce::GUIExtra;
                 }
@@ -355,7 +348,7 @@ package("juce")
 
         if package:config("midi_ci") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_MidiCI.h>
+                #include <juce_midi_ci/juce_MidiCI.h>
                 void test() {
                     juce::MidiCI;
                 }
@@ -364,7 +357,7 @@ package("juce")
 
         if package:config("opengl") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_OpenGL.h>
+                #include <juce_opengl/juce_OpenGL.h>
                 void test() {
                     juce::OpenGL;
                 }
@@ -373,7 +366,7 @@ package("juce")
 
         if package:config("osc") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_OSC.h>
+                #include <juce_osc/juce_OSC.h>
                 void test() {
                     juce::OSC;
                 }
@@ -382,7 +375,7 @@ package("juce")
 
         if package:config("product_unlocking") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_ProductUnlocking.h>
+                #include <juce_product_unlocking/juce_ProductUnlocking.h>
                 void test() {
                     juce::ProductUnlocking;
                 }
@@ -391,7 +384,7 @@ package("juce")
 
         if package:config("video") then
             assert(package:check_cxxsnippets({test = [[
-                #include <juce_Video.h>
+                #include <juce_video/juce_Video.h>
                 void test() {
                     juce::Video;
                 }

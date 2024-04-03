@@ -104,7 +104,6 @@ local modules = {
 }
 
 for modulename, config in pairs(modules) do
-    option(modulename, {showmenu = true,  default = false})
     if config.packages then
         for _, package in ipairs(config.packages) do
             add_requires(package)
@@ -131,43 +130,47 @@ target("juce")
         set_symbols('debug')
     end
 
+    if is_plat("windows") then
+        add_cxxflags("/bigobj")
+    elseif is_plat("mingw") then
+        add_cxxflags("-Wa,-mbig-obj")
+    end
+
     for module, options in pairs(modules) do
-        if has_config(module) then
-            if is_plat("macosx") or is_plat("iphoneos") then
-                add_files("modules/" .. module .. "/" .. module .. ".mm")
-                add_mxflags("-fno-objc-arc")
-            else
-                add_files("modules/" .. module .. "/" .. module .. ".cpp")
+        if is_plat("macosx") or is_plat("iphoneos") then
+            add_files("modules/" .. module .. "/" .. module .. ".mm")
+            add_mxflags("-fno-objc-arc")
+        else
+            add_files("modules/" .. module .. "/" .. module .. ".cpp")
+        end
+
+        add_includedirs("modules/", { public = true })
+        add_headerfiles("modules/(" .. module .. "/" .. module .. ".h)")
+
+        for _, dir in ipairs(os.dirs("modules/" .. module .. "/**")) do
+            add_includedirs(dir, { public = true })
+        end
+
+        for _, dir in ipairs(os.files("modules/" .. module .. "/**.h")) do
+            dir = dir:gsub("\\", "/"):gsub("modules/", "")
+            add_headerfiles("modules/(" .. dir .. ")")
+        end
+
+        if options.syslinks and options.syslinks[os.host()] then
+            for _, syslinks in ipairs(options.syslinks[os.host()]) do
+                add_syslinks(syslinks)
             end
+        end
 
-            add_includedirs("modules/", { public = true })
-            add_headerfiles("modules/(" .. module .. "/" .. module .. ".h)")
-
-            for _, dir in ipairs(os.dirs("modules/" .. module .. "/**")) do
-                add_includedirs(dir, { public = true })
+        if options.flags and options.flags[os.host()] then
+            for _, flags in ipairs(options.flags[os.host()]) do
+                add_cxxflags(flags)
             end
+        end
 
-            for _, dir in ipairs(os.files("modules/" .. module .. "/**.h")) do
-                dir = dir:gsub("\\", "/"):gsub("modules/", "")
-                add_headerfiles("modules/(" .. dir .. ")")
-            end
-
-            if options.syslinks and options.syslinks[os.host()] then
-                for _, syslinks in ipairs(options.syslinks[os.host()]) do
-                    add_syslinks(syslinks)
-                end
-            end
-
-            if options.flags and options.flags[os.host()] then
-                for _, flags in ipairs(options.flags[os.host()]) do
-                    add_cxxflags(flags)
-                end
-            end
-
-            if options.packages then
-                for _, package in ipairs(options.packages) do
-                    add_packages(package)
-                end
+        if options.packages then
+            for _, package in ipairs(options.packages) do
+                add_packages(package)
             end
         end
     end
