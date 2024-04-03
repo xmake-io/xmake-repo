@@ -10,6 +10,8 @@ package("chipmunk2d")
     add_versions("github:7.0.3", "87340c216bf97554dc552371bbdecf283f7c540e")
     add_patches("7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "d0bbefe66852cdadb974dce24d4383c356bc3fa88656739ff1d5baf4e3792a96")
 
+    add_configs("double_precision", {description = "Use double instead of float (not supported on ARM 32bits)", default = false, type = "boolean"})
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::chipmunk")
     elseif is_plat("linux") then
@@ -26,7 +28,16 @@ package("chipmunk2d")
         add_syslinks("log", "m")
     end
 
+    on_load(function (package)
+        if package:config("double_precision") then
+            package:add("defines", "CP_USE_DOUBLES=1")
+        else
+            package:add("defines", "CP_USE_DOUBLES=0")
+        end
+    end)
+
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
+        import("core.tool.compiler")
         local configs = {"-DBUILD_DEMOS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -38,7 +49,9 @@ package("chipmunk2d")
             table.insert(configs, "-DBUILD_STATIC=ON")
             table.insert(configs, "-DINSTALL_STATIC=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+        local opt = {}
+        opt.cxflags = compiler.map_flags("c", "define", "CP_USE_DOUBLES=" .. (package:config("double_precision") and "1" or "0"), {target = self})
+        import("package.tools.cmake").install(package, configs, opt)
         os.vcp("include/chipmunk", package:installdir("include"))
    end)
 
