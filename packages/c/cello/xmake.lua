@@ -7,23 +7,23 @@ package("cello")
 
     add_versions("2.0.3", "1afcae06f5efc10ea161737a862073ff5679c964540bca7cd719539609d0633c")
 
-    on_install("linux", "android", "macosx", "windows", function(package)
+    on_install(function(package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("cello")
                 set_kind("$(kind)")
                 set_languages("gnu99")
-                add_ldflags("-lm", "-lpthread")
+                add_links("m", "pthread")
                 add_files("src/*.c")
                 add_headerfiles("include/Cello.h")
                 add_includedirs("include")
                 on_config(function(target)
                     if is_plat("windows") and target:has_cincludes("Dbghelp.h") then
-                        target:add_ldflags("-lDbghelp")
+                        target:add("links", "Dbghelp")
                     elseif target:has_cincludes("execinfo.h") then
-                        target:add_ldflags("-lexecinfo", "-rdynamic")
+                        target:add({ links = "execinfo", ldflags = "-rdynamic" })
                     else
-                        target:add_defines("CELLO_NSTRACE")
+                        target:add("defines", "CELLO_NSTRACE")
                     end
                 end)
         ]])
