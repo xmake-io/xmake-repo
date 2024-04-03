@@ -9,7 +9,7 @@ package("libffi")
     add_versions("3.3", "72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056")
     add_versions("3.4.2", "540fb721619a6aba3bdeef7d940d8e9e0e6d2c193595bc243241b77ff9e93620")
     add_versions("3.4.4", "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676")
-    add_versions("3.4.6", "9ac790464c1eb2f5ab5809e978a1683e9393131aede72d1b0a0703771d3c6cda")
+    add_versions("3.4.6", "b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e")
 
     if is_plat("linux") then
         add_extsources("apt::libffi-dev", "pacman::libffi")
