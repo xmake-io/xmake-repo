@@ -134,7 +134,7 @@ target("juce")
     for module, options in pairs(modules) do
         if has_config(module) then
             if is_plat("macosx") or is_plat("iphoneos") then
-                files("modules/" .. module .. "/" .. module .. ".mm")
+                add_files("modules/" .. module .. "/" .. module .. ".mm")
             else
                 add_files("modules/" .. module .. "/" .. module .. ".cpp")
             end
