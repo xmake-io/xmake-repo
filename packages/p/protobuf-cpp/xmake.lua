@@ -39,7 +39,7 @@ package("protobuf-cpp")
             package:add("deps", "zlib")
         end
         if package:version():gt("3.19.4") then
-            package:add("deps", "abseil", {configs = {shared = true}})
+            package:add("deps", "abseil", {configs = {shared = package:is_plat("windows")}})
         end
     end)
 
