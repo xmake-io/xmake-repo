@@ -15,48 +15,48 @@ package("juce")
     end
 
     local modules = {
-        "juce_analytics",
-        "juce_audio_basics",
-        "juce_audio_devices",
-        "juce_audio_formats",
-        "juce_audio_plugin_client",
-        "juce_audio_processors",
-        "juce_audio_utils",
-        "juce_box2d",
-        "juce_core",
-        "juce_cryptography",
-        "juce_data_structures",
-        "juce_dsp",
-        "juce_events",
-        "juce_graphics",
-        "juce_gui_basics",
-        "juce_gui_extra",
-        "juce_midi_ci",
-        "juce_opengl",
-        "juce_osc",
-        "juce_product_unlocking",
-        "juce_video"
+        "analytics",
+        "audio_basics",
+        "audio_devices",
+        "audio_formats",
+        "audio_plugin_client",
+        "audio_processors",
+        "audio_utils",
+        "box2d",
+        "core",
+        "cryptography",
+        "data_structures",
+        "dsp",
+        "events",
+        "graphics",
+        "gui_basics",
+        "gui_extra",
+        "midi_ci",
+        "opengl",
+        "osc",
+        "product_unlocking",
+        "video"
     }
 
     for _, modulename in ipairs(modules) do
-        add_configs(modulename, {description = format("Enable %s module", modulename:gsub("_", " ")), default = modulename == "juce_core" and true or false, type = "boolean", readonly = modulename == "juce_core" and true or false})
+        add_configs(modulename, {description = format("Enable %s module", modulename:gsub("_", " ")), default = modulename == "core" and true or false, type = "boolean", readonly = modulename == "core" and true or false})
     end
 
     add_configs("utf", {description = "Set the character encoding type", default = "8", values = {"8", "16", "32"}})
 
-    on_component("juce_analytics", function (package, component)
-        component:add("deps", "juce_gui_basics")
+    on_component("analytics", function (package, component)
+        component:add("deps", "gui_basics")
     end)
 
-    on_component("juce_audio_basics", function (package, component)
-        component:add("deps", "juce_core")
+    on_component("audio_basics", function (package, component)
+        component:add("deps", "core")
         if package:is_plat("iphoneos") or package:is_plat("macosx") then
             component:add("frameworks", "Accelerate")
         end
     end)
 
-    on_component("juce_audio_devices", function (package, component)
-        component:add("deps", "juce_audio_basics", "juce_events")
+    on_component("audio_devices", function (package, component)
+        component:add("deps", "audio_basics", "juce_events")
         if package:is_plat("iphoneos") then
             component:add("frameworks", "CoreAudio", "CoreMIDI", "AudioToolbox", "AVFoundation")
         elseif package:is_plat("macosx") then
@@ -68,8 +68,8 @@ package("juce")
         end
     end)
 
-    on_component("juce_audio_formats", function (package, component)
-        component:add("deps", "juce_audio_basics")
+    on_component("audio_formats", function (package, component)
+        component:add("deps", "audio_basics")
         if package:is_plat("iphoneos") then
             component:add("frameworks", "AudioToolbox", "QuartzCore")
         elseif package:is_plat("macosx") then
@@ -77,12 +77,12 @@ package("juce")
         end
     end)
 
-    on_component("juce_audio_plugin_client", function (package, component)
-        component:add("deps", "juce_audio_processors")
+    on_component("audio_plugin_client", function (package, component)
+        component:add("deps", "audio_processors")
     end)
 
-    on_component("juce_audio_processors", function (package, component)
-        component:add("deps", "juce_gui_extra", "juce_audio_basics")
+    on_component("audio_processors", function (package, component)
+        component:add("deps", "gui_extra", "juce_audio_basics")
         if package:is_plat("iphoneos") then
             component:add("frameworks", "AudioToolbox")
         elseif package:is_plat("macosx") then
@@ -90,8 +90,8 @@ package("juce")
         end
     end)
 
-    on_component("juce_audio_utils", function (package, component)
-        component:add("deps", "juce_audio_processors", "juce_audio_formats", "juce_audio_devices")
+    on_component("audio_utils", function (package, component)
+        component:add("deps", "audio_processors", "juce_audio_formats", "juce_audio_devices")
         if package:is_plat("iphoneos") then
             component:add("frameworks", "CoreAudioKit")
         elseif package:is_plat("macosx") then
@@ -99,11 +99,11 @@ package("juce")
         end
     end)
 
-    on_component("juce_box2d", function (package, component)
-        component:add("deps", "juce_graphics")
+    on_component("box2d", function (package, component)
+        component:add("deps", "graphics")
     end)
 
-    on_component("juce_core", function (package, component)
+    on_component("core", function (package, component)
         if package:is_plat("iphoneos") then
             component:add("frameworks", "Foundation")
         elseif package:is_plat("macosx") then
@@ -117,27 +117,27 @@ package("juce")
         end
     end)
 
-    on_component("juce_cryptography", function (package, component)
-        component:add("deps", "juce_core")
+    on_component("cryptography", function (package, component)
+        component:add("deps", "core")
     end)
 
-    on_component("juce_data_structures", function (package, component)
-        component:add("deps", "juce_events")
+    on_component("data_structures", function (package, component)
+        component:add("deps", "events")
     end)
 
-    on_component("juce_dsp", function (package, component)
-        component:add("deps", "juce_audio_formats")
+    on_component("dsp", function (package, component)
+        component:add("deps", "audio_formats")
         if package:is_plat("iphoneos") or package:is_plat("macosx") then
             component:add("frameworks", "Accelerate")
         end
     end)
 
-    on_component("juce_events", function (package, component)
-        component:add("deps", "juce_core")
+    on_component("events", function (package, component)
+        component:add("deps", "core")
     end)
 
-    on_component("juce_graphics", function (package, component)
-        component:add("deps", "juce_events")
+    on_component("graphics", function (package, component)
+        component:add("deps", "events")
         if package:is_plat("iphoneos") then
             component:add("frameworks", "CoreGraphics", "CoreImage", "CoreText", "QuartzCore")
         elseif package:is_plat("macosx") then
@@ -147,8 +147,8 @@ package("juce")
         end
     end)
 
-    on_component("juce_gui_basics", function (package, component)
-        component:add("deps", "juce_graphics", "juce_data_structures")
+    on_component("gui_basics", function (package, component)
+        component:add("deps", "graphics", "juce_data_structures")
         if package:is_plat("iphoneos") then
             component:add("frameworks", "CoreServices", "UIKit", "Metal", "MetalKit")
         elseif package:is_plat("macosx") then
@@ -158,8 +158,8 @@ package("juce")
         end
     end)
 
-    on_component("juce_gui_basics", function (package, component)
-        component:add("deps", "juce_gui_basics")
+    on_component("gui_basics", function (package, component)
+        component:add("deps", "gui_basics")
         if package:is_plat("iphoneos") then
             component:add("frameworks", "WebKit", "UserNotifications")
         elseif package:is_plat("macosx") then
@@ -167,20 +167,20 @@ package("juce")
         end
     end)
 
-    on_component("juce_midi_ci", function (package, component)
-        component:add("deps", "juce_audio_basics")
+    on_component("midi_ci", function (package, component)
+        component:add("deps", "audio_basics")
     end)
 
-    on_component("juce_opengl", function (package, component)
-        component:add("deps", "juce_gui_extra", "opengl")
+    on_component("opengl", function (package, component)
+        component:add("deps", "gui_extra", "opengl")
     end)
 
-    on_component("juce_product_unlocking", function (package, component)
-        component:add("deps", "juce_cryptography")
+    on_component("product_unlocking", function (package, component)
+        component:add("deps", "cryptography")
     end)
 
-    on_component("juce_video", function (package, component)
-        component:add("deps", "juce_gui_extra")
+    on_component("video", function (package, component)
+        component:add("deps", "gui_extra")
         if package:is_plat("iphoneos") or package:is_plat("macosx") then
             component:add("frameworks", "AVKit", "AVFoundation", "CoreMedia")
         end
@@ -200,11 +200,10 @@ package("juce")
     on_install(function (package)
         package:add("defines", "JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED")
         local configs = {
-            kind = package:config("shared") and "shared" or "static",
             utf = package:config("utf")
         }
         for _, modulename in ipairs(modules) do
-            configs[modulename] = package:config(modulename)
+            configs["juce_" .. modulename] = package:config(modulename)
         end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
@@ -219,7 +218,7 @@ package("juce")
             }
         ]]}, {configs = {languages = "c++17"}}))
 
-        if package:config("juce_analytics") then
+        if package:config("analytics") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Analytics.h>
                 void test() {
@@ -228,7 +227,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_audio_basics") then
+        if package:config("audio_basics") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioFormatReader.h>
                 void test() {
@@ -237,7 +236,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_audio_devices") then
+        if package:config("audio_devices") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioIODeviceType.h>
                 void test() {
@@ -246,7 +245,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_audio_formats") then
+        if package:config("audio_formats") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioFormat.h>
                 void test() {
@@ -255,7 +254,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_audio_plugin_client") then
+        if package:config("audio_plugin_client") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioProcessor.h>
                 void test() {
@@ -264,7 +263,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_audio_processors") then
+        if package:config("audio_processors") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioProcessorGraph.h>
                 void test() {
@@ -273,7 +272,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_audio_utils") then
+        if package:config("audio_utils") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_AudioThumbnail.h>
                 void test() {
@@ -282,7 +281,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_box2d") then
+        if package:config("box2d") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Box2D.h>
                 void test() {
@@ -291,7 +290,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_cryptography") then
+        if package:config("cryptography") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Cryptography.h>
                 void test() {
@@ -300,7 +299,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_data_structures") then
+        if package:config("data_structures") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_DataStructures.h>
                 void test() {
@@ -309,7 +308,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_dsp") then
+        if package:config("dsp") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_DSP.h>
                 void test() {
@@ -318,7 +317,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_events") then
+        if package:config("events") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Events.h>
                 void test() {
@@ -327,7 +326,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_graphics") then
+        if package:config("graphics") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Graphics.h>
                 void test() {
@@ -336,7 +335,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_gui_basics") then
+        if package:config("gui_basics") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_GUIBasics.h>
                 void test() {
@@ -345,7 +344,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_gui_extra") then
+        if package:config("gui_extra") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_GUIExtra.h>
                 void test() {
@@ -354,7 +353,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_midi_ci") then
+        if package:config("midi_ci") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_MidiCI.h>
                 void test() {
@@ -363,7 +362,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_opengl") then
+        if package:config("opengl") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_OpenGL.h>
                 void test() {
@@ -372,7 +371,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_osc") then
+        if package:config("osc") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_OSC.h>
                 void test() {
@@ -381,7 +380,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_product_unlocking") then
+        if package:config("product_unlocking") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_ProductUnlocking.h>
                 void test() {
@@ -390,7 +389,7 @@ package("juce")
             ]]}, {configs = {languages = "c++17"}}))
         end
 
-        if package:config("juce_video") then
+        if package:config("video") then
             assert(package:check_cxxsnippets({test = [[
                 #include <juce_Video.h>
                 void test() {

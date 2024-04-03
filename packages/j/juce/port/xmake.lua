@@ -139,6 +139,7 @@ target("juce")
             else
                 add_files("modules/" .. module .. "/" .. module .. ".cpp")
             end
+
             add_includedirs("modules/", { public = true })
             add_headerfiles("modules/(" .. module .. "/" .. module .. ".h)")
 
