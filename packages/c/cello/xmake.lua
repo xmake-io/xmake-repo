@@ -20,7 +20,7 @@ package("cello")
                 on_config(function(target)
                     if is_plat("windows") and target:has_cincludes("Dbghelp.h") then
                         target:add("links", "Dbghelp")
-                    elseif target:has_cincludes("execinfo.h") then
+                    elseif is_plat("linux") target:has_cincludes("execinfo.h") then
                         target:add({ links = "execinfo", ldflags = "-rdynamic" })
                     else
                         target:add("defines", "CELLO_NSTRACE")
