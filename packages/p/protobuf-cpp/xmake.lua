@@ -38,7 +38,7 @@ package("protobuf-cpp")
         if package:config("zlib") then
             package:add("deps", "zlib")
         end
-        if package:version():gt("3.19.4") then
+        if package:version():ge("22.0") then
             package:add("deps", "abseil")
         end
     end)
@@ -53,7 +53,7 @@ package("protobuf-cpp")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
       
         local packagedeps = {}
-        if package:version():gt("3.19.4") then
+        if package:version():ge("22.0") then
             table.insert(packagedeps, "abseil")
             table.insert(configs, "-Dprotobuf_ABSL_PROVIDER=package")
         end
