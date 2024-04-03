@@ -7,7 +7,7 @@ package("cello")
 
     add_versions("2.0.3", "1afcae06f5efc10ea161737a862073ff5679c964540bca7cd719539609d0633c")
 
-    on_install(function(package)
+    on_install("@!windows", "android@linux", function(package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("Cello")
@@ -18,9 +18,9 @@ package("cello")
                 add_headerfiles("include/Cello.h")
                 add_includedirs("include")
                 on_config(function(target)
-                    if is_plat("windows") and target:has_cincludes("Dbghelp.h") then
+                    if is_plat("@mingw") and target:has_cincludes("Dbghelp.h") then
                         target:add("links", "Dbghelp")
-                    elseif is_plat("linux") and target:has_cincludes("execinfo.h") then
+                    elseif is_plat("@linux") and target:has_cincludes("execinfo.h") then
                         target:add({ links = "execinfo", ldflags = "-rdynamic" })
                     else
                         target:add("defines", "CELLO_NSTRACE")
