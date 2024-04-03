@@ -37,7 +37,6 @@ package("chipmunk2d")
     end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
-        import("core.tool.compiler")
         local configs = {"-DBUILD_DEMOS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -51,9 +50,9 @@ package("chipmunk2d")
         end
         local opt = {}
         if package:config("precision") == "double" then
-            opt.cxflags = compiler.map_flags("c", "define", "CP_USE_DOUBLES=1", {target = self})
+            opt.cxflags = "-DCP_USE_DOUBLES=1"
         elseif package:config("precision") == "single" then
-            opt.cxflags = compiler.map_flags("c", "define", "CP_USE_DOUBLES=0", {target = self})
+            opt.cxflags = "-DCP_USE_DOUBLES=0"
         end
         import("package.tools.cmake").install(package, configs, opt)
         os.vcp("include/chipmunk", package:installdir("include"))
