@@ -125,7 +125,7 @@ target("ffi")
     end
     if is_kind("static") then
         add_defines("FFI_STATIC_BUILD")
-end
+    end
     set_configdir("include")
     add_configfiles("fficonfig.h.in")
     add_configfiles("include/ffi.h.in", {pattern = "@(.-)@"})
@@ -172,7 +172,8 @@ end
         add_headerfiles("src/wasm32/ffitarget.h")
     end
     before_build(function (target)
-        if target:version():le("v3.4.4") then
+        import("core.base.semver")
+        if semver.compare(target:version(), "v3.4.4") <= 0 then
             io.replace("include/ffi.h", "!defined FFI_BUILDING", target:is_static() and "0" or "1", {plain = true})
         end
     end)
