@@ -10,7 +10,7 @@ package("cello")
     on_install(function(package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
-            target("cello")
+            target("Cello")
                 set_kind("$(kind)")
                 set_languages("gnu99")
                 add_links("m", "pthread")
