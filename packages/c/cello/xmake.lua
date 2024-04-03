@@ -7,7 +7,7 @@ package("cello")
 
     add_versions("2.0.3", "1afcae06f5efc10ea161737a862073ff5679c964540bca7cd719539609d0633c")
 
-    on_install(function(package)
+    on_install("linux", "android", "macosx", "windows", function(package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("cello")
