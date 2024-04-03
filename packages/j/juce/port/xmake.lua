@@ -135,6 +135,7 @@ target("juce")
         if has_config(module) then
             if is_plat("macosx") or is_plat("iphoneos") then
                 add_files("modules/" .. module .. "/" .. module .. ".mm")
+                add_mxflags("-fno-objc-arc")
             else
                 add_files("modules/" .. module .. "/" .. module .. ".cpp")
             end
