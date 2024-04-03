@@ -147,7 +147,7 @@ target("juce")
         add_includedirs("modules/", { public = true })
         add_headerfiles("modules/(" .. module .. "/" .. module .. ".h)")
 
-        for _, dir in ipairs(os.dirs("modules/" .. module .. "/**")) do
+        for _, dir in ipairs(os.dirs("modules/" .. module .. "/*.h")) do
             add_includedirs(dir, { public = true })
         end
 

@@ -23,7 +23,6 @@ package("juce")
         "audio_processors",
         "audio_utils",
         "box2d",
-        "core",
         "cryptography",
         "data_structures",
         "dsp",
@@ -37,6 +36,10 @@ package("juce")
         "product_unlocking",
         "video"
     }
+
+    for _, modulename in ipairs(modules) do
+        add_configs(modulename, {description = "Enable " .. modulename .. " module", default = false, type = "boolean"})
+    end
 
     add_configs("utf", {description = "Set the character encoding type", default = "8", values = {"8", "16", "32"}})
 
@@ -183,6 +186,7 @@ package("juce")
     end)
 
     on_load(function (package)
+        package:add("components", "core")
         for _, modulename in ipairs(modules) do
             if package:config(modulename) then
                 package:add("components", modulename)
