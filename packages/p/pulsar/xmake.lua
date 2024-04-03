@@ -9,7 +9,7 @@ package("pulsar")
     add_versions("3.5.0", "21d71a36666264418e3c5d3bc745628228b258daf659e6389bb9c9584409a27e")
     add_versions("3.1.2", "802792e8dd48f21dea0cb9cee7afe20f2598d333d2e484a362504763d1e3d49a")
 
-    add_deps("boost 1.81.0", "protobuf-cpp", "libcurl", "openssl", "zlib", "zstd", "snappy")
+    add_deps("boost 1.81.0", "protobuf-cpp", "libcurl", "openssl", "zlib", "zstd", "snappy", "abseil")
 
     on_install("linux", function (package)
         local configs = {"-DBUILD_TESTS=OFF"}
@@ -19,7 +19,7 @@ package("pulsar")
             configs = table.join(configs, {"-DBUILD_STATIC_LIB=ON", "-DBUILD_DYNAMIC_LIB=OFF"})
         end
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"zstd", "snappy"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"zstd", "snappy", "abseil"}})
     end)
 
     on_test(function (package)
@@ -34,5 +34,5 @@ package("pulsar")
                     std::cout << "invalid argument" << std::endl;
                 }
             }
-        ]]}, {configs = {languages = "cxx11"}}))
+        ]]}, {configs = {languages = "cxx14"}}))
     end)
