@@ -17,6 +17,12 @@ package("libffi")
         add_extsources("brew::libffi")
     end
 
+    on_load("windows", function (package)
+        if not package:config("shared") then
+            package:add("defines", "FFI_STATIC_BUILD")
+        end
+    end)
+
     on_load("macosx", "linux", "bsd", "mingw", function (package)
         if package:gitref() then
             package:add("deps", "autoconf", "automake", "libtool")
