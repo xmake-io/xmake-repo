@@ -109,7 +109,7 @@ local modules = {
 
 for modulename, config in pairs(modules) do
     if config.packages then
-        for _, package in ipairs(config.packages) do
+        for _, package in ipairs(config.packages[os.host()]) do
             add_requires(package)
         end
     end
