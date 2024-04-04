@@ -26,6 +26,7 @@ package("audiofile")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <stdint.h>
             #include <AudioFile.h>
 
             void test () {
