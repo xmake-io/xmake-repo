@@ -13,7 +13,7 @@ package("fmtlog")
         add_syslinks("pthread")
     end
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows|!arm64", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", "add_subdirectory(fmt)", "", {plain = true})
