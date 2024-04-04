@@ -18,10 +18,12 @@ package("cello")
                 add_headerfiles("include/Cello.h")
                 add_includedirs("include")
                 on_config(function(target)
-                    if target:has_cincludes("Dbghelp.h") then
+                    import("lib.detect.find_library")
+                    local linkdirs = target:get("linkdirs")
+                    if target:has_cincludes("execinfo.h") then
+                        target:add("ldflags", "-rdynamic")
+                    elseif find_library("Dbghelp", linkdirs) then
                         target:add("syslinks", "Dbghelp")
-                    elseif target:has_cincludes("execinfo.h") then
-                        target:add({ syslinks = "execinfo", ldflags = "-rdynamic" })
                     else
                         target:add("defines", "CELLO_NSTRACE")
                     end
