@@ -11,7 +11,7 @@ package("libxcomposite")
     end
 
     if is_plat("macosx", "linux") then
-        add_deps("pkg-config", "libx11", "libxext", "xorgproto", "xfixes")
+        add_deps("pkg-config", "libx11", "libxext", "xorgproto", "libxfixes")
     end
 
     on_install("macosx", "linux", function (package)
