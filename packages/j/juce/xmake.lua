@@ -156,6 +156,8 @@ package("juce")
             component:add("frameworks", "Cocoa", "QuartzCore", "Metal", "MetalKit")
         elseif package:is_plat("mingw") then
             component:add("syslinks", "dxgi")
+        elseif package:is_plat("linux") then
+            component:add("deps", "libx11", "libxrandr", "gtk4")
         end
     end)
 

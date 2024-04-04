@@ -51,7 +51,7 @@ local modules = {
             iphoneos = {"objective-c++"}
         },
         packages = {
-            "libcurl"
+            linux = {"libcurl"}
         }
     },
     juce_cryptography = {},
@@ -69,15 +69,18 @@ local modules = {
             macosx = {"Cocoa", "QuartzCore"}
         },
         packages = {
-            "freetype"
+            linux = {"freetype"}
         }
     },
     juce_gui_basics = {
         syslinks = {
             iphoneos = {"CoreServices", "UIKit", "Metal", "MetalKit"},
             macosx = {"Cocoa", "QuartzCore", "Metal", "MetalKit"},
-            mingw = {"dxgi"}
+            mingw = {"dxgi"},
         },
+        packages = {
+            linux = {"libx11", "libxrandr"}
+        }
     },
     juce_gui_extra = {
         syslinks = {
@@ -169,7 +172,7 @@ target("juce")
             end
         end
 
-        if options.packages then
+        if options.packages and options.packages[os.host()] then
             for _, package in ipairs(options.packages) do
                 add_packages(package)
             end
