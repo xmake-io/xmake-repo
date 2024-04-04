@@ -20,9 +20,9 @@ package("cello")
                 on_config(function(target)
                     import("lib.detect.find_library")
                     local linkdirs = target:get("linkdirs")
-                    if target:has_cincludes("execinfo.h") then
+                    if is_plat("linux") and target:has_cincludes("execinfo.h") then
                         target:add("ldflags", "-rdynamic")
-                    elseif find_library("Dbghelp", linkdirs) then
+                    elseif is_plat("windows", "cygwin", "mingw") and find_library("Dbghelp", linkdirs) then
                         target:add("syslinks", "Dbghelp")
                     else
                         target:add("defines", "CELLO_NSTRACE")
