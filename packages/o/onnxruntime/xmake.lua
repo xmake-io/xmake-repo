@@ -3,7 +3,8 @@ package("onnxruntime")
     set_description("ONNX Runtime: cross-platform, high performance ML inferencing and training accelerator")
     set_license("MIT")
 
-    add_configs("gpu", {description = "Enable GPU supports on windows|x64 and linux|x86_64", default = false, type = "boolean"})
+    add_configs("gpu", {description = "Enable GPU support on windows|x64 and linux|x86_64", default = false, type = "boolean"})
+    add_configs("cuda_version", {description = "Specify which CUDA version to use for GPU support", default = "11", type = "string"})
 
     if is_plat("windows") then
         if is_arch("x64") then
@@ -60,15 +61,27 @@ package("onnxruntime")
             if package:is_plat("windows") and package:is_arch("x64") then
                 versions["1.11.1"] = "a9a10e76fbb4351d4103a4d46dc37690075901ef3bb7304dfa138820c42c547b"
                 versions["1.16.1"] = "b841f8e8d9a0556bfc5228ff1488395fa041fafe8d16a62e25a254d000d51888"
-                versions["1.17.0"] = "3c90a38769e2f7bdb088c00410de4895b07b7d53a7c80955f18989775c2a25e7"
-                versions["1.17.1"] = "b7a66f50ad146c2ccb43471d2d3b5ad78084c2d4ddbd3ea82d65f86c867408b2"
-                package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x64-gpu-$(version).zip")
+                if package:config("cuda_version") == "12" then
+                    versions["1.17.0"] = "63823f29039e593da435a6af6757949262ac592e575bfe08675a11d4963b47cf"
+                    versions["1.17.1"] = "5c6e1433d63e699d97d66d66427830caf5e69ea077569bc1e2ab5e1450d8fac1"
+                    package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x64-cuda12-$(version).zip")
+                else
+                    versions["1.17.0"] = "3c90a38769e2f7bdb088c00410de4895b07b7d53a7c80955f18989775c2a25e7"
+                    versions["1.17.1"] = "b7a66f50ad146c2ccb43471d2d3b5ad78084c2d4ddbd3ea82d65f86c867408b2"
+                    package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-win-x64-gpu-$(version).zip")
+                end
             elseif package:is_plat("linux") and package:is_arch("x86_64") then
                 versions["1.11.1"] = "31c392b5804a57bbcf2550a29a76af8641bfbd8a0f68b7e354d876689fe667f2"
                 versions["1.16.1"] = "474d5d74b588d54aa3e167f38acc9b1b8d20c292d0db92299bdc33a81eb4492d"
-                versions["1.17.0"] = "27cfa22af7301868b55220f8733361889286b30be0569a8f46abb63e90342180"
-                versions["1.17.1"] = "613c53745ea4960ed368f6b3ab673558bb8561c84a8fa781b4ea7fb4a4340be4"
-                package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-linux-x64-gpu-$(version).tgz")
+                if package:config("cuda_version") == "12" then
+                    versions["1.17.0"] = "0f0b9a6e7ba703c095aae19220d14f7c48c6170ed24ebf6bc97fbde01312985f"
+                    versions["1.17.1"] = "3a7b114545a90d65ed01d42faabc08f735c1bb58d9065d423c6e4a89222b4efc"
+                    package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-linux-x64-cuda12-$(version).tgz")
+                else
+                    versions["1.17.0"] = "27cfa22af7301868b55220f8733361889286b30be0569a8f46abb63e90342180"
+                    versions["1.17.1"] = "613c53745ea4960ed368f6b3ab673558bb8561c84a8fa781b4ea7fb4a4340be4"
+                    package:set("urls", "https://github.com/microsoft/onnxruntime/releases/download/v$(version)/onnxruntime-linux-x64-gpu-$(version).tgz")
+                end
             end
             package:set("versions", versions)
         end

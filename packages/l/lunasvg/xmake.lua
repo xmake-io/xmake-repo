@@ -6,6 +6,7 @@ package("lunasvg")
 
     add_urls("https://github.com/sammycage/lunasvg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sammycage/lunasvg.git")
+    add_versions("v2.3.9", "088bc9fd1191a004552c65bdcc260989b83da441b0bdaa965e79d984feba88fa")
     add_versions("v2.3.5", "350ff56aa1acdedefe2ad8a4241a9fb8f9b232868adc7bd36dfb3dbdd57e2e93")
 
     add_deps("cmake")

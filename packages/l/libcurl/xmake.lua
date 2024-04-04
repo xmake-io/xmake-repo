@@ -15,6 +15,9 @@ package("libcurl")
         add_versions_list()
     end
 
+    add_patches("7.84.0", path.join(os.scriptdir(), "patches", "7.84.0", "sched.patch"), "e79f56f840cbc6996a153f19d9266bd46fe4154e6b494c8ee0478cb5b87662d3")
+    add_patches("8.7.1", path.join(os.scriptdir(), "patches", "8.7.1", "android_armv7.patch"), "b172fd25063fcf4bce987b47a3d95d9d79bcf80f45e7e45dbf4aba72c685fb24")
+
     add_deps("cmake")
 
     if is_plat("macosx", "iphoneos") then
@@ -74,7 +77,7 @@ package("libcurl")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "cross", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "cross", "android", function (package)
         local version = package:version()
 
         local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF"}
@@ -117,45 +120,45 @@ package("libcurl")
             io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto)", "list(APPEND CURL_LIBS OpenSSL::SSL OpenSSL::Crypto dl)", {plain = true})
             io.replace("CMakeLists.txt", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES})", "list(APPEND CURL_LIBS ${OPENSSL_LIBRARIES} dl)", {plain = true})
         end
-        import("package.tools.cmake").install(package, configs, opt)
-    end)
-
-    on_install("android", function (package)
-        local configs = {"--disable-silent-rules",
-                         "--disable-dependency-tracking",
-                         "--without-hyper",
-                         "--without-libgsasl",
-                         "--without-librtmp",
-                         "--without-quiche",
-                         "--without-ngtcp2",
-                         "--without-nghttp3"}
-
-        local version = package:version()
-        if (package:is_plat("mingw") and version:ge("7.85")) then
-            package:add("syslinks", "Bcrypt")
-        end
-
-        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:debug() then
-            table.insert(configs, "--enable-debug")
-        end
-        if package:is_plat("macosx", "iphoneos") then
-            table.insert(configs, (package:version():ge("7.77") and "--with-secure-transport" or "--with-darwinssl"))
-        end
-        for _, name in ipairs({"openssl", "mbedtls", "zlib", "brotli", "zstd", "libssh2", "libidn2", "libpsl", "nghttp2"}) do
-            table.insert(configs, package:config(name) and "--with-" .. name or "--without-" .. name)
-        end
-        table.insert(configs, package:config("cares") and "--enable-ares" or "--disable-ares")
-        table.insert(configs, package:config("openldap") and "--enable-ldap" or "--disable-ldap")
-        if package:is_plat("macosx") then
-            local cares = package:dep("c-ares")
-            if cares and not cares:config("shared") then
-                -- we need fix missing `-lresolv` when checking c-ares
-                io.replace("./configure", "PKGCONFIG --libs-only-l libcares", "PKGCONFIG --libs-only-l --static libcares", {plain = true})
+        local function handledependency(conf, depname, includeconfig, libconfig)
+            if package:config(conf) then
+                local dep = package:dep(depname)
+                if dep and not dep:is_system() then
+                    local fetchinfo = dep:fetch({external = false})
+                    if fetchinfo then
+                        local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
+                        if includedirs and #includedirs > 0 then
+                            table.insert(configs, "-D" .. includeconfig .. "=" .. table.concat(includedirs, ";"):gsub("\\", "/"))
+                        end
+                        if type(libconfig) == "table" then
+                            if fetchinfo.libfiles then
+                                for _, libfile in ipairs(fetchinfo.libfiles) do
+                                    local libname = path.basename(libfile)
+                                    if libname:startswith("lib") then
+                                        libname = libname:sub(4)
+                                    end
+                                    for opt, suffix in pairs(libconfig) do
+                                        if libname:endswith(suffix) then
+                                            table.insert(configs, "-D" .. opt .. "=" .. libfile:gsub("\\", "/"))
+                                        end
+                                    end
+                                end
+                            end
+                        else
+                            if fetchinfo.libfiles then
+                                table.insert(configs, "-D" .. libconfig .. "=" .. table.concat(fetchinfo.libfiles, ";"):gsub("\\", "/"))
+                            end
+                        end
+                    end
+                end
             end
         end
-        import("package.tools.autoconf").install(package, configs)
+        handledependency("brotli", "brotli", "BROTLI_INCLUDE_DIR", {BROTLICOMMON_LIBRARY = "brotlicommon", BROTLIDEC_LIBRARY = "brotlidec"})
+        handledependency("openssl", "openssl", "OPENSSL_INCLUDE_DIR", {OPENSSL_CRYPTO_LIBRARY = "crypto", OPENSSL_SSL_LIBRARY = "ssl"})
+        handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {MBEDTLS_LIBRARY = "mbedtls", MBEDX509_LIBRARY = "mbedx509", MBEDCRYPTO_LIBRARY = "mbedcrypto"})
+        handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
+        handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
