@@ -35,6 +35,9 @@ package("ozz-animation")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-Dozz_build_msvc_rt_dll=" .. (package:has_runtime("MD") and "ON" or "OFF"))
+        end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-Dozz_build_" .. name .. "=" .. (enabled and "ON" or "OFF"))
