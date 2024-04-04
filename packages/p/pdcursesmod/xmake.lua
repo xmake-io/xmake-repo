@@ -4,6 +4,7 @@ package("pdcursesmod")
 
     add_urls("https://github.com/Bill-Gray/PDCursesMod/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Bill-Gray/PDCursesMod.git")
+    add_versions("v4.4.0", "a53bf776623decb9e4b2c2ffe43e52d83fe4455ffd20229b4ba36c92918f67dd")
     add_versions("v4.3.4", "abbd099a51612200d1bfe236d764e0f0748ee71c3a6bc2c4069447d907d55b82")
 
     if not is_plat("windows") then
