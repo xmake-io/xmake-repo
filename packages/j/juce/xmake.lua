@@ -14,7 +14,7 @@ package("juce")
         add_versions("7.0.11", "45c3bdd8d7f00d5d990cc1f85066d49629d40b411ae9624bda44524cc5a69058")
     end
 
-    add_patches("7.0.11", path.join(os.scriptdir(), "patches", "7.0.11", "juce-build.patch"), "5be087368bace1810932fb4b2bfd611e0ab4cacf5945db0b9532dd2d4168ea19")
+    add_patches("7.0.11", path.join(os.scriptdir(), "patches", "7.0.11", "juce-build.patch"), "af5625959393e2c801e66056fb542914214c73ed47ac32413367e6b5e6e40ef3")
 
     local modules = {
         "analytics",
