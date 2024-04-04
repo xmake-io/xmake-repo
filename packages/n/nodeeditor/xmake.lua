@@ -5,6 +5,7 @@ package("nodeeditor")
 
     set_urls("https://github.com/paceholder/nodeeditor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/paceholder/nodeeditor.git")
+    add_versions("3.0.10", "110e7f6831bae87ba4c7163ac581a1a245d17fa92d28ed8633c6799ad3d948ca")
     add_versions("2.1.3", "4e3194a04ac4a2a2bf4bc8eb6cc27d5cc154923143c1ecf579ce7f0115a90585")
     add_versions("2.2.2", "010ebcf9b68f676c81ea13ea4a541f7ba441ec3dc3b6508315c36f6466c13536")
     add_patches("2.1.3", path.join(os.scriptdir(), "patches", "2.1.3", "fix_qt.patch"), "11b6e765f8c8b0002f84ef0c3eb7dde23076b0564679760b7f4c8ba7c7e46887")
@@ -21,7 +22,7 @@ package("nodeeditor")
         end
     end)
 
-    on_install("windows", "linux", "mingw", "macosx", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "mingw", "macosx|x86_64", function (package)
         local qt = package:dep("qt5core"):fetch().qtdir
 
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTING=OFF"}
@@ -39,10 +40,20 @@ package("nodeeditor")
         if not package:is_plat("windows") then
             cxflags = "-fPIC"
         end
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                QtNodes::FlowScene scene(std::make_shared<QtNodes::DataModelRegistry>());
-                QtNodes::FlowView view(&scene);
-            }
-        ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = {"nodes/FlowScene", "nodes/FlowView"}}))
+        local includes
+        if package:version():ge("3.0") then
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    QtNodes::DataFlowGraphModel model(std::make_shared<QtNodes::NodeDelegateModelRegistry>());
+                }
+            ]]}, {configs = {languages = "c++17", cxflags = cxflags}, includes = {"QtNodes/NodeDelegateModelRegistry", "QtNodes/DataFlowGraphModel"}}))
+            includes = {"QtNodes/FlowScene", "QtNodes/FlowView"}
+        else
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    QtNodes::FlowScene scene(std::make_shared<QtNodes::DataModelRegistry>());
+                    QtNodes::FlowView view(&scene);
+                }
+            ]]}, {configs = {languages = "c++14", cxflags = cxflags}, includes = {"nodes/FlowScene", "nodes/FlowView"}}))
+        end
     end)
