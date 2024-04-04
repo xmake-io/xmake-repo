@@ -14,6 +14,8 @@ package("juce")
         add_versions("7.0.11", "45c3bdd8d7f00d5d990cc1f85066d49629d40b411ae9624bda44524cc5a69058")
     end
 
+    add_patches("7.0.11", path.join(os.scriptdir(), "patches", "7.0.11", "juce-build.patch"), "5be087368bace1810932fb4b2bfd611e0ab4cacf5945db0b9532dd2d4168ea19")
+
     local modules = {
         "analytics",
         "audio_basics",
@@ -157,7 +159,7 @@ package("juce")
         end
     end)
 
-    on_component("gui_basics", function (package, component)
+    on_component("gui_extra", function (package, component)
         component:add("deps", "gui_basics")
         if package:is_plat("iphoneos") then
             component:add("frameworks", "WebKit", "UserNotifications")

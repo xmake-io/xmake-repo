@@ -40,7 +40,7 @@ local modules = {
     juce_box2d = {},
     juce_core = {
         syslinks = {
-            windows = {"kernel32", "user32", "shell32", "gdi32", "vfw32", "comdlg32", "winmm", "wininet", "rpcrt4", "ole32", "advapi32", "ws2_32", "Version", "Imm32", "Shlwapi"},
+            windows = {"kernel32", "user32", "shell32", "gdi32", "vfw32", "comdlg32", "winmm", "wininet", "rpcrt4", "ole32", "advapi32", "ws2_32", "Version", "Imm32", "Shlwapi", "OleAut32"},
             linux = {"rt", "dl", "pthread"},
             macosx = {"Cocoa", "Foundation", "IOKit", "Security"},
             iphoneos = {"Foundation"},
@@ -66,15 +66,16 @@ local modules = {
     juce_graphics = {
         syslinks = {
             iphoneos = {"CoreGraphics", "CoreImage", "CoreText", "QuartzCore"},
-            macosx = {"Cocoa", "QuartzCore"},
-            linux = {"freetype2"}
+            macosx = {"Cocoa", "QuartzCore"}
         },
+        packages = {
+            "freetype"
+        }
     },
     juce_gui_basics = {
         syslinks = {
             iphoneos = {"CoreServices", "UIKit", "Metal", "MetalKit"},
             macosx = {"Cocoa", "QuartzCore", "Metal", "MetalKit"},
-            linux = {"freetype2"},
             mingw = {"dxgi"}
         },
     },
