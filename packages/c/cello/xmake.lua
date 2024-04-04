@@ -13,21 +13,21 @@ package("cello")
             target("Cello")
                 set_kind("$(kind)")
                 set_languages("gnu99")
-                add_links("m", "pthread")
+                add_syslinks("m", "pthread")
                 add_files("src/*.c")
                 add_headerfiles("include/Cello.h")
                 add_includedirs("include")
                 on_config(function(target)
                     if is_plat("@mingw") and target:has_cincludes("Dbghelp.h") then
-                        target:add("links", "Dbghelp")
+                        target:add("syslinks", "Dbghelp")
                     elseif is_plat("@linux") and target:has_cincludes("execinfo.h") then
-                        target:add({ links = "execinfo", ldflags = "-rdynamic" })
+                        target:add({ syslinks = "execinfo", ldflags = "-rdynamic" })
                     else
                         target:add("defines", "CELLO_NSTRACE")
                     end
                 end)
         ]])
-        import("package.tools.xmake").install(package, { kind = package:config("shared") and "shared" or "static" })
+        import("package.tools.xmake").install(package, {})
     end)
 
     on_test(function(package)
