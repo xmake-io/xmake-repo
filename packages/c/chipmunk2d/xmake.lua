@@ -58,12 +58,12 @@ package("chipmunk2d")
         if package:config("precision") == "double" then
             opt.cxflags = {"-DCP_USE_DOUBLES=1"}
             if package:is_plat("macosx", "iphoneos") then
-                table.insert(opt.cxflags, "CP_USE_CGTYPES=1")
+                table.insert(opt.cxflags, "-DCP_USE_CGTYPES=1")
             end
         elseif package:config("precision") == "single" then
             opt.cxflags = {"-DCP_USE_DOUBLES=0"}
             if package:is_plat("macosx", "iphoneos") then
-                table.insert(opt.cxflags, "CP_USE_CGTYPES=0")
+                table.insert(opt.cxflags, "-DCP_USE_CGTYPES=0")
             end
         end
         import("package.tools.cmake").install(package, configs, opt)
