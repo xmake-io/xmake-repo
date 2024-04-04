@@ -157,7 +157,7 @@ package("juce")
         elseif package:is_plat("mingw") then
             component:add("syslinks", "dxgi")
         elseif package:is_plat("linux") then
-            component:add("deps", "libxext", "libx11", "xorgproto", "util-macros", "libxrandr", "libxrender", "gtk4")
+            component:add("deps", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext", "gtk4", "alsa-lib")
         end
     end)
 
