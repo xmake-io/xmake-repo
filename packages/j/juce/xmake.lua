@@ -157,7 +157,7 @@ package("juce")
         elseif package:is_plat("mingw") then
             component:add("syslinks", "dxgi")
         elseif package:is_plat("linux") then
-            component:add("deps", "libx11", "libxrandr", "libxi", "libxcursor", "libxext", "libxdamage", "libxfixes", "libxinerama", "gtk4", "alsa-lib")
+            component:add("deps", "libx11", "libxrandr", "libxi", "libxcursor", "libxext", "libxdamage", "libxfixes", "libxinerama")
         end
     end)
 
@@ -176,6 +176,9 @@ package("juce")
 
     on_component("opengl", function (package, component)
         component:add("deps", "gui_extra", "opengl")
+        if package:is_plat("linux") then
+            component:add("deps", "glu")
+        end
     end)
 
     on_component("product_unlocking", function (package, component)

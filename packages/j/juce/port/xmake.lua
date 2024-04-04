@@ -17,6 +17,9 @@ local modules = {
             linux = {"alsa"},
             mingw = {"winmm"}
         }
+        packages = {
+            linux = {"alsa-lib"}
+        }
     },
     juce_audio_formats = {
         syslinks = {
@@ -79,7 +82,7 @@ local modules = {
             mingw = {"dxgi"},
         },
         packages = {
-            linux = {"libx11", "libxrandr", "libxi", "libxcursor", "libxext", "libxdamage", "libxfixes", "libxinerama", "gtk4", "alsa-lib"}
+            linux = {"libx11", "libxrandr", "libxi", "libxcursor", "libxext", "libxdamage", "libxfixes", "libxinerama"}
         }
     },
     juce_gui_extra = {
@@ -87,6 +90,9 @@ local modules = {
             iphoneos = {"WebKit", "UserNotifications"},
             macosx = {"WebKit", "UserNotifications"},
         },
+        packages = {
+            linux = {"gtk4"}
+        }
     },
     juce_midi_ci = {},
     juce_opengl = {
@@ -96,6 +102,9 @@ local modules = {
             linux = {"hl"},
             mingw = {"opengl32"}
         },
+        packages = {
+            linux = {"glu"}
+        }
     },
     juce_osc = {},
     juce_product_unlocking = {},
