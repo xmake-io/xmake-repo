@@ -31,8 +31,14 @@ package("chipmunk2d")
     on_load(function (package)
         if package:config("precision") == "double" then
             package:add("defines", "CP_USE_DOUBLES=1")
+            if package:is_plat("macosx", "iphoneos") then
+                package:add("defines", "CP_USE_CGTYPES=1")
+            end
         elseif package:config("precision") == "single" then
             package:add("defines", "CP_USE_DOUBLES=0")
+            if package:is_plat("macosx", "iphoneos") then
+                package:add("defines", "CP_USE_CGTYPES=0")
+            end
         end
     end)
 
@@ -50,9 +56,15 @@ package("chipmunk2d")
         end
         local opt = {}
         if package:config("precision") == "double" then
-            opt.cxflags = "-DCP_USE_DOUBLES=1"
+            opt.cxflags = {"-DCP_USE_DOUBLES=1"}
+            if package:is_plat("macosx", "iphoneos") then
+                table.insert(opt.cxflags, "CP_USE_CGTYPES=1")
+            end
         elseif package:config("precision") == "single" then
-            opt.cxflags = "-DCP_USE_DOUBLES=0"
+            opt.cxflags = {"-DCP_USE_DOUBLES=0"}
+            if package:is_plat("macosx", "iphoneos") then
+                table.insert(opt.cxflags, "CP_USE_CGTYPES=0")
+            end
         end
         import("package.tools.cmake").install(package, configs, opt)
         os.vcp("include/chipmunk", package:installdir("include"))
