@@ -28,5 +28,5 @@ package("libxcomposite")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("XCompositeRedirectWindow", {includes = "X11/extensions/Xcomposite.h"}))
+        assert(package:has_cfuncs("XCompositeRedirectWindow", {includes = "X11/extensions/Xcomposite.h"}))
     end)
