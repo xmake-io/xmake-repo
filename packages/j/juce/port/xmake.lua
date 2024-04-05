@@ -16,7 +16,7 @@ local modules = {
             macosx = {"CoreAudio", "CoreMIDI", "AudioToolbox", "AVFoundation"},
             linux = {"alsa"},
             mingw = {"winmm"}
-        }
+        },
         packages = {
             linux = {"alsa-lib"}
         }
@@ -82,7 +82,7 @@ local modules = {
             mingw = {"dxgi"},
         },
         packages = {
-            linux = {"libx11", "libxrandr", "libxi", "libxcursor", "libxext", "libxdamage", "libxfixes", "libxinerama"}
+            linux = {"libx11", "libxrandr", "libxi", "libxcursor", "libxext", "libxdamage", "libxfixes", "libxinerama", "libxcomposite"}
         }
     },
     juce_gui_extra = {
