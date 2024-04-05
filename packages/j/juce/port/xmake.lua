@@ -82,7 +82,7 @@ local modules = {
             mingw = {"dxgi"},
         },
         packages = {
-            linux = {"libx11", "libxrandr", "libxi", "libxcursor", "libxext", "libxdamage", "libxfixes", "libxinerama", "libxcomposite"}
+            linux = {"libx11", "libxrandr", "libxi", "libxcursor", "libxext", "libxdamage", "libxfixes", "libxinerama", "libxcomposite", "xorgproto"}
         }
     },
     juce_gui_extra = {
