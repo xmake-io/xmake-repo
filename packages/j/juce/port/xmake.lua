@@ -124,7 +124,13 @@ for modulename, config in pairs(modules) do
     end
 end
 
-add_requires("openssl")
+if is_plat("android") then
+    add_requires("libffi")
+end
+
+if not is_plat("iphoneos") then
+    add_requires("openssl")
+end
 
 target("juce")
     set_kind("$(kind)")
@@ -189,5 +195,10 @@ target("juce")
             end
         end
 
-        add_packages("openssl")
+        if not is_plat("iphoneos") then
+            add_packages("openssl")
+        end
+        if is_plat("android") then
+            add_requires("libffi")
+        end
     end
