@@ -6,6 +6,7 @@ package("libremidi")
     add_urls("https://github.com/jcelerier/libremidi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jcelerier/libremidi.git")
 
+    add_versions("v4.5.0", "2e884a4c826dd87157ee4fab8cd8c7b9dbbc1ddb804cb10ef0852094200724db")
     add_versions("v3.0", "133b40396ca72e35d94cb0950199c9d123352951e4705971a9cd7606f905328a")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
@@ -66,14 +67,24 @@ package("libremidi")
     end)
 
     on_test(function (package)
-        -- TODO: v4 version will break api
-        assert(package:check_cxxsnippets({test = [[
-            #include <libremidi/libremidi.hpp>
-            void test() {
-                libremidi::midi_in midi;
-                for (int i = 0, N = midi.get_port_count(); i < N; i++) {
-                    std::string name = midi.get_port_name(i);
+        local code
+        if package:version():lt("4.0.0") then
+            code = [[
+                void test() {
+                    libremidi::midi_in midi;
+                    for (int i = 0, N = midi.get_port_count(); i < N; i++) {
+                        std::string name = midi.get_port_name(i);
+                    }
                 }
-            }
-        ]]}, {configs = {languages = "c++20"}}))
+            ]]
+        else
+            code = [[
+                void test() {
+                    libremidi::observer obs;
+                    for(const libremidi::input_port& port : obs.get_input_ports()) {}
+                }
+            ]]
+        end
+
+        assert(package:check_cxxsnippets({test = code}, {configs = {languages = "c++20"}, includes = {"libremidi/libremidi.hpp"}}))
     end)

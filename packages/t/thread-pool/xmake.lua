@@ -6,21 +6,18 @@ package("thread-pool")
 
     add_urls("https://github.com/bshoshany/thread-pool/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bshoshany/thread-pool.git")
+
+    add_versions("v4.1.0", "be7abecbc420bb87919eeef729b13ff7c29d5ce547bdae284923296c695415bd")
     add_versions("v3.3.0", "b76c0103c7ed07c137bd5b1988b9c09da280bbbad37588a096d2954c8d996e0f")
 
     on_install(function (package)
-        os.cp("BS_thread_pool.hpp", package:installdir("include"))
+        if package:version():ge("3.5.0") then
+            os.vcp("include", package:installdir())
+        else
+            os.vcp("BS_thread_pool.hpp", package:installdir("include"))
+        end
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({
-            test = [[
-                #include <BS_thread_pool.hpp>
-                static void test() {
-                    BS::thread_pool pool;
-                    std::future<int> my_future = pool.submit([] { return 42; });
-                    std::cout << my_future.get();
-                }
-            ]]
-        }, {configs = {languages = "c++17"}, includes = {"BS_thread_pool.hpp"}}))
+        assert(package:has_cxxtypes("BS::thread_pool", {configs = {languages = "c++17"}, includes = "BS_thread_pool.hpp"}))
     end)

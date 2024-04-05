@@ -6,9 +6,11 @@ package("mcut")
     add_urls("https://github.com/cutdigital/mcut/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cutdigital/mcut.git")
 
+    add_versions("v1.3.0", "5f33a8196f2ea4cb700b7ceb493c0674ab7f98fec415cbf04d546366bcc566a2")
     add_versions("v1.2.0", "dd339f222468a09f9b54f81ad7f21ef9b5b0b306953615d55684ba581d757297")
     add_versions("v1.1.0", "a31efbb4c963a40574ee0bad946d02dc77df873f68d35524363bd71d2ae858bd")
 
+    add_patches("1.3.0", path.join(os.scriptdir(), "patches", "1.2.0", "install.patch"), "f5eecb8fa8281c11ab8a10314b83bfba437009255fb46382d210010f584dabec")
     add_patches("1.2.0", path.join(os.scriptdir(), "patches", "1.2.0", "install.patch"), "f5eecb8fa8281c11ab8a10314b83bfba437009255fb46382d210010f584dabec")
     add_patches("1.1.0", path.join(os.scriptdir(), "patches", "1.1.0", "install.patch"), "438f5b76d8ad58253420844248c5da09404cc7ad4a7a19c174e90aacf714d0f0")
 
