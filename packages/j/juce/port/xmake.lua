@@ -199,6 +199,6 @@ target("juce")
             add_packages("openssl")
         end
         if is_plat("android") then
-            add_requires("libffi")
+            add_packages("libffi")
         end
     end
