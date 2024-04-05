@@ -115,6 +115,8 @@ package("juce")
             component:add("syslinks", "uuid", "wsock32", "wininet", "version", "ole32", "ws2_32", "oleaut32", "imm32", "comdlg32", "shlwapi", "rpcrt4", "winmm")
         elseif package:is_plat("windows") then
             component:add("syslinks", "kernel32", "user32", "shell32", "gdi32", "vfw32", "comdlg32", "winmm", "wininet", "rpcrt4", "ole32", "advapi32", "ws2_32", "Version", "Imm32", "Shlwapi")
+        elseif package:is_plat("android") then
+            component:add("links", "libffi")
         end
         component:add("deps", "openssl")
     end)
