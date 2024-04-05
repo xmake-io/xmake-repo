@@ -30,7 +30,7 @@ jobs:
         run: |
           # TODO we will remove it later
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev p7zip gobjc gcc g++
+          sudo apt-get install -y libgl1-mesa-dev libglu1-mesa-dev p7zip gobjc gcc g++ x11proto-dev
 
       - name: Tests
         run: |
