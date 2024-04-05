@@ -124,6 +124,8 @@ for modulename, config in pairs(modules) do
     end
 end
 
+add_requires("openssl")
+
 target("juce")
     set_kind("$(kind)")
     set_languages("cxx17")
@@ -186,4 +188,6 @@ target("juce")
                 add_packages(package)
             end
         end
+
+        add_packages("openssl")
     end

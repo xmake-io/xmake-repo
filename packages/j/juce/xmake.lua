@@ -116,6 +116,7 @@ package("juce")
         elseif package:is_plat("windows") then
             component:add("syslinks", "kernel32", "user32", "shell32", "gdi32", "vfw32", "comdlg32", "winmm", "wininet", "rpcrt4", "ole32", "advapi32", "ws2_32", "Version", "Imm32", "Shlwapi")
         end
+        component:add("deps", "openssl")
     end)
 
     on_component("cryptography", function (package, component)
