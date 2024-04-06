@@ -26,6 +26,7 @@ package("simdutf")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSIMDUTF_ICONV=" .. (package:config("iconv") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "add_subdirectory(singleheader)", "", {plain = true})
+        io.replace("src/CMakeLists.txt", "/WX", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
