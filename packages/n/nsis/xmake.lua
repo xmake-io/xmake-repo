@@ -20,8 +20,6 @@ package("nsis")
         end
     end)
 
-    on_install(function ()
-end)
     on_install("@windows|x64", "@windows|x86", function (package)
         os.cp("*", package:installdir())
         os.cp(path.join(package:resourcedir("strlen_8192"), "*"), package:installdir())
