@@ -17,7 +17,7 @@ package("abseil")
 
     add_deps("cmake")
 
-    add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "14", type = "string", values = {"14", "17", "20"}})
+    add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "17", type = "string", values = {"14", "17", "20"}})
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation")
