@@ -3,9 +3,6 @@ package("protobuf-cpp")
     set_homepage("https://developers.google.com/protocol-buffers/")
     set_description("Google's data interchange format for cpp")
 
-    add_urls("https://github.com/protocolbuffers/protobuf/releases/download/v$(version)/protobuf-cpp-$(version).zip")
-    add_urls("https://github.com/protocolbuffers/protobuf/releases/download/v$(version)/protobuf-$(version).zip")
-
     add_urls("https://github.com/protocolbuffers/protobuf/releases/download/v$(version), {version = function (version)
         if version:le("3.19.4") then
             return "protobuf-cpp-" .. version .. ".zip"
