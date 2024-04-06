@@ -14,14 +14,11 @@ package("re2")
     add_versions("2024.03.01", "7b2b3aa8241eac25f674e5b5b2e23d4ac4f0a8891418a2661869f736f03f57f4")
     add_versions("2024.04.01", "3f6690c3393a613c3a0b566309cf04dc381d61470079b653afc47c67fb898198")
 
-    add_deps("cmake")
+    add_deps("cmake", "abseil")
 
     if is_plat("linux") then
         add_syslinks("pthread")
     end
-    on_load(function (package)
-        package:add("deps", "abseil")
-    end)
 
     on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
         local configs = {"-DRE2_BUILD_TESTING=OFF"}
