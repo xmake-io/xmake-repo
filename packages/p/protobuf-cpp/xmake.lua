@@ -5,9 +5,9 @@ package("protobuf-cpp")
 
     add_urls("https://github.com/protocolbuffers/protobuf/releases/download/v$(version)", {version = function (version)
         if version:le("3.19.4") then
-            return "protobuf-cpp-" .. version .. ".zip"
+            return version .. "/protobuf-cpp-" .. version .. ".zip"
         else
-            return "protobuf-" .. version .. ".zip"
+            return version .. "/protobuf-" .. version .. ".zip"
         end
     end})
 
