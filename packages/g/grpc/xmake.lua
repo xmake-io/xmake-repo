@@ -35,7 +35,7 @@ package("grpc")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
-        package:add("deps", "abseil", {configs = {cxx_standard = "17"}})
+        package:add("deps", "abseil")
     end)
 
     on_install("linux", "macosx", "windows", function (package)

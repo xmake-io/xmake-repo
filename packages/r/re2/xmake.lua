@@ -20,7 +20,7 @@ package("re2")
         add_syslinks("pthread")
     end
     on_load(function (package)
-        package:add("deps", "abseil", {configs = {cxx_standard = "17"}})
+        package:add("deps", "abseil")
     end)
 
     on_install("macosx", "linux", "windows", "mingw", "cross", function (package)

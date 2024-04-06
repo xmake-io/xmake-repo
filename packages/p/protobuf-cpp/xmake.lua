@@ -40,7 +40,7 @@ package("protobuf-cpp")
             package:add("deps", "zlib")
         end
         if package:version():ge("22.0") then
-            package:add("deps", "abseil", {configs = {cxx_standard = "17"}})
+            package:add("deps", "abseil")
         end
     end)
 
