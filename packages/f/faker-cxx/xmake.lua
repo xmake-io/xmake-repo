@@ -8,9 +8,18 @@ package("faker-cxx")
 
     add_versions("v1.0.0", "ffba405f53822cac80491702a6b7c5490dc109474a0f37556bd00ddb69433309")
 
+    if is_host("windows") then
+        -- dll symbol 65535
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    add_deps("fmt")
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
+            add_requires("fmt")
+            add_packages("fmt")
             target("faker-cxx")
                 set_kind("$(kind)")
                 add_files("src/**.cpp")
