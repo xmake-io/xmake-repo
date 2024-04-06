@@ -23,7 +23,7 @@ package("grpc")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_deps("c-ares", "re2", "abseil", "protobuf-cpp", "openssl", "zlib")
+    add_deps("c-ares", "re2", "protobuf-cpp", "openssl", "zlib")
 
     if is_plat("linux") then
         add_syslinks("pthread", "dl", "m")
@@ -35,6 +35,7 @@ package("grpc")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
+        package:add("deps", "abseil", {configs = {cxx_standard = "17"}})
     end)
 
     on_install("linux", "macosx", "windows", function (package)
