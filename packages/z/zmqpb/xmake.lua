@@ -14,13 +14,13 @@ package("zmqpb")
     add_deps("cppzmq")
     add_deps("protobuf-cpp")
 
-    on_load("windows", "macosx", "linux", function (package)
+    on_load("windows", "macosx|x86_64", "linux", function (package)
         if not package:gitref() and package:version():lt("0.3") then
             package:add("deps", "fmt")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx|x86_64", "linux", function (package)
         local configs = {}
         import("package.tools.xmake").install(package, configs)
     end)
