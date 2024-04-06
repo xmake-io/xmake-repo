@@ -22,7 +22,9 @@ package("enet6")
     end)
 
     on_install(function (package)
-        import("package.tools.xmake").install(package)
+        local configs = {}
+        configs.examples = false
+        import("package.tools.xmake").install(package, configs)
    end)
 
     on_test(function (package)
