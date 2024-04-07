@@ -20,6 +20,7 @@ package("vulkan-hpp")
     add_versions("v1.3.275", "1a24b015830c116632a0723f3ccfd1f06009ce12")
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
+    add_configs("msvc_modules", {description = "If 'modules' enabled, and you wish to use MSVC on the package, enable this to avoid a known bug of MSVC.", default = false, type = "boolean"})
 
     on_load(function (package)
         if not package:config("modules") then
@@ -56,18 +57,36 @@ package("vulkan-hpp")
             os.cp("Vulkan-Headers/include", package:installdir())
             os.cp("vulkan/*.hpp", package:installdir(path.join("include", "vulkan")))
         else
-            io.writefile("xmake.lua", [[ 
-                target("vulkan-hpp")
-                    set_kind("static")
-                    set_languages("c++20")
-                    add_headerfiles("Vulkan-Headers/include/(**.h)")
-                    add_headerfiles("Vulkan/(**.h)")
-                    add_headerfiles("Vulkan-Headers/include/(**.hpp)")
-                    add_headerfiles("Vulkan/(**.hpp)")
-                    add_includedirs("Vulkan")
-                    add_includedirs("Vulkan-Headers/include")
-                    add_files("Vulkan/vulkan.cppm", {public = true})
-            ]])
+            if package:config("msvc_modules") then
+                io.writefile("xmake.lua", [[ 
+                    target("vulkan-hpp")
+                        set_kind("moduleonly")
+                        set_languages("c++20")
+                        set_toolchains("msvc")
+                        add_cxflags("/EHsc")
+                        add_headerfiles("Vulkan-Headers/include/(**.h)")
+                        add_headerfiles("Vulkan/(**.h)")
+                        add_headerfiles("Vulkan-Headers/include/(**.hpp)")
+                        add_headerfiles("Vulkan/(**.hpp)")
+                        add_includedirs("Vulkan")
+                        add_includedirs("Vulkan-Headers/include")
+                        add_files("Vulkan/vulkan.cppm")
+                        add_defines("VULKAN_HPP_NO_SMART_HANDLE")
+                ]])
+            else
+                io.writefile("xmake.lua", [[ 
+                    target("vulkan-hpp")
+                        set_kind("static")
+                        set_languages("c++20")
+                        add_headerfiles("Vulkan-Headers/include/(**.h)")
+                        add_headerfiles("Vulkan/(**.h)")
+                        add_headerfiles("Vulkan-Headers/include/(**.hpp)")
+                        add_headerfiles("Vulkan/(**.hpp)")
+                        add_includedirs("Vulkan")
+                        add_includedirs("Vulkan-Headers/include")
+                        add_files("Vulkan/vulkan.cppm", {public = true})
+                ]])
+            end
             local configs = {}
             import("package.tools.xmake").install(package, configs)
         end
