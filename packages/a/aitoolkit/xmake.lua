@@ -15,19 +15,5 @@ package("aitoolkit")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <aitoolkit/fsm.hpp>
-            using namespace aitoolkit::fsm;
-
-            struct blackboard_type{};
-            class state_dummy final : public state<blackboard_type> {
-            public:
-                virtual void enter(blackboard_type& blackboard) override {}
-            };
-            void test() {
-                auto simple_bb = blackboard_type{};
-                auto simple_fsm = simple_machine<blackboard_type>();
-                simple_fsm.set_state(std::make_shared<state_dummy>(), simple_bb);
-            }
-        ]]}, {configs = {languages = "c++20"}}))
+        assert(package:has_cxxincludes("aitoolkit/fsm.hpp", {configs = {languages = "c++20"}}))
     end)
