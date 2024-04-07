@@ -17,6 +17,10 @@ package("highfive")
     add_deps("hdf5")
 
     on_install("windows", "macosx", "linux", function (package)
+        if package:version():eq("2.9.0") then
+            io.replace("CMake/HighFiveTargetDeps.cmake", "find_package(HDF5 REQUIRED)", "find_package(HDF5 REQUIRED HINTS ${HDF5_ROOT})", {plain = true})
+        end
+
         local configs = {"-DHIGHFIVE_UNIT_TESTS=OFF",
                          "-DHIGHFIVE_EXAMPLES=OFF",
                          "-DHIGHFIVE_BUILD_DOCS=OFF",
