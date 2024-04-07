@@ -6,6 +6,7 @@ package("scons")
 
     add_urls("https://github.com/SCons/scons/archive/refs/tags/$(version).zip",
              "https://github.com/SCons/scons.git")
+    add_versions("4.7.0", "c783ac12040d1682b81ffd153b48ac1dd9a0eff5a9fbfbb55d86c5d186e88e4a")
     add_versions("4.6.0", "ae729515e951cde252205c1c5a7f237025ce204db8e8b9a145616614d87c6f86")
     add_versions("4.1.0", "106259e92ba001feae5b50175bcec92306d0420bb08229fb037440cf303fcfc3")
     add_versions("4.3.0", "c8cb3be5861c05a46250c60938857b9711c29a1500001da187e36dc05ee70295")
