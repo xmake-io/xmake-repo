@@ -16,13 +16,13 @@ package("zmqpb")
 
     add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = false})
 
-    on_load("windows", "macosx|x86_64", "linux", function (package)
+    on_load("windows", "macosx", "linux", function (package)
         if not package:gitref() and package:version():lt("0.3") then
             package:add("deps", "fmt")
         end
     end)
 
-    on_install("windows", "macosx|x86_64", "linux", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         import("package.tools.xmake").install(package, configs)
     end)
 
