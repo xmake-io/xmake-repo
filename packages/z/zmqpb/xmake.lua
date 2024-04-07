@@ -9,10 +9,12 @@ package("zmqpb")
     add_versions("0.2", "5dfa4d4cebb10cb7ae03943e18e8d48c8ff215e80371f24c5ade212be7f20721")
     add_versions("0.3", "343c57c9f72facca47082422a259ec8c531f5c6e332a3828835080c4a96b9064")
     add_versions("0.4", "7c0001db73b19e65b007adf6c9c5092c3589f043ab3e95a16b3ec2b2a87fa244")
-    add_versions("0.5", "5ec5b2ccbea9e328ac1f4778c76250faf861a9bca5e7fe47b3a366c06c97d782")
+    add_versions("0.5", "c9d44cd63ef440cf7363ce069f5184b59227fe5146ed90cb8bc7f14dae455ed4")
 
     add_deps("cppzmq")
     add_deps("protobuf-cpp")
+    -- protobuf needs it and somehow just doesn't publicizes the linkage
+    add_deps( "utf8_range" )
 
     add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = false})
 
