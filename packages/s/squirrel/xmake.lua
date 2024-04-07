@@ -11,7 +11,7 @@ package("squirrel")
 
     add_deps("cmake")
 
-    on_install("windows", "mingw", "linux", "bsd", "macosx", "android", "iphoneos", "cross", function (package)
+    on_install("windows|native", "mingw", "linux", "bsd", "macosx", "android", "iphoneos", "cross", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         if package:config("shared") then
