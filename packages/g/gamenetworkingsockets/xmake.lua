@@ -20,6 +20,7 @@ package("gamenetworkingsockets")
     end
 
     add_configs("webrtc", {description = "Enable p2p.", default = false, type = "boolean"})
+    add_requireconfs("**.abseil", {configs = {cxx_standard = "14"}})
 
     on_load("windows", "linux", function(package)
         if not package:config("shared") then
