@@ -13,7 +13,7 @@ package("mvfst")
 
     add_deps("cmake", "folly", "fizz")
 
-    on_install("linux", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DBUILD_EXAMPLES=OFF",
                          "-DCMAKE_CXX_STANDARD=17"}
