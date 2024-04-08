@@ -1,8 +1,11 @@
 package("mbedtls")
     set_homepage("https://tls.mbed.org")
-    set_description("An SSL library")
+    set_description("An open source, portable, easy to use, readable and flexible TLS library, and reference implementation of the PSA Cryptography API")
     set_license("Apache-2.0")
 
+    add_urls("https://github.com/Mbed-TLS/mbedtls/releases/download/$(version).tar.bz2", {version = function (version)
+        return string.format("%s/mbedtls-%s", version, tostring(version):sub(2))
+    end)
     add_urls("https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/$(version).zip", {version = function (version)
         return version:ge("v2.23.0") and version or ("mbedtls-" .. tostring(version):sub(2))
     end})
