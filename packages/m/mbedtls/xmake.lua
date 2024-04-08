@@ -5,7 +5,7 @@ package("mbedtls")
 
     add_urls("https://github.com/Mbed-TLS/mbedtls/releases/download/$(version).tar.bz2", {version = function (version)
         return string.format("%s/mbedtls-%s", version, tostring(version):sub(2))
-    end)
+    end})
     add_urls("https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/$(version).zip", {version = function (version)
         return version:ge("v2.23.0") and version or ("mbedtls-" .. tostring(version):sub(2))
     end})
