@@ -8,6 +8,7 @@ package("mbedtls")
     end})
     add_urls("https://github.com/Mbed-TLS/mbedtls.git")
 
+    add_versions("v3.6.0", "749c8a3b240923bcb30408ac93f6bf4d730514b71053605fa690673fd4437273")
     add_versions("v3.5.1", "959a492721ba036afc21f04d1836d874f93ac124cf47cf62c9bcd3a753e49bdb")
     add_versions("v3.4.0", "9969088c86eb89f6f0a131e699c46ff57058288410f2087bd0d308f65e9fccb5")
     add_versions("v2.28.3", "0c0abbd6e33566c5c3c15af4fc19466c8edb62fa483d4ce98f1ba3f656656d2d")
