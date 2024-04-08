@@ -10,6 +10,7 @@ package("mvfst")
     add_versions("2024.03.18", "7f42ad4b8da5646a24ba5e96101da914f77fe581abd686568d1dcd6492df0240")
     add_versions("2024.03.25", "293046511fb9395bdb09860f4c4202bcb848fed4cdd419d436506a07eeac66cd")
     add_versions("2024.04.01", "e39c4d7dd87520fcce6a3d5d398b5d03bd3e680186b9b0db23f02b502c6bcb1e")
+    add_versions("2024.04.08", "f0745b81ec5fefd53ca43f6d399108e88264b8e14e329b47eba64f3872982160")
 
     add_deps("cmake", "folly", "fizz")
 
