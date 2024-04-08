@@ -7,7 +7,7 @@ package("tobiaslocker_base64")
     add_urls("https://github.com/tobiaslocker/base64.git")
     add_versions("2024.02.26", "387b32f337b83d358ac1ffe574e596ba99c41d31")
 
-    on_install(function (package)
+    on_install("windows|!arm64", function (package)
         os.cp("include/base64.hpp", package:installdir("include/tobiaslocker_base64"))
     end)
 
