@@ -5,8 +5,7 @@ package("plf_stack")
     set_license("zlib")
 
     add_urls("https://github.com/mattreecebentley/plf_stack.git")
-    -- v2.02 has an unfortunate compile error.
-    add_versions("v2.01", "9d11bf2c5de5df739c0943af942a544c95b26ffa")
+    add_versions("v2.03", "ec248e8eb98667ffc9cc1415f7750a774a2fc359")
 
     on_install(function (package)
         os.cp("plf_stack.h", package:installdir("include"))
