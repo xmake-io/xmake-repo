@@ -7,6 +7,7 @@ package("frugally-deep")
     add_urls("https://github.com/Dobiasd/frugally-deep/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Dobiasd/frugally-deep.git")
 
+    add_versions("v0.15.31", "49bf5e30ad2d33e464433afbc8b6fe8536fc959474004a1ce2ac03d7c54bc8ba")
     add_versions("v0.15.29", "032cd525d4a7b9b3ebe28fd5e3984ac3e569da496f65d52c81030aabd9d0c52e")
 
     if is_plat("linux", "bsd") then
