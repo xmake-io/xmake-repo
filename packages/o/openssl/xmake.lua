@@ -73,7 +73,10 @@ package("openssl")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
         os.vrunv("perl", configs)
-        import("package.tools.nmake").install(package)
+
+        local runenvs = import("package.tools.nmake").buildenvs(package)
+        local nmake = import("lib.detect.find_tool")("nmake", {envs = runenvs})
+        os.vrunv(nmake.program, {"install_sw"}, {envs = runenvs})
     end)
 
     on_install("mingw", function (package)
