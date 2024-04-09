@@ -88,6 +88,9 @@ package("onnxruntime")
     end)
 
     on_install("windows", "linux|arm64", "linux|x86_64", "macosx", function (package)
+        if package:is_plat("windows") then
+            os.mv("lib/*.dll", package:installdir("bin"))
+        end
         os.cp("*", package:installdir())
     end)
 
