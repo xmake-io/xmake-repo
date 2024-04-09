@@ -55,11 +55,8 @@ package("sqlitecpp")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if is_plat("windows") then
             if package:config("shared") then
-                if package:version():gt("3.2.1") then
-                    table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
-                else
-                    table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-                end
+                table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
+                table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
             end
             table.insert(configs, "-DSQLITECPP_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
