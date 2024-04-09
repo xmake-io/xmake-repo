@@ -6,6 +6,7 @@ package("sqlitecpp")
     set_urls("https://github.com/SRombauts/SQLiteCpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SRombauts/SQLiteCpp.git")
 
+    add_versions("3.3.1", "71f990f9fb4b004533b6859ce40729af823b87fe691dd99ca084a7fd40db54b9")
     add_versions("3.2.1", "70c67d5680c47460f82a7abf8e6b0329bf2fb10795a982a6d8abc06adb42d693")
 
     if is_plat("android", "wasm") then
