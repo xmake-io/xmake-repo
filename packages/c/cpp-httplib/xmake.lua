@@ -40,12 +40,12 @@ package("cpp-httplib")
     end)
 
     on_install(function (package)
-        if package:is_plat("android") then
-            import("core.tool.toolchain")
-            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
-        end
+        -- if package:is_plat("android") then
+        --     import("core.tool.toolchain")
+        --     local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+        --     local ndk_sdkver = ndk:config("ndk_sdkver")
+        --     assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
+        -- end
         local configs = {}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHTTPLIB_REQUIRE_OPENSSL=" .. (package:config("ssl") and "ON" or "OFF"))
