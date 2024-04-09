@@ -15,11 +15,31 @@ package("openh264")
 
     add_deps("meson", "ninja", "nasm")
 
+    on_load("windows", function (package)
+        if package:is_plat("windows") and package:is_arch("arm.*") and (not package:is_precompiled()) then
+            package:add("deps", "strawberry-perl")
+        end
+    end)
+
     on_install("windows", "linux", function (package)
         if package:version():ge("2.4.1") then
+            import("package.tools.meson")
+
+            local opt = {}
+            opt.envs = meson.buildenvs(package)
+            -- add gas-preprocessor to PATH
+            if package:is_plat("windows") and package:is_arch("arm.*") then
+                opt.envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. opt.envs.PATH
+            end
+
+            if package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx") then
+                opt.ldflags = "-lstdc++"
+                opt.shflags = "-lstdc++"
+            end
+
             local configs = {"-Dtests=disabled"}
             table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-            import("package.tools.meson").install(package, configs)
+            meson.install(package, configs, opt)
         else
             import("package.tools.meson").build(package, {"-Dtests=disabled"}, {buildir = "out"})
             import("package.tools.ninja").install(package, {}, {buildir = "out"})
