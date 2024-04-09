@@ -5,6 +5,7 @@ package("sqlpp11")
 
     add_urls("https://github.com/rbock/sqlpp11/archive/refs/tags/$(version).tar.gz",
              "https://github.com/rbock/sqlpp11.git")
+    add_versions("0.64", "72e6d37c716cc45b38c3cf4541604f16224aaa3b511d1f1d0be0c49176c3be86")
     add_versions("0.61", "d5a95e28ae93930f7701f517b1342ac14bcf33a9b1c5b5f0dff6aea5e315bb50")
 
     add_deps("cmake")
