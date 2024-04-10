@@ -141,19 +141,7 @@ package("openssl3")
                          "--openssldir=" .. package:installdir(),
                          "--prefix=" .. package:installdir()}
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
-
-        if package:is_cross() then
-            if is_host("windows") and package:is_plat("android") then
-                buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
-                buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
-                buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
-                buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
-            end
-            os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
-        else
-            os.vrunv("./Configure", configs, {envs = buildenvs})
-        end
-
+        os.vrunv("./Configure", configs, {envs = buildenvs})
         local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
         import("package.tools.make").build(package, makeconfigs)
         import("package.tools.make").make(package, {"install_sw"})
