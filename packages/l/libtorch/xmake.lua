@@ -21,7 +21,7 @@ package("libtorch")
     -- Fix compile on macOS. Refer to https://github.com/pytorch/pytorch/pull/80916
     add_patches("1.12.1", "patches/1.12.1/clang.patch", "cdc3e00b2fea847678b1bcc6b25a4dbd924578d8fb25d40543521a09aab2f7d4")
     add_patches("1.12.1", "patches/1.12.1/vs2022.patch", "5a31b9772793c943ca752c92d6415293f7b3863813ca8c5eb9d92a6156afd21d")
-    add_patches("2.2.2", "patches/2.2.2/pocketfft.patch", "919f224840c7eb13e29e43312889615adf2c5b15c2e78f35756c1f84182b9277")
+    add_patches("2.2.2", "patches/2.2.2/pocketfft.patch", "8b756d867fb60839dcaeb1ee0bdf4189ee95e7f5c6f3810f8cbc8f6a5fae60e9")
 
     add_configs("shared",   {description = "Build shared library.", default = true, type = "boolean"})
     add_configs("python",   {description = "Build python interface.", default = false, type = "boolean"})

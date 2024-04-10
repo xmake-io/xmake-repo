@@ -6,7 +6,7 @@ diff --git a/third_party/pocketfft/pocketfft_hdronly.h b/third_party/pocketfft/p
  #endif
  
 -#if __cplusplus >= 201703L
-+#ifdef __linux__
++#if defined(__linux__) && __cplusplus >= 201703L
  inline void *aligned_alloc(size_t align, size_t size)
    {
    // aligned_alloc() requires that the requested size is a multiple of "align"
