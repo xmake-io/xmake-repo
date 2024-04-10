@@ -23,8 +23,8 @@ package("zeus_expected")
         assert(package:check_cxxsnippets({test = [[
             #include <zeus/expected.hpp>
             void test() {
-                zeus::expected<int, int> e1 = 42;
-                zeus::expected<int, int> e2 = zeus::unexpected(42);
+                zeus::expected<int, std::string> e1 = 42;
+                zeus::expected<int, std::string> e2 = zeus::unexpected("42");
             }
         ]]}, {configs = {languages = "cxx17"}}))
     end)
