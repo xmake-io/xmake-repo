@@ -12,18 +12,19 @@ package("zeus_expected")
     add_patches("v1.0.0", path.join(os.scriptdir(), "patches", "v1.0.0", "fix_typename.patch"), "710d71f8c765a2937df25a2c52abec24f5f4ef5f43281f6aa01853d0498e2a47")
 
     on_install(function (package)
-        if package:is_plat("windows") then
-            package:add("cxxflags", "/Zc:__cplusplus")
-        end
         os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
+        local cxflags = {}
+        if package:is_plat("windows") then
+            table.insert(cxflags, "/Zc:__cplusplus")
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <zeus/expected.hpp>
             void test() {
                 zeus::expected<int, int> e1 = 42;
                 zeus::expected<int, int> e2 = zeus::unexpected(42);
             }
-        ]]}, {configs = {languages = "cxx17"}}))
+        ]]}, {configs = {languages = "cxx17", cxflags = cxflags}}))
     end)
