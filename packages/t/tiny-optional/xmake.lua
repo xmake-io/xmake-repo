@@ -9,10 +9,7 @@ package("tiny-optional")
 
     add_versions("v1.2.0", "d4ce47d0c9c4f89ab41e4e0b96d25bfb98c0cc02da3d7b312337e5e4e6e1c9e8")
 
-    on_install(function (package)
-        if package:is_arch("arm.*") then
-            raise("Unsupported arm architecture!")
-        end
+    on_install("*|!arm*", function (package)
         os.cp("include", package:installdir())
     end)
 
