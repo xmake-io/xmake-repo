@@ -4,11 +4,10 @@ package("plf")
     set_description("Meta-package for all plf libraries.")
     set_license("zlib")
 
-    add_deps("plf_colony", "plf_hive", "plf_indiesort", "plf_list", "plf_nanotimer", "plf_queue", "plf_rand", "plf_reorderase", "plf_stack")
+    add_deps("plf_colony", "plf_indiesort", "plf_list", "plf_nanotimer", "plf_queue", "plf_rand", "plf_reorderase", "plf_stack")
 
     on_install(function (package)
         package:add("deps", "plf_colony")
-        package:add("deps", "plf_hive")
         package:add("deps", "plf_indiesort")
         package:add("deps", "plf_list")
         package:add("deps", "plf_nanotimer")
