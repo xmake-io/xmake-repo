@@ -11,11 +11,10 @@ package("zeus_expected")
 
     add_patches("v1.0.0", path.join(os.scriptdir(), "patches", "v1.0.0", "fix_typename.patch"), "710d71f8c765a2937df25a2c52abec24f5f4ef5f43281f6aa01853d0498e2a47")
 
-    if is_plat("windows") then
-        add_cxxflags("/Zc:__cplusplus")
-    end
-
     on_install(function (package)
+        if package:is_plat("windows") then
+            package:add("cxxflags", "/Zc:__cplusplus")
+        end
         os.cp("include", package:installdir())
     end)
 
