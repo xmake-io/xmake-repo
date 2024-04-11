@@ -1,4 +1,4 @@
-package("plf")
+package("plflibs")
     set_kind("library", {headeronly = true})
     set_homepage("https://plflib.org")
     set_description("Meta-package for all plf libraries.")
