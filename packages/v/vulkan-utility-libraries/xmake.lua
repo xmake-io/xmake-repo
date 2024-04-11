@@ -7,6 +7,7 @@ package("vulkan-utility-libraries")
              "https://github.com/KhronosGroup/Vulkan-Utility-Libraries/archive/refs/tags/v1.3.268.tar.gz",
              "https://github.com/KhronosGroup/Vulkan-Utility-Libraries.git")
 
+    add_versions("v1.3.281", "96d3ec7bda7b6e9fabbb471c570104a7b1cb56928d097dd0441c96129468b888")
     add_versions("v1.3.275", "96d3ec7bda7b6e9fabbb471c570104a7b1cb56928d097dd0441c96129468b888")
     add_versions("v1.3.268", "990de84b66094b647ae420ba13356b79d69e1c6f95532f40466457d51a9d127d")
 
