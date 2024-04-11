@@ -1,0 +1,88 @@
+diff --git a/deps/CMakeLists.txt b/deps/CMakeLists.txt
+index d7bded0..43b84f2 100644
+--- a/deps/CMakeLists.txt
++++ b/deps/CMakeLists.txt
+@@ -2,7 +2,6 @@ if("${POLYSCOPE_BACKEND_OPENGL3_GLFW}")
+ 
+   ## Glad
+   if(NOT TARGET glad)
+-    add_subdirectory(glad)
+   endif()
+ 
+   ## GLFW
+@@ -11,7 +10,7 @@ if("${POLYSCOPE_BACKEND_OPENGL3_GLFW}")
+     set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+     set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+     set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+-    add_subdirectory(glfw)
++    find_package(glfw3 REQUIRED)
+   endif()
+ endif()
+ 
+@@ -24,7 +23,6 @@ endif()
+ 
+ ## Imgui
+ if(NOT TARGET imgui)
+-  add_subdirectory(imgui)
+ endif()
+ 
+ ## Json
+@@ -39,5 +37,5 @@ endif()
+ 
+ ## stb
+ if(NOT TARGET stb)
+-  add_subdirectory(stb)
++  add_library(stb OBJECT stb_impl.cpp)
+ endif()
+diff --git a/deps/MarchingCubeCpp/include/MarchingCube/MC.h b/deps/MarchingCubeCpp/include/MarchingCube/MC.h
+index 62e6c37..98a41cf 100644
+--- a/deps/MarchingCubeCpp/include/MarchingCube/MC.h
++++ b/deps/MarchingCubeCpp/include/MarchingCube/MC.h
+@@ -5,8 +5,11 @@
+ #include <cmath>
+ 
+ // Added by nsharp: use glm instead of internal vector class
++#ifndef GLM_ENABLE_EXPERIMENTAL
++#define GLM_ENABLE_EXPERIMENTAL
+ #include <glm/glm.hpp>
+ #include <glm/gtx/norm.hpp>
++#undef GLM_ENABLE_EXPERIMENTAL
+ 
+ namespace MC
+ {
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 9d03d96..7c658b3 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -49,7 +49,7 @@ if("${POLYSCOPE_BACKEND_OPENGL3_GLFW}")
+ 
+   # Link settings
+   list(APPEND BACKEND_LIBS
+-    glfw
++    ${GLFW_LIBRARIES}
+   )
+ 
+   if(APPLE)
+@@ -371,5 +371,5 @@ add_definitions(-DNOMINMAX)
+ target_include_directories(polyscope PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../include")
+ 
+ # Link settings
+-target_link_libraries(polyscope PUBLIC imgui glm::glm)
++target_link_libraries(polyscope PUBLIC imgui)
+ target_link_libraries(polyscope PRIVATE "${BACKEND_LIBS}" stb nlohmann_json::nlohmann_json MarchingCube::MarchingCube)
+diff --git a/src/transformation_gizmo.cpp b/src/transformation_gizmo.cpp
+index 25c25f8..bdbd830 100644
+--- a/src/transformation_gizmo.cpp
++++ b/src/transformation_gizmo.cpp
+@@ -4,8 +4,11 @@
+ 
+ #include "polyscope/polyscope.h"
+ 
++#ifndef GLM_ENABLE_EXPERIMENTAL
++#define GLM_ENABLE_EXPERIMENTAL
+ #include <glm/gtc/matrix_transform.hpp>
+ #include <glm/gtx/transform.hpp>
++#endif
+ 
+ #include <cmath>
+ 
