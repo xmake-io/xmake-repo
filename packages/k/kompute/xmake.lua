@@ -6,6 +6,7 @@ package("kompute")
 
     add_urls("https://github.com/KomputeProject/kompute.git")
     add_versions("v0.8.0", "9752c6325735434e53fe6fca96946fc1a3212ff951039d1202f1c0606843b24e")
+    add_versions("v0.9.0", "2253cdf9ecdae3fb119fc5a0d0f5124f1efaaaab940ea6fffd60841cfa4a4365")
 
     add_deps("cmake", "vulkan-loader")
 
