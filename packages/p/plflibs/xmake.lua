@@ -1,0 +1,17 @@
+package("plflibs")
+    set_kind("library", {headeronly = true})
+    set_homepage("https://plflib.org")
+    set_description("Meta-package for all plf libraries.")
+    set_license("zlib")
+
+    add_deps("plf_colony", "plf_indiesort", "plf_list", "plf_queue", "plf_rand", "plf_reorderase", "plf_stack")
+
+    on_install(function (package)
+        package:add("deps", "plf_colony")
+        package:add("deps", "plf_indiesort")
+        package:add("deps", "plf_list")
+        package:add("deps", "plf_queue")
+        package:add("deps", "plf_rand")
+        package:add("deps", "plf_reorderase")
+        package:add("deps", "plf_stack")
+    end)
