@@ -1,7 +1,7 @@
 package("openssl3")
-
     set_homepage("https://www.openssl.org/")
     set_description("A robust, commercial-grade, and full-featured toolkit for TLS and SSL.")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/openssl-$(version).zip")
     add_versions("3.0.7", "fcb37203c6bf7376cfd3aeb0be057937b7611e998b6c0d664abde928c8af3eb7")
@@ -43,7 +43,7 @@ package("openssl3")
     end)
 
     on_install("windows", function (package)
-        local configs = {"Configure"}
+        local configs = {"Configure", "no-tests"}
         local target
         if package:is_arch("x86", "i386") then
             target = "VC-WIN32"
@@ -59,7 +59,10 @@ package("openssl3")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
         os.vrunv("perl", configs)
-        import("package.tools.nmake").install(package)
+
+        local runenvs = import("package.tools.nmake").buildenvs(package)
+        local nmake = import("lib.detect.find_tool")("nmake", {envs = runenvs})
+        os.vrunv(nmake.program, {"install_sw"}, {envs = runenvs})
     end)
 
     on_install("mingw", function (package)
