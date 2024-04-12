@@ -8,6 +8,18 @@ package("teascript")
 
     add_versions("v0.13.0", "7c8cc05a8775ee2c857278b5e353670bf02442b2fa3a411343e82b2b85eedced")
 
+    add_configs("fmt", {description = "Use fmt for printing.", default = true, type = "boolean"})
+    add_configs("toml++", {description = "Enable toml support.", default = true, type = "boolean"})
+
+    on_load(function (package)
+        if package:config("fmt") then
+            package:add("deps", "fmt")
+        end
+        if package:config("toml++") then
+            package:add("deps", "toml++")
+        end
+    end)
+
     on_install(function (package)
         os.cp("include", package:installdir())
     end)
