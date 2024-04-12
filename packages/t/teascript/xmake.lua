@@ -1,4 +1,5 @@
 package("teascript")
+    set_kind("library", {headeronly = true})
     set_homepage("https://tea-age.solutions/teascript/overview-and-highlights/")
     set_description("TeaScript C++ Library - embedded scripting language for C++ Applications")
     set_license("MPL-2.0")
