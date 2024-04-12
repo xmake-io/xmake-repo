@@ -6,6 +6,7 @@ package("aws-c-compression")
     add_urls("https://github.com/awslabs/aws-c-compression/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-compression.git")
 
+    add_versions("v0.2.18", "517c361f3b7fffca08efd5ad251a20489794f056eab0dfffacc6d5b341df8e86")
     add_versions("v0.2.17", "703d1671e395ea26f8b0b70d678ed471421685a89e127f8aa125e2b2ecedb0e0")
 
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
