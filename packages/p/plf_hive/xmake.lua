@@ -13,6 +13,7 @@ package("plf_hive")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <version>
 // plf_hive requires C++20 ranges compatibility.
 #ifdef __cpp_lib_containers_ranges
             #include <plf_hive.h>
