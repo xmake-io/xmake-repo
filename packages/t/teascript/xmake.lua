@@ -21,7 +21,7 @@ package("teascript")
         end
     end)
 
-    on_install("!cross,!android,!iphon*,!wasm,@!macosx|x86_64", function (package)
+    on_install("!cross,!android,!iphon*,!wasm,!mingw|x86_64,!mingw|arm64,@!macosx|x86_64", function (package)
         os.cp("include", package:installdir())
     end)
 
