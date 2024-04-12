@@ -4,6 +4,12 @@ package("backward-cpp")
     set_description("Backward is a beautiful stack trace pretty printer for C++.")
     set_license("MIT")
 
+    add_configs("bfd", {
+        description = "Get stack trace with details about your sources by using libbfd from binutils.",
+        default = false,
+        type = "boolean"
+    })
+
     add_urls("https://github.com/bombela/backward-cpp/archive/refs/tags/$(version).zip",
              "https://github.com/bombela/backward-cpp.git")
     add_versions("v1.6", "9b07e12656ab9af8779a84e06865233b9e30fadbb063bf94dd81d318081db8c2")
@@ -19,6 +25,11 @@ package("backward-cpp")
     add_deps("cmake")
 
     on_install("linux", "mingw", "macosx", "windows", function (package)
+        if package:config("bfd") then
+            package:add("deps", "binutils")
+            package:add("syslinks", "bfd")
+        package:add("cxxflags", "-DBACKWARD_HAS_BFD=1")
+        end
         local configs = {"-DBACKWARD_TESTS=OFF"}
         table.insert(configs, "-DBACKWARD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
@@ -28,3 +39,4 @@ package("backward-cpp")
     on_test(function (package)
         assert(package:has_cxxtypes("backward::SignalHandling", {configs = {languages = "c++11"}, includes = "backward/backward.hpp"}))
     end)
+
