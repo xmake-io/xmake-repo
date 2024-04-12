@@ -21,7 +21,7 @@ package("teascript")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         os.cp("include", package:installdir())
     end)
 
@@ -32,5 +32,5 @@ package("teascript")
                 teascript::Engine engine;
                 engine.ExecuteCode("println(\"Hello, World!\");");
             }
-        ]]}, {configs = {languages = "cxx20"}}))
+        ]]}, {configs = {languages = "c++20"}}))
     end)
