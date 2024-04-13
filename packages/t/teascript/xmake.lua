@@ -21,7 +21,7 @@ package("teascript")
         end
     end)
 
-    on_install("windows", "linux", "macosx|arm64", "mingw|i686", "bsd", "msys", function (package)
+    on_install("windows", "linux", "macosx|arm64", "bsd", "msys", "@!mingw|x86_64", function (package)
         os.cp("include", package:installdir())
     end)
 
