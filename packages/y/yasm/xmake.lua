@@ -21,7 +21,9 @@ package("yasm")
     end
 
     on_install("@windows", "@mingw", "@msys", function (package)
-        os.mv("*.exe", package:installdir("bin", "yasm.exe"))
+        -- renaming the file and moving it to the right folder has to be in two steps to avoid xmake mistaking the filename for a folder
+        os.vmv(package:originfile(), "yasm.exe")
+        os.vmv("yasm.exe", package:installdir("bin"))
     end)
 
     on_install("@linux", "@macosx", function (package)
