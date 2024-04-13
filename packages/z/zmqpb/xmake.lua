@@ -9,22 +9,23 @@ package("zmqpb")
     add_versions("0.2", "5dfa4d4cebb10cb7ae03943e18e8d48c8ff215e80371f24c5ade212be7f20721")
     add_versions("0.3", "343c57c9f72facca47082422a259ec8c531f5c6e332a3828835080c4a96b9064")
     add_versions("0.4", "7c0001db73b19e65b007adf6c9c5092c3589f043ab3e95a16b3ec2b2a87fa244")
-    add_versions("0.5", "c9d44cd63ef440cf7363ce069f5184b59227fe5146ed90cb8bc7f14dae455ed4")
+    add_versions("0.5", "846c7f7f01a24647962461433742ef7d091a83ac01934a65bf2a0a5292b2a5c4")
 
     add_deps("cppzmq")
     add_deps("protobuf-cpp")
     -- protobuf needs it and somehow just doesn't publicizes the linkage
+    add_deps( "abseil" )
     add_deps( "utf8_range" )
 
     add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = false})
 
-    on_load("windows|x86", "windows|x64", "macosx", "linux", function (package)
+    on_load("windows", "macosx", "linux", function (package)
         if not package:gitref() and package:version():lt("0.3") then
             package:add("deps", "fmt")
         end
     end)
 
-    on_install("windows|x86", "windows|x64", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         import("package.tools.xmake").install(package, configs)
     end)
 
