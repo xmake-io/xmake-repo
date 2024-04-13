@@ -12,7 +12,7 @@ package("pulsar")
     add_deps("boost 1.81.0", "protobuf-cpp", "libcurl", "openssl", "zlib", "zstd", "snappy")
 
     on_install("linux", function (package)
-        local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_CXX_STANDARD=14"}
+        local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_CXX_STANDARD=17"}
         if package:config("shared") then
             configs = table.join(configs, {"-DBUILD_STATIC_LIB=OFF", "-DBUILD_DYNAMIC_LIB=ON"})
         else
@@ -34,5 +34,5 @@ package("pulsar")
                     std::cout << "invalid argument" << std::endl;
                 }
             }
-        ]]}, {configs = {languages = "cxx14"}}))
+        ]]}, {configs = {languages = "cxx17"}}))
     end)
