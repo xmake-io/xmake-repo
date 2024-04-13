@@ -7,15 +7,10 @@ package("plf_nanotimer")
     add_urls("https://github.com/mattreecebentley/plf_nanotimer.git")
     add_versions("v1.07", "55e0fcb135ec8db874a0656f94d1f1780d7c75a7")
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         os.cp("plf_nanotimer.h", package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <plf_nanotimer.h>
-            void test() {
-                plf::nanotimer timer;
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+        assert(package:has_cxxtypes("plf::nanotimer", {configs = {languages = "c++17"}, includes = "plf_nanotimer.h"}))
     end)
