@@ -9,9 +9,9 @@ package("pulsar")
     add_versions("3.5.0", "21d71a36666264418e3c5d3bc745628228b258daf659e6389bb9c9584409a27e")
     add_versions("3.1.2", "802792e8dd48f21dea0cb9cee7afe20f2598d333d2e484a362504763d1e3d49a")
 
-    add_deps("boost 1.81.0", "protobuf-cpp", "libcurl", "openssl", "zlib", "zstd", "snappy")
+    add_deps("boost 1.81.0", "protobuf-cpp", "libcurl", "openssl", "zlib", "zstd", "snappy", "abseil", "utf8_range")
 
-    on_install("linux", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_CXX_STANDARD=17"}
         if package:config("shared") then
             configs = table.join(configs, {"-DBUILD_STATIC_LIB=OFF", "-DBUILD_DYNAMIC_LIB=ON"})
