@@ -12,6 +12,7 @@ package("pulsar")
     add_deps("boost 1.81.0", "protobuf-cpp", "libcurl", "openssl", "zlib", "zstd", "snappy", "abseil", "utf8_range")
 
     on_install("linux", function (package)
+        io.replace("CMakeLists.txt", "-Werror", "")
         local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_CXX_STANDARD=17"}
         if package:config("shared") then
             configs = table.join(configs, {"-DBUILD_STATIC_LIB=OFF", "-DBUILD_DYNAMIC_LIB=ON"})
