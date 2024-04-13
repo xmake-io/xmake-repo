@@ -1,12 +1,13 @@
 package("kompute")
-
     set_homepage("https://github.com/KomputeProject/kompute")
     set_description("General purpose GPU compute framework for cross vendor graphics cards")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/KomputeProject/kompute.git")
+    add_urls("https://github.com/KomputeProject/kompute/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/KomputeProject/kompute.git")
+
+    add_versions("v0.9.0", "901f609029033f1b97de8189228229d25508408c9f7f1dda0e75b2fa632f3521")
     add_versions("v0.8.0", "9752c6325735434e53fe6fca96946fc1a3212ff951039d1202f1c0606843b24e")
-    add_versions("v0.9.0", "2253cdf9ecdae3fb119fc5a0d0f5124f1efaaaab940ea6fffd60841cfa4a4365")
 
     add_deps("cmake", "vulkan-loader")
 
@@ -24,4 +25,3 @@ package("kompute")
     on_test(function (package)
         assert(package:has_cxxtypes("kp::Manager", {includes = "kompute/Kompute.hpp"}))
     end)
-package_end()
