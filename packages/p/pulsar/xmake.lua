@@ -19,7 +19,7 @@ package("pulsar")
             configs = table.join(configs, {"-DBUILD_STATIC_LIB=ON", "-DBUILD_DYNAMIC_LIB=OFF"})
         end
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"zstd", "snappy", "abseil"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"zstd", "snappy", "abseil", "utf8_range"}})
     end)
 
     on_test(function (package)
