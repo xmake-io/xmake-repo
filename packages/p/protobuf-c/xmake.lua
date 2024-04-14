@@ -3,7 +3,6 @@ package("protobuf-c")
     set_homepage("https://github.com/protobuf-c/protobuf-c")
     set_description("Google's data interchange format for c")
 
-    add_urls("https://github.com/protobuf-c/protobuf-c/releases/download/v$(version)/protobuf-c-$(version).tar.gz")
     add_urls("https://github.com/protobuf-c/protobuf-c/archive/refs/tags/v$(version).tar.gz")
     add_versions("1.5.0", "d4cb022d55f49796959b07a9d83040822e39129bc0eb28f4e8301da17d758f62")
     add_versions("1.3.1", "5eeec797d7ff1d4b1e507925a1780fad5dd8dd11163203d8832e5a9f20a79b08")
