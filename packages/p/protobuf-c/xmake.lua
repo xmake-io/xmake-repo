@@ -12,7 +12,7 @@ package("protobuf-c")
     -- and https://github.com/protobuf-c/protobuf-c/issues/356
     add_patches("1.3.1", path.join(os.scriptdir(), "patches", "1.3.1", "342.patch"), "ab78f9eeff2840cacf5b6b143d284e50e43166ec2cbfa78cd47fd8db1e387c6d")
 
-    add_deps("protobuf-cpp")
+    add_deps("protobuf-cpp 3.19.4")
     if is_plat("windows") then
         add_deps("cmake")
     end
