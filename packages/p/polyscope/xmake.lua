@@ -33,7 +33,7 @@ package("polyscope")
 
     on_install("windows", "macosx", "linux", function (package)
         os.cp("deps/stb/stb_impl.cpp", "deps/stb_impl.cpp")
-        local configs = {"-DPOLYSCOPE_BACKEND_OPENGL_MOCK=OFF"}
+        local configs = {"-DPOLYSCOPE_BACKEND_OPENGL_MOCK=OFF", "-DPOLYSCOPE_BACKEND_OPENGL3_EGL=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = {"imgui", "glad", "glfw", "glm", "happly", "nlohmann_json", "stb"}})
