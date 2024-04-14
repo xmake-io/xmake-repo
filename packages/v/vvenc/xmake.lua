@@ -16,7 +16,7 @@ package("vvenc")
     add_deps("cmake")
 
     on_install("windows|x86", "windows|x64", "linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", function (package)
-        local configs = {}
+        local configs = {"-DVVENC_OVERRIDE_COMPILER_CHECK=ON"}
         if package:is_debug() then
             table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
             table.insert(configs, "-DVVENC_ENABLE_TRACING=ON")
