@@ -7,7 +7,7 @@ package("protobuf-c")
     add_versions("1.5.0", "7b404c63361ed35b3667aec75cc37b54298d56dd2bcf369de3373212cc06fd98")
     add_versions("1.3.1", "51472d3a191d6d7b425e32b612e477c06f73fe23e07f6a6a839b11808e9d2267")
 
-    add_resources("1.5.0", "build-cmake", "https://raw.githubusercontent.com/protobuf-c/protobuf-c/v1.5.0/build-cmake/Config.cmake.in", "a1581bad0c6935d2300c9e5b8d2126db3ec94afdd14ea19dd286fd561eb2e68d")
+    add_resources("1.5.0", "build-cmake/Config.cmake.in", "https://raw.githubusercontent.com/protobuf-c/protobuf-c/v1.5.0/build-cmake/Config.cmake.in", "a1581bad0c6935d2300c9e5b8d2126db3ec94afdd14ea19dd286fd561eb2e68d")
 
     -- fix "error: no type named 'Reflection' in 'google::protobuf::Message'"
     -- see https://github.com/protobuf-c/protobuf-c/pull/342
