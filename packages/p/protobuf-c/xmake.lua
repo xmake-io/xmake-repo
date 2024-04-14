@@ -14,7 +14,7 @@ package("protobuf-c")
 
     add_deps("protobuf-cpp 3.19.4")
     if is_plat("windows") then
-        add_deps("cmake")
+        add_deps("cmake", "abseil", "utf8_range")
     end
 
     add_links("protobuf-c")
@@ -28,7 +28,7 @@ package("protobuf-c")
 
     on_install("windows", function (package)
         -- fix run `protoc-c.exe` failed
-        io.replace("protoc-c/main.cc", "invocation_basename == legacy_name", "1")
+        -- io.replace("protoc-c/main.cc", "invocation_basename == legacy_name", "1")
         os.cd("build-cmake")
         local cflags
         local shflags
