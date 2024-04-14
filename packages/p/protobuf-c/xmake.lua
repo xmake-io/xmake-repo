@@ -26,33 +26,29 @@ package("protobuf-c")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", function (package)
-        -- fix run `protoc-c.exe` failed
-        -- io.replace("protoc-c/main.cc", "invocation_basename == legacy_name", "1")
-        io.writefile("build-cmake/Config.cmake.in", [[
-            @PACKAGE_INIT@
-            include("${CMAKE_CURRENT_LIST_DIR}/protobuf-c-targets.cmake")
-        ]])
+    -- on_install("windows", function (package)
+    --     -- fix run `protoc-c.exe` failed
+    --     io.replace("protoc-c/main.cc", "invocation_basename == legacy_name", "1")
 
-        os.cd("build-cmake")
-        local cflags
-        local shflags
-        local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
-            cflags = {"-DPROTOBUF_C_USE_SHARED_LIB", "-DPROTOBUF_C_EXPORT"}
-            shflags = "/export:protobuf_c_empty_string"
-        else
-            table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
-        end
-        if package:config("vs_runtime"):startswith("MT") then
-            table.insert(configs, "-DMSVC_STATIC_BUILD=ON")
-        else
-            table.insert(configs, "-DMSVC_STATIC_BUILD=OFF")
-        end
-        import("package.tools.cmake").install(package, configs, {cflags = cflags, shflags = shflags})
-        os.cp("build_*/Release/protoc-gen-c.exe", path.join(package:installdir("bin"), "protoc-c.exe"))
-    end)
+    --     os.cd("build-cmake")
+    --     local cflags
+    --     local shflags
+    --     local configs = {}
+    --     if package:config("shared") then
+    --         table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
+    --         cflags = {"-DPROTOBUF_C_USE_SHARED_LIB", "-DPROTOBUF_C_EXPORT"}
+    --         shflags = "/export:protobuf_c_empty_string"
+    --     else
+    --         table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
+    --     end
+    --     if package:config("vs_runtime"):startswith("MT") then
+    --         table.insert(configs, "-DMSVC_STATIC_BUILD=ON")
+    --     else
+    --         table.insert(configs, "-DMSVC_STATIC_BUILD=OFF")
+    --     end
+    --     import("package.tools.cmake").install(package, configs, {cflags = cflags, shflags = shflags})
+    --     os.cp("build_*/Release/protoc-gen-c.exe", path.join(package:installdir("bin"), "protoc-c.exe"))
+    -- end)
 
     on_install("linux", "macosx", function (package)
         local configs = {}
