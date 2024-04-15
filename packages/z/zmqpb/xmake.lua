@@ -17,8 +17,6 @@ package("zmqpb")
     add_deps( "abseil" )
     add_deps( "utf8_range" )
 
-    add_configs("shared", {description = "Build shared binaries.", default = false, type = "boolean", readonly = false})
-
     on_load("windows", "macosx", "linux", function (package)
         if not package:gitref() and package:version():lt("0.3") then
             package:add("deps", "fmt")
@@ -26,6 +24,7 @@ package("zmqpb")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
+       local configs = {}
         import("package.tools.xmake").install(package, configs)
     end)
 
