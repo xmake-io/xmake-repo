@@ -11,11 +11,49 @@ package("libvips")
 
     add_configs("c++", { description = "Build C++ API", default = true, type = "boolean" })
     add_configs("deprecated", { description = "Build deprecated components", default = false, type = "boolean" })
+    add_configs("dynamic_modules", { description = "Build dynamic modules", default = false, type = "boolean" })
+    add_configs("introspection", { description = "Build GObject introspection data", default = false, type = "boolean" })
+    add_configs("vapi", { description = "Build VAPI", default = false, type = "boolean" })
 
     add_configs("nsgif", { description = "Build with nsgif", default = false, type = "boolean" })
     add_configs("ppm", { description = "Build with ppm", default = false, type = "boolean" })
     add_configs("analyze", { description = "Build with analyze", default = false, type = "boolean" })
     add_configs("radiance", { description = "Build with radiance", default = false, type = "boolean" })
+
+    local deps = {
+        "cfitsio",
+        -- "cgif",
+        -- "exif",
+        "fftw",
+        "fontconfig",
+        "libarchive",
+        "libheif",
+        "libimagequant",
+        "libjpeg",
+        "libjxl",
+        "lcms",
+        "imagemagick",
+        "matio",
+        -- "nifti",
+        "openexr",
+        "openjpeg",
+        -- "openslide",
+        -- "highway",
+        -- "orc",
+        -- "pangocairo",
+        -- "pdfium",
+        "poppler",
+        -- "quantizr",
+        -- "rsvg",
+        "libspng",
+        "libtiff",
+        "libwebp",
+        "zlib",
+    }
+
+    for _, dep in ipairs(deps) do
+        add_configs(dep, { description = "Build with " .. dep, default = false, type = "boolean"})
+    end
 
     add_deps("meson", "ninja")
     add_deps("glib", "expat")
@@ -28,6 +66,14 @@ package("libvips")
         add_deps("pkgconf")
     end
 
+    on_load(function (package)
+        for _, dep in ipairs(deps) do
+            if package:config(dep) then
+                package:add("deps", dep)
+            end
+        end
+    end)
+
     on_install("windows", "macosx", "linux", "cross", function (package)
         io.replace("meson.build", "subdir('tools')", "", {plain = true})
         io.replace("meson.build", "subdir('test')", "", {plain = true})
@@ -35,12 +81,37 @@ package("libvips")
 
         local configs = {"-Dexamples=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+
+        local configs_map = {
+            ["c++"] = "cplusplus",
+            ["dynamic_modules"] = "modules",
+            ["libarchive"] = "archive",
+            ["libheif"] = "heif",
+            ["libimagequant"] = "imagequant",
+            ["libjpeg"] = "jpeg",
+            ["libjxl"] = "jpeg-xl",
+            ["imagemagick"] = "magick",
+            ["libspng"] = "spng",
+            ["libtiff"] = "tiff",
+            ["libwebp"] = "webp",
+        }
+
+        -- workaround meson option type
+        table.insert(deps, "dynamic_modules")
+        table.insert(deps, "introspection")
         for name, enabled in table.orderpairs(package:configs()) do
-            if name == "c++" then
-                name = "cplusplus"
-            end
             if not package:extraconf("configs", name, "builtin") then
-                table.insert(configs, "-D" .. name .. "=" .. (enabled and "true" or "false"))
+                local enabled_string
+                if table.contains(deps, name) then
+                    enabled_string = (enabled and "enabled" or "disabled")
+                else
+                    enabled_string = (enabled and "true" or "false")
+                end
+
+                if configs_map[name] then
+                    name = configs_map[name]
+                end
+                table.insert(configs, "-D" .. name .. "=" .. enabled_string)
             end
         end
         import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv"}})
