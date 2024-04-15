@@ -19,11 +19,11 @@ package("vulkan-hpp")
     add_versions("v1.3.272", "e621db07719c0c1c738ad39ef400737a750bb23a")
     add_versions("v1.3.275", "1a24b015830c116632a0723f3ccfd1f06009ce12")
     add_versions("v1.3.276", "d4b36b82236e052a5e6e4cea5fe7967d5b565ebc")
-    add_versions("v1.2.277", "c5c1994f79298543af93d7956b654bdefdfbdd26")
-    add_versions("v1.2.278", "29723f90a127ff08d9099855378162f04b4ffddd")
-    add_versions("v1.2.279", "6fb8def27290f8b87d7835457a9c68190aed9a9a")
-    add_versions("v1.2.280", "e35acfe75215116029298aebf681170559a4fe6a")
-    add_versions("v1.2.281", "88d508b32f207ba85b37fe22fe3732322d1c248d")
+    add_versions("v1.3.277", "c5c1994f79298543af93d7956b654bdefdfbdd26")
+    add_versions("v1.3.278", "29723f90a127ff08d9099855378162f04b4ffddd")
+    add_versions("v1.3.279", "6fb8def27290f8b87d7835457a9c68190aed9a9a")
+    add_versions("v1.3.280", "e35acfe75215116029298aebf681170559a4fe6a")
+    add_versions("v1.3.281", "88d508b32f207ba85b37fe22fe3732322d1c248d")
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
     add_configs("msvc_modules", {description = "If 'modules' enabled, and you wish to use MSVC on the package, enable this to avoid a known bug of MSVC.", default = false, type = "boolean"})
@@ -37,8 +37,8 @@ package("vulkan-hpp")
         end
     end)
 
-
-    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+    -- TODO: add android target
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "iphoneos", function (package)
         local arch_prev
         local plat_prev
         if (package:is_plat("mingw") or package:is_cross()) and package.plat_set then
