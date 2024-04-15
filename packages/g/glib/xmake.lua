@@ -20,7 +20,8 @@ package("glib")
         add_deps("libiconv", {system = true})
         add_deps("libintl")
     elseif is_plat("windows") then
-        add_deps("libintl")
+        add_deps("libintl", "pkgconf")
+        add_syslinks("Iphlpapi", "Dnsapi")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
