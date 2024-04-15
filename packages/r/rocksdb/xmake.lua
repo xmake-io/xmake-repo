@@ -33,7 +33,7 @@ package("rocksdb")
         end
     end)
 
-    on_install("linux", "windows", "macosx", "mingw", function (package)
+    on_install("linux", "windows|arm", "windows|x64", "macosx", "mingw|x86_64", function (package)
         local configs = {
             "-DWITH_ALL_TESTS=OFF",
             "-DWITH_TESTS=OFF",
