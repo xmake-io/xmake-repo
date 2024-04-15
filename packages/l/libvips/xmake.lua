@@ -35,6 +35,7 @@ package("libvips")
         "openexr",
         "openjpeg",
         "poppler",
+        "libpng",
         "libspng",
         "libtiff",
         "libwebp",
@@ -64,13 +65,14 @@ package("libvips")
 
     add_deps("meson", "ninja")
     add_deps("glib", "expat")
+    if is_plat("windows") then
+        add_deps("pkgconf")
+    end
 
     if is_plat("linux") then
         add_extsources("apt::libvips", "pacman::libvips")
     elseif is_plat("macosx") then
         add_extsources("brew::vips")
-    elseif is_plat("windows") then
-        add_deps("pkgconf")
     end
 
     on_load(function (package)
@@ -98,6 +100,7 @@ package("libvips")
             ["libjpeg"] = "jpeg",
             ["libjxl"] = "jpeg-xl",
             ["imagemagick"] = "magick",
+            ["libpng"] = "png",
             ["libspng"] = "spng",
             ["libtiff"] = "tiff",
             ["libwebp"] = "webp",
