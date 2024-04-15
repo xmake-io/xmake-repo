@@ -14,6 +14,18 @@ package("simde")
     end)
 
     on_test(function (package)
-        assert(package:has_cincludes("x86/sse.h"))
-        assert(package:has_cincludes("arm/neon.h"))
+        assert(package:check_cxxsnippets({test = [[
+            #include <assert.h>
+            #include "arm/neon.h"
+            #include "x86/sse2.h"
+    
+            void test() {
+                int64_t a = 1, b = 2;
+                assert(simde_vaddd_s64(a, b) == 3);
+                simde__m128i z = simde_mm_setzero_si128();
+                simde__m128i v = simde_mm_undefined_si128();
+                v = simde_mm_xor_si128(v, v);
+                assert(simde_mm_movemask_epi8(simde_mm_cmpeq_epi8(v, z)) == 0xFFFF);
+            }
+        ]]}))
     end)
