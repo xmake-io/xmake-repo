@@ -22,8 +22,6 @@ package("libvips")
 
     local deps = {
         "cfitsio",
-        -- "cgif",
-        -- "exif",
         "fftw",
         "fontconfig",
         "libarchive",
@@ -34,25 +32,34 @@ package("libvips")
         "lcms",
         "imagemagick",
         "matio",
-        -- "nifti",
         "openexr",
         "openjpeg",
-        -- "openslide",
-        -- "highway",
-        -- "orc",
-        -- "pangocairo",
-        -- "pdfium",
         "poppler",
-        -- "quantizr",
-        -- "rsvg",
         "libspng",
         "libtiff",
         "libwebp",
         "zlib",
     }
 
+    local unsupported_deps = {
+        "cgif",
+        "exif",
+        "nifti",
+        "openslide",
+        "highway",
+        "orc",
+        "pangocairo",
+        "pdfium",
+        "quantizr",
+        "rsvg",
+    }
+
     for _, dep in ipairs(deps) do
         add_configs(dep, { description = "Build with " .. dep, default = false, type = "boolean"})
+    end
+
+    for _, dep in ipairs(unsupported_deps) do
+        add_configs(dep, { description = "Build with " .. dep, default = false, type = "boolean", readonly = true})
     end
 
     add_deps("meson", "ninja")
@@ -96,6 +103,7 @@ package("libvips")
             ["libwebp"] = "webp",
         }
 
+        table.join2(deps, unsupported_deps)
         -- workaround meson option type
         table.insert(deps, "dynamic_modules")
         table.insert(deps, "introspection")

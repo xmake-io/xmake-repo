@@ -19,6 +19,7 @@ package("glib")
     elseif is_plat("macosx") then
         add_deps("libiconv", {system = true})
         add_deps("libintl")
+        add_frameworks("CoreFoundation")
     elseif is_plat("windows") then
         add_deps("libintl", "pkgconf")
         add_syslinks("Iphlpapi", "Dnsapi")
