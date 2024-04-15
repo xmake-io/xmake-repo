@@ -85,7 +85,11 @@ function _check_version_from_github_releases(package, url)
             local version_latest
             for _, line in ipairs(list:split("\n")) do
                 local splitinfo = line:split("%s+")
+                local release = splitinfo[1]
                 local version = splitinfo[#splitinfo - 1]
+                if not version or not _is_valid_version(version) and _is_valid_version(release) then
+                    version = release
+                end
                 if version and _is_valid_version(version) then
                     version_latest = version
                     break

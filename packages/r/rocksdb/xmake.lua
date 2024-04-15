@@ -4,6 +4,7 @@ package("rocksdb")
 
     add_urls("https://github.com/facebook/rocksdb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebook/rocksdb.git")
+    add_versions("v9.0.0", "013aac178aa12837cbfa3b1e20e9e91ff87962ab7fdd044fd820e859f8964f9b")
     add_versions("v7.10.2", "4619ae7308cd3d11cdd36f0bfad3fb03a1ad399ca333f192b77b6b95b08e2f78")
 
     add_deps("cmake")
@@ -32,7 +33,7 @@ package("rocksdb")
         end
     end)
 
-    on_install("linux", "windows", "macosx", "mingw", function (package)
+    on_install("linux", "windows|arm", "windows|x64", "macosx", "mingw|x86_64", function (package)
         local configs = {
             "-DWITH_ALL_TESTS=OFF",
             "-DWITH_TESTS=OFF",

@@ -26,7 +26,7 @@ package("magnum-integration")
         end
     end)
 
-    on_install("windows", "linux", "macosx|x86_64", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF", "-DLIB_SUFFIX="}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))

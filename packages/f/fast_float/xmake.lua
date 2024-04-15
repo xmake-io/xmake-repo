@@ -13,6 +13,7 @@ package("fast_float")
     add_versions("v5.3.0", "2f3bc50670455534dcaedc9dcd0517b71152f319d0cec8625f21c51d23eaf4b9")
     add_versions("v6.0.0", "7e98671ef4cc7ed7f44b3b13f80156c8d2d9244fac55deace28bd05b0a2c7c8e")
     add_versions("v6.1.0", "a9c8ca8ca7d68c2dbb134434044f9c66cfd4c383d5e85c36b704d30f6be82506")
+    add_versions("v6.1.1", "10159a4a58ba95fe9389c3c97fe7de9a543622aa0dcc12dd9356d755e9a94cb4")
 
     if is_plat("wasm") then
         add_patches("v3.4.0", path.join(os.scriptdir(), "patches", "emscripten_fix.patch"), "482705431f67e6f0a375ed7bfe87d6856e7d13f071db6157e1d5659834b0eb50")
@@ -31,5 +32,5 @@ package("fast_float")
                 double result;
                 auto answer = fast_float::from_chars(input.data(), input.data()+input.size(), result);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = {"fast_float/fast_float.h"}}))
+        ]]}, {configs = {languages = "c++14"}, includes = {"fast_float/fast_float.h"}}))
     end)

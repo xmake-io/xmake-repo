@@ -6,6 +6,7 @@ package("sheenbidi")
     add_urls("https://github.com/Tehreer/SheenBidi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Tehreer/SheenBidi.git")
 
+    add_versions("v2.7", "620f732141fd62354361f921a67ba932c44d94e73f127379a0c73ad40c7fa6e0")
     add_versions("v2.6", "f538f51a7861dd95fb9e3f4ad885f39204b5c670867019b5adb7c4b410c8e0d9")
 
     on_install(function (package)

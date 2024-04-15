@@ -4,6 +4,7 @@ package("redis-plus-plus")
 
     add_urls("https://github.com/sewenew/redis-plus-plus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sewenew/redis-plus-plus.git")
+    add_versions("1.3.12", "26c1e45cdbafe1af4d2cf756957b2268baab6f802b53bcdd435864620e2c03c7")
     add_versions("1.3.11", "bb4990eed60d3654cd6902b9e67b3ab43e52557e84315560660b0c9e64b6ff77")
     add_versions("1.3.5", "a49a72fef26ed39d36a278fcc4e4d92822e111697b5992d8f26f70d16edc6c1f")
     add_versions("1.3.6", "87dcadca50c6f0403cde47eb1f79af7ac8dd5a19c3cad2bb54ba5a34f9173a3e")

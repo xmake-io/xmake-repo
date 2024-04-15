@@ -7,11 +7,13 @@ package("samurai")
     add_urls("https://github.com/hpc-maths/samurai/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hpc-maths/samurai.git")
 
+    add_versions("v0.12.0", "0cd94bda528085e6261f7e94e69821f81fd55e36560903078beb3c1025372897")
+    add_versions("v0.10.0", "06739ad6ddc6d62396669e8c0a3806a375c88f3a9345519ae1c1415666229c16")
     add_versions("v0.6.0", "bab96adac8e1553b79678a22de2248bec67c7c205b5fd35e9e1aaccaca41286e")
 
     add_deps("xtensor", "highfive", "pugixml", "fmt")
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|!arm64", "linux", "macosx|!arm64", function (package)
         os.cp("include", package:installdir())
     end)
 

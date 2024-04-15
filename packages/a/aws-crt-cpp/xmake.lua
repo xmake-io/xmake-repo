@@ -6,6 +6,7 @@ package("aws-crt-cpp")
     add_urls("https://github.com/awslabs/aws-crt-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-crt-cpp.git")
 
+    add_versions("v0.26.4", "486113a556614b7b824e1aefec365a2261154fe06321b85601aefe2f65bd0706")
     add_versions("v0.23.1", "8f7029fea12907564b80260cbea4a2b268ca678e7427def3e0c46871e9b42d16")
 
     add_configs("openssl", {description = "Set this if you want to use your system's OpenSSL 1.0.2/1.1.1 compatible libcrypto", default = false, type = "boolean"})

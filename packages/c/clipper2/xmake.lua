@@ -6,6 +6,9 @@ package("clipper2")
     add_urls("https://github.com/AngusJohnson/Clipper2/archive/refs/tags/Clipper2_$(version).tar.gz",
              "https://github.com/AngusJohnson/Clipper2.git")
 
+    add_versions("1.3.0", "8e537ec320e140afaa8fba1f23120416693cc1d71b0f76ad801d24b88b5e0b3c")
+    add_versions("1.2.4", "a013d391c25c5f665cdb5cbd75cdd842dcc28f6e1bd098454beb359f6f212f33")
+    add_versions("1.2.3", "d65bd45f50331e9dd2de3c68137c6be069fe25732095bef0128d547c997b1fda")
     add_versions("1.2.2", "e893e3560383744a13b896225a1ae97cf910fa30125cad66264b18446b9f931e")
 
     add_configs("use_z", {description = "Build Clipper2Z", default = "OFF", type = "string", values = {"ON", "OFF", "ONLY"}})

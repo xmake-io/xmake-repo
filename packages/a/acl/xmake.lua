@@ -5,6 +5,7 @@ package("acl")
     set_license("GPL-2.0")
 
     add_urls("http://download.savannah.nongnu.org/releases/acl/acl-$(version).tar.gz")
+    add_versions("2.3.2", "5f2bdbad629707aa7d85c623f994aa8a1d2dec55a73de5205bac0bf6058a2f7c")
     add_versions("2.3.1", "760c61c68901b37fdd5eefeeaf4c0c7a26bdfdd8ac747a1edff1ce0e243c11af")
 
     add_deps("pkgconf", "attr")

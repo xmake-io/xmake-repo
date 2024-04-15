@@ -6,10 +6,12 @@ package("uvatlas")
 
     local tag = {
         ["2023.06"] = "jun2023",
+        ["2024.02"] = "feb2024"
     }
     add_urls("https://github.com/microsoft/UVAtlas/archive/refs/tags/$(version).zip", {version = function (version) return tag[tostring(version)] end})
     add_urls("https://github.com/microsoft/UVAtlas.git")
     add_versions("2023.06", "b3ac09b88a26179a91822ff3f3b15df574803c94641fd6cf694ea44cb91ad75f")
+    add_versions("2024.02", "fdbbe3dd26828a47f64c577a0cd1ff57fa3f70d1cd233786157e8d60a552eff6")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("tools",  {description = "Build UVAtlasTool", default = false, type = "boolean"})
