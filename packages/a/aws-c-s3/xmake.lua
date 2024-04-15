@@ -6,6 +6,7 @@ package("aws-c-s3")
     add_urls("https://github.com/awslabs/aws-c-s3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-s3.git")
 
+    add_versions("v0.4.9", "42927e6142bc6aa487d1b299834a828031ea9286b298ca2a2c89c505cf173adb")
     add_versions("v0.3.17", "72fd93a2f9a7d9f205d66890da249944b86f9528216dc0321be153bf19b2ecd5")
 
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
