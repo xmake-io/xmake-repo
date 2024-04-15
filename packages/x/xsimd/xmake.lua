@@ -29,14 +29,28 @@ package("xsimd")
     on_test(function (package)
         if package:version():ge("8.0") then
             assert(package:check_cxxsnippets({test = [[
-                #include <iostream>
+                #include <type_traits>
+                #include <vector>
+                
+                #include "xsimd/memory/xsimd_alignment.hpp"
+                
+                using namespace xsimd;
+                
+                struct mock_container {};
+                
                 void test() {
-                    xsimd::batch<double, xsimd::avx> a{1.5, 2.5, 3.5, 4.5};
-                    xsimd::batch<double, xsimd::avx> b{2.5, 3.5, 4.5, 5.5};
-                    auto mean = (a + b) / 2;
-                    std::cout << mean << std::endl;
+                    using u_vector_type = std::vector<double>;
+                    using a_vector_type = std::vector<double, xsimd::default_allocator<double>>;
+                
+                    using u_vector_align = container_alignment_t<u_vector_type>;
+                    using a_vector_align = container_alignment_t<a_vector_type>;
+                    using mock_align = container_alignment_t<mock_container>;
+                
+                    if (!std::is_same<u_vector_align, unaligned_mode>::value) abort();
+                    if (!std::is_same<a_vector_align, aligned_mode>::value) abort();
+                    if (!std::is_same<mock_align, unaligned_mode>::value) abort();
                 }
-            ]]}, {configs = {languages = "c++14"}, includes = "xsimd/xsimd.hpp"}))
+            ]]}, {configs = {languages = "c++14"}}))
         else
             assert(package:check_cxxsnippets({test = [[
                 #include <iostream>
