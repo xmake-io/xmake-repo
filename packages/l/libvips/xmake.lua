@@ -6,7 +6,7 @@ package("libvips")
     add_urls("https://github.com/libvips/libvips/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libvips/libvips.git")
 
-    -- add_versions("v8.15.2", "8c3ece7be367636fd676573a8ff22170c07e95e81fd94f2d1eb9966800522e1f")
+    add_versions("v8.15.2", "8c3ece7be367636fd676573a8ff22170c07e95e81fd94f2d1eb9966800522e1f")
     add_versions("v8.15.1", "5701445a076465a3402a135d13c0660d909beb8efc4f00fbbe82392e243497f2")
 
     add_configs("c++", { description = "Build C++ API", default = true, type = "boolean" })
@@ -125,7 +125,13 @@ package("libvips")
                 table.insert(configs, "-D" .. name .. "=" .. enabled_string)
             end
         end
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv"}})
+
+        local opt = {packagedeps = {"libintl", "libiconv"}}
+        if package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx") then
+            opt.ldflags = "-lstdc++"
+            opt.shflags = "-lstdc++"
+        end
+        import("package.tools.meson").install(package, configs, opt)
     end)
 
     on_test(function (package)
