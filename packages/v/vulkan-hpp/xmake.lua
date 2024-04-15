@@ -36,8 +36,8 @@ package("vulkan-hpp")
         end
     end)
 
-
-    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "android", "iphoneos", function (package)
+    -- TODO: add android target
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "iphoneos", function (package)
         local arch_prev
         local plat_prev
         if (package:is_plat("mingw") or package:is_cross()) and package.plat_set then
