@@ -25,7 +25,7 @@ package("kokkos-kernels")
         end
     end)
 
-    on_install("windows|x64", "macosx", "linux", function (package)
+    on_install("windows|x64", "macosx|x86_64", "linux", function (package)
         if package:is_plat("windows") then
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             if tonumber(vs) < 2022 then
