@@ -10,7 +10,7 @@ package("yasm")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         local configs = {"-DYASM_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
