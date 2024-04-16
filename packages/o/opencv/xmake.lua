@@ -31,7 +31,7 @@ package("opencv")
     add_configs("bundled", {description = "Build 3rd-party libraries with OpenCV.", default = true, type = "boolean"})
     add_configs("tesseract", {description = "Enable tesseract on text module", default = false, type = "boolean"})
 
-    local features = {"1394", "vtk", "eigen", "ffmpeg", "gstreamer", "gtk", "ipp", "halide", "vulkan", "jasper", "openjpeg", "jpeg", "webp", "openexr", "opengl", "png", "tbb", "openmp", "tiff", "itt", "protobuf", "quirc", "obsensor"}
+    local features = {"1394", "vtk", "eigen", "ffmpeg", "gstreamer", "gtk", "ipp", "halide", "vulkan", "jasper", "openjpeg", "jpeg", "webp", "openexr", "opengl", "png", "tbb", "openmp", "tiff", "itt", "protobuf", "quirc", "obsensor", "avif"}
     local default_features = {"1394", "eigen", "ffmpeg", "jpeg", "opengl", "png", "protobuf", "quirc", "webp", "tiff"}
 
     for _, feature in ipairs(features) do
