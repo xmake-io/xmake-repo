@@ -5,8 +5,9 @@ package("mariadb-connector-c")
 
     add_urls("https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/v$(version).tar.gz")
 
-    add_versions("3.1.13", "361136e9c365259397190109d50f8b6a65c628177792273b4acdb6978942b5e7")
+    add_versions("3.3.9", "062b9ec5c26cbb236a78f0ba26981272053f59bdfc113040bab904a9da36d31f")
     add_versions("3.3.4", "ea6a23850d6a2f6f2e0d9e9fdb7d94fe905a4317f73842272cf121ed25903e1f")
+    add_versions("3.1.13", "361136e9c365259397190109d50f8b6a65c628177792273b4acdb6978942b5e7")
 
     add_deps("cmake")
 
@@ -53,6 +54,7 @@ package("mariadb-connector-c")
     end)
 
     on_install("bsd", "linux", "windows", function(package)
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         for name, enabled in pairs(package:configs()) do
