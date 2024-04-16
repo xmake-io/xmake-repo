@@ -10,6 +10,7 @@ package("zmqpb")
     add_versions("0.3", "343c57c9f72facca47082422a259ec8c531f5c6e332a3828835080c4a96b9064")
     add_versions("0.4", "7c0001db73b19e65b007adf6c9c5092c3589f043ab3e95a16b3ec2b2a87fa244")
     add_versions("0.5", "d177c3b87e367932973da20b72376d1320c7501e0a2175c929d4c5e1f06f68ad")
+    add_versions("0.6", "f8c37950ba318d5b6383f082d439139548d9e2d5c29a767fd0ac7d6dbbe020b7")
 
     add_deps("cppzmq")
     add_deps("protobuf-cpp")
