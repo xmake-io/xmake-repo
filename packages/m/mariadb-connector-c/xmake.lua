@@ -54,9 +54,9 @@ package("mariadb-connector-c")
     end)
 
     on_install("bsd", "linux", "windows", function(package)
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DCMAKE_COMPILE_WARNING_AS_ERROR=OFF")
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
