@@ -6,6 +6,7 @@ package("wavpack")
     add_urls("https://github.com/dbry/WavPack//archive/refs/tags/$(version).tar.gz",
              "https://github.com/dbry/WavPack.git")
 
+    add_versions("5.7.0", "c5742ba1054d36ff3d22f0101a9be066f55f6becb9b2a7352c79fa362f2d3d76")
     add_versions("4.80.0", "c72cb0bbe6490b84881d61f326611487eedb570d8d2e74f073359578b08322e2")
     add_versions("5.4.0",  "abbe5ca3fc918fdd64ef216200a5c896243ea803a059a0662cd362d0fa827cd2")
     add_versions("5.5.0",  "b3d11ba35d12c7d2ed143036478b6f9f4bdac993d84b5ed92615bc6b60697b8a")
