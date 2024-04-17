@@ -15,7 +15,7 @@ package("asio")
     add_versions("sourceforge:1.20.0", "4cd5cd0ad97e752a4075f02778732a3737b587f5eeefab59cd98dc43b0dcadb3")
     add_versions("github:1.20.0", "34a8f07be6f54e3753874d46ecfa9b7ab7051c4e3f67103c52a33dfddaea48e6")
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         if os.isdir("asio") then
             os.cp("asio/include/asio.hpp", package:installdir("include"))
             os.cp("asio/include/asio", package:installdir("include"))
