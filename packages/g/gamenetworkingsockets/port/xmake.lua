@@ -427,6 +427,7 @@ if has_config("webrtc") then
 end
 
 target("gns") -- we need limit path length
+    set_languages("c++17")
     set_kind("$(kind)")
 
     add_vectorexts("sse2")
