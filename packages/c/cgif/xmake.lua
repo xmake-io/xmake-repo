@@ -16,10 +16,19 @@ package("cgif")
 
     add_deps("meson", "ninja")
 
-    on_install(function (package)
+    on_install("!android", "!wasm", function (package)
+        local opt = {}
+        if package:is_plat("windows") and package:config("shared") then
+            io.replace("inc/cgif.h", "CGIF* cgif_newgif", "LIBRARY_API CGIF* cgif_newgif", {plain = true})
+            io.replace("inc/cgif.h", "int   cgif_addframe", "LIBRARY_API int cgif_addframe", {plain = true})
+            io.replace("inc/cgif.h", "int   cgif_close", "LIBRARY_API int cgif_close", {plain = true})
+            opt.cxflags = "-DLIBRARY_API=__declspec(dllexport)"
+            package:add("defines", "LIBRARY_API=__declspec(dllimport)")
+        end
+
         local configs = {"-Dexamples=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs)
+        import("package.tools.meson").install(package, configs, opt)
     end)
 
     on_test(function (package)
