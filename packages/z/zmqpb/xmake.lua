@@ -15,7 +15,6 @@ package("zmqpb")
     add_deps("cppzmq")
     add_deps("protobuf-cpp")
     -- protobuf needs it and somehow just doesn't publicizes the linkage
-    add_deps( "abseil" )
     add_deps( "utf8_range" )
 
     on_load("windows", "macosx", "linux", function (package)
