@@ -69,7 +69,9 @@ package("libvips")
         add_deps("pkgconf")
     end
 
-    if is_plat("linux") then
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::libvips")
+    elseif is_plat("linux") then
         add_extsources("apt::libvips", "pacman::libvips")
     elseif is_plat("macosx") then
         add_extsources("brew::vips")
@@ -126,10 +128,10 @@ package("libvips")
             end
         end
 
-        local opt = {}
-        opt.packagedeps = {"libintl", "libiconv"}
-        opt.prefix = path.unix(package:installdir()) -- after xmake v2.9.1
-        import("package.tools.meson").install(package, configs, opt)
+        import("package.tools.meson").install(package, configs, {
+            packagedeps = {"libintl", "libiconv"},
+            prefix = path.unix(package:installdir()) -- after xmake v2.9.1
+        })
     end)
 
     on_test(function (package)
