@@ -126,11 +126,9 @@ package("libvips")
             end
         end
 
-        local opt = {packagedeps = {"libintl", "libiconv"}}
-        if package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx") then
-            opt.ldflags = "-lstdc++"
-            opt.shflags = "-lstdc++"
-        end
+        local opt = {}
+        opt.packagedeps = {"libintl", "libiconv"}
+        opt.prefix = path.unix(package:installdir()) -- after xmake v2.9.1
         import("package.tools.meson").install(package, configs, opt)
     end)
 
