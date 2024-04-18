@@ -4,6 +4,7 @@ package("boringssl")
 
     add_urls("https://github.com/google/boringssl.git")
     add_versions("2021.12.29", "d80f17d5c94b21c4fb2e82ee527bfe001b3553f2")
+    add_versions("2022.06.13", "0c6f40132b828e92ba365c6b7680e32820c63fa7")
 
     add_patches("2021.12.29", path.join(os.scriptdir(), "patches", "2021.12.29", "cmake.patch"), "d8bb6312b87b8aad434ea3f9f4275f769af3cdbaab78adf400e8e3907443b505")
 
