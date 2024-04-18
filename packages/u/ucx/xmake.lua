@@ -5,6 +5,7 @@ package("ucx")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/openucx/ucx/releases/download/v$(version)/ucx-$(version).tar.gz")
+    add_versions("1.16.0", "f73770d3b583c91aba5fb07557e655ead0786e057018bfe42f0ebe8716e9d28c")
     add_versions("1.15.0", "4b202087076bc1c98f9249144f0c277a8ea88ad4ca6f404f94baa9cb3aebda6d")
     add_versions("1.11.0", "b7189b69fe0e16e3c03784ef674e45687a9c520750bd74a45125c460ede37647")
 
