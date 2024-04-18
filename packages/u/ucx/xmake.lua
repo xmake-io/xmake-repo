@@ -18,6 +18,9 @@ package("ucx")
     end)
 
     on_install("linux", function (package)
+        -- Already fixed in the upstream, please remove it in the next release.
+        -- https://github.com/openucx/ucx/commit/98496827bef6f4619a4a8058443f61ef78b8ab72
+        io.replace("src/ucm/ptmalloc286/malloc.c", "int nfences = 0;", "int __attribute__((unused)) nfences = 0;")
         local configs = {"--disable-doxygen-doc", "--without-go", "--without-java", "--without-rte", "--without-fuse3", "--without-gdrcopy", "--without-rdmacm", "--without-knem", "--without-xpmem", "--without-ugni"}
         if package:config("cuda") then
             local cuda = package:dep("cuda"):fetch()
