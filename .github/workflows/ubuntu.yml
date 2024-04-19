@@ -34,4 +34,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -k ${{ matrix.kind }} -m ${{ matrix.mode }}
+          xmake l ./scripts/test.lua -D --toolchain=gcc-13 -k ${{ matrix.kind }} -m ${{ matrix.mode }}
