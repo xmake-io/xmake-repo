@@ -45,7 +45,7 @@ package("imgui-file-dialog")
         assert(package:check_cxxsnippets({test = [[
             #include <ImGuiFileDialog.h>
             void test() {
-                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".cpp,.h,.hpp", ".");
+                ImGuiFileDialog::Instance()->Close();
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
