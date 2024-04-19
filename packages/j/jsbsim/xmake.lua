@@ -8,7 +8,7 @@ package("jsbsim")
 
     add_versions("v1.2.0", "1ac7d594ba4de3582ec1bff972a298af8d65651dd5fc547240ea407b25396d80")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("wsock32", "ws2_32")
     end
 
@@ -18,8 +18,8 @@ package("jsbsim")
     add_deps("cmake")
     add_deps("expat")
 
-    on_install("windows", "linux", "macosx", "android", "mingw", "cross", function (package)
-        if package:is_plat("windows") and (not package:config("shared")) then
+    on_install("windows", "linux", "macosx", "mingw", function (package)
+        if package:is_plat("windows", "mingw") and (not package:config("shared")) then
             package:add("defines", "JSBSIM_STATIC_LINK")
         end
 
