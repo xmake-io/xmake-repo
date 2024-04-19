@@ -13,6 +13,7 @@ package("jsbsim")
     end
 
     add_includedirs("include", "include/JSBSim")
+    add_links("Aeromatic++", "JSBSim")
 
     add_deps("cmake")
     add_deps("expat")
