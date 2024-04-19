@@ -6,19 +6,20 @@ package("boost_reflect")
     add_urls("https://github.com/boost-ext/reflect/archive/refs/tags/$(version).tar.gz",
              "https://github.com/boost-ext/reflect.git")
 
-    add_versions("v1.0.0", "a4a65b94013008a215e639ed0bf334f848209ad2694d3645a154b28962d88e3b")
+    add_versions("v1.1.1", "49b20cbc0e5d9f94bcdc96056f8c5d91ee2e45d8642e02cb37e511079671ad48")
 
-    on_install(function (package)
+    on_install("linux", function (package)
         os.cp("reflect", package:installdir("include"))
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <reflect>
+            enum E { A, B };
+            struct foo { int a; E b; };
             void test() {
-                struct foo { int a; int b; };
-                static_assert(2 == reflect::visit([](auto&&... args) { return sizeof...(args); }, foo{}));
-                static_assert(2 == reflect::size<foo>);
+                constexpr auto f = foo{.a = 42, .b = B};
+                static_assert(2 == reflect::size(f));
             }
         ]]}, {configs = {languages = "c++20"}}))
     end)
