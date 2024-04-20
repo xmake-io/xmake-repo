@@ -8,6 +8,7 @@ package("autodiff")
     add_urls("https://github.com/autodiff/autodiff/archive/refs/tags/$(version).tar.gz",
              "https://github.com/autodiff/autodiff.git")
 
+    add_versions("v1.1.2", "86f68aabdae1eed214bfbf0ddaa182c78ea1bb99e4df404efb7b94d30e06b744")
     add_versions("v1.0.3", "21b57ce60864857913cacb856c3973ae10f7539b6bb00bcc04f85b2f00db0ce2")
 
     add_deps("cmake", "eigen")
