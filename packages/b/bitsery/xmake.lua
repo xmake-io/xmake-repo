@@ -8,6 +8,8 @@ package("bitsery")
              "https://github.com/fraillt/bitsery.git")
     add_versions("v5.2.3", "896d82ab4ccea9899ff2098aa69ad6d25e524ee1d4c747ce3232d0afe3cd05a5")
 
+    add_patches("5.2.3", path.join(os.scriptdir(), "patches", "5.2.3", "cstdint-include.patch"), "e3c8b80948dba824d8ffa0c3294f9b32ca3001c77a80b45f02a46a1e8586a7e1")
+
     on_install("windows", "linux", "macosx", "mingw", "bsd", function (package)
         os.cp(path.join("include", "*"), package:installdir("include"))
     end)
