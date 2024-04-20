@@ -1,0 +1,39 @@
+diff --git a/cartographer/common/math.h b/cartographer/common/math.h
+index c4a77ef..0248f66 100644
+--- a/cartographer/common/math.h
++++ b/cartographer/common/math.h
+@@ -17,6 +17,10 @@
+ #ifndef CARTOGRAPHER_COMMON_MATH_H_
+ #define CARTOGRAPHER_COMMON_MATH_H_
+ 
++#ifndef M_PI
++#define M_PI 3.14159265358979323846
++#endif
++
+ #include <cmath>
+ #include <vector>
+ 
+diff --git a/cartographer/mapping/pose_graph_interface.h b/cartographer/mapping/pose_graph_interface.h
+index 68551f1..6055485 100644
+--- a/cartographer/mapping/pose_graph_interface.h
++++ b/cartographer/mapping/pose_graph_interface.h
+@@ -19,6 +19,7 @@
+ 
+ #include <chrono>
+ #include <vector>
++#include <array>
+ 
+ #include "absl/types/optional.h"
+ #include "cartographer/mapping/id.h"
+diff --git a/cartographer/mapping/value_conversion_tables.h b/cartographer/mapping/value_conversion_tables.h
+index 56924f0..f67854f 100644
+--- a/cartographer/mapping/value_conversion_tables.h
++++ b/cartographer/mapping/value_conversion_tables.h
+@@ -19,6 +19,7 @@
+ 
+ #include <map>
+ #include <vector>
++#include <memory>
+ 
+ #include "cartographer/common/port.h"
+ #include "glog/logging.h"

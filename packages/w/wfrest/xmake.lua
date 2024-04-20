@@ -7,6 +7,8 @@ package("wfrest")
              "https://github.com/wfrest/wfrest.git")
 
     add_versions("v0.9.3", "1bd0047484e81e23c7a8ab7ba41634109169c37d80aeb2c480728214db42878e")
+    add_versions("v0.9.4", "1f8811e90e6c89af91db04cab0c37dc86cf4777f4f4713d6003ac0ec1a2471a9")
+    add_versions("v0.9.5", "46e4957a5c00c95c85979bbc41807b4c4f2aacc11c43e123039ce440ebecab84")
 
     add_deps("openssl", "workflow", "zlib")
 

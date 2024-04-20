@@ -8,6 +8,7 @@ package("tinyobjloader")
     add_urls("https://github.com/tinyobjloader/tinyobjloader.git")
     add_versions("v1.0.7", "b9d08b675ba54b9cb00ffc99eaba7616d0f7e6f6b8947a7e118474e97d942129")
     add_versions("v2.0.0rc10", "e1bc2e5547b562d33ca4a90b581717984a70d58113d83208dbc97c82e137b9fe")
+    add_versions("v2.0.0rc13", "0feb92b838f8ce4aa6eb0ccc32dff30cb64a891e0ec3bde837fca49c78d44334")
 
     add_configs("double", {description = "Use double precision floating numbers.", default = false, type = "boolean"})
     if is_plat("windows") then
@@ -20,7 +21,7 @@ package("tinyobjloader")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
+    on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", "cross", function (package)
         io.writefile("xmake.lua", string.format([[
             add_rules("mode.debug", "mode.release")
             add_rules("utils.install.cmake_importfiles")

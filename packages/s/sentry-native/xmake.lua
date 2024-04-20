@@ -5,6 +5,9 @@ package("sentry-native")
     set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
+    add_versions("0.7.2", "afb44d5cc4e0ec5f2e8068132c68256959188f6bf015e1837e7cc687014b9c70")
+    add_versions("0.7.1", "c450a064b0dbb1883a355455db2b6469abef59c04686a53719384bbc7ff507d3")
+    add_versions("0.7.0", "4dfccc879a81771b9da1c335947ffc9e5987ca3d16b3035efa2c66a06f727543")
     add_versions("0.6.7", "37d7880f837c85d0b19cac106b631c7b4524ff13f11cd31e8337da10842ea779")
     add_versions("0.6.6", "7a98467c0b2571380a3afc5e681cb13aa406a709529be12d74610b0015ccde0c")
     add_versions("0.6.5", "5f74a5c5c3abc6e1e7825d3306be9e3b3fd4e0f586f3cf7e86607d6f56a71995")
@@ -37,17 +40,25 @@ package("sentry-native")
             package:add("defines", "SENTRY_BUILD_STATIC")
         end
 
+        local backend
+        if package:is_plat("linux") then -- linux defaults to breakpad before 0.7 and then defaults to crashpad
+            backend = package:version() and package:version():ge("0.7") and "crashpad" or "breakpad"
+        end
         if package:config("backend") == "crashpad" then
+            backend = "crashpad"
+        elseif package:config("backend") == "breakpad" then
+            backend = "breakpad"
+        end
+
+        if backend == "crashpad" then
             package:add("links", "sentry", "crashpad_client", "crashpad_util", "crashpad_minidump", "crashpad_handler_lib", "mini_chromium", "crashpad_tools", "crashpad_compat", "crashpad_snapshot")
             package:add("deps", "zlib")
-        elseif package:config("backend") == "breakpad" then
-            package:add("links", "sentry", "breakpad_client")
-        elseif package:is_plat("linux") then -- linux defaults to breakpad
+        elseif backend == "breadpad" then
             package:add("links", "sentry", "breakpad_client")
         end
     end)
 
-    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package) -- TODO: to enable android you will need to figure out the order of libs
+    on_install("windows|x86", "windows|x64", "linux", "macosx|x86_64", function (package) -- TODO: to enable android you will need to figure out the order of libs
         local opt = {}
         local configs = {}
         table.insert(configs, "-DSENTRY_BUILD_EXAMPLES=OFF")

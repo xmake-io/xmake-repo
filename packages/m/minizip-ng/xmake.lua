@@ -6,6 +6,8 @@ package("minizip-ng")
 
     add_urls("https://github.com/zlib-ng/minizip-ng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zlib-ng/minizip-ng.git")
+    add_versions("4.0.5", "9bb636474b8a4269280d32aca7de4501f5c24cc642c9b4225b4ed7b327f4ee73")
+    add_versions("4.0.4", "955800fe39f9d830fcb84e60746952f6a48e41093ec7a233c63ad611b5fcfe9f")
     add_versions("3.0.3", "5f1dd0d38adbe9785cb9c4e6e47738c109d73a0afa86e58c4025ce3e2cc504ed")
     add_versions("3.0.5", "1a248c378fdf4ef6c517024bb65577603d5146cffaebe81900bec9c0a5035d4d")
 
@@ -15,6 +17,7 @@ package("minizip-ng")
     add_configs("zstd",  {description = "Enable zstd comppressression library.", default = false, type = "boolean"})
 
     add_deps("cmake")
+
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Security")
         add_syslinks("iconv")
@@ -25,6 +28,13 @@ package("minizip-ng")
     end
 
     on_load(function (package)
+        if package:version():ge("4.0") then
+            if package:is_plat("macosx") then
+                package:add("deps", "openssl")
+            elseif package:is_plat("windows", "mingw") then
+                package:add("syslinks", "Bcrypt")
+            end
+        end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
@@ -47,5 +57,9 @@ package("minizip-ng")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("zipOpen", {includes = {"mz.h", "mz_compat.h"}}))
+        if package:version():ge("4.0") then
+            assert(package:has_cfuncs("zipOpen", {includes = {"minizip/mz.h", "minizip/mz_compat.h"}}))
+        else
+            assert(package:has_cfuncs("zipOpen", {includes = {"mz.h", "mz_compat.h"}}))
+        end
     end)

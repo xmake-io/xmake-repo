@@ -1,0 +1,16 @@
+diff --git a/include/cinatra/ylt/coro_io/channel.hpp b/include/cinatra/ylt/coro_io/channel.hpp
+index bdaec57..ed6dab6 100644
+--- a/include/cinatra/ylt/coro_io/channel.hpp
++++ b/include/cinatra/ylt/coro_io/channel.hpp
+@@ -160,10 +160,7 @@ class channel {
+   channel(const channel& o) = delete;
+   channel& operator=(const channel& o) = delete;
+ 
+-  auto send_request(auto op, typename client_t::config& config)
+-      -> decltype(std::declval<client_pool_t>().send_request(std::move(op),
+-                                                             std::string_view{},
+-                                                             config)) {
++  auto send_request(auto op, typename client_t::config& config) {
+     std::shared_ptr<client_pool_t> client_pool;
+     if (client_pools_.size() > 1) {
+       client_pool = co_await std::visit(

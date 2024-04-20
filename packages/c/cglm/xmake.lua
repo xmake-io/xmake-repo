@@ -5,6 +5,7 @@ package("cglm")
 
     add_urls("https://github.com/recp/cglm/archive/refs/tags/$(version).tar.gz",
              "https://github.com/recp/cglm.git")
+    add_versions("v0.9.2", "5c0639fe125c00ffaa73be5eeecd6be999839401e76cf4ee05ac2883447a5b4d")
     add_versions("v0.9.0", "9b688bc52915cdd4ad8b7d4080ef59cc92674d526856d8f16bb3a114db1dd794")
 
     add_deps("cmake")

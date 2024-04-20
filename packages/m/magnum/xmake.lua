@@ -8,8 +8,12 @@ package("magnum")
              "https://github.com/mosra/magnum.git")
     add_versions("v2020.06", "78c52bc403cec27b98d8d87186622ca57f8d70ffd64342fe4094c720b7d3b0e3")
 
-    add_configs("audio",         {description = "Build audio module.", default = false, type = "boolean"})
-    add_configs("vulkan",        {description = "Build vulkan module.", default = false, type = "boolean"})
+    add_patches("2020.06", "patches/2020.06/msvc.patch", "0739a29807c6aeb4681eaadb4c624c39f5d1ba746de3df7ab83801f41d1ad5bd")
+
+    add_configs("audio",         {description = "Build Audio library.", default = false, type = "boolean"})
+    add_configs("meshtools",     {description = "Build MeshTools library.", default = true, type = "boolean"})
+    add_configs("opengl",        {description = "Build GL library.", default = true, type = "boolean"})
+    add_configs("vulkan",        {description = "Build Vk library.", default = false, type = "boolean"})
     add_configs("deprecated",    {description = "Include deprecated APIs in the build.", default = true, type = "boolean"})
     add_configs("plugin_static", {description = "Build plugins as static libraries.", default = false, type = "boolean"})
 
@@ -38,14 +42,13 @@ package("magnum")
         add_configs(utility, {description = "Build the " .. utility .. " executable.", default = false, type = "boolean"})
     end
 
-    add_deps("cmake", "corrade", "opengl")
-    add_links("MagnumAnyAudioImporter", "MagnumAnyImageConverter", "MagnumAnyImageImporter", "MagnumAnySceneConverter", "MagnumAnySceneImporter", "MagnumMagnumFont", "MagnumMagnumFontConverter", "MagnumObjImporter", "MagnumTgaImageConverter", "MagnumTgaImporter", "MagnumWavAudioImporter")
-    add_links("MagnumCglContext", "MagnumEglContext", "MagnumGlxContext", "MagnumWglContext", "MagnumOpenGLTester", "MagnumVulkanTester")
-    add_links("MagnumAndroidApplication", "MagnumEmscriptenApplication", "MagnumGlfwApplication", "MagnumGlxApplication", "MagnumSdl2Application", "MagnumXEglApplication", "MagnumWindowlessCglApplication", "MagnumWindowlessEglApplication", "MagnumWindowlessGlxApplication", "MagnumWindowlessIosApplication", "MagnumWindowlessWglApplication", "MagnumWindowlessWindowsEglApplication")
-    add_links("MagnumAudio", "MagnumDebugTools", "MagnumGL", "MagnumMeshTools", "MagnumPrimitives", "MagnumSceneGraph", "MagnumShaders", "MagnumText", "MagnumTextureTools", "MagnumTrade", "MagnumVk", "Magnum")
+    add_deps("cmake", "corrade")
     on_load("windows", "linux", "macosx", function (package)
         if package:config("audio") then
             package:add("deps", "openal-soft", {configs = {shared = true}})
+        end
+        if package:config("opengl") then
+            package:add("deps", "opengl")
         end
         if package:config("vulkan") then
             package:add("deps", "vulkansdk")
@@ -54,18 +57,30 @@ package("magnum")
             package:add("deps", "glfw")
         end
         if package:config("sdl2") then
-            package:add("deps", "libsdl")
+            package:add("deps", "libsdl", {configs = {sdlmain = false}})
         end
         if package:config("glx") then
             package:add("deps", "libx11")
         end
+        local links = {"MagnumAnyAudioImporter", "MagnumAnyImageConverter", "MagnumAnyImageImporter", "MagnumAnySceneConverter", "MagnumAnySceneImporter", "MagnumMagnumFont", "MagnumMagnumFontConverter", "MagnumObjImporter", "MagnumTgaImageConverter", "MagnumTgaImporter", "MagnumWavAudioImporter"}
+        table.join2(links, {"MagnumCglContext", "MagnumEglContext", "MagnumGlxContext", "MagnumWglContext", "MagnumOpenGLTester", "MagnumVulkanTester"})
+        table.join2(links, {"MagnumAndroidApplication", "MagnumEmscriptenApplication", "MagnumGlfwApplication", "MagnumGlxApplication", "MagnumSdl2Application", "MagnumXEglApplication", "MagnumWindowlessCglApplication", "MagnumWindowlessEglApplication", "MagnumWindowlessGlxApplication", "MagnumWindowlessIosApplication", "MagnumWindowlessWglApplication", "MagnumWindowlessWindowsEglApplication"})
+        table.join2(links, {"MagnumAudio", "MagnumDebugTools", "MagnumGL", "MagnumMeshTools", "MagnumPrimitives", "MagnumSceneGraph", "MagnumShaders", "MagnumText", "MagnumTextureTools", "MagnumTrade", "MagnumVk", "Magnum"})
+        local postfix = package:debug() and "-d" or ""
+        for _, link in ipairs(links) do
+            package:add("links", link .. postfix)
+        end
     end)
 
     on_install("windows", "linux", "macosx", function (package)
+        io.replace("modules/FindSDL2.cmake", "SDL2-2.0 SDL2", "SDL2-2.0 SDL2 SDL2-static", {plain = true})
+        io.replace("modules/FindSDL2.cmake", "${_SDL2_LIBRARY_PATH_SUFFIX}", "lib ${_SDL2_LIBRARY_PATH_SUFFIX}", {plain = true})
         local configs = {"-DBUILD_TESTS=OFF", "-DLIB_SUFFIX="}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DWITH_AUDIO=" .. (package:config("audio") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_MESHTOOLS=" .. (package:config("meshtools") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_GL=" .. (package:config("opengl") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_VK=" .. (package:config("vulkan") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_DEPRECATED=" .. (package:config("deprecated") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_PLUGIN_STATIC=" .. (package:config("plugin_static") and "ON" or "OFF"))

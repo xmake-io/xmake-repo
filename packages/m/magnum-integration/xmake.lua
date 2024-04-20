@@ -16,7 +16,7 @@ package("magnum-integration")
     add_deps("cmake", "magnum")
     on_load("windows", "linux", "macosx", function (package)
         local configdeps = {bullet = "bullet3",
-                            eigen = "eigen3",
+                            eigen = "eigen",
                             glm = "glm",
                             imgui = "imgui"}
         for config, dep in pairs(configdeps) do

@@ -6,6 +6,9 @@ package("simdutf")
     add_urls("https://github.com/simdutf/simdutf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/simdutf/simdutf.git")
 
+    add_versions("v5.2.4", "36281d6489a4a8c2b5bfac2d41c03dce8fc89ec1cda15cc05c53d44f5ad30b4d")
+    add_versions("v5.2.3", "dfa55d85c3ee51e9b52e55c02701b16f83dcf1921e1075b67f99b1036df5adb8")
+    add_versions("v4.0.9", "599e6558fc8d06f8346e5f210564f8b18751c93d83bce1a40a0e6a326c57b61e")
     add_versions("v3.2.17", "c24e3eec1e08522a09b33e603352e574f26d367a7701bf069a65881f64acd519")
 
     add_configs("iconv", {description = "Whether to use iconv as part of the CMake build if available.", default = false, type = "boolean"})
@@ -24,6 +27,7 @@ package("simdutf")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSIMDUTF_ICONV=" .. (package:config("iconv") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "add_subdirectory(singleheader)", "", {plain = true})
+        io.replace("src/CMakeLists.txt", "/WX", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 

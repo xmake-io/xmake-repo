@@ -7,6 +7,7 @@ package("openpgl")
     add_urls("https://github.com/OpenPathGuidingLibrary/openpgl/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/OpenPathGuidingLibrary/openpgl.git")
 
+    add_versions("0.6.0", "4192a4096ee3e3d31878cd013f8de23418c8037c576537551f946c4811931c5e")
     add_versions("0.5.0", "1ec806d434d45e43e098f82ee9be0cb74928343898c57490b34ff80584e9805a")
 
     add_configs("avx512", {description = "Enable AVX512", default = false, type = "boolean"})

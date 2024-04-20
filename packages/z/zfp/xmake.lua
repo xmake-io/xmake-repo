@@ -5,6 +5,7 @@ package("zfp")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/LLNL/zfp/releases/download/$(version)/zfp-$(version).tar.gz")
+    add_versions("1.0.1", "ca0f7b4ae88044ffdda12faead30723fe83dd8f5bb0db74125df84589e60e52b")
     add_versions("0.5.5", "fdf7b948bab1f4e5dccfe2c2048fd98c24e417ad8fb8a51ed3463d04147393c5")
 
     add_patches("0.5.5", path.join(os.scriptdir(), "patches", "0.5.5", "msvc.patch"), "5934c3fcd2abc64857c89c8dc16a2af855ab278e935e8a259bbcea89ddfe9a52")

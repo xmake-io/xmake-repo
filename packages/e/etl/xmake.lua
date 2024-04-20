@@ -7,6 +7,7 @@ package("etl")
     add_urls("https://github.com/ETLCPP/etl/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ETLCPP/etl.git")
 
+    add_versions("20.38.10", "562f9b5d9e6786350b09d87be9c5f030073e34d7bf0a975de3e91476ddd471a3")
     add_versions("20.38.0", "7e29ce81a2a2d5826286502a2ad5bde1f4b591d2c9e0ef7ccc335e75445223cd")
 
     add_deps("cmake")
