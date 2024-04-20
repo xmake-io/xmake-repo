@@ -14,7 +14,7 @@ package("libdicom")
     end
     add_deps("uthash")
 
-    on_install(function (package)
+    on_install("windows|!arm64", "linux", "macosx", "bsd", "mingw", "msys", "iphoneos", "cross", function (package)
         local configs = {"-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
