@@ -10,7 +10,7 @@ package("bitsery")
 
     add_patches("5.2.3", path.join(os.scriptdir(), "patches", "5.2.3", "cstdint-include.patch"), "bb9ea1f68b219249395f3f3f9404d6e5c150144d793b6707f51facd1ff751f2c")
 
-    on_install("windows", "linux", "macosx", "mingw", "bsd", function (package)
+    on_install(function (package)
         os.cp(path.join("include", "*"), package:installdir("include"))
     end)
 
