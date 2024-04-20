@@ -1,5 +1,4 @@
 package("catch2")
-
     set_homepage("https://github.com/catchorg/Catch2")
     set_description("Catch2 is a multi-paradigm test framework for C++. which also supports Objective-C (and maybe C). ")
     set_license("BSL-1.0")
@@ -24,6 +23,10 @@ package("catch2")
     add_versions("v2.13.6", "39d50f5d1819cdf2908066664d57c2cde4a4000c364ad3376ea099735c896ff4")
     add_versions("v2.13.5", "728679b056dc1248cc79b3a1999ff7453f76422c68417563fc47a0ac2aaeeaef")
     add_versions("v2.9.2", "dc486300de22b0d36ddba1705abb07b9e5780639d824ba172ddf7062b2a1bf8f")
+
+    if is_plat("windows") then
+        add_patches("v3.5.4", path.join(os.scriptdir(), "patches", "3.5.4", "windows_arm64.patch"), "36fa29bd38fc97d3d3563bc4e7fab0810e899f8a2d8f8418555e2a4c051ad947")
+    end
 
     add_configs("cxx17", {description = "Compiles Catch as a C++17 library (requires a C++17 compiler).", default = true, type = "boolean"})
 
