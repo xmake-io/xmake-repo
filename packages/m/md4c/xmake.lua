@@ -8,6 +8,8 @@ package("md4c")
 
     add_deps("cmake")
 
+    add_links("md4c-html", "md4c")
+
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
