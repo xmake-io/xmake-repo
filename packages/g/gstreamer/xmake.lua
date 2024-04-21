@@ -20,7 +20,7 @@ package("gstreamer")
 
     add_deps("meson", "ninja")
     if is_plat("windows") then
-        add_deps("pkgconf","winflexbison")
+        add_deps("pkgconf", "winflexbison")
     else
         add_deps("flex", "bison")
     end
