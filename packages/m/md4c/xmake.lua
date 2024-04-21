@@ -20,5 +20,7 @@ package("md4c")
 
     on_test(function (package)
         assert(package:has_cfuncs("md_html", {includes = "md4c-html.h"}))
-        os.exec("md2html --version")
+        if not package:is_cross() then
+            os.exec("md2html --version")
+        end
     end)
