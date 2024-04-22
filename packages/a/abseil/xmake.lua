@@ -37,6 +37,17 @@ package("abseil")
         local configs = {"-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"), "-DABSL_ENABLE_INSTALL=ON", "-DABSL_PROPAGATE_CXX_STD=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            if package:config("vs_runtime") == "MT" then
+                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded")
+            elseif package:config("vs_runtime") == "MTd" then
+                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug")
+            elseif package:config("vs_runtime") == "MD" then
+                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL")
+            elseif package:config("vs_runtime") == "MDd" then
+                table.insert(configs, "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebugDLL")
+            end
+        end
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
 
         -- get links and ensure link order
