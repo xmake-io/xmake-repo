@@ -16,6 +16,7 @@ package("rocksdb")
     add_configs("zlib",     {description = "Build with zlib.", default = false, type = "boolean"})
     add_configs("zstd",     {description = "Build with zstd.", default = false, type = "boolean"})
     add_configs("gflags",   {description = "Build with gflags.", default = false, type = "boolean"})
+    add_configs("rtti",     {description = "Enable RTTI builds.", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread", "rt", "dl")
@@ -25,7 +26,7 @@ package("rocksdb")
 
     on_load(function (package)
         for name, enabled in pairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") then
+            if (name ~= "rtti") and (not package:extraconf("configs", name, "builtin")) then
                 if enabled then
                     package:add("deps", name)
                 end
@@ -45,7 +46,11 @@ package("rocksdb")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DROCKSDB_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") then
+            if name == "rtti" then
+                if enabled then
+                    table.insert(configs, "-DUSE_RTTI=1")
+                end
+            elseif not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DWITH_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
