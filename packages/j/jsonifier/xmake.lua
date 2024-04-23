@@ -6,8 +6,6 @@ package("jsonifier")
     add_urls("https://github.com/RealTimeChris/Jsonifier.git")
     add_versions("2023.12.27", "b4aa08dcb900f8e097f701c15526cfb891425b9d")
 
-    add_deps("cmake")
-
     on_install(function (package)
         os.cp("Include/jsonifier", package:installdir("include"))
     end)
