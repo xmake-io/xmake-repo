@@ -161,9 +161,10 @@ package("ffmpeg")
             table.insert(configs, "--enable-pthreads")
         elseif package:is_plat("macosx", "iphoneos") then
             table.insert(configs, "--target-os=darwin")
-            table.insert(configs, "--enable-audiotoolbox")
             if package:is_plat("macosx") then
                 table.insert(configs, "--enable-appkit")
+                 -- ffmpeg does not support audiotoolbox on iOS: https://github.com/kewlbear/FFmpeg-iOS-build-script/issues/158
+                table.insert(configs, "--enable-audiotoolbox")
             end
             if macos.version():ge("10.7") then
                 table.insert(configs, "--enable-avfoundation")
@@ -176,7 +177,7 @@ package("ffmpeg")
             end
             if package:config("shared") then
                 -- https://github.com/spack/spack/issues/40159
-                table.insert(configs, "--extra-ldflags=\"-Wl,-ld_classic\"")
+                table.insert(configs, "--extra-ldflags=-Wl,-ld_classic")
             end
         elseif package:is_plat("android") then
             table.insert(configs, "--target-os=android")
