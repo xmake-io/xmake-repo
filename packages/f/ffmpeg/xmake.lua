@@ -48,9 +48,11 @@ package("ffmpeg")
 
     add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
     if is_plat("macosx", "iphoneos") then
-        add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
+        add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "VideoToolbox", "Security")
         if is_plat("iphoneos") then
             add_frameworks("AVFoundation")
+        else
+            add_frameworks("AudioToolbox")
         end
     elseif is_plat("linux") then
         add_syslinks("pthread")
@@ -179,10 +181,6 @@ package("ffmpeg")
             end
             if macos.version():ge("10.11") then
                 table.insert(configs, "--enable-coreimage")
-            end
-            if package:config("shared") then
-                -- https://github.com/spack/spack/issues/40159
-                table.insert(configs, "--extra-ldflags=-ld_classic")
             end
         elseif package:is_plat("android") then
             table.insert(configs, "--target-os=android")
@@ -325,7 +323,12 @@ package("ffmpeg")
             os.vrunv("make", argv)
             os.vrun("make install")
         else
-            import("package.tools.autoconf").install(package, configs)
+            local opt
+            if package:is_plat("macosx") and package:config("shared") then
+                -- https://github.com/spack/spack/issues/40159
+                opt.ldflags = "-Wl,-ld_classic"
+            end
+            import("package.tools.autoconf").install(package, configs, opt)
         end
         package:addenv("PATH", "bin")
     end)
