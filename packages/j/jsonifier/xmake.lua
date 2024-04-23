@@ -3,8 +3,10 @@ package("jsonifier")
     set_description("A few classes for parsing and serializing objects from/into JSON, in C++ - very rapidly.")
     set_license("MIT")
 
-    add_urls("https://github.com/RealTimeChris/Jsonifier.git")
-    add_versions("2023.12.27", "b4aa08dcb900f8e097f701c15526cfb891425b9d")
+    add_urls("https://github.com/RealTimeChris/Jsonifier/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/RealTimeChris/Jsonifier.git")
+    
+    add_versions("v0.9.95", "65604a378e703079d041dfeae77726ddf745e949d34e67d9adea5dc35d8df219")
 
     on_install(function (package)
         os.cp("Include/jsonifier", package:installdir("include"))
