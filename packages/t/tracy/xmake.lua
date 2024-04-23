@@ -11,37 +11,30 @@ package("tracy")
     add_versions("v0.8.2", "4784eddd89c17a5fa030d408392992b3da3c503c872800e9d3746d985cfcc92a")
 
 
-    -- This list is from CMakeLists.txt of tracy
-    local tracy_defines = {
-        { key = "on_demand",                        desc = "On-demand profiling"},
-        { key = "callstack",                        desc = "Enforce callstack collection for tracy regions"},
-        { key = "no_callstack",                     desc = "Disable all callstack related functionality"},
-        { key = "no_callstack_inlines",             desc = "Disables the inline functions in callstacks"},
-        { key = "only_localhost",                   desc = "Only listen on the localhost interface"},
-        { key = "no_broadcast",                     desc = "Disable client discovery by broadcast to local network"},
-        { key = "only_ipv4",                        desc = "Tracy will only accept connections on IPv4 addresses (disable IPv6)"},
-        { key = "no_code_transfer",                 desc = "Disable collection of source code"},
-        { key = "no_context_switch",                desc = "Disable capture of context switches"},
-        { key = "no_exit",                          desc = "Client executable does not exit until all profile data is sent to server"},
-        { key = "no_sampling",                      desc = "Disable call stack sampling"},
-        { key = "no_verify",                        desc = "Disable zone validation for C API"},
-        { key = "no_vsync_capture",                 desc = "Disable capture of hardware Vsync events"},
-        { key = "no_frame_image",                   desc = "Disable the frame image support and its thread"},
-        { key = "no_system_tracing",                desc = "Disable systrace sampling"},
-        { key = "patchable_nopsleds",               desc = "Enable nopsleds for efficient patching by system-level tools (e.g. rr)"},
-        { key = "delayed_init",                     desc = "Enable delayed initialization of the library (init on first call)"},
-        { key = "manual_lifetime",                  desc = "Enable the manual lifetime management of the profile"},
-        { key = "fibers",                           desc = "Enable fibers support"},
-        { key = "no_crash_handler",                 desc = "Disable crash handling"},
-        { key = "timer_fallback",                   desc = "Use lower resolution timers"},
-        { key = "libunwind_backtrace",              desc = "Use libunwind backtracing where supported"},
-        { key = "symbol_offline_resolve",           desc = "Instead of full runtime symbol resolution, only resolve the image path and offset to enable offline symbol resolution"},
-        { key = "libbacktrace_elf_dynload_support", desc = "Enable libbacktrace to support dynamically loaded elfs in symbol resolution resolution after the first symbol resolve operation"},
-    }
-
-    for _, cfg in ipairs(tracy_defines) do
-        add_configs(cfg.key, {description = cfg.desc, default = false, type = "boolean"})
-    end
+    add_configs("on_demand",                        { default = false, type = "boolean", description = "On-demand profiling"})
+    add_configs("enforce_callstack",                { default = false, type = "boolean", description = "Enforce callstack collection for tracy regions"})
+    add_configs("callstack",                        { default = true,  type = "boolean", description = "Enable all callstack related functionality"})
+    add_configs("callstack_inlines",                { default = true,  type = "boolean", description = "Enables the inline functions in callstacks"})
+    add_configs("only_localhost",                   { default = false, type = "boolean", description = "Only listen on the localhost interface"})
+    add_configs("broadcast",                        { default = true,  type = "boolean", description = "Enable client discovery by broadcast to local network"})
+    add_configs("only_ipv4",                        { default = false, type = "boolean", description = "Tracy will only accept connections on IPv4 addresses (disable IPv6)"})
+    add_configs("code_transfer",                    { default = true,  type = "boolean", description = "Enable collection of source code"})
+    add_configs("context_switch",                   { default = true,  type = "boolean", description = "Enable capture of context switches"})
+    add_configs("exit",                             { default = true,  type = "boolean", description = "Enable executable does not exit until all profile data is sent to server"})
+    add_configs("sampling",                         { default = true,  type = "boolean", description = "Enable call stack sampling"})
+    add_configs("verify",                           { default = true,  type = "boolean", description = "Enable zone validation for C API"})
+    add_configs("vsync_capture",                    { default = true,  type = "boolean", description = "Enable capture of hardware Vsync events"})
+    add_configs("frame_image",                      { default = true,  type = "boolean", description = "Enable the frame image support and its thread"})
+    add_configs("system_tracing",                   { default = true,  type = "boolean", description = "Enable systrace sampling"})
+    add_configs("patchable_nopsleds",               { default = false, type = "boolean", description = "Enable nopsleds for efficient patching by system-level tools (e.g. rr)"})
+    add_configs("delayed_init",                     { default = false, type = "boolean", description = "Enable delayed initialization of the library (init on first call)"})
+    add_configs("manual_lifetime",                  { default = false, type = "boolean", description = "Enable the manual lifetime management of the profile"})
+    add_configs("fibers",                           { default = false, type = "boolean", description = "Enable fibers support"})
+    add_configs("crash_handler",                    { default = true,  type = "boolean", description = "Enable crash handling"})
+    add_configs("timer_fallback",                   { default = false, type = "boolean", description = "Use lower resolution timers"})
+    add_configs("libunwind_backtrace",              { default = false, type = "boolean", description = "Use libunwind backtracing where supported"})
+    add_configs("symbol_offline_resolve",           { default = false, type = "boolean", description = "Instead of full runtime symbol resolution, only resolve the image path and offset to enable offline symbol resolution"})
+    add_configs("libbacktrace_elf_dynload_support", { default = false, type = "boolean", description = "Enable libbacktrace to support dynamically loaded elfs in symbol resolution resolution after the first symbol resolve operation"})
 
     add_deps("cmake")
 
@@ -49,11 +42,37 @@ package("tracy")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        
-        for _, cfg in ipairs(tracy_defines) do
-            if package:config(cfg.key) then
-                table.insert(configs, "-DTRACY_" .. cfg.key:upper() .. "=ON")
-                package:add("defines", "TRACY_" .. cfg.key:upper())
+
+        table.insert(configs, "-DTRACY_ON_DEMAND=" .. (package:config("on_demand") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_CALLSTACK=" .. (package:config("enforce_callstack") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_NO_CALLSTACK=" .. (package:config("callstack") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_NO_CALLSTACK_INLINES=" .. (package:config("callstack_inlines") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_ONLY_LOCALHOST=" .. (package:config("only_localhost") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_NO_BROADCAST=" .. (package:config("broadcast") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_ONLY_IPV4=" .. (package:config("only_ipv4") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_NO_CODE_TRANSFER=" .. (package:config("code_transfer") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_NO_CONTEXT_SWITCH=" .. (package:config("context_switch") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_NO_EXIT=" .. (package:config("exit") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_NO_SAMPLING=" .. (package:config("sampling") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_NO_VERIFY=" .. (package:config("verify") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_NO_VSYNC_CAPTURE=" .. (package:config("vsync_capture") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_NO_FRAME_IMAGE=" .. (package:config("frame_image") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_NO_SYSTEM_TRACING=" .. (package:config("system_tracing") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_PATCHABLE_NOPSLEDS=" .. (package:config("patchable_nopsleds") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_DELAYED_INIT=" .. (package:config("delayed_init") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_MANUAL_LIFETIME=" .. (package:config("manual_lifetime") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_FIBERS=" .. (package:config("fibers") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_NO_CRASH_HANDLER=" .. (package:config("crash_handler") and "OFF" or "ON"))
+        table.insert(configs, "-DTRACY_TIMER_FALLBACK=" .. (package:config("timer_fallback") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_LIBUNWIND_BACKTRACE=" .. (package:config("libunwind_backtrace") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_SYMBOL_OFFLINE_RESOLVE=" .. (package:config("symbol_offline_resolve") and "ON" or "OFF"))
+        table.insert(configs, "-DTRACY_LIBBACKTRACE_ELF_DYNLOAD_SUPPORT=" .. (package:config("libbacktrace_elf_dynload_support") and "ON" or "OFF"))
+
+        -- collect tracy defines from cmake configs
+        for _, config in ipairs(configs) do
+            local define = config:match("-D(TRACY_%S+)=")
+            if define then
+                package:add("defines", define)
             end
         end
 
