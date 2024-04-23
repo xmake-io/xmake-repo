@@ -28,7 +28,7 @@ package("boringssl")
         end
     end)
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows|!arm64", function (package)
         import("net.fasturl")
 
         local configs = {}
