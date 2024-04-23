@@ -49,6 +49,9 @@ package("ffmpeg")
     add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
     if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
+        if is_plat("iphoneos") then
+            add_frameworks("AVFoundation")
+        end
     elseif is_plat("linux") then
         add_syslinks("pthread")
     elseif is_plat("android") then
