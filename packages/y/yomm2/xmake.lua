@@ -18,6 +18,8 @@ package("yomm2")
     end)
 
     on_install("windows", "linux", "macosx", "bsd", "mingw", "cross", function (package)
+        io.replace("CMakeLists.txt", "add_subdirectory(docs.in)", "", {plain = true})
+
         local configs =
         {
             "-DYOMM2_ENABLE_TESTS=OFF",
