@@ -42,12 +42,17 @@ package("ffmpeg")
     add_configs("vaapi",            {description = "Enable vaapi library.", default = false, type = "boolean"})
     add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
     add_configs("hardcoded-tables", {description = "Enable hardcoded tables.", default = true, type = "boolean"})
+    if is_plat("linux") then
+        add_configs("drm", {description = "Enable libdrm hardware acceleration", default = true, type = "boolean"})
+    end
 
     add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
     elseif is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("android") then
+        add_syslinks("android")
     end
 
     add_deps("nasm")
@@ -83,7 +88,8 @@ package("ffmpeg")
                             lzma    = "xz",
                             libx264 = "x264",
                             libx265 = "x265",
-                            iconv   = "libiconv"}
+                            iconv   = "libiconv",
+                            drm     = "libdrm"}
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
@@ -97,7 +103,7 @@ package("ffmpeg")
         if not package:config("gpl") then
             package:set("license", "LGPL-3.0")
         end
-        if is_plat("windows", "mingw") and not package:config("shared") then
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("syslinks", "Bcrypt", "Mfplat", "mfuuid", "Ole32", "Secur32", "Strmiids", "User32", "ws2_32")
         end
         if is_subhost("windows") and os.arch() == "x64" then
@@ -153,10 +159,17 @@ package("ffmpeg")
         elseif package:is_plat("linux") then
             table.insert(configs, "--target-os=linux")
             table.insert(configs, "--enable-pthreads")
+            if package:config("drm") then
+                table.insert(configs, "--enable-libdrm")
+            else
+                table.insert(configs, "--disable-libdrm")
+            end
         elseif package:is_plat("macosx", "iphoneos") then
             table.insert(configs, "--target-os=darwin")
-            table.insert(configs, "--enable-appkit")
             table.insert(configs, "--enable-audiotoolbox")
+            if package:is_plat("macosx") then
+                table.insert(configs, "--enable-appkit")
+            end
             if macos.version():ge("10.7") then
                 table.insert(configs, "--enable-avfoundation")
             end
@@ -165,6 +178,10 @@ package("ffmpeg")
             end
             if macos.version():ge("10.11") then
                 table.insert(configs, "--enable-coreimage")
+            end
+            if package:config("shared") then
+                -- https://github.com/spack/spack/issues/40159
+                table.insert(configs, "--extra-ldflags=\"-Wl,-ld_classic\"")
             end
         elseif package:is_plat("android") then
             table.insert(configs, "--target-os=android")
@@ -268,11 +285,11 @@ package("ffmpeg")
             else
                 raise("unknown arch(%s) for android!", package:arch())
             end
-            local function _translate_path(p)
-                if p and is_host("windows") then
-                    return p:gsub("\\", "/")
-                end
-                return p
+            local _translate_path
+            if is_host("windows") then
+                _translate_path = function (p) return p and p:gsub("\\", "/") or p end
+            else
+                _translate_path = function (p) return p end
             end
             local sysroot  = path.join(path.directory(bin), "sysroot")
             local cflags   = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cflags")), table.wrap(get_config("cxflags")), get_config("cflags"))
