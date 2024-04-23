@@ -8,6 +8,7 @@ package("boringssl")
     add_versions("2022.06.13", "a343962da2fbb10d8fa2cd9a2832839a23045a197c0ff306dc0fa0abb85759b3")
     add_versions("2021.12.29", "d80f17d5c94b21c4fb2e82ee527bfe001b3553f2")
 
+    add_patches("2022.06.13", path.join(os.scriptdir(), "patches", "2022.06.13", "cmake.patch"), "c44e5c2b4b4f010a6fab1c0bce22a50feb5d85f37a870cf9a71f8d58bdfbd169")
     add_patches("2021.12.29", path.join(os.scriptdir(), "patches", "2021.12.29", "cmake.patch"), "d8bb6312b87b8aad434ea3f9f4275f769af3cdbaab78adf400e8e3907443b505")
 
     if is_plat("linux") then
@@ -46,6 +47,9 @@ package("boringssl")
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
+            if package:is_plat("windows") then
+                os.mv(package:installdir("lib/*.dll"), package:installdir("bin"))
+            end
         else
             -- we need suppress "hidden symbol ... is referenced by DSO"
             local cxflags
