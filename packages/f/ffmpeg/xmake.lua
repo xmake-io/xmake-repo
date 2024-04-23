@@ -43,11 +43,11 @@ package("ffmpeg")
     add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
     add_configs("hardcoded-tables", {description = "Enable hardcoded tables.", default = true, type = "boolean"})
     if is_plat("linux") then
-        add_configs("drm", {description = "Enable libdrm hardware acceleration", default = true, type = "boolean"})
+        add_configs("libdrm", {description = "Enable libdrm hardware acceleration", default = true, type = "boolean"})
     end
 
     add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
-    if is_plat("macosx") then
+    if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
     elseif is_plat("linux") then
         add_syslinks("pthread")
@@ -89,7 +89,7 @@ package("ffmpeg")
                             libx264 = "x264",
                             libx265 = "x265",
                             iconv   = "libiconv",
-                            drm     = "libdrm"}
+                            libdrm  = "libdrm"}
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
@@ -159,11 +159,6 @@ package("ffmpeg")
         elseif package:is_plat("linux") then
             table.insert(configs, "--target-os=linux")
             table.insert(configs, "--enable-pthreads")
-            if package:config("drm") then
-                table.insert(configs, "--enable-libdrm")
-            else
-                table.insert(configs, "--disable-libdrm")
-            end
         elseif package:is_plat("macosx", "iphoneos") then
             table.insert(configs, "--target-os=darwin")
             table.insert(configs, "--enable-audiotoolbox")
