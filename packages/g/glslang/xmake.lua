@@ -82,7 +82,7 @@ package("glslang")
 
     on_test(function (package)
         if not package:is_cross() then
-            os.vrun("glslangValidator --version")
+            os.vrun("glslang --version")
         end
         if not package:config("binaryonly") then
             assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
