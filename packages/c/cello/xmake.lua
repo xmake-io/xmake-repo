@@ -14,9 +14,20 @@ package("cello")
     end
 
     on_install(function(package)
+        local opt = {}
+        if package:has_cincludes("execinfo.h") then
+            if package:has_cincludes("execinfo.h", {configs = {syslinks = "execinfo"}}) then
+                opt.ldflags = "-lexecinfo"
+                package:add("syslinks", "execinfo")
+            end
+        else
+            opt.cxflags = "-DCELLO_NSTRACE"
+            package:add("defines", "CELLO_NSTRACE")
+        end
+
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
-            target("Cello")
+            target("cello")
                 set_kind("$(kind)")
                 add_files("src/*.c")
                 add_headerfiles("include/Cello.h")
@@ -30,16 +41,8 @@ package("cello")
                 elseif is_plat("linux", "bsd") then
                     add_syslinks("pthread")
                 end
-
-                on_config(function(target)
-                    if not target:has_cincludes("execinfo.h") then
-                        target:add("defines", "CELLO_NSTRACE")
-                    else
-                        target:add("syslinks", "execinfo")
-                    end
-                end)
         ]])
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, {}, opt)
     end)
 
     on_test(function(package)
