@@ -327,7 +327,7 @@ package("ffmpeg")
             if package:is_plat("macosx") and package:config("shared") then
                 opt = {}
                 -- https://github.com/spack/spack/issues/40159
-                opt.ldflags = "-Wl,-ld_classic"
+                opt.shflags = "-Wl,-ld_classic"
             end
             import("package.tools.autoconf").install(package, configs, opt)
         end
