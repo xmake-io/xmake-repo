@@ -9,7 +9,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macOS-latest]
+        os: [macos-latest-large]
         kind: [static, shared]
         arch: [i386, x86_64]
 
@@ -32,4 +32,3 @@ jobs:
       - name: Tests
         run: |
           xmake l ./scripts/test.lua -D -p mingw -a ${{ matrix.arch }} -k ${{ matrix.kind }}
-
