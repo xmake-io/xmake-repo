@@ -5,6 +5,7 @@ package("mimalloc")
     set_license("MIT")
 
     set_urls("https://github.com/microsoft/mimalloc/archive/v$(version).zip")
+    add_versions("2.1.4", "41aa2f6ca7d60b41d0ed1644a4ab437a2233ca40115e36b41a1ebe07b7d58854")
     add_versions("2.1.2", "86281c918921c1007945a8a31e5ad6ae9af77e510abfec20d000dd05d15123c7")
     add_versions("2.0.7", "ddb32937aabddedd0d3a57bf68158d4e53ecf9e051618df3331a67182b8b0508")
     add_versions("2.0.6", "23e7443d0b4d7aa945779ea8a806e4e109c0ed62d740953d3656cddea7e04cf8")
@@ -41,9 +42,6 @@ package("mimalloc")
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
         table.insert(configs, "-DMI_BUILD_TESTS=OFF")
         table.insert(configs, "-DMI_BUILD_OBJECT=OFF")
-        if package:is_plat("wasm") then
-            io.replace("src/prim/prim.c", "__wasi__", "__EMSCRIPTEN__", {plain = true})
-        end
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
         if package:version():le("2.0.1") and package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
             io.replace("CMakeLists.txt", "-redirect.", "-redirect32.", {plain = true})
