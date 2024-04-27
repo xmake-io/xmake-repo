@@ -32,4 +32,3 @@ jobs:
       - name: Tests
         run: |
           xmake l ./scripts/test.lua -D -p mingw -a ${{ matrix.arch }} -k ${{ matrix.kind }}
-
