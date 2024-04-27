@@ -27,6 +27,11 @@ package("aws-crt-cpp")
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+
+            io.replace("include/aws/crt/Exports.h", "WIN32", "_WIN32", {plain = true})
+            if package:config("shared") then
+                package:add("defines", "AWS_CRT_CPP_USE_IMPORT_EXPORT")
+            end
         end
         table.insert(configs, "-DUSE_OPENSSL=" .. (package:config("openssl") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
