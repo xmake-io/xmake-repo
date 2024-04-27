@@ -6,6 +6,7 @@ package("yomm2")
     add_urls("https://github.com/jll63/yomm2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jll63/yomm2.git")
 
+    add_versions("v1.5.1", "323abba27a356555cc3ead3e3e950746ab43f90d97ad21950f2ba3afaf565ecc")
     add_versions("v1.5.0", "daebc9bc56e3f67f1513c40b4b185cf435d8e16fe9936f3e5ed6fbb337a39030")
     add_versions("v1.4.0", "3f1f3a2b6fa5250405986b6cc4dff82299f866e2c6c2db75c7c3f38ecb91360f")
 
