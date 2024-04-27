@@ -28,6 +28,7 @@ jobs:
       - name: Prepare
         run: |
           brew install mingw-w64
+          which x86_64-w64-mingw32-gcc
 
       - name: Tests
         run: |
