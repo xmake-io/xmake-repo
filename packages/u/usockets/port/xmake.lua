@@ -38,3 +38,7 @@ target("usockets")
     add_files("src/**.cpp", "src/**.c")
     add_includedirs("src")
     add_headerfiles("src/libusockets.h")
+
+    if is_plat("windows") and is_kind("shared") then
+        add_rules("utils.symbols.export_all", {export_classes = true})
+    end
