@@ -1,6 +1,7 @@
 option("ssl", {default = nil, type = "string"})
 option("uv", {showmenu = true, default = false})
 option("uring", {showmenu = true, default = false})
+option("quic", {showmenu = true, default = false})
 
 add_rules("mode.debug", "mode.release")
 
@@ -29,6 +30,12 @@ if is_plat("linux") and has_config("uring") then
     add_requires("liburing")
     add_packages("liburing")
     add_defines("LIBUS_USE_IO_URING")
+end
+
+if has_config("quic") then
+    add_requires("lsquic")
+    add_packages("lsquic")
+    add_defines("LIBUS_USE_QUIC")
 end
 
 target("usockets")

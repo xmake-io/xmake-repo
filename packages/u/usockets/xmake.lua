@@ -11,6 +11,7 @@ package("usockets")
     add_configs("ssl", {description = "Select ssl library", default = nil, type = "string", values = {"openssl", "wolfssl", "boringssl"}})
     add_configs("uv", {description = "Enable libuv", default = false, type = "boolean"})
     add_configs("uring", {description = "Enable liburing", default = false, type = "boolean"})
+    add_configs("quic", {description = "Enable lsquic", default = false, type = "boolean", readonly = true})
 
     on_load(function (package)
         local ssl = package:config("ssl")
@@ -32,6 +33,10 @@ package("usockets")
             package:add("deps", "liburing")
             package:add("defines", "LIBUS_USE_IO_URING")
         end
+
+        if package:config("quic") then
+            package:add("deps", "lsquic")
+        end
     end)
 
     on_install("windows", "macosx", "linux", function (package)
@@ -39,6 +44,7 @@ package("usockets")
         configs.ssl = package:config("ssl")
         configs.uv = package:config("uv")
         configs.uring = package:config("uring")
+        configs.uring = package:config("quic")
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
