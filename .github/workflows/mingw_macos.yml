@@ -30,6 +30,7 @@ jobs:
           brew install mingw-w64
           which x86_64-w64-mingw32-gcc
           ls -l $(which x86_64-w64-mingw32-gcc)
+          brew --prefix mingw-w64
 
       - name: Tests
         run: |
