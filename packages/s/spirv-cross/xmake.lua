@@ -1,5 +1,4 @@
 package("spirv-cross")
-
     set_homepage("https://github.com/KhronosGroup/SPIRV-Cross/")
     set_description("SPIRV-Cross is a practical tool and library for performing reflection on SPIR-V and disassembling SPIR-V back to high level languages.")
     set_license("Apache-2.0")
@@ -11,17 +10,33 @@ package("spirv-cross")
     add_versions("1.3.231+1", "f09ba2777714871bddb70d049878af34b94fa54d")
     add_versions("1.3.268+0", "2de1265fca722929785d9acdec4ab728c47a0254")
 
+    add_configs("exceptions", {description = "Enable exception handling", default = true, type = "boolean"})
+
     add_deps("cmake")
     add_links("spirv-cross-c", "spirv-cross-cpp", "spirv-cross-reflect", "spirv-cross-msl", "spirv-cross-util", "spirv-cross-hlsl", "spirv-cross-glsl", "spirv-cross-core")
 
+    if is_plat("windows") then
+        set_policy("platform.longpaths", true)
+    end
+
     on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DSPIRV_CROSS_ENABLE_TESTS=OFF"}
+
+        local cxflags
+        if package:config("exceptions") then
+            table.insert(configs, "-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS=OFF")
+            if package:is_plat("windows") and package:has_tool("cxx", "cl", "clang_cl") then
+                cxflags = "/EHsc"
+            end
+        else
+            table.insert(configs, "-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS=ON")
+        end
         if package:config("shared") then
             table.insert(configs, "-DSPIRV_CROSS_SHARED=ON")
         else
             table.insert(configs, "-DSPIRV_CROSS_SHARED=OFF")
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
         package:addenv("PATH", "bin")
     end)
 
