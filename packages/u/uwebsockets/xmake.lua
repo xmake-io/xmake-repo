@@ -61,5 +61,5 @@ package("uwebsockets")
                     }
                 }).run();
             }
-        ]]}, {configs = {languages = "cxx17"}, includes = "uwebsockets/App.h"}))
+        ]]}, {configs = {languages = "cxx20"}, includes = "uwebsockets/App.h"}))
     end)
