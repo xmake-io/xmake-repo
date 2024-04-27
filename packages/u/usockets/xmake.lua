@@ -9,19 +9,36 @@ package("usockets")
     add_versions("v0.8.8", "d14d2efe1df767dbebfb8d6f5b52aa952faf66b30c822fbe464debaa0c5c0b17")
 
     add_configs("ssl", {description = "Select ssl library", default = nil, type = "string", values = {"openssl", "wolfssl", "boringssl"}})
-
-    add_deps("libuv")
+    add_configs("uv", {description = "Enable libuv", default = false, type = "boolean"})
+    add_configs("uring", {description = "Enable liburing", default = false, type = "boolean"})
 
     on_load(function (package)
         local ssl = package:config("ssl")
         if ssl then
             package:add("deps", ssl)
         end
+
+        if package:is_plat("windows") then
+            package:add("deps", "libuv")
+            package:config_set("uv", true)
+        else
+            if package:config("libuv") then
+                package:add("deps", "libuv")
+                package:add("defines", "LIBUS_USE_LIBUV")
+            end
+        end
+
+        if package:is_plat("linux") and package:config("uring") then
+            package:add("deps", "liburing")
+            package:add("defines", "LIBUS_USE_IO_URING")
+        end
     end)
 
-    on_install("windows", "macosx", "linux", "android@linux,macosx", "mingw@linux,macosx", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         local configs = {}
         configs.ssl = package:config("ssl")
+        configs.uv = package:config("uv")
+        configs.uring = package:config("uring")
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)

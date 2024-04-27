@@ -1,9 +1,8 @@
 option("ssl", {default = nil, type = "string"})
+option("uv", {showmenu = true, default = false})
+option("uring", {showmenu = true, default = false})
 
 add_rules("mode.debug", "mode.release")
-
-add_requires("libuv")
-add_packages("libuv")
 
 local ssl = get_config("ssl")
 if ssl then
@@ -20,9 +19,21 @@ else
     add_defines("LIBUS_NO_SSL")
 end
 
+if is_plat("windows") or has_config("uv") then
+    add_requires("libuv")
+    add_packages("libuv")
+    add_defines("LIBUS_USE_LIBUV")
+end
+
+if is_plat("linux") and has_config("uring") then
+    add_requires("liburing")
+    add_packages("liburing")
+    add_defines("LIBUS_USE_IO_URING")
+end
+
 target("usockets")
     set_kind("$(kind)")
-    set_languages("cxx20")
+    set_languages("c++17")
 
     add_files("src/**.cpp", "src/**.c")
     add_includedirs("src")
