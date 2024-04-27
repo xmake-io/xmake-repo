@@ -1,12 +1,36 @@
 package("uwebsockets")
     set_homepage("https://github.com/uNetworking")
     set_description("Simple, secure & standards compliant web server for the most demanding of applications.")
+    set_license("Apache-2.0")
 
-    set_urls("https://github.com/uNetworking/uWebSockets/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/uNetworking/uWebSockets/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/uNetworking/uWebSockets.git")
 
     add_versions("v20.60.0", "eb72223768f93d40038181653ee5b59a53736448a6ff4e8924fd56b2fcdc00db")
-    add_deps("usockets","libzip")
-    on_install(function (package)
+
+    -- form usockets
+    add_configs("ssl", {description = "Select ssl library", default = nil, type = "string", values = {"openssl", "wolfssl", "boringssl"}})
+    add_configs("uv", {description = "Enable libuv", default = false, type = "boolean"})
+    add_configs("uring", {description = "Enable liburing", default = false, type = "boolean"})
+    add_configs("quic", {description = "Enable lsquic", default = false, type = "boolean", readonly = true})
+
+    add_configs("zip", {description = "Enable libzip", default = false, type = "boolean"})
+    add_configs("deflate", {description = "Enable libdeflate", default = false, type = "boolean"})
+
+    on_load(function (package)
+        package:add("deps", "usockets", {configs = {ssl = package:config("ssl"), uv = package:config("uv"), uring = package:config("uring"), quic = package:config("quic")}})
+        if package:config("zip") then
+            package:add("deps", "libzip")
+            if package:config("deflate") then
+                package:add("deps", "libdeflate")
+                package:add("defines", "UWS_USE_LIBDEFLATE")
+            end
+        else
+            package:add("defines", "UWS_NO_ZLIB")
+        end
+    end)
+
+    on_install("windows", "macosx", "linux", function (package)
         os.cp("src/*", package:installdir("include/uwebsockets"))
     end)
 
@@ -14,10 +38,7 @@ package("uwebsockets")
         assert(package:check_cxxsnippets({test = [[
             void test(){
                 struct UserData {};
-                uWS::SSLApp({
-                    .key_file_name = "key.pem",
-                    .cert_file_name = "cert.pem",
-                }).get("/hello/:name", [](auto *res, auto *req) {
+                uWS::App().get("/hello/:name", [](auto *res, auto *req) {
                     res->writeStatus("200 OK");
                        res->writeHeader("Content-Type", "text/html; charset=utf-8");
                        res->write("<h1>Hello ");
@@ -38,5 +59,5 @@ package("uwebsockets")
                     }
                 }).run();
             }
-        ]]}, {configs = {languages = "cxx20"}, includes = "uwebsockets/App.h"}))
+        ]]}, {configs = {languages = "cxx17"}, includes = "uwebsockets/App.h"}))
     end)
