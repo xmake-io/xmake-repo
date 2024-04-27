@@ -25,6 +25,8 @@ package("ls-hpack")
 
         os.vcp("*.h", package:installdir("include"))
         os.vcp("compat/**.h", package:installdir("include/sys"))
+        os.vcp("**.a", package:installdir("lib"))
+        os.vcp("**.dylib", package:installdir("lib"))
         os.vcp("**.lib", package:installdir("lib"))
         os.vcp("**.so", package:installdir("lib"))
         os.vcp("**.dll", package:installdir("bin"))
