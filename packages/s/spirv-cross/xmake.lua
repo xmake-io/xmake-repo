@@ -15,6 +15,10 @@ package("spirv-cross")
     add_deps("cmake")
     add_links("spirv-cross-c", "spirv-cross-cpp", "spirv-cross-reflect", "spirv-cross-msl", "spirv-cross-util", "spirv-cross-hlsl", "spirv-cross-glsl", "spirv-cross-core")
 
+    if is_plat("windows") then
+        set_policy("platform.longpaths", true)
+    end
+
     on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DSPIRV_CROSS_ENABLE_TESTS=OFF"}
 
