@@ -94,16 +94,14 @@ package("boost")
             end
             if package:is_plat("windows") then
                 local vs_runtime = package:config("vs_runtime")
-                if package:config("shared") then
-                    if package:debug() then
-                        linkname = linkname .. "-gd"
-                    end
+                --if vs_runtime == "MD" then
+                --    linkname = linkname .. ""
+                if vs_runtime == "MDd" then
+                    linkname = linkname .. "-gd"
                 elseif vs_runtime == "MT" then
                     linkname = linkname .. "-s"
                 elseif vs_runtime == "MTd" then
                     linkname = linkname .. "-sgd"
-                elseif vs_runtime == "MDd" then
-                    linkname = linkname .. "-gd"
                 end
             else
                 if package:debug() then
