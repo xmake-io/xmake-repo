@@ -8,28 +8,21 @@ package("ls-hpack")
 
     add_versions("v2.3.3", "3d7d539bd659fefc7168fb514368065cb12a1a7a0946ded60e4e10f1637f1ea2")
 
+    add_patches("v2.3.3", "patches/v2.3.3/fix-cmake-install.patch", "272e43d3f19843f03b11b0c040ddecb5dedf5667ac7ff8102ed29cc5528a5693")
+
     add_deps("cmake")
     add_deps("xxhash")
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY(bin)", "", {plain = true})
-        io.replace("CMakeLists.txt", "SHARED EQUAL 1", "BUILD_SHARED_LIBS", {plain = true})
-
-        local configs = {"-DENABLE_TESTING=OFF"}
+        local configs = {
+            "-DXXH_INCLUDE_DIR=" .. package:dep("xxhash"):installdir("include")
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DSHARED=" .. (package:config("shared") and "1" or "0"))
         if  package:is_plat("windows") and package:config("shared") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
-        import("package.tools.cmake").build(package, configs, {packagedeps = "xxhash"})
-
-        os.vcp("*.h", package:installdir("include"))
-        os.vcp("compat/**.h", package:installdir("include/sys"))
-        os.vcp("**.a", package:installdir("lib"))
-        os.vcp("**.dylib", package:installdir("lib"))
-        os.vcp("**.lib", package:installdir("lib"))
-        os.vcp("**.so", package:installdir("lib"))
-        os.vcp("**.dll", package:installdir("bin"))
+        import("package.tools.cmake").install(package, configs, {packagedeps = "xxhash"})
     end)
 
     on_test(function (package)

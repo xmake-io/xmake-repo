@@ -1,0 +1,22 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index bc624219..b9a5bf81 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -79,12 +79,6 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${MY_CMAKE_FLAGS} $ENV{EXTRA_CFLAGS}")
+ 
+ MESSAGE(STATUS "Compiler flags: ${CMAKE_C_FLAGS}")
+ 
+-IF (NOT CMAKE_BUILD_TYPE STREQUAL Release)
+-    ENABLE_TESTING()
+-    INCLUDE_DIRECTORIES("test")
+-    ADD_SUBDIRECTORY("test")
+-ENDIF()
+-
+-IF (CMAKE_SYSTEM_NAME STREQUAL Linux)
+-    ADD_SUBDIRECTORY(bin)
+-ENDIF()
+\ No newline at end of file
++install(TARGETS ls-hpack)
++install(FILES lshpack.h lsxpack_header.h huff-tables.h  DESTINATION include)
++install(FILES compat/windows/sys/uio.h compat/queue/sys/queue.h  DESTINATION include/sys)
+\ No newline at end of file
