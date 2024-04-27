@@ -12,14 +12,14 @@ package("usockets")
 
     add_deps("libuv")
 
-    on_install(function (package)
+    on_load(function (package)
         local ssl = package:config("ssl")
         if ssl then
             package:add("deps", ssl)
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", "android@linux,macosx", "mingw@linux,macosx", function (package)
         local configs = {}
         configs.ssl = package:config("ssl")
 
