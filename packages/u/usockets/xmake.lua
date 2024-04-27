@@ -17,6 +17,13 @@ package("usockets")
         local ssl = package:config("ssl")
         if ssl then
             package:add("deps", ssl)
+            if ssl == "openssl" or ssl == "boringssl" then
+                package:add("defines", "LIBUS_USE_OPENSSL")
+            elseif ssl == "wolfssl" then
+                package:add("defines", "LIBUS_USE_WOLFSSL")
+            end
+        else
+            package:add("defines", "LIBUS_NO_SSL")
         end
 
         if package:is_plat("windows") then
@@ -36,6 +43,7 @@ package("usockets")
 
         if package:config("quic") then
             package:add("deps", "lsquic")
+            package:add("defines", "LIBUS_USE_QUIC")
         end
     end)
 

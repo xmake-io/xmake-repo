@@ -7,14 +7,12 @@ add_rules("mode.debug", "mode.release")
 
 local ssl = get_config("ssl")
 if ssl then
+    add_requires(ssl)
+    add_packages(ssl)
     if ssl == "openssl" or ssl == "boringssl" then
         add_defines("LIBUS_USE_OPENSSL")
-        add_requires(ssl)
-        add_packages(ssl)
     elseif ssl == "wolfssl" then
         add_defines("LIBUS_USE_WOLFSSL")
-        add_requires(ssl)
-        add_packages(ssl)
     end
 else
     add_defines("LIBUS_NO_SSL")
