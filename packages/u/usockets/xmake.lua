@@ -52,7 +52,7 @@ package("usockets")
         configs.ssl = package:config("ssl")
         configs.uv = package:config("uv")
         configs.uring = package:config("uring")
-        configs.uring = package:config("quic")
+        configs.quic = package:config("quic")
 
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
