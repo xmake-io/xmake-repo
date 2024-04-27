@@ -104,7 +104,7 @@ package("boost")
                     linkname = linkname .. "-sgd"
                 end
             else
-                if package:debug() then
+                if package:is_debug() then
                     linkname = linkname .. "-d"
                 end
             end
@@ -249,7 +249,7 @@ package("boost")
             "-sNO_ZSTD=1",
             "install",
             "threading=" .. (package:config("multi") and "multi" or "single"),
-            "debug-symbols=" .. (package:debug() and "on" or "off"),
+            "debug-symbols=" .. (package:is_debug() and "on" or "off"),
             "link=" .. (package:config("shared") and "shared" or "static"),
             "variant=" .. (package:is_debug() and "debug" or "release"),
             "runtime-debugging=" .. (package:is_debug() and "on" or "off")
