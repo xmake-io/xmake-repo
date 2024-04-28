@@ -11,7 +11,7 @@ package("usockets")
     add_configs("ssl", {description = "Select ssl library", default = nil, type = "string", values = {"openssl", "wolfssl", "boringssl"}})
     add_configs("uv", {description = "Enable libuv", default = false, type = "boolean"})
     add_configs("uring", {description = "Enable liburing", default = false, type = "boolean"})
-    add_configs("quic", {description = "Enable lsquic", default = false, type = "boolean", readonly = true})
+    add_configs("quic", {description = "Enable lsquic", default = false, type = "boolean"})
 
     on_load(function (package)
         local ssl = package:config("ssl")
