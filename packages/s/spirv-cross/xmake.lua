@@ -13,23 +13,39 @@ package("spirv-cross")
     add_configs("exceptions", {description = "Enable exception handling", default = true, type = "boolean"})
 
     add_deps("cmake")
-    add_links("spirv-cross-c", "spirv-cross-cpp", "spirv-cross-reflect", "spirv-cross-msl", "spirv-cross-util", "spirv-cross-hlsl", "spirv-cross-glsl", "spirv-cross-core")
 
     if is_plat("windows") then
         set_policy("platform.longpaths", true)
     end
 
+    on_load(function (package)
+        local links = {"spirv-cross-c", "spirv-cross-cpp", "spirv-cross-reflect",
+                       "spirv-cross-msl", "spirv-cross-util", "spirv-cross-hlsl",
+                       "spirv-cross-glsl", "spirv-cross-core"}
+        for _, link in ipairs(links) do
+            if package:is_plat("windows") and package:is_debug() then
+                link = link .. "d"
+            end
+            package:add("links", link)
+        end
+    end)
+
     on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DSPIRV_CROSS_ENABLE_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
 
         local cxflags
         if package:config("exceptions") then
             table.insert(configs, "-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS=OFF")
             if package:is_plat("windows") and package:has_tool("cxx", "cl", "clang_cl") then
-                cxflags = "/EHsc"
+                cxflags = {"/EHsc"}
             end
         else
             table.insert(configs, "-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS=ON")
+        end
+        if package:is_plat("windows") and package:is_debug() then
+            cxflags = cxflags or {}
+            table.insert(cxflags, "/FS")
         end
         if package:config("shared") then
             table.insert(configs, "-DSPIRV_CROSS_SHARED=ON")
