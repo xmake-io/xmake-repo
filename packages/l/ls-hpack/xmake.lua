@@ -8,21 +8,39 @@ package("ls-hpack")
 
     add_versions("v2.3.3", "3d7d539bd659fefc7168fb514368065cb12a1a7a0946ded60e4e10f1637f1ea2")
 
-    add_patches("v2.3.3", "patches/v2.3.3/fix-cmake-install.patch", "272e43d3f19843f03b11b0c040ddecb5dedf5667ac7ff8102ed29cc5528a5693")
-
-    add_deps("cmake")
     add_deps("xxhash")
 
     on_install(function (package)
-        local configs = {
-            "-DXXH_INCLUDE_DIR=" .. package:dep("xxhash"):installdir("include")
-        }
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DSHARED=" .. (package:config("shared") and "1" or "0"))
-        if  package:is_plat("windows") and package:config("shared") then
-            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-        end
-        import("package.tools.cmake").install(package, configs, {packagedeps = "xxhash"})
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+
+            add_requires("xxhash")
+            add_packages("xxhash")
+
+            target("ls-hpack")
+                set_kind("$(kind)")
+                add_files("*.c")
+                add_headerfiles("*.h")
+
+                add_defines("XXH_HEADER_NAME=<xxhash.h>")
+
+                if is_plat("windows") then
+                    add_includedirs("compat/windows")
+                    add_headerfiles("compat/windows/(sys/*.h)")
+
+                    if is_kind("shared") then
+                        add_rules("utils.symbols.export_all")
+                    end
+                end
+
+                on_config(function(target)
+                    if not target:has_cincludes("sys/queue.h") then
+                        target:add("includedirs", "compat/queue")
+                        target:add("headerfiles", "compat/queue/(sys/*.h)")
+                    end
+                end)
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
