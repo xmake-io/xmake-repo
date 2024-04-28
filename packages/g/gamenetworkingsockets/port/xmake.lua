@@ -426,6 +426,7 @@ end
 
 target("gns") -- we need limit path length
     set_kind("$(kind)")
+    add_rules("protobuf.cpp")
 
     add_vectorexts("sse2")
     add_packages("protobuf-cpp", "openssl")
@@ -479,9 +480,10 @@ target("gns") -- we need limit path length
                 "src/common/crypto_25519_openssl.cpp",
                 "src/common/opensslwrapper.cpp")
 
-    add_files(  "src/common/steamnetworkingsockets_messages_certs.proto",
-                "src/common/steamnetworkingsockets_messages.proto",
-                "src/common/steamnetworkingsockets_messages_udp.proto", {rules = "protobuf.cpp"})
+    add_files("src/common/steamnetworkingsockets_messages_certs.proto",
+              "src/common/steamnetworkingsockets_messages.proto",
+              "src/common/steamnetworkingsockets_messages_udp.proto")
+
     add_files(  "src/common/crypto.cpp",
                 "src/common/crypto_textencode.cpp",
                 "src/common/keypair.cpp",
