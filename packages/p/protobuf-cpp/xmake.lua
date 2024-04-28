@@ -32,8 +32,10 @@ package("protobuf-cpp")
 
     if is_plat("windows") then
         add_links("libprotobuf")
+        add_links("libprotoc")
     else
         add_links("protobuf")
+        add_links("protoc")
     end
 
     if is_plat("linux") then
