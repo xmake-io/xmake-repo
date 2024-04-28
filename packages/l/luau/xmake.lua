@@ -4,8 +4,11 @@ package("luau")
     set_description("A fast, small, safe, gradually typed embeddable scripting language derived from Lua.")
     set_license("MIT")
 
-    add_urls("https://github.com/Roblox/luau.git")
-    add_versions("0.538", "d3b566c258bee3bdccb655c034a11bfc48a586e3")
+    add_urls("https://github.com/Roblox/luau/archive/$(version).tar.gz",
+             "https://github.com/Roblox/luau.git")
+    
+    add_versions("0.623", "5a72f9e5b996c5ec44ee2c7bd9448d2b2e5061bdf7d057de7490f92fb3003f40")
+    add_versions("0.538", "8a1240e02a7daacf1e5cff249040a3298c013157fc496c66adce6dcb21cc30be")
 
     add_configs("extern_c", { description = "Use extern C for all APIs.", default = false, type = "boolean" })
     add_configs("build_web", { description = "Build web module.", default = false, type = "boolean" })
@@ -20,21 +23,32 @@ package("luau")
         table.insert(configs, "-DLUAU_BUILD_WEB=" .. (package:config("build_web") and "ON" or "OFF"))
         table.insert(configs, "-DLUAU_EXTERN_C=" .. (package:config("extern_c") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, { buildir = "build" })
-        os.trycp("VM/include/*.h", package:installdir("include"))
-        os.trycp("Ast/include/*", package:installdir("include"))
-        os.trycp("Common/include/*", package:installdir("include"))
-        os.trycp("Compiler/include/*", package:installdir("include"))
-        -- need to link with Ast last
-        local libs = { "Luau.VM", "Luau.Compiler", "Luau.Ast" }
-        for _, link in ipairs(libs) do
-            package:add("links", link)
+
+        local cmake_file = io.readfile("CMakeLists.txt")
+
+        local links = {}
+        for link in string.gmatch(cmake_file, "add_library%(([%a|%.]+)") do
+            if string.startswith(link, "Luau.") then
+                table.insert(links, link)
+            end
         end
-        os.trycp("build/*.a", package:installdir("lib"))
-        os.trycp("build/*.so", package:installdir("lib"))
-        os.trycp("build/*.dylib", package:installdir("lib"))
-        os.trycp("build/*.lib", package:installdir("lib"))
-        os.trycp("build/*.dll", package:installdir("bin"))
+
+        -- we have to link in reverse order
+        for i = #links, 1, -1 do
+            local link = links[i]
+            package:add("links", link)
+            link = link:gsub("Luau%.", "")
+            link = link:gsub("%..*", "")
+            os.trycp(link .. "/include/*", package:installdir("include"))
+        end
+
+        os.trycp("build/**.a", package:installdir("lib"))
+        os.trycp("build/**.so", package:installdir("lib"))
+        os.trycp("build/**.dylib", package:installdir("lib"))
+        os.trycp("build/**.lib", package:installdir("lib"))
+        os.trycp("build/**.dll", package:installdir("bin"))
         os.trycp("build/luau*", package:installdir("bin"))
+
         package:addenv("PATH", "bin")
     end)
 
@@ -49,8 +63,5 @@ package("luau")
                 luaL_openlibs(L);
                 lua_close(L);
             }
-        ]]})
-    )
+        ]]}))
     end)
-
-
