@@ -1,4 +1,4 @@
-set_languages("gnu11")
+set_languages("cxx17")
 option("webrtc", {default = false, showmenu = true})
 
 add_rules("mode.debug", "mode.release")
@@ -405,7 +405,6 @@ if has_config("webrtc") then
             add_syslinks("pthread")
             add_cxflags("-Wno-attributes")
         end
-        set_languages("cxx17")
         add_packages("openssl", "abseil")
         add_includedirs("src/external/webrtc")
 
@@ -421,13 +420,11 @@ if has_config("webrtc") then
         end
         add_files("src/external/steamwebrtc/ice_session.cpp")
         add_includedirs("src/external/webrtc")
-        set_languages("cxx17")
         add_deps("webrtc-lite")
         add_packages("abseil")
 end
 
 target("gns") -- we need limit path length
-    set_languages("c++17")
     set_kind("$(kind)")
 
     add_vectorexts("sse2")
