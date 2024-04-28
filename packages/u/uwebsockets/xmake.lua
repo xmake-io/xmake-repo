@@ -10,7 +10,6 @@ package("uwebsockets")
     add_versions("v20.61.0", "94778209571f832740fe1a4f19dbc059990b6acc34b8789f39cda6a158178d1f")
     add_versions("v20.60.0", "eb72223768f93d40038181653ee5b59a53736448a6ff4e8924fd56b2fcdc00db")
 
-    -- form usockets
     add_configs("ssl", {description = "Select ssl library", default = nil, type = "string", values = {"openssl", "wolfssl", "boringssl"}})
     add_configs("uv", {description = "Enable libuv", default = false, type = "boolean"})
     add_configs("uring", {description = "Enable liburing", default = false, type = "boolean"})
