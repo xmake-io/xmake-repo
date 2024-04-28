@@ -38,10 +38,14 @@ package("spirv-cross")
         if package:config("exceptions") then
             table.insert(configs, "-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS=OFF")
             if package:is_plat("windows") and package:has_tool("cxx", "cl", "clang_cl") then
-                cxflags = "/EHsc"
+                cxflags = {"/EHsc"}
             end
         else
             table.insert(configs, "-DSPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS=ON")
+        end
+        if package:is_plat("windows") and package:is_debug() then
+            cxflags = cxflags or {}
+            table.insert(cxflags, "/FS")
         end
         if package:config("shared") then
             table.insert(configs, "-DSPIRV_CROSS_SHARED=ON")
