@@ -36,7 +36,7 @@ package("luau")
         -- we have to link in reverse order
         for i = #links, 1, -1 do
             local link = links[i]
-            package:add("links", link .. ".lib")
+            package:add("links", link)
             link = link:gsub("Luau%.", "")
             link = link:gsub("%..*", "")
             os.trycp(link .. "/include/*", package:installdir("include"))
@@ -62,6 +62,13 @@ package("luau")
                 auto L = luaL_newstate();
                 luaL_openlibs(L);
                 lua_close(L);
+            }
+        ]]}))
+        assert(package:check_cxxsnippets({ test = [[
+            #include <Luau/Common.h>
+
+            void test() {
+                Luau::FValue<int> v("test", 42, true);
             }
         ]]}))
     end)
