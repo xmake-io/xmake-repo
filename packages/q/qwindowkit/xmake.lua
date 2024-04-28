@@ -9,6 +9,9 @@ package("qwindowkit")
 
     add_deps("cmake")
     add_deps("qt6core")
+    if is_plat("linux") then
+        add_deps("fontconfig", "libxkbcommon")
+    end
 
     add_includedirs("include/QWindowKit")
 
