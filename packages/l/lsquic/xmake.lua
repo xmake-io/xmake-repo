@@ -51,7 +51,7 @@ package("lsquic")
         table.insert(configs, "-DLSQUIC_FIU=" .. (package:config("fiu") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, opt)
 
-        os.vcp("**.dll", package:installdir("bin"))
+        os.vcp(path.join(package:buildir(), "**.dll"), package:installdir("bin"))
     end)
 
     on_test(function (package)
