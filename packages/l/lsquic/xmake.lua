@@ -11,14 +11,20 @@ package("lsquic")
     add_configs("fiu", {description = "Use Fault Injection in Userspace (FIU)", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("zlib", "boringssl", "ls-qpack", "ls-hpack")
+    add_deps("zlib", "boringssl", "ls-qpack")
 
     add_includedirs("include/lsquic")
 
-    on_load("windows", function (package)
-        if not package:is_precompiled() then
+    on_load(function (package)
+        if package:is_plat("windows") and (not package:is_precompiled()) then
             package:add("deps", "strawberry-perl")
         end
+
+        local configs = {}
+        if package:config("shared") then
+            configs.pic = true
+        end
+        package:add("deps", "ls-hpack", {configs = configs})
     end)
 
     on_install("windows|!arm64", "linux", "macosx", function (package)
