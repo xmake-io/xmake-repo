@@ -8,10 +8,18 @@ package("lsquic")
 
     add_versions("v4.0.8", "f18ff2fa0addc1c51833304b3d3ff0979ecf5f53f54f96bcd3442a40cfcd440b")
 
+    add_configs("fiu", {description = "Use Fault Injection in Userspace (FIU)", default = false, type = "boolean"})
+
     add_deps("cmake")
     add_deps("zlib", "boringssl", "ls-qpack", "ls-hpack")
 
     add_includedirs("include/lsquic")
+
+    on_load("windows", function (package)
+        if not package:is_precompiled() then
+            package:add("deps", "strawberry-perl")
+        end
+    end)
 
     on_install("windows|!arm64", "linux", "macosx", function (package)
         local opt = {}
@@ -40,6 +48,7 @@ package("lsquic")
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DLSQUIC_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DLSQUIC_FIU=" .. (package:config("fiu") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, opt)
 
         os.vcp("**.dll", package:installdir("bin"))
