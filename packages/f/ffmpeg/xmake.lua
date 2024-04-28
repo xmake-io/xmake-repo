@@ -7,18 +7,21 @@ package("ffmpeg")
     add_urls("https://github.com/FFmpeg/FFmpeg/archive/n$(version).zip", {alias = "github"})
     add_urls("https://git.ffmpeg.org/ffmpeg.git", "https://github.com/FFmpeg/FFmpeg.git", {alias = "git"})
 
+    add_versions("home:7.0", "a24d9074bf5523a65aaa9e7bd02afe4109ce79d69bd77d104fed3dab4b934d7a")
     add_versions("home:6.1", "eb7da3de7dd3ce48a9946ab447a7346bd11a3a85e6efb8f2c2ce637e7f547611")
     add_versions("home:6.0.1", "2c6e294569d1ba8e99cbf1acbe49e060a23454228a540a0f45d679d72ec69a06")
     add_versions("home:5.1.2", "39a0bcc8d98549f16c570624678246a6ac736c066cebdb409f9502e915b22f2b")
     add_versions("home:5.1.1", "cd0e16f903421266d5ccddedf7b83b9e5754aef4b9f7a7f06ce9e4c802f0545b")
     add_versions("home:5.0.1", "28df33d400a1c1c1b20d07a99197809a3b88ef765f5f07dc1ff067fac64c59d6")
     add_versions("home:4.0.2", "346c51735f42c37e0712e0b3d2f6476c86ac15863e4445d9e823fe396420d056")
+    add_versions("github:7.0", "9ea4f1e934b1655c9a6dad579fd52fa299cd4f6a5f2b82be97daa98ff2e798d0")
     add_versions("github:6.1", "7da07ff7e30bca95c0593db20442becba13ec446dd9c3331ca3d1b40eecd3c93")
     add_versions("github:6.0.1", "2acb5738a1b4b262633ac2d646340403ae47120d9eb289ecad23fc90093c0d6c")
     add_versions("github:5.1.2", "0c99f3609160f40946e2531804175eea16416320c4b6365ad075e390600539db")
     add_versions("github:5.1.1", "a886fcc94792764c27c88ebe71dffbe5f0d37df8f06f01efac4833ac080c11bf")
     add_versions("github:5.0.1", "f9c2e06cafa4381df8d5c9c9e14d85d9afcbc10c516c6a206f821997cc7f6440")
     add_versions("github:4.0.2", "4df1ef0bf73b7148caea1270539ef7bd06607e0ea8aa2fbf1bb34062a097f026")
+    add_versions("git:7.0", "n7.0")
     add_versions("git:6.1", "n6.1")
     add_versions("git:6.0.1", "n6.0.1")
     add_versions("git:5.1.2", "n5.1.2")
@@ -39,12 +42,22 @@ package("ffmpeg")
     add_configs("vaapi",            {description = "Enable vaapi library.", default = false, type = "boolean"})
     add_configs("vdpau",            {description = "Enable vdpau library.", default = false, type = "boolean"})
     add_configs("hardcoded-tables", {description = "Enable hardcoded tables.", default = true, type = "boolean"})
+    if is_plat("linux") then
+        add_configs("libdrm", {description = "Enable libdrm hardware acceleration", default = true, type = "boolean"})
+    end
 
     add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
-    if is_plat("macosx") then
-        add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "AudioToolbox", "VideoToolbox", "Security")
+    if is_plat("macosx", "iphoneos") then
+        add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "VideoToolbox", "Security")
+        if is_plat("iphoneos") then
+            add_frameworks("AVFoundation")
+        else
+            add_frameworks("AudioToolbox")
+        end
     elseif is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("android") then
+        add_syslinks("android")
     end
 
     add_deps("nasm")
@@ -80,21 +93,22 @@ package("ffmpeg")
                             lzma    = "xz",
                             libx264 = "x264",
                             libx265 = "x265",
-                            iconv   = "libiconv"}
+                            iconv   = "libiconv",
+                            libdrm  = "libdrm"}
         for name, dep in pairs(configdeps) do
             if package:config(name) then
                 package:add("deps", dep)
             end
         end
         -- https://www.ffmpeg.org/platform.html#toc-Advanced-linking-configuration
-        if package:config("pic") ~= false and not package:is_plat("windows", "macosx") then
+        if package:config("pic") ~= false and not package:is_plat("windows", "macosx", "iphoneos") then
             package:add("shflags", "-Wl,-Bsymbolic")
             package:add("ldflags", "-Wl,-Bsymbolic")
         end
         if not package:config("gpl") then
             package:set("license", "LGPL-3.0")
         end
-        if is_plat("windows", "mingw") and not package:config("shared") then
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("syslinks", "Bcrypt", "Mfplat", "mfuuid", "Ole32", "Secur32", "Strmiids", "User32", "ws2_32")
         end
         if is_subhost("windows") and os.arch() == "x64" then
@@ -106,7 +120,7 @@ package("ffmpeg")
         end
     end)
 
-    on_install("windows", "mingw@windows,linux,cygwin,msys", "linux", "macosx", "android", function (package)
+    on_install("windows", "mingw@windows,linux,cygwin,msys", "linux", "macosx", "android", "iphoneos", function (package)
         local configs = {"--enable-version3",
                          "--disable-doc"}
         configs.host = "" -- prevents xmake to add a --host=xx parameter (unsupported by ffmpeg configure script)
@@ -152,8 +166,13 @@ package("ffmpeg")
             table.insert(configs, "--enable-pthreads")
         elseif package:is_plat("macosx", "iphoneos") then
             table.insert(configs, "--target-os=darwin")
-            table.insert(configs, "--enable-appkit")
-            table.insert(configs, "--enable-audiotoolbox")
+            if package:is_plat("macosx") then
+                table.insert(configs, "--enable-appkit")
+                table.insert(configs, "--enable-audiotoolbox")
+            else
+                 -- ffmpeg does not support audiotoolbox on iOS: https://github.com/kewlbear/FFmpeg-iOS-build-script/issues/158
+                table.insert(configs, "--disable-audiotoolbox")
+            end
             if macos.version():ge("10.7") then
                 table.insert(configs, "--enable-avfoundation")
             end
@@ -168,6 +187,7 @@ package("ffmpeg")
             table.insert(configs, "--enable-neon")
             table.insert(configs, "--enable-asm")
             table.insert(configs, "--enable-jni")
+            table.insert(configs, "--enable-mediacodec")
         else
             raise("unexpected platform")
         end
@@ -264,11 +284,11 @@ package("ffmpeg")
             else
                 raise("unknown arch(%s) for android!", package:arch())
             end
-            local function _translate_path(p)
-                if p and is_host("windows") then
-                    return p:gsub("\\", "/")
-                end
-                return p
+            local _translate_path
+            if is_host("windows") then
+                _translate_path = function (p) return p and p:gsub("\\", "/") or p end
+            else
+                _translate_path = function (p) return p end
             end
             local sysroot  = path.join(path.directory(bin), "sysroot")
             local cflags   = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cflags")), table.wrap(get_config("cxflags")), get_config("cflags"))
@@ -303,7 +323,13 @@ package("ffmpeg")
             os.vrunv("make", argv)
             os.vrun("make install")
         else
-            import("package.tools.autoconf").install(package, configs)
+            local opt
+            if package:is_plat("macosx") and package:config("shared") then
+                opt = {}
+                -- https://github.com/spack/spack/issues/40159
+                opt.shflags = "-Wl,-ld_classic"
+            end
+            import("package.tools.autoconf").install(package, configs, opt)
         end
         package:addenv("PATH", "bin")
     end)
