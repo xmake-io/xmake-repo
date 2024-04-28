@@ -13,6 +13,7 @@ package("ffmpeg")
     add_versions("home:5.1.2", "39a0bcc8d98549f16c570624678246a6ac736c066cebdb409f9502e915b22f2b")
     add_versions("home:5.1.1", "cd0e16f903421266d5ccddedf7b83b9e5754aef4b9f7a7f06ce9e4c802f0545b")
     add_versions("home:5.0.1", "28df33d400a1c1c1b20d07a99197809a3b88ef765f5f07dc1ff067fac64c59d6")
+    add_versions("home:4.4.4", "b0d16b48bd8ccb160e14291145294b0b12597e32b17175f7604288a8c73216de")
     add_versions("home:4.0.2", "346c51735f42c37e0712e0b3d2f6476c86ac15863e4445d9e823fe396420d056")
     add_versions("github:7.0", "9ea4f1e934b1655c9a6dad579fd52fa299cd4f6a5f2b82be97daa98ff2e798d0")
     add_versions("github:6.1", "7da07ff7e30bca95c0593db20442becba13ec446dd9c3331ca3d1b40eecd3c93")
@@ -324,7 +325,7 @@ package("ffmpeg")
             os.vrun("make install")
         else
             local opt
-            if package:is_plat("macosx") and package:config("shared") then
+            if package:is_plat("macosx") and package:is_arch("arm.*") and package:config("shared") then
                 opt = {}
                 -- https://github.com/spack/spack/issues/40159
                 opt.shflags = "-Wl,-ld_classic"
