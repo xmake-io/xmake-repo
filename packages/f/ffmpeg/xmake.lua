@@ -325,7 +325,7 @@ package("ffmpeg")
             os.vrun("make install")
         else
             local opt
-            if package:is_plat("macosx") and package:is_arch("arm*") and package:config("shared") then
+            if package:is_plat("macosx") and package:is_arch("arm.*") and package:config("shared") then
                 opt = {}
                 -- https://github.com/spack/spack/issues/40159
                 opt.shflags = "-Wl,-ld_classic"
