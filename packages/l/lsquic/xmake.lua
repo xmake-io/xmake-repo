@@ -26,13 +26,16 @@ package("lsquic")
         io.replace("src/liblsquic/CMakeLists.txt", "../lshpack/lshpack.c", "", {plain = true})
         io.replace("CMakeLists.txt", "-WX", "", {plain = true})
 
-        local boringssl_path = package:dep("boringssl"):installdir()
+        local boringssl = package:dep("boringssl")
+        io.replace("CMakeLists.txt",
+            "lib${LIB_NAME}${LIB_SUFFIX}",
+            "lib${LIB_NAME}" .. (boringssl:config("shared") and ".so" or ".a"), {plain = true})
 
         local configs = {
             "-DLSQUIC_BIN=OFF",
             "-DLSQUIC_TESTS=OFF",
-            "-DBORINGSSL_DIR=" .. boringssl_path,
-            "-DBORINGSSL_LIB=" .. path.join(boringssl_path, "lib"),
+            "-DBORINGSSL_DIR=" .. boringssl:installdir(),
+            "-DBORINGSSL_LIB=" .. boringssl:installdir("lib"),
         }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
