@@ -32,7 +32,7 @@ package("spirv-cross")
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {"-DSPIRV_CROSS_ENABLE_TESTS=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
 
         local cxflags
         if package:config("exceptions") then
