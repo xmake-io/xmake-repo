@@ -24,6 +24,9 @@ package("luau")
         table.insert(configs, "-DLUAU_EXTERN_C=" .. (package:config("extern_c") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, { buildir = "build" })
 
+        io.replace("CMakeLists.txt", ".lib", "", {plain = true})
+        io.replace("Sources.cmake", ".lib", "", {plain = true})
+
         local cmake_file = io.readfile("CMakeLists.txt")
 
         local links = {}
