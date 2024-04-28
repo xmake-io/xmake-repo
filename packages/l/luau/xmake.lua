@@ -36,7 +36,7 @@ package("luau")
         -- we have to link in reverse order
         for i = #links, 1, -1 do
             local link = links[i]
-            package:add("links", link)
+            package:add("links", link .. ".lib")
             link = link:gsub("Luau%.", "")
             link = link:gsub("%..*", "")
             os.trycp(link .. "/include/*", package:installdir("include"))
