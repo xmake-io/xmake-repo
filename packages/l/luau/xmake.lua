@@ -66,12 +66,12 @@ package("luau")
                 luaL_openlibs(L);
                 lua_close(L);
             }
-        ]]}))
+        ]]}, {configs = {languages = "cxx11"}}))
         assert(package:check_cxxsnippets({ test = [[
             #include <Luau/Common.h>
 
             void test() {
                 Luau::FValue<int> v("test", 42, true);
             }
-        ]]}))
+        ]]}, {configs = {languages = "cxx11"}}))
     end)
