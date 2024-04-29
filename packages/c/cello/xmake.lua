@@ -11,20 +11,14 @@ package("cello")
         add_syslinks("dbghelp")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
+        if is_plat("bsd") then
+            add_syslinks("execinfo")
+        end
+    elseif is_plat("cross", "android", "wasm") then
+        add_defines("CELLO_NSTRACE")
     end
 
     on_install(function(package)
-        local opt = {}
-        if package:has_cincludes("execinfo.h") then
-            if package:has_cincludes("execinfo.h", {configs = {syslinks = "execinfo"}}) then
-                opt.ldflags = "-lexecinfo"
-                package:add("syslinks", "execinfo")
-            end
-        else
-            opt.cxflags = "-DCELLO_NSTRACE"
-            package:add("defines", "CELLO_NSTRACE")
-        end
-
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("cello")
@@ -35,14 +29,16 @@ package("cello")
 
                 if is_plat("windows", "mingw") then
                     add_syslinks("dbghelp")
-                    if is_kind("shared") then
-                        add_rules("utils.symbols.export_all")
-                    end
                 elseif is_plat("linux", "bsd") then
                     add_syslinks("pthread")
+                    if is_plat("bsd") then
+                        add_syslinks("execinfo")
+                    end
+                elseif is_plat("cross", "android", "wasm") then
+                    add_defines("CELLO_NSTRACE")
                 end
         ]])
-        import("package.tools.xmake").install(package, {}, opt)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function(package)
