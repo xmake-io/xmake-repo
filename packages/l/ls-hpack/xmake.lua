@@ -14,6 +14,8 @@ package("ls-hpack")
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
 
+            set_symbols("none")
+
             add_requires("xxhash")
             add_packages("xxhash")
 
