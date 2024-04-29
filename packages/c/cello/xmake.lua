@@ -29,6 +29,9 @@ package("cello")
 
                 if is_plat("windows", "mingw") then
                     add_syslinks("dbghelp")
+                    if is_plat("windows") and is_kind("shared") then
+                        add_rules("utils.symbols.export_all")
+                    end
                 elseif is_plat("linux", "bsd") then
                     add_syslinks("pthread")
                     if is_plat("bsd") then
