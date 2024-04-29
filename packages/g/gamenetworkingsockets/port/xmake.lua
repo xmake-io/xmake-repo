@@ -1,4 +1,4 @@
-set_languages("cxx17")
+set_languages("gnu17")
 option("webrtc", {default = false, showmenu = true})
 
 add_rules("mode.debug", "mode.release")
