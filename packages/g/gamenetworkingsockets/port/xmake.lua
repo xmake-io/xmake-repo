@@ -3,11 +3,6 @@ option("webrtc", {default = false, showmenu = true})
 
 add_rules("mode.debug", "mode.release")
 
-if is_cross() then
-    add_requires("protoc", { host = true })
-    add_packages("protoc", { links = {} })
-end
-
 add_requires("protobuf-cpp", "openssl")
 
 if has_config("webrtc") then
@@ -442,10 +437,6 @@ target("gns") -- we need limit path length
     if is_plat("windows") then
         add_syslinks("ws2_32")
         add_defines("WIN32", "_WINDOWS")
-        if is_arch("arm64") then
-            -- src/public/minbase/minbase_identify.h fails to identify little endian on ARM (Windows is always LE)
-            add_defines("VALVE_LITTLE_ENDIAN")
-        end
     else
         add_syslinks("pthread")
         add_defines("POSIX", "LINUX", "GNUC", "GNU_COMPILER")
