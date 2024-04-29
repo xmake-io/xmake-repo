@@ -18,7 +18,7 @@ package("cello")
         add_defines("CELLO_NSTRACE")
     end
 
-    on_install(function(package)
+    on_install("!wasm", function(package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("cello")
