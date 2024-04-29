@@ -9,10 +9,17 @@ package("thorvg")
     add_versions("v0.13.2", "03b5dbb4c73ff221a4bd7243cc0ad377aecff4c3077f5a57ee2902e4122d3218")
 
     add_configs("c_api", {description = "Enable API bindings", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread", "m")
+    end
 
     add_deps("meson", "ninja")
 
-    on_install(function (package)
+    on_install("!android", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "-Ddefault_library=shared")
