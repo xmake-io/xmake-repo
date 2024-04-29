@@ -4,7 +4,8 @@ option("webrtc", {default = false, showmenu = true})
 add_rules("mode.debug", "mode.release")
 
 if is_cross() then
-    add_requires("protobuf-cpp~host", { host = true })
+    add_requires("protoc", { host = true })
+    add_packages("protoc", { links = {} })
 end
 
 add_requires("protobuf-cpp", "openssl")
@@ -15,10 +16,6 @@ if has_config("webrtc") then
         add_rules("c++")
         set_kind("static")
         add_packages("protobuf-cpp")
-            
-        if is_cross() then
-            add_packages("protobuf-cpp~host", { links = {} })
-        end
 
         if is_plat("windows") then
             add_defines("WEBRTC_WIN", "NOMINMAX", "WIN32_LEAN_AND_MEAN", "_WINSOCKAPI_")
