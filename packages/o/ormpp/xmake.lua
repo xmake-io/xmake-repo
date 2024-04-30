@@ -30,25 +30,31 @@ package("ormpp")
         end
     end)
 
-    if not (is_plat("windows") and is_arch("arm64")) then
-        add_deps("frozen", "iguana")
-    end
+    -- if not (is_plat("windows") and is_arch("arm64")) then
+    --     add_deps("frozen", "iguana")
+    -- end
+
+    add_deps("frozen", "iguana")
 
     on_install(function (package)
-        if is_plat("windows") and is_arch("arm64") then
-            os.cp("frozen/**", package:installdir("include/frozen"), {rootdir = "frozen"})
-            os.cp("iguana/**", package:installdir("include/iguana"), {rootdir = "iguana"})   
-        end
+        -- if is_plat("windows") and is_arch("arm64") then
+        --     os.cp("frozen/**", package:installdir("include/frozen"), {rootdir = "frozen"})
+        --     os.cp("iguana/**", package:installdir("include/iguana"), {rootdir = "iguana"})   
+        -- end
 
         if package:version():ge("0.1.2") then
             os.cp("ormpp/*", package:installdir("include"))
         else
             os.cp("include/*", package:installdir("include"))
         end
-
     end)
 
     on_test(function (package)
+        local languages = "c++17"
+        if package:is_plat("windows") and package:is_arch("arm.*") then
+            languages = "c++20"
+        end
+
         assert(package:check_cxxsnippets({test = [[
             using namespace ormpp;
             struct student {
@@ -58,5 +64,5 @@ package("ormpp")
             };
             REGISTER_AUTO_KEY(student, id)
             REFLECTION_WITH_NAME(student, "t_student", id, name, age)        
-        ]]}, {configs = {languages = "c++17"}, includes = { "dbng.hpp" } }))
+        ]]}, {configs = {languages = languages}, includes = { "dbng.hpp" } }))
     end)
