@@ -13,6 +13,14 @@ package("iguana")
     add_deps("frozen")
 
     on_install(function (package)
+        if package:is_plat("android") and package:is_arch("arm.*") then
+            import("core.tool.toolchain")
+
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 22, "package(iguana): need c++20 stl for arm android")
+        end
+
         os.vcp("iguana", package:installdir("include"))
     end)
 
