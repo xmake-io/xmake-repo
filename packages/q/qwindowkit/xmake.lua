@@ -3,9 +3,10 @@ package("qwindowkit")
     set_description("Cross-platform frameless window framework for Qt. Support Windows, macOS, Linux.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/stdware/qwindowkit.git")
+    add_urls("https://github.com/stdware/qwindowkit/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/stdware/qwindowkit.git")
 
-    add_versions("1.0.1", "c2e349f1c38b55fd12f8ae537e754fa6658ab631")
+    add_versions("1.1", "a0102ee4c4fdd08ce35c29a5b9a27384005028b2ab6094f61e467c35917b8c5e")
 
     add_deps("cmake")
     add_deps("qt6gui")
