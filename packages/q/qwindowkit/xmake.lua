@@ -8,7 +8,7 @@ package("qwindowkit")
     add_versions("1.0.1", "c2e349f1c38b55fd12f8ae537e754fa6658ab631")
 
     add_deps("cmake")
-    add_deps("qt6core")
+    add_deps("qt6gui")
     if is_plat("linux") then
         add_deps("fontconfig", "libxkbcommon")
     end
