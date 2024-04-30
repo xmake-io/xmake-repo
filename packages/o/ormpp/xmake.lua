@@ -30,12 +30,12 @@ package("ormpp")
         end
     end)
 
-    if not is_plat("windows|arm64") then
+    if not (is_plat("windows") and is_arch("arm64")) then
         add_deps("frozen", "iguana")
     end
 
     on_install(function (package)
-        if is_plat("windows|arm64") then
+        if is_plat("windows") and is_arch("arm64") then
             os.cp("frozen/**", package:installdir("include/frozen"), {rootdir = "frozen"})
             os.cp("iguana/**", package:installdir("include/iguana"), {rootdir = "iguana"})   
         end
