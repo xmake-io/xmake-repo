@@ -13,7 +13,7 @@ package("rpmalloc")
         add_syslinks("advapi32")
     end
 
-    on_install("windows", function (package)
+    on_install("!wasm", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("rpmalloc")
