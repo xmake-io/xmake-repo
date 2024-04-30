@@ -176,9 +176,9 @@ package("qtbase")
                     raise("unhandled msvc version " .. vs)
                 end
 
-                if package:is_arch("x64", "x86_64") then
+                if os.arch() == "x64" then
                     compiler_version = compiler_version .. "_64"
-                elseif package:is_arch("arm64") then -- arm64 support was added in Qt6.2
+                elseif os.arch() == "arm64" then
                     compiler_version = compiler_version .. "_arm64"
                 end
                 hostarch = "win" .. winarch .. "_" .. compiler_version
