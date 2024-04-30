@@ -31,7 +31,11 @@ package("ormpp")
     end)
 
     on_install(function (package)
-        os.cp("ormpp/*", package:installdir("include"))
+        if package:version():ge("0.1.2") then
+            os.cp("ormpp/*", package:installdir("include"))
+        else
+            os.cp("include/*", package:installdir("include"))
+        end
         os.cp("frozen/**", package:installdir("include/frozen"), {rootdir = "frozen"})
         os.cp("iguana/**", package:installdir("include/iguana"), {rootdir = "iguana"})
     end)
