@@ -7,6 +7,7 @@ package("enet")
     add_urls("https://github.com/lsalzman/enet/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lsalzman/enet.git")
 
+    add_versions("v1.3.18", "28603c895f9ed24a846478180ee72c7376b39b4bb1287b73877e5eae7d96b0dd")
     add_versions("v1.3.17", "1e0b4bc0b7127a2d779dd7928f0b31830f5b3dcb7ec9588c5de70033e8d2434a")
     add_patches("v1.3.17", path.join(os.scriptdir(), "patches", "cmake.patch"), "e77d2d129952443d67c1ec432de81843d72b854d25bbd6fb244b0f85804d21d1")
 
