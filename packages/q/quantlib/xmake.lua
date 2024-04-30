@@ -5,6 +5,7 @@ package("quantlib")
     add_urls("https://github.com/lballabio/QuantLib/releases/download/v$(version)/QuantLib-$(version).tar.gz",
              "https://github.com/lballabio/QuantLib.git")
 
+    add_versions("1.34", "eb87aa8ced76550361771e167eba26aace018074ec370f7af49a01aa56b2fe50")
     add_versions("1.33", "4810d789261eb36423c7d277266a6ee3b28a3c05af1ee0d45544ca2e0e8312bd")
 
     if is_plat("windows") then
