@@ -8,6 +8,7 @@ package("ormpp")
     set_urls("https://github.com/qicosmos/ormpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/qicosmos/ormpp.git")
 
+    add_versions("v0.1.2", "990e88eb176d996cdbbbdfa3e1522b48d135d809f14094771f8d6f02e94573c4")
     add_versions("v0.1.1", "a3c93599950a4c5822ebd0750ac7964c59c9b3f84f638525f01578bac6d898c2")
 
     add_configs("mysql", {description = "Using mysql", default = false, type = "boolean"})
@@ -30,7 +31,7 @@ package("ormpp")
     end)
 
     on_install(function (package)
-        os.cp("include/*", package:installdir("include"))
+        os.cp("ormpp/*", package:installdir("include"))
         os.cp("frozen/**", package:installdir("include/frozen"), {rootdir = "frozen"})
         os.cp("iguana/**", package:installdir("include/iguana"), {rootdir = "iguana"})
     end)
