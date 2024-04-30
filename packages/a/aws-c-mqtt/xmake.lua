@@ -6,6 +6,7 @@ package("aws-c-mqtt")
     add_urls("https://github.com/awslabs/aws-c-mqtt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-mqtt.git")
 
+    add_versions("v0.10.4", "6a41456f9eee15d71e4e2ee162b354865809f26620f1e6e5acb237f190f77f3f")
     add_versions("v0.10.3", "bb938d794b0757d669b5877526363dc6f6f0e43869ca19fc196ffd0f7a35f5b9")
     add_versions("v0.9.5", "987289535d3c988fe949f49d81268736c96fe27b27c98c899f0a148577f6627b")
 
