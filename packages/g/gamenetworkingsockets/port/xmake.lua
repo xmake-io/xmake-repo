@@ -430,8 +430,7 @@ end
 target("gns") -- we need limit path length
     set_kind("$(kind)")
     add_rules("protobuf.cpp")
-    set_languages("gnu17", "c++17") -- required on Linux
-
+    set_languages("gnu17", "c++17")
     add_vectorexts("sse2")
     add_packages("protobuf-cpp", "openssl")
     set_basename("gamenetworkingsockets")
