@@ -6,7 +6,7 @@ package("gnu-gsl")
 
     add_urls("https://ftpmirror.gnu.org/gsl/gsl-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/gsl/gsl-$(version).tar.gz")
-    add_versions("2.7.1", "DCB0FBD43048832B757FF9942691A8DD70026D5DA0FF85601E52687F6DEEB34B")
+    add_versions("2.7.1", "dcb0fbd43048832b757ff9942691a8dd70026d5da0ff85601e52687f6deeb34b")
     add_patches("2.7.1", path.join(os.scriptdir(), "0001-configure.patch"), "50FE9E6A4E68750FA2E21FEBF05471423CC7A0A38E59CF41D5009CD79352B2E6")
     add_patches("2.7.1", path.join(os.scriptdir(), "0002-add-fp-control.patch"), "6C6782327126EA979C5ACEAB3EE022B5DDC7D9D01C244774294572E73427EC4B")
 
