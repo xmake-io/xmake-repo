@@ -7,12 +7,16 @@ package("gnu-gsl")
     add_urls("https://ftpmirror.gnu.org/gsl/gsl-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/gsl/gsl-$(version).tar.gz")
     add_versions("2.7.1", "dcb0fbd43048832b757ff9942691a8dd70026d5da0ff85601e52687f6deeb34b")
-    add_patches("2.7.1", path.join(os.scriptdir(), "0001-configure.patch"), "50fe9e6a4e68750fa2e21febf05471423cc7a0a38e59cf41d5009cd79352b2e6")
-    add_patches("2.7.1", path.join(os.scriptdir(), "0002-add-fp-control.patch"), "6c6782327126ea979c5aceab3ee022b5ddc7d9d01c244774294572e73427ec4b")
+    if is_plat("windows") then
+        add_patches("2.7.1", path.join(os.scriptdir(), "0001-configure.patch"), "50fe9e6a4e68750fa2e21febf05471423cc7a0a38e59cf41d5009cd79352b2e6")
+        add_patches("2.7.1", path.join(os.scriptdir(), "0002-add-fp-control.patch"), "6c6782327126ea979c5aceab3ee022b5ddc7d9d01c244774294572e73427ec4b")
+    end
 
     add_versions("2.7", "efbbf3785da0e53038be7907500628b466152dbc3c173a87de1b5eba2e23602b")
-    add_patches("2.7", path.join(os.scriptdir(), "0001-configure.patch"), "50fe9e6a4e68750fa2e21febf05471423cc7a0a38e59cf41d5009cd79352b2e6")
-    add_patches("2.7", path.join(os.scriptdir(), "0002-add-fp-control.patch"), "6c6782327126ea979c5aceab3ee022b5ddc7d9d01c244774294572e73427ec4b")
+    if is_plat("windows") then
+        add_patches("2.7", path.join(os.scriptdir(), "0001-configure.patch"), "50fe9e6a4e68750fa2e21febf05471423cc7a0a38e59cf41d5009cd79352b2e6")
+        add_patches("2.7", path.join(os.scriptdir(), "0002-add-fp-control.patch"), "6c6782327126ea979c5aceab3ee022b5ddc7d9d01c244774294572e73427ec4b")
+    end
 
     add_links("gsl", "gslcblas")
     on_install("macosx", "linux", function (package)
