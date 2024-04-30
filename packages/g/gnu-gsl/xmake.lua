@@ -7,6 +7,8 @@ package("gnu-gsl")
     add_urls("https://ftpmirror.gnu.org/gsl/gsl-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/gsl/gsl-$(version).tar.gz")
     add_versions("2.7", "efbbf3785da0e53038be7907500628b466152dbc3c173a87de1b5eba2e23602b")
+    add_patches("2.7", path.join(os.scriptdir(), "0001-configure.patch"), "50FE9E6A4E68750FA2E21FEBF05471423CC7A0A38E59CF41D5009CD79352B2E6")
+    add_patches("2.7", path.join(os.scriptdir(), "0002-add-fp-control.patch"), "6C6782327126EA979C5ACEAB3EE022B5DDC7D9D01C244774294572E73427EC4B")
 
     add_links("gsl", "gslcblas")
     on_install("macosx", "linux", function (package)
@@ -17,6 +19,16 @@ package("gnu-gsl")
             table.insert(configs, "--with-pic")
         end
         import("package.tools.autoconf").install(package, configs, {cppflags = cppflags, ldflags = ldflags})
+    end)
+
+    on_install("windows", function (package)
+        -- print(package:cachedir(), package:installdir(), package:scriptdir())
+        os.cp(path.join(os.scriptdir(), "CMakeLists.txt"), path.join(package:cachedir(), "source"))
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE="..(package:config("pic") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
