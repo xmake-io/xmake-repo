@@ -30,16 +30,22 @@ package("ormpp")
         end
     end)
 
-    add_deps("iguana", "frozen")
+    if not is_plat("arm64") then
+        add_deps("frozen", "iguana")
+    end
 
     on_install(function (package)
+        if is_plat("arm64", "armv7l") then
+            os.cp("frozen/**", package:installdir("include/frozen"), {rootdir = "frozen"})
+            os.cp("iguana/**", package:installdir("include/iguana"), {rootdir = "iguana"})   
+        end
+
         if package:version():ge("0.1.2") then
             os.cp("ormpp/*", package:installdir("include"))
         else
             os.cp("include/*", package:installdir("include"))
         end
-        -- os.cp("frozen/**", package:installdir("include/frozen"), {rootdir = "frozen"})
-        -- os.cp("iguana/**", package:installdir("include/iguana"), {rootdir = "iguana"})
+
     end)
 
     on_test(function (package)
