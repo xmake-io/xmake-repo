@@ -30,14 +30,16 @@ package("ormpp")
         end
     end)
 
+    add_deps("iguana", "frozen")
+
     on_install(function (package)
         if package:version():ge("0.1.2") then
             os.cp("ormpp/*", package:installdir("include"))
         else
             os.cp("include/*", package:installdir("include"))
         end
-        os.cp("frozen/**", package:installdir("include/frozen"), {rootdir = "frozen"})
-        os.cp("iguana/**", package:installdir("include/iguana"), {rootdir = "iguana"})
+        -- os.cp("frozen/**", package:installdir("include/frozen"), {rootdir = "frozen"})
+        -- os.cp("iguana/**", package:installdir("include/iguana"), {rootdir = "iguana"})
     end)
 
     on_test(function (package)
@@ -50,5 +52,5 @@ package("ormpp")
             };
             REGISTER_AUTO_KEY(student, id)
             REFLECTION_WITH_NAME(student, "t_student", id, name, age)        
-        ]]}, {configs = {languages = "c++17"}, includes = { "dbng.hpp"} }))
+        ]]}, {configs = {languages = "c++17"}, includes = { "dbng.hpp" } }))
     end)
