@@ -22,7 +22,6 @@ package("gnu-gsl")
     end)
 
     on_install("windows", function (package)
-        -- print(package:cachedir(), package:installdir(), package:scriptdir())
         os.cp(path.join(os.scriptdir(), "CMakeLists.txt"), path.join(package:cachedir(), "source"))
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
