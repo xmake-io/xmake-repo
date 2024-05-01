@@ -13,7 +13,7 @@ package("pocketpy")
         os.cp("../pocketpy.h", package:installdir("include"))
     end)
 
-    on_test(function (package)
+    on_test("linux", "macosx", "android", function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 VM* vm = new VM();
@@ -22,4 +22,15 @@ package("pocketpy")
                 delete vm;
             }
         ]]}, {configs = {languages = "c++17"}, includes = {"pocketpy.h"}}))
+    end)
+
+    on_test("windows|x64", function (package)
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                VM* vm = new VM();
+                vm->exec("print('Hello world!')");
+                vm->exec("a = [1, 2, 3]");
+                delete vm;
+            }
+        ]]}, {configs = {languages = "c++17", cxflags = "/utf-8"}, includes = {"pocketpy.h"}}))
     end)
