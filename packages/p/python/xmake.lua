@@ -1,7 +1,7 @@
 package("python")
-
     set_homepage("https://www.python.org/")
     set_description("The python programming language.")
+    set_license("PSF")
 
     if is_host("windows") then
         if is_arch("x86", "i386") or os.arch() == "x86" then
@@ -129,24 +129,30 @@ package("python")
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
 
-        -- add openssl libs path for detecting
-        local openssl_dir
+        -- add openssl libs path
         local openssl = package:dep("openssl"):fetch()
         if openssl then
+            local openssl_dir
             for _, linkdir in ipairs(openssl.linkdirs) do
                 if path.filename(linkdir) == "lib" then
                     openssl_dir = path.directory(linkdir)
-                    if openssl_dir then
-                        break
+                else
+                    -- try to find if linkdir is root (brew has linkdir as root and includedirs inside)
+                    for _, includedir in ipairs(openssl.sysincludedirs or openssl.includedirs) do
+                        if includedir:startswith(linkdir) then
+                            openssl_dir = linkdir
+                            break
+                        end
                     end
                 end
-            end
-        end
-        if openssl_dir then
-            if package:version():ge("3.0") then
-                table.insert(configs, "--with-openssl=" .. openssl_dir)
-            else
-                io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+                if openssl_dir then
+                    if package:version():ge("3.0") then
+                        table.insert(configs, "--with-openssl=" .. openssl_dir)
+                    else
+                        io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+                    end
+                    break
+                end
             end
         end
 
