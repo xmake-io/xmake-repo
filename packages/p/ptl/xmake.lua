@@ -6,6 +6,7 @@ package("ptl")
 
     add_urls("https://github.com/jrmadsen/PTL/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrmadsen/PTL.git")
+    add_versions("v2.3.3", "3275ad8ec2971c89aacb3b922717dc4e774fa4e59fc3f4035053225c802aee52")
     add_versions("v2.0.0", "58e561a3a1de75679faf4d8760d2ff045ced232d4367157b5b4e4f26c8474721")
 
     add_configs("tbb", {description = "Enable TBB support.", default = false, type = "boolean"})
