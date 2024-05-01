@@ -15,7 +15,7 @@ package("ormpp")
     add_configs("postgresql", {description = "Using postgresql", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Using sqlite3", default = false, type = "boolean"})
 
-    on_load("windows", "macosx", "linux", function(package) 
+    on_load(function(package) 
         local configs = {
             mysql = "ORMPP_ENABLE_MYSQL",
             postgresql = "ORMPP_ENABLE_PG",
@@ -33,11 +33,10 @@ package("ormpp")
     add_deps("frozen", "iguana")
 
     on_install(function (package)
-
         if package:version():ge("0.1.2") then
-            os.cp("ormpp/*", package:installdir("include"))
+            os.vcp("ormpp", package:installdir("include"))
         else
-            os.cp("include/*", package:installdir("include"))
+            os.vcp("include", package:installdir())
         end
     end)
 
@@ -56,5 +55,5 @@ package("ormpp")
             };
             REGISTER_AUTO_KEY(student, id)
             REFLECTION_WITH_NAME(student, "t_student", id, name, age)        
-        ]]}, {configs = {languages = languages}, includes = { "dbng.hpp" } }))
+        ]]}, {configs = {languages = languages}, includes = {"dbng.hpp"} }))
     end)
