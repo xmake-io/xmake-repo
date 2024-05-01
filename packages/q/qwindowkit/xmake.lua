@@ -17,6 +17,7 @@ package("qwindowkit")
 
     on_install("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
         local configs = {}
+        table.insert(configs, "-Dqmsetup_DIR=" .. path.join(os.curdir(), "qmsetup"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
