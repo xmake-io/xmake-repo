@@ -4,7 +4,7 @@ package("pocketpy")
     set_description("C++17 header-only Python interpreter for game engines.")
     set_license("MIT")
 
-    add_urls("https://github.com/blueloveTH/pocketpy/releases/download/$(version)/pocketpy.h")
+    add_urls("https://github.com/pocketpy/pocketpy/releases/download/$(version)/pocketpy.h")
 
     add_versions("v1.4.5", "144f63ed8a21fd2a65e252df53939f7af453d544eb35570603af319ce1af5a46")
     add_versions("v0.9.0", "0da63afb3ea4ebb8b686bfe33b4c7556c0a927cd98ccf3c7a3fb4aa216fbf30b")
@@ -16,13 +16,18 @@ package("pocketpy")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                VM* vm = pkpy_new_vm(true);
-                pkpy_vm_exec(vm, "print('Hello world!')");
-                pkpy_vm_exec(vm, "a = [1, 2, 3]");
-                char* result = pkpy_vm_eval(vm, "sum(a)");
-                printf("%s", result);
-                pkpy_delete(result);
-                pkpy_delete(vm);
+                // Create a virtual machine
+                VM* vm = new VM();
+
+                // Hello world!
+                vm->exec("print('Hello world!')");
+
+                // Create a list
+                vm->exec("a = [1, 2, 3]");
+
+                // Dispose the virtual machine
+                delete vm;
+                return 0;
             }
         ]]}, {configs = {languages = "c++17"}, includes = {"pocketpy.h"}}))
     end)
