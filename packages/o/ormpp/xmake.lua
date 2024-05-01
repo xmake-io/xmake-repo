@@ -34,9 +34,9 @@ package("ormpp")
 
     on_install(function (package)
         if package:version():ge("0.1.2") then
-            os.vcp("ormpp", package:installdir("include"))
+            os.vcp("ormpp/*", package:installdir("include"))
         else
-            os.vcp("include", package:installdir())
+            os.vcp("include/*", package:installdir("include"))
         end
     end)
 
