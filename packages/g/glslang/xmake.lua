@@ -82,9 +82,10 @@ package("glslang")
 
     on_test(function (package)
         if not package:is_cross() then
-            local glslang = "glslangValidator"
-            if not os.isexec(glslang) then
-                glslang = "glslang"
+            local bindir = package:installdir("bin")
+            local glslang = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
+            if not os.isfile(glslang) then
+                glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
             end
             os.vrunv(glslang, {"--version"})
         end
