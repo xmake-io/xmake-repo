@@ -20,7 +20,6 @@ package("qwindowkit")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-        print(os.files(path.join(package:installdir("include"), "**")))
     end)
 
     on_test(function (package)
@@ -31,9 +30,9 @@ package("qwindowkit")
             cxflags = "-fPIC"
         end
         assert(package:check_cxxsnippets({test = [[
-            #include <QWKQuick/qwkquickglobal.h>
+            #include <QWKWidgets/widgetwindowagent.h>
             void test() {
-                QWK::registerTypes(nullptr);
+                QWK::WidgetWindowAgent(nullptr);
             }
         ]]}, {configs = {languages = "c++17", cxflags = cxflags}}))
     end)
