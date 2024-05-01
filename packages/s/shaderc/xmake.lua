@@ -44,7 +44,7 @@ package("shaderc")
         end
     end)
 
-    on_install("linux", "windows", "macosx", function (package)
+    on_install(function (package)
         local opt = {}
         opt.packagedeps = {"glslang", "spirv-tools", "spirv-headers"}
         io.replace("CMakeLists.txt", "add_subdirectory(third_party)", "", {plain = true})
