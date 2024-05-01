@@ -27,7 +27,6 @@ package("pocketpy")
 
                 // Dispose the virtual machine
                 delete vm;
-                return 0;
             }
         ]]}, {configs = {languages = "c++17"}, includes = {"pocketpy.h"}}))
     end)
