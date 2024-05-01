@@ -16,16 +16,9 @@ package("pocketpy")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                // Create a virtual machine
                 VM* vm = new VM();
-
-                // Hello world!
                 vm->exec("print('Hello world!')");
-
-                // Create a list
                 vm->exec("a = [1, 2, 3]");
-
-                // Dispose the virtual machine
                 delete vm;
             }
         ]]}, {configs = {languages = "c++17"}, includes = {"pocketpy.h"}}))
