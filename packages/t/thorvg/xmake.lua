@@ -20,6 +20,10 @@ package("thorvg")
     add_deps("meson", "ninja")
 
     on_install("!android", function (package)
+        if package:is_plat("mingw") then
+            io.replace("src/loaders/svg/tvgSvgLoader.cpp", "float_t", "float", {plain = true})
+        end
+
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "-Ddefault_library=shared")
