@@ -30,7 +30,7 @@ package("gnu-gsl")
     end)
 
     on_install("windows", function (package)
-        os.cp(path.join(os.scriptdir(), "CMakeLists.txt"), path.join(package:cachedir(), "source"))
+        os.cp(path.join(os.scriptdir(), "cmakelists.txt"), path.join(package:cachedir(), "source"))
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
