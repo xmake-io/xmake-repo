@@ -51,7 +51,7 @@ package("shaderc")
         io.replace("CMakeLists.txt", "add_subdirectory(third_party)", "", {plain = true})
         io.replace("libshaderc_util/src/compiler.cc", "SPIRV/GlslangToSpv.h", "glslang/SPIRV/GlslangToSpv.h", {plain = true})
 
-        if (not package:has_tool("ld", "link")) and (not package:has_tool("sh", "link")) then
+        if not package:has_tool("sh", "link") then
             local links = {}
             for _, dep in ipairs({"glslang", "spirv-tools"}) do
                 local fetchinfo = package:dep(dep):fetch()
@@ -111,6 +111,7 @@ package("shaderc")
             table.insert(configs, "-DDISABLE_EXCEPTIONS=ON")
         end
         import("package.tools.cmake").install(package, configs, opt)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
