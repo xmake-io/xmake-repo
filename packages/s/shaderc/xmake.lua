@@ -47,28 +47,25 @@ package("shaderc")
 
     on_install(function (package)
         local opt = {}
-        opt.cxflags = {}
-        if package:has_tool("ld", "link") or package:has_tool("sh", "link") then
-            opt.packagedeps = {"glslang", "spirv-tools", "spirv-headers"}
-        else
-            opt.ldflags = {}
-            opt.shflags = {}
-            for _, dep in ipairs({"glslang", "spirv-tools", "spirv-headers"}) do
-                local fetchinfo = package:dep(dep):fetch()
-                if fetchinfo then
-                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                        table.insert(opt.cxflags, "-I" .. includedir)
-                    end
-                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                        table.insert(opt.ldflags, "-L" .. linkdir)
-                        table.insert(opt.shflags, "-L" .. linkdir)
-                    end
-                end
-            end
-        end
+        opt.packagedeps = {"glslang", "spirv-tools", "spirv-headers"}
         io.replace("CMakeLists.txt", "add_subdirectory(third_party)", "", {plain = true})
         io.replace("libshaderc_util/src/compiler.cc", "SPIRV/GlslangToSpv.h", "glslang/SPIRV/GlslangToSpv.h", {plain = true})
 
+        if (not package:has_tool("ld", "link")) and (not package:has_tool("sh", "link")) then
+            local links = {}
+            for _, dep in ipairs({"glslang", "spirv-tools"}) do
+                local fetchinfo = package:dep(dep):fetch()
+                if fetchinfo then
+                    for _, link in ipairs(fetchinfo.links) do
+                        table.insert(links, link)
+                    end
+                end
+            end
+            io.replace("glslc/CMakeLists.txt", "glslang OSDependent OGLCompiler HLSL glslang SPIRV", "", {plain = true})
+            io.replace("libshaderc_util/CMakeLists.txt", "glslang OSDependent OGLCompiler HLSL glslang SPIRV", table.concat(links, " "), {plain = true})
+            links = table.join({"shaderc", "shaderc_util"}, links)
+            io.replace("glslc/CMakeLists.txt", "shaderc_util shaderc", table.concat(links, " "), {plain = true})
+        end
         -- glslc --version
         local version_str = format("shaderc %s\nspirv-tools %s\nglslang %s\0", 
             package:version(),
@@ -108,7 +105,7 @@ package("shaderc")
         if package:config("exceptions") then
             table.insert(configs, "-DDISABLE_EXCEPTIONS=OFF")
             if package:is_plat("windows") and package:has_tool("cxx", "cl", "clang_cl") then
-                table.insert(opt.cxflags, "/EHsc")
+                opt.cxflags = "/EHsc"
             end
         else
             table.insert(configs, "-DDISABLE_EXCEPTIONS=ON")
