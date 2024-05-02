@@ -51,7 +51,7 @@ package("shaderc")
         io.replace("libshaderc_util/src/compiler.cc", "SPIRV/GlslangToSpv.h", "glslang/SPIRV/GlslangToSpv.h", {plain = true})
 
         -- glslc --version
-        local version_str = format("shaderc %s\nspirv-tools %s\nglslang %s", 
+        local version_str = format("shaderc %s\nspirv-tools %s\nglslang %s\0", 
             package:version(),
             package:dep("spirv-tools"):version(),
             package:dep("glslang"):version()
@@ -64,6 +64,9 @@ package("shaderc")
             if char == "\n" then
                 char = [[\n]]
             end
+            if char == "\0" then
+                char = [[\0]]
+            end
             version_c_array = format([[%s'%s',]], version_c_array, char)
         end
         version_c_array = version_c_array .. "}"
@@ -73,7 +76,7 @@ package("shaderc")
         io.replace("glslc/CMakeLists.txt", "add_dependencies(glslc_exe build-version)", "", {plain = true})
 
         local configs = {
-            "-DSHADERC_ENABLE_EXAMPLES=OFF",
+            "-DSHADERC_SKIP_EXAMPLES=ON",
             "-DSHADERC_SKIP_TESTS=ON",
             "-DSHADERC_ENABLE_COPYRIGHT_CHECK=OFF"
         }
@@ -92,7 +95,6 @@ package("shaderc")
             table.insert(configs, "-DDISABLE_EXCEPTIONS=ON")
         end
         import("package.tools.cmake").install(package, configs, opt)
-        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
