@@ -19,12 +19,8 @@ configvar_check_cincludes("HAVE_TIME64_H", "time64.h")
 
 target("metalink")
     set_kind("$(kind)")
-    add_files("lib/*.c")
-    remove_files(
-        "lib/strptime.c",
-        "lib/timegm.c",
-        "lib/libxml2_metalink_parser.c"
-    )
+    add_files("lib/*.c|lib/strptime.c|lib/timegm.c")
+    remove_files("lib/libxml2_metalink_parser.c")
 
     add_includedirs("lib/includes")
     add_headerfiles("lib/includes/(**.h)")
@@ -40,7 +36,7 @@ target("metalink")
         add_rules("utils.symbols.export_all")
     end
 
-    on_config(function (target)
+    on_load(function (target)
         import("core.base.semver")
 
         local version = get_config("version")
@@ -57,12 +53,14 @@ target("metalink")
         end
 
         if target:has_cfuncs("timegm", {includes = "time.h"}) then
-            target:add("files", path.join(os.projectdir(), "lib/timegm.c"))
             target:add("defines", "HAVE_TIMEGM")
+        else
+            target:add("files", path.join(os.projectdir(), "lib/timegm.c"))
         end
 
         if target:has_cfuncs("strptime", {includes = "time.h"}) then
-            target:add("files", path.join(os.projectdir(), "lib/strptime.c"))
             target:add("defines", "HAVE_STRPTIME")
+        else
+            target:add("files", path.join(os.projectdir(), "lib/strptime.c"))
         end
     end)

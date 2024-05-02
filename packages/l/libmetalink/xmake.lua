@@ -9,10 +9,7 @@ package("libmetalink")
 
     add_deps("expat")
 
-    on_install("windows", "linux", "macosx", "android", "mingw", "cross", function (package)
-        if package:is_plat("windows") then
-            os.cp(path.join(package:scriptdir(), "port", "unistd.h"), "unistd.h")
-        end
+    on_install("linux", "macosx", "android", "mingw", "cross", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "config.h.in")
         import("package.tools.xmake").install(package)
