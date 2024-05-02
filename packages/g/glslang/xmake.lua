@@ -83,11 +83,13 @@ package("glslang")
     on_test(function (package)
         if not package:is_cross() then
             local bindir = package:installdir("bin")
-            local glslang = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
-            if not os.isfile(glslang) then
-                glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
+            local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
+            local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
+            -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
+            if not os.isfile(glslangValidator) then
+                os.cp(glslang, glslangValidator)
             end
-            os.vrunv(glslang, {"--version"})
+            os.vrunv(glslangValidator, {"--version"})
         end
 
         if not package:config("binaryonly") then
