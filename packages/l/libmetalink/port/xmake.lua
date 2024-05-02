@@ -19,12 +19,7 @@ configvar_check_cincludes("HAVE_TIME64_H", "time64.h")
 
 target("metalink")
     set_kind("$(kind)")
-    add_files("lib/*.c")
-    remove_files(
-        "lib/strptime.c",
-        "lib/timegm.c",
-        "lib/libxml2_metalink_parser.c"
-    )
+    add_files("lib/metalink_*.c", "lib/libexpat_metalink_parser.c")
 
     add_includedirs("lib/includes")
     add_headerfiles("lib/includes/(**.h)")
@@ -36,8 +31,12 @@ target("metalink")
     add_configfiles("lib/includes/metalink/metalinkver.h.in", {prefixdir = "metalink", pattern = "@(.-)@"})
     add_headerfiles("(metalink/metalinkver.h)")
 
-    if is_plat("windows") and is_kind("shared") then
-        add_rules("utils.symbols.export_all")
+    if is_plat("windows") then
+        add_defines("strncasecmp=_strnicmp")
+        add_defines("tzname=_tzname")
+        if is_kind("shared") then
+            add_rules("utils.symbols.export_all")
+        end
     end
 
     on_config(function (target)
@@ -57,12 +56,14 @@ target("metalink")
         end
 
         if target:has_cfuncs("timegm", {includes = "time.h"}) then
-            target:add("files", path.join(os.projectdir(), "lib/timegm.c"))
             target:add("defines", "HAVE_TIMEGM")
+        else
+            target:add("files", path.join(os.projectdir(), "lib/timegm.c"))
         end
 
         if target:has_cfuncs("strptime", {includes = "time.h"}) then
-            target:add("files", path.join(os.projectdir(), "lib/strptime.c"))
             target:add("defines", "HAVE_STRPTIME")
+        else
+            target:add("files", path.join(os.projectdir(), "lib/strptime.c"))
         end
     end)
