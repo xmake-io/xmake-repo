@@ -30,6 +30,7 @@ package("shaderc")
                 package:add("deps", "glslang <=1.3.211")
             end
         end
+        package:add("deps", "spirv-tools", "spirv-headers")
 
         if package:config("shared") then
             package:add("links", "shaderc_shared")
@@ -46,7 +47,25 @@ package("shaderc")
 
     on_install(function (package)
         local opt = {}
-        opt.packagedeps = {"glslang", "spirv-tools", "spirv-headers"}
+        opt.cxflags = {}
+        if package:has_tool("ld", "link") or package:has_tool("sh", "link") then
+            opt.packagedeps = {"glslang", "spirv-tools", "spirv-headers"}
+        else
+            opt.ldflags = {}
+            opt.shflags = {}
+            for _, dep in ipairs({"glslang", "spirv-tools", "spirv-headers"}) do
+                local fetchinfo = package:dep(dep):fetch()
+                if fetchinfo then
+                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                        table.insert(opt.cxflags, "-I" .. includedir)
+                    end
+                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                        table.insert(opt.ldflags, "-L" .. linkdir)
+                        table.insert(opt.shflags, "-L" .. linkdir)
+                    end
+                end
+            end
+        end
         io.replace("CMakeLists.txt", "add_subdirectory(third_party)", "", {plain = true})
         io.replace("libshaderc_util/src/compiler.cc", "SPIRV/GlslangToSpv.h", "glslang/SPIRV/GlslangToSpv.h", {plain = true})
 
@@ -89,7 +108,7 @@ package("shaderc")
         if package:config("exceptions") then
             table.insert(configs, "-DDISABLE_EXCEPTIONS=OFF")
             if package:is_plat("windows") and package:has_tool("cxx", "cl", "clang_cl") then
-                opt.cxflags = {"/EHsc"}
+                table.insert(opt.cxflags, "/EHsc")
             end
         else
             table.insert(configs, "-DDISABLE_EXCEPTIONS=ON")
