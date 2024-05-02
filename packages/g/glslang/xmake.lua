@@ -32,6 +32,8 @@ package("glslang")
         add_syslinks("pthread")
     end
 
+    add_defines("ENABLE_HLSL")
+
     on_load(function (package)
         if package:config("binaryonly") then
             package:set("kind", "binary")
