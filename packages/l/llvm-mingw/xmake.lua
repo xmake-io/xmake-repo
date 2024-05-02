@@ -33,12 +33,12 @@ package("llvm-mingw")
     elseif is_host("linux") then
         -- Built on Ubuntu but hopefully run on other distributions
         if os.arch() == "x86_64" then
-            set_urls("https://github.com/mstorsjo/llvm-mingw/releases/download/$(version)/llvm-mingw-$(version)-ucrt-ubuntu-20.04-x86_64.tar.xz")
+            set_urls("https://github.com/mstorsjo/llvm-mingw/releases/download/$(version)/llvm-mingw-$(version)-ucrt-ubuntu-18.04-x86_64.tar.xz")
             add_versions("20211002", "30e9400783652091d9278ce21e5c170d01a5f44e4f1a25717b63cd9ad9fbe13b")
             add_versions("20220323", "6d69ab28a3a9a2b7159178ff11cae8545fd44c9343573900fcf60434539695d8")
             add_versions("20240417", "d28ce4168c83093adf854485446011a0327bad9fe418014de81beba233ce76f1")
         elseif os.arch() == "arm64" then
-            set_urls("https://github.com/mstorsjo/llvm-mingw/releases/download/$(version)/llvm-mingw-$(version)-ucrt-ubuntu-20.04-aarch64.tar.xz")
+            set_urls("https://github.com/mstorsjo/llvm-mingw/releases/download/$(version)/llvm-mingw-$(version)-ucrt-ubuntu-18.04-aarch64.tar.xz")
             add_versions("20211002", "9a26079af16713894e8a11c77e38896c4040b98daceca4408333bd1053c1a3d5")
             add_versions("20220323", "89d4dc4515d7203b658f8257b19943a4055831a3738ed79bc179a1abcc83cde6")
             add_versions("20240417", "c6d449ccf0a4e66bd78b341d39474318f0027bf6c5471db8cc4c8783f6c188ca")
