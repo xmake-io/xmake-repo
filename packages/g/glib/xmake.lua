@@ -20,15 +20,17 @@ package("glib")
         add_deps("libiconv", {system = true})
         add_deps("libintl")
     elseif is_plat("windows") then
-        add_deps("libintl")
+        add_deps("libintl", "pkgconf")
     end
 
     add_includedirs("include/glib-2.0", "lib/glib-2.0/include")
     add_links("gio-2.0", "gobject-2.0", "gthread-2.0", "gmodule-2.0", "glib-2.0")
+
     if is_plat("windows") then
-        add_syslinks("user32", "shell32", "ole32", "ws2_32", "shlwapi")
+        add_syslinks("user32", "shell32", "ole32", "ws2_32", "shlwapi", "iphlpapi", "dnsapi")
     elseif is_plat("macosx") then
-        add_frameworks("Foundation", "CoreFoundation")
+        add_syslinks("resolv")
+        add_frameworks("AppKit", "Foundation", "CoreServices", "CoreFoundation")
         add_extsources("brew::glib")
     elseif is_plat("linux") then
         add_syslinks("pthread", "dl", "resolv")

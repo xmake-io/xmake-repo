@@ -31,7 +31,7 @@ package("gamenetworkingsockets")
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install("windows|x86", "windows|x64", "linux", function (package)
         -- We need copy source codes to the working directory with short path on windows
         --
         -- Because the target name and source file path of this project are too long,

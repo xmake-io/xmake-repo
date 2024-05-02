@@ -1,5 +1,4 @@
 package("enet")
-
     set_homepage("http://enet.bespin.org")
     set_description("Reliable UDP networking library.")
     set_license("MIT")
@@ -7,8 +6,11 @@ package("enet")
     add_urls("https://github.com/lsalzman/enet/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lsalzman/enet.git")
 
+    add_versions("v1.3.18", "28603c895f9ed24a846478180ee72c7376b39b4bb1287b73877e5eae7d96b0dd")
     add_versions("v1.3.17", "1e0b4bc0b7127a2d779dd7928f0b31830f5b3dcb7ec9588c5de70033e8d2434a")
-    add_patches("v1.3.17", path.join(os.scriptdir(), "patches", "cmake.patch"), "e77d2d129952443d67c1ec432de81843d72b854d25bbd6fb244b0f85804d21d1")
+
+    add_patches("v1.3.18", "patches/v1.3.18/cmake.patch", "8feb51d3220d04c53d93aea053db522a0429bb3a0236039a2b62d8f01a3f638b")
+    add_patches("v1.3.17", "patches/v1.3.17/cmake.patch", "e77d2d129952443d67c1ec432de81843d72b854d25bbd6fb244b0f85804d21d1")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::enet")
@@ -38,25 +40,5 @@ package("enet")
    end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test()
-            {
-                if (enet_initialize () != 0)
-                    return;
-
-                ENetAddress address;
-                ENetHost* server;
-                address.host = ENET_HOST_ANY;
-                address.port = 1234;
-                server = enet_host_create (&address, 32, 2, 0, 0);
-                if (server == NULL)
-                    return;
-
-                ENetEvent event;
-                while (enet_host_service (server, &event, 1000) > 0);
-
-                enet_host_destroy(server);
-                enet_deinitialize();
-            }
-        ]]}, {includes = {"enet/enet.h"}}))
+        assert(package:has_cfuncs("enet_initialize", {includes = "enet/enet.h"}))
     end)

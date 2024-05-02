@@ -4,6 +4,7 @@ package("rapidcsv")
     set_description("C++ header-only library for CSV parsing (by d99kris)")
 
     add_urls("https://github.com/d99kris/rapidcsv/archive/refs/tags/v$(version).zip")
+    add_versions("8.82", "e07c9355846b62b960ddebf79fef306ac21ee297f19880f237b7da8eb007a056")
     add_versions("8.80", "5bdbecc3542a881c058624d63c27574fa171fafe32be857e925fccaa1ae75f46")
     add_versions("8.50", "c7822b590f48f7d8c9b560a6e2d7e29d7ec2f7b3642eb75ddff40a803949b502")
 

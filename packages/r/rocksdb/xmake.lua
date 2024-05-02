@@ -4,6 +4,7 @@ package("rocksdb")
 
     add_urls("https://github.com/facebook/rocksdb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebook/rocksdb.git")
+    add_versions("v9.1.1", "54ca90dd782a988cd3ebc3e0e9ba9b4efd563d7eb78c5e690c2403f1b7d4a87a")
     add_versions("v9.0.0", "013aac178aa12837cbfa3b1e20e9e91ff87962ab7fdd044fd820e859f8964f9b")
     add_versions("v7.10.2", "4619ae7308cd3d11cdd36f0bfad3fb03a1ad399ca333f192b77b6b95b08e2f78")
 
@@ -16,6 +17,7 @@ package("rocksdb")
     add_configs("zlib",     {description = "Build with zlib.", default = false, type = "boolean"})
     add_configs("zstd",     {description = "Build with zstd.", default = false, type = "boolean"})
     add_configs("gflags",   {description = "Build with gflags.", default = false, type = "boolean"})
+    add_configs("rtti",     {description = "Enable RTTI builds.", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread", "rt", "dl")
@@ -25,7 +27,7 @@ package("rocksdb")
 
     on_load(function (package)
         for name, enabled in pairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") then
+            if (name ~= "rtti") and (not package:extraconf("configs", name, "builtin")) then
                 if enabled then
                     package:add("deps", name)
                 end
@@ -45,7 +47,11 @@ package("rocksdb")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DROCKSDB_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
-            if not package:extraconf("configs", name, "builtin") then
+            if name == "rtti" then
+                if enabled then
+                    table.insert(configs, "-DUSE_RTTI=1")
+                end
+            elseif not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DWITH_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
