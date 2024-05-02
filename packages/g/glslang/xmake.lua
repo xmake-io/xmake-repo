@@ -32,6 +32,8 @@ package("glslang")
         add_syslinks("pthread")
     end
 
+    add_defines("ENABLE_HLSL")
+
     on_load(function (package)
         if package:config("binaryonly") then
             package:set("kind", "binary")
@@ -78,12 +80,21 @@ package("glslang")
         if not package:config("binaryonly") then
             package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "HLSL", "SPIRV", "SPVRemapper")
         end
+
+        -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
+        local bindir = package:installdir("bin")
+        local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
+        if not os.isfile(glslangValidator) then
+            local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
+            os.trycp(glslang, glslangValidator)
+        end
     end)
 
     on_test(function (package)
         if not package:is_cross() then
-            os.vrun("glslang --version")
+            os.vrun("glslangValidator --version")
         end
+
         if not package:config("binaryonly") then
             assert(package:has_cxxfuncs("ShInitialize", {configs = {languages = "c++11"}, includes = "glslang/Public/ShaderLang.h"}))
         end
