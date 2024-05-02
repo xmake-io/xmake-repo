@@ -9,7 +9,7 @@ package("libmetalink")
 
     add_deps("expat")
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "android", "mingw", "cross", function (package)
         if package:is_plat("windows") then
             os.cp(path.join(package:scriptdir(), "port", "unistd.h"), "unistd.h")
         end
