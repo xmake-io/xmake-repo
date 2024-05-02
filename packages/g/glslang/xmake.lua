@@ -86,7 +86,7 @@ package("glslang")
         local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
         if not os.isfile(glslangValidator) then
             local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
-            os.cp(glslang, glslangValidator)
+            os.trycp(glslang, glslangValidator)
         end
     end)
 
