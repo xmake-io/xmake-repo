@@ -80,18 +80,19 @@ package("glslang")
         if not package:config("binaryonly") then
             package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "HLSL", "SPIRV", "SPVRemapper")
         end
+
+        -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
+        local bindir = package:installdir("bin")
+        local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
+        if not os.isfile(glslangValidator) then
+            local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
+            os.cp(glslang, glslangValidator)
+        end
     end)
 
     on_test(function (package)
         if not package:is_cross() then
-            local bindir = package:installdir("bin")
-            local glslang = path.join(bindir, "glslang" .. (is_host("windows") and ".exe" or ""))
-            local glslangValidator = path.join(bindir, "glslangValidator" .. (is_host("windows") and ".exe" or ""))
-            -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
-            if not os.isfile(glslangValidator) then
-                os.cp(glslang, glslangValidator)
-            end
-            os.vrunv(glslangValidator, {"--version"})
+            os.vrun("glslangValidator --version")
         end
 
         if not package:config("binaryonly") then

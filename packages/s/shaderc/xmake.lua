@@ -9,7 +9,7 @@ package("shaderc")
     add_versions("v2022.2", "517d36937c406858164673db696dc1d9c7be7ef0960fbf2965bfef768f46b8c0")
 
     add_configs("exceptions", {description = "Enable exception handling", default = true, type = "boolean"})
-    if is_plat("windows") then
+    if is_plat("windows", "wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
