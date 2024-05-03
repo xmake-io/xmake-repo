@@ -62,8 +62,12 @@ package("shaderc")
                     end
                 end
             end
-            io.replace("glslc/CMakeLists.txt", "glslang OSDependent OGLCompiler HLSL glslang SPIRV", "", {plain = true})
-            io.replace("libshaderc_util/CMakeLists.txt", "glslang OSDependent OGLCompiler HLSL glslang SPIRV", table.concat(links, " "), {plain = true})
+            if package:version():ge("2023.8") then
+                io.replace("libshaderc_util/CMakeLists.txt", "glslang SPIRV", table.concat(links, " "), {plain = true})
+            else
+                io.replace("glslc/CMakeLists.txt", "glslang OSDependent OGLCompiler HLSL glslang SPIRV", "", {plain = true})
+                io.replace("libshaderc_util/CMakeLists.txt", "glslang OSDependent OGLCompiler HLSL glslang SPIRV", table.concat(links, " "), {plain = true})
+            end
             links = table.join({"shaderc", "shaderc_util"}, links)
             io.replace("glslc/CMakeLists.txt", "shaderc_util shaderc", table.concat(links, " "), {plain = true})
         end
