@@ -6,6 +6,7 @@ package("robin-map")
     set_license("MIT")
 
     add_urls("https://github.com/Tessil/robin-map/archive/refs/tags/$(version).tar.gz")
+    add_versions("v1.3.0", "a8424ad3b0affd4c57ed26f0f3d8a29604f0e1f2ef2089f497f614b1c94c7236")
     add_versions("v1.2.2", "c72767ecea2a90074c7efbe91620c8f955af666505e22782e82813c652710821")
     add_versions("v1.2.1", "2b54d2c1de2f73bea5c51d5dcbd64813a08caf1bfddcfdeee40ab74e9599e8e3")
     add_versions("v0.6.3", "e6654c8c2598f63eb0b1d52ff8bdf39cfcc91d81dd5d05274a6dca91241cd72f")

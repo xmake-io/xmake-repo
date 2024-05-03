@@ -5,20 +5,22 @@ package("pulsar")
 
     add_urls("https://github.com/apache/pulsar-client-cpp/archive/refs/tags/v$(version).tar.gz")
 
+    add_versions("3.5.1", "279debf04b566321ff4fe2c5bd5bef8547a20b2bdbc6943cb027224ce6b45ec4")
     add_versions("3.5.0", "21d71a36666264418e3c5d3bc745628228b258daf659e6389bb9c9584409a27e")
     add_versions("3.1.2", "802792e8dd48f21dea0cb9cee7afe20f2598d333d2e484a362504763d1e3d49a")
 
-    add_deps("boost 1.81.0", "protobuf-cpp", "libcurl", "openssl", "zlib", "zstd", "snappy")
+    add_deps("boost 1.81.0", "protobuf-cpp", "libcurl", "openssl", "zlib", "zstd", "snappy", "abseil", "utf8_range")
 
     on_install("linux", function (package)
-        local configs = {"-DBUILD_TESTS=OFF"}
+        io.replace("CMakeLists.txt", "-Werror", "")
+        local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_CXX_STANDARD=17"}
         if package:config("shared") then
             configs = table.join(configs, {"-DBUILD_STATIC_LIB=OFF", "-DBUILD_DYNAMIC_LIB=ON"})
         else
             configs = table.join(configs, {"-DBUILD_STATIC_LIB=ON", "-DBUILD_DYNAMIC_LIB=OFF"})
         end
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"zstd", "snappy"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"zstd", "snappy", "abseil", "utf8_range"}})
     end)
 
     on_test(function (package)
@@ -33,5 +35,5 @@ package("pulsar")
                     std::cout << "invalid argument" << std::endl;
                 }
             }
-        ]]}, {configs = {languages = "cxx11"}}))
+        ]]}, {configs = {languages = "cxx17"}}))
     end)

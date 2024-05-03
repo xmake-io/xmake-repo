@@ -8,6 +8,7 @@ package("libxmake")
              "https://github.com/xmake-io/xmake.git",
              "https://gitlab.com/tboox/xmake.git")
 
+    add_versions("v2.8.9", "5f793c393346ef80e47f083ade4d3c2fdfc448658a7917fda35ccd7bd2b911b8")
     add_versions("v2.7.9", "9b42d8634833f4885b05b89429dd60044dca99232f6096320b8d857fb33d2aef")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})

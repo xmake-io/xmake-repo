@@ -31,9 +31,9 @@ package("protobuf-cpp")
     add_deps("cmake")
 
     if is_plat("windows") then
-        add_links("libprotobuf")
+        add_links("libprotobuf", "libprotoc", "utf8_range", "utf8_validity")
     else
-        add_links("protobuf")
+        add_links("protobuf", "protoc", "utf8_range", "utf8_validity")
     end
 
     if is_plat("linux") then
