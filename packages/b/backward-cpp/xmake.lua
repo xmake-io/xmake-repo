@@ -24,11 +24,16 @@ package("backward-cpp")
 
     add_deps("cmake")
 
-    on_install("linux", "mingw", "macosx", "windows", function (package)
+    on_load("linux", "mingw@msys", "macos", function (package)
         if package:config("bfd") then
             package:add("deps", "binutils")
+        end
+    end)
+
+    on_install("linux", "mingw", "macosx", "windows", function (package)
+        if package:config("bfd") and package:is_plat("linux", "mingw@msys", "macos") then
             package:add("syslinks", "bfd")
-        package:add("cxxflags", "-DBACKWARD_HAS_BFD=1")
+            package:add("defines", "-DBACKWARD_HAS_BFD=1")
         end
         local configs = {"-DBACKWARD_TESTS=OFF"}
         table.insert(configs, "-DBACKWARD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
