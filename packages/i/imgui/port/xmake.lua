@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
 add_rules("utils.install.cmake_importfiles")
-set_languages("cxx11")
+set_languages("cxx14")
 
 option("dx9",              {showmenu = true,  default = false})
 option("dx10",             {showmenu = true,  default = false})
@@ -129,7 +129,7 @@ target("imgui")
         add_files("backends/imgui_impl_win32.cpp")
         add_headerfiles("(backends/imgui_impl_win32.h)")
     end
-    
+
     if has_config("wgpu") then
         add_files("backends/imgui_impl_wgpu.cpp")
         add_headerfiles("(backends/imgui_impl_wgpu.h)")

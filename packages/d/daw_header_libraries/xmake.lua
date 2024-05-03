@@ -6,6 +6,7 @@ package("daw_header_libraries")
     add_urls("https://github.com/beached/header_libraries/archive/refs/tags/$(version).tar.gz",
              "https://github.com/beached/header_libraries.git")
 
+    add_versions("v2.102.0", "bc80936b439da0ef8a432175732e94573b14069a778b83d5f26ce8847f11ebb8")
     add_versions("v2.96.1", "2a9a5c33baa9e3adc1d82fa13a56522638af13cc39372a0c1c8f5c5d984f1464")
 
     add_deps("cmake")

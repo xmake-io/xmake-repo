@@ -72,7 +72,7 @@ package("magnum")
         end
     end)
 
-    on_install("windows", "linux", "macosx|x86_64", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         io.replace("modules/FindSDL2.cmake", "SDL2-2.0 SDL2", "SDL2-2.0 SDL2 SDL2-static", {plain = true})
         io.replace("modules/FindSDL2.cmake", "${_SDL2_LIBRARY_PATH_SUFFIX}", "lib ${_SDL2_LIBRARY_PATH_SUFFIX}", {plain = true})
         local configs = {"-DBUILD_TESTS=OFF", "-DLIB_SUFFIX="}

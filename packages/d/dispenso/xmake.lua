@@ -6,7 +6,10 @@ package("dispenso")
     add_urls("https://github.com/facebookincubator/dispenso/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebookincubator/dispenso.git")
 
+    add_versions("v1.2.0", "a44d9cf2f9234f5cbdbe4050fd26e63f3266b64955731651adf04dbb7f6b31df")
     add_versions("v1.1.0", "581f95c16cd479692bc89448d0648f6ce24162454308c544c4d35bf5e9efe5c8")
+
+    add_patches(">=1.2.0", "patches/1.2.0/namespace.patch", "a0c00cad221f05f9624a28c2e22f6e419b21b9832281cb875283bf89847b50f1")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -24,6 +27,7 @@ package("dispenso")
         table.insert(configs, "-DDISPENSO_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
 
         io.replace("dispenso/CMakeLists.txt", "-Werror", "", {plain = true})
+        io.replace("dispenso/CMakeLists.txt", "/WX", "", {plain = true})
         io.replace("dispenso/CMakeLists.txt", "Synchronization", "Synchronization winmm", {plain = true})
         import("package.tools.cmake").install(package, configs)
 

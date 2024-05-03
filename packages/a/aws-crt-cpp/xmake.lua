@@ -6,6 +6,8 @@ package("aws-crt-cpp")
     add_urls("https://github.com/awslabs/aws-crt-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-crt-cpp.git")
 
+    add_versions("v0.26.8", "36ced4fb54c8eb7325b4576134e01f93bfaca2709565b5ad036d198d703e4c8f")
+    add_versions("v0.26.4", "486113a556614b7b824e1aefec365a2261154fe06321b85601aefe2f65bd0706")
     add_versions("v0.23.1", "8f7029fea12907564b80260cbea4a2b268ca678e7427def3e0c46871e9b42d16")
 
     add_configs("openssl", {description = "Set this if you want to use your system's OpenSSL 1.0.2/1.1.1 compatible libcrypto", default = false, type = "boolean"})
@@ -25,6 +27,11 @@ package("aws-crt-cpp")
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+
+            io.replace("include/aws/crt/Exports.h", "WIN32", "_WIN32", {plain = true})
+            if package:config("shared") then
+                package:add("defines", "AWS_CRT_CPP_USE_IMPORT_EXPORT")
+            end
         end
         table.insert(configs, "-DUSE_OPENSSL=" .. (package:config("openssl") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)

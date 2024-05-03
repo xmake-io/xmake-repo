@@ -53,9 +53,7 @@ else
 end
 set_configvar("TARGET", targetarch)
 
-includes("check_cfuncs.lua")
-includes("check_cincludes.lua")
-includes("check_csnippets.lua")
+includes("@builtin/check")
 
 set_configvar("STDC_HEADERS", 1)
 set_configvar("LT_OBJDIR", ".libs/")
@@ -125,6 +123,9 @@ target("ffi")
     if is_plat("windows") and is_kind("shared") then
         add_defines("FFI_BUILDING_DLL")
     end
+    if is_kind("static") then
+        add_defines("FFI_STATIC_BUILD")
+    end
     set_configdir("include")
     add_configfiles("fficonfig.h.in")
     add_configfiles("include/ffi.h.in", {pattern = "@(.-)@"})
@@ -166,7 +167,13 @@ target("ffi")
     elseif is_arch("riscv") then
         add_files("src/riscv/ffi.c", "src/riscv/sysv.S")
         add_headerfiles("src/riscv/ffitarget.h")
+    elseif is_arch("wasm32") then
+        add_files("src/wasm32/ffi.c")
+        add_headerfiles("src/wasm32/ffitarget.h")
     end
     before_build(function (target)
-        io.replace("include/ffi.h", "!defined FFI_BUILDING", target:is_static() and "0" or "1", {plain = true})
+        import("core.base.semver")
+        if semver.compare(target:version(), "v3.4.4") <= 0 then
+            io.replace("include/ffi.h", "!defined FFI_BUILDING", target:is_static() and "0" or "1", {plain = true})
+        end
     end)

@@ -3,11 +3,12 @@ package("nsis")
     set_homepage("https://nsis.sourceforge.io/")
     set_description("NSIS (Nullsoft Scriptable Install System) is a professional open source system to create Windows installers.")
 
+    add_urls("https://sourceforge.net/projects/nsis/files/NSIS%203/$(version)/nsis-$(version).zip")
     add_urls("https://github.com/xmake-mirror/nsis/releases/download/$(version).zip", {version = function (version)
         return "v" .. (version:gsub("%.", "")) .. "/nsis-" .. version
     end})
 
-    add_versions("3.09", "b6f9960f6956b40a05809f1edad5761d6ed7af1548806836bc2381689b11442a")
+    add_versions("3.09", "f5dc52eef1f3884230520199bac6f36b82d643d86b003ce51bd24b05c6ba7c91")
 
     add_resources("3.09", "uac", "https://github.com/xmake-mirror/nsis/releases/download/v309/UAC.zip", "20e3192af5598568887c16d88de59a52c2ce4a26e42c5fb8bee8105dcbbd1760")
     add_resources("3.09", "strlen_8192", "https://github.com/xmake-mirror/nsis/releases/download/v309/nsis-3.09-strlen_8192.zip", "9e3b8e77c97a46747201f95f89eba26714dd9c6dc06830c3934b3f5fbdb1beca")
