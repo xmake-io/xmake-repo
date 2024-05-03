@@ -6,6 +6,7 @@ package("shaderc")
     add_urls("https://github.com/google/shaderc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/shaderc.git")
 
+    add_versions("v2024.0", "c761044e4e204be8e0b9a2d7494f08671ca35b92c4c791c7049594ca7514197f")
     add_versions("v2022.2", "517d36937c406858164673db696dc1d9c7be7ef0960fbf2965bfef768f46b8c0")
 
     add_configs("exceptions", {description = "Enable exception handling", default = true, type = "boolean"})
@@ -61,8 +62,12 @@ package("shaderc")
                     end
                 end
             end
-            io.replace("glslc/CMakeLists.txt", "glslang OSDependent OGLCompiler HLSL glslang SPIRV", "", {plain = true})
-            io.replace("libshaderc_util/CMakeLists.txt", "glslang OSDependent OGLCompiler HLSL glslang SPIRV", table.concat(links, " "), {plain = true})
+            if package:version():ge("2023.8") then
+                io.replace("libshaderc_util/CMakeLists.txt", "glslang SPIRV", table.concat(links, " "), {plain = true})
+            else
+                io.replace("glslc/CMakeLists.txt", "glslang OSDependent OGLCompiler HLSL glslang SPIRV", "", {plain = true})
+                io.replace("libshaderc_util/CMakeLists.txt", "glslang OSDependent OGLCompiler HLSL glslang SPIRV", table.concat(links, " "), {plain = true})
+            end
             links = table.join({"shaderc", "shaderc_util"}, links)
             io.replace("glslc/CMakeLists.txt", "shaderc_util shaderc", table.concat(links, " "), {plain = true})
         end
