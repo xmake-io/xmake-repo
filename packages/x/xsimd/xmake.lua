@@ -30,27 +30,32 @@ package("xsimd")
     on_test(function (package)
         if package:version():ge("8.0") then
             assert(package:check_cxxsnippets({test = [[
-                #include <type_traits>
+                #include <cstddef>
                 #include <vector>
+                #include "xsimd/xsimd.hpp"
                 
-                #include "xsimd/memory/xsimd_alignment.hpp"
+                namespace xs = xsimd;
+                using vector_type = std::vector<double, xsimd::aligned_allocator<double>>;
                 
-                using namespace xsimd;
+                void mean(const vector_type& a, const vector_type& b, vector_type& res)
+                {
+                    std::size_t size = a.size();
+                    constexpr std::size_t simd_size = xsimd::simd_type<double>::size;
+                    std::size_t vec_size = size - size % simd_size;
                 
-                struct mock_container {};
-                
-                void test() {
-                    using u_vector_type = std::vector<double>;
-                    using a_vector_type = std::vector<double, xsimd::default_allocator<double>>;
-                
-                    using u_vector_align = container_alignment_t<u_vector_type>;
-                    using a_vector_align = container_alignment_t<a_vector_type>;
-                    using mock_align = container_alignment_t<mock_container>;
-                
-                    if (!std::is_same<u_vector_align, unaligned_mode>::value) abort();
-                    if (!std::is_same<a_vector_align, aligned_mode>::value) abort();
-                    if (!std::is_same<mock_align, unaligned_mode>::value) abort();
+                    for(std::size_t i = 0; i < vec_size; i += simd_size)
+                    {
+                        auto ba = xs::load_aligned(&a[i]);
+                        auto bb = xs::load_aligned(&b[i]);
+                        auto bres = (ba + bb) / 2.;
+                        bres.store_aligned(&res[i]);
+                    }
+                    for(std::size_t i = vec_size; i < size; ++i)
+                    {
+                        res[i] = (a[i] + b[i]) / 2.;
+                    }
                 }
+                void test() {}
             ]]}, {configs = {languages = "c++14"}}))
         else
             assert(package:check_cxxsnippets({test = [[
