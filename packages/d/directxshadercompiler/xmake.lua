@@ -19,6 +19,7 @@ package("directxshadercompiler")
     elseif is_plat("linux") and is_arch("x86_64") then 
         add_urls("https://github.com/microsoft/DirectXShaderCompiler.git")
         add_versions("v1.7.2212", "f2643f8699299ab4e77421952e9c24f7483b46896d9f4cc6b4790b22c90d2ff0")
+        add_versions("v1.8.2403.2", "f01620321135de7c74359c5e3560279d20b47e65cc2e671c4409c929c699b96c")
         
         add_patches("v1.7.2212", path.join(os.scriptdir(), "patches", "disable_go_bindings.patch"), "2337f4f94d4c27c3caf0e6b0f00efd1bee719f79c0bb3b0d7e74c2859546c73a")
 
