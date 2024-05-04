@@ -7,6 +7,7 @@ package("lzav")
     add_urls("https://github.com/avaneev/lzav/archive/refs/tags/$(version).tar.gz",
              "https://github.com/avaneev/lzav.git")
 
+    add_versions("4.0", "bf125517492b0481b76a6b48cef849270dca406b0781f6f4595928046747ea99")
     add_versions("2.14", "98a715dc744d86224c941421beddaf3fcc0defd62ccfad7082eedf83be42dbbd")
 
     on_install(function (package)
