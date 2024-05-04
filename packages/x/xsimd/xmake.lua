@@ -31,11 +31,41 @@ package("xsimd")
         if package:version():ge("8.0") then
             assert(package:check_cxxsnippets({test = [[
                 #include "xsimd/xsimd.hpp"
-
-                xsimd::batch<int> come_and_get_some(xsimd::batch<int> x, xsimd::batch<int> y)
-                {
-                    return x + y;
+                
+                namespace xsimd {
+                
+                template <class arch>
+                inline batch<int, arch> mandel(const batch_bool<float, arch> &_active,
+                                               const batch<float, arch> &c_re,
+                                               const batch<float, arch> &c_im, int maxIters) {
+                  using float_batch_type = batch<float, arch>;
+                  using int_batch_type = batch<int, arch>;
+                
+                  constexpr std::size_t N = float_batch_type::size;
+                
+                  float_batch_type z_re = c_re;
+                  float_batch_type z_im = c_im;
+                  int_batch_type vi(0);
+                
+                  for (int i = 0; i < maxIters; ++i) {
+                    auto active =
+                        _active & ((z_re * z_re + z_im * z_im) <= float_batch_type(4.f));
+                    if (!xsimd::any(active)) {
+                      break;
+                    }
+                
+                    float_batch_type new_re = z_re * z_re - z_im * z_im;
+                    float_batch_type new_im = 2.f * z_re * z_im;
+                
+                    z_re = c_re + new_re;
+                    z_im = c_im + new_im;
+                
+                    vi = select(batch_bool_cast<int>(active), vi + 1, vi);
+                  }
+                
+                  return vi;
                 }
+                } // namespace xsimd
                 void test() {}
             ]]}, {configs = {languages = "c++14"}}))
         else
