@@ -7,6 +7,7 @@ package("luau")
     add_urls("https://github.com/Roblox/luau/archive/$(version).tar.gz",
              "https://github.com/Roblox/luau.git")
     
+    add_versions("0.624", "6d5ce40a7dc0e17da51cc143d2ee1ab32727583c315938f5a69d13ef93ae574d")
     add_versions("0.623", "5a72f9e5b996c5ec44ee2c7bd9448d2b2e5061bdf7d057de7490f92fb3003f40")
     add_versions("0.538", "8a1240e02a7daacf1e5cff249040a3298c013157fc496c66adce6dcb21cc30be")
 
