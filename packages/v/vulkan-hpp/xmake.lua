@@ -99,14 +99,5 @@ package("vulkan-hpp")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                vk::ApplicationInfo ai;
-                ai.pApplicationName = "Test";
-                ai.applicationVersion = VK_MAKE_API_VERSION(1,0,0,0);
-                ai.pEngineName = "Test";
-                ai.engineVersion = VK_MAKE_API_VERSION(1,0,0,0);
-                ai.apiVersion = VK_API_VERSION_1_0;
-            }
-        ]]}, {includes = "vulkan/vulkan.hpp", configs = {languages = "c++14"} }))
+        assert(package:has_cxxincludes("vulkan/vulkan.hpp", {configs = {languages = "c++14"}}))
     end)
