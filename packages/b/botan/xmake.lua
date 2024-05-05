@@ -55,6 +55,8 @@ package("botan")
         if package:is_plat("mingw") then
             cc = "gcc"
             cc_bin = package:build_getenv("cxx")
+        elseif package:is_plat("macosx", "iphoneos") then
+            cc = "clang"
         elseif package:is_plat("wasm") then
             cc = "emcc"
             cc_bin = package:build_getenv("cxx")
@@ -62,10 +64,16 @@ package("botan")
 
         local envs
         if package:is_plat("windows") then
-            table.insert(configs, "--msvc-runtime=" .. package:runtimes())
             local msvc = package:toolchain("msvc")
             assert(msvc:check(), "vs not found!")
+
+            local vs = msvc:config("vs")
+            if tonumber(vs) < 2019 then
+                raise("This version of Botan requires at least msvc 19.30")
+            end
+
             envs = msvc:runenvs()
+            table.insert(configs, "--msvc-runtime=" .. package:runtimes())
         end
 
         table.insert(configs, "--cc=" .. cc)
@@ -82,15 +90,15 @@ package("botan")
         end
         table.insert(configs, "--build-targets=" .. (package:config("shared") and "shared" or "static"))
 
-        local cxxflags = table.join(table.wrap(package:build_getenv("cxflags")), package:build_getenv("cxxflags"))
-        if #cxxflags ~= 0 then
-            table.insert(configs, "--cxflags=" .. table.concat(cxxflags, " "))
-        end
+        -- local cxxflags = table.join(table.wrap(package:build_getenv("cxflags")), package:build_getenv("cxxflags"))
+        -- if #cxxflags ~= 0 then
+        --     table.insert(configs, "--cxflags=" .. table.concat(cxxflags, " "))
+        -- end
 
-        local ldflags = table.join(table.wrap(package:build_getenv("ldflags")))
-        if #ldflags ~= 0 then
-            table.insert(configs, "--ldflags=" .. table.concat(ldflags, " "))
-        end
+        -- local ldflags = table.join(table.wrap(package:build_getenv("ldflags")))
+        -- if #ldflags ~= 0 then
+        --     table.insert(configs, "--ldflags=" .. table.concat(ldflags, " "))
+        -- end
 
         if not package:config("python") then
             table.insert(configs, "--no-install-python-module")
