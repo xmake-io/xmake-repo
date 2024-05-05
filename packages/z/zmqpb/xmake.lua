@@ -23,7 +23,7 @@ package("zmqpb")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|native", "macosx", "linux", function (package)
         local configs = {}
         import("package.tools.xmake").install(package, configs)
     end)
