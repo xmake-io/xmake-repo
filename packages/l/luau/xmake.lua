@@ -16,7 +16,7 @@ package("luau")
 
     add_deps("cmake")
 
-    on_install("linux", "windows", "mingw|x86_64", "macosx", function(package)
+    on_install(function(package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "RelWithDebInfo"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
