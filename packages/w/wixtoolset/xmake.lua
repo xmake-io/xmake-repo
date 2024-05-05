@@ -17,6 +17,7 @@ package("wixtoolset")
         local ui_folder = path.join(package:installdir("bin"), ".wix", "extensions", "WixToolset.UI.wixext", version)
         os.cp(path.join(package:resourcedir("ui")), ui_folder)
         package:addenv("WIX_EXTENSIONS", package:installdir("bin"))
+        package:mark_as_pathenv("WIX_EXTENSIONS")
     end)
 
     on_test(function(package)
