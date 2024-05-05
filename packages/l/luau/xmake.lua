@@ -31,17 +31,15 @@ package("luau")
         local cmake_file = io.readfile("CMakeLists.txt")
 
         local links = {}
-        for link in string.gmatch(cmake_file, "add_library%(([%a|%.]+) STATIC") do
-            if string.startswith(link, "Luau.") then
-                table.insert(links, link)
-            end
-        end
-
-        for interface in string.gmatch(cmake_file, "add_library%(([%a|%.]+) INTERFACE") do
-            if string.startswith(interface, "Luau.") then
-                interface = interface:gsub("Luau%.", "")
-                interface = interface:gsub("%..*", "")
-                os.trycp(interface .. "/include/*", package:installdir("include"))
+        for library_name, library_type in string.gmatch(cmake_file, "add_library%(([%a|%.]+) ([STATIC|INTERFACE]+)") do
+            if string.startswith(library_name, "Luau.") then
+                if library_type == "STATIC" then
+                    table.insert(links, library_name)
+                elseif library_type == "INTERFACE" then
+                    library_name = library_name:gsub("Luau%.", "")
+                    library_name = library_name:gsub("%..*", "")
+                    os.trycp(library_name .. "/include/*", package:installdir("include"))
+                end
             end
         end
 
