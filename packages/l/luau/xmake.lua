@@ -33,12 +33,11 @@ package("luau")
         local links = {}
         for library_name, library_type in string.gmatch(cmake_file, "add_library%(([%a|%.]+) ([STATIC|INTERFACE]+)") do
             if string.startswith(library_name, "Luau.") then
+                local include_dir = library_name:gsub("Luau%.", "")
+                include_dir = include_dir:gsub("%..*", "")
+                os.trycp(include_dir .. "/include/*", package:installdir("include"))
                 if library_type == "STATIC" then
                     table.insert(links, library_name)
-                elseif library_type == "INTERFACE" then
-                    library_name = library_name:gsub("Luau%.", "")
-                    library_name = library_name:gsub("%..*", "")
-                    os.trycp(library_name .. "/include/*", package:installdir("include"))
                 end
             end
         end
