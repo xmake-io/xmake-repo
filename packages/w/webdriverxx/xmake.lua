@@ -1,4 +1,5 @@
 package("webdriverxx")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/durdyev/webdriverxx")
     set_description("A C++ client library for Selenium Webdriver")
     set_license("MIT")
