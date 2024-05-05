@@ -7,7 +7,7 @@ package("webdriverxx")
     add_urls("https://github.com/durdyev/webdriverxx.git")
     add_versions("2018.02.22", "11c4addbb3f791c3d59aecfee2354ba49612d5ca")
 
-    add_patches("2018.03.25", "patches/2018.03.25/picojson.patch", "e3eaacaad4df12429694efba597423bca4083b55f371ced3df2af1f5f009737b")
+    add_patches("2018.02.22", "patches/2018.02.22/picojson.patch", "e3eaacaad4df12429694efba597423bca4083b55f371ced3df2af1f5f009737b")
 
     add_deps("libcurl", "picojson")
 
