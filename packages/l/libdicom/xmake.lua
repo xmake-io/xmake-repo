@@ -11,6 +11,8 @@ package("libdicom")
     add_deps("meson", "ninja")
     if is_plat("windows") then
         add_deps("pkgconf")
+    elseif is_plat("linux") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
     add_deps("uthash")
 
