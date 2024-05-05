@@ -46,9 +46,6 @@ package("luau")
         for i = #links, 1, -1 do
             local link = links[i]
             package:add("links", link)
-            link = link:gsub("Luau%.", "")
-            link = link:gsub("%..*", "")
-            os.trycp(link .. "/include/*", package:installdir("include"))
         end
 
         os.trycp("build/**.a", package:installdir("lib"))
