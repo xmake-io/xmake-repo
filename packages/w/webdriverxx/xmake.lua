@@ -11,7 +11,7 @@ package("webdriverxx")
     
     add_deps("libcurl", "picojson")
 
-    on_install("!wasm", function (package)
+    on_install("!bsd and !wasm", function (package)
         os.rm("include/webdriverxx/picojson.h")
         os.cp("include", package:installdir())
     end)
