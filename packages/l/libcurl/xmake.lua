@@ -160,24 +160,24 @@ package("libcurl")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
 
         -- https://github.com/curl/curl/issues/6575
-        if package:is_plat("windows") and os.isfile("buildconf.bat") then
-            if os.isfile("src/tool_hugehelp.c.cvs") then
-                os.mv("src/tool_hugehelp.c.cvs", "src/tool_hugehelp.c")
-            else
-                io.writefile("src/tool_hugehelp.c", [[
-                    #include "tool_setup.h"
-                    #include "tool_hugehelp.h"
+        -- if package:is_plat("windows") and os.isfile("buildconf.bat") then
+        --     if os.isfile("src/tool_hugehelp.c.cvs") then
+        --         os.mv("src/tool_hugehelp.c.cvs", "src/tool_hugehelp.c")
+        --     else
+        --         io.writefile("src/tool_hugehelp.c", [[
+        --             #include "tool_setup.h"
+        --             #include "tool_hugehelp.h"
 
-                    void hugehelp(void)
-                    {
-                        #ifdef USE_MANUAL
-                            fputs("Built-in manual not included\n", stdout);
-                        #endif
-                    }
-                ]])
-            end
-            os.cp("src/tool_hugehelp.c", "build/src/tool_hugehelp.c")
-        end
+        --             void hugehelp(void)
+        --             {
+        --                 #ifdef USE_MANUAL
+        --                     fputs("Built-in manual not included\n", stdout);
+        --                 #endif
+        --             }
+        --         ]])
+        --     end
+        --     os.cp("src/tool_hugehelp.c", "build/src/tool_hugehelp.c")
+        -- end
 
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
     end)
