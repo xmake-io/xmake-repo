@@ -64,8 +64,11 @@ package("botan")
         else
             local cxx = package:build_getenv("cxx")
 
-            cc = cxx:gsub("gcc$", "gcc")
-            cc = cxx:gsub("clang$", "clang")
+            if cxx:find("clang", 1, true) then
+                cc = "clang"
+            elseif cc:find("gcc", 1, true) then
+                cc = "gcc"
+            end
 
             local cc_bin
             if package:is_plat("mingw") then
@@ -86,7 +89,11 @@ package("botan")
             table.insert(configs, "--os=emscripten")
             table.insert(configs, "--cpu=wasm")
         else
-            table.insert(configs, "--os=" .. package:plat())
+            if package:is_plat("iphoneos") then
+                table.insert(configs, "--os=ios")
+            else
+                table.insert(configs, "--os=" .. package:plat())
+            end
             table.insert(configs, "--cpu=" .. package:arch())
         end
         table.insert(configs, "--build-targets=" .. (package:config("shared") and "shared" or "static"))
