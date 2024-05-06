@@ -6,6 +6,7 @@ package("vk-bootstrap")
     add_urls("https://github.com/charles-lunarg/vk-bootstrap/archive/refs/tags/$(version).tar.gz",
              "https://github.com/charles-lunarg/vk-bootstrap.git")
 
+    add_versions("v1.3.283", "1e6e43b76c14fa544d057b3e4825817e1aed50c3a2efbaf94862340c6304dc24")
     add_versions("v1.3.282", "80aba4c2903e7f7f54a43d4c41dd6e2014b79c26fa432c417efb566e8b42fe67")
     add_versions("v0.5", "7ec1017d71d48595c078a4488140b230fd9cad1059986a18a507f356bf00e89b")
     add_versions("v0.6", "95dedaa5cedf7a271f051d91b24b3b6c78aa3c5b2bc3cf058554c92748a421b2")
