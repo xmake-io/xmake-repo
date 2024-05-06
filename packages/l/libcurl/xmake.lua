@@ -161,8 +161,6 @@ package("libcurl")
         io.writefile("GIT-INFO.md", "")
         if package:is_plat("windows") then
             os.vrunv("buildconf.bat", {})
-        else
-            os.vrunv("autoreconf -fi", {})
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
