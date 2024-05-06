@@ -176,6 +176,10 @@ package("libcurl")
                     }
                 ]])
             end
+            local content = io.readfile("build/src/tool_hugehelp.c")
+            print("OOOOOO")
+            print(content)
+            print("OOOOOO")
         end
 
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
