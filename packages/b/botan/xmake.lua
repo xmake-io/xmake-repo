@@ -43,25 +43,6 @@ package("botan")
         }
 
         local cc
-        if package:has_tool("cxx", "cl") then
-            cc = "msvc"
-        elseif package:has_tool("cxx", "clang_cl", "clang++") then
-            cc = "clang"
-        elseif package:has_tool("cxx", "g++") then
-            cc = "gcc"
-        end
-
-        local cc_bin
-        if package:is_plat("mingw") then
-            cc = "gcc"
-            cc_bin = package:build_getenv("cxx")
-        elseif package:is_plat("macosx", "iphoneos") then
-            cc = "clang"
-        elseif package:is_plat("wasm") then
-            cc = "emcc"
-            cc_bin = package:build_getenv("cxx")
-        end
-
         local envs
         if package:is_plat("windows") then
             local msvc = package:toolchain("msvc")
@@ -74,6 +55,26 @@ package("botan")
 
             envs = msvc:runenvs()
             table.insert(configs, "--msvc-runtime=" .. package:runtimes())
+
+            if package:has_tool("cxx", "cl") then
+                cc = "msvc"
+            elseif package:has_tool("cxx", "clang_cl") then
+                raise("Unsupported toolchains on windows")
+            end
+        else
+            local cxx = package:build_getenv("cxx")
+
+            cc = cxx:gsub("gcc$", "gcc")
+            cc = cxx:gsub("clang$", "clang")
+
+            local cc_bin
+            if package:is_plat("mingw") then
+                cc = "gcc"
+                cc_bin = cxx
+            elseif package:is_plat("wasm") then
+                cc = "emcc"
+                cc_bin = cxx
+            end
         end
 
         table.insert(configs, "--cc=" .. cc)
@@ -89,16 +90,6 @@ package("botan")
             table.insert(configs, "--cpu=" .. package:arch())
         end
         table.insert(configs, "--build-targets=" .. (package:config("shared") and "shared" or "static"))
-
-        -- local cxxflags = table.join(table.wrap(package:build_getenv("cxflags")), package:build_getenv("cxxflags"))
-        -- if #cxxflags ~= 0 then
-        --     table.insert(configs, "--cxflags=" .. table.concat(cxxflags, " "))
-        -- end
-
-        -- local ldflags = table.join(table.wrap(package:build_getenv("ldflags")))
-        -- if #ldflags ~= 0 then
-        --     table.insert(configs, "--ldflags=" .. table.concat(ldflags, " "))
-        -- end
 
         if not package:config("python") then
             table.insert(configs, "--no-install-python-module")
