@@ -176,6 +176,7 @@ package("libcurl")
                     }
                 ]])
             end
+            os.cp("src/tool_hugehelp.c", "build/src/tool_hugehelp.c")
         end
 
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
