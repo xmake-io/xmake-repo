@@ -162,7 +162,7 @@ package("libcurl")
         if package:is_plat("windows") then
             os.vrunv("buildconf.bat", {})
         else
-            os.vrunv("./buildconf", {})
+            os.vrunv("autoreconf -fi", {})
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
