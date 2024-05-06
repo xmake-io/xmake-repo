@@ -14,7 +14,7 @@ package("rcmp")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
         local version = package:version()
         if version then
             package:add("defines", "RCMP_VERSION_MAJOR=" .. version:major())
@@ -22,6 +22,10 @@ package("rcmp")
             package:add("defines", "RCMP_VERSION_PATCH=" .. version:patch())
         end
         os.cp("include", package:installdir())
+        os.trycp("build/**.a", package:installdir("lib"))
+        os.trycp("build/**.so", package:installdir("lib"))
+        os.trycp("build/**.dll", package:installdir("bin"))
+        os.trycp("build/**.lib", package:installdir("lib"))
     end)
 
     on_test(function (package)
