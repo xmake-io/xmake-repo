@@ -158,6 +158,8 @@ package("libcurl")
         handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {MBEDTLS_LIBRARY = "mbedtls", MBEDX509_LIBRARY = "mbedx509", MBEDCRYPTO_LIBRARY = "mbedcrypto"})
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
+        io.writefile("GIT-INFO.md", "")
+        os.runv("buildconf" .. (is_plat("windows") and ".bat" or ""), {})
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
