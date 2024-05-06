@@ -162,9 +162,9 @@ package("libcurl")
         -- https://github.com/curl/curl/issues/6575
         if package:is_plat("windows") and os.isfile("buildconf.bat") then
             if os.isfile("src/tool_hugehelp.c.cvs") then
-                os.mv("src/tool_hugehelp.c.cvs", "build/src/tool_hugehelp.c")
+                os.mv("src/tool_hugehelp.c.cvs", "src/tool_hugehelp.c")
             else
-                io.writefile("build/src/tool_hugehelp.c", [[
+                io.writefile("src/tool_hugehelp.c", [[
                     #include "tool_setup.h"
                     #include "tool_hugehelp.h"
 
@@ -176,10 +176,6 @@ package("libcurl")
                     }
                 ]])
             end
-            local content = io.readfile("build/src/tool_hugehelp.c")
-            print("OOOOOO")
-            print(content)
-            print("OOOOOO")
         end
 
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
