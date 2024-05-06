@@ -1,5 +1,5 @@
 diff --git a/include/webdriverxx/capabilities.h b/include/webdriverxx/capabilities.h
-index b23f269..54c3621 100644
+index ca5cb64..052ad27 100644
 --- a/include/webdriverxx/capabilities.h
 +++ b/include/webdriverxx/capabilities.h
 @@ -2,7 +2,7 @@
@@ -12,7 +12,7 @@ index b23f269..54c3621 100644
  
  namespace webdriverxx {
 diff --git a/include/webdriverxx/client.h b/include/webdriverxx/client.h
-index 26608ee..24af753 100644
+index 5548438..d4b6a3e 100644
 --- a/include/webdriverxx/client.h
 +++ b/include/webdriverxx/client.h
 @@ -5,7 +5,7 @@
@@ -25,7 +25,7 @@ index 26608ee..24af753 100644
  #include <vector>
  
 diff --git a/include/webdriverxx/conversions.h b/include/webdriverxx/conversions.h
-index 2b31ea4..fce9d88 100644
+index 8374073..510b5a0 100644
 --- a/include/webdriverxx/conversions.h
 +++ b/include/webdriverxx/conversions.h
 @@ -4,7 +4,7 @@
@@ -38,7 +38,7 @@ index 2b31ea4..fce9d88 100644
  
  namespace webdriverxx {
 diff --git a/include/webdriverxx/detail/resource.h b/include/webdriverxx/detail/resource.h
-index e5f152d..c2bb74d 100644
+index 26e3ed6..185c5e0 100644
 --- a/include/webdriverxx/detail/resource.h
 +++ b/include/webdriverxx/detail/resource.h
 @@ -6,7 +6,7 @@
@@ -51,7 +51,7 @@ index e5f152d..c2bb74d 100644
  namespace webdriverxx {
  namespace detail {
 diff --git a/include/webdriverxx/detail/types.h b/include/webdriverxx/detail/types.h
-index 6ef2f10..bad0d24 100644
+index f218900..fcbe4e9 100644
 --- a/include/webdriverxx/detail/types.h
 +++ b/include/webdriverxx/detail/types.h
 @@ -3,7 +3,7 @@
@@ -62,13 +62,13 @@ index 6ef2f10..bad0d24 100644
 +#include <picojson.h>
  #include <string>
  
- namespace webdriverxx {
+ #define CXX17_2X ((defined(_MSVC_LANG) && _MSVC_LANG >= 201703L) || __cplusplus >= 201703L)
 diff --git a/include/webdriverxx/js_args.h b/include/webdriverxx/js_args.h
-index 5785caa..6d367a8 100644
+index 0944f28..6e90c94 100644
 --- a/include/webdriverxx/js_args.h
 +++ b/include/webdriverxx/js_args.h
 @@ -2,7 +2,7 @@
- #define WEBDRIVERXX_JS_ARGS_H 
+ #define WEBDRIVERXX_JS_ARGS_H
  
  #include "conversions.h"
 -#include "picojson.h"
@@ -77,15 +77,15 @@ index 5785caa..6d367a8 100644
  namespace webdriverxx {
  
 diff --git a/include/webdriverxx/session.h b/include/webdriverxx/session.h
-index 597263f..1a2f108 100644
+index ee5410d..24f4cd5 100644
 --- a/include/webdriverxx/session.h
 +++ b/include/webdriverxx/session.h
-@@ -11,7 +11,7 @@
+@@ -12,7 +12,7 @@
  #include "detail/keyboard.h"
  #include "detail/shared.h"
  #include "detail/factories_impl.h"
 -#include "picojson.h"
 +#include <picojson.h>
+ #include "utils/picobase64.h"
  #include <string>
- 
- namespace webdriverxx {
+ #include <fstream>

@@ -1,18 +1,17 @@
 package("webdriverxx")
     set_kind("library", {headeronly = true})
-    set_homepage("https://github.com/durdyev/webdriverxx")
+    set_homepage("https://GermanAizek.github.io/webdriverxx")
     set_description("A C++ client library for Selenium Webdriver")
     set_license("MIT")
 
-    add_urls("https://github.com/durdyev/webdriverxx.git")
-    add_versions("2018.02.22", "11c4addbb3f791c3d59aecfee2354ba49612d5ca")
+    add_urls("https://github.com/GermanAizek/webdriverxx.git", {submodules = false})
+    add_versions("2023.04.22", "b8c9ac36360021daca7b0fd006a092b605b19e29")
 
-    add_patches("2018.02.22", "patches/2018.02.22/picojson.patch", "e3eaacaad4df12429694efba597423bca4083b55f371ced3df2af1f5f009737b")
-    add_patches("2018.02.22", "patches/2018.02.22/accept_insecure_certs.patch", "a390ed8b519fb751a43041631b13acfaf23270a445e11c5469969b07a1457f36")
-
+    add_patches("2023.04.22", "patches/2023.04.22/picojson.patch", "11e23fe37c7e3b8ec174642542567c9d6bae3657892f5d7ac8203cbb89c9112c")
+    
     add_deps("libcurl", "picojson")
 
-    on_install("!bsd and !wasm", function (package)
+    on_install("!wasm", function (package)
         os.rm("include/webdriverxx/picojson.h")
         os.cp("include", package:installdir())
     end)
@@ -22,7 +21,7 @@ package("webdriverxx")
             #include <webdriverxx.h>
             using namespace webdriverxx;
             void test() {
-                WebDriver phantom = Start(Phantom());
+                WebDriver phantom = Start(PhantomJS());
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
