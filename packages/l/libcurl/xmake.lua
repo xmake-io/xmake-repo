@@ -170,7 +170,7 @@ package("libcurl")
 
                     void hugehelp(void)
                     {
-                       #ifdef USE_MANUAL
+                        #ifdef USE_MANUAL
                             fputs("Built-in manual not included\n", stdout);
                         #endif
                     }
