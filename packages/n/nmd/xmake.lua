@@ -1,4 +1,5 @@
 package("nmd")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/Nomade040/nmd")
     set_description("An x86 assembler and disassembler along with a C89 header file (nmd_assembly.h), and a C89 2D graphics library (nmd_graphics.h).")
     set_license("MIT")
