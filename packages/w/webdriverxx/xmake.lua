@@ -8,6 +8,7 @@ package("webdriverxx")
     add_versions("2018.02.22", "11c4addbb3f791c3d59aecfee2354ba49612d5ca")
 
     add_patches("2018.02.22", "patches/2018.02.22/picojson.patch", "e3eaacaad4df12429694efba597423bca4083b55f371ced3df2af1f5f009737b")
+    add_patches("2018.02.22", "patches/2018.02.22/accept_insecure_certs.patch", "7c5aa3d9fedbd3c9f97ba0225e3e937931db439303a5ac69fe0c64a9d242aee5")
 
     add_deps("libcurl", "picojson")
 

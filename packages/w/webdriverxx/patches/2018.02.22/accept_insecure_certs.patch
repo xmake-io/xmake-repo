@@ -1,0 +1,48 @@
+diff --git a/include/webdriverxx/browsers/firefox.h b/include/webdriverxx/browsers/firefox.h
+index b47d3f6..e6e54c0 100644
+--- a/include/webdriverxx/browsers/firefox.h
++++ b/include/webdriverxx/browsers/firefox.h
+@@ -11,6 +11,7 @@ struct Firefox : Capabilities { // copyable
+ 		SetBrowserName(browser::Firefox);
+ 		SetVersion("");
+ 		SetPlatform(platform::Any);
++		SetAcceptInsecureCerts(false);
+ 	}
+ 
+ 	WEBDRIVERXX_PROPERTIES_BEGIN(Firefox)
+diff --git a/include/webdriverxx/browsers/ie.h b/include/webdriverxx/browsers/ie.h
+index 0d1a660..77cc170 100644
+--- a/include/webdriverxx/browsers/ie.h
++++ b/include/webdriverxx/browsers/ie.h
+@@ -25,6 +25,7 @@ struct InternetExplorer : Capabilities { // copyable
+ 		SetBrowserName(browser::InternetExplorer);
+ 		SetVersion("");
+ 		SetPlatform(platform::Any);
++		SetAcceptInsecureCerts(false);
+ 	}
+ 
+ 	WEBDRIVERXX_PROPERTIES_BEGIN(InternetExplorer)
+diff --git a/include/webdriverxx/browsers/phantom.h b/include/webdriverxx/browsers/phantom.h
+index 8223e4e..7bd0c63 100644
+--- a/include/webdriverxx/browsers/phantom.h
++++ b/include/webdriverxx/browsers/phantom.h
+@@ -11,6 +11,7 @@ struct Phantom : Capabilities { // copyable
+ 		SetBrowserName(browser::Phantom);
+ 		SetVersion("");
+ 		SetPlatform(platform::Any);
++		SetAcceptInsecureCerts(false);
+ 	}
+ 
+ 	WEBDRIVERXX_PROPERTIES_BEGIN(Phantom)
+diff --git a/include/webdriverxx/capabilities.h b/include/webdriverxx/capabilities.h
+index b23f269..c87ba36 100644
+--- a/include/webdriverxx/capabilities.h
++++ b/include/webdriverxx/capabilities.h
+@@ -180,6 +180,7 @@ struct Capabilities : JsonObject { // copyable
+ 	WEBDRIVERXX_PROPERTY(BrowserConnectionEnabled, "browserConnectionEnabled", bool)
+ 	WEBDRIVERXX_PROPERTY(WebStorageEnabled, "webStorageEnabled", bool)
+ 	WEBDRIVERXX_PROPERTY(AcceptSslCerts, "acceptSslCerts", bool)
++	WEBDRIVERXX_PROPERTY(AcceptInsecureCerts, "acceptInsecureCerts", bool)
+ 	WEBDRIVERXX_PROPERTY(Rotatable, "rotatable", bool)
+ 	WEBDRIVERXX_PROPERTY(NativeEvents, "nativeEvents", bool)
+ 	WEBDRIVERXX_PROPERTY(Proxy, "proxy", Proxy)
