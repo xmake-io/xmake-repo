@@ -161,9 +161,11 @@ package("libcurl")
 
         -- https://github.com/curl/curl/issues/6575
         if package:is_plat("windows") and os.isfile("buildconf.bat") then
+            print("Running buildconf.bat")
             io.replace("buildconf.bat", [[if "%OS%" == "Windows_NT" setlocal]], "", {plain = true})
             io.writefile("GIT-INFO.md", "")
             os.vrunv("buildconf.bat", {})
+            print("ran buildconf.bat")
         end
 
         import("package.tools.cmake").install(package, configs, opt)
