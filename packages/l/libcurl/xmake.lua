@@ -161,7 +161,7 @@ package("libcurl")
 
         -- https://github.com/curl/curl/issues/6575
         if package:is_plat("windows") and os.isfile("buildconf.bat") then
-            io.replace("buildconf.bat", [[if "%OS%" == "Windows_NT" setlocal]], "")
+            io.replace("buildconf.bat", [[if "%OS%" == "Windows_NT" setlocal]], "", {plain = true})
             io.writefile("GIT-INFO.md", "")
             os.vrunv("buildconf.bat", {})
         end
