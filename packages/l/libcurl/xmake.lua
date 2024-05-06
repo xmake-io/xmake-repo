@@ -159,6 +159,7 @@ package("libcurl")
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
         io.writefile("GIT-INFO.md", "")
+        -- https://github.com/curl/curl/issues/6575
         if package:is_plat("windows") then
             os.vrunv("buildconf.bat", {})
         end
