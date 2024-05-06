@@ -164,7 +164,7 @@ package("libcurl")
             if os.isfile("src/tool_hugehelp.c.cvs") then
                 os.mv("src/tool_hugehelp.c.cvs", "src/tool_hugehelp.c")
             else
-                os.writefile("src/tool_hugehelp.c", [[
+                io.writefile("src/tool_hugehelp.c", [[
                     #include "tool_setup.h"
                     #include "tool_hugehelp.h"
 
