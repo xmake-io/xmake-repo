@@ -158,10 +158,10 @@ package("libcurl")
         handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {MBEDTLS_LIBRARY = "mbedtls", MBEDX509_LIBRARY = "mbedx509", MBEDCRYPTO_LIBRARY = "mbedcrypto"})
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
-        
+
         -- https://github.com/curl/curl/issues/6575
-        io.writefile("GIT-INFO.md", "")
-        if package:is_plat("windows") then
+        if package:is_plat("windows") and os.exists("buildconf.bat") then
+            io.writefile("GIT-INFO.md", "")
             os.vrunv("buildconf.bat", {})
         end
 
