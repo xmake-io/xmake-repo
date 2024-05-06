@@ -161,11 +161,21 @@ package("libcurl")
 
         -- https://github.com/curl/curl/issues/6575
         if package:is_plat("windows") and os.isfile("buildconf.bat") then
-            print("Running buildconf.bat")
-            io.replace("buildconf.bat", [[if "%OS%" == "Windows_NT" setlocal]], "", {plain = true})
-            io.writefile("GIT-INFO.md", "")
-            os.vrunv("buildconf.bat", {})
-            print("ran buildconf.bat")
+            if os.isfile("src/tool_hugehelp.c.cvs") then
+                os.mv("src/tool_hugehelp.c.cvs", "src/tool_hugehelp.c")
+            else
+                os.writefile("src/tool_hugehelp.c", [[
+                    #include "tool_setup.h"
+                    #include "tool_hugehelp.h"
+
+                    void hugehelp(void)
+                    {
+                       #ifdef USE_MANUAL
+                            fputs("Built-in manual not included\n", stdout);
+                        #endif
+                    }
+                ]])
+            end
         end
 
         import("package.tools.cmake").install(package, configs, opt)
