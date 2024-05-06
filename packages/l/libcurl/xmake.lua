@@ -159,7 +159,11 @@ package("libcurl")
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
         io.writefile("GIT-INFO.md", "")
-        os.runv("buildconf" .. (is_plat("windows") and ".bat" or ""), {})
+        if is_plat("windows") then
+            os.vrunv("buildconf.bat", {})
+        else
+            os.vrunv("./buildconf", {})
+        end
         import("package.tools.cmake").install(package, configs, opt)
     end)
 
