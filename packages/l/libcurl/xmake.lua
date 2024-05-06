@@ -160,7 +160,7 @@ package("libcurl")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
 
         -- https://github.com/curl/curl/issues/6575
-        if package:is_plat("windows") and os.exists("buildconf.bat") then
+        if package:is_plat("windows") and os.isfile("buildconf.bat") then
             io.writefile("GIT-INFO.md", "")
             os.vrunv("buildconf.bat", {})
         end
