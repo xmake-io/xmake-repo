@@ -163,6 +163,7 @@ package("libcurl")
         if package:is_plat("windows") and os.isfile("buildconf.bat") then
             io.writefile("GIT-INFO.md", "")
             os.vrunv("buildconf.bat", {})
+            print("ran buildconf.bat")
         end
 
         import("package.tools.cmake").install(package, configs, opt)
