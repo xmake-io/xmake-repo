@@ -24,7 +24,7 @@ package("botan")
         add_extsources("brew::botan")
     end
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
