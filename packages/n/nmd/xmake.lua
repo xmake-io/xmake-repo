@@ -7,6 +7,8 @@ package("nmd")
     add_urls("https://github.com/Nomade040/nmd.git")
     add_versions("2021.03.28", "33ac3b62c7d1eb28ae6b71d4dd78aa133ef96488")
 
+    add_includedirs("include", "include/nmd")
+
     on_install(function (package)
         os.cp("nmd_assembly.h", package:installdir("include/nmd"))
         os.cp("nmd_graphics.h", package:installdir("include/nmd"))
