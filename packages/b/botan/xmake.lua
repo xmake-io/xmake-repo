@@ -10,6 +10,7 @@ package("botan")
 
     add_configs("python", {description = "Enable python module", default = false, type = "boolean"})
     add_configs("endian", {description = [[The parameter should be either “little” or “big”. If not used then if the target architecture has a default, that is used. Otherwise left unspecified, which causes less optimal codepaths to be used but will work on either little or big endian.]], default = nil, type = "string", values = {"little", "big"}})
+    add_configs("enable_modules", {description = "Enable modules", default = nil, type = "string"})
     if is_plat("wasm") then 
           add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) 
     end
@@ -34,17 +35,34 @@ package("botan")
             major = package:version():major()
         end
         package:add("includedirs", "include/botan-" .. major)
+
+        local modules = package:config("enable_modules")
+        if modules then
+            for _, dep in ipairs({"bzip2", "lzma", "sqlite3", "zlib"}) do
+                if modules:find(dep) then
+                    if dep == "boost" then
+                        package:add("deps", "boost", {configs = {filesystem = true}})
+                    elseif dep == "lzma" then
+                        package:add("deps", "xz")
+                    else
+                        package:add("deps", dep)
+                    end
+                end
+            end
+        end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx|native", "bsd", "mingw@windows", "msys", "wasm", function (package)
         -- https://botan.randombit.net/handbook/building.html
         local configs = {
             "configure.py",
             "--prefix=" .. package:installdir(),
             "--build-tool=ninja",
-            "--without-documentation"
+            "--without-documentation",
+            "--minimized-build",
         }
 
+        -- env setup
         local cc
         local envs
         if package:is_plat("windows") then
@@ -101,7 +119,16 @@ package("botan")
             end
             table.insert(configs, "--cpu=" .. package:arch())
         end
+
+        -- configs setup
+        if package:is_debug() then
+            table.insert(configs, "--debug-mode")
+        end
         table.insert(configs, "--build-targets=" .. (package:config("shared") and "shared" or "static"))
+
+        if package:config("enable_modules") then
+            table.insert(configs, "--enable-modules=" .. package:config("enable_modules"))
+        end
 
         if not package:config("python") then
             table.insert(configs, "--no-install-python-module")
@@ -111,17 +138,34 @@ package("botan")
             table.insert(configs, "--with-endian=" .. package:config("endian"))
         end
 
+        -- deps setup
+        for _, dep in ipairs(package:orderdeps()) do
+            if dep:name() == "xz" then
+                table.insert(configs, "--with-lzma")
+            else
+                table.insert(configs, "--with-" .. dep:name())
+            end
+
+            local fetchinfo = dep:fetch()
+            if fetchinfo then
+                for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                    table.insert(configs, "--with-external-includedir=" .. includedir)
+                end
+                for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                    table.insert(configs, "--with-external-libdir=" .. linkdir)
+                end
+            end
+        end
+
         os.vrunv("python3", configs, {envs = envs})
         import("package.tools.ninja").install(package, {}, {envs = envs})
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <botan/hash.h>
             #include <botan/hex.h>
-
             void test() {
-                const auto hash1 = Botan::HashFunction::create_or_throw("SHA-256");
+                std::vector<uint8_t> key = Botan::hex_decode("000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F");
             }
         ]]}, {configs = {languages = "c++20"}}))
     end)
