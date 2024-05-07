@@ -49,6 +49,8 @@ package("vulkan-hpp")
             package:plat_set(os.host())
             package:arch_set(os.arch())
         end
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+        io.replace("CMakeLists.txt", "/WX", "", {plain = true})
         import("package.tools.cmake").build(package, {buildir = "build"})
         if arch_prev and plat_prev then
             package:plat_set(plat_prev)
