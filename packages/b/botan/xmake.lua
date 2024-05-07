@@ -146,6 +146,13 @@ package("botan")
             table.insert(configs, "--with-endian=" .. package:config("endian"))
         end
 
+        local cxflags = {}
+        table.join2(cxflags, table.wrap(package:config("cxflags")))
+        table.join2(cxflags, table.wrap(package:config("cxxflags")))
+        for _, flag in ipairs(cxflags) do
+            table.insert(configs, "--extra-cxxflags=" .. flag)
+        end
+
         for _, dep in ipairs({"boost", "bzip2", "xz", "sqlite3", "zlib"}) do
             local packagedep = package:dep(dep)
             if packagedep then
