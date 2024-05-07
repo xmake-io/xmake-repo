@@ -80,7 +80,9 @@ package("botan")
             end
         end
 
-        table.insert(configs, "--cc=" .. cc)
+        if cc then
+            table.insert(configs, "--cc=" .. cc)
+        end
         if cc_bin then
             table.insert(configs, "--cc-bin=" .. cc_bin)
         end
