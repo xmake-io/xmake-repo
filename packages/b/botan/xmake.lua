@@ -10,7 +10,7 @@ package("botan")
 
     add_configs("python", {description = "Enable python module", default = false, type = "boolean"})
     add_configs("endian", {description = [[The parameter should be either “little” or “big”. If not used then if the target architecture has a default, that is used. Otherwise left unspecified, which causes less optimal codepaths to be used but will work on either little or big endian.]], default = nil, type = "string", values = {"little", "big"}})
-    if is_plat("windows", "wasm") then 
+    if is_plat("wasm") then 
           add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) 
       end
 
