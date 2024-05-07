@@ -149,12 +149,6 @@ package("botan")
         for _, dep in ipairs({"boost", "bzip2", "xz", "sqlite3", "zlib"}) do
             local packagedep = package:dep(dep)
             if packagedep then
-                if dep == "xz" then
-                    table.insert(configs, "--with-lzma")
-                else
-                    table.insert(configs, "--with-" .. packagedep:name())
-                end
-
                 local fetchinfo = packagedep:fetch()
                 if fetchinfo then
                     for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
@@ -178,4 +172,8 @@ package("botan")
                 std::vector<uint8_t> key = Botan::hex_decode("000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F");
             }
         ]]}, {configs = {languages = "c++20"}}))
+
+        if not package:is_cross() and package:config("tools") then
+            os.vrun("botan-cli version")
+        end
     end)
