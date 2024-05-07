@@ -12,7 +12,7 @@ package("botan")
     add_configs("endian", {description = [[The parameter should be either “little” or “big”. If not used then if the target architecture has a default, that is used. Otherwise left unspecified, which causes less optimal codepaths to be used but will work on either little or big endian.]], default = nil, type = "string", values = {"little", "big"}})
     if is_plat("wasm") then 
           add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) 
-      end
+    end
 
     add_deps("python 3.x", "ninja", {kind = "binary"})
 
@@ -96,7 +96,7 @@ package("botan")
         else
             if package:is_plat("iphoneos") then
                 table.insert(configs, "--os=ios")
-            else
+            elseif not package:is_plat("bsd") then
                 table.insert(configs, "--os=" .. package:plat())
             end
             table.insert(configs, "--cpu=" .. package:arch())
