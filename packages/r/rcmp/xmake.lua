@@ -16,7 +16,7 @@ package("rcmp")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         os.rm("external/nmd")
-        import("package.tools.cmake").install(package, configs, {buildir = "build"})
+        import("package.tools.cmake").install(package, configs, {packagedeps = "nmd", buildir = "build"})
         local version = package:version()
         if version then
             package:add("defines", "RCMP_VERSION_MAJOR=" .. version:major())
