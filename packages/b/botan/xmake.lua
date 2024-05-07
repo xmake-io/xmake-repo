@@ -66,7 +66,7 @@ package("botan")
 
             if cxx:find("clang", 1, true) then
                 cc = "clang"
-            elseif cc:find("gcc", 1, true) then
+            elseif cxx:find("gcc", 1, true) then
                 cc = "gcc"
             end
 
