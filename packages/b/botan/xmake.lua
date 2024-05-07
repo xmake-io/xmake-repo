@@ -11,7 +11,7 @@ package("botan")
     add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
     add_configs("python", {description = "Enable python module", default = false, type = "boolean"})
     add_configs("endian", {description = [[The parameter should be either “little” or “big”. If not used then if the target architecture has a default, that is used. Otherwise left unspecified, which causes less optimal codepaths to be used but will work on either little or big endian.]], default = nil, type = "string", values = {"little", "big"}})
-    add_configs("enable_modules", {description = "Enable modules", default = nil, type = "string"})
+    add_configs("modules", {description = "Enable modules, example: zlib,lzma...", default = nil, type = "string"})
     if is_plat("wasm") then 
           add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) 
     end
@@ -37,16 +37,19 @@ package("botan")
         end
         package:add("includedirs", "include/botan-" .. major)
 
-        local modules = package:config("enable_modules")
+        local modules = package:config("modules")
         if modules then
-            for _, dep in ipairs({"boost", "bzip2", "lzma", "sqlite3", "zlib"}) do
-                if modules:find(dep) then
-                    if dep == "boost" then
-                        package:add("deps", "boost", {configs = {filesystem = true}})
-                    elseif dep == "lzma" then
-                        package:add("deps", "xz")
-                    else
-                        package:add("deps", dep)
+            local deps = import("core.base.hashset").from(modules:split(","))
+            if deps then
+                for _, dep in ipairs({"boost", "bzip2", "lzma", "sqlite3", "zlib"}) do
+                    if deps:has(dep) then
+                        if dep == "boost" then
+                            package:add("deps", "boost", {configs = {filesystem = true}})
+                        elseif dep == "lzma" then
+                            package:add("deps", "xz")
+                        else
+                            package:add("deps", dep)
+                        end
                     end
                 end
             end
@@ -63,7 +66,6 @@ package("botan")
             "--minimized-build",
         }
 
-        -- env setup
         local cc
         local envs
         if package:is_plat("windows") then
@@ -122,7 +124,6 @@ package("botan")
             table.insert(configs, "--cpu=" .. package:arch())
         end
 
-        -- configs setup
         if package:is_debug() then
             table.insert(configs, "--debug-mode")
         end
@@ -133,8 +134,8 @@ package("botan")
         end
         table.insert(configs, "--build-targets=" .. targets)
 
-        if package:config("enable_modules") then
-            table.insert(configs, "--enable-modules=" .. package:config("enable_modules"))
+        if package:config("modules") then
+            table.insert(configs, "--enable-modules=" .. package:config("modules"))
         end
 
         if not package:config("python") then
@@ -145,7 +146,6 @@ package("botan")
             table.insert(configs, "--with-endian=" .. package:config("endian"))
         end
 
-        -- deps setup
         for _, dep in ipairs({"boost", "bzip2", "xz", "sqlite3", "zlib"}) do
             local packagedep = package:dep(dep)
             if packagedep then
