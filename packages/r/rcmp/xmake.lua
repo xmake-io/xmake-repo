@@ -9,11 +9,13 @@ package("rcmp")
     add_versions("v0.2.2", "accbf1d2c72b169857900ce816ca3c1718c63c9f67ded413613c236455a331d5")
 
     add_deps("cmake")
+    add_deps("nmd")
 
     on_install("linux", "windows", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        os.rm("external/nmd")
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
         local version = package:version()
         if version then
