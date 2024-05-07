@@ -8,6 +8,7 @@ package("botan")
 
     add_versions("3.4.0", "6ef2a16a0527b1cfc9648a644877f7b95c4d07e8ef237273b030c623418c5e5b")
 
+    add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
     add_configs("python", {description = "Enable python module", default = false, type = "boolean"})
     add_configs("endian", {description = [[The parameter should be either “little” or “big”. If not used then if the target architecture has a default, that is used. Otherwise left unspecified, which causes less optimal codepaths to be used but will work on either little or big endian.]], default = nil, type = "string", values = {"little", "big"}})
     add_configs("enable_modules", {description = "Enable modules", default = nil, type = "string"})
@@ -38,7 +39,7 @@ package("botan")
 
         local modules = package:config("enable_modules")
         if modules then
-            for _, dep in ipairs({"bzip2", "lzma", "sqlite3", "zlib"}) do
+            for _, dep in ipairs({"boost", "bzip2", "lzma", "sqlite3", "zlib"}) do
                 if modules:find(dep) then
                     if dep == "boost" then
                         package:add("deps", "boost", {configs = {filesystem = true}})
@@ -115,6 +116,7 @@ package("botan")
             if package:is_plat("iphoneos") then
                 table.insert(configs, "--os=ios")
             elseif not package:is_plat("bsd") then
+                -- let configure.py detech bsd host name
                 table.insert(configs, "--os=" .. package:plat())
             end
             table.insert(configs, "--cpu=" .. package:arch())
@@ -124,7 +126,12 @@ package("botan")
         if package:is_debug() then
             table.insert(configs, "--debug-mode")
         end
-        table.insert(configs, "--build-targets=" .. (package:config("shared") and "shared" or "static"))
+
+        local targets = (package:config("shared") and "shared" or "static")
+        if package:config("tools") then
+            targets = targets .. ",cli"
+        end
+        table.insert(configs, "--build-targets=" .. targets)
 
         if package:config("enable_modules") then
             table.insert(configs, "--enable-modules=" .. package:config("enable_modules"))
@@ -139,20 +146,23 @@ package("botan")
         end
 
         -- deps setup
-        for _, dep in ipairs(package:orderdeps()) do
-            if dep:name() == "xz" then
-                table.insert(configs, "--with-lzma")
-            else
-                table.insert(configs, "--with-" .. dep:name())
-            end
-
-            local fetchinfo = dep:fetch()
-            if fetchinfo then
-                for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                    table.insert(configs, "--with-external-includedir=" .. includedir)
+        for _, dep in ipairs({"boost", "bzip2", "xz", "sqlite3", "zlib"}) do
+            local packagedep = package:dep(dep)
+            if packagedep then
+                if dep == "xz" then
+                    table.insert(configs, "--with-lzma")
+                else
+                    table.insert(configs, "--with-" .. packagedep:name())
                 end
-                for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    table.insert(configs, "--with-external-libdir=" .. linkdir)
+
+                local fetchinfo = packagedep:fetch()
+                if fetchinfo then
+                    for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
+                        table.insert(configs, "--with-external-includedir=" .. includedir)
+                    end
+                    for _, linkdir in ipairs(fetchinfo.linkdirs) do
+                        table.insert(configs, "--with-external-libdir=" .. linkdir)
+                    end
                 end
             end
         end
