@@ -13,9 +13,11 @@ package("wigxjpf")
         end
         import("package.tools.make").build(package, configs)
         os.cp("inc/*.h", package:installdir("include"))
-        os.cp("bin/*", package:installdir("bin"))
-        os.trycp("lib/*.so", package:installdir("lib"))
-        os.trycp("lib/*.a", package:installdir("lib"))
+        if package:config("shared") then
+            os.cp("lib/*.so", package:installdir("lib"))
+        else
+            os.cp("lib/*.a", package:installdir("lib"))
+        end
     end)
 
     on_test(function (package)
