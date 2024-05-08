@@ -21,7 +21,7 @@ package("libunwind")
     add_versions("v1.6.2", "4a6aec666991fb45d0889c44aede8ad6eb108071c3554fcdff671f9c94794976")
     add_versions("v1.5", "90337653d92d4a13de590781371c604f9031cdb50520366aa1e3a91e1efb1017")
 
-    add_patches("1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "fix-arm64.patch"), "5f679af80859b6a50504ec830a4d328c3cf25bef9f2107baed866b438f3818d3")
+    add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "fix-arm64.patch"), "5f679af80859b6a50504ec830a4d328c3cf25bef9f2107baed866b438f3818d3")
 
     add_configs("minidebuginfo", {description = "Enables support for LZMA-compressed symbol tables", default = false, type = "boolean"})
     add_configs("zlibdebuginfo", {description = "Enables support for ZLIB-compressed symbol tables", default = false, type = "boolean"})
