@@ -8,16 +8,14 @@ package("wigxjpf")
 
     on_install("linux", "macosx", function (package)
         local configs = {}
+        if package:config("shared") then
+            table.insert(configs, "shared")
+        end
         import("package.tools.make").build(package, configs)
         os.cp("inc/*.h", package:installdir("include"))
         os.cp("bin/*", package:installdir("bin"))
-        if package:config("shared") then
-            table.insert(configs, "shared")
-            import("package.tools.make").build(package, configs)
-            os.cp("lib/*.so", package:installdir("lib"))
-        else
-            os.cp("lib/*.a", package:installdir("lib"))
-        end
+        os.trycp("lib/*.so", package:installdir("lib"))
+        os.trycp("lib/*.a", package:installdir("lib"))
     end)
 
     on_test(function (package)
