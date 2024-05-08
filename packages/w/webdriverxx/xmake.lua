@@ -12,10 +12,9 @@ package("webdriverxx")
     add_deps("libcurl", "picojson")
 
     on_install("!bsd and !wasm", function (package)
-        os.rmdir("include/gtest")
-        os.rmdir("include/gmock")
         os.rm("include/webdriverxx/picojson.h")
-        os.cp("include", package:installdir())
+        os.cp("include/webdriverxx.h", package:installdir("include"))
+        os.cp("include/webdriverxx", package:installdir("include"))
     end)
 
     on_test(function (package)
