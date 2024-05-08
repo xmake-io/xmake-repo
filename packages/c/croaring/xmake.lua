@@ -19,7 +19,7 @@ package("croaring")
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_ROARING_TESTS=OFF", "-DROARING_USE_CPM=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DROARING_BUILD_LTO=" .. (package:config("lto") and "ON" or "OFF"))
