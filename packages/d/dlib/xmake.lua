@@ -15,10 +15,14 @@ package("dlib")
     add_configs("sqlite3", {description = "Enable sqlite3", default = false, type = "boolean"})
     add_configs("blas", {description = "Enable blas", default = false, type = "boolean"})
     add_configs("mkl", {description = "Enable mkl", default = false, type = "boolean"})
+    add_configs("jxl", {description = "Enable jpeg xl", default = false, type = "boolean"})
+    add_configs("ffmpeg", {description = "Enable ffmpeg", default = false, type = "boolean"})
     add_configs("webp", {description = "Enable webp", default = false, type = "boolean"})
 
+    add_configs("simd", {description = "SIMD acceleration architecture.", type = "string", values = {"sse2", "sse4", "avx", "neon"}})
+
     if is_plat("linux", "bsd") then
-        add_syslinks("pthread", "nsl")
+        add_syslinks("pthread")
     end
 
     add_deps("cmake")
@@ -41,6 +45,12 @@ package("dlib")
         end
         if package:config("mkl") then
             package:add("deps", "mkl")
+        end
+        if package:config("jxl") then
+            package:add("deps", "libjxl")
+        end
+        if package:config("ffmpeg") then
+            package:add("deps", "ffmpeg")
         end
         if package:version():ge("19.24") and package:config("webp") then
             package:add("deps", "libwebp")
@@ -71,7 +81,18 @@ package("dlib")
         table.insert(configs, "-DDLIB_LINK_WITH_SQLITE3=" .. (package:config("sqlite3") and "ON" or "OFF"))
         table.insert(configs, "-DDLIB_USE_BLAS=" .. (package:config("blas") and "ON" or "OFF"))
         table.insert(configs, "-DDLIB_USE_MKL_FFT=" .. (package:config("mkl") and "ON" or "OFF"))
+        table.insert(configs, "-DDLIB_JXL_SUPPORT=" .. (package:config("jxl") and "ON" or "OFF"))
+        table.insert(configs, "-DDLIB_USE_FFMPEG=" .. (package:config("ffmpeg") and "ON" or "OFF"))
         table.insert(configs, "-DDLIB_WEBP_SUPPORT=" .. (package:config("webp") and "ON" or "OFF"))
+
+        local simd = package:config("simd")
+        table.insert(configs, "-DUSE_NEON_INSTRUCTIONS=" .. ((simd == "neon") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_SSE2_INSTRUCTIONS=" .. ((simd == "sse2") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_SSE4_INSTRUCTIONS=" .. ((simd == "sse4") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_AVX_INSTRUCTIONS=" .. ((simd == "avx") and "ON" or "OFF"))
+        if simd == "sse4" then
+            package:add("defines", "DLIB_HAVE_SSE2", "DLIB_HAVE_SSE3", "DLIB_HAVE_SSE41")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
