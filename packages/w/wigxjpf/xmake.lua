@@ -10,12 +10,13 @@ package("wigxjpf")
         local configs = {}
         import("package.tools.make").build(package, configs)
         os.cp("inc/*.h", package:installdir("include"))
-        os.cp("lib/*.a", package:installdir("lib"))
         os.cp("bin/*", package:installdir("bin"))
         if package:config("shared") then
             table.insert(configs, "shared")
             import("package.tools.make").build(package, configs)
             os.cp("lib/*.so", package:installdir("lib"))
+        else
+            os.cp("lib/*.a", package:installdir("lib"))
         end
     end)
 
