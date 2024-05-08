@@ -1,18 +1,65 @@
 package("dlib")
-
-    set_kind("library", {headeronly = true})
     set_homepage("https://dlib.net")
     set_description("A toolkit for making real world machine learning and data analysis applications in C++")
     set_license("Boost")
 
     add_urls("https://github.com/davisking/dlib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/davisking/dlib.git")
+
     add_versions("v19.24.4", "d881911d68972d11563bb9db692b8fcea0ac1b3fd2e3f03fa0b94fde6c739e43")
     add_versions("v19.22", "5f44b67f762691b92f3e41dcf9c95dd0f4525b59cacb478094e511fdacb5c096")
 
+    add_configs("png", {description = "Enable png", default = false, type = "boolean"})
+    add_configs("jpg", {description = "Enable jpg", default = false, type = "boolean"})
+    add_configs("gif", {description = "Enable gif", default = false, type = "boolean"})
+    add_configs("sqlite3", {description = "Enable sqlite3", default = false, type = "boolean"})
+    add_configs("webp", {description = "Enable webp", default = false, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread", "nsl")
+    end
+
     add_deps("cmake")
-    on_install("windows", "linux", "macosx", function (package)
-        import("package.tools.cmake").install(package)
+
+    on_load(function (package)
+        if package:config("png") then
+            package:add("deps", "libpng")
+        end
+        if package:config("png") then
+            package:add("deps", "libjpeg")
+        end
+        if package:config("gif") then
+            package:add("deps", "giflib")
+        end
+        if package:config("sqlite3") then
+            package:add("deps", "sqlite3")
+        end
+        if package:version():ge("19.24") and package:config("webp") then
+            package:add("deps", "libwebp")
+        end
+    end)
+
+    on_install(function (package)
+        local configs = {
+            "-DDLIB_IN_PROJECT_BUILD=OFF",
+            "-DDLIB_ISO_CPP_ONLY=OFF",
+            "-DDLIB_NO_GUI_SUPPORT=ON"
+        }
+        if package:is_debug() then
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        end
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        table.insert(configs, "-DDLIB_PNG_SUPPORT=" .. (package:config("png") and "ON" or "OFF"))
+        table.insert(configs, "-DDLIB_JPEG_SUPPORT=" .. (package:config("jpg") and "ON" or "OFF"))
+        table.insert(configs, "-DDLIB_GIF_SUPPORT=" .. (package:config("jpg") and "ON" or "OFF"))
+        table.insert(configs, "-DDLIB_LINK_WITH_SQLITE3=" .. (package:config("sqlite3") and "ON" or "OFF"))
+        table.insert(configs, "-DDLIB_WEBP_SUPPORT=" .. (package:config("webp") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
