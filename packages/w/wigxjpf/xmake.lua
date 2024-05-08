@@ -16,16 +16,13 @@ package("wigxjpf")
     on_test(function (package)
         assert(package:check_csnippets({test = [[
             #include "wigxjpf.h"
-            int test()
-            {
+            void test() {
                 double val6j;
-                wig_table_init(2*100, 9);
-                wig_temp_init(2*100);
-                val6j = wig6jj(2*  2 , 2*  2 , 2*  1 ,
-                                2*  2 , 2*  1 , 2*  1 );
+                wig_table_init(2 * 100, 9);
+                wig_temp_init(2 * 100);
+                val6j = wig6jj(2 * 2, 2 * 2, 2 * 1, 2 * 2, 2 * 1, 2 * 1);
                 wig_temp_free();
                 wig_table_free();
-                return 0;
             }
         ]]}))
     end)
