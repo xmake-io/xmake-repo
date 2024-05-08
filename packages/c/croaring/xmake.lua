@@ -19,6 +19,11 @@ package("croaring")
     add_deps("cmake")
 
     on_install(function (package)
+        if package:is_plat("bsd") then
+            -- https://man.freebsd.org/cgi/man.cgi?query=bswap64
+            io.replace("include/roaring/portability.h", "byteswap.h", "sys/endian.h", {plain = true})
+        end
+
         local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_ROARING_TESTS=OFF", "-DROARING_USE_CPM=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
