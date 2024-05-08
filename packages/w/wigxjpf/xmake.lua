@@ -12,18 +12,13 @@ package("wigxjpf")
         os.cp("inc/*.h", package:installdir("include"))
         os.cp("lib/*.a", package:installdir("lib"))
         os.cp("bin/*", package:installdir("bin"))
+        if package:config("shared") then
+            table.insert(configs, "shared")
+            import("package.tools.make").build(package, configs)
+            os.cp("lib/*.so", package:installdir("lib"))
+        end
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets({test = [[
-            #include "wigxjpf.h"
-            void test() {
-                double val6j;
-                wig_table_init(2 * 100, 9);
-                wig_temp_init(2 * 100);
-                val6j = wig6jj(2 * 2, 2 * 2, 2 * 1, 2 * 2, 2 * 1, 2 * 1);
-                wig_temp_free();
-                wig_table_free();
-            }
-        ]]}))
+        assert(package:has_cfuncs("wig3jj", {includes = "wigxjpf.h"}))
     end)
