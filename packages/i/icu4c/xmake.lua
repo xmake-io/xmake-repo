@@ -43,30 +43,44 @@ package("icu4c")
 
     on_install("windows", function (package)
         import("package.tools.msbuild")
+
         local projectfiles = os.files("source/**.vcxproj")
-        table.join2(projectfiles, path.join("source", "allinone", "allinone.sln"), os.files("source/**.props"))
+        local sln = path.join("source", "allinone", "allinone.sln")
+        table.join2(projectfiles, sln, os.files("source/**.props"))
+
         if package:is_cross() then
             -- icu build requires native tools
-            local configs = {path.join("source", "allinone", "allinone.sln")}
-            table.insert(configs, "/p:Configuration=Release")
-            table.insert(configs, "/p:Platform=" .. package:arch())
+            local configs = {
+                sln,
+                "/p:Configuration=Release",
+                "/target:pkgdata,genrb"
+            }
+
+            local arch_prev = package:arch()
+            package:arch_set(os.arch())
             msbuild.build(package, configs, {upgrade = projectfiles})
+            package:arch_set(arch_prev)
         end
-        local configs = {path.join("source", "allinone", "allinone.sln"), "/p:SkipUWP=True", "/p:_IsNativeEnvironment=true"}
+
+        local configs = {
+            sln,
+            "/p:SkipUWP=True",
+            "/p:_IsNativeEnvironment=true"
+        }
 
         if not package:config("tools") then
             table.insert(configs, "/target:common,i18n,uconv,io,stubdata")
         end
         msbuild.build(package, configs, {upgrade = projectfiles})
 
-        local suffix = package:is_plat("arm.*") and "ARM" or ""
+        local suffix = package:is_arch("arm.*") and "ARM" or ""
         if package:is_arch(".*64") then
             suffix = suffix .. "64"
         end
 
-        os.cp("include", package:installdir())
-        os.cp("bin" .. suffix .. "/*", package:installdir("bin"))
-        os.cp("lib" .. suffix .. "/*", package:installdir("lib"))
+        os.vcp("include", package:installdir())
+        os.vcp("bin" .. suffix .. "/*", package:installdir("bin"))
+        os.vcp("lib" .. suffix .. "/*", package:installdir("lib"))
         package:addenv("PATH", "bin")
     end)
 
