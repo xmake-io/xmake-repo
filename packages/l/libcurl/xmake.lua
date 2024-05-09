@@ -80,7 +80,7 @@ package("libcurl")
     on_install("windows", "mingw", "linux", "macosx", "iphoneos", "cross", "android", function (package)
         local version = package:version()
 
-        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF", "-DUSE_MANUAL=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF", "-DENABLE_CURL_MANUAL=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
