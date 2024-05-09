@@ -14,6 +14,9 @@ package("glob")
         if package:config("ghc_filesystem") then
             package:add("deps", "ghc_filesystem")
         end
+        if package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
+        end
     end)
 
     on_install(function (package)
