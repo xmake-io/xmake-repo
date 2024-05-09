@@ -23,7 +23,7 @@ package("webdriverxx")
             #include <webdriverxx.h>
             using namespace webdriverxx;
             void test() {
-                WebDriver phantom = Start(PhantomJS());
+                WebDriver chrome = Start(Chrome());
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
