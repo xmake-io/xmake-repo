@@ -29,7 +29,10 @@ package("spirv-headers")
     add_deps("cmake")
 
     on_install(function (package)
-        import("package.tools.cmake").install(package, {"-DSPIRV_HEADERS_SKIP_EXAMPLES=ON"})
+        import("package.tools.cmake").install(package, {
+            "-DSPIRV_HEADERS_SKIP_EXAMPLES=ON",
+            "-DSPIRV_HEADERS_ENABLE_TESTS=OFF"
+        })
     end)
 
     on_test(function (package)
