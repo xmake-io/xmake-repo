@@ -38,7 +38,7 @@ package("fribidi")
         import("package.tools.autoconf").install(package, configs)
     end)
 
-    on_install(function (package)
+    on_install("windows|x86", "windows|x64", "mingw", "msys", "wasm", "cross", function (package)
         local configs = {"-Ddocs=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs)
