@@ -1,0 +1,13 @@
+diff --git a/include/webdriverxx/by.h b/include/webdriverxx/by.h
+index 0ee2a1b..3f5b44e 100644
+--- a/include/webdriverxx/by.h
++++ b/include/webdriverxx/by.h
+@@ -8,7 +8,7 @@ namespace webdriverxx {
+ 
+ class By { // copyable
+ public:
+-        By() : strategy_("css selector"), value_(nullptr) {}
++        By() : strategy_("css selector"), value_("") {}
+ 
+ 	By(const std::string& strategy, const std::string& value)
+ 		: strategy_(strategy)

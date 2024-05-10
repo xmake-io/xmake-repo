@@ -80,7 +80,7 @@ package("libcurl")
     on_install("windows", "mingw", "linux", "macosx", "iphoneos", "cross", "android", function (package)
         local version = package:version()
 
-        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF", "-DENABLE_CURL_MANUAL=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
@@ -158,7 +158,7 @@ package("libcurl")
         handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {MBEDTLS_LIBRARY = "mbedtls", MBEDX509_LIBRARY = "mbedx509", MBEDCRYPTO_LIBRARY = "mbedcrypto"})
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
     end)
 
     on_test(function (package)
