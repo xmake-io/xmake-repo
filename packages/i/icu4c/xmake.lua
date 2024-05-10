@@ -33,6 +33,10 @@ package("icu4c")
     end
 
     on_load(function (package)
+        if package:config("tools") and package:is_plat("windows") then
+            package:add("deps", "python 3.x", {kind = "binary"})
+        end
+
         local libsuffix = package:is_debug() and package:is_plat("mingw", "windows") and "d" or ""
         package:add("links", "icutu" .. libsuffix, "icuio" .. libsuffix)
         if package:is_plat("mingw", "windows") then
@@ -105,6 +109,8 @@ package("icu4c")
             table.insert(configs, "--with-data-packaging=dll")
         end
 
+        table.insert(configs, "--enable-tools=" .. (package:config("tools") and "yes" or "no"))
+
         local envs = {}
         if package:is_plat("linux") and package:config("pic") ~= false then
             envs = autoconf.buildenvs(package, {cxflags = "-fPIC"})
@@ -113,7 +119,7 @@ package("icu4c")
         end
         -- suppress ar errors when passing --toolchain=clang
         envs.ARFLAGS = nil
-        autoconf.install(package, configs, {envs = envs})
+        autoconf.install(package, configs, {cxxflags = "-std=gnu++17", envs = envs})
         package:addenv("PATH", "bin")
     end)
 
