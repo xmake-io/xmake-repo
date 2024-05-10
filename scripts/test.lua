@@ -57,7 +57,7 @@ function _check_packages(argv, packages, repodir)
 end
 
 -- require packages
-function _require_packages(argv, packages, repodir)
+function _require_packages(argv, packages)
     local config_argv = {"f", "-c"}
     if argv.verbose then
         table.insert(config_argv, "-v")
@@ -173,12 +173,8 @@ function _require_packages(argv, packages, repodir)
     end
     local extra_str = string.serialize(extra, {indent = false, strip = true})
     table.insert(require_argv, "--extra=" .. extra_str)
-
-    packages = _check_packages(argv, packages, repodir)
-    if #packages ~= 0 then
-        table.join2(require_argv, packages)
-        os.vexecv("xmake", require_argv)
-    end
+    table.join2(require_argv, packages)
+    os.vexecv("xmake", require_argv)
 end
 
 -- the given package is supported?
@@ -240,8 +236,10 @@ function main(...)
         return
     end
 
-    -- prepare test project
     local repodir = os.curdir()
+    packages = _check_packages(argv, packages, repodir)
+
+    -- prepare test project
     local workdir = path.join(os.tmpdir(), "xmake-repo")
     print(packages)
     os.setenv("XMAKE_STATS", "false")
@@ -269,8 +267,8 @@ function main(...)
     os.exec("xmake repo -l")
 
     -- require packages
-    _require_packages(argv, packages, repodir)
+    _require_packages(argv, packages)
     --[[for _, package in ipairs(packages) do
-        _require_packages(argv, package, repodir)
+        _require_packages(argv, package)
     end]]
 end
