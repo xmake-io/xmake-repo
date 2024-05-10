@@ -6,6 +6,7 @@ package("icu4c")
     add_urls("https://github.com/unicode-org/icu/releases/download/release-$(version)-src.tgz", {version = function (version)
             return (version:gsub("%.", "-")) .. "/icu4c-" .. (version:gsub("%.", "_"))
         end})
+    add_versions("75.1", "cb968df3e4d2e87e8b11c49a5d01c787bd13b9545280fc6642f826527618caef")
     add_versions("73.2", "818a80712ed3caacd9b652305e01afc7fa167e6f2e94996da44b90c2ab604ce1")
     add_versions("73.1", "a457431de164b4aa7eca00ed134d00dfbf88a77c6986a10ae7774fc076bb8c45")
     add_versions("72.1", "a2d2d38217092a7ed56635e34467f92f976b370e20182ad325edea6681a71d68")
@@ -32,6 +33,10 @@ package("icu4c")
     end
 
     on_load(function (package)
+        if package:config("tools") and package:is_plat("windows") then
+            package:add("deps", "python 3.x", {kind = "binary"})
+        end
+
         local libsuffix = package:is_debug() and package:is_plat("mingw", "windows") and "d" or ""
         package:add("links", "icutu" .. libsuffix, "icuio" .. libsuffix)
         if package:is_plat("mingw", "windows") then
@@ -104,11 +109,13 @@ package("icu4c")
             table.insert(configs, "--with-data-packaging=dll")
         end
 
+
         local envs = {}
+        local cxxflags = "-std=gnu++17"
         if package:is_plat("linux") and package:config("pic") ~= false then
-            envs = autoconf.buildenvs(package, {cxflags = "-fPIC"})
+            envs = autoconf.buildenvs(package, {cxflags = "-fPIC", cxxflags = cxxflags})
         else
-            envs = autoconf.buildenvs(package)
+            envs = autoconf.buildenvs(package, {cxxflags = cxxflags})
         end
         -- suppress ar errors when passing --toolchain=clang
         envs.ARFLAGS = nil
