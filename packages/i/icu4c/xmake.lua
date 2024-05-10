@@ -109,15 +109,17 @@ package("icu4c")
             table.insert(configs, "--with-data-packaging=dll")
         end
 
+
         local envs = {}
+        local cxxflags = "-std=gnu++17"
         if package:is_plat("linux") and package:config("pic") ~= false then
-            envs = autoconf.buildenvs(package, {cxflags = "-fPIC"})
+            envs = autoconf.buildenvs(package, {cxflags = "-fPIC", cxxflags = cxxflags})
         else
-            envs = autoconf.buildenvs(package)
+            envs = autoconf.buildenvs(package, {cxxflags = cxxflags})
         end
         -- suppress ar errors when passing --toolchain=clang
         envs.ARFLAGS = nil
-        autoconf.install(package, configs, {cxxflags = "-std=gnu++17", envs = envs})
+        autoconf.install(package, configs, {envs = envs})
         package:addenv("PATH", "bin")
     end)
 
