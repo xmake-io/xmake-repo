@@ -39,9 +39,25 @@ local options =
 ,   {nil, "packages",       "vs", nil, "The package list."                          }
 }
 
+-- check package need test?
+function _check_packages(argv, packages, repodir)
+    local need_test_packages = {}
+    for _, package in ipairs(packages) do
+        local check_filepath = path.join(repodir, "packages", string.sub(package, 1, 1), package, "check.lua")
+        if os.isfile(check_filepath) then
+            local check = import("check", {rootdir = path.directory(check_filepath), anonymous = true})
+            if check(argv) then
+                table.insert(need_test_packages, package)
+            end
+        else
+            table.insert(need_test_packages, package)
+        end
+    end
+    return need_test_packages
+end
 
 -- require packages
-function _require_packages(argv, packages)
+function _require_packages(argv, packages, repodir)
     local config_argv = {"f", "-c"}
     if argv.verbose then
         table.insert(config_argv, "-v")
@@ -157,8 +173,12 @@ function _require_packages(argv, packages)
     end
     local extra_str = string.serialize(extra, {indent = false, strip = true})
     table.insert(require_argv, "--extra=" .. extra_str)
-    table.join2(require_argv, packages)
-    os.vexecv("xmake", require_argv)
+
+    packages = _check_packages(argv, packages, repodir)
+    if #packages ~= 0 then
+        table.join2(require_argv, packages)
+        os.vexecv("xmake", require_argv)
+    end
 end
 
 -- the given package is supported?
@@ -249,8 +269,8 @@ function main(...)
     os.exec("xmake repo -l")
 
     -- require packages
-    _require_packages(argv, packages)
+    _require_packages(argv, packages, repodir)
     --[[for _, package in ipairs(packages) do
-        _require_packages(argv, package)
+        _require_packages(argv, package, repodir)
     end]]
 end
