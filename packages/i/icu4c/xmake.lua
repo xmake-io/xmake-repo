@@ -109,8 +109,6 @@ package("icu4c")
             table.insert(configs, "--with-data-packaging=dll")
         end
 
-        table.insert(configs, "--enable-tools=" .. (package:config("tools") and "yes" or "no"))
-
         local envs = {}
         if package:is_plat("linux") and package:config("pic") ~= false then
             envs = autoconf.buildenvs(package, {cxflags = "-fPIC"})
