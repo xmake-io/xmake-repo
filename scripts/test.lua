@@ -161,11 +161,16 @@ function _require_packages(argv, packages)
     local extra_str = string.serialize(extra, {indent = false, strip = true})
     table.insert(require_argv, "--extra=" .. extra_str)
     table.insert(check_argv, "--extra=" .. extra_str)
-    table.join2(check_argv, packages)
-    table.join2(require_argv, packages)
-    local ok = os.vexecv("xmake", check_argv, {try = true})
-    if ok == 0 then
-        os.vexecv("xmake", require_argv)
+
+    local install_packages = {}
+    for _, package in ipairs(packages) do
+        local ok = os.vexecv("xmake", table.join(check_argv, package), {try = true})
+        if ok == 0 then
+            table.insert(install_packages, package)
+        end
+    end
+    if #install_packages > 0 then
+        os.vexecv("xmake", table.join(require_argv, install_packages))
     end
 end
 
