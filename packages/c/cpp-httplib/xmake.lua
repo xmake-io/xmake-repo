@@ -19,7 +19,7 @@ package("cpp-httplib")
     add_versions("0.15.1", "8d6a4a40ee8fd3f553b7e895882e60e674bd910883fc1857587dbbabee3cdb91")
     add_versions("0.15.2", "4afbcf4203249d2cbcb698e46e1f6fb61b479013a84844d6bb1c044e233cab6a")
     add_versions("0.15.3", "2121bbf38871bb2aafb5f7f2b9b94705366170909f434428352187cb0216124e")
-    
+
     add_configs("ssl",  { description = "Requires OpenSSL", default = false, type = "boolean"})
     add_configs("zlib",  { description = "Requires Zlib", default = false, type = "boolean"})
     add_configs("brotli",  { description = "Requires Brotli", default = false, type = "boolean"})
@@ -41,6 +41,15 @@ package("cpp-httplib")
             package:add("defines", "CPPHTTPLIB_BROTLI_SUPPORT")
         end
     end)
+
+    if on_check then
+        on_check("android", function (package)
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
+        end)
+    end
 
     on_install(function (package)
         if package:is_plat("android") then

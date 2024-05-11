@@ -110,14 +110,17 @@ function _require_packages(argv, packages)
     end
     os.vexecv("xmake", config_argv)
     local require_argv = {"require", "-f", "-y"}
+    local check_argv = {"require", "-f", "-y", "--check"}
     if not argv.precompiled then
         table.insert(require_argv, "--build")
     end
     if argv.verbose then
         table.insert(require_argv, "-v")
+        table.insert(check_argv, "-v")
     end
     if argv.diagnosis then
         table.insert(require_argv, "-D")
+        table.insert(check_argv, "-D")
     end
     local is_debug = false
     if argv.debugdir then
@@ -157,8 +160,13 @@ function _require_packages(argv, packages)
     end
     local extra_str = string.serialize(extra, {indent = false, strip = true})
     table.insert(require_argv, "--extra=" .. extra_str)
+    table.insert(check_argv, "--extra=" .. extra_str)
+    table.join2(check_argv, packages)
     table.join2(require_argv, packages)
-    os.vexecv("xmake", require_argv)
+    local ok = os.vexecv("xmake", check_argv, {try = true})
+    if ok == 0 then
+        os.vexecv("xmake", require_argv)
+    end
 end
 
 -- the given package is supported?
