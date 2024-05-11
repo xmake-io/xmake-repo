@@ -21,6 +21,7 @@ package("cglm")
             local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             if msvc then
                 local vs_sdkver = msvc:config("vs_sdkver")
+                print(vs_sdkver)
                 assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(cglm): need vs_sdkver > 10.0.19041.0")
             end
         end)
