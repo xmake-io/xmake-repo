@@ -18,8 +18,11 @@ package("cglm")
             import("core.tool.toolchain")
             import("core.base.semver")
 
-            local vs_sdkver = toolchain.load("msvc"):config("vs_sdkver")
-            assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(cglm): need vs_sdkver > 10.0.19041.0")
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            if msvc then
+                local vs_sdkver = msvc:config("vs_sdkver")
+                assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(cglm): need vs_sdkver > 10.0.19041.0")
+            end
         end)
     end
 
