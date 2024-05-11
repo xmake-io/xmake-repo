@@ -172,7 +172,7 @@ function _require_packages(argv, packages)
     if #install_packages > 0 then
         os.vexecv("xmake", table.join(require_argv, install_packages))
     else
-        print("no testable packages on %s!", argv.plat or os.subhost())
+        print("no testable packages on %s or you're using lower version xmake!", argv.plat or os.subhost())
     end
 end
 
