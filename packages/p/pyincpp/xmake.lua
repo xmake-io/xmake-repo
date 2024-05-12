@@ -26,5 +26,5 @@ package("pyincpp")
                 assert(map.keys() == Set<String>({"first", "second", "third"}));
                 assert(map["third"][-1].factorial() == 120);
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "pyincpp/pyincpp.hpp"}))
+        ]]}, {configs = {languages = "c++20"}, includes = "pyincpp/pyincpp.hpp"}))
     end)
