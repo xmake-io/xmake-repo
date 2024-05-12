@@ -1,0 +1,33 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 33bc40f41..a5d0c5b6d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -111,6 +111,7 @@ include(XercesICU)
+ include(XercesMutexMgrSelection)
+ include(XercesNetAccessorSelection)
+ include(XercesMsgLoaderSelection)
++include(XercesWChar)
+ include(XercesTranscoderSelection)
+ include(XercesFileMgrSelection)
+ include(XercesXMLCh)
+@@ -126,7 +127,6 @@ include(XercesStdLibs)
+ include(XercesStdNamespace)
+ include(XercesSSE2)
+ include(XercesPathMax)
+-include(XercesWChar)
+ include(XercesIconvConst)
+ include(XercesLFS)
+ 
+diff --git a/cmake/XercesTranscoderSelection.cmake b/cmake/XercesTranscoderSelection.cmake
+index 4ff5b1621..862cc4908 100644
+--- a/cmake/XercesTranscoderSelection.cmake
++++ b/cmake/XercesTranscoderSelection.cmake
+@@ -82,7 +82,7 @@ check_function_exists(wcstombs HAVE_WCSTOMBS)
+ check_function_exists(mbstowcs HAVE_MBSTOWCS)
+ 
+ set(iconv_available 0)
+-if(HAVE_WCHAR_H AND HAVE_MBLEN AND HAVE_WCSTOMBS AND HAVE_MBSTOWCS)
++if(HAVE_WCHAR_H AND (HAVE_MBRLEN OR HAVE_MBLEN) AND HAVE_WCSTOMBS AND HAVE_MBSTOWCS)
+   set(iconv_available 1)
+   list(APPEND transcoders iconv)
+ endif()
