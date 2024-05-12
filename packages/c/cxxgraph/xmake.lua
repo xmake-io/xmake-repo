@@ -9,6 +9,18 @@ package("cxxgraph")
 
     add_versions("v3.1.0", "54838d0d35a6f2685cf45e50e888146aef3c1a10fbbdddb939b3985c7953087a")
 
+    if on_check then
+        on_check("windows", function (package)
+            import("core.tool.toolchain")
+
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            if msvc then
+                local vs = msvc:config("vs")
+                assert(vs and tonumber(vs) >= 2022, "package(cxxgraph): need vs >= 2022")
+            end
+        end)
+    end
+
     on_install(function (package)
         os.cp("include", package:installdir())
     end)
