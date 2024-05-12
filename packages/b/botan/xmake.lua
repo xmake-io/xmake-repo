@@ -10,8 +10,8 @@ package("botan")
 
     add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
     add_configs("python", {description = "Enable python module", default = false, type = "boolean"})
-    add_configs("endian", {description = [[The parameter should be either “little” or “big”. If not used then if the target architecture has a default, that is used. Otherwise left unspecified, which causes less optimal codepaths to be used but will work on either little or big endian.]], default = nil, type = "string", values = {"little", "big"}})
-    add_configs("modules", {description = "Enable modules, example: zlib,lzma...", default = nil, type = "string"})
+    add_configs("endian", {description = [[The  parameter should be either “little” or “big”. If not used then if the target architecture has a default, that is used. Otherwise left unspecified, which causes less optimal codepaths to be used but will work on either little or big endian.]], default = nil, type = "string", values = {"little", "big"}})
+    add_configs("modules", {description = [[Enable modules, example: {configs = {modules = {"zlib", "lzma"}}}]], type = "table"})
     if is_plat("wasm") then 
           add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) 
     end
@@ -30,7 +30,21 @@ package("botan")
         add_syslinks("pthread")
     end
 
+    if on_check then
+        on_check("windows", function (package)
+            import("core.tool.toolchain")
+
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            if msvc then
+                local vs = msvc:config("vs")
+                assert(vs and tonumber(vs) >= 2022, "package(botan): current version need vs >= 2022")
+            end
+        end)
+    end
+
     on_load(function (package)
+        import("core.base.hashset")
+
         local major = "3"
         if package:version() then
             major = package:version():major()
@@ -39,7 +53,7 @@ package("botan")
 
         local modules = package:config("modules")
         if modules then
-            local deps = import("core.base.hashset").from(modules:split(","))
+            local deps = hashset.from(modules)
             if deps then
                 for _, dep in ipairs({"boost", "bzip2", "lzma", "sqlite3", "zlib"}) do
                     if deps:has(dep) then
@@ -134,8 +148,9 @@ package("botan")
         end
         table.insert(configs, "--build-targets=" .. targets)
 
-        if package:config("modules") then
-            table.insert(configs, "--enable-modules=" .. package:config("modules"))
+        local modules = package:config("modules")
+        if modules then
+            table.insert(configs, "--enable-modules=" .. table.concat(modules, ","))
         end
 
         if not package:config("python") then
