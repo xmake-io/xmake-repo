@@ -6,6 +6,7 @@ package("ufbx")
     set_urls("https://github.com/ufbx/ufbx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ufbx/ufbx.git")
 
+    add_versions("v0.14.0", "7bc48494b236e2ed41000f0008cecc9459956dd25154d91c4af4144c2a26fe6d")
     add_versions("v0.13.0", "7715ca1e66c005dea6cfe4817be71fa8e31a8e3d36bed18aec5e0df1a953a22c")
     add_versions("v0.12.0", "5897de4ff727f718df8b2dbe30797fbcbb0f2d7d47ec52f01d30729e62b314b3")
     add_versions("v0.11.1", "c95a698076179fcb1deb163cea9ab0c7c1cdc6b1bc7fb492da20f4a1315a186a")

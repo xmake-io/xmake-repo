@@ -9,6 +9,7 @@ package("shaderc")
     add_versions("v2024.0", "c761044e4e204be8e0b9a2d7494f08671ca35b92c4c791c7049594ca7514197f")
     add_versions("v2022.2", "517d36937c406858164673db696dc1d9c7be7ef0960fbf2965bfef768f46b8c0")
 
+    add_configs("binaryonly", {description = "Only use binary program.", default = false, type = "boolean"})
     add_configs("exceptions", {description = "Enable exception handling", default = true, type = "boolean"})
     if is_plat("windows", "wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -21,15 +22,15 @@ package("shaderc")
     end
 
     on_load(function (package)
-        if package:is_binary() then
+        if package:config("binaryonly") then
             package:set("kind", "binary")
+        end
+
+        if package:version():ge("2022.3") then
+            package:add("deps", "glslang")
         else
-            if package:version():ge("2022.3") then
-                package:add("deps", "glslang")
-            else
-                -- real version: glslang <1.3.231.0
-                package:add("deps", "glslang <=1.3.211")
-            end
+            -- real version: glslang <1.3.231.0
+            package:add("deps", "glslang <=1.3.211")
         end
         package:add("deps", "spirv-tools", "spirv-headers")
 

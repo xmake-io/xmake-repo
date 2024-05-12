@@ -16,12 +16,14 @@ package("glslang")
     add_versions("1.3.261+1", "76b52ebf77833908dc4c0dd6c70a9c357ac720bd")
     add_versions("1.3.268+0", "36d08c0d940cf307a23928299ef52c7970d8cee6")
     add_versions("1.3.275+0", "a91631b260cba3f22858d6c6827511e636c2458a")
+    add_versions("1.3.280+0", "ee2f5d09eaf8f4e8d0d598bd2172fce290d4ca60")
 
     add_patches("1.3.246+1", "https://github.com/KhronosGroup/glslang/commit/1e4955adbcd9b3f5eaf2129e918ca057baed6520.patch", "47893def550f1684304ef7c49da38f0a8fe35c190a3452d3bf58370b3ee7165d")
 
     add_configs("binaryonly", {description = "Only use binary program.", default = false, type = "boolean"})
     add_configs("exceptions", {description = "Build with exception support.", default = false, type = "boolean"})
     add_configs("rtti",       {description = "Build with RTTI support.", default = false, type = "boolean"})
+    add_configs("default_resource_limits",       {description = "Build with default resource limits.", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -79,6 +81,9 @@ package("glslang")
         import("package.tools.cmake").install(package, configs, {packagedeps = {"spirv-tools"}})
         if not package:config("binaryonly") then
             package:add("links", "glslang", "MachineIndependent", "GenericCodeGen", "OGLCompiler", "OSDependent", "HLSL", "SPIRV", "SPVRemapper")
+        end
+        if package:config("default_resource_limits") then
+            package:add("links", "glslang", "glslang-default-resource-limits")
         end
 
         -- https://github.com/KhronosGroup/glslang/releases/tag/12.3.0
