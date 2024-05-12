@@ -5,7 +5,7 @@ package("spectra")
     set_description("Sparse Eigenvalue Computation Toolkit as a Redesigned ARPACK")
     set_license("MPL-2.0")
 
-    add_urls("https://github.com/yixuan/spectra/archive/refs/tags/v1.0.1.tar.gz",
+    add_urls("https://github.com/yixuan/spectra/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yixuan/spectra.git")
     add_versions("v1.0.1", "919e3fbc8c539a321fd5a0766966922b7637cc52eb50a969241a997c733789f3")
 
