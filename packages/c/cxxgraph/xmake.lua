@@ -14,5 +14,5 @@ package("cxxgraph")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("CXXGraph::Graph<int>", {configs = {languages = "c++20"}, includes = "CXXGraph/CXXGraph.hpp"}))
+        assert(package:has_cxxtypes("CXXGraph::Graph<int>", {configs = {languages = "c++20"}, includes = {"algorithm", "CXXGraph/CXXGraph.hpp"}}))
     end)
