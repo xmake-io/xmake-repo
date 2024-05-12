@@ -334,8 +334,8 @@ package("boost")
 
         local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})
         if ok ~= 0 then
+            vprint(io.readfile(path.join(os.curdir(), "boost-log.txt")))
             raise("boost build failed, please check log in " .. path.join(os.curdir(), "boost-log.txt"))
-            raise(io.readfile(path.join(os.curdir(), "boost-log.txt")))
         end
     end)
 
