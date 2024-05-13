@@ -18,8 +18,3 @@ target("sodium")
         add_defines("SODIUM_DLL_EXPORT")
     end
 
-    on_config(function (target)
-        if target:has_tool("cc", "gcc") and target:is_arch("arm.*") then
-            target:add("defines", "HAVE_AMD64_ASM")
-        end
-    end)
