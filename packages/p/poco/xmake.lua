@@ -1,11 +1,11 @@
 package("poco")
-
     set_homepage("https://pocoproject.org/")
     set_description("The POCO C++ Libraries are powerful cross-platform C++ libraries for building network- and internet-based applications that run on desktop, server, mobile, IoT, and embedded systems.")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/pocoproject/poco/archive/refs/tags/poco-$(version)-release.tar.gz",
-    "https://github.com/pocoproject/poco.git")
+             "https://github.com/pocoproject/poco.git")
+
     add_versions("1.11.0", "8a7bfd0883ee95e223058edce8364c7d61026ac1882e29643822ce9b753f3602")
     add_versions("1.11.1", "2412a5819a239ff2ee58f81033bcc39c40460d7a8b330013a687c8c0bd2b4ac0")
     add_versions("1.11.6", "ef0ac1bd1fe4d84b38cde12fbaa7a441d41bfbd567434b9a57ef8b79a8367e74")
