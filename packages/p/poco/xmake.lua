@@ -1,11 +1,11 @@
 package("poco")
-
     set_homepage("https://pocoproject.org/")
     set_description("The POCO C++ Libraries are powerful cross-platform C++ libraries for building network- and internet-based applications that run on desktop, server, mobile, IoT, and embedded systems.")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/pocoproject/poco/archive/refs/tags/poco-$(version)-release.tar.gz",
              "https://github.com/pocoproject/poco.git")
+
     add_versions("1.11.0", "8a7bfd0883ee95e223058edce8364c7d61026ac1882e29643822ce9b753f3602")
     add_versions("1.11.1", "2412a5819a239ff2ee58f81033bcc39c40460d7a8b330013a687c8c0bd2b4ac0")
     add_versions("1.11.6", "ef0ac1bd1fe4d84b38cde12fbaa7a441d41bfbd567434b9a57ef8b79a8367e74")
@@ -14,6 +14,7 @@ package("poco")
     add_versions("1.12.2", "30442ccb097a0074133f699213a59d6f8c77db5b2c98a7c1ad9c5eeb3a2b06f3")
     add_versions("1.12.4", "71ef96c35fced367d6da74da294510ad2c912563f12cd716ab02b6ed10a733ef")
     add_versions("1.12.5", "92b18eb0fcd2263069f03e7cc80f9feb43fb7ca23b8c822a48e42066b2cd17a6")
+    add_versions("1.13.3", "9f074d230daf30f550c5bde5528037bdab6aa83b2a06c81a25e89dd3bcb7e419")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
