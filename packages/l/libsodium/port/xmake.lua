@@ -19,7 +19,7 @@ target("sodium")
     end
 
     on_config(function (target)
-        if (not target:has_tool("cc", "cl")) and target:is_arch("arm.*") then
+        if target:has_tool("cc", "gcc") and target:is_arch("arm.*") then
             target:add("defines", "HAVE_AMD64_ASM")
         end
     end)
