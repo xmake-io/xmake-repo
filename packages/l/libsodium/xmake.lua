@@ -14,19 +14,17 @@ package("libsodium")
         add_deps("autoconf", "automake", "libtool", "pkg-config")
     end
 
-    on_load(function (package)
+    on_install(function (package)
         if not package:config("shared") then
             package:add("defines", "SODIUM_STATIC")
         end
-    end)
 
-    on_install("!linux and !macosx", function (package)
-        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
-    end)
-
-    on_install("linux", "macosx", function (package)
-        import("package.tools.autoconf").install(package)
+        if package:is_plat("linux", "macosx") then
+            import("package.tools.autoconf").install(package)
+        else
+            os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+            import("package.tools.xmake").install(package)
+        end
     end)
 
     on_test(function (package)

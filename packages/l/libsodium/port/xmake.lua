@@ -13,8 +13,7 @@ target("sodium")
 
     if is_kind("static") then
         add_defines("SODIUM_STATIC")
-    elseif is_kind("shared") then
+    elseif is_kind("shared") and is_host("windows") then
         add_files("builds/msvc/resource.rc")
         add_defines("SODIUM_DLL_EXPORT")
     end
-
