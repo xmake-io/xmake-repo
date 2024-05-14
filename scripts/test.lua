@@ -1,6 +1,7 @@
 -- imports
 import("core.base.option")
 import("core.platform.platform")
+import("core.package.package", {alias = "core_package"})
 import("packages", {alias = "get_packages"})
 
 -- the options
@@ -39,6 +40,16 @@ local options =
 ,   {nil, "packages",       "vs", nil, "The package list."                          }
 }
 
+-- check package is supported?
+function _check_package_is_supported()
+    for _, names in pairs(core_package.apis()) do
+        for _, name in ipairs(names) do
+            if type(name) == "string" and name == "package.on_check" then
+                return true
+            end
+        end
+    end
+end
 
 -- require packages
 function _require_packages(argv, packages)
@@ -163,11 +174,15 @@ function _require_packages(argv, packages)
     table.insert(check_argv, "--extra=" .. extra_str)
 
     local install_packages = {}
-    for _, package in ipairs(packages) do
-        local ok = os.vexecv("xmake", table.join(check_argv, package), {try = true})
-        if ok == 0 then
-            table.insert(install_packages, package)
+    if _check_package_is_supported() then
+        for _, package in ipairs(packages) do
+            local ok = os.vexecv("xmake", table.join(check_argv, package), {try = true})
+            if ok == 0 then
+                table.insert(install_packages, package)
+            end
         end
+    else
+        install_packages = packages
     end
     if #install_packages > 0 then
         os.vexecv("xmake", table.join(require_argv, install_packages))
