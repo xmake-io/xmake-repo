@@ -15,6 +15,18 @@ package("libfork")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("windows", function (package)
+            import("core.tool.toolchain")
+
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            if msvc then
+                local vs = msvc:config("vs")
+                assert(vs and tonumber(vs) >= 2022, "package(libfork): need vs >= 2022")
+            end
+        end)
+    end    
+
     on_install(function (package)
         import("package.tools.cmake").install(package, {
             "-DCMAKE_INSTALL_INCLUDEDIR=" .. package:installdir("include")
