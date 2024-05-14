@@ -4,6 +4,7 @@ package("cppcheck")
     set_description("A static analysis tool for C/C++ code")
 
     add_urls("https://github.com/danmar/cppcheck/archive/refs/tags/$(version).tar.gz")
+    add_versions("2.14.0", "2d2ead75db10c5993d77c8dfe854dc42b00fac65953611bb6c83e25fc74b9d50")
     add_versions("2.13.4", "d6ea064ebab76c6aa000795440479767d8d814dd29405918df4c1bbfcd6cb86c")
     add_versions("2.13.0", "8229afe1dddc3ed893248b8a723b428dc221ea014fbc76e6289840857c03d450")
 
