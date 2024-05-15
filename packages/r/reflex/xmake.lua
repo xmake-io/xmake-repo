@@ -41,5 +41,7 @@ package("reflex")
     end)
 
     on_test(function (package)
-        os.vrun("reflex -V")
+        if package:is_plat(os.host()) then
+            os.vrun("reflex -V")
+        end
     end)
