@@ -41,7 +41,11 @@ package("reflex")
     end)
 
     on_test(function (package)
-        if package:is_plat(os.host()) then
-            os.vrun("reflex -V")
-        end
+        assert(package:check_cxxsnippets({test = [[
+            #include <reflex/matcher.h>
+            void test()
+            {
+                reflex::Matcher matcher("\w+","114 514 1919 810");
+            }
+        ]]}, {configs = {languages = "cxx11"}}))
     end)
