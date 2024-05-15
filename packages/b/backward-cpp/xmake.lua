@@ -33,7 +33,7 @@ package("backward-cpp")
     on_install("linux", "mingw", "macosx", "windows", function (package)
         if package:config("bfd") and package:is_plat("linux", "mingw@msys", "macos") then
             package:add("syslinks", "bfd")
-            package:add("defines", "-DBACKWARD_HAS_BFD=1")
+            package:add("defines", "BACKWARD_HAS_BFD=1")
         end
         local configs = {"-DBACKWARD_TESTS=OFF"}
         table.insert(configs, "-DBACKWARD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
