@@ -5,6 +5,7 @@ package("nghttp3")
 
     add_urls("https://github.com/ngtcp2/nghttp3/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ngtcp2/nghttp3.git")
+
     add_versions("v1.3.0", "a83c6a4f589ae777a5f967652969d99b3399a85971340b8de9bed79119a11f88")
 
     add_patches("v1.3.0", "patches/vendor.patch", "51ab785328270b8df854283a8c20403c09813b0586eb84702a9c20241ff14980")
@@ -18,8 +19,6 @@ package("nghttp3")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-        io.replace("lib/nghttp3_http.c", "sfparse/sfparse.h", "sfparse.h", {plain = true})
-
         local configs = {"-DENABLE_LIB_ONLY=ON", "-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
