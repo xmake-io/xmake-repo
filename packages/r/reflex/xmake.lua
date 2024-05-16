@@ -1,57 +1,50 @@
-package("reflex")
-    set_description("The reflex package")
+package("re-flex")
+    set_homepage("https://www.genivia.com/doc/reflex/html")
+    set_description("A high-performance C++ regex library and lexical analyzer generator with Unicode support. Extends Flex++ with Unicode support, indent/dedent anchors, lazy quantifiers, functions for lex and syntax error reporting and more. Seamlessly integrates with Bison and other parsers.")
+    set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/Genivia/RE-flex/archive/refs/tags/v$(version).tar.gz","https://github.com/Genivia/RE-flex.git")
-    add_versions("3.5.1", "e08ed24a6799a6976f6e32312be1ee059b4b6b55f8af3b433a3016d63250c0e4")
-    add_versions("4.3.0", "1658c1be9fa95bf948a657d75d2cef0df81b614bc6052284935774d4d8551d95")
+    add_urls("https://github.com/Genivia/RE-flex/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/Genivia/RE-flex.git")
 
-    add_includedirs("include")
-
-    on_load(function (package)
-        package:addenv("PATH", "bin")
-    end)
+    add_versions("v4.3.0", "1658c1be9fa95bf948a657d75d2cef0df81b614bc6052284935774d4d8551d95")
 
     on_install(function (package)
         io.writefile("xmake.lua",[[
-set_languages("cxx11")
+            add_rules("mode.debug", "mode.release")
+            set_languages("cxx11")
+            add_includedirs("include")
+            set_encodings("utf-8")
+            if not is_plat("cross") then
+                add_vectorexts("all")
+            end
 
-target("ReflexLib")
-    set_kind("shared")
-    add_includedirs("include")
-    add_headerfiles("include/reflex/*.h", {prefixdir = "reflex"})
-    add_files("lib/*.cpp")
-    add_files("unicode/*.cpp")
-    add_vectorexts("all")
-target_end()
+            target("re-flex")
+                set_kind("$(kind)")
+                add_headerfiles("include/reflex/*.h", {prefixdir = "reflex"})
+                add_files("lib/*.cpp")
+                add_files("unicode/*.cpp")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
 
-target("ReflexLibStatic")
-    set_kind("static")
-    add_includedirs("include")
-    add_headerfiles("include/reflex/*.h", {prefixdir = "reflex"})
-    add_files("lib/*.cpp")
-    add_files("unicode/*.cpp")
-    add_vectorexts("all")
-target_end()
-
-target("Reflex")
-    set_kind("binary")
-    add_includedirs("include")
-    add_files("src/*.cpp")
-    add_deps("ReflexLibStatic")
-    add_vectorexts("all")
-target_end()
+            target("reflex")
+                set_kind("binary")
+                add_files("src/*.cpp")
+                add_deps("re-flex")
         ]])
         local configs = {}
+        if package:config("shared") then
+            configs.kind = "shared"
+        end
         import("package.tools.xmake").install(package, configs)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <reflex/matcher.h>
-            void test()
-            {
+            void test() {
                 reflex::Matcher matcher("\w+","114 514 1919 810");
             }
         ]]}, {configs = {languages = "cxx11"}}))
     end)
-package_end()
