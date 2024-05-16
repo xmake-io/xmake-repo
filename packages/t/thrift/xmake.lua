@@ -17,7 +17,7 @@ package("thrift")
         add_deps("flex", "bison")
     end
 
-    local configdeps = {"glib", "libevent", "openssl", "zlib"}
+    local configdeps = {"glib", "libevent", "openssl", "zlib", "qt5"}
     for _, dep in pairs(configdeps) do
         add_configs(config, {description = "Enable " .. dep .. " support.", default = false, type = "boolean"})
     end
@@ -25,23 +25,22 @@ package("thrift")
     on_load(function (package)
         for _, dep in pairs(configdeps) do
             if package:config(dep) then
-                if dep == "libevent" and package:config("ssl") then
+                if dep == "libevent" and package:config("openssl") then
                     package:add("deps", "libevent", {configs = {openssl = true}})
+                elseif package:config("openssl") then
+                    package:add("deps", "openssl3")
+                elseif package:config("qt5") then
+                    package:add("deps", "qt5core", "qt5network")
                 else
-                    if package:config("ssl") then
-                        package:add("deps", "openssl3")
-                    else
-                        package:add("deps", dep)
-                    end
+                    package:add("deps", dep)
                 end
             end
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "cross", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
-            "-DWITH_STDTHREADS=ON",
             "-DBUILD_TUTORIALS=OFF",
 
             "-DBUILD_CPP=ON",
@@ -53,16 +52,17 @@ package("thrift")
 
         for _, dep in pairs(configdeps) do
             local feat = dep:upper()
-            if config == "glib" then
+            if dep == "glib" then
                 feat = "C_GLIB"
             end
-            table.insert(configs, "-DWITH_" .. feat .. "=" .. (package:config(config) and "ON" or "OFF"))
+            table.insert(configs, "-DWITH_" .. feat .. "=" .. (package:config(dep) and "ON" or "OFF"))
         end
 
-        table.insert(configs, "-DBUILD_COMPILER=" .. (package:config("compiler") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_COMPILER=" .. (package:config("compiler") and "ON" or "OFF"))
         if package:is_plat("windows") then
+            table.insert(configs, "-DLIB_INSTALL_DIR=lib")
             table.insert(configs, "-DWITH_MT=" .. (package:has_runtime("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
@@ -73,5 +73,5 @@ package("thrift")
             apache::thrift::transport::TTransport* test() {
                 return new apache::thrift::transport::TSocket("localhost", 9090);
             }
-        ]]}, {configs = {languages = "c++11"}, includes="thrift/transport/TSocket.h"}))
+        ]]}, {configs = {languages = "c++11"}, includes = "thrift/transport/TSocket.h"}))
     end)
