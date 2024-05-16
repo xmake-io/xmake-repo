@@ -8,6 +8,8 @@ package("thrift")
 
     add_versions("v0.16.0", "df2931de646a366c2e5962af679018bca2395d586e00ba82d09c0379f14f8e7b")
 
+    add_patches(">=0.16.0", "patches/0.16.0/cmake.patch", "8dd82f54d52a37487e64aa3529f4dbcedcda671ab46fcb7a8c0f2c521ee0be9b")
+
     add_configs("compiler", {description = "Build compiler", default = false, type = "boolean"})
 
     add_deps("cmake", "boost")
@@ -19,7 +21,7 @@ package("thrift")
 
     local configdeps = {"glib", "libevent", "openssl", "zlib", "qt5"}
     for _, dep in pairs(configdeps) do
-        add_configs(config, {description = "Enable " .. dep .. " support.", default = false, type = "boolean"})
+        add_configs(dep, {description = "Enable " .. dep .. " support.", default = false, type = "boolean"})
     end
 
     on_load(function (package)
@@ -27,9 +29,9 @@ package("thrift")
             if package:config(dep) then
                 if dep == "libevent" and package:config("openssl") then
                     package:add("deps", "libevent", {configs = {openssl = true}})
-                elseif package:config("openssl") then
+                elseif dep == "openssl" then
                     package:add("deps", "openssl3")
-                elseif package:config("qt5") then
+                elseif dep == "qt5" then
                     package:add("deps", "qt5core", "qt5network")
                 else
                     package:add("deps", dep)
@@ -62,7 +64,6 @@ package("thrift")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_COMPILER=" .. (package:config("compiler") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DLIB_INSTALL_DIR=lib")
             table.insert(configs, "-DWITH_MT=" .. (package:has_runtime("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
