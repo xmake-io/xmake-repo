@@ -9,7 +9,7 @@ package("nghttp3")
 
     add_patches("v1.3.0", "patches/vendor.patch", "51ab785328270b8df854283a8c20403c09813b0586eb84702a9c20241ff14980")
 
-    add_deps("cmake")
+    add_deps("cmake", "sfparse")
 
     on_load("windows", function (package)
         if not package:config("shared") then
