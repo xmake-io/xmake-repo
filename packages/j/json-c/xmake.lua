@@ -2,6 +2,7 @@ package("json-c")
 
     set_homepage("https://github.com/json-c/json-c/wiki")
     set_description("JSON parser for C")
+    set_license("MIT")
 
     set_urls("https://github.com/json-c/json-c/archive/json-c-$(version).zip")
 
