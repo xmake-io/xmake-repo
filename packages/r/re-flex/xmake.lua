@@ -14,9 +14,7 @@ package("re-flex")
             set_languages("cxx11")
             add_includedirs("include")
             set_encodings("utf-8")
-            if not is_plat("cross") then
-                add_vectorexts("all")
-            end
+            add_vectorexts("all")
 
             target("re-flex")
                 set_kind("$(kind)")
@@ -32,10 +30,6 @@ package("re-flex")
                 add_files("src/*.cpp")
                 add_deps("re-flex")
         ]])
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
         import("package.tools.xmake").install(package, configs)
         package:addenv("PATH", "bin")
     end)
