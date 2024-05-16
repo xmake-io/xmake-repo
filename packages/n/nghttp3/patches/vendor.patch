@@ -1,0 +1,26 @@
+diff --git a/lib/CMakeLists.txt b/lib/CMakeLists.txt
+index 2f7e31c..3e3d7fb 100644
+--- a/lib/CMakeLists.txt
++++ b/lib/CMakeLists.txt
+@@ -60,12 +60,12 @@ set(nghttp3_SOURCES
+   nghttp3_opl.c
+   nghttp3_objalloc.c
+   nghttp3_unreachable.c
+-  sfparse/sfparse.c
+ )
+ 
+ # Public shared library
+ if(ENABLE_SHARED_LIB)
+   add_library(nghttp3 SHARED ${nghttp3_SOURCES})
++  target_link_libraries(nghttp3 sfparse)
+   set_target_properties(nghttp3 PROPERTIES
+     COMPILE_FLAGS "${WARNCFLAGS}"
+     VERSION ${LT_VERSION} SOVERSION ${LT_SOVERSION}
+@@ -81,6 +81,7 @@ endif()
+ if(ENABLE_STATIC_LIB)
+   # Public static library
+   add_library(nghttp3_static STATIC ${nghttp3_SOURCES})
++  target_link_libraries(nghttp3_static sfparse)
+   set_target_properties(nghttp3_static PROPERTIES
+     COMPILE_FLAGS "${WARNCFLAGS}"
+     VERSION ${LT_VERSION} SOVERSION ${LT_SOVERSION}
