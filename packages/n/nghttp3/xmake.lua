@@ -3,8 +3,9 @@ package("nghttp3")
     set_description("HTTP/3 library written in C")
     set_license("MIT")
 
-    add_urls("https://github.com/ngtcp2/nghttp3.git")
-    add_versions("2022.02.08", "98402fb68fffc0ab1b211a5f07c1425dfd42d217")
+    add_urls("https://github.com/ngtcp2/nghttp3/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/ngtcp2/nghttp3.git")
+    add_versions("v1.3.0", "a83c6a4f589ae777a5f967652969d99b3399a85971340b8de9bed79119a11f88")
 
     add_deps("cmake")
 
