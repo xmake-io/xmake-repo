@@ -5,7 +5,7 @@ package("stringbuilder")
     set_license("MIT")
 
     add_urls("https://github.com/Isameru/stringbuilder.git")
-    add_versions("2023.7.23", "ab772a6f0db237155d17a68c8f72b48383137872")
+    add_versions("2023.7.10", "ab772a6f0db237155d17a68c8f72b48383137872")
 
     on_install(function (package)
         os.cp("include/stringbuilder.h", package:installdir("include"))
