@@ -14,7 +14,12 @@ package("re-flex")
             set_languages("cxx11")
             add_includedirs("include")
             set_encodings("utf-8")
-            add_vectorexts("all")
+
+            option("vectorexts")
+                set_default(false)
+                set_showmenu(true)
+                add_vectorexts("all")
+            option_end()
 
             target("re-flex")
                 set_kind("$(kind)")
