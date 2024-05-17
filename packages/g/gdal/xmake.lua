@@ -7,19 +7,38 @@ package("gdal")
     add_versions("3.8.5", "0c865c7931c7e9bb4832f50fb53aec8676cbbaccd6e55945011b737fb89a49c2")
     add_versions("3.5.1", "7c4406ca010dc8632703a0a326f39e9db25d9f1f6ebaaeca64a963e3fac123d1")
 
+    add_deps("cmake", "proj")
     add_configs("apps", {description = "Build GDAL applications.", default = false, type = "boolean"})
-    add_deps("cmake", "proj", "openjpeg")
+    add_configs("openjpeg", {description = "Use OpenJPEG.", default = true, type = "boolean"}) -- default true to keep compatibility
 
     if is_plat("windows") then
         add_syslinks("wsock32", "ws2_32")
     end
 
+    on_load(function (package)
+        local configdeps = {
+            openjpeg = "openjpeg"
+        }
+
+        for name, dep in pairs(configdeps) do
+            if package:config(name) then
+                package:add("deps", dep)
+            end
+        end
+    end)
+
     on_install("windows|x86", "windows|x64", "macosx", "linux", function (package)
-        local configs = {"-DBUILD_TESTING=OFF", "-DGDAL_USE_EXTERNAL_LIBS=OFF", "-DGDAL_USE_OPENJPEG=ON",
+        local configs = {"-DBUILD_TESTING=OFF", "-DGDAL_USE_EXTERNAL_LIBS=OFF",
                          "-DBUILD_JAVA_BINDINGS=OFF", "-DBUILD_CSHARP_BINDINGS=OFF", "-DBUILD_PYTHON_BINDINGS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
+
+        local packagedeps = {"proj"}
+        if package:config("openjpeg") then
+            table.insert(packagedeps, "openjpeg")
+            table.insert(configs, "-DGDAL_USE_OPENJPEG=ON")
+        end
 
         --fix gdal compile on msvc debug mode
         local cxflags
@@ -27,7 +46,7 @@ package("gdal")
             cxflags = "/FS"
         end
         import("package.tools.cmake").install(package, configs,
-            {cxflags = cxflags, packagedeps = {"openjpeg", "proj"}})
+            {cxflags = cxflags, packagedeps = packagedeps})
         if package:config("apps") then
             package:addenv("PATH", "bin")
         end
