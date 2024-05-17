@@ -6,7 +6,7 @@ package("pyincpp")
     add_urls("https://github.com/chen-qingyu/pyincpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/chen-qingyu/pyincpp.git")
 
-    add_versions("v2.3.0", "c7459dd3c078b78e29ab3323c5a66dba8fd18d54c27a37edcc3d24f028a12f24")
+    add_versions("v2.3.0", "9e840bf3690aa80c66c794a2609ff0d82c2e7d58fc2cdff3ee8741c8745606a5")
 
     on_install(function (package)
         os.cp("sources/*.hpp", package:installdir("include/"))
