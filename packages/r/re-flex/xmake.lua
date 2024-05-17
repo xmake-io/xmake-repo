@@ -14,6 +14,7 @@ package("re-flex")
             set_languages("cxx11")
             add_includedirs("include")
             set_encodings("utf-8")
+            add_vectorexts("all")
 
             target("re-flex")
                 set_kind("$(kind)")
@@ -22,9 +23,6 @@ package("re-flex")
                 add_files("unicode/*.cpp")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
-                end
-                if not is_cross() then
-                    add_vectorexts("all")
                 end
 
             target("reflex")
