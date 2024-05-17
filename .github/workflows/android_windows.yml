@@ -12,12 +12,12 @@ jobs:
       fail-fast: false
       matrix:
         arch: [armeabi-v7a, arm64-v8a]
-        ndk: ["r22", "r26c"]
+        ndk: ["r26d"]
         ndk_sdkver: ["29"]
 
     concurrency:
-        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Android-Windows-${{ matrix.arch }}-${{ matrix.ndk }}-${{ matrix.ndk_sdkver }}
-        cancel-in-progress: true
+      group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Android-Windows-${{ matrix.arch }}-${{ matrix.ndk }}-${{ matrix.ndk_sdkver }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
@@ -33,13 +33,8 @@ jobs:
 
       - name: Prepare
         run: |
-          if ("${{ matrix.ndk }}" -eq "r26c") {
-            curl -fsSL "https://dl.google.com/android/repository/android-ndk-r26c-windows.zip" -o android-ndk-r26c-windows.zip
-            Expand-Archive ./android-ndk-r26c-windows.zip -DestinationPath ./ndk
-          } else {
-            curl -fsSL "https://dl.google.com/android/repository/android-ndk-r22-windows-x86_64.zip" -o android-ndk-r22-windows-x86_64.zip
-            Expand-Archive ./android-ndk-r22-windows-x86_64.zip -DestinationPath ./ndk
-          }
+          curl -fsSL "https://dl.google.com/android/repository/android-ndk-r26d-windows.zip" -o android-ndk-r26d-windows.zip
+          Expand-Archive ./android-ndk-r26d-windows.zip -DestinationPath ./ndk
 
       - name: Tests
         run: |
@@ -55,4 +50,3 @@ jobs:
           Set-Item -Path Env:Path -Value ($Env:XMAKE_PROGRAM_DIR + ";" + $Env:Path)
           xmake --version
           xmake l ./scripts/test.lua -D -p android --ndk=D:/a/xmake-repo/xmake-repo/ndk/android-ndk-${{ matrix.ndk }} --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
-

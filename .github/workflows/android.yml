@@ -12,33 +12,27 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         arch: [armeabi-v7a, arm64-v8a]
-        ndk: ["r22", "r26b"]
-        ndk_sdkver: ["29", "21"]
+        ndk: ["r26d"]
+        ndk_sdkver: ["29"]
 
     runs-on: ${{ matrix.os }}
 
     concurrency:
-        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Android-${{ matrix.arch }}-${{ matrix.ndk }}-${{ matrix.ndk_sdkver }}
-        cancel-in-progress: true
+      group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Android-${{ matrix.arch }}-${{ matrix.ndk }}-${{ matrix.ndk_sdkver }}
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v1
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: branch@master
-          actions-cache-folder: '.xmake-cache'
-          actions-cache-key: 'android'
+          actions-cache-folder: ".xmake-cache"
+          actions-cache-key: "android"
 
       - name: Prepare
         run: |
-          if test ${{ matrix.ndk }} = "r26b"; then
-            wget -q https://dl.google.com/android/repository/android-ndk-r26b-linux.zip
-            unzip -q -o ./android-ndk-r26b-linux.zip
-          else
-            wget -q https://dl.google.com/android/repository/android-ndk-r22-linux-x86_64.zip
-            unzip -q -o ./android-ndk-r22-linux-x86_64.zip
-          fi
+          wget -q https://dl.google.com/android/repository/android-ndk-r26d-linux.zip
+          unzip -q -o ./android-ndk-r26d-linux.zip
 
       - name: Tests
         run: |
           xmake l ./scripts/test.lua -D -p android --ndk=`pwd`/android-ndk-${{ matrix.ndk }} --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}
-
