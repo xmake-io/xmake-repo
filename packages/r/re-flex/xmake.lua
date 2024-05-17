@@ -18,7 +18,7 @@ package("re-flex")
 
             target("re-flex")
                 set_kind("$(kind)")
-                add_headerfiles("include/reflex/*.h", {prefixdir = "reflex"})
+                add_headerfiles("include/(reflex/*.h)")
                 add_files("lib/*.cpp")
                 add_files("unicode/*.cpp")
                 if is_plat("windows") and is_kind("shared") then
