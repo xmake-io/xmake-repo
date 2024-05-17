@@ -6,13 +6,10 @@ package("pyincpp")
     add_urls("https://github.com/chen-qingyu/pyincpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/chen-qingyu/pyincpp.git")
 
-    add_versions("v1.6.0", "1e8e4bfde447c439974180e206087b309f50ac0e24aeddf39d21d73fd7067368")
-    add_versions("v1.4.1", "f3de3b5044a5c640811e87782264acbaf14697cd8c35bb21ddcd4de5664a60d0")
-    add_versions("v1.3.3", "2689349de9faa35d8bbefddcc7d29d49308a2badd58961cc2b1a8f80c96d0823")
-    add_versions("v1.3.2", "687148704f278c292962cffe1f440e5a4cc33f2a82f5e5a17b23aab88a282951")
+    add_versions("v2.3.0", "589209616b071d2ac58e6a19aa7257e296a8b8e4a83f322b153d8062c03ea998")
 
     on_install(function (package)
-        os.cp("sources/*.hpp", package:installdir("include/pyincpp"))
+        os.cp("sources/*.hpp", package:installdir("include/"))
     end)
 
     on_test(function (package)
@@ -20,10 +17,9 @@ package("pyincpp")
             #include <cassert>
             using namespace pyincpp;
             void test() {
-                Map<String, List<Integer>> map = {{"first", {123, 456}}, {"second", {789}}, {"second", {0}}, {"third", {"12345678987654321", 5}}};
-                assert(map.size() == 3);
-                assert(map.keys() == Set<String>({"first", "second", "third"}));
-                assert(map["third"][-1].factorial() == 120);
+                Dict<Str, List<Int>> dict = {{"first", {"123", "456"}}, {"second", {"789"}}, {"third", {"12345678987654321", "5"}}};
+                assert(dict.keys() == (Set<Str>{"first", "second", "third"}));
+                assert(dict["third"][-1].factorial() == 120);
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "pyincpp/pyincpp.hpp"}))
+        ]]}, {configs = {languages = "c++20"}, includes = "pyincpp.hpp"}))
     end)
