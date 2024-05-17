@@ -1,6 +1,6 @@
 package("re-flex")
     set_homepage("https://www.genivia.com/doc/reflex/html")
-    set_description("A high-performance C++ regex library and lexical analyzer generator with Unicode support. Extends Flex++ with Unicode support, indent/dedent anchors, lazy quantifiers, functions for lex and syntax error reporting and more. Seamlessly integrates with Bison and other parsers.")
+    set_description("A high-performance C++ regex library and lexical analyzer generator with Unicode support.")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/Genivia/RE-flex/archive/refs/tags/$(version).tar.gz",
@@ -15,12 +15,6 @@ package("re-flex")
             add_includedirs("include")
             set_encodings("utf-8")
 
-            option("vectorexts")
-                set_default(false)
-                set_showmenu(true)
-                add_vectorexts("all")
-            option_end()
-
             target("re-flex")
                 set_kind("$(kind)")
                 add_headerfiles("include/reflex/*.h", {prefixdir = "reflex"})
@@ -29,13 +23,16 @@ package("re-flex")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all", {export_classes = true})
                 end
+                if not is_cross() then
+                    add_vectorexts("all")
+                end
 
             target("reflex")
                 set_kind("binary")
                 add_files("src/*.cpp")
                 add_deps("re-flex")
         ]])
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
         package:addenv("PATH", "bin")
     end)
 
