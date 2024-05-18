@@ -42,7 +42,7 @@ local options =
 
 -- check package is supported?
 function _check_package_is_supported()
-    for _, names in pairs(core_package.apis()) do
+    for _, names in pairs(core_package.apis) do
         for _, name in ipairs(names) do
             if type(name) == "string" and name == "package.on_check" then
                 return true
