@@ -1,5 +1,5 @@
-option("robust_mutex", {showmenu = true, default = false})
-option("tools", {showmenu = true, default = false})
+option("robust_mutex", {default = false})
+option("tools", {default = false})
 
 add_rules("mode.debug", "mode.release")
 
