@@ -30,7 +30,7 @@ package("backward-cpp")
         end
     end)
 
-    on_install("linux", "mingw", "macosx", "windows", function (package)
+    on_install("linux", "mingw", "macosx", "windows|!arm*", function (package)
         if package:config("bfd") and package:is_plat("linux", "mingw@msys", "macos") then
             package:add("syslinks", "bfd")
             package:add("defines", "BACKWARD_HAS_BFD=1")
