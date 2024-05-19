@@ -14,15 +14,17 @@ package("pyincpp")
     add_versions("v1.3.2", "687148704f278c292962cffe1f440e5a4cc33f2a82f5e5a17b23aab88a282951")
 
     -- Some old platforms cannot support the C++20 standard well
-    if on_check and package:version():ge("2.0.0") then
+    if on_check then
         on_check("android", "macosx", function (package)
-            import("core.tool.toolchain")
-            if package:is_plat("android") then
-                local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
-                local ndk_ver = ndk:config("ndk")
-                assert(ndk_ver and ndk_ver > "r22", "package(pyincpp): need ndk version > r22 for android")
-            else
-                assert(macos.version() > "macos-12", "package(pyincpp): need os version > 12 for macosx")
+            if package:version():ge("2.0.0") then
+                import("core.tool.toolchain")
+                if package:is_plat("android") then
+                    local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+                    local ndk_ver = ndk:config("ndk")
+                    assert(ndk_ver and ndk_ver > "r22", "package(pyincpp): need ndk version > r22 for android")
+                else
+                    assert(macos.version() > "macos-12", "package(pyincpp): need os version > 12 for macosx")
+                end
             end
         end)
     end
