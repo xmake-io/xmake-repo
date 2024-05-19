@@ -15,10 +15,10 @@ package("pyincpp")
 
     -- Some old platforms cannot support the C++20 standard well
     if on_check then
-        on_check("android", "macosx", function (package)
+        on_check(function (package)
             if package:version():ge("2.0.0") then
                 assert(package:check_cxxsnippets({test = [[
-                    #if !((defined(_MSVC_LANG) && _MSVC_LANG > 201703L) || __cplusplus > 201703L)
+                    #if !((defined(_MSVC_LANG) && _MSVC_LANG >= 202002L) || __cplusplus >= 202002L)
                     #error "Require at least C++20."
                     #endif
                 ]]}, {configs = {languages = "c++20"}}))
