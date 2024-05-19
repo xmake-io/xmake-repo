@@ -17,14 +17,11 @@ package("pyincpp")
     if on_check then
         on_check("android", "macosx", function (package)
             if package:version():ge("2.0.0") then
-                if package:is_plat("android") then
-                    import("core.tool.toolchain")
-                    local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
-                    local ndk_ver = ndk:config("ndk")
-                    assert(ndk_ver and ndk_ver > "r22", "package(pyincpp): need ndk version > r22 for android")
-                else
-                    assert(macos.version() > "macos-12", "package(pyincpp): need os version > 12 for macosx")
-                end
+                assert(package:check_cxxsnippets({test = [[
+                    #if !((defined(_MSVC_LANG) && _MSVC_LANG > 201703L) || __cplusplus > 201703L)
+                    #error "Require at least C++20."
+                    #endif
+                ]]}, {configs = {languages = "c++20"}}))
             end
         end)
     end
