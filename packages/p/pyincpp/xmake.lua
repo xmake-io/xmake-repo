@@ -13,7 +13,7 @@ package("pyincpp")
     add_versions("v1.3.3", "2689349de9faa35d8bbefddcc7d29d49308a2badd58961cc2b1a8f80c96d0823")
     add_versions("v1.3.2", "687148704f278c292962cffe1f440e5a4cc33f2a82f5e5a17b23aab88a282951")
 
-    -- Some old platforms cannot support the C++20 standard well
+    -- Some old platforms don't support the C++20 standard well
     if on_check then
         on_check(function (package)
             if package:version():ge("2.0.0") then
