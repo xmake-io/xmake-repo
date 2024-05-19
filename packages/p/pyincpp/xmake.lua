@@ -23,7 +23,7 @@ package("pyincpp")
                     local ndk_ver = ndk:config("ndk")
                     assert(ndk_ver and ndk_ver > "r22", "package(pyincpp): need ndk version > r22 for android")
                 else
-                    assert(macos.version():gt("12"), "package(pyincpp): need os version > 12 for macosx")
+                    assert(macos.version() > "macos-12", "package(pyincpp): need os version > 12 for macosx")
                 end
             end
         end)
