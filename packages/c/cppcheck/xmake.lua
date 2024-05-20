@@ -10,7 +10,13 @@ package("cppcheck")
     add_deps("cmake")
 
     on_install("windows|x64", "macosx", "linux", "msys", function (package)
-        import("package.tools.cmake").install(package)
+        local configs = {}
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        end
+
+        io.replace("cmake/compileroptions.cmake", "add_compile_options($<$<NOT:$<CONFIG:Debug>>:/MD>)", "", {plain = true})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
