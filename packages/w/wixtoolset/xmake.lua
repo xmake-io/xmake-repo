@@ -1,4 +1,5 @@
 package("wixtoolset")
+    set_kind("binary")
     set_homepage("https://wixtoolset.org/")
     set_description("The most powerful set of tools available to create your Windows installation experience.")
 
