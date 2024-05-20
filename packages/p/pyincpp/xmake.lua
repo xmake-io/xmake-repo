@@ -18,6 +18,9 @@ package("pyincpp")
         on_check(function (package)
             if package:version():ge("2.0.0") then
                 assert(package:check_cxxsnippets({test = [[
+                    #if !((defined(_MSVC_LANG) && _MSVC_LANG > 201703L) || __cplusplus > 201703L)
+                    #   error "Require at least C++20."
+                    #endif
                     #include <cstddef>
                     #include <iterator>
                     struct SimpleInputIterator {
