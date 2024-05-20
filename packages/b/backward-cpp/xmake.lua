@@ -4,11 +4,7 @@ package("backward-cpp")
     set_description("Backward is a beautiful stack trace pretty printer for C++.")
     set_license("MIT")
 
-    add_configs("bfd", {
-        description = "Get stack trace with details about your sources by using libbfd from binutils.",
-        default = false,
-        type = "boolean"
-    })
+    add_configs("bfd", {description = "Get stack trace with details about your sources by using libbfd from binutils.", default = false, type = "boolean"})
 
     add_urls("https://github.com/bombela/backward-cpp/archive/refs/tags/$(version).zip",
              "https://github.com/bombela/backward-cpp.git")
