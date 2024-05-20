@@ -32,7 +32,7 @@ package("benchmark")
         add_syslinks("shlwapi")
     end
 
-    if is_plat("windows", "mingw") then
+    if is_plat("mingw") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
