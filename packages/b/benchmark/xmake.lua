@@ -28,8 +28,12 @@ package("benchmark")
 
     if is_plat("linux") then
         add_syslinks("pthread")
-    elseif is_plat("windows") or is_plat("mingw") then
+    elseif is_plat("windows", "mingw") then
         add_syslinks("shlwapi")
+    end
+
+    if is_plat("windows", "mingw") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
     add_deps("cmake")
@@ -43,11 +47,7 @@ package("benchmark")
     on_install("macosx", "linux", "windows", "mingw", function (package)
         local configs = {"-DBENCHMARK_ENABLE_TESTING=OFF", "-DBENCHMARK_INSTALL_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        if is_plat("mingw") then
-            table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
-        else
-            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        end
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
