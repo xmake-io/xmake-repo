@@ -18,9 +18,16 @@ package("pyincpp")
         on_check(function (package)
             if package:version():ge("2.0.0") then
                 assert(package:check_cxxsnippets({test = [[
-                    #if !((defined(_MSVC_LANG) && _MSVC_LANG >= 202002L) || __cplusplus >= 202002L)
-                    #error "Require at least C++20."
-                    #endif
+                    #include <cstddef>
+                    #include <iterator>
+                    struct SimpleInputIterator {
+                        using difference_type = std::ptrdiff_t;
+                        using value_type = int;
+                        int operator*() const;
+                        SimpleInputIterator& operator++();
+                        void operator++(int) { ++*this; }
+                    };
+                    static_assert(std::input_iterator<SimpleInputIterator>);
                 ]]}, {configs = {languages = "c++20"}}))
             end
         end)
@@ -29,7 +36,7 @@ package("pyincpp")
     on_install(function (package)
         if package:version():ge("2.0.0") then
             os.cp("sources/*.hpp", package:installdir("include/"))
-        else -- v1.x.x
+        else
             os.cp("sources/*.hpp", package:installdir("include/pyincpp/"))
         end
     end)
@@ -45,7 +52,7 @@ package("pyincpp")
                     assert(dict["third"][-1].factorial() == 120);
                 }
             ]]}, {configs = {languages = "c++20"}, includes = "pyincpp.hpp"}))
-        else -- v1.x.x
+        else
             assert(package:check_cxxsnippets({test = [[
                 #include <cassert>
                 using namespace pyincpp;
