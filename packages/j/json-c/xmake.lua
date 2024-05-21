@@ -5,7 +5,6 @@ package("json-c")
 
     set_urls("https://github.com/json-c/json-c/archive/refs/tags/json-c-$(version).zip")
 
-    add_versions("0.17-20230812", "471e9eb1dad4fd2e4fec571d8415993e66a89f23a5b052f1ba11b54db90252de")
     add_versions("0.13.1-20180305", "8a244527eb4f697362f713f7d6dca3f6f9b5335e18fe7b705130ae62e599e864")
 
     if is_plat("windows") and winos.version():gt("winxp") then
