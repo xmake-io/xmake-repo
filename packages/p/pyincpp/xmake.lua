@@ -33,7 +33,7 @@ package("pyincpp")
                     struct TestCmp {
                         auto operator<=>(const TestCmp&) const = default;
                     };
-                    static_assert((std::set<TestCmp>{TestCmp(), TestCmp()} == std::set<TestCmp>{TestCmp(), TestCmp()}), "Require supports C++20 standard.");
+                    assert((std::set<TestCmp>{TestCmp(), TestCmp()} == std::set<TestCmp>{TestCmp(), TestCmp()}), "Require supports C++20 standard.");
                 ]]}, {configs = {languages = "c++20"}}))
             end
         end)
