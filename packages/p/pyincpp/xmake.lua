@@ -18,6 +18,7 @@ package("pyincpp")
         on_check(function (package)
             if package:version():ge("2.0.0") then
                 assert(package:check_cxxsnippets({test = [[
+                    #include <cassert>
                     #include <cstddef>
                     #include <iterator>
                     struct SimpleInputIterator {
