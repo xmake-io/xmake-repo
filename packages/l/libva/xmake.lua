@@ -29,7 +29,7 @@ package("libva")
             package:config_set("x11", true)
         end
 
-        if package:config("drm") then
+        if package:config("drm") or is_plat("linux") then
             package:add("deps", "libdrm")
         end
         if package:config("x11") then
@@ -40,7 +40,7 @@ package("libva")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "msys", function (package)
+    on_install("windows", "linux", "mingw", "msys", function (package)
         local configs = {}
         table.insert(configs, "-Ddisable_drm=" .. (package:config("drm") and "false" or "true"))
         table.insert(configs, "-Dwith_win32=" .. (package:config("win32") and "yes" or "no"))
