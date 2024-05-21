@@ -18,7 +18,6 @@ package("pyincpp")
         on_check(function (package)
             if package:version():ge("2.0.0") then
                 assert(package:check_cxxsnippets({test = [[
-                    #include <cassert>
                     #include <cstddef>
                     #include <iterator>
                     struct SimpleInputIterator {
@@ -28,14 +27,21 @@ package("pyincpp")
                         SimpleInputIterator& operator++();
                         void operator++(int) { ++*this; }
                     };
-                    static_assert(std::input_iterator<SimpleInputIterator>, "Require supports C++20 standard.");
+                    static_assert(std::input_iterator<SimpleInputIterator>);
 
                     #include <set>
+                    #include <string>
+                    #include <cassert>
                     struct TestCmp {
+                        std::string str_;
                         auto operator<=>(const TestCmp&) const = default;
                     };
-                    assert((std::set<TestCmp>{TestCmp(), TestCmp()} == std::set<TestCmp>{TestCmp(), TestCmp()}), "Require supports C++20 standard.");
-                ]]}, {configs = {languages = "c++20"}}))
+                    std::set<TestCmp> s1 = {TestCmp(), TestCmp()};
+                    std::set<TestCmp> s2 = {TestCmp(), TestCmp()};
+                    void test() {
+                        assert(s1 == s2);
+                    }
+                ]]}, {configs = {languages = "c++20"}}), "Require supports C++20 standard.")
             end
         end)
     end
