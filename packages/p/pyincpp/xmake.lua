@@ -23,7 +23,9 @@ package("pyincpp")
                     void test_concept(InputIt) {}
 
                     #include <set>
+                    #include <string>
                     struct TestCmp {
+                        std::string str_;
                         auto operator<=>(const TestCmp&) const = default;
                     };
                     std::set<TestCmp> s = {TestCmp(), TestCmp()};
