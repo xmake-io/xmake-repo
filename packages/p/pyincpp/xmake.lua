@@ -18,19 +18,22 @@ package("pyincpp")
         on_check(function (package)
             if package:version():ge("2.0.0") then
                 assert(package:check_cxxsnippets({test = [[
-                    #if !((defined(_MSVC_LANG) && _MSVC_LANG > 201703L) || __cplusplus > 201703L)
-                    #error "Require at least C++20."
-                    #endif
-
+                    #include <cstddef>
                     #include <iterator>
-                    template <std::input_iterator InputIt>
-                    void test_concept(InputIt) {}
+                    struct SimpleInputIterator {
+                        using difference_type = std::ptrdiff_t;
+                        using value_type = int;
+                        int operator*() const;
+                        SimpleInputIterator& operator++();
+                        void operator++(int) { ++*this; }
+                    };
+                    static_assert(std::input_iterator<SimpleInputIterator>, "Require supports C++20 standard.");
 
                     #include <set>
                     struct TestCmp {
                         auto operator<=>(const TestCmp&) const = default;
                     };
-                    std::set<TestCmp> s = {TestCmp(), TestCmp()};
+                    static_assert((std::set<TestCmp>{TestCmp(), TestCmp()}), "Require supports C++20 standard.");
                 ]]}, {configs = {languages = "c++20"}}))
             end
         end)
