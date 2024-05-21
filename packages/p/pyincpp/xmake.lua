@@ -13,15 +13,23 @@ package("pyincpp")
     add_versions("v1.3.3", "2689349de9faa35d8bbefddcc7d29d49308a2badd58961cc2b1a8f80c96d0823")
     add_versions("v1.3.2", "687148704f278c292962cffe1f440e5a4cc33f2a82f5e5a17b23aab88a282951")
 
-    -- Some old platforms cannot support the C++20 standard well
+    -- Some old platforms don't support the C++20 standard well.
     if on_check then
-        on_check("android", "macosx", function (package)
+        on_check(function (package)
             if package:version():ge("2.0.0") then
                 assert(package:check_cxxsnippets({test = [[
-                    #if !((defined(_MSVC_LANG) && _MSVC_LANG > 201703L) || __cplusplus > 201703L)
-                    #error "Require at least C++20."
-                    #endif
-                ]]}, {configs = {languages = "c++20"}}))
+                    #include <iterator>
+                    template <std::input_iterator InputIt>
+                    void test_concept(InputIt) {}
+
+                    #include <set>
+                    #include <string>
+                    struct TestCmp {
+                        std::string str_;
+                        auto operator<=>(const TestCmp&) const = default;
+                    };
+                    std::set<TestCmp> s = {TestCmp(), TestCmp()};
+                ]]}, {configs = {languages = "c++20"}}), "Require supports C++20 standard.")
             end
         end)
     end
@@ -29,7 +37,7 @@ package("pyincpp")
     on_install(function (package)
         if package:version():ge("2.0.0") then
             os.cp("sources/*.hpp", package:installdir("include/"))
-        else -- v1.x.x
+        else
             os.cp("sources/*.hpp", package:installdir("include/pyincpp/"))
         end
     end)
@@ -45,7 +53,7 @@ package("pyincpp")
                     assert(dict["third"][-1].factorial() == 120);
                 }
             ]]}, {configs = {languages = "c++20"}, includes = "pyincpp.hpp"}))
-        else -- v1.x.x
+        else
             assert(package:check_cxxsnippets({test = [[
                 #include <cassert>
                 using namespace pyincpp;
