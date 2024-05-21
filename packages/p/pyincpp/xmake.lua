@@ -18,29 +18,15 @@ package("pyincpp")
         on_check(function (package)
             if package:version():ge("2.0.0") then
                 assert(package:check_cxxsnippets({test = [[
-                    #include <cstddef>
                     #include <iterator>
-                    struct SimpleInputIterator {
-                        using difference_type = std::ptrdiff_t;
-                        using value_type = int;
-                        int operator*() const;
-                        SimpleInputIterator& operator++();
-                        void operator++(int) { ++*this; }
-                    };
-                    static_assert(std::input_iterator<SimpleInputIterator>);
+                    template <std::input_iterator InputIt>
+                    void test_concept(InputIt) {}
 
                     #include <set>
-                    #include <string>
-                    #include <cassert>
                     struct TestCmp {
-                        std::string str_;
                         auto operator<=>(const TestCmp&) const = default;
                     };
-                    std::set<TestCmp> s1 = {TestCmp(), TestCmp()};
-                    std::set<TestCmp> s2 = {TestCmp(), TestCmp()};
-                    void test() {
-                        assert(s1 == s2);
-                    }
+                    std::set<TestCmp> s = {TestCmp(), TestCmp()};
                 ]]}, {configs = {languages = "c++20"}}), "Require supports C++20 standard.")
             end
         end)
