@@ -33,7 +33,7 @@ package("libva")
             package:add("deps", "libdrm")
         end
         if package:config("x11") then
-            package:add("deps", "libx11")
+            package:add("deps", "libx11", "libxext", "libxfixes")
         end
         if package:config("wayland") then
             package:add("deps", "wayland")
