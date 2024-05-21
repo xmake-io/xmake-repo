@@ -2,6 +2,7 @@ package("sqlite3")
 
     set_homepage("https://sqlite.org/")
     set_description("The most used database engine in the world")
+    set_license("Public Domain")
 
     set_urls("https://sqlite.org/$(version)", {version = function (version)
         local year = "2024"
