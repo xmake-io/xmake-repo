@@ -49,6 +49,15 @@ package("assimp")
         add_syslinks("advapi32")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(assimp): need ndk api level >= 26 for android")
+        end)
+    end
+
     on_load(function (package)
         if not package:gitref() then
             if package:version():le("5.1.0") then
