@@ -11,7 +11,7 @@ package("platformfolders")
     add_patches("4.2.0", "patches/4.2.0/cmake-install.patch", "a38850ff7e9b91034f226685af7633ff692de3aea4798cb3dddecc6b055a7601")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("Ole32", "Shell32")
+        add_syslinks("ole32", "shell32", "uuid")
     end
 
     add_deps("cmake")
