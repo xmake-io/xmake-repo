@@ -18,7 +18,7 @@ package("pyincpp")
         on_check(function (package)
             if package:version():ge("2.0.0") then
                 assert(package:check_cxxsnippets({test = [[
-                    #if !((defined(_MSVC_LANG) && _MSVC_LANG >= 202002L) || __cplusplus >= 202002L)
+                    #if !((defined(_MSVC_LANG) && _MSVC_LANG > 201703L) || __cplusplus > 201703L)
                     #error "Require at least C++20."
                     #endif
 
@@ -30,7 +30,7 @@ package("pyincpp")
                     struct TestCmp {
                         auto operator<=>(const TestCmp&) const = default;
                     };
-                    std::set<TestCmp> s = {TestCmp()};
+                    std::set<TestCmp> s = {TestCmp(), TestCmp()};
                 ]]}, {configs = {languages = "c++20"}}))
             end
         end)
