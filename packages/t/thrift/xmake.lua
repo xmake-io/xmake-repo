@@ -6,6 +6,11 @@ package("thrift")
     add_urls("https://github.com/apache/thrift/archive/refs/tags/$(version).tar.gz",
              "https://github.com/apache/thrift.git")
 
+    add_versions("v0.20.0", "cd7b829d3d9d87f9f7d708e004eef7629789591ee1d416f4741913bc33e5c27d")
+    add_versions("v0.19.0", "6428911db505702c51f7d993155a4a4c8afee83fdd021b52f2eccd8d34780629")
+    add_versions("v0.18.1", "9cea30b9700153329ae1926cc05a20bbe3e8451ae270b0c8c5c5fe9929924cb3")
+    add_versions("v0.18.0", "b42a659ebe3711a78de4b14a117ea44558106223593c3f09c0d8dbe8a1b26848")
+    add_versions("v0.17.0", "f5888bcd3b8de40c2c2ab86896867ad9b18510deb412cba3e5da76fb4c604c29")
     add_versions("v0.16.0", "df2931de646a366c2e5962af679018bca2395d586e00ba82d09c0379f14f8e7b")
 
     add_patches(">=0.16.0", "patches/0.16.0/cmake.patch", "8dd82f54d52a37487e64aa3529f4dbcedcda671ab46fcb7a8c0f2c521ee0be9b")
