@@ -14,10 +14,19 @@ package("xtensor")
     add_versions("0.24.0", "37738aa0865350b39f048e638735c05d78b5331073b6329693e8b8f0902df713")
     add_versions("0.23.10", "2e770a6d636962eedc868fef4930b919e26efe783cd5d8732c11e14cf72d871c")
 
+    add_configs("simd", {description = "Enable SIMD acceleration ", default = true, type = "boolean"})
+
     add_deps("cmake")
-    add_deps("xtl", "xsimd")
+    add_deps("xtl ^0.7.0")
+
+    on_load("windows", "macosx", "linux", "mingw@windows", function (package) 
+        if package:config("simd") then
+            package:add("deps", "xsimd ^11.0.0")
+        end
+    end)
     on_install("windows", "macosx", "linux", "mingw@windows", function (package)
-        import("package.tools.cmake").install(package, {"-DXTENSOR_USE_XSIMD=ON"})
+        local configs = {"-DXTENSOR_USE_XSIMD=" .. (package:config("simd") and "ON" or "OFF")}
+        import("package.tools.cmake").install(package, configs, {packagedeps = "xsimd"})
     end)
 
     on_test(function (package)
