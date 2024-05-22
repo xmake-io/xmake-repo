@@ -5,6 +5,7 @@ package("promise-cpp")
 
     add_urls("https://github.com/xhawk18/promise-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xhawk18/promise-cpp.git")
+    add_versions("2.1.5", "9608686d0d136323396a84c2f6046060a966ed10bf4bb7895ef87340c118b66a")
     add_versions("2.1.3", "831f5c7fb36a1f0adda408898038b428d4afe96e7028947be0f755c6851eec26")
 
     add_patches("2.1.3", path.join(os.scriptdir(), "patches", "2.1.3", "cmake.patch"), "3ea274743d852c685e8a9fb4f609f768c2e5461061b87473092ee98c68e1ab88")
