@@ -6,6 +6,7 @@ package("cli11")
 
     add_urls("https://github.com/CLIUtils/CLI11/archive/refs/tags/$(version).tar.gz",
              "https://github.com/CLIUtils/CLI11.git")
+    add_versions("v2.4.2", "f2d893a65c3b1324c50d4e682c0cdc021dd0477ae2c048544f39eed6654b699a")
     add_versions("v2.4.1", "73b7ec52261ce8fe980a29df6b4ceb66243bb0b779451dbd3d014cfec9fdbb58")
     add_versions("v2.3.2", "aac0ab42108131ac5d3344a9db0fdf25c4db652296641955720a4fbe52334e22")
     add_versions("v2.2.0", "d60440dc4d43255f872d174e416705f56ba40589f6eb07727f76376fb8378fd6")
