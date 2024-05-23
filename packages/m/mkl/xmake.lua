@@ -64,7 +64,7 @@ package("mkl")
             add_resources("2023.2.0+49495", "headers", "https://anaconda.org/intel/mkl-include/2023.2.0/download/linux-64/mkl-include-2023.2.0-intel_49495.tar.bz2", "0dfb6ca3c17d99641f20877579c78155cf95aa0b22363bcc91b1d57df4646318")
             add_versions("2024.1.0+691", "be8833b094253d51abe49de418f7db2260f4c8f32514969a4a2eabaadc5d55c2")
             add_resources("2024.1.0+691", "headers", "https://anaconda.org/intel/mkl-include/2024.1.0/download/linux-64/mkl-include-2024.1.0-intel_691.tar.bz2", "e36b2e74f5c28ff91565abe47a09dc246c9cf725e0d05b5fb08813b4073ea68b")
-        elseif is_arch("x86") then
+        elseif is_arch("i386") then
             add_urls("https://anaconda.org/intel/mkl-static/$(version).tar.bz2", {version = function (version)
                 local mv = version:split("%+")
                 return format("%s/download/linux-32/mkl-static-%s-intel_%s", mv[1], mv[1], mv[2])
@@ -90,7 +90,8 @@ package("mkl")
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
-    on_load("windows", "macosx", "linux", function (package)
+
+    on_load(function (package)
         -- Refer to [oneAPI Math Kernel Library Link Line Advisor](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html)
         -- to get the link option for MKL library.
         local suffix = (package:config("interface") == 32 and "lp64" or "ilp64")
@@ -136,7 +137,7 @@ package("mkl")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|!arm64", "macosx|!arm64", "linux|x86_64", "linux|i386", function (package)
         local headerdir = package:resourcedir("headers")
         if package:is_plat("windows") then
             os.trymv(path.join("Library", "lib"), package:installdir())
