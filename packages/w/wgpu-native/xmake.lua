@@ -5,7 +5,7 @@ package("wgpu-native")
 
     if is_plat("windows") and is_arch("x64") then
         add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version)/wgpu-windows-x86_64-release.zip", {version = function(version) return version:gsub("%+", ".") end})
-        add_versions("v0.19.4+1", "1b8ae05bb7626e037ab7088f9f11fc8bb8341a32800d33857c09ff2fb1b3893f")
+        add_versions("v0.19.4+1", "9e1591d60c2d2ee20d6d4a63bc01c7c5eecf7734761673160aa639e550a1ba4d")
         add_versions("v0.17.0+2", "1b8ae05bb7626e037ab7088f9f11fc8bb8341a32800d33857c09ff2fb1b3893f")
     elseif is_plat("windows") and is_arch("x86") then
         add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version)/wgpu-windows-i686-release.zip", {version = function(version) return version:gsub("%+", ".") end})
