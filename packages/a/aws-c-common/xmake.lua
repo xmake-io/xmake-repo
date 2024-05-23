@@ -6,6 +6,9 @@ package("aws-c-common")
     add_urls("https://github.com/awslabs/aws-c-common/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-common.git")
 
+    add_versions("v0.9.19", "196430fda1bca2c77df7d9199232956d371a92f49ee48fd6c29ff969410ca0ed")
+    add_versions("v0.9.17", "82f1a88494c5563892f0e048f0f56acfe7e10e5aa3fe9267b956dbabcc043440")
+    add_versions("v0.9.15", "8f36c7a6a5d2e17365759d15591f800d3e76dcaa34a226389b92647cbd92393a")
     add_versions("v0.9.14", "70b10ebbf40e3b6c1b36d81d5e4b63fe430414a81f76293a65e42dfa5def571e")
     add_versions("v0.9.13", "6d2044fc58e5d7611610976602f3fc2173676726b00eed026526962c599ece1d")
     add_versions("v0.9.3", "389eaac7f64d7d5a91ca3decad6810429eb5a65bbba54798b9beffcb4d1d1ed6")

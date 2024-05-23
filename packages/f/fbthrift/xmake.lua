@@ -9,6 +9,7 @@ package("fbthrift")
     add_versions("2024.03.11", "decfd7e211d61159778501d3847673d0212303999bbfa15913b0c05567641b84")
     add_versions("2024.03.18", "e1d8d7cc0a718e3c18934ac198ee3ad63848b90e8a19d62b2b7d54f0c878089c")
     add_versions("2024.03.25", "2a325446cd3a149a892c0c6abcb0f6f6cf83b72266d83ad279d2fdd9340aeef2")
+    add_versions("2024.04.01", "e408a973a59a37def97a8e0ec368ee9fa39c8d49c925ecf7335f1c0463c1a819")
 
     add_deps("cmake", "folly", "fizz", "wangle", "mvfst", "zstd", "python")
 

@@ -1,6 +1,7 @@
 -- imports
 import("core.base.option")
 import("core.platform.platform")
+import("core.package.package", {alias = "core_package"})
 import("packages", {alias = "get_packages"})
 
 -- the options
@@ -39,6 +40,16 @@ local options =
 ,   {nil, "packages",       "vs", nil, "The package list."                          }
 }
 
+-- check package is supported?
+function _check_package_is_supported()
+    for _, names in pairs(core_package.apis()) do
+        for _, name in ipairs(names) do
+            if type(name) == "string" and name == "package.on_check" then
+                return true
+            end
+        end
+    end
+end
 
 -- require packages
 function _require_packages(argv, packages)
@@ -110,14 +121,17 @@ function _require_packages(argv, packages)
     end
     os.vexecv("xmake", config_argv)
     local require_argv = {"require", "-f", "-y"}
+    local check_argv = {"require", "-f", "-y", "--check"}
     if not argv.precompiled then
         table.insert(require_argv, "--build")
     end
     if argv.verbose then
         table.insert(require_argv, "-v")
+        table.insert(check_argv, "-v")
     end
     if argv.diagnosis then
         table.insert(require_argv, "-D")
+        table.insert(check_argv, "-D")
     end
     local is_debug = false
     if argv.debugdir then
@@ -157,8 +171,24 @@ function _require_packages(argv, packages)
     end
     local extra_str = string.serialize(extra, {indent = false, strip = true})
     table.insert(require_argv, "--extra=" .. extra_str)
-    table.join2(require_argv, packages)
-    os.vexecv("xmake", require_argv)
+    table.insert(check_argv, "--extra=" .. extra_str)
+
+    local install_packages = {}
+    if _check_package_is_supported() then
+        for _, package in ipairs(packages) do
+            local ok = os.vexecv("xmake", table.join(check_argv, package), {try = true})
+            if ok == 0 then
+                table.insert(install_packages, package)
+            end
+        end
+    else
+        install_packages = packages
+    end
+    if #install_packages > 0 then
+        os.vexecv("xmake", table.join(require_argv, install_packages))
+    else
+        print("no testable packages on %s or you're using lower version xmake!", argv.plat or os.subhost())
+    end
 end
 
 -- the given package is supported?

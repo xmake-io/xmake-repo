@@ -35,6 +35,13 @@ jobs:
           tar -xvf node-v14.15.4-linux-x64.tar.xz
           export PATH=`pwd`/node-v14.15.4-linux-x64/bin:$PATH
           sudo npm install markdown-to-html -g
+          git config --global user.email "waruqi@gmail.com"
+          git config --global user.name "ruki"
+
+      - name: Build artifacts
+        if: ${{ github.repository }} == "xmake-io/xmake-repo"
+        run: |
+          xmake l scripts/build_artifacts.lua
 
       - name: Publish documents
         run: |
@@ -45,15 +52,8 @@ jobs:
           git remote set-url --add all git@gitee.com:xmake-io/xrepo-docs.git
           git remote set-url --add all git@gitlab.com:xmake-io/xrepo-docs.git
           xmake l -vD `pwd`/build.lua
-          git config --global user.email "waruqi@gmail.com"
-          git config --global user.name "ruki"
           git status
           git add -A
           git diff-index --quiet HEAD || git commit -m "autoupdate docs by xmake-repo/ci"
           git push all master
-
-      - name: Build artifacts
-        if: ${{ github.repository }} == "xmake-io/xmake-repo"
-        run: |
-          xmake l scripts/build_artifacts.lua
 

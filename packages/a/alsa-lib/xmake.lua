@@ -11,6 +11,7 @@ package("alsa-lib")
     add_configs("versioned", {description = "pass flag --without-versioned", default = true, type = "boolean"})
 
     if is_plat("linux") then
+        add_syslinks("pthread")
         add_extsources("pacman::alsa-lib", "apt::libasound2-dev")
     end
 

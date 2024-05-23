@@ -28,11 +28,16 @@ package("openssl")
     on_fetch("fetch")
 
     on_load(function (package)
-        if is_subhost("windows") and not package:is_precompiled() then
-            package:add("deps", "nasm")
-            -- the perl executable found in GitForWindows will fail to build OpenSSL
-            -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
-            package:add("deps", "strawberry-perl", { system = false })
+        if not package:is_precompiled() then
+            if package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
+                -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
+                package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
+            elseif is_subhost("windows") and not package:is_precompiled() then
+                package:add("deps", "nasm", { private = true })
+                -- the perl executable found in GitForWindows will fail to build OpenSSL
+                -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
+                package:add("deps", "strawberry-perl", { system = false, private = true })
+            end
         end
 
         -- @note we must use package:is_plat() instead of is_plat in description for supporting add_deps("openssl", {host = true}) in python
@@ -68,7 +73,10 @@ package("openssl")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
         os.vrunv("perl", configs)
-        import("package.tools.nmake").install(package)
+
+        local runenvs = import("package.tools.nmake").buildenvs(package)
+        local nmake = import("lib.detect.find_tool")("nmake", {envs = runenvs})
+        os.vrunv(nmake.program, {"install_sw"}, {envs = runenvs})
     end)
 
     on_install("mingw", function (package)
@@ -138,6 +146,12 @@ package("openssl")
         end
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         if package:is_cross() then
+            if is_host("windows") and package:is_plat("android") then
+                buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
+                buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
+                buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
+                buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
+            end
             os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
         else
             os.vrunv("./config", configs, {shell = true, envs = buildenvs})

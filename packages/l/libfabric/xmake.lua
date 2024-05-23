@@ -5,6 +5,7 @@ package("libfabric")
     set_license("BSD-2-Clause")
 
     add_urls("https://github.com/ofiwg/libfabric/releases/download/v$(version)/libfabric-$(version).tar.bz2")
+    add_versions("1.20.2", "75b89252a0b8b3eae8e60f7098af1598445a99a99e8fc1ff458e2fd5d4ef8cde")
     add_versions("1.20.1", "fd88d65c3139865d42a6eded24e121aadabd6373239cef42b76f28630d6eed76")
     add_versions("1.13.0", "0c68264ae18de5c31857724c754023351614330bd61a50b40cef2b5e8f63ab28")
     add_versions("1.17.0", "579c0f5ef636c0c72f4d3d6bd4da91a5aed9ac3ac4ea387404c45dbbdee4745d")

@@ -7,6 +7,8 @@ package("xsimd")
     add_urls("https://github.com/xtensor-stack/xsimd/archive/refs/tags/$(version).tar.gz",
              "https://github.com/xtensor-stack/xsimd.git")
 
+    add_versions("13.0.0", "8bdbbad0c3e7afa38d88d0d484d70a1671a1d8aefff03f4223ab2eb6a41110a3")
+    add_versions("12.1.1", "73f94a051278ef3da4533b691d31244d12074d5d71107473a9fd8d7be15f0110")
     add_versions("7.6.0", "eaf47f1a316ef6c3287b266161eeafc5aa61226ce5ac6c13502546435b790252")
     add_versions("8.0.3", "d1d41253c4f82eaf2f369d7fcb4142e35076cf8675b9d94caa06ecf883024344")
     add_versions("8.0.5", "0e1b5d973b63009f06a3885931a37452580dbc8d7ca8ad40d4b8c80d2a0f84d7")
@@ -28,14 +30,25 @@ package("xsimd")
     on_test(function (package)
         if package:version():ge("8.0") then
             assert(package:check_cxxsnippets({test = [[
-                #include <iostream>
-                void test() {
-                    xsimd::batch<double, xsimd::avx> a{1.5, 2.5, 3.5, 4.5};
-                    xsimd::batch<double, xsimd::avx> b{2.5, 3.5, 4.5, 5.5};
-                    auto mean = (a + b) / 2;
-                    std::cout << mean << std::endl;
+                #include "xsimd/xsimd.hpp"
+
+                namespace xsimd {
+                template <class arch>
+                inline batch<int, arch> mandel(const batch_bool<float, arch> &_active,
+                                               const batch<float, arch> &c_re,
+                                               const batch<float, arch> &c_im, int maxIters) {
+                    using float_batch_type = batch<float, arch>;
+                    using int_batch_type = batch<int, arch>;
+
+                    float_batch_type z_re = c_re;
+                    float_batch_type z_im = c_im;
+                    int_batch_type vi(0);
+                    return vi;
                 }
-            ]]}, {configs = {languages = "c++14"}, includes = "xsimd/xsimd.hpp"}))
+                }  // namespace xsimd
+
+                void test() {}
+            ]]}, {configs = {languages = "c++14"}}))
         else
             assert(package:check_cxxsnippets({test = [[
                 #include <iostream>

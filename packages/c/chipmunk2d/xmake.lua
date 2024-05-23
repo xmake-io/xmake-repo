@@ -1,5 +1,4 @@
 package("chipmunk2d")
-
     set_homepage("https://chipmunk-physics.net/")
     set_description("A fast and lightweight 2D game physics library.")
     set_license("MIT")
@@ -9,7 +8,9 @@ package("chipmunk2d")
 
     add_versions("archive:7.0.3", "1e6f093812d6130e45bdf4cb80280cb3c93d1e1833d8cf989d554d7963b7899a")
     add_versions("github:7.0.3", "87340c216bf97554dc552371bbdecf283f7c540e")
-    add_patches("7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "08e80020880e9bf3c61b48d41537d953e7bf6a63797eb8bcd6b78ba038b79d8f")
+    add_patches("7.0.3", path.join(os.scriptdir(), "patches", "7.0.3", "android.patch"), "d0bbefe66852cdadb974dce24d4383c356bc3fa88656739ff1d5baf4e3792a96")
+
+    add_configs("precision", {description = "Which precision to use (defaults is double on most platforms except ARM 32bits)", default = "default", type = "string", values = {"default", "single", "double"}})
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::chipmunk")
@@ -23,7 +24,23 @@ package("chipmunk2d")
 
     if is_plat("linux") then
         add_syslinks("pthread", "m")
+    elseif is_plat("android") then
+        add_syslinks("log", "m")
     end
+
+    on_load(function (package)
+        if package:config("precision") == "double" then
+            package:add("defines", "CP_USE_DOUBLES=1")
+            if package:is_plat("macosx", "iphoneos") then
+                package:add("defines", "CP_USE_CGTYPES=1")
+            end
+        elseif package:config("precision") == "single" then
+            package:add("defines", "CP_USE_DOUBLES=0")
+            if package:is_plat("macosx", "iphoneos") then
+                package:add("defines", "CP_USE_CGTYPES=0")
+            end
+        end
+    end)
 
     on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
         local configs = {"-DBUILD_DEMOS=OFF"}
@@ -35,8 +52,21 @@ package("chipmunk2d")
         else
             table.insert(configs, "-DBUILD_SHARED=OFF")
             table.insert(configs, "-DBUILD_STATIC=ON")
+            table.insert(configs, "-DINSTALL_STATIC=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+        local opt = {}
+        if package:config("precision") == "double" then
+            opt.cxflags = {"-DCP_USE_DOUBLES=1"}
+            if package:is_plat("macosx", "iphoneos") then
+                table.insert(opt.cxflags, "-DCP_USE_CGTYPES=1")
+            end
+        elseif package:config("precision") == "single" then
+            opt.cxflags = {"-DCP_USE_DOUBLES=0"}
+            if package:is_plat("macosx", "iphoneos") then
+                table.insert(opt.cxflags, "-DCP_USE_CGTYPES=0")
+            end
+        end
+        import("package.tools.cmake").install(package, configs, opt)
         os.vcp("include/chipmunk", package:installdir("include"))
    end)
 

@@ -16,6 +16,8 @@ package("vulkan-headers")
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
 
     -- when adding a new sdk version, please also update vulkan-hpp, vulkan-loader, vulkan-utility-libraries, spirv-headers, spirv-reflect, glslang and volk packages
+    add_versions("1.3.283+0", "cf54a812911b4e3e4ff15716c222a8fb9a87c2771c0b86060cb0ca2570ea55a9")
+    add_versions("1.3.280+0", "14caa991988be6451755ad1c81df112f4b6f2bea05f0cf2888a52d4d0f0910f6")
     add_versions("1.3.275+0", "fcd2136a9feb0402820b334d8242773462cc47ed397aa20c8f4d04f7ea18d810")
     add_versions("1.3.268+0", "94993cbe2b1a604c0d5d9ea37a767e1aba4d771d2bfd4ddceefd66243095164f")
     add_versions("1.3.261+1", "7a25ebdb6325e626dc5d33bc937b289ccce7ddb7b0ac1a1b1d5d7ff33b6715d3")

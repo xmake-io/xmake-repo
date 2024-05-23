@@ -6,6 +6,8 @@ package("directx-headers")
 
     add_urls("https://github.com/microsoft/DirectX-Headers/archive/refs/tags/$(version).zip",
              "https://github.com/microsoft/DirectX-Headers.git")
+    add_versions("v1.614.0", "9305df61de9916cc206b3b466fcb0afa4312664ef512f93939242adcfa029554")
+    add_versions("v1.613.1", "c356d242e63f6c8e6fa8dec01f7d526b172621f0f6687611239f772095842e4c")
     add_versions("v1.613.0", "38852327d998e54d9faac93be28c1f8b6489442832eb380004e2fecedd907eef")
     add_versions("v1.610.0", "ce8036d57e4b3b87167bf82a0236fc09cba4ffa7088322912b8ce82f284555db")
 
