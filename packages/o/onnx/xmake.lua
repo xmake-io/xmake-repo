@@ -53,7 +53,7 @@ package("onnx")
 
     on_test(function (package)
         local languages = "c++11"
-        if package:is_plat("windows") and package:version():ge("1.16.0") then
+        if package:is_plat("windows") or package:version():ge("1.16.0") then
             languages = "c++17"
         end
         assert(package:has_cxxtypes("onnx::ModelProto", {includes = "onnx/proto_utils.h", configs = {languages = languages}}))
