@@ -5,23 +5,12 @@ package("plf_hive")
     set_license("zlib")
 
     add_urls("https://github.com/mattreecebentley/plf_hive.git")
-    add_versions("latest", "bebd22a4fa017c09bfa0100603e5c7ff4af6c01e")
+    add_versions("2024.04.21", "7689475b1fa2a95228cf0f44db9c209d7e430748")
 
     on_install(function (package)
         os.cp("plf_hive.h", package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <version>
-// plf_hive requires C++20 ranges compatibility.
-#ifdef __cpp_lib_containers_ranges
-            #include <plf_hive.h>
-            void test() {
-                plf::hive<int> i_hive;
-            }
-#else
-void test() { return; }
-#endif
-        ]]}, {configs = {languages = "c++20"}}))
+        assert(package:has_cxxtypes("plf::hive<int>", {configs = {languages = "c++20"}, includes = "plf_hive.h"}))
     end)
