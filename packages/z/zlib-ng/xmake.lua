@@ -14,22 +14,20 @@ package("zlib-ng")
     add_deps("cmake")
 
     if on_check then
-        on_check(function (package)
+        on_check("windows", "mingw", function (package)
             import("core.tool.toolchain")
             import("core.base.semver")
 
-            if package:version():ge("2.1.5") then
-                if package:is_plat("windows") and package:is_arch("arm.*") then
-                    local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-                    if msvc then
-                        local vs_sdkver = msvc:config("vs_sdkver")
-                        assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.17763"), "package(zlib-ng/arm >= 2.1.5): need vs_sdkver > 10.0.17763.0")
-                    end
+            if package:version():ge("2.1.5") and package:is_arch("arm.*") then
+                local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+                if msvc then
+                    local vs_sdkver = msvc:config("vs_sdkver")
+                    assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(zlib-ng/arm >= 2.1.5): need vs_sdkver > 10.0.19041.0")
                 end
+            end
 
-                if package:is_plat("android") then
-                    assert("package(zlib-ng >= 2.1.5): Unsupported android")
-                end
+            if package:version():eq("2.1.6") and package:is_arch("i386") and package:is_cross() then
+                assert(false, "package(zlib-ng/i386): Unsupported cross compilation")
             end
         end)
     end
