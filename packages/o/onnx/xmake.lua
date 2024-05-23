@@ -40,5 +40,6 @@ package("onnx")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function (package) assert(package:has_cxxtypes("onnx::ModelProto", {includes = "onnx/proto_utils.h", configs = {languages = "c++17"}}))
+    on_test(function (package)
+        assert(package:has_cxxtypes("onnx::ModelProto", {includes = "onnx/proto_utils.h", configs = {languages = "c++17"}}))
     end)
