@@ -49,7 +49,7 @@ package("webui")
             #include <webui.hpp>
             void test() {
                 size_t my_window = webui_new_window();
-                webui_show(my_window, "<html>Hello</html>");
+                webui_show(my_window, "<html><head><script src=\"webui.js\"></script></head> This is WebUI Test. </html>");
                 webui_wait();
             }
         ]]}, {configs = {languages = "c++17"}}))
