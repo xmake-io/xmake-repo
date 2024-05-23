@@ -14,6 +14,6 @@ target("promise-cpp")
     add_includedirs(".", "include")
     add_headerfiles("include/(**.hpp)", "(add_ons/**.hpp)")
 
-    if is_kind("shared") then
+    if is_plat("windows") and is_kind("shared") then
         add_defines("PROMISE_BUILD_SHARED")
     end
