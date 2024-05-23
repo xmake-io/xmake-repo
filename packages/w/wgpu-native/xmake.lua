@@ -39,7 +39,7 @@ package("wgpu-native")
 
     on_load("windows", function (package)
         if not package:config("shared") then
-            package:add("syslinks", "Advapi32", "bcrypt", "d3dcompiler", "NtDll", "User32", "Userenv", "WS2_32")
+            package:add("syslinks", "Advapi32", "bcrypt", "d3dcompiler", "NtDll", "User32", "Userenv", "WS2_32", "Gdi32", "Opengl32")
         end
     end)
 
