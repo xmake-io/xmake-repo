@@ -27,7 +27,7 @@ package("onnx")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. (package:is_plat("windows") and "17" or "11"))
+        table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
         if package:is_plat("windows") then
             local vs_runtime = package:config("vs_runtime")
             if vs_runtime then
@@ -40,10 +40,5 @@ package("onnx")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function (package)
-        local languages = "c++11"
-        if package:is_plat("windows") then
-            languages = "c++17"
-        end
-        assert(package:has_cxxtypes("onnx::ModelProto", {includes = "onnx/proto_utils.h", configs = {languages = languages}}))
+    on_test(function (package) assert(package:has_cxxtypes("onnx::ModelProto", {includes = "onnx/proto_utils.h", configs = {languages = "c++17"}}))
     end)
