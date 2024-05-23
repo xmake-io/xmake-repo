@@ -7,12 +7,9 @@ package("stringbuilder")
     add_urls("https://github.com/Isameru/stringbuilder.git")
     add_versions("2023.7.10", "ab772a6f0db237155d17a68c8f72b48383137872")
 
-    on_install(function (package)
+    on_install("!windows", function (package)
         io.replace("include/stringbuilder.h", "#pragma once", "#pragma once\n#include <ios>\n#include <stdexcept>", {plain = true})
         io.replace("include/stringbuilder.h", "#include <intrin.h>", "", {plain = true})
-        if package:is_plat("windows") then
-            io.replace("include/stringbuilder.h", "#pragma once", "#pragma once\n#include <windows.h>", {plain = true})
-        end
         os.cp("include", package:installdir())
     end)
 
