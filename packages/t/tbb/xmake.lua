@@ -19,7 +19,6 @@ package("tbb")
         add_versions("2021.7.0", "2cae2a80cda7d45dc7c072e4295c675fff5ad8316691f26f40539f7e7e54c0cc")
         add_versions("2021.10.0", "487023a955e5a3cc6d3a0d5f89179f9b6c0ae7222613a7185b0227ba0c83700b")
         add_versions("2021.11.0", "782ce0cab62df9ea125cdea253a50534862b563f1d85d4cda7ad4e77550ac363")
-        add_versions("2021.12.0", "c7bb7aa69c254d91b8f0041a71c5bcc3936acb64408a1719aec0b2b7639dd84f")
     else
         add_urls("https://github.com/oneapi-src/oneTBB/archive/v$(version).tar.gz")
         add_versions("2020.3", "ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3")
@@ -30,8 +29,7 @@ package("tbb")
         add_versions("2021.7.0", "2cae2a80cda7d45dc7c072e4295c675fff5ad8316691f26f40539f7e7e54c0cc")
         add_versions("2021.10.0", "487023a955e5a3cc6d3a0d5f89179f9b6c0ae7222613a7185b0227ba0c83700b")
         add_versions("2021.11.0", "782ce0cab62df9ea125cdea253a50534862b563f1d85d4cda7ad4e77550ac363")
-        add_versions("2021.12.0", "c7bb7aa69c254d91b8f0041a71c5bcc3936acb64408a1719aec0b2b7639dd84f")
-    
+
         add_patches("2021.2.0", path.join(os.scriptdir(), "patches", "2021.2.0", "gcc11.patch"), "181511cf4878460cb48ac0531d3ce8d1c57626d698e9001a0951c728fab176fb")
         add_patches("2021.5.0", path.join(os.scriptdir(), "patches", "2021.5.0", "i386.patch"), "1a1c11724839cf98b1b8f4d415c0283ec7719c330b11503c578739eb02889ec0")
 
