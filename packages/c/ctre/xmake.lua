@@ -9,6 +9,7 @@ package("ctre")
     add_versions("3.6", "f99f9c8bd3154d76305ef4fbde2c6622ed309c5a3401168732048fbc31e93f5d")
     add_versions("3.7.2", "1dbcd96d279b5be27e9c90d2952533db10bc0e5d8ff6224a3c6d538fd94ab18f")
     add_versions("3.8.1", "7c7a936145defe56e886bac7731ea16a52de65d73bda2b56702d0d0a61101c76")
+    add_versions("3.9.0", "55778712968d4f3ad00e9d20fc4d2149d14d96b4ff3dab086613797cd2ccd2b2")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
