@@ -70,6 +70,9 @@ package("tbb")
                 import("core.tool.toolchain")
                 local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
                 local ndk_sdkver = ndk:config("ndk_sdkver")
+                print("NDK= ", ndk)
+                print("NDK_SDKVER= ", ndk_sdkver)
+                print("TONUMBER_NDK_SDKVER= ", tonumber(ndk_sdkver))
                 local exflags = {"-Wl", "--undefined-version"}
                 if ndk_sdkver and tonumber(ndk_sdkver) == 26 then
                     import("package.tools.cmake").install(package, configs, {shflags = exflags, ldflags = exflags})
