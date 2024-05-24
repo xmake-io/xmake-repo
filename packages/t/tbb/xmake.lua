@@ -77,7 +77,7 @@ package("tbb")
                 --  for the above ndk versions ,we have to a workaround
                 -- 
                 local exflags = {"-Wl,--undefined-version"}
-                if ndkver == 26 and ndk_sdkver == "29" then
+                if ndkver == 26 and ndk_sdkver == 29 then
                     print("At this time point we have to add -Wl,--undefined-version to ldflags ")
                     import("package.tools.cmake").install(package, configs, {shflags = exflags, ldflags = exflags})
                 else
