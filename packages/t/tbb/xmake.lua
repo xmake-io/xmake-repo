@@ -66,7 +66,7 @@ package("tbb")
                 io.replace("cmake/compilers/GNU.cmake", "-Wl,-z,relro,-z,now,-z,noexecstack", "", {plain = true})
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
             end
-            if target:is_plat("android") then
+            if package:is_plat("android") then
                 
                 local ndk = toolchain.load("ndk")
                 local ndk_sdkver = ndk:config("ndk_sdkver")
