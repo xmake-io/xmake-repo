@@ -12,6 +12,8 @@ package("morton-nd")
     add_deps("cmake")
 
     on_install(function (package)
+        io.replace("include/morton-nd/mortonND_BMI2.h", "#include <immintrin.h>", "#include <immintrin.h>\n#include <cstdint>", {plain = true})
+        io.replace("include/morton-nd/mortonND_LUT.h", "#include <limits>", "#include <limits>\n#include <cstdint>", {plain = true})
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
     end)
 
