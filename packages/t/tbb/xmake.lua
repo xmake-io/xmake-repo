@@ -67,15 +67,11 @@ package("tbb")
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
             end
             if target:is_plat("android") then
-                local exldflags = {}
+                
                 local ndk = toolchain.load("ndk")
                 local ndk_sdkver = ndk:config("ndk_sdkver")
                 if ndk_sdkver and tonumber(ndk_sdkver) == 26 then
-                    table.insert(exldflags, "-Wl")
-                    table.insert(exldflags, "--undefined-version")
-                end
-                if #exldflags > 0 then
-                    table.insert(configs, "EXTRA_LDFLAGS=" .. table.concat(exldflags, " "))
+                    table.insert(configs, "EXTRA_LDFLAGS=--undefined-version")
                 end
             end
             import("package.tools.cmake").install(package, configs)
