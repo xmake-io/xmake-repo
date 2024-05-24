@@ -60,18 +60,23 @@ package("openmp")
                     if package:has_tool(toolkind, "clang", "clangxx") then
                         if not package:is_plat("macosx") then
                             result.ldflags = "-fopenmp"
+                            result.shflags = "-fopenmp"
                         end
                     elseif package:has_tool(toolkind, "gcc", "gxx", "gfortran") then
                         result.ldflags = "-fopenmp"
+                        result.shflags = "-fopenmp"
                     elseif package:has_tool(toolkind, "icc", "icpc") then
                         result.ldflags = "-qopenmp"
+                        result.shflags = "-qopenmp"
                     elseif package:has_tool(toolkind, "icl") then
                         result.ldflags = "-Qopenmp"
+                        result.shflags = "-Qopenmp"
                     end
                 end
                 if package:config("runtime") == "custom" then
                     if package:has_tool(toolkind, "cl") then
                         result.ldflags = "/nodefaultlib:vcomp"
+                        result.shflags = "/nodefaultlib:vcomp"
                     end
                 end
             end
