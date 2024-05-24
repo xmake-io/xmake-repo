@@ -19,7 +19,7 @@ package("nifti")
         end
     end)
 
-    on_install(function (package)
+    on_install("!cross and !wasm", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DNIFTI_INSTALL_NO_DOCS=ON",
