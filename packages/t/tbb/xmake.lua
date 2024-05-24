@@ -66,26 +66,18 @@ package("tbb")
                 io.replace("cmake/compilers/GNU.cmake", "-Wl,-z,relro,-z,now,-z,noexecstack", "", {plain = true})
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
             end
+
+            local exflags
             if package:is_plat("android") then
                 import("core.tool.toolchain")
+
                 local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
                 local ndkver = ndk:config("ndkver")
-                -- local ndk_sdkver = tonumber(ndk:config("ndk_sdkver") )
-                
-                --  20240524:
-                --  for r26c,r26b: ndkver is 26 
-                --  for the above ndk versions ,we have to a workaround
-                -- 
-                local exflags = {"-Wl,--undefined-version"}
-                if ndkver == 26  then
-                    print("At this time point we have to add -Wl,--undefined-version to ldflags ")
-                    import("package.tools.cmake").install(package, configs, {shflags = exflags, ldflags = exflags})
-                else
-                    import("package.tools.cmake").install(package, configs)
+                if ndkver == 26 then
+                    exflags = {"-Wl,--undefined-version"}
                 end
-            else
-                import("package.tools.cmake").install(package, configs)
             end
+            import("package.tools.cmake").install(package, configs, {shflags = exflags, ldflags = exflags})
             if package:is_plat("mingw") then
                 local ext = package:config("shared") and ".dll.a" or ".a"
                 local libfiles = os.files(path.join(package:installdir("lib"), "libtbb*" .. ext))
