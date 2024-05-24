@@ -74,7 +74,7 @@ package("tbb")
                     table.insert(exldflags, "-Wl")
                     table.insert(exldflags, "--undefined-version")
                 end
-                if #ldflags > 0 then
+                if #exldflags > 0 then
                     table.insert(configs, "EXTRA_LDFLAGS=" .. table.concat(exldflags, " "))
                 end
             end
