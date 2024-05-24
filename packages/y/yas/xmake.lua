@@ -7,6 +7,9 @@ package("yas")
     add_versions("2023.09.13", "7c5ced1d940ddc6826cf537468e65ea1f592bfe4")
 
     on_install(function (package)
+        io.replace("include/yas/detail/config/endian.hpp",
+        "|| defined(__ARM_ARCH_7S__)",
+        "|| defined(__ARM_ARCH_7S__) || defined(_M_ARM64)", {plain = true})
         os.cp("include", package:installdir())
     end)
 
