@@ -69,12 +69,15 @@ package("tbb")
             if package:is_plat("android") then
                 import("core.tool.toolchain")
                 local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
-                local ndk_sdkver = ndk:config("ndk_sdkver")
-                print("NDK= ", ndk)
-                print("NDK_SDKVER= ", ndk_sdkver)
-                print("TONUMBER_NDK_SDKVER= ", tonumber(ndk_sdkver))
+                local ndkver = ndk:config("ndkver")
+                local ndk_sdkver = tonumber(ndk:config("ndk_sdkver") )
+                
+                --  20240524:
+                --  for r26c,r26b: ndkver is 26 and ndk_sdkver:="29" 
+                --  for the above ndk versions ,we have to a workaround
+                -- 
                 local exflags = {"-Wl", "--undefined-version"}
-                if ndk_sdkver and tonumber(ndk_sdkver) == 26 then
+                if ndkver == 26 and ndk_sdkver == "29" then
                     import("package.tools.cmake").install(package, configs, {shflags = exflags, ldflags = exflags})
                 else
                     import("package.tools.cmake").install(package, configs)
