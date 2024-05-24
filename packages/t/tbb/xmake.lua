@@ -67,14 +67,17 @@ package("tbb")
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
             end
             if package:is_plat("android") then
-                
                 local ndk = toolchain.load("ndk")
                 local ndk_sdkver = ndk:config("ndk_sdkver")
+                local exflags = {"-Wl", "--undefined-version"}
                 if ndk_sdkver and tonumber(ndk_sdkver) == 26 then
-                    table.insert(configs, "EXTRA_LDFLAGS=--undefined-version")
+                    import("package.tools.cmake").install(package, configs, {shflags = exflags, ldflags = exflags})
+                else
+                    import("package.tools.cmake").install(package, configs)
                 end
+            else
+                import("package.tools.cmake").install(package, configs)
             end
-            import("package.tools.cmake").install(package, configs)
             if package:is_plat("mingw") then
                 local ext = package:config("shared") and ".dll.a" or ".a"
                 local libfiles = os.files(path.join(package:installdir("lib"), "libtbb*" .. ext))
