@@ -5,10 +5,10 @@ package("nifti")
     add_urls("https://github.com/NIFTI-Imaging/nifti_clib.git")
     add_versions("2024.01.25", "f24bec503f1a5d501c0413c1bb8aa3d6e04aebda")
 
-    add_configs("nifti2", {description = "Build nifti2.", default = true, type = "boolean"})
-    add_configs("cifti",  {description = "Build cifti.",  default = true, type = "boolean"})
-    add_configs("fslio",  {description = "Build fslio.",  default = true, type = "boolean"})
-    add_configs("tools",  {description = "Build tools.",  default = true, type = "boolean"})
+    add_configs("nifti2", {description = "Build nifti2.", default = false, type = "boolean"})
+    add_configs("cifti",  {description = "Build cifti.",  default = false, type = "boolean"})
+    add_configs("fslio",  {description = "Build fslio.",  default = false, type = "boolean"})
+    add_configs("tools",  {description = "Build tools.",  default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("zlib")
@@ -29,6 +29,7 @@ package("nifti")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+            io.replace("nifticdf/nifticdf.h", "extern char const * const inam[];", "__declspec(dllimport) char const * const inam[];", {plain = true})
         end
 
         table.insert(configs, "-DUSE_NIFTI2_CODE=" .. (package:config("nifti2") and "ON" or "OFF"))
