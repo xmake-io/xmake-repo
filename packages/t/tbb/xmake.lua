@@ -70,7 +70,7 @@ package("tbb")
                 local exldflags = {}
                 local ndk = toolchain.load("ndk")
                 local ndk_sdkver = ndk:config("ndk_sdkver")
-                if ndk_sdkver and tonumber(ndk_sdkver) == 26
+                if ndk_sdkver and tonumber(ndk_sdkver) == 26 then
                     table.insert(exldflags, "-Wl")
                     table.insert(exldflags, "--undefined-version")
                 end
