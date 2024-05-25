@@ -53,5 +53,9 @@ package("glog")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("google::InitGoogleLogging(\"glog\")", {includes = "glog/logging.h"}))
+        local languages
+        if package:version():ge("0.7.0") then
+            languages = "c++14"
+        end
+        assert(package:has_cxxfuncs("google::InitGoogleLogging(\"glog\")", {includes = "glog/logging.h", configs = {languages = languages}}))
     end)
