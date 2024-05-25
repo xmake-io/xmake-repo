@@ -50,9 +50,9 @@ package("glog")
             table.insert(configs, "-DWITH_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
 
-        if (is_host("macosx") and package:is_plat("mingw")) or package:is_plat("msys") then
+        if package:is_plat("mingw") then
             -- fix cmake try run
-            table.insert(configs, "-DWITH_SYMBOLIZE=OFF")
+            table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=ON")
         end
         import("package.tools.cmake").install(package, configs)
     end)
