@@ -1,11 +1,11 @@
 package("glog")
-
     set_homepage("https://github.com/google/glog/")
     set_description("C++ implementation of the Google logging module")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/google/glog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/glog.git")
+
     add_versions("v0.7.0", "375106b5976231b92e66879c1a92ce062923b9ae573c42b56ba28b112ee4cc11")
     add_versions("v0.4.0", "f28359aeba12f30d73d9e4711ef356dc842886968112162bc73002645139c39c")
     add_versions("v0.5.0", "eede71f28371bf39aa69b45de23b329d37214016e2055269b3b5e7cfd40b59f5")
@@ -20,9 +20,11 @@ package("glog")
 
     if is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("windows") then
+        add_syslinks("dbghelp")
     end
 
-    on_load("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package)
+    on_load(function (package)
         if package:is_plat("windows") then
             if package:version():le("0.4") and not package:config("shared") then
                 package:add("defines", "GOOGLE_GLOG_DLL_DECL=")
@@ -34,9 +36,13 @@ package("glog")
                 package:add("deps", dep)
             end
         end
+
+        if package:version():ge("0.7.0") then
+            package:add("defines", "GLOG_USE_GLOG_EXPORT")
+        end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", "cross", function (package)
+    on_install(function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_INSTALL_LIBDIR=lib"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
