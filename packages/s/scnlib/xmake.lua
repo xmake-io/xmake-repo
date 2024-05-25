@@ -18,6 +18,19 @@ package("scnlib")
 
     add_deps("fast_float")
 
+    on_check("windows", function (package)
+        import("core.tool.toolchain")
+        import("core.base.semver")
+
+        if package:version():ge("2.0.3") and package:is_arch("arm.*") then
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            if msvc then
+                local vs_sdkver = msvc:config("vs_sdkver")
+                assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(scnlib): need vs_sdkver > 10.0.19041.0")
+            end
+        end
+    end)
+
     on_load(function (package)
         if package:config("header_only") and package:version():lt("2.0.0") then
             package:set("kind", "library", {headeronly = true})
@@ -38,7 +51,7 @@ package("scnlib")
         end
     end)
 
-    on_install(function (package)
+    on_install("!android and !iphoneos and !wasm", function (package)
         if package:config("header_only") and package:version():lt("2.0.0") then
             os.cp("include/scn", package:installdir("include"))
             return
