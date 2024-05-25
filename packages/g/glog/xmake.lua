@@ -50,7 +50,7 @@ package("glog")
             table.insert(configs, "-DWITH_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
 
-        if is_host("macosx") and package:is_plat("mingw") then
+        if (is_host("macosx") and package:is_plat("mingw")) or package:is_plat("msys") then
             -- fix cmake try run
             table.insert(configs, "-DWITH_SYMBOLIZE=OFF")
         end
