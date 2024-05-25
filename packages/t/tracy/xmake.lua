@@ -70,8 +70,8 @@ package("tracy")
 
         -- collect tracy defines from cmake configs
         for _, config in ipairs(configs) do
-            local define = config:match("-D(TRACY_%S+)=")
-            if define then
+            local define, value = config:match("-D(TRACY_%S+)=(.*)")
+            if define and value and value == "OFF" then
                 package:add("defines", define)
             end
         end
