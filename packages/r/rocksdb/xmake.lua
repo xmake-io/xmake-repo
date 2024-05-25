@@ -67,6 +67,9 @@ package("rocksdb")
         if package:is_plat("mingw") then
             cxflags = "-DMINGW_HAS_SECURE_API"
         end
+        if package:is_cross() then
+            io.replace("CMakeLists.txt", [[set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")]], "", {plain = true})
+        end
         import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
