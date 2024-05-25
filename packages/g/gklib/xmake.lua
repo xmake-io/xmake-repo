@@ -18,7 +18,7 @@ package("gklib")
         add_defines("USE_GKREGEX")
     end
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
         local configs = {
             openmp = package:config("openmp"),
             regex = package:config("regex"),
@@ -28,6 +28,9 @@ package("gklib")
         if configs.regex then
             package:add("defines", "USE_GKREGEX")
         end
+
+        io.replace("gk_arch.h", "gk_ms_stdint.h", "stdint.h", {plain = true})
+        io.replace("gk_arch.h", "gk_ms_inttypes.h", "inttypes.h", {plain = true})
 
         io.replace("gk_arch.h", "LINUX", "__linux__", {plain = true})
         for _, file in ipairs({"timers.c", "gk_arch.h", "error.c", "string.c"}) do
