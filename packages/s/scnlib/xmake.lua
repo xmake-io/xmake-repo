@@ -26,7 +26,9 @@ package("scnlib")
             package:add("deps", "cmake")
         end
 
-        if package:version():le("2.0.2") then
+        if package:version():ge("2.0.3") then
+            package:add("links", "scn", "simdutf")
+        else
             package:add("deps", "simdutf")
         end
 
