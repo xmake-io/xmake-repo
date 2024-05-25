@@ -49,6 +49,11 @@ package("glog")
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DWITH_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
+
+        if is_host("macosx") and package:is_plat("mingw") then
+            -- fix cmake try run
+            table.insert(configs, "-DWITH_SYMBOLIZE=OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
