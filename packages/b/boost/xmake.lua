@@ -222,11 +222,16 @@ package("boost")
         local build_toolset
         local runenvs
         if package:is_plat("windows") then
-            build_toolchain = package:toolchain("clang-cl") or package:toolchain("msvc") or
-                toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-            assert(build_toolchain:check(), "build toolchain not found!")
-            build_toolset = build_toolchain:name() == "clang-cl" and "clang-win" or "msvc"
-            runenvs = build_toolchain:runenvs()
+            if package:has_tool("cxx", "clang_cl") then
+                build_toolset = "clang-win"
+                build_toolchain = package:toolchain("clang-cl")
+            elseif package:has_tool("cxx", "cl") then
+                build_toolset = "msvc"
+                build_toolchain = package:toolchain("msvc")
+            end
+            if build_toolchain then
+                runenvs = build_toolchain:runenvs()
+            end
         end
 
         local file = io.open("user-config.jam", "w")
