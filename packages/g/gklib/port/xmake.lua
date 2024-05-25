@@ -1,6 +1,6 @@
-option("openmp", {showmenu = true, default = false})
-option("regex", {showmenu = true, default = false})
-option("rand", {showmenu = true, default = false})
+option("openmp", {default = false})
+option("regex", {default = false})
+option("rand", {default = false})
 
 add_rules("mode.debug", "mode.release")
 
