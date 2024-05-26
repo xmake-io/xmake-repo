@@ -6,6 +6,7 @@ package("thorvg")
     add_urls("https://github.com/thorvg/thorvg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/thorvg/thorvg.git")
 
+    add_versions("v0.13.5", "977ed74c3846c9a6acd5765aff776745d40e3c91507b22e51177d59c69afd198")
     add_versions("v0.13.2", "03b5dbb4c73ff221a4bd7243cc0ad377aecff4c3077f5a57ee2902e4122d3218")
 
     add_configs("c_api", {description = "Enable API bindings", default = false, type = "boolean"})
