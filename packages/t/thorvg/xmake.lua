@@ -27,30 +27,29 @@ package("thorvg")
     end
 
     add_deps("meson", "ninja")
+    if is_plat("windows") then
+        add_deps("pkgconf")
+    end
 
     on_load(function (package)
         import("core.base.hashset")
 
         local loaders = package:config("loaders")
         if loaders then
-            local deps = hashset.from(loaders)
-            local has_dep = false
-            if deps then
-                if deps:has("all") or deps:has("jpg") then
-                    package:add("deps", "libjpeg-turbo")
-                    has_dep = true
+            local loaders = hashset.from(loaders)
+            if loaders then
+                local deps = {jpg = "libjpeg-turbo", png = "libpng", webp = "libwebp"}
+                if loaders:has("all") then
+                    for _, dep in pairs(deps) do
+                        package:add("deps", dep)
+                    end
+                else
+                    for name, dep in pairs(deps) do
+                        if loaders:has(name) then
+                            package:add("deps", dep)
+                        end
+                    end
                 end
-                if deps:has("all") or deps:has("png") then
-                    package:add("deps", "libpng")
-                    has_dep = true
-                end
-                if deps:has("all") or deps:has("webp") then
-                    package:add("deps", "libwebp")
-                    has_dep = true
-                end
-            end
-            if has_dep and package:is_plat("windows") then
-                package:add("deps", "pkgconf")
             end
         end
     end)
