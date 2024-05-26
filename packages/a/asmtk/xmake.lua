@@ -22,6 +22,8 @@ package("asmtk")
                 set_languages("c++11")
                 if is_kind("static") then
                     add_defines("ASMTK_STATIC")
+                elseif is_kind("shared") then
+                    add_defines("ASMTK_EXPORTS")
                 end
                 if is_plat("windows") then
                     add_cxxflags("/GR-", "/GF", "/Zc:inline", "/Zc:strictStrings", "/Zc:threadSafeInit-")
