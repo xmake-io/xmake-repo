@@ -26,7 +26,7 @@ package("crashpad")
             set_urls("https://github.com/sanqideshi/xmake-repo/releases/download/$(version)/crashpad.tar.gz")
             add_versions("v2024.05.26", "239122ad8c747dc6e12e3636cfc7885ee5f997b10e472a0ee27d65b7777ff8f0")
         end
-        add_includedirs("include", "/include/third_party/mini_chromium/mini_chromium", "include/out/Default/gen")
+        add_includedirs("include", "include/third_party/mini_chromium/mini_chromium", "include/out/Default/gen")
         add_links("common", "client", "util", "base")
     end
 
