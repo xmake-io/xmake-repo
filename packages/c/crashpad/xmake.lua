@@ -1,7 +1,7 @@
 package("crashpad")
     set_homepage("https://chromium.googlesource.com/crashpad/crashpad/+/refs/heads/main/README.md")
     set_description("Crashpad is a crash-reporting system.")
-
+    set_license("Apache-2.0")
     if is_host("windows") then
     
         local map = {
@@ -25,8 +25,6 @@ package("crashpad")
         add_includedirs("include", "include/mini_chromium")
     end
 
-    
-    
     if is_host("linux") then
         local version = "v2024.05.26"
         if is_arch("x64", "x86_64") then
@@ -36,7 +34,6 @@ package("crashpad")
         add_includedirs("include","/include/third_party/mini_chromium/mini_chromium","include/out/Default/gen")
         add_links("common","client","util","base")
     end
-    
 
     on_install("windows", function (package)
         os.cp("include/*", package:installdir("include"))
@@ -48,7 +45,6 @@ package("crashpad")
         end
     end)
 
-    
     on_install("linux", function (package)
         os.cp("include/*", package:installdir("include"))
         os.cp("bin/*", package:installdir("bin"))
@@ -59,7 +55,6 @@ package("crashpad")
     on_test(function (package)
         if is_host("linux") then
             os.runv("crashpad_handler --help")
-            
             assert(package:check_cxxsnippets({test = [[
                 #include <stdio.h>
                 #include <unistd.h>
