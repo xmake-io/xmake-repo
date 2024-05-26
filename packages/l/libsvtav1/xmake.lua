@@ -27,8 +27,8 @@ package("libsvtav1")
     add_deps("cmake", "nasm")
     add_deps("cpuinfo")
 
-    on_install("windows", "linux", "macosx", "bsd", "android", function (package)
-        if package:config("shared") then
+    on_install("windows", "linux", "macosx", "bsd", function (package)
+        if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "EB_DLL")
         end
 
@@ -45,9 +45,9 @@ package("libsvtav1")
 
     on_test(function (package)
         if package:config("encoder") then
-            assert(package:has_cfuncs("svt_av1_enc_init_handle", {includes = "svt-av1/EbSvtAv1Enc.h"}))
+            assert(package:has_cfuncs("svt_av1_enc_init_handle", {includes = {"stddef.h", "svt-av1/EbSvtAv1Enc.h"}}))
         end
         if package:config("decoder") then
-            assert(package:has_cfuncs("svt_av1_dec_init_handle", {includes = "svt-av1/EbSvtAv1Dec.h"}))
+            assert(package:has_cfuncs("svt_av1_dec_init_handle", {includes = {"stddef.h", "svt-av1/EbSvtAv1Dec.h"}}))
         end
     end)
