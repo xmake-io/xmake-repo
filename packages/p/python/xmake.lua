@@ -123,6 +123,7 @@ package("python")
     end)
 
     on_install("@macosx", "@bsd", "@linux", function (package)
+        local version = package:version()
 
         -- init configs
         local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
@@ -149,7 +150,7 @@ package("python")
                     end
                 end
                 if openssl_dir then
-                    if package:version():ge("3.0") then
+                    if version:ge("3.0") then
                         table.insert(configs, "--with-openssl=" .. openssl_dir)
                     else
                         io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
@@ -230,20 +231,24 @@ package("python")
             table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
         end
 
+        local pyver = ("python%d.%d"):format(version:major(), version:minor())
+        -- https://github.com/python/cpython/issues/109796
+        if version:ge("3.12.0") then
+            os.mkdir(package:installdir("lib", pyver))
+        end
+
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
         import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
         os.vrunv("make", {"-j4", "PYTHONAPPSDIR=" .. package:installdir()})
         os.vrunv("make", {"install", "-j4", "PYTHONAPPSDIR=" .. package:installdir()})
-        if package:version():ge("3.0") then
+        if version:ge("3.0") then
             os.cp(path.join(package:installdir("bin"), "python3"), path.join(package:installdir("bin"), "python"))
             os.cp(path.join(package:installdir("bin"), "python3-config"), path.join(package:installdir("bin"), "python-config"))
         end
 
         -- install wheel
         local python = path.join(package:installdir("bin"), "python")
-        local version = package:version()
-        local pyver = ("python%d.%d"):format(version:major(), version:minor())
         local envs = {
             PATH = package:installdir("bin"),
             PYTHONPATH = package:installdir("lib", pyver, "site-packages"),
