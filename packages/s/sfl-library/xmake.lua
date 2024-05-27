@@ -7,6 +7,7 @@ package("sfl-library")
     add_urls("https://github.com/slavenf/sfl-library/archive/refs/tags/$(version).tar.gz",
              "https://github.com/slavenf/sfl-library.git")
 
+    add_versions("2022-03-13-1", "6e641b81918944762c41ddb6d96bd0b052d917d3bc4160f2134ad694adf47a11")
     add_versions("1.5.0", "767d9b3627540071d2a80f18f034d80d6e9eaffc027876c7898c51aeebd3bf37")
 
     on_install(function (package)
