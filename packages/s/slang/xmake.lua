@@ -3,9 +3,10 @@ package("slang")
     set_description("Making it easier to work with shaders")
     set_license("MIT")
 
-    add_urls("https://github.com/shader-slang/slang.git")
+    add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-source.zip",
+             "https://github.com/shader-slang/slang.git")
 
-    add_versions("v2024.1.17", "62b7219e715bd4c0f984bcd98c9767fb6422c78f")
+    add_versions("2024.1.17", "df9949c344d71d066897b014477de90b081707f0c936a8ae2d8182e22141f73b")
 
     add_configs("shared", { description = "Build shared library", default = true, type = "boolean" })
     add_configs("embed_stdlib_source", { description = "Embed stdlib source in the binary", default = true, type = "boolean" })
@@ -22,9 +23,8 @@ package("slang")
     add_configs("slang_llvm_flavor", { description = "How to get or build slang-llvm (available options: FETCH_BINARY, USE_SYSTEM_LLVM, DISABLE)", default = "DISABLE", type = "string" })
 
     add_deps("cmake")
+
     on_install("windows|x64", "macosx", "linux|x86_64", function (package)
-        package:addenv("PATH", "bin")
-        import("package.tools.cmake")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DSLANG_LIB_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
@@ -41,7 +41,8 @@ package("slang")
         table.insert(configs, "-DSLANG_ENABLE_EXAMPLES=" .. (package:config("examples") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_SLANG_LLVM_FLAVOR=" .. package:config("slang_llvm_flavor"))
 
-        cmake.install(package, configs)
+        import("package.tools.cmake").install(package, configs)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
@@ -55,4 +56,3 @@ package("slang")
             }
         ]] }, { configs = { languages = "c++17" } }))
     end)
-
