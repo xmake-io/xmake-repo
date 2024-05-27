@@ -7,6 +7,7 @@ package("aitoolkit")
     add_urls("https://github.com/linkdd/aitoolkit/archive/refs/tags/$(version).tar.gz",
              "https://github.com/linkdd/aitoolkit.git")
 
+    add_versions("v0.5.1", "25ce3e5225d9ab3e4aa5b5cf41b790d17c8d6586a06fa70e18ae7aad7ca6ac26")
     add_versions("v0.5.0", "e2f59412a6cdc7389f25f4b85847e81c39866d33367515bd02e38be4d54ac74c")
     add_versions("v0.3.0", "8cbe1d281235a3486c5840c7f9782f2b3b2ed181d76e8cbe83a2b1395d21ab8a")
 

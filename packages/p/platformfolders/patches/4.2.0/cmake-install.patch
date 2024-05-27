@@ -1,0 +1,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5ae2017..30e2045 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -83,6 +83,7 @@ if(PLATFORMFOLDERS_ENABLE_INSTALL)
+ 		EXPORT "platform_foldersConfig"
+ 		LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+ 		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++		RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+ 		# Tells it where to put the header files
+ 		PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/sago"
+ 	)

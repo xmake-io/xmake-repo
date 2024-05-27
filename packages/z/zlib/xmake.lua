@@ -2,6 +2,7 @@ package("zlib")
 
     set_homepage("http://www.zlib.net")
     set_description("A Massively Spiffy Yet Delicately Unobtrusive Compression Library")
+    set_license("zlib")
 
     add_urls("https://github.com/madler/zlib/archive/$(version).tar.gz")
     add_urls("https://github.com/madler/zlib.git")
