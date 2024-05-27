@@ -18,7 +18,7 @@ package("cpuinfo")
         add_syslinks("pthread")
     end
 
-    on_check("windows", function (package)
+    on_check("windows|arm.*", function (package)
         import("core.tool.toolchain")
         import("core.base.semver")
 
