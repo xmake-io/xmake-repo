@@ -22,7 +22,7 @@ package("slang")
     add_configs("slang_llvm_flavor", { description = "How to get or build slang-llvm (available options: FETCH_BINARY, USE_SYSTEM_LLVM, DISABLE)", default = "DISABLE", type = "string" })
 
     add_deps("cmake")
-    on_install(function (package)
+    on_install("windows|x64", "macosx", "linux|x86_64", function (package)
         package:addenv("PATH", "bin")
         import("package.tools.cmake")
         local configs = {}
