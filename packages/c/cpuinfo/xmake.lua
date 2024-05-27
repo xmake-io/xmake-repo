@@ -18,7 +18,7 @@ package("cpuinfo")
         add_syslinks("pthread")
     end
 
-    on_install("windows", "linux", "macosx", "bsd", "android", function (package)
+    on_install(function (package)
         local configs = {"-DCPUINFO_BUILD_TOOLS=OFF",
                          "-DCPUINFO_BUILD_UNIT_TESTS=OFF",
                          "-DCPUINFO_BUILD_MOCK_TESTS=OFF",
@@ -27,8 +27,13 @@ package("cpuinfo")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCPUINFO_LIBRARY_TYPE=" .. (package:config("shared") and "shared" or "static"))
 
-        io.replace("CMakeLists.txt", [[SET(CPUINFO_TARGET_PROCESSOR "${CMAKE_SYSTEM_PROCESSOR}")]], "", {plain = true})
-        table.insert(configs, "-DCPUINFO_TARGET_PROCESSOR=" .. package:arch())
+        if package:is_plat("mingw") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=Windows")
+        end
+        if (package:is_cross() or package:is_plat("mingw")) and (not package:is_plat("android")) then
+            io.replace("CMakeLists.txt", [[SET(CPUINFO_TARGET_PROCESSOR "${CMAKE_SYSTEM_PROCESSOR}")]], "", {plain = true})
+            table.insert(configs, "-DCPUINFO_TARGET_PROCESSOR=" .. package:arch())
+        end
 
         if package:is_plat("windows") then
             table.insert(configs, "-DCPUINFO_RUNTIME_TYPE=" .. (package:config("vs_runtime"):startswith("MT") and "static" or "shared"))
