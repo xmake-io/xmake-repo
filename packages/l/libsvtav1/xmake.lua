@@ -27,7 +27,7 @@ package("libsvtav1")
     add_deps("cmake", "nasm")
     add_deps("cpuinfo")
 
-    on_install("!windows@arm.*", function (package)
+    on_install("!cross and !windows@arm.*", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "EB_DLL")
         end
