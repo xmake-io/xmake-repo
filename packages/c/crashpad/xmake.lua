@@ -2,7 +2,8 @@ package("crashpad")
     set_homepage("https://chromium.googlesource.com/crashpad/crashpad/+/refs/heads/main/README.md")
     set_description("Crashpad is a crash-reporting system.")
     set_license("Apache-2.0")
-    add_deps("depot_tools","rsync")
+
+    add_deps("depot_tools", "rsync")
 
     add_includedirs("include", "/include/third_party/mini_chromium/mini_chromium", "include/out/Default/gen")
     add_links("common", "client", "util", "base")
@@ -42,7 +43,7 @@ package("crashpad")
     --     end
     -- end)
 
-    on_install("windows","linux", function(package)
+    on_install("windows", "linux", function(package)
         print("build start...")
         local installeddir = os.curdir()
         os.mkdir("tmp")
@@ -95,21 +96,22 @@ package("crashpad")
             os.runv("crashpad_handler --help")
             assert(package:check_cxxsnippets({
                 test = [[
-                        #include <stdio.h>
-                        #include <unistd.h>
-                        #include <string.h>
-                        #include "client/crashpad_client.h"
-                        #include "client/crash_report_database.h"
-                        #include "client/settings.h"
-                        using namespace crashpad;
-                        void test() {
-                            CrashpadClient *client = new CrashpadClient();
-                        }
-                    ]]
+                            #include <stdio.h>
+                            #include <unistd.h>
+                            #include <string.h>
+                            #include "client/crashpad_client.h"
+                            #include "client/crash_report_database.h"
+                            #include "client/settings.h"
+                            using namespace crashpad;
+                            void test() {
+                                CrashpadClient *client = new CrashpadClient();
+                            }
+                        ]]
             }, {
                 configs = {
                     languages = "cxx17"
                 }
             }))
         end
+
     end)
