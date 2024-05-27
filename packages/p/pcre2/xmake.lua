@@ -1,9 +1,10 @@
 package("pcre2")
-
     set_homepage("https://www.pcre.org/")
     set_description("A Perl Compatible Regular Expressions Library")
 
-    set_urls("https://github.com/PhilipHazel/pcre2/releases/download/pcre2-$(version)/pcre2-$(version).tar.gz")
+    add_urls("https://github.com/PhilipHazel/pcre2/releases/download/pcre2-$(version)/pcre2-$(version).tar.gz",
+             "https://github.com/PhilipHazel/pcre2.git")
+
     add_versions("10.43", "889d16be5abb8d05400b33c25e151638b8d4bac0e2d9c76e9d6923118ae8a34e")
     add_versions("10.42", "c33b418e3b936ee3153de2c61cc638e7e4fe3156022a5c77d0711bcbb9d64f1f")
     add_versions("10.40", "ded42661cab30ada2e72ebff9e725e745b4b16ce831993635136f2ef86177724")
