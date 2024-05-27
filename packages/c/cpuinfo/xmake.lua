@@ -26,6 +26,10 @@ package("cpuinfo")
                          "-DCPUINFO_BUILD_PKG_CONFIG=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCPUINFO_LIBRARY_TYPE=" .. (package:config("shared") and "shared" or "static"))
+
+        io.replace("CMakeLists.txt", [[SET(CPUINFO_TARGET_PROCESSOR "${CMAKE_SYSTEM_PROCESSOR}")]], "", {plain = true})
+        table.insert(configs, "-DCPUINFO_TARGET_PROCESSOR=" .. package:arch())
+
         if package:is_plat("windows") then
             table.insert(configs, "-DCPUINFO_RUNTIME_TYPE=" .. (package:config("vs_runtime"):startswith("MT") and "static" or "shared"))
             local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
