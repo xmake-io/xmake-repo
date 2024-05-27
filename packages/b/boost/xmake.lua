@@ -4,8 +4,8 @@ package("boost")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
 
-    add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version).tar.gz")
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-b2-nodocs.tar.gz")
+    add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version).tar.gz")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {alias = "mirror", version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
@@ -339,6 +339,22 @@ package("boost")
 
         local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})
         if ok ~= 0 then
+            ----DEBUG WHATS WRONG WITH CLANG:
+            ------DEBUG
+            -- Opening the file in 'read' mode
+            local errlogpath=path.join(os.curdir(), "boost-log.txt")
+            local file = io.open(errlogpath, "r")
+            
+            -- Reading the entire contents of the file
+            local content = file:read("*all")
+            
+            -- Displaying the content
+            print("Content of errlog:")
+            print(content)
+            
+            -- Closing the file after reading
+            file:close()
+            ------GUBED
             raise("boost build failed, please check log in " .. path.join(os.curdir(), "boost-log.txt"))
         end
     end)
