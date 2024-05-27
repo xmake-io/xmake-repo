@@ -17,15 +17,12 @@ package("slang")
     add_configs("slangc", { description = "Enable standalone compiler target", default = false, type = "boolean" })
     add_configs("slangrt", { description = "Enable runtime target", default = false, type = "boolean" })
     add_configs("slang_glslang", { description = "Enable glslang dependency and slang-glslang wrapper target", default = false, type = "boolean" })
-    add_configs("tests", { description = "Enable test targets, requires SLANG_ENABLE_GFX, SLANG_ENABLE_SLANGD and SLANG_ENABLE_SLANGRT", default = false, type = "boolean" })
-    add_configs("examples", { description = "Enable example targets, requires SLANG_ENABLE_GFX", default = false, type = "boolean" })
     add_configs("slang_llvm_flavor", { description = "How to get or build slang-llvm (available options: FETCH_BINARY, USE_SYSTEM_LLVM, DISABLE)", default = "DISABLE", type = "string" })
 
     add_deps("cmake")
+
     on_install("windows|x64", "macosx", "linux|x86_64", function (package)
-        package:addenv("PATH", "bin")
-        import("package.tools.cmake")
-        local configs = {}
+        local configs = {"-DSLANG_ENABLE_TESTS=OFF", "-DSLANG_ENABLE_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DSLANG_LIB_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
         table.insert(configs, "-DSLANG_EMBED_STDLIB_SOURCE=" .. (package:config("embed_stdlib_source") and "ON" or "OFF"))
@@ -37,11 +34,10 @@ package("slang")
         table.insert(configs, "-DSLANG_ENABLE_SLANGC=" .. (package:config("slangc") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_ENABLE_SLANGRT=" .. (package:config("slangrt") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_ENABLE_SLANG_GLSLANG=" .. (package:config("slang_glslang") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_ENABLE_TESTS=" .. (package:config("tests") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_ENABLE_EXAMPLES=" .. (package:config("examples") and "ON" or "OFF"))
         table.insert(configs, "-DSLANG_SLANG_LLVM_FLAVOR=" .. package:config("slang_llvm_flavor"))
 
-        cmake.install(package, configs)
+        import("package.tools.cmake").install(package, configs)
+        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
@@ -53,6 +49,5 @@ package("slang")
                 Slang::ComPtr<slang::IGlobalSession> global_session;
                 slang::createGlobalSession(global_session.writeRef());
             }
-        ]] }, { configs = { languages = "c++17" } }))
+        ]] }, {configs = {languages = "c++17"}}))
     end)
-
