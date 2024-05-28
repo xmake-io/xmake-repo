@@ -14,8 +14,12 @@ package("ncurses")
 
     add_configs("widec", {description = "Compile with wide-char/UTF-8 code.", default = true, type = "boolean"})
 
-    if is_plat("linux") then
-        add_extsources("apt::libncurses-dev")
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::ncurses")
+    elseif is_plat("linux") then
+        add_extsources("apt::libncurses-dev", "pacman::ncurses")
+    elseif is_plat("macosx") then
+        add_extsources("brew::ncurses")
     end
     on_load(function (package)
         if package:config("widec") then
@@ -27,9 +31,15 @@ package("ncurses")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", function (package)
-        local configs = {"--without-manpages", "--enable-sigwinch", "--with-gpm=no"}
-        table.insert(configs, "--with-debug=" .. (package:debug() and "yes" or "no"))
+    on_install(function (package)
+        local configs = {"--with-debug=" .. (package:debug() and "yes" or "no"),
+                         "--without-manpages",
+                         "--enable-sigwinch",
+                         "--with-gpm=no",
+                         "--without-ada",
+                         "--without-progs",
+                         "--without-tack",
+                         "--without-tests"}
         if package:config("widec") then
             table.insert(configs, "--enable-widec")
         end
