@@ -6,6 +6,7 @@ package("symengine")
     add_urls("https://github.com/symengine/symengine/archive/refs/tags/$(version).tar.gz",
              "https://github.com/symengine/symengine.git")
 
+    add_versions("v0.12.0", "1b5c3b0bc6a9f187635f93585649f24a18e9c7f2167cebcd885edeaaf211d956")
     add_versions("v0.11.2", "f6972acd6a65354f6414e69460d2e175729470632bdac05919bc2f7f32e48cbd")
 
     add_configs("integer_class", {description = "Integer class for symengine. Either gmp, gmpxx, flint or piranha", default = "boost", type = "string", values = {"boost", "gmp"}})
