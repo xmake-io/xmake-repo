@@ -10,6 +10,7 @@ package("cpuinfo")
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
+    add_configs("clog", {description = "Build clog library.", default = false, type = "boolean"})
 
     add_deps("cmake")
     if is_plat("windows") then
@@ -57,6 +58,10 @@ package("cpuinfo")
             end
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:config("clog") then
+            import("clog")(package)
+        end
     end)
 
     on_test(function (package)
@@ -67,4 +72,8 @@ package("cpuinfo")
                 std::cout << "Running on CPU " << cpuinfo_get_package(0)->name;
             }
         ]]}, {configs = {languages = "c++11"}, includes = "cpuinfo.h"}))
+
+        if package:config("clog") then
+            assert(package:has_cfuncs("clog_vlog_info", {includes = "clog.h"}))
+        end
     end)
