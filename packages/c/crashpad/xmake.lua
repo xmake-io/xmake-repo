@@ -3,8 +3,10 @@ package("crashpad")
     set_description("Crashpad is a crash-reporting system.")
     set_license("Apache-2.0")
 
-    add_deps("depot_tools","libcurl")
-
+    if is_host("linux") then
+        add_deps("depot_tools","libcurl")
+    end
+    
     if is_host("windows") then
         local map = {
             ["2021.8.1"] = "stable",
