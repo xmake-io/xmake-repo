@@ -14,6 +14,10 @@ package("libstatgrab")
     
     add_deps("automake", "autoconf", "libtool")
 
+    if is_plat("macosx") then
+        add_frameworks("IOKit", "CoreFoundation")
+    end
+
     on_install("macosx", "linux", function (package)
         local configs = {"--disable-statgrab",
                          "--disable-saidar",
