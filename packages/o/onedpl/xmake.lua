@@ -6,7 +6,8 @@ package("onedpl")
 
     add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version)-release.tar.gz")
     add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version).tar.gz")
-    add_versions("2022.5.0-rc1", "9180c60331ec5b307dd89a5d8bfcd096667985c6761c52322405d4b69193ed88")
+    --add_versions("2022.5.0-rc1", "9180c60331ec5b307dd89a5d8bfcd096667985c6761c52322405d4b69193ed88")
+    add_versions("2022.0.0", "e22eb0155258abdccd810dc131baa3eac4a856507b6eef37462a077d37cd810e")
     add_versions("2021.6.1", "4995fe2ed2724b89cdb52c4b6c9af22e146b48d2561abdafdaaa06262dbd67c4")
 
     add_configs("backend", {description = "Choose threading backend.", default = "tbb", type = "string", values = {"tbb", "dpcpp", "dpcpp_only", "omp", "serial"}})
@@ -29,7 +30,6 @@ package("onedpl")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DONEDPL_BACKEND=" .. package:config("backend"))
-        table.insert(configs, "-DCXX_STANDARD=17")
         import("package.tools.cmake").install(package, configs)
     end)
 
