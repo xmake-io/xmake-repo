@@ -84,7 +84,7 @@ package("crashpad")
     end)
 
     if is_host("linux") then
-        add_includedirs("include", "/include/third_party/mini_chromium/mini_chromium", "include/out/Default/gen")
+        add_includedirs("include", "include/third_party/mini_chromium/mini_chromium", "include/out/Default/gen")
         add_links("common", "client", "util", "base")
     end
 
