@@ -19,12 +19,12 @@ package("cpuinfo")
         add_syslinks("pthread")
     end
 
-    on_check("windows|arm.*", function (package)
+    on_check("windows", function (package)
         import("core.tool.toolchain")
         import("core.base.semver")
 
         local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-        if msvc then
+        if msvc and package:is_arch("arm.*") then
             local vs_sdkver = msvc:config("vs_sdkver")
             assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(cpuinfo): need vs_sdkver > 10.0.19041.0")
         end
