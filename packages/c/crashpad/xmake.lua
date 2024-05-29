@@ -83,8 +83,10 @@ package("crashpad")
         package:addenv("PATH", "bin")
     end)
 
-    add_includedirs("include", "/include/third_party/mini_chromium/mini_chromium", "include/out/Default/gen")
-    add_links("common", "client", "util", "base")
+    if is_host("linux") then
+        add_includedirs("include", "/include/third_party/mini_chromium/mini_chromium", "include/out/Default/gen")
+        add_links("common", "client", "util", "base")
+    end
 
     on_test(function(package)
         if package:is_plat("linux") or package:is_plat("windows") then
