@@ -78,7 +78,8 @@ package("libtorch")
     on_install("windows|x64", "macosx", "linux", function (package)
         import("package.tools.cmake")
         import("core.tool.toolchain")
-
+        import("core.base.semver")
+        
         if package:is_plat("windows") then
             local vs = toolchain.load("msvc"):config("vs")
             if tonumber(vs) < 2019 then
@@ -176,10 +177,10 @@ package("libtorch")
         if package:is_plat("windows") then
             table.insert(configs, "-DCAFFE2_USE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
             table.insert(configs, "-DCPUINFO_RUNTIME_TYPE=" .. (package:config("vs_runtime"):startswith("MT") and "static" or "shared"))
-            local vs_sdkver = toolchain.load("msvc"):config("vs_sdkver")
-            if vs_sdkver then
-                local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
-                assert(tonumber(build_ver) >= 18362, "libtorch requires Windows SDK to be at least 10.0.18362.0")
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            if msvc then
+                local vs_sdkver = msvc:config("vs_sdkver")
+                assert(semver.match(vs_sdkver):gt("10.0.18362"), "package(libtorch): need vs_sdkver > 10.0.18362.0")
                 table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
                 table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
             end
