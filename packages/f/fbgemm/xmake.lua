@@ -10,15 +10,18 @@ package("fbgemm")
 
     add_patches("0.7.0", "patches/0.7.0/dep-unbundle.patch", "f3117ff728989146d5ab0c370fe410c73459091f65cae5f6b304e5637889fb8f")
 
-    -- only for libtorch
+    -- need libtorch
     add_configs("gpu", {description = "Build fbgemm_gpu library", default = false, type = "boolean"})
     add_configs("cpu", {description = "Build FBGEMM_GPU without GPU support", default = false, type = "boolean"})
     add_configs("rocm", {description = "Build FBGEMM_GPU for ROCm", default = false, type = "boolean"})
 
-    add_deps("cmake", "python")
-    add_deps("asmjit", "cpuinfo")
+    add_deps("cmake", "python", {kind = "binary"})
+    add_deps("asmjit", "cpuinfo", "openmp")
 
-    on_install(function (package)
+    -- mingw support: https://github.com/pytorch/FBGEMM/pull/2114
+    on_install("!iphoneos and !mingw", function (package)
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+
         if not package:config("shared") then
             package:add("defines", "FBGEMM_STATIC")
         end
