@@ -15,7 +15,7 @@ package("asmjit")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
         if not package:config("shared") then
             package:add("defines", "ASMJIT_STATIC")
         end
