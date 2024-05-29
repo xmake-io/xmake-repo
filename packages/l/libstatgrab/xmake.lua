@@ -25,7 +25,7 @@ package("libstatgrab")
                          "--disable-tests"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        if package:config("thread_support") == false then
+        if not package:config("thread_support") then
             table.insert(configs, "--disable-thread-support")
         else 
             package:add("syslinks", "pthread")
