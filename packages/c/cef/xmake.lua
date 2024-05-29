@@ -62,5 +62,5 @@ package("cef")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("CefShutdown", {includes = "cef_app.h"}))
+        assert(package:has_cxxfuncs("CefShutdown", {includes = "cef_app.h", configs = {languages = "c++17"}}))
     end)
