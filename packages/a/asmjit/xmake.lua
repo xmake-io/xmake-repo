@@ -1,5 +1,4 @@
 package("asmjit")
-
     set_homepage("https://asmjit.com/")
     set_description("AsmJit is a lightweight library for machine code generation written in C++ language.")
     set_license("zlib")
@@ -13,13 +12,14 @@ package("asmjit")
     if is_plat("linux") then
         add_syslinks("rt")
     end
-    on_load("windows", "macosx", "linux", function (package)
+
+    on_load(function (package)
         if not package:config("shared") then
             package:add("defines", "ASMJIT_STATIC")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DASMJIT_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
