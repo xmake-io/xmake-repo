@@ -3,7 +3,7 @@ package("crashpad")
     set_description("Crashpad is a crash-reporting system.")
     set_license("Apache-2.0")
 
-    add_deps("depot_tools")
+    add_deps("depot_tools","libcurl")
 
     if is_host("windows") then
         local map = {
@@ -34,7 +34,11 @@ package("crashpad")
     on_install("windows", function(package)
         os.cp("include", package:installdir())
         os.cp("bin", package:installdir())
-        os.cp("lib", package:installdir())
+        if package:config("shared") then
+            os.cp("lib_md/*", package:installdir("lib"))
+        else
+            os.cp("lib_mt/*", package:installdir("lib"))
+        end
     end)
 
     on_install("linux", function(package)
