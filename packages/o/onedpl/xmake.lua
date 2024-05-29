@@ -29,6 +29,7 @@ package("onedpl")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DONEDPL_BACKEND=" .. package:config("backend"))
+        table.insert(configs, "-DCXX_STANDARD=17")
         import("package.tools.cmake").install(package, configs)
     end)
 
