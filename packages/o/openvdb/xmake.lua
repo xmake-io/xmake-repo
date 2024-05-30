@@ -16,6 +16,8 @@ package("openvdb")
     add_versions("v10.1.0", "2746236e29659a0d35ab90d832f7c7987dd2537587a1a2f9237d9c98afcd5817")
     add_versions("v11.0.0", "6314ff1db057ea90050763e7b7d7ed86d8224fcd42a82cdbb9c515e001b96c74")
 
+    add_patches(">=10.1.0", "patches/10.1.0/blosc-dep.patch", "a1a5adf4ae2c75c3a3a390b25654dd7785b88d15e459a1620fc0b42b20f81ba0")
+
     add_deps("cmake")
     add_deps("boost >1.73", {configs = {regex = true, system = true, iostreams = true}})
 
@@ -66,11 +68,7 @@ package("openvdb")
     on_install("macosx", "linux", "windows|x64", "windows|x86", function (package)
         io.replace("cmake/FindBlosc.cmake", "${BUILD_TYPE} ${_BLOSC_LIB_NAME}", "${BUILD_TYPE} blosc libblosc", {plain = true})
         io.replace("cmake/FindTBB.cmake", "Tbb_${COMPONENT}_LIB_TYPE STREQUAL STATIC", "TRUE", {plain = true})
-        if package:is_plat("windows") then
-            io.replace("cmake/FindBlosc.cmake", "lz4 snappy zlib zstd", "", {plain = true})
-        else
-            io.replace("cmake/FindBlosc.cmake", "lz4 snappy zlib zstd", "lz4", {plain = true})
-        end
+        io.replace("cmake/FindBlosc.cmake", "lz4 snappy zlib zstd", "lz4", {plain = true})
 
         local configs = {
             "-DOPENVDB_BUILD_DOCS=OFF",
