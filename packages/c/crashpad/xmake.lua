@@ -4,7 +4,8 @@ package("crashpad")
     set_license("Apache-2.0")
 
     if is_host("linux") then
-        add_deps("depot_tools","apt::libcurl4-openssl-dev")
+        add_deps("depot_tools")
+        add_extsources("pacman::curl", "apt::libcurl4-gnutls-dev", "apt::libcurl4-nss-dev", "apt::libcurl4-openssl-dev")
         -- add_includedirs("/usr/include/x86_64-linux-gnu")
     end
     
