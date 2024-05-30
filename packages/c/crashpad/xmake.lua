@@ -115,10 +115,15 @@ package("crashpad")
     on_test(function(package)
         if package:is_plat("linux") then
             os.vrunv("crashpad_handler", {"--help"})
-            assert(package:check_cxxsnippets({
+            
+        end
+
+        if package:is_plat("windows") then
+            os.vrunv("crashpad_handler.exe", {"--help"})
+        end
+        
+        assert(package:check_cxxsnippets({
                 test = [[
-                                #include <stdio.h>
-                                #include <unistd.h>
                                 #include <string.h>
                                 #include "client/crashpad_client.h"
                                 #include "client/crash_report_database.h"
@@ -133,11 +138,5 @@ package("crashpad")
                     languages = "cxx17"
                 }
             }))
-        end
-
-        if package:is_plat("windows") then
-            print("this is windows platform")
-            -- os.vrunv("crashpad_handler.exe", {"--help"})
-        end
 
     end)
