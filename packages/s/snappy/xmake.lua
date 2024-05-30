@@ -19,6 +19,8 @@ package("snappy")
     add_configs("bmi2", {description = "Use the BMI2 instruction set", default = false, type = "boolean"})
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+
         if package:version():eq("1.1.10") then
             io.replace("snappy.cc", "(op + deferred_length) < op_limit_min_slop);", "static_cast<ptrdiff_t>(op + deferred_length) < op_limit_min_slop);", {plain = true})
         end
