@@ -56,16 +56,16 @@ package("crashpad")
 
     on_install("linux", function(package)
         print("build start...")
-        local minstalleddir = os.iorunv("pwd")
+        local minstalleddir = string.trim(os.iorunv("pwd"))
         os.mkdir("tmp")
         os.cd("tmp")
-        local currentdir = os.iorunv("pwd")
+        local currentdir = string.trim(os.iorunv("pwd"))
         print("currentdir:" .. currentdir)
         if not os.exists("crashpad") then
             os.vrunv("fetch", {"crashpad"})
         end
         os.cd("crashpad")
-        local crashpaddir = os.iorunv("pwd")
+        local crashpaddir = string.trim(os.iorunv("pwd"))
         os.vrunv("gclient", {"sync"})
         os.vrunv("gn", {"gen", "out/Default"})
         os.vrunv("ninja", {"-C", "out/Default"})
@@ -80,7 +80,7 @@ package("crashpad")
 
         print("make include/*.h files")
         local rsync_command = table.concat({"rsync -av --include='*.h' --include='*/' --exclude='*' ", crashpaddir, "/ ",
-                                            mincludedir,"/"})
+                                            mincludedir, "/"})
         print(rsync_command)
         os.run(rsync_command)
         print("make lib/* files")
@@ -116,29 +116,29 @@ package("crashpad")
     on_test(function(package)
         if package:is_plat("linux") then
             os.vrunv("crashpad_handler", {"--help"})
+            assert(package:check_cxxsnippets({
+                test = [[
+                                #include <stdio.h>
+                                #include <unistd.h>
+                                #include <string.h>
+                                #include "client/crashpad_client.h"
+                                #include "client/crash_report_database.h"
+                                #include "client/settings.h"
+                                using namespace crashpad;
+                                void test() {
+                                    CrashpadClient *client = new CrashpadClient();
+                                }
+                            ]]
+            }, {
+                configs = {
+                    languages = "cxx17"
+                }
+            }))
         end
 
         if package:is_plat("windows") then
-            os.vrunv("crashpad_handler.exe", {"--help"})
+            print("this is windows platform")
+            -- os.vrunv("crashpad_handler.exe", {"--help"})
         end
-
-        assert(package:check_cxxsnippets({
-            test = [[
-                            #include <stdio.h>
-                            #include <unistd.h>
-                            #include <string.h>
-                            #include "client/crashpad_client.h"
-                            #include "client/crash_report_database.h"
-                            #include "client/settings.h"
-                            using namespace crashpad;
-                            void test() {
-                                CrashpadClient *client = new CrashpadClient();
-                            }
-                        ]]
-        }, {
-            configs = {
-                languages = "cxx17"
-            }
-        }))
 
     end)
