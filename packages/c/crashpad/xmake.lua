@@ -4,7 +4,7 @@ package("crashpad")
     set_license("Apache-2.0")
 
     if is_host("linux") then
-        add_deps("depot_tools")
+        add_deps("depot_tools","rsync")
         if linuxos.name() == "ubuntu" or linuxos.name() == "debian" then
             add_deps("apt::libcurl4-openssl-dev")
         end
@@ -56,11 +56,7 @@ package("crashpad")
 
     on_install("linux", function(package)
         print("build start...")
-        local minstalleddir = string.trim(os.iorunv("pwd"))
-        os.mkdir("tmp")
-        os.cd("tmp")
-        local currentdir = string.trim(os.iorunv("pwd"))
-        print("currentdir:" .. currentdir)
+
         if not os.exists("crashpad") then
             os.vrunv("fetch", {"crashpad"})
         end
@@ -71,9 +67,9 @@ package("crashpad")
         os.vrunv("ninja", {"-C", "out/Default"})
         print("build end...")
 
-        local mbindir = path.join(minstalleddir, "bin")
-        local mlibdir = path.join(minstalleddir, "lib")
-        local mincludedir = path.join(minstalleddir, "include")
+        local mbindir = path.join(crashpaddir, "bin")
+        local mlibdir = path.join(crashpaddir, "lib")
+        local mincludedir = path.join(crashpaddir, "include")
         os.vrunv("mkdir",{"-p",mbindir})
         os.vrunv("mkdir",{"-p",mlibdir})
         os.vrunv("mkdir",{"-p",mincludedir})
@@ -99,7 +95,7 @@ package("crashpad")
         os.cp(path.join(crashpaddir, "out/Default/dump_minidump_annotations"), mbindir)
         os.cp(path.join(crashpaddir, "out/Default/base94_encoder"), mbindir)
 
-        os.cd(minstalleddir)
+        os.cd(crashpaddir)
         -- os.rm("tmp")
         os.cp(mincludedir, package:installdir())
         os.cp(mlibdir, package:installdir())
