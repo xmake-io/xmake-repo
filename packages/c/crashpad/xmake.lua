@@ -12,7 +12,7 @@ package("crashpad")
             add_deps("pacman::curl")
         end
         if linuxos.name() == "fedora" then
-            add_deps("yum::libcurl-devel")
+            add_deps("dnf::libcurl-devel")
         end
     end
     
