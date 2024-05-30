@@ -5,7 +5,15 @@ package("crashpad")
 
     if is_host("linux") then
         add_deps("depot_tools")
-        add_deps("pacman::curl", "dnf::libcurl-devel", "yum::libcurl-devel", "apt::libcurl4-openssl-dev")
+        if linuxos.name() == "ubuntu" or linuxos.name() == "debian" then
+            add_deps("apt::libcurl4-openssl-dev")
+        end
+        if linuxos.name() == "archlinux" or linuxos.name() == "manjaro" then
+            add_deps("pacman::curl")
+        end
+        if linuxos.name() == "fedora" then
+            add_deps("yum::libcurl-devel")
+        end
     end
     
     if is_host("windows") then
