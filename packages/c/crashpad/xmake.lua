@@ -4,7 +4,7 @@ package("crashpad")
     set_license("Apache-2.0")
 
     if is_host("linux") then
-        add_deps("depot_tools","libcurl")
+        add_deps("depot_tools")
     end
     
     if is_host("windows") then
