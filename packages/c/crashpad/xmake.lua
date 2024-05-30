@@ -5,7 +5,7 @@ package("crashpad")
 
     if is_host("linux") then
         add_deps("depot_tools")
-        add_ldflags("-I/usr/include/x86_64-linux-gnu")
+        add_includedirs("/usr/include/x86_64-linux-gnu")
     end
     
     if is_host("windows") then
