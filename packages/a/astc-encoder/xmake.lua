@@ -26,6 +26,8 @@ package("astc-encoder")
     add_deps("cmake")
 
     on_install("windows|x64", "windows|x86", "mingw|x86_64", "linux", function (package)
+        io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DASTCENC_SHAREDLIB=" .. (package:config("shared") and "ON" or "OFF"))
