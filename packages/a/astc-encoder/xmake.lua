@@ -66,7 +66,7 @@ package("astc-encoder")
                 astcenc_error status = astcenc_context_alloc(config, 1, &context);
             }
         ]]}, {configs = {languages = "c++14"}}))
-        if package:config("cli") then
+        if package:config("cli") and (not package:is_cross()) then
             os.vrun("astcenc -help")
         end
     end)
