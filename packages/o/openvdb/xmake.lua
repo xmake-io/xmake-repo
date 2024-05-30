@@ -65,7 +65,7 @@ package("openvdb")
 
     on_install("macosx", "linux", "windows|x64", "windows|x86", function (package)
         io.replace("cmake/FindBlosc.cmake", "${BUILD_TYPE} ${_BLOSC_LIB_NAME}", "${BUILD_TYPE} blosc libblosc", {plain = true})
-        io.replace("cmake/FindBlosc.cmake", "lz4 snappy zlib zstd", "lz4", {plain = true})
+        io.replace("cmake/FindBlosc.cmake", "lz4 snappy zlib zstd", "", {plain = true})
         io.replace("cmake/FindTBB.cmake", "Tbb_${COMPONENT}_LIB_TYPE STREQUAL STATIC", "TRUE", {plain = true})
         local configs = {"-DOPENVDB_BUILD_DOCS=OFF", "-DUSE_PKGCONFIG=OFF", "-DBoost_USE_STATIC_LIBS=ON", "-DUSE_CCACHE=OFF", "-DBLOSC_USE_EXTERNAL_SOURCES=ON"}
         if package:config("shared") then
@@ -84,6 +84,7 @@ package("openvdb")
         end
         table.insert(configs, "-DOPENVDB_BUILD_VDB_LOD=" .. (package:config("lod") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_PRINT=" .. (package:config("print") and "ON" or "OFF"))
+        table.insert(configs, "-DOPENVDB_BUILD_BINARIES=" .. (package:config("print") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_RENDER=" .. (package:config("render") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_VIEW=" .. (package:config("view") and "ON" or "OFF"))
         if package:version():ge("10.0") then
