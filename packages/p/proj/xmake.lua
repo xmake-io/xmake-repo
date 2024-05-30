@@ -27,9 +27,6 @@ package("proj")
         end
         if package:config("curl") then
             package:add("deps", "libcurl")
-            if package:is_plat("linux") then
-                package:add("deps", "openssl")
-            end
         end
         if package:config("apps") then
             package:addenv("PATH", "bin")
@@ -41,9 +38,7 @@ package("proj")
         if package:is_plat("windows") and package:is_arch("arm64") then
             io.replace("CMakeLists.txt", "add_subdirectory(data)", "", {plain = true})
         end
-        if package:config("curl") and package:is_plat("linux") then
-            io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl ssl crypto", {plain = true})
-        else
+        if package:config("curl") and (package:version():le(9.4)) then
             io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl", {plain = true})
         end
         if package:is_plat("windows") and not package:config("shared") then
@@ -56,9 +51,8 @@ package("proj")
         table.insert(configs, "-DENABLE_TIFF=" .. (package:config("tiff") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_CURL=" .. (package:config("curl") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_PROJSYNC=" .. (package:config("curl") and "ON" or "OFF"))
-        if package:config("curl") and package:is_plat("linux") then
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"openssl"}})
-        elseif package:config("curl") and package:is_plat("macosx") then
+
+        if package:config("curl") and package:is_plat("macosx") then
             local exflags = {"-framework", "CoreFoundation", "-framework", "Security", "-framework", "SystemConfiguration"}
             import("package.tools.cmake").install(package, configs, {shflags = exflags, ldflags = exflags})
         else
