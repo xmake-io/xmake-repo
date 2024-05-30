@@ -9,7 +9,7 @@ package("crashpad")
             add_deps("apt::libcurl4-openssl-dev")
         end
         if linuxos.name() == "archlinux" or linuxos.name() == "manjaro" then
-            add_deps("pacman::curl")
+            add_deps("pacman::curl","pacman::clang")
         end
         if linuxos.name() == "fedora" then
             add_deps("dnf::libcurl-devel")
