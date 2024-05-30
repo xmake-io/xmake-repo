@@ -51,6 +51,7 @@ package("crashpad")
         else
             os.cp("lib_mt/*", package:installdir("lib"))
         end
+        package:addenv("PATH", "bin")
     end)
 
     on_install("linux", function(package)
@@ -93,11 +94,11 @@ package("crashpad")
         os.cp(path.join(crashpaddir, "out/Default/dump_minidump_annotations"), mbindir)
         os.cp(path.join(crashpaddir, "out/Default/base94_encoder"), mbindir)
     
-        os.cd(installeddir)
+        os.cd(minstalleddir)
         -- os.rm("tmp")
-        os.cp(path.join(mincludedir, "*"), package:installdir("include"))
-        os.cp(path.join(mlibdir, "*"), package:installdir("lib"))
-        os.cp(path.join(mbindir, "*"), package:installdir("bin"))
+        os.cp(mincludedir, package:installdir())
+        os.cp(mlibdir, package:installdir())
+        os.cp(mbindir, package:installdir())
         package:addenv("PATH", "bin")
     end)
     
@@ -108,26 +109,32 @@ package("crashpad")
     end
 
     on_test(function(package)
-        if package:is_plat("linux") or package:is_plat("windows") then
+        if package:is_plat("linux") package:is_plat("windows") then
             os.runv("crashpad_handler --help")
-            assert(package:check_cxxsnippets({
-                test = [[
-                            #include <stdio.h>
-                            #include <unistd.h>
-                            #include <string.h>
-                            #include "client/crashpad_client.h"
-                            #include "client/crash_report_database.h"
-                            #include "client/settings.h"
-                            using namespace crashpad;
-                            void test() {
-                                CrashpadClient *client = new CrashpadClient();
-                            }
-                        ]]
-            }, {
-                configs = {
-                    languages = "cxx17"
-                }
-            }))
         end
+
+        if package:is_plat("windows")
+            os.runv("crashpad_handler.exe --help")
+        end
+        
+        assert(package:check_cxxsnippets({
+            test = [[
+                        #include <stdio.h>
+                        #include <unistd.h>
+                        #include <string.h>
+                        #include "client/crashpad_client.h"
+                        #include "client/crash_report_database.h"
+                        #include "client/settings.h"
+                        using namespace crashpad;
+                        void test() {
+                            CrashpadClient *client = new CrashpadClient();
+                        }
+                    ]]
+        }, {
+            configs = {
+                languages = "cxx17"
+            }
+        }))
+        
 
     end)
