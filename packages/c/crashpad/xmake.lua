@@ -5,6 +5,7 @@ package("crashpad")
 
     if is_host("linux") then
         add_deps("depot_tools")
+        add_ldflags("-I/usr/include","-I/usr/include/curl")
     end
     
     if is_host("windows") then
