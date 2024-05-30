@@ -9,13 +9,13 @@ package("crashpad")
             add_deps("apt::libcurl4-openssl-dev")
         end
         if linuxos.name() == "archlinux" or linuxos.name() == "manjaro" then
-            add_deps("pacman::curl","pacman::clang")
+            add_deps("pacman::curl", "pacman::clang")
         end
         if linuxos.name() == "fedora" then
             add_deps("dnf::libcurl-devel")
         end
     end
-    
+
     if is_host("windows") then
         local map = {
             ["2021.8.1"] = "stable",
@@ -70,16 +70,18 @@ package("crashpad")
         os.vrunv("gn", {"gen", "out/Default"})
         os.vrunv("ninja", {"-C", "out/Default"})
         print("build end...")
-    
+
         local mbindir = path.join(minstalleddir, "bin")
         local mlibdir = path.join(minstalleddir, "lib")
         local mincludedir = path.join(minstalleddir, "include")
         os.mkdir(mbindir)
         os.mkdir(mlibdir)
         os.mkdir(mincludedir)
-    
+
         print("make include/*.h files")
-        local rsync_command = table.concat({"rsync -av --include='*.h' --include='*/' --exclude='*' ", crashpaddir," ", mincludedir})
+        local rsync_command = table.concat({"rsync -av --include='*.h' --include='*/' --exclude='*' ", crashpaddir, "/ ",
+                                            mincludedir,"/"})
+        print(rsync_command)
         os.run(rsync_command)
         print("make lib/* files")
         os.cp(path.join(crashpaddir, "out/Default/obj/third_party/mini_chromium/mini_chromium/base/libbase.a"), mlibdir)
@@ -93,15 +95,18 @@ package("crashpad")
         os.cp(path.join(crashpaddir, "out/Default/generate_dump"), mbindir)
         os.cp(path.join(crashpaddir, "out/Default/dump_minidump_annotations"), mbindir)
         os.cp(path.join(crashpaddir, "out/Default/base94_encoder"), mbindir)
-    
+
         os.cd(minstalleddir)
         -- os.rm("tmp")
         os.cp(mincludedir, package:installdir())
         os.cp(mlibdir, package:installdir())
         os.cp(mbindir, package:installdir())
         package:addenv("PATH", "bin")
+        print("start ls ..")
+        os.vrunv("ls", {"-al", mbindir})
+        os.vrunv("ls", {"-al", mlibdir})
+        os.vrunv("ls", {"-al", mincludedir})
     end)
-    
 
     if is_host("linux") then
         add_includedirs("include", "include/third_party/mini_chromium/mini_chromium", "include/out/Default/gen")
@@ -110,31 +115,30 @@ package("crashpad")
 
     on_test(function(package)
         if package:is_plat("linux") then
-            os.runv("crashpad_handler --help")
+            os.vrunv("crashpad_handler", {"--help"})
         end
 
         if package:is_plat("windows") then
-            os.runv("crashpad_handler.exe --help")
+            os.vrunv("crashpad_handler.exe", {"--help"})
         end
-        
+
         assert(package:check_cxxsnippets({
             test = [[
-                        #include <stdio.h>
-                        #include <unistd.h>
-                        #include <string.h>
-                        #include "client/crashpad_client.h"
-                        #include "client/crash_report_database.h"
-                        #include "client/settings.h"
-                        using namespace crashpad;
-                        void test() {
-                            CrashpadClient *client = new CrashpadClient();
-                        }
-                    ]]
+                            #include <stdio.h>
+                            #include <unistd.h>
+                            #include <string.h>
+                            #include "client/crashpad_client.h"
+                            #include "client/crash_report_database.h"
+                            #include "client/settings.h"
+                            using namespace crashpad;
+                            void test() {
+                                CrashpadClient *client = new CrashpadClient();
+                            }
+                        ]]
         }, {
             configs = {
                 languages = "cxx17"
             }
         }))
-        
 
     end)
