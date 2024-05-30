@@ -109,11 +109,11 @@ package("crashpad")
     end
 
     on_test(function(package)
-        if package:is_plat("linux") package:is_plat("windows") then
+        if package:is_plat("linux") then
             os.runv("crashpad_handler --help")
         end
 
-        if package:is_plat("windows")
+        if package:is_plat("windows") then
             os.runv("crashpad_handler.exe --help")
         end
         
