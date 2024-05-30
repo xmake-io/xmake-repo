@@ -5,8 +5,7 @@ package("crashpad")
 
     if is_host("linux") then
         add_deps("depot_tools")
-        add_extsources("pacman::curl", "apt::libcurl4-gnutls-dev", "apt::libcurl4-nss-dev", "apt::libcurl4-openssl-dev")
-        -- add_includedirs("/usr/include/x86_64-linux-gnu")
+        add_deps("pacman::curl", "dnf::libcurl-devel", "yum::libcurl-devel", "apt::libcurl4-openssl-dev")
     end
     
     if is_host("windows") then
@@ -90,6 +89,7 @@ package("crashpad")
         os.cp("bin/*", package:installdir("bin"))
         package:addenv("PATH", "bin")
     end)
+    
 
     if is_host("linux") then
         add_includedirs("include", "include/third_party/mini_chromium/mini_chromium", "include/out/Default/gen")
