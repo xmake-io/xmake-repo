@@ -19,7 +19,8 @@ package("fbgemm")
     add_deps("asmjit", "cpuinfo", "openmp")
 
     -- mingw support: https://github.com/pytorch/FBGEMM/pull/2114
-    on_install("!iphoneos and !mingw", function (package)
+    -- arm support: https://github.com/pytorch/FBGEMM/issues/2074
+    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
 
         if not package:config("shared") then
