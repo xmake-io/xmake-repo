@@ -85,6 +85,15 @@ package("imgui")
         add_syslinks("imm32")
     end
 
+    -- on_source was introduced in xmake 2.9.3
+    if on_source then
+        on_source(function (package)
+            if package:version_str():find("-docking", 1, true) then
+                package:set("urls", {"https://github.com/ocornut/imgui.git"})
+            end
+        end)
+    end
+
     on_load("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         -- begin: backwards compatibility
         if package:config("sdl2") or package:config("sdlrenderer") then
@@ -130,8 +139,10 @@ package("imgui")
         if package:config("freetype") then
             package:add("deps", "freetype")
         end
-        if package:version_str():find("-docking", 1, true) then
-            package:set("urls", {"https://github.com/ocornut/imgui.git"})
+        if not on_source then
+            if package:version_str():find("-docking", 1, true) then
+                package:set("urls", {"https://github.com/ocornut/imgui.git"})
+            end
         end
     end)
 

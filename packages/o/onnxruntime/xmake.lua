@@ -53,7 +53,10 @@ package("onnxruntime")
         end
     end
 
-    on_load(function (package) 
+    -- on_source was introduced in xmake 2.9.3
+    local on_source = on_source or on_load
+
+    on_source(function (package) 
         if package:config("gpu") then
             package:add("deps", "cuda", {configs = {utils = {"cudart", "nvrtc"}}})
 
