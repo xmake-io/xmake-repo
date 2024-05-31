@@ -72,9 +72,9 @@ package("crashpad")
 
         assert(package:check_cxxsnippets({
                 test = [[
-                                    #include "crashpad/client/crashpad_client.h"
-                                    #include "crashpad/client/crash_report_database.h"
-                                    #include "crashpad/client/settings.h"
+                                    #include "client/crashpad_client.h"
+                                    #include "client/crash_report_database.h"
+                                    #include "client/settings.h"
                                     using namespace crashpad;
                                     void test() {
                                         CrashpadClient *client = new CrashpadClient();
