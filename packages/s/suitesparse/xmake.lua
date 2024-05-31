@@ -21,17 +21,29 @@ package("suitesparse")
     add_configs("graphblas", {description = "Enable GraphBLAS module.", default = not is_arch("x86"), type = "boolean"})
     add_configs("graphblas_static", {description = "Enable static GraphBLAS module.", default = false, type = "boolean"})
 
-    add_deps("metis")
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::suitesparse")
+    elseif is_plat("linux") then
+        add_extsources("pacman::suitesparse", "apt::libsuitesparse-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::suite-sparse")
+    end
+
     if not is_plat("windows") then
         add_deps("gmp", "mpfr")
     end
     if is_plat("linux") then
         add_syslinks("m", "rt")
     end
+
     on_load("windows", "macosx", "linux", function (package)
         if package:version():ge("7.4.0") then
             package:add("deps", "cmake")
         end
+        if package:version():lt("6.0.0") then
+            package:add("deps", "metis")
+        end
+
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
@@ -65,7 +77,7 @@ package("suitesparse")
 
     on_install("windows|x64", "windows|x86", "macosx", "linux", function (package)
         if package:version():ge("7.4.0") then
-            local configs = {"-DSUITESPARSE_DEMOS=OFF"}
+            local configs = {"-DSUITESPARSE_DEMOS=OFF", "-DSUITESPARSE_USE_FORTRAN=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
