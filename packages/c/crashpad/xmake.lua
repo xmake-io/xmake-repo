@@ -9,6 +9,8 @@ package("crashpad")
 
     on_install("linux", "windows|x64", "windows|x86", function(package)
         local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {
             packagedeps = {"libcurl"}
         })
@@ -19,26 +21,12 @@ package("crashpad")
     add_links("crashpad_client", "crashpad_util", "mini_chromium")
 
     on_test(function(package)
-        if package:is_plat("linux") then
-            os.vrunv("crashpad_handler", {"--help"})
-        end
-
-        if package:is_plat("windows") then
-            os.vrunv("crashpad_handler.exe", {"--help"})
-        end
-
-        assert(package:check_cxxsnippets({
-            test = [[
-                                    #include "client/crashpad_client.h"
-                                    using namespace crashpad;
-                                    void test() {
-                                        CrashpadClient *client = new CrashpadClient();
-                                    }
-                                ]]
-        }, {
-            configs = {
-                languages = "cxx17"
+        os.vrunv("crashpad_handler" .. (package:is_plat("windows") and ".exe" or ""), {"--help"})
+        assert(package:check_cxxsnippets({test = [[
+            #include "client/crashpad_client.h"
+            using namespace crashpad;
+            void test() {
+                CrashpadClient *client = new CrashpadClient();
             }
-        }))
-
+        ]]}, {configs = {languages = "cxx17"}}))
     end)
