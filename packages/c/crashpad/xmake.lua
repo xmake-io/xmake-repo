@@ -4,16 +4,9 @@ package("crashpad")
     set_license("Apache-2.0")
 
     if is_host("linux") then
-        add_deps("depot_tools","rsync")
-        if linuxos.name() == "ubuntu" or linuxos.name() == "debian" then
-            add_deps("apt::libcurl4-openssl-dev")
-        end
-        if linuxos.name() == "archlinux" or linuxos.name() == "manjaro" then
-            add_deps("pacman::curl", "pacman::clang")
-        end
-        if linuxos.name() == "fedora" then
-            add_deps("dnf::libcurl-devel")
-        end
+        add_urls("https://github.com/getsentry/crashpad.git")
+        add_versions("2024.04.15", "96e301b7d6b81990a244d7de41a0d36eeb60899e")
+        add_deps("depot_tools", "libcurl")
     end
 
     if is_host("windows") then
@@ -55,85 +48,41 @@ package("crashpad")
     end)
 
     on_install("linux", function(package)
-        print("build start...")
-
-        if not os.exists("crashpad") then
-            os.vrunv("fetch", {"crashpad"})
-        end
-        os.cd("crashpad")
-        local crashpaddir = string.trim(os.iorunv("pwd"))
-        os.vrunv("gclient", {"sync"})
-        os.vrunv("gn", {"gen", "out/Default"})
-        os.vrunv("ninja", {"-C", "out/Default"})
-        print("build end...")
-
-        local mbindir = path.join(crashpaddir, "bin")
-        local mlibdir = path.join(crashpaddir, "lib")
-        local mincludedir = path.join(crashpaddir, "include")
-        os.vrunv("mkdir",{"-p",mbindir})
-        os.vrunv("mkdir",{"-p",mlibdir})
-        os.vrunv("mkdir",{"-p",mincludedir})
-        -- os.mkdir(mbindir)
-        -- os.mkdir(mlibdir)
-        -- os.mkdir(mincludedir)
-
-        print("make include/*.h files")
-        local rsync_command = table.concat({"rsync -av --include='*.h' --include='*/' --exclude='*' ", crashpaddir, "/ ",
-                                            mincludedir, "/"})
-        print(rsync_command)
-        os.run(rsync_command)
-        print("make lib/* files")
-        os.cp(path.join(crashpaddir, "out/Default/obj/third_party/mini_chromium/mini_chromium/base/libbase.a"), mlibdir)
-        os.cp(path.join(crashpaddir, "out/Default/obj/client/libcommon.a"), mlibdir)
-        os.cp(path.join(crashpaddir, "out/Default/obj/client/libclient.a"), mlibdir)
-        os.cp(path.join(crashpaddir, "out/Default/obj/util/libutil.a"), mlibdir)
-
-        os.cp(path.join(crashpaddir, "out/Default/crashpad_handler"), mbindir)
-        os.cp(path.join(crashpaddir, "out/Default/crashpad_http_upload"), mbindir)
-        os.cp(path.join(crashpaddir, "out/Default/crashpad_database_util"), mbindir)
-        os.cp(path.join(crashpaddir, "out/Default/generate_dump"), mbindir)
-        os.cp(path.join(crashpaddir, "out/Default/dump_minidump_annotations"), mbindir)
-        os.cp(path.join(crashpaddir, "out/Default/base94_encoder"), mbindir)
-
-        os.cd(crashpaddir)
-        -- os.rm("tmp")
-        os.cp(mincludedir, package:installdir())
-        os.cp(mlibdir, package:installdir())
-        os.cp(mbindir, package:installdir())
-        package:addenv("PATH", "bin")
-        print("start ls ..")
-        os.vrunv("ls", {"-al", mbindir})
-        os.vrunv("ls", {"-al", mlibdir})
-        os.vrunv("ls", {"-al", mincludedir})
+        local configs = {}
+        import("package.tools.cmake").install(package, configs, {
+            packagedeps = {"libcurl"}
+        })
+        os.exec("ls -al " .. package:installdir() .. "/include/crashpad/client")
     end)
 
     if is_host("linux") then
-        add_includedirs("include", "include/third_party/mini_chromium/mini_chromium", "include/out/Default/gen")
-        add_links("common", "client", "util", "base")
+        add_includedirs("include/crashpad", "include/crashpad/mini_chromium")
+        add_links("crashpad_client", "crashpad_util", "mini_chromium")
     end
 
     on_test(function(package)
         if package:is_plat("linux") then
             os.vrunv("crashpad_handler", {"--help"})
-            
-        end
-
-        if package:is_plat("windows") then
-            os.vrunv("crashpad_handler.exe", {"--help"})
-        end
-        
-        assert(package:check_cxxsnippets({
+            assert(package:check_cxxsnippets({
                 test = [[
-                                #include "client/crashpad_client.h"
-                                using namespace crashpad;
-                                void test() {
-                                    CrashpadClient *client = new CrashpadClient();
-                                }
-                            ]]
+                                    #include "crashpad/client/crashpad_client.h"
+                                    #include "crashpad/client/crash_report_database.h"
+                                    #include "crashpad/client/settings.h"
+                                    using namespace crashpad;
+                                    void test() {
+                                        CrashpadClient *client = new CrashpadClient();
+                                    }
+                                ]]
             }, {
                 configs = {
                     languages = "cxx17"
                 }
             }))
+        end
+
+        if package:is_plat("windows") then
+            print("this is windows platform")
+            -- os.vrunv("crashpad_handler.exe", {"--help"})
+        end
 
     end)
