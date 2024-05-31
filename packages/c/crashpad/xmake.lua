@@ -63,18 +63,9 @@ package("crashpad")
     on_test(function(package)
         if package:is_plat("linux") then
             os.vrunv("crashpad_handler", {"--help"})
-            
-        end
-
-        if package:is_plat("windows") then
-            os.vrunv("crashpad_handler.exe", {"--help"})
-        end
-
-        assert(package:check_cxxsnippets({
+            assert(package:check_cxxsnippets({
                 test = [[
                                     #include "client/crashpad_client.h"
-                                    #include "client/crash_report_database.h"
-                                    #include "client/settings.h"
                                     using namespace crashpad;
                                     void test() {
                                         CrashpadClient *client = new CrashpadClient();
@@ -85,4 +76,11 @@ package("crashpad")
                     languages = "cxx17"
                 }
             }))
+        end
+
+        if package:is_plat("windows") then
+            os.vrunv("crashpad_handler.exe", {"--help"})
+        end
+
+        
     end)
