@@ -52,7 +52,7 @@ package("crashpad")
         import("package.tools.cmake").install(package, configs, {
             packagedeps = {"libcurl"}
         })
-        os.exec("ls -al " .. package:installdir() .. "/include/crashpad/client")
+        package:addenv("PATH", "bin")
     end)
 
     if is_host("linux") then
@@ -63,7 +63,14 @@ package("crashpad")
     on_test(function(package)
         if package:is_plat("linux") then
             os.vrunv("crashpad_handler", {"--help"})
-            assert(package:check_cxxsnippets({
+            
+        end
+
+        if package:is_plat("windows") then
+            os.vrunv("crashpad_handler.exe", {"--help"})
+        end
+
+        assert(package:check_cxxsnippets({
                 test = [[
                                     #include "crashpad/client/crashpad_client.h"
                                     #include "crashpad/client/crash_report_database.h"
@@ -78,11 +85,4 @@ package("crashpad")
                     languages = "cxx17"
                 }
             }))
-        end
-
-        if package:is_plat("windows") then
-            print("this is windows platform")
-            -- os.vrunv("crashpad_handler.exe", {"--help"})
-        end
-
     end)
