@@ -7,7 +7,7 @@ package("crashpad")
     add_versions("2024.04.15", "96e301b7d6b81990a244d7de41a0d36eeb60899e")
     add_deps("libcurl")
 
-    on_install("linux", "windows", function(package)
+    on_install("linux|x86_64", "windows|x86_64", function(package)
         local configs = {}
         import("package.tools.cmake").install(package, configs, {
             packagedeps = {"libcurl"}
