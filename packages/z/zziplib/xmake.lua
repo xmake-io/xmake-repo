@@ -13,7 +13,8 @@ package("zziplib")
 
     add_deps("cmake", "zlib")
     on_install("windows", "macosx", "linux", function (package)
-        local configs = {"-DZZIPTEST=OFF", "-DZZIPDOCS=OFF", "-DZZIPWRAP=OFF", "-DZZIPSDL=OFF", "-DZZIPMMAPPED=OFF", "-DZZIPFSEEKO=OFF", "-DZZIPBINS=OFF", "-DCOVERAGE=OFF"}
+        io.replace("zzip/CMakeLists.txt", "include ( CodeCoverage )", "", {plain = true})
+        local configs = {"-DZZIPTEST=OFF", "-DZZIPDOCS=OFF", "-DZZIPWRAP=OFF", "-DZZIPSDL=OFF", "-DZZIPMMAPPED=OFF", "-DZZIPFSEEKO=OFF", "-DZZIPBINS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
