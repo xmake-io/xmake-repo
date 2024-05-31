@@ -5,7 +5,7 @@ package("cminpack")
     add_urls("https://github.com/devernay/cminpack/archive/$(version).tar.gz",
              "https://github.com/devernay/cminpack.git")
 
-    add_versions("1.3.9", "aa37bac5b5caaa4f5805ea5c4240e3834c993672f6dab0b17190ee645e251c9f")
+    add_versions("v1.3.9", "aa37bac5b5caaa4f5805ea5c4240e3834c993672f6dab0b17190ee645e251c9f")
 
     add_configs("blas", {description = "Compile cminpack using cblas library if possible", default = false, type = "boolean"})
 
