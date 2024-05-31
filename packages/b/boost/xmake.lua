@@ -4,11 +4,13 @@ package("boost")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
 
+    add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-b2-nodocs.tar.gz")
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version).tar.gz")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {alias = "mirror", version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
 
+    add_versions("1.85.0", "f4a7d3f81b8a0f65067b769ea84135fd7b72896f4f59c7f405086c8c0dc61434")
     add_versions("1.84.0", "4d27e9efed0f6f152dc28db6430b9d3dfb40c0345da7342eaa5a987dde57bd95")
     add_versions("1.83.0", "0c6049764e80aa32754acd7d4f179fd5551d8172a83b71532ae093e7384e98da")
     add_versions("1.82.0", "b62bd839ea6c28265af9a1f68393eda37fab3611425d3b28882d8e424535ec9d")
@@ -170,8 +172,14 @@ package("boost")
                 return format("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
             else
                 cxx = cxx:gsub("gcc$", "g++")
+                cxx = cxx:gsub("gcc%-", "g++-")
                 cxx = cxx:gsub("clang$", "clang++")
-                return format("using gcc : : \"%s\" ;", cxx:gsub("\\", "/"))
+                cxx = cxx:gsub("clang%-", "clang++-")
+                if cxx and cxx:find("clang", 1, true) then
+                    return format("using clang : : \"%s\" ;", cxx:gsub("\\", "/"))
+                else
+                    return format("using gcc : : \"%s\" ;", cxx:gsub("\\", "/"))
+                end
             end
         end
 
@@ -222,11 +230,16 @@ package("boost")
         local build_toolset
         local runenvs
         if package:is_plat("windows") then
-            build_toolchain = package:toolchain("clang-cl") or package:toolchain("msvc") or
-                toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-            assert(build_toolchain:check(), "build toolchain not found!")
-            build_toolset = build_toolchain:name() == "clang-cl" and "clang-win" or "msvc"
-            runenvs = build_toolchain:runenvs()
+            if package:has_tool("cxx", "clang_cl") then
+                build_toolset = "clang-win"
+                build_toolchain = package:toolchain("clang-cl")
+            elseif package:has_tool("cxx", "cl") then
+                build_toolset = "msvc"
+                build_toolchain = package:toolchain("msvc")
+            end
+            if build_toolchain then
+                runenvs = build_toolchain:runenvs()
+            end
         end
 
         local file = io.open("user-config.jam", "w")
@@ -330,6 +343,18 @@ package("boost")
             table.insert(argv, "pch=off")
         end
 
+        if package:is_plat("windows") and package:version():le("1.85.0") then
+            local vs_toolset = build_toolchain:config("vs_toolset")
+            local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+            local minor = vs_toolset_ver:minor()
+            if minor and minor >= 40 then
+                io.replace("tools/build/src/engine/config_toolset.bat", "vc143", "vc144", {plain = true})
+                io.replace("tools/build/src/engine/build.bat", "vc143", "vc144", {plain = true})
+                io.replace("tools/build/src/engine/guess_toolset.bat", "vc143", "vc144", {plain = true})
+                io.replace("tools/build/src/tools/intel-win.jam", "14.3", "14.4", {plain = true})
+                io.replace("tools/build/src/tools/msvc.jam", "14.3", "14.4", {plain = true})
+            end
+        end
         local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})
         if ok ~= 0 then
             raise("boost build failed, please check log in " .. path.join(os.curdir(), "boost-log.txt"))
