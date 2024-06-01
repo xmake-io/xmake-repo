@@ -6,6 +6,8 @@ package("imgui")
     add_urls("https://github.com/ocornut/imgui/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ocornut/imgui.git")
 
+    add_versions("v1.90.7-docking", "v1.90.7-docking")
+    add_versions("v1.90.7", "872574217643d4ad7e9e6df420bb8d9e0d468fb90641c2bf50fd61745e05de99")
     add_versions("v1.90.6-docking", "v1.90.6-docking")
     add_versions("v1.90.6", "70b4b05ac0938e82b4d5b8d59480d3e2ca63ca570dfb88c55023831f387237ad")
     add_versions("v1.90.5-docking", "v1.90.5-docking")

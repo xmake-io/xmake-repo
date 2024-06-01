@@ -1,25 +1,25 @@
 package("asmjit")
-
     set_homepage("https://asmjit.com/")
     set_description("AsmJit is a lightweight library for machine code generation written in C++ language.")
     set_license("zlib")
 
     add_urls("https://github.com/asmjit/asmjit.git")
+    add_versions("2024.05.21", "55c5d6cef59619fb81014531b32f434a793cfb18")
     add_versions("2024.03.09", "268bce7952883dec5015ae539906e9e9d7fb65a0")
     add_versions("2022.01.18", "9a92d2f97260749f6f29dc93e53c743448f0137a")
     add_versions("2021.06.27", "d02235b83434943b52a6d7c57118205c5082de08")
 
-    add_deps("cmake")
-    if is_plat("linux") then
-        add_syslinks("rt")
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread", "rt", "m")
     end
-    on_load("windows", "macosx", "linux", function (package)
+
+    add_deps("cmake")
+
+    on_install("!iphoneos", function (package)
         if not package:config("shared") then
             package:add("defines", "ASMJIT_STATIC")
         end
-    end)
 
-    on_install("windows", "macosx", "linux", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DASMJIT_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
