@@ -6,6 +6,7 @@ package("slang")
     add_urls("https://github.com/shader-slang/slang.git")
 
     add_versions("v2024.1.17", "62b7219e715bd4c0f984bcd98c9767fb6422c78f")
+    add_versions("v2021.1.18", "efdbb954c57b89362e390f955d45f90e59d66878")
 
     add_configs("shared", { description = "Build shared library", default = true, type = "boolean", readonly = true })
     add_configs("embed_stdlib_source", { description = "Embed stdlib source in the binary", default = true, type = "boolean" })
