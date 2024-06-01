@@ -3,6 +3,9 @@ option("tools", {default = false})
 
 add_rules("mode.debug", "mode.release")
 
+set_languages("c++11")
+add_rules("utils.install.cmake_importfiles")
+
 if has_config("opencl") then
     add_requires("opencl")
     add_packages("opencl")
