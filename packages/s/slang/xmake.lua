@@ -7,11 +7,10 @@ package("slang")
 
     add_versions("v2024.1.17", "62b7219e715bd4c0f984bcd98c9767fb6422c78f")
 
-    add_configs("shared", { description = "Build shared library", default = true, type = "boolean" })
+    add_configs("shared", { description = "Build shared library", default = true, type = "boolean", readonly = true })
     add_configs("embed_stdlib_source", { description = "Embed stdlib source in the binary", default = true, type = "boolean" })
     add_configs("embed_stdlib", { description = "Build slang with an embedded version of the stdlib", default = false, type = "boolean" })
     add_configs("full_ir_validation", { description = "Enable full IR validation (SLOW!)", default = false, type = "boolean" })
-    add_configs("asan", { description = "Enable ASAN (address sanitizer)", default = false, type = "boolean" })
     add_configs("gfx", { description = "Enable gfx targets", default = false, type = "boolean" })
     add_configs("slangd", { description = "Enable language server target", default = false, type = "boolean" })
     add_configs("slangc", { description = "Enable standalone compiler target", default = false, type = "boolean" })
