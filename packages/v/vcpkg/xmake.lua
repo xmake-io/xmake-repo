@@ -7,12 +7,11 @@ package("vcpkg")
     add_versions("2024.05.24", "3034e534d4ed13e6e6edad3c331c0e9e3280f579dd4ba86151aa1e2896b85d31")
 
     add_deps("unzip","cmake","ninja","libcurl")
-    on_install("linux", "windows|x64", "windows|x86", function(package)
-       
-        if linuxos.name == "archlinux" or linuxos.name == "manjaro" then
-            add_deps("pacman::zip","pacman::curl")
-        end
+    if linuxos.name == "archlinux" or linuxos.name == "manjaro" then
+        package:add_deps("pacman::zip","pacman::curl")
+    end
 
+    on_install("linux", "windows|x64", "windows|x86", function(package)
         local scriptpath = path.join(".",package:is_plat("linux") and "bootstrap-vcpkg.sh" or "bootstrap-vcpkg.bat")
         local exepath = path.join(".",package:is_plat("linux") and "vcpkg" or "vcpkg.exe")
         print("scriptpath:" .. scriptpath)
