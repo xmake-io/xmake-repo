@@ -12,15 +12,15 @@ package("ktx")
     add_configs("ktx1", {description = "Enable KTX 1 support.", default = true, type = "boolean"})
     add_configs("ktx2", {description = "Enable KTX 2 support.", default = true, type = "boolean"})
     add_configs("vulkan", {description = "Enable Vulkan texture upload.", default = false, type = "boolean"})
-    add_configs("opengl", {description = "Enable OpenGL texture upload.", default = false, type = "boolean"})
+    add_configs("opengl", {description = "Enable OpenGL texture upload.", default = is_plat("wasm"), type = "boolean"})
     -- This project .def file export 64-bit symbols only
-    if is_plat("wasm", "iphoneos") or (is_plat("windows") and is_arch("x86")) then
+    if is_plat("wasm", "iphoneos") or (is_plat("windows", "mingw") and is_arch("x86", "i386")) then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
         local configs = {"-DKTX_FEATURE_TESTS=OFF", "-DKTX_LOADTEST_APPS_USE_LOCAL_DEPENDENCIES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DKTX_FEATURE_STATIC_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
