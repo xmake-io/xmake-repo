@@ -11,7 +11,7 @@ package("vcpkg")
 
     --add_deps("cmake")
     --add_deps("libcurl")
-
+    
     on_install("linux", "windows|x64", "windows|x86", function(package)
         
         local scriptpath = path.join(".",package:is_plat("linux") and "bootstrap-vcpkg.sh" or "bootstrap-vcpkg.bat")
@@ -19,7 +19,8 @@ package("vcpkg")
         print("scriptpath:" .. scriptpath)
         os.run(scriptpath)
         os.cp(exepath,package:installdir())
-        package:addenv("PATH", ".")
+        os.setenv("VCPKG_ROOT", package:installdir())
+        package:addenv("PATH", package:installdir())
     end)
 
     on_test(function(package)
