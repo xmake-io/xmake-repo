@@ -15,7 +15,7 @@ package("telebot")
         add_deps("pthreads4w")
     end
 
-    on_install("windows", "mingw@macosx,linux", "linux", function (package)
+    on_install("windows|x64", "windows|x86", "mingw@macosx,linux", "linux", function (package)
         if package:is_plat("windows") then
             io.replace("src/telebot.c", "#include <unistd.h>", "", {plain = true})
             io.replace("src/telebot-core.c", "#include <unistd.h>", "", {plain = true})
