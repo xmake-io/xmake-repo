@@ -13,6 +13,10 @@ package("ktx")
     add_configs("ktx2", {description = "Enable KTX 2 support.", default = true, type = "boolean"})
     add_configs("vulkan", {description = "Enable Vulkan texture upload.", default = false, type = "boolean"})
     add_configs("opengl", {description = "Enable OpenGL texture upload.", default = false, type = "boolean"})
+    -- This project .def file export 64-bit symbols only
+    if is_plat("wasm", "iphoneos") or (is_plat("windows") and is_arch("x86")) then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
 
