@@ -13,9 +13,7 @@ package("vcpkg")
     end
 
     on_install("linux", "windows|x64", "windows|x86", function(package)
-        local scriptpath =  package:is_plat("linux") and "bootstrap-vcpkg.sh" or "bootstrap-vcpkg.bat"
-        local exepath = package:is_plat("linux") and "vcpkg" or "vcpkg.exe"
-        print("scriptpath:" .. scriptpath)
+        local scriptpath =  package:is_plat("linux") and "./bootstrap-vcpkg.sh" or "bootstrap-vcpkg.bat"
         os.run(scriptpath)
         os.cp(".", package:installdir())
         package:setenv("VCPKG_ROOT", ".")
