@@ -1,23 +1,23 @@
 package("json-c")
-
     set_homepage("https://github.com/json-c/json-c/wiki")
     set_description("JSON parser for C")
+    set_license("MIT")
 
-    set_urls("https://github.com/json-c/json-c/archive/json-c-$(version).zip")
+    set_urls("https://github.com/json-c/json-c/archive/refs/tags/json-c-$(version).zip")
 
-    add_versions("0.13.1-20180305", "8a244527eb4f697362f713f7d6dca3f6f9b5335e18fe7b705130ae62e599e864")
+    add_versions("0.17-20230812", "471e9eb1dad4fd2e4fec571d8415993e66a89f23a5b052f1ba11b54db90252de")
 
-    if is_plat("windows") and winos.version():gt("winxp") then
-        add_deps("cmake")
-        on_install("windows", function (package)
-            import("package.tools.cmake").install(package)
-            os.cp("json_object_iterator.h", package:installdir("include/json-c"))
-        end)
-    end
-
-    on_install("linux", "macosx", "iphoneos", "android", function (package)
-        local configs = {"--disable-dependency-tracking", "--disable-silent-rules", "--enable-shared=no"}
-        import("package.tools.autoconf").install(package, configs)
+    add_deps("cmake")
+    on_install(function (package)
+        local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_APPS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
+        if package:config("pic") ~= false then
+            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+            table.insert(configs, "-DDISABLE_STATIC_FPIC=OFF")
+        end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)

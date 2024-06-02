@@ -3,8 +3,9 @@ package("cppfront")
     set_homepage("https://github.com/hsutter/cppfront")
     set_description("A personal experimental C++ Syntax 2 -> Syntax 1 compiler")
 
+    add_urls("https://github.com/hsutter/cppfront/archive/refs/tags/$(version).tar.gz")
     add_urls("https://github.com/hsutter/cppfront.git")
-    add_versions("2023.08.29", "b757afd9b0051a40278706cdfc57971e371e4e32")
+    add_versions("v0.7.0", "d4ffb37d19a2b7c054d005cf4687439577ef2f3d93b340a342704e064cd1d047")
 
     on_fetch(function (package, opt)
         if opt.system then
@@ -12,7 +13,7 @@ package("cppfront")
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install("windows", "linux", "macosx|x86_64", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")

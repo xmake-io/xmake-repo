@@ -17,7 +17,7 @@ package("cpr")
     add_configs("ssl", {description = "Enable SSL.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    if is_plat("mingw") then
+    if is_plat("mingw", "linux") then
         add_syslinks("pthread")
     end
     add_links("cpr")

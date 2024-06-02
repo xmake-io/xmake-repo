@@ -2,6 +2,7 @@ package("zlib")
 
     set_homepage("http://www.zlib.net")
     set_description("A Massively Spiffy Yet Delicately Unobtrusive Compression Library")
+    set_license("zlib")
 
     add_urls("https://github.com/madler/zlib/archive/$(version).tar.gz")
     add_urls("https://github.com/madler/zlib.git")
@@ -10,6 +11,7 @@ package("zlib")
     add_versions("v1.2.12", "d8688496ea40fb61787500e863cc63c9afcbc524468cedeb478068924eb54932")
     add_versions("v1.2.13", "1525952a0a567581792613a9723333d7f8cc20b87a81f920fb8bc7e3f2251428")
     add_versions("v1.3", "b5b06d60ce49c8ba700e0ba517fa07de80b5d4628a037f4be8ad16955be7a7c0")
+    add_versions("v1.3.1", "17e88863f3600672ab49182f217281b6fc4d3c762bde361935e436a95214d05c")
 
     add_configs("zutil", {description = "Export zutil.h api", default = false, type = "boolean"})
 
@@ -21,9 +23,18 @@ package("zlib")
         add_extsources("brew::zlib")
     end
 
+    on_fetch(function (package, opt)
+        if xmake.version():lt("2.8.7") then return end -- disable system find if the bug is present
+        if opt.system then
+            if not package:is_plat("windows", "mingw") then
+                return package:find_package("system::z", {includes = "zlib.h"})
+            end
+        end
+    end)
+
     on_install(function (package)
         io.writefile("xmake.lua", [[
-            includes("check_cincludes.lua")
+            includes("@builtin/check")
             add_rules("mode.debug", "mode.release")
             target("zlib")
                 set_kind("$(kind)")

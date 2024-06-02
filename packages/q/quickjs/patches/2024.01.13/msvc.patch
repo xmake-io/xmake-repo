@@ -1,0 +1,52 @@
+From 5382b796b5b92901d492ec3f63c3447fe3beb1ad Mon Sep 17 00:00:00 2001
+From: SpringFestival <2765864063@qq.com>
+Date: Sat, 23 Mar 2024 16:28:15 +0800
+Subject: [PATCH] fix header to fit msvc
+
+---
+ quickjs.h | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/quickjs.h b/quickjs.h
+index 7199936..1da1999 100644
+--- a/quickjs.h
++++ b/quickjs.h
+@@ -215,9 +215,18 @@ typedef struct JSValue {
+ #define JS_VALUE_GET_FLOAT64(v) ((v).u.float64)
+ #define JS_VALUE_GET_PTR(v) ((v).u.ptr)
+ 
++#ifndef __MINGW__COMPILE__
++
++#define JS_MKVAL(tag, val) (JSValue){ (JSValueUnion){ val }, tag }
++#define JS_MKPTR(tag, p) (JSValue){ (JSValueUnion){ p }, tag }
++
++#else
++
+ #define JS_MKVAL(tag, val) (JSValue){ (JSValueUnion){ .int32 = val }, tag }
+ #define JS_MKPTR(tag, p) (JSValue){ (JSValueUnion){ .ptr = p }, tag }
+ 
++#endif
++
+ #define JS_TAG_IS_FLOAT64(tag) ((unsigned)(tag) == JS_TAG_FLOAT64)
+ 
+ #define JS_NAN (JSValue){ .u.float64 = JS_FLOAT64_NAN, JS_TAG_FLOAT64 }
+@@ -670,7 +679,7 @@ static inline JSValue JS_DupValue(JSContext *ctx, JSValueConst v)
+         JSRefCountHeader *p = (JSRefCountHeader *)JS_VALUE_GET_PTR(v);
+         p->ref_count++;
+     }
+-    return (JSValue)v;
++    return v;
+ }
+ 
+ static inline JSValue JS_DupValueRT(JSRuntime *rt, JSValueConst v)
+@@ -679,7 +688,7 @@ static inline JSValue JS_DupValueRT(JSRuntime *rt, JSValueConst v)
+         JSRefCountHeader *p = (JSRefCountHeader *)JS_VALUE_GET_PTR(v);
+         p->ref_count++;
+     }
+-    return (JSValue)v;
++    return v;
+ }
+ 
+ int JS_ToBool(JSContext *ctx, JSValueConst val); /* return -1 for JS_EXCEPTION */
+-- 
+2.40.0.windows.1

@@ -22,6 +22,7 @@ target("bz2")
     if is_plat("wasm") then
         add_defines("BZ_STRICT_ANSI")
     end
+    add_cflags("clang::-Wno-error=int-conversion")
 
 if has_config("enable_tools") then
 

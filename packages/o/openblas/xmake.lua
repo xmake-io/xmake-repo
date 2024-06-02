@@ -17,6 +17,7 @@ package("openblas")
             add_versions("0.3.21", "ecf1853ce92696fb8531c941c50e983ea8fa673c118a87298a075c045d52a3ca")
             add_versions("0.3.23", "e3a82e60db8d6197228790567e7cf74f2c421a65b29f848977a07b5457debdaa")
             add_versions("0.3.24", "6335128ee7117ea2dd2f5f96f76dafc17256c85992637189a2d5f6da0c608163")
+            add_versions("0.3.26", "859c510a962a30ef1b01aa93cde26fdb5fb1050f94ad5ab2802eba3731935e06")
         elseif is_arch("x86") then
             add_urls("https://github.com/OpenMathLib/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version)-x86.zip")
             add_versions("0.3.15", "bcde933737b477813eaac290de5cb8756d3b42199e8ef5f44b23ae5f06fe0834")
@@ -26,6 +27,7 @@ package("openblas")
             add_versions("0.3.20", "0ee249246af7ce2fd66f86cb9350f5f5a7b97496b9b997bfd0680048dd194158")
             add_versions("0.3.21", "936416a0fec5506af9cf040c9de5c7edbd0ff18b53431799d1a43e47f9eba64e")
             add_versions("0.3.24", "92f8e0c73e1eec3c428b210fbd69b91e966f8cf1f998f3b60a52f024b2bf9d27")
+            add_versions("0.3.26", "9c3d48c3c21cd2341d642a63ee8a655205587befdab46462df7e0104d6771f67")
         end
 
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
@@ -41,6 +43,7 @@ package("openblas")
         add_versions("0.3.21", "f36ba3d7a60e7c8bcc54cd9aaa9b1223dd42eaf02c811791c37e8ca707c241ca")
         add_versions("0.3.23", "5d9491d07168a5d00116cdc068a40022c3455bf9293c7cb86a65b1054d7e5114")
         add_versions("0.3.24", "ceadc5065da97bd92404cac7254da66cc6eb192679cf1002098688978d4d5132")
+        add_versions("0.3.26", "4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68")
 
         add_configs("fortran", {description = "Compile with fortran enabled.", default = is_plat("linux"), type = "boolean"})
         add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean"})
@@ -54,7 +57,7 @@ package("openblas")
     end
     on_load("macosx", "linux", "mingw@windows,msys", function (package)
         if package:config("fortran") then
-            package:add("deps", "gfortran", {system = true})
+            package:add("deps", "gfortran")
         end
         if package:config("openmp") then
             package:add("deps", "openmp")
@@ -75,6 +78,12 @@ package("openblas")
         if package:is_plat("linux") then
             table.insert(configs, "CC=" .. package:build_getenv("cc"))
         end
+        if package:is_plat("macosx") and package:is_arch("arm64") then
+            table.insert(configs, "TARGET=VORTEX")
+            table.insert(configs, "BINARY=64")
+            table.insert(configs, "CFLAGS=-arch arm64")
+            table.insert(configs, "LDFLAGS=-arch arm64")
+        end
         if package:debug() then table.insert(configs, "DEBUG=1") end
         if package:config("openmp") then table.insert(configs, "USE_OPENMP=1") end
         if not package:config("shared") then
@@ -93,9 +102,6 @@ package("openblas")
         if package:is_plat("mingw") then
             if package:is_arch("i386", "x86") then
                 table.insert(configs, "BINARY=32")
-            end
-            if package:config("shared") then
-                package:addenv("PATH", "bin")
             end
         else
             local cflags

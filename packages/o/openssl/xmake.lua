@@ -1,7 +1,7 @@
 package("openssl")
-
     set_homepage("https://www.openssl.org/")
     set_description("A robust, commercial-grade, and full-featured toolkit for TLS and SSL.")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_$(version).zip", {version = function (version)
         return version:gsub("^(%d+)%.(%d+)%.(%d+)-?(%a*)$", "%1_%2_%3%4")
@@ -28,11 +28,16 @@ package("openssl")
     on_fetch("fetch")
 
     on_load(function (package)
-        if package:is_plat("windows") and (not package.is_built or package:is_built()) then
-            package:add("deps", "nasm")
-            -- the perl executable found in GitForWindows will fail to build OpenSSL
-            -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
-            package:add("deps", "strawberry-perl", { system = false })
+        if not package:is_precompiled() then
+            if package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
+                -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
+                package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
+            elseif is_subhost("windows") and not package:is_precompiled() then
+                package:add("deps", "nasm", { private = true })
+                -- the perl executable found in GitForWindows will fail to build OpenSSL
+                -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
+                package:add("deps", "strawberry-perl", { system = false, private = true })
+            end
         end
 
         -- @note we must use package:is_plat() instead of is_plat in description for supporting add_deps("openssl", {host = true}) in python
@@ -68,7 +73,10 @@ package("openssl")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
         os.vrunv("perl", configs)
-        import("package.tools.nmake").install(package)
+
+        local runenvs = import("package.tools.nmake").buildenvs(package)
+        local nmake = import("lib.detect.find_tool")("nmake", {envs = runenvs})
+        os.vrunv(nmake.program, {"install_sw"}, {envs = runenvs})
     end)
 
     on_install("mingw", function (package)
@@ -100,57 +108,60 @@ package("openssl")
         import("package.tools.make").make(package, {"install_sw"})
     end)
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("linux", "macosx", "bsd", "cross", "android", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
-        local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        local configs = {"--openssldir=" .. package:installdir(),
-                         "--prefix=" .. package:installdir()}
+        local configs = {}
+        if package:is_cross() then
+            local target_plat, target_arch
+            if package:is_plat("macosx") then
+                target_plat = "darwin64"
+                target_arch = package:is_arch("arm64") and "arm64-cc" or "x86_64-cc"
+            else
+                target_plat = "linux"
+                if package:is_arch("x86_64") then
+                    target_arch = "x86_64"
+                elseif package:is_arch("i386", "x86") then
+                    target_arch = "x86"
+                elseif package:is_arch("arm64", "arm64-v8a") then
+                    target_arch = "aarch64"
+                elseif package:is_arch("arm.*") then
+                    target_arch = "armv4"
+                elseif package:is_arch(".*64") then
+                    target_arch = "generic64"
+                else
+                    target_arch = "generic32"
+                end
+            end
+            table.insert(configs, target_plat .. "-" .. target_arch)
+            if package:is_plat("cross", "android") then
+                table.insert(configs, "-DOPENSSL_NO_HEARTBEATS")
+                table.insert(configs, "no-threads")
+            end
+        end
+        table.insert(configs, "--openssldir=" .. package:installdir():gsub("\\", "/"))
+        table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         if package:debug() then
             table.insert(configs, "--debug")
         end
-        os.vrunv("./config", configs, {envs = buildenvs})
+        local buildenvs = import("package.tools.autoconf").buildenvs(package)
+        if package:is_cross() then
+            if is_host("windows") and package:is_plat("android") then
+                buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
+                buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
+                buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
+                buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
+            end
+            os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
+        else
+            os.vrunv("./config", configs, {shell = true, envs = buildenvs})
+        end
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"), "*.a"))
         end
     end)
-
-    on_install("cross", "android", function (package)
-
-        local target_arch = "generic32"
-        if package:is_arch("x86_64") then
-            target_arch = "x86_64"
-        elseif package:is_arch("i386", "x86") then
-            target_arch = "x86"
-        elseif package:is_arch("arm64", "arm64-v8a") then
-            target_arch = "aarch64"
-        elseif package:is_arch("arm.*") then
-            target_arch = "armv4"
-        elseif package:is_arch(".*64") then
-            target_arch = "generic64"
-        end
-
-        local target_plat = "linux"
-        if package:is_plat("macosx") then
-            target_plat = "darwin64"
-            target_arch = "x86_64-cc"
-        end
-
-        local target = target_plat .. "-" .. target_arch
-        local configs = {target,
-                         "-DOPENSSL_NO_HEARTBEATS",
-                         "no-shared",
-                         "no-threads",
-                         "--openssldir=" .. package:installdir(),
-                         "--prefix=" .. package:installdir()}
-        local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        os.vrunv("./Configure", configs, {envs = buildenvs})
-        import("package.tools.make").build(package)
-        import("package.tools.make").make(package, {"install_sw"})
-    end)
-
     on_test(function (package)
         assert(package:has_cfuncs("SSL_new", {includes = "openssl/ssl.h"}))
     end)

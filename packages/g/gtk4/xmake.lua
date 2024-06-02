@@ -24,8 +24,8 @@ package("gtk4")
     end
 
     add_deps("meson", "ninja")
-    add_deps("glib", "pango", "cairo", "gdk-pixbuf", "libepoxy", "graphene", "fribidi", "pcre2")
-    add_deps("harfbuzz", {configs = {glib = true}})
+    add_deps("glib", "pango", "gdk-pixbuf", "libepoxy", "graphene", "fribidi", "pcre2")
+    add_deps("harfbuzz", "cairo", {configs = {glib = true}})
     if is_plat("linux") then
         add_deps("libdrm")
         add_deps("libiconv")

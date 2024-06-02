@@ -5,7 +5,8 @@ package("dynareadout")
 
     add_urls("https://github.com/PucklaJ/dynareadout/archive/refs/tags/$(version).tar.gz",
              "https://github.com/PucklaJ/dynareadout.git")
-    add_versions("22.12",   "2e430c718c610d4425e23d4c6c87fe4794bb8c76d3cc015988706dbf5027daa4")
+    add_versions("24.03", "d91feb2ebfa604b543dd6d98c3dd5aee5c489e6987159fef78dfcea1aad64bd5")
+    add_versions("22.12", "2e430c718c610d4425e23d4c6c87fe4794bb8c76d3cc015988706dbf5027daa4")
     add_versions("23.01",   "578080c734927cc925e7e91a52317bc3e710965071f1da50853b1e48f81a1c0f")
     add_versions("23.02",   "054949a8774089fc217d7c0ec02996b53d331794c41941ed5006b90715bb4d30")
     add_versions("23.04",   "929efad70c68931f35c76336ea8b23bf2da46022d5fd570f4efc06d776a94604")
@@ -17,6 +18,9 @@ package("dynareadout")
     add_versions("23.10",   "834d356e80019a7288001c2796c9ce14c2a8e5494c1051fae402f4503b10c1e5")
     add_versions("23.10.1", "6ebb6e9d9b3db637476cc9bd5342e4779be175f87225261da35c9270790e77d7")
     add_versions("23.11",   "2222bea87af9289dbc1a52adc5f09058863c503003e94193ca9388eff9e4ff04")
+    add_versions("23.12",   "6afc9c0857b6227e39466aae00db606d3376e61d518bb73544d8240fe3a66a90")
+    add_versions("24.01",   "f39094567272816c9a7dd84d3eaa0ef5c26309eeeadba814cac12f82e93ae0e1")
+    add_versions("24.02",   "acd483bd737a7769087befa1eb2010426c1328bb84ab0481ea11cdeb7655c64e")
 
     add_configs("cpp",         {description = "Build the C++ bindings",                       default = true,  type = "boolean"})
     add_configs("profiling",   {description = "Build with profiling features",                default = false, type = "boolean"})
@@ -27,6 +31,9 @@ package("dynareadout")
             package:add("links", "dynareadout_cpp", "dynareadout")
         else
             package:add("links", "dynareadout")
+        end
+        if package:is_plat("macosx") then
+            package:add("deps", "boost")
         end
     end)
 

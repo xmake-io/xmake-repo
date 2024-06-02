@@ -1,11 +1,15 @@
 package("catch2")
-
     set_homepage("https://github.com/catchorg/Catch2")
     set_description("Catch2 is a multi-paradigm test framework for C++. which also supports Objective-C (and maybe C). ")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/catchorg/Catch2/archive/refs/tags/$(version).zip",
              "https://github.com/catchorg/Catch2.git")
+    add_versions("v3.6.0", "aa0ebf551ffbf098ec1e253b5fee234c30b4ee54a31b1be63cb1a7735d3cf391")
+    add_versions("v3.5.4", "190a236fe0772ac4f5eebfdebfc18f92eeecfd270c55a1e5095ae4f10be2343f")
+    add_versions("v3.5.3", "2de1868288b26a19c2aebfc3fe53a748ec3ec5fc32cc742dfccaf6c685a0dc07")
+    add_versions("v3.5.2", "85fcc78d0c3387b15ad82f22a94017b29e4fe7c1cf0a05c3dd465b2746eef73f")
+    add_versions("v3.5.1", "b422fcd526a95e6057839f93a18099261bdc8c595f932ed4b1a978b358b3f1ed")
     add_versions("v3.5.0", "82079168b2304cfd0dfc70338f0c4b3caa4f3ef76b2643110d3f74a632252fc6")
     add_versions("v3.4.0", "cd175f5b7e62c29558d4c17d2b94325ee0ab6d0bf1a4b3d61bc8dbcc688ea3c2")
     add_versions("v3.3.2", "802a1d7f98f8e38a7913b596c5e3356ea76c544acb7c695bfd394544556359f3")
@@ -20,6 +24,10 @@ package("catch2")
     add_versions("v2.13.6", "39d50f5d1819cdf2908066664d57c2cde4a4000c364ad3376ea099735c896ff4")
     add_versions("v2.13.5", "728679b056dc1248cc79b3a1999ff7453f76422c68417563fc47a0ac2aaeeaef")
     add_versions("v2.9.2", "dc486300de22b0d36ddba1705abb07b9e5780639d824ba172ddf7062b2a1bf8f")
+
+    if is_plat("windows") then
+        add_patches("v3.5.4", path.join(os.scriptdir(), "patches", "3.5.4", "windows_arm64.patch"), "36fa29bd38fc97d3d3563bc4e7fab0810e899f8a2d8f8418555e2a4c051ad947")
+    end
 
     add_configs("cxx17", {description = "Compiles Catch as a C++17 library (requires a C++17 compiler).", default = true, type = "boolean"})
 
@@ -51,7 +59,11 @@ package("catch2")
         end
         component:add("links", link)
         if package:is_plat("windows") then
-            component:add("ldflags", "-subsystem:console")
+            if package:has_tool("cxx", "cl") then
+                component:add("ldflags", "-subsystem:console")
+            elseif package:has_tool("cxx", "clang", "clangxx") then
+                component:add("ldflags", "-Wl,/subsystem:console")
+            end
         end
     end)
 

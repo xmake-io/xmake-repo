@@ -5,6 +5,7 @@ package("libde265")
     set_license("LGPL-3.0")
 
     add_urls("https://github.com/strukturag/libde265/releases/download/v$(version)/libde265-$(version).tar.gz")
+    add_versions("1.0.15", "00251986c29d34d3af7117ed05874950c875dd9292d016be29d3b3762666511d")
     add_versions("1.0.8", "24c791dd334fa521762320ff54f0febfd3c09fc978880a8c5fbc40a88f21d905")
 
     add_deps("cmake")

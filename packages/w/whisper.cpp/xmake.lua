@@ -6,6 +6,10 @@ package("whisper.cpp")
     set_urls("https://github.com/ggerganov/whisper.cpp/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/ggerganov/whisper.cpp.git")
 
+    add_versions("1.6.2", "da7988072022acc3cfa61b370b3c51baad017f1900c3dc4e68cb276499f66894")
+    add_versions("1.6.0", "2729a83662edf909dad66115a3b616c27011cbe4c05335656034954c91ba0c92")
+    add_versions("1.5.5", "27fa5c472657af2a6cee63de349a34b23d0f3781fa9b8ef301a940cf64964a79")
+    add_versions("1.5.4", "06eed84de310fdf5408527e41e863ac3b80b8603576ba0521177464b1b341a3a")
     add_versions("1.4.2", "1b988dcc77fca55f188dbc4e472f971a80854c1d44309cf3eaab9d5677f175e1")
 
     add_patches("1.4.2", path.join(os.scriptdir(), "patches", "1.4.2", "fix.patch"), "1330bdbb769aad37f0de6998ac9b0107423ec62385bbfb0a89a98c226daace48")
@@ -45,6 +49,9 @@ package("whisper.cpp")
         table.insert(configs, "-DWHISPER_PERF=" .. (package:config("perf") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("mingw") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch())
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 

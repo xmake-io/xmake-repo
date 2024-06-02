@@ -1,0 +1,70 @@
+diff --git a/src/Magnum/GL/Buffer.cpp b/src/Magnum/GL/Buffer.cpp
+index 5fa02c2..038e001 100644
+--- a/src/Magnum/GL/Buffer.cpp
++++ b/src/Magnum/GL/Buffer.cpp
+@@ -419,7 +419,7 @@ void Buffer::bindImplementationMulti(const Target target, const GLuint firstInde
+         }
+     }
+ 
+-    glBindBuffersRange(GLenum(target), firstIndex, buffers.size(), ids, offsetsSizes, offsetsSizes + buffers.size());
++    glBindBuffersRange(GLenum(target), firstIndex, buffers.size(), ids, offsetsSizes, offsetsSizes.data() + buffers.size());
+ }
+ #endif
+ 
+diff --git a/src/Magnum/Implementation/ImageProperties.h b/src/Magnum/Implementation/ImageProperties.h
+index d6326cf..6eedae0 100644
+--- a/src/Magnum/Implementation/ImageProperties.h
++++ b/src/Magnum/Implementation/ImageProperties.h
+@@ -70,7 +70,7 @@ template<UnsignedInt dimensions, class T, class Image, class Data> Containers::S
+ 
+     static_assert(sizeof(decltype(image.data().front())) == 1,
+         "pointer arithmetic expects image data type to have 1 byte");
+-    return {data.suffix(properties.first[dimensions - 1]), data + properties.first.sum(), size, stride};
++    return {data.suffix(properties.first[dimensions - 1]), data.data() + properties.first.sum(), size, stride};
+ }
+ 
+ }}
+diff --git a/src/Magnum/MeshTools/Concatenate.cpp b/src/Magnum/MeshTools/Concatenate.cpp
+index 38a7bc1..c20eeb9 100644
+--- a/src/Magnum/MeshTools/Concatenate.cpp
++++ b/src/Magnum/MeshTools/Concatenate.cpp
+@@ -73,7 +73,7 @@ Trade::MeshData concatenate(Containers::Array<char>&& indexData, const UnsignedI
+         attribute = Trade::MeshAttributeData{
+             attribute.name(), attribute.format(),
+             Containers::StridedArrayView1D<void>{vertexData,
+-                vertexData + attribute.offset(vertexData),
++                vertexData.data() + attribute.offset(vertexData),
+                 vertexCount, attribute.stride()},
+             attribute.arraySize()};
+     }
+@@ -130,7 +130,7 @@ Trade::MeshData concatenate(Containers::Array<char>&& indexData, const UnsignedI
+         /* Otherwise, if we need an index buffer (meaning at least one of the
+            meshes is indexed), generate a trivial index buffer */
+         } else if(!indices.empty()) {
+-            std::iota(indices + indexOffset, indices + indexOffset + mesh.vertexCount(), UnsignedInt(vertexOffset));
++            std::iota(indices.data() + indexOffset, indices.data() + indexOffset + mesh.vertexCount(), UnsignedInt(vertexOffset));
+             indexOffset += mesh.vertexCount();
+         }
+ 
+diff --git a/src/Magnum/MeshTools/Interleave.cpp b/src/Magnum/MeshTools/Interleave.cpp
+index b98c589..c16fd74 100644
+--- a/src/Magnum/MeshTools/Interleave.cpp
++++ b/src/Magnum/MeshTools/Interleave.cpp
+@@ -224,7 +224,7 @@ Trade::MeshData interleavedLayout(Trade::MeshData&& data, const UnsignedInt vert
+         attribute = Trade::MeshAttributeData{
+             attribute.name(), attribute.format(),
+             Containers::StridedArrayView1D<void>{vertexData,
+-                vertexData + attribute.offset(vertexData),
++                vertexData.data() + attribute.offset(vertexData),
+                 vertexCount, attribute.stride()},
+             attribute.arraySize()};
+     }
+@@ -261,7 +261,7 @@ Trade::MeshData interleave(Trade::MeshData&& data, const Containers::ArrayView<c
+             indexData = Containers::Array<char>{data.indexData().size()};
+             Utility::copy(data.indexData(), indexData);
+             indices = Trade::MeshIndexData{data.indexType(),
+-                Containers::ArrayView<const void>{indexData + data.indexOffset(), data.indices().size()[0]*data.indices().size()[1]}};
++                Containers::ArrayView<const void>{indexData.data() + data.indexOffset(), data.indices().size()[0]*data.indices().size()[1]}};
+         }
+     }
+ 

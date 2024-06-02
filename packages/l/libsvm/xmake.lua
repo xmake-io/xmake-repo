@@ -5,7 +5,8 @@ package("libsvm")
 
     add_urls("https://github.com/cjlin1/libsvm/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cjlin1/libsvm.git")
-    add_versions("v325",  "1f587ec0df6fd422dfe50f942f8836ac179b0723b768fe9d2fabdfd1601a0963")
+    add_versions("v332", "e1d7d316112d199ebd69c9695f79226d236b86e2c8d88e70cfe35fd383954ed8")
+    add_versions("v325", "1f587ec0df6fd422dfe50f942f8836ac179b0723b768fe9d2fabdfd1601a0963")
 
     on_install(function (package)
         io.writefile("xmake.lua", [[

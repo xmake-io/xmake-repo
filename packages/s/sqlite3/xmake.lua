@@ -2,15 +2,18 @@ package("sqlite3")
 
     set_homepage("https://sqlite.org/")
     set_description("The most used database engine in the world")
+    set_license("Public Domain")
 
     set_urls("https://sqlite.org/$(version)", {version = function (version)
-        local year = "2023"
+        local year = "2024"
         if version:le("3.24") then
             year = "2018"
         elseif version:le("3.36") then
             year = "2021"
         elseif version:le("3.42") then
             year = "2022"
+        elseif version:le("3.44") then
+            year = "2023"
         end
         local version_str = version:gsub("[.+]", "")
         if #version_str < 7 then
@@ -28,6 +31,10 @@ package("sqlite3")
     add_versions("3.37.0+200", "4089a8d9b467537b3f246f217b84cd76e00b1d1a971fe5aca1e30e230e46b2d8")
     add_versions("3.39.0+200", "852be8a6183a17ba47cee0bbff7400b7aa5affd283bf3beefc34fcd088a239de")
     add_versions("3.43.0+200", "6d422b6f62c4de2ca80d61860e3a3fb693554d2f75bb1aaca743ccc4d6f609f0")
+    add_versions("3.45.0+100", "cd9c27841b7a5932c9897651e20b86c701dd740556989b01ca596fcfa3d49a0a")
+    add_versions("3.45.0+200", "bc9067442eedf3dd39989b5c5cfbfff37ae66cc9c99274e0c3052dc4d4a8f6ae")
+    add_versions("3.45.0+300", "b2809ca53124c19c60f42bf627736eae011afdcc205bb48270a5ee9a38191531")
+    add_versions("3.46.0+0", "6f8e6a7b335273748816f9b3b62bbdc372a889de8782d7f048c653a447417a7d")
 
     if is_plat("macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
@@ -36,6 +43,7 @@ package("sqlite3")
     on_install(function (package)
         local xmake_lua = [[
             add_rules("mode.debug", "mode.release")
+            set_encodings("utf-8")
             target("sqlite3")
                 set_kind("$(kind)")
                 add_files("sqlite3.c")

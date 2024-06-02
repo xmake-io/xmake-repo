@@ -9,6 +9,7 @@ package("libzip")
                  return tostring(version):sub(2)
          end})
     add_urls("https://github.com/nih-at/libzip.git")
+    add_versions("v1.10.1", "9669ae5dfe3ac5b3897536dc8466a874c8cf2c0e3b1fdd08d75b273884299363")
     add_versions("v1.8.0", "30ee55868c0a698d3c600492f2bea4eb62c53849bcf696d21af5eb65f3f3839e")
     add_versions("v1.9.2", "fd6a7f745de3d69cf5603edc9cb33d2890f0198e415255d0987a0cf10d824c6f")
 

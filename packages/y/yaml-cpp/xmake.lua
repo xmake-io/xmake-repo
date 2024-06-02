@@ -4,7 +4,7 @@ package("yaml-cpp")
     set_description("A YAML parser and emitter in C++")
     set_license("MIT")
 
-    add_urls("https://github.com/jbeder/yaml-cpp/archive/$(version).tar.gz", {version = function (version)
+    add_urls("https://github.com/jbeder/yaml-cpp/archive/refs/tags/$(version).tar.gz", {version = function (version)
         return version:le("0.7.0") and "yaml-cpp-" .. tostring(version) or version
     end})
     add_urls("https://github.com/jbeder/yaml-cpp.git")

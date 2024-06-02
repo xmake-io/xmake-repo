@@ -6,7 +6,11 @@ option("wide", {showmenu = true,  default = false})
 
 add_rules("mode.debug", "mode.release")
 
-add_requires("expat")
+if has_config("wide") then
+    add_requires("expat", {configs = {char_type = "wchar_t"}})
+else
+    add_requires("expat")
+end
 
 if has_config("libzip") then
     add_requires("libzip")

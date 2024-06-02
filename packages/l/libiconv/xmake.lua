@@ -2,6 +2,7 @@ package("libiconv")
 
     set_homepage("https://www.gnu.org/software/libiconv")
     set_description("Character set conversion library.")
+    set_license("LGPL-2.0")
 
     set_urls("https://ftpmirror.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz")
@@ -21,7 +22,7 @@ package("libiconv")
 
     on_fetch("macosx", "linux", function (package, opt)
         if opt.system then
-            if package:is_plat("linux") then
+            if package:is_plat("linux") and package:has_tool("cc", "gcc", "gxx") then
                 return {} -- on linux libiconv is already a part of glibc
             else
                 return package:find_package("system::iconv", {includes = "iconv.h"})

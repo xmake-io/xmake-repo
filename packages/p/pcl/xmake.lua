@@ -8,6 +8,7 @@ package("pcl")
              "https://github.com/PointCloudLibrary/pcl.git")
     add_versions("1.12.0", "21dfa9a268de9675c1f94d54d9402e4e02120a0aa4215d064436c52b7d5bd48f")
     add_versions("1.12.1", "dc0ac26f094eafa7b26c3653838494cc0a012bd1bdc1f1b0dc79b16c2de0125a")
+    add_versions("1.14.0", "de297b929eafcb93747f12f98a196efddf3d55e4edf1b6729018b436d5be594d")
 
     add_configs("vtk", {description = "Build with vtk.", default = false, type = "boolean"})
     add_configs("cuda", {description = "Build with cuda.", default = false, type = "boolean"})
@@ -33,7 +34,7 @@ package("pcl")
             io.replace("cmake/pcl_options.cmake", "set(CMAKE_FIND_LIBRARY_SUFFIXES", "#set(CMAKE_FIND_LIBRARY_SUFFIXES", {plain = true})
         end
 
-        local configs = {"-DWITH_OPENGL=OFF", "-DWITH_PCAP=OFF", "-DWITH_QT=OFF", "-DBoost_USE_STATIC_LIBS=ON", "-DPCL_ALLOW_BOTH_SHARED_AND_STATIC_DEPENDENCIES=ON"}
+        local configs = {"-DWITH_OPENGL=OFF", "-DWITH_PCAP=OFF", "-DWITH_QT=OFF", "-DWITH_LIBUSB=OFF", "-DBoost_USE_STATIC_LIBS=ON", "-DPCL_ALLOW_BOTH_SHARED_AND_STATIC_DEPENDENCIES=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPCL_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_VTK=" .. (package:config("vtk") and "ON" or "OFF"))

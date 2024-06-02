@@ -7,6 +7,7 @@ package("cpp-semver")
     add_urls("https://github.com/z4kn4fein/cpp-semver/archive/refs/tags/$(version).tar.gz",
              "https://github.com/z4kn4fein/cpp-semver.git")
 
+    add_versions("v0.3.3", "05d59da347b5b5b4f34670d32704a54219657c9856a7af6645f06064006c6c68")
     add_versions("v0.3.1", "9168cc815d8b9a5b3d73d2a158efec467eff844f1cab929bc145312cfc3958ae")
 
     on_install(function (package)

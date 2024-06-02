@@ -7,6 +7,7 @@ package("span-lite")
 
     add_urls("https://github.com/martinmoene/span-lite/archive/refs/tags/v$(version).zip",
              "https://github.com/martinmoene/span-lite.git")
+    add_versions("0.11.0", "315a321ddc586e78e5fc345661c3259e237c8c8968087c1aa36c4407343d7ddb")
     add_versions("0.10.3", "e9d4facd0c98b12b045de356c6c6c0c06d047d741fe61bde02ca9a68c82d7658")
 
     add_deps("cmake")

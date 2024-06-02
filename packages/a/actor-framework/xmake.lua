@@ -6,6 +6,7 @@ package("actor-framework")
     add_urls("https://github.com/actor-framework/actor-framework/archive/refs/tags/$(version).tar.gz",
              "https://github.com/actor-framework/actor-framework.git")
 
+    add_versions("0.19.6", "48dc4c4abf5ab5a7c6f84b9259cc8be1b02c601d31893647ab44e143cdc4b6d5")
     add_versions("0.19.2", "aa3fcc494424e0e20b177125458a6a6ed39c751a3d3d5193054e88bdf8a146d2")
 
     add_configs("profiler", {description = "Enable experimental profiler API", default = false, type = "boolean"})

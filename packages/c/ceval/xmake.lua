@@ -7,6 +7,7 @@ package("ceval")
 
     add_urls("https://github.com/erstan/ceval/archive/refs/tags/$(version).tar.gz",
              "https://github.com/erstan/ceval.git")
+    add_versions("1.0.1", "fb5508fc40715d1f1a50a1fa737f3c88cb7aeb187fb2aede7c35f0758f277779")
     add_versions("1.0.0", "3bb8cca8f0f7bf6f5ee6e7198d1174eab4d493318b6d97cc739343017090573e")
 
     on_install(function (package)
