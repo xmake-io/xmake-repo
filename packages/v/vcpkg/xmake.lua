@@ -13,7 +13,7 @@ package("vcpkg")
     --add_deps("libcurl")
     
     on_install("linux", "windows|x64", "windows|x86", function(package)
-        
+        os.setenv("VCPKG_ROOT", os.curdir())
         local scriptpath = path.join(".",package:is_plat("linux") and "bootstrap-vcpkg.sh" or "bootstrap-vcpkg.bat")
         local exepath = path.join(".",package:is_plat("linux") and "vcpkg" or "vcpkg.exe")
         print("scriptpath:" .. scriptpath)
