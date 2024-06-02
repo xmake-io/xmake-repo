@@ -7,8 +7,8 @@ package("vcpkg")
     add_versions("2024.05.24", "3034e534d4ed13e6e6edad3c331c0e9e3280f579dd4ba86151aa1e2896b85d31")
 
     add_deps("unzip","cmake","ninja","libcurl")
-    if linuxos.name == "archlinux" or linuxos.name == "manjaro" then
-        package:add_deps("pacman::zip","pacman::curl")
+    if linuxos.name() == "archlinux" or linuxos.name() == "manjaro" then
+        add_deps("pacman::zip","pacman::curl")
     end
 
     on_install("linux", "windows|x64", "windows|x86", function(package)
