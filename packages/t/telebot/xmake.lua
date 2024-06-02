@@ -16,8 +16,10 @@ package("telebot")
     end
 
     on_install("windows", "mingw@macosx,linux", "linux", function (package)
-        io.replace("src/telebot.c", "#include <unistd.h>", "", {plain = true})
-        io.replace("src/telebot-core.c", "#include <unistd.h>", "", {plain = true})
+        if package:is_plat("windows") then
+            io.replace("src/telebot.c", "#include <unistd.h>", "", {plain = true})
+            io.replace("src/telebot-core.c", "#include <unistd.h>", "", {plain = true})
+        end
 
         io.replace("src/telebot.c", "#include <json.h>", "#include <json-c/json.h>", {plain = true})
         io.replace("src/telebot-core.c", "#include <json.h>", "#include <json-c/json.h>", {plain = true})
