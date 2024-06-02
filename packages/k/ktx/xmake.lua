@@ -9,8 +9,8 @@ package("ktx")
     add_configs("decoder", {description = "ETC decoding support", default = false, type = "boolean"})
     add_configs("opencl", {description = "Compile with OpenCL support so applications can choose to use it.", default = false, type = "boolean"})
     add_configs("embed", {description = "Embed bitcode in binaries.", default = false, type = "boolean"})
-    add_configs("ktx1", {description = "Enable KTX 1 support.", default = false, type = "boolean"})
-    add_configs("ktx2", {description = "Enable KTX 2 support.", default = false, type = "boolean"})
+    add_configs("ktx1", {description = "Enable KTX 1 support.", default = true, type = "boolean"})
+    add_configs("ktx2", {description = "Enable KTX 2 support.", default = true, type = "boolean"})
     add_configs("vulkan", {description = "Enable Vulkan texture upload.", default = false, type = "boolean"})
     add_configs("opengl", {description = "Enable OpenGL texture upload.", default = false, type = "boolean"})
 
@@ -31,7 +31,7 @@ package("ktx")
         table.insert(configs, "-DKTX_FEATURE_GL_UPLOAD=" .. (package:config("opengl") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
-        if package:is_plat("windows") and (not package:config("shared")) then
+        if package:is_plat("windows", "mingw") and (not package:config("shared")) then
             package:add("defines", "KHRONOS_STATIC")
         end
         if package:config("ktx1") then
