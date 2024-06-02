@@ -11,7 +11,7 @@ package("telebot")
     end
 
     add_deps("json-c", "libcurl")
-    if is_plat("windows") then
+    if is_plat("windows", "mingw@macosx,linux") then
         add_deps("pthreads4w")
     end
 
@@ -31,7 +31,7 @@ package("telebot")
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             set_encodings("utf-8")
-            if is_plat("windows") then
+            if is_plat("windows", "mingw@macosx,linux") then
                 add_requires("pthreads4w")
                 add_packages("pthreads4w")
             end
