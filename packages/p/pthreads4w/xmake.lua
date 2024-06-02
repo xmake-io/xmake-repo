@@ -15,7 +15,7 @@ package("pthreads4w")
         add_deps("autoconf", "automake")
     end
 
-    on_install("windows", function (package)
+    on_install("windows|x64", "windows|x86", function (package)
         local target = "VC"
         if not package:config("shared") then
             target = target .. "-static"
