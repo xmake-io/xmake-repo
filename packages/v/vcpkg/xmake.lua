@@ -18,6 +18,7 @@ package("vcpkg")
         os.cp(".", package:installdir())
         package:setenv("VCPKG_ROOT", ".")
         package:addenv("PATH", ".")
+        package:mark_as_pathenv("VCPKG_ROOT")
     end)
 
     on_test(function(package)
