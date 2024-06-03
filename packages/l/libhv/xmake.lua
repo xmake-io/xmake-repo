@@ -28,7 +28,7 @@ package("libhv")
     add_configs("nghttp2",     {description = "with nghttp2 library", default = false, type = "boolean"})
     add_configs("openssl",     {description = "with openssl library", default = false, type = "boolean"})
     add_configs("mbedtls",     {description = "with mbedtls library", default = false, type = "boolean"})
-    add_configs("GNUTLS",      {description="with gnutls library", default=false,type="boolean"})
+    add_configs("gnutls",      {description = "with gnutls library", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread")
@@ -78,7 +78,7 @@ package("libhv")
                                "enable_uds",
                                "enable_windump",
                                "use_multimap",
-                               "WITH_GNUTLS"}) do
+                               "with_gnutls"}) do
             local config_name = name:gsub("with_", ""):gsub("use_", ""):gsub("enable_", "")
             table.insert(configs, "-D" .. name:upper() .. "=" .. (package:config(config_name) and "ON" or "OFF"))
         end
