@@ -9,6 +9,12 @@ package("zip")
     add_deps("cmake")
 
     on_install("@windows", "@macosx", "@linux", function (package)
+        io.replace("zip.h", "#define __zip_h 1", [[#define __zip_h 1
+            #if defined(WIN32) || defined(WINDLL)
+            #  define WIN32_LEAN_AND_MEAN
+            #  include <windows.h>
+            #endif
+        ]], {plain = true})
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             includes("@builtin/check")
@@ -22,7 +28,7 @@ package("zip")
                           "fileio.c", "globals.c", "trees.c", "ttyio.c", "util.c",
                           "zip.c", "zipfile.c", "zipup.c")
                 if is_plat("windows") then
-                    add_files("win32/*.c", "win32/winapp.rc")
+                    add_files("win32/*.c")
                     add_syslinks("user32", "advapi32")
                     add_defines("WIN32", "NO_ASM")
                 else
