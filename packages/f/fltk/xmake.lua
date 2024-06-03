@@ -1,10 +1,9 @@
 package("fltk")
-
     set_homepage("https://www.fltk.org")
     set_description("Fast Light Toolkit")
-    set_urls("https://github.com/fltk/fltk/archive/d7985607d6dd8308f104d84c778080731fa23c9a.zip")
+
+    add_urls("https://github.com/fltk/fltk/archive/d7985607d6dd8308f104d84c778080731fa23c9a.zip")
     add_versions("1.4.0", "43d398ab068732cb1debd9a98d124e47c9da6f53cdf3e36f22868a54cca0c371")
-    add_deps("cmake")
 
     if is_host("linux") then
         add_configs("pango",   {description = "Use pango for font support", default = false, type = "boolean"})
@@ -23,6 +22,9 @@ package("fltk")
         add_deps("libx11", "libxext", "libxinerama", "libxcursor", "libxrender", "libxfixes", "fontconfig") 
     end
 
+    add_deps("cmake")
+    add_deps("zlib", "libpng", "libjpeg")
+
     on_load(function (package)
         if is_plat("linux") then
             if package:config("pango") then 
@@ -34,30 +36,23 @@ package("fltk")
         end
     end)
 
-    on_install("macosx", "windows", "mingw", "linux", "android", function (package)
-        local configs = {}
-        table.insert(configs, "-DOPTION_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DFLTK_BUILD_TEST=OFF")
-        if package:is_plat("linux") then
-            table.insert(configs, "-DOPTION_USE_SYSTEM_LIBPNG=OFF")
-            table.insert(configs, "-DOPTION_USE_SYSTEM_ZLIB=OFF")
-            table.insert(configs, "-DOPTION_USE_SYSTEM_LIBJPEG=OFF")
-            if package:config("pango") then 
-                table.insert(configs, "-DOPTION_USE_PANGO=ON")
-            else 
-                table.insert(configs, "-DOPTION_USE_PANGO=OFF")
-            end 
-            if package:config("xft") then 
-                table.insert(configs, "-DOPTION_USE_XFT=ON")
-            else 
-                table.insert(configs, "-DOPTION_USE_XFT=OFF")
-            end
+    on_install(function (package)
+        for _, file in ipairs(os.files("**.cxx")) do
+            io.replace(file, "<libpng/png.h>", "<png.h>", {plain = true})
         end
-        if package:is_plat("android") then
-            table.insert(configs, "-DOPTION_USE_SYSTEM_LIBPNG=OFF")
-            table.insert(configs, "-DOPTION_USE_SYSTEM_ZLIB=OFF")
-            table.insert(configs, "-DOPTION_USE_SYSTEM_LIBJPEG=OFF")
+
+        local configs = {
+            "-DFLTK_BUILD_TEST=OFF",
+            "-DFLTK_BUILD_EXAMPLES=OFF",
+            "-DOPTION_USE_SYSTEM_LIBPNG=ON",
+            "-DOPTION_USE_SYSTEM_ZLIB=ON",
+            "-DOPTION_USE_SYSTEM_LIBJPEG=ON"
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DOPTION_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("linux") then
+            table.insert(configs, "-DOPTION_USE_PANGO=" .. (package:config("pango") and "ON" or "OFF"))
+            table.insert(configs, "-DOPTION_USE_XFT=" .. (package:config("xft") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
     end)
