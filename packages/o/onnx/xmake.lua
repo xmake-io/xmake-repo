@@ -6,6 +6,7 @@ package("onnx")
     add_urls("https://github.com/onnx/onnx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/onnx/onnx.git")
 
+    add_versions("v1.16.1", "0e6aa2c0a59bb2d90858ad0040ea1807117cc2f05b97702170f18e6cd6b66fb3")
     add_versions("v1.16.0", "0ce153e26ce2c00afca01c331a447d86fbf21b166b640551fe04258b4acfc6a4")
     add_versions("v1.15.0", "c757132e018dd0dd171499ef74fca88b74c5430a20781ec53da19eb7f937ef68")
     add_versions("v1.11.0", "a20f2d9df805b16ac75ab4da0a230d3d1c304127d719e5c66a4e6df514e7f6c0")
