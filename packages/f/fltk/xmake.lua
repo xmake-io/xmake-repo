@@ -21,7 +21,7 @@ package("fltk")
     elseif is_plat("android") then
         add_syslinks("android")
         add_syslinks("dl")
-    else
+    elseif is_plat("linux") then
         add_syslinks("dl", "pthread")
         add_deps("libx11", "libxext", "libxinerama", "libxcursor", "libxrender", "libxfixes", "fontconfig") 
     end
@@ -30,7 +30,7 @@ package("fltk")
     add_deps("zlib", "libpng", "libjpeg")
 
     on_load(function (package)
-        if is_plat("linux") then
+        if package:is_plat("linux") then
             if package:config("pango") then 
                 package:add("deps", "pango-1.0", "pangoxft-1.0", "gobject-2.0", "cairo", "pangocairo-1.0")
             end
