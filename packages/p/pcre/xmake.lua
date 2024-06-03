@@ -22,6 +22,7 @@ package("pcre")
 
     on_install("windows", function (package)
         local configs = {"-DPCRE_BUILD_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DPCRE_SUPPORT_JIT=" .. (package:config("jit") and "ON" or "OFF"))
         local bitwidth = package:config("bitwidth") or "8"
