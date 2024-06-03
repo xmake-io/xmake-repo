@@ -11,7 +11,7 @@ package("zip")
     on_install("@windows", "@macosx", "@linux", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
-            includes("check_cfuncs.lua")
+            includes("@builtin/check")
             check_cfuncs("HAVE_LCHMOD", "lchmod", {includes = "sys/stat.h"})
             target("zip")
                 set_kind("binary")
