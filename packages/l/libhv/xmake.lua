@@ -59,14 +59,11 @@ package("libhv")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw", function(package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw@windows", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
-        if package:is_plat("mingw") and package:is_cross() then
-            table.insert(configs, "-DWITH_WEPOLL=OFF")
-        end
 
         for _, name in ipairs({"with_protocol",
                                "with_http",
