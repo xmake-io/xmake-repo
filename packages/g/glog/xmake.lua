@@ -36,10 +36,6 @@ package("glog")
                 package:add("deps", dep)
             end
         end
-
-        if package:version():ge("0.7.0") then
-            package:add("defines", "GLOG_USE_GLOG_EXPORT")
-        end
     end)
 
     on_install(function (package)
@@ -50,11 +46,18 @@ package("glog")
             table.insert(configs, "-DWITH_" .. config:upper() .. "=" .. (package:config(config) and "ON" or "OFF"))
         end
 
+        -- fix cmake try run
         if package:is_plat("mingw") then
-            -- fix cmake try run
             table.insert(configs, "-DHAVE_SYMBOLIZE_EXITCODE=ON")
         end
+
         import("package.tools.cmake").install(package, configs)
+
+        -- fix https://github.com/xmake-io/xmake-repo/discussions/4221
+        if package:version() and package:version():ge("0.7.0") then
+            io.replace(path.join(package:installdir("include"), "glog/logging.h"),
+                "#define GLOG_LOGGING_H", "#define GLOG_LOGGING_H\n#define GLOG_USE_GLOG_EXPORT", {plain = true})
+        end
     end)
 
     on_test(function (package)
