@@ -9,10 +9,29 @@ package("zip")
     add_deps("cmake")
 
     on_install("@windows", "@macosx", "@linux", function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            includes("check_cfuncs.lua")
+            check_cfuncs("HAVE_LCHMOD", "lchmod", {includes = "sys/stat.h"})
+            target("zip")
+                set_kind("binary")
+                if not has_config("__HAVE_LCHMOD") then
+                    add_defines("NO_LCHMOD")
+                end
+                add_files("crc32.c", "crypt.c", "deflate.c",
+                          "fileio.c", "globals.c", "trees.c", "ttyio.c", "util.c",
+                          "zip.c", "zipfile.c", "zipup.c")
+                if is_plat("windows") then
+                    add_files("win32/*.c", "win32/winapp.rc")
+                    add_syslinks("user32", "advapi32")
+                    add_defines("WIN32", "NO_ASM")
+                else
+                    add_files("unix/unix.c")
+                    add_defines("UNIX", "NO_OFF_T")
+                end
+                add_includedirs(".")
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
