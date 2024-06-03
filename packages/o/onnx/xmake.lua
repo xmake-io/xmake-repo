@@ -12,7 +12,7 @@ package("onnx")
     add_versions("v1.11.0", "a20f2d9df805b16ac75ab4da0a230d3d1c304127d719e5c66a4e6df514e7f6c0")
     add_versions("v1.12.0", "052ad3d5dad358a33606e0fc89483f8150bb0655c99b12a43aa58b5b7f0cc507")
 
-    add_patches("1.16.0", "patches/1.16.0/cmake-abseil.patch", "d8cad2b231ce01aa3263692f88293be3eaa2b380e021eb5288f4c7ea930c19cb")
+    add_patches(">=1.16.0", "patches/1.16.0/cmake-abseil.patch", "d8cad2b231ce01aa3263692f88293be3eaa2b380e021eb5288f4c7ea930c19cb")
 
     add_configs("exceptions", {description = "Enable exception handling", default = true, type = "boolean"})
     add_configs("registration", {description = "Enable static registration for onnx operator schemas.", default = true, type = "boolean"})
