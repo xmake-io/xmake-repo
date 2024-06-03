@@ -6,10 +6,7 @@ package("vcpkg")
     add_urls("https://github.com/microsoft/vcpkg/archive/refs/tags/$(version).tar.gz")
     add_versions("2024.05.24", "3034e534d4ed13e6e6edad3c331c0e9e3280f579dd4ba86151aa1e2896b85d31")
 
-    add_deps("unzip", "cmake", "ninja", "libcurl")
-    if linuxos.name() == "archlinux" or linuxos.name() == "manjaro" then
-        add_deps("pacman::zip", "pacman::curl")
-    end
+    add_deps("zip", "unzip", "cmake", "ninja", "libcurl")
 
     on_install("linux", "windows|x64", "windows|x86", function(package)
         local scriptpath =  package:is_plat("linux") and "./bootstrap-vcpkg.sh" or "bootstrap-vcpkg.bat"
