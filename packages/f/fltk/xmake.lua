@@ -2,13 +2,17 @@ package("fltk")
     set_homepage("https://www.fltk.org")
     set_description("Fast Light Toolkit")
 
-    add_urls("https://github.com/fltk/fltk/archive/d7985607d6dd8308f104d84c778080731fa23c9a.zip")
+    add_urls("https://github.com/fltk/fltk/archive/d7985607d6dd8308f104d84c778080731fa23c9a.zip",
+             "https://github.com/fltk/fltk.git")
+
     add_versions("1.4.0", "43d398ab068732cb1debd9a98d124e47c9da6f53cdf3e36f22868a54cca0c371")
 
-    if is_host("linux") then
+    if is_plat("linux") then
         add_configs("pango",   {description = "Use pango for font support", default = false, type = "boolean"})
         add_configs("xft",     {description = "Use libXft for font support", default = false, type = "boolean"})
     end
+    add_configs("fluid", {description = "Build fluid", default = false, type = "boolean"})
+    add_configs("forms", {description = "Build forms", default = false, type = "boolean"})
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "comctl32", "gdi32", "oleaut32", "ole32", "uuid", "shell32", "advapi32", "comdlg32", "winspool", "user32", "kernel32", "odbc32")
@@ -50,6 +54,8 @@ package("fltk")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DOPTION_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DFLTK_BUILD_FLUID=" .. (package:config("fluid") and "ON" or "OFF"))
+        table.insert(configs, "-DFLTK_BUILD_FORMS=" .. (package:config("forms") and "ON" or "OFF"))
         if package:is_plat("linux") then
             table.insert(configs, "-DOPTION_USE_PANGO=" .. (package:config("pango") and "ON" or "OFF"))
             table.insert(configs, "-DOPTION_USE_XFT=" .. (package:config("xft") and "ON" or "OFF"))
