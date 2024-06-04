@@ -10,7 +10,7 @@ package("vcpkg")
     add_deps("zip", "unzip", "cmake", "ninja", "curl")
 
     on_install("@linux", "@macosx", "@windows", function(package)
-        local scriptpath =  package:is_plat("linux") and "./bootstrap-vcpkg.sh" or "bootstrap-vcpkg.bat"
+        local scriptpath = package:is_plat("windows") and "bootstrap-vcpkg.bat" or "./bootstrap-vcpkg.sh"
         os.run(scriptpath)
         os.cp(".", package:installdir())
         package:setenv("VCPKG_ROOT", ".")
