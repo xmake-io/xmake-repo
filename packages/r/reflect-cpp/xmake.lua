@@ -1,5 +1,4 @@
 package("reflect-cpp")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/getml/reflect-cpp")
     set_description("A C++20 library for fast serialization, deserialization and validation using reflection. Supports JSON, BSON, CBOR, flexbuffers, msgpack, TOML, XML, YAML / msgpack.org[C++20]")
@@ -8,21 +7,22 @@ package("reflect-cpp")
     add_urls("https://github.com/getml/reflect-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/getml/reflect-cpp.git")
 
-    add_versions("v0.9.0", "a64ad16da970da7d66d71a134312c7d0b7de2f4e1448b83d3ea92130dfe0449c")
+    add_versions("v0.10.0", "d2c8876d993ddc8c57c5804e767786bdb46a2bdf1a6cd81f4b14f57b1552dfd7")
 
-    --add_configs("with_bson", { description = "OnEnable Bson Support.", default = false, type = "boolean"})
-    add_configs("cbor", { description = "OnEnable Cbor Support.", default = false, type = "boolean"})
-    add_configs("flatbuffers", { description = "OnEnable Flexbuffers Support.", default = false, type = "boolean"})
-    add_configs("msgpack", { description = "OnEnable Msgpack Support.", default = false, type = "boolean"})
-    add_configs("xml", { description = "OnEnable Xml Support.", default = false, type = "boolean"})
-    add_configs("toml", { description = "OnEnable Toml Support.", default = false, type = "boolean"})
-    add_configs("yaml", { description = "OnEnable Yaml Support.", default = false, type = "boolean"})
+    add_patches("0.10.0", "patches/0.10.0/cmake.patch", "b8929c0a13bd4045cbdeea0127e08a784e2dc8c43209ca9f056fff4a3ab5c4d3")
 
-    add_deps({"cmake", "yyjson"})
+    add_configs("bson", {description = "Enable Bson Support.", default = false, type = "boolean", readonly = true})
+    add_configs("cbor", {description = "Enable Cbor Support.", default = false, type = "boolean"})
+    add_configs("flatbuffers", {description = "Enable Flexbuffers Support.", default = false, type = "boolean"})
+    add_configs("msgpack", {description = "Enable Msgpack Support.", default = false, type = "boolean"})
+    add_configs("xml", {description = "Enable Xml Support.", default = false, type = "boolean"})
+    add_configs("toml", {description = "Enable Toml Support.", default = false, type = "boolean"})
+    add_configs("yaml", {description = "Enable Yaml Support.", default = false, type = "boolean"})
+    add_configs("yyjson", {description = "Enable yyjson Support.", default = false, type = "boolean"})
+
+    add_deps("cmake")
 
     on_load(function (package)
-        package:add("links", "yyjson")
-
         if package:config("cbor") then
             package:add("deps", "tinycbor")
         end
@@ -45,14 +45,15 @@ package("reflect-cpp")
 
         if package:config("yaml") then
             package:add("deps", "yaml-cpp")
-        end   
+        end
+
+        if package:config("yyjson") then
+            package:add("deps", "yyjson")
+        end
     end)
 
     on_install(function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package)
     end)
 
     on_test(function (package)
@@ -67,11 +68,9 @@ package("reflect-cpp")
             const auto homer = Person{.first_name = "Homer",
                                       .last_name = "Simpson",
                                       .age = 45};
-            void test(int argc, char** argv)
-            {
+            void test() {
                 const std::string json_string = rfl::json::write(homer);
                 auto homer2 = rfl::json::read<Person>(json_string).value();
             }   
-        ]]}, {includes = {"rfl.hpp", "rfl/json.hpp"}, configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = "c++20"}}))
     end)
-
