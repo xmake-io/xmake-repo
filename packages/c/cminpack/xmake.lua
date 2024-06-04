@@ -1,9 +1,11 @@
 package("cminpack")
-    set_homepage("http://devernay.free.fr/hacks/cminpack/")
+    set_homepage("https://devernay.github.io/cminpack/")
     set_description("A C/C++ rewrite of the MINPACK software (originally in FORTRAN) for solving nonlinear equations and nonlinear least squares problems")
 
-    add_urls("https://github.com/devernay/cminpack.git")
-    add_versions("2024.01.04", "cba7bcce88d93011411799ee3275caef18aaf7dd")
+    add_urls("https://github.com/devernay/cminpack/archive/$(version).tar.gz",
+             "https://github.com/devernay/cminpack.git")
+
+    add_versions("v1.3.9", "aa37bac5b5caaa4f5805ea5c4240e3834c993672f6dab0b17190ee645e251c9f")
 
     add_configs("blas", {description = "Compile cminpack using cblas library if possible", default = false, type = "boolean"})
 
