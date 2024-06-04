@@ -3,6 +3,8 @@ package("curl")
     set_base("libcurl")
 
     on_load(function (package)
+        package:base():plat_set(package:plat())
+        package:base():arch_set(package:arch())
         package:base():script("load")(package)
     end)
 
