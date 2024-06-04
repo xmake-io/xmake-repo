@@ -71,7 +71,7 @@ package("libcurl")
         local has_deps = false
         for name, dep in pairs(configdeps) do
             if package:config(name) then
-                package:add("deps", dep)
+                package:add("deps", dep, {host = package:is_binary()})
                 has_deps = true
             end
         end
