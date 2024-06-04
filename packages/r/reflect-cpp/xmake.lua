@@ -11,10 +11,10 @@ package("reflect-cpp")
     add_versions("v0.9.0", "a64ad16da970da7d66d71a134312c7d0b7de2f4e1448b83d3ea92130dfe0449c")
 
     --add_configs("with_bson", { description = "OnEnable Bson Support.", default = false, type = "boolean"})
-    add_configs("cbor", { description = "OnEnable Cbor Support.", default = true, type = "boolean"})
+    add_configs("cbor", { description = "OnEnable Cbor Support.", default = false, type = "boolean"})
     add_configs("flatbuffers", { description = "OnEnable Flexbuffers Support.", default = false, type = "boolean"})
     add_configs("msgpack", { description = "OnEnable Msgpack Support.", default = false, type = "boolean"})
-    add_configs("xml", { description = "OnEnable Xml Support.", default = true, type = "boolean"})
+    add_configs("xml", { description = "OnEnable Xml Support.", default = false, type = "boolean"})
     add_configs("toml", { description = "OnEnable Toml Support.", default = false, type = "boolean"})
     add_configs("yaml", { description = "OnEnable Yaml Support.", default = false, type = "boolean"})
 
@@ -45,12 +45,14 @@ package("reflect-cpp")
 
         if package:config("yaml") then
             package:add("deps", "yaml-cpp")
-        end 
-        
+        end   
     end)
 
     on_install(function (package)
-         os.cp("include", package:installdir())
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
