@@ -50,7 +50,7 @@ package("moltenvk")
         os.mv("Package/" .. conf .. "/MoltenVK/dylib/" ..plat .. "/*", package:installdir("lib"))
         os.mv("Package/" .. conf .. "/MoltenVK/MoltenVK.xcframework/" .. plat:lower() .. "-*/*.a", package:installdir("lib"))
         if package:config("shared") then
-            os.mv("Package/" .. conf .. "/MoltenVK/dynamic/MoltenVK.xcframework/" .. plat:lower() .. "-*/*.dylib", package:installdir("lib"))
+            os.mv("Package/" .. conf .. "/MoltenVK/dynamic/dylib/" .. plat .. "/*.dylib", package:installdir("lib"))
         else
             os.mv("Package/" .. conf .. "/MoltenVK/static/MoltenVK.xcframework/" .. plat:lower() .. "-*/*.a", package:installdir("lib"))
         end
