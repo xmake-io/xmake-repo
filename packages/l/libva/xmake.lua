@@ -5,6 +5,7 @@ package("libva")
     add_urls("https://github.com/intel/libva/archive/refs/tags/$(version).tar.gz",
              "https://github.com/intel/libva.git")
 
+    add_versions("20090323", "a7ff2ff7bcccfedbc680c78dc4ab8c365ed9383b66a578b07b1ad6e5a0b5509e")
     add_versions("2.21.0", "f7c3fffef3f04eb146e036dad2587d852bfb70e4926d014bf437244915ef7425")
 
     add_configs("win32", {description = "Build with win32", default = false, type = "boolean"})
