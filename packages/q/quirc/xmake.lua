@@ -1,6 +1,7 @@
 package("quirc")
     set_homepage("https://github.com/dlbeer/quirc")
     set_description("QR decoder library")
+    set_license("ISC")
 
     add_urls("https://github.com/dlbeer/quirc/archive/refs/tags/v1.2.tar.gz",
              "https://github.com/dlbeer/quirc.git")
