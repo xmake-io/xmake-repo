@@ -2,8 +2,9 @@ package("quirc")
     set_homepage("https://github.com/dlbeer/quirc")
     set_description("QR decoder library")
 
-    add_urls("https://github.com/dlbeer/quirc.git")
-    add_versions("2023.03.22", "542848dd6b9b0eaa9587bbf25b9bc67bd8a71fca")
+    add_urls("https://github.com/dlbeer/quirc/archive/refs/tags/v1.2.tar.gz",
+             "https://github.com/dlbeer/quirc.git")
+    add_versions("v1.2", "73c12ea33d337ec38fb81218c7674f57dba7ec0570bddd5c7f7a977c0deb64c5")
 
     on_install(function (package)
         local configs = {}
