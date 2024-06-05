@@ -35,7 +35,12 @@ package("blend2d")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBLEND2D_STATIC=" .. (package:config("shared") and "FALSE" or "TRUE"))
-        import("package.tools.cmake").install(package, configs)
+
+        local cxflags
+        if package:is_plat("windows") and package:is_arch("arm.*") then
+            cxflags = "-D__ARM_NEON"
+        end
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
