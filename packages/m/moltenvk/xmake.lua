@@ -34,7 +34,9 @@ package("moltenvk")
         end
         os.vrunv("./fetchDependencies", configs)
         local conf = package:debug() and "Debug" or "Release"
-        os.vrun("xcodebuild build -project MoltenVKPackaging.xcodeproj -scheme \"MoltenVK Package (" ..plat .. " only)\" -configuration \"" .. conf)
+        os.vrun("xcodebuild build -quit -project MoltenVKPackaging.xcodeproj -scheme \"MoltenVK Package (" ..plat .. " only)\" -configuration \"" .. conf)
+        print(os.files("Package/**.a"))
+        print(os.files("Package/**.dylib"))
         os.mv("Package/" .. conf .. "/MoltenVK/include", package:installdir())
         os.mv("Package/" .. conf .. "/MoltenVK/dylib/" ..plat .. "/*", package:installdir("lib"))
         os.mv("Package/" .. conf .. "/MoltenVK/MoltenVK.xcframework/" .. plat:lower() .. "-*/*.a", package:installdir("lib"))
