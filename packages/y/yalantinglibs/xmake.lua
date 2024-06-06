@@ -64,10 +64,10 @@ package("yalantinglibs")
             };
             REFLECTION(person, name, age);
 
-            int main() {
+            void test() {
                 person p{.name = "tom", .age = 20};
                 std::string str;
-                struct_json::to_json(p, str); // {"name":"tom","age":20}
+                struct_json::to_json(p, str);
 
                 person p1;
                 struct_json::from_json(p1, str);
