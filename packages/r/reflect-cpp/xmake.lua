@@ -52,23 +52,21 @@ package("reflect-cpp")
         end
     end)
 
-    on_install(function (package)
-        import("package.tools.cmake").install(package)
-    end)
-
     on_check(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <cstddef>
-            #include <iterator>
-            struct SimpleInputIterator {
-                using difference_type = std::ptrdiff_t;
-                using value_type = int;
-                int operator*() const;
-                SimpleInputIterator& operator++();
-                void operator++(int) { ++*this; }
-            };
-            static_assert(std::input_iterator<SimpleInputIterator>);
+            #include <ranges>
+            #include <source_location>
+            #include <iostream>
+            void test() {
+                constexpr std::string_view message = "Hello, C++20!";
+                for (char c : std::views::filter(message, [](char c) { return std::islower(c); }))
+                    std::cout << std::source_location::current().line() << ": " << c << '\n';
+            }
         ]]}, {configs = {languages = "c++20"}}), "Require at least C++20.")
+    end)
+
+    on_install(function (package)
+        import("package.tools.cmake").install(package)
     end)
 
     on_test(function (package)
