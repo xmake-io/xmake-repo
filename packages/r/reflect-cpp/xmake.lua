@@ -22,6 +22,16 @@ package("reflect-cpp")
 
     add_deps("cmake")
 
+    on_check("windows", function (package)
+            import("core.tool.toolchain")
+
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            if msvc then
+                local vs = msvc:config("vs")
+                assert(vs and tonumber(vs) >= 2022, "package(reflect-cpp): need vs >= 2022")
+            end
+    end)
+
     on_load(function (package)
         if package:config("yyjson") then
             package:add("deps", "yyjson")
@@ -50,19 +60,6 @@ package("reflect-cpp")
         if package:config("yaml") then
             package:add("deps", "yaml-cpp")
         end
-    end)
-
-    on_check(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <ranges>
-            #include <source_location>
-            #include <iostream>
-            void test() {
-                constexpr std::string_view message = "Hello, C++20!";
-                for (char c : std::views::filter(message, [](char c) { return std::islower(c); }))
-                    std::cout << std::source_location::current().line() << ": " << c << '\n';
-            }
-        ]]}, {configs = {languages = "c++20"}}), "Require at least C++20.")
     end)
 
     on_install(function (package)
