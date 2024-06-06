@@ -10,32 +10,32 @@ package("yalantinglibs")
 
     add_deps("cmake")
 
-    add_configs("YLT_ENABLE_SSL", {description = "Enable optional ssl support for rpc/http",  default = false, type = "boolean"})
-    add_configs("YLT_ENABLE_PMR", {description = "Enable pmr optimization",  default = false, type = "boolean"})
-    add_configs("YLT_ENABLE_IO_URING", {description = "Using io_uring as a backend on linux (instead of epoll)",  default = false, type = "boolean"})
-    add_configs("YLT_ENABLE_FILE_IO_URING	", {description = "Enable io_uring optimizations",  default = false, type = "boolean"})
-    add_configs("YLT_ENABLE_STRUCT_PACK_UNPORTABLE_TYPE", {description = "struct_pack enables support for special types that are not cross-platform (such as wstring, in128_t)",  default = false, type = "boolean"})
-    add_configs("YLT_ENABLE_STRUCT_PACK_OPTIMIZE", {description = "struct_pack enables aggressive template expansion optimization (will cost more compilation time)",  default = false, type = "boolean"})
+    add_configs("ENABLE_SSL", {description = "Enable optional ssl support for rpc/http",  default = false, type = "boolean"})
+    add_configs("ENABLE_PMR", {description = "Enable pmr optimization",  default = false, type = "boolean"})
+    add_configs("ENABLE_IO_URING", {description = "Using io_uring as a backend on linux (instead of epoll)",  default = false, type = "boolean"})
+    add_configs("ENABLE_FILE_IO_URING	", {description = "Enable io_uring optimizations",  default = false, type = "boolean"})
+    add_configs("ENABLE_STRUCT_PACK_UNPORTABLE_TYPE", {description = "struct_pack enables support for special types that are not cross-platform (such as wstring, in128_t)",  default = false, type = "boolean"})
+    add_configs("ENABLE_STRUCT_PACK_OPTIMIZE", {description = "struct_pack enables aggressive template expansion optimization (will cost more compilation time)",  default = false, type = "boolean"})
 
     on_install(function (package)
         import("core.tool.compiler")
-        local languages = "17"
+        local CPP20_ENABLE = "OFF"
         
         local features = compiler.features("cxx", {configs = {cxxflags = "-std=c++20"}})
         if features then
-            languages = "20"
+            CPP20_ENABLE = "ON"
         end
 
         local configs = {}
-        table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. languages)
+        table.insert(configs, "-DENABLE_CPP_20=" .. CPP20_ENABLE)
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DYLT_ENABLE_SSL=" .. (package:config("YLT_ENABLE_SSL") and "ON" or "OFF"))
-        table.insert(configs, "-DYLT_ENABLE_PMR=" .. (package:config("YLT_ENABLE_PMR") and "ON" or "OFF"))
-        table.insert(configs, "-DYLT_ENABLE_IO_URING=" .. (package:config("YLT_ENABLE_IO_URING") and "ON" or "OFF"))
-        table.insert(configs, "-DYLT_ENABLE_FILE_IO_URING=" .. (package:config("YLT_ENABLE_FILE_IO_URING") and "ON" or "OFF"))
-        table.insert(configs, "-DYLT_ENABLE_STRUCT_PACK_UNPORTABLE_TYPE=" .. (package:config("YLT_ENABLE_STRUCT_PACK_UNPORTABLE_TYPE") and "ON" or "OFF"))
-        table.insert(configs, "-DYLT_ENABLE_STRUCT_PACK_OPTIMIZE=" .. (package:config("YLT_ENABLE_STRUCT_PACK_OPTIMIZE") and "ON" or "OFF"))
+        table.insert(configs, "-DYLT_ENABLE_SSL=" .. (package:config("ENABLE_SSL") and "ON" or "OFF"))
+        table.insert(configs, "-DYLT_ENABLE_PMR=" .. (package:config("ENABLE_PMR") and "ON" or "OFF"))
+        table.insert(configs, "-DYLT_ENABLE_IO_URING=" .. (package:config("ENABLE_IO_URING") and "ON" or "OFF"))
+        table.insert(configs, "-DYLT_ENABLE_FILE_IO_URING=" .. (package:config("ENABLE_FILE_IO_URING") and "ON" or "OFF"))
+        table.insert(configs, "-DYLT_ENABLE_STRUCT_PACK_UNPORTABLE_TYPE=" .. (package:config("ENABLE_STRUCT_PACK_UNPORTABLE_TYPE") and "ON" or "OFF"))
+        table.insert(configs, "-DYLT_ENABLE_STRUCT_PACK_OPTIMIZE=" .. (package:config("ENABLE_STRUCT_PACK_OPTIMIZE") and "ON" or "OFF"))
         
         table.insert(configs, "-DBUILD_EXAMPLES=OFF")
         table.insert(configs, "-DBUILD_BENCHMARK=OFF")
