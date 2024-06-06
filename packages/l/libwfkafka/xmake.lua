@@ -13,6 +13,7 @@ package("libwfkafka")
     add_versions("v0.11.1", "06968ed4e43f6676811b620d09eb5c32ac57252305e7e28def6efde8ef1ceb19")
     add_versions("v0.11.2", "cc2d18ab2b292e2f0163ef67ef6976912e2a21c271396da0e2151ca8cd22abd3")
     add_versions("v0.11.3", "af7adcdd8151f8e72247599a43c28aa849d61ed39e58058cfa80649d011575bc")
+    add_versions("v0.11.4", "844fd03db120141fa61600b26a4ef35716dc0e75d1e8c8018078eb385cf746a4")
 
     add_deps("openssl", "workflow", "lz4", "zstd", "snappy", "zlib")
 

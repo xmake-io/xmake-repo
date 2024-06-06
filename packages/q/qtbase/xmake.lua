@@ -5,7 +5,7 @@ package("qtbase")
     set_license("LGPL-3")
 
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
-    add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
+    add_configs("runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
 
     add_deps("aqt")
 

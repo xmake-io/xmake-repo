@@ -11,10 +11,12 @@ function is_supported(instance, plat, arch, opt)
         return false
     end
 
-    -- get script
+    -- has install script?
     local script = instance:get("install")
-    local result = select_script(script, {plat = plat, arch = arch})
-    return result
+    if not select_script(script, {plat = plat, arch = arch}) then
+        return false
+    end
+    return true
 end
 
 -- load package

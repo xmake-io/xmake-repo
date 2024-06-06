@@ -1,0 +1,57 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0b51071..ecc2c9e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -240,8 +240,8 @@ message(WARNING "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+ message(WARNING "CMAKE_CXX_FLAGS_DEBUG is ${CMAKE_CXX_FLAGS_DEBUG}")
+ message(WARNING "CMAKE_CXX_FLAGS_RELEASE is ${CMAKE_CXX_FLAGS_RELEASE}")
+ message(WARNING "==========")
+-
+-if(NOT TARGET asmjit)
++find_package(asmjit CONFIG REQUIRED)
++if(0)
+   #Download asmjit from github if ASMJIT_SRC_DIR is not specified.
+   if(NOT DEFINED ASMJIT_SRC_DIR)
+     set(ASMJIT_SRC_DIR "${FBGEMM_SOURCE_DIR}/third_party/asmjit"
+@@ -269,8 +269,8 @@ if(NOT TARGET asmjit)
+     target_compile_options_if_supported(asmjit -Wno-unused-but-set-variable)
+   endif()
+ endif()
+-
+-if(NOT TARGET cpuinfo)
++find_package(cpuinfo CONFIG REQUIRED)
++if(0)
+   #Download cpuinfo from github if CPUINFO_SOURCE_DIR is not specified.
+   if(NOT DEFINED CPUINFO_SOURCE_DIR)
+     set(CPUINFO_SOURCE_DIR "${FBGEMM_SOURCE_DIR}/third_party/cpuinfo"
+@@ -354,12 +354,7 @@ target_include_directories(fbgemm BEFORE
+     PUBLIC $<BUILD_INTERFACE:${FBGEMM_SOURCE_DIR}>
+     PUBLIC $<BUILD_INTERFACE:${FBGEMM_SOURCE_DIR}/include>)
+ 
+-target_link_libraries(fbgemm
+-  $<BUILD_INTERFACE:asmjit>
+-  $<BUILD_INTERFACE:cpuinfo>)
+-add_dependencies(fbgemm
+-  asmjit
+-  cpuinfo)
++target_link_libraries(fbgemm asmjit cpuinfo)
+ 
+ if(OpenMP_FOUND)
+   target_link_libraries(fbgemm OpenMP::OpenMP_CXX)
+@@ -383,12 +378,12 @@ install(
+ 
+ if(MSVC)
+   if(FBGEMM_LIBRARY_TYPE STREQUAL "shared")
+-    install(
+-      FILES $<TARGET_PDB_FILE:fbgemm> $<TARGET_PDB_FILE:asmjit>
+-      DESTINATION ${CMAKE_INSTALL_LIBDIR} OPTIONAL)
++    # install(
++    #   FILES $<TARGET_PDB_FILE:fbgemm> $<TARGET_PDB_FILE:asmjit>
++    #   DESTINATION ${CMAKE_INSTALL_LIBDIR} OPTIONAL)
+   endif()
+   install(TARGETS fbgemm DESTINATION ${CMAKE_INSTALL_LIBDIR})
+-  install(TARGETS asmjit DESTINATION ${CMAKE_INSTALL_LIBDIR})
++  # install(TARGETS asmjit DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ endif()
+ 
+ #Make project importable from the build directory

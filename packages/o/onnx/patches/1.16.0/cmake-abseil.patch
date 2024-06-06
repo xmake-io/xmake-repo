@@ -1,0 +1,29 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6d7ca846..ccf65e10 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -509,13 +509,13 @@ if(ONNX_USE_LITE_PROTO)
+   if(TARGET protobuf::libprotobuf-lite)
+     target_link_libraries(onnx_proto PUBLIC protobuf::libprotobuf-lite PRIVATE ${protobuf_ABSL_USED_TARGETS})
+   else()
+-    target_link_libraries(onnx_proto PUBLIC ${PROTOBUF_LITE_LIBRARIES})
++    target_link_libraries(onnx_proto PUBLIC ${PROTOBUF_LITE_LIBRARIES} ${protobuf_ABSL_USED_TARGETS})
+   endif()
+ else()
+   if(TARGET protobuf::libprotobuf)
+     target_link_libraries(onnx_proto PUBLIC protobuf::libprotobuf PRIVATE ${protobuf_ABSL_USED_TARGETS})
+   else()
+-    target_link_libraries(onnx_proto PUBLIC ${PROTOBUF_LIBRARIES})
++    target_link_libraries(onnx_proto PUBLIC ${PROTOBUF_LIBRARIES} ${protobuf_ABSL_USED_TARGETS})
+   endif()
+ endif()
+ add_onnx_global_defines(onnx_proto)
+@@ -532,7 +532,7 @@ target_include_directories(onnx PUBLIC
+   $<BUILD_INTERFACE:${ONNX_ROOT}>
+   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+   $<INSTALL_INTERFACE:include>)
+-target_link_libraries(onnx PUBLIC onnx_proto)
++target_link_libraries(onnx PUBLIC onnx_proto ${protobuf_ABSL_USED_TARGETS})
+ add_onnx_global_defines(onnx)
+ 
+ if(BUILD_ONNX_PYTHON)

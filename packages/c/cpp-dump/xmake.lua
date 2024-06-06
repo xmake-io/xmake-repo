@@ -7,6 +7,7 @@ package("cpp-dump")
     add_urls("https://github.com/philip82148/cpp-dump/archive/refs/tags/$(version).tar.gz",
              "https://github.com/philip82148/cpp-dump.git")
 
+    add_versions("v0.6.0", "22bc5fafa22ac7c1e99db8824fdabec4af6baabed0c8b7cc80a0205dfb550414")
     add_versions("v0.5.0", "31fa8b03c9ee820525137be28f37b36e2abe7fd91df7d67681cb894db2230fe6")
 
     on_install(function (package)
