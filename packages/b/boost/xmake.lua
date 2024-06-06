@@ -114,18 +114,21 @@ package("boost")
             end
             return linkname
         end
-        -- we need the fixed link order
-        local sublibs = {log = {"log_setup", "log"},
-                         python = {"python", "numpy"},
-                         stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
-        for _, libname in ipairs(libnames) do
-            local libs = sublibs[libname]
-            if libs then
-                for _, lib in ipairs(libs) do
-                    package:add("links", get_linkname(package, lib))
+
+        if not package:is_plat("windows") then
+            -- we need the fixed link order
+            local sublibs = {log = {"log_setup", "log"},
+                            python = {"python", "numpy"},
+                            stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
+            for _, libname in ipairs(libnames) do
+                local libs = sublibs[libname]
+                if libs then
+                    for _, lib in ipairs(libs) do
+                        package:add("links", get_linkname(package, lib))
+                    end
+                else
+                    package:add("links", get_linkname(package, libname))
                 end
-            else
-                package:add("links", get_linkname(package, libname))
             end
         end
         -- disable auto-link all libs
