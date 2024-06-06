@@ -284,8 +284,11 @@ package("boost")
         else
             table.insert(argv, "address-model=32")
         end
-        local cxxflags
-        local linkflags
+
+        local cxxflags = {}
+        local linkflags = {}
+        table.join2(cxxflags, table.wrap(package:config("cxflags")))
+        table.join2(cxxflags, table.wrap(package:config("cxxflags")))
         if package:is_plat("windows") then
             local vs_runtime = package:config("vs_runtime")
             if package:config("shared") then
@@ -296,14 +299,16 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "toolset=" .. build_toolset)
-            cxxflags = "-std:c++14"
+            table.insert(cxxflags, "-std:c++14")
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
         elseif package:is_plat("macosx") then
             table.insert(argv, "toolset=darwin")
 
             -- fix macosx arm64 build issue https://github.com/microsoft/vcpkg/pull/18529
-            cxxflags = "-std=c++14 -arch " .. package:arch()
+            table.insert(cxxflags, "-std=c++14")
+            table.insert(cxxflags, "-arch")
+            table.insert(cxxflags, package:arch())
             local xcode = package:toolchain("xcode") or import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
             if xcode:check() then
                 local xcode_dir = xcode:config("xcode")
@@ -311,30 +316,35 @@ package("boost")
                 local target_minver = xcode:config("target_minver")
                 if xcode_dir and xcode_sdkver then
                     local xcode_sdkdir = xcode_dir .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode_sdkver .. ".sdk"
-                    cxxflags = cxxflags .. " -isysroot " .. xcode_sdkdir
+                    table.insert(cxxflags, "-isysroot")
+                    table.insert(cxxflags, xcode_sdkdir)
                 end
                 if target_minver then
-                    cxxflags = cxxflags .. " -mmacosx-version-min=" .. target_minver
+                    table.insert(cxxflags, "-mmacosx-version-min=" .. target_minver)
                 end
             end
         else
-            cxxflags = "-std=c++14"
+            table.insert(cxxflags, "-std=c++14")
             if package:config("pic") ~= false then
-                cxxflags = cxxflags .. " -fPIC"
+                table.insert(cxxflags, "-fPIC")
             end
         end
         if package.has_runtime and package:has_runtime("c++_shared", "c++_static") then
-            cxxflags = (cxxflags or "") .. " -stdlib=libc++"
-            linkflags = (linkflags or "") .. " -stdlib=libc++"
+            table.insert(cxxflags, "-stdlib=libc++")
+            table.insert(linkflags, "-stdlib=libc++")
             if package:has_runtime("c++_static") then
-                linkflags = linkflags .. " -static-libstdc++"
+                table.insert(linkflags, "-static-libstdc++")
             end
         end
+        if package:config("asan") then
+            table.insert(cxxflags, "-fsanitize=address")
+            table.insert(linkflags, "-fsanitize=address")
+        end
         if cxxflags then
-            table.insert(argv, "cxxflags=" .. cxxflags)
+            table.insert(argv, "cxxflags=" .. table.concat(cxxflags, " "))
         end
         if linkflags then
-            table.insert(argv, "linkflags=" .. linkflags)
+            table.insert(argv, "linkflags=" .. table.concat(linkflags, " "))
         end
         for _, libname in ipairs(libnames) do
             if package:config("all") or package:config(libname) then
