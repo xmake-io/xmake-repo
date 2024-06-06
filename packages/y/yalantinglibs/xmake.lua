@@ -34,8 +34,16 @@ package("yalantinglibs")
         
         import("package.tools.cmake").install(package, configs)
     end)
+
+
     on_test(function (package)
-        local languages = "c++20"
+        import("core.tool.compiler")
+        local languages = "c++17"
+        
+        local features = compiler.features("cxx", {configs = {cxxflags = "-std=c++20"}})
+        if features then
+            languages = "c++20"
+        end
 
         assert(package:check_cxxsnippets({test = [[
             #include "ylt/struct_json/json_reader.h"
