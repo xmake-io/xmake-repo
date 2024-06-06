@@ -12,17 +12,21 @@ package("reflect-cpp")
     add_patches("0.10.0", "patches/0.10.0/cmake.patch", "b8929c0a13bd4045cbdeea0127e08a784e2dc8c43209ca9f056fff4a3ab5c4d3")
 
     add_configs("bson", {description = "Enable Bson Support.", default = false, type = "boolean", readonly = true})
+    add_configs("yyjson", {description = "Enable yyjson Support.", default = true, type = "boolean"})
     add_configs("cbor", {description = "Enable Cbor Support.", default = false, type = "boolean"})
     add_configs("flatbuffers", {description = "Enable Flexbuffers Support.", default = false, type = "boolean"})
     add_configs("msgpack", {description = "Enable Msgpack Support.", default = false, type = "boolean"})
     add_configs("xml", {description = "Enable Xml Support.", default = false, type = "boolean"})
     add_configs("toml", {description = "Enable Toml Support.", default = false, type = "boolean"})
     add_configs("yaml", {description = "Enable Yaml Support.", default = false, type = "boolean"})
-    add_configs("yyjson", {description = "Enable yyjson Support.", default = false, type = "boolean"})
 
     add_deps("cmake")
 
     on_load(function (package)
+        if package:config("yyjson") then
+            package:add("deps", "yyjson")
+        end
+
         if package:config("cbor") then
             package:add("deps", "tinycbor")
         end
@@ -46,14 +50,25 @@ package("reflect-cpp")
         if package:config("yaml") then
             package:add("deps", "yaml-cpp")
         end
-
-        if package:config("yyjson") then
-            package:add("deps", "yyjson")
-        end
     end)
 
     on_install(function (package)
         import("package.tools.cmake").install(package)
+    end)
+
+    on_check(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <cstddef>
+            #include <iterator>
+            struct SimpleInputIterator {
+                using difference_type = std::ptrdiff_t;
+                using value_type = int;
+                int operator*() const;
+                SimpleInputIterator& operator++();
+                void operator++(int) { ++*this; }
+            };
+            static_assert(std::input_iterator<SimpleInputIterator>);
+        ]]}, {configs = {languages = "c++20"}}), "Require at least C++20.")
     end)
 
     on_test(function (package)
