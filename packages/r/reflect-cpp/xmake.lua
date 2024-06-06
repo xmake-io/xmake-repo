@@ -29,6 +29,17 @@ package("reflect-cpp")
             if msvc then
                 local vs = msvc:config("vs")
                 assert(vs and tonumber(vs) >= 2022, "package(reflect-cpp): need vs >= 2022")
+            else
+                assert(package:check_cxxsnippets({test = [[
+                #include <ranges>
+                #include <source_location>
+                #include <iostream>
+                void test() {
+                    constexpr std::string_view message = "Hello, C++20!";
+                    for (char c : std::views::filter(message, [](char c) { return std::islower(c); }))
+                        std::cout << std::source_location::current().line() << ": " << c << '\n';
+                }
+                ]]}, {configs = {languages = "c++20"}}), "package(reflect-cpp) Require at least C++20.")
             end
     end)
 
