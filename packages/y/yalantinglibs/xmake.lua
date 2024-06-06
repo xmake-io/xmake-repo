@@ -18,7 +18,16 @@ package("yalantinglibs")
     add_configs("YLT_ENABLE_STRUCT_PACK_OPTIMIZE", {description = "struct_pack enables aggressive template expansion optimization (will cost more compilation time)",  default = false, type = "boolean"})
 
     on_install(function (package)
+        import("core.tool.compiler")
+        local languages = "17"
+        
+        local features = compiler.features("cxx", {configs = {cxxflags = "-std=c++20"}})
+        if features then
+            languages = "20"
+        end
+
         local configs = {}
+        table.insert(configs, "-DCMAKE_CXX_STANDARD=" .. languages)
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DYLT_ENABLE_SSL=" .. (package:config("YLT_ENABLE_SSL") and "ON" or "OFF"))
