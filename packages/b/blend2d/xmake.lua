@@ -16,6 +16,16 @@ package("blend2d")
         add_syslinks("pthread")
     end
 
+    on_check("windows", function (package)
+        import("core.tool.toolchain")
+
+        local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+        if msvc and package:is_arch("arm.*") then
+            local vs = msvc:config("vs")
+            assert(vs and tonumber(vs) >= 2022, "package(blend2d/arm): need vs >= 2022")
+        end
+    end)
+
     on_load(function (package)
         if package:config("jit") then
             package:add("deps", "asmjit")
