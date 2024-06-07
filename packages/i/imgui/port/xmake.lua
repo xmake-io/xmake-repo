@@ -1,5 +1,6 @@
 add_rules("mode.debug", "mode.release")
-set_languages("cxx11")
+add_rules("utils.install.cmake_importfiles")
+set_languages("cxx14")
 
 option("dx9",              {showmenu = true,  default = false})
 option("dx10",             {showmenu = true,  default = false})
@@ -13,6 +14,7 @@ option("sdl2",             {showmenu = true,  default = false})
 option("sdl2_renderer",    {showmenu = true,  default = false})
 option("vulkan",           {showmenu = true,  default = false})
 option("win32",            {showmenu = true,  default = false})
+option("wgpu",             {showmenu = true,  default = false})
 option("freetype",         {showmenu = true,  default = false})
 option("user_config",      {showmenu = true,  default = nil, type = "string"})
 option("wchar32",          {showmenu = true,  default = false})
@@ -35,15 +37,23 @@ if has_config("vulkan") then
     add_requires("vulkansdk")
 end
 
+if has_config("wgpu") then
+    add_requires("wgpu-native")
+end
+
 if has_config("freetype") then
     add_requires("freetype")
 end
 
 target("imgui")
-    set_kind("static")
+    set_kind("$(kind)")
     add_files("*.cpp", "misc/cpp/*.cpp")
     add_headerfiles("*.h", "(misc/cpp/*.h)")
     add_includedirs(".", "misc/cpp")
+
+    if is_kind("shared") and is_plat("windows", "mingw") then
+        add_defines("IMGUI_API=__declspec(dllexport)")
+    end
 
     if has_config("dx9") then
         add_files("backends/imgui_impl_dx9.cpp")
@@ -118,6 +128,12 @@ target("imgui")
     if has_config("win32") then
         add_files("backends/imgui_impl_win32.cpp")
         add_headerfiles("(backends/imgui_impl_win32.h)")
+    end
+
+    if has_config("wgpu") then
+        add_files("backends/imgui_impl_wgpu.cpp")
+        add_headerfiles("(backends/imgui_impl_wgpu.h)")
+        add_packages("wgpu-native")
     end
 
     if has_config("freetype") then

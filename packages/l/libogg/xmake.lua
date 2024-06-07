@@ -6,7 +6,7 @@ package("libogg")
     set_urls("https://gitlab.xiph.org/xiph/ogg/-/archive/$(version)/ogg-$(version).tar.gz",
              "https://gitlab.xiph.org/xiph/ogg.git")
     add_versions("v1.3.4", "62cc64b9fd3cf57bde3a9033e94534ba34313d2bb9698029f623121a4e47bb9b")
-    add_patches("v1.3.4", path.join(os.scriptdir(), "patches", "1.3.4", "macos_fix.patch"), "e12c41ad71206777f399c1048914e5e5a2fe44e18d0d50ebe9bedbfbe0624c35")
+    add_patches("v1.3.4", "patches/1.3.4/macos_fix.patch", "e12c41ad71206777f399c1048914e5e5a2fe44e18d0d50ebe9bedbfbe0624c35")
 
     add_deps("cmake")
     if is_plat("cross") and is_subhost("windows") then

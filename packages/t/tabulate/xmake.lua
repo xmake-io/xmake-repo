@@ -1,19 +1,20 @@
 package("tabulate")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/p-ranav/tabulate")
-    set_description("Header-only library for printing aligned, formatted and colorized tables in Modern C++")
+    set_description("Table Maker for Modern C++")
     set_license("MIT")
 
-    add_urls("https://github.com/p-ranav/tabulate/archive/refs/tags/v$(version).zip",
+    add_urls("https://github.com/p-ranav/tabulate/archive/refs/tags/$(version).tar.gz",
              "https://github.com/p-ranav/tabulate.git")
-    add_versions("1.4", "77aca3b371316fb33b8a794906614bc2ef0964ca23ba096161f5e2fade181ffb")
+
+    add_versions("v1.5", "16b289f46306283544bb593f4601e80d6ea51248fde52e910cc569ef08eba3fb")
 
     on_install(function (package)
-        os.cp("include/tabulate/*.hpp", package:installdir("include/tabulate"))
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[                    
+        assert(package:check_cxxsnippets({test = [[
             void test() {
                 tabulate::Table test{};
             }

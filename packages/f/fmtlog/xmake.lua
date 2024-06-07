@@ -5,6 +5,7 @@ package("fmtlog")
 
     add_urls("https://github.com/MengRao/fmtlog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/MengRao/fmtlog.git")
+    add_versions("v2.2.1", "9bc2f1ea37eece0f4807689962b529d2d4fa07654baef184f051319b4eac9304")
     add_versions("v2.1.2", "d286184e04c3c3286417873dd2feac524c53babc6cd60f10179aa5b10416ead7")
 
     add_deps("cmake", "fmt")
@@ -12,7 +13,7 @@ package("fmtlog")
         add_syslinks("pthread")
     end
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install("linux", "macosx", "windows|!arm64", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", "add_subdirectory(fmt)", "", {plain = true})

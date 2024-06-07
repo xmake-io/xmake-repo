@@ -1,13 +1,13 @@
 package("hiredis")
-
     set_homepage("https://github.com/redis/hiredis")
     set_description("Minimalistic C client for Redis >= 1.2")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/redis/hiredis/archive/refs/tags/$(version).tar.gz",
              "https://github.com/redis/hiredis.git")
-    add_versions('v1.0.2', 'e0ab696e2f07deb4252dda45b703d09854e53b9703c7d52182ce5a22616c3819')
-    add_versions('v1.1.0', 'fe6d21741ec7f3fc9df409d921f47dfc73a4d8ff64f4ac6f1d95f951bf7f53d6')
+    add_versions("v1.0.2", "e0ab696e2f07deb4252dda45b703d09854e53b9703c7d52182ce5a22616c3819")
+    add_versions("v1.1.0", "fe6d21741ec7f3fc9df409d921f47dfc73a4d8ff64f4ac6f1d95f951bf7f53d6")
+    add_versions("v1.2.0", "82ad632d31ee05da13b537c124f819eb88e18851d9cb0c30ae0552084811588c")
 
     if is_plat("windows", "mingw") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
@@ -25,7 +25,7 @@ package("hiredis")
     end)
 
     on_install(function (package)
-        if package:version():eq("v1.0.2") or package:version():eq("v1.1.0") then
+        if package:version() and package:version():lt("1.2.0") then
             io.replace("CMakeLists.txt",
                 "TARGET_INCLUDE_DIRECTORIES(hiredis PUBLIC $<INSTALL_INTERFACE:.>",
                 "TARGET_INCLUDE_DIRECTORIES(hiredis PUBLIC $<INSTALL_INTERFACE:include>",
@@ -42,21 +42,24 @@ package("hiredis")
             "-DENABLE_SSL_TESTS=OFF",
         }
 
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_SSL=" .. (package:config("openssl") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
 
-        -- hiredis cmake builds static and shared library at the same time.
-        -- Remove unneeded one after install.
-        if package:config("shared") then
-            -- maybe is import library, libhiredis.dll.a
-            if not package:is_plat("mingw") then
-                os.tryrm(path.join(package:installdir("lib"), "*.a"))
+        if package:version() and package:version():lt("1.2.0") then
+            -- hiredis cmake builds static and shared library at the same time.
+            -- Remove unneeded one after install.
+            if package:config("shared") then
+                -- maybe is import library, libhiredis.dll.a
+                if not package:is_plat("mingw") then
+                    os.tryrm(path.join(package:installdir("lib"), "*.a"))
+                end
+            else
+                os.tryrm(path.join(package:installdir("lib"), "*.so"))
+                os.tryrm(path.join(package:installdir("lib"), "*.so.*"))
+                os.tryrm(path.join(package:installdir("lib"), "*.dylib"))
             end
-        else
-            os.tryrm(path.join(package:installdir("lib"), "*.so"))
-            os.tryrm(path.join(package:installdir("lib"), "*.so.*"))
-            os.tryrm(path.join(package:installdir("lib"), "*.dylib"))
         end
     end)
 

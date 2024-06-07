@@ -1,0 +1,12 @@
+diff --git a/include/bitsery/details/adapter_common.h b/include/bitsery/details/adapter_common.h
+index 7f665d4..166d188 100644
+--- a/include/bitsery/details/adapter_common.h
++++ b/include/bitsery/details/adapter_common.h
+@@ -28,6 +28,7 @@
+ #include <algorithm>
+ #include <cassert>
+ #include <climits>
++#include <cstdint>
+ 
+ namespace bitsery {
+ 

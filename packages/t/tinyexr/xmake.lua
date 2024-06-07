@@ -7,6 +7,7 @@ package("tinyexr")
     add_urls("https://github.com/syoyo/tinyexr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/syoyo/tinyexr.git")
     add_versions("v1.0.1", "4dbbd8c7d17597ad557518de5eb923bd02683d26d0de765f9224e8d57d121677")
+    add_versions("v1.0.8", "b56446533f36496c3c76b8e4f664f04736b173c5e3f4903f6edff3753f363302")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 

@@ -6,11 +6,13 @@ package("libdeflate")
 
     add_urls("https://github.com/ebiggers/libdeflate/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ebiggers/libdeflate.git")
+    add_versions("v1.20", "ed1454166ced78913ff3809870a4005b7170a6fd30767dc478a09b96847b9c2a")
     add_versions("v1.8", "50711ad4e9d3862f8dfb11b97eb53631a86ee3ce49c0e68ec2b6d059a9662f61")
     add_versions("v1.10", "5c1f75c285cd87202226f4de49985dcb75732f527eefba2b3ddd70a8865f2533")
     add_versions("v1.13", "0d81f197dc31dc4ef7b6198fde570f4e8653c77f4698fcb2163d820a9607c838")
     add_versions("v1.15", "58b95040df7383dc0413defb700d9893c194732474283cc4c8f144b00a68154b")
     add_versions("v1.17", "fa4615af671513fa2a53dc2e7a89ff502792e2bdfc046869ef35160fcc373763")
+    add_versions("v1.19", "27bf62d71cd64728ff43a9feb92f2ac2f2bf748986d856133cc1e51992428c25")
 
     add_deps("cmake")
     on_load("windows", function (package)

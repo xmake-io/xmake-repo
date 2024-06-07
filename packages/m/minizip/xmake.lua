@@ -12,6 +12,8 @@ package("minizip")
 
     add_deps("zlib")
 
+    add_includedirs("include", "include/minizip")
+
     on_install(function (package)
         os.cd(path.join("contrib", "minizip"))
         io.writefile("xmake.lua", [[
@@ -22,7 +24,7 @@ package("minizip")
             target("minizip")
                 set_kind("$(kind)")
                 add_files("zip.c", "unzip.c", "mztools.c", "ioapi.c")
-                add_headerfiles("crypt.h", "zip.h", "unzip.h", "ioapi.h", "mztools.h")
+                add_headerfiles("crypt.h", "zip.h", "unzip.h", "ioapi.h", "mztools.h", {prefixdir = "minizip"})
                 add_packages("zlib")
                 if is_plat("windows") then
                     add_files("iowin32.c")

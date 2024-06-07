@@ -6,6 +6,7 @@ package("wil")
 
     add_urls("https://github.com/microsoft/wil.git")
     add_versions("2022.09.16", "5f4caba4e7a9017816e47becdd918fcc872039ba")
+    add_versions("2023.12.16", "572b8728926eb9c8fc55572bb4b84bb92dabd79d")
 
     on_install("windows", function (package)
         os.cp("include", package:installdir())

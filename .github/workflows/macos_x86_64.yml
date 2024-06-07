@@ -1,0 +1,33 @@
+name: macOS (x86_64)
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-12]
+        arch: [x86_64]
+        kind: [static, shared]
+
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-macOS-${{ matrix.arch }}-${{ matrix.kind }}
+        cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: branch@master
+          actions-cache-folder: '.xmake-cache'
+
+      - name: Tests
+        run: |
+          wget https://curl.haxx.se/ca/cacert.pem -O /tmp/cacert.pem
+          export CURL_CA_BUNDLE=/tmp/cacert.pem
+          xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }}

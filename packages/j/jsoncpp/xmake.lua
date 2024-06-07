@@ -45,5 +45,5 @@ package("jsoncpp")
                     assert(age == 20);
                 }
             ]]
-        }, {configs = {languages = "c++11"}, includes = "json/json.h"}))
+        }, {configs = {languages = "c++14"}, includes = "json/json.h"}))
     end)

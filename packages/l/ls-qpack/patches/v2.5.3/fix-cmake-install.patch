@@ -1,0 +1,26 @@
+From 79c136923681d7187feade455225543335525c3f Mon Sep 17 00:00:00 2001
+From: Biagio Festa <15035284+BiagioFesta@users.noreply.github.com>
+Date: Fri, 26 May 2023 14:37:58 +0200
+Subject: [PATCH 1/1] CMakeLists.txt: install library target (#50)
+
+---
+ CMakeLists.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7f7cd40..61e2e6d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -101,3 +101,9 @@ endif()
+ if(LSQPACK_BIN)
+     add_subdirectory(bin)
+ endif()
++
++install(TARGETS ls-qpack)
++install(FILES lsqpack.h lsxpack_header.h DESTINATION include)
++if(MSVC)
++    install(DIRECTORY wincompat/sys DESTINATION include)
++endif()
+-- 
+2.42.0.windows.2
+

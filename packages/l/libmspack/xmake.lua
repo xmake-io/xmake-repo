@@ -6,6 +6,7 @@ package("libmspack")
 
     add_urls("https://github.com/kyz/libmspack/archive/refs/tags/$(version).zip",
              "https://github.com/kyz/libmspack.git")
+    add_versions("v1.11", "88f8395ff4630d600a0973d7c8c011c21877b80439be5d6cc840afd02f54da20")
     add_versions("v0.10.1alpha", "d51e3b0d42afef91939fb282f7712e0b81c243ffe0aaacafc977d384408b4ab1")
 
     on_install("windows", "macosx", "linux", function (package)

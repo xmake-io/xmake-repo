@@ -6,6 +6,7 @@ package("libtins")
 
     set_urls("https://github.com/mfontanini/libtins/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mfontanini/libtins.git")
+    add_versions("v4.5", "6ff5fe1ada10daef8538743dccb9c9b3e19d05d028ffdc24838e62ff3fc55841")
     add_versions("v4.4", "ff0121b4ec070407e29720c801b7e1a972042300d37560a62c57abadc9635634")
 
     add_deps("cmake", "boost")

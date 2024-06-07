@@ -11,7 +11,7 @@ function _find_package_on_windows(package, opt)
     -- find includes and links
     local result = {links = {}, linkdirs = {}, includedirs = {}}
     for _, lib in ipairs({"tbb", "tbbmalloc", "tbbmalloc_proxy"}) do
-        local linkinfo = find_library(lib, paths, {suffixes = path.join("lib", rdir, "vc14")})
+        local linkinfo = find_library(lib, paths, {suffixes = {"lib", path.join("lib", rdir, "vc14")}})
         if linkinfo then
             table.insert(result.linkdirs, linkinfo.linkdir)
             table.insert(result.links, lib)

@@ -9,6 +9,7 @@ package("flatbuffers")
     add_versions("v1.12.0", "4b8b21adbfe8a74b90604161afcf87c125a26b86c99327e7a04525080606536c")
     add_versions("v2.0.0", "ffd68aebdfb300c9e82582ea38bf4aa9ce65c77344c94d5047f3be754cc756ea")
     add_versions("v23.1.21", "48597d6a6f8ca67a02ae8d8494b3bfc9136eb93da60a538d5bfc024f7c564f97")
+    add_versions("v23.5.26", "57bd580c0772fd1a726c34ab8bf05325293bc5f9c165060a898afa1feeeb95e1")
 
     add_deps("cmake")
     on_install("windows", "linux", "macosx", "mingw", "android", "iphoneos", "cross", function(package)

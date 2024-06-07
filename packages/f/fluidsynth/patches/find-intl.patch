@@ -1,0 +1,409 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 986b594..77e6d2b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -356,6 +356,8 @@ endif ( WIN32 )
+ # Check for threads and math
+ find_package ( Threads REQUIRED )
+ 
++unset ( HAS_LIBM CACHE )
++unset ( MATH_LIBRARY CACHE )
+ find_library ( HAS_LIBM NAMES "m" )
+ if ( HAS_LIBM )
+   set ( MATH_LIBRARY "m" )
+diff --git a/cmake_admin/FindFLAC.cmake b/cmake_admin/FindFLAC.cmake
+deleted file mode 100644
+index 2de2f41..0000000
+--- a/cmake_admin/FindFLAC.cmake
++++ /dev/null
+@@ -1,106 +0,0 @@
+-#[=======================================================================[.rst:
+-FindFLAC
+--------
+-
+-Finds the FLAC library.
+-
+-Imported Targets
+-^^^^^^^^^^^^^^^^
+-
+-This module provides the following imported targets, if found:
+-
+-``FLAC::FLAC``
+-  The FLAC C library.
+-``FLAC::FLAC++``
+-  The FLAC C++ library.
+-
+-Result Variables
+-^^^^^^^^^^^^^^^^
+-
+-This will define the following variables:
+-
+-``FLAC_FOUND``
+-  True if both libraries were found.
+-``FLAC_FLAC_FOUND``
+-  True if the C library was found.
+-``FLAC_FLAC++_FOUND``
+-  True if the C++ library was found..
+-
+-#]=======================================================================]
+-
+-# Use pkg-config if available
+-find_package(PkgConfig QUIET)
+-pkg_check_modules(PC_FLAC QUIET flac)
+-pkg_check_modules(PC_FLAC++ QUIET flac++)
+-
+-# Find the headers and libraries
+-find_path(
+-  FLAC_INCLUDE_DIR
+-  NAMES "FLAC/all.h"
+-  HINTS "PC_FLAC_INCLUDEDIR")
+-
+-find_path(
+-  FLAC++_INCLUDE_DIR
+-  NAMES "FLAC++/all.h"
+-  HINTS "PC_FLAC++_INCLUDEDIR")
+-
+-find_library(
+-  FLAC_LIBRARY
+-  NAMES "FLAC"
+-  HINTS "${PC_FLAC_LIBDIR}")
+-
+-find_library(
+-  FLAC++_LIBRARY
+-  NAMES "FLAC++"
+-  HINTS "${PC_FLAC++_LIBDIR}")
+-
+-# Handle transitive dependencies
+-if(PC_FLAC_FOUND)
+-  get_target_properties_from_pkg_config("${FLAC_LIBRARY}" "PC_FLAC" "_flac")
+-else()
+-  if(NOT TARGET "Ogg::ogg")
+-    find_package(Ogg QUIET)
+-  endif()
+-  set(_flac_link_libraries "Ogg::ogg" ${MATH_LIBRARY})
+-endif()
+-
+-if(PC_FLAC++_FOUND)
+-  get_target_properties_from_pkg_config("${FLAC++_LIBRARY}" "PC_FLAC++"
+-                                        "_flac++")
+-else()
+-  set(_flac++_link_libraries "FLAC::FLAC")
+-endif()
+-
+-# Forward the result to CMake
+-include(FindPackageHandleStandardArgs)
+-find_package_handle_standard_args(
+-  FLAC REQUIRED_VARS "FLAC_LIBRARY" "FLAC_INCLUDE_DIR" "FLAC++_LIBRARY"
+-                     "FLAC++_INCLUDE_DIR")
+-
+-# Create the target
+-if(FLAC_FOUND AND NOT TARGET FLAC::FLAC)
+-  add_library(FLAC::FLAC UNKNOWN IMPORTED)
+-  set_target_properties(
+-    FLAC::FLAC
+-    PROPERTIES IMPORTED_LOCATION "${FLAC_LIBRARY}"
+-               INTERFACE_COMPILE_OPTIONS "${_flac_compile_options}"
+-               INTERFACE_INCLUDE_DIRECTORIES "${FLAC_INCLUDE_DIR}"
+-               INTERFACE_LINK_LIBRARIES "${_flac_link_libraries}"
+-               INTERFACE_LINK_DIRECTORIES "${_flac_link_directories}")
+-  set(FLAC_FLAC_FOUND TRUE)
+-endif()
+-
+-if(FLAC_FOUND AND NOT TARGET FLAC::FLAC++)
+-  add_library(FLAC::FLAC++ UNKNOWN IMPORTED)
+-  set_target_properties(
+-    FLAC::FLAC++
+-    PROPERTIES IMPORTED_LOCATION "${FLAC++_LIBRARY}"
+-               INTERFACE_COMPILE_OPTIONS "${_flac++_compile_options}"
+-               INTERFACE_INCLUDE_DIRECTORIES "${FLAC++_INCLUDE_DIR}"
+-               INTERFACE_LINK_LIBRARIES "${_flac++_link_libraries}"
+-               INTERFACE_LINK_DIRECTORIES "${_flac++_link_directories}")
+-  set(FLAC_FLAC++_FOUND TRUE)
+-endif()
+-
+-mark_as_advanced(FLAC_LIBRARY FLAC_INCLUDE_DIR FLAC++_LIBRARY
+-                 FLAC++_INCLUDE_DIR)
+diff --git a/cmake_admin/FindGLib2.cmake b/cmake_admin/FindGLib2.cmake
+index f6fa6f1..b7821bf 100644
+--- a/cmake_admin/FindGLib2.cmake
++++ b/cmake_admin/FindGLib2.cmake
+@@ -64,6 +64,14 @@ find_library(
+   NAMES "gobject-2.0"
+   HINTS "${PC_GOBJECT2_LIBDIR}")
+ 
++find_library(
++  Intl_LIBRARY
++  NAMES "intl")
++
++find_library(
++  Pcre_LIBRARY
++  NAMES "pcre")
++
+ # GLib stores its config in lib/glib-2.0/include
+ get_filename_component(_glib2_libdir "${GLib2_glib-2_LIBRARY}" PATH)
+ find_path(
+@@ -102,12 +110,15 @@ find_package_handle_standard_args(
+                 "GLib2_INCLUDE_DIRS"
+   VERSION_VAR "GLib2_VERSION")
+ 
++get_filename_component(_intl_path "${Intl_LIBRARY}" DIRECTORY)
++
+ # Create the targets
+ if(GLib2_glib-2_LIBRARY AND NOT TARGET GLib2::glib-2)
+   # Handle transitive dependencies
+   if(PC_GLIB2_FOUND)
+     get_target_properties_from_pkg_config("${GLib2_glib-2_LIBRARY}" "PC_GLIB2"
+                                           "_glib2")
++    list(APPEND _glib2_link_directories "${_intl_path}")
+   else()
+     find_package(Intl QUIET)
+     find_package(Iconv QUIET)
+@@ -118,36 +129,9 @@ if(GLib2_glib-2_LIBRARY AND NOT TARGET GLib2::glib-2)
+       list(APPEND _glib2_link_libraries "Threads::Threads")
+     endif()
+     list(APPEND _glib2_link_libraries ${MATH_LIBRARY})
+-
+-    # Glib can link to either PCRE 1 or 2
+-    find_library(
+-      _pcre2_8bit_library
+-      NAMES "pcre2-8"
+-      HINTS "${PC_GLIB2_LIBDIR}")
+-    if(_pcre2_8bit_library)
+-      include(CheckCSourceCompiles)
+-      set(_backup_includes ${CMAKE_REQUIRED_INCLUDES})
+-      set(_backup_libraries ${CMAKE_REQUIRED_LIBRARIES})
+-      set(_backup_libdir ${CMAKE_REQUIRED_LIBRARIES})
+-      set(CMAKE_REQUIRED_INCLUDES "${GLib2_INCLUDE_DIRS}")
+-      set(CMAKE_REQUIRED_LIBRARIES
+-          "${GLib2_glib-2_LIBRARY}" "${_glib2_link_libraries}"
+-          "${_pcre2_8bit_library}")
+-      check_c_source_compiles(
+-        "#include <glib.h>
+-    int main(){
+-      g_regex_error_quark();
+-    }"
+-        GLIB2_USES_PCRE2)
+-      set(CMAKE_REQUIRED_INCLUDES ${_backup_includes})
+-      set(CMAKE_REQUIRED_LIBRARIES ${_backup_libraries})
+-    endif()
+-    if(GLIB2_USES_PCRE2)
+-      list(APPEND _glib2_link_libraries "${_pcre2_8bit_library}")
+-    else()
+-      list(APPEND _glib2_link_libraries "pcre")
+-    endif()
+   endif()
++  get_filename_component(_pcre_path "${Pcre_LIBRARY}" DIRECTORY)
++  list(APPEND _glib2_link_directories "${_pcre_path}")
+ 
+   # pkg_check_modules consider these as LDFLAGS_OTHER rather instead of
+   # libraries
+@@ -172,6 +156,7 @@ if(GLib2_gthread-2_LIBRARY AND NOT TARGET GLib2::gthread-2)
+   if(PC_GTHREAD2_FOUND)
+     get_target_properties_from_pkg_config("${GLib2_gthread-2_LIBRARY}"
+                                           "PC_GTHREAD2" "_gthread2")
++    list(APPEND _glib2_link_directories "${_intl_path}")
+   else()
+     set(_gthread2_link_libraries "Threads::Threads" "GLib2::glib-2")
+   endif()
+@@ -191,6 +176,7 @@ if(GLib2_gmodule-2_LIBRARY AND NOT TARGET GLib2::gmodule-2)
+   if(PC_GMODULE2_FOUND)
+     get_target_properties_from_pkg_config("${GLib2_gmodule-2_LIBRARY}"
+                                           "PC_GMODULE2" "_gmodule2")
++    list(APPEND _glib2_link_directories "${_intl_path}")
+   else()
+     set(_gmodule2_link_libraries "GLib2::glib-2")
+   endif()
+@@ -210,6 +196,7 @@ if(GLib2_gobject-2_LIBRARY AND NOT TARGET GLib2::gobject-2)
+   if(PC_GOBJECT2_FOUND)
+     get_target_properties_from_pkg_config("${GLib2_gobject-2_LIBRARY}"
+                                           "PC_OBJECT2" "_gobject2")
++    list(APPEND _glib2_link_directories "${_intl_path}")
+   else()
+     find_package(libffi QUIET)
+     set(_gobject2_link_libraries "libffi" "GLib2::glib-2")
+diff --git a/cmake_admin/FindSndFile.cmake b/cmake_admin/FindSndFile.cmake
+deleted file mode 100644
+index d77333b..0000000
+--- a/cmake_admin/FindSndFile.cmake
++++ /dev/null
+@@ -1,180 +0,0 @@
+-#[=======================================================================[.rst:
+-FindSndFile
+--------
+-
+-Finds the SndFile library.
+-
+-Imported Targets
+-^^^^^^^^^^^^^^^^
+-
+-This module provides the following imported targets, if found:
+-
+-``SndFile::sndfile``
+-  The SndFile library
+-
+-Result Variables
+-^^^^^^^^^^^^^^^^
+-
+-This will define the following variables:
+-
+-``SndFile_FOUND``
+-  True if the system has the SndFile library.
+-``SndFile_VERSION``
+-  The version of the SndFile library which was found.
+-``SndFile_WITH_EXTERNAL_LIBS``
+-  True if the library was built with Xiph codecs.
+-
+-For compatibility with upstream, the following variables are also set:
+-
+-``SndFile_WITH_MPEG``
+-``SndFile_VERSION_MAJOR``
+-``SndFile_VERSION_MINOR``
+-``SndFile_VERSION_PATCH``
+-``SndFile_LIBRARY``
+-``SndFile_LIBRARIES``
+-``SNDFILE_LIBRARY``
+-``SNDFILE_LIBRARIES``
+-``SNDFILE_INCLUDE_DIR``
+-
+-#]=======================================================================]
+-
+-# Use pkg-config if available
+-find_package(PkgConfig QUIET)
+-pkg_check_modules(PC_SNDFILE QUIET sndfile)
+-
+-# Find the headers and libraries
+-find_path(
+-  SndFile_INCLUDE_DIR
+-  NAMES "sndfile.h"
+-  HINTS "${PC_SNDFILE_INCLUDEDIR}")
+-
+-find_library(
+-  _sndfile_library
+-  NAMES "sndfile"
+-  HINTS "${PC_SNDFILE_LIBDIR}")
+-
+-# Get version from pkg-config or read the config header
+-if(PC_SNDFILE_VERSION)
+-  set(SndFile_VERSION "${PC_SNDFILE_VERSION}")
+-  string(REPLACE "." ";" _sndfile_version_list "${SndFile_VERSION}")
+-  list(GET _sndfile_version_list 0 SndFile_VERSION_MAJOR)
+-  list(GET _sndfile_version_list 1 SndFile_VERSION_MINOR)
+-  list(GET _sndfile_version_list 2 SndFile_VERSION_PATCH)
+-elseif(SndFile_INCLUDE_DIR)
+-  file(READ "${SndFile_INCLUDE_DIR}/sndfile.h" _sndfile_h)
+-  if("#define SNDFILE_1" MATCHES _snfile_h)
+-    set(SndFile_VERSION "1")
+-    set(SndFile_VERSION_MAJOR "1")
+-  endif()
+-endif()
+-
+-# Check the features SndFile was built with
+-if(PC_SNDFILE_FOUND)
+-  if("vorbis" IN_LIST PC_SNDFILE_STATIC_LIBRARIES)
+-    set(SndFile_WITH_EXTERNAL_LIBS TRUE)
+-  endif()
+-  if("mpg123" IN_LIST PC_SNDFILE_STATIC_LIBRARIES)
+-    set(SndFile_WITH_MPEG TRUE)
+-  endif()
+-elseif(_sndfile_library)
+-  # sndfile may need any of these libraries
+-  find_package(Ogg 1.3 QUIET)
+-  find_package(Vorbis QUIET)
+-  find_package(FLAC QUIET)
+-  find_package(Opus QUIET)
+-  find_package(mp3lame QUIET)
+-  find_package(mpg123 QUIET)
+-
+-  if(NOT CMAKE_CROSSCOMPILING)
+-    include(CheckSourceRuns)
+-    set(_backup_includes ${CMAKE_REQUIRED_INCLUDES})
+-    set(_backup_libraries ${CMAKE_REQUIRED_LIBRARIES})
+-    set(CMAKE_REQUIRED_INCLUDES "${SndFile_INCLUDE_DIR}")
+-    set(CMAKE_REQUIRED_LIBRARIES "${_sndfile_library}")
+-
+-    set(_optional_libs "MPG123::libmpg123" "mp3lame::mp3lame" "FLAC::FLAC"
+-                       "Opus::opus" "Vorbis::vorbisenc" "Ogg::ogg")
+-    foreach(_target ${_optional_libs})
+-      if(TARGET "${_target}")
+-        list(APPEND CMAKE_REQUIRED_LIBRARIES "${_target}")
+-      endif()
+-    endforeach()
+-
+-    check_source_runs(
+-      C
+-      "#include <stdlib.h>
+-#include <sndfile.h>
+-int main() {
+-  SF_FORMAT_INFO info = {SF_FORMAT_VORBIS};
+-  sf_command(NULL, SFC_GET_FORMAT_INFO, &info, sizeof info);
+-  return info.name != NULL ? EXIT_SUCCESS : EXIT_FAILURE;
+-}"
+-      SNDFILE_SUPPORTS_VORBIS)
+-
+-    check_source_runs(
+-      C
+-      "#include <stdlib.h>
+-#include <sndfile.h>
+-int main() {
+-  SF_FORMAT_INFO info = {SF_FORMAT_MPEG_LAYER_III};
+-  sf_command(NULL, SFC_GET_FORMAT_INFO, &info, sizeof info);
+-  return info.name != NULL ? EXIT_SUCCESS : EXIT_FAILURE;
+-}"
+-      SNDFILE_SUPPORTS_MPEG)
+-
+-    set(SndFile_WITH_EXTERNAL_LIBS ${SNDFILE_SUPPORTS_VORBIS})
+-    set(SndFile_WITH_MPEG ${SNDFILE_SUPPORTS_MPEG})
+-    set(CMAKE_REQUIRED_INCLUDES ${_backup_includes})
+-    set(CMAKE_REQUIRED_LIBRARIES ${_backup_libraries})
+-  else()
+-    message(
+-      STATUS
+-        "Cross-compiling without pkg-config - cannot check for external libraries."
+-        "If you have the upstream CMake config set CMAKE_FIND_PACKAGE_PREFER_CONFIG to true for accurate results."
+-    )
+-    set(SndFile_WITH_EXTERNAL_LIBS FALSE)
+-    set(SndFile_WITH_MPEG FALSE)
+-  endif()
+-endif()
+-
+-# Handle transitive dependencies
+-if(PC_SNDFILE_FOUND)
+-  get_target_properties_from_pkg_config("${_sndfile_library}" "PC_SNDFILE"
+-                                        "_sndfile")
+-else()
+-  if(SndFile_WITH_EXTERNAL_LIBS)
+-    list(APPEND _sndfile_link_libraries "FLAC::FLAC" "Opus::opus"
+-         "Vorbis::vorbisenc" "Ogg::ogg")
+-  endif()
+-  if(SndFile_WITH_MPEG)
+-    list(APPEND _sndfile_link_libraries "MPG123::libmpg123" "mp3lame::mp3lame")
+-  endif()
+-endif()
+-
+-# Forward the result to CMake
+-include(FindPackageHandleStandardArgs)
+-find_package_handle_standard_args(
+-  SndFile
+-  REQUIRED_VARS "_sndfile_library" "SndFile_INCLUDE_DIR"
+-  VERSION_VAR "SndFile_VERSION")
+-
+-if(SndFile_FOUND AND NOT TARGET SndFile::sndfile)
+-  add_library(SndFile::sndfile UNKNOWN IMPORTED)
+-  set_target_properties(
+-    SndFile::sndfile
+-    PROPERTIES IMPORTED_LOCATION "${_sndfile_library}"
+-               INTERFACE_COMPILE_OPTIONS "${_sndfile_compile_options}"
+-               INTERFACE_INCLUDE_DIRECTORIES "${SndFile_INCLUDE_DIR}"
+-               INTERFACE_LINK_LIBRARIES "${_sndfile_link_libraries}"
+-               INTERFACE_LINK_DIRECTORIES "${_sndfile_link_directories}")
+-
+-  # Set additional variables for compatibility with upstream config
+-  set(SNDFILE_FOUND TRUE)
+-  set(SndFile_LIBRARY SndFile::sndfile)
+-  set(SndFile_LIBRARIES SndFile::sndfile)
+-  set(SNDFILE_LIBRARY SndFile::sndfile)
+-  set(SNDFILE_LIBRARIES SndFile::sndfile)
+-  set(SNDFILE_INCLUDE_DIR "${SndFile_INCLUDE_DIR}")
+-endif()
+-
+-mark_as_advanced(_sndfile_library)

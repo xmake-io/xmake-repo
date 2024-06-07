@@ -3,8 +3,10 @@ package("zltoolkit")
     set_description("A lightweight network framework based on C++11 that utilizes thread pool technology to achieve high concurrent network I/O.")
     set_license("MIT")
 
-    set_urls("https://github.com/ZLMediaKit/ZLToolKit.git")
+    set_urls("https://github.com/ZLMediaKit/ZLToolKit.git",
+             "https://gitee.com/xia-chu/ZLToolKit.git")
 
+    add_versions("2023.8.26", "a4b8b5e00aac6251254a513c7759605c0ba35f90")
     add_versions("2023.7.8", "e4744a0a523817356f2ec995ee5a732264c31629")
 
     add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})

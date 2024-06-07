@@ -47,7 +47,10 @@ function _find_package_on_windows(package, opt)
     if openssl then
         local version = try {function () return os.iorunv(openssl, {"version"}) end}
         if version then
-            result.version = semver.match(version)
+            version = semver.match(version)
+            if version then
+                result.version = version:rawstr()
+            end
         end
     end
     return result

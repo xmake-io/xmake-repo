@@ -6,7 +6,7 @@ package("aqt")
 
     if is_host("windows") and (os.arch() == "x64" or os.arch() == "x86") then
         add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
-        add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
+        add_configs("runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
 
         if os.arch() == "x86" then
             add_urls("https://github.com/miurahr/aqtinstall/releases/download/v$(version)/aqt_x86_signed.exe", { alias = "signed" })
@@ -30,7 +30,7 @@ package("aqt")
 
     on_install("@macosx", "@linux", "@windows", "@msys", function (package)
         if is_host("windows") and (os.arch() == "x64" or os.arch() == "x86") then
-            os.mv(package:originfile(), path.join(package:installdir("bin"), "aqt.exe"))
+            os.cp(package:originfile(), path.join(package:installdir("bin"), "aqt.exe"))
         else
             -- ensurepip has been dropped in recent releases
             try {function () os.vrunv("python3", {"-m", "ensurepip"}) end}

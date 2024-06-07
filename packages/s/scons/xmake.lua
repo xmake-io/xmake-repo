@@ -6,6 +6,8 @@ package("scons")
 
     add_urls("https://github.com/SCons/scons/archive/refs/tags/$(version).zip",
              "https://github.com/SCons/scons.git")
+    add_versions("4.7.0", "c783ac12040d1682b81ffd153b48ac1dd9a0eff5a9fbfbb55d86c5d186e88e4a")
+    add_versions("4.6.0", "ae729515e951cde252205c1c5a7f237025ce204db8e8b9a145616614d87c6f86")
     add_versions("4.1.0", "106259e92ba001feae5b50175bcec92306d0420bb08229fb037440cf303fcfc3")
     add_versions("4.3.0", "c8cb3be5861c05a46250c60938857b9711c29a1500001da187e36dc05ee70295")
 
@@ -33,8 +35,11 @@ package("scons")
             io.writefile("build/doc/man/sconsign.1", "")
         end
 
+        -- fix ml64 support for x64
+        -- @see https://stackoverflow.com/questions/58919970/building-x64-nsis-using-vs2012
+        io.replace("SCons/Tool/masm.py", "'ml'", "'ml64' if env.get('TARGET_ARCH')=='amd64' else 'ml'", {plain = true})
         os.vrunv("python", {"setup.py", "install", "--prefix", package:installdir()})
-        if package:is_plat("windows") then
+        if is_host("windows", "msys") then
             os.mv(package:installdir("Scripts", "*"), package:installdir("bin"))
             os.rmdir(package:installdir("Scripts"))
         end

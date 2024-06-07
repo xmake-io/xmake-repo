@@ -8,7 +8,10 @@ package("qt6lib")
     add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
 
     add_versions("6.3.0", "dummy")
+    add_versions("6.5.0", "dummy")
     add_versions("6.5.1", "dummy")
+    add_versions("6.5.2", "dummy")
+    add_versions("6.5.3", "dummy")
     add_versions("6.6.0", "dummy")
 
     on_load(function (package)

@@ -50,3 +50,19 @@ package("clblast")
 
         import("package.tools.cmake").install(package, configs)
     end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <clblast.h>
+            void test () {
+               clblast::ClearCache();
+            }
+        ]]}, {configs = {languages = "c++11"}}))
+
+        assert(package:check_csnippets({test = [[
+            #include <clblast_c.h>
+            void test () {
+                CLBlastClearCache();    
+            }
+        ]]}, {configs = {languages = "c11"}}))
+    end)
