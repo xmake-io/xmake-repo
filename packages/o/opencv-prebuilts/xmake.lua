@@ -2,27 +2,6 @@ package("opencv-prebuilts")
     set_homepage("https://github.com/thommyho/Cpp-OpenCV-Windows-PreBuilts")
     set_description("OpenCV prebuilt windows binaries and libs | x64 and x86 | MSVC143, MSVC142, legacy (MSVC141,MSVC140) | Debug, Release, RelWithDebInfo")
 
-    -- local vs_ver = nil
-
-    -- on_fetch(function (package)
-    --     vs_ver = import("core.tool.toolchain").load("msvc"):config("vs")
-    -- end)
-
-    -- if vs_ver == "2019" then
-    --     if os.arch() == "x86" then
-    --         set_urls("https://github.com/thommyho/Cpp-OpenCV-Windows-PreBuilts/releases/download/$(version)/MSVC142_32.zip")
-    --     elseif os.arch() == "x64" then
-    --         set_urls("https://github.com/thommyho/Cpp-OpenCV-Windows-PreBuilts/releases/download/$(version)/MSVC142_64.zip")
-    --     end
-    -- elseif vs_ver == "2022" then
-    --     if os.arch() == "x86" then
-    --         set_urls("https://github.com/thommyho/Cpp-OpenCV-Windows-PreBuilts/releases/download/$(version)/MSVC143_32.zip")
-    --     elseif os.arch() == "x64" then
-    --         set_urls("https://github.com/thommyho/Cpp-OpenCV-Windows-PreBuilts/releases/download/$(version)/MSVC143_64.zip")
-    --         add_versions("v4.9.0", "0637b2c0334b767879bcf6e6d5e0c4f978d7105fc882cfe58d712f52819602bf")
-    --     end
-    -- end
-
     if on_source then
         on_source(function (package)
             local vs_ver = import("core.tool.toolchain").load("msvc"):config("vs")
