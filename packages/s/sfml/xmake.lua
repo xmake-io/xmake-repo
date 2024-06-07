@@ -23,6 +23,8 @@ package("sfml")
 
     if is_plat("macosx") then
         add_extsources("brew::sfml/sfml-all")
+    elseif not is_host("windows") then
+        add_extsources("pkgconfig::sfml-all")
     end
 
     on_component("graphics", function (package, component)
@@ -33,6 +35,7 @@ package("sfml")
         component:add("links", "sfml-graphics" .. e)
         component:add("deps", "window", "system")
         component:add("extsources", "brew::sfml/sfml-graphics")
+        component:add("extsources", "pkgconfig::sfml-graphics")
     end)
 
     on_component("window", function (package, component)
@@ -43,6 +46,7 @@ package("sfml")
         component:add("links", "sfml-window" .. e)
         component:add("deps", "system")
         component:add("extsources", "brew::sfml/sfml-window")
+        component:add("extsources", "pkgconfig::sfml-window")
         if not package:config("shared") then
             if package:is_plat("windows", "mingw") then
                 component:add("syslinks", "opengl32", "gdi32", "advapi32", "user32")
@@ -66,6 +70,7 @@ package("sfml")
         component:add("links", "sfml-audio" .. e)
         component:add("deps", "system")
         component:add("extsources", "brew::sfml/sfml-audio")
+        component:add("extsources", "pkgconfig::sfml-audio")
         if not package:config("shared") and package:is_plat("windows", "mingw") then
             component:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
         end
@@ -79,6 +84,7 @@ package("sfml")
         component:add("links", "sfml-network" .. e)
         component:add("deps", "system")
         component:add("extsources", "brew::sfml/sfml-network")
+        component:add("extsources", "pkgconfig::sfml-network")
         component:add("extsources", "apt::sfml-network")
         if not package:config("shared") and package:is_plat("windows", "mingw") then
             component:add("syslinks", "ws2_32")
@@ -98,6 +104,7 @@ package("sfml")
             component:add("deps", "main")
         end
         component:add("extsources", "brew::sfml/sfml-system")
+        component:add("extsources", "pkgconfig::sfml-system")
         if not package:config("shared") then
             if package:is_plat("windows", "mingw") then
                 component:add("syslinks", "winmm")

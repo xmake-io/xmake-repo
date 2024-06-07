@@ -6,6 +6,7 @@ package("stx")
     add_urls("https://github.com/lamarrr/STX/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lamarrr/STX.git")
 
+    add_versions("v1.0.5", "d21a1895bc7057c8c6118a042ec39f364b2ad768394d4facb2fd64b73b07d97f")
     add_versions("v1.0.3", "0118b76a5f2a7a60132edecc9b632d9fc82a187bc232ac1a3fd9200fdd92dc7d")
 
     add_configs("backtrace", {description = "Enable stack backtraces", default = false, type = "boolean"})

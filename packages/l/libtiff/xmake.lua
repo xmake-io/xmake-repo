@@ -17,6 +17,11 @@ package("libtiff")
     add_configs("jpeg",       {description = "use libjpeg (required for JPEG compression)", default = false, type = "boolean"})
     add_configs("zstd",       {description = "use libzstd (required for ZSTD compression)", default = false, type = "boolean"})
     add_configs("webp",       {description = "use libwebp (required for WEBP compression)", default = false, type = "boolean"})
+
+    if is_plat("macosx") then
+        add_extsources("brew::libtiff/libtiff-4")
+    end
+
     local configdeps = {zlib       = "zlib",
                         libdeflate = "libdeflate",
                         jpeg       = "libjpeg-turbo",

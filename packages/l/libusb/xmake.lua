@@ -6,9 +6,10 @@ package("libusb")
     add_urls("https://github.com/libusb/libusb/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libusb/libusb.git")
 
+    add_versions("v1.0.27", "e8f18a7a36ecbb11fb820bd71540350d8f61bcd9db0d2e8c18a6fb80b214a3de")
     add_versions("v1.0.26", "a09bff99c74e03e582aa30759cada218ea8fa03580517e52d463c59c0b25e240")
 
-    add_resources("v1.0.26", "libusb-cmake", "https://github.com/libusb/libusb-cmake.git", "84fb1bba4dde4c266944e7c7aa641a8a15d18f31")
+    add_resources(">=1.0.26", "libusb-cmake", "https://github.com/libusb/libusb-cmake.git", "84fb1bba4dde4c266944e7c7aa641a8a15d18f31")
 
     if is_plat("macosx") then
         add_frameworks("CoreFoundation", "IOKit", "Security")

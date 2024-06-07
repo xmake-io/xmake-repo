@@ -243,7 +243,11 @@ end
 end
 configvar_check_ctypes("HAVE_STDINT_H_WITH_UINTMAX", "uintmax_t", {includes = "stdint.h"})
 configvar_check_ctypes("HAVE_UINTMAX_T", "uintmax_t", {includes = "stdint.h"})
-configvar_check_links("HAVE_PTHREAD_API", "pthread")
+if is_plat("android") then
+    configvar_check_cfuncs("HAVE_PTHREAD_API", "pthread_create", {includes = "pthread.h"})
+else
+    configvar_check_links("HAVE_PTHREAD_API", "pthread")
+end
 configvar_check_ctypes("HAVE_PTHREAD_RWLOCK", "pthread_rwlock_t", {includes = "pthread.h"})
 configvar_check_cfuncs("HAVE_THRD_CREATE", "thrd_create", {includes = "threads.h"})
 configvar_check_csnippets("HAVE_ALLOCA", [[

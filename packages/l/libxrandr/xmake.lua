@@ -3,8 +3,9 @@ package("libxrandr")
     set_homepage("https://www.x.org/")
     set_description("X.Org: X Resize, Rotate and Reflection extension library")
 
-    set_urls("https://www.x.org/archive/individual/lib/libXrandr-$(version).tar.bz2")
-    add_versions("1.5.2", "8aea0ebe403d62330bb741ed595b53741acf45033d3bda1792f1d4cc3daee023")
+    set_urls("https://www.x.org/archive/individual/lib/libXrandr-$(version).tar.gz")
+    add_versions("1.5.2", "3f10813ab355e7a09f17e147d61b0ce090d898a5ea5b5519acd0ef68675dcf8e")
+    add_versions("1.5.4", "c72c94dc3373512ceb67f578952c5d10915b38cc9ebb0fd176a49857b8048e22")
 
     if is_plat("linux") then
         add_extsources("apt::libxrandr-dev")

@@ -7,16 +7,19 @@ package("directxshadercompiler")
     local date = {["1.5.2010"] = "2020_10-22",
                   ["1.6.2104"] = "2021_04-20",
                   ["1.6.2106"] = "2021_07_01",
-                  ["1.7.2212"] = "2022_12_16"}
+                  ["1.7.2212"] = "2022_12_16",
+                  ["1.8.2403"] = "2024_03_07"}
     if is_plat("windows") then 
         add_urls("https://github.com/microsoft/DirectXShaderCompiler/releases/download/v$(version).zip", {version = function (version) return version .. "/dxc_" .. date[tostring(version)] end})
         add_versions("1.5.2010", "b691f63778f470ebeb94874426779b2f60685fc8711adf1b1f9f01535d9b67f8")
         add_versions("1.6.2104", "ee5e96d58134957443ded04be132e2e19240c534d7602e3ab8fd5adc5156014a")
         add_versions("1.6.2106", "053b2d90c227cae84e7ce636bc4f7c25acd224c31c11a324885acbf5dd8b7aac")
         add_versions("1.7.2212", "ed77c7775fcf1e117bec8b5bb4de6735af101b733d3920dda083496dceef130f")
+        add_versions("1.8.2403", "7a916a49b3ca81d803ca1bcd1ae859e7f317ce2fcf875bd34147aa2c57d1e392")
     elseif is_plat("linux") and is_arch("x86_64") then 
         add_urls("https://github.com/microsoft/DirectXShaderCompiler.git")
         add_versions("v1.7.2212", "f2643f8699299ab4e77421952e9c24f7483b46896d9f4cc6b4790b22c90d2ff0")
+        add_versions("v1.8.2403", "4211ea2cffc3575cf58556ebbc31c64adb73b1b8f68e47456c2048b60de4a24c")
         
         add_patches("v1.7.2212", path.join(os.scriptdir(), "patches", "disable_go_bindings.patch"), "2337f4f94d4c27c3caf0e6b0f00efd1bee719f79c0bb3b0d7e74c2859546c73a")
 

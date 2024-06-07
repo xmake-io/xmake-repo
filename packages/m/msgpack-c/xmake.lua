@@ -5,6 +5,7 @@ package("msgpack-c")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/msgpack/msgpack-c/releases/download/c-$(version)/msgpack-c-$(version).tar.gz")
+    add_versions("6.0.1", "a349cd9af28add2334c7009e331335af4a5b97d8558b2e9804d05f3b33d97925")
     add_versions("4.0.0", "420fe35e7572f2a168d17e660ef981a589c9cbe77faa25eb34a520e1fcc032c8")
 
     add_deps("cmake")

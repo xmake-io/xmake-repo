@@ -5,6 +5,8 @@ package("assimp")
 
     set_urls("https://github.com/assimp/assimp/archive/refs/tags/$(version).zip",
              "https://github.com/assimp/assimp.git")
+    add_versions("v5.4.1", "08837ee7c50b98ca72d2c9e66510ca6640681db8800aa2d3b1fcd61ccc615113")
+    add_versions("v5.4.0", "0f3698e9ba0110df0b636dbdd95706e7e28d443ff3dbaf5828926c23bfff778d")
     add_versions("v5.3.1", "f4020735fe4601de9d85cb335115568cce0e027a65e546dd8895081696d624bd")
     add_versions("v5.3.0", "cccbd20522b577613096b0b157f62c222f844bc177356b8301cd74eee3fecadb")
     add_versions("v5.2.5", "5384877d53be7b5bbf50c26ab3f054bec91b3df8614372dcd7240f44f61c509b")
@@ -45,6 +47,15 @@ package("assimp")
 
     if is_plat("windows") then
         add_syslinks("advapi32")
+    end
+
+    if on_check then
+        on_check("android", function (package)
+            import("core.tool.toolchain")
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(assimp): need ndk api level >= 26 for android")
+        end)
     end
 
     on_load(function (package)

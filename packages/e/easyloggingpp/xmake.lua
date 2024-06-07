@@ -6,6 +6,7 @@ package("easyloggingpp")
 
     add_urls("https://github.com/amrayn/easyloggingpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/amrayn/easyloggingpp.git")
+    add_versions("v9.97.1", "ebe473e17b13f1d1f16d0009689576625796947a711e14aec29530f39560c7c2")
     add_versions("v9.97.0", "9110638e21ef02428254af8688bf9e766483db8cc2624144aa3c59006907ce22")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})

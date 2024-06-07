@@ -6,6 +6,7 @@ package("matio")
     add_urls("https://github.com/tbeu/matio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/tbeu/matio.git", {submodules = false})
 
+    add_versions("v1.5.27", "2efe7c4a206885287c0f56128f3a36aa6e453077d03e4c2c42cdce9d332b67eb")
     add_versions("v1.5.26", "4aa5ac827ee49a3111f88f8d9b8ae034b8757384477e8f29cb64582c7d54e156")
 
     add_configs("zlib", {description = "Build with zlib support", default = false, type = "boolean"})

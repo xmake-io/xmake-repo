@@ -12,13 +12,21 @@ package("fcl")
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
+    add_configs("octomap", {description = "Enable OctoMap library support.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("eigen", "libccd", "octomap")
+    add_deps("eigen", "libccd")
+    on_load(function (package)
+        if package:config("octomap") then
+            package:add("deps", "octomap")
+        end
+    end)
+
     on_install("windows", "macosx", "linux", function (package)
         local configs = {"-DFCL_BUILD_TESTS=OFF"} 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DFCL_STATIC_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DFCL_WITH_OCTOMAP=" .. (package:config("octomap") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 

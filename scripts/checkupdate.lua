@@ -85,7 +85,11 @@ function _check_version_from_github_releases(package, url)
             local version_latest
             for _, line in ipairs(list:split("\n")) do
                 local splitinfo = line:split("%s+")
+                local release = splitinfo[1]
                 local version = splitinfo[#splitinfo - 1]
+                if not version or not _is_valid_version(version) and _is_valid_version(release) then
+                    version = release
+                end
                 if version and _is_valid_version(version) then
                     version_latest = version
                     break
@@ -98,6 +102,18 @@ function _check_version_from_github_releases(package, url)
     end
 end
 
+function _version_is_behind_conditions(package)
+    local scriptfile = path.join(package:scriptdir(), "xmake.lua")
+    local file = io.open(scriptfile)
+    for line in file:lines() do
+        local pos = line:find("add_versions", 1, true) or line:find("add_versionfiles", 1, true)
+        if pos and pos > 5 then
+            return true
+        end
+    end
+    file:close()
+end
+
 function main(package)
     local checkers = {
         ["https://github%.com/.-/.-/archive/refs/tags/.*"] = _check_version_from_github_tags,
@@ -105,7 +121,7 @@ function main(package)
     }
     for _, url in ipairs(package:urls()) do
         for pattern, checker in pairs(checkers) do
-            if url:match(pattern) then
+            if url:match(pattern) and not _version_is_behind_conditions(package) then
                 return checker(package, url)
             end
         end

@@ -17,6 +17,8 @@ package("mkl")
             add_resources("2022.1.0+192", "headers", "https://anaconda.org/intel/mkl-include/2022.1.0/download/win-64/mkl-include-2022.1.0-intel_192.tar.bz2", "b6452e8c4891fcfab452bc23c6adc9c61ab6635fa494bb2b29725473c1013abc")
             add_versions("2023.2.0+49496", "21a9fe03ba80009934a50b9d75f16757b9e49415e44245ced3b896fd471351ca")
             add_resources("2023.2.0+49496", "headers", "https://anaconda.org/intel/mkl-include/2023.2.0/download/win-64/mkl-include-2023.2.0-intel_49496.tar.bz2", "daa93c899e6c7627232fa60e67a2b6079cd29752e8ba1251ae895a57e51defa7")
+            add_versions("2024.1.0+692", "6431647057cd8757a464a3f6ab2099139e059d04446f04443afd2570febe42bf")
+            add_resources("2024.1.0+692", "headers","https://anaconda.org/intel/mkl-include/2024.1.0/download/win-64/mkl-include-2024.1.0-intel_692.tar.bz2","28229844aa6c19870531452e5805ab876da4a5df896a9e753e6b481da2d389cb")
         elseif is_arch("x86") then
             add_urls("https://anaconda.org/intel/mkl-static/$(version).tar.bz2", {version = function (version)
                 local mv = version:split("%+")
@@ -30,6 +32,8 @@ package("mkl")
             add_resources("2022.0.3+171", "headers", "https://anaconda.org/intel/mkl-include/2022.0.3/download/win-32/mkl-include-2022.0.3-intel_171.tar.bz2", "f696cd98b2f33b2c21bf7b70f57e894a763dad1831c721a348614cfeb17a4541")
             add_versions("2023.2.0+49496", "4795b6a00b1b7ae5c608de67ba2c79ad152223d0eaf4aba46db848bbae268718")
             add_resources("2023.2.0+49496", "headers", "https://anaconda.org/intel/mkl-include/2023.2.0/download/win-32/mkl-include-2023.2.0-intel_49496.tar.bz2", "0ed907ecc2eaae0ed8c280814392b5b80cc19df78838d9688273a12bd72c7bf8")
+            add_versions("2024.1.0+692", "7a8622f23a27fa487f08653645b6dc3f46b10f5b60ea2b90377812571730d0d9")
+            add_resources("2024.1.0+692", "headers","https://anaconda.org/intel/mkl-include/2024.1.0/download/win-32/mkl-include-2024.1.0-intel_692.tar.bz2","8994e1c5b5599934e83eb964a136be98dc5a6355f3f5b35cab44cdc0e8b970dd")
         end
     elseif is_plat("macosx") and is_arch("x86_64") then
         add_urls("https://anaconda.org/intel/mkl-static/$(version).tar.bz2", {version = function (version)
@@ -58,7 +62,9 @@ package("mkl")
             add_resources("2022.1.0+223", "headers", "https://anaconda.org/intel/mkl-include/2022.1.0/download/linux-64/mkl-include-2022.1.0-intel_223.tar.bz2", "704e658a9b25a200f8035f3d0a8f2e094736496a2169f87609f1cfed2e2eb0a9")
             add_versions("2023.2.0+49495", "5c91829865f36f7f5845f5b38e509bb05bee1a38ccfd2caa0eabc0c28aaa4082")
             add_resources("2023.2.0+49495", "headers", "https://anaconda.org/intel/mkl-include/2023.2.0/download/linux-64/mkl-include-2023.2.0-intel_49495.tar.bz2", "0dfb6ca3c17d99641f20877579c78155cf95aa0b22363bcc91b1d57df4646318")
-        elseif is_arch("x86") then
+            add_versions("2024.1.0+691", "be8833b094253d51abe49de418f7db2260f4c8f32514969a4a2eabaadc5d55c2")
+            add_resources("2024.1.0+691", "headers", "https://anaconda.org/intel/mkl-include/2024.1.0/download/linux-64/mkl-include-2024.1.0-intel_691.tar.bz2", "e36b2e74f5c28ff91565abe47a09dc246c9cf725e0d05b5fb08813b4073ea68b")
+        elseif is_arch("i386") then
             add_urls("https://anaconda.org/intel/mkl-static/$(version).tar.bz2", {version = function (version)
                 local mv = version:split("%+")
                 return format("%s/download/linux-32/mkl-static-%s-intel_%s", mv[1], mv[1], mv[2])
@@ -71,6 +77,8 @@ package("mkl")
             add_resources("2022.0.2+136", "headers", "https://anaconda.org/intel/mkl-include/2022.0.2/download/linux-32/mkl-include-2022.0.2-intel_136.tar.bz2", "16882aeddbd33a2dc9210e61c59db6ad0d7d9efdd40ad1544b369b0830683371")
             add_versions("2023.2.0+49495", "9cdcb26ebbbe1510611f01f75780c0e69522d5df73395370a73c81413beaa56a")
             add_resources("2023.2.0+49495", "headers", "https://anaconda.org/intel/mkl-include/2023.2.0/download/linux-32/mkl-include-2023.2.0-intel_49495.tar.bz2", "b4433c6839bb7f48951b2dcf409dec7306aee3649c539ee0513d8bfb1a1ea283")
+            add_versions("2024.1.0+691", "8bd52f73844edc59fe925fa9edef66a7158e502df7c06ddc532d1b370df4fb7d")
+            add_resources("2024.1.0+691", "headers", "https://anaconda.org/intel/mkl-include/2024.1.0/download/linux-32/mkl-include-2024.1.0-intel_691.tar.bz2", "88529f8bea2498e88b2cf8dc7aa3735f46f348cf5047006dfc6455f8e2bbdd30")
         end
     end
 
@@ -82,7 +90,8 @@ package("mkl")
     if is_plat("linux") then
         add_syslinks("pthread", "dl")
     end
-    on_load("windows", "macosx", "linux", function (package)
+
+    on_load(function (package)
         -- Refer to [oneAPI Math Kernel Library Link Line Advisor](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html)
         -- to get the link option for MKL library.
         local suffix = (package:config("interface") == 32 and "lp64" or "ilp64")
@@ -128,7 +137,7 @@ package("mkl")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|!arm64", "macosx|!arm64", "linux|x86_64", "linux|i386", function (package)
         local headerdir = package:resourcedir("headers")
         if package:is_plat("windows") then
             os.trymv(path.join("Library", "lib"), package:installdir())

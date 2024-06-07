@@ -2,6 +2,7 @@ package("libiconv")
 
     set_homepage("https://www.gnu.org/software/libiconv")
     set_description("Character set conversion library.")
+    set_license("LGPL-2.0")
 
     set_urls("https://ftpmirror.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz",
              "https://ftp.gnu.org/gnu/libiconv/libiconv-$(version).tar.gz")

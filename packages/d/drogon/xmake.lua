@@ -6,6 +6,8 @@ package("drogon")
 
     add_urls("https://github.com/an-tao/drogon/archive/refs/tags/$(version).tar.gz",
              "https://github.com/an-tao/drogon.git")
+    add_versions("v1.9.4", "b23d9d01d36fb1221298fcdbedcf7fd3e1b8b8821bf6fb8ed073c8b0c290d11d")
+    add_versions("v1.9.3", "fb4ef351b3e4c06ed850cfbbf50c571502decb1738fb7d62a9d7d70077c9fc23")
     add_versions("v1.4.1", "ad794d7744b600240178348c15e216c919fe7a2bc196cf1239f129aee2af19c7")
     add_versions("v1.6.0", "9f8802b579aac29e9eddfb156e432276727a3d3c49fffdf453a2ddcd1cb69093")
     add_versions("v1.7.1", "a0bce1f32b6e1321486bb25c55ca7bd7a577cbd53f1e7be47367d0f9733730f1")

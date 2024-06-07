@@ -5,6 +5,7 @@ package("srt")
 
     add_urls("https://github.com/Haivision/srt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Haivision/srt.git")
+    add_versions("v1.5.3", "befaeb16f628c46387b898df02bc6fba84868e86a6f6d8294755375b9932d777")
     add_versions("v1.4.2", "28a308e72dcbb50eb2f61b50cc4c393c413300333788f3a8159643536684a0c4")
 
     add_deps("cmake")

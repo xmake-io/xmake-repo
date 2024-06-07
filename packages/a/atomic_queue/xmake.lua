@@ -7,6 +7,7 @@ package("atomic_queue")
     add_urls("https://github.com/max0x7ba/atomic_queue/archive/refs/tags/$(version).tar.gz",
              "https://github.com/max0x7ba/atomic_queue.git")
     add_versions("v1.5", "599b76a0222e7b54118d6f0fb686845c9d323107f2de76b3f68292b057e5a99f")
+    add_versions("v1.6.3", "0ad6e0203d90367f6a4e496449dfd9ad65b80168fadafef4eac08820c6bda79c")
 
     on_install(function (package)
         os.cp("include/atomic_queue/", package:installdir("include"))

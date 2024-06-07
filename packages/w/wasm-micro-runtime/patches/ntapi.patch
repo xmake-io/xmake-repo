@@ -1,0 +1,36 @@
+diff --git a/core/shared/platform/windows/win_clock.c b/core/shared/platform/windows/win_clock.c
+index c96bdfb3..48e2c449 100644
+--- a/core/shared/platform/windows/win_clock.c
++++ b/core/shared/platform/windows/win_clock.c
+@@ -55,14 +55,30 @@ os_clock_res_get(__wasi_clockid_t clock_id, __wasi_timestamp_t *resolution)
+         case __WASI_CLOCK_THREAD_CPUTIME_ID:
+         {
+ #if WINAPI_PARTITION_DESKTOP
++            HMODULE ntdll = LoadLibrary("ntdll.dll");
++            if (!ntdll) {
++                return __WASI_ENOTSUP;
++            }
++
++            typedef NTSTATUS(NTAPI *LPFN_NtQueryTimerResolution)(
++                OUT PULONG MinimumResolution,
++                OUT PULONG MaximumResolution,
++                OUT PULONG CurrentResolution
++            );
++            LPFN_NtQueryTimerResolution pNtQueryTimerResolution = (LPFN_NtQueryTimerResolution)GetProcAddress(ntdll, "NtQueryTimerResolution");
++            if (!pNtQueryTimerResolution) {
++                return __WASI_ENOTSUP;
++            }
++
+             ULONG maximum_time;
+             ULONG minimum_time;
+             ULONG current_time;
+             NTSTATUS
+-            status = NtQueryTimerResolution(&maximum_time, &minimum_time,
++            status = pNtQueryTimerResolution(&maximum_time, &minimum_time,
+                                             &current_time);
+             uint64 result = (uint64)current_time * NANOSECONDS_PER_TICK;
+             *resolution = result / (uint64)NANOSECONDS_PER_SECOND;
++            FreeLibrary(ntdll);
+             return error;
+ #else
+             return __WASI_ENOTSUP;

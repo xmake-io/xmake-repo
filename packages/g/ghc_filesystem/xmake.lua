@@ -7,6 +7,7 @@ package("ghc_filesystem")
 
     add_urls("https://github.com/gulrak/filesystem/archive/refs/tags/$(version).tar.gz",
              "https://github.com/gulrak/filesystem.git")
+    add_versions("v1.5.14", "e783f672e49de7c5a237a0cea905ed51012da55c04fbacab397161976efc8472")
     add_versions("v1.5.10", "9b96a024679807879fdfb30e46e8e461293666aeeee5fbf7f5af75aeacdfea29")
     add_versions("v1.5.12", "7d62c5746c724d28da216d9e11827ba4e573df15ef40720292827a4dfd33f2e9")
 

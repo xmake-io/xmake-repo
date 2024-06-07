@@ -1,0 +1,69 @@
+From 6a83588fdda0f70465ecd8b0231e753f434abeb1 Mon Sep 17 00:00:00 2001
+From: Sam Lantinga <slouken@libsdl.org>
+Date: Fri, 9 Feb 2024 01:26:45 -0800
+Subject: [PATCH] Redefine XINPUT_CAPABILITIES_EX as an SDL typedef
+
+mingw-w64 has added this from Proton (which added this from SDL), so we need to re-define it as a local symbol to avoid conflicting with mingw-w64 headers.
+
+Fixes https://github.com/libsdl-org/SDL/issues/9031
+
+(cherry picked from commit b7c61569f899982338bff0d5b9d35bd6d83485d3)
+(cherry picked from commit 93d7b6e50c3f625a86c2443deffc334cf0eda832)
+---
+ src/core/windows/SDL_xinput.h             | 6 +++---
+ src/joystick/windows/SDL_xinputjoystick.c | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/src/core/windows/SDL_xinput.h b/src/core/windows/SDL_xinput.h
+index 396afcde7dd01..efdb86282e10c 100644
+--- a/src/core/windows/SDL_xinput.h
++++ b/src/core/windows/SDL_xinput.h
+@@ -212,7 +212,7 @@ typedef struct
+ #endif /* HAVE_XINPUT_H */
+ 
+ /* This struct is not defined in XInput headers. */
+-typedef struct _XINPUT_CAPABILITIES_EX
++typedef struct
+ {
+     XINPUT_CAPABILITIES Capabilities;
+     WORD VendorId;
+@@ -220,7 +220,7 @@ typedef struct _XINPUT_CAPABILITIES_EX
+     WORD ProductVersion;
+     WORD unk1;
+     DWORD unk2;
+-} XINPUT_CAPABILITIES_EX, *PXINPUT_CAPABILITIES_EX;
++} SDL_XINPUT_CAPABILITIES_EX;
+ 
+ /* Forward decl's for XInput API's we load dynamically and use if available */
+ typedef DWORD(WINAPI *XInputGetState_t)(
+@@ -244,7 +244,7 @@ typedef DWORD(WINAPI *XInputGetCapabilitiesEx_t)(
+     DWORD dwReserved,                       /* [in] Must be 1 */
+     DWORD dwUserIndex,                      /* [in] Index of the gamer associated with the device */
+     DWORD dwFlags,                          /* [in] Input flags that identify the device type */
+-    XINPUT_CAPABILITIES_EX *pCapabilitiesEx /* [out] Receives the capabilities */
++    SDL_XINPUT_CAPABILITIES_EX *pCapabilitiesEx /* [out] Receives the capabilities */
+ );
+ 
+ typedef DWORD(WINAPI *XInputGetBatteryInformation_t)(
+diff --git a/src/joystick/windows/SDL_xinputjoystick.c b/src/joystick/windows/SDL_xinputjoystick.c
+index 3a2e912ca381b..1ae7fb489957e 100644
+--- a/src/joystick/windows/SDL_xinputjoystick.c
++++ b/src/joystick/windows/SDL_xinputjoystick.c
+@@ -117,7 +117,7 @@ static const char *GetXInputName(const Uint8 userid, BYTE SubType)
+ 
+ static SDL_bool GetXInputDeviceInfo(Uint8 userid, Uint16 *pVID, Uint16 *pPID, Uint16 *pVersion)
+ {
+-    XINPUT_CAPABILITIES_EX capabilities;
++    SDL_XINPUT_CAPABILITIES_EX capabilities;
+ 
+     if (!XINPUTGETCAPABILITIESEX || XINPUTGETCAPABILITIESEX(1, userid, 0, &capabilities) != ERROR_SUCCESS) {
+         return SDL_FALSE;
+@@ -143,7 +143,7 @@ static SDL_bool GetXInputDeviceInfo(Uint8 userid, Uint16 *pVID, Uint16 *pPID, Ui
+ 
+ int SDL_XINPUT_GetSteamVirtualGamepadSlot(Uint8 userid)
+ {
+-    XINPUT_CAPABILITIES_EX capabilities;
++    SDL_XINPUT_CAPABILITIES_EX capabilities;
+ 
+     if (XINPUTGETCAPABILITIESEX &&
+         XINPUTGETCAPABILITIESEX(1, userid, 0, &capabilities) == ERROR_SUCCESS &&

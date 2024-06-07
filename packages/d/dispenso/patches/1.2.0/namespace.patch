@@ -1,0 +1,22 @@
+diff --git a/dispenso/detail/quanta.cpp b/dispenso/detail/quanta.cpp
+index fbab069..a587e86 100644
+--- a/dispenso/detail/quanta.cpp
++++ b/dispenso/detail/quanta.cpp
+@@ -5,12 +5,15 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
++#ifdef _WIN32
++#include <Windows.h>
++#include <timeapi.h>
++#endif
++
+ #include <dispenso/detail/quanta.h>
+ 
+ namespace dispenso {
+ #ifdef _WIN32
+-#include <Windows.h>
+-#include <timeapi.h>
+ 
+ namespace {
+ struct OsQuantaSetter {

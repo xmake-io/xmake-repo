@@ -4,11 +4,13 @@ package("boost")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
 
+    add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-b2-nodocs.tar.gz")
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version).tar.gz")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {alias = "mirror", version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
 
+    add_versions("1.85.0", "f4a7d3f81b8a0f65067b769ea84135fd7b72896f4f59c7f405086c8c0dc61434")
     add_versions("1.84.0", "4d27e9efed0f6f152dc28db6430b9d3dfb40c0345da7342eaa5a987dde57bd95")
     add_versions("1.83.0", "0c6049764e80aa32754acd7d4f179fd5551d8172a83b71532ae093e7384e98da")
     add_versions("1.82.0", "b62bd839ea6c28265af9a1f68393eda37fab3611425d3b28882d8e424535ec9d")
@@ -112,18 +114,21 @@ package("boost")
             end
             return linkname
         end
-        -- we need the fixed link order
-        local sublibs = {log = {"log_setup", "log"},
-                         python = {"python", "numpy"},
-                         stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
-        for _, libname in ipairs(libnames) do
-            local libs = sublibs[libname]
-            if libs then
-                for _, lib in ipairs(libs) do
-                    package:add("links", get_linkname(package, lib))
+
+        if not package:is_plat("windows") then
+            -- we need the fixed link order
+            local sublibs = {log = {"log_setup", "log"},
+                            python = {"python", "numpy"},
+                            stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
+            for _, libname in ipairs(libnames) do
+                local libs = sublibs[libname]
+                if libs then
+                    for _, lib in ipairs(libs) do
+                        package:add("links", get_linkname(package, lib))
+                    end
+                else
+                    package:add("links", get_linkname(package, libname))
                 end
-            else
-                package:add("links", get_linkname(package, libname))
             end
         end
         -- disable auto-link all libs
@@ -170,8 +175,14 @@ package("boost")
                 return format("using %s : %s : \"%s\" ;", win_toolset, msvc_ver, cxx:gsub("\\", "\\\\"))
             else
                 cxx = cxx:gsub("gcc$", "g++")
+                cxx = cxx:gsub("gcc%-", "g++-")
                 cxx = cxx:gsub("clang$", "clang++")
-                return format("using gcc : : %s ;", cxx:gsub("\\", "/"))
+                cxx = cxx:gsub("clang%-", "clang++-")
+                if cxx and cxx:find("clang", 1, true) then
+                    return format("using clang : : \"%s\" ;", cxx:gsub("\\", "/"))
+                else
+                    return format("using gcc : : \"%s\" ;", cxx:gsub("\\", "/"))
+                end
             end
         end
 
@@ -200,6 +211,10 @@ package("boost")
             "--without-icu"
         }
 
+        if package:has_tool("cxx", "clang", "clangxx") then
+            table.insert(bootstrap_argv, "--with-toolset=clang")
+        end
+
         if package:is_plat("windows") then
             -- for bootstrap.bat, all other arguments are useless
             bootstrap_argv = { "msvc" }
@@ -218,11 +233,16 @@ package("boost")
         local build_toolset
         local runenvs
         if package:is_plat("windows") then
-            build_toolchain = package:toolchain("clang-cl") or package:toolchain("msvc") or
-                toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-            assert(build_toolchain:check(), "build toolchain not found!")
-            build_toolset = build_toolchain:name() == "clang-cl" and "clang-win" or "msvc"
-            runenvs = build_toolchain:runenvs()
+            if package:has_tool("cxx", "clang_cl") then
+                build_toolset = "clang-win"
+                build_toolchain = package:toolchain("clang-cl")
+            elseif package:has_tool("cxx", "cl") then
+                build_toolset = "msvc"
+                build_toolchain = package:toolchain("msvc")
+            end
+            if build_toolchain then
+                runenvs = build_toolchain:runenvs()
+            end
         end
 
         local file = io.open("user-config.jam", "w")
@@ -264,7 +284,11 @@ package("boost")
         else
             table.insert(argv, "address-model=32")
         end
-        local cxxflags
+
+        local cxxflags = {}
+        local linkflags = {}
+        table.join2(cxxflags, table.wrap(package:config("cxflags")))
+        table.join2(cxxflags, table.wrap(package:config("cxxflags")))
         if package:is_plat("windows") then
             local vs_runtime = package:config("vs_runtime")
             if package:config("shared") then
@@ -275,14 +299,16 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "toolset=" .. build_toolset)
-            cxxflags = "-std:c++14"
+            table.insert(cxxflags, "-std:c++14")
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
         elseif package:is_plat("macosx") then
             table.insert(argv, "toolset=darwin")
 
             -- fix macosx arm64 build issue https://github.com/microsoft/vcpkg/pull/18529
-            cxxflags = "-std=c++14 -arch " .. package:arch()
+            table.insert(cxxflags, "-std=c++14")
+            table.insert(cxxflags, "-arch")
+            table.insert(cxxflags, package:arch())
             local xcode = package:toolchain("xcode") or import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
             if xcode:check() then
                 local xcode_dir = xcode:config("xcode")
@@ -290,20 +316,35 @@ package("boost")
                 local target_minver = xcode:config("target_minver")
                 if xcode_dir and xcode_sdkver then
                     local xcode_sdkdir = xcode_dir .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode_sdkver .. ".sdk"
-                    cxxflags = cxxflags .. " -isysroot " .. xcode_sdkdir
+                    table.insert(cxxflags, "-isysroot")
+                    table.insert(cxxflags, xcode_sdkdir)
                 end
                 if target_minver then
-                    cxxflags = cxxflags .. " -mmacosx-version-min=" .. target_minver
+                    table.insert(cxxflags, "-mmacosx-version-min=" .. target_minver)
                 end
             end
         else
-            cxxflags = "-std=c++14"
+            table.insert(cxxflags, "-std=c++14")
             if package:config("pic") ~= false then
-                cxxflags = cxxflags .. " -fPIC"
+                table.insert(cxxflags, "-fPIC")
             end
         end
+        if package.has_runtime and package:has_runtime("c++_shared", "c++_static") then
+            table.insert(cxxflags, "-stdlib=libc++")
+            table.insert(linkflags, "-stdlib=libc++")
+            if package:has_runtime("c++_static") then
+                table.insert(linkflags, "-static-libstdc++")
+            end
+        end
+        if package:config("asan") then
+            table.insert(cxxflags, "-fsanitize=address")
+            table.insert(linkflags, "-fsanitize=address")
+        end
         if cxxflags then
-            table.insert(argv, "cxxflags=" .. cxxflags)
+            table.insert(argv, "cxxflags=" .. table.concat(cxxflags, " "))
+        end
+        if linkflags then
+            table.insert(argv, "linkflags=" .. table.concat(linkflags, " "))
         end
         for _, libname in ipairs(libnames) do
             if package:config("all") or package:config(libname) then
@@ -315,6 +356,18 @@ package("boost")
             table.insert(argv, "pch=off")
         end
 
+        if package:is_plat("windows") and package:version():le("1.85.0") then
+            local vs_toolset = build_toolchain:config("vs_toolset")
+            local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+            local minor = vs_toolset_ver:minor()
+            if minor and minor >= 40 then
+                io.replace("tools/build/src/engine/config_toolset.bat", "vc143", "vc144", {plain = true})
+                io.replace("tools/build/src/engine/build.bat", "vc143", "vc144", {plain = true})
+                io.replace("tools/build/src/engine/guess_toolset.bat", "vc143", "vc144", {plain = true})
+                io.replace("tools/build/src/tools/intel-win.jam", "14.3", "14.4", {plain = true})
+                io.replace("tools/build/src/tools/msvc.jam", "14.3", "14.4", {plain = true})
+            end
+        end
         local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})
         if ok ~= 0 then
             raise("boost build failed, please check log in " .. path.join(os.curdir(), "boost-log.txt"))

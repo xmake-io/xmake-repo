@@ -17,7 +17,13 @@ package("utfcpp")
     add_versions("v3.2.3", "3ba9b0dbbff08767bdffe8f03b10e596ca351228862722e4c9d4d126d2865250")
     add_versions("v3.2.1", "8d6aa7d77ad0abb35bb6139cb9a33597ac4c5b33da6a004ae42429b8598c9605")
 
-    add_extsources("apt::libutfcpp-dev", "pacman::utf8cpp")
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::utf8cpp")
+    elseif is_plat("linux") then
+        add_extsources("apt::libutfcpp-dev", "pacman::utf8cpp")
+    elseif is_plat("macosx") then
+        add_extsources("brew::utf8cpp")
+    end
 
     add_deps("cmake")
 

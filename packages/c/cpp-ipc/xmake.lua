@@ -7,6 +7,7 @@ package("cpp-ipc")
     set_urls("https://github.com/mutouyun/cpp-ipc/archive/refs/tags/v$(version).zip",
              "https://github.com/mutouyun/cpp-ipc.git")
 
+    add_versions("1.3.0", "898f97a36c855a58dfe9645b73c388e6df7bcd3762a5c9a6a75b4bca60d72b4b")
     add_versions("1.2.0", "31739760d8f191c7aaf71d1c453fce1989d1f74fdee9a61f9fdd475b29fe1888")
 
     add_deps("cmake")

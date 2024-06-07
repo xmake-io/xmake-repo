@@ -229,7 +229,11 @@ void test() {environ.foo = 1;}]], {includes = is_plat("windows") and "stdlib.h" 
 -- config.h variables
 configvar_check_ctypes("HAVE_STDINT_H_WITH_UINTMAX", "uintmax_t", {includes = "stdint.h"})
 configvar_check_ctypes("HAVE_UINTMAX_T", "uintmax_t", {includes = "stdint.h"})
-configvar_check_links("HAVE_PTHREAD_API", "pthread")
+if is_plat("android") then
+    configvar_check_cfuncs("HAVE_PTHREAD_API", "pthread_create", {includes = "pthread.h"})
+else
+    configvar_check_links("HAVE_PTHREAD_API", "pthread")
+end
 configvar_check_csnippets("HAVE_ALLOCA", [[
 #ifdef __GNUC__
 # define alloca __builtin_alloca
