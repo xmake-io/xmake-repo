@@ -10,14 +10,18 @@ package("yasm")
 
     add_deps("cmake")
 
-    if is_host("windows", "msys") then
+    if is_subhost("mingw", "msys") then
         add_deps("dlfcn-win32")
     end
 
     on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         local configs = {"-DYASM_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs)
+        local opt
+        if is_subhost("mingw", "msys") then
+            opt = {packagedeps = "dlfcn-win32"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
