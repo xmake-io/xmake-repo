@@ -7,6 +7,10 @@ package("stdexec")
 
     add_versions("2024.03.08", "b3ba13a7b8c206371207196e08844fb7bc745438")
 
+    if is_plat("windows") then
+        add_cxxflags("/Zc:__cplusplus")
+    end
+
     add_deps("cmake")
 
     on_install("linux", "macosx", "windows", "mingw", function (package)
