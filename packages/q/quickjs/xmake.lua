@@ -8,7 +8,7 @@ package("quickjs")
     add_versions("2024.01.13", "d6c7d169de6fb2c90cd2bd2226ba9dafdef883ce")
 
     if is_plat("windows") then
-        add_patches("2024.01.13", "patches/2024.01.13/msvc.patch", "4e3b6a346a2b55455cba832d543876daba9f7fce6011ba9f858b2de31f0fd0e8")
+        add_patches("2024.01.13", "patches/2024.01.13/msvc.patch", "0a240fdc13b31090bde7ebba10dacaabf42db0f580583b79af7cd53a0730a7c0")
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
     end
 
