@@ -147,6 +147,10 @@ package("ffmpeg")
         else
             table.insert(configs, "--disable-debug")
         end
+        -- https://www.ffmpeg.org/platform.html#toc-Advanced-linking-configuration
+        if package:config("pic") ~= false and not package:is_plat("windows", "macosx", "iphoneos") then
+            table.insert(configs, "--enable-pic")
+        end
 
         if package:is_plat("windows") then
             table.insert(configs, "--target-os=win32")
