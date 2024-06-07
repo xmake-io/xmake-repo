@@ -27,7 +27,7 @@ package("opencv-prebuilts")
 
     add_configs("runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
 
-    on_install("windows", function (package)    
+    on_install("windows|!arm*", function (package)    
         if package:is_debug() then
             os.cp("Debug/include/*", package:installdir("include"))
             os.cp("Debug/lib/*", package:installdir("lib"))
