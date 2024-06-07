@@ -1,5 +1,4 @@
 package("boost")
-
     set_homepage("https://www.boost.org/")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
@@ -81,7 +80,7 @@ package("boost")
     end
 
     on_load(function (package)
-        function get_linkname(package, libname)
+        local function get_linkname(package, libname)
             local linkname
             if package:is_plat("windows") then
                 linkname = (package:config("shared") and "boost_" or "libboost_") .. libname
@@ -100,11 +99,11 @@ package("boost")
                     if package:debug() then
                         linkname = linkname .. "-gd"
                     end
+                elseif package:config("asan") or vs_runtime == "MTd" then
+                    linkname = linkname .. "-sgd"
                 elseif vs_runtime == "MT" then
                     linkname = linkname .. "-s"
-                elseif vs_runtime == "MTd" then
-                    linkname = linkname .. "-sgd"
-                elseif vs_runtime == "MDd" then
+                elseif package:config("asan") or vs_runtime == "MDd" then
                     linkname = linkname .. "-gd"
                 end
             else
@@ -115,20 +114,18 @@ package("boost")
             return linkname
         end
 
-        if not package:is_plat("windows") then
-            -- we need the fixed link order
-            local sublibs = {log = {"log_setup", "log"},
-                            python = {"python", "numpy"},
-                            stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
-            for _, libname in ipairs(libnames) do
-                local libs = sublibs[libname]
-                if libs then
-                    for _, lib in ipairs(libs) do
-                        package:add("links", get_linkname(package, lib))
-                    end
-                else
-                    package:add("links", get_linkname(package, libname))
+        -- we need the fixed link order
+        local sublibs = {log = {"log_setup", "log"},
+                        python = {"python", "numpy"},
+                        stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
+        for _, libname in ipairs(libnames) do
+            local libs = sublibs[libname]
+            if libs then
+                for _, lib in ipairs(libs) do
+                    package:add("links", get_linkname(package, lib))
                 end
+            else
+                package:add("links", get_linkname(package, libname))
             end
         end
         -- disable auto-link all libs
@@ -147,7 +144,7 @@ package("boost")
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         import("core.base.option")
 
-        function get_compiler(package, toolchain)
+        local function get_compiler(package, toolchain)
             local cxx = package:build_getenv("cxx")
             if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
@@ -391,6 +388,21 @@ package("boost")
                 #include <boost/date_time/gregorian/gregorian.hpp>
                 static void test() {
                     boost::gregorian::date d(2010, 1, 30);
+                }
+            ]]}, {configs = {languages = "c++14"}}))
+        end
+
+        if package:config("filesystem") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <boost/filesystem.hpp>
+                #include <iostream>
+                static void test() {
+                    boost::filesystem::path path("/path/to/directory");
+                    if (boost::filesystem::exists(path)) {
+                        std::cout << "Directory exists" << std::endl;
+                    } else {
+                        std::cout << "Directory does not exist" << std::endl;
+                    }
                 }
             ]]}, {configs = {languages = "c++14"}}))
         end
