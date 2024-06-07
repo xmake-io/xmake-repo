@@ -10,6 +10,10 @@ package("yasm")
 
     add_deps("cmake")
 
+    if is_host("windows", "msys") then
+        add_deps("dlfcn-win32")
+    end
+
     on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         local configs = {"-DYASM_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
