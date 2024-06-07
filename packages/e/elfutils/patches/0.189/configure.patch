@@ -1,0 +1,81 @@
+diff --git a/configure b/configure
+index acc483f..244e733 100755
+--- a/configure
++++ b/configure
+@@ -9363,76 +9363,6 @@ See \`config.log' for more details" "$LINENO" 5; } ;;
+ esac
+ 
+ 
+-saved_LIBS="$LIBS"
+-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing _obstack_free" >&5
+-printf %s "checking for library containing _obstack_free... " >&6; }
+-if test ${ac_cv_search__obstack_free+y}
+-then :
+-  printf %s "(cached) " >&6
+-else $as_nop
+-  ac_func_search_save_LIBS=$LIBS
+-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-
+-/* Override any GCC internal prototype to avoid an error.
+-   Use char because int might match the return type of a GCC
+-   builtin and then its argument prototype would still apply.  */
+-char _obstack_free ();
+-int
+-main (void)
+-{
+-return _obstack_free ();
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-for ac_lib in '' obstack
+-do
+-  if test -z "$ac_lib"; then
+-    ac_res="none required"
+-  else
+-    ac_res=-l$ac_lib
+-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+-  fi
+-  if ac_fn_c_try_link "$LINENO"
+-then :
+-  ac_cv_search__obstack_free=$ac_res
+-fi
+-rm -f core conftest.err conftest.$ac_objext conftest.beam \
+-    conftest$ac_exeext
+-  if test ${ac_cv_search__obstack_free+y}
+-then :
+-  break
+-fi
+-done
+-if test ${ac_cv_search__obstack_free+y}
+-then :
+-
+-else $as_nop
+-  ac_cv_search__obstack_free=no
+-fi
+-rm conftest.$ac_ext
+-LIBS=$ac_func_search_save_LIBS
+-fi
+-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search__obstack_free" >&5
+-printf "%s\n" "$ac_cv_search__obstack_free" >&6; }
+-ac_res=$ac_cv_search__obstack_free
+-if test "$ac_res" != no
+-then :
+-  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+-
+-fi
+-
+-LIBS="$saved_LIBS"
+-case "$ac_cv_search__obstack_free" in
+-        no) { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+-printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
+-as_fn_error $? "failed to find _obstack_free
+-See \`config.log' for more details" "$LINENO" 5; } ;;
+-        -l*) obstack_LIBS="$ac_cv_search__obstack_free" ;;
+-        *) obstack_LIBS= ;;
+-esac
+-
+ 
+ 
+ ac_config_files="$ac_config_files doc/Makefile"

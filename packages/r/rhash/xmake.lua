@@ -5,6 +5,7 @@ package("rhash")
     
     add_urls("https://sourceforge.net/projects/rhash/files/rhash/$(version)/rhash-$(version)-src.tar.gz")
     add_urls("https://github.com/rhash/RHash/archive/refs/tags/v$(version).tar.gz")
+    add_versions("1.4.4", "8e7d1a8ccac0143c8fe9b68ebac67d485df119ea17a613f4038cda52f84ef52a")
     add_versions("1.4.2", "600d00f5f91ef04194d50903d3c79412099328c42f28ff43a0bdb777b00bec62")
 
     add_configs("gettext", {description = "Enable gettext (localization) support.", default = false, type = "boolean"})

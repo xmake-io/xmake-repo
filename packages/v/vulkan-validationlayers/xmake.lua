@@ -4,15 +4,34 @@ package("vulkan-validationlayers")
     set_license("Apache-2.0")
 
     if is_plat("android") then
-        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/download/sdk-$(version)/android-binaries-$(version).tar.gz", {version = function (version) return (version:ge("1.3.261") and "sdk-" or "") .. version:gsub("%+", ".") end})
+        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/releases/download/$(version).tar.gz", {version = function (version)
+            local versionLoc = version:gsub("%+", ".")
+            if version:gt("1.3.268+0") then
+                return "vulkan-sdk-" .. versionLoc .. "/android-binaries-" .. versionLoc
+            elseif version:gt("1.3.261+1") then
+                return "vulkan-sdk-" .. versionLoc .. "/android-binaries-vulkan-sdk-" .. versionLoc
+            elseif version:gt("1.3.250+1") then
+                return "sdk-" .. versionLoc .. "/android-binaries-sdk-" .. versionLoc
+            else
+                return "sdk-" .. versionLoc .. "/android-binaries-" .. versionLoc
+            end
+        end})
 
+        add_versions("1.3.275+0", "6e22fb13601c1e780c44a17497a3c999cc5207e52a09819e7c32ecd8439eff7a")
         add_versions("1.2.198+0", "5436e974d6b3133b3454edf1910f76b9f869db8bbe086859b2abe32fdb539cbc")
         add_versions("1.2.189+1", "b3e69b60a67a17b023825f9eb0ce1aef22e6b59d095afa204d883a9ce3d81021")
         add_versions("1.3.261+1", "ebb324859653e15fb4a9cf7cd1b3252d1aeab370d15e19f9d0c4b7330aef790c")
     else
-        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/sdk-$(version).tar.gz", {version = function (version) return version:gsub("%+", ".") end})
+        add_urls("https://github.com/KhronosGroup/Vulkan-ValidationLayers/archive/$(version).tar.gz", {version = function (version)
+            local prefix = "sdk-"
+            if version:gt("1.3.261+1") then
+                prefix = "vulkan-sdk-"
+            end
+            return version:startswith("v") and version or prefix .. version:gsub("%+", ".")
+        end})
 
         add_versions("1.3.261+1", "1372d522f297bb3fb386802b1aa4b7f885a9e1e969a6a3c6e9b29d381357f21d")
+        add_versions("1.3.275+0", "acfd84039109220129624b0ecb69980bbc3a858978c62b556dbe16efd0f26755")
         add_versions("1.2.198+0", "4a70cc5da26baf873fcf69b081eeeda545515dd66e5904f18fee32b4d275593a")
         add_versions("1.2.189+1", "d169ae71ae3ba12159df355b58f86f5635062c695d1deac9b97d5653561d517d")
         add_versions("1.2.182+0", "e88492143c8b08154807e7ead0ac784365b14464bb5016c2800cbff176ff61e7")
@@ -22,13 +41,20 @@ package("vulkan-validationlayers")
         add_patches("1.2.154+0", "https://github.com/KhronosGroup/Vulkan-ValidationLayers/commit/9d3ef3258715573b17e8195855c76626600998be.patch", "1fa39483c345fbfb43b925e8410a55e58fa8a9776f9e5443c6e4ec994a554749")
 
         add_deps("cmake")
-
+        add_deps("glslang", "spirv-headers", "spirv-tools")
+        
         if is_plat("windows") then
             add_syslinks("Advapi32")
+        end
+
+        if is_plat("mingw") and is_subhost("msys") then
+            add_extsources("pacman::vulkan-validation-layers")   
         elseif is_plat("linux") then
-            add_extsources("apt::vulkan-validationlayers-dev", "pacman::vulkan-extra-layers")
+            add_extsources("apt::vulkan-validationlayers-dev", "pacman::vulkan-validation-layers")
             add_deps("ninja")
             add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
+        elseif is_plat("macosx") then
+            add_extsources("brew::vulkan-validationlayers")
         end
     end
 
@@ -40,6 +66,10 @@ package("vulkan-validationlayers")
         package:add("deps", "vulkan-headers " .. sdkver)
         if package:version():ge("1.2.189") then
             package:add("deps", "robin-hood-hashing")
+        end
+
+        if package:version():ge("1.3.275") then
+            package:add("deps", "vulkan-utility-libraries " .. sdkver)
         end
     end)
 

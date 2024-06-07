@@ -7,6 +7,7 @@ package("boost_ut")
     add_urls("https://github.com/boost-ext/ut/archive/refs/tags/$(version).tar.gz")
     add_urls("https://github.com/boost-ext/ut.git")
     add_versions("v1.1.9", "1a666513157905aa0e53a13fac602b5673dcafb04a869100a85cd3f000c2ed0d")
+    add_versions("v2.0.1", "1e43be17045a881c95cedc843d72fe9c1e53239b02ed179c1e39e041ebcd7dad")
 
     add_configs("modules", {description = "Enable C++20 modules", default = false, type = "boolean", readonly = true})
 

@@ -1,5 +1,4 @@
 package("libhv")
-
     set_homepage("https://github.com/ithewei/libhv")
     set_description("Like libevent, libev, and libuv, libhv provides event-loop with non-blocking IO and timer, but simpler api and richer protocols.")
 
@@ -14,6 +13,7 @@ package("libhv")
     add_versions("1.2.6", "dd5ed854f5cdc0bdd3a3310a9f0452ec194e2907006551aebbb603825a989ed1")
     add_versions("1.3.0", "e7a129dcabb541baeb8599e419380df6aa98afc6e04874ac88a6d2bdb5a973a5")
     add_versions("1.3.1", "66fb17738bc51bee424b6ddb1e3b648091fafa80c8da6d75626d12b4188e0bdc")
+    add_versions("1.3.2", "61d6d5fadf13d81c111df4514e0e61062fead21c2a8b6c4caf7706f9b002fae1")
 
     add_configs("protocol",    {description = "compile protocol", default = false, type = "boolean"})
     add_configs("http",        {description = "compile http", default = true, type = "boolean"})
@@ -28,16 +28,16 @@ package("libhv")
     add_configs("nghttp2",     {description = "with nghttp2 library", default = false, type = "boolean"})
     add_configs("openssl",     {description = "with openssl library", default = false, type = "boolean"})
     add_configs("mbedtls",     {description = "with mbedtls library", default = false, type = "boolean"})
-    add_configs("GNUTLS",      {description="with gnutls library",default=false,type="boolean"})
+    add_configs("gnutls",      {description = "with gnutls library", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread")
     elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
     elseif is_plat("windows") then
-        add_syslinks("advapi32")
+        add_syslinks("crypt32", "advapi32")
     elseif is_plat("mingw") then
-        add_syslinks("ws2_32")
+        add_syslinks("crypt32", "ws2_32", "secur32")
         add_syslinks("pthread")
     end
 
@@ -51,17 +51,20 @@ package("libhv")
         elseif package:config("curl") then
             package:add("deps", "libcurl")
         elseif package:config("nghttp2") then
-            -- TODO
+            package:add("deps", "nghttp2")
         end
-        if package:is_plat("windows") and not package:config("shared") then
+
+        if not package:config("shared") then
             package:add("defines", "HV_STATICLIB")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw", function(package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw@windows", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+
         for _, name in ipairs({"with_protocol",
                                "with_http",
                                "with_http_server",
@@ -75,7 +78,7 @@ package("libhv")
                                "enable_uds",
                                "enable_windump",
                                "use_multimap",
-                               "WITH_GNUTLS"}) do
+                               "with_gnutls"}) do
             local config_name = name:gsub("with_", ""):gsub("use_", ""):gsub("enable_", "")
             table.insert(configs, "-D" .. name:upper() .. "=" .. (package:config(config_name) and "ON" or "OFF"))
         end
@@ -97,5 +100,11 @@ package("libhv")
 
     on_test(function(package)
         assert(package:has_cfuncs("hloop_new", {includes = "hv/hloop.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include "hv/hv.h"
+            void test() {
+                const char* version = hv_compile_version();
+                printf("%s\n", version);
+            }
+        ]]}, {configs = {languages = "c++11"}}))
     end)
-

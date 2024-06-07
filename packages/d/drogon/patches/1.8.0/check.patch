@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d9dbd66..87c92e6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -379,8 +379,7 @@ if (BUILD_MYSQL)
+ 
+     if (DROGON_FOUND_MYSQL)
+         message(STATUS "Ok! We find mariadb!")
+-        include(CheckLibraryExists)
+-        check_library_exists(${MYSQL_LIB_NAME} mysql_optionsv "" HAS_MYSQL_OPTIONSV)
++        set(HAS_MYSQL_OPTIONSV TRUE)
+         if (HAS_MYSQL_OPTIONSV)
+             message(STATUS "Mariadb support mysql_optionsv")
+             add_definitions(-DHAS_MYSQL_OPTIONSV)

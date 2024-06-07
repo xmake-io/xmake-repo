@@ -1,5 +1,5 @@
 package("kiwisolver")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://kiwisolver.readthedocs.io/en/latest/")
     set_description("Efficient C++ implementation of the Cassowary constraint solving algorithm")
 

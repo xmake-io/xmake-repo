@@ -28,6 +28,10 @@ end
 
 set_languages("c++17")
 
+if is_kind("shared") then
+    add_defines("JPH_SHARED_LIBRARY")
+end
+
 target("Jolt")
     set_kind("$(kind)")
     add_includedirs(".")

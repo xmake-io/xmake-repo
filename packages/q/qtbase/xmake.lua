@@ -5,7 +5,7 @@ package("qtbase")
     set_license("LGPL-3")
 
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
-    add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
+    add_configs("runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
 
     add_deps("aqt")
 
@@ -147,7 +147,7 @@ package("qtbase")
         -- special case for cross-compilation since we need binaries we can run on the host
         if package:is_cross() then
             local runhost
-            if is_host("windows") or package:is_plat("mingw") then
+            if is_host("windows") then
                 runhost = "windows"
             elseif is_host("linux") then
                 runhost = "linux"
@@ -157,8 +157,40 @@ package("qtbase")
                 raise("unhandled host " .. os.host())
             end
 
+            local hostarch
+            if is_host("windows") then
+                local winarch
+                if os.arch():find("64", 1, true) then
+                    winarch = "64"
+                else
+                    winarch = "32"
+                end
+
+                local compiler_version
+                local vs = toolchain.load("msvc"):config("vs")
+                if tonumber(vs) >= 2019 or version:ge("6.0") then
+                    compiler_version = "msvc2019"
+                elseif vs == "2017" or vs == "2015" then
+                    compiler_version = "msvc" .. vs
+                else
+                    raise("unhandled msvc version " .. vs)
+                end
+
+                if os.arch() == "x64" then
+                    compiler_version = compiler_version .. "_64"
+                elseif os.arch() == "arm64" then
+                    compiler_version = compiler_version .. "_arm64"
+                end
+                hostarch = "win" .. winarch .. "_" .. compiler_version
+            elseif is_host("linux") then
+                hostarch = "gcc_64"
+            elseif is_host("macosx") then
+                hostarch = "clang_64"
+            end
+
             -- download qtbase to bin_host folder
-            os.vrunv("aqt", {"install-qt", "-O", path.join(installdir, "bin_host"), runhost, "desktop", versionstr, "--archives", "qtbase"})
+            os.vrunv("aqt", {"install-qt", "-O", path.join(installdir, "bin_host"),
+                runhost, "desktop", versionstr, hostarch})
 
             -- add symbolic links for useful tools
             local tool_folders = {}
@@ -183,7 +215,7 @@ package("qtbase")
             end
 
             for folder, tools in pairs(tool_folders) do
-                for _, file in pairs(os.files(path.join(installdir, "bin_host", versionstr, "*", folder, "*"))) do
+                for _, file in ipairs(os.files(path.join(installdir, "bin_host", versionstr, "*", folder, "*"))) do
                     local filename = path.filename(file)
                     if tools[filename] then
                         local targetpath = path.join(installdir, folder, filename)

@@ -17,6 +17,7 @@ package("tbox")
     add_versions("v1.6.9", "31db6cc51af7db76ad5b5da88356982b1e0f1e624c466c749646dd203b68adae")
     add_versions("v1.7.1", "236493a71ffc9d07111e906fc2630893b88d32c0a5fbb53cd94211f031bd65a1")
     add_versions("v1.7.4", "c2eb29ad0cab15b851ab54cea6ae99555222a337a0f83340ae820b4a6e76a10c")
+    add_versions("v1.7.5", "6382cf7d6110cbe6f29e8346d0e4eb078dd2cbf7e62913b96065848e351eb15e")
 
     add_configs("micro",      {description = "Compile micro core library for the embed system.", default = false, type = "boolean"})
     add_configs("float",      {description = "Enable or disable the float type.", default = true, type = "boolean"})

@@ -1,9 +1,10 @@
 package("openssl3")
-
     set_homepage("https://www.openssl.org/")
     set_description("A robust, commercial-grade, and full-featured toolkit for TLS and SSL.")
+    set_license("Apache-2.0")
 
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/openssl-$(version).zip")
+
     add_versions("3.0.7", "fcb37203c6bf7376cfd3aeb0be057937b7611e998b6c0d664abde928c8af3eb7")
     add_versions("3.0.6", "9b45be41df0d6e9cf9e340a64525177662f22808ac69aee6bfb29c511284dae4")
     add_versions("3.0.5", "4313c91fb0412e6a600493eb7c59bd555c4ff2ea7caa247a98c8456ad6f9fc74")
@@ -20,7 +21,7 @@ package("openssl3")
             package:add("deps", "nasm")
             -- the perl executable found in GitForWindows will fail to build OpenSSL
             -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
-            package:add("deps", "strawberry-perl", { system = false })
+            package:add("deps", "strawberry-perl", {system = false})
         end
 
         -- @note we must use package:is_plat() instead of is_plat in description for supporting add_deps("openssl", {host = true}) in python
@@ -43,7 +44,7 @@ package("openssl3")
     end)
 
     on_install("windows", function (package)
-        local configs = {"Configure"}
+        local configs = {"Configure", "no-tests"}
         local target
         if package:is_arch("x86", "i386") then
             target = "VC-WIN32"
@@ -59,7 +60,10 @@ package("openssl3")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
         os.vrunv("perl", configs)
-        import("package.tools.nmake").install(package)
+
+        local runenvs = import("package.tools.nmake").buildenvs(package)
+        local nmake = import("lib.detect.find_tool")("nmake", {envs = runenvs})
+        os.vrunv(nmake.program, {"install_sw"}, {envs = runenvs})
     end)
 
     on_install("mingw", function (package)

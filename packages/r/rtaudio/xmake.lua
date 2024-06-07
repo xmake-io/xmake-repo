@@ -5,6 +5,7 @@ package("rtaudio")
     add_urls("https://github.com/thestk/rtaudio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/thestk/rtaudio.git")
 
+    add_versions("6.0.1", "7206c8b6cee43b474f43d64988fefaadfdcfc4264ed38d8de5f5d0e6ddb0a123")
     add_versions("6.0.0", "bbd637a45ab54ba999883410b9bdd84529c3ac894aee9a68fc3b9a6f0686b9fb")
 
     add_configs("asio", {description = "Build ASIO API", default = false, type = "boolean"})

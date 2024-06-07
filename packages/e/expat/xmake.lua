@@ -5,6 +5,7 @@ package("expat")
     set_license("MIT")
 
     set_urls("https://github.com/libexpat/libexpat/releases/download/R_$(version).tar.bz2", {version = function (version) return version:gsub("%.", "_") .. "/expat-" .. version end})
+    add_versions("2.6.2", "9c7c1b5dcbc3c237c500a8fb1493e14d9582146dd9b42aa8d3ffb856a3b927e0")
     add_versions("2.5.0", "6f0e6e01f7b30025fa05c85fdad1e5d0ec7fd35d9f61b22f34998de11969ff67")
     add_versions("2.4.8", "a247a7f6bbb21cf2ca81ea4cbb916bfb9717ca523631675f99b3d4a5678dcd16")
     add_versions("2.4.7", "e149bdd8b90254c62b3d195da53a09bd531a4d63a963b0d8a5268d48dd2f6a65")
@@ -14,6 +15,8 @@ package("expat")
     add_versions("2.2.10", "b2c160f1b60e92da69de8e12333096aeb0c3bf692d41c60794de278af72135a5")
     add_versions("2.2.6", "17b43c2716d521369f82fc2dc70f359860e90fa440bea65b3b85f0b246ea81f2")
 
+    add_configs("char_type", {description = "Character type to use", default = "char", type = "string", values = {"char", "ushort", "wchar_t"}})
+
     add_deps("cmake")
     on_load("windows", function (package)
         if not package:config("shared") then
@@ -21,10 +24,11 @@ package("expat")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "cross", function (package)
+    on_install("windows", "linux", "macosx", "android", "mingw", "cross", function (package)
         local configs = {"-DEXPAT_BUILD_EXAMPLES=OFF", "-DEXPAT_BUILD_TESTS=OFF", "-DEXPAT_BUILD_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DEXPAT_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DEXPAT_CHAR_TYPE=" .. package:config("char_type"))
         if package:is_plat("windows") then
             table.insert(configs, "-DEXPAT_MSVC_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end

@@ -1,0 +1,41 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index cc26bcb..f1c1dcc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -27,15 +27,11 @@ project(reflectcpp)
+ 
+ set(CMAKE_CXX_STANDARD 20)
+ 
+-if (REFLECTCPP_BUILD_SHARED)
+-    add_library(reflectcpp SHARED src/yyjson.c)
+-else ()
+-    add_library(reflectcpp STATIC src/yyjson.c)
+-endif ()
++add_library(reflectcpp INTERFACE)
+ 
+-target_compile_features(reflectcpp PUBLIC cxx_std_20)
++target_compile_features(reflectcpp INTERFACE cxx_std_20)
+ 
+-target_include_directories(reflectcpp PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include> )
++target_include_directories(reflectcpp INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include> )
+ 
+ if (REFLECTCPP_BSON)
+     find_package(bson-1.0 CONFIG REQUIRED)
+@@ -82,7 +78,7 @@ if (REFLECTCPP_YAML)
+     target_link_libraries(reflectcpp INTERFACE yaml-cpp::yaml-cpp)
+ endif ()
+ 
+-target_compile_options(reflectcpp PRIVATE -Wall)
++
+ 
+ if (REFLECTCPP_BUILD_TESTS)
+     if (MSVC)
+@@ -109,7 +105,7 @@ install(
+ file(GLOB_RECURSE RFL_HEADERS RELATIVE ${CMAKE_CURRENT_LIST_DIR} "${CMAKE_CURRENT_LIST_DIR}/include/*" )
+ 
+ target_sources(reflectcpp
+-    PUBLIC
++    INTERFACE
+     FILE_SET reflectcpp_headers    
+     TYPE HEADERS
+     BASE_DIRS $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>

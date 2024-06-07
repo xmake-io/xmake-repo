@@ -7,6 +7,7 @@ package("mosquitto")
              "https://github.com/eclipse/mosquitto.git")
  
     add_versions("v2.0.15", "547f98acd2e4668c8f3b86ef61e71c755366d180565b6e7537813876467d04d9")
+    add_versions("v2.0.18", "25499231664bc5338f9f05eb1815f4d5878f0c6c97e03afb3463a7b139a7e775")
 
     if is_plat("windows") then
         add_patches("v2.0.15", path.join(os.scriptdir(), "patches", "cmake.patch"),"b241fb965f3d00bad1fddf060fe9b99cba83df32c373a4eaee2289e05abd26b6")
@@ -59,9 +60,15 @@ package("mosquitto")
                 package:add("deps", value)
             end
         end
+        if package:version():eq("2.0.18") and package:is_plat("windows") and package:is_arch("arm.*") then
+            raise("mosquitto 2.0.18 not support windows arm")
+        end
     end)
  
     on_install("windows", "linux", "macosx", function (package)
+        if package:version():eq("2.0.18") and package:is_plat("windows") then
+            io.replace("CMakeLists.txt", 'add_definitions("-D_CRT_SECURE_NO_WARNINGS")', 'add_definitions("-D_CRT_SECURE_NO_WARNINGS")\nadd_definitions("-DWIN32")', {plain = true})
+        end
         local configs ={"-DDOCUMENTATION=OFF", "-DWITH_CLIENTS=OFF", "-DWITH_APPS=OFF", "-DWITH_PLUGINS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DWITH_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))

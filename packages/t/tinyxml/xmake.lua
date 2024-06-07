@@ -7,6 +7,9 @@ package("tinyxml")
     add_urls("https://sourceforge.net/projects/tinyxml/files/tinyxml/$(version).zip", {version = function (version) return version .. "/tinyxml_" .. version:gsub("%.", "_") end})
     add_versions("2.6.2", "ac6bb9501c6f50cc922d22f26b02fab168db47521be5e845b83d3451a3e1d512")
 
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
     add_configs("stl", {description = "Enable STL support.", default = true, type = "boolean"})
 
     on_install(function (package)
@@ -20,13 +23,7 @@ package("tinyxml")
                 add_files("tinyxml.cpp", "tinystr.cpp", "tinyxmlerror.cpp", "tinyxmlparser.cpp")
                 add_headerfiles("tinyxml.h", "tinystr.h")
         ]])
-        local configs = {}
-        if not package:is_plat("windows") and package:config("shared") then
-            configs.kind = "shared"
-        elseif package:is_plat("linux") and package:config("pic") ~= false then
-            configs.cxflags = "-fPIC"
-        end
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

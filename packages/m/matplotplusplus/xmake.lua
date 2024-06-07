@@ -1,13 +1,14 @@
 package("matplotplusplus")
-
     set_homepage("https://alandefreitas.github.io/matplotplusplus/")
     set_description("A C++ Graphics Library for Data Visualization")
     set_license("MIT")
 
     add_urls("https://github.com/alandefreitas/matplotplusplus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/alandefreitas/matplotplusplus.git")
-    add_versions("v1.1.0", "5c3a1bdfee12f5c11fd194361040fe4760f57e334523ac125ec22b2cb03f27bb")
+
+    add_versions("v1.2.1", "9dd7cc92b2425148f50329f5a3bf95f9774ac807657838972d35334b5ff7cb87")
     add_versions("v1.2.0", "42e24edf717741fcc721242aaa1fdb44e510fbdce4032cdb101c2258761b2554")
+    add_versions("v1.1.0", "5c3a1bdfee12f5c11fd194361040fe4760f57e334523ac125ec22b2cb03f27bb")
 
     local configdeps = {jpeg   = "libjpeg-turbo",
                         tiff   = "libtiff",
@@ -25,9 +26,11 @@ package("matplotplusplus")
 
     add_deps("cmake")
     add_deps("nodesoup")
+
     if is_plat("windows") then
         add_syslinks("user32", "shell32", "gdi32")
     end
+
     on_load("windows", "macosx", "linux", function (package)
         for config, dep in pairs(configdeps) do
             if package:config(config) then
@@ -43,7 +46,15 @@ package("matplotplusplus")
                 raise("Your compiler is too old to use this library.")
             end
         end
-        local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DBUILD_INSTALLER=ON", "-DBUILD_PACKAGE=OFF", "-DWITH_SYSTEM_NODESOUP=ON"}
+
+        local configs = {
+            "-DBUILD_EXAMPLES=OFF",
+            "-DMATPLOTPP_BUILD_EXAMPLES=OFF",
+            "-DBUILD_TESTS=OFF",
+            "-DBUILD_INSTALLER=ON",
+            "-DBUILD_PACKAGE=OFF",
+            "-DWITH_SYSTEM_NODESOUP=ON"
+        }
         for config, dep in pairs(configdeps) do
             if not package:config(config) then
                 table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. config:upper() .. "=ON")

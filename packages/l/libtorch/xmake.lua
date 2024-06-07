@@ -12,19 +12,24 @@ package("libtorch")
     add_versions("v1.9.1", "dfbd030854359207cb3040b864614affeace11ce")
     add_versions("v1.11.0", "bc2c6edaf163b1a1330e37a6e34caf8c553e4755")
     add_versions("v1.12.1", "664058fa83f1d8eede5d66418abff6e20bd76ca8")
+    add_versions("v2.1.0", "7bcf7da3a268b435777fe87c7794c382f444e86d")
+    add_versions("v2.1.2", "a8e7c98cb95ff97bb30a728c6b2a1ce6bff946eb")
+    add_versions("v2.2.2", "39901f229520a5256505ec24782f716ee7ddc843")
 
-    add_patches("1.9.x", path.join(os.scriptdir(), "patches", "1.9.0", "gcc11.patch"), "4191bb3296f18f040c230d7c5364fb160871962d6278e4ae0f8bc481f27d8e4b")
-    add_patches("1.11.0", path.join(os.scriptdir(), "patches", "1.11.0", "gcc11.patch"), "1404b0bc6ce7433ecdc59d3412e3d9ed507bb5fd2cd59134a254d7d4a8d73012")
+    add_patches("1.9.x", "patches/1.9.0/gcc11.patch", "4191bb3296f18f040c230d7c5364fb160871962d6278e4ae0f8bc481f27d8e4b")
+    add_patches("1.11.0", "patches/1.11.0/gcc11.patch", "1404b0bc6ce7433ecdc59d3412e3d9ed507bb5fd2cd59134a254d7d4a8d73012")
     -- Fix compile on macOS. Refer to https://github.com/pytorch/pytorch/pull/80916
-    add_patches("1.12.1", path.join(os.scriptdir(), "patches", "1.12.1", "clang.patch"), "cdc3e00b2fea847678b1bcc6b25a4dbd924578d8fb25d40543521a09aab2f7d4")
-    add_patches("1.12.1", path.join(os.scriptdir(), "patches", "1.12.1", "vs2022.patch"), "5a31b9772793c943ca752c92d6415293f7b3863813ca8c5eb9d92a6156afd21d")
+    add_patches("1.12.1", "patches/1.12.1/clang.patch", "cdc3e00b2fea847678b1bcc6b25a4dbd924578d8fb25d40543521a09aab2f7d4")
+    add_patches("1.12.1", "patches/1.12.1/vs2022.patch", "5a31b9772793c943ca752c92d6415293f7b3863813ca8c5eb9d92a6156afd21d")
+    add_patches("2.2.2", "patches/2.2.2/pocketfft.patch", "8b756d867fb60839dcaeb1ee0bdf4189ee95e7f5c6f3810f8cbc8f6a5fae60e9")
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
-    add_configs("python", {description = "Build python interface.", default = false, type = "boolean"})
-    add_configs("openmp", {description = "Use OpenMP for parallel code.", default = true, type = "boolean"})
-    add_configs("cuda",   {description = "Enable CUDA support.", default = false, type = "boolean"})
-    add_configs("ninja",  {description = "Use ninja as build tool.", default = false, type = "boolean"})
-    add_configs("blas",   {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas", "eigen"}})
+    add_configs("shared",   {description = "Build shared library.", default = true, type = "boolean"})
+    add_configs("python",   {description = "Build python interface.", default = false, type = "boolean"})
+    add_configs("openmp",   {description = "Use OpenMP for parallel code.", default = true, type = "boolean"})
+    add_configs("cuda",     {description = "Enable CUDA support.", default = false, type = "boolean"})
+    -- https://github.com/pytorch/pytorch/issues/24186 only ninja is supported on windows
+    add_configs("ninja",    {description = "Use ninja as build tool.", default = is_plat("windows"), type = "boolean"})
+    add_configs("blas",     {description = "Set BLAS vendor.", default = "openblas", type = "string", values = {"mkl", "openblas", "eigen"}})
     add_configs("pybind11", {description = "Use pybind11 from xrepo.", default = false, type = "boolean"})
     add_configs("protobuf-cpp", {description = "Use protobuf from xrepo.", default = false, type = "boolean"})
     if not is_plat("macosx") then
@@ -72,9 +77,10 @@ package("libtorch")
 
     on_install("windows|x64", "macosx", "linux", function (package)
         import("package.tools.cmake")
+        import("core.tool.toolchain")
 
         if package:is_plat("windows") then
-            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            local vs = toolchain.load("msvc"):config("vs")
             if tonumber(vs) < 2019 then
                 raise("Your compiler is too old to use this library.")
             end
@@ -112,35 +118,37 @@ package("libtorch")
         end
 
         -- some patches to the third-party cmake files
+        io.replace("cmake/MiscCheck.cmake", "if(UNIX)", "if(TRUE)", {plain = true})
         io.replace("third_party/fbgemm/CMakeLists.txt", "PRIVATE FBGEMM_STATIC", "PUBLIC FBGEMM_STATIC", {plain = true})
-        -- Workaround to compile with GCC-12.
-        -- Refer to [this pytorch issue](https://github.com/pytorch/pytorch/issues/77939).
-        io.replace("third_party/fbgemm/CMakeLists.txt",
-            'string(APPEND CMAKE_CXX_FLAGS " -Werror")',
-            'string(APPEND CMAKE_CXX_FLAGS " -Werror")\n  string(APPEND CMAKE_CXX_FLAGS " -Wno-uninitialized")',
-            {plain = true}
-        )
         io.replace("third_party/protobuf/cmake/install.cmake", "install%(DIRECTORY.-%)", "")
-        if package:is_plat("windows") and package:config("vs_runtime"):startswith("MD") then
-            io.replace("third_party/fbgemm/CMakeLists.txt", "MT", "MD", {plain = true})
+        if package:is_plat("windows") then
+            if package:config("vs_runtime"):startswith("MD") then
+                io.replace("third_party/fbgemm/CMakeLists.txt", "MT", "MD", {plain = true})
+                io.replace("c10/macros/Macros.h", "extern \"C\" {\nC10_IMPORT", "extern \"C\" {\n__declspec(dllimport)", {plain = true})
+            else
+                io.replace("CMakeLists.txt", "\"NOT BUILD_SHARED_LIBS\" OFF", "\"NOT BUILD_SHARED_LIBS\" ON", {plain = true})
+                io.replace("c10/macros/Macros.h", "extern \"C\" {\nC10_IMPORT", "extern \"C\" {", {plain = true})
+            end
         end
 
         -- prepare python
-        os.vrun("python -m pip install typing_extensions pyyaml")
+        local python_exe = package:is_plat("windows") and "python" or "python3"
+        os.vrun(python_exe .. " -m pip install typing_extensions pyyaml")
         local configs = {"-DUSE_MPI=OFF",
-                         "-DCMAKE_INSTALL_LIBDIR=lib",
+                         "-DUSE_NUMA=OFF",
+                         "-DUSE_MAGMA=OFF",
                          "-DBUILD_TEST=OFF",
                          "-DATEN_NO_TEST=ON"}
         if package:config("python") then
             table.insert(configs, "-DBUILD_PYTHON=ON")
-            os.vrun("python -m pip install numpy")
+            os.vrun(python_exe .. " -m pip install numpy")
         else
             table.insert(configs, "-DBUILD_PYTHON=OFF")
             table.insert(configs, "-DUSE_NUMPY=OFF")
         end
 
         -- prepare for installation
-        local envs = cmake.buildenvs(package, {cmake_generator = "Ninja"})
+        local envs = cmake.buildenvs(package)
         if not package:is_plat("macosx") then
             if package:config("blas") == "mkl" then
                 table.insert(configs, "-DBLAS=MKL")
@@ -163,8 +171,18 @@ package("libtorch")
         table.insert(configs, "-DUSE_DISTRIBUTED=" .. (package:config("distributed") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_SYSTEM_PYBIND11=" .. (package:config("pybind11") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_CUSTOM_PROTOBUF=" .. (package:config("protobuf-cpp") and "OFF" or "ON"))
+        local pythonpath, err = os.iorun(python_exe .. " -c \"import sys; print(sys.executable)\"")
+        table.insert(configs, "-DPYTHON_EXECUTABLE=" .. pythonpath)
         if package:is_plat("windows") then
             table.insert(configs, "-DCAFFE2_USE_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DCPUINFO_RUNTIME_TYPE=" .. (package:config("vs_runtime"):startswith("MT") and "static" or "shared"))
+            local vs_sdkver = toolchain.load("msvc"):config("vs_sdkver")
+            if vs_sdkver then
+                local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
+                assert(tonumber(build_ver) >= 18362, "libtorch requires Windows SDK to be at least 10.0.18362.0")
+                table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
+                table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
+            end
         end
 
         local opt = {envs = envs}
@@ -211,5 +229,5 @@ package("libtorch")
                 auto b = torch::tensor({1, 2, 3});
                 auto c = torch::dot(a, b);
             }
-        ]]}, {configs = {languages = "c++14"}, includes = "torch/torch.h"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "torch/torch.h"}))
     end)

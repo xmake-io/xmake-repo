@@ -1,5 +1,6 @@
 add_rules("mode.debug", "mode.release")
-set_languages("cxx11")
+add_rules("utils.install.cmake_importfiles")
+set_languages("cxx14")
 
 option("dx9",              {showmenu = true,  default = false})
 option("dx10",             {showmenu = true,  default = false})
@@ -45,10 +46,14 @@ if has_config("freetype") then
 end
 
 target("imgui")
-    set_kind("static")
+    set_kind("$(kind)")
     add_files("*.cpp", "misc/cpp/*.cpp")
     add_headerfiles("*.h", "(misc/cpp/*.h)")
     add_includedirs(".", "misc/cpp")
+
+    if is_kind("shared") and is_plat("windows", "mingw") then
+        add_defines("IMGUI_API=__declspec(dllexport)")
+    end
 
     if has_config("dx9") then
         add_files("backends/imgui_impl_dx9.cpp")
@@ -124,7 +129,7 @@ target("imgui")
         add_files("backends/imgui_impl_win32.cpp")
         add_headerfiles("(backends/imgui_impl_win32.h)")
     end
-    
+
     if has_config("wgpu") then
         add_files("backends/imgui_impl_wgpu.cpp")
         add_headerfiles("(backends/imgui_impl_wgpu.h)")

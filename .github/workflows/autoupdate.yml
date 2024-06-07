@@ -1,0 +1,43 @@
+name: Auto-update packages
+
+on:
+  schedule: # execute every 24 hours
+    - cron: "0 */24 * * *"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: branch@master
+
+      - name: Installation
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install -y gh unzip zip
+          echo ${{ secrets.XMAKE_REPO_TOKEN }} | gh auth login --with-token
+          git config --global user.email "waruqi@gmail.com"
+          git config --global user.name "ruki"
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          name: id_rsa # optional
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Auto-update packages
+        if: ${{ github.repository }} == "xmake-io/xmake-repo"
+        run: |
+          xmake l -vD scripts/autoupdate.lua
+
+

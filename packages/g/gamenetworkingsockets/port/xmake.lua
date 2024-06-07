@@ -1,15 +1,16 @@
-set_languages("gnu11")
 option("webrtc", {default = false, showmenu = true})
 
 add_rules("mode.debug", "mode.release")
 
 add_requires("protobuf-cpp", "openssl")
+
 if has_config("webrtc") then
     add_requires("abseil")
     target("webrtc-lite")
         add_rules("c++")
         set_kind("static")
         add_packages("protobuf-cpp")
+
         if is_plat("windows") then
             add_defines("WEBRTC_WIN", "NOMINMAX", "WIN32_LEAN_AND_MEAN", "_WINSOCKAPI_")
             add_cxflags("/wd4715", "/wd4005", "/wd4996", "/wd4530")
@@ -428,7 +429,8 @@ end
 
 target("gns") -- we need limit path length
     set_kind("$(kind)")
-
+    add_rules("protobuf.cpp")
+    set_languages("gnu17", "gnu++17")
     add_vectorexts("sse2")
     add_packages("protobuf-cpp", "openssl")
     set_basename("gamenetworkingsockets")
@@ -481,9 +483,10 @@ target("gns") -- we need limit path length
                 "src/common/crypto_25519_openssl.cpp",
                 "src/common/opensslwrapper.cpp")
 
-    add_files(  "src/common/steamnetworkingsockets_messages_certs.proto",
-                "src/common/steamnetworkingsockets_messages.proto",
-                "src/common/steamnetworkingsockets_messages_udp.proto", {rules = "protobuf.cpp"})
+    add_files("src/common/steamnetworkingsockets_messages_certs.proto",
+              "src/common/steamnetworkingsockets_messages.proto",
+              "src/common/steamnetworkingsockets_messages_udp.proto")
+
     add_files(  "src/common/crypto.cpp",
                 "src/common/crypto_textencode.cpp",
                 "src/common/keypair.cpp",

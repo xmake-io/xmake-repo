@@ -5,6 +5,7 @@ package("fdk-aac")
 
     add_urls("https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/mstorsjo/fdk-aac.git")
+    add_versions("2.0.3", "e25671cd96b10bad896aa42ab91a695a9e573395262baed4e4a2ff178d6a3a78")
     add_versions("2.0.0", "6e6c7921713788e31df655911e1d42620b057180b00bf16874f5d630e1d5b9a2")
     add_versions("2.0.1", "a4142815d8d52d0e798212a5adea54ecf42bcd4eec8092b37a8cb615ace91dc6")
     add_versions("2.0.2", "7812b4f0cf66acda0d0fe4302545339517e702af7674dd04e5fe22a5ade16a90")
