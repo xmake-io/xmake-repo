@@ -41,9 +41,6 @@ package("proj")
         if package:config("curl") and (package:version():le(9.4)) then
             io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl", {plain = true})
         end
-        if package:is_plat("windows") and not package:config("shared") then
-            io.replace("src/proj.h", "#ifndef PROJ_DLL", "#define PROJ_DLL\n#ifndef PROJ_DLL", {plain = true})
-        end
         local configs = {"-DNLOHMANN_JSON_ORIGIN=external", "-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -57,6 +54,11 @@ package("proj")
             import("package.tools.cmake").install(package, configs, {shflags = exflags, ldflags = exflags})
         else
             import("package.tools.cmake").install(package, configs)
+        end
+
+        if not package:config("shared") then
+            -- public compile definitions in CMake
+            package:add("defines", "PROJ_DLL=")
         end
     end)
 
