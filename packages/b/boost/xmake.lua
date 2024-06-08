@@ -256,8 +256,8 @@ package("boost")
                 local dep = package:dep(depname)
                 local info = dep:fetch({external = false})
                 if info then
-                    local usStr = format("\nusing %s : : <include>\"%s\" <search>\"%s\" ;",rule, info.includedirs[1], info.linkdirs[1])              
-                    file:write(usStr)
+                    local usingstr = format("\nusing %s : : <include>\"%s\" <search>\"%s\" ;",rule, info.includedirs[1], info.linkdirs[1])              
+                    file:write(usingstr)
                 end
         end
         local file = io.open("user-config.jam", "w")
