@@ -11,6 +11,7 @@ package("protobuf-cpp")
         end
     end})
 
+    add_versions("27.1", "7d7f2ddccc37e3c1c5dfe65ad69d99923d8fe84beac68ed9cdec489909c4d8d3")
     add_versions("27.0", "3e1148db090ff21226c1888ef39fa7bc7790042be21ff4289fd21ce1735f3455")
     add_versions("26.1", "e15c272392df84ae95797759c685a9225fe5e88838bab3e0650c29239bdfccdd")
     add_versions("3.8.0", "91ea92a8c37825bd502d96af9054064694899c5c7ecea21b8d11b1b5e7e993b5")
