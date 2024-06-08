@@ -9,6 +9,17 @@ package("bytepack")
 
     add_versions("v0.1.0", "7761cf51736d4e1a65ca69323182930967846eaed04adddfd316f59a5c2eb244")
 
+    on_check(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <algorithm>
+            #include <string>
+            void test() {
+                std::string s{"xmake"};
+                std::ranges::reverse(s.begin(), s.end());
+            }
+        ]]}, {configs = {languages = "c++20"}}), "package(bytepack) Require at least C++20.")
+    end)
+
     on_install(function (package)
         os.cp("include", package:installdir())
     end)
