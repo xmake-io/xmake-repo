@@ -11,10 +11,21 @@ package("sse2neon")
 
     if is_plat("windows") then
         add_cxxflags("/Zc:preprocessor")
+    elseif is_plat("cross") then
+        add_cxxflags("-mfpu=neon")
     end
 
     on_check(function (package)
         assert(package:is_arch("arm.*"), "package(sse2neon): only support arm")
+        if package:is_plat("windows") then
+            import("core.tool.toolchain")
+
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            if msvc then
+                local vs = msvc:config("vs")
+                assert(vs and tonumber(vs) >= 2022, "package(sse2neon): need vs >= 2022")
+            end
+        end
     end)
 
     on_install(function (package)
