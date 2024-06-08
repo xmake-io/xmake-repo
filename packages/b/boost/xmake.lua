@@ -78,8 +78,8 @@ package("boost")
     for _, libname in ipairs(libnames) do
         add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
     end
-    add_configs("nozstd", {description = "disable zstd for iostreams", default = true, type = "boolean"})
-    add_configs("nolzma", {description = "disable lzma for iostreams", default = true, type = "boolean"})
+    add_configs("zstd", {description = "enable zstd for iostreams", default = false, type = "boolean"})
+    add_configs("lzma", {description = "enable lzma for iostreams", default = false, type = "boolean"})
 
     on_load(function (package)
         local function get_linkname(package, libname)
@@ -142,10 +142,10 @@ package("boost")
             package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
         if  package:is_plat("linux") then
-            if not package:config("nozstd") then
+            if package:config("zstd") then
                 package:add("deps", "zstd")
             end
-            if not package:config("nolzma") then
+            if package:config("lzma") then
                 package:add("deps", "xz")
             end
         end
@@ -261,10 +261,10 @@ package("boost")
         local file = io.open("user-config.jam", "w")
         if file then
             file:write(get_compiler(package, build_toolchain))
-            if not package:config("nolzma") then
+            if package:config("lzma") then
                 config_deppath(file, "xz", "lzma")
             end
-            if not package:config("nozstd") then
+            if package:config("zstd") then
                 config_deppath(file, "zstd", "zstd")
             end
             file:close()
@@ -290,10 +290,10 @@ package("boost")
             "runtime-debugging=" .. (package:is_debug() and "on" or "off")
         }
 
-        if package:config("nolzma") then
+        if not package:config("lzma") then
             table.insert(argv,"-sNO_LZMA=1")
         end
-        if package:config("nozstd") then
+        if not package:config("zstd") then
             table.insert(argv,"-sNO_ZSTD=1")
         end
 
@@ -436,8 +436,7 @@ package("boost")
         end
 
         if package:config("iostreams") then
-            if not package:config("nozstd") then
-                print("check iostreams.zstd")
+            if package:config("zstd") then
                 assert(package:check_cxxsnippets({test = [[
                 #include <boost/iostreams/filter/zstd.hpp>
                 #include <boost/iostreams/filtering_stream.hpp>
@@ -448,8 +447,7 @@ package("boost")
                 }
                 ]]}, {configs = {languages = "c++14"}}))
             end
-            if not package:config("nolzma") then
-                print("check iostreams.lzma")
+            if package:config("lzma") then
                 assert(package:check_cxxsnippets({test = [[
                 #include <boost/iostreams/filter/lzma.hpp>
                 #include <boost/iostreams/filtering_stream.hpp>
