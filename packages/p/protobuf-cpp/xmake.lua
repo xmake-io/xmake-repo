@@ -1,5 +1,4 @@
 package("protobuf-cpp")
-
     set_homepage("https://developers.google.com/protocol-buffers/")
     set_description("Google's data interchange format for cpp")
 
@@ -85,18 +84,26 @@ package("protobuf-cpp")
     end)
 
     on_test(function (package)
-        if package:is_cross() then
-            return
+        if not package:is_cross() then
+            io.writefile("test.proto", [[
+                syntax = "proto3";
+                package test;
+                message TestCase {
+                    string name = 4;
+                }
+                message Test {
+                    repeated TestCase case = 1;
+                }
+            ]])
+            os.vrun("protoc test.proto --cpp_out=.")
         end
-        io.writefile("test.proto", [[
-            syntax = "proto3";
-            package test;
-            message TestCase {
-                string name = 4;
+
+        assert(package:check_cxxsnippets({test = [[
+            #include <google/protobuf/timestamp.pb.h>
+            #include <google/protobuf/util/time_util.h>
+            void test() {
+                google::protobuf::Timestamp ts;
+                google::protobuf::util::TimeUtil::FromString("1972-01-01T10:00:20.021Z", &ts);
             }
-            message Test {
-                repeated TestCase case = 1;
-            }
-        ]])
-        os.vrun("protoc test.proto --cpp_out=.")
+        ]]}, {configs = {languages = "c++17"}}))
     end)
