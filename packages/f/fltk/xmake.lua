@@ -44,7 +44,7 @@ package("fltk")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "mingw", "android", function (package)
         for _, file in ipairs(os.files("**.cxx")) do
             io.replace(file, "<libpng/png.h>", "<png.h>", {plain = true})
         end
@@ -65,7 +65,12 @@ package("fltk")
             table.insert(configs, "-DOPTION_USE_PANGO=" .. (package:config("pango") and "ON" or "OFF"))
             table.insert(configs, "-DOPTION_USE_XFT=" .. (package:config("xft") and "ON" or "OFF"))
         end
-        import("package.tools.cmake").install(package, configs)
+
+        local packagedeps
+        if package:is_plat("linux") then
+            packagedeps = "libxfixes"
+        end
+        import("package.tools.cmake").install(package, configs. {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
