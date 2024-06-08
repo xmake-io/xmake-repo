@@ -11,7 +11,9 @@ package("cppcheck")
     add_deps("cmake")
 
     on_install("windows|x64", "macosx", "linux", "msys", function (package)
-        local configs = {}
+        io.replace("cmake/findDependencies.cmake", "find_program(LIBXML2_XMLLINT_EXECUTABLE xmllint)", "", {plain = true})
+
+        local configs = {"-DLIBXML2_XMLLINT_EXECUTABLE=OFF"}
         if package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
         end
