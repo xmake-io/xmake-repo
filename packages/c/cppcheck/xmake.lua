@@ -17,6 +17,7 @@ package("cppcheck")
         end
 
         io.replace("cmake/compileroptions.cmake", "add_compile_options($<$<NOT:$<CONFIG:Debug>>:/MD>)", "", {plain = true})
+        io.replace("cmake/compileroptions.cmake", "add_compile_options($<$<NOT:$<CONFIG:Debug>>:/MDd>)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
