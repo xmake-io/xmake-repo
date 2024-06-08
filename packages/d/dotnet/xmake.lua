@@ -88,7 +88,7 @@ package("dotnet")
                 ["7.0.4"] = "d3fe9043-0ff4-4584-aacf-1ad41c47407b/7b84ed341359488cd0de21de1b4df6d0/dotnet-sdk-7.0.202-osx-x64",
                 ["7.0.15"] = "77e1c2df-aaa1-44aa-abc5-ffca44b1dfc9/1fea5228f09398a885ca956d1b537f02/dotnet-sdk-7.0.405-osx-x64",
                 ["8.0.1"] = "c7f806d2-1483-4a52-893a-4de1054b0bff/a6f52ed50876c45f859192b6576a14d5/dotnet-sdk-8.0.101-osx-x64",
-                ["8.0.6"] = "6ef47a54-b1c6-4000-8df4-486f64464c2b/ae87b597b19312fa9f73b9f2f8c687bd/dotnet-sdk-8.0.301-osx-x64.tar.gz",
+                ["8.0.6"] = "6ef47a54-b1c6-4000-8df4-486f64464c2b/ae87b597b19312fa9f73b9f2f8c687bd/dotnet-sdk-8.0.301-osx-x64",
             }
             set_urls("https://download.visualstudio.microsoft.com/download/pr/$(version).tar.gz", {version = function (version)
                 return versions[tostring(version)]
@@ -103,7 +103,7 @@ package("dotnet")
                 ["7.0.4"] = "4402413a-ef81-4732-a0c0-38f11694b226/e205b8bf48d95902a6dbe1c3cccca272/dotnet-sdk-7.0.202-osx-arm64",
                 ["7.0.15"] = "5bb0e0e4-2a8d-4aba-88ad-232e1f65c281/ee6d35f762d81965b4cf336edde1b318/dotnet-sdk-7.0.405-osx-arm64",
                 ["8.0.1"] = "ef083c06-7aee-4a4f-b18b-50c9a8990753/e206864e7910e81bbd9cb7e674ff1b4c/dotnet-sdk-8.0.101-osx-arm64",
-                ["8.0.6"] = "c503e53c-0567-4604-b7a8-1d6e7a1357f5/53e78f56b01147a092c0cc273b443550/dotnet-sdk-8.0.301-osx-arm64.tar.gz",
+                ["8.0.6"] = "c503e53c-0567-4604-b7a8-1d6e7a1357f5/53e78f56b01147a092c0cc273b443550/dotnet-sdk-8.0.301-osx-arm64",
             }
             set_urls("https://download.visualstudio.microsoft.com/download/pr/$(version).tar.gz", {version = function (version)
                 return versions[tostring(version)]
