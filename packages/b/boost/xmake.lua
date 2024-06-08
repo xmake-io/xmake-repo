@@ -252,11 +252,13 @@ package("boost")
             end
         end
 
-        local function config_deppath(file,depName,ruleName)
-                local dep = package:dep(depName)
+        local function config_deppath(file, depname, rule)
+                local dep = package:dep(depname)
                 local info = dep:fetch({external = false})
-                local usStr = format("\nusing %s : : <include>\"%s\" <search>\"%s\" ;",ruleName, info.includedirs[1], info.linkdirs[1])              
-                file:write(usStr)
+                if info then
+                    local usStr = format("\nusing %s : : <include>\"%s\" <search>\"%s\" ;",rule, info.includedirs[1], info.linkdirs[1])              
+                    file:write(usStr)
+                end
         end
         local file = io.open("user-config.jam", "w")
         if file then
@@ -291,12 +293,11 @@ package("boost")
         }
 
         if not package:config("lzma") then
-            table.insert(argv,"-sNO_LZMA=1")
+            table.insert(argv, "-sNO_LZMA=1")
         end
         if not package:config("zstd") then
-            table.insert(argv,"-sNO_ZSTD=1")
+            table.insert(argv, "-sNO_ZSTD=1")
         end
-
 
         if package:config("lto") then
             table.insert(argv, "lto=on")
@@ -438,26 +439,25 @@ package("boost")
         if package:config("iostreams") then
             if package:config("zstd") then
                 assert(package:check_cxxsnippets({test = [[
-                #include <boost/iostreams/filter/zstd.hpp>
-                #include <boost/iostreams/filtering_stream.hpp>
-                int main(int argc, char* argv[]) {
-                boost::iostreams::filtering_ostream out;
-                out.push(boost::iostreams::zstd_compressor());
-                return 0;
-                }
+                    #include <boost/iostreams/filter/zstd.hpp>
+                    #include <boost/iostreams/filtering_stream.hpp>
+                    static void test() {
+                        boost::iostreams::filtering_ostream out;
+                        out.push(boost::iostreams::zstd_compressor());
+                        return 0;
+                    }
                 ]]}, {configs = {languages = "c++14"}}))
             end
             if package:config("lzma") then
                 assert(package:check_cxxsnippets({test = [[
-                #include <boost/iostreams/filter/lzma.hpp>
-                #include <boost/iostreams/filtering_stream.hpp>
-                int main(int argc, char* argv[]) {
-                boost::iostreams::filtering_ostream out;
-                out.push(boost::iostreams::lzma_compressor());
-                return 0;
-                }
-            ]]}, {configs = {languages = "c++14"}}))
+                    #include <boost/iostreams/filter/lzma.hpp>
+                    #include <boost/iostreams/filtering_stream.hpp>
+                    static void test() {
+                        boost::iostreams::filtering_ostream out;
+                        out.push(boost::iostreams::lzma_compressor());
+                        return 0;
+                    }
+                 ]]}, {configs = {languages = "c++14"}}))
             end
         end
-
     end)
