@@ -70,7 +70,7 @@ package("fltk")
         if package:is_plat("linux") then
             packagedeps = "libxfixes"
         end
-        import("package.tools.cmake").install(package, configs. {packagedeps = packagedeps})
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
