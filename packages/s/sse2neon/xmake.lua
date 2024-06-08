@@ -11,8 +11,6 @@ package("sse2neon")
 
     if is_plat("windows") then
         add_cxxflags("/Zc:preprocessor")
-    elseif is_plat("cross") then
-        add_cxxflags("-mfpu=neon")
     end
 
     on_check(function (package)
@@ -28,7 +26,7 @@ package("sse2neon")
         end
     end)
 
-    on_install(function (package)
+    on_install("!cross", function (package)
         assert(package:is_arch("arm.*"), "package(sse2neon): only support arm")
         os.vcp("sse2neon.h", package:installdir("include"))
     end)
