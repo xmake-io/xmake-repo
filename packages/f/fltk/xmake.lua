@@ -2,10 +2,14 @@ package("fltk")
     set_homepage("https://www.fltk.org")
     set_description("Fast Light Toolkit")
 
+    add_urls("https://www.fltk.org/pub/fltk/$(version)/fltk-$(version)-source.tar.bz2", {alias = "home"})
+    add_urls("https://github.com/fltk/fltk/archive/refs/tags/release-$(version).tar.gz", {alias = "github"})
     add_urls("https://github.com/fltk/fltk/archive/d7985607d6dd8308f104d84c778080731fa23c9a.zip",
              "https://github.com/fltk/fltk.git")
 
-    add_versions("1.4.0", "43d398ab068732cb1debd9a98d124e47c9da6f53cdf3e36f22868a54cca0c371")
+    add_versions("home:1.3.9", "103441134915402808fd45424d4061778609437e804334434e946cfd26b196c2")
+    add_versions("github:1.3.9", "f30661851a61f1931eaaceb9ef4005584c85cb07fd7ffc38a645172b8e4eb3df")
+    -- add_versions("1.4.0", "43d398ab068732cb1debd9a98d124e47c9da6f53cdf3e36f22868a54cca0c371")
 
     if is_plat("linux") then
         add_configs("pango",   {description = "Use pango for font support", default = false, type = "boolean"})
@@ -54,6 +58,7 @@ package("fltk")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DOPTION_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DFLTK_MSVC_RUNTIME_DLL=" .. (package:has_runtime("MD") and "ON" or "OFF"))
         table.insert(configs, "-DFLTK_BUILD_FLUID=" .. (package:config("fluid") and "ON" or "OFF"))
         table.insert(configs, "-DFLTK_BUILD_FORMS=" .. (package:config("forms") and "ON" or "OFF"))
         if package:is_plat("linux") then
