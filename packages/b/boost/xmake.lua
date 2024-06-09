@@ -78,6 +78,8 @@ package("boost")
     for _, libname in ipairs(libnames) do
         add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
     end
+    add_configs("zstd", {description = "enable zstd for iostreams", default = false, type = "boolean"})
+    add_configs("lzma", {description = "enable lzma for iostreams", default = false, type = "boolean"})
 
     on_load(function (package)
         local function get_linkname(package, libname)
@@ -138,6 +140,14 @@ package("boost")
                 package:add("defines", "BOOST_PYTHON_STATIC_LIB")
             end
             package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
+        end
+        if package:is_plat("linux") then
+            if package:config("zstd") then
+                package:add("deps", "zstd")
+            end
+            if package:config("lzma") then
+                package:add("deps", "xz")
+            end
         end
     end)
 
@@ -242,9 +252,23 @@ package("boost")
             end
         end
 
+        local function config_deppath(file, depname, rule)
+                local dep = package:dep(depname)
+                local info = dep:fetch({external = false})
+                if info then
+                    local usingstr = format("\nusing %s : : <include>\"%s\" <search>\"%s\" ;",rule, info.includedirs[1], info.linkdirs[1])              
+                    file:write(usingstr)
+                end
+        end
         local file = io.open("user-config.jam", "w")
         if file then
             file:write(get_compiler(package, build_toolchain))
+            if package:config("lzma") then
+                config_deppath(file, "xz", "lzma")
+            end
+            if package:config("zstd") then
+                config_deppath(file, "zstd", "zstd")
+            end
             file:close()
         end
         os.vrun("./b2 headers")
@@ -260,8 +284,6 @@ package("boost")
             "-q", -- quit on first error
             "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
-            "-sNO_LZMA=1",
-            "-sNO_ZSTD=1",
             "install",
             "threading=" .. (package:config("multi") and "multi" or "single"),
             "debug-symbols=" .. (package:debug() and "on" or "off"),
@@ -269,6 +291,13 @@ package("boost")
             "variant=" .. (package:is_debug() and "debug" or "release"),
             "runtime-debugging=" .. (package:is_debug() and "on" or "off")
         }
+
+        if not package:config("lzma") then
+            table.insert(argv, "-sNO_LZMA=1")
+        end
+        if not package:config("zstd") then
+            table.insert(argv, "-sNO_ZSTD=1")
+        end
 
         if package:config("lto") then
             table.insert(argv, "lto=on")
@@ -405,5 +434,30 @@ package("boost")
                     }
                 }
             ]]}, {configs = {languages = "c++14"}}))
+        end
+
+        if package:config("iostreams") then
+            if package:config("zstd") then
+                assert(package:check_cxxsnippets({test = [[
+                    #include <boost/iostreams/filter/zstd.hpp>
+                    #include <boost/iostreams/filtering_stream.hpp>
+                    static void test() {
+                        boost::iostreams::filtering_ostream out;
+                        out.push(boost::iostreams::zstd_compressor());
+                        return 0;
+                    }
+                ]]}, {configs = {languages = "c++14"}}))
+            end
+            if package:config("lzma") then
+                assert(package:check_cxxsnippets({test = [[
+                    #include <boost/iostreams/filter/lzma.hpp>
+                    #include <boost/iostreams/filtering_stream.hpp>
+                    static void test() {
+                        boost::iostreams::filtering_ostream out;
+                        out.push(boost::iostreams::lzma_compressor());
+                        return 0;
+                    }
+                 ]]}, {configs = {languages = "c++14"}}))
+            end
         end
     end)
