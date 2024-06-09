@@ -141,7 +141,7 @@ package("boost")
             end
             package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
-        if  package:is_plat("linux") then
+        if package:is_plat("linux") then
             if package:config("zstd") then
                 package:add("deps", "zstd")
             end
