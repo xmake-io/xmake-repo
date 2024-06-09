@@ -1,11 +1,11 @@
 package("libuv")
-
     set_homepage("http://libuv.org/")
     set_description("A multi-platform support library with a focus on asynchronous I/O.")
     set_license("MIT")
 
     set_urls("https://github.com/libuv/libuv/archive/refs/tags/$(version).zip",
              "https://github.com/libuv/libuv.git")
+
     add_versions("v1.46.0", "45953dc9b64db7f4f47561f9e4543b762c52adfe7c9b6f8e9efbc3b4dd7d3081")
     add_versions("v1.44.1", "d233a9c522a9f4afec47b0d12f302d93d114a9e3ea104150e65f55fd931518e6")
     add_versions("v1.42.0", "031130768b25ae18c4b9d4a94ba7734e2072b11c6fce3e554612c516c3241402")
@@ -51,7 +51,7 @@ package("libuv")
         end
     end)
 
-    on_install("windows", function (package)
+    on_install(function (package)
         local configs = {"-DLIBUV_BUILD_TESTS=OFF", "-DLIBUV_BUILD_BENCH=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBUV_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
@@ -61,7 +61,7 @@ package("libuv")
         end
     end)
 
-    on_install("macosx", "linux", "android@linux,macosx", "mingw@linux,macosx", function (package)
+    on_install("macosx", "linux", "android@linux,macosx", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared=yes")
