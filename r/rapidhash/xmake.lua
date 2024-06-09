@@ -3,7 +3,7 @@ package("rapidhash")
     set_description("Very fast, high quality, platform independant hashing algorithm.")
     set_homepage("https://github.com/Nicoshev/rapidhash")
 
-    add_urls("https://github.com/Nicoshev/rapidhash")
+    add_urls("https://github.com/Nicoshev/rapidhash.git")
     add_versions("2024.06.06", "e795829fedad966b627b316183901d2670a40af8")
 
     on_install(function(package)
