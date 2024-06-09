@@ -53,7 +53,7 @@ package("libuv")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local version = package:version()
         if version:ge("1.46.0") or is_host("windows") then
             local configs = {"-DLIBUV_BUILD_TESTS=OFF", "-DLIBUV_BUILD_BENCH=OFF"}
