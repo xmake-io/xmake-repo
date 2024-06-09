@@ -22,60 +22,56 @@ package("libuv")
     add_versions("v1.23.0", "ffa1aacc9e8374b01d1ff374b1e8f1e7d92431895d18f8e9d5e59a69a2a00c30")
     add_versions("v1.22.0", "1e8e51531732f8ef5867ae3a40370814ce2e4e627537e83ca519d40b424dced0")
 
-    if is_host("windows") then
-        add_deps("cmake")
-    else
-        add_deps("autoconf", "automake", "libtool", "pkg-config")
-    end
-
     if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows", "mingw") then
         add_syslinks("advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "shell32", "ole32", "uuid", "dbghelp")
     end
 
-    on_load("windows", function (package)
+    on_load(function (package)
         local version = package:version()
-        if version:ge("1.45") then
-            package:add("links", package:config("shared") and "uv" or "libuv")
+        if version:ge("1.46.0") or is_host("windows") then
+            package:add("deps", "cmake")
         else
-            package:add("links", package:config("shared") and "uv" or "uv_a")
+            package:add("autoconf", "automake", "libtool", "pkg-config")
         end
-        if package:config("shared") then
-            package:add("defines", "USING_UV_SHARED")
-        end
-        if version:ge("1.40") and version:lt("1.44") then
-            package:add("linkdirs", path.join("lib", package:debug() and "Debug" or "Release"))
+
+        if package:is_plat("windows") then
+            if version:ge("1.45") then
+                package:add("links", package:config("shared") and "uv" or "libuv")
+            else
+                package:add("links", package:config("shared") and "uv" or "uv_a")
+            end
+            if package:config("shared") then
+                package:add("defines", "USING_UV_SHARED")
+            end
+            if version:ge("1.40") and version:lt("1.44") then
+                package:add("linkdirs", path.join("lib", package:is_debug() and "Debug" or "Release"))
+            end
         end
     end)
 
     on_install(function (package)
-        local configs = {"-DLIBUV_BUILD_TESTS=OFF", "-DLIBUV_BUILD_BENCH=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DLIBUV_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
-        if package:version():lt("1.40") then
-            os.cp("include", package:installdir())
-        end
-    end)
-
-    on_install("macosx", "linux", "android@linux,macosx", function (package)
-        local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
+        local version = package:version()
+        if version:ge("1.46.0") or is_host("windows") then
+            local configs = {"-DLIBUV_BUILD_TESTS=OFF", "-DLIBUV_BUILD_BENCH=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DLIBUV_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
+            if version:lt("1.40") then
+                os.cp("include", package:installdir())
+            end
         else
-            table.insert(configs, "--enable-shared=no")
+            local configs = {}
+            table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+            if package:is_plat("iphoneos") and version:ge("1.40") and version:lt("1.44") then
+                -- fix CoreFoundation type definition
+                io.replace("src/unix/darwin.c", "!TARGET_OS_IPHONE", "1", {plain = true})
+            end
+            import("package.tools.autoconf").install(package, configs)
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-        if package:is_plat("iphoneos") and package:version():ge("1.40") and package:version():lt("1.44") then
-            -- fix CoreFoundation type definition
-            io.replace("src/unix/darwin.c", "!TARGET_OS_IPHONE", "1", {plain = true})
-        end
-        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
