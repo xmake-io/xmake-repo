@@ -444,7 +444,6 @@ package("boost")
                     static void test() {
                         boost::iostreams::filtering_ostream out;
                         out.push(boost::iostreams::zstd_compressor());
-                        return 0;
                     }
                 ]]}, {configs = {languages = "c++14"}}))
             end
@@ -455,7 +454,6 @@ package("boost")
                     static void test() {
                         boost::iostreams::filtering_ostream out;
                         out.push(boost::iostreams::lzma_compressor());
-                        return 0;
                     }
                  ]]}, {configs = {languages = "c++14"}}))
             end
