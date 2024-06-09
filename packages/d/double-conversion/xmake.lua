@@ -6,6 +6,7 @@ package("double-conversion")
 
     add_urls("https://github.com/google/double-conversion/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/double-conversion.git")
+    add_versions("v3.3.0", "04ec44461850abbf33824da84978043b22554896b552c5fd11a9c5ae4b4d296e")
     add_versions("v3.1.5", "a63ecb93182134ba4293fd5f22d6e08ca417caafa244afaa751cbfddf6415b13")
 
     add_deps("cmake")

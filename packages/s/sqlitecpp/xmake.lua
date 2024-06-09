@@ -1,11 +1,12 @@
 package("sqlitecpp")
-
     set_homepage("http://srombauts.github.io/SQLiteCpp")
     set_description("SQLiteC++ (SQLiteCpp) is a smart and easy to use C++ SQLite3 wrapper.")
+    set_license("MIT")
 
     set_urls("https://github.com/SRombauts/SQLiteCpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/SRombauts/SQLiteCpp.git")
 
+    add_versions("3.3.1", "71f990f9fb4b004533b6859ce40729af823b87fe691dd99ca084a7fd40db54b9")
     add_versions("3.2.1", "70c67d5680c47460f82a7abf8e6b0329bf2fb10795a982a6d8abc06adb42d693")
 
     if is_plat("android", "wasm") then
@@ -51,18 +52,28 @@ package("sqlitecpp")
         table.insert(configs, "-DSQLITE_OMMIT_LOAD_EXTENSION=" .. (package:config("ommit_load_extension") and "ON" or "OFF"))
         table.insert(configs, "-DSQLITECPP_DISABLE_STD_FILESYSTEM=" .. (package:config("filesystem") and "ON" or "OFF"))
         table.insert(configs, "-DSQLITECPP_USE_STACK_PROTECTION=" .. (package:config("stack_protection") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        if is_plat("windows") then
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+
+        if package:is_plat("windows") then
             if package:config("shared") then
                 if package:version():gt("3.2.1") then
-                    table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
+                    package:add("defines", "SQLITECPP_COMPILE_DLL")
                 else
+                    table.remove(configs, #configs) -- BUILD_SHARED_LIBS
                     table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
                 end
             end
             table.insert(configs, "-DSQLITECPP_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        os.trycp("**.dll", package:installdir("bin"))
+        os.trycp("**.so", package:installdir("lib"))
+        if package:config("sqlite3_external") then
+            os.tryrm(package:installdir("bin/sqlite3*"))
+            os.tryrm(package:installdir("lib/sqlite3*"))
+        end
     end)
 
     on_test(function (package)

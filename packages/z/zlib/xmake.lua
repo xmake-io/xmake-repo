@@ -2,6 +2,7 @@ package("zlib")
 
     set_homepage("http://www.zlib.net")
     set_description("A Massively Spiffy Yet Delicately Unobtrusive Compression Library")
+    set_license("zlib")
 
     add_urls("https://github.com/madler/zlib/archive/$(version).tar.gz")
     add_urls("https://github.com/madler/zlib.git")
@@ -23,7 +24,7 @@ package("zlib")
     end
 
     on_fetch(function (package, opt)
-        if xmake:version():lt("2.8.7") then return end -- disable system find if the bug is present
+        if xmake.version():lt("2.8.7") then return end -- disable system find if the bug is present
         if opt.system then
             if not package:is_plat("windows", "mingw") then
                 return package:find_package("system::z", {includes = "zlib.h"})

@@ -6,6 +6,7 @@ package("libsigcplusplus")
     add_urls("https://github.com/libsigcplusplus/libsigcplusplus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libsigcplusplus/libsigcplusplus.git")
 
+    add_versions("3.6.0", "bbe81e4f6d8acb41a9795525a38c0782751dbc4af3d78a9339f4a282e8a16c38")
     add_versions("3.4.0", "445d889079041b41b368ee3b923b7c71ae10a54da03bc746f2d0723e28ba2291")
 
     add_configs("deprecated_api", {description = "Build deprecated API and include it in the library", default = false, type = "boolean"})
@@ -19,26 +20,32 @@ package("libsigcplusplus")
     on_install("windows", "linux", "macosx", "mingw", "msys", "iphoneos", "cross", "wasm", function (package)
         local configs = {"-Dvalidation=false", "-Dbuild-examples=false", "-Dbuild-tests=false"}
         table.insert(configs, "-Dbuild-deprecated-api=" .. (package:config("deprecated_api") and "true" or "false"))
+
+        local shflags = {}
         if package:config("shared") then
             table.insert(configs, "-Ddefault_library=shared")
+
+            if package:is_plat("linux", "macosx") then
+                shflags = "-lstdc++"
+            end
         else
             table.insert(configs, "-Ddefault_library=static")
             if package:is_plat("windows") then
                 package:add("defines", "SIGC_BUILD")
             end
         end
-        import("package.tools.meson").install(package, configs)
+        import("package.tools.meson").install(package, configs, {shflags = shflags})
     end)
 
-    on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <string>
-            #include <sigc++/sigc++.h>
-            void on_print(const std::string& str) {}
-            void test() {
-                sigc::signal<void(const std::string&)> signal_print;
-                signal_print.connect(sigc::ptr_fun(&on_print));
-                signal_print.emit("hello world\n");
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+    on_test(function (package) 
+         assert(package:check_cxxsnippets({test = [[ 
+            #include <string> 
+            #include <sigc++/sigc++.h> 
+            void on_print(const std::string& str) {} 
+            void test() { 
+                sigc::signal<void(const std::string&)> signal_print; 
+                signal_print.connect(sigc::ptr_fun(&on_print)); 
+                signal_print.emit("hello world\n"); 
+            } 
+         ]]}, {configs = {languages = "c++17"}}))
     end)

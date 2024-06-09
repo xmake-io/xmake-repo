@@ -1,11 +1,13 @@
 package("kokkos-kernels")
-
     set_homepage("https://github.com/kokkos/kokkos-kernels")
     set_description("Kokkos C++ Performance Portability Programming EcoSystem: Math Kernels")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/kokkos/kokkos-kernels/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kokkos/kokkos-kernels.git")
+
+    add_versions("4.3.01", "749553a6ea715ba1e56fa0b13b42866bb9880dba7a94e343eadf40d08c68fab8")
+    add_versions("4.3.00", "03c3226ee97dbca4fa56fe69bc4eefa0673e23c37f2741943d9362424a63950e")
     add_versions("4.2.01", "058052b3a40f5d4e447b7ded5c480f1b0d4aa78373b0bc7e43804d0447c34ca8")
     add_versions("4.0.01", "3f493fcb0244b26858ceb911be64092fbf7785616ad62c81abde0ea1ce86688a")
 
@@ -15,7 +17,7 @@ package("kokkos-kernels")
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    on_load("windows|x64", "macosx", "linux", function (package)
+    on_load("windows|x64", "macosx|x86_64", "linux", function (package)
         if package:config("cuda") then
             package:add("deps", "cuda")
             package:add("deps", "kokkos", {configs = {cuda = true}})
@@ -24,7 +26,7 @@ package("kokkos-kernels")
         end
     end)
 
-    on_install("windows|x64", "macosx", "linux", function (package)
+    on_install("windows|x64", "macosx|x86_64", "linux", function (package)
         if package:is_plat("windows") then
             local vs = import("core.tool.toolchain").load("msvc"):config("vs")
             if tonumber(vs) < 2022 then

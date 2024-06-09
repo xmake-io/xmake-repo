@@ -22,13 +22,18 @@ package("spirv-headers")
     add_versions("1.3.261+1", "32b4c6ae6a2fa9b56c2c17233c8056da47e331f76e117729925825ea3e77a739")
     add_versions("1.3.268+0", "1022379e5b920ae21ccfb5cb41e07b1c59352a18c3d3fdcbf38d6ae7733384d4")
     add_versions("1.3.275+0", "d46b261f1fbc5e85022cb2fada9a6facb5b0c9932b45007a77fe05639a605bd1")
+    add_versions("1.3.280+0", "a00906b6bddaac1e37192eff2704582f82ce2d971f1aacee4d51d9db33b0f772")
+    add_versions("1.3.283+0", "a68a25996268841073c01514df7bab8f64e2db1945944b45087e5c40eed12cb9")
 
     add_patches("1.3.261+1", "https://github.com/KhronosGroup/SPIRV-Headers/commit/c43effd54686240d8b13762279d5392058d10e27.patch", "b97a05c35c00620519a5f3638a974fc2a01f062bf6e86b74b49a234f82cc55ce")
 
     add_deps("cmake")
 
     on_install(function (package)
-        import("package.tools.cmake").install(package, {"-DSPIRV_HEADERS_SKIP_EXAMPLES=ON"})
+        import("package.tools.cmake").install(package, {
+            "-DSPIRV_HEADERS_SKIP_EXAMPLES=ON",
+            "-DSPIRV_HEADERS_ENABLE_TESTS=OFF"
+        })
     end)
 
     on_test(function (package)

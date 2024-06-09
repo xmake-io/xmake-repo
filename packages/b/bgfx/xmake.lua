@@ -37,7 +37,7 @@ package("bgfx")
         package:add("defines", "BX_CONFIG_DEBUG=" .. (package:debug() and "1" or "0"))
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|native", "macosx", "linux", function (package)
         local bxdir = package:resourcefile("bx")
         local bimgdir = package:resourcefile("bimg")
         local genie = is_host("windows") and "genie.exe" or "genie"

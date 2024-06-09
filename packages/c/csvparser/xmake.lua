@@ -4,6 +4,10 @@ package("csvparser")
     set_description("A modern C++ library for reading, writing, and analyzing CSV (and similar) files (by vincentlaucsb)")
 
     add_urls("https://github.com/vincentlaucsb/csv-parser/archive/refs/tags/$(version).zip")
+    add_versions("2.2.3", "83170169f2af38b171d7c3e127d9411fe381988a4b8910465f7d1c4c6169e815")
+    add_versions("2.2.2", "e8fb8693680f2a0931ef28cb67a1ea007123201c74073fc588c18f5151e29cfd")
+    add_versions("2.2.1", "96fd6a468f56fc157a11fcbc5cece6da952b06190837c46465d091eff674a813")
+    add_versions("2.2.0", "b7744b28f3ac5f92c17379f323733cb8872ea48ef2347842604dc54285d60640")
     add_versions("2.1.1", "5fb6fc1c32196fb8cda144f192964b5bbedf61da9015d6c0edb8cb39b0dacff8")
 
     on_install(function (package)

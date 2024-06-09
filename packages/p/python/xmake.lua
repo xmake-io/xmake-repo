@@ -1,7 +1,7 @@
 package("python")
-
     set_homepage("https://www.python.org/")
     set_description("The python programming language.")
+    set_license("PSF")
 
     if is_host("windows") then
         if is_arch("x86", "i386") or os.arch() == "x86" then
@@ -17,6 +17,7 @@ package("python")
             add_versions("3.10.11", "7fac6ed9a58623f31610024d2c4d6abb33fac0cf741ec1a5285d056b5933012e")
             add_versions("3.11.3", "992648876ecca6cfbe122dc2d9c358c9029d9fdb83ee6edd6e54926bf0360da6")
             add_versions("3.11.8", "f5e399d12b00a4f73dc3078b7b4fe900e1de6821aa3e31d1c27c6ef4e33e95d9")
+            add_versions("3.12.3", "49bbcd200cda1f56452feeaf0954045e85b27a93b929034cc03ab198c4d9662e")
         else
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
             add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
@@ -30,6 +31,7 @@ package("python")
             add_versions("3.10.11", "96663f508643c1efec639733118d4a8382c5c895b82ad1362caead17b643260e")
             add_versions("3.11.3", "708c4e666989b3b00057eaea553a42b23f692c4496337a91d17aced931280dc4")
             add_versions("3.11.8", "2be5fdc87a96659b75f2acd9f4c4a7709fcfccb7a81cd0bd11e9c0e08380e55c")
+            add_versions("3.12.3", "00a80ccce8738de45ebe73c6084b1ea92ad131ec79cbe5c033a925c761cb5fdc")
         end
     else
         add_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
@@ -44,6 +46,7 @@ package("python")
         add_versions("3.10.11", "f3db31b668efa983508bd67b5712898aa4247899a346f2eb745734699ccd3859")
         add_versions("3.11.3", "1a79f3df32265d9e6625f1a0b31c28eb1594df911403d11f3320ee1da1b3e048")
         add_versions("3.11.8", "d3019a613b9e8761d260d9ebe3bd4df63976de30464e5c0189566e1ae3f61889")
+        add_versions("3.12.3", "a6b9459f45a6ebbbc1af44f5762623fa355a0c87208ed417628b379d762dddb0")
     end
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
@@ -120,6 +123,7 @@ package("python")
     end)
 
     on_install("@macosx", "@bsd", "@linux", function (package)
+        local version = package:version()
 
         -- init configs
         local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
@@ -129,24 +133,30 @@ package("python")
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
 
-        -- add openssl libs path for detecting
-        local openssl_dir
+        -- add openssl libs path
         local openssl = package:dep("openssl"):fetch()
         if openssl then
+            local openssl_dir
             for _, linkdir in ipairs(openssl.linkdirs) do
                 if path.filename(linkdir) == "lib" then
                     openssl_dir = path.directory(linkdir)
-                    if openssl_dir then
-                        break
+                else
+                    -- try to find if linkdir is root (brew has linkdir as root and includedirs inside)
+                    for _, includedir in ipairs(openssl.sysincludedirs or openssl.includedirs) do
+                        if includedir:startswith(linkdir) then
+                            openssl_dir = linkdir
+                            break
+                        end
                     end
                 end
-            end
-        end
-        if openssl_dir then
-            if package:version():ge("3.0") then
-                table.insert(configs, "--with-openssl=" .. openssl_dir)
-            else
-                io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+                if openssl_dir then
+                    if version:ge("3.0") then
+                        table.insert(configs, "--with-openssl=" .. openssl_dir)
+                    else
+                        io.gsub("setup.py", "/usr/local/ssl", openssl_dir)
+                    end
+                    break
+                end
             end
         end
 
@@ -221,20 +231,24 @@ package("python")
             table.insert(configs, "LDFLAGS=" .. table.concat(ldflags, " "))
         end
 
+        local pyver = ("python%d.%d"):format(version:major(), version:minor())
+        -- https://github.com/python/cpython/issues/109796
+        if version:ge("3.12.0") then
+            os.mkdir(package:installdir("lib", pyver))
+        end
+
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
         import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
         os.vrunv("make", {"-j4", "PYTHONAPPSDIR=" .. package:installdir()})
         os.vrunv("make", {"install", "-j4", "PYTHONAPPSDIR=" .. package:installdir()})
-        if package:version():ge("3.0") then
+        if version:ge("3.0") then
             os.cp(path.join(package:installdir("bin"), "python3"), path.join(package:installdir("bin"), "python"))
             os.cp(path.join(package:installdir("bin"), "python3-config"), path.join(package:installdir("bin"), "python-config"))
         end
 
         -- install wheel
         local python = path.join(package:installdir("bin"), "python")
-        local version = package:version()
-        local pyver = ("python%d.%d"):format(version:major(), version:minor())
         local envs = {
             PATH = package:installdir("bin"),
             PYTHONPATH = package:installdir("lib", pyver, "site-packages"),

@@ -6,11 +6,16 @@ package("vk-bootstrap")
     add_urls("https://github.com/charles-lunarg/vk-bootstrap/archive/refs/tags/$(version).tar.gz",
              "https://github.com/charles-lunarg/vk-bootstrap.git")
 
+    add_versions("v1.3.285", "c86b12ac2a0a809f7bf2af009a612be188aa4bb3a669d5955b22007989b3e07c")
+    add_versions("v1.3.284", "753a7cc337ae7dcfcbfad1547c010287fd4bec1237bf17f35349470c7430830c")
+    add_versions("v1.3.283", "1e6e43b76c14fa544d057b3e4825817e1aed50c3a2efbaf94862340c6304dc24")
+    add_versions("v1.3.282", "80aba4c2903e7f7f54a43d4c41dd6e2014b79c26fa432c417efb566e8b42fe67")
     add_versions("v0.5", "7ec1017d71d48595c078a4488140b230fd9cad1059986a18a507f356bf00e89b")
     add_versions("v0.6", "95dedaa5cedf7a271f051d91b24b3b6c78aa3c5b2bc3cf058554c92748a421b2")
     add_versions("v0.7", "7b2c30a4c46514cc5b20d2bebab25c495df39574b9e117c760d1cfe19f71d9aa")
     add_versions("v1.3.268", "028300b0dac2dfaf193ca95d2ecd46a450f6da31095a09334c4c3b76c561714c")
     add_versions("v1.3.275", "33737a731e8b3a4539812e63502ea55dffb3dbc7331b44c4cc0902fbf797f5ff")
+    add_versions("v1.3.280", "0b8b434b4d02a4ace9238acdd403c4c7993957176182c45bd8f0c1225733a599")
 
     add_deps("vulkan-headers")
 

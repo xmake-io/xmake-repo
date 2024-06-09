@@ -5,23 +5,22 @@ package("msdfgen")
 
     add_urls("https://github.com/Chlumsky/msdfgen/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Chlumsky/msdfgen.git")
+
+    add_versions("v1.12", "f058117496097217d12e4ea86adbff8467adaf6f12af793925d243b86b0c4f57")
+    add_versions("v1.11", "fad74e33274f591e72511bc0546189e7aec439f2a512ef1b2fde243554d457cb")
     add_versions("v1.10", "2754d1687bfb80968d9c682e0c4c04c8fcf72df1421d076baf44ea0d87aa3662")
-    add_patches("v1.10", "https://github.com/Chlumsky/msdfgen/commit/839e0e86cb846e3ea0c0a3d5da97321fe81f91e4.patch", "f69096f65edb588dcb50529ac750fd5fb24b716e053cb9c33749e52219fd7df4")
+
+    add_patches("v1.10", "https://github.com/Chlumsky/msdfgen/commit/839e0e86cb846e3ea0c0a3d5da97321fe81f91e4.patch", "8b8ab53b66b4b8c27d78c2e617795e9818c5ba72a7a7cb7a75bc416fe4bfb26c")
 
     add_configs("extensions", {description = "Build extensions library (requires freetype, libpng and tinyxml2)", default = false, type = "boolean"})
     add_configs("openmpp", {description = "Build with OpenMP support for multi-threaded code", default = false, type = "boolean"})
     add_configs("skia", {description = "Build with the Skia library", default = false, type = "boolean"})
     add_configs("standalone", {description = "Build standalone executable", default = false, type = "boolean"})
 
-    -- shared compilation is not supported on mingw/msys2 because of the "export all symbol" CMake feature
-    if is_plat("mingw") and is_subhost("msys") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
-
     add_deps("cmake")
 
     on_load(function (package)
-        if package:is_plat("windows", "mingw") and package:config("shared") then
+        if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "MSDFGEN_PUBLIC=__declspec(dllimport)")
         else
             package:add("defines", "MSDFGEN_PUBLIC=")
@@ -49,12 +48,10 @@ package("msdfgen")
         table.insert(configs, "-DMSDFGEN_USE_SKIA=" .. (package:config("skia") and "ON" or "OFF"))
 
         if package:is_plat("windows") then
-            io.replace("CMakeLists.txt", [[set(MSDFGEN_MSVC_RUNTIME "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], [[set(MSDFGEN_MSVC_RUNTIME, "${CMAKE_MSVC_RUNTIME_LIBRARY}")]], {plain = true})
+            io.replace("CMakeLists.txt", [[set(MSDFGEN_MSVC_RUNTIME "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
+            io.replace("CMakeLists.txt", [[set(MSDFGEN_MSVC_RUNTIME "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         elseif package:is_plat("mingw") then
-            if package:config("shared") then
-                table.insert(configs, "-DCMAKE_SUPPORT_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-            end
-            io.replace("CMakeLists.txt", [[if(BUILD_SHARED_LIBS AND WIN32)]], [[if(BUILD_SHARED_LIBS AND (WIN32 OR MINGW))]], {plain = true})
+            io.replace("CMakeLists.txt", [[target_compile_definitions(msdfgen-core PRIVATE "MSDFGEN_PUBLIC=__declspec(dllexport)")]], "target_compile_definitions(msdfgen-core PRIVATE MSDFGEN_PUBLIC=)", {plain = true})
         end
 
         import("package.tools.cmake").install(package, configs)
@@ -90,7 +87,7 @@ package("msdfgen")
                 }
             ]]}, {configs = { languages = "c++11" }, includes = {"msdfgen/msdfgen.h", "msdfgen/msdfgen-ext.h"}}))
 
-            if package:config("standalone") then
+            if package:config("standalone") and (not package:is_cross()) then
                 os.vrun("msdfgen -help")
             end
         end

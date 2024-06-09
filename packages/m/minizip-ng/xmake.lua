@@ -6,6 +6,8 @@ package("minizip-ng")
 
     add_urls("https://github.com/zlib-ng/minizip-ng/archive/refs/tags/$(version).tar.gz",
              "https://github.com/zlib-ng/minizip-ng.git")
+    add_versions("4.0.6", "e96ed3866706a67dbed05bf035e26ef6b60f408e1381bf0fe9af17fe2c0abebc")
+    add_versions("4.0.5", "9bb636474b8a4269280d32aca7de4501f5c24cc642c9b4225b4ed7b327f4ee73")
     add_versions("4.0.4", "955800fe39f9d830fcb84e60746952f6a48e41093ec7a233c63ad611b5fcfe9f")
     add_versions("3.0.3", "5f1dd0d38adbe9785cb9c4e6e47738c109d73a0afa86e58c4025ce3e2cc504ed")
     add_versions("3.0.5", "1a248c378fdf4ef6c517024bb65577603d5146cffaebe81900bec9c0a5035d4d")

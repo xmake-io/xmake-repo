@@ -6,6 +6,7 @@ package("imgui-file-dialog")
     add_urls("https://github.com/aiekick/ImGuiFileDialog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aiekick/ImGuiFileDialog.git")
 
+    add_versions("v0.6.7", "136e714965afaec2bac857bf46a653fdd74a0bf493e281682706c604113026b8")
     add_versions("v0.6.6", "75420f6eaf74fb1fa22042713f573858d8549366e7741baaf91128eb065b4b47")
     add_versions("v0.6.5", "3fac0f2cfc92b3f2c806e6743236467d0f691e54b1747a3955b82ef28b13e2fa")
 
@@ -44,7 +45,7 @@ package("imgui-file-dialog")
         assert(package:check_cxxsnippets({test = [[
             #include <ImGuiFileDialog.h>
             void test() {
-                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".cpp,.h,.hpp", ".");
+                ImGuiFileDialog::Instance()->Close();
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)

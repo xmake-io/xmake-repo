@@ -6,6 +6,8 @@ package("mxml")
 
     add_urls("https://github.com/michaelrsweet/mxml/releases/download/v$(version)/mxml-$(version).zip")
     add_urls("https://github.com/michaelrsweet/mxml.git")
+    add_versions("4.0.3", "a6201ad26ff3d14a84bc0027646ee89aeee858f0c9e69c166bb9705ba1eb55e7")
+    add_versions("4.0.2", "7506c88640ae4bcf9b2f50edc6eb32c47b367df9da3dfa24654456b3b45be3a9")
     add_versions("3.3.1", "ca6b05725184866b9e5874329e98be22cbbdc1e733789e08b55b088be207484a")
     add_versions("3.3", "fca59b0d7fae2b9165c223cdce68e45dbf41e21e5e53190d8b214218b8353380")
 

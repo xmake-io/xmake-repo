@@ -6,6 +6,7 @@ package("aws-c-compression")
     add_urls("https://github.com/awslabs/aws-c-compression/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-compression.git")
 
+    add_versions("v0.2.18", "517c361f3b7fffca08efd5ad251a20489794f056eab0dfffacc6d5b341df8e86")
     add_versions("v0.2.17", "703d1671e395ea26f8b0b70d678ed471421685a89e127f8aa125e2b2ecedb0e0")
 
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
@@ -18,7 +19,7 @@ package("aws-c-compression")
     on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "android", "iphoneos", "cross", "wasm", function (package)
         local aws_cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         local aws_c_common_configdir = package:dep("aws-c-common"):installdir("lib", "aws-c-common", "cmake")
-        if package:is_plat("windows") then
+        if is_host("windows") then
             aws_cmakedir = aws_cmakedir:gsub("\\", "/")
             aws_c_common_configdir = aws_c_common_configdir:gsub("\\", "/")
         end

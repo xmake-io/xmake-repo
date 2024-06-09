@@ -16,6 +16,8 @@ package("spirv-tools")
     add_versions("1.3.261+1", "sdk-1.3.261.1")
     add_versions("1.3.268+0", "vulkan-sdk-1.3.268.0")
     add_versions("1.3.275+0", "vulkan-sdk-1.3.275.0")
+    add_versions("1.3.280+0", "vulkan-sdk-1.3.280.0")
+    add_versions("1.3.283+0", "vulkan-sdk-1.3.283.0")
 
     add_deps("cmake >=3.17.2")
     add_deps("python 3.x", {kind = "binary"})

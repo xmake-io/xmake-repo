@@ -5,6 +5,7 @@ package("proj")
     set_license("MIT")
 
     add_urls("https://download.osgeo.org/proj/proj-$(version).tar.gz")
+    add_versions("9.4.0", "3643b19b1622fe6b2e3113bdb623969f5117984b39f173b4e3fb19a8833bd216")
     add_versions("9.0.1", "737eaacbe7906d0d6ff43f0d9ebedc5c734cccc9e6b8d7beefdec3ab22d9a6a3")
     add_versions("8.2.1", "76ed3d0c3a348a6693dfae535e5658bbfd47f71cb7ff7eb96d9f12f7e068b1cf")
 

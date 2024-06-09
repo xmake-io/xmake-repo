@@ -1,5 +1,4 @@
 package("libhv")
-
     set_homepage("https://github.com/ithewei/libhv")
     set_description("Like libevent, libev, and libuv, libhv provides event-loop with non-blocking IO and timer, but simpler api and richer protocols.")
 
@@ -29,7 +28,7 @@ package("libhv")
     add_configs("nghttp2",     {description = "with nghttp2 library", default = false, type = "boolean"})
     add_configs("openssl",     {description = "with openssl library", default = false, type = "boolean"})
     add_configs("mbedtls",     {description = "with mbedtls library", default = false, type = "boolean"})
-    add_configs("GNUTLS",      {description="with gnutls library",default=false,type="boolean"})
+    add_configs("gnutls",      {description = "with gnutls library", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread")
@@ -52,17 +51,20 @@ package("libhv")
         elseif package:config("curl") then
             package:add("deps", "libcurl")
         elseif package:config("nghttp2") then
-            -- TODO
+            package:add("deps", "nghttp2")
         end
+
         if not package:config("shared") then
             package:add("defines", "HV_STATICLIB")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw", function(package)
+    on_install("windows", "linux", "macosx", "android", "iphoneos", "mingw@windows", function(package)
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DBUILD_UNITTEST=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+
         for _, name in ipairs({"with_protocol",
                                "with_http",
                                "with_http_server",
@@ -76,7 +78,7 @@ package("libhv")
                                "enable_uds",
                                "enable_windump",
                                "use_multimap",
-                               "WITH_GNUTLS"}) do
+                               "with_gnutls"}) do
             local config_name = name:gsub("with_", ""):gsub("use_", ""):gsub("enable_", "")
             table.insert(configs, "-D" .. name:upper() .. "=" .. (package:config(config_name) and "ON" or "OFF"))
         end
@@ -106,4 +108,3 @@ package("libhv")
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
-
