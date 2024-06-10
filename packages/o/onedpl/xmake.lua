@@ -47,15 +47,6 @@ package("onedpl")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #if (__INTEL_COMPILER >= 1900 || !defined(__INTEL_COMPILER) && _PSTL_GCC_VERSION >= 40900 || _OPENMP >= 201307)
-            #    define _PSTL_UDR_PRESENT 1
-            #else
-            #    define _PSTL_UDR_PRESENT 0
-            #endif
-            #define _PSTL_UDS_PRESENT (__INTEL_COMPILER >= 1900 && __INTEL_COMPILER_BUILD_DATE >= 20180626)
-            /* MACROS DUE TO https://github.com/llvm/llvm-project/commit/3b9a1bb1af90db9472340ef2122d3855eb9ba3fc#diff-4c6821476cefc699b801f5fdbeda3341e3c64626dcf39a79621ea02031bdd50eL113 */
-            /* ALSO C.F. https://github.com/oneapi-src/oneDPL/issues/1602 */
-            /* AND THE USING OF _PSTL_... MACROS IS REMOVED FROM ONEDPL NOWADAYS*/
             #include <oneapi/dpl/algorithm>
             #include <oneapi/dpl/execution>
             #include <oneapi/dpl/numeric>
