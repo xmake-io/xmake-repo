@@ -8,6 +8,7 @@ package("ormpp")
     set_urls("https://github.com/qicosmos/ormpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/qicosmos/ormpp.git")
 
+    add_versions("0.1.3", "671f2f19965d630d7147f94dd12f4212a9cce58c5455f892f321f2243acb8ea4")
     add_versions("v0.1.2", "990e88eb176d996cdbbbdfa3e1522b48d135d809f14094771f8d6f02e94573c4")
     add_versions("v0.1.1", "a3c93599950a4c5822ebd0750ac7964c59c9b3f84f638525f01578bac6d898c2")
 
