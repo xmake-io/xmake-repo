@@ -9,6 +9,10 @@ package("cpp-async")
 
     add_versions("v1.1.0", "168681dfd999b7546d623f20d18072ce280502cf0bf3a829c2aec58741062a23")
 
+    on_check(function (package)
+        assert(package:has_cxxincludes("coroutine", {configs = {languages = "c++20"}}), "package(cpp-async) Require at least C++20.")
+    end)
+
     on_install(function (package)
         os.cp("include/async", package:installdir("include"))
     end)
