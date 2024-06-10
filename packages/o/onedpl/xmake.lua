@@ -36,6 +36,9 @@ package("onedpl")
 
     on_install("windows", "linux", function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(test)", "", {plain = true})
+        -- c.f. https://github.com/oneapi-src/oneDPL/issues/1602  and https://github.com/oneapi-src/oneDPL/commit/e25afef957b50536c5091ed23150fff10921b18f
+        io.replace("include/oneapi/dpl/pstl/algorithm_impl.h", "(_PSTL_UDR_PRESENT || _ONEDPL_UDR_PRESENT)", "_ONEDPL_UDR_PRESENT // _PSTL_UDR_PRESENT", {plain = true})
+        io.replace("include/oneapi/dpl/pstl/numeric_impl.h", "(_PSTL_UDS_PRESENT || _ONEDPL_UDS_PRESENT)", "_ONEDPL_UDS_PRESENT // PSTL_UDS_PRESENT", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DONEDPL_BACKEND=" .. package:config("backend"))
