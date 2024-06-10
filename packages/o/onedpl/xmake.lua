@@ -16,7 +16,7 @@ package("onedpl")
     on_fetch("fetch")
     on_load("windows", "linux", function (package)
         local backend = package:config("backend")
-        if backend == "tbb" or backend == "dpcpp" then
+        if backend == "tbb"  then
             package:add("deps", "tbb")
 	        package:add("defines", "ONEDPL_USE_TBB_BACKEND=1")
             package:add("ldflags", "-ltbb")
@@ -26,8 +26,15 @@ package("onedpl")
 	    elseif backend == "dpcpp" then
 	        package:add("deps", "tbb")
             package:add("ldflags", "-ltbb")
+            package:add("defines", "ONEDPL_USE_TBB_BACKEND=1")
 	        package:add("defines", "ONEDPL_USE_DPCPP_BACKEND=1")
-
+        elseif backend == "dpcpp_only" then
+            package:add("defines", "ONEDPL_USE_TBB_BACKEND=0")
+	        package:add("defines", "ONEDPL_USE_DPCPP_BACKEND=1")
+        elseif backend == "serial" then
+            package:add("defines", "ONEDPL_USE_OPENMP_BACKEND=0")
+            package:add("defines", "ONEDPL_USE_TBB_BACKEND=0")
+	        package:add("defines", "ONEDPL_USE_DPCPP_BACKEND=0")
         end
         if package:is_plat("windows") then
             package:add("cxxflags", "/Zc:__cplusplus")
