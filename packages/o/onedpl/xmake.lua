@@ -6,16 +6,27 @@ package("onedpl")
 
     add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version)-release.tar.gz")
     add_versions("2021.6.1", "4995fe2ed2724b89cdb52c4b6c9af22e146b48d2561abdafdaaa06262dbd67c4")
+    add_versions("2022.5.0-rc1", "9180c60331ec5b307dd89a5d8bfcd096667985c6761c52322405d4b69193ed88")
 
-    add_configs("backend", {description = "Choose threading backend.", default = "tbb", type = "string", values = {"tbb", "dpcpp", "dpcpp_only", "omp", "serial"}})
+    add_configs("backend", {description = "Choose threading backend.", default = "tbb", type = "string", values = {"tbb", "dpcpp", "dpcpp_only", "omp","serial"}})
 
     add_deps("cmake")
+
+    on_fetch("fetch")
     on_load("windows", "linux", function (package)
         local backend = package:config("backend")
         if backend == "tbb" or backend == "dpcpp" then
             package:add("deps", "tbb")
+	        package:add("defines", "ONEDPL_USE_TBB_BACKEND=1")
+            package:add("ldflags", "-ltbb")
         elseif backend == "omp" then
             package:add("deps", "openmp")
+	        package:add("defines", "ONEDPL_USE_OPENMP_BACKEND=1")
+	    elseif backend == "dpcpp" then
+	        package:add("deps", "tbb")
+            package:add("ldflags", "-ltbb")
+	        package:add("defines", "ONEDPL_USE_DPCPP_BACKEND=1")
+
         end
         if package:is_plat("windows") then
             package:add("cxxflags", "/Zc:__cplusplus")
