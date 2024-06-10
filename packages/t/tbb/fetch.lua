@@ -1,7 +1,7 @@
 import("lib.detect.find_path")
 import("lib.detect.find_library")
 
-function _find_package_on_windows(package, opt)
+function _find_package(package, opt)
     local rdir = (package:is_arch("x64") and "intel64" or "ia32")
     local paths = {
         "$(env TBB_ROOT)",
@@ -22,7 +22,6 @@ function _find_package_on_windows(package, opt)
     if incpath then
         table.insert(result.includedirs, incpath)
     end
-
     if #result.includedirs > 0 and #result.linkdirs > 0 then
         local version_file = path.join(incpath, "oneapi", "tbb", "version.h")
         if not os.isfile(version_file) then
@@ -47,9 +46,8 @@ end
 function main(package, opt)
     if opt.system and package.find_package then
         local result
-        if package:is_plat("windows") then
-            result = _find_package_on_windows(package, opt)
-        end
+        result = _find_package(package, opt)
+        
         if not result then
             result = package:find_package("tbb", opt)
         end
