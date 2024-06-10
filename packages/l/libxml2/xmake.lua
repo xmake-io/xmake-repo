@@ -88,7 +88,7 @@ package("libxml2")
         end
     end)
 
-    on_install("macosx", "linux", "iphoneos", "android", "bsd", function (package)
+    on_install("macosx", "linux", "iphoneos", "android@!windows", "bsd", function (package)
         import("package.tools.autoconf")
         local configs = {"--disable-dependency-tracking",
                          "--without-lzma",
@@ -137,8 +137,6 @@ package("libxml2")
         else
             table.insert(configs, "--without-python")
         end
-        print(configs)
-        print(envs)
         autoconf.install(package, configs, {envs = envs})
         package:addenv("PATH", package:installdir("bin"))
         if package:config("python") then
