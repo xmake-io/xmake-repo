@@ -78,7 +78,7 @@ package("sqlcipher")
         os.cp("sqlite3ext.h", package:installdir("include"))
     end)
 
-    on_install("linux", "macosx", "android", "iphoneos", "cross", function (package)
+    on_install("linux", "macosx", "iphoneos", "cross", function (package)
         os.vrunv("./configure", {"--with-crypto-lib=none"})
         import("package.tools.make").build(package, {"sqlite3.c"})
         local configs = {}
