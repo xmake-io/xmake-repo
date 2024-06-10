@@ -41,6 +41,7 @@ package("sqlite3")
     add_configs("stmt_vtab", {description = "Enable the SQLITE_STMT virtual table logic.", default = true, type = "boolean"}) -- default true to keep compatibility
     add_configs("dbstat_vtab", {description = "Enable the dbstat virtual table.", default = true, type = "boolean"}) -- default true to keep compatibility
     add_configs("math_functions", {description = "Enable the built-in SQL math functions.", default = true, type = "boolean"}) -- default true to keep compatibility
+    add_configs("rtree", {description = "Enable R-Tree.", default = false, type = "boolean"})
 
     if is_plat("macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
@@ -56,7 +57,8 @@ package("sqlite3")
                 { name = "dbpage_vtab", define = "SQLITE_ENABLE_DBPAGE_VTAB" },
                 { name = "stmt_vtab", define = "SQLITE_ENABLE_STMTVTAB" },
                 { name = "dbstat_vtab", define = "SQLITE_ENABLE_DBSTAT_VTAB" },
-                { name = "math_functions", define = "SQLITE_ENABLE_MATH_FUNCTIONS" }
+                { name = "math_functions", define = "SQLITE_ENABLE_MATH_FUNCTIONS" },
+                { name = "rtree", define = "SQLITE_ENABLE_RTREE" }
             }
 
             for _, opt in ipairs(options) do
