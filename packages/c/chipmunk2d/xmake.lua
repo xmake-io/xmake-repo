@@ -24,6 +24,8 @@ package("chipmunk2d")
 
     if is_plat("linux") then
         add_syslinks("pthread", "m")
+    elseif is_plat("bsd") then
+        add_syslinks("pthread", "m")
     elseif is_plat("android") then
         add_syslinks("log", "m")
     end
@@ -42,7 +44,7 @@ package("chipmunk2d")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", function (package)
+    on_install("windows", "linux", "macosx", "iphoneos", "mingw", "android", "wasm", "bsd",function (package)
         local configs = {"-DBUILD_DEMOS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
