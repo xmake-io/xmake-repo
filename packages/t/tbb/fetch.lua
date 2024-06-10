@@ -5,7 +5,7 @@ function _find_package_on_windows(package, opt)
     local rdir = (package:is_arch("x64") and "intel64" or "ia32")
     local paths = {
         "$(env TBB_ROOT)",
-        "$(env ONEAPI_ROOT)\\tbb\\latest"
+        "$(env ONEAPI_ROOT)/tbb/latest"
     }
 
     -- find includes and links
