@@ -1,5 +1,4 @@
 package("libxml2")
-
     set_homepage("http://xmlsoft.org/")
     set_description("The XML C parser and toolkit of Gnome.")
     set_license("MIT")
@@ -22,7 +21,7 @@ package("libxml2")
         add_syslinks("m")
     end
 
-    on_load("windows", "macosx", "linux", "iphoneos", "android", function (package)
+    on_load("windows", "macosx", "linux", "iphoneos", "android", "bsd", function (package)
         if package:is_plat("windows") then
             if not package:config("shared") then
                 package:add("defines", "LIBXML_STATIC")
@@ -89,7 +88,7 @@ package("libxml2")
         end
     end)
 
-    on_install("macosx", "linux", "iphoneos", "android", function (package)
+    on_install("macosx", "linux", "iphoneos", "android@!windows", "bsd", function (package)
         import("package.tools.autoconf")
         local configs = {"--disable-dependency-tracking",
                          "--without-lzma",
