@@ -2,7 +2,7 @@ import("lib.detect.find_path")
 import("lib.detect.find_library")
 
 function _find_package(package, opt)
-    local rdir = (package:is_arch("x64") and "intel64" or "ia32")
+    local rdir = (package:is_arch("x64") and "x86_64" or "ia32")
     local paths = {
         "$(env TBB_ROOT)",
         "$(env ONEAPI_ROOT)/tbb/latest"
