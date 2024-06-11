@@ -18,7 +18,8 @@ package("pkg-config")
         if is_host("macosx") then
             table.insert(pcpath, "/usr/local/Homebrew/Library/Homebrew/os/mac/pkgconfig/" .. macos.version():major() .. '.' .. macos.version():minor())
         end
-        local opt = {cflags = "-Wno-error"}
+        -- see https://gitlab.freedesktop.org/pkg-config/pkg-config/-/issues/81
+        local opt = {cflags = "-Wno-int-conversion"}
         import("package.tools.autoconf").install(package, {"--disable-werror", "--disable-compile-warnings", "--disable-debug", "--disable-host-tool", "--with-internal-glib", ["with-pc-path"] = table.concat(pcpath, ':')}, opt)
     end)
 
