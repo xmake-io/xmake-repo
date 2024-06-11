@@ -36,12 +36,12 @@ package("sqlite3")
     add_versions("3.45.0+300", "b2809ca53124c19c60f42bf627736eae011afdcc205bb48270a5ee9a38191531")
     add_versions("3.46.0+0", "6f8e6a7b335273748816f9b3b62bbdc372a889de8782d7f048c653a447417a7d")
 
-    add_configs("explain_comments", {description = "Inserts comment text into the output of EXPLAIN.", default = true, type = "boolean"}) -- default true to keep compatibility
-    add_configs("dbpage_vtab", {description = "Enable the SQLITE_DBPAGE virtual table.", default = true, type = "boolean"}) -- default true to keep compatibility
-    add_configs("stmt_vtab", {description = "Enable the SQLITE_STMT virtual table logic.", default = true, type = "boolean"}) -- default true to keep compatibility
-    add_configs("dbstat_vtab", {description = "Enable the dbstat virtual table.", default = true, type = "boolean"}) -- default true to keep compatibility
-    add_configs("math_functions", {description = "Enable the built-in SQL math functions.", default = true, type = "boolean"}) -- default true to keep compatibility
-    add_configs("rtree", {description = "Enable R-Tree.", default = false, type = "boolean"})
+    add_configs("explain_comments", { description = "Inserts comment text into the output of EXPLAIN.", default = true, type = "boolean"})
+    add_configs("dbpage_vtab",      { description = "Enable the SQLITE_DBPAGE virtual table.", default = true, type = "boolean"})
+    add_configs("stmt_vtab",        { description = "Enable the SQLITE_STMT virtual table logic.", default = true, type = "boolean"})
+    add_configs("dbstat_vtab",      { description = "Enable the dbstat virtual table.", default = true, type = "boolean"})
+    add_configs("math_functions",   { description = "Enable the built-in SQL math functions.", default = true, type = "boolean"})
+    add_configs("rtree",            { description = "Enable R-Tree.", default = false, type = "boolean"})
 
     if is_plat("macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
@@ -52,31 +52,18 @@ package("sqlite3")
             add_rules("mode.debug", "mode.release")
             set_encodings("utf-8")
 
-            local options = {
-                { name = "explain_comments", define = "SQLITE_ENABLE_EXPLAIN_COMMENTS" },
-                { name = "dbpage_vtab", define = "SQLITE_ENABLE_DBPAGE_VTAB" },
-                { name = "stmt_vtab", define = "SQLITE_ENABLE_STMTVTAB" },
-                { name = "dbstat_vtab", define = "SQLITE_ENABLE_DBSTAT_VTAB" },
-                { name = "math_functions", define = "SQLITE_ENABLE_MATH_FUNCTIONS" },
-                { name = "rtree", define = "SQLITE_ENABLE_RTREE" }
-            }
-
-            for _, opt in ipairs(options) do
-                option(opt.name)
-                    set_default(false)
-                    set_showmenu(true)
-                    add_defines(opt.define)
-                option_end()
-            end
+            option("explain_comments", {default = false, defines = "SQLITE_ENABLE_EXPLAIN_COMMENTS"})
+            option("dbpage_vtab", {default = false, defines = "SQLITE_ENABLE_DBPAGE_VTAB"})
+            option("stmt_vtab", {default = false, defines = "SQLITE_ENABLE_STMTVTAB"})
+            option("dbstat_vtab", {default = false, defines = "SQLITE_ENABLE_DBSTAT_VTAB"})
+            option("math_functions", {default = false, defines = "SQLITE_ENABLE_MATH_FUNCTIONS"})
+            option("rtree", {default = false, defines = "SQLITE_ENABLE_RTREE"})
 
             target("sqlite3")
                 set_kind("$(kind)")
                 add_files("sqlite3.c")
                 add_headerfiles("sqlite3.h", "sqlite3ext.h")
-
-                for _, opt in ipairs(options) do
-                    add_options(opt.name)
-                end
+                add_options("explain_comments", "dbpage_vtab", "stmt_vtab", "dbstat_vtab", "math_functions", "rtree")
 
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("SQLITE_API=__declspec(dllexport)")
