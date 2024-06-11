@@ -18,7 +18,8 @@ package("pkg-config")
         if is_host("macosx") then
             table.insert(pcpath, "/usr/local/Homebrew/Library/Homebrew/os/mac/pkgconfig/" .. macos.version():major() .. '.' .. macos.version():minor())
         end
-        import("package.tools.autoconf").install(package, {"--disable-werror", "--disable-compile-warnings", "--disable-debug", "--disable-host-tool", "--with-internal-glib", ["with-pc-path"] = table.concat(pcpath, ':')})
+        local opt = {cflags = "-Wno-error"}
+        import("package.tools.autoconf").install(package, {"--disable-werror", "--disable-compile-warnings", "--disable-debug", "--disable-host-tool", "--with-internal-glib", ["with-pc-path"] = table.concat(pcpath, ':')}, opt)
     end)
 
     on_test(function (package)
