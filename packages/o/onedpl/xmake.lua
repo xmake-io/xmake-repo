@@ -4,18 +4,37 @@ package("onedpl")
     set_homepage("https://www.intel.com/content/www/us/en/developer/tools/oneapi/dpc-library.html")
     set_description("oneAPI DPC++ Library")
 
+    add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version).tar.gz")
     add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version)-release.tar.gz")
     add_versions("2021.6.1", "4995fe2ed2724b89cdb52c4b6c9af22e146b48d2561abdafdaaa06262dbd67c4")
+    add_versions("2022.5.0-rc1", "9180c60331ec5b307dd89a5d8bfcd096667985c6761c52322405d4b69193ed88")
 
     add_configs("backend", {description = "Choose threading backend.", default = "tbb", type = "string", values = {"tbb", "dpcpp", "dpcpp_only", "omp", "serial"}})
 
     add_deps("cmake")
+
+    on_fetch("fetch")
     on_load("windows", "linux", function (package)
         local backend = package:config("backend")
-        if backend == "tbb" or backend == "dpcpp" then
+        if backend == "tbb"  then
             package:add("deps", "tbb")
+	        package:add("defines", "ONEDPL_USE_TBB_BACKEND=1")
+            package:add("ldflags", "-ltbb")
         elseif backend == "omp" then
             package:add("deps", "openmp")
+	        package:add("defines", "ONEDPL_USE_OPENMP_BACKEND=1")
+	    elseif backend == "dpcpp" then
+	        package:add("deps", "tbb")
+            package:add("ldflags", "-ltbb")
+            package:add("defines", "ONEDPL_USE_TBB_BACKEND=1")
+	        package:add("defines", "ONEDPL_USE_DPCPP_BACKEND=1")
+        elseif backend == "dpcpp_only" then
+            package:add("defines", "ONEDPL_USE_TBB_BACKEND=0")
+	        package:add("defines", "ONEDPL_USE_DPCPP_BACKEND=1")
+        elseif backend == "serial" then
+            package:add("defines", "ONEDPL_USE_OPENMP_BACKEND=0")
+            package:add("defines", "ONEDPL_USE_TBB_BACKEND=0")
+	        package:add("defines", "ONEDPL_USE_DPCPP_BACKEND=0")
         end
         if package:is_plat("windows") then
             package:add("cxxflags", "/Zc:__cplusplus")
@@ -24,6 +43,9 @@ package("onedpl")
 
     on_install("windows", "linux", function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(test)", "", {plain = true})
+        -- c.f. https://github.com/oneapi-src/oneDPL/issues/1602  and https://github.com/oneapi-src/oneDPL/commit/e25afef957b50536c5091ed23150fff10921b18f
+        io.replace("include/oneapi/dpl/pstl/algorithm_impl.h", "(_PSTL_UDR_PRESENT || _ONEDPL_UDR_PRESENT)", "_ONEDPL_UDR_PRESENT // _PSTL_UDR_PRESENT", {plain = true})
+        io.replace("include/oneapi/dpl/pstl/numeric_impl.h", "(_PSTL_UDS_PRESENT || _ONEDPL_UDS_PRESENT)", "_ONEDPL_UDS_PRESENT // PSTL_UDS_PRESENT", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DONEDPL_BACKEND=" .. package:config("backend"))
