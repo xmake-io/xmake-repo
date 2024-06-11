@@ -4,8 +4,8 @@ package("onedpl")
     set_homepage("https://www.intel.com/content/www/us/en/developer/tools/oneapi/dpc-library.html")
     set_description("oneAPI DPC++ Library")
 
-    add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version)-release.tar.gz")
     add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version).tar.gz")
+    add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version)-release.tar.gz")
     add_versions("2021.6.1", "4995fe2ed2724b89cdb52c4b6c9af22e146b48d2561abdafdaaa06262dbd67c4")
     add_versions("2022.5.0-rc1", "9180c60331ec5b307dd89a5d8bfcd096667985c6761c52322405d4b69193ed88")
 
