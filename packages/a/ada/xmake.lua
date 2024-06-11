@@ -6,6 +6,7 @@ package("ada")
     set_urls("https://github.com/ada-url/ada/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/ada-url/ada.git")
 
+    add_versions("2.8.0", "83b77fb53d1a9eea22b1484472cea0215c50478c9ea2b4b44b0ba3b52e07c139")
     add_versions("2.7.8", "8de067b7cb3da1808bf5439279aee6048d761ba246bf8a854c2af73b16b41c75")
     add_versions("2.7.7", "7116d86a80b79886efbc9d946d3919801815060ae62daf78de68c508552af554")
     add_versions("2.7.6", "e2822783913c50b9f5c0f20b5259130a7bdc36e87aba1cc38a5de461fe45288f")

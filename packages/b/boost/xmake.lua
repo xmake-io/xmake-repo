@@ -1,5 +1,4 @@
 package("boost")
-
     set_homepage("https://www.boost.org/")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
@@ -79,9 +78,11 @@ package("boost")
     for _, libname in ipairs(libnames) do
         add_configs(libname,    { description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
     end
+    add_configs("zstd", {description = "enable zstd for iostreams", default = false, type = "boolean"})
+    add_configs("lzma", {description = "enable lzma for iostreams", default = false, type = "boolean"})
 
     on_load(function (package)
-        function get_linkname(package, libname)
+        local function get_linkname(package, libname)
             local linkname
             if package:is_plat("windows") then
                 linkname = (package:config("shared") and "boost_" or "libboost_") .. libname
@@ -100,11 +101,11 @@ package("boost")
                     if package:debug() then
                         linkname = linkname .. "-gd"
                     end
+                elseif package:config("asan") or vs_runtime == "MTd" then
+                    linkname = linkname .. "-sgd"
                 elseif vs_runtime == "MT" then
                     linkname = linkname .. "-s"
-                elseif vs_runtime == "MTd" then
-                    linkname = linkname .. "-sgd"
-                elseif vs_runtime == "MDd" then
+                elseif package:config("asan") or vs_runtime == "MDd" then
                     linkname = linkname .. "-gd"
                 end
             else
@@ -114,10 +115,11 @@ package("boost")
             end
             return linkname
         end
+
         -- we need the fixed link order
         local sublibs = {log = {"log_setup", "log"},
-                         python = {"python", "numpy"},
-                         stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
+                        python = {"python", "numpy"},
+                        stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
         for _, libname in ipairs(libnames) do
             local libs = sublibs[libname]
             if libs then
@@ -139,12 +141,20 @@ package("boost")
             end
             package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
+        if package:is_plat("linux") then
+            if package:config("zstd") then
+                package:add("deps", "zstd")
+            end
+            if package:config("lzma") then
+                package:add("deps", "xz")
+            end
+        end
     end)
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         import("core.base.option")
 
-        function get_compiler(package, toolchain)
+        local function get_compiler(package, toolchain)
             local cxx = package:build_getenv("cxx")
             if package:is_plat("macosx") then
                 -- we uses ld/clang++ for link stdc++ for shared libraries
@@ -242,9 +252,23 @@ package("boost")
             end
         end
 
+        local function config_deppath(file, depname, rule)
+                local dep = package:dep(depname)
+                local info = dep:fetch({external = false})
+                if info then
+                    local usingstr = format("\nusing %s : : <include>\"%s\" <search>\"%s\" ;",rule, info.includedirs[1], info.linkdirs[1])              
+                    file:write(usingstr)
+                end
+        end
         local file = io.open("user-config.jam", "w")
         if file then
             file:write(get_compiler(package, build_toolchain))
+            if package:config("lzma") then
+                config_deppath(file, "xz", "lzma")
+            end
+            if package:config("zstd") then
+                config_deppath(file, "zstd", "zstd")
+            end
             file:close()
         end
         os.vrun("./b2 headers")
@@ -260,8 +284,6 @@ package("boost")
             "-q", -- quit on first error
             "--layout=tagged-1.66", -- prevent -x64 suffix in case cmake can't find it
             "--user-config=user-config.jam",
-            "-sNO_LZMA=1",
-            "-sNO_ZSTD=1",
             "install",
             "threading=" .. (package:config("multi") and "multi" or "single"),
             "debug-symbols=" .. (package:debug() and "on" or "off"),
@@ -269,6 +291,13 @@ package("boost")
             "variant=" .. (package:is_debug() and "debug" or "release"),
             "runtime-debugging=" .. (package:is_debug() and "on" or "off")
         }
+
+        if not package:config("lzma") then
+            table.insert(argv, "-sNO_LZMA=1")
+        end
+        if not package:config("zstd") then
+            table.insert(argv, "-sNO_ZSTD=1")
+        end
 
         if package:config("lto") then
             table.insert(argv, "lto=on")
@@ -281,8 +310,11 @@ package("boost")
         else
             table.insert(argv, "address-model=32")
         end
-        local cxxflags
-        local linkflags
+
+        local cxxflags = {}
+        local linkflags = {}
+        table.join2(cxxflags, table.wrap(package:config("cxflags")))
+        table.join2(cxxflags, table.wrap(package:config("cxxflags")))
         if package:is_plat("windows") then
             local vs_runtime = package:config("vs_runtime")
             if package:config("shared") then
@@ -293,14 +325,16 @@ package("boost")
                 table.insert(argv, "runtime-link=shared")
             end
             table.insert(argv, "toolset=" .. build_toolset)
-            cxxflags = "-std:c++14"
+            table.insert(cxxflags, "-std:c++14")
         elseif package:is_plat("mingw") then
             table.insert(argv, "toolset=gcc")
         elseif package:is_plat("macosx") then
             table.insert(argv, "toolset=darwin")
 
             -- fix macosx arm64 build issue https://github.com/microsoft/vcpkg/pull/18529
-            cxxflags = "-std=c++14 -arch " .. package:arch()
+            table.insert(cxxflags, "-std=c++14")
+            table.insert(cxxflags, "-arch")
+            table.insert(cxxflags, package:arch())
             local xcode = package:toolchain("xcode") or import("core.tool.toolchain").load("xcode", {plat = package:plat(), arch = package:arch()})
             if xcode:check() then
                 local xcode_dir = xcode:config("xcode")
@@ -308,30 +342,35 @@ package("boost")
                 local target_minver = xcode:config("target_minver")
                 if xcode_dir and xcode_sdkver then
                     local xcode_sdkdir = xcode_dir .. "/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX" .. xcode_sdkver .. ".sdk"
-                    cxxflags = cxxflags .. " -isysroot " .. xcode_sdkdir
+                    table.insert(cxxflags, "-isysroot")
+                    table.insert(cxxflags, xcode_sdkdir)
                 end
                 if target_minver then
-                    cxxflags = cxxflags .. " -mmacosx-version-min=" .. target_minver
+                    table.insert(cxxflags, "-mmacosx-version-min=" .. target_minver)
                 end
             end
         else
-            cxxflags = "-std=c++14"
+            table.insert(cxxflags, "-std=c++14")
             if package:config("pic") ~= false then
-                cxxflags = cxxflags .. " -fPIC"
+                table.insert(cxxflags, "-fPIC")
             end
         end
         if package.has_runtime and package:has_runtime("c++_shared", "c++_static") then
-            cxxflags = (cxxflags or "") .. " -stdlib=libc++"
-            linkflags = (linkflags or "") .. " -stdlib=libc++"
+            table.insert(cxxflags, "-stdlib=libc++")
+            table.insert(linkflags, "-stdlib=libc++")
             if package:has_runtime("c++_static") then
-                linkflags = linkflags .. " -static-libstdc++"
+                table.insert(linkflags, "-static-libstdc++")
             end
         end
+        if package:config("asan") then
+            table.insert(cxxflags, "-fsanitize=address")
+            table.insert(linkflags, "-fsanitize=address")
+        end
         if cxxflags then
-            table.insert(argv, "cxxflags=" .. cxxflags)
+            table.insert(argv, "cxxflags=" .. table.concat(cxxflags, " "))
         end
         if linkflags then
-            table.insert(argv, "linkflags=" .. linkflags)
+            table.insert(argv, "linkflags=" .. table.concat(linkflags, " "))
         end
         for _, libname in ipairs(libnames) do
             if package:config("all") or package:config(libname) then
@@ -380,5 +419,43 @@ package("boost")
                     boost::gregorian::date d(2010, 1, 30);
                 }
             ]]}, {configs = {languages = "c++14"}}))
+        end
+
+        if package:config("filesystem") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <boost/filesystem.hpp>
+                #include <iostream>
+                static void test() {
+                    boost::filesystem::path path("/path/to/directory");
+                    if (boost::filesystem::exists(path)) {
+                        std::cout << "Directory exists" << std::endl;
+                    } else {
+                        std::cout << "Directory does not exist" << std::endl;
+                    }
+                }
+            ]]}, {configs = {languages = "c++14"}}))
+        end
+
+        if package:config("iostreams") then
+            if package:config("zstd") then
+                assert(package:check_cxxsnippets({test = [[
+                    #include <boost/iostreams/filter/zstd.hpp>
+                    #include <boost/iostreams/filtering_stream.hpp>
+                    static void test() {
+                        boost::iostreams::filtering_ostream out;
+                        out.push(boost::iostreams::zstd_compressor());
+                    }
+                ]]}, {configs = {languages = "c++14"}}))
+            end
+            if package:config("lzma") then
+                assert(package:check_cxxsnippets({test = [[
+                    #include <boost/iostreams/filter/lzma.hpp>
+                    #include <boost/iostreams/filtering_stream.hpp>
+                    static void test() {
+                        boost::iostreams::filtering_ostream out;
+                        out.push(boost::iostreams::lzma_compressor());
+                    }
+                 ]]}, {configs = {languages = "c++14"}}))
+            end
         end
     end)
