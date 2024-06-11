@@ -8,12 +8,16 @@ package("xerces-c")
     add_versions("3.2.5", "4aa0f7ed265a45d253f900fa145cc8cae10414d085695f1de03a2ec141a3358b")
     add_versions("3.2.4", "563a668b331ca5d1fc08ed52e5f62a13508b47557f88a068ad1db6f68e1f2eb2")
 
+    local is_system_transcoder_supported = is_plat("linux", "windows", "mingw", "macosx")
+    add_configs("transcoder", {
+        description = "Transcoder (used to convert between internal UTF-16 and other encodings)",
+        default = is_system_transcoder_supported and "system_transcoder" or "iconv",
+        type = "string",
+        values = {"system_transcoder", "iconv", "icu"}
+    })
+
     add_deps("cmake")
-    if is_plat("windows") then
-        add_syslinks("advapi32")
-    elseif is_plat("macosx") then
-        add_frameworks("CoreFoundation", "CoreServices")
-    elseif is_plat("android") then
+    if is_plat("android") then
         -- for NDK version less than 26
         add_patches(">=3.2.4",
             path.join(os.scriptdir(), "patches", "patch-android.diff"),
@@ -27,14 +31,60 @@ package("xerces-c")
         assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(xerces-c): need ndk api level >= 26 for android armeabi-v7a")
     end)
 
+    on_load(function (package)
+        if package:config("transcoder") == "system_transcoder" then
+            if package:is_plat("linux") then
+                package:add("deps", "libiconv", {system = true})
+            elseif package:is_plat("windows", "mingw") then
+                add_syslinks("advapi32")
+            elseif package:is_plat("macosx") then
+                add_frameworks("CoreFoundation", "CoreServices")
+            else
+                raise("`system_transcoder` only support GNU iconv library, macOS APIs and Windows APIs!")
+            end
+        elseif package:config("transcoder") == "iconv" then
+            package:add("deps", "libiconv", {system = false})
+        elseif package:config("transcoder") == "icu" then
+            package:add("deps", "icu4c")
+        end
+    end)
+
     on_install("windows", "macosx", "linux", "android", function (package)
-        local configs = {"-Dnetwork=OFF", "-DCMAKE_DISABLE_FIND_PACKAGE_ICU=ON", "-DCMAKE_DISABLE_FIND_PACKAGE_CURL=ON"}
+        local configs = {
+            "-Dnetwork=OFF"
+        }
+
+        local packagedeps = {}
+        if package:config("transcoder") == "system_transcoder" then
+            if package:is_plat("linux") then
+                table.insert(configs, "-Dtranscoder=gnuiconv")
+            elseif package:is_plat("windows", "mingw") then
+                table.insert(configs, "-Dtranscoder=windows")
+            elseif package:is_plat("macosx") then
+                table.insert(configs, "-Dtranscoder=macosunicodeconverter")
+            end
+        elseif package:config("transcoder") == "iconv" then
+            table.insert(packagedeps, "libiconv")
+            table.insert(configs, "-Dtranscoder=iconv")
+        elseif package:config("transcoder") == "icu" then
+            table.insert(packagedeps, "icu4c")
+            table.insert(configs, "-Dtranscoder=icu")
+            io.replace(
+                "cmake/FindICU.cmake",
+                "add_library(${_ICU_imported_target} UNKNOWN IMPORTED)",
+                [[
+                    add_library(${_ICU_imported_target} UNKNOWN IMPORTED)
+                    target_compile_features(${_ICU_imported_target} INTERFACE cxx_std_17)
+                ]],
+                {plain = true})
+        end
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
