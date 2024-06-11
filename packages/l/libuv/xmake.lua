@@ -38,7 +38,7 @@ package("libuv")
 
             local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
             local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(libuv): need ndk api level >= 24 after v1.47.0")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(libuv): need ndk api level >= 24 after v1.47.0")
         end
     end)
 
