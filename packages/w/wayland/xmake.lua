@@ -4,9 +4,10 @@ package("wayland")
     set_license("MIT")
 
     add_urls("https://wayland.freedesktop.org/releases/wayland-$(version).tar.xz")
-    add_versions("1.18.0", "4675a79f091020817a98fd0484e7208c8762242266967f55a67776936c2e294d")
-    add_versions("1.19.0", "baccd902300d354581cd5ad3cc49daa4921d55fb416a5883e218750fef166d15")
-
+--    add_versions("1.18.0", "4675a79f091020817a98fd0484e7208c8762242266967f55a67776936c2e294d")
+--    add_versions("1.19.0", "baccd902300d354581cd5ad3cc49daa4921d55fb416a5883e218750fef166d15")
+    add_versions("1.23.0", "a00bb4f55e680d6681982b0fe2d64aab1e9569e47e21605f168b9af09b771742")
+    		
     add_resources("1.18.0", "protocols", "https://wayland.freedesktop.org/releases/wayland-protocols-1.20.tar.xz", "9782b7a1a863d82d7c92478497d13c758f52e7da4f197aa16443f73de77e4de7")
     add_resources("1.19.0", "protocols", "https://wayland.freedesktop.org/releases/wayland-protocols-1.21.tar.xz", "b99945842d8be18817c26ee77dafa157883af89268e15f4a5a1a1ff3ffa4cde5")
 
@@ -16,7 +17,7 @@ package("wayland")
 
     add_deps("meson", "ninja >=1.8.2", "libxml2", "libffi", "expat", "bison", "pkg-config")
 
-    on_install("linux", function (package)
+    on_install("linux", "bsd", function (package)
         -- imports
         import("package.tools.meson")
         import("package.tools.autoconf")
