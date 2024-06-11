@@ -21,7 +21,6 @@ package("wayland")
     on_install("linux", "bsd", function (package)
         -- imports
         import("package.tools.meson")
-        import("package.tools.autoconf")
         import("lib.detect.find_file")
 
         -- set environment variables
@@ -44,15 +43,10 @@ package("wayland")
 
         -- install wayland-protocols
         local protocol = assert(package:resourcedir("protocols"), "wayland-protocols not found!")
-        local configfile = find_file("configure.ac", path.join(protocol, "**"))
-        os.cd(path.directory(configfile))
+        local buildfile = find_file("meson.build", path.join(protocol, "**"))
+        os.cd(path.directory(buildfile))
 
-        envs = autoconf.buildenvs(package)
-        envs.LD_LIBRARY_PATH = path.joinenv(table.join(LD_LIBRARY_PATH, envs.LD_LIBRARY_PATH))
-        envs.PKG_CONFIG_PATH = path.joinenv(table.join(PKG_CONFIG_PATH, envs.PKG_CONFIG_PATH))
-        envs.ACLOCAL_PATH    = path.joinenv(table.join(ACLOCAL_PATH, envs.ACLOCAL_PATH))
-        envs.ACLOCAL         = ACLOCAL
-        autoconf.install(package, {}, {envs = envs})
+        meson.install(package, {}, {envs = envs})
     end)
 
     on_test(function (package)
