@@ -50,7 +50,7 @@ package("wayland")
         else
             import("package.tools.autoconf")
             
-            local configfile = assert(find_file("configure.ac", path.join(protocol, "**"))
+            local configfile = assert(find_file("configure.ac", path.join(protocol, "**")))
             os.cd(path.directory(configfile))
 
             envs = autoconf.buildenvs(package)
