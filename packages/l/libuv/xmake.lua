@@ -6,6 +6,7 @@ package("libuv")
     set_urls("https://github.com/libuv/libuv/archive/refs/tags/$(version).zip",
              "https://github.com/libuv/libuv.git")
 
+    add_versions("v1.47.0", "d50af7e6d72526db137e66fad812421c8a1cae09d146b0ec2bb9a22c5f23ba93")
     add_versions("v1.46.0", "45953dc9b64db7f4f47561f9e4543b762c52adfe7c9b6f8e9efbc3b4dd7d3081")
     add_versions("v1.44.1", "d233a9c522a9f4afec47b0d12f302d93d114a9e3ea104150e65f55fd931518e6")
     add_versions("v1.42.0", "031130768b25ae18c4b9d4a94ba7734e2072b11c6fce3e554612c516c3241402")
@@ -29,6 +30,15 @@ package("libuv")
     elseif is_plat("windows", "mingw") then
         add_syslinks("advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "shell32", "ole32", "uuid", "dbghelp")
     end
+
+    -- https://github.com/libuv/libuv/issues/3411
+    on_check("android", function (package)
+        if package:version():ge("1.47.0") then
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(libuv): need ndk api level >= 24 after v1.47.0")
+        end
+    end)
 
     on_load(function (package)
         local version = package:version()
