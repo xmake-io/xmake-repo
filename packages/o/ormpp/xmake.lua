@@ -1,5 +1,4 @@
 package("ormpp")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/qicosmos/ormpp")
     set_description("modern C++ ORM, C++17, support mysql, postgresql,sqlite")
@@ -16,6 +15,19 @@ package("ormpp")
     add_configs("postgresql", {description = "Using postgresql", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Using sqlite3", default = false, type = "boolean"})
 
+    add_deps("frozen", "iguana")
+
+    on_check(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <vector>
+            #include <algorithm>
+            void test() {
+                std::vector<int> v{1, 2, 3, 4};
+                auto it = std::find_if (v.begin(), v.end(), [](int i){return i % 2 == 0;});
+            }
+        ]]}, {configs = {languages = "c++20"}}), "package(ormpp) Require at least C++20.")
+    end)
+
     on_load(function(package) 
         local configs = {
             mysql = "ORMPP_ENABLE_MYSQL",
@@ -30,8 +42,6 @@ package("ormpp")
             end
         end
     end)
-
-    add_deps("frozen", "iguana")
 
     on_install(function (package)
         if package:version():ge("0.1.2") then
@@ -55,6 +65,6 @@ package("ormpp")
                 int id;
             };
             REGISTER_AUTO_KEY(student, id)
-            REFLECTION_WITH_NAME(student, "t_student", id, name, age)        
-        ]]}, {configs = {languages = languages}, includes = {"dbng.hpp"} }))
+            REFLECTION_WITH_NAME(student, "t_student", id, name, age)
+        ]]}, {configs = {languages = languages}, includes = {"dbng.hpp"}}))
     end)
