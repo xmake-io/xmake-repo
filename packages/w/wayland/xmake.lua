@@ -44,9 +44,22 @@ package("wayland")
         -- install wayland-protocols
         local protocol = assert(package:resourcedir("protocols"), "wayland-protocols not found!")
         local buildfile = find_file("meson.build", path.join(protocol, "**"))
-        os.cd(path.directory(buildfile))
+        if buildfile then
+            os.cd(path.directory(buildfile))
+            meson.install(package, {}, {envs = envs})
+        else
+            import("package.tools.autoconf")
+            
+            local configfile = assert(find_file("configure.ac", path.join(protocol, "**"))
+            os.cd(path.directory(configfile))
 
-        meson.install(package, {}, {envs = envs})
+            envs = autoconf.buildenvs(package)
+            envs.LD_LIBRARY_PATH = path.joinenv(table.join(LD_LIBRARY_PATH, envs.LD_LIBRARY_PATH))
+            envs.PKG_CONFIG_PATH = path.joinenv(table.join(PKG_CONFIG_PATH, envs.PKG_CONFIG_PATH))
+            envs.ACLOCAL_PATH    = path.joinenv(table.join(ACLOCAL_PATH, envs.ACLOCAL_PATH))
+            envs.ACLOCAL         = ACLOCAL
+            autoconf.install(package, {}, {envs = envs})
+        end
     end)
 
     on_test(function (package)
