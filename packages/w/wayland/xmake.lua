@@ -10,7 +10,7 @@ package("wayland")
 
     add_resources("1.18.0", "protocols", "https://wayland.freedesktop.org/releases/wayland-protocols-1.20.tar.xz", "9782b7a1a863d82d7c92478497d13c758f52e7da4f197aa16443f73de77e4de7")
     add_resources("1.19.0", "protocols", "https://wayland.freedesktop.org/releases/wayland-protocols-1.21.tar.xz", "b99945842d8be18817c26ee77dafa157883af89268e15f4a5a1a1ff3ffa4cde5")
-    add_resources("1.23.0", "protocols", "https://wayland.freedesktop.org/releases/wayland-protocols-1.36.tar.xz", "71fd4de05e79f9a1ca559fac30c1f8365fa10346422f9fe795f74d77b9ef7e92")
+    add_resources("1.23.0", "protocols", "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.36/downloads/wayland-protocols-1.36.tar.xz", "71fd4de05e79f9a1ca559fac30c1f8365fa10346422f9fe795f74d77b9ef7e92")
 
     if is_plat("linux") then
         add_extsources("apt::libwayland-dev", "pacman::wayland")
