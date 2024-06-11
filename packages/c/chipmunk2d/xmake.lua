@@ -22,9 +22,7 @@ package("chipmunk2d")
 
     add_deps("cmake")
 
-    if is_plat("linux") then
-        add_syslinks("pthread", "m")
-    elseif is_plat("bsd") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread", "m")
     elseif is_plat("android") then
         add_syslinks("log", "m")
