@@ -1,5 +1,5 @@
 diff --git a/include/teascript/StackMachine.hpp b/include/teascript/StackMachine.hpp
-index 4a0af14..3faff4c 100644
+index 4a0af14..b714742 100644
 --- a/include/teascript/StackMachine.hpp
 +++ b/include/teascript/StackMachine.hpp
 @@ -558,7 +558,7 @@ private:
@@ -83,12 +83,22 @@ index 4a0af14..3faff4c 100644
                          run = false;
                          continue;
                      } else if( not tuple.ContainsIdx( idx ) ) {
-@@ -961,13 +961,13 @@ private:
+@@ -953,21 +953,21 @@ private:
+ 
+                      // get the sequence
+                     auto &seq_val = mStack[s - 1];
+-                    if( not seq_val.GetTypeInfo()->IsSame<IntegerSequence>() && not seq_val.GetTypeInfo()->IsSame<Tuple>() ) {
++                    if( not seq_val.GetTypeInfo()->template IsSame<IntegerSequence>() && not seq_val.GetTypeInfo()->template IsSame<Tuple>() ) {
+                         HandleException( std::make_exception_ptr( exception::eval_error( "Forall loop can actually only iterate over an IntegerSequence/Tuple!" ) ) );
+                         run = false;
+                         continue;
+                     }
  
                      //FIXME: if seq_val is a sequence already we should use a reference for in later versions it will be possible to manipulate it elsewhere in the loop.
-                     auto  seq = seq_val.GetTypeInfo()->IsSame<Tuple>()
+-                    auto  seq = seq_val.GetTypeInfo()->IsSame<Tuple>()
 -                        ? IntegerSequence( 0LL, static_cast<Integer>(seq_val.GetValue<Tuple>().Size() - 1), 1LL )
 -                        : seq_val.GetValue<IntegerSequence>();
++                    auto  seq = seq_val.GetTypeInfo()->template IsSame<Tuple>()
 +                        ? IntegerSequence( 0LL, static_cast<Integer>(seq_val.template GetValue<Tuple>().Size() - 1), 1LL )
 +                        : seq_val.template GetValue<IntegerSequence>();
                      seq.Reset();
