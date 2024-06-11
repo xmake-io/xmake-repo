@@ -17,17 +17,6 @@ package("ormpp")
 
     add_deps("frozen", "iguana")
 
-    on_check(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <vector>
-            #include <algorithm>
-            void test() {
-                std::vector<int> v{1, 2, 3, 4};
-                auto it = std::find_if (v.begin(), v.end(), [](int i){return i % 2 == 0;});
-            }
-        ]]}, {configs = {languages = "c++20"}}), "package(ormpp) Require at least C++20.")
-    end)
-
     on_load(function(package) 
         local configs = {
             mysql = "ORMPP_ENABLE_MYSQL",
@@ -58,6 +47,8 @@ package("ormpp")
         end
 
         assert(package:check_cxxsnippets({test = [[
+            #include <algorithm>
+            #include <dbng.hpp>
             using namespace ormpp;
             struct student {
                 std::string name;
@@ -66,5 +57,5 @@ package("ormpp")
             };
             REGISTER_AUTO_KEY(student, id)
             REFLECTION_WITH_NAME(student, "t_student", id, name, age)
-        ]]}, {configs = {languages = languages}, includes = {"dbng.hpp"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
