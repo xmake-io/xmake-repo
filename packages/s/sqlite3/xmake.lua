@@ -83,14 +83,14 @@ package("sqlite3")
         end
         io.writefile("xmake.lua", xmake_lua)
 
-        local config = {}
+        local configs = {}
         for opt, value in pairs(package:configs()) do
             if not package:extraconf("configs", opt, "builtin") then
-                config[opt] = value
+                configs[opt] = value
             end
         end
 
-        import("package.tools.xmake").install(package, config)
+        import("package.tools.xmake").install(package, configs)
         package:addenv("PATH", "bin")
     end)
 
