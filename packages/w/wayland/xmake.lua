@@ -18,6 +18,10 @@ package("wayland")
 
     add_deps("meson", "ninja >=1.8.2", "libxml2", "libffi", "expat", "bison", "pkg-config")
 
+    if is_plat("bsd") then
+        add_deps("epoll-shim")
+    end
+
     on_install("linux", "bsd", function (package)
         -- imports
         import("package.tools.meson")
