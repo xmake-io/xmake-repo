@@ -33,7 +33,7 @@ package("proj")
         end
     end)
 
-    on_install("!wasm and !android@!windows", function (package)
+    on_install("!wasm and (!android or android@!windows)", function (package)
         -- windows@arm64 cann't generate proj.db
         if package:is_plat("windows") and package:is_arch("arm64") then
             io.replace("CMakeLists.txt", "add_subdirectory(data)", "", {plain = true})
