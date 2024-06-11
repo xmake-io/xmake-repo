@@ -3,21 +3,11 @@ import("lib.detect.find_library")
 
 function _find_package(package, opt)
     local paths = {
-	      "$(env DPL_ROOT)",
+	    "$(env DPL_ROOT)",
         "$(env ONEAPI_ROOT)/dpl/latest"
     }
     -- find library
     local result = {links = {}, linkdirs = {}, includedirs = {}}
-    local backend = package:config("backend")
-    
-    if backend == "tbb" or backend == "dpcpp" then
-        package:add("deps", "tbb")
-    elseif backend == "omp" then
-        package:add("deps", "openmp")
-    end
-    if package:is_plat("windows") then
-        package:add("cxxflags", "/Zc:__cplusplus")
-    end
 
     -- find include
     local includepath = find_path(path.join("oneapi","dpl","algorithm"), paths, {suffixes = "include"})
