@@ -34,9 +34,7 @@ package("libuv")
     -- https://github.com/libuv/libuv/issues/3411
     on_check("android", function (package)
         if package:version():ge("1.47.0") then
-            import("core.tool.toolchain")
-
-            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+            local ndk = package:toolchain("ndk")
             local ndk_sdkver = ndk:config("ndk_sdkver")
             assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(libuv): need ndk api level >= 24 after v1.47.0")
         end
