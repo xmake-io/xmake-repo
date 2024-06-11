@@ -48,7 +48,7 @@ package("openal-soft")
     end)
 
     on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", "cross", "bsd" , function (package)
-        if is_plat("linux") and linuxos.name() == "fedora" then
+        if (package:is_plat("linux") and linuxos.name() == "fedora") or package:is_plat("bsd") then
             -- https://github.com/kcat/openal-soft/issues/864
             io.replace("CMakeLists.txt", "if(HAVE_GCC_PROTECTED_VISIBILITY)", "if(0)", {plain = true})
         end
