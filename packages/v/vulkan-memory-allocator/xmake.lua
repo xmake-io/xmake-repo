@@ -11,7 +11,7 @@ package("vulkan-memory-allocator")
 
     add_deps("vulkan-headers")
 
-    on_install("windows", "linux", "mingw", "macosx", "iphoneos", "android", function (package)
+    on_install("windows", "linux", "mingw", "macosx", "iphoneos", "android", "bsd", function (package)
         os.cp("include/vk_mem_alloc.h", package:installdir("include"))
     end)
 
