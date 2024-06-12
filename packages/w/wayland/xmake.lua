@@ -53,7 +53,7 @@ package("wayland")
             try
             {
                 function ()
-                    meson.install(package, {"-Dbuild-tests=false"}, {envs = envs})
+                    meson.install(package, {"-Dtests=false"}, {envs = envs})
                 end,
                 catch
                 {
