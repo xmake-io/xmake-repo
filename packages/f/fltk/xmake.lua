@@ -34,11 +34,10 @@ package("fltk")
     add_deps("zlib", "libpng", "libjpeg")
 
     on_load(function (package)
-        if package:version() and package:version():eq("1.3.9") and package:is_plat("linux") then
-            assert(package:config("fluid"), "Unsupported fluid on linux")
-        end
-
         if package:is_plat("linux") then
+            if package:version() and package:version():eq("1.3.9") then
+                assert(package:config("fluid"), "Unsupported fluid on linux")
+            end
             if package:config("pango") then 
                 package:add("deps", "pango-1.0", "pangoxft-1.0", "gobject-2.0", "cairo", "pangocairo-1.0")
             end
@@ -48,7 +47,7 @@ package("fltk")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", "msys", function (package)
         for _, file in ipairs(os.files("**.cxx")) do
             io.replace(file, "<libpng/png.h>", "<png.h>", {plain = true})
         end
