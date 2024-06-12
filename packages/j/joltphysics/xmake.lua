@@ -108,10 +108,11 @@ package("joltphysics")
             table.insert(configs, "-DUSE_SSE4_2=" .. (package:config("inst_sse4_2") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_TZCNT=" .. (package:config("inst_tzcnt") and "ON" or "OFF"))
             -- test, don't merge me
+            print("patching cmakelists...")
             local cmakelists = io.open("CMakeLists.txt", "a")
-            cmakelists:print("")
-            cmakelists:print("MESSAGE(${CMAKE_SYSTEM_PROCESSOR})")
+            cmakelists:write([[\nMESSAGE(CMAKE_SYSTEM_PROCESSOR="${CMAKE_SYSTEM_PROCESSOR}")\n]])
             cmakelists:close()
+            print(io.readfile("CMakeLists.txt"))
             -- test
             import("package.tools.cmake").install(package, configs)
         else
