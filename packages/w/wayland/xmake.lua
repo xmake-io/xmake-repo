@@ -50,23 +50,7 @@ package("wayland")
         local buildfile = find_file("meson.build", path.join(protocol, "**"))
         if buildfile then
             os.cd(path.directory(buildfile))
-            try
-            {
-                function ()
-                    meson.install(package, {"-Dtests=false"}, {envs = envs})
-                end,
-                catch
-                {
-                    function (errs)
-                        print("catching error")
-                        print("reading logs...")
-                        local logs = find_file("meson-log.txt", "**")
-                        print("found logs at " .. logs)
-                        print(io.readfile(logs))
-                        os.raise(errs)
-                    end
-                }
-            }
+            meson.install(package, {"-Dtests=false"}, {envs = envs})
         else
             import("package.tools.autoconf")
             
