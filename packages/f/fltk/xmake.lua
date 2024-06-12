@@ -4,16 +4,16 @@ package("fltk")
 
     add_urls("https://www.fltk.org/pub/fltk/$(version)/fltk-$(version)-source.tar.bz2", {alias = "home"})
     add_urls("https://github.com/fltk/fltk/archive/refs/tags/release-$(version).tar.gz", {alias = "github"})
-    add_urls("https://github.com/fltk/fltk/archive/d7985607d6dd8308f104d84c778080731fa23c9a.zip",
-             "https://github.com/fltk/fltk.git")
+    add_urls("https://github.com/fltk/fltk.git")
 
     add_versions("home:1.3.9", "103441134915402808fd45424d4061778609437e804334434e946cfd26b196c2")
     add_versions("github:1.3.9", "f30661851a61f1931eaaceb9ef4005584c85cb07fd7ffc38a645172b8e4eb3df")
-    -- add_versions("1.4.0", "43d398ab068732cb1debd9a98d124e47c9da6f53cdf3e36f22868a54cca0c371")
+
+    add_patches("1.3.9", "patches/1.3.9/cmake-fluid.patch", "06ee1e82a74651a0b4ba4b386e5e5436d8b95584330d02a8a2c53351210a9127")
 
     if is_plat("linux") then
-        add_configs("pango",   {description = "Use pango for font support", default = false, type = "boolean"})
-        add_configs("xft",     {description = "Use libXft for font support", default = false, type = "boolean"})
+        add_configs("pango", {description = "Use pango for font support", default = false, type = "boolean"})
+        add_configs("xft", {description = "Use libXft for font support", default = false, type = "boolean"})
     end
     add_configs("fluid", {description = "Build fluid", default = false, type = "boolean"})
     add_configs("forms", {description = "Build forms", default = false, type = "boolean"})
@@ -34,6 +34,10 @@ package("fltk")
     add_deps("zlib", "libpng", "libjpeg")
 
     on_load(function (package)
+        if package:version() and package:version():eq("1.3.9") and package:is_plat("linux") then
+            assert(package:config("fluid"), "Unsupported fluid on linux")
+        end
+
         if package:is_plat("linux") then
             if package:config("pango") then 
                 package:add("deps", "pango-1.0", "pangoxft-1.0", "gobject-2.0", "cairo", "pangocairo-1.0")
@@ -44,7 +48,7 @@ package("fltk")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "android", function (package)
+    on_install(function (package)
         for _, file in ipairs(os.files("**.cxx")) do
             io.replace(file, "<libpng/png.h>", "<png.h>", {plain = true})
         end
@@ -65,12 +69,7 @@ package("fltk")
             table.insert(configs, "-DOPTION_USE_PANGO=" .. (package:config("pango") and "ON" or "OFF"))
             table.insert(configs, "-DOPTION_USE_XFT=" .. (package:config("xft") and "ON" or "OFF"))
         end
-
-        local packagedeps
-        if package:is_plat("linux") then
-            packagedeps = "libxfixes"
-        end
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
