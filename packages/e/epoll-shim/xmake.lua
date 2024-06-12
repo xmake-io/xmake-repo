@@ -10,9 +10,8 @@ package("epoll-shim")
 
     add_deps("cmake")
 
-    add_includedirs("include", "include/libepoll-shim")
-
     on_install("bsd", "macosx", function (package)
+        io.replace("CMakeLists.txt", [[set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/libepoll-shim")]], "", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
