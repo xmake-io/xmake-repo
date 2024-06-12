@@ -36,7 +36,7 @@ package("fltk")
     on_load(function (package)
         if package:is_plat("linux") then
             if package:version() and package:version():eq("1.3.9") then
-                assert(package:config("fluid"), "Unsupported fluid on linux")
+                assert(not package:config("fluid"), "package(fltk/1.3.9): Unsupported fluid on linux")
             end
             if package:config("pango") then 
                 package:add("deps", "pango-1.0", "pangoxft-1.0", "gobject-2.0", "cairo", "pangocairo-1.0")
