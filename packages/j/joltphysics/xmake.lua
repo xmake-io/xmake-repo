@@ -110,7 +110,10 @@ package("joltphysics")
             -- test, don't merge me
             print("patching cmakelists...")
             local cmakelists = io.open("CMakeLists.txt", "a")
-            cmakelists:write([[\nMESSAGE(CMAKE_SYSTEM_PROCESSOR="${CMAKE_SYSTEM_PROCESSOR}")\n]])
+            cmakelists:print("")
+            cmakelists:write([[
+                MESSAGE(CMAKE_SYSTEM_PROCESSOR="${CMAKE_SYSTEM_PROCESSOR}")
+                ]])
             cmakelists:close()
             print(io.readfile("CMakeLists.txt"))
             -- test
