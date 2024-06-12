@@ -1,12 +1,13 @@
 package("c-ares")
-
     set_homepage("https://c-ares.org/")
     set_description("A C library for asynchronous DNS requests")
+    set_license("MIT")
 
     add_urls("https://c-ares.org/download/c-ares-$(version).tar.gz")
     add_urls("https://github.com/c-ares/c-ares/releases/download/cares-$(version).tar.gz", {version = function (version)
         return version:gsub("%.", "_") .. "/c-ares-" .. version
     end})
+    add_versions("1.29.0", "0b89fa425b825c4c7bc708494f374ae69340e4d1fdc64523bdbb2750bfc02ea7")
     add_versions("1.28.1", "675a69fc54ddbf42e6830bc671eeb6cd89eeca43828eb413243fd2c0a760809d")
     add_versions("1.27.0", "0a72be66959955c43e2af2fbd03418e82a2bd5464604ec9a62147e37aceb420b")
     add_versions("1.16.1", "d08312d0ecc3bd48eee0a4cc0d2137c9f194e0a28de2028928c0f6cae85f86ce")
@@ -24,6 +25,8 @@ package("c-ares")
                 path.join(os.scriptdir(), "patches", "1.18.1", "skip-docs.patch" ),
                 "bbe389b4aab052c2e6845e87d1f56a8366bf18c944f5e5e6f05a2cf105dbe680")
 
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+
     if is_plat("macosx") then
         add_syslinks("resolv")
     end
@@ -31,11 +34,13 @@ package("c-ares")
     add_deps("cmake")
 
     on_install("linux", "macosx", "windows", function (package)
-        local configs = {"-DCARES_BUILD_TESTS=OFF", "-DCARES_BUILD_TOOLS=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DCARES_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCARES_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
-        if not package:config("shared") then
+        local shared = package:config("shared")
+        local configs = {"-DCARES_BUILD_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCARES_SHARED=" .. (shared and "ON" or "OFF"))
+        table.insert(configs, "-DCARES_STATIC=" .. (shared and "OFF" or "ON"))
+        table.insert(configs, "-DCARES_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
+        if not shared then
             package:add("defines", "CARES_STATICLIB")
         end
         import("package.tools.cmake").install(package, configs)
