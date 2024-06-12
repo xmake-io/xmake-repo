@@ -43,29 +43,29 @@ package("wayland")
         envs.PKG_CONFIG_PATH = path.joinenv(table.join(PKG_CONFIG_PATH, envs.PKG_CONFIG_PATH))
         envs.ACLOCAL_PATH    = path.joinenv(table.join(ACLOCAL_PATH, envs.ACLOCAL_PATH))
         envs.ACLOCAL         = ACLOCAL
-        try
-        {
-            function ()
-                meson.install(package, configs, {envs = envs})
-            end,
-            catch
-            {
-                function (errs)
-                    print(errs)
-                    print("reading logs...")
-                    local logs = find_file("meson-log.txt", "**")
-                    print("found logs at " .. logs)
-                    print(io.readfile(logs))
-                end
-            }
-        }
+        meson.install(package, configs, {envs = envs})
 
         -- install wayland-protocols
         local protocol = assert(package:resourcedir("protocols"), "wayland-protocols not found!")
         local buildfile = find_file("meson.build", path.join(protocol, "**"))
         if buildfile then
             os.cd(path.directory(buildfile))
-            meson.install(package, {}, {envs = envs})
+            try
+            {
+                function ()
+                    meson.install(package, {}, {envs = envs})
+                end,
+                catch
+                {
+                    function (errs)
+                        print(errs)
+                        print("reading logs...")
+                        local logs = find_file("meson-log.txt", "**")
+                        print("found logs at " .. logs)
+                        print(io.readfile(logs))
+                    end
+                }
+            }
         else
             import("package.tools.autoconf")
             
