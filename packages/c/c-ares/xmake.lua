@@ -4,9 +4,15 @@ package("c-ares")
     set_license("MIT")
 
     add_urls("https://c-ares.org/download/c-ares-$(version).tar.gz")
-    add_urls("https://github.com/c-ares/c-ares/releases/download/cares-$(version).tar.gz", {version = function (version)
-        return version:gsub("%.", "_") .. "/c-ares-" .. version
+    add_urls("https://github.com/c-ares/c-ares/releases/download/$(version).tar.gz", {version = function (version)
+        if version:ge("1.30.0") then
+            return "v" .. version .. "/c-ares-" .. version
+        else
+            return "cares-" .. version:gsub("%.", "_") .. "/c-ares-" .. version
+        end
     end})
+
+    add_versions("1.30.0", "4fea312112021bcef081203b1ea020109842feb58cd8a36a3d3f7e0d8bc1138c")
     add_versions("1.29.0", "0b89fa425b825c4c7bc708494f374ae69340e4d1fdc64523bdbb2750bfc02ea7")
     add_versions("1.28.1", "675a69fc54ddbf42e6830bc671eeb6cd89eeca43828eb413243fd2c0a760809d")
     add_versions("1.27.0", "0a72be66959955c43e2af2fbd03418e82a2bd5464604ec9a62147e37aceb420b")
