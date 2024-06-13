@@ -108,7 +108,7 @@ package("joltphysics")
             table.insert(configs, "-DUSE_SSE4_2=" .. (package:config("inst_sse4_2") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_TZCNT=" .. (package:config("inst_tzcnt") and "ON" or "OFF"))
             -- https://github.com/jrouwe/JoltPhysics/issues/1133
-            if package:is_plat("mingw") or package:is_cross() then
+            if package:is_plat("mingw") or (package:is_plat("linux", "macosx", "cross") and package:is_cross()) then
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
             end
             import("package.tools.cmake").install(package, configs)
