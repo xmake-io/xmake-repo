@@ -37,7 +37,7 @@ package("folly")
         package:add("deps", "liburing")
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_LibDwarf=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_Libiberty=ON",
@@ -57,7 +57,7 @@ package("folly")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test("windows", "macosx", function (package)
+    on_test("macosx", function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <cassert>
             void test() {
