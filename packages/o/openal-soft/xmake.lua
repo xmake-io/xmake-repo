@@ -18,8 +18,6 @@ package("openal-soft")
         add_extsources("pacman::openal")
     elseif is_plat("linux") then
         add_extsources("pacman::openal", "apt::libopenal-dev")
-     elseif is_plat("bsd") then
-        add_extsources("pkg::openal-soft")    
     elseif is_plat("macosx") then
         add_extsources("brew::openal-soft")
     end
