@@ -4,12 +4,18 @@ package("godotcpp4")
     set_license("MIT")
 
     set_urls("https://github.com/godotengine/godot-cpp.git")
-    -- add_versions("4.2", "2b6eb6832e1dba2816229917dd2a6d54184e1bf4")
+    add_versions("4.2", "2b6eb6832e1dba2816229917dd2a6d54184e1bf4")
     add_versions("4.1", "32becf6a13681119ad63b6d7cc4e816c9a0cc86b")
     add_versions("4.0", "9d1c396c54fc3bdfcc7da4f3abcb52b14f6cce8f")
 
     add_deps("scons")
     add_includedirs("gen/include", "include")
+
+    on_check("android", function (package)
+        if package:version():ge("4.1") then
+            raise("package(godotcpp4 >=4.1): only support ndk version 23.2.8568313")
+        end
+    end)
 
     on_load(function(package)
         assert(not package:is_arch(
