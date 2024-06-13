@@ -76,7 +76,7 @@ package("joltphysics")
         end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm", "bsd",function (package)
+    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm", "bsd", function (package)
         -- Jolt CMakeLists had no install target/support for custom msvc runtime until 3.0.0
         local version = package:version()
         if not version or version:ge("3.0.0") then
@@ -107,16 +107,10 @@ package("joltphysics")
             table.insert(configs, "-DUSE_SSE4_1=" .. (package:config("inst_sse4_1") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_SSE4_2=" .. (package:config("inst_sse4_2") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_TZCNT=" .. (package:config("inst_tzcnt") and "ON" or "OFF"))
-            -- test, don't merge me
-            print("patching cmakelists...")
-            local cmakelists = io.open("CMakeLists.txt", "a")
-            cmakelists:print("")
-            cmakelists:write([[
-                MESSAGE(CMAKE_SYSTEM_PROCESSOR="${CMAKE_SYSTEM_PROCESSOR}")
-                ]])
-            cmakelists:close()
-            print(io.readfile("CMakeLists.txt"))
-            -- test
+            -- https://github.com/jrouwe/JoltPhysics/issues/1133
+            if package:is_plat("mingw") or package:is_cross() then
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
+            end
             import("package.tools.cmake").install(package, configs)
         else
             os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")
