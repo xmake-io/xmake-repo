@@ -18,12 +18,9 @@ package("c-ares")
     add_versions("1.18.1", "1a7d52a8a84a9fbffb1be9133c0f6e17217d91ea5a6fa61f6b4729cda78ebbcf")
     add_versions("1.19.0", "bfceba37e23fd531293829002cac0401ef49a6dc55923f7f92236585b7ad1dd3")
 
-    add_patches("1.18.1",
-                path.join(os.scriptdir(), "patches", "1.18.1", "guard-imported-lib.patch" ),
-                "3cb03453af9e1477cfe926b1c03b2e3fbb8200a72888b590439e69e2d4253609")
-    add_patches("1.18.1",
-                path.join(os.scriptdir(), "patches", "1.18.1", "skip-docs.patch" ),
-                "bbe389b4aab052c2e6845e87d1f56a8366bf18c944f5e5e6f05a2cf105dbe680")
+    add_patches("1.29.0", "patches/1.29.0/macosx-header.patch", "389c12e54d82f0e8d5dc38dc15bbade12592509627680498774159a0cb32faf2")
+    add_patches("1.18.1", "patches/1.18.1/guard-imported-lib.patch", "3cb03453af9e1477cfe926b1c03b2e3fbb8200a72888b590439e69e2d4253609")
+    add_patches("1.18.1", "patches/1.18.1/skip-docs.patch", "bbe389b4aab052c2e6845e87d1f56a8366bf18c944f5e5e6f05a2cf105dbe680")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
@@ -33,7 +30,7 @@ package("c-ares")
 
     add_deps("cmake")
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install(function (package)
         local shared = package:config("shared")
         local configs = {"-DCARES_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
