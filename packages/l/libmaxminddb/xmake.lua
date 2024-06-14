@@ -6,7 +6,7 @@ package("libmaxminddb")
     add_urls("https://github.com/maxmind/libmaxminddb/releases/download/$(version)/libmaxminddb-$(version).tar.gz",
              "https://github.com/maxmind/libmaxminddb.git")
 
-    add_versions("1.9.1", "a80682a89d915fdf60b35d316232fb04ebf36fff27fda9bd39fe8a38d3cd3f12")
+    add_versions("1.10.0", "5e6db72df423ae225bfe8897069f6def40faa8931f456b99d79b8b4d664c6671")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
