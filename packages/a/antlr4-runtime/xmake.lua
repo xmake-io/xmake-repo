@@ -42,5 +42,9 @@ package("antlr4-runtime")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("antlr4::ANTLRInputStream", {configs = {languages = "c++17"}, includes = "antlr4-runtime/antlr4-runtime.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                antlr4::ANTLRInputStream x;
+            }
+        ]]}, {configs = {languages = "c++17"}, includes = "antlr4-runtime/antlr4-runtime.h"}))
     end)
