@@ -83,7 +83,7 @@ package("joltphysics")
                     package:add("cflags", "/arch:AVX512")
                 elseif package:config("inst_avx2") then
                     package:add("cflags", "/arch:AVX2")
-                elseif package:config("inst_avx")
+                elseif package:config("inst_avx") then
                     package:add("cflags", "/arch:AVX2")
                 end
             else
