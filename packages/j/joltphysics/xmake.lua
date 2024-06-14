@@ -12,6 +12,8 @@ package("joltphysics")
     add_versions("v3.0.1", "7ebb40bf2dddbcf0515984582aaa197ddd06e97581fd55b98cb64f91b243b8a6")
     add_versions("v3.0.0", "f8d756ae3471a32f2ee7e07475df2f7a34752f0fdd05e9a7ed2e7ce3dcdcd574")
     add_versions("v2.0.1", "96ae2e8691c4802e56bf2587da30f2cc86b8abe82a78bc2398065bd87dd718af")
+    -- patch for SSE instructions not enabled in 32bits mode
+    add_patches("v5.0.0", "https://github.com/jrouwe/JoltPhysics/commit/ebccdcbfae6b60e37480aa203d0781d26e437fbc.patch", "274f3a3ccbe2af8c1d94a66a96c894340764da2b447a13c43a665930c2d56337")
     -- patch for visibility attributes (fixes compilation in shared mode on GCC <13)
     add_patches("v4.0.0", "https://github.com/jrouwe/JoltPhysics/commit/b084d8f9054d78cb50bc851cc4db505462c4c634.patch", "a8f5da0bc5d4a1011771016be2ad1cdb00d4c40dd0909ef6ae4a1d1c95e8e251")
     -- patch for missing standard include (fixes Fedora compilation)
