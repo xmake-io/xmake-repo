@@ -6,7 +6,12 @@ package("folly")
 
     add_urls("https://github.com/facebook/folly/releases/download/v$(version).00/folly-v$(version).00.zip",
              "https://github.com/facebook/folly.git")
-
+    add_versions("2021.06.28", "477765d43045d82ac6a2750142aed9534cd5efc1fbf2be622bb682a8c02a45a4")
+    add_versions("2021.08.02", "03159657ef7a08c1207d90e63f02d4d6b1241dcae49f11a72441c0c269b269fa")
+    add_versions("2021.11.01", "2620ad559f1e041f50328c91838cde666d422ed09f23b31bcdbf61e709da5c17")
+    add_versions("2022.02.14", "6a50d4cc954f0f77efc85af231ee6b7f676a0d743c12b7080fb03fd3da3ffbf2")
+    add_versions("2022.04.25", "7d5cd59613780d7d2b9c946c810bfd6b0d11ed3a8a74c5ab00d4e9de5d1b2104")
+    add_versions("2022.08.29", "3adac6d4b203c2917185fd190fc04d615051cb2a4f6b988ddf3c42034efc8d4d")
     add_versions("2023.11.20", "7aabcfc5d85ca88fbd06bca1a7381654ec8b0c31fe919788b8d7c18ba50f38ff")
     add_versions("2024.02.26", "ed7086aa7a3e66e9afd2aeb1ddb746d94dcc0c80b792635cb72cd3622e2de9e3")
     add_versions("2024.03.04", "55fadd809f749b1834d20f1dff9aeb410f39b3e3025218d3b2e014948b58763d")
