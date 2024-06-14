@@ -1,13 +1,21 @@
 package("godotcpp4")
-
     set_homepage("https://godotengine.org/")
     set_description("C++ bindings for the Godot 4 script API")
+    set_license("MIT")
 
     set_urls("https://github.com/godotengine/godot-cpp.git")
+    add_versions("4.2", "2b6eb6832e1dba2816229917dd2a6d54184e1bf4")
+    add_versions("4.1", "32becf6a13681119ad63b6d7cc4e816c9a0cc86b")
     add_versions("4.0", "9d1c396c54fc3bdfcc7da4f3abcb52b14f6cce8f")
 
     add_deps("scons")
     add_includedirs("gen/include", "include")
+
+    on_check("android", function (package)
+        if package:version():ge("4.1") then
+            raise("package(godotcpp4 >=4.1): only support ndk version 23.2.8568313")
+        end
+    end)
 
     on_load(function(package)
         assert(not package:is_arch(
@@ -29,7 +37,7 @@ package("godotcpp4")
     end)
 
     on_install("linux", "windows|x64", "windows|x86", "macosx", "iphoneos", "android", function(package)
-        if package:is_plat("windows") then
+        if package:is_plat("windows") and package:version():eq("4.0.0") then
             io.replace("tools/targets.py", "/MD", "/" .. package:config("vs_runtime"), {plain = true})
         end
 
@@ -58,40 +66,19 @@ package("godotcpp4")
             "debug_symbols=" .. (package:is_debug() and "yes" or "no")
         }
 
+        if package:is_plat("windows") then
+            table.insert(configs, "use_static_cpp=" .. (package:has_runtime("MT") and "yes" or "no"))
+        end
+
         import("package.tools.scons").build(package, configs)
-        os.cp("bin/*." .. (package:is_plat("windows") and "lib" or "a"), package:installdir("lib"))
-        os.cp("include/godot_cpp", package:installdir("include"))
-        os.cp("gen/include/godot_cpp", path.join(package:installdir("gen"), "include", "godot_cpp"))
-        os.cp("gdextension/gdextension_interface.h", package:installdir("include"))
+        os.vcp("bin/*." .. (package:is_plat("windows") and "lib" or "a"), package:installdir("lib"))
+        os.vcp("include/godot_cpp", package:installdir("include"))
+        os.vcp("gen/include/godot_cpp", path.join(package:installdir("gen"), "include", "godot_cpp"))
+        os.vcp("gdextension/gdextension_interface.h", package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-          #include <godot_cpp/classes/global_constants.hpp>
-          #include <godot_cpp/classes/ref_counted.hpp>
-          #include <godot_cpp/core/binder_common.hpp>
-          using namespace godot;
-
-          class ExampleRef : public RefCounted {
-            GDCLASS(ExampleRef, RefCounted);
-
-          protected:
-            static void _bind_methods() {
-              ClassDB::bind_method(D_METHOD("get_id"), &ExampleRef::get_id);
-            }
-
-          public:
-            int get_id() { return 5; }
-          };
-
-          extern "C" {
-          GDExtensionBool GDE_EXPORT
-          example_library_init(const GDExtensionInterface *p_interface,
-                              GDExtensionClassLibraryPtr p_library,
-                              GDExtensionInitialization *r_initialization) {
-            ClassDB::register_class<ExampleRef>();
-            return true;
-          }
-          }
-        ]]}, {configs = {languages = "cxx17"}}))
+        local file = (package:version():eq("4.0") and "4.0.cpp" or "4.x.cpp")
+        local code = io.readfile(path.join(os.scriptdir(), "test", file))
+        assert(package:check_cxxsnippets({test = code}, {configs = {languages = "cxx17"}}))
     end)
