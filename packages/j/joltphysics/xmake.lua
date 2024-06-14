@@ -31,7 +31,7 @@ package("joltphysics")
     add_configs("object_layer_bits", {description = "Number of bits to use in ObjectLayer. Can be 16 or 32.", default = "16", type = "string", values = {"16", "32"}})
     add_configs("symbols", { description = "When turning this option on, the library will be compiled with debug symbols", default = false, type = "boolean" })
 
-    if is_arch("x86", "x64", "x86_64") then
+    if is_arch("i386", "x86", "x64", "x86_64") then
         add_configs("inst_avx", { description = "Enable AVX CPU instructions (x86/x64 only)", default = false, type = "boolean" })
         add_configs("inst_avx2", { description = "Enable AVX2 CPU instructions (x86/x64 only)", default = false, type = "boolean" })
         add_configs("inst_avx512", { description = "Enable AVX512F+AVX512VL CPU instructions (x86/x64 only)", default = false, type = "boolean" })
@@ -76,7 +76,7 @@ package("joltphysics")
         if package:config("shared") then
             package:add("defines", "JPH_SHARED_LIBRARY")
         end
-        if package:is_arch("x86", "x64", "x86_64") then
+        if package:is_arch("i386", "x86", "x64", "x86_64") then
             -- add instruction sets (from https://github.com/jrouwe/JoltPhysics/blob/4cd52055e09160affcafa557b39520331bf0d034/Jolt/Jolt.cmake#L602)
             if package:has_tool("cxx", "cl") then
                 if package:config("inst_avx512") then
@@ -176,7 +176,9 @@ package("joltphysics")
             table.insert(configs, "-DUSE_SSE4_2=" .. (package:config("inst_sse4_2") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_TZCNT=" .. (package:config("inst_tzcnt") and "ON" or "OFF"))
             -- https://github.com/jrouwe/JoltPhysics/issues/1133
-            if package:is_plat("mingw", "wasm") or (package:is_plat("linux", "macosx", "cross") and package:is_cross()) then
+            if package:is_plat("wasm") then
+                table.insert(configs, "-DEMSCRIPTEN_SYSTEM_PROCESSOR=" .. package:targetarch())
+            elseif package:is_plat("mingw") or (package:is_plat("linux", "macosx", "cross") and package:is_cross()) then
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
             end
             import("package.tools.cmake").install(package, configs)
