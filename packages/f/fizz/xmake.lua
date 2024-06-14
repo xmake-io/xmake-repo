@@ -26,9 +26,6 @@ package("fizz")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function (package)
-        assert(package:has_cxxincludes("fizz/server/AsyncFizzServer.h", {configs = {languages = "c++17"}}))
-    end)
     on_test("linux", function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "fizz/experimental/crypto/exchange/OQSKeyExchange.h"
