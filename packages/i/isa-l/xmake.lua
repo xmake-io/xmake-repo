@@ -8,7 +8,7 @@ package("isa-l")
 
     add_versions("v2.31.0", "e218b7b2e241cfb8e8b68f54a6e5eed80968cc387c4b1af03708b54e9fb236f1")
 
-    if is_subhost("msys", "cygwin") or (not is_plat("windows", "mingw")) then
+    if not is_plat("windows", "mingw") then
         add_deps("autoconf", "automake", "libtool")
     end
     add_deps("nasm")
@@ -29,7 +29,7 @@ package("isa-l")
             if package:is_debug() then
                 os.vcp("isa-l.pdb", package:installdir("bin"))
             end
-        elseif is_plat("mingw") and (not is_subhost("msys", "cygwin")) then
+        elseif is_plat("mingw") then
             os.cp(path.join(package:scriptdir(), "port", "isa-l.h.in"), "isa-l.h.in")
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
             import("package.tools.xmake").install(package, {version = package:version()})
