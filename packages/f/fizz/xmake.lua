@@ -26,7 +26,7 @@ package("fizz")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test("linux", function (package)
+    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "fizz/experimental/crypto/exchange/OQSKeyExchange.h"
             void test() {
