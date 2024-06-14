@@ -8,6 +8,8 @@ package("libmaxminddb")
 
     add_versions("1.9.1", "a80682a89d915fdf60b35d316232fb04ebf36fff27fda9bd39fe8a38d3cd3f12")
 
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
@@ -21,6 +23,7 @@ package("libmaxminddb")
         if package:is_plat("windows") then
             table.insert(configs, "-DMSVC_STATIC_RUNTIME=" .. (package:has_runtime("MT") and "ON" or "OFF"))
         end
+        table.insert(configs, "-DMAXMINDDB_BUILD_BINARIES=" .. (package:config("tools") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
