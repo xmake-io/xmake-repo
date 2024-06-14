@@ -30,8 +30,8 @@ package("fizz")
         assert(package:check_cxxsnippets({test = [[
             #include "fizz/experimental/crypto/exchange/OQSKeyExchange.h"
             void test() {
-                auto clientKex = OQSClientKeyExchange(OQS_KEM_alg_kyber_768);
-                auto serverKex = OQSServerKeyExchange(OQS_KEM_alg_kyber_768);
+                auto clientKex = fizz::OQSClientKeyExchange(OQS_KEM_alg_kyber_768);
+                auto serverKex = fizz::OQSServerKeyExchange(OQS_KEM_alg_kyber_768);
                 clientKex.generateKeyPair();
                 serverKex.generateKeyPair();
             }
