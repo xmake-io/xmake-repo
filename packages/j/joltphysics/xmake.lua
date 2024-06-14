@@ -80,39 +80,39 @@ package("joltphysics")
             -- add instruction sets (from https://github.com/jrouwe/JoltPhysics/blob/4cd52055e09160affcafa557b39520331bf0d034/Jolt/Jolt.cmake#L602)
             if package:has_tool("cxx", "cl") then
                 if package:config("inst_avx512") then
-                    package:add("cflags", "/arch:AVX512")
+                    package:add("cxxflags", "/arch:AVX512")
                 elseif package:config("inst_avx2") then
-                    package:add("cflags", "/arch:AVX2")
+                    package:add("cxxflags", "/arch:AVX2")
                 elseif package:config("inst_avx") then
-                    package:add("cflags", "/arch:AVX2")
+                    package:add("cxxflags", "/arch:AVX2")
                 end
             else
                 if package:config("inst_avx512") then
-                    package:add("cflags", "-mavx512f", "-mavx512vl", "-mavx512dq", "-mavx2", "-mbmi", "-mpopcnt", "-mlzcnt", "-mf16c")
+                    package:add("cxxflags", "-mavx512f", "-mavx512vl", "-mavx512dq", "-mavx2", "-mbmi", "-mpopcnt", "-mlzcnt", "-mf16c")
                 elseif package:config("inst_avx2") then
-                    package:add("cflags", "-mavx2", "-mbmi", "-mpopcnt", "-mlzcnt", "-mf16c")
+                    package:add("cxxflags", "-mavx2", "-mbmi", "-mpopcnt", "-mlzcnt", "-mf16c")
                 elseif package:config("inst_avx") then
-                    package:add("cflags", "-mavx", "-mpopcnt")
+                    package:add("cxxflags", "-mavx", "-mpopcnt")
                 elseif package:config("inst_sse4_2") then
-                    package:add("cflags", "-msse4.2", "-mpopcnt")
+                    package:add("cxxflags", "-msse4.2", "-mpopcnt")
                 elseif package:config("inst_sse4_1") then
-                    package:add("cflags", "-msse4.1")
+                    package:add("cxxflags", "-msse4.1")
                 else
-                    package:add("cflags", "-msse2")
+                    package:add("cxxflags", "-msse2")
                 end
                 if package:config("inst_lzcnt") then
-                    package:add("cflags", "-mlzcnt")
+                    package:add("cxxflags", "-mlzcnt")
                 end
                 if package:config("inst_tzcnt") then
-                    package:add("cflags", "-mbmi")
+                    package:add("cxxflags", "-mbmi")
                 end
                 if package:config("inst_f16c") then
-                    package:add("cflags", "-mf16c")
+                    package:add("cxxflags", "-mf16c")
                 end
                 if package:config("inst_fmadd") and not package:config("cross_platform_deterministic") then
-                    package:add("cflags", "-mfma")
+                    package:add("cxxflags", "-mfma")
                 end
-                package:add("cflags", "-mfpmath=sse")
+                package:add("cxxflags", "-mfpmath=sse")
             end
             if package:config("inst_avx512") then
         		package:add("defines", "JPH_USE_AVX512")
@@ -166,17 +166,15 @@ package("joltphysics")
             table.insert(configs, "-DDOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
             table.insert(configs, "-DGENERATE_DEBUG_SYMBOLS=" .. ((package:debug() or package:config("symbols")) and "ON" or "OFF"))
             table.insert(configs, "-DOBJECT_LAYER_BITS=" .. package:config("object_layer_bits"))
-            if package:is_arch("x86", "x64", "x86_64") then
-                table.insert(configs, "-DUSE_AVX=" .. (package:config("inst_avx") and "ON" or "OFF"))
-                table.insert(configs, "-DUSE_AVX2=" .. (package:config("inst_avx2") and "ON" or "OFF"))
-                table.insert(configs, "-DUSE_AVX512=" .. (package:config("inst_avx512") and "ON" or "OFF"))
-                table.insert(configs, "-DUSE_F16C=" .. (package:config("inst_f16c") and "ON" or "OFF"))
-                table.insert(configs, "-DUSE_FMADD=" .. (package:config("inst_fmadd") and "ON" or "OFF"))
-                table.insert(configs, "-DUSE_LZCNT=" .. (package:config("inst_lzcnt") and "ON" or "OFF"))
-                table.insert(configs, "-DUSE_SSE4_1=" .. (package:config("inst_sse4_1") and "ON" or "OFF"))
-                table.insert(configs, "-DUSE_SSE4_2=" .. (package:config("inst_sse4_2") and "ON" or "OFF"))
-                table.insert(configs, "-DUSE_TZCNT=" .. (package:config("inst_tzcnt") and "ON" or "OFF"))
-            end
+            table.insert(configs, "-DUSE_AVX=" .. (package:config("inst_avx") and "ON" or "OFF"))
+            table.insert(configs, "-DUSE_AVX2=" .. (package:config("inst_avx2") and "ON" or "OFF"))
+            table.insert(configs, "-DUSE_AVX512=" .. (package:config("inst_avx512") and "ON" or "OFF"))
+            table.insert(configs, "-DUSE_F16C=" .. (package:config("inst_f16c") and "ON" or "OFF"))
+            table.insert(configs, "-DUSE_FMADD=" .. (package:config("inst_fmadd") and "ON" or "OFF"))
+            table.insert(configs, "-DUSE_LZCNT=" .. (package:config("inst_lzcnt") and "ON" or "OFF"))
+            table.insert(configs, "-DUSE_SSE4_1=" .. (package:config("inst_sse4_1") and "ON" or "OFF"))
+            table.insert(configs, "-DUSE_SSE4_2=" .. (package:config("inst_sse4_2") and "ON" or "OFF"))
+            table.insert(configs, "-DUSE_TZCNT=" .. (package:config("inst_tzcnt") and "ON" or "OFF"))
             -- https://github.com/jrouwe/JoltPhysics/issues/1133
             if package:is_plat("mingw", "wasm") or (package:is_plat("linux", "macosx", "cross") and package:is_cross()) then
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
