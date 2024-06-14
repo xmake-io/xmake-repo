@@ -19,7 +19,7 @@ package("fizz")
         os.cd("fizz")
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DBUILD_EXAMPLES=OFF",
-                         "-DCMAKE_CXX_STANDARD=17"
+                         "-DCMAKE_CXX_STANDARD=17",
                          "-DFIZZ_HAVE_OQS=TRUE"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
