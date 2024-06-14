@@ -8,11 +8,21 @@ package("antlr4-runtime")
 
     add_versions("4.13.1", "da20d487524d7f0a8b13f73a8dc326de7fc2e5775f5a49693c0a4e59c6b1410c")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::antlr4-runtime-cpp")
+    elseif is_plat("linux") then
+        add_extsources("pacman::antlr4-runtime", "apt::libantlr4-runtime-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::antlr4-cpp-runtime")
+    end
+
     if is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation")
     end
+
+    add_includedirs("include", "include/antlr4-runtime")
 
     add_deps("cmake")
 
