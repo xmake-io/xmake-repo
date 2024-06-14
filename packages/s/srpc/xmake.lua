@@ -6,6 +6,7 @@ package("srpc")
     add_urls("https://github.com/sogou/srpc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/srpc.git")
 
+    add_versions("v0.10.3", "37485ef4ff74fac32d74cf87c1ef02a7ff320e8822dff0051320645d43176d71")
     add_versions("v0.10.2", "da570f3522e9dfec9c396632044fcb51b5ddc5c854ba7824d1770de138f469fb")
 
     add_deps("cmake", "protobuf-cpp")
