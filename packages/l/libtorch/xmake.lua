@@ -121,6 +121,7 @@ package("libtorch")
         -- some patches to the third-party cmake files
         io.replace("cmake/MiscCheck.cmake", "if(UNIX)", "if(TRUE)", {plain = true})
         io.replace("third_party/fbgemm/CMakeLists.txt", "PRIVATE FBGEMM_STATIC", "PUBLIC FBGEMM_STATIC", {plain = true})
+        io.replace("third_party/fbgemm/CMakeLists.txt", "-Werror", "", {plain = true})
         io.replace("third_party/protobuf/cmake/install.cmake", "install%(DIRECTORY.-%)", "")
         if package:is_plat("windows") then
             if package:config("vs_runtime"):startswith("MD") then
