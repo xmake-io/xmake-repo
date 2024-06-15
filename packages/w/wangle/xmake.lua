@@ -27,9 +27,10 @@ package("wangle")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <chrono>
             #include "wangle/util/FilePoller.h"
             void test() {
-                wangle::FilePoller poller(1);
+                wangle::FilePoller poller(std::chrono::milliseconds(1));
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
