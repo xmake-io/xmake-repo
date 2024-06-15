@@ -29,7 +29,7 @@ package("wangle")
         assert(package:check_cxxsnippets({test = [[
             #include "wangle/util/FilePoller.h"
             void test() {
-                FilePoller poller(1);
+                wangle::FilePoller poller(1);
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
