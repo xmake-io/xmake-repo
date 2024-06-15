@@ -38,6 +38,9 @@ package("folly")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
+    if is_plat("macosx") then
+        add_syslinks("c++abi")
+    end
 
     on_load("linux", function (package)
         package:add("deps", "libaio")
