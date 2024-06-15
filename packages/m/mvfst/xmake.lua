@@ -24,5 +24,5 @@ package("mvfst")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("quic::isClientStream(0)", {includes = "quic/state/QuicStreamUtilities.h", configs = {languages = "c++17"}))
+        assert(package:has_cxxfuncs("quic::isClientStream(0)", {includes = "quic/state/QuicStreamUtilities.h", configs = {languages = "c++17"}}))
     end)
