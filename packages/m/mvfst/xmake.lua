@@ -10,6 +10,7 @@ package("mvfst")
     add_versions("2024.03.18", "7f42ad4b8da5646a24ba5e96101da914f77fe581abd686568d1dcd6492df0240")
     add_versions("2024.03.25", "293046511fb9395bdb09860f4c4202bcb848fed4cdd419d436506a07eeac66cd")
     add_versions("2024.04.01", "e39c4d7dd87520fcce6a3d5d398b5d03bd3e680186b9b0db23f02b502c6bcb1e")
+    add_versions("2024.06.10", "cc75889429a66463cc8e607ba09d584fb4e6d2e69b1127a538043b367c54a1ae")
 
     add_deps("cmake", "folly", "fizz")
 
@@ -23,5 +24,5 @@ package("mvfst")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("quic/QuicConstants.h", {configs = {languages = "c++17"}}))
+        assert(package:has_cxxfuncs("quic::isClientStream(0)", {includes = "quic/state/QuicStreamUtilities.h", configs = {languages = "c++17"}}))
     end)
