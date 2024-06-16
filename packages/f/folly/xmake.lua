@@ -29,7 +29,10 @@ package("folly")
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
+
     add_configs("lzma", {description = "Support LZMA for compression", default = true, type = "boolean"})
+    add_configs("libaio", {description = "Support compile with libaio", default = true, type = "boolean"})
+    add_configs("liburing", {description = "Support compile with liburing", default = true, type = "boolean"})
 
     add_deps("cmake")
     add_deps("boost", {configs = {date_time = true, iostreams = true, context = true, filesystem = true, program_options = true, regex = true, system = true, thread = true}})
@@ -44,12 +47,14 @@ package("folly")
     end
 
     on_load(function (package)
-        if package:is_plat("linux") then
-            package:add("deps", "libaio")
-            package:add("deps", "liburing")
-        end
         if package:config("lzma") then
             package:add("deps", "xz")
+        end
+        if package:is_plat("linux") and package:config("libaio") then
+            package:add("deps", "libaio")
+        end
+        if package:is_plat("linux") and package:config("liburing") then
+            package:add("deps", "liburing")
         end
     end)
 
