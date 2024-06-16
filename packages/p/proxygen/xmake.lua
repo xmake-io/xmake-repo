@@ -29,7 +29,7 @@ package("proxygen")
             void test() {
                 proxygen::HTTPServerOptions options;
                 options.threads = 4;
-                proxygen::HTTPServer server(options);
+                proxygen::HTTPServer server(std::move(options));
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
