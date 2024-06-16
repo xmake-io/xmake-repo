@@ -10,6 +10,7 @@ package("proxygen")
     add_versions("2024.03.18", "7731c5eea71f1ab3182a1a54329abae983ac63794f86768762a0136587dfd979")
     add_versions("2024.03.25", "b11c8da4dbcbbdde8d9504f2edd3eb537bdf959eccc07a8333d1936965437abc")
     add_versions("2024.04.01", "75b040c235fee853e8db90075620f56ee4aa69345eea9ab4f80aa35501fe2eff")
+    add_versions("2024.06.10", "8e511c5f1e4fda9db9edab980d6b02ebb47faf086078aab85db875e339e0bff4")
 
     add_deps("cmake", "folly", "fizz", "wangle", "mvfst", "gperf", "python")
 
@@ -23,5 +24,12 @@ package("proxygen")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("proxygen/httpserver/ScopedHTTPServer.h", {configs = {languages = "c++17"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include "proxygen/httpserver/HTTPServer.h"
+            void test() {
+                proxygen::HTTPServerOptions options;
+                options.threads = 4;
+                proxygen::HTTPServer server(std::move(options));
+            }
+        ]]}, {configs = {languages = "c++17"}}))
     end)
