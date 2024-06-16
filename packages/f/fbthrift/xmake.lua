@@ -24,11 +24,5 @@ package("fbthrift")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include "thrift/lib/cpp2/op/Patch.h"
-            void test() {
-                apache::thrift::op::BoolPatch patch;
-                patch.invert();
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+        assert(package:has_cxxfuncs("apache::thrift::detail::validate_bool(0)", {includes = "thrift/lib/cpp2/protocol/Protocol.h", configs = {languages = "c++17"}}))
     end)
