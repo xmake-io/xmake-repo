@@ -63,6 +63,9 @@ package("ffmpeg")
     end
 
     add_deps("nasm")
+    if is_plat("linux", "macosx") then
+        add_deps("pkg-config")
+    end
 
     on_fetch("mingw", "linux", "macosx", function (package, opt)
         import("lib.detect.find_tool")
