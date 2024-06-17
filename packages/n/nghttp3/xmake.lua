@@ -14,7 +14,7 @@ package("nghttp3")
 
     add_deps("cmake", "sfparse")
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install(function (package)
         local configs = {"-DENABLE_LIB_ONLY=ON", "-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
