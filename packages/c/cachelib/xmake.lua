@@ -11,6 +11,7 @@ package("cachelib")
     add_deps("cmake", "folly", "fizz", "wangle", "fbthrift", "numactl", "sparse-map", "fmt")
 
     on_install("linux", function (package)
+        os.cd("cachelib")
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
