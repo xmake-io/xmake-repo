@@ -1,6 +1,6 @@
 package("cachelib")
     set_homepage("www.cachelib.org")
-    set_description("An implementation of the QUIC transport protocol.")
+    set_description("Pluggable in-process caching engine to build and scale high performance services")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/facebook/CacheLib/archive/refs/tags/v$(version).00.tar.gz",
