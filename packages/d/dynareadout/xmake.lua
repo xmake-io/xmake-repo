@@ -5,6 +5,7 @@ package("dynareadout")
 
     add_urls("https://github.com/PucklaJ/dynareadout/archive/refs/tags/$(version).tar.gz",
              "https://github.com/PucklaJ/dynareadout.git")
+    add_versions("24.05", "86e045f23d1e1d3ed2e002774f8f04badc5c974c3441bdc07f3a82c5711328c9")
     add_versions("24.03", "d91feb2ebfa604b543dd6d98c3dd5aee5c489e6987159fef78dfcea1aad64bd5")
     add_versions("22.12", "2e430c718c610d4425e23d4c6c87fe4794bb8c76d3cc015988706dbf5027daa4")
     add_versions("23.01",   "578080c734927cc925e7e91a52317bc3e710965071f1da50853b1e48f81a1c0f")
