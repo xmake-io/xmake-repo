@@ -16,7 +16,7 @@ package("neco")
 
     if on_check then
         on_check("windows", function (package)
-            assert(package:has_cxxincludes("stdatomic.h", {configs = {languages = "c11"}}),
+            assert(package:has_cincludes("stdatomic.h", {configs = {languages = "c11"}}),
              "package(neco) Require at least C11 and stdatomic.h")
         end)
     end
