@@ -8,7 +8,7 @@ package("cachelib")
 
     add_versions("2024.06.10", "65afd2e313b6852faa84d7d9140493133854e69da40b8973ea9e29a26aca7fc9")
 
-    add_deps("cmake", "folly", "fizz", "wangle", "fbthrift", "numactl", "sparse-map", "fmt", "glog", "gtest", "gflags")
+    add_deps("cmake", "folly", "fizz", "wangle", "fbthrift", "numactl", "sparse-map", "fmt", "glog <0.7.0", "gtest", "gflags")
 
     on_install("linux", function (package)
         os.cd("cachelib")
