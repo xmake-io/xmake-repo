@@ -1,6 +1,6 @@
 package("directxtk")
     set_homepage("https://github.com/microsoft/DirectXTK")
-    set_description("This package contains the \"DirectX Tool Kit\", a collection of helper classes for writing Direct3D 11 C++ code for Universal Windows Platform (UWP) apps for Windows 10, Xbox One, and Win32 desktop applications for Windows 7 Service Pack 1 or later.")
+    set_description("A collection of helper classes for writing Direct3D 11 C++ code For Windows.")
 
     set_urls("https://github.com/microsoft/DirectXTK/archive/$(version).zip",
              "https://github.com/microsoft/DirectXTK.git",
@@ -19,6 +19,16 @@ package("directxtk")
     add_versions("24.2.0", "edb643b2444ff24925339cfb1bc9f76c671d5404a5549d32ecaa0d61bbab28c9")
 
     add_deps("cmake")
+
+    if on_source then
+        on_source(function (package)
+            -- FIXME arm/MT met some link errors
+            local vs = package:toolchain("msvc"):config("vs")
+            if package:is_arch("arm.*") and vs and vs < "2022" then
+                package:add("configs", "runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
+            end
+        end)
+    end
 
     if on_check then
         on_check("windows", function (package)
