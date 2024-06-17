@@ -89,11 +89,10 @@ package("folly")
 
     on_test("linux", function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "folly/experimental/io/IoUring.h"
-            #include "folly/experimental/io/AsyncIO.h"
+            #include "folly/fibers/TimedMutex.h"
+            using SharedMutex = folly::fibers::TimedRWMutexWritePriority<folly::fibers::Baton>;
             void test() {
-                folly::AsyncIOOp asyncIOOp;
-                folly::IoUringOp ioUringOp;
+                std::unique_ptr<SharedMutex[]> mutex_{new SharedMutex[4]};
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
