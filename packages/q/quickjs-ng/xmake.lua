@@ -14,6 +14,13 @@ package("quickjs-ng")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("windows", function (package)
+            assert(package:has_cincludes("stdatomic.h", {configs = {languages = "c11"}}),
+             "package(quickjs-ng) Require at least C11 and stdatomic.h")
+        end)
+    end
+
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
