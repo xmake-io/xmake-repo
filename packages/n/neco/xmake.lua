@@ -13,6 +13,9 @@ package("neco")
     end
 
     on_install(function (package)
+        io.replace("neco.c", "#if defined(__linux__) && !defined(_GNU_SOURCE)",
+            "#if defined(__linux__) && !defined(_GNU_SOURCE) && !defined(__ANDROID__)", {plain = true})
+        io.replace("neco.c", "#include <stdlib.h>", "#include <stdlib.h>\n#include <time.h>", {plain = true})
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             set_languages("c11")
