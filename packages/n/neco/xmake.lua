@@ -17,6 +17,7 @@ package("neco")
     on_install("linux", "mingw", "windows", "bsd", "android", "iphoneos", function (package)
         io.replace("neco.c", "#if defined(__linux__) && !defined(_GNU_SOURCE)",
             "#if defined(__linux__) && !defined(_GNU_SOURCE) && !defined(__ANDROID__)", {plain = true})
+        io.replace("neco.c", "&(int){1}", "(const char*)&(int){1}", {plain = true})
         if package:is_plat("linux") then
             io.replace("neco.c", "#include <stdlib.h>", "#include <stdlib.h>\n#include <time.h>\n#include <sys/mman.h>", {plain = true})
         end
