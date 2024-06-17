@@ -11,12 +11,13 @@ package("cachelib")
     add_deps("cmake", "folly", "fizz", "wangle", "fbthrift", "numactl", "sparse-map", "fmt", "glog <0.7.0", "gtest", "gflags")
 
     on_install("linux", function (package)
+        io.replace("cachelib/CMakeLists.txt", "find_package(GTest CONFIG REQUIRED)", "", {plain = true})
         os.cd("cachelib")
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"gtest"}})
     end)
 
     on_test(function (package)
