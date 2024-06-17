@@ -34,6 +34,7 @@ package("neco")
                 end
                 if is_plat("linux", "bsd") then
                     add_syslinks("pthread", "dl")
+                    add_defines("_BSD_SOURCE")
                 elseif is_plat("windows", "mingw") then
                     add_syslinks("ws2_32", "wsock32")
                 end
