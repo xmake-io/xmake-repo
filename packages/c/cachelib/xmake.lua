@@ -24,7 +24,7 @@ package("cachelib")
         assert(package:check_cxxsnippets({test = [[
             #include "cachelib/allocator/CacheAllocator.h"
             void test() {
-                cachelib::LruAllocator::Config config;
+                facebook::cachelib::LruAllocator::Config config;
                 config.setCacheSize(1 * 1024 * 1024 * 1024)
                     .setCacheName("My Use Case")
                     .setAccessConfig({25, 10})
