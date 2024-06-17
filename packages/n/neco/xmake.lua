@@ -10,14 +10,19 @@ package("neco")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
+    elseif is_plat("mingw") then
+        add_syslinks("ws2_32", "wsock32")
     end
 
-    on_install(function (package)
+    on_install("linux", "mingw", "windows", "bsd", "android", "iphoneos", function (package)
         io.replace("neco.c", "#if defined(__linux__) && !defined(_GNU_SOURCE)",
             "#if defined(__linux__) && !defined(_GNU_SOURCE) && !defined(__ANDROID__)", {plain = true})
-        io.replace("neco.c", "#include <stdlib.h>", "#include <stdlib.h>\n#include <time.h>", {plain = true})
+        if package:is_plat("linux") then
+            io.replace("neco.c", "#include <stdlib.h>", "#include <stdlib.h>\n#include <time.h>\n#include <sys/mman.h>", {plain = true})
+        end
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
+            set_warnings("none")
             set_languages("c11")
             target("neco")
                 set_kind("$(kind)")
@@ -28,6 +33,8 @@ package("neco")
                 end
                 if is_plat("linux", "bsd") then
                     add_syslinks("pthread", "dl")
+                elseif is_plat("windows", "mingw") then
+                    add_syslinks("ws2_32", "wsock32")
                 end
         ]])
         import("package.tools.xmake").install(package)
