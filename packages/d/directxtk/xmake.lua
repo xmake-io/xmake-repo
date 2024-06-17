@@ -20,14 +20,9 @@ package("directxtk")
 
     add_deps("cmake")
 
-    if on_source then
-        on_source(function (package)
-            -- FIXME arm/MT met some link errors
-            local vs = package:toolchain("msvc"):config("vs")
-            if package:is_arch("arm.*") and vs and vs < "2022" then
-                package:add("configs", "runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
-            end
-        end)
+    -- FIXME arm/MT met some link errors
+    if is_arch("arm.*") then
+        add_configs("runtimes", {description = "Set compiler runtimes.", default = "MD", readonly = true})
     end
 
     if on_check then
