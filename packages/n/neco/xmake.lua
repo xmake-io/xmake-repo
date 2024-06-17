@@ -14,6 +14,13 @@ package("neco")
         add_syslinks("ws2_32", "wsock32")
     end
 
+    if on_check then
+        on_check("windows", function (package)
+            assert(package:has_cxxincludes("stdatomic.h", {configs = {languages = "c11"}}),
+             "package(neco) Require at least C11 and stdatomic.h")
+        end)
+    end
+
     on_install("linux", "mingw|x86_64", "windows", "bsd", "android", "iphoneos", function (package)
         io.replace("neco.c", "#if defined(__linux__) && !defined(_GNU_SOURCE)",
             "#if defined(__linux__) && !defined(_GNU_SOURCE) && !defined(__ANDROID__)", {plain = true})
