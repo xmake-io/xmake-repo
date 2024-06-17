@@ -14,15 +14,17 @@ package("quickjs-ng")
 
     add_deps("cmake")
 
-    on_check("windows", function (package)
-        local msvc = package:toolchain("msvc")
-        if msvc then
-            local vs = msvc:config("vs")
-            assert(vs and tonumber(vs) >= 2022, "package(quickjs-ng): need vs >= 2022")
-        end
-    end)
+    if on_check then
+        on_check("windows", function (package)
+            local msvc = package:toolchain("msvc")
+            if msvc then
+                local vs = msvc:config("vs")
+                assert(vs and tonumber(vs) >= 2022, "package(quickjs-ng): need vs >= 2022")
+            end
+        end)
+    end
 
-    on_install("!iphoneos", function (package)
+    on_install("!iphoneos and !windows@xx86", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
