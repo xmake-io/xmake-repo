@@ -79,20 +79,22 @@ package("folly")
 
     on_test("macosx", function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "folly/fibers/TimedMutex.h"
-            using SharedMutex = folly::fibers::TimedRWMutexWritePriority<folly::fibers::Baton>;
+            #include <cassert>
             void test() {
-                std::unique_ptr<SharedMutex[]> mutex_{new SharedMutex[4]};
+                folly::CpuId id;
+                assert(folly::kIsArchAmd64 == id.mmx());
             }
         ]]}, {configs = {languages = "c++17"}, includes = "folly/CpuId.h"}))
     end)
 
     on_test("linux", function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "folly/fibers/TimedMutex.h"
-            using SharedMutex = folly::fibers::TimedRWMutexWritePriority<folly::fibers::Baton>;
+            #include "folly/experimental/io/IoUring.h"
+            #include "folly/experimental/io/AsyncIO.h"
             void test() {
-                std::unique_ptr<SharedMutex[]> mutex_{new SharedMutex[4]};
+                folly::AsyncIOOp asyncIOOp;
+                folly::IoUringOp ioUringOp;
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
+
