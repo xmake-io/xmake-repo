@@ -33,11 +33,12 @@ package("folly")
     add_configs("lzma", {description = "Support LZMA for compression", default = true, type = "boolean"})
     add_configs("libaio", {description = "Support compile with libaio", default = true, type = "boolean"})
     add_configs("liburing", {description = "Support compile with liburing", default = true, type = "boolean"})
+    add_configs("libdwarf", {description = "Support compile with libdwarf", default = true, type = "boolean"})
 
     add_deps("cmake")
     add_deps("boost", {configs = {date_time = true, iostreams = true, context = true, filesystem = true, program_options = true, regex = true, system = true, thread = true}})
     add_deps("libevent", {configs = {openssl = true}})
-    add_deps("double-conversion", "gflags", "glog <0.7.0", "zlib", "fmt", "libdwarf")
+    add_deps("double-conversion", "gflags", "glog <0.7.0", "zlib", "fmt")
     add_deps("bzip2", "lz4", "zstd", {optional = true})
     if is_plat("linux") then
         add_syslinks("pthread")
@@ -55,6 +56,9 @@ package("folly")
         end
         if package:is_plat("linux") and package:config("liburing") then
             package:add("deps", "liburing")
+        end
+        if package:config("libdwarf") then
+            package:add("deps", "libdwarf")
         end
     end)
 
