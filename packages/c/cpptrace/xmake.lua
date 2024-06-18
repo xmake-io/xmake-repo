@@ -21,8 +21,11 @@ package("cpptrace")
 
     if is_plat("windows") then
         add_syslinks("dbghelp")
-    elseif is_plat("linux", "macosx") then
+    elseif is_plat("macosx") then
         add_deps("libdwarf")
+    elseif is_plat("linux") then
+        add_deps("libdwarf")
+        add_syslinks("dl")
     elseif is_plat("mingw") then
         add_deps("libdwarf")
         add_syslinks("dbghelp")
