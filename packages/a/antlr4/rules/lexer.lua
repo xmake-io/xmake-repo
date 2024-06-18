@@ -3,6 +3,22 @@ rule("lexer")
 
     add_deps("@find_antlr4")
 
+    on_config(function (target)
+        -- remove parser g4
+        for _, sourcebatch in pairs(target:sourcebatches()) do
+            if sourcebatch.rulename == "@antlr4/lexer" then
+                local sourcefiles = {}
+                for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
+                    if not sourcefile:lower():find("parser") then
+                        table.insert(sourcefiles, sourcefile)
+                    end
+                end
+                sourcebatch.sourcefiles = sourcefiles
+                break
+            end
+        end
+    end)
+
     before_buildcmd_file(function (target, batchcmds, sourcefile_g4, opt)
         local java = target:data("antlr4.tool")
         local argv = target:data("antlr4.tool.argv")
