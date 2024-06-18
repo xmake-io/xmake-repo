@@ -30,9 +30,9 @@ package("folly")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_configs("lzma", {description = "Support LZMA for compression", default = true, type = "boolean"})
+    add_configs("lzma", {description = "Support LZMA for compression", default = false, type = "boolean"})
     add_configs("libaio", {description = "Support compile with libaio", default = false, type = "boolean"})
-    add_configs("liburing", {description = "Support compile with liburing", default = true, type = "boolean"})
+    add_configs("liburing", {description = "Support compile with liburing", default = false, type = "boolean"})
     add_configs("libdwarf", {description = "Support compile with libdwarf", default = false, type = "boolean"})
 
     add_deps("cmake")
@@ -74,10 +74,6 @@ package("folly")
         if package:is_plat("windows") then
             table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
-        --if not package:is_plat("linux") then
-        --    table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_LibAIO=ON")
-        --    table.insert(configs, "-DLIBAIO_FOUND=OFF")
-        --end 
         import("package.tools.cmake").install(package, configs)
     end)
 
