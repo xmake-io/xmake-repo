@@ -30,10 +30,10 @@ package("folly")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    add_configs("lzma", {description = "Support LZMA for compression", default = false, type = "boolean"})
-    add_configs("libaio", {description = "Support compile with libaio", default = false, type = "boolean"})
-    add_configs("liburing", {description = "Support compile with liburing", default = false, type = "boolean"})
-    add_configs("libdwarf", {description = "Support compile with libdwarf", default = false, type = "boolean"})
+    add_configs("lzma", {description = "Support LZMA for compression", default = true, type = "boolean"})
+    add_configs("libaio", {description = "Support compile with libaio", default = true, type = "boolean"})
+    add_configs("liburing", {description = "Support compile with liburing", default = true, type = "boolean"})
+    add_configs("libdwarf", {description = "Support compile with libdwarf", default = true, type = "boolean"})
 
     add_deps("cmake")
     add_deps("boost", {configs = {date_time = true, iostreams = true, context = true, filesystem = true, program_options = true, regex = true, system = true, thread = true}})
