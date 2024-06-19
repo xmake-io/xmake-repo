@@ -24,7 +24,7 @@ package("quickjs-ng")
         end)
     end
 
-    on_install("!iphoneos and !windows@x86", function (package)
+    on_install("!iphoneos and windows|!x86", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
