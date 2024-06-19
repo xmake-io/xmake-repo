@@ -8,6 +8,8 @@ package("nsync")
 
     add_versions("1.28.1", "0011fc00820088793b6a9ba97536173a25cffd3df2dc62616fb3a2824b3c43f5")
 
+    add_patches("1.28.1", "patches/1.28.1/cmake.patch", "626a89a5a60884b7aaf44011494e7ba5dbfcdae9fcdb5afcef5b5d1f893b4600")
+
     if is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
     end
@@ -15,11 +17,6 @@ package("nsync")
     add_deps("cmake")
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "set (CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
-        io.replace("CMakeLists.txt",
-        "${CMAKE_INSTALL_LIBDIR} COMPONENT Development)",
-        "${CMAKE_INSTALL_LIBDIR} COMPONENT Development\nRUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})", {plain = true})
-
         local configs = {"-DNSYNC_ENABLE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
