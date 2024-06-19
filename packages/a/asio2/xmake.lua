@@ -8,7 +8,6 @@ package("asio2")
     add_urls("https://github.com/zhllxt/asio2/archive/refs/tags/v$(version).zip")
     add_urls("https://github.com/zhllxt/asio2.git")
     add_versions("2.9", "3ce0b41300954ffc13948bd51af6430e324b1c28e26d2eb5a83e775cf38c12b4")
-    add_versions("2023.05.09", "ac8c79964d79020091e38fcbb4ae9dccccb3b03c")
 
     add_deps("asio", "cereal", "fmt", "openssl3")
     add_deps("spdlog", { configs = { header_only = false, fmt_external = true } })
