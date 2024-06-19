@@ -12,7 +12,7 @@ package("asio2")
     add_deps("asio", "cereal", "fmt", "openssl3")
     add_deps("spdlog", { configs = { header_only = false, fmt_external = true } })
 
-    on_install("windows", "linux", "macosx", "mingw", "bsd", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "bsd", "cross", function (package)
         os.cp(path.join("include", "*"), package:installdir("include"))
     end)
 
