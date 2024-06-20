@@ -13,7 +13,7 @@ package("simplewindow")
     add_syslinks("user32", "gdi32", "shell32")
 
 
-    on_install("windows", function (package)
+    on_install("windows|!arm*", function (package)
         local configs = {"vs/sw.sln"}
         table.insert(configs, "/p:Platform=" .. (package:is_arch("x64") and "x64" or "Win32"))
 
