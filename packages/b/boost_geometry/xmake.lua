@@ -2,6 +2,7 @@ package("boost_geometry")
     set_kind("library", {headeronly = true})
     set_homepage("http://boost.org/libs/geometry")
     set_description("Boost.Geometry - Generic Geometry Library | Requires C++14 since Boost 1.75")
+    set_license("BSL-1.0")
 
     add_urls("https://github.com/boostorg/geometry/archive/refs/tags/boost-$(version).tar.gz",
              "https://github.com/boostorg/geometry.git")
