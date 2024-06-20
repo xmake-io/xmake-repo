@@ -3,19 +3,19 @@ package("slang")
     set_description("Making it easier to work with shaders")
     set_license("MIT")
 
-    if package:is_plat("windows") and package:is_arch("x64") then
+    if is_host("windows") and os.arch() == "x64" then
         add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-win64.zip",
             {version = function (version) return version:gsub("v", "") end})
-    elseif package:is_plat("linux") and package:is_arch("x86_64") then
+    elseif is_host("linux") and os.arch() == "x86_64" then
         add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-linux-x86_64.tar.gz",
             {version = function (version) return version:gsub("v", "") end})
-    elseif package:is_plat("linux") and package:is_arch("aarch64", "arm+.*") then
+    elseif is_host("linux") and os.arch() == "arm64" then
         add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-linux-aarch64.tar.gz",
             {version = function (version) return version:gsub("v", "") end})
-    elseif package:is_plat("macosx") and package:is_arch("x64") then
+    elseif is_host("macosx") and os.arch() == "x64" then
         add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-macos-x64.zip",
             {version = function (version) return version:gsub("v", "") end})
-    elseif package:is_plat("macosx") and package:is_arch("aarch64", "arm+.*") then
+    elseif is_host("macosx") and os.arch() == "arm64" then
         add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-macos-aarch64.zip",
             {version = function (version) return version:gsub("v", "") end})
     end
