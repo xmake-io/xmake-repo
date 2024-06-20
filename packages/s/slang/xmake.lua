@@ -3,40 +3,49 @@ package("slang")
     set_description("Making it easier to work with shaders")
     set_license("MIT")
 
-    add_urls("https://github.com/shader-slang/slang.git")
+    if package:is_plat("windows") and package:is_arch("x64") then
+        add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-win64.zip",
+            {version = function (version) return version:gsub("v", "") end})
+    elseif package:is_plat("linux") and package:is_arch("x86_64") then
+        add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-linux-x86_64.tar.gz",
+            {version = function (version) return version:gsub("v", "") end})
+    elseif package:is_plat("linux") and package:is_arch("aarch64", "arm+.*") then
+        add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-linux-aarch64.tar.gz",
+            {version = function (version) return version:gsub("v", "") end})
+    elseif package:is_plat("macosx") and package:is_arch("x64") then
+        add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-macos-x64.zip",
+            {version = function (version) return version:gsub("v", "") end})
+    elseif package:is_plat("macosx") and package:is_arch("aarch64", "arm+.*") then
+        add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-macos-aarch64.zip",
+            {version = function (version) return version:gsub("v", "") end})
+    end
 
+    add_versions("v2024.1.22", "c00f461aad3d997a2e1c59559421275d6339ae6f")
+    add_versions("v2024.1.21", "8ea3854d94eb1ff213be716a38493d601784810b")
+    add_versions("v2024.1.20", "89c1fd0dd1581221f583653a9dfa6d1cf990577c")
+    add_versions("v2024.1.19", "753a524be885cf463fa6e60734aa739fcce1396f")
     add_versions("v2024.1.18", "efdbb954c57b89362e390f955d45f90e59d66878")
     add_versions("v2024.1.17", "62b7219e715bd4c0f984bcd98c9767fb6422c78f")
 
     add_configs("shared", { description = "Build shared library", default = true, type = "boolean", readonly = true })
-    add_configs("embed_stdlib_source", { description = "Embed stdlib source in the binary", default = true, type = "boolean" })
-    add_configs("embed_stdlib", { description = "Build slang with an embedded version of the stdlib", default = false, type = "boolean" })
-    add_configs("full_ir_validation", { description = "Enable full IR validation (SLOW!)", default = false, type = "boolean" })
     add_configs("gfx", { description = "Enable gfx targets", default = false, type = "boolean" })
-    add_configs("slangd", { description = "Enable language server target", default = false, type = "boolean" })
-    add_configs("slangc", { description = "Enable standalone compiler target", default = false, type = "boolean" })
-    add_configs("slangrt", { description = "Enable runtime target", default = false, type = "boolean" })
     add_configs("slang_glslang", { description = "Enable glslang dependency and slang-glslang wrapper target", default = false, type = "boolean" })
     add_configs("slang_llvm_flavor", { description = "How to get or build slang-llvm (available options: FETCH_BINARY, USE_SYSTEM_LLVM, DISABLE)", default = "DISABLE", type = "string" })
 
-    add_deps("cmake")
+    on_install("windows|x64", "linux|x86_64", "linux|arm64", "macosx", function (package)
+        local plat_cp_lib = function (src)
+            os.trycp("bin/*/release/" .. src .. ".dll", package:installdir("bin"))
+            os.trycp("bin/*/release/" .. src .. ".lib", package:installdir("lib"))
+            os.trycp("bin/*/release/lib" .. src .. ".so", package:installdir("lib"))
+        end
+        
+        os.cp("*.h", package:installdir("include"))
 
-    on_install("windows|x64", "macosx", "linux|x86_64", function (package)
-        local configs = {"-DSLANG_ENABLE_TESTS=OFF", "-DSLANG_ENABLE_EXAMPLES=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DSLANG_LIB_TYPE=" .. (package:config("shared") and "SHARED" or "STATIC"))
-        table.insert(configs, "-DSLANG_EMBED_STDLIB_SOURCE=" .. (package:config("embed_stdlib_source") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_EMBED_STDLIB=" .. (package:config("embed_stdlib") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_ENABLE_FULL_IR_VALIDATION=" .. (package:config("full_ir_validation") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_ENABLE_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_ENABLE_GFX=" .. (package:config("gfx") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_ENABLE_SLANGD=" .. (package:config("slangd") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_ENABLE_SLANGC=" .. (package:config("slangc") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_ENABLE_SLANGRT=" .. (package:config("slangrt") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_ENABLE_SLANG_GLSLANG=" .. (package:config("slang_glslang") and "ON" or "OFF"))
-        table.insert(configs, "-DSLANG_SLANG_LLVM_FLAVOR=" .. package:config("slang_llvm_flavor"))
+        plat_cp_lib("slang")
+        if package:config("gfx") then plat_cp_lib("gfx") end
+        if package:config("slang_glslang") then plat_cp_lib("slang-glslang") end
+        if package:config("slang_llvm_flavor") then plat_cp_lib("slang-llvm") end
 
-        import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
     end)
 
