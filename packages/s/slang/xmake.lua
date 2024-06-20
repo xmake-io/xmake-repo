@@ -18,7 +18,7 @@ package("slang")
         
         add_versions("v2024.1.22", "69c67d95dc096601a07d7f02f987d6e3af469d4a6422216a80154aeda6a79be7")
         add_versions("v2024.1.18", "f1817beb67c5792fce7229971e5a53172ea54c6dc759e6b782cc719cfac537a2")
-    elseif is_host("macosx") and os.arch() == "x64" then
+    elseif is_host("macosx") and os.arch() == "x86_64" then
         add_urls("https://github.com/shader-slang/slang/releases/download/v$(version)/slang-$(version)-macos-x64.zip", {version = function (version) return version:gsub("v", "") end})
 
         add_versions("v2024.1.22", "1c09e797601e08dedd5443ae718ce2e3f5f1fdc5bc6198bcd5862e03b14139eb")
@@ -30,24 +30,11 @@ package("slang")
         add_versions("v2024.1.18", "298f6a1eee3d174278f2660beee5519eebbe214d198253117d8674275ef6a320")
     end
 
-    add_configs("shared", { description = "Build shared library", default = true, type = "boolean", readonly = true })
-    add_configs("gfx", { description = "Enable gfx targets", default = false, type = "boolean" })
-    add_configs("slang_glslang", { description = "Enable glslang dependency and slang-glslang wrapper target", default = false, type = "boolean" })
-    add_configs("slang_llvm_flavor", { description = "How to get or build slang-llvm (available options: FETCH_BINARY, USE_SYSTEM_LLVM, DISABLE)", default = "DISABLE", type = "string" })
-
     on_install("windows|x64", "linux|x86_64", "linux|arm64", "macosx", function (package)
-        local plat_cp_lib = function (src)
-            os.trycp("bin/*/release/" .. src .. ".dll", package:installdir("bin"))
-            os.trycp("bin/*/release/" .. src .. ".lib", package:installdir("lib"))
-            os.trycp("bin/*/release/lib" .. src .. ".so", package:installdir("lib"))
-        end
-        
         os.cp("*.h", package:installdir("include"))
-
-        plat_cp_lib("slang")
-        if package:config("gfx") then plat_cp_lib("gfx") end
-        if package:config("slang_glslang") then plat_cp_lib("slang-glslang") end
-        if package:config("slang_llvm_flavor") then plat_cp_lib("slang-llvm") end
+        os.trycp("bin/*/release/*.dll", package:installdir("bin"))
+        os.trycp("bin/*/release/*.lib", package:installdir("lib"))
+        os.trycp("bin/*/release/*.so", package:installdir("lib"))
 
         package:addenv("PATH", "bin")
     end)
