@@ -12,9 +12,7 @@ package("cachelib")
 
     if on_check then
         on_check(function (package)
-            import("core.tool.toolchain")
-
-            local clang = toolchain.load("clang", {plat = package:plat(), arch = package:arch()})
+            local clang = package:toolchain("clang", {plat = package:plat(), arch = package:arch()})
             if clang then
                 assert(not clang, "package(cachelib): disable clang for now")
             end
