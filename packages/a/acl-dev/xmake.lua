@@ -51,11 +51,16 @@ package("acl-dev")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macos", "mingw", "android", "freebsd", function (package)
         local configs = {}
+        local cxflags = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        if package:config("shared") then
+        if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DACL_BUILD_SHARED=YES")
+            table.insert(cxflags, "/DACL_PREPARE_COMPILE")
+            table.insert(cxflags, "/DACL_DLL")
+            table.insert(cxflags, "/DACL_EXPORTS")
+            table.insert(cxflags, "/D_WINDLL")
         end
         if package:config("mbedtls") then
             table.insert(configs, "-DHAS_MBEDTLS=YES")
@@ -93,7 +98,9 @@ package("acl-dev")
         if package:config("openssl_dll") then
             table.insert(configs, "-DHAS_OPENSSL_DLL=YES")
         end
-        import("package.tools.cmake").install(package, configs)
+        
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+
 
         os.cp(path.translate("lib_acl_cpp/include/*"), package:installdir("include"))
         os.cp(path.translate("lib_protocol/include/*"), package:installdir("include"))
