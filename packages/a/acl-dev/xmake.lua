@@ -95,9 +95,7 @@ package("acl-dev")
         end
         import("package.tools.cmake").install(package, configs)
 
-        os.mkdir(package:installdir("include") .. path.translate("/acl_cpp"))
-        print(package:installdir("include") .. path.translate("/acl_cpp"))
-        os.cp(path.translate("lib_acl_cpp/include/*"), package:installdir("include") .. path.translate("/acl_cpp/"))
+        os.cp(path.translate("lib_acl_cpp/include/*"), package:installdir("include"))
         os.cp(path.translate("lib_protocol/include/*"), package:installdir("include"))
         os.cp(path.translate("lib_acl/include/*"), package:installdir("include"))
         os.cp(path.translate("lib_fiber/c/include/*"), package:installdir("include"))
