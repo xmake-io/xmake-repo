@@ -60,6 +60,7 @@ package("cpp-httplib")
             assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
         end
         local configs = {"-DHTTPLIB_COMPILE=OFF"}
+        io.replace("httplib.h", "CreateFile2", "CreateFileW", {plain = true})
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHTTPLIB_REQUIRE_OPENSSL=" .. (package:config("ssl") and "ON" or "OFF"))
         table.insert(configs, "-DHTTPLIB_REQUIRE_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
