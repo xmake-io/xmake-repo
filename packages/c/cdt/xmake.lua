@@ -1,6 +1,7 @@
 package("cdt")
     set_homepage("https://artem-ogre.github.io/CDT/")
     set_description("Constrained Delaunay Triangulation (C++)")
+    set_license("MPL-2.0")
 
     add_urls("https://github.com/artem-ogre/CDT/archive/refs/tags/$(version).tar.gz",
              "https://github.com/artem-ogre/CDT.git")
