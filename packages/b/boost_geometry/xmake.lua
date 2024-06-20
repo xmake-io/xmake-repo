@@ -10,7 +10,7 @@ package("boost_geometry")
 
     add_deps("boost")
 
-    on_install(function (package)
+    on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         os.cp("include", package:installdir(""))
     end)
 
