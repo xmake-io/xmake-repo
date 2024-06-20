@@ -7,6 +7,10 @@ package("cdt")
 
     add_versions("1.4.1", "86df99eb5f02a73eeb8c6ea45765eed0d7f206e8d4d9f6479f77e3c590ae5bb3")
 
+    if is_plat("macosx") then
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    end
+
     on_install(function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
