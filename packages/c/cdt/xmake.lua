@@ -8,21 +8,14 @@ package("cdt")
 
     add_versions("1.4.1", "86df99eb5f02a73eeb8c6ea45765eed0d7f206e8d4d9f6479f77e3c590ae5bb3")
 
-    if is_plat("macosx") then
-        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
-    end
+    add_deps("cmake")
 
     on_install(function (package)
+        os.cd("CDT")
         local configs = {}
-        io.writefile("xmake.lua", [[
-            add_rules("mode.release", "mode.debug")
-            target("cdt")
-                set_kind("$(kind)")
-                set_languages("cxx17")
-                add_files("CDT/src/*.cpp")
-                add_headerfiles("CDT/include/(*.h)", "CDT/include/(*.hpp)")
-        ]])
-        import("package.tools.xmake").install(package, configs)
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
@@ -30,7 +23,7 @@ package("cdt")
             #include <CDT.h>
             using namespace CDT;
             void test() {
-                 auto cdt = Triangulation<double>{};
+                auto cdt = Triangulation<double>{};
                 cdt.insertVertices({
                     {0.0, 1e38},
                     {1.0, 1e38},
