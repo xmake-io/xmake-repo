@@ -47,7 +47,7 @@ package("wayland")
 
         -- install wayland-protocols
         local protocol = assert(package:resourcedir("protocols"), "wayland-protocols not found!")
-        local buildfile = find_file("meson.build", path.join(protocol, "**"))
+        local buildfile = find_file("meson.build", path.join(protocol, "*"))
         if buildfile then
             os.cd(path.directory(buildfile))
             meson.install(package, {"-Dtests=false"}, {envs = envs})
