@@ -6,6 +6,7 @@ package("mujs")
     add_urls("https://github.com/ccxvii/mujs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ccxvii/mujs.git")
 
+    add_versions("1.3.5", "78a311ae4224400774cb09ef5baa2633c26971513f8b931d3224a0eb85b13e0b")
     add_versions("1.3.4", "c015475880f6a382e706169c94371a7dd6cc22078832f6e0865af8289c2ef42b")
 
     if is_plat("linux", "bsd") then
