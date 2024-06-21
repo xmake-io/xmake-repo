@@ -19,8 +19,7 @@ package("boost_geometry")
         assert(package:check_cxxsnippets({test = [[
             #include <boost/geometry/geometry.hpp>
             void test() {
-                using namespace boost::geometry;
-                model::point<double, 2, cs::cartesian> pt1;
+                boost::geometry::model::point<double, 2, boost::geometry::cs::cartesian> pt1;
             }
         ]]}, {configs = {languages = "cxx14"}}))
     end)
