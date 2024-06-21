@@ -46,7 +46,7 @@ package("x265")
         table.insert(configs, "-DENABLE_SVT_HEVC=" .. (package:config("svt_hevc") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
 
-        if package:is_plat("numa") then
+        if package:config("numa") then
             table.insert(configs, "-DENABLE_LIBNUMA=ON")
             package:add("syslinks", "numa")
         else
