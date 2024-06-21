@@ -1,14 +1,16 @@
 package("pcl")
-
     set_homepage("https://pointclouds.org/")
     set_description("The Point Cloud Library (PCL) is a standalone, large scale, open project for 2D/3D image and point cloud processing.")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/PointCloudLibrary/pcl/archive/refs/tags/pcl-$(version).tar.gz",
              "https://github.com/PointCloudLibrary/pcl.git")
+
     add_versions("1.12.0", "21dfa9a268de9675c1f94d54d9402e4e02120a0aa4215d064436c52b7d5bd48f")
     add_versions("1.12.1", "dc0ac26f094eafa7b26c3653838494cc0a012bd1bdc1f1b0dc79b16c2de0125a")
     add_versions("1.14.0", "de297b929eafcb93747f12f98a196efddf3d55e4edf1b6729018b436d5be594d")
+
+    add_patches("1.14.0", "https://github.com/PointCloudLibrary/pcl/commit/16c92e558bd146a9f68d58cd5aca64836be7c038.patch", "a7d025bb4ce2b4551029dcdc4db0cbf8f1eccd59cbcb7ddeebf5dac35cdaeac0")
 
     add_configs("vtk", {description = "Build with vtk.", default = false, type = "boolean"})
     add_configs("cuda", {description = "Build with cuda.", default = false, type = "boolean"})
@@ -16,7 +18,8 @@ package("pcl")
     add_deps("cmake")
     add_deps("boost", {configs = {filesystem = true, serialization = true, date_time = true, iostreams = true, system = true}})
     add_deps("eigen", "boost", "lz4", "flann", "zlib", "libpng", "qhull", "glew")
-    on_load("windows", "linux", "macosx", function (package)
+
+    on_load(function (package)
         package:add("includedirs", "include/pcl-" .. package:version():major() .. "." .. package:version():minor())
         if package:config("vtk") then
             package:add("deps", "vtk")
