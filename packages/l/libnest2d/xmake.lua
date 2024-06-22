@@ -13,7 +13,7 @@ package("libnest2d")
         package:add("defines", "LIBNEST2D_OPTIMIZER_nlopt")
     end)
 
-    on_install(function (package)
+    on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         local configs = {}
         import("package.tools.xmake").install(package, configs)
