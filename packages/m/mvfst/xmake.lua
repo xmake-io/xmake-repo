@@ -13,6 +13,8 @@ package("mvfst")
     add_versions("2024.06.10", "cc75889429a66463cc8e607ba09d584fb4e6d2e69b1127a538043b367c54a1ae")
     add_versions("2024.06.17", "748c744dae967a0ac25c89a6c7ccf62da2a4974ab45644d395fb7bc8f2e96dc1")
 
+    add_patches("2024.06.17", path.join(os.scriptdir(), "patches", "shared.patch"), "6b940f5a07e476d1f13b7d427923573333c82eb3b887d25927b6da9b0400c107")
+
     add_deps("cmake", "folly", "fizz")
 
     on_install("linux", function (package)
