@@ -7,6 +7,7 @@ package("cxxgraph")
     add_urls("https://github.com/ZigRazor/CXXGraph/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ZigRazor/CXXGraph.git")
 
+    add_versions("v4.1.0", "1f6601abfcb692f35bfe14f2a34b2302f70213a257b0f7d541a110d6bd460040")
     add_versions("v3.1.0", "54838d0d35a6f2685cf45e50e888146aef3c1a10fbbdddb939b3985c7953087a")
 
     if on_check then
