@@ -6,7 +6,7 @@ package("libnest2d")
     add_urls("https://github.com/tamasmeszaros/libnest2d.git")
     add_versions("2022.11.16", "663daa69e1d7478669f714218e27681edbc96640")
 
-    add_deps("nlopt", "polyclipping", "boost_geometry")
+    add_deps("nlopt", "polyclipping", "boost")
 
     on_load(function (package)
         package:add("defines", "LIBNEST2D_GEOMETRIES_clipper")
@@ -27,5 +27,5 @@ package("libnest2d")
                 using namespace libnest2d;
                 Degrees deg(180);
             }
-        ]]}, {configs = {languages = "cxx11"}}))
+        ]]}, {configs = {languages = "cxx14"}}))
     end)
