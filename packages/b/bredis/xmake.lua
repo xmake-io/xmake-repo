@@ -11,6 +11,10 @@ package("bredis")
 
     add_deps("boost")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32")
+    end
+
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
         os.cp("include", package:installdir())
     end)
