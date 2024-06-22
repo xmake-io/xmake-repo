@@ -1,10 +1,10 @@
 add_rules("mode.debug", "mode.release")
 
-add_requires("nlopt", "polyclipping", "boost")
+add_requires("nlopt", "polyclipping", "boost 1.72.0")
 
 target("libnest2d")
     set_kind("$(kind)")
-    set_languages("cxx14")
+    set_languages("cxx11")
     add_packages("nlopt", "polyclipping", "boost")
 
     add_files("src/*.cpp")

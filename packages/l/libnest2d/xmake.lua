@@ -6,7 +6,7 @@ package("libnest2d")
     add_urls("https://github.com/tamasmeszaros/libnest2d.git")
     add_versions("2022.11.16", "663daa69e1d7478669f714218e27681edbc96640")
 
-    add_deps("nlopt", "polyclipping", "boost")
+    add_deps("nlopt", "polyclipping", "boost 1.72.0")
 
     on_load(function (package)
         package:add("defines", "LIBNEST2D_GEOMETRIES_clipper")
