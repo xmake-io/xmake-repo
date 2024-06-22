@@ -4,7 +4,7 @@ add_requires("nlopt", "polyclipping", "boost_geometry")
 
 target("libnest2d")
     set_kind("$(kind)")
-    set_languages("cxx11")
+    set_languages("cxx14")
     add_packages("nlopt", "polyclipping", "boost_geometry")
 
     add_files("src/*.cpp")
