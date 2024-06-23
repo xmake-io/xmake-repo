@@ -20,5 +20,9 @@ package("bredis")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("bredis::bredis_category", {configs = {languages = "c++11"}, includes = "bredis/Connection.hpp"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                bredis::bredis_category x;
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "bredis/Connection.hpp"}))
     end)
