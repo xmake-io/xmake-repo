@@ -422,7 +422,7 @@ package("boost")
                 boost::unordered_map<std::string, int> map;
                 map["2"] = 2;
             }
-         ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++14"}}))
         
         if package:config("date_time") then
             assert(package:check_cxxsnippets({test = [[
@@ -467,7 +467,7 @@ package("boost")
                         boost::iostreams::filtering_ostream out;
                         out.push(boost::iostreams::lzma_compressor());
                     }
-                 ]]}, {configs = {languages = "c++14"}}))
+                ]]}, {configs = {languages = "c++14"}}))
             end
         end
     end)
