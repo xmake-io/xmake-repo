@@ -14,7 +14,7 @@ package("matchit")
         os.cp("include", package:installdir())
     end)
 
-    on_test(function (package) 
+    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "matchit.h"
             constexpr int32_t gcd(int32_t a, int32_t b) {
