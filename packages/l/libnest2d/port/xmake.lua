@@ -13,3 +13,7 @@ target("libnest2d")
     add_defines("LIBNEST2D_GEOMETRIES_clipper", "LIBNEST2D_OPTIMIZER_nlopt")
 
     add_includedirs("include", {public = true})
+
+    if is_plat("windows") and is_kind("shared") then
+        add_rules("utils.symbols.export_all", {export_classes = true})
+    end

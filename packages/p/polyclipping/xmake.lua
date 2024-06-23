@@ -7,7 +7,6 @@ package("polyclipping")
     add_versions("6.4.2", "a14320d82194807c4480ce59c98aa71cd4175a5156645c4e2b3edd330b930627")
 
     on_install(function (package)
-        local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("polyclipping")
@@ -15,8 +14,11 @@ package("polyclipping")
                 set_languages("cxx11")
                 add_files("cpp/*.cpp")
                 add_headerfiles("cpp/(*.hpp)")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
         ]])
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)

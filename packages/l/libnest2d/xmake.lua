@@ -6,17 +6,13 @@ package("libnest2d")
     add_urls("https://github.com/tamasmeszaros/libnest2d.git")
     add_versions("2022.11.16", "663daa69e1d7478669f714218e27681edbc96640")
 
-    add_deps("nlopt", "polyclipping", "boost")
+    add_defines("LIBNEST2D_GEOMETRIES_clipper", "LIBNEST2D_OPTIMIZER_nlopt")
 
-    on_load(function (package)
-        package:add("defines", "LIBNEST2D_GEOMETRIES_clipper")
-        package:add("defines", "LIBNEST2D_OPTIMIZER_nlopt")
-    end)
+    add_deps("nlopt", "polyclipping", "boost")
 
     on_install("linux", "windows", "macosx", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        local configs = {}
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
