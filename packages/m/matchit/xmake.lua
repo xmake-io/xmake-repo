@@ -5,9 +5,10 @@ package("matchit")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/BowenFu/matchit.cpp/archive/refs/tags/$(version).tar.gz",
-           "https://github.com/BowenFu/matchit.cpp.git")
-    add_versions("v1.0.1", "52112e323eb3a1e63485334764c345d3e908a244")
-    add_versions("2022.11.22", "62c85a91413c61880ededee1a265ecfc87eb8ecd")
+             "https://github.com/BowenFu/matchit.cpp.git", {alias = "release"})
+    add_urls("https://github.com/BowenFu/matchit.cpp.git", {alias = "trunk"})
+    add_versions("release:v1.0.1", "2860cb85febf37220f75cef5b499148bafc9f5541fe1298e11b0c169bb3f31ac")
+    add_versions("trunk:2022.11.22", "62c85a91413c61880ededee1a265ecfc87eb8ecd")
 
     on_install(function (package)
         os.cp("include", package:installdir())
