@@ -17,6 +17,18 @@ package("libassert")
     add_configs("lowercase", {description = "Enables assert alias for ASSERT", default = false, type = "boolean"})
     add_configs("magic_enum", {description = "Use the MagicEnum library to print better diagnostics for enum classes", default = true, type = "boolean"})
 
+    if on_check then
+        on_check("windows", function (package)
+            import("core.tool.toolchain")
+
+            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            if msvc then
+                local vs = msvc:config("vs")
+                assert(vs and tonumber(vs) >= 2022, "package(libassert): The current compiler version must be 2022 or higher to avoid internal compiler errors.")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("magic_enum") then
             package:add("deps", "magic_enum")
