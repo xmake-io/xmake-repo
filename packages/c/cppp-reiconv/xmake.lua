@@ -16,6 +16,9 @@ package("cppp-reiconv")
         table.insert(configs, "-DENABLE_EXTRA=ON")
         table.insert(configs, "-DENABLE_TEST=OFF")
         import("package.tools.cmake").install(package, configs)
+        if not package:config("shared") and package:is_plat("windows") then
+            os.rm(path.translate(package:installdir("lib") .. "cppp-reiconv.lib"))
+        end
     end)
 
     on_test(function (package)
