@@ -104,10 +104,10 @@ package("libsdl")
             package:add("defines", "SDL_MAIN_HANDLED")
         end
         package:add("components", "lib")
-        if package:is_plat("linux") and (package:config("x11") or package:config("with_x")) then
+        if package:is_plat("linux", "bsd") and (package:config("x11") or package:config("with_x")) then
             package:add("deps", "libxext", {private = true})
         end
-        if package:is_plat("linux") and package:config("wayland") then
+        if package:is_plat("linux", "bsd") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
         end
     end)
