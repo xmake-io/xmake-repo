@@ -31,7 +31,7 @@ package("pahomqttc")
             package:add("deps", "openssl")
         end
 
-        if package:config("shared") then
+        if package:config("shared") and package:is_plat("windows") then
             package:add("defines", "PAHO_MQTT_IMPORTS")
         end
     end)
