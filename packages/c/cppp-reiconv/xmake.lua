@@ -16,8 +16,26 @@ package("cppp-reiconv")
         table.insert(configs, "-DENABLE_EXTRA=ON")
         table.insert(configs, "-DENABLE_TEST=OFF")
         import("package.tools.cmake").install(package, configs)
-        if not package:config("shared") and package:is_plat("windows") then
-            os.rm(path.translate(package:installdir("lib") .. "cppp-reiconv.lib"))
+        if package:is_plat("windows") then
+            if package:config("shared") then
+                os.rm(path.translate(package:installdir("lib") .. "/cppp-reiconv.static.lib"))
+            else
+                os.rm(path.translate(package:installdir("lib") .. "/cppp-reiconv.lib"))
+            end
+        elseif package:is_plat("macos") then
+            if package:config("shared") then
+                os.rm(path.translate(package:installdir("lib") .. "/libcppp-reiconv.static.a"))
+            else
+                os.rm(path.translate(package:installdir("lib") .. "/libcppp-reiconv.dylib"))
+                os.rm(path.translate(package:installdir("lib") .. "/libcppp-reiconv.2.1.0.dylib"))
+            end
+        else
+            if package:config("shared") then
+                os.rm(path.translate(package:installdir("lib") .. "/libcppp-reiconv.static.a"))
+            else
+                os.rm(path.translate(package:installdir("lib") .. "/libcppp-reiconv.so"))
+                os.rm(path.translate(package:installdir("lib") .. "/libcppp-reiconv.so.2.1.0"))
+            end
         end
     end)
 
