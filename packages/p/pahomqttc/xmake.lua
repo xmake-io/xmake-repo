@@ -1,7 +1,7 @@
 package("pahomqttc")
     set_homepage("https://github.com/eclipse/paho.mqtt.c")
     set_description("Eclipse Paho MQTT C Client Library")
-    set_license("EPL v2.0")
+    set_license("EPL-2.0")
 
     add_urls("https://github.com/eclipse/paho.mqtt.c/archive/refs/tags/$(version).zip",
              "https://github.com/eclipse/paho.mqtt.c.git")
