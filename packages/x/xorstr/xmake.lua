@@ -9,7 +9,7 @@ package("xorstr")
 
     add_versions("2021.11.19", "b52220a50c33f8b13e6aaa2fcd14f31a44d96ba721b014ab921c30b5e3cb61eb")
 
-    on_install(function (package)
+    on_install("!cross and !wasm and mingw|!i386", function (package)
         os.cp("include", package:installdir())
     end)
 
