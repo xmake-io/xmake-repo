@@ -43,8 +43,8 @@ package("pahomqttc")
             "-DPAHO_ENABLE_CPACK=OFF",
             "-DPAHO_BUILD_DOCUMENTATION=FALSE",
         }
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         local shared = package:config("shared")
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DPAHO_BUILD_SHARED=" .. (shared and "TRUE" or "FALSE"))
         table.insert(configs, "-DPAHO_BUILD_STATIC=" .. (shared and "FALSE" or "TRUE"))
 
