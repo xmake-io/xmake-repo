@@ -38,7 +38,10 @@ package("pahomqttc")
         end
         -- paho-mqtt3[a|c][-static]
         local links = "paho-mqtt3" .. (package:config("asynchronous") and "a" or "c")
-        package:add("links", links .. (package:config("shared") and "" or "-static"))
+        if package:is_plat("windows", "mingw") and (not package:config("shared")) then
+            links = links .. "-static"
+        end
+        package:add("links", links)
     end)
 
     on_install("!wasm", function (package)
