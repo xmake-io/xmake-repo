@@ -10,6 +10,8 @@ package("pahomqttc")
 
     add_configs("uuid", {description = "Flag that defines whether libuuid or a custom uuid implementation should be used", default = false, type = "boolean"})
     add_configs("openssl", {description = "Flag that defines whether to build ssl-enabled binaries too.", default = false, type = "boolean"})
+    add_configs("high_performance", {description = "Enable tracing and heap tracking", default = false, type = "boolean"})
+    add_configs("asynchronous", {description = "Use asynchronous", default = false, type = "boolean"})
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "advapi32", "rpcrt4", "crypt32")
@@ -34,9 +36,12 @@ package("pahomqttc")
         if package:config("shared") and package:is_plat("windows") then
             package:add("defines", "PAHO_MQTT_IMPORTS")
         end
+        -- paho-mqtt3[a|c][-static]
+        local links = "paho-mqtt3" .. (package:config("asynchronous") and "a" or "c")
+        package:add("links", links .. (package:config("shared") and "" or "-static"))
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local configs = {
             "-DPAHO_BUILD_SAMPLES=FALSE",
             "-DPAHO_ENABLE_TESTING=OFF",
@@ -50,6 +55,7 @@ package("pahomqttc")
 
         table.insert(configs, "-DPAHO_WITH_SSL=" .. (package:config("openssl") and "TRUE" or "FALSE"))
         table.insert(configs, "-DPAHO_WITH_LIBUUID=" .. (package:config("uuid") and "TRUE" or "FALSE"))
+        table.insert(configs, "-DPAHO_HIGH_PERFORMANCE=" .. (package:config("high_performance") and "TRUE" or "FALSE"))
         import("package.tools.cmake").install(package, configs)
     end)
 
