@@ -10,7 +10,7 @@ package("xtrans")
         add_extsources("apt::xtrans-dev", "pacman::xtrans")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "bsd") then
         add_deps("pkg-config", "util-macros", "xorgproto")
     end
 
