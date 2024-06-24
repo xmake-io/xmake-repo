@@ -21,7 +21,7 @@ package("libassert")
         on_check("windows", function (package)
             import("core.tool.toolchain")
 
-            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+            local msvc = package:toolchain("msvc")
             if msvc then
                 local vs = msvc:config("vs")
                 assert(vs and tonumber(vs) >= 2022, "package(libassert): The current compiler version must be 2022 or higher to avoid internal compiler errors.")
