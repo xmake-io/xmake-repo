@@ -1,6 +1,7 @@
 package("libsdl")
     set_homepage("https://www.libsdl.org/")
     set_description("Simple DirectMedia Layer")
+    set_license("zlib")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::SDL2")
@@ -10,11 +11,10 @@ package("libsdl")
         add_extsources("brew::sdl2")
     end
 
-    set_license("zlib")
-
     add_urls("https://www.libsdl.org/release/SDL2-$(version).zip",
              "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL.git", { alias = "github" })
+
     add_versions("archive:2.0.8", "e6a7c71154c3001e318ba7ed4b98582de72ff970aca05abc9f45f7cbdc9088cb")
     add_versions("archive:2.0.12", "476e84d6fcbc499cd1f4a2d3fd05a924abc165b5d0e0d53522c9604fe5a021aa")
     add_versions("archive:2.0.14", "2c1e870d74e13dfdae870600bfcb6862a5eab4ea5b915144aff8d75a0f9bf046")
@@ -80,7 +80,7 @@ package("libsdl")
         add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
     end
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
         add_configs("wayland", {description = "Enables Wayland support", default = true, type = "boolean"})
 
@@ -104,10 +104,10 @@ package("libsdl")
             package:add("defines", "SDL_MAIN_HANDLED")
         end
         package:add("components", "lib")
-        if package:is_plat("linux") and (package:config("x11") or package:config("with_x")) then
+        if package:is_plat("linux", "bsd") and (package:config("x11") or package:config("with_x")) then
             package:add("deps", "libxext", {private = true})
         end
-        if package:is_plat("linux") and package:config("wayland") then
+        if package:is_plat("linux", "bsd") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
         end
     end)
@@ -207,7 +207,7 @@ package("libsdl")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_TEST=OFF")
         local opt
-        if package:is_plat("linux", "cross") then
+        if package:is_plat("linux", "bsd", "cross") then
             local includedirs = {}
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)
