@@ -1,5 +1,4 @@
 package("libx11")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: Core X11 protocol client library")
 
@@ -11,15 +10,18 @@ package("libx11")
     add_versions("1.8.7", "793ebebf569f12c864b77401798d38814b51790fce206e01a431e5feb982e20b")
 
     if is_plat("linux") then
-        add_syslinks("dl")
         add_extsources("apt::libx11-dev", "pacman::libx11")
     elseif is_plat("macosx") then
         add_extsources("brew::libx11")
     end
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("dl")
+    end
+
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "bsd") then
         add_deps("pkg-config", "util-macros", "xtrans", "libxcb", "xorgproto")
     end
     if is_plat("macosx") then
@@ -27,7 +29,7 @@ package("libx11")
         add_deps("gnu-sed")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",

@@ -1,5 +1,4 @@
 package("xtrans")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: X Network Transport layer shared code")
 
@@ -15,7 +14,7 @@ package("xtrans")
         add_deps("pkg-config", "util-macros", "xorgproto")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
