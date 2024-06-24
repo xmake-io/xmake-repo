@@ -60,5 +60,9 @@ package("pahomqttc")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("MQTTClient_connect", {includes = "MQTTClient.h"}))
+        if package:config("asynchronous") then
+            assert(package:has_cfuncs("MQTTAsync_connect", {includes = "MQTTAsync.h"}))
+        else
+            assert(package:has_cfuncs("MQTTClient_connect", {includes = "MQTTClient.h"}))
+        end
     end)
