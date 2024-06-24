@@ -11,8 +11,8 @@ package("pahomqttc")
     add_configs("uuid", {description = "Flag that defines whether libuuid or a custom uuid implementation should be used", default = false, type = "boolean"})
     add_configs("openssl", {description = "Flag that defines whether to build ssl-enabled binaries too.", default = false, type = "boolean"})
 
-    if is_plat("windows") then
-        add_syslinks("ws2_32", "advapi32", "rpcrt4")
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32", "advapi32", "rpcrt4", "crypt32")
     elseif is_plat("linux") then
         add_syslinks("dl", "pthread", "rt")
     elseif is_plat("android") then
