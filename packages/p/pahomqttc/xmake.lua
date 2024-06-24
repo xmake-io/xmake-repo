@@ -1,7 +1,7 @@
 package("pahomqttc")
     set_homepage("https://github.com/eclipse/paho.mqtt.c")
     set_description("Eclipse Paho MQTT C Client Library")
-    set_license("MIT")
+    set_license("EPL v2.0")
 
     add_urls("https://github.com/eclipse/paho.mqtt.c/archive/refs/tags/$(version).zip",
              "https://github.com/eclipse/paho.mqtt.c.git")
@@ -9,6 +9,7 @@ package("pahomqttc")
     add_versions("v1.3.13", "5ba7c7ab7ebb1499938fa2e358e6c1f9a926b270f2bf082acf89d59b4771a132")
 
     add_configs("uuid", {description = "Flag that defines whether libuuid or a custom uuid implementation should be used", default = false, type = "boolean"})
+    add_configs("openssl", {description = "Flag that defines whether to build ssl-enabled binaries too.", default = false, type = "boolean"})
 
     if is_plat("windows") then
         add_syslinks("ws2_32", "advapi32", "rpcrt4")
@@ -25,6 +26,9 @@ package("pahomqttc")
     on_load(function (package)
         if package:config("uuid") then
             package:add("deps", "uuid")
+        end
+        if package:config("openssl") then
+            package:add("deps", "openssl")
         end
 
         if package:config("shared") then
@@ -44,6 +48,7 @@ package("pahomqttc")
         table.insert(configs, "-DPAHO_BUILD_SHARED=" .. (shared and "TRUE" or "FALSE"))
         table.insert(configs, "-DPAHO_BUILD_STATIC=" .. (shared and "FALSE" or "TRUE"))
 
+        table.insert(configs, "-DPAHO_WITH_SSL=" .. (package:config("openssl") and "TRUE" or "FALSE"))
         table.insert(configs, "-DPAHO_WITH_LIBUUID=" .. (package:config("uuid") and "TRUE" or "FALSE"))
         import("package.tools.cmake").install(package, configs)
     end)
