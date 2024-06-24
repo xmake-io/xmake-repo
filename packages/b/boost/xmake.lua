@@ -41,37 +41,41 @@ package("boost")
     end
 
     add_configs("pyver", {description = "python version x.y, etc. 3.10", default = "3.10"})
-    local libnames = {"fiber",
-                      "coroutine",
-                      "context",
-                      "regex",
-                      "system",
-                      "container",
-                      "exception",
-                      "timer",
-                      "atomic",
-                      "graph",
-                      "serialization",
-                      "random",
-                      "wave",
-                      "date_time",
-                      "locale",
-                      "iostreams",
-                      "program_options",
-                      "test",
+    local libnames = {"atomic",
+                      "charconv",
                       "chrono",
+                      "cobalt",
+                      "container",
+                      "context",
                       "contract",
-                      "graph_parallel",
-                      "json",
-                      "log",
-                      "thread",
+                      "coroutine",
+                      "date_time",
+                      "exception",
+                      "fiber",
                       "filesystem",
+                      "graph",
+                      "graph_parallel",
+                      "headers",
+                      "iostreams",
+                      "json",
+                      "locale",
+                      "log",
                       "math",
                       "mpi",
                       "nowide",
+                      "program_options",
                       "python",
+                      "random",
+                      "regex",
+                      "serialization",
                       "stacktrace",
-                      "type_erasure"}
+                      "system",
+                      "test",
+                      "thread",
+                      "timer",
+                      "type_erasure",
+                      "url",
+                      "wave"}
 
     add_configs("all",          { description = "Enable all library modules support.",  default = false, type = "boolean"})
     add_configs("multi",        { description = "Enable multi-thread support.",  default = true, type = "boolean"})
@@ -412,6 +416,14 @@ package("boost")
             }
         ]]}, {configs = {languages = "c++14"}}))
 
+        assert(package:check_cxxsnippets({test = [[
+            #include <boost/unordered_map.hpp>
+            static void test() {
+                boost::unordered_map<std::string, int> map;
+                map["2"] = 2;
+            }
+        ]]}, {configs = {languages = "c++14"}}))
+        
         if package:config("date_time") then
             assert(package:check_cxxsnippets({test = [[
                 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -455,7 +467,7 @@ package("boost")
                         boost::iostreams::filtering_ostream out;
                         out.push(boost::iostreams::lzma_compressor());
                     }
-                 ]]}, {configs = {languages = "c++14"}}))
+                ]]}, {configs = {languages = "c++14"}}))
             end
         end
     end)
