@@ -13,21 +13,11 @@ package("libassert")
     add_versions("v1.2.2", "68206b43bc4803357ba7d366574b4631bd327c46ab76ddef6ff9366784fa6b3c")
     add_versions("v1.2", "332f96181f4bdbd95ef5fcd6484782ba2d89b50fd5189bc2a33fd524962f6771")
 
+    add_patches("v2.1.0", "https://github.com/jeremy-rifkin/libassert/commit/aff047da702316b10219a967f78da352f847b8d0.patch", "acdf2e1c7529774be581e7dbab3bbca828743bba8b8f9d6ac9dd4585b2245c58")
+
     add_configs("decompose", {description = "Enables expression decomposition of && and || (this prevents short circuiting)", default = false, type = "boolean"})
     add_configs("lowercase", {description = "Enables assert alias for ASSERT", default = false, type = "boolean"})
     add_configs("magic_enum", {description = "Use the MagicEnum library to print better diagnostics for enum classes", default = true, type = "boolean"})
-
-    if on_check then
-        on_check("windows", function (package)
-            import("core.tool.toolchain")
-
-            local msvc = package:toolchain("msvc")
-            if msvc then
-                local vs = msvc:config("vs")
-                assert(vs and tonumber(vs) >= 2022, "package(libassert): The current compiler version must be 2022 or higher to avoid internal compiler errors.")
-            end
-        end)
-    end
 
     on_load(function (package)
         if package:config("magic_enum") then
