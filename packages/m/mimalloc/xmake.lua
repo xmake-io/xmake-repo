@@ -23,8 +23,10 @@ package("mimalloc")
 
     add_configs("secure", {description = "Use a secured version of mimalloc", default = false, type = "boolean"})
     add_configs("rltgenrandom", {description = "Use a RtlGenRandom instead of BCrypt", default = false, type = "boolean"})
-    add_configs("etw", {description = "Enable Event tracing for Windows", default = false, type = "boolean"})
-
+    if is_plat("windows") then
+        add_configs("etw", {description = "Enable Event tracing for Windows", default = false, type = "boolean"})
+    end
+    
     add_deps("cmake")
 
     if is_plat("windows") then
@@ -46,9 +48,8 @@ package("mimalloc")
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
-        if package:is_plat("windows") and package:config("etw") then
-            table.insert(configs, "-DMI_TRACK_ETW=ON")
-        end
+        table.insert(configs, "-DMI_TRACK_ETW=" .. (package:config("etw") and "ON" or "OFF"))
+
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
         if package:version():le("2.0.1") and package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
             io.replace("CMakeLists.txt", "-redirect.", "-redirect32.", {plain = true})
