@@ -4,7 +4,8 @@ package("json-c")
     set_license("MIT")
 
     set_urls("https://github.com/json-c/json-c/archive/refs/tags/json-c-$(version).zip")
-
+    set_urls("https://github.com/json-c/json-c.git")
+    
     add_versions("0.17-20230812", "471e9eb1dad4fd2e4fec571d8415993e66a89f23a5b052f1ba11b54db90252de")
 
     add_deps("cmake")
