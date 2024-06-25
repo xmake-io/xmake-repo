@@ -29,15 +29,16 @@ package("pahomqttc")
         if package:config("uuid") then
             package:add("deps", "uuid")
         end
-        if package:config("openssl") then
-            package:add("deps", "openssl")
-        end
 
         if package:config("shared") and package:is_plat("windows") then
             package:add("defines", "PAHO_MQTT_IMPORTS")
         end
-        -- paho-mqtt3[a|c][-static]
+        -- paho-mqtt3[a|c][s][-static]
         local links = "paho-mqtt3" .. (package:config("asynchronous") and "a" or "c")
+        if package:config("openssl") then
+            links = links .. "s"
+            package:add("deps", "openssl")
+        end
         if package:is_plat("windows", "mingw") and (not package:config("shared")) then
             links = links .. "-static"
         end
