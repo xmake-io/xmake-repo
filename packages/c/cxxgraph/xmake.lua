@@ -7,16 +7,16 @@ package("cxxgraph")
     add_urls("https://github.com/ZigRazor/CXXGraph/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ZigRazor/CXXGraph.git")
 
+    add_versions("v4.1.0", "1f6601abfcb692f35bfe14f2a34b2302f70213a257b0f7d541a110d6bd460040")
     add_versions("v3.1.0", "54838d0d35a6f2685cf45e50e888146aef3c1a10fbbdddb939b3985c7953087a")
 
     if on_check then
-        on_check("windows", function (package)
-            import("core.tool.toolchain")
-
-            local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-            if msvc then
-                local vs = msvc:config("vs")
+        on_check("windows", "wasm", function (package)
+            if package:is_plat("windows") then
+                local vs = package:toolchain("msvc"):config("vs")
                 assert(vs and tonumber(vs) >= 2022, "package(cxxgraph): need vs >= 2022")
+            elseif package:is_plat("wasm") then
+                assert(not package:version("4.1.0"), "package(cxxgraph/4.1.0): Unsupported platform")
             end
         end)
     end
