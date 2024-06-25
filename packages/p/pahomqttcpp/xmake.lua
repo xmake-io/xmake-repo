@@ -12,16 +12,21 @@ package("pahomqttcpp")
     add_configs("openssl", {description = "Flag that defines whether to build ssl-enabled binaries too.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("pahomqttc", {configs = {asynchronous = true}})
 
     on_load(function (package)
         if package:config("openssl") then
             package:add("deps", "openssl")
         end
 
-        if package:config("shared") and package:is_plat("windows") then
-            package:add("defines", "PAHO_MQTTPP_IMPORTS")
+        local opt = {configs = {asynchronous = true}}
+        if package:config("shared") and package:is_plat("windows", "mingw") then
+            opt.configs.shared = true
+            if package:is_plat("windows") then
+                package:add("defines", "PAHO_MQTTPP_IMPORTS")
+            end
         end
+
+        package:add("deps", "pahomqttc", opt)
     end)
 
     on_install("!wasm", function (package)
