@@ -80,8 +80,10 @@ package("reflect-cpp")
 
     on_install(function (package)
         local version = package:version()
-        if version and version:ge("0.11.1") then
+        if version and version:ge("0.11.1") and package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "find_package(ctre CONFIG REQUIRED)", "", {plain = true})
+            io.replace("CMakeLists.txt", "find_package(yyjson CONFIG REQUIRED)", "", {plain = true})
+            io.replace("CMakeLists.txt", "target_link_libraries(reflectcpp INTERFACE yyjson::yyjson)", "", {plain = true})
         end
         import("package.tools.cmake").install(package, {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF"})
     end)
