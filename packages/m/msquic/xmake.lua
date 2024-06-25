@@ -3,8 +3,9 @@ package("msquic")
     set_description("Cross-platform, C implementation of the IETF QUIC protocol.")
     set_license("MIT")
 
-    add_urls("https://github.com/microsoft/msquic.git")
-    add_versions("v1.9.0", "v1.9.0")
+    add_urls("https://github.com/microsoft/msquic/archive/refs/tags/v$(version).tar.gz",
+             "https://github.com/microsoft/msquic.git")
+    add_versions("v2.3.5", "a3e9dac887c4a6a4afd5cb40c44c2b83358f5020b2c9c08d6d8bd632ac9c7aa9")
 
     add_deps("cmake")
     add_includedirs("msquic/include")
