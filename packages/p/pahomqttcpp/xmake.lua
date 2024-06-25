@@ -12,7 +12,7 @@ package("pahomqttcpp")
     add_configs("openssl", {description = "Flag that defines whether to build ssl-enabled binaries too.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("pahomqttc")
+    add_deps("pahomqttc", {configs = {asynchronous = true}})
 
     on_load(function (package)
         if package:config("openssl") then
