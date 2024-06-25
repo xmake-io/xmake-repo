@@ -9,7 +9,7 @@ package("nsync")
     add_versions("1.29.1", "3045a8922171430426b695edf794053182d245f6a382ddcc59ef4a6190848e98")
     add_versions("1.28.1", "0011fc00820088793b6a9ba97536173a25cffd3df2dc62616fb3a2824b3c43f5")
 
-    add_patches("1.28.1", "patches/1.28.1/cmake.patch", "626a89a5a60884b7aaf44011494e7ba5dbfcdae9fcdb5afcef5b5d1f893b4600")
+    add_patches(">=1.28.1", "patches/1.28.1/cmake.patch", "626a89a5a60884b7aaf44011494e7ba5dbfcdae9fcdb5afcef5b5d1f893b4600")
 
     if is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
