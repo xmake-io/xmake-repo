@@ -6,6 +6,7 @@ package("ade")
     add_urls("https://github.com/opencv/ade/archive/refs/tags/$(version).tar.gz",
              "https://github.com/opencv/ade.git")
 
+    add_versions("v0.1.2", "ac2e6a4acbe6e0b0942418687ec37c6cd55dcaec5112c7ca09abefe6ee539499")
     add_versions("v0.1.2d", "edefba61a33d6cd4b78a9976cb3309c95212610a81ba6dade09882d1794198ff")
 
     add_deps("cmake")
