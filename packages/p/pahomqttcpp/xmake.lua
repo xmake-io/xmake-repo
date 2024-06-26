@@ -6,7 +6,7 @@ package("pahomqttcpp")
     add_urls("https://github.com/eclipse/paho.mqtt.cpp/archive/refs/tags/$(version).zip",
              "https://github.com/eclipse/paho.mqtt.cpp.git")
 
-    add_versions("v1.4.0", "c165960f64322de21697eb06efdca3d74cce90f45ff5ff0efdd968708e13ba0c")
+    -- add_versions("v1.4.0", "c165960f64322de21697eb06efdca3d74cce90f45ff5ff0efdd968708e13ba0c")
     add_versions("v1.3.2", "e01f43cf0ba35efa666503c7adb2786d4a6f7fe6eb44ce5311ac4785a0ce8a98")
     add_versions("v1.2.0", "90c4d8ae4f56bb706120fddcc5937cd0a0360b6f39d5cd5574a5846c0f923473")
     
@@ -20,7 +20,7 @@ package("pahomqttcpp")
         end
 
         local opt = {configs = {asynchronous = true}}
-        if package:config("shared") and package:is_plat("windows", "mingw") then
+        if package:config("shared") then
             opt.configs.shared = true
             if package:is_plat("windows") then
                 package:add("defines", "PAHO_MQTTPP_IMPORTS")
