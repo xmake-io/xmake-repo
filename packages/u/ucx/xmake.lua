@@ -6,7 +6,7 @@ package("ucx")
     add_urls("https://github.com/openucx/ucx/releases/download/v$(version)/ucx-$(version).tar.gz",
              "https://github.com/openucx/ucx.git")
 
-    -- add_versions("1.17.0", "34658e282f99f89ce7a991c542e9727552734ac6ad408c52f22b4c2653b04276")
+    add_versions("1.17.0", "34658e282f99f89ce7a991c542e9727552734ac6ad408c52f22b4c2653b04276")
     add_versions("1.16.0", "f73770d3b583c91aba5fb07557e655ead0786e057018bfe42f0ebe8716e9d28c")
     add_versions("1.15.0", "4b202087076bc1c98f9249144f0c277a8ea88ad4ca6f404f94baa9cb3aebda6d")
     add_versions("1.11.0", "b7189b69fe0e16e3c03784ef674e45687a9c520750bd74a45125c460ede37647")
@@ -21,7 +21,7 @@ package("ucx")
         end
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", function (package)
         local configs = {"--disable-doxygen-doc", "--without-go", "--without-java", "--without-rte", "--without-fuse3", "--without-gdrcopy", "--without-rdmacm", "--without-knem", "--without-xpmem", "--without-ugni"}
         if package:config("cuda") then
             local cuda = package:dep("cuda"):fetch()
