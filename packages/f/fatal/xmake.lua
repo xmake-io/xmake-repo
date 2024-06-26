@@ -9,7 +9,7 @@ package("fatal")
 
     add_versions("2024.06.24", "9b134c46eec2a1fc38cfbfef13de11f7b252ded6d789d2460956d43b89719a8b")
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install(function (package)
         os.cp("fatal", package:installdir("include"))
     end)
 
