@@ -20,6 +20,8 @@ package("folly")
     add_versions("2024.03.25", "3c57b0d1f1266e935aef1ed54535561fd2eeedc1aa946fbc46871e839014f74c")
     add_versions("2024.04.01", "f09e522c76a5f102c40c54726f6f255b0dc127c78f9c8c9ac117fc0f7ac284bb")
     add_versions("2024.06.10", "27d7f825a9a3469b59a4f0a5ba2edac733407ea8dcc036e7ca9279d803ece1e9")
+    add_versions("2024.06.17", "a26cda1cf5f9914f2ff05b5f8e4062d73f5a1ff71ee1911e734dc758313f6d30")
+    add_versions("2024.06.24", "05ce0aed45c3a8125334438564364fbf32cd0d80b2a58c010cc821f5f16def50")
 
     add_patches("<=2022.08.29", path.join(os.scriptdir(), "patches", "2021.06.28", "reorder.patch"), "9a6bf283881580474040cfc7a8e89d461d68b89bae5583d89fff0a3198739980")
     add_patches("<=2022.08.29", path.join(os.scriptdir(), "patches", "2021.06.28", "regex.patch"), "6a77ade9f48dd9966d3f7154e66ca8a5c030ae2b6d335cbe3315784aefd8f495")
@@ -33,6 +35,7 @@ package("folly")
     add_configs("lzma", {description = "Support LZMA for compression", default = true, type = "boolean"})
     add_configs("libaio", {description = "Support compile with libaio", default = true, type = "boolean"})
     add_configs("liburing", {description = "Support compile with liburing", default = true, type = "boolean"})
+    add_configs("libdwarf", {description = "Support compile with libdwarf", default = true, type = "boolean"})
 
     add_deps("cmake")
     add_deps("boost", {configs = {date_time = true, iostreams = true, context = true, filesystem = true, program_options = true, regex = true, system = true, thread = true}})
@@ -56,11 +59,13 @@ package("folly")
         if package:is_plat("linux") and package:config("liburing") then
             package:add("deps", "liburing")
         end
+        if package:config("libdwarf") then
+            package:add("deps", "libdwarf")
+        end
     end)
 
     on_install("linux", "macosx", function (package)
         local configs = {"-DBUILD_TESTS=OFF",
-                         "-DCMAKE_DISABLE_FIND_PACKAGE_LibDwarf=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_Libiberty=ON",
                          "-DCMAKE_DISABLE_FIND_PACKAGE_LibURCU=ON",
                          "-DLIBURCU_FOUND=OFF",
@@ -71,10 +76,6 @@ package("folly")
         if package:is_plat("windows") then
             table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
-        if not package:is_plat("linux") then
-            table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_LibAIO=ON")
-            table.insert(configs, "-DLIBAIO_FOUND=OFF")
-        end 
         import("package.tools.cmake").install(package, configs)
     end)
 

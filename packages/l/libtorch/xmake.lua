@@ -15,6 +15,7 @@ package("libtorch")
     add_versions("v2.1.0", "7bcf7da3a268b435777fe87c7794c382f444e86d")
     add_versions("v2.1.2", "a8e7c98cb95ff97bb30a728c6b2a1ce6bff946eb")
     add_versions("v2.2.2", "39901f229520a5256505ec24782f716ee7ddc843")
+    add_versions("v2.3.1", "63d5e9221bedd1546b7d364b5ce4171547db12a9")
 
     add_patches("1.9.x", "patches/1.9.0/gcc11.patch", "4191bb3296f18f040c230d7c5364fb160871962d6278e4ae0f8bc481f27d8e4b")
     add_patches("1.11.0", "patches/1.11.0/gcc11.patch", "1404b0bc6ce7433ecdc59d3412e3d9ed507bb5fd2cd59134a254d7d4a8d73012")
@@ -120,6 +121,7 @@ package("libtorch")
         -- some patches to the third-party cmake files
         io.replace("cmake/MiscCheck.cmake", "if(UNIX)", "if(TRUE)", {plain = true})
         io.replace("third_party/fbgemm/CMakeLists.txt", "PRIVATE FBGEMM_STATIC", "PUBLIC FBGEMM_STATIC", {plain = true})
+        io.replace("third_party/fbgemm/CMakeLists.txt", "-Werror", "", {plain = true})
         io.replace("third_party/protobuf/cmake/install.cmake", "install%(DIRECTORY.-%)", "")
         if package:is_plat("windows") then
             if package:config("vs_runtime"):startswith("MD") then
