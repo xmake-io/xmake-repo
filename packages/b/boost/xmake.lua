@@ -389,16 +389,18 @@ package("boost")
             table.insert(argv, "pch=off")
         end
 
-        local vs_toolset = build_toolchain:config("vs_toolset")
-        if package:is_plat("windows") and package:version():le("1.85.0") and vs_toolset then
-            local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
-            local minor = vs_toolset_ver:minor()
-            if minor and minor >= 40 then
-                io.replace("tools/build/src/engine/config_toolset.bat", "vc143", "vc144", {plain = true})
-                io.replace("tools/build/src/engine/build.bat", "vc143", "vc144", {plain = true})
-                io.replace("tools/build/src/engine/guess_toolset.bat", "vc143", "vc144", {plain = true})
-                io.replace("tools/build/src/tools/intel-win.jam", "14.3", "14.4", {plain = true})
-                io.replace("tools/build/src/tools/msvc.jam", "14.3", "14.4", {plain = true})
+        if package:is_plat("windows") and package:version():le("1.85.0") then
+            local vs_toolset = build_toolchain:config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                if minor and minor >= 40 then
+                    io.replace("tools/build/src/engine/config_toolset.bat", "vc143", "vc144", {plain = true})
+                    io.replace("tools/build/src/engine/build.bat", "vc143", "vc144", {plain = true})
+                    io.replace("tools/build/src/engine/guess_toolset.bat", "vc143", "vc144", {plain = true})
+                    io.replace("tools/build/src/tools/intel-win.jam", "14.3", "14.4", {plain = true})
+                    io.replace("tools/build/src/tools/msvc.jam", "14.3", "14.4", {plain = true})
+                end
             end
         end
         local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})
