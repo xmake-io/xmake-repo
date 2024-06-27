@@ -4,7 +4,7 @@ package("libjpeg-turbo")
     set_description("A JPEG image codec that uses SIMD instructions (MMX, SSE2, AVX2, Neon, AltiVec) to accelerate baseline JPEG compression and decompression on x86, x86-64, Arm, and PowerPC systems.")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/libjpeg-turbo/libjpeg-turbo/archive/$(version).tar.gz",
+    add_urls("https://github.com/libjpeg-turbo/libjpeg-turbo/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libjpeg-turbo/libjpeg-turbo.git")
     add_versions("2.0.5",  "b3090cd37b5a8b3e4dbd30a1311b3989a894e5d3c668f14cbc6739d77c9402b7")
     add_versions("2.0.6",  "005aee2fcdca252cee42271f7f90574dda64ca6505d9f8b86ae61abc2b426371")
@@ -15,6 +15,7 @@ package("libjpeg-turbo")
     add_versions("2.1.3",  "dbda0c685942aa3ea908496592491e5ec8160d2cf1ec9d5fd5470e50768e7859")
     add_versions("2.1.4",  "a78b05c0d8427a90eb5b4eb08af25309770c8379592bb0b8a863373128e6143f")
     add_versions("3.0.1",  "5b9bbca2b2a87c6632c821799438d358e27004ab528abf798533c15d50b39f82")
+    add_versions("3.0.3",  "a649205a90e39a548863a3614a9576a3fb4465f8e8e66d54999f127957c25b21")
 
     add_configs("jpeg", {description = "libjpeg API/ABI emulation target version.", default = "6", type = "string", values = {"6", "7", "8"}})
 
@@ -29,6 +30,9 @@ package("libjpeg-turbo")
     end)
 
     on_install("windows", "linux", "macosx", "android", "mingw", function (package)
+        io.replace("sharedlib/CMakeLists.txt", "string(REGEX REPLACE \"/MT\" \"/MD\"", "#", {plain = true})
+        io.replace("sharedlib/CMakeLists.txt", "set(CMAKE_MSVC_RUNTIME_LIBRARY", "#", {plain = true})
+        io.replace("sharedlib/CMakeLists.txt", "/NODEFAULTLIB:LIBCMT /NODEFAULTLIB:LIBCMTD", "", {plain = true})
         if package:is_plat("windows") and not package:config("shared") then
             io.replace("release/libjpeg.pc.in", "-ljpeg", "-ljpeg-static", {plain = true})
             io.replace("release/libturbojpeg.pc.in", "-lturbojpeg", "-lturbojpeg-static", {plain = true})
