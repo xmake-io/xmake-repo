@@ -5,15 +5,13 @@ package("npcap_sdk")
     set_urls("https://npcap.com/dist/npcap-sdk-$(version).zip")
     add_versions("1.13", "dad1f2bf1b02b787be08ca4862f99e39a876c1f274bac4ac0cedc9bbc58f94fd")
 
-    on_install("windows", function (package)
+    on_install("windows|x64", "windows|x86", "windows|arm64", function (package)
         os.cp("Include", package:installdir())
         if package:is_arch("arm+.*") then
             os.cp("Lib/ARM64/*", package:installdir("lib"))
-        end
-        if package:is_arch("x86") then
+        elseif package:is_arch("x86") then
             os.cp("Lib/*.lib", package:installdir("lib"))
-        end
-        if package:is_arch("x64") then
+        else
             os.cp("Lib/x64/*.lib", package:installdir("lib"))
         end
     end)
