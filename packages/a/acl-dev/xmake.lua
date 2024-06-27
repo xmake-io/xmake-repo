@@ -8,9 +8,9 @@ package("acl-dev")
     set_urls("https://github.com/acl-dev/acl.git")
     add_versions("v3.6.1-7", "b80b4304b11f3b89decd276ecbdb8f7bbbe422c4b2a56eea069cb25116f24d6c")
 
+    add_patches("v3.6.1-7", "https://github.com/acl-dev/acl/commit/353186995c44b180f316f9267ad520e362d2d7cd.patch", "b30133c15eeb24e15601ed870f422217ec42016a7890f60b662d89ca52a32d51")
 
     on_install(function (package)
-        
         local configs = {}
         configs.kind = package:config("shared") and "shared" or "static"
         configs.mode = package:debug() and "debug" or "release"
