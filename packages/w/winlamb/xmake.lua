@@ -7,7 +7,7 @@ package("winlamb")
     add_urls("https://github.com/rodrigocfd/winlamb.git")
     add_versions("2023.07.07", "3db0753b91074be6e0097ebb8f719dc4045510de")
 
-    on_install(function (package)
+    on_install("windows", function (package)
         os.cp("*", path.join(package:installdir("include"), "winlamb"))
     end)
 
