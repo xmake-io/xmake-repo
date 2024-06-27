@@ -81,10 +81,10 @@ package("reflect-cpp")
     on_install(function (package)
         local version = package:version()
         if version and version:lt("0.11.1") then
+            import("package.tools.cmake").install(package, {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF"})
+        else
             os.rm("include/thirdparty")
             os.cp("include", package:installdir())
-        else
-            import("package.tools.cmake").install(package, {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF"})
         end
     end)
 
