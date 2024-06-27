@@ -8,16 +8,13 @@ package("npcap_sdk")
     on_install("windows", function (package)
         os.cp("Include", package:installdir())
         if package:is_arch("arm+.*") then
-            os.rm("*.lib")
-            os.rm("x64")
+            os.cp("Lib/ARM64/*", package:installdir("lib"))
         end
         if package:is_arch("x86") then
-            os.rm("ARM64")
-            os.rm("x64")
+            os.cp("Lib/*.lib", package:installdir("lib"))
         end
         if package:is_arch("x64") then
-            os.rm("*.lib")
-            os.rm("ARM64")
+            os.cp("Lib/x64/*.lib", package:installdir("lib"))
         end
     end)
 
