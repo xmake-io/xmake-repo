@@ -7,7 +7,7 @@ package("pcapplusplus")
 
     add_versions("v23.09", "f2b92d817df6138363be0d144a61716f8ecc43216f0008135da2e0e15727d35a")
 
-    add_deps("cmake")
+    add_deps("cmake", "npcap_sdk")
 
     on_install(function (package)
         local configs = {}
