@@ -22,8 +22,6 @@ package("reflect-cpp")
     add_configs("toml", {description = "Enable Toml Support.", default = false, type = "boolean"})
     add_configs("yaml", {description = "Enable Yaml Support.", default = false, type = "boolean"})
 
-    add_deps("cmake")
-
     on_check(function (package)
         if package:is_plat("windows") then
             local vs = package:toolchain("msvc"):config("vs")
@@ -82,7 +80,7 @@ package("reflect-cpp")
 
     on_install(function (package)
         local version = package:version()
-        if version and version:ge("0.11.1") then
+        if version and version:lt("0.11.1") then
             os.rm("include/thirdparty")
             os.cp("include", package:installdir())
         else
