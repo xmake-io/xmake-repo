@@ -15,6 +15,7 @@ package("pybind11")
     add_versions("v2.9.2", "d1646e6f70d8a3acb2ddd85ce1ed543b5dd579c68b8fb8e9638282af20edead8")
     add_versions("v2.10.0", "225df6e6dea7cea7c5754d4ed954e9ca7c43947b849b3795f87cb56437f1bd19")
     add_versions("v2.12.0", "411f77380c43798506b39ec594fc7f2b532a13c4db674fcf2b1ca344efaefb68")
+    add_versions("v2.13.1", "a3c9ea1225cb731b257f2759a0c12164db8409c207ea5cf851d4b95679dda072")
 
     add_deps("cmake", "python 3.x")
     on_install("windows", "macosx", "linux", function (package)
