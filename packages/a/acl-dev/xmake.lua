@@ -1,8 +1,8 @@
 package("acl-dev")
 
-    set_homepage("https://github.com/aseprite/tga")
-    set_description("C++ library to read/write Truevision TGA/TARGA files")
-    set_license("MIT")
+    set_homepage("https://github.com/acl-dev/acl")
+    set_description("C/C++ server and network library")
+    set_license("LGPL-3.0")
 
     set_urls("https://github.com/acl-dev/acl/archive/refs/tags/$(version).zip")
     set_urls("https://github.com/acl-dev/acl.git")
