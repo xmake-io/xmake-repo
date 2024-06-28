@@ -22,8 +22,6 @@ package("reflect-cpp")
     add_configs("toml", {description = "Enable Toml Support.", default = false, type = "boolean"})
     add_configs("yaml", {description = "Enable Yaml Support.", default = false, type = "boolean"})
 
-    add_deps("cmake")
-
     on_check(function (package)
         if package:is_plat("windows") then
             local vs = package:toolchain("msvc"):config("vs")
@@ -75,17 +73,19 @@ package("reflect-cpp")
         if version and version:ge("0.11.1") then
             package:add("deps", "ctre")
             package:add("defines", "REFLECTCPP_NO_BUNDLED_DEPENDENCIES")
+        else
+            package:add("deps", "cmake")
         end
     end)
 
     on_install(function (package)
         local version = package:version()
-        if version and version:ge("0.11.1") and package:is_plat("wasm") then
-            io.replace("CMakeLists.txt", "find_package(ctre CONFIG REQUIRED)", "", {plain = true})
-            io.replace("CMakeLists.txt", "find_package(yyjson CONFIG REQUIRED)", "", {plain = true})
-            io.replace("CMakeLists.txt", "target_link_libraries(reflectcpp INTERFACE yyjson::yyjson)", "", {plain = true})
+        if version and version:lt("0.11.1") then
+            import("package.tools.cmake").install(package, {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF"})
+        else
+            os.rm("include/thirdparty")
+            os.cp("include", package:installdir())
         end
-        import("package.tools.cmake").install(package, {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF"})
     end)
 
     on_test(function (package)
