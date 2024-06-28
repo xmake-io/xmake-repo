@@ -6,6 +6,7 @@ package("freeglut")
 
     add_urls("https://github.com/FreeGLUTProject/freeglut/archive/refs/tags/$(version).zip",
              "https://github.com/FreeGLUTProject/freeglut.git")
+    add_versions("v3.6.0", "a0021f0cd0feba3b2ccdb566f40430a318fda8d5a42ca249c571284801186af3")
     add_versions("v3.4.0", "8aed768c71dd5ec0676216bc25e23fa928cc628c82e54ecca261385ccfcee93a")
 
     add_patches("v3.4.0", path.join(os.scriptdir(), "patches", "3.4.0", "arm64.patch"), "a96b538e218ca478c7678aad62b724226dcdf11371da58d1287b95dbe241d00e")
