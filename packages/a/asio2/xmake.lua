@@ -4,10 +4,10 @@ package("asio2")
     set_description("Header only c++ network library, based on asio, support tcp,udp,http,websocket,rpc,ssl,icmp,serial_port.")
     set_license("BSL-1.0")
 
-    add_urls("https://github.com/zhllxt/asio2/archive/refs/tags/v$(version).zip",
+    add_urls("https://github.com/zhllxt/asio2/archive/refs/tags/$(version).zip",
              "https://github.com/zhllxt/asio2.git")
 
-    add_versions("2.9", "3ce0b41300954ffc13948bd51af6430e324b1c28e26d2eb5a83e775cf38c12b4")
+    add_versions("v2.9", "3ce0b41300954ffc13948bd51af6430e324b1c28e26d2eb5a83e775cf38c12b4")
 
     add_patches("2.9", "patches/2.9/remove-const.patch", "6326f333ab2d0484c23bb3cd9cfd5a565030b5525d083677565a693f5f8803b6")
 
