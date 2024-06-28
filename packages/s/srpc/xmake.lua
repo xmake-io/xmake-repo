@@ -7,8 +7,9 @@ package("srpc")
              "https://github.com/sogou/srpc.git")
 
     add_versions("v0.10.2", "da570f3522e9dfec9c396632044fcb51b5ddc5c854ba7824d1770de138f469fb")
+    add_versions("v0.10.3", "8fc8d5d0d0b0975ed4a5d266e82841c4e94eb041cb459357b92dba4e3b64ebb8")
 
-    add_deps("cmake", "protobuf-cpp")
+    add_deps("cmake", "protobuf-cpp", "abseil")
     add_deps("workflow", "snappy", "lz4", "zlib")
 
     on_install("linux", "macosx", function (package)
