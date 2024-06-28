@@ -7,6 +7,8 @@ package("pcapplusplus")
 
     add_versions("v23.09", "f2b92d817df6138363be0d144a61716f8ecc43216f0008135da2e0e15727d35a")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     add_deps("cmake")
     if is_plat("windows") then
         add_syslinks("ws2_32")
@@ -19,7 +21,6 @@ package("pcapplusplus")
         table.insert(configs, "-DPCAPPP_BUILD_TESTS=OFF")
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
