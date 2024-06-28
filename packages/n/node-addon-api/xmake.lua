@@ -5,8 +5,8 @@ package("node-addon-api")
     set_description("Module for using Node-API from C++")
     set_license("MIT")
 
-    add_configs("errors", { description = "Choose error handling method.", default = "except", type = "string", values = {"except", "noexcept", "maybe"}})
-    add_configs("disable_deprecated", { description = "Disable deprecated APIs.", default = true, type = "boolean"})
+    add_configs("errors", {description = "Choose error handling method.", default = "except", type = "string", values = {"except", "noexcept", "maybe"}})
+    add_configs("disable_deprecated", {description = "Disable deprecated APIs.", default = true, type = "boolean"})
 
     set_urls("https://github.com/nodejs/node-addon-api/archive/refs/tags/$(version).tar.gz",
         "https://github.com/nodejs/node-addon-api.git")
