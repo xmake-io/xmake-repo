@@ -43,7 +43,7 @@ package("freeglut")
         end
     end)
 
-    on_install("linux", "windows", "mingw", "android", function (package)
+    on_install("linux", "windows", "mingw", function (package)
         local configs = {"-DFREEGLUT_BUILD_DEMOS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -64,7 +64,7 @@ package("freeglut")
                 table.insert(opt.cxflags, "-DFREEGLUT_STATIC=1")
             end
             if package:is_arch("arm64") then
-                local vs = msvc:config("vs")
+                local vs = package:toolchain("msvc"):config("vs")
                 if vs then
                     assert(tonumber(vs) >= 2022, "package(freeglut): requires Visual Studio 2022 and later for arm targets")
                     table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
