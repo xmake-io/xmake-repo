@@ -7,10 +7,17 @@ package("pcapplusplus")
 
     add_versions("v23.09", "f2b92d817df6138363be0d144a61716f8ecc43216f0008135da2e0e15727d35a")
 
-    add_deps("cmake", "npcap_sdk")
+    add_deps("cmake")
+    if is_plat("windows") then
+        add_syslinks("ws2_32")
+        add_deps("npcap_sdk")
+    end
 
-    on_install(function (package)
+    on_install("windows", function (package)
         local configs = {}
+        table.insert(configs, "-DPCAPPP_BUILD_EXAMPLES=OFF")
+        table.insert(configs, "-DPCAPPP_BUILD_TESTS=OFF")
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
@@ -18,9 +25,9 @@ package("pcapplusplus")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "IPv4Layer.h"
-            #include "Packet.h"
-            #include "PcapFileDevice.h"
+            #include "pcapplusplus/IPv4Layer.h"
+            #include "pcapplusplus/Packet.h"
+            #include "pcapplusplus/PcapFileDevice.h"
             void test() {
                 pcpp::PcapFileReaderDevice reader("1_packet.pcap");
             }
