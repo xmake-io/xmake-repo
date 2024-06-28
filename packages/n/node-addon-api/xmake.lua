@@ -5,23 +5,14 @@ package("node-addon-api")
     set_description("Module for using Node-API from C++")
     set_license("MIT")
 
-    add_configs("errors", {
-        description = "Choose between 'except', 'noexcept' and 'maybe' to specify how errors should be handled.\n" ..
-            "See https://github.com/nodejs/node-addon-api/blob/main/doc/error_handling.md for more details.",
-        default = "except",
-        type = "string"
-    })
-    add_configs("disable_deprecated", {
-        description = "Control the availability of the deprecated APIs.",
-        default = true,
-        type = "boolean"
-    })
+    add_configs("errors", { description = "Choose error handling method.", default = "except", type = "string", values = {"except", "noexcept", "maybe"}})
+    add_configs("disable_deprecated", { description = "Disable deprecated APIs.", default = true, type = "boolean"})
 
     set_urls("https://github.com/nodejs/node-addon-api/archive/refs/tags/$(version).tar.gz",
         "https://github.com/nodejs/node-addon-api.git")
     add_versions("v8.0.0", "42424c5206b9d67b41af4fcff5d6e3cb22074168035a03b8467852938a281d47")
 
-    add_deps("node", {kind = 'binary', system = true})
+    add_deps("node", {kind = "binary", system = true})
 
     on_load(function(package)
         package:add("defines", "NAPI_VERSION=" .. package:version():major())
@@ -43,7 +34,9 @@ package("node-addon-api")
     end)
 
     on_install("linux" ,function(package)
-        local include_dir = path.join(package:installdir(), "include")
-        os.mkdir(include_dir)
-        os.cp("*.h", include_dir)
+        os.cp("*.h", package:installdir("include"))
+    end)
+
+    on_test(function (package)
+        assert(os.isfile(path.join(package:installdir("include"), "napi.h")))
     end)
