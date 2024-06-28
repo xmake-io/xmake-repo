@@ -10,7 +10,6 @@ package("yalantinglibs")
     add_versions("0.3.4", "88ba1ae2aa828383e51af95dbd029f90d16d5428d868739c8c91de3f31bed70b")
     add_configs("ssl", {description = "Enable SSL", default = false, type = "boolean"})
 
-
     add_deps("asio", "async_simple")
 
     on_load(function (package)
