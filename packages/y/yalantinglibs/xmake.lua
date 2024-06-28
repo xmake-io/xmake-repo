@@ -18,7 +18,7 @@ package("yalantinglibs")
         end
     end)
 
-    on_install(function (package)
+    on_install("linux", "macos", "windows", function (package)
         os.cp("include", package:installdir())
     end)
 
