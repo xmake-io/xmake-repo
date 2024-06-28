@@ -19,7 +19,6 @@ package("pcapplusplus")
         local configs = {}
         table.insert(configs, "-DPCAPPP_BUILD_EXAMPLES=OFF")
         table.insert(configs, "-DPCAPPP_BUILD_TESTS=OFF")
-
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
