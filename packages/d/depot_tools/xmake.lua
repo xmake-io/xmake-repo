@@ -21,9 +21,10 @@ package("depot_tools")
 
     on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
+        local sourcedir = os.curdir()
         local ninja = path.join(package:dep("ninja"):installdir("bin"), "ninja" .. (is_host("windows") and ".exe" or ""))
         if ninja and os.isfile(ninja) then
-            os.trycp(ninja, os.curdir())
+            os.trycp(ninja, sourcedir)
         end
         os.cp("*", package:installdir())
         os.cd(package:installdir())
@@ -36,7 +37,7 @@ package("depot_tools")
             envs.HTTPS_PROXY = proxy
             envs.ALL_PROXY = proxy
         end
-        envs.PATH = table.join(os.curdir(), path.splitenv(os.getenv("PATH")))
+        envs.PATH = table.join(sourcedir, path.splitenv(os.getenv("PATH")))
         -- skip to check and update obsolete URL
         io.replace("./update_depot_tools",
             'CANONICAL_GIT_URL="https://chromium.googlesource.com/chromium/tools/depot_tools.git"',
