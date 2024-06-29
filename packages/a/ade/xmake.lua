@@ -7,6 +7,9 @@ package("ade")
              "https://github.com/opencv/ade.git")
 
     add_versions("v0.1.2d", "edefba61a33d6cd4b78a9976cb3309c95212610a81ba6dade09882d1794198ff")
+    add_versions("v0.1.2", "ac2e6a4acbe6e0b0942418687ec37c6cd55dcaec5112c7ca09abefe6ee539499")
+
+    add_patches("0.1.2", "patches/0.1.2/cmake-mingw.patch", "59ac0ed938b82090e97de6dee358ba683b371908c3063b4d10146999a30eaaaa")
 
     add_deps("cmake")
 
@@ -19,5 +22,9 @@ package("ade")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("ade::Graph", {configs = {languages = "c++11"}, includes = "ade/graph.hpp"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                ade::Graph x;
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "ade/graph.hpp"}))
     end)
