@@ -41,6 +41,9 @@ package("depot_tools")
         io.replace("./update_depot_tools",
             'CANONICAL_GIT_URL="https://chromium.googlesource.com/chromium/tools/depot_tools.git"',
             'CANONICAL_GIT_URL="https://github.com/xmake-mirror/depot_tools.git"', {plain = true})
+        io.replace("./update_depot_tools", 'remote_url=$(eval "$GIT" config --get remote.origin.url)',
+            'remote_url="https://github.com/xmake-mirror/depot_tools.git"', {plain = true})
+        os.vrunv("git", {"commit", "-a", "-m", "..."})
         -- we need fetch some files when running gclient for the first time
         if is_host("windows") then
             os.vrunv("gclient.bat", {"--verbose"}, {envs = envs})
