@@ -17,6 +17,18 @@ package("yoga")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <bit>
+                void test() {
+                    constexpr double f64v = 19880124.0; 
+                    constexpr auto u64v = std::bit_cast<std::uint64_t>(f64v);
+                }
+            ]]}, {configs = {languages = "c++20"}}), "package(yoga) Require at least C++20.")
+        end)
+    end
+
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
