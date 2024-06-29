@@ -6,43 +6,30 @@ package("faker-cxx")
     add_urls("https://github.com/cieslarmichal/faker-cxx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cieslarmichal/faker-cxx.git")
 
-    add_versions("v1.0.0", "ffba405f53822cac80491702a6b7c5490dc109474a0f37556bd00ddb69433309")
+    add_versions("v2.0.0", "8a7f5441f4453af868444675878a2d9a74918c1595caa65d537d3ea327e46a49")
 
-    if is_host("windows") then
-        -- dll symbol 65535
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
-
+    add_deps("cmake")
     add_deps("fmt")
 
     on_install(function (package)
-        io.writefile("xmake.lua", [[
-            add_rules("mode.debug", "mode.release")
-            add_requires("fmt")
-            add_packages("fmt")
-            target("faker-cxx")
-                set_kind("$(kind)")
-                add_files("src/**.cpp")
-                remove_files("src/**Test.cpp")
-                add_headerfiles("include/(**.h)")
-                add_includedirs("include")
+        local configs = {"-DBUILD_TESTING=OFF", "-DUSE_SYSTEM_DEPENDENCIES=ON", "-DUSE_STD_FORMAT=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-                add_cxxflags("cl::/bigobj")
-                set_languages("c++20")
-                set_encodings("utf-8")
-                if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all", {export_classes = true})
-                end
-        ]])
-        import("package.tools.xmake").install(package, configs)
+        local cxflags
+        if package:has_tool("cxx", "cl") then
+            cxflags = "/utf-8"
+            if package:config("shared") then
+                table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+            end
+        end
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <faker-cxx/Internet.h>
             void test() {
-                const auto email = faker::Internet::email();
-                const auto password = faker::Internet::password();
+                const auto id = faker::string::uuid();
             }
-        ]]}, {configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = "c++20"}, includes = "faker-cxx/String.h"}))
     end)
