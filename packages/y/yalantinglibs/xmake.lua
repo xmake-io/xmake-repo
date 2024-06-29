@@ -42,7 +42,7 @@ package("yalantinglibs")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local configs = {
             "-DINSTALL_THIRDPARTY=OFF",
             "-DINSTALL_STANDALONE=OFF",
