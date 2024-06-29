@@ -13,6 +13,7 @@ package("re2")
     add_versions("2023.11.01", "4e6593ac3c71de1c0f322735bc8b0492a72f66ffccfad76e259fa21c41d27d8a")
     add_versions("2024.03.01", "7b2b3aa8241eac25f674e5b5b2e23d4ac4f0a8891418a2661869f736f03f57f4")
     add_versions("2024.04.01", "3f6690c3393a613c3a0b566309cf04dc381d61470079b653afc47c67fb898198")
+    add_versions("2024.06.01", "7326c74cddaa90b12090fcfc915fe7b4655723893c960ee3c2c66e85c5504b6c")
 
     add_deps("cmake", "abseil")
 
