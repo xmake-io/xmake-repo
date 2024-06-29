@@ -23,7 +23,7 @@ package("re2")
 
     on_load(function (package)
         local version = package:version()
-        if version:eq("2024.06.01") and is_plat("mingw") then
+        if version:eq("2024.06.01") and package:is_plat("mingw") then
             package:add("syslinks", "Dbghelp")
         end
     end)
