@@ -14,6 +14,7 @@ package("libopus")
     add_versions("home:1.4", "c9b32b4253be5ae63d1ff16eea06b94b5f0f2951b7a02aceef58e3a3ce49c51f")
     add_versions("home:1.3.1", "65b58e1e25b2a114157014736a3d9dfeaad8d41be1c8179866f144a2fb44ff9d")
 
+    add_versions("github:1.5.2", "9480e329e989f70d69886ded470c7f8cfe6c0667cc4196d4837ac9e668fb7404")
     add_versions("github:1.5.1", "7ce44ef3d335a3268f26be7d53bb3bed7205b34eaf80bf92a99e69d490afe9d9")
     add_versions("github:1.5", "d7de528957dde0ba40e9dec9e25b679232bfaf19fb6a02ed8358845007d7075e")
     add_versions("github:1.4", "659e6b223e42a51b0a898632b9a5f406ccd5c2e00aa526ddd1264789774b94e5")
