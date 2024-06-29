@@ -11,6 +11,20 @@ package("faker-cxx")
     add_deps("cmake")
     add_deps("fmt")
 
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <concepts>
+                #include <ranges>
+                static_assert(std::integral<bool>);
+                void test() {
+                    const auto v = {4, 1, 3, 2};
+                    auto it = std::ranges::find(v, 3);
+                }
+            ]]}, {configs = {languages = "c++20"}}), "package(faker-cxx) Require at least C++20.")
+        end)
+    end
+
     on_install(function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DUSE_SYSTEM_DEPENDENCIES=ON", "-DUSE_STD_FORMAT=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
