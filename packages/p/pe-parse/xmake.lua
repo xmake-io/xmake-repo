@@ -14,6 +14,9 @@ package("pe-parse")
 
     on_install(function (package)
         io.replace("cmake/compilation_flags.cmake", "-Werror", "", {plain = true})
+        if package:is_plat("windows") and package:is_arch("arm.*") then
+            io.replace("CMakeLists.txt", "find_package(Filesystem COMPONENTS Experimental Final REQUIRED)", "", {plain = true})
+        end
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
