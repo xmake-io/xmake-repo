@@ -12,6 +12,7 @@ package("vulkan-utility-libraries")
         return version:startswith("v") and version or prefix .. version:gsub("%+", ".")
     end})
 
+    add_versions("v1.3.289", "6166182b6f279d85784651bf21a134a4016f429cd364bc587ece7b5af9af32d7")
     add_versions("v1.3.283", "a446616dede2b0168726f4e1b51777ba5c20ec46c475b378e2c07fd4ab4375ee")
     add_versions("v1.3.280", "075e13f2fdeeca3bb6fb39155c8cc345cf216ab93661549b1a33368aa28a9dea")
     add_versions("v1.3.275", "96d3ec7bda7b6e9fabbb471c570104a7b1cb56928d097dd0441c96129468b888")
