@@ -9,7 +9,7 @@ package("srpc")
     add_versions("v0.10.3", "8fc8d5d0d0b0975ed4a5d266e82841c4e94eb041cb459357b92dba4e3b64ebb8")
     add_versions("v0.10.2", "da570f3522e9dfec9c396632044fcb51b5ddc5c854ba7824d1770de138f469fb")
 
-    add_deps("cmake", "protobuf-cpp", "abseil")
+    add_deps("cmake", "protobuf-cpp", "abseil", "utf8_range")
     add_deps("workflow", "snappy", "lz4", "zlib")
 
     on_install("linux", "macosx", function (package)
@@ -25,7 +25,7 @@ package("srpc")
         io.replace("CMakeLists.txt", 'check_include_file_cxx("workflow/Workflow.h" WORKFLOW_INSTALLED)',
             "set(WORKFLOW_INSTALLED TRUE)", {plain = true})
         import("package.tools.cmake").install(package, configs, {packagedeps = {
-            "workflow", "snappy", "lz4", "zlib", "abseil"}})
+            "workflow", "snappy", "lz4", "zlib", "abseil", "utf8_range"}})
         if package:config("shared") then
             os.rm(path.join(package:installdir("lib"), "*.a"))
         else
