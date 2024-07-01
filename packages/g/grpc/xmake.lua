@@ -5,10 +5,8 @@ package("grpc")
 
     add_urls("https://github.com/grpc/grpc/archive/refs/tags/$(version).zip",
              "https://github.com/grpc/grpc.git")
-
-    add_versions("v1.65.0", "e2bd1c061d01b2e2fefb364d7de34caafd95137d6a4aea35324bc3c4b2be72a2")
-    add_versions("v1.62.1", "f672a3a3b370f2853869745110dabfb6c13af93e17ffad4676a0b95b5ec204af")
     add_versions("v1.51.3", "17720fd0a690e904a468b4b3dae6fa5ec40b0d1f4d418e2ca092e2f92f06fce0")
+    add_versions("v1.62.1", "f672a3a3b370f2853869745110dabfb6c13af93e17ffad4676a0b95b5ec204af")
 
     add_patches("1.51.3", path.join(os.scriptdir(), "patches", "1.51.3", "disable-download-archive.patch"), "90fdd6e4a51cbc9756d1fcdd0f65e665d4b78cfd91fdbeb0228cc4e9c4ba1b73")
     add_patches("1.51.3", path.join(os.scriptdir(), "patches", "1.51.3", "static-linking-in-linux.patch"), "176474919883f93be0c5056098eccad408038663c6c7361f2e049cdf7247a19c")
