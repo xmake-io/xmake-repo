@@ -21,6 +21,10 @@ package("wxwidgets")
             add_resources("3.2.4", "releaseDLL",
                 "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxMSW-3.2.4_vc14x_x64_ReleaseDLL.7z",
                 "0f9108e64f98978580fee2d4b3a53451ab4333e4b47dde45b82e7867d0bbfc2c")
+            add_versions("3.2.5", "c6a4da42e5214aa50828b45ba4310ae01396a26b3a5087c068e9a3e34bcb7afe")
+            add_resources("3.2.5", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.5/wxMSW-3.2.5_vc14x_x64_ReleaseDLL.7z",
+                "5bce239ea1da4b8c0f5f870d2410b85fa2adc755b4f840adeb29cf353710042f")
         else
             add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxMSW-$(version)_vc14x_Dev.7z")
             add_versions("3.2.0", "0cd2387edcf1f26924d59efcc3ea4c8a00783ee01bf396756dabdd7967e4b37b")
@@ -39,6 +43,10 @@ package("wxwidgets")
             add_resources("3.2.4", "releaseDLL",
                 "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxMSW-3.2.4_vc14x_ReleaseDLL.7z",
                 "240308cb9ffb718ab2f1298238c6e6aea7708cb16aca5801a03bffee6f9ef673")
+            add_versions("3.2.5", "5a43e165c6fe8f27de89b0b51769298d69ba0ce512dad7a865959e1c09653a5f")
+            add_resources("3.2.5", "releaseDLL",
+                "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.5/wxMSW-3.2.5_vc14x_ReleaseDLL.7z",
+                "4bf637f8dc394a8a57a20b357bf8557d6487c9f9fce7481e21e48f1e15df14f8")
         end
         add_resources("3.2.0", "headers",
             "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.0/wxWidgets-3.2.0-headers.7z",
@@ -52,6 +60,9 @@ package("wxwidgets")
         add_resources("3.2.4", "headers",
             "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.4/wxWidgets-3.2.4-headers.7z",
             "b8c4fd1a62c104c65089a088670d80e827b3893b7425c1cab8d7e49879797326")
+        add_resources("3.2.5", "headers",
+            "https://github.com/wxWidgets/wxWidgets/releases/download/v3.2.5/wxWidgets-3.2.5-headers.7z",
+            "03f548d3464b44990afcfe5ffc24813c56ace2793013d544879f50da68ba6636")
 
         add_configs("shared",     {description = "Build shared library.", default = true, type = "boolean", readonly = true})
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
@@ -63,6 +74,7 @@ package("wxwidgets")
         add_versions("v3.2.2", "2a4ec4d1af3f22fbfd0a40b051385a5d82628d9f28bae8427f5c30d72bdaade7")
         add_versions("v3.2.3", "0eb9499c06778c6746dbd4aee2a124f1995a5db331e282d15237b0046c1788af")
         add_versions("v3.2.4", "b358b7f59f5b7cb934265120d114e5fd510a8b40802d00a111a85911eb5100d1")
+        add_versions("v3.2.5", "c3a54d1c5dc3feefc2893c28923fd722c990c572253d5ad353eec99386ba11eb")
 
         add_deps("cmake")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib")
