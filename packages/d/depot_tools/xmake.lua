@@ -21,12 +21,19 @@ package("depot_tools")
 
     on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
+        print(os.getenv("PATH"))
         local sourcedir = os.curdir()
         local ninja = path.join(package:dep("ninja"):installdir("bin"), "ninja" .. (is_host("windows") and ".exe" or ""))
         if ninja and os.isfile(ninja) then
+            os.execv(ninja, {"--version"})
             os.trycp(ninja, sourcedir)
+            print("aaaaaaaaaaaaaaaaa bbbb")
+            os.execv(path.join(sourcedir, "ninja"), {"--version"})
         end
         os.cp("*", package:installdir())
+        print("aaaaaaaaaaaaaaaaa")
+        print(path.join(package:installdir(), "ninja"), os.isfile(path.join(package:installdir(), "ninja")))
+        os.execv(path.join(package:installdir(), "ninja"), {"--version"})
         os.cd(package:installdir())
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
         -- @note we must use http proxy instead of socks5 proxy
@@ -38,6 +45,7 @@ package("depot_tools")
             envs.ALL_PROXY = proxy
         end
         envs.PATH = table.join(sourcedir, path.splitenv(os.getenv("PATH")))
+        print("00000000000000000000000")
         -- skip to check and update obsolete URL
         io.replace("./update_depot_tools",
             'CANONICAL_GIT_URL="https://chromium.googlesource.com/chromium/tools/depot_tools.git"',
@@ -47,18 +55,26 @@ package("depot_tools")
         os.vrunv("git", {"config", "user.email", "you@example.com"})
         os.vrunv("git", {"config", "user.name", "me"})
         os.vrunv("git", {"commit", "-a", "-m", "..."})
+        print("11111111111111111111")
         -- we need fetch some files when running gclient for the first time
         if is_host("windows") then
             os.vrunv("gclient.bat", {"--verbose"}, {envs = envs})
         else
             os.vrunv("./gclient", {"--verbose"}, {shell = true, envs = envs})
         end
-  end)
+        print("22222222222222222222222")
+    end)
 
     on_test(function (package)
         import("core.base.global")
         os.vrun("python3 --version")
-        os.vrun("ninja --version")
+        print("0000")
+        print(path.join(package:installdir(), "ninja"), os.isfile(path.join(package:installdir(), "ninja")))
+        print(os.getenv("PATH"))
+        os.execv(path.join(package:installdir(), "ninja"), {"--version"})
+        print("11111")
+        os.execv("ninja", {"--version"})
+        print("2222")
         local envs = {}
         local proxy = global.get("proxy")
         if proxy then
