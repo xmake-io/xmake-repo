@@ -35,6 +35,10 @@ package("fmt")
         add_extsources("brew::fmt")
     end
 
+    if is_plat("windows") then
+        add_cxxflags("/utf-8")
+    end
+
     on_load(function (package)
         if package:config("header_only") then
             package:add("defines", "FMT_HEADER_ONLY=1")
