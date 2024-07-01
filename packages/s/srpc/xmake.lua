@@ -6,20 +6,26 @@ package("srpc")
     add_urls("https://github.com/sogou/srpc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sogou/srpc.git")
 
+    add_versions("v0.10.3", "8fc8d5d0d0b0975ed4a5d266e82841c4e94eb041cb459357b92dba4e3b64ebb8")
     add_versions("v0.10.2", "da570f3522e9dfec9c396632044fcb51b5ddc5c854ba7824d1770de138f469fb")
 
-    add_deps("cmake", "protobuf-cpp")
+    add_deps("cmake", "protobuf-cpp", "abseil")
     add_deps("workflow", "snappy", "lz4", "zlib")
 
     on_install("linux", "macosx", function (package)
-        local configs = {}
+        -- workaround for protobuf breaking change
+        -- https://github.com/protocolbuffers/protobuf/commit/06e7caba58ede0220b110b89d08f329e5f8a7537
+        io.replace("src/message/rpc_message_trpc.cc", "always_print_primitive_fields", "always_print_fields_with_no_presence", {plain = true})
+        io.replace("src/message/rpc_message_srpc.cc", "always_print_primitive_fields", "always_print_fields_with_no_presence", {plain = true})
+
+        local configs = {"-DCMAKE_CXX_STANDARD=17"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         os.rm("third_party")
         io.replace("CMakeLists.txt", 'check_include_file_cxx("workflow/Workflow.h" WORKFLOW_INSTALLED)',
             "set(WORKFLOW_INSTALLED TRUE)", {plain = true})
         import("package.tools.cmake").install(package, configs, {packagedeps = {
-            "workflow", "snappy", "lz4", "zlib"}})
+            "workflow", "snappy", "lz4", "zlib", "abseil"}})
         if package:config("shared") then
             os.rm(path.join(package:installdir("lib"), "*.a"))
         else

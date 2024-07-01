@@ -11,6 +11,7 @@ package("protobuf-cpp")
         end
     end})
 
+    add_versions("27.2", "7b4554f730a41f5c595cef3502038a69b8954c30d8ec9c62a167d5e1ebd8c210")
     add_versions("27.0", "3e1148db090ff21226c1888ef39fa7bc7790042be21ff4289fd21ce1735f3455")
     add_versions("26.1", "e15c272392df84ae95797759c685a9225fe5e88838bab3e0650c29239bdfccdd")
     add_versions("3.8.0", "91ea92a8c37825bd502d96af9054064694899c5c7ecea21b8d11b1b5e7e993b5")
@@ -84,18 +85,27 @@ package("protobuf-cpp")
     end)
 
     on_test(function (package)
-        if package:is_cross() then
-            return
+        if not package:is_cross() then
+            io.writefile("test.proto", [[
+                syntax = "proto3";
+                package test;
+                message TestCase {
+                    string name = 4;
+                }
+                message Test {
+                    repeated TestCase case = 1;
+                }
+            ]])
+            os.vrun("protoc test.proto --cpp_out=.")
         end
-        io.writefile("test.proto", [[
-            syntax = "proto3";
-            package test;
-            message TestCase {
-                string name = 4;
+
+        assert(package:check_cxxsnippets({test = [[
+            #include <google/protobuf/message.h>
+            #include <google/protobuf/timestamp.pb.h>
+            #include <google/protobuf/util/time_util.h>
+            void test() {
+                google::protobuf::Timestamp ts;
+                google::protobuf::util::TimeUtil::FromString("1972-01-01T10:00:20.021Z", &ts);
             }
-            message Test {
-                repeated TestCase case = 1;
-            }
-        ]])
-        os.vrun("protoc test.proto --cpp_out=.")
+        ]]}, {configs = {languages = "c++17"}}))
     end)
