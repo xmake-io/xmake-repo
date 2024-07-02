@@ -26,6 +26,7 @@ package("fmt")
                 "3280569bced9ec08933f0ea37b6a4fef4538944d9046fe197ad63e22d1357cd4")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
+    add_configs("unicode", {description = "Enable Unicode support.", default = is_plat("windows"), type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::fmt")
@@ -33,10 +34,6 @@ package("fmt")
         add_extsources("pacman::fmt", "apt::libfmt-dev")
     elseif is_plat("macosx") then
         add_extsources("brew::fmt")
-    end
-
-    if is_plat("windows") then
-        add_cxxflags("/utf-8")
     end
 
     on_load(function (package)
@@ -53,6 +50,9 @@ package("fmt")
                 package:add("defines", "FMT_EXPORT")
             end
         end
+        if package:is_plat("windows") and package:config("unicode") then
+            package:add("cxxflags", "/utf-8")
+        end
     end)
 
     on_install(function (package)
@@ -63,7 +63,8 @@ package("fmt")
         io.gsub("CMakeLists.txt", "MASTER_PROJECT AND CMAKE_GENERATOR MATCHES \"Visual Studio\"", "0")
         local configs = {"-DFMT_TEST=OFF", "-DFMT_DOC=OFF", "-DFMT_FUZZ=OFF", "-DCMAKE_CXX_VISIBILITY_PRESET=default"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DFMT_UNICODE=" .. (package:config("unicode") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
