@@ -1,0 +1,57 @@
+package("ctpg")
+    set_kind("library", {headeronly = true})
+    set_homepage("https://github.com/peter-winter/ctpg")
+    set_description("Compile Time Parser Generator is a C++ single header library which takes a language description as a C++ code and turns it into a LR1 table parser with a deterministic finite automaton lexical analyzer, all in compile time.")
+    set_license("MIT")
+
+    add_urls("https://github.com/peter-winter/ctpg/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/peter-winter/ctpg.git")
+
+    add_versions("v1.3.7", "6cc7c34de4983e21070599fd5693b65ef08cd5c8f42612e43b47eda723623429")
+
+    add_deps("cmake")
+
+    on_install(function (package)
+        import("package.tools.cmake").install(package, {
+            "-DBUILD_TESTING=OFF"
+        })
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <ctpg/ctpg.hpp>
+            #include <iostream>
+            #include <charconv>
+
+            using namespace ctpg;
+            using namespace ctpg::buffers;
+
+            constexpr nterm<int> list("list");
+
+            constexpr char number_pattern[] = "[1-9][0-9]*";
+            constexpr regex_term<number_pattern> number("number");
+
+            int to_int(std::string_view sv)
+            {
+                int i = 0;
+                std::from_chars(sv.data(), sv.data() + sv.size(), i);
+                return i;
+            }
+
+            constexpr parser p(
+                list,
+                terms(',', number),
+                nterms(list),
+                rules(
+                    list(number) >=
+                        to_int,
+                    list(list, ',', number)
+                        >= [](int sum, char, const auto& n){ return sum + to_int(n); }
+                )
+            );
+
+            void test(int argc, char* argv[]) {
+                auto res = p.parse(string_buffer(argv[1]), std::cerr);
+            }
+        ]]}, {configs = {languages = "c++17"}}))
+    end)
