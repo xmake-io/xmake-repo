@@ -6,6 +6,7 @@ package("cgif")
     add_urls("https://github.com/dloebl/cgif/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dloebl/cgif.git")
 
+    add_versions("v0.4.1", "8666f9c5f8123d1c22137a6dd714502a330377fb74e2007621926fe4258529d5")
     add_versions("v0.4.0", "130ff8a604f047449e81ddddf818bd0e03826b5f468e989b02726b16b7d4742e")
 
     if is_plat("linux") then

@@ -3,14 +3,26 @@ package("json-c")
     set_description("JSON parser for C")
     set_license("MIT")
 
-    set_urls("https://github.com/json-c/json-c/archive/refs/tags/json-c-$(version).zip")
+    add_urls("https://github.com/json-c/json-c.git")
+    add_urls("https://github.com/json-c/json-c/archive/refs/tags/json-c-$(version).tar.gz", {
+        version = function (version)
+        local list =  {
+            ["0.17"] = "20230812",
+        }
+        return version .. "-" .. list[tostring(version)]
+    end})
 
-    add_versions("0.17-20230812", "471e9eb1dad4fd2e4fec571d8415993e66a89f23a5b052f1ba11b54db90252de")
+    add_versions("0.17", "024d302a3aadcbf9f78735320a6d5aedf8b77876c8ac8bbb95081ca55054c7eb")
 
     add_deps("cmake")
+
     on_install(function (package)
+        if package:config("shared") and package:is_plat("windows") then
+            package:add("defines", "JSON_EXPORT=__declspec(dllimport)")
+        end
+
         local configs = {"-DBUILD_TESTING=OFF", "-DBUILD_APPS=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
         if package:config("pic") ~= false then
