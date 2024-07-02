@@ -26,7 +26,7 @@ package("fmt")
                 "3280569bced9ec08933f0ea37b6a4fef4538944d9046fe197ad63e22d1357cd4")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
-    add_configs("unicode", {description = "Enable Unicode support.", default = is_plat("windows"), type = "boolean"})
+    add_configs("unicode", {description = "Enable Unicode support.", default = true, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::fmt")
