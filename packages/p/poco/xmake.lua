@@ -31,6 +31,8 @@ package("poco")
         add_syslinks("iphlpapi")
     end
 
+    set_allowedarchs("mingw|x64", "msys|x64")
+
     on_load("windows", "linux", "macosx", "mingw", "msys", function (package)
 
         if package:config("postgresql") then
