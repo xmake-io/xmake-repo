@@ -31,7 +31,7 @@ package("poco")
         add_syslinks("iphlpapi")
     end
 
-    set_allowedarchs("mingw|x64", "msys|x64")
+    
 
     on_load("windows", "linux", "macosx", "mingw", "msys", function (package)
 
@@ -51,7 +51,7 @@ package("poco")
 
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", "msys", function (package)
+    on_install("windows", "linux", "macosx", "mingw|x86_64", "msys|x86_64", function (package)
         io.replace("XML/CMakeLists.txt", "EXPAT REQUIRED", "EXPAT CONFIG REQUIRED")
         io.replace("XML/CMakeLists.txt", "EXPAT::EXPAT", "expat::expat")
         io.replace("XML/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED XML_DTD XML_NS")
