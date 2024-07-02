@@ -30,6 +30,10 @@ package("libiconv")
         end
     end)
 
+    on_load("@windows", function (package)
+        package:add("deps", "msys2", {configs = {make = true}})
+    end)
+
     on_load(function (package)
         package:addenv("PATH", "bin")
     end)
@@ -50,6 +54,11 @@ package("libiconv")
     end)
 
     on_install("macosx", "linux", "bsd", "cross", "android", "wasm", function (package)
+        if is_host("windows") then
+            import("lib.detect.find_tool")
+            assert(find_tool("sh") and find_tool("make"), "Autoconf is required.")
+        end
+
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings", "--enable-relocatable"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
@@ -76,4 +85,3 @@ package("libiconv")
             }
         ]]}))
     end)
-
