@@ -19,39 +19,12 @@ package("ctpg")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <ctpg/ctpg.hpp>
-            #include <iostream>
-            #include <charconv>
-
             using namespace ctpg;
             using namespace ctpg::buffers;
 
             constexpr nterm<int> list("list");
-
             constexpr char number_pattern[] = "[1-9][0-9]*";
             constexpr regex_term<number_pattern> number("number");
-
-            int to_int(std::string_view sv)
-            {
-                int i = 0;
-                std::from_chars(sv.data(), sv.data() + sv.size(), i);
-                return i;
-            }
-
-            constexpr parser p(
-                list,
-                terms(',', number),
-                nterms(list),
-                rules(
-                    list(number) >=
-                        to_int,
-                    list(list, ',', number)
-                        >= [](int sum, char, const auto& n){ return sum + to_int(n); }
-                )
-            );
-
-            void test(int argc, char* argv[]) {
-                auto res = p.parse(string_buffer(argv[1]), std::cerr);
-            }
-        ]]}, {configs = {languages = "c++17"}}))
+            void test() {}
+        ]]}, {configs = {languages = "c++17"}, includes = "ctpg/ctpg.hpp"}))
     end)
