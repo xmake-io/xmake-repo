@@ -21,7 +21,8 @@ package("poco")
     end
     add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
     add_configs("postgresql", {description = "Enable postgresql support.", default = false, type = "boolean"})
-    add_configs("odbc", {description = "Enable odbc support.", default = is_plat("windows") and not is_plat("mingw", "msys"), type = "boolean"})
+    add_configs("mongodb", {description = "Enable mongodb support.", default = false, type = "boolean"})
+    add_configs("odbc", {description = "Enable odbc support.", default = is_plat("windows"), type = "boolean"})
 
     add_deps("cmake")
     add_deps("openssl", "sqlite3", "expat", "zlib")
@@ -62,11 +63,11 @@ package("poco")
         local configs = {"-DPOCO_UNBUNDLED=ON", "-DENABLE_TESTS=OFF", "-DENABLE_PDF=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if (package:is_plat("windows") and not package:is_plat("mingw", "msys")) and not package:config("shared") then
+        if package:is_plat("windows") and not package:config("shared") then
             table.insert(configs, "-DPOCO_MT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
 
-        if (package:is_plat("windows") and not package:is_plat("mingw", "msys")) then
+        if package:is_plat("windows") then
             local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
             if vs_sdkver then
                 local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
@@ -76,12 +77,12 @@ package("poco")
             end
         end
 
-        for _, lib in ipairs({"mysql", "postgresql", "odbc"}) do
+        for _, lib in ipairs({"mysql", "postgresql", "odbc", "mongodb"}) do
             table.insert(configs, "-DENABLE_DATA_" .. lib:upper() .. "=" .. (package:config(lib) and "ON" or "OFF"))
         end
 
         if package:is_plat("mingw", "msys") then 
-            table.insert(configs, "-DENABLE_MONGODB=OFF")
+            -- table.insert(configs, "-DENABLE_MONGODB=OFF")
             table.insert(configs, "-DPOCO_DATA_NO_SQL_PARSER=ON")
         end
 
