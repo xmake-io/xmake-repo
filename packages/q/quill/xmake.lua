@@ -15,6 +15,8 @@ package("quill")
     add_versions("v2.9.1", "921e053118136f63cebb2ca1d7e42456fd0bf9626facb755884709092753c054")
     add_versions("v2.8.0", "0461a6c314e3d882f3b9ada487ef1bf558925272509ee41a9fd25f7776db6075")
 
+    add_patches("4.5.0", "patches/4.5.0/windows-arm.patch", "e7db1f07e1eea048798283f9865842c4754ed3d1ff220954cadd392ad4450cc3")
+
     if is_plat("macosx") then
         add_extsources("brew::quill")
     end
