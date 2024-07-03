@@ -12,7 +12,7 @@ package("node-addon-api")
         "https://github.com/nodejs/node-addon-api.git")
     add_versions("v8.0.0", "42424c5206b9d67b41af4fcff5d6e3cb22074168035a03b8467852938a281d47")
 
-    add_deps("node")
+    add_deps("nodejs")
 
     on_load(function(package)
         package:add("defines", "NAPI_VERSION=" .. package:version():major())
