@@ -15,5 +15,14 @@ package("metalang99")
     end)
 
     on_test(function(package)
-        assert(package:has_cincludes("metalang99.h"))
+        assert(package:check_csnippets({test = [[
+            typedef struct {
+                double width, height;
+            } Rect;
+            #define Rect_new(...) ML99_OVERLOAD(Rect_new_, __VA_ARGS__)
+            #define Rect_new_1(x) { x, x }
+            #define Rect_new_2(x, y) { x, y }
+            static Rect ra = Rect_new(7, 8);
+            static Rect rb = Rect_new(10);
+        ]]}, { configs = { languages = "c99" }, includes = "metalang99.h" }))
     end)
