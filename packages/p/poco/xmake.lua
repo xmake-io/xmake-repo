@@ -77,8 +77,7 @@ package("poco")
             table.insert(configs, "-DENABLE_DATA_" .. lib:upper() .. "=" .. (package:config(lib) and "ON" or "OFF"))
         end
 
-        if package:is_plat("mingw", "msys") then 
-            -- table.insert(configs, "-DENABLE_MONGODB=OFF")
+        if package:is_plat("mingw") then 
             table.insert(configs, "-DPOCO_DATA_NO_SQL_PARSER=ON")
         end
 
