@@ -61,11 +61,11 @@ package("poco")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and not package:config("shared") then
-            table.insert(configs, "-DPOCO_MT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DPOCO_MT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         end
 
         if package:is_plat("windows") then
-            local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
+            local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
             if vs_sdkver then
                 local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
                 assert(tonumber(build_ver) >= 18362, "poco requires Windows SDK to be at least 10.0.18362.0")
