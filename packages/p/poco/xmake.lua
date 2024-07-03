@@ -31,24 +31,18 @@ package("poco")
         add_syslinks("iphlpapi")
     end
 
-    
-
     on_load("windows", "linux", "macosx", "mingw", function (package)
-
         if package:config("postgresql") then
             package:add("deps", "postgresql")
         end
-
         if package:config("mysql") then
             package:add("deps", "mysql")
         end
-
         if package:version():ge("1.12.0") then
             package:add("deps", "pcre2")
         else
             package:add("deps", "pcre")
         end
-
     end)
 
     on_install("windows", "linux", "macosx", "mingw@msys", function (package)
