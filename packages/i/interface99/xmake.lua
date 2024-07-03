@@ -42,5 +42,5 @@ package("interface99")
                 VCALL(shape, scale, 5);
                 assert(VCALL(shape, perim) == 120);
             }
-        ]]}, { configs = { languages = "c99" }, includes = "interface99.h" }))
+        ]]}, { configs = { languages = "c11" }, includes = "interface99.h" }))
     end)
