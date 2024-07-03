@@ -17,5 +17,25 @@ package("datatype99")
     end)
 
     on_test(function(package)
-        assert(package:has_cincludes("datatype99.h"))
+        assert(package:check_csnippets({test = [[
+            #include <assert.h>
+            datatype(
+                BinaryTree,
+                (Leaf, int),
+                (Node, BinaryTree *, int, BinaryTree *)
+            );
+            int sum(const BinaryTree *tree) {
+                match(*tree) {
+                    of(Leaf, x) return *x;
+                    of(Node, lhs, x, rhs) return sum(*lhs) + *x + sum(*rhs);
+                }
+                return -1;
+            }
+            void test() {
+                BinaryTree leaf5 = Leaf(5);
+                BinaryTree leaf7 = Leaf(7);
+                BinaryTree node = Node(&leaf5, 123, &leaf7);
+                assert(sum(&node) == 135);
+            }
+        ]]}, { configs = { languages = "c99" }, includes = "datatype99.h" }))
     end)
