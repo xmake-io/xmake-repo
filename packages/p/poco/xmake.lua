@@ -77,7 +77,7 @@ package("poco")
             table.insert(configs, "-DENABLE_DATA_" .. lib:upper() .. "=" .. (package:config(lib) and "ON" or "OFF"))
         end
 
-        if is_host("mingw") then
+        if is_plat("mingw") then
             table.insert(configs, "-DPOCO_DATA_NO_SQL_PARSER=ON")
         end
 
