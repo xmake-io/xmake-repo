@@ -24,5 +24,5 @@ package("metalang99")
             #define Rect_new_2(x, y) { x, y }
             static Rect ra = Rect_new(7, 8);
             static Rect rb = Rect_new(10);
-        ]]}, { configs = { languages = "c99" }, includes = "metalang99.h" }))
+        ]]}, { configs = { languages = "c11" }, includes = "metalang99.h" }))
     end)
