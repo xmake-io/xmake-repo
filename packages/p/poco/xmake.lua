@@ -31,7 +31,7 @@ package("poco")
         add_syslinks("iphlpapi")
     end
 
-    on_load("windows", "linux", "macosx", "mingw", function (package)
+    on_load(function (package)
         if package:config("postgresql") then
             package:add("deps", "postgresql")
         end
