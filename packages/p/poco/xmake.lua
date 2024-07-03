@@ -23,6 +23,7 @@ package("poco")
     add_configs("postgresql", {description = "Enable postgresql support.", default = false, type = "boolean"})
     add_configs("mongodb", {description = "Enable mongodb support.", default = false, type = "boolean"})
     add_configs("odbc", {description = "Enable odbc support.", default = is_plat("windows"), type = "boolean"})
+    add_configs("sql_parser", {description = "poco data sql parser.", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("openssl", "sqlite3", "expat", "zlib")
@@ -77,8 +78,8 @@ package("poco")
             table.insert(configs, "-DENABLE_DATA_" .. lib:upper() .. "=" .. (package:config(lib) and "ON" or "OFF"))
         end
 
-        if is_plat("mingw") then
-            table.insert(configs, "-DPOCO_DATA_NO_SQL_PARSER=ON")
+        if package:is_plat("mingw") then
+            table.insert(configs, "-DPOCO_DATA_NO_SQL_PARSER=" .. (package:config("sql_parser") and "OFF" or "ON"))
         end
 
         if package:config("mysql") then
