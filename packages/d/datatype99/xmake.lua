@@ -37,5 +37,5 @@ package("datatype99")
                 BinaryTree node = Node(&leaf5, 123, &leaf7);
                 assert(sum(&node) == 135);
             }
-        ]]}, { configs = { languages = "c99" }, includes = "datatype99.h" }))
+        ]]}, { configs = { languages = "c11" }, includes = "datatype99.h" }))
     end)
