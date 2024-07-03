@@ -78,9 +78,7 @@ package("poco")
             table.insert(configs, "-DENABLE_DATA_" .. lib:upper() .. "=" .. (package:config(lib) and "ON" or "OFF"))
         end
 
-        if package:is_plat("mingw") then
-            table.insert(configs, "-DPOCO_DATA_NO_SQL_PARSER=" .. (package:config("sql_parser") and "OFF" or "ON"))
-        end
+        table.insert(configs, "-DPOCO_DATA_NO_SQL_PARSER=" .. (package:config("sql_parser") and "OFF" or "ON"))
 
         if package:config("mysql") then
             io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '', {plain = true})
