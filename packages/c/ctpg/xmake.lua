@@ -1,7 +1,7 @@
 package("ctpg")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/peter-winter/ctpg")
-    set_description("Compile Time Parser Generator is a C++ single header library which takes a language description as a C++ code and turns it into a LR1 table parser with a deterministic finite automaton lexical analyzer, all in compile time.")
+    set_description("Compile Time Parser Generator.")
     set_license("MIT")
 
     add_urls("https://github.com/peter-winter/ctpg/archive/refs/tags/$(version).tar.gz",
