@@ -30,7 +30,7 @@ package("libtommath")
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
         import("package.tools.cmake").install(package, configs)
-        os.trymv(package:installdir("tommath.h"), package:installdir("include/libtommath"))
+        os.trymv(package:installdir("include/*.h"), package:installdir("include/libtommath"))
     end)
 
     on_test(function (package)
