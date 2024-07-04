@@ -35,5 +35,5 @@ package("libtommath")
 
     on_test(function (package)
         assert(package:has_cfuncs("mp_init", {includes = "tommath.h"}))
-        assert(package:has_cfuncs("mp_init", {includes = "include/libtommath/tommath.h"}))
+        assert(package:has_cfuncs("mp_init", {includes = "libtommath/tommath.h"}))
     end)
