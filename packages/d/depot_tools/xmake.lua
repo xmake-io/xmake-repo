@@ -21,10 +21,7 @@ package("depot_tools")
 
     on_install("linux", "macosx", "windows", function (package)
         import("core.base.global")
-        local ninja = path.join(package:dep("ninja"):installdir("bin"), "ninja" .. (is_host("windows") and ".exe" or ""))
-        if ninja and os.isfile(ninja) then
-            os.trycp(ninja, os.curdir())
-        end
+        local sourcedir = os.curdir()
         os.cp("*", package:installdir())
         os.cd(package:installdir())
         -- maybe we need set proxy, e.g. `xmake g --proxy=http://127.0.0.1:xxxx`
@@ -36,18 +33,27 @@ package("depot_tools")
             envs.HTTPS_PROXY = proxy
             envs.ALL_PROXY = proxy
         end
-        envs.PATH = table.join(os.curdir(), path.splitenv(os.getenv("PATH")))
+        envs.PATH = table.join(sourcedir, path.splitenv(os.getenv("PATH")))
         -- skip to check and update obsolete URL
         io.replace("./update_depot_tools",
             'CANONICAL_GIT_URL="https://chromium.googlesource.com/chromium/tools/depot_tools.git"',
             'CANONICAL_GIT_URL="https://github.com/xmake-mirror/depot_tools.git"', {plain = true})
+        io.replace("./update_depot_tools", 'remote_url=$(eval "$GIT" config --get remote.origin.url)',
+            'remote_url="https://github.com/xmake-mirror/depot_tools.git"', {plain = true})
+        os.vrunv("git", {"config", "user.email", "you@example.com"})
+        os.vrunv("git", {"config", "user.name", "me"})
+        os.vrunv("git", {"commit", "-a", "-m", "..."})
         -- we need fetch some files when running gclient for the first time
         if is_host("windows") then
             os.vrunv("gclient.bat", {"--verbose"}, {envs = envs})
         else
             os.vrunv("./gclient", {"--verbose"}, {shell = true, envs = envs})
         end
-  end)
+        local ninja = path.join(package:dep("ninja"):installdir("bin"), "ninja" .. (is_host("windows") and ".exe" or ""))
+        if ninja and os.isfile(ninja) then
+            os.cp(ninja, package:installdir())
+        end
+    end)
 
     on_test(function (package)
         import("core.base.global")
