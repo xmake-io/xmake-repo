@@ -8,7 +8,7 @@ package("interface99")
         "https://github.com/Hirrolot/interface99.git")
 
     add_versions("1.0.0", "578c7e60fde4ea1c7fd3515e444c6a2e62a9095dac979516c0046a8ed008e3b2")
-    -- add_versions("1.0.1", "ddc7cd979cf9c964a4313a5e6bdc87bd8df669142f29c8edb71d2f2f7822d9aa")
+    add_versions("1.0.1", "ddc7cd979cf9c964a4313a5e6bdc87bd8df669142f29c8edb71d2f2f7822d9aa")
 
     add_deps("metalang99")
 
