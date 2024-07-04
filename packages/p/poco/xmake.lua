@@ -21,7 +21,9 @@ package("poco")
     end
     add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
     add_configs("postgresql", {description = "Enable postgresql support.", default = false, type = "boolean"})
+    add_configs("mongodb", {description = "Enable mongodb support.", default = false, type = "boolean"})
     add_configs("odbc", {description = "Enable odbc support.", default = is_plat("windows"), type = "boolean"})
+    add_configs("sql_parser", {description = "Enable poco data sql parser.", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("openssl", "sqlite3", "expat", "zlib")
@@ -30,7 +32,7 @@ package("poco")
         add_syslinks("iphlpapi")
     end
 
-    on_load("windows", "linux", "macosx", function (package)
+    on_load(function (package)
         if package:config("postgresql") then
             package:add("deps", "postgresql")
         end
@@ -44,7 +46,7 @@ package("poco")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "mingw|x86_64@msys", function (package)
         io.replace("XML/CMakeLists.txt", "EXPAT REQUIRED", "EXPAT CONFIG REQUIRED")
         io.replace("XML/CMakeLists.txt", "EXPAT::EXPAT", "expat::expat")
         io.replace("XML/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED XML_DTD XML_NS")
@@ -54,14 +56,16 @@ package("poco")
             io.replace("cmake/FindPCRE2.cmake", "NAMES pcre2-8", "NAMES pcre2-8-static pcre2-8", {plain = true})
             io.replace("cmake/FindPCRE2.cmake", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"\nINTERFACE_COMPILE_DEFINITIONS PCRE2_STATIC", {plain = true})
         end
+
         local configs = {"-DPOCO_UNBUNDLED=ON", "-DENABLE_TESTS=OFF", "-DENABLE_PDF=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and not package:config("shared") then
-            table.insert(configs, "-DPOCO_MT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DPOCO_MT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         end
+
         if package:is_plat("windows") then
-            local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
+            local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
             if vs_sdkver then
                 local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
                 assert(tonumber(build_ver) >= 18362, "poco requires Windows SDK to be at least 10.0.18362.0")
@@ -69,10 +73,12 @@ package("poco")
                 table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
             end
         end
-        for _, lib in ipairs({"mysql", "postgresql", "odbc"}) do
+
+        for _, lib in ipairs({"mysql", "postgresql", "odbc", "mongodb"}) do
             table.insert(configs, "-DENABLE_DATA_" .. lib:upper() .. "=" .. (package:config(lib) and "ON" or "OFF"))
         end
-        
+        table.insert(configs, "-DPOCO_DATA_NO_SQL_PARSER=" .. (package:config("sql_parser") and "OFF" or "ON"))
+
         if package:config("mysql") then
             io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '', {plain = true})
             local libmysql = package:dep("mysql"):fetch()
