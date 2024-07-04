@@ -23,6 +23,7 @@ package("stfl")
                 set_kind("$(kind)")
                 add_files("*.c|example.c")
                 add_files("widgets/*.c")
+                add_includedirs(".")
                 add_headerfiles("stfl.h")
 
                 if is_plat("linux", "bsd") then
