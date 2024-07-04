@@ -7,9 +7,11 @@ package("fluidsynth")
     add_urls("https://github.com/FluidSynth/fluidsynth/archive/refs/tags/$(version).zip",
              "https://github.com/FluidSynth/fluidsynth.git")
     add_versions("v2.3.3", "0ab6f1aae1c7652b9249de2d98070313f3083046fddd673277556f1cca65568e")
+    add_versions("v2.3.5", "3cdaa24777f11fbc6da506d7f7b41fef31822006f83886dcf6e758a9941cae40")
 
     if is_plat("windows", "macosx") then
-        add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "find-intl.patch"), "dafdb8f11957ed2f396832fe3b63933e8a32b96d8c836166b2fefacf3f918a9d")
+        add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "2.3.3", "find-intl.patch"), "418aed8df3dab9264d3612ecf722fd48870397f4fd3f20c2072b85ae4864eccf")
+        add_patches("v2.3.5", path.join(os.scriptdir(), "patches", "2.3.5", "find-intl.patch"), "abee0a70e418589250883956142facd9aab585241709d1cda0292a7b9f9819d0")
     end
 
     add_configs("aufile", {description = "Compile support for sound file output", default = true, type = "boolean"})
