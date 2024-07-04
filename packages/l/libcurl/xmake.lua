@@ -32,9 +32,9 @@ package("libcurl")
 
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
-        if package:is_plat("linux", "android", "cross") then
-            package:config_set("openssl", true)
-        end
+        -- if package:is_plat("linux", "android", "cross") then
+        --     package:config_set("openssl", true)
+        -- end
 
         if package:is_plat("macosx", "iphoneos") then
             package:add("frameworks", "Security", "CoreFoundation", "SystemConfiguration")
@@ -73,7 +73,7 @@ package("libcurl")
         local has_deps = false
         for name, dep in pairs(configdeps) do
             if package:config(name) then
-                package:add("deps", dep, {host = package:is_binary()})
+                package:add("deps", dep, {host = package:is_binary(), configs = {shared = package:config("shared")}})
                 has_deps = true
             end
         end
