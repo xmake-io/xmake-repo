@@ -9,7 +9,7 @@ package("libtomcrypt")
 
     add_deps("libtommath", "cmake")
 
-    on_install(function (package)
+    on_install("!wasm and (macosx|!x86_64 or !macosx)", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
