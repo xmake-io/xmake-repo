@@ -10,7 +10,7 @@ package("stfl")
 
     add_deps("ncurses")
 
-    on_install(function (package)
+    on_install("linux", "macosx", "bsd", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             add_requires("ncurses")
