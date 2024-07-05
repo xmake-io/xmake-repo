@@ -38,7 +38,6 @@ package("actor-framework")
         {
             "-DCAF_ENABLE_EXAMPLES=OFF",
             "-DCAF_ENABLE_TESTING=OFF",
-            "-DCAF_ENABLE_TESTING=OFF",
             "-DCAF_ENABLE_TOOLS=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
