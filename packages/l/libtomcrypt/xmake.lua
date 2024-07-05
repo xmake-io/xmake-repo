@@ -1,6 +1,6 @@
 package("libtomcrypt")
     set_homepage("https://www.libtom.net")
-    set_description("LibTomCrypt is a fairly comprehensive, modular and portable cryptographic toolkit that provides developers with a vast array of well known published block ciphers, one-way hash functions, chaining modes, pseudo-random number generators, public key cryptography and a plethora of other routines.")
+    set_description("A fairly comprehensive, modular and portable cryptographic toolkit.")
     set_license("Unlicense")
 
     add_urls("https://github.com/libtom/libtomcrypt.git")
