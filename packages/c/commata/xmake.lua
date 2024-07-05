@@ -4,16 +4,14 @@ package("commata")
     set_homepage("https://furfurylic.github.io/commata/CommataSpecification.xml")
     set_description("Just another header-only C++17 CSV parser")
 
-    add_urls("https://github.com/furfurylic/commata.git")
-    add_versions("2024.06.18", "43751b633978628b61fb206bb0d17140d6f3ef3f")
+    add_urls("https://github.com/furfurylic/commata/archive/refs/tags/v1.0.0-rc.2.zip")
+    add_versions("v1.0.0", "5f9ef542d10d5d04d296e609ae8931e09a157761c86630d71b2f397c6a205a75")
 
     on_install(function (package)
-        os.cp("include/commata/*.hpp", package:installdir("include/commata"))
-        os.cp("include/commata/detail/*.hpp", package:installdir("include/commata/detail"))
+        os.cp("include/", package:installdir("include/"), {rootdir = "include"})
     end)
 
     on_test(function (package)
-        -- assert(package:has_cxxfuncs("read", {includes = "commata/char_input.hpp",configs = {languages = "c++17"}}))
         assert(package:check_cxxsnippets({test = [[
             using commata::stored_table;
             void test() {
