@@ -11,7 +11,7 @@ package("fluidsynth")
 
     if is_plat("windows", "macosx") then
         add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "2.3.3", "find-intl.patch"), "418aed8df3dab9264d3612ecf722fd48870397f4fd3f20c2072b85ae4864eccf")
-        add_patches("v2.3.5", path.join(os.scriptdir(), "patches", "2.3.5", "find-intl.patch"), "abee0a70e418589250883956142facd9aab585241709d1cda0292a7b9f9819d0")
+        add_patches("v2.3.5", path.join(os.scriptdir(), "patches", "2.3.5", "find-intl.patch"), "18e77a850c09e7eecdffb1651ee9ea402c14420dc5838692bdb583726bb909f2")
     end
 
     add_configs("aufile", {description = "Compile support for sound file output", default = true, type = "boolean"})
