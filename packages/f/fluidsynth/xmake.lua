@@ -9,8 +9,8 @@ package("fluidsynth")
     add_versions("v2.3.3", "0ab6f1aae1c7652b9249de2d98070313f3083046fddd673277556f1cca65568e")
     add_versions("v2.3.5", "3cdaa24777f11fbc6da506d7f7b41fef31822006f83886dcf6e758a9941cae40")
 
-        add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "2.3.3", "find-intl.patch"), "418aed8df3dab9264d3612ecf722fd48870397f4fd3f20c2072b85ae4864eccf")
-        add_patches("v2.3.5", path.join(os.scriptdir(), "patches", "2.3.5", "find-intl.patch"), "B71C50191E3799E93606B2CF79E61098BDF52D681BD3E758103D2C43C192BFC5")
+    add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "2.3.3", "find-intl.patch"), "0c80989cce85b8e69409498e3a5d1df41c1ce29bf11261bcb441fdbf08c42f85")
+    add_patches("v2.3.5", path.join(os.scriptdir(), "patches", "2.3.5", "find-intl.patch"), "b71c50191e3799e93606b2cf79e61098bdf52d681bd3e758103d2c43c192bfc5")
 
     add_configs("aufile", {description = "Compile support for sound file output", default = true, type = "boolean"})
     add_configs("dbus", {description = "Compile DBUS support", default = not is_plat("windows"), type = "boolean"})
