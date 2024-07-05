@@ -7,7 +7,7 @@ package("fluidsynth")
     add_urls("https://github.com/FluidSynth/fluidsynth/archive/refs/tags/$(version).zip",
              "https://github.com/FluidSynth/fluidsynth.git")
     add_versions("v2.3.3", "0ab6f1aae1c7652b9249de2d98070313f3083046fddd673277556f1cca65568e")
-    add_versions("v2.3.5", "37B25BA6881F387B34EA6CF31DE913A563B30DE0BB5926C71EF7FFFFCDDA9588")
+    add_versions("v2.3.5", "37b25ba6881f387b34ea6cf31de913a563b30de0bb5926c71ef7ffffcdda9588")
 
     add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "2.3.3", "find-intl.patch"), "418aed8df3dab9264d3612ecf722fd48870397f4fd3f20c2072b85ae4864eccf")
     add_patches("v2.3.5", path.join(os.scriptdir(), "patches", "2.3.5", "find-intl.patch"), "411687d9affa3f23e7b918cfb534d31702900acca030af303c27ada4ff0ac846")
