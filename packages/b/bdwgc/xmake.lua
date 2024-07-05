@@ -2,33 +2,26 @@ package("bdwgc")
     set_homepage("https://www.hboehm.info/gc/")
     set_description("The Boehm-Demers-Weiser conservative C/C++ Garbage Collector (bdwgc, also known as bdw-gc, boehm-gc, libgc)")
 
-    add_urls("https://github.com/ivmai/bdwgc/-/archive/$(version).tar.gz",
+    add_urls("https://github.com/ivmai/bdwgc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ivmai/bdwgc.git")
 
     add_versions("v8.2.6", "3bfc2b1dd385bfb46d2dab029211a66249a309795b6893f4e00554904999e40a")
     add_versions("v8.2.4", "18e63ab1428bd52e691da107a6a56651c161210b11fbe22e2aa3c31f7fa00ca5")
 
     add_deps("cmake")
+    add_deps("libatomic_ops")
 
-    if is_plat("windows") then
-        add_deps("libatomic_ops")
-    end
-
-    on_install("macosx", "linux", "android", "iphoneos", "windows", "mingw", function (package)
-        local configs = {}
+    on_install(function (package)
+        local configs = {"-Denable_docs=OFF", "-Dwith_libatomic_ops=ON"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs)
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        import("package.tools.cmake").install(package, configs, {packagedeps = "libatomic_ops"})
+
+        if package:config("shared") and package:is_plat("windows", "mingw", "cygwin") then
+            package:add("defines", "GC_DLL")
+        end
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets({test=[[
-        void test() {
-            GC_INIT();
-            int *ptr = GC_MALLOC(sizeof(int));
-            *ptr = 42;
-            printf("Value: %d\n", *ptr);
-            return 0;
-        }
-        ]]}),{configs = {includes = "gc.h"}})
+        assert(package:has_cfuncs("GC_init", {includes = "gc/gc.h"}))
     end)
