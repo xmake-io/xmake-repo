@@ -7,7 +7,7 @@ package("fluidsynth")
     add_urls("https://github.com/FluidSynth/fluidsynth/archive/refs/tags/$(version).zip",
              "https://github.com/FluidSynth/fluidsynth.git")
     add_versions("v2.3.3", "0ab6f1aae1c7652b9249de2d98070313f3083046fddd673277556f1cca65568e")
-    add_versions("v2.3.5", "3cdaa24777f11fbc6da506d7f7b41fef31822006f83886dcf6e758a9941cae40")
+    add_versions("v2.3.5", "37B25BA6881F387B34EA6CF31DE913A563B30DE0BB5926C71EF7FFFFCDDA9588")
 
     add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "2.3.3", "find-intl.patch"), "418aed8df3dab9264d3612ecf722fd48870397f4fd3f20c2072b85ae4864eccf")
     add_patches("v2.3.5", path.join(os.scriptdir(), "patches", "2.3.5", "find-intl.patch"), "411687d9affa3f23e7b918cfb534d31702900acca030af303c27ada4ff0ac846")
@@ -32,15 +32,14 @@ package("fluidsynth")
 
     add_deps("cmake")
     add_deps("glib")
-    add_deps("libiconv")
     if is_plat("windows") then
-        add_deps("libintl")
+        add_deps("libiconv")
         add_deps("pkgconf")
         add_syslinks("ws2_32")
     elseif is_plat("linux") then
         add_deps("pkg-config")
-    else
-        add_deps("libintl")
+    elseif is_plat("macosx") then
+        add_deps("libiconv", {system = true})
         add_deps("pkg-config")
     end
 
