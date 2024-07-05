@@ -21,6 +21,7 @@ package("fluidsynth")
     add_configs("sdl2", {description = "Compile SDL2 audio support ", default = false, type = "boolean"})
     if is_plat("linux") then
         add_configs("pulseaudio", {description = "Compile PulseAudio support", default = false, type = "boolean"})
+        add_configs("systemd", {description = "Compile systemd support", default = true, type = "boolean"})
     end
     add_configs("readline", {description = "Compile support for sound file output", default = false, type = "boolean"})
     add_configs("threads", {description = "Enable multi-threading support (such as parallel voice synthesis)", default = true, type = "boolean"})
@@ -64,7 +65,7 @@ package("fluidsynth")
     on_install("windows", "linux", "macosx", function (package)
         local configs = {}
         local configopts = {
-            "aufile", "dbus", "jack", "libsndfile", "opensles", "network", "sdl2", "readline", "pulseaudio", "threads", "openmp"
+            "aufile", "dbus", "jack", "libsndfile", "opensles", "network", "sdl2", "readline", "pulseaudio", "systemd", "threads", "openmp"
         }
         for _, config in ipairs(configopts) do
             table.insert(configs, "-Denable-" .. config .. "=" .. (package:config(config) and "ON" or "OFF"))
