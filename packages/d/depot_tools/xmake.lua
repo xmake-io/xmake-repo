@@ -7,6 +7,7 @@ package("depot_tools")
              "https://chromium.googlesource.com/chromium/tools/depot_tools.git")
     add_versions("2022.2.1", "8a6d00f116d6de9d5c4e92acb519fd0859c6449a")
     add_versions("2024.2.29", "50de666ba40a4808daf9791fece3d8a43228a1de")
+    add_versions("2024.7.4", "452fe3be37f78fbecefa1b4b0d359531bcd70d0d")
 
     -- we use external ninja instead of depot_tools/ninja which eating ram until VM exhaustion (16GB)
     add_deps("ninja", {private = true, system = false})
