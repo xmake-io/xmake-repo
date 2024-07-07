@@ -11,6 +11,9 @@ package("bvh")
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
     add_configs("c_api",  {description = "Builds the C API library wrapper", default = true, type = "boolean"})
 
+    if is_plat("bsd") then
+        add_syslinks("pthread")
+    end
     on_load(function (package)
         if not package:config("c_api") then
             package:set("kind", "library", {headeronly = true})
