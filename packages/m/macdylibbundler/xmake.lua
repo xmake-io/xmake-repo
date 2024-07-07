@@ -8,7 +8,7 @@ package("macdylibbundler")
 
     add_versions("1.0.5", "d48138fd6766c70097b702d179a657127f9aed3d083051c2d4fce145881a316e")
 
-    on_install("linux", "macosx", "mingw", "android", function (package)
+    on_install("linux", "macosx", "android", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
