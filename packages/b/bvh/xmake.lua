@@ -9,7 +9,7 @@ package("bvh")
     add_versions("2024.7.8", "77a08cac234bae46abbb5e78c73e8f3c158051d0")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
-    add_configs("c_api",  {description = "Builds the C API library wrapper", default = false, type = "boolean"})
+    add_configs("c_api",  {description = "Builds the C API library wrapper", default = true, type = "boolean"})
 
     on_load(function (package)
         if not package:config("c_api") then
