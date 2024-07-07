@@ -7,7 +7,3 @@ target("macdylibbundler")
     add_includedirs("src")
 
     add_headerfiles("src/*.h")
-
-    if is_plat("windows") and is_kind("shared") then
-        add_rules("utils.symbols.export_all", {export_classes = true})
-    end
