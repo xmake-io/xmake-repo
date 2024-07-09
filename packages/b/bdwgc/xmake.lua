@@ -11,6 +11,16 @@ package("bdwgc")
     add_deps("cmake")
     add_deps("libatomic_ops")
 
+    if on_check then
+        on_check("android", function (package)
+            if package:is_arch("armeabi-v7a") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(bdwgc/armeabi-v7a): need ndk api level > 21")
+            end
+        end)
+    end
+
     on_install("!wasm", function (package)
         local configs = {"-Denable_docs=OFF", "-Dwith_libatomic_ops=ON"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
