@@ -11,14 +11,14 @@ package("bdwgc")
     add_deps("cmake")
     add_deps("libatomic_ops")
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local configs = {"-Denable_docs=OFF", "-Dwith_libatomic_ops=ON"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs, {packagedeps = "libatomic_ops"})
 
-        if package:config("shared") and package:is_plat("windows", "mingw", "cygwin") then
-            package:add("defines", "GC_DLL")
+        if package:is_plat("windows", "mingw", "cygwin") then
+            package:add("defines", (package:config("shared") and "GC_DLL" or "GC_NOT_DLL"))
         end
     end)
 
