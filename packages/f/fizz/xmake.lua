@@ -19,7 +19,7 @@ package("fizz")
 
     add_deps("cmake", "folly", "libsodium", "liboqs")
 
-    on_install("windows|x64", "linux", "macosx", function (package)
+    on_install("linux", "macosx", function (package)
         os.cd("fizz")
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DBUILD_EXAMPLES=OFF",
