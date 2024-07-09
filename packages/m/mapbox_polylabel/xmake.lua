@@ -7,6 +7,7 @@ package("mapbox_polylabel")
     add_urls("https://github.com/mapbox/polylabel/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mapbox/polylabel.git")
 
+    add_versions("v2.0.1", "d51ec39f9f1bc46c551dfdf642f72057a8c2cde2c5e89bc70e0bd712fad63a75")
     add_versions("v2.0.0", "9aba4320c6cb5a8e9a8d44feb0d68b79b3127bdcb759a26aca92ac637668d7b9")
 
     add_deps("mapbox_geometry")
