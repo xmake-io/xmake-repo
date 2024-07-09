@@ -15,10 +15,11 @@ package("fizz")
     add_versions("2024.06.17", "46e9d1b782a51b2c063390dc1161f26f2c77ef7a94ff8ccc4bdc272697cad8bb")
     add_versions("2024.06.24", "b5fd5fb3fe1cf20519ea91d6a0127505596f8c74c82cde9d54ea6ae92df86a50")
     add_versions("2024.07.01", "002bca2765cb0889ec535eeb1950acf93af57638a2da9b2deacc522113625fcc")
+    add_versions("2024.07.08", "dd80231fb79760ef0b15394364ddbe35d4da82a7e07238dbaaf2f98f267d3938")
 
     add_deps("cmake", "folly", "libsodium", "liboqs")
 
-    on_install("linux", "macosx", function (package)
+    on_install("windows|x64", "linux", "macosx", function (package)
         os.cd("fizz")
         local configs = {"-DBUILD_TESTS=OFF",
                          "-DBUILD_EXAMPLES=OFF",
