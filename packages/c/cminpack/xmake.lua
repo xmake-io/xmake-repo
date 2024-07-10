@@ -7,7 +7,8 @@ package("cminpack")
 
     add_versions("v1.3.9", "aa37bac5b5caaa4f5805ea5c4240e3834c993672f6dab0b17190ee645e251c9f")
 
-    add_configs("blas", {description = "BLAS library to compile with.", default = "openblas", type = "string", values = {"openblas", "mkl"}})
+    local support_openblas = is_plat("linux", "macosx") or (is_plat("windows") and is_arch("x86", "x64"))
+    add_configs("blas", {description = "BLAS library to compile with.", default = (support_openblas and "openblas" or nil), type = "string", values = {"openblas", "mkl"}})
 
     if is_plat("linux") then
         add_syslinks("m")
