@@ -28,7 +28,7 @@ package("mimalloc")
     if is_plat("windows") then
         add_configs("etw", {description = "Enable Event tracing for Windows", default = false, type = "boolean"})
     end
-    
+
     add_deps("cmake")
 
     if is_plat("windows") then
