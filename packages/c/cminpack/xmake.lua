@@ -7,7 +7,7 @@ package("cminpack")
 
     add_versions("v1.3.9", "aa37bac5b5caaa4f5805ea5c4240e3834c993672f6dab0b17190ee645e251c9f")
 
-    add_configs("blas", {description = "Compile cminpack using cblas library if possible", default = false, type = "boolean"})
+    add_configs("blas", {description = "BLAS library to compile with.", default = "openblas", type = "string", values = {"openblas", "mkl"}})
 
     if is_plat("linux") then
         add_syslinks("m")
@@ -19,7 +19,7 @@ package("cminpack")
 
     on_load(function (package)
         if package:config("blas") then
-            package:add("deps", "openblas")
+            package:add("deps", package:config("blas"))
         end
     end)
 
