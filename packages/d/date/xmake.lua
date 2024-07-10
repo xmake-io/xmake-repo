@@ -11,11 +11,12 @@ package("date")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ole32", "shell32")
-    elseif is_plat("macosx") then
-        add_syslinks("z")
     end
 
     add_deps("cmake")
+    if is_plat("macosx") then
+        add_deps("zlib")
+    end
 
     on_install(function (package)
         local configs = {"-DBUILD_TZ_LIB=ON",
