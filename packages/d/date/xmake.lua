@@ -9,6 +9,10 @@ package("date")
 
     add_versions("v3.0.1", "f4300b96f7a304d4ef9bf6e0fa3ded72159f7f2d0f605bdde3e030a0dba7cf9f")
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("ole32", "shell32")
+    end
+
     add_deps("cmake")
 
     on_install(function (package)
@@ -20,6 +24,19 @@ package("date")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("date::sys_days", {configs = {languages = "c++11"}, includes = "date/date.h"}))
-        assert(package:has_cxxtypes("date::time_zone", {configs = {languages = "c++11"}, includes = "date/tz.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <date/date.h>
+            void test() {
+                using namespace date;
+                year_month_weekday_last{year{2015}, month{3u}, weekday_last{weekday{0u}}};
+            }
+        ]]}, {configs = {languages = "c++14"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <date/tz.h>
+            void test() {
+                using namespace date;
+                using namespace std::chrono;
+                make_zoned(current_zone(), system_clock::now());
+            }
+        ]]}, {configs = {languages = "c++14"}}))
     end)
