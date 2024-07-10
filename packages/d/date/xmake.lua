@@ -11,6 +11,8 @@ package("date")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ole32", "shell32")
+    elseif is_plat("macosx") then
+        add_syslinks("z")
     end
 
     add_deps("cmake")
