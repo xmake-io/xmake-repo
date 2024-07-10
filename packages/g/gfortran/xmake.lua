@@ -8,7 +8,7 @@ package("gfortran")
 
         if opt.system then
             local fortran = package:find_tool("gfortran", opt)
-            if not fortran then return end
+            if not fortran then return false end
 
             if package:is_binary() then
                 return true
