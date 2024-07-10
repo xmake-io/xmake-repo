@@ -6,6 +6,7 @@ package("scotch")
     add_urls("https://gitlab.inria.fr/scotch/scotch/-/archive/$(version)/scotch-$(version).zip",
              "https://gitlab.inria.fr/scotch/scotch.git")
     add_versions("v6.1.1", "21d001c390ec63ac60f987b9921f33cc1967b41cf07567e22cbf3253cda8962a")
+    add_versions("v7.0.4", "d613d00b15a95fbe24c04d862b01cb743b24a0c5e5f4e6002b885b6baf2f42bf")
 
     add_deps("zlib")
     if is_plat("linux") then

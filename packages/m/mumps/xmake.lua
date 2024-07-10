@@ -1,24 +1,24 @@
 package("mumps")
 
-    set_homepage("http://mumps.enseeiht.fr/")
+    set_homepage("https://mumps-solver.org/index.php")
     set_description("MUMPS: MUltifrontal Massively Parallel sparse direct Solver")
 
-    add_urls("http://mumps.enseeiht.fr/MUMPS_$(version).tar.gz")
+    add_urls("https://mumps-solver.org/MUMPS_$(version).tar.gz")
     add_versions("5.4.1", "93034a1a9fe0876307136dcde7e98e9086e199de76f1c47da822e7d4de987fa8")
+    add_versions("5.7.2", "1362d377ce7422fc886c55212b4a4d2c381918b5ca4478f682a22d0627a8fbf8")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
+    add_deps("gfortran", {kind = "binary"})
     add_deps("scotch", "openblas")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
     add_links("smumps", "dmumps", "cmumps", "zmumps", "mumps_common", "pord", "mpiseq")
+
     on_install("linux", function (package)
         import("lib.detect.find_tool")
-        local fortranc = find_tool("gfortran")
-        if not fortranc then
-            raise("gfortran not found!")
-        end
+        local fortranc = assert(find_tool("gfortran"), "gfortran not found!")
 
         os.cp("Make.inc/Makefile.inc.generic.SEQ", "Makefile.inc")
         io.replace("Makefile.inc", "ORDERINGSF  = -Dpord", "ORDERINGSF  = -Dscotch -Dpord", {plain = true})
