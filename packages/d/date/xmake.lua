@@ -30,7 +30,7 @@ package("date")
                 using namespace date;
                 year_month_weekday_last{year{2015}, month{3u}, weekday_last{weekday{0u}}};
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++11"}}))
         assert(package:check_cxxsnippets({test = [[
             #include <date/tz.h>
             void test() {
@@ -38,5 +38,5 @@ package("date")
                 using namespace std::chrono;
                 make_zoned(current_zone(), system_clock::now());
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)
