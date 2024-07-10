@@ -81,6 +81,10 @@ package("mimalloc")
             elseif package:is_plat("mingw") then
                 os.trycp("build/**.dll", package:installdir("bin"))
                 os.trycp("build/**.a", package:installdir("lib"))
+            elseif package:is_plat("macosx") then
+                os.trycp("build/*.dylib", package:installdir("bin"))
+                os.trycp("build/*.dylib", package:installdir("lib"))
+                os.trycp("build/*.a", package:installdir("lib"))               
             else
                 os.trycp("build/*.so", package:installdir("bin"))
                 os.trycp("build/*.so", package:installdir("lib"))
