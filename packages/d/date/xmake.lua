@@ -11,10 +11,12 @@ package("date")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ole32", "shell32")
+    elseif is_plat("macosx", "iphoneos") then
+        add_frameworks("Foundation")
     end
 
     add_deps("cmake")
-    if is_plat("macosx") then
+    if is_plat("macosx", "iphoneos") then
         add_deps("zlib")
     end
 
