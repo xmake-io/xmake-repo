@@ -23,11 +23,12 @@ package("folly")
     add_versions("2024.06.17", "a26cda1cf5f9914f2ff05b5f8e4062d73f5a1ff71ee1911e734dc758313f6d30")
     add_versions("2024.06.24", "05ce0aed45c3a8125334438564364fbf32cd0d80b2a58c010cc821f5f16def50")
     add_versions("2024.07.01", "a619f2759e821d4657aa9f1cae0dedcec2085e656e16a3c458e053a759d2ce83")
+    add_versions("2024.07.08", "93c9c7c7e3cb30c1b4437ac3043c05a245383fbb6e558abda704d61f14dc67bd")
 
     add_patches("<=2022.08.29", path.join(os.scriptdir(), "patches", "2021.06.28", "reorder.patch"), "9a6bf283881580474040cfc7a8e89d461d68b89bae5583d89fff0a3198739980")
     add_patches("<=2022.08.29", path.join(os.scriptdir(), "patches", "2021.06.28", "regex.patch"), "6a77ade9f48dd9966d3f7154e66ca8a5c030ae2b6d335cbe3315784aefd8f495")
-    add_patches("<=2024.07.01", path.join(os.scriptdir(), "patches", "2023.11.20", "pkgconfig.patch"), "6838623d453418569853f62ad97c729e802a120c13d804aabba6d6455997e674")
-    add_patches("<=2024.07.01", path.join(os.scriptdir(), "patches", "2023.11.20", "msvc.patch"), "1ee01c75528bd42736541022af461e44af3031c01d62c9342006f0abc0f44f2d")
+    add_patches("<=2024.07.08", path.join(os.scriptdir(), "patches", "2023.11.20", "pkgconfig.patch"), "6838623d453418569853f62ad97c729e802a120c13d804aabba6d6455997e674")
+    add_patches("<=2024.07.08", path.join(os.scriptdir(), "patches", "2023.11.20", "msvc.patch"), "1ee01c75528bd42736541022af461e44af3031c01d62c9342006f0abc0f44f2d")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
