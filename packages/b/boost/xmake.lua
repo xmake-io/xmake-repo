@@ -247,6 +247,9 @@ package("boost")
             if package:has_tool("cxx", "clang_cl") then
                 build_toolset = "clang-win"
                 build_toolchain = package:toolchain("clang-cl")
+            elseif package:has_tool("cxx", "clang") then
+                build_toolset = "clang-win"
+                build_toolchain = package:toolchain("clang") or package:toolchain("llvm")
             elseif package:has_tool("cxx", "cl") then
                 build_toolset = "msvc"
                 build_toolchain = package:toolchain("msvc")
@@ -388,14 +391,16 @@ package("boost")
 
         if package:is_plat("windows") and package:version():le("1.85.0") then
             local vs_toolset = build_toolchain:config("vs_toolset")
-            local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
-            local minor = vs_toolset_ver:minor()
-            if minor and minor >= 40 then
-                io.replace("tools/build/src/engine/config_toolset.bat", "vc143", "vc144", {plain = true})
-                io.replace("tools/build/src/engine/build.bat", "vc143", "vc144", {plain = true})
-                io.replace("tools/build/src/engine/guess_toolset.bat", "vc143", "vc144", {plain = true})
-                io.replace("tools/build/src/tools/intel-win.jam", "14.3", "14.4", {plain = true})
-                io.replace("tools/build/src/tools/msvc.jam", "14.3", "14.4", {plain = true})
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                if minor and minor >= 40 then
+                    io.replace("tools/build/src/engine/config_toolset.bat", "vc143", "vc144", {plain = true})
+                    io.replace("tools/build/src/engine/build.bat", "vc143", "vc144", {plain = true})
+                    io.replace("tools/build/src/engine/guess_toolset.bat", "vc143", "vc144", {plain = true})
+                    io.replace("tools/build/src/tools/intel-win.jam", "14.3", "14.4", {plain = true})
+                    io.replace("tools/build/src/tools/msvc.jam", "14.3", "14.4", {plain = true})
+                end
             end
         end
         local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})

@@ -6,6 +6,7 @@ package("actor-framework")
     add_urls("https://github.com/actor-framework/actor-framework/archive/refs/tags/$(version).tar.gz",
              "https://github.com/actor-framework/actor-framework.git")
 
+    add_versions("1.0.0", "602018239d23a1805d35ebda704fd5c969a0693fc513fcf7459063b628459e5b")
     add_versions("0.19.6", "48dc4c4abf5ab5a7c6f84b9259cc8be1b02c601d31893647ab44e143cdc4b6d5")
     add_versions("0.19.2", "aa3fcc494424e0e20b177125458a6a6ed39c751a3d3d5193054e88bdf8a146d2")
 

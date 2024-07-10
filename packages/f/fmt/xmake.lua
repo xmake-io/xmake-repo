@@ -1,10 +1,12 @@
 package("fmt")
-
     set_homepage("https://fmt.dev")
     set_description("fmt is an open-source formatting library for C++. It can be used as a safe and fast alternative to (s)printf and iostreams.")
 
     set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip",
              "https://github.com/fmtlib/fmt.git")
+
+    add_versions("11.0.1", "62ca45531814109b5d6cef0cf2fd17db92c32a30dd23012976e768c685534814")
+    add_versions("11.0.0", "583ce480ef07fad76ef86e1e2a639fc231c3daa86c4aa6bcba524ce908f30699")
     add_versions("10.2.1", "312151a2d13c8327f5c9c586ac6cf7cddc1658e8f53edae0ec56509c8fa516c9")
     add_versions("10.2.0", "8a942861a94f8461a280f823041cde8f620a6d8b0e0aacc98c15bb5a9dd92399")
     add_versions("10.1.1", "b84e58a310c9b50196cda48d5678d5fa0849bca19e5fdba6b684f0ee93ed9d1b")
@@ -25,6 +27,7 @@ package("fmt")
                 "3280569bced9ec08933f0ea37b6a4fef4538944d9046fe197ad63e22d1357cd4")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
+    add_configs("unicode", {description = "Enable Unicode support.", default = true, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::fmt")
@@ -48,6 +51,9 @@ package("fmt")
                 package:add("defines", "FMT_EXPORT")
             end
         end
+        if package:is_plat("windows") and package:config("unicode") then
+            package:add("cxxflags", "/utf-8")
+        end
     end)
 
     on_install(function (package)
@@ -58,7 +64,8 @@ package("fmt")
         io.gsub("CMakeLists.txt", "MASTER_PROJECT AND CMAKE_GENERATOR MATCHES \"Visual Studio\"", "0")
         local configs = {"-DFMT_TEST=OFF", "-DFMT_DOC=OFF", "-DFMT_FUZZ=OFF", "-DCMAKE_CXX_VISIBILITY_PRESET=default"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DFMT_UNICODE=" .. (package:config("unicode") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -73,4 +80,3 @@ package("fmt")
             }
         ]]}, {configs = {languages = "c++14"}, includes = "fmt/format.h"}))
     end)
-

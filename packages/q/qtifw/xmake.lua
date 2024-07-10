@@ -4,7 +4,7 @@ package("qtifw")
     set_description("The Qt Installer Framework provides a set of tools and utilities to create installers for the supported desktop Qt platforms: Linux, Microsoft Windows, and macOS.")
     set_license("GPL-3")
 
-    add_versions("4.6.0", "dummy")
+    add_versions("4.7.0", "dummy")
 
     add_deps("aqt")
 
