@@ -5,7 +5,7 @@ add_packages("zlib")
 
 target("pdfio")
     set_kind("$(kind)")
-    add_files("pdfio-*.c")
+    add_files("pdfio-*.c", "ttf.c")
     add_headerfiles("pdfio.h")
 
     if is_plat("windows") and is_kind("shared") then
