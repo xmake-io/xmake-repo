@@ -11,7 +11,7 @@ package("aws-lc")
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     add_deps("cmake")
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") or is_host("windows") then
         add_deps("nasm")
     end
 
@@ -23,7 +23,7 @@ package("aws-lc")
         add_syslinks("pthread", "dl", "m")
     end
 
-    on_install(function (package)
+    on_install("!cross", function (package)
         if package:config("shared") and package:is_plat("windows") then
             package:add("defines", "BORINGSSL_SHARED_LIBRARY")
         end
