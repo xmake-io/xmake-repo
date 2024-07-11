@@ -26,6 +26,7 @@ package("pdfio")
 
     on_install(function (package)
         if package:is_plat("mingw") and package:is_arch("i386") then
+            io.replace("ttf.c", "typedef __int64 ssize_t;", "", {plain = true})
             io.replace("pdfio.h", "typedef __int64 ssize_t;", "", {plain = true})
         end
 
