@@ -16,24 +16,20 @@ package("pdfio")
 
     add_deps("zlib")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(pdfio): need ndk api level > 21")
+        end)
+    end
+
     on_install(function (package)
-        io.writefile("xmake.lua", [[
-            add_requires("zlib")
-            add_packages("zlib")
-            add_rules("mode.debug", "mode.release")
-            target("pdfio")
-                set_kind("$(kind)")
-                add_files("*.c|test*.c")
-                add_headerfiles("pdfio.h")
-                if is_plat("windows") and is_kind("shared") then
-                    add_rules("utils.symbols.export_all")
-                end
-                if is_plat("windows", "mingw") then
-                    add_syslinks("advapi32")
-                elseif is_plat("linux", "bsd") then
-                    add_syslinks("m")
-                end
-        ]])
+        if package:is_plat("mingw") and package:is_arch("i386") then
+            io.replace("pdfio.h", "typedef __int64 ssize_t;", "", {plain = true})
+        end
+
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
 
