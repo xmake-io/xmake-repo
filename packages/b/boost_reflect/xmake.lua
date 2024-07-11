@@ -6,6 +6,7 @@ package("boost_reflect")
     add_urls("https://github.com/boost-ext/reflect/archive/refs/tags/$(version).tar.gz",
              "https://github.com/boost-ext/reflect.git")
 
+    add_versions("v1.2.1", "e24d5765b9a85ee99c494f1ce5827428220c69a6cac97817abbeef0f6b0b4ba9")
     add_versions("v1.1.1", "49b20cbc0e5d9f94bcdc96056f8c5d91ee2e45d8642e02cb37e511079671ad48")
 
     on_install("linux", function (package)
