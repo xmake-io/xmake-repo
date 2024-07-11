@@ -21,33 +21,25 @@ package("proj")
         add_syslinks("pthread")
     end
 
-    on_load("windows", "macosx", "linux", function (package)
+    on_load(function (package)
         if package:config("tiff") then
             package:add("deps", "libtiff")
         end
         if package:config("curl") then
             package:add("deps", "libcurl")
-            if package:is_plat("linux") then
-                package:add("deps", "openssl")
-            end
         end
         if package:config("apps") then
             package:addenv("PATH", "bin")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("!wasm and (!android or android@!windows)", function (package)
         -- windows@arm64 cann't generate proj.db
         if package:is_plat("windows") and package:is_arch("arm64") then
             io.replace("CMakeLists.txt", "add_subdirectory(data)", "", {plain = true})
         end
-        if package:config("curl") and package:is_plat("linux") then
-            io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl ssl crypto", {plain = true})
-        else
+        if package:config("curl") and (package:version():le(9.4)) then
             io.replace("src/lib_proj.cmake", "${CURL_LIBRARIES}", "CURL::libcurl", {plain = true})
-        end
-        if package:is_plat("windows") and not package:config("shared") then
-            io.replace("src/proj.h", "#ifndef PROJ_DLL", "#define PROJ_DLL\n#ifndef PROJ_DLL", {plain = true})
         end
         local configs = {"-DNLOHMANN_JSON_ORIGIN=external", "-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -56,13 +48,17 @@ package("proj")
         table.insert(configs, "-DENABLE_TIFF=" .. (package:config("tiff") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_CURL=" .. (package:config("curl") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_PROJSYNC=" .. (package:config("curl") and "ON" or "OFF"))
-        if package:config("curl") and package:is_plat("linux") then
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"openssl"}})
-        elseif package:config("curl") and package:is_plat("macosx") then
+
+        if package:config("curl") and package:is_plat("macosx") then
             local exflags = {"-framework", "CoreFoundation", "-framework", "Security", "-framework", "SystemConfiguration"}
             import("package.tools.cmake").install(package, configs, {shflags = exflags, ldflags = exflags})
         else
             import("package.tools.cmake").install(package, configs)
+        end
+
+        if not package:config("shared") then
+            -- public compile definitions in CMake
+            package:add("defines", "PROJ_DLL=")
         end
     end)
 

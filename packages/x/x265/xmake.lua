@@ -14,6 +14,9 @@ package("x265")
 
     add_configs("hdr10_plus", {description = "Enable dynamic HDR10 compilation", default = false, type = "boolean"})
     add_configs("svt_hevc", {description = "Enable SVT HEVC Encoder", default = false, type = "boolean"})
+    if is_plat("linux") then
+        add_configs("numa", {description = "Enable libnuma", default = false, type = "boolean"})
+    end
 
     add_deps("cmake")
     if is_plat("wasm") then
@@ -36,11 +39,20 @@ package("x265")
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "X86 AND NOT X64", "FALSE")
         end
+
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_HDR10_PLUS=" .. (package:config("hdr10_plus") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SVT_HEVC=" .. (package:config("svt_hevc") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+
+        if package:config("numa") then
+            table.insert(configs, "-DENABLE_LIBNUMA=ON")
+            package:add("syslinks", "numa")
+        else
+            table.insert(configs, "-DENABLE_LIBNUMA=OFF")
+        end
+
         if package:is_cross() and package:is_targetarch("arm.*") then
             table.insert(configs, "-DCROSS_COMPILE_ARM=ON")
             if not package:is_plat("android") then
@@ -51,6 +63,7 @@ package("x265")
         if package:version() then
             table.insert(configs, "-DX265_LATEST_TAG=" .. package:version():rawstr())
         end
+
         import("package.tools.cmake").install(package, configs)
         if package:is_plat("windows") then -- fix x265.pc
             io.replace(path.join(package:installdir("lib", "pkgconfig"), "x265.pc"), "-lx265", "-lx265-static", {plain = true})

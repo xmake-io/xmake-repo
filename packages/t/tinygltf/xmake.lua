@@ -6,6 +6,8 @@ package("tinygltf")
 
     add_urls("https://github.com/syoyo/tinygltf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/syoyo/tinygltf.git")
+
+    add_versions("v2.9.2", "b34d1456bb1d63bbb4e05ea1e4d8691d0253a03ef72385a8bffd2fae4b743feb")
     add_versions("v2.8.22", "97c3eb1080c1657cd749d0b49af189c6a867d5af30689c48d5e19521e7b5a070")
     add_versions("v2.8.21", "e567257d7addde58b0a483832cbaa5dd8f15e5bcaee6f023831e215d1a2c0502")
     add_versions("v2.5.0", "5d85bd556b60b1b69527189293cfa4902957d67fabb8582b6532f23a5ef27ec1")
@@ -20,7 +22,7 @@ package("tinygltf")
             "-DTINYGLTF_BUILD_LOADER_EXAMPLE=OFF",
             "-DTINYGLTF_HEADER_ONLY=ON"
         }
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)

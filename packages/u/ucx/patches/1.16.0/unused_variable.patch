@@ -1,0 +1,31 @@
+From 98496827bef6f4619a4a8058443f61ef78b8ab72 Mon Sep 17 00:00:00 2001
+From: Roie Danino <rdanino@nvidia.com>
+Date: Wed, 7 Feb 2024 14:23:45 +0200
+Subject: [PATCH] UCM/PTMALLOC286: added UCS_V_UNUSED attribute to nfences
+ which might be unused in release
+
+---
+ src/ucm/ptmalloc286/malloc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/ucm/ptmalloc286/malloc.c b/src/ucm/ptmalloc286/malloc.c
+index e1779967885..45c1aaf8ff3 100644
+--- a/src/ucm/ptmalloc286/malloc.c
++++ b/src/ucm/ptmalloc286/malloc.c
+@@ -526,6 +526,7 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
+ #endif
+ 
+ #include <ucs/sys/preprocessor.h>
++#include <ucs/sys/compiler_def.h>
+ 
+ /* Version identifier to allow people to support multiple versions */
+ #ifndef DLMALLOC_VERSION
+@@ -3997,7 +3998,7 @@ static void add_segment(mstate m, char* tbase, size_t tsize, flag_t mmapped) {
+   msegmentptr ss = (msegmentptr)(chunk2mem(sp));
+   mchunkptr tnext = chunk_plus_offset(sp, ssize);
+   mchunkptr p = tnext;
+-  int nfences = 0;
++  int UCS_V_UNUSED nfences = 0;
+ 
+   /* reset top to new space */
+   init_top(m, (mchunkptr)tbase, tsize - TOP_FOOT_SIZE);
