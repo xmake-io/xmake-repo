@@ -7,6 +7,7 @@ package("watcher")
     set_urls("https://github.com/e-dant/watcher/archive/refs/tags/release/$(version).tar.gz",
              "https://github.com/e-dant/watcher.git")
 
+    add_versions("0.11.0", "0d6b9b409ccaed6313437ea3dc8b2fc078f3d25b")
     add_versions("0.9.5", "41b74d138eec106c35a99e7544def599453a8bf4cf4887ad627e1c9e3355287c")
 
     if is_plat("linux", "bsd") then
