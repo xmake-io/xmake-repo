@@ -6,13 +6,14 @@ package("libxml2")
     add_urls("https://download.gnome.org/sources/libxml2/$(version).tar.xz", {version = function (version) return format("%d.%d/libxml2-%s", version:major(), version:minor(), version) end})
     add_urls("https://gitlab.gnome.org/GNOME/libxml2.git")
     add_versions("2.10.3", "5d2cc3d78bec3dbe212a9d7fa629ada25a7da928af432c93060ff5c17ee28a9c")
+    add_versions("2.13.2", "e7c8f5e0b5542159e0ddc409c22c9164304b581eaa9930653a76fb845b169263")
 
     add_configs("iconv", {description = "Enable libiconv support.", default = false, type = "boolean"})
     add_configs("python", {description = "Enable the python interface.", default = false, type = "boolean"})
 
     add_includedirs("include/libxml2")
     if is_plat("windows") then
-        add_syslinks("wsock32", "ws2_32")
+        add_syslinks("wsock32", "ws2_32", "bcrypt")
     else
         add_links("xml2")
     end
@@ -89,6 +90,9 @@ package("libxml2")
     end)
 
     on_install("macosx", "linux", "iphoneos", "android@!windows", "bsd", function (package)
+        if package:is_plat("iphoneos") then
+            io.replace("dict.c", "defined(HAVE_GETENTROPY)", "0", {plain = true}) -- getentropy is private on iOS
+        end
         import("package.tools.autoconf")
         local configs = {"--disable-dependency-tracking",
                          "--without-lzma",
