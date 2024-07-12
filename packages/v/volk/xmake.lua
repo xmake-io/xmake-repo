@@ -65,6 +65,12 @@ package("volk")
         import("package.tools.xmake").install(package)
     end)
 
+    on_load(function (package)
+        if package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
+        end
+    end)
+
     on_test(function (package)
         local defines
         if package:config("header_only") then 
