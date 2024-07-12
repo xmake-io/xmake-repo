@@ -39,5 +39,5 @@ package("node-addon-api")
     end)
 
     on_test(function (package)
-        assert(os.isfile(path.join(package:installdir("include"), "napi.h")))
+        assert(package:has_cfuncs("Napi::Just(0)", {includes = "napi.h"}))
     end)
