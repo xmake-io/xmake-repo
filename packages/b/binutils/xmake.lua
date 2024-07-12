@@ -19,6 +19,28 @@ package("binutils")
         add_extsources("brew::binutils")
     end
 
+    on_fetch("@linux", "@macosx", "@msys", function (package, opt)
+        if opt.system then
+            if package:is_binary() then
+                if package:find_tool("system::ld") then
+                    return {}
+                end
+            elseif package:is_library() then
+                local libs = {"bfd", "ctf", "opcodes"}
+                links = {}
+                for _, lib in ipairs(libs) do
+                    local libinfo = package:find_package("system::" .. lib)                    
+                    if libinfo then
+                        table.insert(result.links, libinfo.links)
+                    end
+                end
+                if #links ~= 0 then
+                    return {links = links}
+                end
+            end
+        end
+    end)    
+
     add_deps("bison")
 
     on_install("@linux", "@macosx", "@msys", function (package)
