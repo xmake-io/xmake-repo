@@ -13,5 +13,5 @@ package("node-api-headers")
     end)
 
     on_test(function (package)
-        assert(os.isfile(path.join(package:installdir("include"), "node_api.h")))
+        assert(package:has_cfuncs("napi_status", {includes = "node_api.h"}))
     end)
