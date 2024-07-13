@@ -8,7 +8,8 @@ package("ragel")
              "https://github.com/adrian-thurston/ragel.git")
     add_versions("6.10", "5f156edb65d20b856d638dd9ee2dfb43285914d9aa2b6ec779dac0270cd56c3f")
 
-    on_install(function (package)
+    on_install("linux", "windows|x64", function (package)
+        io.replace("ragel/main.cpp", "#include <unistd.h>", "", {plain = true})
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("ragel")
