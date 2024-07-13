@@ -2,6 +2,7 @@ package("glaze")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/stephenberry/glaze")
     set_description("Extremely fast, in memory, JSON and interface library for modern C++")
+    set_license("MIT")
 
     add_urls("https://github.com/stephenberry/glaze/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stephenberry/glaze.git")
@@ -16,8 +17,18 @@ package("glaze")
     add_versions("v2.2.0", "1d6e36029a58bf8c4bdd035819e1ab02b87d8454dd80fa2f5d46c96a1e6d600c")
     add_versions("v1.3.5", "de5d59cb7f31193d45f67f25d8ced1499df50c0d926a1461432b87f2b2368817")
 
+    add_deps("cmake")
+
     on_install(function (package)
-        os.cp("include", package:installdir())
+        local version = package:version()
+        if version and version:ge("2.9.5") then
+            if package:has_tool("cxx", "cl", "clang_cl") then
+                package:add("cxxflags", "/Zc:preprocessor", "/permissive-", "/Zc:lambda")
+            end
+            import("package.tools.cmake").install(package, {"-Dglaze_DEVELOPER_MODE=OFF"})
+        else
+            os.cp("include", package:installdir())
+        end
     end)
 
     on_test(function (package)
