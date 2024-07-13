@@ -7,9 +7,10 @@ package("hyperscan")
              "https://github.com/intel/hyperscan.git")
     add_versions("v5.4.2", "32b0f24b3113bbc46b6bfaa05cf7cf45840b6b59333d078cc1f624e4c40b2b99")
 
-    add_deps("cmake", "boost", "ragel")
+    add_deps("cmake", "boost", "ragel", "python")
 
-    on_install(function (package)
+    on_install("linux", "windows|x64", function (package)
+        io.replace("Makefile", "prefix ?= /usr/local", "prefix ?= " .. package:installdir(), {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
