@@ -1,12 +1,11 @@
 package("node-addon-api")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/nodejs/node-addon-api")
     set_description("Module for using Node-API from C++")
     set_license("MIT")
 
     add_configs("errors", {description = "Choose error handling method.", default = "except", type = "string", values = {"except", "noexcept", "maybe"}})
-    add_configs("disable_deprecated", {description = "Disable deprecated APIs.", default = true, type = "boolean"})
+    add_configs("deprecated", {description = "Disable deprecated APIs.", default = false, type = "boolean"})
     add_configs("napi_version", {description = "Target a specific Node-API version.", default = nil, type = "number"})
 
     set_urls("https://github.com/nodejs/node-addon-api/archive/refs/tags/$(version).tar.gz",
@@ -17,7 +16,7 @@ package("node-addon-api")
 
     on_load(function(package)
         package:add("defines", "NAPI_VERSION=" .. package:config("napi_version") or package:version():major())
-        if package:config("disable_deprecated") then
+        if not package:config("deprecated") then
             package:add("defines", "NODE_ADDON_API_DISABLE_DEPRECATED")
         end
         
