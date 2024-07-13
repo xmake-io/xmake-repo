@@ -27,16 +27,15 @@ package("binutils")
                 end
             elseif package:is_library() then
                 local libs = {"bfd", "ctf", "opcodes"}
-                links = {}
+                local result
                 for _, lib in ipairs(libs) do
                     local libinfo = package:find_package("system::" .. lib)                    
                     if libinfo then
+                        result = result or {links = {}}
                         table.insert(result.links, libinfo.links)
                     end
                 end
-                if #links ~= 0 then
-                    return {links = links}
-                end
+                return result
             end
         end
     end)    
