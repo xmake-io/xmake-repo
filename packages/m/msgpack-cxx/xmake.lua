@@ -11,8 +11,6 @@ package("msgpack-cxx")
 
     add_configs("boost", {description = "Use Boost", default = false, type = "boolean"})
 
-    add_deps("cmake")
-
     on_load(function (package)
         if package:config("boost") then
             package:add("deps", "boost")
