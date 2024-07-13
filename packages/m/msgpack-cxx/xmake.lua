@@ -23,7 +23,7 @@ package("msgpack-cxx")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "mingw", function (package)
+    on_install(function (package)
         local configs = {"-DMSGPACK_BUILD_EXAMPLES=OFF", "-DMSGPACK_BUILD_TESTS=OFF", "-DMSGPACK_BUILD_DOCS=OFF", "-DMSGPACK_USE_STATIC_BOOST=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
