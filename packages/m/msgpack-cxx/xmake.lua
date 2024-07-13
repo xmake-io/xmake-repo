@@ -11,7 +11,7 @@ package("msgpack-cxx")
 
     add_configs("std", {description = "Choose C++ standard version.", default = "cxx17", type = "string", values = {"cxx98", "cxx11", "cxx14", "cxx17", "cxx20"}})
 
-    add_configs("boost", {description = "Use Boost", default = false, type = "boolean"})
+    add_configs("boost", {description = "Use Boost", default = true, type = "boolean"})
 
     add_deps("cmake")
 
