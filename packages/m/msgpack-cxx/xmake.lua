@@ -11,7 +11,18 @@ package("msgpack-cxx")
 
     add_configs("std", {description = "Choose C++ standard version.", default = "cxx17", type = "string", values = {"cxx98", "cxx11", "cxx14", "cxx17", "cxx20"}})
 
-    add_deps("cmake", "boost")
+    add_configs("boost", {description = "Use Boost", default = false, type = "boolean"})
+
+    add_deps("cmake")
+
+    add_defines("MSGPACK_NO_BOOST")
+
+    on_load(function (package)
+        if package:config("boost") then
+            package:add("deps", "boost")
+        end
+    end)
+
     on_install("windows", "macosx", "linux", "mingw", function (package)
         local configs = {"-DMSGPACK_BUILD_EXAMPLES=OFF", "-DMSGPACK_BUILD_TESTS=OFF", "-DMSGPACK_BUILD_DOCS=OFF", "-DMSGPACK_USE_STATIC_BOOST=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -19,8 +30,13 @@ package("msgpack-cxx")
         if package:config("std") ~= "cxx98" then
             table.insert(configs, "-DMSGPACK_" .. package:config("std"):upper() .. "=ON")
         end
-        if package:is_plat("windows") then
-            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        if package:config("boost") then
+            table.insert(configs, "-DMSGPACK_USE_BOOST=ON")
+            if is_plat("windows") then
+                table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            end
+        else
+            table.insert(configs, "-DMSGPACK_USE_BOOST=OFF")
         end
         import("package.tools.cmake").install(package, configs)
     end)
