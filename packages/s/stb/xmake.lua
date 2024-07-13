@@ -9,6 +9,7 @@ package("stb")
     add_versions("2021.09.10", "af1a5bc352164740c1cc1354942b1c6b72eacb8a")
     add_versions("2023.01.30", "5736b15f7ea0ffb08dd38af21067c314d6a3aae9")
     add_versions("2023.12.15", "f4a71b13373436a2866c5d68f8f80ac6f0bc1ffe")
+    add_versions("2024.06.01", "013ac3beddff3dbffafd5177e7972067cd2b5083")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::stb")
