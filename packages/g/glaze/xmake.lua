@@ -19,13 +19,26 @@ package("glaze")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    if on_check then
+        on_check("windows", function (package)
+            if package:is_plat("windows") then
+                local vs = package:toolchain("msvc"):config("vs")
+                assert(vs and tonumber(vs) >= 2022, "package(glaze): need vs >= 2022")
+            end
+        end)
+    end
+
+    on_install("windows", "linux", "bsd", "mingw", "wasm", function (package)
         local version = package:version()
         if version and version:ge("2.9.5") then
             if package:has_tool("cxx", "cl", "clang_cl") then
                 package:add("cxxflags", "/Zc:preprocessor", "/permissive-", "/Zc:lambda")
             end
-            import("package.tools.cmake").install(package, {"-Dglaze_DEVELOPER_MODE=OFF"})
+
+            import("package.tools.cmake").install(package, {
+                "-Dglaze_DEVELOPER_MODE=OFF",
+                "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release")
+            })
         else
             os.cp("include", package:installdir())
         end
