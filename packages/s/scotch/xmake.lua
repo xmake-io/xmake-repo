@@ -13,6 +13,12 @@ package("scotch")
         add_syslinks("pthread")
     end
     add_links("esmumps", "scotch", "scotcherr", "scotcherrexit", "scotchmetis")
+    on_load(function (package)
+        if package:version():ge("7.0.0") then
+            package:add("deps", "bison")
+        end
+    end)
+
     on_install("macosx|x86_64", "linux", function (package)
         os.cd("src")
         if package:is_plat("macosx") then

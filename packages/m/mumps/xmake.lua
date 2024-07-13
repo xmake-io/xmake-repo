@@ -9,7 +9,6 @@ package("mumps")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
-    add_deps("gfortran", {kind = "binary"})
     add_deps("scotch", "openblas")
     if is_plat("linux") then
         add_syslinks("pthread")
