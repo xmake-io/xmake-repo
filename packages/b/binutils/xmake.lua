@@ -22,7 +22,7 @@ package("binutils")
     on_fetch("@linux", "@macosx", "@msys", function (package, opt)
         if opt.system then
             if package:is_binary() then
-                if package:find_tool("system::ld") then
+                if package:find_tool("ld") then
                     return {}
                 end
             elseif package:is_library() then
