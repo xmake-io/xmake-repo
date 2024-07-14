@@ -1,5 +1,4 @@
 package("msgpack-cxx")
-    set_kind("library", {headeronly = true})
     set_homepage("https://msgpack.org/")
     set_description("MessagePack implementation for C++")
     set_license("BSL-1.0")
@@ -21,6 +20,9 @@ package("msgpack-cxx")
             package:add("deps", "boost")
         else
             package:add("defines", "MSGPACK_NO_BOOST")
+        end
+        if not (package:config("boost") and not package:config("header_only")) then
+            package:set("kind", "library", {headeronly = true})
         end
     end)
 
