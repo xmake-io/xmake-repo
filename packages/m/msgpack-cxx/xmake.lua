@@ -1,4 +1,5 @@
 package("msgpack-cxx")
+    set_kind("library", {headeronly = true})
     set_homepage("https://msgpack.org/")
     set_description("MessagePack implementation for C++")
     set_license("BSL-1.0")
@@ -10,12 +11,13 @@ package("msgpack-cxx")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
     add_configs("std", {description = "Choose C++ standard version.", default = "cxx17", type = "string", values = {"cxx98", "cxx11", "cxx14", "cxx17", "cxx20"}})
-    add_configs("boost", {description = "Use Boost", default = false, type = "boolean"})
+    add_configs("boost", {description = "Use Boost", default = true, type = "boolean"})
 
     on_load(function (package)
         if package:config("header_only") then
             package:set("kind", "library", {headeronly = true})
         else
+        if not package:config("header_only") then
             package:add("deps", "cmake")
         end
         if package:config("boost") then
@@ -38,9 +40,6 @@ package("msgpack-cxx")
             if package:config("boost") then
                 table.insert(configs, "-DMSGPACK_USE_STATIC_BOOST=ON")
                 table.insert(configs, "-DMSGPACK_USE_BOOST=ON")
-                if is_plat("windows") then
-                    table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
-                end
             else
                 table.insert(configs, "-DMSGPACK_USE_BOOST=OFF")
             end
