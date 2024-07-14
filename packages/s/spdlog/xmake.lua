@@ -39,7 +39,9 @@ package("spdlog")
     end
 
     on_load(function (package)
-        if not package:config("header_only") then
+        if package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
+        else
             package:add("defines", "SPDLOG_COMPILED_LIB")
             package:add("deps", "cmake")
         end
