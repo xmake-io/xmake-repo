@@ -13,16 +13,15 @@ package("msgpack-cxx")
     add_configs("boost", {description = "Use Boost", default = is_plat("macosx", "linux", "windows", "bsd", "mingw", "cross"), type = "boolean"})
 
     on_load(function (package)
-        if not package:config("header_only") then
+        if package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
+        else
             package:add("deps", "cmake")
         end
         if package:config("boost") then
             package:add("deps", "boost")
         else
             package:add("defines", "MSGPACK_NO_BOOST")
-        end
-        if not (package:config("boost") and not package:config("header_only")) then
-            package:set("kind", "library", {headeronly = true})
         end
     end)
 
