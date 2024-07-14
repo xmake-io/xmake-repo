@@ -15,13 +15,13 @@ package("libyuv")
                 alias = "home", version = import("version")
             })
 
-            package:add("versions", "home:1891", "92eec6118d1c36c4b7dc76397351d86ec0d1da8171c63cd48d5fb130d4384c59")
-
             package:add("versions", "github:1891", "a8dddc6f45d6987cd3c08e00824792f3c72651fde29f475f572ee2292c03761f")
+
+            package:add("versions", "home:1891", "92eec6118d1c36c4b7dc76397351d86ec0d1da8171c63cd48d5fb130d4384c59")
         end)
     end
 
-    add_patches("1891", "patches/1891/cmake.patch", "72f16cfdbfe25e091add589fa1b7772c6fd6ee7b159da7ac59ac1b7d6d7f0be1")
+    add_patches("1891", "patches/1891/cmake.patch", "87086566b2180f65ff3d5ef9db7c59a6e51e2592aeeb787e45305beb4cf9d30d")
 
     add_configs("jpeg", {description = "Build with JPEG.", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
@@ -43,7 +43,7 @@ package("libyuv")
     end)
 
     on_install(function (package)
-        local configs = {}
+        local configs = {"-DCMAKE_CXX_STANDARD=11"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLIBYUV_WITH_JPEG=" .. (package:config("jpeg") and "ON" or "OFF"))
