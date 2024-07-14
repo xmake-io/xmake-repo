@@ -52,7 +52,7 @@ package("fmt")
             end
         end
         if package:is_plat("windows") and package:config("unicode") then
-            package:add("cxxflags", "/utf-8")
+            package:add("cxxflags", "/utf-8", {public = true})
         end
     end)
 
