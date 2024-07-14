@@ -11,7 +11,11 @@ package("msgpack-cxx")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
     add_configs("std", {description = "Choose C++ standard version.", default = "cxx17", type = "string", values = {"cxx98", "cxx11", "cxx14", "cxx17", "cxx20"}})
-    add_configs("boost", {description = "Use Boost", default = true, type = "boolean"})
+    if is_plat("windows", "macosx", "linux", "mingw") then
+        add_configs("boost", {description = "Use Boost", default = true, type = "boolean"})
+    else
+        add_configs("boost", {description = "Use Boost", default = false, type = "boolean", readonly = true})
+    end
 
     on_load(function (package)
         if not package:config("header_only") then
