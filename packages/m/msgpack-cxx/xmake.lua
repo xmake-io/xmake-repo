@@ -14,9 +14,6 @@ package("msgpack-cxx")
     add_configs("boost", {description = "Use Boost", default = true, type = "boolean"})
 
     on_load(function (package)
-        if package:config("header_only") then
-            package:set("kind", "library", {headeronly = true})
-        else
         if not package:config("header_only") then
             package:add("deps", "cmake")
         end
