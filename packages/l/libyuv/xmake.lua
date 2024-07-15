@@ -3,23 +3,20 @@ package("libyuv")
     set_description("libyuv is an open source project that includes YUV scaling and conversion functionality.")
     set_license("BSD-3-Clause")
 
-    if on_source then
-        on_source(function (package)
-            package:add("urls", "https://github.com/lemenkov/libyuv.git")
-            package:add("urls", "https://github.com/lemenkov/libyuv/archive/$(version).tar.gz", {
-                alias = "github", version = import("version")
-            })
+    add_urls("https://chromium.googlesource.com/libyuv/libyuv.git",
+             "https://github.com/lemenkov/libyuv.git")
 
-            package:add("urls", "https://chromium.googlesource.com/libyuv/libyuv.git")
-            package:add("urls", "https://chromium.googlesource.com/libyuv/libyuv/+archive/$(version).tar.gz", {
-                alias = "home", version = import("version")
-            })
+    add_urls("https://github.com/lemenkov/libyuv/archive/$(version).tar.gz", {
+        version = function (version)
+            -- Versions from LIBYUV_VERSION definition in include/libyuv/version.h
+            -- Pay attention to package commits incrementing this definition
+            local table = {
+                ["1891"] = "611806a1559b92c97961f51c78805d8d9d528c08",
+            }
+            return table[tostring(version)]
+        end})
 
-            package:add("versions", "github:1891", "a8dddc6f45d6987cd3c08e00824792f3c72651fde29f475f572ee2292c03761f")
-
-            package:add("versions", "home:1891", "92eec6118d1c36c4b7dc76397351d86ec0d1da8171c63cd48d5fb130d4384c59")
-        end)
-    end
+    add_versions("1891", "a8dddc6f45d6987cd3c08e00824792f3c72651fde29f475f572ee2292c03761f")
 
     add_patches("1891", "patches/1891/cmake.patch", "87086566b2180f65ff3d5ef9db7c59a6e51e2592aeeb787e45305beb4cf9d30d")
 
@@ -43,6 +40,14 @@ package("libyuv")
     end)
 
     on_install(function (package)
+        if package:is_plat("android") then
+            io.replace("Android.bp", "-Werror", "", {plain = true})
+        elseif package:is_plat("iphoneos") then
+            io.replace("CMakeLists.txt",
+                [[STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]],
+                [[set(arch_lowercase "arm64")]], {plain = true})
+        end
+
         local configs = {"-DCMAKE_CXX_STANDARD=14"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
