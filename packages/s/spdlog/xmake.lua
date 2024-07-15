@@ -1,5 +1,4 @@
 package("spdlog")
-
     set_homepage("https://github.com/gabime/spdlog")
     set_description("Fast C++ logging library.")
     set_license("MIT")
