@@ -1,5 +1,4 @@
 package("spdlog")
-
     set_homepage("https://github.com/gabime/spdlog")
     set_description("Fast C++ logging library.")
     set_license("MIT")
@@ -39,7 +38,9 @@ package("spdlog")
     end
 
     on_load(function (package)
-        if not package:config("header_only") then
+        if package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
+        else
             package:add("defines", "SPDLOG_COMPILED_LIB")
             package:add("deps", "cmake")
         end
