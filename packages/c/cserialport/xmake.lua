@@ -20,10 +20,18 @@ package("cserialport")
 
     add_deps("cmake")
 
-    on_install(function (package)
-        -- remove clang-tidy
-        io.replace("CMakeLists.txt", "if(MSVC)", "if(0)", {plain = true})
+    if on_check then
+        on_check("windows", function (package)
+            import("core.base.semver")
 
+            if package:is_arch("arm.*") then
+                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(cserialport/arm): need vs_toolset >= v143")
+            end
+        end)
+    end
+
+    on_install("!cross and !iphoneos and !android", function (package)
         local configs = {"-DCSERIALPORT_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
