@@ -24,7 +24,7 @@ package("binutils")
             if package:is_binary() then
                 local tools = {"lb", "ranlib", "objcopy"}
                 for _, tool in ipairs(tools) do
-                    if !package:find_tool(tool) then
+                    if not package:find_tool(tool) then
                         return
                     end
                 end
