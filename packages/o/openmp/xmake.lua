@@ -1,5 +1,5 @@
 package("openmp")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://openmp.org/")
     set_description("The OpenMP API specification for parallel programming")
 
