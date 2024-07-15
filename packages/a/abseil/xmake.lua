@@ -16,6 +16,9 @@ package("abseil")
     add_versions("20240116.1", "3c743204df78366ad2eaf236d6631d83f6bc928d1705dd0000b872e53b73dc6a")
     add_versions("20240116.2", "733726b8c3a6d39a4120d7e45ea8b41a434cdacde401cba500f14236c49b39dc")
 
+    add_patches("20240116.1", "https://github.com/abseil/abseil-cpp/commit/3335e58f198e899a500b744163f9b883035a5217.patch", "f83278086b42bc997846d2b931a266678f96e2727fce6ffd98b2b58ce75fa0a3")
+    add_patches("20240116.2", "https://github.com/abseil/abseil-cpp/commit/3335e58f198e899a500b744163f9b883035a5217.patch", "f83278086b42bc997846d2b931a266678f96e2727fce6ffd98b2b58ce75fa0a3")
+
     add_deps("cmake")
 
     add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "17", type = "string", values = {"14", "17", "20"}})
