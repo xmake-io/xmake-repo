@@ -29,6 +29,13 @@ package("libyuv")
         add_syslinks("m")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(libyuv/arm64): need ndk version > 22")
+        end)
+    end
+
     on_load(function (package)
         if package:config("jpeg") then
             package:add("deps", "libjpeg")
@@ -40,12 +47,10 @@ package("libyuv")
     end)
 
     on_install(function (package)
-        if package:is_plat("android") then
-            io.replace("Android.bp", "-Werror", "", {plain = true})
-        elseif package:is_plat("iphoneos") then
+        if package:is_plat("iphoneos", "cross") then
             io.replace("CMakeLists.txt",
                 [[STRING(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch_lowercase)]],
-                [[set(arch_lowercase "arm64")]], {plain = true})
+                [[set(arch_lowercase "]] .. package:arch() .. [[")]], {plain = true})
         end
 
         local configs = {"-DCMAKE_CXX_STANDARD=14"}
