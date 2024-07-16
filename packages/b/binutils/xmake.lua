@@ -22,7 +22,7 @@ package("binutils")
     on_fetch("@linux", "@macosx", "@msys", function (package, opt)
         if opt.system then
             if package:is_binary() then
-                local tools = {"lb", "ranlib", "objcopy"}
+                local tools = {"ld", "ranlib", "objcopy"}
                 for _, tool in ipairs(tools) do
                     if not package:find_tool(tool) then
                         return
