@@ -12,6 +12,12 @@ package("blake3")
     add_versions("1.3.3", "27d2bc4ee5945ba75434859521042c949463ee7514ff17aaef328e23ef83fec0")
     add_versions("1.3.1", "112becf0983b5c83efff07f20b458f2dbcdbd768fd46502e7ddd831b83550109")
 
+    if on_check then
+        on_check("mingw", function (package)
+            assert(package:is_arch("x86_64"), "package(blake3/mingw): Only suport x86_64 arch")
+        end)
+    end
+
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
