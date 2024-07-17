@@ -13,11 +13,11 @@ package("dav1d")
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     add_deps("nasm", "meson", "ninja")
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
     end
 
-    on_install(function (package)
+    on_install("!android and !wasm", function (package)
         import("package.tools.meson")
 
         local configs = {"-Denable_tests=false"}
