@@ -18,6 +18,8 @@ package("dav1d")
     end
 
     on_install(function (package)
+        import("package.tools.meson")
+
         local configs = {"-Denable_tests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Denable_tools=" .. (package:config("tools") and "true" or "false"))
