@@ -29,7 +29,7 @@ package("libzip")
         add_syslinks("advapi32")
     end
 
-    on_load("windows", "macosx", "linux", function (package)
+    on_load(function (package)
         for config, dep in pairs(configdeps) do
             if package:config(config) then
                 package:add("deps", dep)
@@ -37,7 +37,7 @@ package("libzip")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "mingw", function (package)
         io.replace("CMakeLists.txt", "Dist(", "#Dist(", {plain = true})
         local configs = {"-DBUILD_DOC=OFF", "-DBUILD_EXAMPLES=OFF", "-DBUILD_REGRESS=OFF", "-DBUILD_TOOLS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
