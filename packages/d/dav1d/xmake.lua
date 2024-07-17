@@ -37,7 +37,7 @@ package("dav1d")
     end)
 
     on_test(function (package)
-        if not package:is_cross() then
+        if package:config("tools") and (not package:is_cross()) then
             os.vrun("dav1d -v")
         end
         assert(package:has_cfuncs("dav1d_default_settings", {includes = "dav1d/dav1d.h"}))
