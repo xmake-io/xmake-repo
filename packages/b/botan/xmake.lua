@@ -6,6 +6,7 @@ package("botan")
     set_urls("https://github.com/randombit/botan/archive/refs/tags/$(version).tar.gz",
              "https://github.com/randombit/botan.git")
 
+    add_versions("3.5.0", "7d91d3349e6029e1a6929a50ab587f9fd4e29a9af3f3d698553451365564001f")
     add_versions("3.4.0", "6ef2a16a0527b1cfc9648a644877f7b95c4d07e8ef237273b030c623418c5e5b")
 
     add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})

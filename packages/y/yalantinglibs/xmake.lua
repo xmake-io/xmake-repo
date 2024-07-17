@@ -8,6 +8,7 @@ package("yalantinglibs")
              "https://github.com/alibaba/yalantinglibs.git")
 
     add_versions("0.3.4", "dd5edd3f43f23cd4b0614896e6587b61bb38c981dc21c85a54bcc54800d0dfe8")
+    add_versions("0.3.5", "8d382573da01449c4f83fccbbc3bdc08d221651f3fc8b9137eb4fbdb703677c2")
 
     add_configs("ssl", {description = "Enable ssl support", default = false, type = "boolean"})
     add_configs("pmr", {description = "Enable pmr support",  default = false, type = "boolean"})

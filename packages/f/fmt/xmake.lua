@@ -13,7 +13,7 @@ package("fmt")
     add_versions("10.1.0", "d725fa83a8b57a3cedf238828fa6b167f963041e8f9f7327649bddc68ae316f4")
     add_versions("10.0.0", "4943cb165f3f587f26da834d3056ee8733c397e024145ca7d2a8a96bb71ac281")
     add_versions("9.1.0", "cceb4cb9366e18a5742128cb3524ce5f50e88b476f1e54737a47ffdf4df4c996")
-    add_versions("9.0.0", "fc96dd2d2fdf2bded630787adba892c23cb9e35c6fd3273c136b0c57d4651ad6")    
+    add_versions("9.0.0", "fc96dd2d2fdf2bded630787adba892c23cb9e35c6fd3273c136b0c57d4651ad6")
     add_versions("8.1.1", "23778bad8edba12d76e4075da06db591f3b0e3c6c04928ced4a7282ca3400e5d")
     add_versions("8.0.1", "a627a56eab9554fc1e5dd9a623d0768583b3a383ff70a4312ba68f94c9d415bf")
     add_versions("8.0.0", "36016a75dd6e0a9c1c7df5edb98c93a3e77dabcf122de364116efb9f23c6954a")
@@ -22,9 +22,7 @@ package("fmt")
     add_versions("6.0.0", "b4a16b38fa171f15dbfb958b02da9bbef2c482debadf64ac81ec61b5ac422440")
     add_versions("5.3.0", "4c0741e10183f75d7d6f730b8708a99b329b2f942dad5a9da3385ab92bb4a15c")
 
-    add_patches("10.1.0",
-                path.join(os.scriptdir(), "patches", "10.1.0", "utf8.patch" ),
-                "3280569bced9ec08933f0ea37b6a4fef4538944d9046fe197ad63e22d1357cd4")
+    add_patches("10.1.0", "patches/10.1.0/utf8.patch", "3280569bced9ec08933f0ea37b6a4fef4538944d9046fe197ad63e22d1357cd4")
 
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
     add_configs("unicode", {description = "Enable Unicode support.", default = true, type = "boolean"})
@@ -40,6 +38,7 @@ package("fmt")
     on_load(function (package)
         if package:config("header_only") then
             package:add("defines", "FMT_HEADER_ONLY=1")
+            package:set("kind", "library", {headeronly = true})
         else
             package:add("deps", "cmake")
         end
