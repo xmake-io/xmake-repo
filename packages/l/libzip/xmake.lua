@@ -13,6 +13,8 @@ package("libzip")
     add_versions("v1.8.0", "30ee55868c0a698d3c600492f2bea4eb62c53849bcf696d21af5eb65f3f3839e")
     add_versions("v1.9.2", "fd6a7f745de3d69cf5603edc9cb33d2890f0198e415255d0987a0cf10d824c6f")
 
+    add_patches("<=1.10.1", "patches/1.10.1/mingw.patch", "17513dbef5feca0630ad16a2eacb507fd2ee3d3a47a7c9a660eba24b35ea3fa8")
+
     add_deps("cmake", "zlib")
 
     local configdeps = {-- gnutls = "gnutls",
