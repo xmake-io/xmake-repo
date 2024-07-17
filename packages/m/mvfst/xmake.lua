@@ -15,6 +15,7 @@ package("mvfst")
     add_versions("2024.06.24", "0a8c9bf9c9e1e293e56c0bd05e60606b2b299245510442a2e9af01519c040041")
     add_versions("2024.07.01", "833fc3421cb8a17ab1c2b5542e76074bcb9cfd534ec5e459393dd1e774921907")
     add_versions("2024.07.08", "345080326a3a8a24439253f7029b8f3c0785d804a179757b94ea2a5a52f4013f")
+    add_versions("2024.07.15", "598ac31d018c980c60d19fd5bd625b79cc6235250fdb3210524cfaa6cf27bddb")
 
     add_patches(">=2024.06.17", path.join(os.scriptdir(), "patches", "shared.patch"), "6b940f5a07e476d1f13b7d427923573333c82eb3b887d25927b6da9b0400c107")
 
