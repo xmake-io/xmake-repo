@@ -8,7 +8,9 @@ package("osip")
 
     add_versions("5.3.0", "593c9d61150b230f7e757b652d70d5fe336c84db7e4db190658f9ef1597d59ed")
 
-    on_install(function (package)
+    add_deps("autoconf", "automake")
+
+    on_install("@macosx", "@linux", "@bsd", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
