@@ -8,6 +8,12 @@ package("xerces-c")
     add_versions("3.2.5", "4aa0f7ed265a45d253f900fa145cc8cae10414d085695f1de03a2ec141a3358b")
     add_versions("3.2.4", "563a668b331ca5d1fc08ed52e5f62a13508b47557f88a068ad1db6f68e1f2eb2")
 
+    add_configs("xmlch_type", {
+        description = "XMLCh type (UTF-16 character type)",
+        default = "char16_t",
+        type = "string",
+        values = {"char16_t", "uint16_t", "wchar_t"}
+    })
     local is_system_transcoder_supported = is_plat("linux", "windows", "mingw", "macosx")
     add_configs("transcoder", {
         description = "Transcoder (used to convert between internal UTF-16 and other encodings)",
@@ -31,6 +37,12 @@ package("xerces-c")
         assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(xerces-c): need ndk api level >= 26 for android armeabi-v7a")
     end)
 
+    on_check(function (package)
+        if package:config("xmlch_type") == "wchar_t" then
+            assert(package:is_plat("windows"), "Windows only")
+        end
+    end)
+
     on_load(function (package)
         if package:config("transcoder") == "system_transcoder" then
             if package:is_plat("linux") then
@@ -51,7 +63,8 @@ package("xerces-c")
 
     on_install("windows", "macosx", "linux", "android", function (package)
         local configs = {
-            "-Dnetwork=OFF"
+            "-Dnetwork=OFF",
+            "-Dxmlch-type=" .. package:config("xmlch_type")
         }
 
         local packagedeps = {}
