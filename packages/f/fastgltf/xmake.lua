@@ -6,6 +6,7 @@ package("fastgltf")
     add_urls("https://github.com/spnda/fastgltf/archive/refs/tags/$(version).tar.gz",
              "https://github.com/spnda/fastgltf.git")
 
+    add_versions("v0.7.2", "292fc9d0d5a6726c90db88c1aadf09e6d152ffc0ebffe6fb968736c47288511c")
     add_versions("v0.7.1", "44bcb025dd5cd480236a3bc7a3f8c9a708a801ed773b7859677440d22e0e1e7c")
 
     add_patches("0.7.1", "patches/0.7.1/cmake-simdjson.patch", "943828708f0e011122249196dc70d9a1f026e3212e1c1c35f6988907a6ea4e49")
