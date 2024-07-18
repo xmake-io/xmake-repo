@@ -15,6 +15,7 @@ package("proxygen")
     add_versions("2024.06.24", "4087de735334ba50f1e9c8df7c2040718d3c1ba9f9da102db5bbb7328a56b94a")
     add_versions("2024.07.01", "eb5141c6e972b3957a15ab90feb3d56b68061b2ca8d463fe84776cce5c9629bb")
     add_versions("2024.07.08", "3980eceba8a353222f831a411feeeec8f4e8b846278abb915f20865765a2edbf")
+    add_versions("2024.07.15", "ab26ec9184980edf709547af5dd7f52030f60d2d4474b269c93a96e809c10c5f")
 
     add_deps("cmake", "folly", "fizz", "wangle", "mvfst", "gperf", "python")
 
