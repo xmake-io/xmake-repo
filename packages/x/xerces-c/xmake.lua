@@ -33,6 +33,12 @@ package("xerces-c")
         type = "string",
         values = {"inmemory", "icu", "iconv"}
     })
+    add_configs("network_accessor", {
+        description = "Net Accessor (used to access network resources)",
+        default = "off",
+        type = "string",
+        values = {"off", "curl", "sockets", "cfurl", "winsock"}
+    })
 
     add_deps("cmake")
     if is_plat("android") then
@@ -82,11 +88,23 @@ package("xerces-c")
         elseif package:config("message_loader") == "icu" then
             package:add("deps", "icu4c")
         end
+
+        if package:config("network_accessor") == "curl" then
+            assert(not package:is_plat("windows"), "UNIX only")
+            package:add("deps", "libcurl")
+        elseif package:config("network_accessor") == "sockets" then
+            assert(not package:is_plat("windows"), "UNIX only")
+        elseif package:config("network_accessor") == "cfurl" then
+            assert(package:is_plat("macosx"), "macOS only")
+            add_frameworks("CoreServices")
+        elseif package:config("network_accessor") == "winsock" then
+            assert(package:is_plat("windows", "cygwin", "mingw"), "Windows, Cygwin, MingGW only")
+            add_syslinks("advapi32")
+        end
     end)
 
     on_install("windows", "macosx", "linux", "android", function (package)
         local configs = {
-            "-Dnetwork=OFF",
             "-Dxmlch-type=" .. package:config("xmlch_type"),
             "-Dmutex-manager=" .. package:config("mutex_manager"),
             "-Dmessage-loader=" .. package:config("message_loader")
@@ -109,6 +127,12 @@ package("xerces-c")
             table.insert(configs, "-Dtranscoder=icu")
         end
 
+        if package:config("network_accessor") == "off" then
+            table.insert(configs, "-Dnetwork:BOOL=OFF")
+        else
+            table.insert(configs, "-Dnetwork-accessor=" .. package:config("network_accessor"))
+        end
+
         local packagedeps = {}
         if package:config("transcoder") == "iconv" or package:config("message_loader") == "iconv" then
             table.insert(packagedeps, "libiconv")
@@ -123,6 +147,9 @@ package("xerces-c")
                     target_compile_features(${_ICU_imported_target} INTERFACE cxx_std_17)
                 ]],
                 {plain = true})
+        end
+        if package:config("network_accessor") == "curl" then
+            table.insert(packagedeps, "libcurl")
         end
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
