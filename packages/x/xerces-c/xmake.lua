@@ -14,6 +14,12 @@ package("xerces-c")
         type = "string",
         values = {"char16_t", "uint16_t", "wchar_t"}
     })
+    add_configs("mutex_manager", {
+        description = "Thread support",
+        default = "standard",
+        type = "string",
+        values = {"standard", "posix", "windows", "nothreads"}
+    })
     local is_system_transcoder_supported = is_plat("linux", "windows", "mingw", "macosx")
     add_configs("transcoder", {
         description = "Transcoder (used to convert between internal UTF-16 and other encodings)",
@@ -41,6 +47,11 @@ package("xerces-c")
         if package:config("xmlch_type") == "wchar_t" then
             assert(package:is_plat("windows"), "Windows only")
         end
+        if package:config("mutex_manager") == "windows" then
+            assert(package:is_plat("windows"), "Windows only")
+        elseif package:config("mutex_manager") == "posix" then
+            assert((not package:is_plat("windows")) or package:is_plat("cygwin"), "UNIX and Cygwin only")
+        end
     end)
 
     on_load(function (package)
@@ -64,8 +75,12 @@ package("xerces-c")
     on_install("windows", "macosx", "linux", "android", function (package)
         local configs = {
             "-Dnetwork=OFF",
-            "-Dxmlch-type=" .. package:config("xmlch_type")
+            "-Dxmlch-type=" .. package:config("xmlch_type"),
+            "-Dmutex-manager=" .. package:config("mutex_manager")
         }
+        if package:config("mutex_manager") == "nothreads" then
+            table.insert(configs, "-Dthreads:BOOL=OFF")
+        end
 
         local packagedeps = {}
         if package:config("transcoder") == "system_transcoder" then
