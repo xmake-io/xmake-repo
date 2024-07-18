@@ -27,6 +27,12 @@ package("xerces-c")
         type = "string",
         values = {"system_transcoder", "iconv", "icu"}
     })
+    add_configs("message_loader", {
+        description = "Message Loader (used to access diagnostics messages)",
+        default = "inmemory",
+        type = "string",
+        values = {"inmemory", "icu", "iconv"}
+    })
 
     add_deps("cmake")
     if is_plat("android") then
@@ -70,19 +76,25 @@ package("xerces-c")
         elseif package:config("transcoder") == "icu" then
             package:add("deps", "icu4c")
         end
+
+        if package:config("message_loader") == "iconv" then
+            package:add("deps", "libiconv")
+        elseif package:config("message_loader") == "icu" then
+            package:add("deps", "icu4c")
+        end
     end)
 
     on_install("windows", "macosx", "linux", "android", function (package)
         local configs = {
             "-Dnetwork=OFF",
             "-Dxmlch-type=" .. package:config("xmlch_type"),
-            "-Dmutex-manager=" .. package:config("mutex_manager")
+            "-Dmutex-manager=" .. package:config("mutex_manager"),
+            "-Dmessage-loader=" .. package:config("message_loader")
         }
         if package:config("mutex_manager") == "nothreads" then
             table.insert(configs, "-Dthreads:BOOL=OFF")
         end
 
-        local packagedeps = {}
         if package:config("transcoder") == "system_transcoder" then
             if package:is_plat("linux") then
                 table.insert(configs, "-Dtranscoder=gnuiconv")
@@ -92,11 +104,17 @@ package("xerces-c")
                 table.insert(configs, "-Dtranscoder=macosunicodeconverter")
             end
         elseif package:config("transcoder") == "iconv" then
-            table.insert(packagedeps, "libiconv")
             table.insert(configs, "-Dtranscoder=iconv")
         elseif package:config("transcoder") == "icu" then
-            table.insert(packagedeps, "icu4c")
             table.insert(configs, "-Dtranscoder=icu")
+        end
+
+        local packagedeps = {}
+        if package:config("transcoder") == "iconv" or package:config("message_loader") == "iconv" then
+            table.insert(packagedeps, "libiconv")
+        end
+        if package:config("transcoder") == "icu" or package:config("message_loader") == "icu" then
+            table.insert(packagedeps, "icu4c")
             io.replace(
                 "cmake/FindICU.cmake",
                 "add_library(${_ICU_imported_target} UNKNOWN IMPORTED)",
