@@ -55,7 +55,7 @@ package("backward-cpp")
         package:add("defines", "BACKWARD_HAS_PDB_SYMBOL=" .. (is_plat("windows") and "1" or "0"))
     end)
 
-    on_install("windows|!arm.*", function (package)
+    on_install("windows|!arm64", function (package)
         io.replace("backward.hpp", [[#pragma comment(lib, "psapi.lib")]], "", {plain = true})
         io.replace("backward.hpp", [[#pragma comment(lib, "dbghelp.lib")]], "", {plain = true})
 
