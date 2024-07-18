@@ -56,9 +56,6 @@ package("backward-cpp")
     end)
 
     on_install("windows|!arm64", function (package)
-        io.replace("backward.hpp", [[#pragma comment(lib, "psapi.lib")]], "", {plain = true})
-        io.replace("backward.hpp", [[#pragma comment(lib, "dbghelp.lib")]], "", {plain = true})
-
         local configs = {"-DBACKWARD_TESTS=OFF", "-DSTACK_DETAILS_AUTO_DETECT=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBACKWARD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
@@ -80,6 +77,10 @@ package("backward-cpp")
         table.insert(configs, "-DSTACK_DETAILS_BFD=" .. ((stack_walking == "bfd") and "ON" or "OFF"))
         table.insert(configs, "-DSTACK_DETAILS_DWARF=" .. ((stack_walking == "dwarf") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+
+        io.replace("backward.hpp", [[#pragma comment(lib, "psapi.lib")]], "", {plain = true})
+        io.replace("backward.hpp", [[#pragma comment(lib, "dbghelp.lib")]], "", {plain = true})
+
         os.cp(package:installdir("include/*.hpp"), package:installdir("include/backward"))
         os.cp(package:installdir("include/*.hpp"), package:installdir("lib/backward"))
     end)
