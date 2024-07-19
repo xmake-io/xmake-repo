@@ -22,7 +22,7 @@ package("backward-cpp")
 
     if is_plat("windows", "mingw") then
         add_syslinks("psapi", "dbghelp")
-    elseif is_plat("linux", "bsd", "android") then
+    elseif is_plat("linux", "bsd", "android", "wasm") then
         add_syslinks("dl", "m", "execinfo")
     end
 
