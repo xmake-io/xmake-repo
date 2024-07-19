@@ -25,10 +25,6 @@ package("backward-cpp")
     elseif is_plat("linux", "bsd", "android") then
         add_syslinks("dl", "m")
     end
-    
-    if is_plat("android", "bsd", "wasm") then
-        add_syslinks("execinfo")
-    end
 
     add_deps("cmake")
 
@@ -59,7 +55,7 @@ package("backward-cpp")
         package:add("defines", "BACKWARD_HAS_PDB_SYMBOL=" .. (is_plat("windows") and "1" or "0"))
     end)
 
-    on_install("!windows or windows|!arm64", function (package)
+    on_install("(!windows or windows|!arm64) and !android and !bsd and !wasm", function (package)
         local configs = {"-DBACKWARD_TESTS=OFF", "-DSTACK_DETAILS_AUTO_DETECT=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBACKWARD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
