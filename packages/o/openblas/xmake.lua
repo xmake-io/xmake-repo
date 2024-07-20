@@ -48,7 +48,7 @@ package("openblas")
         add_versions("0.3.26", "4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68")
         add_versions("0.3.27", "aa2d68b1564fe2b13bc292672608e9cdeeeb6dc34995512e65c3b10f4599e897")
 
-        add_configs("fortran", {description = "Compile with fortran enabled.", default = is_plat("linux"), type = "boolean"})
+        add_configs("fortran", {description = "Compile with fortran enabled.", default = not is_plat("macosx"), type = "boolean"})
         add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean"})
     end
 
