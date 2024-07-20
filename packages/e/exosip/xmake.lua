@@ -10,7 +10,6 @@ package("exosip")
 
     add_deps("autoconf", "m4", "libtool", "automake", "osip", "openssl 1.1.1-w")
     add_links("eXosip2", "osip2", "osipparser2", "ssl", "crypto", "pthread", "resolv")
-    add_cflags("-pthread")
 
     if is_plat("macosx") then
         add_syslinks("resolv")
@@ -20,7 +19,7 @@ package("exosip")
     end
 
     on_install("macosx", "linux", function (package)
-        local configs = {"--disable-trace"}
+        local configs = {"--disable-trace", "--enable-pthread=force"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if not package:debug() then
