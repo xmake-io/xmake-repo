@@ -1,6 +1,6 @@
 package("exosip")
     set_homepage("https://savannah.nongnu.org/projects/exosip")
-    set_description("eXosip is a library that hides the complexity of using the SIP protocol for mutlimedia session establishement.")
+    set_description("eXosip is a library that hides the complexity of using the SIP protocol for mutlimedia session establishement")
     set_license("GPL-2.0")
 
     add_urls("https://git.savannah.nongnu.org/cgit/exosip.git/snapshot/exosip-$(version).tar.gz",
