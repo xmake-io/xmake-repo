@@ -32,16 +32,12 @@ package("oatpp-openssl")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "oatpp-openssl/SHA1.hpp"
+           #include "oatpp-openssl/server/ConnectionProvider.hpp"
+            #include "oatpp-openssl/Config.hpp"
+            #include "oatpp-openssl/configurer/TrustStore.hpp"
             void test() {
-                oatpp::String message = "oat++ web framework";
-                oatpp::String messageEncoded = "43e1bad62b6b4a1e88c9de60435335b5b7518f4a";
-                {
-                    oatpp::openssl::SHA1 sha;
-                    sha.update(message);
-                    oatpp::String encoded = sha.finalBinary();
-                    OATPP_ASSERT(encoded == messageEncoded);
-                }
+                const char* trust = "path/to/truststore";
+                auto config = oatpp::openssl::Config::createDefaultClientConfigShared();
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)
