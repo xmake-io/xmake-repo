@@ -8,37 +8,12 @@ package("xerces-c")
     add_versions("3.2.5", "4aa0f7ed265a45d253f900fa145cc8cae10414d085695f1de03a2ec141a3358b")
     add_versions("3.2.4", "563a668b331ca5d1fc08ed52e5f62a13508b47557f88a068ad1db6f68e1f2eb2")
 
-    add_configs("xmlch_type", {
-        description = "XMLCh type (UTF-16 character type)",
-        default = "char16_t",
-        type = "string",
-        values = {"char16_t", "uint16_t", "wchar_t"}
-    })
-    add_configs("mutex_manager", {
-        description = "Thread support",
-        default = "standard",
-        type = "string",
-        values = {"standard", "posix", "windows", "nothreads"}
-    })
+    add_configs("xmlch_type", {description = "XMLCh type (UTF-16 character type)", default = "char16_t", type = "string", values = {"char16_t", "uint16_t", "wchar_t"}})
+    add_configs("mutex_manager", {description = "Thread support", default = "standard", type = "string", values = {"standard", "posix", "windows", "nothreads"}})
     local is_system_transcoder_supported = is_plat("linux", "windows", "mingw", "macosx")
-    add_configs("transcoder", {
-        description = "Transcoder (used to convert between internal UTF-16 and other encodings)",
-        default = is_system_transcoder_supported and "system_transcoder" or "iconv",
-        type = "string",
-        values = {"system_transcoder", "iconv", "icu"}
-    })
-    add_configs("message_loader", {
-        description = "Message Loader (used to access diagnostics messages)",
-        default = "inmemory",
-        type = "string",
-        values = {"inmemory", "icu", "iconv"}
-    })
-    add_configs("network_accessor", {
-        description = "Net Accessor (used to access network resources)",
-        default = "off",
-        type = "string",
-        values = {"off", "curl", "sockets", "cfurl", "winsock"}
-    })
+    add_configs("transcoder", {description = "Transcoder (used to convert between internal UTF-16 and other encodings)", default = is_system_transcoder_supported and "system_transcoder" or "iconv", type = "string", values = {"system_transcoder", "iconv", "icu"}})
+    add_configs("message_loader", {description = "Message Loader (used to access diagnostics messages)", default = "inmemory", type = "string", values = {"inmemory", "icu", "iconv"}})
+    add_configs("network_accessor", {description = "Net Accessor (used to access network resources)", default = "off", type = "string", values = {"off", "curl", "sockets", "cfurl", "winsock"}})
 
     add_deps("cmake")
     if is_plat("android") then
