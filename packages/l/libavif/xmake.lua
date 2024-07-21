@@ -33,7 +33,7 @@ package("libavif")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        table.insert(configs, "-DAVIF_CODEC_DAV1D=ON" .. (package:config("dav1d") and "ON" or "OFF"))
+        table.insert(configs, "-DAVIF_CODEC_DAV1D=" .. (package:config("dav1d") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
