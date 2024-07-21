@@ -8,6 +8,7 @@ package("libxmake")
              "https://github.com/xmake-io/xmake.git",
              "https://gitlab.com/tboox/xmake.git")
 
+    add_versions("v2.9.3", "82a9bb6961a39bea8f280c1413d54854423f8f92e2ff43ee1c0fead7a3b5edd8")
     add_versions("v2.9.2", "1f617b6a4568c7eb3e8ab0f3a67c16989245adc547e3a7d1fd861acb308fb5b2")
     add_versions("v2.9.1", "a31dbef8c303aea1268068b4b1ac1aec142ac4124c7cb7d9c7eeb57c414f8d15")
     add_versions("v2.8.9", "5f793c393346ef80e47f083ade4d3c2fdfc448658a7917fda35ccd7bd2b911b8")
