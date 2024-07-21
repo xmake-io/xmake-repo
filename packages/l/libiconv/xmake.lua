@@ -20,10 +20,12 @@ package("libiconv")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    on_fetch("macosx", "linux", function (package, opt)
+    on_fetch(function (package, opt)
         if opt.system then
-            if package:is_plat("linux") and package:has_tool("cc", "gcc", "gxx") then
-                return {} -- on linux libiconv is already a part of glibc
+            import("lib.detect.has_ctypes")
+            import("lib.detect.has_cfuncs")
+            if has_ctypes("iconv_t", {includes = "iconv.h"}) and has_cfuncs("iconv", {includes = "iconv.h"}) then
+                return {} -- libiconv is already a part of glibc (GNU iconv)
             else
                 return package:find_package("system::iconv", {includes = "iconv.h"})
             end
