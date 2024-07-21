@@ -15,13 +15,20 @@ package("libavif")
     add_deps("cmake")
     add_deps("libyuv")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(libavif): library deps libyuv need ndk version > 22")
+        end)
+    end
+
     on_load(function (package)
         if package:config("dav1d") then
             package:add("deps", "dav1d")
         end
     end)
 
-    on_install("!cross", function (package)
+    on_install("!cross and !wasm", function (package)
         local configs = {"-DAVIF_ENABLE_WERROR=OFF", "-DAVIF_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
