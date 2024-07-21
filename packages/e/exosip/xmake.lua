@@ -8,8 +8,8 @@ package("exosip")
 
     add_versions("5.3.0", "66c2b2ddcfdc8807054fa31f72a6068ef66d98bedd9aedb25b9031718b9906a2")
 
-    add_deps("autoconf", "m4", "libtool", "automake", "osip", "openssl 1.1.1-w")
-    add_links("eXosip2", "osip2", "osipparser2", "ssl", "crypto", "pthread", "resolv")
+    add_deps("autoconf", "m4", "libtool", "automake", "osip", "openssl")
+    add_links("eXosip2", "osip2", "osipparser2")
 
     if is_plat("macosx") then
         add_syslinks("resolv")
