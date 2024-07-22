@@ -14,12 +14,11 @@ package("libaom-av1")
         add_syslinks("pthread", "m")
     end
 
-    add_deps("cmake")
-    if is_plat("windows") then
+    add_deps("cmake", "nasm")
+    if is_plat("windows", "mingw") then
         add_deps("strawberry-perl")
-    else
-        add_deps("nasm")
     end
+
     on_install(function (package)
         local configs = {
             "-DENABLE_EXAMPLES=OFF",
@@ -30,6 +29,10 @@ package("libaom-av1")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") and package:is_arch("arm.*") then
+            table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch())
+        end
 
         table.insert(configs, "-DENABLE_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
