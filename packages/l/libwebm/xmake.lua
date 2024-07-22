@@ -3,14 +3,12 @@ package("libwebm")
     set_description("Library for muxing and demuxing WebM media container files")
     set_license("BSD-3-Clause")
 
-    add_urls("https://chromium.googlesource.com/webm/libwebm.git")
-    add_urls("https://chromium.googlesource.com/webm/libwebm/+archive/libwebm-$(version).tar.gz", {
-        version = function (version)
+    add_urls("https://chromium.googlesource.com/webm/libwebm.git", { version = function (version)
             return version:gsub("+", ".")
         end
     })
 
-    add_versions("1.0.0+31", "60caf5776124db463d6f98bc216bd48d8b4e73d9034b65168b801f031dfcfc55")
+    add_versions("1.0.0+31", "6745fd29e0245fc584b0bb9f65018ea2366fe7fb")
 
     add_configs("webmts", {description = "Enables WebM PES/TS support.", default = false, type = "boolean"})
     add_configs("webm_info", {description = "Enables building webm_info.", default = false, type = "boolean"})
