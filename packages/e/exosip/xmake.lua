@@ -19,6 +19,19 @@ package("exosip")
         add_syslinks("pthread", "resolv")
     end
 
+    on_check("macosx", function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include "TargetConditionals.h"
+            #include <CoreFoundation/CoreFoundation.h>
+            #include <CoreServices/CoreServices.h>
+            #include <Security/Security.h>
+            void test() {
+                SInt32 osx_version = 0;
+                OSErr res = Gestalt(gestaltSystemVersion, &osx_version);
+            }
+        ]]}))
+    end)
+
     on_install("macosx", "linux", function (package)
         local configs = {"--disable-trace", "--enable-pthread=force"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
