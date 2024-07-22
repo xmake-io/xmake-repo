@@ -39,6 +39,7 @@ package("openexr")
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "OPENEXR_DLL")
         end
+        package:add("includedirs", {"include/OpenEXR", "include"})
     end)
 
     on_install("macosx", "linux", "windows", "mingw@windows", "mingw@msys", function (package)
