@@ -36,6 +36,13 @@ package("sqlite3")
     add_versions("3.45.0+300", "b2809ca53124c19c60f42bf627736eae011afdcc205bb48270a5ee9a38191531")
     add_versions("3.46.0+0", "6f8e6a7b335273748816f9b3b62bbdc372a889de8782d7f048c653a447417a7d")
 
+    add_configs("explain_comments", { description = "Inserts comment text into the output of EXPLAIN.", default = true, type = "boolean"})
+    add_configs("dbpage_vtab",      { description = "Enable the SQLITE_DBPAGE virtual table.", default = true, type = "boolean"})
+    add_configs("stmt_vtab",        { description = "Enable the SQLITE_STMT virtual table logic.", default = true, type = "boolean"})
+    add_configs("dbstat_vtab",      { description = "Enable the dbstat virtual table.", default = true, type = "boolean"})
+    add_configs("math_functions",   { description = "Enable the built-in SQL math functions.", default = true, type = "boolean"})
+    add_configs("rtree",            { description = "Enable R-Tree.", default = false, type = "boolean"})
+
     if is_plat("macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
     end
@@ -44,11 +51,20 @@ package("sqlite3")
         local xmake_lua = [[
             add_rules("mode.debug", "mode.release")
             set_encodings("utf-8")
+
+            option("explain_comments", {default = false, defines = "SQLITE_ENABLE_EXPLAIN_COMMENTS"})
+            option("dbpage_vtab", {default = false, defines = "SQLITE_ENABLE_DBPAGE_VTAB"})
+            option("stmt_vtab", {default = false, defines = "SQLITE_ENABLE_STMTVTAB"})
+            option("dbstat_vtab", {default = false, defines = "SQLITE_ENABLE_DBSTAT_VTAB"})
+            option("math_functions", {default = false, defines = "SQLITE_ENABLE_MATH_FUNCTIONS"})
+            option("rtree", {default = false, defines = "SQLITE_ENABLE_RTREE"})
+
             target("sqlite3")
                 set_kind("$(kind)")
                 add_files("sqlite3.c")
                 add_headerfiles("sqlite3.h", "sqlite3ext.h")
-                add_defines("SQLITE_ENABLE_EXPLAIN_COMMENTS", "SQLITE_ENABLE_DBPAGE_VTAB", "SQLITE_ENABLE_STMTVTAB", "SQLITE_ENABLE_DBSTAT_VTAB", "SQLITE_ENABLE_MATH_FUNCTIONS")
+                add_options("explain_comments", "dbpage_vtab", "stmt_vtab", "dbstat_vtab", "math_functions", "rtree")
+
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("SQLITE_API=__declspec(dllexport)")
                 end
@@ -66,7 +82,15 @@ package("sqlite3")
             ]]
         end
         io.writefile("xmake.lua", xmake_lua)
-        import("package.tools.xmake").install(package)
+
+        local configs = {}
+        for opt, value in pairs(package:configs()) do
+            if not package:extraconf("configs", opt, "builtin") then
+                configs[opt] = value
+            end
+        end
+
+        import("package.tools.xmake").install(package, configs)
         package:addenv("PATH", "bin")
     end)
 

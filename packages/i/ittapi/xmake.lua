@@ -6,6 +6,8 @@ package("ittapi")
     add_urls("https://github.com/intel/ittapi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/intel/ittapi.git")
 
+    add_versions("v3.25.1", "866a5a75a287a7440760146f99bd1093750c3fb5bf572c3bff2d4795628ebc7c")
+    add_versions("v3.24.8", "4e57ece3286f3b902d17b1247710f0f6f9a370cc07d5e67631d3656ffac28d81")
     add_versions("v3.24.7", "2ff56c5c3f144b92e34af9bee451115f6076c9070ec92d361c3c07de8ff42649")
     add_versions("v3.24.6", "4e6cb42b6bd9e699e3dfbaf678e572f4292127dfee3312744137ac567064a26f")
     add_versions("v3.24.4", "f7341c563f228f4358b645fce526208c742fe13e61fc3ba2c777ba94d36e98f5")

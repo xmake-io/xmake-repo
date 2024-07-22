@@ -6,10 +6,11 @@ package("glog")
     add_urls("https://github.com/google/glog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/glog.git")
 
+    add_versions("v0.7.1", "00e4a87e87b7e7612f519a41e491f16623b12423620006f59f5688bfd8d13b08")
     add_versions("v0.7.0", "375106b5976231b92e66879c1a92ce062923b9ae573c42b56ba28b112ee4cc11")
-    add_versions("v0.4.0", "f28359aeba12f30d73d9e4711ef356dc842886968112162bc73002645139c39c")
-    add_versions("v0.5.0", "eede71f28371bf39aa69b45de23b329d37214016e2055269b3b5e7cfd40b59f5")
     add_versions("v0.6.0", "8a83bf982f37bb70825df71a9709fa90ea9f4447fb3c099e1d720a439d88bad6")
+    add_versions("v0.5.0", "eede71f28371bf39aa69b45de23b329d37214016e2055269b3b5e7cfd40b59f5")
+    add_versions("v0.4.0", "f28359aeba12f30d73d9e4711ef356dc842886968112162bc73002645139c39c")
 
     local configdeps = {gtest = "gtest", gflags = "gflags", unwind = "libunwind"}
     for config, dep in pairs(configdeps) do

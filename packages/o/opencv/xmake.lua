@@ -6,6 +6,7 @@ package("opencv")
 
     add_urls("https://github.com/opencv/opencv/archive/$(version).tar.gz",
              "https://github.com/opencv/opencv.git")
+    add_versions("4.10.0", "b2171af5be6b26f7a06b1229948bbb2bdaa74fcf5cd097e0af6378fce50a6eb9")
     add_versions("4.9.0", "ddf76f9dffd322c7c3cb1f721d0887f62d747b82059342213138dc190f28bc6c")
     add_versions("4.8.0", "cbf47ecc336d2bff36b0dcd7d6c179a9bb59e805136af6b9670ca944aef889bd")
     add_versions("4.6.0", "1ec1cba65f9f20fe5a41fda1586e01c70ea0c9a6d7b67c9e13edf0cfe2239277")
@@ -17,6 +18,7 @@ package("opencv")
     add_versions("4.2.0", "9ccb2192d7e8c03c58fee07051364d94ed7599363f3b0dce1c5e6cc11c1bb0ec")
     add_versions("3.4.9", "b7ea364de7273cfb3b771a0d9c111b8b8dfb42ff2bcd2d84681902fb8f49892a")
 
+    add_resources("4.10.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.10.0.tar.gz", "65597f8fb8dc2b876c1b45b928bbcc5f772ddbaf97539bf1b737623d0604cba1")
     add_resources("4.9.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.9.0.tar.gz", "8952c45a73b75676c522dd574229f563e43c271ae1d5bbbd26f8e2b6bc1a4dae")
     add_resources("4.8.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.8.0.tar.gz", "b4aef0f25a22edcd7305df830fa926ca304ea9db65de6ccd02f6cfa5f3357dbb")
     add_resources("4.6.0", "opencv_contrib", "https://github.com/opencv/opencv_contrib/archive/4.6.0.tar.gz", "1777d5fd2b59029cf537e5fd6f8aa68d707075822f90bde683fcde086f85f7a7")
@@ -80,13 +82,14 @@ package("opencv")
             elseif package:is_arch("arm64") then arch = "ARM64"
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
-            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            local vs = package:toolchain("msvc"):config("vs")
             local vc_ver = "vc13"
             if     vs == "2015" then vc_ver = "vc14"
             elseif vs == "2017" then vc_ver = "vc15"
             elseif vs == "2019" then vc_ver = "vc16"
             elseif vs == "2022" then vc_ver = "vc17"
             end
+            package:add("linkdirs", linkdir) -- fix path for 4.9.0/vs2022
             package:add("linkdirs", path.join(arch, vc_ver, linkdir))
         elseif package:is_plat("mingw") then
             local arch = (package:is_arch("x86_64") and "x64" or "x86")
@@ -112,7 +115,7 @@ package("opencv")
                 package:add("deps", "gtk+3", {optional = true})
             end
         end
-        if not package.is_built or package:is_built() then
+        if not package:is_precompiled() then
             package:add("deps", "cmake", "python 3.x", {kind = "binary"})
         end
 
@@ -120,6 +123,16 @@ package("opencv")
             package:add("deps", "tesseract 4.1.3") -- Opencv need tesseract from the v4 series
         end
     end)
+
+    if on_check then
+        on_check("windows|arm64", function (package)
+            if package:version() and package:version():lt("4.10.0") then
+                raise("current opencv version does not support windows/arm64!")
+            end
+            local vs = package:toolchain("msvc"):config("vs")
+            assert(tonumber(vs) >= 2022, "opencv requires Visual Studio 2022 and later for arm targets")
+        end)
+    end
 
     on_install("linux", "macosx", "windows", "mingw@windows,msys", function (package)
         io.replace("cmake/OpenCVUtils.cmake", "if(PKG_CONFIG_FOUND OR PkgConfig_FOUND)", "if(NOT WIN32 AND (PKG_CONFIG_FOUND OR PkgConfig_FOUND))", {plain = true})
@@ -151,10 +164,8 @@ package("opencv")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
             if package:is_arch("arm64") then
-                local vs = import("core.tool.toolchain").load("msvc"):config("vs")
-                assert(tonumber(vs) >= 2022, "opencv requires Visual Studio 2022 and later for arm targets")
                 table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
                 table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
             end
@@ -169,14 +180,34 @@ package("opencv")
             local modulesdir = assert(find_path("modules", path.join(resourcedir, "*")), "modules not found!")
             table.insert(configs, "-DOPENCV_EXTRA_MODULES_PATH=" .. path.absolute(path.join(modulesdir, "modules")))
         end
-        -- fix https://github.com/opencv/opencv/issues/22418
-        if package:config("ffmpeg") and package:version() and package:version():le("4.6") then
-            io.replace("modules/videoio/src/ffmpeg_codecs.hpp",
-                "#include <libavformat/avformat.h>",
-                "#include <libavcodec/version.h>\n#include <libavformat/avformat.h>", {plain = true})
+        local shflags, ldflags
+        if package:config("ffmpeg") then
+            -- fix https://github.com/opencv/opencv/issues/22418
+            if package:version() and package:version():le("4.6") then
+                io.replace("modules/videoio/src/ffmpeg_codecs.hpp",
+                    "#include <libavformat/avformat.h>",
+                    "#include <libavcodec/version.h>\n#include <libavformat/avformat.h>", {plain = true})
+            end
+            -- https://www.ffmpeg.org/platform.html#toc-Advanced-linking-configuration
+            if package:config("shared") and not package:is_plat("windows", "macosx", "iphoneos") then
+                ldflags = {"-Wl,-Bsymbolic"}
+                shflags = {"-Wl,-Bsymbolic"}
+            end
         end
-        import("package.tools.cmake").install(package, configs, {buildir = "bd"})
-        for _, link in ipairs({"opencv_phase_unwrapping", "opencv_surface_matching", "opencv_saliency", "opencv_wechat_qrcode", "opencv_mcc", "opencv_face", "opencv_img_hash", "opencv_videostab", "opencv_structured_light", "opencv_intensity_transform", "opencv_ccalib", "opencv_line_descriptor", "opencv_stereo", "opencv_dnn_objdetect", "opencv_dnn_superres", "opencv_fuzzy", "opencv_hfs", "opencv_rapid", "opencv_bgsegm", "opencv_bioinspired", "opencv_rgbd", "opencv_dpm", "opencv_aruco", "opencv_reg", "opencv_tracking", "opencv_datasets", "opencv_xfeatures2d", "opencv_shape", "opencv_barcode", "opencv_superres", "opencv_viz", "opencv_plot", "opencv_quality", "opencv_text", "opencv_cudaoptflow", "opencv_optflow", "opencv_ximgproc", "opencv_xobjdetect", "opencv_xphoto", "opencv_stitching", "opencv_ml", "opencv_photo", "opencv_cudaobjdetect", "opencv_cudalegacy", "opencv_cudabgsegm", "opencv_cudafeatures2d", "opencv_cudastereo", "opencv_cudaimgproc", "opencv_cudafilters", "opencv_cudaarithm", "opencv_cudawarping", "opencv_cudacodec", "opencv_cudev", "opencv_gapi", "opencv_objdetect", "opencv_highgui", "opencv_videoio", "opencv_video", "opencv_calib3d", "opencv_dnn", "opencv_features2d", "opencv_flann", "opencv_imgcodecs", "opencv_imgproc", "opencv_core"}) do
+        import("package.tools.cmake").install(package, configs, {buildir = "bd", shflags = shflags, ldflags = ldflags})
+        for _, link in ipairs({"opencv_phase_unwrapping", "opencv_surface_matching", "opencv_saliency",
+                               "opencv_wechat_qrcode", "opencv_mcc", "opencv_face",
+                               "opencv_img_hash", "opencv_videostab", "opencv_structured_light", "opencv_intensity_transform",
+                               "opencv_ccalib", "opencv_line_descriptor", "opencv_stereo", "opencv_dnn_objdetect", "opencv_dnn_superres",
+                               "opencv_fuzzy", "opencv_hfs", "opencv_rapid", "opencv_bgsegm", "opencv_bioinspired", "opencv_rgbd",
+                               "opencv_dpm", "opencv_aruco", "opencv_reg", "opencv_tracking", "opencv_datasets", "opencv_xfeatures2d",
+                               "opencv_shape", "opencv_barcode", "opencv_superres", "opencv_viz", "opencv_plot", "opencv_quality",
+                               "opencv_text", "opencv_cudaoptflow", "opencv_optflow", "opencv_ximgproc", "opencv_xobjdetect",
+                               "opencv_xphoto", "opencv_stitching", "opencv_ml", "opencv_photo", "opencv_cudaobjdetect", "opencv_cudalegacy",
+                               "opencv_cudabgsegm", "opencv_cudafeatures2d", "opencv_cudastereo", "opencv_cudaimgproc", "opencv_cudafilters",
+                               "opencv_cudaarithm", "opencv_cudawarping", "opencv_cudacodec", "opencv_cudev", "opencv_gapi", "opencv_objdetect",
+                               "opencv_highgui", "opencv_videoio", "opencv_video", "opencv_calib3d", "opencv_dnn", "opencv_features2d",
+                               "opencv_flann", "opencv_imgcodecs", "opencv_imgproc", "opencv_core"}) do
             local reallink = link
             if package:is_plat("windows", "mingw") then
                 reallink = reallink .. package:version():gsub("%.", "")
@@ -190,7 +221,7 @@ package("opencv")
             elseif package:is_arch("arm64") then arch = "ARM64"
             end
             local linkdir = (package:config("shared") and "lib" or "staticlib")
-            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
+            local vs = package:toolchain("msvc"):config("vs")
             local vc_ver = "vc13"
             if     vs == "2015" then vc_ver = "vc14"
             elseif vs == "2017" then vc_ver = "vc15"
@@ -199,11 +230,15 @@ package("opencv")
             end
 
             local installdir = package:installdir(arch, vc_ver)
-            for _, f in ipairs(os.files(path.join(installdir, linkdir, "*.lib"))) do
+            local libfiles = {}
+            table.join2(libfiles, os.files(path.join(package:installdir(), linkdir, "*.lib")))
+            table.join2(libfiles, os.files(path.join(package:installdir(), arch, vc_ver, linkdir, "*.lib")))
+            for _, f in ipairs(libfiles) do
                 if not f:match("opencv_.+") then
                     package:add("links", path.basename(f))
                 end
             end
+            package:addenv("PATH", "bin") -- fix path for 4.9.0/vs2022
             package:addenv("PATH", path.join(arch, vc_ver, "bin"))
         elseif package:is_plat("mingw") then
             local arch = package:is_arch("x86_64") and "x64" or "x86"
@@ -228,10 +263,13 @@ package("opencv")
 
     on_test(function (package)
         if not package:is_cross() then
-            if package:debug() and package:is_plat("windows", "mingw") then
-                os.vrun("opencv_versiond")
-            else
-                os.vrun("opencv_version")
+            -- FIXME, it will crash on action ci/2022/MD, but it works on local machine
+            if not package:has_runtime("MD", "MDd") then
+                if package:debug() and package:is_plat("windows", "mingw") then
+                    os.vrun("opencv_versiond")
+                else
+                    os.vrun("opencv_version")
+                end
             end
         end
         assert(package:check_cxxsnippets({test = [[

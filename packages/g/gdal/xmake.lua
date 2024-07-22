@@ -4,6 +4,7 @@ package("gdal")
     set_license("MIT")
 
     add_urls("https://github.com/OSGeo/gdal/releases/download/v$(version)/gdal-$(version).tar.gz")
+    add_versions("3.9.1", "46cd95ad0f270af0cd317ddc28fa5e0a7ad0b0fd160a7bd22909150df53e3418")
     add_versions("3.9.0", "3b29b573b60d156cf160805290474b625c4197ca36a79fd14f83ec8f77f29ba0")
     add_versions("3.8.5", "0c865c7931c7e9bb4832f50fb53aec8676cbbaccd6e55945011b737fb89a49c2")
     add_versions("3.5.1", "7c4406ca010dc8632703a0a326f39e9db25d9f1f6ebaaeca64a963e3fac123d1")
@@ -11,7 +12,6 @@ package("gdal")
     add_deps("cmake")
     add_configs("apps", {description = "Build GDAL applications.", default = false, type = "boolean"})
     add_configs("curl", {description = "Use CURL.", default = false, type = "boolean"})
-    add_configs("curl_static", {description = "Use static build of CURL.", default = false, type = "boolean"})
     add_configs("geos", {description = "Use GEOS.", default = false, type = "boolean"})
     add_configs("gif", {description = "Use GIF.", default = false, type = "boolean"})
     add_configs("iconv", {description = "Use Iconv.", default = false, type = "boolean"})
@@ -31,7 +31,6 @@ package("gdal")
 
         local configdeps = {
             curl = "libcurl",
-            curl_static = "libcurl",
             geos = "geos",
             gif = "giflib",
             iconv = "libiconv",
@@ -45,11 +44,7 @@ package("gdal")
 
         for name, dep in pairs(configdeps) do
             if package:config(name) then
-                if name:match('^(.*)_static$') then
-                    package:add("deps", dep, {configs = {shared = false}})
-                else
-                    package:add("deps", dep)
-                end
+                package:add("deps", dep)
             end
         end
     end)
@@ -65,11 +60,11 @@ package("gdal")
         table.insert(configs, "-DBUILD_APPS=" .. (package:config("apps") and "ON" or "OFF"))
 
         local packagedeps = {"proj"}
-        if package:config("curl") or package:config("curl_static") then
+        if package:config("curl") then
             table.insert(packagedeps, "libcurl")
             table.insert(configs, "-DGDAL_USE_CURL=ON")
 
-            if package:config("curl_static") then
+            if not package:dep("libcurl"):config("shared") then
                 table.insert(configs, "-DCURL_USE_STATIC_LIBS=ON")
             end
         end

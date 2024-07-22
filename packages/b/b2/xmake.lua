@@ -6,6 +6,7 @@ package("b2")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/bfgroup/b2/releases/download/$(version)/b2-$(version).zip")
+    add_versions("5.2.1", "493102f1dd3f50f2892ce61ee91bd362720ab3fd38fa2ea6912bb2c09da9faa3")
     add_versions("5.1.0", "2bf9618a0baa132d22fdfebf6b40436329172e3ca4b7b8a33e06ed97cd603dad")
     add_versions("5.0.1", "5d3b98c63ed4d0f6114f660bd4eca5df32afa332310878b35c0d0faa04a3b6dd")
     add_versions("5.0.0", "d5f280f466b80b694ccb9696413375522d16e6f811918daeb44a917d5bd6c7b5")

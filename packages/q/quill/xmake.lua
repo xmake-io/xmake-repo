@@ -6,6 +6,9 @@ package("quill")
     set_urls("https://github.com/odygrd/quill/archive/refs/tags/$(version).tar.gz",
              "https://github.com/odygrd/quill.git")
 
+    add_versions("v5.1.0", "0b4f34415c4b173f3d0466752fa3d3835e1a58f931bfce5281f817b5f997511f")
+    add_versions("v5.0.0", "c2fd2b090db7d2d7633d4ee5a8316e43b4f5a13d8e339721b8e830fb03c25129")
+    add_versions("v4.5.0", "70e8f4a76fd8a83b60d378f31b70dd09a9381686ebafdcd0db08fe099f518309")
     add_versions("v4.3.0", "c97bf3bfac6dfb7ed77fa08d945a490e302ba07e405539fda61985b39750cb29")
     add_versions("v3.8.0", "d3e1b349c5d6904c9644e5b79ec65f21692e8094a3d75241a7fe071076eef4dd")
     add_versions("v3.6.0", "ba9dc3df262f2e65c57904580cc8407eba9a462001340c17bab7ae1dccddb4bd")
@@ -13,6 +16,8 @@ package("quill")
     add_versions("v2.9.0", "dec64c0fbb4bfbafe28fdeeeefac10206285bf2be4a42ec5dfb7987ca4ccb372")
     add_versions("v2.9.1", "921e053118136f63cebb2ca1d7e42456fd0bf9626facb755884709092753c054")
     add_versions("v2.8.0", "0461a6c314e3d882f3b9ada487ef1bf558925272509ee41a9fd25f7776db6075")
+
+    add_patches("4.5.0", "patches/4.5.0/windows-arm.patch", "e7db1f07e1eea048798283f9865842c4754ed3d1ff220954cadd392ad4450cc3")
 
     if is_plat("macosx") then
         add_extsources("brew::quill")

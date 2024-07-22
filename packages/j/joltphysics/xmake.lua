@@ -12,6 +12,8 @@ package("joltphysics")
     add_versions("v3.0.1", "7ebb40bf2dddbcf0515984582aaa197ddd06e97581fd55b98cb64f91b243b8a6")
     add_versions("v3.0.0", "f8d756ae3471a32f2ee7e07475df2f7a34752f0fdd05e9a7ed2e7ce3dcdcd574")
     add_versions("v2.0.1", "96ae2e8691c4802e56bf2587da30f2cc86b8abe82a78bc2398065bd87dd718af")
+    -- patch for SSE instructions not enabled in 32bits mode
+    add_patches("v5.0.0", "https://github.com/jrouwe/JoltPhysics/commit/ebccdcbfae6b60e37480aa203d0781d26e437fbc.patch", "274f3a3ccbe2af8c1d94a66a96c894340764da2b447a13c43a665930c2d56337")
     -- patch for visibility attributes (fixes compilation in shared mode on GCC <13)
     add_patches("v4.0.0", "https://github.com/jrouwe/JoltPhysics/commit/b084d8f9054d78cb50bc851cc4db505462c4c634.patch", "a8f5da0bc5d4a1011771016be2ad1cdb00d4c40dd0909ef6ae4a1d1c95e8e251")
     -- patch for missing standard include (fixes Fedora compilation)
@@ -29,7 +31,7 @@ package("joltphysics")
     add_configs("object_layer_bits", {description = "Number of bits to use in ObjectLayer. Can be 16 or 32.", default = "16", type = "string", values = {"16", "32"}})
     add_configs("symbols", { description = "When turning this option on, the library will be compiled with debug symbols", default = false, type = "boolean" })
 
-    if is_arch("x86", "x64", "x86_64") then
+    if is_arch("i386", "x86", "x64", "x86_64") then
         add_configs("inst_avx", { description = "Enable AVX CPU instructions (x86/x64 only)", default = false, type = "boolean" })
         add_configs("inst_avx2", { description = "Enable AVX2 CPU instructions (x86/x64 only)", default = false, type = "boolean" })
         add_configs("inst_avx512", { description = "Enable AVX512F+AVX512VL CPU instructions (x86/x64 only)", default = false, type = "boolean" })
@@ -74,9 +76,75 @@ package("joltphysics")
         if package:config("shared") then
             package:add("defines", "JPH_SHARED_LIBRARY")
         end
+        if package:is_arch("i386", "x86", "x64", "x86_64") then
+            -- add instruction sets (from https://github.com/jrouwe/JoltPhysics/blob/4cd52055e09160affcafa557b39520331bf0d034/Jolt/Jolt.cmake#L602)
+            if package:has_tool("cxx", "cl") then
+                if package:config("inst_avx512") then
+                    package:add("cxxflags", "/arch:AVX512")
+                elseif package:config("inst_avx2") then
+                    package:add("cxxflags", "/arch:AVX2")
+                elseif package:config("inst_avx") then
+                    package:add("cxxflags", "/arch:AVX2")
+                end
+            else
+                if package:config("inst_avx512") then
+                    package:add("cxxflags", "-mavx512f", "-mavx512vl", "-mavx512dq", "-mavx2", "-mbmi", "-mpopcnt", "-mlzcnt", "-mf16c")
+                elseif package:config("inst_avx2") then
+                    package:add("cxxflags", "-mavx2", "-mbmi", "-mpopcnt", "-mlzcnt", "-mf16c")
+                elseif package:config("inst_avx") then
+                    package:add("cxxflags", "-mavx", "-mpopcnt")
+                elseif package:config("inst_sse4_2") then
+                    package:add("cxxflags", "-msse4.2", "-mpopcnt")
+                elseif package:config("inst_sse4_1") then
+                    package:add("cxxflags", "-msse4.1")
+                else
+                    package:add("cxxflags", "-msse2")
+                end
+                if package:config("inst_lzcnt") then
+                    package:add("cxxflags", "-mlzcnt")
+                end
+                if package:config("inst_tzcnt") then
+                    package:add("cxxflags", "-mbmi")
+                end
+                if package:config("inst_f16c") then
+                    package:add("cxxflags", "-mf16c")
+                end
+                if package:config("inst_fmadd") and not package:config("cross_platform_deterministic") then
+                    package:add("cxxflags", "-mfma")
+                end
+                package:add("cxxflags", "-mfpmath=sse")
+            end
+            if package:config("inst_avx512") then
+        		package:add("defines", "JPH_USE_AVX512")
+            end
+            if package:config("inst_avx2") then
+        		package:add("defines", "JPH_USE_AVX2")
+            end
+            if package:config("inst_avx") then
+        		package:add("defines", "JPH_USE_AVX")
+            end
+        	if package:config("inst_sse4_1") then
+        		package:add("defines", "JPH_USE_SSE4_1")
+            end
+        	if package:config("inst_sse4_2") then
+        		package:add("defines", "JPH_USE_SSE4_2")
+            end
+        	if package:config("inst_lzcnt") then
+        		package:add("defines", "JPH_USE_LZCNT")
+            end
+        	if package:config("inst_tzcnt") then
+        		package:add("defines", "JPH_USE_TZCNT")
+            end
+        	if package:config("inst_f16c") then
+        		package:add("defines", "JPH_USE_F16C")
+            end
+        	if package:config("inst_fmadd") and not package:config("cross_platform_deterministic") then
+        		package:add("defines", "JPH_USE_FMADD")
+            end
+        end
     end)
 
-    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm",  function (package)
+    on_install("windows", "mingw", "linux", "macosx", "iphoneos", "android", "wasm", "bsd", function (package)
         -- Jolt CMakeLists had no install target/support for custom msvc runtime until 3.0.0
         local version = package:version()
         if not version or version:ge("3.0.0") then
@@ -107,7 +175,12 @@ package("joltphysics")
             table.insert(configs, "-DUSE_SSE4_1=" .. (package:config("inst_sse4_1") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_SSE4_2=" .. (package:config("inst_sse4_2") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_TZCNT=" .. (package:config("inst_tzcnt") and "ON" or "OFF"))
-
+            -- https://github.com/jrouwe/JoltPhysics/issues/1133
+            if package:is_plat("wasm") then
+                table.insert(configs, "-DEMSCRIPTEN_SYSTEM_PROCESSOR=" .. package:targetarch())
+            elseif package:is_plat("mingw") or (package:is_plat("linux", "macosx", "cross") and package:is_cross()) then
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
+            end
             import("package.tools.cmake").install(package, configs)
         else
             os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), "xmake.lua")

@@ -1,11 +1,13 @@
 package("libuv")
-
     set_homepage("http://libuv.org/")
     set_description("A multi-platform support library with a focus on asynchronous I/O.")
     set_license("MIT")
 
     set_urls("https://github.com/libuv/libuv/archive/refs/tags/$(version).zip",
              "https://github.com/libuv/libuv.git")
+
+    add_versions("v1.48.0", "6dd637af0c23bee06b685a94e22f7e695f4ea7a9ab705485e32e658d4fd0125b")
+    add_versions("v1.47.0", "d50af7e6d72526db137e66fad812421c8a1cae09d146b0ec2bb9a22c5f23ba93")
     add_versions("v1.46.0", "45953dc9b64db7f4f47561f9e4543b762c52adfe7c9b6f8e9efbc3b4dd7d3081")
     add_versions("v1.44.1", "d233a9c522a9f4afec47b0d12f302d93d114a9e3ea104150e65f55fd931518e6")
     add_versions("v1.42.0", "031130768b25ae18c4b9d4a94ba7734e2072b11c6fce3e554612c516c3241402")
@@ -22,60 +24,71 @@ package("libuv")
     add_versions("v1.23.0", "ffa1aacc9e8374b01d1ff374b1e8f1e7d92431895d18f8e9d5e59a69a2a00c30")
     add_versions("v1.22.0", "1e8e51531732f8ef5867ae3a40370814ce2e4e627537e83ca519d40b424dced0")
 
-    if is_host("windows") then
-        add_deps("cmake")
-    else
-        add_deps("autoconf", "automake", "libtool", "pkg-config")
-    end
-
     if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
     elseif is_plat("windows", "mingw") then
         add_syslinks("advapi32", "iphlpapi", "psapi", "user32", "userenv", "ws2_32", "shell32", "ole32", "uuid", "dbghelp")
     end
 
-    on_load("windows", function (package)
+    -- https://github.com/libuv/libuv/issues/3411
+    if on_check then
+        on_check("android", function (package)
+            if package:version():ge("1.47.0") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(libuv): need ndk api level >= 24 after v1.47.0")
+            end
+        end)
+    end
+
+    on_load(function (package)
         local version = package:version()
-        if version:ge("1.45") then
-            package:add("links", package:config("shared") and "uv" or "libuv")
+        if version:ge("1.46.0") or is_host("windows") then
+            package:add("deps", "cmake")
         else
-            package:add("links", package:config("shared") and "uv" or "uv_a")
+            package:add("autoconf", "automake", "libtool", "pkg-config")
         end
-        if package:config("shared") then
-            package:add("defines", "USING_UV_SHARED")
-        end
-        if version:ge("1.40") and version:lt("1.44") then
-            package:add("linkdirs", path.join("lib", package:debug() and "Debug" or "Release"))
+
+        if package:is_plat("windows") then
+            if version:ge("1.45") then
+                package:add("links", package:config("shared") and "uv" or "libuv")
+            else
+                package:add("links", package:config("shared") and "uv" or "uv_a")
+            end
+            if package:config("shared") then
+                package:add("defines", "USING_UV_SHARED")
+            end
+            if version:ge("1.40") and version:lt("1.44") then
+                package:add("linkdirs", path.join("lib", package:is_debug() and "Debug" or "Release"))
+            end
         end
     end)
 
-    on_install("windows", function (package)
-        local configs = {"-DLIBUV_BUILD_TESTS=OFF", "-DLIBUV_BUILD_BENCH=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DLIBUV_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
-        if package:version():lt("1.40") then
-            os.cp("include", package:installdir())
+    on_install("!wasm", function (package)
+        if package:is_plat("mingw") then
+            io.replace("CMakeLists.txt", "CYGWIN OR MSYS", "FALSE", {plain = true})
         end
-    end)
 
-    on_install("macosx", "linux", "android@linux,macosx", "mingw@linux,macosx", function (package)
-        local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
+        local version = package:version()
+        if version:ge("1.46.0") or is_host("windows") then
+            local configs = {"-DLIBUV_BUILD_TESTS=OFF", "-DLIBUV_BUILD_BENCH=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DLIBUV_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
+            if version:lt("1.40") then
+                os.cp("include", package:installdir())
+            end
         else
-            table.insert(configs, "--enable-shared=no")
+            local configs = {}
+            table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+            if package:is_plat("iphoneos") and version:ge("1.40") and version:lt("1.44") then
+                -- fix CoreFoundation type definition
+                io.replace("src/unix/darwin.c", "!TARGET_OS_IPHONE", "1", {plain = true})
+            end
+            import("package.tools.autoconf").install(package, configs)
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-        if package:is_plat("iphoneos") and package:version():ge("1.40") and package:version():lt("1.44") then
-            -- fix CoreFoundation type definition
-            io.replace("src/unix/darwin.c", "!TARGET_OS_IPHONE", "1", {plain = true})
-        end
-        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)

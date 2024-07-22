@@ -4,7 +4,8 @@ package("workflow")
     set_license("Apache-2.0")
 
     if is_plat("windows") then
-        add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version)-win.zip")
+        add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version)-win.zip",
+                 "https://github.com/sogou/workflow.git")
         add_versions("v0.10.10", "6758b1d46c4beadfccc88d3e9492bb99cfad26e643c141749aec790907092417")
     else
         add_urls("https://github.com/sogou/workflow/archive/refs/tags/$(version).tar.gz",

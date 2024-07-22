@@ -1,6 +1,7 @@
 package("libsdl")
     set_homepage("https://www.libsdl.org/")
     set_description("Simple DirectMedia Layer")
+    set_license("zlib")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::SDL2")
@@ -10,11 +11,10 @@ package("libsdl")
         add_extsources("brew::sdl2")
     end
 
-    set_license("zlib")
-
     add_urls("https://www.libsdl.org/release/SDL2-$(version).zip",
              "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL.git", { alias = "github" })
+
     add_versions("archive:2.0.8", "e6a7c71154c3001e318ba7ed4b98582de72ff970aca05abc9f45f7cbdc9088cb")
     add_versions("archive:2.0.12", "476e84d6fcbc499cd1f4a2d3fd05a924abc165b5d0e0d53522c9604fe5a021aa")
     add_versions("archive:2.0.14", "2c1e870d74e13dfdae870600bfcb6862a5eab4ea5b915144aff8d75a0f9bf046")
@@ -40,6 +40,8 @@ package("libsdl")
     add_versions("archive:2.30.1", "c15ded54e9f32f8a1f9ed3e3dc072837a320ed23c5d0e95b7c18ecbe05c1187b")
     add_versions("archive:2.30.2", "09a822abf6e97f80d09cf9c46115faebb3476b0d56c1c035aec8ec3f88382ae7")
     add_versions("archive:2.30.3", "c5d78a9e0346c6695f03df8ba25e5e111a1e23c8aefa8372a1c5a0dd79acaf10")
+    add_versions("archive:2.30.4", "292d5e2f897aa3acb6b365b605c3249c92916fbe7eba4a2e57573ada3855d7cb")
+    add_versions("archive:2.30.5", "688d3da2bf7e887d0ba8e0f81c926119f85029544f4f6da8dea96db70f9d28e3")
     add_versions("github:2.0.8",  "release-2.0.8")
     add_versions("github:2.0.12", "release-2.0.12")
     add_versions("github:2.0.14", "release-2.0.14")
@@ -65,6 +67,8 @@ package("libsdl")
     add_versions("github:2.30.1", "release-2.30.1")
     add_versions("github:2.30.2", "release-2.30.2")
     add_versions("github:2.30.3", "release-2.30.3")
+    add_versions("github:2.30.4", "release-2.30.4")
+    add_versions("github:2.30.5", "release-2.30.5")
 
     add_patches("2.30.0", path.join(os.scriptdir(), "patches", "2.30.0", "fix_mingw.patch"), "ab54eebc2e58d88653b257bc5b48a232c5fb0e6fad5d63661b6388215a7b0cd0")
 
@@ -78,7 +82,7 @@ package("libsdl")
         add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
     end
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
         add_configs("wayland", {description = "Enables Wayland support", default = true, type = "boolean"})
 
@@ -102,10 +106,10 @@ package("libsdl")
             package:add("defines", "SDL_MAIN_HANDLED")
         end
         package:add("components", "lib")
-        if package:is_plat("linux") and (package:config("x11") or package:config("with_x")) then
+        if package:is_plat("linux", "bsd") and (package:config("x11") or package:config("with_x")) then
             package:add("deps", "libxext", {private = true})
         end
-        if package:is_plat("linux") and package:config("wayland") then
+        if package:is_plat("linux", "bsd") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
         end
     end)
@@ -205,7 +209,7 @@ package("libsdl")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_TEST=OFF")
         local opt
-        if package:is_plat("linux", "cross") then
+        if package:is_plat("linux", "bsd", "cross") then
             local includedirs = {}
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)

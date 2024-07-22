@@ -1,5 +1,4 @@
 package("util-macros")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: Set of autoconf macros used to build other xorg packages")
 
@@ -14,7 +13,7 @@ package("util-macros")
 
     add_deps("pkg-config")
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var")}
         import("package.tools.autoconf").install(package, configs)

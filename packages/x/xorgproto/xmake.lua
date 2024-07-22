@@ -1,5 +1,4 @@
 package("xorgproto")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://www.x.org/")
     set_description("X.Org: Protocol Headers")
@@ -13,11 +12,11 @@ package("xorgproto")
         add_extsources("apt::x11proto-dev", "pkgconfig::xproto")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "bsd") then
         add_deps("pkg-config", "util-macros")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",

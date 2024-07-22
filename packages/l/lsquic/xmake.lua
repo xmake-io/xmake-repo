@@ -6,7 +6,10 @@ package("lsquic")
     add_urls("https://github.com/litespeedtech/lsquic/archive/refs/tags/$(version).tar.gz",
              "https://github.com/litespeedtech/lsquic.git")
 
+    add_versions("v4.0.9", "bebb6e687138368d89ff3f67768692ac55b06925d63b011d000ce134b6ec98f1")
     add_versions("v4.0.8", "f18ff2fa0addc1c51833304b3d3ff0979ecf5f53f54f96bcd3442a40cfcd440b")
+
+    add_patches(">=4.0.8", "patches/4.0.8/cmake.patch", "c9b8412fbd7df511dee4d57ea5dfa50bc527e015fc808270235b91abfd9baa89")
 
     add_configs("fiu", {description = "Use Fault Injection in Userspace (FIU)", default = false, type = "boolean"})
 
@@ -29,9 +32,6 @@ package("lsquic")
             -- https://github.com/litespeedtech/lsquic/issues/433
             package:add("defines", "WIN32", "WIN32_LEAN_AND_MEAN")
         end
-
-        io.replace("src/liblsquic/CMakeLists.txt", "ls-qpack/lsqpack.c", "", {plain = true})
-        io.replace("src/liblsquic/CMakeLists.txt", "../lshpack/lshpack.c", "", {plain = true})
         io.replace("CMakeLists.txt", "-WX", "", {plain = true})
 
         local boringssl = package:dep("boringssl")
@@ -49,9 +49,10 @@ package("lsquic")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DLSQUIC_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLSQUIC_FIU=" .. (package:config("fiu") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        end
         import("package.tools.cmake").install(package, configs, opt)
-
-        os.vcp(path.join(package:buildir(), "**.dll"), package:installdir("bin"))
     end)
 
     on_test(function (package)
