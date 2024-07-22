@@ -1,5 +1,5 @@
 package("backward-cpp")
-    set_kind("library", {headeronly = true})
+
     set_homepage("https://github.com/bombela/backward-cpp")
     set_description("Backward is a beautiful stack trace pretty printer for C++.")
     set_license("MIT")
@@ -33,14 +33,11 @@ package("backward-cpp")
         end
         local configs = {"-DBACKWARD_TESTS=OFF"}
         table.insert(configs, "-DBACKWARD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
         import("package.tools.cmake").install(package, configs)
-        os.vcp(package:installdir("include/*.hpp"), package:installdir("include/backward"))
-        os.vcp(package:installdir("include/*.hpp"), package:installdir("lib/backward"))
+        os.mv(package:installdir("include/*.hpp"), package:installdir("include/backward"))
     end)
 
     on_test(function (package)
         assert(package:has_cxxtypes("backward::SignalHandling", {configs = {languages = "c++11"}, includes = "backward/backward.hpp"}))
     end)
+

@@ -74,9 +74,6 @@ package("spdlog")
         table.insert(configs, "-DSPDLOG_FMT_EXTERNAL_HO=" .. (package:config("fmt_external_ho") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_NO_EXCEPTIONS=" .. (package:config("noexcept") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_WCHAR_SUPPORT=" .. (package:config("wchar") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 
