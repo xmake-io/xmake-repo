@@ -4,7 +4,7 @@ package("bmf")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/star-hengxing/bmf/archive/refs/heads/windows-support.zip")
-    add_versions("v0.0.10", "36fdcf8976a577ab2fb547e69f237b639cd4b27cf0c41e490b6dcecf868f5590")
+    add_versions("v0.0.10", "c29df532f25c2f6278252151e2796517fc432f0120b6658779a57b3007939b73")
 
     add_configs("breakpad", {description = "Enable build with breakpad support", default = false, type = "boolean"})
     add_configs("cuda", {description = "Enable CUDA support", default = false, type = "boolean"})
@@ -16,7 +16,6 @@ package("bmf")
     add_deps("cmake")
     add_deps("nlohmann_json", {configs = {cmake = true}})
     add_deps("spdlog", {configs = {header_only = false, fmt_external = true}})
-    add_deps("fmt")
     add_deps("dlpack", "backward-cpp")
 
     if is_plat("windows") then
@@ -36,7 +35,7 @@ package("bmf")
             package:add("deps", "glog")
         end
         if package:config("ffmpeg") then
-            package:add("deps", "ffmpeg")
+            package:add("deps", "ffmpeg >=4.0.0 <5.1.0")
         end
         if package:config("mobile") then
             package:add("deps", "benchmark")
@@ -47,17 +46,16 @@ package("bmf")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local configs = {
             "-DBMF_LOCAL_DEPENDENCIES=OFF",
             "-DBMF_ENABLE_PYTHON=OFF",
             "-DBMF_ENABLE_TEST=OFF",
-            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        local ver = package:version() or "1.2.0"
+        local ver = package:version() or "0.0.10"
         if ver then
             table.insert(configs, "-DBMF_BUILD_VERSION=" .. ver)
         end
