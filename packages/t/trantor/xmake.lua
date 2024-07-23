@@ -38,7 +38,7 @@ package("trantor")
             package:config_set("spdlog", false)
         end
         if package:config("spdlog") then
-            package:add("deps", "spdlog", {configs = {header_only = false, fmt_external = true}})
+            package:add("deps", "spdlog", {configs = {header_only = false, fmt_external_ho = true}})
         end
     end)
 
