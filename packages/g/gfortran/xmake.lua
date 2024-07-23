@@ -11,7 +11,7 @@ package("gfortran")
             if not fortran then return end
 
             if package:is_binary() then
-                return true
+                return {}
             else
                 local installdir = path.directory(path.directory(fortran.program))
                 local target
