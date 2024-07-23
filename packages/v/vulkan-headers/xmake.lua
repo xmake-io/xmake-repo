@@ -49,7 +49,10 @@ package("vulkan-headers")
 
     on_install(function (package)
         if not package:config("modules") then
-            import("package.tools.cmake").install(package)
+            import("package.tools.cmake").install(package, {
+                "-DVULKAN_HEADERS_ENABLE_MODULE=OFF",
+                "-DVULKAN_HEADERS_ENABLE_TESTS=OFF"
+            })
         else
             io.writefile("xmake.lua", [[ 
                 target("vulkan-headers")
