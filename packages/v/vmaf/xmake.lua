@@ -14,6 +14,10 @@ package("vmaf")
     add_configs("float", {description = "Compile floating-point feature extractors", default = false, type = "boolean"})
     add_configs("cuda", {description = "Enable CUDA support", default = false, type = "boolean"})
     add_configs("nvtx", {description = "Enable NVTX range support", default = false, type = "boolean"})
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::vmaf")
@@ -43,7 +47,7 @@ package("vmaf")
         end
     end)
 
-    on_install("!windows", function (package)
+    on_install("!windows and !android", function (package)
         local configs = {"-Denable_tests=false", "-Denable_docs=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
@@ -55,6 +59,9 @@ package("vmaf")
         table.insert(configs, "-Denable_nvtx=" .. (package:config("nvtx") and "true" or "false"))
 
         os.cd("libvmaf")
+        if not package:config("tools") then
+            io.replace("meson.build", [[subdir('tools')]], "", {plain = true})
+        end
         import("package.tools.meson").install(package, configs)
     end)
 
