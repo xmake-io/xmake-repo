@@ -7,6 +7,7 @@ package("nanoflann")
 
     add_urls("https://github.com/jlblancoc/nanoflann/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jlblancoc/nanoflann.git")
+    add_versions("v1.6.0", "f889026fbcb241e1e9d71bab5dfb9cc35775bf18a6466a283e2cbcd60edb2705")
     add_versions("v1.5.5", "fd28045eabaf0e7f12236092f80905a1750e0e6b580bb40eadd64dc4f75d641d")
     add_versions("v1.3.2", "e100b5fc8d72e9426a80312d852a62c05ddefd23f17cbb22ccd8b458b11d0bea")
     add_versions("v1.4.2", "97fce650eb644a359a767af526cab9ba31842e53790a7279887e1ae2fffe7319")
