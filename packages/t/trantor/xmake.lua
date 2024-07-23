@@ -22,6 +22,8 @@ package("trantor")
 	
     add_patches("v1.5.8", path.join(os.scriptdir(), "patches", "1.5.8", "skip_doc.patch" ), "4124f3cc1e486ad75bc5ec2fa454ea5319d68287d0b1d8cfa3b5ab865f8ca5fd")
 
+    add_configs("spdlog", {description = "Allow using the spdlog logging library", default = false, type = "boolean"})
+
     add_deps("cmake")
     add_deps("openssl", "c-ares", {optional = true})
     if is_plat("windows", "mingw") then
@@ -31,6 +33,15 @@ package("trantor")
         add_syslinks("pthread")
     end
 
+    on_load(function (package)
+        if package:version():le("v1.5.15") then
+            package:config_set("spdlog", false)
+        end
+        if package:config("spdlog") then
+            package:add("deps", "spdlog", {configs = {header_only = false, fmt_external = true}})
+        end
+    end)
+
     on_install("windows", "macosx", "linux", "mingw@windows", function (package)
         io.replace("CMakeLists.txt", "\"${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/Findc-ares.cmake\"", "", {plain = true})
         io.replace("CMakeLists.txt", "find_package(c-ares)", "find_package(c-ares CONFIG)", {plain = true})
@@ -39,6 +50,9 @@ package("trantor")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+        end
+        if package:config("spdlog") then
+            table.insert(configs, "-DUSE_SPDLOG=ON")
         end
         import("package.tools.cmake").install(package, configs)
     end)
