@@ -17,6 +17,16 @@ package("libzen")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            if package:is_arch("armeabi-v7a") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(libzen/armeabi-v7a): need ndk api level >= 24 for android")
+            end
+        end)
+    end
+
     on_install(function (package)
         local configs = {}
         local shared = package:config("shared")
