@@ -40,7 +40,7 @@ package("openssl3")
         elseif package:is_plat("linux", "cross") then
             package:add("syslinks", "pthread", "dl")
         end
-        if package:is_plat("linux", "mingw", "bsd") and package:is_arch("x86_64") then
+        if package:is_plat("linux", "mingw") and package:is_arch("x86_64") then
             package:add("linkdirs", "lib64")
         end
         if package:is_plat("linux") then
