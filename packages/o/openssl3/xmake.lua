@@ -22,6 +22,19 @@ package("openssl3")
             -- the perl executable found in GitForWindows will fail to build OpenSSL
             -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
             package:add("deps", "strawberry-perl", {system = false})
+            -- check xmake tool jom
+            local nmake = import("package.tools.jom", {try = true, anonymous = true})
+            local use_jom = false
+            if nmake then
+                use_jom = true
+            else
+                nmake = import("package.tools.nmake", {anonymous = true})
+            end
+            if use_jom then
+                package:add("deps", "jom", { private = true })
+            end
+            package:data_set("nmake", nmake)
+            package:data_set("use_jom", use_jom)
         end
 
         -- @note we must use package:is_plat() instead of is_plat in description for supporting add_deps("openssl", {host = true}) in python
@@ -44,6 +57,8 @@ package("openssl3")
     end)
 
     on_install("windows", function (package)
+        local nmake = package:data("nmake")
+        local use_jom = package:data("use_jom")
         local configs = {"Configure", "no-tests"}
         local target
         if package:is_arch("x86", "i386") then
@@ -59,11 +74,14 @@ package("openssl3")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
+        if use_jom then
+            table.insert(configs, "no-makedepend")
+            table.insert(configs, "/FS")
+        end
         os.vrunv("perl", configs)
 
-        local runenvs = import("package.tools.nmake").buildenvs(package)
-        local nmake = import("lib.detect.find_tool")("nmake", {envs = runenvs})
-        os.vrunv(nmake.program, {"install_sw"}, {envs = runenvs})
+        nmake.build(package)
+        nmake.make(package, {"install_sw"})
     end)
 
     on_install("mingw", function (package)
