@@ -23,6 +23,9 @@ package("udt")
                 if is_mode("debug") then
                     add_defines("_DEBUG")
                 end
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
                 set_languages("cxx11")
                 if is_plat("windows", "mingw") then
                     add_defines("WINDOWS")
