@@ -5,11 +5,14 @@ package("udt")
 
     set_urls("https://github.com/dorkbox/UDT.git")
 
+    if is_plat("windows") then
+        add_defines("WINDOWS")
+        add_syslinks("Ws2_32")
+    else
+        add_syslinks("pthread")
+    end
+
     on_install(function (package)
-        if is_plat("windows") then
-            package:add("defines", "WINDOWS")
-            package:add("links", "Ws2_32")
-        end
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("udt")
