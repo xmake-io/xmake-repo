@@ -23,18 +23,10 @@ package("openssl3")
             -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
             package:add("deps", "strawberry-perl", {system = false})
             -- check xmake tool jom
-            local nmake = import("package.tools.jom", {try = true, anonymous = true})
-            local use_jom = false
-            if nmake then
-                use_jom = true
-            else
-                nmake = import("package.tools.nmake", {anonymous = true})
+            import("package.tools.jom", {try = true})
+            if jom then
+                package:add("deps", "jom", {private = true})
             end
-            if use_jom then
-                package:add("deps", "jom", { private = true })
-            end
-            package:data_set("nmake", nmake)
-            package:data_set("use_jom", use_jom)
         end
 
         -- @note we must use package:is_plat() instead of is_plat in description for supporting add_deps("openssl", {host = true}) in python
@@ -57,8 +49,8 @@ package("openssl3")
     end)
 
     on_install("windows", function (package)
-        local nmake = package:data("nmake")
-        local use_jom = package:data("use_jom")
+        import("package.tools.jom", {try = true})
+        import("package.tools.nmake")
         local configs = {"Configure", "no-tests"}
         local target
         if package:is_arch("x86", "i386") then
@@ -74,14 +66,19 @@ package("openssl3")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
-        if use_jom then
+        if jom then
             table.insert(configs, "no-makedepend")
             table.insert(configs, "/FS")
         end
         os.vrunv("perl", configs)
 
-        nmake.build(package)
-        nmake.make(package, {"install_sw"})
+        if jom then
+            jom.build(package)
+            jom.make(package, {"install_sw"})
+        else
+            nmake.build(package)
+            nmake.make(package, {"install_sw"})
+        end
     end)
 
     on_install("mingw", function (package)
