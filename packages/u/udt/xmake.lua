@@ -15,7 +15,7 @@ package("udt")
         add_syslinks("pthread", "m")
     end
 
-    on_install(function (package)
+    on_install("!windows or windows|!x86", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("udt")
