@@ -13,3 +13,7 @@ package("jom")
     on_install("@windows", function (package)
         os.cp("*", package:installdir("bin"))
     end)
+
+    on_test(function (package)
+        os.vrun("jom /VERSION")
+    end)
