@@ -4,7 +4,6 @@ package("udt")
     set_license("Apache-2.0")
 
     set_urls("https://github.com/dorkbox/UDT.git")
-    add_versions("2017.12.03", "6526f2e7ff55a0c015268bf91465bf54fbe310903442eede099ba5986387413c")
 
     on_install(function (package)
         if is_plat("windows") then
