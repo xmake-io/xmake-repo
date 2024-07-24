@@ -9,6 +9,7 @@ package("oatpp")
     add_versions("1.0.0", "9ba7c75e3ada8ec894ec10beae712e775774a835fd3de89d8c34e17740202619")
     add_versions("1.2.5", "36276e8b23e68ece1e6093c3f06fc80e3d42a5f4e47cdeef5e7e63f36eeddaad")
     add_versions("1.3.0", "e1f80fa8fd7a74da6737e7fee1a4db68b4d7085a3f40e7d550752d6ff5714583")
+    add_versions("1.4.0-preview", "bbf9715eb8bc3ef58686c5b1fb844de4b73ba6d0")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -21,8 +22,9 @@ package("oatpp")
     add_deps("cmake")
 
     on_load(function (package)
-        package:add("includedirs", path.join("include", "oatpp-" .. package:version_str(), "oatpp"))
-        package:add("linkdirs", path.join("lib", "oatpp-" .. package:version_str()))
+        local version = package:version_str():gsub("-preview", "")
+        package:add("includedirs", path.join("include", "oatpp-" .. version, "oatpp"))
+        package:add("linkdirs", path.join("lib", "oatpp-" .. version))
     end)
 
     on_install("linux", "macosx", "windows|x64", function (package)
@@ -38,6 +40,7 @@ package("oatpp")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "oatpp/encoding/Base64.hpp"
+            #include "oatpp/base/Log.hpp"
             void test() {
                 oatpp::String message = "oat++ web framework";
                 oatpp::String messageEncoded = "b2F0Kysgd2ViIGZyYW1ld29yaw==";
@@ -48,5 +51,5 @@ package("oatpp")
                     OATPP_ASSERT(message == decoded);
                 }
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "cxx11"}}))
     end)
