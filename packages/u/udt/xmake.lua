@@ -8,7 +8,7 @@ package("udt")
 
     add_versions("2017.12.03", "af743ffdb2e40225d7375df1a3d6320127b903322af4021460681f1052b7461e")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_defines("WINDOWS")
         add_syslinks("Ws2_32")
     elseif is_plat("linux", "bsd") then
@@ -24,7 +24,7 @@ package("udt")
                     add_defines("_DEBUG")
                 end
                 set_languages("cxx11")
-                if is_plat("windows") then
+                if is_plat("windows", "mingw") then
                     add_defines("WINDOWS")
                     add_syslinks("Ws2_32")
                 elseif is_plat("linux", "bsd") then
