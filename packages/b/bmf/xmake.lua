@@ -4,7 +4,7 @@ package("bmf")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/star-hengxing/bmf/archive/refs/heads/windows-support.zip")
-    add_versions("v0.0.10", "c29df532f25c2f6278252151e2796517fc432f0120b6658779a57b3007939b73")
+    add_versions("v0.0.10", "424918fb8c45406db4c10c1cf5307339f8368e9ecac6513dba37be45b65f5d44")
 
     add_configs("breakpad", {description = "Enable build with breakpad support", default = false, type = "boolean"})
     add_configs("cuda", {description = "Enable CUDA support", default = false, type = "boolean"})
