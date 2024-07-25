@@ -53,7 +53,7 @@ package("vulkan-validationlayers")
         elseif is_plat("linux") then
             add_extsources("apt::vulkan-validationlayers-dev", "pacman::vulkan-validation-layers")
             add_deps("ninja")
-            add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
+            add_deps("wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon")
         elseif is_plat("macosx") then
             add_extsources("brew::vulkan-validationlayers")
         end
