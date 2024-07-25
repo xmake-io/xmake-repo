@@ -32,7 +32,7 @@ package("drogon")
     add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "config.patch"), "67a921899a24c1646be6097943cc2ed8228c40f177493451f011539c6df0ed76")
     add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "check.patch"), "e4731995bb754f04e1bb813bfe3dfb480a850fbbd5cdb48d5a53b32b4ed8669c")
     add_patches(">=1.8.2 <1.8.5", path.join(os.scriptdir(), "patches", "1.8.2", "gcc13.patch"), "d2842a734df52c590ab950414c7a95a1ac1be48f8680f909d0eeba5f36087cb0")
-    add_patches("1.9.1", path.join(os.scriptdir(), "patches", "1.9.1", "resolv.patch"), "2b511e60fe99062396accab6b25d0092e111a83db11cffc23ce8e790370d017c")
+    add_patches(">=1.9.1", path.join(os.scriptdir(), "patches", "1.9.1", "resolv.patch"), "2b511e60fe99062396accab6b25d0092e111a83db11cffc23ce8e790370d017c")
 
     add_configs("c_ares", {description = "Enable async DNS query support.", default = false, type = "boolean"})
     add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
@@ -41,11 +41,14 @@ package("drogon")
     add_configs("sqlite3", {description = "Enable sqlite3 support.", default = false, type = "boolean"})
     add_configs("redis", {description = "Enable redis support.", default = false, type = "boolean"})
     add_configs("yaml", {description = "Enable yaml support.", default = false, type = "boolean"})
+    add_configs("spdlog", {description = "Allow using the spdlog logging library", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("trantor", "jsoncpp", "brotli", "zlib")
+    add_deps("jsoncpp", "brotli", "zlib")
 
     if is_plat("windows") then
+        -- enable mtt for drogon
+        set_policy("package.msbuild.multi_tool_task", true)
         add_syslinks("ws2_32", "rpcrt4", "crypt32", "advapi32", "iphlpapi")
     else
         add_deps("libuuid")
@@ -68,10 +71,18 @@ package("drogon")
                 package:add("deps", dep)
             end
         end
-        
+        if package:version():le("v1.9.2") then
+            package:config_set("spdlog", false)
+        end
+        if package:config("spdlog") then
+            package:add("defines", "DROGON_SPDLOG_SUPPORT")
+            package:add("deps", "trantor", {configs = {spdlog = true}})
+        else
+            package:add("deps", "trantor")
+        end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|native", "macosx", "linux", function (package)
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
         io.replace("cmake_modules/FindMySQL.cmake", "PATH_SUFFIXES mysql", "PATH_SUFFIXES mysql mariadb", {plain = true})
 
