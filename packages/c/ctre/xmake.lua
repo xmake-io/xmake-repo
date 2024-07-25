@@ -14,7 +14,9 @@ package("ctre")
     add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
 
     on_load(function (package)
-        if not package:config("header_only") then
+        if package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
+        else
             package:add("deps", "cmake")
         end
     end)
