@@ -17,6 +17,7 @@ package("fizz")
     add_versions("2024.07.01", "002bca2765cb0889ec535eeb1950acf93af57638a2da9b2deacc522113625fcc")
     add_versions("2024.07.08", "dd80231fb79760ef0b15394364ddbe35d4da82a7e07238dbaaf2f98f267d3938")
     add_versions("2024.07.15", "44da982621aa91f15f5b2ec7a27510aab4650383b3a135372586501f3f44fc6c")
+    add_versions("2024.07.22", "197717243d50caa067f58976ee63a09c367f28fd5ce8e1b825eb8da59dd4a15e")
 
     add_deps("cmake", "folly", "libsodium", "liboqs")
 
