@@ -159,10 +159,14 @@ package("openssl3")
                          "-DOPENSSL_NO_HEARTBEATS",
                          "no-shared",
                          "no-threads",
-                         "--openssldir=" .. package:installdir(),
-                         "--prefix=" .. package:installdir()}
+                         "--openssldir=" .. package:installdir():gsub("\\", "/"),
+                         "--prefix=" .. package:installdir():gsub("\\", "/")}
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         if package:is_cross() and package:is_plat("android") and is_subhost("windows") then
+            buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
+            buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
+            buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
+            buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
             os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
         else
             os.vrunv("./Configure", configs, {envs = buildenvs})
