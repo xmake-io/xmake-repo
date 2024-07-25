@@ -17,15 +17,20 @@ package("openssl3")
     on_fetch("fetch")
 
     on_load(function (package)
-        if package:is_plat("windows") and (not package.is_built or package:is_built()) then
-            package:add("deps", "nasm")
-            -- the perl executable found in GitForWindows will fail to build OpenSSL
-            -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
-            package:add("deps", "strawberry-perl", {system = false})
-            -- check xmake tool jom
-            import("package.tools.jom", {try = true})
-            if jom then
-                package:add("deps", "jom", {private = true})
+        if not package:is_precompiled() then
+            if package:is_plat("windows") then
+                package:add("deps", "nasm")
+                -- the perl executable found in GitForWindows will fail to build OpenSSL
+                -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
+                package:add("deps", "strawberry-perl", {system = false})
+                -- check xmake tool jom
+                import("package.tools.jom", {try = true})
+                if jom then
+                    package:add("deps", "jom", {private = true})
+                end
+            elseif package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
+                -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
+                package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
             end
         end
 
@@ -157,7 +162,11 @@ package("openssl3")
                          "--openssldir=" .. package:installdir(),
                          "--prefix=" .. package:installdir()}
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        os.vrunv("./Configure", configs, {envs = buildenvs})
+        if package:is_cross() and package:is_plat("android") and is_subhost("windows") then
+            os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
+        else
+            os.vrunv("./Configure", configs, {envs = buildenvs})
+        end
         local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
         import("package.tools.make").build(package, makeconfigs)
         import("package.tools.make").make(package, {"install_sw"})
