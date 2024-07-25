@@ -70,9 +70,9 @@ package("bmf")
         if package:is_plat("windows") then
             envs.SCRIPT_EXEC_MODE = "win"
         end
-        import("package.tools.cmake").install(package, configs, {envs = envs, jobs = "1"})
+        import("package.tools.cmake").install(package, configs, {envs = envs})
 
-        os.cp(package:buildir() .. "/output/bmf/include", package:installdir())
+        os.cp(path.join(package:buildir(), "output/bmf/include"), package:installdir())
     end)
 
     on_test(function (package)
