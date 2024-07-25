@@ -8,6 +8,7 @@ package("qt6gui")
 
         if package:is_plat("linux") then 
             package:add("deps", "freetype", "fontconfig", "libxkbcommon")
+            add_extsources("apt::libgl1-mesa-dev", "pacman::mesa")
         elseif package:is_plat("android") then
             package:data_set("syslinks", "GLESv2")
         elseif package:is_plat("iphoneos") then
