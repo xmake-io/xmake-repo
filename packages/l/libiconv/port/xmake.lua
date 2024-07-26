@@ -31,11 +31,7 @@ if has_config("vers") then
     set_configvar("PACKAGE_STRING", "libiconv " .. get_config("vers"))
 end
 
-includes("check_cfuncs.lua")
-includes("check_ctypes.lua")
-includes("check_macros.lua")
-includes("check_cincludes.lua")
-includes("check_csnippets.lua")
+includes("@builtin/check")
 
 -- config.h variables
 option("__NO_BROKEN_WCHAR_H")
@@ -101,11 +97,14 @@ set_configvar("GNULIB_TEST_REALPATH", 1)
 set_configvar("GNULIB_TEST_SIGPROCMASK", 1)
 set_configvar("GNULIB_TEST_STAT", 1)
 set_configvar("GNULIB_TEST_STRERROR", 1)
-set_configvar("ssize_t", "int", {quote = false})
-set_configvar("uid_t", "int", {quote = false})
+if not is_plat("android") then
+    set_configvar("ssize_t", "int", {quote = false})
+    set_configvar("uid_t", "int", {quote = false})
+end
 configvar_check_ctypes("USE_MBSTATE_T", "mbstate_t", {includes = "wchar.h", default = 0})
 configvar_check_cincludes("ENABLE_NLS", "libintl.h", {default = 0})
 configvar_check_cincludes("HAVE_DLFCN_H", "dlfcn.h")
+configvar_check_cincludes("HAVE_FCNTL", "fcntl.h")
 configvar_check_cincludes("HAVE_INTTYPES_H", "inttypes.h")
 configvar_check_cincludes("HAVE_MACH_O_DYLD_H", "mach-o/dyld.h")
 configvar_check_cincludes("HAVE_MEMORY_H", "memory.h")
