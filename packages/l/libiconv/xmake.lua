@@ -34,13 +34,17 @@ package("libiconv")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", "mingw", function (package)
+    on_install("windows", "mingw", "android", function (package)
         io.gsub("config.h.in", "%$", "")
         io.gsub("config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         io.gsub("libcharset/config.h.in", "%$", "")
         io.gsub("libcharset/config.h.in", "# ?undef (.-)\n", "${define %1}\n")
-        io.gsub("srclib/safe-read.c", "#include <unistd.h>", "")
-        io.gsub("srclib/progreloc.c", "#include <unistd.h>", "")
+
+        if package:is_plat("windows") then
+            io.gsub("srclib/safe-read.c", "#include <unistd.h>", "")
+            io.gsub("srclib/progreloc.c", "#include <unistd.h>", "")
+        end
+
         os.cp(path.join(os.scriptdir(), "port", "xmake.lua"), ".")
         import("package.tools.xmake").install(package, {
             relocatable = true,
@@ -49,16 +53,12 @@ package("libiconv")
         })
     end)
 
-    on_install("macosx", "linux", "bsd", "cross", "android", "wasm", function (package)
+    on_install("macosx", "linux", "bsd", "cross", "wasm", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings", "--enable-relocatable"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         if package:debug() then
             table.insert(configs, "--enable-debug")
-        end
-        if package:is_plat("android") then
-            io.replace("./configure", "#define gid_t int", "")
-            io.replace("./configure", "#define uid_t int", "")
         end
         os.vrunv("make", {"-f", "Makefile.devel", "CFLAGS=" .. (package:config("cflags") or "")})
         import("package.tools.autoconf").install(package, configs)
@@ -76,4 +76,3 @@ package("libiconv")
             }
         ]]}))
     end)
-
