@@ -23,6 +23,15 @@ package("bmf")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
     end
+    
+    on_check("windows", function (package)
+        local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+        if vs_toolset then
+            local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+            local minor = vs_toolset_ver:minor()
+            assert(minor and minor >= 30, "package(bmf): Only support >= v143 toolset")
+        end
+    end)
 
     on_load(function (package)
         if package:config("breakpad") then
@@ -46,7 +55,7 @@ package("bmf")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", function (package)
         local configs = {
             "-DBMF_LOCAL_DEPENDENCIES=OFF",
             "-DBMF_ENABLE_PYTHON=OFF",
