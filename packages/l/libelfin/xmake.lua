@@ -10,7 +10,7 @@ package("libelfin")
 
     add_deps("python 3.x", {kind = "binary"})
 
-    on_install("!windows", function (package)
+    on_install("!windows and !mingw", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
