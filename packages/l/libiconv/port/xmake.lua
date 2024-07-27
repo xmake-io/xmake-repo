@@ -259,3 +259,9 @@ target("iconv_no_i18n")
         add_defines("LOCALEDIR=\"" .. path.join(get_config("installprefix"), "share", "locale"):gsub("\\", "\\\\") .. "\"")
     end
     add_files("src/iconv_no_i18n.c")
+
+    if is_plat("android") then
+        -- Gnulib defines these macros to 0 on GNU and other platforms that do not distinguish between text and binary I/O.
+        -- https://www.gnu.org/software/gnulib/manual/html_node/fcntl_002eh.html
+        add_defines("O_BINARY=0")
+    end

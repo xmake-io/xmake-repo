@@ -13,9 +13,6 @@ package("libiconv")
     if is_plat("macosx") then
         add_patches("1.15", path.join(os.scriptdir(), "patches", "1.15", "patch-utf8mac.diff"),
             "e8128732f22f63b5c656659786d2cf76f1450008f36bcf541285268c66cabeab")
-    elseif is_plat("android") then
-        add_patches("1.x", path.join(os.scriptdir(), "patches", "1.16", "makefile.in.patch"),
-            "d09e4212040f5adf1faa5cf5a9a18f6f79d4cdce9affb05f2e75df2ea3b3d686")
     elseif is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
