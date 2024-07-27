@@ -193,7 +193,7 @@ configvar_check_csnippets("GNULIB_SIGPIPE", [[#include <signal.h>
 #error SIGPIPE not defined
 #endif]])
 configvar_check_csnippets("HAVE_LANGINFO_CODESET", [[#include <langinfo.h>
-int test() { char* cs = nl_langinfo(CODESET); return !cs; }]])
+int test() { char* cs = nl_langinfo(CODESET); return !cs; }]], {warnings = "error"})
 configvar_check_csnippets("HAVE_ENVIRON_DECL=0", [[extern struct {int foo;} environ;
 void test() {environ.foo = 1;}]], {includes = has_config("__HAVE_UNISTD_H") and "unistd.h" or "stdlib.h", default = 1})
 
