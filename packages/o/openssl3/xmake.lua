@@ -5,6 +5,7 @@ package("openssl3")
 
     add_urls("https://github.com/openssl/openssl/archive/refs/tags/openssl-$(version).zip")
 
+    add_versions("3.3.1", "307284f39bfb7061229c57e263e707655aa80aa9950bf6def28ed63fec91a726")
     add_versions("3.0.14", "9590b9ae18c4de183be74dfc9da5be1f1e8f85dd631a78bc74c0ebc3d7e27a93")
     add_versions("3.0.7", "fcb37203c6bf7376cfd3aeb0be057937b7611e998b6c0d664abde928c8af3eb7")
     add_versions("3.0.6", "9b45be41df0d6e9cf9e340a64525177662f22808ac69aee6bfb29c511284dae4")
@@ -43,7 +44,7 @@ package("openssl3")
         end
         if package:is_plat("windows", "mingw") then
             package:add("syslinks", "ws2_32", "user32", "crypt32", "advapi32")
-        elseif package:is_plat("linux", "cross") then
+        elseif package:is_plat("linux", "bsd", "cross") then
             package:add("syslinks", "pthread", "dl")
         end
         if package:is_plat("linux", "mingw") and package:is_arch("x86_64") then
