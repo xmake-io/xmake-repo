@@ -1,5 +1,5 @@
 package("range-v3")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/ericniebler/range-v3/")
     set_description("Range library for C++14/17/20, basis for C++20's std::ranges")
     set_license("BSL-1.0")
