@@ -1,14 +1,12 @@
-package("oatpp-websocket")
+package("oatpp-openssl")
     set_homepage("https://oatpp.io/")
-    set_description("It provides WebSocket functionality for oatpp applications.")
+    set_description("It provides secure server and client connection providers for oatpp applications.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/oatpp/oatpp-websocket/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/oatpp/oatpp-websocket.git")
+    add_urls("https://github.com/oatpp/oatpp-openssl/archive/5925e8ba856fa71cda8937c4cb357508d4fdb3fb.tar.gz",
+             "https://github.com/oatpp/oatpp-openssl.git")
 
-    add_versions("1.0.0", "2e4ed596d1e8c15f0b9c6d5ba994b8fde623a6dfd256a17c8f99d86427115981")
-    add_versions("1.2.5", "b930034aaed40715ccc9b9df094292ea6e2a44f31bf830d1e15db5255ece9184")
-    add_versions("1.3.0", "8215765238c595e296c9ea961670064ff9c44e3e0f9accda59d81b10cc29873b")
+    add_versions("1.3.0", "540ab736ca8f7b8a89c23ad51655e038b59c6df8a08a60b95125843c9643a405")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -16,9 +14,10 @@ package("oatpp-websocket")
 
     add_deps("cmake")
     add_deps("oatpp")
+    add_deps("openssl")
 
     on_load(function (package)
-        package:add("includedirs", path.join("include", "oatpp-" .. package:version_str(), "oatpp-websocket"))
+        package:add("includedirs", path.join("include", "oatpp-" .. package:version_str(), "oatpp-openssl"))
         package:add("linkdirs", path.join("lib", "oatpp-" .. package:version_str()))
     end)
 
@@ -34,16 +33,12 @@ package("oatpp-websocket")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "oatpp-websocket/SHA1.hpp"
+            #include "oatpp-openssl/server/ConnectionProvider.hpp"
+            #include "oatpp-openssl/Config.hpp"
+            #include "oatpp-openssl/configurer/TrustStore.hpp"
             void test() {
-                oatpp::String message = "oat++ web framework";
-                oatpp::String messageEncoded = "43e1bad62b6b4a1e88c9de60435335b5b7518f4a";
-                {
-                    oatpp::websocket::SHA1 sha;
-                    sha.update(message);
-                    oatpp::String encoded = sha.finalBinary();
-                    OATPP_ASSERT(encoded == messageEncoded);
-                }
+                const char* trust = "path/to/truststore";
+                auto config = oatpp::openssl::Config::createDefaultClientConfigShared();
             }
         ]]}, {configs = {languages = "c++11"}}))
     end)

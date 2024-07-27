@@ -47,12 +47,12 @@ package("spdlog")
         assert(not (package:config("fmt_external") and package:config("fmt_external_ho")), "fmt_external and fmt_external_ho are mutually exclusive")
         if package:config("std_format") then
             package:add("defines", "SPDLOG_USE_STD_FORMAT")
-        elseif package:config("fmt_external") then
+        elseif package:config("fmt_external") or package:config("fmt_external_ho") then
             package:add("defines", "SPDLOG_FMT_EXTERNAL")
-            package:add("deps", "fmt")
-        elseif package:config("fmt_external_ho") then
-            package:add("defines", "SPDLOG_FMT_EXTERNAL_HO")
-            package:add("deps", "fmt", {configs = {header_only = true}})
+            package:add("deps", "fmt", {configs = {header_only = package:config("header_only")}})
+        end
+        if not package:config("header_only") and package:config("fmt_external_ho") then
+            package:add("defines", "FMT_HEADER_ONLY=1")
         end
         if package:config("noexcept") then
             package:add("defines", "SPDLOG_NO_EXCEPTIONS")

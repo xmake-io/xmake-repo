@@ -153,6 +153,17 @@ package("boost")
                 package:add("deps", "xz")
             end
         end
+
+        if package:is_plat("windows") and package:version():le("1.85.0") then
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                if minor and minor >= 40 then
+                    package:add("patches", "<=1.85.0", "patches/1.85.0/fix-v144.patch", "1ba99cb2e2f03a4ba489a32596c62e1310b6c73ba4d19afa8796bcf180c84422")
+                end
+            end
+        end
     end)
 
     on_install("macosx", "linux", "windows", "bsd", "mingw", "cross", function (package)
@@ -387,21 +398,6 @@ package("boost")
 
         if package:is_plat("linux") then
             table.insert(argv, "pch=off")
-        end
-
-        if package:is_plat("windows") and package:version():le("1.85.0") then
-            local vs_toolset = build_toolchain:config("vs_toolset")
-            if vs_toolset then
-                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
-                local minor = vs_toolset_ver:minor()
-                if minor and minor >= 40 then
-                    io.replace("tools/build/src/engine/config_toolset.bat", "vc143", "vc144", {plain = true})
-                    io.replace("tools/build/src/engine/build.bat", "vc143", "vc144", {plain = true})
-                    io.replace("tools/build/src/engine/guess_toolset.bat", "vc143", "vc144", {plain = true})
-                    io.replace("tools/build/src/tools/intel-win.jam", "14.3", "14.4", {plain = true})
-                    io.replace("tools/build/src/tools/msvc.jam", "14.3", "14.4", {plain = true})
-                end
-            end
         end
         local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})
         if ok ~= 0 then
