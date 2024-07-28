@@ -34,6 +34,9 @@ package("drogon")
     add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "check.patch"), "e4731995bb754f04e1bb813bfe3dfb480a850fbbd5cdb48d5a53b32b4ed8669c")
     add_patches(">=1.8.2 <1.8.5", path.join(os.scriptdir(), "patches", "1.8.2", "gcc13.patch"), "d2842a734df52c590ab950414c7a95a1ac1be48f8680f909d0eeba5f36087cb0")
     add_patches(">=1.9.1", path.join(os.scriptdir(), "patches", "1.9.1", "resolv.patch"), "2b511e60fe99062396accab6b25d0092e111a83db11cffc23ce8e790370d017c")
+    if is_plat("windows") then
+        add_patches("1.9.6", path.join(os.scriptdir(), "patches", "1.9.6", "windows-build.patch"), "4a798dc3ba7df2f1541ecf66b1b03bab15f200d310ac63f7893770cb3b199453")
+    end
 
     add_configs("c_ares", {description = "Enable async DNS query support.", default = false, type = "boolean"})
     add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
