@@ -198,7 +198,7 @@ configvar_check_csnippets("HAVE_ENVIRON_DECL=0", [[extern struct {int foo;} envi
 void test() {environ.foo = 1;}]], {includes = has_config("__HAVE_UNISTD_H") and "unistd.h" or "stdlib.h", default = 1})
 
 if is_plat("android") then
-    add_cxflags("-Wno-error=parentheses-equality")
+    add_cxflags("-Wno-error=parentheses-equality", "-Wno-error=deprecated-non-prototype")
 end
 
 target("charset")
