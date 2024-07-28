@@ -53,7 +53,7 @@ target("dwarf++")
         file:print("")
 
         local python = assert(import("lib.detect.find_tool")("python3"), "python not found!")
-        local result = try { function() return os.iorunv(python.program, {}, {stdin = "dwarf/data.hh"}) end}
+        local result = try { function() return os.iorunv(python.program, {"elf/enum-print.py"}, {stdin = "dwarf/dwarf++.hh"}) end}
         if result then
             file:print(result)
         end
