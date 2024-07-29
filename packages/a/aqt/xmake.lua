@@ -40,6 +40,7 @@ package("aqt")
             os.cp(package:originfile(), path.join(package:installdir("bin"), "aqt.exe"))
         elseif is_host("macosx") and (os.arch() == "arm64" or os.arch() == "x86_64") then
             os.cp(package:originfile(), path.join(package:installdir("bin"), "aqt"))
+            os.vrunv("chmod", {"+x", path.join(package:installdir("bin"), "aqt")})
         else
             -- ensurepip has been dropped in recent releases
             try {function () os.vrunv("python3", {"-m", "ensurepip"}) end}
