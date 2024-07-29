@@ -26,7 +26,7 @@ package("liba52")
         add_syslinks("m")
     end
 
-    if is_subhost("msys") or (not is_plat("windows", "mingw")) then
+    if is_subhost("msys") or (not is_host("windows"))then
         add_deps("autoconf", "automake", "libtool", "m4")
     end
 
@@ -37,9 +37,10 @@ package("liba52")
     end)
 
     on_install(function (package)
-        if is_subhost("msys") or (not package:is_plat("windows", "mingw")) then
+        if is_subhost("msys") or (not is_host("windows"))then
             -- Generate config.h by autotools
-            os.vrunv("./configure", {}, {shell = true})
+            local buildenvs = import("package.tools.autoconf").buildenvs(package)
+            os.vrunv("./configure", {}, {shell = true, envs = buildenvs})
         end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {tools = package:config("tools")})

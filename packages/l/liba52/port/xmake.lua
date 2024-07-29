@@ -34,7 +34,8 @@ target("a52")
         "include/a52.h",
         "include/attributes.h",
         "include/audio_out.h",
-        "include/mm_accel.h", {prefixdir = "a52dec"}
+        "include/mm_accel.h",
+        "liba52/a52_internal.h", {prefixdir = "a52dec"}
     )
 
     if is_plat("windows", "mingw") then
