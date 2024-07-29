@@ -41,7 +41,7 @@ package("breakpad")
         io.replace("configure", "WARN_CXXFLAGS \" -Werror\"", "WARN_CXXFLAGS ", {plain = true})
         local configs = {"--disable-dependency-tracking"}
         if package:debug() then
-            table.insert(configs, "--debug")
+            table.insert(configs, "-d")
         end
         import("package.tools.autoconf").install(package, configs)
         os.mv(package:installdir("include", "breakpad", "client"), package:installdir("include"))
