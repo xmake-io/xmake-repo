@@ -61,7 +61,7 @@ package("breakpad")
                 }
             ]]
         end
-
+        
         local header = "client/" .. plat .. "/handler/exception_handler.h"
         assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = "c++11"}, includes = header}))
     end)
