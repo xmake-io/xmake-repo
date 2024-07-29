@@ -30,6 +30,9 @@ package("capnproto")
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32")
+    end
 
     add_deps("cmake", "zlib")
     on_install("windows", "mingw@windows,msys", "linux", "macosx", "bsd", function (package)
