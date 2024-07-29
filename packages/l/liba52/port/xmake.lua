@@ -11,6 +11,11 @@ if is_plat("windows") and has_config("tools") then
     add_requires("strings_h")
 end
 
+if is_plat("macosx", "iphoneos") then
+    -- Fixes duplicate symbols errors on arm64
+    set_languages("gnu89")
+end
+
 rule("tools")
     on_load(function (target)
         if not get_config("tools") then
