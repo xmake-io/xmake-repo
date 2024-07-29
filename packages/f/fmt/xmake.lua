@@ -51,7 +51,7 @@ package("fmt")
                 package:add("defines", "FMT_EXPORT")
             end
         end
-        if package:is_plat("windows") and package:config("unicode") then
+        if package:has_tool("cxx", "cl") and package:config("unicode") then
             package:add("cxxflags", "/utf-8")
         end
     end)
