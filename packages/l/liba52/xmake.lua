@@ -37,9 +37,9 @@ package("liba52")
     end)
 
     on_install(function (package)
-        if  is_subhost("msys") or (not is_plat("windows", "mingw")) then
+        if is_subhost("msys") or (not package:is_plat("windows", "mingw")) then
             -- Generate config.h by autotools
-            os.vrun("./configure")
+            os.vrunv("./configure", {}, {shell = true})
         end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {tools = package:config("tools")})
