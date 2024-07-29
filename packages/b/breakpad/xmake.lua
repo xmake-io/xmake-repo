@@ -6,6 +6,7 @@ package("breakpad")
              "https://github.com/google/breakpad.git",
              "https://chromium.googlesource.com/breakpad/breakpad.git")
 
+    add_versions("v2023.06.01", "81555be3595e25e8be0fe6dd34e9490beba224296e0a8a858341e7bced67674d")
     add_versions("v2023.01.27", "f187e8c203bd506689ce4b32596ba821e1e2f034a83b8e07c2c635db4de3cc0b")
 
     if is_plat("windows") then
@@ -19,8 +20,11 @@ package("breakpad")
     if is_plat("windows") then
         add_syslinks("wininet", "dbghelp", "imagehlp")
     elseif is_plat("linux") then
+        add_deps("autoconf", "automake", "m4", "libtool", "linux-syscall-support")
         add_syslinks("pthread")
+        add_patches("v2023.06.01", path.join(os.scriptdir(), "patches", "v2023.06.01", "add-linux_systemcall_support.patch"), "522c7039d684cfeb9325843935477f0446a2b8a3699d24fc2b37bff46a068399")
     elseif is_plat("macosx") then
+        add_deps("autoconf", "automake", "m4", "libtool")
         add_frameworks("CoreFoundation")
     end
 
@@ -31,6 +35,23 @@ package("breakpad")
         io.replace("src/processor/exploitability_win.cc", "third_party/", "", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
+    end)
+
+    on_install("linux", "macosx", function (package)
+        io.replace("configure", "WARN_CXXFLAGS \" -Werror\"", "WARN_CXXFLAGS ", {plain = true})
+        local configs = {"--disable-dependency-tracking"}
+        if package:debug() then
+            table.insert(configs, "--debug")
+        end
+        import("package.tools.autoconf").install(package, configs)
+        os.mv(package:installdir("include", "breakpad", "client"), package:installdir("include"))
+        os.mv(package:installdir("include", "breakpad", "common"), package:installdir("include"))
+        os.mv(package:installdir("include", "breakpad", "processor"), package:installdir("include"))
+        os.mv(package:installdir("include", "breakpad", "google_breakpad"), package:installdir("include"))
+        os.mv(package:installdir("include", "breakpad", "third_party"), package:installdir("include"))  
+        for _, dir in ipairs(os.dirs(package:installdir("include/**"))) do
+            print(dir)
+        end
     end)
 
     on_test(function (package)
@@ -56,6 +77,7 @@ package("breakpad")
         else
             plat = "linux"
             snippets = [[
+                #include"client/linux/handler/exception_handler.h"
                 void test() {
                     google_breakpad::MinidumpDescriptor descriptor("/tmp");
                 }
@@ -63,5 +85,5 @@ package("breakpad")
         end
 
         local header = "client/" .. plat .. "/handler/exception_handler.h"
-        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = "c++11"}, includes = header}))
+        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = "c++17"}}))
     end)

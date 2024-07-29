@@ -8,6 +8,7 @@ package("linux-syscall-support")
 
     on_install("linux", function (package)
         os.cp("linux_syscall_support.h", package:installdir("include/lss"))
+        print("the package dir is" .. package:installdir())
     end)
 
     on_test(function (package)
