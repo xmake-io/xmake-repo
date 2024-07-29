@@ -26,7 +26,7 @@ package("liba52")
         add_syslinks("m")
     end
 
-    if not (is_plat("windows") or (is_plat("mingw") and is_subhost("msys"))) then
+    if is_subhost("msys") or (not is_plat("windows", "mingw")) then
         add_deps("autoconf", "automake", "libtool", "m4")
     end
 
@@ -37,7 +37,7 @@ package("liba52")
     end)
 
     on_install(function (package)
-        if not (is_plat("windows") or (is_plat("mingw") and is_subhost("msys"))) then
+        if  is_subhost("msys") or (not is_plat("windows", "mingw")) then
             -- Generate config.h by autotools
             os.vrun("./configure")
         end

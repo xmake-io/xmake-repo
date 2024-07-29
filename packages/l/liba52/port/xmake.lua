@@ -7,7 +7,7 @@ if is_plat("windows", "mingw") and (not is_subhost("msys")) then
     add_includedirs("vc++")
 end
 
-if is_plat("windows") then
+if is_plat("windows") and has_config("tools") then
     add_requires("strings_h")
 end
 
