@@ -1,7 +1,7 @@
 package("liba52")
-    set_homepage("https://pagure.io/libaio")
+    set_homepage("https://liba52.sourceforge.io")
     set_description("Library for decoding ATSC A/52 (AC-3) audio streams")
-    set_license("GPL-2.0")
+    set_license("GPL-2.0-or-later")
 
     add_urls("https://git.adelielinux.org/community/a52dec/-/archive/$(version)/a52dec-$(version).tar.bz2",
              "https://git.adelielinux.org/community/a52dec.git",
@@ -26,7 +26,7 @@ package("liba52")
         add_syslinks("m")
     end
 
-    if is_subhost("msys") or (not is_host("windows"))then
+    if not is_host("windows") then
         add_deps("autoconf", "automake", "libtool", "m4")
     end
 
@@ -39,7 +39,12 @@ package("liba52")
     on_install(function (package)
         if is_subhost("msys") or (not is_host("windows"))then
             -- Generate config.h by autotools
-            import("package.tools.autoconf").configure(package)
+            local configs = {}
+            if package:is_plat("android", "bsd", "wasm") then
+                table.insert(configs, "--disable-oss")
+                table.insert(configs, "--disable-djbfft")
+            end
+            import("package.tools.autoconf").configure(package, configs)
         end
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {tools = package:config("tools")})
