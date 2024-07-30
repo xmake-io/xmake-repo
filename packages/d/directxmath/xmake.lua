@@ -21,8 +21,8 @@ package("directxmath")
     add_deps("cmake")
     add_includedirs("include/directxmath")
 
-    on_install("windows", "mingw", "linux", function (package)
-        if package:is_plat("linux") then
+    on_install("windows", "mingw", "linux", "macosx", function (package)
+        if package:is_plat("linux", "macosx") then
             os.cp("../resources/headers/sal.h", package:installdir("include", "directxmath"))
         end
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
