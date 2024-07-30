@@ -36,8 +36,8 @@ package("liba52")
         end
     end)
 
-    on_install(function (package)
-        if is_subhost("msys") or (not is_host("windows"))then
+    on_install("!iphoneos", function (package)
+        if not is_host("windows")then
             -- Generate config.h by autotools
             local configs = {}
             if package:is_plat("android", "bsd", "wasm") then

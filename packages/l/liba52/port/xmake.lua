@@ -3,7 +3,7 @@ option("tools", {default = false})
 add_rules("mode.debug", "mode.release")
 
 add_includedirs("include")
-if is_plat("windows", "mingw") and (not is_subhost("msys")) then
+if is_plat("windows", "mingw") or is_host("windows") then
     add_includedirs("vc++")
 end
 
