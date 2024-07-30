@@ -11,8 +11,8 @@ if is_plat("windows") and has_config("tools") then
     add_requires("strings_h")
 end
 
-if is_plat("macosx", "iphoneos") then
-    -- Fixes duplicate symbols errors on arm64
+if is_plat("macosx") or (is_host("macosx") and is_plat("mingw")) then
+    -- Fixes duplicate symbols
     set_languages("gnu89")
 end
 
