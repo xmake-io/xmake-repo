@@ -20,7 +20,7 @@ package("libcurl")
 
     add_configs("cares",    {description = "Enable c-ares support.", default = false, type = "boolean"})
     add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = false, type = "boolean"})
-    add_configs("mbedtls",  {description = "Enable mbedTLS for SSL/TLS.", default = false, type = "boolean"})
+    add_configs("mbedtls",  {description = "Enable mbedTLS for SSL/TLS.", default = true, type = "boolean"})
     add_configs("nghttp2",  {description = "Use Nghttp2 library.", default = false, type = "boolean"})
     add_configs("openldap", {description = "Use OpenLDAP library.", default = false, type = "boolean"})
     add_configs("libidn2",  {description = "Use Libidn2 for IDN support.", default = false, type = "boolean"})
@@ -32,7 +32,7 @@ package("libcurl")
 
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
-        if package:is_plat("linux", "android", "cross") then
+        if not package:config("mbedtls") and package:is_plat("linux", "android", "cross") then
             package:config_set("openssl", true)
         end
 
