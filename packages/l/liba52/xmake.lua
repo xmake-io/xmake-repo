@@ -36,7 +36,7 @@ package("liba52")
         end
     end)
 
-    on_install("!iphoneos", function (package)
+    on_install("!iphoneos and (!android or android@!windows)", function (package)
         if not is_host("windows")then
             -- Generate config.h by autotools
             local configs = {}
