@@ -15,22 +15,24 @@ package("fmtlog")
     end
 
     on_load(function (package)
-        local version_mapping = {
-            {pkgver = "2.2.2", fmtver = " 10.2.1"},
-            {pkgver = "2.2.1", fmtver = " 9.1.0"},
-            {pkgver = "2.1.2", fmtver = " 8.1.0"}
-        }
-        local packagever = package:version()
         local fmtver = ""
-        -- find lowest matching version (or exact match)
-        for _, ver in ipairs(version_mapping) do
-            if packagever:lt(ver.pkgver) then
-                fmtver = ver.fmtver
-            else
-                if packagever:eq(ver.pkgver) then
+        local packagever = package:version()
+        if packagever then
+            local version_mapping = {
+                {pkgver = "2.2.2", fmtver = " 10.2.1"},
+                {pkgver = "2.2.1", fmtver = " 9.1.0"},
+                {pkgver = "2.1.2", fmtver = " 8.1.0"}
+            }
+            -- find lowest matching version (or exact match)
+            for _, ver in ipairs(version_mapping) do
+                if packagever:lt(ver.pkgver) then
                     fmtver = ver.fmtver
+                else
+                    if packagever:eq(ver.pkgver) then
+                        fmtver = ver.fmtver
+                    end
+                    break
                 end
-                break
             end
         end
         package:add("deps", "fmt" .. fmtver)
