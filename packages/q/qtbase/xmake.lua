@@ -85,7 +85,9 @@ package("qtbase")
             local compiler_version
             if package:is_plat("windows") then
                 local vs = toolchain.load("msvc"):config("vs")
-                if tonumber(vs) >= 2019 or version:ge("6.0") then
+                if version:ge("6.8") then
+                    compiler_version = "msvc2022"
+                elseif tonumber(vs) >= 2019 or version:ge("6.0") then
                     compiler_version = "msvc2019"
                 elseif vs == "2017" or vs == "2015" then
                     compiler_version = "msvc" .. vs
@@ -168,7 +170,9 @@ package("qtbase")
 
                 local compiler_version
                 local vs = toolchain.load("msvc"):config("vs")
-                if tonumber(vs) >= 2019 or version:ge("6.0") then
+                if version:ge("6.8") then
+                    compiler_version = "msvc2022"
+                elseif tonumber(vs) >= 2019 or version:ge("6.0") then
                     compiler_version = "msvc2019"
                 elseif vs == "2017" or vs == "2015" then
                     compiler_version = "msvc" .. vs
