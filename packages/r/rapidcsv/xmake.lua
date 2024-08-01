@@ -1,5 +1,6 @@
 package("rapidcsv")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/d99kris/rapidcsv")
     set_description("C++ header-only library for CSV parsing (by d99kris)")
 
