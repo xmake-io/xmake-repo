@@ -84,8 +84,10 @@ package("qtbase")
 
             local compiler_version
             if package:is_plat("windows") then
-                local vs = toolchain.load("msvc"):config("vs")
-                if tonumber(vs) >= 2019 or version:ge("6.0") then
+                local vs = package:toolchain("msvc"):config("vs")
+                if version:ge("6.8") then
+                    compiler_version = "msvc2022"
+                elseif tonumber(vs) >= 2019 or version:ge("6.0") then
                     compiler_version = "msvc2019"
                 elseif vs == "2017" or vs == "2015" then
                     compiler_version = "msvc" .. vs
@@ -116,7 +118,11 @@ package("qtbase")
             end
             arch = "win" .. winarch .. "_" .. compiler_version
         elseif package:is_plat("linux") then
-            arch = "gcc_64"
+            if version:ge("6.7.0") then
+                arch = "linux_gcc_64"
+            else
+                arch = "gcc_64"
+            end
         elseif package:is_plat("macosx") then
             arch = "clang_64"
         elseif package:is_plat("android") then
@@ -167,8 +173,10 @@ package("qtbase")
                 end
 
                 local compiler_version
-                local vs = toolchain.load("msvc"):config("vs")
-                if tonumber(vs) >= 2019 or version:ge("6.0") then
+                local vs = package:toolchain("msvc"):config("vs")
+                if version:ge("6.8") then
+                    compiler_version = "msvc2022"
+                elseif tonumber(vs) >= 2019 or version:ge("6.0") then
                     compiler_version = "msvc2019"
                 elseif vs == "2017" or vs == "2015" then
                     compiler_version = "msvc" .. vs
@@ -183,14 +191,17 @@ package("qtbase")
                 end
                 hostarch = "win" .. winarch .. "_" .. compiler_version
             elseif is_host("linux") then
-                hostarch = "gcc_64"
+                if version:ge("6.7.0") then
+                    arch = "linux_gcc_64"
+                else
+                    arch = "gcc_64"
+                end
             elseif is_host("macosx") then
                 hostarch = "clang_64"
             end
 
             -- download qtbase to bin_host folder
-            os.vrunv("aqt", {"install-qt", "-O", path.join(installdir, "bin_host"),
-                runhost, "desktop", versionstr, hostarch})
+            os.vrunv("aqt", {"install-qt", "-O", path.join(installdir, "bin_host"), runhost, "desktop", versionstr, hostarch})
 
             -- add symbolic links for useful tools
             local tool_folders = {}
