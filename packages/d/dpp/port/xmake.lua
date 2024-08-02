@@ -2,6 +2,8 @@ add_rules("mode.debug", "mode.release")
 
 add_requires("fmt", "nlohmann_json", "openssl", "zlib")
 
+option("coro", {default = false})
+
 option("have_voice", {default = true})
 
 if has_config("have_voice") then
@@ -19,6 +21,11 @@ target("dpp")
     if has_config("have_voice") then
         add_packages("libopus", "libsodium")
         add_defines("HAVE_VOICE")
+    end
+
+    if has_config("coro") then
+        set_languages("c++20")
+        add_defines("DPP_CORO")
     end
 
     add_defines("DPP_BUILD", "DPP_USE_EXTERNAL_JSON")

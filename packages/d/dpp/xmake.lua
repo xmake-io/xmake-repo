@@ -55,6 +55,8 @@ package("dpp")
 
     add_configs("have_voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = false})
 
+    add_configs("coro", { description = "Enable experimental coroutines support for the library.", default = false, type = "boolean" , readonly = false})
+
     if is_plat("linux", "macosx") then
         add_syslinks("pthread")
     end
@@ -66,6 +68,10 @@ package("dpp")
         if package:config("have_voice") then
             package:add("defines", "HAVE_VOICE")
             package:add("deps", "libsodium", "libopus")
+        end
+
+        if package:config("coro") then
+            package:add("defines", "DPP_CORO")
         end
 
         if package:version():le("v10.0.13") then
@@ -99,7 +105,8 @@ package("dpp")
         os.rmdir("include/dpp/nlohmann")
 
         local configs = {
-            have_voice = package:config("have_voice")
+            have_voice = package:config("have_voice"),
+            coro = package:config("coro")
         }
         
         if package:version():ge("v10.0.29") and package:is_plat("windows") then
