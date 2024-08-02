@@ -42,7 +42,7 @@ configvar_check_cincludes("LIBA52_DJBFFT", "fftc4.h")
 -- set_configvar("LIBA52_DOUBLE", "1")
 -- set_configvar("LIBA52_FIXED", "1")
 -- set_configvar("LIBAO_AL", "1")
-if is_plat("linux", "bsd") then
+if is_plat("linux") then
     set_configvar("LIBAO_OSS", "1")
 end
 if is_plat("windows", "mingw", "msys", "cygwin") then
