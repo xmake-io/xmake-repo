@@ -1,6 +1,12 @@
 add_rules("mode.debug", "mode.release")
 
-add_requires("fmt", "nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
+add_requires("fmt", "nlohmann_json", "openssl", "zlib")
+
+option("have_voice", {default = true})
+
+if has_config("have_voice") then
+    add_requires("libopus", "libsodium")
+end
 
 target("dpp")
     set_kind("$(kind)")
@@ -8,7 +14,12 @@ target("dpp")
     add_includedirs("include", "include/dpp")
     add_headerfiles("include/(dpp/**.h)")
     add_files("src/dpp/**.cpp")
-    add_packages("fmt", "nlohmann_json", "libsodium", "libopus", "openssl", "zlib")
+    add_packages("fmt", "nlohmann_json", "openssl", "zlib")
+
+    if has_config("have_voice") then
+        add_packages("libopus", "libsodium")
+        add_defines("HAVE_VOICE")
+    end
 
     add_defines("DPP_BUILD", "DPP_USE_EXTERNAL_JSON")
 

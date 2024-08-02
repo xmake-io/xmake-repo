@@ -53,7 +53,7 @@ package("dpp")
 
     add_deps("nlohmann_json", "openssl", "zlib")
 
-    add_configs("have_voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = true})
+    add_configs("have_voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = false})
 
     if is_plat("linux", "macosx") then
         add_syslinks("pthread")
@@ -98,7 +98,10 @@ package("dpp")
         io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
         os.rmdir("include/dpp/nlohmann")
 
-        local configs = {}
+        local configs = {
+            have_voice = package:config("have_voice")
+        }
+        
         if package:version():ge("v10.0.29") and package:is_plat("windows") then
             configs.cxflags = "/bigobj /Gy"
         end
