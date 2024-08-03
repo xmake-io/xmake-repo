@@ -17,7 +17,9 @@ package("cppfront")
     on_check(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <compare>
+            #include <source_location>
             void test() {
+                std::source_location::current();
                 std::compare_three_way{};
             }
         ]]}, {configs = {languages = "c++20"}}), "package(cppfront) requires at least C++20.")
@@ -39,12 +41,13 @@ package("cppfront")
 
     on_test(function (package)
         io.writefile("main.cpp2", [[
-        main: () -> int =
-            println("Hello world!\n");
-
-        println: (msg: _) -> int = {
-            std::cout << "msg: " << msg;
-            return 0;
-        }]])
+            main: () -> int =
+                println("Hello world!\n");
+    
+            println: (msg: _) -> int = {
+                std::cout << "msg: " << msg;
+                return 0;
+            }
+        ]])
         os.vrun("cppfront -o main.cpp main.cpp2")
     end)
