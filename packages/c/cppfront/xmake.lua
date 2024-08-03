@@ -5,6 +5,7 @@ package("cppfront")
 
     add_urls("https://github.com/hsutter/cppfront/archive/refs/tags/$(version).tar.gz")
     add_urls("https://github.com/hsutter/cppfront.git")
+    add_versions("v0.7.2", "fb44c6a65fa19b185ddf385dd3bfea05afe0bc8260382b7a8e3c75b3c9004cd6")
     add_versions("v0.7.0", "d4ffb37d19a2b7c054d005cf4687439577ef2f3d93b340a342704e064cd1d047")
 
     on_fetch(function (package, opt)
