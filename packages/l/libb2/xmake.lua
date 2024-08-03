@@ -8,17 +8,25 @@ package("libb2")
 
     add_versions("v0.98.1", "9eb776149c41a34619e801adeae8056ca68faadc7cea3a68a54b2a4d93ef1937")
 
+    add_configs("openmp", {description = "Enable Openmp", default = false, type = "boolean"})
+    add_configs("sse", {description = "Enable SSE", default = false, type = "boolean"})
+
     on_install(function (package)
         if package:config("shared") then
             package:add("defines", "BLAKE2_DLL")
         end
+
+        local configs = {
+            openmp = package:config("openmp"),
+            sse = package:config("sse"),
+        }
 
         io.writefile("src/config.h")
         io.replace("src/blake2-impl.h",
             "#define BLAKE2_IMPL_NAME(fun)  BLAKE2_IMPL_EVAL(fun, SUFFIX)",
             "#define BLAKE2_IMPL_NAME", {plain = true})
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
