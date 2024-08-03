@@ -13,7 +13,7 @@ package("libmpeg2")
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     if is_plat("linux", "macosx", "bsd") then
-        add_deps("libx11")
+        add_deps("libxext")
     end
 
     on_load(function (package)

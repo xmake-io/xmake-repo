@@ -6,10 +6,6 @@ if is_plat("windows") and has_config("tools") then
     add_requires("strings_h")
 end
 
--- if is_arch("arm.*") then
---     add_requires("nasm")
--- end
-
 if is_plat("macosx") or (is_host("macosx") and is_plat("mingw")) then
     -- Fixes duplicate symbols
     set_languages("gnu89")
@@ -62,14 +58,15 @@ target("mpeg2")
         add_syslinks("user32", "gdi32")
     end
 
-    -- if is_arch("arm.*") then
-    --     set_toolchains("nasm")
-    --     add_files("libmpeg2/motion_comp_arm_s.S")
-    -- end
-
     if is_plat("windows") and is_kind("shared") then
         add_rules("utils.symbols.export_all")
     end
+
+    on_config(function (target)
+        if not target:has_tool("cxx", "cl") and target:is_arch("arm.*") then
+            target:add("files", "libmpeg2/motion_comp_arm_s.S")
+        end
+    end)
 
 rule("tools")
     on_load(function (target)
