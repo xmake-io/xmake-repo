@@ -44,8 +44,8 @@ end
 
 if is_plat("linux", "macosx", "bsd") then
     set_configvar("LIBVO_X11", "1")
-    add_requires("libx11")
-    add_packages("libx11")
+    add_requires("libxext")
+    add_packages("libxext")
 end
 
 target("mpeg2")
