@@ -8,7 +8,7 @@ end
 
 add_rules("mode.debug", "mode.release")
 
-target("libb2")
+target("b2")
     set_kind("$(kind)")
     add_headerfiles("src/blake2.h")
     add_files("src/blake2bp.c", "src/blake2sp.c")
