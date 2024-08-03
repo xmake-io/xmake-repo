@@ -21,12 +21,14 @@ package("concurrencpp")
 
     on_load(function (package)
         package:add("includedirs", "include/concurrencpp-" .. package:version_str())
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "CRCPP_IMPORT_API")
+        end
     end)
 
-    on_install("macosx", "windows", function (package)
-        assert(package:has_tool("cxx", "clang", "cl"), "compiler not supported!")
+    on_install(function (package)
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
