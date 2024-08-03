@@ -18,8 +18,8 @@ package("cppfront")
         assert(package:check_cxxsnippets({test = [[
             #include <compare>
             #include <source_location>
+            constexpr auto crt = std::source_location::current();
             void test() {
-                std::source_location::current();
                 std::compare_three_way{};
             }
         ]]}, {configs = {languages = "c++20"}}), "package(cppfront) requires at least C++20.")
