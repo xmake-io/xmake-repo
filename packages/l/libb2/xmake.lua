@@ -1,6 +1,6 @@
 package("libb2")
     set_homepage("https://blake2.net")
-    set_description("BLAKE2 official implementations")
+    set_description("C library providing BLAKE2b, BLAKE2s, BLAKE2bp, BLAKE2sp")
     set_license("CC0-1.0")
 
     add_urls("https://github.com/BLAKE2/libb2/archive/643decfbf8ae600c3387686754d74c84144950d1.tar.gz",
@@ -10,6 +10,16 @@ package("libb2")
 
     add_configs("openmp", {description = "Enable Openmp", default = false, type = "boolean"})
     add_configs("sse", {description = "Enable SSE", default = false, type = "boolean"})
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("m")
+    end
+
+    on_load(function (package)
+        if package:config("openmp") then
+            package:add("deps", "openmp")
+        end
+    end)
 
     on_install(function (package)
         if package:config("shared") then
