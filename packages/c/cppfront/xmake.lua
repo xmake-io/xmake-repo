@@ -23,7 +23,7 @@ package("cppfront")
         ]]}, {configs = {languages = "c++20"}}), "package(cppfront) requires at least C++20.")
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx|x86_64", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
