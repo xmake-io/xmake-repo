@@ -2,23 +2,74 @@ option("tools", {default = false})
 
 add_rules("mode.debug", "mode.release")
 
-add_includedirs("include")
-if is_plat("windows", "mingw") or is_host("windows") then
-    add_includedirs("vc++")
-end
-
 if is_plat("windows") and has_config("tools") then
     add_requires("strings_h")
 end
 
-if is_arch("arm.*") then
-    add_requires("nasm")
-end
+-- if is_arch("arm.*") then
+--     add_requires("nasm")
+-- end
 
 if is_plat("macosx") or (is_host("macosx") and is_plat("mingw")) then
     -- Fixes duplicate symbols
     set_languages("gnu89")
 end
+
+add_includedirs("include")
+
+set_configdir("include")
+add_configfiles("config.h.in")
+
+includes("@builtin/check")
+configvar_check_cincludes("HAVE_ALTIVEC_H", "altivec.h")
+configvar_check_cfuncs("HAVE_BUILTIN_EXPECT", "__builtin_expect")
+-- configvar_check_cincludes("HAVE_DLFCN_H", "dlfcn.h")
+configvar_check_cfuncs("HAVE_FTIME", "ftime", {includes = "time.h"})
+configvar_check_cfuncs("HAVE_GETTIMEOFDAY", "gettimeofday", {includes = "time.h"})
+configvar_check_cincludes("HAVE_INTTYPES_H", "inttypes.h")
+configvar_check_cincludes("HAVE_IO_H", "io.h")
+configvar_check_cfuncs("HAVE_MEMALIGN", "memalign", {includes = "stdlib.h"})
+-- configvar_check_cincludes("HAVE_MEMORY_H", "memory.h")
+-- configvar_check_cincludes("HAVE_STDINT_H", "stdint.h")
+-- configvar_check_cincludes("HAVE_STDLIB_H", "stdlib.h")
+-- configvar_check_cincludes("HAVE_STRINGS_H", "strings.h")
+configvar_check_cincludes("HAVE_STRING_H", "string.h")
+configvar_check_cincludes("HAVE_STRUCT_TIMEVAL", ".h")
+-- configvar_check_cincludes("HAVE_SYS_STAT_H", "sys/stat.h")
+configvar_check_cincludes("HAVE_SYS_TIMEB_H", "sys/timeb.h")
+configvar_check_cincludes("HAVE_SYS_TIME_H", "sys/time.h")
+-- configvar_check_cincludes("HAVE_SYS_TYPES_H", "sys/types.h")
+configvar_check_cincludes("HAVE_TIME_H", "time.h")
+-- configvar_check_cincludes("HAVE_UNISTD_H", "unistd.h")
+
+if is_plat("windows") then
+    set_configvar("LIBVO_DX", "1")
+end
+
+if is_plat("linux", "macosx", "bsd") then
+    set_configvar("LIBVO_X11", "1")
+    add_requires("libx11")
+    add_packages("libx11")
+end
+
+target("mpeg2")
+    set_kind("$(kind)")
+    add_files("libmpeg2/**.c", "libvo/*.c")
+
+    add_headerfiles("include/mpeg2.h", "include/mpeg2convert.h", {prefixdir = "mpeg2dec"})
+
+    if is_plat("windows", "mingw") then
+        add_syslinks("user32", "gdi32")
+    end
+
+    -- if is_arch("arm.*") then
+    --     set_toolchains("nasm")
+    --     add_files("libmpeg2/motion_comp_arm_s.S")
+    -- end
+
+    if is_plat("windows") and is_kind("shared") then
+        add_rules("utils.symbols.export_all")
+    end
 
 rule("tools")
     on_load(function (target)
@@ -35,28 +86,6 @@ rule("tools")
             target:add("packages", "strings_h")
         end
     end)
-
-target("mpeg2")
-    set_kind("shared")
-    add_files("libmpeg2/**.c", "libvo/*.c")
-    add_headerfiles("include/mpeg2.h", "include/mpeg2convert.h", {prefixdir = "mpeg2dec"})
-
-    if is_plat("windows", "mingw") then
-        add_syslinks("user32", "gdi32")
-    end
-
-    if is_arch("arm.*") then
-        set_toolchains("nasm")
-        add_files("libmpeg2/motion_comp_arm_s.S")
-    end
-
-    if is_kind("shared") then
-        if is_plat("mingw") then
-            add_shflags("-Wl,--output-def,mpeg2.def")
-        elseif is_plat("windows") then
-            add_rules("utils.symbols.export_all")
-        end
-    end
 
 target("corrupt_mpeg2")
     add_rules("tools")
