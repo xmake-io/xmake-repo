@@ -15,14 +15,16 @@ package("cppfront")
     end)
 
     on_check(function (package)
+        if package:is_plat("windows") then
+            local vs = package:toolchain("msvc"):config("vs")
+            assert(vs and tonumber(vs) >= 2022, "package(cppfront): need vs >= 2022.")
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <compare>
-            #include <source_location>
-            constexpr auto crt = std::source_location::current();
             void test() {
                 std::compare_three_way{};
             }
-        ]]}, {configs = {languages = "c++20"}}), "package(cppfront) requires at least C++20.")
+        ]]}, {configs = {languages = "c++20"}}), "package(cppfront): requires at least C++20.")
     end)
 
     on_install("windows", "linux", "macosx|x86_64", function (package)
