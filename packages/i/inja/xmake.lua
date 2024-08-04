@@ -2,6 +2,7 @@ package("inja")
 
     set_homepage("https://pantor.github.io/inja/")
     set_description("A Template Engine for Modern C++")
+    set_license("MIT")
 
     add_urls("https://github.com/pantor/inja/archive/$(version).tar.gz",
              "https://github.com/pantor/inja.git")
