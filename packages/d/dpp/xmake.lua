@@ -54,7 +54,7 @@ package("dpp")
     add_deps("nlohmann_json", "openssl", "zlib")
 
     add_configs("voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = false})
-
+    add_configs("have_voice", { description = "Enable voice support for the library (Deprecated flag, move out to newer version 'voice').", default = false, type = "boolean" , readonly = false})
     add_configs("coro", { description = "Enable experimental coroutines support for the library.", default = false, type = "boolean" , readonly = false})
 
     if is_plat("linux", "macosx") then
@@ -64,6 +64,21 @@ package("dpp")
     on_load(function (package)
         if not package:config("shared") then
             package:add("defines", "DPP_STATIC")
+        end
+        if package:config("have_voice") then
+            wprint([[
+                === Deprecation Warning ===
+                You should move out to use voice flag, instead of have_voice
+                Deprecated:
+                add_requires("dpp", {
+                    configs = {have_voice = true}
+                })
+                New (Recommended):
+                add_requires("dpp", {
+                    configs = {voice = true}
+                })
+                This flag will be removed soon, please migrate ASAP!
+            ]])
         end
         if package:config("voice") then
             package:add("defines", "HAVE_VOICE")
@@ -105,7 +120,7 @@ package("dpp")
         os.rmdir("include/dpp/nlohmann")
 
         local configs = {
-            voice = package:config("voice"),
+            voice = package:config("voice") or package:config("have_voice"),
             coro = package:config("coro")
         }
         
