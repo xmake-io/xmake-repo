@@ -4,9 +4,9 @@ add_requires("fmt", "nlohmann_json", "openssl", "zlib")
 
 option("coro", {default = false})
 
-option("have_voice", {default = true})
+option("voice", {default = true})
 
-if has_config("have_voice") then
+if has_config("voice") then
     add_requires("libopus", "libsodium")
 end
 
@@ -18,7 +18,7 @@ target("dpp")
     add_files("src/dpp/**.cpp")
     add_packages("fmt", "nlohmann_json", "openssl", "zlib")
 
-    if has_config("have_voice") then
+    if has_config("voice") then
         add_packages("libopus", "libsodium")
         add_defines("HAVE_VOICE")
     end

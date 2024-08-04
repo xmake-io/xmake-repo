@@ -53,7 +53,7 @@ package("dpp")
 
     add_deps("nlohmann_json", "openssl", "zlib")
 
-    add_configs("have_voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = false})
+    add_configs("voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = false})
 
     add_configs("coro", { description = "Enable experimental coroutines support for the library.", default = false, type = "boolean" , readonly = false})
 
@@ -65,7 +65,7 @@ package("dpp")
         if not package:config("shared") then
             package:add("defines", "DPP_STATIC")
         end
-        if package:config("have_voice") then
+        if package:config("voice") then
             package:add("defines", "HAVE_VOICE")
             package:add("deps", "libsodium", "libopus")
         end
@@ -105,7 +105,7 @@ package("dpp")
         os.rmdir("include/dpp/nlohmann")
 
         local configs = {
-            have_voice = package:config("have_voice"),
+            voice = package:config("voice"),
             coro = package:config("coro")
         }
         
