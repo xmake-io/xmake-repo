@@ -18,7 +18,7 @@ package("brynet")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         os.cp("include", package:installdir())
     end)
 
