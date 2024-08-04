@@ -12,7 +12,6 @@ end
 
 target("dpp")
     set_kind("$(kind)")
-    set_languages("c++17")
     add_includedirs("include", "include/dpp")
     add_headerfiles("include/(dpp/**.h)")
     add_files("src/dpp/**.cpp")
@@ -24,9 +23,15 @@ target("dpp")
     end
 
     if has_config("coro") then
-        set_languages("c++20")
         add_defines("DPP_CORO")
     end
+
+    local target_cpp_lang = "c++17"
+    if has_config("coro") then
+        target_cpp_lang = "c++20"
+    end
+
+    set_languages(target_cpp_lang)
 
     add_defines("DPP_BUILD", "DPP_USE_EXTERNAL_JSON")
 
