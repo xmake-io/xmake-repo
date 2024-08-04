@@ -26,26 +26,14 @@ package("liba52")
         add_syslinks("m")
     end
 
-    if not is_host("windows") then
-        add_deps("autoconf", "automake", "libtool", "m4")
-    end
-
     on_load("windows", function (package)
         if package:config("tools") then
             package:add("deps", "strings_h", {private = true})
         end
     end)
 
-    on_install("!iphoneos and (!android or android@!windows)", function (package)
-        if not is_host("windows")then
-            -- Generate config.h by autotools
-            local configs = {}
-            if package:is_plat("android", "bsd", "wasm") then
-                table.insert(configs, "--disable-oss")
-                table.insert(configs, "--disable-djbfft")
-            end
-            import("package.tools.autoconf").configure(package, configs)
-        end
+    on_install(function (package)
+        os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "config.h.in")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, {tools = package:config("tools")})
     end)
