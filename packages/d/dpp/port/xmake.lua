@@ -1,11 +1,7 @@
 add_rules("mode.debug", "mode.release")
-
 add_requires("fmt", "nlohmann_json", "openssl", "zlib")
-
 option("coro", {default = false})
-
 option("voice", {default = true})
-
 if has_config("voice") then
     add_requires("libopus", "libsodium")
 end
