@@ -2,6 +2,7 @@ package("cosmocc")
     set_kind("toolchain")
     set_homepage("https://github.com/jart/cosmopolitan")
     set_description("build-once run-anywhere c library")
+    set_license("ISC")
 
     add_urls("https://cosmo.zip/pub/cosmocc/cosmocc-$(version).zip",
              "https://github.com/xmake-mirror/cosmopolitan/releases/download/$(version)/cosmocc-$(version).zip")

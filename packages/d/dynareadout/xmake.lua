@@ -2,6 +2,7 @@ package("dynareadout")
 
     set_homepage("https://github.com/PucklaJ/dynareadout")
     set_description("High-Performance C/C++ library for parsing binary output files and key files of LS Dyna (d3plot, binout, input deck)")
+    set_license("zlib")
 
     add_urls("https://github.com/PucklaJ/dynareadout/archive/refs/tags/$(version).tar.gz",
              "https://github.com/PucklaJ/dynareadout.git")
