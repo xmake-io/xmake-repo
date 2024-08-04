@@ -1,6 +1,7 @@
 package("mujs")
     set_homepage("http://mujs.com/")
     set_description("An embeddable Javascript interpreter in C.")
+    set_license("ISC")
 
     add_urls("https://mujs.com/downloads/mujs-$(version).tar.gz")
     add_urls("https://github.com/ccxvii/mujs/archive/refs/tags/$(version).tar.gz",

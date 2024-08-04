@@ -3,6 +3,7 @@ package("jsoncons")
     set_kind("library", {headeronly = true})
     set_homepage("https://danielaparker.github.io/jsoncons/")
     set_description("A C++, header-only library for constructing JSON and JSON-like data formats, with JSON Pointer, JSON Patch, JSONPath, JMESPath, CSV, MessagePack, CBOR, BSON, UBJSON")
+    set_license("BSL-1.0")
 
     set_urls("https://github.com/danielaparker/jsoncons/archive/$(version).zip",
              "https://github.com/danielaparker/jsoncons.git")

@@ -2,6 +2,7 @@ package("daw_header_libraries")
     set_kind("library", {headeronly = true})
     set_homepage("https://beached.github.io/header_libraries/")
     set_description("Various header libraries mostly future std lib, replacements for(e.g. visit), or some misc ")
+    set_license("BSL-1.0")
 
     add_urls("https://github.com/beached/header_libraries/archive/refs/tags/$(version).tar.gz",
              "https://github.com/beached/header_libraries.git")
