@@ -6,6 +6,7 @@ package("antlr4-runtime")
     add_urls("https://github.com/antlr/antlr4/archive/refs/tags/$(version).tar.gz",
              "https://github.com/antlr/antlr4.git")
 
+    add_versions("4.13.2", "9f18272a9b32b622835a3365f850dd1063d60f5045fb1e12ce475ae6e18a35bb")
     add_versions("4.13.1", "da20d487524d7f0a8b13f73a8dc326de7fc2e5775f5a49693c0a4e59c6b1410c")
 
     if is_plat("mingw") and is_subhost("msys") then
