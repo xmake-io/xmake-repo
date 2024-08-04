@@ -117,6 +117,10 @@ package("dpp")
     end)
 
     on_test(function (package)
+        local test_cpp_ver = "c++17"
+        if package:config("coro") then
+            test_cpp_ver = "c++20"
+        end
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 dpp::cluster bot(std::getenv("BOT_TOKEN"));
@@ -129,5 +133,5 @@ package("dpp")
                 });
                 bot.start(false);
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "dpp/dpp.h"}))
+        ]]}, {configs = {languages = test_cpp_ver}, includes = "dpp/dpp.h"}))
     end)
