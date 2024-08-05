@@ -53,7 +53,7 @@ package("uvw")
 
     on_test(function (package)
         local code
-        if package:version() and package:version():le("3.0.0") then
+        if package:version() and package:version():lt("3.0.0") then
             code = [[
                 void test() {
                     auto loop = uvw::Loop::getDefault();
