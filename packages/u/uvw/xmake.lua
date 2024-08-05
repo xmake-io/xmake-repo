@@ -9,8 +9,6 @@ package("uvw")
     add_versions("3.0.0", "v3.0.0_libuv_v1.44")
     add_versions("3.4.0", "v3.4.0_libuv_v1.48")
 
-    add_deps("cmake", "libuv")
-
     if on_check then
         on_check("android", function (package)
             if package:version():ge("3.4.0") then
@@ -20,6 +18,8 @@ package("uvw")
             end
         end)
     end
+
+    add_deps("cmake", "libuv")
 
     on_install(function (package) 
         local configs = {}
