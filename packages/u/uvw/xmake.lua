@@ -6,7 +6,7 @@ package("uvw")
     add_urls("https://github.com/skypjack/uvw.git")
 
     add_versions("2.10.0", "v2.10.0_libuv_v1.42")
-    -- add_versions("3.0.0", "v3.4.0_libuv_v1.44")
+    add_versions("3.0.0", "v3.0.0_libuv_v1.44")
     add_versions("3.4.0", "v3.4.0_libuv_v1.48")
 
     add_deps("cmake", "libuv")
