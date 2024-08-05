@@ -11,7 +11,7 @@ package("uvw")
 
     add_deps("cmake", "libuv")
 
-    on_install("macosx", "linux", "iphoneos", "android@linux,macosx", "mingw@linux,macosx,msys", "windows", function (package)
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -19,6 +19,11 @@ package("uvw")
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=off")
         end
+
+        if package:version():ge("3.0.0") then
+            table.insert(configs, "-DANDROID_PLATFORM=android-24")
+        end
+        
         import("package.tools.cmake").install(package, configs)
     end)
 
