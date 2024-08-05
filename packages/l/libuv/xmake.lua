@@ -47,7 +47,7 @@ package("libuv")
 
     on_load(function (package)
         local version = package:version()
-        if version:ge("1.46.0") or is_host("windows") then
+        if version:ge("1.42.0") or is_host("windows") then
             package:add("deps", "cmake")
         else
             package:add("autoconf", "automake", "libtool", "pkg-config")
