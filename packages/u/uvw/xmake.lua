@@ -6,12 +6,11 @@ package("uvw")
     add_urls("https://github.com/skypjack/uvw.git")
 
     add_versions("2.10.0", "v2.10.0_libuv_v1.42")
-    add_versions("3.0.0", "v3.0.0_libuv_v1.44")
     add_versions("3.4.0", "v3.4.0_libuv_v1.48")
 
     add_deps("cmake", "libuv")
 
-    on_install("macosx", "linux", "iphoneos", "android@linux,macosx", "mingw@linux,macosx", "windows", function (package)
+    on_install("macosx", "linux", "iphoneos", "android@linux,macosx", "mingw@linux,macosx,msys", "windows", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
