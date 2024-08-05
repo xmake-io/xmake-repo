@@ -64,7 +64,7 @@ package("libuv")
             if package:config("shared") then
                 package:add("defines", "USING_UV_SHARED")
             end
-            if version:ge("1.40") and version:lt("1.44") then
+            if version:ge("1.40") and version:lt("1.43") then
                 package:add("linkdirs", path.join("lib", package:is_debug() and "Debug" or "Release"))
             end
         end
