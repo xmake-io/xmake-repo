@@ -21,7 +21,7 @@ package("uvw")
 
     add_deps("cmake", "libuv")
 
-    on_install(function (package) 
+    on_install("!wasm", function (package) 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
@@ -33,7 +33,7 @@ package("uvw")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test("!wasm", function (package)
+    on_test(function (package)
         if package:version():le("2.10.0") then
         assert(package:check_cxxsnippets({
             test = [[
