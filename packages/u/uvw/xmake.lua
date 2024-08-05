@@ -35,10 +35,10 @@ package("uvw")
 
     if on_check then
         on_check("android", function (package)
-            if package:version():ge("3.3.0") then
+            if package:version():ge("3.1.0") then
                 local ndk = package:toolchain("ndk")
                 local ndk_sdkver = ndk:config("ndk_sdkver")
-                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(uvw): deps(libuv) need ndk api level >= 24 after v1.47.0")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(uvw): deps(libuv) need ndk api level >= 24 after v1.45.0")
             end
         end)
     end
