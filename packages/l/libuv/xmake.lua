@@ -26,6 +26,8 @@ package("libuv")
     add_versions("v1.23.0", "ffa1aacc9e8374b01d1ff374b1e8f1e7d92431895d18f8e9d5e59a69a2a00c30")
     add_versions("v1.22.0", "1e8e51531732f8ef5867ae3a40370814ce2e4e627537e83ca519d40b424dced0")
 
+    add_patches("1.44.1", "https://github.com/libuv/libuv/pull/3563/commits/88930d52c1dd60f87445fdc26f0c22b2078299ea.patch", "ab61f14e35fbf6f54c854484b3766046da2dd0368bf71ec12471b89dd3739b1d")
+
     if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation")
     elseif is_plat("linux", "bsd") then
