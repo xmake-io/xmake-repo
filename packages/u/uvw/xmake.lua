@@ -33,7 +33,7 @@ package("uvw")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function (package)
+    on_test("!wasm", function (package)
         if package:version():le("2.10.0") then
         assert(package:check_cxxsnippets({
             test = [[
