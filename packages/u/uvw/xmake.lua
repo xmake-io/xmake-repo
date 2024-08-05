@@ -11,17 +11,27 @@ package("uvw")
 
     add_deps("cmake", "libuv")
 
+    if on_check then
+        on_check("android", function (package)
+            if package:version():ge("3.4.0") then
+                local ndk = package:toolchain("ndk")
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(uvw): deps(libuv) need ndk api level >= 24 after v1.47.0")
+            end
+        end)
+    end
+
     on_install(function (package)
+        if package:version():ge("3.0.0") and  then
+            
+        end
+        
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=on")
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=off")
-        end
-
-        if package:version():ge("3.0.0") then
-            table.insert(configs, "-DANDROID_PLATFORM=android-24")
         end
         
         import("package.tools.cmake").install(package, configs)
