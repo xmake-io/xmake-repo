@@ -56,6 +56,10 @@ package("libuv")
         end
 
         if package:is_plat("windows") then
+            if version:eq("1.43.0") then
+                package:config_set("shared", false)
+                wprint("package(libuv/1.43.0) only support static library")
+            end
             if version:ge("1.45") then
                 package:add("links", package:config("shared") and "uv" or "libuv")
             else
