@@ -38,7 +38,7 @@ package("uvw")
             test = [[
             #include <uvw.hpp>
             void test() {
-                auto loop = uvw::Loop::get_default();
+                auto loop = uvw::loop::get_default();
             }
             ]]},
             {configs = {languages = "c++17"}
