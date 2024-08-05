@@ -6,6 +6,7 @@ package("uvw")
     add_urls("https://github.com/skypjack/uvw.git")
 
     add_versions("2.10.0", "v2.10.0_libuv_v1.42")
+    add_versions("3.0.0", "v3.4.0_libuv_v1.44")
     add_versions("3.4.0", "v3.4.0_libuv_v1.48")
 
     add_deps("cmake", "libuv")
@@ -22,6 +23,7 @@ package("uvw")
     end)
 
     on_test(function (package)
+        if package:version():se("2.10.0") then
         assert(package:check_cxxsnippets({
             test = [[
             #include <uvw.hpp>
@@ -31,4 +33,15 @@ package("uvw")
             ]]},
             {configs = {languages = "c++17"}
         }))
+        else
+        assert(package:check_cxxsnippets({
+            test = [[
+            #include <uvw.hpp>
+            void test() {
+                auto loop = uvw::Loop::get_default();
+            }
+            ]]},
+            {configs = {languages = "c++17"}
+        }))
+        end
     end)
