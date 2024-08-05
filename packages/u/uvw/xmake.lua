@@ -21,11 +21,7 @@ package("uvw")
         end)
     end
 
-    on_install(function (package)
-        if package:version():ge("3.0.0") and  then
-            
-        end
-        
+    on_install(function (package) 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("shared") then
