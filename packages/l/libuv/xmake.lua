@@ -74,7 +74,7 @@ package("libuv")
         end
 
         local version = package:version()
-        if version:ge("1.46.0") or is_host("windows") then
+        if version:ge("1.42.0") or is_host("windows") then
             local configs = {"-DLIBUV_BUILD_TESTS=OFF", "-DLIBUV_BUILD_BENCH=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DLIBUV_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
