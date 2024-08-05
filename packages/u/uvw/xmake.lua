@@ -23,7 +23,7 @@ package("uvw")
     end)
 
     on_test(function (package)
-        if package:version():se("2.10.0") then
+        if package:version():le("2.10.0") then
         assert(package:check_cxxsnippets({
             test = [[
             #include <uvw.hpp>
