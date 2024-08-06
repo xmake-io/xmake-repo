@@ -42,7 +42,7 @@ package("libsdl")
     add_versions("archive:2.30.3", "c5d78a9e0346c6695f03df8ba25e5e111a1e23c8aefa8372a1c5a0dd79acaf10")
     add_versions("archive:2.30.4", "292d5e2f897aa3acb6b365b605c3249c92916fbe7eba4a2e57573ada3855d7cb")
     add_versions("archive:2.30.5", "688d3da2bf7e887d0ba8e0f81c926119f85029544f4f6da8dea96db70f9d28e3")
-    add_versions("archive:2.30.6", "6D4E00FCBEE9FD8985CC2869EDEB0B1A751912B87506CF2FB6471E73D981E1F4")
+    add_versions("archive:2.30.6", "6d4e00fcbee9fd8985cc2869edeb0b1a751912b87506cf2fb6471e73d981e1f4")
 
     add_versions("github:2.0.8",  "release-2.0.8")
     add_versions("github:2.0.12", "release-2.0.12")
