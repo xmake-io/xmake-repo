@@ -17,7 +17,7 @@ package("aws-c-sdkutils")
 
     add_deps("cmake", "aws-c-common")
 
-    on_install(function (package)
+    on_install("!mingw or mingw|!i386", function (package)
         local aws_cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         local aws_c_common_configdir = package:dep("aws-c-common"):installdir("lib", "aws-c-common", "cmake")
         if is_host("windows") then

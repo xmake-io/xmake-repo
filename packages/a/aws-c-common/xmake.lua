@@ -30,7 +30,7 @@ package("aws-c-common")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("!mingw or mingw|!i386", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
