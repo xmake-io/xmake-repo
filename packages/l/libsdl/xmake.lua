@@ -74,6 +74,7 @@ package("libsdl")
     add_versions("github:2.30.6", "release-2.30.6")
 
     add_patches("2.30.0", path.join(os.scriptdir(), "patches", "2.30.0", "fix_mingw.patch"), "ab54eebc2e58d88653b257bc5b48a232c5fb0e6fad5d63661b6388215a7b0cd0")
+    add_patches("3.30.6", "https://github.com/libsdl-org/SDL/commit/7cf3234efeb7a68636bcfdfb3b1507b43fbb0845.patch", "c2fba1e76f8f10631544b63e8ce105a67d582b23bba7c96bdef5f135bd6b4cad")
 
     add_deps("cmake")
 
