@@ -56,7 +56,7 @@ package("poco")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw|x86_64@msys", function (package)
+    on_install("windows", "linux", "macosx", "mingw@msys", function (package)
         io.replace("XML/CMakeLists.txt", "EXPAT REQUIRED", "EXPAT CONFIG REQUIRED")
         io.replace("XML/CMakeLists.txt", "EXPAT::EXPAT", "expat::expat")
         io.replace("XML/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED XML_DTD XML_NS")
