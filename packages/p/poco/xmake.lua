@@ -16,6 +16,16 @@ package("poco")
     add_versions("1.12.5", "92b18eb0fcd2263069f03e7cc80f9feb43fb7ca23b8c822a48e42066b2cd17a6")
     add_versions("1.13.3", "9f074d230daf30f550c5bde5528037bdab6aa83b2a06c81a25e89dd3bcb7e419")
 
+    add_patches("1.11.0", "patches/1.11.0/cmake.patch")
+    add_patches("1.11.1", "patches/1.11.1/cmake.patch")
+    add_patches("1.11.6", "patches/1.11.6/cmake.patch")
+    add_patches("1.11.8", "patches/1.11.8/cmake.patch")
+    add_patches("1.12.1", "patches/1.12.1/cmake.patch")
+    add_patches("1.12.2", "patches/1.12.2/cmake.patch")
+    add_patches("1.12.4", "patches/1.12.4/cmake.patch")
+    add_patches("1.12.5", "patches/1.12.5/cmake.patch")
+    add_patches("1.13.3", "patches/1.13.3/cmake.patch")
+
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
