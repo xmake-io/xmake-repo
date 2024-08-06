@@ -11,7 +11,7 @@ package("poselib")
     add_deps("cmake")
     add_deps("eigen")
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         io.replace("CMakeLists.txt", "-march=native", "", {plain = true})
         io.replace("CMakeLists.txt", "-Wall -Werror -fPIC", "", {plain = true})
 
