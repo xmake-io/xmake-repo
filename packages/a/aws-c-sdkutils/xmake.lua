@@ -11,14 +11,13 @@ package("aws-c-sdkutils")
     add_versions("v0.1.15", "15fa30b8b0a357128388f2f40ab0ba3df63742fd333cc2f89cb91a9169f03bdc")
     add_versions("v0.1.12", "c876c3ce2918f1181c24829f599c8f06e29733f0bd6556d4c4fb523390561316")
 
-    add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     add_deps("cmake", "aws-c-common")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "android", "iphoneos", "cross", "wasm", function (package)
+    on_install(function (package)
         local aws_cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         local aws_c_common_configdir = package:dep("aws-c-common"):installdir("lib", "aws-c-common", "cmake")
         if is_host("windows") then
