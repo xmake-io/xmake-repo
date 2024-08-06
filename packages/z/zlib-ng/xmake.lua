@@ -12,7 +12,7 @@ package("zlib-ng")
     add_versions("2.0.6", "8258b75a72303b661a238047cb348203d88d9dddf85d480ed885f375916fcab6")
     add_versions("2.0.5", "eca3fe72aea7036c31d00ca120493923c4d5b99fe02e6d3322f7c88dbdcd0085")
 
-    add_configs("compat", {description = "Compile with zlib compatible API", default = false, type = "boolean"})
+    add_configs("zlib_compat", {description = "Compile with zlib compatible API", default = false, type = "boolean"})
 
     add_deps("cmake")
 
@@ -51,12 +51,12 @@ package("zlib-ng")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DINC_INSTALL_DIR=" .. package:installdir("include"))
         table.insert(configs, "-DLIB_INSTALL_DIR=" .. package:installdir("lib"))
-        table.insert(configs, "-DZLIB_COMPAT=" .. (package:config("compat") and "ON" or "OFF"))
+        table.insert(configs, "-DZLIB_COMPAT=" .. (package:config("zlib_compat") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
-        if package:config("compat") then
+        if package:config("zlib_compat") then
             assert(package:has_cfuncs("inflate", {includes = "zlib.h"}))
         else
             assert(package:has_cfuncs("zng_inflate", {includes = "zlib-ng.h"}))

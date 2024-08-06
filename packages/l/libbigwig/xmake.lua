@@ -22,7 +22,7 @@ package("libbigwig")
             package:add("deps", "libcurl")
         end
         if package:config("zlib_ng") then
-            package:add("deps", "zlib-ng", {configs = {compat = true}})
+            package:add("deps", "zlib-ng", {configs = {zlib_compat = true}})
         else
             package:add("deps", "zlib")
         end
