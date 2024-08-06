@@ -1,5 +1,4 @@
 package("libpthread-stubs")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: pthread-stubs.pc")
 
@@ -10,7 +9,7 @@ package("libpthread-stubs")
 
     add_deps("pkg-config")
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         import("package.tools.autoconf").install(package)
     end)
 
@@ -18,4 +17,3 @@ package("libpthread-stubs")
         local envs = {PKG_CONFIG_PATH = path.join(package:installdir(), "lib", "pkgconfig")}
         os.vrunv("pkg-config", {"--exists", "pthread-stubs"}, {envs = envs})
     end)
-

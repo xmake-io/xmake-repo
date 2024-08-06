@@ -18,6 +18,7 @@ package("openblas")
             add_versions("0.3.23", "e3a82e60db8d6197228790567e7cf74f2c421a65b29f848977a07b5457debdaa")
             add_versions("0.3.24", "6335128ee7117ea2dd2f5f96f76dafc17256c85992637189a2d5f6da0c608163")
             add_versions("0.3.26", "859c510a962a30ef1b01aa93cde26fdb5fb1050f94ad5ab2802eba3731935e06")
+            add_versions("0.3.27", "7b4d7504f274f8e26001aab4e25ec05032d90b8785b0355dc0d09247858d9f1e")
         elseif is_arch("x86") then
             add_urls("https://github.com/OpenMathLib/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version)-x86.zip")
             add_versions("0.3.15", "bcde933737b477813eaac290de5cb8756d3b42199e8ef5f44b23ae5f06fe0834")
@@ -28,6 +29,7 @@ package("openblas")
             add_versions("0.3.21", "936416a0fec5506af9cf040c9de5c7edbd0ff18b53431799d1a43e47f9eba64e")
             add_versions("0.3.24", "92f8e0c73e1eec3c428b210fbd69b91e966f8cf1f998f3b60a52f024b2bf9d27")
             add_versions("0.3.26", "9c3d48c3c21cd2341d642a63ee8a655205587befdab46462df7e0104d6771f67")
+            add_versions("0.3.27", "0cb61cff9eac7fcc07036880dfeec7a2e194d0412524901bf03e55208f51f900")
         end
 
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
@@ -44,8 +46,9 @@ package("openblas")
         add_versions("0.3.23", "5d9491d07168a5d00116cdc068a40022c3455bf9293c7cb86a65b1054d7e5114")
         add_versions("0.3.24", "ceadc5065da97bd92404cac7254da66cc6eb192679cf1002098688978d4d5132")
         add_versions("0.3.26", "4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68")
+        add_versions("0.3.27", "aa2d68b1564fe2b13bc292672608e9cdeeeb6dc34995512e65c3b10f4599e897")
 
-        add_configs("fortran", {description = "Compile with fortran enabled.", default = is_plat("linux"), type = "boolean"})
+        add_configs("fortran", {description = "Compile with fortran enabled.", default = not is_plat("macosx"), type = "boolean"})
         add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean"})
     end
 

@@ -4,6 +4,8 @@ package("libdwarf")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/davea42/libdwarf-code/releases/download/v$(version)/libdwarf-$(version).tar.xz")
+    add_versions("0.10.1", "b511a2dc78b98786064889deaa2c1bc48a0c70115c187900dd838474ded1cc19")
+    add_versions("0.10.0", "17b7143c4b3e5949d1578c43e8f1e2abd9f1a47e725e6600fe7ac4833a93bb77")
     add_versions("0.9.2", "c1cd51467f9cb8459cd27d4071857abc56191cc5d4182d8bdd7744030f88f830")
     add_versions("0.9.1", "877e81b189edbb075e3e086f6593457d8353d4df09b02e69f3c0c8aa19b51bf4")
     add_versions("0.9.0", "d3cad80a337276a7581bb90ebcddbd743484a99a959157c066dd30f7535db59b")

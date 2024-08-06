@@ -18,18 +18,8 @@ package("libcurl")
     add_patches("7.84.0", path.join(os.scriptdir(), "patches", "7.84.0", "sched.patch"), "e79f56f840cbc6996a153f19d9266bd46fe4154e6b494c8ee0478cb5b87662d3")
     add_patches("8.7.1", path.join(os.scriptdir(), "patches", "8.7.1", "android_armv7.patch"), "b172fd25063fcf4bce987b47a3d95d9d79bcf80f45e7e45dbf4aba72c685fb24")
 
-    add_deps("cmake")
-
-    if is_plat("macosx", "iphoneos") then
-        add_frameworks("Security", "CoreFoundation", "SystemConfiguration")
-    elseif is_plat("linux") then
-        add_syslinks("pthread")
-    elseif is_plat("windows", "mingw") then
-        add_syslinks("advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
-    end
-
     add_configs("cares",    {description = "Enable c-ares support.", default = false, type = "boolean"})
-    add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = is_plat("linux", "android", "cross"), type = "boolean"})
+    add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = false, type = "boolean"})
     add_configs("mbedtls",  {description = "Enable mbedTLS for SSL/TLS.", default = false, type = "boolean"})
     add_configs("nghttp2",  {description = "Use Nghttp2 library.", default = false, type = "boolean"})
     add_configs("openldap", {description = "Use OpenLDAP library.", default = false, type = "boolean"})
@@ -40,20 +30,35 @@ package("libcurl")
     add_configs("libssh2",  {description = "Use libSSH2 library.", default = false, type = "boolean"})
     add_configs("libpsl",   {description = "Use libpsl library.", default = false, type = "boolean"})
 
-    if is_plat("mingw") and is_subhost("msys") then
-        add_extsources("pacman::curl")
-    elseif is_plat("linux") then
-        add_extsources("pacman::curl", "apt::libcurl4-gnutls-dev", "apt::libcurl4-nss-dev", "apt::libcurl4-openssl-dev")
-    elseif is_plat("macosx") then
-        add_extsources("brew::curl")
-    end
-
+    -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
+        if package:is_plat("linux", "android", "cross") then
+            package:config_set("openssl", true)
+        end
+
+        if package:is_plat("macosx", "iphoneos") then
+            package:add("frameworks", "Security", "CoreFoundation", "SystemConfiguration")
+        elseif package:is_plat("linux") then
+            package:add("syslinks", "pthread")
+        elseif package:is_plat("windows", "mingw") then
+            package:add("syslinks", "advapi32", "crypt32", "wldap32", "winmm", "ws2_32", "user32")
+        end
+
+        if package:is_plat("mingw") and is_subhost("msys") then
+            package:add("extsources", "pacman::curl")
+        elseif package:is_plat("linux") then
+            package:add("extsources", "pacman::curl", "apt::libcurl4-gnutls-dev", "apt::libcurl4-nss-dev", "apt::libcurl4-openssl-dev")
+        elseif package:is_plat("macosx") then
+            package:add("extsources", "brew::curl")
+        end
+
         if package:is_plat("windows", "mingw") then
             if not package:config("shared") then
                 package:add("defines", "CURL_STATICLIB")
             end
         end
+
+        package:add("deps", "cmake")
         local configdeps = {cares    = "c-ares",
                             openssl  = "openssl",
                             mbedtls  = "mbedtls",
@@ -68,7 +73,7 @@ package("libcurl")
         local has_deps = false
         for name, dep in pairs(configdeps) do
             if package:config(name) then
-                package:add("deps", dep)
+                package:add("deps", dep, {host = package:is_binary()})
                 has_deps = true
             end
         end
@@ -80,7 +85,7 @@ package("libcurl")
     on_install("windows", "mingw", "linux", "macosx", "iphoneos", "cross", "android", function (package)
         local version = package:version()
 
-        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF"}
+        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_MANUAL=OFF", "-DENABLE_CURL_MANUAL=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
@@ -158,7 +163,7 @@ package("libcurl")
         handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {MBEDTLS_LIBRARY = "mbedtls", MBEDX509_LIBRARY = "mbedx509", MBEDCRYPTO_LIBRARY = "mbedcrypto"})
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs, {buildir = "build"})
     end)
 
     on_test(function (package)

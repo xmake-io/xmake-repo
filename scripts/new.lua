@@ -58,6 +58,41 @@ local function get_github_data(reponame)
     return {data = data, host = host}
 end
 
+local function get_license_spdx_id(key)
+    local licenses = {
+        ["apache-2.0"] = "Apache-2.0",
+        ["lgpl-2.0"] = "LGPL-2.0",
+        ["lgpl-2.1"] = "LGPL-2.1",
+        ["agpl-3.0"] = "AGPL-3.0",
+        ["bsd-2-clause"] = "BSD-2-Clause",
+        ["bsd-3-clause"] = "BSD-3-Clause",
+        ["bsl-1.0"] = "BSL-1.0",
+        ["cc0-1.0"] = "CC0-1.0",
+        ["epl-2.0"] = "EPL-2.0",
+        ["gpl-2.0"] = "GPL-2.0",
+        ["gpl-3.0"] = "GPL-3.0",
+        ["mpl-2.0"] = "MPL-2.0",
+        zlib = "zlib",
+        mit = "MIT",
+    }
+    local license = licenses[key]
+    if license then
+        return license
+    end
+
+    local url = string.format("https://api.github.com/licenses/%s", key)
+    local tmpfile = os.tmpfile({ramdisk = false})
+    local ok = try { function () http.download(url, tmpfile); return true end }
+    if not ok then
+        os.tryrm(tmpfile)
+        return nil
+    end
+    local license_detail = json.loadfile(tmpfile)
+    license = license_detail["spdx_id"]
+    os.tryrm(tmpfile)
+    return license
+end
+
 function generate_package(reponame, get_data)
     local repo_data = get_data(reponame)
     local data = repo_data.data
@@ -80,14 +115,7 @@ function generate_package(reponame, get_data)
 
     -- define license if available
     if type(data.licenseInfo) == "table" and data.licenseInfo.key then
-        local licenses = {
-            ["apache-2.0"] = "Apache-2.0",
-            ["lgpl-2.0"] = "LGPL-2.0",
-            ["lgpl-2.1"] = "LGPL-2.1",
-            zlib = "zlib",
-            mit = "MIT",
-        }
-        local license = licenses[data.licenseInfo.key]
+        local license = get_license_spdx_id(data.licenseInfo.key)
         if license then
             file:print('    set_license("%s")', license)
         end

@@ -11,6 +11,10 @@ package("zeromq")
 
     add_patches("4.3.4", "https://github.com/zeromq/libzmq/commit/438d5d88392baffa6c2c5e0737d9de19d6686f0d.patch", "08f8068e109225ff628f9205597b917f633f02bc0be9382b06fbd98b0de2f8a0")
 
+    if is_plat("macosx") then
+        add_extsources("brew::zeromq")
+    end
+
     if is_plat("linux") then
         add_configs("libunwind", {description = "Enable libunwind.", default = false, type = "boolean"})
     end
@@ -39,7 +43,7 @@ package("zeromq")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_install("linux", "macosx|x86_64", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {"--disable-dependency-tracking", "--without-docs", "--enable-libbsd=no", "--disable-Werror"}
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))

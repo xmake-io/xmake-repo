@@ -2,6 +2,7 @@ package("icbc")
 
     set_homepage("https://github.com/castano/icbc")
     set_description("A High Quality SIMD BC1 Encoder")
+    set_license("MIT")
     
     add_urls("https://github.com/castano/icbc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/castano/icbc.git")

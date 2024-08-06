@@ -15,7 +15,10 @@ package("vcglib")
 
     add_deps("eigen")
     on_install("windows", "macosx", "linux", function (package)
+        os.mv("apps", package:installdir("include"))
+        os.mv("eigenlib", package:installdir("include"))
         os.mv("vcg", package:installdir("include"))
+        os.mv("wrap", package:installdir("include"))
     end)
 
     on_test(function (package)

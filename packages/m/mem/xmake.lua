@@ -3,6 +3,7 @@ package("mem")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/0x1F9F1/mem")
     set_description("A collection of C++11 headers useful for reverse engineering")
+    set_license("MIT")
 
     add_urls("https://github.com/0x1F9F1/mem/archive/refs/tags/$(version).tar.gz",
              "https://github.com/0x1F9F1/mem.git")

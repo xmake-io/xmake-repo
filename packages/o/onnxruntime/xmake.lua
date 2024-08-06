@@ -53,7 +53,7 @@ package("onnxruntime")
         end
     end
 
-    on_load(function (package) 
+    on_load(function (package)
         if package:config("gpu") then
             package:add("deps", "cuda", {configs = {utils = {"cudart", "nvrtc"}}})
 

@@ -1,0 +1,29 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ea146a8..31373e5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -69,14 +69,12 @@ set(C4CORE_SRC_FILES
+     c4/windows_push.hpp
+     c4/c4core.natvis
+     #
+-    c4/ext/debugbreak/debugbreak.h
+     c4/ext/rng/rng.hpp
+     c4/ext/sg14/inplace_function.h
+     )
+ if(C4CORE_WITH_FASTFLOAT)
+     list(APPEND C4CORE_SRC_FILES
+         c4/ext/fast_float.hpp
+-        c4/ext/fast_float_all.h
+         )
+ endif()
+ set(C4CORE_AMALGAMATED ${C4CORE_SRC_DIR}/../src_singleheader/c4/c4core_all.hpp)
+@@ -97,6 +95,9 @@ c4_add_library(c4core
+ )
+ if(NOT C4CORE_WITH_FASTFLOAT)
+     target_compile_definitions(c4core PUBLIC -DC4CORE_NO_FAST_FLOAT)
++else()
++    find_package(FastFloat REQUIRED CONFIG)
++    target_link_libraries(c4core PUBLIC "FastFloat::fast_float")
+ endif()
+ if(C4CORE_NO_DEBUG_BREAK)
+     target_compile_definitions(c4core PUBLIC -DC4_NO_DEBUG_BREAK)

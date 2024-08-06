@@ -1,0 +1,22 @@
+From 34bb2c023d60d22e4b1a31750d9b649d7729209e Mon Sep 17 00:00:00 2001
+From: xpxz <97490782+heheda123123@users.noreply.github.com>
+Date: Wed, 19 Jun 2024 14:08:48 +0800
+Subject: [PATCH] remove const in set_to_text_limit
+
+---
+ include/asio2/http/detail/flex_body.hpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/asio2/http/detail/flex_body.hpp b/include/asio2/http/detail/flex_body.hpp
+index 491f5b8a..18e682db 100644
+--- a/include/asio2/http/detail/flex_body.hpp
++++ b/include/asio2/http/detail/flex_body.hpp
+@@ -136,7 +136,7 @@ class basic_flex_body<TextBody, FileBody>::value_type
+ 	inline bool is_text() const noexcept { return !is_file();      }
+ 	inline bool is_file() const noexcept { return file_.is_open(); }
+ 
+-    inline void set_to_text_limit(std::uint64_t v) const noexcept
++    inline void set_to_text_limit(std::uint64_t v) noexcept
+     {
+         this->to_text_limit_ = v;
+     }

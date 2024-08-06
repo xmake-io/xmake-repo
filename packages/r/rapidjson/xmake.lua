@@ -1,5 +1,6 @@
 package("rapidjson")
 
+    set_kind("library", { headeronly = true })
     set_homepage("https://github.com/Tencent/rapidjson")
     set_description("RapidJSON is a JSON parser and generator for C++.")
     set_license("MIT")
