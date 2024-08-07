@@ -32,6 +32,9 @@ package("libsmb2")
             io.replace("include/smb2/libsmb2.h", "_WINDOWS", "_WIN32", {plain = true})
             io.replace("include/asprintf.h", "vasprintf", "vasprintf_", {plain = true})
             io.replace("include/asprintf.h", "asprintf", "asprintf_", {plain = true})
+            if package:is_arch("i386") then
+                io.replace("lib/compat.h", "typedef SSIZE_T ssize_t;", "", {plain = true})
+            end
         end
 
         local configs = {}
