@@ -16,6 +16,14 @@ package("libsmb2")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 26, "package(libsmb2): need ndk api level >= 26 for android")
+        end)
+    end
+
     on_install(function (package)
         if package:is_plat("mingw") then
             io.replace("lib/compat.h", "_WINDOWS", "_WIN32", {plain = true})
