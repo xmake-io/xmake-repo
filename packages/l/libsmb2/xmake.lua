@@ -12,6 +12,8 @@ package("libsmb2")
         add_syslinks("ws2_32")
     end
 
+    add_includedirs("include", "include/smb2")
+
     add_deps("cmake")
 
     on_install(function (package)
