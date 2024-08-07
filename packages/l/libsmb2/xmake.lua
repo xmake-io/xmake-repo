@@ -8,13 +8,22 @@ package("libsmb2")
 
     add_versions("2024.07.16", "49ac50058af28612da3fead14f9566fcd3ed334c8afc33f94d5cd790c745ea9c")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
 
     add_deps("cmake")
 
     on_install(function (package)
+        if package:is_plat("mingw") then
+            io.replace("lib/compat.h", "_WINDOWS", "_WIN32", {plain = true})
+            io.replace("lib/compat.c", "_WINDOWS", "_WIN32", {plain = true})
+            io.replace("lib/socket.c", "_WINDOWS", "_WIN32", {plain = true})
+            io.replace("include/smb2/libsmb2.h", "_WINDOWS", "_WIN32", {plain = true})
+            io.replace("include/asprintf.h", "vasprintf", "vasprintf_", {plain = true})
+            io.replace("include/asprintf.h", "asprintf", "asprintf_", {plain = true})
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
