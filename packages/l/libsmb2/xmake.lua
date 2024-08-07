@@ -31,5 +31,5 @@ package("libsmb2")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("smb2_init_context", {includes = {"inttypes.h", "smb2/libsmb2.h"}}))
+        assert(package:has_cfuncs("smb2_init_context", {includes = {"stddef.h", "stdint.h", "smb2/libsmb2.h"}}))
     end)
