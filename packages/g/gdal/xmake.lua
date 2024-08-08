@@ -118,5 +118,5 @@ package("gdal")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("GDALAllRegister", {includes = "ogrsf_frmts.h"}))
+        assert(package:has_cxxfuncs("GDALAllRegister", {includes = "ogrsf_frmts.h"}))
     end)
