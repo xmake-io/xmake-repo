@@ -11,6 +11,13 @@ package("intx")
 
     add_deps("cmake")
 
+    on_check(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <concepts>
+            void test(std::signed_integral auto x) {}
+        ]]}, {configs = {languages = "c++20"}}), "package(intx) Require at least C++20.")
+    end)
+
     on_install(function (package)
         import("package.tools.cmake").install(package, {"-DINTX_TESTING=OFF"})
     end)
