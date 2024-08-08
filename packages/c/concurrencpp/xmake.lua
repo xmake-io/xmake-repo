@@ -11,7 +11,8 @@ package("concurrencpp")
     add_versions("0.1.6", "e7d5c23a73ff1d7199d361d3402ad2a710dfccf7630b622346df94a7532b4221")
     add_versions("0.1.7", "049f3e83ad1828e0b8b518652de1a3160d5849fdff03d521d0a5af0167338e89")
 
-    add_patches("0.1.7", "patches/0.1.7/add-include-string.patch", "ac0a1cbe43162beab4e29009fde658a765a00ad0817a010f1f208e0c5bd67b75")
+    -- https://github.com/David-Haim/concurrencpp/issues/166
+    add_patches("0.1.7", "patches/0.1.7/add-include-string.patch", "a4b8c219fcc913a3cbeda1522c408f4b347e12f11ec130dd7df65504dcdccc09")
 
     if is_plat("windows") then
         add_syslinks("synchronization", "ws2_32", "mswsock")
