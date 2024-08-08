@@ -1,6 +1,7 @@
 package("fmt")
     set_homepage("https://fmt.dev")
     set_description("fmt is an open-source formatting library for C++. It can be used as a safe and fast alternative to (s)printf and iostreams.")
+    set_license("MIT")
 
     set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip",
              "https://github.com/fmtlib/fmt.git")
@@ -51,7 +52,7 @@ package("fmt")
                 package:add("defines", "FMT_EXPORT")
             end
         end
-        if package:is_plat("windows") and package:config("unicode") then
+        if package:has_tool("cxx", "cl") and package:config("unicode") then
             package:add("cxxflags", "/utf-8")
         end
     end)

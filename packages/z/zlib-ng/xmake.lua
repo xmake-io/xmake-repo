@@ -12,6 +12,8 @@ package("zlib-ng")
     add_versions("2.0.6", "8258b75a72303b661a238047cb348203d88d9dddf85d480ed885f375916fcab6")
     add_versions("2.0.5", "eca3fe72aea7036c31d00ca120493923c4d5b99fe02e6d3322f7c88dbdcd0085")
 
+    add_configs("zlib_compat", {description = "Compile with zlib compatible API", default = false, type = "boolean"})
+
     add_deps("cmake")
 
     if on_check then
@@ -27,23 +29,20 @@ package("zlib-ng")
                 end
             end
 
-            if package:version():eq("2.1.6") and package:is_arch("i386") and package:is_cross() then
-                assert(false, "package(zlib-ng/i386): Unsupported cross compilation")
+            if package:version():ge("2.1.6") and package:is_arch("i386") and package:is_cross() then
+                assert(false, "package(zlib-ng/i386 >= 2.1.6): Unsupported cross compilation")
+            end
+        end)
+
+        on_check("android", function (package)
+            if package:version():ge("2.1.5") and package:is_arch("arm.*") then
+                assert(false, "package(zlib-ng/android >= 2.1.5): Unsupported android and arm")
             end
         end)
     end
 
-    on_load(function (package)
-        if package:version():eq("2.1.5") then
-            if package:is_plat("android") or package:is_arch("arm.*") then
-                raise("zlib-ng 2.1.5 not support android and arm.")
-            end
-        end
-    end)
-
     on_install("windows", "macosx", "linux", "android", "mingw", function (package)
         local configs = {
-            "-DZLIB_COMPAT=ON",
             "-DZLIB_ENABLE_TESTS=OFF",
             "-DZLIBNG_ENABLE_TESTS=OFF",
             "-DWITH_GTEST=OFF",
@@ -52,9 +51,14 @@ package("zlib-ng")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DINC_INSTALL_DIR=" .. package:installdir("include"))
         table.insert(configs, "-DLIB_INSTALL_DIR=" .. package:installdir("lib"))
+        table.insert(configs, "-DZLIB_COMPAT=" .. (package:config("zlib_compat") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("inflate", {includes = "zlib.h"}))
+        if package:config("zlib_compat") then
+            assert(package:has_cfuncs("inflate", {includes = "zlib.h"}))
+        else
+            assert(package:has_cfuncs("zng_inflate", {includes = "zlib-ng.h"}))
+        end
     end)

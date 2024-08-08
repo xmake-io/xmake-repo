@@ -2,6 +2,7 @@ package("highfive")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/BlueBrain/HighFive")
     set_description("HighFive - Header-only C++ HDF5 interface")
+    set_license("BSL-1.0")
 
     add_urls("https://github.com/BlueBrain/HighFive/archive/refs/tags/$(version).tar.gz",
              "https://github.com/BlueBrain/HighFive.git")

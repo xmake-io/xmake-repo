@@ -2,6 +2,7 @@ package("libsvm")
 
     set_homepage("https://github.com/cjlin1/libsvm")
     set_description("A simple, easy-to-use, and efficient software for SVM classification and regression")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/cjlin1/libsvm/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cjlin1/libsvm.git")

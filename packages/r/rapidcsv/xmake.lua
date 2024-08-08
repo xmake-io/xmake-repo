@@ -1,7 +1,9 @@
 package("rapidcsv")
 
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/d99kris/rapidcsv")
     set_description("C++ header-only library for CSV parsing (by d99kris)")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/d99kris/rapidcsv/archive/refs/tags/v$(version).zip")
     add_versions("8.83", "ca7e99a7229d50a8d7e59d77f31b53970579429c71bf05bc53729d15135c9b6f")

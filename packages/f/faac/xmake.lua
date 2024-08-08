@@ -1,6 +1,7 @@
 package("faac")
     set_homepage("https://sourceforge.net/projects/faac/")
     set_description("Freeware Advanced Audio Coder faac mirror")
+    set_license("LGPL-2.1")
 
     add_urls("https://github.com/knik0/faac/archive/refs/tags/$(version).tar.gz", {version = function (version)
         return version:gsub("%.", "_")

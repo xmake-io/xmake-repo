@@ -1,6 +1,7 @@
 package("libnet")
     set_homepage("https://codedocs.xyz/libnet/libnet/")
     set_description("A portable framework for low-level network packet construction")
+    set_license("MIT")
 
     add_urls("https://github.com/libnet/libnet/releases/download/$(version).tar.gz", {version = function (version)
         return version .. "/libnet-" .. (version:gsub("v", ""))

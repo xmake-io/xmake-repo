@@ -2,6 +2,7 @@ package("functionalplus")
     set_kind("library", {headeronly = true})
     set_homepage("http://www.editgym.com/fplus-api-search/")
     set_description("Functional Programming Library for C++. Write concise and readable C++ code.")
+    set_license("BSL-1.0")
 
     add_urls("https://github.com/Dobiasd/FunctionalPlus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Dobiasd/FunctionalPlus.git")

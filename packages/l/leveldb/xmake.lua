@@ -2,6 +2,7 @@ package("leveldb")
 
     set_homepage("https://github.com/google/leveldb")
     set_description("LevelDB is a fast key-value storage library written at Google that provides an ordered mapping from string keys to string values.")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/google/leveldb/archive/$(version).tar.gz",
              "https://github.com/google/leveldb.git")

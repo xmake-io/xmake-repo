@@ -21,6 +21,7 @@ package("yoga")
         on_check(function (package)
             assert(package:check_cxxsnippets({test = [[
                 #include <bit>
+                #include <cstdint>
                 void test() {
                     constexpr double f64v = 19880124.0; 
                     constexpr auto u64v = std::bit_cast<std::uint64_t>(f64v);
