@@ -86,6 +86,7 @@ package("boost")
     add_configs("lzma", {description = "enable lzma for iostreams", default = false, type = "boolean"})
 
     on_load(function (package)
+
         local function get_linkname(package, libname)
             local linkname
             if package:is_plat("windows") then
@@ -145,13 +146,11 @@ package("boost")
             end
             package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
-        if package:is_plat("linux") then
-            if package:config("zstd") then
-                package:add("deps", "zstd")
-            end
-            if package:config("lzma") then
-                package:add("deps", "xz")
-            end
+        if package:config("zstd") then
+            package:add("deps", "zstd")
+        end
+        if package:config("lzma") then
+            package:add("deps", "xz")
         end
 
         if package:is_plat("windows") and package:version():le("1.85.0") then
