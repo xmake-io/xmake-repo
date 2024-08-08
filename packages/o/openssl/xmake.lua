@@ -37,6 +37,11 @@ package("openssl")
                 -- the perl executable found in GitForWindows will fail to build OpenSSL
                 -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
                 package:add("deps", "strawberry-perl", { system = false, private = true })
+                -- check xmake tool jom
+                import("package.tools.jom", {try = true})
+                if jom then
+                    package:add("deps", "jom", {private = true})
+                end
             end
         end
 
@@ -57,6 +62,8 @@ package("openssl")
     end)
 
     on_install("windows", function (package)
+        import("package.tools.jom", {try = true})
+        import("package.tools.nmake")
         local configs = {"Configure", "no-tests"}
         local target
         if package:is_arch("x86", "i386") then
@@ -72,11 +79,19 @@ package("openssl")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
+        if jom then
+            table.insert(configs, "no-makedepend")
+            table.insert(configs, "/FS")
+        end
         os.vrunv("perl", configs)
 
-        local runenvs = import("package.tools.nmake").buildenvs(package)
-        local nmake = import("lib.detect.find_tool")("nmake", {envs = runenvs})
-        os.vrunv(nmake.program, {"install_sw"}, {envs = runenvs})
+        if jom then
+            jom.build(package)
+            jom.make(package, {"install_sw"})
+        else
+            nmake.build(package)
+            nmake.make(package, {"install_sw"})
+        end
     end)
 
     on_install("mingw", function (package)

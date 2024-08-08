@@ -60,8 +60,11 @@ package("matplotplusplus")
                 table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. config:upper() .. "=ON")
             end
         end
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 

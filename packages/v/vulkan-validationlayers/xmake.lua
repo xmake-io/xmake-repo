@@ -18,6 +18,7 @@ package("vulkan-validationlayers")
             end
         end})
 
+        add_versions("1.3.290+0", "eb26b4bf1f031e57d1624c53d489279076b893b0383fddccc79de7ee2caaa128")
         add_versions("1.3.275+0", "6e22fb13601c1e780c44a17497a3c999cc5207e52a09819e7c32ecd8439eff7a")
         add_versions("1.2.198+0", "5436e974d6b3133b3454edf1910f76b9f869db8bbe086859b2abe32fdb539cbc")
         add_versions("1.2.189+1", "b3e69b60a67a17b023825f9eb0ce1aef22e6b59d095afa204d883a9ce3d81021")
@@ -30,6 +31,7 @@ package("vulkan-validationlayers")
             return version:startswith("v") and version or prefix .. version:gsub("%+", ".")
         end})
 
+        add_versions("1.3.290+0", "59be2c0a5bdbfdbdebdcda48bd65ffa3b219f681c73a90fc683cd4708c1b79de")
         add_versions("1.3.275+0", "acfd84039109220129624b0ecb69980bbc3a858978c62b556dbe16efd0f26755")
         add_versions("1.2.198+0", "4a70cc5da26baf873fcf69b081eeeda545515dd66e5904f18fee32b4d275593a")
         add_versions("1.2.189+1", "d169ae71ae3ba12159df355b58f86f5635062c695d1deac9b97d5653561d517d")
@@ -51,7 +53,7 @@ package("vulkan-validationlayers")
         elseif is_plat("linux") then
             add_extsources("apt::vulkan-validationlayers-dev", "pacman::vulkan-validation-layers")
             add_deps("ninja")
-            add_deps("wayland", "libxrandr", "libxcb", "libxkbcommon")
+            add_deps("wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon")
         elseif is_plat("macosx") then
             add_extsources("brew::vulkan-validationlayers")
         end
@@ -76,7 +78,7 @@ package("vulkan-validationlayers")
         if package:is_plat("linux") then
             local includes = {}
             local linkdirs = {}
-            for _, lib in ipairs({"wayland", "libxrandr", "libxcb", "libxkbcommon"}) do
+            for _, lib in ipairs({"wayland", "libxrandr", "libxrender", "libxcb", "libxkbcommon"}) do
                 local fetchinfo = package:dep(lib):fetch()
                 for _, dir in ipairs(fetchinfo.sysincludedirs or fetchinfo.includedirs) do
                     table.insert(includes, dir)

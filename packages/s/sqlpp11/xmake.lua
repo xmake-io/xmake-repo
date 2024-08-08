@@ -2,6 +2,7 @@ package("sqlpp11")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/rbock/sqlpp11")
     set_description("A type safe SQL template library for C++")
+    set_license("BSD-2-Clause")
 
     add_urls("https://github.com/rbock/sqlpp11/archive/refs/tags/$(version).tar.gz",
              "https://github.com/rbock/sqlpp11.git")

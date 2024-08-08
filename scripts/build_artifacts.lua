@@ -14,6 +14,10 @@ function _load_package(packagename, packagedir, packagefile)
     end
 end
 
+function _need_artifact(instance)
+    return (not instance:is_headeronly()) and (packages_util.is_supported(instance, "windows", "x64") or packages_util.is_supported(instance, "windows", "x86"))
+end
+
 function _build_artifacts(name, versions)
     local buildinfo = {name = name, versions = versions}
     print(buildinfo)
@@ -60,8 +64,7 @@ function _get_latest_modified_packages()
            local packagename = path.filename(packagedir)
            if #path.filename(path.directory(packagedir)) == 1 then
                local instance = _load_package(packagename, packagedir, file)
-               if instance and packages_util.is_supported(instance, "windows")
-                  and (instance.is_headeronly and not instance:is_headeronly()) then
+               if instance and _need_artifact(instance) then
                   table.insert(instances, instance)
                   print("  > %s", instance:name())
                end
@@ -86,8 +89,7 @@ function _get_all_packages()
                 local basefile = path.join(basedir, "xmake.lua")
                 instance._BASE = _load_package(basename, basedir, basefile)
             end
-            if instance and packages_util.is_supported(instance, "windows")
-              and (instance.is_headeronly and not instance:is_headeronly()) then
+            if instance and _need_artifact(instance) then
                 table.insert(packages, instance)
             end
         end
@@ -128,8 +130,7 @@ function _get_packagerefs_in_latest_24h()
                    local packagename = path.filename(packagedir)
                    if #path.filename(path.directory(packagedir)) == 1 then
                        local instance = _load_package(packagename, packagedir, file)
-                       if instance and packages_util.is_supported(instance, "windows")
-                          and (instance.is_headeronly and not instance:is_headeronly()) then
+                       if instance and _need_artifact(instance) then
                           table.insert(instances, instance)
                        end
                     end

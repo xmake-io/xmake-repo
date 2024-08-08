@@ -2,6 +2,7 @@ package("srt")
 
     set_homepage("https://www.srtalliance.org/")
     set_description("Secure Reliable Transport (SRT) Protocol")
+    set_license("MPL-2.0")
 
     add_urls("https://github.com/Haivision/srt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Haivision/srt.git")

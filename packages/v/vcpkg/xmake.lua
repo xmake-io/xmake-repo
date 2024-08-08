@@ -5,6 +5,7 @@ package("vcpkg")
     set_license("MIT")
 
     add_urls("https://github.com/microsoft/vcpkg/archive/refs/tags/$(version).tar.gz")
+    add_versions("2024.07.12", "7da785e42b7487fb0e7465188f12c6ce0dfa760ab334d0f4f708bd1fc54081b1")
     add_versions("2024.05.24", "3034e534d4ed13e6e6edad3c331c0e9e3280f579dd4ba86151aa1e2896b85d31")
 
     add_deps("zip", "unzip", "cmake", "ninja", "curl")

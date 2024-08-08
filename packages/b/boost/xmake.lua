@@ -86,6 +86,7 @@ package("boost")
     add_configs("lzma", {description = "enable lzma for iostreams", default = false, type = "boolean"})
 
     on_load(function (package)
+
         local function get_linkname(package, libname)
             local linkname
             if package:is_plat("windows") then
@@ -145,12 +146,21 @@ package("boost")
             end
             package:add("deps", "python " .. package:config("pyver") .. ".x", {configs = {headeronly = true}})
         end
-        if package:is_plat("linux") then
-            if package:config("zstd") then
-                package:add("deps", "zstd")
-            end
-            if package:config("lzma") then
-                package:add("deps", "xz")
+        if package:config("zstd") then
+            package:add("deps", "zstd")
+        end
+        if package:config("lzma") then
+            package:add("deps", "xz")
+        end
+
+        if package:is_plat("windows") and package:version():le("1.85.0") then
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                if minor and minor >= 40 then
+                    package:add("patches", "<=1.85.0", "patches/1.85.0/fix-v144.patch", "1ba99cb2e2f03a4ba489a32596c62e1310b6c73ba4d19afa8796bcf180c84422")
+                end
             end
         end
     end)
@@ -263,7 +273,11 @@ package("boost")
                 local dep = package:dep(depname)
                 local info = dep:fetch({external = false})
                 if info then
-                    local usingstr = format("\nusing %s : : <include>\"%s\" <search>\"%s\" ;",rule, info.includedirs[1], info.linkdirs[1])              
+                    local usingstr = format("\nusing %s : %s : <include>%s <search>%s <name>%s ;",
+                        rule, dep:version(),
+                        path.unix(info.includedirs[1]),
+                        path.unix(info.linkdirs[1]),
+                        info.links[1])
                     file:write(usingstr)
                 end
         end
@@ -299,7 +313,12 @@ package("boost")
             "runtime-debugging=" .. (package:is_debug() and "on" or "off")
         }
 
-        if not package:config("lzma") then
+        local cxxflags = {}
+        if package:config("lzma") then
+            if package:is_plat("windows") and not package:dep("xz"):config("shared") then
+                table.insert(cxxflags, "-DLZMA_API_STATIC")
+            end
+        else
             table.insert(argv, "-sNO_LZMA=1")
         end
         if not package:config("zstd") then
@@ -318,7 +337,6 @@ package("boost")
             table.insert(argv, "address-model=32")
         end
 
-        local cxxflags = {}
         local linkflags = {}
         table.join2(cxxflags, table.wrap(package:config("cxflags")))
         table.join2(cxxflags, table.wrap(package:config("cxxflags")))
@@ -387,21 +405,6 @@ package("boost")
 
         if package:is_plat("linux") then
             table.insert(argv, "pch=off")
-        end
-
-        if package:is_plat("windows") and package:version():le("1.85.0") then
-            local vs_toolset = build_toolchain:config("vs_toolset")
-            if vs_toolset then
-                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
-                local minor = vs_toolset_ver:minor()
-                if minor and minor >= 40 then
-                    io.replace("tools/build/src/engine/config_toolset.bat", "vc143", "vc144", {plain = true})
-                    io.replace("tools/build/src/engine/build.bat", "vc143", "vc144", {plain = true})
-                    io.replace("tools/build/src/engine/guess_toolset.bat", "vc143", "vc144", {plain = true})
-                    io.replace("tools/build/src/tools/intel-win.jam", "14.3", "14.4", {plain = true})
-                    io.replace("tools/build/src/tools/msvc.jam", "14.3", "14.4", {plain = true})
-                end
-            end
         end
         local ok = os.execv("./b2", argv, {envs = runenvs, try = true, stdout = "boost-log.txt"})
         if ok ~= 0 then

@@ -16,6 +16,10 @@ package("async_simple")
 
     add_deps("cmake")
 
+    on_load("windows", function (package)
+        package:set("kind", "library", {headeronly = true})
+    end)
+
     on_install("windows", "linux", "macosx", function (package)
         if package:version():le("1.3") then
             io.replace("async_simple/CMakeLists.txt",
