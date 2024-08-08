@@ -21,8 +21,9 @@ package("breakpad")
         add_syslinks("wininet", "dbghelp", "imagehlp")
     elseif is_plat("linux") then
         add_deps("autoconf", "automake", "m4", "libtool")
+        add_deps("linux-syscall-support")
         add_syslinks("pthread")
-        add_patches("v2023.06.01", path.join(os.scriptdir(), "patches", "v2023.06.01", "add_linux_systemcall_support.patch"), "522c7039d684cfeb9325843935477f0446a2b8a3699d24fc2b37bff46a068399")
+        add_patches("v2023.06.01", path.join(os.scriptdir(), "patches", "v2023.06.01", "linux_syscall_support.patch"), "b61bf7bc138a3030259ad91b97a3eed73971595856255a17e7968d20d4b3877f")
     elseif is_plat("macosx") then
         add_deps("autoconf", "automake", "m4", "libtool")
         add_frameworks("CoreFoundation")
@@ -38,17 +39,19 @@ package("breakpad")
     end)
 
     on_install("linux", "macosx", function (package)
+        print(os.curdir() , "is the xmake pkg install dir")
         io.replace("configure", "WARN_CXXFLAGS \" -Werror\"", "WARN_CXXFLAGS ", {plain = true})
         local configs = {"--disable-dependency-tracking"}
         if package:debug() then
             table.insert(configs, "-d")
         end
-        import("package.tools.autoconf").install(package, configs)
-        os.mv(package:installdir("include", "breakpad", "client"), package:installdir("include"))
-        os.mv(package:installdir("include", "breakpad", "common"), package:installdir("include"))
-        os.mv(package:installdir("include", "breakpad", "processor"), package:installdir("include"))
-        os.mv(package:installdir("include", "breakpad", "google_breakpad"), package:installdir("include"))
-        os.mv(package:installdir("include", "breakpad", "third_party"), package:installdir("include"))  
+        import("package.tools.autoconf").install(package, configs, {packagedeps = "linux-syscall-support"})
+        os.cp(package:installdir("include", "breakpad", "client"), package:installdir("include"))
+        os.cp(package:installdir("include", "breakpad", "common"), package:installdir("include"))
+        os.cp(package:installdir("include", "breakpad", "processor"), package:installdir("include"))
+        os.cp(package:installdir("include", "breakpad", "google_breakpad"), package:installdir("include"))
+        os.cp(package:installdir("include", "breakpad", "third_party"), package:installdir("include"))  
+        print("fucking success")
     end)
 
     on_test(function (package)
@@ -81,5 +84,5 @@ package("breakpad")
         end
 
         local header = "client/" .. plat .. "/handler/exception_handler.h"
-        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = "c++17"}, includes = header}))
+        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = "c++17"}, includes = header, {packages = "breakpad"}}))
     end)
