@@ -273,7 +273,11 @@ package("boost")
                 local dep = package:dep(depname)
                 local info = dep:fetch({external = false})
                 if info then
-                    local usingstr = format("\nusing %s : : <include>\"%s\" <search>\"%s\" ;",rule, info.includedirs[1], info.linkdirs[1])              
+                    local usingstr = format("\nusing %s : %s : <include>%s <search>%s <name>%s ;",
+                        rule, dep:version(),
+                        path.unix(info.includedirs[1]),
+                        path.unix(info.linkdirs[1]),
+                        info.links[1])
                     file:write(usingstr)
                 end
         end
@@ -309,7 +313,12 @@ package("boost")
             "runtime-debugging=" .. (package:is_debug() and "on" or "off")
         }
 
-        if not package:config("lzma") then
+        local cxxflags = {}
+        if package:config("lzma") then
+            if package:is_plat("windows") and not package:dep("xz"):config("shared") then
+                table.insert(cxxflags, "-DLZMA_API_STATIC")
+            end
+        else
             table.insert(argv, "-sNO_LZMA=1")
         end
         if not package:config("zstd") then
@@ -328,7 +337,6 @@ package("boost")
             table.insert(argv, "address-model=32")
         end
 
-        local cxxflags = {}
         local linkflags = {}
         table.join2(cxxflags, table.wrap(package:config("cxflags")))
         table.join2(cxxflags, table.wrap(package:config("cxxflags")))
