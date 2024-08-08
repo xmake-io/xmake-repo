@@ -118,9 +118,5 @@ package("gdal")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <ogrsf_frmts.h>
-            void test(int argc, char** argv) {
-                GDALAllRegister();
-            }]]}, {configs = {languages = "c++11"}, includes = "ogrsf_frmts.h"}))
+        assert(package:has_cfuncs("GDALAllRegister", {includes = "ogrsf_frmts.h"}))
     end)
