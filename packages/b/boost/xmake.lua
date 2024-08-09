@@ -101,16 +101,15 @@ package("boost")
                 linkname = linkname .. "-mt"
             end
             if package:is_plat("windows") then
-                local vs_runtime = package:config("vs_runtime")
                 if package:config("shared") then
                     if package:debug() then
                         linkname = linkname .. "-gd"
                     end
-                elseif package:config("asan") or vs_runtime == "MTd" then
+                elseif package:config("asan") or package:has_runtime("MTd") then
                     linkname = linkname .. "-sgd"
-                elseif vs_runtime == "MT" then
+                elseif package:has_runtime("MT") then
                     linkname = linkname .. "-s"
-                elseif package:config("asan") or vs_runtime == "MDd" then
+                elseif package:config("asan") or package:has_runtime("MDd") then
                     linkname = linkname .. "-gd"
                 end
             else
@@ -341,10 +340,9 @@ package("boost")
         table.join2(cxxflags, table.wrap(package:config("cxflags")))
         table.join2(cxxflags, table.wrap(package:config("cxxflags")))
         if package:is_plat("windows") then
-            local vs_runtime = package:config("vs_runtime")
             if package:config("shared") then
                 table.insert(argv, "runtime-link=shared")
-            elseif vs_runtime and vs_runtime:startswith("MT") then
+            elseif package:has_runtime("MT", "MTd") then
                 table.insert(argv, "runtime-link=static")
             else
                 table.insert(argv, "runtime-link=shared")
