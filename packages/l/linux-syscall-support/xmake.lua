@@ -6,6 +6,8 @@ package("linux-syscall-support")
     add_urls("https://chromium.googlesource.com/linux-syscall-support.git")
     add_versions("v2022.10.12", "9719c1e1e676814c456b55f5f070eabad6709d31")
 
+    set_kind("library", {headeronly = true})
+
     on_install("linux", function (package)
         os.cp("linux_syscall_support.h", package:installdir("include/lss"))
     end)
