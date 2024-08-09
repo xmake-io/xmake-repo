@@ -40,21 +40,11 @@ package("breakpad")
 
     on_install("linux", function (package)
         io.replace("configure", "WARN_CXXFLAGS \" -Werror\"", "WARN_CXXFLAGS ", {plain = true})
-
-        local configs = {"--disable-dependency-tracking"}
-        local envs = {}
-        local cxxflags = "-std=gnu++17"
-
+        local configs = {"--disable-dependency-tracking", "CXXFLAGS=-std=gnu++17"}
         if package:is_debug() then
-            table.insert(cxxflags, "-g")
+            table.insert(configs, "CXXFLAGS=-g")
         end
-
-        if package:is_plat("linux") and package:config("pic") ~= false then
-            envs = import("package.tools.autoconf").buildenvs(package, {cxflags = "-fPIC", cxxflags = cxxflags})
-        else
-            envs = import("package.tools.autoconf").buildenvs(package, {cxxflags = cxxflags})
-        end
-        import("package.tools.autoconf").install(package, configs, {packagedeps = "linux-syscall-support"}, {envs = envs})
+        import("package.tools.autoconf").install(package, configs, {packagedeps = "linux-syscall-support"})
     end)
 
     on_test(function (package)
