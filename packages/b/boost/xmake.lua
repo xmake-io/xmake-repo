@@ -84,6 +84,8 @@ package("boost")
     end
     add_configs("zstd", {description = "enable zstd for iostreams", default = false, type = "boolean"})
     add_configs("lzma", {description = "enable lzma for iostreams", default = false, type = "boolean"})
+    add_configs("zlib", {description = "enable zlib for iostreams", default = false, type = "boolean"})
+    add_configs("bzip2", {description = "enable bzip2 for iostreams", default = false, type = "boolean"})
 
     on_load(function (package)
 
@@ -151,6 +153,12 @@ package("boost")
         end
         if package:config("lzma") then
             package:add("deps", "xz")
+        end
+        if package:config("zlib") then
+            package:add("deps", "zlib")
+        end
+        if package:config("bzip2") then
+            package:add("deps", "bzip2")
         end
 
         if package:is_plat("windows") and package:version():le("1.85.0") then
@@ -290,6 +298,12 @@ package("boost")
             if package:config("zstd") then
                 config_deppath(file, "zstd", "zstd")
             end
+            if package:config("zlib") then
+                config_deppath(file, "zlib", "zlib")
+            end
+            if package:config("bzip2") then
+                config_deppath(file, "bzip2", "bzip2")
+            end
             file:close()
         end
         os.vrun("./b2 headers")
@@ -323,6 +337,12 @@ package("boost")
         end
         if not package:config("zstd") then
             table.insert(argv, "-sNO_ZSTD=1")
+        end
+        if not package:config("zlib") then
+            table.insert(argv, "-sNO_ZLIB=1")
+        end
+        if not package:config("bzip2") then
+            table.insert(argv, "-sNO_BZIP2=1")
         end
 
         if package:config("lto") then
