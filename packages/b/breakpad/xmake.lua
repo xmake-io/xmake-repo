@@ -38,9 +38,9 @@ package("breakpad")
         import("package.tools.xmake").install(package, configs)
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", function (package)
         io.replace("configure", "WARN_CXXFLAGS \" -Werror\"", "WARN_CXXFLAGS ", {plain = true})
-        local configs = {"--disable-dependency-tracking"}
+        local configs = {"--disable-dependency-tracking", "CXXFLAGS='-std=c++17'"}
         if package:is_debug() then
             table.insert(configs, "CXXFLAGS=-g")
         end
