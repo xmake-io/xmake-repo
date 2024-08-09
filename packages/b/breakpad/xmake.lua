@@ -39,11 +39,10 @@ package("breakpad")
     end)
 
     on_install("linux", "macosx", function (package)
-        print(os.curdir() , "is the xmake pkg install dir")
         io.replace("configure", "WARN_CXXFLAGS \" -Werror\"", "WARN_CXXFLAGS ", {plain = true})
         local configs = {"--disable-dependency-tracking"}
-        if package:debug() then
-            table.insert(configs, "-d")
+        if package:is_debug() then
+            table.insert(configs, "CXXFLAGS=-g")
         end
         import("package.tools.autoconf").install(package, configs, {packagedeps = "linux-syscall-support"})
         os.cp(package:installdir("include", "breakpad", "client"), package:installdir("include"))
@@ -51,7 +50,6 @@ package("breakpad")
         os.cp(package:installdir("include", "breakpad", "processor"), package:installdir("include"))
         os.cp(package:installdir("include", "breakpad", "google_breakpad"), package:installdir("include"))
         os.cp(package:installdir("include", "breakpad", "third_party"), package:installdir("include"))  
-        print("fucking success")
     end)
 
     on_test(function (package)
@@ -84,5 +82,5 @@ package("breakpad")
         end
 
         local header = "client/" .. plat .. "/handler/exception_handler.h"
-        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = "c++17"}, includes = header, {packages = "breakpad"}}))
+        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = "c++17"}, includes = header}))
     end)
