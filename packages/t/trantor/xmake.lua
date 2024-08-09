@@ -6,6 +6,8 @@ package("trantor")
     add_urls("https://github.com/an-tao/trantor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/an-tao/trantor.git")
 
+    add_versions("v1.5.20", "4d3b98c228aafde1001cff581cf8d1a4a9f71f7b2a85a28978b560aefc21c038")
+    add_versions("v1.5.19", "a2f55a98fd4b0737ba0e2cd77d2f237253e607b2047071be04a9ea76587bb608")
     add_versions("v1.5.18", "f8227eb5307671496db435736e0b856529afae420b148c60a2b36839d6738707")
     add_versions("v1.5.17", "10689dc1864a3fdb08cba824475996346a1bfb083575fd3d62858aaefa9044d9")
     add_versions("v1.3.0", "524589dc9258e1ace3b2f887b835cfbeccab3c5efc4ba94963c59f3528248d9b")
@@ -20,6 +22,8 @@ package("trantor")
 	
     add_patches("v1.5.8", path.join(os.scriptdir(), "patches", "1.5.8", "skip_doc.patch" ), "4124f3cc1e486ad75bc5ec2fa454ea5319d68287d0b1d8cfa3b5ab865f8ca5fd")
 
+    add_configs("spdlog", {description = "Allow using the spdlog logging library", default = false, type = "boolean"})
+
     add_deps("cmake")
     add_deps("openssl", "c-ares", {optional = true})
     if is_plat("windows", "mingw") then
@@ -29,6 +33,15 @@ package("trantor")
         add_syslinks("pthread")
     end
 
+    on_load(function (package)
+        if package:version():le("v1.5.15") then
+            package:config_set("spdlog", false)
+        end
+        if package:config("spdlog") then
+            package:add("deps", "spdlog", {configs = {header_only = false, fmt_external_ho = true}})
+        end
+    end)
+
     on_install("windows", "macosx", "linux", "mingw@windows", function (package)
         io.replace("CMakeLists.txt", "\"${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/Findc-ares.cmake\"", "", {plain = true})
         io.replace("CMakeLists.txt", "find_package(c-ares)", "find_package(c-ares CONFIG)", {plain = true})
@@ -37,6 +50,9 @@ package("trantor")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:config("pic") ~= false then
             table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+        end
+        if package:config("spdlog") then
+            table.insert(configs, "-DUSE_SPDLOG=ON")
         end
         import("package.tools.cmake").install(package, configs)
     end)

@@ -2,6 +2,7 @@ package("cli")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/daniele77/cli")
     set_description("A library for interactive command line interfaces in modern C++")
+    set_license("BSL-1.0")
 
     add_urls("https://github.com/daniele77/cli/archive/refs/tags/$(version).tar.gz",
              "https://github.com/daniele77/cli.git")

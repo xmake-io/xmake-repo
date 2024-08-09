@@ -2,6 +2,7 @@ package("stackwalker")
 
     set_homepage("https://github.com/JochenKalmbach/StackWalker")
     set_description("A library to walk the callstack in windows applications.")
+    set_license("BSD-2-Clause")
 
     set_urls("https://github.com/JochenKalmbach/StackWalker/archive/$(version).zip",
              "https://github.com/JochenKalmbach/StackWalker.git")

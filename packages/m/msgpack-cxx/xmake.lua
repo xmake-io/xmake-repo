@@ -1,5 +1,5 @@
 package("msgpack-cxx")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://msgpack.org/")
     set_description("MessagePack implementation for C++")
     set_license("BSL-1.0")
@@ -10,17 +10,30 @@ package("msgpack-cxx")
     add_versions("4.1.1", "8115c5edcf20bc1408c798a6bdaec16c1e52b1c34859d4982a0fb03300438f0b")
 
     add_configs("std", {description = "Choose C++ standard version.", default = "cxx17", type = "string", values = {"cxx98", "cxx11", "cxx14", "cxx17", "cxx20"}})
+    add_configs("boost", {description = "Use Boost", default = is_plat("macosx", "linux", "windows", "bsd", "mingw", "cross"), type = "boolean"})
 
-    add_deps("cmake", "boost")
-    on_install("windows", "macosx", "linux", "mingw", function (package)
-        local configs = {"-DMSGPACK_BUILD_EXAMPLES=OFF", "-DMSGPACK_BUILD_TESTS=OFF", "-DMSGPACK_BUILD_DOCS=OFF", "-DMSGPACK_USE_STATIC_BOOST=ON"}
+    add_deps("cmake")
+
+    on_load(function (package)
+        if package:config("boost") then
+            package:add("deps", "boost")
+        else
+            package:add("defines", "MSGPACK_NO_BOOST")
+        end
+    end)
+
+    on_install(function (package)
+        local configs = {"-DMSGPACK_BUILD_EXAMPLES=OFF", "-DMSGPACK_BUILD_TESTS=OFF", "-DMSGPACK_BUILD_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("std") ~= "cxx98" then
             table.insert(configs, "-DMSGPACK_" .. package:config("std"):upper() .. "=ON")
         end
-        if package:is_plat("windows") then
-            table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        if package:config("boost") then
+            table.insert(configs, "-DMSGPACK_USE_STATIC_BOOST=ON")
+            table.insert(configs, "-DMSGPACK_USE_BOOST=ON")
+        else
+            table.insert(configs, "-DMSGPACK_USE_BOOST=OFF")
         end
         import("package.tools.cmake").install(package, configs)
     end)

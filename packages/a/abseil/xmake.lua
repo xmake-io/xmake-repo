@@ -15,6 +15,10 @@ package("abseil")
     add_versions("20230802.1", "987ce98f02eefbaf930d6e38ab16aa05737234d7afbab2d5c4ea7adbe50c28ed")
     add_versions("20240116.1", "3c743204df78366ad2eaf236d6631d83f6bc928d1705dd0000b872e53b73dc6a")
     add_versions("20240116.2", "733726b8c3a6d39a4120d7e45ea8b41a434cdacde401cba500f14236c49b39dc")
+    add_versions("20240722.0", "f50e5ac311a81382da7fa75b97310e4b9006474f9560ac46f54a9967f07d4ae3")
+
+    add_patches("20240116.1", "https://github.com/abseil/abseil-cpp/commit/3335e58f198e899a500b744163f9b883035a5217.patch", "f83278086b42bc997846d2b931a266678f96e2727fce6ffd98b2b58ce75fa0a3")
+    add_patches("20240116.2", "https://github.com/abseil/abseil-cpp/commit/3335e58f198e899a500b744163f9b883035a5217.patch", "f83278086b42bc997846d2b931a266678f96e2727fce6ffd98b2b58ce75fa0a3")
 
     add_deps("cmake")
 
@@ -35,6 +39,8 @@ package("abseil")
             io.replace(path.join("absl", "synchronization", "internal", "pthread_waiter.h"), "#ifndef _WIN32", "#if !defined(_WIN32) && !defined(__MINGW32__)", {plain = true})
             io.replace(path.join("absl", "synchronization", "internal", "win32_waiter.h"), "#if defined(_WIN32) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", "#if defined(_WIN32) && !defined(__MINGW32__) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", {plain = true})
         end
+        io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
+        io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
         local configs = {"-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"), "-DABSL_ENABLE_INSTALL=ON", "-DABSL_PROPAGATE_CXX_STD=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

@@ -7,6 +7,7 @@ package("string-view-lite")
 
     add_urls("https://github.com/martinmoene/string-view-lite/archive/refs/tags/$(version).tar.gz",
              "https://github.com/martinmoene/string-view-lite.git")
+    add_versions("v1.8.0", "9b38c32621eb1a81a7fa59427144309225c414a7bae522ab3a2d9ae239dd35be")
     add_versions("v1.7.0", "265eaec08c4555259b46f5b03004dbc0f7206384edfac1cd5a837efaa642e01c")
 
     add_deps("cmake")

@@ -28,7 +28,7 @@ package("libremidi")
 
     on_load(function (package)
         if package:config("header_only") then
-            package:set("library", {headeronly = true})
+            package:set("kind", "library", {headeronly = true})
             package:add("defines", "LIBREMIDI_HEADER_ONLY=1")
             if package:config("jack") then
                 package:add("defines", "LIBREMIDI_JACK=1")
