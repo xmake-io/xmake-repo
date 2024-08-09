@@ -20,8 +20,8 @@ package("breakpad")
     if is_plat("windows") then
         add_syslinks("wininet", "dbghelp", "imagehlp")
     elseif is_plat("linux") then
-        add_deps("autoconf", "automake", "m4", "libtool")
-        add_deps("linux-syscall-support")
+        add_deps("autoconf", "automake", "m4", "libtool", "linux-syscall-support")
+        add_includedirs("include", "include/breakpad")
         add_syslinks("pthread")
         add_patches("v2023.06.01", path.join(os.scriptdir(), "patches", "v2023.06.01", "linux_syscall_support.patch"), "b61bf7bc138a3030259ad91b97a3eed73971595856255a17e7968d20d4b3877f")
     elseif is_plat("macosx") then
@@ -40,16 +40,21 @@ package("breakpad")
 
     on_install("linux", function (package)
         io.replace("configure", "WARN_CXXFLAGS \" -Werror\"", "WARN_CXXFLAGS ", {plain = true})
-        local configs = {"--disable-dependency-tracking", "CXXFLAGS=-std=gnu++17"}
+
+        local configs = {"--disable-dependency-tracking"}
+        local envs = {}
+        local cxxflags = "-std=gnu++17"
+
         if package:is_debug() then
-            table.insert(configs, "CXXFLAGS=-g")
+            table.insert(cxxflags, "-g")
         end
-        import("package.tools.autoconf").install(package, configs, {packagedeps = "linux-syscall-support"})
-        os.cp(package:installdir("include", "breakpad", "client"), package:installdir("include"))
-        os.cp(package:installdir("include", "breakpad", "common"), package:installdir("include"))
-        os.cp(package:installdir("include", "breakpad", "processor"), package:installdir("include"))
-        os.cp(package:installdir("include", "breakpad", "google_breakpad"), package:installdir("include"))
-        os.cp(package:installdir("include", "breakpad", "third_party"), package:installdir("include"))  
+
+        if package:is_plat("linux") and package:config("pic") ~= false then
+            envs = import("package.tools.autoconf").buildenvs(package, {cxflags = "-fPIC", cxxflags = cxxflags})
+        else
+            envs = import("package.tools.autoconf").buildenvs(package, {cxxflags = cxxflags})
+        end
+        import("package.tools.autoconf").install(package, configs, {packagedeps = "linux-syscall-support"}, {envs = envs})
     end)
 
     on_test(function (package)
