@@ -15,14 +15,16 @@ package("daw_json_link")
 
     add_deps("cmake")
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android@linux,macosx", "iphoneos", "cross", function (package)
-        if package:is_plat("android") then
-            import("core.tool.toolchain")
-            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
             local ndk_sdkver = ndk:config("ndk_sdkver")
             assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(daw_json_link): need ndk api level > 21 for android")
-        end
-        import("package.tools.cmake").install(package, configs)
+        end)
+    end
+
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android@linux,macosx", "iphoneos", "cross", function (package)
+        import("package.tools.cmake").install(package)
     end)
 
     on_test(function (package)
