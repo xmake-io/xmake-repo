@@ -11,7 +11,7 @@ package("zmqpb")
     add_versions("0.4", "7c0001db73b19e65b007adf6c9c5092c3589f043ab3e95a16b3ec2b2a87fa244")
     add_versions("0.8", "93433dfe60b09add321d5f6fd467724409929211010963ad63be6c68494446ed")
     add_versions("0.9", "c4192777fd7d62b3624a6389efea68a772c4f2820c3d85128961c3dd5ee94a67")
-    add_versions("0.10.1", "441fc837e87cba30c435ee98c2ae83e0b3f45382faeacd3ea7f8f0dc7a36b9f9")
+    add_versions("0.10.2", "3dc82384cb79cc46262a2ba4007351be8606fadda7b8f399df3cbde9dd77560b")
 
     add_deps("cppzmq")
     add_deps("protobuf-cpp")
@@ -20,16 +20,19 @@ package("zmqpb")
         if not package:gitref() and package:version():lt("0.3") then
             package:add("deps", "fmt")
         end
-        if not package:gitref() and package:version():lt("0.10.1") then
+        if package:gitref() or package:version():gt("0.8") then
+            package:add("deps", "hedley")
+            if package:config("shared") then
+                package:add("defines", "ZMQPB_IS_SHARED")
+            end
+        end
+        if not package:gitref() and package:version():lt("0.10.2") then
             -- protobuf needed it and somehow just didn't publicizes the linkage
             package:add("deps", "utf8_range")
         end
-        if package:gitref() or package:version():gt("0.9") then
-            package:set("kind", "library", {headeronly = true})
-        end
     end)
 
-    on_install("windows|native", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         local configs = {}
         import("package.tools.xmake").install(package, configs)
     end)
