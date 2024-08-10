@@ -1,0 +1,37 @@
+diff --git a/tools/ios.py b/tools/ios.py
+index 7571868..9795cd9 100644
+--- a/tools/ios.py
++++ b/tools/ios.py
+@@ -3,6 +3,7 @@ import sys
+ import subprocess
+ import common_compiler_flags
+ from SCons.Variables import *
++from SCons.Variables import BoolVariable
+ 
+ if sys.version_info < (3,):
+ 
+diff --git a/tools/linux.py b/tools/linux.py
+index 1783e06..e325234 100644
+--- a/tools/linux.py
++++ b/tools/linux.py
+@@ -1,7 +1,7 @@
+ import common_compiler_flags
+ from SCons.Variables import *
+ from SCons.Tool import clang, clangxx
+-
++from SCons.Variables import BoolVariable
+ 
+ def options(opts):
+     opts.Add(BoolVariable("use_llvm", "Use the LLVM compiler - only effective when targeting Linux", False))
+diff --git a/tools/windows.py b/tools/windows.py
+index a263241..dc85442 100644
+--- a/tools/windows.py
++++ b/tools/windows.py
+@@ -3,6 +3,7 @@ import my_spawn
+ import common_compiler_flags
+ from SCons.Tool import msvc, mingw
+ from SCons.Variables import *
++from SCons.Variables import BoolVariable
+ 
+ 
+ def options(opts):

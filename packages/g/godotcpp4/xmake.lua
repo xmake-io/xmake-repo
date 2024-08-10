@@ -8,6 +8,8 @@ package("godotcpp4")
     add_versions("4.1", "32becf6a13681119ad63b6d7cc4e816c9a0cc86b")
     add_versions("4.0", "9d1c396c54fc3bdfcc7da4f3abcb52b14f6cce8f")
 
+    add_patches("4.2", "patches/4.2/import_fix.patch", "ee30195a7f1b086b10c300ca48e5ed101e6c162e30b971c98ad33ec676f76465")
+
     add_deps("scons")
     add_includedirs("gen/include", "include")
 
