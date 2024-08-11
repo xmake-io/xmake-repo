@@ -23,7 +23,7 @@ package("breakpad")
         add_deps("autoconf", "automake", "m4", "libtool", "linux-syscall-support")
         add_includedirs("include", "include/breakpad")
         add_syslinks("pthread")
-        add_patches("v2023.06.01", path.join(os.scriptdir(), "patches", "v2023.06.01", "linux_syscall_support.patch"), "b61bf7bc138a3030259ad91b97a3eed73971595856255a17e7968d20d4b3877f")
+        add_patches("v2023.06.01", path.join(os.scriptdir(), "patches", "v2023.06.01", "linux_syscall_support.patch"), "7e4c3b3e643d861155c956548a592f2a6bb54e13107cadb7cc0b0700dc1b2ae4")
     elseif is_plat("macosx") then
         add_deps("autoconf", "automake", "m4", "libtool")
         add_frameworks("CoreFoundation")
