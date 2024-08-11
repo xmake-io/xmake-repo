@@ -207,15 +207,16 @@ package("joltphysics")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <cstdarg>
+            void trace_impl(const char* fmt, ...) {
+                va_list list;
+                va_start(list, fmt);
+                char buffer[1024];
+                vsnprintf(buffer, sizeof(buffer), fmt, list);
+                va_end(list);
+            };
             void test() {
                 JPH::RegisterDefaultAllocator();
-                JPH::Trace = [](const char* fmt, ...) {
-                	va_list list;
-                	va_start(list, fmt);
-                	char buffer[1024];
-                	vsnprintf(buffer, sizeof(buffer), fmt, list);
-                	va_end(list);
-                };
+                JPH::Trace = &trace_impl;
                 JPH::PhysicsSystem physics_system;
                 physics_system.OptimizeBroadPhase();
             }
