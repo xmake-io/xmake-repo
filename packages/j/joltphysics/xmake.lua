@@ -214,9 +214,15 @@ package("joltphysics")
                 vsnprintf(buffer, sizeof(buffer), fmt, list);
                 va_end(list);
             };
+            bool AssertFailedImpl(const char *inExpression, const char *inMessage, const char *inFile, JPH::uint inLine)
+            {
+            	// Breakpoint
+            	return true;
+            };
             void test() {
                 JPH::RegisterDefaultAllocator();
                 JPH::Trace = &trace_impl;
+                JPH::AssertFailed = &AssertFailedImpl;
                 JPH::PhysicsSystem physics_system;
                 physics_system.OptimizeBroadPhase();
             }
