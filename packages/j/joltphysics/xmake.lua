@@ -211,7 +211,7 @@ package("joltphysics")
                 JPH::RegisterDefaultAllocator();
                 JPH::Trace = [](const char* fmt, ...) {
                 	va_list list;
-                	va_start(list, inFMT);
+                	va_start(list, fmt);
                 	char buffer[1024];
                 	vsnprintf(buffer, sizeof(buffer), inFMT, list);
                 	va_end(list);
