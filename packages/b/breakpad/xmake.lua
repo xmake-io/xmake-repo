@@ -40,7 +40,7 @@ package("breakpad")
 
     on_install("linux", function (package)
         io.replace("configure", "WARN_CXXFLAGS \" -Werror\"", "WARN_CXXFLAGS ", {plain = true})
-        local configs = {"--disable-dependency-tracking", "CXXFLAGS=-std=c++17"}
+        local configs = {"--disable-dependency-tracking", "CXXFLAGS=-std=gnu++17"}
         if package:is_debug() then
             table.insert(configs, "CXXFLAGS=-g")
         end
