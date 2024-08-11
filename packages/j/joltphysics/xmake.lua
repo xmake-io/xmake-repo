@@ -213,7 +213,7 @@ package("joltphysics")
                 	va_list list;
                 	va_start(list, fmt);
                 	char buffer[1024];
-                	vsnprintf(buffer, sizeof(buffer), inFMT, list);
+                	vsnprintf(buffer, sizeof(buffer), fmt, list);
                 	va_end(list);
                 };
                 JPH::PhysicsSystem physics_system;
