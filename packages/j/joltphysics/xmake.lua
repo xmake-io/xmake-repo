@@ -225,7 +225,7 @@ package("joltphysics")
             void test() {
                 JPH::RegisterDefaultAllocator();
                 JPH::Trace = &trace_impl;
-                JPH::AssertFailed = &AssertFailedImpl;
+                JPH_IF_ENABLE_ASSERTS(JPH::AssertFailed = &AssertFailedImpl;)
                 JPH::PhysicsSystem physics_system;
                 physics_system.OptimizeBroadPhase();
             }
