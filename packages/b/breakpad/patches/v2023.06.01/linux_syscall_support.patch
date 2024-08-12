@@ -1,0 +1,334 @@
+diff --git a/Makefile.in b/Makefile.in
+index 1845638..76f632c 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -314,8 +314,7 @@ DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
+ 	$(am__includecl_HEADERS_DIST) $(am__includeclc_HEADERS_DIST) \
+ 	$(am__includecldwc_HEADERS_DIST) \
+ 	$(am__includeclh_HEADERS_DIST) $(am__includeclm_HEADERS_DIST) \
+-	$(includegbc_HEADERS) $(am__includelss_HEADERS_DIST) \
+-	$(includep_HEADERS) $(am__DIST_COMMON)
++	$(includegbc_HEADERS) $(includep_HEADERS) $(am__DIST_COMMON)
+ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
+  configure.lineno config.status.lineno
+ mkinstalldirs = $(install_sh) -d
+@@ -340,7 +339,7 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libexecdir)" \
+ 	"$(DESTDIR)$(includecldir)" "$(DESTDIR)$(includeclcdir)" \
+ 	"$(DESTDIR)$(includecldwcdir)" "$(DESTDIR)$(includeclhdir)" \
+ 	"$(DESTDIR)$(includeclmdir)" "$(DESTDIR)$(includegbcdir)" \
+-	"$(DESTDIR)$(includelssdir)" "$(DESTDIR)$(includepdir)"
++	"$(DESTDIR)$(includepdir)"
+ @DISABLE_PROCESSOR_FALSE@am__EXEEXT_5 = src/common/test_assembler_unittest$(EXEEXT) \
+ @DISABLE_PROCESSOR_FALSE@	src/common/dwarf/dwarf2reader_lineinfo_unittest$(EXEEXT) \
+ @DISABLE_PROCESSOR_FALSE@	src/common/dwarf/dwarf2reader_splitfunctions_unittest$(EXEEXT) \
+@@ -1926,12 +1925,10 @@ am__includeclh_HEADERS_DIST =  \
+ 	$(top_srcdir)/src/client/linux/handler/*.h
+ am__includeclm_HEADERS_DIST =  \
+ 	$(top_srcdir)/src/client/linux/minidump_writer/*.h
+-am__includelss_HEADERS_DIST = $(top_srcdir)/src/third_party/lss/*.h
+ HEADERS = $(includec_HEADERS) $(includecl_HEADERS) \
+ 	$(includeclc_HEADERS) $(includecldwc_HEADERS) \
+ 	$(includeclh_HEADERS) $(includeclm_HEADERS) \
+-	$(includegbc_HEADERS) $(includelss_HEADERS) \
+-	$(includep_HEADERS)
++	$(includegbc_HEADERS) $(includep_HEADERS)
+ am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
+ # Read a list of newline-separated strings from the standard input,
+ # and print each of them once, without duplicates.  Input order is
+@@ -9914,8 +9911,7 @@ install-data-am: install-dist_docDATA install-includecHEADERS \
+ 	install-includeclHEADERS install-includeclcHEADERS \
+ 	install-includecldwcHEADERS install-includeclhHEADERS \
+ 	install-includeclmHEADERS install-includegbcHEADERS \
+-	install-includelssHEADERS install-includepHEADERS \
+-	install-pkgconfigDATA
++	install-includepHEADERS install-pkgconfigDATA
+ 
+ install-dvi: install-dvi-am
+ 
+@@ -10274,8 +10270,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_docDATA \
+ 	uninstall-includecHEADERS uninstall-includeclHEADERS \
+ 	uninstall-includeclcHEADERS uninstall-includecldwcHEADERS \
+ 	uninstall-includeclhHEADERS uninstall-includeclmHEADERS \
+-	uninstall-includegbcHEADERS uninstall-includelssHEADERS \
+-	uninstall-includepHEADERS uninstall-libLIBRARIES \
++	uninstall-includegbcHEADERS uninstall-includepHEADERS uninstall-libLIBRARIES \
+ 	uninstall-libexecPROGRAMS uninstall-pkgconfigDATA
+ 
+ .MAKE: check-am install-am install-strip
+@@ -10297,7 +10292,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_docDATA \
+ 	install-includeclHEADERS install-includeclcHEADERS \
+ 	install-includecldwcHEADERS install-includeclhHEADERS \
+ 	install-includeclmHEADERS install-includegbcHEADERS \
+-	install-includelssHEADERS install-includepHEADERS install-info \
++	install-includepHEADERS install-info \
+ 	install-info-am install-libLIBRARIES install-libexecPROGRAMS \
+ 	install-man install-pdf install-pdf-am install-pkgconfigDATA \
+ 	install-ps install-ps-am install-strip installcheck \
+@@ -10309,7 +10304,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_docDATA \
+ 	uninstall-includecHEADERS uninstall-includeclHEADERS \
+ 	uninstall-includeclcHEADERS uninstall-includecldwcHEADERS \
+ 	uninstall-includeclhHEADERS uninstall-includeclmHEADERS \
+-	uninstall-includegbcHEADERS uninstall-includelssHEADERS \
++	uninstall-includegbcHEADERS \
+ 	uninstall-includepHEADERS uninstall-libLIBRARIES \
+ 	uninstall-libexecPROGRAMS uninstall-pkgconfigDATA
+ 
+diff --git a/src/client/linux/crash_generation/crash_generation_client.cc b/src/client/linux/crash_generation/crash_generation_client.cc
+index 020c614..85320eb 100644
+--- a/src/client/linux/crash_generation/crash_generation_client.cc
++++ b/src/client/linux/crash_generation/crash_generation_client.cc
+@@ -40,7 +40,7 @@
+ 
+ #include "common/linux/eintr_wrapper.h"
+ #include "common/linux/ignore_ret.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ namespace google_breakpad {
+ 
+diff --git a/src/client/linux/handler/exception_handler.cc b/src/client/linux/handler/exception_handler.cc
+index 9e23c11..6afbf63 100644
+--- a/src/client/linux/handler/exception_handler.cc
++++ b/src/client/linux/handler/exception_handler.cc
+@@ -98,7 +98,7 @@
+ #include "client/linux/minidump_writer/linux_dumper.h"
+ #include "client/linux/minidump_writer/minidump_writer.h"
+ #include "common/linux/eintr_wrapper.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ #if defined(__ANDROID__)
+ #include "linux/sched.h"
+diff --git a/src/client/linux/handler/exception_handler_unittest.cc b/src/client/linux/handler/exception_handler_unittest.cc
+index b2d8d46..5d4204a 100644
+--- a/src/client/linux/handler/exception_handler_unittest.cc
++++ b/src/client/linux/handler/exception_handler_unittest.cc
+@@ -53,7 +53,7 @@
+ #include "common/linux/linux_libc_support.h"
+ #include "common/tests/auto_tempdir.h"
+ #include "common/using_std_string.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ #include "google_breakpad/processor/minidump.h"
+ 
+ using namespace google_breakpad;
+diff --git a/src/client/linux/log/log.cc b/src/client/linux/log/log.cc
+index 2a48d7f..2d49581 100644
+--- a/src/client/linux/log/log.cc
++++ b/src/client/linux/log/log.cc
+@@ -36,7 +36,7 @@
+ #include <android/log.h>
+ #include <dlfcn.h>
+ #else
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ #endif
+ 
+ namespace logger {
+diff --git a/src/client/linux/minidump_writer/cpu_set.h b/src/client/linux/minidump_writer/cpu_set.h
+index 70c1c75..9e198c0 100644
+--- a/src/client/linux/minidump_writer/cpu_set.h
++++ b/src/client/linux/minidump_writer/cpu_set.h
+@@ -34,7 +34,7 @@
+ #include <string.h>
+ 
+ #include "common/linux/linux_libc_support.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ namespace google_breakpad {
+ 
+diff --git a/src/client/linux/minidump_writer/directory_reader.h b/src/client/linux/minidump_writer/directory_reader.h
+index 62bba87..30daa74 100644
+--- a/src/client/linux/minidump_writer/directory_reader.h
++++ b/src/client/linux/minidump_writer/directory_reader.h
+@@ -37,7 +37,7 @@
+ #include <string.h>
+ 
+ #include "common/linux/linux_libc_support.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ namespace google_breakpad {
+ 
+diff --git a/src/client/linux/minidump_writer/line_reader.h b/src/client/linux/minidump_writer/line_reader.h
+index d54a67d..999f3e3 100644
+--- a/src/client/linux/minidump_writer/line_reader.h
++++ b/src/client/linux/minidump_writer/line_reader.h
+@@ -34,7 +34,7 @@
+ #include <string.h>
+ 
+ #include "common/linux/linux_libc_support.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ namespace google_breakpad {
+ 
+diff --git a/src/client/linux/minidump_writer/linux_dumper.cc b/src/client/linux/minidump_writer/linux_dumper.cc
+index 85922a9..d78dce3 100644
+--- a/src/client/linux/minidump_writer/linux_dumper.cc
++++ b/src/client/linux/minidump_writer/linux_dumper.cc
+@@ -54,7 +54,7 @@
+ #include "common/linux/memory_mapped_file.h"
+ #include "common/linux/safe_readlink.h"
+ #include "google_breakpad/common/minidump_exception_linux.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ using google_breakpad::elf::FileID;
+ 
+diff --git a/src/client/linux/minidump_writer/linux_dumper_unittest_helper.cc b/src/client/linux/minidump_writer/linux_dumper_unittest_helper.cc
+index 5a135fd..e66dc46 100644
+--- a/src/client/linux/minidump_writer/linux_dumper_unittest_helper.cc
++++ b/src/client/linux/minidump_writer/linux_dumper_unittest_helper.cc
+@@ -42,7 +42,7 @@
+ #include <unistd.h>
+ 
+ #include "common/scoped_ptr.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ #if defined(__ARM_EABI__)
+ #define TID_PTR_REGISTER "r3"
+diff --git a/src/client/linux/minidump_writer/linux_ptrace_dumper.cc b/src/client/linux/minidump_writer/linux_ptrace_dumper.cc
+index 2adc39e..7572315 100644
+--- a/src/client/linux/minidump_writer/linux_ptrace_dumper.cc
++++ b/src/client/linux/minidump_writer/linux_ptrace_dumper.cc
+@@ -60,7 +60,7 @@
+ #include "client/linux/minidump_writer/directory_reader.h"
+ #include "client/linux/minidump_writer/line_reader.h"
+ #include "common/linux/linux_libc_support.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ // Suspends a thread by attaching to it.
+ static bool SuspendThread(pid_t pid) {
+diff --git a/src/client/linux/minidump_writer/minidump_writer.cc b/src/client/linux/minidump_writer/minidump_writer.cc
+index a95dd25..ce0d07f 100644
+--- a/src/client/linux/minidump_writer/minidump_writer.cc
++++ b/src/client/linux/minidump_writer/minidump_writer.cc
+@@ -82,7 +82,7 @@
+ #include "common/linux/linux_libc_support.h"
+ #include "common/minidump_type_helper.h"
+ #include "google_breakpad/common/minidump_format.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ namespace {
+ 
+diff --git a/src/client/linux/minidump_writer/proc_cpuinfo_reader.h b/src/client/linux/minidump_writer/proc_cpuinfo_reader.h
+index 5ae16df..4278341 100644
+--- a/src/client/linux/minidump_writer/proc_cpuinfo_reader.h
++++ b/src/client/linux/minidump_writer/proc_cpuinfo_reader.h
+@@ -35,7 +35,7 @@
+ 
+ #include "client/linux/minidump_writer/line_reader.h"
+ #include "common/linux/linux_libc_support.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ namespace google_breakpad {
+ 
+diff --git a/src/client/minidump_file_writer.cc b/src/client/minidump_file_writer.cc
+index c00af36..c05f2e9 100644
+--- a/src/client/minidump_file_writer.cc
++++ b/src/client/minidump_file_writer.cc
+@@ -44,7 +44,7 @@
+ #include "common/linux/linux_libc_support.h"
+ #include "common/string_conversion.h"
+ #if defined(__linux__) && __linux__
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ #endif
+ 
+ #if defined(__ANDROID__)
+diff --git a/src/common/linux/file_id.cc b/src/common/linux/file_id.cc
+index d8fcbd8..ef13264 100644
+--- a/src/common/linux/file_id.cc
++++ b/src/common/linux/file_id.cc
+@@ -49,7 +49,7 @@
+ #include "common/linux/linux_libc_support.h"
+ #include "common/linux/memory_mapped_file.h"
+ #include "common/using_std_string.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ namespace google_breakpad {
+ namespace elf {
+diff --git a/src/common/linux/memory_mapped_file.cc b/src/common/linux/memory_mapped_file.cc
+index a7b96eb..042915c 100644
+--- a/src/common/linux/memory_mapped_file.cc
++++ b/src/common/linux/memory_mapped_file.cc
+@@ -43,7 +43,7 @@
+ #include <unistd.h>
+ 
+ #include "common/memory_range.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ namespace google_breakpad {
+ 
+diff --git a/src/common/linux/safe_readlink.cc b/src/common/linux/safe_readlink.cc
+index a42b01a..7093951 100644
+--- a/src/common/linux/safe_readlink.cc
++++ b/src/common/linux/safe_readlink.cc
+@@ -35,7 +35,7 @@
+ 
+ #include <stddef.h>
+ 
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ namespace google_breakpad {
+ 
+diff --git a/src/common/memory_allocator.h b/src/common/memory_allocator.h
+index 1c99913..37a3471 100644
+--- a/src/common/memory_allocator.h
++++ b/src/common/memory_allocator.h
+@@ -46,7 +46,7 @@
+ #define sys_munmap munmap
+ #define MAP_ANONYMOUS MAP_ANON
+ #else
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ #endif
+ 
+ namespace google_breakpad {
+diff --git a/src/common/module.cc b/src/common/module.cc
+index 0eb5aad..b6f5da7 100644
+--- a/src/common/module.cc
++++ b/src/common/module.cc
+@@ -42,6 +42,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ 
++#include <algorithm>
+ #include <functional>
+ #include <iostream>
+ #include <memory>
+diff --git a/src/processor/testdata/linux_test_app.cc b/src/processor/testdata/linux_test_app.cc
+index b0bbb66..38dffb5 100644
+--- a/src/processor/testdata/linux_test_app.cc
++++ b/src/processor/testdata/linux_test_app.cc
+@@ -49,7 +49,7 @@
+ #include <string>
+ 
+ #include "client/linux/handler/exception_handler.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ 
+ namespace {
+ 
+diff --git a/src/tools/linux/md2core/minidump-2-core.cc b/src/tools/linux/md2core/minidump-2-core.cc
+index 3e310bc..e2f02a4 100644
+--- a/src/tools/linux/md2core/minidump-2-core.cc
++++ b/src/tools/linux/md2core/minidump-2-core.cc
+@@ -55,7 +55,7 @@
+ #include "common/using_std_string.h"
+ #include "google_breakpad/common/breakpad_types.h"
+ #include "google_breakpad/common/minidump_format.h"
+-#include "third_party/lss/linux_syscall_support.h"
++#include "lss//linux_syscall_support.h"
+ #include "tools/linux/md2core/minidump_memory_range.h"
+ 
+ #if ULONG_MAX == 0xffffffffffffffff
