@@ -16,6 +16,8 @@ package("ctrack")
     on_load(function (package)
         if package:config("parallel") then
             package:add("deps", "tbb")
+        else
+            package:add("defines", "CTRACK_DISABLE_EXECUTION_POLICY")
         end
     end)
 
