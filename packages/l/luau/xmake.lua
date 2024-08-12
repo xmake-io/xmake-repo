@@ -21,9 +21,14 @@ package("luau")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "RelWithDebInfo"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLUAU_BUILD_TESTS=OFF")
-        table.insert(configs, "-DLUAU_BUILD_WEB=" .. (package:config("build_web") and "ON" or "OFF"))
+        table.insert(configs, "-DLUAU_BUILD_WEB=" .. ((package:is_plat("wasm") or package:config("build_web")) and "ON" or "OFF"))
         table.insert(configs, "-DLUAU_EXTERN_C=" .. (package:config("extern_c") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs, { buildir = "build" })
+
+        if package:is_plat("wasm") then
+            import("package.tools.cmake").install(package, configs, { buildir = "build" })
+        else
+            import("package.tools.cmake").build(package, configs, { target = "Luau.Web", buildir = "build" })
+        end
 
         io.replace("CMakeLists.txt", ".lib", "", {plain = true})
         io.replace("Sources.cmake", ".lib", "", {plain = true})
