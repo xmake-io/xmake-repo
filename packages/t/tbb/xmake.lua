@@ -48,8 +48,6 @@ package("tbb")
 
     on_fetch("fetch")
 
-    add_links("tbb", "tbbmalloc", "tbbmalloc_proxy")
-
     if on_check then
         on_check("macosx", function (package)
             assert(package:is_arch("arm64") and package:version():ge("2021.0"),
@@ -58,6 +56,14 @@ package("tbb")
     end
 
     on_load(function (package)
+        if package:has_tool("cxx", "cl", "clang_cl") then
+            package:add("defines", "__TBB_NO_IMPLICIT_LINKAGE")
+        end
+        if package:is_debug() then
+            package:add("links", "tbb_debug", "tbbmalloc_debug", "tbbmalloc_proxy_debug")
+        else
+            package:add("links", "tbb", "tbbmalloc", "tbbmalloc_proxy")
+        end
         if package:gitref() or package:version():ge("2021.0") then
             package:add("deps", "cmake")
         end
