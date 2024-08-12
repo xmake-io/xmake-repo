@@ -25,9 +25,9 @@ package("luau")
         table.insert(configs, "-DLUAU_EXTERN_C=" .. (package:config("extern_c") and "ON" or "OFF"))
 
         if package:is_plat("wasm") then
-            import("package.tools.cmake").install(package, configs, { buildir = "build" })
-        else
             import("package.tools.cmake").build(package, configs, { target = "Luau.Web", buildir = "build" })
+        else
+            import("package.tools.cmake").install(package, configs, { buildir = "build" })
         end
 
         io.replace("CMakeLists.txt", ".lib", "", {plain = true})
