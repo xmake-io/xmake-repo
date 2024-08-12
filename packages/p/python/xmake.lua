@@ -237,6 +237,11 @@ package("python")
             os.mkdir(package:installdir("lib", pyver))
         end
 
+        -- fix ssl module detect, e.g. gcc conftest.c -ldl   -lcrypto >&5
+        if package:is_plat("linux") then
+            io.replace("./configure", "-lssl -lcrypto", "-lssl -lcrypto -ldl", {plain = true})
+        end
+
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
         import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})

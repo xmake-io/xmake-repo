@@ -2,6 +2,7 @@ package("cutlass")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/NVIDIA/cutlass")
     set_description("CUDA Templates for Linear Algebra Subroutines")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/NVIDIA/cutlass/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NVIDIA/cutlass.git")

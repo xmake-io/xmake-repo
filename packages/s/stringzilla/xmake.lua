@@ -40,6 +40,13 @@ package("stringzilla")
     add_versions("v1.2.2", "2e17c49965841647a1c371247f53b2f576e5fb32fe4b84a080d425b12f17703c")
 
     on_install("android|!armeabi-v7a or !android",function (package)
+        if package:version():gt("3.0.0") then
+            os.cp("include/stringzilla/experimental.h", package:installdir("include/stringzilla"))
+            if package:config("cpp") then
+                os.cp("include/stringzilla/stringzilla.hpp", package:installdir("include/stringzilla"))
+            end
+        end
+        
         if package:version():gt("2.0.4") then
             os.cp("include/stringzilla/stringzilla.h", package:installdir("include"))
         else
@@ -48,7 +55,18 @@ package("stringzilla")
     end)
 
     on_test(function (package)
-        if package:version():gt("2.0.0") then
+        if package:version():gt("3.0.0") then
+            if package:config("cpp") then
+                assert(package:check_cxxsnippets({test = [[
+                    #include <stringzilla/stringzilla.hpp>
+                    static void test() {
+                        ashvardanian::stringzilla::string s = "hello";
+                        assert(s == "hello");
+                    }
+                ]]}, {configs = {languages = "c++11"}, includes = "stringzilla/stringzilla.hpp"}))
+                assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
+            end
+        elseif package:version():gt("2.0.0") then
             assert(package:has_cfuncs("sz_sort", {includes = "stringzilla.h"}))
         else
             assert(package:has_cxxfuncs("strzl_sort", {includes = "stringzilla.h", configs = {languages = "c++17"}}))

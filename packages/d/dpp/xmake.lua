@@ -53,7 +53,9 @@ package("dpp")
 
     add_deps("nlohmann_json", "openssl", "zlib")
 
-    add_configs("have_voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = true})
+    add_configs("voice", { description = "Enable voice support for the library.", default = true, type = "boolean" , readonly = false})
+    add_configs("have_voice", { description = "Enable voice support for the library (Deprecated flag, move out to newer version 'voice').", default = false, type = "boolean" , readonly = false})
+    add_configs("coro", { description = "Enable experimental coroutines support for the library.", default = false, type = "boolean" , readonly = false})
 
     if is_plat("linux", "macosx") then
         add_syslinks("pthread")
@@ -64,13 +66,27 @@ package("dpp")
             package:add("defines", "DPP_STATIC")
         end
         if package:config("have_voice") then
+            wprint([[
+                === Deprecation Warning ===
+                You should move out to use voice flag, instead of have_voice
+                Deprecated:
+                add_requires("dpp", {
+                    configs = {have_voice = true}
+                })
+                New (Recommended):
+                add_requires("dpp", {
+                    configs = {voice = true}
+                })
+                This flag will be removed soon, please migrate ASAP!
+            ]])
+        end
+        if package:config("voice") then
             package:add("defines", "HAVE_VOICE")
             package:add("deps", "libsodium", "libopus")
         end
 
-        if package:config("have_voice") then
-            package:add("defines", "HAVE_VOICE")
-            package:add("deps", "libsodium", "libopus")
+        if package:config("coro") then
+            package:add("defines", "DPP_CORO")
         end
 
         if package:version():le("v10.0.13") then
@@ -103,7 +119,11 @@ package("dpp")
         io.replace("include/dpp/restrequest.h", "#include <nlohmann/json_fwd.hpp>", "#include <nlohmann/json.hpp>", {plain = true})
         os.rmdir("include/dpp/nlohmann")
 
-        local configs = {}
+        local configs = {
+            voice = package:config("voice") or package:config("have_voice"),
+            coro = package:config("coro")
+        }
+        
         if package:version():ge("v10.0.29") and package:is_plat("windows") then
             configs.cxflags = "/bigobj /Gy"
         end
@@ -112,6 +132,10 @@ package("dpp")
     end)
 
     on_test(function (package)
+        local test_cpp_ver = "c++17"
+        if package:config("coro") then
+            test_cpp_ver = "c++20"
+        end
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 dpp::cluster bot(std::getenv("BOT_TOKEN"));
@@ -124,5 +148,5 @@ package("dpp")
                 });
                 bot.start(false);
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "dpp/dpp.h"}))
+        ]]}, {configs = {languages = test_cpp_ver}, includes = "dpp/dpp.h"}))
     end)

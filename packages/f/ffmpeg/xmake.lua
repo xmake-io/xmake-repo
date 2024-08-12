@@ -256,7 +256,7 @@ package("ffmpeg")
             else
                 -- rename files from libxx.a to xx.lib
                 for _, libfile in ipairs(os.files(package:installdir("lib", "*.a"))) do
-                    os.vmv(libfile, libfile:gsub("^(.+[\\/])lib(.+)%.a$", "%1%2.lib"))
+                    os.vmv(libfile, (libfile:gsub("^(.+[\\/])lib(.+)%.a$", "%1%2.lib")))
                 end
             end
         elseif package:is_plat("android") then

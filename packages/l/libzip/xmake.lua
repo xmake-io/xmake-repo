@@ -13,6 +13,8 @@ package("libzip")
     add_versions("v1.8.0", "30ee55868c0a698d3c600492f2bea4eb62c53849bcf696d21af5eb65f3f3839e")
     add_versions("v1.9.2", "fd6a7f745de3d69cf5603edc9cb33d2890f0198e415255d0987a0cf10d824c6f")
 
+    add_patches("<=1.10.1", "patches/1.10.1/mingw.patch", "17513dbef5feca0630ad16a2eacb507fd2ee3d3a47a7c9a660eba24b35ea3fa8")
+
     add_deps("cmake", "zlib")
 
     local configdeps = {-- gnutls = "gnutls",
@@ -29,7 +31,7 @@ package("libzip")
         add_syslinks("advapi32")
     end
 
-    on_load("windows", "macosx", "linux", function (package)
+    on_load(function (package)
         for config, dep in pairs(configdeps) do
             if package:config(config) then
                 package:add("deps", dep)
@@ -37,7 +39,7 @@ package("libzip")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "mingw", function (package)
         io.replace("CMakeLists.txt", "Dist(", "#Dist(", {plain = true})
         local configs = {"-DBUILD_DOC=OFF", "-DBUILD_EXAMPLES=OFF", "-DBUILD_REGRESS=OFF", "-DBUILD_TOOLS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))

@@ -17,6 +17,7 @@ package("gtest")
     add_versions("archive:v1.12.1", "24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2")
     add_versions("v1.13.0", "ffa17fbc5953900994e2deec164bb8949879ea09b411e07f215bfbb1f87f4632")
     add_versions("v1.14.0", "1f357c27ca988c3f7c6b4bf68a9395005ac6761f034046e9dde0896e3aba00e4")
+    add_versions("v1.15.2", "f179ec217f9b3b3f3c6e8b02d3e7eda997b49e4ce26d6b235c9053bec9c0bf9f")
 
     add_configs("main",  {description = "Link to the gtest_main entry point.", default = false, type = "boolean"})
     add_configs("gmock", {description = "Link to the googlemock library.", default = true, type = "boolean"})

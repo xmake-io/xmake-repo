@@ -18,6 +18,7 @@ package("glslang")
     add_versions("1.3.275+0", "a91631b260cba3f22858d6c6827511e636c2458a")
     add_versions("1.3.280+0", "ee2f5d09eaf8f4e8d0d598bd2172fce290d4ca60")
     add_versions("1.3.283+0", "e8dd0b6903b34f1879520b444634c75ea2deedf5")
+    add_versions("1.3.290+0", "fa9c3deb49e035a8abcabe366f26aac010f6cbfb")
 
     add_patches("1.3.246+1", "https://github.com/KhronosGroup/glslang/commit/1e4955adbcd9b3f5eaf2129e918ca057baed6520.patch", "47893def550f1684304ef7c49da38f0a8fe35c190a3452d3bf58370b3ee7165d")
 
