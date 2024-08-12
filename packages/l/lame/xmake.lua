@@ -24,10 +24,12 @@ package("lame")
         import("package.tools.autoconf").install(package, configs)
     end)
 
-    on_install("windows|x86", function (package)
+    on_install("windows", function (package)
+        -- lame install guide says to `copy configMS.h config.h`
+        -- then to `nmake -f Makefile.MSVC  comp=msvc  asm=no`
         os.cp("configMS.h", "config.h")
         io.gsub("Makefile.MSVC", "nasmw", "nasm")
-        import("package.tools.nmake").build(package, {"-f", "Makefile.MSVC"})
+        import("package.tools.nmake").build(package, {"-f", "Makefile.MSVC", "comp=msvc", "asm=no"})
         os.cp("output/*.lib", package:installdir("lib"))
         os.cp("output/*.exe", package:installdir("bin"))
         os.cp("include/*.h", package:installdir("include/lame"))
