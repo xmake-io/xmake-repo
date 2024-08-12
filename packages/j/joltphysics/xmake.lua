@@ -77,6 +77,9 @@ package("joltphysics")
         if package:config("shared") then
             package:add("defines", "JPH_SHARED_LIBRARY")
         end
+        if not package:is_debug() then
+            package:add("defines", "JPH_NO_DEBUG")
+        end
         if package:is_arch("i386", "x86", "x64", "x86_64") then
             -- add instruction sets (from https://github.com/jrouwe/JoltPhysics/blob/4cd52055e09160affcafa557b39520331bf0d034/Jolt/Jolt.cmake#L602)
             if package:has_tool("cxx", "cl") then
