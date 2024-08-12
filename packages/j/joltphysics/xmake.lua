@@ -30,6 +30,7 @@ package("joltphysics")
     add_configs("debug_renderer", { description = "Adds support to draw lines and triangles, used to be able to debug draw the state of the world", default = true, type = "boolean" })
     add_configs("double_precision", { description = "Compiles the library so that all positions are stored in doubles instead of floats. This makes larger worlds possible", default = false, type = "boolean" })
     add_configs("object_layer_bits", {description = "Number of bits to use in ObjectLayer. Can be 16 or 32.", default = "16", type = "string", values = {"16", "32"}})
+    add_configs("object_stream", { description = "Compile the ObjectStream class and RTTI attribute information", default = true, type = "boolean" })
     add_configs("symbols", { description = "When turning this option on, the library will be compiled with debug symbols", default = false, type = "boolean" })
 
     if is_arch("i386", "x86", "x64", "x86_64") then
@@ -79,6 +80,9 @@ package("joltphysics")
         end
         if not package:is_debug() then
             package:add("defines", "JPH_NO_DEBUG")
+        end
+        if package:config("object_stream") then
+            package:add("defines", "JPH_OBJECT_STREAM")
         end
         if package:is_arch("i386", "x86", "x64", "x86_64") then
             -- add instruction sets (from https://github.com/jrouwe/JoltPhysics/blob/4cd52055e09160affcafa557b39520331bf0d034/Jolt/Jolt.cmake#L602)
@@ -168,6 +172,7 @@ package("joltphysics")
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DCROSS_PLATFORM_DETERMINISTIC=" .. (package:config("cross_platform_deterministic") and "ON" or "OFF"))
             table.insert(configs, "-DDOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
+            table.insert(configs, "-DENABLE_OBJECT_STREAM" .. (package:config("object_stream") and "ON" or "OFF"))
             table.insert(configs, "-DGENERATE_DEBUG_SYMBOLS=" .. ((package:debug() or package:config("symbols")) and "ON" or "OFF"))
             table.insert(configs, "-DOBJECT_LAYER_BITS=" .. package:config("object_layer_bits"))
             table.insert(configs, "-DUSE_AVX=" .. (package:config("inst_avx") and "ON" or "OFF"))
