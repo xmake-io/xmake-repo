@@ -5,6 +5,7 @@ package("joltphysics")
 
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrouwe/JoltPhysics.git")
+    add_versions("v5.1.0", "525c9d6fb79471b3995f9d621c9f843e71470aed286872c4d4065c1f7b7d049a")
     add_versions("v5.0.0", "5231953d1b1d5b9cb617facf86341a11337e1cd04456949af6911b917a1646cb")
     add_versions("v4.0.2", "046baf71d05e47de7a530ce5d58a587a93ea7e9ea1ef8bf3ff80238fb95650ae")
     add_versions("v4.0.1", "e0bb4fa07047ca9c38bd71262427ad2972a7f45f8dff74587f73457f3b60df82")
@@ -75,6 +76,9 @@ package("joltphysics")
         end
         if package:config("shared") then
             package:add("defines", "JPH_SHARED_LIBRARY")
+        end
+        if not package:is_debug() then
+            package:add("defines", "JPH_NO_DEBUG")
         end
         if package:is_arch("i386", "x86", "x64", "x86_64") then
             -- add instruction sets (from https://github.com/jrouwe/JoltPhysics/blob/4cd52055e09160affcafa557b39520331bf0d034/Jolt/Jolt.cmake#L602)
@@ -205,8 +209,23 @@ package("joltphysics")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <cstdarg>
+            void trace_impl(const char* fmt, ...) {
+                va_list list;
+                va_start(list, fmt);
+                char buffer[1024];
+                vsnprintf(buffer, sizeof(buffer), fmt, list);
+                va_end(list);
+            };
+            bool AssertFailedImpl(const char *inExpression, const char *inMessage, const char *inFile, JPH::uint inLine)
+            {
+            	// Breakpoint
+            	return true;
+            };
             void test() {
                 JPH::RegisterDefaultAllocator();
+                JPH::Trace = &trace_impl;
+                JPH_IF_ENABLE_ASSERTS(JPH::AssertFailed = &AssertFailedImpl;)
                 JPH::PhysicsSystem physics_system;
                 physics_system.OptimizeBroadPhase();
             }
