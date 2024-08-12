@@ -50,8 +50,9 @@ package("tbb")
 
     if on_check then
         on_check("macosx", function (package)
-            assert(package:is_arch("x86_64") and package:version():ge("2021.0"),
-                "package(tbb <2021.0) unsupported version on macosx/arm64")
+            if package:is_arch("arm64") then
+                assert(package:version():ge("2021.0"), "package(tbb/arm64 <2021.0) unsupported version on macosx")
+            end
         end)
     end
 
