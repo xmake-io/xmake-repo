@@ -33,6 +33,10 @@ package("luau")
         io.replace("CMakeLists.txt", ".lib", "", {plain = true})
         io.replace("Sources.cmake", ".lib", "", {plain = true})
 
+        if package:is_plat("bsd") then
+            io.replace("CMakeLists.txt", [[if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS")]], [[if(TRUE)]], {plain = true})
+        end
+
         local cmake_file = io.readfile("CMakeLists.txt")
 
         local links = {}
