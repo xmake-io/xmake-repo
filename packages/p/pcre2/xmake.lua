@@ -23,7 +23,7 @@ package("pcre2")
             if package:is_arch("armeabi-v7a") then
                 local ndk = package:toolchain("ndk")
                 local ndkver = ndk:config("ndkver")
-                assert(ndkver and tonumber(ndkver) >= 22, "package(pcre2/): need ndk version >= 22")
+                assert(ndkver and tonumber(ndkver) > 22, "package(pcre2/armeabi-v7a): need ndk version > 22")
             end
         end)
     end
