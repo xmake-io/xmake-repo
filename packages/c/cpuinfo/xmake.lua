@@ -10,6 +10,7 @@ package("cpuinfo")
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
+    add_configs("clog", {description = "Build clog library.", default = false, type = "boolean"})
 
     add_deps("cmake")
     if is_plat("windows") then
@@ -18,12 +19,12 @@ package("cpuinfo")
         add_syslinks("pthread")
     end
 
-    on_check("windows|arm.*", function (package)
+    on_check("windows", function (package)
         import("core.tool.toolchain")
         import("core.base.semver")
 
         local msvc = toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
-        if msvc then
+        if msvc and package:is_arch("arm.*") then
             local vs_sdkver = msvc:config("vs_sdkver")
             assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(cpuinfo): need vs_sdkver > 10.0.19041.0")
         end
@@ -57,6 +58,10 @@ package("cpuinfo")
             end
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:config("clog") then
+            import("clog")(package)
+        end
     end)
 
     on_test(function (package)
@@ -67,4 +72,8 @@ package("cpuinfo")
                 std::cout << "Running on CPU " << cpuinfo_get_package(0)->name;
             }
         ]]}, {configs = {languages = "c++11"}, includes = "cpuinfo.h"}))
+
+        if package:config("clog") then
+            assert(package:has_cfuncs("clog_vlog_info", {includes = "clog.h"}))
+        end
     end)

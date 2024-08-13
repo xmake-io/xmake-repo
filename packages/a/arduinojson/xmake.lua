@@ -7,6 +7,7 @@ package("arduinojson")
     add_urls("https://github.com/bblanchon/ArduinoJson/archive/refs/tags/$(version).tar.gz",
              "https://github.com/bblanchon/ArduinoJson.git")
 
+    add_versions("v7.1.0", "74bc745527a274bcab85c6498de77da749627113c4921ccbcaf83daa7ac35dee")
     add_versions("v7.0.4", "98ca14d98e9f1e8978ce5ad3ca0eeda3d22419d17586c60f299f369078929917")
     add_versions("v7.0.3", "6da2d069e0caa0c829444912ee13e78bdf9cc600be632428a164c92e69528000")
     add_versions("v6.21.4", "9551af9282372f6e64cf4009fc43be7f2df6eb96fe9c0aab44d4eed217d09747")

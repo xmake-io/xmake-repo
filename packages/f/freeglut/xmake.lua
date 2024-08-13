@@ -1,14 +1,15 @@
 package("freeglut")
-
     set_homepage("http://freeglut.sourceforge.net")
-    set_description("A free-software/open-source alternative to the OpenGL Utility Toolkit (GLUT) library.")
+    set_description("Free implementation of the OpenGL Utility Toolkit (GLUT)")
     set_license("MIT")
 
-    add_urls("https://github.com/FreeGLUTProject/freeglut/archive/refs/tags/$(version).zip",
+    add_urls("https://github.com/freeglut/freeglut/releases/download/v$(version)/freeglut-$(version).tar.gz",
              "https://github.com/FreeGLUTProject/freeglut.git")
-    add_versions("v3.4.0", "8aed768c71dd5ec0676216bc25e23fa928cc628c82e54ecca261385ccfcee93a")
 
-    add_patches("v3.4.0", path.join(os.scriptdir(), "patches", "3.4.0", "arm64.patch"), "a96b538e218ca478c7678aad62b724226dcdf11371da58d1287b95dbe241d00e")
+    add_versions("3.6.0", "9c3d4d6516fbfa0280edc93c77698fb7303e443c1aaaf37d269e3288a6c3ea52")
+    add_versions("3.4.0", "3c0bcb915d9b180a97edaebd011b7a1de54583a838644dcd42bb0ea0c6f3eaec")
+
+    add_patches("3.4.0", "patches/3.4.0/arm64.patch", "a96b538e218ca478c7678aad62b724226dcdf11371da58d1287b95dbe241d00e")
 
     add_deps("cmake")
 
@@ -18,7 +19,17 @@ package("freeglut")
     end
     add_deps("glu", "opengl", {optional = true})
 
-    on_load("windows", function (package)
+    if on_check then
+        on_check("windows", function (package)
+            local msvc = package:toolchain("msvc")
+            if msvc and package:is_arch("arm.*") then
+                local vs = msvc:config("vs")
+                assert(vs and tonumber(vs) >= 2022, "package(freeglut): requires Visual Studio 2022 and later for arm targets")
+            end
+        end)
+    end
+
+    on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "FREEGLUT_STATIC=1")
         end
@@ -32,8 +43,9 @@ package("freeglut")
         end
     end)
 
-    on_install("linux", "windows", function (package)
+    on_install("linux", "windows", "mingw", function (package)
         local configs = {"-DFREEGLUT_BUILD_DEMOS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         if package:config("shared") then
             table.insert(configs, "-DFREEGLUT_BUILD_SHARED_LIBS=ON")
             table.insert(configs, "-DFREEGLUT_BUILD_STATIC_LIBS=OFF")
@@ -41,27 +53,30 @@ package("freeglut")
             table.insert(configs, "-DFREEGLUT_BUILD_SHARED_LIBS=OFF")
             table.insert(configs, "-DFREEGLUT_BUILD_STATIC_LIBS=ON")
         end
+
+        local opt = {}
+        opt.cxflags = {}
         if package:is_plat("windows") then
             if package:config("shared") then
-                table.insert(configs, "-DCMAKE_C_FLAGS=-DFREEGLUT_LIB_PRAGMAS=0")
+                table.insert(opt.cxflags, "-DFREEGLUT_LIB_PRAGMAS=0")
             else
-                table.insert(configs, "-DCMAKE_C_FLAGS=-DFREEGLUT_LIB_PRAGMAS=0 -DFREEGLUT_STATIC=1")
+                table.insert(opt.cxflags, "-DFREEGLUT_LIB_PRAGMAS=0")
+                table.insert(opt.cxflags, "-DFREEGLUT_STATIC=1")
             end
             if package:is_arch("arm64") then
-                local vs = import("core.tool.toolchain").load("msvc"):config("vs")
-                assert(tonumber(vs) >= 2022, "freeglut requires Visual Studio 2022 and later for arm targets")
-                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
-                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+                local vs = package:toolchain("msvc"):config("vs")
+                if vs then
+                    assert(tonumber(vs) >= 2022, "package(freeglut): requires Visual Studio 2022 and later for arm targets")
+                    table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
+                    table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+                end
             end
         end
-        if package:config("pic") ~= false then
-            table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-        end
         if package:is_plat("linux") then
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"libxi", "libxxf86vm", "libxrandr", "libxrender"}})
-        else
-            import("package.tools.cmake").install(package, configs)
+            opt.packagedeps = {"libxi", "libxxf86vm", "libxrandr", "libxrender"}
         end
+
+        import("package.tools.cmake").install(package, configs, opt)
         os.trycp(path.join("include", "GL", "glut.h"), package:installdir("include", "GL"))
     end)
 

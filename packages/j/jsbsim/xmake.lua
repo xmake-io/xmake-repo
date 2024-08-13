@@ -6,6 +6,7 @@ package("jsbsim")
     add_urls("https://github.com/JSBSim-Team/jsbsim/archive/refs/tags/$(version).tar.gz",
              "https://github.com/JSBSim-Team/jsbsim.git")
 
+    add_versions("v1.2.1", "21990b6130fce9368592caff79421b275780e04868fc05b1c3e2aa2a6f8d7459")
     add_versions("v1.2.0", "1ac7d594ba4de3582ec1bff972a298af8d65651dd5fc547240ea407b25396d80")
 
     if is_plat("windows", "mingw") then

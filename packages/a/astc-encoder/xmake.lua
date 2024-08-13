@@ -6,6 +6,7 @@ package("astc-encoder")
     add_urls("https://github.com/ARM-software/astc-encoder/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ARM-software/astc-encoder.git")
 
+    add_versions("4.8.0", "6c12f4656be21a69cbacd9f2c817283405decb514072dc1dcf51fd9a0b659852")
     add_versions("4.7.0", "a57c81f79055aa7c9f8c82ac5464284e3df9bba682895dee09fa35bd1fdbab93")
     add_versions("4.6.1", "a73c7afadb2caba00339a8f715079d43f9b7e75cf57463477e5ac36ef7defd26")
 
@@ -25,6 +26,8 @@ package("astc-encoder")
     add_deps("cmake")
 
     on_install("windows|x64", "windows|x86", "mingw|x86_64", "linux", function (package)
+        io.replace("Source/cmake_core.cmake", "-Werror", "", {plain = true})
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DASTCENC_SHAREDLIB=" .. (package:config("shared") and "ON" or "OFF"))
@@ -63,7 +66,7 @@ package("astc-encoder")
                 astcenc_error status = astcenc_context_alloc(config, 1, &context);
             }
         ]]}, {configs = {languages = "c++14"}}))
-        if package:config("cli") then
+        if package:config("cli") and (not package:is_cross()) then
             os.vrun("astcenc -help")
         end
     end)

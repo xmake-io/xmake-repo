@@ -6,13 +6,14 @@ package("msdfgen")
     add_urls("https://github.com/Chlumsky/msdfgen/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Chlumsky/msdfgen.git")
 
+    add_versions("v1.12", "f058117496097217d12e4ea86adbff8467adaf6f12af793925d243b86b0c4f57")
     add_versions("v1.11", "fad74e33274f591e72511bc0546189e7aec439f2a512ef1b2fde243554d457cb")
     add_versions("v1.10", "2754d1687bfb80968d9c682e0c4c04c8fcf72df1421d076baf44ea0d87aa3662")
 
     add_patches("v1.10", "https://github.com/Chlumsky/msdfgen/commit/839e0e86cb846e3ea0c0a3d5da97321fe81f91e4.patch", "8b8ab53b66b4b8c27d78c2e617795e9818c5ba72a7a7cb7a75bc416fe4bfb26c")
 
     add_configs("extensions", {description = "Build extensions library (requires freetype, libpng and tinyxml2)", default = false, type = "boolean"})
-    add_configs("openmpp", {description = "Build with OpenMP support for multi-threaded code", default = false, type = "boolean"})
+    add_configs("openmp", {description = "Build with OpenMP support for multi-threaded code", default = false, type = "boolean"})
     add_configs("skia", {description = "Build with the Skia library", default = false, type = "boolean"})
     add_configs("standalone", {description = "Build standalone executable", default = false, type = "boolean"})
 

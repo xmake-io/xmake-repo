@@ -2,41 +2,40 @@ package("rttr")
     set_homepage("https://www.rttr.org")
     set_description("rttr: An open source library, which adds reflection to C++.")
     set_license("MIT")
+    
+    add_urls("https://github.com/rttrorg/rttr/archive/7edbd580cfad509a3253c733e70144e36f02ecd4.tar.gz",
+             "https://github.com/rttrorg/rttr.git")
+    -- 2021.08.11
+    add_versions("0.9.7", "bba4b6fac2349fa6badc701aad5e7afb87504a7089a867b1a7cbed08fb2f3a90")
+
+    add_configs("rtti", {description = "Build with RTTI support.", default = true, type = "boolean"})
 
     if is_plat("macosx") then
         add_extsources("brew::rttr")
     end
-    
-    add_urls("https://www.rttr.org/releases/rttr-$(version)-src.tar.gz",
-             "https://github.com/rttrorg/rttr/releases/download/v$(version)/rttr-$(version)-src.tar.gz",
-             "https://github.com/rttrorg/rttr.git")
-
-    add_versions("0.9.6", "f62caee43016489320f8a69145c9208cddd72e451ea95618bc26a49a4cd6c990")
-    add_versions("0.9.5", "caa8d404840b0e156f869a947e475b09f7b602ab53c290271f40ce028c8d7d91")
 
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_EXAMPLES=OFF")
-        table.insert(configs, "-DBUILD_DOCUMENTATION=OFF")
-        table.insert(configs, "-DBUILD_UNIT_TESTS=OFF") -- rttr has problem building unit tests on macosx.
-        -- rttr use BUILD_RTTR_DYNAMIC and BUILD_STATIC options to control whether to build dynamic or static libraries.
-        table.insert(configs, "-DBUILD_RTTR_DYNAMIC=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
-        local cxflags
-        if package:has_tool("cxx", "gcc", "gxx", "clang", "clangxx") then
-            if not package:is_plat("windows") then
-                -- Passing this flag to clang-cl may cause errors.
-                -- gcc does not seem to support -Wno-error options.
-                cxflags = "-Wno-implicit-float-conversion"
-            end
-        end
-        if package:is_plat("windows") and package:config("shared") then
+        io.replace("CMake/utility.cmake", "/WX", "", {plain = true})
+        io.replace("CMake/utility.cmake", "-Werror", "", {plain = true})
+
+        local configs = {
+            "-DBUILD_EXAMPLES=OFF",
+            "-DBUILD_DOCUMENTATION=OFF",
+            "-DBUILD_UNIT_TESTS=OFF",
+            "-DBUILD_DOCUMENTATION=OFF",
+            "-DBUILD_PACKAGE=OFF",
+        }
+        local shared = package:config("shared")
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_RTTR_DYNAMIC=" .. (shared and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_STATIC=" .. (shared and "OFF" or "ON"))
+        table.insert(configs, "-DBUILD_WITH_RTTI=" .. (package:config("rtti") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
+        if package:is_plat("windows") and shared then
             package:add("defines", "RTTR_DLL")
         end
-        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)

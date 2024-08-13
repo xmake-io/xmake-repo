@@ -23,6 +23,7 @@ package("volk")
     add_versions("1.3.275+0", "b68d24e139190e49e5eafd72894f6e85c80472b8745bddc6ef91d6bf339df813")
     add_versions("1.3.280+0", "af9c98d09284eef29f6826bb1620bfe551a91a864fce707416b83c255efe3c25")
     add_versions("1.3.283+0", "872035f1f26c53b218632a3a8dbccbd276710aaabafb9bb1bc1a6c0633ee6aab")
+    add_versions("1.3.290+0", "bb6a6d616c0f2bbd5d180da982a6d92a0948581cec937de69f17883980c6ca06")
 
     add_deps("vulkan-headers")
 
@@ -63,6 +64,12 @@ package("volk")
         end
         
         import("package.tools.xmake").install(package)
+    end)
+
+    on_load(function (package)
+        if package:config("header_only") then
+            package:set("kind", "library", {headeronly = true})
+        end
     end)
 
     on_test(function (package)

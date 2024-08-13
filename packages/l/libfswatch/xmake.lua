@@ -1,6 +1,7 @@
 package("libfswatch")
     set_homepage("https://emcrisostomo.github.io/fswatch/")
     set_description("A cross-platform file change monitor with multiple backends: Apple OS X File System Events, *BSD kqueue, Solaris/Illumos File Events Notification, Linux inotify, Microsoft Windows and a stat()-based backend.")
+    set_license("GPL-3.0")
 
     add_urls("https://github.com/emcrisostomo/fswatch/archive/refs/tags/$(version).tar.gz",
              "https://github.com/emcrisostomo/fswatch.git")

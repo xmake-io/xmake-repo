@@ -5,6 +5,7 @@ package("sonic-cpp")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/bytedance/sonic-cpp/archive/refs/tags/v$(version).zip")
+    add_versions("1.0.1", "4c892a72970df301b39416ee1f038d0573507f374391053ecd6e9a9c686c3d11")
     add_versions("1.0.0", "409441bfc8b8b9fea8641dc0a0cdfaeed784246066a5c49fc7d6e74c39999f7b")
 
     add_cxxflags("-march=haswell")
