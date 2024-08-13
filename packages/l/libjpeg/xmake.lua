@@ -58,7 +58,7 @@ package("libjpeg")
                         add_rules("utils.symbols.export_all")
                     end
             ]])
-            import("package.tools.xmake").install(package, configs)
+            import("package.tools.xmake").install(package)
         end
     end)
 
