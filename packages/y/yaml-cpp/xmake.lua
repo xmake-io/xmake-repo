@@ -30,5 +30,9 @@ package("yaml-cpp")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("YAML::Parser", {configs = {languages = "c++11"}, includes = "yaml-cpp/yaml.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                YAML::Load("");
+            }
+        ]]}, {configs = {languages = "c++11"}, includes = "yaml-cpp/yaml.h"}))
     end)
