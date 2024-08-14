@@ -1,4 +1,4 @@
-package("ame.diligent_core")
+package("diligent_core")
     set_kind("library")
     set_homepage("https://diligentgraphics.com/diligent-engine")
     set_description("A modern cross-platform low-level graphics API.")
