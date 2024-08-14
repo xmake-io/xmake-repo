@@ -1,5 +1,4 @@
 package("yaml-cpp")
-
     set_homepage("https://github.com/jbeder/yaml-cpp/")
     set_description("A YAML parser and emitter in C++")
     set_license("MIT")
@@ -14,11 +13,7 @@ package("yaml-cpp")
 
     add_deps("cmake")
 
-    if is_plat("mingw") then
-        add_configs("shared", {description = "Build shared library.", default = true, readonly = true, type = "boolean"})
-    end
-
-    on_load("windows", function (package)
+    on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "YAML_CPP_STATIC_DEFINE")
         end
@@ -26,6 +21,7 @@ package("yaml-cpp")
 
     on_install(function (package)
         local configs = {"-DYAML_CPP_BUILD_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DYAML_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DYAML_MSVC_SHARED_RT=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
