@@ -19,7 +19,7 @@ package("yaml-cpp")
         end
     end)
 
-    on_install(function (package)
+    on_install("!mingw", function (package)
         local configs = {"-DYAML_CPP_BUILD_TESTS=OFF"}
         table.insert(configs, "-DYAML_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
