@@ -23,16 +23,17 @@ package("glaze")
 
     if on_check then
         on_check("windows", function (package)
-            if package:is_plat("windows") then
-                local vs = package:toolchain("msvc"):config("vs")
-                assert(vs and tonumber(vs) >= 2022, "package(glaze): need vs >= 2022")
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(glaze) requires c++20")
             end
         end)
     end
 
     on_install("windows", "linux", "bsd", "mingw", "wasm", function (package)
-        local version = package:version()
-        if version and version:ge("2.9.5") then
+        if package:gitref() or package:version():ge("2.9.5") then
             if package:has_tool("cxx", "cl", "clang_cl") then
                 package:add("cxxflags", "/Zc:preprocessor", "/permissive-", "/Zc:lambda")
             end
@@ -63,5 +64,5 @@ package("glaze")
                 obj_t obj{};
                 glz::write_json(obj, buffer);
             }
-        ]]}, {configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = "c++23"}}))
     end)
