@@ -1,11 +1,11 @@
 package("abseil")
-
     set_homepage("https://abseil.io")
     set_description("C++ Common Libraries")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/abseil/abseil-cpp/archive/$(version).tar.gz",
              "https://github.com/abseil/abseil-cpp.git")
+
     add_versions("20200225.1", "0db0d26f43ba6806a8a3338da3e646bb581f0ca5359b3a201d8fb8e4752fd5f8")
     add_versions("20210324.1", "441db7c09a0565376ecacf0085b2d4c2bbedde6115d7773551bc116212c2a8d6")
     add_versions("20210324.2", "59b862f50e710277f8ede96f083a5bb8d7c9595376146838b9580be90374ee1f")
@@ -24,7 +24,9 @@ package("abseil")
 
     add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "17", type = "string", values = {"14", "17", "20"}})
 
-    if is_plat("macosx") then
+    if is_plat("linux") then
+        add_syslinks("pthread")
+    elseif is_plat("macosx") then
         add_frameworks("CoreFoundation")
     end
 
@@ -34,7 +36,7 @@ package("abseil")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
+    on_install(function (package)
         if package:version() and package:version():eq("20230802.1") and package:is_plat("mingw") then
             io.replace(path.join("absl", "synchronization", "internal", "pthread_waiter.h"), "#ifndef _WIN32", "#if !defined(_WIN32) && !defined(__MINGW32__)", {plain = true})
             io.replace(path.join("absl", "synchronization", "internal", "win32_waiter.h"), "#if defined(_WIN32) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", "#if defined(_WIN32) && !defined(__MINGW32__) && _WIN32_WINNT >= _WIN32_WINNT_VISTA", {plain = true})
