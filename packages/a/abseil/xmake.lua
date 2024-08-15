@@ -34,6 +34,7 @@ package("abseil")
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ABSL_CONSUME_DLL")
         end
+        package:add("defines", "absl_DIR=" .. package:installdir("lib", "cmake", "absl"))
     end)
 
     on_install(function (package)
