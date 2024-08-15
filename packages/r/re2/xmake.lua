@@ -33,10 +33,10 @@ package("re2")
         local configs = {
             "-DRE2_BUILD_TESTING=OFF",
             "-DCMAKE_CXX_STANDARD=17",
-            "-Dabsl_DIR=" .. package:dep("abseil"):installdir()
+            "-Dabsl_DIR=" .. package:dep("abseil"):installdir("lib/cmake/absl"),
         }
 
-        io.replace("CMakeLists.txt", "find_package(absl REQUIRED)", "find_package(absl REQUIRED CONFIG)", {plain = true})
+        -- io.replace("CMakeLists.txt", "find_package(absl REQUIRED)", "find_package(absl REQUIRED CONFIG)", {plain = true})
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
