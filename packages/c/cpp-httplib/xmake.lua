@@ -28,6 +28,14 @@ package("cpp-httplib")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
+        end)
+    end
+
     on_load(function (package)
         if package:config("ssl") then
             package:add("deps", "openssl" .. (package:version():ge("0.15.0") and "3" or ""))
@@ -42,15 +50,6 @@ package("cpp-httplib")
             package:add("defines", "CPPHTTPLIB_BROTLI_SUPPORT")
         end
     end)
-
-    if on_check then
-        on_check("android", function (package)
-            import("core.tool.toolchain")
-            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
-            local ndk_sdkver = ndk:config("ndk_sdkver")
-            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
-        end)
-    end
 
     on_install(function (package)
         if package:is_plat("android") then
@@ -70,9 +69,8 @@ package("cpp-httplib")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <httplib.h>
-            static void test() {
+            void test() {
                 httplib::Client cli("http://cpp-httplib-server.yhirose.repl.co");
             }
-        ]]}, {includes = "httplib.h",configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = "c++11"}, includes = "httplib.h"}))
     end)
