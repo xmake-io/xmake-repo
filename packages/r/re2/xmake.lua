@@ -33,6 +33,7 @@ package("re2")
         local configs = {
             "-DRE2_BUILD_TESTING=OFF",
             "-DCMAKE_CXX_STANDARD=17",
+            "-Dabsl_DIR=" .. (package:dep("abseil"):installdir("lib", "cmake", "absl")),
         }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
