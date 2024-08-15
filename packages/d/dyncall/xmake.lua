@@ -10,7 +10,7 @@ package("dyncall")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
