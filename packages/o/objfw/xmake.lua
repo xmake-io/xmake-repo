@@ -63,7 +63,7 @@ package("objfw")
         local tls = package:config("tls")
         if type(tls) == "boolean" then
             if tls then
-                if is_plat("macosx") then
+                if package:is_plat("macosx") then
                     package:add("frameworks", "Security")
                 else
                     package:add("deps", "openssl")
