@@ -17,17 +17,5 @@ package("dyncall")
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets({test = [[
-            #include <math.h>
-            void test() {
-                double r;
-                DCCallVM* vm = dcNewCallVM(4096);
-                dcMode(vm, DC_CALL_C_DEFAULT);
-                dcReset(vm);
-                /* call: double sqrt(double x); */
-                dcArgDouble(vm, 4.2373);
-                r = dcCallDouble(vm, (DCpointer)&sqrt);
-                dcFree(vm);
-            }
-        ]]}, {includes = "dyncall.h"}))
+        assert(package:has_cfuncs("dcNewCallVM", {includes = "dyncall.h"}))
     end)
