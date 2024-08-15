@@ -82,11 +82,11 @@ package("abseil")
             #include <string>
             #include <vector>
             void test() {
-              std::vector<std::string> v = {"foo", "bar", "baz"};
-              std::string s = absl::StrJoin(v, "-");
-              int result = 0;
-              auto a = absl::SimpleAtoi("123", &result);
-              std::cout << "Joined string: " << s << "\\n";
+                std::vector<std::string> v = {"foo", "bar", "baz"};
+                std::string s = absl::StrJoin(v, "-");
+                int result = 0;
+                auto a = absl::SimpleAtoi("123", &result);
+                std::cout << "Joined string: " << s << "\\n";
             }
         ]]}, {configs = {languages = "cxx17"}}))
     end)
