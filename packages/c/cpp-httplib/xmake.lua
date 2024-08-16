@@ -67,7 +67,7 @@ package("cpp-httplib")
         table.insert(configs, "-DHTTPLIB_NO_EXCEPTIONS=" .. (package:config("exceptions") and "OFF" or "ON"))
 
         if package:config("ssl") then
-            local openssl = package:dep("openssl")
+            local openssl = package:dep("openssl" .. (package:version():ge("0.15.0") and "3" or ""))
             if not openssl:is_system() then
                 table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
             end
