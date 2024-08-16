@@ -33,8 +33,20 @@ package("re2")
         local configs = {
             "-DRE2_BUILD_TESTING=OFF",
             "-DCMAKE_CXX_STANDARD=17",
-            "-Dabsl_DIR=" .. (package:dep("abseil"):installdir("lib", "cmake", "absl")),
         }
+
+        local absl_dir = ""
+        local abseil = package:dep("abseil"):fetch()
+        if abseil then
+            for _, linkdir in ipairs(abseil.linkdirs) do
+                local dir = path.join(linkdir, "cmake", "absl")
+                if os.isdir(dir) then
+                    absl_dir = dir
+                    break
+                end
+            end
+        end
+        table.insert(configs, "-Dabsl_DIR=" .. absl_dir)
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
