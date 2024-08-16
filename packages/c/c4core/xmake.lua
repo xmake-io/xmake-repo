@@ -27,7 +27,7 @@ package("c4core")
         end
 
         if package:config("fast_float") or package:config("debugbreak") then
-            package:add("patches", "0.2.1", "patches/0.2.1/cmake-deps.patch", "92c0c6510cc3b8cbd10b575b5b9d0defa2a19d19f24c1618a73d4f4636da4c9b")
+            package:add("patches", ">=0.2.1", "patches/0.2.1/cmake-deps.patch", "92c0c6510cc3b8cbd10b575b5b9d0defa2a19d19f24c1618a73d4f4636da4c9b")
         end
     end)
 
