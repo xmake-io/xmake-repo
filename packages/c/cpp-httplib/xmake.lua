@@ -21,7 +21,7 @@ package("cpp-httplib")
     add_versions("0.15.3", "2121bbf38871bb2aafb5f7f2b9b94705366170909f434428352187cb0216124e")
     add_versions("0.16.2", "75565bcdf12522929a26fb57a2c7f8cc0e175e27a9ecf51616075f3ea960da44")
 
-    add_configs("ssl",  { description = "Requires OpenSSL", default = false, type = "boolean"})
+    add_configs("ssl",  { description = "Requires OpenSSL", default = true, type = "boolean"})
     add_configs("zlib",  { description = "Requires Zlib", default = false, type = "boolean"})
     add_configs("brotli",  { description = "Requires Brotli", default = false, type = "boolean"})
     add_configs("exceptions", {description = "Enable the use of C++ exceptions", default = true, type = "boolean"})
@@ -51,7 +51,7 @@ package("cpp-httplib")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", function (package)
         if package:is_plat("android") then
             import("core.tool.toolchain")
             local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
@@ -59,11 +59,19 @@ package("cpp-httplib")
             assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(httplib): need ndk api level >= 24 for android")
         end
         local configs = {"-DHTTPLIB_COMPILE=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DHTTPLIB_REQUIRE_OPENSSL=" .. (package:config("ssl") and "ON" or "OFF"))
         table.insert(configs, "-DHTTPLIB_REQUIRE_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
         table.insert(configs, "-DHTTPLIB_REQUIRE_BROTLI=" .. (package:config("brotli") and "ON" or "OFF"))
         table.insert(configs, "-DHTTPLIB_NO_EXCEPTIONS=" .. (package:config("exceptions") and "OFF" or "ON"))
+
+        if package:config("ssl") then
+            local openssl = package:dep("openssl")
+            if not openssl:is_system() then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
