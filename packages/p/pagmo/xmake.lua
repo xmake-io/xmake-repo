@@ -6,6 +6,7 @@ package("pagmo")
 
     add_urls("https://github.com/esa/pagmo2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/esa/pagmo2.git")
+    add_versions("v2.19.1", "ecc180e669fa6bbece959429ac7d92439e89e1fd1c523aa72b11b6c82e414a1d")
     add_versions("v2.18.0", "5ad40bf3aa91857a808d6b632d9e1020341a33f1a4115d7a2b78b78fd063ae31")
 
     local configdeps = {eigen = "EIGEN3", nlopt = "NLOPT", --[[ipopt = "IPOPT"]]}
