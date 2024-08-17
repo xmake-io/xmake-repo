@@ -41,14 +41,14 @@ package("libvips")
         "libtiff",
         "libwebp",
         "zlib",
+        "cgif",
+        "nifti",
+        "highway",
     }
 
     local unsupported_deps = {
-        "cgif",
         "exif",
-        "nifti",
         "openslide",
-        "highway",
         "orc",
         "pangocairo",
         "pdfium",
