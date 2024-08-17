@@ -30,9 +30,9 @@ package("fast_float")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                const std::string input =  "3.1416 xyz ";
+                const std::string input = "3.1416 xyz ";
                 double result;
-                auto answer = fast_float::from_chars(input.data(), input.data()+input.size(), result);
+                auto answer = fast_float::from_chars(input.data(), input.data() + input.size(), result);
             }
         ]]}, {configs = {languages = "c++14"}, includes = {"fast_float/fast_float.h"}}))
     end)
