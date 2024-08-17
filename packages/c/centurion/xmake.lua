@@ -75,7 +75,7 @@ package("centurion")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         os.cp("src/*", package:installdir("include"))
     end)
 
