@@ -14,6 +14,9 @@ package("freeimage")
 
     add_configs("rgb", {description = "Use RGB instead of BGR.", default = false})
 
+    if is_plat("macosx") then
+        add_deps("libpng")
+    end
     on_load("windows", function (package)
         if not package:config("shared") then
             package:add("defines", "FREEIMAGE_LIB")
@@ -35,9 +38,15 @@ package("freeimage")
         io.writefile("xmake.lua", format([[
             add_rules("mode.debug", "mode.release")
             includes("check_cincludes.lua")
+            if is_plat("macosx") then
+                add_requires("libpng")
+            end
             target("freeimage")
                 set_kind("$(kind)")
                 set_languages("c++11")
+                if is_plat("macosx") then
+                    add_packages("libpng")
+                end
                 add_files({"%s"})
                 add_headerfiles("Source/FreeImage.h", "Source/FreeImageIO.h")
                 set_symbols("hidden")
