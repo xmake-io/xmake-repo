@@ -9,7 +9,7 @@ package("json-glib")
 
 
     add_patches("1.9.2", "patches/1.9.2/add_brace_to_json_scanner.patch", "5d77c14d25ad24a911d28d51e9defee9a3c382428dc3e23101f6319fc46b227c")
-    add_deps("glib", "meson", "ninja")
+    add_deps("glib", "meson", "ninja", "libiconv")
 
     add_includedirs("include", "include/json-glib-1.0")
 
