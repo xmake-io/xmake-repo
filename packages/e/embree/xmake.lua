@@ -12,7 +12,7 @@ package("embree")
     add_versions("v3.13.4", "e6a8d1d4742f60ae4d936702dd377bc4577a3b034e2909adb2197d0648b1cb35")
     add_versions("v3.13.5", "b8c22d275d9128741265537c559d0ea73074adbf2f2b66b0a766ca52c52d665b")
     add_versions("v4.3.0", "baf0a57a45837fc055ba828a139467bce0bc0c6a9a5f2dccb05163d012c12308")
-    add_versions("v4.3.3", "baf0a57a45837fc055ba828a139467bce0bc0c6a9a5f2dccb05163d012c12308")
+    add_versions("v4.3.3", "8a3bc3c3e21aa209d9861a28f8ba93b2f82ed0dc93341dddac09f1f03c36ef2d")
 
     -- Not recommanded to build embree as a static library.
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
