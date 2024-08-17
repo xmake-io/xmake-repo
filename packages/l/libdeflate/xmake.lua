@@ -34,7 +34,7 @@ package("libdeflate")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "android", "mingw", "bsd", function (package)
+    on_install(function (package)
         local configs = {"-DLIBDEFLATE_BUILD_GZIP=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBDEFLATE_BUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
