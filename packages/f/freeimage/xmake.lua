@@ -10,6 +10,9 @@ package("freeimage")
 
     add_patches("3.18.0", path.join(os.scriptdir(), "patches", "3.18.0", "libjxr.patch"), "fddbb9fa736da383f54352dc0ab848d083d9279b66cc6ac53910236144ad75ab")
 	add_patches("3.18.0", path.join(os.scriptdir(), "patches", "3.18.0", "openexr.patch"), "051940ec58fd5ae85b65c67b83fd46eda807c9039f0f5207769ac871350af830")
+	add_patches("3.18.0", path.join(os.scriptdir(), "patches", "3.18.0", "pluginbmp.patch"), "2029f95478c8ce77f83671fe8e1889c11caa04eef2584abf0cd0a9f6a7047db0")
+
+    add_configs("rgb", {description = "Use RGB instead of BGR.", default = false})
 
     on_load("windows", function (package)
         if not package:config("shared") then
@@ -28,6 +31,7 @@ package("freeimage")
         local content = io.readfile("Makefile.srcs")
         sources = content:match("SRCS = (.-)\n"):split(" ")
         includes = content:match("INCLUDE = (.-)\n"):gsub("%-I", ""):split(" ")
+        local rgb_type = package:config("rgb") and "FREEIMAGE_COLORORDER=1" or "FREEIMAGE_COLORORDER=0"
         io.writefile("xmake.lua", format([[
             add_rules("mode.debug", "mode.release")
             includes("check_cincludes.lua")
@@ -39,7 +43,7 @@ package("freeimage")
                 set_symbols("hidden")
                 add_includedirs({"%s"})
                 check_cincludes("Z_HAVE_UNISTD_H", "unistd.h")
-                add_defines("OPJ_STATIC", "NO_LCMS", "LIBRAW_NODLL", "DISABLE_PERF_MEASUREMENT")
+                add_defines("OPJ_STATIC", "NO_LCMS", "LIBRAW_NODLL", "DISABLE_PERF_MEASUREMENT", "]] .. rgb_type .. [[")
                 if is_plat("windows") then
                     add_files("FreeImage.rc")
                     add_defines("WIN32", "_CRT_SECURE_NO_DEPRECATE")
