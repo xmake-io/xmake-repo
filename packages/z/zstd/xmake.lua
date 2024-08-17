@@ -4,12 +4,13 @@ package("zstd")
     set_description("Zstandard - Fast real-time compression algorithm")
     set_license("BSD-3-Clause")
 
-    set_urls("https://github.com/facebook/zstd/archive/$(version).tar.gz",
+    set_urls("https://github.com/facebook/zstd/archive/refs/tags/$(version).tar.gz",
              "https://github.com/facebook/zstd.git")
     add_versions("v1.4.5", "734d1f565c42f691f8420c8d06783ad818060fc390dee43ae0a89f86d0a4f8c2")
     add_versions("v1.5.0", "0d9ade222c64e912d6957b11c923e214e2e010a18f39bec102f572e693ba2867")
     add_versions("v1.5.2", "f7de13462f7a82c29ab865820149e778cbfe01087b3a55b5332707abf9db4a6e")
     add_versions("v1.5.5", "98e9c3d949d1b924e28e01eccb7deed865eefebf25c2f21c702e5cd5b63b85e1")
+    add_versions("v1.5.6", "30f35f71c1203369dc979ecde0400ffea93c27391bfd2ac5a9715d2173d92ff7")
 
     on_load("windows", function (package)
         if package:config("shared") then

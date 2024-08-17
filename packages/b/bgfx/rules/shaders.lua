@@ -73,9 +73,9 @@ rule("shaders")
         }
         local bgfx_default_profiles = {
             windows = {
-                vertex = {dx9 = "vs_3_0", dx11 = "vs_5_0", glsl = "120"},
-                fragment = {dx9 = "ps_3_0", dx11 = "ps_5_0", glsl = "120"},
-                compute = {dx11 = "cs_5_0", glsl = "430"},
+                vertex = {dx9 = "s_3_0", dx11 = "s_5_0", glsl = "120"},
+                fragment = {dx9 = "s_3_0", dx11 = "s_5_0", glsl = "120"},
+                compute = {dx11 = "s_5_0", glsl = "430"},
             },
             macosx = {
                 vertex = {metal = "metal", glsl = "120"},

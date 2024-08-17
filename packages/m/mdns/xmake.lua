@@ -2,9 +2,11 @@ package("mdns")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/mjansson/mdns")
     set_description("Public domain mDNS/DNS-SD library in C")
+    set_license("Unlicense")
 
     add_urls("https://github.com/mjansson/mdns/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mjansson/mdns.git")
+    add_versions("1.4.3", "be1fd8e35599cb7de179decbd0633c121d11a2dcb9cc193ff5c590bd0d480483")
     add_versions("1.4.2", "c69cfdebe28a489c85f33744f7811c40572a9769a81cd57ecc09ef95802347f2")
 
     add_deps("cmake")

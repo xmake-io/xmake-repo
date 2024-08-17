@@ -28,11 +28,21 @@ package("openssl")
     on_fetch("fetch")
 
     on_load(function (package)
-        if is_subhost("windows") and not package:is_precompiled() then
-            package:add("deps", "nasm")
-            -- the perl executable found in GitForWindows will fail to build OpenSSL
-            -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
-            package:add("deps", "strawberry-perl", { system = false })
+        if not package:is_precompiled() then
+            if package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
+                -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
+                package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
+            elseif is_subhost("windows") and not package:is_precompiled() then
+                package:add("deps", "nasm", { private = true })
+                -- the perl executable found in GitForWindows will fail to build OpenSSL
+                -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
+                package:add("deps", "strawberry-perl", { system = false, private = true })
+                -- check xmake tool jom
+                import("package.tools.jom", {try = true})
+                if jom then
+                    package:add("deps", "jom", {private = true})
+                end
+            end
         end
 
         -- @note we must use package:is_plat() instead of is_plat in description for supporting add_deps("openssl", {host = true}) in python
@@ -52,6 +62,8 @@ package("openssl")
     end)
 
     on_install("windows", function (package)
+        import("package.tools.jom", {try = true})
+        import("package.tools.nmake")
         local configs = {"Configure", "no-tests"}
         local target
         if package:is_arch("x86", "i386") then
@@ -67,8 +79,19 @@ package("openssl")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
+        if jom then
+            table.insert(configs, "no-makedepend")
+            table.insert(configs, "/FS")
+        end
         os.vrunv("perl", configs)
-        import("package.tools.nmake").install(package)
+
+        if jom then
+            jom.build(package)
+            jom.make(package, {"install_sw"})
+        else
+            nmake.build(package)
+            nmake.make(package, {"install_sw"})
+        end
     end)
 
     on_install("mingw", function (package)
@@ -138,6 +161,12 @@ package("openssl")
         end
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         if package:is_cross() then
+            if is_host("windows") and package:is_plat("android") then
+                buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
+                buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
+                buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
+                buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
+            end
             os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
         else
             os.vrunv("./config", configs, {shell = true, envs = buildenvs})

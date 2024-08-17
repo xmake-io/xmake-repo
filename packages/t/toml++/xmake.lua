@@ -2,6 +2,7 @@ package("toml++")
 
     set_homepage("https://marzer.github.io/tomlplusplus/")
     set_description("toml++ is a header-only TOML config file parser and serializer for C++17 (and later!).")
+    set_license("MIT")
 
     add_urls("https://github.com/marzer/tomlplusplus/archive/refs/tags/$(version).tar.gz",
              "https://github.com/marzer/tomlplusplus.git")

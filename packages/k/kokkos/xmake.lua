@@ -1,11 +1,13 @@
 package("kokkos")
-
     set_homepage("https://kokkos.github.io/")
     set_description("Kokkos C++ Performance Portability Programming EcoSystem: The Programming Model")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/kokkos/kokkos/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kokkos/kokkos.git")
+
+    add_versions("4.3.01", "5998b7c732664d6b5e219ccc445cd3077f0e3968b4be480c29cd194b4f45ec70")
+    add_versions("4.3.00", "53cf30d3b44dade51d48efefdaee7a6cf109a091b702a443a2eda63992e5fe0d")
     add_versions("4.2.01", "cbabbabba021d00923fb357d2e1b905dda3838bd03c885a6752062fe03c67964")
     add_versions("4.2.00", "ac08765848a0a6ac584a0a46cd12803f66dd2a2c2db99bb17c06ffc589bf5be8")
     add_versions("4.0.01", "bb942de8afdd519fd6d5d3974706bfc22b6585a62dd565c12e53bdb82cd154f0")

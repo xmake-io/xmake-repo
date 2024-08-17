@@ -7,6 +7,7 @@ package("ssp")
     add_urls("https://github.com/red0124/ssp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/red0124/ssp.git")
 
+    add_versions("v1.8.0", "a4416746023c8a60f6808200193dd207f1044b6e37e6c5bc0462e85452307d1d")
     add_versions("v1.6.1", "4cdf75959b0a5fabd0b3e6ec1bad41d7c3f298d5b7f822d6e12b7e4d7dfcdd34")
 
     add_deps("cmake", "fast_float")

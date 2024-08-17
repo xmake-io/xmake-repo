@@ -16,12 +16,15 @@ package("openvdb")
     add_versions("v10.1.0", "2746236e29659a0d35ab90d832f7c7987dd2537587a1a2f9237d9c98afcd5817")
     add_versions("v11.0.0", "6314ff1db057ea90050763e7b7d7ed86d8224fcd42a82cdbb9c515e001b96c74")
 
+    add_patches(">=10.1.0", "patches/10.1.0/blosc-dep.patch", "a1a5adf4ae2c75c3a3a390b25654dd7785b88d15e459a1620fc0b42b20f81ba0")
+
     add_deps("cmake")
     add_deps("boost >1.73", {configs = {regex = true, system = true, iostreams = true}})
 
     add_configs("with_houdini", {description = "Location of Houdini installation. Set to enable built with Houdini.", default = "", type = "string"})
     add_configs("with_maya", {description = "Location of Maya installation. Set to enable built with Maya.", default = "", type = "string"})
     add_configs("simd", {description = "SIMD acceleration architecture.", type = "string", values = {"None", "SSE42", "AVX"}})
+    add_configs("python", {description = "Build the pyopenvdb Python module.", default = false, type = "boolean"})
     add_configs("print", {description = "Command line binary for displaying information about OpenVDB files.", default = true, type = "boolean"})
     add_configs("lod", {description = "Command line binary for generating volume mipmaps from an OpenVDB grid.", default = false, type = "boolean"})
     add_configs("render", {description = "Command line binary for ray-tracing OpenVDB grids.", default = false, type = "boolean"})
@@ -42,6 +45,10 @@ package("openvdb")
             if package:config("with_maya") == "" then
                 package:add("deps", package:version():ge("9.0.0") and "tbb" or "tbb <2021.0")
             end
+        end
+        if package:config("python") then
+            package:add("deps", "python 3.x")
+            package:add("deps", "pybind11")
         end
         if package:config("view") then
             package:add("deps", "glew", {configs = {shared = true}})
@@ -67,7 +74,15 @@ package("openvdb")
         io.replace("cmake/FindBlosc.cmake", "${BUILD_TYPE} ${_BLOSC_LIB_NAME}", "${BUILD_TYPE} blosc libblosc", {plain = true})
         io.replace("cmake/FindBlosc.cmake", "lz4 snappy zlib zstd", "lz4", {plain = true})
         io.replace("cmake/FindTBB.cmake", "Tbb_${COMPONENT}_LIB_TYPE STREQUAL STATIC", "TRUE", {plain = true})
-        local configs = {"-DOPENVDB_BUILD_DOCS=OFF", "-DUSE_PKGCONFIG=OFF", "-DBoost_USE_STATIC_LIBS=ON", "-DUSE_CCACHE=OFF", "-DBLOSC_USE_EXTERNAL_SOURCES=ON"}
+
+        local configs = {
+            "-DOPENVDB_BUILD_DOCS=OFF",
+            "-DUSE_PKGCONFIG=OFF",
+            "-DBoost_USE_STATIC_LIBS=ON",
+            "-DUSE_CCACHE=OFF",
+            "-DBLOSC_USE_EXTERNAL_SOURCES=ON"
+        }
+
         if package:config("shared") then
             table.insert(configs, "-DOPENVDB_CORE_SHARED=ON")
             table.insert(configs, "-DOPENVDB_CORE_STATIC=OFF")
@@ -82,8 +97,10 @@ package("openvdb")
             end
             table.insert(configs, "-DBoost_USE_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
+        table.insert(configs, "-DOPENVDB_BUILD_PYTHON_MODULE=" .. (package:config("python") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_LOD=" .. (package:config("lod") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_PRINT=" .. (package:config("print") and "ON" or "OFF"))
+        table.insert(configs, "-DOPENVDB_BUILD_BINARIES=" .. (package:config("print") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_RENDER=" .. (package:config("render") and "ON" or "OFF"))
         table.insert(configs, "-DOPENVDB_BUILD_VDB_VIEW=" .. (package:config("view") and "ON" or "OFF"))
         if package:version():ge("10.0") then
@@ -117,6 +134,22 @@ package("openvdb")
         end
         import("package.tools.cmake").install(package, configs)
         package:addenv("PATH", "bin")
+        if package:config("python") then
+            local pyver = package:dep("python"):version()
+            local pydpath = path.join(package:installdir("lib"), format("python%d.%d", pyver:major(), pyver:minor()), "site-packages")
+            package:addenv("PYTHONPATH", pydpath)
+            -- after python 3.8, python will not search in PATH for dlls
+            if package:is_plat("windows") then
+                local tbb = package:dep("tbb"):fetch()
+                if tbb and tbb.linkdirs then
+                    local tbb_dir = path.directory(tbb.linkdirs[1])
+                    os.cp(path.join(tbb_dir, "bin", "tbb*.dll"), pydpath)
+                end
+                if package:config("shared") then
+                    os.cp(path.join(package:installdir("bin"), "openvdb.dll"), pydpath)
+                end
+            end
+        end
     end)
 
     on_test(function (package)
@@ -139,5 +172,8 @@ package("openvdb")
                 }
             ]]}, {configs = {languages = "c++17"},
                   includes = {"nanovdb/util/GridBuilder.h"}}))
+        end
+        if package:config("python") then
+            os.vrun("python -c 'import pyopenvdb'")
         end
     end)

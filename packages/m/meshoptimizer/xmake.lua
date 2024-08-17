@@ -8,6 +8,7 @@ package("meshoptimizer")
              "https://github.com/zeux/meshoptimizer.git")
     add_versions("v0.18", "f5bc07d7322e6292fe0afce03462b5c394d111386236f926fdc44d2aff3b854b")
     add_versions("v0.20", "cf1077a83958bed3d8da28a841ca53a6a42d871e49023edce64e37002a0f5a48")
+    add_versions("v0.21", "050a5438e4644833ff69f35110fcf4e37038a89c5fdc8aed45d8cd848ecb3a20")
 
     add_deps("cmake")
     on_load("windows", function (package)

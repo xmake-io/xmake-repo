@@ -15,12 +15,13 @@ package("libunwind")
     end})
     add_urls("https://github.com/libunwind/libunwind.git")
 
+    add_versions("v1.8.1", "ddf0e32dd5fafe5283198d37e4bf9decf7ba1770b6e7e006c33e6df79e6a6157")
     add_versions("v1.8.0", "b6b3df40a0970c8f2865fb39aa2af7b5d6f12ad6c5774e266ccca4d6b8b72268")
     add_versions("v1.7.2", "a18a6a24307443a8ace7a8acc2ce79fbbe6826cd0edf98d6326d0225d6a5d6e6")
     add_versions("v1.6.2", "4a6aec666991fb45d0889c44aede8ad6eb108071c3554fcdff671f9c94794976")
     add_versions("v1.5", "90337653d92d4a13de590781371c604f9031cdb50520366aa1e3a91e1efb1017")
 
-    add_patches("1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "fix-arm64.patch"), "5f679af80859b6a50504ec830a4d328c3cf25bef9f2107baed866b438f3818d3")
+    add_patches(">=1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "fix-arm64.patch"), "5f679af80859b6a50504ec830a4d328c3cf25bef9f2107baed866b438f3818d3")
 
     add_configs("minidebuginfo", {description = "Enables support for LZMA-compressed symbol tables", default = false, type = "boolean"})
     add_configs("zlibdebuginfo", {description = "Enables support for ZLIB-compressed symbol tables", default = false, type = "boolean"})

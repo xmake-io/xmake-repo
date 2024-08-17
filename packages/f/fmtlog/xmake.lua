@@ -5,14 +5,40 @@ package("fmtlog")
 
     add_urls("https://github.com/MengRao/fmtlog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/MengRao/fmtlog.git")
+    add_versions("v2.2.2", "31e8341093e45fc999dbeeecfe9cdc118cc8f1e64a184cc3f194f5701d5eaec9")
+    add_versions("v2.2.1", "9bc2f1ea37eece0f4807689962b529d2d4fa07654baef184f051319b4eac9304")
     add_versions("v2.1.2", "d286184e04c3c3286417873dd2feac524c53babc6cd60f10179aa5b10416ead7")
 
-    add_deps("cmake", "fmt")
+    add_deps("cmake")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_load(function (package)
+        local fmtver = ""
+        local packagever = package:version()
+        if packagever then
+            local version_mapping = {
+                {pkgver = "2.2.2", fmtver = " 10.2.1"},
+                {pkgver = "2.2.1", fmtver = " 9.1.0"},
+                {pkgver = "2.1.2", fmtver = " 8.1.0"}
+            }
+            -- find lowest matching version (or exact match)
+            for _, ver in ipairs(version_mapping) do
+                if packagever:lt(ver.pkgver) then
+                    fmtver = ver.fmtver
+                else
+                    if packagever:eq(ver.pkgver) then
+                        fmtver = ver.fmtver
+                    end
+                    break
+                end
+            end
+        end
+        package:add("deps", "fmt" .. fmtver)
+    end)
+
+    on_install("linux", "macosx", "windows|!arm64", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", "add_subdirectory(fmt)", "", {plain = true})

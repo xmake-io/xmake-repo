@@ -7,6 +7,7 @@ package("jwt-cpp")
     add_urls("https://github.com/Thalhammer/jwt-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Thalhammer/jwt-cpp.git")
 
+    add_versions("v0.7.0", "b9eb270e3ba8221e4b2bc38723c9a1cb4fa6c241a42908b9a334daff31137406")
     add_versions("v0.6.0", "0227bd6e0356b211341075c7997c837f0b388c01379bd256aa525566a5553f03")
 
     add_configs("picojson", {description = "Use picojson", default = true, type = "boolean"})

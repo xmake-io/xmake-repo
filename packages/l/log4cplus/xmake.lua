@@ -5,6 +5,7 @@ package("log4cplus")
     set_license("BSD-2-Clause")
 
     add_urls("https://github.com/log4cplus/log4cplus/releases/download/REL_$(version).tar.gz", {version = function (version) return version:gsub("%.", "_") .. "/log4cplus-" .. version end})
+    add_versions("2.1.1", "42dc435928917fd2f847046c4a0c6086b2af23664d198c7fc1b982c0bfe600c1")
     add_versions("2.0.6", "5fb26433b0f200ebfc2e6effb7e2e5131185862a2ea9a621a8e7f3f725a72b08")
     add_versions("2.0.7", "086451c7e7c582862cbd6c60d87bb6d9d63c4b65321dba85fa71766382f7ec6d")
 

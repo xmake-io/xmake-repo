@@ -69,8 +69,8 @@ function _update_version(instance, version, shasum)
     os.vexec("git checkout %s", branch)
     local inserted = false
     local scriptfile = path.join(instance:scriptdir(), "xmake.lua")
+    local version_current
     if os.isfile(scriptfile) then
-        local version_current
         io.gsub(scriptfile, "add_versions%(\"(.-)\",%s+\"(.-)\"%)", function (v, h)
             if not version_current or semver.compare(v, version_current) > 0 then
                 version_current = v
@@ -112,6 +112,9 @@ function main(pattern)
     local count = 0
     local maxcount = 5
     local instances = _get_all_packages(pattern)
+    if #instances < maxcount then
+        maxcount = #instances
+    end
     math.randomseed(os.time())
     while count < maxcount and #instances > 0 do
         local idx = math.random(#instances)

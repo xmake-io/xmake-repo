@@ -6,6 +6,7 @@ package("indicators")
 
     add_urls("https://github.com/p-ranav/indicators/archive/refs/tags/v$(version).zip",
              "https://github.com/p-ranav/indicators.git")
+    add_versions("2.3", "c1deca4b72d655ba457882a5d1b75011f99253c6a2cc8d2f5bc7c49324b2e4ff")
     add_versions("2.2", "08dc0592a1fb5e3a050562961fbaacf4d03dadb76a0eb47f0670e63235d14dc5")
 
     on_install(function (package)

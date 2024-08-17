@@ -15,7 +15,7 @@ package("glfw")
     add_versions("3.3.9", "a7e7faef424fcb5f83d8faecf9d697a338da7f7a906fc1afbc0e1879ef31bd53")
     add_versions("3.4", "c038d34200234d071fae9345bc455e4a8f2f544ab60150765d7704e08f3dac01")
 
-    add_configs("glfw_include", {description = "Choose submodules enabled in glfw", default = "none", type = "string", values = {"none", "vulkan", "glu", "glext", "es2", "es3"}})
+    add_configs("glfw_include", {description = "Choose submodules enabled in glfw", default = "none", type = "string", values = {"none", "vulkan", "glu", "glext", "es2", "es3", "system"}})
     add_configs("x11", {description = "Build support for X11", default = is_plat("linux"), type = "boolean"})
     add_configs("wayland", {description = "Build support for Wayland", default = false, type = "boolean"})
 
@@ -36,7 +36,10 @@ package("glfw")
     end
 
     on_load(function (package)
-        package:add("defines", "GLFW_INCLUDE_" .. package:config("glfw_include"):upper())
+        local glfw_include = package:config("glfw_include")
+        if glfw_include ~= "system" then
+            package:add("defines", "GLFW_INCLUDE_" .. glfw_include:upper())
+        end
         if package:config("x11") then
             package:add("deps", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext")
         end
@@ -45,12 +48,12 @@ package("glfw")
         end
     end)
 
-    on_install("macosx", "windows", "linux", "mingw", function (package)
+    on_install("!wasm and !iphoneos", function (package)
         local configs = {"-DGLFW_BUILD_DOCS=OFF", "-DGLFW_BUILD_TESTS=OFF", "-DGLFW_BUILD_EXAMPLES=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:config("vs_runtime"):startswith("MT") and "OFF" or "ON"))
+            table.insert(configs, "-DUSE_MSVC_RUNTIME_LIBRARY_DLL=" .. (package:has_runtime("MT") and "OFF" or "ON"))
         end
         table.insert(configs, "-DGLFW_BUILD_X11=" .. (package:config("x11") and "ON" or "OFF"))
         table.insert(configs, "-DGLFW_BUILD_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))

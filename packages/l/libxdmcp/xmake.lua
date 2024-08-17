@@ -1,5 +1,4 @@
 package("libxdmcp")
-
     set_homepage("https://www.x.org/")
     set_description("X.Org: X Display Manager Control Protocol library")
 
@@ -11,11 +10,11 @@ package("libxdmcp")
         add_extsources("apt::libxdmcp-dev", "pacman::libxmdcp")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "bsd") then
         add_deps("pkg-config", "xorgproto")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",

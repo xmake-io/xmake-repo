@@ -6,6 +6,7 @@ package("ginkgo")
 
     add_urls("https://github.com/ginkgo-project/ginkgo/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ginkgo-project/ginkgo.git")
+    add_versions("v1.8.0", "421efaed1be2ef11d230b79fc68bcf7e264a2c57ae52aff6dec7bd90f8d4ae30")
     add_versions("v1.7.0", "f4b362bcb046bc53fbe2e578662b939222d0c44b96449101829e73ecce02bcb3")
 
     add_configs("openmp", {description = "Compile OpenMP kernels for CPU.", default = false, type = "boolean"})
@@ -24,7 +25,7 @@ package("ginkgo")
         -- TODO: add hip and sycl
     end)
 
-    on_install("windows|x64", "windows|arm64", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         local configs = {"-DGINKGO_BUILD_TESTS=OFF", "-DGINKGO_BUILD_EXAMPLES=OFF", "-DGINKGO_BUILD_BENCHMARKS=OFF", "-DGINKGO_BUILD_REFERENCE=ON", "-DGINKGO_BUILD_MPI=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

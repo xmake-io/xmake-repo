@@ -1,10 +1,10 @@
 package("expat")
-
     set_homepage("https://libexpat.github.io")
     set_description("XML 1.0 parser")
     set_license("MIT")
 
     set_urls("https://github.com/libexpat/libexpat/releases/download/R_$(version).tar.bz2", {version = function (version) return version:gsub("%.", "_") .. "/expat-" .. version end})
+    add_versions("2.6.2", "9c7c1b5dcbc3c237c500a8fb1493e14d9582146dd9b42aa8d3ffb856a3b927e0")
     add_versions("2.5.0", "6f0e6e01f7b30025fa05c85fdad1e5d0ec7fd35d9f61b22f34998de11969ff67")
     add_versions("2.4.8", "a247a7f6bbb21cf2ca81ea4cbb916bfb9717ca523631675f99b3d4a5678dcd16")
     add_versions("2.4.7", "e149bdd8b90254c62b3d195da53a09bd531a4d63a963b0d8a5268d48dd2f6a65")
@@ -17,13 +17,14 @@ package("expat")
     add_configs("char_type", {description = "Character type to use", default = "char", type = "string", values = {"char", "ushort", "wchar_t"}})
 
     add_deps("cmake")
+
     on_load("windows", function (package)
         if not package:config("shared") then
             package:add("defines", "XML_STATIC")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "mingw", "cross", function (package)
+    on_install("windows", "linux", "macosx", "android", "mingw", "cross", "bsd", function (package)
         local configs = {"-DEXPAT_BUILD_EXAMPLES=OFF", "-DEXPAT_BUILD_TESTS=OFF", "-DEXPAT_BUILD_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DEXPAT_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

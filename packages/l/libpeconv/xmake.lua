@@ -1,6 +1,7 @@
 package("libpeconv")
     set_homepage("https://hasherezade.github.io/libpeconv")
     set_description("A library to load, manipulate, dump PE files. See also: https://github.com/hasherezade/libpeconv_tpl")
+    set_license("BSD-2-Clause")
 
     add_urls("https://github.com/hasherezade/libpeconv.git")
     add_versions("2023.05.31", "709a9b40fa6420c6cd7aa1145b0ff1a154858358")

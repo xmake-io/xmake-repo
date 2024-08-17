@@ -1,11 +1,11 @@
 package("poco")
-
     set_homepage("https://pocoproject.org/")
     set_description("The POCO C++ Libraries are powerful cross-platform C++ libraries for building network- and internet-based applications that run on desktop, server, mobile, IoT, and embedded systems.")
     set_license("BSL-1.0")
 
     add_urls("https://github.com/pocoproject/poco/archive/refs/tags/poco-$(version)-release.tar.gz",
              "https://github.com/pocoproject/poco.git")
+
     add_versions("1.11.0", "8a7bfd0883ee95e223058edce8364c7d61026ac1882e29643822ce9b753f3602")
     add_versions("1.11.1", "2412a5819a239ff2ee58f81033bcc39c40460d7a8b330013a687c8c0bd2b4ac0")
     add_versions("1.11.6", "ef0ac1bd1fe4d84b38cde12fbaa7a441d41bfbd567434b9a57ef8b79a8367e74")
@@ -14,13 +14,16 @@ package("poco")
     add_versions("1.12.2", "30442ccb097a0074133f699213a59d6f8c77db5b2c98a7c1ad9c5eeb3a2b06f3")
     add_versions("1.12.4", "71ef96c35fced367d6da74da294510ad2c912563f12cd716ab02b6ed10a733ef")
     add_versions("1.12.5", "92b18eb0fcd2263069f03e7cc80f9feb43fb7ca23b8c822a48e42066b2cd17a6")
+    add_versions("1.13.3", "9f074d230daf30f550c5bde5528037bdab6aa83b2a06c81a25e89dd3bcb7e419")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
     add_configs("mysql", {description = "Enable mysql support.", default = false, type = "boolean"})
     add_configs("postgresql", {description = "Enable postgresql support.", default = false, type = "boolean"})
+    add_configs("mongodb", {description = "Enable mongodb support.", default = false, type = "boolean"})
     add_configs("odbc", {description = "Enable odbc support.", default = is_plat("windows"), type = "boolean"})
+    add_configs("sql_parser", {description = "Enable poco data sql parser.", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("openssl", "sqlite3", "expat", "zlib")
@@ -29,7 +32,7 @@ package("poco")
         add_syslinks("iphlpapi")
     end
 
-    on_load("windows", "linux", "macosx", function (package)
+    on_load(function (package)
         if package:config("postgresql") then
             package:add("deps", "postgresql")
         end
@@ -43,7 +46,7 @@ package("poco")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows", "linux", "macosx", "mingw|x86_64@msys", function (package)
         io.replace("XML/CMakeLists.txt", "EXPAT REQUIRED", "EXPAT CONFIG REQUIRED")
         io.replace("XML/CMakeLists.txt", "EXPAT::EXPAT", "expat::expat")
         io.replace("XML/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED XML_DTD XML_NS")
@@ -53,14 +56,16 @@ package("poco")
             io.replace("cmake/FindPCRE2.cmake", "NAMES pcre2-8", "NAMES pcre2-8-static pcre2-8", {plain = true})
             io.replace("cmake/FindPCRE2.cmake", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"\nINTERFACE_COMPILE_DEFINITIONS PCRE2_STATIC", {plain = true})
         end
+
         local configs = {"-DPOCO_UNBUNDLED=ON", "-DENABLE_TESTS=OFF", "-DENABLE_PDF=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") and not package:config("shared") then
-            table.insert(configs, "-DPOCO_MT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-DPOCO_MT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         end
+
         if package:is_plat("windows") then
-            local vs_sdkver = import("core.tool.toolchain").load("msvc"):config("vs_sdkver")
+            local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
             if vs_sdkver then
                 local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
                 assert(tonumber(build_ver) >= 18362, "poco requires Windows SDK to be at least 10.0.18362.0")
@@ -68,10 +73,12 @@ package("poco")
                 table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
             end
         end
-        for _, lib in ipairs({"mysql", "postgresql", "odbc"}) do
+
+        for _, lib in ipairs({"mysql", "postgresql", "odbc", "mongodb"}) do
             table.insert(configs, "-DENABLE_DATA_" .. lib:upper() .. "=" .. (package:config(lib) and "ON" or "OFF"))
         end
-        
+        table.insert(configs, "-DPOCO_DATA_NO_SQL_PARSER=" .. (package:config("sql_parser") and "OFF" or "ON"))
+
         if package:config("mysql") then
             io.replace("Data/MySQL/include/Poco/Data/MySQL/MySQL.h", '#pragma comment(lib, "libmysql")', '', {plain = true})
             local libmysql = package:dep("mysql"):fetch()

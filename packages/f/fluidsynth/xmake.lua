@@ -7,10 +7,10 @@ package("fluidsynth")
     add_urls("https://github.com/FluidSynth/fluidsynth/archive/refs/tags/$(version).zip",
              "https://github.com/FluidSynth/fluidsynth.git")
     add_versions("v2.3.3", "0ab6f1aae1c7652b9249de2d98070313f3083046fddd673277556f1cca65568e")
+    add_versions("v2.3.5", "3cdaa24777f11fbc6da506d7f7b41fef31822006f83886dcf6e758a9941cae40")
 
-    if is_plat("windows", "macosx") then
-        add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "find-intl.patch"), "dafdb8f11957ed2f396832fe3b63933e8a32b96d8c836166b2fefacf3f918a9d")
-    end
+    add_patches("v2.3.3", path.join(os.scriptdir(), "patches", "2.3.3", "find-intl.patch"), "0c80989cce85b8e69409498e3a5d1df41c1ce29bf11261bcb441fdbf08c42f85")
+    add_patches("v2.3.5", path.join(os.scriptdir(), "patches", "2.3.5", "find-intl.patch"), "b71c50191e3799e93606b2cf79e61098bdf52d681bd3e758103d2c43c192bfc5")
 
     add_configs("aufile", {description = "Compile support for sound file output", default = true, type = "boolean"})
     add_configs("dbus", {description = "Compile DBUS support", default = not is_plat("windows"), type = "boolean"})
@@ -21,6 +21,7 @@ package("fluidsynth")
     add_configs("sdl2", {description = "Compile SDL2 audio support ", default = false, type = "boolean"})
     if is_plat("linux") then
         add_configs("pulseaudio", {description = "Compile PulseAudio support", default = false, type = "boolean"})
+        add_configs("systemd", {description = "Compile systemd support", default = true, type = "boolean"})
     end
     add_configs("readline", {description = "Compile support for sound file output", default = false, type = "boolean"})
     add_configs("threads", {description = "Enable multi-threading support (such as parallel voice synthesis)", default = true, type = "boolean"})
@@ -31,14 +32,15 @@ package("fluidsynth")
 
     add_deps("cmake")
     add_deps("glib")
-    add_deps("libiconv")
     if is_plat("windows") then
-        add_deps("libintl")
+        add_deps("libiconv")
         add_deps("pkgconf")
         add_syslinks("ws2_32")
     elseif is_plat("linux") then
+        add_deps("libiconv")
         add_deps("pkg-config")
-    else
+    elseif is_plat("macosx") then
+        add_deps("libiconv", {system = true})
         add_deps("libintl")
         add_deps("pkg-config")
     end
@@ -64,7 +66,7 @@ package("fluidsynth")
     on_install("windows", "linux", "macosx", function (package)
         local configs = {}
         local configopts = {
-            "aufile", "dbus", "jack", "libsndfile", "opensles", "network", "sdl2", "readline", "pulseaudio", "threads", "openmp"
+            "aufile", "dbus", "jack", "libsndfile", "opensles", "network", "sdl2", "readline", "pulseaudio", "systemd", "threads", "openmp"
         }
         for _, config in ipairs(configopts) do
             table.insert(configs, "-Denable-" .. config .. "=" .. (package:config(config) and "ON" or "OFF"))
