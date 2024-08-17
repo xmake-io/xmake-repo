@@ -1,5 +1,4 @@
 package("reflect-cpp")
-    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/getml/reflect-cpp")
     set_description("A C++20 library for fast serialization, deserialization and validation using reflection. Supports JSON, BSON, CBOR, flexbuffers, msgpack, TOML, XML, YAML / msgpack.org[C++20]")
     set_license("MIT")
@@ -74,18 +73,31 @@ package("reflect-cpp")
         end
 
         local version = package:version()
-        if version and version:ge("0.11.1") then
-            package:add("deps", "ctre")
-            package:add("defines", "REFLECTCPP_NO_BUNDLED_DEPENDENCIES")
-        else
+        if version then
+            if version:lt("0.13.0") then
+                package:set("kind", "library", {headeronly = true})
+            end
+
+            if version:ge("0.11.1") then
+                package:add("deps", "ctre", {configs = {cmake = true}})
+                if version:eq("0.11.1") then
+                    package:add("defines", "REFLECTCPP_NO_BUNDLED_DEPENDENCIES")
+                end
+            end
+        end
+
+        if package:gitref() or version:lt("0.11.1") or version:ge("0.13.0") then
             package:add("deps", "cmake")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local version = package:version()
-        if version and version:lt("0.11.1") then
-            import("package.tools.cmake").install(package, {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF"})
+        if package:gitref() or version:lt("0.11.1") or version:ge("0.13.0") then
+            local configs = {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
         else
             os.rm("include/thirdparty")
             os.cp("include", package:installdir())
