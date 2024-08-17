@@ -1,10 +1,10 @@
 package("re2")
-
     set_homepage("https://github.com/google/re2")
     set_description("RE2 is a fast, safe, thread-friendly alternative to backtracking regular expression engines like those used in PCRE, Perl, and Python. It is a C++ library.")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/google/re2/archive/$(version).tar.gz", {version = function (version) return version:gsub("%.", "-") end})
+
     add_versions("2020.11.01", "8903cc66c9d34c72e2bc91722288ebc7e3ec37787ecfef44d204b2d6281954d7")
     add_versions("2021.06.01", "26155e050b10b5969e986dab35654247a3b1b295e0532880b5a9c13c0a700ceb")
     add_versions("2021.08.01", "cd8c950b528f413e02c12970dce62a7b6f37733d7f68807e73a2d9bc9db79bc8")
@@ -14,26 +14,44 @@ package("re2")
     add_versions("2024.03.01", "7b2b3aa8241eac25f674e5b5b2e23d4ac4f0a8891418a2661869f736f03f57f4")
     add_versions("2024.04.01", "3f6690c3393a613c3a0b566309cf04dc381d61470079b653afc47c67fb898198")
     add_versions("2024.06.01", "7326c74cddaa90b12090fcfc915fe7b4655723893c960ee3c2c66e85c5504b6c")
+    add_versions("2024.07.02", "eb2df807c781601c14a260a507a5bb4509be1ee626024cb45acbd57cb9d4032b")
 
     add_deps("cmake", "abseil")
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
     on_load(function (package)
         local version = package:version()
-        if version:eq("2024.06.01") and package:is_plat("mingw") then
+        if version:ge("2024.06.01") and package:is_plat("mingw") then
             package:add("syslinks", "Dbghelp")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "mingw", "cross", function (package)
-        local configs = {"-DRE2_BUILD_TESTING=OFF"}
-        table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
+    on_install(function (package)
+        local configs = {
+            "-DRE2_BUILD_TESTING=OFF",
+            "-DCMAKE_CXX_STANDARD=17",
+        }
+
+        local absl_dir = ""
+        local abseil = package:dep("abseil"):fetch()
+        if abseil then
+            for _, linkdir in ipairs(abseil.linkdirs) do
+                local dir = path.join(linkdir, "cmake", "absl")
+                if os.isdir(dir) then
+                    absl_dir = dir
+                    break
+                end
+            end
+        end
+        table.insert(configs, "-Dabsl_DIR=" .. absl_dir)
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"abseil"}})
     end)
 
     on_test(function (package)
