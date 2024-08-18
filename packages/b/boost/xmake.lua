@@ -9,6 +9,7 @@ package("boost")
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
 
+    add_versions("1.86.0", "2128a4c96862b5c0970c1e34d76b1d57e4a1016b80df85ad39667f30b1deba26")
     add_versions("1.85.0", "f4a7d3f81b8a0f65067b769ea84135fd7b72896f4f59c7f405086c8c0dc61434")
     add_versions("1.84.0", "4d27e9efed0f6f152dc28db6430b9d3dfb40c0345da7342eaa5a987dde57bd95")
     add_versions("1.83.0", "0c6049764e80aa32754acd7d4f179fd5551d8172a83b71532ae093e7384e98da")
