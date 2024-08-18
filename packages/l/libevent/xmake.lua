@@ -26,7 +26,7 @@ package("libevent")
         end
     end)
 
-    on_install(function (package)
+    on_install("!android and (!mingw or mingw|!i386)", function (package)
         io.replace("CMakeLists.txt", "advapi32", "advapi32 crypt32", {plain = true})
         if package:gitref() or package:version():eq("2.1.12") then
             io.replace("cmake/LibeventConfig.cmake.in",
