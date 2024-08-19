@@ -13,8 +13,26 @@ package("mysql")
 
     add_deps("cmake")
     add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
+    if is_plat("linux") then
+        add_deps("ncurses")
+    end
+
+    if on_check then
+        on_check(function (package)
+            local version = package:version()
+            if version:ge("9.0.1") then
+                assert(package:is_arch(".*64"), "package(mysql) supports only 64-bit platforms.")
+            end
+        end)
+    end
 
     on_load(function(package)
+        local version = package:version()
+        if version:ge("9.0.1") then
+        else
+            package:add("deps", "boost")
+        end
+
         if package:config("server") then
             package:add("deps", "icu4c", "protobuf-cpp", "libfido2")
         end
@@ -25,10 +43,11 @@ package("mysql")
         if version:eq("9.0.1") then
             io.replace("cmake/ssl.cmake", "FIND_CUSTOM_OPENSSL()", "FIND_SYSTEM_OPENSSL()", {plain = true})
         end
+
         if package:is_plat("windows") then
             io.replace("cmake/install_macros.cmake",
                 [[NOT type MATCHES "STATIC_LIBRARY"]],
-                [[CMAKE_BUILD_TYPE STREQUAL "DEBUG"]], {plain = true})
+                [[NOT type MATCHES "STATIC_LIBRARY" AND CMAKE_BUILD_TYPE STREQUAL "DEBUG"]], {plain = true})
         end
 
         local configs = {
@@ -36,14 +55,14 @@ package("mysql")
             -- "-DWITH_SYSTEM_LIBS=ON", -- It will find linux lib on windows :(
 
             -- client deps
-            -- "-DWITH_BOOST=system", -- cmkae/boost.cmake: Always use the bundled version.
+            "-DWITH_BOOST=system",
             "-DWITH_ZLIB=system",
-            "-DWITH_ZLIB=system",
+            "-DWITH_ZSTD=system",
             "-DWITH_SSL=system",
             "-DWITH_LZ4=system",
             "-DWITH_RAPIDJSON=system",
 
-            -- todo: server deps
+            -- TODO: server deps
             -- "-DWITH_ICU=system",
             -- "-DWITH_PROTOBUF=system",
         }
@@ -61,7 +80,21 @@ package("mysql")
         table.insert(configs, "-DWITHOUT_SERVER=" .. (package:config("server") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
 
-        os.trymv(package:installdir("lib/*.dll"), package:installdir("bin"))
+        if package:is_plat("windows") then
+            if package:config("shared") then
+                os.tryrm(package:installdir("lib/mysqlclient.lib"))
+                os.trymv(package:installdir("lib/libmysql.dll"), package:installdir("bin"))
+            else
+                os.tryrm(package:installdir("lib/libmysql.lib"))
+                os.tryrm(package:installdir("lib/libmysql.dll"))
+            end
+        else
+            if package:config("shared") then
+                os.tryrm(package:installdir("lib/*.a"))
+            else
+                os.tryrm(package:installdir("lib/*.so*"))
+            end
+        end
     end)
 
     on_test(function (package)
