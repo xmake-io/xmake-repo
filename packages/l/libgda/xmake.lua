@@ -11,11 +11,7 @@ package("libgda")
 
     add_deps("meson", "ninja", "libxml2", "gettext", "sqlite3", "json-glib", "pcre2", "iso-codes")
     on_install("linux", function (package)
-        local configs = {"-Dui=false", "-Dvapi=false", "-Dc_args=-Wno-error=deprecated-declarations"}
-
-        if package:has_tool("clang", "clangxx") then
-           table.insert(configs, "-Dc_args=-Wno-error=deprecated-non-prototype")
-        end
+        local configs = {"-Dui=false", "-Dvapi=false", "-Dwerror=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs, {packagedeps = {"glib"}})
     end)
