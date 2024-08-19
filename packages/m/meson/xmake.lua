@@ -27,6 +27,11 @@ package("meson")
     add_versions("0.50.1", "f68f56d60c80a77df8fc08fa1016bc5831605d4717b622c96212573271e14ecc")
 
     add_deps("python 3.x", {kind = "binary"})
+    if is_host("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
 
     -- https://github.com/xmake-io/xmake-repo/issues/1937
     set_policy("package.precompiled", false)
