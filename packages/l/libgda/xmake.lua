@@ -13,8 +13,8 @@ package("libgda")
     on_install("linux", function (package)
         local configs = {"-Dui=false", "-Dvapi=false", "-Dc_args=-Wno-error=deprecated-declarations"}
 
-        if package:is_plat("linux") and package:has_tool("clang", "clangxx") then
-            table.insert(configs, "-Dc_args=-Wno-error=deprecated-non-prototype")
+        if package:has_tool("clang", "clangxx") then
+           table.insert(configs, "-Dc_args=-Wno-error=deprecated-non-prototype")
         end
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         import("package.tools.meson").install(package, configs, {packagedeps = {"glib"}})
