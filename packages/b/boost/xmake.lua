@@ -281,9 +281,17 @@ package("boost")
                 local dep = package:dep(depname)
                 local info = dep:fetch({external = false})
                 if info then
+                    local includedirs = table.wrap(info.sysincludedirs or info.includedirs)
+                    if #includedirs == 0 then
+                        includedirs = ""
+                    else
+                        for i, dir in ipairs(includedirs) do
+                            includedirs[i] = path.unix(dir)
+                        end
+                    end
                     local usingstr = format("\nusing %s : %s : <include>%s <search>%s <name>%s ;",
                         rule, dep:version(),
-                        path.unix(info.includedirs[1] or info.sysincludedirs[1]),
+                        table.concat(includedirs, ";"),
                         path.unix(info.linkdirs[1]),
                         info.links[1])
                     file:write(usingstr)
