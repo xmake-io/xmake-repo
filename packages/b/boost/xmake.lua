@@ -283,7 +283,7 @@ package("boost")
                 if info then
                     local usingstr = format("\nusing %s : %s : <include>%s <search>%s <name>%s ;",
                         rule, dep:version(),
-                        path.unix(info.includedirs[1]),
+                        path.unix(info.includedirs[1] or info.sysincludedirs[1]),
                         path.unix(info.linkdirs[1]),
                         info.links[1])
                     file:write(usingstr)
