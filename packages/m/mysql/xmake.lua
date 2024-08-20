@@ -39,7 +39,7 @@ package("mysql")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "bsd", "mingw", "cross", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         local version = package:version()
         if version:eq("9.0.1") then
             io.replace("cmake/ssl.cmake", "FIND_CUSTOM_OPENSSL()", "FIND_SYSTEM_OPENSSL()", {plain = true})
@@ -62,12 +62,22 @@ package("mysql")
             "-DWITH_SSL=system",
             "-DWITH_LZ4=system",
             "-DWITH_RAPIDJSON=system",
-            "-DWITH_EDITLINE=system",
 
             -- TODO: server deps
             -- "-DWITH_ICU=system",
             -- "-DWITH_PROTOBUF=system",
         }
+        if package:is_plat("linux") then
+            table.insert(configs, "-DWITH_EDITLINE=system")
+            local readline = package:dep("readline"):fetch()
+            if readline then
+                local includedirs = table.wrap(readline.sysincludedirs or readline.includedirs)
+                local libfiles = table.wrap(readline.libfiles)
+                table.insert(configs, "-DEDITLINE_INCLUDE_DIR=" .. table.concat(includedirs, ";"))
+                table.insert(configs, "-DEDITLINE_LIBRARY=" .. table.concat(libfiles, ";"))
+            end
+        end
+
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_LTO=" .. (package:config("lto") and "ON" or "OFF"))
