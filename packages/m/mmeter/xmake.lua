@@ -14,6 +14,7 @@ package("mmeter")
             target("mmeter")
                 set_kind("$(kind)")
                 add_files("src/*.cpp")
+                add_includedirs("include")
                 add_headerfiles("include/*.h")
                 set_languages("c++17")
                 if is_plat("windows") and is_kind("shared") then
