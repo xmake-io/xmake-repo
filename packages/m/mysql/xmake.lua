@@ -14,7 +14,7 @@ package("mysql")
     add_deps("cmake")
     add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
     if is_plat("linux") then
-        add_deps("ncurses")
+        add_deps("readline")
     end
 
     if on_check then
@@ -22,6 +22,7 @@ package("mysql")
             local version = package:version()
             if version:ge("9.0.1") then
                 assert(package:is_arch(".*64"), "package(mysql) supports only 64-bit platforms.")
+                assert(not package:is_plat("macosx"), "package(mysql >=9.0.1) Unsupported macosx")
             end
         end)
     end
@@ -61,6 +62,7 @@ package("mysql")
             "-DWITH_SSL=system",
             "-DWITH_LZ4=system",
             "-DWITH_RAPIDJSON=system",
+            "-DWITH_EDITLINE=system",
 
             -- TODO: server deps
             -- "-DWITH_ICU=system",
