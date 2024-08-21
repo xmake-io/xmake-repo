@@ -66,8 +66,6 @@ package("poco")
     end
 
     on_load(function (package)
-        assert(not (package:has_runtime("MT", "MTd") and package:config("shared")), "Poco cannot have both BUILD_SHARED_LIBS and POCO_MT")
-        assert(not (package:config("mysql") and package:config("mariadb")), "Poco's options 'mysql' and 'mariadb' cannot exist together")
         if package:version():ge("1.12.0") then
             package:add("deps", "pcre2")
         else
@@ -100,6 +98,23 @@ package("poco")
         end
     end)
 
+    on_check(function (package)
+        assert(not (package:has_runtime("MT", "MTd") and package:config("shared")), "Poco cannot have both BUILD_SHARED_LIBS and POCO_MT")
+        assert(not (package:config("mysql") and package:config("mariadb")), "Poco's options 'mysql' and 'mariadb' cannot exist together")
+
+        -- warning: only works on windows sdk 10.0.18362.0 and later
+        if package:is_plat("windows") then
+            local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
+            print(vs_sdkver)
+            if vs_sdkver then
+                local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
+                assert(tonumber(build_ver) >= 18362, "poco requires Windows SDK to be at least 10.0.18362.0")
+                table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
+                table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
+            end
+        end
+    end)
+
     on_install("windows", "linux", "macosx", "mingw|x86_64@msys", function (package)
         local configs = {"-DPOCO_UNBUNDLED=ON"} -- Using external dependencies
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. ((package:debug() or package:has_runtime("MTd", "MDd")) and "Debug" or "Release"))
@@ -127,16 +142,6 @@ package("poco")
 
         if not package:config("install_cpp_runtimes") then
             io.replace("CMakeLists.txt", 'include(InstallRequiredSystemLibraries)', '', {plain = true})
-        end
-
-        if package:is_plat("windows") then
-            local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
-            if vs_sdkver then
-                local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
-                assert(tonumber(build_ver) >= 18362, "poco requires Windows SDK to be at least 10.0.18362.0")
-                table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
-                table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
-            end
         end
 
         table.insert(configs, "-DENABLE_XML=" .. (package:config("xml") and "ON" or "OFF"))
@@ -189,7 +194,6 @@ package("poco")
             io.replace("cmake/FindMySQL.cmake", 'find_library(MYSQL_LIBRARY NAMES mysqlclient\n', 'find_library(MYSQL_LIBRARY NAMES mysqlclient libmariadb\n', {plain = true})
         end
 
-        -- warning: only works on windows sdk 10.0.18362.0 and later
         import("package.tools.cmake").install(package, configs)
     end)
 
