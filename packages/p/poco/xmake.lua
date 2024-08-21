@@ -105,12 +105,9 @@ package("poco")
         -- warning: only works on windows sdk 10.0.18362.0 and later
         if package:is_plat("windows") then
             local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
-            print(vs_sdkver)
             if vs_sdkver then
                 local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
                 assert(tonumber(build_ver) >= 18362, "poco requires Windows SDK to be at least 10.0.18362.0")
-                table.insert(configs, "-DCMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION=" .. vs_sdkver)
-                table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. vs_sdkver)
             end
         end
     end)
