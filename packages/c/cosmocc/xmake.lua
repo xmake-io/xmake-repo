@@ -30,9 +30,6 @@ package("cosmocc")
     add_versions("3.6.0", "4918c45ac3e0972ff260e2a249e25716881e39fb679d5e714ae216a2ef6c3f7e")
     add_versions("3.6.1", "5f46bdfa4db8326794306d1a0348efc01e199f53b262bc05aa92b37be09a3f3a")
     add_versions("3.6.2", "268aa82d9bfd774f76951b250f87b8edcefd5c754b8b409e1639641e8bd8d5bc")
-    
-
-
 
     on_load("@windows|x64", function (package)
         package:add("deps", "msys2")
