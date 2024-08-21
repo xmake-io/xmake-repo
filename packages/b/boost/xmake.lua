@@ -282,9 +282,7 @@ package("boost")
                 local info = dep:fetch({external = false})
                 if info then
                     local includedirs = table.wrap(info.sysincludedirs or info.includedirs)
-                    if #includedirs == 0 then
-                        includedirs = ""
-                    else
+                    if #includedirs != 0 then
                         for i, dir in ipairs(includedirs) do
                             includedirs[i] = path.unix(dir)
                         end
