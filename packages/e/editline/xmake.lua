@@ -7,6 +7,8 @@ package("editline")
 
     add_versions("3.1", "5f0573349d77c4a48967191cdd6634dd7aa5f6398c6a57fe037cc02696d6099f")
 
+    add_includedirs("include", "include/editline")
+
     add_deps("ncurses")
 
     on_install("linux", "macosx", "bsd", "msys", function (package)
