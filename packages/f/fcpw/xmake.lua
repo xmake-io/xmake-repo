@@ -11,7 +11,7 @@ package("fcpw")
     add_configs("python", {description = "Build python binding", default = false, type = "boolean"})
 
     add_deps("eigen")
-    on_load("windows", "linux", "macosx", "mingw", function (package)
+    on_load(function (package)
         if package:config("enoki") then
             package:add("deps", "enoki")
             package:add("defines", "FCPW_USE_ENOKI")
@@ -28,7 +28,7 @@ package("fcpw")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install(function (package)
         os.cp("include/fcpw", package:installdir("include"))
         if package:config("python") then
             local configs = {}
