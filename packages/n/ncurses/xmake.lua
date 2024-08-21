@@ -33,7 +33,7 @@ package("ncurses")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("linux", "macosx", "bsd", "msys", function (package)
         local configs = {
             "--without-manpages",
             "--enable-sigwinch",

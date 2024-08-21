@@ -9,7 +9,7 @@ package("editline")
 
     add_deps("ncurses")
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("linux", "macosx", "bsd", "msys", function (package)
         local configs = {"--disable-examples"}
         table.insert(configs, "--with-debug=" .. (package:is_debug() and "yes" or "no"))
         if package:config("shared") then
