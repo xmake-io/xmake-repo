@@ -27,7 +27,7 @@ package("enoki")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", "mingw", function (package)
         os.cp("include/enoki", package:installdir("include"))
         if package:config("cuda") or package:config("autodiff") then
             local configs = {}
@@ -45,6 +45,9 @@ package("enoki")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #ifndef _USE_MATH_DEFINES
+            #define _USE_MATH_DEFINES
+            #endif
             #include <enoki/array.h>
             void test() {
                 enoki::Array<int, 4> idx(1, 2, 3, 4);
