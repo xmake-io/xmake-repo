@@ -278,22 +278,25 @@ package("boost")
         end
 
         local function config_deppath(file, depname, rule)
-                local dep = package:dep(depname)
-                local info = dep:fetch({external = false})
-                if info then
-                    local includedirs = table.wrap(info.sysincludedirs or info.includedirs)
-                    if #includedirs != 0 then
-                        for i, dir in ipairs(includedirs) do
-                            includedirs[i] = path.unix(dir)
-                        end
-                    end
-                    local usingstr = format("\nusing %s : %s : <include>%s <search>%s <name>%s ;",
-                        rule, dep:version(),
-                        table.concat(includedirs, ";"),
-                        path.unix(info.linkdirs[1]),
-                        info.links[1])
-                    file:write(usingstr)
+            local dep = package:dep(depname)
+            local info = dep:fetch({external = false})
+            if info then
+                local includedirs = table.wrap(info.sysincludedirs or info.includedirs)
+                for i, dir in ipairs(includedirs) do
+                    includedirs[i] = path.unix(dir)
                 end
+                local linkdirs = table.wrap(info.linkdirs)
+                for i, dir in ipairs(linkdirs) do
+                    linkdirs[i] = path.unix(dir)
+                end
+                local links = table.wrap(info.links)
+                local usingstr = format("\nusing %s : %s : <include>%s <search>%s <name>%s ;",
+                    rule, dep:version(),
+                    table.concat(includedirs, ";"),
+                    table.concat(linkdirs, ";"),
+                    table.concat(links, ";"))
+                file:write(usingstr)
+            end
         end
         local file = io.open("user-config.jam", "w")
         if file then
@@ -456,7 +459,7 @@ package("boost")
                 map["2"] = 2;
             }
         ]]}, {configs = {languages = "c++14"}}))
-        
+
         if package:config("date_time") then
             assert(package:check_cxxsnippets({test = [[
                 #include <boost/date_time/gregorian/gregorian.hpp>
