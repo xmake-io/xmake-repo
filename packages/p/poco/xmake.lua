@@ -138,6 +138,10 @@ package("poco")
             io.replace("cmake/FindPCRE2.cmake", "NAMES pcre2-8", "NAMES pcre2-8-static pcre2-8", {plain = true})
             io.replace("cmake/FindPCRE2.cmake", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"\nINTERFACE_COMPILE_DEFINITIONS PCRE2_STATIC", {plain = true})
         end
+        -- pcre2 has some problem on wasm plat, set it's root directory manually
+        if package:version():ge("1.12.0") then
+            table.insert(configs, "-DPCRE2_ROOT_DIR=" .. package:dep("pcre2"):installdir())
+        end
 
         if not package:config("install_cpp_runtimes") then
             io.replace("CMakeLists.txt", 'include(InstallRequiredSystemLibraries)', '', {plain = true})
