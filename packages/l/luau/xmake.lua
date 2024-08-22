@@ -26,25 +26,28 @@ package("luau")
         table.insert(configs, "-DLUAU_BUILD_WEB=" .. ((package:is_plat("wasm") or package:config("build_web")) and "ON" or "OFF"))
         table.insert(configs, "-DLUAU_EXTERN_C=" .. (package:config("extern_c") and "ON" or "OFF"))
 
+        io.replace("CMakeLists.txt", ".lib", "", {plain = true})
+
+        if package:is_plat("bsd") then
+            io.replace("CMakeLists.txt", [[if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS")]], [[if(TRUE)]], {plain = true})
+        end
+
         if package:is_plat("wasm") then
             import("package.tools.cmake").build(package, configs, { target = "Luau.Web", buildir = "build" })
         else
             import("package.tools.cmake").install(package, configs, { buildir = "build" })
         end
 
-        io.replace("CMakeLists.txt", ".lib", "", {plain = true})
-        io.replace("Sources.cmake", ".lib", "", {plain = true})
-
-        if package:is_plat("bsd") then
-            io.replace("CMakeLists.txt", [[if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS")]], [[if(TRUE)]], {plain = true})
-        end
-
         local cmake_file = io.readfile("CMakeLists.txt")
 
         local links = {}
-        for library_name, library_type in string.gmatch(cmake_file, "add_library%(([%a|%.]+) ([STATIC|INTERFACE]+)") do
-            if string.startswith(library_name, "Luau.") then
-                if library_type == "STATIC" then
+        for library_name, library_type in cmake_file:gmatch("add_library%(([%a|%.]+) (%w+)") do
+            library_type = library_type:lower()
+            if library_name:startswith("Luau.") and (library_type == "static" or library_type == "interface") then
+                if library_name:endswith(".lib") then
+                    library_name = library_name:sub(1, -5)
+                end
+                if library_type == "static" then
                     table.insert(links, library_name)
                 end
                 local include_dir = library_name:gsub("Luau%.", "")
