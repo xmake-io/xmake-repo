@@ -112,7 +112,7 @@ package("poco")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw|x86_64@msys", function (package)
+    on_install(function (package)
         local configs = {"-DPOCO_UNBUNDLED=ON"} -- Using external dependencies
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. ((package:debug() or package:has_runtime("MTd", "MDd")) and "Debug" or "Release"))
         table.insert(configs, "-DPOCO_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
