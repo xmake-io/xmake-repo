@@ -1,5 +1,4 @@
 package("expat")
-
     set_homepage("https://libexpat.github.io")
     set_description("XML 1.0 parser")
     set_license("MIT")
@@ -18,13 +17,14 @@ package("expat")
     add_configs("char_type", {description = "Character type to use", default = "char", type = "string", values = {"char", "ushort", "wchar_t"}})
 
     add_deps("cmake")
+
     on_load("windows", function (package)
         if not package:config("shared") then
             package:add("defines", "XML_STATIC")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "mingw", "cross", function (package)
+    on_install("windows", "linux", "macosx", "android", "mingw", "cross", "bsd", function (package)
         local configs = {"-DEXPAT_BUILD_EXAMPLES=OFF", "-DEXPAT_BUILD_TESTS=OFF", "-DEXPAT_BUILD_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DEXPAT_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

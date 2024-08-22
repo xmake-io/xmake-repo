@@ -5,6 +5,7 @@ package("mimalloc")
     set_license("MIT")
 
     set_urls("https://github.com/microsoft/mimalloc/archive/v$(version).zip")
+    add_versions("2.1.7", "fa61cf01e3dd869b35275bfd8be95bfde77f0b65dfa7e34012c09a66e1ea463f")
     add_versions("2.1.2", "86281c918921c1007945a8a31e5ad6ae9af77e510abfec20d000dd05d15123c7")
     add_versions("2.0.7", "ddb32937aabddedd0d3a57bf68158d4e53ecf9e051618df3331a67182b8b0508")
     add_versions("2.0.6", "23e7443d0b4d7aa945779ea8a806e4e109c0ed62d740953d3656cddea7e04cf8")
@@ -13,6 +14,7 @@ package("mimalloc")
     add_versions("2.0.2", "6ccba822e251b8d10f8a63d5d7767bc0cbfae689756a4047cdf3d1e4a9fd33d0")
     add_versions("2.0.1", "59c1fe79933e0ac9837a9ca4d954e4887dccd80a84281a6f849681b89a8b8876")
 
+    add_versions("1.8.7", "c37c099244f1096c40fca6ca9d2d456bb22efb99d64d34a26e39e3291a774ed9")
     add_versions("1.7.7", "d51a5b8f3bc6800a0b2fc46830ce67b4d31b12f4e4550ff80cf394d5a88fead8")
     add_versions("1.7.6", "bae56f8ebdcd43da83b52610d7f1c1602ea8d3798d906825defa5c40ad2eb560")
     add_versions("1.7.3", "8319eca4a114dce5f897a4cb7d945bce22d915b4b262adb861cd7ac68fa3e848")
@@ -23,6 +25,9 @@ package("mimalloc")
 
     add_configs("secure", {description = "Use a secured version of mimalloc", default = false, type = "boolean"})
     add_configs("rltgenrandom", {description = "Use a RtlGenRandom instead of BCrypt", default = false, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("etw", {description = "Enable Event tracing for Windows", default = false, type = "boolean"})
+    end
 
     add_deps("cmake")
 
@@ -45,6 +50,8 @@ package("mimalloc")
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
+        table.insert(configs, "-DMI_TRACK_ETW=" .. (package:config("etw") and "ON" or "OFF"))
+
         --x64:mimalloc-redirect.lib/dll x86:mimalloc-redirect32.lib/dll
         if package:version():le("2.0.1") and package:config("shared") and package:is_plat("windows") and package:is_arch("x86") then
             io.replace("CMakeLists.txt", "-redirect.", "-redirect32.", {plain = true})
@@ -74,6 +81,10 @@ package("mimalloc")
             elseif package:is_plat("mingw") then
                 os.trycp("build/**.dll", package:installdir("bin"))
                 os.trycp("build/**.a", package:installdir("lib"))
+            elseif package:is_plat("macosx") then
+                os.trycp("build/*.dylib", package:installdir("bin"))
+                os.trycp("build/*.dylib", package:installdir("lib"))
+                os.trycp("build/*.a", package:installdir("lib"))               
             else
                 os.trycp("build/*.so", package:installdir("bin"))
                 os.trycp("build/*.so", package:installdir("lib"))

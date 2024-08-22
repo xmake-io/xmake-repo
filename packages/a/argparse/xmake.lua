@@ -6,6 +6,7 @@ package("argparse")
 
     add_urls("https://github.com/p-ranav/argparse/archive/refs/tags/v$(version).zip",
              "https://github.com/p-ranav/argparse.git")
+    add_versions("3.1", "3e5a59ab7688dcd1f918bc92051a10564113d4f36c3bbed3ef596c25e519a062")
     add_versions("3.0", "674e724c2702f0bfef1619161815257a407e1babce30d908327729fba6ce4124")
     add_versions("2.6", "ce4e58d527b83679bdcc4adfa852af7ec9df16b76c11637823ef642cb02d2618")
     add_versions("2.7", "58cf098fd195895aeb9b9120d96f1e310994b2f44d72934c438ec91bf2191f46")

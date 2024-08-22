@@ -12,7 +12,7 @@ package("unzip")
         io.replace("win32/nt.c", "#include \"../unzip.h\"", "#include \"../unzip.h\"\n#ifdef CR\n#undef CR\n#endif", {plain = true})
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
-            includes("check_cfuncs.lua")
+            includes("@builtin/check")
             check_cfuncs("HAVE_LCHMOD", "lchmod", {includes = "sys/stat.h"})
             target("unzip")
                 set_kind("binary")

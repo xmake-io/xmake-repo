@@ -1,6 +1,7 @@
 package("littlefs")
     set_homepage("https://github.com/littlefs-project/littlefs")
     set_description("A little fail-safe filesystem designed for microcontrollers")
+    set_license("BSD-3-Clause")
 
     add_urls("https://github.com/littlefs-project/littlefs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/littlefs-project/littlefs.git")

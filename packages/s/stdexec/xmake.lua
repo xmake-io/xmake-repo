@@ -7,9 +7,13 @@ package("stdexec")
 
     add_versions("2024.03.08", "b3ba13a7b8c206371207196e08844fb7bc745438")
 
+    if is_plat("windows") then
+        add_cxxflags("/Zc:__cplusplus")
+    end
+
     add_deps("cmake")
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "mingw", function (package)
         local configs = {"-DSTDEXEC_BUILD_EXAMPLES=OFF", "-DSTDEXEC_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

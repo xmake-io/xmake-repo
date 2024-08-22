@@ -1,0 +1,20 @@
+diff --git a/quic/state/CMakeLists.txt b/quic/state/CMakeLists.txt
+index e3b0d5d9d..d86f50ee7 100644
+--- a/quic/state/CMakeLists.txt
++++ b/quic/state/CMakeLists.txt
+@@ -151,6 +151,7 @@ add_dependencies(
+   mvfst_codec
+   mvfst_codec_types
+   mvfst_state_machine
++  mvfst_flowcontrol
+ )
+ 
+ target_link_libraries(
+@@ -160,6 +161,7 @@ target_link_libraries(
+   mvfst_codec
+   mvfst_codec_types
+   mvfst_state_machine
++  mvfst_flowcontrol
+ )
+ 
+ 

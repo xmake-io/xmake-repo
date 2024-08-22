@@ -1,5 +1,5 @@
 package("openmp")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://openmp.org/")
     set_description("The OpenMP API specification for parallel programming")
 
@@ -56,13 +56,15 @@ package("openmp")
                 elseif package:has_tool(toolkind, "icl") then
                     result[flagname] = "-Qopenmp"
                 end
+            end
+            for _, toolkind in ipairs({"ld", "fcld"}) do
                 if package:config("runtime") == "default" then
                     if package:has_tool(toolkind, "clang", "clangxx") then
                         if not package:is_plat("macosx") then
                             result.ldflags = "-fopenmp"
                             result.shflags = "-fopenmp"
                         end
-                    elseif package:has_tool(toolkind, "gcc", "gxx", "gfortran") then
+                    elseif package:has_tool(toolkind, "gcc", "gxx") then
                         result.ldflags = "-fopenmp"
                         result.shflags = "-fopenmp"
                     elseif package:has_tool(toolkind, "icc", "icpc") then
@@ -71,10 +73,13 @@ package("openmp")
                     elseif package:has_tool(toolkind, "icl") then
                         result.ldflags = "-Qopenmp"
                         result.shflags = "-Qopenmp"
+                    elseif package:has_tool(toolkind, "gfortran") then
+                        result.fcldflags = "-fopenmp"
+                        result.fcshflags = "-fopenmp"
                     end
                 end
                 if package:config("runtime") == "custom" then
-                    if package:has_tool(toolkind, "cl") then
+                    if package:has_tool(toolkind, "link") then
                         result.ldflags = "/nodefaultlib:vcomp"
                         result.shflags = "/nodefaultlib:vcomp"
                     end

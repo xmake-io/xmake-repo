@@ -4,11 +4,11 @@ package("asmtk")
     set_license("zlib")
 
     set_urls("https://github.com/asmjit/asmtk.git")
-    add_versions("2023.6.14", "6e25b8983fbd8bf455c01ed7c5dd40c99b789565")
+    add_versions("2023.07.18", "e2752c85d39da4b0c5c729737a6faa25286b8e0c")
 
     add_deps("asmjit")
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("!iphoneos", function (package)
         if not package:config("shared") then
             package:add("defines", "ASMTK_STATIC")
         end

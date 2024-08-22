@@ -1,0 +1,32 @@
+diff --git a/libvips/iofuncs/generate.c b/libvips/iofuncs/generate.c
+index bb3d1b2d7..8be7ad675 100644
+--- a/libvips/iofuncs/generate.c
++++ b/libvips/iofuncs/generate.c
+@@ -92,6 +92,11 @@
+ #endif /*HAVE_CONFIG_H*/
+ #include <glib/gi18n-lib.h>
+ 
++#if defined(_MSC_VER)
++#include <BaseTsd.h>
++typedef SSIZE_T ssize_t;
++#endif
++
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdarg.h>
+diff --git a/libvips/iofuncs/util.c b/libvips/iofuncs/util.c
+index 047516084..c2049c107 100644
+--- a/libvips/iofuncs/util.c
++++ b/libvips/iofuncs/util.c
+@@ -37,6 +37,11 @@
+ #endif /*HAVE_CONFIG_H*/
+ #include <glib/gi18n-lib.h>
+ 
++#if defined(_MSC_VER)
++#include <BaseTsd.h>
++typedef SSIZE_T ssize_t;
++#endif
++
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>

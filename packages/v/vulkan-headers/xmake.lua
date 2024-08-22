@@ -16,6 +16,7 @@ package("vulkan-headers")
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
 
     -- when adding a new sdk version, please also update vulkan-hpp, vulkan-loader, vulkan-utility-libraries, spirv-headers, spirv-reflect, glslang and volk packages
+    add_versions("1.3.290+0", "5b186e1492d97c44102fe858fb9f222b55524a8b6da940a8795c9e326ae6d722")
     add_versions("1.3.283+0", "cf54a812911b4e3e4ff15716c222a8fb9a87c2771c0b86060cb0ca2570ea55a9")
     add_versions("1.3.280+0", "14caa991988be6451755ad1c81df112f4b6f2bea05f0cf2888a52d4d0f0910f6")
     add_versions("1.3.275+0", "fcd2136a9feb0402820b334d8242773462cc47ed397aa20c8f4d04f7ea18d810")
@@ -48,7 +49,10 @@ package("vulkan-headers")
 
     on_install(function (package)
         if not package:config("modules") then
-            import("package.tools.cmake").install(package)
+            import("package.tools.cmake").install(package, {
+                "-DVULKAN_HEADERS_ENABLE_MODULE=OFF",
+                "-DVULKAN_HEADERS_ENABLE_TESTS=OFF"
+            })
         else
             io.writefile("xmake.lua", [[ 
                 target("vulkan-headers")
