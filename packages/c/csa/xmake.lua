@@ -7,7 +7,12 @@ package("csa")
     add_urls("https://github.com/epwalsh/CSA.git")
     add_versions("2018.05.25", "3d7154fd35c35fb7297e25bd507c5e3f705b1ad6")
 
-    on_install(function (package)
+    add_deps("openmp")
+
+    on_install("linux", "macosx", "windows", "mingw@msys", function (package)
+        if package:has_tool("cxx", "gxx") then
+            package:add("cxxflags", "-fpermissive")
+        end
         os.cp("include", package:installdir())
     end)
 
