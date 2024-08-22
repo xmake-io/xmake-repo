@@ -7,19 +7,32 @@ package("editline")
 
     add_versions("3.1", "5f0573349d77c4a48967191cdd6634dd7aa5f6398c6a57fe037cc02696d6099f")
 
+    add_configs("terminal_db", {description = "Select terminal library", default = "termcap", type = "string", values = {"termcap", "ncurses", "tinfo"}})
+
     add_includedirs("include", "include/editline")
 
-    add_deps("ncurses")
-
-    on_install("linux", "macosx", "bsd", "msys", function (package)
-        local configs = {"--disable-examples"}
-        table.insert(configs, "--with-debug=" .. (package:is_debug() and "yes" or "no"))
-        if package:config("shared") then
-            table.insert(configs, "--with-shared")
+    on_load(function (package)
+        local terminal = package:config("terminal_db")
+        if terminal == "termcap" then
+            package:add("deps", "termcap")
+        elseif terminal == "ncurses" then
+            package:add("deps", "ncurses")
+            if package:is_plat("mingw") then
+                raise("Unsupported ncurses on mingw, need package libsystre first")
+            end
+        else
+            raise("Unsupported tinfo now!")
         end
-        import("package.tools.autoconf").install(package, configs)
+    end)
+
+    on_install("linux", "macosx", "bsd", "mingw", "msys", function (package)
+        local configs = {"--disable-examples"}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        import("package.tools.autoconf").install(package, configs, {packagedeps = package:config("terminal_db")})
     end)
 
     on_test(function (package)
         assert(package:has_cfuncs("el_init", {includes = "histedit.h"}))
     end)
+ 
