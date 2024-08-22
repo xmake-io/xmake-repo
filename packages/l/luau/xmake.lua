@@ -26,8 +26,6 @@ package("luau")
         table.insert(configs, "-DLUAU_BUILD_WEB=" .. ((package:is_plat("wasm") or package:config("build_web")) and "ON" or "OFF"))
         table.insert(configs, "-DLUAU_EXTERN_C=" .. (package:config("extern_c") and "ON" or "OFF"))
 
-        io.replace("CMakeLists.txt", ".lib", "", {plain = true})
-
         if package:is_plat("bsd") then
             io.replace("CMakeLists.txt", [[if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|iOS")]], [[if(TRUE)]], {plain = true})
         end
@@ -50,7 +48,7 @@ package("luau")
                 if library_type == "static" then
                     table.insert(links, library_name)
                 end
-                local include_dir = library_name:gsub("Luau%.", "")
+                local include_dir = library_name:sub(6)
                 include_dir = include_dir:gsub("%..*", "")
                 os.trycp(include_dir .. "/include/*", package:installdir("include"))
             end
