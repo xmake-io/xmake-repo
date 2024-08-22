@@ -7,7 +7,7 @@ if has_config("openmp") then
     add_defines("SQUISH_USE_OPENMP")
 end
 
-if has_config("openmp") then
+if has_config("sse2") then
     add_vectorexts("sse2")
     add_defines("SQUISH_USE_SSE=2")
 end
