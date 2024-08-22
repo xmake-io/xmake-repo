@@ -98,7 +98,7 @@ package("poco")
         end
     end)
 
-    on_check(function (package)
+    on_check("!mingw@macos", function (package)
         assert(not (package:has_runtime("MT", "MTd") and package:config("shared")), "Poco cannot have both BUILD_SHARED_LIBS and POCO_MT")
         assert(not (package:config("mysql") and package:config("mariadb")), "Poco's options 'mysql' and 'mariadb' cannot exist together")
 
