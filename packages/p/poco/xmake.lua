@@ -100,6 +100,7 @@ package("poco")
 
     on_check(function (package)
         assert(not (package:is_plat("mingw") and package:is_subhost("macos")), "Poco not support mingw@macos")
+        assert(not (package:is_plat("wasm")), "Poco not support wasm")
 
         assert(not (package:has_runtime("MT", "MTd") and package:config("shared")), "Poco cannot have both BUILD_SHARED_LIBS and POCO_MT")
         assert(not (package:config("mysql") and package:config("mariadb")), "Poco's options 'mysql' and 'mariadb' cannot exist together")
@@ -137,10 +138,6 @@ package("poco")
             io.replace("Foundation/CMakeLists.txt", "POCO_SOURCES%(SRCS RegExp.-%)", "")
             io.replace("cmake/FindPCRE2.cmake", "NAMES pcre2-8", "NAMES pcre2-8-static pcre2-8", {plain = true})
             io.replace("cmake/FindPCRE2.cmake", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"", "IMPORTED_LOCATION \"${PCRE2_LIBRARY}\"\nINTERFACE_COMPILE_DEFINITIONS PCRE2_STATIC", {plain = true})
-        end
-        -- pcre2 has some problem on wasm plat, set it's root directory manually
-        if package:version():ge("1.12.0") then
-            table.insert(configs, "-DPCRE2_ROOT_DIR=" .. package:dep("pcre2"):installdir())
         end
 
         if not package:config("install_cpp_runtimes") then
