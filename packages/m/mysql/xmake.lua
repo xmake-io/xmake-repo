@@ -14,7 +14,7 @@ package("mysql")
     add_deps("cmake")
     add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
     if is_plat("linux") then
-        add_deps("readline")
+        add_deps("editline")
     end
 
     if on_check then
@@ -73,13 +73,6 @@ package("mysql")
         }
         if package:is_plat("linux") then
             table.insert(configs, "-DWITH_EDITLINE=system")
-            local readline = package:dep("readline"):fetch()
-            if readline then
-                local includedirs = table.wrap(readline.sysincludedirs or readline.includedirs)
-                local libfiles = table.wrap(readline.libfiles)
-                table.insert(configs, "-DEDITLINE_INCLUDE_DIR=" .. table.concat(includedirs, ";"))
-                table.insert(configs, "-DEDITLINE_LIBRARY=" .. table.concat(libfiles, ";"))
-            end
         end
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
