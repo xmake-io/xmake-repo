@@ -14,7 +14,7 @@ package("mysql")
     add_deps("cmake")
     add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
     if is_plat("linux") then
-        add_deps("editline")
+        add_deps("editline", {configs = {terminal_db = "ncurses"}})
     end
 
     if on_check then
@@ -44,9 +44,6 @@ package("mysql")
         if version:eq("9.0.1") then
             io.replace("cmake/ssl.cmake", "FIND_CUSTOM_OPENSSL()", "FIND_SYSTEM_OPENSSL()", {plain = true})
         end
-        io.replace("cmake/readline.cmake",
-            "IF(EDITLINE_HAVE_COMPLETION_INT OR EDITLINE_HAVE_COMPLETION_CHAR)",
-            "IF(TRUE)", {plain = true})
 
         if package:is_plat("windows") then
             io.replace("cmake/install_macros.cmake",
