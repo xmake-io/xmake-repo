@@ -25,7 +25,7 @@ package("editline")
         end
     end)
 
-    on_install("linux", "macosx", "bsd", "mingw", "msys", function (package)
+    on_install("linux", "macosx", "bsd", "msys", function (package)
         local configs = {"--disable-examples"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
@@ -35,4 +35,3 @@ package("editline")
     on_test(function (package)
         assert(package:has_cfuncs("el_init", {includes = "histedit.h"}))
     end)
- 
