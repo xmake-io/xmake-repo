@@ -9,6 +9,7 @@ package("minio-cpp")
     add_versions("v0.3.0", "da0f2f54bf169ad9e5e9368cc9143df4db056fc5c05bb55d8c1d9065e7211f7c")
 
     add_patches("0.3.0", "patches/0.3.0/cmake-pkgconfig-find-deps.patch", "53a0a5a300c896ad92dbaf3b96fa25556a2f555e84ce07deb7b7b1562ddac9e5")
+    add_patches("0.3.0", "patches/0.3.0/macos-unistd.patch", "cd50e5d3cb5ceda7d606dc15f90ab4764b34a61a96a3be83f02688329843ef1f")
 
     add_deps("cmake", "pkgconf")
     add_deps("nlohmann_json", {configs = {cmake = true}})
@@ -26,8 +27,7 @@ package("minio-cpp")
         end
 
         local envs = import("package.tools.cmake").buildenvs(package)
-        if is_subhost("msys") then
-            -- xmake bug, Fixed after v2.9.5
+        if is_subhost("msys") and xmake:version():le("2.9.4") then
             envs.PKG_CONFIG_PATH = table.concat(envs.PKG_CONFIG_PATH:split(";"), ":")
         end
         import("package.tools.cmake").install(package, configs, {envs = envs})
