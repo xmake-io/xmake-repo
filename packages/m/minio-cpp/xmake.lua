@@ -8,14 +8,14 @@ package("minio-cpp")
 
     add_versions("v0.3.0", "da0f2f54bf169ad9e5e9368cc9143df4db056fc5c05bb55d8c1d9065e7211f7c")
 
-    add_patches("0.3.0", "patches/0.3.0/cmake-remove-unofficial.patch", "974d2369b994b1a12d0596dccf2ef02be86b3a26528f75812a827639edd85367")
+    add_patches("0.3.0", "patches/0.3.0/cmake-pkgconfig-find-deps.patch", "53a0a5a300c896ad92dbaf3b96fa25556a2f555e84ce07deb7b7b1562ddac9e5")
 
-    add_deps("cmake")
+    add_deps("cmake", "pkgconf")
     add_deps("nlohmann_json", {configs = {cmake = true}})
     add_deps("inih", {configs = {ini_parser = true}})
     add_deps("openssl", "curlpp", "pugixml", "zlib")
 
-    on_install("windows", "linux", "macosx", "mingw", "cross", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         io.replace("src/utils.cc", "#include <openssl/types.h>", "", {plain = true})
 
         local configs = {}
@@ -24,7 +24,13 @@ package("minio-cpp")
         if package:is_plat("windows") and package:config("shared") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"curlpp", "libcurl", "inih"}})
+
+        local envs = import("package.tools.cmake").buildenvs(package)
+        if is_subhost("msys") then
+            -- xmake bug, Fixed after v2.9.5
+            envs.PKG_CONFIG_PATH = table.concat(envs.PKG_CONFIG_PATH:split(";"), ":")
+        end
+        import("package.tools.cmake").install(package, configs, {envs = envs})
     end)
 
     on_test(function (package)
