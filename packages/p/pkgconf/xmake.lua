@@ -25,7 +25,7 @@ package("pkgconf")
         end
     end)
 
-    on_install("@macosx", "@linux", "@bsd", function(package)
+    on_install("@macosx", "@linux", "@bsd", "@msys", "@cygwin", function(package)
         import("package.tools.autoconf").install(package)
     end)
 
