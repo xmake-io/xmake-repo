@@ -10,7 +10,7 @@ package("minio-cpp")
 
     add_patches("0.3.0", "patches/0.3.0/cmake-remove-unofficial.patch", "974d2369b994b1a12d0596dccf2ef02be86b3a26528f75812a827639edd85367")
 
-    add_deps("cmake", "pkgconf")
+    add_deps("cmake")
     add_deps("nlohmann_json", {configs = {cmake = true}})
     add_deps("inih", {configs = {ini_parser = true}})
     add_deps("openssl", "curlpp", "pugixml", "zlib")
