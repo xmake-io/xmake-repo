@@ -26,9 +26,6 @@ package("wren")
                 end
 
         ]], package:config("shared") and "shared" or "static"))
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
         import("package.tools.xmake").install(package, configs)
     end)
 
