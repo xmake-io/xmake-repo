@@ -14,7 +14,10 @@ package("minio-cpp")
     add_deps("cmake")
     if is_host("windows") then
         add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
     end
+
     add_deps("nlohmann_json", {configs = {cmake = true}})
     add_deps("inih", {configs = {ini_parser = true}})
     add_deps("openssl3", "curlpp", "pugixml", "zlib")
