@@ -18,6 +18,10 @@ package("luau")
 
     on_install(function(package)
         io.replace("extern/isocline/src/completers.c", "__finddata64_t", "_finddatai64_t", {plain = true})
+        io.replace("CMakeLists.txt", [[cmake_policy(SET CMP0054 NEW)]], [[
+            cmake_policy(SET CMP0054 NEW)
+            cmake_policy(SET CMP0057 NEW)
+        ]], {plain = true})
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "RelWithDebInfo"))
