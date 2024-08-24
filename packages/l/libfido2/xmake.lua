@@ -58,6 +58,7 @@ package("libfido2")
     on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", function (package)
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
         io.replace("CMakeLists.txt", "-WX", "", {plain = true})
+        io.replace("CMakeLists.txt", "/sdl", "", {plain = true})
 
         local configs = {"-DBUILD_TESTS=OFF", "-DBUILD_EXAMPLES=OFF", "-DBUILD_MANPAGES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -75,7 +76,6 @@ package("libfido2")
 
         local opt = {}
         if package:is_plat("windows") then
-            opt.cxflags = {"-D_CRT_SECURE_NO_WARNINGS", "-D_SCL_SECURE_NO_WARNINGS"}
             os.mkdir(path.join(package:buildir(), "src", "pdb"))
             if package:config("shared") then
                 table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
