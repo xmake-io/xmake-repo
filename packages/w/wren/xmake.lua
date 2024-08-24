@@ -21,8 +21,6 @@ package("wren")
 
                 if is_mode("debug") then
                     add_defines("DEBUG")
-                elseif is_mode("release") then
-                    add_defines("NDEBUG")
                 end
 
         ]], package:config("shared") and "shared" or "static"))
