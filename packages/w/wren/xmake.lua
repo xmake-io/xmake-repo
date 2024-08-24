@@ -22,7 +22,7 @@ package("wren")
                 if is_plat("windows") and is_kind("shared") then
                     add_rules("utils.symbols.export_all")
                 end
-        ]]))
+        ]])
         import("package.tools.xmake").install(package)
     end)
 
