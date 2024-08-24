@@ -8,16 +8,13 @@ package("minio-cpp")
 
     add_versions("v0.3.0", "da0f2f54bf169ad9e5e9368cc9143df4db056fc5c05bb55d8c1d9065e7211f7c")
 
-    add_patches("0.3.0", "patches/0.3.0/cmake-pkgconfig-find-deps.patch", "15cc2958571e8c92b452bf6b96f04a3eb5320267b873b5d94d1cea77464b456b")
+    add_patches("0.3.0", "patches/0.3.0/cmake-pkgconfig-find-deps.patch", "53a0a5a300c896ad92dbaf3b96fa25556a2f555e84ce07deb7b7b1562ddac9e5")
     add_patches("0.3.0", "patches/0.3.0/macos-unistd.patch", "cd50e5d3cb5ceda7d606dc15f90ab4764b34a61a96a3be83f02688329843ef1f")
 
     add_deps("cmake")
     if is_host("windows") then
         add_deps("pkgconf")
-    else
-        add_deps("pkg-config")
     end
-
     add_deps("nlohmann_json", {configs = {cmake = true}})
     add_deps("inih", {configs = {ini_parser = true}})
     add_deps("openssl3", "curlpp", "pugixml", "zlib")
