@@ -3,7 +3,9 @@ package("angelscript")
     set_description("Extremely flexible cross-platform scripting library designed to allow applications to extend their functionality through external scripts")
     set_license("zlib")
 
+    add_urls("https://github.com/codecat/angelscript-mirror.git")
     add_urls("http://angelcode.com/angelscript/sdk/files/angelscript_$(version).zip")
+
     add_versions("2.37.0", "0c52d1688016a0b2484e9ca549471c4e295df060770c57840144c64815f54f10")
     add_versions("2.36.0", "33f95f7597bc0d88b097d35e7b1320d15419ffc5779851d9d2a6cccec57811b3")
     add_versions("2.35.1", "5c1096b6d6cf50c7e77ae93c736d35b69b07b1e5047161c7816bca25b413a18b")
@@ -28,6 +30,9 @@ package("angelscript")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DAS_NO_EXCEPTIONS=" .. (package:config("exceptions") and "OFF" or "ON"))
 
+        if package:gitref() then
+            os.cd("sdk")
+        end
         os.cd("angelscript/projects/cmake")
         if package:is_plat("android") then
             io.gsub("CMakeLists.txt", "set_property", "#set_property")
