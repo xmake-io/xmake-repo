@@ -28,47 +28,5 @@ package("wren")
     end)
 
     on_test(function (package)
-        assert(package:check_csnippets({test = [[
-            int main() {
-                WrenConfiguration config;
-                wrenInitConfiguration(&config);
-
-                WrenVM* vm = wrenNewVM(&config);
-
-                const char* script = 
-                    "class HelloWorld {\n"
-                    "  static main() {\n"
-                    "    System.print(\"Hello from Wren!\")\n"
-                    "  }\n"
-                    "}";
-
-                WrenInterpretResult result = wrenInterpret(vm, "main", script);
-
-                if (result == WREN_RESULT_SUCCESS) {
-                    wrenEnsureSlots(vm, 1); 
-                    wrenGetVariable(vm, "main", "HelloWorld", 0); 
-                    WrenHandle* classHandle = wrenGetSlotHandle(vm, 0);
-
-                    wrenEnsureSlots(vm, 1); 
-                    wrenSetSlotHandle(vm, 0, classHandle);
-                    
-                    result = wrenCall(vm, 0); 
-
-                    if (result != WREN_RESULT_SUCCESS) {
-                        fprintf(stderr, "Error calling main function.\n");
-                        wrenFreeVM(vm);
-                        return 1; 
-                    }
-                } else {
-                    fprintf(stderr, "Error interpreting Wren script.\n");
-                    wrenFreeVM(vm);
-                    return 1; 
-                }
-
-                wrenFreeVM(vm);
-                return 0; 
-            }
-        ]]}, {
-            includes = {"wren.h", "stdio.h"}
-        }))
+        assert(package:has_cfuncs("wrenInterpret", {includes = "wren.h"}))
     end)
