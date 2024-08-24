@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 94e4292..9704baf 100644
+index 94e4292..7d0e142 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -169,27 +169,12 @@ endif()
@@ -32,7 +32,7 @@ index 94e4292..9704baf 100644
 +	find_package(OpenSSL REQUIRED)
 +	find_package(ZLIB REQUIRED)
 +	set(CBOR_LIBRARIES PkgConfig::libcbor)
-+	set(CRYPTO_LIBRARIES OpenSSL::Crypto)
++	set(CRYPTO_LIBRARIES OpenSSL::SSL OpenSSL::Crypto)
  
  	set(MSVC_DISABLED_WARNINGS_LIST
  		"C4152" # nonstandard extension used: function/data pointer
@@ -66,7 +66,18 @@ index 94e4292..9704baf 100644
 -		set(CRYPTO_LIBRARIES "crypto")
 -	endif()
 +	set(CBOR_LIBRARIES PkgConfig::libcbor)
-+	set(CRYPTO_LIBRARIES OpenSSL::Crypto)
++	set(CRYPTO_LIBRARIES OpenSSL::SSL OpenSSL::Crypto)
  
  	if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
  		pkg_search_module(UDEV libudev REQUIRED)
+@@ -277,8 +258,8 @@ else()
+ 
+ 	if(USE_HIDAPI)
+ 		add_definitions(-DUSE_HIDAPI)
+-		pkg_search_module(HIDAPI hidapi${HIDAPI_SUFFIX} REQUIRED)
+-		set(HIDAPI_LIBRARIES hidapi${HIDAPI_SUFFIX})
++		pkg_search_module(hidapi REQUIRED IMPORTED_TARGET hidapi)
++		set(HIDAPI_LIBRARIES PkgConfig::hidapi)
+ 	endif()
+ 
+ 	if(NFC_LINUX)

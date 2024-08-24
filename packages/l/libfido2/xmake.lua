@@ -8,7 +8,7 @@ package("libfido2")
 
     add_versions("1.15.0", "32e3e431cfe29b45f497300fdb7076971cb77fc584fcfa80084d823a6ed94fbb")
 
-    add_patches("1.15.0", "patches/1.15.0/cmake-pkgconfig-find-deps.patch", "efd904282b7ec321e984d03bf72a25e50c61ac9252c24f050a7b83daccb17a34")
+    add_patches("1.15.0", "patches/1.15.0/cmake-pkgconfig-find-deps.patch", "1d8c559529f8589e44f794b33d9216234d44ef857742db9ef94693dbd41c9486")
 
     add_configs("hidapi", {description = "Use hidapi", default = false, type = "boolean"})
     add_configs("pcsc", {description = "Enable experimental PCSC support", default = false, type = "boolean"})
