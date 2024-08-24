@@ -9,22 +9,21 @@ package("wren")
     add_versions("0.4.0", "23c0ddeb6c67a4ed9285bded49f7c91714922c2e7bb88f42428386bf1cf7b339")
 
     on_install(function (package)
-        local configs = {}
-        io.writefile("xmake.lua", format([[
-            local kind = "%s"
+        io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             target("wren")
-                set_kind(kind)
+                set_kind("$(kind)")
                 add_headerfiles("src/include/*.h", "src/vm/*.h", "src/optional/*.h")
                 add_includedirs("src/include", "src/vm", "src/optional")
                 add_files("src/vm/*.c", "src/optional/*.c")
-
                 if is_mode("debug") then
                     add_defines("DEBUG")
                 end
-
-        ]], package:config("shared") and "shared" or "static"))
-        import("package.tools.xmake").install(package, configs)
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
+                end
+        ]]))
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
