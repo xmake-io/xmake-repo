@@ -33,7 +33,6 @@ package("pixman")
             "-Dopenmp=disabled",
             "-Dlibpng=disabled",
             "-Dgtk=disabled",
-            "-Dtests=disabled",
         }
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         io.replace("meson.build", "subdir('test')", "", {plain = true})
