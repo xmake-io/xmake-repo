@@ -20,6 +20,14 @@ package("angelscript")
         add_syslinks("pthread")
     end
 
+    if on_check then
+        on_check("mingw", function (package)
+            if is_host("macosx") and package:is_arch("i386") and package:version():eq("2.37.0") then
+                assert(false, "package(angelscript 2.37.0): Unsupported version on mingw|i386")
+            end
+        end)
+    end
+
     on_load("windows|x86", "windows|x64", "linux", "android", "msys", "mingw", function (package)
         package:add("deps", "cmake")
     end)
