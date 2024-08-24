@@ -25,12 +25,7 @@ package("minio-cpp")
         if package:is_plat("windows") and package:config("shared") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
-
-        local envs = import("package.tools.cmake").buildenvs(package)
-        if is_subhost("msys") and xmake:version():le("2.9.4") then
-            envs.PKG_CONFIG_PATH = table.concat(envs.PKG_CONFIG_PATH:split(";"), ":")
-        end
-        import("package.tools.cmake").install(package, configs, {envs = envs})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
