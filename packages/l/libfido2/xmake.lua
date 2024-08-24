@@ -77,6 +77,9 @@ package("libfido2")
         if package:is_plat("windows") then
             opt.cxflags = {"-D_CRT_SECURE_NO_WARNINGS", "-D_SCL_SECURE_NO_WARNINGS"}
             os.mkdir(path.join(package:buildir(), "src", "pdb"))
+            if package:config("shared") then
+                table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+            end
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
