@@ -11,6 +11,9 @@ package("libfido2")
     add_patches("1.15.0", "patches/1.15.0/cmake-pkgconfig-find-deps.patch", "efd904282b7ec321e984d03bf72a25e50c61ac9252c24f050a7b83daccb17a34")
 
     add_configs("hidapi", {description = "Use hidapi", default = false, type = "boolean"})
+    add_configs("pcsc", {description = "Enable experimental PCSC support", default = false, type = "boolean"})
+    add_configs("windows_hello", {description = "Abstract Windows Hello as a FIDO device", default = false, type = "boolean"})
+    add_configs("nfc", {description = "Enable NFC support on Linux", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -23,6 +26,8 @@ package("libfido2")
 
     if is_plat("windows", "mingw") then
         add_syslinks("setupapi", "hid", "bcrypt")
+    elseif is_plat("macosx") then
+        add_frameworks("CoreFoundation", "IOKit")
     end
 
     add_deps("cmake")
@@ -31,15 +36,26 @@ package("libfido2")
     else
         add_deps("pkg-config")
     end
+
     add_deps("openssl", "libcbor", "zlib")
+    if is_plat("linux") then
+        add_deps("libudev")
+    end
 
     on_load(function(package)
         if package:config("hidapi") then
             package:add("deps", "hidapi")
         end
+        if package:config("pcsc") then
+            if package:is_plat("windows", "mingw") then
+                package:add("syslinks", "winscard")
+            elseif package:is_plat("macosx") then
+                package:add("frameworks", "PCSC")
+            end
+        end
     end)
 
-    on_install("!iphoneos and !wasm", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", function (package)
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
         io.replace("CMakeLists.txt", "-WX", "", {plain = true})
 
@@ -52,6 +68,9 @@ package("libfido2")
         end
 
         table.insert(configs, "-DUSE_HIDAPI=" .. (package:config("hidapi") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_PCSC=" .. (package:config("pcsc") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_WINHELLO=" .. (package:config("windows_hello") and "ON" or "OFF"))
+        table.insert(configs, "-DNFC_LINUX=" .. (package:config("nfc") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
 
         local opt = {}
