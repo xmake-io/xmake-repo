@@ -26,7 +26,19 @@ package("pixman")
 
     add_includedirs("include", "include/pixman-1")
 
-    on_install("!android", function (package)
+    if on_check then
+        on_check(function (package)
+            if package:version():lt("0.43.0") and package:is_arch("arm.*") then
+                assert(false, "package(pixman <0.43.0): Unsupported arm")
+            end
+        end)
+    end
+
+    on_install("!android and !cross and (!windows or windows|!arm64)", function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "PIXMAN_API=__declspec(dllimport)")
+        end
+
         local configs = {
             "-Dopenmp=disabled",
             "-Dlibpng=disabled",
