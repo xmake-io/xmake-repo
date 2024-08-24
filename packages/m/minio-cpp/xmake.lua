@@ -20,9 +20,22 @@ package("minio-cpp")
 
     add_deps("nlohmann_json", {configs = {cmake = true}})
     add_deps("inih", {configs = {ini_parser = true}})
-    add_deps("openssl3", "curlpp", "pugixml", "zlib")
+    add_deps("curlpp", "pugixml", "zlib")
+
+    on_load(function (package)
+        -- xrepo package: curlpp -> libcurl -> openssl
+        if package:is_plat("linux") then
+            package:add("deps", "openssl")
+        else
+            package:add("deps", "openssl3")
+        end
+    end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
+        if package:is_plat("linux") then
+            io.replace("src/utils.cc", "#include <openssl/types.h>", "", {plain = true})
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
