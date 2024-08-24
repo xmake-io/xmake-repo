@@ -1,6 +1,6 @@
 package("wren")
     set_homepage("http://wren.io")
-    set_description("The Wren Programming Language. Wren is a small, fast, class-based concurrent scripting language.")
+    set_description("Wren is a small, fast, class-based concurrent scripting language.")
     set_license("MIT")
 
     add_urls("https://github.com/wren-lang/wren/archive/refs/tags/$(version).tar.gz",
