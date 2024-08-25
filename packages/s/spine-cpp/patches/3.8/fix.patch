@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 17d865734..cdd4eab5f 100644
+index 17d865734..9a5787b7f 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -1,37 +1,7 @@
+@@ -1,37 +1,6 @@
 -cmake_minimum_required(VERSION 2.8.9)
 +cmake_minimum_required(VERSION 3.5)
  project(spine)
@@ -15,7 +15,6 @@ index 17d865734..cdd4eab5f 100644
 -	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wunused-value -Wno-c++11-long-long -Wno-variadic-macros -Werror -Wextra -pedantic -Wnonportable-include-path -Wshadow -std=c89")
 -	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wunused-value -Wno-c++11-long-long -Wno-variadic-macros -Werror -Wextra -Wnon-virtual-dtor -pedantic -Wnonportable-include-path -Wshadow -std=c++03 -fno-exceptions -fno-rtti")
 -endif()
-+set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install)
 +include(GNUInstallDirs)
  
 -set(CMAKE_INSTALL_PREFIX "./")
@@ -46,10 +45,10 @@ index 17d865734..cdd4eab5f 100644
 \ No newline at end of file
 +add_subdirectory(spine-cpp)
 diff --git a/spine-cpp/CMakeLists.txt b/spine-cpp/CMakeLists.txt
-index 706040cab..639393497 100644
+index 706040cab..d5fac84aa 100644
 --- a/spine-cpp/CMakeLists.txt
 +++ b/spine-cpp/CMakeLists.txt
-@@ -1,17 +1,8 @@
+@@ -1,17 +1,9 @@
 -if(MSVC)
 -	message("MSCV detected")
 -	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
@@ -68,5 +67,6 @@ index 706040cab..639393497 100644
 -install(TARGETS spine-cpp DESTINATION dist/lib)
 -install(FILES ${INCLUDES} DESTINATION dist/include)
 \ No newline at end of file
-+install(TARGETS spine-cpp DESTINATION lib)
-+install(FILES ${INCLUDES} DESTINATION include)
++
++install(TARGETS spine-cpp DESTINATION ${CMAKE_INSTALL_LIBDIR})
++install(DIRECTORY "./spine-cpp/include/spine" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
