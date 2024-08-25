@@ -5,6 +5,7 @@ package("aws-lc")
     add_urls("https://github.com/aws/aws-lc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/aws/aws-lc.git")
 
+    add_versions("v1.34.2", "4958ac76edd53ced46d3a064cb58be8bd11e4937bcc3857623d319c2894d0904")
     add_versions("v1.32.0", "67fbb78659055c2289c9068bb4ca1c0f1b6ca27700c7f6d34c6bc2f27cd46314")
 
     add_configs("jitter", {description = "Enable FIPS entropy source: CPU Jitter", default = false, type = "boolean"})

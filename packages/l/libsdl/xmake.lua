@@ -208,6 +208,7 @@ package("libsdl")
     end)
 
     on_install(function (package)
+        io.replace("src/sensor/android/SDL_androidsensor.c", "ALooper_pollAll", "ALooper_pollOnce", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

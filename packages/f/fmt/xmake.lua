@@ -52,12 +52,12 @@ package("fmt")
                 package:add("defines", "FMT_EXPORT")
             end
         end
-        if package:has_tool("cxx", "cl") and package:config("unicode") then
-            package:add("cxxflags", "/utf-8")
-        end
     end)
 
     on_install(function (package)
+        if package:has_tool("cxx", "cl") and package:config("unicode") then
+            package:add("cxxflags", "/utf-8")
+        end
         if package:config("header_only") then
             os.cp("include/fmt", package:installdir("include"))
             return

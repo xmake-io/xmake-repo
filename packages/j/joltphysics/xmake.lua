@@ -60,7 +60,7 @@ package("joltphysics")
             package:add("defines", "JPH_OBJECT_LAYER_BITS=" .. package:config("object_layer_bits"))
         end
         if package:is_plat("windows") and not package:config("shared") then
-            package:add("syslinks", "Advapi32")
+            package:add("syslinks", "advapi32")
         end
         package:add("defines", "JPH_PROFILE_ENABLED")
         if package:is_plat("windows") then
@@ -86,7 +86,7 @@ package("joltphysics")
         end
         if package:is_arch("i386", "x86", "x64", "x86_64") then
             -- add instruction sets (from https://github.com/jrouwe/JoltPhysics/blob/4cd52055e09160affcafa557b39520331bf0d034/Jolt/Jolt.cmake#L602)
-            if package:has_tool("cxx", "cl") then
+            if package:is_plat("windows") then
                 if package:config("inst_avx512") then
                     package:add("cxxflags", "/arch:AVX512")
                 elseif package:config("inst_avx2") then
@@ -172,7 +172,7 @@ package("joltphysics")
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DCROSS_PLATFORM_DETERMINISTIC=" .. (package:config("cross_platform_deterministic") and "ON" or "OFF"))
             table.insert(configs, "-DDOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
-            table.insert(configs, "-DENABLE_OBJECT_STREAM" .. (package:config("object_stream") and "ON" or "OFF"))
+            table.insert(configs, "-DENABLE_OBJECT_STREAM=" .. (package:config("object_stream") and "ON" or "OFF"))
             table.insert(configs, "-DGENERATE_DEBUG_SYMBOLS=" .. ((package:debug() or package:config("symbols")) and "ON" or "OFF"))
             table.insert(configs, "-DOBJECT_LAYER_BITS=" .. package:config("object_layer_bits"))
             table.insert(configs, "-DUSE_AVX=" .. (package:config("inst_avx") and "ON" or "OFF"))

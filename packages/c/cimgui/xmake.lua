@@ -23,7 +23,7 @@ package("cimgui")
 
     add_defines("IMGUI_DISABLE_OBSOLETE_FUNCTIONS=1")
 
-    add_deps("luajit")
+    add_deps("luajit", {private = true})
 
     on_load(function (package)
         if package:config("sdl2") then

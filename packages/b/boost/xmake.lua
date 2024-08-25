@@ -9,6 +9,7 @@ package("boost")
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
 
+    add_versions("1.86.0", "2128a4c96862b5c0970c1e34d76b1d57e4a1016b80df85ad39667f30b1deba26")
     add_versions("1.85.0", "f4a7d3f81b8a0f65067b769ea84135fd7b72896f4f59c7f405086c8c0dc61434")
     add_versions("1.84.0", "4d27e9efed0f6f152dc28db6430b9d3dfb40c0345da7342eaa5a987dde57bd95")
     add_versions("1.83.0", "0c6049764e80aa32754acd7d4f179fd5551d8172a83b71532ae093e7384e98da")
@@ -277,16 +278,25 @@ package("boost")
         end
 
         local function config_deppath(file, depname, rule)
-                local dep = package:dep(depname)
-                local info = dep:fetch({external = false})
-                if info then
-                    local usingstr = format("\nusing %s : %s : <include>%s <search>%s <name>%s ;",
-                        rule, dep:version(),
-                        path.unix(info.includedirs[1]),
-                        path.unix(info.linkdirs[1]),
-                        info.links[1])
-                    file:write(usingstr)
+            local dep = package:dep(depname)
+            local info = dep:fetch({external = false})
+            if info then
+                local includedirs = table.wrap(info.sysincludedirs or info.includedirs)
+                for i, dir in ipairs(includedirs) do
+                    includedirs[i] = path.unix(dir)
                 end
+                local linkdirs = table.wrap(info.linkdirs)
+                for i, dir in ipairs(linkdirs) do
+                    linkdirs[i] = path.unix(dir)
+                end
+                local links = table.wrap(info.links)
+                local usingstr = format("\nusing %s : %s : <include>%s <search>%s <name>%s ;",
+                    rule, dep:version(),
+                    table.concat(includedirs, ";"),
+                    table.concat(linkdirs, ";"),
+                    table.concat(links, ";"))
+                file:write(usingstr)
+            end
         end
         local file = io.open("user-config.jam", "w")
         if file then
@@ -449,7 +459,7 @@ package("boost")
                 map["2"] = 2;
             }
         ]]}, {configs = {languages = "c++14"}}))
-        
+
         if package:config("date_time") then
             assert(package:check_cxxsnippets({test = [[
                 #include <boost/date_time/gregorian/gregorian.hpp>
