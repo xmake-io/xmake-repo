@@ -18,23 +18,23 @@ package("mysql")
     add_deps("cmake")
     add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
     if is_plat("linux") then
-        add_deps("editline", {configs = {terminal_db = "ncurses"}})
+        -- TODO: improve xrepo editline
+        -- add_deps("editline", {configs = {terminal_db = "ncurses"}})
     end
 
     if on_check then
         on_check(function (package)
             local version = package:version()
-            if version:ge("9.0.1") then
+            if version:ge("9.0.0") then
                 assert(package:is_arch(".*64"), "package(mysql) supports only 64-bit platforms.")
-                assert(not package:is_plat("macosx"), "package(mysql >=9.0.1) Unsupported macosx")
+                assert(not package:is_plat("macosx"), "package(mysql >=9.0.0) need c++20 compiler")
             end
         end)
     end
 
     on_load(function(package)
         local version = package:version()
-        if version:ge("9.0.1") then
-        else
+        if version:lt("9.0.0") then
             package:add("deps", "boost", "libevent")
         end
 
@@ -60,7 +60,14 @@ package("mysql")
         import("patch").cmake(package)
 
         local configs = {
+            "-DWITH_BUILD_ID=OFF",
             "-DWITH_UNIT_TESTS=OFF",
+            "-DENABLED_PROFILING=OFF",
+            "-DWIX_DIR=OFF",
+            "-DWITH_TEST_TRACE_PLUGIN=OFF",
+            "-DMYSQL_MAINTAINER_MODE=OFF",
+            "-DBUNDLE_RUNTIME_LIBRARIES=OFF",
+            "-DDOWNLOAD_BOOST=OFF",
             -- "-DWITH_SYSTEM_LIBS=ON", -- It will find linux lib on windows :(
             "-DWITH_BOOST=system",
             "-DWITH_LIBEVENT=system",
@@ -71,7 +78,8 @@ package("mysql")
             "-DWITH_RAPIDJSON=system",
         }
         if package:is_plat("linux") then
-            table.insert(configs, "-DWITH_EDITLINE=system")
+            -- TODO: improve xrepo editline
+            table.insert(configs, "-DWITH_EDITLINE=bundled")
         end
 
         table.insert(configs, "-DWITH_CURL=" .. (package:config("curl") and "system" or "none"))
@@ -85,6 +93,7 @@ package("mysql")
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DINSTALL_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DWITH_LTO=" .. (package:config("lto") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_LSAN=" .. (package:config("lsan") and "ON" or "OFF"))
