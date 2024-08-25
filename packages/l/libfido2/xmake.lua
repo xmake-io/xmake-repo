@@ -17,9 +17,7 @@ package("libfido2")
     add_configs("nfc", {description = "Enable NFC support on Linux", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
-    if is_plat("mingw") and is_subhost("msys") then
-        add_extsources("pacman::libfido2-devel")
-    elseif is_plat("linux") then
+    if is_plat("linux") then
         add_extsources("pacman::libfido2", "apt::libfido2-dev")
     elseif is_plat("macosx") then
         add_extsources("brew::libfido2")
