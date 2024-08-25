@@ -73,6 +73,11 @@ package("libfido2")
         table.insert(configs, "-DNFC_LINUX=" .. (package:config("nfc") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
 
+        local openssl = package:dep("openssl")
+        if not openssl:is_system() then
+            table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+        end
+
         local opt = {}
         if package:is_plat("windows") then
             os.mkdir(path.join(package:buildir(), "src", "pdb"))
