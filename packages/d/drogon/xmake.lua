@@ -99,7 +99,12 @@ package("drogon")
 
         -- no support for windows shared library
         if not package:is_plat("windows") then
-            table.insert(configs, "-DBUILD_DROGON_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+            local shared = package:config("shared") and "ON" or "OFF"
+            if version:ge("1.8.0") then
+                table.insert(configs, "-DBUILD_SHARED_LIBS=" .. shared)
+            else
+                table.insert(configs, "-DBUILD_DROGON_SHARED=" .. shared)
+            end
         end
 
         for name, enabled in pairs(package:configs()) do
