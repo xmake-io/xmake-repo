@@ -18,6 +18,7 @@ package("poco")
     
     add_configs("install_cpp_runtimes", {description = "Install c++ runtimes with Poco.", default = false, type = "boolean"})
     -- https://docs.pocoproject.org/current/00200-GettingStarted.html
+    add_configs("foundation", {description = "Build Foundation support library.", default = true, type = "boolean", readonly = true})
     add_configs("xml", {description = "Build XML support library.", default = true, type = "boolean"})
     add_configs("json", {description = "Build JSON support library.", default = false, type = "boolean"})
     add_configs("net", {description = "Build Net support library.", default = false, type = "boolean"})
@@ -72,8 +73,6 @@ package("poco")
             package:add("deps", "pcre")
         end
 
-        -- Todo: Rewrite to xmake based on the poco's module dependencies in CMakeList.txt
-
         if package:config("netssl") or package:config("crypto") or package:config("jwt") then
             package:add("deps", "openssl")
         end
@@ -111,6 +110,47 @@ package("poco")
             if vs_sdkver then
                 local build_ver = string.match(vs_sdkver, "%d+%.%d+%.(%d+)%.?%d*")
                 assert(tonumber(build_ver) >= 18362, "poco requires Windows SDK to be at least 10.0.18362.0")
+            end
+        end
+
+        -- check option's dependencies
+        local dependencies = {xml                    = {"foundation"},
+                              json                   = {"foundation"},
+                              net                    = {"foundation"},
+                              netssl                 = {"foundation", "net", "util", "crypto"},
+                              crypto                 = {"foundation"},
+                              jwt                    = {"foundation", "json", "crypto"},
+                              data                   = {"foundation"},
+                              sqlite                 = {"foundation", "data"},
+                              mysql                  = {"foundation", "data"},
+                              mariadb                = {"foundation", "data"},
+                              postgresql             = {"foundation", "data"},
+                              sql_parser             = {"foundation"},
+                              odbc                   = {"foundation", "data"},
+                              mongodb                = {"foundation", "net"},
+                              redis                  = {"foundation", "net"},
+                              pdf                    = {"foundation", "xml", "json", "util"},
+                              util                   = {"foundation", "xml", "json"},
+                              zip                    = {"foundation", "xml"},
+                              sevenzip               = {"foundation", "xml"},
+                              apache_connector       = {"foundation", "xml", "json", "util", "net"},
+                              cpp_parser             = {"foundation"},
+                              encodings              = {"foundation"},
+                              encodings_compiler     = {"foundation", "xml", "json", "util", "net"},
+                              page_compiler          = {"foundation", "xml", "json", "util", "net"},
+                              file2page              = {"foundation", "xml", "json", "util", "net"},
+                              netssl_win             = {"foundation"},
+                              prometheus             = {"foundation", "net"},
+                              active_record          = {"foundation", "data", "sqlite"},
+                              active_record_compiler = {"foundation", "xml", "json", "util"}
+                            }
+        for opt, deps in pairs(dependencies) do
+            if package:config(opt) then
+                local flag = true
+                for _, dep in ipairs(deps) do
+                    flag = flag and package:config(dep)
+                end
+                assert(flag, "Option \'" .. opt .. "\' depends on {" .. table.concat(deps, ", ") .. "}. But some options not found")
             end
         end
     end)
@@ -199,5 +239,44 @@ package("poco")
 
     on_test(function (package)
         assert(package:has_cxxtypes("Poco::BasicEvent<int>", {configs = {languages = "c++14"}, includes = "Poco/BasicEvent.h"}))
-        -- Todo: add more test for each poco's module
+
+        -- option's test
+        local optiontests = {{"xml",                    "Poco::XML::Document",              "Poco/DOM/Document.h"},
+                             {"json",                   "Poco::JSON::Parser",               "Poco/JSON/Parser.h"},
+                             {"net",                    "Poco::Net::HTTPServer",            "Poco/Net/HTTPServer.h"},
+                             {"netssl",                 "Poco::Net::HTTPSStreamFactory",    "Poco/Net/HTTPSStreamFactory.h"},
+                             {"crypto",                 "Poco::Crypto::CipherFactory",      "Poco/Crypto/CipherFactory.h"},
+                             {"jwt",                    "Poco::JWT::Token",                 "Poco/JWT/Token.h"},
+                             {"data",                   "Poco::Data::Row",                  "Poco/Data/Row.h"},
+                             {"sqlite",                 "Poco::Data::SQLite::Connector",    "Poco/Data/SQLite/Connector.h"},
+                             {"mysql",                  "Poco::Data::MySQL::Connector",     "Poco/Data/MySQL/Connector.h"},
+                             {"mariadb",                "Poco::Data::MySQL::Connector",     "Poco/Data/MySQL/Connector.h"},
+                             {"postgresql",             "Poco::Data::PostgreSQL::Connector",    "Poco/Data/PostgreSQL/Connector.h"},
+                            --  {"sql_parser",             "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
+                             {"odbc",                   "Poco::Data::ODBC::Connector",      "Poco/Data/ODBC/Connector.h"},
+                             {"mongodb",                "Poco::MongoDB::Connection",        "Poco/MongoDB/Connection.h"},
+                             {"redis",                  "Poco::Redis::Client",              "Poco/Redis/Client.h"},
+                             {"pdf",                    "Poco::PDF::Document",              "Poco/PDF/Document.h"},
+                             {"util",                   "Poco::Util::Application",          "Poco/Util/Application.h"},
+                             {"zip",                    "Poco::Zip::Decompress",            "Poco/Zip/Decompress.h"},
+                             {"sevenzip",               "Poco::SevenZip::ArchiveEntry",     "Poco/SevenZip/ArchiveEntry.h"},
+                             {"apache_connector",       "Poco::ApacheConnector",            "Poco/ApacheConnector.h"},
+                             {"cpp_parser",             "Poco::CppParser::CppToken",        "Poco/CppParser/CppToken.h"},
+                             {"encodings",              "Poco::MacChineseSimpEncoding",     "Poco/MacChineseSimpEncoding.h"},
+                            --  {"encodings_compiler",     "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
+                            --  {"page_compiler",          "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
+                            --  {"file2page",              "Poco::XML::Document",              "Poco/DOM/Document.h"}, -- don't know how to check
+                             {"netssl_win",             "Poco::Net::HTTPSStreamFactory",    "Poco/Net/HTTPSStreamFactory.h"},
+                             {"prometheus",             "Poco::Prometheus::CounterSample",  "Poco/Prometheus/CounterSample.h"},
+                             {"active_record",          "Poco::ActiveRecord::DefaultStatementPlaceholderProvider", "Poco/ActiveRecord/ActiveRecord.h"}
+                            --  {"active_record_compiler", "Poco::XML::Document",              "Poco/DOM/Document.h"} -- don't know how to check
+                            }
+        for _, optiontest in ipairs(optiontests) do
+            local name = optiontest[1]
+            local test = optiontest[2]
+            local file = optiontest[3]
+            if package:config(name) then
+                assert(package:has_cxxtypes(test, {configs = {languages = "c++17"}, includes = file}))
+            end
+        end
     end)
