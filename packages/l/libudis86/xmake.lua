@@ -23,8 +23,7 @@ package("libudis86")
                     add_rules("utils.symbols.export_all", {export_filter = function(symbol) return symbol:startswith("ud_") end})
                 end
         ]])
-        local configs = {kind = package:config("shared") and "shared" or "static"}
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
