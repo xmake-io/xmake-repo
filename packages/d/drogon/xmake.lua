@@ -100,7 +100,6 @@ package("drogon")
         -- no support for windows shared library
         if not package:is_plat("windows") then
             local shared = (package:config("shared") and "ON" or "OFF")
-
             if version:ge("1.8.0") then
                 table.insert(configs, "-DBUILD_SHARED_LIBS=" .. shared)
             else
