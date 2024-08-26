@@ -84,6 +84,15 @@ package("objfw")
         end
     end)
 
+    on_check(function (package)
+        assert(package:check_msnippets({test = [[
+            void test() {
+                @autoreleasepool {
+                }
+            }
+        ]]}))
+    end)
+
     on_install("linux", "macosx", function (package)
         local configs = {}
         local tls = package:config("tls")
