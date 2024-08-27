@@ -10,7 +10,7 @@ package("pango")
     add_versions("1.50.3", "4a8b0cf33d5f9ecaa9cd99dd72703d5c4c53bc58df64dd9538493bb4356ab691")
 
     add_deps("meson", "ninja")
-    add_deps("fontconfig", "freetype", "fribidi", "glib", "pcre2")
+    add_deps("fontconfig", "freetype", "fribidi", "glib", "pcre2", "libthai")
     add_deps("harfbuzz", "cairo", {configs = {glib = true}})
     if is_plat("windows") then
         add_deps("libintl")
