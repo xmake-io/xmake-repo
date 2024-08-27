@@ -11,7 +11,6 @@ package("libdatrie")
 
     on_install("linux", function (package)
         local configs = {"--disable-dependency-tracking", "--disable-doxygen-doc"}
-        table.insert(configs, (package:is_debug() and "-d" or ""))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         import("package.tools.autoconf").install(package, configs)
