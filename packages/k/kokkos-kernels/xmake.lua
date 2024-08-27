@@ -18,12 +18,30 @@ package("kokkos-kernels")
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    on_load("windows|x64", "macosx|x86_64", "linux", function (package)
+
+    if on_check then
+        on_check("windows", function (package)
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(kokkos-kernels) require vs_toolset >= 14.3")
+            end
+        end)
+    end
+
+    on_load(function (package)
+        local kokkos = "kokkos"
+        local version = package:version()
+        if version then
+            kokkos = kokkos .. " " .. version
+        end
+
         if package:config("cuda") then
             package:add("deps", "cuda")
-            package:add("deps", "kokkos", {configs = {cuda = true}})
+            package:add("deps", kokkos, {configs = {cuda = true}})
         else
-            package:add("deps", "kokkos")
+            package:add("deps", kokkos)
         end
     end)
 
