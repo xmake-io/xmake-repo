@@ -46,6 +46,8 @@ package("scotch")
             import("package.tools.cmake").install(package, configs)
 
         elseif package:is_plat("macosx", "linux") then
+            import("package.tools.make")
+
             os.cd("src")
             if package:is_plat("macosx") then
                 os.cp("Make.inc/Makefile.inc.i686_mac_darwin10", "Makefile.inc")
@@ -60,7 +62,7 @@ package("scotch")
             end
             io.replace("Makefile.inc", "CFLAGS%s+=", "CFLAGS := $(CFLAGS)")
             io.replace("Makefile.inc", "LDFLAGS%s+=", "LDFLAGS := $(LDFLAGS)")
-            local envs = import("package.tools.make").buildenvs(package)
+            local envs = make.buildenvs(package)
             local zlib = package:dep("zlib"):fetch()
             if zlib then
                 local cflags, ldflags
@@ -73,9 +75,9 @@ package("scotch")
                 envs.CFLAGS  = cflags
                 envs.LDFLAGS = ldflags
             end
-            os.vrunv("make", {"scotch"}, {envs = envs})
-            os.vrunv("make", {"esmumps"}, {envs = envs})
-            os.vrunv("make", {"prefix=" .. package:installdir(), "install"}, {envs = envs})
+            make.make(package, {"scotch"}, {envs = envs})
+            make.make(package, {"esmumps"}, {envs = envs})
+            make.make(package, {"prefix=" .. package:installdir(), "install"}, {envs = envs})
 
         else
             raise("Unsupported platform!")
