@@ -20,6 +20,39 @@ package("opentelemetry-cpp")
 
     add_deps("cmake")
 
+    add_links(
+        "opentelemetry_exporter_otlp_http_metric",
+        "opentelemetry_exporter_otlp_http_log",
+        "opentelemetry_exporter_otlp_http",
+        "opentelemetry_exporter_otlp_http_client",
+        "opentelemetry_exporter_otlp_grpc_log",
+        "opentelemetry_exporter_otlp_grpc_metrics",
+        "opentelemetry_exporter_otlp_grpc",
+        "opentelemetry_exporter_otlp_grpc_client",
+        "opentelemetry_exporter_otlp_file_metric",
+        "opentelemetry_exporter_otlp_file_log",
+        "opentelemetry_exporter_otlp_file",
+        "opentelemetry_exporter_otlp_file_client",
+        "opentelemetry_exporter_prometheus",
+        "opentelemetry_exporter_ostream_logs",
+        "opentelemetry_exporter_ostream_span",
+        "opentelemetry_exporter_ostream_metrics",
+        "opentelemetry_exporter_in_memory",
+        "opentelemetry_http_client_curl",
+        "opentelemetry_proto_grpc",
+        "opentelemetry_otlp_recordable",
+        "opentelemetry_proto",
+        "opentelemetry_logs",
+        "opentelemetry_trace",
+        "opentelemetry_metrics",
+        "prometheus-cpp-pull",
+        "prometheus-cpp-push",
+        "prometheus-cpp-core",
+        "opentelemetry_resources",
+        "opentelemetry_common",
+        "opentelemetry_version"
+    )
+
     on_load(function (package)
         if package:config("withOtlpGrpc") then
             package:add("deps", "grpc")
