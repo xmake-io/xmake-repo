@@ -8,6 +8,7 @@ package("opencv-mobile")
     add_versions("4.10.0", "e9209285ad4d682536db4505bc06e46b94b9e56d91896e16c2853c83a870f004")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
+    add_deps("openmp")
 
     on_load("linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
@@ -40,6 +41,14 @@ package("opencv-mobile")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
+            if package:is_arch("arm64") then
+                table.insert(configs, "-DCMAKE_SYSTEM_NAME=Windows")
+                table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=ARM64")
+            end
+        elseif package:is_plat("mingw") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "i686"))
+        elseif package:is_plat("macosx") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. (package:is_arch("x86_64") and "AMD64" or "ARM64"))
         end
         local options = string.split(io.readfile("options.txt"), "\n", {plain = true})
         table.remove_if(options, function (_, option)
