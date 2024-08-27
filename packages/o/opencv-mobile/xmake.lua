@@ -7,7 +7,7 @@ package("opencv-mobile")
 
     add_versions("4.10.0", "e9209285ad4d682536db4505bc06e46b94b9e56d91896e16c2853c83a870f004")
 
-    add_deps("python", {kind = "binary"})
+    add_deps("cmake", "python 3.x", {kind = "binary"})
 
     on_load("linux", "macosx", "windows", "mingw@windows,msys", function (package)
         if package:is_plat("windows") then
@@ -29,6 +29,8 @@ package("opencv-mobile")
             local arch = (package:is_arch("x86_64") and "x64" or "x86")
             local linkdir = (package:config("shared") and "lib" or "staticlib")
             package:add("linkdirs", path.join(arch, "mingw", linkdir))
+        elseif package:version():ge("4.0") then
+            package:add("includedirs", "include/opencv4")
         end
     end)
 
@@ -76,6 +78,8 @@ package("opencv-mobile")
                 end
             end
             package:addenv("PATH", path.join(arch, "mingw", "bin"))
+        else
+            package:addenv("PATH", "bin")
         end
     end)
 
