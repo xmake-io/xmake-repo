@@ -30,4 +30,6 @@ jobs:
         run: |
           wget https://curl.haxx.se/ca/cacert.pem -O /tmp/cacert.pem
           export CURL_CA_BUNDLE=/tmp/cacert.pem
+          sudo ln /usr/local/bin/gfortran-14 /usr/local/bin/gfortran
+          export PATH="$PATH:/usr/local/Cellar/gcc/14.1.0_2/libexec/gcc/x86_64-apple-darwin21/14/"
           xmake l ./scripts/test.lua -D -a ${{ matrix.arch }} -k ${{ matrix.kind }}

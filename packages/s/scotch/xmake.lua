@@ -15,11 +15,12 @@ package("scotch")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
-    -- add_links("esmumps", "scotch", "scotcherr", "scotcherrexit", "scotchmetis")
+    add_links("ptesmumps", "esmumps", "scotch", "scotcherr", "scotcherrexit", "scotchmetis", "scotchmetisv5", "scotchmetisv3")
     on_load(function (package)
         if package:version():ge("7.0.0") then
             package:add("deps", "cmake")
             package:add("deps", "flex", "bison")
+            package:add("deps", "gfortran", {kind = "binary"})
             if package:config("zlib") then
                 package:add("deps", "zlib")
             end
