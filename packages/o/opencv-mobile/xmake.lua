@@ -38,9 +38,12 @@ package("opencv-mobile")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DBUILD_WITH_STATIC_CRT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
+        end
         local options = string.split(io.readfile("options.txt"), "\n", {plain = true})
         table.remove_if(options, function (_, option)
-            return option:startswith("-DCMAKE_BUILD_TYPE") or option:startswith("-DBUILD_SHARED_LIBS")
+            return option:startswith("-DCMAKE_BUILD_TYPE") or option:startswith("-DBUILD_SHARED_LIBS") or option:startswith("-DBUILD_WITH_STATIC_CRT")
         end)
         table.join2(configs, options)
         import("package.tools.cmake").install(package, configs)
