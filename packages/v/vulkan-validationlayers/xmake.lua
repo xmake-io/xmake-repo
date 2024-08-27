@@ -107,10 +107,16 @@ package("vulkan-validationlayers")
             cmake.install(package, configs, {buildir = os.tmpfile() .. ".dir", cmake_generator = "Ninja", envs = envs})
         end
         os.mv("layers", package:installdir("include"))
+
+        package:addenv("VK_ADD_LAYER_PATH", "lib")
+        package:mark_as_pathenv("VK_ADD_LAYER_PATH")
     end)
 
     on_install("android", function (package)
         os.cp("*", package:installdir("lib"))
+
+        package:addenv("VK_ADD_LAYER_PATH", "lib")
+        package:mark_as_pathenv("VK_ADD_LAYER_PATH")
     end)
 
     on_test(function (package)
