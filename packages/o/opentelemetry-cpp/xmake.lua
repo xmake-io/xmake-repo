@@ -6,9 +6,6 @@ package("opentelemetry-cpp")
     add_urls("https://github.com/open-telemetry/opentelemetry-cpp.git")
     add_versions("v1.16.1", "baecbb95bd63df53e0af16e87bc683967962c5f8")
 
-    add_configs("pic", {description = "Position Independent Code.", default = false, type = "boolean"})
-    add_configs("shared", {description = "Build shared libraries.", default = false, type = "boolean"})
-
     add_configs("withOtlpGrpc", {description = "Whether to include the OTLP gRPC exporter in the SDK.", default = false, type = "boolean"})
     add_configs("withOtlpHttp", {description = "Whether to include the OTLP http exporter in the SDK.", default = false, type = "boolean"})
     add_configs("withOtlpFile", {description = "Whether to include the OTLP file exporter in the SDK.", default = false, type = "boolean"})
@@ -16,6 +13,10 @@ package("opentelemetry-cpp")
     add_configs("apiOnly", {description = "Only build the API (use as a header-only library). Overrides all options to enable exporters.", default = false, type = "boolean"})
     add_configs("withStl", {description = "Which version of the Standard Library for C++ to use. (ON, OFF, CXX11, CXX14, CXX17, CXX20 or CXX23)", default = "OFF", type = "string"})
     add_configs("withAbseil", {description = "Whether to use Abseil for C++latest features.", default = false, type = "boolean"})
+
+    if is_host("windows") then
+        set_policy("platform.longpaths", true)
+    end
 
     add_deps("cmake")
 
