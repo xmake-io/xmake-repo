@@ -21,6 +21,7 @@ package("mysql")
     add_deps("cmake")
     add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
     if is_plat("linux") then
+        add_deps("patchelf")
         -- TODO: improve xrepo editline
         -- add_deps("editline", {configs = {terminal_db = "ncurses"}})
         add_deps("ncurses")
@@ -58,9 +59,14 @@ package("mysql")
         if package:config("kerberos") then
             package:add("deps", "krb5")
         end
+
+        if package:is_cross() then
+            package:add("deps", "mysql-build-tools", {host = true, private = true})
+            package:add("patches", "8.0.39", "patches/8.0.39/cmake-cross-compilation.patch", "0f951afce6bcbc5b053d4e7e4aef57f602ff89960d230354f36385ca31c1c7a5")
+        end
     end)
 
-    on_install("windows|native", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", function (package)
         import("patch").cmake(package)
 
         local configs = {
@@ -108,6 +114,10 @@ package("mysql")
         end
 
         table.insert(configs, "-DWITHOUT_SERVER=" .. (package:config("server") and "OFF" or "ON"))
+
+        if package:is_cross() then
+            table.insert(configs, "-DCMAKE_CROSSCOMPILING=ON")
+        end
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") then
