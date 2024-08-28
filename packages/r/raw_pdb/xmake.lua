@@ -10,7 +10,7 @@ package("raw_pdb")
 
     add_deps("cmake")
 
-    on_install("!macosx", function (package)
+    on_install("!macosx and !iphoneos", function (package)
         local configs = {"-DRAWPDB_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -42,7 +42,7 @@ package("raw_pdb")
 
     on_test(function (package)
         if package:version():ge("2024.08.27") then
-            assert(package:has_cxxfuncs("PDB::ValidateFile(0, 0)", {includes = {"cstdint", "raw_pdb/PDB.h"}}))
+            assert(package:has_cxxfuncs("PDB::ValidateFile(0, 0)", {includes = {"cstddef", "raw_pdb/PDB.h"}}))
         else
             assert(package:has_cxxfuncs("PDB::ValidateFile(0)", {includes = "PDB.h"}))
         end
