@@ -70,7 +70,7 @@ package("opentelemetry-cpp")
         end
     end)
 
-    on_install("!iphoneos", "!linux|!aarch64", function (package)
+    on_install("!iphoneos and !cross|!aarch64", function (package)
         if package:has_tool("cxx", "clang", "clangxx") then
             package:add("cxxflags", "-Wno-missing-template-arg-list-after-template-kw")
         end
