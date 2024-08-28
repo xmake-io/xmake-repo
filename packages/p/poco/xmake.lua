@@ -17,14 +17,7 @@ package("poco")
     add_versions("1.13.3", "9f074d230daf30f550c5bde5528037bdab6aa83b2a06c81a25e89dd3bcb7e419")
 
     if is_plat("mingw") then
-        add_patches("1.11.0", "patches/1.11.0/cmake.patch", "1ce893ecf58f6dbb3d3b9cb29992478fe1aa9b481f94f2069561f729e31fae64")
-        add_patches("1.11.1", "patches/1.11.1/cmake.patch", "1ce893ecf58f6dbb3d3b9cb29992478fe1aa9b481f94f2069561f729e31fae64")
-        add_patches("1.11.6", "patches/1.11.6/cmake.patch", "1ce893ecf58f6dbb3d3b9cb29992478fe1aa9b481f94f2069561f729e31fae64")
-        add_patches("1.11.8", "patches/1.11.8/cmake.patch", "1ce893ecf58f6dbb3d3b9cb29992478fe1aa9b481f94f2069561f729e31fae64")
-        add_patches("1.12.1", "patches/1.12.1/cmake.patch", "1ce893ecf58f6dbb3d3b9cb29992478fe1aa9b481f94f2069561f729e31fae64")
-        add_patches("1.12.2", "patches/1.12.2/cmake.patch", "1ce893ecf58f6dbb3d3b9cb29992478fe1aa9b481f94f2069561f729e31fae64")
-        add_patches("1.12.4", "patches/1.12.4/cmake.patch", "1ce893ecf58f6dbb3d3b9cb29992478fe1aa9b481f94f2069561f729e31fae64")
-        add_patches("1.12.5", "patches/1.12.5/cmake.patch", "1ce893ecf58f6dbb3d3b9cb29992478fe1aa9b481f94f2069561f729e31fae64")
+        add_patches(">=1.11.0 <=1.12.5", "patches/1.12.5/cmake.patch")
         add_patches("1.13.3", "patches/1.13.3/cmake.patch", "07d20afe85e799a8f4f92b6e3766165a379a7597299b30f28beeae2f721e7058")
     end
 
