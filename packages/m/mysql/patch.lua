@@ -1,3 +1,21 @@
+function _patch_editline(package)
+    if not package:is_plat("linux") then
+        return
+    end
+
+    -- cmake/readline.cmake always consider editline is shared library
+    -- If we use static library, CHECK_CXX_SOURCE_COMPILES will fail because missing ncurses
+
+    local editline = package:dep("libedit")
+    if not editline:config("shared") then
+        local strings = "\nFIND_PACKAGE(Curses)\nlist(APPEND EDITLINE_LIBRARY ${CURSES_LIBRARIES})\n"
+        io.replace("cmake/readline.cmake",
+            "MARK_AS_ADVANCED(EDITLINE_INCLUDE_DIR EDITLINE_LIBRARY)",
+            "MARK_AS_ADVANCED(EDITLINE_INCLUDE_DIR EDITLINE_LIBRARY)" .. strings,
+            {plain = true})
+    end
+end
+
 function cmake(package)
     local version = package:version()
 
@@ -29,4 +47,6 @@ function cmake(package)
             io.replace("cmake/rapidjson.cmake", "IF (NOT HAVE_RAPIDJSON_WITH_STD_REGEX)", "if(FALSE)", {plain = true})
         end
     end
+
+    _patch_editline(package)
 end
