@@ -6,11 +6,11 @@ package("opentelemetry-cpp")
     add_urls("https://github.com/open-telemetry/opentelemetry-cpp.git")
     add_versions("v1.16.1", "baecbb95bd63df53e0af16e87bc683967962c5f8")
 
-    add_configs("otlpGrpc", {description = "Whether to include the OTLP gRPC exporter in the SDK.", default = false, type = "boolean"})
-    add_configs("otlpHttp", {description = "Whether to include the OTLP http exporter in the SDK.", default = false, type = "boolean"})
-    add_configs("otlpFile", {description = "Whether to include the OTLP file exporter in the SDK.", default = false, type = "boolean"})
+    add_configs("otlp_grpc", {description = "Whether to include the OTLP gRPC exporter in the SDK.", default = false, type = "boolean"})
+    add_configs("otlp_http", {description = "Whether to include the OTLP http exporter in the SDK.", default = false, type = "boolean"})
+    add_configs("otlp_file", {description = "Whether to include the OTLP file exporter in the SDK.", default = false, type = "boolean"})
     add_configs("prometheus", {description = "Enable building prometheus exporter.", default = false, type = "boolean"})
-    add_configs("apiOnly", {description = "Only build the API (use as a header-only library). Overrides all options to enable exporters.", default = false, type = "boolean"})
+    add_configs("api_only", {description = "Only build the API (use as a header-only library). Overrides all options to enable exporters.", default = false, type = "boolean"})
     add_configs("stl", {description = "Which version of the Standard Library for C++ to use. (true, false, cxx11, cxx14, cxx17, cxx20 or cxx23)", default = "false", type = "string", values = {"true", "false", "cxx11", "cxx14", "cxx17", "cxx20", "cxx23"}})
     add_configs("abseil", {description = "Whether to use Abseil for C++latest features.", default = false, type = "boolean"})
 
@@ -55,9 +55,9 @@ package("opentelemetry-cpp")
     )
 
     on_load(function (package)
-        if package:config("otlpGrpc") then
+        if package:config("otlp_grpc") then
             package:add("deps", "grpc")
-        elseif package:config("otlpHttp") or package:config("otlpFile") then
+        elseif package:config("otlp_http") or package:config("otlp_file") then
             package:add("deps", "protobuf-cpp")
         elseif package:config("abseil") then
             package:add("deps", "abseil")
@@ -75,8 +75,8 @@ package("opentelemetry-cpp")
             "-DWITH_FUNC_TESTS=OFF",
             "-DCMAKE_CXX_STANDARD=14"
         }
-        if package:has_tool("cxx", "clang", "clangxx") then
-            package:add("cxxflags", "clang::-Wno-missing-template-arg-list-after-template-kw")
+        if package:has_tool("cxx", "clang", "clangxx", "emcc", "emxx") then
+            package:add("cxxflags", "-Wno-missing-template-arg-list-after-template-kw")
             table.insert(configs, "-DCMAKE_CXX_FLAGS=-Wno-missing-template-arg-list-after-template-kw")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
@@ -91,11 +91,11 @@ package("opentelemetry-cpp")
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
         end
         
-        table.insert(configs, "-DWITH_OTLP_GRPC=" .. (package:config("otlpGrpc") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_OTLP_HTTP=" .. (package:config("otlpHttp") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_OTLP_FILE=" .. (package:config("otlpFile") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_OTLP_GRPC=" .. (package:config("otlp_grpc") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_OTLP_HTTP=" .. (package:config("otlp_http") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_OTLP_FILE=" .. (package:config("otlp_file") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_PROMETHEUS=" .. (package:config("prometheus") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_API_ONLY=" .. (package:config("apiOnly") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_API_ONLY=" .. (package:config("api_only") and "ON" or "OFF"))
         local stl = package:config("stl")
         if stl == "true" then
             stl = "on"
@@ -104,12 +104,12 @@ package("opentelemetry-cpp")
         end
         stl = string.upper(stl)
         table.insert(configs, "-DWITH_STL=" .. stl)
-        local abseil = (package:config("abseil") or package:config("otlpGrpc") or package:config("otlpHttp") or package:config("otlpFile")) and "ON" or "OFF"
+        local abseil = (package:config("abseil") or package:config("otlp_grpc") or package:config("otlp_http") or package:config("otlp_file")) and "ON" or "OFF"
         table.insert(configs, "-DWITH_ABSEIL=" .. abseil)
 
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("opentelemetry::exporter::trace::OStreamSpanExporterFactory::Create()",{configs = {languages = "c++17"}, includes = "opentelemetry/exporters/ostream/span_exporter_factory.h"}))
+        assert(package:has_cxxfuncs("opentelemetry::exporter::trace::OStreamSpanExporterFactory::Create()", {configs = {languages = "c++17"}, includes = "opentelemetry/exporters/ostream/span_exporter_factory.h"}))
     end)
