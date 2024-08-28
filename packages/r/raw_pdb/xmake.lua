@@ -5,12 +5,12 @@ package("raw_pdb")
 
     add_urls("https://github.com/MolecularMatters/raw_pdb.git")
 
-    -- add_versions("2024.08.27", "3d6ca630f7527716fd3345cbfc5e043c67bfd2a1")
+    add_versions("2024.08.27", "3d6ca630f7527716fd3345cbfc5e043c67bfd2a1")
     add_versions("2022.10.17", "e6f9d2104025ad152d68517b3f4c31cc7c2334a4")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("!macosx", function (package)
         local configs = {"-DRAWPDB_BUILD_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
