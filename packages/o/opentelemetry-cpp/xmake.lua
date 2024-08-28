@@ -81,7 +81,16 @@ package("opentelemetry-cpp")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=" .. (package:config("pic") and "ON" or "OFF"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("shared") then
+            if package:is_plat("windows") then
+                table.insert(configs, "-DOPENTELEMETRY_BUILD_DLL=ON")
+            else
+                table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
+            end
+        else
+            table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
+        end
+        
         table.insert(configs, "-DWITH_OTLP_GRPC=" .. (package:config("otlpGrpc") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_OTLP_HTTP=" .. (package:config("otlpHttp") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_OTLP_FILE=" .. (package:config("otlpFile") and "ON" or "OFF"))
@@ -97,10 +106,6 @@ package("opentelemetry-cpp")
         table.insert(configs, "-DWITH_STL=" .. stl)
         local abseil = (package:config("abseil") or package:config("otlpGrpc") or package:config("otlpHttp") or package:config("otlpFile")) and "ON" or "OFF"
         table.insert(configs, "-DWITH_ABSEIL=" .. abseil)
-
-        if package:config("shared") and package:is_plat("windows") then
-            table.insert(configs, "-DOPENTELEMETRY_BUILD_DLL=ON")
-        end
 
         import("package.tools.cmake").install(package, configs)
     end)
