@@ -6,13 +6,13 @@ package("opentelemetry-cpp")
     add_urls("https://github.com/open-telemetry/opentelemetry-cpp.git")
     add_versions("v1.16.1", "baecbb95bd63df53e0af16e87bc683967962c5f8")
 
-    add_configs("withOtlpGrpc", {description = "Whether to include the OTLP gRPC exporter in the SDK.", default = false, type = "boolean"})
-    add_configs("withOtlpHttp", {description = "Whether to include the OTLP http exporter in the SDK.", default = false, type = "boolean"})
-    add_configs("withOtlpFile", {description = "Whether to include the OTLP file exporter in the SDK.", default = false, type = "boolean"})
-    add_configs("withPrometheus", {description = "Enable building prometheus exporter.", default = false, type = "boolean"})
+    add_configs("otlpGrpc", {description = "Whether to include the OTLP gRPC exporter in the SDK.", default = false, type = "boolean"})
+    add_configs("otlpHttp", {description = "Whether to include the OTLP http exporter in the SDK.", default = false, type = "boolean"})
+    add_configs("otlpFile", {description = "Whether to include the OTLP file exporter in the SDK.", default = false, type = "boolean"})
+    add_configs("prometheus", {description = "Enable building prometheus exporter.", default = false, type = "boolean"})
     add_configs("apiOnly", {description = "Only build the API (use as a header-only library). Overrides all options to enable exporters.", default = false, type = "boolean"})
-    add_configs("withStl", {description = "Which version of the Standard Library for C++ to use. (ON, OFF, CXX11, CXX14, CXX17, CXX20 or CXX23)", default = "OFF", type = "string", values = {"ON", "OFF", "CXX11", "CXX14", "CXX17", "CXX20", "CXX23"}})
-    add_configs("withAbseil", {description = "Whether to use Abseil for C++latest features.", default = false, type = "boolean"})
+    add_configs("stl", {description = "Which version of the Standard Library for C++ to use. (true, false, cxx11, cxx14, cxx17, cxx20 or cxx23)", default = "false", type = "string", values = {"true", "false", "cxx11", "cxx14", "cxx17", "cxx20", "cxx23"}})
+    add_configs("abseil", {description = "Whether to use Abseil for C++latest features.", default = false, type = "boolean"})
 
     if is_host("windows") then
         set_policy("platform.longpaths", true)
@@ -55,15 +55,12 @@ package("opentelemetry-cpp")
     )
 
     on_load(function (package)
-        if package:config("withOtlpGrpc") then
+        if package:config("otlpGrpc") then
             package:add("deps", "grpc")
-        elseif package:config("withOtlpHttp") or package:config("withOtlpFile") then
+        elseif package:config("otlpHttp") or package:config("otlpFile") then
             package:add("deps", "protobuf-cpp")
-        elseif package:config("withAbseil") then
+        elseif package:config("abseil") then
             package:add("deps", "abseil")
-        end
-        if package:config("withGsl") then
-            package:add("deps", "gsl")
         end
         if package:config("shared") and package:is_plat("windows") then
             package:add("defines", "OPENTELEMETRY_BUILD_IMPORT_DLL")
@@ -71,10 +68,6 @@ package("opentelemetry-cpp")
     end)
 
     on_install("!iphoneos and !cross|!aarch64", function (package)
-        if package:has_tool("cxx", "clang", "clangxx") then
-            package:add("cxxflags", "-Wno-missing-template-arg-list-after-template-kw")
-        end
-
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DWITH_EXAMPLES=OFF",
@@ -82,16 +75,27 @@ package("opentelemetry-cpp")
             "-DWITH_FUNC_TESTS=OFF",
             "-DCMAKE_CXX_STANDARD=14"
         }
+        if package:has_tool("cxx", "clang", "clangxx") then
+            package:add("cxxflags", "clang::-Wno-missing-template-arg-list-after-template-kw")
+            table.insert(configs, "-DCMAKE_CXX_FLAGS=-Wno-missing-template-arg-list-after-template-kw")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=" .. (package:config("pic") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_OTLP_GRPC=" .. (package:config("withOtlpGrpc") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_OTLP_HTTP=" .. (package:config("withOtlpHttp") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_OTLP_FILE=" .. (package:config("withOtlpFile") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_PROMETHEUS=" .. (package:config("withPrometheus") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_OTLP_GRPC=" .. (package:config("otlpGrpc") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_OTLP_HTTP=" .. (package:config("otlpHttp") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_OTLP_FILE=" .. (package:config("otlpFile") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_PROMETHEUS=" .. (package:config("prometheus") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_API_ONLY=" .. (package:config("apiOnly") and "ON" or "OFF"))
-        table.insert(configs, "-DWITH_STL=" .. package:config("withStl")) -- withStl is a string, see description
-        local abseil = (package:config("withAbseil") or package:config("withOtlpGrpc") or package:config("withOtlpHttp") or package:config("withOtlpFile")) and "ON" or "OFF"
+        local stl = package:config("stl")
+        if stl == "true" then
+            stl = "on"
+        elseif stl == "false" then
+            stl = "off"
+        end
+        stl = string.upper(stl)
+        table.insert(configs, "-DWITH_STL=" .. stl)
+        local abseil = (package:config("abseil") or package:config("otlpGrpc") or package:config("otlpHttp") or package:config("otlpFile")) and "ON" or "OFF"
         table.insert(configs, "-DWITH_ABSEIL=" .. abseil)
 
         if package:config("shared") and package:is_plat("windows") then
