@@ -13,7 +13,15 @@ package("rapidobj")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(rapidobj): need ndk api level  > 21 for android")
+        end)
+    end
+
+    on_install("!wasm and !bsd", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DRAPIDOBJ_BuildTools=" .. (package:config("tools") and "ON" or "OFF"))
@@ -25,5 +33,5 @@ package("rapidobj")
             void test() {
                 rapidobj::Result result = rapidobj::ParseFile("/home/user/teapot/teapot.obj");
             }
-        ]]}, {configs = {languages = "c++17"}, includes = "rapidobj/rapidobj.hpp"}))
+        ]]}, {configs = {languages = "c++20"}, includes = "rapidobj/rapidobj.hpp"}))
     end)
