@@ -21,6 +21,9 @@ package("raw_pdb")
         if package:version():ge("2024.08.27") then
             io.replace("src/CMakeLists.txt", "if (UNIX)", "if(1)", {plain = true})
             import("package.tools.cmake").install(package, configs)
+            if is_host("windows") then
+                os.trycp("raw_pdb.natvis", package:installdir("include/natvis"))
+            end
         else
             io.replace("src/CMakeLists.txt", "add_subdirectory(Examples)", "", {plain = true})
             import("package.tools.cmake").build(package, configs)
