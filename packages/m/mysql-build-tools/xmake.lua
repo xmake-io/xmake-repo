@@ -67,9 +67,15 @@ package("mysql-build-tools")
             "-DCMAKE_BUILD_TYPE=Release",
         }
         if package:is_plat("linux") then
-            table.insert(configs, "-DWITH_EDITLINE=bundled")
+            local widec = package:dep("ncurses"):config("widec")
+            -- From FindCurses.cmake
+            table.insert(configs, "-DCURSES_NEED_WIDE=" .. (widec and "ON" or "OFF"))
+            table.insert(configs, "-DWITH_EDITLINE=system")
         end
         table.insert(configs, "-DWITHOUT_SERVER=" .. (package:config("server") and "OFF" or "ON"))
+        if package:is_cross() then
+            table.insert(configs, "-DCMAKE_CROSSCOMPILING=ON")
+        end
 
         local opt = {}
         if xmake:version():ge("2.9.5") then

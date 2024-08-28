@@ -21,9 +21,7 @@ package("mysql")
     add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
     if is_plat("linux") then
         add_deps("patchelf")
-        -- TODO: improve xrepo editline
-        -- add_deps("editline", {configs = {terminal_db = "ncurses"}})
-        add_deps("ncurses")
+        add_deps("libedit", {configs = {terminal_db = "ncurses"}})
     end
 
     if on_check then
@@ -90,8 +88,7 @@ package("mysql")
             local widec = package:dep("ncurses"):config("widec")
             -- From FindCurses.cmake
             table.insert(configs, "-DCURSES_NEED_WIDE=" .. (widec and "ON" or "OFF"))
-            -- TODO: improve xrepo editline
-            table.insert(configs, "-DWITH_EDITLINE=bundled")
+            table.insert(configs, "-DWITH_EDITLINE=system")
         end
 
         table.insert(configs, "-DWITH_CURL=" .. (package:config("curl") and "system" or "none"))
