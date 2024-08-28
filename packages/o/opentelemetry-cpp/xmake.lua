@@ -11,7 +11,7 @@ package("opentelemetry-cpp")
     add_configs("withOtlpFile", {description = "Whether to include the OTLP file exporter in the SDK.", default = false, type = "boolean"})
     add_configs("withPrometheus", {description = "Enable building prometheus exporter.", default = false, type = "boolean"})
     add_configs("apiOnly", {description = "Only build the API (use as a header-only library). Overrides all options to enable exporters.", default = false, type = "boolean"})
-    add_configs("withStl", {description = "Which version of the Standard Library for C++ to use. (ON, OFF, CXX11, CXX14, CXX17, CXX20 or CXX23)", default = "OFF", type = "string"})
+    add_configs("withStl", {description = "Which version of the Standard Library for C++ to use. (ON, OFF, CXX11, CXX14, CXX17, CXX20 or CXX23)", default = "OFF", type = "string", values = {"ON", "OFF", "CXX11", "CXX14", "CXX17", "CXX20", "CXX23"}})
     add_configs("withAbseil", {description = "Whether to use Abseil for C++latest features.", default = false, type = "boolean"})
 
     if is_host("windows") then
@@ -50,7 +50,8 @@ package("opentelemetry-cpp")
         "prometheus-cpp-core",
         "opentelemetry_resources",
         "opentelemetry_common",
-        "opentelemetry_version"
+        "opentelemetry_version",
+        "opentelemetry_cpp"
     )
 
     on_load(function (package)
@@ -64,14 +65,22 @@ package("opentelemetry-cpp")
         if package:config("withGsl") then
             package:add("deps", "gsl")
         end
+        if package:config("shared") and package:is_plat("windows") then
+            package:add("defines", "OPENTELEMETRY_BUILD_IMPORT_DLL")
+        end
     end)
 
-    on_install(function (package)
+    on_install("!iphoneos", "!linux|!aarch64", function (package)
+        if package:has_tool("cxx", "clang", "clangxx") then
+            package:add("cxxflags", "-Wno-missing-template-arg-list-after-template-kw")
+        end
+
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DWITH_EXAMPLES=OFF",
             "-DWITH_BENCHMARK=OFF",
-            "-DWITH_FUNC_TESTS=OFF"
+            "-DWITH_FUNC_TESTS=OFF",
+            "-DCMAKE_CXX_STANDARD=14"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=" .. (package:config("pic") and "ON" or "OFF"))
@@ -84,6 +93,10 @@ package("opentelemetry-cpp")
         table.insert(configs, "-DWITH_STL=" .. package:config("withStl")) -- withStl is a string, see description
         local abseil = (package:config("withAbseil") or package:config("withOtlpGrpc") or package:config("withOtlpHttp") or package:config("withOtlpFile")) and "ON" or "OFF"
         table.insert(configs, "-DWITH_ABSEIL=" .. abseil)
+
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DOPENTELEMETRY_BUILD_DLL=ON")
+        end
 
         import("package.tools.cmake").install(package, configs)
     end)
