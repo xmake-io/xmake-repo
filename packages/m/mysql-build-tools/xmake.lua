@@ -13,6 +13,10 @@ package("mysql-build-tools")
 
     add_deps("cmake")
     add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
+    if is_plat("linux") then
+        add_deps("patchelf")
+        add_deps("libedit", {configs = {terminal_db = "ncurses"}})
+    end
 
     local tool_list = {
         "uca9dump",
