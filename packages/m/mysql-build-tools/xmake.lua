@@ -6,7 +6,6 @@ package("mysql-build-tools")
 
     add_urls("https://github.com/mysql/mysql-server/archive/refs/tags/mysql-$(version).tar.gz")
 
-    -- add_versions("9.0.1", "54a8a99a810c2c8ca51f11c7e5a764018066db1b75ba92c509c3794bd0cd552c")
     add_versions("8.0.39", "3a72e6af758236374764b7a1d682f7ab94c70ed0d00bf0cb0f7dd728352b6d96")
 
     add_configs("server", {description = "Build server", default = false, type = "boolean"})
