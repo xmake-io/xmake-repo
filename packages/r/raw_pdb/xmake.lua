@@ -42,7 +42,7 @@ package("raw_pdb")
 
     on_test(function (package)
         if package:version():ge("2024.08.27") then
-            assert(package:has_cxxfuncs("PDB::ValidateFile(0, 0)", {includes = "raw_pdb/PDB.h"}))
+            assert(package:has_cxxfuncs("PDB::ValidateFile(0, 0)", {includes = {"cstdint", "raw_pdb/PDB.h"}}))
         else
             assert(package:has_cxxfuncs("PDB::ValidateFile(0)", {includes = "PDB.h"}))
         end
