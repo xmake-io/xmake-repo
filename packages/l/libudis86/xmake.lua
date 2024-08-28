@@ -8,7 +8,7 @@ package("libudis86")
 
     add_deps("python", {kind = "binary"})
 
-    on_install(function (package)
+    on_install("!cross", function (package)
         io.replace("scripts/ud_opcode.py", "/ 32", "// 32", {plain = true})
         io.replace("scripts/ud_opcode.py", "/ 2", "// 2", {plain = true})
         os.vrunv("python", {"scripts/ud_itab.py", "docs/x86/optable.xml", "libudis86"})
