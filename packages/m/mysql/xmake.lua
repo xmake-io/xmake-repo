@@ -66,40 +66,7 @@ package("mysql")
     on_install("windows", "macosx", "linux", function (package)
         import("patch").cmake(package)
 
-        local configs = {
-            "-DWITH_BUILD_ID=OFF",
-            "-DWITH_UNIT_TESTS=OFF",
-            "-DENABLED_PROFILING=OFF",
-            "-DWIX_DIR=OFF",
-            "-DWITH_TEST_TRACE_PLUGIN=OFF",
-            "-DMYSQL_MAINTAINER_MODE=OFF",
-            "-DBUNDLE_RUNTIME_LIBRARIES=OFF",
-            "-DDOWNLOAD_BOOST=OFF",
-            -- "-DWITH_SYSTEM_LIBS=ON", -- It will find linux lib on windows :(
-            "-DWITH_BOOST=system",
-            "-DWITH_LIBEVENT=system",
-            "-DWITH_ZLIB=system",
-            "-DWITH_ZSTD=system",
-            "-DWITH_SSL=system",
-            "-DWITH_LZ4=system",
-            "-DWITH_RAPIDJSON=system",
-        }
-        if package:is_plat("linux") then
-            local widec = package:dep("ncurses"):config("widec")
-            -- From FindCurses.cmake
-            table.insert(configs, "-DCURSES_NEED_WIDE=" .. (widec and "ON" or "OFF"))
-            table.insert(configs, "-DWITH_EDITLINE=system")
-        end
-
-        table.insert(configs, "-DWITH_CURL=" .. (package:config("curl") and "system" or "none"))
-        table.insert(configs, "-DWITH_KERBEROS=" .. (package:config("kerberos") and "system" or "none"))
-        table.insert(configs, "-DWITH_FIDO=" .. (package:config("fido") and "system" or "none"))
-        if package:config("server") then
-            -- TODO: server deps
-            table.insert(configs, "-DWITH_ICU=system")
-            table.insert(configs, "-DWITH_PROTOBUF=system")
-        end
-
+        local configs = import("configs").get(package, false)
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DINSTALL_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))
@@ -110,12 +77,6 @@ package("mysql")
         table.insert(configs, "-DWITH_UBSAN=" .. (package:config("ubsan") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DLINK_STATIC_RUNTIME_LIBRARIES=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
-        end
-
-        table.insert(configs, "-DWITHOUT_SERVER=" .. (package:config("server") and "OFF" or "ON"))
-
-        if package:is_cross() then
-            table.insert(configs, "-DCMAKE_CROSSCOMPILING=ON")
         end
         import("package.tools.cmake").install(package, configs)
 
