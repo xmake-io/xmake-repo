@@ -13,10 +13,6 @@ package("libedit")
         add_extsources("apt::libedit-dev")
     end
 
-    if is_host("linux") then
-        add_extsources("apt::libedit-dev")
-    end
-
     add_includedirs("include", "include/editline")
 
     on_load(function (package)
