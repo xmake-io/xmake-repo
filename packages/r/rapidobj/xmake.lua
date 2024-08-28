@@ -21,7 +21,7 @@ package("rapidobj")
         end)
     end
 
-    on_install("!wasm and !bsd", function (package)
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DRAPIDOBJ_BuildTools=" .. (package:config("tools") and "ON" or "OFF"))
