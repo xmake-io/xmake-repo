@@ -21,7 +21,7 @@ package("rapidobj")
         end)
     end
 
-    on_install(function (package)
+    on_install("!wasm and !bsd", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DRAPIDOBJ_BuildTools=" .. (package:config("tools") and "ON" or "OFF"))
@@ -33,5 +33,5 @@ package("rapidobj")
             void test() {
                 rapidobj::Result result = rapidobj::ParseFile("/home/user/teapot/teapot.obj");
             }
-        ]]}, {configs = {languages = "c++20"}, includes = "rapidobj/rapidobj.hpp"}))
+        ]]}, {configs = {languages = "c++17"}, includes = "rapidobj/rapidobj.hpp"}))
     end)
