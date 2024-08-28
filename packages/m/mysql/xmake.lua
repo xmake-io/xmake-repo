@@ -88,6 +88,9 @@ package("mysql")
             "-DWITH_RAPIDJSON=system",
         }
         if package:is_plat("linux") then
+            local widec = package:dep("ncurses"):config("widec")
+            -- From FindCurses.cmake
+            table.insert(configs, "-DCURSES_NEED_WIDE=" .. (widec and "ON" or "OFF"))
             -- TODO: improve xrepo editline
             table.insert(configs, "-DWITH_EDITLINE=bundled")
         end
