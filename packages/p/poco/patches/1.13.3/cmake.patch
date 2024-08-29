@@ -1,0 +1,67 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index af6af03..dfaf679 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -519,7 +519,7 @@ write_basic_package_version_file(
+ # Set config script install location in a location that find_package() will
+ # look for, which is different on MS Windows than for UNIX
+ # Note: also set in POCO_GENERATE_PACKAGE macro in cmake/PocoMacros.cmake
+-if(WIN32)
++if(MSVC)
+ 	set(PocoConfigPackageLocation "cmake")
+ else()
+ 	set(PocoConfigPackageLocation "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+diff --git a/Foundation/include/Poco/Platform.h b/Foundation/include/Poco/Platform.h
+index 7a4e7e2..41257de 100644
+--- a/Foundation/include/Poco/Platform.h
++++ b/Foundation/include/Poco/Platform.h
+@@ -239,6 +239,9 @@
+ 	#define POCO_ARCH_LITTLE_ENDIAN 1
+ #endif
+ 
++#if defined (__MINGW32__)
++	#define POCO_COMPILER_MINGW
++#endif
+ 
+ #ifdef __SOFTFP__
+ #define POCO_NO_FPENVIRONMENT
+@@ -253,11 +256,6 @@
+ #elif defined (__GNUC__)
+ 	#define POCO_COMPILER_GCC
+ 	#define POCO_HAVE_CXXABI_H
+-	#if defined (__MINGW32__) || defined (__MINGW64__)
+-		#define POCO_COMPILER_MINGW
+-	#endif
+-#elif defined (__MINGW32__) || defined (__MINGW64__)
+-	#define POCO_COMPILER_MINGW
+ #elif defined (__INTEL_COMPILER) || defined(__ICC) || defined(__ECC) || defined(__ICL)
+ 	#define POCO_COMPILER_INTEL
+ #elif defined (__SUNPRO_CC)
+diff --git a/cmake/PocoMacros.cmake b/cmake/PocoMacros.cmake
+index 2ef58c5..a62f5e5 100644
+--- a/cmake/PocoMacros.cmake
++++ b/cmake/PocoMacros.cmake
+@@ -40,8 +40,13 @@ if(WIN32)
+ 			endforeach()
+ 		endif(X64)
+ 	endif()
+-	find_program(CMAKE_MC_COMPILER mc.exe HINTS "${sdk_bindir}" "${kit_bindir}" "${kit81_bindir}" ${kit10_bindir}
++	if(MINGW)
++		find_program(CMAKE_MC_COMPILER windmc.exe HINTS "${sdk_bindir}" "${kit_bindir}"
+ 		DOC "path to message compiler")
++	else()
++		find_program(CMAKE_MC_COMPILER mc.exe HINTS "${sdk_bindir}" "${kit_bindir}" "${kit81_bindir}" ${kit10_bindir}
++			DOC "path to message compiler")
++	endif()
+ 	if(NOT CMAKE_MC_COMPILER)
+ 		message(FATAL_ERROR "message compiler not found: required to build")
+ 	endif(NOT CMAKE_MC_COMPILER)
+@@ -237,7 +242,7 @@ endif()
+ # Set config script install location in a location that find_package() will
+ # look for, which is different on MS Windows than for UNIX
+ # Note: also set in root CMakeLists.txt
+-if(WIN32)
++if(MSVC)
+ 	set(PocoConfigPackageLocation "cmake")
+ else()
+ 	set(PocoConfigPackageLocation "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")

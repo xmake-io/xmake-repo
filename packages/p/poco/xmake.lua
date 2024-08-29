@@ -16,6 +16,11 @@ package("poco")
     add_versions("1.12.5", "92b18eb0fcd2263069f03e7cc80f9feb43fb7ca23b8c822a48e42066b2cd17a6")
     add_versions("1.13.3", "9f074d230daf30f550c5bde5528037bdab6aa83b2a06c81a25e89dd3bcb7e419")
 
+    if is_plat("mingw") then
+        add_patches(">=1.11.0 <=1.12.5", "patches/1.12.5/cmake.patch", "1ce893ecf58f6dbb3d3b9cb29992478fe1aa9b481f94f2069561f729e31fae64")
+        add_patches("1.13.3", "patches/1.13.3/cmake.patch", "88739551ba648387548df5190c190209579b0f8edff7e7a0532d6733eca9de19")
+    end
+
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
@@ -28,7 +33,7 @@ package("poco")
     add_deps("cmake")
     add_deps("openssl", "sqlite3", "expat", "zlib")
     add_defines("POCO_NO_AUTOMATIC_LIBS")
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("iphlpapi")
     end
 
@@ -46,7 +51,7 @@ package("poco")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "mingw|x86_64@msys", function (package)
+    on_install("windows", "linux", "macosx", "mingw", function (package)
         io.replace("XML/CMakeLists.txt", "EXPAT REQUIRED", "EXPAT CONFIG REQUIRED")
         io.replace("XML/CMakeLists.txt", "EXPAT::EXPAT", "expat::expat")
         io.replace("XML/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED XML_DTD XML_NS")
@@ -93,5 +98,9 @@ package("poco")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("Poco::BasicEvent<int>", {configs = {languages = "c++14"}, includes = "Poco/BasicEvent.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                Poco::BasicEvent<int> x;
+            }
+        ]]}, {configs = {languages = "c++14"}, includes = "Poco/BasicEvent.h"}))
     end)
