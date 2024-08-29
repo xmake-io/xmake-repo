@@ -18,7 +18,7 @@ package("poco")
 
     if is_plat("mingw") then
         add_patches(">=1.11.0 <=1.12.5", "patches/1.12.5/cmake.patch", "1ce893ecf58f6dbb3d3b9cb29992478fe1aa9b481f94f2069561f729e31fae64")
-        add_patches("1.13.3", "patches/1.13.3/cmake.patch", "07d20afe85e799a8f4f92b6e3766165a379a7597299b30f28beeae2f721e7058")
+        add_patches("1.13.3", "patches/1.13.3/cmake.patch", "88739551ba648387548df5190c190209579b0f8edff7e7a0532d6733eca9de19")
     end
 
     if is_plat("windows") then
@@ -33,7 +33,7 @@ package("poco")
     add_deps("cmake")
     add_deps("openssl", "sqlite3", "expat", "zlib")
     add_defines("POCO_NO_AUTOMATIC_LIBS")
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("iphlpapi")
     end
 
@@ -98,5 +98,9 @@ package("poco")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("Poco::BasicEvent<int>", {configs = {languages = "c++14"}, includes = "Poco/BasicEvent.h"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                Poco::BasicEvent<int> x;
+            }
+        ]]}, {configs = {languages = "c++14"}, includes = "Poco/BasicEvent.h"}))
     end)
