@@ -38,6 +38,15 @@ package("sentry-native")
         add_syslinks("bsm")
     end
 
+    on_check(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <ranges>
+            template<typename T>
+            concept CR = std::ranges::contiguous_range<T>;
+            void test() {}
+        ]]}, {configs = {languages = "c++20"}}), "package(sentry-native) Require at least C++20.")
+    end)
+
     on_load("windows", "linux", "macosx", function (package)
         if not package:config("shared") then
             package:add("defines", "SENTRY_BUILD_STATIC")
