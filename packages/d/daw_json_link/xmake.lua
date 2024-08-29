@@ -7,6 +7,7 @@ package("daw_json_link")
     add_urls("https://github.com/beached/daw_json_link/archive/refs/tags/$(version).tar.gz",
              "https://github.com/beached/daw_json_link.git")
 
+    add_versions("v3.28.3", "c9973e8da74c4a6eb84fbd1f86f8048a697068af7dec6aee602e08e9f4df39db")
     add_versions("v3.26.0", "c3eb3e37eba2eb919a908ef0be4c0f1c02460a677248a1b4298bfbe1bb2d9239")
     add_versions("v3.24.1", "439b4678377950f165e3d49d472c0676f0ef2fae3c5e6e7febddd5633f6e4f39")
     add_versions("v3.24.0", "7cecb2acde88028043e343ed4da7cde84c565a38125d3edb90db90daf881240a")
