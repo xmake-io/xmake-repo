@@ -18,7 +18,11 @@ package("box2d")
 
     on_check("windows", function (package)
         if package:version():ge("3.0.0") then
-            assert(package:has_cincludes("stdatomic.h", {configs = {languages = "c11"}}),
+            local configs = {languages = "c11"}
+            if package:toolchain("msvc") then
+                configs.cflags = "/experimental:c11atomics"
+            end
+            assert(package:has_cincludes("stdatomic.h", {configs = configs}),
             "package(box2d) Requires at least C11 and stdatomic.h")
         end
     end)
