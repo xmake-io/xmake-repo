@@ -8,11 +8,20 @@ package("box2d")
     add_versions("2.4.0", "6aebbc54c93e367c97e382a57ba12546731dcde51526964c2ab97dec2050f8b9")
     add_versions("2.4.1", "0cb512dfa5be79ca227cd881b279adee61249c85c8b51caf5aa036b71e943002")
     add_versions("2.4.2", "593f165015fdd07ea521a851105f1c86ae313c5af0a15968ed95f864417fa8a7")
-    add_versions("3.0.0", "c2983a30a95037c46c19e42f398de6bc375d6ae87f30e0d0bbabb059ec60f8c0")
+    if is_arch("x64", "x86_64", "arm64*") then
+        add_versions("3.0.0", "c2983a30a95037c46c19e42f398de6bc375d6ae87f30e0d0bbabb059ec60f8c0")
+    end
 
     add_configs("avx2", {description = "Enable AVX2.", default = false, type = "boolean"})
 
     add_deps("cmake")
+
+    on_check("windows", function (package)
+        if package:version():ge("3.0.0") then
+            assert(package:has_cincludes("stdatomic.h", {configs = {languages = "c11"}}),
+            "package(box2d) Requires at least C11 and stdatomic.h")
+        end
+    end)
 
     on_install("windows", "linux", "macosx", "mingw", function (package)
         local configs = {}
@@ -71,7 +80,7 @@ package("box2d")
                     }
                     b2DestroyWorld(worldId);
                 }
-            ]]}, {configs = {languages = "c17"}, includes = "box2d/box2d.h"}))
+            ]]}, {configs = {languages = "c11"}, includes = "box2d/box2d.h"}))
         else
             assert(package:check_cxxsnippets({test = [[
                 void test(int argc, char** argv) {
