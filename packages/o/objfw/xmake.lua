@@ -129,7 +129,6 @@ package("objfw")
             local ssl_incdir = find_path(is_gnu and "gnutls/gnutls.h" or "openssl/ssl.h", { ssl:installdir("include"), "/usr/include/", "/usr/local/include" })
 
             if libssl then
-                print("Using SSL "..ssl:name().." from "..libssl.linkdir..", include dir: "..ssl_incdir)
                 table.insert(configs, "CPPFLAGS=-I"..ssl_incdir)
                 table.insert(configs, "LDFLAGS=-L"..libssl.linkdir)
             else
