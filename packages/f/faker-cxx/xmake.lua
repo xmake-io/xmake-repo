@@ -42,9 +42,15 @@ package("faker-cxx")
     end)
 
     on_test(function (package)
+        local includes = "faker-cxx/string.h"
+        local version = package:version()
+        if version and version:lt("3.0.0") then
+            includes = "faker-cxx/String.h"
+        end
+
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 const auto id = faker::string::uuid();
             }
-        ]]}, {configs = {languages = "c++20"}, includes = "faker-cxx/String.h"}))
+        ]]}, {configs = {languages = "c++20"}, includes = includes}))
     end)
