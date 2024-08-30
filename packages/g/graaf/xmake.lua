@@ -9,6 +9,17 @@ package("graaf")
 
     add_versions("v1.1.1", "86a95e14aa18f81ea31ec0764ef8b12d1fe42396da3be0046e0dbbb562fb3c89")
 
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                enum class fruit { orange, apple };
+                void test() {
+                    using enum fruit;
+                }
+            ]]}, {configs = {languages = "c++20"}}), "package(graaf) Require at least C++20.")
+        end)
+    end
+
     on_install(function (package)
         if package:gitref() then
             os.cp("include", package:installdir())
