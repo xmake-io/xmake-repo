@@ -38,7 +38,7 @@ package("libsdl_ttf")
         io.replace("CMakeLists.txt", "target_link_libraries%(SDL2_ttf PRIVATE %$?<?B?U?I?L?D?_?I?N?T?E?R?F?A?C?E?:?%${sdl2_target_name}>?%)", [[
 target_include_directories(SDL2_ttf PRIVATE ${SDL2_INCLUDE_DIR})
 target_link_libraries(SDL2_ttf PRIVATE $<BUILD_INTERFACE:${SDL2_LIBRARY}>)
-        ]], {plain = true})
+        ]])
 
         local configs = {"-DSDL2TTF_SAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
