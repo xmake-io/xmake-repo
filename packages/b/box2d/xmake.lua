@@ -18,6 +18,8 @@ package("box2d")
 
     on_check("windows", function (package)
         if package:version():ge("3.0.0") then
+            assert(not package:is_arch("arm64"), "package(box2d =>3.0.0) Unsupported architecture.")
+
             local configs = {languages = "c11"}
             if package:toolchain("msvc") then
                 configs.cflags = "/experimental:c11atomics"
