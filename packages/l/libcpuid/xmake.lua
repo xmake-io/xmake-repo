@@ -17,14 +17,12 @@ package("libcpuid")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
-        local opt
         if package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-            if package:is_arch("x86") then
-                opt = {cxflags = {"-DPLATFORM_X86"}}
-            end
+            io.replace("CMakeLists.txt", [[if("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")]], [[message(MSVC_CXX_ARCHITECTURE_ID="${MSVC_CXX_ARCHITECTURE_ID}")
+   if("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")]], {plain = true})
         end
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
