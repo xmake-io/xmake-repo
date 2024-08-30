@@ -25,5 +25,5 @@ package("quadsort")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("quadsort", {includes = "quadsort.h"}))
+        assert(package:has_cfuncs("quadsort", {includes = {"string.h", "quadsort.h"}}))
     end)
