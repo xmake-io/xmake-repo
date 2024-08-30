@@ -9,6 +9,8 @@ package("centurion")
 
     add_versions("v7.3.0", "ad8b7c27074939fa46380a878e82c2b0365d1c4ad31b4a71bfcd5ce3ac0198e6")
 
+    add_patches("v7.3.0", path.join(os.scriptdir(), "patches", "7.3.0", "fix_method_name.patch"), "2c5faf24867440e53bdabf79b4354cdbf2c79707ca9e372ba7cdd94bcb1dcc52")
+
     add_configs("pragma_once", { description = "Use #pragma once in centurion.hpp", default = true, type = "boolean" })
     add_configs("debug_macros", { description = "Include debug-only logging macros, such as CENTURION_LOG_INFO", default = true, type = "boolean" })
 
@@ -26,12 +28,8 @@ package("centurion")
     add_includedirs("include", "include/SDL2")
 
     on_load(function (package)
-        if package:config("shared") then
-            package:add("deps", "libsdl", { configs = { shared = true } })
-        else
-            package:add("deps", "libsdl")
-        end
-
+        package:add("deps", "libsdl", { configs = { shared = package:config("shared") } })
+        
         if not package:config("pragma_once") then
             package:add("defines", "CENTURION_NO_PRAGMA_ONCE")
         end
@@ -40,29 +38,17 @@ package("centurion")
         end
 
         if package:config("sdl_image") then
-            if package:config("shared") then
-                package:add("deps", "libsdl_image", { configs = { shared = true } })
-            else
-                package:add("deps", "libsdl_image")
-            end
+            package:add("deps", "libsdl_image", { configs = { shared = package:config("shared") } })
         else
             package:add("defines", "CENTURION_NO_SDL_IMAGE")
         end
         if package:config("sdl_mixer") then
-            if package:config("shared") then
-                package:add("deps", "libsdl_mixer", { configs = { shared = true } })
-            else
-                package:add("deps", "libsdl_mixer")
-            end
+            package:add("deps", "libsdl_mixer", { configs = { shared = package:config("shared") } })
         else
             package:add("defines", "CENTURION_NO_SDL_MIXER")
         end
         if package:config("sdl_ttf") then
-            if package:config("shared") then
-                package:add("deps", "libsdl_ttf", { configs = { shared = true } })
-            else
-                package:add("deps", "libsdl_ttf")
-            end
+            package:add("deps", "libsdl_ttf", { configs = { shared = package:config("shared") } })
         else
             package:add("defines", "CENTURION_NO_SDL_TTF")
         end
@@ -75,7 +61,7 @@ package("centurion")
         end
     end)
 
-    on_install("!wasm", function (package)
+    on_install(function (package)
         os.cp("src/*", package:installdir("include"))
     end)
 
