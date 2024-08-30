@@ -16,7 +16,7 @@ package("async_simple")
 
     add_deps("cmake")
 
-    on_load("windows", function (package)
+    on_load("!linux and !macosx", function (package)
         package:set("kind", "library", {headeronly = true})
     end)
 
