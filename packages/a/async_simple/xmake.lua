@@ -20,7 +20,7 @@ package("async_simple")
         package:set("kind", "library", {headeronly = true})
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install(function (package)
         if package:version():le("1.3") then
             io.replace("async_simple/CMakeLists.txt",
             [[file(GLOB coro_header "coro/*.h")]],
