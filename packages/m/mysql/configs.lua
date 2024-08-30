@@ -10,7 +10,6 @@ end
 
 function _target_configs(package)
     local configs = {}
-
     table.insert(configs, "-DWITH_CURL=" .. (package:config("curl") and "system" or "none"))
     table.insert(configs, "-DWITH_KERBEROS=" .. (package:config("kerberos") and "system" or "none"))
     table.insert(configs, "-DWITH_FIDO=" .. (package:config("fido") and "system" or "none"))
@@ -54,9 +53,18 @@ function get(package, build_host_tool)
         table.insert(configs, "-DWITH_PROTOBUF=system")
     end
 
+    if package:config("x") then
+        table.join2(configs, {"-DWITH_MYSQLX=ON", "-DWITH_MYSQLX_USE_PROTOBUF_FULL=ON"})
+    else
+        table.insert(configs, "-DWITH_MYSQLX=OFF")
+    end
+
+    if package:config("cluster") then
+        table.join2(configs, {"-DWITH_NDB=ON", "-DWITH_NDBCLUSTER=ON"})
+    else
+        table.join2(configs, {"-DWITH_NDB=OFF", "-DWITH_NDBCLUSTER=OFF"})
+    end
     table.insert(configs, "-DWITHOUT_SERVER=" .. (package:config("server") and "OFF" or "ON"))
-
     table.join2(configs, (build_host_tool and _host_tool_configs(package) or _target_configs(package)))
-
     return configs
 end

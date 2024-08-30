@@ -11,6 +11,7 @@ package("mysql")
     add_configs("curl", {description = "Build with curl", default = false, type = "boolean"})
     add_configs("kerberos", {description = "Build with kerberos", default = false, type = "boolean"})
     add_configs("fido", {description = "Build FIDO based authentication plugins", default = false, type = "boolean"})
+    add_configs("x", {description = "Build MySQL X plugin", default = false, type = "boolean"})
     if is_plat("windows") then
         add_configs("debug", {description = "Enable debug symbols.", default = false, readonly = true})
     end

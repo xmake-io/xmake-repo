@@ -43,20 +43,21 @@ package("mysql-build-tools")
     end)
 
     on_install("windows", "macosx", "linux", function (package)
-        import("package.tools.cmake")
-
         local mysql_script_dir = path.join(path.directory(package:scriptdir()), "mysql")
-        import("patch", {rootdir = mysql_script_dir}).cmake(package)
+
+        import("patch", {rootdir = mysql_script_dir})
+        import("configs", {rootdir = mysql_script_dir})
+        import("package.tools.cmake")
+        import("core.base.hashset")
 
         local opt = {}
         if cmake.configure then -- xmake 2.9.5
             opt.target = tool_list
         end
+        patch.cmake(package)
+        cmake.build(package, configs.get(package, true), opt)
 
-        local configs = import("configs", {rootdir = mysql_script_dir}).get(package, true)
-        cmake.build(package, configs, opt)
-
-        local hash = import("core.base.hashset").from(tool_list)
+        local hash = hashset.from(tool_list)
         local tools_dir = path.join(package:buildir(), "runtime_output_directory/**")
         for _, file in ipairs(os.files(tools_dir)) do
             if hash:has(path.basename(file)) then

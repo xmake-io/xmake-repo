@@ -2,10 +2,8 @@ function _patch_editline(package)
     if not package:is_plat("linux") then
         return
     end
-
     -- cmake/readline.cmake always consider editline is shared library
     -- If we use static library, CHECK_CXX_SOURCE_COMPILES will fail because missing ncurses
-
     local editline = package:dep("libedit")
     if not editline:config("shared") then
         local strings = "\nFIND_PACKAGE(Curses)\nlist(APPEND EDITLINE_LIBRARY ${CURSES_LIBRARIES})\n"
@@ -18,7 +16,6 @@ end
 
 function cmake(package)
     local version = package:version()
-
     if version:eq("8.0.39") then
         io.replace("cmake/ssl.cmake", "IF(NOT OPENSSL_APPLINK_C)", "IF(FALSE)", {plain = true})
         io.replace("cmake/boost.cmake", "IF(NOT BOOST_MINOR_VERSION EQUAL 77)", "IF(FALSE)", {plain = true})
@@ -46,6 +43,10 @@ function cmake(package)
             -- skip try_run
             io.replace("cmake/rapidjson.cmake", "IF (NOT HAVE_RAPIDJSON_WITH_STD_REGEX)", "if(FALSE)", {plain = true})
         end
+    end
+
+    if not package:config("cluster") then
+        io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY(storage/ndb)", "", {plain = true})
     end
 
     _patch_editline(package)
