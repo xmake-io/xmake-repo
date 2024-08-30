@@ -33,10 +33,10 @@ package("libsdl_mixer")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "sdl_find_sdl2(${sdl2_target_name} ${SDL_REQUIRED_VERSION})", "", {plain = true})
-        io.replace("CMakeLists.txt", "target_link_libraries(SDL2_mixer PRIVATE $<BUILD_INTERFACE:${sdl2_target_name}>)", [[
+        io.replace("CMakeLists.txt", "target_link_libraries%(SDL2_mixer PRIVATE (%$<BUILD_INTERFACE:)?%${sdl2_target_name}>?%)", [[
 target_include_directories(SDL2_mixer PRIVATE ${SDL2_INCLUDE_DIR})
 target_link_libraries(SDL2_mixer PRIVATE $<BUILD_INTERFACE:${SDL2_LIBRARY}>)
-        ]], {plain = true})
+        ]])
 
         local configs = {
                             "-DSDL2MIXER_CMD=OFF",
