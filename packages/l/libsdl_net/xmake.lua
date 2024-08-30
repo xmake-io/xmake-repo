@@ -33,7 +33,7 @@ package("libsdl_net")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "sdl_find_sdl2(${sdl2_target_name} ${SDL_REQUIRED_VERSION})", "", {plain = true})
-        io.replace("CMakeLists.txt", "target_link_libraries%(SDL2_net PRIVATE (%$<BUILD_INTERFACE:)?%${sdl2_target_name}>?%)", [[
+        io.replace("CMakeLists.txt", "target_link_libraries%(SDL2_net PRIVATE %$?<?B?U?I?L?D?_?I?N?T?E?R?F?A?C?E?:?%${sdl2_target_name}>?%)", [[
 target_include_directories(SDL2_net PRIVATE ${SDL2_INCLUDE_DIR})
 target_link_libraries(SDL2_net PRIVATE $<BUILD_INTERFACE:${SDL2_LIBRARY}>)
         ]])
