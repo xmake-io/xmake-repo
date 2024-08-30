@@ -19,7 +19,7 @@ package("libcpuid")
         io.replace("CMakeLists.txt", "add_subdirectory(tests)", "", {plain = true})
         if package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-            io.replace("CMakeLists.txt", [[if("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")]], [[message(MSVC_CXX_ARCHITECTURE_ID="${MSVC_CXX_ARCHITECTURE_ID}")
+            io.replace("libcpuid/CMakeLists.txt", [[if("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")]], [[message(MSVC_CXX_ARCHITECTURE_ID="${MSVC_CXX_ARCHITECTURE_ID}")
    if("${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "x64")]], {plain = true})
         end
         import("package.tools.cmake").install(package, configs)
