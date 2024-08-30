@@ -66,7 +66,7 @@ target_link_libraries(SDL2_mixer PRIVATE $<BUILD_INTERFACE:${SDL2_LIBRARY}>)
                 local libfiles = {}
                 for _, libfile in ipairs(fetchinfo.libfiles) do
                     if libfile:match("SDL2%..+$") or libfile:match("SDL2-static%..+$") then
-                        if not (libfile:endswith(".dll") and package:config("shared")) then
+                        if not (package:config("shared") and libfile:endswith(".dll")) then
                             table.insert(libfiles, libfile)
                         end
                     end
