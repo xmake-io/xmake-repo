@@ -58,7 +58,7 @@ package("mysql")
         end
 
         if package:is_cross() then
-            package:add("deps", "mysql-build-tools", {host = true, private = true})
+            package:add("deps", "mysql-build-tools")
             package:add("patches", "8.0.39", "patches/8.0.39/cmake-cross-compilation.patch", "0f951afce6bcbc5b053d4e7e4aef57f602ff89960d230354f36385ca31c1c7a5")
         end
     end)

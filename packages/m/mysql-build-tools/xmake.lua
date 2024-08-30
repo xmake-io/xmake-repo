@@ -12,10 +12,10 @@ package("mysql-build-tools")
     add_configs("debug", {description = "Enable debug symbols.", default = false, readonly = true})
 
     add_deps("cmake")
-    add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson")
+    add_deps("zlib", "zstd", "lz4", "openssl", "rapidjson", {host = true, private = true})
     if is_plat("linux") then
         add_deps("patchelf")
-        add_deps("libedit", {configs = {terminal_db = "ncurses"}})
+        add_deps("libedit", {host = true, private = true, configs = {terminal_db = "ncurses"}})
     end
 
     local tool_list = {
@@ -38,21 +38,23 @@ package("mysql-build-tools")
 
         local version = package:version()
         if version:lt("9.0.0") then
-            package:add("deps", "boost", "libevent")
+            package:add("deps", "boost", "libevent", {host = true, private = true})
         end
     end)
 
     on_install("windows", "macosx", "linux", function (package)
+        import("package.tools.cmake")
+
         local mysql_script_dir = path.join(path.directory(package:scriptdir()), "mysql")
         import("patch", {rootdir = mysql_script_dir}).cmake(package)
 
         local opt = {}
-        if xmake:version():ge("2.9.5") then
+        if cmake.configure then -- xmake 2.9.5
             opt.target = tool_list
         end
 
         local configs = import("configs", {rootdir = mysql_script_dir}).get(package, true)
-        import("package.tools.cmake").build(package, configs, opt)
+        cmake.build(package, configs, opt)
 
         local hash = import("core.base.hashset").from(tool_list)
         local tools_dir = path.join(package:buildir(), "runtime_output_directory/**")
