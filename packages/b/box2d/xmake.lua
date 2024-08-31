@@ -17,14 +17,14 @@ package("box2d")
     end
 
     add_deps("cmake")
-    
+
     if on_check then
         on_check("windows", function (package)
             if package:version():ge("3.0.0") then
-                assert(not package:is_arch("arm64"), "package(box2d =>3.0.0) Unsupported architecture.")
+                assert(not package:is_arch("arm64.*"), "package(box2d =>3.0.0) Unsupported architecture.")
 
                 local configs = {languages = "c11"}
-                if  package:has_tool("cc", "cl") then
+                if package:has_tool("cc", "cl") then
                     configs.cflags = "/experimental:c11atomics"
                 end
                 assert(package:has_cincludes("stdatomic.h", {configs = configs}),
