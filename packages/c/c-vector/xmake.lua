@@ -13,7 +13,7 @@ package("c-vector")
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("c-vector")
-                set_kind("static")
+                set_kind("$(kind)")
                 add_files("vec.c")
                 add_headerfiles("vec.h")
         ]])
