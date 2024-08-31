@@ -36,11 +36,17 @@ package("libsdl_image")
     end)
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "sdl_find_sdl2(${sdl2_target_name} ${SDL_REQUIRED_VERSION})", "", {plain = true})
-        io.replace("CMakeLists.txt", "target_link_libraries%(SDL2_image PRIVATE %$?<?B?U?I?L?D?_?I?N?T?E?R?F?A?C?E?:?%${sdl2_target_name}>?%)", [[
+        if is_plat("wasm") then
+            io.replace("CMakeLists.txt", "sdl_find_sdl2(${sdl2_target_name} ${SDL_REQUIRED_VERSION})", "", {plain = true})
+            io.replace("CMakeLists.txt", "target_link_libraries(SDL2_image PRIVATE $<BUILD_INTERFACE:${sdl2_target_name}>)", [[
 target_include_directories(SDL2_image PRIVATE ${SDL2_INCLUDE_DIR})
 target_link_libraries(SDL2_image PRIVATE $<BUILD_INTERFACE:${SDL2_LIBRARY}>)
-        ]])
+            ]], {plain = true})
+            io.replace("CMakeLists.txt", "target_link_libraries(SDL2_image PRIVATE ${sdl2_target_name})", [[
+target_include_directories(SDL2_image PRIVATE ${SDL2_INCLUDE_DIR})
+target_link_libraries(SDL2_image PRIVATE ${SDL2_LIBRARY})
+            ]], {plain = true})
+        end
 
         local configs = {"-DSDL2IMAGE_SAMPLES=OFF", "-DSDL2IMAGE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
