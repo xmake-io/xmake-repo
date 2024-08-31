@@ -11,7 +11,7 @@ package("alpaca")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         import("package.tools.cmake").install(package)
     end)
 
