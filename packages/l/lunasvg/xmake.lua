@@ -12,9 +12,8 @@ package("lunasvg")
     add_versions("v2.3.5", "350ff56aa1acdedefe2ad8a4241a9fb8f9b232868adc7bd36dfb3dbdd57e2e93")
 
     add_deps("cmake")
-    add_deps("plutovg")
 
-    on_load("windows", function (package)
+    on_load("windows", "mingw", function (package)
         local version = package:version()
         if package:gitref() or version:ge("2.4.1") then
             if not package:config("shared") then

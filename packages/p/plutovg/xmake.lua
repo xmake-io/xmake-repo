@@ -10,7 +10,7 @@ package("plutovg")
 
     add_deps("cmake")
 
-    on_load("windows", function (package)
+    on_load("windows", "mingw", function (package)
         if not package:config("shared") then
             package:add("defines", "PLUTOVG_BUILD_STATIC")
         end
