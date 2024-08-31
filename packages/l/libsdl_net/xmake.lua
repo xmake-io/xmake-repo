@@ -32,7 +32,7 @@ package("libsdl_net")
     end)
 
     on_install(function (package)
-        if is_plat("wasm") then
+        if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "sdl_find_sdl2(${sdl2_target_name} ${SDL_REQUIRED_VERSION})", "", {plain = true})
             io.replace("CMakeLists.txt", "target_link_libraries(SDL2_net PRIVATE $<BUILD_INTERFACE:${sdl2_target_name}>)", [[
 target_include_directories(SDL2_net PRIVATE ${SDL2_INCLUDE_DIR})
