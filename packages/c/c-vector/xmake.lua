@@ -16,6 +16,9 @@ package("c-vector")
                 set_kind("$(kind)")
                 add_files("vec.c")
                 add_headerfiles("vec.h")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
+                end
         ]])
         if package:config("shared") then
             configs.kind = "shared"
