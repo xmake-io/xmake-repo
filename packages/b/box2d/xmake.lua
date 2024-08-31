@@ -67,25 +67,17 @@ package("box2d")
             assert(package:check_csnippets({test = [[
                 void test(int argc, char** argv) {
                     b2WorldDef worldDef = b2DefaultWorldDef();
-                    worldDef.gravity = (b2Vec2){0.0f, -10.0f};
                     b2WorldId worldId = b2CreateWorld(&worldDef);
                     b2BodyDef bodyDef = b2DefaultBodyDef();
-                    bodyDef.type = b2_dynamicBody;
-                    bodyDef.position = (b2Vec2){0.0f, 4.0f};
                     b2BodyId bodyId = b2CreateBody(worldId, &bodyDef);
-                    b2Polygon dynamicBox = b2MakeBox(1.0f, 1.0f);
+                    b2Polygon box = b2MakeBox(1.0f, 1.0f);
                     b2ShapeDef shapeDef = b2DefaultShapeDef();
-                    shapeDef.density = 1.0f;
-                    shapeDef.friction = 0.3f;
-                    b2CreatePolygonShape(bodyId, &shapeDef, &dynamicBox);
+                    b2CreatePolygonShape(bodyId, &shapeDef, &box);
                     float timeStep = 1.0f / 60.0f;
                     int subStepCount = 4;
-                    for (int i = 0; i < 90; ++i)
-                    {
-                        b2World_Step(worldId, timeStep, subStepCount);
-                        b2Vec2 position = b2Body_GetPosition(bodyId);
-                        b2Rot rotation = b2Body_GetRotation(bodyId);
-                    }
+                    b2World_Step(worldId, timeStep, subStepCount);
+                    b2Vec2 position = b2Body_GetPosition(bodyId);
+                    b2Rot rotation = b2Body_GetRotation(bodyId);
                     b2DestroyWorld(worldId);
                 }
             ]]}, {configs = {languages = "c11"}, includes = "box2d/box2d.h"}))
@@ -94,25 +86,18 @@ package("box2d")
                 void test(int argc, char** argv) {
                     b2World world(b2Vec2(0.0f, -10.0f));
                     b2BodyDef bodyDef;
-                    bodyDef.type = b2_dynamicBody;
-                    bodyDef.position.Set(0.0f, 4.0f);
                     b2Body* body = world.CreateBody(&bodyDef);
-                    b2PolygonShape dynamicBox;
-                    dynamicBox.SetAsBox(1.0f, 1.0f);
+                    b2PolygonShape box;
+                    box.SetAsBox(1.0f, 1.0f);
                     b2FixtureDef fixtureDef;
-                    fixtureDef.shape = &dynamicBox;
-                    fixtureDef.density = 1.0f;
-                    fixtureDef.friction = 0.3f;
+                    fixtureDef.shape = &box;
                     body->CreateFixture(&fixtureDef);
                     float timeStep = 1.0f / 60.0f;
                     int32 velocityIterations = 6;
                     int32 positionIterations = 2;
-                    for (int32 i = 0; i < 60; ++i)
-                    {
-                        world.Step(timeStep, velocityIterations, positionIterations);
-                        b2Vec2 position = body->GetPosition();
-                        float angle = body->GetAngle();
-                    }
+                    world.Step(timeStep, velocityIterations, positionIterations);
+                    b2Vec2 position = body->GetPosition();
+                    float angle = body->GetAngle();
                 }
             ]]}, {configs = {languages = "c++11"}, includes = "box2d/box2d.h"}))
         end
