@@ -20,8 +20,8 @@ package("pango")
         add_extsources("brew::pango")
         add_frameworks("CoreFoundation")
     elseif is_plat("linux") then
-        add_deps("libthai")
         add_deps("libiconv")
+        add_deps("libthai")
         add_deps("xorgproto")
         add_extsources("apt::libpango-1.0-0", "pacman::pango")
     end
@@ -48,7 +48,7 @@ package("pango")
         -- fix unexpected -Werror=array-bounds errors, see https://gitlab.gnome.org/GNOME/pango/-/issues/740
         io.replace("meson.build", "'-Werror=array-bounds',", "", {plain = true})
 
-        local envs = meson.buildenvs(package, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "pcre2", "libintl", "libiconv"}})
+        local envs = meson.buildenvs(package, {packagedeps = {"fontconfig", "freetype", "harfbuzz", "fribidi", "cairo", "glib", "pcre2", "libthai", "libdatrie", "libintl", "libiconv"}})
         -- workaround for https://github.com/xmake-io/xmake/issues/4412
         envs.LDFLAGS = string.gsub(envs.LDFLAGS, "%-libpath:", "/libpath:")
         meson.install(package, configs, {envs = envs})
