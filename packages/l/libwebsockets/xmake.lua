@@ -12,7 +12,7 @@ package("libwebsockets")
 
     add_configs("ssl", {description = "Enable ssl (default: openssl).", default = false, type = "boolean"})
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
     end
 
