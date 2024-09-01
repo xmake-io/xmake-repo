@@ -11,19 +11,38 @@ package("libwebsockets")
     add_deps("cmake")
 
     add_configs("ssl", {description = "Enable ssl (default: openssl).", default = false, type = "boolean"})
+    add_configs("cap", {description = "Build with libcap", default = false, type = "boolean"})
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
+    end
+
+    if on_check then
+        on_check("windows", function (package)
+            import("core.base.semver")
+
+            local msvc = package:toolchain("msvc")
+            if msvc then
+                local vs_sdkver = msvc:config("vs_sdkver")
+                assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(libwebsockets): need vs_sdkver > 10.0.19041.0")
+            end
+        end)
     end
 
     on_load(function (package)
         if package:config("ssl") then
             package:add("deps", "openssl")
         end
+        if package:config("cap") then
+            package:add("deps", "libcap")
+        end
     end)
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "/WX", "", {plain = true})
+        if not package:is_plat("linux") or not package:config("cap") then
+            io.replace("CMakeLists.txt", [[CHECK_LIBRARY_EXISTS(cap cap_set_flag "" LWS_HAVE_LIBCAP)]], "", {plain = true})
+        end
 
         local configs = {"-DDISABLE_WERROR=ON", "-DLWS_WITH_MINIMAL_EXAMPLES=OFF", "-DLWS_WITHOUT_TESTAPPS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
