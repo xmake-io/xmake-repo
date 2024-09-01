@@ -4,6 +4,7 @@ package("fpng")
 
     add_urls("https://github.com/richgel999/fpng/archive/refs/tags/$(version).tar.gz",
 	     "https://github.com/richgel999/fpng.git")
+    add_versions("v1.0.6", "0f4b60f0b638d47addfbd150bb19bfe2f3343c4ed2d742c02c085456de0ee1dd")
     add_versions("v1.0.1", "ef4e7ee23176908fdad4936f05f3ad097abaf61485171e108fb1e7ff230bd523")
 
     add_configs("sse4", { description = "Enable SSE 4.1 support.", default = false, type = "boolean"})
