@@ -30,5 +30,15 @@ package("imguitextselect")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("TextSelect", {includes = "textselect.hpp", configs = {languages = "c++20"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <cstddef>
+            #include <string_view>
+            #include <textselect.hpp>
+            void test() {
+                auto getLineAtIdx = [](std::size_t) { return std::string_view{}; };
+                auto getNumLines = []() { return (std::size_t)0; };
+                TextSelect textSelect{ getLineAtIdx, getNumLines };
+                textSelect.update();
+            }
+        ]]}, {configs = {languages = "c++20"}}))
     end)
