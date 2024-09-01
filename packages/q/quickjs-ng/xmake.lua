@@ -8,6 +8,8 @@ package("quickjs-ng")
 
     add_versions("v0.5.0", "41212a6fb84bfe07d61772c02513734b7a06465843ba8f76f1ce1e5df866f489")
 
+    add_configs("libc", {description = "Build standard library modules as part of the library", default = false, type = "boolean"})
+
     if is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
     end
@@ -24,11 +26,14 @@ package("quickjs-ng")
         end)
     end
 
-    on_install("!iphoneos and windows|!x86", function (package)
+    on_install("!iphoneos and (!windows or windows|!x86)", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCONFIG_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
+        table.insert(configs, "-DCONFIG_MSAN=" .. (package:config("msan") and "ON" or "OFF"))
+        table.insert(configs, "-DCONFIG_UBSAN=" .. (package:config("ubsan") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_QJS_LIBC=" .. (package:config("libc") and "ON" or "OFF"))
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end

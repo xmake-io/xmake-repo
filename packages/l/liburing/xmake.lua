@@ -2,6 +2,7 @@ package("liburing")
 
     set_homepage("https://github.com/axboe/liburing")
     set_description("liburing provides helpers to setup and teardown io_uring instances")
+    set_license("MIT")
 
     add_urls("https://github.com/axboe/liburing/archive/refs/tags/liburing-$(version).tar.gz",
              "https://github.com/axboe/liburing.git")

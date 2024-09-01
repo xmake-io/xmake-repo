@@ -1,4 +1,4 @@
-package("editline")
+package("libedit")
     set_homepage("http://thrysoee.dk/editline")
     set_description("Autotool- and libtoolized port of the NetBSD Editline library (libedit).")
     set_license("BSD-3-Clause")
@@ -7,7 +7,11 @@ package("editline")
 
     add_versions("3.1", "5f0573349d77c4a48967191cdd6634dd7aa5f6398c6a57fe037cc02696d6099f")
 
-    add_configs("terminal_db", {description = "Select terminal library", default = "termcap", type = "string", values = {"termcap", "ncurses", "tinfo"}})
+    add_configs("terminal_db", {description = "Select terminal library", default = "ncurses", type = "string", values = {"termcap", "ncurses", "tinfo"}})
+
+    if is_plat("linux") then
+        add_extsources("apt::libedit-dev")
+    end
 
     add_includedirs("include", "include/editline")
 
@@ -29,7 +33,16 @@ package("editline")
         local configs = {"--disable-examples"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
-        import("package.tools.autoconf").install(package, configs, {packagedeps = package:config("terminal_db")})
+
+        local terminal_db = package:config("terminal_db")
+        if terminal_db == "ncurses" then
+            local widec = package:dep("ncurses"):config("widec")
+            if widec then
+                -- hack
+                io.replace("configure", "-lncurses", "-lncursesw", {plain = true})
+            end
+        end
+        import("package.tools.autoconf").install(package, configs, {packagedeps = terminal_db})
     end)
 
     on_test(function (package)
