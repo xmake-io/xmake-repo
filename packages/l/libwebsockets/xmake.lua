@@ -25,7 +25,7 @@ package("libwebsockets")
     on_install(function (package)
         io.replace("CMakeLists.txt", "/WX", "", {plain = true})
 
-        local configs = {"-DDISABLE_WERROR=ON"}
+        local configs = {"-DDISABLE_WERROR=ON", "-DLWS_WITH_MINIMAL_EXAMPLES=OFF", "-DLWS_WITHOUT_TESTAPPS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLWS_WITH_SSL=" .. (package:config("ssl") and "ON" or "OFF"))
