@@ -11,6 +11,8 @@ package("at-spi2-core")
 
     add_includedirs("include", "include/at-spi-2.0", "include/atk-1.0", "include/at-spi2-atk/2.0")
 
+    add_links("atk-bridge-2.0", "atspi", "atk-1.0")
+
     add_deps("meson", "ninja", "glib", "pkg-config", "dbus", "libx11", "libxtst", "libxi")
     on_install("linux", function (package)
         local configs = {}
