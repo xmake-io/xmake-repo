@@ -13,7 +13,7 @@ package("at-spi2-core")
 
     add_links("atk-bridge-2.0", "atspi", "atk-1.0")
 
-    add_deps("meson", "ninja", "glib", "pkg-config", "dbus", "libx11", "libxtst", "libxi")
+    add_deps("meson", "ninja", "glib", "pkg-config", "dbus", "libx11", "libxtst", "libxi", "libxml2")
     on_install("linux", function (package)
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
