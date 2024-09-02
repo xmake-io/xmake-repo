@@ -13,6 +13,7 @@ package("glob")
     on_load(function (package)
         if package:config("ghc_filesystem") then
             package:add("deps", "ghc_filesystem")
+            package:add("defines", "GLOB_USE_GHC_FILESYSTEM")
         end
         if package:config("header_only") then
             package:set("kind", "library", {headeronly = true})
@@ -20,22 +21,30 @@ package("glob")
     end)
 
     on_install(function (package)
-        if package:config("ghc_filesystem") then
-            package:add("defines", "GLOB_USE_GHC_FILESYSTEM")
-        end
         if package:config("header_only") then
             os.cp("single_include/glob", package:installdir("include"))
         else
+            local configs = {}
+            if package:config("ghc_filesystem") then
+                package:add("defines", "GLOB_USE_GHC_FILESYSTEM")
+                configs.ghc_filesystem = true
+            end
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
+                if has_config("ghc_filesystem") then
+                    add_requires("ghc_filesystem")
+                end
                 target("glob")
                     set_kind("$(kind)")
                     set_languages("cxx17")
+                    if has_config("ghc_filesystem") then
+                        add_packages("ghc_filesystem")
+                    end
                     add_headerfiles("include/(glob/*.h)")
                     add_files("source/*.cpp")
                     add_includedirs("include", {public = true})
             ]])
-            import("package.tools.xmake").install(package)
+            import("package.tools.xmake").install(package, configs)
         end
     end)
 
