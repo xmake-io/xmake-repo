@@ -31,6 +31,7 @@ package("glob")
             end
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
+                option("ghc_filesystem", {default = false, showmenu = true, description = "Use ghc_filesystem"})
                 if has_config("ghc_filesystem") then
                     add_requires("ghc_filesystem")
                 end
