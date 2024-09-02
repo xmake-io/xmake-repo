@@ -15,7 +15,7 @@ package("at-spi2-core")
     on_install("linux", function (package)
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs)
+        import("package.tools.meson").install(package, configs, {packagedeps = {"glib", "libiconv", "libx11", "libxtst", "libxi", "dbus"}})
     end)
 
     on_test(function (package)
