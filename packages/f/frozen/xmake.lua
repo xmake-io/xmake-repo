@@ -8,6 +8,7 @@ package("frozen")
     set_urls("https://github.com/serge-sans-paille/frozen/archive/refs/tags/$(version).tar.gz",
              "https://github.com/serge-sans-paille/frozen.git")
 
+    add_versions("1.2.0", "ed8339c017d7c5fe019ac2c642477f435278f0dc643c1d69d3f3b1e95915e823")
     add_versions("1.1.1", "f7c7075750e8fceeac081e9ef01944f221b36d9725beac8681cbd2838d26be45")
 
     on_install(function (package)
