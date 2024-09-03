@@ -26,7 +26,6 @@ package("glob")
         else
             local configs = {}
             if package:config("ghc_filesystem") then
-                package:add("defines", "GLOB_USE_GHC_FILESYSTEM")
                 configs.ghc_filesystem = true
             end
             io.writefile("xmake.lua", [[
@@ -40,10 +39,14 @@ package("glob")
                     set_languages("cxx17")
                     if has_config("ghc_filesystem") then
                         add_packages("ghc_filesystem")
+                        add_defines("GLOB_USE_GHC_FILESYSTEM")
                     end
                     add_headerfiles("include/(glob/*.h)")
                     add_files("source/*.cpp")
                     add_includedirs("include", {public = true})
+                    if is_plat("windows") and is_kind("shared") then
+                        add_rules("utils.symbols.export_all")
+                    end
             ]])
             import("package.tools.xmake").install(package, configs)
         end
