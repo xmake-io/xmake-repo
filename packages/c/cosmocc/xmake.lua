@@ -34,8 +34,6 @@ package("cosmocc")
     add_versions("3.7.1", "13b65b0e659b493bd82f3d0a319d0265d66f849839e484aa2a54191024711e85")
     add_versions("3.8.0", "813c6b2f95062d2e0a845307a79505424cb98cb038e8013334f8a22e3b92a474")
 
-
-
     on_load("@windows|x64", function (package)
         package:add("deps", "msys2")
     end)
@@ -46,9 +44,15 @@ package("cosmocc")
             assert(find_tool("sh"), "cosmocc need sh/bash, please install it first!")
         end
         os.cp("*", package:installdir(), {symlink = true})
+        -- fix symlinks for windows
+        if is_host("windows") then
+            os.cp("bin/cosmocc", path.join(package:installdir("bin"), "cosmoc++"))
+        end
     end)
 
     on_test(function (package)
         local cosmocc = path.join(package:installdir("bin"), "cosmocc")
+        local cosmocxx = path.join(package:installdir("bin"), "cosmoc++")
         os.vrunv(cosmocc, {"--version"}, {shell = true})
+        os.vrunv(cosmocxx, {"--version"}, {shell = true})
     end)
