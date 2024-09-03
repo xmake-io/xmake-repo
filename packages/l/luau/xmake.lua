@@ -3,9 +3,10 @@ package("luau")
     set_description("A fast, small, safe, gradually typed embeddable scripting language derived from Lua.")
     set_license("MIT")
 
-    add_urls("https://github.com/Roblox/luau/archive/$(version).tar.gz",
+    add_urls("https://github.com/Roblox/luau/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Roblox/luau.git")
     
+    add_versions("0.640", "63ada3e4c8c17e5aff8964b16951bfd1b567329dd81c11ae1144b6e95f354762")
     add_versions("0.638", "87ea29188f0d788e3b8649a063cda6b1e1804a648f425f4d0e65ec8449f2d171")
     add_versions("0.624", "6d5ce40a7dc0e17da51cc143d2ee1ab32727583c315938f5a69d13ef93ae574d")
     add_versions("0.623", "5a72f9e5b996c5ec44ee2c7bd9448d2b2e5061bdf7d057de7490f92fb3003f40")
