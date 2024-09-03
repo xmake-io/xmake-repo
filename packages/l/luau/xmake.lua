@@ -1,10 +1,10 @@
 package("luau")
-    set_homepage("https://luau-lang.org/")
+    set_homepage("https://www.luau.org/")
     set_description("A fast, small, safe, gradually typed embeddable scripting language derived from Lua.")
     set_license("MIT")
 
-    add_urls("https://github.com/Roblox/luau/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/Roblox/luau.git")
+    add_urls("https://github.com/luau-lang/luau/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/luau-lang/luau.git")
     
     add_versions("0.640", "63ada3e4c8c17e5aff8964b16951bfd1b567329dd81c11ae1144b6e95f354762")
     add_versions("0.638", "87ea29188f0d788e3b8649a063cda6b1e1804a648f425f4d0e65ec8449f2d171")
