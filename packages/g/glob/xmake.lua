@@ -33,13 +33,13 @@ package("glob")
                 option("ghc_filesystem", {default = false, showmenu = true, description = "Use ghc_filesystem"})
                 if has_config("ghc_filesystem") then
                     add_requires("ghc_filesystem")
+                    add_defines("GLOB_USE_GHC_FILESYSTEM")
                 end
                 target("glob")
                     set_kind("$(kind)")
                     set_languages("cxx17")
                     if has_config("ghc_filesystem") then
                         add_packages("ghc_filesystem")
-                        add_defines("GLOB_USE_GHC_FILESYSTEM")
                     end
                     add_headerfiles("include/(glob/*.h)")
                     add_files("source/*.cpp")
