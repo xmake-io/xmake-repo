@@ -26,6 +26,7 @@ package("glob")
         else
             local configs = {}
             if package:config("ghc_filesystem") then
+                package:add("defines", "GLOB_USE_GHC_FILESYSTEM")
                 configs.ghc_filesystem = true
             end
             io.writefile("xmake.lua", [[
