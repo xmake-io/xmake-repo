@@ -34,6 +34,8 @@ package("cosmocc")
     add_versions("3.7.1", "13b65b0e659b493bd82f3d0a319d0265d66f849839e484aa2a54191024711e85")
     add_versions("3.8.0", "813c6b2f95062d2e0a845307a79505424cb98cb038e8013334f8a22e3b92a474")
 
+    set_policy("package.precompiled", false)
+
     on_load("@windows|x64", function (package)
         package:add("deps", "msys2")
     end)
