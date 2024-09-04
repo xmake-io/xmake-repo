@@ -72,7 +72,9 @@ package("poco")
         else
             package:add("deps", "pcre")
         end
-
+        if package:config("net") and package:is_plat("windows") then
+            package:add("syslinks", "ws2_32")
+        end
         if package:config("netssl") or package:config("crypto") or package:config("jwt") then
             package:add("deps", "openssl")
         end
