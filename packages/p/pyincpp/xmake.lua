@@ -2,6 +2,7 @@ package("pyincpp")
     set_homepage("https://github.com/chen-qingyu/pyincpp")
     set_description("A C++ type library that is as easy to use as Python built-in types.")
     set_kind("library", {headeronly = true})
+    set_license("MIT")
 
     add_urls("https://github.com/chen-qingyu/pyincpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/chen-qingyu/pyincpp.git")
