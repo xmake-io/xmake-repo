@@ -29,7 +29,7 @@ package("atk")
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dintrospection=" .. (package:config("introspection") and "true" or "false"))
-        import("package.tools.meson").install(package, configs, {packagedeps = "libintl"})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv"}})
     end)
 
     on_test(function (package)
