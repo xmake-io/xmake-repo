@@ -23,7 +23,7 @@ package("atk")
         add_deps("pkgconf")
     end
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows", "macosx", "linux", "cross", function (package)
         local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dintrospection=" .. (package:config("introspection") and "true" or "false"))
