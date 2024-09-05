@@ -67,19 +67,26 @@ package("catch2")
             link = link.."d"
         end
         component:add("links", link)
+        if package:is_plat("windows") and package:version():le("3.0") then
+            if package:has_tool("cxx", "cl") then
+                component:add("ldflags", "-subsystem:console")
+            elseif package:has_tool("cxx", "clang", "clangxx") then
+                component:add("ldflags", "-Wl,/subsystem:console")
+            end
+        end
     end)
 
     on_install(function (package)
-        if package:is_plat("windows") then
-            local main_component = package:component("main")
-            if package:has_tool("cxx", "cl") then
-                main_component:add("ldflags", "-subsystem:console")
-            elseif package:has_tool("cxx", "clang", "clangxx") then
-                main_component:add("ldflags", "-Wl,/subsystem:console")
-            end
-        end
-
         if package:version():ge("3.0") then
+            if package:is_plat("windows") then
+                local main_component = package:component("main")
+                if package:has_tool("cxx", "cl") then
+                    main_component:add("ldflags", "-subsystem:console")
+                elseif package:has_tool("cxx", "clang", "clangxx") then
+                    main_component:add("ldflags", "-Wl,/subsystem:console")
+                end
+            end
+
             local configs = {"-DCATCH_INSTALL_DOCS=OFF", "-DCATCH_BUILD_TESTING=OFF", "-DCATCH_BUILD_EXAMPLES=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
