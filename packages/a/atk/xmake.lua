@@ -3,7 +3,9 @@ package("atk")
     set_description("ATK - The Accessibility Toolkit")
     set_license("LGPL-2.0")
 
-    add_urls("https://gitlab.gnome.org/Archive/atk/-/archive/$(version)/atk-$(version).tar.bz2")
+    add_urls("https://gitlab.gnome.org/Archive/atk/-/archive/$(version)/atk-$(version).tar.bz2",
+             "https://gitlab.gnome.org/Archive/atk.git")
+
     add_versions("2.38.0", "469313d28bd22bcbf7b7ea300dddb9b6c13854455d297f4d51a944e378b0a9d7")
 
     add_configs("introspection", {description = "Whether to build introspection files", default = false, type = "boolean"})
