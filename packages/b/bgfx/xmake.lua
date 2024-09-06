@@ -47,7 +47,7 @@ package("bgfx")
         local bimgdir = package:resourcefile("bimg")
         local genie = is_host("windows") and "genie.exe" or "genie"
         local args = {}
-        if is_plat("windows|native", "macosx", "linux") then
+        if package:is_plat("windows", "macosx", "linux") then
             args = {"--with-tools"}
         end
         if package:config("shared") then
