@@ -3,8 +3,15 @@
 -- Usage:
 --
 -- add_rules("@bgfx/shaders")
+--
+-- -- generate binary file:
 -- add_files("shader.vert", {type = "vertex", output_dir = "shaders", output_name = "shader.vert.bin", profiles = {glsl = "330"}})
--- add_files("vs_shader.sc", {type = "vertex", output_dir = "shaders", output_name = "shader.vert.h", header = true, profiles = {glsl = "330"}})
+-- -- generate header file:
+-- add_files("vs_shader.sc", {type = "vertex", output_dir = "shaders", output_name = "vs_shader.h", profiles = {glsl = "330"}})
+-- -- generate header file exporting variable "vertex_src":
+-- add_files("vs_shader.sc", {type = "vertex", output_dir = "shaders", output_name = "vs_shader.h", array_name = "vertex_src", profiles = {glsl = "330"}})
+-- -- force to generate header file with default variable name:
+-- add_files("vs_shader.sc", {type = "vertex", output_dir = "shaders", output_name = "vs_shader.inc", array_name = true, profiles = {glsl = "330"}})
 
 rule("shaders")
     set_extensions(".sc", ".vert", ".frag", ".comp")
@@ -27,7 +34,7 @@ rule("shaders")
         else
             local filename = path.filename(shaderfile)
             output_filename = filename:match("^(.*)%.sc$") or filename
-            if fileconfig and fileconfig.header then
+            if fileconfig and fileconfig.array_name then
                 output_filename = output_filename .. ".h"
             else
                 output_filename = output_filename .. ".bin"
@@ -102,10 +109,10 @@ rule("shaders")
             "--platform", bgfx_platforms[target:plat()],
         }
 
-        if fileconfig and fileconfig.header then
+        if fileconfig and fileconfig.array_name then
             table.insert(args, "--bin2c")
-            if fileconfig.header ~= true then
-                table.insert(args, fileconfig.header)
+            if fileconfig.array_name ~= true then
+                table.insert(args, fileconfig.array_name)
             end
         end
 
