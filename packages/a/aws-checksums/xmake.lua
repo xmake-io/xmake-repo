@@ -14,7 +14,21 @@ package("aws-checksums")
 
     add_deps("cmake", "aws-c-common")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "cross", function (package)
+    if on_check then
+        on_check(function (package)
+            if package:version():eq("0.1.19") then
+                if package:is_plat("windows") then
+                    if package:has_tool("cxx", "clang_cl") then
+                        raise("package(aws-checksums 0.1.19) unsupported clang-cl toolchain")
+                    end
+                elseif package:has_tool("cxx", "clang") then
+                    raise("package(aws-checksums 0.1.19) unsupported clang toolchain")
+                end
+            end
+        end)
+    end
+
+    on_install("!mingw or mingw|!i386", function (package)
         local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
         if package:is_plat("windows") then
             cmakedir = cmakedir:gsub("\\", "/")
