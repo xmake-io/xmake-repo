@@ -4,9 +4,10 @@
 --
 -- add_rules("@bgfx/shaders")
 -- add_files("shader.vert", {type = "vertex", output_dir = "shaders", output_name = "shader.vert.bin", profiles = {glsl = "330"}})
+-- add_files("vs_shader.sc", {type = "vertex", output_dir = "shaders", output_name = "shader.vert.h", header = true, profiles = {glsl = "330"}})
 
 rule("shaders")
-    set_extensions(".vert", ".frag", ".comp")
+    set_extensions(".sc", ".vert", ".frag", ".comp")
     on_buildcmd_file(function (target, batchcmds, shaderfile, opt)
         import("lib.detect.find_program")
         import("core.base.option")
@@ -24,7 +25,13 @@ rule("shaders")
         if fileconfig and fileconfig.output_name then
             output_filename = fileconfig.output_name
         else
-            output_filename = path.filename(shaderfile) .. ".bin"
+            local filename = path.filename(shaderfile)
+            output_filename = filename:match("^(.*)%.sc$") or filename
+            if fileconfig and fileconfig.header then
+                output_filename = output_filename .. ".h"
+            else
+                output_filename = output_filename .. ".bin"
+            end
         end
 
         local output_dir
@@ -38,26 +45,7 @@ rule("shaders")
         if fileconfig and fileconfig.vardef then
             vardef_filename = fileconfig.vardef
         else
-            vardef_filename = path.join(
-                path.directory(shaderfile),
-                path.basename(shaderfile) .. ".varying.def.sc")
-        end
-
-        local shader_type
-        if fileconfig and fileconfig.type then
-            if table.contains(bgfx_types, fileconfig.type) then
-                shader_type = fileconfig.type
-            else
-                raise("unsupported shader type " .. fileconfig.type)
-            end
-        elseif shaderfile:match("%.vert$") then
-            shader_type = "vertex"
-        elseif shaderfile:match("%.frag$") then
-            shader_type = "fragment"
-        elseif shaderfile:match("%.comp$") then
-            shader_type = "compute"
-        else
-            raise("cannot determine shader type from file name " .. path.filename(shaderfile))
+            vardef_filename = path.join(path.directory(shaderfile), "varying.def.sc")
         end
 
         -- determine platform-specific shaderc arguments
@@ -73,8 +61,8 @@ rule("shaders")
         }
         local bgfx_default_profiles = {
             windows = {
-                vertex = {dx9 = "s_3_0", dx11 = "s_5_0", glsl = "120"},
-                fragment = {dx9 = "s_3_0", dx11 = "s_5_0", glsl = "120"},
+                vertex = {dx11 = "s_5_0", glsl = "120"},
+                fragment = {dx11 = "s_5_0", glsl = "120"},
                 compute = {dx11 = "s_5_0", glsl = "430"},
             },
             macosx = {
@@ -89,6 +77,23 @@ rule("shaders")
             }
         }
 
+        local shader_type
+        if fileconfig and fileconfig.type then
+            if table.contains(bgfx_types, fileconfig.type) then
+                shader_type = fileconfig.type
+            else
+                raise("unsupported shader type " .. fileconfig.type)
+            end
+        elseif shaderfile:match("^vs_.*%.sc$") or shaderfile:match("%.vert$") then
+            shader_type = "vertex"
+        elseif shaderfile:match("^fs_.*%.sc$") or shaderfile:match("%.frag$") then
+            shader_type = "fragment"
+        elseif shaderfile:match("^cs_.*%.sc$") or shaderfile:match("%.comp$") then
+            shader_type = "compute"
+        else
+            raise("cannot determine shader type from file name " .. path.filename(shaderfile))
+        end
+
         -- build command args
         local args = {
             "-f", shaderfile,
@@ -96,6 +101,15 @@ rule("shaders")
             "--varyingdef", vardef_filename,
             "--platform", bgfx_platforms[target:plat()],
         }
+
+        if fileconfig and fileconfig.header then
+            table.insert(args, "--bin2c")
+            if fileconfig.header ~= true then
+                table.insert(args, fileconfig.header)
+            end
+        end
+
+        -- print(target:pkg("bgfx"):installdir())
         for _, includedir in ipairs(target:get("includedirs")) do
             table.insert(args, "-i")
             table.insert(args, includedir)
@@ -113,7 +127,7 @@ rule("shaders")
             local outputdir = path.join(target:targetdir(), output_dir, folder)
             batchcmds:mkdir(outputdir)
             local binary = path.join(outputdir, output_filename)
-            
+
             -- compiling
             local real_args = {}
             table.join2(real_args, args)
