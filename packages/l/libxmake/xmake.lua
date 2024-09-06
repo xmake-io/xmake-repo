@@ -58,7 +58,7 @@ package("libxmake")
 typedef __int8 int8_t;]], '#if defined(_MSC_VER) && (_MSC_VER < 1600)\ntypedef __int8 int8_t;', {plain = true})
         import("package.tools.xmake").install(package, configs)
         os.cp("../xmake", package:installdir("share"))
-        if package:is_plat("linux", "macosx") and package:has_cfuncs("readline", {links = "readline", includes = "readline/readline.h"}) then
+        if package:is_plat("linux", "macosx") and package:has_cfuncs("readline", {links = "readline", includes = {"stdio.h", "readline/readline.h"}}) then
             package:add("syslinks", "readline")
         end
     end)
