@@ -27,7 +27,7 @@ package("gtk+3")
     on_install("linux", "windows", "macosx", function (package)
         local configs = {"-Dintrospection=false", "-Ddemos=false", "-Dexamples=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libthai", "libdatrie", "gdk-pixbuf"}})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libx11", "libxi", "at-spi2-core", "libthai", "libdatrie", "gdk-pixbuf"}})
     end)
 
     on_test(function (package)
