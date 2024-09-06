@@ -20,10 +20,19 @@ package("daw_header_libraries")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
+        local code = [[
             #include <daw/daw_carray.h>
             void test() {
                 daw::carray<int, 6> t = {1, 2, 3, 4, 5, 6};
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]
+        if package:gitref() or package:version():ge("2.109.0") then
+            code = [[
+                #include <daw/daw_bounded_array.h>
+                void test() {
+                    daw::array<int, 6> t = { 1, 2, 3, 4, 5, 6 };
+            }
+            ]]
+        end
+        assert(package:check_cxxsnippets({test = code}, {configs = {languages = "c++17"}}))
     end)
