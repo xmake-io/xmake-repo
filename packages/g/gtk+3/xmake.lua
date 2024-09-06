@@ -19,15 +19,15 @@ package("gtk+3")
         add_syslinks("pthread", "rt")
     end
 
---  "pango", "libepoxy", "graphene", "libxkbcommon" , {packagedeps = {"pango", "libthai", "libdatrie", "dbus"}}
     add_deps("meson", "ninja")
-    add_deps("gdk-pixbuf", "pango", "libepoxy", "graphene", "libxkbcommon")
+    add_deps("glib", "gdk-pixbuf", "pango", "libepoxy", "graphene", "libxkbcommon")
     add_deps("libx11", "libxfixes", "libxcursor", "libxi", "libxcomposite", "libxrandr", "libxdamage", "libxinerama", "at-spi2-core")
     add_links("gtk-3", "gdk-3", "gailutil-3", "X11", "X11-cxb", "pangocairo-1.0", "pango", "cairo")
+    
     on_install("linux", "windows", "macosx", function (package)
         local configs = {"-Dintrospection=false", "-Ddemos=false", "-Dexamples=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libthai", "libdatrie", "at-spi2-core"}})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libthai", "libdatrie"}})
     end)
 
     on_test(function (package)
