@@ -6,6 +6,7 @@ package("rmlui")
     add_urls("https://github.com/mikke89/RmlUi/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mikke89/RmlUi.git")
 
+    add_versions("6.0", "aba3d4b8691076750eee6bf52d722db7880dfe74c18aebd8c6d676e43175fb78")
     add_versions("5.1", "0d28177118f0777e42864b2b7ddfc2937e81eb0dc4c52fc034c71a0c93516626")
     add_versions("5.0", "1f6eac0e140c35275df32088579fc3a0087fa523082c21c28d5066bd6d18882a")
 
@@ -16,7 +17,7 @@ package("rmlui")
     add_configs("lottie",   {description = "Build with Lottie plugin enabled.", default = false, type = "boolean"})
 
     if is_plat("windows") then
-        add_syslinks("shlwapi", "imm32")
+        add_syslinks("shlwapi", "imm32", "user32")
     elseif is_plat("macosx") then
         add_frameworks("Cocoa")
     end
