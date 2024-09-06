@@ -1,5 +1,4 @@
 package("microsoft-proxy")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/microsoft/proxy")
     set_description("Proxy: Easy Polymorphism in C++")
@@ -8,6 +7,7 @@ package("microsoft-proxy")
     add_urls("https://github.com/microsoft/proxy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/proxy.git")
 
+    add_versions("3.0.0", "7e073e217e5572bc4c17ed5893273c80ea34c87e1406c853beeb9ca9bdda9733")
     add_versions("2.4.0", "7eed973655938d681a90dcc0c200e6cc1330ea8611a9c1a9e1b30439514443cb")
     add_versions("2.3.0", "ff6f17c5360895776d29ce2b1235de7b42912468b52729810506431e352a78d0")
     add_versions("2.2.1", "096f0b2d793dffc54d41def2bca0ced594b6b8efe35ac5ae27db35802e742b96")
