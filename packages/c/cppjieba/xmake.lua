@@ -9,7 +9,6 @@ package("cppjieba")
 
     add_versions("v5.2.0", "00c420e9e1b212827a38b6e252468895f744c0e7be8c4feaab4e0a93b8d3b1ca")
 
-    add_deps("cmake")
     add_deps("limonp")
 
     on_install(function (package)

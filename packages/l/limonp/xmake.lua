@@ -12,9 +12,10 @@ package("limonp")
     add_deps("cmake")
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY(test)", "", {plain = true})
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        io.replace("CMakeLists.txt", "ADD_SUBDIRECTORY(test)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
