@@ -30,7 +30,7 @@ package("aws-checksums")
 
     on_install("!mingw or mingw|!i386", function (package)
         local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
-        if package:is_plat("windows") then
+        if is_host("windows") then
             cmakedir = cmakedir:gsub("\\", "/")
         end
 
