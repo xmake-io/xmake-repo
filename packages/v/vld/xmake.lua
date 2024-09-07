@@ -6,7 +6,7 @@ package("vld")
     add_urls("https://github.com/oneiric/vld/archive/refs/tags/v$(version).zip")
     add_versions("2.7.0", "1bb5695a424b234d29d16acdc6bdb4be79d58501674b6d3765a19f237c5ad0f2")
 
-    add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly=true})
+    add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
 
     on_install("windows", function (package)
         io.replace("src/tests/basics/Allocs.cpp", "#error Unsupported compiler", '#define CRTDLLNAME   _T("ucrtbase.dll")', {plain=true})
