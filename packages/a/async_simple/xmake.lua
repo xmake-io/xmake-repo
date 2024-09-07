@@ -44,7 +44,6 @@ package("async_simple")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <async_simple/coro/Lazy.h>
             async_simple::coro::Lazy<void> func() {
                 co_return;
             }
