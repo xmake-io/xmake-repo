@@ -6,6 +6,7 @@ package("zziplib")
 
     add_urls("https://github.com/gdraheim/zziplib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/gdraheim/zziplib.git")
+    add_versions("v0.13.78", "feaeee7c34f18aa27bd3da643cc6a47d04d2c41753a59369d09102d79b9b0a31")
     add_versions("v0.13.77", "50e166e6a879c2bd723e60e482a91ec793a7362fa2d9c5fe556fb0e025810477")
     add_versions("v0.13.76", "08b0e300126329c928a41b6d68e397379fad02469e34a0855d361929968ea4c0")
     add_versions("v0.13.74", "319093aa98d39453f3ea2486a86d8a2fab2d5632f6633a2665318723a908eecf")

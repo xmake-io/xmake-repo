@@ -47,6 +47,7 @@ package("openblas")
         add_versions("0.3.24", "ceadc5065da97bd92404cac7254da66cc6eb192679cf1002098688978d4d5132")
         add_versions("0.3.26", "4e6e4f5cb14c209262e33e6816d70221a2fe49eb69eaf0a06f065598ac602c68")
         add_versions("0.3.27", "aa2d68b1564fe2b13bc292672608e9cdeeeb6dc34995512e65c3b10f4599e897")
+        add_versions("0.3.28", "f1003466ad074e9b0c8d421a204121100b0751c96fc6fcf3d1456bd12f8a00a1")
 
         add_configs("fortran", {description = "Compile with fortran enabled.", default = not is_plat("macosx"), type = "boolean"})
         add_configs("openmp",  {description = "Compile with OpenMP enabled.", default = not is_plat("macosx"), type = "boolean"})
@@ -153,10 +154,10 @@ package("openblas")
     on_test(function (package)
         assert(package:check_csnippets({test = [[
             void test() {
-                double A[6] = {1.0,2.0,1.0,-3.0,4.0,-1.0};
-                double B[6] = {1.0,2.0,1.0,-3.0,4.0,-1.0};
-                double C[9] = {.5,.5,.5,.5,.5,.5,.5,.5,.5};
-                cblas_dgemm(CblasColMajor,CblasNoTrans,CblasTrans,3,3,2,1,A,3,B,3,2,C,3);
+                double A[6] = {1.0, 2.0, 1.0, -3.0, 4.0, -1.0};
+                double B[6] = {1.0, 2.0, 1.0, -3.0, 4.0, -1.0};
+                double C[9] = {.5, .5, .5, .5, .5, .5, .5, .5, .5};
+                cblas_dgemm(CblasColMajor, CblasNoTrans, CblasTrans, 3, 3, 2, 1, A, 3, B, 3, 2, C, 3);
             }
         ]]}, {includes = "cblas.h"}))
     end)

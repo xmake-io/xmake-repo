@@ -6,6 +6,8 @@ package("aws-crt-cpp")
     add_urls("https://github.com/awslabs/aws-crt-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-crt-cpp.git")
 
+    add_versions("v0.28.2", "7f27df9d2028008e665bab4b2e094365eac696610610e52182c679a43dbeaf6f")
+    add_versions("v0.27.5", "cc69252ee132f5cc76b1fcf1ebec574e88f7080b05caa8125aab5684b26a37b9")
     add_versions("v0.27.4", "0554776a4cbbea016075f4a28698ff22818c5b948296171e1f76d0a787576f83")
     add_versions("v0.27.2", "e17c82d7cc3b5e6e4300bc7e4794306e292b5281d212ead536000a8b5f5f1be4")
     add_versions("v0.27.0", "e7601c8c5e6391013b6ad164d2dd7b970bf5dbb3693b9cc80c424bd6f42b79c8")

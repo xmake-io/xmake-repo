@@ -180,10 +180,7 @@ function generate_package(reponame, get_data)
                 add_files("src/*.c")
                 add_headerfiles("src/(*.h)")
         ]])
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
-        import("package.tools.xmake").install(package, configs)]=]
+        import("package.tools.xmake").install(package)]=]
             end,
         },
         ["CMakeLists.txt"] = {

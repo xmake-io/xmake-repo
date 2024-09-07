@@ -23,6 +23,7 @@ package("cairo")
         add_deps("pkgconf", "libintl")
     elseif is_plat("macosx") then
         add_deps("libiconv", {system = true})
+        add_deps("lzo")
     elseif is_plat("linux") then
         add_deps("libiconv")
     end
@@ -76,7 +77,7 @@ package("cairo")
         io.replace("meson.build", "subdir('fuzzing')", "", {plain = true})
         io.replace("meson.build", "subdir('docs')", "", {plain = true})
         io.replace("meson.build", "'CoreFoundation'", "'CoreFoundation', 'Foundation'", {plain = true})
-        local envs = meson.buildenvs(package, {packagedeps = {"libintl", "libiconv"}})
+        local envs = meson.buildenvs(package, {packagedeps = {"libintl", "libiconv", "lzo"}})
         if package:is_plat("windows") then
             envs.PATH = package:dep("pkgconf"):installdir("bin") .. path.envsep() .. envs.PATH
         end

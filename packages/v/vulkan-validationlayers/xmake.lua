@@ -69,6 +69,9 @@ package("vulkan-validationlayers")
         if package:version():ge("1.3.275") then
             package:add("deps", "vulkan-utility-libraries " .. sdkver)
         end
+
+        package:addenv("VK_ADD_LAYER_PATH", "lib")
+        package:mark_as_pathenv("VK_ADD_LAYER_PATH")
     end)
 
     on_install("windows", "linux", function (package)

@@ -1,5 +1,4 @@
 package("reflect-cpp")
-    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/getml/reflect-cpp")
     set_description("A C++20 library for fast serialization, deserialization and validation using reflection. Supports JSON, BSON, CBOR, flexbuffers, msgpack, TOML, XML, YAML / msgpack.org[C++20]")
     set_license("MIT")
@@ -7,6 +6,8 @@ package("reflect-cpp")
     add_urls("https://github.com/getml/reflect-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/getml/reflect-cpp.git")
 
+    add_versions("v0.14.1", "639aec9d33025703a58d32c231ab1ab474c0cc4fb0ff90eadcaffb49271c41cd")
+    add_versions("v0.14.0", "ea92a2460a71184b7d4fa4e9baad9910efad092df78b114459a7d6b0ee558d3c")
     add_versions("v0.13.0", "a7a31832fe8bbaa7f7299da46dfd4ccc8b99a13242e16a1d93f8669de1fca9c6")
     add_versions("v0.12.0", "13d448dd5eaee13ecb7ab5cb61cb263c7111ba75230503adc823a888f68e1eaa")
     add_versions("v0.11.1", "e45f112fb3f14507a4aa53b99ae2d4ab6a4e7b2d5f04dd06fec00bf7faa7bbdc")
@@ -72,18 +73,31 @@ package("reflect-cpp")
         end
 
         local version = package:version()
-        if version and version:ge("0.11.1") then
-            package:add("deps", "ctre")
-            package:add("defines", "REFLECTCPP_NO_BUNDLED_DEPENDENCIES")
-        else
+        if version then
+            if version:lt("0.13.0") then
+                package:set("kind", "library", {headeronly = true})
+            end
+
+            if version:ge("0.11.1") then
+                package:add("deps", "ctre", {configs = {cmake = true}})
+                if version:eq("0.11.1") then
+                    package:add("defines", "REFLECTCPP_NO_BUNDLED_DEPENDENCIES")
+                end
+            end
+        end
+
+        if package:gitref() or version:lt("0.11.1") or version:ge("0.13.0") then
             package:add("deps", "cmake")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local version = package:version()
-        if version and version:lt("0.11.1") then
-            import("package.tools.cmake").install(package, {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF"})
+        if package:gitref() or version:lt("0.11.1") or version:ge("0.13.0") then
+            local configs = {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
         else
             os.rm("include/thirdparty")
             os.cp("include", package:installdir())

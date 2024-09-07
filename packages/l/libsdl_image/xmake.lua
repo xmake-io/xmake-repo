@@ -32,14 +32,22 @@ package("libsdl_image")
     add_includedirs("include", "include/SDL2")
 
     on_load(function (package)
-        if package:config("shared") then
-            package:add("deps", "libsdl", { configs = { shared = true }})
-        else
-            package:add("deps", "libsdl")
-        end
+        package:add("deps", "libsdl", { configs = { shared = package:config("shared") }})
     end)
 
     on_install(function (package)
+        if package:is_plat("wasm") then
+            io.replace("CMakeLists.txt", "sdl_find_sdl2(${sdl2_target_name} ${SDL_REQUIRED_VERSION})", "", {plain = true})
+            io.replace("CMakeLists.txt", "target_link_libraries(SDL2_image PRIVATE $<BUILD_INTERFACE:${sdl2_target_name}>)", [[
+target_include_directories(SDL2_image PRIVATE ${SDL2_INCLUDE_DIR})
+target_link_libraries(SDL2_image PRIVATE $<BUILD_INTERFACE:${SDL2_LIBRARY}>)
+            ]], {plain = true})
+            io.replace("CMakeLists.txt", "target_link_libraries(SDL2_image PRIVATE ${sdl2_target_name})", [[
+target_include_directories(SDL2_image PRIVATE ${SDL2_INCLUDE_DIR})
+target_link_libraries(SDL2_image PRIVATE ${SDL2_LIBRARY})
+            ]], {plain = true})
+        end
+
         local configs = {"-DSDL2IMAGE_SAMPLES=OFF", "-DSDL2IMAGE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -54,11 +62,15 @@ package("libsdl_image")
                         break
                     end
                 end
+                local libfiles = {}
                 for _, libfile in ipairs(fetchinfo.libfiles) do
                     if libfile:match("SDL2%..+$") or libfile:match("SDL2-static%..+$") then
-                        table.insert(configs, "-DSDL2_LIBRARY=" .. table.concat(fetchinfo.libfiles, ";"))
+                        if not (package:config("shared") and libfile:endswith(".dll")) then
+                            table.insert(libfiles, libfile)
+                        end
                     end
                 end
+                table.insert(configs, "-DSDL2_LIBRARY=" .. table.concat(libfiles, ";"))
             end
         end
         import("package.tools.cmake").install(package, configs)

@@ -6,6 +6,7 @@ package("faker-cxx")
     add_urls("https://github.com/cieslarmichal/faker-cxx/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cieslarmichal/faker-cxx.git")
 
+    add_versions("v3.0.0", "63d6846376593e05da690136cabe8e7bf42ddcdd4edad3ae9b48696f86d80468")
     add_versions("v2.0.0", "8a7f5441f4453af868444675878a2d9a74918c1595caa65d537d3ea327e46a49")
 
     add_deps("cmake")
@@ -41,9 +42,15 @@ package("faker-cxx")
     end)
 
     on_test(function (package)
+        local includes = "faker-cxx/string.h"
+        local version = package:version()
+        if version and version:lt("3.0.0") then
+            includes = "faker-cxx/String.h"
+        end
+
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 const auto id = faker::string::uuid();
             }
-        ]]}, {configs = {languages = "c++20"}, includes = "faker-cxx/String.h"}))
+        ]]}, {configs = {languages = "c++20"}, includes = includes}))
     end)
