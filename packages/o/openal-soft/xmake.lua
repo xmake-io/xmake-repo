@@ -31,6 +31,8 @@ package("openal-soft")
         add_syslinks("ole32", "shell32", "user32", "winmm", "kernel32")
     elseif is_plat("linux", "cross") then
         add_syslinks("dl", "pthread")
+     elseif is_plat("bsd", "cross") then
+        add_syslinks("pthread")
     elseif is_plat("android") then
         add_syslinks("dl", "OpenSLES")
     elseif is_plat("macosx", "iphoneos") then
@@ -43,8 +45,8 @@ package("openal-soft")
         end
     end)
 
-    on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", "cross", function (package)
-        if is_plat("linux") and linuxos.name() == "fedora" then
+    on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", "cross", "bsd" , function (package)
+        if (package:is_plat("linux") and linuxos.name() == "fedora") or package:is_plat("bsd") then
             -- https://github.com/kcat/openal-soft/issues/864
             io.replace("CMakeLists.txt", "if(HAVE_GCC_PROTECTED_VISIBILITY)", "if(0)", {plain = true})
         end

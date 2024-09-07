@@ -6,6 +6,8 @@ package("aws-c-event-stream")
     add_urls("https://github.com/awslabs/aws-c-event-stream/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-event-stream.git")
 
+    add_versions("v0.4.2", "c98b8fa05c2ca10aacfce7327b92a84669c2da95ccb8e7d7b3e3285fcec8beee")
+    add_versions("v0.4.1", "f8915fba57c86148f8df4c303ca6f31de6c23375de554ba8d6f9aef2a980e93e")
     add_versions("v0.3.2", "3134b35a45e9f9d974c2b78ee44fd2ea0aebc04df80236b80692aa63bee2092e")
 
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})

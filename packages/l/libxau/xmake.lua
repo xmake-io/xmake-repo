@@ -5,16 +5,17 @@ package("libxau")
 
     set_urls("https://www.x.org/archive/individual/lib/libXau-$(version).tar.gz")
     add_versions("1.0.10", "51a54da42475d4572a0b59979ec107c27dacf6c687c2b7b04e5cf989a7c7e60c")
+    add_versions("1.0.11", "3a321aaceb803577a4776a5efe78836eb095a9e44bbc7a465d29463e1a14f189")
 
     if is_plat("linux") then
         add_extsources("apt::libxau-dev", "pacman::libxau")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "bsd") then
         add_deps("pkg-config", "util-macros", "xorgproto")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",

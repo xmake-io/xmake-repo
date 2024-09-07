@@ -11,7 +11,7 @@ package("libarchive")
     add_versions("3.7.2", "df404eb7222cf30b4f8f93828677890a2986b66ff8bf39dac32a804e96ddf104")
 
     add_deps("cmake")
-    add_deps("zlib", "bzip2", "lz4", "zstd")
+    add_deps("zlib", "bzip2", "lz4", "zstd", "lzma")
 
     if is_plat("windows") then
         add_syslinks("advapi32")

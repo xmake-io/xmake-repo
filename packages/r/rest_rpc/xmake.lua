@@ -2,6 +2,7 @@ package("rest_rpc")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/qicosmos/rest_rpc")
     set_description("c++11, high performance, cross platform, easy to use rpc framework.")
+    set_license("MIT")
 
     add_urls("https://github.com/qicosmos/rest_rpc.git")
     add_versions("2023.6.14", "8782f1d341e1dd18f9fe3a77b8335fd17a5ba585")

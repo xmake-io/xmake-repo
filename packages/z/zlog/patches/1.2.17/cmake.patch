@@ -1,0 +1,61 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 33e0fa1..6303c74 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -24,10 +24,7 @@ SET(zlog_so_ver ${CPACK_PACKAGE_VERSION_MAJOR})
+ 
+ message(STATUS "plateform : ${CMAKE_SYSTEM}")
+ 
+-add_definitions("-g -Wall -Wstrict-prototypes")
+-set(CMAKE_C_FLAGS "-std=c99 -pedantic -D_DEFAULT_SOURCE")
+-set(CMAKE_C_FLAGS_DEBUG "-ggdb3 -DDEBUG")
+-set(CMAKE_C_FLAGS_RELEASE "-O2")
++
+ 
+ if (WIN32)
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 ")
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 2471e3a..4c58f96 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -10,7 +10,6 @@ endif()
+ list(REMOVE_ITEM SRCS ./zlog-chk-conf.c)
+ 
+ add_library(zlog
+-    SHARED
+     ${SRCS}
+     )
+ target_link_libraries(zlog
+@@ -26,23 +25,6 @@ endif()
+ 
+ set_target_properties(zlog PROPERTIES VERSION ${zlog_ver} SOVERSION ${zlog_so_ver})
+ 
+-add_library(zlog_s
+-    STATIC
+-    ${SRCS}
+-    )
+-target_link_libraries(zlog_s
+-    ${CMAKE_THREAD_PREFER_PTHREAD}
+-    )
+-
+-if (WIN32)
+-    target_link_libraries(zlog_s
+-        ${UNIXEM_LIBRARY}
+-        Ws2_32
+-        )
+-endif()
+-
+-set_target_properties(zlog_s PROPERTIES OUTPUT_NAME zlog)
+-
+ #================================================================
+ # generate zlog-chk-conf
+ #================================================================
+@@ -53,7 +35,7 @@ target_link_libraries(zlog-chk-conf zlog)
+ # install
+ #================================================================
+ install(TARGETS
+-    zlog zlog_s zlog-chk-conf
++    zlog zlog-chk-conf
+     COMPONENT zlog
+     ARCHIVE DESTINATION lib
+     LIBRARY DESTINATION lib

@@ -6,6 +6,15 @@ package("aws-c-io")
     add_urls("https://github.com/awslabs/aws-c-io/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-io.git")
 
+    add_versions("v0.14.18", "44e9dee181ed7d867d1cc2944f4b4669259b569fc56bdd6dd4c7c30440fc4bf8")
+    add_versions("v0.14.16", "bf78ab5dbeeaec2f55cb035e18c49ce8ba4e2ea7519e8b94e18ccd8851e39f4d")
+    add_versions("v0.14.14", "c62400e83232e6d7c04bacebf02d552f6699d90735d9b8b6ee5fae879735c458")
+    add_versions("v0.14.13", "1c228b1ed327e3a8518b89702ac0d93265cf50788038091e187c697cace7fa5a")
+    add_versions("v0.14.9", "3a3b7236f70209ac12b5bafa7dd81b75cc68b691a0aa0686d6d3b7e4bbe5fbc9")
+    add_versions("v0.14.8", "d50e21fdbd5170a4071fe067ef4ce297b02cb058ad47e118305e25f6e07d9cf0")
+    add_versions("v0.14.7", "ecf1f660d7d43913aa8a416be6a2027101ce87c3b241344342d608335b4df7d4")
+    add_versions("v0.14.6", "bb3af305af748185b1c7b17afa343e54f2d494ccff397402f1b17041b0967865")
+    add_versions("v0.14.5", "2700bcde062f7de1c1cbfd236b9fdfc9b24b4aa6dc0fb09bb156e16e07ebd0b6")
     add_versions("v0.13.32", "2a6b18c544d014ca4f55cb96002dbbc1e52a2120541c809fa974cb0838ea72cc")
 
     add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})

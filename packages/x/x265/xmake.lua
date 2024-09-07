@@ -11,9 +11,12 @@ package("x265")
     add_versions("3.2.1", "b5ee7ea796a664d6e2763f9c0ae281fac5d25892fc2cb134698547103466a06a")
     add_versions("3.3", "ca25a38772fc6b49e5f1aa88733bc1dc92da7dc18f02a85cc3e99d76ba85b0a9")
     add_versions("3.4", "544d147bf146f8994a7bf8521ed878c93067ea1c7c6e93ab602389be3117eaaf")
-    
+
     add_configs("hdr10_plus", {description = "Enable dynamic HDR10 compilation", default = false, type = "boolean"})
     add_configs("svt_hevc", {description = "Enable SVT HEVC Encoder", default = false, type = "boolean"})
+    if is_plat("linux") then
+        add_configs("numa", {description = "Enable libnuma", default = false, type = "boolean"})
+    end
 
     add_deps("cmake")
     if is_plat("wasm") then
@@ -36,11 +39,20 @@ package("x265")
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "X86 AND NOT X64", "FALSE")
         end
+
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_HDR10_PLUS=" .. (package:config("hdr10_plus") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SVT_HEVC=" .. (package:config("svt_hevc") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+
+        if package:config("numa") then
+            table.insert(configs, "-DENABLE_LIBNUMA=ON")
+            package:add("syslinks", "numa")
+        else
+            table.insert(configs, "-DENABLE_LIBNUMA=OFF")
+        end
+
         if package:is_cross() and package:is_targetarch("arm.*") then
             table.insert(configs, "-DCROSS_COMPILE_ARM=ON")
             if not package:is_plat("android") then
@@ -51,8 +63,11 @@ package("x265")
         if package:version() then
             table.insert(configs, "-DX265_LATEST_TAG=" .. package:version():rawstr())
         end
-        table.insert(configs, "--trace")
+
         import("package.tools.cmake").install(package, configs)
+        if package:is_plat("windows") then -- fix x265.pc
+            io.replace(path.join(package:installdir("lib", "pkgconfig"), "x265.pc"), "-lx265", "-lx265-static", {plain = true})
+        end
     end)
 
     on_test(function (package)

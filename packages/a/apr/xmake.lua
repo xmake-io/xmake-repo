@@ -5,6 +5,7 @@ package("apr")
 
     add_urls("https://github.com/apache/apr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/apache/apr.git")
+    add_versions("1.7.4", "060b6e5ca8b3251545a93777c9ef744ceff02d4a59bb60a7dd9b3da9da33673e")
     add_versions("1.7.0", "a7e2c5e6d60f6c7b1611b31a2f914a3e58f44eded5b064f0bae43ff30b16a4e6")
 
     if is_plat("linux") then
@@ -15,7 +16,7 @@ package("apr")
         add_syslinks("wsock32", "ws2_32", "advapi32", "shell32", "rpcrt4")
     end
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx|x86_64", function (package)
         local configs = {}
         if package:is_plat("linux") then
             os.vrunv("sh", {"./buildconf"})
@@ -36,7 +37,7 @@ package("apr")
         package:add("includedirs", "include/apr-1")
     end)
 
-    on_install("windows", function (package)
+    on_install("windows|x86", "windows|x64", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DAPR_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))

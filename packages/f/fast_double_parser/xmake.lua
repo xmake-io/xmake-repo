@@ -9,6 +9,7 @@ package("fast_double_parser")
              "https://github.com/lemire/fast_double_parser.git")
     add_versions("v0.5.0", "afbd2d42facd037bf3859856a8fe4112e4d7ded942255f6c0e6c17689d41f645")
     add_versions("v0.7.0", "eb80a1d9c406bbe8cb22fffd3c007651f716abd03225009302d8aba8e9c4df77")
+    add_versions("v0.8.0", "9ad74e059cc7c3e53a3057ca97a74c88ae2a6a7d36ce470193557cbd05ee8f92")
 
     on_install("windows|x64", "macosx", "linux", "mingw", "android", function (package)
         os.cp("include", package:installdir())

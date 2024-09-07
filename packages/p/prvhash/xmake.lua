@@ -7,6 +7,7 @@ package("prvhash")
 
     add_urls("https://github.com/avaneev/prvhash/archive/refs/tags/$(version).tar.gz",
              "https://github.com/avaneev/prvhash.git")
+    add_versions("4.3.2", "e647b34e2f20134947bd3ba2b8841de251ea9da001865d9e44fdb05bd63ac741")
     add_versions("4.0", "b4d8ce80ee73e504faccd235d4071398c95b06421095eeb2502ef46a810f8375")
     
     on_install(function (package)

@@ -1,17 +1,17 @@
 import("lib.detect.find_path")
 import("lib.detect.find_library")
 
-function _find_package_on_windows(package, opt)
-    local rdir = (package:is_arch("x64") and "intel64" or "ia32")
+function _find_package(package, opt)
+    local rdir = (package:is_arch("x64", "x86_64") and "intel64" or "ia32")
     local paths = {
         "$(env TBB_ROOT)",
-        "$(env ONEAPI_ROOT)\\tbb\\latest"
+        "$(env ONEAPI_ROOT)/tbb/latest"
     }
 
     -- find includes and links
     local result = {links = {}, linkdirs = {}, includedirs = {}}
     for _, lib in ipairs({"tbb", "tbbmalloc", "tbbmalloc_proxy"}) do
-        local linkinfo = find_library(lib, paths, {suffixes = path.join("lib", rdir, "vc14")})
+        local linkinfo = find_library(lib, paths, {suffixes = {"lib", path.join("lib", rdir, "vc14")}})
         if linkinfo then
             table.insert(result.linkdirs, linkinfo.linkdir)
             table.insert(result.links, lib)
@@ -22,7 +22,6 @@ function _find_package_on_windows(package, opt)
     if incpath then
         table.insert(result.includedirs, incpath)
     end
-
     if #result.includedirs > 0 and #result.linkdirs > 0 then
         local version_file = path.join(incpath, "oneapi", "tbb", "version.h")
         if not os.isfile(version_file) then
@@ -47,9 +46,8 @@ end
 function main(package, opt)
     if opt.system and package.find_package then
         local result
-        if package:is_plat("windows") then
-            result = _find_package_on_windows(package, opt)
-        end
+        result = _find_package(package, opt)
+        
         if not result then
             result = package:find_package("tbb", opt)
         end

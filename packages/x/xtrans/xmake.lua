@@ -1,20 +1,20 @@
 package("xtrans")
-
+    set_kind("library", {headeronly = true})
     set_homepage("https://www.x.org/")
     set_description("X.Org: X Network Transport layer shared code")
 
-    set_urls("https://www.x.org/archive/individual/lib/xtrans-$(version).tar.bz2")
-    add_versions("1.4.0", "377c4491593c417946efcd2c7600d1e62639f7a8bbca391887e2c4679807d773")
+    set_urls("https://www.x.org/archive/individual/lib/xtrans-$(version).tar.gz")
+    add_versions("1.4.0", "48ed850ce772fef1b44ca23639b0a57e38884045ed2cbb18ab137ef33ec713f9")
 
     if is_plat("linux") then
         add_extsources("apt::xtrans-dev", "pacman::xtrans")
     end
 
-    if is_plat("macosx", "linux") then
+    if is_plat("macosx", "linux", "bsd") then
         add_deps("pkg-config", "util-macros", "xorgproto")
     end
 
-    on_install("macosx", "linux", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",

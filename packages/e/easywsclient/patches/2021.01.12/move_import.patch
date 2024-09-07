@@ -1,0 +1,18 @@
+diff --git a/easywsclient.cpp b/easywsclient.cpp
+index 0c98098..aca7e77 100644
+--- a/easywsclient.cpp
++++ b/easywsclient.cpp
+@@ -1,3 +1,4 @@
++#include "easywsclient.hpp"
+ 
+ #ifdef _WIN32
+     #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+@@ -73,8 +74,6 @@
+ #include <vector>
+ #include <string>
+ 
+-#include "easywsclient.hpp"
+-
+ using easywsclient::Callback_Imp;
+ using easywsclient::BytesCallback_Imp;
+ 

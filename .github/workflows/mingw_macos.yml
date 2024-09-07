@@ -11,11 +11,12 @@ jobs:
       matrix:
         os: [macOS-latest]
         kind: [static, shared]
+        arch: [i386, x86_64]
 
     runs-on: ${{ matrix.os }}
 
     concurrency:
-        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-MingW-macOS-${{ matrix.kind }}
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-MingW-macOS-${{ matrix.kind }}-${{ matrix.arch }}
         cancel-in-progress: true
     steps:
       - uses: actions/checkout@v1
@@ -30,5 +31,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p mingw -k ${{ matrix.kind }}
-
+          xmake l ./scripts/test.lua -D -p mingw -a ${{ matrix.arch }} -k ${{ matrix.kind }}

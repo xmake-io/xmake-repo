@@ -1,0 +1,18 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -512,12 +512,12 @@ endif()
+ 
+ file(
+   GENERATE
+-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libfolly.pc
++  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libfolly_$<CONFIG>.pc
+   INPUT ${CMAKE_CURRENT_BINARY_DIR}/libfolly.pc.gen
+   ${target_arg}
+ )
+ install(
+-  FILES ${CMAKE_CURRENT_BINARY_DIR}/libfolly.pc
++  FILES ${CMAKE_CURRENT_BINARY_DIR}/libfolly_${CMAKE_BUILD_TYPE}.pc
+   DESTINATION ${LIB_INSTALL_DIR}/pkgconfig
+   COMPONENT dev
+ )

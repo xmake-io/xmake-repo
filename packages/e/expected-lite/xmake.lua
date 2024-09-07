@@ -7,6 +7,7 @@ package("expected-lite")
     add_urls("https://github.com/martinmoene/expected-lite/archive/refs/tags/$(version).tar.gz",
              "https://github.com/martinmoene/expected-lite.git")
 
+    add_versions("v0.8.0", "27649f30bd9d4fe7b193ab3eb6f78c64d0f585c24c085f340b4722b3d0b5e701")
     add_versions("v0.6.3", "b2f90d5f03f6423ec67cc3c06fd0c4e813ec10c4313062b875b37d17593b57b4")
 
     on_install(function (package)

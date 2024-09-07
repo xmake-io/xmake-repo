@@ -19,7 +19,7 @@ package("libevent")
 
     on_load(function (package)
         if package:config("openssl") then
-            package:add("deps", "openssl")
+            package:add("deps", "openssl3")
         end
         if package:config("mbedtls") then
             package:add("deps", "mbedtls")

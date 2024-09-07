@@ -1,6 +1,7 @@
 package("libsdl")
     set_homepage("https://www.libsdl.org/")
     set_description("Simple DirectMedia Layer")
+    set_license("zlib")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::SDL2")
@@ -10,11 +11,10 @@ package("libsdl")
         add_extsources("brew::sdl2")
     end
 
-    set_license("zlib")
-
     add_urls("https://www.libsdl.org/release/SDL2-$(version).zip",
              "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL2-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL.git", { alias = "github" })
+
     add_versions("archive:2.0.8", "e6a7c71154c3001e318ba7ed4b98582de72ff970aca05abc9f45f7cbdc9088cb")
     add_versions("archive:2.0.12", "476e84d6fcbc499cd1f4a2d3fd05a924abc165b5d0e0d53522c9604fe5a021aa")
     add_versions("archive:2.0.14", "2c1e870d74e13dfdae870600bfcb6862a5eab4ea5b915144aff8d75a0f9bf046")
@@ -36,6 +36,14 @@ package("libsdl")
     add_versions("archive:2.28.3", "2308d4e4cd5852b3b81934dcc94603454834c14bef49de1cb1230c37ea6dc15c")
     add_versions("archive:2.28.4", "b53b9b42e731a33552d0a533316a88009b423c16a8a3a418df9ffe498c37da3d")
     add_versions("archive:2.28.5", "97bd14ee0ec67494d2b93f1a4f7da2bf891103c57090d96fdcc2b019d885c76a")
+    add_versions("archive:2.30.0", "80b0c02b6018630cd40639ac9fc8e5c1d8eec14d8fe3e6dfa76343e3ba8b78d9")
+    add_versions("archive:2.30.1", "c15ded54e9f32f8a1f9ed3e3dc072837a320ed23c5d0e95b7c18ecbe05c1187b")
+    add_versions("archive:2.30.2", "09a822abf6e97f80d09cf9c46115faebb3476b0d56c1c035aec8ec3f88382ae7")
+    add_versions("archive:2.30.3", "c5d78a9e0346c6695f03df8ba25e5e111a1e23c8aefa8372a1c5a0dd79acaf10")
+    add_versions("archive:2.30.4", "292d5e2f897aa3acb6b365b605c3249c92916fbe7eba4a2e57573ada3855d7cb")
+    add_versions("archive:2.30.5", "688d3da2bf7e887d0ba8e0f81c926119f85029544f4f6da8dea96db70f9d28e3")
+    add_versions("archive:2.30.6", "6d4e00fcbee9fd8985cc2869edeb0b1a751912b87506cf2fb6471e73d981e1f4")
+
     add_versions("github:2.0.8",  "release-2.0.8")
     add_versions("github:2.0.12", "release-2.0.12")
     add_versions("github:2.0.14", "release-2.0.14")
@@ -57,17 +65,28 @@ package("libsdl")
     add_versions("github:2.28.3", "release-2.28.3")
     add_versions("github:2.28.4", "release-2.28.4")
     add_versions("github:2.28.5", "release-2.28.5")
+    add_versions("github:2.30.0", "release-2.30.0")
+    add_versions("github:2.30.1", "release-2.30.1")
+    add_versions("github:2.30.2", "release-2.30.2")
+    add_versions("github:2.30.3", "release-2.30.3")
+    add_versions("github:2.30.4", "release-2.30.4")
+    add_versions("github:2.30.5", "release-2.30.5")
+    add_versions("github:2.30.6", "release-2.30.6")
+
+    add_patches("2.30.0", path.join(os.scriptdir(), "patches", "2.30.0", "fix_mingw.patch"), "ab54eebc2e58d88653b257bc5b48a232c5fb0e6fad5d63661b6388215a7b0cd0")
+    add_patches("2.30.6", "https://github.com/libsdl-org/SDL/commit/7cf3234efeb7a68636bcfdfb3b1507b43fbb0845.patch", "c2fba1e76f8f10631544b63e8ce105a67d582b23bba7c96bdef5f135bd6b4cad")
 
     add_deps("cmake")
 
     add_includedirs("include", "include/SDL2")
 
-    add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+    if is_plat("android") then
+        add_configs("sdlmain", {description = "Use SDL_main entry point", default = false, type = "boolean", readonly = true})
+    else
+        add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
+    end
 
-    -- @note deprecated
-    add_configs("use_sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
-
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
         add_configs("wayland", {description = "Enables Wayland support", default = true, type = "boolean"})
 
@@ -80,14 +99,21 @@ package("libsdl")
     end
 
     on_load(function (package)
-        if package:config("sdlmain") or package:config("use_sdlmain") then
+        if package:config("sdlmain") then
             package:add("components", "main")
+            if package:is_plat("mingw") then
+                -- MinGW requires linking mingw32 before SDL2main
+                local libsuffix = package:is_debug() and "d" or ""
+                package:add("linkorders", "mingw32", "SDL2main" .. libsuffix)
+            end
+        else
+            package:add("defines", "SDL_MAIN_HANDLED")
         end
         package:add("components", "lib")
-        if package:is_plat("linux") and (package:config("x11") or package:config("with_x")) then
+        if package:is_plat("linux", "bsd") and (package:config("x11") or package:config("with_x")) then
             package:add("deps", "libxext", {private = true})
         end
-        if package:is_plat("linux") and package:config("wayland") then
+        if package:is_plat("linux", "bsd") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
         end
     end)
@@ -95,7 +121,11 @@ package("libsdl")
     on_component("main", function (package, component)
         local libsuffix = package:is_debug() and "d" or ""
         component:add("links", "SDL2main" .. libsuffix)
-        component:add("defines", "SDL_MAIN_HANDLED")
+        if package:is_plat("windows") then
+            component:add("syslinks", "shell32")
+        elseif package:is_plat("mingw") then
+            component:add("syslinks", "mingw32")
+        end
         component:add("deps", "lib")
     end)
 
@@ -183,7 +213,7 @@ package("libsdl")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_TEST=OFF")
         local opt
-        if package:is_plat("linux", "cross") then
+        if package:is_plat("linux", "bsd", "cross") then
             local includedirs = {}
             for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
                 local dep = package:dep(depname)
@@ -216,5 +246,11 @@ package("libsdl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SDL_Init", {includes = "SDL2/SDL.h", configs = {defines = "SDL_MAIN_HANDLED"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include <SDL2/SDL.h>
+            int main(int argc, char** argv) {
+                SDL_Init(0);
+                return 0;
+            }
+        ]]}, {configs = {defines = "SDL_MAIN_HANDLED"}}));
     end)

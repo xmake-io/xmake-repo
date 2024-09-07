@@ -3,8 +3,8 @@ package("readline")
     set_description("Library for command-line editing")
     set_license("GPL-3.0-or-later")
 
-    add_urls("https://ftp.gnu.org/gnu/readline/readline-$(version).tar.gz",
-             "https://ftpmirror.gnu.org/readline/readline-8.1.tar.gz")
+    add_urls("https://ftpmirror.gnu.org/readline/readline-$(version).tar.gz",
+             "https://ftp.gnu.org/gnu/readline/readline-$(version).tar.gz")
     add_versions("8.1", "f8ceb4ee131e3232226a17f51b164afc46cd0b9e6cef344be87c65962cb82b02")
 
     add_deps("ncurses")

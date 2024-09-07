@@ -31,8 +31,8 @@ package("mysql")
     on_load("windows", "mingw", "linux", "macosx", function(package) 
         if package:version():ge("8.0.0") then
             package:add("deps", "boost")
-            package:add("deps", "openssl 1.1.1-t")
-            package:add("deps", "zlib v1.2.13")
+            package:add("deps", "openssl")
+            package:add("deps", "zlib")
             package:add("deps", "zstd")
             package:add("deps", "lz4")
         else
@@ -49,7 +49,7 @@ package("mysql")
         os.cp("lib/libmysql.dll", package:installdir("bin"))
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         if package:version():ge("8.0.0") then
             io.gsub("CMakeLists.txt", "ADD_SUBDIRECTORY%(storage/ndb%)", "")
             local configs = {"-DCOMPILATION_COMMENT=XMake",
