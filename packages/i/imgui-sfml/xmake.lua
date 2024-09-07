@@ -1,6 +1,7 @@
 package("imgui-sfml")
     set_homepage("https://github.com/eliasdaler/imgui-sfml")
     set_description("Dear ImGui binding for use with SFML")
+    set_license("MIT")
 
     add_urls("https://github.com/eliasdaler/imgui-sfml/archive/refs/tags/$(version).tar.gz",
              "https://github.com/eliasdaler/imgui-sfml.git")
