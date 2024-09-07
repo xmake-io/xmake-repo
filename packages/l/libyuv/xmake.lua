@@ -32,7 +32,7 @@ package("libyuv")
     if on_check then
         on_check("android", function (package)
             local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(libyuv/arm64): need ndk version > 22")
+            assert(ndk and tonumber(ndk) > 22, "package(libyuv): need ndk version > 22")
         end)
     end
 

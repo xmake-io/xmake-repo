@@ -1,10 +1,12 @@
 package("fmt")
     set_homepage("https://fmt.dev")
     set_description("fmt is an open-source formatting library for C++. It can be used as a safe and fast alternative to (s)printf and iostreams.")
+    set_license("MIT")
 
     set_urls("https://github.com/fmtlib/fmt/releases/download/$(version)/fmt-$(version).zip",
              "https://github.com/fmtlib/fmt.git")
 
+    add_versions("11.0.2", "40fc58bebcf38c759e11a7bd8fdc163507d2423ef5058bba7f26280c5b9c5465")
     add_versions("11.0.1", "62ca45531814109b5d6cef0cf2fd17db92c32a30dd23012976e768c685534814")
     add_versions("11.0.0", "583ce480ef07fad76ef86e1e2a639fc231c3daa86c4aa6bcba524ce908f30699")
     add_versions("10.2.1", "312151a2d13c8327f5c9c586ac6cf7cddc1658e8f53edae0ec56509c8fa516c9")
@@ -50,12 +52,12 @@ package("fmt")
                 package:add("defines", "FMT_EXPORT")
             end
         end
-        if package:is_plat("windows") and package:config("unicode") then
-            package:add("cxxflags", "/utf-8")
-        end
     end)
 
     on_install(function (package)
+        if package:has_tool("cxx", "cl") and package:config("unicode") then
+            package:add("cxxflags", "/utf-8")
+        end
         if package:config("header_only") then
             os.cp("include/fmt", package:installdir("include"))
             return

@@ -8,16 +8,26 @@ package("crashpad")
 
     add_includedirs("include/crashpad", "include/crashpad/mini_chromium")
     add_links("crashpad_client", "crashpad_util", "mini_chromium")
+    if add_bindirs then
+        add_bindirs("bin")
+    end
 
     add_deps("cmake")
     add_deps("libcurl")
 
-    on_install("linux", "windows|x64", "windows|x86", function(package)
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation")
+        add_syslinks("bsm")
+    end
+
+    on_install("linux", "windows|x64", "windows|x86", "macosx", function(package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {packagedeps = "libcurl"})
-        package:addenv("PATH", "bin")
+        if not package:get("bindirs") then
+            package:addenv("PATH", "bin")
+        end
     end)
 
     on_test(function(package)

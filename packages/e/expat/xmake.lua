@@ -24,7 +24,7 @@ package("expat")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", "mingw", "cross", "bsd", function (package)
+    on_install(function (package)
         local configs = {"-DEXPAT_BUILD_EXAMPLES=OFF", "-DEXPAT_BUILD_TESTS=OFF", "-DEXPAT_BUILD_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DEXPAT_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

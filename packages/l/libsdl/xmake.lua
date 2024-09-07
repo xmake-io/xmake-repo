@@ -42,6 +42,8 @@ package("libsdl")
     add_versions("archive:2.30.3", "c5d78a9e0346c6695f03df8ba25e5e111a1e23c8aefa8372a1c5a0dd79acaf10")
     add_versions("archive:2.30.4", "292d5e2f897aa3acb6b365b605c3249c92916fbe7eba4a2e57573ada3855d7cb")
     add_versions("archive:2.30.5", "688d3da2bf7e887d0ba8e0f81c926119f85029544f4f6da8dea96db70f9d28e3")
+    add_versions("archive:2.30.6", "6d4e00fcbee9fd8985cc2869edeb0b1a751912b87506cf2fb6471e73d981e1f4")
+
     add_versions("github:2.0.8",  "release-2.0.8")
     add_versions("github:2.0.12", "release-2.0.12")
     add_versions("github:2.0.14", "release-2.0.14")
@@ -69,8 +71,10 @@ package("libsdl")
     add_versions("github:2.30.3", "release-2.30.3")
     add_versions("github:2.30.4", "release-2.30.4")
     add_versions("github:2.30.5", "release-2.30.5")
+    add_versions("github:2.30.6", "release-2.30.6")
 
     add_patches("2.30.0", path.join(os.scriptdir(), "patches", "2.30.0", "fix_mingw.patch"), "ab54eebc2e58d88653b257bc5b48a232c5fb0e6fad5d63661b6388215a7b0cd0")
+    add_patches("2.30.6", "https://github.com/libsdl-org/SDL/commit/7cf3234efeb7a68636bcfdfb3b1507b43fbb0845.patch", "c2fba1e76f8f10631544b63e8ce105a67d582b23bba7c96bdef5f135bd6b4cad")
 
     add_deps("cmake")
 
@@ -204,6 +208,7 @@ package("libsdl")
     end)
 
     on_install(function (package)
+        io.replace("src/sensor/android/SDL_androidsensor.c", "ALooper_pollAll", "ALooper_pollOnce", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

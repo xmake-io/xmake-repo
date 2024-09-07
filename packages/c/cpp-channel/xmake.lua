@@ -7,6 +7,7 @@ package("cpp-channel")
     add_urls("https://github.com/andreiavrammsd/cpp-channel/archive/refs/tags/$(version).zip",
              "https://github.com/andreiavrammsd/cpp-channel.git")
 
+    add_versions("v0.8.3", "095102dd7be6a2087206fc22ec2e32b4eb687f25f8d57d36355290ffb203e4d7")
     add_versions("v0.8.2", "36f234c40d59b90356d37b558a8918a86b128030ad5d42d8c6a627cfe81c8624")
 
     on_install(function (package)

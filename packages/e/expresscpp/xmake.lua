@@ -2,6 +2,7 @@ package("expresscpp")
 
     set_homepage("https://github.com/expresscpp/expresscpp.git")
     set_description("Fast, unopinionated, minimalist web framework for C++ Perfect for building REST APIs.")
+    set_license("MIT")
 
     set_urls("https://github.com/expresscpp/expresscpp/archive/$(version).tar.gz",
              "https://github.com/expresscpp/expresscpp.git")

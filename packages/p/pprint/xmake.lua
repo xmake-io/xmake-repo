@@ -2,6 +2,7 @@ package("pprint")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/p-ranav/pprint")
     set_description("Pretty Printer for Modern C++")
+    set_license("MIT")
 
     add_urls("https://github.com/p-ranav/pprint.git")
 

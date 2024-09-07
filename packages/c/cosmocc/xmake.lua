@@ -2,6 +2,7 @@ package("cosmocc")
     set_kind("toolchain")
     set_homepage("https://github.com/jart/cosmopolitan")
     set_description("build-once run-anywhere c library")
+    set_license("ISC")
 
     add_urls("https://cosmo.zip/pub/cosmocc/cosmocc-$(version).zip",
              "https://github.com/xmake-mirror/cosmopolitan/releases/download/$(version)/cosmocc-$(version).zip")
@@ -18,6 +19,22 @@ package("cosmocc")
     add_versions("3.4.0", "475e24b84a18973312433f5280e267acbe1b4dac1b2e2ebb3cfce46051a8c08c")
     add_versions("3.5.0", "6c8443078ce43bf15bb835c8317d6d44e694e1572023263359c082afb7ec2224")
     add_versions("3.5.1", "ea1f47cd4ead6ce3038551be164ad357bd45a4b5b7824871c561d2af23f871d6")
+    add_versions("3.5.2", "69d319eb6f5e9f2581949e60cea8e419e0d7d4095c0c79ac627f5a77490f6240")
+    add_versions("3.5.3", "4f0850a01a2d83417de21ee79bea09ffddeab4bf9061b072ddbe5522a28d73c6")
+    add_versions("3.5.4", "1e822906021a5eb56172b4e89840c0b0cd7db97b718355a41414b4ca913171e0")
+    add_versions("3.5.5", "c48f405298885fbd37737b4cc75e75ead9bd159346c948068cf6e724a01c40e9")
+    add_versions("3.5.6", "efdc021d1825a27830a45e88d408668c08f22dcb7f6a1ca289fdaf77a937aa66")
+    add_versions("3.5.7", "596876951b62ad2530c63afc40edd805d751fcb2416e544d249af04ad00bb4ed")
+    add_versions("3.5.8", "80bea0e523b666d4d4e74fb729ac1e4bd924d1b9f2892d939af62ae2c4a0f622")
+    add_versions("3.5.9", "1f66831de4bf2d82e138d8993e9ee84a7559afc47aeeb2e2de51872401790a0a")
+    add_versions("3.6.0", "4918c45ac3e0972ff260e2a249e25716881e39fb679d5e714ae216a2ef6c3f7e")
+    add_versions("3.6.1", "5f46bdfa4db8326794306d1a0348efc01e199f53b262bc05aa92b37be09a3f3a")
+    add_versions("3.6.2", "268aa82d9bfd774f76951b250f87b8edcefd5c754b8b409e1639641e8bd8d5bc")
+    add_versions("3.7.0", "871cfffd2e4ee3fc55d6f8d8583c6d73669f8412eea604830c8ecb74f89d6aef")
+    add_versions("3.7.1", "13b65b0e659b493bd82f3d0a319d0265d66f849839e484aa2a54191024711e85")
+    add_versions("3.8.0", "813c6b2f95062d2e0a845307a79505424cb98cb038e8013334f8a22e3b92a474")
+
+    set_policy("package.precompiled", false)
 
     on_load("@windows|x64", function (package)
         package:add("deps", "msys2")
@@ -29,9 +46,15 @@ package("cosmocc")
             assert(find_tool("sh"), "cosmocc need sh/bash, please install it first!")
         end
         os.cp("*", package:installdir(), {symlink = true})
+        -- fix symlinks for windows
+        if is_host("windows") then
+            os.cp("bin/cosmocc", path.join(package:installdir("bin"), "cosmoc++"))
+        end
     end)
 
     on_test(function (package)
         local cosmocc = path.join(package:installdir("bin"), "cosmocc")
+        local cosmocxx = path.join(package:installdir("bin"), "cosmoc++")
         os.vrunv(cosmocc, {"--version"}, {shell = true})
+        os.vrunv(cosmocxx, {"--version"}, {shell = true})
     end)

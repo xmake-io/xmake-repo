@@ -21,7 +21,9 @@ package("objfw")
     add_versions("1.1.2",   "5d9f9a70d583298e780ae11fc75a7ae2beeef904b301e1bc4f4ffa8d7ee31d9f")
     add_versions("1.1.3",   "e66ff27ac93c5747019aaa5c8a72b2e4508938e59b3ce08909e54e566ebb2e41")
     add_versions("1.1.4",   "f6bfdbab22008aae3e4b48d77ced1a04c5153961c6f7e5492891f90ae5131a78")
-
+    add_versions("1.1.5",   "9d45d2009a0bb9b1a0918918e454b47b8161670df8016b5f3a85eccea91d8988")
+    add_versions("1.1.6",   "c19a97a011e14780fb32cfbdbbd6a699a955b57124e4e079768cb8aad4430e1d")
+	add_versions("1.1.7",	"5107d8a0627e2270d211abf1b4f6c50fd89c8d672d2179b50daa7d3b66d68a70")
 
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
@@ -32,7 +34,7 @@ package("objfw")
         add_frameworks("CoreFoundation")
     end
 
-    add_configs("tls", { description = "Enable TLS support.", default = (is_plat("macosx") and "securetransport" or "openssl"), values = { true, false, "openssl", "gnutls", "securetransport" } })
+    add_configs("tls", { description = "Enable TLS support.", default = (is_plat("macosx") and "securetransport" or "openssl"), values = { true, false, "openssl", "gnutls", "securetransport", "mbedtls" } })
     add_configs("rpath", { description = "Enable rpath.", default = true, type = "boolean" })
     add_configs("runtime", { description = "Use the included runtime, not recommended for macOS!", default = not is_plat("macosx"), type = "boolean" })
     add_configs("seluid24", { description = "Use 24 bit instead of 16 bit for selector UIDs.", default = false, type = "boolean" })
@@ -61,7 +63,11 @@ package("objfw")
         local tls = package:config("tls")
         if type(tls) == "boolean" then
             if tls then
-                package:add("deps", "openssl")
+                if package:is_plat("macosx") then
+                    package:add("frameworks", "Security")
+                else
+                    package:add("deps", "openssl")
+                end
             end
         elseif tls then
             if tls == "openssl" then
@@ -70,8 +76,21 @@ package("objfw")
                 package:add("frameworks", "Security")
             elseif tls == "gnutls" then
                 package:add("deps", "gnutls")
+            elseif tls == "mbedtls" then
+                package:add("deps", "mbedtls")
+            else
+                raise("Unknown TLS library: %s", tls)
             end
         end
+    end)
+
+    on_check(function (package)
+        assert(package:check_msnippets({test = [[
+            void test() {
+                @autoreleasepool {
+                }
+            }
+        ]]}))
     end)
 
     on_install("linux", "macosx", function (package)
@@ -94,7 +113,8 @@ package("objfw")
             end
         end
 
-        -- SecureTransport must be handled by system so we don't worry about providing CFLAGS and LDFLAGS
+        -- SecureTransport must be handled by system so we don't worry about providing CFLAGS and LDFLAGS,
+        -- but for OpenSSL and GnuTLS we need to provide the paths
         local ssl = package:dep("openssl") or package:dep("gnutls")
         local is_gnu = ssl and ssl:name() == "gnutls"
         if ssl then

@@ -23,6 +23,8 @@ package("openexr")
 
     add_configs("build_both", {description = "Build both static library and shared library. (deprecated)", default = false, type = "boolean"})
 
+    add_includedirs("include/OpenEXR", "include")
+
     on_load("windows", "macosx", "linux", "mingw@windows", "mingw@msys", function (package)
         local ver = package:version()
         local suffix = format("-%d_%d", ver:major(), ver:minor())
@@ -41,7 +43,7 @@ package("openexr")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "mingw@windows", "mingw@msys", function (package)
+    on_install("macosx", "linux", "windows|x64", "windows|x86", "mingw@windows", "mingw@msys", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DINSTALL_OPENEXR_EXAMPLES=OFF", "-DINSTALL_OPENEXR_DOCS=OFF", "-DOPENEXR_BUILD_UTILS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:version():ge("3.0") then

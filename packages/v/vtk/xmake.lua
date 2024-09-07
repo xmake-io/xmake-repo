@@ -12,9 +12,11 @@ package("vtk")
     add_versions("9.1.0", "8fed42f4f8f1eb8083107b68eaa9ad71da07110161a3116ad807f43e5ca5ce96")
     add_versions("9.2.2", "1c5b0a2be71fac96ff4831af69e350f7a0ea3168981f790c000709dcf9121075")
     add_versions("9.2.6", "06fc8d49c4e56f498c40fcb38a563ed8d4ec31358d0101e8988f0bb4d539dd12")
+    add_versions("9.3.1", "8354ec084ea0d2dc3d23dbe4243823c4bfc270382d0ce8d658939fd50061cab8")
 
-    add_patches("9.0.3", path.join(os.scriptdir(), "patches", "9.0.3", "limits.patch"), "3bebcd1cac52462b0cf84c8232c3426202c75c944784252b215b4416cbe111db")
-    add_patches("9.2.6", path.join(os.scriptdir(), "patches", "9.2.6", "gcc13.patch"), "71bcb65197442e053ae2a69079bd2b3b8708a0bedf9f4f9a955e72b15720857c")
+    add_patches("9.0.3", "patches/9.0.3/limits.patch", "3bebcd1cac52462b0cf84c8232c3426202c75c944784252b215b4416cbe111db")
+    add_patches("9.2.6", "patches/9.2.6/gcc13.patch", "71bcb65197442e053ae2a69079bd2b3b8708a0bedf9f4f9a955e72b15720857c")
+    add_patches("9.3.1", "patches/9.3.1/msvc.patch", "619ed4145f3b7c727aee168aac04271e6414d314bf49db470de688acc9f49cb8")
 
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 

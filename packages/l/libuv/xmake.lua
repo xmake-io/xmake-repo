@@ -9,7 +9,9 @@ package("libuv")
     add_versions("v1.48.0", "6dd637af0c23bee06b685a94e22f7e695f4ea7a9ab705485e32e658d4fd0125b")
     add_versions("v1.47.0", "d50af7e6d72526db137e66fad812421c8a1cae09d146b0ec2bb9a22c5f23ba93")
     add_versions("v1.46.0", "45953dc9b64db7f4f47561f9e4543b762c52adfe7c9b6f8e9efbc3b4dd7d3081")
+    add_versions("v1.45.0", "969d2c7c1110c5c47666a149501f29f7e4948c4a5b4add0f8ffe6b2203282638")
     add_versions("v1.44.1", "d233a9c522a9f4afec47b0d12f302d93d114a9e3ea104150e65f55fd931518e6")
+    add_versions("v1.43.0", "5d60a506981bcb340333b9d47d5faa8a49f2382da33073972383a02f79173b7b")
     add_versions("v1.42.0", "031130768b25ae18c4b9d4a94ba7734e2072b11c6fce3e554612c516c3241402")
     add_versions("v1.41.0", "cb89a8b9f686c5ccf7ed09a9e0ece151a73ebebc17af3813159c335b02181794")
     add_versions("v1.40.0", "61366e30d8484197dc9e4a94dbd98a0ba52fb55cb6c6d991af1f3701b10f322b")
@@ -24,6 +26,8 @@ package("libuv")
     add_versions("v1.23.0", "ffa1aacc9e8374b01d1ff374b1e8f1e7d92431895d18f8e9d5e59a69a2a00c30")
     add_versions("v1.22.0", "1e8e51531732f8ef5867ae3a40370814ce2e4e627537e83ca519d40b424dced0")
 
+    add_patches("1.44.1", "https://github.com/libuv/libuv/pull/3563/commits/88930d52c1dd60f87445fdc26f0c22b2078299ea.patch", "ab61f14e35fbf6f54c854484b3766046da2dd0368bf71ec12471b89dd3739b1d")
+
     if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation")
     elseif is_plat("linux", "bsd") then
@@ -35,23 +39,27 @@ package("libuv")
     -- https://github.com/libuv/libuv/issues/3411
     if on_check then
         on_check("android", function (package)
-            if package:version():ge("1.47.0") then
+            if package:version():ge("1.45.0") then
                 local ndk = package:toolchain("ndk")
                 local ndk_sdkver = ndk:config("ndk_sdkver")
-                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(libuv): need ndk api level >= 24 after v1.47.0")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(libuv): need ndk api level >= 24 after v1.45.0")
             end
         end)
     end
 
     on_load(function (package)
         local version = package:version()
-        if version:ge("1.46.0") or is_host("windows") then
+        if version:ge("1.42.0") or is_host("windows") then
             package:add("deps", "cmake")
         else
             package:add("autoconf", "automake", "libtool", "pkg-config")
         end
 
         if package:is_plat("windows") then
+            if version:eq("1.43.0") then
+                package:config_set("shared", false)
+                wprint("package(libuv/1.43.0) only support static library")
+            end
             if version:ge("1.45") then
                 package:add("links", package:config("shared") and "uv" or "libuv")
             else
@@ -60,7 +68,7 @@ package("libuv")
             if package:config("shared") then
                 package:add("defines", "USING_UV_SHARED")
             end
-            if version:ge("1.40") and version:lt("1.44") then
+            if version:ge("1.40") and version:lt("1.43") then
                 package:add("linkdirs", path.join("lib", package:is_debug() and "Debug" or "Release"))
             end
         end
@@ -72,7 +80,7 @@ package("libuv")
         end
 
         local version = package:version()
-        if version:ge("1.46.0") or is_host("windows") then
+        if version:ge("1.42.0") or is_host("windows") then
             local configs = {"-DLIBUV_BUILD_TESTS=OFF", "-DLIBUV_BUILD_BENCH=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DLIBUV_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
