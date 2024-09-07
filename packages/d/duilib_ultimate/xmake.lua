@@ -7,8 +7,9 @@ package("duilib_ultimate")
     add_versions("0.3", "4a650267e98d8b19818bdeb7675dcf1403017732b961620678e1d2d81f81db91")
 
     add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean", readonly=true})
+    add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT", type = "string", readonly = true})
 
-    on_install("windows", function (package)
+    on_install("windows|!arm64", function (package)
         package:add("defines", "UILIB_STATIC")
         package:add("syslinks", "gdi32")
 
