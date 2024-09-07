@@ -8,7 +8,7 @@ package("vld")
 
     add_configs("shared", {description = "Download shared binaries.", default = true, type = "boolean", readonly = true})
 
-    on_install("windows", function (package)
+    on_install("windows|!arm64", function (package)
         io.replace("src/tests/basics/Allocs.cpp", "#error Unsupported compiler", '#define CRTDLLNAME   _T("ucrtbase.dll")', {plain=true})
         io.replace("src/tests/suite/testsuite.cpp", "#error Unsupported compiler", '#define CRTDLLNAME   _T("ucrtbase.dll")', {plain=true})
         local configs = {"vld_vs16.sln"}
