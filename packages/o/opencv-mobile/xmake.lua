@@ -6,6 +6,7 @@ package("opencv-mobile")
     add_urls("https://github.com/nihui/opencv-mobile/releases/download/v29/opencv-mobile-$(version).zip")
 
     add_versions("4.10.0", "e9209285ad4d682536db4505bc06e46b94b9e56d91896e16c2853c83a870f004")
+    add_patches("4.10.0", path.join(os.scriptdir(), "patches", "4.10.0", "msvc.patch"), "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("openmp")
