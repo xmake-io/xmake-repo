@@ -6,12 +6,13 @@ package("opencv-mobile")
     add_urls("https://github.com/nihui/opencv-mobile/releases/download/v29/opencv-mobile-$(version).zip")
 
     add_versions("4.10.0", "e9209285ad4d682536db4505bc06e46b94b9e56d91896e16c2853c83a870f004")
-    add_patches("4.10.0", path.join(os.scriptdir(), "patches", "4.10.0", "msvc.patch"), "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
+
+    add_patches("4.10.0", "patches/4.10.0/msvc.patch", "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("openmp")
 
-    on_load("linux", "macosx", "windows", "mingw@windows,msys", function (package)
+    on_load(function (package)
         if package:is_plat("windows") then
             local arch = "x64"
             if     package:is_arch("x86")   then arch = "x86"
@@ -73,8 +74,8 @@ package("opencv-mobile")
             end
 
             local libfiles = {}
-            table.join2(libfiles, os.files(path.join(package:installdir(), linkdir, "*.lib")))
-            table.join2(libfiles, os.files(path.join(package:installdir(), arch, vc_ver, linkdir, "*.lib")))
+            table.join2(libfiles, os.files(package:installdir(linkdir, "*.lib")))
+            table.join2(libfiles, os.files(package:installdir(arch, vc_ver, linkdir, "*.lib")))
             for _, f in ipairs(libfiles) do
                 if not f:match("opencv_.+") then
                     package:add("links", path.basename(f))
@@ -85,7 +86,7 @@ package("opencv-mobile")
         elseif package:is_plat("mingw") then
             local arch = package:is_arch("x86_64") and "x64" or "x86"
             local linkdir = (package:config("shared") and "lib" or "staticlib")
-            for _, f in ipairs(os.files(path.join(package:installdir(), arch, "mingw", linkdir, "lib*.a"))) do
+            for _, f in ipairs(os.files(package:installdir(arch, "mingw", linkdir, "lib*.a"))) do
                 if not f:match("libopencv_.+") then
                     package:add("links", path.basename(f):match("lib(.+)"))
                 end
