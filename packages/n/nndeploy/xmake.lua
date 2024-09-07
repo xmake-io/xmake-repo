@@ -17,7 +17,7 @@ package("nndeploy")
         add_syslinks("pthread")
     end
 
-    on_install("linux", "windows", function (package)
+    on_install("linux", "windows|x64", function (package)
         local options = {
             demo = "ENABLE_NNDEPLOY_DEMO",
         }
