@@ -1,13 +1,13 @@
 package("duilib_ultimate")
 
     set_homepage("https://github.com/qdtroy/DuiLib_Ultimate")
-    set_description("DuiLib_Ultimate是duilib库的增强拓展版")
+    set_description("DuiLib_Ultimate is the Optimized version for duilib library")
 
     add_urls("https://github.com/qdtroy/DuiLib_Ultimate/archive/refs/tags/$(version).tar.gz")
     add_versions("0.3", "4a650267e98d8b19818bdeb7675dcf1403017732b961620678e1d2d81f81db91")
 
-    add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean", readonly=true})
-    add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MT", type = "string", readonly = true})
+    add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean", readonly = true})
+    add_configs("runtimes", {description = "Set vs compiler runtime.", default = "MT", type = "string", readonly = true})
 
     on_install("windows|!arm64", function (package)
         package:add("defines", "UILIB_STATIC")
