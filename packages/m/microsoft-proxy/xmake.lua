@@ -13,6 +13,17 @@ package("microsoft-proxy")
     add_versions("2.2.1", "096f0b2d793dffc54d41def2bca0ced594b6b8efe35ac5ae27db35802e742b96")
     add_versions("1.1.1", "6852b135f0bb6de4dc723f76724794cff4e3d0d5706d09d0b2a4f749f309055d")
 
+    if on_check then
+        on_check("windows", function (package)
+            if package:version():ge("3.0.0") then
+                import("core.base.semver")
+
+                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(microsoft-proxy): need vs_toolset >= v143")
+            end
+        end)
+    end
+
     on_install(function (package)
         os.cp("proxy.h", package:installdir("include"))
     end)
