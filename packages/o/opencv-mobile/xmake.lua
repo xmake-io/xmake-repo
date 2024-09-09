@@ -3,11 +3,22 @@ package("opencv-mobile")
     set_description("The minimal opencv for Android, iOS, ARM Linux, Windows, Linux, MacOS, WebAssembly")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/nihui/opencv-mobile/releases/download/v29/opencv-mobile-$(version).zip")
+    local version_map = {
+        ["4.10.0"] = "v29",
+        ["3.4.20"] = "v29"
+    }
+    add_urls("https://github.com/nihui/opencv-mobile/releases/download/$(version).zip", {version = function (version)
+        local v = version_map[tostring(version)]
+        if not v then
+            return version
+        end
+        return string.format("%s/opencv-mobile-%s", v, tostring(version))
+    end})
 
     add_versions("4.10.0", "e9209285ad4d682536db4505bc06e46b94b9e56d91896e16c2853c83a870f004")
+    add_versions("3.4.20", "85c19b443454d3ae839d8f4f7a6a71c79f9ac38592a8a96e2f806fc0c68b64f4")
 
-    add_patches("4.10.0", "patches/4.10.0/msvc.patch", "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
+    add_patches("*", "patches/msvc.patch", "6fa760ea58c8b90c87129f16c84b128a4447ea11cee7d6568ea4f5e7ae250971")
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
     add_deps("openmp")
@@ -109,5 +120,5 @@ package("opencv-mobile")
                 std::cout << CV_VERSION << std::endl;
             }
         ]]}, {configs = {languages = "c++11"},
-              includes = package:version():ge("4.0") and "opencv2/opencv.hpp" or "opencv/cv.h"}))
+              includes = package:version():ge("3.0") and "opencv2/opencv.hpp" or "opencv/cv.h"}))
     end)
