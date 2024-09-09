@@ -4,7 +4,7 @@ set_languages("c++11")
 
 target("cppunit")
     set_kind("$(kind)")
-    add_files("src/cppunit/*.cpp|src/cppunit/DllMain.cpp.cpp")
+    add_files("src/cppunit/*.cpp|DllMain.cpp")
     add_includedirs("include", {public = true})
     add_headerfiles("include/(cppunit/**.h)")
 
@@ -14,7 +14,7 @@ target("cppunit")
     end
 
     if is_plat("windows", "mingw", "msys", "cygwin") then
-        add_files("src/cppunit/DllMain.cpp.cpp")
+        add_files("src/cppunit/DllMain.cpp")
     end
 
 target("DllPlugInTester")

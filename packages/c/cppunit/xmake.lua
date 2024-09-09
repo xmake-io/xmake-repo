@@ -15,13 +15,14 @@ package("cppunit")
         add_extsources("brew::cppunit")
     end
 
-    on_install(function (package)
-        if package:is_plat("windows") then
-            if package:config("shared") then
-                package:add("defines", "CPPUNIT_DLL")
-            end
-    
+    on_install("!android", function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "CPPUNIT_DLL")
+        end
+
+        if is_host("windows") and not is_subhost("msys") then
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+            os.cp(path.join(package:scriptdir(), "port", "config-auto.h"), "include/cppunit/config-auto.h")
             import("package.tools.xmake").install(package)
         else
             local configs = {"--enable-doxygen=no", "--enable-dot=no", "--enable-werror=no", "--enable-werror=no"}
