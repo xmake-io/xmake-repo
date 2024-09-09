@@ -11,11 +11,11 @@ package("mcfgthread")
 
     add_versions("1.8.4", "d2318ef761927860b7a8963308145065047d8ad2102313b26e6eb2d88d9ef1e3")
 
-    add_patches("1.8.4", "patches/1.8.4/meson.patch", "45d8bd695d543dab79aa44d0dfe1bb90a417648feefdd2a181f61f474bf14d4a")
+    add_patches("1.8.4", "patches/1.8.4/meson.patch", "89b98f9152719c44c2a7d8800b63ac621954fd0fe10884b9e90fc3298b76c6c9")
 
     add_configs("debug_checks", {description = "enable run-time assertions", default = false, type = "boolean"})
 
-    add_syslinks("ntdll")
+    add_syslinks("kernel32", "ntdll")
 
     add_deps("meson", "ninja")
 

@@ -1,66 +1,19 @@
 diff --git a/meson.build b/meson.build
-index 5cf334b..27c3659 100644
+index 5cf334b..ad9f5cd 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -291,89 +291,93 @@ install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
+@@ -291,6 +291,8 @@ install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
  #===========================================================
  # Rules for 'lib/libmcfgthread'
  #===========================================================
--mcfgthread_version_o = import('windows').compile_resources(
--      'mcfgthread/version.rc',
--      args: [ '-I.', '-c65001' ],
--      depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
 +if get_option('default_library') == 'shared'
-+  mcfgthread_version_o = import('windows').compile_resources(
-+        'mcfgthread/version.rc',
-+        args: [ '-I.', '-c65001' ],
-+        depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
- 
--lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
--      c_pch: 'mcfgthread/xprecompiled.h',
--      c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables', '-DDLL_EXPORT' ],
--      link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
--                   '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1',
--                   '-Wl,--exclude-all-symbols', '-Wl,--kill-at' ],
--      sources: [ mcfgthread_src_min, mcfgthread_version_o ],
--      dependencies: [ dep_kernel32, dep_ntdll ],
--      soversion: ver.get('abi_major'),
--      version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
--      install: true)
-+  lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
-+        c_pch: 'mcfgthread/xprecompiled.h',
-+        c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables', '-DDLL_EXPORT' ],
-+        link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
-+                    '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1',
-+                    '-Wl,--exclude-all-symbols', '-Wl,--kill-at' ],
-+        sources: [ mcfgthread_src_min, mcfgthread_version_o ],
-+        dependencies: [ dep_kernel32, dep_ntdll ],
-+        soversion: ver.get('abi_major'),
-+        version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
-+        install: true)
- 
--lib_mcfgthread_dll = shared_library('mcfgthread',
--      c_pch: 'mcfgthread/xprecompiled.h',
--      c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables', '-DDLL_EXPORT' ],
--      link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
--                   '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1',
--                   '-Wl,--exclude-all-symbols', '-Wl,--kill-at' ],
--      sources: [ mcfgthread_src_min, mcfgthread_src_ex, mcfgthread_version_o ],
--      dependencies: [ dep_kernel32, dep_ntdll ],
--      soversion: ver.get('abi_major'),
--      version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
--      install: true)
-+  lib_mcfgthread_dll = shared_library('mcfgthread',
-+        c_pch: 'mcfgthread/xprecompiled.h',
-+        c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables', '-DDLL_EXPORT' ],
-+        link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
-+                    '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1',
-+                    '-Wl,--exclude-all-symbols', '-Wl,--kill-at' ],
-+        sources: [ mcfgthread_src_min, mcfgthread_src_ex, mcfgthread_version_o ],
-+        dependencies: [ dep_kernel32, dep_ntdll ],
-+        soversion: ver.get('abi_major'),
-+        version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
-+        install: true)
++
+ mcfgthread_version_o = import('windows').compile_resources(
+       'mcfgthread/version.rc',
+       args: [ '-I.', '-c65001' ],
+@@ -320,22 +322,25 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
+       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
+       install: true)
  
 -lib_mcfgthread_a = static_library('mcfgthread',
 -      c_pch: 'mcfgthread/xprecompiled.h',
@@ -69,104 +22,34 @@ index 5cf334b..27c3659 100644
 -      dependencies: [ dep_kernel32, dep_ntdll ],
 -      install: true)
 -
--import('pkgconfig').generate(lib_mcfgthread_dll,
--      name: 'mcfgthread',
--      url: 'https://github.com/lhmouse/mcfgthread',
--      description: 'Cornerstone library for C++11 threading on mingw-w64',
--      libraries: '-lntdll')
-+  import('pkgconfig').generate(lib_mcfgthread_dll,
-+        name: 'mcfgthread',
-+        url: 'https://github.com/lhmouse/mcfgthread',
-+        description: 'Cornerstone library for C++11 threading on mingw-w64',
-+        libraries: '-lntdll')
-+elif get_option('default_library') == 'static'
-+  lib_mcfgthread_a = static_library('mcfgthread',
-+        c_pch: 'mcfgthread/xprecompiled.h',
-+        c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
-+        sources: [ mcfgthread_src_min, mcfgthread_src_ex, ],
-+        dependencies: [ dep_kernel32, dep_ntdll ],
-+        install: true)
-+endif
+ import('pkgconfig').generate(lib_mcfgthread_dll,
+       name: 'mcfgthread',
+       url: 'https://github.com/lhmouse/mcfgthread',
+       description: 'Cornerstone library for C++11 threading on mingw-w64',
+       libraries: '-lntdll')
  
++elif get_option('default_library') == 'static'
++
++lib_mcfgthread_a = static_library('mcfgthread',
++      c_pch: 'mcfgthread/xprecompiled.h',
++      c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
++      sources: [ mcfgthread_src_min, mcfgthread_src_ex, ],
++      dependencies: [ dep_kernel32, dep_ntdll ],
++      install: true)
++endif
  #===========================================================
  # Rules for tests
  #===========================================================
--foreach src: test_src
--  test_c_args = []
--  test_cpp_args = []
--  test_dependencies = []
--  test_link_with = lib_mcfgthread_dll
 +if get_option('build-test')
-+  foreach src: test_src
-+    test_c_args = []
-+    test_cpp_args = []
-+    test_dependencies = []
-+    test_link_with = lib_mcfgthread_dll
+ foreach src: test_src
+   test_c_args = []
+   test_cpp_args = []
+@@ -377,3 +382,4 @@ foreach src: test_src
  
--  if src == 'test/win8.c' or src == 'test/win10.c'
--    test_link_with = lib_mcfgthread_a
--  endif
-+    if src == 'test/win8.c' or src == 'test/win10.c'
-+      test_link_with = lib_mcfgthread_a
-+    endif
- 
--  if src == 'test/memory.c'
--    test_dependencies = [ dep_advapi32, dep_ntdll ]
--  endif
-+    if src == 'test/memory.c'
-+      test_dependencies = [ dep_advapi32, dep_ntdll ]
-+    endif
- 
--  if src == 'test/gthr_c89_pedantic.c'
--    test_c_args = [ '-std=c89', '-Wpedantic', '-Wno-variadic-macros',
--                    '-Wno-long-long', '-Werror=declaration-after-statement' ]
--  endif
-+    if src == 'test/gthr_c89_pedantic.c'
-+      test_c_args = [ '-std=c89', '-Wpedantic', '-Wno-variadic-macros',
-+                      '-Wno-long-long', '-Werror=declaration-after-statement' ]
-+    endif
- 
--  if src == 'test/c11_c99_pedantic.c'
--    test_c_args = [ '-std=c99', '-Wpedantic' ]
--  endif
-+    if src == 'test/c11_c99_pedantic.c'
-+      test_c_args = [ '-std=c99', '-Wpedantic' ]
-+    endif
- 
--  if src == 'test/cxx11_no_exceptions.cpp'
--    test_cpp_args = [ '-std=c++11', '-fno-rtti', '-fno-exceptions' ]
--  endif
-+    if src == 'test/cxx11_no_exceptions.cpp'
-+      test_cpp_args = [ '-std=c++11', '-fno-rtti', '-fno-exceptions' ]
-+    endif
- 
--  if src == 'test/cxx11_pedantic.cpp'
--    test_cpp_args = [ '-std=c++11', '-Wpedantic' ]
--  endif
-+    if src == 'test/cxx11_pedantic.cpp'
-+      test_cpp_args = [ '-std=c++11', '-Wpedantic' ]
-+    endif
- 
--  test_exe = executable(src.underscorify(), src,
--                        c_args: test_c_args,
--                        cpp_args: test_cpp_args,
--                        link_args: [ '-static-libgcc', '-static-libstdc++' ],
--                        dependencies: test_dependencies,
--                        link_with: test_link_with,
--                        install: false)
-+    test_exe = executable(src.underscorify(), src,
-+                          c_args: test_c_args,
-+                          cpp_args: test_cpp_args,
-+                          link_args: [ '-static-libgcc', '-static-libstdc++' ],
-+                          dependencies: test_dependencies,
-+                          link_with: test_link_with,
-+                          install: false)
- 
--  test('..' / src, test_exe)
--endforeach
-+    test('..' / src, test_exe)
-+  endforeach
+   test('..' / src, test_exe)
+ endforeach
 +endif
+\ No newline at end of file
 diff --git a/meson.options b/meson.options
 index d0342f8..b45d572 100644
 --- a/meson.options
