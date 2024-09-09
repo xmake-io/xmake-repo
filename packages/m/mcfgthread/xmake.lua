@@ -6,7 +6,7 @@ package("mcfgthread")
     add_urls("https://github.com/lhmouse/mcfgthread.git")
     add_urls("https://github.com/lhmouse/mcfgthread/archive/refs/tags/$(version).tar.gz", {
         version = function (version)
-            return format("%d.%d-ga.%d", version:major(), version:minor(), version:patch())
+            return format("v%d.%d-ga.%d", version:major(), version:minor(), version:patch())
     end})
 
     add_versions("1.8.4", "d2318ef761927860b7a8963308145065047d8ad2102313b26e6eb2d88d9ef1e3")
