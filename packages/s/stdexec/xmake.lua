@@ -10,6 +10,17 @@ package("stdexec")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("windows", function (package)
+            if package:version():ge("3.0.0") then
+                import("core.base.semver")
+
+                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(stdexec): need vs_toolset >= v143")
+            end
+        end)
+    end
+
     on_install("windows", "linux", "macosx", "mingw", function (package)
         if package:has_tool("cxx", "cl") then
             package:add("cxxflags", "/Zc:__cplusplus", "/Zc:preprocessor")
