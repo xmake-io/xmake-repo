@@ -14,6 +14,10 @@ package("argtable3")
             package:add("defines", "argtable3_IMPORTS")
         end
 
+        if package:is_plat("mingw") then
+            io.replace("src/version.rc.in", "#include <verrsrc.h>", "", {plain = true})
+        end
+
         if package:version() then
             io.writefile("version.tag", package:version_str() .. ".xmake")
         end
