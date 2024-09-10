@@ -15,6 +15,10 @@ package("asio2")
     add_deps("asio", "cereal")
     add_deps("spdlog", { configs = { header_only = false, fmt_external = true } })
 
+    if is_plat("mingw") then
+        add_syslinks("ws2_32")
+    end
+
     on_load(function (package)
         if package:config("ssl") then
             package:add("deps", "openssl3")
