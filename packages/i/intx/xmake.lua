@@ -15,7 +15,12 @@ package("intx")
     on_check(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <concepts>
-            void test(std::signed_integral auto x) {}
+            #include <algorithm>
+            #include <string>
+            void test(std::signed_integral auto x) {
+                std::string s;
+                std::ranges::reverse(s);
+            }
         ]]}, {configs = {languages = "c++20"}}), "package(intx) Require at least C++20.")
     end)
 
