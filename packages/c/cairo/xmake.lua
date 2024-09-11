@@ -82,9 +82,6 @@ package("cairo")
             envs.PATH = package:dep("pkgconf"):installdir("bin") .. path.envsep() .. envs.PATH
         end
         meson.install(package, configs, {envs = envs})
-
-        local cairo_pkgconfig_dir = package:installdir("lib/pkgconfig/cairo.pc")
-        io.replace(cairo_pkgconfig_dir, [[Cflags:]], [[Cflags: -I${includedir }]])
     end)
 
     on_test(function (package)
