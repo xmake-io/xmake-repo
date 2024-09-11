@@ -1,6 +1,6 @@
 package("go")
     set_kind("binary")
-    set_homepage("https://golang.org/")
+    set_homepage("https://go.dev")
     set_description("The Go Programming Language")
     set_license("BSD-3-Clause")
 
