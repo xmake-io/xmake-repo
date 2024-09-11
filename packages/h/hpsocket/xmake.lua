@@ -70,7 +70,7 @@ package("hpsocket")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "linux", "android", function (package)
+    on_install("windows", "linux", "android", "cross", "mingw", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
 
         local config = {}
