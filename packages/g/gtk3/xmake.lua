@@ -13,8 +13,6 @@ package("gtk3")
         end
     end)
 
-    add_configs("wayland", {description = "build the gtk with wayland backend", default = false, type = "boolean"})
-
     if is_plat("linux") then
         add_syslinks("rt")
     end
@@ -29,12 +27,16 @@ package("gtk3")
 
     on_install("linux", function (package)
         local configs = {"-Dintrospection=false", "-Ddemos=false", "-Dexamples=false", "-Dtests=false"}
-
-        --Disable the Wayland option temporarily, as there is currently a problem with meson https://github.com/xmake-io/xmake/pull/5484
-        table.insert(configs, "-Dwayland_backend=" .. (package:config("wayland") and "true" or "false"))
-
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs, {packagedeps = {"libx11", "libxext", "libxi", "at-spi2-core", "libthai", "libdatrie", "gdk-pixbuf"}})
+        io.replace("gdk/x11/gdkglcontext-x11.c", [[cairo/cairo-xlib.h]], [[cairo-xlib.h]], {plain = true})
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libx11", 
+                                                                                "libxext", 
+                                                                                "libxi", 
+                                                                                "at-spi2-core", 
+                                                                                "cairo", 
+                                                                                "libthai", 
+                                                                                "libdatrie", 
+                                                                                "gdk-pixbuf"}})
     end)
 
     on_test(function (package)
