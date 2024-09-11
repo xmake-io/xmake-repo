@@ -28,7 +28,7 @@ package("gtk+3")
     on_install("linux", function (package)
         local configs = {"-Dintrospection=false", "-Ddemos=false", "-Dexamples=false", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        io.replace("gdk/x11/gdkglcontext-x11.c", "cairo/cairo-xlib.h", "cairo-xlib.h")
+        io.replace("gdk/x11/gdkglcontext-x11.c", [[cairo/cairo-xlib.h]], [[cairo-xlib.h]], {plain = true})
         import("package.tools.meson").install(package, configs, {packagedeps = {"libx11", 
                                                                                 "libxext", 
                                                                                 "libxi", 
