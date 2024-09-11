@@ -6,7 +6,7 @@ package("libvpx")
     add_urls("https://github.com/webmproject/libvpx/archive/refs/tags/v1.14.1.tar.gz")
     add_versions("v1.14.1", "901747254d80a7937c933d03bd7c5d41e8e6c883e0665fadcb172542167c7977")
 
-    add_deps("autoconf", "automake", "libtool", "m4")
+    add_deps("autoconf", "automake", "libtool", "m4", "yasm", "nasm")
 
     add_configs("vp8", {description = "enable the vp8 codec", default = false, type = "boolean"})
     add_configs("vp9", {description = "enable the vp9 codec", default = false, type = "boolean"})
