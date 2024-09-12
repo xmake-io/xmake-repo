@@ -55,6 +55,8 @@ package("gdk-pixbuf")
                          "-Dtests=false",
                          "-Dinstalled_tests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+
+        package:addenv("PATH", "bin")
         import("package.tools.meson").install(package, configs, {packagedeps = {"libjpeg-turbo", "libpng", "libtiff", "glib", "pcre2", "libintl", "libiconv"}})
     end)
 
