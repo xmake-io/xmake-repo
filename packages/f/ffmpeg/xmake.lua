@@ -211,7 +211,11 @@ package("ffmpeg")
                 local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
                 -- add gas-preprocessor to PATH
                 if package:is_arch("arm", "arm64") then
-                    envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
+                    if envs.PATH then
+                        envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
+                    else
+                        envs.PATH = path.join(os.programdir(), "scripts")
+                    end
                 end
                 autoconf.install(package, configs, {envs = envs})
             else
