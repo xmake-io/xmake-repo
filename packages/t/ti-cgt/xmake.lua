@@ -24,12 +24,15 @@ package("ti-cgt")
         local installer = "ti_cgt_c6000_" .. version .. "_"
         if is_host("windows") then
             installer = "../" .. installer .. "windows-x64_installer.exe"
-        elseif is_host("linux") then
-            installer = "../" .. installer .. "linux-x64_installer.bin"
-        elseif is_host("macosx") then
-            os.cd(installer .."osx_installer.app/Contents/MacOS")
-            installer = "installbuilder.sh"
-            -- TODO
+        else
+            if is_host("linux") then
+                installer = "../" .. installer .. "linux-x64_installer.bin"
+            elseif is_host("macosx") then
+                os.cd(installer .."osx_installer.app/Contents/MacOS")
+                installer = "installbuilder.sh"
+                -- TODO
+            end
+            os.vrunv("chmod", {"+x", installer})
         end
 
         os.vrunv(installer, {"--mode", "unattended", "--prefix", os.curdir()})
