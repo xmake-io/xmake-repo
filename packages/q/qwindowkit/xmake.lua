@@ -7,6 +7,7 @@ package("qwindowkit")
              "https://github.com/stdware/qwindowkit.git")
 
     add_versions("1.1", "a0102ee4c4fdd08ce35c29a5b9a27384005028b2ab6094f61e467c35917b8c5e")
+    add_versions("1.2", "f06b4befc54c6e2c764dbec8a970ce7ffbe561e76a52ea121dca84598f4035b8")
 
     add_deps("cmake")
     add_deps("qmsetup")
