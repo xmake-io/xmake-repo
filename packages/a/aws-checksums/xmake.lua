@@ -6,6 +6,7 @@ package("aws-checksums")
     add_urls("https://github.com/awslabs/aws-checksums/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-checksums.git")
 
+    add_versions("v0.1.19", "844e5a4f659f454112c559d4f4043b7accfbb134e47a55f4c55f79d9c71bdab1")
     add_versions("v0.1.18", "bdba9d0a8b8330a89c6b8cbc00b9aa14f403d3449b37ff2e0d96d62a7301b2ee")
     add_versions("v0.1.17", "83c1fbae826631361a529e9565e64a942c412baaec6b705ae5da3f056b97b958")
 
@@ -13,9 +14,23 @@ package("aws-checksums")
 
     add_deps("cmake", "aws-c-common")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "cross", function (package)
+    if on_check then
+        on_check(function (package)
+            if package:version():eq("0.1.19") then
+                if package:is_plat("windows") then
+                    if package:has_tool("cxx", "clang_cl") then
+                        raise("package(aws-checksums 0.1.19) unsupported clang-cl toolchain")
+                    end
+                elseif package:has_tool("cxx", "clang") then
+                    raise("package(aws-checksums 0.1.19) unsupported clang toolchain")
+                end
+            end
+        end)
+    end
+
+    on_install("!mingw or mingw|!i386", function (package)
         local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
-        if package:is_plat("windows") then
+        if is_host("windows") then
             cmakedir = cmakedir:gsub("\\", "/")
         end
 
