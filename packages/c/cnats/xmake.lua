@@ -12,6 +12,12 @@ package("cnats")
     add_configs("sodium", {description = "Build with libsodium", default = false, type = "boolean"})
     add_configs("streaming", {description = "Build NATS Streaming", default = false, type = "boolean"})
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("ws2_32")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread", "rt")
+    end
+
     add_deps("cmake")
 
     on_load(function (package)
