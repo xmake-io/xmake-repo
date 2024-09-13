@@ -3,7 +3,9 @@ package("libvpx")
     set_description("libvpx is a free software video codec library from Google and the Alliance for Open Media (AOMedia)")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/webmproject/libvpx/archive/refs/tags/v1.14.1.tar.gz")
+    add_urls("https://github.com/webmproject/libvpx/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/webmproject/libvpx.git",
+             "https://chromium.googlesource.com/webm/libvpx.git")
     add_versions("v1.14.1", "901747254d80a7937c933d03bd7c5d41e8e6c883e0665fadcb172542167c7977")
 
     add_deps("autoconf", "automake", "libtool", "m4", "yasm")
@@ -18,14 +20,19 @@ package("libvpx")
     add_configs("webm_io",          {description = "enable input from and output to WebM container", default = false, type = "boolean"})
     add_configs("libyuv",           {description = "enable libyuv", default = false, type = "boolean"})
 
+    on_load(function (package)
+        if package:config("libyuv") then
+            package:add("deps", "libyuv")
+        end
+    end)
 
-    if on_check then
-        on_check(function (package)
-            if package:has_tool("cxx", "clang") and is_arch("x64", "x86_64") then
-                raise("package(libvpx) unsupported clang toolchain")
-            end
-        end)
-    end
+    -- if on_check then
+    --     on_check(function (package)
+    --         if package:has_tool("cxx", "clang") and is_arch("x64", "x86_64") then
+    --             raise("package(libvpx) unsupported clang toolchain")
+    --         end
+    --     end)
+    -- end
 
     on_install(function (package)
         local configs = {"--disable-dependency-tracking", "--disable-examples", "--disable-docs", "--as=yasm", "--disable-unit-tests"}
@@ -40,13 +47,13 @@ package("libvpx")
 
         table.insert(configs, (package:config("vp8") and "--enable-vp8" or "--disable-vp8"))
         table.insert(configs, (package:config("vp9") and "--enable-vp9" or "--disable-vp9"))
-        table.insert(configs, (package:config("vp9_post") and "----enable-vp9-postproc" or ""))
-        table.insert(configs, (package:config("vp9_highbitdepth") and "----enable-vp9-postproc" or ""))
+        table.insert(configs, (package:config("vp9_post") and "--enable-vp9-postproc" or "--disable-vp9-postproc"))
+        table.insert(configs, (package:config("vp9_highbitdepth") and "--enable-vp9-highbitdepth" or "--disable-vp9-highbitdepth"))
         
-        table.insert(configs, (package:config("postproc") and "--enable-postproc" or ""))
+        table.insert(configs, (package:config("postproc") and "--enable-postproc" or "--disable-postproc"))
         table.insert(configs, (package:config("codec_srcs") and "--enable-codec-srcs" or ""))
-        table.insert(configs, (package:config("webm_io") and "--enable-webm-io" or ""))
-        table.insert(configs, (package:config("libyuv") and "--enable-libyuv" or ""))
+        table.insert(configs, (package:config("webm_io") and "--enable-webm-io" or "--disable-webm-io"))
+        table.insert(configs, (package:config("libyuv") and "--enable-libyuv" or "--disable-libyuv"))
         
         import("package.tools.autoconf").install(package, configs)
     end)
