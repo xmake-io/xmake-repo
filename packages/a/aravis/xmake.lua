@@ -43,7 +43,7 @@ package("aravis")
         package:add("includedirs", "include", format("include/aravis-%d.%d", version:major(), version:minor()))
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|native", "macosx|native", "linux|native", function (package)
         -- patch xrepo package name to find .pc
         local libusb = package:dep("libusb")
         if libusb and not libusb:is_system() then
