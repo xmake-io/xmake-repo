@@ -8,7 +8,7 @@ package("libvpx")
              "https://chromium.googlesource.com/webm/libvpx.git")
     add_versions("v1.14.1", "901747254d80a7937c933d03bd7c5d41e8e6c883e0665fadcb172542167c7977")
 
-    if not package:is_plat("windows") then
+    if not is_plat("windows") then
         add_deps("autoconf", "automake", "libtool", "m4", "yasm")
     end
 
