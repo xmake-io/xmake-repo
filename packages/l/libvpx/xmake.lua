@@ -8,7 +8,9 @@ package("libvpx")
              "https://chromium.googlesource.com/webm/libvpx.git")
     add_versions("v1.14.1", "901747254d80a7937c933d03bd7c5d41e8e6c883e0665fadcb172542167c7977")
 
-    add_deps("autoconf", "automake", "libtool", "m4", "yasm")
+    if not package:is_plat("windows") then
+        add_deps("autoconf", "automake", "libtool", "m4", "yasm")
+    end
 
     add_configs("vp8",              {description = "enable the vp8 codec", default = false, type = "boolean"})
     add_configs("vp9",              {description = "enable the vp9 codec", default = false, type = "boolean"})
@@ -34,7 +36,7 @@ package("libvpx")
     --     end)
     -- end
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local configs = {"--disable-dependency-tracking", "--disable-examples", "--disable-docs", "--as=yasm", "--disable-unit-tests"}
         if package:config("shared") then
             table.insert(configs, "--enable-shared")
@@ -55,8 +57,9 @@ package("libvpx")
         table.insert(configs, (package:config("webm_io") and "--enable-webm-io" or "--disable-webm-io"))
         table.insert(configs, (package:config("libyuv") and "--enable-libyuv" or "--disable-libyuv"))
 
-        if is_arch("x64", "x86_64") and is_plat("windows") then
+        if package:is_arch("x64", "x86_64") and package:is_plat("windows") then
             table.insert(configs, "--target=x86_64-win64-vs17")
+            table.insert(configs, "--enable-static-msvcrt")
         end
         
         import("package.tools.autoconf").install(package, configs)
