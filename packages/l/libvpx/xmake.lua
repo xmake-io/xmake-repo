@@ -36,47 +36,10 @@ package("libvpx")
         end)
     end
 
-    on_install("!wasm" and "!bsd", function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {"--disable-dependency-tracking", "--disable-examples", "--disable-docs", "--as=yasm", "--disable-unit-tests"}
 
-        -- specify the platform
-        if package:is_plat("windows") then
-            table.insert(configs, "--enable-static-msvcrt")
-            table.insert(configs, "--disable-shared --enable-static")            
-            if package:is_arch("x86_64") then
-                if package:has_tool("gcc") then
-                    table.insert(configs, "--target=x86_64-win64-gcc")
-                else
-                    table.insert(configs, "--target=x86_64-win64-vs17")
-                end
-
-            elseif package:is_arch("x86") then
-                if package:has_tool("gcc") then
-                    table.insert(configs, "--target=x86-win32-gcc")
-                else
-                    table.insert(configs, "--target=x86-win32-vs17")
-                end
-
-            elseif package:is_arch("arm64") then
-                table.insert(configs, "--target=arm64-win64-vs17")
-            
-            elseif package:is_arch("armv7") then
-                table.insert(configs, "--target=armv7-win32-vs17")
-
-            end
-
-        elseif package:is_plat("android") then         
-            if package:is_arch("arm64") then
-                table.insert(configs, "--target=arm64-android-gcc")
-            elseif package:is_arch("armv7") then
-                table.insert(configs, "--target=armv7-android-gcc")
-            end
-
-        end
-
-        if not package:is_plat("windows") then
-            table.insert(configs, (package:config("shared") and "--enable-shared --disable-static" or "--disable-shared --enable-static"))
-        end
+        table.insert(configs, (package:config("shared") and "--enable-shared --disable-static" or "--disable-shared --enable-static"))
         table.insert(configs, (package:is_debug() and "--enable-debug" or ""))
 
         table.insert(configs, (package:config("vp8") and "--enable-vp8" or "--disable-vp8"))
