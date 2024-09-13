@@ -54,6 +54,10 @@ package("libvpx")
         table.insert(configs, (package:config("codec_srcs") and "--enable-codec-srcs" or ""))
         table.insert(configs, (package:config("webm_io") and "--enable-webm-io" or "--disable-webm-io"))
         table.insert(configs, (package:config("libyuv") and "--enable-libyuv" or "--disable-libyuv"))
+
+        if is_arch("x64", "x86_64") and is_plat("windows") then
+            table.insert(configs, "--target=x86_64-win64-vs17")
+        end
         
         import("package.tools.autoconf").install(package, configs)
     end)
