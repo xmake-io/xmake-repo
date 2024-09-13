@@ -37,11 +37,23 @@ package("cnats")
         table.insert(configs, "-DNATS_BUILD_LIB_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DNATS_BUILD_LIB_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
 
+        table.insert(configs, "-DNATS_BUILD_STREAMING=" .. (package:config("streaming") and "ON" or "OFF"))
         table.insert(configs, "-DNATS_BUILD_TLS_USE_OPENSSL_1_1_API=ON")
         table.insert(configs, "-DNATS_BUILD_WITH_TLS=" .. (package:config("tls") and "ON" or "OFF"))
         table.insert(configs, "-DNATS_BUILD_USE_SODIUM=" .. (package:config("sodium") and "ON" or "OFF"))
-        table.insert(configs, "-DNATS_BUILD_STREAMING=" .. (package:config("streaming") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local cxflags
+        if package:config("sodium") then
+            local libsodium = package:dep("libsodium")
+            if not libsodium:is_system() then
+                table.insert(configs, "-DNATS_SODIUM_DIR=" .. libsodium:installdir())
+                io.replace("CMakeLists.txt", "libsodium.lib libsodium.dll", "sodium.lib sodium.dll", {plain = true})
+            end
+            if not libsodium:config("shared") then
+                cxflags = "-DSODIUM_STATIC"
+            end
+        end
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
