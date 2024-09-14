@@ -5,6 +5,7 @@ package("sqlite_orm")
 
     add_urls("https://github.com/fnc12/sqlite_orm/archive/refs/tags/v$(version).zip")
     add_versions("1.8.2", "dd098fe06b46640384b77fd937b694af105dab221ab45f574e4ff9bb38bbeb90")
+    add_versions("1.9", "800f76b6a4b4d216d6d462f12cd0b62fa5057e9d2d8992f4ffd70e2b8123624b")
 
     add_deps("sqlite3")
 
