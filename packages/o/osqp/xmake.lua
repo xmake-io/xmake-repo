@@ -13,7 +13,7 @@ package("osqp")
     add_deps("cmake")
     if is_plat("windows") then
         add_deps("pkgconf")
-    else
+    elseif is_host("linux", "macosx", "bsd") then
         add_deps("pkg-config")
     end
     add_deps("qdldl")
