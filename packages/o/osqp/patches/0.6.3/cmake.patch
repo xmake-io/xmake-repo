@@ -1,0 +1,82 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index afd7bb940..232981149 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -270,7 +270,8 @@ endif (R_LANG)
+ 
+ # Add linear system solvers cumulative library
+ add_subdirectory(lin_sys)
+-
++include(GNUInstallDirs)
++if(NOT BUILD_SHARED_LIBS)
+ # Static library
+ add_library (osqpstatic STATIC ${osqp_src} ${osqp_headers} ${linsys_solvers})
+ # Give same name to static library output
+@@ -294,7 +295,7 @@ install(TARGETS osqpstatic
+         ARCHIVE       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+         LIBRARY       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+         RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+-
++endif()
+ 
+ # Install Headers
+ # ----------------------------------------------
+@@ -310,7 +311,7 @@ endif (MATLAB)
+ # If we are building Python/Matlab/R interface:
+ #   - do not build shared library
+ #   - do not build demo
+-if (NOT PYTHON AND NOT MATLAB AND NOT R_LANG AND NOT EMBEDDED)
++if (BUILD_SHARED_LIBS)
+     # Create osqp shared library
+     # NB: Add all the linear system solvers here
+     add_library (osqp SHARED ${osqp_src} ${osqp_headers} ${linsys_solvers})
+@@ -331,10 +332,9 @@ if (NOT PYTHON AND NOT MATLAB AND NOT R_LANG AND NOT EMBEDDED)
+             RUNTIME       DESTINATION "${CMAKE_INSTALL_BINDIR}")
+ 
+     # Create demo executable (linked to static library)
+-    add_executable (osqp_demo ${PROJECT_SOURCE_DIR}/examples/osqp_demo.c)
+-    target_link_libraries (osqp_demo osqpstatic)
+ 
+-endif (NOT PYTHON AND NOT MATLAB AND NOT R_LANG AND NOT EMBEDDED)
++
++endif (BUILD_SHARED_LIBS)
+ 
+ # Create CMake packages for the build directory
+ # ----------------------------------------------
+diff --git a/lin_sys/direct/CMakeLists.txt b/lin_sys/direct/CMakeLists.txt
+index c36c375ad..13ac7d2cd 100644
+--- a/lin_sys/direct/CMakeLists.txt
++++ b/lin_sys/direct/CMakeLists.txt
+@@ -6,12 +6,11 @@ add_subdirectory(qdldl)
+ 
+ # Need to add qdldlobject only here because it cannot be
+ # included in another object library such as linsys_qdldl
+-set(direct_linsys_solvers $<TARGET_OBJECTS:linsys_qdldl> $<TARGET_OBJECTS:qdldlobject>)
++set(direct_linsys_solvers $<TARGET_OBJECTS:linsys_qdldl> )
+ 
+ # NB. The second directory is added because we need to include the "qdldl_types.h" file in "qdldl_interface.h"
+ set(direct_linsys_solvers_includes
+-	"${CMAKE_CURRENT_SOURCE_DIR}/qdldl/"
+-	"${CMAKE_CURRENT_SOURCE_DIR}/qdldl/qdldl_sources/include")
++	"${CMAKE_CURRENT_SOURCE_DIR}/qdldl/")
+ 
+ 
+ # Add other solvers if embedded option is false
+diff --git a/lin_sys/direct/qdldl/CMakeLists.txt b/lin_sys/direct/qdldl/CMakeLists.txt
+index d78c4a38d..9af194845 100644
+--- a/lin_sys/direct/qdldl/CMakeLists.txt
++++ b/lin_sys/direct/qdldl/CMakeLists.txt
+@@ -1,5 +1,4 @@
+ # Add qdldl
+-add_subdirectory(qdldl_sources)
+ 
+ 
+ if(NOT DEFINED EMBEDDED)
+@@ -27,7 +26,6 @@ endif()
+ set(qdldl_interface_includes
+     ${CMAKE_CURRENT_SOURCE_DIR}
+     ${CMAKE_CURRENT_SOURCE_DIR}/amd/include
+-    ${CMAKE_CURRENT_SOURCE_DIR}/qdldl_sources/include
+ )
+ 
+ set(qdldl_interface_src
