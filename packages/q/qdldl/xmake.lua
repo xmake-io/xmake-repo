@@ -21,7 +21,7 @@ package("qdldl")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DQDLDL_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DQDLDL_BUILD_STATIC_LIB=" .. (package:config("shared") and "OF" or "ONF"))
+        table.insert(configs, "-DQDLDL_BUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
     end)
 
