@@ -38,7 +38,7 @@ package("flann")
         io.writefile("xmake.lua", format([[
             add_rules("mode.debug", "mode.release")
             add_requires("lz4")
-            if is_plat("windows") then
+            if is_plat("windows", "mingw") then
                 if is_kind("static") then
                     add_defines("FLANN_STATIC")
                 elseif is_kind("shared") then
