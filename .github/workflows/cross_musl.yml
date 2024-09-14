@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        cross: [arm-unknown-linux-musleabi, aarch64-unknown-linux-musl]
+        cross: [arm-unknown-linux-musleabihf, aarch64-unknown-linux-musl]
 
     runs-on: ${{ matrix.os }}
 
