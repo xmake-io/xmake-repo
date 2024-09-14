@@ -8,12 +8,10 @@ package("osqp")
 
     add_versions("v0.6.3", "285b2a60f68d113a1090767ec8a9c81a65b3af2d258f8c78a31cc3f98ba58456")
 
-    add_patches("0.6.3", "patches/0.6.3/cmake.patch", "ffe3809019eebae7559e8c4016431e9d3e9bc35776d9affe65b83904dd753999")
+    add_patches("0.6.3", "patches/0.6.3/cmake.patch", "1cd5a36c8ca2dd393f39d2e79f9d54fbf63d086ea3d57d250a0ea5cc1a2f9eca")
 
     add_deps("cmake")
-    if is_plat("windows") then
-        add_deps("pkgconf")
-    elseif is_host("linux", "macosx", "bsd") then
+    if is_host("linux", "macosx", "bsd") then
         add_deps("pkg-config")
     end
     add_deps("qdldl")
@@ -25,7 +23,7 @@ package("osqp")
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = "qdldl"})
     end)
 
     on_test(function (package)

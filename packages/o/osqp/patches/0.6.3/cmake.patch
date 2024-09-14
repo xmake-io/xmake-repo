@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index afd7bb94..a8ccb883 100644
+index afd7bb94..de8a9607 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -267,15 +267,18 @@ endif (R_LANG)
@@ -9,7 +9,7 @@ index afd7bb94..a8ccb883 100644
 -
 +include(GNUInstallDirs)
 +include(FindPkgConfig)
-+pkg_search_module(qdldl REQUIRED IMPORTED_TARGET qdldl)
++pkg_search_module(qdldl IMPORTED_TARGET qdldl)
  # Add linear system solvers cumulative library
  add_subdirectory(lin_sys)
  
