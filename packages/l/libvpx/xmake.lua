@@ -30,7 +30,7 @@ package("libvpx")
 
     if on_check then
         on_check(function (package)
-            if package:has_tool("cxx", "clang") and is_arch("x64", "x86_64") then
+            if package:has_tool("cxx", "clang") and package:is_arch("x64", "x86_64") then
                 raise("package(libvpx) unsupported clang toolchain")
             end
         end)
