@@ -15,7 +15,7 @@ package("jrtplib")
         add_syslinks("pthread")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", function (package)
         io.replace("src/CMakeLists.txt", [[option(JRTPLIB_WARNINGSASERRORS "Enable -Wall -Wextra -Werror" ON)]], [[option(JRTPLIB_WARNINGSASERRORS "Enable -Wall -Wextra -Werror" OFF)]], {plain=true})
         io.replace("src/CMakeLists.txt", [[NOT MSVC OR JRTPLIB_COMPILE_STATIC]], [[JRTPLIB_COMPILE_STATIC]], {plain=true})
         io.replace("src/CMakeLists.txt", [[NOT MSVC OR NOT JRTPLIB_COMPILE_STATIC]], [[NOT JRTPLIB_COMPILE_STATIC]], {plain=true})
