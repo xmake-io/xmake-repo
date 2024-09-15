@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        cross: [arm-unknown-linux-musleabihf, aarch64-unknown-linux-musl]
+        cross: [arm, aarch64]
 
     runs-on: ${{ matrix.os }}
 
@@ -25,9 +25,9 @@ jobs:
 
       - name: Installation
         run: |
-          wget https://github.com/musl-cross/musl-cross/releases/download/20240903/${{ matrix.cross }}.tgz
-          tar -xvf ${{ matrix.cross }}.tgz
+          apt-get update
+          apt-get install -y gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p cross --toolchain=muslcc --sdk=`pwd`/${{ matrix.cross }}
+          xmake l ./scripts/test.lua -D -p cross --cross=${{ matrix.cross }}-
