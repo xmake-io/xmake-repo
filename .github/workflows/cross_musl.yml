@@ -25,8 +25,8 @@ jobs:
 
       - name: Installation
         run: |
-          apt-get update
-          apt-get install -y gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf
 
       - name: Tests
         run: |
