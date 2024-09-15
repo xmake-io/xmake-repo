@@ -30,4 +30,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p cross --toolchain=muslcc --sdk=`pwd`/x86_64-linux-gnu-host-${{ matrix.cross }}-target-gcc15.tar.xz
+          xmake l ./scripts/test.lua -D -p cross --toolchain=muslcc --sdk=`pwd`/x86_64-linux-gnu-host-${{ matrix.cross }}-target-gcc15
