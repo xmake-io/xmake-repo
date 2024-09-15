@@ -30,4 +30,4 @@ jobs:
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p cross --cross=${{ matrix.cross }}-
+          xmake l ./scripts/test.lua -D -p cross --toolchain=cross --cross=${{ matrix.cross }}-
