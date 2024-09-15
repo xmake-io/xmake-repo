@@ -30,22 +30,24 @@ package("jrtplib")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "rtpsession.h"
-            #include "rtpsessionparams.h"
-            #include "rtpudpv4transmitter.h"
-            #include "rtpipv4address.h"
-            #include "rtptimeutilities.h"
-            #include "rtppacket.h"
-            using namespace jrtplib;
-            void test() {
-                	RTPSession session;
+        #include "rtpsession.h"
+        #include "rtpsessionparams.h"
+        #include "rtpudpv4transmitter.h"
+        #include "rtpipv4address.h"
+        #include "rtptimeutilities.h"
+        #include "rtppacket.h"
 
-	                RTPSessionParams sessionparams;
-	                sessionparams.SetOwnTimestampUnit(1.0/8000.0);
-	                
-                    RTPUDPv4TransmissionParams transparams;
-	                transparams.SetPortbase(8000);
-	                int status = session.Create(sessionparams,&transparams);
-            }
+        using namespace jrtplib;
+
+        void test() {
+            RTPSession session;
+	        
+            RTPSessionParams sessionparams;
+	        sessionparams.SetOwnTimestampUnit(1.0/8000.0);
+	        
+            RTPUDPv4TransmissionParams transparams;
+	        transparams.SetPortbase(8000);
+	        int status = session.Create(sessionparams,&transparams);
+        }
         ]]}, {configs = {languages = "c++11"}}))
     end)
