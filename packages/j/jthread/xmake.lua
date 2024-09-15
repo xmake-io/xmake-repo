@@ -8,22 +8,14 @@ package("jthread")
     add_versions("2023.08.18", "719413043807b77448df3ba1c749798fb72ee459")
     add_deps("cmake")
 
-    add_patches("2023.08.18", "patches/2023.08.18/cmakelist.patch", "4c5162f128f31ebee63805db1dbed0a17fc02b2661958b80468fcffc394d7f4e")
+    add_patches("2023.08.18", "patches/2023.08.18/cmakelist.patch", "62304c64bf7a84ce7d3f95042d2307b4306d934e00cc033837610d9cef8401d5")
 
     add_includedirs("include", "include/jthread")
     
     on_install("windows", "linux", "macosx", function(package)
-
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        if package:config("shared") then 
-            table.insert(configs, "-DJTHREAD_COMPILE_STATIC=OFF")
-            table.insert(configs, "-DJTHREAD_COMPILE_STATIC_ONLY=OFF")
-        else 
-            table.insert(configs, "-DJTHREAD_COMPILE_STATIC_ONLY=ON")
-            table.insert(configs, "-DJTHREAD_COMPILE_STATIC=ON")
-        end
-
+        table.insert(configs, "-DJTHREAD_COMPILE_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
     end)
 
