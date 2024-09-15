@@ -25,9 +25,9 @@ jobs:
 
       - name: Installation
         run: |
-          wget https://github.com/24bit-xjkp/toolchains/releases/download/gcc15.0.0-v4/x86_64-linux-gnu-host-{{ matrix.cross }}-target-gcc15.tar.xz
-          tar -xvf x86_64-linux-gnu-host-{{ matrix.cross }}-target-gcc15.tar.xz
+          wget https://github.com/24bit-xjkp/toolchains/releases/download/gcc15.0.0-v4/x86_64-linux-gnu-host-${{ matrix.cross }}-target-gcc15.tar.xz
+          tar -xvf x86_64-linux-gnu-host-${{ matrix.cross }}-target-gcc15.tar.xz
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p cross --toolchain=muslcc --sdk=`pwd`/x86_64-linux-gnu-host-{{ matrix.cross }}-target-gcc15.tar.xz
+          xmake l ./scripts/test.lua -D -p cross --toolchain=muslcc --sdk=`pwd`/x86_64-linux-gnu-host-${{ matrix.cross }}-target-gcc15.tar.xz
