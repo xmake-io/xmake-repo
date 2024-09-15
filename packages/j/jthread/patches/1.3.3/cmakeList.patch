@@ -1,0 +1,13 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 517e13f..3224c46 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -35,7 +35,7 @@ else ()
+ 	set(JTHREAD_COMPILE_STATIC ON CACHE BOOL "Flag indicating if a static library should be built, or a dynamic one")
+ endif ()
+ 
+-if (NOT MSVC OR JTHREAD_COMPILE_STATIC)
++if (NOT MSVC AND JTHREAD_COMPILE_STATIC)
+ 	set(JTHREAD_INSTALLTARGETS jthread-static)
+ 	add_library(jthread-static STATIC ${SOURCES} ${HEADERS})
+ 	set_target_properties(jthread-static PROPERTIES OUTPUT_NAME jthread)
