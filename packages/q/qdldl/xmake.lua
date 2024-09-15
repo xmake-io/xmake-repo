@@ -17,7 +17,7 @@ package("qdldl")
             package:add("defines", "QDLDL_SHARED_LIB")
         end
 
-        local configs = {"-DQDLDL_BUILD_DEMO_EXE=OFF"}
+        local configs = {"-DQDLDL_BUILD_DEMO_EXE=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DQDLDL_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))

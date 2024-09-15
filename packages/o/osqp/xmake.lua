@@ -11,7 +11,7 @@ package("osqp")
     add_patches("0.6.3", "patches/0.6.3/cmake.patch", "ffe3809019eebae7559e8c4016431e9d3e9bc35776d9affe65b83904dd753999")
 
     add_deps("cmake")
-    if is_plat("windows") then
+    if is_subhost("windows") then
         add_deps("pkgconf")
     elseif is_host("linux", "macosx", "bsd") then
         add_deps("pkg-config")
@@ -19,7 +19,7 @@ package("osqp")
     add_deps("qdldl")
 
     on_install(function (package)
-        local configs = {}
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("shared") and package:is_plat("windows") then
