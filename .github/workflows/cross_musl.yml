@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        cross: [arm, aarch64]
+        cross: [arm-linux-gnueabihf, aarch64-linux-gnu]
 
     runs-on: ${{ matrix.os }}
 
@@ -25,9 +25,9 @@ jobs:
 
       - name: Installation
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf
+          wget https://github.com/24bit-xjkp/toolchains/releases/download/gcc15.0.0-v4/x86_64-linux-gnu-host-{{ matrix.cross }}-target-gcc15.tar.xz
+          tar -xvf x86_64-linux-gnu-host-{{ matrix.cross }}-target-gcc15.tar.xz
 
       - name: Tests
         run: |
-          xmake l ./scripts/test.lua -D -p cross --toolchain=cross --cross=${{ matrix.cross }}-
+          xmake l ./scripts/test.lua -D -p cross --toolchain=muslcc --sdk=`pwd`/x86_64-linux-gnu-host-{{ matrix.cross }}-target-gcc15.tar.xz
