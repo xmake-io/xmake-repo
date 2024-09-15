@@ -8,10 +8,10 @@ package("jthread")
     add_versions("2023.08.18", "719413043807b77448df3ba1c749798fb72ee459")
     add_deps("cmake")
 
-    add_patches("1.3.3", "patches/1.3.3/cmakelist.patch", "4c5162f128f31ebee63805db1dbed0a17fc02b2661958b80468fcffc394d7f4e")
+    add_patches("2023.08.18", "patches/2023.08.18/cmakelist.patch", "d5fc628a66434c377a2d88d27d90e937e9d175669a3452958beaeba6f5bcedee")
 
     add_includedirs("include", "include/jthread")
-    
+
     on_install("windows", "linux", "macosx", function(package)
 
         local configs = {}
@@ -30,7 +30,6 @@ package("jthread")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             using namespace jthread;
-            class TestThread : public JThread{
-            };
+            JMutex* test = new JMutex();
         ]]}, {configs = {languages = "c++11"}, includes = "jthread.h"}))
     end)
