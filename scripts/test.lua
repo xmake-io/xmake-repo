@@ -17,6 +17,7 @@ local options =
 ,   {'j', "jobs",           "kv", nil, "Set the build jobs."                        }
 ,   {'f', "configs",        "kv", nil, "Set the configs."                           }
 ,   {'d', "debugdir",       "kv", nil, "Set the debug source directory."            }
+,   {nil, "policies",       "kv", nil, "Set the policies."                          }
 ,   {nil, "fetch",          "k",  nil, "Fetch package only."                        }
 ,   {nil, "precompiled",    "k",  nil, "Attemp to install the precompiled package." }
 ,   {nil, "remote",         "k",  nil, "Test package on the remote server."         }
@@ -68,6 +69,9 @@ function _require_packages(argv, packages)
     end
     if argv.mode then
         table.insert(config_argv, "--mode=" .. argv.mode)
+    end
+    if argv.policies then
+        table.insert(config_argv, "--policies=" .. argv.policies)
     end
     if argv.ndk then
         table.insert(config_argv, "--ndk=" .. argv.ndk)
