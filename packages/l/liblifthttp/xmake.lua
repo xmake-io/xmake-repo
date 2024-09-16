@@ -12,6 +12,7 @@ package("liblifthttp")
 
     on_install("linux", "macosx", "android", "iphoneos", function (package)
         -- patch gcc13
+        io.replace("inc/lift/http.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
         io.replace("inc/lift/query_builder.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
         io.replace("inc/lift/resolve_host.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
         io.replace("inc/lift/lift_status.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
