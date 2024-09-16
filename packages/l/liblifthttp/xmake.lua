@@ -10,7 +10,12 @@ package("liblifthttp")
 
     add_deps("libcurl", "zlib", "libuv")
 
-    on_install("!wasm and !windows and !mingw", function (package)
+    on_install("linux", "macosx", "android", "iphoneos", function (package)
+        -- patch gcc13
+        io.replace("inc/lift/query_builder.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+        io.replace("inc/lift/resolve_host.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+        io.replace("inc/lift/lift_status.hpp", "#include <string>", "#include <string>\n#include <cstdint>", {plain = true})
+
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             set_languages("c++17")
