@@ -65,12 +65,12 @@ package("wxwidgets")
         add_versions("v3.2.4", "b358b7f59f5b7cb934265120d114e5fd510a8b40802d00a111a85911eb5100d1")
 
         add_deps("cmake")
-        add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib")
+        add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango")
         if is_plat("linux") then
-            add_deps("gtk+3", "opengl")
+            add_deps("opengl")
         end
     end
-
+    
     if is_plat("macosx") then
         add_defines("__WXOSX_COCOA__", "__WXMAC__", "__WXOSX__", "__WXMAC_XCODE__")
         add_frameworks("AudioToolbox", "WebKit", "CoreFoundation", "Security", "Carbon", "Cocoa", "IOKit", "QuartzCore")
@@ -79,6 +79,9 @@ package("wxwidgets")
         add_defines("__WXGTK3__", "__WXGTK__")
         add_syslinks("pthread", "m", "dl")
         add_syslinks("X11", "Xext", "Xtst", "xkbcommon")
+        add_links(
+            "pango-1.0", "pangoxft-1.0", "pangocairo-1.0", "pangoft2-1.0"
+        )
     elseif is_plat("windows") then
         add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=u", "wxMSVC_VERSION=14x")
         add_links(
@@ -109,6 +112,14 @@ package("wxwidgets")
                 package:add("deps", "libtiff", {configs = {shared = true}})
             else
                 package:add("deps", "libtiff")
+            end
+
+            if is_plat("linux") then
+                 if package:config("shared") then
+                    package:add("deps", "gtk3", {configs = {shared = true}})
+                else
+                    package:add("deps", "gtk3")
+                end
             end
         end
     end)
@@ -142,13 +153,13 @@ package("wxwidgets")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("linux") then
-            local libgtk3 = package:dep("gtk+3"):fetch()
+            local libgtk3 = package:dep("gtk3"):fetch()
             if libgtk3 then
                 table.insert(configs, "-DGTK3_INCLUDE_DIRS=" .. table.concat(libgtk3.sysincludedirs, ";"))
                 table.insert(configs, "-DGTK3_LIBRARIES=" .. table.concat(libgtk3.links, ";"))
             end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"pango", "at-spi2-core", "gtk3", "gdk-pixbuf"}})
         local version = package:version()
         local subdir = "wx-" .. version:major() .. "." .. version:minor()
         local setupdir = package:is_plat("macosx") and "osx" or "gtk"
