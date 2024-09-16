@@ -8,7 +8,7 @@ package("xtd")
 
     add_versions("v0.1.2", "648f7e5e2252d0db4e9432d493cec0682c059605ae3dfded793884cbbf3d1bd5")
 
-    add_configs("graphic_toolkit", {description = "Select xtd graphic toolkit.", default = "fltk", type = "string", values = {"gtk3", "wxwidgets", "fltk", "gtk4", "qt5"}})
+    add_configs("graphic_toolkit", {description = "Select xtd graphic toolkit.", default = "wxwidgets", type = "string", values = {"gtk3", "wxwidgets", "fltk", "gtk4", "qt5"}})
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     -- when building the xtd shared library, it shows Cyclic dependencies error. I have summit a issue to xtd.
     -- https://github.com/gammasoft71/xtd/issues/264#issue-2527671013
@@ -34,11 +34,11 @@ package("xtd")
     end)    
 
     on_install("linux", function (package)
-        -- io.replace("src/","", "" {plain=true})
-        local configs = {"-DXTD_NATIVE_GRAPHIC_TOOLKIT=" .. package:config("graphic_toolkit"), "-DXTD_BUILD_TOOLS=OFF", "XTD_INSTALL_RESOURCES"}
+        local configs = {"-DXTD_NATIVE_GRAPHIC_TOOLKIT=" .. package:config("graphic_toolkit"), 
+                         "-DXTD_BUILD_TOOLS=OFF", 
+                         "XTD_INSTALL_RESOURCES", 
+                         "-DXTD_INSTALL_EXAMPLES=OFF"}
         table.insert(configs, "-DXTD_BUILD_SHARED_LIBRARIES=" .. (package:config("shared") and "ON" or "OFF")) 
-        -- table.insert(configs, "-DXTD_NATIVE_GRAPHIC_TOOLKIT=" .. (package:config("graphic_toolkit"))) 
-        table.insert(configs, "-DXTD_INSTALL_EXAMPLES=OFF")
         import("package.tools.cmake").install(package, configs)
     end)
 
