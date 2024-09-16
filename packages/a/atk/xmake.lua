@@ -1,13 +1,14 @@
 package("atk")
-
     set_homepage("https://gitlab.gnome.org/GNOME/atk")
     set_description("ATK - The Accessibility Toolkit")
     set_license("LGPL-2.0")
 
-    add_urls("https://download.gnome.org/sources/atk/$(version).tar.xz", {version = function (version)
-        return format("%d.%d/atk-%s", version:major(), version:minor(), version)
-    end})
-    add_versions("2.36.0", "fb76247e369402be23f1f5c65d38a9639c1164d934e40f6a9cf3c9e96b652788")
+    add_urls("https://gitlab.gnome.org/Archive/atk/-/archive/$(version)/atk-$(version).tar.bz2",
+             "https://gitlab.gnome.org/Archive/atk.git")
+
+    add_versions("2.38.0", "469313d28bd22bcbf7b7ea300dddb9b6c13854455d297f4d51a944e378b0a9d7")
+
+    add_configs("introspection", {description = "Whether to build introspection files", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::atk")
@@ -17,12 +18,18 @@ package("atk")
         add_extsources("brew::atk")
     end
 
-    add_deps("meson", "ninja", "glib", "pkg-config")
     add_includedirs("include/atk-1.0")
-    on_install("linux", function (package)
-        local configs = {"-Dintrospection=false"}
+
+    add_deps("meson", "ninja", "glib")
+    if is_plat("windows") then
+        add_deps("pkgconf")
+    end
+
+    on_install("windows", "macosx", "linux", "cross", function (package)
+        local configs = {}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
-        import("package.tools.meson").install(package, configs)
+        table.insert(configs, "-Dintrospection=" .. (package:config("introspection") and "true" or "false"))
+        import("package.tools.meson").install(package, configs, {packagedeps = {"libintl", "libiconv"}})
     end)
 
     on_test(function (package)

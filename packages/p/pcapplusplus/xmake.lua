@@ -5,6 +5,7 @@ package("pcapplusplus")
     set_urls("https://github.com/seladb/PcapPlusPlus/archive/refs/tags/$(version).zip",
              "https://github.com/seladb/PcapPlusPlus.git")
 
+    add_versions("v24.09", "0a9d80d09a906c08a1df5f5a937134355c7cb3fc8a599bf1a0f10002cf0285be")
     add_versions("v23.09", "f2b92d817df6138363be0d144a61716f8ecc43216f0008135da2e0e15727d35a")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})

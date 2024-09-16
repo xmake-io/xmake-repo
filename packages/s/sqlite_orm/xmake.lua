@@ -3,13 +3,19 @@ package("sqlite_orm")
     set_homepage("https://github.com/fnc12/sqlite_orm")
     set_description("SQLite ORM light header only library for modern C++")
 
-    add_urls("https://github.com/fnc12/sqlite_orm/archive/refs/tags/v$(version).zip")
-    add_versions("1.8.2", "dd098fe06b46640384b77fd937b694af105dab221ab45f574e4ff9bb38bbeb90")
+    add_urls("https://github.com/fnc12/sqlite_orm/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/fnc12/sqlite_orm.git")
 
+    add_versions("v1.9", "a2fa433e24f6873a9e8cd9dd7e49d2d12640b458f3f6f941163cf60f6673b8a2")
+    add_versions("v1.8.2", "56e0c7729800637a8061658d0fdad4424d2cdde77b063d23cc1b76aa20339072")
+
+    add_deps("cmake")
     add_deps("sqlite3")
 
     on_install(function (package)
-        os.cp("include", package:installdir())
+        local configs = {"-DBUILD_TESTING=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)

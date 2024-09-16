@@ -6,6 +6,7 @@ package("dlpack")
     add_urls("https://github.com/dmlc/dlpack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dmlc/dlpack.git")
 
+    add_versions("v1.0", "f8cfdcb634ff3cf0e3d9a3426e019e1c6469780a3b0020c9bc4ecc09cf9abcb1")
     add_versions("v0.8", "cf965c26a5430ba4cc53d61963f288edddcd77443aa4c85ce722aaf1e2f29513")
 
     add_configs("contrib", {description = "Build in progress unstable libraries", default = false, type = "boolean"})

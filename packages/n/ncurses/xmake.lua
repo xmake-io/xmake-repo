@@ -51,7 +51,3 @@ package("ncurses")
     on_test(function (package)
         assert(package:has_cfuncs("initscr", {includes = "curses.h"}))
     end)
-
-    on_test(function (package)
-        assert(package:has_cfuncs("initscr", {includes = "curses.h"}))
-    end)

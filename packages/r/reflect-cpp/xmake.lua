@@ -91,7 +91,7 @@ package("reflect-cpp")
         end
     end)
 
-    on_install("!wasm", function (package)
+    on_install(function (package)
         local version = package:version()
         if package:gitref() or version:lt("0.11.1") or version:ge("0.13.0") then
             local configs = {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF"}

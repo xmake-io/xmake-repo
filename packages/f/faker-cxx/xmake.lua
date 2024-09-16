@@ -26,7 +26,7 @@ package("faker-cxx")
         end)
     end
 
-    on_install("!wasm", function (package)
+    on_install(function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DUSE_SYSTEM_DEPENDENCIES=ON", "-DUSE_STD_FORMAT=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
