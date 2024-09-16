@@ -22,14 +22,15 @@ package("google-dawn")
     add_deps("abseil", "spirv-tools")
 
     on_load(function (package)
-        local python = package:is_plat("windows") and "python" or "python3"
-        os.vrun(python .. " -m pip install jinja2")
         if package:config("shared") then
             package:add("defines", "WGPU_SHARED_LIBRARY", "DAWN_NATIVE_SHARED_LIBRARY")
         end
     end)
 
     on_install(function (package)
+        local python = package:is_plat("windows") and "python" or "python3"
+        os.vrun(python .. " -m pip install jinja2")
+
         import("patch")(package)
         local configs = import("configs").get(package)
         import("package.tools.cmake").install(package, configs)
