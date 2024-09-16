@@ -26,7 +26,7 @@ package("gdk-pixbuf")
     add_deps("meson", "ninja")
     add_deps("libpng", "libjpeg-turbo", "glib", "pcre2")
 
-    on_load("linux", function (package)
+    on_load(function (package)
         if package:config("shared") then
             package:add("deps", "libtiff", {configs = {shared = true}})
         else
