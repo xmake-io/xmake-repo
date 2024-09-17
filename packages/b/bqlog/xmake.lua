@@ -9,8 +9,10 @@ package("bqlog")
 
     if is_plat("windows", "mingw") then
         add_syslinks("shell32")
-    elseif is_plat("linux", "bsd") then
+    elseif is_plat("linux") then
         add_syslinks("pthread")
+    elseif is_plat("linux") then
+        add_syslinks("pthread", "execinfo")
     elseif is_plat("android") then
         add_syslinks("log", "android")
     elseif is_plat("iphoneos") then
