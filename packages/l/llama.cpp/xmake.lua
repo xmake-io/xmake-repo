@@ -8,6 +8,7 @@ package("llama.cpp")
 
     add_versions("3775", "405bae9d550cb3fbf36d6583377b951a346b548f5850987238fe024a16f45cad")
 
+    add_configs("curl", {description = "llama: use libcurl to download model from an URL", default = false, type = "boolean"})
     add_configs("openmp", {description = "ggml: use OpenMP", default = false, type = "boolean"})
     add_configs("cuda", {description = "ggml: use CUDA", default = false, type = "boolean"})
     add_configs("vulkan", {description = "ggml: use Vulkan", default = false, type = "boolean"})
@@ -31,6 +32,17 @@ package("llama.cpp")
             assert(ndkver and tonumber(ndkver) > 22, "package(llama.cpp) require ndkver > 22")
             assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(llama.cpp) require ndk api >= 24")
         end)
+
+        on_check("windows", function (package)
+            if package:is_arch("arm.*") then
+                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                if vs_toolset then
+                    local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                    local minor = vs_toolset_ver:minor()
+                    assert(minor and minor >= 30, "package(llama.cpp/arm64) require vs_toolset >= 14.3")
+                end
+            end
+        end)
     end
 
     on_load(function (package)
@@ -38,6 +50,9 @@ package("llama.cpp")
             package:add("defines", "GGML_SHARED", "LLAMA_SHARED")
         end
 
+        if package:config("curl") then
+            package:add("deps", "libcurl")
+        end
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
@@ -76,6 +91,7 @@ package("llama.cpp")
         table.insert(configs, "-DGGML_LTO=" .. (package:config("lto") and "ON" or "OFF"))
         table.insert(configs, "-DGGML_SANITIZE_ADDRESS=" .. (package:config("asan") and "ON" or "OFF"))
 
+        table.insert(configs, "-DLLAMA_CURL=" .. (package:config("curl") and "ON" or "OFF"))
         table.insert(configs, "-DGGML_OPENMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DGGML_CUDA=" .. (package:config("cuda") and "ON" or "OFF"))
         table.insert(configs, "-DGGML_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
