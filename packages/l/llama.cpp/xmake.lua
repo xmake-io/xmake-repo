@@ -19,23 +19,25 @@ package("llama.cpp")
         add_syslinks("pthread")
     end
 
+    add_links("llama", "ggml")
+
     add_deps("cmake")
 
-    on_component("llama", function (package, component)
-        component:add("links", "llama")
-        if package:config("shared") then
-            package:add("defines", "LLAMA_SHARED")
-        end
-    end)
-
-    on_component("ggml", function (package, component)
-        component:add("links", "ggml")
-        if package:config("shared") then
-            package:add("defines", "GGML_SHARED")
-        end
-    end)
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndkver = ndk:config("ndkver")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndkver and tonumber(ndkver) > 22, "package(llama.cpp) require ndkver > 22")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(llama.cpp) require ndk api >= 24")
+        end)
+    end
 
     on_load(function (package)
+        if package:config("shared") then
+            package:add("defines", "GGML_SHARED", "LLAMA_SHARED")
+        end
+
         if package:config("openmp") then
             package:add("deps", "openmp")
         end
