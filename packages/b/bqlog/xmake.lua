@@ -11,7 +11,7 @@ package("bqlog")
         add_syslinks("shell32")
     elseif is_plat("linux") then
         add_syslinks("pthread")
-    elseif is_plat("linux") then
+    elseif is_plat("bsd") then
         add_syslinks("pthread", "execinfo")
     elseif is_plat("android") then
         add_syslinks("log", "android")
@@ -32,7 +32,7 @@ package("bqlog")
         end)
     end
 
-    on_install("windows|x64", "linux", "macosx", "android", "bsd", function (package)
+    on_install("windows|x64", "linux", "macosx", "bsd", "android", "iphoneos", function (package)
         if package:config("shared") then
             package:add("defines", "BQ_DYNAMIC_LIB_IMPORT")
         end
