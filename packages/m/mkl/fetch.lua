@@ -45,7 +45,8 @@ function _find_package(package, opt)
         table.join2(group, {"mkl_intel_thread", "mkl_core"})
     end
 
-    if package:has_tool("cc", "gcc", "gxx") then
+    if (package:has_tool("cc", "gcc", "gxx") or 
+        package:has_tool("fc", "gfortran")) then
         result.ldflags = "-Wl,--start-group "
         for _, lib in ipairs(group) do
             result.ldflags = result.ldflags .. "-l" .. lib .. " "
