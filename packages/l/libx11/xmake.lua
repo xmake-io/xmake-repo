@@ -50,5 +50,5 @@ package("libx11")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("XOpenDisplay", {includes = "X11/Xlib-xcb.h"}))
+        assert(package:has_cfuncs("XOpenDisplay", {includes = "X11/Xlib.h"}))
     end)
