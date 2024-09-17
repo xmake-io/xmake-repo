@@ -9,7 +9,7 @@ package("bqlog")
 
     if is_plat("windows", "mingw") then
         add_syslinks("shell32")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     elseif is_plat("android") then
         add_syslinks("log", "android")
@@ -19,7 +19,18 @@ package("bqlog")
 
     add_deps("cmake")
 
-    on_install("!wasm and !mingw", function (package)
+    if on_check then
+        on_check("windows", function (package)
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(bqlog) require vs_toolset >= 14.3")
+            end
+        end)
+    end
+
+    on_install("windows|x64", "linux", "macosx", "android", "bsd", function (package)
         if package:config("shared") then
             package:add("defines", "BQ_DYNAMIC_LIB_IMPORT")
         end
