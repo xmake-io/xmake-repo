@@ -19,7 +19,7 @@ package("google-dawn")
     end
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
-    add_deps("abseil", "spirv-tools")
+    add_deps("abseil", "spirv-tools", "libx11")
 
     on_load(function (package)
         if package:config("shared") then
