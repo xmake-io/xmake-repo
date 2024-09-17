@@ -57,12 +57,14 @@ package("wxwidgets")
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
         add_configs("debug",      {description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
     else
-        add_urls("https://github.com/wxWidgets/wxWidgets/archive/refs/tags/$(version).tar.gz",
+        add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxWidgets-$(version).tar.bz2",
+                 "https://github.com/wxWidgets/wxWidgets/archive/refs/tags/$(version).tar.gz",
                  "https://github.com/wxWidgets/wxWidgets.git")
         add_versions("v3.2.0", "43480e3887f32924246eb439520a3a2bc04d7947712de1ea0590c5b58dedadd9")
         add_versions("v3.2.2", "2a4ec4d1af3f22fbfd0a40b051385a5d82628d9f28bae8427f5c30d72bdaade7")
         add_versions("v3.2.3", "0eb9499c06778c6746dbd4aee2a124f1995a5db331e282d15237b0046c1788af")
         add_versions("v3.2.4", "b358b7f59f5b7cb934265120d114e5fd510a8b40802d00a111a85911eb5100d1")
+        add_versions("3.2.4", "0640e1ab716db5af2ecb7389dbef6138d7679261fbff730d23845ba838ca133e")
 
         add_deps("cmake")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango")
