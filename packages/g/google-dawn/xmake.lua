@@ -36,7 +36,7 @@ package("google-dawn")
         local configs = import("configs").get(package)
 
         local packagedeps = {}
-        if package:is_plat("linux") then
+        if package:is_plat("linux", "bsd") then
             table.insert(packagedeps, "libx11")
         end
         import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
