@@ -15,7 +15,7 @@ package("google-dawn")
     end
 
     if is_plat("linux", "bsd") then
-        ad_syslinks("pthread")
+        add_syslinks("pthread")
     end
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
