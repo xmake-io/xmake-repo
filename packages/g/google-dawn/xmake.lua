@@ -16,10 +16,11 @@ package("google-dawn")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
+        add_deps("libx11")
     end
 
     add_deps("cmake", "python 3.x", {kind = "binary"})
-    add_deps("abseil", "spirv-tools", "libx11")
+    add_deps("abseil", "spirv-tools")
 
     on_load(function (package)
         if package:config("shared") then
