@@ -34,7 +34,12 @@ package("google-dawn")
 
         import("patch")(package)
         local configs = import("configs").get(package)
-        import("package.tools.cmake").install(package, configs)
+
+        local packagedeps = {}
+        if package:is_plat("linux") then
+            table.insert(packagedeps, "libx11")
+        end
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)
