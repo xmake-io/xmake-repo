@@ -64,6 +64,11 @@ package("bqlog")
         ]])
         io.replace("src/CMakeLists.txt", "/WX", "", {plain = true})
         io.replace("src/CMakeLists.txt", "-Werror", "", {plain = true})
+        io.replace("src/CMakeLists.txt", [[set_xcode_property(BqLog GCC_GENERATE_DEBUGGING_SYMBOLS NO "ALL")]],
+        [[  macro (set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
+            set_xcode_property(BqLog GCC_GENERATE_DEBUGGING_SYMBOLS NO "ALL")
+            endmacro (set_xcode_property)
+        ]], {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
