@@ -1,4 +1,4 @@
-package("thirdparty-asl")
+package("coin-or-asl")
     set_homepage("https://github.com/coin-or-tools/ThirdParty-ASL/")
     set_description("The Advanced Linux Sound Architecture (ALSA) provides audio and MIDI functionality to the Linux operating system.")
     set_license("EPL-1.0")
