@@ -7,10 +7,6 @@ package("bqlog")
 
     add_versions("1.4.4", "c32a8eae1f935a0dfc2d67e93b0d6cad6a0c551d65e72b10713da304ab33ee11")
 
-    if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
-
     if is_plat("windows", "mingw") then
         add_syslinks("shell32")
     elseif is_plat("linux") then
@@ -23,7 +19,11 @@ package("bqlog")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("!wasm and !mingw", function (package)
+        if package:config("shared") then
+            package:add("defines", "BQ_DYNAMIC_LIB_IMPORT")
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_TYPE=" .. (package:config("shared") and "dynamic_lib" or "static_lib"))
@@ -41,6 +41,7 @@ package("bqlog")
         table.insert(configs, "-DTARGET_PLATFORM=" .. plat)
 
         io.writefile("CMakeLists.txt", [[
+            cmake_minimum_required(VERSION 3.22)
             add_subdirectory(src)
             include(GNUInstallDirs)
             install(TARGETS BqLog
