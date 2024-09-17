@@ -13,7 +13,7 @@ package("llama.cpp")
     add_configs("vulkan", {description = "ggml: use Vulkan", default = false, type = "boolean"})
     add_configs("blas", {description = "ggml: use BLAS", default = nil, type = "string", values = {"mkl", "openblas"}})
 
-    if is_plat("macosx") then
+    if is_plat("macosx", "iphoneos") then
         add_frameworks("Accelerate", "Foundation", "Metal", "MetalKit")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
