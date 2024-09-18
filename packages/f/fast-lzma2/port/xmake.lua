@@ -19,14 +19,28 @@ target("fast-lzma2")
         add_syslinks("pthread")
     end
 
-    if is_arch("x64", "x86_64") then
-        add_defines("LZMA2_DEC_OPT")
-        add_deps("asm")
-    end
+    on_config(function (target)
+        if not target:is_arch("x64", "x86_64") or target:is_plat("bsd") then
+            return
+        end
+
+        target:add("defines", "LZMA2_DEC_OPT")
+        if target:has_tool("cxx", "clang") then
+            target:add("deps", "asm")
+        else
+            if target:is_plat("windows") then
+                target:add("files", "*.asm")
+                target:add("asflags", "-DMS_x64_CALL=1")
+            else
+                target:add("files", "*.S")
+                target:add("asflags", "-DMS_x64_CALL=0")
+            end
+        end
+    end)
 target_end()
 
 if is_arch("x64", "x86_64") then
-    -- help for clang toolchain
+    -- workaround for clang toolchain
     target("asm")
         set_kind("object")
 
