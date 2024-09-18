@@ -11,6 +11,25 @@ package("flux")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndkver = ndk:config("ndkver")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndkver and tonumber(ndkver) > 22, "package(flux) require ndk version > 22")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) >= 24, "package(flux) require ndk api >= 24")
+        end)
+
+        on_check("windows", function (package)
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(flux) require vs_toolset >= 14.3")
+            end
+        end)
+    end
+
     on_install(function (package)
         local configs = {"-DFLUX_BUILD_EXAMPLES=OFF", "-DFLUX_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
