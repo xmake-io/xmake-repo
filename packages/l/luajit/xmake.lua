@@ -17,6 +17,14 @@ package("luajit")
         add_syslinks("dl")
     end
 
+    if on_check then
+        on_check(function (package)
+            if package:is_arch("arm.*") then
+                raise("package(luajit/arm64) unsupported arch")
+            end
+        end)
+    end
+
     on_load(function (package)
         package:addenv("PATH", "bin")
         if package:config("shared") then
