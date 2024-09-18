@@ -39,7 +39,7 @@ target("fast-lzma2")
     end)
 target_end()
 
-if is_arch("x64", "x86_64") then
+if is_arch("x64", "x86_64") and not is_plat("bsd", "macosx") then
     -- workaround for clang toolchain
     target("asm")
         set_kind("object")
