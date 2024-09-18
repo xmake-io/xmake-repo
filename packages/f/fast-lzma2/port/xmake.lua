@@ -20,7 +20,7 @@ target("fast-lzma2")
     end
 
     on_config(function (target)
-        if not target:is_arch("x64", "x86_64") or target:is_plat("bsd") then
+        if not target:is_arch("x64", "x86_64") or target:is_plat("bsd", "macosx") then
             return
         end
 
