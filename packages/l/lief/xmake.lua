@@ -34,6 +34,22 @@ package("lief")
     add_deps("nlohmann_json", {configs = {cmake = true}})
     add_deps("tl_expected", "utfcpp", "mbedtls <3.6.0", "tcb-span", "frozen")
 
+    if on_check then
+        on_check(function (package)
+            if package:is_plat("windows") then
+                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                if vs_toolset then
+                    local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                    local minor = vs_toolset_ver:minor()
+                    assert(minor and minor >= 30, "package(lief) require vs_toolset >= 14.3")
+                end
+            end
+            if package:is_arch("arm.*") then
+                raise("package(lief) dep(mbedtls <3.6.0) unsupported arm arch")
+            end
+        end)
+    end
+
     on_install(function (package)
         if package:config("shared") then
             package:add("defines", "LIEF_IMPORT")
