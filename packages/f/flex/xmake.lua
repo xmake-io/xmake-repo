@@ -19,6 +19,9 @@ package("flex")
         -- we always set it, because flex may be modified as library
         -- by add_deps("flex", {kind = "library"})
         package:addenv("PATH", "bin")
+        if package:is_library() then
+            package:set("kind", "library", {headeronly = true})
+        end
     end)
 
     on_install("windows", function (package)
@@ -28,16 +31,13 @@ package("flex")
 
     on_install("macosx", "linux", "bsd", "android", "iphoneos", "cross", function (package)
         import("package.tools.autoconf").install(package)
-        if not package:is_binary() then
-            package:add("links", "")
-        end
     end)
 
     on_test(function (package)
         if not package:is_cross() then
             os.vrun("flex -h")
         end
-        if not package:is_binary() then
+        if package:is_library() then
             assert(package:has_cxxincludes("FlexLexer.h"))
         end
     end)
