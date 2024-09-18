@@ -5,6 +5,7 @@ package("catch2")
 
     add_urls("https://github.com/catchorg/Catch2/archive/refs/tags/$(version).zip",
              "https://github.com/catchorg/Catch2.git")
+    add_versions("v3.7.1", "7d771897398704ecb61eae534912e50c4d3ec6129c4d01c174a55c29657970d7")
     add_versions("v3.7.0", "75b04c94471a70680f10f5d0d985bd1a96b8941d040d6a7bfd43f6c6b1de9daf")
     add_versions("v3.6.0", "aa0ebf551ffbf098ec1e253b5fee234c30b4ee54a31b1be63cb1a7735d3cf391")
     add_versions("v3.5.4", "190a236fe0772ac4f5eebfdebfc18f92eeecfd270c55a1e5095ae4f10be2343f")
