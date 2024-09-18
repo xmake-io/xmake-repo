@@ -49,6 +49,7 @@ package("libpng")
                         add_files("arm/*.S")
                         add_defines("PNG_ARM_NEON_OPT=2")
                     end
+                    add_cxflags("-mfloat-abi=hard")
                 elseif is_arch("mips.*") then
                     add_files("mips/*.c")
                     add_defines("PNG_MIPS_MSA_OPT=2")
