@@ -7,6 +7,7 @@ package("dataframe")
              "https://github.com/hosseinmoein/DataFrame.git")
 
     add_versions("3.2.0", "44c513ef7956976738c2ca37384a220c5383e95fc363ad933541c6f3eef9d294")
+    add_versions("3.1.0", "09280a81f17d87d171062210c904c1acd94b1cdcf4c040eaa16cc9d224d526d4")
     add_versions("3.0.0", "9266fb85c518a251a5440e490c81615601791f2de2fad8755aa09f13a0c541f9")
     add_versions("1.21.0", "a6b07eaaf628225a34e4402c1a6e311430e8431455669ac03691d92f44081172")
     add_versions("1.22.0", "4b244241cd56893fccb22f7c874588f0d86b444912382ed6e9a4cf95e55ffda2")
@@ -19,6 +20,14 @@ package("dataframe")
 
     if on_check then
         on_check(function (package)
+            local version = package:version()
+            if version:lt("3.0.0") then
+                return
+            end
+            if version:eq("3.1.0") then
+                assert(package:has_tool("cxx", "cl", "clang", "clang_cl"), "package(dataframe/3.1.0) Only msvc/clang support")
+            end
+
             if package:is_plat("windows") then
                 local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
                 if vs_toolset then
