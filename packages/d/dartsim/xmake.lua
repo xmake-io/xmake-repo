@@ -6,6 +6,7 @@ package("dartsim")
 
     add_urls("https://github.com/dartsim/dart/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dartsim/dart.git")
+    add_versions("v6.14.5", "eb89cc01f4f48c399b055d462d8ecd2a3f846f825a35ffc67f259186b362e136")
     add_versions("v6.14.4", "f5fc7f5cb1269cc127a1ff69be26247b9f3617ce04ff1c80c0f3f6abc7d9ab70")
     add_versions("v6.13.0", "4da3ff8cee056252a558b05625a5ff29b21e71f2995e6d7f789abbf6261895f7")
     add_versions("v6.14.2", "6bbaf452f8182b97bf22adeab6cc7f3dc1cd2733358543131fa130e07c0860fc")
