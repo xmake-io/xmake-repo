@@ -4,11 +4,17 @@ package("flux")
     set_description("A C++20 library for sequence-orientated programming")
     set_license("BSL-1.0")
 
-    add_urls("https://github.com/tcbrindle/flux.git")
-    add_versions("2023.08.17", "8434e8e0fd131cebc3aed0d845530335bf7fb5e1")
+    add_urls("https://github.com/tcbrindle/flux/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/tcbrindle/flux.git")
+
+    add_versions("v0.4.0", "95e7d9d71c9ee9e89bb24b46ccba77ddfb0a1580630c2faab0b415dacc7c8d56")
+
+    add_deps("cmake")
 
     on_install(function (package)
-        os.cp("include", package:installdir())
+        local configs = {"-DFLUX_BUILD_EXAMPLES=OFF", "-DFLUX_BUILD_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
