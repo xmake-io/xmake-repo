@@ -6,6 +6,7 @@ package("verilator")
     add_urls("https://github.com/verilator/verilator/archive/refs/tags/$(version).tar.gz")
     add_urls("https://github.com/verilator/verilator.git")
 
+    add_versions("v5.028", "02d4b6f34754b46a97cfd70f5fcbc9b730bd1f0a24c3fc37223397778fcb142c")
     add_versions("v5.016", "66fc36f65033e5ec904481dd3d0df56500e90c0bfca23b2ae21b4a8d39e05ef1")
 
     on_load(function (package)
@@ -20,8 +21,10 @@ package("verilator")
             end
             package:add("deps", "python 3.x", {kind = "binary"})
         end
-        package:mark_as_pathenv("VERILATOR_ROOT")
-        package:addenv("VERILATOR_ROOT", ".")
+        if package:version() and package:version():lt("5.028") then
+            package:mark_as_pathenv("VERILATOR_ROOT")
+            package:addenv("VERILATOR_ROOT", ".")
+        end
     end)
 
     on_install("windows", function (package)
@@ -55,10 +58,15 @@ package("verilator")
                 table.insert(cxflags, "-I" .. includedir)
             end
         end
+        io.replace("Makefile.in", "$(VL_INST_MAN_FILES)", "", {plain = true})
         os.vrun("autoconf")
         local envs = autoconf.buildenvs(package, {cxflags = cxflags})
         envs.VERILATOR_ROOT = nil
-        autoconf.install(package, configs, {envs = envs})
+        local jobs
+        if package:version() and package:version():ge("5.028") then
+            jobs = 1
+        end
+        autoconf.install(package, configs, {envs = envs, jobs = jobs})
     end)
 
     on_test(function (package)
