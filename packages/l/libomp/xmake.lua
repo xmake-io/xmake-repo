@@ -12,7 +12,6 @@ package("libomp")
     add_resources("19.1.0", "llvm_cmake", "https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.0/cmake-19.1.0.src.tar.xz", "dc78b6a9ac8a097ca6ac0f23c06821d65e6ea3bf666026f529994c1d01056ae7")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean"})
-    add_configs("gdb", {description = "Build gdb-plugin code that enables OMPD support in GDB.", default = false, type = "boolean"})
 
     on_fetch("macosx", "linux", function (package, opt)
         if opt.system then
@@ -30,7 +29,7 @@ package("libomp")
         add_syslinks("pthread", "dl")
     end
     on_load(function (package)
-        if package:config("gdb") then
+        if package:version():ge("19.0") and package:is_built() then
             package:add("deps", "python 3.x")
         end
     end)
