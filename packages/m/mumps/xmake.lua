@@ -3,12 +3,12 @@ package("mumps")
     set_homepage("http://mumps.enseeiht.fr/")
     set_description("MUMPS: MUltifrontal Massively Parallel sparse direct Solver")
 
-    add_urls("http://mumps.enseeiht.fr/MUMPS_$(version).tar.gz")
+    add_urls("http://mumps-solver.org/MUMPS_$(version).tar.gz")
     add_versions("5.4.1", "93034a1a9fe0876307136dcde7e98e9086e199de76f1c47da822e7d4de987fa8")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
-    add_deps("scotch", "openblas")
+    add_deps("scotch", "openblas", "openmp")
     if is_plat("linux") then
         add_syslinks("pthread")
     end
