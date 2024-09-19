@@ -20,6 +20,14 @@ package("tinyxml2")
             package:add("defines", "TINYXML2_IMPORT")
         end
 
+        if package:is_plat("android") and package:is_arch("armeabi-v7a") then
+            local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+            if ndk_sdkver and tonumber(ndk_sdkver) < 24 then
+                io.replace("tinyxml2.cpp", "ftello", "ftell", {plain = true})
+                io.replace("tinyxml2.cpp", "fseeko", "fseek", {plain = true})
+            end
+        end
+
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
