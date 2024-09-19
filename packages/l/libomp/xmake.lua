@@ -30,7 +30,7 @@ package("libomp")
     end
     on_load(function (package)
         if package:version():ge("19.0") and package:is_built() then
-            package:add("deps", "python 3.x")
+            package:add("deps", "python 3.x", {kind = "binary"})
         end
     end)
 
@@ -49,7 +49,7 @@ package("libomp")
         local shared = package:config("shared")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (shared and "ON" or "OFF"))
         table.insert(configs, "-DLIBOMP_ENABLE_SHARED=" .. (shared and "ON" or "OFF"))
-        table.insert(configs, "-DLIBOMP_OMPD_GDB_SUPPORT=" .. (package:config("gdb") and "ON" or "OFF"))
+        table.insert(configs, "-DLIBOMP_OMPD_GDB_SUPPORT=" .. (package:is_cross() and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
     end)
 
