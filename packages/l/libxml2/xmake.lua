@@ -32,11 +32,6 @@ package("libxml2")
     add_includedirs("include/libxml2")
 
     add_deps("cmake")
-    if is_subhost("windows") then
-        add_deps("pkgconf")
-    else
-        add_deps("pkg-config")
-    end
 
     on_load(function (package)
         if package:is_plat("windows") and not package:config("shared") then
