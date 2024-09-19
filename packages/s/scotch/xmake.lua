@@ -1,23 +1,27 @@
 package("scotch")
-
     set_homepage("https://www.labri.fr/perso/pelegrin/scotch/")
     set_description("Scotch: a software package for graph and mesh/hypergraph partitioning, graph clustering, and sparse matrix ordering")
 
     add_urls("https://gitlab.inria.fr/scotch/scotch/-/archive/$(version)/scotch-$(version).zip",
              "https://gitlab.inria.fr/scotch/scotch.git")
+
     add_versions("v6.1.1", "21d001c390ec63ac60f987b9921f33cc1967b41cf07567e22cbf3253cda8962a")
     add_versions("v7.0.5", "fd52e97844115dce069220bacbfb45fccdf83d425614b02b67b44cedf9d72640")
+
+    add_patches("7.0.5", "patches/7.0.5/cmake.patch", "5104181d78dcf31779ab70cae61bb80fa2f6f836ce5d73628ef9b2d074fb8d8c")
 
     add_configs("zlib", {description = "Use ZLIB compression format.", default = true, type = "boolean"})
     add_configs("lzma", {description = "Use LZMA compression format.", default = false, type = "boolean"})
     add_configs("bz2", {description = "Use BZ2 compression format.", default = false, type = "boolean"})
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
+
     add_links("ptesmumps", "esmumps", "scotch", "scotcherr", "scotcherrexit", "scotchmetis", "scotchmetisv5", "scotchmetisv3")
+
     on_load(function (package)
-        if package:version():ge("7.0.0") then
+        if package:gitref() or package:version():ge("7.0.0") then
             package:add("deps", "cmake")
             package:add("deps", "flex", "bison")
             package:add("deps", "gfortran", {kind = "binary"})
@@ -35,16 +39,24 @@ package("scotch")
         end
     end)
 
-    on_install("macosx", "linux", function (package)
-        if package:version():ge("7.0.0") then
+    on_install(function (package)
+        if package:gitref() or package:version():ge("7.0.0") then
             local configs = {"-DENABLE_TESTS=OFF", "-DBUILD_PTSCOTCH=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_LZMA=" .. (package:config("lzma") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_BZ2=" .. (package:config("bz2") and "ON" or "OFF"))
+            if package:is_plat("windows") then
+                os.mkdir(path.join(package:buildir(), "src/scotch/pdb"))
+                os.mkdir(path.join(package:buildir(), "src/esmumps/pdb"))
+                os.mkdir(path.join(package:buildir(), "src/libscotch/pdb"))
+                os.mkdir(path.join(package:buildir(), "src/libscotchmetis/pdb"))
+                if package:config("shared") then
+                    table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+                end
+            end
             import("package.tools.cmake").install(package, configs)
-
         elseif package:is_plat("macosx", "linux") then
             import("package.tools.make")
 
