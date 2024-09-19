@@ -49,10 +49,6 @@ package("aravis")
         if libusb and not libusb:is_system() then
             io.replace("meson.build", "libusb-1.0", "libusb", {plain = true})
         end
-        local libxml2 = package:dep("libxml2")
-        if not libxml2:is_system() then
-            io.replace("meson.build", "libxml-2.0", "libxml2", {plain = true})
-        end
 
         local configs = {"-Dviewer=disabled", "-Dtests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))

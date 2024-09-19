@@ -14,7 +14,7 @@ package("libxml2")
 
     includes(path.join(os.scriptdir(), "configs.lua"))
     for name, desc in pairs(get_libxml2_configs()) do
-        add_configs(name, {description = desc, default = false, type = "boolean"})
+        add_configs(name, {description = desc[1], default = desc[2], type = "boolean"})
     end
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
     add_configs("all", {description = "Enable all configs, exclude python", default = false, type = "boolean"})
@@ -104,6 +104,11 @@ package("libxml2")
             opt.cxflags = "-DLZMA_API_STATIC"
         end
         import("package.tools.cmake").install(package, configs, opt)
+        if package:is_plat("windows") then
+            local libfiles = os.files(package:installdir("lib/*xml2*.lib"))[1]
+            local pc = package:installdir("lib/pkgconfig/libxml-2.0.pc")
+            io.replace(pc, "-lxml2", "-l" .. path.basename(libfiles), {plain = true})
+        end
     end)
 
     on_test(function (package)
