@@ -40,7 +40,7 @@ package("libxml2")
     end
 
     on_load(function (package)
-        if package:is_plat("windows") and not package:config("shared") then
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "LIBXML_STATIC")
         end
 
