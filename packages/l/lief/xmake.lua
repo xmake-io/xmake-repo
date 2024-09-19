@@ -30,7 +30,7 @@ package("lief")
     end
 
     add_deps("cmake")
-    add_deps("spdlog", {configs = {header_only = false}})
+    add_deps("spdlog", {configs = {header_only = false, noexcept = true}})
     add_deps("nlohmann_json", {configs = {cmake = true}})
     add_deps("tl_expected", "utfcpp", "mbedtls <3.6.0", "tcb-span", "frozen")
 
@@ -78,15 +78,10 @@ package("lief")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLIEF_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
+        table.insert(configs, "-DLIEF_DISABLE_EXCEPTIONS=" .. (package:config("exceptions") and "OFF" or "ON"))
 
-        local configs_map = {
-            ["exceptions"] = "DISABLE_EXCEPTIONS"
-        }
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
-                if configs_map[name] then
-                    name = configs_map[name]
-                end
                 table.insert(configs, "-DLIEF_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
