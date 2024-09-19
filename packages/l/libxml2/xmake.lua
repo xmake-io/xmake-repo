@@ -17,6 +17,7 @@ package("libxml2")
         add_configs(name, {description = desc, default = false, type = "boolean"})
     end
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+    add_configs("all", {description = "Enable all configs, exclude python", default = false, type = "boolean"})
 
     if is_plat("windows", "mingw") then
         add_syslinks("wsock32", "ws2_32", "bcrypt")
@@ -42,10 +43,16 @@ package("libxml2")
             package:add("defines", "LIBXML_STATIC")
         end
 
-        if package:config("threads") then
-            if package:is_plat("linux", "bsd") then
-                package:add("syslinks", "pthread")
+        if package:config("all") then
+            for name, _ in pairs(import("configs").get_libxml2_configs()) do
+                if name ~= "python" then
+                    package:config_set(name, true)
+                end
             end
+        end
+
+        if package:config("threads") and package:is_plat("linux", "bsd") then
+            package:add("syslinks", "pthread")
         end
 
         if package:config("tools") then
