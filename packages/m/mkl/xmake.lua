@@ -3,8 +3,6 @@ package("mkl")
     set_homepage("https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl.html")
     set_description("Intel® oneAPI Math Kernel Library")
 
-    add_configs("runtime",      {description = "Set MKL runtime for gcc/clang like compilers.", default = "default", type = "string", values = {"default", "custom"}})
-
     if is_plat("windows") then
         if is_arch("x64") then
             add_urls("https://software.repos.intel.com/python/conda/$(version).tar.bz2", {version = function (version)
@@ -116,49 +114,47 @@ package("mkl")
         package:add("links", package:is_arch("x64", "x86_64") and "mkl_lapack95_" .. suffix or "mkl_lapack95")
 
         for _, toolkind in ipairs({"ld", "fcld"}) do
-            if package:config("runtime") == "default" then
-                if package:has_tool(toolkind, "gcc", "gxx") or package:has_tool(toolkind, "gfortran") then
+            if package:has_tool(toolkind, "gcc", "gxx") or package:has_tool(toolkind, "gfortran") then
 
-                    local var_ldflags = "ldflags"
-                    local var_shflags = "shflags"
-                    if package:has_tool(toolkind, "gfortran") then
-                        var_ldflags = "ldflags"
-                        var_shflags = "shflags"
-                    end
-                    local flags = {"-Wl,--start-group"}
-                    table.insert(flags, package:is_arch("x64", "x86_64") and "-lmkl_intel_" .. suffix or "-lmkl_intel")
-                    local threading = package:config("threading")
-                    if threading == "tbb" then
-                        table.insert(flags, "-lmkl_tbb_thread")
-                        package:add("deps", "tbb")
-                    elseif threading == "seq" then
-                        table.insert(flags, "-lmkl_sequential")
-                    elseif threading == "openmp" then
-                        table.insert(flags, "-lmkl_intel_thread")
-                        table.insert(flags, "-lomp")
-                    elseif threading == "gomp" then
-                        table.insert(flags, "-lmkl_gnu_thread")
-                        table.insert(flags, "-lgomp")
-                    end
-                    table.insert(flags, "-lmkl_core")
-                    table.insert(flags, "-Wl,--end-group")
-                    package:add(var_ldflags, table.concat(flags, " "))
-                    package:add(var_shflags, table.concat(flags, " "))
-                else
-                    package:add("links", package:is_arch("x64", "x86_64") and "mkl_intel_" .. suffix or "mkl_intel_c")
-                    local threading = package:config("threading")
-                    if threading == "tbb" then
-                        package:add("links", "mkl_tbb_thread")
-                        package:add("deps", "tbb")
-                    elseif threading == "seq" then
-                        package:add("links", "mkl_sequential")
-                    elseif threading == "openmp" then
-                        package:add("links", "mkl_intel_thread", "omp")
-                    elseif threading == "gomp" then
-                        package:add("links", "mkl_gnu_thread", "gomp")
-                    end
-                    package:add("links", "mkl_core")
+                local var_ldflags = "ldflags"
+                local var_shflags = "shflags"
+                if package:has_tool(toolkind, "gfortran") then
+                    var_ldflags = "ldflags"
+                    var_shflags = "shflags"
                 end
+                local flags = {"-Wl,--start-group"}
+                table.insert(flags, package:is_arch("x64", "x86_64") and "-lmkl_intel_" .. suffix or "-lmkl_intel")
+                local threading = package:config("threading")
+                if threading == "tbb" then
+                    table.insert(flags, "-lmkl_tbb_thread")
+                    package:add("deps", "tbb")
+                elseif threading == "seq" then
+                    table.insert(flags, "-lmkl_sequential")
+                elseif threading == "openmp" then
+                    table.insert(flags, "-lmkl_intel_thread")
+                    table.insert(flags, "-lomp")
+                elseif threading == "gomp" then
+                    table.insert(flags, "-lmkl_gnu_thread")
+                    table.insert(flags, "-lgomp")
+                end
+                table.insert(flags, "-lmkl_core")
+                table.insert(flags, "-Wl,--end-group")
+                package:add(var_ldflags, table.concat(flags, " "))
+                package:add(var_shflags, table.concat(flags, " "))
+            else
+                package:add("links", package:is_arch("x64", "x86_64") and "mkl_intel_" .. suffix or "mkl_intel_c")
+                local threading = package:config("threading")
+                if threading == "tbb" then
+                    package:add("links", "mkl_tbb_thread")
+                    package:add("deps", "tbb")
+                elseif threading == "seq" then
+                    package:add("links", "mkl_sequential")
+                elseif threading == "openmp" then
+                    package:add("links", "mkl_intel_thread", "omp")
+                elseif threading == "gomp" then
+                    package:add("links", "mkl_gnu_thread", "gomp")
+                end
+                package:add("links", "mkl_core")
             end
         end
     end)
