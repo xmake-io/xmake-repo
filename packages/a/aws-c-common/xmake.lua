@@ -32,7 +32,7 @@ package("aws-c-common")
 
     add_deps("cmake")
 
-    on_install("!mingw or mingw|!i386", function (package)
+    on_install(function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "AWS_COMMON_USE_IMPORT_EXPORT")
         end
