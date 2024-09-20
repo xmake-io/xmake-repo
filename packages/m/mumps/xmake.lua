@@ -1,10 +1,11 @@
 package("mumps")
 
-    set_homepage("http://mumps.enseeiht.fr/")
+    set_homepage("https://mumps-solver.org/index.php")
     set_description("MUMPS: MUltifrontal Massively Parallel sparse direct Solver")
 
-    add_urls("http://mumps.enseeiht.fr/MUMPS_$(version).tar.gz")
+    add_urls("https://mumps-solver.org/MUMPS_$(version).tar.gz")
     add_versions("5.4.1", "93034a1a9fe0876307136dcde7e98e9086e199de76f1c47da822e7d4de987fa8")
+    add_versions("5.7.3", "84a47f7c4231b9efdf4d4f631a2cae2bdd9adeaabc088261d15af040143ed112")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
@@ -13,17 +14,20 @@ package("mumps")
         add_syslinks("pthread")
     end
     add_links("smumps", "dmumps", "cmumps", "zmumps", "mumps_common", "pord", "mpiseq")
+
     on_install("linux", function (package)
         import("lib.detect.find_tool")
-        local fortranc = find_tool("gfortran")
-        if not fortranc then
-            raise("gfortran not found!")
-        end
+        local fortranc = assert(find_tool("gfortran"), "gfortran not found!")
 
         os.cp("Make.inc/Makefile.inc.generic.SEQ", "Makefile.inc")
         io.replace("Makefile.inc", "ORDERINGSF  = -Dpord", "ORDERINGSF  = -Dscotch -Dpord", {plain = true})
-        io.replace("Makefile.inc", "LAPACK = -llapack", "LAPACK = -lopenblas", {plain = true})
-        io.replace("Makefile.inc", "LIBBLAS = -lblas", "LIBBLAS = -lopenblas", {plain = true})
+        if package:dep("openblas"):config("openmp") then
+            io.replace("Makefile.inc", "LAPACK = -llapack", "LAPACK = -fopenmp -lopenblas", {plain = true})
+            io.replace("Makefile.inc", "LIBBLAS = -lblas", "LIBBLAS = -fopenmp -lopenblas", {plain = true})
+        else
+            io.replace("Makefile.inc", "LAPACK = -llapack", "LAPACK = -lopenblas", {plain = true})
+            io.replace("Makefile.inc", "LIBBLAS = -lblas", "LIBBLAS = -lopenblas", {plain = true})
+        end
         io.replace("Makefile.inc", "f90", fortranc.program, {plain = true})
         io.replace("Makefile.inc", "OPTF    = -O", "OPTF    = -O -std=legacy", {plain = true})
         local envs = import("package.tools.make").buildenvs(package)
