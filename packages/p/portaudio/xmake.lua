@@ -55,7 +55,11 @@ package("portaudio")
     on_install("!iphoneos", function (package)
         io.replace("CMakeLists.txt", [["${ALSA_LIBRARIES}"]], "ALSA::ALSA", {plain = true})
 
-        local configs = {"-DPA_BUILD_TESTS=OFF", "-DPA_BUILD_EXAMPLES=OFF"}
+        local configs = {
+            "-DPA_BUILD_TESTS=OFF",
+            "-DPA_BUILD_EXAMPLES=OFF",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+        }
         if package:is_debug() then
             table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
             table.insert(configs, "-DPA_ENABLE_DEBUG_OUTPUT=ON")
