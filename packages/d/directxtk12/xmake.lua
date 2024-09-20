@@ -38,7 +38,7 @@ package("directxtk12")
             if vs_toolset then
                 local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
                 local minor = vs_toolset_ver:minor()
-                assert(minor and minor >= 30, "package(bqlog) require vs_toolset >= 14.3")
+                assert(minor and minor >= 30, "package(directxtk12) require vs_toolset >= 14.3")
             end
         end)
     end
