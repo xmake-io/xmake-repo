@@ -8,7 +8,9 @@ package("scotch")
     add_versions("v6.1.1", "21d001c390ec63ac60f987b9921f33cc1967b41cf07567e22cbf3253cda8962a")
     add_versions("v7.0.5", "fd52e97844115dce069220bacbfb45fccdf83d425614b02b67b44cedf9d72640")
 
-    add_patches("7.0.5", "patches/7.0.5/cmake.patch", "5104181d78dcf31779ab70cae61bb80fa2f6f836ce5d73628ef9b2d074fb8d8c")
+    if is_plat("windows", "mingw", "msys") then
+        add_patches("7.0.5", "patches/7.0.5/cmake.patch", "5104181d78dcf31779ab70cae61bb80fa2f6f836ce5d73628ef9b2d074fb8d8c")
+    end
 
     add_configs("zlib", {description = "Use ZLIB compression format.", default = true, type = "boolean"})
     add_configs("lzma", {description = "Use LZMA compression format.", default = false, type = "boolean"})
@@ -20,11 +22,18 @@ package("scotch")
 
     add_links("ptesmumps", "esmumps", "scotch", "scotcherr", "scotcherrexit", "scotchmetis", "scotchmetisv5", "scotchmetisv3")
 
+    if on_check then
+        on_check(function (package)
+            if package:is_cross() then
+                raise("package(scotch) unsupported cross-compilation")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:gitref() or package:version():ge("7.0.0") then
             package:add("deps", "cmake")
             package:add("deps", "flex", "bison")
-            package:add("deps", "gfortran", {kind = "binary"})
             if package:config("zlib") then
                 package:add("deps", "zlib")
             end
@@ -38,8 +47,8 @@ package("scotch")
             package:add("deps", "zlib")
         end
     end)
-
-    on_install(function (package)
+    -- mingw require to fix xrepo flex package
+    on_install("windows|x64", "windows|arm64", "linux", "macosx", "bsd", function (package)
         if package:gitref() or package:version():ge("7.0.0") then
             local configs = {"-DENABLE_TESTS=OFF", "-DBUILD_PTSCOTCH=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
