@@ -123,7 +123,7 @@ function _require_packages(argv, packages)
     if argv.ldflags then
         table.insert(config_argv, "--ldflags=" .. argv.ldflags)
     end
-    os.vexecv("xmake", config_argv)
+    os.vexecv(os.programfile(), config_argv)
     local require_argv = {"require", "-f", "-y"}
     local check_argv = {"require", "-f", "-y", "--check"}
     if not argv.precompiled then
@@ -180,7 +180,7 @@ function _require_packages(argv, packages)
     local install_packages = {}
     if _check_package_is_supported() then
         for _, package in ipairs(packages) do
-            local ok = os.vexecv("xmake", table.join(check_argv, package), {try = true})
+            local ok = os.vexecv(os.programfile(), table.join(check_argv, package), {try = true})
             if ok == 0 then
                 table.insert(install_packages, package)
             end
@@ -189,7 +189,7 @@ function _require_packages(argv, packages)
         install_packages = packages
     end
     if #install_packages > 0 then
-        os.vexecv("xmake", table.join(require_argv, install_packages))
+        os.vexecv(os.programfile(), table.join(require_argv, install_packages))
     else
         print("no testable packages on %s or you're using lower version xmake!", argv.plat or os.subhost())
     end
@@ -282,7 +282,7 @@ function main(...)
         os.tryrm(workdir)
         os.mkdir(workdir)
         os.cd(workdir)
-        os.exec("xmake create test")
+        os.execv(os.programfile(), {"create", "test"})
     else
         os.cd(workdir)
     end
@@ -290,16 +290,16 @@ function main(...)
     print(os.curdir())
     -- do action for remote?
     if os.isdir("xmake-repo") then
-        os.exec("xmake service --disconnect")
+        os.execv(os.programfile(), {"service", "--disconnect"})
     end
     if argv.remote then
         os.tryrm("xmake-repo")
         os.cp(path.join(repodir, "packages"), "xmake-repo/packages")
-        os.exec("xmake service --connect")
+        os.execv(os.programfile(), {"service", "--connect"})
         repodir = "xmake-repo"
     end
-    os.exec("xmake repo --add local-repo %s", repodir)
-    os.exec("xmake repo -l")
+    os.execv(os.programfile(), {"repo", "--add", "local-repo", repodir})
+    os.execv(os.programfile(), {"repo", "-l"})
 
     -- require packages
     _require_packages(argv, packages)
