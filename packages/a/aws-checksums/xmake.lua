@@ -32,7 +32,7 @@ package("aws-checksums")
         end)
     end
 
-    on_install(function (package)
+    on_install("!mingw or mingw|!i386", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "AWS_CHECKSUMS_USE_IMPORT_EXPORT")
         end
