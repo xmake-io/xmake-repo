@@ -33,6 +33,10 @@ package("aws-c-common")
     add_deps("cmake")
 
     on_install("!mingw or mingw|!i386", function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "AWS_COMMON_USE_IMPORT_EXPORT")
+        end
+
         local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
