@@ -117,15 +117,13 @@ package("mkl")
 
         for _, toolkind in ipairs({"ld", "fcld"}) do
             if package:config("runtime") == "default" then
-                if (package:has_tool(toolkind, "gcc", "gxx") or package:has_tool(toolkind, "gfortran")) then
-                    if package:has_tool(toolkind, "gcc", "gxx") then
-                        var_ldflags = 'ldflags'
-                        var_shflags = 'shflags'
-                    else
-                        var_ldflags = 'ldflags'
-                        var_shflags = 'shflags'
-                        -- var_ldflags = 'fcldflags'
-                        -- var_shflags = 'fcshflags'
+                if package:has_tool(toolkind, "gcc", "gxx") or package:has_tool(toolkind, "gfortran") then
+
+                    local var_ldflags = "ldflags"
+                    local var_shflags = "shflags"
+                    if package:has_tool(toolkind, "gfortran") then
+                        var_ldflags = "ldflags"
+                        var_shflags = "shflags"
                     end
                     local flags = {"-Wl,--start-group"}
                     table.insert(flags, package:is_arch("x64", "x86_64") and "-lmkl_intel_" .. suffix or "-lmkl_intel")

@@ -1,8 +1,6 @@
 import("lib.detect.find_path")
 import("lib.detect.find_library")
 
--- add_configs("runtime",      {description = "Set MKL runtime for gcc/clang like compilers.", default = "default", type = "string", values = {"default", "custom"}})
-
 function _find_package(package, opt)
     local rdir = (package:is_arch("x64", "x86_64") and "intel64" or "ia32")
     local suffix = (package:config("interface") == 32 and "lp64" or "ilp64")
@@ -48,26 +46,22 @@ function _find_package(package, opt)
     end
 
     for _, toolkind in ipairs({"ld", "fcld"}) do
-        -- if package:config("runtime") == "default" then
-            if (package:has_tool(toolkind, "gcc", "gxx") or package:has_tool(toolkind, "gfortran")) then
-                local flags = {"-Wl,--start-group"}
-                for _, lib in ipairs(group) do
-                    table.insert(flags, "-l" .. lib)
-                end
-                table.insert(flags, "-Wl,--end-group")
-                if package:has_tool(toolkind, "gcc", "gxx") then
-                    result.ldflags = table.concat(flags, " ")
-                    result.shflags = table.concat(flags, " ")
-                else
-                    -- result.fcldflags = table.concat(flags, " ")
-                    -- result.fcshflags = table.concat(flags, " ")
-                    result.fcldflags = table.concat(flags, " ")
-                    result.fcshflags = table.concat(flags, " ")
-                end
-            else
-                table.join2(result.links, group)
+        if package:has_tool(toolkind, "gcc", "gxx") or package:has_tool(toolkind, "gfortran") then
+            local flags = {"-Wl,--start-group"}
+            for _, lib in ipairs(group) do
+                table.insert(flags, "-l" .. lib)
             end
-        -- end
+            table.insert(flags, "-Wl,--end-group")
+            if package:has_tool(toolkind, "gcc", "gxx") then
+                result.ldflags = table.concat(flags, " ")
+                result.shflags = table.concat(flags, " ")
+            else
+                result.ldflags = table.concat(flags, " ")
+                result.shflags = table.concat(flags, " ")
+            end
+        else
+            table.join2(result.links, group)
+        end
     end
 
     -- find include
