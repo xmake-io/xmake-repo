@@ -23,7 +23,7 @@ package("portaudio")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreAudio", "AudioToolbox", "AudioUnit", "CoreServices")
     elseif is_plat("linux", "bsd") then
-        add_syslinks("pthread")
+        add_syslinks("pthread", "asound")
     end
 
     add_deps("cmake")
