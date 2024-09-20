@@ -8,7 +8,7 @@ package("scotch")
     add_versions("v6.1.1", "21d001c390ec63ac60f987b9921f33cc1967b41cf07567e22cbf3253cda8962a")
     add_versions("v7.0.5", "fd52e97844115dce069220bacbfb45fccdf83d425614b02b67b44cedf9d72640")
 
-    if is_plat("windows", "mingw", "msys") then
+    if is_plat("windows", "mingw", "msys", "bsd") then
         add_patches("7.0.5", "patches/7.0.5/cmake.patch", "5104181d78dcf31779ab70cae61bb80fa2f6f836ce5d73628ef9b2d074fb8d8c")
     end
 
@@ -34,7 +34,7 @@ package("scotch")
         if package:gitref() or package:version():ge("7.0.0") then
             package:add("deps", "cmake")
             package:add("deps", "flex", "bison")
-            if not package:is_plat("windows") then
+            if package:is_plat("linux", "macosx") then
                 package:add("deps", "gfortran", {kind = "binary"})
             end
 
