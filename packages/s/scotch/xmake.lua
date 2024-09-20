@@ -34,6 +34,10 @@ package("scotch")
         if package:gitref() or package:version():ge("7.0.0") then
             package:add("deps", "cmake")
             package:add("deps", "flex", "bison")
+            if not package:is_plat("windows") then
+                package:add("deps", "gfortran", {kind = "binary"})
+            end
+
             if package:config("zlib") then
                 package:add("deps", "zlib")
             end
