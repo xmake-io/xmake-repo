@@ -50,7 +50,7 @@ package("emscripten-glfw")
             )
             install(DIRECTORY external/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
             install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-            install(FILES src/js/lib_emscripten_glfw3.js DESTINATION ${CMAKE_INSTALL_LIBDIR})
+            install(FILES src/js/lib_emscripten_glfw3.js DESTINATION ${CMAKE_INSTALL_BINDIR})
         if(0)]], {plain = true})
 
         local configs = {}
@@ -59,6 +59,12 @@ package("emscripten-glfw")
         table.insert(configs, "-DEMSCRIPTEN_GLFW3_DISABLE_JOYSTICK=" .. (package:config("joystick") and "OFF" or "ON"))
         table.insert(configs, "-DEMSCRIPTEN_GLFW3_DISABLE_MULTI_WINDOW_SUPPORT =" .. (package:config("multi_window") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
+
+        package:add("ldflags",
+            "--js-library",
+            package:installdir("bin/lib_emscripten_glfw3.js"),
+            os.files(package:installdir("lib/*.a"))[1]
+        )
     end)
 
     on_test(function (package)
