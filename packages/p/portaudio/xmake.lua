@@ -4,6 +4,7 @@ package("portaudio")
 
     add_urls("https://github.com/PortAudio/portaudio.git")
 
+    add_versions("2024.08.25", "3beece1baedab8acd7084d028df781efacaf31c4")
     add_versions("2023.08.05", "95a5c4ba645e01b32f70458f8ddcd92edd62f982")
 
     add_configs("skeleton", {description = "Use skeleton host API", default = false, type = "boolean"})
@@ -23,12 +24,15 @@ package("portaudio")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreAudio", "AudioToolbox", "AudioUnit", "CoreServices")
     elseif is_plat("linux", "bsd") then
-        add_syslinks("pthread", "asound")
+        add_syslinks("pthread")
     end
 
     add_deps("cmake")
+    if is_plat("linux") then
+        add_deps("alsa-lib")
+    end
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "wasm", "cross", function (package)
+    on_install("!iphoneos", function (package)
         local configs = {"-DPA_BUILD_TESTS=OFF", "-DPA_BUILD_EXAMPLES=OFF"}
         if package:is_debug() then
             table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
