@@ -16,6 +16,7 @@ package("portaudio")
         add_configs("wdmks", {description = "Enable support for WDMKS", default = true, type = "boolean"})
         add_configs("wdmks_devcie_info", {description = "Use WDM/KS API for device info", default = true, type = "boolean"})
     elseif is_plat("linux") then
+        add_configs("alsa", {description = "Enable support for ALSA", default = true, type = "boolean"})
         add_configs("alsa_dynamic", {description = "Enable dynamically loading libasound with dlopen using PaAlsa_SetLibraryPathName", default = false, type = "boolean"})
     end
 
@@ -28,11 +29,32 @@ package("portaudio")
     end
 
     add_deps("cmake")
-    if is_plat("linux") then
-        add_deps("alsa-lib")
-    end
+
+    on_load(function (package)
+        if package:config("alsa") then
+            package:add("deps", "alsa-lib")
+            package:add("defines", "PA_USE_ALSA=1")
+        end
+        if package:config("asio") then
+            package:add("defines", "PA_USE_ASIO=1")
+        end
+        if package:config("direct_sound") then
+            package:add("defines", "PA_USE_DS=1")
+        end
+        if package:config("wmme") then
+            package:add("defines", "PA_USE_WMME=1")
+        end
+        if package:config("wasapi") then
+            package:add("defines", "PA_USE_WASAPI=1")
+        end
+        if package:config("wdmks") then
+            package:add("defines", "PA_USE_WDMKS=1")
+        end
+    end)
 
     on_install("!iphoneos", function (package)
+        io.replace("CMakeLists.txt", [["${ALSA_LIBRARIES}"]], "ALSA::ALSA", {plain = true})
+
         local configs = {"-DPA_BUILD_TESTS=OFF", "-DPA_BUILD_EXAMPLES=OFF"}
         if package:is_debug() then
             table.insert(configs, "-DCMAKE_BUILD_TYPE=Debug")
@@ -52,6 +74,7 @@ package("portaudio")
             table.insert(configs, "-DPA_USE_WDMKS=" .. (package:config("wdmks") and "ON" or "OFF"))
             table.insert(configs, "-DPA_USE_WDMKS_DEVICE_INFO=" .. (package:config("wdmks_devcie_info") and "ON" or "OFF"))
         elseif package:is_plat("linux") then
+            table.insert(configs, "-DPA_USE_ALSA=" .. (package:config("alsa") and "ON" or "OFF"))
             table.insert(configs, "-DPA_ALSA_DYNAMIC=" .. (package:config("alsa_dynamic") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
