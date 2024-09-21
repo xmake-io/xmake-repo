@@ -21,13 +21,15 @@ package("mumps")
 
         os.cp("Make.inc/Makefile.inc.generic.SEQ", "Makefile.inc")
         io.replace("Makefile.inc", "ORDERINGSF  = -Dpord", "ORDERINGSF  = -Dscotch -Dpord", {plain = true})
+        local links = "-lopenblas"
         if package:dep("openblas"):config("openmp") then
-            io.replace("Makefile.inc", "LAPACK = -llapack", "LAPACK = -fopenmp -lopenblas", {plain = true})
-            io.replace("Makefile.inc", "LIBBLAS = -lblas", "LIBBLAS = -fopenmp -lopenblas", {plain = true})
-        else
-            io.replace("Makefile.inc", "LAPACK = -llapack", "LAPACK = -lopenblas", {plain = true})
-            io.replace("Makefile.inc", "LIBBLAS = -lblas", "LIBBLAS = -lopenblas", {plain = true})
+            links = "-fopenmp " .. links
+            if package:dep("openblas"):dep("openmp"):dep("libomp") then
+                links = links .. " -lomp"
+            end
         end
+        io.replace("Makefile.inc", "LAPACK = -llapack", "LAPACK = " .. links, {plain = true})
+        io.replace("Makefile.inc", "LIBBLAS = -lblas", "LIBBLAS = " .. links, {plain = true})
         io.replace("Makefile.inc", "f90", fortranc.program, {plain = true})
         io.replace("Makefile.inc", "OPTF    = -O", "OPTF    = -O -std=legacy", {plain = true})
         local envs = import("package.tools.make").buildenvs(package)
