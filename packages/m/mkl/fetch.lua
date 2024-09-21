@@ -46,18 +46,18 @@ function _find_package(package, opt)
     end
 
     for _, toolkind in ipairs({"ld", "fcld"}) do
-        if package:has_tool(toolkind, "gcc", "gxx") or package:has_tool(toolkind, "gfortran") then
+        if package:has_tool(toolkind, "gcc", "gxx", "gfortran") then
             local flags = {"-Wl,--start-group"}
             for _, lib in ipairs(group) do
                 table.insert(flags, "-l" .. lib)
             end
             table.insert(flags, "-Wl,--end-group")
             if package:has_tool(toolkind, "gcc", "gxx") then
-                result.ldflags = table.concat(flags, " ")
-                result.shflags = table.concat(flags, " ")
+                result.ldflags = flags
+                result.shflags = flags
             else
-                result.ldflags = table.concat(flags, " ")
-                result.shflags = table.concat(flags, " ")
+                result.fcldflags = flags
+                result.fcshflags = flags
             end
         else
             table.join2(result.links, group)

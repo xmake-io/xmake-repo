@@ -114,13 +114,13 @@ package("mkl")
         package:add("links", package:is_arch("x64", "x86_64") and "mkl_lapack95_" .. suffix or "mkl_lapack95")
 
         for _, toolkind in ipairs({"ld", "fcld"}) do
-            if package:has_tool(toolkind, "gcc", "gxx") or package:has_tool(toolkind, "gfortran") then
+            if package:has_tool(toolkind, "gcc", "gxx", "gfortran") then
 
                 local var_ldflags = "ldflags"
                 local var_shflags = "shflags"
                 if package:has_tool(toolkind, "gfortran") then
-                    var_ldflags = "ldflags"
-                    var_shflags = "shflags"
+                    var_ldflags = "fcldflags"
+                    var_shflags = "fcshflags"
                 end
                 local flags = {"-Wl,--start-group"}
                 table.insert(flags, package:is_arch("x64", "x86_64") and "-lmkl_intel_" .. suffix or "-lmkl_intel")
@@ -139,8 +139,8 @@ package("mkl")
                 end
                 table.insert(flags, "-lmkl_core")
                 table.insert(flags, "-Wl,--end-group")
-                package:add(var_ldflags, table.concat(flags, " "))
-                package:add(var_shflags, table.concat(flags, " "))
+                package:add(var_ldflags, flags)
+                package:add(var_shflags, flags)
             else
                 package:add("links", package:is_arch("x64", "x86_64") and "mkl_intel_" .. suffix or "mkl_intel_c")
                 local threading = package:config("threading")
