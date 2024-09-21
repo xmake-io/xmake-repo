@@ -34,7 +34,7 @@ package("mumps")
         io.replace("Makefile.inc", "OPTF    = -O", "OPTF    = -O -std=legacy", {plain = true})
         local envs = import("package.tools.make").buildenvs(package)
         local cflags, ldflags
-        for _, dep in ipairs(package:orderdeps()) do
+        for _, dep in ipairs(package:librarydeps()) do
             local fetchinfo = dep:fetch()
             if fetchinfo then
                 for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
