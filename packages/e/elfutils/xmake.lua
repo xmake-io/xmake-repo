@@ -16,13 +16,22 @@ package("elfutils")
     add_configs("libasm",   {description = "Enable libasm", default = false, type = "boolean"})
 
     add_deps("m4", "zstd", "zlib")
-    if is_plat("android") then
-        add_deps("libintl", "argp-standalone")
-    end
 
-    if is_plat("android") then
+    if on_source then
+        on_source(function (package)
+            if package:is_plat("android") then
+                package:add("configs", "shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+            end
+        end)
+    elseif is_plat("android") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
+
+    on_load(function(package)
+        if package:is_plat("android") then
+            package:add("deps", "libintl", "argp-standalone")
+        end
+    end)
 
     on_install("linux", "android", function (package)
         local configs = {"--disable-dependency-tracking",
