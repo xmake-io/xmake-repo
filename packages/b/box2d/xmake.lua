@@ -18,9 +18,15 @@ package("box2d")
     add_deps("cmake")
 
     if on_check then
-        on_check("windows", function (package)
+        on_check(function (package)
             if package:version():ge("3.0.0") then
-                assert(not package:is_arch("arm64.*"), "package(box2d =>3.0.0) Unsupported architecture.")
+                if package:check_sizeof("void*") == "4" then
+                    raise("package(box2d =>3.0.0) Unsupported architecture.")
+                end
+
+                if package:is_plat("windows") then
+                    assert(not package:is_arch("arm64.*"), "package(box2d =>3.0.0) Unsupported architecture.")
+                end
 
                 local configs = {languages = "c11"}
                 if package:has_tool("cc", "cl") then
