@@ -33,6 +33,15 @@ package("elfutils")
         end
     end)
 
+    if on_check then
+        -- https://github.com/xmake-io/xmake-repo/issues/3182
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) <= 23, "package(elfutils): need ndk api level <= 23 for android")
+        end)
+    end
+
     on_install("linux", "android", function (package)
         local configs = {"--disable-dependency-tracking",
                          "--disable-silent-rules",
