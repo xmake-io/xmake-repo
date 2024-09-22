@@ -21,11 +21,17 @@ package("box2d")
         on_check(function (package)
             if package:version():ge("3.0.0") then
                 if package:check_sizeof("void*") == "4" then
-                    raise("package(box2d =>3.0.0) Unsupported architecture.")
+                    raise("package(box2d >=3.0.0) unsupported 32-bit")
                 end
 
                 if package:is_plat("windows") then
-                    assert(not package:is_arch("arm64.*"), "package(box2d =>3.0.0) Unsupported architecture.")
+                    assert(not package:is_arch("arm64.*"), "package(box2d/arm >=3.0.0) Unsupported architecture.")
+                end
+
+                if package:is_plat("android") then
+                    local ndk = package:toolchain("ndk")
+                    local ndk_sdkver = ndk:config("ndk_sdkver")
+                    assert(ndk_sdkver and tonumber(ndk_sdkver) >= 28, "package(box2d >=3.0.0) requires ndk api level >= 28")
                 end
 
                 local configs = {languages = "c11"}
@@ -38,7 +44,7 @@ package("box2d")
         end)
     end
 
-    on_install(function (package)
+    on_install("!bsd", function (package)
         if package:config("shared") then
             package:add("defines", "B2_SHARED")
         end
