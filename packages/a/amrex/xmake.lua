@@ -10,7 +10,7 @@ package("amrex")
     add_patches("24.09", "patches/24.09/remove-symlink.patch", "d71adb07252e488ee003f6f04fea756864d6af2232b43208c9e138e062eb6e4d")
 
     add_configs("openmp", {description = "Enable OpenMP", default = false, type = "boolean"})
-    add_configs("mpi", {description = "Enable MPI", default = false, type = "boolean"})
+    add_configs("mpi", {description = "Enable MPI", default = false, type = "boolean", readonly = true})
     add_configs("cuda", {description = "Enable CUDA", default = false, type = "boolean"})
     add_configs("hdf5", {description = "Enable HDF5-based I/O", default = false, type = "boolean"})
     add_configs("fortran", {description = "Enable fortran", default = false, type = "boolean"})
@@ -21,6 +21,18 @@ package("amrex")
     end
 
     add_deps("cmake")
+
+    if on_check then
+        on_check("windows", function (package)
+            import("core.base.semver")
+
+            local msvc = package:toolchain("msvc")
+            if msvc then
+                local vs_sdkver = msvc:config("vs_sdkver")
+                assert(vs_sdkver and semver.match(vs_sdkver):gt("10.0.19041"), "package(amrex) require vs_sdkver > 10.0.19041.0")
+            end
+        end)
+    end
 
     on_load(function (package)
         if package:config("openmp") then
@@ -37,7 +49,7 @@ package("amrex")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "macosx", "linux", "bsd", "mingw", function (package)
         local configs = {"-DAMReX_ENABLE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
