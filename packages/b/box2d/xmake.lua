@@ -6,8 +6,8 @@ package("box2d")
     set_urls("https://github.com/erincatto/box2d/archive/refs/tags/$(version).tar.gz",
              "https://github.com/erincatto/box2d.git")
 
-    add_versions("3.0.0", "64ad759006cd2377c99367f51fb36942b57f0e9ad690ed41548dd620e6f6c8b1")
-    add_versions("2.4.2", "85b9b104d256c985e6e244b4227d447897fac429071cc114e5cc819dae848852")
+    add_versions("v3.0.0", "64ad759006cd2377c99367f51fb36942b57f0e9ad690ed41548dd620e6f6c8b1")
+    add_versions("v2.4.2", "85b9b104d256c985e6e244b4227d447897fac429071cc114e5cc819dae848852")
 
     add_configs("avx2", {description = "Enable AVX2.", default = false, type = "boolean"})
 
