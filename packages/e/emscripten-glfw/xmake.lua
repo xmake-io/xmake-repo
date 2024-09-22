@@ -5,21 +5,12 @@ package("emscripten-glfw")
 
     add_urls("https://github.com/pongasoft/emscripten-glfw.git")
     add_urls("https://github.com/pongasoft/emscripten-glfw/archive/refs/tags/$(version).tar.gz", {
-        alias = "github",
         version = function (version)
             return "v3.4.0." .. tostring(version):gsub("%.", "")
         end
     })
-    add_urls("https://github.com/pongasoft/emscripten-glfw/releases/download/v$(version)/emscripten-glfw3-$(version).zip", {
-        alias = "release",
-        version = function (version)
-            return "3.4.0." .. tostring(version):gsub("%.", "")
-        end
-    })
 
-    add_versions("github:2024.09.07", "ad4eea0c52ce61921da18e9fc8b6402a4a2e4515a8c783e2f1ae62671ab23fe3")
-
-    add_versions("release:2024.09.07", "bddd7b7b3b34e5799024f7dd618435c391a420ca21c2fb0252b4ae68c8e07c89")
+    add_versions("2024.09.07", "ad4eea0c52ce61921da18e9fc8b6402a4a2e4515a8c783e2f1ae62671ab23fe3")
 
     add_configs("joystick", {description = "Enable joystick support", default = true, type = "boolean"})
     add_configs("multi_window", {description = "Enable multi window support", default = true, type = "boolean"})
