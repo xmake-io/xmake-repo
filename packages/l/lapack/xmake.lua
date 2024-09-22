@@ -11,7 +11,7 @@ package("lapack")
 
     add_links("cblas", "blas", "lapack", "lapacke")
 
-    on_install(function (package)
+    on_install("linux", function (package)
         local configs = {"-DLAPACKE=ON", "-DBUILD_TESTING=OFF", "-DCBLAS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
