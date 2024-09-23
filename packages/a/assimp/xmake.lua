@@ -136,6 +136,12 @@ package("assimp")
             if minizip and not minizip:is_system() then
                 packagedeps = table.join2(packagedeps or {}, "minizip")
             end
+            -- fix ninja debug build
+            os.mkdir(path.join(package:buildir(), "code/pdb"))
+            -- MDd == _DEBUG + _MT + _DLL
+            if package:is_debug() and package:has_runtime("MD", "MT") then
+                io.replace("CMakeLists.txt", "/D_DEBUG", "", {plain = true})
+            end
         end
 
         local zlib = package:dep("zlib")
