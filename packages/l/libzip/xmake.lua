@@ -33,6 +33,15 @@ package("libzip")
         add_syslinks("advapi32")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            if package:is_arch("armeabi-v7a") then
+                local ndkver = package:toolchain("ndk"):config("ndkver")
+                assert(ndkver and tonumber(ndkver) > 22, "package(libzip) require ndk version > 22")
+            end
+        end)
+    end
+
     on_load(function (package)
         for config, dep in pairs(configdeps) do
             if package:config(config) then
