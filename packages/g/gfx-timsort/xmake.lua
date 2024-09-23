@@ -1,4 +1,4 @@
-package("timsort")
+package("gfx-timsort")
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/timsort/cpp-TimSort")
     set_description("A C++ implementation of timsort")
