@@ -12,9 +12,20 @@ package("gfx-timsort")
     add_deps("cmake")
 
     if on_check then
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(gfx-timsort) requires ndk version > 22")
+        on_check(function (package)
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(gfx-timsort) requires ndk version > 22")
+            end
+
+            assert(package:check_cxxsnippets({test = [[
+                #include <vector>
+                #include <algorithm>
+                void test() {
+                    std::vector<int> data;
+                    auto lower = std::ranges::lower_bound(data, 0);
+                }
+            ]]}, {configs = {languages = "c++20"}}), "package(gfx-timsort) Require at least C++20.")
         end)
     end
 
