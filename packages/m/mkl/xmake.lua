@@ -180,4 +180,17 @@ package("mkl")
                 cblas_dgemm(CblasColMajor,CblasNoTrans,CblasTrans,3,3,2,1,A,3,B,3,2,C,3);
             }
         ]]}, {includes = "mkl_cblas.h"}))
+        import("lib.detect.find_tool")
+        if package.check_fcsnippets and find_tool("gfortran") then
+            assert(package:check_fcsnippets({test = [[
+    program test
+        use iso_fortran_env, only: r64 => real64
+        real(r64) :: A(3,2), B(3,2), C(3,3)
+        data A/1.0_r64,1.0_r64,4.0_r64,2.0_r64,-3.0_r64,-1.0_r64/, &
+            B/1.0_r64,1.0_r64,4.0_r64,2.0_r64,-3.0_r64,-1.0_r64/, &
+            C/9*.5_r64/
+        call dgemm('N','T',3,3,2,1.0_r64,A,3,B,3,2.0_r64,C,3)
+    end program test
+            ]]}))
+        end
     end)
