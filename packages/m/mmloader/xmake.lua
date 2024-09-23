@@ -12,6 +12,15 @@ package("mmloader")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check(function (package)
+            import("core.base.semver")
+
+            local vs_sdkver = package:toolchain("msvc"):config("vs_sdkver")
+            assert(vs_sdkver and not semver.match(vs_sdkver):eq("10.0.19041"), "package(mmloader) require vs_sdkver != 10.0.19041.0")
+        end)
+    end
+
     on_install("windows|x64", "windows|x86", function (package)
         local configs = {"-DBUILD_MMLOADER_DEMO=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
