@@ -6,6 +6,7 @@ package("imath")
 
     add_urls("https://github.com/AcademySoftwareFoundation/Imath/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/Imath.git")
+    add_versions("v3.1.12", "8a1bc258f3149b5729c2f4f8ffd337c0e57f09096e4ba9784329f40c4a9035da")
     add_versions("v3.1.10", "f2943e86bfb694e216c60b9a169e5356f8a90f18fbd34d7b6e3450be14f60b10")
     add_versions("v3.1.0", "211c907ab26d10bd01e446da42f073ee7381e1913d8fa48084444bc4e1b4ef87")
     add_versions("v3.1.1", "a63fe91d8d0917acdc31b0c9344b1d7dbc74bf42de3e3ef5ec982386324b9ea4")
