@@ -8,7 +8,7 @@ package("lazy_importer")
 
     add_versions("2023.08.02", "4810f51d63438865e508c2784ea00811d9beb2ea")
 
-    on_install(function (package)
+    on_install("windows", "mingw", "msys", function (package)
         os.cp("include", package:installdir())
     end)
 
