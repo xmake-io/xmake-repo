@@ -38,6 +38,7 @@ package("elfutils")
         on_check("android", function (package)
             local ndk = package:toolchain("ndk")
             local ndk_sdkver = ndk:config("ndk_sdkver")
+            assert(ndk and tonumber(ndk) < 26, "package(elfutils): need ndk version < 26 for android")
             assert(ndk_sdkver and tonumber(ndk_sdkver) <= 23, "package(elfutils): need ndk api level <= 23 for android")
         end)
     end
