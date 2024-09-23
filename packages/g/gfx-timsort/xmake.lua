@@ -11,6 +11,13 @@ package("gfx-timsort")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(gfx-timsort) requires ndk version > 22")
+        end)
+    end
+
     on_install(function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
