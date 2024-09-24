@@ -7,17 +7,20 @@ package("ipopt")
     add_versions("3.14.16", "cc8c217991240db7eb14189eee0dff88f20a89bac11958b48625fa512fe8d104")
 
     if is_plat("linux") then
-        add_extsources("apt::liblapack-dev")
+        -- add_extsources("apt::liblapack-dev")
         add_syslinks("gfortran", "pthread")
     end
 
-    add_deps("gfortran", "openblas", "mumps", "coin-or-asl")
+    add_deps("gfortran", "openblas", "mumps", "coin-or-asl", "lapack")
 
     if not is_plat("windows") then
         add_deps("autoconf", "automake", "libtool", "m4")
     end
 
     add_includedirs("include", "include/coin-or")
+
+    -- add_links("smumps", "dmumps", "cmumps", "zmumps", "mumps_common", "esmumps", "pord", "mpiseq", "ptesmumps", "esmumps", "scotch", "scotcherr", 
+    --         "scotcherrexit", "scotchmetisv5", "scotchmetisv3", "gfortran", "dl")
 
     on_install("linux", function (package)
         local fetch_info_mumps = package:dep("mumps"):fetch()
