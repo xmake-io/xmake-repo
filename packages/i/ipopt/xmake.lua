@@ -8,7 +8,7 @@ package("ipopt")
 
     if is_plat("linux") then
         add_extsources("apt::liblapack-dev")
-        add_syslinks("gfortran", "pthread")
+        add_syslinks("pthread")
     end
 
     add_deps("gfortran", "openblas", "mumps", "coin-or-asl", "lapack")
@@ -28,9 +28,9 @@ package("ipopt")
 
         local configs = {}
         print(fetch_info_lapack.linkdirs)
-        local lapack_flags = [[--with-lapack-lflags=-L]] .. fetch_info_lapack.linkdirs[1] .. " " 
+        local lapack_flags = [[--with-lapack-lflags=-L]] .. tostring(fetch_info_lapack.linkdirs[1]) .. [[ ]]
         for _, link in ipairs(fetch_info_lapack.links) do 
-            lapack_flags = lapack_flags .. "-l" .. link .. " "
+            lapack_flags = lapack_flags .. "-l" .. tostring(link) .. " "
         end        
         lapack_flags = lapack_flags .. [[-lgfortran -lm]]
         table.insert(configs, lapack_flags)
