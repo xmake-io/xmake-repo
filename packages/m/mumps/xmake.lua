@@ -50,6 +50,7 @@ package("mumps")
         envs.LSCOTCH = ldflags
         os.vrunv("make", {"all"}, {envs = envs})
         os.cp("include/*.h", package:installdir("include"))
+        os.cp("libseq/*h", package:installdir("include"))
         os.cp("lib/*.a|README", package:installdir("lib"))
         os.cp("libseq/*.a", package:installdir("lib"))
     end)
