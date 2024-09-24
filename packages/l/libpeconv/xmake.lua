@@ -15,7 +15,7 @@ package("libpeconv")
 
     add_deps("cmake")
 
-    on_install("windows", "mingw", "msys", function (package)
+    on_install("windows|x64", "windows|x86", "mingw", "msys", function (package)
         if package:config("unicode") then
             package:add("defines", "UNICODE", "_UNICODE")
         end
