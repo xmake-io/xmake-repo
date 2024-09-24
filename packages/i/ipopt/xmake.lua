@@ -17,11 +17,7 @@ package("ipopt")
         add_deps("autoconf", "automake", "libtool", "m4")
     end
 
-    add_links("smumps", "dmumps", "cmumps", "zmumps", "mumps_common", "esmumps", "pord", "mpiseq", "ptesmumps", "esmumps", "scotch", "scotcherr", 
-            "scotcherrexit", "scotchmetisv5", "scotchmetisv3", "gfortran", "dl")
-
     add_includedirs("include", "include/coin-or")
-    add_linkdirs("lib")
 
     on_install("linux", function (package)
         local fetch_info_mumps = package:dep("mumps"):fetch()
@@ -54,7 +50,7 @@ package("ipopt")
             using namespace Ipopt;
 
             void test() {
-                SmartPtr<IpoptApplication> app = IpoptApplicationFactory();
+                SmartPtr<IpoptApplication> app = new IpoptApplication;
                 ApplicationReturnStatus status;
                 status = app->Initialize();
             }
