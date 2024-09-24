@@ -24,14 +24,14 @@ package("libpeconv")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DPECONV_UNICODE=" .. (package:config("unicode") and "ON" or "OFF"))
 
+        io.replace("run_pe/CMakeLists.txt", "/MT", "", {plain = true})
+        io.replace("libpeconv/CMakeLists.txt", "/MT", "", {plain = true})
         if package:is_plat("windows") then
-            io.replace("run_pe/CMakeLists.txt", "/MT", "", {plain = true})
-            io.replace("libpeconv/CMakeLists.txt", "/MT", "", {plain = true})
-
             os.mkdir(path.join(package:buildir(), "run_pe/pdb"))
             os.mkdir(path.join(package:buildir(), "libpeconv/pdb"))
         end
         import("package.tools.cmake").install(package, configs)
+        os.trycp(path.join(package:buildir(), "run_pe/pdb/run_pe.pdb"), package:installdir("bin"))
     end)
 
     on_test(function (package)
