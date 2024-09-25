@@ -57,20 +57,21 @@ package("wxwidgets")
         add_configs("vs_runtime", {description = "Set vs compiler runtime.", default = "MD", readonly = true})
         add_configs("debug",      {description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
     else
-        add_urls("https://github.com/wxWidgets/wxWidgets/archive/refs/tags/$(version).tar.gz",
+        add_urls("https://github.com/wxWidgets/wxWidgets/releases/download/v$(version)/wxWidgets-$(version).tar.bz2",
                  "https://github.com/wxWidgets/wxWidgets.git")
-        add_versions("v3.2.0", "43480e3887f32924246eb439520a3a2bc04d7947712de1ea0590c5b58dedadd9")
-        add_versions("v3.2.2", "2a4ec4d1af3f22fbfd0a40b051385a5d82628d9f28bae8427f5c30d72bdaade7")
-        add_versions("v3.2.3", "0eb9499c06778c6746dbd4aee2a124f1995a5db331e282d15237b0046c1788af")
-        add_versions("v3.2.4", "b358b7f59f5b7cb934265120d114e5fd510a8b40802d00a111a85911eb5100d1")
+        add_versions("3.2.0", "356e9b55f1ae3d58ae1fed61478e9b754d46b820913e3bfbc971c50377c1903a")
+        add_versions("3.2.2", "8edf18672b7bc0996ee6b7caa2bee017a9be604aad1ee471e243df7471f5db5d")
+        add_versions("3.2.3", "c170ab67c7e167387162276aea84e055ee58424486404bba692c401730d1a67a")
+        add_versions("3.2.4", "0640e1ab716db5af2ecb7389dbef6138d7679261fbff730d23845ba838ca133e")
+        add_versions("3.2.5", "0ad86a3ad3e2e519b6a705248fc9226e3a09bbf069c6c692a02acf7c2d1c6b51")
 
         add_deps("cmake")
-        add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib")
+        add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango")
         if is_plat("linux") then
-            add_deps("gtk+3", "opengl")
+            add_deps("opengl")
         end
     end
-
+    
     if is_plat("macosx") then
         add_defines("__WXOSX_COCOA__", "__WXMAC__", "__WXOSX__", "__WXMAC_XCODE__")
         add_frameworks("AudioToolbox", "WebKit", "CoreFoundation", "Security", "Carbon", "Cocoa", "IOKit", "QuartzCore")
@@ -79,6 +80,9 @@ package("wxwidgets")
         add_defines("__WXGTK3__", "__WXGTK__")
         add_syslinks("pthread", "m", "dl")
         add_syslinks("X11", "Xext", "Xtst", "xkbcommon")
+        add_links(
+            "pango-1.0", "pangoxft-1.0", "pangocairo-1.0", "pangoft2-1.0"
+        )
     elseif is_plat("windows") then
         add_defines("WXUSINGDLL", "__WXMSW__", "wxSUFFIX=u", "wxMSVC_VERSION=14x")
         add_links(
@@ -109,6 +113,14 @@ package("wxwidgets")
                 package:add("deps", "libtiff", {configs = {shared = true}})
             else
                 package:add("deps", "libtiff")
+            end
+
+            if is_plat("linux") then
+                 if package:config("shared") then
+                    package:add("deps", "gtk3", {configs = {shared = true}})
+                else
+                    package:add("deps", "gtk3")
+                end
             end
         end
     end)
@@ -142,13 +154,13 @@ package("wxwidgets")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("linux") then
-            local libgtk3 = package:dep("gtk+3"):fetch()
+            local libgtk3 = package:dep("gtk3"):fetch()
             if libgtk3 then
                 table.insert(configs, "-DGTK3_INCLUDE_DIRS=" .. table.concat(libgtk3.sysincludedirs, ";"))
                 table.insert(configs, "-DGTK3_LIBRARIES=" .. table.concat(libgtk3.links, ";"))
             end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"pango", "at-spi2-core", "gtk3", "gdk-pixbuf"}})
         local version = package:version()
         local subdir = "wx-" .. version:major() .. "." .. version:minor()
         local setupdir = package:is_plat("macosx") and "osx" or "gtk"
