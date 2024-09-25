@@ -29,7 +29,7 @@ package("quickjs-ng")
     end
 
     on_install("!iphoneos and (!windows or windows|!x86)", function (package)
-        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+        io.replace("CMakeLists.txt", "xcheck_add_c_compiler_flag(-Werror)", "", {plain = true})
         io.replace("CMakeLists.txt", "if(NOT WIN32 AND NOT EMSCRIPTEN)", "if(0)", {plain = true})
 
         local configs = {}
