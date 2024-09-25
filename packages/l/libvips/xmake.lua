@@ -10,7 +10,7 @@ package("libvips")
     add_versions("v8.15.2", "8c3ece7be367636fd676573a8ff22170c07e95e81fd94f2d1eb9966800522e1f")
     add_versions("v8.15.1", "5701445a076465a3402a135d13c0660d909beb8efc4f00fbbe82392e243497f2")
 
-    add_patches("8.15.3", "patches/8.15.3/msvc-ssize_t.patch", "d056a86735c4e05e164ca6fb27999bd98871e3b4de2fce0b792bf936d67ea658")
+    add_patches("8.15.3", "patches/8.15.3/msvc-ssize_t.patch", "1995af657dfd2f4e4f8edec685f67bd473537ff33c42d8329a0df0e0477408b9")
 
     add_configs("c++", { description = "Build C++ API", default = true, type = "boolean" })
     add_configs("deprecated", { description = "Build deprecated components", default = false, type = "boolean" })
