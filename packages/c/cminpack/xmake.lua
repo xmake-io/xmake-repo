@@ -8,7 +8,7 @@ package("cminpack")
     add_versions("v1.3.9", "aa37bac5b5caaa4f5805ea5c4240e3834c993672f6dab0b17190ee645e251c9f")
 
     local support_openblas = is_plat("linux", "macosx") or (is_plat("windows") and is_arch("x86", "x64"))
-    add_configs("blas", {description = "BLAS library to compile with.", default = (support_openblas and "openblas" or nil), type = "string", values = {"openblas", "mkl"}})
+    add_configs("blas", {description = "BLAS library to compile with.", default = (support_openblas and "openblas" or nil), type = "string", values = {"openblas", "mkl", "apple"}})
 
     if is_plat("linux") then
         add_syslinks("m")
@@ -33,6 +33,10 @@ package("cminpack")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_BLAS=" .. (package:config("blas") and "ON" or "OFF"))
+        local bla_vendor = {mkl = "Intel10_64lp", openblas = "OpenBLAS", apple = "Apple"}
+        if package:config("blas") then
+            table.insert(configs, "-DBLA_VENDOR=" .. bla_vendor[package:config("blas")])
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
