@@ -20,6 +20,15 @@ package("libzippp")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            if package:is_arch("armeabi-v7a") then
+                local ndkver = package:toolchain("ndk"):config("ndkver")
+                assert(ndkver and tonumber(ndkver) > 22, "package(libzip) require ndk version > 22")
+            end
+        end)
+    end
+
     on_load(function (package)
         package:add("deps", "libzip v" .. libzip_version_map[package:version_str()])
         if package:config("encryption") then
@@ -27,7 +36,7 @@ package("libzippp")
         end
     end)
 
-    on_install(function (package)
+    on_install("!cross", function (package)
         local configs = {
             "-DLIBZIPPP_BUILD_TESTS=OFF",
             "-DLIBZIPPP_CMAKE_CONFIG_MODE=ON",

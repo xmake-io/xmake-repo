@@ -30,7 +30,7 @@ package("libzip")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("advapi32")
+        add_syslinks("advapi32", "bcrypt")
     end
 
     if on_check then
