@@ -7,6 +7,11 @@ package("lapack")
 
     add_versions("v3.12.0", "eac9570f8e0ad6f30ce4b963f4f033f0f643e7c3912fc9ee6cd99120675ad48b")
 
+    if is_plat("linux") then
+        add_extsources("apt::liblapack-dev")
+    end
+
+
     add_deps("cmake", "gfortran")
 
     add_links( "lapacke", "lapack", "cblas", "blas")
