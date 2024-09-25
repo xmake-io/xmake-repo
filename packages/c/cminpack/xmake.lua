@@ -9,6 +9,7 @@ package("cminpack")
 
     local support_openblas = is_plat("linux", "macosx") or (is_plat("windows") and is_arch("x86", "x64"))
     add_configs("blas", {description = "BLAS library to compile with.", default = (support_openblas and "openblas" or nil), type = "string", values = {"openblas", "mkl", "apple"}})
+    add_configs("long_double", {description = "Enable extended precision.", default = false, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("m")
@@ -19,7 +20,7 @@ package("cminpack")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:config("blas") then
+        if package:config("blas") and not package:config("long_double") then
             package:add("deps", package:config("blas"))
         end
     end)
@@ -28,13 +29,17 @@ package("cminpack")
         if package:is_plat("windows", "mingw") and (not package:config("shared")) then
             package:add("defines", "CMINPACK_NO_DLL")
         end
+        if not package:config("long_double") then
+            io.replace("CMakeLists.txt", "${SIZEOF_LONG_DOUBLE} GREATER ${SIZEOF_DOUBLE}", "FALSE", {plain = true})
+        end
+        local has_blas = package:config("blas") and not package:config("long_double")
 
         local configs = {"-DBUILD_EXAMPLES=OFF", "-DENABLE_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DUSE_BLAS=" .. (package:config("blas") and "ON" or "OFF"))
-        local bla_vendor = {mkl = "Intel10_64lp", openblas = "OpenBLAS", apple = "Apple"}
-        if package:config("blas") then
+        table.insert(configs, "-DUSE_BLAS=" .. (has_blas and "ON" or "OFF"))
+        if has_blas then
+            local bla_vendor = {mkl = "Intel10_64lp", openblas = "OpenBLAS", apple = "Apple"}
             table.insert(configs, "-DBLA_VENDOR=" .. bla_vendor[package:config("blas")])
             if package:dep(package:config("blas")) then
                 local bla_static = not package:dep(package:config("blas")):config("shared")
