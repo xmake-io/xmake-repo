@@ -2,12 +2,13 @@ package("cminpack")
     set_homepage("https://devernay.github.io/cminpack/")
     set_description("A C/C++ rewrite of the MINPACK software (originally in FORTRAN) for solving nonlinear equations and nonlinear least squares problems")
 
-    add_urls("https://github.com/devernay/cminpack/archive/$(version).tar.gz",
+    add_urls("https://github.com/devernay/cminpack/archive/refs/tags/$(version).tar.gz",
              "https://github.com/devernay/cminpack.git")
-
+    add_versions("v1.3.11", "45675fac0a721a1c7600a91a9842fe1ab313069db163538f2923eaeddb0f46de")
     add_versions("v1.3.9", "aa37bac5b5caaa4f5805ea5c4240e3834c993672f6dab0b17190ee645e251c9f")
 
-    add_configs("blas", {description = "Compile cminpack using cblas library if possible", default = false, type = "boolean"})
+    local support_openblas = is_plat("linux", "macosx") or (is_plat("windows") and is_arch("x86", "x64"))
+    add_configs("blas", {description = "BLAS library to compile with.", default = (support_openblas and "openblas" or nil), type = "string", values = {"openblas", "mkl"}})
 
     if is_plat("linux") then
         add_syslinks("m")
@@ -19,7 +20,7 @@ package("cminpack")
 
     on_load(function (package)
         if package:config("blas") then
-            package:add("deps", "openblas")
+            package:add("deps", package:config("blas"))
         end
     end)
 
