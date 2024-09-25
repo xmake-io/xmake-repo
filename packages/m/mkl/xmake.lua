@@ -181,7 +181,7 @@ package("mkl")
             }
         ]]}, {includes = "mkl_cblas.h"}))
         import("lib.detect.find_tool")
-        if package.check_fcsnippets and find_tool("gfortran") then
+        if package.check_fcsnippets and find_tool("gfortran") and package:has_tool("fcld", "gfortran") then
             assert(package:check_fcsnippets({test = [[
     program test
         use iso_fortran_env, only: r64 => real64
