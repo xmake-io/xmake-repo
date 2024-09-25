@@ -36,6 +36,10 @@ package("cminpack")
         local bla_vendor = {mkl = "Intel10_64lp", openblas = "OpenBLAS", apple = "Apple"}
         if package:config("blas") then
             table.insert(configs, "-DBLA_VENDOR=" .. bla_vendor[package:config("blas")])
+            if package:dep(package:config("blas")) then
+                local bla_static = not package:dep(package:config("blas")):config("shared")
+                table.insert(configs, "-DBLA_STATIC=" .. (bla_static and "ON" or "OFF"))
+            end
         end
         import("package.tools.cmake").install(package, configs)
     end)
