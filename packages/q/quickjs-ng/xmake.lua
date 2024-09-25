@@ -6,6 +6,7 @@ package("quickjs-ng")
     add_urls("https://github.com/quickjs-ng/quickjs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/quickjs-ng/quickjs.git")
 
+    add_versions("v0.6.1", "276edbb30896cdf2eee12a8bdb5b9c1cc2734eac8c898de6d52268ae201e614d")
     add_versions("v0.5.0", "41212a6fb84bfe07d61772c02513734b7a06465843ba8f76f1ce1e5df866f489")
 
     add_configs("libc", {description = "Build standard library modules as part of the library", default = false, type = "boolean"})
