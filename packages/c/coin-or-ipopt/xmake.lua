@@ -57,7 +57,7 @@ package("coin-or-ipopt")
             table.insert(configs, "--enable-debug")
         end
 
-        import("package.tools.autoconf").install(package, configs, {packagedeps = {"mumps", "scotch", "lapack"}})
+        import("package.tools.autoconf").install(package, configs, {packagedeps = {"mumps", "scotch", "lapack", "openmp"}})
     end)
 
     on_test(function (package)
