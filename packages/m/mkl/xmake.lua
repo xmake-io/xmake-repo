@@ -191,6 +191,6 @@ package("mkl")
             C/9*.5_r64/
         call dgemm('N','T',3,3,2,1.0_r64,A,3,B,3,2.0_r64,C,3)
     end program test
-            ]]}))
+            ]]}, {linkerkind = "cxx", configs = {syslinks = "gfortran"}}))
         end
     end)
