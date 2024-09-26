@@ -49,6 +49,7 @@ package("x264")
     end)
 
     on_install("windows", "mingw", "linux", "macosx", "wasm", function (package)
+        io.replace("configure", "x264.dll.", "x264.", {plain = true})
         local configs = {}
         table.insert(configs, "--enable-" .. (package:config("shared") and "shared" or "static"))
         if package:is_plat("mingw") then
