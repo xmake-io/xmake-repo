@@ -12,6 +12,7 @@ package("process-dump")
     on_install("@windows", "@mingw", "@msys", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
+            set_languages("c++11")
             target("pd")
                 set_kind("binary")
                 add_files("pd/*.cpp", "pd/*.rc")
