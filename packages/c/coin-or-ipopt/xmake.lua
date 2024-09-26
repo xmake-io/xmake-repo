@@ -39,7 +39,7 @@ package("coin-or-ipopt")
         for _, link in ipairs(fetch_info_lapack.links) do 
             lapack_flags = lapack_flags .. "-l" .. tostring(link) .. " "
         end        
-        lapack_flags = lapack_flags .. [[-lgfortran -lm]]
+        lapack_flags = lapack_flags .. [[-lgfortran -lm -fopenmp]]
         table.insert(configs, lapack_flags)
         
         table.insert(configs, [[--with-mumps-cflags="-I]] .. fetch_info_mumps.sysincludedirs[1] .. [["]])
@@ -57,7 +57,7 @@ package("coin-or-ipopt")
             table.insert(configs, "--enable-debug")
         end
 
-        import("package.tools.autoconf").install(package, configs, {packagedeps = {"mumps", "scotch", "lapack", "openmp"}})
+        import("package.tools.autoconf").install(package, configs, {packagedeps = {"mumps", "scotch", "lapack"}})
     end)
 
     on_test(function (package)
