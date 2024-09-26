@@ -9,7 +9,7 @@ package("process-dump")
 
     add_versions("v2.1.1", "cd4e2327ce8fae5228d4790c73e4f3add9bff86e8f27ac9bcfc18f3373f61461")
 
-    on_install("@windows", "@mingw", "@msys", function (package)
+    on_install("@windows", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             set_languages("c++11")
