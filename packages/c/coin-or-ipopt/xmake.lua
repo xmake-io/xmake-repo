@@ -11,7 +11,7 @@ package("coin-or-ipopt")
         add_syslinks("pthread")
     end
 
-    add_deps("gfortran", "openblas", "mumps", "coin-or-asl", "lapack")
+    add_deps("gfortran", "openblas", "mumps", "coin-or-asl", "lapack", "openmp")
 
     if not is_plat("windows") then
         add_deps("autoconf", "automake", "libtool", "m4")
@@ -34,8 +34,7 @@ package("coin-or-ipopt")
         local fetch_info_lapack = package:dep("lapack"):fetch()
 
         local configs = {}
-        
-        print(fetch_info_lapack.linkdirs)
+
         local lapack_flags = [[--with-lapack-lflags=-L]] .. tostring(fetch_info_lapack.linkdirs[1]) .. [[ ]]
         for _, link in ipairs(fetch_info_lapack.links) do 
             lapack_flags = lapack_flags .. "-l" .. tostring(link) .. " "
@@ -58,7 +57,7 @@ package("coin-or-ipopt")
             table.insert(configs, "--enable-debug")
         end
 
-        import("package.tools.autoconf").install(package, configs, {packagedeps={"mumps", "scotch", "lapack", "gfortran"}})
+        import("package.tools.autoconf").install(package, configs, {packagedeps = {"mumps", "scotch", "lapack"}})
     end)
 
     on_test(function (package)
@@ -70,13 +69,10 @@ package("coin-or-ipopt")
             using namespace Ipopt;
 
             void test() {
-
                 IpBlasDot(0, nullptr, 0, nullptr, 0);
                 SmartPtr<IpoptApplication> app = new IpoptApplication;
                 ApplicationReturnStatus status;
                 status = app->Initialize();
-
-
             }
         ]]}, {configs = {languages = "c++11"}, includes = "IpIpoptApplication.hpp"}))
     end)
