@@ -11,6 +11,7 @@ package("lapack")
         add_extsources("apt::liblapack-dev")
     end
 
+
     add_deps("cmake", "gfortran")
 
     add_links( "lapacke", "lapack", "cblas", "blas")
