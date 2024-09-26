@@ -203,6 +203,7 @@ package("ffmpeg")
         end
 
         if package:is_plat("windows") then
+            table.insert(configs, "--extra-cflags=-" .. package:config("runtimes"))
             if path.cygwin then -- xmake 2.8.9
                 import("package.tools.autoconf")
                 local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
