@@ -160,7 +160,7 @@ package("wxwidgets")
                 table.insert(configs, "-DGTK3_LIBRARIES=" .. table.concat(libgtk3.links, ";"))
             end
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"pango", "at-spi2-core", "gtk3", "gdk-pixbuf"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"pango", "at-spi2-core", "gtk3", "gdk-pixbuf", "glib", "harfbuzz", "cairo"}})
         local version = package:version()
         local subdir = "wx-" .. version:major() .. "." .. version:minor()
         local setupdir = package:is_plat("macosx") and "osx" or "gtk"
