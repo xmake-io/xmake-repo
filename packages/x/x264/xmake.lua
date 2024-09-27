@@ -42,9 +42,6 @@ package("x264")
     end
 
     add_deps("nasm")
-    if is_plat("bsd") then
-        add_deps("autoconf", "automake", "libtool")
-    end
 
     on_load(function (package)
         if is_subhost("windows") and os.arch() == "x64" then
@@ -57,7 +54,7 @@ package("x264")
         end
     end)
 
-    on_install("!iphoneos", function (package)
+    on_install("!iphoneos and !bsd", function (package)
         if is_host("windows") then
             io.replace("Makefile",
                 "ln -f -s $(SONAME) $(DESTDIR)$(libdir)/libx264.$(SOSUFFIX)",
@@ -89,8 +86,8 @@ package("x264")
             local ndk_bindir = package:toolchain("ndk"):config("bindir")
             ndk_bindir = path.unix(assert(ndk_bindir)) .. "/llvm-"
             table.insert(configs, "--cross-prefix=" .. ndk_bindir)
-        elseif package:is_plat("mingw", "msys", "cygwin") then
-            table.insert(configs, "--host_os=" .. package:plat())
+        elseif package:is_plat("mingw") and not is_host("windows") then
+            package:config_set("asm", false)
         end
 
         for name, value in pairs(package:configs()) do
