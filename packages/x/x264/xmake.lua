@@ -74,7 +74,6 @@ package("x264")
             import("core.tool.toolchain")
             local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
             assert(msvc:check(), "msvs not found!")
-            print("here is msvc on windows")
             io.replace("configure", "x264.dll.lib", "x264.lib", {plain = true})
             -- keep msys2 envs in front to prevent conflict with possibly installed sh.exe
             local envs = os.joinenvs(os.getenvs(), msvc:runenvs())
@@ -92,22 +91,7 @@ package("x264")
             os.vrunv("make", argv, {envs = envs})
             os.vrunv("make", {"install"}, {envs = envs})
         else
-            try
-            {
-                -- try 代码块
-                function ()
             import("package.tools.autoconf").install(package, configs)
-                end,
-
-                -- catch 代码块
-                catch
-                {
-                    -- 发生异常后，被执行
-                    function (errors)
-                        io.cat("config.log")
-                    end
-                }
-            }
         end
     end)
 
