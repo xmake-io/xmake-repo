@@ -24,7 +24,9 @@ package("hdf5")
     add_configs("cpplib", {description = "Build HDF5 C++ Library", default = false, type = "boolean"})
 
     add_deps("cmake")
-    if is_plat("linux") then
+    if is_plat("windows") then
+        add_syslinks("shlwapi")
+    elseif is_plat("linux") then
         add_syslinks("dl")
     end
     on_load("windows", "macosx", "linux", function (package)
