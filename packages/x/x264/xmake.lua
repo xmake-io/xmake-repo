@@ -89,6 +89,8 @@ package("x264")
             local ndk_bindir = package:toolchain("ndk"):config("bindir")
             ndk_bindir = path.unix(assert(ndk_bindir)) .. "/llvm-"
             table.insert(configs, "--cross-prefix=" .. ndk_bindir)
+        elseif package:is_plat("mingw", "msys", "cygwin") then
+            table.insert(configs, "--host_os=" .. package:plat())
         end
 
         for name, value in pairs(package:configs()) do
