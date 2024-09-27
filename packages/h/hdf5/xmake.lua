@@ -47,6 +47,7 @@ package("hdf5")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DONLY_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DHDF5_BUILD_STATIC_TOOLS=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DHDF5_BUILD_CPP_LIB=" .. (package:config("cpplib") and "ON" or "OFF"))
         table.insert(configs, "-DHDF5_ENABLE_Z_LIB_SUPPORT=" .. (package:config("zlib") and "ON" or "OFF"))
         table.insert(configs, "-DHDF5_ENABLE_SZIP_SUPPORT=" .. (package:config("szip") and "ON" or "OFF"))
@@ -56,7 +57,7 @@ package("hdf5")
     end)
 
     on_test(function (package)
-        if package:config("shared") then
+        if package:config("shared") and package:version():lt("1.14.0") then
             os.vrun("h5diff-shared --version")
         else
             os.vrun("h5diff --version")
