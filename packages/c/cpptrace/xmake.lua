@@ -6,6 +6,7 @@ package("cpptrace")
     add_urls("https://github.com/jeremy-rifkin/cpptrace/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jeremy-rifkin/cpptrace.git")
 
+    add_versions("v0.7.1", "63df54339feb0c68542232229777df057e1848fc8294528613971bbf42889e83")
     add_versions("v0.7.0", "b5c1fbd162f32b8995d9b1fefb1b57fac8b1a0e790f897b81cdafe3625d12001")
     add_versions("v0.6.3", "665bf76645ec7b9e6d785a934616f0138862c36cdb58b0d1c9dd18dd4c57395a")
     add_versions("v0.6.2", "02a0540b5b1be0788565f48b065b456d3eab81ae2323a50e75ed36449a0143ed")
@@ -20,8 +21,6 @@ package("cpptrace")
 
     add_patches("0.5.2", "https://github.com/jeremy-rifkin/cpptrace/commit/599d6abd6cc74e80e8429fc309247be5f7edd5d7.patch", "977e6c17400ff2f85362ca1d6959038fdb5d9e5b402cfdd705b422c566e8e87a")
 
-    add_deps("cmake")
-
     if is_plat("windows") then
         add_syslinks("dbghelp")
     elseif is_plat("macosx") then
@@ -34,31 +33,42 @@ package("cpptrace")
         add_syslinks("dbghelp")
     end
 
+    add_deps("cmake")
+
     on_install("linux", "macosx", "windows", "mingw", function (package)
         io.replace("CMakeLists.txt", "/WX", "", {plain = true})
 
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        package:add("links", "cpptrace")
         if not package:config("shared") then
             package:add("defines", "CPPTRACE_STATIC_DEFINE")
         end
+
+        local configs = {
+            "-DBUILD_TESTING=OFF",
+            "-DCPPTRACE_USE_EXTERNAL_LIBDWARF=ON",
+            "-DCPPTRACE_USE_EXTERNAL_ZSTD=ON",
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.trycp(path.join(package:buildir(), "cpptrace.pdb"), dir)
+        end
     end)
 
     on_test(function (package)
         local code
-        if package:version():le("0.1") then
+        if package:gitref() or package:version():gt("0.1") then
             code = [[
                 void test() {
-                    cpptrace::print_trace();
+                    cpptrace::generate_trace().print();
                 }
             ]]
         else
             code = [[
                 void test() {
-                    cpptrace::generate_trace().print();
+                    cpptrace::print_trace();
                 }
             ]]
         end
