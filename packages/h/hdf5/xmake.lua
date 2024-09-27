@@ -59,10 +59,12 @@ package("hdf5")
     end)
 
     on_test(function (package)
-        if package:config("shared") and package:version():le("1.14.0") then
-            os.vrun("h5diff-shared --version")
-        else
-            os.vrun("h5diff --version")
+        if not package:is_cross() then
+            if package:config("shared") and package:version():le("1.14.0") then
+                os.vrun("h5diff-shared --version")
+            else
+                os.vrun("h5diff --version")
+            end
         end
         assert(package:has_cfuncs("H5open", {includes = "H5public.h"}))
 
