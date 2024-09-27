@@ -67,8 +67,8 @@ package("x264")
         if package:is_plat("android") and package:is_arch("armeabi-v7a") then
             local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
             if ndk_sdkver and tonumber(ndk_sdkver) < 24 then
-                io.replace("configure", "define fseek fseeko", "# ", {plain = true})
-                io.replace("configure", "define ftell ftello", "# ", {plain = true})
+                io.replace("configure", "define fseek fseek", "", {plain = true})
+                io.replace("configure", "define ftell ftell", "", {plain = true})
             end
         end
 
@@ -86,8 +86,12 @@ package("x264")
             local ndk_bindir = package:toolchain("ndk"):config("bindir")
             ndk_bindir = path.unix(assert(ndk_bindir)) .. "/llvm-"
             table.insert(configs, "--cross-prefix=" .. ndk_bindir)
-        elseif package:is_plat("mingw") and not is_host("windows") then
-            package:config_set("asm", false)
+        elseif package:is_plat("mingw") then
+            local triples = {
+                i386   = "i686-w64-mingw32",
+                x86_64 = "x86_64-w64-mingw32"
+            }
+            table.insert(configs, "--host=" .. (triples[package:arch()] or triples.i386))
         end
 
         for name, value in pairs(package:configs()) do
