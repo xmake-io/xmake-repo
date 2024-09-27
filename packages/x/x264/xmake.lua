@@ -92,6 +92,9 @@ package("x264")
                 x86_64 = "x86_64-w64-mingw32"
             }
             table.insert(configs, "--host=" .. (triples[package:arch()] or triples.i386))
+            if not is_host("windows") then
+                package:config_set("asm", false)
+            end
         end
 
         for name, value in pairs(package:configs()) do
