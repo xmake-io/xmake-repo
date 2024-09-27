@@ -27,7 +27,7 @@ package("glaze")
                 constexpr void f() {
                     static constexpr int g = 1;
                 }
-            ]]}, {configs = {languages = "c++23"}}), "package(glaze) Require at least C++23.")
+            ]]}, {configs = {languages = "c++2b"}}), "package(glaze) Require at least C++23.")
         end)
     end
 
@@ -65,5 +65,5 @@ package("glaze")
                 obj_t obj{};
                 glz::write_json(obj, buffer);
             }
-        ]]}, {configs = {languages = "c++23"}}))
+        ]]}, {configs = {languages = "c++2b"}}))
     end)
