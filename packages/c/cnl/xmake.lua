@@ -10,6 +10,13 @@ package("cnl")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(cnl) require ndk version > 22")
+        end)
+    end
+
     on_install(function (package)
         io.replace("CMakeLists.txt", [[add_subdirectory("test")]], "", {plain = true})
 
