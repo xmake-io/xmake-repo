@@ -70,8 +70,8 @@ package("x264")
         if package:is_plat("android") and package:is_arch("armeabi-v7a") then
             local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
             if ndk_sdkver and tonumber(ndk_sdkver) < 24 then
-                io.replace("configure", "define fseek fseeko", "", {plain = true})
-                io.replace("configure", "define ftell ftello", "", {plain = true})
+                io.replace("configure", "define fseek fseeko", "# ", {plain = true})
+                io.replace("configure", "define ftell ftello", "# ", {plain = true})
             end
         end
 
