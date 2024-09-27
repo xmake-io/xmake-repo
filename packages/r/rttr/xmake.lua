@@ -37,9 +37,11 @@ package("rttr")
             os.mkdir(path.join(package:buildir(), "src/rttr/pdb"))
         end
         import("package.tools.cmake").install(package, configs)
-        if package:is_plat("windows") and shared then
-            package:add("defines", "RTTR_DLL")
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+        if package:is_plat("windows")then
+            if shared then
+                package:add("defines", "RTTR_DLL")
+            end
+            local dir = package:installdir(shared and "bin" or "lib")
             os.vcp(path.join(package:buildir(), "bin/*.pdb"), dir)
         end
     end)
@@ -93,5 +95,5 @@ package("rttr")
                     assert(ctor.is_valid());
                 }
             }
-        ]]}, { configs = {languages = "c++20"} }))
+        ]]}, { configs = {languages = "c++14"} }))
     end)
