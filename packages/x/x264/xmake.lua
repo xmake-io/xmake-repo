@@ -92,7 +92,22 @@ package("x264")
             os.vrunv("make", argv, {envs = envs})
             os.vrunv("make", {"install"}, {envs = envs})
         else
+            try
+            {
+                -- try 代码块
+                function ()
             import("package.tools.autoconf").install(package, configs)
+                end,
+
+                -- catch 代码块
+                catch
+                {
+                    -- 发生异常后，被执行
+                    function (errors)
+                        io.cat("config.log")
+                    end
+                }
+            }
         end
     end)
 
