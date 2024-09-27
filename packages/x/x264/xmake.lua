@@ -37,11 +37,14 @@ package("x264")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_plat("linux", "macosx") then
+    if is_plat("linux", "macosx", "bsd") then
         add_syslinks("pthread", "dl")
     end
 
     add_deps("nasm")
+    if is_plat("bsd") then
+        add_deps("autoconf", "automake", "libtool")
+    end
 
     on_load(function (package)
         if is_subhost("windows") and os.arch() == "x64" then
@@ -54,7 +57,7 @@ package("x264")
         end
     end)
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
         if is_host("windows") then
             io.replace("Makefile",
                 "ln -f -s $(SONAME) $(DESTDIR)$(libdir)/libx264.$(SOSUFFIX)",
@@ -64,10 +67,19 @@ package("x264")
                 "$(INSTALL) -m 755 libx264.$(SOSUFFIX) $(DESTDIR)$(libdir)", {plain = true})
         end
 
+        if package:is_plat("android") and package:is_arch("armeabi-v7a") then
+            local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+            if ndk_sdkver and tonumber(ndk_sdkver) < 24 then
+                io.replace("configure", "define fseek fseeko", "", {plain = true})
+                io.replace("configure", "define ftell ftello", "", {plain = true})
+            end
+        end
+
         local configs = {}
         table.insert(configs, "--enable-" .. (package:config("shared") and "shared" or "static"))
-        table.insert(configs, "--" .. (package:config("debug") and "enable" or "disable") .. "-debug")
+        table.insert(configs, "--" .. (package:is_debug() and "enable" or "disable") .. "-debug")
         table.insert(configs, "--" .. (package:config("lto") and "enable" or "disable") .. "-lto")
+        table.insert(configs, "--" .. (package:config("pic") and "enable" or "disable") .. "-pic")
 
         if package:is_plat("wasm") then
             table.insert(configs, "--host=i686-gnu")
