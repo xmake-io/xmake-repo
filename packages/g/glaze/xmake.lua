@@ -39,6 +39,7 @@ package("glaze")
 
             import("package.tools.cmake").install(package, {
                 "-Dglaze_DEVELOPER_MODE=OFF",
+                "-DCMAKE_CXX_STANDARD=23",
                 "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release")
             })
         else
@@ -63,5 +64,5 @@ package("glaze")
                 obj_t obj{};
                 glz::write_json(obj, buffer);
             }
-        ]]}, {configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = "c++23"}}))
     end)
