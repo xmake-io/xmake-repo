@@ -57,7 +57,7 @@ package("hdf5")
     end)
 
     on_test(function (package)
-        if package:config("shared") and package:version():lt("1.14.0") then
+        if package:config("shared") and package:version():le("1.14.0") then
             os.vrun("h5diff-shared --version")
         else
             os.vrun("h5diff --version")
