@@ -22,15 +22,16 @@ package("glaze")
     add_deps("cmake")
 
     if on_check then
-        on_check("windows", function (package)
-            if package:is_plat("windows") then
-                local vs = package:toolchain("msvc"):config("vs")
-                assert(vs and tonumber(vs) >= 2022, "package(glaze): need vs >= 2022")
-            end
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                constexpr void f() {
+                    static constexpr int g = 1;
+                }
+            ]]}, {configs = {languages = "c++23"}}), "package(glaze) Require at least C++23.")
         end)
     end
 
-    on_install("windows", "linux", "bsd", "mingw", "wasm", function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "wasm", function (package)
         local version = package:version()
         if version and version:ge("2.9.5") then
             if package:has_tool("cxx", "cl", "clang_cl") then
