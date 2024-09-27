@@ -19,12 +19,22 @@ package("hdf5")
     add_versions("home:1.14.0", "a571cc83efda62e1a51a0a912dd916d01895801c5025af91669484a1575a6ef4")
     add_versions("github:1.14.4-3", "019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03")
 
+    add_configs("zlib", {description = "Enable Zlib Filters", default = false, type = "boolean"})
+    add_configs("szip", {description = "Enable Szip Filters", default = false, type = "boolean"})
     add_configs("cpplib", {description = "Build HDF5 C++ Library", default = false, type = "boolean"})
 
     add_deps("cmake")
     if is_plat("linux") then
         add_syslinks("dl")
     end
+    on_load("windows", "macosx", "linux", function (package)
+        if package:config("zlib") then
+            package:add("deps", "zlib")
+        end
+        if package:config("szip") then
+            package:add("deps", "szip")
+        end
+    end)
     on_install("windows", "macosx", "linux", function (package)
         local configs = {
             "-DHDF5_GENERATE_HEADERS=OFF",
@@ -38,6 +48,8 @@ package("hdf5")
         table.insert(configs, "-DONLY_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DHDF5_BUILD_CPP_LIB=" .. (package:config("cpplib") and "ON" or "OFF"))
+        table.insert(configs, "-DHDF5_ENABLE_Z_LIB_SUPPORT=" .. (package:config("zlib") and "ON" or "OFF"))
+        table.insert(configs, "-DHDF5_ENABLE_SZIP_SUPPORT=" .. (package:config("szip") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
         package:addenv("HDF5_ROOT", path.join(package:installdir("cmake")))
         package:addenv("PATH", package:installdir("bin"))
