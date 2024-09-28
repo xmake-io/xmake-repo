@@ -10,7 +10,7 @@ package("nifly")
 
     add_deps("half", "miniball")
 
-    on_install(function (package)
+    on_install("windows", "linux", "bsd", "macos", "android", "iphoneos", function (package)
         import("package.tools.xmake").install(package)
     end)
 
