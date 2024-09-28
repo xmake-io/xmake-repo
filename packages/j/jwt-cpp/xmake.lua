@@ -31,11 +31,13 @@ package("jwt-cpp")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <jwt-cpp/jwt.h>
-            void test() {
-                std::string token;
-                auto decoded = jwt::decode(token);
-            }
-        ]]}, {configs = {languages = "c++11"}}))
+        if package:config("picojson") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <jwt-cpp/jwt.h>
+                void test() {
+                    std::string token;
+                    auto decoded = jwt::decode(token);
+                }
+            ]]}, {configs = {languages = "c++11"}}))
+        end
     end)
