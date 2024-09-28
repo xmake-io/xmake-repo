@@ -7,7 +7,15 @@ package("wirehair")
 
     add_versions("2023.12.02", "557c00c707a4b6a51db312c113b8036dadbe132e")
 
-    on_install("!macosx and !iphoneos and (!windows or windows|!arm64)", function (package)
+    if on_check then
+        on_check("mingw", function (package)
+            if is_host("macosx") then
+                raise("package(wirehair) unsupport mingw plat on macosx")
+            end
+        end)
+    end
+
+    on_install("!macosx and !iphoneos and !wasm and (!windows or windows|!arm64)", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "WIREHAIR_DLL")
         end
