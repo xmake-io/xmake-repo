@@ -12,11 +12,11 @@ package("superlu")
 
     add_configs("blas", {description = "Choose BLAS library to use.", default = "openblas", type = "string", values = {"mkl", "openblas"}})
 
-    on_load("windows", "linux", "macosx", function (package)
+    on_load("windows|!arm64", "linux", "macosx", function (package)
         package:add("deps", package:config("blas"))
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install("windows|!arm64", "linux", "macosx", function (package)
         os.cd("SRC")
         if package:version():ge("7.0.0") then
             io.replace("superlu_config.h", "#define HAVE_METIS TRUE", "", {plain = true})
