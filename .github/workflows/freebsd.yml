@@ -33,6 +33,7 @@ jobs:
             git config --global --add safe.directory `pwd`
             git clone --recurse-submodules https://github.com/xmake-io/xmake.git /tmp/xmake -b dev
             cd /tmp/xmake
+            git checkout dc097d15931e7d16e295f01b1b4e136a3bbf11f1
             ./configure
             gmake -j4
             gmake install
