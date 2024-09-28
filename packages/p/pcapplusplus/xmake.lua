@@ -1,6 +1,7 @@
 package("pcapplusplus")
     set_homepage("https://github.com/seladb/PcapPlusPlus")
     set_description("PcapPlusPlus is a multiplatform C++ library for capturing, parsing and crafting of network packets.")
+    set_license("Unlicense")
 
     set_urls("https://github.com/seladb/PcapPlusPlus/archive/refs/tags/$(version).zip",
              "https://github.com/seladb/PcapPlusPlus.git")
@@ -10,25 +11,27 @@ package("pcapplusplus")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
-    add_deps("cmake")
+    add_links("Pcap++", "Packet++", "Common++")
+
     if is_plat("windows") then
         add_syslinks("ws2_32")
-        add_deps("npcap_sdk")
     end
 
-    if is_plat("linux") then
+    add_deps("cmake")
+    if is_plat("windows") then
+        add_deps("npcap_sdk")
+    elseif is_plat("linux") then
         add_deps("libpcap")
     end
 
     on_install("windows", "linux", function (package)
-        local configs = {}
-        table.insert(configs, "-DPCAPPP_BUILD_EXAMPLES=OFF")
-        table.insert(configs, "-DPCAPPP_BUILD_TESTS=OFF")
+        local configs = {
+            "-DPCAPPP_BUILD_EXAMPLES=OFF",
+            "-DPCAPPP_BUILD_TESTS=OFF",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
-
-    add_links("Pcap++", "Packet++", "Common++")
     
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
