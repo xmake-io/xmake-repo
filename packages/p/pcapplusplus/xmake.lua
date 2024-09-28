@@ -32,7 +32,7 @@ package("pcapplusplus")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
-    
+
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "pcapplusplus/IPv4Layer.h"
