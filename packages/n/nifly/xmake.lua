@@ -4,7 +4,7 @@ package("nifly")
     set_license("GPL-3.0")
 
     add_urls("https://github.com/ousnius/nifly.git")
-    add_versions("2024.09.28", "bfe6567fe87ce63d55f16a67c64fdbf9ca799ebf")
+    add_versions("2024.09.28", "a6bbbeb92be1fc97d106759a231a96e962e8cfe2")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
