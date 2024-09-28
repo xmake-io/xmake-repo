@@ -16,12 +16,17 @@ package("pcapplusplus")
         add_deps("npcap_sdk")
     end
 
-    on_install("windows", function (package)
+    if is_plat("linux") then
+        add_deps("libpcap")
+    end
+
+    on_install("windows", "linux", function (package)
         local configs = {}
         table.insert(configs, "-DPCAPPP_BUILD_EXAMPLES=OFF")
         table.insert(configs, "-DPCAPPP_BUILD_TESTS=OFF")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
+        package:add("linkorders", {"Pcap++", "Packet++", "Common++"})
     end)
 
     on_test(function (package)
