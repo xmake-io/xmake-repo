@@ -7,7 +7,7 @@ package("wirehair")
 
     add_versions("2023.12.02", "557c00c707a4b6a51db312c113b8036dadbe132e")
 
-    on_install(function (package)
+    on_install("!macosx and !iphoneos and (!windows or windows|!arm64)", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "WIREHAIR_DLL")
         end
@@ -15,6 +15,7 @@ package("wirehair")
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             set_languages("c++11")
+            add_vectorexts("all")
             target("wirehair")
                 set_kind("$(kind)")
                 add_files("*.cpp")
