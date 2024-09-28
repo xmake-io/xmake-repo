@@ -10,15 +10,17 @@ package("jwt-cpp")
     add_versions("v0.7.0", "b9eb270e3ba8221e4b2bc38723c9a1cb4fa6c241a42908b9a334daff31137406")
     add_versions("v0.6.0", "0227bd6e0356b211341075c7997c837f0b388c01379bd256aa525566a5553f03")
 
-    add_configs("picojson", {description = "Use picojson", default = false, type = "boolean"})
+    add_configs("picojson", {description = "Provide the picojson template specialiaze", default = false, type = "boolean"})
+    add_configs("base64", {description = "Include the base64 implementation from this library", default = true, type = "boolean"})
     add_configs("ssl", {description = "Select ssl library", default = "openssl", type = "string", values = {"openssl", "openssl3", "libressl", "wolfssl"}})
-    add_configs("base64", {description = "Use picojson", default = true, type = "boolean"})
 
     add_deps("cmake")
 
     on_load(function (package)
-        package:add("deps", "nlohmann_json", {configs = {cmake = true}})
         package:add("deps", package:config("ssl"))
+        if package:gitref() or package:version():le("0.7.0") then
+            package:add("deps", "nlohmann_json", {configs = {cmake = true}})
+        end
 
         if package:config("picojson") then
             package:add("deps", "picojson")
@@ -31,7 +33,7 @@ package("jwt-cpp")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "android", "cross", function (package)
         if package:config("picojson") then
             io.replace("include/jwt-cpp/jwt.h", "picojson/picojson.h", "picojson.h", {plain = true})
             io.replace("include/jwt-cpp/traits/kazuho-picojson/traits.h", "picojson/picojson.h", "picojson.h", {plain = true})
