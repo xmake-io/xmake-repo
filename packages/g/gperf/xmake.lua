@@ -27,7 +27,7 @@ package("gperf")
 
     on_install("@macosx", "@linux", "@bsd", "@msys", function (package)
         io.replace("lib/getline.cc", "register", "", {plain = true})
-        io.replace("lib/getopt.cc", "register", "", {plain = true})
+        io.replace("lib/getopt.c", "register", "", {plain = true})
         import("package.tools.autoconf").install(package)
     end)
 
