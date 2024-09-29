@@ -73,7 +73,11 @@ package("openblas")
     on_install("windows|x64", "windows|x86", function (package)
         os.cp(path.join("bin", "libopenblas.dll"), package:installdir("bin"))
         os.cp("include", package:installdir())
-        os.cp(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
+        if package:version():ge("0.3.18") then
+            os.cp("libopenblas.lib", path.join(package:installdir("lib"), "openblas.lib"))
+        else
+            os.cp(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
+        end
         package:addenv("PATH", "bin")
     end)
 
