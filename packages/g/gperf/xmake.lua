@@ -25,7 +25,7 @@ package("gperf")
         import("package.tools.xmake").install(package)
     end)
 
-    on_install("@macosx", "@linux", "@bsd", function (package)
+    on_install("@macosx", "@linux", "@bsd", "@msys", function (package)
         import("package.tools.autoconf").install(package)
     end)
 
