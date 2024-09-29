@@ -208,6 +208,7 @@ package("ffmpeg")
                 import("package.tools.autoconf")
                 local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
                 -- add gas-preprocessor to PATH
+                print("autoconf libiconv's envs:", envs)
                 if package:is_arch("arm", "arm64") then
                     envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
                 end
@@ -348,7 +349,20 @@ package("ffmpeg")
             table.insert(configs, "--sysroot=" .. _translate_path(sysroot))
             table.insert(configs, "--cross-prefix=" .. _translate_path(cross_prefix))
             table.insert(configs, "--prefix=" .. _translate_path(package:installdir()))
+            try
+            {
+                function () 
             os.vrunv("./configure", configs, {shell = true})
+                end,
+                catch
+                {
+                    function (errors)
+                        print(errors)
+                        io.cat("ffbuild/config.log")
+                        assert(false)
+                    end
+                }
+            }
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
             if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
