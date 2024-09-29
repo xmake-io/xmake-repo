@@ -19,6 +19,7 @@ package("openblas")
             add_versions("0.3.24", "6335128ee7117ea2dd2f5f96f76dafc17256c85992637189a2d5f6da0c608163")
             add_versions("0.3.26", "859c510a962a30ef1b01aa93cde26fdb5fb1050f94ad5ab2802eba3731935e06")
             add_versions("0.3.27", "7b4d7504f274f8e26001aab4e25ec05032d90b8785b0355dc0d09247858d9f1e")
+            add_versions("0.3.28", "4cbd0e5daa3fb083b18f5e5fa6eefe79e2f2c51a6d539f98a3c6309a21160042")
         elseif is_arch("x86") then
             add_urls("https://github.com/OpenMathLib/OpenBLAS/releases/download/v$(version)/OpenBLAS-$(version)-x86.zip")
             add_versions("0.3.15", "bcde933737b477813eaac290de5cb8756d3b42199e8ef5f44b23ae5f06fe0834")
@@ -30,6 +31,7 @@ package("openblas")
             add_versions("0.3.24", "92f8e0c73e1eec3c428b210fbd69b91e966f8cf1f998f3b60a52f024b2bf9d27")
             add_versions("0.3.26", "9c3d48c3c21cd2341d642a63ee8a655205587befdab46462df7e0104d6771f67")
             add_versions("0.3.27", "0cb61cff9eac7fcc07036880dfeec7a2e194d0412524901bf03e55208f51f900")
+            add_versions("0.3.28", "4a14ba2b43937278616cd0883e033cc07ee1331afdd2d264ad81432bd7b16c7b")
         end
 
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
@@ -71,7 +73,11 @@ package("openblas")
     on_install("windows|x64", "windows|x86", function (package)
         os.cp(path.join("bin", "libopenblas.dll"), package:installdir("bin"))
         os.cp("include", package:installdir())
-        os.cp(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
+        if package:version():ge("0.3.28") then
+            os.cp("libopenblas.lib", path.join(package:installdir("lib"), "openblas.lib"))
+        else
+            os.cp(path.join("lib", "libopenblas.lib"), path.join(package:installdir("lib"), "openblas.lib"))
+        end
         package:addenv("PATH", "bin")
     end)
 
