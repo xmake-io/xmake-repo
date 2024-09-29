@@ -204,6 +204,10 @@ package("ffmpeg")
 
         if package:is_plat("windows") then
             table.insert(configs, "--extra-cflags=-" .. package:config("runtimes"))
+            try
+            {
+                -- try 代码块
+                function ()
             if path.cygwin then -- xmake 2.8.9
                 import("package.tools.autoconf")
                 local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
@@ -260,6 +264,16 @@ package("ffmpeg")
                     os.vmv(libfile, (libfile:gsub("^(.+[\\/])lib(.+)%.a$", "%1%2.lib")))
                 end
             end
+                end,
+                -- catch 代码块
+                catch
+                {
+                    -- 发生异常后，被执行
+                    function (errors)
+                        io.cat("ffbuild/config.log")
+                    end
+                }
+            }
         elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")
