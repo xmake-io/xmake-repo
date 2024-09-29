@@ -204,10 +204,6 @@ package("ffmpeg")
 
         if package:is_plat("windows") then
             table.insert(configs, "--extra-cflags=-" .. package:config("runtimes"))
-            try
-            {
-                -- try 代码块
-                function ()
             if path.cygwin then -- xmake 2.8.9
                 import("package.tools.autoconf")
                 local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
@@ -215,7 +211,21 @@ package("ffmpeg")
                 if package:is_arch("arm", "arm64") then
                     envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
                 end
+                print("In path.cygwin")
+                try
+                {
+                    function () 
                 autoconf.install(package, configs, {envs = envs})
+                    end,
+                    catch
+                    {
+                        function (errors)
+                            print(errors)
+                            io.cat("ffbuild/config.log")
+                            assert(false)
+                        end
+                    }
+                }
             else
                 import("core.base.option")
                 import("core.tool.toolchain")
@@ -245,6 +255,10 @@ package("ffmpeg")
                 end
 
                 table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
+                print("In others")
+                try
+                {
+                    function () 
                 os.vrunv("./configure", configs, {shell = true, envs = envs})
 
                 local njob = option.get("jobs") or tostring(os.default_njob())
@@ -254,6 +268,16 @@ package("ffmpeg")
                 end
                 os.vrunv("make", argv, {envs = envs})
                 os.vrunv("make", {"install"}, {envs = envs})
+                    end,
+                    catch
+                    {
+                        function (errors)
+                            print(errors)
+                            io.cat("ffbuild/config.log")
+                            assert(false)
+                        end
+                    }
+                }
             end
             if package:config("shared") then
                 -- move .lib from bin/ to lib/
@@ -264,16 +288,6 @@ package("ffmpeg")
                     os.vmv(libfile, (libfile:gsub("^(.+[\\/])lib(.+)%.a$", "%1%2.lib")))
                 end
             end
-                end,
-                -- catch 代码块
-                catch
-                {
-                    -- 发生异常后，被执行
-                    function (errors)
-                        io.cat("ffbuild/config.log")
-                    end
-                }
-            }
         elseif package:is_plat("android") then
             import("core.base.option")
             import("core.tool.toolchain")
