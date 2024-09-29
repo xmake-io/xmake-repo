@@ -19,7 +19,7 @@ package("libhubbub")
         if not package:is_precompiled() then
             package:add("deps", "gperf")
             if is_subhost("windows") then
-                package:add("deps", "strawberry-perl", "gperf")
+                package:add("deps", "strawberry-perl")
             end
         end
     end)

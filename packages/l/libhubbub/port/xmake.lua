@@ -1,16 +1,17 @@
 add_rules("mode.debug", "mode.release")
 
+if is_subhost("windows") then
+    add_requires("strawberry-perl")
+    add_packages("strawberry-perl")
+end
+add_requires("gperf")
+add_packages("gperf")
+
 add_requires("libparserutils")
 add_packages("libparserutils")
-
 if is_plat("windows") then
     add_requires("strings_h")
     add_packages("strings_h")
-end
-
-if is_subhost("windows") then
-    add_requires("strawberry-perl", "gperf")
-    add_packages("strawberry-perl", "gperf")
 end
 
 target("hubbub")
