@@ -7,6 +7,7 @@ package("gyp-next")
 
     add_urls("https://github.com/nodejs/gyp-next/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nodejs/gyp-next.git")
+    add_versions("v0.18.2", "d709119fa756fec7d7d2c7663553d73f6bf1ad4e139b4ec21fed5c65abc7bd3b")
     add_versions("v0.18.1", "f9be5e64a992688b651d64c6f269a8a701b843e089c048fae0733e9eb01dd48e")
     add_versions("v0.18.0", "2c0e002843da6a854d937a93d6fad5993954a457b3ffc2031d8af2dcff42caba")
     add_versions("v0.16.2", "145d5719a88112ae2631a88556361da3b8780f4179a928c823ba3d18ab796464")
