@@ -14,11 +14,11 @@ package("libsvgtiny")
     on_install(function (package)
         os.cd(package:version_str())
         io.replace("src/svgtiny.c", "calloc(sizeof(*diagram), 1);", "calloc(1, sizeof(*diagram));", {plain = true})
-        
+
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("svgtiny_create", {includes = "svgtiny.h"}))
+        assert(package:has_cfuncs("svgtiny_create", {includes = {"stddef.h", "svgtiny.h"}}))
     end)
