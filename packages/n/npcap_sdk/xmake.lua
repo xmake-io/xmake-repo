@@ -4,6 +4,7 @@ package("npcap_sdk")
 
     set_urls("https://npcap.com/dist/npcap-sdk-$(version).zip")
     add_versions("1.13", "dad1f2bf1b02b787be08ca4862f99e39a876c1f274bac4ac0cedc9bbc58f94fd")
+    add_versions("1.12", "24c4862723f61d28048a24e10eb31d2269b2152a5762410dd1caffc041871337")
 
     on_load("mingw", function (package)
         if package:version():eq("1.13") then
