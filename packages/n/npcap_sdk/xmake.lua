@@ -16,7 +16,7 @@ package("npcap_sdk")
         os.cp("Include/*", package:installdir("include"))
         if package:is_arch("arm64") then
             os.cp("Lib/ARM64/*", package:installdir("lib"))
-        elseif package:is_arch("x86") then
+        elseif package:is_arch("x86") or package:is_arch("i386") then
             os.cp("Lib/*.lib", package:installdir("lib"))
         else
             os.cp("Lib/x64/*.lib", package:installdir("lib"))
