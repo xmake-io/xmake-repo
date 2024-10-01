@@ -66,17 +66,24 @@ function _find_library(package, opt)
         includepath = find_path("Python.h", { path.directory(exepath), out }, { suffixes = { "include/python" .. pyver } })
     end
 
-    if libpath and includepath then
-        local result = {
-            version = version,
-            includedirs = includepath
-        }
-        if not package:config("headeronly") then
-            result.links = libpath.link
-            result.linkdirs = libpath.linkdir
-        end
+    if not includepath then
+        return false
+    end
+    local result = {
+        version = version,
+        includedirs = includepath
+    }
+    -- If headeronly is set, links is not needed
+
+    if package:config("headeronly") then
         return result
     end
+    if libpath then
+        result.links = libpath.link
+        result.linkdirs = libpath.linkdir
+        return result
+    end
+    return false
 end
 
 function main(package, opt)
