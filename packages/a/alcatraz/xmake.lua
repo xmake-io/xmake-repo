@@ -9,7 +9,7 @@ package("alcatraz")
 
     add_deps("asmjit", "zydis")
 
-    on_install("@windows", "@mingw", "@msys", function (package)
+    on_install("@windows", function (package)
         io.replace("Alcatraz/obfuscator/obfuscator.cpp", "#include <iostream>",
             "#include <iostream>\n#include <bit>", {plain = true})
 
