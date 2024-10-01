@@ -19,7 +19,29 @@ package("pybind11")
     add_versions("v2.12.0", "411f77380c43798506b39ec594fc7f2b532a13c4db674fcf2b1ca344efaefb68")
     add_versions("v2.13.1", "a3c9ea1225cb731b257f2759a0c12164db8409c207ea5cf851d4b95679dda072")
 
-    add_deps("cmake", "python 3.x")
+    -- On Windows, pybind11 must be linked with python library.
+    -- But on Linux, Python Packaging Authority recommends using headeronly mode for C extensions, 
+    -- and linking libpythonX.Y.so is not allowed on manylinux, which is the base image for distributing C extensions.
+
+    -- see https://gitlab.kitware.com/cmake/cmake/-/issues/20425 and
+    -- https://peps.python.org/pep-0513/#libpythonx-y-so-1
+
+    add_configs("use_python_headeronly", {description = "Use python headeronly", default = false, type = "boolean"})
+
+    add_deps("cmake")
+    on_load(function (package)
+        local python_headeronly = package:config("use_python_headeronly")
+
+        if os.host() == "windows" then
+            print("Python headeronly is not supported on Windows")
+            python_headeronly = false
+        end
+
+        package:add("deps", "python 3.x", {configs = {
+            headeronly = python_headeronly,
+        }})
+    end)
+
     on_install("windows|native", "macosx", "linux", function (package)
         import("package.tools.cmake").install(package, {"-DPYBIND11_TEST=OFF"})
     end)
