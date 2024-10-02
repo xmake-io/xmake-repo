@@ -73,7 +73,6 @@ function _find_library(package, opt)
         version = version,
         includedirs = includepath
     }
-    -- If headeronly is set, links is not needed
 
     if package:config("headeronly") then
         return result
@@ -83,7 +82,6 @@ function _find_library(package, opt)
         result.linkdirs = libpath.linkdir
         return result
     end
-    return false
 end
 
 function main(package, opt)
