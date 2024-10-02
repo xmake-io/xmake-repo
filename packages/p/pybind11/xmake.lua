@@ -30,7 +30,7 @@ package("pybind11")
 
     on_load(function (package)
         local python_headeronly = package:config("python_headeronly")
-        if os.is_host("windows") then
+        if is_host("windows") then
             wprint("Python headeronly is not supported on Windows")
             python_headeronly = false
         end
