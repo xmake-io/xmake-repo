@@ -10,7 +10,7 @@ package("sqlite-vec")
 
     add_deps("sqlite3")
 
-    on_install(function (package)
+    on_install("!bsd and (!windows or windows|!x86)", function (package)
         if package:is_plat("windows") and not package:config("shared") then
             package:add("defines", "SQLITE_VEC_STATIC")
         end
