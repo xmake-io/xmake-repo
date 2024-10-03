@@ -10,6 +10,7 @@ package("node-addon-api")
 
     set_urls("https://github.com/nodejs/node-addon-api/archive/refs/tags/$(version).tar.gz",
         "https://github.com/nodejs/node-addon-api.git")
+    add_versions("v8.2.0", "1c178658585046e8ad262afda24e0d3703bcf98c0b80a699385209da1c61d7ac")
     add_versions("v8.0.0", "42424c5206b9d67b41af4fcff5d6e3cb22074168035a03b8467852938a281d47")
 
     add_deps("node-api-headers")
