@@ -12,7 +12,7 @@ package("libssh2")
 
     add_configs("backend", {description = "Select crypto backend.", default = (is_plat("windows") and "wincng" or "openssl"), type = "string", values = {"openssl", "wincng", "mbedtls", "libgcrypt"}})
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("bcrypt", "crypt32", "ws2_32")
     end
 
@@ -41,7 +41,16 @@ package("libssh2")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
-        table.insert(configs, "-DCRYPTO_BACKEND=" .. backend_name[package:config("backend")])
+
+        local backend = package:config("backend")
+        table.insert(configs, "-DCRYPTO_BACKEND=" .. backend_name[backend])
+
+        if backend == "openssl" then
+            local openssl = package:dep("openssl")
+            if not openssl:is_system() then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+            end
+        end
 
         if package:is_plat("windows") then
             os.mkdir(path.join(package:buildir(), "src/pdb"))
