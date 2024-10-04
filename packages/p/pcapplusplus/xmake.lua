@@ -14,7 +14,7 @@ package("pcapplusplus")
     add_links("Pcap++", "Packet++", "Common++")
 
     if is_plat("windows") then
-        add_syslinks("ws2_32")
+        add_syslinks("ws2_32", "iphlpapi")
     end
 
     add_deps("cmake")
