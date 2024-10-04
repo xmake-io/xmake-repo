@@ -5,6 +5,12 @@ package("gperftools")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/gperftools/gperftools/archive/refs/tags/gperftools-$(version).tar.gz")
+    add_versions("2.16", "f12624af5c5987f2cc830ee534f754c3c5961eec08004c26a8b80de015cf056f")
+    add_versions("2.15", "c69fef855628c81ef56f12e3c58f2b7ce1f326c0a1fe783e5cae0b88cbbe9a80")
+    add_versions("2.14", "6b561baf304b53d0a25311bd2e29bc993bed76b7c562380949e7cb5e3846b299")
+    add_versions("2.13", "4882c5ece69f8691e51ffd6486df7d79dbf43b0c909d84d3c0883e30d27323e7")
+    add_versions("2.12", "fb611b56871a3d9c92ab0cc41f9c807e8dfa81a54a4a9de7f30e838756b5c7c6")
+    add_versions("2.11", "8ffda10e7c500fea23df182d7adddbf378a203c681515ad913c28a64b87e24dc")
     add_versions("2.10", "b0dcfe3aca1a8355955f4b415ede43530e3bb91953b6ffdd75c45891070fe0f1")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
