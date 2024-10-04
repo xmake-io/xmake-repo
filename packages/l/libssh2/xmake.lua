@@ -30,7 +30,7 @@ package("libssh2")
         end
     end)
 
-    on_install("!wasm", function (package)
+    on_install("!wasm and !iphoneos", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DBUILD_EXAMPLES=OFF",
