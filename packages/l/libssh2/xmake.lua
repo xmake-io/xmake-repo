@@ -57,10 +57,14 @@ package("libssh2")
             end
         end
 
+        local opt = {}
         if package:is_plat("windows") then
             os.mkdir(path.join(package:buildir(), "src/pdb"))
+            if backend == "mbedtls" then
+                opt.packagedeps = backend
+            end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, opt)
 
         if package:is_plat("windows") and package:is_debug() then
             local dir = package:installdir(package:config("shared") and "bin" or "lib")
