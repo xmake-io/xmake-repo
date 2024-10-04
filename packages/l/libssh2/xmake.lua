@@ -10,7 +10,7 @@ package("libssh2")
     add_versions("1.10.0", "2d64e90f3ded394b91d3a2e774ca203a4179f69aebee03003e5a6fa621e41d51")
     add_versions("1.11.0", "3736161e41e2693324deb38c26cfdc3efe6209d634ba4258db1cecff6a5ad461")
 
-    add_configs("backend", {description = "Select crypto backend.", default = (is_plat("windows") and "wincng" or "openssl"), type = "string", values = {"openssl", "wincng", "mbedtls", "libgcrypt"}})
+    add_configs("backend", {description = "Select crypto backend.", default = (is_plat("windows") and "wincng" or "openssl"), type = "string", values = {"openssl", "wincng", "mbedtls", "libgcrypt", "wolfssl"}})
 
     if is_plat("windows", "mingw") then
         add_syslinks("bcrypt", "crypt32", "ws2_32")
@@ -31,13 +31,18 @@ package("libssh2")
     end)
 
     on_install("!wasm", function (package)
-        local configs = {"-DBUILD_TESTING=OFF",
-                         "-DBUILD_EXAMPLES=OFF",
-                         "-DENABLE_ZLIB_COMPRESSION=ON"}
-        local backend_name = {wincng    = "WinCNG",
-                              openssl   = "OpenSSL",
-                              mbedtls   = "mbedTLS",
-                              libgcrypt = "Libgcrypt"}
+        local configs = {
+            "-DBUILD_TESTING=OFF",
+            "-DBUILD_EXAMPLES=OFF",
+            "-DENABLE_ZLIB_COMPRESSION=ON",
+        }
+        local backend_name = {
+            wincng    = "WinCNG",
+            openssl   = "OpenSSL",
+            mbedtls   = "mbedTLS",
+            libgcrypt = "Libgcrypt",
+            wolfssl   = "wolfSSL",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
