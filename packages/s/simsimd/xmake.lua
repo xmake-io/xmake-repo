@@ -25,7 +25,7 @@ package("simsimd")
                     return vdotq_s32(ab_vec, a_vec, b_vec);
                 }
                 #pragma clang attribute pop
-            ]]}, "package(simsimd) requires a higher version of NDK.")
+            ]]}), "package(simsimd) requires a higher version of NDK.")
         end)
     end
 
