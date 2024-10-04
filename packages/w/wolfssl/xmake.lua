@@ -21,10 +21,10 @@ package("wolfssl")
     add_configs("openssl_all", {description = "Enable all OpenSSL API, size++", default = false, type = "boolean"})
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ws2_32", "crypt32")
+        add_syslinks("ws2_32", "crypt32", "advapi32")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread", "m")
-    elseif is_plat("macosx") then
+    elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Security")
     end
 
