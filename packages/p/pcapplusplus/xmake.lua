@@ -13,12 +13,12 @@ package("pcapplusplus")
 
     add_links("Pcap++", "Packet++", "Common++")
 
-    if is_plat("windows") or is_plat("mingw") then
+    if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "iphlpapi")
     end
 
     add_deps("cmake")
-    if is_plat("windows") or is_plat("mingw") then
+    if is_plat("windows", "mingw") then
         add_deps("npcap_sdk")
     elseif is_plat("linux") then
         add_deps("libpcap")
