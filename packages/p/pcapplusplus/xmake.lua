@@ -13,18 +13,18 @@ package("pcapplusplus")
 
     add_links("Pcap++", "Packet++", "Common++")
 
-    if is_plat("windows") then
+    if is_plat("windows") or is_plat("mingw") then
         add_syslinks("ws2_32", "iphlpapi")
     end
 
     add_deps("cmake")
-    if is_plat("windows") then
+    if is_plat("windows") or is_plat("mingw") then
         add_deps("npcap_sdk")
     elseif is_plat("linux") then
         add_deps("libpcap")
     end
 
-    on_install("windows", "linux", function (package)
+    on_install("windows", "mingw", "linux", function (package)
         local configs = {
             "-DPCAPPP_BUILD_EXAMPLES=OFF",
             "-DPCAPPP_BUILD_TESTS=OFF",
