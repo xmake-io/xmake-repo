@@ -15,12 +15,26 @@ package("liboqs")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    if on_check then
+        on_check("windows", function (package)
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(liboqs) require vs_toolset >= 14.3")
+            end
+        end)
+    end
+
+    on_install("!windows or windows|!arm64", function (package)
         io.replace(".CMake/compiler_opts.cmake", "add_compile_options(/MT)", "", {plain = true})
 
         local configs = {"-DOQS_BUILD_ONLY_LIB=ON", "-DOQS_USE_OPENSSL=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("cross", "iphoneos") or (package:is_plat("mingw") and package:is_arch("i386")) then
+            table.insert(configs, "-DOQS_PERMIT_UNSUPPORTED_ARCHITECTURE=ON")
+        end
 
         if package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=.")
