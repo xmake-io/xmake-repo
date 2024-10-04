@@ -35,11 +35,19 @@ package("pcapplusplus")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <vector>
             #include "pcapplusplus/IPv4Layer.h"
             #include "pcapplusplus/Packet.h"
             #include "pcapplusplus/PcapFileDevice.h"
-            void test() {
+            #include "pcapplusplus/PcapLiveDeviceList.h"
+
+            void testPcapFileReaderDevice() {
                 pcpp::PcapFileReaderDevice reader("1_packet.pcap");
+            }
+
+            void testPcapLiveDeviceList() {
+                std::vector<pcpp::PcapLiveDevice *> devList = 
+                    pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDevicesList();
             }
         ]]}, {configs = {languages = "c++17"}}))
     end)
