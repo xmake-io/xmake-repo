@@ -6,7 +6,6 @@ package("pycdc")
     add_urls("https://github.com/zrax/pycdc.git")
 
     add_versions("2024.08.12", "dc6ca4ae36128f2674b5b4c9b0ce6fdda97d4df0")
-    add_versions("2022.10.04", "44a730f3a889503014fec94ae6e62d8401cb75e5")
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
