@@ -10,7 +10,7 @@ package("libpcap")
 
     add_deps("cmake", "flex", "bison")
 
-    on_install("linux", "macosx", "android", function (package)
+    on_install("linux", "macosx", "android", "bsd", function (package)
         local configs = {
             "-DDISABLE_AIRPCAP=ON",
             "-DDISABLE_DPDK=ON",
