@@ -33,6 +33,15 @@ package("libgit2")
         add_deps("openssl", "zlib")
     end
 
+    if on_check then
+        on_check("windows", function (package)
+            -- undefined symbol __except_handler4_common(msvcrt)
+            if package:is_arch("x86") and package:has_runtime("MD", "MDd") and package:config("shared") then
+                raise("package(libgit2) unsupported x86 & MD & shared")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("ssh") then
             package:add("deps", "libssh2", {configs = {backend = "openssl"}})
