@@ -32,6 +32,7 @@ package("libssh2")
 
     on_install("!wasm and !iphoneos", function (package)
         local configs = {
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
             "-DBUILD_TESTING=OFF",
             "-DBUILD_EXAMPLES=OFF",
             "-DENABLE_ZLIB_COMPRESSION=ON",
@@ -44,6 +45,7 @@ package("libssh2")
             wolfssl   = "wolfSSL",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DENABLE_DEBUG_LOGGING=" .. (package:is_debug() and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
 
