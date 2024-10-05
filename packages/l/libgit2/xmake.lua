@@ -13,6 +13,7 @@ package("libgit2")
 
     add_configs("ssh", {description = "Enable SSH support", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+    add_configs("https", {description = "Select crypto backend.", default = (is_plat("windows", "mingw") and "winhttp" or "openssl"), type = "string", values = {"winhttp", "openssl", "mbedtls"}})
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
@@ -30,7 +31,7 @@ package("libgit2")
 
     add_deps("pcre2", "llhttp")
     if not is_plat("macosx", "iphoneos") then
-        add_deps("openssl", "zlib")
+        add_deps("zlib")
     end
 
     if on_check then
@@ -45,6 +46,11 @@ package("libgit2")
     on_load(function (package)
         if package:config("ssh") then
             package:add("deps", "libssh2", {configs = {backend = "openssl"}})
+        end
+
+        local https = package:config("https")
+        if https ~= "winhttp" then
+            package:add("deps", https)
         end
     end)
 
@@ -68,6 +74,11 @@ package("libgit2")
             if package:version():eq("1.7.1") then
                 io.replace("cmake/DefaultCFlags.cmake", "/GL", "", {plain = true})
             end
+        end
+
+        if package:is_plat("windows", "mingw", "msys") and package:config("https") ~= "winhttp" then
+            -- Need to pass `-DUSE_HTTPS=xxxssl`, but let cmake auto-detect is convenient
+            io.replace("cmake/SelectHTTPSBackend.cmake", "elseif(WIN32)", "elseif(0)", {plain = true})
         end
 
         local configs = {
