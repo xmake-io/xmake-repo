@@ -14,15 +14,28 @@ package("gperftools")
     add_versions("2.10", "b0dcfe3aca1a8355955f4b415ede43530e3bb91953b6ffdd75c45891070fe0f1")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
+    add_configs("minimal", {description = "Build only tcmalloc-minimal (and maybe tcmalloc-minimal-debug)", default = false, type = "boolean"})
+    add_configs("tcmalloc", {description = "Link with tcmalloc.", default = true, type = "boolean"})
+    add_configs("profiler", {description = "Link with profiler.", default = true, type = "boolean"})
     if is_plat("linux") then
         add_configs("unwind", {description = "Enable libunwind support.", default = false, type = "boolean"})
     end
 
     add_deps("cmake")
 
-    on_load("linux", function (package)
-        if package:config("unwind") then
+    on_load(function (package)
+        if package:is_plat("linux") and package:config("unwind") then
             package:add("deps", "libunwind")
+        end
+
+        if package:config("tcmalloc") then
+            local libsuffix = package:config("minimal") and "_minimal" or ""
+            libsuffix = package:debug() and libsuffix .. "_debug" or libsuffix
+            package:add("links", "tcmalloc" .. libsuffix)
+        end
+
+        if package:config("profiler") then
+            package:add("links", "profiler")
         end
     end)
 
@@ -30,10 +43,23 @@ package("gperftools")
         local configs = {"-DBUILD_TESTING=OFF", "-Dgperftools_build_benchmark=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DGPERFTOOLS_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-Dgperftools_build_minimal=" .. (package:config("minimal") and "ON" or "OFF"))
         if package:is_plat("linux") then
             table.insert(configs, "-Dgperftools_enable_libunwind=" .. (package:config("unwind") and "ON" or "OFF"))
         end
-        import("package.tools.cmake").install(package, configs)
+
+        if package:version():le("2.15") then
+            import("package.tools.cmake").install(package, configs)
+        else 
+            import("package.tools.cmake").build(package, configs, {buildir = "build"})
+
+            os.trycp("build/gperftools", package:installdir("include"))
+            os.trycp("build/**.a", package:installdir("lib"))
+            os.trycp("build/**.dylib", package:installdir("lib"))
+            os.trycp("build/**.so", package:installdir("lib"))
+            os.trycp("build/**.lib", package:installdir("lib"))
+            os.trycp("build/**.dll", package:installdir("bin"))
+        end
     end)
 
     on_test(function (package)
