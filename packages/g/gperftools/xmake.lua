@@ -14,7 +14,7 @@ package("gperftools")
     add_versions("2.10", "b0dcfe3aca1a8355955f4b415ede43530e3bb91953b6ffdd75c45891070fe0f1")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
-    add_configs("minimal", {description = "Build only tcmalloc-minimal (and maybe tcmalloc-minimal-debug)", default = false, type = "boolean"})
+    add_configs("minimal", {description = "Build only tcmalloc-minimal (and maybe tcmalloc-minimal-debug)", default = is_plat("windows"), type = "boolean"})
     add_configs("tcmalloc", {description = "Link with tcmalloc.", default = true, type = "boolean"})
     add_configs("profiler", {description = "Link with profiler.", default = true, type = "boolean"})
     if is_plat("linux") then
