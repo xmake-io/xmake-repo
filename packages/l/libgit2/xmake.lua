@@ -54,6 +54,7 @@ package("libgit2")
     on_load(function (package)
         local https = package:config("https")
         if package:is_plat("iphoneos") and https == "openssl" then
+            -- TODO: openssl support iphoneos
             return 
         end
 
@@ -128,6 +129,8 @@ package("libgit2")
 
         if package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        elseif package:is_plat("iphoneos") and https == "openssl" then
+            table.insert(configs, "-DUSE_HTTPS=OFF")
         elseif package:is_plat("mingw") then
             local mingw = import("detect.sdks.find_mingw")()
             local dlltool = assert(os.files(path.join(mingw.bindir, "*dlltool*"))[1], "dlltool not found!")
