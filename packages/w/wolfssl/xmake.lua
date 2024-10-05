@@ -39,7 +39,7 @@ package("wolfssl")
         end
     end)
 
-    on_install(function (package)
+    on_install("!windows or windows|!arm64", function (package)
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
 
         local configs = {"-DWOLFSSL_EXAMPLES=no", "-DWOLFSSL_CRYPT_TESTS=no"}
