@@ -44,13 +44,19 @@ package("libgit2")
     end
 
     on_load(function (package)
-        if package:config("ssh") then
-            package:add("deps", "libssh2", {configs = {backend = "openssl"}})
-        end
-
         local https = package:config("https")
         if https ~= "winhttp" then
             package:add("deps", https)
+        end
+        
+        if package:config("ssh") then
+            local backend
+            if https == "winhttp" then
+                backend = "wincng"
+            else
+                backend = https
+            end
+            package:add("deps", "libssh2", {configs = {backend = backend}})
         end
     end)
 
@@ -76,9 +82,23 @@ package("libgit2")
             end
         end
 
-        if package:is_plat("windows", "mingw", "msys") and package:config("https") ~= "winhttp" then
-            -- Need to pass `-DUSE_HTTPS=xxxssl`, but let cmake auto-detect is convenient
-            io.replace("cmake/SelectHTTPSBackend.cmake", "elseif(WIN32)", "elseif(0)", {plain = true})
+        local https = package:config("https")
+        if https ~= "winhttp" then
+            if package:is_plat("windows", "mingw", "msys") then
+                -- Need to pass `-DUSE_HTTPS=xxxssl`, but let cmake auto-detect is convenient
+                io.replace("cmake/SelectHTTPSBackend.cmake", "elseif(WIN32)", "elseif(0)", {plain = true})
+            end
+
+            if https == "mbedtls" then
+                local links = {"${MBEDTLS_LIBRARY}", "${MBEDX509_LIBRARY}", "${MBEDCRYPTO_LIBRARY}"}
+                if package:is_plat("windows", "mingw", "msys") then
+                    table.join2(links, {"ws2_32", "advapi32", "bcrypt"})
+                end
+    
+                io.replace("cmake/FindmbedTLS.cmake",
+                    [["-L${MBEDTLS_LIBRARY_DIR} -l${MBEDTLS_LIBRARY_FILE} -l${MBEDX509_LIBRARY_FILE} -l${MBEDCRYPTO_LIBRARY_FILE}"]],
+                    table.concat(links, " "), {plain = true})
+            end
         end
 
         local configs = {
