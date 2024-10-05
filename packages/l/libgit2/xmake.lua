@@ -40,6 +40,27 @@ package("libgit2")
     end)
 
     on_install("!wasm", function (package)
+        if package:is_plat("android") then
+            for _, file in ipairs(os.files("src/**.txt")) do
+                if path.basename(file) == "CMakeLists" then
+                    io.replace(file, "C_STANDARD 90", "C_STANDARD 99", {plain = true})
+                end
+            end
+        elseif package:is_plat("windows") then
+            -- MDd == _MT + _DLL + _DEBUG
+            io.replace("cmake/DefaultCFlags.cmake", "/D_DEBUG", "", {plain = true})
+            -- Use CMAKE_MSVC_RUNTIME_LIBRARY
+            io.replace("cmake/DefaultCFlags.cmake", "/MT", "", {plain = true})
+            io.replace("cmake/DefaultCFlags.cmake", "/MTd", "", {plain = true})
+            io.replace("cmake/DefaultCFlags.cmake", "/MD", "", {plain = true})
+            io.replace("cmake/DefaultCFlags.cmake", "/MDd", "", {plain = true})
+
+            io.replace("CMakeLists.txt", "/GL", "", {plain = true})
+            if package:version():eq("1.7.1") then
+                io.replace("cmake/DefaultCFlags.cmake", "/GL", "", {plain = true})
+            end
+        end
+
         local configs = {
             "-DBUILD_TESTS=OFF",
             "-DBUILD_CLAR=OFF",
@@ -56,22 +77,7 @@ package("libgit2")
         if package:is_plat("android", "iphoneos") then
             table.insert(configs, "-DUSE_HTTPS=OFF")
         elseif package:is_plat("windows") then
-            -- MDd == _MT + _DLL + _DEBUG
-            io.replace("cmake/DefaultCFlags.cmake", "/D_DEBUG", "", {plain = true})
-            -- Use CMAKE_MSVC_RUNTIME_LIBRARY
-            io.replace("cmake/DefaultCFlags.cmake", "/MT", "", {plain = true})
-            io.replace("cmake/DefaultCFlags.cmake", "/MTd", "", {plain = true})
-            io.replace("cmake/DefaultCFlags.cmake", "/MD", "", {plain = true})
-            io.replace("cmake/DefaultCFlags.cmake", "/MDd", "", {plain = true})
-
-            io.replace("CMakeLists.txt", "/GL", "", {plain = true})
-            if package:version():eq("1.7.1") then
-                io.replace("cmake/DefaultCFlags.cmake", "/GL", "", {plain = true})
-            end
-
-            os.mkdir(path.join(package:buildir(), "src/libgit2/pdb"))
-            os.mkdir(path.join(package:buildir(), "src/util/pdb"))
-            os.mkdir(path.join(package:buildir(), "deps/xdiff/pdb"))
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
         end
 
         local opt = {}
