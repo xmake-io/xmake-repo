@@ -32,7 +32,9 @@ package("libpcap")
             "-DDISABLE_TC=ON",
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
         }
-
+        if package:is_plat("macosx") and package:is_arch("arm64") then
+            table.insert(configs, "-DCMAKE_OSX_ARCHITECTURES=arm64")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_STATIC_RT=" .. (package:config("shared") and "OFF" or "ON"))
