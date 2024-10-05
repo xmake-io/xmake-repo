@@ -6,6 +6,10 @@ package("libpcap")
 
     add_urls("https://www.tcpdump.org/release/libpcap-$(version).tar.gz")
     add_urls("https://github.com/the-tcpdump-group/libpcap.git")
+    add_versions("1.10.5", "37ced90a19a302a7f32e458224a00c365c117905c2cd35ac544b6880a81488f0")
+    add_versions("1.10.4", "ed19a0383fad72e3ad435fd239d7cd80d64916b87269550159d20e47160ebe5f")
+    add_versions("1.10.3", "2a8885c403516cf7b0933ed4b14d6caa30e02052489ebd414dc75ac52e7559e6")
+    add_versions("1.10.2", "db6d79d4ad03b8b15fb16c42447d093ad3520c0ec0ae3d331104dcfb1ce77560")
     add_versions("1.10.1", "ed285f4accaf05344f90975757b3dbfe772ba41d1c401c2648b7fa45b711bdd4")
     
     add_configs("remote", {description = "Enable remote capture support (requires openssl)", default = true, type = "boolean"})
