@@ -7,8 +7,16 @@ package("libpcap")
     add_urls("https://www.tcpdump.org/release/libpcap-$(version).tar.gz")
     add_urls("https://github.com/the-tcpdump-group/libpcap.git")
     add_versions("1.10.1", "ed285f4accaf05344f90975757b3dbfe772ba41d1c401c2648b7fa45b711bdd4")
-
+    
+    add_configs("remote", {description = "Enable remote capture support (requires openssl)", default = true, type = "boolean"})
+    
     add_deps("cmake", "flex", "bison")
+
+    on_load(function (package)
+        if package:config("remote") then
+            package:add("deps", "openssl")
+        end
+    end)
 
     on_install("linux", "macosx", "android", "bsd", function (package)
         local configs = {
@@ -22,12 +30,12 @@ package("libpcap")
             "-DDISABLE_SEPTEL=ON",
             "-DDISABLE_SNF=ON",
             "-DDISABLE_TC=ON",
-            "-DENABLE_REMOTE=OFF",
         }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_STATIC_RT=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DENABLE_REMOTE=" .. (package:config("remote") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
         if package:config("shared") then
