@@ -83,9 +83,7 @@ package("libgit2")
         table.insert(configs, "-DUSE_SSH=" .. (package:config("ssh") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_CLI=" .. (package:config("tools") and "ON" or "OFF"))
 
-        if package:is_plat("android", "iphoneos") then
-            table.insert(configs, "-DUSE_HTTPS=OFF")
-        elseif package:is_plat("windows") then
+        if package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
         end
 
