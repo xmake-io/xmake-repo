@@ -27,8 +27,8 @@ package("bison")
             package:add("deps", "m4")
         end
 
-        -- we always set it, because flex may be modified as library
-        -- by add_deps("flex", {kind = "library"})
+        -- we always set it, because bison may be modified as library
+        -- by add_deps("bison", {kind = "library"})
         package:addenv("PATH", "bin")
         if package:is_library() then
             package:set("kind", "library", {headeronly = true})
