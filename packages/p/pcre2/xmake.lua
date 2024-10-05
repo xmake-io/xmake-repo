@@ -63,6 +63,7 @@ package("pcre2")
         end
         if package:is_debug() then
             table.insert(configs, "-DPCRE2_DEBUG=ON")
+            table.insert(configs, "-DINSTALL_MSVC_PDB=ON")
         end
         if package:is_plat("windows") then
             table.insert(configs, "-DPCRE2_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
