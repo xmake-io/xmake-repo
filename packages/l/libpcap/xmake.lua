@@ -30,6 +30,7 @@ package("libpcap")
             "-DDISABLE_SEPTEL=ON",
             "-DDISABLE_SNF=ON",
             "-DDISABLE_TC=ON",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
         }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
