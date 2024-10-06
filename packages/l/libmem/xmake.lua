@@ -8,9 +8,9 @@ package("libmem")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
     add_deps("cmake")
 
-    -- Installation instructions
+
     on_install(function (package)
-        -- Set the build configuration parameters
+
         local configs = {}
 
         io.writefile("xmake.lua", [[
@@ -143,6 +143,6 @@ package("libmem")
                     add_deps("libmem")
             end
         ]])
-        -- Use xmake to build and install libmem
+
         import("package.tools.xmake").install(package, configs)
     end)
