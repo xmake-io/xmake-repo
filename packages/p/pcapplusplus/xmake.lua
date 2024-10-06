@@ -20,11 +20,11 @@ package("pcapplusplus")
     add_deps("cmake")
     if is_plat("windows", "mingw") then
         add_deps("npcap_sdk")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "macosx", "android", "bsd") then
         add_deps("libpcap")
     end
 
-    on_install("windows", "mingw", "linux", function (package)
+    on_install("windows", "mingw", "linux", "macosx", "android", "bsd", function (package)
         local configs = {
             "-DPCAPPP_BUILD_EXAMPLES=OFF",
             "-DPCAPPP_BUILD_TESTS=OFF",
