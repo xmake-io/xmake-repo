@@ -16,7 +16,7 @@ package("pcapplusplus")
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32", "iphlpapi")
     elseif is_plat("macosx") then
-        add_frameworks("CoreFoundation", "Foundation", "IOKit")
+        add_frameworks("CoreFoundation", "SystemConfiguration")
     end
 
     add_deps("cmake")
