@@ -1,5 +1,6 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c17", "c++20")
+add_requires("capstone", "vcpkg::keystone")
 add_headerfiles("include/(libmem/**.h)")
 add_headerfiles("include/(libmem/**.hpp)")
 if is_plat("windows") then
@@ -7,9 +8,7 @@ if is_plat("windows") then
 end
 
 -- Set options
-option("build_tests", {description = "Build tests", default = false, showmenu = true})
-option("deep_tests", {description = "Enable deep testing", default = false, showmenu = true})
-option("build_static", {description = "Build static library", default = true, showmenu = true})
+option("shared", {description = "Build static library", default = true, showmenu = true})
 
 set_arch(os.arch())
 
@@ -94,7 +93,8 @@ end
 
 -- Add target for libmem
 target("libmem")
-    if has_config("build_static") then
+    
+    if has_config("shared") then
         set_kind("static")
     else
         set_kind("shared")
@@ -108,9 +108,6 @@ target("libmem")
     add_includedirs(internal_dir)
     add_includedirs(common_dir)
 
-    -- Link against external libraries
-    add_links("capstone", "keystone", "llvm")
-
     -- Platform-specific dependencies
     if is_plat("windows") then
         add_syslinks("user32", "psapi", "ntdll", "shell32")
@@ -120,13 +117,8 @@ target("libmem")
         add_syslinks("dl", "kvm", "procstat", "elf", "stdc++", "m")
     end
 
+    -- Link against external libraries
+    add_links("capstone", "keystone")
+
     -- Define for export symbol
     add_defines("LM_EXPORT")
-
--- Optionally build tests
-if has_config("build_tests") then
-    target("libmem_tests")
-        set_kind("binary")
-        add_files(path.join(libmem_dir, "tests/*.cpp"))
-        add_deps("libmem")
-end
