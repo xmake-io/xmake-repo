@@ -16,6 +16,12 @@ package("llhttp")
     end)
 
     on_install(function (package)
+        io.replace("include/llhttp.h", "__wasm__", "__GNUC__", {plain = true})
+        io.replace("include/llhttp.h", "_WIN32", "_MSC_VER", {plain = true})
+        if not package:config("shared") then
+            io.replace("include/llhttp.h", "__declspec(dllexport)", "", {plain = true})
+        end
+
         local xmake_configs = {}
         if package:version():ge("9.2.1") then
             -- Get cmake config file
@@ -32,8 +38,6 @@ package("llhttp")
 
         if package:config("shared") then
             io.replace(package:installdir("include/llhttp.h"), "__declspec(dllexport)", "__declspec(dllimport)", {plain = true})
-        else
-            io.replace(package:installdir("include/llhttp.h"), "__declspec(dllexport)", "", {plain = true})
         end
     end)
 
