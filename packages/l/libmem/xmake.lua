@@ -143,8 +143,6 @@ package("libmem")
                     add_deps("libmem")
             end
         ]])
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         -- Use xmake to build and install libmem
         import("package.tools.xmake").install(package, configs)
     end)
