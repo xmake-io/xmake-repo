@@ -9,7 +9,7 @@ package("pcapplusplus")
     add_versions("v24.09", "0a9d80d09a906c08a1df5f5a937134355c7cb3fc8a599bf1a0f10002cf0285be")
     add_versions("v23.09", "f2b92d817df6138363be0d144a61716f8ecc43216f0008135da2e0e15727d35a")
 
-    add_patches("v24.09", "patches/v24.09/VLA.patch", "8c380468c78118b6d85f6b3856cd49c4d890fd326dde3400b8c47c01c885cef4")
+    add_patches("v24.09", "patches/v24.09/vla.patch", "8c380468c78118b6d85f6b3856cd49c4d890fd326dde3400b8c47c01c885cef4")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
