@@ -4,7 +4,7 @@ package("libmem")
     set_description("Advanced Game Hacking Library for C, Modern C++, Rust and Python (Windows/Linux/FreeBSD) (Process/Memory Hacking) (Hooking/Detouring) (Cross Platform) (x86/x64/ARM/ARM64) (DLL/SO Injection) (Internal/External) (Assembler/Disassembler)")
     set_license("AGPL-3.0")
 
-    add_urls("https://github.com/rdbo/libmem.git", {submodules = true})
+    add_urls("https://github.com/rdbo/libmem/archive/refs/tags/$(version).tar.gz", "https://github.com/rdbo/libmem.git", {submodules = true})
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
     add_deps("cmake")
 
