@@ -20,6 +20,10 @@ package("libpcap")
     
     add_configs("remote", {description = "Enable remote capture support (requires openssl)", default = true, type = "boolean"})
 
+    if is_plat("mingw", "msys") then
+        add_patches("1.10.5", "patches/1.10.5/cmake-mingw.patch", "6b27886a5be489aa03150790330b5c78320cec3067ca62f3a2fde9565cbeb344")
+    end
+
     add_deps("cmake", "flex", "bison")
     if is_plat("windows", "mingw", "msys") then
         add_deps("npcap_sdk")
@@ -29,7 +33,7 @@ package("libpcap")
         if package:config("remote") then
             package:add("deps", "openssl")
             if package:is_plat("windows", "mingw", "msys") then
-                package:add("patches", "1.10.5", "patches/1.10.5/cmake.patch", "eeb6d0bf9eca935eb97c789cbb6752cbdaff7bf88b533e90b66ef086afbd26b0")
+                package:add("patches", "1.10.5", "patches/1.10.5/cmake-msvc.patch", "eeb6d0bf9eca935eb97c789cbb6752cbdaff7bf88b533e90b66ef086afbd26b0")
             end
         end
     end)
