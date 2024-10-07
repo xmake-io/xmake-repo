@@ -3,15 +3,10 @@ package("libmem")
     set_homepage("https://github.com/rdbo/libmem")
     set_description("Cross-platform game hacking library for C, C++, Rust, and Python, supporting process/memory hacking, hooking, detouring, and DLL/SO injection.")
     set_license("AGPL-3.0")
-
-    add_urls("https://github.com/rdbo/libmem.git", {submodules = true})
+    add_urls("https://github.com/rdbo/libmem/archive/refs/tags/$(version).tar.gz", "https://github.com/rdbo/libmem.git")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
+    add_deps("capstone", "keystone")
 
-    add_deps("cmake", "capstone", "vcpkg::keystone")
-
-
-    add_configs("shared", {description = "Build static lib", default = true, type = "boolean"})
-    
     -- Platform-specific dependencies
     if is_plat("windows") then
         add_syslinks("user32", "psapi", "ntdll", "shell32")
@@ -22,10 +17,7 @@ package("libmem")
     end
 
     on_install(function (package)
-        local configs = {
-            shared = package:config("shared")
-        }
-
+        local configs = {}
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package, configs)
     end)
