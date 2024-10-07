@@ -38,8 +38,13 @@ package("libpcap")
 
     on_install("!iphoneos and !wasm", function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(testprogs)", "", {plain = true})
-        io.replace("CMakeLists.txt", "ws2_32", "ws2_32 user32 crypt32 advapi32", {plain = true}) -- from openssl syslinks
-        io.replace("CMakeLists.txt", "/x64", "", {plain = true}) -- fix install dir
+        if package:is_plat("windows", "mingw", "msys") then
+            io.replace("CMakeLists.txt", "/x64", "", {plain = true}) -- fix install dir
+            io.replace("CMakeLists.txt", "${OPENSSL_LIBRARIES}", "${OPENSSL_LIBRARIES} ws2_32 user32 crypt32 advapi32", {plain = true})
+            if package:is_plat("mingw", "msys") then
+                io.replace("CMakeLists.txt", "check_function_exists(asprintf HAVE_ASPRINTF)", "", {plain = true})
+            end
+        end
 
         local configs = {
             "-DDISABLE_AIRPCAP=ON",
@@ -69,7 +74,11 @@ package("libpcap")
         import("package.tools.cmake").install(package, configs)
 
         if package:config("shared") then
-            os.rm(package:installdir("lib/lib*.a"))
+            if package:is_plat("mingw", "msys") then
+                os.rm(package:installdir("lib/libpcap.a"))
+            else
+                os.rm(package:installdir("lib/lib*.a"))
+            end
             os.rm(package:installdir("lib/*_static*"))
         else
             os.rm(package:installdir("lib/lib*.so"))
