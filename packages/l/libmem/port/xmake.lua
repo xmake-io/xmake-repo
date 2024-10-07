@@ -1,26 +1,22 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c17", "c++20")
-add_requires("capstone", "vcpkg::keystone")
+
+add_requires("capstone", {configs = {shared = true}})
+add_requires("keystone", {configs = {shared = true}})
+
 add_headerfiles("include/(libmem/**.h)")
 add_headerfiles("include/(libmem/**.hpp)")
 if is_plat("windows") then
     set_toolset("make", "nmake") -- Use NMAKE as the make tool
 end
 
--- Set options
-option("shared", {description = "Build static library", default = true, showmenu = true})
-
 set_arch(os.arch())
 
 -- Set Capstone, Keystone, and LLVM directories (adjust as needed)
 local external_dependencies_dir = path.join(os.projectdir(), "external")
-local capstone_dir = path.join(external_dependencies_dir, "capstone")
-local keystone_dir = path.join(external_dependencies_dir, "keystone")
 local llvm_dir = path.join(external_dependencies_dir, "llvm")
 
 -- Set external dependencies
-add_includedirs(path.join(capstone_dir, "include"))
-add_includedirs(path.join(keystone_dir, "include"))
 add_includedirs(path.join(llvm_dir, "include"))
 
 -- Define source directories
@@ -94,12 +90,8 @@ end
 -- Add target for libmem
 target("libmem")
     
-    if has_config("shared") then
-        set_kind("static")
-    else
-        set_kind("shared")
-    end
-
+    set_kind("$(kind)")
+    add_packages("capstone", "keystone")
     add_files(libmem_src)
     
     -- Correct the include directory to point to "include"
