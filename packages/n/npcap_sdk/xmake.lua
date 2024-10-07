@@ -7,6 +7,8 @@ package("npcap_sdk")
     add_versions("1.13", "dad1f2bf1b02b787be08ca4862f99e39a876c1f274bac4ac0cedc9bbc58f94fd")
     add_versions("1.12", "24c4862723f61d28048a24e10eb31d2269b2152a5762410dd1caffc041871337")
 
+    set_policy("package.precompiled", false)
+
     on_install("windows", "mingw", "msys", function (package)
         if package:is_plat("mingw") and package:version():eq("1.13") then
             io.replace("Include/Packet32.h", "_Post_invalid_", "", {plain = true})

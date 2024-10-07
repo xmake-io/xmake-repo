@@ -20,8 +20,6 @@ package("libpcap")
     
     add_configs("remote", {description = "Enable remote capture support (requires openssl)", default = true, type = "boolean"})
 
-    set_policy("package.precompiled", false)
-
     add_deps("cmake", "flex", "bison")
     if is_plat("windows", "mingw", "msys") then
         add_deps("npcap_sdk")
