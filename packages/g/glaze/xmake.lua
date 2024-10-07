@@ -7,6 +7,7 @@ package("glaze")
     add_urls("https://github.com/stephenberry/glaze/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stephenberry/glaze.git")
 
+    add_versions("v3.6.2", "74b14656b7a47c0a03d0a857adf5059e8c2351a7a84623593be0dd16b293216c")
     add_versions("v3.6.0", "d394fed35440bd1cb1a2aec059b967acc43fc04764ecb0915ba24b9f5a9ca0a3")
     add_versions("v3.3.2", "e492d3f662c3c096ce7abac86780af6c84f74c4f19b29223ad92fccc054aafad")
     add_versions("v3.1.7", "388483bb3dfa1fe25c1dfec24f0afd1651e0303833cfa1b7f51020a2569e992a")
@@ -21,16 +22,6 @@ package("glaze")
     add_versions("v1.3.5", "de5d59cb7f31193d45f67f25d8ced1499df50c0d926a1461432b87f2b2368817")
 
     add_deps("cmake")
-
-    if on_check then
-        on_check(function (package)
-            assert(package:check_cxxsnippets({test = [[
-                constexpr void f() {
-                    static constexpr int g = 1;
-                }
-            ]]}, {configs = {languages = "c++2b"}}), "package(glaze) Require at least C++23.")
-        end)
-    end
 
     on_install("windows", "linux", "macosx", "bsd", "mingw", "wasm", function (package)
         local version = package:version()
