@@ -19,11 +19,7 @@ package("pybind11")
     add_versions("v2.12.0", "411f77380c43798506b39ec594fc7f2b532a13c4db674fcf2b1ca344efaefb68")
     add_versions("v2.13.1", "a3c9ea1225cb731b257f2759a0c12164db8409c207ea5cf851d4b95679dda072")
 
-    -- Linking libpythonX.Y.so is not allowed on manylinux, which is the base image for distributing C extensions.
-
-    -- see https://gitlab.kitware.com/cmake/cmake/-/issues/20425 and
     -- https://peps.python.org/pep-0513/#libpythonx-y-so-1
-
     add_configs("python_headeronly", {description = "Enable headeronly for Python", default = false, type = "boolean"})
 
     add_deps("cmake")
@@ -35,9 +31,7 @@ package("pybind11")
             python_headeronly = false
         end
 
-        package:add("deps", "python 3.x", {configs = {
-            headeronly = python_headeronly,
-        }})
+        package:add("deps", "python 3.x", {configs = {headeronly = python_headeronly}})
     end)
 
     on_install("windows|native", "macosx", "linux", function (package)
