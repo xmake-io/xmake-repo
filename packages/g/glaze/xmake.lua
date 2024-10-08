@@ -32,6 +32,9 @@ package("glaze")
                     local minor = vs_toolset_ver:minor()
                     assert(minor and minor >= 30, "package(glaze) require vs_toolset >= 14.3")
                 end
+            elseif package:is_plat("android") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) >= 27, "package(glaze) require ndk version >= 27")
             end
             assert(package:check_cxxsnippets({test = [[
                 #include <bit>
