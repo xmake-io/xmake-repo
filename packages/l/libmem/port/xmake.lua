@@ -1,8 +1,8 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c17", "c++20")
 
-add_requires("capstone", {configs = {shared = true}})
-add_requires("keystone", {configs = {shared = true}})
+add_requires("capstone")
+add_requires("keystone")
 
 add_headerfiles("include/(libmem/**.h)")
 add_headerfiles("include/(libmem/**.hpp)")
@@ -24,67 +24,36 @@ local libmem_dir = os.projectdir()
 local internal_dir = path.join(libmem_dir, "internal")
 local common_dir = path.join(libmem_dir, "src", "common")
 
+local arch = (is_arch("x86_64") and "x64" or "x86")
 -- Add source files based on platform
-local libmem_src = {}
+local libmem_src = {
+    path.join(common_dir, "*.c"),
+    path.join(common_dir, "*.cpp"),
+    path.join(common_dir, "arch/*.c"),
+    path.join(internal_dir, "demangler/*.cpp"),
+    path.join(llvm_dir, "lib/Demangle/*.cpp")
+}
+
+if is_plat("linux") or is_plat("freebsd") then
+    table.insert(libmem_src, path.join(internal_dir, "posixutils/*.c"))
+    table.insert(libmem_src, path.join(internal_dir, "elfutils/*.c"))
+    table.insert(libmem_src, path.join(common_dir, "arch/x86.c"))
+end
+
 
 if is_plat("windows") then
-    libmem_src = {
-        path.join(libmem_dir, "src/win/*.c"),
-        path.join(common_dir, "*.c"),
-        path.join(common_dir, "*.cpp"),
-        path.join(common_dir, "arch/*.c"),
-        path.join(internal_dir, "winutils/*.c"),
-        path.join(internal_dir, "demangler/*.cpp"),
-        path.join(llvm_dir, "lib/Demangle/*.cpp")
-    }
+    table.insert(libmem_src, path.join(libmem_dir, "src/win/*.c"))
+    table.insert(libmem_src, path.join(internal_dir, "winutils/*.c"))
 elseif is_plat("linux") then
-    if is_arch("x86_64") then
-        libmem_src = {
-            path.join(common_dir, "arch/x86.c"),
-            path.join(libmem_dir, "src/linux/ptrace/x64/*.c"),
-            path.join(libmem_dir, "src/linux/*.c"),
-            path.join(common_dir, "*.c"),
-            path.join(common_dir, "*.cpp"),
-            path.join(internal_dir, "posixutils/*.c"),
-            path.join(internal_dir, "elfutils/*.c"),
-            path.join(internal_dir, "demangler/*.cpp")
-        }
-    elseif is_arch("i386") then
-        libmem_src = {
-            path.join(common_dir, "arch/x86.c"),
-            path.join(libmem_dir, "src/linux/ptrace/x86/*.c"),
-            path.join(libmem_dir, "src/linux/*.c"),
-            path.join(common_dir, "*.c"),
-            path.join(common_dir, "*.cpp"),
-            path.join(internal_dir, "posixutils/*.c"),
-            path.join(internal_dir, "elfutils/*.c"),
-            path.join(internal_dir, "demangler/*.cpp")
-        }
-    end
+    table.insert(libmem_src, path.join(libmem_dir, "src/linux/ptrace/*.c"))
+    table.insert(libmem_src, path.join(libmem_dir, "src/linux/*.c"))
+
+    table.insert(libmem_src, path.join(libmem_dir, "src/linux/ptrace/".. arch .. "/*.c"))
 elseif is_plat("freebsd") then
-    if is_arch("x86_64") then
-        libmem_src = {
-            path.join(common_dir, "arch/x86.c"),
-            path.join(libmem_dir, "src/freebsd/ptrace/x64/*.c"),
-            path.join(libmem_dir, "src/freebsd/*.c"),
-            path.join(common_dir, "*.c"),
-            path.join(common_dir, "*.cpp"),
-            path.join(internal_dir, "posixutils/*.c"),
-            path.join(internal_dir, "elfutils/*.c"),
-            path.join(internal_dir, "demangler/*.cpp")
-        }
-    elseif is_arch("i386") then
-        libmem_src = {
-            path.join(common_dir, "arch/x86.c"),
-            path.join(libmem_dir, "src/freebsd/ptrace/x86/*.c"),
-            path.join(libmem_dir, "src/freebsd/*.c"),
-            path.join(common_dir, "*.c"),
-            path.join(common_dir, "*.cpp"),
-            path.join(internal_dir, "posixutils/*.c"),
-            path.join(internal_dir, "elfutils/*.c"),
-            path.join(internal_dir, "demangler/*.cpp")
-        }
-    end
+    table.insert(libmem_src, path.join(libmem_dir, "src/freebsd/ptrace/*.c"))
+    table.insert(libmem_src, path.join(libmem_dir, "src/freebsd/*.c"))
+
+    table.insert(libmem_src, path.join(libmem_dir, "src/freebsd/ptrace/".. arch .. "/*.c"))
 end
 
 -- Add target for libmem
@@ -108,9 +77,6 @@ target("libmem")
     elseif is_plat("freebsd") then
         add_syslinks("dl", "kvm", "procstat", "elf", "stdc++", "m")
     end
-
-    -- Link against external libraries
-    add_links("capstone", "keystone")
 
     -- Define for export symbol
     add_defines("LM_EXPORT")
