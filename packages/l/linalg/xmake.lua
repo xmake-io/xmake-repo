@@ -7,7 +7,7 @@ package("linalg")
     add_urls("https://github.com/sgorsten/linalg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sgorsten/linalg.git")
 
-    add_versions("v2.2", "28640228988186EDAF7729177BFAB4C91170B303AD489407A4228CEB55A73EC2")
+    add_versions("v2.2", "28640228988186edaf7729177bfab4c91170b303ad489407a4228ceb55a73ec2")
 
     on_install("windows", "linux", "macosx", function (package)
         os.cp("linalg.h", package:installdir("include"))
