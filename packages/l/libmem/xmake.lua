@@ -3,9 +3,12 @@ package("libmem")
     set_description("Cross-platform game hacking library for C, C++, Rust, and Python, supporting process/memory hacking, hooking, detouring, and DLL/SO injection.")
     set_license("AGPL-3.0")
 
-    add_urls("https://github.com/rdbo/libmem/archive/refs/tags/$(version).tar.gz", "https://github.com/rdbo/libmem.git")
+    add_urls(
+        "https://github.com/rdbo/libmem/archive/refs/tags/$(version).tar.gz",
+        "https://github.com/rdbo/libmem.git")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
 
+    set_policy("compatibility.version", "3.0")
     add_deps("capstone", "keystone")
 
     if is_plat("windows") then
@@ -16,10 +19,16 @@ package("libmem")
         add_syslinks("dl", "kvm", "procstat", "elf", "stdc++", "m")
     end
 
-    on_install(function (package)
-        local configs = {}
+    on_load(function (package)
+        if package:is_plat("windows") and not package:config("shared") then
+            package:add("defines", "LM_EXPORT")
+        end
+    end)
+
+    on_install("windows", "linux", "freebsd", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
+        os.cp(path.join("include", "libmem"), package:installdir("include"))
     end)
 
     on_test(function (package)
@@ -33,5 +42,5 @@ package("libmem")
                 std::optional<Thread> currentThread = GetThread();
                 std::optional<std::vector<Thread>> threads = EnumThreads();
             }
-            ]]}, {configs = {languages = "c++20"}}))
+        ]]}, {configs = {languages = "c++17"}}))
     end)
