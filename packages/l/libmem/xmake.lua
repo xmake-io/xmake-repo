@@ -20,7 +20,7 @@ package("libmem")
     end
 
     on_load(function (package)
-        if package:is_plat("windows") and not package:config("shared") then
+        if package:is_plat("windows") and package:config("static") then
             package:add("defines", "LM_EXPORT")
         end
     end)
