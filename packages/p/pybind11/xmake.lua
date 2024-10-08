@@ -20,18 +20,16 @@ package("pybind11")
     add_versions("v2.13.1", "a3c9ea1225cb731b257f2759a0c12164db8409c207ea5cf851d4b95679dda072")
 
     -- https://peps.python.org/pep-0513/#libpythonx-y-so-1
-    add_configs("python_headeronly", {description = "Enable headeronly for Python", default = false, type = "boolean"})
+    if is_plat("windows", "mingw") then
+        add_configs("python_headeronly", {description = "Enable headeronly for Python", default = false, type = "boolean", readonly = true})
+    else
+        add_configs("python_headeronly", {description = "Enable headeronly for Python", default = false, type = "boolean"})
+    end
 
     add_deps("cmake")
 
     on_load(function (package)
-        local python_headeronly = package:config("python_headeronly")
-        if is_host("windows") then
-            wprint("Python headeronly is not supported on Windows")
-            python_headeronly = false
-        end
-
-        package:add("deps", "python 3.x", {configs = {headeronly = python_headeronly}})
+        package:add("deps", "python 3.x", {configs = {headeronly = package:config("python_headeronly")}})
     end)
 
     on_install("windows|native", "macosx", "linux", function (package)
