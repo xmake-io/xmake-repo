@@ -23,10 +23,31 @@ package("glaze")
 
     add_deps("cmake")
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "wasm", function (package)
+    if on_check then
+        on_check(function (package)
+            if package:is_plat("windows") then
+                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                if vs_toolset then
+                    local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                    local minor = vs_toolset_ver:minor()
+                    assert(minor and minor >= 30, "package(glaze) require vs_toolset >= 14.3")
+                end
+            end
+            assert(package:check_cxxsnippets({test = [[
+                #include <bit>
+                #include <cstdint>
+                void test() {
+                    constexpr double f64v = 19880124.0; 
+                    constexpr auto u64v = std::bit_cast<std::uint64_t>(f64v);
+                }
+            ]]}, {configs = {languages = "c++20"}}), "package(glaze) require >= c++20")
+        end)
+    end
+
+    on_install(function (package)
         local version = package:version()
         if version and version:ge("2.9.5") then
-            if package:has_tool("cxx", "cl", "clang_cl") then
+            if package:has_tool("cxx", "cl") then
                 package:add("cxxflags", "/Zc:preprocessor", "/permissive-", "/Zc:lambda")
             end
 
