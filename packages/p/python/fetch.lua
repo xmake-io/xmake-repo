@@ -67,7 +67,7 @@ function _find_library(package, opt)
     end
 
     if not includepath then
-        return false
+        return
     end
     local result = {
         version = version,
