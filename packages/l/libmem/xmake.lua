@@ -18,7 +18,7 @@ package("libmem")
     end
 
     on_load(function (package)
-        if package:is_plat("windows") and package:config("static") then
+        if package:is_plat("windows") then
             package:add("defines", "LM_EXPORT")
         end
     end)

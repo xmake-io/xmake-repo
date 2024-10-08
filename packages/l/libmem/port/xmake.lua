@@ -42,6 +42,6 @@ target("libmem")
         add_files("internal/winutils/*.c")
         add_files("src/win/*.c")
     end
-    if is_plat("windows") and is_kind("static") then
+    if is_plat("windows") then
         add_defines("LM_EXPORT")
     end
