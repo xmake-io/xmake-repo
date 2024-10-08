@@ -13,7 +13,7 @@ package("libmem")
         add_syslinks("user32", "psapi", "ntdll", "shell32")
     elseif is_plat("linux") then
         add_syslinks("dl", "stdc++", "m")
-    elseif is_plat("freebsd") then
+    elseif is_plat("bsd") then
         add_syslinks("dl", "kvm", "procstat", "elf", "stdc++", "m")
     end
 
