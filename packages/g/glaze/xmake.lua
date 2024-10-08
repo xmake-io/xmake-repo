@@ -36,6 +36,15 @@ package("glaze")
                 local ndk = package:toolchain("ndk"):config("ndkver")
                 assert(ndk and tonumber(ndk) >= 27, "package(glaze) require ndk version >= 27")
             end
+
+            if package:has_tool("cxx", "gcc") then
+                assert(package:check_cxxsnippets({test = [[
+                    constexpr void f() {
+                        static constexpr int g = 1;
+                    }
+                ]]}, {configs = {languages = "c++2b"}}), "package(glaze) require >= c++23")
+            end
+
             assert(package:check_cxxsnippets({test = [[
                 #include <bit>
                 #include <cstdint>
