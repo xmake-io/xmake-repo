@@ -1,4 +1,3 @@
-set_policy("compatibility.version", "3.0")
 add_rules("mode.debug", "mode.release")
 set_languages("c++17")
 add_requires("capstone", "keystone")
@@ -7,7 +6,7 @@ add_packages("capstone", "keystone")
 target("libmem")
     set_kind("$(kind)")
 
-    add_includedirs("include", { public = true })
+    add_includedirs("include")
     add_includedirs(
         "external/llvm/include",
         "src/common",
@@ -23,9 +22,9 @@ target("libmem")
         "external/llvm/lib/Demangle/*.cpp"
     )
 
-    if is_plat("linux", "freebsd") then
+    if is_plat("linux", "bsd") then
         add_syslinks("dl", "stdc++", "m")
-        if is_plat("freebsd") then
+        if is_plat("bsd") then
             add_syslinks("kvm", "procstat", "elf")
         end
 

@@ -7,8 +7,6 @@ package("libmem")
         "https://github.com/rdbo/libmem/archive/refs/tags/$(version).tar.gz",
         "https://github.com/rdbo/libmem.git")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
-
-    set_policy("compatibility.version", "3.0")
     add_deps("capstone", "keystone")
 
     if is_plat("windows") then
