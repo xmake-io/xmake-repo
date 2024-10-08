@@ -7,12 +7,16 @@ package("flex")
 
     if on_source then
         on_source(function (package)
-            if not package:is_plat("windows") then
+            if not package:is_plat("windows", "mingw", "msys") then
                 package:add("urls", "https://github.com/westes/flex/releases/download/v$(version)/flex-$(version).tar.gz")
             end
         end)
-    elseif not is_plat("windows") then
+    elseif not is_plat("windows", "mingw", "msys") then
         add_urls("https://github.com/westes/flex/releases/download/v$(version)/flex-$(version).tar.gz")
+    end
+
+    if is_subhost("msys") then
+        add_deps("pacman::flex")
     end
 
     on_load("macosx", "linux", "bsd", "windows", function (package)
@@ -28,6 +32,9 @@ package("flex")
         if package:is_library() then
             package:set("kind", "library", {headeronly = true})
         end
+    end)
+
+    on_install("@msys", function (package)
     end)
 
     on_install("windows", function (package)
