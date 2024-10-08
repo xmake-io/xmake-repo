@@ -1,13 +1,13 @@
 package("libmem")
-
     set_homepage("https://github.com/rdbo/libmem")
     set_description("Cross-platform game hacking library for C, C++, Rust, and Python, supporting process/memory hacking, hooking, detouring, and DLL/SO injection.")
     set_license("AGPL-3.0")
+
     add_urls("https://github.com/rdbo/libmem/archive/refs/tags/$(version).tar.gz", "https://github.com/rdbo/libmem.git")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
+
     add_deps("capstone", "keystone")
 
-    -- Platform-specific dependencies
     if is_plat("windows") then
         add_syslinks("user32", "psapi", "ntdll", "shell32")
     elseif is_plat("linux") then
