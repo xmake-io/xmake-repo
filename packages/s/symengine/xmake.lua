@@ -6,6 +6,7 @@ package("symengine")
     add_urls("https://github.com/symengine/symengine/archive/refs/tags/$(version).tar.gz",
              "https://github.com/symengine/symengine.git")
 
+    add_versions("v0.13.0", "f46bcf037529cd1a422369327bf360ad4c7d2b02d0f607a62a5b09c74a55bb59")
     add_versions("v0.12.0", "1b5c3b0bc6a9f187635f93585649f24a18e9c7f2167cebcd885edeaaf211d956")
     add_versions("v0.11.2", "f6972acd6a65354f6414e69460d2e175729470632bdac05919bc2f7f32e48cbd")
 
