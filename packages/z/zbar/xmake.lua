@@ -13,6 +13,7 @@ package("zbar")
     add_deps("autoconf", "automake", "libtool", "gettext", "pkg-config", {kind = "binary", host = true, private = true})
     if is_plat("macosx") then
         add_deps("libiconv", {system = true})
+        add_deps("autoconf-archive")
     else
         add_deps("libiconv")
     end
