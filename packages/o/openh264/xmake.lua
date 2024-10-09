@@ -9,20 +9,20 @@ package("openh264")
     add_versions("v2.4.1", "8ffbe944e74043d0d3fb53d4a2a14c94de71f58dbea6a06d0dc92369542958ea")
     add_versions("v2.1.1", "af173e90fce65f80722fa894e1af0d6b07572292e76de7b65273df4c0a8be678")
 
-    if is_plat("linux") then
+    if is_plat("linux", "bsd") then
         add_syslinks("pthread", "rt")
     end
 
     add_deps("meson", "ninja", "nasm")
 
     on_load("windows", function (package)
-        if package:is_plat("windows") and package:is_arch("arm.*") and (not package:is_precompiled()) then
+        if package:is_arch("arm.*") and (not package:is_precompiled()) then
             package:add("deps", "strawberry-perl")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
-        if package:version():ge("2.4.1") then
+    on_install(function (package)
+        if package:gitref() or package:version():ge("2.4.1") then
             import("package.tools.meson")
 
             local opt = {}
@@ -30,11 +30,6 @@ package("openh264")
             -- add gas-preprocessor to PATH
             if package:is_plat("windows") and package:is_arch("arm.*") then
                 opt.envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. opt.envs.PATH
-            end
-
-            if package:is_plat("linux") and package:has_tool("cc", "clang", "clangxx") then
-                opt.ldflags = "-lstdc++"
-                opt.shflags = "-lstdc++"
             end
 
             local configs = {"-Dtests=disabled"}
