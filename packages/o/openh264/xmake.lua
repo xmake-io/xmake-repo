@@ -21,7 +21,7 @@ package("openh264")
         end
     end)
 
-    on_install("windows", "linux", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         if package:version():ge("2.4.1") then
             import("package.tools.meson")
 
@@ -47,6 +47,7 @@ package("openh264")
                 os.tryrm(path.join(package:installdir("lib"), "libopenh264.a"))
             else
                 os.tryrm(path.join(package:installdir("lib"), "libopenh264.so*"))
+                os.tryrm(path.join(package:installdir("lib"), "libopenh264.dylib"))
                 os.tryrm(path.join(package:installdir("lib"), "openh264.lib"))
                 os.tryrm(path.join(package:installdir("bin"), "openh264-*.dll"))
             end
