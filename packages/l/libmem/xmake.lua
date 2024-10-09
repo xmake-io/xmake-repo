@@ -9,9 +9,9 @@ package("libmem")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
     add_deps("capstone", "keystone")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("user32", "psapi", "ntdll", "shell32", "Ole32")
-        if is_mingw() then
+        if is_plat("mingw") then
             add_links("uuid")
         end
     elseif is_plat("linux") then
