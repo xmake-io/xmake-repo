@@ -21,7 +21,7 @@ package("openh264")
         end
     end)
 
-    on_install(function (package)
+    on_install("!android and !bsd and !wasm", function (package)
         if package:gitref() or package:version():ge("2.4.1") then
             import("package.tools.meson")
 
