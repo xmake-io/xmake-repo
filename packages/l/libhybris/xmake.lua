@@ -14,7 +14,7 @@ package("libhybris")
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        local buildenvs = import("package.tools.autoconf").buildenvs(package)
+        local buildenvs = import("package.tools.autoconf").buildenvs(package, configs)
         local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
         import("package.tools.make").build(package, makeconfigs)
         import("package.tools.make").make(package, {"install"})
