@@ -33,7 +33,9 @@ package("x265")
         add_syslinks("pthread", "dl")
     end
 
-    add_deps("cmake", "nasm >=2.13")
+    set_policy("package.cmake_generator.ninja", true)
+
+    add_deps("cmake", "ninja", "nasm >=2.13")
 
     if on_check then
         on_check("cross", function (package)
@@ -119,7 +121,7 @@ package("x265")
             end
         else
             if package:config("shared") then
-                os.rm(package:installdir("lib/libx265.a"))
+                os.tryrm(package:installdir("lib/libx265.a"))
             end
         end
     end)
