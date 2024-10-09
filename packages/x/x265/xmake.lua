@@ -45,7 +45,7 @@ package("x265")
         end)
     end
 
-    on_install(function (package)
+    on_install("!cross", function (package)
         os.cd("source")
         -- Let xmake cp pdb
         io.replace("CMakeLists.txt", "if((WIN32 AND ENABLE_CLI) OR (WIN32 AND ENABLE_SHARED))", "if(0)", {plain = true})
