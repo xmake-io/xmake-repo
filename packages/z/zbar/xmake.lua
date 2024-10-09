@@ -6,7 +6,11 @@ package("zbar")
     add_urls("https://github.com/mchehab/zbar/archive/refs/tags/$(version).tar.gz")
     add_versions("0.23.93", "212dfab527894b8bcbcc7cd1d43d63f5604a07473d31a5f02889e372614ebe28")
 
-    add_deps("autoconf", "automake", "libtool", "gettext", {kind = "binary", host = true, private = true})
+    if is_plat("linux", "android") then
+        add_syslinks("pthread")
+    end
+
+    add_deps("autoconf", "automake", "libtool", "gettext", "pkg-config")
     add_deps("libiconv")
 
     on_install("macosx", "linux", "android", function (package)
@@ -29,17 +33,20 @@ package("zbar")
 
         local cflags = {}
         local ldflags = {}
-        for _, dep in ipairs(package:orderdeps()) do
-            local fetchinfo = dep:fetch()
-            if fetchinfo then
-                for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                    table.insert(cflags, "-I" .. includedir)
-                end
-                for _, linkdir in ipairs(fetchinfo.linkdirs) do
-                    table.insert(ldflags, "-L" .. linkdir)
-                end
-                for _, link in ipairs(fetchinfo.links) do
-                    table.insert(ldflags, "-l" .. link)
+        for _, name in ipairs({"libiconv"}) do
+            local dep = package:dep(name)
+            if dep then
+                local depinfo = dep:fetch()
+                if depinfo then
+                    for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do
+                        table.insert(cflags, "-I" .. includedir)
+                    end
+                    for _, linkdir in ipairs(depinfo.linkdirs) do
+                        table.insert(ldflags, "-L" .. linkdir)
+                    end
+                    for _, link in ipairs(depinfo.links) do
+                        table.insert(ldflags, "-l" .. link)
+                    end
                 end
             end
         end
