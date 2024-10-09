@@ -18,6 +18,8 @@ package("x265")
 
     add_configs("hdr10_plus", {description = "Enable dynamic HDR10 compilation", default = false, type = "boolean"})
     add_configs("svt_hevc", {description = "Enable SVT HEVC Encoder", default = false, type = "boolean"})
+    add_configs("high_bit_depth", {description = "Store pixel samples as 16bit values (Main10/Main12)", default = false, type = "boolean"})
+    add_configs("main12", {description = "Support Main12 instead of Main10", default = false, type = "boolean"})
     if is_plat("linux") then
         add_configs("numa", {description = "Enable libnuma", default = false, type = "boolean"})
     elseif is_plat("wasm") then
@@ -52,6 +54,8 @@ package("x265")
 
         table.insert(configs, "-DENABLE_HDR10_PLUS=" .. (package:config("hdr10_plus") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SVT_HEVC=" .. (package:config("svt_hevc") and "ON" or "OFF"))
+        table.insert(configs, "-DHIGH_BIT_DEPTH=" .. (package:config("high_bit_depth") and "ON" or "OFF"))
+        table.insert(configs, "-DMAIN12=" .. (package:config("main12") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_CLI=" .. (package:config("tools") and "ON" or "OFF"))
         table.insert(configs, "-DNATIVE_BUILD=" .. (package:is_cross() and "OFF" or "ON"))
 
@@ -78,21 +82,20 @@ package("x265")
         end
         import("package.tools.cmake").install(package, configs)
 
-        if package:config("shared") then
-            os.tryrm(package:installdir("lib/x265-static.lib"))
-        end
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "libx265.pdb"), dir)
-            if package:config("tools") then
-                os.trycp(path.join(package:buildir(), "x265.pdb"), package:installdir("bin"))
-            end
-        end
-
         if package:is_plat("windows") then
+            if package:config("shared") then
+                os.tryrm(package:installdir("lib/x265-static.lib"))
+            end
             -- Error links, switch to xmake pc file
             os.rm(package:installdir("lib/pkgconfig/x265.pc"))
+
+            if package:is_debug() then
+                local dir = package:installdir(package:config("shared") and "bin" or "lib")
+                os.trycp(path.join(package:buildir(), "libx265.pdb"), dir)
+                if package:config("tools") then
+                    os.trycp(path.join(package:buildir(), "x265.pdb"), package:installdir("bin"))
+                end
+            end
         end
     end)
 
