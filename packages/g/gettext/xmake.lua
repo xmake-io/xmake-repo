@@ -92,5 +92,9 @@ package("gettext")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("ngettext", {includes = "libintl.h"}))
+        if package:is_binary() then
+            assert(os.isfile(path.join(package:installdir(), "bin", "gettext")))
+        else
+            assert(package:has_cfuncs("ngettext", {includes = "libintl.h"}))
+        end
     end)

@@ -6,6 +6,10 @@ package("zbar")
     add_urls("https://github.com/mchehab/zbar/archive/refs/tags/$(version).tar.gz")
     add_versions("0.23.93", "212dfab527894b8bcbcc7cd1d43d63f5604a07473d31a5f02889e372614ebe28")
 
+    if is_plat("linux", "android") then
+        add_syslinks("pthread")
+    end
+
     add_deps("autoconf", "automake", "libtool", "gettext", {kind = "binary", host = true, private = true})
     add_deps("libiconv")
 
