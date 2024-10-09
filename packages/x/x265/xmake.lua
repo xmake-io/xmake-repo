@@ -65,6 +65,14 @@ package("x265")
         else
             table.insert(configs, "-DENABLE_LIBNUMA=OFF")
         end
+        if package:version() then
+            table.insert(configs, "-DX265_LATEST_TAG=" .. package:version():rawstr())
+        end
+
+        if (package:is_plat("windows") and package:is_arch("arm.*"))
+            or package:is_plat("android", "iphoneos", "wasm") then
+            table.insert(configs, "-DENABLE_ASSEMBLY=OFF")
+        end
 
         if package:is_cross() and package:is_targetarch("arm.*") then
             if package:is_arch64() then
@@ -73,14 +81,19 @@ package("x265")
                 table.insert(configs, "-DCROSS_COMPILE_ARM=ON")
             end
         end
-        if package:version() then
-            table.insert(configs, "-DX265_LATEST_TAG=" .. package:version():rawstr())
-        end
 
         if package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
         end
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if package:gitref() or package:version():ge("4.0") then
+            if package:is_plat("wasm") then
+                opt.cxflags = "-pthread"
+                package:add("ldflags", "-s USE_PTHREADS=1")
+            end
+        end
+        import("package.tools.cmake").install(package, configs, opt)
 
         if package:is_plat("windows") then
             if package:config("shared") then
@@ -95,6 +108,10 @@ package("x265")
                 if package:config("tools") then
                     os.trycp(path.join(package:buildir(), "x265.pdb"), package:installdir("bin"))
                 end
+            end
+        else
+            if package:config("shared") then
+                os.rm(package:installdir("lib/*.a"))
             end
         end
     end)
