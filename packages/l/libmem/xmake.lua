@@ -10,7 +10,7 @@ package("libmem")
     add_deps("capstone", "keystone")
 
     if is_plat("windows", "mingw") then
-        add_syslinks("user32", "psapi", "ntdll", "shell32", "Ole32")
+        add_syslinks("user32", "psapi", "ntdll", "shell32", "ole32")
         if is_plat("mingw") then
             add_links("uuid")
         end
