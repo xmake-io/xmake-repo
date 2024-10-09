@@ -10,8 +10,12 @@ package("zbar")
         add_syslinks("pthread")
     end
 
-    add_deps("autoconf", "automake", "libtool", "gettext", "pkg-config")
-    add_deps("libiconv")
+    add_deps("autoconf", "automake", "libtool", "gettext", "pkg-config", {kind = "binary", host = true, private = true})
+    if is_plat("macosx") then
+        add_deps("libiconv", {system = true})
+    else
+        add_deps("libiconv")
+    end
 
     on_install("macosx", "linux", "android", function (package)
         local configs = {   "--disable-video",
@@ -33,21 +37,16 @@ package("zbar")
 
         local cflags = {}
         local ldflags = {}
-        for _, name in ipairs({"libiconv"}) do
-            local dep = package:dep(name)
-            if dep then
-                local depinfo = dep:fetch()
-                if depinfo then
-                    for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do
-                        table.insert(cflags, "-I" .. includedir)
-                    end
-                    for _, linkdir in ipairs(depinfo.linkdirs) do
-                        table.insert(ldflags, "-L" .. linkdir)
-                    end
-                    for _, link in ipairs(depinfo.links) do
-                        table.insert(ldflags, "-l" .. link)
-                    end
-                end
+        local depinfo = package:dep("libiconv"):fetch()
+        if depinfo then
+            for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do
+                table.insert(cflags, "-I" .. includedir)
+            end
+            for _, linkdir in ipairs(depinfo.linkdirs) do
+                table.insert(ldflags, "-L" .. linkdir)
+            end
+            for _, link in ipairs(depinfo.links) do
+                table.insert(ldflags, "-l" .. link)
             end
         end
         
