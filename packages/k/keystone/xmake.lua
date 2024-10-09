@@ -34,7 +34,10 @@ package("keystone")
     end)
 
     on_test(function (package)
-        if not package:is_cross() then
+        if not package:is_cross() and not package:is_plat("windows") then
+            os.vrun('kstool -b x64 "mov rax, 1; ret"')
+        end
+        if package:is_plat("windows") and package:config("static") then
             os.vrun('kstool -b x64 "mov rax, 1; ret"')
         end
         assert(package:has_cfuncs("ks_version", {includes = "keystone/keystone.h"}))
