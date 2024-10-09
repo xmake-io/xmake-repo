@@ -37,9 +37,9 @@ target("libmem")
         add_files(path.join(prefix, "*.c"))
 
         add_files(path.join(prefix, "ptrace", arch, "*.c"))
-    elseif is_plat("windows") then
+    elseif is_plat("windows", "mingw") then
         add_syslinks("user32", "psapi", "ntdll", "shell32", "Ole32")
-        if is_mingw() then
+        if is_plat("mingw") then
             add_links("uuid")
         end
         add_files("internal/winutils/*.c")
