@@ -7,6 +7,7 @@ package("trompeloeil")
     add_urls("https://github.com/rollbear/trompeloeil/archive/refs/tags/$(version).tar.gz",
              "https://github.com/rollbear/trompeloeil.git")
   
+    add_versions("v49", "2523571fb7920b2813cbc23b46e60294aba8ead7eba434bfec69c24408615593")
     add_versions("v48", "eebd18456975251ea3450b815e241cccfefba5b883e4a36bd309f9cf629bdec6")
     add_versions("v47", "4a1d79260c1e49e065efe0817c8b9646098ba27eed1802b0c3ba7d959e4e5e84")
     add_versions("v43", "86a0afa2e97347202a0a883ab43da78c1d4bfff0d6cb93205cfc433d0d9eb9eb")
