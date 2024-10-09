@@ -8,6 +8,7 @@ package("libhybris")
     add_deps("autoconf", "automake", "libtool")
 
     on_install("linux", function (package)
+        os.cd("hybris")
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_debug() then
