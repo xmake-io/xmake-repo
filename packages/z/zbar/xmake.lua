@@ -6,7 +6,7 @@ package("zbar")
     add_urls("https://github.com/mchehab/zbar/archive/refs/tags/$(version).tar.gz")
     add_versions("0.23.93", "212dfab527894b8bcbcc7cd1d43d63f5604a07473d31a5f02889e372614ebe28")
 
-    if is_plat("linux", "android") then
+    if is_plat("linux") then
         add_syslinks("pthread")
     end
 
@@ -35,6 +35,9 @@ package("zbar")
         end
         if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
+        end
+        if package:is_plat("android") then
+            table.insert(configs, "--disable-pthread")
         end
 
         local cflags = {}
