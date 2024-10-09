@@ -35,6 +35,14 @@ package("x265")
 
     add_deps("cmake", "nasm >=2.13")
 
+    if on_check then
+        on_check("cross", function (package)
+            if package:version():ge("4.0") then
+                raise("package(x265 >=4.0) unsupported cross pltform")
+            end
+        end)
+    end
+
     on_install(function (package)
         os.cd("source")
         -- Let xmake cp pdb
