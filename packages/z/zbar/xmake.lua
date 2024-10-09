@@ -37,19 +37,24 @@ package("zbar")
 
         local cflags = {}
         local ldflags = {}
-        local depinfo = package:dep("libiconv"):fetch()
-        if depinfo then
-            for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do
-                table.insert(cflags, "-I" .. includedir)
-            end
-            for _, linkdir in ipairs(depinfo.linkdirs) do
-                table.insert(ldflags, "-L" .. linkdir)
-            end
-            for _, link in ipairs(depinfo.links) do
-                table.insert(ldflags, "-l" .. link)
+        for _, name in ipairs({"libiconv","pthread"}) do
+            local dep = package:dep(name)
+            if dep then
+                local depinfo = dep:fetch()
+                if depinfo then
+                    for _, includedir in ipairs(depinfo.includedirs or depinfo.sysincludedirs) do
+                        table.insert(cflags, "-I" .. includedir)
+                    end
+                    for _, linkdir in ipairs(depinfo.linkdirs) do
+                        table.insert(ldflags, "-L" .. linkdir)
+                    end
+                    for _, link in ipairs(depinfo.links) do
+                        table.insert(ldflags, "-l" .. link)
+                    end
+                end
             end
         end
-        
+
         local libtool = package:dep("libtool")
         if libtool then
             os.vrun("autoreconf --force --install -I" .. libtool:installdir("share", "aclocal"))
