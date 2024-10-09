@@ -10,7 +10,8 @@ package("zbar")
         add_syslinks("pthread")
     end
 
-    add_deps("autoconf", "automake", "libtool", "gettext", "pkg-config", {kind = "binary", host = true, private = true})
+    add_deps("autoconf", "automake", "libtool")
+    add_deps("gettext", {kind = "binary"})
     if is_plat("macosx") then
         add_deps("libiconv", {system = true})
         add_deps("autoconf-archive")
