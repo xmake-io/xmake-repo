@@ -5,7 +5,7 @@ package("libhybris")
     add_urls("https://github.com/libhybris/libhybris.git")
     add_versions("2024.09.01", "936279916605003fba95a0f3629a6bc5e6caa343")
 
-    add_deps("autoconf", "automake", "libtool")
+    add_deps("autoconf", "automake", "libtool", "pkgconf")
 
     on_install("linux", function (package)
         os.cd("hybris")
@@ -14,7 +14,10 @@ package("libhybris")
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        import("package.tools.autoconf").install(package, configs)
+        local buildenvs = import("package.tools.autoconf").buildenvs(package)
+        local makeconfigs = {CFLAGS = buildenvs.CFLAGS, ASFLAGS = buildenvs.ASFLAGS}
+        import("package.tools.make").build(package, makeconfigs)
+        import("package.tools.make").make(package, {"install"})
     end)
 
     on_test(function (package)
