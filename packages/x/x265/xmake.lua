@@ -111,7 +111,7 @@ package("x265")
             end
         else
             if package:config("shared") then
-                os.rm(package:installdir("lib/*.a"))
+                os.rm(package:installdir("lib/libx265.a"))
             end
         end
     end)
