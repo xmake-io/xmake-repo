@@ -37,7 +37,7 @@ package("keystone")
     end)
 
     on_test(function (package)
-        if not package:is_cross() and not package:config("shared") then
+        if package:config("static") and not package:is_cross() and not package:config("build_libs_only") then
             os.vrun('kstool -b x64 "mov rax, 1; ret"')
         end
         assert(package:has_cfuncs("ks_version", {includes = "keystone/keystone.h"}))
