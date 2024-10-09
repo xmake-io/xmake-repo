@@ -14,30 +14,27 @@ package("keystone")
         add_syslinks("shell32")
     end
 
-    add_configs("build_libs_only", { 
-        description = "Only build Keystone library (no tools)", 
-        default = true, 
-        type = "boolean" 
-    })
-
-
     on_load(function (package)
-        package:addenv("PATH", "bin")
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
     end)
-
 
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DBUILD_LIBS_ONLY=" .. (package:config("build_libs_only") and "ON" or "OFF"))
-        table.insert(configs, "-DKEYSTONE_BUILD_STATIC_RUNTIME=" .. (package:config("static") and "ON" or "OFF"))
+        if package:is_cross() then
+            table.insert(configs, "-DBUILD_LIBS_ONLY=ON")
+        elseif package:is_plat("windows") then
+            table.insert(configs, "-DKEYSTONE_BUILD_STATIC_RUNTIME=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
+        end
         import("package.tools.cmake").install(package, configs)
         os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
-        if package:config("static") and not package:is_cross() and not package:config("build_libs_only") then
+        if not package:is_cross() then
             os.vrun('kstool -b x64 "mov rax, 1; ret"')
         end
         assert(package:has_cfuncs("ks_version", {includes = "keystone/keystone.h"}))
