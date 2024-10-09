@@ -6,10 +6,12 @@ package("zbar")
     add_urls("https://github.com/mchehab/zbar/archive/refs/tags/$(version).tar.gz")
     add_versions("0.23.93", "212dfab527894b8bcbcc7cd1d43d63f5604a07473d31a5f02889e372614ebe28")
 
-    add_deps("autoconf", "automake", "libtool", "libiconv")
+    add_deps("autoconf", "automake", "libtool", "gettext", {kind = "binary", host = true, private = true})
+    add_deps("libiconv")
 
-    on_install("macosx", "linux", "bsd", "mingw", "windows", "android", function (package)
-        local configs = {   "--without-gtk",
+    on_install("macosx", "linux", "android", function (package)
+        local configs = {   "--disable-video",
+                            "--without-gtk",
                             "--without-python",
                             "--without-qt",
                             "--without-java",
@@ -17,16 +19,18 @@ package("zbar")
                             "--without-dbus",
                         }
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
-        if package:debug() then
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        if package:is_plat("linux") and package:config("pic") ~= false then
+        if package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
         end
-        
+
         local cflags = {}
         local ldflags = {}
-        local fetchinfo = package:dep("libiconv"):fetch()
+        for _, dep in ipairs(package:orderdeps()) do
+            local fetchinfo = dep:fetch()
             if fetchinfo then
                 for _, includedir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
                     table.insert(cflags, "-I" .. includedir)
@@ -38,13 +42,15 @@ package("zbar")
                     table.insert(ldflags, "-l" .. link)
                 end
             end
-
+        end
+        
         local libtool = package:dep("libtool")
         if libtool then
             os.vrun("autoreconf --force --install -I" .. libtool:installdir("share", "aclocal"))
         else
             os.vrun("autoreconf --force --install")
         end
+        
         import("package.tools.autoconf").install(package, configs, {cflags = cflags, ldflags = ldflags})
     end)
 
