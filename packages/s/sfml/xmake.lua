@@ -11,6 +11,7 @@ package("sfml")
         add_versions("2.5.1", "438c91a917cc8aa19e82c6f59f8714da353c488584a007d401efac8368e1c785")
     end
 
+    add_versions("2.6.1", "82535db9e57105d4f3a8aedabd138631defaedc593cab589c924b7d7a11ffb9d")
     add_versions("2.6.0", "0c3f84898ea1db07dc46fa92e85038d8c449e3c8653fe09997383173de96bc06")
 
     add_configs("graphics",   {description = "Use the graphics module", default = true, type = "boolean"})
