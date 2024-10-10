@@ -50,7 +50,23 @@ package("spdlog")
             package:add("defines", "SPDLOG_USE_STD_FORMAT")
         elseif package:config("fmt_external") or package:config("fmt_external_ho") then
             package:add("defines", "SPDLOG_FMT_EXTERNAL")
-            package:add("deps", "fmt", {configs = {header_only = package:config("header_only")}})
+            local fmt_version = {
+                ["v1.14.1"] = "10.2.1",
+                ["v1.14.0"] = "10.2.1",
+                ["v1.13.0"] = "10.0.0",
+                ["v1.12.0"] = "10.0.0",
+                ["v1.11.0"] = "9.1.0",
+                ["v1.10.0"] = "8.1.1",
+                ["v1.9.2"] = "8.0.0",
+                ["v1.9.1"] = "8.0.0",
+                ["v1.9.0"] = "8.0.0",
+                default = "7.1.3",
+                ["v1.5.0"] = "6.1.2",
+                ["v1.4.2"] = "6.0.0",
+                ["v1.3.1"] = "5.3.0",
+            }
+            local fmt_ver = fmt_version[tostring(package:version())] or fmt_version.default
+            package:add("deps", "fmt " .. fmt_ver, {configs = {header_only = package:config("header_only")}})
         end
         if not package:config("header_only") and package:config("fmt_external_ho") then
             package:add("defines", "FMT_HEADER_ONLY=1")
