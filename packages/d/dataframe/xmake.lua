@@ -6,6 +6,7 @@ package("dataframe")
     add_urls("https://github.com/hosseinmoein/DataFrame/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hosseinmoein/DataFrame.git")
 
+    add_versions("3.3.0", "57a722592a29ee8fca902983411c78e7f4179c402a8b0b905f96916c9694672a")
     add_versions("3.2.0", "44c513ef7956976738c2ca37384a220c5383e95fc363ad933541c6f3eef9d294")
     add_versions("3.1.0", "09280a81f17d87d171062210c904c1acd94b1cdcf4c040eaa16cc9d224d526d4")
     add_versions("3.0.0", "9266fb85c518a251a5440e490c81615601791f2de2fad8755aa09f13a0c541f9")
