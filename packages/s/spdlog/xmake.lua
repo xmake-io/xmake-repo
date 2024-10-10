@@ -83,7 +83,7 @@ package("spdlog")
     on_test(function (package)
         local version = package:version()
         if version and version:le("1.2.1") then
-            assert(package:has_cxxfuncs("spdlog::get(\"default\")->info(\"\")", {includes = "spdlog/spdlog.h"}))
+            assert(package:has_cxxfuncs("spdlog::get(\"default\")->info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++14"}}))
         else
             if package:config("std_format") then
                 assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++20"}}))
