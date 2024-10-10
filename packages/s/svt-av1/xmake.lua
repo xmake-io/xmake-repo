@@ -98,7 +98,13 @@ package("svt-av1")
                 io.replace("Source/Lib/Common/Codec/EbThreads.h", "#if defined(__linux__)", "#if 0", {plain = true})
             end
         end
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if package:is_plat("wasm") then
+            -- https://github.com/emscripten-core/emscripten/issues/17030
+            opt.cxflags = "-fno-stack-protector"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
 
         if package:is_plat("windows") and package:is_debug() then
             local dir = package:installdir(package:config("shared") and "bin" or "lib")
