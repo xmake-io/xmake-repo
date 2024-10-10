@@ -14,9 +14,7 @@ package("libhybris")
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        os.vrunv("./configure.ac", configs, {shell = true})
-        os.vrunv("make")
-        os.vrun("make install")
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
