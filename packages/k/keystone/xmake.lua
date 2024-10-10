@@ -10,8 +10,8 @@ package("keystone")
 
     add_deps("cmake")
 
-    if is_plat("windows") then
-        add_syslinks("shell32")
+    if is_plat("windows", "mingw") then
+        add_syslinks("shell32", "ole32", "uuid")
     end
 
     on_load(function (package)
@@ -24,7 +24,7 @@ package("keystone")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_cross() then
+        if package:is_cross() or (package:is_plat("windows") and package:config("shared")) then
             table.insert(configs, "-DBUILD_LIBS_ONLY=ON")
         elseif package:is_plat("windows") then
             table.insert(configs, "-DKEYSTONE_BUILD_STATIC_RUNTIME=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
@@ -34,7 +34,7 @@ package("keystone")
     end)
 
     on_test(function (package)
-        if not package:is_cross() then
+        if not package:is_cross() and not (package:is_plat("windows") and package:config("shared")) then
             os.vrun('kstool -b x64 "mov rax, 1; ret"')
         end
         assert(package:has_cfuncs("ks_version", {includes = "keystone/keystone.h"}))
