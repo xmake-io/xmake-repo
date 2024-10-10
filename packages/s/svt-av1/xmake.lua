@@ -49,10 +49,6 @@ package("svt-av1")
     add_deps("cpuinfo")
 
     on_load(function (package)
-        if not package:has_cfuncs("_mm512_extracti64x4_epi64", {includes = "immintrin.h"}) then
-            package:config_set("avx512", false)
-        end
-
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "EB_DLL")
         end

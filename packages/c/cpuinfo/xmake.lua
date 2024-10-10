@@ -4,8 +4,10 @@ package("cpuinfo")
     set_license("BSD-2-Clause")
 
     add_urls("https://github.com/pytorch/cpuinfo.git")
-    add_versions("2022.09.15", "de2fa78ebb431db98489e78603e4f77c1f6c5c57")
+
+    add_versions("2024.09.26", "1e83a2fdd3102f65c6f1fb602c1b320486218a99")
     add_versions("2023.07.21", "60480b7098c8ddc73d611285fc478dec66e4edf9")
+    add_versions("2022.09.15", "de2fa78ebb431db98489e78603e4f77c1f6c5c57")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
