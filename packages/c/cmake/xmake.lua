@@ -22,6 +22,7 @@ package("cmake")
         add_versions("3.28.3", "d9e2c22fec920a4d1f6b0d0683c035d799475c179c91e41e1a7fbfab610a0305")
         add_versions("3.29.2", "0d670b59dddd064d24cf8c386abf3590bda2642bb169e11534cf1e3d1ae3a76a")
         add_versions("3.30.1", "51e12618829b811bba6f033ee8f39f6192da1b6abb20d82a7899d5134e879a4c")
+        add_versions("3.30.2", "c6fdda745f9ce69bca048e91955c7d043ba905d6388a62e0ff52b681ac17183c")
     elseif is_host("linux") then
         if os.arch():find("arm64.*") then
             add_urls("https://cmake.org/files/v$(version)-aarch64.tar.gz", {version = function (version)
@@ -36,6 +37,7 @@ package("cmake")
             add_versions("3.28.3", "bbf023139f944cefe731d944f2864d8ea3ea0c4f9310b46ac72b3cb4e314b023")
             add_versions("3.29.2", "ca883c6dc3ce9eebd833804f0f940ecbbff603520cfd169ee58916dbbc23c2b8")
             add_versions("3.30.1", "ad234996f8750f11d7bd0d17b03f55c434816adf1f1671aab9e8bab21a43286a")
+            add_versions("3.30.2", "d18f50f01b001303d21f53c6c16ff12ee3aa45df5da1899c2fe95be7426aa026")
         else
             add_urls("https://cmake.org/files/v$(version)-x86_64.tar.gz", {version = function (version)
                     return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version .. (version:ge("3.20") and "-linux" or "-Linux")
@@ -55,6 +57,7 @@ package("cmake")
             add_versions("3.28.3", "804d231460ab3c8b556a42d2660af4ac7a0e21c98a7f8ee3318a74b4a9a187a6")
             add_versions("3.29.2", "0416c70cf88e8f92efcbfe292e181bc09ead7d70e29ab37b697522c01121eab5")
             add_versions("3.30.1", "ac31f077ef3378641fa25a3cb980d21b2f083982d3149a8f2eb9154f2b53696b")
+            add_versions("3.30.2", "cdd7fb352605cee3ae53b0e18b5929b642900e33d6b0173e19f6d4f2067ebf16")
         end
     elseif is_host("windows") then
         if os.arch() == "x64" then
@@ -76,6 +79,7 @@ package("cmake")
             add_versions("3.28.3", "cac7916f7e1e73a25de857704c94fd5b72ba9fe2f055356b5602d2f960e50e5b")
             add_versions("3.29.2", "86b5de51f60a0e9d62be4d8ca76ea467d154083d356fcc9af1409606be341cd8")
             add_versions("3.30.1", "cf7788ff9d92812da194847d4ec874fc576f34079987d0f20c96cd09e2a16220")
+            add_versions("3.30.2", "48bf4b3dc2d668c578e0884cac7878e146b036ca6b5ce4f8b5572f861b004c25")
         elseif os.arch() == "x86" then
             add_urls("https://cmake.org/files/v$(version).zip", {excludes = {"*/doc/*"}, version = function (version)
                     return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version .. (version:ge("3.20") and "-windows-i386" or "-win32-x86")
@@ -95,6 +99,7 @@ package("cmake")
             add_versions("3.28.3", "411812b6b29ac793faf69bdbd36c612f72659363c5491b9f0a478915db3fc58c")
             add_versions("3.29.2", "e51b281c9dfd1498834729b33bf49fc668ad1dadbc2eaba7b693d0f7d748450d")
             add_versions("3.30.1", "f5fb1d93b82e9a5fbd5853d4b17a130605f0b4ed13a655d1371c2d6d55f9261d")
+            add_versions("3.30.2", "d01f7ea52097dd58aa225884b1ecc543827e9ef99d36dac2898609a0d5e60eb6")
         elseif os.arch() == "arm64" then
             add_urls("https://cmake.org/files/v$(version).zip", {excludes = {"*/doc/*"}, version = function (version)
                     return table.concat(table.slice((version):split('%.'), 1, 2), '.') .. "/cmake-" .. version .. "-windows-arm64"
@@ -106,6 +111,7 @@ package("cmake")
             add_versions("3.28.3", "cfe023b7e82812ef802fb1ec619f6cfa2fdcb58ee61165fc315086286fe9cdcc")
             add_versions("3.29.2", "5b16a0db4966c04582c40131038de49d5b0161fcd950dc9e955753dfab858882")
             add_versions("3.30.1", "02b433f70aa549449be2d53046d0179590bf3b6290d9fda3fbbb23f96a4f2802")
+            add_versions("3.30.2", "c0cef52e8f60eb1c3058f8bc0b3803c27d79f066b7d7d94f46a2c689bbd36f22")
         end
     else
         add_urls("https://github.com/Kitware/CMake/releases/download/v$(version)/cmake-$(version).tar.gz")
@@ -119,6 +125,7 @@ package("cmake")
         add_versions("3.28.3", "72b7570e5c8593de6ac4ab433b73eab18c5fb328880460c86ce32608141ad5c1")
         add_versions("3.29.2", "36db4b6926aab741ba6e4b2ea2d99c9193222132308b4dc824d4123cb730352e")
         add_versions("3.30.1", "df9b3c53e3ce84c3c1b7c253e5ceff7d8d1f084ff0673d048f260e04ccb346e1")
+        add_versions("3.30.2", "46074c781eccebc433e98f0bbfa265ca3fd4381f245ca3b140e7711531d60db2")
     end
 
     if is_plat("mingw") and is_subhost("msys") then
@@ -128,6 +135,14 @@ package("cmake")
     elseif is_plat("macosx") then
         add_extsources("brew::cmake")
     end
+
+    on_load(function (package)
+        -- xmake v3.x will enable this ninja policy by default
+        import("core.project.project")
+        if xmake.version():ge("2.9.0") and project.policy("package.cmake_generator.ninja") then
+            package:add("deps", "ninja")
+        end
+    end)
 
     on_install("@macosx", function (package)
         os.cp("CMake.app/Contents/bin", package:installdir())

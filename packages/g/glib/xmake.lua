@@ -60,8 +60,8 @@ package("glib")
         end
     end)
 
-    on_load("windows", "macosx", "linux", "cross", function (package)
-        if package:version():ge("2.74.0") then
+    on_load(function (package)
+        if package:gitref() or package:version():ge("2.74.0") then
             package:add("deps", "pcre2")
         else
             package:add("deps", "pcre")

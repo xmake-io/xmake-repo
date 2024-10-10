@@ -1,7 +1,8 @@
 package("csvparser")
-
+    set_kind("library", { headeronly = true })
     set_homepage("https://github.com/vincentlaucsb/csv-parser")
     set_description("A modern C++ library for reading, writing, and analyzing CSV (and similar) files (by vincentlaucsb)")
+    set_license("MIT")
 
     add_urls("https://github.com/vincentlaucsb/csv-parser/archive/refs/tags/$(version).zip")
     add_versions("2.3.0", "17eb8e1a4f2f8cdc6679329e4626de608bb33a830d5614184a21b5d8838bbbb0")

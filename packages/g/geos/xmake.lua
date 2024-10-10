@@ -5,6 +5,7 @@ package("geos")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/libgeos/geos/archive/refs/tags/$(version).tar.gz")
+    add_versions("3.13.0", "351375d3697000d94a6b3d4041f08e12221f4eb065ed412c677960a869518631")
     add_versions("3.12.1", "f6e2f3aaa417410d3fa4c78a9c5ef60d46097ef7ad0aee3bbbb77327350e1e01")
     add_versions("3.11.3", "3c517fcccdd3d562122d59c93e0982ef9bc10e775a177ad88882fca1d7d28d08")
     add_versions("3.9.1", "e9e20e83572645ac2af0af523b40a404627ce74b3ec99727754391cdf5b23645")

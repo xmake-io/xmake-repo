@@ -13,7 +13,7 @@ package("inja")
     add_deps("cmake")
     add_deps("nlohmann_json", {configs = {cmake = true}})
 
-    on_install("!wasm", function (package)
+    on_install(function (package)
         import("package.tools.cmake").install(package, {
             "-DINJA_INSTALL=ON",
             "-DINJA_USE_EMBEDDED_JSON=OFF",

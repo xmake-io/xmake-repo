@@ -5,14 +5,11 @@ import("private.core.base.select_script")
 
 -- is supported platform and architecture?
 function is_supported(instance, plat, arch, opt)
-
-    -- ignore template package
     if instance:is_template() then
         return false
     end
 
-    -- has install script?
-    local script = instance:get("install")
+    local script = instance:get(instance:is_fetchonly() and "fetch" or "install")
     if not select_script(script, {plat = plat, arch = arch}) then
         return false
     end

@@ -5,6 +5,7 @@ package("assimp")
 
     set_urls("https://github.com/assimp/assimp/archive/refs/tags/$(version).zip",
              "https://github.com/assimp/assimp.git")
+    add_versions("v5.4.3", "795c29716f4ac123b403e53b677e9f32a8605c4a7b2d9904bfaae3f4053b506d")
     add_versions("v5.4.2", "03e38d123f6bf19a48658d197fd09c9a69db88c076b56a476ab2da9f5eb87dcc")
     add_versions("v5.4.1", "08837ee7c50b98ca72d2c9e66510ca6640681db8800aa2d3b1fcd61ccc615113")
     add_versions("v5.4.0", "0f3698e9ba0110df0b636dbdd95706e7e28d443ff3dbaf5828926c23bfff778d")
@@ -134,6 +135,12 @@ package("assimp")
             local minizip = package:dep("minizip")
             if minizip and not minizip:is_system() then
                 packagedeps = table.join2(packagedeps or {}, "minizip")
+            end
+            -- fix ninja debug build
+            os.mkdir(path.join(package:buildir(), "code/pdb"))
+            -- MDd == _DEBUG + _MT + _DLL
+            if package:is_debug() and package:has_runtime("MD", "MT") then
+                io.replace("CMakeLists.txt", "/D_DEBUG", "", {plain = true})
             end
         end
 

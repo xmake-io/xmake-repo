@@ -1,0 +1,16 @@
+diff --git a/0.2.5/src/charset/codecs/codec_utf8.c b/0.2.5/src/charset/codecs/codec_utf8.c
+index 6117fe6..39bdb28 100644
+--- a/0.2.5/src/charset/codecs/codec_utf8.c
++++ b/0.2.5/src/charset/codecs/codec_utf8.c
+@@ -409,8 +409,8 @@ parserutils_error charset_utf8_codec_read_char(charset_utf8_codec *c,
+ 		const uint8_t **source, size_t *sourcelen,
+ 		uint8_t **dest, size_t *destlen)
+ {
+-	uint32_t ucs4;
+-	size_t sucs4;
++	uint32_t ucs4 = 0;
++	size_t sucs4 = 0;
+ 	parserutils_error error;
+ 
+ 	/* Convert a single character */
+ 

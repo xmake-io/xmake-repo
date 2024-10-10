@@ -5,6 +5,7 @@ package("cosmocc")
     set_license("ISC")
 
     add_urls("https://cosmo.zip/pub/cosmocc/cosmocc-$(version).zip",
+             "https://justine.lol/cosmopolitan/cosmocc-$(version).zip",
              "https://github.com/xmake-mirror/cosmopolitan/releases/download/$(version)/cosmocc-$(version).zip")
 
     add_versions("3.2.4", "d2fa6dbf6f987310494581deff5b915dbdc5ca701f20f7613bb0dcf1de2ee511")
@@ -30,9 +31,15 @@ package("cosmocc")
     add_versions("3.6.0", "4918c45ac3e0972ff260e2a249e25716881e39fb679d5e714ae216a2ef6c3f7e")
     add_versions("3.6.1", "5f46bdfa4db8326794306d1a0348efc01e199f53b262bc05aa92b37be09a3f3a")
     add_versions("3.6.2", "268aa82d9bfd774f76951b250f87b8edcefd5c754b8b409e1639641e8bd8d5bc")
-    
+    add_versions("3.7.0", "871cfffd2e4ee3fc55d6f8d8583c6d73669f8412eea604830c8ecb74f89d6aef")
+    add_versions("3.7.1", "13b65b0e659b493bd82f3d0a319d0265d66f849839e484aa2a54191024711e85")
+    add_versions("3.8.0", "813c6b2f95062d2e0a845307a79505424cb98cb038e8013334f8a22e3b92a474")
+    add_versions("3.9.0", "814ab13782191c40b80f081242db3fd850a4ea35122c7ee9da434c36e9444c6a")
+    add_versions("3.9.1", "5eabd964554cc592d707d553697a450272290c07b88cc2e9503a299e00a13584")
+    add_versions("3.9.2", "f4ff13af65fcd309f3f1cfd04275996fb7f72a4897726628a8c9cf732e850193")
+    add_versions("3.9.3", "37cfb39217b980b04dc256dc9a4ae55646c371a1b0e63d5a1e45bed3cc14ceae")
 
-
+    set_policy("package.precompiled", false)
 
     on_load("@windows|x64", function (package)
         package:add("deps", "msys2")
@@ -44,9 +51,15 @@ package("cosmocc")
             assert(find_tool("sh"), "cosmocc need sh/bash, please install it first!")
         end
         os.cp("*", package:installdir(), {symlink = true})
+        -- fix symlinks for windows
+        if is_host("windows") then
+            os.cp("bin/cosmocc", path.join(package:installdir("bin"), "cosmoc++"))
+        end
     end)
 
     on_test(function (package)
         local cosmocc = path.join(package:installdir("bin"), "cosmocc")
+        local cosmocxx = path.join(package:installdir("bin"), "cosmoc++")
         os.vrunv(cosmocc, {"--version"}, {shell = true})
+        os.vrunv(cosmocxx, {"--version"}, {shell = true})
     end)

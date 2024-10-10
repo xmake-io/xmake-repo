@@ -1,11 +1,12 @@
 package("benchmark")
-
     set_homepage("https://github.com/google/benchmark")
     set_description("A microbenchmark support library")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/google/benchmark/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/google/benchmark.git")
+
+    add_versions("1.9.0", "35a77f46cc782b16fac8d3b107fbfbb37dcd645f7c28eee19f3b8e0758b48994")
     add_versions("1.5.2", "dccbdab796baa1043f04982147e67bb6e118fe610da2c65f88912d73987e700c")
     add_versions("1.5.3", "e4fbb85eec69e6668ad397ec71a3a3ab165903abe98a8327db920b94508f720e")
     add_versions("1.5.4", "e3adf8c98bb38a198822725c0fc6c0ae4711f16fbbf6aeb311d5ad11e5a081b5")
@@ -40,6 +41,7 @@ package("benchmark")
 
     add_deps("cmake")
     add_links("benchmark_main", "benchmark")
+
     on_load("windows", function (package)
         if not package:config("shared") then
             package:add("defines", "BENCHMARK_STATIC_DEFINE")
@@ -47,10 +49,19 @@ package("benchmark")
     end)
 
     on_install("macosx", "linux", "windows", "mingw", function (package)
+        if package:is_plat("windows") then
+            os.mkdir(path.join(package:buildir(), "src/pdb"))
+        end
+
         local configs = {"-DBENCHMARK_ENABLE_TESTING=OFF", "-DBENCHMARK_INSTALL_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.cp(path.join(package:buildir(), "src/*.pdb"), dir)
+        end
     end)
 
     on_test(function (package)

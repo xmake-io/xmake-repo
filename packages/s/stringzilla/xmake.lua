@@ -7,6 +7,9 @@ package("stringzilla")
     add_urls("https://github.com/ashvardanian/StringZilla/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ashvardanian/StringZilla.git")
 
+    add_versions("v3.9.8", "2efaf2eb9b10287efa51fffa4b1e05cf7b426e3404c3c4fd3c141291846c733c")
+    add_versions("v3.9.6", "21577e967d79155f5bcbe9bfd885dd817a79666f384fb2a955c0ac5dbf0657a3")
+    add_versions("v3.9.5", "2132ffc56ded5951a00f3c7046328f2cfb0c59121252f7303cd33fbe93bc8e97")
     add_versions("v3.8.4", "4132957633d28ce2651e587f2ab736cdf174e61b8ab1bcef453b21d40a2d872e")
     add_versions("v3.8.3", "17c4527012495b66028236f62223a7c84c32c14dce91821f2ebb36a67bce489b")
     add_versions("v3.8.2", "1f1e940c6c74aecc06964aa650fe23d0b64570b5d4d83a820d2d11428050d853")
@@ -39,9 +42,13 @@ package("stringzilla")
     add_versions("v2.0.3", "6b52a7b4eb8383cbcf83608eaa08e5ba588a378449439b73584713a16d8920e3")
     add_versions("v1.2.2", "2e17c49965841647a1c371247f53b2f576e5fb32fe4b84a080d425b12f17703c")
 
-    on_install("android|!armeabi-v7a or !android",function (package)
+    on_install("android|!armeabi-v7a or !android", function (package)
         if package:version():gt("3.0.0") then
-            os.cp("include/stringzilla/experimental.h", package:installdir("include/stringzilla"))
+            if package:version():gt("3.9.0") then
+                os.cp("include/stringzilla/drafts.h", package:installdir("include/stringzilla"))
+            else
+                os.cp("include/stringzilla/experimental.h", package:installdir("include/stringzilla"))
+            end
             if package:config("cpp") then
                 os.cp("include/stringzilla/stringzilla.hpp", package:installdir("include/stringzilla"))
             end
