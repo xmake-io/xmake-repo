@@ -34,8 +34,11 @@ package("keystone")
             table.insert(configs, "-DKEYSTONE_BUILD_STATIC_RUNTIME=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         elseif package:is_plat("android") then
             -- support for ndk >= r27
-            table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW")
-        end
+            io.insert("CMakeLists.txt", 1, [[if (POLICY CMP0057)
+              cmake_policy(SET CMP0057 NEW)
+            endif()]])
+            end
+        io.replace("CMakeLists.txt", "add_subdirectory(suite/fuzz)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
         os.cp("include", package:installdir())
     end)
