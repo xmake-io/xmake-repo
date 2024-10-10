@@ -43,9 +43,7 @@ package("svt-av1")
         add_ldflags("-s USE_PTHREADS=1")
     end
 
-    set_policy("package.cmake_generator.ninja", true)
-
-    add_deps("cmake", "ninja", "nasm")
+    add_deps("cmake", "nasm")
     add_deps("cpuinfo")
 
     on_load(function (package)
@@ -99,8 +97,10 @@ package("svt-av1")
 
         local opt = {}
         if package:is_plat("wasm") then
+            -- https://stackoverflow.com/questions/58854858/undefined-symbol-stack-chk-guard-in-libopenh264-so-when-building-ffmpeg-wit
             -- https://github.com/emscripten-core/emscripten/issues/17030
-            opt.cxflags = "-fno-stack-protector"
+            opt.cxflags = {"-fno-stack-protector", "-U_FORTIFY_SOURCE"}
+            opt.ldflags = {"-fno-stack-protector", "-U_FORTIFY_SOURCE"}
         end
         import("package.tools.cmake").install(package, configs, opt)
 
@@ -111,8 +111,16 @@ package("svt-av1")
     end)
 
     on_test(function (package)
+        local ldflags = {}
+        if package:is_plat("wasm") then
+            table.insert(ldflags, "-s USE_PTHREADS=1")
+            table.insert(ldflags, "-s TOTAL_MEMORY=256MB")
+        end
+
         if package:gitref() or package:version():ge("2.1.1") then
-            assert(package:has_cfuncs("svt_av1_enc_init_handle", {includes = "svt-av1/EbSvtAv1Enc.h"}))
+            assert(package:has_cfuncs("svt_av1_enc_init_handle", {
+                includes = "svt-av1/EbSvtAv1Enc.h", configs = {ldflags = ldflags}
+            }))
         else
             if package:config("encoder") then
                 assert(package:has_cfuncs("svt_av1_enc_init_handle", {includes = {"stddef.h", "svt-av1/EbSvtAv1Enc.h"}}))
