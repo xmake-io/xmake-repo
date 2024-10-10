@@ -6,6 +6,7 @@ package("libenvpp")
     add_urls("https://github.com/ph3at/libenvpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ph3at/libenvpp.git")
 
+    add_versions("v1.4.3", "affbd735b6f47615a54c9159baef9de206cc85badb5af4f662669f3789a13fa8")
     add_versions("v1.4.2", "14b2e14112036b15c7fc2d7e566ee6b2de9c2c55091e8d3de194ebed19f6fc34")
     add_versions("v1.4.1", "1bcd0a1eb4eef32a53cbb410ae38d708ea662e491cc5536cb9b15d54cc8b5707")
     add_versions("v1.4.0", "3f9a4a4b62abc06522de76e3a999cc3cd6b60299dc26b28ccc2183aa614f10cd")
