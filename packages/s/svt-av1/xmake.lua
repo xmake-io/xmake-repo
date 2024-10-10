@@ -13,8 +13,8 @@ package("svt-av1")
     add_versions("v1.5.0", "64e27b024eb43e4ba4e7b85584e0497df534043b2ce494659532c585819d0333")
     add_versions("v1.6.0", "3bc207247568ac713245063555082bfc905edc31df3bf6355e3b194cb73ad817")
 
-    add_configs("encoder", {description = "Build Encoder lib", default = true, type = "boolean"})
-    add_configs("decoder", {description = "Build Decoder lib", default = true, type = "boolean"})
+    add_configs("encoder", {description = "Build Encoder lib (deprecated after v2.1.1)", default = true, type = "boolean"})
+    add_configs("decoder", {description = "Build Decoder lib (deprecated after v2.1.1)", default = true, type = "boolean"})
     add_configs("avx512", {description = "Enable building avx512 code", default = false, type = "boolean"})
     add_configs("minimal_build", {description = "Enable minimal build", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
@@ -40,6 +40,7 @@ package("svt-av1")
         add_syslinks("pthread", "m")
     elseif is_plat("wasm") then
         add_syslinks("pthread")
+        add_ldflags("-s USE_PTHREADS=1")
     end
 
     add_deps("cmake", "nasm")
@@ -55,7 +56,7 @@ package("svt-av1")
         end
     end)
 
-    on_install(function (package)
+    on_install("!cross and (!windows or windows|!arm64)", function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DCOVERAGE=OFF",
