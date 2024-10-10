@@ -6,6 +6,7 @@ package("svt-av1")
     add_urls("https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/$(version)/SVT-AV1-$(version).tar.gz",
              "https://gitlab.com/AOMediaCodec/SVT-AV1.git")
 
+    add_versions("v2.2.1", "d02b54685542de0236bce4be1b50912aba68aff997c43b350d84a518df0cf4e5")
     add_versions("v2.1.0", "72a076807544f3b269518ab11656f77358284da7782cece497781ab64ed4cb8a")
     add_versions("v1.4.0", "0a4650b822c4eeb9656fbe96bd795e7a73cbfd1ab8c12546348ba88d8ed6b415")
     add_versions("v1.4.1", "e3f7fc194afc6c90b43e0b80fa24c09940cb03bea394e0e1f5d1ded18e9ab23f")
@@ -16,6 +17,7 @@ package("svt-av1")
     add_configs("decoder", {description = "Build Decoder lib", default = true, type = "boolean"})
     add_configs("avx512", {description = "Enable building avx512 code", default = false, type = "boolean"})
     add_configs("minimal_build", {description = "Enable minimal build", default = false, type = "boolean"})
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::svt-av1")
@@ -53,23 +55,28 @@ package("svt-av1")
         end
     end)
 
-    on_install("!cross and (!windows or windows|!arm64)", function (package)
+    on_install(function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DCOVERAGE=OFF",
-            "-DBUILD_APPS=OFF",
             "-DUSE_EXTERNAL_CPUINFO=ON",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DSVT_AV1_LTO=" .. (package:config("lto") and "ON" or "OFF"))
+        table.insert(configs, "-DSVT_AV1_PGO=" .. (package:config("pgo") and "ON" or "OFF"))
 
         table.insert(configs, "-DBUILD_ENC=" .. (package:config("encoder") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_DEC=" .. (package:config("decoder") and "ON" or "OFF"))
         table.insert(configs, "-DMINIMAL_BUILD=" .. (package:config("minimal_build") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_AVX512=" .. (package:config("avx512") and "ON" or "OFF"))
-        table.insert(configs, "-DSVT_AV1_LTO=" .. (package:config("lto") and "ON" or "OFF"))
-        table.insert(configs, "-DSVT_AV1_PGO=" .. (package:config("pgo") and "ON" or "OFF"))
         table.insert(configs, "-DNATIVE=" .. (package:config("native") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_APPS=" .. (package:config("tools") and "ON" or "OFF"))
+
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        end
+
         if package:version() and package:version():lt("2.0.0") then
             if package:is_plat("wasm") then
                 io.replace("CMakeLists.txt", "if(MINGW)", "if(TRUE)\n    check_both_flags_add(-pthread)\n  elseif(MINGW)", {plain = true})
@@ -91,13 +98,22 @@ package("svt-av1")
             end
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.vcp("Bin/**.pdb", dir)
+        end
     end)
 
     on_test(function (package)
-        if package:config("encoder") then
-            assert(package:has_cfuncs("svt_av1_enc_init_handle", {includes = {"stddef.h", "svt-av1/EbSvtAv1Enc.h"}}))
-        end
-        if package:config("decoder") then
-            assert(package:has_cfuncs("svt_av1_dec_init_handle", {includes = {"stddef.h", "svt-av1/EbSvtAv1Dec.h"}}))
+        if package:gitref() or package:version():ge("2.1.1") then
+            assert(package:has_cfuncs("svt_av1_enc_init_handle", {includes = "svt-av1/EbSvtAv1Enc.h"}))
+        else
+            if package:config("encoder") then
+                assert(package:has_cfuncs("svt_av1_enc_init_handle", {includes = {"stddef.h", "svt-av1/EbSvtAv1Enc.h"}}))
+            end
+            if package:config("decoder") then
+                assert(package:has_cfuncs("svt_av1_dec_init_handle", {includes = {"stddef.h", "svt-av1/EbSvtAv1Dec.h"}}))
+            end
         end
     end)
