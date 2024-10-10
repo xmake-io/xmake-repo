@@ -43,7 +43,9 @@ package("svt-av1")
         add_ldflags("-s USE_PTHREADS=1")
     end
 
-    add_deps("cmake", "nasm")
+    set_policy("package.cmake_generator.ninja", true)
+
+    add_deps("cmake", "ninja", "nasm")
     add_deps("cpuinfo")
 
     on_load(function (package)
