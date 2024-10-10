@@ -9,6 +9,7 @@ package("keystone")
     add_versions("0.9.2", "c9b3a343ed3e05ee168d29daf89820aff9effb2c74c6803c2d9e21d55b5b7c24")
 
     add_deps("cmake")
+    add_requires("python 3.x", {kind = "binary"})
 
     if is_plat("windows", "mingw") then
         add_syslinks("shell32", "ole32", "uuid")
