@@ -54,13 +54,12 @@ package("zbar")
             end
         end
 
-        local aclocal_dir = os.iorun("aclocal --print-ac-dir")
-        if aclocal_dir then
-            os.vrun("autoreconf --force --install -I" .. aclocal_dir)
+        local libtool = package:dep("libtool")
+        if libtool then
+            os.vrun("autoreconf --force --install -I" .. libtool:installdir("share", "aclocal"))
         else
             os.vrun("autoreconf --force --install")
-        end
-        
+        end    
         import("package.tools.autoconf").install(package, configs, {cflags = cflags, ldflags = ldflags})
     end)
 
