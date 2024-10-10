@@ -18,6 +18,10 @@ package("svt-av1")
     add_configs("avx512", {description = "Enable building avx512 code", default = false, type = "boolean"})
     add_configs("minimal_build", {description = "Enable minimal build", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+    if is_plat("android") and is_host("linux") then
+        -- llvm-ar: not found
+        add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+    end
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::svt-av1")
