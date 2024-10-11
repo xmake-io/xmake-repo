@@ -1,10 +1,11 @@
 add_rules("mode.debug", "mode.release")
 set_languages("c++17")
+
 add_requires("capstone", "keystone")
-add_packages("capstone", "keystone")
 
 target("libmem")
     set_kind("$(kind)")
+    add_packages("capstone", "keystone")
 
     add_includedirs("include")
     add_includedirs(
@@ -35,12 +36,12 @@ target("libmem")
         local prefix = path.join("src", is_plat("linux") and "linux" or "freebsd")
         add_files(path.join(prefix, "ptrace", "*.c"))
         add_files(path.join(prefix, "*.c"))
-
         add_files(path.join(prefix, "ptrace", arch, "*.c"))
+    
     elseif is_plat("windows", "mingw") then
         add_syslinks("user32", "psapi", "ntdll", "shell32", "ole32")
         if is_plat("mingw") then
-            add_links("uuid")
+            add_syslinks("uuid")
         end
         add_files("internal/winutils/*.c")
         add_files("src/win/*.c")
