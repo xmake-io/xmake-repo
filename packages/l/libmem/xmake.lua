@@ -12,7 +12,7 @@ package("libmem")
     if is_plat("windows", "mingw") then
         add_syslinks("user32", "psapi", "ntdll", "shell32", "ole32")
         if is_plat("mingw") then
-            add_links("uuid")
+            add_syslinks("uuid")
         end
     elseif is_plat("linux") then
         add_syslinks("dl", "stdc++", "m")
@@ -26,7 +26,7 @@ package("libmem")
         end
     end)
 
-    on_install("windows", "linux", "freebsd", function (package)
+    on_install("windows", "linux", "bsd", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
         os.cp(path.join("include", "libmem"), package:installdir("include"))
