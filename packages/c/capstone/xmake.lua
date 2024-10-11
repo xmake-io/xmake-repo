@@ -28,7 +28,7 @@ package("capstone")
         if package:is_plat("windows") and package:is_debug() then
             local dir = package:installdir(package:config("shared") and "bin" or "lib")
             os.trycp(path.join(package:buildir(), "capstone.pdb"), dir)
-            os.trycp(path.join(package:buildir(), "cstool.pdb"), dir)
+            os.trycp(path.join(package:buildir(), "cstool.pdb"), package:installdir("bin"))
         end
     end)
 
