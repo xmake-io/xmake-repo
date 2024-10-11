@@ -7,8 +7,8 @@ target("libmem")
     set_kind("$(kind)")
     add_packages("capstone", "keystone")
     
-    add_headerfiles("include/(libmem/*.h)", {install = true})
-    add_headerfiles("include/(libmem/*.hpp)", {install = true})
+    add_headerfiles("include/(libmem/*.h)")
+    add_headerfiles("include/(libmem/*.hpp)")
 
     add_includedirs("include")
     add_includedirs(
