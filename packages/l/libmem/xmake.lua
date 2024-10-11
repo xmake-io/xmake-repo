@@ -29,11 +29,17 @@ package("libmem")
     on_install("windows", "linux", "bsd", function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
-        os.cp(path.join("include", "libmem"), package:installdir("include"))
     end)
 
     on_test(function (package)
-        assert(package:has_cincludes("libmem/libmem.h"))
+        assert(package:check_csnippets({test = [[
+            #include <libmem/libmem.h>
+            void test() {
+                lm_thread_t resultThread;
+                lm_bool_t result = LM_GetThread(&result);
+            }
+        ]]}, {configs = {languages = "c11"}}))
+
         assert(package:check_cxxsnippets({test = [[
             #include <libmem/libmem.hpp>
             #include <vector>
