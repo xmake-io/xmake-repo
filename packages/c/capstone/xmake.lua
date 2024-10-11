@@ -20,7 +20,6 @@ package("capstone")
             "-DCAPSTONE_BUILD_TESTS=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DCAPSTONE_DEBUG=" .. (package:is_debug() and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
