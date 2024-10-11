@@ -6,7 +6,8 @@ package("capstone")
     add_urls("https://github.com/capstone-engine/capstone/archive/refs/tags/$(version).tar.gz",
              "https://github.com/capstone-engine/capstone.git")
 
-    add_versions("5.0.3", "3970c63ca1f8755f2c8e69b41432b710ff634f1b45ee4e5351defec4ec8e1753")
+    -- add_versions("5.0.3", "3970c63ca1f8755f2c8e69b41432b710ff634f1b45ee4e5351defec4ec8e1753")
+    add_versions("4.0.2", "7c81d798022f81e7507f1a60d6817f63aa76e489aa4e7055255f21a22f5e526a")
 
     add_deps("cmake")
 
@@ -25,10 +26,16 @@ package("capstone")
         table.insert(configs, "-DENABLE_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "capstone.pdb"), dir)
-            os.trycp(path.join(package:buildir(), "cstool.pdb"), package:installdir("bin"))
+        if package:is_plat("windows") then
+            if package:version():eq("4.0.2") and package:config("shared") then
+                os.rm(package:installdir("lib/capstone.lib"))
+            end
+
+            if package:is_debug() then
+                local dir = package:installdir(package:config("shared") and "bin" or "lib")
+                os.trycp(path.join(package:buildir(), "capstone.pdb"), dir)
+                os.trycp(path.join(package:buildir(), "cstool.pdb"), package:installdir("bin"))
+            end
         end
     end)
 
