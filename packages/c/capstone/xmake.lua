@@ -10,7 +10,7 @@ package("capstone")
 
     add_deps("cmake")
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
         package:addenv("PATH", "bin")
 
         local configs = {
