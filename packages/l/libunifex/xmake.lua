@@ -7,6 +7,8 @@ package("libunifex")
     add_urls("https://github.com/facebookexperimental/libunifex/archive/refs/tags/v$(version).tar.gz")
     add_versions("0.4.0", "d5ce3b616e166da31e6b4284764a1feeba52aade868bcbffa94cfd86b402716e")
 
+    add_deps("cmake")
+    
     on_install(function (package)
         local configs = {   "-DBUILD_TESTING=OFF",
                             "-DUNIFEX_BUILD_EXAMPLES=OFF",
