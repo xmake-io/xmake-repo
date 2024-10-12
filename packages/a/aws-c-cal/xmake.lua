@@ -45,7 +45,11 @@ package("aws-c-cal")
     on_install("!wasm and (!mingw or mingw|!i386)", function (package)
         local cmakedir = path.unix(package:dep("aws-c-common"):installdir("lib", "cmake"))
 
-        local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_MODULE_PATH=" .. cmakedir}
+        local configs = {
+            "-DBUILD_TESTING=OFF",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+            "-DCMAKE_MODULE_PATH=" .. cmakedir,
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
