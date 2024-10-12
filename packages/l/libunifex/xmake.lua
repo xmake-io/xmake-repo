@@ -9,7 +9,7 @@ package("libunifex")
 
     add_deps("cmake")
     
-    on_install(function (package)
+    on_install("!windows", function (package)
         local configs = {   "-DBUILD_TESTING=OFF",
                             "-DUNIFEX_BUILD_EXAMPLES=OFF",
                         }
