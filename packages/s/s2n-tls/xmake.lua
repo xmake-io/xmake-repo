@@ -30,7 +30,11 @@ package("s2n-tls")
     add_deps("cmake", "openssl")
 
     on_install("linux", "bsd", "cross", "android", function (package)
-        local configs = {"-DBUILD_TESTING=OFF", "-DUNSAFE_TREAT_WARNINGS_AS_ERRORS=OFF"}
+        local configs = {
+            "-DBUILD_TESTING=OFF",
+            "-DUNSAFE_TREAT_WARNINGS_AS_ERRORS=OFF",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DS2N_LTO=" .. (package:config("lto") and "ON" or "OFF"))
