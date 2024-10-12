@@ -20,10 +20,18 @@ package("aws-c-cal")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
+    if is_plat("windows","mingw") then
+        add_syslinks("bcrypt", "ncrypt")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    elseif is_plat("macosx", "iphoneos") then
+        add_frameworks("Security", "CoreFoundation")
+    end
+
     add_deps("cmake", "aws-c-common")
 
     on_load(function (package)
-        if not package:is_plat("windows", "mingw", "msys", "macosx", "iphoneos") then
+        if package:is_plat("linux", "bsd", "cross", "android") then
             package:config_set("openssl", true)
         end
         if package:config("openssl") then

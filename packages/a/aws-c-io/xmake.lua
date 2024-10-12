@@ -22,11 +22,11 @@ package("aws-c-io")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_plat("windows") then
+    if is_plat("windows","mingw") then
         add_syslinks("advapi32", "crypt32", "secur32", "ncrypt")
     elseif is_plat("linux", "bsd", "cross") then
         add_deps("s2n-tls")
-    elseif is_plat("macosx") then
+    elseif is_plat("macosx", "iphoneos") then
         add_frameworks("Security")
     end
 
