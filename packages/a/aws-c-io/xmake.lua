@@ -32,7 +32,7 @@ package("aws-c-io")
 
     add_deps("cmake", "aws-c-common", "aws-c-cal")
 
-    on_install("!mingw or mingw|!i386", function (package)
+    on_install("!wasm and (!mingw or mingw|!i386)", function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_IO_USE_IMPORT_EXPORT")
         end

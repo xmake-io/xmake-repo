@@ -42,7 +42,7 @@ package("aws-c-cal")
         end
     end)
 
-    on_install("!mingw or mingw|!i386", function (package)
+    on_install("!wasm and (!mingw or mingw|!i386)", function (package)
         local cmakedir = path.unix(package:dep("aws-c-common"):installdir("lib", "cmake"))
 
         local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_MODULE_PATH=" .. cmakedir}
