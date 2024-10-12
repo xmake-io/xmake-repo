@@ -36,7 +36,7 @@ package("libmem")
             #include <libmem/libmem.h>
             void test() {
                 lm_thread_t resultThread;
-                lm_bool_t result = LM_GetThread(&result);
+                lm_bool_t result = LM_GetThread(&resultThread);
             }
         ]]}, {configs = {languages = "c11"}}))
 
