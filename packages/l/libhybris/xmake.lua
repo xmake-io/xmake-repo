@@ -14,13 +14,13 @@ package("libhybris")
         if package:is_debug() then
             table.insert(configs, "--enable-debug")
         end
-        local ndk_version = package:dep("android"):version()
-        local ndk_version_major = ndk_version:major() or 0
-        local ndk_version_minor = ndk_version:minor() or 0
-        local ndk_version_patch = ndk_version:patch() or 0
+        local android_version = package:dep("android"):version()
+        local android_version_major = android_version:major() or 0
+        local android_version_minor = android_version:minor() or 0
+        local android_version_patch = android_version:patch() or 0
         os.run(
             "sh utils/extract-headers.sh --version %s %s %s", 
-            ndk_version_major .. '.' .. ndk_version_minor .. '.' .. ndk_version_patch,
+            android_version_major .. '.' .. android_version_minor .. '.' .. android_version_patch,
             package:dep("android"):installdir(),
             package:installdir("include")
         )
