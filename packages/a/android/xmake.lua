@@ -8,14 +8,23 @@ package("android")
 
     add_deps("repo")
 
-    -- Generate config based on xml projects in manifest
-    on_load(function (package)
-    
-    end)
+    includes(path.join(os.scriptdir(), "configs.lua"))
+    for _, name in ipairs(get_android_projects()) do
+        add_configs(name, {default = false, type = "boolean"})
+    end
 
     on_install(function (package)
+        local projects_enabled = {}
+        for name, enabled in table.orderpairs(package:configs()) do
+            if not package:extraconf("configs", name, "builtin") and enabled then
+                table.insert(projects_enabled, name)
+            end
+        end
         os.vrun("repo init --partial-clone -b main -u https://android.googlesource.com/platform/manifest")
-        os.vrun("repo sync -j8")
+        for _, project_name in ipairs(projects_enabled) do
+            os.vrun("repo sync " .. project_name)
+        end
+        os.cp("*", package:installdir())
     end)
 
     on_test(function (package)
