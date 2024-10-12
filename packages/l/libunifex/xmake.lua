@@ -4,8 +4,8 @@ package("libunifex")
     set_description("The 'libunifex' project is a prototype implementation of the C++ sender/receiver async programming model that is currently being considered for standardisation.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/facebookexperimental/libunifex/archive/refs/tags/v$(version).tar.gz")
-    add_versions("0.4.0", "d5ce3b616e166da31e6b4284764a1feeba52aade868bcbffa94cfd86b402716e")
+    add_urls("https://github.com/facebookexperimental/libunifex/archive/refs/tags/$(version).tar.gz")
+    add_versions("v0.4.0", "d5ce3b616e166da31e6b4284764a1feeba52aade868bcbffa94cfd86b402716e")
 
     add_deps("cmake")
     
