@@ -45,6 +45,11 @@ package("aws-c-common")
             table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.vcp(path.join(package:buildir(), "*.pdb"), dir)
+        end
     end)
 
     on_test(function (package)

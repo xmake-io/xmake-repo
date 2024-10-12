@@ -18,7 +18,9 @@ package("aws-c-io")
     add_versions("v0.14.5", "2700bcde062f7de1c1cbfd236b9fdfc9b24b4aa6dc0fb09bb156e16e07ebd0b6")
     add_versions("v0.13.32", "2a6b18c544d014ca4f55cb96002dbbc1e52a2120541c809fa974cb0838ea72cc")
 
-    add_configs("asan", {description = "Enable Address Sanitize.", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("windows") then
         add_syslinks("advapi32", "crypt32", "secur32", "ncrypt")
@@ -30,11 +32,12 @@ package("aws-c-io")
 
     add_deps("cmake", "aws-c-common", "aws-c-cal")
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", "bsd", "msys", "cross", function (package)
-        local cmakedir = package:dep("aws-c-common"):installdir("lib", "cmake")
-        if package:is_plat("windows") then
-            cmakedir = cmakedir:gsub("\\", "/")
+    on_install("!mingw or mingw|!i386", function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "USE_WINDOWS_DLL_SEMANTICS", "AWS_IO_USE_IMPORT_EXPORT")
         end
+
+        local cmakedir = path.unix(package:dep("aws-c-common"):installdir("lib", "cmake"))
 
         local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_MODULE_PATH=" .. cmakedir}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -44,6 +47,11 @@ package("aws-c-io")
             table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.vcp(path.join(package:buildir(), "*.pdb"), dir)
+        end
     end)
 
     on_test(function (package)
