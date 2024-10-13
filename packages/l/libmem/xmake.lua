@@ -15,9 +15,9 @@ package("libmem")
             add_syslinks("uuid")
         end
     elseif is_plat("linux") then
-        add_syslinks("dl", "stdc++", "m")
+        add_syslinks("dl", "m")
     elseif is_plat("bsd") then
-        add_syslinks("dl", "kvm", "procstat", "elf", "stdc++", "m")
+        add_syslinks("dl", "kvm", "procstat", "elf", "m")
     end
 
     on_load(function(package)
