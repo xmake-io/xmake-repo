@@ -55,5 +55,5 @@ package("libunifex")
             auto delay(milliseconds ms) {
                 return schedule_after(current_scheduler, ms);
             }
-        ]]}, {configs = {languages = "c++20"},includes = {"chrono", "unifex/on.hpp", "unifex/scheduler_concepts.hpp"}}))
+        ]]}, {configs = {languages = "c++20"}, includes = {"chrono", "unifex/on.hpp", "unifex/scheduler_concepts.hpp"}}))
     end)
