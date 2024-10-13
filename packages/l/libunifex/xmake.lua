@@ -20,10 +20,7 @@ package("libunifex")
     end)
     
     on_install(function (package)
-        local configs = {   "-DBUILD_TESTING=OFF",
-                            "-DUNIFEX_BUILD_EXAMPLES=OFF",
-                            "-DCMAKE_CXX_STANDARD=20",
-                        }
+        local configs = {"-DBUILD_TESTING=OFF", "-DUNIFEX_BUILD_EXAMPLES=OFF", "-DCMAKE_CXX_STANDARD=20"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DALEMBIC_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
@@ -37,5 +34,5 @@ package("libunifex")
             auto delay(milliseconds ms) {
                 return schedule_after(current_scheduler, ms);
             }
-        ]]}, {configs = {languages = "c++20"},includes = {"chrono", "unifex/on.hpp", "unifex/scheduler_concepts.hpp"}}))
+        ]]}, {configs = {languages = "c++20"}, includes = {"chrono", "unifex/on.hpp", "unifex/scheduler_concepts.hpp"}}))
     end)
