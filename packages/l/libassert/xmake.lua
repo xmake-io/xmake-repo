@@ -68,6 +68,11 @@ package("libassert")
             table.insert(configs, "-DLIBASSERT_USE_MAGIC_ENUM=" .. (package:config("magic_enum") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
         end
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.trycp(path.join(package:buildir(), "assert.pdb"), dir)
+        end
     end)
 
     on_test(function (package)
