@@ -12,6 +12,10 @@ package("libunifex")
     add_deps("cmake")
 
     on_check(function (package)
+        if package:is_plat("windows") then
+            local vs = package:toolchain("msvc"):config("vs")
+            assert(vs and tonumber(vs) >= 2022, "package(libunifex): need vs >= 2022.")
+        end
         assert(package:has_cxxincludes("coroutine", {configs = {languages = "c++20"}}), "package(libunifex) require C++20 with coroutine support")
     end)
     
