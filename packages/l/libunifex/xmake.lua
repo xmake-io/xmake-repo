@@ -10,10 +10,15 @@ package("libunifex")
     add_patches("v0.4.0", "patches/v0.4.0/std-memset.patch", "8108bf13b8071cff16e6d96bf97399ed3e657f59d6a843a078e42e4b3318def4")
 
     add_deps("cmake")
+
+    on_check(function (package)
+        assert(package:has_cxxincludes("coroutine", {configs = {languages = "c++20"}}), "package(libunifex) require C++20 with coroutine support")
+    end)
     
     on_install("!windows", function (package)
         local configs = {   "-DBUILD_TESTING=OFF",
                             "-DUNIFEX_BUILD_EXAMPLES=OFF",
+                            "-DCMAKE_CXX_STANDARD=20",
                         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DALEMBIC_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -28,5 +33,5 @@ package("libunifex")
             auto delay(milliseconds ms) {
                 return schedule_after(current_scheduler, ms);
             }
-        ]]}, {configs = {languages = "c++17"},includes = {"chrono", "unifex/on.hpp", "unifex/scheduler_concepts.hpp"}}))
+        ]]}, {configs = {languages = "c++20"},includes = {"chrono", "unifex/on.hpp", "unifex/scheduler_concepts.hpp"}}))
     end)
