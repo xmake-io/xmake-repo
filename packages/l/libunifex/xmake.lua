@@ -15,7 +15,7 @@ package("libunifex")
         assert(package:has_cxxincludes("coroutine", {configs = {languages = "c++20"}}), "package(libunifex) require C++20 with coroutine support")
     end)
     
-    on_install("!windows", function (package)
+    on_install(function (package)
         local configs = {   "-DBUILD_TESTING=OFF",
                             "-DUNIFEX_BUILD_EXAMPLES=OFF",
                             "-DCMAKE_CXX_STANDARD=20",
