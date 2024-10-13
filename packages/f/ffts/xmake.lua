@@ -10,6 +10,14 @@ package("ffts")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check(function (package)
+            if package:has_tool("cc", "clang", "clang_cl") then
+                raise("package(ffts) unsupported clang toolchain")
+            end
+        end)
+    end
+
     on_install(function (package)
         -- remove test
         io.replace("CMakeLists.txt", "endif(ENABLE_STATIC OR ENABLE_SHARED)", "endif(0)", {plain = true})
