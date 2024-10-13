@@ -5,6 +5,11 @@ add_requires("capstone", "keystone")
 
 target("libmem")
     set_kind("$(kind)")
+
+    if is_plat("windows") and is_kind("shared") then
+        add_rules("utils.symbols.export_all", {export_classes = true})
+    end    
+
     add_packages("capstone", "keystone")
     
     add_headerfiles("include/(libmem/*.h)")
