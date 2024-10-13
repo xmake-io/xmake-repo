@@ -7,6 +7,8 @@ package("libunifex")
     add_urls("https://github.com/facebookexperimental/libunifex/archive/refs/tags/$(version).tar.gz")
     add_versions("v0.4.0", "d5ce3b616e166da31e6b4284764a1feeba52aade868bcbffa94cfd86b402716e")
 
+    add_patches("v0.4.0", "patches/v0.4.0/std-memset.patch", "8108bf13b8071cff16e6d96bf97399ed3e657f59d6a843a078e42e4b3318def4")
+
     add_deps("cmake")
     
     on_install("!windows", function (package)
