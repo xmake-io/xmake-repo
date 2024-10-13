@@ -3,12 +3,9 @@ package("libmem")
     set_description("Cross-platform game hacking library for C, C++, Rust, and Python, supporting process/memory hacking, hooking, detouring, and DLL/SO injection.")
     set_license("AGPL-3.0")
 
-    add_urls(
-        "https://github.com/rdbo/libmem/archive/refs/tags/$(version).tar.gz",
-        "https://github.com/rdbo/libmem.git")
+    add_urls("https://github.com/rdbo/libmem/archive/refs/tags/$(version).tar.gz",
+            "https://github.com/rdbo/libmem.git")
     add_versions("5.0.2", "99adea3e86bd3b83985dce9076adda16968646ebd9d9316c9f57e6854aeeab9c")
-
-    --add_patches("5.0.2", path.join(os.scriptdir(), "patches", "cxxexport.patch"), "3b6184cfd3fbc6698c1027f70c6d50890b9c5ed7a689a414cd1b42173fd179e3")
 
     add_deps("capstone", "keystone")
 
@@ -24,7 +21,7 @@ package("libmem")
     end
 
     on_load(function(package)
-        if not package:config("shared") then
+        if package:config("shared") then
             package:add("defines", "LM_EXPORT")
         end
     end)
