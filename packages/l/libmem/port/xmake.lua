@@ -7,8 +7,15 @@ target("libmem")
     set_kind("$(kind)")
 
     if is_plat("windows") and is_kind("shared") then
-        add_rules("utils.symbols.export_all", {export_classes = true})
-    end    
+        add_rules("utils.symbols.export_all", {export_classes = true, export_filter = function (symbol)
+            if symbol:find("libmem", 1, true) then
+                return true
+            end
+        end})
+    end
+    if is_kind("shared") then
+        add_defines("LM_EXPORT")
+    end
 
     add_packages("capstone", "keystone")
     
@@ -54,5 +61,3 @@ target("libmem")
         add_files("internal/winutils/*.c")
         add_files("src/win/*.c")
     end
-
-    add_defines("LM_EXPORT")
