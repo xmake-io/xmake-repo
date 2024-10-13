@@ -22,16 +22,14 @@ package("cpptrace")
 
     add_patches("0.5.2", "https://github.com/jeremy-rifkin/cpptrace/commit/599d6abd6cc74e80e8429fc309247be5f7edd5d7.patch", "977e6c17400ff2f85362ca1d6959038fdb5d9e5b402cfdd705b422c566e8e87a")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("dbghelp")
-    elseif is_plat("macosx") then
-        add_deps("libdwarf")
     elseif is_plat("linux") then
-        add_deps("libdwarf")
         add_syslinks("dl")
-    elseif is_plat("mingw") then
+    end
+
+    if not is_plat("windows") then
         add_deps("libdwarf")
-        add_syslinks("dbghelp")
     end
 
     add_deps("cmake")
