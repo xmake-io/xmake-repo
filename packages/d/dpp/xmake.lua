@@ -67,24 +67,12 @@ package("dpp")
         if not package:config("shared") then
             package:add("defines", "DPP_STATIC")
         end
-        if package:config("have_voice") then
-            wprint([[
-                === Deprecation Warning ===
-                You should move out to use voice flag, instead of have_voice
-                Deprecated:
-                add_requires("dpp", {
-                    configs = {have_voice = true}
-                })
-                New (Recommended):
-                add_requires("dpp", {
-                    configs = {voice = true}
-                })
-                This flag will be removed soon, please migrate ASAP!
-            ]])
-        end
         if package:config("voice") then
             package:add("defines", "HAVE_VOICE")
-            package:add("deps", "libsodium", "libopus")
+            package:add("deps", "libopus")
+            if package:version():lt("v10.0.32") then
+                package:add("deps", "libsodium")
+            end
         end
 
         if package:config("coro") then
