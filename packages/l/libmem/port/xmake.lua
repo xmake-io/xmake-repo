@@ -13,7 +13,9 @@ target("libmem")
             end
         end})
     end
-    add_defines("LM_EXPORT")
+    if is_plat("windows") or is_kind("shared") then
+        add_defines("LM_EXPORT")
+    end
 
     add_packages("capstone", "keystone")
     
