@@ -21,7 +21,9 @@ package("libmem")
     end
 
     on_load(function(package)
-        package:add("defines", "LM_EXPORT")
+        if package:is_plat("windows") or package:config("shared") then
+            package:add("defines", "LM_EXPORT")
+        end
     end)
 
     on_install("windows", "linux", "bsd", function (package)
