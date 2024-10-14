@@ -13,9 +13,7 @@ target("libmem")
             end
         end})
     end
-    if is_kind("shared") then
-        add_defines("LM_EXPORT")
-    end
+    add_defines("LM_EXPORT")
 
     add_packages("capstone", "keystone")
     
