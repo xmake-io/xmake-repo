@@ -13,6 +13,7 @@ package("ginkgo")
     add_configs("cuda",   {description = "Compile kernels for NVIDIA GPUs.", default = false, type = "boolean"})
     add_configs("hip",    {description = "Compile kernels for AMD or NVIDIA GPUs.", default = false, type = "boolean"})
     add_configs("sycl",   {description = "Compile SYCL kernels for Intel GPUs or other SYCL enabled hardware.", default = false, type = "boolean"})
+    add_configs("jacobi_full", {description = "Use all the optimizations for the CUDA Jacobi algorithm.", default = false, type = "boolean"})
 
     add_deps("cmake")
     on_load("windows", "macosx", "linux", function (package)
@@ -20,7 +21,7 @@ package("ginkgo")
             package:add("deps", "openmp")
         end
         if package:config("cuda") then
-            package:add("deps", "cuda")
+            package:add("deps", "cuda", {configs = {utils = {"cublas", "cusparse"}}})
         end
         -- TODO: add hip and sycl
     end)
@@ -33,6 +34,7 @@ package("ginkgo")
         table.insert(configs, "-DGINKGO_BUILD_HIP=" .. (package:config("hip") and "ON" or "OFF"))
         table.insert(configs, "-DGINKGO_BUILD_SYCL=" .. (package:config("sycl") and "ON" or "OFF"))
         table.insert(configs, "-DGINKGO_BUILD_OMP=" .. (package:config("openmp") and "ON" or "OFF"))
+        table.insert(configs, "-DGINKGO_JACOBI_FULL_OPTIMIZATIONS=" .. (package:config("jacobi_full") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
