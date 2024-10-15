@@ -56,11 +56,11 @@ package("stringzilla")
                 os.cp("include/stringzilla/stringzilla.hpp", package:installdir("include/stringzilla"))
             end
         end
-        
+
         if package:version():gt("2.0.4") then
-            os.cp("include/stringzilla/stringzilla.h", package:installdir("include"))
+            os.cp("include/stringzilla/stringzilla.h", package:installdir("include/stringzilla"))
         else
-            os.cp("stringzilla/stringzilla.h", package:installdir("include"))
+            os.cp("stringzilla/stringzilla.h", package:installdir("include/stringzilla"))
         end
     end)
 
@@ -77,8 +77,8 @@ package("stringzilla")
                 assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
             end
         elseif package:version():gt("2.0.0") then
-            assert(package:has_cfuncs("sz_sort", {includes = "stringzilla.h"}))
+            assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
         else
-            assert(package:has_cxxfuncs("strzl_sort", {includes = "stringzilla.h", configs = {languages = "c++17"}}))
+            assert(package:has_cxxfuncs("strzl_sort", {includes = "stringzilla/stringzilla.h", configs = {languages = "c++17"}}))
         end
     end)
