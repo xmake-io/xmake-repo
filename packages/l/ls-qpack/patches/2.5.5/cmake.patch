@@ -1,0 +1,30 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 413b4579..f9f1371d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -42,14 +42,14 @@ else()
+ 	set(LSQPACK_DEPENDS "libxxhash")
+ endif()
+ 
+-if(WIN32)
++if(MSVC OR MINGW OR EMSCRIPTEN)
+     target_include_directories(ls-qpack PUBLIC
+         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/wincompat>
+         $<INSTALL_INTERFACE:include>
+     )
+ endif()
+ 
+-if(WIN32)
++if(MSVC)
+     target_compile_options(ls-qpack PRIVATE
+         /Wall
+         /wd4100 # unreffed parameter
+@@ -144,7 +144,7 @@ if(LSQPACK_BIN)
+           DESTINATION ${CMAKE_INSTALL_BINDIR})
+ endif()
+ 
+-if(WIN32)
++if(MSVC OR MINGW OR EMSCRIPTEN)
+     install(DIRECTORY wincompat/sys DESTINATION include)
+ else()
+     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/lsqpack.pc"
