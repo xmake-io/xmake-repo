@@ -12,8 +12,6 @@ if version then
     add_defines("PACKAGE_VERSION=\"" .. version .. "\"")
 end
 
-set_languages("c++20")
-
 target("plist")
     set_kind("$(kind)")
     add_files("libcnary/*.c|cnary.c", "src/*.c")

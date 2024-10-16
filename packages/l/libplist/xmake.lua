@@ -20,7 +20,7 @@ package("libplist")
     if on_check then
         on_check(function (package)
             if package:is_plat("windows") and package:has_tool("cxx", "cl") then
-                raise("package(libplist) unsupported msvc toolchain, you use clang toolchain")
+                raise("package(libplist) unsupported msvc toolchain now, you can use clang toolchain\nadd_requires(\"libplist\", {configs = {toolchains = \"clang-cl\"}}))")
             end
         end)
     end
