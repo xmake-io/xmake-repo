@@ -35,7 +35,11 @@ package("ginkgo")
         table.insert(configs, "-DGINKGO_BUILD_SYCL=" .. (package:config("sycl") and "ON" or "OFF"))
         table.insert(configs, "-DGINKGO_BUILD_OMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DGINKGO_JACOBI_FULL_OPTIMIZATIONS=" .. (package:config("jacobi_full") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        local opt = {}
+        if package:is_plat("windows") and package:config("shared") then
+            opt.cmake_generator = "" -- do not use ninja
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
