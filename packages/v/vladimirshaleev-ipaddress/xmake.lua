@@ -9,9 +9,9 @@ package("vladimirshaleev-ipaddress")
 
     add_versions("v1.1.0", "e5084d83ebd712210882eb6dac14ed1b9b71584dede523b35c6181e0a06375f1")
 
-    add_configs("exceptions", {description = "Disable handling cpp exception for", default = true, type = "boolean"})
-    add_configs("overload_std", {description = "Do not overload std functions such as to_string, hash etc", default = true, type = "boolean"})
-    add_configs("ipv6_scope", {description = "Disable scope id for IPv6 addresses", default = true, type = "boolean"})
+    add_configs("exceptions", {description = "Support handling cpp exception", default = true, type = "boolean"})
+    add_configs("overload_std", {description = "Overload std functions such as to_string, hash etc", default = true, type = "boolean"})
+    add_configs("ipv6_scope", {description = "Support scope id for IPv6 addresses", default = true, type = "boolean"})
     add_configs("ipv6_scope_max_length", {description = "Maximum scope-id length for IPv6 addresses", default = 16, type = "number"})
 
     add_deps("cmake")
