@@ -66,7 +66,7 @@ package("wxwidgets")
         add_versions("3.2.5", "0ad86a3ad3e2e519b6a705248fc9226e3a09bbf069c6c692a02acf7c2d1c6b51")
 
         add_deps("cmake")
-        add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango")
+        add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango", "at-spi2-core", "gdk-pixbuf", "glib")
         if is_plat("linux") then
             add_deps("opengl")
         end
@@ -136,6 +136,16 @@ package("wxwidgets")
     end)
 
     on_install("macosx", "linux", function (package)
+        -- Notify the user about issues caused by the CMake version.
+        local cmake = package:dep("cmake")
+        local cmake_fetch = cmake:fetch()
+        local major, minor, patch = cmake_fetch.version:match("^(%d+)%.(%d+)%.(%d+)$")
+        local cmake_version = tonumber(major.. minor.. patch)
+        if cmake_version > 3280 then
+            wprint("\ncmake may not find Cmath detail in https://github.com/prusa3d/PrusaSlicer/issues/12169\n")
+        end
+
+        io.replace("build/cmake/modules/FindGTK3.cmake", "QUIET", "REQUIRED")
         local configs = {"-DwxBUILD_TESTS=OFF",
                          "-DwxBUILD_SAMPLES=OFF",
                          "-DwxBUILD_DEMOS=OFF",
@@ -160,7 +170,7 @@ package("wxwidgets")
                 table.insert(configs, "-DGTK3_LIBRARIES=" .. table.concat(libgtk3.links, ";"))
             end
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"pango", "at-spi2-core", "gdk-pixbuf", "glib", "harfbuzz", "cairo"}})
+        import("package.tools.cmake").install(package, configs)
         local version = package:version()
         local subdir = "wx-" .. version:major() .. "." .. version:minor()
         local setupdir = package:is_plat("macosx") and "osx" or "gtk"
