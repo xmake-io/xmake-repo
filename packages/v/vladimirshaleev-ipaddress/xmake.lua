@@ -5,7 +5,7 @@ package("vladimirshaleev-ipaddress")
     set_license("MIT")
 
     add_urls("https://github.com/VladimirShaleev/ipaddress/archive/refs/tags/$(version).tar.gz",
-        "https://github.com/VladimirShaleev/ipaddress.git")
+             "https://github.com/VladimirShaleev/ipaddress.git")
 
     add_versions("v1.1.0", "e5084d83ebd712210882eb6dac14ed1b9b71584dede523b35c6181e0a06375f1")
 
