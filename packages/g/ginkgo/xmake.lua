@@ -15,6 +15,8 @@ package("ginkgo")
     add_configs("sycl",   {description = "Compile SYCL kernels for Intel GPUs or other SYCL enabled hardware.", default = false, type = "boolean"})
     add_configs("jacobi_full", {description = "Use all the optimizations for the CUDA Jacobi algorithm.", default = false, type = "boolean"})
 
+    set_policy("package.cmake_generator.ninja", false)
+
     add_deps("cmake")
     on_load("windows", "macosx", "linux", function (package)
         if package:config("openmp") then
@@ -36,8 +38,8 @@ package("ginkgo")
         table.insert(configs, "-DGINKGO_BUILD_OMP=" .. (package:config("openmp") and "ON" or "OFF"))
         table.insert(configs, "-DGINKGO_JACOBI_FULL_OPTIMIZATIONS=" .. (package:config("jacobi_full") and "ON" or "OFF"))
         local opt = {}
-        if package:is_plat("windows") and package:config("shared") then
-            opt.cmake_generator = "" -- do not use ninja
+        if not (package:is_plat("windows") and package:config("shared")) then
+            opt.cmake_generator = "Ninja"
         end
         import("package.tools.cmake").install(package, configs, opt)
     end)
