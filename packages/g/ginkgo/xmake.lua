@@ -25,6 +25,9 @@ package("ginkgo")
         if package:config("cuda") then
             package:add("deps", "cuda", {configs = {utils = {"cublas", "cusparse"}}})
         end
+        if not (package:is_plat("windows") and package:config("shared")) then
+            package:add("deps", "ninja")
+        end
         -- TODO: add hip and sycl
     end)
 
