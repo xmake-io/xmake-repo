@@ -65,10 +65,10 @@ package("wxwidgets")
         add_versions("3.2.4", "0640e1ab716db5af2ecb7389dbef6138d7679261fbff730d23845ba838ca133e")
         add_versions("3.2.5", "0ad86a3ad3e2e519b6a705248fc9226e3a09bbf069c6c692a02acf7c2d1c6b51")
 
-        add_deps("cmake")
+        add_deps("cmake", {configs = {version = "3.26.4"}})
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango", "at-spi2-core", "glib")
         if is_plat("linux") then
-            add_deps("opengl")
+            add_deps("opengl", "at-spi2-core")
         end
     end
     
@@ -165,13 +165,7 @@ package("wxwidgets")
             table.insert(configs, "-DwxBUILD_DEBUG_LEVEL=2")
         end
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("linux") then
-            local libgtk3 = package:dep("gtk3"):fetch()
-            if libgtk3 then
-                table.insert(configs, "-DGTK3_INCLUDE_DIRS=" .. table.concat(libgtk3.sysincludedirs, ";"))
-                table.insert(configs, "-DGTK3_LIBRARIES=" .. table.concat(libgtk3.links, ";"))
-            end
-        end
+
         import("package.tools.cmake").install(package, configs)
         local version = package:version()
         local subdir = "wx-" .. version:major() .. "." .. version:minor()
