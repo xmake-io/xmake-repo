@@ -1,8 +1,8 @@
 package("vladimirshaleev-ipaddress")
+    set_kind("library", {headeronly = true})
     set_homepage("https://vladimirshaleev.github.io/ipaddress/")
     set_description("A library for working and manipulating IPv4/IPv6 addresses and networks")
     set_license("MIT")
-    set_kind("library", {headeronly = true})
 
     add_urls("https://github.com/VladimirShaleev/ipaddress/archive/refs/tags/$(version).tar.gz",
         "https://github.com/VladimirShaleev/ipaddress.git")
@@ -48,9 +48,5 @@ package("vladimirshaleev-ipaddress")
                 std::cout << "server: " << server << " and client: " << client << " for " << teredo_ip << std::endl << std::endl;
             }
         ]]
-        }, {
-            configs = {
-                languages = "c++17"
-            }
-        }))
+        }, {configs = {languages = "c++17"}}))
     end)
