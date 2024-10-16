@@ -66,7 +66,7 @@ package("wxwidgets")
         add_versions("3.2.5", "0ad86a3ad3e2e519b6a705248fc9226e3a09bbf069c6c692a02acf7c2d1c6b51")
 
         add_deps("cmake")
-        add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango", "at-spi2-core", "gdk-pixbuf", "glib")
+        add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango", "at-spi2-core", "glib")
         if is_plat("linux") then
             add_deps("opengl")
         end
@@ -111,8 +111,10 @@ package("wxwidgets")
             if package:config("shared") then
                 package:add("defines", "WXUSINGDLL")
                 package:add("deps", "libtiff", {configs = {shared = true}})
+                package:add("deps", "gdk-pixbuf", {configs = {shared = true}})
             else
                 package:add("deps", "libtiff")
+                package:add("deps", "gdk-pixbuf")
             end
 
             if is_plat("linux") then
