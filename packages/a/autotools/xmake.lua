@@ -7,5 +7,5 @@ package("autotools")
         add_deps("autoconf", "automake", "libtool")
     end
 
-    on_fetch(function (package)
+    on_install("@linux", "@macosx", "@bsd", "@msys", function (package)
     end)
