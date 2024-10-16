@@ -16,6 +16,21 @@ package("vladimirshaleev-ipaddress")
 
     add_deps("cmake")
 
+    on_load(function (package)
+        if not package:config("exceptions") then
+            package:add("defines", "IPADDRESS_NO_EXCEPTIONS")
+        end
+        if not package:config("overload_std") then
+            package:add("defines", "IPADDRESS_NO_OVERLOAD_STD")
+        end
+        if not package:config("ipv6_scope") then
+            package:add("defines", "IPADDRESS_NO_IPV6_SCOPE")
+            package:add("defines", "IPADDRESS_IPV6_SCOPE_MAX_LENGTH=0")
+        else
+            package:add("defines", "IPADDRESS_IPV6_SCOPE_MAX_LENGTH=" .. package:config("ipv6_scope_max_length"))
+        end
+    end)
+
     on_install(function(package)
         local configs = {"-DBUILD_TESTING=OFF", "-DIPADDRESS_ENABLE_CLANG_TIDY=OFF", "-DIPADDRESS_BUILD_TESTS=OFF",
                          "-DIPADDRESS_BUILD_BENCHMARK=OFF", "-DIPADDRESS_BUILD_DOC=OFF",
@@ -33,19 +48,31 @@ package("vladimirshaleev-ipaddress")
     end)
 
     on_test(function(package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <iostream>
-            #include <ipaddress/ipaddress.hpp>
-            using namespace ipaddress;
-            void parse_ip_sample() {
-                constexpr auto ip = ipv6_address::parse("fec0::1ff:fe23:4567:890a%eth2");
-                std::cout << "DNS PTR " << ip.reverse_pointer() << std::endl << std::endl;
-            }
-            void teredo_sample() {
-                constexpr auto teredo_ip = "2001:0000:4136:e378:8000:63bf:3fff:fdd2"_ipv6;
-                auto [server, client] = teredo_ip.teredo().value();
-                std::cout << "server: " << server << " and client: " << client << " for " << teredo_ip << std::endl << std::endl;
-            }
-        ]]
-        }, {configs = {languages = "c++17"}}))
+        if package:config("overload_std") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <iostream>
+                #include <ipaddress/ipaddress.hpp>
+                using namespace ipaddress;
+                void parse_ip_sample() {
+                    constexpr auto ip = ipv6_address::parse("fec0::1ff:fe23:4567:890a%eth2");
+                    std::cout << "DNS PTR " << ip.reverse_pointer() << std::endl << std::endl;
+                }
+                void teredo_sample() {
+                    constexpr auto teredo_ip = "2001:0000:4136:e378:8000:63bf:3fff:fdd2"_ipv6;
+                    auto [server, client] = teredo_ip.teredo().value();
+                    std::cout << "server: " << server << " and client: " << client << " for " << teredo_ip << std::endl << std::endl;
+                }
+            ]]
+            }, {configs = {languages = "c++17"}}))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                #include <ipaddress/ipaddress.hpp>
+                using namespace ipaddress;
+                auto test_no_overload() {
+                    constexpr auto ip = ipv6_address::parse("fec0::1ff:fe23:4567:890a%eth2");
+                    return ip;
+                }
+            ]]
+            }, {configs = {languages = "c++17"}}))
+        end
     end)
