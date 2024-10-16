@@ -23,7 +23,7 @@ package("libxslt")
         if package:config("thread") and package:is_plat("linux", "bsd") then
             package:add("syslinks", "pthread")
         end
-        if package:is_plat("windows") and not package:config("shared") then
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "LIBXSLT_STATIC")
         end
     end)
