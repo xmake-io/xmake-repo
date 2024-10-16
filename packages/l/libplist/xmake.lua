@@ -3,11 +3,15 @@ package("libplist")
     set_description("Library for Apple Binary- and XML-Property Lists")
     set_license("LGPL-2.1")
 
-    set_urls("https://github.com/libimobiledevice/libplist/archive/$(version).tar.gz",
+    set_urls("https://github.com/libimobiledevice/libplist/archive/refs/tags/$(version).tar.gz",
              "https://github.com/libimobiledevice/libplist.git")
 
     add_versions("2.6.0", "e6491c2fa3370e556ac41b8705dd7f8f0e772c8f78641c3878cabd45bd84d950")
     add_versions("2.2.0", "7e654bdd5d8b96f03240227ed09057377f06ebad08e1c37d0cfa2abe6ba0cee2")
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -20,6 +24,12 @@ package("libplist")
             end
         end)
     end
+
+    on_load(function (package)
+        if not (is_subhost("windows") or package:is_plat("windows", "android", "wasm")) then
+            package:add("deps", "autotools")
+        end
+    end)
 
     on_install(function (package)
         local version = package:version()
