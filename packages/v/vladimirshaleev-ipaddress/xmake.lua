@@ -9,9 +9,9 @@ package("vladimirshaleev-ipaddress")
 
     add_versions("v1.1.0", "e5084d83ebd712210882eb6dac14ed1b9b71584dede523b35c6181e0a06375f1")
 
-    add_configs("noexcept", {description = "Disable handling cpp exception for", default = false, type = "boolean"})
-    add_configs("no_overload_std", {description = "Do not overload std functions such as to_string, hash etc", default = false, type = "boolean"})
-    add_configs("no_ipv6_scope", {description = "Disable scope id for IPv6 addresses", default = false, type = "boolean"})
+    add_configs("exceptions", {description = "Disable handling cpp exception for", default = true, type = "boolean"})
+    add_configs("overload_std", {description = "Do not overload std functions such as to_string, hash etc", default = true, type = "boolean"})
+    add_configs("ipv6_scope", {description = "Disable scope id for IPv6 addresses", default = true, type = "boolean"})
     add_configs("ipv6_scope_max_length", {description = "Maximum scope-id length for IPv6 addresses", default = 16, type = "number"})
 
     add_deps("cmake")
@@ -24,9 +24,9 @@ package("vladimirshaleev-ipaddress")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        table.insert(configs, "-DIPADDRESS_NO_EXCEPTIONS=" .. (package:config("noexcept") and "ON" or "OFF"))
-        table.insert(configs, "-DIPADDRESS_NO_OVERLOAD_STD=" .. (package:config("no_overload_std") and "ON" or "OFF"))
-        table.insert(configs, "-DIPADDRESS_NO_IPV6_SCOPE=" .. (package:config("no_ipv6_scope") and "ON" or "OFF"))
+        table.insert(configs, "-DIPADDRESS_NO_EXCEPTIONS=" .. (package:config("exceptions") and "OFF" or "ON"))
+        table.insert(configs, "-DIPADDRESS_NO_OVERLOAD_STD=" .. (package:config("overload_std") and "OFF" or "ON"))
+        table.insert(configs, "-DIPADDRESS_NO_IPV6_SCOPE=" .. (package:config("ipv6_scope") and "OFF" or "ON"))
         table.insert(configs, "-DIPADDRESS_IPV6_SCOPE_MAX_LENGTH=" .. package:config("ipv6_scope_max_length"))
 
         import("package.tools.cmake").install(package, configs)
