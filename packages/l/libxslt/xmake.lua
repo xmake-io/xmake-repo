@@ -28,7 +28,7 @@ package("libxslt")
         end
     end)
 
-    on_install(function (package)
+    on_install("!iphoneos", function (package)
         local configs = {"-DLIBXSLT_WITH_TESTS=OFF", "-DLIBXSLT_WITH_PYTHON=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBXSLT_WITH_DEBUGGER=" .. (package:is_debug() and "Debug" or "Release"))
