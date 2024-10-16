@@ -1,4 +1,4 @@
-package("ipaddress", function()
+package("vladimirshaleev-ipaddress", function()
     set_homepage("https://vladimirshaleev.github.io/ipaddress/")
     set_description("A library for working and manipulating IPv4/IPv6 addresses and networks")
     set_license("MIT")
