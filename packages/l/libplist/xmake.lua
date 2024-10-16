@@ -29,6 +29,10 @@ package("libplist")
         if not (is_subhost("windows") or package:is_plat("windows", "android", "wasm")) then
             package:add("deps", "autotools")
         end
+
+        if not package:config("shared") then
+            package:add("defines", "LIBPLIST_STATIC")
+        end
     end)
 
     on_install(function (package)

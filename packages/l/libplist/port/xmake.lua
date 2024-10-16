@@ -15,6 +15,7 @@ target("plist")
     add_files("libcnary/*.c", "src/*.c")
     add_includedirs("src", "include", "libcnary/include")
     add_headerfiles("include/(plist/*.h)")
-    if is_plat("windows") and is_kind("shared") then
-        add_rules("utils.symbols.export_all")
+
+    if is_kind("static") then
+        add_defines("LIBPLIST_STATIC")
     end
