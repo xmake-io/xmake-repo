@@ -33,8 +33,7 @@ package("vladimirshaleev-ipaddress")
     end)
 
     on_test(function(package)
-        assert(package:check_cxxsnippets({
-            test = [[
+        assert(package:check_cxxsnippets({test = [[
             #include <iostream>
             #include <ipaddress/ipaddress.hpp>
             using namespace ipaddress;
