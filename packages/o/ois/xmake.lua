@@ -10,9 +10,11 @@ package("ois")
 
     add_deps("cmake")
 
-    if is_plat("linux", "bsd", "android", "wasm", "cross") then
+    if is_plat("linux", "bsd", "android", "cross") then
         add_deps("libx11")
-    elseif is_plat("macosx") then
+    elseif is_plat("wasm") then
+        add_syslinks("x11")
+    elseif is_plat("macosx", "iphoneos") then
         add_frameworks("Cocoa", "Foundation", "Carbon", "IOKit")
     elseif is_plat("windows", "mingw") then
         add_syslinks("dinput8", "dxguid", "ole32", "oleaut32", "user32", "uuid", "xinput", "winmm")
