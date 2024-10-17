@@ -21,11 +21,9 @@ package("ois")
     end
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
-        io.replace("CMakeLists.txt", "DESTINATION include/ois", "DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ois", {plain = true})
         local configs = {
             "-DOIS_BUILD_DEMOS=OFF", 
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
-            "-DCMAKE_INSTALL_INCLUDEDIR=" .. package:installdir("include")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DOIS_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -34,7 +32,7 @@ package("ois")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-        #include <OIS/OIS.h>
+        #include <ois/OIS.h>
 
         class InputListener : public OIS::KeyListener {
         public:
