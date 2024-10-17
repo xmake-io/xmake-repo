@@ -21,7 +21,7 @@ package("ois")
     end
 
     on_install(function (package)
-        local configs = {"-DOIS_BUILD_DEMOS=OFF"}
+        local configs = {"-DOIS_BUILD_DEMOS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DOIS_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
