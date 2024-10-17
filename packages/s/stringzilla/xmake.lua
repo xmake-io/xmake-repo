@@ -7,6 +7,9 @@ package("stringzilla")
     add_urls("https://github.com/ashvardanian/StringZilla/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ashvardanian/StringZilla.git")
 
+    add_configs("cpp", {description = "Enable C++ support.", default = true, type = "boolean"})
+
+    add_versions("v3.10.0", "69729a1403c4609256f861a0221e5331f836b4945f6848472e81183726e436e6")
     add_versions("v3.9.8", "2efaf2eb9b10287efa51fffa4b1e05cf7b426e3404c3c4fd3c141291846c733c")
     add_versions("v3.9.6", "21577e967d79155f5bcbe9bfd885dd817a79666f384fb2a955c0ac5dbf0657a3")
     add_versions("v3.9.5", "2132ffc56ded5951a00f3c7046328f2cfb0c59121252f7303cd33fbe93bc8e97")
@@ -42,7 +45,7 @@ package("stringzilla")
     add_versions("v2.0.3", "6b52a7b4eb8383cbcf83608eaa08e5ba588a378449439b73584713a16d8920e3")
     add_versions("v1.2.2", "2e17c49965841647a1c371247f53b2f576e5fb32fe4b84a080d425b12f17703c")
 
-    on_install("android|!armeabi-v7a or !android", function (package)
+    on_install("android|!armeabi-v7a or (!android and !cross)", function (package)
         if package:version():gt("3.0.0") then
             if package:version():gt("3.9.0") then
                 os.cp("include/stringzilla/drafts.h", package:installdir("include/stringzilla"))
@@ -53,11 +56,11 @@ package("stringzilla")
                 os.cp("include/stringzilla/stringzilla.hpp", package:installdir("include/stringzilla"))
             end
         end
-        
+
         if package:version():gt("2.0.4") then
-            os.cp("include/stringzilla/stringzilla.h", package:installdir("include"))
+            os.cp("include/stringzilla/stringzilla.h", package:installdir("include/stringzilla"))
         else
-            os.cp("stringzilla/stringzilla.h", package:installdir("include"))
+            os.cp("stringzilla/stringzilla.h", package:installdir("include/stringzilla"))
         end
     end)
 
@@ -74,8 +77,8 @@ package("stringzilla")
                 assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
             end
         elseif package:version():gt("2.0.0") then
-            assert(package:has_cfuncs("sz_sort", {includes = "stringzilla.h"}))
+            assert(package:has_cfuncs("sz_sort", {includes = "stringzilla/stringzilla.h"}))
         else
-            assert(package:has_cxxfuncs("strzl_sort", {includes = "stringzilla.h", configs = {languages = "c++17"}}))
+            assert(package:has_cxxfuncs("strzl_sort", {includes = "stringzilla/stringzilla.h", configs = {languages = "c++17"}}))
         end
     end)
