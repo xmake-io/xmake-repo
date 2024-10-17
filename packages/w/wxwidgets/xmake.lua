@@ -147,7 +147,8 @@ package("wxwidgets")
             wprint("\ncmake may not find Cmath detail in https://github.com/prusa3d/PrusaSlicer/issues/12169\n")
         end
 
-        io.replace("build/cmake/modules/FindGTK3.cmake", "QUIET", "REQUIRED")
+        io.replace("build/cmake/modules/FindGTK3.cmake", "FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK3 DEFAULT_MSG GTK3_INCLUDE_DIRS GTK3_LIBRARIES VERSION_OK)", 
+                                                         [[FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK3 DEFAULT_MSG GTK3_INCLUDE_DIRS GTK3_LIBRARY_DIRS GTK3_LIBRARIES VERSION_OK)]], {plain = true})
         local configs = {"-DwxBUILD_TESTS=OFF",
                          "-DwxBUILD_SAMPLES=OFF",
                          "-DwxBUILD_DEMOS=OFF",
