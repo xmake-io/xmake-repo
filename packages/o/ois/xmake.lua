@@ -23,7 +23,7 @@ package("ois")
         add_syslinks("dinput8", "dxguid", "ole32", "oleaut32", "user32", "uuid", "xinput", "winmm")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
         local configs = {
             "-DOIS_BUILD_DEMOS=OFF", 
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
