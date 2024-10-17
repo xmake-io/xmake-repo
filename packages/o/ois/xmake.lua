@@ -11,7 +11,7 @@ package("ois")
     add_deps("cmake")
 
     if is_plat("linux") then
-        add_syslinks("x11")
+        add_syslinks("X11")
     elseif is_plat("macosx") then
         add_frameworks("Cocoa", "Foundation", "Carbon", "IOKit")
     elseif is_plat("windows", "mingw") then
