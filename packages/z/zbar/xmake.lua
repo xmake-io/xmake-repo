@@ -55,8 +55,9 @@ package("zbar")
         end
 
         local libtool = package:dep("libtool")
-        if libtool then
-            os.vrun("autoreconf --force --install -I" .. libtool:installdir("share", "aclocal"))
+        local autoconf = package:dep("autoconf")
+        if libtool and autoconf then
+            os.vrun("autoreconf --force --install -I" .. libtool:installdir("share", "aclocal") .. " -I" .. autoconf:installdir("share", "autoconf", "autoconf"))
         else
             os.vrun("autoreconf --force --install")
         end    
