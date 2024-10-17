@@ -15,6 +15,7 @@ package("gtk3")
 
     if is_plat("linux") then
         add_syslinks("rt")
+        add_syslinks("pthread")
     end
 
     add_includedirs("include", "include/gtk-3.0")
