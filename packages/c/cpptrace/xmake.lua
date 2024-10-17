@@ -6,6 +6,7 @@ package("cpptrace")
     add_urls("https://github.com/jeremy-rifkin/cpptrace/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jeremy-rifkin/cpptrace.git")
 
+    add_versions("v0.7.2", "62835abfd91a840e4d212c850695b576523fe6f9036bc5c3e52183b6eb9905c5")
     add_versions("v0.7.1", "63df54339feb0c68542232229777df057e1848fc8294528613971bbf42889e83")
     add_versions("v0.7.0", "b5c1fbd162f32b8995d9b1fefb1b57fac8b1a0e790f897b81cdafe3625d12001")
     add_versions("v0.6.3", "665bf76645ec7b9e6d785a934616f0138862c36cdb58b0d1c9dd18dd4c57395a")
@@ -21,16 +22,14 @@ package("cpptrace")
 
     add_patches("0.5.2", "https://github.com/jeremy-rifkin/cpptrace/commit/599d6abd6cc74e80e8429fc309247be5f7edd5d7.patch", "977e6c17400ff2f85362ca1d6959038fdb5d9e5b402cfdd705b422c566e8e87a")
 
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("dbghelp")
-    elseif is_plat("macosx") then
-        add_deps("libdwarf")
     elseif is_plat("linux") then
-        add_deps("libdwarf")
         add_syslinks("dl")
-    elseif is_plat("mingw") then
+    end
+
+    if not is_plat("windows") then
         add_deps("libdwarf")
-        add_syslinks("dbghelp")
     end
 
     add_deps("cmake")
