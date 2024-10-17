@@ -35,7 +35,9 @@ package("libxml2")
 
     if on_check then
         on_check("iphoneos", function (package)
-            raise("All version unsupported now. see https://gitlab.gnome.org/GNOME/libxml2/-/issues/774\nYou can use `libxml2 master` branch to build or open a pull request to patch it.")
+            if not package:gitref() then
+                raise("All version unsupported now. see https://gitlab.gnome.org/GNOME/libxml2/-/issues/774\nYou can use `libxml2 master` branch to build or open a pull request to patch it.")
+            end
         end)
     end
 
