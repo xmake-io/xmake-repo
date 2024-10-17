@@ -20,7 +20,19 @@ package("ois")
         add_syslinks("dinput8", "dxguid", "ole32", "oleaut32", "user32", "uuid", "xinput", "winmm")
     end
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
+        io.replace("CMakeLists.txt", "DESTINATION include/ois", "DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ois", {plain = true})
+        io.replace("CMakeLists.txt", [[
+if(UNIX)
+	include(GNUInstallDirs)
+	set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
+else()
+	set(LIB_INSTALL_DIR "lib")
+endif()]], [[
+include(GNUInstallDirs)
+set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
+]], 
+        {plain = true})
         local configs = {"-DOIS_BUILD_DEMOS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DOIS_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
