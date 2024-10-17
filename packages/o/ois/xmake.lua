@@ -12,18 +12,13 @@ package("ois")
 
     if is_plat("linux", "bsd") then
         add_deps("libx11")
-        if is_plat("bsd") then
-            add_deps("linux-headers")
-        end
-    elseif is_plat("android", "cross", "wasm") then
-        add_syslinks("x11")
-    elseif is_plat("macosx", "iphoneos") then
+    elseif is_plat("macosx") then
         add_frameworks("Cocoa", "Foundation", "Carbon", "IOKit")
     elseif is_plat("windows", "mingw") then
         add_syslinks("dinput8", "dxguid", "ole32", "oleaut32", "user32", "uuid", "xinput", "winmm")
     end
 
-    on_install("windows", "linux", "macosx", "bsd", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         local configs = {
             "-DOIS_BUILD_DEMOS=OFF", 
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
