@@ -65,7 +65,7 @@ package("wxwidgets")
         add_versions("3.2.4", "0640e1ab716db5af2ecb7389dbef6138d7679261fbff730d23845ba838ca133e")
         add_versions("3.2.5", "0ad86a3ad3e2e519b6a705248fc9226e3a09bbf069c6c692a02acf7c2d1c6b51")
 
-        add_deps("cmake", {configs = {version = "3.26.4"}})
+        add_deps("cmake 3.26.4")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango", "at-spi2-core", "glib")
         if is_plat("linux") then
             add_deps("opengl", "at-spi2-core")
