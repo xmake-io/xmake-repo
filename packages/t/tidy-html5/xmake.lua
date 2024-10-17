@@ -24,13 +24,23 @@ package("tidy-html5")
             package:add("defines", "TIDY_STATIC")
         end
 
-        local configs = {"-DBUILD_TAB2SPACE=OFF", "-DSUPPORT_CONSOLE_APP=OFF"}
+        local configs = {
+            "-DBUILD_TAB2SPACE=OFF",
+            "-DSUPPORT_CONSOLE_APP=OFF",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DENABLE_DEBUG_LOG=" .. (package:is_debug() and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_ALLOC_DEBUG=" .. (package:is_debug() and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_MEMORY_DEBUG=" .. (package:is_debug() and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if package:is_plat("wasm") then
+            opt.cxflags = "-DHAS_FUTIME=0"
+            package:add("defines", "HAS_FUTIME=0")
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
