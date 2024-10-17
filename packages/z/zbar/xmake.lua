@@ -18,7 +18,7 @@ package("zbar")
         add_deps("libiconv")
     end
 
-    on_install("macosx", "linux", "android", function (package)
+    on_install("macosx", "linux", "android|!windows", function (package)
         local configs = {   "--disable-video",
                             "--without-gtk",
                             "--without-python",
