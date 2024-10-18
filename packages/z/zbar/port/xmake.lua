@@ -35,7 +35,6 @@ target("zbar")
             "zbar/image.c", 
             "zbar/convert.c",
             "zbar/refcnt.c", 
-            "zbar/window.c", 
             "zbar/video.c",
             "zbar/img_scanner.c", 
             "zbar/scanner.c",
