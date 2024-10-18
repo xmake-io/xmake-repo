@@ -30,8 +30,6 @@ target("zbar")
             "zbar/symbol.c",
             "zbar/image.c", 
             "zbar/convert.c",
-            "zbar/processor.c", 
-            "zbar/processor/lock.c",
             "zbar/refcnt.c", 
             "zbar/window.c", 
             "zbar/video.c",
@@ -44,9 +42,8 @@ target("zbar")
     add_files("zbar/decoder/*.c|pdf417*.c")
     add_files("zbar/qrcode/*.c")
     -- "null" implementation for window module and video module
-    add_files("zbar/window/null.c", "zbar/video/null.c")
+    add_files("zbar/window/null.c", "zbar/video/null.c", "zbar/processor/null.c")
+    
     if is_plat("windows", "mingw") then
-        add_files("zbar/processor/win.c", "zbar/libzbar.rc")
-    else 
-        add_files("zbar/processor/posix.c")
+        add_files("zbar/libzbar.rc")
     end
