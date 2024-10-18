@@ -18,10 +18,11 @@ target("zbar")
     add_includedirs("include")
     add_includedirs("zbar")
 
-    add_headerfiles("include/zbar.h", "include/zbar/Scanner.h", "include/zbar/Decoder.h",
+    add_headerfiles("include/zbar.h")
+    add_headerfiles("include/zbar/Scanner.h", "include/zbar/Decoder.h",
         "include/zbar/Exception.h", "include/zbar/Symbol.h", "include/zbar/Image.h",
         "include/zbar/ImageScanner.h", "include/zbar/Video.h", "include/zbar/Window.h",
-        "include/zbar/Processor.h")
+        "include/zbar/Processor.h", {prefixdir = "zbar"})
 
     add_files(
             "zbar/config.c",
