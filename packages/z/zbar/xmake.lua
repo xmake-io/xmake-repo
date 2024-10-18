@@ -19,11 +19,7 @@ package("zbar")
         add_syslinks("pthread")
     end
 
-    if is_plat("macosx") then
-        add_deps("libiconv", {system = true})
-    else
-        add_deps("libiconv")
-    end
+    add_deps("libiconv")
 
     on_install("!iphoneos and !windows", function (package)
         os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "include/config.h.in")

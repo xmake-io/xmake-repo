@@ -1,10 +1,6 @@
 add_rules("mode.debug", "mode.release")
 
-if is_plat("macosx") then
-    add_requires("libiconv", {system = true})
-else
-    add_requires("libiconv")
-end
+add_requires("libiconv")
 
 -- add options
 option("enable_codebar")
