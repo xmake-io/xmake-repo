@@ -10,7 +10,6 @@ end
 option("enable_codebar")
     set_default(true)
     set_description("whether to build support for Codabar symbology")
-    set_configvar("ENABLE_CODABAR", "1")
 option_end()
 if has_config("enable_codebar") then set_configvar("ENABLE_CODABAR", 1) end
 
