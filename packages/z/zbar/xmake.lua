@@ -25,7 +25,7 @@ package("zbar")
         add_deps("libiconv")
     end
 
-    on_install("!iphoneos", function (package)
+    on_install("!iphoneos", "!windows", function (package)
         os.cp(path.join(package:scriptdir(), "port", "config.h"), "include/config.h")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         import("package.tools.xmake").install(package)
