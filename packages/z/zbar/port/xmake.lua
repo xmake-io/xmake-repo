@@ -40,7 +40,7 @@ target("zbar")
             "zbar/misc.c",
             "zbar/sqcode.c")
     -- pdf417 is incomplete
-    add_files("zbar/decoder/*.c|pdf417.c")
+    add_files("zbar/decoder/*.c|pdf417*.c")
     add_files("zbar/qrcode/*.c")
     if is_plat("windows", "mingw") then
         add_files("zbar/processor/win.c", "zbar/libzbar.rc")
