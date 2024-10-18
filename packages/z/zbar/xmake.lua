@@ -3,7 +3,8 @@ package("zbar")
     set_description("Library for reading bar codes from various sources")
     set_license("LGPL-2.1")
 
-    add_urls("https://github.com/mchehab/zbar/archive/refs/tags/$(version).tar.gz")
+    add_urls("https://github.com/mchehab/zbar/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/mchehab/zbar.git")
     add_versions("0.23.93", "212dfab527894b8bcbcc7cd1d43d63f5604a07473d31a5f02889e372614ebe28")
 
     if is_plat("mingw") and is_subhost("msys") then
