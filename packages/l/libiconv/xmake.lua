@@ -50,7 +50,7 @@ package("libiconv")
         })
     end)
 
-    on_install("macosx", "linux", "bsd", "cross", "wasm", function (package)
+    on_install("macosx", "linux", "bsd", "cross", "wasm", "iphoneos", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings", "--enable-relocatable"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
