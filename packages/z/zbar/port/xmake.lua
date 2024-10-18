@@ -43,6 +43,8 @@ target("zbar")
     -- pdf417 is incomplete
     add_files("zbar/decoder/*.c|pdf417*.c")
     add_files("zbar/qrcode/*.c")
+    -- "null" implementation for window module and video module
+    add_files("zbar/processor/null.c", "zbar/window/null.c", "zbar/video/null.c")
     if is_plat("windows", "mingw") then
         add_files("zbar/processor/win.c", "zbar/libzbar.rc")
     else 
