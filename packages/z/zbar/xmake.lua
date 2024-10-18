@@ -6,6 +6,14 @@ package("zbar")
     add_urls("https://github.com/mchehab/zbar/archive/refs/tags/$(version).tar.gz")
     add_versions("0.23.93", "212dfab527894b8bcbcc7cd1d43d63f5604a07473d31a5f02889e372614ebe28")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::zbar")
+    elseif is_plat("linux") then
+        add_extsources("pacman::zbar", "apt::libzbar-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::zbar")
+    end
+
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
