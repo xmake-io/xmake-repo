@@ -26,9 +26,13 @@ package("zbar")
     end
 
     on_install("!iphoneos and !windows", function (package)
-        os.cp(path.join(package:scriptdir(), "port", "config.h"), "include/config.h")
+        os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "include/config.h.in")
+        io.gsub("include/config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-        import("package.tools.xmake").install(package)
+
+        import("package.tools.xmake").install(package, {
+            vers = package:version_str()
+        })
     end)
 
     on_test(function (package)
