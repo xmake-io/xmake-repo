@@ -31,7 +31,7 @@ package("libiconv")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", "mingw", "android", function (package)
+    on_install("windows", "mingw", "android", "iphoneos", function (package)
         io.gsub("config.h.in", "%$", "")
         io.gsub("config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         io.gsub("libcharset/config.h.in", "%$", "")
@@ -50,7 +50,7 @@ package("libiconv")
         })
     end)
 
-    on_install("macosx", "linux", "bsd", "cross", "wasm", "iphoneos", function (package)
+    on_install("macosx", "linux", "bsd", "cross", "wasm", function (package)
         local configs = {"--disable-dependency-tracking", "--enable-extra-encodings", "--enable-relocatable"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
