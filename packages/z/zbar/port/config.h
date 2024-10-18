@@ -117,16 +117,16 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the <jerror.h> header file. */
-#define HAVE_JERROR_H 1
+/* #undef HAVE_JERROR_H */
 
 /* Define to 1 if you have the <jni.h> header file. */
 /* #undef HAVE_JNI_H */
 
 /* Define to 1 if you have the <jpeglib.h> header file. */
-#define HAVE_JPEGLIB_H 1
+/* #undef HAVE_JPEGLIB_H */
 
 /* Define to 1 if you have the 'jpeg' library (-ljpeg). */
-#define HAVE_LIBJPEG 1
+/* #undef HAVE_LIBJPEG */
 
 /* Define to 1 if you have the 'pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1
@@ -390,7 +390,7 @@
 #define VERSION "0.23.93"
 
 /* Define to 1 if the X Window System is missing or not being used. */
-/* #undef X_DISPLAY_MISSING */
+#define X_DISPLAY_MISSING 1
 
 /* Program major version (before the '.') as a number */
 #define ZBAR_VERSION_MAJOR 0
