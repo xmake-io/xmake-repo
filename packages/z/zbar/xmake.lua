@@ -29,10 +29,20 @@ package("zbar")
         os.cp(path.join(package:scriptdir(), "port", "config.h.in"), "include/config.h.in")
         io.gsub("include/config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        
+        local config = { vers = package:version_str() }
 
-        import("package.tools.xmake").install(package, {
-            vers = package:version_str()
-        })
+        -- get LIB_VERSION from configure.ac
+        -- format: AC_SUBST([LIB_VERSION], [3:0:3])
+        configure_ac = io.readfile("configure.ac")
+        for _, key in ipairs({"LIB_VERSION"}) do
+            local value = configure_ac:match("AC_SUBST%(%[" .. key .. "%],%s*%[(.-)%]%)")
+            if value then
+                config[key] = value
+            end
+        end
+
+        import("package.tools.xmake").install(package,config)
     end)
 
     on_test(function (package)

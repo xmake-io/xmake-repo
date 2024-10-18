@@ -86,6 +86,24 @@ if has_config("vers") then
     set_configvar("ZBAR_VERSION_PATCH", patch_ver, {quote = false})
 end
 
+option("LIB_VERSION")
+    set_default("")
+    set_showmenu(true)
+option_end()
+if has_config("LIB_VERSION") then
+    local lib_vers = get_config("LIB_VERSION")
+
+    local cur = lib_vers:match("([^:]+)")
+    local age = lib_vers:match(".*:(.*)$")
+    local major = tonumber(cur) - tonumber(age)
+    local minor = tonumber(age)
+    local revision = lib_vers:match("^[^:]*:([^:]*):.*$")
+
+    set_configvar("LIB_VERSION_MAJOR", major, {quote = false})
+    set_configvar("LIB_VERSION_MINOR", minor, {quote = false})
+    set_configvar("LIB_VERSION_REVISION", revision, {quote = false})
+end
+
 set_configvar("PACKAGE", "zbar")
 set_configvar("PACKAGE_NAME", "zbar")
 set_configvar("PACKAGE_TARNAME", "zbar")
