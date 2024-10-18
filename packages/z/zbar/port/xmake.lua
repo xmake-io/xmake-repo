@@ -1,6 +1,10 @@
 add_rules("mode.debug", "mode.release")
 
-add_requires("libiconv")
+if is_plat("macosx") then
+    add_requires("libiconv", {system = true})
+else
+    add_requires("libiconv")
+end
 
 target("zbar")
     set_kind("$(kind)")
