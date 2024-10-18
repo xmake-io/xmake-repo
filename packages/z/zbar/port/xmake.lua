@@ -3,65 +3,40 @@ add_rules("mode.debug", "mode.release")
 add_requires("libiconv")
 
 -- add options
-option("enable_codebar")
-    set_default(true)
-    set_description("whether to build support for Codabar symbology")
+option("enable-codes")
+    set_default("ean,databar,code128,code93,code39,codabar,i25,qrcode,sqcode")
+    set_description("Select symbologies to compile",
+                    "default=ean,databar,code128,code93,code39,codabar,i25,qrcode,sqcode")
 option_end()
-if has_config("enable_codebar") then set_configvar("ENABLE_CODABAR", 1) end
 
-option("enable_code128")
-    set_default(true)
-    set_description("whether to build support for Code 128 symbology")
-option_end()
-if has_config("enable_code128") then set_configvar("ENABLE_CODE128", 1) end
+local codes =  {{name = "ean",     description = "EAN symbologies"},
+                {name = "databar", description = "DataBar symbology"},
+                {name = "code128", description = "name 128 symbology"},
+                {name = "code93",  description = "name 93 symbology"},
+                {name = "code39",  description = "name 39 symbology"},
+                {name = "codabar", description = "Codabar symbology"},
+                {name = "i25",     description = "Interleaved 2 of 5 symbology"},
+                {name = "qrcode",  description = "QR name"},
+                {name = "sqcode",  description = "SQ name"},
+                {name = "pdf417",  description = "PDF417 symbology (incomplete)"}}
+for _, code in ipairs(codes) do
+    option(code.name)
+        -- set_default(false)
+        add_deps("enable-codes")
+        set_description("whether to build support for " .. code.description)
 
-option("enable_code39")
-    set_default(true)
-    set_description("whether to build support for Code 39 symbology")
-option_end()
-if has_config("enable_code39") then set_configvar("ENABLE_CODE39", 1) end
-
-option("enable_code93")
-    set_default(true)
-    set_description("whether to build support for Code 93 symbology")
-option_end()
-if has_config("enable_code93") then set_configvar("ENABLE_CODE93", 1) end
-
-option("enable_databar")
-    set_default(true)
-    set_description("whether to build support for DataBar symbology")
-option_end()
-if has_config("enable_databar") then set_configvar("ENABLE_DATABAR", 1) end
-
-option("enable_ean")
-    set_default(true)
-    set_description("whether to build support for EAN symbologies")
-option_end()
-if has_config("enable_ean") then set_configvar("ENABLE_EAN", 1) end
-
-option("enable_i25")
-    set_default(true)
-    set_description("whether to build support for Interleaved 2 of 5 symbology")
-option_end()
-if has_config("enable_i25") then set_configvar("ENABLE_I25", 1) end
-
-option("enable_pdf417")
-    set_default(false)
-    set_description("whether to build support for PDF417 symbology (incomplete)")
-option_end()
-if has_config("enable_pdf417") then set_configvar("ENABLE_PDF417", 1) end
-
-option("enable_qrcode")
-    set_default(true)
-    set_description("whether to build support for QR Code")
-option_end()
-if has_config("enable_qrcode") then set_configvar("ENABLE_QRCODE", 1) end
-
-option("enable_sqcode")
-    set_default(true)
-    set_description("whether to build support for SQ Code")
-option_end()
-if has_config("enable_sqcode") then set_configvar("ENABLE_SQCODE", 1) end
+        on_check(function (option)
+            local enabled_codes = option:dep("enable-codes"):value()
+            if enabled_codes then
+                if enabled_codes:find(code.name) or enabled_codes:find("all") then
+                    option:enable(true)
+                end
+            end
+        end)    
+    option_end()
+    
+    if has_config(code.name) then set_configvar("ENABLE_" .. code.name:upper(), 1) end
+end
 
 option("vers")
     set_default("")
@@ -150,34 +125,34 @@ target("zbar")
             "zbar/decoder.c", 
             "zbar/misc.c",
             "zbar/sqcode.c")
-    if has_config("enable_ean") then
+    if has_config("ean") then
         add_files("zbar/decoder/ean.c")
     end
-    if has_config("enable_databar") then
+    if has_config("databar") then
         add_files("zbar/decoder/databar.c")
     end
-    if has_config("enable_code128") then
+    if has_config("code128") then
         add_files("zbar/decoder/code128.c")
     end
-    if has_config("enable_code93") then
+    if has_config("code93") then
         add_files("zbar/decoder/code93.c")
     end
-    if has_config("enable_code39") then
+    if has_config("code39") then
         add_files("zbar/decoder/code39.c")
     end
-    if has_config("enable_codebar") then
+    if has_config("codabar") then
         add_files("zbar/decoder/codabar.c")
     end
-    if has_config("enable_i25") then
+    if has_config("i25") then
         add_files("zbar/decoder/i25.c")
     end
-    if has_config("enable_pdf417") then
+    if has_config("pdf417") then
         add_files("zbar/decoder/pdf417.c")
     end
-    if has_config("enable_qrcode") then
+    if has_config("qrcode") then
         add_files("zbar/decoder/qr_finder.c", "zbar/qrcode/*.c")
     end
-    if has_config("enable_sqcode") then
+    if has_config("sqcode") then
         add_files("zbar/decoder/sq_finder.c")
     end
     
