@@ -73,10 +73,6 @@ target("zbar")
         add_syslinks("pthread")
     end
 
-    if is_plat("windows") and is_kind("shared") then
-        add_rules("utils.symbols.export_all")
-    end
-
     add_packages("libiconv")
     
     add_includedirs("include")
