@@ -3,20 +3,10 @@ add_rules("mode.debug", "mode.release")
 add_requires("libiconv")
 
 -- add options
-local symbologies = {{name = "ean",     files = {"zbar/decoder/ean.c"}},
-                    {name = "databar", files = {"zbar/decoder/databar.c"}},
-                    {name = "code128", files = {"zbar/decoder/code128.c"}},
-                    {name = "code93",  files = {"zbar/decoder/code93.c"}},
-                    {name = "code39",  files = {"zbar/decoder/code39.c"}},
-                    {name = "codabar", files = {"zbar/decoder/codabar.c"}},
-                    {name = "i25",     files = {"zbar/decoder/i25.c"}},
-                    {name = "qrcode",  files = {"zbar/decoder/qr_finder.c", "zbar/qrcode/*.c"}},
-                    {name = "sqcode",  files = {"zbar/decoder/sq_finder.c"}},
-                    {name = "pdf417",  files = {"zbar/decoder/pdf417.c"}}}
-for _, symbology in ipairs(symbologies) do
-    option(symbology.name)
-    option_end()
-end
+option("symbologies")
+    set_default({"ean","databar","code128","code93","code39","codabar","i25","qrcode","sqcode"})
+    set_description("Select symbologies to compile")
+option_end()
 
 option("vers")
     set_default("")
@@ -102,10 +92,23 @@ target("zbar")
             "zbar/misc.c",
             "zbar/sqcode.c")
 
-    for _, symbology in ipairs(symbologies) do
-        if has_config(symbology.name) then
-            add_files(symbology.files)
-            set_configvar("ENABLE_" .. symbology.name:upper(), 1)
+    local symbologies = {{name = "ean",     files = {"zbar/decoder/ean.c"}},
+                        {name = "databar", files = {"zbar/decoder/databar.c"}},
+                        {name = "code128", files = {"zbar/decoder/code128.c"}},
+                        {name = "code93",  files = {"zbar/decoder/code93.c"}},
+                        {name = "code39",  files = {"zbar/decoder/code39.c"}},
+                        {name = "codabar", files = {"zbar/decoder/codabar.c"}},
+                        {name = "i25",     files = {"zbar/decoder/i25.c"}},
+                        {name = "qrcode",  files = {"zbar/decoder/qr_finder.c", "zbar/qrcode/*.c"}},
+                        {name = "sqcode",  files = {"zbar/decoder/sq_finder.c"}},
+                        {name = "pdf417",  files = {"zbar/decoder/pdf417.c"}}}
+    local enabled_symbologies = get_config("symbologies")
+    if enabled_symbologies then
+        for _, symbology in ipairs(symbologies) do
+            if table.contains(enabled_symbologies, symbology.name) or table.contains(enabled_symbologies, "all") then
+                add_files(symbology.files)
+                set_configvar("ENABLE_" .. symbology.name:upper(), 1)
+            end
         end
     end
 

@@ -15,20 +15,7 @@ package("zbar")
         add_extsources("brew::zbar")
     end
 
-    local symbologies = {{name = "ean",     definition = "EAN symbologies", default = true},
-                        {name = "databar", definition = "DataBar symbology", default = true},
-                        {name = "code128", definition = "name 128 symbology", default = true},
-                        {name = "code93",  definition = "name 93 symbology", default = true},
-                        {name = "code39",  definition = "name 39 symbology", default = true},
-                        {name = "codabar", definition = "Codabar symbology", default = true},
-                        {name = "i25",     definition = "Interleaved 2 of 5 symbology", default = true},
-                        {name = "qrcode",  definition = "QR name", default = true},
-                        {name = "sqcode",  definition = "SQ name", default = true},
-                        {name = "pdf417",  definition = "PDF417 symbology (incomplete)"}, default = false}
-
-    for _, symbology in ipairs(symbologies) do
-        add_configs(symbology.name, {description = "whether to build support for " .. symbology.definition, default = symbology.default, type = "boolean"})
-    end
+    add_configs("symbologies", {description = "Select symbologies to compile", default = {"ean","databar","code128","code93","code39","codabar","i25","qrcode","sqcode"}, type = "table"})
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
@@ -41,7 +28,8 @@ package("zbar")
         io.gsub("include/config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         
-        local configs = { vers = package:version_str() }
+        local configs = {   vers = package:version_str(),
+                            symbologies = symbologies }
 
         -- get LIB_VERSION from configure.ac
         -- format: AC_SUBST([LIB_VERSION], [3:0:3])
@@ -50,12 +38,6 @@ package("zbar")
             local value = configure_ac:match("AC_SUBST%(%[" .. key .. "%]%s*,%s*%[(.-)%]%)")
             if value then
                 configs[key] = value
-            end
-        end
-
-        for _, symbology in ipairs(symbologies) do
-            if package:config(symbology.name) then
-                configs[symbology.name] = true
             end
         end
 
