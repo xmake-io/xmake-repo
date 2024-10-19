@@ -4,7 +4,6 @@ add_requires("libiconv")
 
 -- add options
 option("symbologies")
-    -- set_default({"ean","databar","code128","code93","code39","codabar","i25","qrcode","sqcode"})
     set_description("Select symbologies to compile")
 option_end()
 
@@ -13,6 +12,8 @@ option("vers")
     set_showmenu(true)
 option_end()
 if has_config("vers") then
+    set_version(get_config("vers"))
+
     set_configvar("VERSION", get_config("vers"))
     set_configvar("PACKAGE_VERSION", get_config("vers"))
     set_configvar("PACKAGE_STRING", "zbar " .. get_config("vers"))

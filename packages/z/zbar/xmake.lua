@@ -15,7 +15,7 @@ package("zbar")
         add_extsources("brew::zbar")
     end
 
-    add_configs("symbologies", {description = "Select symbologies to compile", default = {"ean","databar","code128","code93","code39","codabar","i25","qrcode","sqcode"}, type = "table"})
+    add_configs("symbologies", {description = "Select symbologies to compile", default = {"ean", "databar", "code128", "code93", "code39", "codabar", "i25", "qrcode", "sqcode"}, type = "table"})
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
