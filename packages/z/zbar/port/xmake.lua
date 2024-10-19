@@ -3,39 +3,19 @@ add_rules("mode.debug", "mode.release")
 add_requires("libiconv")
 
 -- add options
-option("enable-codes")
-    set_default("ean,databar,code128,code93,code39,codabar,i25,qrcode,sqcode")
-    set_description("Select symbologies to compile",
-                    "default=ean,databar,code128,code93,code39,codabar,i25,qrcode,sqcode")
-option_end()
-
-local codes =  {{name = "ean",     description = "EAN symbologies"},
-                {name = "databar", description = "DataBar symbology"},
-                {name = "code128", description = "name 128 symbology"},
-                {name = "code93",  description = "name 93 symbology"},
-                {name = "code39",  description = "name 39 symbology"},
-                {name = "codabar", description = "Codabar symbology"},
-                {name = "i25",     description = "Interleaved 2 of 5 symbology"},
-                {name = "qrcode",  description = "QR name"},
-                {name = "sqcode",  description = "SQ name"},
-                {name = "pdf417",  description = "PDF417 symbology (incomplete)"}}
-for _, code in ipairs(codes) do
-    option(code.name)
-        -- set_default(false)
-        add_deps("enable-codes")
-        set_description("whether to build support for " .. code.description)
-
-        on_check(function (option)
-            local enabled_codes = option:dep("enable-codes"):value()
-            if enabled_codes then
-                if enabled_codes:find(code.name) or enabled_codes:find("all") then
-                    option:enable(true)
-                end
-            end
-        end)    
+local symbologies = {{name = "ean",     files = {"zbar/decoder/ean.c"}},
+                    {name = "databar", files = {"zbar/decoder/databar.c"}},
+                    {name = "code128", files = {"zbar/decoder/code128.c"}},
+                    {name = "code93",  files = {"zbar/decoder/code93.c"}},
+                    {name = "code39",  files = {"zbar/decoder/code39.c"}},
+                    {name = "codabar", files = {"zbar/decoder/codabar.c"}},
+                    {name = "i25",     files = {"zbar/decoder/i25.c"}},
+                    {name = "qrcode",  files = {"zbar/decoder/qr_finder.c", "zbar/qrcode/*.c"}},
+                    {name = "sqcode",  files = {"zbar/decoder/sq_finder.c"}},
+                    {name = "pdf417",  files = {"zbar/decoder/pdf417.c"}}}
+for _, symbology in ipairs(symbologies) do
+    option(symbology.name)
     option_end()
-    
-    if has_config(code.name) then set_configvar("ENABLE_" .. code.name:upper(), 1) end
 end
 
 option("vers")
@@ -125,37 +105,14 @@ target("zbar")
             "zbar/decoder.c", 
             "zbar/misc.c",
             "zbar/sqcode.c")
-    if has_config("ean") then
-        add_files("zbar/decoder/ean.c")
+
+    for _, symbology in ipairs(symbologies) do
+        if has_config(symbology.name) then
+            add_files(symbology.files)
+            set_configvar("ENABLE_" .. symbology.name:upper(), 1)
+        end
     end
-    if has_config("databar") then
-        add_files("zbar/decoder/databar.c")
-    end
-    if has_config("code128") then
-        add_files("zbar/decoder/code128.c")
-    end
-    if has_config("code93") then
-        add_files("zbar/decoder/code93.c")
-    end
-    if has_config("code39") then
-        add_files("zbar/decoder/code39.c")
-    end
-    if has_config("codabar") then
-        add_files("zbar/decoder/codabar.c")
-    end
-    if has_config("i25") then
-        add_files("zbar/decoder/i25.c")
-    end
-    if has_config("pdf417") then
-        add_files("zbar/decoder/pdf417.c")
-    end
-    if has_config("qrcode") then
-        add_files("zbar/decoder/qr_finder.c", "zbar/qrcode/*.c")
-    end
-    if has_config("sqcode") then
-        add_files("zbar/decoder/sq_finder.c")
-    end
-    
+
     -- "null" implementation for window module and video module
     add_files("zbar/window/null.c", "zbar/video/null.c", "zbar/processor/null.c")
     
