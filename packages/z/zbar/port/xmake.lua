@@ -4,7 +4,7 @@ add_requires("libiconv")
 
 -- add options
 option("symbologies")
-    set_default({"ean","databar","code128","code93","code39","codabar","i25","qrcode","sqcode"})
+    -- set_default({"ean","databar","code128","code93","code39","codabar","i25","qrcode","sqcode"})
     set_description("Select symbologies to compile")
 option_end()
 
@@ -105,7 +105,7 @@ target("zbar")
     local enabled_symbologies = get_config("symbologies")
     if enabled_symbologies then
         for _, symbology in ipairs(symbologies) do
-            if table.contains(enabled_symbologies, symbology.name) or table.contains(enabled_symbologies, "all") then
+            if enabled_symbologies:find(symbology.name) or enabled_symbologies:find("all") then
                 add_files(symbology.files)
                 set_configvar("ENABLE_" .. symbology.name:upper(), 1)
             end

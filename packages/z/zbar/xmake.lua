@@ -29,7 +29,7 @@ package("zbar")
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
         
         local configs = {   vers = package:version_str(),
-                            symbologies = symbologies }
+                            symbologies = table.concat(package:config("symbologies"), ",") }
 
         -- get LIB_VERSION from configure.ac
         -- format: AC_SUBST([LIB_VERSION], [3:0:3])
