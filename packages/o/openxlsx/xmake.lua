@@ -21,6 +21,9 @@ package("openxlsx")
         if not package:config("lto") then
             io.replace("CMakeLists.txt", "set_property(TARGET OpenXLSX PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)", "", {plain = true})
         end
+        if package:is_plat("mingw") then
+            io.replace("OpenXLSX/sources/XLDocument.cpp", "#    define stat _stat", "", {plain = true})
+        end
 
         local configs = {
             "-DOPENXLSX_CREATE_DOCS=OFF",
