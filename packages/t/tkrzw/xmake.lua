@@ -15,5 +15,5 @@ package("tkrzw")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxfuncs("tkrzw::ParseCommandArguments", {includes = "tkrzw_cmd_util.h"}))
+        assert(package:has_cxxfuncs("tkrzw::Print()", {includes = "tkrzw_cmd_util.h"}))
     end)
