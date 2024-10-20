@@ -24,7 +24,16 @@ package("gdk-pixbuf")
     add_includedirs("include", "include/gdk-pixbuf-2.0")
 
     add_deps("meson", "ninja")
-    add_deps("libpng", "libjpeg-turbo", "libtiff", "glib", "pcre2")
+    add_deps("libpng", "libjpeg-turbo", "glib", "pcre2")
+
+    on_load(function (package)
+        if package:config("shared") then
+            package:add("deps", "libtiff", {configs = {shared = true}})
+        else
+            package:add("deps", "libtiff")
+        end
+    end)
+
     if is_plat("windows") then
         add_syslinks("iphlpapi", "dnsapi")
         add_deps("pkgconf", "libintl")
