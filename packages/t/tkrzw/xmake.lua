@@ -12,6 +12,7 @@ package("tkrzw")
     end
 
     on_install("linux", function (package)
+        os.vrun("rm configure")
         io.replace("configure.in", "AC_CHECK_LIB(atomic, main)", "")
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
