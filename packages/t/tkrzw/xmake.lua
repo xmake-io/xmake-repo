@@ -7,7 +7,11 @@ package("tkrzw")
 
     add_versions("2024-06-04", "409a57bf7507a4079d0519bc4a023da8ab79e132")
 
-    on_install("macosx", "linux", function (package)
+    if is_plat("linux") then
+        add_syslinks("atomic")
+    end
+
+    on_install("linux", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
