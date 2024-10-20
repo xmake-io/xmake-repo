@@ -14,17 +14,7 @@ option_end()
 if has_config("vers") then
     set_version(get_config("vers"))
 
-    set_configvar("VERSION", get_config("vers"))
-    set_configvar("PACKAGE_VERSION", get_config("vers"))
     set_configvar("PACKAGE_STRING", "zbar " .. get_config("vers"))
-    
-    local vers = get_config("vers"):split("%.")
-    major_ver = vers[1] or ""
-    minor_ver = vers[2] or ""
-    patch_ver = vers[3] or ""
-    set_configvar("ZBAR_VERSION_MAJOR", major_ver, {quote = false})
-    set_configvar("ZBAR_VERSION_MINOR", minor_ver, {quote = false})
-    set_configvar("ZBAR_VERSION_PATCH", patch_ver, {quote = false})
 end
 
 option("LIB_VERSION")

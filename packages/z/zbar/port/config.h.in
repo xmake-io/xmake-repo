@@ -370,7 +370,7 @@
 #undef PACKAGE_URL
 
 /* Define to the version of this package. */
-#undef PACKAGE_VERSION
+#define PACKAGE_VERSION "${VERSION}"
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
@@ -392,13 +392,13 @@
 #undef X_DISPLAY_MISSING
 
 /* Program major version (before the '.') as a number */
-#undef ZBAR_VERSION_MAJOR
+#define ZBAR_VERSION_MAJOR ${VERSION_MAJOR}
 
 /* Program minor version (after '.') as a number */
-#undef ZBAR_VERSION_MINOR
+#define ZBAR_VERSION_MINOR ${VERSION_MINOR}
 
 /* Program patch version (after the second '.') as a number */
-#undef ZBAR_VERSION_PATCH
+#define ZBAR_VERSION_PATCH ${VERSION_ALTER}
 
 /* Define to 1 if necessary to make fseeko visible. */
 #undef _LARGEFILE_SOURCE
