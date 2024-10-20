@@ -12,6 +12,7 @@ package("tkrzw")
     end
 
     on_install("linux", function (package)
+        io.replace("configure.in", "AC_CHECK_LIB(atomic, main)", "")
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
