@@ -14,7 +14,20 @@ package("emio")
 
     add_includedirs("include/emio")
 
-    on_install("linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", "wasm", function (package)
+    if on_check then
+        on_check(function (package)
+            assert(package:check_cxxsnippets({test = [[
+                #include <bit>
+                void test() {
+                    for (unsigned x{0}; x != 8; ++x) {
+                        auto y = std::bit_width(x);
+                    }
+                }
+            ]]}, {configs = {languages = "c++20"}}), "package(emio) Require at least C++20.")
+        end)
+    end
+
+    on_install("!windows", function (package)
         import("package.tools.cmake").install(package)
     end)
 
