@@ -13,8 +13,6 @@ option("vers")
 option_end()
 if has_config("vers") then
     set_version(get_config("vers"))
-
-    set_configvar("PACKAGE_STRING", "zbar " .. get_config("vers"))
 end
 
 option("LIB_VERSION")
