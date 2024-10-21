@@ -3,22 +3,12 @@ add_rules("mode.debug", "mode.release")
 add_requires("libiconv")
 
 -- add options
-option("symbologies")
-    set_description("Select symbologies to compile")
-option_end()
+option("symbologies", {description = "Select symbologies to compile"})
+option("vers", {description = "Set the version"})
+option("LIB_VERSION", {description = "Set the library version"})
 
-option("vers")
-    set_default("")
-    set_showmenu(true)
-option_end()
-if has_config("vers") then
-    set_version(get_config("vers"))
-end
+set_version("$(vers)")
 
-option("LIB_VERSION")
-    set_default("")
-    set_showmenu(true)
-option_end()
 if has_config("LIB_VERSION") then
     local lib_vers = get_config("LIB_VERSION")
 
