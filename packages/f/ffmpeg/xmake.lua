@@ -203,14 +203,30 @@ package("ffmpeg")
         end
 
         if package:is_plat("windows") then
+            table.insert(configs, "--extra-cflags=-" .. package:config("runtimes"))
             if path.cygwin then -- xmake 2.8.9
                 import("package.tools.autoconf")
                 local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
                 -- add gas-preprocessor to PATH
+                print("autoconf libiconv's envs:", envs)
                 if package:is_arch("arm", "arm64") then
                     envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
                 end
+                print("In path.cygwin")
+                try
+                {
+                    function () 
                 autoconf.install(package, configs, {envs = envs})
+                    end,
+                    catch
+                    {
+                        function (errors)
+                            print(errors)
+                            io.cat("ffbuild/config.log")
+                            assert(false)
+                        end
+                    }
+                }
             else
                 import("core.base.option")
                 import("core.tool.toolchain")
@@ -240,6 +256,10 @@ package("ffmpeg")
                 end
 
                 table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
+                print("In others")
+                try
+                {
+                    function () 
                 os.vrunv("./configure", configs, {shell = true, envs = envs})
 
                 local njob = option.get("jobs") or tostring(os.default_njob())
@@ -249,6 +269,16 @@ package("ffmpeg")
                 end
                 os.vrunv("make", argv, {envs = envs})
                 os.vrunv("make", {"install"}, {envs = envs})
+                    end,
+                    catch
+                    {
+                        function (errors)
+                            print(errors)
+                            io.cat("ffbuild/config.log")
+                            assert(false)
+                        end
+                    }
+                }
             end
             if package:config("shared") then
                 -- move .lib from bin/ to lib/
@@ -319,7 +349,20 @@ package("ffmpeg")
             table.insert(configs, "--sysroot=" .. _translate_path(sysroot))
             table.insert(configs, "--cross-prefix=" .. _translate_path(cross_prefix))
             table.insert(configs, "--prefix=" .. _translate_path(package:installdir()))
+            try
+            {
+                function () 
             os.vrunv("./configure", configs, {shell = true})
+                end,
+                catch
+                {
+                    function (errors)
+                        print(errors)
+                        io.cat("ffbuild/config.log")
+                        assert(false)
+                    end
+                }
+            }
             local njob = option.get("jobs") or tostring(os.default_njob())
             local argv = {"-j" .. njob}
             if option.get("verbose") or is_subhost("windows") then -- we always need enable it on windows, otherwise it will fail.
