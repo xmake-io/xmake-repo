@@ -6,6 +6,7 @@ package("cnats")
     add_urls("https://github.com/nats-io/nats.c/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nats-io/nats.c.git")
 
+    add_versions("v3.9.1", "56836bb30a2da93eaa6df0dfa27e796e6be0933b5b3d4d83b5c76d3b80304290")
     add_versions("v3.8.2", "083ee03cf5a413629d56272e88ad3229720c5006c286e8180c9e5b745c10f37d")
 
     add_configs("tls", {description = "Build with TLS support", default = false, type = "boolean"})
