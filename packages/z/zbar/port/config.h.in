@@ -361,7 +361,7 @@
 #undef PACKAGE_NAME
 
 /* Define to the full name and version of this package. */
-#undef PACKAGE_STRING
+#define PACKAGE_STRING "zbar ${VERSION}"
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
