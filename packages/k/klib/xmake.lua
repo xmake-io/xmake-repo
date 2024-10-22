@@ -7,8 +7,8 @@ package("klib")
     add_versions("2024.06.03", "29445495262cf34f4c3b82d3917ac83f3e1f3f58")
 
     add_configs("url", {description = "Enable FILE-like interfaces to libcurl.", default = false, type = "boolean"})
-    add_configs("thread", {description = "simple multi-threading models.", default = false, type = "boolean"})
-    add_configs("open", {description = "smart stream opening.", default = false, type = "boolean"})
+    add_configs("thread", {description = "Enable simple multi-threading models.", default = false, type = "boolean"})
+    add_configs("open", {description = "Enable smart stream opening.", default = false, type = "boolean"})
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")

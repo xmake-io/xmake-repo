@@ -17,7 +17,7 @@ end
 target("klib")
     set_kind("$(kind)")
     add_files("kmath.c", {defines = "M_SQRT2=1.41421356237309504880"})
-    add_files("*.c|rand48.c|kurl.c|kthread.c|kopen.c")
+    add_files("*.c|rand48.c|kurl.c|kthread.c|kopen.c|ksw.c")
     add_includedirs(os.projectdir())
     add_packages("zlib")
 
@@ -29,7 +29,7 @@ target("klib")
         add_syslinks("ws2_32")
     end
 
-    add_headerfiles("*.h|unistd.h|kurl.h|kthread.h|kopen.h")
+    add_headerfiles("*.h|unistd.h|kurl.h|kthread.h|kopen.h|ksw.h")
 
     if has_config("url") then
         add_files("kurl.c")
@@ -44,4 +44,9 @@ target("klib")
     if has_config("open") then
         add_files("kopen.c")
         add_headerfiles("kopen.h")
+    end
+
+    if is_arch("x64", "x86", "x86_64") then
+        add_files("ksw.c")
+        add_headerfiles("ksw.h")
     end
