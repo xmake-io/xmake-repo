@@ -69,6 +69,7 @@ package("wxwidgets")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango", "glib")
         if is_plat("linux") then
             add_deps("opengl", "at-spi2-core")
+            add_patches("3.2.5", "patches/3.2.5/gtk3_cmake.patch", "39f9a47c0136369d6a68af554496d8d1a154be87f59fa8c07746f0a8794a9932")
         end
     end
     
