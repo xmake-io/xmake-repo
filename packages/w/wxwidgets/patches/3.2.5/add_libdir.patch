@@ -24,3 +24,15 @@ index d2939a1..b8f5fab 100644
  
 -mark_as_advanced(GTK3_INCLUDE_DIRS GTK3_LIBRARIES)
 +mark_as_advanced(GTK3_INCLUDE_DIRS GTK3_LIBRARY_DIRS GTK3_LIBRARIES)
+diff --git a/build/cmake/modules/FindWAYLANDEGL.cmake b/build/cmake/modules/FindWAYLANDEGL.cmake
+index ad23bf9..8208d19 100644
+--- a/build/cmake/modules/FindWAYLANDEGL.cmake
++++ b/build/cmake/modules/FindWAYLANDEGL.cmake
+@@ -14,6 +14,7 @@ if (WAYLANDEGL_VERSION)
+     endif ()
+ endif ()
+ 
++link_directories(${WAYLANDEGL_LIBRARY_DIRS})
+ include(FindPackageHandleStandardArgs)
+ FIND_PACKAGE_HANDLE_STANDARD_ARGS(WAYLANDEGL DEFAULT_MSG WAYLANDEGL_LIBRARIES VERSION_OK)
+ 
