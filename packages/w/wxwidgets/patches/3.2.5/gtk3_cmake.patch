@@ -1,5 +1,5 @@
 diff --git a/build/cmake/modules/FindGTK3.cmake b/build/cmake/modules/FindGTK3.cmake
-index d2939a1..1fb0e25 100644
+index d2939a1..b8f5fab 100644
 --- a/build/cmake/modules/FindGTK3.cmake
 +++ b/build/cmake/modules/FindGTK3.cmake
 @@ -29,7 +29,7 @@
@@ -11,7 +11,11 @@ index d2939a1..1fb0e25 100644
  set(VERSION_OK TRUE)
  if (GTK3_VERSION)
  if (GTK3_FIND_VERSION_EXACT)
-@@ -48,6 +48,6 @@ set(CMAKE_REQUIRED_INCLUDES ${GTK3_INCLUDE_DIRS})
+@@ -45,9 +45,10 @@ endif ()
+ # Check for GDK Wayland support
+ include(CheckSymbolExists)
+ set(CMAKE_REQUIRED_INCLUDES ${GTK3_INCLUDE_DIRS})
++link_directories(${GTK3_LIBRARY_DIRS})
  check_symbol_exists(GDK_WINDOWING_WAYLAND "gdk/gdk.h" wxHAVE_GDK_WAYLAND)
  check_symbol_exists(GDK_WINDOWING_X11 "gdk/gdk.h" wxHAVE_GDK_X11)
  include(FindPackageHandleStandardArgs)
