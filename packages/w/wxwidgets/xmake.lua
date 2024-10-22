@@ -69,7 +69,7 @@ package("wxwidgets")
         add_deps("libjpeg", "libpng", "nanosvg", "expat", "zlib", "pango", "glib")
         if is_plat("linux") then
             add_deps("opengl", "at-spi2-core")
-            add_patches("3.2.5", "patches/3.2.5/add_libdir.patch", "9a9fe4d745b4b6b09998ec7a93642d69761a8779d203fbb42a3df8c3d62adeb0")
+            add_patches("<=3.2.5", "patches/3.2.5/add_libdir.patch", "9a9fe4d745b4b6b09998ec7a93642d69761a8779d203fbb42a3df8c3d62adeb0")
         end
     end
     
