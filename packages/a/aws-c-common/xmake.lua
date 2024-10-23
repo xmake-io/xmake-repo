@@ -6,6 +6,7 @@ package("aws-c-common")
     add_urls("https://github.com/awslabs/aws-c-common/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-c-common.git")
 
+    add_versions("v0.9.28", "bf265e9e409d563b0eddcb66e1cb00ff6b371170db3e119348478d911d054317")
     add_versions("v0.9.27", "0c0eecbd7aa04f85b1bdddf6342789bc8052737c6e9aa2ca35e26caed41d06ba")
     add_versions("v0.9.25", "443f3268387715e6e2c417a87114a6b42873aeeebc793d3f6f631323e7c48a80")
     add_versions("v0.9.24", "715a15399fe6dce2971c222ecabea4276e42ba3465a63c175724fc0c80d7a888")
@@ -32,7 +33,11 @@ package("aws-c-common")
     add_deps("cmake")
 
     on_install("!mingw or mingw|!i386", function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "AWS_COMMON_USE_IMPORT_EXPORT")
+        end
+
+        local configs = {"-DBUILD_TESTING=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_SANITIZERS=" .. (package:config("asan") and "ON" or "OFF"))
@@ -40,6 +45,11 @@ package("aws-c-common")
             table.insert(configs, "-DAWS_STATIC_MSVC_RUNTIME_LIBRARY=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.vcp(path.join(package:buildir(), "*.pdb"), dir)
+        end
     end)
 
     on_test(function (package)

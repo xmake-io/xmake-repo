@@ -25,6 +25,7 @@ package("eigen")
     add_includedirs("include/eigen3")
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "add_subdirectory", "#", {plain = true})
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
     end)
 

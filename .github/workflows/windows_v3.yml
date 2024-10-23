@@ -1,0 +1,49 @@
+name: Windows (v3.0)
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2022]
+        kind: [static, shared]
+        arch: [x64]
+
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+        group: ${{ github.ref }}-${{ github.base_ref }}-${{ github.head_ref }}-Windows-v3-${{ matrix.os }}-${{ matrix.kind }}-${{ matrix.arch }}
+        cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v1
+      - uses: xmake-io/github-action-setup-xmake@v1
+        with:
+          xmake-version: branch@master
+
+      - name: Configure Pagefile
+        uses: al-cheb/configure-pagefile-action@v1.4
+        with:
+          minimum-size: 8GB
+          maximum-size: 32GB
+          disk-root: "D:"
+
+      - name: Tests
+        run: |
+          git clone https://github.com/xmake-io/xmake.git --recurse-submodules -b master xmakesrc
+          cd xmakesrc/core
+          xmake
+          cd ../..
+          Copy-Item ./xmakesrc/core/build/xmake.exe ./xmakesrc/xmake
+          Copy-Item ./xmakesrc/scripts/xrepo.bat ./xmakesrc/xmake
+          Copy-Item ./xmakesrc/scripts/xrepo.ps1 ./xmakesrc/xmake
+          $Env:XMAKE_MAIN_REPO = "https://github.com/xmake-io/xmake-repo.git"
+          $Env:XMAKE_PROGRAM_DIR = $(Resolve-Path ./xmakesrc/xmake)
+          Set-Item -Path Env:Path -Value ($Env:XMAKE_PROGRAM_DIR + ";" + $Env:Path)
+          xmake --version
+          xmake l ./scripts/test.lua -vD -a ${{ matrix.arch }} -k ${{ matrix.kind }} --policies=compatibility.version:3.0 --linkjobs=2
+

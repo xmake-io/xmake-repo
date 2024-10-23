@@ -6,6 +6,9 @@ package("thorvg")
     add_urls("https://github.com/thorvg/thorvg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/thorvg/thorvg.git")
 
+    add_versions("v0.15.2", "98fcd73567c003a33fad766a7dbb9244c61e9b4721397d42e7fa04fc2e499dce")
+    add_versions("v0.15.1", "4935228bb11e1a5303fc98d2a4b355c94eb82bff10cff581821b0b3c41368049")
+    add_versions("v0.14.10", "e11e2e27ef26ed018807e828cce3bca1fb9a7f25683a152c9cd1f7aac9f3b67a")
     add_versions("v0.14.6", "13d7778968ce10f4f7dd1ea1f66861d4ee8ff22f669566992b4ac00e050496cf")
     add_versions("v0.14.3", "302e7bb2082a5c4528b6ec9b95d500b2c0f54f4333870a709cc122b5b393dcfe")
     add_versions("v0.14.2", "04202e8f5e17b427c3b16ae3b3d4be5d3f3cdac96d5c64ed3efd7b6db3ad731f")
@@ -92,13 +95,7 @@ package("thorvg")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <thorvg.h>
-            void test() {
-                tvg::Initializer::init(tvg::CanvasEngine::Sw, 0);
-            }
-        ]]}, {configs = {languages = "c++14"}}))
-
+        assert(package:has_cxxfuncs("tvg::Initializer::init(tvg::CanvasEngine::Sw, 0)", {includes = "thorvg.h", configs = {languages = "c++14"}}))
         if package:config("c_api") then
             assert(package:has_cxxfuncs("tvg_engine_init", {includes = "thorvg_capi.h"}))
         end

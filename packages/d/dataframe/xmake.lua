@@ -6,15 +6,60 @@ package("dataframe")
     add_urls("https://github.com/hosseinmoein/DataFrame/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hosseinmoein/DataFrame.git")
 
+    add_versions("3.3.0", "57a722592a29ee8fca902983411c78e7f4179c402a8b0b905f96916c9694672a")
+    add_versions("3.2.0", "44c513ef7956976738c2ca37384a220c5383e95fc363ad933541c6f3eef9d294")
+    add_versions("3.1.0", "09280a81f17d87d171062210c904c1acd94b1cdcf4c040eaa16cc9d224d526d4")
     add_versions("3.0.0", "9266fb85c518a251a5440e490c81615601791f2de2fad8755aa09f13a0c541f9")
     add_versions("1.21.0", "a6b07eaaf628225a34e4402c1a6e311430e8431455669ac03691d92f44081172")
     add_versions("1.22.0", "4b244241cd56893fccb22f7c874588f0d86b444912382ed6e9a4cf95e55ffda2")
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread", "rt")
+    end
+
     add_deps("cmake")
-    
-    on_install("windows", "macosx", "linux", function (package)
+
+    if on_check then
+        on_check(function (package)
+            local version = package:version()
+            if version:lt("3.0.0") then
+                return
+            end
+            if version:eq("3.1.0") then
+                assert(package:has_tool("cxx", "cl", "clang", "clang_cl"), "package(dataframe/3.1.0) Only msvc/clang support")
+            end
+
+            if package:is_plat("windows") then
+                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                if vs_toolset then
+                    local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                    local minor = vs_toolset_ver:minor()
+                    assert(minor and minor >= 30, "package(dataframe) require vs_toolset >= 14.3")
+                end
+            end
+            assert(package:check_cxxsnippets({test = [[
+                #include <algorithm>
+                #include <ranges>
+                #include <vector>
+                void test() {
+                    std::vector<int> x, y;
+                    std::ranges::fill(x, 10);
+                    for (auto&& [a, b] : std::views::zip(x, y)) {}
+                }
+            ]]}, {configs = {languages = "c++23"}}), "package(dataframe) require c++23")
+        end)
+    end
+
+    on_install(function (package)
+        if package:config("shared") then
+            package:add("defines", "HMDF_SHARED")
+        end
+        if package:has_tool("cxx", "cl") then
+            package:add("defines", "_USE_MATH_DEFINES")
+        end
+
         local configs = {"-DCMAKE_CXX_STANDARD=23"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)

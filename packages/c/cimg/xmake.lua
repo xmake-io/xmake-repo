@@ -9,6 +9,7 @@ package("cimg")
     end})
     add_urls("https://github.com/greyclab/cimg.git")
 
+    add_versions("v3.4.3", "87dc0a945a350222253d61dc680fdca3878b92827d63a47a6cb1e1b3772050e0")
     add_versions("v3.4.2", "d427168370301f6d288d9e1c69fcc48d9d4919e977ac5c2ec013ae6ac5613efb")
     add_versions("v3.4.1", "ea8bc2186142eb59fbb391b0debfc4150f839a0b39552bc8093225cf02eda335")
     add_versions("v3.4.0", "987bddc3a98ec684c2ffc7968881adb2626f5b09c90e6102947b3c4acd0de931")

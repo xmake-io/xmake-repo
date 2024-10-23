@@ -36,7 +36,7 @@ package("zydis")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "bsd", "cross", "mingw", "android", function (package)
+    on_install("!wasm and !iphoneos", function (package)
         if package:is_plat("mingw") and package:version():ge("3.2.1") then
             local rc_str = io.readfile("resources/VersionInfo.rc", {encoding = "utf16le"})
             io.writefile("resources/VersionInfo.rc", rc_str, {encoding = "utf8"})

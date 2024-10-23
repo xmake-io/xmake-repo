@@ -17,6 +17,7 @@ local options =
 ,   {'j', "jobs",           "kv", nil, "Set the build jobs."                        }
 ,   {'f', "configs",        "kv", nil, "Set the configs."                           }
 ,   {'d', "debugdir",       "kv", nil, "Set the debug source directory."            }
+,   {nil, "policies",       "kv", nil, "Set the policies."                          }
 ,   {nil, "fetch",          "k",  nil, "Fetch package only."                        }
 ,   {nil, "precompiled",    "k",  nil, "Attemp to install the precompiled package." }
 ,   {nil, "remote",         "k",  nil, "Test package on the remote server."         }
@@ -37,6 +38,7 @@ local options =
 ,   {nil, "appledev",       "kv", nil, "The Apple Device Type"                      }
 ,   {nil, "mingw",          "kv", nil, "Set the MingW directory."                   }
 ,   {nil, "toolchain",      "kv", nil, "Set the toolchain name."                    }
+,   {nil, "toolchain_host", "kv", nil, "Set the host toolchain name."               }
 ,   {nil, "packages",       "vs", nil, "The package list."                          }
 }
 
@@ -68,6 +70,9 @@ function _require_packages(argv, packages)
     end
     if argv.mode then
         table.insert(config_argv, "--mode=" .. argv.mode)
+    end
+    if argv.policies then
+        table.insert(config_argv, "--policies=" .. argv.policies)
     end
     if argv.ndk then
         table.insert(config_argv, "--ndk=" .. argv.ndk)
@@ -110,6 +115,9 @@ function _require_packages(argv, packages)
     if argv.toolchain then
         table.insert(config_argv, "--toolchain=" .. argv.toolchain)
     end
+    if argv.toolchain_host then
+        table.insert(config_argv, "--toolchain_host=" .. argv.toolchain_host)
+    end
     if argv.cflags then
         table.insert(config_argv, "--cflags=" .. argv.cflags)
     end
@@ -119,7 +127,7 @@ function _require_packages(argv, packages)
     if argv.ldflags then
         table.insert(config_argv, "--ldflags=" .. argv.ldflags)
     end
-    os.vexecv("xmake", config_argv)
+    os.vexecv(os.programfile(), config_argv)
     local require_argv = {"require", "-f", "-y"}
     local check_argv = {"require", "-f", "-y", "--check"}
     if not argv.precompiled then
@@ -176,7 +184,7 @@ function _require_packages(argv, packages)
     local install_packages = {}
     if _check_package_is_supported() then
         for _, package in ipairs(packages) do
-            local ok = os.vexecv("xmake", table.join(check_argv, package), {try = true})
+            local ok = os.vexecv(os.programfile(), table.join(check_argv, package), {try = true})
             if ok == 0 then
                 table.insert(install_packages, package)
             end
@@ -185,7 +193,7 @@ function _require_packages(argv, packages)
         install_packages = packages
     end
     if #install_packages > 0 then
-        os.vexecv("xmake", table.join(require_argv, install_packages))
+        os.vexecv(os.programfile(), table.join(require_argv, install_packages))
     else
         print("no testable packages on %s or you're using lower version xmake!", argv.plat or os.subhost())
     end
@@ -278,7 +286,7 @@ function main(...)
         os.tryrm(workdir)
         os.mkdir(workdir)
         os.cd(workdir)
-        os.exec("xmake create test")
+        os.execv(os.programfile(), {"create", "test"})
     else
         os.cd(workdir)
     end
@@ -286,16 +294,16 @@ function main(...)
     print(os.curdir())
     -- do action for remote?
     if os.isdir("xmake-repo") then
-        os.exec("xmake service --disconnect")
+        os.execv(os.programfile(), {"service", "--disconnect"})
     end
     if argv.remote then
         os.tryrm("xmake-repo")
         os.cp(path.join(repodir, "packages"), "xmake-repo/packages")
-        os.exec("xmake service --connect")
+        os.execv(os.programfile(), {"service", "--connect"})
         repodir = "xmake-repo"
     end
-    os.exec("xmake repo --add local-repo %s", repodir)
-    os.exec("xmake repo -l")
+    os.execv(os.programfile(), {"repo", "--add", "local-repo", repodir})
+    os.execv(os.programfile(), {"repo", "-l"})
 
     -- require packages
     _require_packages(argv, packages)

@@ -17,11 +17,12 @@ package("xtd")
         add_extsources("apt::libgsound-dev")
     end
 
-    add_deps("cmake","alsa-lib", "xorgproto")
+    add_deps("cmake","alsa-lib", "xorgproto", "glib", "wxwidgets")
 
     on_load("linux", function (package)
         if package:config("graphic_toolkit") == "wxwidgets" then
             package:add("deps", "wxwidgets")
+            package:add("deps", "gtk3")
         elseif package:config("graphic_toolkit") == "gtk3" then 
             package:add("deps", "gtk3")
         elseif package:config("graphic_toolkit") == "gtk4" then 
@@ -37,7 +38,6 @@ package("xtd")
         -- io.replace("src/","", "" {plain=true})
         local configs = {"-DXTD_NATIVE_GRAPHIC_TOOLKIT=" .. package:config("graphic_toolkit"), "-DXTD_BUILD_TOOLS=OFF", "XTD_INSTALL_RESOURCES"}
         table.insert(configs, "-DXTD_BUILD_SHARED_LIBRARIES=" .. (package:config("shared") and "ON" or "OFF")) 
-        -- table.insert(configs, "-DXTD_NATIVE_GRAPHIC_TOOLKIT=" .. (package:config("graphic_toolkit"))) 
         table.insert(configs, "-DXTD_INSTALL_EXAMPLES=OFF")
         import("package.tools.cmake").install(package, configs)
     end)

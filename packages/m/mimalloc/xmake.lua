@@ -3,7 +3,7 @@ package("mimalloc")
     set_description("mimalloc (pronounced 'me-malloc') is a general purpose allocator with excellent performance characteristics.")
     set_license("MIT")
 
-    set_urls("https://github.com/microsoft/mimalloc/archive/$(version).zip",
+    set_urls("https://github.com/microsoft/mimalloc/archive/refs/tags/$(version).zip",
              "https://github.com/microsoft/mimalloc.git")
 
     add_versions("v2.1.7", "fa61cf01e3dd869b35275bfd8be95bfde77f0b65dfa7e34012c09a66e1ea463f")
@@ -40,7 +40,15 @@ package("mimalloc")
         add_syslinks("atomic")
     end
 
-    on_install("macosx", "windows", "linux", "android", "mingw", "wasm", function (package)
+    on_install(function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "MI_SHARED_LIB")
+        end
+
+        if package:is_plat("wasm") then
+            package:add("ldflags", "-sMALLOC=emmalloc")
+        end
+
         local configs = {
             "-DMI_OVERRIDE=OFF",
             "-DMI_BUILD_TESTS=OFF",
@@ -48,6 +56,7 @@ package("mimalloc")
         }
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DMI_DEBUG_FULL=" .. (package:is_debug() and "ON" or "OFF"))
         table.insert(configs, "-DMI_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DMI_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DMI_SECURE=" .. (package:config("secure") and "ON" or "OFF"))
@@ -67,12 +76,14 @@ package("mimalloc")
             end
         end
 
-        if package:version():ge("2.1.2") then
+        if package:gitref() or package:version():ge("2.1.2") then
             table.insert(configs, "-DMI_INSTALL_TOPLEVEL=ON")
-            if package:is_plat("windows") then
-                table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-            end
             import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+
+            if package:is_plat("windows") and package:is_debug() then
+                local dir = package:installdir(package:config("shared") and "bin" or "lib")
+                os.cp(path.join(package:buildir(), "mimalloc-debug.pdb"), dir)
+            end
         else
             import("package.tools.cmake").build(package, configs, {buildir = "build", cxflags = cxflags})
 
