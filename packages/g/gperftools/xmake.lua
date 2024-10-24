@@ -23,6 +23,20 @@ package("gperftools")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("windows", function (package)
+            assert(package:config("minimal"), "package(gperftools): supports only minimal mode on Windows")
+            if package:is_arch("arm.*") then
+                assert(package:version():ge("2.11"), "package(gperftools): requires version >= 2.11 for Windows on ARM")
+            end
+        end)
+        on_check("macosx", function (package)
+            if macos.version():gt("12") then
+                assert(package:version():ge("2.11"), "package(gperftools): requires version >= 2.11 for macOS 13+")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:is_plat("linux") and package:config("unwind") then
             package:add("deps", "libunwind")
