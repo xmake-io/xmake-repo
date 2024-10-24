@@ -9,7 +9,13 @@ package("imguizmo")
     add_versions("1.89+wip", "82e2465b8d029e2d85002905cc4ed5087e2119fe")
     add_versions("1.91.3+wip", "bcdd86bb8a8019b373e46921c52ef7f2fdaa8b16")
 
-    add_deps("imgui")
+    on_load(function (package)
+        if package:version():lt("1.90") then
+            package:add("deps", "imgui 1.89.x")
+        else
+            package:add("deps", "imgui")
+        end
+    end)
 
     on_install("macosx", "linux", "windows", "mingw", "android", "iphoneos", function (package)
         local imgui = package:dep("imgui")
