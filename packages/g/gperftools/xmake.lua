@@ -25,7 +25,7 @@ package("gperftools")
 
     if on_check then
         on_check("windows", function (package)
-            assert(package:config("minimal"), "package(gperftools): supports only minimal mode on Windows")
+            assert(package:config("minimal"), "package(gperftools): only tcmalloc_minimal is supported on Windows")
             assert(not (package:version():ge("2.11") and package:version():le("2.12")), "package(gperftools): version 2.11 - 2.12 cannot be built on Windows")
             if package:is_arch("arm.*") then
                 assert(package:version():ge("2.13"), "package(gperftools): requires version >= 2.13 for Windows on ARM")
