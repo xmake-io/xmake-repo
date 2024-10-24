@@ -52,7 +52,7 @@ package("gperftools")
         end
     end)
 
-    on_install("windows", "macosx", "linux", function (package)
+    on_install("windows|!arm64", "macosx", "linux", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-Dgperftools_build_benchmark=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DGPERFTOOLS_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
