@@ -18,7 +18,7 @@ package("gperftools")
         add_extsources("brew::gperftools")
     end
 
-    add_configs("minimal", {description = "Build only tcmalloc-minimal (and maybe tcmalloc-minimal-debug)", default = is_plat("windows"), type = "boolean"})
+    add_configs("minimal", {description = "Build only tcmalloc-minimal (and maybe tcmalloc-minimal-debug)", default = is_plat("windows", "mingw"), type = "boolean"})
     add_configs("tcmalloc", {description = "Use tcmalloc", default = true, type = "boolean"})
     add_configs("profiler", {description = "Use profiler", default = true, type = "boolean"})
     if is_plat("linux") then
@@ -28,9 +28,11 @@ package("gperftools")
     add_deps("cmake")
 
     if on_check then
-        on_check("windows", function (package)
-            assert(package:config("minimal"), "package(gperftools): only tcmalloc_minimal is supported on Windows")
-            assert(package:version():ge("2.16") or package:version():eq("2.10"), "package(gperftools): requires version = 2.10 or >= 2.16 for Windows")
+        on_check("windows", "mingw", function (package)
+            assert(package:config("minimal"), "package(gperftools): only tcmalloc_minimal is supported on Windows or MinGW")
+            if is_plat("windows") then
+                assert(package:version():ge("2.16") or package:version():eq("2.10"), "package(gperftools): requires version = 2.10 or >= 2.16 for Windows")
+            end
         end)
         on_check("macosx", function (package)
             if not package:version():ge("2.14") then
@@ -57,7 +59,7 @@ package("gperftools")
         end
     end)
 
-    on_install("windows|!arm64", "macosx", "linux", function (package)
+    on_install("windows|!arm64", "macosx", "linux", "mingw", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-Dgperftools_build_benchmark=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DGPERFTOOLS_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
