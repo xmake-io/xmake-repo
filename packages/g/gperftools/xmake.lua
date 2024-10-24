@@ -4,7 +4,9 @@ package("gperftools")
     set_description("gperftools is a collection of a high-performance multi-threaded malloc() implementation, plus some pretty nifty performance analysis tools.")
     set_license("BSD-3-Clause")
 
-    add_urls("https://github.com/gperftools/gperftools/archive/refs/tags/gperftools-$(version).tar.gz")
+    add_urls("https://github.com/gperftools/gperftools/archive/refs/tags/gperftools-$(version).tar.gz",
+             "https://github.com/gperftools/gperftools.git")
+
     add_versions("2.16", "737be182b4e42f5c7f595da2a7aa59ce0489a73d336d0d16847f2aa52d5221b4")
     add_versions("2.15", "3918ff2e21bb3dbb5a801e1daf55fb20421906f7c42fbb482bede7bdc15dfd2e")
     add_versions("2.14", "ab456a74af2f57a3ee6c20462f73022d11f7ffc22e470fc06dec39692c0ee5f3")
