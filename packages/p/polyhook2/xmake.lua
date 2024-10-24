@@ -17,7 +17,7 @@ package("polyhook2")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
-            local static_runtime = package:runtimes():startswith("MT")
+            local static_runtime = package:has_runtime("MT", "MTd")
             table.insert(configs, "-DPOLYHOOK_BUILD_STATIC_RUNTIME=" .. (static_runtime and "ON" or "OFF"))
             if not static_runtime then
                 table.insert(configs, "-DPOLYHOOK_BUILD_SHARED_ASMTK=ON")
