@@ -56,6 +56,13 @@ package("libssh")
         table.insert(configs, "-DWITH_MBEDTLS=" .. (backend == "mbedtls" and "ON" or "OFF"))
         table.insert(configs, "-DWITH_GCRYPT=" .. (backend == "libgcrypt" and "ON" or "OFF"))
 
+        local openssl = package:dep("openssl")
+        if openssl then
+            if not openssl:is_system() then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+            end
+        end
+
         if package:is_plat("windows") then
             os.mkdir(path.join(package:buildir(), "src/pdb"))
         end
