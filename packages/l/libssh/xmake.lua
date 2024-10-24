@@ -18,43 +18,43 @@ package("libssh")
 
     add_versions("gitlab:0.11.1", "7d0d064b7d44420036f410d4dd3f05ad6ada61d21314d1e9d424a2e9970d1b68")
 
-    add_configs("backend", {description = "Select crypto backend.", default = (is_plat("wasm") and "mbedtls" or "openssl"), type = "string", values = {"openssl", "mbedtls", "libgcrypt"}})
+    add_configs("zlib", {description = "Build with zlib", default = false, type = "boolean"})
+    add_configs("backend", {description = "Select crypto backend.", default = (is_plat("wasm", "iphoneos") and "mbedtls" or "openssl"), type = "string", values = {"openssl", "mbedtls", "libgcrypt"}})
 
     if is_plat("windows", "mingw") then
-        add_syslinks("iphlpapi")
+        add_syslinks("iphlpapi", "shell32")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
     add_deps("cmake")
-    add_deps("zlib")
 
     on_load(function (package)
+        if package:config("zlib") then
+            package:add("deps", "zlib")
+        end
         package:add("deps", package:config("backend"))
 
-        if package:is_plat("windows") and not package:config("shared") then
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "LIBSSH_STATIC")
         end
     end)
 
-    on_install(function (package)
+    on_install("!android", function (package)
         io.replace("src/CMakeLists.txt", "iphlpapi", "iphlpapi\ncrypt32", {plain = true})
 
         local configs = {
             "-DWITH_EXAMPLES=OFF",
-            "-DWITH_ZLIB=ON",
+            "-DWITH_GSSAPI=OFF",
+            "-DWITH_NACL=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         local backend = package:config("backend")
-        local backend_configs = {
-            mbedtls   = "-DWITH_MBEDTLS=ON",
-            libgcrypt = "-DWITH_GCRYPT=ON",
-        }
-        if backend ~= "openssl" then
-            table.insert(configs, backend_configs[backend])
-        end
+        table.insert(configs, "-DWITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_MBEDTLS=" .. (backend == "mbedtls" and "ON" or "OFF"))
+        table.insert(configs, "-DWITH_GCRYPT=" .. (backend == "libgcrypt" and "ON" or "OFF"))
 
         if package:is_plat("windows") then
             os.mkdir(path.join(package:buildir(), "src/pdb"))
