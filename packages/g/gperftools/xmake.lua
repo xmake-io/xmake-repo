@@ -37,7 +37,7 @@ package("gperftools")
         on_check("macosx", function (package)
             if not package:version():ge("2.14") then
                 if not (package:version():eq("2.10") and macos.version():le("12")) then
-                    assert(false, "package(gperftools): requires version >= 2.14 for macOS")
+                    raise("package(gperftools): requires version >= 2.14 for macOS")
                 end
             end
         end)
