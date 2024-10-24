@@ -5,12 +5,9 @@ package("gperftools")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/gperftools/gperftools/archive/refs/tags/gperftools-$(version).tar.gz")
-    -- add_versions("2.16", "737be182b4e42f5c7f595da2a7aa59ce0489a73d336d0d16847f2aa52d5221b4")
-    -- add_versions("2.15", "3918ff2e21bb3dbb5a801e1daf55fb20421906f7c42fbb482bede7bdc15dfd2e")
-    -- add_versions("2.14", "ab456a74af2f57a3ee6c20462f73022d11f7ffc22e470fc06dec39692c0ee5f3")
-    add_versions("2.13", "fd43adbe0419cb0eaaa3e439845cc89fe7d42c22eff7fd2d6b7e87ae2acbce1d")
-    add_versions("2.12", "1cc42af8c0ec117695ecfa49ef518d9eaf7b215a2657b51f655daa2dc07101ce")
-    add_versions("2.11", "b0d32b3d82da0ddac2a347412b50f97efddeae66dfbceb49455b7262fb965434")
+    add_versions("2.16", "737be182b4e42f5c7f595da2a7aa59ce0489a73d336d0d16847f2aa52d5221b4")
+    add_versions("2.15", "3918ff2e21bb3dbb5a801e1daf55fb20421906f7c42fbb482bede7bdc15dfd2e")
+    add_versions("2.14", "ab456a74af2f57a3ee6c20462f73022d11f7ffc22e470fc06dec39692c0ee5f3")
     add_versions("2.10", "b0dcfe3aca1a8355955f4b415ede43530e3bb91953b6ffdd75c45891070fe0f1")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
@@ -26,15 +23,13 @@ package("gperftools")
     if on_check then
         on_check("windows", function (package)
             assert(package:config("minimal"), "package(gperftools): only tcmalloc_minimal is supported on Windows")
-            assert(not (package:version():ge("2.11") and package:version():le("2.12")), "package(gperftools): version 2.11 - 2.12 cannot be built on Windows")
-            if package:is_arch("arm.*") then
-                assert(package:version():ge("2.13"), "package(gperftools): requires version >= 2.13 for Windows on ARM")
-            end
+            assert(package:version():ge("2.16"), "package(gperftools): requires version >= 2.16 for Windows")
         end)
         on_check("macosx", function (package)
-            assert(not (package:version():ge("2.11") and package:version():le("2.12")), "package(gperftools): version 2.11 - 2.12 cannot be built on macOS")
-            if macos.version():gt("12") then
-                assert(package:version():ge("2.13"), "package(gperftools): requires version >= 2.13 for macOS 13+")
+            if not package:version():ge("2.14") then
+                if not (package:version():eq("2.10") and macos.version():le("12")) then
+                    assert(false, "package(gperftools): requires version >= 2.14 for macOS")
+                end
             end
         end)
     end
