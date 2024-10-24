@@ -74,6 +74,7 @@ package("gperftools")
         end
 
         io.replace("CMakeLists.txt", "if(MINGW OR MSVC)", "if(MINGW OR MSVC)\nlink_libraries(psapi synchronization shlwapi)", {plain = true})
+        io.replace("src/windows/port.h", "inline int nanosleep", "extern \"C\" inline int nanosleep", {plain = true})
 
         if package:version():le("2.15") then
             import("package.tools.cmake").install(package, configs)
