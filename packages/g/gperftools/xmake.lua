@@ -32,6 +32,8 @@ package("gperftools")
             assert(package:config("minimal"), "package(gperftools): only tcmalloc_minimal is supported on Windows or MinGW")
             if is_plat("windows") then
                 assert(package:version():ge("2.16") or package:version():eq("2.10"), "package(gperftools): requires version = 2.10 or >= 2.16 for Windows")
+            else
+                assert(package:version():ge("2.16"), "package(gperftools): requires version >= 2.16 for MinGW")
             end
         end)
         on_check("macosx", function (package)
