@@ -18,7 +18,6 @@ package("gperftools")
         add_extsources("brew::gperftools")
     end
 
-    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
     add_configs("minimal", {description = "Build only tcmalloc-minimal (and maybe tcmalloc-minimal-debug)", default = is_plat("windows"), type = "boolean"})
     add_configs("tcmalloc", {description = "Use tcmalloc", default = true, type = "boolean"})
     add_configs("profiler", {description = "Use profiler", default = true, type = "boolean"})
