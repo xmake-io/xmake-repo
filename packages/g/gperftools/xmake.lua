@@ -31,7 +31,7 @@ package("gperftools")
     if on_check then
         on_check("windows", function (package)
             assert(package:config("minimal"), "package(gperftools): only tcmalloc_minimal is supported on Windows")
-            assert(package:version():ge("2.16"), "package(gperftools): requires version >= 2.16 for Windows")
+            assert(package:version():ge("2.16") or package:version():eq("2.10"), "package(gperftools): requires version = 2.10 or >= 2.16 for Windows")
         end)
         on_check("macosx", function (package)
             if not package:version():ge("2.14") then
