@@ -11,7 +11,7 @@ package("imguizmo")
 
     on_load(function (package)
         if package:version():lt("1.90") then
-            package:add("deps", "imgui 1.89.x")
+            package:add("deps", "imgui <=1.89.3")
         else
             package:add("deps", "imgui")
         end
