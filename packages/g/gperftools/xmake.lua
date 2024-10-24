@@ -15,8 +15,8 @@ package("gperftools")
 
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
     add_configs("minimal", {description = "Build only tcmalloc-minimal (and maybe tcmalloc-minimal-debug)", default = is_plat("windows"), type = "boolean"})
-    add_configs("tcmalloc", {description = "Link with tcmalloc.", default = true, type = "boolean"})
-    add_configs("profiler", {description = "Link with profiler.", default = true, type = "boolean"})
+    add_configs("tcmalloc", {description = "Use tcmalloc", default = true, type = "boolean"})
+    add_configs("profiler", {description = "Use profiler", default = true, type = "boolean"})
     if is_plat("linux") then
         add_configs("unwind", {description = "Enable libunwind support.", default = false, type = "boolean"})
     end
@@ -30,7 +30,7 @@ package("gperftools")
 
         if package:config("tcmalloc") then
             local libsuffix = package:config("minimal") and "_minimal" or ""
-            libsuffix = package:debug() and libsuffix .. "_debug" or libsuffix
+            libsuffix = package:is_debug() and libsuffix .. "_debug" or libsuffix
             package:add("links", "tcmalloc" .. libsuffix)
         end
 
@@ -41,7 +41,7 @@ package("gperftools")
 
     on_install("windows", "macosx", "linux", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-Dgperftools_build_benchmark=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DGPERFTOOLS_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-Dgperftools_build_minimal=" .. (package:config("minimal") and "ON" or "OFF"))
         if package:is_plat("linux") then
