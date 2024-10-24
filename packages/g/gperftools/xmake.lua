@@ -12,6 +12,12 @@ package("gperftools")
     add_versions("2.14", "ab456a74af2f57a3ee6c20462f73022d11f7ffc22e470fc06dec39692c0ee5f3")
     add_versions("2.10", "b0dcfe3aca1a8355955f4b415ede43530e3bb91953b6ffdd75c45891070fe0f1")
 
+    if is_plat("linux") then
+        add_extsources("pacman::gperftools", "apt::libgoogle-perftools-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::gperftools")
+    end
+
     add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = is_plat("windows")})
     add_configs("minimal", {description = "Build only tcmalloc-minimal (and maybe tcmalloc-minimal-debug)", default = is_plat("windows"), type = "boolean"})
     add_configs("tcmalloc", {description = "Use tcmalloc", default = true, type = "boolean"})
