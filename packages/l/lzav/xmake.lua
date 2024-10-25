@@ -12,6 +12,7 @@ package("lzav")
     add_versions("2.14", "98a715dc744d86224c941421beddaf3fcc0defd62ccfad7082eedf83be42dbbd")
 
     on_install(function (package)
+        io.replace("lzav.h", "_refblk:", "_refblk:\n;", {plain = true})
         os.cp("lzav.h", package:installdir("include"))
    end)
 
