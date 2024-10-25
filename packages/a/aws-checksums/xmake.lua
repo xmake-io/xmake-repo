@@ -6,6 +6,7 @@ package("aws-checksums")
     add_urls("https://github.com/awslabs/aws-checksums/archive/refs/tags/$(version).tar.gz",
              "https://github.com/awslabs/aws-checksums.git")
 
+    add_versions("v0.2.0", "aae619de7fb5908a52223eae3b80fae70260eed5919ad4c385b2d5a144a641f0")
     add_versions("v0.1.20", "12f80085993662b6d2cbd2d090b49b4350d19396b1d218d52323712cc8dee252")
     add_versions("v0.1.19", "844e5a4f659f454112c559d4f4043b7accfbb134e47a55f4c55f79d9c71bdab1")
     add_versions("v0.1.18", "bdba9d0a8b8330a89c6b8cbc00b9aa14f403d3449b37ff2e0d96d62a7301b2ee")
