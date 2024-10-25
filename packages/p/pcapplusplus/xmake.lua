@@ -12,6 +12,7 @@ package("pcapplusplus")
     add_patches("v24.09", "patches/v24.09/vla.patch", "8c380468c78118b6d85f6b3856cd49c4d890fd326dde3400b8c47c01c885cef4")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    add_configs("zstd", {description = "Support compile with zstd", default = false, type = "boolean"})
 
     add_links("Pcap++", "Packet++", "Common++")
 
@@ -29,6 +30,12 @@ package("pcapplusplus")
     elseif is_plat("linux", "macosx", "android", "bsd") then
         add_deps("libpcap")
     end
+
+    on_load(function (package)
+        if package:config("zstd") then
+            package:add("deps", "zstd")
+        end
+    end)
 
     on_install("windows", "mingw", "linux", "macosx", "android", "bsd", function (package)
         local configs = {
