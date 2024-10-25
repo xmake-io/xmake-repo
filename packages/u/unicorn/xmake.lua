@@ -38,10 +38,14 @@ package("unicorn")
         table.insert(configs, "-DUNICORN_ARCH=" .. archs)
         import("package.tools.cmake").install(package, configs)
 
+        if package:config("shared") then
+            os.tryrm(package:installdir("lib/unicorn.lib"))
+            os.rm(package:installdir("lib/*.a"))
+        end
+
         if package:is_plat("windows") then
             if package:config("shared") then
                 io.replace(package:installdir("include/unicorn/unicorn.h"), "__declspec(dllexport)", "__declspec(dllimport)", {plain = true})
-                os.rm(package:installdir("lib/unicorn.lib"))
             end
             if package:is_debug() then
                 local dir = package:installdir(package:config("shared") and "bin" or "lib")
