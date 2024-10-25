@@ -43,6 +43,7 @@ package("pcapplusplus")
             "-DPCAPPP_BUILD_TESTS=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DLIGHT_PCAPNG_ZSTD=" .. (package:config("zstd") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
