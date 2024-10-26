@@ -25,7 +25,7 @@ package("unicorn")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "cross", function (package)
+    on_install("windows|!arm64", "macosx", "linux", "cross", function (package)
         io.replace("CMakeLists.txt", "if(UNICORN_INSTALL AND NOT MSVC)", "if(1)", {plain = true})
 
         local configs = {"-DUNICORN_BUILD_TESTS=OFF"}
