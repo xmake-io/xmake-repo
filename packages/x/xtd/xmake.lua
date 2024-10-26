@@ -15,14 +15,17 @@ package("xtd")
 
     if is_plat("linux") then
         add_extsources("apt::libgsound-dev")
-    end
+        add_patches("v0.1.2", "patches/v0.1.2/add_wxwidgets_to_tools.patch", "f54c33316e7e5acb733a4c3f5ec785bcb36db7ecab868142750f5b3e20069f20")
+    end 
 
-    add_deps("cmake","alsa-lib", "xorgproto", "glib", "wxwidgets")
+    add_deps("cmake","alsa-lib", "xorgproto", "glib", "wxwidgets", "gtk3")
+    add_links("xtd", "xtd.core", "xtd.forms", "xtd.drawing", "xtd.tunit", "xtd.forms.native.wxwidgets", "xtd.3rdparty.call_stack", "xtd.core.native.unix", "xtd.drawing.native.wxwidgets")
 
     on_load("linux", function (package)
         if package:config("graphic_toolkit") == "wxwidgets" then
             package:add("deps", "wxwidgets")
-            package:add("deps", "gtk3")
+            package:add("deps", "wayland")
+            package:add("deps", "libepoxy")
         elseif package:config("graphic_toolkit") == "gtk3" then 
             package:add("deps", "gtk3")
         elseif package:config("graphic_toolkit") == "gtk4" then 
@@ -35,10 +38,12 @@ package("xtd")
     end)    
 
     on_install("linux", function (package)
-        -- io.replace("src/","", "" {plain=true})
-        local configs = {"-DXTD_NATIVE_GRAPHIC_TOOLKIT=" .. package:config("graphic_toolkit"), "-DXTD_BUILD_TOOLS=OFF", "XTD_INSTALL_RESOURCES"}
+        print("\n\n\n\n\nthe toolkit is " ..  package:config("graphic_toolkit") .. "\n\n\n\n")
+        local configs = {" --log-level=VERBOSE", "-DXTD_NATIVE_GRAPHIC_TOOLKIT=" ..  package:config("graphic_toolkit"), "-DXTD_INSTALL_RESOURCES=OFF", "-DXTD_BUILD_TOOL_SLEEPFOR_COMMAND_LINE=OFF"}
         table.insert(configs, "-DXTD_BUILD_SHARED_LIBRARIES=" .. (package:config("shared") and "ON" or "OFF")) 
         table.insert(configs, "-DXTD_INSTALL_EXAMPLES=OFF")
+        table.insert(configs, "-DXTD_BUILD_TOOL_GUIDGEN_GUI=OFF")
+        table.insert(configs, "-DXTD_BUILD_TOOL_GUIDGEN_COMMAND_LINE=OFF")
         import("package.tools.cmake").install(package, configs)
     end)
 
