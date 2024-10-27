@@ -7,7 +7,7 @@ package("libcanberra")
     add_urls("http://0pointer.de/lennart/projects/libcanberra/libcanberra-$(version).tar.xz")
     add_versions("0.30", "c2b671e67e0c288a69fc33dc1b6f1b534d07882c2aceed37004bf48c601afa72")
 
-    add_deps("libtool", {configs = {kind_libtool = library}})
+    add_deps("libtool", {kind = "library"})
     add_deps("autoconf", "automake", "m4")
     add_deps("libogg", "alsa-lib")
 
