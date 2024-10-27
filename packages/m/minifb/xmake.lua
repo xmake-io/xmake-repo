@@ -19,7 +19,7 @@ package("minifb")
         add_syslinks("gdi32", "opengl32", "user32", "winmm")
     end
 
-    on_install("!android and !cross", function (package)
+    on_install("!android and !cross and !bsd", function (package)
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", "add_definitions(-D_DEBUG)", "", {plain = true}) -- fix M[D|T]d
         end

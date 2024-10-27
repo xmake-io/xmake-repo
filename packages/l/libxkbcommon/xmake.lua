@@ -3,7 +3,7 @@ package("libxkbcommon")
     set_description("keymap handling library for toolkits and window systems")
     set_license("MIT")
 
-    add_urls("https://github.com/xkbcommon/libxkbcommon/archive/xkbcommon-$(version).tar.gz",
+    add_urls("https://github.com/xkbcommon/libxkbcommon/archive/refs/tags/xkbcommon-$(version).tar.gz",
              "https://github.com/xkbcommon/libxkbcommon.git")
 
     add_versions("1.0.3", "5d10a57ab65daad7d975926166770eca1d2c899131ab96c23845df1c42da5c31")
@@ -33,7 +33,7 @@ package("libxkbcommon")
 
     add_deps("meson", "ninja")
 
-    on_install("linux", "bsd", function (package)
+    on_install("linux", function (package)
         package:addenv("PATH", "bin")
         local configs = {
             "-Denable-docs=false",
