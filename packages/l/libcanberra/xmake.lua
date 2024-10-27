@@ -42,6 +42,7 @@ package("libcanberra")
         local libtool_libdir = "../../../l/libtool" .. after_libtool .. "/lib"
         print(libtool_libdir)
         package:add("linkdirs", libtool_libdir)
+        package:add("includedirs", fetchinfo.artifacts.installdir .. "/include/")
         import("package.tools.autoconf").install(package, configs, {packagedeps= {"libvorbis"}})
     end)
 
