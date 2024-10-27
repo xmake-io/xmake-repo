@@ -7,17 +7,17 @@ package("libcanberra")
     add_urls("http://0pointer.de/lennart/projects/libcanberra/libcanberra-$(version).tar.xz")
     add_versions("0.30", "c2b671e67e0c288a69fc33dc1b6f1b534d07882c2aceed37004bf48c601afa72")
 
-    add_deps("autoconf", "automake", "libtool", "m4")
+    add_deps("libtool", {configs = {kind = library}})
+    add_deps("autoconf", "automake", "m4")
     add_deps("libogg", "alsa-lib")
 
-    
     add_deps("libvorbis", {configs = {shared=true}})
 
     if is_plat("linux") then
         add_syslinks("dl", "ltdl")
     end
 
-    add_links("canberra", "canberra-null", "canberra-alsa", "canberra-oss", "canberra-pulse", "canberra-multi")
+    add_links("canberra", "canberra-null", "canberra-alsa", "canberra-oss", "canberra-pulse", "canberra-multi", "ltdl")
 
     add_linkdirs("lib", "lib/libcanberra-0.30")
 
@@ -43,8 +43,8 @@ package("libcanberra")
         local after_libtool = string.sub(fetchinfo.artifacts.installdir, pos + 7)
         local libtool_dir = "../../../libtool" .. after_libtool
         print(libtool_libdir)
-        package:add("linkdirs", libtool_dir .. "lib/")
-        package:add("includedirs", libtool_dir .. "include/")
+        package:add("linkdirs", libtool_dir .. "/lib/")
+        package:add("includedirs", libtool_dir .. "/include/")
         import("package.tools.autoconf").install(package, configs, {packagedeps= {"libvorbis"}})
     end)
 
