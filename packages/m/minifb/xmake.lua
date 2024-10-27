@@ -8,16 +8,18 @@ package("minifb")
 
     add_deps("cmake")
 
-    if is_plat("macosx", "iphoneos") then
-        add_frameworks("CoreFoundation", "Foundation", "AppKit", "MetalKit", "Metal")
-    elseif is_plat("linux") then
-        add_deps("libx11", "libxkbcommon")
+    if is_plat("macosx") then
+        add_frameworks("Cocoa", "QuartzCore", "Metal", "MetalKit")
+    elseif is_plat("iphoneos") then
+        add_frameworks("UIKit", "QuartzCore", "Metal", "MetalKit")
+    elseif is_plat("linux", "bsd") then
+        add_deps("libx11")
         add_deps("glx", "opengl", {optional = true})
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "opengl32", "user32", "winmm")
     end
 
-    on_install("!android and !bsd", function (package)
+    on_install("!android and !cross", function (package)
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", "add_definitions(-D_DEBUG)", "", {plain = true}) -- fix M[D|T]d
         end
@@ -33,7 +35,7 @@ package("minifb")
         end
 
         local opt = {}
-        if package:is_plat("linux") then
+        if package:is_plat("linux", "bsd") then
             opt.packagedeps = {"libx11", "libxkbcommon", "glx", "opengl"}
         end
         import("package.tools.cmake").install(package, configs, opt)
