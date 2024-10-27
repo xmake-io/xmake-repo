@@ -20,6 +20,7 @@ package("libtool")
 
     if is_host("linux") then
         add_extsources("apt::libtool", "pacman::libtool")
+        add_syslinks("dl")
     elseif is_host("macosx") then
         add_extsources("brew::libtool")
     end
@@ -27,7 +28,10 @@ package("libtool")
     add_deps("autoconf")
 
     on_install("@macosx", "@linux", "@bsd", function (package)
-        import("package.tools.autoconf").install(package, {"--disable-dependency-tracking", "--enable-ltdl-install"})
+        local configs = {"--disable-dependency-tracking", "--enable-ltdl-install"}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        import("package.tools.autoconf").install(package, configs)
         if package:is_plat("macosx") then
             local bindir = package:installdir("bin")
             os.ln(path.join(bindir, "libtoolize"), path.join(bindir, "glibtoolize"))
@@ -35,8 +39,9 @@ package("libtool")
     end)
 
     on_test(function (package)
-        os.vrun("libtool --version")
         if package:kind() ~= "binary" then
             assert(package:has_cfuncs("lt_dlopen", {includes = "ltdl.h"}))
+        else
+            os.vrun("libtool --version")
         end
     end)

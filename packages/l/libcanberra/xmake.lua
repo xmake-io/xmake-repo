@@ -14,7 +14,7 @@ package("libcanberra")
     add_deps("libvorbis", {configs = {shared=true}})
 
     if is_plat("linux") then
-        add_syslinks("dl", "ltdl")
+        add_syslinks("dl")
     end
 
     add_links("canberra", "canberra-null", "canberra-alsa", "canberra-oss", "canberra-pulse", "canberra-multi", "ltdl")
@@ -36,8 +36,8 @@ package("libcanberra")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--with-systemdsystemunitdir=" .. package:installdir("system_servise"))
         table.insert(configs, "LDFLAGS=-L" .. fetchinfo.artifacts.installdir .. "/lib")
-        table.insert(configs, "CPPFLAGS=-I" .. fetchinfo.artifacts.installdir .. "/include/")
-        table.insert(configs, "LIBLTDL=" .. "-llibltdl")
+        table.insert(configs, "CFLAGS=-I" .. fetchinfo.artifacts.installdir .. "/include")
+        table.insert(configs, "LIBS=" .. "-lltdl -ldl")
 
         local pos = string.find(fetchinfo.artifacts.installdir, "libtool")
         local after_libtool = string.sub(fetchinfo.artifacts.installdir, pos + 7)
