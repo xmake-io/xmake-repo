@@ -25,6 +25,7 @@ package("libcanberra")
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--with-systemdsystemunitdir=" .. package:installdir("system_servise"))
         table.insert(configs, "LDFLAGS=-L" .. fetchinfo.artifacts.installdir .. "/lib/")
+        table.insert(configs, "CPPFLAGS=-I" .. fetchinfo.artifacts.installdir .. "/include/")
         table.insert(configs, "LIBLTDL=" .. "-llibltdl")
 
         local pos = string.find(fetchinfo.artifacts.installdir, "libtool")
@@ -32,7 +33,7 @@ package("libcanberra")
         local libtool_libdir = "../../../l/libtool" .. after_libtool .. "/lib"
         print(libtool_libdir)
         package:add("linkdirs", libtool_libdir)
-        import("package.tools.autoconf").install(package, configs, {packdeps = {"libtool"}})
+        import("package.tools.autoconf").install(package, configs, {packagedeps= {"libvorbis", "libogg"}})
     end)
 
     on_test(function (package)
