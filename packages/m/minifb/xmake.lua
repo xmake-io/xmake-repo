@@ -13,7 +13,7 @@ package("minifb")
     elseif is_plat("iphoneos") then
         add_frameworks("UIKit", "QuartzCore", "Metal", "MetalKit")
     elseif is_plat("linux", "bsd") then
-        add_deps("libx11")
+        add_deps("libx11", "libxkbcommon")
         add_deps("glx", "opengl", {optional = true})
     elseif is_plat("windows", "mingw") then
         add_syslinks("gdi32", "opengl32", "user32", "winmm")
