@@ -19,6 +19,17 @@ package("minifb")
         add_syslinks("gdi32", "opengl32", "user32", "winmm")
     end
 
+    if on_check then
+        on_check("windows|arm64", function (package)
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(minifb) require vs_toolset >= 14.3")
+            end
+        end)
+    end
+
     on_install("!android and !cross and !bsd", function (package)
         if package:is_plat("windows") then
             io.replace("CMakeLists.txt", "add_definitions(-D_DEBUG)", "", {plain = true}) -- fix M[D|T]d
