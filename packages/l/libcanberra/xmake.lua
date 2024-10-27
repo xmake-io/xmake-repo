@@ -8,7 +8,10 @@ package("libcanberra")
     add_versions("0.30", "c2b671e67e0c288a69fc33dc1b6f1b534d07882c2aceed37004bf48c601afa72")
 
     add_deps("autoconf", "automake", "libtool", "m4")
-    add_deps("libvorbis", "libogg", "alsa-lib")
+    add_deps("libogg", "alsa-lib")
+
+    
+    add_deps("libvorbis", {configs = {shared=true}})
 
     if is_plat("linux") then
         add_syslinks("dl", "ltdl")
@@ -20,11 +23,17 @@ package("libcanberra")
 
     on_install("linux", function (package)
         local fetchinfo = package:dep("libtool"):fetch()
+
+        if package:config("shared") then
+            package:add("deps", "libvorbis", {configs = {shared=true}})
+        else
+            package:add("deps", "libvorbis")
+        end
         local configs = {"--disable-dependency-tracking", "--disable-lynx"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--with-systemdsystemunitdir=" .. package:installdir("system_servise"))
-        table.insert(configs, "LDFLAGS=-L" .. fetchinfo.artifacts.installdir .. "/lib/")
+        table.insert(configs, "LDFLAGS=-L" .. fetchinfo.artifacts.installdir .. "/lib")
         table.insert(configs, "CPPFLAGS=-I" .. fetchinfo.artifacts.installdir .. "/include/")
         table.insert(configs, "LIBLTDL=" .. "-llibltdl")
 
@@ -33,7 +42,7 @@ package("libcanberra")
         local libtool_libdir = "../../../l/libtool" .. after_libtool .. "/lib"
         print(libtool_libdir)
         package:add("linkdirs", libtool_libdir)
-        import("package.tools.autoconf").install(package, configs, {packagedeps= {"libvorbis", "libogg"}})
+        import("package.tools.autoconf").install(package, configs, {packagedeps= {"libvorbis"}})
     end)
 
     on_test(function (package)
