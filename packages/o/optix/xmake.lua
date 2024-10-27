@@ -11,7 +11,7 @@ package("optix")
             local paths = {"$(env OptiX_ROOT)"}
             if package:is_plat("windows") then
                 for _, dir in ipairs(os.dirs("$(env PROGRAMDATA)/NVIDIA Corporation/OptiX SDK *.*.*")) do
-                    if semver.satisfies(dir:match("OptiX SDK (%d+%.%d+%.%d+)"), package:version_str()) then
+                    if package:version_str() == "latest" or semver.satisfies(dir:match("OptiX SDK (%d+%.%d+%.%d+)"), package:version_str()) then
                         table.insert(paths, dir)
                     end
                 end
