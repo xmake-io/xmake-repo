@@ -13,26 +13,62 @@ package("magic_enum")
     add_versions("v0.8.2", "62bd7034bbbfc3d7806001767d5775ab42f3ff33bb38366e1ceb21102f0dff9a")
     add_versions("v0.9.0", "2fb2f602b4660f8af539ee00958132a397e138bda19aa1ceae546de3a143386b")
     add_versions("v0.9.5", "44ad80db5a72f5047e01d90e18315751d9ac90c0ab42cbea7a6f9ec66a4cd679")
-    add_versions("v0.9.6", "814791ff32218dc869845af7eb89f898ebbcfa18e8d81aa4d682d18961e13731")
+    add_versions("v0.9.6", "fcda8295256a2084f1f98a63b3d2c66b3d7140eea008e1ef94ea015b2f6d3034")
+
+    add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
 
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {
-            "-DMAGIC_ENUM_OPT_BUILD_EXAMPLES=OFF",
-            "-DMAGIC_ENUM_OPT_BUILD_TESTS=OFF",
-            "-DMAGIC_ENUM_OPT_INSTALL=ON"
-        }
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs)
+        if package:version():lt("v0.9.6") or not package:config("modules") then
+            local configs = {
+                "-DMAGIC_ENUM_OPT_BUILD_EXAMPLES=OFF",
+                "-DMAGIC_ENUM_OPT_BUILD_TESTS=OFF",
+                "-DMAGIC_ENUM_OPT_INSTALL=ON"
+            }
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            import("package.tools.cmake").install(package, configs)
+        else
+            if package:version():eq("v0.9.6") then
+                io.writefile("xmake.lua", [[ 
+                    target("magic_enum")
+                        set_kind("moduleonly")
+                        set_languages("c++20")
+                        add_headerfiles("include/magic_enum/**.hpp")
+                        add_includedirs("include/magic_enum")
+                        add_files("module/**.cppm", {public = true})
+                ]])
+            else
+                -- after v0.9.6 include files need to be prepended with magic_enum directory
+                io.writefile("xmake.lua", [[ 
+                    target("magic_enum")
+                        set_kind("moduleonly")
+                        set_languages("c++20")
+                        add_headerfiles("include/(magic_enum/**.hpp)")
+                        add_includedirs("include")
+                        add_files("module/**.cppm", {public = true})
+                ]])
+            end
+            import("package.tools.xmake").install(package)
+        end
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            enum class Color { RED = 2, BLUE = 4, GREEN = 8 };
-            void test() {
-                Color color = Color::RED;
-                auto color_name = magic_enum::enum_name(color);
-            }
-        ]]}, {configs = {languages = "c++17"}, includes = "magic_enum.hpp"}))
+        if package:version():le("v0.9.6") then
+            assert(package:check_cxxsnippets({test = [[
+                enum class Color { RED = 2, BLUE = 4, GREEN = 8 };
+                void test() {
+                    Color color = Color::RED;
+                    auto color_name = magic_enum::enum_name(color);
+                }
+            ]]}, {configs = {languages = "c++17"}, includes = "magic_enum.hpp"}))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                enum class Color { RED = 2, BLUE = 4, GREEN = 8 };
+                void test() {
+                    Color color = Color::RED;
+                    auto color_name = magic_enum::enum_name(color);
+                }
+            ]]}, {configs = {languages = "c++17"}, includes = "magic_enum/magic_enum.hpp"}))
+        end
     end)
