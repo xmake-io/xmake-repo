@@ -10,8 +10,10 @@ package("libtool")
     add_versions("2.4.5", "509cb49c7de14ce7eaf88993cf09fd4071882699dfd874c2e95b31ab107d6987")
     add_versions("2.4.7", "04e96c2404ea70c590c546eba4202a4e12722c640016c12b9b2f1ce3d481e9a8")
 
+    add_configs("kind_libtool", {description = "choose a kind to build libtool", default = "binary", type = "string", values = {"binary", "library"}})
+
     on_load(function (package)
-        if package:configs("kind") == "library" then
+        if package:configs("kind_libtool") == "library" then
             package:set("kind", "library")
         else
             package:set("kind", "binary")
