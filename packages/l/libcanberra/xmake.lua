@@ -15,7 +15,7 @@ package("libcanberra")
         add_syslinks("dl")
     end
 
-    add_links("canberra", "canberra-null", "canberra-alsa", "canberra-oss", "canberra-pulse", "canberra-multi", "ltdl")
+    add_links("canberra", "canberra-null", "canberra-alsa", "canberra-oss", "canberra-pulse", "canberra-multi")
 
     add_linkdirs("lib", "lib/libcanberra-0.30")
 

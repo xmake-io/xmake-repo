@@ -1,7 +1,7 @@
 package("libtool")
     set_homepage("https://www.gnu.org/software/libtool/")
     set_description("A generic library support script.")
-
+    set_kind("binary")
     add_urls("http://ftpmirror.gnu.org/libtool/libtool-$(version).tar.gz",
              "https://mirrors.ustc.edu.cn/gnu/libtool/libtool-$(version).tar.gz",
              "git://git.savannah.gnu.org/libtool.git")
@@ -11,8 +11,8 @@ package("libtool")
     add_versions("2.4.7", "04e96c2404ea70c590c546eba4202a4e12722c640016c12b9b2f1ce3d481e9a8")
 
     on_load(function (package)
-        if package:kind() ~= "library" then
-            package:set("kind", "binary")
+        if package:is_library() then
+            package:addenv("PATH", "bin")
         end
     end)
 
@@ -40,7 +40,7 @@ package("libtool")
     end)
 
     on_test(function (package)
-        if package:kind() ~= "binary" then
+        if package:is_binary() then
             assert(package:has_cfuncs("lt_dlopen", {includes = "ltdl.h"}))
         else
             os.vrun("libtool --version")
