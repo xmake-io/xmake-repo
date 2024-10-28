@@ -6,6 +6,7 @@ package("pdfio")
     add_urls("https://github.com/michaelrsweet/pdfio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/michaelrsweet/pdfio.git")
 
+    add_versions("v1.3.2", "a814fd10e602ffcc9e243674c82268a097992b1c4ad1359d9ab236c56b648b71")
     add_versions("v1.3.1", "0f2933f2d5d0a8c0152510fe5b565715cee8146f3d0d10024e3c597268928574")
     add_versions("v1.3.0", "aae5b4850560869021f6af1700a0681f0d19299554f24abf890a1a78188ddf02")
 
