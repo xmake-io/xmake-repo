@@ -9,7 +9,7 @@ package("meet")
 
     add_versions("v0.1.2", "29f214601a25cf25fb3130e24a7b3f616aa58e662509a8b48d6a8383c12e6ca1")
 	
-    on_install(function (package)
+    on_install("windows", "mingw", "msys", function (package)
         os.cp("include", package:installdir())
     end)
 
