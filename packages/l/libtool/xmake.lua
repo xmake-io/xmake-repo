@@ -40,7 +40,7 @@ package("libtool")
     end)
 
     on_test(function (package)
-        if package:is_binary() then
+        if not package:is_binary() then
             assert(package:has_cfuncs("lt_dlopen", {includes = "ltdl.h"}))
         else
             os.vrun("libtool --version")
