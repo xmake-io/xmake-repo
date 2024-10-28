@@ -1,8 +1,8 @@
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index a01d814..1f38b73 100644
+index a01d814..595190c 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -5,6 +5,15 @@ project(src)
+@@ -5,6 +5,14 @@ project(src)
  include(../scripts/cmake/xtd_commands.cmake)
  include(../scripts/cmake/xtd_version.cmake)
  
@@ -12,7 +12,6 @@ index a01d814..1f38b73 100644
 +link_directories(${WXWIDGETS_LIBRARY_DIRS})
 +set(XTD_EXTRA_LIBS "${XTD_EXTRA_LIBS};${WXWIDGETS_LIBRARIES}")
 +
-+message(VERBOSE "\n\n\n\nxtd_extra_libs = ${XTD_EXTRA_LIBS}\n\n\n\n")
 +add_references(${XTD_EXTRA_LIBS})
 +
  set(XTD_HEADER_FILE "xtd/include/xtd/xtd.h")
