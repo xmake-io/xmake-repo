@@ -44,7 +44,7 @@ package("vulkan-memory-allocator-hpp")
             io.writefile("xmake.lua", format([[
                 add_requires("vulkan-memory-allocator", "%s >= 1.3.275")
                 target("vulkan-memory-allocator-hpp")
-                    set_kind("static")
+                    set_kind("moduleonly")
                     set_languages("c++20")
                     add_headerfiles("include/(**.hpp)")
                     add_includedirs("include")
