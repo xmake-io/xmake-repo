@@ -33,18 +33,8 @@ package("libcanberra")
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         table.insert(configs, "--with-systemdsystemunitdir=" .. package:installdir("system_servise"))
-        if fetchinfo then
-            local includedirs = fetchinfo.includedirs or fetchinfo.sysincludedirs
-            if includedirs and #includedirs > 0 then
-                table.insert(configs, "CFLAGS=-I" .. includedir)
-            end
-            local linkdirs = fetchinfo.linkdirs
-            if linkdirs and #linkdirs > 0 then
-                table.insert(configs, "LDFLAGS=-L" .. linkdirs)
-            end
-        end
         table.insert(configs, "LIBS=" .. "-lltdl -ldl")
-        import("package.tools.autoconf").install(package, configs, {packagedeps= {"libvorbis"}})
+        import("package.tools.autoconf").install(package, configs, {packagedeps= {"libtool", "libvorbis"}})
     end)
 
     on_test(function (package)
