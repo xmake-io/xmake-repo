@@ -6,6 +6,7 @@ package("commata")
 
     add_urls("https://github.com/furfurylic/commata/archive/refs/tags/$(version)-rc.2.zip",
              "https://github.com/furfurylic/commata.git")
+    add_versions("v1.0.1", "4aec67cd6254baf1183e8a0faae691a7e0be21e888958cdc682237579804ea3d")
     add_versions("v1.0.0", "5f9ef542d10d5d04d296e609ae8931e09a157761c86630d71b2f397c6a205a75")
 
     on_install(function (package)

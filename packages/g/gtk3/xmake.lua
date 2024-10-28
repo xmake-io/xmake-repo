@@ -15,13 +15,22 @@ package("gtk3")
 
     if is_plat("linux") then
         add_syslinks("rt")
+        add_syslinks("pthread")
     end
 
     add_includedirs("include", "include/gtk-3.0")
 
+    on_load("linux", function (package)
+        if package:config("shared") then
+            package:add("deps", "gdk-pixbuf", {configs = {shared = true}})
+        else
+            package:add("deps", "gdk-pixbuf")
+        end
+    end)
+
     add_deps("meson", "ninja")
     add_deps("cairo", {configs = {glib = true}})
-    add_deps("glib", "gdk-pixbuf", "pango", "libepoxy", "graphene", "libxkbcommon", "libxext")
+    add_deps("glib", "pango", "libepoxy", "graphene", "libxkbcommon", "libxext")
     add_deps("libx11", "libxfixes", "libxcursor", "libxi", "libxcomposite", "libxrandr", "libxdamage", "libxinerama", "at-spi2-core")
     add_links("gtk-3", "gdk-3", "gailutil-3", "X11", "X11-cxb", "pangocairo-1.0", "pango", "rt")
 
@@ -31,7 +40,8 @@ package("gtk3")
         io.replace("gdk/x11/gdkglcontext-x11.c", [[cairo/cairo-xlib.h]], [[cairo-xlib.h]], {plain = true})
         import("package.tools.meson").install(package, configs, {packagedeps = {"libx11", 
                                                                                 "libxext", 
-                                                                                "libxi", 
+                                                                                "libxi",
+                                                                                "pango", 
                                                                                 "at-spi2-core", 
                                                                                 "cairo", 
                                                                                 "libthai", 

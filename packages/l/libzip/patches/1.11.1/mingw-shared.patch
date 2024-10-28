@@ -1,0 +1,22 @@
+From 4e6f0344690b747cbca2e183e3837c5044414513 Mon Sep 17 00:00:00 2001
+From: Thomas Klausner <wiz@gatalith.at>
+Date: Mon, 23 Sep 2024 09:12:28 +0200
+Subject: [PATCH] Do not include zip.h from lib/*.c
+
+---
+ lib/zip_dirent.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/lib/zip_dirent.c b/lib/zip_dirent.c
+index 85c4c6dc..6e3e1a46 100644
+--- a/lib/zip_dirent.c
++++ b/lib/zip_dirent.c
+@@ -39,7 +39,6 @@
+ #include <time.h>
+ #include <zlib.h>
+ 
+-#include "zip.h"
+ #include "zipint.h"
+ 
+ static zip_string_t *_zip_dirent_process_ef_utf_8(const zip_dirent_t *de, zip_uint16_t id, zip_string_t *str, bool check_consistency);
+ 

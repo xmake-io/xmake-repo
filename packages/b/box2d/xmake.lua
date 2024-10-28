@@ -1,27 +1,38 @@
 package("box2d")
-
     set_homepage("https://box2d.org")
     set_description("A 2D Physics Engine for Games")
     set_license("MIT")
 
-    set_urls("https://github.com/erincatto/box2d/archive/v$(version).zip")
-    add_versions("2.4.0", "6aebbc54c93e367c97e382a57ba12546731dcde51526964c2ab97dec2050f8b9")
-    add_versions("2.4.1", "0cb512dfa5be79ca227cd881b279adee61249c85c8b51caf5aa036b71e943002")
-    add_versions("2.4.2", "593f165015fdd07ea521a851105f1c86ae313c5af0a15968ed95f864417fa8a7")
-    if is_arch("x64", "x86_64", "arm64.*") then
-        add_versions("3.0.0", "c2983a30a95037c46c19e42f398de6bc375d6ae87f30e0d0bbabb059ec60f8c0")
-    end
+    set_urls("https://github.com/erincatto/box2d/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/erincatto/box2d.git")
 
-    if is_arch("x64", "x86_64") then
-        add_configs("avx2", {description = "Enable AVX2.", default = false, type = "boolean"})
+    add_versions("v3.0.0", "64ad759006cd2377c99367f51fb36942b57f0e9ad690ed41548dd620e6f6c8b1")
+    add_versions("v2.4.2", "85b9b104d256c985e6e244b4227d447897fac429071cc114e5cc819dae848852")
+
+    add_configs("avx2", {description = "Enable AVX2.", default = false, type = "boolean"})
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     add_deps("cmake")
 
     if on_check then
-        on_check("windows", function (package)
+        on_check(function (package)
             if package:version():ge("3.0.0") then
-                assert(not package:is_arch("arm64.*"), "package(box2d =>3.0.0) Unsupported architecture.")
+                if package:check_sizeof("void*") == "4" then
+                    raise("package(box2d >=3.0.0) unsupported 32-bit")
+                end
+
+                if package:is_plat("windows") then
+                    assert(not package:is_arch("arm64.*"), "package(box2d/arm >=3.0.0) Unsupported architecture.")
+                end
+
+                if package:is_plat("android") then
+                    local ndk = package:toolchain("ndk")
+                    local ndk_sdkver = ndk:config("ndk_sdkver")
+                    assert(ndk_sdkver and tonumber(ndk_sdkver) >= 28, "package(box2d >=3.0.0) requires ndk api level >= 28")
+                end
 
                 local configs = {languages = "c11"}
                 if package:has_tool("cc", "cl") then
@@ -33,37 +44,45 @@ package("box2d")
         end)
     end
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
-        local configs = {}
-        if package:version():ge("3.0.0") then
-            table.insert(configs, "--compile-no-warning-as-error")
-            table.insert(configs, "-DBOX2D_SANITIZE=OFF")
-            table.insert(configs, "-DBOX2D_SAMPLES=OFF")
-            table.insert(configs, "-DBOX2D_BENCHMARKS=OFF")
-            table.insert(configs, "-DBOX2D_DOCS=OFF")
-            table.insert(configs, "-DBOX2D_PROFILE=OFF")
-            table.insert(configs, "-DBOX2D_VALIDATE=OFF")
-            table.insert(configs, "-DBOX2D_UNIT_TESTS=OFF")
-            table.insert(configs, "-DBOX2D_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
-        else
-            table.insert(configs, "-DBOX2D_BUILD_UNIT_TESTS=OFF")
-            table.insert(configs, "-DBOX2D_BUILD_TESTBED=OFF")
-            table.insert(configs, "-DBOX2D_BUILD_DOCS=OFF")
+    on_install("!bsd", function (package)
+        if package:config("shared") then
+            package:add("defines", "B2_SHARED")
         end
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        import("package.tools.cmake").build(package, configs, {buildir = "build"})
-        if package:is_plat("windows") then
-            os.trycp(path.join("build", "src", "*", "*.lib"), package:installdir("lib"))
-            os.trycp(path.join("build", "bin", "*", "*.lib"), package:installdir("lib"))
-        else
-            os.trycp("build/src/*.a", package:installdir("lib"))
-            os.trycp("build/bin/*.a", package:installdir("lib"))
+        if package:is_plat("windows") and package:is_debug() then
+            package:add("defines", "B2_ENABLE_ASSERT")
         end
-        os.cp("include", package:installdir())
+
+        io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
+
+        local configs = {
+            "-DBOX2D_BUILD_UNIT_TESTS=OFF",
+            "-DBOX2D_BUILD_TESTBED=OFF",
+
+            "-DBOX2D_SAMPLES=OFF",
+            "-DBOX2D_UNIT_TESTS=OFF",
+            "-DBOX2D_VALIDATE=OFF",
+            "--compile-no-warning-as-error",
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBOX2D_SANITIZE=" .. (package:config("asan") and "ON" or "OFF"))
+        table.insert(configs, "-DBOX2D_AVX2=" .. (package:config("avx2") and "ON" or "OFF"))
+
+        os.mkdir(path.join(package:buildir(), "src/pdb"))
+        import("package.tools.cmake").install(package, configs)
+
+        if package:gitref() or package:version():ge("3.0.0") then
+            os.cp("include", package:installdir())
+        end
+        if package:config("shared") then
+            os.trycp(path.join(package:buildir(), "bin/box2d.pdb"), package:installdir("bin"))
+        else
+            os.trycp(path.join(package:buildir(), "bin/box2d.pdb"), package:installdir("lib"))
+        end
     end)
 
     on_test(function (package)
-        if package:version():ge("3.0.0") then
+        if package:gitref() or package:version():ge("3.0.0") then
             assert(package:check_csnippets({test = [[
                 void test(int argc, char** argv) {
                     b2WorldDef worldDef = b2DefaultWorldDef();

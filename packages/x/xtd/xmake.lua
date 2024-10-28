@@ -14,10 +14,11 @@ package("xtd")
     -- https://github.com/gammasoft71/xtd/issues/264#issue-2527671013
 
     if is_plat("linux") then
-        add_extsources("apt::libgsound-dev")
-    end
+        add_patches("v0.1.2", "patches/v0.1.2/add_wxwidgets_to_tools.patch", "1eef76faf6fef4436c8b8c55bb8ff7dc093e725dcb343bdbec5af4dbb30ea7b3")
+    end 
 
-    add_deps("cmake","alsa-lib", "xorgproto")
+    add_deps("cmake","alsa-lib", "xorgproto", "glib", "gsound", "libuuid")
+    add_links("xtd", "xtd.core", "xtd.forms", "xtd.drawing", "xtd.tunit", "xtd.forms.native.wxwidgets", "xtd.3rdparty.call_stack", "xtd.core.native.unix", "xtd.drawing.native.wxwidgets")
 
     on_load("linux", function (package)
         if package:config("graphic_toolkit") == "wxwidgets" then
@@ -34,12 +35,12 @@ package("xtd")
     end)    
 
     on_install("linux", function (package)
-        local configs = {"-DXTD_NATIVE_GRAPHIC_TOOLKIT=" .. package:config("graphic_toolkit"), 
-                         "-DXTD_BUILD_TOOLS=OFF", 
-                         "XTD_INSTALL_RESOURCES", 
-                         "-DXTD_INSTALL_EXAMPLES=OFF"}
+        local configs = {" --log-level=VERBOSE", "-DXTD_NATIVE_GRAPHIC_TOOLKIT=" ..  package:config("graphic_toolkit"), "-DXTD_INSTALL_RESOURCES=OFF", "-DXTD_BUILD_TOOL_SLEEPFOR_COMMAND_LINE=OFF"}
         table.insert(configs, "-DXTD_BUILD_SHARED_LIBRARIES=" .. (package:config("shared") and "ON" or "OFF")) 
-        import("package.tools.cmake").install(package, configs)
+        table.insert(configs, "-DXTD_INSTALL_EXAMPLES=OFF")
+        table.insert(configs, "-DXTD_BUILD_TOOL_GUIDGEN_GUI=OFF")
+        table.insert(configs, "-DXTD_BUILD_TOOL_GUIDGEN_COMMAND_LINE=OFF")
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"libcanberra"}})
     end)
 
     on_test(function (package)

@@ -7,6 +7,7 @@ package("limonp")
     add_urls("https://github.com/yanyiwu/limonp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/yanyiwu/limonp.git")
 
+    add_versions("v1.0.0", "57c088a10ceda774e05281b1fc7779455af2cc824969e331874871822452e24f")
     add_versions("v0.9.0", "92d90b262ab2e3375dd386731deeb028f88ee7d07d0695d53d10bef6887d2f5f")
 
     add_deps("cmake")

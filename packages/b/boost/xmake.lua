@@ -124,10 +124,14 @@ package("boost")
         end
 
         -- we need the fixed link order
+        local headeronly = not package:config("all")
         local sublibs = {log = {"log_setup", "log"},
                         python = {"python", "numpy"},
                         stacktrace = {"stacktrace_backtrace", "stacktrace_basic"}}
         for _, libname in ipairs(libnames) do
+            if package:config(libname) then
+                headeronly = false
+            end
             local libs = sublibs[libname]
             if libs then
                 for _, lib in ipairs(libs) do
@@ -136,6 +140,9 @@ package("boost")
             else
                 package:add("links", get_linkname(package, libname))
             end
+        end
+        if headeronly then
+            package:set("kind", "library", {headeronly = true})
         end
         -- disable auto-link all libs
         if package:is_plat("windows") then

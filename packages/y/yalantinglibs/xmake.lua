@@ -7,6 +7,7 @@ package("yalantinglibs")
     set_urls("https://github.com/alibaba/yalantinglibs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/alibaba/yalantinglibs.git")
 
+    add_versions("0.3.8", "a9966687a2ac1ed0b1a001a69e144db4cff4cdf77a5a80c00364e6ea687d3c52")
     add_versions("0.3.7", "b4258806173f63034aa529913601bc3d90da8a598725c0edf0be1a8c5c6f32b8")
     add_versions("0.3.6", "92f694ad42537f95535efc648fc5e73e82f840dae4f54524a096050db398214b")
     add_versions("0.3.4", "dd5edd3f43f23cd4b0614896e6587b61bb38c981dc21c85a54bcc54800d0dfe8")

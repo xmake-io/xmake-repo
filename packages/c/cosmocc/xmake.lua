@@ -5,6 +5,7 @@ package("cosmocc")
     set_license("ISC")
 
     add_urls("https://cosmo.zip/pub/cosmocc/cosmocc-$(version).zip",
+             "https://justine.lol/cosmopolitan/cosmocc-$(version).zip",
              "https://github.com/xmake-mirror/cosmopolitan/releases/download/$(version)/cosmocc-$(version).zip")
 
     add_versions("3.2.4", "d2fa6dbf6f987310494581deff5b915dbdc5ca701f20f7613bb0dcf1de2ee511")
@@ -33,6 +34,11 @@ package("cosmocc")
     add_versions("3.7.0", "871cfffd2e4ee3fc55d6f8d8583c6d73669f8412eea604830c8ecb74f89d6aef")
     add_versions("3.7.1", "13b65b0e659b493bd82f3d0a319d0265d66f849839e484aa2a54191024711e85")
     add_versions("3.8.0", "813c6b2f95062d2e0a845307a79505424cb98cb038e8013334f8a22e3b92a474")
+    add_versions("3.9.0", "814ab13782191c40b80f081242db3fd850a4ea35122c7ee9da434c36e9444c6a")
+    add_versions("3.9.1", "5eabd964554cc592d707d553697a450272290c07b88cc2e9503a299e00a13584")
+    add_versions("3.9.2", "f4ff13af65fcd309f3f1cfd04275996fb7f72a4897726628a8c9cf732e850193")
+    add_versions("3.9.3", "37cfb39217b980b04dc256dc9a4ae55646c371a1b0e63d5a1e45bed3cc14ceae")
+    add_versions("3.9.4", "04d2aca686e3b780f8dadbee2750bac28fdcca2aaedcc97375fb91bd38f94bdd")
 
     set_policy("package.precompiled", false)
 
