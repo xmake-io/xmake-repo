@@ -16,9 +16,12 @@ package("libtool")
         end
     end)
 
+    if is_plat("linux") then
+        add_syslinks("dl")
+    end
+
     if is_host("linux") then
         add_extsources("apt::libtool", "pacman::libtool")
-        add_syslinks("dl")
     elseif is_host("macosx") then
         add_extsources("brew::libtool")
     end

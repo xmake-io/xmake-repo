@@ -10,7 +10,6 @@ package("libcanberra")
     add_deps("libtool", {kind = "library"})
     add_deps("autoconf", "automake", "m4")
     add_deps("libogg", "alsa-lib")
-    add_deps("libvorbis", {configs = {shared = true}})
 
     if is_plat("linux") then
         add_syslinks("dl")
@@ -22,13 +21,15 @@ package("libcanberra")
 
     add_includedirs("include")
 
-    on_install("linux", function (package)
-        local fetchinfo = package:dep("libtool"):fetch()
+    on_load(function (package)
         if package:config("shared") then
             package:add("deps", "libvorbis", {configs = {shared = true}})
         else
             package:add("deps", "libvorbis")
         end
+    end)
+
+    on_install("linux", function (package)
         local configs = {"--disable-dependency-tracking", "--disable-lynx"}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
