@@ -1,5 +1,4 @@
 package("eigen")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://eigen.tuxfamily.org/")
     set_description("C++ template library for linear algebra")
@@ -7,6 +6,7 @@ package("eigen")
 
     add_urls("https://gitlab.com/libeigen/eigen/-/archive/$(version)/eigen-$(version).tar.bz2",
              "https://gitlab.com/libeigen/eigen.git")
+
     add_versions("3.3.7", "685adf14bd8e9c015b78097c1dc22f2f01343756f196acdc76a678e1ae352e11")
     add_versions("3.3.8", "0215c6593c4ee9f1f7f28238c4e8995584ebf3b556e9dbf933d84feb98d5b9ef")
     add_versions("3.3.9", "0fa5cafe78f66d2b501b43016858070d52ba47bd9b1016b0165a7b8e04675677")
@@ -27,6 +27,11 @@ package("eigen")
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory", "#", {plain = true})
         import("package.tools.cmake").install(package, {"-DBUILD_TESTING=OFF"})
+
+        if not os.isfile(package:installdir("include/eigen3/Eigen/Dense")) then
+            os.vcp("unsupported/Eigen", package:installdir("include/eigen3/unsupported"))
+            os.vcp("Eigen", package:installdir("include/eigen3"))
+        end
     end)
 
     on_test(function (package)
