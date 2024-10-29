@@ -19,6 +19,8 @@ package("cjson")
             end
         end
 
+        io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+
         local configs = {"-DENABLE_CJSON_TEST=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
