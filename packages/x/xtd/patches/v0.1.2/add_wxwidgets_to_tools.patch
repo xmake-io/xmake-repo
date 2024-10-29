@@ -30,6 +30,18 @@ index 263a4ab..8d35497 100644
  add_sources(
    include/xtd/xtd.forms.native.wxwidgets.h
    include/xtd/xtd.forms.native.wxwidgets
+diff --git a/src/xtd.forms/include/xtd/forms/button_renderer.h b/src/xtd.forms/include/xtd/forms/button_renderer.h
+index 2bfe757..bca4d9b 100644
+--- a/src/xtd.forms/include/xtd/forms/button_renderer.h
++++ b/src/xtd.forms/include/xtd/forms/button_renderer.h
+@@ -4,6 +4,7 @@
+ #pragma once
+ #include <optional>
+ #include <string>
++#include <cstddef>
+ #include <xtd/drawing/color.h>
+ #include <xtd/drawing/font.h>
+ #include <xtd/drawing/graphics.h>
 diff --git a/src/xtd.tunit/CMakeLists.txt b/src/xtd.tunit/CMakeLists.txt
 index 651e875..4a2891a 100644
 --- a/src/xtd.tunit/CMakeLists.txt

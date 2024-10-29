@@ -14,8 +14,18 @@ package("xtd")
     -- https://github.com/gammasoft71/xtd/issues/264#issue-2527671013
 
     if is_plat("linux") then
-        add_patches("v0.1.2", "patches/v0.1.2/add_wxwidgets_to_tools.patch", "f8448cbb96591aac4e02b9446b7fa1c1054a6b3fafa76306eed9af232d4fc9f4")
+        add_patches("v0.1.2", "patches/v0.1.2/add_wxwidgets_to_tools.patch", "3ce364859341832be2a47452a727dbabf6b368a8b11f70849fb8818de200642b")
     end 
+
+    -- regarding the problems when building with clang
+    -- https://github.com/gammasoft71/xtd/issues/268
+    if on_check then
+        on_check(function (package)
+            if package:has_tool("cxx", "clang", "clang_cl") then
+                raise("package(xtd) unsupported clang toolchain")
+            end
+        end)
+    end
 
     add_deps("cmake","alsa-lib", "xorgproto", "glib", "gsound", "libuuid")
     add_links("xtd", "xtd.core", "xtd.forms", "xtd.drawing", "xtd.tunit", "xtd.forms.native.wxwidgets", "xtd.3rdparty.call_stack", "xtd.core.native.unix", "xtd.drawing.native.wxwidgets")
