@@ -14,7 +14,7 @@ package("xtd")
     -- https://github.com/gammasoft71/xtd/issues/264#issue-2527671013
 
     if is_plat("linux") then
-        add_patches("v0.1.2", "patches/v0.1.2/add_wxwidgets_to_tools.patch", "1eef76faf6fef4436c8b8c55bb8ff7dc093e725dcb343bdbec5af4dbb30ea7b3")
+        add_patches("v0.1.2", "patches/v0.1.2/add_wxwidgets_to_tools.patch", "49bab271e73ccfdaae93f62048c0ef3580d6a62deac0d0a8abf2e12c00c944e4")
     end 
 
     add_deps("cmake","alsa-lib", "xorgproto", "glib", "gsound", "libuuid")

@@ -30,6 +30,26 @@ index 263a4ab..8d35497 100644
  add_sources(
    include/xtd/xtd.forms.native.wxwidgets.h
    include/xtd/xtd.forms.native.wxwidgets
+diff --git a/src/xtd.tunit/CMakeLists.txt b/src/xtd.tunit/CMakeLists.txt
+index 651e875..fd5a89f 100644
+--- a/src/xtd.tunit/CMakeLists.txt
++++ b/src/xtd.tunit/CMakeLists.txt
+@@ -4,6 +4,15 @@ cmake_minimum_required(VERSION 3.20)
+ project(xtd.tunit)
+ include(../../scripts/cmake/xtd_commands.cmake)
+ include(../../scripts/cmake/xtd_version.cmake)
++
++find_package(PkgConfig)
++pkg_check_modules(GSOUND REQUIRED gsound)
++include_directories(${GSOUND_INCLUDE_DIRS})
++link_directories(${GSOUND_LIBRARY_DIRS})
++set(XTD_EXTRA_LIBS "${XTD_EXTRA_LIBS};${WXWIDGETS_LIBRARIES}")
++
++add_references(${XTD_EXTRA_LIBS})
++
+ add_include_directories(include)
+ add_references(xtd.core)
+ add_sources(
 diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
 index f993971..fc5491f 100644
 --- a/tools/CMakeLists.txt
