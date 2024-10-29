@@ -9,6 +9,7 @@ package("cjson")
     add_versions("1.7.10", "80a0584410656c8d8da2ba703744f44d7535fc4f0778d8bf4f980ce77c6a9f65")
     add_versions("1.7.14", "d797b4440c91a19fa9c721d1f8bab21078624aa9555fc64c5c82e24aa2a08221")
     add_versions("1.7.15", "c55519316d940757ef93a779f1db1ca809dbf979c551861f339d35aaea1c907c")
+    add_versions("1.7.18", "cc6d93cc3b659037c34193ecc7be5a874a18c2ac67b24efe82db6a759b486b5d")
 
     add_deps("cmake")
 
