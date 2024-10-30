@@ -27,8 +27,11 @@ package("bddisasm")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
+        if package:is_cross() then
+            io.replace("CMakeLists.txt", "-march=native", "", {plain = true})
+        end
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
