@@ -1,7 +1,7 @@
 package("stringzilla")
     set_kind("library", {headeronly = true})
     set_homepage("https://ashvardanian.com/posts/stringzilla/")
-    set_description("Up to 10x faster string search, split, sort, and shuffle for long strings and multi-gigabyte files in Python and C, leveraging SIMD with just a few lines of Arm Neon and x86 AVX2 & AVX-512 intrinsics 🦖")
+    set_description("Up to 10x faster strings for C, C++, Python, Rust, and Swift, leveraging NEON, AVX2, AVX-512, and SWAR to accelerate search, sort, edit distances, alignment scores, etc 🦖")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/ashvardanian/StringZilla/archive/refs/tags/$(version).tar.gz",
@@ -9,6 +9,7 @@ package("stringzilla")
 
     add_configs("cpp", {description = "Enable C++ support.", default = true, type = "boolean"})
 
+    add_versions("v3.10.7", "e9f9081d796718763c06a65bb3a5dabe102b757ad0dff18bd7ac8c08217d7e4c")
     add_versions("v3.10.6", "041d122d4defc79b0d007ceb136ac3c72c9eb8797b28487b446e9710bd836e78")
     add_versions("v3.10.5", "25c85e6e5cc72a359e022e3c732dc930f190e735e2ca81782f32edffa8a4a860")
     add_versions("v3.10.0", "69729a1403c4609256f861a0221e5331f836b4945f6848472e81183726e436e6")
