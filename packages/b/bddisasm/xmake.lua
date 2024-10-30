@@ -11,7 +11,7 @@ package("bddisasm")
     add_configs("isagenerator", {description = "Include the x86 isagenerator target", default = false, type = "boolean"})
     add_configs("vsnprintf", {description = "Expect nd_vsnprintf_s implementation from the integrator", default = false, type = "boolean"})
     add_configs("memset", {description = "Expect nd_memset implementation from the integrator", default = false, type = "boolean"})
-    add_configs("mnemonics", {description = "include mnemonics", default = false, type = "boolean"})
+    add_configs("mnemonics", {description = "include mnemonics", default = true, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     add_links("bddisasm", "bdshemu")
