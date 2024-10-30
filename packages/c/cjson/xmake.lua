@@ -7,6 +7,7 @@ package("cjson")
              "https://github.com/DaveGamble/cJSON.git")
 
     add_versions("v1.7.18", "3aa806844a03442c00769b83e99970be70fbef03735ff898f4811dd03b9f5ee5")
+    add_versions("v1.7.15", "5308fd4bd90cef7aa060558514de6a1a4a0819974a26e6ed13973c5f624c24b2")
 
     add_deps("cmake")
 
