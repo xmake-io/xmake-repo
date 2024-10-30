@@ -11,7 +11,7 @@ package("bddisasm")
     add_configs("isagenerator", {description = "Include the x86 isagenerator target", default = false, type = "boolean"})
     add_configs("vsnprintf", {description = "Expect nd_vsnprintf_s implementation from the integrator", default = false, type = "boolean"})
     add_configs("memset", {description = "Expect nd_memset implementation from the integrator", default = false, type = "boolean"})
-    add_configs("no_mnemonics", {description = "Exclude mnemonics - this option involves setting the BDDISASM_NO_FORMAT flag", default = false, type = "boolean"})
+    add_configs("mnemonics", {description = "include mnemonics", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     add_links("bddisasm", "bdshemu")
@@ -22,12 +22,13 @@ package("bddisasm")
         if package:config("isagenerator") then
             package:add("deps", "python 3.x", {kind = "binary"})
         end
-        if package:config("no_mnemonics") then
+        if not package:config("mnemonics") then
             package:add("defines", "BDDISASM_NO_MNEMONIC", "BDDISASM_NO_FORMAT")
         end
     end)
 
     on_install("!wasm", function (package)
+        io.replace("CMakeLists.txt", "/WX", "", {plain = true})
         io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
         if package:is_cross() then
             io.replace("CMakeLists.txt", "-march=native", "", {plain = true})
@@ -43,7 +44,7 @@ package("bddisasm")
         table.insert(configs, "-DBDD_INCLUDE_ISAGENERATOR_X86=" .. (package:config("isagenerator") and "ON" or "OFF"))
         table.insert(configs, "-DBDD_USE_EXTERNAL_VSNPRINTF=" .. (package:config("vsnprintf") and "ON" or "OFF"))
         table.insert(configs, "-DBDD_USE_EXTERNAL_MEMSET=" .. (package:config("memset") and "ON" or "OFF"))
-        table.insert(configs, "-DBDD_NO_MNEMONIC=" .. (package:config("no_mnemonics") and "ON" or "OFF"))
+        table.insert(configs, "-DBDD_NO_MNEMONIC=" .. (package:config("mnemonics") and "OFF" or "ON"))
         table.insert(configs, "-DBDD_INCLUDE_TOOL=" .. (package:config("tools") and "ON" or "OFF"))
         if package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
