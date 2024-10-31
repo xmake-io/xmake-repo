@@ -86,7 +86,7 @@ package("drogon")
         end
     end)
 
-    on_install("windows|native", "macosx", "linux", function (package)
+    on_install("windows|!arm*", "macosx", "linux", function (package)
         io.replace("cmake/templates/config.h.in", "\"@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@\"", "R\"(@COMPILATION_FLAGS@@DROGON_CXX_STANDARD@)\"", {plain = true})
         io.replace("cmake_modules/FindMySQL.cmake", "PATH_SUFFIXES mysql", "PATH_SUFFIXES mysql mariadb", {plain = true})
 
