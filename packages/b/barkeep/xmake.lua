@@ -9,7 +9,7 @@ package("barkeep")
 
     add_versions("v0.1.3", "211425e348b570547b49d11edfb6e3750701d97cc89f073771b16d6012530a66")
 
-    add_configs("fmt", {description = "Use fmt format", default = false, type = "boolean"})
+    add_configs("fmt", {description = "Use fmt format", default = true, type = "boolean"})
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
