@@ -6,6 +6,7 @@ package("drogon")
 
     add_urls("https://github.com/an-tao/drogon/archive/refs/tags/$(version).tar.gz",
              "https://github.com/an-tao/drogon.git")
+    add_versions("v1.9.8", "62332a4882cc7db1c7cf04391b65c91ddf6fcbb49af129fc37eb0130809e0449")
     add_versions("v1.9.6", "a81d0ea0e87b0214aa56f7fa7bb851011efe606af67891a0945825104505a08a")
     add_versions("v1.9.5", "ec17882835abeb0672db29cb36ab0c5523f144d5d8ff177861b8f5865803eaae")
     add_versions("v1.9.4", "b23d9d01d36fb1221298fcdbedcf7fd3e1b8b8821bf6fb8ed073c8b0c290d11d")
@@ -46,6 +47,7 @@ package("drogon")
     add_configs("redis", {description = "Enable redis support.", default = false, type = "boolean"})
     add_configs("yaml", {description = "Enable yaml support.", default = false, type = "boolean"})
     add_configs("spdlog", {description = "Allow using the spdlog logging library", default = false, type = "boolean"})
+    add_configs("cpp20", {description = "Enable c++ 20 support.", default = false, type = "boolean"})
 
     add_deps("cmake")
     add_deps("jsoncpp", "brotli", "zlib")
@@ -115,6 +117,8 @@ package("drogon")
                         if version:ge("1.8.4") then
                             table.insert(configs, "-DBUILD_YAML_CONFIG=" .. (enabled and "ON" or "OFF"))
                         end
+                    elseif name == "cpp20" then
+                        table.insert(configs, "-DCMAKE_CXX_STANDARD=20")
                     else
                         table.insert(configs, "-DBUILD_" .. name:upper() .. "="  .. (enabled and "ON" or "OFF"))
                     end
