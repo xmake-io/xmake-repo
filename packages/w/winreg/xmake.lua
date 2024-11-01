@@ -13,6 +13,9 @@ package("winreg")
     add_versions("v6.1.0", "d4118ccfd4f4edee29e0f6b3706979791ad537278e2f74818c150bb66f8fcc53")
 
     on_install("windows", "mingw", "msys", function (package)
+        if package:is_plat("mingw") and package:is_arch("i386") then
+            io.replace("WinReg/WinReg.hpp", "UNREFERENCED_PARAMETER(size);", "(void)size;", {plain = true})
+        end
         os.cp("WinReg/WinReg.hpp", package:installdir("include/WinReg"))
     end)
 
