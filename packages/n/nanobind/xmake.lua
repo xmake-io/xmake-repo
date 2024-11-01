@@ -11,7 +11,7 @@ package("nanobind")
     add_deps("cmake")
     add_deps("robin-map", "python >=3.8")
 
-    on_install(function (package)
+    on_install("windows|!arm64", "linux", "macosx", "bsd", function (package)
         local builddir = path.join(os.curdir(), "build")
 
         local configs = {
