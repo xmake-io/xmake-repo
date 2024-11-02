@@ -35,6 +35,10 @@ function main(package)
 
     _add_iostreams_configs(package, configs)
 
+    if package:config("locale") then
+        table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
+    end
+
     local opt = {}
     opt.cxflags = {}
     local lzma = package:dep("xz")

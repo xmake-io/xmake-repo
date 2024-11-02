@@ -54,6 +54,14 @@ function _auto_enabled_dep_configs(package)
 end
 
 function _add_deps(package)
+    if package:config("regex") then
+        package:add("deps", "icu4c")
+    end
+    if package:config("locale") then
+        package:add("deps", "libiconv", "icu4c")
+        package:config_set("regex", true)
+    end
+
     if package:config("iostreams") then
         if package:config("zlib") then
             package:add("deps", "zlib")
