@@ -20,10 +20,9 @@ package("qt6webview")
         end
         assert(package:check_cxxsnippets({test = [[
             int test(int argc, char** argv) {
-                QApplication app (argc, argv);
                 QWebEngineView webView;
                 webView.show();
                 return app.exec();
             }
-        ]]}, {configs = {languages = "c++17", cxflags = cxflags}, includes = {"QApplication", "QWebEngineView"}}))
+        ]]}, {configs = {languages = "c++17", cxflags = cxflags}, includes = {"QWebEngineView"}}))
     end)
