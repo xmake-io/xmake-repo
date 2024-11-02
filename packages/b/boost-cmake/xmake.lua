@@ -3,9 +3,9 @@ package("boost-cmake")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
 
-    set_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.7z")
+    set_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.tar.gz")
 
-    add_versions("1.86.0", "ee6e0793b5ec7d13e7181ec05d3b1aaa23615947295080e4b9930324488e078f")
+    add_versions("1.86.0", "c62ce6e64d34414864fef946363db91cea89c1b90360eabed0515f0eda74c75c")
 
     includes(path.join(os.scriptdir(), "libs.lua"))
     for libname, _ in pairs(get_libs()) do
