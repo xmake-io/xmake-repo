@@ -48,7 +48,7 @@ package("python2")
         package:addenv("PATH", "bin")
     end)
 
-    on_load("@macosx", "@linux", function (package)
+    on_load("@macosx", "@linux", "@bsd", function (package)
 
         -- set includedirs
         local version = package:version()
@@ -72,7 +72,7 @@ package("python2")
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx", "@linux", "@bsd", function (package)
 
         -- init configs
         local configs = {"--enable-ipv6", "--with-ensurepip"}
@@ -124,26 +124,6 @@ package("python2")
             xcode_dir = xcode_dir or get_config("xcode")
             xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver")
             target_minver = target_minver or get_config("target_minver")
-
-            -- TODO will be deprecated after xmake v2.5.1
-            xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver_macosx")
-            if not xcode_dir or not xcode_sdkver then
-                -- maybe on cross platform, we need find xcode envs manually
-                local xcode = import("detect.sdks.find_xcode")(nil, {force = true, plat = package:plat(), arch = package:arch()})
-                if xcode then
-                    xcode_dir = xcode.sdkdir
-                    xcode_sdkver = xcode.sdkver
-                end
-            end
-
-            -- TODO will be deprecated after xmake v2.5.1
-            target_minver = target_minver or get_config("target_minver_macosx")
-            if not target_minver then
-                local macos_ver = macos.version()
-                if macos_ver then
-                    target_minver = macos_ver:major() .. "." .. macos_ver:minor()
-                end
-            end
 
             if xcode_dir and xcode_sdkver then
                 -- help Python's build system (setuptools/pip) to build things on SDK-based systems
