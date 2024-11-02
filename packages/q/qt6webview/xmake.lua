@@ -22,7 +22,7 @@ package("qt6webview")
             int test(int argc, char** argv) {
                 QWebEngineView webView;
                 webView.show();
-                return app.exec();
+                return 0;
             }
         ]]}, {configs = {languages = "c++17", cxflags = cxflags}, includes = {"QWebEngineView"}}))
     end)
