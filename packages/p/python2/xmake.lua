@@ -24,7 +24,7 @@ package("python2")
         add_versions("2.7.18", "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814")
     end
 
-    if not is_plat(os.host()) then
+    if not is_plat(os.host()) or not is_arch(os.arch()) then
         set_kind("binary")
     end
 
@@ -72,10 +72,12 @@ package("python2")
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
-    on_install("@macosx", "@linux", "@bsd", function (package)
+    on_install("@macosx|x86_64", "@linux", "@bsd", function (package)
 
         -- init configs
-        local configs = {"--enable-ipv6", "--with-ensurepip"}
+        local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
+        table.insert(configs, "--libdir=" .. package:installdir("lib"))
+        table.insert(configs, "--with-platlibdir=lib")
         table.insert(configs, "--datadir=" .. package:installdir("share"))
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
@@ -184,7 +186,7 @@ package("python2")
 
         -- install wheel
         local python = path.join(package:installdir("bin"), "python")
-        os.vrunv(python, {"-m", "pip", "install", "wheel"})
+        os.vrunv(python, {"-m", "pip", "install", "wheel"}, {envs = {LD_LIBRARY_PATH = package:installdir("lib")}})
     end)
 
     on_test(function (package)
