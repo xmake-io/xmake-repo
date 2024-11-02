@@ -1,37 +1,9 @@
-import("core.base.graph")
-
-function _mangle_link_format_string(package)
-    local link = "boost_%s"
-    if package:is_plat("windows") and not package:config("shared") then
-        link = "lib" .. link
-    end
-    return link
-end
-
 function _add_defines(package)
     if package:is_plat("windows") then
         package:add("defines", "BOOST_ALL_NO_LIB")
     end
     if package:config("shared") then
         package:add("defines", "BOOST_ALL_DYN_LINK")
-    end
-end
-
-function _add_links(package)
-    local dag = graph.new(true)
-
-    libs.for_each(function (libname, deps)
-        if package:config(libname) then
-            for _, dep_libname in ipairs(deps) do
-                dag:add_edge(libname, dep_libname)
-            end
-        end
-    end)
-
-    local links = dag:topological_sort()
-    local format_str = _mangle_link_format_string(package)
-    for _, libname in ipairs(links) do
-        package:add("links", format(format_str, libname))
     end
 end
 
@@ -46,6 +18,14 @@ function _recursion_enabled_dep_configs(package, libname, deps, visited_table)
 end
 
 function _auto_enabled_dep_configs(package)
+    -- workaround
+    if package:config("locale") then
+        package:config_set("regex", true)
+    end
+    if package:config("python") then
+        package:config_set("thread", true)
+    end
+
     local visited_table = {}
 
     libs.for_each(function (libname, deps)
@@ -59,7 +39,9 @@ function _add_deps(package)
     end
     if package:config("locale") then
         package:add("deps", "libiconv", "icu4c")
-        package:config_set("regex", true)
+    end
+    if package:config("python") then
+        package:add("deps", "python", {configs = {headeronly = true}})
     end
 
     if package:config("iostreams") then
@@ -86,9 +68,7 @@ function main(package)
 
     _auto_enabled_dep_configs(package)
 
-    _add_defines(package)
-
-    _add_links(package)
-
     _add_deps(package)
+
+    _add_defines(package)
 end
