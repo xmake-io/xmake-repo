@@ -1,5 +1,4 @@
 package("icu4c")
-
     set_homepage("http://site.icu-project.org/")
     set_description("C/C++ libraries for Unicode and globalization.")
 
@@ -23,6 +22,14 @@ package("icu4c")
         add_patches(">=69.1", path.join(os.scriptdir(), "patches", "72.1", "mingw.patch"), "9ddbe7f691224ccf69f8c0218f788f0a39ab8f1375cc9aad2cc92664ffcf46a5")
     end
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::icu")
+    elseif is_plat("linux") then
+        add_extsources("pacman::icu", "apt::libicu-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::icu4c")
+    end
+
     add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
@@ -33,8 +40,15 @@ package("icu4c")
     end
 
     on_load(function (package)
-        if package:config("tools") and package:is_plat("windows") then
-            package:add("deps", "python 3.x", {kind = "binary"})
+        if package:is_plat("windows") then
+            if package:config("tools") then
+                package:add("deps", "python 3.x", {kind = "binary"})
+            end
+
+            if package:has_runtime("MTd", "MDd") then
+                wprint("MTd/MDd runtime force to use debug package")
+                package:config_set("debug", true)
+            end
         end
 
         local libsuffix = package:is_debug() and package:is_plat("mingw", "windows") and "d" or ""
@@ -67,10 +81,24 @@ package("icu4c")
             package:arch_set(arch_prev)
         end
 
+        if package:has_runtime("MT", "MTd") then
+            local files = {
+                "source/common/common.vcxproj",
+                "source/i18n/i18n.vcxproj",
+                "source/extra/uconv/uconv.vcxproj",
+                "source/io/io.vcxproj",
+                "source/stubdata/stubdata.vcxproj",
+            }
+            for _, vcxproj in ipairs(files) do
+                io.replace(vcxproj, "MultiThreadedDLL", "MultiThreaded", {plain = true})
+                io.replace(vcxproj, "MultiThreadedDebugDLL", "MultiThreadedDebug", {plain = true})
+            end
+        end
+
         local configs = {
             sln,
             "/p:SkipUWP=True",
-            "/p:_IsNativeEnvironment=true"
+            "/p:_IsNativeEnvironment=true",
         }
 
         if not package:config("tools") then
