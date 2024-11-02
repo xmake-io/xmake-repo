@@ -11,6 +11,10 @@ package("boost-cmake")
     for libname, _ in pairs(get_libs()) do
         add_configs(libname, {description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
     end
+    add_configs("zlib", {description = "Enable zlib for iostreams", default = false, type = "boolean"})
+    add_configs("bzip2", {description = "Enable bzip2 for iostreams", default = false, type = "boolean"})
+    add_configs("lzma", {description = "Enable lzma for iostreams", default = false, type = "boolean"})
+    add_configs("zstd", {description = "Enable zstd for iostreams", default = false, type = "boolean"})
 
     add_deps("cmake")
 
