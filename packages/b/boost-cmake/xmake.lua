@@ -23,18 +23,5 @@ package("boost-cmake")
     end)
 
     on_test(function (package)
-        if package:config("filesystem") then
-            assert(package:check_cxxsnippets({test = [[
-                #include <boost/filesystem.hpp>
-                #include <iostream>
-                static void test() {
-                    boost::filesystem::path path("/path/to/directory");
-                    if (boost::filesystem::exists(path)) {
-                        std::cout << "Directory exists" << std::endl;
-                    } else {
-                        std::cout << "Directory does not exist" << std::endl;
-                    }
-                }
-            ]]}, {configs = {languages = "c++14"}}))
-        end
+        import("test")(package)
     end)
