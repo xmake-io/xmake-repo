@@ -16,6 +16,21 @@ function _add_links(package)
             return
         end
 
+        if libname == "test" then
+            package:add("links", format(format_str, "prg_exec_monitor"))
+            package:add("links", "libboost_test_exec_monitor") -- always static
+            package:add("links", format(format_str, "unit_test_framework"))
+            return
+        elseif libname == "stacktrace" then
+            package:add("links", format(format_str, "stacktrace_noop"))
+            package:add("links", format(format_str, "stacktrace_backtrace"))
+            package:add("links", format(format_str, "stacktrace_addr2line"))
+            package:add("links", format(format_str, "stacktrace_basic"))
+            package:add("links", format(format_str, "stacktrace_windbg"))
+            package:add("links", format(format_str, "stacktrace_windbg_cached"))
+            return
+        end
+
         if libname == "python" then
             local py_ver = assert(package:dep("python"):version(), "Can't get python version")
             libname = libname .. py_ver:major() .. py_ver:minor()
@@ -24,8 +39,11 @@ function _add_links(package)
 
         -- TODO: Add to libs.lua?
         if libname == "serialization" then
-            libname = "w" .. libname
-            package:add("links", format(format_str, libname))
+            package:add("links", format(format_str, "wserialization"))
+        elseif libname == "fiber" then
+            package:add("links", format(format_str, "fiber_numa"))
+        elseif libname == "log" then
+            package:add("links", format(format_str, "log_setup"))
         end
     end)
 end
