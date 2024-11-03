@@ -33,6 +33,29 @@ function _auto_enabled_dep_configs(package)
     end)
 end
 
+function _add_iostreams_deps(package)
+    if not package:config("iostreams") then
+        return
+    end
+
+    if package:config("zlib") then
+        package:add("deps", "zlib")
+    end
+    if package:config("bzip2") then
+        package:add("deps", "bzip2")
+    end
+    if package:config("lzma") then
+        package:add("deps", "xz")
+    end
+
+    if package:config("zstd") then
+        package:add("deps", "zstd")
+
+        package:add("deps", (is_subhost("windows") and "pkgconf") or "pkg-config")
+        package:add("patches", "1.86.0", "patches/1.86.0/find-zstd.patch", "7a90f2cbf01fc26bc8a98d58468c20627974f30e45bdd4a00c52644b60af1ef6")
+    end
+end
+
 function _add_deps(package)
     if package:config("regex") then
         package:add("deps", "icu4c")
@@ -47,23 +70,7 @@ function _add_deps(package)
         package:add("deps", "openssl >=1.1.1-a") -- same as python on_load
     end
 
-    if package:config("iostreams") then
-        if package:config("zlib") then
-            package:add("deps", "zlib")
-        end
-        if package:config("bzip2") then
-            package:add("deps", "bzip2")
-        end
-        if package:config("lzma") then
-            package:add("deps", "xz")
-        end
-        if package:config("zstd") then
-            package:add("deps", "zstd")
-
-            package:add("deps", (is_subhost("windows") and "pkgconf") or "pkg-config")
-            package:add("patches", "1.86.0", "patches/1.86.0/find-zstd.patch", "7a90f2cbf01fc26bc8a98d58468c20627974f30e45bdd4a00c52644b60af1ef6")
-        end
-    end
+    _add_iostreams_deps(package)
 end
 
 function main(package)
@@ -76,6 +83,7 @@ function main(package)
         end)
     else
         if package:config("all") then
+            package:config_set("openssl", true) -- mysql/redis require
             libs.for_each(function (libname)
                 package:config_set(libname, true)
             end)

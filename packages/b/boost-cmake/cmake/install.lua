@@ -70,7 +70,7 @@ function _check_links(package)
 
     links = links:to_array()
     if #links ~= 0 then
-        -- TODO: Remove header only "link"
+        -- TODO: Remove header only "link" or unsupported platform link
         wprint("Missing library files\n" .. table.concat(links, "\n"))
     end
     if #lib_files ~= 0 then
@@ -87,18 +87,20 @@ function _add_iostreams_configs(package, configs)
 end
 
 function _add_libs_configs(package, configs)
-    local include_libs = {}
-    local exclude_libs = {}
+    if not package:config("all") then
+        local include_libs = {}
+        local exclude_libs = {}
 
-    libs.for_each(function (libname)
-        if package:config(libname) then
-            table.insert(include_libs, libname)
-        else
-            table.insert(exclude_libs, libname)
-        end
-    end)
-    table.insert(configs, "-DBOOST_INCLUDE_LIBRARIES=" .. table.concat(include_libs, ";"))
-    table.insert(configs, "-DBOOST_EXCLUDE_LIBRARIES=" .. table.concat(exclude_libs, ";"))
+        libs.for_each(function (libname)
+            if package:config(libname) then
+                table.insert(include_libs, libname)
+            else
+                table.insert(exclude_libs, libname)
+            end
+        end)
+        table.insert(configs, "-DBOOST_INCLUDE_LIBRARIES=" .. table.concat(include_libs, ";"))
+        table.insert(configs, "-DBOOST_EXCLUDE_LIBRARIES=" .. table.concat(exclude_libs, ";"))
+    end
 
     table.insert(configs, "-DBOOST_ENABLE_PYTHON=" .. (package:config("python") and "ON" or "OFF"))
     -- TODO: add mpi to xrepo
@@ -108,6 +110,11 @@ function _add_libs_configs(package, configs)
     end
 
     _add_iostreams_configs(package, configs)
+
+    local openssl = package:dep("openssl")
+    if openssl and not openssl:is_system() then
+        table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+    end
 end
 
 function main(package)
