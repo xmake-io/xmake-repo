@@ -92,6 +92,9 @@ function main(package)
     if package:config("header_only") then
         _header_only(package, snippets)
     else
+        if not package:config("cmake") then
+            _header_only(package, snippets)
+        end
         _iostreams(package, snippets)
         _filesystem(package, snippets)
         _date_time(package, snippets)
