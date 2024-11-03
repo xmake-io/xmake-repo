@@ -33,7 +33,7 @@ package("zbar")
         io.replace("zbar/processor.h", "#include <unistd.h>", "", {plain = true})
         
         local configs = {   vers = package:version_str(),
-                            symbologies = table.concat(package:config("symbologies"), ",") }
+                            symbologies = table.concat(package:config("symbologies"), ",")}
 
         -- get LIB_VERSION from configure.ac
         -- format: AC_SUBST([LIB_VERSION], [3:0:3])
