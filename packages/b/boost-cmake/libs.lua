@@ -1,125 +1,173 @@
-local libs = {
-    exception = { },
-    test = {
-      "exception"
-    },
-    iostreams = {
-      "random",
-      "regex"
-    },
-    atomic = { },
-    date_time = { },
-    math = {
-      "random"
-    },
-    container = { },
-    graph_parallel = {
-      "filesystem",
-      "graph",
-      "mpi",
-      "random",
-      "serialization"
-    },
-    serialization = { },
-    program_options = { },
-    graph = {
-      "math",
-      "random",
-      "regex",
-      "serialization"
-    },
-    timer = { },
-    process = {
-      "filesystem",
-      "system"
-    },
-    contract = {
-      "exception",
-      "thread"
-    },
-    mpi = {
-      "graph",
-      "python",
-      "serialization"
-    },
-    fiber = {
-      "context",
-      "filesystem"
-    },
-    context = { },
-    coroutine = {
-      "context",
-      "exception",
-      "system"
-    },
-    log = {
-      "atomic",
-      "date_time",
-      "exception",
-      "filesystem",
-      "random",
-      "regex",
-      "system",
-      "thread"
-    },
-    regex = { },
-    thread = {
-      "atomic",
-      "chrono",
-      "container",
-      "date_time",
-      "exception",
-      "system"
-    },
-    nowide = {
-      "filesystem"
-    },
-    random = {
-      "system"
-    },
-    url = {
-      "system"
-    },
-    type_erasure = {
-      "thread"
-    },
-    locale = {
-      "thread"
-    },
-    wave = {
-      "filesystem",
-      "serialization"
-    },
-    json = {
-      "container",
-      "system"
-    },
-    python = {
-      "graph"
-    },
-    charconv = { },
-    chrono = {
-      "system"
-    },
-    cobalt = {
-      "container",
-      "context",
-      "system"
-    },
-    system = { },
-    filesystem = {
-      "atomic",
-      "system"
-    },
-    stacktrace = { }
+local sorted_libs = {
+  "wave",
+  "url",
+  "type_erasure",
+  "timer",
+  "test",
+  "stacktrace",
+  "program_options",
+  "process",
+  "nowide",
+  "log",
+  "locale",
+  "json",
+  "iostreams",
+  "graph_parallel",
+  "mpi",
+  "python",
+  "graph",
+  "serialization",
+  "regex",
+  "math",
+  "random",
+  "fiber",
+  "filesystem",
+  "coroutine",
+  "contract",
+  "thread",
+  "date_time",
+  "exception",
+  "cobalt",
+  "context",
+  "container",
+  "chrono",
+  "system",
+  "charconv",
+  "atomic"
+}
+
+local libs_dep = {
+  json = {
+    "container",
+    "system"
+  },
+  python = {
+    "graph"
+  },
+  test = {
+    "exception"
+  },
+  type_erasure = {
+    "thread"
+  },
+  thread = {
+    "atomic",
+    "chrono",
+    "container",
+    "date_time",
+    "exception",
+    "system"
+  },
+  fiber = {
+    "context",
+    "filesystem"
+  },
+  chrono = {
+    "system"
+  },
+  charconv = { },
+  contract = {
+    "exception",
+    "thread"
+  },
+  timer = { },
+  wave = {
+    "filesystem",
+    "serialization"
+  },
+  stacktrace = { },
+  coroutine = {
+    "context",
+    "exception",
+    "system"
+  },
+  math = {
+    "random"
+  },
+  exception = { },
+  filesystem = {
+    "atomic",
+    "system"
+  },
+  date_time = { },
+  atomic = { },
+  url = {
+    "system"
+  },
+  serialization = { },
+  process = {
+    "filesystem",
+    "system"
+  },
+  regex = { },
+  container = { },
+  random = {
+    "system"
+  },
+  nowide = {
+    "filesystem"
+  },
+  program_options = { },
+  system = { },
+  cobalt = {
+    "container",
+    "context",
+    "system"
+  },
+  graph = {
+    "math",
+    "random",
+    "regex",
+    "serialization"
+  },
+  context = { },
+  mpi = {
+    "graph",
+    "python",
+    "serialization"
+  },
+  log = {
+    "atomic",
+    "date_time",
+    "exception",
+    "filesystem",
+    "random",
+    "regex",
+    "system",
+    "thread"
+  },
+  iostreams = {
+    "random",
+    "regex"
+  },
+  locale = {
+    "thread"
+  },
+  graph_parallel = {
+    "filesystem",
+    "graph",
+    "mpi",
+    "random",
+    "serialization"
+  }
 }
 
 function get_libs()
-    return libs
+    return sorted_libs
+end
+
+function get_lib_deps()
+    return libs_dep
 end
 
 function for_each(lambda)
-    for lib, deps in pairs(get_libs()) do
-        lambda(lib, deps)
+    for _, lib in ipairs(get_libs()) do
+        lambda(lib)
+    end
+end
+
+function for_each_lib_deps(lambda)
+    for libname, deps in pairs(get_lib_deps()) do
+        lambda(libname, deps)
     end
 end

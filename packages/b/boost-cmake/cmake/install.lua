@@ -1,6 +1,5 @@
 import("core.base.hashset")
 import("core.base.option")
-import("core.base.graph")
 
 function _mangle_link_format_string(package)
     local link = "boost_%s"
@@ -11,20 +10,12 @@ function _mangle_link_format_string(package)
 end
 -- Only get package dep version in on_install
 function _add_links(package)
-    -- TODO: Using the sorted libs.lua list and remove this code?
-    local dag = graph.new(true)
-
-    libs.for_each(function (libname, deps)
-        if package:config(libname) then
-            for _, dep_libname in ipairs(deps) do
-                dag:add_edge(libname, dep_libname)
-            end
-        end
-    end)
-
-    local links = dag:topological_sort()
     local format_str = _mangle_link_format_string(package)
-    for _, libname in ipairs(links) do
+    libs.for_each(function (libname)
+        if not package:config(libname) then
+            return
+        end
+
         if libname == "python" then
             local py_ver = assert(package:dep("python"):version(), "Can't get python version")
             libname = libname .. py_ver:major() .. py_ver:minor()
@@ -36,27 +27,27 @@ function _add_links(package)
             libname = "w" .. libname
             package:add("links", format(format_str, libname))
         end
-    end
+    end)
 end
 
 function _check_links(package)
     local lib_files = {}
-    local links = hashset.from(package:get("links"))
+    local links = hashset.from(table.wrap(package:get("links")))
 
     for _, libfile in ipairs(os.files(package:installdir("lib/*"))) do
         local link = path.basename(libfile)
         if not links:remove(link) then
-            table.insert(lib_files, libfile)
+            table.insert(lib_files, path.filename(libfile))
         end
     end
 
     links = links:to_array()
     if #links ~= 0 then
         -- TODO: Remove header only "link"
-        wprint("Missing library files -> " .. table.concat(links, " "))
+        wprint("Missing library files\n" .. table.concat(links, "\n"))
     end
     if #lib_files ~= 0 then
-        wprint("Missing links -> " .. table.concat(lib_files, "\n"))
+        wprint("Missing links\n" .. table.concat(lib_files, "\n"))
     end
 end
 

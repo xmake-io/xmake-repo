@@ -12,7 +12,7 @@ function _recursion_enabled_dep_configs(package, libname, deps, visited_table)
         visited_table[libname] = true
         for _, dep_libname in ipairs(deps) do
             package:config_set(dep_libname, true)
-            _recursion_enabled_dep_configs(package, dep_libname, libs.get_libs()[dep_libname], visited_table)
+            _recursion_enabled_dep_configs(package, dep_libname, libs.get_lib_deps()[dep_libname], visited_table)
         end
     end
 end
@@ -28,7 +28,7 @@ function _auto_enabled_dep_configs(package)
 
     local visited_table = {}
 
-    libs.for_each(function (libname, deps)
+    libs.for_each_lib_deps(function (libname, deps)
         _recursion_enabled_dep_configs(package, libname, deps, visited_table)
     end)
 end

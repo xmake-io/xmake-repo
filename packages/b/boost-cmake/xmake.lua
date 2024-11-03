@@ -8,7 +8,7 @@ package("boost-cmake")
     add_versions("1.86.0", "c62ce6e64d34414864fef946363db91cea89c1b90360eabed0515f0eda74c75c")
 
     includes(path.join(os.scriptdir(), "libs.lua"))
-    for libname, _ in pairs(get_libs()) do
+    for _, libname in ipairs(get_libs()) do
         add_configs(libname, {description = "Enable " .. libname .. " library.", default = (libname == "filesystem"), type = "boolean"})
     end
     add_configs("zlib", {description = "Enable zlib for iostreams", default = false, type = "boolean"})
