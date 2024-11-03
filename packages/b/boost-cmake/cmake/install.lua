@@ -107,8 +107,7 @@ function _add_libs_configs(package, configs)
     end
 
     table.insert(configs, "-DBOOST_ENABLE_PYTHON=" .. (package:config("python") and "ON" or "OFF"))
-    -- TODO: add mpi to xrepo
-    -- table.insert(configs, "-DBOOST_ENABLE_MPI=" .. (package:config("mpi") and "ON" or "OFF"))
+    table.insert(configs, "-DBOOST_ENABLE_MPI=" .. (package:config("mpi") and "ON" or "OFF"))
     if package:config("locale") then
         table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
     end

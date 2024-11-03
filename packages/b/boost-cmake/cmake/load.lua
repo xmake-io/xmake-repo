@@ -100,6 +100,12 @@ function main(package)
         end
     end
 
+    if package:config("mpi") then
+        -- TODO: add mpi to xrepo
+        package:config_set("mpi", false)
+        wprint("package(boost) Unsupported mpi config")
+    end
+
     _add_deps(package)
 
     _add_defines(package)
