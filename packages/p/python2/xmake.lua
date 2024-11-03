@@ -77,7 +77,6 @@ package("python2")
         -- init configs
         local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
         table.insert(configs, "--libdir=" .. package:installdir("lib"))
-        table.insert(configs, "--with-platlibdir=lib")
         table.insert(configs, "--datadir=" .. package:installdir("share"))
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
@@ -181,7 +180,8 @@ package("python2")
 
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
-        import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
+        import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = "", LD_LIBRARY_PATH = package:installdir("lib")}})
+        os.vrunv("make", {"-j4", "PYTHONAPPSDIR=" .. package:installdir()})
         os.vrunv("make", {"install", "-j4", "PYTHONAPPSDIR=" .. package:installdir()})
 
         -- install wheel
