@@ -152,6 +152,14 @@ local libs_dep = {
   }
 }
 
+local header_only_buildable = {
+  "graph_parallel",
+  "system",
+  "exception",
+  "regex",
+  "math",
+}
+
 function get_libs()
     return sorted_libs
 end
@@ -160,9 +168,19 @@ function get_lib_deps()
     return libs_dep
 end
 
+function get_header_only_buildable()
+    return header_only_buildable
+end
+
 function for_each(lambda)
-    for _, lib in ipairs(get_libs()) do
-        lambda(lib)
+    for _, libname in ipairs(get_libs()) do
+        lambda(libname)
+    end
+end
+
+function for_each_header_only_buildable_lib(lambda)
+    for _, libname in ipairs(get_header_only_buildable()) do
+        lambda(libname)
     end
 end
 

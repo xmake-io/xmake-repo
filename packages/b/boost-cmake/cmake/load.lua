@@ -73,14 +73,22 @@ function _add_deps(package)
     _add_iostreams_deps(package)
 end
 
+function _add_header_only_configs(package)
+    libs.for_each(function (libname)
+        package:config_set(libname, false)
+    end)
+    -- TODO: find cmake option to install header only library
+    -- libs.for_each_header_only_buildable_lib(function (libname)
+    --     package:config_set(libname, true)
+    -- end)
+end
+
 function main(package)
     import("libs", {rootdir = package:scriptdir()})
 
     if package:config("header_only") then
         package:set("kind", "library", {headeronly = true})
-        libs.for_each(function (libname)
-            package:config_set(libname, false)
-        end)
+        _add_header_only_configs(package)
     else
         if package:config("all") then
             package:config_set("openssl", true) -- mysql/redis require

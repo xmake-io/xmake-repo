@@ -88,17 +88,21 @@ end
 
 function _add_libs_configs(package, configs)
     if not package:config("all") then
-        local include_libs = {}
-        local exclude_libs = {}
+        local header_only_buildable
+        if package:config("header_only") then
+            header_only_buildable = hashset.from(libs.get_header_only_buildable())
+        end
 
+        local exclude_libs = {}
         libs.for_each(function (libname)
-            if package:config(libname) then
-                table.insert(include_libs, libname)
+            if header_only_buildable and header_only_buildable:has(libname) then
+                -- continue
             else
-                table.insert(exclude_libs, libname)
+                if not package:config(libname) then
+                    table.insert(exclude_libs, libname)
+                end
             end
         end)
-        table.insert(configs, "-DBOOST_INCLUDE_LIBRARIES=" .. table.concat(include_libs, ";"))
         table.insert(configs, "-DBOOST_EXCLUDE_LIBRARIES=" .. table.concat(exclude_libs, ";"))
     end
 
@@ -117,6 +121,18 @@ function _add_libs_configs(package, configs)
     end
 end
 
+function _add_opt(package, opt)
+    opt.cxflags = {}
+    local lzma = package:dep("xz")
+    if lzma and not lzma:config("shared") then
+        table.insert(opt.cxflags, "-DLZMA_API_STATIC")
+    end
+    
+    if package:is_plat("windows") then
+        table.insert(opt.cxflags, "/EHsc")
+    end
+end
+
 function main(package)
     import("libs", {rootdir = package:scriptdir()})
 
@@ -129,17 +145,12 @@ function main(package)
 
     _add_libs_configs(package, configs)
 
-    local opt = {
-        cxflags = {},
-    }
-    local lzma = package:dep("xz")
-    if lzma and not lzma:config("shared") then
-        table.insert(opt.cxflags, "-DLZMA_API_STATIC")
+    if option.get("verbose") then
+        table.insert(configs, "-DBoost_DEBUG=ON")
     end
-    
-    if package:is_plat("windows") then
-        table.insert(opt.cxflags, "/EHsc")
-    end
+
+    local opt = {}
+    _add_opt(package, opt)
     import("package.tools.cmake").install(package, configs, opt)
 
     _add_links(package)
