@@ -84,6 +84,10 @@ package("python2")
             table.insert(configs, "--with-pic")
         end
 
+        -- add compiler settings
+        table.insert(configs, "CC=" .. (package:build_getenv("cc") or "gcc"))
+        table.insert(configs, "CXX=" .. (package:build_getenv("cxx") or "g++"))
+
         -- add openssl libs path for detecting
         local openssl_dir
         local openssl = package:dep("openssl"):fetch()

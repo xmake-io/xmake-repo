@@ -38,7 +38,9 @@ package("ninja")
     end
 
     on_load("linux", "bsd", function (package)
-        package:add("deps", package:version():ge("1.10.0") and "python" or "python2", {kind = "binary"})
+        if package:is_built() then
+            package:add("deps", package:version():ge("1.10.0") and "python" or "python2", {kind = "binary"})
+        end
     end)
 
     on_install("@windows", "@msys", "@cygwin", function (package)
@@ -52,7 +54,7 @@ package("ninja")
     on_install("@linux", "@bsd", function (package)
         import("lib.detect.find_tool")
         local python = assert(find_tool("python"), "python not found!")
-        os.vrunv(python.program, {"configure.py", "--bootstrap"})
+        os.vrunv(python.program, {"configure.py", "--bootstrap"}, {envs = {CXX = package:build_getenv("cxx")}})
         os.cp("./ninja", package:installdir("bin"))
     end)
 
