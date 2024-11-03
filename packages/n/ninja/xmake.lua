@@ -54,7 +54,13 @@ package("ninja")
     on_install("@linux", "@bsd", function (package)
         import("lib.detect.find_tool")
         local python = assert(find_tool("python"), "python not found!")
-        os.vrunv(python.program, {"configure.py", "--bootstrap"}, {envs = {CXX = package:build_getenv("cxx")}})
+        local envs = {}
+        if package:has_tool("cxx", "gcc", "g++") then
+            envs.CXX = "g++"
+        elseif package:has_tool("cxx", "clang", "clang++") then
+            envs.CXX = "clang++"
+        end
+        os.vrunv(python.program, {"configure.py", "--bootstrap"}, {envs = envs})
         os.cp("./ninja", package:installdir("bin"))
     end)
 

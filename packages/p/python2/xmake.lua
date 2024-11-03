@@ -84,6 +84,13 @@ package("python2")
             table.insert(configs, "--with-pic")
         end
 
+        -- add compiler settings
+        if package:has_tool("cxx", "gcc", "g++") then
+            table.insert(configs, "CXX=g++")
+        elseif package:has_tool("cxx", "clang", "clang++") then
+            table.insert(configs, "CXX=clang++")
+        end
+
         -- add openssl libs path for detecting
         local openssl_dir
         local openssl = package:dep("openssl"):fetch()
