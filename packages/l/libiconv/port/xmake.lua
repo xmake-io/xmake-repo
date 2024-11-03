@@ -97,7 +97,7 @@ set_configvar("GNULIB_TEST_REALPATH", 1)
 set_configvar("GNULIB_TEST_SIGPROCMASK", 1)
 set_configvar("GNULIB_TEST_STAT", 1)
 set_configvar("GNULIB_TEST_STRERROR", 1)
-if not is_plat("android") then
+if not is_plat("android", "iphoneos") then
     set_configvar("ssize_t", "int", {quote = false})
     set_configvar("uid_t", "int", {quote = false})
 end
