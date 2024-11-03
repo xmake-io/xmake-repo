@@ -16,6 +16,8 @@ package("boost-cmake")
     add_configs("lzma", {description = "Enable lzma for iostreams", default = false, type = "boolean"})
     add_configs("zstd", {description = "Enable zstd for iostreams", default = false, type = "boolean"})
 
+    add_configs("all", {description = "Enable all library modules support.", default = false, type = "boolean"})
+
     add_deps("cmake")
 
     on_load(function (package)

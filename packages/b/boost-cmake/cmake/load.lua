@@ -66,7 +66,13 @@ end
 function main(package)
     import("libs", {rootdir = package:scriptdir()})
 
-    _auto_enabled_dep_configs(package)
+    if package:config("all") then
+        libs.for_each(function (libname)
+            package:config_set(libname, true)
+        end)
+    else
+        _auto_enabled_dep_configs(package)
+    end
 
     _add_deps(package)
 

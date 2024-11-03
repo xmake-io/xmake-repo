@@ -1,8 +1,8 @@
 import("core.base.hashset")
 import("core.base.option")
 
-function _mangle_link_format_string(package)
-    local link = "boost_%s"
+function _mangle_link_string(package)
+    local link = "boost_"
     if package:is_plat("windows") and not package:config("shared") then
         link = "lib" .. link
     end
@@ -10,40 +10,49 @@ function _mangle_link_format_string(package)
 end
 -- Only get package dep version in on_install
 function _add_links(package)
-    local format_str = _mangle_link_format_string(package)
+    local suffix = _mangle_link_string(package)
+
+    local sub_lib_map = {
+        test = {"prg_exec_monitor", "unit_test_framework"},
+        serialization = {"wserialization", "serialization"},
+        fiber = {"fiber", "fiber_numa"},
+        log = {"log", "log_setup"},
+        stacktrace = {
+            "stacktrace_noop",
+            "stacktrace_backtrace",
+            "stacktrace_addr2line",
+            "stacktrace_basic",
+            "stacktrace_windbg",
+            "stacktrace_windbg_cached",
+        },
+    }
+
+    if package:config("python") then
+        local py_ver = assert(package:dep("python"):version(), "Can't get python version")
+        py_ver = py_ver:major() .. py_ver:minor()
+        -- TODO: detect numpy
+        sub_lib_map["python"] = {
+            "python" .. py_ver,
+            "numpy" .. py_ver,
+        }
+    end
+
     libs.for_each(function (libname)
         if not package:config(libname) then
             return
         end
 
-        if libname == "test" then
-            package:add("links", format(format_str, "prg_exec_monitor"))
-            package:add("links", "libboost_test_exec_monitor") -- always static
-            package:add("links", format(format_str, "unit_test_framework"))
-            return
-        elseif libname == "stacktrace" then
-            package:add("links", format(format_str, "stacktrace_noop"))
-            package:add("links", format(format_str, "stacktrace_backtrace"))
-            package:add("links", format(format_str, "stacktrace_addr2line"))
-            package:add("links", format(format_str, "stacktrace_basic"))
-            package:add("links", format(format_str, "stacktrace_windbg"))
-            package:add("links", format(format_str, "stacktrace_windbg_cached"))
-            return
-        end
-
-        if libname == "python" then
-            local py_ver = assert(package:dep("python"):version(), "Can't get python version")
-            libname = libname .. py_ver:major() .. py_ver:minor()
-        end
-        package:add("links", format(format_str, libname))
-
-        -- TODO: Add to libs.lua?
-        if libname == "serialization" then
-            package:add("links", format(format_str, "wserialization"))
-        elseif libname == "fiber" then
-            package:add("links", format(format_str, "fiber_numa"))
-        elseif libname == "log" then
-            package:add("links", format(format_str, "log_setup"))
+        local sub_lib = sub_lib_map[libname]
+        if sub_lib then
+            for _, sub_libname in ipairs(sub_lib) do
+                package:add("links", suffix .. sub_libname)
+            end
+            if libname == "test" then
+                -- always static
+                package:add("links", "libboost_test_exec_monitor")
+            end
+        else
+            package:add("links", suffix .. libname)
         end
     end)
 end
@@ -69,7 +78,15 @@ function _check_links(package)
     end
 end
 
-function _add_libs(package, configs)
+function _add_iostreams_configs(package, configs)
+    local iostreams_deps = {"zlib", "bzip2", "lzma", "zstd"}
+    for _, dep in ipairs(iostreams_deps) do
+        local config = format("-DBOOST_IOSTREAMS_ENABLE_%s=%s", dep:upper(), (package:config(dep) and "ON" or "OFF"))
+        table.insert(configs, config)
+    end
+end
+
+function _add_libs_configs(package, configs)
     local include_libs = {}
     local exclude_libs = {}
 
@@ -82,14 +99,15 @@ function _add_libs(package, configs)
     end)
     table.insert(configs, "-DBOOST_INCLUDE_LIBRARIES=" .. table.concat(include_libs, ";"))
     table.insert(configs, "-DBOOST_EXCLUDE_LIBRARIES=" .. table.concat(exclude_libs, ";"))
-end
 
-function _add_iostreams_configs(package, configs)
-    local iostreams_deps = {"zlib", "bzip2", "lzma", "zstd"}
-    for _, dep in ipairs(iostreams_deps) do
-        local config = format("-DBOOST_IOSTREAMS_ENABLE_%s=%s", dep:upper(), (package:config(dep) and "ON" or "OFF"))
-        table.insert(configs, config)
+    table.insert(configs, "-DBOOST_ENABLE_PYTHON=" .. (package:config("python") and "ON" or "OFF"))
+    -- TODO: add mpi to xrepo
+    -- table.insert(configs, "-DBOOST_ENABLE_MPI=" .. (package:config("mpi") and "ON" or "OFF"))
+    if package:config("locale") then
+        table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
     end
+
+    _add_iostreams_configs(package, configs)
 end
 
 function main(package)
@@ -102,17 +120,11 @@ function main(package)
         table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
     end
 
-    _add_libs(package, configs)
+    _add_libs_configs(package, configs)
 
-    _add_iostreams_configs(package, configs)
-
-    table.insert(configs, "-DBOOST_ENABLE_PYTHON=" .. (package:config("python") and "ON" or "OFF"))
-    if package:config("locale") then
-        table.insert(configs, "-DCMAKE_CXX_STANDARD=17")
-    end
-
-    local opt = {}
-    opt.cxflags = {}
+    local opt = {
+        cxflags = {},
+    }
     local lzma = package:dep("xz")
     if lzma and not lzma:config("shared") then
         table.insert(opt.cxflags, "-DLZMA_API_STATIC")
