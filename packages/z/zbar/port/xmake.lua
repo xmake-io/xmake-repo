@@ -40,6 +40,11 @@ target("zbar")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
+    elseif is_plat("windows") then
+        add_syslinks("winmm")
+        if is_kind("shared") then
+            add_rules("utils.symbols.export_all")
+        end
     end
 
     add_packages("libiconv")
