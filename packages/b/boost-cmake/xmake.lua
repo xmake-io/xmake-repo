@@ -15,8 +15,10 @@ package("boost-cmake")
     add_configs("bzip2", {description = "Enable bzip2 for iostreams", default = false, type = "boolean"})
     add_configs("lzma", {description = "Enable lzma for iostreams", default = false, type = "boolean"})
     add_configs("zstd", {description = "Enable zstd for iostreams", default = false, type = "boolean"})
+    add_configs("openssl", {description = "Enable openssl for mysql/redis", default = false, type = "boolean"})
 
     add_configs("all", {description = "Enable all library modules support.", default = false, type = "boolean"})
+    add_configs("header_only", {description = "Enable header only modules", default = false, type = "boolean"})
 
     add_deps("cmake")
 

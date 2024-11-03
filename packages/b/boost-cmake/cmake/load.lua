@@ -43,6 +43,9 @@ function _add_deps(package)
     if package:config("python") then
         package:add("deps", "python", {configs = {headeronly = true}})
     end
+    if package:config("openssl") then
+        package:add("deps", "openssl >=1.1.1-a") -- same as python on_load
+    end
 
     if package:config("iostreams") then
         if package:config("zlib") then
@@ -66,12 +69,19 @@ end
 function main(package)
     import("libs", {rootdir = package:scriptdir()})
 
-    if package:config("all") then
+    if package:config("header_only") then
+        package:set("kind", "library", {headeronly = true})
         libs.for_each(function (libname)
-            package:config_set(libname, true)
+            package:config_set(libname, false)
         end)
     else
-        _auto_enabled_dep_configs(package)
+        if package:config("all") then
+            libs.for_each(function (libname)
+                package:config_set(libname, true)
+            end)
+        else
+            _auto_enabled_dep_configs(package)
+        end
     end
 
     _add_deps(package)

@@ -88,10 +88,14 @@ end
 
 function main(package)
     local snippets = {}
-    -- _header_only(package, snippets)
-    _iostreams(package, snippets)
-    _filesystem(package, snippets)
-    _date_time(package, snippets)
+
+    if package:config("header_only") then
+        _header_only(package, snippets)
+    else
+        _iostreams(package, snippets)
+        _filesystem(package, snippets)
+        _date_time(package, snippets)
+    end
 
     local opt = {configs = {languages = "c++14"}}
     for _, snippet in ipairs(snippets) do
