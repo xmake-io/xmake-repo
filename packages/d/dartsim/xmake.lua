@@ -76,7 +76,7 @@ package("dartsim")
         table.insert(configs, "-DDART_BUILD_GUI_OSG=" .. (package:config("openscenegraph") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
         local suffix = package:is_debug() and "d" or ""
-        for _, lib in {"dart-collision-bullet", "dart-collision-ode", "dart-gui-osg", "dart-gui", "dart-optimizer-ipopt", "dart-optimizer-nlopt", "dart-optimizer-pagmo", "dart-utils-urdf", "dart-utils", "dart", "dart-external-odelcpsolver", "dart-external-lodepng"} do
+        for _, lib in ipairs({"dart-collision-bullet", "dart-collision-ode", "dart-gui-osg", "dart-gui", "dart-optimizer-ipopt", "dart-optimizer-nlopt", "dart-optimizer-pagmo", "dart-utils-urdf", "dart-utils", "dart", "dart-external-odelcpsolver", "dart-external-lodepng"}) do
             package:add("links", lib .. suffix)
         end
     end)
