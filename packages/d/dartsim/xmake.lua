@@ -27,6 +27,8 @@ package("dartsim")
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
         add_cxxflags("/permissive-")
         add_syslinks("user32")
+        -- https://gitlab.kitware.com/cmake/cmake/-/issues/20222
+        set_policy("package.cmake_generator.ninja", false)
     end
 
     add_deps("cmake")
