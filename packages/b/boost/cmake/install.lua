@@ -12,7 +12,7 @@ end
 function _add_links(package)
     local suffix = _mangle_link_string(package)
 
-    local sub_lib_map = {
+    local sub_libs_map = {
         test = {"prg_exec_monitor", "unit_test_framework"},
         serialization = {"wserialization", "serialization"},
         fiber = {"fiber", "fiber_numa"},
@@ -31,7 +31,7 @@ function _add_links(package)
         local py_ver = assert(package:dep("python"):version(), "Can't get python version")
         py_ver = py_ver:major() .. py_ver:minor()
         -- TODO: detect numpy
-        sub_lib_map["python"] = {
+        sub_libs_map["python"] = {
             "python" .. py_ver,
             "numpy" .. py_ver,
         }
@@ -42,9 +42,9 @@ function _add_links(package)
             return
         end
 
-        local sub_lib = sub_lib_map[libname]
-        if sub_lib then
-            for _, sub_libname in ipairs(sub_lib) do
+        local sub_libs = sub_libs_map[libname]
+        if sub_libs then
+            for _, sub_libname in ipairs(sub_libs) do
                 package:add("links", suffix .. sub_libname)
             end
             if libname == "test" then
@@ -89,7 +89,7 @@ end
 function _add_libs_configs(package, configs)
     if not package:config("all") then
         local header_only_buildable
-        if package:config("header_only") then
+        if package:is_headeronly() then
             header_only_buildable = hashset.from(libs.get_header_only_buildable())
         end
 
@@ -127,7 +127,7 @@ function _add_opt(package, opt)
         table.insert(opt.cxflags, "-DLZMA_API_STATIC")
     end
     
-    if package:is_plat("windows") then
+    if package:has_tool("cxx", "cl") then
         table.insert(opt.cxflags, "/EHsc")
     end
 end

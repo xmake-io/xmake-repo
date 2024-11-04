@@ -3,6 +3,8 @@ package("boost")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
 
+    -- xrepo does not support `package:config("cmake")` in on_source to set the download url, so if you want to build with cmake, we need to `add_urls` cmake archive url at first line.
+    -- Users can also download the cmake archive and put it in `xmake g --pkg_searchdirs=` to avoid xrepo using a non-cmake archive url.
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.tar.gz", {alias = "cmake"})
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-b2-nodocs.tar.gz")
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version).tar.gz")
@@ -94,6 +96,7 @@ package("boost")
     on_install(function (package)
         local version = package:version()
         if package:config("cmake") and version:ge("1.86") then
+            assert(os.isfile("CMakeLists.txt"), "Currently the source archive only has the b2 build system, you need to download the cmake archive and put it in `xmake g --pkg_searchdirs=` to avoid xrepo using a non-cmake archive url.")
             import("cmake.install")(package)
         else
             import("b2.install")(package)
