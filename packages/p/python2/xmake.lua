@@ -24,15 +24,15 @@ package("python2")
         add_versions("2.7.18", "da3080e3b488f648a3d7a4560ddee895284c3380b11d6de75edb986526b9a814")
     end
 
-    if not is_plat(os.host()) then
+    if not is_plat(os.host()) or not is_arch(os.arch()) then
         set_kind("binary")
     end
 
-    if is_host("macosx", "linux") then
+    if is_host("macosx", "linux", "bsd") then
         add_deps("openssl", "ca-certificates", {host = true})
     end
 
-    if is_host("linux") then
+    if is_host("linux", "bsd") then
         add_deps("libffi", "zlib", {host = true})
         add_syslinks("util", "pthread", "dl")
     end
@@ -48,7 +48,7 @@ package("python2")
         package:addenv("PATH", "bin")
     end)
 
-    on_load("@macosx", "@linux", function (package)
+    on_load("@macosx", "@linux", "@bsd", function (package)
 
         -- set includedirs
         local version = package:version()
@@ -72,15 +72,23 @@ package("python2")
         os.vrunv(python, {"-m", "pip", "install", "wheel"})
     end)
 
-    on_install("@macosx", "@linux", function (package)
+    on_install("@macosx|x86_64", "@linux", "@bsd", function (package)
 
         -- init configs
-        local configs = {"--enable-ipv6", "--with-ensurepip"}
+        local configs = {"--enable-ipv6", "--with-ensurepip", "--enable-optimizations"}
+        table.insert(configs, "--libdir=" .. package:installdir("lib"))
         table.insert(configs, "--datadir=" .. package:installdir("share"))
         table.insert(configs, "--datarootdir=" .. package:installdir("share"))
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         if package:is_plat("linux") and package:config("pic") ~= false then
             table.insert(configs, "--with-pic")
+        end
+
+        -- add compiler settings
+        if package:has_tool("cxx", "gcc", "g++") then
+            table.insert(configs, "CXX=g++")
+        elseif package:has_tool("cxx", "clang", "clang++") then
+            table.insert(configs, "CXX=clang++")
         end
 
         -- add openssl libs path for detecting
@@ -124,26 +132,6 @@ package("python2")
             xcode_dir = xcode_dir or get_config("xcode")
             xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver")
             target_minver = target_minver or get_config("target_minver")
-
-            -- TODO will be deprecated after xmake v2.5.1
-            xcode_sdkver = xcode_sdkver or get_config("xcode_sdkver_macosx")
-            if not xcode_dir or not xcode_sdkver then
-                -- maybe on cross platform, we need find xcode envs manually
-                local xcode = import("detect.sdks.find_xcode")(nil, {force = true, plat = package:plat(), arch = package:arch()})
-                if xcode then
-                    xcode_dir = xcode.sdkdir
-                    xcode_sdkver = xcode.sdkver
-                end
-            end
-
-            -- TODO will be deprecated after xmake v2.5.1
-            target_minver = target_minver or get_config("target_minver_macosx")
-            if not target_minver then
-                local macos_ver = macos.version()
-                if macos_ver then
-                    target_minver = macos_ver:major() .. "." .. macos_ver:minor()
-                end
-            end
 
             if xcode_dir and xcode_sdkver then
                 -- help Python's build system (setuptools/pip) to build things on SDK-based systems
@@ -199,12 +187,13 @@ package("python2")
 
         -- unset these so that installing pip and setuptools puts them where we want
         -- and not into some other Python the user has installed.
-        import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = ""}})
+        import("package.tools.autoconf").configure(package, configs, {envs = {PYTHONHOME = "", PYTHONPATH = "", LD_LIBRARY_PATH = package:installdir("lib")}})
+        os.vrunv("make", {"-j4", "PYTHONAPPSDIR=" .. package:installdir()})
         os.vrunv("make", {"install", "-j4", "PYTHONAPPSDIR=" .. package:installdir()})
 
         -- install wheel
         local python = path.join(package:installdir("bin"), "python")
-        os.vrunv(python, {"-m", "pip", "install", "wheel"})
+        os.vrunv(python, {"-m", "pip", "install", "wheel"}, {envs = {LD_LIBRARY_PATH = package:installdir("lib")}})
     end)
 
     on_test(function (package)
