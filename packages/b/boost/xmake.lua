@@ -28,10 +28,12 @@ package("boost")
 
     if on_source then
         on_source(function (package)
-            if not package:config("cmake") then
-                return
-            end
+            -- xmake bug?
+            -- if not package:config("cmake") then
+            --     return
+            -- end
 
+            -- due to bug, we can't fallback to b2
             package:set("urls", "https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.tar.gz")
 
             package:add("versions", "1.86.0", "c62ce6e64d34414864fef946363db91cea89c1b90360eabed0515f0eda74c75c")
@@ -50,7 +52,7 @@ package("boost")
     add_configs("zstd", {description = "Enable zstd for iostreams", default = false, type = "boolean"})
     add_configs("openssl", {description = "Enable openssl for mysql/redis", default = false, type = "boolean"})
 
-    add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
+    add_configs("cmake", {description = "Use cmake build system", default = (on_source and true or false), type = "boolean"})
     add_configs("all", {description = "Enable all library modules support.", default = false, type = "boolean"})
     add_configs("header_only", {description = "Enable header only modules", default = false, type = "boolean"})
 
