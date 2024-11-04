@@ -3,11 +3,14 @@ package("boost")
     set_description("Collection of portable C++ source libraries.")
     set_license("BSL-1.0")
 
+    add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.tar.gz", {alias = "cmake"})
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-b2-nodocs.tar.gz")
     add_urls("https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version).tar.gz")
     add_urls("https://github.com/xmake-mirror/boost/releases/download/boost-$(version).tar.bz2", {alias = "mirror", version = function (version)
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
+
+    add_versions("cmake:1.86.0", "c62ce6e64d34414864fef946363db91cea89c1b90360eabed0515f0eda74c75c")
 
     add_versions("1.86.0", "2128a4c96862b5c0970c1e34d76b1d57e4a1016b80df85ad39667f30b1deba26")
     add_versions("1.85.0", "f4a7d3f81b8a0f65067b769ea84135fd7b72896f4f59c7f405086c8c0dc61434")
@@ -15,6 +18,7 @@ package("boost")
     add_versions("1.83.0", "0c6049764e80aa32754acd7d4f179fd5551d8172a83b71532ae093e7384e98da")
     add_versions("1.82.0", "b62bd839ea6c28265af9a1f68393eda37fab3611425d3b28882d8e424535ec9d")
     add_versions("1.81.0", "121da556b718fd7bd700b5f2e734f8004f1cfa78b7d30145471c526ba75a151c")
+
     add_versions("mirror:1.80.0", "1e19565d82e43bc59209a168f5ac899d3ba471d55c7610c677d4ccf2c9c500c0")
     add_versions("mirror:1.79.0", "475d589d51a7f8b3ba2ba4eda022b170e562ca3b760ee922c146b6c65856ef39")
     add_versions("mirror:1.78.0", "8681f175d4bdb26c52222665793eef08490d7758529330f98d3b29dd0735bccc")
@@ -25,20 +29,6 @@ package("boost")
     add_versions("mirror:1.73.0", "4eb3b8d442b426dc35346235c8733b5ae35ba431690e38c6a8263dce9fcbb402")
     add_versions("mirror:1.72.0", "59c9b274bc451cf91a9ba1dd2c7fdcaf5d60b1b3aa83f2c9fa143417cc660722")
     add_versions("mirror:1.70.0", "430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778")
-
-    if on_source then
-        on_source(function (package)
-            -- xmake bug?
-            -- if not package:config("cmake") then
-            --     return
-            -- end
-
-            -- due to bug, we can't fallback to b2
-            package:set("urls", "https://github.com/boostorg/boost/releases/download/boost-$(version)/boost-$(version)-cmake.tar.gz")
-
-            package:add("versions", "1.86.0", "c62ce6e64d34414864fef946363db91cea89c1b90360eabed0515f0eda74c75c")
-        end)
-    end
 
     add_patches("1.75.0", "patches/1.75.0/warning.patch", "43ff97d338c78b5c3596877eed1adc39d59a000cf651d0bcc678cf6cd6d4ae2e")
 
@@ -52,7 +42,7 @@ package("boost")
     add_configs("zstd", {description = "Enable zstd for iostreams", default = false, type = "boolean"})
     add_configs("openssl", {description = "Enable openssl for mysql/redis", default = false, type = "boolean"})
 
-    add_configs("cmake", {description = "Use cmake build system", default = (on_source and true or false), type = "boolean"})
+    add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
     add_configs("all", {description = "Enable all library modules support.", default = false, type = "boolean"})
     add_configs("header_only", {description = "Enable header only modules", default = false, type = "boolean"})
 
@@ -75,8 +65,13 @@ package("boost")
         on_check(function (package)
             if not package:is_plat("macosx", "linux", "windows", "bsd", "mingw", "cross") then
                 if not package:config("cmake") then
-                    raise("boost/b2 unsupported current platform.")
+                    raise("package(boost/b2) unsupported current platform.")
                 end
+            end
+
+            local version = package:version()
+            if package:config("cmake") and version:lt("1.86") then
+                raise("package(boost/cmake) only support >= 1.86.0 version")
             end
         end)
     end
