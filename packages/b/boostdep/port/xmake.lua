@@ -2,6 +2,8 @@
 
 add_rules("mode.debug", "mode.release")
 
+set_languages("c++17")
+
 target("filesystem")
     set_kind("static")
     add_files("libs/filesystem/src/*.cpp|windows_file_codecvt.cpp")
