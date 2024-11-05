@@ -44,7 +44,7 @@ package("boost")
     add_configs("zstd", {description = "Enable zstd for iostreams", default = false, type = "boolean"})
     add_configs("openssl", {description = "Enable openssl for mysql/redis", default = false, type = "boolean"})
 
-    add_configs("cmake", {description = "Use cmake build system", default = true, type = "boolean"})
+    add_configs("cmake", {description = "Use cmake build system (>= 1.86)", default = true, type = "boolean"})
     add_configs("all", {description = "Enable all library modules support.", default = false, type = "boolean"})
     add_configs("header_only", {description = "Enable header only modules", default = false, type = "boolean"})
 
@@ -70,17 +70,17 @@ package("boost")
                     raise("package(boost/b2) unsupported current platform.")
                 end
             end
-
-            local version = package:version()
-            if package:config("cmake") and version:lt("1.86") then
-                raise("package(boost/cmake) only support >= 1.86.0 version")
-            end
         end)
     end
 
     on_load(function (package)
         local version = package:version()
-        if package:config("cmake") and version:ge("1.86") then
+        if package:config("cmake") and version:lt("1.86") then
+            -- Don't break old version
+            package:config_set("cmake", false)
+        end
+
+        if package:config("cmake") then
             wprint("If cmake build failure, set package config cmake = false fallback to b2 for the build")
 
             package:add("deps", "cmake")
@@ -94,8 +94,7 @@ package("boost")
     end)
 
     on_install(function (package)
-        local version = package:version()
-        if package:config("cmake") and version:ge("1.86") then
+        if package:config("cmake") then
             assert(os.isfile("CMakeLists.txt"), "Currently the source archive only has the b2 build system, you need to download the cmake archive and put it in `xmake g --pkg_searchdirs=` to avoid xrepo using a non-cmake archive url.")
             import("cmake.install")(package)
         else
