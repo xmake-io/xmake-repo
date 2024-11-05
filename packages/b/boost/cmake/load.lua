@@ -34,10 +34,6 @@ function _auto_enabled_dep_configs(package)
 end
 
 function _add_iostreams_deps(package)
-    if not package:config("iostreams") then
-        return
-    end
-
     if package:config("zlib") then
         package:add("deps", "zlib")
     end
@@ -69,8 +65,9 @@ function _add_deps(package)
     if package:config("openssl") then
         package:add("deps", "openssl >=1.1.1-a") -- same as python on_load
     end
-
-    _add_iostreams_deps(package)
+    if package:config("iostreams") then
+        _add_iostreams_deps(package)
+    end
 end
 
 function _add_header_only_configs(package)

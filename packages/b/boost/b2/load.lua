@@ -60,6 +60,9 @@ function main(package)
     -- disable auto-link all libs
     if package:is_plat("windows") then
         package:add("defines", "BOOST_ALL_NO_LIB")
+        if package:config("shared") then
+            package:add("defines", "BOOST_ALL_DYN_LINK")
+        end
     end
 
     if package:config("python") then

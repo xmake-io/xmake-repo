@@ -10,7 +10,7 @@ function _mangle_link_string(package)
 end
 -- Only get package dep version in on_install
 function _add_links(package)
-    local suffix = _mangle_link_string(package)
+    local prefix = _mangle_link_string(package)
 
     local sub_libs_map = {
         test = {"prg_exec_monitor", "unit_test_framework"},
@@ -45,14 +45,14 @@ function _add_links(package)
         local sub_libs = sub_libs_map[libname]
         if sub_libs then
             for _, sub_libname in ipairs(sub_libs) do
-                package:add("links", suffix .. sub_libname)
+                package:add("links", prefix .. sub_libname)
             end
             if libname == "test" then
                 -- always static
                 package:add("links", "libboost_test_exec_monitor")
             end
         else
-            package:add("links", suffix .. libname)
+            package:add("links", prefix .. libname)
         end
     end)
 end
