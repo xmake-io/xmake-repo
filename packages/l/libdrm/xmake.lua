@@ -10,16 +10,14 @@ package("libdrm")
     add_versions("2.4.118", "a777bd85f2b5fc9c57f886c82058300578317cafdbc77d0a769d7e9a9567ab88")
 
     if is_plat("linux") then
-        add_extsources("pkgconfig::libdrm", "pacman::libdrm", "apt::libdrm-dev")
-    elseif is_plat("macosx") then
-        add_extsources("brew::libdrm")
+        add_extsources("pkgconfig::libdrm", "pacman::libdrm", "apt::libdrm-dev", "brew::libdrm")
     end
 
     add_includedirs("include", "include/libdrm")
 
     add_deps("meson", "ninja")
 
-    on_install("linux", "macosx", "bsd", function (package)
+    on_install("linux", "bsd", function (package)
         local configs = {
             "-Dudev=true",
             "-Dvalgrind=disabled",
