@@ -40,7 +40,7 @@ function _get_compiler(package, toolchain)
     end
 end
 
-function _config_deppath(file, depname, rule)
+function _config_deppath(package, file, depname, rule)
     local dep = package:dep(depname)
     local info = dep:fetch({external = false})
     if info then
@@ -130,16 +130,16 @@ function main(package)
     if file then
         file:write(_get_compiler(package, build_toolchain))
         if package:config("lzma") then
-            _config_deppath(file, "xz", "lzma")
+            _config_deppath(package, file, "xz", "lzma")
         end
         if package:config("zstd") then
-            _config_deppath(file, "zstd", "zstd")
+            _config_deppath(package, file, "zstd", "zstd")
         end
         if package:config("zlib") then
-            _config_deppath(file, "zlib", "zlib")
+            _config_deppath(package, file, "zlib", "zlib")
         end
         if package:config("bzip2") then
-            _config_deppath(file, "bzip2", "bzip2")
+            _config_deppath(package, file, "bzip2", "bzip2")
         end
         file:close()
     end
