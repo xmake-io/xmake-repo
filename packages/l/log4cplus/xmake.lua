@@ -30,6 +30,9 @@ package("log4cplus")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DUNICODE=" .. (package:config("unicode") and "ON" or "OFF"))
+        if package:is_plat("wasm") then
+            table.insert(configs, "-DLOG4CPLUS_BUILD_LOGGINGSERVER=OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
