@@ -1,5 +1,4 @@
 package("log4cplus")
-
     set_homepage("https://sourceforge.net/projects/log4cplus/")
     set_description("log4cplus is a simple to use C++ logging API providing thread-safe, flexible, and arbitrarily granular control over log management and configuration.")
     set_license("BSD-2-Clause")
@@ -12,24 +11,28 @@ package("log4cplus")
 
     add_configs("unicode", {description = "Use unicode charset.", default = true, type = "boolean"})
 
-    add_deps("cmake")
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_syslinks("advapi32", "ws2_32")
-    elseif is_plat("linux") then
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
-    on_load("windows", "linux", "macosx", function (package)
+    add_deps("cmake")
+
+    on_load(function (package)
         if package:config("unicode") then
             package:add("defines", "UNICODE")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-DLOG4CPLUS_BUILD_TESTING=OFF"}
-        table.insert(configs, "-DUNICODE=" .. (package:config("unicode") and "ON" or "OFF"))
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+    on_install(function (package)
+        local configs = {"-DLOG4CPLUS_BUILD_TESTING=OFF", "-DWITH_UNIT_TESTS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DUNICODE=" .. (package:config("unicode") and "ON" or "OFF"))
+        if package:is_plat("wasm") then
+            table.insert(configs, "-DLOG4CPLUS_BUILD_LOGGINGSERVER=OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
