@@ -1,5 +1,5 @@
 package("flex")
-    set_kind("binary")
+    set_kind("library")
     set_homepage("https://github.com/westes/flex/")
     set_license("BSD-2-Clause")
 
@@ -15,11 +15,7 @@ package("flex")
         add_urls("https://github.com/westes/flex/releases/download/v$(version)/flex-$(version).tar.gz")
     end
 
-    if is_subhost("msys") then
-        add_deps("pacman::flex")
-    end
-
-    on_load("macosx", "linux", "bsd", "windows", function (package)
+    on_load("macosx", "linux", "bsd", "windows", "@msys", function (package)
         if package:is_plat("windows") then
             package:add("deps", "winflexbison", {private = true})
         elseif package:is_plat("linux") then
@@ -35,6 +31,13 @@ package("flex")
     end)
 
     on_install("@msys", function (package)
+        os.vrun("pacman -Sy --noconfirm --needed --disable-download-timeout flex")
+        -- https://github.com/msys2/MSYS2-packages/issues/1911
+        if package:is_library() then
+            local msys_dir = os.getenv("MINGW_PREFIX")
+            local header = path.join(path.directory(msys_dir), "usr/include/FlexLexer.h")
+            os.vcp(header, package:installdir("include"))
+        end
     end)
 
     on_install("windows", function (package)
