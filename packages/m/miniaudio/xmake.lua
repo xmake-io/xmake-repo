@@ -25,6 +25,10 @@ package("miniaudio")
         add_frameworks("AudioToolbox", "CoreAudio", "AudioUnit", "AVFoundation", "CoreFoundation", "Foundation")
     end
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
     on_load(function (package)
         if package:config("headeronly") and package:config("shared") then
             package:add("defines", "MA_DLL")
@@ -41,7 +45,12 @@ package("miniaudio")
                 target("miniaudio")
                     set_kind("$(kind)")
                     add_headerfiles("extras/miniaudio_split/(miniaudio.h)")
-                    add_files("extras/miniaudio_split/miniaudio.c")
+                    if is_plat("macosx", "iphoneos") then
+                        add_files("extras/miniaudio_split/miniaudio.c", {sourcekind = "mm"})
+                    else
+                        add_files("extras/miniaudio_split/miniaudio.c")
+                    end
+                
                     add_defines("MINIAUDIO_IMPLEMENTATION")
 
                     if is_kind("shared") then
