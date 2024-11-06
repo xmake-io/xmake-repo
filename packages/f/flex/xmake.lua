@@ -1,5 +1,5 @@
 package("flex")
-    set_kind("library")
+    set_kind("binary")
     set_homepage("https://github.com/westes/flex/")
     set_license("BSD-2-Clause")
 
@@ -46,7 +46,13 @@ package("flex")
     end)
 
     on_install("macosx", "linux", "bsd", "android", "iphoneos", "cross", function (package)
-        import("package.tools.autoconf").install(package)
+        local configs = {}
+        table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+        if package:is_debug() then
+            table.insert(configs, "--enable-debug")
+        end
+        import("package.tools.autoconf").install(package, configs)
     end)
 
     on_test(function (package)
