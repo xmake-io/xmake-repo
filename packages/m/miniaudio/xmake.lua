@@ -46,7 +46,7 @@ package("miniaudio")
                     set_kind("$(kind)")
                     add_headerfiles("extras/miniaudio_split/(miniaudio.h)")
                     if is_plat("macosx", "iphoneos") then
-                        add_files("extras/miniaudio_split/miniaudio.c", {sourcekind = "mm"})
+                        add_files("extras/miniaudio_split/miniaudio.c", {sourcekind = "m"})
                     else
                         add_files("extras/miniaudio_split/miniaudio.c")
                     end
