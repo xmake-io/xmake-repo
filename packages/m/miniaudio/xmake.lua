@@ -1,5 +1,4 @@
 package("miniaudio")
-    set_kind("library", {headeronly = true})
     set_homepage("https://miniaud.io")
     set_description("Single file audio playback and capture library written in C.")
 
@@ -11,6 +10,14 @@ package("miniaudio")
     add_versions("0.11.17", "4b139065f7068588b73d507d24e865060e942eb731f988ee5a8f1828155b9480")
     add_versions("0.11.18", "85ca916266d809b39902e180a6d16f82caea9c2ea1cea6d374413641b7ba48c3")
 
+    add_configs("headeronly", {description = "Install the headeronly version (or the split one if disabled).", default = false, type = "boolean"})
+
+    on_load(function (package)
+        if package:config("headeronly") then
+            package:set("kind", "library", {headeronly = true})
+        end
+    end)
+
     if is_plat("iphoneos") then
         add_frameworks("AudioToolbox", "AVFoundation", "CoreFoundation", "Foundation")
     elseif is_plat("macosx") then
@@ -18,8 +25,32 @@ package("miniaudio")
         add_frameworks("AudioToolbox", "CoreAudio", "AudioUnit", "AVFoundation", "CoreFoundation", "Foundation")
     end
 
+    on_load(function (package)
+        if package:config("headeronly") and package:config("shared") then
+            package:add("defines", "MA_DLL")
+        end
+    end)
+
     on_install(function (package)
-        os.cp("miniaudio.h", package:installdir("include"))
+        if package:config("headeronly") then
+            os.cp("miniaudio.h", package:installdir("include"))
+        else
+            io.writefile("xmake.lua", [[
+                add_rules("mode.debug", "mode.release")
+    
+                target("miniaudio")
+                    set_kind("$(kind)")
+                    add_headerfiles("extras/miniaudio_split/(miniaudio.h)")
+                    add_files("extras/miniaudio_split/miniaudio.c")
+                    add_defines("MINIAUDIO_IMPLEMENTATION")
+
+                    if is_kind("shared") then
+                        add_defines("MA_DLL", { public = true })
+                    end
+            ]])
+            import("package.tools.xmake").install(package)
+        end
+        os.cp("extras/nodes", package:installdir("include"))
     end)
 
     on_test(function (package)
