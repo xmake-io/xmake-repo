@@ -13,12 +13,8 @@ package("verilator")
 
     on_load(function (package)
         if not package:is_precompiled() then
-            if package:is_plat("windows") then
-                package:add("deps", "winflexbison", {kind = "library"})
-            else
-                package:add("deps", "flex", {kind = "library"})
-                package:add("deps", "bison")
-            end
+            package:add("deps", "flex", {kind = "library"})
+            package:add("deps", "bison")
             package:add("deps", "python 3.x", {kind = "binary"})
         end
         package:mark_as_pathenv("VERILATOR_ROOT")
@@ -29,16 +25,31 @@ package("verilator")
         import("package.tools.cmake")
 
         io.replace("src/CMakeLists.txt", "MSVC_RUNTIME_LIBRARY MultiThreaded$<IF:$<CONFIG:Release>,,DebugDLL>", "", {plain = true})
+        if is_subhost("msys") then
+            io.replace("CMakeLists.txt", "if(WIN32)", "if(0)", {plain = true})
+        end
 
-        local configs = {"-DOBJCACHE_ENABLED=OFF", "-DDEBUG_AND_RELEASE_AND_COVERAGE=OFF"}
+        local configs = {
+            "-DOBJCACHE_ENABLED=OFF",
+            "-DDEBUG_AND_RELEASE_AND_COVERAGE=OFF",
+            "-DCMAKE_CXX_STANDARD=20",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        end
 
         local opt = {}
         opt.envs = cmake.buildenvs(package)
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-            opt.envs.WIN_FLEX_BISON = package:dep("winflexbison"):installdir("include")
+        if is_host("windows") then
+            local winflexbison = package:dep("winflexbison")
+            if winflexbison then
+                opt.envs.WIN_FLEX_BISON = winflexbison:installdir("include")
+            else
+                local flex = package:dep("flex")
+                table.insert(configs, "-DFLEX_INCLUDE_DIR=" .. flex:installdir("include"))
+            end
         end
         cmake.install(package, configs, opt)
 
@@ -56,5 +67,7 @@ package("verilator")
     end)
 
     on_test(function (package)
-        os.vrun("verilator --version")
+        if not package:is_cross() then
+            os.vrun("verilator --version")
+        end
     end)
