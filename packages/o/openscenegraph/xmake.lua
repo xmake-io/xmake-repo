@@ -7,6 +7,8 @@ package("openscenegraph")
              "https://github.com/openscenegraph/OpenSceneGraph.git")
     add_versions("3.6.5", "aea196550f02974d6d09291c5d83b51ca6a03b3767e234a8c0e21322927d1e12")
 
+    add_patches("3.6.5", "patches/3.6.5/msvc.patch", "e7a9b98a78dc08d612fb4d0c5f9895d1fed6c5a1b3615499af0643b381b47fe0")
+
     add_configs("tools", {description = "Enable to build OSG Applications.", default = false, type = "boolean"})
 
     local configdeps = {fontconfig = "fontconfig",
@@ -40,7 +42,7 @@ package("openscenegraph")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        local configs = {"-DBUILD_OSG_EXAMPLES=OFF"}
+        local configs = {"-DBUILD_OSG_EXAMPLES=OFF", "-DOSG_MSVC_VERSIONED_DLL=OFF"}
         local disabled_packages = {"ilmbase", "Inventor", "OpenCascade", "FBX", "GDAL", "GTA", "CURL", "LibVNCServer", "GStreamer", "SDL", "Poppler", "RSVG", "GtkGl", "Asio", "ZeroConf", "LIBLAS"}
         for _, pkg in ipairs(disabled_packages) do
             table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. pkg .. "=ON")
@@ -52,7 +54,7 @@ package("openscenegraph")
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. dep .. "=" .. (package:config(config) and "OFF" or "ON"))
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
     end)
 
     on_test(function (package)
