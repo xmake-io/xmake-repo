@@ -9,9 +9,6 @@ package("microsoft-kuku")
     add_versions("v2.1.0", "96ed5fad82ea8c8a8bb82f6eaf0b5dce744c0c2566b4baa11d8f5443ad1f83b7")
 
     add_configs("c_api",  {description = "Builds C API", default = false, type = "boolean"})
-    if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
 
     add_deps("cmake")
 
@@ -29,10 +26,15 @@ package("microsoft-kuku")
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "if(WIN32 AND BUILD_SHARED_LIBS)", "if(0)", {plain = true})
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DKUKU_BUILD_KUKU_C=" .. (package:config("c_api") and "ON" or "OFF"))
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
