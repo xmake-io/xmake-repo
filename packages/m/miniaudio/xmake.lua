@@ -10,13 +10,7 @@ package("miniaudio")
     add_versions("0.11.17", "4b139065f7068588b73d507d24e865060e942eb731f988ee5a8f1828155b9480")
     add_versions("0.11.18", "85ca916266d809b39902e180a6d16f82caea9c2ea1cea6d374413641b7ba48c3")
 
-    add_configs("headeronly", {description = "Install the headeronly version (or the split one if disabled).", default = true, type = "boolean"})
-
-    on_load(function (package)
-        if package:config("headeronly") then
-            package:set("kind", "library", {headeronly = true})
-        end
-    end)
+    add_configs("headeronly", {description = "Install the headeronly version (or the split one if disabled).", default = false, type = "boolean"})
 
     if is_plat("iphoneos") then
         add_frameworks("AudioToolbox", "AVFoundation", "CoreFoundation", "Foundation")
@@ -30,7 +24,10 @@ package("miniaudio")
     end
 
     on_load(function (package)
-        if package:config("headeronly") and package:config("shared") then
+        if package:config("headeronly") then
+            package:set("kind", "library", {headeronly = true})
+        end
+        if not package:config("headeronly") and package:config("shared") then
             package:add("defines", "MA_DLL")
         end
     end)
