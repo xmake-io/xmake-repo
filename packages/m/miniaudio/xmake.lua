@@ -63,5 +63,5 @@ package("miniaudio")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("ma_encoder_config_init", {includes = "miniaudio.h"}))
+        assert(package:has_cfuncs("ma_encoder_config_init", {includes = "miniaudio.h", defines = package:config("headeronly") and "MINIAUDIO_IMPLEMENTATION" or nil}))
     end)
