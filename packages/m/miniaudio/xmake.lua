@@ -39,6 +39,9 @@ package("miniaudio")
         if package:config("headeronly") then
             os.cp("miniaudio.h", package:installdir("include"))
         else
+            if is_plat("macosx", "iphoneos") then
+                io.writefile("extras/miniaudio_split/miniaudio.m", "#include \"miniaudio.c\"")
+            end
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
     
@@ -46,7 +49,6 @@ package("miniaudio")
                     set_kind("$(kind)")
                     add_headerfiles("extras/miniaudio_split/(miniaudio.h)")
                     if is_plat("macosx", "iphoneos") then
-                        io.writefile("extras/miniaudio_split/miniaudio.m", "#include \"miniaudio.c\"")
                         add_files("extras/miniaudio_split/miniaudio.m")
                     else
                         add_files("extras/miniaudio_split/miniaudio.c")
