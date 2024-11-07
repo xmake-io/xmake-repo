@@ -25,16 +25,14 @@ package("cpu-features")
             end
         end
 
-        local configs = {
-            "-DBUILD_TESTING=OFF",
-            "-DENABLE_INSTALL=ON",
-            "-DBUILD_EXECUTABLE=ON",
-            "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch(),
-        }
+        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_INSTALL=ON", "-DBUILD_EXECUTABLE=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=" .. (package:config("pic") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_PIC=" .. (package:config("pic") and "ON" or "OFF"))
+        if package:is_plat("cross", "iphoneos") then
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch())
+        end
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
