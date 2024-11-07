@@ -63,6 +63,8 @@ package("boost")
         add_syslinks("pthread", "dl")
     end
 
+    on_fetch("fetch")
+
     if on_check then
         on_check(function (package)
             if not package:is_plat("macosx", "linux", "windows", "bsd", "mingw", "cross") then
