@@ -7,7 +7,7 @@ package("openscenegraph")
              "https://github.com/openscenegraph/OpenSceneGraph.git")
     add_versions("3.6.5", "aea196550f02974d6d09291c5d83b51ca6a03b3767e234a8c0e21322927d1e12")
 
-    add_patches("3.6.5", "patches/3.6.5/msvc.patch", "e7a9b98a78dc08d612fb4d0c5f9895d1fed6c5a1b3615499af0643b381b47fe0")
+    add_patches("3.6.5", "patches/3.6.5/msvc.patch", "57b2cc3e5017f7932c5d758346ef0ede8be70f3265276fd8e04534367474eb55")
 
     add_configs("tools", {description = "Enable to build OSG Applications.", default = false, type = "boolean"})
 

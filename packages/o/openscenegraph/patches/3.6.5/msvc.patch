@@ -8,6 +8,6 @@ index b9f518a..19186a7 100644
  #endif
 -    std::streamoff offset = pos.operator std::streamoff( ) - _FPOSOFF( position );
 +    std::streamoff offset = 0;
-
+ 
      return OSGA_Archive::pos_type( position + offset );
  }
