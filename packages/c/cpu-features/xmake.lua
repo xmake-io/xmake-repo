@@ -16,8 +16,21 @@ package("cpu-features")
 
     add_deps("cmake")
 
-    on_install(function (package)
-        local configs = {"-DBUILD_TESTING=OFF", "-DENABLE_INSTALL=ON", "-DBUILD_EXECUTABLE=ON"}
+    on_install("!wasm", function (package)
+        if package:is_cross() then
+            local arch
+            if package:is_arch("arm.*") then
+                arch = (package:is_arch64() and "set(PROCESSOR_IS_AARCH64 TRUE)" or "set(PROCESSOR_IS_ARM TRUE)")
+                io.replace("CMakeLists.txt", "set(PROCESSOR_IS_X86 TRUE)", arch, {plain = true})
+            end
+        end
+
+        local configs = {
+            "-DBUILD_TESTING=OFF",
+            "-DENABLE_INSTALL=ON",
+            "-DBUILD_EXECUTABLE=ON",
+            "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch(),
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_POSITION_INDEPENDENT_CODE=" .. (package:config("pic") and "ON" or "OFF"))
