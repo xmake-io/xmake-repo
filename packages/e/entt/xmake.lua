@@ -4,8 +4,9 @@ package("entt")
     set_description("Gaming meets modern C++ - a fast and reliable entity component system (ECS) and much more.")
     set_license("MIT")
 
-    set_urls("https://github.com/skypjack/entt/archive/$(version).tar.gz",
+    set_urls("https://github.com/skypjack/entt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/skypjack/entt.git")
+
     add_versions("v3.14.0", "e31f6e95a30e2977a50449ef9a607a9ff40febe6f9da2a8144a183f8606f7719")
     add_versions("v3.13.2", "cb556aa543d01177b62de41321759e02d96078948dda72705b3d7fe68af88489")
     add_versions("v3.13.1", "a4f290b601a70333126abd2cec7b0c232c74a4f85dcf1e04d969e8122dae8652")
@@ -31,6 +32,15 @@ package("entt")
     
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::entt")
+    end
+
+    if on_check then
+        on_check("android", function (package)
+            if package:version():ge("3.14.0") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(entt) require ndk version > 22")
+            end
+        end)
     end
 
     on_install(function (package)
