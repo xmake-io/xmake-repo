@@ -46,7 +46,8 @@ package("miniaudio")
                     set_kind("$(kind)")
                     add_headerfiles("extras/miniaudio_split/(miniaudio.h)")
                     if is_plat("macosx", "iphoneos") then
-                        add_files("extras/miniaudio_split/miniaudio.c", {sourcekind = "mm"})
+                        io.writefile("extras/miniaudio_split/miniaudio.m", "#include \"miniaudio.c\"")
+                        add_files("extras/miniaudio_split/miniaudio.m")
                     else
                         add_files("extras/miniaudio_split/miniaudio.c")
                     end
