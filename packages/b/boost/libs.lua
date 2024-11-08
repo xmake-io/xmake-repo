@@ -189,3 +189,32 @@ function for_each_lib_deps(lambda)
         lambda(libname, deps)
     end
 end
+
+function get_sub_libs(package)
+    local sub_libs_map = {
+        test = {"prg_exec_monitor", "unit_test_framework"},
+        serialization = {"wserialization", "serialization"},
+        fiber = {"fiber", "fiber_numa"},
+        log = {"log", "log_setup"},
+        stacktrace = {
+            "stacktrace_noop",
+            "stacktrace_backtrace",
+            "stacktrace_addr2line",
+            "stacktrace_basic",
+            "stacktrace_windbg",
+            "stacktrace_windbg_cached",
+        },
+    }
+
+    if package:config("python") then
+        local py_ver = assert(package:dep("python"):version(), "Can't get python version")
+        py_ver = py_ver:major() .. py_ver:minor()
+        -- TODO: detect numpy
+        sub_libs_map["python"] = {
+            "python" .. py_ver,
+            "numpy" .. py_ver,
+        }
+    end
+
+    return sub_libs_map
+end
