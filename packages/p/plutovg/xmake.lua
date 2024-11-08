@@ -14,7 +14,9 @@ package("plutovg")
 
     add_deps("cmake")
 
-    on_load("windows", "mingw", function (package)
+    add_includedirs("include", "include/plutovg")
+
+    on_load(function (package)
         if not package:config("shared") then
             package:add("defines", "PLUTOVG_BUILD_STATIC")
         end
@@ -25,6 +27,11 @@ package("plutovg")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.trycp(path.join(package:buildir(), "plutovg.pdb"), dir)
+        end
     end)
 
     on_test(function (package)
