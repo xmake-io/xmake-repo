@@ -1,8 +1,7 @@
-local build_defines
-
 package("miniaudio")
     set_homepage("https://miniaud.io")
     set_description("Single file audio playback and capture library written in C.")
+    set_license("MIT")
 
     set_urls("https://github.com/mackron/miniaudio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mackron/miniaudio.git")
@@ -11,8 +10,6 @@ package("miniaudio")
     add_versions("0.11.16", "13320464820491c61bd178b95818fecb7cd0e68f9677d61e1345df6be8d4d77e")
     add_versions("0.11.17", "4b139065f7068588b73d507d24e865060e942eb731f988ee5a8f1828155b9480")
     add_versions("0.11.18", "85ca916266d809b39902e180a6d16f82caea9c2ea1cea6d374413641b7ba48c3")
-
-    local backends = {"aaudio", "audio4", "alsa", "coreaudio", "dsound", "jack", "null", "opensl", "oss", "pulseaudio", "wasapi", "webaudio", "winmm"}
 
     add_configs("headeronly", {description = "Install the headeronly version (or the split one if disabled).", default = true, type = "boolean"})
 
@@ -48,7 +45,7 @@ package("miniaudio")
         if package:config("headeronly") then
             package:set("kind", "library", {headeronly = true})
         end
-        local defines = build_defines(package)
+        local defines = import("build_defines")(package)
         if #defines > 0 then
             package:add("defines", table.unwrap(defines))
         end
@@ -58,7 +55,7 @@ package("miniaudio")
         if package:config("headeronly") then
             os.cp("miniaudio.h", package:installdir("include"))
         else
-            local defines = build_defines(package)
+           local defines = import("build_defines")(package)
             if is_plat("macosx", "iphoneos") then
                 io.writefile("extras/miniaudio_split/miniaudio.m", "#include \"miniaudio.c\"")
             end
@@ -83,76 +80,5 @@ target("miniaudio")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("ma_version", {includes = "miniaudio.h", defines = package:config("headeronly") and "MINIAUDIO_IMPLEMENTATION" or nil}))
+        assert(package:has_cfuncs("ma_version", {includes = "miniaudio.h", configs = {defines = package:config("headeronly") and "MINIAUDIO_IMPLEMENTATION" or nil}}))
     end)
-
-build_defines = function (package)
-    local defines = {}
-    if not package:config("headeronly") and package:config("shared") then
-        table.insert(defines, "MA_DLL")
-    end
-
-    local available_backends = table.values(backends)
-    local enabled_backends = package:config("enabled_backends")
-    if #enabled_backends > 0 then
-        table.insert(defines, "MA_ENABLE_ONLY_SPECIFIC_BACKENDS")
-        for _, backend in ipairs(enabled_backends) do
-            if not available_backends[backend] then
-                os.raise("unknown backend " .. backend)
-            end
-            table.insert(defines, "MA_ENABLE_" .. backend:upper())
-        end
-    end
-    local disabled_backends = package:config("disabled_backends")
-    for _, backend in ipairs(disabled_backends) do
-        for _, backend in ipairs(enabled_backends) do
-            if not available_backends[backend] then
-                os.raise("unknown backend " .. backend)
-            end
-            table.insert(defines, "MA_NO_" .. backend:upper())
-        end
-    end
-    if not package:config("avx2") then
-        table.insert(defines, "MA_NO_AVX2")
-    end
-    if not package:config("decoding") then
-        table.insert(defines, "MA_NO_DECODING")
-    end
-    if not package:config("device_io") then
-        table.insert(defines, "MA_NO_DEVICE_IO")
-    end
-    if not package:config("encoding") then
-        table.insert(defines, "MA_NO_ENCODING")
-    end
-    if not package:config("engine") then
-        table.insert(defines, "MA_NO_ENGINE")
-    end
-    if not package:config("flac") then
-        table.insert(defines, "MA_NO_FLAC")
-    end
-    if not package:config("generation") then
-        table.insert(defines, "MA_NO_GENERATION")
-    end
-    if not package:config("mp3") then
-        table.insert(defines, "MA_NO_MP3")
-    end
-    if not package:config("neon") then
-        table.insert(defines, "MA_NO_NEON")
-    end
-    if not package:config("node_graph") then
-        table.insert(defines, "MA_NO_NODE_GRAPH")
-    end
-    if not package:config("resource_manager") then
-        table.insert(defines, "MA_NO_RESOURCE_MANAGER")
-    end
-    if not package:config("sse2") then
-        table.insert(defines, "MA_NO_SSE2")
-    end
-    if not package:config("threading") then
-        table.insert(defines, "MA_NO_THREADING")
-    end
-    if not package:config("wav") then
-        table.insert(defines, "MA_NO_WAV")
-    end
-    return table.unique(defines)
-end
