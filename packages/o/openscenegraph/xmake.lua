@@ -42,12 +42,13 @@ package("openscenegraph")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
+        io.replace("src/osgPlugins/tiff/CMakeLists.txt", "TIFF_LIBRARY", "TIFF::TIFF", {plain = true})
         local configs = {"-DBUILD_OSG_EXAMPLES=OFF", "-DOSG_MSVC_VERSIONED_DLL=OFF"}
         local disabled_packages = {"ilmbase", "Inventor", "OpenCascade", "FBX", "GDAL", "GTA", "CURL", "LibVNCServer", "GStreamer", "SDL", "Poppler", "RSVG", "GtkGl", "Asio", "ZeroConf", "LIBLAS"}
         for _, pkg in ipairs(disabled_packages) do
             table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. pkg .. "=ON")
         end
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DDYNAMIC_OPENSCENEGRAPH=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DDYNAMIC_OPENTHREADS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_OSG_APPLICATIONS=" .. (package:config("tools") and "ON" or "OFF"))
@@ -55,6 +56,10 @@ package("openscenegraph")
             table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. dep .. "=" .. (package:config(config) and "OFF" or "ON"))
         end
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
+        local suffix = package:is_debug() and "d" or ""
+        for _, lib in ipairs({"osg", "osgGA", "osgUtil", "osgDB", "osgText", "osgWidget", "osgTerrain", "osgFX", "osgViewer", "osgVolume", "osgManipulator", "osgAnimation", "osgParticle", "osgShadow", "osgPresentation", "osgSim", "OpenThreads"}) do
+            package:add("links", lib .. suffix)
+        end
     end)
 
     on_test(function (package)
