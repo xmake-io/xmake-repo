@@ -56,7 +56,7 @@ package("miniaudio")
             os.cp("miniaudio.h", package:installdir("include"))
         else
            local defines = import("build_defines")(package)
-            if is_plat("macosx", "iphoneos") then
+            if package:is_plat("macosx", "iphoneos") then
                 io.writefile("extras/miniaudio_split/miniaudio.m", "#include \"miniaudio.c\"")
             end
             local definelist = table.concat(table.imap(defines, function (_, d) return "    add_defines(\"" .. d .. "\")" end), "\n")
