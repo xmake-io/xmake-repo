@@ -39,6 +39,8 @@ package("cosmocc")
     add_versions("3.9.2", "f4ff13af65fcd309f3f1cfd04275996fb7f72a4897726628a8c9cf732e850193")
     add_versions("3.9.3", "37cfb39217b980b04dc256dc9a4ae55646c371a1b0e63d5a1e45bed3cc14ceae")
     add_versions("3.9.4", "04d2aca686e3b780f8dadbee2750bac28fdcca2aaedcc97375fb91bd38f94bdd")
+    add_versions("3.9.5", "83b0f9120a581d85dcafeb2bb5900b872c8d2c01ddcbc6816e7a69ad748a7659")
+    add_versions("3.9.6", "cb9611df6aa156f0bd94a10976dbd694cf137985d70a963be717e1cfb66fa19e")
 
     set_policy("package.precompiled", false)
 

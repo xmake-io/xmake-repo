@@ -16,6 +16,7 @@ package("libjpeg-turbo")
     add_versions("2.1.4",  "a78b05c0d8427a90eb5b4eb08af25309770c8379592bb0b8a863373128e6143f")
     add_versions("3.0.1",  "5b9bbca2b2a87c6632c821799438d358e27004ab528abf798533c15d50b39f82")
     add_versions("3.0.3",  "a649205a90e39a548863a3614a9576a3fb4465f8e8e66d54999f127957c25b21")
+    add_versions("3.0.4",  "0270f9496ad6d69e743f1e7b9e3e9398f5b4d606b6a47744df4b73df50f62e38")
 
     add_configs("jpeg", {description = "libjpeg API/ABI emulation target version.", default = "6", type = "string", values = {"6", "7", "8"}})
 
