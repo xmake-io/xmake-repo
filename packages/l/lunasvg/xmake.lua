@@ -15,12 +15,10 @@ package("lunasvg")
     add_deps("cmake")
     add_deps("plutovg")
 
-    on_load("windows", "mingw", function (package)
-        local version = package:version()
-        if package:gitref() or version:ge("3.0.0") then
-            package:add("includedirs", "include/lunasvg")
-        end
+    add_includedirs("include", "include/lunasvg")
 
+    on_load(function (package)
+        local version = package:version()
         if package:gitref() or version:ge("2.4.1") then
             if not package:config("shared") then
                 package:add("defines", "LUNASVG_BUILD_STATIC")
