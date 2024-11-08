@@ -80,5 +80,14 @@ target("miniaudio")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("ma_version", {includes = "miniaudio.h", configs = {defines = package:config("headeronly") and "MINIAUDIO_IMPLEMENTATION" or nil}}))
+        local check_snippets = package.check_csnippets
+        if package:config("headeronly") and package:is_plat("macosx", "iphoneos") then
+            check_snippets = package.check_msnippets
+        end
+        assert(check_snippets(package, {test = [[
+            void test() {
+                ma_uint32 major, minor, rev;
+                ma_version(&major, &minor, &rev);
+            }
+        ]]}, {includes = {"miniaudio.h"}, configs = {defines = package:config("headeronly") and "MINIAUDIO_IMPLEMENTATION" or nil}}))
     end)
