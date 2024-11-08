@@ -18,7 +18,7 @@ package("proj")
     if is_plat("windows") then
         add_syslinks("shell32", "ole32")
     elseif is_plat("linux") then
-        add_syslinks("pthread")
+        add_syslinks("dl", "pthread")
     end
 
     on_load(function (package)
