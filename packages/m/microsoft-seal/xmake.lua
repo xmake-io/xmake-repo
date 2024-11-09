@@ -79,7 +79,9 @@ package("microsoft-seal")
         table.insert(configs, "-DSEAL_BUILD_SEAL_C=" .. (package:config("c_api") and "ON" or "OFF"))
         table.insert(configs, "-DSEAL_USE_INTRIN=" .. (package:config("intrin") and "ON" or "OFF"))
 
-        if package:is_plat("mingw") then
+        if package:is_plat("iphoneos") then
+            table.insert(configs, "-DSEAL_USE_MEMSET_S=OFF")
+        elseif package:is_plat("mingw") then
             -- No aligned malloc implementation on MinGW
             -- https://github.com/ebassi/graphene/issues/83
             table.insert(configs, "-DSEAL_USE_ALIGNED_ALLOC=OFF")
