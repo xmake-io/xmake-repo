@@ -45,14 +45,23 @@ function _find_package(package, opt)
         table.join2(group, {"mkl_intel_thread", "mkl_core"})
     end
 
-    if package:has_tool("cc", "gcc", "gxx") then
-        result.ldflags = "-Wl,--start-group "
-        for _, lib in ipairs(group) do
-            result.ldflags = result.ldflags .. "-l" .. lib .. " "
+    for _, toolkind in ipairs({"ld", "fcld"}) do
+        if package:has_tool(toolkind, "gcc", "gxx", "gfortran") then
+            local flags = {"-Wl,--start-group"}
+            for _, lib in ipairs(group) do
+                table.insert(flags, "-l" .. lib)
+            end
+            table.insert(flags, "-Wl,--end-group")
+            if package:has_tool(toolkind, "gcc", "gxx") then
+                result.ldflags = flags
+                result.shflags = flags
+            else
+                result.fcldflags = flags
+                result.fcshflags = flags
+            end
+        else
+            table.join2(result.links, group)
         end
-        result.ldflags = result.ldflags .. "-Wl,--end-group"
-    else
-        table.join2(result.links, group)
     end
 
     -- find include
