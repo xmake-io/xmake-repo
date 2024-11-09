@@ -25,6 +25,18 @@ package("openscenegraph")
         add_configs(config, {description = "Enable the " .. config .. " plugin.", default = false, type = "boolean"})
     end
 
+    set_policy("platform.longpaths", true)
+
+    on_check("windows", function (package)
+        import("core.tool.toolchain")
+
+        local msvc = package:toolchain("msvc")
+        if msvc and package:is_arch("arm.*") then
+            local vs = msvc:config("vs")
+            assert(vs and tonumber(vs) >= 2022, "package(openscenegraph/arm): need vs >= 2022")
+        end
+    end)
+
     add_deps("cmake")
     add_deps("libjpeg-turbo", "libpng", "giflib", "libtiff")
     if is_plat("linux") then
@@ -42,8 +54,10 @@ package("openscenegraph")
     end)
 
     on_install("windows", "linux", "macosx", function (package)
-        io.replace("src/osgPlugins/tiff/CMakeLists.txt", "TIFF_LIBRARY", "TIFF::TIFF", {plain = true})
-        local configs = {"-DBUILD_OSG_EXAMPLES=OFF", "-DOSG_MSVC_VERSIONED_DLL=OFF"}
+        io.replace("CMakeLists.txt", "FIND_PACKAGE(TIFF)", "FIND_PACKAGE(TIFF CONFIG)", {plain = true})
+        io.replace("src/osgPlugins/cfg/CMakeLists.txt", "-Wno-deprecated-register", "-Wno-deprecated-register -Wno-register", {plain = true})
+        io.replace("src/osgPlugins/tiff/CMakeLists.txt", "TARGET_LIBRARIES_VARS TIFF_LIBRARY", "TARGET_EXTERNAL_LIBRARIES TIFF::tiff", {plain = true})
+        local configs = {"-DBUILD_OSG_EXAMPLES=OFF", "-DOSG_MSVC_VERSIONED_DLL=OFF", "-DOSG_AGGRESSIVE_WARNINGS=OFF"}
         local disabled_packages = {"ilmbase", "Inventor", "OpenCascade", "FBX", "GDAL", "GTA", "CURL", "LibVNCServer", "GStreamer", "SDL", "Poppler", "RSVG", "GtkGl", "Asio", "ZeroConf", "LIBLAS"}
         for _, pkg in ipairs(disabled_packages) do
             table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. pkg .. "=ON")
@@ -55,7 +69,7 @@ package("openscenegraph")
         for config, dep in pairs(configdeps) do
             table.insert(configs, "-DCMAKE_DISABLE_FIND_PACKAGE_" .. dep .. "=" .. (package:config(config) and "OFF" or "ON"))
         end
-        import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
+        import("package.tools.cmake").install(package, configs)
         local suffix = package:is_debug() and "d" or ""
         for _, lib in ipairs({"osg", "osgGA", "osgUtil", "osgDB", "osgText", "osgWidget", "osgTerrain", "osgFX", "osgViewer", "osgVolume", "osgManipulator", "osgAnimation", "osgParticle", "osgShadow", "osgPresentation", "osgSim", "OpenThreads"}) do
             package:add("links", lib .. suffix)
