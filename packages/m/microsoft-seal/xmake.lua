@@ -53,7 +53,8 @@ package("microsoft-seal")
         end
     end)
 
-    on_install(function (package)
+    -- TODO: Fix cmake try_run
+    on_install("!iphoneos", function (package)
         io.replace("CMakeLists.txt", "if(WIN32 AND BUILD_SHARED_LIBS)", "if(0)", {plain = true})
         if package:config("hexl") then
             io.replace("CMakeLists.txt", "1.2.4", "", {plain = true})
