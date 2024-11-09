@@ -1,0 +1,17 @@
+diff --git a/cmake/SEALConfig.cmake.in b/cmake/SEALConfig.cmake.in
+index 45f855e..94ea283 100644
+--- a/cmake/SEALConfig.cmake.in
++++ b/cmake/SEALConfig.cmake.in
+@@ -89,8 +89,10 @@ if(NOT SEAL_CARRY_DEPS)
+         seal_find_dependency(ZLIB)
+     endif()
+     if(SEAL_USE_ZSTD)
+-        seal_find_dependency(zstd)
+-        if(NOT TARGET zstd::libzstd_static)
++        include(FindPkgConfig)
++        pkg_search_module("libzstd" REQUIRED IMPORTED_TARGET "libzstd")
++        set(zstd_static "PkgConfig::libzstd")
++        if(0)
+             if(TARGET libzstd)
+                 get_target_property(libzstd_type libzstd TYPE)
+                 if(libzstd_type STREQUAL "SHARED")
