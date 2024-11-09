@@ -9,9 +9,10 @@ package("mcfgthread")
             return format("v%d.%d-ga.%d", version:major(), version:minor(), version:patch())
     end})
 
+    add_versions("1.9.1", "311d0816971c27d379a0a8b3528e4469d1221856e9ee59c76c6e65daa8845914")
     add_versions("1.8.4", "d2318ef761927860b7a8963308145065047d8ad2102313b26e6eb2d88d9ef1e3")
 
-    add_patches("1.8.4", "patches/1.8.4/meson.patch", "89b98f9152719c44c2a7d8800b63ac621954fd0fe10884b9e90fc3298b76c6c9")
+    add_patches(">=1.8.4", "patches/1.8.4/meson.patch", "89b98f9152719c44c2a7d8800b63ac621954fd0fe10884b9e90fc3298b76c6c9")
 
     add_configs("debug_checks", {description = "enable run-time assertions", default = false, type = "boolean"})
 
