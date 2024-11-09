@@ -14,12 +14,15 @@ package("microsoft-seal")
     add_configs("hexl", {description = "Enable Intel HEXL", default = false, type = "boolean"})
     add_configs("throw_tran", {description = "Throw an exception when Evaluator outputs a transparent ciphertext", default = false, type = "boolean"})
     add_configs("gaussian", {description = "Use a rounded Gaussian distribution for noise sampling instead of a Centered Binomial Distribution", default = false, type = "boolean"})
+    add_configs("intrin", {description = "Use intrinsics", default = false, type = "boolean"})
     add_configs("c_api",  {description = "Builds C API", default = false, type = "boolean", readonly = true})
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_plat("linux", "bsd") then
+    if is_plat("windows", "mingw") then
+        add_syslinks("bcrypt")
+    elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
 
@@ -55,6 +58,10 @@ package("microsoft-seal")
         if package:config("hexl") then
             io.replace("CMakeLists.txt", "1.2.4", "", {plain = true})
         end
+        if package:is_plat("windows", "mingw") then
+            io.replace("cmake/SEALMacros.cmake", "target_link_libraries(${target} PUBLIC Threads::Threads)",
+                "target_link_libraries(${target} PUBLIC Threads::Threads bcrypt)", {plain = true})
+        end
 
         local configs = {"-DSEAL_BUILD_DEPS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -70,6 +77,13 @@ package("microsoft-seal")
         table.insert(configs, "-DSEAL_THROW_ON_TRANSPARENT_CIPHERTEXT=" .. (package:config("throw_tran") and "ON" or "OFF"))
         table.insert(configs, "-DSEAL_USE_GAUSSIAN_NOISE=" .. (package:config("gaussian") and "ON" or "OFF"))
         table.insert(configs, "-DSEAL_BUILD_SEAL_C=" .. (package:config("c_api") and "ON" or "OFF"))
+        table.insert(configs, "-DSEAL_USE_INTRIN=" .. (package:config("intrin") and "ON" or "OFF"))
+
+        if package:is_plat("mingw") then
+            -- No aligned malloc implementation on MinGW
+            -- https://github.com/ebassi/graphene/issues/83
+            table.insert(configs, "-DSEAL_USE_ALIGNED_ALLOC=OFF")
+        end
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") and package:is_debug() then
