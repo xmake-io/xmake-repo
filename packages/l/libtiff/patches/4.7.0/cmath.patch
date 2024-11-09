@@ -35,7 +35,7 @@ index 74b2a02..2ed96ac 100644
 -target_link_libraries(tiff-grayscale tiff tiff_port CMath::CMath)
 +target_link_libraries(tiff-grayscale tiff tiff_port)
 +if(CMath_LIBRARIES)
-+    target_link_libraries(tiff-grayscale PRIVATE ${CMath_LIBRARIES})
++    target_link_libraries(tiff-grayscale ${CMath_LIBRARIES})
 +endif()
  
  add_executable(tiff-palette tiff-palette.c)
@@ -45,7 +45,7 @@ index 74b2a02..2ed96ac 100644
 -target_link_libraries(tiff-rgb tiff tiff_port CMath::CMath)
 +target_link_libraries(tiff-rgb tiff tiff_port)
 +if(CMath_LIBRARIES)
-+    target_link_libraries(tiff-rgb PRIVATE ${CMath_LIBRARIES})
++    target_link_libraries(tiff-rgb ${CMath_LIBRARIES})
 +endif()
  
  if(WEBP_SUPPORT AND EMSCRIPTEN)

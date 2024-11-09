@@ -13,7 +13,7 @@ package("libtiff")
     add_versions("v4.7.0", "e1d49a419f812cb81626a0c4b2bf0f13c10710fc329284dc9b6dad75b75764bc")
 
     -- https://gitlab.com/libtiff/libtiff/-/issues/625
-    add_patches("4.7.0", "patches/4.7.0/cmath.patch", "c6febeb4bd63eb4a7dadf646276fd3584a8fe2956fbd481d083af4e07bd8ea5c")
+    add_patches("4.7.0", "patches/4.7.0/cmath.patch", "007685076f0bcee9b6f22f628b9a21c2331726215da4c863f63b24d66d2cae20")
 
     add_configs("tools",      {description = "build TIFF tools", default = false, type = "boolean"})
     add_configs("zlib",       {description = "use zlib (required for Deflate compression)", default = false, type = "boolean"})
