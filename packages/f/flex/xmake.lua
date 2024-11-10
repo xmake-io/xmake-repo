@@ -15,6 +15,15 @@ package("flex")
         add_urls("https://github.com/westes/flex/releases/download/v$(version)/flex-$(version).tar.gz")
     end
 
+    on_fetch(function (package)
+        -- If pacman::flex already installed
+        if is_subhost("msys") and package:is_library() then
+            local msys_dir = os.getenv("MINGW_PREFIX")
+            local header = path.join(path.directory(msys_dir), "usr/include/FlexLexer.h")
+            os.trycp(header, package:installdir("include"))
+        end
+    end)
+
     on_load("macosx", "linux", "bsd", "windows", "@msys", function (package)
         if package:is_plat("windows") then
             package:add("deps", "winflexbison", {private = true})
