@@ -17,6 +17,14 @@ package("hexl")
     add_deps("cmake")
     add_deps("cpu-features")
 
+    if on_check then
+        on_check(function (package)
+            if not package:is_arch("x86_64", "x64") then
+                raise("package(hexl) only support x86_64 arch")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:is_debug() then
             package:add("deps", "easyloggingpp")
@@ -25,13 +33,16 @@ package("hexl")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         os.rmdir("cmake/third-party")
         io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
         io.replace("hexl/CMakeLists.txt", "set_target_properties(hexl PROPERTIES POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
         if package:is_cross() then
             io.replace("hexl/CMakeLists.txt", "-march=native", "", {plain = true})
         end
+        io.replace("cmake/hexl/hexl-util.cmake", "if(HEXL_DEBUG AND UNIX)", "if(0)", {plain = true})
+        io.replace("cmake/hexl/hexl-util.cmake", "if (CAN_COMPILE AND CAN_RUN STREQUAL 0)", "if(CAN_COMPILE)", {plain = true})
+        io.replace("cmake/hexl/hexl-util.cmake", "try_run(CAN_RUN CAN_COMPILE", "try_compile(CAN_COMPILE", {plain = true})
 
         local configs = {"-DHEXL_BENCHMARK=OFF", "-DHEXL_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -43,10 +54,6 @@ package("hexl")
             end
         end
         table.insert(configs, "-DHEXL_EXPERIMENTAL=" .. (package:config("experimental") and "ON" or "OFF"))
-        if package:is_debug() then
-            local dir = path.unix(package:dep("easyloggingpp"):installdir("lib/cmake"))
-            table.insert(configs, "-DCMAKE_MODULE_PATH=" .. dir)
-        end
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") and package:is_debug() then
