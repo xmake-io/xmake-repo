@@ -29,7 +29,7 @@ package("hexl")
         if package:is_debug() then
             package:add("deps", "easyloggingpp")
             package:add("deps", (is_subhost("windows") and "pkgconf") or "pkg-config")
-            package:add("patches", "1.2.5", "patches/1.2.5/cmake-find-easyloggingpp.patch", "d284399824952840318e53599978bff6491e3e95f41fae7ccd584d2e6c1fa52d")
+            package:add("patches", "1.2.5", "patches/1.2.5/cmake-find-easyloggingpp.patch", "7b239bebc13cd9548334b4dfcc84f1a11895c37e08b414d87e5ce81c944fb239")
         end
     end)
 
