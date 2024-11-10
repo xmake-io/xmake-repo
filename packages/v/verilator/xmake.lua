@@ -24,9 +24,31 @@ package("verilator")
     on_install(function (package)
         import("package.tools.cmake")
 
-        io.replace("src/CMakeLists.txt", "MSVC_RUNTIME_LIBRARY MultiThreaded$<IF:$<CONFIG:Release>,,DebugDLL>", "", {plain = true})
         if is_subhost("msys") then
             io.replace("CMakeLists.txt", "if(WIN32)", "if(0)", {plain = true})
+        end
+
+        local version = package:version()
+        if version then
+            if version:ge("5.030") then
+                io.replace("src/CMakeLists.txt", "MSVC_RUNTIME_LIBRARY MultiThreaded$<IF:$<CONFIG:Release>,,DebugDLL>", "", {plain = true})
+            else
+                io.replace("src/CMakeLists.txt", "MSVC_RUNTIME_LIBRARY  MultiThreaded$<IF:$<CONFIG:Release>,,DebugDLL>", "", {plain = true})
+                if version:lt("5.028") then
+                    if is_host("linux", "bsd") then
+                        io.replace("src/CMakeLists.txt", "install(TARGETS ${verilator})",
+                            "target_link_libraries(${verilator} PRIVATE pthread)\ninstall(TARGETS ${verilator})", {plain = true})
+                    end
+
+                    if version:lt("5.020") then
+                        if is_host("windows") and not package:has_tool("cxx", "cl") then
+                            io.replace("src/CMakeLists.txt", "/bigobj", "-Wa,-mbig-obj", {plain = true})
+                            io.replace("src/CMakeLists.txt", "YY_NO_UNISTD_H", "", {plain = true})
+                            io.replace("src/CMakeLists.txt", "/STACK:10000000", "-Wl,--stack,10000000 -mconsole -lcomctl32 -DWIN_32_LEAN_AND_MEAN", {plain = true})
+                        end
+                    end
+                end
+            end
         end
 
         local configs = {
@@ -48,7 +70,12 @@ package("verilator")
                 opt.envs.WIN_FLEX_BISON = winflexbison:installdir("include")
             else
                 local flex = package:dep("flex")
-                table.insert(configs, "-DFLEX_INCLUDE_DIR=" .. flex:installdir("include"))
+                local includedir = flex:installdir("include")
+                if version and version:lt("5.026") then
+                    opt.cxflags = "-I" .. includedir
+                else
+                    table.insert(configs, "-DFLEX_INCLUDE_DIR=" .. includedir)
+                end
             end
         end
         cmake.install(package, configs, opt)
