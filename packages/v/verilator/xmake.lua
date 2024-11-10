@@ -42,6 +42,7 @@ package("verilator")
 
                     if version:lt("5.020") then
                         if is_host("windows") and not package:has_tool("cxx", "cl") then
+                            io.replace("src/CMakeLists.txt", "INTERPROCEDURAL_OPTIMIZATION_RELEASE  TRUE", "", {plain = true})
                             io.replace("src/CMakeLists.txt", "/bigobj", "-Wa,-mbig-obj", {plain = true})
                             io.replace("src/CMakeLists.txt", "YY_NO_UNISTD_H", "", {plain = true})
                             io.replace("src/CMakeLists.txt", "/STACK:10000000", "-Wl,--stack,10000000 -mconsole -lcomctl32 -DWIN_32_LEAN_AND_MEAN", {plain = true})
