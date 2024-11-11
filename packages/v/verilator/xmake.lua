@@ -84,21 +84,24 @@ package("verilator")
         end
         cmake.install(package, configs, opt)
 
-        local bindir = package:installdir("bin")
-        local subfix = (is_host("windows") and ".exe" or "")
-        local verilator = path.join(bindir, "verilator" .. subfix)
-        if not os.isfile(verilator) then
-            local verilator_bin = "verilator_bin"
-            if package:is_debug() then
-                verilator_bin = verilator_bin .. "_dbg"
+        if is_host("windows") then
+            local bindir = package:installdir("bin")
+            local verilator = path.join(bindir, "verilator.exe")
+            if not os.isfile(verilator) then
+                local verilator_bin = "verilator_bin"
+                if package:is_debug() then
+                    verilator_bin = verilator_bin .. "_dbg"
+                end
+                verilator_bin = path.join(bindir, verilator_bin .. ".exe")
+                os.trycp(verilator_bin, verilator)
             end
-            verilator_bin = path.join(bindir, verilator_bin .. subfix)
-            os.trycp(verilator_bin, verilator)
+
+            if package:is_plat("windows") and package:is_debug() then
+                os.vcp(path.join(package:buildir(), "**.pdb"), package:installdir("bin"))
+            end
         end
     end)
 
     on_test(function (package)
-        if not package:is_cross() then
-            os.vrun("verilator --version")
-        end
+        os.vrun("verilator --version")
     end)
