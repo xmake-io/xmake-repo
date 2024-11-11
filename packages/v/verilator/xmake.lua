@@ -84,7 +84,12 @@ package("verilator")
         end
         cmake.install(package, configs, opt)
 
-        if is_host("windows") then
+        if is_host("linux") then
+            if package:is_debug() then
+                local bindir = package:installdir("bin")
+                os.ln(path.join(bindir, "verilator_bin_debug"), path.join(bindir, "verilator_bin"))
+            end
+        elseif is_host("windows") then
             local bindir = package:installdir("bin")
             local verilator = path.join(bindir, "verilator.exe")
             if not os.isfile(verilator) then
