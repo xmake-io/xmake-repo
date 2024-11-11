@@ -65,12 +65,13 @@ package("verilator")
 
         local opt = {}
         opt.envs = cmake.buildenvs(package)
-        if is_host("windows") then
-            local winflexbison = package:dep("winflexbison")
-            if winflexbison then
-                opt.envs.WIN_FLEX_BISON = winflexbison:installdir("include")
-            else
-                local flex = package:dep("flex")
+        local winflexbison = package:dep("winflexbison")
+        if winflexbison then
+            opt.envs.WIN_FLEX_BISON = winflexbison:installdir("include")
+        else
+            local flex = package:dep("flex")
+            -- https://github.com/verilator/verilator/issues/3487
+            if is_subhost("msys") or not flex:is_system() then
                 local includedir = flex:installdir("include")
                 if version and version:lt("5.026") then
                     opt.cxflags = "-I" .. includedir
