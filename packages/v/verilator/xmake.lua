@@ -87,7 +87,7 @@ package("verilator")
         if is_host("linux") then
             if package:is_debug() then
                 local bindir = package:installdir("bin")
-                os.ln(path.join(bindir, "verilator_bin_debug"), path.join(bindir, "verilator_bin"))
+                os.ln(path.join(bindir, "verilator_bin_dbg"), path.join(bindir, "verilator_bin"))
             end
         elseif is_host("windows") then
             local bindir = package:installdir("bin")
