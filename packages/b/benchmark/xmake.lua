@@ -40,6 +40,17 @@ package("benchmark")
     add_deps("cmake")
     add_links("benchmark_main", "benchmark")
 
+    if on_check then
+        on_check("android", function (package)
+            if package:is_plat("android") and package:is_arch("armeabi-v7a") then
+                local ndk_sdkver = package:toolchain("ndk"):config("ndk_sdkver")
+                if ndk_sdkver and tonumber(ndk_sdkver) < 24 then
+                    raise("package(benchmark) require ndk api >= 24")
+                end
+            end    
+        end)
+    end
+
     on_load(function (package)
         if not package:config("shared") then
             package:add("defines", "BENCHMARK_STATIC_DEFINE")
@@ -47,7 +58,11 @@ package("benchmark")
     end)
 
     on_install(function (package)
-        local configs = {"-DBENCHMARK_ENABLE_TESTING=OFF", "-DBENCHMARK_INSTALL_DOCS=OFF"}
+        local configs = {
+            "-DBENCHMARK_ENABLE_TESTING=OFF",
+            "-DBENCHMARK_INSTALL_DOCS=OFF",
+            "-DBENCHMARK_ENABLE_WERROR=OFF",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DBENCHMARK_ENABLE_LTO=" .. (package:config("lto") and "ON" or "OFF"))
