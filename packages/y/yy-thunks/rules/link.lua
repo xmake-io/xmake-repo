@@ -5,8 +5,10 @@ rule("xp")
         if thunks then
             local installdir = thunks:installdir()
             table.insert(target:objectfiles(), 1, path.join(installdir, "lib", objectfile))
-            if target:is_shared() then
-                target:add("shflags", "/entry:DllMainCRTStartupForYY_Thunks", {tools = "link", force = true})
+            if thunks:version():ge("1.1") then
+                if target:is_shared() then
+                    target:add("shflags", "/entry:DllMainCRTStartupForYY_Thunks", {tools = "link", force = true})
+                end
             end
         end
     end)
@@ -17,7 +19,7 @@ rule("vista")
         local thunks = target:pkg("yy-thunks")
         if thunks then
             local installdir = thunks:installdir()
-            table.insert(target:objectfiles(), path.join(installdir, "lib", objectfile))
+            table.insert(target:objectfiles(), 1, path.join(installdir, "lib", objectfile))
         end
     end)
 
@@ -31,7 +33,7 @@ rule("2k")
         local thunks = target:pkg("yy-thunks")
         if thunks then
             local installdir = thunks:installdir()
-            table.insert(target:objectfiles(), path.join(installdir, "lib", objectfile))
+            table.insert(target:objectfiles(), 1, path.join(installdir, "lib", objectfile))
         end
     end)
 

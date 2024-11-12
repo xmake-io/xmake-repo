@@ -11,7 +11,7 @@ package("yy-thunks")
     add_versions("1.0.9", "216b88757f28075d3d8c0363139e870d49ba84458fc10a0f094f264ebf0a302c")
     add_versions("1.0.7", "3607a79ac37f141cbcbf00aaea8d82a4c2628d81d8dad9e2a4dce4c8c17a025b")
 
-    on_install("windows|x64", "windows|x86", "mingw", "msys", function (package)
+    on_install("windows|x64", "windows|x86", function (package)
         -- check vs version
         local vs = package:toolchain("msvc"):config("vs")
         if vs and tonumber(vs) < 2005 then
