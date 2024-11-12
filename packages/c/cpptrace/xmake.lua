@@ -25,7 +25,7 @@ package("cpptrace")
         add_syslinks("dbghelp")
     elseif is_plat("macosx") then
         add_deps("libdwarf")
-    elseif is_plat("linux") then
+    elseif is_plat("linux") or is_plat("cross") then
         add_deps("libdwarf")
         add_syslinks("dl")
     elseif is_plat("mingw") then
@@ -35,7 +35,7 @@ package("cpptrace")
 
     add_deps("cmake")
 
-    on_install("linux", "macosx", "windows", "mingw", function (package)
+    on_install("linux", "macosx", "windows", "mingw", "cross", function (package)
         io.replace("CMakeLists.txt", "/WX", "", {plain = true})
 
         if not package:config("shared") then
