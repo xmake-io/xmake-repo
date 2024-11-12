@@ -8,7 +8,7 @@ package("ctrl-c")
 
     add_versions("v1.0.0", "9f63ff2e02ac62a19e30208af746d5a2655ecf040773b6c7d1e27e85be45ee1a")
 
-    on_install(function (package)
+    on_install("!bsd and !wasm", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             set_languages("c++11")
