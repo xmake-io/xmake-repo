@@ -32,7 +32,7 @@ package("fftw")
         end
 
         if package:is_arch("arm.*") then
-            package:config_set("none")
+            package:config_set("simd", "none")
         end
     end)
 
