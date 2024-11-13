@@ -18,7 +18,7 @@ package("fftw")
         add_syslinks("pthread")
     end
 
-    if not is_plat("linux", "macosx") then
+    if not is_plat("linux") then
         add_deps("cmake")
     end
 
@@ -72,7 +72,7 @@ package("fftw")
         end
     end)
 
-    on_install("linux", "macosx", function (package)
+    on_install("linux", function (package)
         local configs = {}
         if package:config("shared") then
             table.insert(configs, "--enable-shared")
