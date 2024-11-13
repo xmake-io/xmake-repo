@@ -13,7 +13,20 @@ package("soil2")
     add_deps("cmake")
     add_deps("opengl")
 
-    on_install("!android and !wasm and !cross", function (package)
+    if on_check then
+        on_check("windows", function (package)
+            if package:is_arch("arm.*") then
+                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                if vs_toolset then
+                    local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                    local minor = vs_toolset_ver:minor()
+                    assert(minor and minor >= 30, "package(soil2) require vs_toolset >= 14.3")
+                end
+            end
+        end)
+    end
+
+    on_install("!android and !wasm and !cross and !iphoneos", function (package)
         io.replace("CMakeLists.txt", "$<$<CXX_COMPILER_ID:Clang>:-fPIC>", "", {plain = true})
         io.replace("CMakeLists.txt", "$<$<CXX_COMPILER_ID:GNU>:-fPIC>", "", {plain = true})
 
@@ -23,7 +36,12 @@ package("soil2")
         if package:is_plat("windows") and package:config("shared") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {packagedeps = "opengl"}
+        if package:is_plat("macosx") then
+            opt.shflags = {"-framework", "CoreFoundation"}
+        end
+        import("package.tools.cmake").install(package, configs, opt)
 
         if package:is_plat("windows") and package:is_debug() then
             local dir = package:installdir(package:config("shared") and "bin" or "lib")
