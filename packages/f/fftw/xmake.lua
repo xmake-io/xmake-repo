@@ -30,10 +30,14 @@ package("fftw")
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "FFTW_DLL")
         end
+
+        if package:is_arch("arm.*") then
+            package:config_set("none")
+        end
     end)
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTS=OFF"}
+        local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_COMBINED_THREADS=" .. (package:config("shared") and "ON" or "OFF"))
