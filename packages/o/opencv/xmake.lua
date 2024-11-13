@@ -112,7 +112,7 @@ package("opencv")
         end
         if package:is_plat("linux") then
             if package:config("gtk") then
-                package:add("deps", "gtk+3", {optional = true})
+                package:add("deps", "gtk3", {optional = true})
             end
         end
         if not package:is_precompiled() then
