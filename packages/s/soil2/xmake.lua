@@ -11,10 +11,7 @@ package("soil2")
     end
 
     add_deps("cmake")
-    add_deps("opengl", {optional = true})
-    if is_plat("linux") then
-        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxi", "libxfixes", "libxext")
-    end
+    add_deps("opengl")
 
     if on_check then
         on_check("windows", function (package)
@@ -29,7 +26,7 @@ package("soil2")
         end)
     end
 
-    on_install("!android and !wasm and !cross and !iphoneos and !bsd", function (package)
+    on_install("!android and !wasm and !cross and !iphoneos", function (package)
         io.replace("CMakeLists.txt", "$<$<CXX_COMPILER_ID:Clang>:-fPIC>", "", {plain = true})
         io.replace("CMakeLists.txt", "$<$<CXX_COMPILER_ID:GNU>:-fPIC>", "", {plain = true})
 
