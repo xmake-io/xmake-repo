@@ -6,10 +6,14 @@ package("soil2")
     add_urls("https://github.com/SpartanJ/SOIL2.git")
     add_versions("2024.10.14", "1ecaa772fdc67a49f9737452d628730384806f9b")
 
+    if is_plat("macosx") then
+        add_frameworks("CoreFoundation")
+    end
+
     add_deps("cmake")
     add_deps("opengl")
 
-    on_install("!android and !wasm", function (package)
+    on_install("!android and !wasm and !cross", function (package)
         io.replace("CMakeLists.txt", "$<$<CXX_COMPILER_ID:Clang>:-fPIC>", "", {plain = true})
         io.replace("CMakeLists.txt", "$<$<CXX_COMPILER_ID:GNU>:-fPIC>", "", {plain = true})
 
@@ -28,5 +32,5 @@ package("soil2")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("SOIL_load_OGL_texture", {includes = "SOIL2/SOIL2.h"}))
+        assert(package:has_cfuncs("SOIL_load_OGL_texture", {includes = "soil2/SOIL2.h"}))
     end)
