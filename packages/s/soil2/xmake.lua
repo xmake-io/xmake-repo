@@ -11,7 +11,7 @@ package("soil2")
     end
 
     add_deps("cmake")
-    add_deps("opengl")
+    add_deps("opengl", {optional = true})
 
     if on_check then
         on_check("windows", function (package)
@@ -26,7 +26,8 @@ package("soil2")
         end)
     end
 
-    on_install("!android and !wasm and !cross and !iphoneos", function (package)
+    -- TODO: fix glXGetProcAddress on linux
+    on_install("!android and !wasm and !cross and !iphoneos and !linux", function (package)
         io.replace("CMakeLists.txt", "$<$<CXX_COMPILER_ID:Clang>:-fPIC>", "", {plain = true})
         io.replace("CMakeLists.txt", "$<$<CXX_COMPILER_ID:GNU>:-fPIC>", "", {plain = true})
 
