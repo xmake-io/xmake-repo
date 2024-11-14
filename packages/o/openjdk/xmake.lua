@@ -61,7 +61,7 @@ package("openjdk")
         end)
     end
 
-    on_install("@windows", "@linux", "@macosx", "@msys", function (package)
+    on_install("windows|x64", "windows|arm64", "linux", "macosx", "mingw|x86_64", function (package)
         local plat
         if package:is_plat("windows", "mingw") then
             plat = "win32"
