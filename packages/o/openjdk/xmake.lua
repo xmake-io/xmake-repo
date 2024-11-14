@@ -87,7 +87,9 @@ package("openjdk")
     end)
 
     on_test(function (package)
-        os.vrun("java -version")
+        if not package:is_cross() then
+            os.vrun("java -version")
+        end
         if package:is_library() then
             assert(package:has_cfuncs("JNI_CreateJavaVM", {includes = "jni.h"}))
         end
