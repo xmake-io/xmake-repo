@@ -19,6 +19,9 @@ package("jnipp")
             if not package:is_arch64() then
                 raise("package(jnipp) unsupported 32-bit arch")
             end
+            if package:is_cross() then
+                raise("package(jnipp) only support native build")
+            end
         end)
     end
 
