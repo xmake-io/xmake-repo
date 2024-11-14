@@ -7,6 +7,7 @@ package("glaze")
     add_urls("https://github.com/stephenberry/glaze/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stephenberry/glaze.git")
 
+    add_versions("v4.0.1", "0026aca33201ee6d3a820fb5926f36ba8c838bfd3120e2e179b0eee62b5bd231")
     add_versions("v3.6.2", "74b14656b7a47c0a03d0a857adf5059e8c2351a7a84623593be0dd16b293216c")
     add_versions("v3.6.0", "d394fed35440bd1cb1a2aec059b967acc43fc04764ecb0915ba24b9f5a9ca0a3")
     add_versions("v3.3.2", "e492d3f662c3c096ce7abac86780af6c84f74c4f19b29223ad92fccc054aafad")
@@ -75,20 +76,18 @@ package("glaze")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <glaze/glaze.hpp>
             struct obj_t {
                 double x{};
                 float y{};
             };
             template <>
             struct glz::meta<obj_t> {
-                using T = obj_t;
-                static constexpr auto value = object("x", &T::x);
+                static constexpr auto value = object("x", &obj_t::x, "y", &obj_t::y);
             };
             void test() {
                 std::string buffer{};
                 obj_t obj{};
                 glz::write_json(obj, buffer);
             }
-        ]]}, {configs = {languages = "c++2b"}}))
+        ]]}, {configs = {languages = "c++2b"}, includes = "glaze/glaze.hpp"}))
     end)
