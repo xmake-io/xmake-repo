@@ -4,7 +4,7 @@ package("nelib")
     set_description("A commonly used tool collection library")
 
     add_urls("https://github.com/hexne/NeLib.git")
-    add_versions("2024.11.15", "0103d2f84dd1f72498b58eb2fecc7775cc537d55")
+    add_versions("2024.11.15", "ee9195d2b2612da06e0ac4aaa1f6c7cb6c94699a")
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
     add_configs("header_only", {description = "Build as a headeronly library.", default = false, type = "boolean"})
