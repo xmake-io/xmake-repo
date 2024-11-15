@@ -14,6 +14,7 @@ package("magic_enum")
     add_versions("v0.9.0", "2fb2f602b4660f8af539ee00958132a397e138bda19aa1ceae546de3a143386b")
     add_versions("v0.9.5", "44ad80db5a72f5047e01d90e18315751d9ac90c0ab42cbea7a6f9ec66a4cd679")
     add_versions("v0.9.6", "fcda8295256a2084f1f98a63b3d2c66b3d7140eea008e1ef94ea015b2f6d3034")
+    add_versions("v0.9.7", "b403d3dad4ef542fdc3024fa37d3a6cedb4ad33c72e31b6d9bab89dcaf69edf7")
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
 
