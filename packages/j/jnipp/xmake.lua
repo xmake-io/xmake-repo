@@ -25,7 +25,7 @@ package("jnipp")
         end)
     end
 
-    on_install("windows", "linux", "macosx", "mingw", "msys", function (package)
+    on_install("windows", "linux", "macosx", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             add_requires("openjdk", {kind = "library"})

@@ -6,31 +6,31 @@ package("openjdk")
 
     -- https://learn.microsoft.com/en-us/java/openjdk/download
     if is_host("windows") then
-        if is_arch("x64", "x86_64") then
+        if os.arch() == "x64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-windows-x64.zip")
 
             add_versions("21.0.5", "12e42c2c572a111f38e2a9e044afc50dbdac850349a4d4bb26808ed33119a9cd")
-        elseif is_arch("arm64") then
+        elseif os.arch() == "arm64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-windows-aarch64.zip")
 
             add_versions("21.0.5", "5eaa375659c543a5d3310d51004e3bdc290ff9e48e9bcd29187dfafeca97c2a4")
         end
     elseif is_host("linux") then
-        if is_arch("x86_64") then
+        if os.arch() == "x86_x64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-linux-x64.tar.gz")
 
             add_versions("21.0.5", "0d42a80dbc92f2f112e6db3b4b9bd278c0776a73b6050812e720230813487ebd")
-        elseif is_arch("arm64-v8a") then
+        elseif os.arch() == "arm64-v8a" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-linux-aarch64.tar.gz")
 
             add_versions("21.0.5", "356844fe544085b00cd73935e0c7a4c534f286799728fa6d6e996d1cb8b1a682")
         end
     elseif is_host("macosx") then
-        if is_arch("x86_64") then
+        if os.arch() == "x86_x64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-macos-x64.tar.gz")
 
             add_versions("21.0.5", "3e2317348141b28203fac39eaa60c14a1b3f1fdb9cfdbcb793eaa4dd5828da6e")
-        elseif is_arch("arm64") then
+        elseif os.arch() == "arm64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-macos-aarch64.tar.gz")
 
             add_versions("21.0.5", "78aa915475b426c03059cc51e9c12596a5138457bd7ebb9b90daad119551662d")
@@ -61,7 +61,7 @@ package("openjdk")
         end)
     end
 
-    on_install("windows|x64", "windows|arm64", "linux", "macosx", "mingw|x86_64", function (package)
+    on_install("windows|!x86", "linux", "macosx", function (package)
         local plat
         if package:is_plat("windows", "mingw") then
             plat = "win32"
