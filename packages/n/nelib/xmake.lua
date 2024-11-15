@@ -2,16 +2,12 @@ package("nelib")
     set_kind("library")
     set_homepage("https://github.com/hexne/nelib")
     set_description("A commonly used tool collection library")
-
     add_urls("https://github.com/hexne/NeLib.git")
     add_versions("2024.11.15", "ee9195d2b2612da06e0ac4aaa1f6c7cb6c94699a")
-
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
     add_configs("header_only", {description = "Build as a headeronly library.", default = false, type = "boolean"})
     set_policy("package.cmake_generator.ninja", true)
-
     add_deps("opencv")
-
 
     on_load(function (package)
         if not package:config("modules") then
@@ -48,7 +44,6 @@ package("nelib")
         end
 
     end)
-
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
