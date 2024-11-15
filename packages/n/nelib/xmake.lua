@@ -7,7 +7,8 @@ package("nelib")
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
     add_configs("header_only", {description = "Build as a headeronly library.", default = false, type = "boolean"})
-    add_deps("opencv")
+    set_policy("package.cmake_generator.ninja", true)
+    add_deps("opencv", "ninja")
 
     on_load(function (package)
         if package:config("modules") then
