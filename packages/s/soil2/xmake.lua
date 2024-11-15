@@ -27,7 +27,7 @@ package("soil2")
     end
 
     -- TODO: fix glXGetProcAddress on linux
-    on_install("!android and !wasm and !cross and !iphoneos and !linux and !bsd", function (package)
+    on_install("windows", "macosx", "mingw", "msys", function (package)
         io.replace("CMakeLists.txt", "$<$<CXX_COMPILER_ID:Clang>:-fPIC>", "", {plain = true})
         io.replace("CMakeLists.txt", "$<$<CXX_COMPILER_ID:GNU>:-fPIC>", "", {plain = true})
 
