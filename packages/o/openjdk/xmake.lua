@@ -16,7 +16,7 @@ package("openjdk")
             add_versions("21.0.5", "5eaa375659c543a5d3310d51004e3bdc290ff9e48e9bcd29187dfafeca97c2a4")
         end
     elseif is_host("linux") then
-        if os.arch() == "x86_x64" then
+        if os.arch() == "x86_64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-linux-x64.tar.gz")
 
             add_versions("21.0.5", "0d42a80dbc92f2f112e6db3b4b9bd278c0776a73b6050812e720230813487ebd")
@@ -26,7 +26,7 @@ package("openjdk")
             add_versions("21.0.5", "356844fe544085b00cd73935e0c7a4c534f286799728fa6d6e996d1cb8b1a682")
         end
     elseif is_host("macosx") then
-        if os.arch() == "x86_x64" then
+        if os.arch() == "x86_64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-macos-x64.tar.gz")
 
             add_versions("21.0.5", "3e2317348141b28203fac39eaa60c14a1b3f1fdb9cfdbcb793eaa4dd5828da6e")
