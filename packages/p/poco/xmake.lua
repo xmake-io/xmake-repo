@@ -175,7 +175,7 @@ package("poco")
         end
         -- Todo: need to fix pcre2
         -- pcre2 has a partial problem with the static library, resulting in missing macros in poco's foundation module; the shared library has no problems
-        if package:version():ge("1.12.0") and not package:dep("pcre2"):config("shared") then
+        if package:version():ge("1.12.0") and not package:config("shared") and not package:dep("pcre2"):config("shared") then
             io.replace("Foundation/CMakeLists.txt", "PUBLIC POCO_UNBUNDLED", "PUBLIC POCO_UNBUNDLED PCRE_STATIC")
             io.replace("Foundation/CMakeLists.txt", "POCO_SOURCES%(SRCS RegExp.-%)", "")
             io.replace("cmake/FindPCRE2.cmake", "NAMES pcre2-8", "NAMES pcre2-8-static pcre2-8", {plain = true})
