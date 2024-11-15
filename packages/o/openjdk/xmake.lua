@@ -42,11 +42,14 @@ package("openjdk")
     add_configs("debug", {description = "Enable debug symbols.", default = false, type = "boolean", readonly = true})
 
     if is_plat("linux") then
-        add_deps("alsa-lib", {configs = {shared = true, versioned = false}})
-        add_deps("freetype", "libxtst", "libxi", "libxrender")
         add_extsources("pacman::jdk-openjdk", "apt::default-jdk")
     elseif is_plat("macosx") then
         add_extsources("brew::openjdk")
+    end
+
+    if is_plat("linux") then
+        add_deps("alsa-lib", {configs = {shared = true, versioned = false}})
+        add_deps("freetype", "libxtst", "libxi", "libxrender")
     end
 
     set_policy("package.precompiled", false)
