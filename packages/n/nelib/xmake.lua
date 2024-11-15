@@ -4,7 +4,7 @@ package("nelib")
     set_description("A commonly used tool collection library")
 
     add_urls("https://github.com/hexne/NeLib.git")
-    add_versions("2024.11.15", "1c7f4c321f0387abd6520a419122e89ad9a6b918")
+    add_versions("2024.11.15", "0103d2f84dd1f72498b58eb2fecc7775cc537d55")
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
     add_configs("header_only", {description = "Build as a headeronly library.", default = false, type = "boolean"})
@@ -39,7 +39,7 @@ package("nelib")
                 target("nelib")
                     add_packages("opencv")
                     set_kind("$(kind)")
-                    set_languages("c++23")
+                    set_languages("c++20")
                     add_headerfiles("./**.h", {outputdir = 'nelib'})
                     add_includedirs(".")
                     add_files("**.cppm", {public = true})
@@ -55,5 +55,5 @@ package("nelib")
             void test() {
                 ;
             }
-        ]]}, {configs = {languages = "c++23", includes = "nelib/tools.h"}}))
+        ]]}, {configs = {languages = "c++20", includes = "nelib/tools.h"}}))
     end)
