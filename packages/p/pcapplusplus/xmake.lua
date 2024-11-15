@@ -24,7 +24,7 @@ package("pcapplusplus")
         add_syslinks("pthread")
     end
 
-    add_deps("cmake")
+    add_deps("cmake >=3.24.0")
     if is_plat("windows", "mingw") then
         add_deps("npcap_sdk")
     elseif is_plat("linux", "macosx", "android", "bsd") then
