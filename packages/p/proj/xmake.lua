@@ -1,5 +1,4 @@
 package("proj")
-
     set_homepage("https://proj.org/index.html")
     set_description("PROJ is a generic coordinate transformation software that transforms geospatial coordinates from one coordinate reference system (CRS) to another.")
     set_license("MIT")
@@ -13,13 +12,14 @@ package("proj")
     add_configs("tiff", {description = "Enable TIFF support.", default = false, type = "boolean"})
     add_configs("curl", {description = "Enable Curl support.", default = false, type = "boolean"})
 
+    if is_plat("windows", "mingw") then
+        add_syslinks("shell32", "ole32")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("dl", "pthread")
+    end
+
     add_deps("cmake", "sqlite3")
     add_deps("nlohmann_json", {configs = {cmake = true}})
-    if is_plat("windows") then
-        add_syslinks("shell32", "ole32")
-    elseif is_plat("linux") then
-        add_syslinks("pthread")
-    end
 
     on_load(function (package)
         if package:config("tiff") then
@@ -30,6 +30,10 @@ package("proj")
         end
         if package:config("apps") then
             package:addenv("PATH", "bin")
+        end
+
+        if not package:config("shared") then
+            package:add("defines", "PROJ_DLL=")
         end
     end)
 
@@ -54,11 +58,6 @@ package("proj")
             import("package.tools.cmake").install(package, configs, {shflags = exflags, ldflags = exflags})
         else
             import("package.tools.cmake").install(package, configs)
-        end
-
-        if not package:config("shared") then
-            -- public compile definitions in CMake
-            package:add("defines", "PROJ_DLL=")
         end
     end)
 

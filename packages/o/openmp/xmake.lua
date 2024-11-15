@@ -19,10 +19,9 @@ package("openmp")
     end)
 
     on_fetch(function (package)
-        for _, dep in ipairs(package:orderdeps()) do
-            if not dep:fetch() then
-                return
-            end
+        local libomp = package:dep("libomp")
+        if libomp and not libomp:fetch() then
+            return
         end
         local result = {}
         if package.has_tool then

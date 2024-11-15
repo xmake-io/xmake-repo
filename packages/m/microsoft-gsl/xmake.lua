@@ -4,13 +4,19 @@ package("microsoft-gsl")
     set_description("Guidelines Support Library")
     set_license("MIT")
 
-    add_urls("https://github.com/microsoft/GSL/archive/$(version).tar.gz",
+    add_urls("https://github.com/microsoft/GSL/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/GSL.git")
-    add_versions("v3.1.0", "d3234d7f94cea4389e3ca70619b82e8fb4c2f33bb3a070799f1e18eef500a083")
+
+    add_versions("v4.1.0", "0a227fc9c8e0bf25115f401b9a46c2a68cd28f299d24ab195284eb3f1d7794bd")
     add_versions("v4.0.0", "f0e32cb10654fea91ad56bde89170d78cfbf4363ee0b01d8f097de2ba49f6ce9")
+    add_versions("v3.1.0", "d3234d7f94cea4389e3ca70619b82e8fb4c2f33bb3a070799f1e18eef500a083")
+
+    add_deps("cmake")
 
     on_install(function (package)
-        os.mv("include/gsl", package:installdir("include"))
+        local configs = {"-DGSL_TEST=OFF", "-DGSL_INSTALL=ON"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)

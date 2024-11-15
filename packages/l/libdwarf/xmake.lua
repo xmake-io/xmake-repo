@@ -18,7 +18,7 @@ package("libdwarf")
         add_links("dwarf")
     end
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "cross", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))

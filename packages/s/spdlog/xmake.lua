@@ -5,6 +5,8 @@ package("spdlog")
 
     add_urls("https://github.com/gabime/spdlog/archive/refs/tags/$(version).zip",
              "https://github.com/gabime/spdlog.git")
+
+    add_versions("v1.15.0", "076f3b4d452b95433083bcc66d07f79addba2d3fcb2b9177abeb7367d47aefbb")
     add_versions("v1.14.1", "429dfdf3afc1984feb59e414353c21c110bc79609f6d7899d52f6aa388646f6d")
     add_versions("v1.14.0", "2cd8a65885e7937fdd046b181eed7e95d61bab7006bd0fb7b9c766185ed3e0ae")
     add_versions("v1.13.0", "9f6763bb76fff7db371f5733626c83352edd7c57899501ab00248fafad9cc504")
@@ -64,6 +66,10 @@ package("spdlog")
     end)
 
     on_install(function (package)
+        if package:has_tool("cxx", "cl") and not (package:config("fmt_external") or package:config("fmt_external_ho")) then
+            package:add("cxxflags", "/utf-8")
+        end
+
         if (not package:gitref() and package:version():lt("1.4.0")) or package:config("header_only") then
             os.cp("include", package:installdir())
             return

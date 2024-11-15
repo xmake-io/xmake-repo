@@ -31,7 +31,7 @@ package("libiconv")
         package:addenv("PATH", "bin")
     end)
 
-    on_install("windows", "mingw", "android", function (package)
+    on_install("windows", "mingw", "android", "iphoneos", function (package)
         io.gsub("config.h.in", "%$", "")
         io.gsub("config.h.in", "# ?undef (.-)\n", "${define %1}\n")
         io.gsub("libcharset/config.h.in", "%$", "")

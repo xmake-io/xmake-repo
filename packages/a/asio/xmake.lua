@@ -7,6 +7,7 @@ package("asio")
 
     add_urls("https://sourceforge.net/projects/asio/files/asio/$(version) (Stable)/asio-$(version).tar.gz", {alias = "sourceforge"})
     add_urls("https://github.com/chriskohlhoff/asio/archive/refs/tags/asio-$(version).tar.gz", {alias = "github", version = function (version) return version:gsub("%.", "-") end})
+    add_versions("github:1.32.0", "f1b94b80eeb00bb63a3c8cef5047d4e409df4d8a3fe502305976965827d95672")
     add_versions("github:1.30.2", "755bd7f85a4b269c67ae0ea254907c078d408cce8e1a352ad2ed664d233780e8")
     add_versions("github:1.29.0", "44305859b4e6664dbbf853c1ef8ca0259d694f033753ae309fcb2534ca20f721")
     add_versions("github:1.28.0", "226438b0798099ad2a202563a83571ce06dd13b570d8fded4840dbc1f97fa328")
@@ -14,6 +15,10 @@ package("asio")
     add_versions("github:1.21.0", "5d2d2dcb7bfb39bff941cabbfc8c27ee322a495470bf0f3a7c5238648cf5e6a9")
     add_versions("sourceforge:1.20.0", "4cd5cd0ad97e752a4075f02778732a3737b587f5eeefab59cd98dc43b0dcadb3")
     add_versions("github:1.20.0", "34a8f07be6f54e3753874d46ecfa9b7ab7051c4e3f67103c52a33dfddaea48e6")
+
+    if is_plat("mingw") then
+        add_syslinks("ws2_32", "bcrypt")
+    end
 
     on_install("!wasm", function (package)
         if os.isdir("asio") then

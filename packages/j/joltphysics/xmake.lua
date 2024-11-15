@@ -5,6 +5,7 @@ package("joltphysics")
 
     add_urls("https://github.com/jrouwe/JoltPhysics/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jrouwe/JoltPhysics.git")
+    add_versions("v5.2.0", "f478afe3050c885e21403748e10ab18e3e8df8b0982c540e75f1e078ef8b2c88")
     add_versions("v5.1.0", "525c9d6fb79471b3995f9d621c9f843e71470aed286872c4d4065c1f7b7d049a")
     add_versions("v5.0.0", "5231953d1b1d5b9cb617facf86341a11337e1cd04456949af6911b917a1646cb")
     add_versions("v4.0.2", "046baf71d05e47de7a530ce5d58a587a93ea7e9ea1ef8bf3ff80238fb95650ae")
@@ -29,9 +30,12 @@ package("joltphysics")
     add_configs("cross_platform_deterministic", { description = "Turns on behavior to attempt cross platform determinism", default = false, type = "boolean" })
     add_configs("debug_renderer", { description = "Adds support to draw lines and triangles, used to be able to debug draw the state of the world", default = true, type = "boolean" })
     add_configs("double_precision", { description = "Compiles the library so that all positions are stored in doubles instead of floats. This makes larger worlds possible", default = false, type = "boolean" })
+    add_configs("exceptions", { description = "Compile the library with C++ exceptions enabled. This adds some overhead and Jolt doesn't use exceptions so by default it is off.", default = false, type = "boolean" })
     add_configs("object_layer_bits", {description = "Number of bits to use in ObjectLayer. Can be 16 or 32.", default = "16", type = "string", values = {"16", "32"}})
     add_configs("object_stream", { description = "Compile the ObjectStream class and RTTI attribute information", default = true, type = "boolean" })
+    add_configs("rtti", { description = "Compile the library with C++ RTTI enabled. This adds some overhead and Jolt doesn't use RTTI so by default it is off.", default = false, type = "boolean" })
     add_configs("symbols", { description = "When turning this option on, the library will be compiled with debug symbols", default = false, type = "boolean" })
+    add_configs("symbol_format", { description = "Which type of debug symbols to generate", default = "", type = "string" })
 
     if is_arch("i386", "x86", "x64", "x86_64") then
         add_configs("inst_avx", { description = "Enable AVX CPU instructions (x86/x64 only)", default = false, type = "boolean" })
@@ -168,12 +172,13 @@ package("joltphysics")
                 "-DUSE_STATIC_MSVC_RUNTIME_LIBRARY=OFF",
                 "-DOVERRIDE_CXX_FLAGS=OFF"
             }
-            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            table.insert(configs, "-DCPP_EXCEPTIONS_ENABLED=" .. (package:config("exceptions") and "ON" or "OFF"))
+            table.insert(configs, "-DCPP_RTTI_ENABLED=" .. (package:config("rtti") and "ON" or "OFF"))
             table.insert(configs, "-DCROSS_PLATFORM_DETERMINISTIC=" .. (package:config("cross_platform_deterministic") and "ON" or "OFF"))
             table.insert(configs, "-DDOUBLE_PRECISION=" .. (package:config("double_precision") and "ON" or "OFF"))
             table.insert(configs, "-DENABLE_OBJECT_STREAM=" .. (package:config("object_stream") and "ON" or "OFF"))
-            table.insert(configs, "-DGENERATE_DEBUG_SYMBOLS=" .. ((package:debug() or package:config("symbols")) and "ON" or "OFF"))
             table.insert(configs, "-DOBJECT_LAYER_BITS=" .. package:config("object_layer_bits"))
             table.insert(configs, "-DUSE_AVX=" .. (package:config("inst_avx") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_AVX2=" .. (package:config("inst_avx2") and "ON" or "OFF"))
@@ -184,6 +189,12 @@ package("joltphysics")
             table.insert(configs, "-DUSE_SSE4_1=" .. (package:config("inst_sse4_1") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_SSE4_2=" .. (package:config("inst_sse4_2") and "ON" or "OFF"))
             table.insert(configs, "-DUSE_TZCNT=" .. (package:config("inst_tzcnt") and "ON" or "OFF"))
+            if package:is_debug() or package:config("symbols") then
+                table.insert(configs, "-DGENERATE_DEBUG_SYMBOLS=ON")
+                table.insert(configs, "-DJPH_DEBUG_SYMBOL_FORMAT=" .. package:config("symbol_format"))
+            else
+                table.insert(configs, "-DGENERATE_DEBUG_SYMBOL=OFF")
+            end
             -- https://github.com/jrouwe/JoltPhysics/issues/1133
             if package:is_plat("wasm") then
                 table.insert(configs, "-DEMSCRIPTEN_SYSTEM_PROCESSOR=" .. package:targetarch())
