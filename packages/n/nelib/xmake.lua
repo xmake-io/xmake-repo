@@ -7,7 +7,7 @@ package("nelib")
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
     add_configs("header_only", {description = "Build as a headeronly library.", default = false, type = "boolean"})
-
+    set_policy("package.cmake_generator.ninja", true)
     add_deps("opencv")
 
     on_load(function (package)
@@ -27,11 +27,11 @@ package("nelib")
                 add_requires("opencv")
                 target("nelib")
                     add_packages("opencv")
-                    set_kind("moduleonly")
+                    set_kind("$(kind)")
                     set_languages("c++20")
-                    add_headerfiles("./**.h", {outputdir = "nelib"})
+                    add_headerfiles("./**.h")
                     add_includedirs(".")
-                    add_files("**.cppm")
+                    add_files("**.cppm", { public = true })
             ]])
             import("package.tools.xmake").install(package)
         else
@@ -49,11 +49,11 @@ package("nelib")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("nelib/tools.h"))
+        assert(package:has_cxxincludes("tools.h"))
         -- TODO add module tests
         assert(package:check_cxxsnippets({test = [[
             void test() {
                 ;
             }
-        ]]}, {configs = {languages = "c++20", includes = "nelib/tools.h"}}))
+        ]]}, {configs = {languages = "c++20", includes = "tools.h"}}))
     end)
