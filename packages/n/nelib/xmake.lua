@@ -1,5 +1,5 @@
 package("nelib")
-    set_kind("library")
+    set_kind("library", {moduleonly = true})
     set_homepage("https://github.com/hexne/nelib")
     set_description("A commonly used tool collection library")
     add_urls("https://github.com/hexne/NeLib.git")
