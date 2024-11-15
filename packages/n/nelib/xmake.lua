@@ -25,7 +25,7 @@ package("nelib")
                 io.replace("CMakeLists.txt", "NOT GLM_DISABLE_AUTO_DETECTION", "FALSE")
                 local configs = {"-DGLM_BUILD_TESTS=OFF"}
                 table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-                import("package.tools.cmake").build(package, configs)
+                import("package.tools.cmake").build(package, {configs , buildir = "build"})
                 os.cp("**.pcm", package:installdir("include"))
                 os.cp("**.a", package:installdir("lib"))
             end
