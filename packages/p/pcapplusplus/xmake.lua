@@ -41,11 +41,13 @@ package("pcapplusplus")
     on_install("windows", "mingw", "linux", "macosx", "android", "bsd", function (package)
         local configs = {
             "-DPCAPPP_BUILD_EXAMPLES=OFF",
-            "-DPCAPPP_BUILD_TESTS=OFF",
-            "--compile-no-warning-as-error",
+            "-DPCAPPP_BUILD_TESTS=OFF"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIGHT_PCAPNG_ZSTD=" .. (package:config("zstd") and "ON" or "OFF"))
+        for _, cmakefile in ipairs(os.files("**/CMakeLists.txt")) do
+            io.replace(cmakefile, "COMPILE_WARNING_AS_ERROR ON", "COMPILE_WARNING_AS_ERROR OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -62,7 +64,7 @@ package("pcapplusplus")
             }
 
             void testPcapLiveDeviceList() {
-                std::vector<pcpp::PcapLiveDevice *> devList = 
+                std::vector<pcpp::PcapLiveDevice *> devList =
                     pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDevicesList();
             }
         ]]}, {configs = {languages = "c++17"}}))
