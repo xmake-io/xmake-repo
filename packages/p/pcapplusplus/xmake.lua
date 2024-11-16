@@ -24,7 +24,7 @@ package("pcapplusplus")
         add_syslinks("pthread")
     end
 
-    add_deps("cmake >=3.24.0")
+    add_deps("cmake")
     if is_plat("windows", "mingw") then
         add_deps("npcap_sdk")
     elseif is_plat("linux", "macosx", "android", "bsd") then
@@ -34,10 +34,12 @@ package("pcapplusplus")
     on_install("windows", "mingw", "linux", "macosx", "android", "bsd", function (package)
         local configs = {
             "-DPCAPPP_BUILD_EXAMPLES=OFF",
-            "-DPCAPPP_BUILD_TESTS=OFF",
-            "--compile-no-warning-as-error",
+            "-DPCAPPP_BUILD_TESTS=OFF"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        for _, cmakefile in ipairs(os.files("**/CMakeLists.txt")) do
+            io.replace(cmakefile, "COMPILE_WARNING_AS_ERROR ON", "COMPILE_WARNING_AS_ERROR OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -54,7 +56,7 @@ package("pcapplusplus")
             }
 
             void testPcapLiveDeviceList() {
-                std::vector<pcpp::PcapLiveDevice *> devList = 
+                std::vector<pcpp::PcapLiveDevice *> devList =
                     pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDevicesList();
             }
         ]]}, {configs = {languages = "c++17"}}))
