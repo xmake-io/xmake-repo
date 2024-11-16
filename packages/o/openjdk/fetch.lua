@@ -4,7 +4,9 @@ function main(package, opt)
     end
 
     local java = package:find_tool("java", opt)
-    if not java then return end
+    if not java then
+        return
+    end
 
     local result = {}
     result.version = java.version
@@ -19,10 +21,10 @@ function main(package, opt)
             return
         end
 
-        result.includedirs = {path.join(sdkdir, "include"), path.join(sdkdir, "include", "win32")}
+        result.includedirs = {path.join(sdkdir, "include"), path.join(sdkdir, "include/win32")}
         result.linkdirs = path.join(sdkdir, "lib")
         result.links = {"jvm", "jawt"}
-        package:add("bindirs", path.join(sdkdir, "bin"), path.join(sdkdir, "bin", "server"))
+        result.bindirs = {path.join(sdkdir, "bin"), path.join(sdkdir, "bin/server")}
         return result
     end
     -- TODO: linux, mac
