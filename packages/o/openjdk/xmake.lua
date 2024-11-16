@@ -68,7 +68,7 @@ package("openjdk")
         local plat
         if package:is_plat("windows", "mingw") then
             plat = "win32"
-            package:addenv("PATH", "bin/server")
+            package:add("bindirs", package:installdir("bin/server"))
         else
             package:add("linkdirs", "lib", "lib/server")
             if package:is_plat("linux") then
@@ -86,7 +86,7 @@ package("openjdk")
         os.cp("conf", package:installdir())
 
         package:add("includedirs", "include", path.join("include", plat))
-        package:addenv("PATH", "bin")
+        package:add("bindirs", package:installdir("bin"))
     end)
 
     on_test(function (package)

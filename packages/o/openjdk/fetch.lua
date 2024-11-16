@@ -22,7 +22,7 @@ function main(package, opt)
         result.includedirs = {path.join(sdkdir, "include"), path.join(sdkdir, "include", "win32")}
         result.linkdirs = path.join(sdkdir, "lib")
         result.links = {"jvm", "jawt"}
-        package:addenv("PATH", path.join(sdkdir, "bin"), path.join(sdkdir, "bin", "server"))
+        package:add("bindirs", path.join(sdkdir, "bin"), path.join(sdkdir, "bin", "server"))
         return result
     end
     -- TODO: linux, mac
