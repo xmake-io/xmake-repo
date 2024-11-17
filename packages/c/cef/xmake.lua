@@ -50,7 +50,8 @@ package("cef")
     end
     add_includedirs(".", "include")
 
-    on_install("windows", function (package)
+    -- TODO: add support for arm
+    on_install("windows|x86", "windows|x64", function (package)
         local distrib_type = package:debug() and "Debug" or "Release"
         os.cp(path.join(distrib_type, "*.lib"), package:installdir("lib"))
         os.cp(path.join(distrib_type, "*.dll"), package:installdir("bin"))
