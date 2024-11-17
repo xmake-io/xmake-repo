@@ -14,7 +14,7 @@ package("dartsim")
 
     add_patches("6.x", "patches/6.14.5/dartpy.patch", "c8f989317ac8e20259a91e76d28b986b3d4bda01a8e4d0fc13704f6e4f0e144b")
 
-    add_configs("dartpy", {description = "Build dartpy interface.", default = true, type = "boolean"})
+    add_configs("dartpy", {description = "Build dartpy interface.", default = false, type = "boolean"})
     add_configs("gui",   {description = "Build GLUT GUI.", default = false, type = "boolean"})
     local configdeps = {bullet3 = "Bullet",
                         nlopt = "NLOPT",
