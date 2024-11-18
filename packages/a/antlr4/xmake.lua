@@ -24,7 +24,7 @@ package("antlr4")
         package:addenv("CLASSPATH", "lib/antlr-complete.jar")
     end)
 
-    on_install("@windows", "@linux", "@macosx", "@msys", function (package)
+    on_install("@windows", "@linux", "@macosx", function (package)
         local source = "antlr-" .. package:version() .. "-complete.jar"
         local target = path.join(package:installdir("lib"), "antlr-complete.jar")
         os.vcp("../" .. source, package:installdir("lib"))
