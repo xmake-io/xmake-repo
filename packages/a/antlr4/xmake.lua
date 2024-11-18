@@ -19,13 +19,16 @@ package("antlr4")
 
     add_deps("openjdk")
 
+    on_load(function (package)
+        package:mark_as_pathenv("CLASSPATH")
+        package:addenv("CLASSPATH", "lib/antlr-complete.jar")
+    end)
+
     on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         local source = "antlr-" .. package:version() .. "-complete.jar"
         local target = path.join(package:installdir("lib"), "antlr-complete.jar")
         os.vcp("../" .. source, package:installdir("lib"))
         os.vmv(package:installdir("lib", source), target)
-        package:addenv("CLASSPATH", "lib/antlr-complete.jar")
-        package:mark_as_pathenv("CLASSPATH")
     end)
 
     on_test(function (package)
