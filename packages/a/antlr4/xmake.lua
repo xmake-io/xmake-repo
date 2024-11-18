@@ -5,11 +5,21 @@ package("antlr4")
     set_license("BSD-3-Clause")
 
     add_urls("https://www.antlr.org/download/antlr-$(version)-complete.jar")
+
+    add_versions("4.13.2", "eae2dfa119a64327444672aff63e9ec35a20180dc5b8090b7a6ab85125df4d76")
     add_versions("4.13.1", "bc13a9c57a8dd7d5196888211e5ede657cb64a3ce968608697e4f668251a8487")
+
+    if is_plat("linux") then
+        add_extsources("pacman::antlr4", "apt::antlr4")
+    elseif is_plat("macosx") then
+        add_extsources("brew::antlr")
+    end
+
+    set_policy("package.precompiled", false)
 
     add_deps("openjdk")
 
-    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "macosx|arm64", "mingw|x86_64", function (package)
+    on_install("@windows", "@linux", "@macosx", "@msys", function (package)
         local source = "antlr-" .. package:version() .. "-complete.jar"
         local target = path.join(package:installdir("lib"), "antlr-complete.jar")
         os.vcp("../" .. source, package:installdir("lib"))
@@ -19,7 +29,5 @@ package("antlr4")
     end)
 
     on_test(function (package)
-        if not package:is_cross() then
-            os.vrun("java -classpath $(env CLASSPATH) org.antlr.v4.Tool")
-        end
+        os.vrun("java -classpath $(env CLASSPATH) org.antlr.v4.Tool")
     end)
