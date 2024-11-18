@@ -35,6 +35,8 @@ package("sqlite3")
     add_versions("3.45.0+200", "bc9067442eedf3dd39989b5c5cfbfff37ae66cc9c99274e0c3052dc4d4a8f6ae")
     add_versions("3.45.0+300", "b2809ca53124c19c60f42bf627736eae011afdcc205bb48270a5ee9a38191531")
     add_versions("3.46.0+0", "6f8e6a7b335273748816f9b3b62bbdc372a889de8782d7f048c653a447417a7d")
+    add_versions("3.46.0+100", "67d3fe6d268e6eaddcae3727fce58fcc8e9c53869bdd07a0c61e38ddf2965071")
+    add_versions("3.47.0+0", "83eb21a6f6a649f506df8bd3aab85a08f7556ceed5dbd8dea743ea003fc3a957")
 
     add_configs("explain_comments", { description = "Inserts comment text into the output of EXPLAIN.", default = true, type = "boolean"})
     add_configs("dbpage_vtab",      { description = "Enable the SQLITE_DBPAGE virtual table.", default = true, type = "boolean"})
@@ -42,6 +44,7 @@ package("sqlite3")
     add_configs("dbstat_vtab",      { description = "Enable the dbstat virtual table.", default = true, type = "boolean"})
     add_configs("math_functions",   { description = "Enable the built-in SQL math functions.", default = true, type = "boolean"})
     add_configs("rtree",            { description = "Enable R-Tree.", default = false, type = "boolean"})
+    add_configs("safe_mode",        { description = "Use thread safe mode in 0 (single thread) | 1 (serialize) | 2 (mutli thread).", default = "1", type = "string", values = {"0", "1", "2"}})
 
     if is_plat("macosx", "linux", "bsd") then
         add_syslinks("pthread", "dl")
@@ -58,12 +61,17 @@ package("sqlite3")
             option("dbstat_vtab", {default = false, defines = "SQLITE_ENABLE_DBSTAT_VTAB"})
             option("math_functions", {default = false, defines = "SQLITE_ENABLE_MATH_FUNCTIONS"})
             option("rtree", {default = false, defines = "SQLITE_ENABLE_RTREE"})
+            option("safe_mode", {default = "1"})
 
             target("sqlite3")
                 set_kind("$(kind)")
                 add_files("sqlite3.c")
                 add_headerfiles("sqlite3.h", "sqlite3ext.h")
                 add_options("explain_comments", "dbpage_vtab", "stmt_vtab", "dbstat_vtab", "math_functions", "rtree")
+
+                if has_config("safe_mode") then
+                    add_defines("SQLITE_THREADSAFE=" .. get_config("safe_mode"))
+                end
 
                 if is_kind("shared") and is_plat("windows") then
                     add_defines("SQLITE_API=__declspec(dllexport)")

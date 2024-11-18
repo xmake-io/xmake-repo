@@ -16,11 +16,7 @@ package("xz")
         end
     end)
 
-    on_install("windows", "mingw@windows", function (package)
-        local configs = {}
-        if package:config("shared") then
-            configs.kind = "shared"
-        end
+    on_install("windows", "mingw@windows,msys", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("lzma")
@@ -52,7 +48,7 @@ package("xz")
                 add_headerfiles("src/liblzma/api/*.h")
                 add_headerfiles("src/liblzma/api/(lzma/*.h)")
         ]])
-        import("package.tools.xmake").install(package, configs)
+        import("package.tools.xmake").install(package)
     end)
 
     on_install("macosx", "linux", "mingw@linux,macosx", function (package)

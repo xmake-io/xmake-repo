@@ -14,12 +14,13 @@ package("spirv-reflect")
     add_versions("1.3.275+0", "2f7460f0be0f73c9ffde719bc3e924b4250f4d98")
     add_versions("1.3.280+0", "8406f76dcf6cca11fe430058c4f0ed4b846f3be4")
     add_versions("1.3.283+0", "ee5b57fba6a986381f998567761bbc064428e645")
+    add_versions("1.3.290+0", "b4dc70d8e6ac30c719a2d05b8ad05e1d277c92b4")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_deps("spirv-headers")
 
-    on_install("windows", "linux", "macosx", "mingw", function (package)
+    on_install("windows", "linux", "macosx", "mingw", "android", function (package)
         io.gsub("spirv_reflect.h", "#include \"%.%/include%/spirv%/unified1%/spirv.h\"", "#include \"spirv/unified1/spirv.h\"")
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")

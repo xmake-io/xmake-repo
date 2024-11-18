@@ -17,6 +17,7 @@ local options =
 ,   {'j', "jobs",           "kv", nil, "Set the build jobs."                        }
 ,   {'f', "configs",        "kv", nil, "Set the configs."                           }
 ,   {'d', "debugdir",       "kv", nil, "Set the debug source directory."            }
+,   {nil, "policies",       "kv", nil, "Set the policies."                          }
 ,   {nil, "fetch",          "k",  nil, "Fetch package only."                        }
 ,   {nil, "precompiled",    "k",  nil, "Attemp to install the precompiled package." }
 ,   {nil, "remote",         "k",  nil, "Test package on the remote server."         }
@@ -37,6 +38,7 @@ local options =
 ,   {nil, "appledev",       "kv", nil, "The Apple Device Type"                      }
 ,   {nil, "mingw",          "kv", nil, "Set the MingW directory."                   }
 ,   {nil, "toolchain",      "kv", nil, "Set the toolchain name."                    }
+,   {nil, "toolchain_host", "kv", nil, "Set the host toolchain name."               }
 ,   {nil, "packages",       "vs", nil, "The package list."                          }
 }
 
@@ -68,6 +70,9 @@ function _require_packages(argv, packages)
     end
     if argv.mode then
         table.insert(config_argv, "--mode=" .. argv.mode)
+    end
+    if argv.policies then
+        table.insert(config_argv, "--policies=" .. argv.policies)
     end
     if argv.ndk then
         table.insert(config_argv, "--ndk=" .. argv.ndk)
@@ -110,6 +115,9 @@ function _require_packages(argv, packages)
     if argv.toolchain then
         table.insert(config_argv, "--toolchain=" .. argv.toolchain)
     end
+    if argv.toolchain_host then
+        table.insert(config_argv, "--toolchain_host=" .. argv.toolchain_host)
+    end
     if argv.cflags then
         table.insert(config_argv, "--cflags=" .. argv.cflags)
     end
@@ -119,7 +127,7 @@ function _require_packages(argv, packages)
     if argv.ldflags then
         table.insert(config_argv, "--ldflags=" .. argv.ldflags)
     end
-    os.vexecv("xmake", config_argv)
+    os.vexecv(os.programfile(), config_argv)
     local require_argv = {"require", "-f", "-y"}
     local check_argv = {"require", "-f", "-y", "--check"}
     if not argv.precompiled then
@@ -176,7 +184,7 @@ function _require_packages(argv, packages)
     local install_packages = {}
     if _check_package_is_supported() then
         for _, package in ipairs(packages) do
-            local ok = os.vexecv("xmake", table.join(check_argv, package), {try = true})
+            local ok = os.vexecv(os.programfile(), table.join(check_argv, package), {try = true})
             if ok == 0 then
                 table.insert(install_packages, package)
             end
@@ -185,7 +193,7 @@ function _require_packages(argv, packages)
         install_packages = packages
     end
     if #install_packages > 0 then
-        os.vexecv("xmake", table.join(require_argv, install_packages))
+        os.vexecv(os.programfile(), table.join(require_argv, install_packages))
     else
         print("no testable packages on %s or you're using lower version xmake!", argv.plat or os.subhost())
     end
@@ -216,6 +224,32 @@ function _package_is_supported(argv, packagename)
     end
 end
 
+function get_modified_packages()
+    local packages = {}
+    local diff = os.iorun("git --no-pager diff HEAD^")
+    for _, line in ipairs(diff:split("\n")) do
+        if line:startswith("+++ b/") then
+            local file = line:sub(7)
+            if file:startswith("packages") then
+                assert(file == file:lower(), "%s must be lower case!", file)
+                local package = file:match("packages/%w/(%S-)/")
+                table.insert(packages, package)
+            end
+        elseif line:startswith("+") and line:find("add_versions") then
+            local version = line:match("add_versions%(\"(.-)\"")
+            if version:find(":", 1, true) then
+                version = version:split(":")[2]
+            end
+            if #packages > 0 and version then
+                local lastpackage = packages[#packages]
+                local splitinfo = lastpackage:split("%s+")
+                table.insert(packages, splitinfo[1] .. " " .. version)
+            end
+        end
+    end
+    return table.unique(packages)
+end
+
 -- the main entry
 function main(...)
 
@@ -225,14 +259,7 @@ function main(...)
     -- get packages
     local packages = argv.packages or {}
     if #packages == 0 then
-        local files = os.iorun("git diff --name-only HEAD^")
-        for _, file in ipairs(files:split('\n'), string.trim) do
-            if file:startswith("packages") then
-                assert(file == file:lower(), "%s must be lower case!", file)
-                local package = file:match("packages/%w/(%S-)/")
-                table.insert(packages, package)
-            end
-        end
+        packages = get_modified_packages()
     end
     if #packages == 0 then
         table.insert(packages, "tbox dev")
@@ -259,7 +286,7 @@ function main(...)
         os.tryrm(workdir)
         os.mkdir(workdir)
         os.cd(workdir)
-        os.exec("xmake create test")
+        os.execv(os.programfile(), {"create", "test"})
     else
         os.cd(workdir)
     end
@@ -267,16 +294,16 @@ function main(...)
     print(os.curdir())
     -- do action for remote?
     if os.isdir("xmake-repo") then
-        os.exec("xmake service --disconnect")
+        os.execv(os.programfile(), {"service", "--disconnect"})
     end
     if argv.remote then
         os.tryrm("xmake-repo")
         os.cp(path.join(repodir, "packages"), "xmake-repo/packages")
-        os.exec("xmake service --connect")
+        os.execv(os.programfile(), {"service", "--connect"})
         repodir = "xmake-repo"
     end
-    os.exec("xmake repo --add local-repo %s", repodir)
-    os.exec("xmake repo -l")
+    os.execv(os.programfile(), {"repo", "--add", "local-repo", repodir})
+    os.execv(os.programfile(), {"repo", "-l"})
 
     -- require packages
     _require_packages(argv, packages)

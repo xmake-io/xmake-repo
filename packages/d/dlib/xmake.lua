@@ -6,6 +6,8 @@ package("dlib")
     add_urls("https://github.com/davisking/dlib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/davisking/dlib.git")
 
+    add_versions("v19.24.6", "22513c353ec9c153300c394050c96ca9d088e02966ac0f639e989e50318c82d6")
+    add_versions("v19.24.5", "01cab8fb880cf4d1cb9c84cb74c6ce291a78c69f443dced5aa2a88fb20bdc3bd")
     add_versions("v19.24.4", "d881911d68972d11563bb9db692b8fcea0ac1b3fd2e3f03fa0b94fde6c739e43")
     add_versions("v19.22", "5f44b67f762691b92f3e41dcf9c95dd0f4525b59cacb478094e511fdacb5c096")
 

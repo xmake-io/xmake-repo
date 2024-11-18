@@ -6,6 +6,8 @@ package("openexr")
 
     add_urls("https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openexr.git")
+    add_versions("v3.3.1", "58aad2b32c047070a52f1205b309bdae007442e0f983120e4ff57551eb6f10f1")
+    add_versions("v3.3.0", "58b00f50d2012f3107573c4b7371f70516d2972c2b301a50925e1b4a60a7be6f")
     add_versions("v3.2.4", "81e6518f2c4656fdeaf18a018f135e96a96e7f66dbe1c1f05860dd94772176cc")
     add_versions("v3.2.3", "f3f6c4165694d5c09e478a791eae69847cadb1333a2948ca222aa09f145eba63")
     add_versions("v2.5.3", "6a6525e6e3907715c6a55887716d7e42d09b54d2457323fcee35a0376960bebf")
@@ -22,6 +24,8 @@ package("openexr")
     add_deps("zlib")
 
     add_configs("build_both", {description = "Build both static library and shared library. (deprecated)", default = false, type = "boolean"})
+
+    add_includedirs("include/OpenEXR", "include")
 
     on_load("windows", "macosx", "linux", "mingw@windows", "mingw@msys", function (package)
         local ver = package:version()
@@ -41,7 +45,7 @@ package("openexr")
         end
     end)
 
-    on_install("macosx", "linux", "windows", "mingw@windows", "mingw@msys", function (package)
+    on_install("macosx", "linux", "windows|x64", "windows|x86", "mingw@windows", "mingw@msys", function (package)
         local configs = {"-DBUILD_TESTING=OFF", "-DINSTALL_OPENEXR_EXAMPLES=OFF", "-DINSTALL_OPENEXR_DOCS=OFF", "-DOPENEXR_BUILD_UTILS=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         if package:version():ge("3.0") then

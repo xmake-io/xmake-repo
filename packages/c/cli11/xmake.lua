@@ -15,6 +15,9 @@ package("cli11")
         add_extsources("pkgconfig::CLI11")
     end
 
+    if is_plat("windows") then
+        add_syslinks("shell32")
+    end
     on_install("windows", "linux", "macosx", function (package)
         os.cp("include", package:installdir())
     end)

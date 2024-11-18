@@ -1,0 +1,72 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 17d865734..9a5787b7f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,37 +1,6 @@
+-cmake_minimum_required(VERSION 2.8.9)
++cmake_minimum_required(VERSION 3.5)
+ project(spine)
+ 
+-if(MSVC)
+-	message("MSCV detected")
+-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+-	set (CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
+-else()
+-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wunused-value -Wno-c++11-long-long -Wno-variadic-macros -Werror -Wextra -pedantic -Wnonportable-include-path -Wshadow -std=c89")
+-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wunused-value -Wno-c++11-long-long -Wno-variadic-macros -Werror -Wextra -Wnon-virtual-dtor -pedantic -Wnonportable-include-path -Wshadow -std=c++03 -fno-exceptions -fno-rtti")
+-endif()
++include(GNUInstallDirs)
+ 
+-set(CMAKE_INSTALL_PREFIX "./")
+-set(CMAKE_VERBOSE_MAKEFILE ON)
+-set(SPINE_SFML FALSE CACHE BOOL FALSE)
+-set(SPINE_COCOS2D_OBJC FALSE CACHE BOOL FALSE)
+-set(SPINE_COCOS2D_X FALSE CACHE BOOL FALSE)
+-
+-if((${SPINE_SFML}) OR (${CMAKE_CURRENT_BINARY_DIR} MATCHES "spine-sfml"))
+-	add_subdirectory(spine-c)
+-	add_subdirectory(spine-sfml/c)
+-	add_subdirectory(spine-cpp)
+-	add_subdirectory(spine-sfml/cpp)
+-endif()
+-
+-if((${SPINE_COCOS2D_OBJC}) OR (${CMAKE_CURRENT_BINARY_DIR} MATCHES "spine-cocos2d-objc"))
+-	if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+-		add_subdirectory(spine-cocos2d-objc)
+-	endif()
+-endif()
+-
+-if((${SPINE_COCOS2D_X}) OR (${CMAKE_CURRENT_BINARY_DIR} MATCHES "spine-cocos2dx"))
+-	add_subdirectory(spine-cocos2dx)
+-endif()
+-
+-add_subdirectory(spine-c/spine-c-unit-tests)
+-add_subdirectory(spine-cpp/spine-cpp-unit-tests)
+\ No newline at end of file
++add_subdirectory(spine-cpp)
+diff --git a/spine-cpp/CMakeLists.txt b/spine-cpp/CMakeLists.txt
+index 706040cab..d5fac84aa 100644
+--- a/spine-cpp/CMakeLists.txt
++++ b/spine-cpp/CMakeLists.txt
+@@ -1,17 +1,9 @@
+-if(MSVC)
+-	message("MSCV detected")
+-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+-	set (CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}")
+-else()
+-	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic -std=c89")
+-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wnon-virtual-dtor -pedantic -std=c++03 -fno-exceptions -fno-rtti")
+-endif()
+-
+ include_directories(include)
+ file(GLOB INCLUDES "spine-cpp/include/**/*.h")
+ file(GLOB SOURCES "spine-cpp/src/**/*.cpp")
+ 
+ add_library(spine-cpp STATIC ${SOURCES} ${INCLUDES})
+ target_include_directories(spine-cpp PUBLIC spine-cpp/include)
+-install(TARGETS spine-cpp DESTINATION dist/lib)
+-install(FILES ${INCLUDES} DESTINATION dist/include)
+\ No newline at end of file
++
++install(TARGETS spine-cpp DESTINATION ${CMAKE_INSTALL_LIBDIR})
++install(DIRECTORY "./spine-cpp/include/spine" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})

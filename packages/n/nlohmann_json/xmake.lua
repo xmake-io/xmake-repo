@@ -1,5 +1,5 @@
 package("nlohmann_json")
-
+    set_kind("library", { headeronly = true })
     set_homepage("https://nlohmann.github.io/json/")
     set_description("JSON for Modern C++")
     set_license("MIT")

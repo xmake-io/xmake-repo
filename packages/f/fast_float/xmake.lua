@@ -14,6 +14,10 @@ package("fast_float")
     add_versions("v6.0.0", "7e98671ef4cc7ed7f44b3b13f80156c8d2d9244fac55deace28bd05b0a2c7c8e")
     add_versions("v6.1.0", "a9c8ca8ca7d68c2dbb134434044f9c66cfd4c383d5e85c36b704d30f6be82506")
     add_versions("v6.1.1", "10159a4a58ba95fe9389c3c97fe7de9a543622aa0dcc12dd9356d755e9a94cb4")
+    add_versions("v6.1.3", "7dd99cc2ff44e07dc2a42bed0c6b8c4a8ee4e3b1c330f77073b6cfdb48724c8e")
+    add_versions("v6.1.4", "12cb6d250824160ca16bcb9d51f0ca7693d0d10cb444f34f1093bc02acfce704")
+    add_versions("v6.1.5", "597126ff5edc3ee59d502c210ded229401a30dafecb96a513135e9719fcad55f")
+    add_versions("v6.1.6", "4458aae4b0eb55717968edda42987cabf5f7fc737aee8fede87a70035dba9ab0")
 
     if is_plat("wasm") then
         add_patches("v3.4.0", path.join(os.scriptdir(), "patches", "emscripten_fix.patch"), "482705431f67e6f0a375ed7bfe87d6856e7d13f071db6157e1d5659834b0eb50")
@@ -28,9 +32,9 @@ package("fast_float")
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             void test() {
-                const std::string input =  "3.1416 xyz ";
+                const std::string input = "3.1416 xyz ";
                 double result;
-                auto answer = fast_float::from_chars(input.data(), input.data()+input.size(), result);
+                auto answer = fast_float::from_chars(input.data(), input.data() + input.size(), result);
             }
         ]]}, {configs = {languages = "c++14"}, includes = {"fast_float/fast_float.h"}}))
     end)

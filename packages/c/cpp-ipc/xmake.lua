@@ -15,7 +15,7 @@ package("cpp-ipc")
         add_syslinks("advapi32")
     end
 
-    on_install("windows", "linux", "mingw", function (package)
+    on_install("windows", "linux", "mingw", "cross", function (package)
         local configs = {"-DLIBIPC_BUILD_TESTS=OFF", "-DLIBIPC_BUILD_DEMOS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBIPC_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

@@ -6,6 +6,7 @@ package("kokkos-kernels")
     add_urls("https://github.com/kokkos/kokkos-kernels/archive/refs/tags/$(version).tar.gz",
              "https://github.com/kokkos/kokkos-kernels.git")
 
+    add_versions("4.4.00", "6559871c091eb5bcff53bae5a0f04f2298971d1aa1b2c135bd5a2dae3f9376a2")
     add_versions("4.3.01", "749553a6ea715ba1e56fa0b13b42866bb9880dba7a94e343eadf40d08c68fab8")
     add_versions("4.3.00", "03c3226ee97dbca4fa56fe69bc4eefa0673e23c37f2741943d9362424a63950e")
     add_versions("4.2.01", "058052b3a40f5d4e447b7ded5c480f1b0d4aa78373b0bc7e43804d0447c34ca8")
@@ -17,12 +18,30 @@ package("kokkos-kernels")
     add_configs("cuda", {description = "Enable CUDA support.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    on_load("windows|x64", "macosx|x86_64", "linux", function (package)
+
+    if on_check then
+        on_check("windows", function (package)
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(kokkos-kernels) require vs_toolset >= 14.3")
+            end
+        end)
+    end
+
+    on_load(function (package)
+        local kokkos = "kokkos"
+        local version = package:version()
+        if version then
+            kokkos = kokkos .. " " .. version
+        end
+
         if package:config("cuda") then
             package:add("deps", "cuda")
-            package:add("deps", "kokkos", {configs = {cuda = true}})
+            package:add("deps", kokkos, {configs = {cuda = true}})
         else
-            package:add("deps", "kokkos")
+            package:add("deps", kokkos)
         end
     end)
 

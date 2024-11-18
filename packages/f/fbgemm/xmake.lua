@@ -6,9 +6,15 @@ package("fbgemm")
     add_urls("https://github.com/pytorch/FBGEMM/archive/refs/tags/$(version).tar.gz",
              "https://github.com/pytorch/FBGEMM.git")
 
+    add_versions("v0.8.0", "f754dbc6becf8ece0474872c4e797445b55c21799c1f1d219470c0c5818207dd")
     add_versions("v0.7.0", "c51ac26bc0aa8fef7e80631c4abdd3a7c33d1a097359cef9b008bf9e1203c071")
 
+    add_patches("0.8.0", "patches/0.8.0/dep-unbundle.patch", "505ccda3b12ec519cb0732352b223862b3470c207e03e84889b977cbdc1d9aae")
     add_patches("0.7.0", "patches/0.7.0/dep-unbundle.patch", "f3117ff728989146d5ab0c370fe410c73459091f65cae5f6b304e5637889fb8f")
+
+    if is_plat("windows") then
+        add_patches("0.8.0", "patches/0.8.0/msvc-omp.patch", "d4a7830e40a476ffdeda00d2f7901a7db6e7950392ff672144d5e9f3c37ced2f")
+    end
 
     -- need libtorch
     add_configs("gpu", {description = "Build fbgemm_gpu library", default = false, type = "boolean"})

@@ -1,0 +1,13 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 4c54198..b631d40 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -103,7 +103,7 @@ list(APPEND COMPAT_SOURCES
+ )
+ 
+ if(WIN32)
+-	list(APPEND BASE_LIBRARIES wsock32 ws2_32 bcrypt setupapi hid)
++	list(APPEND BASE_LIBRARIES wsock32 ws2_32 bcrypt setupapi hid crypt32)
+ 	if(USE_PCSC)
+ 		list(APPEND BASE_LIBRARIES winscard)
+ 	endif()

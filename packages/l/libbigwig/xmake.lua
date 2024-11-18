@@ -21,7 +21,11 @@ package("libbigwig")
         if package:config("curl") then
             package:add("deps", "libcurl")
         end
-        package:add("deps", (package:config("zlib_ng") and "zlib-ng" or "zlib"))
+        if package:config("zlib_ng") then
+            package:add("deps", "zlib-ng", {configs = {zlib_compat = true}})
+        else
+            package:add("deps", "zlib")
+        end
     end)
 
     on_install("linux", "macosx", "bsd", "mingw", "msys", "android", "iphoneos", "cross", function (package)

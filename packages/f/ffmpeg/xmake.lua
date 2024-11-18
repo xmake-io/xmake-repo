@@ -63,6 +63,9 @@ package("ffmpeg")
     end
 
     add_deps("nasm")
+    if is_plat("linux", "macosx") then
+        add_deps("pkg-config")
+    end
 
     on_fetch("mingw", "linux", "macosx", function (package, opt)
         import("lib.detect.find_tool")
@@ -253,7 +256,7 @@ package("ffmpeg")
             else
                 -- rename files from libxx.a to xx.lib
                 for _, libfile in ipairs(os.files(package:installdir("lib", "*.a"))) do
-                    os.vmv(libfile, libfile:gsub("^(.+[\\/])lib(.+)%.a$", "%1%2.lib"))
+                    os.vmv(libfile, (libfile:gsub("^(.+[\\/])lib(.+)%.a$", "%1%2.lib")))
                 end
             end
         elseif package:is_plat("android") then

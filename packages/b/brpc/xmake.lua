@@ -1,10 +1,11 @@
 package("brpc")
-    set_homepage("https://github.com/apache/incubator-brpc")
+    set_homepage("https://brpc.apache.org")
     set_description("brpc is an Industrial-grade RPC framework using C++ Language, which is often used in high performance system such as Search, Storage, Machine learning, Advertisement, Recommendation etc.")
     set_license("Apache-2.0")
 
     add_urls("https://github.com/apache/brpc/archive/refs/tags/$(version).tar.gz")
 
+    add_versions("1.10.0", "fe4eb10b4ca1a59e0f71086552b2d8897afd66df93b53c18ad83f6a93717cc2d")
     add_versions("1.8.0", "13ffb2f1f57c679379a20367c744b3e597614a793ec036cd7580aae90798019d")
     add_versions("1.7.0", "48668cbc943edd1b72551e99c58516249d15767b46ea13a843eb8df1d3d1bc42")
     add_versions("1.6.1", "d9eb93683b0e4cb583aacdf2357c3e3e613fbf797c4fafd0eae1d09d5ea50964")
@@ -12,6 +13,7 @@ package("brpc")
     add_versions("1.5.0", "5ce178e3070ecdf9576a8917e3f65d96085f437bfbf9f1d09d46bca1375938cf")
     add_versions("1.3.0", "b9d638b76725552ed11178c650d7fc95e30f252db7972a93dc309a0698c7d2b8")
 
+    add_patches("1.10.0", path.join(os.scriptdir(), "patches", "1.8.0", "cmake.patch"), "315889dcca66331932a8ce90bbdc5f71e336ca39d625ff85a589ee2bf10155ee")
     add_patches("1.8.0", path.join(os.scriptdir(), "patches", "1.8.0", "cmake.patch"), "315889dcca66331932a8ce90bbdc5f71e336ca39d625ff85a589ee2bf10155ee")
     add_patches("1.7.0", path.join(os.scriptdir(), "patches", "1.7.0", "cmake.patch"), "801920d6fcd20f3da68c1846dc22d26d2d320e48b06b6b5bd38bbed11e5ebd2c")
     add_patches("1.6.1", path.join(os.scriptdir(), "patches", "1.6.1", "cmake.patch"), "046e590994ad302127d4cb7b1b2d8231db5f7c30c3948a0172d0dca9bef1da0b")

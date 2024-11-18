@@ -1,0 +1,18 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index de598c7..0035bf7 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -190,9 +190,10 @@ if(SEAL_USE_ZSTD)
+         seal_fetch_thirdparty_content(ExternalZSTD)
+         set(zstd_static "libzstd_static")
+     else()
+-        find_package(zstd CONFIG)
+-        if(NOT zstd_FOUND)
+-            message(FATAL_ERROR "Zstandard: not found")
++        include(FindPkgConfig)
++        pkg_search_module("libzstd" REQUIRED IMPORTED_TARGET "libzstd")
++        if(libzstd_FOUND)
++            set(zstd_static "PkgConfig::libzstd")
+         else()
+             if(TARGET zstd::libzstd_static)
+                 set(zstd_static "zstd::libzstd_static")

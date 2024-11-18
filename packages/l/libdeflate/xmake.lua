@@ -1,11 +1,13 @@
 package("libdeflate")
-
     set_homepage("https://github.com/ebiggers/libdeflate")
     set_description("libdeflate is a library for fast, whole-buffer DEFLATE-based compression and decompression.")
     set_license("MIT")
 
     add_urls("https://github.com/ebiggers/libdeflate/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ebiggers/libdeflate.git")
+
+    add_versions("v1.22", "7f343c7bf2ba46e774d8a632bf073235e1fd27723ef0a12a90f8947b7fe851d6")
+    add_versions("v1.21", "50827d312c0413fbd41b0628590cd54d9ad7ebf88360cba7c0e70027942dbd01")
     add_versions("v1.20", "ed1454166ced78913ff3809870a4005b7170a6fd30767dc478a09b96847b9c2a")
     add_versions("v1.8", "50711ad4e9d3862f8dfb11b97eb53631a86ee3ce49c0e68ec2b6d059a9662f61")
     add_versions("v1.10", "5c1f75c285cd87202226f4de49985dcb75732f527eefba2b3ddd70a8865f2533")
@@ -15,19 +17,27 @@ package("libdeflate")
     add_versions("v1.19", "27bf62d71cd64728ff43a9feb92f2ac2f2bf748986d856133cc1e51992428c25")
 
     add_deps("cmake")
+
+    if on_check then
+        on_check("windows", function (package)
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset and package:is_arch("arm.*") then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(libdeflate/arm): requires vs_toolset >= 14.3")
+            end
+        end)
+    end
+
     on_load("windows", function (package)
         if package:config("shared") then
             package:add("defines", "LIBDEFLATE_DLL")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "android", "mingw", "bsd", function (package)
-        if package:is_plat("windows") and package:is_arch("arm.*") then
-            local vs = import("core.tool.toolchain").load("msvc"):config("vs")
-            assert(tonumber(vs) > 2019, "libdeflate requires Visual Studio 2022 and later for arm targets")
-        end
+    on_install(function (package)
         local configs = {"-DLIBDEFLATE_BUILD_GZIP=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DLIBDEFLATE_BUILD_STATIC_LIB=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DLIBDEFLATE_BUILD_SHARED_LIB=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)

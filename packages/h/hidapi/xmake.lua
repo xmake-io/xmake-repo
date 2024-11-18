@@ -18,7 +18,11 @@ package("hidapi")
         add_deps("pkg-config")
     end
 
-    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
+    on_install("windows|x86", "windows|x64", "linux", "macosx", "mingw", function (package)
+        io.replace("libusb/CMakeLists.txt",
+            "pkg_check_modules(libusb REQUIRED IMPORTED_TARGET libusb-1.0>=1.0.9)",
+            "pkg_check_modules(libusb REQUIRED IMPORTED_TARGET libusb)", {plain = true})
+
         local configs = {
             "-DHIDAPI_WITH_TESTS=OFF",
             "-DHIDAPI_BUILD_PP_DATA_DUMP=OFF",

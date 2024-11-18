@@ -1,0 +1,19 @@
+diff --git a/libs/iostreams/CMakeLists.txt b/libs/iostreams/CMakeLists.txt
+index 1d8352f..01b612c 100644
+--- a/libs/iostreams/CMakeLists.txt
++++ b/libs/iostreams/CMakeLists.txt
+@@ -27,7 +27,13 @@ function(boost_iostreams_option name description package version found target) #
+ 
+   if(${name})
+ 
+-    find_package(${package} ${version} REQUIRED)
++    if("${package}" STREQUAL "zstd")
++      include(FindPkgConfig)
++      pkg_search_module("libzstd" REQUIRED IMPORTED_TARGET "libzstd")
++      set(target "PkgConfig::libzstd")
++    else()
++      find_package(${package} ${version} REQUIRED)
++    endif()
+     target_sources(boost_iostreams PRIVATE ${ARGN})
+     target_link_libraries(boost_iostreams PRIVATE ${target})
+ 

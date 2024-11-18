@@ -5,15 +5,16 @@ import("private.core.base.select_script")
 
 -- is supported platform and architecture?
 function is_supported(instance, plat, arch, opt)
-
-    -- ignore template package
     if instance:is_template() then
         return false
     end
 
-    -- has install script?
-    local script = instance:get("install")
+    local script = instance:get(instance:is_fetchonly() and "fetch" or "install")
     if not select_script(script, {plat = plat, arch = arch}) then
+        if opt.native and select_script(script, {
+            plat = plat, arch = arch, subhost = plat, subarch = arch}) then
+            return true
+        end
         return false
     end
     return true
@@ -32,6 +33,7 @@ end
 
 -- the main entry
 function main(opt)
+    opt = opt or {}
     local packages = {}
     for _, packagedir in ipairs(os.dirs(path.join("packages", "*", "*"))) do
         local packagename = path.filename(packagedir)

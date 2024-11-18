@@ -1,61 +1,45 @@
 package("libxslt")
-
     set_homepage("http://xmlsoft.org/XSLT/")
     set_description("Libxslt is the XSLT C library developed for the GNOME project.")
     set_license("MIT")
 
-    add_urls("http://xmlsoft.org/sources/libxslt-$(version).tar.gz")
-    add_versions("1.1.34", "98b1bd46d6792925ad2dfe9a87452ea2adebf69dcb9919ffd55bf926a7f93f7f")
+    add_urls("https://gitlab.gnome.org/GNOME/libxslt/-/archive/$(version)/libxslt-$(version).tar.bz2",
+             "https://gitlab.gnome.org/GNOME/libxslt.git")
 
-    add_configs("iconv", {description = "Enable libiconv support.", default = false, type = "boolean"})
+    add_versions("v1.1.42", "1df3134451708a0098850f9b9e8d86734af7a08f5bea5890f7a3e02b9ccd59d9")
 
-    on_load("windows", "macosx", "linux", function (package)
-        if package:is_plat("windows") and not package:config("shared") then
+    add_configs("crypto", {description = "Add crypto support to exslt", default = false, type = "boolean"})
+    add_configs("moudles", {description = "Add plugin extension support", default = false, type = "boolean"})
+    add_configs("thread", {description = "Add multithread support", default = false, type = "boolean"})
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+
+    add_deps("cmake")
+    add_deps("libxml2")
+
+    on_load(function (package)
+        if package:config("crypto") then
+            package:add("deps", "libgcrypt")
+        end
+        if package:config("thread") and package:is_plat("linux", "bsd") then
+            package:add("syslinks", "pthread")
+        end
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
             package:add("defines", "LIBXSLT_STATIC")
         end
-        package:add("deps", "libxml2", {configs = {iconv = package:config("iconv")}})
     end)
 
-    on_install("windows", function (package)
-        io.replace("libxslt/xsltconfig.h.in", "@WITH_PROFILER@", "0", {plain = true})
-        os.cd("win32")
-        local args = {"configure.js", "compiler=msvc", "iconv=no"}
-        table.insert(args, "cruntime=/" .. package:config("vs_runtime"))
-        table.insert(args, "debug=" .. (package:debug() and "yes" or "no"))
-        local cflags = "/DLIBXML_STATIC \"/I$(INCPREFIX)\" \"/I" .. package:dep("libxml2"):installdir("include", "libxml2") .. "\""
-        local ldflags = "ws2_32.lib \"/LIBPATH:$(LIBPREFIX)\" \"/LIBPATH:" .. package:dep("libxml2"):installdir("lib") .. "\""
-        io.replace("Makefile.msvc", "libxml2.lib", "libxml2_a.lib", {plain = true})
-        io.replace("Makefile.msvc", "/I$(INCPREFIX)", cflags, {plain = true})
-        io.replace("Makefile.msvc", "/LIBPATH:$(LIBPREFIX)", ldflags, {plain = true})
-        table.insert(args, "prefix=" .. package:installdir())
-        os.vrunv("cscript", args)
-        import("package.tools.nmake").install(package, {"/f", "Makefile.msvc"})
-        if package:config("shared") then
-            os.tryrm(path.join(package:installdir("lib"), "libxslt_a.lib"))
-            os.tryrm(path.join(package:installdir("lib"), "libexslt_a.lib"))
-        else
-            os.tryrm(path.join(package:installdir("lib"), "libxslt.lib"))
-            os.tryrm(path.join(package:installdir("lib"), "libexslt.lib"))
-            os.tryrm(path.join(package:installdir("bin"), "libxslt.dll"))
-            os.tryrm(path.join(package:installdir("bin"), "libexslt.dll"))
-        end
-        package:addenv("PATH", "bin")
-    end)
+    on_install("!iphoneos", function (package)
+        local configs = {"-DLIBXSLT_WITH_TESTS=OFF", "-DLIBXSLT_WITH_PYTHON=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DLIBXSLT_WITH_DEBUGGER=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DLIBXSLT_WITH_XSLT_DEBUG=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-    on_install("macosx", "linux", function (package)
-        local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-            table.insert(configs, "--enable-static=no")
-        else
-            table.insert(configs, "--enable-shared=no")
-            table.insert(configs, "--enable-static=yes")
-        end
-        if package:config("pic") ~= false then
-            table.insert(configs, "--with-pic")
-        end
-        import("package.tools.autoconf").install(package, configs)
-        package:addenv("PATH", "bin")
+        table.insert(configs, "-DLIBXSLT_WITH_CRYPTO=" .. (package:config("crypto") and "ON" or "OFF"))
+        table.insert(configs, "-DLIBXSLT_WITH_MODULES=" .. (package:config("moudles") and "ON" or "OFF"))
+        table.insert(configs, "-DLIBXSLT_WITH_THREADS=" .. (package:config("thread") and "ON" or "OFF"))
+        table.insert(configs, "-DLIBXSLT_WITH_PROGRAMS=" .. (package:config("tools") and "ON" or "OFF"))
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)

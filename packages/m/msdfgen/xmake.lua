@@ -13,7 +13,7 @@ package("msdfgen")
     add_patches("v1.10", "https://github.com/Chlumsky/msdfgen/commit/839e0e86cb846e3ea0c0a3d5da97321fe81f91e4.patch", "8b8ab53b66b4b8c27d78c2e617795e9818c5ba72a7a7cb7a75bc416fe4bfb26c")
 
     add_configs("extensions", {description = "Build extensions library (requires freetype, libpng and tinyxml2)", default = false, type = "boolean"})
-    add_configs("openmpp", {description = "Build with OpenMP support for multi-threaded code", default = false, type = "boolean"})
+    add_configs("openmp", {description = "Build with OpenMP support for multi-threaded code", default = false, type = "boolean"})
     add_configs("skia", {description = "Build with the Skia library", default = false, type = "boolean"})
     add_configs("standalone", {description = "Build standalone executable", default = false, type = "boolean"})
 

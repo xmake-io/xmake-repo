@@ -16,12 +16,32 @@ package("elfutils")
     add_configs("libasm",   {description = "Enable libasm", default = false, type = "boolean"})
 
     add_deps("m4", "zstd", "zlib")
-    if is_plat("android") then
-        add_deps("libintl", "argp-standalone")
+
+    if on_source then
+        on_source(function (package)
+            if package:is_plat("android") then
+                package:add("configs", "shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+            end
+        end)
+    elseif is_plat("android") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
-    if is_plat("android") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    on_load(function(package)
+        if package:is_plat("android") then
+            package:add("deps", "libintl", "argp-standalone")
+        end
+    end)
+
+    if on_check then
+        -- https://github.com/xmake-io/xmake-repo/issues/3182
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndk_sdkver = ndk:config("ndk_sdkver")
+            local ndkver = ndk:config("ndkver")
+            assert(ndkver and tonumber(ndkver) < 26, "package(elfutils): need ndk version < 26 for android")
+            assert(ndk_sdkver and tonumber(ndk_sdkver) <= 23, "package(elfutils): need ndk api level <= 23 for android")
+        end)
     end
 
     on_install("linux", "android", function (package)
