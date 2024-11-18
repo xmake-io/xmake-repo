@@ -24,7 +24,7 @@ rule("lexer")
         local argv = target:data("antlr4.tool.argv")
         table.join2(argv, target:values("antlr4.lexer.flags"))
 
-        local autogendir = path.join(target:autogendir(), "rules", "antlr4", "lexer")
+        local autogendir = path.join(target:autogendir(), "rules/antlr4/lexer")
         local sourcefile_cxx = path.join(autogendir, path.directory(sourcefile_g4), path.basename(sourcefile_g4) .. ".cpp")
         local sourcefile_dir = path.directory(sourcefile_cxx)
 
@@ -37,11 +37,12 @@ rule("lexer")
         target:add("includedirs", sourcefile_dir, {public = true})
 
         table.insert(argv, sourcefile_g4)
-        batchcmds:vrunv(java.program, argv)
         batchcmds:show_progress(opt.progress, "${color.build.object}compiling.g4 %s", sourcefile_g4)
+        batchcmds:vrunv(java.program, argv)
 
         local objectfile = target:objectfile(sourcefile_cxx)
         table.insert(target:objectfiles(), objectfile)
+        batchcmds:show_progress(opt.progress, "${color.build.object}compiling.$(mode) %s", sourcefile_cxx)
         batchcmds:compile(sourcefile_cxx, objectfile)
 
         batchcmds:add_depfiles(sourcefile_g4)
