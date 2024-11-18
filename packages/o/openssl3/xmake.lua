@@ -20,7 +20,7 @@ package("openssl3")
     on_fetch("fetch")
 
     -- https://security.stackexchange.com/questions/173425/how-do-i-calculate-md2-hash-with-openssl
-    add_configs("enable_md2", {description = "Enable MD2 on OpenSSl3 or not", default = false, type = "boolean"})
+    add_configs("md2", {description = "Enable MD2 on OpenSSl3 or not", default = false, type = "boolean"})
 
     on_load(function (package)
         if not package:is_precompiled() then
@@ -78,7 +78,7 @@ package("openssl3")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
         
-        if package:config("enable_md2") then
+        if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
 
@@ -109,7 +109,7 @@ package("openssl3")
         table.insert(configs, "--prefix=" .. installdir)
         table.insert(configs, "--openssldir=" .. installdir)
         
-        if package:config("enable_md2") then
+        if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
 
@@ -141,7 +141,7 @@ package("openssl3")
             table.insert(configs, "--debug")
         end
         
-        if package:config("enable_md2") then
+        if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
 
@@ -183,7 +183,7 @@ package("openssl3")
                          "--openssldir=" .. package:installdir():gsub("\\", "/"),
                          "--prefix=" .. package:installdir():gsub("\\", "/")}
         
-        if package:config("enable_md2") then
+        if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
 
@@ -205,3 +205,4 @@ package("openssl3")
     on_test(function (package)
         assert(package:has_cfuncs("SSL_new", {includes = "openssl/ssl.h"}))
     end)
+
