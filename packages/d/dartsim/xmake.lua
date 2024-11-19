@@ -34,6 +34,8 @@ package("dartsim")
         set_policy("package.cmake_generator.ninja", false)
     end
 
+    set_policy("platform.longpaths", true)
+
     add_deps("cmake")
     add_deps("assimp", "libccd", "eigen", "fcl", "octomap", "fmt")
     on_load("windows|x64", "linux", "macosx", function (package)
@@ -111,7 +113,7 @@ package("dartsim")
         if package:is_plat("linux") then
             table.insert(deps, "freeglut")
         end
-        import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir", packagedeps = deps})
+        import("package.tools.cmake").install(package, configs, {packagedeps = deps})
         local suffix = package:is_debug() and "d" or ""
         for _, lib in ipairs({"dart-collision-bullet", "dart-collision-ode", "dart-gui-osg", "dart-gui", "dart-optimizer-ipopt", "dart-optimizer-nlopt", "dart-optimizer-pagmo", "dart-utils-urdf", "dart-utils", "dart", "dart-external-odelcpsolver", "dart-external-lodepng"}) do
             package:add("links", lib .. suffix)
