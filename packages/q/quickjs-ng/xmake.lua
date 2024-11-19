@@ -44,6 +44,11 @@ package("quickjs-ng")
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.vcp(path.join(package:buildir(), "qjs.pdb"), dir)
+        end
     end)
 
     on_test(function (package)
