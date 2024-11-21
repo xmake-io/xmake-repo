@@ -73,6 +73,10 @@ package("zeromq")
         table.insert(configs, "-DBUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
+        if (package:is_plat("windows") and package:is_cross()) or package:is_plat("mingw") then
+            -- hardcode win10
+            table.insert(configs, "-DCMAKE_SYSTEM_VERSION=10.0")
+        end
 
         table.insert(configs, "-DWITH_OPENPGM=" .. (package:config("openpgm") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_NORM=" .. (package:config("norm") and "ON" or "OFF"))
