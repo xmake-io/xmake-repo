@@ -15,7 +15,7 @@ package("nanopb")
 
     on_load(function (package)
         if package:config("generator") then
-            package:add("deps", "python 3.x")
+            package:add("deps", "python 3.x", {kind = "binary"})
         end
     end)
 
@@ -30,7 +30,22 @@ package("nanopb")
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
-        table.insert(configs, "-Dnanopb_BUILD_GENERATOR=" .. (package:config("generator") and "ON" or "OFF"))
+
+        if package:config("generator") then
+            table.insert(configs, "-Dnanopb_BUILD_GENERATOR=ON")
+            table.insert(configs, "-Dnanopb_PYTHON_INSTDIR_OVERRIDE=" .. package:installdir("python"))
+            if is_host("windows") then
+                local python = package:dep("python")
+                if python:is_system() then
+                    table.insert(configs, "-DPython_EXECUTABLE=python")
+                else
+                    table.insert(configs, "-DPython_EXECUTABLE=" .. python:installdir("bin/python.exe"))
+                end
+            end
+        else
+            table.insert(configs, "-Dnanopb_BUILD_GENERATOR=OFF")
+            table.insert(configs, "-Dnanopb_PYTHON_INSTDIR_OVERRIDE=.")
+        end
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") and package:is_debug() then
