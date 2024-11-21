@@ -39,7 +39,7 @@ package("zeromq")
     add_deps("cmake")
 
     on_load(function (package)
-        if package:is_plat("windows") and not package:config("shared") then
+        if not package:config("shared") then
             package:add("defines", "ZMQ_STATIC")
         end
 
