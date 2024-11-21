@@ -40,7 +40,7 @@ package("flex")
     end)
 
     on_install("@msys", function (package)
-        os.vrun("pacman -Sy --noconfirm --needed --disable-download-timeout flex")
+        import("package.manager.pacman.install_package")("", {pacmna = "flex"})
         -- https://github.com/msys2/MSYS2-packages/issues/1911
         if package:is_library() then
             local msys_dir = os.getenv("MINGW_PREFIX")

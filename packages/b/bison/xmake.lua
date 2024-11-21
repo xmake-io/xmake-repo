@@ -36,7 +36,7 @@ package("bison")
     end)
 
     on_install("@msys", function (package)
-        os.vrun("pacman -Sy --noconfirm --needed --disable-download-timeout bison")
+        import("package.manager.pacman.install_package")("", {pacmna = "bison"})
     end)
 
     on_install("windows", function (package)
