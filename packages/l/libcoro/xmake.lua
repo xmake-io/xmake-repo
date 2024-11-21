@@ -25,6 +25,10 @@ package("libcoro")
         if package:config("tls") then
             package:add("deps", "openssl")
         end
+
+        if not package:config("shared") then
+            package:add("defines", "CORO_STATIC_DEFINE")
+        end
     end)
 
     on_install(function (package)
@@ -37,7 +41,12 @@ package("libcoro")
         table.insert(configs, "-DLIBCORO_BUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DLIBCORO_FEATURE_NETWORKING=" .. (package:config("networking") and "ON" or "OFF"))
         table.insert(configs, "-DLIBCORO_FEATURE_TLS=" .. (package:config("tls") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if package:is_plat("mingw") and package:config("shared") then
+            opt.shflags = "-Wl,--export-all-symbols"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
 
         if package:is_plat("windows") and package:is_debug() then
             local dir = package:installdir(package:config("shared") and "bin" or "lib")
