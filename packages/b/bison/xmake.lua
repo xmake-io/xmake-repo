@@ -33,10 +33,10 @@ package("bison")
         if package:is_library() then
             package:set("kind", "library", {headeronly = true})
         end
-    end)
 
-    on_install("@msys", function (package)
-        import("package.manager.pacman.install_package")("", {pacmna = "bison"})
+        if is_subhost("msys") and xmake:version():ge("2.9.7") then
+            package:add("deps", "pacman::bison", {configs = {msystem = "msys"}})
+        end
     end)
 
     on_install("windows", function (package)

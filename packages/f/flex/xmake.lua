@@ -37,10 +37,13 @@ package("flex")
         if package:is_library() then
             package:set("kind", "library", {headeronly = true})
         end
+
+        if is_subhost("msys") and xmake:version():ge("2.9.7") then
+            package:add("deps", "pacman::flex", {configs = {msystem = "msys"}})
+        end
     end)
 
     on_install("@msys", function (package)
-        import("package.manager.pacman.install_package")("", {pacmna = "flex"})
         -- https://github.com/msys2/MSYS2-packages/issues/1911
         if package:is_library() then
             local msys_dir = os.getenv("MINGW_PREFIX")
