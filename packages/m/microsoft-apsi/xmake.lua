@@ -9,9 +9,7 @@ package("microsoft-apsi")
 
     add_configs("log4cplus", {description = "Use Log4cplus for logging", default = false, type = "boolean"})
     add_configs("cppzmq", {description = "Use ZeroMQ for networking", default = false, type = "boolean"})
-    if is_plat("windows") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_deps("cmake")
     add_deps("microsoft-seal", {configs = {ms_gsl = true, zstd = true, throw_tran = false}})
