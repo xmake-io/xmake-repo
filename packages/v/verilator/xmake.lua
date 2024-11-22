@@ -11,6 +11,14 @@ package("verilator")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check(function (package)
+            if is_subhost("msys") and xmake:version():lt("2.9.7") then
+                raise("package(verilator) requires xmake >= 2.9.7 on msys")
+            end
+        end)
+    end
+
     on_load(function (package)
         if not package:is_precompiled() then
             package:add("deps", "flex", {kind = "library"})
