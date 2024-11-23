@@ -21,11 +21,9 @@ function _get_python_libs()
 end
 
 function _add_info(linkinfo, result)
-    if linkinfo then
-        table.insert(result.linkdirs, linkinfo.linkdir)
-        table.insert(result.libfiles, linkinfo.filename)
-        table.insert(result.links, linkinfo.link)
-    end
+    table.insert(result.linkdirs, linkinfo.linkdir)
+    table.insert(result.libfiles, linkinfo.filename)
+    table.insert(result.links, linkinfo.link)
 end
 
 function main(package, opt)
@@ -38,7 +36,7 @@ function main(package, opt)
             "/usr/local/lib",
             "/usr/lib/x86_64-linux-gnu",
         }
-        
+
         local result = {
             libfiles = {},
             linkdirs = {},
@@ -51,23 +49,32 @@ function main(package, opt)
         }
 
         local sub_libs_map = libs.get_sub_libs(package)
-        sub_libs_map["python"] = _get_python_libs()
+        sub_libs_map.python = _get_python_libs()
         table.insert(sub_libs_map.test, "test_exec_monitor")
 
+        local found
         libs.for_each(function (libname)
             local sub_libs = sub_libs_map[libname]
             if sub_libs then
                 for _, sub_libname in ipairs(sub_libs) do
                     local linkinfo = find_library("boost_" .. sub_libname, paths, opt)
-                    _add_info(linkinfo, result)
+                    if linkinfo then
+                        _add_info(linkinfo, result)
+                        found = true
+                    end
                 end
             else
                 local linkinfo = find_library("boost_" .. libname, paths, opt)
-                _add_info(linkinfo, result)
+                if linkinfo then
+                    _add_info(linkinfo, result)
+                    found = true
+                end
             end
         end)
 
-        result.linkdirs = table.unique(result.linkdirs)
-        return result
+        if found then
+            result.linkdirs = table.unique(result.linkdirs)
+            return result
+        end
     end
 end
