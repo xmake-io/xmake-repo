@@ -22,6 +22,8 @@ package("glaze")
     add_versions("v2.2.0", "1d6e36029a58bf8c4bdd035819e1ab02b87d8454dd80fa2f5d46c96a1e6d600c")
     add_versions("v1.3.5", "de5d59cb7f31193d45f67f25d8ced1499df50c0d926a1461432b87f2b2368817")
 
+    add_patches("4.0.1", "https://github.com/stephenberry/glaze/commit/8f35df43bcb1210a0c1e07a68b99608e29ecea43.patch", "66eba4c0eea1469c1bf21b2b6ea31cb320391d1095ffe06c5a7ff3dfda796763")
+
     add_deps("cmake")
 
     if on_check then
