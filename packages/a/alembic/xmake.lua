@@ -14,7 +14,7 @@ package("alembic")
     add_configs("hdf5", {description = "Include HDF5 stuff", default = false, type = "boolean"})
     add_configs("maya", {description = "Include maya stuff", default = false, type = "boolean"})
     add_configs("prman", {description = "Include prman stuff", default = false, type = "boolean"})
-    add_configs("tools", {description = "Build tools", default = true, type = "boolean"})
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     if is_plat("linux", "bsd") then
         add_syslinks("m", "pthread")
