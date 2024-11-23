@@ -22,7 +22,12 @@ end
 
 function _add_info(linkinfo, result)
     table.insert(result.linkdirs, linkinfo.linkdir)
-    table.insert(result.libfiles, linkinfo.filename)
+    if linkinfo.filename then
+        local filepath = path.join(linkinfo.linkdir, linkinfo.filename)
+        if os.isfile(filepath) then
+            table.insert(result.libfiles, filepath)
+        end
+    end
     table.insert(result.links, linkinfo.link)
 end
 
