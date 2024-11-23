@@ -37,6 +37,10 @@ package("alembic")
     end)
 
     on_install(function (package)
+        if package:is_plat("windows", "mingw") then
+            io.replace("lib/Alembic/Ogawa/OStream.cpp", "#include <stdexcept>", "#include <stdexcept>\n#include <Windows.h>", {plain = true})
+        end
+
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DUSE_TESTS=OFF",
@@ -49,8 +53,8 @@ package("alembic")
         end
 
         table.insert(configs, "-DUSE_ARNOLD=" .. (package:config("arnold") and "ON" or "OFF"))
-        table.insert(configs, "-USE_MAYA=" .. (package:config("maya") and "ON" or "OFF"))
-        table.insert(configs, "-USE_PRMAN=" .. (package:config("prman") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_MAYA=" .. (package:config("maya") and "ON" or "OFF"))
+        table.insert(configs, "-DUSE_PRMAN=" .. (package:config("prman") and "ON" or "OFF"))
         table.insert(configs, "-DUSE_BINARIES=" .. (package:config("tools") and "ON" or "OFF"))
 
         local hdf5 = package:dep("hdf5")
