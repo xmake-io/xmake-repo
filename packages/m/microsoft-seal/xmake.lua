@@ -86,11 +86,6 @@ package("microsoft-seal")
             table.insert(configs, "-DSEAL_USE_ALIGNED_ALLOC=OFF")
         end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "**.pdb"), dir)
-        end
     end)
 
     on_test(function (package)

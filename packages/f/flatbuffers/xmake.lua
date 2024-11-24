@@ -15,6 +15,7 @@ package("flatbuffers")
     add_deps("cmake")
 
     on_install(function(package)
+        io.replace("CMakeLists.txt", "/MT", "", {plain = true})
         io.replace("CMakeLists.txt",
             "RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}",
             "RUNTIME DESTINATION bin", {plain = true})
@@ -36,9 +37,7 @@ package("flatbuffers")
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "flatc.pdb"), package:installdir("bin"))
-            os.trycp(path.join(package:buildir(), "flatbuffers.pdb"), dir)
+            os.trymv(package:installdir("lib/flatc.pdb"), package:installdir("bin"))
         end
     end)
 

@@ -15,6 +15,16 @@ package("microsoft-apsi")
     add_deps("microsoft-seal", {configs = {ms_gsl = true, zstd = true, throw_tran = false}})
     add_deps("microsoft-kuku", "flatbuffers", "jsoncpp")
 
+    if on_check then
+        on_check(function (package)
+            -- TODO: To support cross-compilation, need host flatc tool and target flatbuffers library
+            -- Remove cmake try_run, replace check_cxx_source_runs to check_cxx_source_compiles
+            if package:is_arch64() or package:is_cross() then
+                raise("package(microsoft-apsi) unsupported cross-compilation")
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("log4cplus") then
             package:add("deps", "log4cplus", {configs = {unicode = false}})
@@ -31,7 +41,7 @@ package("microsoft-apsi")
         end
     end)
 
-    on_install("!iphoneos", function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
