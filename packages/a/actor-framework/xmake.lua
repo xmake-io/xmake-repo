@@ -14,7 +14,7 @@ package("actor-framework")
 
     add_configs("profiler", {description = "Enable experimental profiler API", default = false, type = "boolean"})
     add_configs("runtime_checks", {description = "Build CAF with extra runtime assertions", default = false, type = "boolean"})
-    add_configs("exceptions", {description = "Build CAF with support for exceptions", default = false, type = "boolean"})
+    add_configs("exceptions", {description = "Build CAF with support for exceptions", default = true, type = "boolean"})
     add_configs("io", {description = "Build legacy networking I/O module", default = false, type = "boolean"})
     add_configs("net", {description = "Build networking I/O module", default = false, type = "boolean"})
     add_configs("openssl", {description = "Build OpenSSL module", default = false, type = "boolean"})
@@ -36,6 +36,9 @@ package("actor-framework")
     end)
 
     on_install("windows", "linux", "macosx", "bsd", function (package)
+        io.replace("CMakeLists.txt", "add_library(libcaf_test)", "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(libcaf_test)", "", {plain = true})
+
         local configs =
         {
             "-DCAF_ENABLE_EXAMPLES=OFF",
