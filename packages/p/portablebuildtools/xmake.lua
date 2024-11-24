@@ -12,5 +12,6 @@ package("portablebuildtools")
     end)
 
     on_test(function (package)
-        os.run("PortableBuildTools.exe /?")
+        os.runv("PortableBuildTools.exe", {"list"})
     end)
+
