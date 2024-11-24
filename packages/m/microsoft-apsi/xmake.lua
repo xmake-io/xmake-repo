@@ -19,7 +19,7 @@ package("microsoft-apsi")
         on_check(function (package)
             -- TODO: To support cross-compilation, need host flatc tool and target flatbuffers library
             -- Remove cmake try_run, replace check_cxx_source_runs to check_cxx_source_compiles
-            if package:is_arch64() or package:is_cross() then
+            if not package:is_arch64() or package:is_cross() then
                 raise("package(microsoft-apsi) unsupported cross-compilation")
             end
         end)
