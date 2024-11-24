@@ -71,7 +71,7 @@ package("openscenegraph")
         end
         import("package.tools.cmake").install(package, configs)
         local suffix = package:is_debug() and "d" or ""
-        for _, lib in ipairs({"osg", "osgGA", "osgUtil", "osgDB", "osgText", "osgWidget", "osgTerrain", "osgFX", "osgViewer", "osgVolume", "osgManipulator", "osgAnimation", "osgParticle", "osgShadow", "osgPresentation", "osgSim", "OpenThreads"}) do
+        for _, lib in ipairs({"osgPresentation", "osgSim", "osgShadow", "osgParticle", "osgAnimation", "osgManipulator", "osgTerrain", "osgVolume", "osgWidget", "osgUI", "osgViewer", "osgText", "osgFX", "osgGA", "osgDB", "osgUtil", "osg", "OpenThreads"}) do
             package:add("links", lib .. suffix)
         end
     end)
