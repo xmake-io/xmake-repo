@@ -43,7 +43,7 @@ package("abseil")
         end
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
-        local configs = {"-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"), "-DABSL_ENABLE_INSTALL=ON", "-DABSL_PROPAGATE_CXX_STD=ON"}
+        local configs = {"-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"), "-DABSL_ENABLE_INSTALL=ON", "-DABSL_PROPAGATE_CXX_STD=ON", "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
