@@ -25,10 +25,7 @@ package("antlr4")
     end)
 
     on_install("@windows", "@linux", "@macosx", function (package)
-        local source = "antlr-" .. package:version() .. "-complete.jar"
-        local target = path.join(package:installdir("lib"), "antlr-complete.jar")
-        os.vcp("../" .. source, package:installdir("lib"))
-        os.vmv(package:installdir("lib", source), target)
+        os.vcp(package:originfile(), path.join(package:installdir("lib"), "antlr-complete.jar"))
     end)
 
     on_test(function (package)
