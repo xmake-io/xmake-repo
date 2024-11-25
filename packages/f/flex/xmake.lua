@@ -1,5 +1,4 @@
 package("flex")
-    set_kind("binary")
     set_homepage("https://github.com/westes/flex/")
     set_license("BSD-2-Clause")
 
@@ -14,15 +13,6 @@ package("flex")
     elseif not is_plat("windows", "mingw", "msys") then
         add_urls("https://github.com/westes/flex/releases/download/v$(version)/flex-$(version).tar.gz")
     end
-
-    on_fetch(function (package)
-        -- If pacman::flex already installed
-        if is_subhost("msys") and package:is_library() then
-            local msys_dir = os.getenv("MINGW_PREFIX")
-            local header = path.join(path.directory(msys_dir), "usr/include/FlexLexer.h")
-            os.trycp(header, package:installdir("include"))
-        end
-    end)
 
     on_load("macosx", "linux", "bsd", "windows", "@msys", function (package)
         if package:is_plat("windows") then
@@ -39,7 +29,7 @@ package("flex")
         end
 
         if is_subhost("msys") and xmake:version():ge("2.9.7") then
-            package:add("deps", "pacman::flex", {configs = {msystem = "msys"}})
+            package:add("deps", "pacman::flex", {private = true, configs = {msystem = "msys"}})
         end
     end)
 
