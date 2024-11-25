@@ -1,6 +1,6 @@
 package("msvc")
     set_kind("toolchain")
-    set_homepage("https://visualstudio.microsoft.com/")
+    set_homepage("https://visualstudio.microsoft.com/zh-hans/visual-cpp-build-tools/")
     set_description("Microsoft Visual C/C++ Compiler")
 
     add_versions("14.42.17+12", "dummy")
@@ -63,6 +63,10 @@ package("msvc")
         table.insert(argv, "env=none")
         table.insert(argv, "path=" .. package:installdir())
         table.insert(argv, "target=" .. (package:config("target") or os.arch()))
+
+        -- @note It downloads the official binary source
+        -- https://visualstudio.microsoft.com/zh-hans/visual-cpp-build-tools/
+        -- https://github.com/Data-Oriented-House/PortableBuildTools/blob/3a2cd42b1de75da63ad30a55982d8dff3c36aa45/source.c#L724
         os.vrunv("PortableBuildTools.exe", argv)
     end)
 
