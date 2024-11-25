@@ -1,4 +1,4 @@
-package("portablebuildtools")
+package("portable_build_tools")
     set_kind("toolchain")
     set_homepage("https://github.com/Data-Oriented-House/PortableBuildTools")
     set_description("Portable VS Build Tools installer")
