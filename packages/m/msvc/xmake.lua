@@ -18,9 +18,9 @@ package("msvc")
     add_versions("14.30.17+0", "dummy")
     add_versions("14.29.16+11", "dummy")
 
-    add_configs("preview", {description = "The Preview Version", default = false, type = "boolean"})
-    add_configs("target", {description = "The Target architecture", default = os.arch(), type = "string", values = {"x64", "x86", "arm", "arm64"}})
-    add_configs("sdkver", {description = "The Windows SDK Version", default = "10.0.26100", type = "string", values = {
+    add_configs("preview", {description = "The Preview Version", type = "boolean"})
+    add_configs("target", {description = "The Target architecture", type = "string", values = {"x64", "x86", "arm", "arm64"}})
+    add_configs("sdkver", {description = "The Windows SDK Version", type = "string", values = {
         "10.0.26100",
         "10.0.22621",
         "10.0.22000",
@@ -31,22 +31,29 @@ package("msvc")
     on_load(function (package)
         if not package:is_precompiled() then
             if is_host("windows") then
-                package:add("deps", "portable_build_tools")
+                package:add("deps", "portablebuildtools")
             elseif is_host("linux") then
                 -- TODO use msvc-wine
             end
         end
     end)
 
-    -- TODO on_fetch
+    on_fetch("@windows", "@msys", function (package, opt)
+        if opt.system then
+            -- TODO maybe we need to improve it
+            if not package:config("sdkver") and not package:config("target") and not package:config("preview") then
+                local msvc = package:toolchain("msvc")
+                if msvc and msvc:check() then
+                    return {}
+                end
+            end
+        end
+    end)
 
     on_install("@windows", "@msys", function (package)
         import("core.base.semver")
         local argv = {"accept_license"}
-        local sdkver = assert(package:config("sdkver"), "sdkver not found")
-        if sdkver then
-            sdkver = semver.new(sdkver)
-        end
+        local sdkver = semver.new(package:config("sdkver") or "10.0.26100")
         if package:config("preview") then
             table.insert(argv, "preview")
         end
@@ -60,9 +67,7 @@ package("msvc")
     end)
 
     on_test(function (package)
-        if is_host("windows", "msys") then
-            assert(os.isfile(path.join(package:installdir(), "devcmd.bat")))
-        end
+        assert(os.isfile(path.join(package:installdir(), "devcmd.bat")))
     end)
 
 
