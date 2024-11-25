@@ -31,7 +31,7 @@ package("msvc")
     on_load(function (package)
         if not package:is_precompiled() then
             if is_host("windows") then
-                package:add("deps", "portablebuildtools")
+                package:add("deps", "portable_build_tools")
             elseif is_host("linux") then
                 -- TODO use msvc-wine
             end
