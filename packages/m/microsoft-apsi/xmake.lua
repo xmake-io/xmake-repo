@@ -15,22 +15,15 @@ package("microsoft-apsi")
     add_deps("microsoft-seal", {configs = {ms_gsl = true, zstd = true, throw_tran = false}})
     add_deps("microsoft-kuku", "flatbuffers", "jsoncpp")
 
-    if on_check then
-        on_check(function (package)
-            -- TODO: To support cross-compilation, need host flatc tool and target flatbuffers library
-            -- Remove cmake try_run, replace check_cxx_source_runs to check_cxx_source_compiles
-            if not package:is_arch64() or package:is_cross() then
-                raise("package(microsoft-apsi) unsupported cross-compilation")
-            end
-        end)
-    end
-
     on_load(function (package)
         if package:config("log4cplus") then
             package:add("deps", "log4cplus", {configs = {unicode = false}})
         end
         if package:config("cppzmq") then
             package:add("deps", "cppzmq")
+        end
+        if package:is_cross() then
+            package:add("deps", "flatbuffers~binary", {host = true, private = true, kind = "binary"})
         end
 
         local version = package:version()
@@ -41,12 +34,18 @@ package("microsoft-apsi")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", function (package)
+    on_install(function (package)
+        if package:is_cross() then
+            io.replace("CMakeLists.txt", "get_target_property(FLATBUFFERS_FLATC_PATH flatbuffers::flatc IMPORTED_LOCATION_RELEASE)", "", {plain = true})
+            io.replace("cmake/DetectArch.cmake", "if(MSVC)", "if(WIN32)", {plain = true})
+            io.replace("cmake/DetectArch.cmake", "check_cxx_source_runs", "check_cxx_source_compiles", {plain = true})
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        if package:is_cross() then
+            table.insert(configs, "-DFLATBUFFERS_FLATC_PATH=flatc")
         end
 
         table.insert(configs, "-DAPSI_USE_LOG4CPLUS=" .. (package:config("log4cplus") and "ON" or "OFF"))
