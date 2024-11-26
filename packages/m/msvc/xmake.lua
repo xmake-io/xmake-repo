@@ -2,6 +2,9 @@ package("msvc")
     set_kind("toolchain")
     set_homepage("https://visualstudio.microsoft.com/zh-hans/visual-cpp-build-tools/")
     set_description("Microsoft Visual C/C++ Compiler")
+    if set_installtips then
+        set_installtips("Do you accept the license agreement? https://go.microsoft.com/fwlink/?LinkId=2179911")
+    end
 
     add_versions("14.42.17+12", "dummy")
     add_versions("14.41.17+11", "dummy")
@@ -53,34 +56,22 @@ package("msvc")
     on_install("@windows", "@msys", function (package)
         import("core.base.semver")
 
-        -- get confirm result
-        local result = utils.confirm({description = function ()
-            cprint("${bright color.warning}note: ${clear}Do you accept the license agreement for installing msvc build toolchain?")
-            cprint("  https://go.microsoft.com/fwlink/?LinkId=2179911")
-        end, answer = function ()
-            cprint("please input: ${bright}y${clear} (y/n)")
-            io.flush()
-            return (io.read() or "n"):trim()
-        end})
-
-        if result and result ~= "n" then
-            local argv = {"accept_license"}
-            local sdkver = semver.new(package:config("sdkver") or "10.0.26100")
-            if package:config("preview") then
-                table.insert(argv, "preview")
-            end
-            table.insert(argv, "msvc=" .. package:version_str():replace("+", ".", {plain = true}))
-            table.insert(argv, "sdk=" .. sdkver:patch())
-            table.insert(argv, "host=" .. os.arch())
-            table.insert(argv, "env=none")
-            table.insert(argv, "path=" .. package:installdir())
-            table.insert(argv, "target=" .. (package:config("target") or os.arch()))
-
-            -- @note It downloads the official binary source
-            -- https://visualstudio.microsoft.com/zh-hans/visual-cpp-build-tools/
-            -- https://github.com/Data-Oriented-House/PortableBuildTools/blob/3a2cd42b1de75da63ad30a55982d8dff3c36aa45/source.c#L724
-            os.vrunv("PortableBuildTools.exe", argv)
+        local argv = {"accept_license"}
+        local sdkver = semver.new(package:config("sdkver") or "10.0.26100")
+        if package:config("preview") then
+            table.insert(argv, "preview")
         end
+        table.insert(argv, "msvc=" .. package:version_str():replace("+", ".", {plain = true}))
+        table.insert(argv, "sdk=" .. sdkver:patch())
+        table.insert(argv, "host=" .. os.arch())
+        table.insert(argv, "env=none")
+        table.insert(argv, "path=" .. package:installdir())
+        table.insert(argv, "target=" .. (package:config("target") or os.arch()))
+
+        -- @note It downloads the official binary source
+        -- https://visualstudio.microsoft.com/zh-hans/visual-cpp-build-tools/
+        -- https://github.com/Data-Oriented-House/PortableBuildTools/blob/3a2cd42b1de75da63ad30a55982d8dff3c36aa45/source.c#L724
+        os.vrunv("PortableBuildTools.exe", argv)
     end)
 
     on_test(function (package)
