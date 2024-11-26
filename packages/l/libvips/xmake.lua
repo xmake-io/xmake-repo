@@ -83,6 +83,13 @@ package("libvips")
         add_extsources("brew::vips")
     end
 
+    on_check("windows", function (package)
+        local version = package:version()
+        if version:eq("8.16.0") then
+            raise("package(libvips 8.16.0) unsupported msvc toolchain")
+        end
+    end)
+
     on_load(function (package)
         for _, dep in ipairs(deps) do
             if package:config(dep) then
