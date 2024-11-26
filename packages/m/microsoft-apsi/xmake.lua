@@ -15,6 +15,12 @@ package("microsoft-apsi")
     add_deps("microsoft-seal", {configs = {ms_gsl = true, zstd = true, throw_tran = false}})
     add_deps("microsoft-kuku", "flatbuffers", "jsoncpp")
 
+    on_check(function (package)
+        if not package:is_arch64() then
+            raise("package(microsoft-apsi) unsupported 32-bit")
+        end
+    end)
+
     on_load(function (package)
         if package:config("log4cplus") then
             package:add("deps", "log4cplus", {configs = {unicode = false}})
@@ -34,7 +40,7 @@ package("microsoft-apsi")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "android", function (package)
         if package:is_cross() then
             io.replace("CMakeLists.txt", "get_target_property(FLATBUFFERS_FLATC_PATH flatbuffers::flatc IMPORTED_LOCATION_RELEASE)", "", {plain = true})
             io.replace("cmake/DetectArch.cmake", "if(MSVC)", "if(WIN32)", {plain = true})
