@@ -25,10 +25,8 @@ package("memorymodulepp")
                 add_headerfiles("MemoryModule/*.h", {prefixdir = "MemoryModule"})
                 add_headerfiles("3rdparty/phnt/include/*.h", {prefixdir = "3rdparty/phnt/include"})
                 add_includedirs(".")
-
         ]])
         import("package.tools.xmake").install(package)
-
     end)
 
     on_test(function (package)
