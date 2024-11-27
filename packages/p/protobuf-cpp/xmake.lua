@@ -152,7 +152,9 @@ package("protobuf-cpp")
     end)
 
     on_test(function (package)
-        if not package:is_cross() then
+        if not package:is_cross() and
+            -- Missing libgcc_s_xxx.dll, Maybe msys2 bug
+            not (is_subhost("msys") and package:is_plat("mingw", "msys") and package:is_arch("i386")) then
             io.writefile("test.proto", [[
                 syntax = "proto3";
                 package test;
