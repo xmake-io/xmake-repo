@@ -11,8 +11,7 @@ package("protobuf-cpp")
         end
     end})
 
-    -- TODO: https://protobuf.dev/support/version-support
-    -- cpp library use x.y.z version
+    -- TODO: Use x.y.z version? https://protobuf.dev/support/version-support
     add_versions("28.1", "0ac35978514f3e868181ea60237e695d892d4748ac03fb926a26ac7e2698aa29")
     add_versions("28.0", "979027233837dceaf927402e789261e46d4ff87ce45b3e38be8b15c4a1f696a3")
     add_versions("27.3", "a49147217f69e8d19aab0cc5c0059d6201261f5cb62145f8ab4ac8b94e7ffa86")
@@ -34,8 +33,8 @@ package("protobuf-cpp")
 
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
-    add_configs("lite", {description = "Use lite", default = false, type = "boolean", readonly = true})
-    add_configs("upb", {description = "Build libupb", default = false, type = "boolean"})
+    add_configs("lite", {description = "Build lite version", default = false, type = "boolean"})
+    add_configs("upb", {description = "Build upb", default = false, type = "boolean"})
 
     add_deps("cmake")
     if is_plat("android") and is_host("windows") then
@@ -44,9 +43,9 @@ package("protobuf-cpp")
     end
 
     if is_plat("windows") then
-        add_links("libprotobuf", "libprotoc", "utf8_range", "utf8_validity")
+        add_links("libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
     else
-        add_links("protobuf", "protoc", "utf8_range", "utf8_validity")
+        add_links("protoc", "protobuf", "utf8_range", "utf8_validity")
     end
 
     if is_plat("linux", "bsd") then
@@ -64,6 +63,46 @@ package("protobuf-cpp")
 
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "PROTOBUF_USE_DLLS")
+        end
+    end)
+    -- ref: https://github.com/conan-io/conan-center-index/blob/19c9de61cce5a5089ce42b0cf15a88ade7763275/recipes/protobuf/all/conanfile.py
+    on_component("utf8_range", function (package, component)
+        component:add("extsources", "pkgconfig::utf8_range")
+        component:add("links", "utf8_validity", "utf8_range")
+    end)
+
+    on_component("protobuf", function (package, component)
+        component:add("extsources", "pkgconfig::protobuf")
+        if is_plat("windows") then
+            component:add("links", "libprotobuf", "utf8_validity")
+        else
+            component:add("links", "protobuf", "utf8_validity")
+        end
+    end)
+
+    on_component("protobuf-lite", function (package, component)
+        component:add("extsources", "pkgconfig::protobuf-lite")
+        if is_plat("windows") then
+            component:add("links", "libprotobuf-lite", "utf8_validity")
+        else
+            component:add("links", "protobuf-lite", "utf8_validity")
+        end
+    end)
+
+    on_component("protoc", function (package, component)
+        component:add("deps", "protobuf")
+        if is_plat("windows") then
+            component:add("links", "libprotoc")
+        else
+            component:add("links", "protoc")
+        end
+    end)
+
+    on_component("upb", function (package, component)
+        if is_plat("windows") then
+            component:add("links", "libupb", "utf8_range")
+        else
+            component:add("links", "upb", "utf8_range")
         end
     end)
 
@@ -103,6 +142,11 @@ package("protobuf-cpp")
             table.insert(configs, "-Dprotobuf_ABSL_PROVIDER=package")
         end
         import("package.tools.cmake").install(package, configs, opt)
+
+        if not package:config("lite") then
+            os.tryrm(package:installdir("bin/libprotobuf-lite*"))
+            os.tryrm(package:installdir("lib/libprotobuf-lite*"))
+        end
 
         os.trycp("build/Release/protoc.exe", package:installdir("bin"))
     end)
