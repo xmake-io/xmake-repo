@@ -38,6 +38,10 @@ package("protobuf-cpp")
     add_configs("upb", {description = "Build libupb", default = false, type = "boolean"})
 
     add_deps("cmake")
+    if is_plat("android") and is_host("windows") then
+        add_deps("ninja")
+        set_policy("package.cmake_generator.ninja", true)
+    end
 
     if is_plat("windows") then
         add_links("libprotobuf", "libprotoc", "utf8_range", "utf8_validity")
