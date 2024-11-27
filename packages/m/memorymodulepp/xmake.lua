@@ -8,7 +8,7 @@ package("memorymodulepp")
     add_versions("2024.11.7", "79f258b672f81c6ebbee1454335c4a4309d07ccb")
     add_deps("microsoft-detours")
 
-    on_install("windows", function (package)
+    on_install("windows|x86", "windows|x64", function (package)
         io.replace("MemoryModule/stdafx.h", '../3rdparty/phnt/include/phnt_windows.h', '3rdparty/phnt/include/phnt_windows.h', {plain = true})
         io.replace("MemoryModule/stdafx.h", '../3rdparty/phnt/include/phnt.h', '3rdparty/phnt/include/phnt.h', {plain = true})
         io.replace("MemoryModule/MmpDotNet.cpp", '3rdparty/Detours/detours.h', 'detours.h', {plain = true})
