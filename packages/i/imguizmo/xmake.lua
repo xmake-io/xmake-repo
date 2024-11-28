@@ -31,6 +31,7 @@ package("imguizmo")
 
             target("imguizmo")
                 set_kind("static")
+                add_defines("IMGUI_DEFINE_MATH_OPERATORS")
                 add_files("*.cpp")
                 add_headerfiles("*.h")
                 add_packages("imgui")
