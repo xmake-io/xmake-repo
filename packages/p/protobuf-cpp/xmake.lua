@@ -33,7 +33,7 @@ package("protobuf-cpp")
 
     add_configs("rtti", {description = "Enable runtime type information", default = true, type = "boolean"})
     add_configs("zlib", {description = "Enable zlib", default = false, type = "boolean"})
-    add_configs("lite", {description = "Build lite version", default = false, type = "boolean"})
+    add_configs("lite", {description = "Build lite version", default = true, type = "boolean", readonly = true})
     add_configs("upb", {description = "Build upb", default = false, type = "boolean"})
 
     add_deps("cmake")
@@ -142,11 +142,6 @@ package("protobuf-cpp")
             table.insert(configs, "-Dprotobuf_ABSL_PROVIDER=package")
         end
         import("package.tools.cmake").install(package, configs, opt)
-
-        if not package:config("lite") then
-            os.tryrm(package:installdir("bin/libprotobuf-lite*"))
-            os.tryrm(package:installdir("lib/libprotobuf-lite*"))
-        end
 
         os.trycp("build/Release/protoc.exe", package:installdir("bin"))
     end)
