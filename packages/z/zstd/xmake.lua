@@ -18,12 +18,13 @@ package("zstd")
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
     add_configs("contrib", {description = "Build contrib", default = false, type = "boolean"})
 
-    add_deps("cmake")
-
-    -- patch downstream package cmake ref: https://github.com/davea42/libdwarf-code/issues/225
-
-    on_load("windows", function (package)
-        if package:config("shared") then
+    on_load(function (package)
+        -- Some downstream cmake package need patch: find_package(zstd CONFIG REQUIRED)
+        -- https://github.com/facebook/zstd/issues/3271
+        if package:config("cmake") then
+            package:add("deps", "cmake")
+        end
+        if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ZSTD_DLL_IMPORT=1")
         end
     end)
