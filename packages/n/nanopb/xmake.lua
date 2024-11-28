@@ -11,15 +11,16 @@ package("nanopb")
     add_configs("generator", {description = "Build the protoc plugin for code generation", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("protobuf-cpp", {kind = "binary"})
+    add_deps("protobuf-cpp")
 
     on_load(function (package)
         if package:config("generator") then
             package:add("deps", "python 3.x", {kind = "binary"})
+            package:addenv("PYTHONPATH", "lib/site-packages")
         end
     end)
 
-    on_install("windows", "linux", "macosx", function (package)
+    on_install(function (package)
         local configs = {
             "-Dnanopb_BUILD_RUNTIME=ON",
             "-Dnanopb_MSVC_STATIC_RUNTIME=OFF",
@@ -33,7 +34,7 @@ package("nanopb")
 
         if package:config("generator") then
             table.insert(configs, "-Dnanopb_BUILD_GENERATOR=ON")
-            table.insert(configs, "-Dnanopb_PYTHON_INSTDIR_OVERRIDE=" .. package:installdir("python"))
+            table.insert(configs, "-Dnanopb_PYTHON_INSTDIR_OVERRIDE=" .. package:installdir("lib/site-packages"))
             if is_host("windows") then
                 local python = package:dep("python")
                 if python:is_system() then
@@ -47,11 +48,6 @@ package("nanopb")
             table.insert(configs, "-Dnanopb_PYTHON_INSTDIR_OVERRIDE=.")
         end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "*.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
