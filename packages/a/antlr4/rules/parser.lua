@@ -13,7 +13,7 @@ rule("parser")
                     -- remove lexer g4
                     if not sourcefile:lower():find("lexer", 1, true) then
                         table.insert(sourcefiles, sourcefile)
-                        table.insert(includedirs, path.join(autogendir, path.directory(sourcefile)))
+                        table.insert(includedirs, path.normalize(path.join(autogendir, path.directory(sourcefile))))
                     end
                 end
                 sourcebatch.sourcefiles = sourcefiles
@@ -36,7 +36,7 @@ rule("parser")
         table.join2(argv, target:values("antlr4.parser.flags"))
 
         local autogendir = path.join(target:autogendir(), "rules/antlr4/parser")
-        local sourcefile_cxx = path.join(autogendir, path.directory(sourcefile_g4), path.basename(sourcefile_g4) .. ".cpp")
+        local sourcefile_cxx = path.normalize(path.join(autogendir, path.directory(sourcefile_g4), path.basename(sourcefile_g4) .. ".cpp"))
         local sourcefile_dir = path.directory(sourcefile_cxx)
 
         batchcmds:mkdir(sourcefile_dir)
