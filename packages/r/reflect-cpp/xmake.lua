@@ -4,7 +4,7 @@ package("reflect-cpp")
     set_license("MIT")
 
     add_urls("https://github.com/getml/reflect-cpp/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/getml/reflect-cpp.git")
+             "https://github.com/getml/reflect-cpp.git", {submodules = false})
 
     add_versions("v0.16.0", "a84d94dbd353d788926d6e54507b44c046863f7bc4ecb35afe0338374a68a77d")
     add_versions("v0.14.1", "639aec9d33025703a58d32c231ab1ab474c0cc4fb0ff90eadcaffb49271c41cd")
@@ -26,6 +26,9 @@ package("reflect-cpp")
     add_configs("toml", {description = "Enable Toml Support.", default = false, type = "boolean"})
     add_configs("yaml", {description = "Enable Yaml Support.", default = false, type = "boolean"})
     add_configs("ubjson", {description = "Enable UBJSON Support.", default = false, type = "boolean"})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     on_check(function (package)
         if package:is_plat("windows") then
@@ -67,7 +70,7 @@ package("reflect-cpp")
         end
 
         if package:config("toml") then
-            package:add("deps", "tomlcpp")
+            package:add("deps", "toml++")
         end
 
         if package:config("yaml") then
@@ -100,7 +103,10 @@ package("reflect-cpp")
     on_install(function (package)
         local version = package:version()
         if package:gitref() or version:lt("0.11.1") or version:ge("0.13.0") then
-            local configs = {"-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF", "-DREFLECTCPP_USE_VCPKG=OFF"}
+            local configs = {
+                "-DREFLECTCPP_USE_BUNDLED_DEPENDENCIES=OFF",
+                "-DREFLECTCPP_USE_VCPKG=OFF",
+            }
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
