@@ -47,7 +47,12 @@ package("vmaf")
         end
     end)
 
-    on_install("!windows and !android", function (package)
+    on_install("!windows", function (package)
+        os.cd("libvmaf")
+        if not package:config("tools") then
+            io.replace("meson.build", [[subdir('tools')]], "", {plain = true})
+        end
+
         local configs = {"-Denable_tests=false", "-Denable_docs=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
@@ -57,11 +62,6 @@ package("vmaf")
         table.insert(configs, "-Denable_float=" .. (package:config("float") and "true" or "false"))
         table.insert(configs, "-Denable_cuda=" .. (package:config("cuda") and "true" or "false"))
         table.insert(configs, "-Denable_nvtx=" .. (package:config("nvtx") and "true" or "false"))
-
-        os.cd("libvmaf")
-        if not package:config("tools") then
-            io.replace("meson.build", [[subdir('tools')]], "", {plain = true})
-        end
         import("package.tools.meson").install(package, configs)
     end)
 
