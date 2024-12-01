@@ -13,10 +13,6 @@ package("protoc")
     end)
 
     on_test(function (package)
-        if is_subhost("msys") and package:is_plat("mingw", "msys") and package:is_arch("i386") then
-            return
-        end
-
         io.writefile("test.proto", [[
             syntax = "proto3";
             package test;
