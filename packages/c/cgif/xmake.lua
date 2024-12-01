@@ -17,7 +17,7 @@ package("cgif")
 
     add_deps("meson", "ninja")
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "iphoneos", "cross", function (package)
+    on_install(function (package)
         local opt = {}
         if package:is_plat("windows") and package:config("shared") then
             io.replace("inc/cgif.h", "CGIF* cgif_newgif", "LIBRARY_API CGIF* cgif_newgif", {plain = true})
