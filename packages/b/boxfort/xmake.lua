@@ -15,7 +15,7 @@ package("boxfort")
 
     add_deps("meson", "ninja")
 
-    on_install(function (package)
+    on_install("windows|!arm64", "linux", "macosx", "bsd", "mingw", "msys", "cross", function (package)
         if not package:config("shared") then
             package:add("defines", "BXF_STATIC_LIB")
         end
