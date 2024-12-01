@@ -22,7 +22,7 @@ package("openh264")
         end
     end)
 
-    on_install("!android and !bsd and !wasm", function (package)
+    on_install("!bsd and !wasm", function (package)
         io.replace("meson.build", "-Werror", "", {plain = true})
 
         if package:gitref() or package:version():ge("2.4.1") then
