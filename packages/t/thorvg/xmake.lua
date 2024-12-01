@@ -61,20 +61,19 @@ package("thorvg")
                 end
             end
         end
+
+        if not package:config("shared") then
+            package:add("defines", "TVG_STATIC")
+        end
     end)
 
-    on_install("!android", function (package)
+    on_install(function (package)
         if package:is_plat("mingw") then
             io.replace("src/loaders/svg/tvgSvgLoader.cpp", "float_t", "float", {plain = true})
         end
 
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "-Ddefault_library=shared")
-        else
-            table.insert(configs, "-Ddefault_library=static")
-            package:add("defines", "TVG_STATIC")
-        end
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
         local loaders = package:config("loaders")
         local savers = package:config("savers")
