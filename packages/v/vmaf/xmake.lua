@@ -35,8 +35,13 @@ package("vmaf")
 
     if on_check then
         on_check("android", function (package)
-            local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(vmaf) require ndk version > 22")
+            local ndk = package:toolchain("ndk")
+            local ndkver = ndk:config("ndkver")
+            assert(ndkver and tonumber(ndkver) > 22, "package(vmaf) require ndk version > 22")
+            if package:is_arch("armeabi-v7a") then
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(vmaf/armeabi-v7a) require ndk api level > 21")
+            end
         end)
     end
 
