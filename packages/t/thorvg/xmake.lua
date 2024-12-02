@@ -40,6 +40,18 @@ package("thorvg")
         add_deps("pkgconf")
     end
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk")
+            local ndkver = ndk:config("ndkver")
+            assert(ndkver and tonumber(ndkver) > 22, "package(thorvg) require ndk version > 22")
+            if package:is_arch("armeabi-v7a") then
+                local ndk_sdkver = ndk:config("ndk_sdkver")
+                assert(ndk_sdkver and tonumber(ndk_sdkver) > 21, "package(thorvg/armeabi-v7a) require ndk api level > 21")
+            end
+        end)
+    end
+
     on_load(function (package)
         import("core.base.hashset")
 
@@ -61,20 +73,19 @@ package("thorvg")
                 end
             end
         end
+
+        if not package:config("shared") then
+            package:add("defines", "TVG_STATIC")
+        end
     end)
 
-    on_install("!android", function (package)
+    on_install(function (package)
         if package:is_plat("mingw") then
             io.replace("src/loaders/svg/tvgSvgLoader.cpp", "float_t", "float", {plain = true})
         end
 
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "-Ddefault_library=shared")
-        else
-            table.insert(configs, "-Ddefault_library=static")
-            package:add("defines", "TVG_STATIC")
-        end
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
         local loaders = package:config("loaders")
         local savers = package:config("savers")
