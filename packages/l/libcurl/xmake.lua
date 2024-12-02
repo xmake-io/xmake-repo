@@ -33,11 +33,7 @@ package("libcurl")
 
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
-        if package:is_plat("linux", "android", "cross") then -- why? TODO: remove it.
-            package:config_set("openssl", true)
-        end
-
-        assert(!(package:config("openssl") && package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
+        assert(not(package:config("openssl") and package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
 
         if package:is_plat("macosx", "iphoneos") then
             package:add("frameworks", "Security", "CoreFoundation", "SystemConfiguration")
