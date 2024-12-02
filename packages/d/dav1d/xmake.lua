@@ -12,12 +12,22 @@ package("dav1d")
     add_versions("0.9.0", "cfae88e8067c9b2e5b96d95a7a00155c353376fe9b992a96b4336e0eab19f9f6")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
     end
 
     add_deps("meson", "ninja", "nasm")
+
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(dav1d) require ndk version > 22")
+        end)
+    end
 
     on_install(function (package)
         if package:config("tools") then
