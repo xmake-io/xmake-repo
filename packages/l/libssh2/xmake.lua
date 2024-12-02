@@ -8,10 +8,10 @@ package("libssh2")
              "https://github.com/libssh2/libssh2.git")
 
     add_versions("1.11.1", "d9ec76cbe34db98eec3539fe2c899d26b0c837cb3eb466a56b0f109cabf658f7")
-    add_versions("1.10.0", "2d64e90f3ded394b91d3a2e774ca203a4179f69aebee03003e5a6fa621e41d51")
     add_versions("1.11.0", "3736161e41e2693324deb38c26cfdc3efe6209d634ba4258db1cecff6a5ad461")
+    add_versions("1.10.0", "2d64e90f3ded394b91d3a2e774ca203a4179f69aebee03003e5a6fa621e41d51")
 
-    add_configs("backend", {description = "Select crypto backend.", default = (is_plat("windows") and "wincng" or "openssl"), type = "string", values = {"openssl", "wincng", "mbedtls", "libgcrypt", "wolfssl"}})
+    add_configs("backend", {description = "Select crypto backend.", default = (is_plat("windows") and "wincng" or "openssl"), type = "string", values = {"openssl", "openssl3", "wincng", "mbedtls", "libgcrypt", "wolfssl"}})
 
     if is_plat("windows", "mingw") then
         add_syslinks("bcrypt", "crypt32", "ws2_32")
@@ -41,6 +41,7 @@ package("libssh2")
         local backend_name = {
             wincng    = "WinCNG",
             openssl   = "OpenSSL",
+            openssl3  = "OpenSSL",
             mbedtls   = "mbedTLS",
             libgcrypt = "Libgcrypt",
             wolfssl   = "wolfSSL",
@@ -53,8 +54,8 @@ package("libssh2")
         local backend = package:config("backend")
         table.insert(configs, "-DCRYPTO_BACKEND=" .. backend_name[backend])
 
-        if backend == "openssl" then
-            local openssl = package:dep("openssl")
+        if backend == "openssl" or backend == "openssl3" then
+            local openssl = package:dep(backend)
             if not openssl:is_system() then
                 table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
             end
