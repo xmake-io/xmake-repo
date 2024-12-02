@@ -20,6 +20,7 @@ package("libcurl")
 
     add_configs("cares",    {description = "Enable c-ares support.", default = false, type = "boolean"})
     add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = false, type = "boolean"})
+    add_configs("openssl3", {description = "Enable OpenSSL-3 for SSL/TLS.", default = false, type = "boolean"})
     add_configs("mbedtls",  {description = "Enable mbedTLS for SSL/TLS.", default = false, type = "boolean"})
     add_configs("nghttp2",  {description = "Use Nghttp2 library.", default = false, type = "boolean"})
     add_configs("openldap", {description = "Use OpenLDAP library.", default = false, type = "boolean"})
@@ -32,9 +33,11 @@ package("libcurl")
 
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
-        if package:is_plat("linux", "android", "cross") then
+        if package:is_plat("linux", "android", "cross") then -- why? TODO: remove it.
             package:config_set("openssl", true)
         end
+
+        assert(!(package:config("openssl") && package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
 
         if package:is_plat("macosx", "iphoneos") then
             package:add("frameworks", "Security", "CoreFoundation", "SystemConfiguration")
@@ -61,6 +64,7 @@ package("libcurl")
         package:add("deps", "cmake")
         local configdeps = {cares    = "c-ares",
                             openssl  = "openssl",
+                            openssl3 = "openssl3",
                             mbedtls  = "mbedtls",
                             nghttp2  = "nghttp2",
                             openldap = "openldap",
@@ -95,6 +99,7 @@ package("libcurl")
 
         local configopts = {cares    = "ENABLE_ARES",
                             openssl  = (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL"),
+                            openssl3 = (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL"),
                             mbedtls  = (version:ge("7.81") and "CURL_USE_MBEDTLS" or "CMAKE_USE_MBEDTLS"),
                             nghttp2  = "USE_NGHTTP2",
                             libidn2  = "USE_LIBIDN2",
@@ -160,6 +165,7 @@ package("libcurl")
         end
         handledependency("brotli", "brotli", "BROTLI_INCLUDE_DIR", {BROTLICOMMON_LIBRARY = "brotlicommon", BROTLIDEC_LIBRARY = "brotlidec"})
         handledependency("openssl", "openssl", "OPENSSL_INCLUDE_DIR", {OPENSSL_CRYPTO_LIBRARY = "crypto", OPENSSL_SSL_LIBRARY = "ssl"})
+        handledependency("openssl3", "openssl3", "OPENSSL_INCLUDE_DIR", {OPENSSL_CRYPTO_LIBRARY = "crypto", OPENSSL_SSL_LIBRARY = "ssl"})
         handledependency("mbedtls", "mbedtls", "MBEDTLS_INCLUDE_DIRS", {MBEDTLS_LIBRARY = "mbedtls", MBEDX509_LIBRARY = "mbedx509", MBEDCRYPTO_LIBRARY = "mbedcrypto"})
         handledependency("zlib", "zlib", "ZLIB_INCLUDE_DIR", "ZLIB_LIBRARY")
         handledependency("zstd", "zstd", "Zstd_INCLUDE_DIR", "Zstd_LIBRARY")
