@@ -5,6 +5,7 @@ package("amrex")
     add_urls("https://github.com/AMReX-Codes/amrex/releases/download/$(version)/amrex-$(version).tar.gz",
              "https://github.com/AMReX-Codes/amrex.git")
 
+    add_versions("24.12", "ca4b41ac73fabb9cf3600b530c9823eb3625f337d9b7b9699c1089e81c67fc67")
     add_versions("24.09", "a1435d16532d04a1facce9a9ae35d68a57f7cd21a5f22a6590bde3c265ea1449")
 
     add_patches("24.09", "patches/24.09/remove-symlink.patch", "d71adb07252e488ee003f6f04fea756864d6af2232b43208c9e138e062eb6e4d")
