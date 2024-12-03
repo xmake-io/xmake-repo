@@ -10,7 +10,7 @@ package("snmalloc")
     add_versions("0.6.2", "e0486ccf03eac5dd8acbb66ea8ad33bec289572a51614acdf7117397e4f1af8c")
     add_versions("0.6.0", "de1bfb86407d5aac9fdad88319efdd5593ca2f6c61fc13371c4f34aee0b6664f")
 
-    add_configs("header_only", {description = "Use header only version.", default = true, type = "boolean"})
+    add_configs("header_only", {description = "Use header only version.", default = false, type = "boolean"})
     add_configs("wait_on_address", {description = "Use wait on address backoff strategy if it is available", default = true, type = "boolean"})
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -31,7 +31,7 @@ package("snmalloc")
         package:add("defines", "SNMALLOC_USE_WAIT_ON_ADDRESS=" .. (package:config("wait_on_address") and "1" or "0"))
     end)
 
-    on_install(function (package)
+    on_install("!wasm and !iphoneos", function (package)
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
 
         local configs = {"-DSNMALLOC_BUILD_TESTING=OFF"}
