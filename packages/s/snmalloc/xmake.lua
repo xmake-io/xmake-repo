@@ -39,7 +39,7 @@ package("snmalloc")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSNMALLOC_STATIC_LIBRARY=" .. (package:config("shared") and "OFF" or "ON"))
         table.insert(configs, "-DSNMALLOC_IPO=" .. (package:config("lto") and "ON" or "OFF"))
-        table.insert(configs, "-DSNMALLOC_HEADER_ONLY_LIBRARY=ON" .. (package:config("header_only") and "ON" or "OFF"))
+        table.insert(configs, "-DSNMALLOC_HEADER_ONLY_LIBRARY=" .. (package:config("header_only") and "ON" or "OFF"))
         table.insert(configs, "-DSNMALLOC_ENABLE_WAIT_ON_ADDRESS=" .. (package:config("wait_on_address") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
