@@ -73,6 +73,9 @@ package("poco")
         else
             package:add("deps", "pcre")
         end
+        if package:version():ge("1.14.0") then
+            package:add("deps", "utf8proc")
+        end
         if package:config("net") and package:is_plat("windows") then
             package:add("syslinks", "ws2_32")
         end
