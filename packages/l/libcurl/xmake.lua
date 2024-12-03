@@ -17,7 +17,7 @@ package("libcurl")
 
     add_patches("7.84.0", path.join(os.scriptdir(), "patches", "7.84.0", "sched.patch"), "e79f56f840cbc6996a153f19d9266bd46fe4154e6b494c8ee0478cb5b87662d3")
     add_patches("8.7.1", path.join(os.scriptdir(), "patches", "8.7.1", "android_armv7.patch"), "b172fd25063fcf4bce987b47a3d95d9d79bcf80f45e7e45dbf4aba72c685fb24")
-    add_patches(">=8.9.1", path.join(os.scriptdir(), "patches", "0001-macos-fix-Apple-SDK-bug-workaround-for-non-macOS-tar.patch"), "9503db07a76d828ab7d33565c6aa65c9df80626c11248a4b670aaf10b42e4de7")
+    add_patches("8.9.0", path.join(os.scriptdir(), "patches", "8.9.0", "fix-apple-sdk-bug.patch"), "9503db07a76d828ab7d33565c6aa65c9df80626c11248a4b670aaf10b42e4de7")
 
     add_configs("cares",    {description = "Enable c-ares support.", default = false, type = "boolean"})
     add_configs("openssl",  {description = "Enable OpenSSL for SSL/TLS.", default = false, type = "boolean"})
