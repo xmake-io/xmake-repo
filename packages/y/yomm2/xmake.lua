@@ -15,13 +15,20 @@ package("yomm2")
     add_deps("cmake")
     add_deps("boost", {configs = {header_only = true}})
 
+    if on_check then
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(yomm2) require ndk version > 22")
+        end)
+    end
+
     on_load(function (package)
         if not package:config("shared") then
             package:set("kind", "library", {headeronly = true})
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(docs.in)", "", {plain = true})
 
         local configs =
