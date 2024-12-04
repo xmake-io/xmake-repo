@@ -5,8 +5,7 @@ package("libcurl")
     set_description("The multiprotocol file transfer library.")
     set_license("MIT")
 
-    set_urls("https://curl.haxx.se/download/curl-$(version).tar.bz2",
-             "http://curl.mirror.anstey.ca/curl-$(version).tar.bz2")
+    set_urls("https://curl.haxx.se/download/curl-$(version).tar.bz2")
     add_urls("https://github.com/curl/curl/releases/download/curl-$(version).tar.bz2",
              {version = function (version) return (version:gsub("%.", "_")) .. "/curl-" .. version end})
     if add_versionfiles then
