@@ -21,7 +21,15 @@ package("pybind11")
 
     add_deps("cmake", "python 3.x")
     on_install("windows|native", "macosx", "linux", function (package)
-        import("package.tools.cmake").install(package, {"-DPYBIND11_TEST=OFF"})
+        import("detect.tools.find_python3")
+
+        local configs = {"-DPYBIND11_TEST=OFF"}
+        local python = find_python3()
+        local pythondir = path.directory(python)
+        if pythondir and path.is_absolute(pythondir) then
+            table.insert(configs, "-DPython_ROOT_DIR=" .. pythondir)
+        end
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)

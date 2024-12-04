@@ -53,11 +53,14 @@ function _add_iostreams_deps(package)
 end
 
 function _add_deps(package)
-    if package:config("regex") then
+    if package:config("regex") and package:config("icu") then
         package:add("deps", "icu4c")
     end
     if package:config("locale") then
-        package:add("deps", "libiconv", "icu4c")
+        package:add("deps", "libiconv")
+        if package:config("icu") then
+            package:add("deps", "icu4c")
+        end
     end
     if package:config("python") then
         package:add("deps", "python", {configs = {headeronly = true}})

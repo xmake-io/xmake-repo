@@ -7,6 +7,7 @@ package("gsl-lite")
     add_urls("https://github.com/gsl-lite/gsl-lite/archive/refs/tags/$(version).tar.gz",
              "https://github.com/gsl-lite/gsl-lite.git")
 
+    add_versions("v0.42.0", "54a1b6f9db72eab5d8dcaf06b36d32d4f5da3471d91dac71aba19fe15291a773")
     add_versions("v0.41.0", "4682d8a60260321b92555760be3b9caab60e2a71f95eddbdfb91e557ee93302a")
 
     add_deps("cmake")

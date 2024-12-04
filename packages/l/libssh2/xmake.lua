@@ -7,6 +7,7 @@ package("libssh2")
              "https://www.libssh2.org/download/libssh2-$(version).tar.gz",
              "https://github.com/libssh2/libssh2.git")
 
+    add_versions("1.11.1", "d9ec76cbe34db98eec3539fe2c899d26b0c837cb3eb466a56b0f109cabf658f7")
     add_versions("1.10.0", "2d64e90f3ded394b91d3a2e774ca203a4179f69aebee03003e5a6fa621e41d51")
     add_versions("1.11.0", "3736161e41e2693324deb38c26cfdc3efe6209d634ba4258db1cecff6a5ad461")
 

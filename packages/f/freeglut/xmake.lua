@@ -31,7 +31,7 @@ package("freeglut")
 
     on_load("windows", "mingw", function (package)
         if not package:config("shared") then
-            package:add("defines", "FREEGLUT_STATIC=1")
+            package:add("defines", "FREEGLUT_STATIC")
         end
         package:add("defines", "FREEGLUT_LIB_PRAGMAS=0")
         package:add("syslinks", "gdi32", "winmm", "user32", "advapi32")
@@ -61,7 +61,7 @@ package("freeglut")
                 table.insert(opt.cxflags, "-DFREEGLUT_LIB_PRAGMAS=0")
             else
                 table.insert(opt.cxflags, "-DFREEGLUT_LIB_PRAGMAS=0")
-                table.insert(opt.cxflags, "-DFREEGLUT_STATIC=1")
+                table.insert(opt.cxflags, "-DFREEGLUT_STATIC")
             end
             if package:is_arch("arm64") then
                 local vs = package:toolchain("msvc"):config("vs")
@@ -78,6 +78,10 @@ package("freeglut")
 
         import("package.tools.cmake").install(package, configs, opt)
         os.trycp(path.join("include", "GL", "glut.h"), package:installdir("include", "GL"))
+        if package:is_plat("windows") and not package:config("shared") then
+            os.trycp(path.join(package:installdir("lib"), "freeglut_static.lib"), path.join(package:installdir("lib"), "freeglut.lib"))
+            package:add("links", "freeglut")
+        end
     end)
 
     on_test(function (package)

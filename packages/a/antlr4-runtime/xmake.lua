@@ -28,18 +28,21 @@ package("antlr4-runtime")
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {"-DANTLR_BUILD_CPP_TESTS=OFF", "-DANTLR4_INSTALL=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DANTLR_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DANTLR_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
+        if not package:config("shared") then
+            package:add("defines", "ANTLR4CPP_STATIC")
+        end
 
         os.cd("runtime/Cpp")
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
+        io.replace("CMakeLists.txt", "add_subdirectory(runtime)",
+            "include(GNUInstallDirs)\nadd_subdirectory(runtime)", {plain = true})
+        
+        local configs = {"-DANTLR_BUILD_CPP_TESTS=OFF", "-DANTLR4_INSTALL=ON"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DANTLR_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DANTLR_BUILD_STATIC=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
-        if not package:config("shared") then
-            package:add("defines", "ANTLR4CPP_STATIC")
-        end
     end)
 
     on_test(function (package)

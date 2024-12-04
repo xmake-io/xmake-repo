@@ -6,6 +6,7 @@ package("liburing")
 
     add_urls("https://github.com/axboe/liburing/archive/refs/tags/liburing-$(version).tar.gz",
              "https://github.com/axboe/liburing.git")
+    add_versions("2.8", "3ed7891d1b2bbe743ef3fb6d0a4970e630aa02d7c7bd3b0212791fb7be815984")
     add_versions("2.7", "56202ad443c50e684dde3692819be3b91bbe003e1c14bf5abfa11973669978c1")
     add_versions("2.6", "682f06733e6db6402c1f904cbbe12b94942a49effc872c9e01db3d7b180917cc")
     add_versions("2.5", "456f5f882165630f0dc7b75e8fd53bd01a955d5d4720729b4323097e6e9f2a98")

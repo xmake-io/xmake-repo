@@ -10,8 +10,10 @@ package("pcapplusplus")
     add_versions("v23.09", "f2b92d817df6138363be0d144a61716f8ecc43216f0008135da2e0e15727d35a")
 
     add_patches("v24.09", "patches/v24.09/vla.patch", "8c380468c78118b6d85f6b3856cd49c4d890fd326dde3400b8c47c01c885cef4")
+    add_patches("v24.09", "patches/v24.09/explicit-override.patch", "d4ff15e920ea4996f6d3105e898e42d75cfab47b7e930467442ae356a361cf25")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    add_configs("zstd", {description = "Support compile with zstd", default = false, type = "boolean"})
 
     add_links("Pcap++", "Packet++", "Common++")
 
@@ -30,12 +32,22 @@ package("pcapplusplus")
         add_deps("libpcap")
     end
 
+    on_load(function (package)
+        if package:config("zstd") then
+            package:add("deps", "zstd")
+        end
+    end)
+
     on_install("windows", "mingw", "linux", "macosx", "android", "bsd", function (package)
         local configs = {
             "-DPCAPPP_BUILD_EXAMPLES=OFF",
-            "-DPCAPPP_BUILD_TESTS=OFF",
+            "-DPCAPPP_BUILD_TESTS=OFF"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DLIGHT_PCAPNG_ZSTD=" .. (package:config("zstd") and "ON" or "OFF"))
+        for _, cmakefile in ipairs(os.files("**/CMakeLists.txt")) do
+            io.replace(cmakefile, "COMPILE_WARNING_AS_ERROR ON", "COMPILE_WARNING_AS_ERROR OFF")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -52,7 +64,7 @@ package("pcapplusplus")
             }
 
             void testPcapLiveDeviceList() {
-                std::vector<pcpp::PcapLiveDevice *> devList = 
+                std::vector<pcpp::PcapLiveDevice *> devList =
                     pcpp::PcapLiveDeviceList::getInstance().getPcapLiveDevicesList();
             }
         ]]}, {configs = {languages = "c++17"}}))
