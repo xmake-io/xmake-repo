@@ -32,6 +32,11 @@ package("libcurl")
     add_configs("libssh2",  {description = "Use libSSH2 library.", default = false, type = "boolean"})
     add_configs("libpsl",   {description = "Use libpsl library.", default = false, type = "boolean"})
 
+    if is_plat("android") and is_host("windows") then
+        add_deps("ninja")
+        set_policy("package.cmake_generator.ninja", true)
+    end
+
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
         assert(not(package:config("openssl") and package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
