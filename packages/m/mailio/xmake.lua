@@ -23,7 +23,7 @@ package("mailio")
         end
     end)
 
-    on_install("!iphoneos", function (package)
+    on_install("!iphoneos and !wasm", function (package)
         local version = package:version()
         io.replace("CMakeLists.txt", "/WX", "", {plain = true})
         io.replace("CMakeLists.txt", "set(Boost_USE_STATIC_LIBS ON)", "", {plain = true})
