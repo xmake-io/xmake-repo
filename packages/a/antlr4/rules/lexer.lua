@@ -4,19 +4,23 @@ rule("lexer")
     add_deps("@find_antlr4")
 
     on_config(function (target)
-        -- remove parser g4
+        local includedirs = {}
+        local autogendir = path.join(target:autogendir(), "rules/antlr4/lexer")
         for _, sourcebatch in pairs(target:sourcebatches()) do
             if sourcebatch.rulename == "@antlr4/lexer" then
                 local sourcefiles = {}
                 for _, sourcefile in ipairs(sourcebatch.sourcefiles) do
-                    if not sourcefile:lower():find("parser") then
+                    -- remove parser g4
+                    if not sourcefile:lower():find("parser", 1, true) then
                         table.insert(sourcefiles, sourcefile)
+                        table.insert(includedirs, path.normalize(path.join(autogendir, path.directory(sourcefile))))
                     end
                 end
                 sourcebatch.sourcefiles = sourcefiles
                 break
             end
         end
+        target:add("includedirs", table.unique(includedirs), {public = true})
     end)
 
     before_buildcmd_file(function (target, batchcmds, sourcefile_g4, opt)
@@ -25,7 +29,7 @@ rule("lexer")
         table.join2(argv, target:values("antlr4.lexer.flags"))
 
         local autogendir = path.join(target:autogendir(), "rules/antlr4/lexer")
-        local sourcefile_cxx = path.join(autogendir, path.directory(sourcefile_g4), path.basename(sourcefile_g4) .. ".cpp")
+        local sourcefile_cxx = path.normalize(path.join(autogendir, path.directory(sourcefile_g4), path.basename(sourcefile_g4) .. ".cpp"))
         local sourcefile_dir = path.directory(sourcefile_cxx)
 
         batchcmds:mkdir(sourcefile_dir)
@@ -33,8 +37,6 @@ rule("lexer")
         table.insert(argv, autogendir)
         table.insert(argv, "-lib")
         table.insert(argv, sourcefile_dir)
-
-        target:add("includedirs", sourcefile_dir, {public = true})
 
         table.insert(argv, sourcefile_g4)
         batchcmds:show_progress(opt.progress, "${color.build.object}compiling.g4 %s", sourcefile_g4)

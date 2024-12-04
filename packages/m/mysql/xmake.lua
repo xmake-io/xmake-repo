@@ -16,6 +16,12 @@ package("mysql")
         add_configs("debug", {description = "Enable debug symbols.", default = false, readonly = true})
     end
 
+    if is_plat("linux") then
+        add_extsources("apt::libmysqlclient-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::mysql-client")
+    end
+
     add_includedirs("include", "include/mysql")
 
     add_deps("cmake")
