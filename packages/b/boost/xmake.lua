@@ -43,6 +43,7 @@ package("boost")
     add_configs("lzma", {description = "Enable lzma for iostreams", default = false, type = "boolean"})
     add_configs("zstd", {description = "Enable zstd for iostreams", default = false, type = "boolean"})
     add_configs("openssl", {description = "Enable openssl for mysql/redis", default = false, type = "boolean"})
+    add_configs("icu", {description = "Enable icu for regex/locale", default = false, type = "boolean"})
 
     add_configs("cmake", {description = "Use cmake build system (>= 1.86)", default = true, type = "boolean"})
     add_configs("all", {description = "Enable all library modules support.", default = false, type = "boolean"})
