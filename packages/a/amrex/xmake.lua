@@ -5,9 +5,10 @@ package("amrex")
     add_urls("https://github.com/AMReX-Codes/amrex/releases/download/$(version)/amrex-$(version).tar.gz",
              "https://github.com/AMReX-Codes/amrex.git")
 
+    add_versions("24.12", "ca4b41ac73fabb9cf3600b530c9823eb3625f337d9b7b9699c1089e81c67fc67")
     add_versions("24.09", "a1435d16532d04a1facce9a9ae35d68a57f7cd21a5f22a6590bde3c265ea1449")
 
-    add_patches("24.09", "patches/24.09/remove-symlink.patch", "d71adb07252e488ee003f6f04fea756864d6af2232b43208c9e138e062eb6e4d")
+    add_patches(">=24.09", "patches/24.09/remove-symlink.patch", "d71adb07252e488ee003f6f04fea756864d6af2232b43208c9e138e062eb6e4d")
 
     add_configs("openmp", {description = "Enable OpenMP", default = false, type = "boolean"})
     add_configs("mpi", {description = "Enable MPI", default = false, type = "boolean", readonly = true})
@@ -49,7 +50,7 @@ package("amrex")
         end
     end)
 
-    on_install("windows", "macosx", "linux", "bsd", "mingw", function (package)
+    on_install("windows", "macosx", "linux", "bsd", "mingw", "msys", function (package)
         local configs = {"-DAMReX_ENABLE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -65,10 +66,6 @@ package("amrex")
                 local enabled = (package:config(name) and "ON" or "OFF")
                 table.insert(configs, format("-DAMReX_%s=%s", real, enabled))
             end
-        end
-
-        if package:is_plat("windows") then
-            os.mkdir(path.join(package:buildir(), "Src/pdb"))
         end
         import("package.tools.cmake").install(package, configs)
     end)

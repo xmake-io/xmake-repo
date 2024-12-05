@@ -6,6 +6,7 @@ package("srt")
 
     add_urls("https://github.com/Haivision/srt/archive/refs/tags/$(version).tar.gz",
              "https://github.com/Haivision/srt.git")
+    add_versions("v1.5.4", "d0a8b600fe1b4eaaf6277530e3cfc8f15b8ce4035f16af4a5eb5d4b123640cdd")
     add_versions("v1.5.3", "befaeb16f628c46387b898df02bc6fba84868e86a6f6d8294755375b9932d777")
     add_versions("v1.4.2", "28a308e72dcbb50eb2f61b50cc4c393c413300333788f3a8159643536684a0c4")
 

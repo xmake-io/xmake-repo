@@ -15,6 +15,7 @@ package("flatbuffers")
     add_deps("cmake")
 
     on_install(function(package)
+        io.replace("CMakeLists.txt", "/MT", "", {plain = true})
         io.replace("CMakeLists.txt",
             "RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}",
             "RUNTIME DESTINATION bin", {plain = true})
@@ -25,8 +26,13 @@ package("flatbuffers")
 
         local configs = {"-DFLATBUFFERS_BUILD_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DFLATBUFFERS_BUILD_SHAREDLIB=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DFLATBUFFERS_BUILD_FLATLIB=" .. (package:config("shared") and "OFF" or "ON"))
+        if package:is_binary() then
+            table.insert(configs, "-DFLATBUFFERS_BUILD_SHAREDLIB=OFF")
+            table.insert(configs, "-DFLATBUFFERS_BUILD_FLATLIB=OFF")
+        else
+            table.insert(configs, "-DFLATBUFFERS_BUILD_SHAREDLIB=" .. (package:config("shared") and "ON" or "OFF"))
+            table.insert(configs, "-DFLATBUFFERS_BUILD_FLATLIB=" .. (package:config("shared") and "OFF" or "ON"))
+        end
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
@@ -35,10 +41,12 @@ package("flatbuffers")
         table.insert(configs, "-DFLATBUFFERS_BUILD_FLATHASH=" .. (package:is_cross() and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
 
+        if package:is_binary() then
+            os.tryrm(package:installdir("include"))
+        end
+
         if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "flatc.pdb"), package:installdir("bin"))
-            os.trycp(path.join(package:buildir(), "flatbuffers.pdb"), dir)
+            os.trymv(package:installdir("lib/flatc.pdb"), package:installdir("bin"))
         end
     end)
 
@@ -46,11 +54,13 @@ package("flatbuffers")
         if not package:is_cross() then
             os.vrun("flatc --version")
         end
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                flatbuffers::FlatBufferBuilder builder;
-                builder.CreateString("MyMonster");
-                flatbuffers::DetachedBuffer dtbuilder = builder.Release();
-            }
-        ]]}, {configs = {languages = "c++14"}, includes = "flatbuffers/flatbuffers.h"}))
+        if package:is_library() then
+            assert(package:check_cxxsnippets({test = [[
+                void test() {
+                    flatbuffers::FlatBufferBuilder builder;
+                    builder.CreateString("MyMonster");
+                    flatbuffers::DetachedBuffer dtbuilder = builder.Release();
+                }
+            ]]}, {configs = {languages = "c++14"}, includes = "flatbuffers/flatbuffers.h"}))
+        end
     end)
