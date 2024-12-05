@@ -99,8 +99,6 @@ package("libcurl")
         end
 
         local configopts = {cares    = "ENABLE_ARES",
-                            openssl  = (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL"),
-                            openssl3 = (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL"),
                             mbedtls  = (version:ge("7.81") and "CURL_USE_MBEDTLS" or "CMAKE_USE_MBEDTLS"),
                             nghttp2  = "USE_NGHTTP2",
                             libidn2  = "USE_LIBIDN2",
@@ -112,6 +110,8 @@ package("libcurl")
         for name, opt in pairs(configopts) do
             table.insert(configs, "-D" .. opt .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
+        table.insert(configs,"-D" .. (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL") .. "=" .. ((package:config('openssl') or package:config('openssl3')) and "ON" or "OFF"))
+
         if not package:config("openldap") then
             table.insert(configs, "-DCURL_DISABLE_LDAP=ON")
         end
