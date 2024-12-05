@@ -49,29 +49,12 @@ rule("parser")
         batchcmds:show_progress(opt.progress, "${color.build.object}compiling.g4 %s", sourcefile_g4)
         batchcmds:vrunv(java.program, argv)
 
-        local sourcefiles_cxx = {sourcefile_cxx}
-
-        local sourcefile_file_dir = path.join(autogendir, path.directory(sourcefile_g4))
-        if visitor then
-            table.insert(sourcefiles_cxx, path.join(sourcefile_file_dir, path.basename(sourcefile_g4) .. "Visitor.cpp"))
-            table.insert(sourcefiles_cxx, path.join(sourcefile_file_dir, path.basename(sourcefile_g4) .. "BaseVisitor.cpp"))
-        end
-        if listener then
-            table.insert(sourcefiles_cxx, path.join(sourcefile_file_dir, path.basename(sourcefile_g4) .. "Listener.cpp"))
-            table.insert(sourcefiles_cxx, path.join(sourcefile_file_dir, path.basename(sourcefile_g4) .. "BaseListener.cpp"))
-        end
-
-        for _, cxx in ipairs(sourcefiles_cxx) do
-            local objectfile = target:objectfile(cxx)
-            table.insert(target:objectfiles(), objectfile)
-            batchcmds:show_progress(opt.progress, "${color.build.object}compiling.$(mode) %s", cxx)
-            batchcmds:compile(cxx, objectfile)
-
-            if cxx == sourcefile_cxx then
-                batchcmds:set_depmtime(os.mtime(objectfile))
-                batchcmds:set_depcache(target:dependfile(objectfile))
-            end
-        end
+        local objectfile = target:objectfile(sourcefile_cxx)
+        table.insert(target:objectfiles(), objectfile)
+        batchcmds:show_progress(opt.progress, "${color.build.object}compiling.$(mode) %s", sourcefile_cxx)
+        batchcmds:compile(sourcefile_cxx, objectfile)
 
         batchcmds:add_depfiles(sourcefile_g4)
+        batchcmds:set_depmtime(os.mtime(objectfile))
+        batchcmds:set_depcache(target:dependfile(objectfile))
     end)
