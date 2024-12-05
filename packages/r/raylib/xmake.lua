@@ -19,7 +19,7 @@ package("raylib")
         add_versions("4.2.0", "5f79c103b82c577698b01c7b2c166d0c2b51615886b7fabdc671199f0aaf4b38")
         add_versions("4.5.0", "63deb87ffc32e5eb2023ba763aaea2cb5f41bd37bbc07760651efe251bd76f3d")
         add_versions("5.0", "48e477d3dde2e20220572c9f93a332c48cf378fc1e1f205454b975180085565c")
-        add_versions("5.5", "930C67B676963C6CFFBD965814664523081ECBF3D30FC9DF4211D0064AA6BA39")
+        add_versions("5.5", "930c67b676963c6cffbd965814664523081ecbf3d30fc9df4211d0064aa6ba39")
     else
         add_urls("https://github.com/raysan5/raylib/archive/$(version).tar.gz",
                  "https://github.com/raysan5/raylib.git")
