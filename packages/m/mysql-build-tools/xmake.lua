@@ -43,7 +43,7 @@ package("mysql-build-tools")
 
         local version = package:version()
         if version:lt("9.0.0") then
-            package:add("deps", "boost", {host = true, private = true, {configs = {header_only = true}}})
+            package:add("deps", "boost", {host = true, private = true, configs = {header_only = true}})
             package:add("deps", "libevent", {host = true, private = true})
         end
     end)
