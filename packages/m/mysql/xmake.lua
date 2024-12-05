@@ -80,10 +80,11 @@ package("mysql")
     on_install("windows", "macosx", "linux", function (package)
         import("patch").cmake(package)
 
+        local is_shared = package:config("shared")
         local configs = import("configs").get(package, false)
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DINSTALL_STATIC_LIBRARIES=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (is_shared and "ON" or "OFF"))
+        table.insert(configs, "-DINSTALL_STATIC_LIBRARIES=" .. (is_shared and "OFF" or "ON"))
         table.insert(configs, "-DWITH_LTO=" .. (package:config("lto") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         table.insert(configs, "-DWITH_LSAN=" .. (package:config("lsan") and "ON" or "OFF"))
@@ -95,15 +96,21 @@ package("mysql")
         import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") then
-            if package:config("shared") then
+            if is_shared then
                 os.tryrm(package:installdir("lib/mysqlclient.lib"))
                 os.trymv(package:installdir("lib/libmysql.dll"), package:installdir("bin"))
             else
                 os.tryrm(package:installdir("lib/libmysql.lib"))
                 os.tryrm(package:installdir("lib/libmysql.dll"))
             end
+        elseif package:is_plat("macosx") then
+            if is_shared then
+                os.tryrm(package:installdir("lib/*.dylib"))
+            else
+                os.tryrm(package:installdir("lib/*.a"))
+            end
         else
-            if package:config("shared") then
+            if is_shared then
                 os.tryrm(package:installdir("lib/*.a"))
             else
                 os.tryrm(package:installdir("lib/*.so*"))
