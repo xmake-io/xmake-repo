@@ -103,17 +103,12 @@ package("mysql")
                 os.tryrm(package:installdir("lib/libmysql.lib"))
                 os.tryrm(package:installdir("lib/libmysql.dll"))
             end
-        elseif package:is_plat("macosx") then
-            if is_shared then
-                os.tryrm(package:installdir("lib/*.dylib"))
-            else
-                os.tryrm(package:installdir("lib/*.a"))
-            end
         else
             if is_shared then
                 os.tryrm(package:installdir("lib/*.a"))
             else
                 os.tryrm(package:installdir("lib/*.so*"))
+                os.tryrm(package:installdir("lib/*.dylib"))
             end
         end
     end)
