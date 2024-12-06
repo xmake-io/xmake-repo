@@ -11,7 +11,6 @@ package("libxml2")
     add_versions("v2.13.2", "5091cf2767c3f7ba08bf59fbe85b01db36ca21abdcb37deea964fcb26a4391fb")
     add_versions("v2.12.9", "3cd02671b20954865f5b3e90f192d8cc4d815b2362c2ff9a0b450b41648dac58")
     add_versions("v2.11.9", "b9ed243467f82306da608a7a735ed55d90c7aaab0d3c6cf61284c43daa77cfee")
-    add_versions("v2.9.14", "9bd7dae7690b2112033ddb6ad4f454e036fff2d38505c3a5b80427669484c0a4")
 
     includes(path.join(os.scriptdir(), "configs.lua"))
     for name, desc in pairs(get_libxml2_configs()) do

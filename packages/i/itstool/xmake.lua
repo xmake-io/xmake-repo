@@ -8,9 +8,9 @@ package("itstool")
     add_urls("http://files.itstool.org/itstool/itstool-$(version).tar.bz2")
     add_versions("2.0.7", "6b9a7cd29a12bb95598f5750e8763cee78836a1a207f85b74d8b3275b27e87ca")
 
-    add_deps("libxml2 v2.9.14", {configs = {shared = true, iconv = true, python = true}})
+    add_deps("libxml2", {configs = {shared = true, iconv = true, python = true}})
 
-    on_install("macosx", "linux", function (package)
+    on_install("linux", function (package)
         import("package.tools.autoconf").install(package)
     end)
 
