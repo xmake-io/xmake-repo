@@ -16,7 +16,7 @@ package("node-addon-api")
     add_deps("node-api-headers")
 
     on_load(function(package)
-        package:add("defines", "NAPI_VERSION=" .. package:config("napi_version") or package:version():major())
+        package:add("defines", "NAPI_VERSION=" .. (package:config("napi_version") or package:version():major()))
         if not package:config("deprecated") then
             package:add("defines", "NODE_ADDON_API_DISABLE_DEPRECATED")
         end
