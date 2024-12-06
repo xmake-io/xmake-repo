@@ -27,7 +27,7 @@ package("libssh2")
         end
 
         if package:is_plat("windows") and package:config("shared") then
-            package:add("defines", "LIBSSH2_EXPORTS")
+            package:add("defines", "LIBSSH2_API=__declspec(dllimport)")
         end
     end)
 
@@ -63,17 +63,16 @@ package("libssh2")
 
         local opt = {}
         if package:is_plat("windows") then
-            os.mkdir(path.join(package:buildir(), "src/pdb"))
             if backend == "mbedtls" then
                 opt.packagedeps = backend
             end
+
+            local version = package:version()
+            if version and version:le("1.10.0") and package:config("shared") then
+                opt.cxflags = "-D_WINDLL"
+            end
         end
         import("package.tools.cmake").install(package, configs, opt)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "src/*.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
