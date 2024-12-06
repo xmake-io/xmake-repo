@@ -3,7 +3,7 @@ package("protoc")
     set_homepage("https://developers.google.com/protocol-buffers/")
     set_description("Google's data interchange format compiler")
 
-    add_deps("protobuf-cpp")
+    add_deps("protobuf-cpp", {host = true})
 
     on_install("@windows", "@linux", "@macosx", "@bsd", "@msys", "@cygwin", function (package)
     end)
