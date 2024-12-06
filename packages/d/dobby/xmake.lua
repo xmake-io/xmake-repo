@@ -26,13 +26,9 @@ package("dobby")
     end
 
     add_deps("cmake")
+
     on_install("linux", "macosx", "android", "iphoneos", function (package)
-        import("core.tool.toolchain")
-        local configs = {
-            "-DDOBBY_BUILD_EXAMPLE=OFF",
-            "-DDOBBY_BUILD_TEST=OFF"
-        }
-        
+        local configs = {"-DDOBBY_BUILD_EXAMPLE=OFF", "-DDOBBY_BUILD_TEST=OFF"}
         table.insert(configs, "-DDOBBY_DEBUG=" .. (package:debug() and "ON" or "OFF"))
         table.insert(configs, "-DPlugin.SymbolResolver=" .. (package:config("symbol_resolver") and "ON" or "OFF"))
         table.insert(configs, "-DPlugin.ImportTableReplace=" .. (package:config("import_table_replacer") and "ON" or "OFF"))
@@ -42,12 +38,11 @@ package("dobby")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
 
         if package:is_plat("android") then
-            local arch = package:arch()
-            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = arch})
+            local ndk = package:toolchain("ndk")
             table.insert(configs, "-DCMAKE_ANDROID_NDK=" .. ndk:config("ndk"))
             table.insert(configs, "-DCMAKE_ANDROID_ARCH_ABI=" .. arch)
             local sdkver = "21"
-            if arch == "armeabi-v7a" or arch == "x86" then
+            if package:is_arch("armeabi-v7a", "x86") then
                 sdkver = "19"
             end
             table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. sdkver)
