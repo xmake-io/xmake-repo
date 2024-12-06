@@ -9,11 +9,6 @@ package("dobby")
     add_patches("2023.4.14", path.join(os.scriptdir(), "patches", "add-link-of-pthread.patch"), "e65f9b428e75db9d1994abf5695102c69a8ae17de36b13ef3d4f33fd6b361fd0")
     add_patches("2023.4.14", path.join(os.scriptdir(), "patches", "fix-compile-on-lower-version-of-gcc.patch"), "632aad7d79e2afd9587089a39c3eb2b64a3750ab3c8954f04672c13abcddbbae")
 
-    -- build
-    add_configs("debug",   {description = "Enable debug logging.", default = false, type = "boolean"})
-    add_configs("example", {description = "Enable example build.", default = false, type = "boolean"})
-    add_configs("test",    {description = "Enable test build.",    default = false, type = "boolean"})
-
     -- plugins
     add_configs("symbol_resolver",             {description = "Enable symbol resolver plugin.",       default = true,  type = "boolean"})
     add_configs("import_table_replacer",       {description = "Enable import table replacer plugin.", default = false, type = "boolean"})
@@ -25,18 +20,15 @@ package("dobby")
 
     add_deps("cmake")
     on_install("linux", "macosx", function (package)
-        function xmake_option(option)
-            return package:config(option) and "ON" or "OFF"
-        end
         local configs = {
-            "-DDOBBY_DEBUG="                     .. xmake_option("debug"),
-            "-DDOBBY_BUILD_EXAMPLE="             .. xmake_option("example"),
-            "-DDOBBY_BUILD_TEST="                .. xmake_option("test"),
-            "-DPlugin.SymbolResolver="           .. xmake_option("symbol_resolver"),
-            "-DPlugin.ImportTableReplace="       .. xmake_option("import_table_replacer"),
-            "-DPlugin.Android.BionicLinkerUtil=" .. xmake_option("android_bionic_linker_utils"),
-            "-DNearBranch="                      .. xmake_option("near_branch"),
-            "-DFullFloatingPointRegisterPack="   .. xmake_option("full_floating_point_register_pack")
+            "-DDOBBY_BUILD_EXAMPLE=OFF",
+            "-DDOBBY_BUILD_TEST=OFF",
+            "-DDOBBY_DEBUG="                     .. package:debug()                                     and "ON" or "OFF",
+            "-DPlugin.SymbolResolver="           .. package:config("symbol_resolver")                   and "ON" or "OFF",
+            "-DPlugin.ImportTableReplace="       .. package:config("import_table_replacer")             and "ON" or "OFF",
+            "-DPlugin.Android.BionicLinkerUtil=" .. package:config("android_bionic_linker_utils")       and "ON" or "OFF",
+            "-DNearBranch="                      .. package:config("near_branch")                       and "ON" or "OFF",
+            "-DFullFloatingPointRegisterPack="   .. package:config("full_floating_point_register_pack") and "ON" or "OFF"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE="       .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
