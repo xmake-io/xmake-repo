@@ -1,4 +1,5 @@
 package("dobby")
+    set_homepage("https://github.com/jmpews/Dobby")
     set_description("a lightweight, multi-platform, multi-architecture hook framework.")
     set_license("Apache-2.0")
 
