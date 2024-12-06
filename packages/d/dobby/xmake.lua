@@ -40,14 +40,14 @@ package("dobby")
         if package:is_plat("android") then
             local ndk = package:toolchain("ndk")
             table.insert(configs, "-DCMAKE_ANDROID_NDK=" .. ndk:config("ndk"))
-            table.insert(configs, "-DCMAKE_ANDROID_ARCH_ABI=" .. arch)
+            table.insert(configs, "-DCMAKE_ANDROID_ARCH_ABI=" .. package:arch())
             local sdkver = "21"
             if package:is_arch("armeabi-v7a", "x86") then
                 sdkver = "19"
             end
             table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. sdkver)
         elseif package:is_plat("iphoneos") then
-            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
+            table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:arch())
             table.insert(configs, "-DCMAKE_OSX_DEPLOYMENT_TARGET=9.3") -- @from scripts/platform_builder.py:158
         end
 
