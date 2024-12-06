@@ -7,7 +7,6 @@ package("dobby")
 
     add_versions("2023.4.14", "0932d69c320e786672361ab53825ba8f4245e9d3")
     
-    add_patches("2023.4.14", path.join(os.scriptdir(), "patches", "add-link-of-pthread.patch"), "e65f9b428e75db9d1994abf5695102c69a8ae17de36b13ef3d4f33fd6b361fd0")
     add_patches("2023.4.14", path.join(os.scriptdir(), "patches", "fix-compile-on-lower-version-of-gcc.patch"), "632aad7d79e2afd9587089a39c3eb2b64a3750ab3c8954f04672c13abcddbbae")
 
     add_configs("symbol_resolver", {description = "Enable symbol resolver plugin.", default = true,  type = "boolean"})
@@ -16,6 +15,10 @@ package("dobby")
 
     add_configs("near_branch", {description = "Enable near branch trampoline.", default = true,  type = "boolean"})
     add_configs("full_floating_point_register_pack", {description = "Enables saving and packing of all floating-point registers.", default = false, type = "boolean"})
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
 
     add_deps("cmake")
     on_install("linux", "macosx", "android", "iphoneos", function (package)
