@@ -46,9 +46,9 @@ package("xerces-c")
             if package:is_plat("linux") then
                 package:add("deps", "libiconv", {system = true})
             elseif package:is_plat("windows", "mingw") then
-                add_syslinks("advapi32")
+                package:add("syslinks", "advapi32")
             elseif package:is_plat("macosx") then
-                add_frameworks("CoreFoundation", "CoreServices")
+                package:add("frameworks", "CoreFoundation", "CoreServices")
             else
                 raise("`system_transcoder` only support GNU iconv library, macOS APIs and Windows APIs!")
             end
@@ -71,10 +71,10 @@ package("xerces-c")
             assert(not package:is_plat("windows"), "UNIX only")
         elseif package:config("network_accessor") == "cfurl" then
             assert(package:is_plat("macosx"), "macOS only")
-            add_frameworks("CoreServices")
+            package:add("frameworks", "CoreServices")
         elseif package:config("network_accessor") == "winsock" then
             assert(package:is_plat("windows", "cygwin", "mingw"), "Windows, Cygwin, MingGW only")
-            add_syslinks("advapi32")
+            package:add("syslinks", "advapi32")
         end
     end)
 
