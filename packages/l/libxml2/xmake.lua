@@ -79,7 +79,7 @@ package("libxml2")
             package:add("deps", "readline")
         end
         if package:config("python") then
-            if package:config("shared") then
+            if not package:config("shared") then
                 raise("package(libxml2) python interface require shared lib")
             end
             if package:is_cross() then
