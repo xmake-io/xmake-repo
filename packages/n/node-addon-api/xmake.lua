@@ -6,7 +6,7 @@ package("node-addon-api")
 
     add_configs("errors", {description = "Choose error handling method.", default = "except", type = "string", values = {"except", "noexcept", "maybe"}})
     add_configs("deprecated", {description = "Disable deprecated APIs.", default = false, type = "boolean"})
-    add_configs("napi_version", {description = "Target a specific Node-API version.", default = 8, type = "number"})
+    add_configs("napi_version", {description = "Target a specific Node-API version.", default = "8", type = "number"})
 
     set_urls("https://github.com/nodejs/node-addon-api/archive/refs/tags/$(version).tar.gz",
         "https://github.com/nodejs/node-addon-api.git")
