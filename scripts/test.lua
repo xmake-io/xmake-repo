@@ -53,6 +53,19 @@ function _check_package_is_supported()
     end
 end
 
+function _info_packages(argv, packages)
+    local info_argv = {"require", "-f", "-y", "--info"}
+    if argv.verbose then
+        table.insert(info_argv, "-v")
+    end
+    if argv.diagnosis then
+        table.insert(info_argv, "-D")
+    end
+    for _, package in irpairs(packages) do
+        os.vexecv(os.programfile(), table.join(info_argv, package))
+    end
+end
+
 -- require packages
 function _require_packages(argv, packages)
     local config_argv = {"f", "-c"}
@@ -265,18 +278,6 @@ function main(...)
         table.insert(packages, "tbox dev")
     end
 
-    -- remove unsupported packages
-    for idx, package in irpairs(packages) do
-        assert(package == package:lower(), "package(%s) must be lower case!", package)
-        if not _package_is_supported(argv, package) then
-            table.remove(packages, idx)
-        end
-    end
-    if #packages == 0 then
-        print("no testable packages on %s!", argv.plat or os.subhost())
-        return
-    end
-
     -- prepare test project
     local repodir = os.curdir()
     local workdir = path.join(os.tmpdir(), "xmake-repo")
@@ -304,6 +305,23 @@ function main(...)
     end
     os.execv(os.programfile(), {"repo", "--add", "local-repo", repodir})
     os.execv(os.programfile(), {"repo", "-l"})
+
+    -- info packages
+    _info_packages(argv, packages)
+
+    os.cd(repodir)
+    -- remove unsupported packages
+    for idx, package in irpairs(packages) do
+        assert(package == package:lower(), "package(%s) must be lower case!", package)
+        if not _package_is_supported(argv, package) then
+            table.remove(packages, idx)
+        end
+    end
+    if #packages == 0 then
+        print("no testable packages on %s!", argv.plat or os.subhost())
+        return
+    end
+    os.cd(path.join(workdir, "test"))
 
     -- require packages
     _require_packages(argv, packages)
