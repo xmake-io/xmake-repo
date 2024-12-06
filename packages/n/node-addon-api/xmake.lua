@@ -6,7 +6,7 @@ package("node-addon-api")
 
     add_configs("errors", {description = "Choose error handling method.", default = "except", type = "string", values = {"except", "noexcept", "maybe"}})
     add_configs("deprecated", {description = "Disable deprecated APIs.", default = false, type = "boolean"})
-    add_configs("napi_version", {description = "Target a specific Node-API version.", default = "8", type = "string"})
+    add_configs("napi_version", {description = "Target a specific Node-API version.", default = nil, type = "number"})
 
     set_urls("https://github.com/nodejs/node-addon-api/archive/refs/tags/$(version).tar.gz",
         "https://github.com/nodejs/node-addon-api.git")
@@ -16,7 +16,11 @@ package("node-addon-api")
     add_deps("node-api-headers")
 
     on_load(function(package)
-        package:add("defines", "NAPI_VERSION=" .. package:config("napi_version") or package:version():major())
+        if package:config("napi_version") then
+            package:add("defines", "NAPI_VERSION=" .. package:config("napi_version"))
+        else
+            package:add("defines", "NAPI_VERSION=" .. package:version():major())
+        end
         if not package:config("deprecated") then
             package:add("defines", "NODE_ADDON_API_DISABLE_DEPRECATED")
         end
