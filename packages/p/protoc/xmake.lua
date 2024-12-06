@@ -1,15 +1,11 @@
 package("protoc")
     set_kind("binary")
-    set_base("protobuf-cpp")
+    set_homepage("https://developers.google.com/protocol-buffers/")
+    set_description("Google's data interchange format compiler")
 
-    on_load(function (package)
-        package:base():plat_set(package:plat())
-        package:base():arch_set(package:arch())
-        package:base():script("load")(package)
-    end)
+    add_deps("protobuf-cpp")
 
-    on_install("@windows", "@linux", "@macosx", "@bsd", "@msys", function (package)
-        package:base():script("install")(package)
+    on_install("@windows", "@linux", "@macosx", "@bsd", "@msys", "@cygwin", function (package)
     end)
 
     on_test(function (package)
