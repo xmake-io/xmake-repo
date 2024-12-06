@@ -35,6 +35,7 @@ package("dobby")
         table.insert(configs, "-DNearBranch=" .. (package:config("near_branch") and "ON" or "OFF"))
         table.insert(configs, "-DFullFloatingPointRegisterPack=" .. (package:config("full_floating_point_register_pack") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
 
         if package:is_plat("android") then
             local arch = package:arch()
