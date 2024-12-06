@@ -16,6 +16,11 @@ package("dobby")
     add_configs("near_branch", {description = "Enable near branch trampoline.", default = true,  type = "boolean"})
     add_configs("full_floating_point_register_pack", {description = "Enables saving and packing of all floating-point registers.", default = false, type = "boolean"})
 
+    if is_plat("macosx") then
+        -- @see https://github.com/xmake-io/xmake-repo/pull/5920#issuecomment-2522876049
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
+
     if is_plat("linux", "bsd") then
         add_syslinks("pthread")
     end
@@ -48,7 +53,7 @@ package("dobby")
             table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. sdkver)
         elseif package:is_plat("iphoneos") then
             table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
-            table.insert(configs, "-DCMAKE_OSX_DEPLOYMENT_TARGET=9.3") -- from scripts/platform_builder.py:158
+            table.insert(configs, "-DCMAKE_OSX_DEPLOYMENT_TARGET=9.3") -- @from scripts/platform_builder.py:158
         end
 
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
