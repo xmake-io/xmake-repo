@@ -18,11 +18,12 @@ package("dobby")
     add_configs("full_floating_point_register_pack", {description = "Enables saving and packing of all floating-point registers.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    on_install("linux", "macosx", function (package)
+    on_install("linux", "macosx", "android", "iphoneos", function (package)
         local configs = {
             "-DDOBBY_BUILD_EXAMPLE=OFF",
             "-DDOBBY_BUILD_TEST=OFF"
         }
+        
         table.insert(configs, "-DDOBBY_DEBUG=" .. (package:debug() and "ON" or "OFF"))
         table.insert(configs, "-DPlugin.SymbolResolver=" .. (package:config("symbol_resolver") and "ON" or "OFF"))
         table.insert(configs, "-DPlugin.ImportTableReplace=" .. (package:config("import_table_replacer") and "ON" or "OFF"))
@@ -30,7 +31,21 @@ package("dobby")
         table.insert(configs, "-DNearBranch=" .. (package:config("near_branch") and "ON" or "OFF"))
         table.insert(configs, "-DFullFloatingPointRegisterPack=" .. (package:config("full_floating_point_register_pack") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DCMAKE_SYSTEM_PROCESSOR=" .. package:targetarch())
+
+        if package:is_plat("android") then
+            local arch = package:arch()
+            local ndk = toolchain.load("ndk", {plat = package:plat(), arch = arch})
+            table.insert(configs, "-DCMAKE_ANDROID_NDK=" .. ndk:config("ndk"))
+            table.insert(configs, "-DCMAKE_ANDROID_ARCH_ABI=" .. arch)
+            local sdkver = "21"
+            if arch == "armeabi-v7a" or arch == "x86" then
+                sdkver = "19"
+            end
+            table.insert(configs, "-DCMAKE_SYSTEM_VERSION=" .. sdkver)
+        elseif package:is_plat("iphoneos") then
+            table.insert(configs, "-DCMAKE_OSX_DEPLOYMENT_TARGET=9.3") -- from scripts/platform_builder.py:158
+        end
+
         import("package.tools.cmake").install(package, configs, {buildir = "build"})
         os.trycp("include", package:installdir())
         os.trycp(package:config("shared") and "build/**.so" or "build/**.a", package:installdir("lib"))
