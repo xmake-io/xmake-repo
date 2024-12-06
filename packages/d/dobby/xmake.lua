@@ -9,12 +9,10 @@ package("dobby")
     add_patches("2023.4.14", path.join(os.scriptdir(), "patches", "add-link-of-pthread.patch"), "e65f9b428e75db9d1994abf5695102c69a8ae17de36b13ef3d4f33fd6b361fd0")
     add_patches("2023.4.14", path.join(os.scriptdir(), "patches", "fix-compile-on-lower-version-of-gcc.patch"), "632aad7d79e2afd9587089a39c3eb2b64a3750ab3c8954f04672c13abcddbbae")
 
-    -- plugins
     add_configs("symbol_resolver",             {description = "Enable symbol resolver plugin.",       default = true,  type = "boolean"})
     add_configs("import_table_replacer",       {description = "Enable import table replacer plugin.", default = false, type = "boolean"})
     add_configs("android_bionic_linker_utils", {description = "Enable android bionic linker utils.",  default = false, type = "boolean"})
 
-    -- features
     add_configs("near_branch",                       {description = "Enable near branch trampoline.",                              default = true,  type = "boolean"})
     add_configs("full_floating_point_register_pack", {description = "Enables saving and packing of all floating-point registers.", default = false, type = "boolean"})
 
