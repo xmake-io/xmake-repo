@@ -22,7 +22,7 @@ package("dobby")
             "-DDOBBY_BUILD_EXAMPLE=OFF",
             "-DDOBBY_BUILD_TEST=OFF"
         }
-        table.insert(configs, "-DDOBBY_DEBUG=", .. (package:debug() and "ON" or "OFF"))
+        table.insert(configs, "-DDOBBY_DEBUG=" .. (package:debug() and "ON" or "OFF"))
         table.insert(configs, "-DPlugin.SymbolResolver=" .. (package:config("symbol_resolver") and "ON" or "OFF"))
         table.insert(configs, "-DPlugin.ImportTableReplace=" .. (package:config("import_table_replacer") and "ON" or "OFF"))
         table.insert(configs, "-DPlugin.Android.BionicLinkerUtil=" .. (package:config("android_bionic_linker_utils") and "ON" or "OFF"))
