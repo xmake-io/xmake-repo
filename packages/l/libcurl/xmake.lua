@@ -38,7 +38,7 @@ package("libcurl")
 
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
-        assert(not(package:config("openssl") and package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
+        assert(not (package:config("openssl") and package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
 
         if package:is_plat("macosx", "iphoneos") then
             package:add("frameworks", "Security", "CoreFoundation", "SystemConfiguration")
@@ -110,7 +110,7 @@ package("libcurl")
         for name, opt in pairs(configopts) do
             table.insert(configs, "-D" .. opt .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
-        table.insert(configs,"-D" .. (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL") .. "=" .. ((package:config('openssl') or package:config('openssl3')) and "ON" or "OFF"))
+        table.insert(configs, "-D" .. (version:ge("7.81") and "CURL_USE_OPENSSL" or "CMAKE_USE_OPENSSL") .. "=" .. ((package:config("openssl") or package:config("openssl3")) and "ON" or "OFF"))
 
         if not package:config("openldap") then
             table.insert(configs, "-DCURL_DISABLE_LDAP=ON")
