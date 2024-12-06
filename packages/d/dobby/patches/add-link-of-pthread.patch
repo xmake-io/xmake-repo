@@ -1,0 +1,25 @@
+From 29712d5474877c04df20b04c51404d9e7371595a Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Sat, 31 Aug 2024 01:52:24 +0800
+Subject: [PATCH] add link of pthread.
+
+---
+ CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6907a14..d8711fe 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -349,6 +349,8 @@ endif ()
+ 
+ # ---
+ 
++target_link_libraries(dobby pthread)
++
+ if (SYSTEM.Android)
+   target_link_libraries(dobby log)
+   if (PROCESSOR.ARM)
+-- 
+2.47.1
+
