@@ -13,7 +13,7 @@ package("raylib-cpp")
 
 	add_deps("raylib 5.5")
 
-    on_install(function (package)
+    on_install("windows", "linux", "freebsd", "macosx", "mingw", function (package)
         os.cp("include/*.hpp", package:installdir("include/raylib-cpp"))
     end)
 
