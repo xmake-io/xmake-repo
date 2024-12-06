@@ -19,6 +19,7 @@ package("dobby")
 
     add_deps("cmake")
     on_install("linux", "macosx", "android", "iphoneos", function (package)
+        import("core.tool.toolchain")
         local configs = {
             "-DDOBBY_BUILD_EXAMPLE=OFF",
             "-DDOBBY_BUILD_TEST=OFF"
