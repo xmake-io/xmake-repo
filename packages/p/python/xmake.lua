@@ -207,7 +207,7 @@ package("python")
         end
 
         -- add pic
-        if package:is_plat("linux") and package:config("pic") ~= false then
+        if package:is_plat("linux", "bsd") and package:config("pic") ~= false then
             table.insert(cppflags, "-fPIC")
         end
 
