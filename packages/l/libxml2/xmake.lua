@@ -39,8 +39,13 @@ package("libxml2")
                 raise("All version unsupported now. see https://gitlab.gnome.org/GNOME/libxml2/-/issues/774\nYou can use `libxml2 master` branch to build or open a pull request to patch it.")
             end
 
-            if package:config("python") and package:is_cross() then
-                raise("libxml2 python interface does not support cross-compilation")
+            if package:config("python") then
+                if package:is_cross() then
+                    raise("package(libxml2) python interface does not support cross-compilation")
+                end
+                if not package:is_plat("windows", "linux", "macosx", "bsd") then
+                    raise("package(libxml2) python interface unsupported current platform")
+                end
             end
         end)
     end
@@ -56,7 +61,7 @@ package("libxml2")
 
         if package:config("python") then
             package:config_set("iconv", true)
-            package:add("deps", "python 3.x")
+            package:add("deps", "python 3.x", {private = true})
             package:data_set("PYTHONPATH", package:installdir("python"))
             package:addenv("PYTHONPATH", package:data("PYTHONPATH"))
         end
