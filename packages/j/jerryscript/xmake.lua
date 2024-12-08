@@ -13,7 +13,10 @@ package("jerryscript")
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {"-DJERRY_CMDLINE=" .. (package:config("cli") and "ON" or "OFF")}
+        local configs = {
+            "-DJERRY_CMDLINE=" .. (package:config("cli") and "ON" or "OFF"),
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
+        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
