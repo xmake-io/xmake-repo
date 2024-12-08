@@ -6,6 +6,7 @@ package("stdexec")
 
     add_urls("https://github.com/NVIDIA/stdexec.git")
 
+    add_versions("2024.12.08", "26d8565bc7660b4fb8b504e00cac6b0419ffa939")
     add_versions("2024.03.08", "b3ba13a7b8c206371207196e08844fb7bc745438")
 
     add_deps("cmake")
