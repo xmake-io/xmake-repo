@@ -8,6 +8,8 @@ package("flatcc")
 
     add_versions("v0.6.1", "2533c2f1061498499f15acc7e0937dcf35bc68e685d237325124ae0d6c600c2b")
 
+    add_configs("reflection", {description = "generation of binary flatbuffer schema files", default = false, type = "boolean"})
+
     add_deps("cmake")
 
     on_load(function (package)
@@ -26,6 +28,7 @@ package("flatcc")
             "-DFLATCC_COVERAGE=OFF",
             "-DFLATCC_ALLOW_WERROR=OFF",
             "-DFLATCC_DEBUG_CLANG_SANITIZE=OFF",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -34,6 +37,7 @@ package("flatcc")
         end
 
         table.insert(configs, "-DFLATCC_RTONLY=" .. (package:is_cross() and "ON" or "OFF"))
+        table.insert(configs, "-DFLATCC_REFLECTION=" .. (package:config("reflection") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
 
         os.trymv(package:installdir("lib/*.dll"), package:installdir("bin"))
