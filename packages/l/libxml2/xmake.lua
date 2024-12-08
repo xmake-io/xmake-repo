@@ -96,7 +96,7 @@ package("libxml2")
         end
     end)
 
-    on_install(function (package)
+    on_install("macosx", function (package)
         if package:config("python") then
             io.replace("python/libxml.c", "PyObject *PyInit_libxml2mod", "PyMODINIT_FUNC\nPyInit_libxml2mod", {plain = true})
             io.replace("CMakeLists.txt", "add_library(\n        LibXml2Mod", "add_library(LibXml2Mod SHARED", {plain = true})
@@ -138,7 +138,7 @@ package("libxml2")
             if package:is_plat("windows") then
                 os.vrun([[python -c "import libxml2"]])
             else
-                os.vrun([[python3 -c "import libxml2"]])
+                os.vrun([[python3 -v -c "import libxml2"]])
             end
         end
     end)
