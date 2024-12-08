@@ -2,7 +2,7 @@ package("onedpl")
 
     set_kind("library", {headeronly = true})
     set_homepage("https://www.intel.com/content/www/us/en/developer/tools/oneapi/dpc-library.html")
-    set_description("oneAPI DPC++ Library")
+    set_description("oneDPL is part of the UXL Foundation and is an implementation of the oneAPI specification for the oneDPL component.")
 
     add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version).tar.gz")
     add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version)-release.tar.gz")
