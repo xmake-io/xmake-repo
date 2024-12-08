@@ -3,6 +3,7 @@ package("protobuf-cpp")
     set_description("Google's data interchange format for cpp")
     set_license("BSD-3-Clause")
 
+    add_urls("https://github.com/protocolbuffers/protobuf.git")
     add_urls("https://github.com/protocolbuffers/protobuf/releases/download/v$(version)", {version = function (version)
         if version:le("3.19.4") then
             return version .. "/protobuf-cpp-" .. version .. ".zip"
@@ -36,6 +37,14 @@ package("protobuf-cpp")
     add_configs("lite", {description = "Build lite version", default = true, type = "boolean", readonly = true})
     add_configs("upb", {description = "Build upb", default = false, type = "boolean"})
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::protobuf")
+    elseif is_plat("linux") then
+        add_extsources("pacman::protobuf")
+    elseif is_plat("macosx") then
+        add_extsources("brew::protobuf")
+    end
+
     add_deps("cmake")
     if is_plat("android") and is_host("windows") then
         add_deps("ninja")
@@ -54,6 +63,15 @@ package("protobuf-cpp")
 
     on_load(function (package)
         package:addenv("PATH", "bin")
+
+        if is_plat("linux") then
+            if package:is_binary() then
+                package:add("extsources", "apt::protobuf-compiler")
+            elseif package:is_library() then
+                package:add("extsources", "apt::libprotobuf-dev", "apt::libprotoc-dev")
+            end
+        end
+
         if package:config("zlib") then
             package:add("deps", "zlib")
         end

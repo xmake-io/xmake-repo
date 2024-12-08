@@ -28,7 +28,7 @@ package("abseil")
         add_syslinks("advapi32", "dbghelp", "bcrypt")
     elseif is_plat("linux", "bsd") then
         add_syslinks("pthread")
-    elseif is_plat("macosx") then
+    elseif is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation")
     end
 
