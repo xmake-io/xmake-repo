@@ -10,9 +10,9 @@ package("nanoarrow")
 
     add_configs("ipc", {description = "Build IPC extension", default = false, type = "boolean"})
     add_configs("device", {description = "Build device extension", default = false, type = "boolean"})
-    add_configs("cuda", {description = "Build device extension", default = false, type = "boolean"})
+    add_configs("cuda", {description = "Build cuda with device extension", default = false, type = "boolean"})
     if is_plat("macosx") then
-        add_configs("metal", {description = "Build device extension", default = false, type = "boolean"})
+        add_configs("metal", {description = "Build Apple metal with device extension", default = false, type = "boolean"})
     end
 
     add_links("nanoarrow_ipc", "nanoarrow_device", "nanoarrow")
