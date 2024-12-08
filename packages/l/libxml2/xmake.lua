@@ -116,6 +116,10 @@ package("libxml2")
 
         if package:config("python") then
             table.insert(configs, "-DLIBXML2_PYTHON_INSTALL_DIR=" .. package:data("PYTHONPATH"))
+            local python = package:dep("python")
+            if not python:is_system() then
+                table.insert(configs, "-DPython_ROOT_DIR=" .. python:installdir())
+            end
         end
 
         local opt = {}
