@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index dd198286..a80a7422 100644
+index dd198286..2be84c5f 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -235,7 +235,7 @@ if(USING_GCC)
@@ -7,7 +7,7 @@ index dd198286..a80a7422 100644
  
  if(USING_CLANG)
 -  jerry_add_compile_flags(-Wno-nested-anon-types -Wno-static-in-inline)
-+  jerry_add_compile_flags(-Wno-nested-anon-types -Wno-static-in-inline -Wno-deprecated-enum-enum-conversion)
++  jerry_add_compile_flags(-Wno-nested-anon-types -Wno-static-in-inline -Wno-enum-enum-conversion)
  endif()
  
  if(USING_TI)
