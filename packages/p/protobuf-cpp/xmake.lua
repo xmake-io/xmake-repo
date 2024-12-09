@@ -53,7 +53,10 @@ package("protobuf-cpp")
     end
 
     on_load(function (package)
-        package:addenv("PATH", "bin")
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
+
         if package:config("zlib") then
             package:add("deps", "zlib")
         end
