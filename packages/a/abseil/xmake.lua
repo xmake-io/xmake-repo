@@ -25,7 +25,7 @@ package("abseil")
     add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "17", type = "string", values = {"14", "17", "20"}})
 
     on_load(function (package)
-        if package:is_plat("windows", "mingw") then
+        if package:is_plat("windows", "mingw", "msys") then
             package:add("syslinks", "advapi32", "dbghelp", "bcrypt")
         elseif package:is_plat("linux", "bsd") then
             package:add("syslinks", "pthread")
