@@ -130,16 +130,19 @@ function _require_packages(argv, packages)
     os.vexecv(os.programfile(), config_argv)
     local require_argv = {"require", "-f", "-y"}
     local check_argv = {"require", "-f", "-y", "--check"}
+    local info_argv = {"require", "-f", "-y", "--info"}
     if not argv.precompiled then
         table.insert(require_argv, "--build")
     end
     if argv.verbose then
         table.insert(require_argv, "-v")
         table.insert(check_argv, "-v")
+        table.insert(info_argv, "-v")
     end
     if argv.diagnosis then
         table.insert(require_argv, "-D")
         table.insert(check_argv, "-D")
+        table.insert(info_argv, "-D")
     end
     local is_debug = false
     if argv.debugdir then
@@ -180,9 +183,19 @@ function _require_packages(argv, packages)
     local extra_str = string.serialize(extra, {indent = false, strip = true})
     table.insert(require_argv, "--extra=" .. extra_str)
     table.insert(check_argv, "--extra=" .. extra_str)
+    table.insert(info_argv, "--extra=" .. extra_str)
 
+    -- call `xrepo info` to test on_load
+    if #packages > 0 then
+        print("testing to load packages ...")
+        print("  > if it causes errors, please remove assert/raise() to on_check.")
+        os.vexecv(os.programfile(), table.join(info_argv, packages))
+    end
+
+    -- test on_check
     local install_packages = {}
     if _check_package_is_supported() then
+        print("testing to check packages ...")
         for _, package in ipairs(packages) do
             local ok = os.vexecv(os.programfile(), table.join(check_argv, package), {try = true})
             if ok == 0 then
@@ -192,7 +205,10 @@ function _require_packages(argv, packages)
     else
         install_packages = packages
     end
+
+    -- test installation
     if #install_packages > 0 then
+        print("testing to install packages ...")
         os.vexecv(os.programfile(), table.join(require_argv, install_packages))
     else
         print("no testable packages on %s or you're using lower version xmake!", argv.plat or os.subhost())
