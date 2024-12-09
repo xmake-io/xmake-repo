@@ -24,15 +24,15 @@ package("abseil")
 
     add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "17", type = "string", values = {"14", "17", "20"}})
 
-    if is_plat("windows", "mingw") then
-        add_syslinks("advapi32", "dbghelp", "bcrypt")
-    elseif is_plat("linux", "bsd") then
-        add_syslinks("pthread")
-    elseif is_plat("macosx") then
-        add_frameworks("CoreFoundation")
-    end
-
     on_load(function (package)
+        if package:is_plat("windows", "mingw", "msys") then
+            package:add("syslinks", "advapi32", "dbghelp", "bcrypt")
+        elseif package:is_plat("linux", "bsd") then
+            package:add("syslinks", "pthread")
+        elseif package:is_plat("macosx", "iphoneos") then
+            package:add("frameworks", "CoreFoundation")
+        end
+
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ABSL_CONSUME_DLL")
         end
