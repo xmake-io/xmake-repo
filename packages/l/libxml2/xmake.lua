@@ -149,7 +149,7 @@ package("libxml2")
             local pc = package:installdir("lib/pkgconfig/libxml-2.0.pc")
             io.replace(pc, "-lxml2", "-l" .. path.basename(libfiles), {plain = true})
         elseif package:is_plat("macosx") then
-            os.mv(path.join(package:installdir("python"), "libxml2mod.dylib"), path.join(package:installdir("python"), "libxml2mod.so"))
+            os.trymv(path.join(package:installdir("python"), "libxml2mod.dylib"), path.join(package:installdir("python"), "libxml2mod.so"))
         end
     end)
 
