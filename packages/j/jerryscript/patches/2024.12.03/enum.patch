@@ -165,3 +165,16 @@ index 40b42bb6..c455dc92 100644
  } /* ecma_typedarray_helper_get_constructor_id */
  
  /**
+diff --git a/jerry-port/win/jerry-port-win-date.c b/jerry-port/win/jerry-port-win-date.c
+index 91aee326..3d7cfebb 100644
+--- a/jerry-port/win/jerry-port-win-date.c
++++ b/jerry-port/win/jerry-port-win-date.c
+@@ -69,7 +69,7 @@ filetime_to_unix_time (LPFILETIME ft_p)
+   ULARGE_INTEGER date;
+   date.HighPart = ft_p->dwHighDateTime;
+   date.LowPart = ft_p->dwLowDateTime;
+-  return (double) (((LONGLONG) date.QuadPart - UNIX_EPOCH_IN_TICKS) / TICKS_PER_MS);
++  return (double) (((LONGLONG) date.QuadPart - (LONGLONG) UNIX_EPOCH_IN_TICKS) / TICKS_PER_MS);
+ } /* filetime_to_unix_time */
+ 
+ /**
