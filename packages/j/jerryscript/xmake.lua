@@ -7,7 +7,7 @@ package("jerryscript")
 
     add_versions("2024.12.03", "c509a06669bd39301fdf0d36305a69689f51919e")
 
-    add_patches("2024.12.03", "patches/2024.12.03/enum.patch", "d8fe23c305a084e400738e7be830691e0dad62699cfbe747e0366683a7c0fc9b")
+    add_patches("2024.12.03", "patches/2024.12.03/enum.patch", "c7ba3678204a5edfcf1f5695ce760a2b3a2d84cbcb5bf2fce0547b7d339a947f")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
@@ -15,13 +15,7 @@ package("jerryscript")
 
     add_deps("cmake")
 
-    if on_check then
-        on_check("linux", function (package)
-            assert(not package:has_tool("cxx", "clang", "clangxx"), "package(jerryscript): Linux Clang is not supported.")
-        end)
-    end
-
-    on_install("!mingw and !macosx", function (package)
+    on_install(function (package)
         local configs = {
             "-DJERRY_CMDLINE=" .. (package:config("cli") and "ON" or "OFF"),
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
