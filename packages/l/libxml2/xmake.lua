@@ -105,7 +105,7 @@ package("libxml2")
             io.replace("CMakeLists.txt", "add_library(\n        LibXml2Mod", "add_library(LibXml2Mod SHARED", {plain = true})
             if package:config("shared") and is_host("windows") then
                 local patch = io.readfile(path.join(os.scriptdir(), "patches/patch-libxml.py"))
-                io.replace("python/libxml.py", "import xml2mod", patch, {plain = true})
+                io.replace("python/libxml.py", "import libxml2mod", patch, {plain = true})
             end
             -- @see https://github.com/xmake-io/xmake/issues/2177
             -- https://github.com/xmake-io/xmake-repo/pull/5930
