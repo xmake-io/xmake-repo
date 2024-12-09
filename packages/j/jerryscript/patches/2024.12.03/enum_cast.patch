@@ -53,6 +53,27 @@ index 94c0384d..98c25eae 100644
  
      ecma_bytecode_deref ((ecma_compiled_code_t *) old_bc_p);
  
+diff --git a/jerry-core/ecma/operations/ecma-bigint.c b/jerry-core/ecma/operations/ecma-bigint.c
+index 7a4464e0..7487eae9 100644
+--- a/jerry-core/ecma/operations/ecma-bigint.c
++++ b/jerry-core/ecma/operations/ecma-bigint.c
+@@ -1584,14 +1584,14 @@ ecma_bigint_and (ecma_value_t left_value, /**< left BigInt value */
+     }
+ 
+     /* x & (-y) == x & ~(y-1) == x &~ (y-1) */
+-    uint32_t operation_and_options = ECMA_BIG_UINT_BITWISE_AND_NOT | ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
++    uint32_t operation_and_options = (int) ECMA_BIG_UINT_BITWISE_AND_NOT | (int) ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
+     return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
+   }
+ 
+   if (!(right_p->u.bigint_sign_and_size & ECMA_BIGINT_SIGN))
+   {
+     /* (-x) & y == ~(x-1) & y == y &~ (x-1) */
+-    uint32_t operation_and_options = ECMA_BIG_UINT_BITWISE_AND_NOT | ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
++    uint32_t operation_and_options = (int) ECMA_BIG_UINT_BITWISE_AND_NOT | (int) ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
+     return ecma_bigint_bitwise_op (operation_and_options, right_p, left_p);
+   }
+ 
 diff --git a/jerry-core/ecma/operations/ecma-regexp-object.c b/jerry-core/ecma/operations/ecma-regexp-object.c
 index e5b276ae..d3501e6d 100644
 --- a/jerry-core/ecma/operations/ecma-regexp-object.c
