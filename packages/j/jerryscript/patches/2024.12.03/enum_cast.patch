@@ -54,7 +54,7 @@ index 94c0384d..98c25eae 100644
      ecma_bytecode_deref ((ecma_compiled_code_t *) old_bc_p);
  
 diff --git a/jerry-core/ecma/operations/ecma-bigint.c b/jerry-core/ecma/operations/ecma-bigint.c
-index 7a4464e0..7487eae9 100644
+index 7a4464e0..5f291a57 100644
 --- a/jerry-core/ecma/operations/ecma-bigint.c
 +++ b/jerry-core/ecma/operations/ecma-bigint.c
 @@ -1584,14 +1584,14 @@ ecma_bigint_and (ecma_value_t left_value, /**< left BigInt value */
@@ -62,7 +62,7 @@ index 7a4464e0..7487eae9 100644
  
      /* x & (-y) == x & ~(y-1) == x &~ (y-1) */
 -    uint32_t operation_and_options = ECMA_BIG_UINT_BITWISE_AND_NOT | ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
-+    uint32_t operation_and_options = (int) ECMA_BIG_UINT_BITWISE_AND_NOT | (int) ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
++    uint32_t operation_and_options = (uint32_t) ECMA_BIG_UINT_BITWISE_AND_NOT | (uint32_t) ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
      return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
    }
  
@@ -70,12 +70,55 @@ index 7a4464e0..7487eae9 100644
    {
      /* (-x) & y == ~(x-1) & y == y &~ (x-1) */
 -    uint32_t operation_and_options = ECMA_BIG_UINT_BITWISE_AND_NOT | ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
-+    uint32_t operation_and_options = (int) ECMA_BIG_UINT_BITWISE_AND_NOT | (int) ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
++    uint32_t operation_and_options = (uint32_t) ECMA_BIG_UINT_BITWISE_AND_NOT | (uint32_t) ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
      return ecma_bigint_bitwise_op (operation_and_options, right_p, left_p);
    }
  
+@@ -1633,7 +1633,7 @@ ecma_bigint_or (ecma_value_t left_value, /**< left BigInt value */
+ 
+     /* x | (-y) == x | ~(y-1) == ~((y-1) &~ x) == -(((y-1) &~ x) + 1) */
+     uint32_t operation_and_options =
+-      (ECMA_BIG_UINT_BITWISE_AND_NOT | ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
++      ((uint32_t) ECMA_BIG_UINT_BITWISE_AND_NOT | (uint32_t) ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | (uint32_t) ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
+     return ecma_bigint_bitwise_op (operation_and_options, right_p, left_p);
+   }
+ 
+@@ -1641,13 +1641,13 @@ ecma_bigint_or (ecma_value_t left_value, /**< left BigInt value */
+   {
+     /* (-x) | y == ~(x-1) | y == ~((x-1) &~ y) == -(((x-1) &~ y) + 1) */
+     uint32_t operation_and_options =
+-      (ECMA_BIG_UINT_BITWISE_AND_NOT | ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
++      ((uint32_t) ECMA_BIG_UINT_BITWISE_AND_NOT | (uint32_t) ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | (uint32_t) ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
+     return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
+   }
+ 
+   /* (-x) | (-y) == ~(x-1) | ~(y-1) == ~((x-1) & (y-1)) = -(((x-1) & (y-1)) + 1) */
+   uint32_t operation_and_options =
+-    (ECMA_BIG_UINT_BITWISE_AND | ECMA_BIG_UINT_BITWISE_DECREASE_BOTH | ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
++    ((uint32_t) ECMA_BIG_UINT_BITWISE_AND | (uint32_t) ECMA_BIG_UINT_BITWISE_DECREASE_BOTH | (uint32_t) ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
+   return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
+ } /* ecma_bigint_or */
+ 
+@@ -1683,7 +1683,7 @@ ecma_bigint_xor (ecma_value_t left_value, /**< left BigInt value */
+ 
+     /* x ^ (-y) == x ^ ~(y-1) == ~(x ^ (y-1)) == -((x ^ (y-1)) + 1) */
+     uint32_t operation_and_options =
+-      (ECMA_BIG_UINT_BITWISE_XOR | ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT | ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
++      ((int) ECMA_BIG_UINT_BITWISE_XOR | (int) ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT | (int) ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
+     return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
+   }
+ 
+@@ -1691,7 +1691,7 @@ ecma_bigint_xor (ecma_value_t left_value, /**< left BigInt value */
+   {
+     /* (-x) | y == ~(x-1) ^ y == ~((x-1) ^ y) == -(((x-1) ^ y) + 1) */
+     uint32_t operation_and_options =
+-      (ECMA_BIG_UINT_BITWISE_XOR | ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
++      ((int) ECMA_BIG_UINT_BITWISE_XOR | (int) ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | (int) ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
+     return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
+   }
+ 
 diff --git a/jerry-core/ecma/operations/ecma-regexp-object.c b/jerry-core/ecma/operations/ecma-regexp-object.c
-index e5b276ae..d3501e6d 100644
+index e5b276ae..5e8f2251 100644
 --- a/jerry-core/ecma/operations/ecma-regexp-object.c
 +++ b/jerry-core/ecma/operations/ecma-regexp-object.c
 @@ -164,7 +164,7 @@ ecma_op_regexp_alloc (ecma_object_t *ctr_obj_p) /**< constructor object pointer
@@ -83,7 +126,7 @@ index e5b276ae..d3501e6d 100644
                                                        ecma_get_magic_string (LIT_MAGIC_STRING_LASTINDEX_UL),
                                                        ecma_make_uint32_value (0),
 -                                                      ECMA_PROPERTY_FLAG_WRITABLE | JERRY_PROP_SHOULD_THROW);
-+                                                      (int) ECMA_PROPERTY_FLAG_WRITABLE | (int) JERRY_PROP_SHOULD_THROW);
++                                                      (uint32_t) ECMA_PROPERTY_FLAG_WRITABLE | (uint32_t) JERRY_PROP_SHOULD_THROW);
  
    JERRY_ASSERT (ecma_is_value_true (status));
  
