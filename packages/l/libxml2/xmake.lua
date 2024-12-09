@@ -62,8 +62,9 @@ package("libxml2")
         if package:config("python") then
             package:config_set("iconv", true)
             package:add("deps", "python 3.x", {private = true})
+            package:addenv("PYTHONPATH", "python")
+            package:mark_as_pathenv("PYTHONPATH")
             package:data_set("PYTHONPATH", package:installdir("python"))
-            package:addenv("PYTHONPATH", package:data("PYTHONPATH"))
         end
 
         if package:config("threads") and package:is_plat("linux", "bsd") then
@@ -97,12 +98,27 @@ package("libxml2")
     end)
 
     on_install(function (package)
+        local cxflags = {}
+        local shflags = {}
         if package:config("python") then
             io.replace("python/libxml.c", "PyObject *PyInit_libxml2mod", "PyMODINIT_FUNC\nPyInit_libxml2mod", {plain = true})
             io.replace("CMakeLists.txt", "add_library(\n        LibXml2Mod", "add_library(LibXml2Mod SHARED", {plain = true})
             if package:config("shared") and is_host("windows") then
                 local patch = io.readfile(path.join(os.scriptdir(), "patches/patch-libxml.py"))
-                io.replace("python/libxml.py", "import libxml2mod", patch, {plain = true})
+                io.replace("python/libxml.py", "import xml2mod", patch, {plain = true})
+            end
+            -- @see https://github.com/xmake-io/xmake/issues/2177
+            -- https://github.com/xmake-io/xmake-repo/pull/5930
+            if package:is_plat("macosx") then
+                io.replace("CMakeLists.txt", "target_link_libraries(LibXml2Mod LibXml2 Python::Python)",
+                    "target_link_libraries(LibXml2Mod LibXml2)", {plain = true})
+                local pythonlib = package:dep("python"):fetch()
+                if pythonlib then
+                    for _, includedir in ipairs(pythonlib.sysincludedirs or pythonlib.includedirs) do
+                        table.insert(cxflags, "-I" .. includedir)
+                    end
+                end
+                table.join2(shflags, {"-undefined", "dynamic_lookup"})
             end
         end
 
@@ -122,17 +138,18 @@ package("libxml2")
             end
         end
 
-        local opt = {}
         local lzma = package:dep("xz")
         if lzma and not lzma:config("shared") then
-            opt.cxflags = "-DLZMA_API_STATIC"
+            table.insert(cxflags, "-DLZMA_API_STATIC")
         end
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags, shflags = shflags})
 
         if package:is_plat("windows") then
             local libfiles = os.files(package:installdir("lib/*xml2*.lib"))[1]
             local pc = package:installdir("lib/pkgconfig/libxml-2.0.pc")
             io.replace(pc, "-lxml2", "-l" .. path.basename(libfiles), {plain = true})
+        elseif package:is_plat("macosx") then
+            os.mv(path.join(package:installdir("python"), "libxml2mod.dylib"), path.join(package:installdir("python"), "libxml2mod.so"))
         end
     end)
 
