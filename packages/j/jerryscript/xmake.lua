@@ -3,10 +3,9 @@ package("jerryscript")
     set_description("Ultra-lightweight JavaScript engine for the Internet of Things.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/jerryscript-project/jerryscript/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/jerryscript-project/jerryscript.git")
+    add_urls("https://github.com/jerryscript-project/jerryscript.git")
 
-    add_versions("v2.4.0", "5850947c23db6fbce032d15560551408ab155b16a94a7ac4412dc3bb85762d2d")
+    add_versions("2024.12.03", "c509a06669bd39301fdf0d36305a69689f51919e")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
