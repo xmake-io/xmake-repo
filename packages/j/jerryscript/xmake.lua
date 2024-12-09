@@ -8,6 +8,8 @@ package("jerryscript")
 
     add_versions("v2.4.0", "5850947c23db6fbce032d15560551408ab155b16a94a7ac4412dc3bb85762d2d")
 
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+
     add_configs("cli", {description = "Build jerry command line tool", default = false, type = "boolean"})
 
     add_deps("cmake")
