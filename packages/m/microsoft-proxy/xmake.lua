@@ -22,6 +22,11 @@ package("microsoft-proxy")
                 assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(microsoft-proxy): need vs_toolset >= v143")
             end
         end)
+
+        on_check("android", function (package)
+            local ndk = package:toolchain("ndk"):config("ndkver")
+            assert(ndk and tonumber(ndk) > 22, "package(microsoft-proxy) require ndk version > 22")
+        end)
     end
 
     on_install(function (package)

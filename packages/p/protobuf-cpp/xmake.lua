@@ -62,14 +62,16 @@ package("protobuf-cpp")
     end
 
     on_load(function (package)
-        package:addenv("PATH", "bin")
-
         if is_plat("linux") then
             if package:is_binary() then
                 package:add("extsources", "apt::protobuf-compiler")
             elseif package:is_library() then
                 package:add("extsources", "apt::libprotobuf-dev", "apt::libprotoc-dev")
             end
+        end
+
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
         end
 
         if package:config("zlib") then
