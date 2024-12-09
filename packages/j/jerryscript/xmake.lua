@@ -7,8 +7,6 @@ package("jerryscript")
 
     add_versions("2024.12.03", "c509a06669bd39301fdf0d36305a69689f51919e")
 
-    add_patches("2024.12.03", "patches/2024.12.03/enum_cast.patch", "e52e2602d78accefab8383a859373dc7b1f343f6597148aa07e179665235fdb3")
-
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     add_configs("cli", {description = "Build jerry command line tool", default = false, type = "boolean"})
@@ -20,6 +18,10 @@ package("jerryscript")
             "-DJERRY_CMDLINE=" .. (package:config("cli") and "ON" or "OFF"),
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
         }
+        if package:has_tool("cxx", "clang", "clangxx", "emcc", "emxx") then
+            package:add("cxxflags", "-Wno-deprecated-enum-enum-conversion")
+            table.insert(configs, "-DCMAKE_CXX_FLAGS=-Wno-deprecated-enum-enum-conversion")
+        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
