@@ -46,23 +46,24 @@ package("protobuf-cpp")
     end
 
     add_deps("cmake")
-    if is_plat("android") and is_host("windows") then
-        add_deps("ninja")
-        set_policy("package.cmake_generator.ninja", true)
-    end
-
-    if is_plat("windows") then
-        add_links("libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
-    else
-        add_links("protoc", "protobuf", "utf8_range", "utf8_validity")
-    end
-
-    if is_plat("linux", "bsd", "mingw") then
-        add_syslinks("m", "pthread")
-    end
 
     on_load(function (package)
-        if is_plat("linux") then
+        if package:is_plat("android") and is_host("windows") then
+            package:add("deps", "ninja")
+            package:set("policy", "package.cmake_generator.ninja", true)
+        end
+    
+        if package:is_plat("windows") then
+            package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
+        else
+            package:add("links", "protoc", "protobuf", "utf8_range", "utf8_validity")
+        end
+    
+        if package:is_plat("linux", "bsd", "mingw") then
+            package:add("syslinks", "m", "pthread")
+        end
+
+        if package:is_plat("linux") then
             if package:is_binary() then
                 package:add("extsources", "apt::protobuf-compiler")
             elseif package:is_library() then
