@@ -7,7 +7,7 @@ package("jerryscript")
 
     add_versions("2024.12.03", "c509a06669bd39301fdf0d36305a69689f51919e")
 
-    add_patches("2024.12.03", "patches/2024.12.03/enum_cast.patch", "9f2b16671ee8f0883a789767d29c2cc17a6df04ab655958055b4fa6c0b8c06fa")
+    add_patches("2024.12.03", "patches/2024.12.03/enum_cast.patch", "e52e2602d78accefab8383a859373dc7b1f343f6597148aa07e179665235fdb3")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
