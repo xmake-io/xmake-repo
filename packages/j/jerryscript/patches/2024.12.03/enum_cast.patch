@@ -40,3 +40,29 @@ index 60f8023f..59cbcb4c 100644
  
    if (!LIT_IS_GLOBAL_SYMBOL (id))
    {
+diff --git a/jerry-core/ecma/builtin-objects/ecma-builtin-regexp-prototype.c b/jerry-core/ecma/builtin-objects/ecma-builtin-regexp-prototype.c
+index 94c0384d..98c25eae 100644
+--- a/jerry-core/ecma/builtin-objects/ecma-builtin-regexp-prototype.c
++++ b/jerry-core/ecma/builtin-objects/ecma-builtin-regexp-prototype.c
+@@ -251,7 +251,7 @@ ecma_builtin_regexp_prototype_compile (ecma_value_t this_arg, /**< this */
+     ecma_value_t status = ecma_builtin_helper_def_prop (this_obj_p,
+                                                         ecma_get_magic_string (LIT_MAGIC_STRING_LASTINDEX_UL),
+                                                         ecma_make_uint32_value (0),
+-                                                        ECMA_PROPERTY_FLAG_WRITABLE | JERRY_PROP_SHOULD_THROW);
++                                                        (int) ECMA_PROPERTY_FLAG_WRITABLE | (int) JERRY_PROP_SHOULD_THROW);
+ 
+     ecma_bytecode_deref ((ecma_compiled_code_t *) old_bc_p);
+ 
+diff --git a/jerry-core/ecma/operations/ecma-regexp-object.c b/jerry-core/ecma/operations/ecma-regexp-object.c
+index e5b276ae..d3501e6d 100644
+--- a/jerry-core/ecma/operations/ecma-regexp-object.c
++++ b/jerry-core/ecma/operations/ecma-regexp-object.c
+@@ -164,7 +164,7 @@ ecma_op_regexp_alloc (ecma_object_t *ctr_obj_p) /**< constructor object pointer
+   ecma_value_t status = ecma_builtin_helper_def_prop (new_object_p,
+                                                       ecma_get_magic_string (LIT_MAGIC_STRING_LASTINDEX_UL),
+                                                       ecma_make_uint32_value (0),
+-                                                      ECMA_PROPERTY_FLAG_WRITABLE | JERRY_PROP_SHOULD_THROW);
++                                                      (int) ECMA_PROPERTY_FLAG_WRITABLE | (int) JERRY_PROP_SHOULD_THROW);
+ 
+   JERRY_ASSERT (ecma_is_value_true (status));
+ 
