@@ -16,6 +16,9 @@ package("jerryscript")
     add_deps("cmake")
 
     on_install(function (package)
+        if package:is_plat("wasm") then
+            io.replace("CMakeLists.txt", [[CMAKE_C_COMPILER_ID MATCHES "Clang"]], "TRUE")
+        end
         local configs = {
             "-DJERRY_CMDLINE=" .. (package:config("cli") and "ON" or "OFF"),
             "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
