@@ -11,7 +11,7 @@ package("itstool")
 
     add_deps("libxml2", {configs = {python = true}})
 
-    on_install("@linux", "@macosx", "@bsd", function (package)
+    on_install("linux", "macosx", "bsd", function (package)
         import("package.tools.autoconf").install(package)
     end)
 
