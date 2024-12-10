@@ -24,17 +24,33 @@ package("iguana")
             languages = "c++20"
         end
 
-        assert(package:check_cxxsnippets({test = [[
-            #include <iguana/json_reader.hpp>
-            struct some_obj {
-                std::string_view name;
-                iguana::numeric_str age;
-            };
-            REFLECTION(some_obj, name, age);
-            void test() {
-                some_obj obj;
-                std::string_view str = "{\"name\":\"tom\", \"age\":20}";
-                iguana::from_json(obj, str);
-            }
-        ]]}, {configs = {languages = languages}}))
+        if package:version():ge("1.0.6") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <iguana/json_reader.hpp>
+                struct some_obj {
+                    std::string_view name;
+                    iguana::numeric_str age;
+                };
+                YLT_REFL(some_obj, name, age);
+                void test() {
+                    some_obj obj;
+                    std::string_view str = "{\"name\":\"tom\", \"age\":20}";
+                    iguana::from_json(obj, str);
+                }
+            ]]}, {configs = {languages = languages}}))
+        else
+            assert(package:check_cxxsnippets({test = [[
+                #include <iguana/json_reader.hpp>
+                struct some_obj {
+                    std::string_view name;
+                    iguana::numeric_str age;
+                };
+                REFLECTION(some_obj, name, age);
+                void test() {
+                    some_obj obj;
+                    std::string_view str = "{\"name\":\"tom\", \"age\":20}";
+                    iguana::from_json(obj, str);
+                }
+            ]]}, {configs = {languages = languages}}))
+        end
     end)
