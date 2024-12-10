@@ -16,6 +16,9 @@ package("duktape")
                 set_kind("$(kind)")
                 add_files("src-noline/*.c")
                 add_headerfiles("src-noline/(*.h)")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
         ]])
         import("package.tools.xmake").install(package)
     end)
