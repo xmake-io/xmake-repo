@@ -3,7 +3,8 @@ package("duktape")
     set_description("Duktape - embeddable Javascript engine with a focus on portability and compact footprint")
     set_license("MIT")
 
-    add_urls("https://github.com/svaarala/duktape/releases/download/v$(version)/duktape-$(version).tar.xz")
+    add_urls("https://github.com/svaarala/duktape/releases/download/v$(version)/duktape-$(version).tar.xz",
+             "https://github.com/svaarala/duktape.git")
 
     add_versions("2.7.0", "90f8d2fa8b5567c6899830ddef2c03f3c27960b11aca222fa17aa7ac613c2890")
 
