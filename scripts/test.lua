@@ -53,8 +53,8 @@ function _check_package_is_supported()
     end
 end
 
--- require packages
-function _require_packages(argv, packages)
+-- config packages
+function _config_packages(argv, packages)
     local config_argv = {"f", "-c"}
     if argv.verbose then
         table.insert(config_argv, "-v")
@@ -128,39 +128,10 @@ function _require_packages(argv, packages)
         table.insert(config_argv, "--ldflags=" .. argv.ldflags)
     end
     os.vexecv(os.programfile(), config_argv)
-    local require_argv = {"require", "-f", "-y"}
-    local check_argv = {"require", "-f", "-y", "--check"}
-    local info_argv = {"require", "-f", "-y", "--info"}
-    if not argv.precompiled then
-        table.insert(require_argv, "--build")
-    end
-    if argv.verbose then
-        table.insert(require_argv, "-v")
-        table.insert(check_argv, "-v")
-        table.insert(info_argv, "-v")
-    end
-    if argv.diagnosis then
-        table.insert(require_argv, "-D")
-        table.insert(check_argv, "-D")
-        table.insert(info_argv, "-D")
-    end
-    local is_debug = false
-    if argv.debugdir then
-        is_debug = true
-        table.insert(require_argv, "--debugdir=" .. argv.debugdir)
-    end
-    if argv.shallow or is_debug then
-        table.insert(require_argv, "--shallow")
-    end
-    if argv.jobs then
-        table.insert(require_argv, "--jobs=" .. argv.jobs)
-    end
-    if argv.linkjobs then
-        table.insert(require_argv, "--linkjobs=" .. argv.linkjobs)
-    end
-    if argv.fetch then
-        table.insert(require_argv, "--fetch")
-    end
+end
+
+-- get extra string
+function _get_extra_str(argv)
     local extra = {}
     if argv.mode == "debug" then
         extra.debug = true
@@ -180,9 +151,20 @@ function _require_packages(argv, packages)
             raise(errors)
         end
     end
-    local extra_str = string.serialize(extra, {indent = false, strip = true})
-    table.insert(require_argv, "--extra=" .. extra_str)
-    table.insert(check_argv, "--extra=" .. extra_str)
+    return string.serialize(extra, {indent = false, strip = true})
+end
+
+-- load packages
+function _load_packages(argv, packages)
+    _config_packages(argv, packages)
+    local info_argv = {"require", "-f", "-y", "--info"}
+    if argv.verbose then
+        table.insert(info_argv, "-v")
+    end
+    if argv.diagnosis then
+        table.insert(info_argv, "-D")
+    end
+    local extra_str = _get_extra_str(argv)
     table.insert(info_argv, "--extra=" .. extra_str)
 
     -- call `xrepo info` to test on_load
@@ -191,6 +173,44 @@ function _require_packages(argv, packages)
         print("  > if it causes errors, please remove assert/raise() to on_check.")
         os.vexecv(os.programfile(), table.join(info_argv, packages))
     end
+end
+
+-- require packages
+function _require_packages(argv, packages)
+    _config_packages(argv, packages)
+    local require_argv = {"require", "-f", "-y"}
+    local check_argv = {"require", "-f", "-y", "--check"}
+    if not argv.precompiled then
+        table.insert(require_argv, "--build")
+    end
+    if argv.verbose then
+        table.insert(require_argv, "-v")
+        table.insert(check_argv, "-v")
+    end
+    if argv.diagnosis then
+        table.insert(require_argv, "-D")
+        table.insert(check_argv, "-D")
+    end
+    local is_debug = false
+    if argv.debugdir then
+        is_debug = true
+        table.insert(require_argv, "--debugdir=" .. argv.debugdir)
+    end
+    if argv.shallow or is_debug then
+        table.insert(require_argv, "--shallow")
+    end
+    if argv.jobs then
+        table.insert(require_argv, "--jobs=" .. argv.jobs)
+    end
+    if argv.linkjobs then
+        table.insert(require_argv, "--linkjobs=" .. argv.linkjobs)
+    end
+    if argv.fetch then
+        table.insert(require_argv, "--fetch")
+    end
+    local extra_str = _get_extra_str(argv)
+    table.insert(require_argv, "--extra=" .. extra_str)
+    table.insert(check_argv, "--extra=" .. extra_str)
 
     -- test on_check
     local install_packages = {}
@@ -231,6 +251,7 @@ function _package_is_supported(argv, packagename)
                     arch = os.subarch()
                 end
                 for _, package_arch in ipairs(package.archs) do
+                    print(package_arch, package.archs)
                     if arch == package_arch then
                         return true
                     end
@@ -282,6 +303,7 @@ function main(...)
     end
 
     -- remove unsupported packages
+    local packages_original = table.clone(packages)
     for idx, package in irpairs(packages) do
         assert(package == package:lower(), "package(%s) must be lower case!", package)
         if not _package_is_supported(argv, package) then
@@ -321,9 +343,15 @@ function main(...)
     os.execv(os.programfile(), {"repo", "--add", "local-repo", repodir})
     os.execv(os.programfile(), {"repo", "-l"})
 
+    -- load packages
+    _load_packages(argv, packages_original)
+
+    -- no unsupported packages
+    if #packages == 0 then
+        print("no testable packages on %s!", argv.plat or os.subhost())
+        return
+    end
+
     -- require packages
     _require_packages(argv, packages)
-    --[[for _, package in ipairs(packages) do
-        _require_packages(argv, package)
-    end]]
 end
