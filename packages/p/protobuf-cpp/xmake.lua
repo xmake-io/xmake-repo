@@ -3,6 +3,7 @@ package("protobuf-cpp")
     set_description("Google's data interchange format for cpp")
     set_license("BSD-3-Clause")
 
+    add_urls("https://github.com/protocolbuffers/protobuf.git")
     add_urls("https://github.com/protocolbuffers/protobuf/releases/download/v$(version)", {version = function (version)
         if version:le("3.19.4") then
             return version .. "/protobuf-cpp-" .. version .. ".zip"
@@ -36,23 +37,40 @@ package("protobuf-cpp")
     add_configs("lite", {description = "Build lite version", default = true, type = "boolean", readonly = true})
     add_configs("upb", {description = "Build upb", default = false, type = "boolean"})
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::protobuf")
+    elseif is_plat("linux") then
+        add_extsources("pacman::protobuf")
+    elseif is_plat("macosx") then
+        add_extsources("brew::protobuf")
+    end
+
     add_deps("cmake")
-    if is_plat("android") and is_host("windows") then
-        add_deps("ninja")
-        set_policy("package.cmake_generator.ninja", true)
-    end
-
-    if is_plat("windows") then
-        add_links("libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
-    else
-        add_links("protoc", "protobuf", "utf8_range", "utf8_validity")
-    end
-
-    if is_plat("linux", "bsd", "mingw") then
-        add_syslinks("m", "pthread")
-    end
 
     on_load(function (package)
+        if package:is_plat("android") and is_host("windows") then
+            package:add("deps", "ninja")
+            package:set("policy", "package.cmake_generator.ninja", true)
+        end
+    
+        if package:is_plat("windows") then
+            package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
+        else
+            package:add("links", "protoc", "protobuf", "utf8_range", "utf8_validity")
+        end
+    
+        if package:is_plat("linux", "bsd", "mingw") then
+            package:add("syslinks", "m", "pthread")
+        end
+
+        if package:is_plat("linux") then
+            if package:is_binary() then
+                package:add("extsources", "apt::protobuf-compiler")
+            elseif package:is_library() then
+                package:add("extsources", "apt::libprotobuf-dev", "apt::libprotoc-dev")
+            end
+        end
+
         if not package:is_cross() then
             package:addenv("PATH", "bin")
         end
