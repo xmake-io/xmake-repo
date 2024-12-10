@@ -24,33 +24,19 @@ package("iguana")
             languages = "c++20"
         end
 
-        if package:version():ge("1.0.6") then
-            assert(package:check_cxxsnippets({test = [[
-                #include <iguana/json_reader.hpp>
-                struct some_obj {
-                    std::string_view name;
-                    iguana::numeric_str age;
-                };
-                YLT_REFL(some_obj, name, age);
-                void test() {
-                    some_obj obj;
-                    std::string_view str = "{\"name\":\"tom\", \"age\":20}";
-                    iguana::from_json(obj, str);
-                }
-            ]]}, {configs = {languages = languages}}))
-        else
-            assert(package:check_cxxsnippets({test = [[
-                #include <iguana/json_reader.hpp>
-                struct some_obj {
-                    std::string_view name;
-                    iguana::numeric_str age;
-                };
-                REFLECTION(some_obj, name, age);
-                void test() {
-                    some_obj obj;
-                    std::string_view str = "{\"name\":\"tom\", \"age\":20}";
-                    iguana::from_json(obj, str);
-                }
-            ]]}, {configs = {languages = languages}}))
-        end
+        local reflection_macro = package:version():ge("1.0.6") and "YLT_REFL" or "REFLECTION"
+        local snippets = string.format([[
+            #include <iguana/json_reader.hpp>
+            struct some_obj {
+                std::string_view name;
+                iguana::numeric_str age;
+            };
+            %s(some_obj, name, age);
+            void test() {
+                some_obj obj;
+                std::string_view str = "{\"name\":\"tom\", \"age\":20}";
+                iguana::from_json(obj, str);
+            }
+        ]], reflection_macro)
+        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = languages}}))
     end)
