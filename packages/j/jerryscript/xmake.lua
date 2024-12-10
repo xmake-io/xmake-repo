@@ -15,6 +15,12 @@ package("jerryscript")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("linux", function (package)
+            assert(not package:has_tool("cxx", "clang", "clangxx"), "package(jerryscript): Linux Clang is not supported.")
+        end)
+    end
+
     on_install("!mingw and !macosx", function (package)
         local configs = {
             "-DJERRY_CMDLINE=" .. (package:config("cli") and "ON" or "OFF"),
