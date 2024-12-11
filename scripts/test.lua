@@ -302,19 +302,6 @@ function main(...)
         table.insert(packages, "tbox dev")
     end
 
-    -- remove unsupported packages
-    local packages_original = table.clone(packages)
-    for idx, package in irpairs(packages) do
-        assert(package == package:lower(), "package(%s) must be lower case!", package)
-        if not _package_is_supported(argv, package) then
-            table.remove(packages, idx)
-        end
-    end
-    if #packages == 0 then
-        print("no testable packages on %s!", argv.plat or os.subhost())
-        return
-    end
-
     -- prepare test project
     local repodir = os.curdir()
     local workdir = path.join(os.tmpdir(), "xmake-repo")
@@ -343,8 +330,18 @@ function main(...)
     os.execv(os.programfile(), {"repo", "--add", "local-repo", repodir})
     os.execv(os.programfile(), {"repo", "-l"})
 
+    local packages_original = table.clone(packages)
+
     -- load packages
     _load_packages(argv, packages_original)
+
+    -- remove unsupported packages
+    for idx, package in irpairs(packages) do
+        assert(package == package:lower(), "package(%s) must be lower case!", package)
+        if not _package_is_supported(argv, package) then
+            table.remove(packages, idx)
+        end
+    end
 
     -- no unsupported packages
     if #packages == 0 then
