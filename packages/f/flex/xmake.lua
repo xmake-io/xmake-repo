@@ -48,7 +48,7 @@ package("flex")
         os.rm(path.join(package:installdir(), "bin", "bison.exe"))
     end)
 
-    on_install("macosx", "linux", "bsd", "android", "iphoneos", "cross", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
