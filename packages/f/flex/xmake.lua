@@ -1,4 +1,5 @@
 package("flex")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/westes/flex/")
     set_license("BSD-2-Clause")
 
@@ -21,16 +22,16 @@ package("flex")
             package:add("deps", "m4")
         end
 
-        -- we always set it, because flex may be modified as library
-        -- by add_deps("flex", {kind = "library"})
-        package:addenv("PATH", "bin")
-        if package:is_library() then
-            package:set("kind", "library", {headeronly = true})
-        end
-
         if is_subhost("msys") and xmake:version():ge("2.9.7") then
             package:add("deps", "pacman::flex", {private = true, configs = {msystem = "msys"}})
         end
+
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
+        -- https://github.com/Seifert69/DikuMUD3/issues/70#issuecomment-1100932157
+        -- Don't link libfl.so
+        package:add("links", "")
     end)
 
     on_install("@msys", function (package)
