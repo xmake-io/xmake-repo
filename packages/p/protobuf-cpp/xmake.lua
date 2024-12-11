@@ -110,6 +110,10 @@ package("protobuf-cpp")
     end)
 
     on_install(function (package)
+        if package:is_plat("windows", "mingw") then
+            io.replace("src/google/protobuf/port_def.inc", "#define PROTOBUF_DESCRIPTOR_WEAK_MESSAGES_ALLOWED", "", {plain = true})
+        end
+
         local version = package:version()
         if version:le("3.19.4") then
             os.cd("cmake")
@@ -119,9 +123,6 @@ package("protobuf-cpp")
         io.replace("CMakeLists.txt", "set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)", "", {plain = true})
         if version:ge("26.1") then
             io.replace("cmake/abseil-cpp.cmake", "BUILD_SHARED_LIBS AND MSVC", "FALSE", {plain = true})
-        end
-        if package:is_plat("windows", "mingw") then
-            io.replace("src/google/protobuf/port_def.inc", "#define PROTOBUF_DESCRIPTOR_WEAK_MESSAGES_ALLOWED", "", {plain = true})
         end
 
         local configs = {
