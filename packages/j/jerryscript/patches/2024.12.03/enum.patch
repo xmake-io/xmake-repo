@@ -1,0 +1,189 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index dd198286..2be84c5f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -235,7 +235,7 @@ if(USING_GCC)
+ endif()
+ 
+ if(USING_CLANG)
+-  jerry_add_compile_flags(-Wno-nested-anon-types -Wno-static-in-inline)
++  jerry_add_compile_flags(-Wno-nested-anon-types -Wno-static-in-inline -Wno-enum-enum-conversion)
+ endif()
+ 
+ if(USING_TI)
+diff --git a/jerry-core/api/jerryscript.c b/jerry-core/api/jerryscript.c
+index 60f8023f..59cbcb4c 100644
+--- a/jerry-core/api/jerryscript.c
++++ b/jerry-core/api/jerryscript.c
+@@ -82,13 +82,13 @@ JERRY_STATIC_ASSERT ((int) ECMA_PROMISE_IS_PENDING == (int) JERRY_PROMISE_STATE_
+ /**
+  * Offset between internal and external arithmetic operator types
+  */
+-#define ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET (JERRY_BIN_OP_SUB - NUMBER_ARITHMETIC_SUBTRACTION)
++#define ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET ((int) JERRY_BIN_OP_SUB - (int) NUMBER_ARITHMETIC_SUBTRACTION)
+ 
+-JERRY_STATIC_ASSERT (((NUMBER_ARITHMETIC_SUBTRACTION + ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET) == JERRY_BIN_OP_SUB)
+-                       && ((NUMBER_ARITHMETIC_MULTIPLICATION + ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET)
+-                           == JERRY_BIN_OP_MUL)
+-                       && ((NUMBER_ARITHMETIC_DIVISION + ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET) == JERRY_BIN_OP_DIV)
+-                       && ((NUMBER_ARITHMETIC_REMAINDER + ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET) == JERRY_BIN_OP_REM),
++JERRY_STATIC_ASSERT ((((int) NUMBER_ARITHMETIC_SUBTRACTION + (int) ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET) == (int) JERRY_BIN_OP_SUB)
++                       && (((int) NUMBER_ARITHMETIC_MULTIPLICATION + (int) ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET)
++                           == (int) JERRY_BIN_OP_MUL)
++                       && (((int) NUMBER_ARITHMETIC_DIVISION + (int) ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET) == (int) JERRY_BIN_OP_DIV)
++                       && (((int) NUMBER_ARITHMETIC_REMAINDER + (int) ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET) == (int) JERRY_BIN_OP_REM),
+                      number_arithmetics_operation_type_matches_external);
+ 
+ #if !JERRY_PARSER && !JERRY_SNAPSHOT_EXEC
+@@ -1841,7 +1841,7 @@ jerry_binary_op (jerry_binary_op_t operation, /**< operation */
+     case JERRY_BIN_OP_DIV:
+     case JERRY_BIN_OP_REM:
+     {
+-      return jerry_return (do_number_arithmetic (operation - ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET, lhs, rhs));
++      return jerry_return (do_number_arithmetic (operation - (int) ECMA_NUMBER_ARITHMETIC_OP_API_OFFSET, lhs, rhs));
+     }
+     default:
+     {
+@@ -4854,7 +4854,7 @@ jerry_symbol (jerry_well_known_symbol_t symbol) /**< jerry_well_known_symbol_t e
+ {
+   jerry_assert_api_enabled ();
+ 
+-  lit_magic_string_id_t id = (lit_magic_string_id_t) (LIT_GLOBAL_SYMBOL__FIRST + symbol);
++  lit_magic_string_id_t id = (lit_magic_string_id_t) ((int) LIT_GLOBAL_SYMBOL__FIRST + (int) symbol);
+ 
+   if (!LIT_IS_GLOBAL_SYMBOL (id))
+   {
+diff --git a/jerry-core/ecma/builtin-objects/ecma-builtin-regexp-prototype.c b/jerry-core/ecma/builtin-objects/ecma-builtin-regexp-prototype.c
+index 94c0384d..98c25eae 100644
+--- a/jerry-core/ecma/builtin-objects/ecma-builtin-regexp-prototype.c
++++ b/jerry-core/ecma/builtin-objects/ecma-builtin-regexp-prototype.c
+@@ -251,7 +251,7 @@ ecma_builtin_regexp_prototype_compile (ecma_value_t this_arg, /**< this */
+     ecma_value_t status = ecma_builtin_helper_def_prop (this_obj_p,
+                                                         ecma_get_magic_string (LIT_MAGIC_STRING_LASTINDEX_UL),
+                                                         ecma_make_uint32_value (0),
+-                                                        ECMA_PROPERTY_FLAG_WRITABLE | JERRY_PROP_SHOULD_THROW);
++                                                        (int) ECMA_PROPERTY_FLAG_WRITABLE | (int) JERRY_PROP_SHOULD_THROW);
+ 
+     ecma_bytecode_deref ((ecma_compiled_code_t *) old_bc_p);
+ 
+diff --git a/jerry-core/ecma/operations/ecma-bigint.c b/jerry-core/ecma/operations/ecma-bigint.c
+index 7a4464e0..5f291a57 100644
+--- a/jerry-core/ecma/operations/ecma-bigint.c
++++ b/jerry-core/ecma/operations/ecma-bigint.c
+@@ -1584,14 +1584,14 @@ ecma_bigint_and (ecma_value_t left_value, /**< left BigInt value */
+     }
+ 
+     /* x & (-y) == x & ~(y-1) == x &~ (y-1) */
+-    uint32_t operation_and_options = ECMA_BIG_UINT_BITWISE_AND_NOT | ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
++    uint32_t operation_and_options = (uint32_t) ECMA_BIG_UINT_BITWISE_AND_NOT | (uint32_t) ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
+     return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
+   }
+ 
+   if (!(right_p->u.bigint_sign_and_size & ECMA_BIGINT_SIGN))
+   {
+     /* (-x) & y == ~(x-1) & y == y &~ (x-1) */
+-    uint32_t operation_and_options = ECMA_BIG_UINT_BITWISE_AND_NOT | ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
++    uint32_t operation_and_options = (uint32_t) ECMA_BIG_UINT_BITWISE_AND_NOT | (uint32_t) ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT;
+     return ecma_bigint_bitwise_op (operation_and_options, right_p, left_p);
+   }
+ 
+@@ -1633,7 +1633,7 @@ ecma_bigint_or (ecma_value_t left_value, /**< left BigInt value */
+ 
+     /* x | (-y) == x | ~(y-1) == ~((y-1) &~ x) == -(((y-1) &~ x) + 1) */
+     uint32_t operation_and_options =
+-      (ECMA_BIG_UINT_BITWISE_AND_NOT | ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
++      ((uint32_t) ECMA_BIG_UINT_BITWISE_AND_NOT | (uint32_t) ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | (uint32_t) ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
+     return ecma_bigint_bitwise_op (operation_and_options, right_p, left_p);
+   }
+ 
+@@ -1641,13 +1641,13 @@ ecma_bigint_or (ecma_value_t left_value, /**< left BigInt value */
+   {
+     /* (-x) | y == ~(x-1) | y == ~((x-1) &~ y) == -(((x-1) &~ y) + 1) */
+     uint32_t operation_and_options =
+-      (ECMA_BIG_UINT_BITWISE_AND_NOT | ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
++      ((uint32_t) ECMA_BIG_UINT_BITWISE_AND_NOT | (uint32_t) ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | (uint32_t) ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
+     return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
+   }
+ 
+   /* (-x) | (-y) == ~(x-1) | ~(y-1) == ~((x-1) & (y-1)) = -(((x-1) & (y-1)) + 1) */
+   uint32_t operation_and_options =
+-    (ECMA_BIG_UINT_BITWISE_AND | ECMA_BIG_UINT_BITWISE_DECREASE_BOTH | ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
++    ((uint32_t) ECMA_BIG_UINT_BITWISE_AND | (uint32_t) ECMA_BIG_UINT_BITWISE_DECREASE_BOTH | (uint32_t) ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
+   return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
+ } /* ecma_bigint_or */
+ 
+@@ -1683,7 +1683,7 @@ ecma_bigint_xor (ecma_value_t left_value, /**< left BigInt value */
+ 
+     /* x ^ (-y) == x ^ ~(y-1) == ~(x ^ (y-1)) == -((x ^ (y-1)) + 1) */
+     uint32_t operation_and_options =
+-      (ECMA_BIG_UINT_BITWISE_XOR | ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT | ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
++      ((int) ECMA_BIG_UINT_BITWISE_XOR | (int) ECMA_BIG_UINT_BITWISE_DECREASE_RIGHT | (int) ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
+     return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
+   }
+ 
+@@ -1691,7 +1691,7 @@ ecma_bigint_xor (ecma_value_t left_value, /**< left BigInt value */
+   {
+     /* (-x) | y == ~(x-1) ^ y == ~((x-1) ^ y) == -(((x-1) ^ y) + 1) */
+     uint32_t operation_and_options =
+-      (ECMA_BIG_UINT_BITWISE_XOR | ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
++      ((int) ECMA_BIG_UINT_BITWISE_XOR | (int) ECMA_BIG_UINT_BITWISE_DECREASE_LEFT | (int) ECMA_BIG_UINT_BITWISE_INCREASE_RESULT);
+     return ecma_bigint_bitwise_op (operation_and_options, left_p, right_p);
+   }
+ 
+diff --git a/jerry-core/ecma/operations/ecma-regexp-object.c b/jerry-core/ecma/operations/ecma-regexp-object.c
+index e5b276ae..5e8f2251 100644
+--- a/jerry-core/ecma/operations/ecma-regexp-object.c
++++ b/jerry-core/ecma/operations/ecma-regexp-object.c
+@@ -164,7 +164,7 @@ ecma_op_regexp_alloc (ecma_object_t *ctr_obj_p) /**< constructor object pointer
+   ecma_value_t status = ecma_builtin_helper_def_prop (new_object_p,
+                                                       ecma_get_magic_string (LIT_MAGIC_STRING_LASTINDEX_UL),
+                                                       ecma_make_uint32_value (0),
+-                                                      ECMA_PROPERTY_FLAG_WRITABLE | JERRY_PROP_SHOULD_THROW);
++                                                      (uint32_t) ECMA_PROPERTY_FLAG_WRITABLE | (uint32_t) JERRY_PROP_SHOULD_THROW);
+ 
+   JERRY_ASSERT (ecma_is_value_true (status));
+ 
+diff --git a/jerry-core/ecma/operations/ecma-typedarray-object.c b/jerry-core/ecma/operations/ecma-typedarray-object.c
+index 40b42bb6..c455dc92 100644
+--- a/jerry-core/ecma/operations/ecma-typedarray-object.c
++++ b/jerry-core/ecma/operations/ecma-typedarray-object.c
+@@ -741,7 +741,7 @@ ecma_typedarray_helper_is_typedarray (ecma_builtin_id_t builtin_id) /**< the bui
+ ecma_builtin_id_t
+ ecma_typedarray_helper_get_prototype_id (ecma_typedarray_type_t typedarray_id) /**< the id of the typedarray **/
+ {
+-  return (ecma_builtin_id_t) (ECMA_FIRST_TYPEDARRAY_BUILTIN_PROTOTYPE_ID + typedarray_id);
++  return (ecma_builtin_id_t) ((uint32_t) ECMA_FIRST_TYPEDARRAY_BUILTIN_PROTOTYPE_ID + (uint32_t) typedarray_id);
+ } /* ecma_typedarray_helper_get_prototype_id */
+ 
+ /**
+@@ -752,7 +752,7 @@ ecma_typedarray_helper_get_prototype_id (ecma_typedarray_type_t typedarray_id) /
+ ecma_builtin_id_t
+ ecma_typedarray_helper_get_constructor_id (ecma_typedarray_type_t typedarray_id) /**< the id of the typedarray **/
+ {
+-  return (ecma_builtin_id_t) (ECMA_FIRST_TYPEDARRAY_BUILTIN_ROUTINE_ID + typedarray_id);
++  return (ecma_builtin_id_t) ((uint32_t) ECMA_FIRST_TYPEDARRAY_BUILTIN_ROUTINE_ID + (uint32_t) typedarray_id);
+ } /* ecma_typedarray_helper_get_constructor_id */
+ 
+ /**
+diff --git a/jerry-port/win/jerry-port-win-date.c b/jerry-port/win/jerry-port-win-date.c
+index 91aee326..35e55482 100644
+--- a/jerry-port/win/jerry-port-win-date.c
++++ b/jerry-port/win/jerry-port-win-date.c
+@@ -46,7 +46,7 @@
+ static void
+ unix_time_to_filetime (double t, LPFILETIME ft_p)
+ {
+-  LONGLONG ll = (LONGLONG) t * TICKS_PER_MS + UNIX_EPOCH_IN_TICKS;
++  LONGLONG ll = (LONGLONG) t * (LONGLONG) TICKS_PER_MS + (LONGLONG) UNIX_EPOCH_IN_TICKS;
+ 
+   /* FILETIME values before the epoch are invalid. */
+   if (ll < 0)
+@@ -69,7 +69,7 @@ filetime_to_unix_time (LPFILETIME ft_p)
+   ULARGE_INTEGER date;
+   date.HighPart = ft_p->dwHighDateTime;
+   date.LowPart = ft_p->dwLowDateTime;
+-  return (double) (((LONGLONG) date.QuadPart - UNIX_EPOCH_IN_TICKS) / TICKS_PER_MS);
++  return (double) (((LONGLONG) date.QuadPart - (LONGLONG) UNIX_EPOCH_IN_TICKS) / (LONGLONG) TICKS_PER_MS);
+ } /* filetime_to_unix_time */
+ 
+ /**
