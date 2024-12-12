@@ -77,7 +77,7 @@ package("openssl3")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
-        
+
         if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
@@ -108,7 +108,7 @@ package("openssl3")
         end
         table.insert(configs, "--prefix=" .. installdir)
         table.insert(configs, "--openssldir=" .. installdir)
-        
+
         if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
@@ -140,7 +140,7 @@ package("openssl3")
         if package:debug() then
             table.insert(configs, "--debug")
         end
-        
+
         if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
@@ -154,8 +154,7 @@ package("openssl3")
         end
     end)
 
-    on_install("cross", "android", function (package)
-
+    on_install("cross", "android", "iphoneos", function (package)
         local target_arch = "generic32"
         if package:is_arch("x86_64") then
             target_arch = "x86_64"
@@ -173,6 +172,20 @@ package("openssl3")
         if package:is_plat("macosx") then
             target_plat = "darwin64"
             target_arch = "x86_64-cc"
+        elseif package:is_plat("iphoneos") then
+            local xcode = package:toolchain("xcode")
+            local simulator = xcode and xcode:config("appledev") == "simulator"
+            if simulator then
+                target_plat = "iossimulator"
+                target_arch = "xcrun"
+            else
+                if package:is_arch("arm64", "x86_64") then
+                    target_plat = "ios64"
+                else
+                    target_plat = "ios"
+                end
+                target_arch = "cross"
+            end
         end
 
         local target = target_plat .. "-" .. target_arch
@@ -182,7 +195,7 @@ package("openssl3")
                          "no-threads",
                          "--openssldir=" .. package:installdir():gsub("\\", "/"),
                          "--prefix=" .. package:installdir():gsub("\\", "/")}
-        
+
         if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
