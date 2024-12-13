@@ -335,14 +335,16 @@ function main(...)
     -- load packages
     _load_packages(argv, packages_original)
 
+    os.cd(repodir)
     -- remove unsupported packages
     for idx, package in irpairs(packages) do
         assert(package == package:lower(), "package(%s) must be lower case!", package)
         if not _package_is_supported(argv, package) then
             table.remove(packages, idx)
         end
-    end
-
+    end 
+    os.cd(path.join(workdir, "test"))
+    
     -- no unsupported packages
     if #packages == 0 then
         print("no testable packages on %s!", argv.plat or os.subhost())
