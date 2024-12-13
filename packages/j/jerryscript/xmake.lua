@@ -10,7 +10,6 @@ package("jerryscript")
     add_patches("2024.12.03", "patches/2024.12.03/enum.patch", "91a69eacb49d9c7cc0302060787fe514fa53790858579bc32e326d991436bbaa")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-
     add_configs("cli", {description = "Build jerry command line tool", default = false, type = "boolean"})
 
     add_deps("cmake")
