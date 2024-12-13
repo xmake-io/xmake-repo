@@ -52,13 +52,13 @@ package("protobuf-cpp")
             package:add("deps", "ninja")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
-    
+
         if package:is_plat("windows") then
             package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
         else
             package:add("links", "protoc", "protobuf", "utf8_range", "utf8_validity")
         end
-    
+
         if package:is_plat("linux", "bsd", "mingw") then
             package:add("syslinks", "m", "pthread")
         end
@@ -167,7 +167,11 @@ package("protobuf-cpp")
         end
         import("package.tools.cmake").install(package, configs, opt)
 
-        os.trycp("build/Release/protoc.exe", package:installdir("bin"))
+        if package:is_cross() then
+            os.tryrm(package:installdir("bin/*"))
+        else
+            os.trycp("build/Release/protoc.exe", package:installdir("bin"))
+        end
     end)
 
     on_test(function (package)
