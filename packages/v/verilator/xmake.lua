@@ -66,9 +66,6 @@ package("verilator")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
         if not is_host("linux") then
             table.insert(configs, "-DCMAKE_CXX_STANDARD=20")
         end
@@ -107,10 +104,6 @@ package("verilator")
                 end
                 verilator_bin = path.join(bindir, verilator_bin .. ".exe")
                 os.trycp(verilator_bin, verilator)
-            end
-
-            if package:is_plat("windows") and package:is_debug() then
-                os.vcp(path.join(package:buildir(), "**.pdb"), package:installdir("bin"))
             end
         end
     end)
