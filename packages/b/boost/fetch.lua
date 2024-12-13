@@ -10,7 +10,7 @@ function _get_python_libs()
     end
 
     local libs = {}
-    local version = result.version
+    local version = result and result.version
     if version then
         local py_ver = semver.new(version)
         py_ver = py_ver:major() .. py_ver:minor()
