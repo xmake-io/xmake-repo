@@ -335,6 +335,7 @@ function main(...)
     -- load packages
     _load_packages(argv, packages_original)
 
+    local old_dir = os.cd(repodir)
     -- remove unsupported packages
     for idx, package in irpairs(packages) do
         assert(package == package:lower(), "package(%s) must be lower case!", package)
@@ -342,6 +343,7 @@ function main(...)
             table.remove(packages, idx)
         end
     end
+    os.cd(old_dir)
 
     -- no unsupported packages
     if #packages == 0 then
