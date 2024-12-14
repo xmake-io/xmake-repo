@@ -47,7 +47,7 @@ package("arrow")
     
     ----------------------------------------------------
     --Dependencies
-    add_deps("cmake", "xsimd", "openssl3")
+    add_deps("cmake", "xsimd")
 
     if is_plat("linux") then
         add_syslinks("pthread")
@@ -58,7 +58,7 @@ package("arrow")
     end
 
     local configs = {
-        "-DARROW_DEPENDENCY_SOURCE=SYSTEM",
+        "-DARROW_DEPENDENCY_SOURCE=BUNDLED",
         "-DARROW_BUILD_TESTS=OFF",
     }
 
@@ -90,8 +90,8 @@ package("arrow")
     end)
 
     on_component("flight", function (package, component)
-        package:add("deps", "grpc")
-        package:add("deps", "gflags")
+        --package:add("deps", "grpc")
+        --package:add("deps", "gflags")
         table.insert(configs, "-DARROW_FLIGHT=ON")
     end)
 
@@ -101,8 +101,8 @@ package("arrow")
     end)
 
     on_component("gandiva", function (package, component)
-        package:add("deps", "llvm")
-        package:add("deps", "protobuf-cpp")
+        --package:add("deps", "llvm")
+        --package:add("deps", "protobuf-cpp")
         component:add("deps", "with_re2")
         table.insert(configs, "-DARROW_GANDIVA=ON")
     end)
@@ -124,7 +124,7 @@ package("arrow")
     end)
 
     on_component("s3", function (package, component)
-        package:add("deps", "aws-sdk-cpp")
+        --package:add("deps", "aws-sdk-cpp")
         table.insert(configs, "-DARROW_S3=ON")
     end)
 
@@ -133,18 +133,18 @@ package("arrow")
     end)
 
     on_component("jemalloc", function (package, component)
-        package:add("deps", "jemalloc")
+        --package:add("deps", "jemalloc")
         table.insert(configs, "-DARROW_JEMALLOC=ON")
         table.insert(configs, "-DARROW_MIMALLOC=OFF")
     end)
 
     on_component("json", function (package, component)
-        package:add("deps", "rapidjson")
+        --package:add("deps", "rapidjson")
         table.insert(configs, "-DARROW_JSON=ON")
     end)
 
     on_component("mimalloc", function (package, component)
-        package:add("deps", "mimalloc")
+        --package:add("deps", "mimalloc")
         table.insert(configs, "-DARROW_MIMALLOC=ON")
         table.insert(configs, "-DARROW_JEMALLOC=OFF")
     end)
@@ -162,7 +162,7 @@ package("arrow")
     end)
 
     on_component("parquet", function (package, component)
-        package:add("deps", "thrift", {configs = {libevent=true, openssl=true}})
+        --package:add("deps", "thrift", {configs = {libevent=true, openssl=true}})
         table.insert(configs, "-DARROW_PARQUET=ON")
     end)
     
@@ -177,46 +177,46 @@ package("arrow")
 
     --sub components
     on_component("with_re2", function (package, component)
-        package:add("deps", "re2")
+        --package:add("deps", "re2")
         table.insert(configs, "-DARROW_WITH_RE2=ON")
     end)
 
     on_component("with_utf8proc", function (package, component)
-        package:add("deps", "utf8proc")
+        --package:add("deps", "utf8proc")
         table.insert(configs, "-DARROW_WITH_UTF8PROC=ON")
     end)
 
     on_component("with_bz2", function (package, component)
-        package:add("deps", "bzip2")
+        --package:add("deps", "bzip2")
         table.insert(configs, "-DARROW_WITH_BZ2=ON")
     end)
 
     on_component("with_brotli", function (package, component)
-        package:add("deps", "brotli")
+        --package:add("deps", "brotli")
         table.insert(configs, "-DARROW_WITH_BROTLI=ON")
     end)
 
     on_component("with_lz4", function (package, component)
-        package:add("deps", "lz4")
+        --package:add("deps", "lz4")
         table.insert(configs, "-DARROW_WITH_LZ4=ON")
     end)
 
     on_component("with_snappy", function (package, component)
-        package:add("deps", "snappy")
+        --package:add("deps", "snappy")
         table.insert(configs, "-DARROW_WITH_SNAPPY=ON")
     end)
 
     on_component("with_zlib", function (package, component)
-        package:add("deps", "zlib")
+        --package:add("deps", "zlib")
         table.insert(configs, "-DARROW_WITH_ZLIB=ON")
     end)
 
     on_component("with_zstd", function (package, component)
-        package:add("deps", "zstd")
+        --package:add("deps", "zstd")
         table.insert(configs, "-DARROW_WITH_ZSTD=ON")
     end)
     on_load("windows", "linux", "macosx", "mingw",function (package)
-        package:add("deps", "boost", {configs = {locale = true}})
+        --package:add("deps", "boost", {configs = {locale = true}})
         --optional components
         --Allocator
         if package:config("jemalloc") then 
