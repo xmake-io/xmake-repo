@@ -47,7 +47,7 @@ package("arrow")
     
     ----------------------------------------------------
     --Dependencies
-    add_deps("cmake", "boost", "xsimd")
+    add_deps("cmake", "xsimd")
 
     if is_plat("linux") then
         add_syslinks("pthread")
@@ -216,6 +216,7 @@ package("arrow")
         table.insert(configs, "-DARROW_WITH_ZSTD=ON")
     end)
     on_load("windows", "linux", "macosx", "mingw",function (package)
+        package:add("deps", "boost", {configs = {locale = true}})
         --optional components
         --Allocator
         if package:config("jemalloc") then 
