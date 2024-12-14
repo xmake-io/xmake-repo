@@ -7,7 +7,6 @@ package("uwebsockets")
     add_urls("https://github.com/uNetworking/uWebSockets/archive/refs/tags/$(version).tar.gz",
              "https://github.com/uNetworking/uWebSockets.git")
 
-    add_versions("v20.71.0", "1e4e7bfa379dd8096182d0b47ae648c7bcf93be4a4130ad6e7625ed1d46aec1d")
     add_versions("v20.70.0", "39a7e32182df2da02955ab1c1681af9710c82115075f4caabb8689a2c04460b9")
     add_versions("v20.67.0", "8124bb46326f81d99ad3552b7a3bf78489784d3660fb60d7fe5f5337a21203a3")
     add_versions("v20.66.0", "54d1a8cfb46e1814e1525e9bc72a4652aa708f352e55f35ef4b55804c98bfee1")
