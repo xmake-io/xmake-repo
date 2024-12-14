@@ -38,6 +38,13 @@ package("libcurl")
 
     -- we init all configurations in on_load, because package("curl") need it.
     on_load(function (package)
+        if package:is_plat("linux", "android", "cross") then
+            -- if no TLS backend has been enabled nor disabled, enable openssl by default
+            if package:config("openssl") == nil and package:config("openssl3") == nil and package:config("mbedtls") == nil then
+                package:config_set("openssl", true)
+            end
+        end
+
         assert(not (package:config("openssl") and package:config("openssl3")), "OpenSSL and OpenSSL-3 cannot be enabled at the same time.")
 
         if package:is_plat("macosx", "iphoneos") then
