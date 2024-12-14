@@ -47,7 +47,7 @@ package("arrow")
     
     ----------------------------------------------------
     --Dependencies
-    add_deps("cmake", "xsimd")
+    add_deps("cmake", "xsimd", "openssl3")
 
     if is_plat("linux") then
         add_syslinks("pthread")
