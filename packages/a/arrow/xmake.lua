@@ -11,7 +11,7 @@ package("arrow")
     --Note: arrow-python has been moved to pyarrow and option: -DARROW_PYTHON=ON is deprecated since 10.0.0. This will be removed in a future release; thus the "python" config option is removed.
     add_configs("build_utilities",      {description = "CBuild Arrow commandline utilities", default = false, type = "boolean"})
     add_configs("compute",      {description = "Build all computational kernel functions, ON by default", default = true, type = "boolean"})
-    add_configs("csv",      {description = "CSV reader module", default = false, type = "boolean"})
+    add_configs("csv",      {description = "CSV reader module", default = true, type = "boolean"})
     add_configs("cuda",     {description = " CUDA integration for GPU development. Depends on NVIDIA CUDA toolkit. The CUDA toolchain used to build the library can be customized by using the $CUDA_HOME environment variable.", default = false, type = "boolean"})
     add_configs("dataset",      {description = "Dataset API, implies the Filesystem API, ON bu default", default = true, type = "boolean"})
     add_configs("filesystem",      {description = "Filesystem API for accessing local and remote filesystems", default = false, type = "boolean"})
@@ -43,7 +43,7 @@ package("arrow")
     add_configs("with_zstd", {description = "Build support for ZSTD compression", default = false, type = "boolean"})
     --Customized Bundle Option
     add_configs("with_all_compress_libs", {description = "Build support for all supported compress libraries, on by default", default = true, type = "boolean"})
-    add_configs("arrow_dataio_bundle", {description = "If your use-case is limited to reading/writing Arrow data (feather, parquet, csv, json), then this options should be sufficient; default ON", default = true, type = "boolean"})
+    add_configs("arrow_dataio_bundle", {description = "If your use-case is limited to reading/writing Arrow data (feather, parquet, csv, json), then this options should be sufficient; default ON", default = false, type = "boolean"})
     
     ----------------------------------------------------
     --Dependencies
@@ -230,7 +230,7 @@ package("arrow")
         ----Every use in data sciences:
         if package:config("arrow_dataio_bundle") then 
             package:add("components","csv", "json", "ipc","parquet", "parquet_require_encryption")
-            package:add("components", "with_lz4", "with_brotli", "with_snappy", "with_zlib", "with_zstd")
+            package:add("components", "with_lz4", "with_brotli", "with_snappy", "with_zlib", "with_zstd", "with_bz2")
         end
         if package:config("with_all_compress_libs") then 
             package:add("components","with_bz2", "with_lz4", "with_brotli", "with_snappy", "with_zlib", "with_zstd")
