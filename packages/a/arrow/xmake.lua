@@ -58,7 +58,7 @@ package("arrow")
     end
 
     local configs = {
-        "-DARROW_DEPENDENCY_SOURCE=BUNDLED",
+        "-DARROW_DEPENDENCY_SOURCE=AUTO",
         "-DARROW_BUILD_TESTS=OFF",
     }
 
