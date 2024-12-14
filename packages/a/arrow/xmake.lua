@@ -42,8 +42,8 @@ package("arrow")
     add_configs("with_zlib", {description = "Build support for zlib (gzip) compression", default = false, type = "boolean"})
     add_configs("with_zstd", {description = "Build support for ZSTD compression", default = false, type = "boolean"})
     --Customized Bundle Option
-    add_configs("with_all_compress_libs", {description = "Build support for all supported compress libraries", default = false, type = "boolean"})
-    add_configs("arrow_dataio_bundle", {description = "If your use-case is limited to reading/writing Arrow data (feather, parquet, csv, json), then this options should be sufficient; default ON", default = false, type = "boolean"})
+    add_configs("with_all_compress_libs", {description = "Build support for all supported compress libraries; default ON", default = true, type = "boolean"})
+    add_configs("arrow_dataio_bundle", {description = "If your use-case is limited to reading/writing Arrow data (feather, parquet, csv, json), then this options should be sufficient; default ON", default = true, type = "boolean"})
     
     ----------------------------------------------------
     --Dependencies
