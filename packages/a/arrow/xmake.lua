@@ -256,18 +256,19 @@ package("arrow")
         end
 
         if is_plat("windows") then
-            if not has_config("shared") then
-                add_defines("ARROW_STATIC")
-                add_links("arrow_static", "arrow_bundled_dependencies")
-                if has_config("flight") then
-                    add_defines("ARROW_FLIGHT_STATIC")
-                    add_links("arrow_flight_static")
+            if package:config("shared") then
+                package:add("defines", "ARROW_STATIC")
+                package:add("links", "arrow_static")
+                package:add("links", "arrow_bundled_dependencies")
+                if package:config("flight") then
+                    package:add("defines", "ARROW_FLIGHT_STATIC")
+                    package:add("links", "arrow_flight_static")
                 end
-                if has_config("flight_sql") then
-                    add_defines("ARROW_FLIGHT_STATIC")
-                    add_defines("ARROW_FLIGHT_SQL_STATIC")
-                    add_links("arrow_flight_sql_static")
-                    add_links("arrow_flight_static")
+                if package:config("flight_sql") then
+                    package:add("defines", "ARROW_FLIGHT_STATIC")
+                    package:add("links", "arrow_flight_static")
+                    package:add("defines", "ARROW_FLIGHT_SQL_STATIC")
+                    package:add("links", "arrow_flight_sql_static")
                 end
             end
         end
