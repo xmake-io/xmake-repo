@@ -1,11 +1,10 @@
 package("arrow")
     set_homepage("https://arrow.apache.org/")
-    set_description("Apache Arrow defines a language-independent columnar memory format for flat and hierarchical data, organized for efficient analytic operations on modern hardware like CPUs and GPUs without serialization overhead. \
-    Arrow's libraries implement the format and provide building blocks for a range of use cases, including high performance analytics. ")
+    set_description("Apache Arrow defines a language-independent columnar memory format for flat and hierarchical data, organized for efficient analytic operations on modern hardware like CPUs and GPUs without serialization overhead. Arrow's libraries implement the format and provide building blocks for a range of use cases, including high performance analytics. ")
     set_license("Apache-2.0")
     set_urls("https://github.com/apache/arrow/archive/refs/tags/apache-arrow-$(version).tar.gz")
 
-    add_versions('18.1.0','026ecabd74f7b075f6c74e5448132ba40f35688a29d07616bcc1bd976676706c')
+    add_versions("18.1.0", "026ecabd74f7b075f6c74e5448132ba40f35688a29d07616bcc1bd976676706c")
     
     --Note: gcs depends on google-cloud-sdk which is not included in xrepo
     --Note: orc depends on Apache-orc which is not included in xrepo, and can generate compile-time error at this time with gcc-14&-O3, thus left disabled
@@ -300,4 +299,3 @@ package("arrow")
             }
         ]]}, {configs = {languages = "c++17"}, includes = "arrow/api.h"}))
     end)
-package_end()
