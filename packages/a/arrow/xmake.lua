@@ -162,7 +162,7 @@ package("arrow")
     end)
 
     on_component("parquet", function (package, component)
-        package:add("deps", "thrift", {configs = {libevent=true, openssl=true})
+        package:add("deps", "thrift", {configs = {libevent=true, openssl=true}})
         table.insert(configs, "-DARROW_PARQUET=ON")
     end)
     
