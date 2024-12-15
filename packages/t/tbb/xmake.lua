@@ -21,6 +21,8 @@ package("tbb")
         add_versions("2021.10.0", "487023a955e5a3cc6d3a0d5f89179f9b6c0ae7222613a7185b0227ba0c83700b")
         add_versions("2021.11.0", "782ce0cab62df9ea125cdea253a50534862b563f1d85d4cda7ad4e77550ac363")
         add_versions("2021.12.0", "c7bb7aa69c254d91b8f0041a71c5bcc3936acb64408a1719aec0b2b7639dd84f")
+        add_versions("2021.13.0", "3ad5dd08954b39d113dc5b3f8a8dc6dc1fd5250032b7c491eb07aed5c94133e1")
+        add_versions("2022.0.0", "e8e89c9c345415b17b30a2db3095ba9d47647611662073f7fbf54ad48b7f3c2a")
     else
         add_urls("https://github.com/oneapi-src/oneTBB/archive/refs/tags/v$(version).tar.gz")
         add_versions("2020.3", "ebc4f6aa47972daed1f7bf71d100ae5bf6931c2e3144cf299c8cc7d041dca2f3")
@@ -32,11 +34,14 @@ package("tbb")
         add_versions("2021.10.0", "487023a955e5a3cc6d3a0d5f89179f9b6c0ae7222613a7185b0227ba0c83700b")
         add_versions("2021.11.0", "782ce0cab62df9ea125cdea253a50534862b563f1d85d4cda7ad4e77550ac363")
         add_versions("2021.12.0", "c7bb7aa69c254d91b8f0041a71c5bcc3936acb64408a1719aec0b2b7639dd84f")
-    
+        add_versions("2021.13.0", "3ad5dd08954b39d113dc5b3f8a8dc6dc1fd5250032b7c491eb07aed5c94133e1")
+        add_versions("2022.0.0", "e8e89c9c345415b17b30a2db3095ba9d47647611662073f7fbf54ad48b7f3c2a")
+        
         add_patches("2020.3", "patches/2020.3/gcc13.patch", "419557beb877a72fa394c886fbb674c1b0c300fee7f2ec4e2de39ceeeb6b95fd")
         add_patches("2021.2.0", "patches/2021.2.0/gcc11.patch", "181511cf4878460cb48ac0531d3ce8d1c57626d698e9001a0951c728fab176fb")
         add_patches("2021.5.0", "patches/2021.5.0/i386.patch", "1a1c11724839cf98b1b8f4d415c0283ec7719c330b11503c578739eb02889ec0")
-
+        add_patches("2022.0.0", "patches/2022.0.0/fix-mingw-compilation.patch", "917999038883152acd2e8b59edbc67081d4c9cb6a15113ce28d38274fe8fb0d9")
+        
         if is_plat("macosx") then
             add_configs("compiler", {description = "Compiler used to compile tbb." , default = "clang", type = "string", values = {"clang", "gcc", "icc", "cl", "icl", "[others]"}})
         else
@@ -89,7 +94,7 @@ package("tbb")
 
                 local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
                 local ndkver = ndk:config("ndkver")
-                if ndkver == 26 then
+                if ndkver == 26 or ndkver == 27 then
                     exflags = {"-Wl,--undefined-version"}
                 end
             end

@@ -34,24 +34,37 @@ package("libxml2")
     add_deps("cmake")
 
     if on_check then
-        on_check("iphoneos", function (package)
-            if not package:gitref() then
+        on_check(function (package)
+            if not package:gitref() and package:is_plat("iphoneos") then
                 raise("All version unsupported now. see https://gitlab.gnome.org/GNOME/libxml2/-/issues/774\nYou can use `libxml2 master` branch to build or open a pull request to patch it.")
+            end
+
+            if package:config("python") then
+                if package:is_cross() then
+                    raise("package(libxml2) python interface does not support cross-compilation")
+                end
+                if not package:is_plat("windows", "linux", "macosx", "bsd") then
+                    raise("package(libxml2) python interface unsupported current platform")
+                end
             end
         end)
     end
 
     on_load(function (package)
-        if package:is_plat("windows", "mingw") and not package:config("shared") then
-            package:add("defines", "LIBXML_STATIC")
-        end
-
         if package:config("all") then
             for name, _ in pairs(import("configs").get_libxml2_configs()) do
                 if name ~= "python" then
                     package:config_set(name, true)
                 end
             end
+        end
+
+        if package:config("python") then
+            package:config_set("iconv", true)
+            package:add("deps", "python 3.x", {private = true})
+            package:addenv("PYTHONPATH", "python")
+            package:mark_as_pathenv("PYTHONPATH")
+            package:data_set("PYTHONPATH", package:installdir("python"))
         end
 
         if package:config("threads") and package:is_plat("linux", "bsd") then
@@ -78,20 +91,37 @@ package("libxml2")
         if package:config("readline") and package:is_plat("linux", "macosx") then
             package:add("deps", "readline")
         end
-        if package:config("python") then
-            assert(package:config("shared"), "package(libxml2) python interface require shared lib")
-            if package:is_cross() then
-                raise("libxml2 python interface does not support cross-compilation")
-            end
-            if not package:config("iconv") then
-                raise("libxml2 python interface requires iconv to be enabled")
-            end
-            package:add("deps", "python 3.x")
-            package:addenv("PYTHONPATH", package:installdir("python"))
+
+        if package:is_plat("windows", "mingw") and not package:config("shared") then
+            package:add("defines", "LIBXML_STATIC")
         end
     end)
 
     on_install(function (package)
+        local cxflags = {}
+        local shflags = {}
+        if package:config("python") then
+            io.replace("python/libxml.c", "PyObject *PyInit_libxml2mod", "PyMODINIT_FUNC\nPyInit_libxml2mod", {plain = true})
+            io.replace("CMakeLists.txt", "add_library(\n        LibXml2Mod", "add_library(LibXml2Mod SHARED", {plain = true})
+            if package:config("shared") and is_host("windows") then
+                local patch = io.readfile(path.join(os.scriptdir(), "patches/patch-libxml.py"))
+                io.replace("python/libxml.py", "import libxml2mod", patch, {plain = true})
+            end
+            -- @see https://github.com/xmake-io/xmake/issues/2177
+            -- https://github.com/xmake-io/xmake-repo/pull/5930
+            if package:is_plat("macosx") then
+                io.replace("CMakeLists.txt", "target_link_libraries(LibXml2Mod LibXml2 Python::Python)",
+                    "target_link_libraries(LibXml2Mod LibXml2)", {plain = true})
+                local pythonlib = package:dep("python"):fetch()
+                if pythonlib then
+                    for _, includedir in ipairs(pythonlib.sysincludedirs or pythonlib.includedirs) do
+                        table.insert(cxflags, "-I" .. includedir)
+                    end
+                end
+                table.join2(shflags, {"-undefined", "dynamic_lookup"})
+            end
+        end
+
         local configs = {"-DLIBXML2_WITH_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -100,16 +130,26 @@ package("libxml2")
             table.insert(configs, format("-DLIBXML2_WITH_%s=%s", name:upper(), enabled))
         end
 
-        local opt = {}
+        if package:config("python") then
+            table.insert(configs, "-DLIBXML2_PYTHON_INSTALL_DIR=" .. package:data("PYTHONPATH"))
+            local python = package:dep("python")
+            if not python:is_system() then
+                table.insert(configs, "-DPython_ROOT_DIR=" .. python:installdir())
+            end
+        end
+
         local lzma = package:dep("xz")
         if lzma and not lzma:config("shared") then
-            opt.cxflags = "-DLZMA_API_STATIC"
+            table.insert(cxflags, "-DLZMA_API_STATIC")
         end
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags, shflags = shflags})
+
         if package:is_plat("windows") then
             local libfiles = os.files(package:installdir("lib/*xml2*.lib"))[1]
             local pc = package:installdir("lib/pkgconfig/libxml-2.0.pc")
             io.replace(pc, "-lxml2", "-l" .. path.basename(libfiles), {plain = true})
+        elseif package:is_plat("macosx") then
+            os.trymv(path.join(package:installdir("python"), "libxml2mod.dylib"), path.join(package:installdir("python"), "libxml2mod.so"))
         end
     end)
 

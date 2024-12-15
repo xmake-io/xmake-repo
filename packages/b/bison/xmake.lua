@@ -20,11 +20,7 @@ package("bison")
     add_versions("3.7.6", "69dc0bb46ea8fc307d4ca1e0b61c8c355eb207d0b0c69f4f8462328e74d7b9ea")
     add_versions("3.8.2", "06c9e13bdf7eb24d4ceb6b59205a4f67c2c7e7213119644430fe82fbd14a0abb")
 
-    if is_subhost("msys") then
-        add_deps("pacman::bison")
-    end
-
-    on_load("macosx", "linux", "bsd", "windows", function (package)
+    on_load("macosx", "linux", "bsd", "windows", "@msys", function (package)
         if package:is_plat("windows") then
             package:add("deps", "winflexbison", {private = true})
         elseif package:is_plat("linux", "bsd") then
@@ -37,9 +33,10 @@ package("bison")
         if package:is_library() then
             package:set("kind", "library", {headeronly = true})
         end
-    end)
 
-    on_install("@msys", function (package)
+        if is_subhost("msys") and xmake:version():ge("2.9.7") then
+            package:add("deps", "pacman::bison", {configs = {msystem = "msys"}})
+        end
     end)
 
     on_install("windows", function (package)

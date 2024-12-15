@@ -3,6 +3,7 @@ package("protobuf-cpp")
     set_description("Google's data interchange format for cpp")
     set_license("BSD-3-Clause")
 
+    add_urls("https://github.com/protocolbuffers/protobuf.git")
     add_urls("https://github.com/protocolbuffers/protobuf/releases/download/v$(version)", {version = function (version)
         if version:le("3.19.4") then
             return version .. "/protobuf-cpp-" .. version .. ".zip"
@@ -36,24 +37,44 @@ package("protobuf-cpp")
     add_configs("lite", {description = "Build lite version", default = true, type = "boolean", readonly = true})
     add_configs("upb", {description = "Build upb", default = false, type = "boolean"})
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::protobuf")
+    elseif is_plat("linux") then
+        add_extsources("pacman::protobuf")
+    elseif is_plat("macosx") then
+        add_extsources("brew::protobuf")
+    end
+
     add_deps("cmake")
-    if is_plat("android") and is_host("windows") then
-        add_deps("ninja")
-        set_policy("package.cmake_generator.ninja", true)
-    end
-
-    if is_plat("windows") then
-        add_links("libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
-    else
-        add_links("protoc", "protobuf", "utf8_range", "utf8_validity")
-    end
-
-    if is_plat("linux", "bsd", "mingw") then
-        add_syslinks("m", "pthread")
-    end
 
     on_load(function (package)
-        package:addenv("PATH", "bin")
+        if package:is_plat("android") and is_host("windows") then
+            package:add("deps", "ninja")
+            package:set("policy", "package.cmake_generator.ninja", true)
+        end
+
+        if package:is_plat("windows") then
+            package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
+        else
+            package:add("links", "protoc", "protobuf", "utf8_range", "utf8_validity")
+        end
+
+        if package:is_plat("linux", "bsd", "mingw") then
+            package:add("syslinks", "m", "pthread")
+        end
+
+        if package:is_plat("linux") then
+            if package:is_binary() then
+                package:add("extsources", "apt::protobuf-compiler")
+            elseif package:is_library() then
+                package:add("extsources", "apt::libprotobuf-dev", "apt::libprotoc-dev")
+            end
+        end
+
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
+
         if package:config("zlib") then
             package:add("deps", "zlib")
         end
@@ -107,6 +128,10 @@ package("protobuf-cpp")
     end)
 
     on_install(function (package)
+        if package:is_plat("windows", "mingw") then
+            io.replace("src/google/protobuf/port_def.inc", "#define PROTOBUF_DESCRIPTOR_WEAK_MESSAGES_ALLOWED", "", {plain = true})
+        end
+
         local version = package:version()
         if version:le("3.19.4") then
             os.cd("cmake")
@@ -116,9 +141,6 @@ package("protobuf-cpp")
         io.replace("CMakeLists.txt", "set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)", "", {plain = true})
         if version:ge("26.1") then
             io.replace("cmake/abseil-cpp.cmake", "BUILD_SHARED_LIBS AND MSVC", "FALSE", {plain = true})
-        end
-        if package:is_plat("windows", "mingw") then
-            io.replace("src/google/protobuf/port_def.inc", "#define PROTOBUF_DESCRIPTOR_WEAK_MESSAGES_ALLOWED", "", {plain = true})
         end
 
         local configs = {
@@ -132,7 +154,7 @@ package("protobuf-cpp")
         table.insert(configs, "-Dprotobuf_DISABLE_RTTI=" .. (package:config("rtti") and "OFF" or "ON"))
         if package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-            table.insert(configs, "-Dprotobuf_MSVC_STATIC_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            table.insert(configs, "-Dprotobuf_MSVC_STATIC_RUNTIME=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
         end
 
         table.insert(configs, "-Dprotobuf_WITH_ZLIB=" .. (package:config("zlib") and "ON" or "OFF"))
@@ -146,7 +168,11 @@ package("protobuf-cpp")
         end
         import("package.tools.cmake").install(package, configs, opt)
 
-        os.trycp("build/Release/protoc.exe", package:installdir("bin"))
+        if package:is_cross() then
+            os.tryrm(package:installdir("bin/*"))
+        else
+            os.trycp("build/Release/protoc.exe", package:installdir("bin"))
+        end
     end)
 
     on_test(function (package)
