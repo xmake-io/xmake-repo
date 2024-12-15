@@ -1,11 +1,14 @@
 package("openexr")
-
     set_homepage("https://www.openexr.com/")
     set_description("OpenEXR provides the specification and reference implementation of the EXR file format, the professional-grade image storage format of the motion picture industry.")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/openexr.git")
+
+    add_versions("v3.3.2", "5013e964de7399bff1dd328cbf65d239a989a7be53255092fa10b85a8715744d")
+    add_versions("v3.3.1", "58aad2b32c047070a52f1205b309bdae007442e0f983120e4ff57551eb6f10f1")
+    add_versions("v3.3.0", "58b00f50d2012f3107573c4b7371f70516d2972c2b301a50925e1b4a60a7be6f")
     add_versions("v3.2.4", "81e6518f2c4656fdeaf18a018f135e96a96e7f66dbe1c1f05860dd94772176cc")
     add_versions("v3.2.3", "f3f6c4165694d5c09e478a791eae69847cadb1333a2948ca222aa09f145eba63")
     add_versions("v2.5.3", "6a6525e6e3907715c6a55887716d7e42d09b54d2457323fcee35a0376960bebf")
@@ -18,14 +21,30 @@ package("openexr")
     add_versions("v3.1.5", "93925805c1fc4f8162b35f0ae109c4a75344e6decae5a240afdfce25f8a433ec")
     add_versions("v3.2.1", "61e175aa2203399fb3c8c2288752fbea3c2637680d50b6e306ea5f8ffdd46a9b")
 
-    add_deps("cmake")
-    add_deps("zlib")
-
     add_configs("build_both", {description = "Build both static library and shared library. (deprecated)", default = false, type = "boolean"})
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
 
     add_includedirs("include/OpenEXR", "include")
 
-    on_load("windows", "macosx", "linux", "mingw@windows", "mingw@msys", function (package)
+    add_deps("cmake")
+    add_deps("zlib", "libdeflate")
+
+    if on_check then
+        on_check("windows", function (package)
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            if vs_toolset and package:is_arch("arm.*") then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(openexr) dep(libdeflate) requires vs_toolset >= 14.3")
+            end
+        end)
+    end
+
+    on_load(function (package)
         local ver = package:version()
         local suffix = format("-%d_%d", ver:major(), ver:minor())
         local links = {}
@@ -43,9 +62,23 @@ package("openexr")
         end
     end)
 
-    on_install("macosx", "linux", "windows|x64", "windows|x86", "mingw@windows", "mingw@msys", function (package)
-        local configs = {"-DBUILD_TESTING=OFF", "-DINSTALL_OPENEXR_EXAMPLES=OFF", "-DINSTALL_OPENEXR_DOCS=OFF", "-DOPENEXR_BUILD_UTILS=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+    on_install(function (package)
+        io.replace("CMakeLists.txt", "add_subdirectory(website/src)", "", {plain = true})
+
+        local configs = {
+            "-DBUILD_TESTING=OFF",
+            "-DINSTALL_OPENEXR_EXAMPLES=OFF",
+            "-DOPENEXR_BUILD_EXAMPLES=OFF",
+            "-DINSTALL_OPENEXR_DOCS=OFF",
+            "-DBUILD_WEBSITE=OFF",
+            "-DCMAKE_DEBUG_POSTFIX=''",
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        end
+        table.insert(configs, "-DOPENEXR_BUILD_TOOLS=" .. (package:config("tools") and "ON" or "OFF"))
+        table.insert(configs, "-DOPENEXR_BUILD_UTILS=" .. (package:config("tools") and "ON" or "OFF"))
         if package:version():ge("3.0") then
             if package:is_plat("windows") and package:version():le("3.1.4") then
                 local vs_toolset = import("core.tool.toolchain").load("msvc"):config("vs_toolset")
@@ -68,14 +101,17 @@ package("openexr")
             table.insert(configs, "-DPYILMBASE_ENABLE=OFF")
         end
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:is_debug() then
+            os.vcp(path.join(package:buildir(), "bin/*.pdb"), package:installdir("bin"))
+            os.vcp(path.join(package:buildir(), "src/lib/*.pdb"), package:installdir("lib"))
+        end
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include <stdio.h>
             void test() {
-                printf( OPENEXR_PACKAGE_STRING );
+                Imf::RgbaInputFile file("hello.exr");
             }
-        ]]}, {configs = {languages = "c++14"},
-              includes = {"OpenEXR/OpenEXRConfig.h"}}))
+        ]]}, {configs = {languages = "c++14"}, includes = {"ImfRgbaFile.h"}}))
     end)

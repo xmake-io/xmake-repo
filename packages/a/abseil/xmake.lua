@@ -3,7 +3,7 @@ package("abseil")
     set_description("C++ Common Libraries")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/abseil/abseil-cpp/archive/$(version).tar.gz",
+    add_urls("https://github.com/abseil/abseil-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/abseil/abseil-cpp.git")
 
     add_versions("20200225.1", "0db0d26f43ba6806a8a3338da3e646bb581f0ca5359b3a201d8fb8e4752fd5f8")
@@ -24,13 +24,15 @@ package("abseil")
 
     add_configs("cxx_standard", {description = "Select c++ standard to build.", default = "17", type = "string", values = {"14", "17", "20"}})
 
-    if is_plat("linux") then
-        add_syslinks("pthread")
-    elseif is_plat("macosx") then
-        add_frameworks("CoreFoundation")
-    end
-
     on_load(function (package)
+        if package:is_plat("windows", "mingw", "msys") then
+            package:add("syslinks", "advapi32", "dbghelp", "bcrypt")
+        elseif package:is_plat("linux", "bsd") then
+            package:add("syslinks", "pthread")
+        elseif package:is_plat("macosx", "iphoneos") then
+            package:add("frameworks", "CoreFoundation")
+        end
+
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "ABSL_CONSUME_DLL")
         end
@@ -43,8 +45,13 @@ package("abseil")
         end
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
         io.replace("CMakeLists.txt", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
-        local configs = {"-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"), "-DABSL_ENABLE_INSTALL=ON", "-DABSL_PROPAGATE_CXX_STD=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+
+        local configs = {
+            "-DCMAKE_CXX_STANDARD=" .. package:config("cxx_standard"),
+            "-DABSL_ENABLE_INSTALL=ON",
+            "-DABSL_PROPAGATE_CXX_STD=ON",
+        }
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
 

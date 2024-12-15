@@ -1,0 +1,30 @@
+diff --git a/rpcapd/CMakeLists.txt b/rpcapd/CMakeLists.txt
+index 555d6d40..7446687e 100644
+--- a/rpcapd/CMakeLists.txt
++++ b/rpcapd/CMakeLists.txt
+@@ -87,13 +87,13 @@ if(WIN32 OR ((CMAKE_USE_PTHREADS_INIT OR PTHREADS_FOUND) AND HAVE_CRYPT))
+       OSX_ARCHITECTURES "${OSX_EXECUTABLE_ARCHITECTURES}")
+   endif()
+ 
+-  if(WIN32)
++  if(BUILD_SHARED_LIBS)
+     target_link_libraries(rpcapd ${LIBRARY_NAME}
+       ${RPCAPD_LINK_LIBRARIES} ${PCAP_LINK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+-  else(WIN32)
++  else(BUILD_SHARED_LIBS)
+     target_link_libraries(rpcapd ${LIBRARY_NAME}_static
+       ${RPCAPD_LINK_LIBRARIES} ${PCAP_LINK_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+-  endif(WIN32)
++  endif(BUILD_SHARED_LIBS)
+ 
+   ######################################
+   # Install rpcap daemon and man pages
+@@ -119,7 +119,7 @@ if(WIN32 OR ((CMAKE_USE_PTHREADS_INIT OR PTHREADS_FOUND) AND HAVE_CRYPT))
+     # will determine where it goes.
+     #
+     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+-      install(TARGETS rpcapd DESTINATION bin/amd64)
++      install(TARGETS rpcapd DESTINATION bin)
+     else(CMAKE_SIZEOF_VOID_P EQUAL 8)
+       install(TARGETS rpcapd DESTINATION bin)
+     endif(CMAKE_SIZEOF_VOID_P EQUAL 8)

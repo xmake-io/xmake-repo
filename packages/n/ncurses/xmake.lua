@@ -43,12 +43,8 @@ package("ncurses")
         }
 
         table.insert(configs, "--with-debug=" .. (package:is_debug() and "yes" or "no"))
-        if package:config("widec") then
-            table.insert(configs, "--enable-widec")
-        end
-        if package:config("shared") then
-            table.insert(configs, "--with-shared")
-        end
+        table.insert(configs, "--with-shared=" .. (package:config("shared") and "yes" or "no"))
+        table.insert(configs, "--enable-widec=" .. (package:config("widec") and "yes" or "no"))
         import("package.tools.autoconf").install(package, configs, {arflags = {"-curvU"}})
     end)
 

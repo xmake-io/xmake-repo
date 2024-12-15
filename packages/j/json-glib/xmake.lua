@@ -5,6 +5,7 @@ package("json-glib")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/GNOME/json-glib/archive/refs/tags/$(version).tar.gz")
+    add_versions("1.10.0", "447890f9de2a04c312871768208f6c8aeec4069392af7605bc77e61165dcb374")
     add_versions("1.9.2", "277c3b7fc98712e30115ee3a60c3eac8acc34570cb98d3ff78de85ed804e0c80")
 
     add_patches("1.9.2", "patches/1.9.2/add_brace_to_json_scanner.patch", "5d77c14d25ad24a911d28d51e9defee9a3c382428dc3e23101f6319fc46b227c")

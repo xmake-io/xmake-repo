@@ -5,6 +5,7 @@ package("hypre")
 
     add_urls("https://github.com/hypre-space/hypre/archive/refs/tags/$(version).tar.gz",
              "https://github.com/hypre-space/hypre.git")
+    add_versions("v2.32.0", "2277b6f01de4a7d0b01cfe12615255d9640eaa02268565a7ce1a769beab25fa1")
     add_versions("v2.31.0", "9a7916e2ac6615399de5010eb39c604417bb3ea3109ac90e199c5c63b0cb4334")
     add_versions("v2.30.0", "8e2af97d9a25bf44801c6427779f823ebc6f306438066bba7fcbc2a5f9b78421")
     add_versions("v2.20.0", "5be77b28ddf945c92cde4b52a272d16fb5e9a7dc05e714fc5765948cba802c01")

@@ -1,0 +1,13 @@
+diff --git a/source/win32/low_latency_iocp_context.cpp b/source/win32/low_latency_iocp_context.cpp
+index 3941c87..db8c293 100644
+--- a/source/win32/low_latency_iocp_context.cpp
++++ b/source/win32/low_latency_iocp_context.cpp
+@@ -19,6 +19,7 @@
+ #include <unifex/scope_guard.hpp>
+ #include <unifex/exception.hpp>
+ 
++#include <cstring>
+ #include <atomic>
+ #include <random>
+ #include <system_error>
+ 

@@ -136,6 +136,14 @@ package("cmake")
         add_extsources("brew::cmake")
     end
 
+    on_load(function (package)
+        -- xmake v3.x will enable this ninja policy by default
+        import("core.project.project")
+        if xmake.version():ge("2.9.0") and project.policy("package.cmake_generator.ninja") then
+            package:add("deps", "ninja")
+        end
+    end)
+
     on_install("@macosx", function (package)
         os.cp("CMake.app/Contents/bin", package:installdir())
         os.cp("CMake.app/Contents/share", package:installdir())

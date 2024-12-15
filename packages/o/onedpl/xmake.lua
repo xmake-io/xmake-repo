@@ -2,12 +2,15 @@ package("onedpl")
 
     set_kind("library", {headeronly = true})
     set_homepage("https://www.intel.com/content/www/us/en/developer/tools/oneapi/dpc-library.html")
-    set_description("oneAPI DPC++ Library")
+    set_description("oneDPL is part of the UXL Foundation and is an implementation of the oneAPI specification for the oneDPL component.")
 
     add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version).tar.gz")
     add_urls("https://github.com/oneapi-src/oneDPL/archive/refs/tags/oneDPL-$(version)-release.tar.gz")
     add_versions("2021.6.1", "4995fe2ed2724b89cdb52c4b6c9af22e146b48d2561abdafdaaa06262dbd67c4")
     add_versions("2022.5.0-rc1", "9180c60331ec5b307dd89a5d8bfcd096667985c6761c52322405d4b69193ed88")
+    add_versions("2022.6.0-rc1", "45698e2f97de085806aa685ec1fe3ccecc28251d744b016fca112aa3ecc90c9a")
+    add_versions("2022.7.0", "095be49a9f54633d716e82f66cc3f1e5e858f19ef47639e4c94bfc6864292990")
+    add_versions("2022.7.1", "0e6a1bee7a4f4375091c98b0b5290edf3178bb810384e0e106bf96c03649a754")
 
     add_configs("backend", {description = "Choose threading backend.", default = "tbb", type = "string", values = {"tbb", "dpcpp", "dpcpp_only", "omp", "serial"}})
 

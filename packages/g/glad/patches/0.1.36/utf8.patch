@@ -1,0 +1,23 @@
+diff --git a/glad/__main__.py b/glad/__main__.py
+index 4b01eb16..1dbae4b0 100644
+--- a/glad/__main__.py
++++ b/glad/__main__.py
+@@ -40,7 +40,7 @@ def get_spec(value, reproducible=False):
+         if reproducible:
+             logger.info('reproducible build, using packaged specification: \'%s.xml\'', value)
+             try:
+-                return spec_cls.from_file(glad.files.open_local(value + '.xml'))
++                return spec_cls.from_file(glad.files.open_local(value + '.xml', 'rb'))
+             except IOError:
+                 raise ValueError('unable to open reproducible copy of {}.xml, '
+                                  'try dropping --reproducible'.format(value))
+diff --git a/glad/files/gl.xml b/glad/files/gl.xml
+index 60696d62..d5f33ba2 100644
+--- a/glad/files/gl.xml
++++ b/glad/files/gl.xml
+@@ -1,4 +1,4 @@
+-﻿<?xml version="1.0" encoding="UTF-8"?>
++<?xml version="1.0" encoding="UTF-8"?>
+ <registry>
+     <comment>
+ Copyright 2013-2020 The Khronos Group Inc.

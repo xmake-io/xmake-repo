@@ -1,11 +1,12 @@
 package("imath")
-
     set_homepage("https://github.com/AcademySoftwareFoundation/Imath/")
     set_description("Imath is a C++ and python library of 2D and 3D vector, matrix, and math operations for computer graphics")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/AcademySoftwareFoundation/Imath/archive/refs/tags/$(version).tar.gz",
              "https://github.com/AcademySoftwareFoundation/Imath.git")
+
+    add_versions("v3.1.12", "8a1bc258f3149b5729c2f4f8ffd337c0e57f09096e4ba9784329f40c4a9035da")
     add_versions("v3.1.10", "f2943e86bfb694e216c60b9a169e5356f8a90f18fbd34d7b6e3450be14f60b10")
     add_versions("v3.1.0", "211c907ab26d10bd01e446da42f073ee7381e1913d8fa48084444bc4e1b4ef87")
     add_versions("v3.1.1", "a63fe91d8d0917acdc31b0c9344b1d7dbc74bf42de3e3ef5ec982386324b9ea4")
@@ -17,17 +18,26 @@ package("imath")
     add_versions("v3.1.11", "9057849585e49b8b85abe7cc1e76e22963b01bfdc3b6d83eac90c499cd760063")
 
     add_includedirs("include", "include/Imath")
-    on_load(function (package)
-        if not package.is_built or package:is_built() then
-            package:add("deps", "cmake")
-        end
-    end)
 
-    on_install("windows", "macosx", "linux", "mingw@windows", "mingw@msys", function (package)
+    add_deps("cmake")
+
+    on_install(function (package)
+        if package:is_plat("windows", "mingw") and package:config("shared") then
+            package:add("defines", "IMATH_DLL")
+        end
+
         local configs = {"-DBUILD_TESTING=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
+        end
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") and package:is_debug() then
+            local dir = package:installdir(package:config("shared") and "bin" or "lib")
+            os.vcp(path.join(package:buildir(), "**.pdb"), dir)
+        end
     end)
 
     on_test(function (package)

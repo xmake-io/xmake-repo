@@ -7,6 +7,7 @@ package("taskflow")
 
     add_urls("https://github.com/taskflow/taskflow.git")
     add_urls("https://github.com/taskflow/taskflow/archive/$(version).tar.gz")
+    add_versions("v3.8.0", "51316ee5fbf0c8f8f4638eb7428430cadfe6e8910756593884710e99129fa0ab")
     add_versions("v3.7.0", "788b88093fb3788329ebbf7c7ee05d1f8960d974985a301798df01e77e04233b")
     add_versions("v3.6.0", "5a1cd9cf89f93a97fcace58fd73ed2fc8ee2053bcb43e047acb6bc121c3edf4c")
     add_versions("v3.5.0", "33c44e0da7dfda694d2b431724d6c8fd25a889ad0afbb4a32e8da82e2e9c2a92")

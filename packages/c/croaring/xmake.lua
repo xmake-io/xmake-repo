@@ -6,6 +6,8 @@ package("croaring")
     add_urls("https://github.com/RoaringBitmap/CRoaring/archive/refs/tags/$(version).tar.gz",
              "https://github.com/RoaringBitmap/CRoaring.git")
 
+    add_versions("v4.1.7", "ea235796c074c3a8a8c3e5c84bb5f09619723b8e4913cf99cc349f626c193569")
+    add_versions("v4.1.5", "7eafa9fd0dace499e80859867a6ba5a010816cf6e914dd9350ad1d44c0fc83eb")
     add_versions("v4.1.1", "42804cc2bb5c9279ec4fcaa56d2d6b389da934634abcce8dbc4e4c1d60e1468d")
     add_versions("v4.1.0", "0596c6e22bcccb56f38260142b435f1f72aef7721fa370fd9f2b88380245fc1d")
     add_versions("v4.0.0", "a8b98db3800cd10979561a1388e4e970886a24015bd6cfabb08ba7917f541b0d")

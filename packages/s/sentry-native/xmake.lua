@@ -5,6 +5,11 @@ package("sentry-native")
     set_urls("https://github.com/getsentry/sentry-native/releases/download/$(version)/sentry-native.zip",
              "https://github.com/getsentry/sentry-native.git")
 
+    add_versions("0.7.15", "9880614984c75fc6ed1967b7aa29aebbea2f0c88f2d7c707b18391b5632091c0")
+    add_versions("0.7.12", "03c99ef84992fddd37f79c63ae78a69ec49b1b1d7598c7a7c5d8e6742b97ea0a")
+    add_versions("0.7.11", "7fb41a8e5270168958d867504f503beb014035f382edaa07132be65348df27e0")
+    add_versions("0.7.10", "b7f7b5002cf7a4c614736ac294351da499db4f7fe155a452d527e69badc672bc")
+    add_versions("0.7.9", "d01f66125e1fb80c02668d2ea6b908987323d3f477d69332ef21506a62606d40")
     add_versions("0.7.6", "42180ad933a3a2bd86a1649ed0f1a41df20e783ce17c5cb1f86775f7caf06bc1")
     add_versions("0.7.5", "d9f1b44753fae3e9462aa1e6fd3021cb0ff2f51c1a1fa02b34510e3bc311f429")
     add_versions("0.7.2", "afb44d5cc4e0ec5f2e8068132c68256959188f6bf015e1837e7cc687014b9c70")
@@ -36,6 +41,15 @@ package("sentry-native")
         add_frameworks("CoreText", "CoreGraphics", "SystemConfiguration", "CoreFoundation", "Foundation")
         add_syslinks("bsm")
     end
+
+    on_check(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include <ranges>
+            template<typename T>
+            concept CR = std::ranges::contiguous_range<T>;
+            void test() {}
+        ]]}, {configs = {languages = "c++20"}}), "package(sentry-native) Require at least C++20.")
+    end)
 
     on_load("windows", "linux", "macosx", function (package)
         if not package:config("shared") then

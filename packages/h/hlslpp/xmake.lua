@@ -5,6 +5,8 @@ package("hlslpp")
     set_license("MIT")
 
     add_urls("https://github.com/redorav/hlslpp/archive/refs/tags/$(version).tar.gz")
+    add_versions("3.5.3", "9be1b0edcd7877da49e5e85473c83eac792ef10dcccd3f1ff18297f2176ac251")
+    add_versions("3.5.1", "5f0a89db4b2a8dcf8237463455d6c03e3f9a090117aed2ba07a7309b239bd88c")
     add_versions("3.5", "9553e69181a5cff770fe68c2dc5afcda638b290c2e83dca635ed695e01aa16df")
     add_versions("3.4", "14541f5350849f04785280add677d7ee4c9a224376e0644beb71318ef18f3531")
     add_versions("3.1", "6f933e43bf8150a41d76a188377e59007897dc87e96be30608e7f2007605d5c4")

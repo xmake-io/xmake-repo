@@ -9,6 +9,7 @@ package("sokol")
     add_versions("2022.02.10", "e8931e4399a0eb4bf026120d7bdb89825815af9e")
     add_versions("2023.01.27", "dc6814bdecd277366a650b6b0b744b52bb9131e5")
     add_versions("2024.07.10", "7b20c1936229370277d1c61bde950bce194de584")
+    add_versions("2024.12.08", "a94f66a4823cabe63374c93c502331e83642b70f")
 
     on_install(function (package)
         os.cp("*.h", package:installdir("include"))

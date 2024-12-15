@@ -5,6 +5,8 @@ package("spdlog")
 
     add_urls("https://github.com/gabime/spdlog/archive/refs/tags/$(version).zip",
              "https://github.com/gabime/spdlog.git")
+
+    add_versions("v1.15.0", "076f3b4d452b95433083bcc66d07f79addba2d3fcb2b9177abeb7367d47aefbb")
     add_versions("v1.14.1", "429dfdf3afc1984feb59e414353c21c110bc79609f6d7899d52f6aa388646f6d")
     add_versions("v1.14.0", "2cd8a65885e7937fdd046b181eed7e95d61bab7006bd0fb7b9c766185ed3e0ae")
     add_versions("v1.13.0", "9f6763bb76fff7db371f5733626c83352edd7c57899501ab00248fafad9cc504")
@@ -21,6 +23,7 @@ package("spdlog")
     add_versions("v1.5.0", "87e87c989f15d6b9f5379385aec1001c89a42941341ebaa09ec895b98a00efb4")
     add_versions("v1.4.2", "56b90f0bd5b126cf1b623eeb19bf4369516fa68f036bbc22d9729d2da511fb5a")
     add_versions("v1.3.1", "db6986d0141546d4fba5220944cc1f251bd8afdfc434bda173b4b0b6406e3cd0")
+    add_versions("v1.2.1", "ff69568eee595693f26b921c7b0fc7de1096a36cf57f51a6eda8ce022aebc7ff")
 
     add_patches("v1.11.0", path.join(os.scriptdir(), "patches", "v1.11.0", "fmt10.patch"), "61efa804845141ffa86532d9be7103d4dc8185e96de69d5efca42ebd7058e13d")
 
@@ -63,12 +66,17 @@ package("spdlog")
     end)
 
     on_install(function (package)
+        if package:has_tool("cxx", "cl") and not (package:config("fmt_external") or package:config("fmt_external_ho")) then
+            package:add("cxxflags", "/utf-8")
+        end
+
         if (not package:gitref() and package:version():lt("1.4.0")) or package:config("header_only") then
             os.cp("include", package:installdir())
             return
         end
 
         local configs = {"-DSPDLOG_BUILD_TESTS=OFF", "-DSPDLOG_BUILD_EXAMPLE=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DSPDLOG_BUILD_SHARED=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_USE_STD_FORMAT=" .. (package:config("std_format") and "ON" or "OFF"))
         table.insert(configs, "-DSPDLOG_FMT_EXTERNAL=" .. (package:config("fmt_external") and "ON" or "OFF"))
@@ -79,9 +87,15 @@ package("spdlog")
     end)
 
     on_test(function (package)
-        if package:config("std_format") then
-            assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++20"}}))
+        local version = package:version()
+        local cpp_version = package:config("std_format") and "c++20" or "c++14"
+        if version and version:le("1.2.1") then
+            assert(package:has_cxxfuncs("spdlog::get(\"default\")->info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = cpp_version}}))
         else
-            assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = "c++14"}}))
+            if package:config("std_format") then
+                assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = cpp_version}}))
+            else
+                assert(package:has_cxxfuncs("spdlog::info(\"\")", {includes = "spdlog/spdlog.h", configs = {languages = cpp_version}}))
+            end
         end
     end)

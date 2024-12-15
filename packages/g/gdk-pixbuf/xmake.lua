@@ -1,5 +1,4 @@
 package("gdk-pixbuf")
-
     set_homepage("https://docs.gtk.org/gdk-pixbuf/")
     set_description("GdkPixbuf is a library that loads image data in various formats and stores it as linear buffers in memory. The buffers can then be scaled, composited, modified, saved, or rendered.")
     set_license("LGPL-2.1")
@@ -14,21 +13,36 @@ package("gdk-pixbuf")
 
     add_patches("2.42.6", path.join(os.scriptdir(), "patches", "2.42.6", "macosx.patch"), "ad2705a5a9aa4b90fb4588bb567e95f5d82fccb6a5d463cd07462180e2e418eb")
 
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::gdk-pixbuf2")
+    elseif is_plat("linux") then
+        add_extsources("pacman::gdk-pixbuf2", "apt::libgdk-pixbuf-2.0-dev")
+    elseif is_plat("macosx") then
+        add_extsources("brew::gdk-pixbuf")
+    end
+
     add_includedirs("include", "include/gdk-pixbuf-2.0")
 
     add_deps("meson", "ninja")
-    add_deps("libpng", "libjpeg-turbo", "libtiff", "glib", "pcre2")
+    add_deps("libpng", "libjpeg-turbo", "glib", "pcre2")
+
+    on_load(function (package)
+        if package:config("shared") then
+            package:add("deps", "libtiff", {configs = {shared = true}})
+        else
+            package:add("deps", "libtiff")
+        end
+    end)
+
     if is_plat("windows") then
         add_syslinks("iphlpapi", "dnsapi")
         add_deps("pkgconf", "libintl")
     elseif is_plat("macosx") then
         add_frameworks("Foundation", "CoreFoundation", "AppKit")
-        add_extsources("brew::gdk-pixbuf")
         add_deps("libiconv", {system = true})
         add_syslinks("resolv")
     elseif is_plat("linux") then
         add_deps("libiconv")
-        add_extsources("pacman::gdk-pixbuf2")
     end
 
     on_install("windows", "macosx", "linux", function (package)
@@ -50,6 +64,8 @@ package("gdk-pixbuf")
                          "-Dtests=false",
                          "-Dinstalled_tests=false"}
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+
+        package:addenv("PATH", "bin")
         import("package.tools.meson").install(package, configs, {packagedeps = {"libjpeg-turbo", "libpng", "libtiff", "glib", "pcre2", "libintl", "libiconv"}})
     end)
 

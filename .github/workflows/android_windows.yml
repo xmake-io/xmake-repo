@@ -23,9 +23,11 @@ jobs:
       - uses: xmake-io/github-action-setup-xmake@v1
         with:
           xmake-version: branch@master
+          actions-cache-folder: '.xmake-cache'
+          actions-cache-key: 'android-windows'
 
       - name: Configure Pagefile
-        uses: al-cheb/configure-pagefile-action@v1.2
+        uses: al-cheb/configure-pagefile-action@v1.4
         with:
           minimum-size: 8GB
           maximum-size: 32GB
@@ -43,15 +45,6 @@ jobs:
 
       - name: Tests
         run: |
-          git clone https://github.com/xmake-io/xmake.git --recurse-submodules -b master xmakesrc
-          cd xmakesrc/core
-          xmake
-          cd ../..
-          Copy-Item ./xmakesrc/core/build/xmake.exe ./xmakesrc/xmake
-          Copy-Item ./xmakesrc/scripts/xrepo.bat ./xmakesrc/xmake
-          Copy-Item ./xmakesrc/scripts/xrepo.ps1 ./xmakesrc/xmake
           $Env:XMAKE_MAIN_REPO = "https://github.com/xmake-io/xmake-repo.git"
-          $Env:XMAKE_PROGRAM_DIR = $(Resolve-Path ./xmakesrc/xmake)
-          Set-Item -Path Env:Path -Value ($Env:XMAKE_PROGRAM_DIR + ";" + $Env:Path)
           xmake --version
           xmake l ./scripts/test.lua -D -p android --ndk=D:/a/xmake-repo/xmake-repo/ndk/android-ndk-${{ matrix.ndk }} --ndk_sdkver=${{ matrix.ndk_sdkver }} -a ${{ matrix.arch }}

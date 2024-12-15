@@ -1,0 +1,121 @@
+diff --git a/cmake/FindCMath.cmake b/cmake/FindCMath.cmake
+index ad92218..d3dc089 100644
+--- a/cmake/FindCMath.cmake
++++ b/cmake/FindCMath.cmake
+@@ -55,18 +55,11 @@ if(CMath_FOUND)
+         set(CMath_INCLUDE_DIRS)
+     endif()
+     if(NOT CMath_LIBRARIES)
++        if(NOT CMath_LIBRARY)
++            unset(CMath_LIBRARY)
++        endif()
+         if (CMath_LIBRARY)
+             set(CMath_LIBRARIES ${CMath_LIBRARY})
+         endif()
+     endif()
+-
+-    if(NOT TARGET CMath::CMath)
+-        if(CMath_LIBRARIES)
+-            add_library(CMath::CMath UNKNOWN IMPORTED)
+-            set_target_properties(CMath::CMath PROPERTIES
+-                  IMPORTED_LOCATION "${CMath_LIBRARY}")
+-        else()
+-            add_library(CMath::CMath INTERFACE IMPORTED)
+-        endif()
+-    endif()
+ endif()
+diff --git a/contrib/dbs/CMakeLists.txt b/contrib/dbs/CMakeLists.txt
+index 74b2a02..2ed96ac 100644
+--- a/contrib/dbs/CMakeLists.txt
++++ b/contrib/dbs/CMakeLists.txt
+@@ -26,13 +26,19 @@ add_executable(tiff-bi tiff-bi.c)
+ target_link_libraries(tiff-bi tiff tiff_port)
+ 
+ add_executable(tiff-grayscale tiff-grayscale.c)
+-target_link_libraries(tiff-grayscale tiff tiff_port CMath::CMath)
++target_link_libraries(tiff-grayscale tiff tiff_port)
++if(CMath_LIBRARIES)
++    target_link_libraries(tiff-grayscale ${CMath_LIBRARIES})
++endif()
+ 
+ add_executable(tiff-palette tiff-palette.c)
+ target_link_libraries(tiff-palette tiff tiff_port)
+ 
+ add_executable(tiff-rgb tiff-rgb.c)
+-target_link_libraries(tiff-rgb tiff tiff_port CMath::CMath)
++target_link_libraries(tiff-rgb tiff tiff_port)
++if(CMath_LIBRARIES)
++    target_link_libraries(tiff-rgb ${CMath_LIBRARIES})
++endif()
+ 
+ if(WEBP_SUPPORT AND EMSCRIPTEN)
+   # Emscripten is pretty finnicky about linker flags.
+diff --git a/libtiff/CMakeLists.txt b/libtiff/CMakeLists.txt
+index a8aa0c3..25914c9 100644
+--- a/libtiff/CMakeLists.txt
++++ b/libtiff/CMakeLists.txt
+@@ -184,9 +184,9 @@ if(WEBP_SUPPORT)
+   target_link_libraries(tiff PRIVATE WebP::webp)
+   string(APPEND tiff_requires_private " libwebp")
+ endif()
+-if(CMath_LIBRARY)
+-  target_link_libraries(tiff PRIVATE CMath::CMath)
+-  list(APPEND tiff_libs_private_list "${CMath_LIBRARY}")
++if(CMath_LIBRARIES)
++  target_link_libraries(tiff PRIVATE ${CMath_LIBRARIES})
++  list(APPEND tiff_libs_private_list "${CMath_LIBRARIES}")
+ endif()
+ 
+ set(tiff_libs_private_list "${tiff_libs_private_list}" PARENT_SCOPE)
+diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
+index 5bf93b1..f6c4e2f 100644
+--- a/tools/CMakeLists.txt
++++ b/tools/CMakeLists.txt
+@@ -48,7 +48,10 @@ target_link_libraries(ppm2tiff PRIVATE tiff tiff_port)
+ 
+ add_executable(raw2tiff ../placeholder.h)
+ target_sources(raw2tiff PRIVATE raw2tiff.c ${MSVC_RESOURCE_FILE})
+-target_link_libraries(raw2tiff PRIVATE tiff tiff_port CMath::CMath)
++target_link_libraries(raw2tiff PRIVATE tiff tiff_port)
++if(CMath_LIBRARIES)
++    target_link_libraries(raw2tiff PRIVATE ${CMath_LIBRARIES})
++endif()
+ 
+ add_executable(rgb2ycbcr ../placeholder.h)
+ target_sources(rgb2ycbcr PRIVATE rgb2ycbcr.c ${MSVC_RESOURCE_FILE})
+@@ -56,7 +59,10 @@ target_link_libraries(rgb2ycbcr PRIVATE tiff tiff_port)
+ 
+ add_executable(thumbnail ../placeholder.h)
+ target_sources(thumbnail PRIVATE thumbnail.c ${MSVC_RESOURCE_FILE})
+-target_link_libraries(thumbnail PRIVATE tiff tiff_port CMath::CMath)
++target_link_libraries(thumbnail PRIVATE tiff tiff_port)
++if(CMath_LIBRARIES)
++    target_link_libraries(thumbnail PRIVATE ${CMath_LIBRARIES})
++endif()
+ 
+ add_executable(tiff2bw ../placeholder.h)
+ target_sources(tiff2bw PRIVATE tiff2bw.c ${MSVC_RESOURCE_FILE})
+@@ -68,7 +74,10 @@ target_link_libraries(tiff2pdf PRIVATE tiff tiff_port)
+ 
+ add_executable(tiff2ps ../placeholder.h)
+ target_sources(tiff2ps PRIVATE tiff2ps.c ${MSVC_RESOURCE_FILE})
+-target_link_libraries(tiff2ps PRIVATE tiff tiff_port CMath::CMath)
++target_link_libraries(tiff2ps PRIVATE tiff tiff_port)
++if(CMath_LIBRARIES)
++    target_link_libraries(tiff2ps PRIVATE ${CMath_LIBRARIES})
++endif()
+ 
+ add_executable(tiff2rgba ../placeholder.h)
+ target_sources(tiff2rgba PRIVATE tiff2rgba.c ${MSVC_RESOURCE_FILE})
+@@ -84,7 +93,10 @@ target_link_libraries(tiffcp PRIVATE tiff tiff_port)
+ 
+ add_executable(tiffcrop ../placeholder.h)
+ target_sources(tiffcrop PRIVATE tiffcrop.c ${MSVC_RESOURCE_FILE})
+-target_link_libraries(tiffcrop PRIVATE tiff tiff_port CMath::CMath)
++target_link_libraries(tiffcrop PRIVATE tiff tiff_port)
++if(CMath_LIBRARIES)
++    target_link_libraries(tiffcrop PRIVATE ${CMath_LIBRARIES})
++endif()
+ 
+ add_executable(tiffdither ../placeholder.h)
+ target_sources(tiffdither PRIVATE tiffdither.c ${MSVC_RESOURCE_FILE})

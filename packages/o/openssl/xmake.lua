@@ -123,7 +123,7 @@ package("openssl")
         import("package.tools.make").make(package, {"install_sw"})
     end)
 
-    on_install("linux", "macosx", "bsd", "cross", "android", function (package)
+    on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         local configs = {}
         if package:is_cross() then
@@ -131,6 +131,20 @@ package("openssl")
             if package:is_plat("macosx") then
                 target_plat = "darwin64"
                 target_arch = package:is_arch("arm64") and "arm64-cc" or "x86_64-cc"
+            elseif package:is_plat("iphoneos") then
+                local xcode = package:toolchain("xcode")
+                local simulator = xcode and xcode:config("appledev") == "simulator"
+                if simulator then
+                    target_plat = "iossimulator"
+                    target_arch = "xcrun"
+                else
+                    if package:is_arch("arm64", "x86_64") then
+                        target_plat = "ios64"
+                    else
+                        target_plat = "ios"
+                    end
+                    target_arch = "cross"
+                end
             else
                 target_plat = "linux"
                 if package:is_arch("x86_64") then
