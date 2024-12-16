@@ -11,6 +11,12 @@ package("google-cloud-cpp")
     add_deps("abseil", "crc32c", "libcurl", "openssl3", "zlib")
     add_deps("nlohmann_json", {configs = {cmake = true}})
 
+    on_check(function (package)
+        if package:is_plat("android") then
+            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on android yet.")
+        end
+    end)
+
     on_install(function (package)
         local configs = {
             "-DBUILD_TESTING=OFF",
