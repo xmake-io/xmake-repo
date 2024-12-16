@@ -169,7 +169,7 @@ package("protobuf-cpp")
         import("package.tools.cmake").install(package, configs, opt)
 
         if package:is_cross() then
-            os.tryrm(package:installdir("bin/*"))
+            os.tryrm(package:installdir("bin/*.exe"))
         else
             os.trycp("build/Release/protoc.exe", package:installdir("bin"))
         end
