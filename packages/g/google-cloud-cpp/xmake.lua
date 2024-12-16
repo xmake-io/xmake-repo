@@ -21,6 +21,12 @@ package("google-cloud-cpp")
         if package:is_plat("iphoneos") then
             raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on iphoneos yet.")
         end
+        if package:is_plat("bsd") then
+            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on FreeBSD yet.")
+        end
+        if package:is_plat("cross") and is_arch("arm.*")  then
+            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on cross|arm yet.")
+        end
     end)
 
     on_install(function (package)
