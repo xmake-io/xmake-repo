@@ -35,9 +35,6 @@ package("foo")
             "-DZLIB_HOME="..package:dep("zlib"):installdir(),
             "-DZSTD_HOME="..package:dep("zstd"):installdir()
         }
-        if package:dep("cmake"):version() < "1.9.0" then 
-            table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0077=NEW")
-        end
         
         
         import("package.tools.cmake").install(package, configs)
