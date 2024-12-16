@@ -19,7 +19,7 @@ package("orc")
             raise("package(orc) unsupported arm arch")
         end
     end)
-    on_install("windows", "linux", "macosx", "bsd",function (package)
+    on_install("windows", "linux", "macosx", "bsd", function (package)
         
         local configs = {
             "-DBUILD_JAVA=OFF",
@@ -47,5 +47,13 @@ package("orc")
         import("package.tools.cmake").install(package, configs)
     end)
     on_test(function (package)
-            assert(package:has_cxxincludes("orc/Type.hh", {configs = {languages = "c++17"}}))
+        assert(package:check_cxxsnippets({test = [[
+            #include "OrcFile.hh"
+            void test(){
+                std::unique_ptr<OutputStream> outStream =writeLocalFile("my-file.orc");
+                std::unique_ptr<Type> schema(Type::buildTypeFromString("struct<x:int,y:int>"));
+                WriterOptions options;
+                std::unique_ptr<Writer> writer =createWriter(*schema, outStream.get(), options);
+            }
+        ]]}, {configs = {languages = "c++17"}}))
     end)
