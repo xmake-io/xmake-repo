@@ -48,7 +48,7 @@ package("orc")
     end)
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            #include "OrcFile.hh"
+            #include "orc/OrcFile.hh"
             void test(){
                 std::unique_ptr<OutputStream> outStream =writeLocalFile("my-file.orc");
                 std::unique_ptr<Type> schema(Type::buildTypeFromString("struct<x:int,y:int>"));
