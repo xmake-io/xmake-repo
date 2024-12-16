@@ -1,4 +1,4 @@
-package("foo")
+package("orc")
     set_homepage("https://arrow.apache.org/")
     set_description("ORC is a self-describing type-aware columnar file format designed for Hadoop workloads.")
     set_license("Apache-2.0")
