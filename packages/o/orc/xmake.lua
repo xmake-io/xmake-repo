@@ -19,7 +19,7 @@ package("orc")
             raise("package(orc) unsupported arm arch")
         end
     end)
-    on_install("windows","linux","macosx","bsd",function (package)
+    on_install("windows", "mingw@windows,msys", "linux", "macosx", "bsd",function (package)
         
         local configs = {
             "-DBUILD_JAVA=OFF",
@@ -47,5 +47,5 @@ package("orc")
         import("package.tools.cmake").install(package, configs)
     end)
     on_test(function (package)
-            assert(package:has_cxxincludes("orc/Type.hh"), {configs = {languages = "c++17"}})
+            assert(package:has_cxxincludes("orc/Type.hh", {configs = {languages = "c++17"})})
     end)
