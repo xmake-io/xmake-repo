@@ -19,7 +19,7 @@ package("orc")
             raise("package(orc) unsupported arm arch")
         end
     end)
-    on_install("windows", "mingw@windows,msys", "linux", "macosx", "bsd",function (package)
+    on_install("windows", "linux", "macosx", "bsd",function (package)
         
         local configs = {
             "-DBUILD_JAVA=OFF",
