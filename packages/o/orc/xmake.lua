@@ -14,7 +14,7 @@ package("orc")
     if is_plat("macosx", "linux") then
         add_syslinks("pthread", "m")
     end
-    on_install("@windows|!arm*","@linux|!arm*","@macosx|!arm*","@bsd|!arm*4",function (package)
+    on_install("windows|!arm*","linux|!arm*","macosx|!arm*","bsd|!arm*",function (package)
         
         local configs = {
             "-DBUILD_JAVA=OFF",
