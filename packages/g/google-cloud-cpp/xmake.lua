@@ -15,6 +15,9 @@ package("google-cloud-cpp")
         if package:is_plat("android") then
             raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on android yet.")
         end
+        if package:is_plat("wasm") then
+            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on wasm yet.")
+        end
         if package:is_plat("mingw") then
             raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on mingw yet.")
         end
@@ -24,8 +27,8 @@ package("google-cloud-cpp")
         if package:is_plat("bsd") then
             raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on FreeBSD yet.")
         end
-        if package:is_plat("cross") and is_arch("arm.*")  then
-            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on cross|arm yet.")
+        if package:is_arch("arm.*")  then
+            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on arm yet.")
         end
     end)
 
@@ -47,7 +50,7 @@ package("google-cloud-cpp")
             package:add("deps","protobuf-cpp")
             package:add("deps","grpc")
         end
-            
+        package:add("cxxflags", "-Wno-missing-template-arg-list-after-template-kw")    
     end)
 
     on_test(function (package)
