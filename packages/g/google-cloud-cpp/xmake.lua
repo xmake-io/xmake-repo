@@ -39,6 +39,7 @@ package("google-cloud-cpp")
             "-DGOOGLE_CLOUD_CPP_ENABLE_MACOS_OPENSSL_CHECK=OFF",
             "-DGOOGLE_CLOUD_CPP_ENABLE_WERROR=OFF",
         }
+        package:add("cxxflags", "-Wno-missing-template-arg-list-after-template-kw")
         import("package.tools.cmake").install(package, configs)
     end)
 
@@ -50,7 +51,6 @@ package("google-cloud-cpp")
             package:add("deps","protobuf-cpp")
             package:add("deps","grpc")
         end
-        package:add("cxxflags", "-Wno-missing-template-arg-list-after-template-kw")    
     end)
 
     on_test(function (package)
