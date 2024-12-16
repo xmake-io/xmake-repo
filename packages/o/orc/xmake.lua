@@ -16,7 +16,7 @@ package("orc")
     end
     on_check(function (package)
         if package:is_arch("arm.*") then
-            raise("package(xxx) unsupported arm arch")
+            raise("package(orc) unsupported arm arch")
         end
     end)
     on_install("windows","linux","macosx","bsd",function (package)
