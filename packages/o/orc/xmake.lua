@@ -5,7 +5,7 @@ package("foo")
 
     add_urls("https://github.com/apache/orc/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/apache/orc.git")
-    add_versions('2.0.3','7920c7c7644f31c5519befa18f8f949cdf53420603b621bd85d214b516e25ff3')
+    add_versions("2.0.3","7920c7c7644f31c5519befa18f8f949cdf53420603b621bd85d214b516e25ff3")
     add_configs("fPIC", {default = true, type = "boolean"})
     add_configs("build_tools", {default = false, type = "boolean"})
     add_configs("build_avx512", {default = true, type = "boolean"})
@@ -35,7 +35,9 @@ package("foo")
             "-DZLIB_HOME="..package:dep("zlib"):installdir(),
             "-DZSTD_HOME="..package:dep("zstd"):installdir()
         }
-        
+        if package:dep("cmake"):version() < "1.9.0" then 
+            table.insert(configs, "-DCMAKE_POLICY_DEFAULT_CMP0077=NEW")
+        end
         
         import("package.tools.cmake").install(package, configs)
     end)
