@@ -25,7 +25,11 @@ package("google-cloud-cpp")
         if package:config("shared") then
             package:add("deps","protobuf-cpp",{shared= true})
             package:add("deps","grpc",{shared= true})
+        else
+            package:add("deps","protobuf-cpp")
+            package:add("deps","grpc")
         end
+            
     end)
 
     on_test(function (package)
