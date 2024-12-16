@@ -18,6 +18,9 @@ package("google-cloud-cpp")
         if package:is_plat("mingw") then
             raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on mingw yet.")
         end
+        if package:is_plat("iphoneos") then
+            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on iphoneos yet.")
+        end
     end)
 
     on_install(function (package)
