@@ -54,6 +54,7 @@ package("grpc")
             "-DgRPC_PROTOBUF_PROVIDER=package",
             "-DgRPC_UPB_PROVIDER=module", -- TODO
             "-DgRPC_BENCHMARK_PROVIDER=none",
+            "-DProtobuf_ROOT=" .. package:dep("protobuf-cpp"):installdir(),
             "-DgRPC_PROTOBUF_PACKAGE_TYPE=CONFIG"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
