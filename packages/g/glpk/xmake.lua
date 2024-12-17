@@ -11,32 +11,29 @@ package("glpk")
         add_extsources("apt::libglpk-dev")
     end
 
-    on_install("macosx|x86_64", "linux", function (package)
+    add_deps("zlib")
+
+    on_install("macosx", "linux", function (package)
         local configs = {}
         table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
         table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
         import("package.tools.autoconf").install(package, configs)
     end)
 
-    on_install("windows", function (package)
-        os.cd("w64") -- Makefiles are the same in w64 and w32 directory
-        os.cp("config_VC", "config.h")
-        local version = package:version()
-        local basename = string.format("glpk_%d_%d", version:major(), version:minor())
-         -- glp_netgen_prob is not defined, but should be disabled
-         -- see: https://www.mail-archive.com/bug-glpk@gnu.org/msg01020.html
-        io.replace(basename .. ".def", "glp_netgen_prob\n", "", {plain = true})
-        import("package.tools.nmake").build(package, {"/f", package:config("shared") and "makefile_VC_DLL" or "makefile_VC"})
-
-        if package:config("shared") then
-            os.cp(basename .. ".dll", package:installdir("bin"))
-            os.cp(basename .. ".lib", package:installdir("lib"))
-        else
-            os.cp("glpk.lib", package:installdir("lib"))
+    on_install(function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            local def = "glpk.def"
+            local version = package:version()
+            local arch_dir = package:is_arch64() and "w64" or "w32"
+            local basename = format("%s/glpk_%d_%d.def", arch_dir, version:major(), version:minor())
+            os.vcp(basename, def)
+            -- glp_netgen_prob is not defined, but should be disabled
+            -- see: https://www.mail-archive.com/bug-glpk@gnu.org/msg01020.html
+            io.replace(def, "glp_netgen_prob\n", "", {plain = true})
         end
 
-        os.cd("..")
-        os.cp("src/glpk.h", package:installdir("include"))
+        os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        import("package.tools.xmake").install(package, configs)
     end)
 
     on_test(function (package)
