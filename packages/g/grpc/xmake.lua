@@ -11,7 +11,7 @@ package("grpc")
 
     add_patches("1.51.3", path.join(os.scriptdir(), "patches", "1.51.3", "disable-download-archive.patch"), "90fdd6e4a51cbc9756d1fcdd0f65e665d4b78cfd91fdbeb0228cc4e9c4ba1b73")
     add_patches("1.51.3", path.join(os.scriptdir(), "patches", "1.51.3", "static-linking-in-linux.patch"), "176474919883f93be0c5056098eccad408038663c6c7361f2e049cdf7247a19c")
-    add_patches("1.68.2", path.join(os.scriptdir(), "patches", "1.68.2", "fix-NAN-on-Win11.patch"), "3b5c90855adbee29cda36a1d140167a20c96e81c9b39692bb7c77b32da73fb71")
+    add_patches("1.68.2", path.join(os.scriptdir(), "patches", "1.68.2", "fix-nan-on-win11.patch"), "3b5c90855adbee29cda36a1d140167a20c96e81c9b39692bb7c77b32da73fb71")
     add_deps("cmake")
     if is_plat("linux") then
         add_deps("autoconf", "libtool", "pkg-config")
