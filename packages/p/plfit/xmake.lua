@@ -29,6 +29,9 @@ package("plfit")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(test)", "", {plain = true})
+        if package:is_plat("cross", "wasm") then
+            io.replace("CMakeLists.txt", "FIND_LIBRARY(MATH_LIBRARY NAMES m)", "set(MATH_LIBRARY )", {plain = true})
+        end
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
