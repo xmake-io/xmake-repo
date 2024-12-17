@@ -54,6 +54,9 @@ package("grpc")
             "-DgRPC_PROTOBUF_PACKAGE_TYPE=CONFIG"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:is_cross() then
+            package:add("deps", "protoc")
+        end
         import("package.tools.cmake").install(package, configs, {packagedeps = {"abseil", "protobuf-cpp"}})
     end)
 
