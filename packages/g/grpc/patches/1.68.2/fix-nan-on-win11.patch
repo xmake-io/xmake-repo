@@ -1,7 +1,7 @@
-diff --git a/upb/message/message.c b/upb/message/message.c
+diff --git a/third_party/upb/message/internal/message.c b/third_party/upb/message/internal/message.c
 index 265d30d..afc6e51 100644
---- a/upb/message/message.c
-+++ b/upb/message/message.c
+--- a/third_party/upb/message/internal/message.c
++++ b/third_party/upb/message/internal/message.c
 @@ -15,9 +15,9 @@
  // Must be last.
  #include "upb/port/def.inc"
