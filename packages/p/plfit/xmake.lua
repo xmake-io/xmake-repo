@@ -27,7 +27,7 @@ package("plfit")
         end
     end)
 
-    on_install(function (package)
+    on_install("!cross", function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(test)", "", {plain = true})
         if package:is_plat("cross", "wasm") then
             io.replace("CMakeLists.txt", "FIND_LIBRARY(MATH_LIBRARY NAMES m)", "set(MATH_LIBRARY )", {plain = true})
