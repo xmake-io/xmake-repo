@@ -11,6 +11,9 @@ package("glpk")
     add_configs("gmp", {description = "Enable gmp support", default = false, type = "boolean"})
     add_configs("mysql", {description = "enable MathProg MySQL support", default = false, type = "boolean", readonly = true})
     add_configs("odbc", {description = "enable MathProg ODBC support", default = false, type = "boolean", readonly = true})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("linux") then
         add_extsources("apt::libglpk-dev")
