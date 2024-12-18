@@ -4,10 +4,11 @@ package("date")
     set_description("A date and time library for use with C++11 and C++14.")
     set_license("MIT")
 
-    add_urls("https://github.com/HowardHinnant/date.git")
-
-    add_versions("2024.05.14", "1ead6715dec030d340a316c927c877a3c4e5a00c")
-    add_versions("2021.04.17", "6e921e1b1d21e84a5c82416ba7ecd98e33a436d0")
+    add_urls("https://github.com/HowardHinnant/date/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/HowardHinnant/date.git")
+    
+    add_versions("v3.0.3", "30de45a34a2605cca33a993a9ea54e8f140f23b1caf1acf3c2fd436c42c7d942")
+    add_versions("v3.0.1", "7a390f200f0ccd207e8cff6757e04817c1a0aec3e327b006b7eb451c57ee3538")
 
     if is_plat("windows", "mingw") then
         add_syslinks("ole32", "shell32")
