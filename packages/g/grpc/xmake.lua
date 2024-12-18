@@ -39,6 +39,11 @@ package("grpc")
         if package:is_cross() then
             package:add("deps", "protoc")
         end
+        if package:is_plat("windows") then
+            package:add("links", "libprotoc", "libprotobuf", "utf8_range", "utf8_validity")
+        else
+            package:add("links", "protoc", "protobuf", "utf8_range", "utf8_validity")
+        end
     end)
 
     on_install("linux", "macosx", "windows", function (package)
