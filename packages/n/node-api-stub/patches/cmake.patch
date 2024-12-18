@@ -1,0 +1,7 @@
+--- a/CMakeLists.txt	2024-12-18 21:07:24.460618593 +0800
++++ b/CMakeLists.txt	2024-12-18 21:07:05.907811865 +0800
+@@ -3,3 +3,4 @@
+ project(libnode_api LANGUAGES C)
+ 
+ add_library(node_api STATIC node_api.c)
++install(TARGETS node_api RUNTIME)
