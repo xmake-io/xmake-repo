@@ -13,6 +13,8 @@ package("igraph")
     add_configs("openmp", {description = "Use OpenMP for parallelization", default = false, type = "boolean"})
     if is_plat("windows") then
         add_configs("debug", {description = "Enable debug symbols.", default = false, readonly = true})
+    elseif is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     if is_plat("linux", "bsd") then
@@ -22,12 +24,18 @@ package("igraph")
     add_deps("cmake", "flex", "bison", {kind = "binary"})
     add_deps("plfit")
 
+    on_check(function (package)
+        if package:is_cross() then
+            raise("package(igraph) unsupported cross-compilation")
+        end
+    end)
+
     on_load(function (package)
         if package:is_plat("linux", "macosx") then
             package:add("deps", "gmp")
-            if package:is_plat("linux") then
-                package:add("deps", "lapack")
-            end
+            -- if package:is_plat("linux") then
+            --     package:add("deps", "lapack")
+            -- end
         end
 
         if package:config("glpk") then
@@ -60,9 +68,9 @@ package("igraph")
         }
         if package:is_plat("linux", "macosx") then
             table.insert(configs, "-DIGRAPH_USE_INTERNAL_GMP=OFF")
-            if package:is_plat("linux") then
-                table.insert(configs, "-DIGRAPH_USE_INTERNAL_LAPACK=OFF")
-            end
+            -- if package:is_plat("linux") then
+            --     table.insert(configs, "-DIGRAPH_USE_INTERNAL_LAPACK=OFF")
+            -- end
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
