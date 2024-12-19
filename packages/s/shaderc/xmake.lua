@@ -6,6 +6,7 @@ package("shaderc")
     add_urls("https://github.com/google/shaderc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/shaderc.git")
 
+    add_versions("v2024.4", "989a46c0bc0e58ab8ac9ef9c1fb8000e0209d482b242a514b385d8f8c4cbfa06")
     add_versions("v2024.1", "eb3b5f0c16313d34f208d90c2fa1e588a23283eed63b101edd5422be6165d528")
     add_versions("v2024.0", "c761044e4e204be8e0b9a2d7494f08671ca35b92c4c791c7049594ca7514197f")
     add_versions("v2022.2", "517d36937c406858164673db696dc1d9c7be7ef0960fbf2965bfef768f46b8c0")
