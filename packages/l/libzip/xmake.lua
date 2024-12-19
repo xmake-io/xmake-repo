@@ -9,6 +9,7 @@ package("libzip")
          end})
     add_urls("https://github.com/nih-at/libzip.git")
 
+    add_versions("v1.11.2", "6b2a43837005e1c23fdfee532b78f806863e412d2089b9c42b49ab08cbcd7665")
     add_versions("v1.11.1", "c0e6fa52a62ba11efd30262290dc6970947aef32e0cc294ee50e9005ceac092a")
     add_versions("v1.10.1", "9669ae5dfe3ac5b3897536dc8466a874c8cf2c0e3b1fdd08d75b273884299363")
     add_versions("v1.8.0", "30ee55868c0a698d3c600492f2bea4eb62c53849bcf696d21af5eb65f3f3839e")
