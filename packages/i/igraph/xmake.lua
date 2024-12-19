@@ -28,6 +28,9 @@ package("igraph")
         if package:is_cross() then
             raise("package(igraph) unsupported cross-compilation")
         end
+        if is_subhost("msys") and xmake:version():lt("2.9.7") then
+            raise("package(igraph) requires xmake >= 2.9.7 on msys")
+        end
     end)
 
     on_load(function (package)
@@ -53,12 +56,14 @@ package("igraph")
         end
     end)
 
-    on_install("!cross", function (package)
+    on_install("!cross and !bsd", function (package)
         -- Disable test/doc/cpack
         io.replace("CMakeLists.txt", "CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME", "0", {plain = true})
         io.writefile("IGRAPH_VERSION", package:version_str())
 
+        -- https://igraph.org/c/html/latest/igraph-Installation.html
         local configs = {
+            "-DIGRAPH_WARNINGS_AS_ERRORS=OFF"
             -- "-DIGRAPH_USE_INTERNAL_GMP=OFF",
             -- "-DIGRAPH_USE_INTERNAL_ARPACK=OFF",
             -- "-DIGRAPH_USE_INTERNAL_BLAS=OFF",
