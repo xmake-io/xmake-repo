@@ -39,6 +39,8 @@ package("bison")
         end
     end)
 
+    on_install("@msys", function (package) end)
+
     on_install("windows", function (package)
         os.cp(path.join(package:dep("winflexbison"):installdir(), "*"), package:installdir())
         os.rm(path.join(package:installdir(), "bin", "flex.exe"))
