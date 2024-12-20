@@ -63,7 +63,7 @@ package("igraph")
 
         -- https://igraph.org/c/html/latest/igraph-Installation.html
         local configs = {
-            "-DIGRAPH_WARNINGS_AS_ERRORS=OFF"
+            "-DIGRAPH_WARNINGS_AS_ERRORS=OFF",
             -- "-DIGRAPH_USE_INTERNAL_GMP=OFF",
             -- "-DIGRAPH_USE_INTERNAL_ARPACK=OFF",
             -- "-DIGRAPH_USE_INTERNAL_BLAS=OFF",
