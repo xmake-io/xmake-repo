@@ -6,6 +6,7 @@ package("liblifthttp")
     add_urls("https://github.com/jbaldwin/liblifthttp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/jbaldwin/liblifthttp.git")
 
+    add_versions("v2022.1", "177dbb7bf13ac80abf2fcbbc722c3e240c4898aa7660dfc0c5d358d3a491b1d8")
     add_versions("v4.1.0", "438fd51fd42e1d6e0218a164acc443713f1ae803a6483d356db084c78abb5b11")
 
     add_deps("libcurl", "zlib", "libuv")
