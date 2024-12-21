@@ -9,6 +9,7 @@ package("openal-soft")
     end})
     add_urls("https://github.com/kcat/openal-soft.git")
 
+    add_versions("1.24.1", "e1b6ec960e00bfed3d480330274b0f102dc10e4ae0dbb70fd9db80d6978165b1")
     add_versions("1.23.1", "dfddf3a1f61059853c625b7bb03de8433b455f2f79f89548cbcbd5edca3d4a4a")
     add_versions("1.22.2", "3e58f3d4458f5ee850039b1a6b4dac2343b3a5985a6a2e7ae2d143369c5b8135")
     add_versions("1.22.0", "814831a8013d7365dfd1917b27f1fb6e723f3be3fe1c6a7ff4516425d8392f68")
