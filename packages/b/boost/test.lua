@@ -102,6 +102,15 @@ function _header_only(package, snippets)
             }
         ]]
     )
+    table.insert(snippets,
+        [[
+            #include <boost/heap/fibonacci_heap.hpp>
+            void test() {
+                boost::heap::fibonacci_heap<int> heap;
+                heap.push(1);
+            }
+        ]]
+    )
 end
 
 function main(package)
