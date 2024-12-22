@@ -6,6 +6,7 @@ package("mysql-build-tools")
 
     add_urls("https://github.com/mysql/mysql-server/archive/refs/tags/mysql-$(version).tar.gz")
 
+    add_versions("8.0.40", "746c111747ba56ac9cdcd3d47867ee9f2e7d5d6230a1fd3401723db997e33f28")
     add_versions("8.0.39", "3a72e6af758236374764b7a1d682f7ab94c70ed0d00bf0cb0f7dd728352b6d96")
 
     add_configs("server", {description = "Build server", default = false, type = "boolean"})
@@ -16,6 +17,10 @@ package("mysql-build-tools")
     if is_plat("linux") then
         add_deps("patchelf")
         add_deps("libedit", {host = true, private = true, configs = {terminal_db = "ncurses"}})
+    end
+    if is_plat("windows") then
+        add_deps("ninja")
+        set_policy("package.cmake_generator.ninja", true)
     end
 
     local tool_list = {
@@ -38,7 +43,8 @@ package("mysql-build-tools")
 
         local version = package:version()
         if version:lt("9.0.0") then
-            package:add("deps", "boost", "libevent", {host = true, private = true})
+            package:add("deps", "boost", {host = true, private = true, configs = {header_only = true}})
+            package:add("deps", "libevent", {host = true, private = true})
         end
     end)
 
