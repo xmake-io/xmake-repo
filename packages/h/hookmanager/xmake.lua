@@ -13,7 +13,7 @@ package("hookmanager")
     add_configs("use_minhook", {description = "Use minhook as the underlying hook executor.", default = false, type = "boolean"})
     add_configs("use_detours", {description = "Use detours as the underlying hook executor.", default = false, type = "boolean"})
     
-    on_load(function (package)
+    on_load("windows|x64",function (package)
         if package:config("use_lighthook") then
             package:add("deps", "lighthook")
 			package:add("defines", "USE_LIGHTHOOK")
@@ -26,7 +26,7 @@ package("hookmanager")
         end
     end)
 	
-	on_install("windows", function (package)
+	on_install("windows|x64", function (package)
         os.cp("include/HookManager/HookManager.hpp", package:installdir("include","HookManager"))
     end)
 
