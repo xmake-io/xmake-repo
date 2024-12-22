@@ -7,13 +7,12 @@ package("hookmanager")
     add_urls("https://github.com/cngege/HookManager/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cngege/HookManager.git")
 
-    add_versions("v0.3.1", "783dfc861232bf6f00ca7e626f38ab19eebc5833dba8344c1cdfcaf20ab28bb9")
+    add_versions("v0.3.2", "35f4e658182bfe8d70eaab6af15fee6b182367e0cc7a7163c49ddb1c64024183")
 	
-	add_configs("use_lighthook", {description = "Use lighthook as the underlying hook executor.", default = false, type = "boolean"})
+	add_configs("use_lighthook", {description = "Use lighthook as the underlying hook executor.", default = true, type = "boolean"})
     add_configs("use_minhook", {description = "Use minhook as the underlying hook executor.", default = false, type = "boolean"})
     add_configs("use_detours", {description = "Use detours as the underlying hook executor.", default = false, type = "boolean"})
     
-	
     on_load(function (package)
         if package:config("use_lighthook") then
             package:add("deps", "lighthook")
@@ -28,15 +27,14 @@ package("hookmanager")
     end)
 	
 	on_install("windows", function (package)
-        os.cp("HookManager/HookManager.hpp", package:installdir("include","HookManager"))
+        os.cp("include/HookManager/HookManager.hpp", package:installdir("include","HookManager"))
     end)
 
     on_test(function (package)
-		package:add("deps", "lighthook")
-		package:add("defines", "USE_LIGHTHOOK")
         assert(package:check_cxxsnippets({test = [[
+			#include "HookManager/HookManager.hpp"
             void test() {
-                HookInstance* h = HookManager::getInstance();
+                auto* h = HookManager::getInstance();
             }
-        ]]}, {configs = {languages = "c++20"}, includes = {"HookManager/HookManager.hpp"}}))
+        ]]}, {configs = {languages = "c++20"}}))
     end)
