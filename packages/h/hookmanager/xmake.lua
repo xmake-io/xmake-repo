@@ -9,18 +9,18 @@ package("hookmanager")
 
     add_versions("v0.3.2", "35f4e658182bfe8d70eaab6af15fee6b182367e0cc7a7163c49ddb1c64024183")
 	
-	add_configs("use_lighthook", {description = "Use lighthook as the underlying hook executor.", default = true, type = "boolean"})
-    add_configs("use_minhook", {description = "Use minhook as the underlying hook executor.", default = false, type = "boolean"})
-    add_configs("use_detours", {description = "Use detours as the underlying hook executor.", default = false, type = "boolean"})
+	add_configs("lighthook", {description = "Use lighthook as the underlying hook executor.", default = true, type = "boolean"})
+    add_configs("minhook", {description = "Use minhook as the underlying hook executor.", default = false, type = "boolean"})
+    add_configs("detours", {description = "Use detours as the underlying hook executor.", default = false, type = "boolean"})
     
     on_load("windows|x64",function (package)
-        if package:config("use_lighthook") then
+        if package:config("lighthook") then
             package:add("deps", "lighthook")
 			package:add("defines", "USE_LIGHTHOOK")
-        elseif package:config("use_minhook") then
+        elseif package:config("minhook") then
             package:add("deps", "minhook")
 			package:add("defines", "USE_MINHOOK")
-		elseif package:config("use_detours") then
+		elseif package:config("detours") then
 			package:add("deps", "microsoft-detours")
 			package:add("defines", "USE_DETOURS")
         end
