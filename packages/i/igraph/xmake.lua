@@ -8,7 +8,7 @@ package("igraph")
 
     add_versions("0.10.15", "65a0ba01888a4c5b3e0437e4d9a5bd9e8e93a1897cf5fc4e560e3586f4a43deb")
 
-    add_patches("0.10.15", "patches/0.10.15/build-dep.patch", "2ebc1a81e5954493566c1d5b160be402a9c80339d872ed20630887b3b5d9d078")
+    add_patches("0.10.15", "patches/0.10.15/build-dep.patch", "74a126582ba8df66ee2f4d0e28efbdcba1d3f62c7eec4e7a04231125ea21ee07")
 
     add_configs("glpk", {description = "Compile igraph with GLPK support", default = false, type = "boolean"})
     add_configs("graphml", {description = "Compile igraph with GraphML support", default = false, type = "boolean"})
