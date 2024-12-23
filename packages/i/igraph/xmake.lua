@@ -19,7 +19,9 @@ package("igraph")
         add_syslinks("pthread")
     end
 
-    add_deps("cmake", "flex", "bison", {kind = "binary"})
+    set_policy("package.cmake_generator.ninja", true)
+
+    add_deps("cmake", "ninja", "flex", "bison", {kind = "binary"})
     add_deps("plfit")
 
     on_check(function (package)
