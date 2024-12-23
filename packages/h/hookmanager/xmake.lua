@@ -8,31 +8,31 @@ package("hookmanager")
              "https://github.com/cngege/HookManager.git")
 
     add_versions("v0.3.2", "35f4e658182bfe8d70eaab6af15fee6b182367e0cc7a7163c49ddb1c64024183")
-	
-	add_configs("lighthook", {description = "Use lighthook as the underlying hook executor.", default = true, type = "boolean"})
+
+    add_configs("lighthook", {description = "Use lighthook as the underlying hook executor.", default = true, type = "boolean"})
     add_configs("minhook", {description = "Use minhook as the underlying hook executor.", default = false, type = "boolean"})
     add_configs("detours", {description = "Use detours as the underlying hook executor.", default = false, type = "boolean"})
-    
-    on_load("windows|x64",function (package)
+
+    on_load("windows|x64", function (package)
         if package:config("lighthook") then
             package:add("deps", "lighthook")
-			package:add("defines", "USE_LIGHTHOOK")
+            package:add("defines", "USE_LIGHTHOOK")
         elseif package:config("minhook") then
             package:add("deps", "minhook")
-			package:add("defines", "USE_MINHOOK")
-		elseif package:config("detours") then
-			package:add("deps", "microsoft-detours")
-			package:add("defines", "USE_DETOURS")
+            package:add("defines", "USE_MINHOOK")
+        elseif package:config("detours") then
+            package:add("deps", "microsoft-detours")
+            package:add("defines", "USE_DETOURS")
         end
     end)
-	
-	on_install("windows|x64", function (package)
-        os.cp("include/HookManager/HookManager.hpp", package:installdir("include","HookManager"))
+
+    on_install("windows|x64", function (package)
+        os.cp("include/HookManager/HookManager.hpp", package:installdir("include/HookManager"))
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-			#include "HookManager/HookManager.hpp"
+            #include "HookManager/HookManager.hpp"
             void test() {
                 auto* h = HookManager::getInstance();
             }
