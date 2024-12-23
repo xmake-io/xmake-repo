@@ -11,9 +11,7 @@ package("igraph")
     add_configs("glpk", {description = "Compile igraph with GLPK support", default = false, type = "boolean"})
     add_configs("graphml", {description = "Compile igraph with GraphML support", default = false, type = "boolean"})
     add_configs("openmp", {description = "Use OpenMP for parallelization", default = false, type = "boolean"})
-    if is_plat("windows") then
-        add_configs("debug", {description = "Enable debug symbols.", default = false, readonly = true})
-    elseif is_plat("wasm") then
+    if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
@@ -34,11 +32,9 @@ package("igraph")
     end)
 
     on_load(function (package)
+        -- TODO: unbundle deps gmp, arpack, blas, lapack
         if package:is_plat("linux", "macosx") then
             package:add("deps", "gmp")
-            -- if package:is_plat("linux") then
-            --     package:add("deps", "lapack")
-            -- end
         end
 
         if package:config("glpk") then
@@ -63,6 +59,7 @@ package("igraph")
 
         -- https://igraph.org/c/html/latest/igraph-Installation.html
         local configs = {
+            "-DUSE_CCACHE=OFF",
             "-DIGRAPH_WARNINGS_AS_ERRORS=OFF",
             -- "-DIGRAPH_USE_INTERNAL_GMP=OFF",
             -- "-DIGRAPH_USE_INTERNAL_ARPACK=OFF",
@@ -73,9 +70,6 @@ package("igraph")
         }
         if package:is_plat("linux", "macosx") then
             table.insert(configs, "-DIGRAPH_USE_INTERNAL_GMP=OFF")
-            -- if package:is_plat("linux") then
-            --     table.insert(configs, "-DIGRAPH_USE_INTERNAL_LAPACK=OFF")
-            -- end
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
