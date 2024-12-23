@@ -58,6 +58,9 @@ package("igraph")
         -- Disable test/doc/cpack
         io.replace("CMakeLists.txt", "CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME", "0", {plain = true})
         io.writefile("IGRAPH_VERSION", package:version_str())
+        if package:config("graphml") then
+            io.replace("etc/cmake/dependencies.cmake", "find_package(LibXml2 ${LIBXML2_VERSION_MIN} QUIET)", "find_package(LibXml2 CONFIG REQUIRED)", {plain = true})
+        end
 
         -- https://igraph.org/c/html/latest/igraph-Installation.html
         local configs = {
@@ -78,8 +81,9 @@ package("igraph")
         table.insert(configs, "-DIGRAPH_ENABLE_LTO=" .. (package:config("lto") and "ON" or "OFF"))
 
         table.insert(configs, "-DIGRAPH_GLPK_SUPPORT=" .. (package:config("glpk") and "ON" or "OFF"))
-        table.insert(configs, "-DIGRAPH_GRAPHML_SUPPORT=" .. (package:config("graphml") and "ON" or "OFF"))
         table.insert(configs, "-DIGRAPH_OPENMP_SUPPORT=" .. (package:config("openmp") and "ON" or "OFF"))
+        -- AUTO -> find_package, ON -> find_dependency (unavailable)
+        table.insert(configs, "-DIGRAPH_GRAPHML_SUPPORT=" .. (package:config("graphml") and "AUTO" or "OFF"))
 
         local opt = {}
         if package:config("glpk") then
