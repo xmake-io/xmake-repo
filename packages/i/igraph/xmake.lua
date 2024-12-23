@@ -8,6 +8,8 @@ package("igraph")
 
     add_versions("0.10.15", "65a0ba01888a4c5b3e0437e4d9a5bd9e8e93a1897cf5fc4e560e3586f4a43deb")
 
+    add_patches("0.10.15", "patches/0.10.15/build-dep.patch", "2ebc1a81e5954493566c1d5b160be402a9c80339d872ed20630887b3b5d9d078")
+
     add_configs("glpk", {description = "Compile igraph with GLPK support", default = false, type = "boolean"})
     add_configs("graphml", {description = "Compile igraph with GraphML support", default = false, type = "boolean"})
     add_configs("openmp", {description = "Use OpenMP for parallelization", default = false, type = "boolean"})
@@ -19,9 +21,7 @@ package("igraph")
         add_syslinks("pthread")
     end
 
-    set_policy("package.cmake_generator.ninja", true)
-
-    add_deps("cmake", "ninja", "flex", "bison", {kind = "binary"})
+    add_deps("cmake", "flex", "bison", {kind = "binary"})
     add_deps("plfit")
 
     on_check(function (package)
