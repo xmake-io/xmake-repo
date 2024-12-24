@@ -11,6 +11,7 @@ package("sfml")
         add_versions("2.5.1", "438c91a917cc8aa19e82c6f59f8714da353c488584a007d401efac8368e1c785")
     end
 
+    add_versions("3.0.0", "37506fafbd618b1f8e153bbca8811e62203a70b32a1183279fb9612fd0501d2b")
     add_versions("2.6.1", "82535db9e57105d4f3a8aedabd138631defaedc593cab589c924b7d7a11ffb9d")
     add_versions("2.6.0", "0c3f84898ea1db07dc46fa92e85038d8c449e3c8653fe09997383173de96bc06")
 
@@ -22,9 +23,15 @@ package("sfml")
         add_configs("main", {description = "Link to the sfml-main library", default = true, type = "boolean"})
     end
 
-    if is_plat("macosx") then
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::sfml")
+    elseif is_plat("linux") then
+        add_extsources("pacman::sfml", "apt::libsfml-dev")
+    elseif is_plat("macosx") then
         add_extsources("brew::sfml/sfml-all")
-    elseif not is_host("windows") then
+    end
+    
+    if not is_host("windows") then
         add_extsources("pkgconfig::sfml-all")
     end
 
@@ -73,7 +80,8 @@ package("sfml")
         component:add("extsources", "brew::sfml/sfml-audio")
         component:add("extsources", "pkgconfig::sfml-audio")
         if not package:config("shared") and package:is_plat("windows", "mingw") then
-            component:add("links", "openal32", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
+            component:add("links", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
+            if package:version():lt("3.0.0") then component:add("links", "openal32") end
         end
     end)
 
@@ -148,7 +156,8 @@ package("sfml")
         end
 
         if package:config("audio") then
-            package:add("deps", "libogg", "libflac", "libvorbis", "openal-soft")
+            package:add("deps", "libogg", "libflac", "libvorbis")
+            if package:version():lt("3.0.0") then package:add("deps", "openal-soft") end
         end
 
         package:add("components", "system")
@@ -170,7 +179,7 @@ package("sfml")
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
             -- Fix missing system libs
             if package:config("audio") then
-                if package:is_plat("windows", "mingw") then
+                if package:is_plat("windows", "mingw") and package:version():lt("3.0.0") then
                     local file = io.open("src/SFML/Audio/CMakeLists.txt", "a")
                     file:print("target_link_libraries(OpenAL INTERFACE winmm)")
                     file:close()
@@ -226,7 +235,7 @@ package("sfml")
             end
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
-            if package:is_plat("windows") and package:config("vs_runtime"):startswith("MT") then
+            if package:is_plat("windows") and package:has_runtime("MT", "MTd") then
                 table.insert(configs, "-DSFML_USE_STATIC_STD_LIBS=ON")
             end
         end
@@ -237,7 +246,7 @@ package("sfml")
         table.insert(configs, "-DWARNINGS_AS_ERRORS=OFF")
         table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
         local packagedeps
-        if package:config("audio") then
+        if package:config("audio") and package:version():lt("3.0.0") then
             packagedeps = packagedeps or {}
             table.insert(packagedeps, "openal-soft")
         end
@@ -259,19 +268,18 @@ package("sfml")
         ]]}, {includes = "SFML/System.hpp"}))
         if package:config("graphics") then
             assert(package:check_cxxsnippets({test = [[
-                void test(int args, char** argv) {
-                    sf::Text text;
-                    text.setString("Hello world");
+                void test(const sf::Texture& texture, const sf::Color& color) {
+                    sf::Sprite sprite(texture);
+                    sprite.setColor(color);
                 }
             ]]}, {includes = "SFML/Graphics.hpp"}))
         end
         if package:config("window") or package:config("graphics") then
             assert(package:check_cxxsnippets({test = [[
                 void test(int args, char** argv) {
-                    sf::Window window(sf::VideoMode(1280, 720), "Title");
+                    sf::Window window(sf::VideoMode(), "Title");
 
-                    sf::Event event;
-                    window.pollEvent(event);
+                    window.close();
                 }
             ]]}, {includes = "SFML/Window.hpp"}))
         end
@@ -279,22 +287,17 @@ package("sfml")
             assert(package:check_cxxsnippets({test = [[
                 void test(int args, char** argv) {
                     sf::Music music;
-                    music.openFromFile("music.ogg");
+                    auto res = music.openFromFile("music.ogg");
                     music.play();
                 }
             ]]}, {includes = "SFML/Audio.hpp"}))
         end
         if package:config("network") then
             assert(package:check_cxxsnippets({test = [[
-                void test(int args, char** argv) {
-                    sf::UdpSocket socket;
-                    socket.bind(54000);
-
+                void test(sf::UdpSocket& socket, const sf::IpAddress& remoteAddress) {
                     char data[100];
-                    std::size_t received;
-                    sf::IpAddress sender;
-                    unsigned short port;
-                    socket.receive(data, 100, received, sender, port);
+                    unsigned short remotePort = 54000;
+                    auto status = socket.send(data, 100, remoteAddress, remotePort);
                 }
             ]]}, {includes = "SFML/Network.hpp"}))
         end
