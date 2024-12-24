@@ -29,7 +29,7 @@ package("openssl")
 
     on_load(function (package)
         if not package:is_precompiled() then
-            if package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
+            if package:is_plat("android", "wasm") and is_subhost("windows") and os.arch() == "x64" then
                 -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
                 package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
             elseif is_subhost("windows") and not package:is_precompiled() then
@@ -123,7 +123,7 @@ package("openssl")
         import("package.tools.make").make(package, {"install_sw"})
     end)
 
-    on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", function (package)
+    on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", "wasm", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
         local configs = {}
         if package:is_cross() then
@@ -185,12 +185,17 @@ package("openssl")
         else
             os.vrunv("./config", configs, {shell = true, envs = buildenvs})
         end
+
+        if is_host("windows") and package:is_plat("wasm") then
+            io.replace("Makefile", "bat.exe", "bat", {plain = true})
+        end
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"), "*.a"))
         end
     end)
+
     on_test(function (package)
         assert(package:has_cfuncs("SSL_new", {includes = "openssl/ssl.h"}))
     end)
