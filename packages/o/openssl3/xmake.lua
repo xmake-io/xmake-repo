@@ -24,7 +24,7 @@ package("openssl3")
 
     -- https://security.stackexchange.com/questions/173425/how-do-i-calculate-md2-hash-with-openssl
     add_configs("md2", {description = "Enable MD2 on OpenSSl3 or not", default = false, type = "boolean"})
-    if is_plat("cross", "android", "iphoneos", "wasm") then
+    if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
