@@ -24,7 +24,7 @@ package("openssl3")
 
     -- https://security.stackexchange.com/questions/173425/how-do-i-calculate-md2-hash-with-openssl
     add_configs("md2", {description = "Enable MD2 on OpenSSl3 or not", default = false, type = "boolean"})
-    if is_plat("wasm") then
+    if is_plat("cross", "android", "iphoneos", "wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
@@ -211,14 +211,14 @@ package("openssl3")
         end
 
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        if package:is_cross() then
-            if (package:is_plat("android") and is_subhost("windows")) or package:is_plat("wasm") then
-                buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
-                buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
-                buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
-                buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
-                os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
-            end
+        if (package:is_cross() and package:is_plat("android") and is_subhost("windows")) or
+            package:is_plat("wasm") then
+
+            buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
+            buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
+            buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
+            buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
+            os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
         else
             os.vrunv("./Configure", configs, {envs = buildenvs})
         end
