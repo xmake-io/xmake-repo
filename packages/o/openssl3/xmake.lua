@@ -205,6 +205,10 @@ package("openssl3")
         if package:config("md2") then
             table.insert(configs, "enable-md2")
         end
+        if package:is_plat("wasm") then
+            -- @see https://github.com/openssl/openssl/issues/12174
+            table.insert(configs, "no-afalgeng")
+        end
 
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         if package:is_cross() then
@@ -230,4 +234,3 @@ package("openssl3")
     on_test(function (package)
         assert(package:has_cfuncs("SSL_new", {includes = "openssl/ssl.h"}))
     end)
-

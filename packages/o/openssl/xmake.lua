@@ -173,6 +173,11 @@ package("openssl")
         if package:debug() then
             table.insert(configs, "--debug")
         end
+        if package:is_plat("wasm") then
+            -- @see https://github.com/openssl/openssl/issues/12174
+            table.insert(configs, "no-afalgeng")
+        end
+
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         if package:is_cross() then
             if is_host("windows") and package:is_plat("android") then
