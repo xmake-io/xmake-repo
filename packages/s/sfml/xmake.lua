@@ -245,6 +245,8 @@ package("sfml")
         table.insert(configs, "-DSFML_BUILD_NETWORK=" .. (package:config("network") and "ON" or "OFF"))
         table.insert(configs, "-DWARNINGS_AS_ERRORS=OFF")
         table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
+        if package:version():ge("3.0.0") then table.insert(configs, "-DCMAKE_CXX_STANDARD=17") end
+
         local packagedeps
         if package:config("audio") and package:version():lt("3.0.0") then
             packagedeps = packagedeps or {}
@@ -260,6 +262,7 @@ package("sfml")
     end)
 
     on_test(function (package)
+        local configs = package:version():ge("3.0.0") and {languages = "c++17"} or {}
         assert(package:check_cxxsnippets({test = [[
             void test(int args, char** argv) {
                 sf::Clock c;
@@ -272,7 +275,7 @@ package("sfml")
                     sf::Sprite sprite(texture);
                     sprite.setColor(color);
                 }
-            ]]}, {includes = "SFML/Graphics.hpp"}))
+            ]]}, {includes = "SFML/Graphics.hpp", configs = configs}))
         end
         if package:config("window") or package:config("graphics") then
             assert(package:check_cxxsnippets({test = [[
@@ -281,7 +284,7 @@ package("sfml")
 
                     window.close();
                 }
-            ]]}, {includes = "SFML/Window.hpp"}))
+            ]]}, {includes = "SFML/Window.hpp", configs = configs}))
         end
         if package:config("audio") then
             assert(package:check_cxxsnippets({test = [[
@@ -290,7 +293,7 @@ package("sfml")
                     auto res = music.openFromFile("music.ogg");
                     music.play();
                 }
-            ]]}, {includes = "SFML/Audio.hpp"}))
+            ]]}, {includes = "SFML/Audio.hpp", configs = configs}))
         end
         if package:config("network") then
             assert(package:check_cxxsnippets({test = [[
@@ -299,6 +302,6 @@ package("sfml")
                     unsigned short remotePort = 54000;
                     auto status = socket.send(data, 100, remoteAddress, remotePort);
                 }
-            ]]}, {includes = "SFML/Network.hpp"}))
+            ]]}, {includes = "SFML/Network.hpp", configs = configs}))
         end
     end)
