@@ -29,8 +29,8 @@ package("grpc")
 
     if on_check then
         on_check(function (package)
-            if package:is_cross() then
-                raise("package(grpc) unsupported cross-compilation")
+            if package:is_plat("mingw", "msys") then
+                raise("package(grpc) unsupported mingw plat on msys.\nFix refer: https://github.com/msys2/MINGW-packages/tree/404359eedd188a8427ed139659472d64bd250384/mingw-w64-grpc")
             end
         end)
     end
@@ -55,6 +55,17 @@ package("grpc")
         if package:is_plat("macosx") and package:config("shared") then
             io.replace("CMakeLists.txt", "target_compile_features(upb_textformat_lib PUBLIC cxx_std_14)",
             "target_compile_features(upb_textformat_lib PUBLIC cxx_std_14)\ntarget_link_options(upb_textformat_lib PRIVATE -Wl,-undefined,dynamic_lookup)\ntarget_link_options(upb_json_lib PRIVATE -Wl,-undefined,dynamic_lookup)", {plain = true})
+        end
+        if package:is_cross() then
+            -- xrepo protobuf will remove protoc.exe in cross-compilation
+            -- Avoid using CONFIG mode in cmake to find protoc.exe
+            io.replace("cmake/protobuf.cmake", "find_package(Protobuf REQUIRED CONFIG)", "find_package(Protobuf)", {plain = true})
+            -- Disable plugin build
+            -- https://github.com/grpc/grpc/issues/29370
+            io.replace("CMakeLists.txt", "add_library(grpc_plugin_support",
+                "if(0)\nadd_library(grpc_plugin_support", {plain = true})
+            io.replace("CMakeLists.txt", "if(gRPC_INSTALL)\n  install(TARGETS grpc_plugin_support",
+                "endif()\nif(0)\n  install(TARGETS grpc_plugin_support", {plain = true})
         end
 
         local configs = {
@@ -84,6 +95,9 @@ package("grpc")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
+        table.insert(configs, "-DgRPC_BUILD_CODEGEN=" .. (package:is_cross() and "OFF" or "ON"))
+        table.insert(configs, "-DgRPC_BUILD_GRPC_CPP_PLUGIN=" .. (package:is_cross() and "OFF" or "ON"))
+
         local opt = {}
         if not (package:gitref() or package:version():ge("1.68.2")) then
             opt.packagedeps = "protobuf-cpp"
@@ -95,10 +109,6 @@ package("grpc")
             os.cp(path.join(package:buildir(), "grpc_cpp_plugin*"), package:installdir("bin"))
         else
             import("package.tools.cmake").install(package, configs, opt)
-
-            if package:is_cross() then
-                os.tryrm(package:installdir("bin/*.exe"))
-            end
         end
 
     end)
