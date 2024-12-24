@@ -50,7 +50,13 @@ package("grpc")
         end
     end)
 
-    on_install("linux", "macosx", "windows", function (package)
+    on_install(function (package)
+        -- @see https://github.com/grpc/grpc/issues/36654#issuecomment-2228569158
+        if package:is_plat("macosx") and package:config("shared") then
+            io.replace("CMakeLists.txt", "target_compile_features(upb_textformat_lib PUBLIC cxx_std_14)",
+            "target_compile_features(upb_textformat_lib PUBLIC cxx_std_14)\ntarget_link_options(upb_textformat_lib PRIVATE -Wl,-undefined,dynamic_lookup)\ntarget_link_options(upb_json_lib PRIVATE -Wl,-undefined,dynamic_lookup)", {plain = true})
+        end
+
         local configs = {
             "-DgRPC_DOWNLOAD_ARCHIVES=OFF",
             "-DCMAKE_CXX_STANDARD=" .. package:dep("abseil"):config("cxx_standard"),
