@@ -19,7 +19,7 @@ package("grpc")
     end
 
     add_deps("cmake")
-    add_deps("c-ares", "re2", "protobuf-cpp", "openssl", "zlib")
+    add_deps("c-ares", "re2", "protobuf-cpp", "openssl3", "zlib")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl", "m")
