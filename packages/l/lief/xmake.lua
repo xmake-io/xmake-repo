@@ -14,7 +14,7 @@ package("lief")
     add_versions("0.14.1", "92916dcb3178353d863aef4f409186889983c56e025b774741d5316a72ec3a7d")
 
     add_patches("0.15.1", "patches/0.15.1/algorithm.patch", "3e110539c3db037b2b24cd32f97ad8cc6241b1f69d4a65dab9fd6c84e482bbd9")
-    add_patches("0.16.0", "https://github.com/lief-project/LIEF/commit/41166332a2435fdb7d2bdc5c73f9ff9b442c5459.patch", "41166332a2435fdb7d2bdc5c73f9ff9b442c5459")
+    add_patches("0.16.0", "https://github.com/lief-project/LIEF/commit/41166332a2435fdb7d2bdc5c73f9ff9b442c5459.patch", "b1431e0b809ab74fc21f491872b339d3f4c3eac3203b7db6d681a78ecd182769")
     
     add_configs("elf",    {description = "Enable ELF module.", default = true, type = "boolean"})
     add_configs("pe",     {description = "Enable PE module.", default = true, type = "boolean"})
