@@ -150,7 +150,7 @@ package("sfml")
 
         if package:is_plat("linux") then
             if package:config("window") or package:config("graphics") then
-                package:add("deps", "libx11", "libxcursor", "libxrandr", "libxrender", "libxfixes", "libxext", "eudev")
+                package:add("deps", "libx11", "libxcursor", "libxrandr", "libxrender", "libxfixes", "libxext", "eudev", "libxi")
                 package:add("deps", "opengl", "glx", {optional = true})
             end
         end
