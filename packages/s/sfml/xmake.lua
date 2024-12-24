@@ -268,14 +268,14 @@ package("sfml")
                 sf::Clock c;
                 c.restart();
             }
-        ]]}, {includes = "SFML/System.hpp"}))
+        ]]}, {configs = configs, includes = "SFML/System.hpp"}))
         if package:config("graphics") then
             assert(package:check_cxxsnippets({test = [[
                 void test(const sf::Texture& texture, const sf::Color& color) {
                     sf::Sprite sprite(texture);
                     sprite.setColor(color);
                 }
-            ]]}, {includes = "SFML/Graphics.hpp", configs = configs}))
+            ]]}, {configs = configs, includes = "SFML/Graphics.hpp"}))
         end
         if package:config("window") or package:config("graphics") then
             assert(package:check_cxxsnippets({test = [[
@@ -284,7 +284,7 @@ package("sfml")
 
                     window.close();
                 }
-            ]]}, {includes = "SFML/Window.hpp", configs = configs}))
+            ]]}, {configs = configs, includes = "SFML/Window.hpp"}))
         end
         if package:config("audio") then
             assert(package:check_cxxsnippets({test = [[
@@ -293,7 +293,7 @@ package("sfml")
                     auto res = music.openFromFile("music.ogg");
                     music.play();
                 }
-            ]]}, {includes = "SFML/Audio.hpp", configs = configs}))
+            ]]}, {configs = configs, includes = "SFML/Audio.hpp"}))
         end
         if package:config("network") then
             assert(package:check_cxxsnippets({test = [[
@@ -302,6 +302,6 @@ package("sfml")
                     unsigned short remotePort = 54000;
                     auto status = socket.send(data, 100, remoteAddress, remotePort);
                 }
-            ]]}, {includes = "SFML/Network.hpp", configs = configs}))
+            ]]}, {configs = configs, includes = "SFML/Network.hpp"}))
         end
     end)
