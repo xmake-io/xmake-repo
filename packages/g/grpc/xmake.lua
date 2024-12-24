@@ -50,7 +50,7 @@ package("grpc")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         -- @see https://github.com/grpc/grpc/issues/36654#issuecomment-2228569158
         if package:is_plat("macosx") and package:config("shared") then
             io.replace("CMakeLists.txt", "target_compile_features(upb_textformat_lib PUBLIC cxx_std_14)",
