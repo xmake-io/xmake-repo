@@ -82,20 +82,29 @@ package("grpc")
         if not (package:gitref() or package:version():ge("1.68.2")) then
             opt.packagedeps = "protobuf-cpp"
         end
-        import("package.tools.cmake").install(package, configs, opt)
+        if package:is_binary() then
+            opt.target = "grpc_cpp_plugin"
+            import("package.tools.cmake").build(package, configs, opt)
 
-        if package:is_cross() then
-            os.tryrm(package:installdir("bin/*.exe"))
+            os.cp(path.join(package:buildir(), "grpc_cpp_plugin*"), package:installdir("bin"))
+        else
+            import("package.tools.cmake").install(package, configs, opt)
+
+            if package:is_cross() then
+                os.tryrm(package:installdir("bin/*.exe"))
+            end
         end
+
     end)
 
     on_test(function (package)
         if not package:is_cross() then
-            assert(os.isfile(path.join(package:installdir(), "bin", "grpc_cpp_plugin")))
+            local grpc_cpp_plugin = "bin/grpc_cpp_plugin" .. (is_host("windows") and ".exe" or "")
+            assert(os.isfile(path.join(package:installdir(), grpc_cpp_plugin)))
         end
 
-        local languages = "c++" .. package:dep("abseil"):config("cxx_standard")
         if package:is_library() then
+            local languages = "c++" .. package:dep("abseil"):config("cxx_standard")
             assert(package:check_cxxsnippets({test = [[
                 void test() {
                     auto v = grpc::Version();
