@@ -7,6 +7,7 @@ package("hookmanager")
     add_urls("https://github.com/cngege/HookManager/archive/refs/tags/$(version).tar.gz",
              "https://github.com/cngege/HookManager.git")
 
+    add_versions("v0.3.3", "8a4ebc17def15c93a09125466211e8ed700c05c4197a8eb0d6aa4a7ed9a4b9a1")
     add_versions("v0.3.2", "35f4e658182bfe8d70eaab6af15fee6b182367e0cc7a7163c49ddb1c64024183")
 
     add_configs("lighthook", {description = "Use lighthook as the underlying hook executor.", default = true, type = "boolean"})
