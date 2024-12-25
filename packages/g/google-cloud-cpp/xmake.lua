@@ -12,24 +12,24 @@ package("google-cloud-cpp")
     add_deps("nlohmann_json", {configs = {cmake = true}})
 
     on_check(function (package)
-        if package:is_plat("android") then
-            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on android yet.")
-        end
+    --    if package:is_plat("android") then
+    --        raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on android yet.")
+    --    end
         if package:is_plat("wasm") then
-            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on wasm yet.")
+            raise("package(google-cloud-cpp) unsupported on wasm due to package(grpc) is unsupported on wasm yet.")
         end
         if package:is_plat("mingw") then
-            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on mingw yet.")
+            raise("package(google-cloud-cpp) unsupported on mingw due to package(grpc) is unsupported on mingw yet.")
         end
-        if package:is_plat("iphoneos") then
-            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on iphoneos yet.")
-        end
-        if package:is_plat("bsd") then
-            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on FreeBSD yet.")
-        end
-        if package:is_arch("arm.*")  then
-            raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on arm yet.")
-        end
+    --    if package:is_plat("iphoneos") then
+    --        raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on iphoneos yet.")
+    --    end
+    --    if package:is_plat("bsd") then
+    --        raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on FreeBSD yet.")
+    --    end
+    --    if package:is_arch("arm.*")  then
+    --        raise("package(google-cloud-cpp) unsupported on android due to package(grpc) is unsupported on arm yet.")
+    --    end
     end)
 
     on_install(function (package)
