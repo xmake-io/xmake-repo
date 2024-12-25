@@ -6,6 +6,7 @@ package("vvenc")
     add_urls("https://github.com/fraunhoferhhi/vvenc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/fraunhoferhhi/vvenc.git")
 
+    add_versions("v1.13.0", "28994435e4f7792cc3a907b1c5f20afd0f7ef1fcd82eee2af7713df7a72422eb")
     add_versions("v1.12.1", "ba353363779e8f835200f319c801b052a97d592ebc817b52c41bdce093fa2fe2")
     add_versions("v1.12.0", "e7311ffcc87d8fcc4b839807061cca1b89be017ae7c449a69436dc2dd07615c2")
     add_versions("v1.11.1", "4f0c8ac3f03eb970bee7a0cacc57a886ac511d58f081bb08ba4bce6f547d92fa")
