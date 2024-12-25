@@ -6,7 +6,9 @@ package("exprtk")
     set_license("MIT")
 
     add_urls("https://github.com/ArashPartow/exprtk.git")
-    add_versions("2022.01.01", "f46bffcd6966d38a09023fb37ba9335214c9b959")
+    add_versions("0.0.1", "806c519c91fd08ba4fa19380dbf3f6e42de9e2d1")
+    add_versions("0.0.2", "f46bffcd6966d38a09023fb37ba9335214c9b959")
+    add_versions("0.0.3", "a4b17d543f072d2e3ba564e4bc5c3a0d2b05c338")
 
     if is_plat("windows") then
         add_cxxflags("/bigobj")
