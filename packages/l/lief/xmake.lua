@@ -34,7 +34,7 @@ package("lief")
     add_deps("cmake")
     add_deps("spdlog", {configs = {fmt_external = false, noexcept = true, header_only = false, fmt_external_ho = true}})
     add_deps("nlohmann_json", {configs = {cmake = true}})
-    add_deps("tl_expected", "utfcpp", "mbedtls <3.6.0", "tcb-span", "frozen") --, "fmt"
+    add_deps("tl_expected", "utfcpp", "mbedtls <3.6.0", "tcb-span", "frozen")
 
     if on_check then
         on_check(function (package)
