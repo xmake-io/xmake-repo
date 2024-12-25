@@ -32,9 +32,9 @@ package("lief")
     end
 
     add_deps("cmake")
-    add_deps("spdlog", {configs = {header_only = false, noexcept = true}})
+    add_deps("spdlog", {configs = {fmt_external = false, noexcept = true, header_only = false, fmt_external_ho = true}})
     add_deps("nlohmann_json", {configs = {cmake = true}})
-    add_deps("tl_expected", "utfcpp", "mbedtls <3.6.0", "tcb-span", "frozen")
+    add_deps("tl_expected", "utfcpp", "mbedtls <3.6.0", "tcb-span", "frozen") --, "fmt"
 
     if on_check then
         on_check(function (package)
@@ -57,8 +57,12 @@ package("lief")
             package:add("defines", "LIEF_IMPORT")
         end
 
-        io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp)", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)", {plain = true})
+        --os.tryrm("third-party/spdlog/fmt/bundled/args.h")
 
+        io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp)", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)", {plain = true})
+        io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)", "find_package(fmt CONFIG REQUIRED)\nfind_package(spdlog CONFIG REQUIRED)\ntarget_link_libraries(LIB_LIEF PRIVATE fmt::fmt spdlog::spdlog)", {plain = true})
+        io.replace("CMakeLists.txt", "TARGETS LIB_LIEF lief_spdlog", "TARGETS LIB_LIEF", {plain = true})
+        io.replace("src/logging.cpp", "#include \"spdlog/fmt/bundled/args.h\"", "#include <fmt/args.h>", {plain = true})
         local configs = {
             "-DLIEF_C_API=ON",
             "-DLIEF_PYTHON_API=OFF",
@@ -87,7 +91,7 @@ package("lief")
                 table.insert(configs, "-DLIEF_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"tl_expected", "utfcpp", "mbedtls", "tcb-span", "frozen", "nlohmann_json", "spdlog", "fmt"}})
     end)
 
     on_test(function (package)
