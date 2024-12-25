@@ -91,7 +91,7 @@ package("lief")
                 table.insert(configs, "-DLIEF_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
             end
         end
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"tl_expected", "utfcpp", "mbedtls", "tcb-span", "frozen", "nlohmann_json", "spdlog", "fmt"}})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
