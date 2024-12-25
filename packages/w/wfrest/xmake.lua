@@ -6,6 +6,7 @@ package("wfrest")
     add_urls("https://github.com/wfrest/wfrest/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wfrest/wfrest.git")
 
+    add_versions("v0.9.8", "61de0d3fd998562c54ec7a932c503a766d9f269386b28aa3cc8f8180868f58ad")
     add_versions("v0.9.7", "47eaf6feec20bd5d905a69526c0f3905f07e17b442ffff02391a35ce2ac397bf")
     add_versions("v0.9.3", "1bd0047484e81e23c7a8ab7ba41634109169c37d80aeb2c480728214db42878e")
     add_versions("v0.9.4", "1f8811e90e6c89af91db04cab0c37dc86cf4777f4f4713d6003ac0ec1a2471a9")
