@@ -4,7 +4,7 @@ package("pffft")
     set_description("PFFFT, a pretty fast Fourier Transform.")
     set_license("BSD-like (FFTPACK license)")
     add_urls("https://bitbucket.org/jpommier/pffft.git")
-    add_configs("nosimd", {description = "Build without SIMD support.", default = true, type = "boolean"})
+    add_configs("nosimd", {description = "Build without SIMD support.", default = false, type = "boolean"})
 
     if not is_plat("windows") then
         add_syslinks("m")
