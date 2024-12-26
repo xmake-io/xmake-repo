@@ -57,7 +57,7 @@ package("lief")
             package:add("defines", "LIEF_IMPORT")
         end
 
-        os.rm("third_party")
+        os.rm("third-party")
 
         io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp)", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)", {plain = true})
 
