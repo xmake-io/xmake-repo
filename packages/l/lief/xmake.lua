@@ -32,7 +32,7 @@ package("lief")
     end
 
     add_deps("cmake")
-    add_deps("spdlog", {configs = {fmt_external = false, noexcept = true, header_only = false, fmt_external_ho = true}})
+    add_deps("spdlog", {configs = {header_only = false, noexcept = true}})
     add_deps("nlohmann_json", {configs = {cmake = true}})
     add_deps("tl_expected", "utfcpp", "mbedtls <3.6.0", "tcb-span", "frozen")
 
@@ -59,7 +59,7 @@ package("lief")
 
         io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp)", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)", {plain = true})
         
-        io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)", "find_package(fmt CONFIG REQUIRED)\nfind_package(spdlog CONFIG REQUIRED)\ntarget_link_libraries(LIB_LIEF PRIVATE fmt::fmt spdlog::spdlog)", {plain = true})
+        io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)", "find_package(spdlog CONFIG REQUIRED)\ntarget_link_libraries(LIB_LIEF PRIVATE spdlog::spdlog)", {plain = true})
         io.replace("CMakeLists.txt", "TARGETS LIB_LIEF lief_spdlog", "TARGETS LIB_LIEF", {plain = true})
         io.replace("src/logging.cpp", "#include \"spdlog/fmt/bundled/args.h\"", "#include <fmt/args.h>", {plain = true})
         
