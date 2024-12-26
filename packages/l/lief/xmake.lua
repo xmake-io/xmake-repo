@@ -57,11 +57,13 @@ package("lief")
             package:add("defines", "LIEF_IMPORT")
         end
 
+        os.rm("third_party")
+
         io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp)", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)", {plain = true})
-        
+
         io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE lief_spdlog)", "find_package(spdlog CONFIG REQUIRED)\ntarget_link_libraries(LIB_LIEF PRIVATE spdlog::spdlog)", {plain = true})
         io.replace("CMakeLists.txt", "TARGETS LIB_LIEF lief_spdlog", "TARGETS LIB_LIEF", {plain = true})
-        
+
         local configs = {
             "-DLIEF_C_API=ON",
             "-DLIEF_PYTHON_API=OFF",
