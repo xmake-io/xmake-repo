@@ -11,8 +11,8 @@ target("pffft")
     if is_kind("shared") then
         add_rules("utils.symbols.export_all")
     end
-    add_files("*.c")
-    add_headerfiles("*.h")
+    add_files("fftpack.c", "pffft.c")
+    add_headerfiles("fftpack.h", "pffft.h")
     if not is_plat("windows") then
         add_syslinks("m")
     else
