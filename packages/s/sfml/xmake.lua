@@ -81,7 +81,9 @@ package("sfml")
         component:add("extsources", "pkgconfig::sfml-audio")
         if not package:config("shared") and package:is_plat("windows", "mingw") then
             component:add("links", "flac", "vorbisenc", "vorbisfile", "vorbis", "ogg")
-            if package:version():lt("3.0.0") then component:add("links", "openal32") end
+            if not (package:gitref() or package:version():ge("3.0.0")) then 
+                component:add("links", "openal32") 
+            end
         end
     end)
 
@@ -157,7 +159,9 @@ package("sfml")
 
         if package:config("audio") then
             package:add("deps", "libogg", "libflac", "libvorbis")
-            if package:version():lt("3.0.0") then package:add("deps", "openal-soft") end
+            if not (package:gitref() or package:version():ge("3.0.0")) then 
+                package:add("deps", "openal-soft") 
+            end
         end
 
         package:add("components", "system")
@@ -178,8 +182,8 @@ package("sfml")
         if package:config("shared") then
             table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
             -- Fix missing system libs
-            if package:config("audio") then
-                if package:is_plat("windows", "mingw") and package:version():lt("3.0.0") then
+            if package:config("audio") and not (package:gitref() or package:version():ge("3.0.0")) then
+                if package:is_plat("windows", "mingw") then
                     local file = io.open("src/SFML/Audio/CMakeLists.txt", "a")
                     file:print("target_link_libraries(OpenAL INTERFACE winmm)")
                     file:close()
@@ -203,9 +207,9 @@ package("sfml")
                                 for _, libfile in ipairs(libfiles) do
                                     table.insert(libraries, (libfile:gsub("\\", "/")))
                                 end
-                                local lib_name = package:version():lt("3.0.0") and "Freetype" or "freetype"
+                                local lib_name = (package:gitref() or package:version():ge("3.0.0")) and "freetype" or "Freetype"
                                 local file = io.open("src/SFML/Graphics/CMakeLists.txt", "a")
-                                file:print(format("target_link_libraries(%s INTERFACE %s)", lib_name, table.concat(libraries, " ")))
+                                file:print("target_link_libraries(%s INTERFACE %s)", lib_name, table.concat(libraries, " "))
                                 file:close()
                             end
                         end
@@ -246,10 +250,12 @@ package("sfml")
         table.insert(configs, "-DSFML_BUILD_NETWORK=" .. (package:config("network") and "ON" or "OFF"))
         table.insert(configs, "-DWARNINGS_AS_ERRORS=OFF")
         table.insert(configs, "-DSFML_USE_SYSTEM_DEPS=TRUE")
-        if package:version():ge("3.0.0") then table.insert(configs, "-DCMAKE_CXX_STANDARD=17") end
+        if package:gitref() or package:version():ge("3.0.0") then 
+            table.insert(configs, "-DCMAKE_CXX_STANDARD=17") 
+        end
 
         local packagedeps
-        if package:config("audio") and package:version():lt("3.0.0") then
+        if package:config("audio") and not (package:gitref() or package:version():ge("3.0.0")) then
             packagedeps = packagedeps or {}
             table.insert(packagedeps, "openal-soft")
         end
@@ -263,7 +269,7 @@ package("sfml")
     end)
 
     on_test(function (package)
-        local configs = package:version():ge("3.0.0") and {languages = "c++17"} or {}
+        local configs = (package:gitref() or package:version():ge("3.0.0")) and {languages = "c++17"} or {}
         assert(package:check_cxxsnippets({test = [[
             void test(int args, char** argv) {
                 sf::Clock c;
