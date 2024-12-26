@@ -7,6 +7,8 @@ package("google-cloud-cpp")
              "https://github.com/googleapis/google-cloud-cpp.git")
     add_versions("2.32.0","db69dd73ef4af8b2e816d80ded04950036d0e0dccc274f8c3d3ed1d7f5692a1b")
 
+    add_configs("grpc", {description = "Enable gRPC", default = true, type = "boolean"})
+
     add_deps("cmake")
     add_deps("abseil", "crc32c", "libcurl", "openssl3", "zlib")
     add_deps("nlohmann_json", {configs = {cmake = true}})
@@ -39,6 +41,8 @@ package("google-cloud-cpp")
             "-DGOOGLE_CLOUD_CPP_ENABLE_MACOS_OPENSSL_CHECK=OFF",
             "-DGOOGLE_CLOUD_CPP_ENABLE_WERROR=OFF",
         }
+        table.insert(configs, "-DGOOGLE_CLOUD_CPP_ENABLE_GRPC=" .. (package:config("grpc") and "ON" or "OFF"))
+        
         package:add("cxxflags", "-Wno-missing-template-arg-list-after-template-kw")
         import("package.tools.cmake").install(package, configs)
     end)
@@ -46,10 +50,14 @@ package("google-cloud-cpp")
     on_load(function (package)
         if package:config("shared") then
             package:add("deps","protobuf-cpp",{shared= true})
-            package:add("deps","grpc",{shared= true})
+            if package:config("grpc") then
+                package:add("deps","grpc",{shared= true})
+            end
         else
             package:add("deps","protobuf-cpp")
-            package:add("deps","grpc")
+            if package:config("grpc") then
+                package:add("deps","grpc")
+            end
         end
     end)
 
