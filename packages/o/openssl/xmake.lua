@@ -192,5 +192,27 @@ package("openssl")
         end
     end)
     on_test(function (package)
-        assert(package:has_cfuncs("SSL_new", {includes = "openssl/ssl.h"}))
+        assert(package:check_csnippets({test = [[
+                #include <openssl/ssl.h>
+
+                int test(){
+                    SSL_library_init();
+                    SSL_load_error_strings();
+                    SSL_CTX *ctx = SSL_CTX_new(SSLv23_client_method());
+                    if(ctx == NULL){
+                        return 1;
+                    }
+
+                    SSL *ssl = SSL_new(ctx);
+                    if(ssl == NULL){
+                        SSL_CTX_free(ctx);
+                        return 1;
+                    }
+
+                    SSL_free(ssl);
+                    SSL_CTX_free(ctx);
+
+                    return 0;
+                }
+            ]]}))
     end)
