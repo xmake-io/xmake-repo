@@ -14,6 +14,8 @@ package("pffft")
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
+        local configs = {}
+        configs.simd = package:config("simd")
         import("package.tools.xmake").install(package, configs)
     end)
 
