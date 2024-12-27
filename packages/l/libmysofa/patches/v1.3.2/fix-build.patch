@@ -1,0 +1,106 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index dcaa92a..ed966e6 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -13,21 +13,23 @@ use_c99()
+ configure_file(config.h.in config.h)
+ include_directories(${CMAKE_CURRENT_BINARY_DIR})
+ 
++find_package(ZLIB REQUIRED)
+ if(NOT MSVC)
+   if(NOT WIN32)
+     find_library(MATH m)
+   else()
+     set(MATH "")
+   endif()
+-  include(FindZLIB)
+ else()
+   set(MATH "")
++  if(0)
+   find_program(NUGET nuget)
+   if(NUGET)
+     execute_process(COMMAND ${NUGET} install zlib)
+   endif()
+   include_directories(
+     ${PROJECT_SOURCE_DIR}/windows/third-party/zlib-1.2.11/include/)
++  endif()
+ endif()
+ 
+ if(NOT MSVC)
+@@ -36,12 +38,11 @@ if(NOT MSVC)
+   else()
+     set(MATH "")
+   endif()
+-  include(FindZLIB)
+-  include_directories(${ZLIB_INCLUDE_DIRS})
+   set(PKG_CONFIG_PRIVATELIBS "-lm ${PKG_CONFIG_PRIVATELIBS}")
+   set(PKG_CONFIG_PRIVATELIBS "-lz ${PKG_CONFIG_PRIVATELIBS}")
+ else()
+   set(MATH "")
++  if(0)
+   find_program(NUGET nuget)
+   if(NOT NUGET)
+     message(
+@@ -53,6 +54,7 @@ else()
+   endif()
+   include_directories(
+     ${PROJECT_SOURCE_DIR}/windows/third-party/zlib-1.2.11/include/)
++  endif()
+ endif()
+ 
+ set(libsrc
+@@ -80,15 +82,16 @@ set(libsrc
+ set(public-headers
+     hrtf/mysofa.h
+ )
++install(FILES "${public-headers}" DESTINATION include)
+ 
+-if(BUILD_STATIC_LIBS)
++if(NOT(BUILD_SHARED_LIBS))
+ add_library(mysofa-static STATIC ${libsrc})
+ target_include_directories(mysofa-static
+   PUBLIC
+   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hrtf>"
+   $<INSTALL_INTERFACE:include/>
+ )
+-target_link_libraries(mysofa-static LINK_PRIVATE ${MATH} ${ZLIB_LIBRARIES})
++target_link_libraries(mysofa-static LINK_PRIVATE ${MATH} ZLIB::ZLIB)
+ set_target_properties(
+   mysofa-static
+   PROPERTIES OUTPUT_NAME mysofa CLEAN_DIRECT_OUTPUT 1 POSITION_INDEPENDENT_CODE
+@@ -120,7 +123,7 @@ if(BUILD_SHARED_LIBS)
+     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hrtf>"
+     $<INSTALL_INTERFACE:include/>
+   )
+-  target_link_libraries(mysofa-shared PRIVATE ${MATH} ${ZLIB_LIBRARIES})
++  target_link_libraries(mysofa-shared PRIVATE ${MATH} ZLIB::ZLIB)
+   set_target_properties(mysofa-shared
+                         PROPERTIES OUTPUT_NAME mysofa CLEAN_DIRECT_OUTPUT 1)
+   # Rename the Windows import library (stub) of the DLL to prevent a name clash
+@@ -171,7 +174,7 @@ endif()
+ 
+ if(BUILD_TESTS)
+   add_executable(mysofa2json tests/sofa2json.c tests/json.c)
+-  if(BUILD_STATIC_LIBS)
++  if(NOT(BUILD_SHARED_LIBS))
+     target_link_libraries(mysofa2json mysofa-static)
+   else()
+     target_link_libraries(mysofa2json mysofa-shared)
+@@ -192,7 +195,7 @@ if(BUILD_TESTS)
+     tests/cache.c
+     tests/json.c
+     tests/user_defined_variable.c)
+-  if(BUILD_STATIC_LIBS)
++  if(NOT(BUILD_SHARED_LIBS))
+     target_link_libraries(external mysofa-static ${CUNIT_LIBRARIES})
+   else()
+     target_link_libraries(external mysofa-shared ${CUNIT_LIBRARIES} m)
+@@ -210,7 +213,7 @@ if(BUILD_TESTS)
+     COMMAND internal)
+ 
+   add_executable(multithread tests/multithread.c)
+-  if(BUILD_STATIC_LIBS)
++  if(NOT(BUILD_SHARED_LIBS))
+     target_link_libraries(multithread mysofa-static pthread)
+   else()
+     target_link_libraries(multithread mysofa-shared pthread m)
