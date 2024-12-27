@@ -6,6 +6,7 @@ package("quickjs-ng")
     add_urls("https://github.com/quickjs-ng/quickjs/archive/refs/tags/$(version).tar.gz",
              "https://github.com/quickjs-ng/quickjs.git", {submodules = false})
 
+    add_versions("v0.8.0", "7e60e1e0dcd07d25664331308a2f4aee2a88d60d85896e828d25df7c3d40204e")
     add_versions("v0.7.0", "46c45cc2ed174474765dac8e41062998d92c4dd5fd779624da4073d6cd430eeb")
     add_versions("v0.6.1", "276edbb30896cdf2eee12a8bdb5b9c1cc2734eac8c898de6d52268ae201e614d")
     add_versions("v0.5.0", "41212a6fb84bfe07d61772c02513734b7a06465843ba8f76f1ce1e5df866f489")
@@ -25,6 +26,11 @@ package("quickjs-ng")
                 local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
                 local minor = vs_toolset_ver:minor()
                 assert(minor and minor >= 30, "package(quickjs-ng) require vs_toolset >= 14.3")
+            end
+        end)
+        on_check("wasm", "cross", function (package)
+            if package:version():eq("0.8.0") then
+                raise("package(quickjs-ng v0.8.0) unsupported platform")
             end
         end)
     end
