@@ -6,7 +6,7 @@ package("pffft")
 
     add_urls("https://bitbucket.org/jpommier/pffft.git")
 
-    add_configs("simd", {description = "Build without SIMD support.", default = true, type = "boolean"})
+    add_configs("simd", {description = "Build with SIMD support.", default = true, type = "boolean"})
 
     if not is_plat("windows") then
         add_syslinks("m")
