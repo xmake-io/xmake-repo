@@ -2,6 +2,7 @@ add_rules("mode.debug", "mode.release")
 
 target("pffft")
     set_kind("$(kind)")
+    add_options("simd")
     if not has_config("simd") then
         add_defines("PFFFT_SIMD_DISABLE")
     end
