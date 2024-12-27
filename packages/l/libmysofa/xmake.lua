@@ -15,6 +15,7 @@ package("libmysofa")
     on_install(function (package)
         local configs = {"-DBUILD_TESTS=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
         import("package.tools.cmake").install(package, configs)
     end)
 
