@@ -1,8 +1,9 @@
 add_rules("mode.debug", "mode.release")
 
+option("simd", {default = true, description = "Build with simd"})
+
 target("pffft")
     set_kind("$(kind)")
-    add_options("simd")
     if not has_config("simd") then
         add_defines("PFFFT_SIMD_DISABLE")
     end
