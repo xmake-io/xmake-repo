@@ -13,6 +13,8 @@ package("libmysofa")
     add_deps("cmake", "zlib")
 
     on_install(function (package)
+        os.rm("share/default.sofa")
+        os.cp("share/MIT_KEMAR_normal_pinna.sofa", "share/default.sofa")
         local configs = {"-DBUILD_TESTS=OFF"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
