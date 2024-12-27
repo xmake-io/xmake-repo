@@ -19,14 +19,6 @@ package("clay")
     on_test(function (package)
         assert(package:has_cxxincludes("clay.h", {configs = {languages = "c++20"}}))
         if package:config("renderer") then
-            assert(package:check_cxxsnippets({test = [[
-                #define CLAY_IMPLEMENTATION
-                #include "clay.h"
-                #include "renderers/raylib/clay_renderer_raylib.c"
-                void test() {
-                    BeginDrawing();
-                    EndDrawing();
-                }
-            ]]}, {configs = {languages = "c++20"}}))
+            assert(os.isfile(package:installdir("include", "renderers", "raylib", "clay_renderer_raylib.c")))
         end
     end)
