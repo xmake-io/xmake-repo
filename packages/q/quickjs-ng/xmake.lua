@@ -28,6 +28,11 @@ package("quickjs-ng")
                 assert(minor and minor >= 30, "package(quickjs-ng) require vs_toolset >= 14.3")
             end
         end)
+        on_check("wasm", "cross", function (package)
+            if package:version():eq("0.8.0") then
+                raise("package(quickjs-ng v0.8.0) unsupported platform")
+            end
+        end)
     end
 
     on_install("!iphoneos and (!windows or windows|!x86)", function (package)
