@@ -12,7 +12,7 @@ package("amgcl")
     add_versions("1.4.4", "02fd5418e14d669422f65fc739ce72bf9516ced2d8942574d4b8caa05dda9d8c")
 
     add_deps("cmake")
-    add_deps("boost", {configs = {serialization = true, program_options = true}})
+    add_deps("boost", {configs = {cmake = false, serialization = true, program_options = true}})
     on_install("windows", "mingw", "macosx", "linux", function (package)
         io.replace("CMakeLists.txt", "unit_test_framework", "", {plain = true})
         local configs = {"-DBoost_USE_STATIC_LIBS=ON"}
