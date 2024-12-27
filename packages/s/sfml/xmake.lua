@@ -240,9 +240,8 @@ package("sfml")
             end
         else
             table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
-            if package:is_plat("windows") and package:has_runtime("MT", "MTd") then
-                table.insert(configs, "-DSFML_USE_STATIC_STD_LIBS=ON")
-            end
+             -- SFML overrides MSVC runtimes if set to ON, xmake already takes cares of setting it
+            table.insert(configs, "-DSFML_USE_STATIC_STD_LIBS=OFF")
         end
         table.insert(configs, "-DSFML_BUILD_AUDIO=" .. (package:config("audio") and "ON" or "OFF"))
         table.insert(configs, "-DSFML_BUILD_GRAPHICS=" .. (package:config("graphics") and "ON" or "OFF"))
