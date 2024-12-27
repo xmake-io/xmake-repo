@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.release")
 
-option("nosimd")
+option("simd")
     set_default(false)
     set_description("Build without SIMD support.")
     add_defines("PFFFT_SIMD_DISABLE")
