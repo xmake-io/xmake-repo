@@ -14,7 +14,7 @@ package("angelscript")
 
     add_patches(">=2.34.0", "patches/msvc-arm64.patch", "1433f474870102e6fd8d0c9978b6d122a098cdecded29be70176b9dab534564f")
 
-    add_configs("exceptions", {description = "Enable exception handling in script context", default = false, type = "boolean"})
+    add_configs("exceptions", {description = "Enable exception handling in script context", default = true, type = "boolean"})
 
     if is_plat("linux") then
         add_syslinks("pthread")

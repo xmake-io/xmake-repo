@@ -2,7 +2,7 @@ add_rules("mode.debug", "mode.release")
 add_rules("utils.install.cmake_importfiles")
 set_languages("c++11")
 
-option("exceptions", {showmenu = true,  default = false})
+option("exceptions", {default = true})
 
 target("angelscript")
     set_kind("shared")
