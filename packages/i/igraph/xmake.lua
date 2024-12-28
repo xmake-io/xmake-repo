@@ -24,7 +24,7 @@ package("igraph")
 
     on_check(function (package)
         if package:is_cross() then
-            if not package:is_plat("windows", "macosx") then
+            if not package:is_plat("macosx", "windows", "mingw", "msys") then
                 raise("package(igraph) unsupported cross-compilation now. To support it, see https://igraph.org/c/html/latest/igraph-Installation.html#igraph-Installation-cross-compiling")
             end
         end
@@ -94,7 +94,7 @@ package("igraph")
             local header
             if package:is_plat("macosx") then
                 header = "arith_osx.h"
-            elseif package:is_plat("windows") then
+            elseif package:is_plat("windows", "mingw", "msys") then
                 if package:is_arch64() then
                     header = "arith_win64.h"
                 else
