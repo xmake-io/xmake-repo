@@ -12,8 +12,12 @@ package("libmysofa")
 
     add_deps("cmake", "zlib")
 
-    on_install("!wasm", function (package)
-        if package:is_plat("cross", "bsd") then
+    if is_plat("linux", "bsd") then
+        add_syslinks("m", "pthread")
+    end
+
+    on_install(function (package)
+        if package:is_plat("wasm", "cross") then
             io.replace("src/CMakeLists.txt", [[find_library(MATH m)]], [[set(MATH "")]], {plain = true})
         end
         os.rm("windows/third-party/zlib-1.2.11")
