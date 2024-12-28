@@ -6,6 +6,7 @@ package("openjpeg")
 
     add_urls("https://github.com/uclouvain/openjpeg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/uclouvain/openjpeg.git")
+    add_versions("v2.5.3", "368fe0468228e767433c9ebdea82ad9d801a3ad1e4234421f352c8b06e7aa707")
     add_versions("v2.3.1", "63f5a4713ecafc86de51bfad89cc07bb788e9bba24ebbf0c4ca637621aadb6a9")
     add_versions("v2.4.0", "8702ba68b442657f11aaeb2b338443ca8d5fb95b0d845757968a7be31ef7f16d")
     add_versions("v2.5.0", "0333806d6adecc6f7a91243b2b839ff4d2053823634d4f6ed7a59bc87409122a")
