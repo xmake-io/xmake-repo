@@ -8,7 +8,7 @@ package("libmysofa")
 
     add_versions("v1.3.2", "6c5224562895977e87698a64cb7031361803d136057bba35ed4979b69ab4ba76")
 
-    add_patches("v1.3.2", "patches/v1.3.2/fix-build.patch", "af5bd833a0d4ed9deffc3f2a50c79b0b170d4a71c39f32a57d4066eea5d0f88b")
+    add_patches("v1.3.2", "patches/v1.3.2/fix-build.patch", "bac09b04bd3a9e07092b30afdbd6aff9f0181a288bff3b933dd288064873c8c1")
 
     add_deps("cmake", "zlib")
 
