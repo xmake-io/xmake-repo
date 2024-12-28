@@ -20,7 +20,7 @@ package("onnx")
     add_configs("exceptions", {description = "Enable exception handling", default = true, type = "boolean"})
     add_configs("registration", {description = "Enable static registration for onnx operator schemas.", default = true, type = "boolean"})
 
-    add_deps("cmake", "python", {kind = "binary"})
+    add_deps("cmake", "protoc", "python", {kind = "binary"})
     add_deps("protobuf-cpp")
 
     if is_plat("windows") then
@@ -30,13 +30,9 @@ package("onnx")
     on_load(function (package)
         package:add("defines", "ONNX_ML")
         package:add("defines", "ONNX_NAMESPACE=onnx")
-
-        if package:is_cross() then
-            package:add("deps", "protoc")
-        end
     end)
 
-    on_install(function (package)
+    on_install("!mingw", function (package)
         local version = package:version()
 
         io.replace("cmake/Utils.cmake", "target_compile_options(${lib} PRIVATE $<$<NOT:$<CONFIG:Debug>>:/MT> $<$<CONFIG:Debug>:/MTd>)", "", {plain = true})
