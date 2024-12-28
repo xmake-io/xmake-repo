@@ -1,5 +1,5 @@
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index dcaa92a..aff976f 100644
+index dcaa92a..12f4b7a 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -10,8 +10,9 @@ endmacro(use_c99)
@@ -61,7 +61,7 @@ index dcaa92a..aff976f 100644
  
  if(BUILD_STATIC_LIBS)
  add_library(mysofa-static STATIC ${libsrc})
-@@ -88,11 +91,11 @@ target_include_directories(mysofa-static
+@@ -88,7 +91,7 @@ target_include_directories(mysofa-static
    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/hrtf>"
    $<INSTALL_INTERFACE:include/>
  )
@@ -70,11 +70,6 @@ index dcaa92a..aff976f 100644
  set_target_properties(
    mysofa-static
    PROPERTIES OUTPUT_NAME mysofa CLEAN_DIRECT_OUTPUT 1 POSITION_INDEPENDENT_CODE
--                                                      ${BUILD_SHARED_LIBS})
-+                                                      OFF)
- set_target_properties( mysofa-static PROPERTIES PUBLIC_HEADER "${public-headers}" )
- install(TARGETS mysofa-static
-   EXPORT mysofa_exports
 @@ -169,6 +172,11 @@ else()
                           mysofa_export.h)
  endif()
@@ -88,19 +83,18 @@ index dcaa92a..aff976f 100644
    add_executable(mysofa2json tests/sofa2json.c tests/json.c)
    if(BUILD_STATIC_LIBS)
 diff --git a/src/hrtf/mysofa.h b/src/hrtf/mysofa.h
-index 206e77b..538f0b6 100644
+index 206e77b..82bc9d9 100644
 --- a/src/hrtf/mysofa.h
 +++ b/src/hrtf/mysofa.h
-@@ -14,6 +14,8 @@ extern "C" {
+@@ -14,6 +14,7 @@ extern "C" {
  #include <stdint.h>
  #include <stddef.h>
  
 +#include "mysofa_export.h"
-+
  #define MYSOFA_DEFAULT_NEIGH_STEP_ANGLE 0.5f
  #define MYSOFA_DEFAULT_NEIGH_STEP_RADIUS 0.01f
  
-@@ -127,44 +129,44 @@ enum {
+@@ -127,44 +128,44 @@ enum {
    MYSOFA_ONLY_SOURCES_WITH_MC_SUPPORTED
  };
  
@@ -169,7 +163,7 @@ index 206e77b..538f0b6 100644
  
  struct MYSOFA_EASY {
    struct MYSOFA_HRTF *hrtf;
-@@ -173,38 +175,38 @@ struct MYSOFA_EASY {
+@@ -173,38 +174,38 @@ struct MYSOFA_EASY {
    float *fir;
  };
  
