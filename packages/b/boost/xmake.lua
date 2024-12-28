@@ -12,8 +12,10 @@ package("boost")
             return version .. "/boost_" .. (version:gsub("%.", "_"))
         end})
 
+    add_versions("cmake:1.87.0", "78fbf579e3caf0f47517d3fb4d9301852c3154bfecdc5eeebd9b2b0292366f5b")
     add_versions("cmake:1.86.0", "c62ce6e64d34414864fef946363db91cea89c1b90360eabed0515f0eda74c75c")
 
+    add_versions("1.87.0", "d6c69e4459eb5d6ec208250291221e7ff4a2affde9af6e49c9303b89c687461f")
     add_versions("1.86.0", "2128a4c96862b5c0970c1e34d76b1d57e4a1016b80df85ad39667f30b1deba26")
     add_versions("1.85.0", "f4a7d3f81b8a0f65067b769ea84135fd7b72896f4f59c7f405086c8c0dc61434")
     add_versions("1.84.0", "4d27e9efed0f6f152dc28db6430b9d3dfb40c0345da7342eaa5a987dde57bd95")

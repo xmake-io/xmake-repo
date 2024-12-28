@@ -16,6 +16,11 @@ package("emmylua_debugger")
     add_configs("luasrc", {description = "Use lua source.", default = true, type = "boolean"})
     add_configs("luaver", {description = "Set lua version.", default = "5.4", type = "string"})
 
+    if is_plat("windows") then
+        add_configs("emmy_tool", {description = "Build emmy_tool", default = false, type = "boolean"})
+        add_configs("emmy_hook", {description = "Build emmy_hook", default = false, type = "boolean"})
+    end
+
     add_deps("cmake")
 
     on_load(function (package)
@@ -44,6 +49,18 @@ package("emmylua_debugger")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", "set(CMAKE_INSTALL_PREFIX install)", "", {plain = true})
+        if package:is_plat("windows") then
+            if not (package:config("emmy_tool") or package:config("emmy_hook")) then
+                io.replace("CMakeLists.txt", "add_subdirectory(shared)", "", {plain = true})
+            end
+            if not package:config("emmy_tool") then
+                io.replace("CMakeLists.txt", "add_subdirectory(emmy_tool)", "", {plain = true})
+            end
+            if not package:config("emmy_hook") then
+                io.replace("CMakeLists.txt", "add_subdirectory(emmy_hook)", "", {plain = true})
+                io.replace("CMakeLists.txt", "add_subdirectory(third-party/EasyHook)", "", {plain = true})
+            end
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
