@@ -1,5 +1,5 @@
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index dcaa92a..483442c 100644
+index dcaa92a..aff976f 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
 @@ -10,8 +10,9 @@ endmacro(use_c99)
@@ -75,15 +75,6 @@ index dcaa92a..483442c 100644
  set_target_properties( mysofa-static PROPERTIES PUBLIC_HEADER "${public-headers}" )
  install(TARGETS mysofa-static
    EXPORT mysofa_exports
-@@ -113,7 +116,7 @@ install(TARGETS mysofa-static
-   endif()
- endif()
- 
--if(BUILD_SHARED_LIBS)
-+if(NOT(BUILD_SHARED_LIBS))
-   add_library(mysofa-shared SHARED ${libsrc})
-   target_include_directories(mysofa-shared
-     PUBLIC
 @@ -169,6 +172,11 @@ else()
                           mysofa_export.h)
  endif()

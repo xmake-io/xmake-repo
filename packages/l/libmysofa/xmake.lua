@@ -8,7 +8,7 @@ package("libmysofa")
 
     add_versions("v1.3.2", "6c5224562895977e87698a64cb7031361803d136057bba35ed4979b69ab4ba76")
 
-    add_patches("v1.3.2", "patches/v1.3.2/fix-build.patch", "dd166f489adf647554f9cc449bb71b8ae1070dc75e6bb8d291fe6d73ede21766")
+    add_patches("v1.3.2", "patches/v1.3.2/fix-build.patch", "d815651f421eb41fde33491562895a11610916304ed47641e93b916260c95d67")
 
     add_deps("cmake", "zlib")
 
@@ -18,7 +18,7 @@ package("libmysofa")
         os.cp("share/MIT_KEMAR_normal_pinna.sofa", "share/default.sofa")
         local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
     end)
