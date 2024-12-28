@@ -3,12 +3,10 @@ package("igraph")
     set_description("Library for the analysis of networks")
     set_license("GPL-2.0")
 
-    add_urls("https://github.com/igraph/igraph/archive/refs/tags/$(version).tar.gz",
+    add_urls("https://github.com/igraph/igraph/releases/download/$(version)/igraph-$(version).tar.gz",
              "https://github.com/igraph/igraph.git")
 
-    add_versions("0.10.15", "65a0ba01888a4c5b3e0437e4d9a5bd9e8e93a1897cf5fc4e560e3586f4a43deb")
-
-    add_patches("0.10.15", "patches/0.10.15/build-dep.patch", "74a126582ba8df66ee2f4d0e28efbdcba1d3f62c7eec4e7a04231125ea21ee07")
+    add_versions("0.10.15", "03ba01db0544c4e32e51ab66f2356a034394533f61b4e14d769b9bbf5ad5e52c")
 
     add_configs("glpk", {description = "Compile igraph with GLPK support", default = false, type = "boolean"})
     add_configs("graphml", {description = "Compile igraph with GraphML support", default = false, type = "boolean"})
@@ -21,12 +19,12 @@ package("igraph")
         add_syslinks("pthread")
     end
 
-    add_deps("cmake", "flex", "bison", {kind = "binary"})
+    add_deps("cmake")
     add_deps("plfit")
 
     on_check(function (package)
         if package:is_cross() then
-            raise("package(igraph) unsupported cross-compilation")
+            raise("package(igraph) unsupported cross-compilation now")
         end
         if is_subhost("msys") and xmake:version():lt("2.9.7") then
             raise("package(igraph) requires xmake >= 2.9.7 on msys")
@@ -34,6 +32,11 @@ package("igraph")
     end)
 
     on_load(function (package)
+        if package:gitref() then
+            wprint("If build failed with flex/bison, please see https://github.com/igraph/igraph/issues/2713")
+            package:add("deps", "flex", "bison", {kind = "binary"})
+        end
+
         -- TODO: unbundle deps gmp, arpack, blas, lapack
         if package:is_plat("linux", "macosx") then
             package:add("deps", "gmp")
@@ -57,9 +60,11 @@ package("igraph")
     on_install("!cross and !bsd", function (package)
         -- Disable test/doc/cpack
         io.replace("CMakeLists.txt", "CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME", "0", {plain = true})
-        io.writefile("IGRAPH_VERSION", package:version_str())
         if package:config("graphml") then
             io.replace("etc/cmake/dependencies.cmake", "find_package(LibXml2 ${LIBXML2_VERSION_MIN} QUIET)", "find_package(LibXml2 CONFIG REQUIRED)", {plain = true})
+        end
+        if package:gitref() then
+            io.writefile("IGRAPH_VERSION", package:version_str())
         end
 
         -- https://igraph.org/c/html/latest/igraph-Installation.html
