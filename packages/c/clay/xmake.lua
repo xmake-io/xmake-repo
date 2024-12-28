@@ -13,7 +13,7 @@ package("clay")
 
     on_install(function (package)
         os.cp("clay.h", package:installdir("include"))
-        os.cp("renderers/", package:installdir("include", "renderers"), {rootdir = "renderers"})
+        os.cp("renderers", package:installdir("include"))
     end)
 
     on_test(function (package)
