@@ -15,7 +15,7 @@ package("libmysofa")
     on_install(function (package)
         os.rm("share/default.sofa")
         os.cp("share/MIT_KEMAR_normal_pinna.sofa", "share/default.sofa")
-        local configs = {"-DBUILD_TESTS=OFF"}
+        local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
