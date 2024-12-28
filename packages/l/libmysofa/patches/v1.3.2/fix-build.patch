@@ -93,10 +93,19 @@ index dcaa92a..6c3181b 100644
    add_executable(mysofa2json tests/sofa2json.c tests/json.c)
    if(BUILD_STATIC_LIBS)
 diff --git a/src/hrtf/mysofa.h b/src/hrtf/mysofa.h
-index 206e77b..cb6c557 100644
+index 206e77b..538f0b6 100644
 --- a/src/hrtf/mysofa.h
 +++ b/src/hrtf/mysofa.h
-@@ -127,44 +127,44 @@ enum {
+@@ -14,6 +14,8 @@ extern "C" {
+ #include <stdint.h>
+ #include <stddef.h>
+ 
++#include "mysofa_export.h"
++
+ #define MYSOFA_DEFAULT_NEIGH_STEP_ANGLE 0.5f
+ #define MYSOFA_DEFAULT_NEIGH_STEP_RADIUS 0.01f
+ 
+@@ -127,44 +129,44 @@ enum {
    MYSOFA_ONLY_SOURCES_WITH_MC_SUPPORTED
  };
  
@@ -165,7 +174,7 @@ index 206e77b..cb6c557 100644
  
  struct MYSOFA_EASY {
    struct MYSOFA_HRTF *hrtf;
-@@ -173,38 +173,38 @@ struct MYSOFA_EASY {
+@@ -173,38 +175,38 @@ struct MYSOFA_EASY {
    float *fir;
  };
  

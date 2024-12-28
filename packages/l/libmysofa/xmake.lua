@@ -8,11 +8,12 @@ package("libmysofa")
 
     add_versions("v1.3.2", "6c5224562895977e87698a64cb7031361803d136057bba35ed4979b69ab4ba76")
 
-    add_patches("v1.3.2", "patches/v1.3.2/fix-build.patch", "bac09b04bd3a9e07092b30afdbd6aff9f0181a288bff3b933dd288064873c8c1")
+    add_patches("v1.3.2", "patches/v1.3.2/fix-build.patch", "bb799e249773edcff9520856b44d6aaba8d6cb3d88a5371877194ddd580ca3c6")
 
     add_deps("cmake", "zlib")
 
     on_install(function (package)
+        os.rm("windows/third-party/zlib-1.2.11")
         os.rm("share/default.sofa")
         os.cp("share/MIT_KEMAR_normal_pinna.sofa", "share/default.sofa")
         local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
