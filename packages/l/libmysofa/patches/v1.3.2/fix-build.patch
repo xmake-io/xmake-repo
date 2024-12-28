@@ -1,15 +1,19 @@
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index dcaa92a..6c3181b 100644
+index dcaa92a..483442c 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -13,21 +13,23 @@ use_c99()
- configure_file(config.h.in config.h)
- include_directories(${CMAKE_CURRENT_BINARY_DIR})
+@@ -10,8 +10,9 @@ endmacro(use_c99)
+ 
+ use_c99()
  
 +find_package(ZLIB REQUIRED)
+ configure_file(config.h.in config.h)
+-include_directories(${CMAKE_CURRENT_BINARY_DIR})
++include_directories(${CMAKE_CURRENT_BINARY_DIR} ${ZLIB_INCLUDE_DIRS})
+ 
  if(NOT MSVC)
    if(NOT WIN32)
-     find_library(MATH m)
+@@ -19,15 +20,16 @@ if(NOT MSVC)
    else()
      set(MATH "")
    endif()
