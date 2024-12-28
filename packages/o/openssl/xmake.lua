@@ -32,15 +32,18 @@ package("openssl")
             if package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
                 -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
                 package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
-            elseif is_subhost("windows") and not package:is_precompiled() then
-                package:add("deps", "nasm", { private = true })
-                -- the perl executable found in GitForWindows will fail to build OpenSSL
-                -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
-                package:add("deps", "strawberry-perl", { system = false, private = true })
-                -- check xmake tool jom
-                import("package.tools.jom", {try = true})
-                if jom then
-                    package:add("deps", "jom", {private = true})
+            elseif is_subhost("windows") then
+                package:add("deps", "strawberry-perl", { private = true })
+                if package:is_plat("windows") then
+                    package:add("deps", "nasm", { private = true })
+                    -- check xmake tool jom
+                    import("package.tools.jom", {try = true})
+                    if jom then
+                        package:add("deps", "jom", {private = true})
+                    end
+                else
+                    wprint("package(openssl): OpenSSL should be built in a Unix-like shell (e.g., MSYS2, Git Bash) if not targeting MSVC. " ..
+                    "It seems you are not in such an environment. If you encounter build errors, please consider trying again in a Unix-like shell.")
                 end
             end
         end
@@ -118,6 +121,9 @@ package("openssl")
         if package:config("shared") then
             os.mkdir("fuzz")
         end
+
+        io.replace("Configure", "use Pod::Usage;", "", {plain = true})
+        io.replace("Configure", "pod2usage.-;", "")
         os.vrunv("perl", configs, {envs = buildenvs})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
@@ -173,6 +179,9 @@ package("openssl")
         if package:debug() then
             table.insert(configs, "--debug")
         end
+
+        io.replace("Configure", "use Pod::Usage;", "", {plain = true})
+        io.replace("Configure", "pod2usage.-;", "")
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
         if package:is_cross() then
             if is_host("windows") and package:is_plat("android") then
