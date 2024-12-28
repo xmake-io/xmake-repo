@@ -24,10 +24,9 @@ package("igraph")
 
     on_check(function (package)
         if package:is_cross() then
-            raise("package(igraph) unsupported cross-compilation now")
-        end
-        if is_subhost("msys") and xmake:version():lt("2.9.7") then
-            raise("package(igraph) requires xmake >= 2.9.7 on msys")
+            if not package:is_plat("windows", "macosx") then
+                raise("package(igraph) unsupported cross-compilation now. To support it, see https://igraph.org/c/html/latest/igraph-Installation.html#igraph-Installation-cross-compiling")
+            end
         end
     end)
 
@@ -38,6 +37,7 @@ package("igraph")
         end
 
         -- TODO: unbundle deps gmp, arpack, blas, lapack
+        -- https://igraph.org/c/html/latest/igraph-Installation.html#igraph-Installation-prerequisites
         if package:is_plat("linux", "macosx") then
             package:add("deps", "gmp")
         end
@@ -89,6 +89,24 @@ package("igraph")
         table.insert(configs, "-DIGRAPH_OPENMP_SUPPORT=" .. (package:config("openmp") and "ON" or "OFF"))
         -- AUTO -> find_package, ON -> find_dependency (unavailable)
         table.insert(configs, "-DIGRAPH_GRAPHML_SUPPORT=" .. (package:config("graphml") and "AUTO" or "OFF"))
+        if package:is_cross() then
+            -- from https://github.com/microsoft/vcpkg/tree/0857a4b08c14030bbe41e80accb2b1fddb047a74/ports/igraph
+            local header
+            if package:is_plat("macosx") then
+                header = "arith_osx.h"
+            elseif package:is_plat("windows") then
+                if package:is_arch64() then
+                    header = "arith_win64.h"
+                else
+                    header = "arith_win32.h"
+                end
+            end
+
+            if header then
+                local header_path = path.unix(path.join(os.scriptdir(), header))
+                table.insert(configs, "-DF2C_EXTERNAL_ARITH_HEADER=" .. header_path)
+            end
+        end
 
         local opt = {}
         if package:config("glpk") then
