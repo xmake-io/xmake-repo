@@ -32,11 +32,7 @@ package("openssl")
             -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
             package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
         elseif is_subhost("windows") then
-            import("lib.detect.find_tool")
-            local perl = find_tool("perl", {paths={"$(env PERL)"}})
-            if not perl then
-                package:add("deps", "strawberry-perl", { private = true })
-            end
+            package:add("deps", "strawberry-perl", { private = true })
             if package:is_plat("windows") then
                 package:add("deps", "nasm", { private = true })
                 -- check xmake tool jom
@@ -68,8 +64,7 @@ package("openssl")
 
     if on_check then
         on_check(function (package)
-            import("lib.detect.find_tool")
-            local perl = assert(find_tool("perl", {paths={"$(env PERL)"}}), "package(openssl): perl not found!")
+            local perl = assert(package:find_tool("perl", {paths = {"$(env PERL)"}}), "package(openssl): perl not found!")
             local working_dir = os.iorunv(perl.program, {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
             -- Check if Perl is using Unix-style paths
             local use_unix_path = working_dir:find("/") == 1
@@ -102,13 +97,10 @@ package("openssl")
             table.insert(configs, "no-makedepend")
             table.insert(configs, "/FS")
         end
-        import("lib.detect.find_tool")
-        local perl = assert(find_tool("perl", {paths={"$(env PERL)"}}), "package(openssl): perl not found!")
-        local working_dir = os.iorunv(perl.program, {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
-        perl.use_unix_path = working_dir:find("/") == 1
-        import("configure.patch")(package, {perl = perl})
-        os.vrunv(perl.program, configs, {envs = {CONFIGURE_INSIST = 1}})
-        import("makefile.patch")(package, {perl = perl})
+        -- local perl = package:dep("strawberry-perl")
+        -- assert(perl, "package(openssl): strawberry-perl not found!")
+        os.vrunv("perl", configs)
+        -- import("makefile.patch")(package, {perl = perl})
 
         if jom then
             jom.build(package)
