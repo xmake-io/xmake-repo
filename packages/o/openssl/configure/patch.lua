@@ -4,7 +4,7 @@ function _fix_overlong_make_recipe()
     -- For more details, see: https://github.com/openssl/openssl/issues/12116
     io.gsub("Configurations/00-base-templates.conf", -- replace default AR
 
-            "DEFAULTS%s-=>%s-{" .. 
+            "DEFAULTS%s-=>%s-{" ..
                "(.-)"..
                 [[AR%s-=>%s-"%S-"%s-,]].. 	-- AR		=> "ar",
             "(.-)}",
@@ -15,10 +15,10 @@ function _fix_overlong_make_recipe()
             "%2}")
     io.gsub("Configurations/00-base-templates.conf", -- replace default ARFLAGS
 
-            "DEFAULTS%s-=>%s-{" .. 
+            "DEFAULTS%s-=>%s-{" ..
                "(.-)"..
                 [[ARFLAGS%s-=>%s-"%S-"%s-,]].. --	ARFLAGS		=> "r",
-            "(.-)}", 
+            "(.-)}",
 
             "DEFAULTS => {"..
                 "%1"..
@@ -26,7 +26,7 @@ function _fix_overlong_make_recipe()
             "%2}")
     io.gsub("Configurations/00-base-templates.conf", -- replace BASE_unix ARFLAGS
 
-            "BASE_unix%s-=>%s-{" .. 
+            "BASE_unix%s-=>%s-{" ..
                "(.-)"..
                 [[ARFLAGS%s-=>%s-"%S-"%s-,]].. -- ARFLAGS         => "r",
             "(.-)}",
@@ -39,7 +39,7 @@ function _fix_overlong_make_recipe()
 
             "(sub%s-dependmagic%s-{)" ..
                "(.-)"..
-            "}%s-'';", 
+            "}%s-'';",
 
             "%1"..
                 "%2"..
@@ -76,7 +76,7 @@ function _fix_overlong_make_recipe()
 
     io.gsub("Configurations/unix-Makefile.tmpl", -- change the way we handle dependencies
 
-            "sub%s-libobj2shlib%s-{" .. 
+            "sub%s-libobj2shlib%s-{" ..
                "(.-)"..
                 [[my%s-%$objs.-;]].. -- my $objs = join(" ", @objs);
             "(.-)}",
@@ -88,7 +88,7 @@ function _fix_overlong_make_recipe()
             "%2}")
     io.gsub("Configurations/unix-Makefile.tmpl", -- change the way we handle dependencies
 
-            "sub%s-libobj2shlib%s-{" .. 
+            "sub%s-libobj2shlib%s-{" ..
                "(.-)"..
                 [[my%s-%$deps.-;]].. -- my $deps = join(" ", @objs, @defs, @deps);
             "(.-)}",
@@ -100,9 +100,9 @@ function _fix_overlong_make_recipe()
                     join(" \\\n" . ' ' x (length($full) + 2),
                         fill_lines(' ', $COLUMNS - length($full) - 2, @fulldeps));]] ..
             "%2}")
-    io.gsub("Configurations/unix-Makefile.tmpl", 
+    io.gsub("Configurations/unix-Makefile.tmpl",
 
-            "sub%s-libobj2shlib%s-{" .. 
+            "sub%s-libobj2shlib%s-{" ..
                "(.-)"..
                 [[%$target:%s-%$deps]].. -- $target: $deps
             "(.-)}",
@@ -111,7 +111,7 @@ function _fix_overlong_make_recipe()
                 "%1"..
                 [[$target: $fulldeps]] ..
             "%2}")
-    io.gsub("Configurations/unix-Makefile.tmpl", 
+    io.gsub("Configurations/unix-Makefile.tmpl",
 
             "sub%s-obj2lib%s-{" ..
                "(.-)"..
@@ -128,7 +128,7 @@ function _fix_overlong_make_recipe()
                 my $fill_lib =
                     join("\n\t", (map { "\$(AR) \$(ARFLAGS) $lib$libext $_" } @objs_grouped));]] ..
             "%2}")
-    io.gsub("Configurations/unix-Makefile.tmpl", 
+    io.gsub("Configurations/unix-Makefile.tmpl",
 
             "sub%s-obj2lib%s-{" ..
                "(.-)"..
@@ -142,7 +142,6 @@ function _fix_overlong_make_recipe()
                 '\t' .. [[$fill_lib]] ..'\n' ..
                 '\t' .. [[\$(RANLIB) \$\@ || echo Never mind.]] .. '\n' ..
             "EOF")
-            
 end
 
 function _remove_unused_pod_usage()
