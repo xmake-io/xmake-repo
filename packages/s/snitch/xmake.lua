@@ -6,6 +6,7 @@ package("snitch")
 
     add_urls("https://github.com/cschreib/snitch/archive/refs/tags/v$(version).tar.gz",
              "https://github.com/cschreib/snitch.git")
+    add_versions("1.3.1", "f9ae374014515a6077df025f8958b7e80ccecd9cf7ee3abd9f17150398eee8db")
     add_versions("1.2.5", "87be73638ebf14667ef7dd9e6372faa7ad4fa9b2c6367c844f733469680469a2")
     add_versions("1.2.4", "0dbcbd2fa682c9215f049905e9f13be00a6bb6a3c5c4a83704e0237d71dbd23b")
     add_versions("1.0.0", "9616a854e5d7d26b9003d1bb0fa1a1e4dba03a6e380b0f71ac989648e452a994")
