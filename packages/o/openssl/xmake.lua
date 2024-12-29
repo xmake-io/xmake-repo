@@ -121,7 +121,7 @@ package("openssl")
 
     on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", "mingw", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
-        local configs = {}
+        local configs = {"no-tests"}
         if package:is_cross() or package:is_plat("mingw") then
             local target_plat, target_arch
             if package:is_plat("macosx") then
@@ -215,7 +215,7 @@ package("openssl")
         perl.use_unix_path = working_dir:find("/") == 1
         import("configure.patch")(package, {perl = perl})
         if package:is_cross() or package:is_plat("mingw") then
-            os.vrunv(perl.program, table.join("./Configure", "no-tests", configs), {envs = buildenvs})
+            os.vrunv(perl.program, table.join("./Configure", configs), {envs = buildenvs})
         else
             os.vrunv("./config", configs, {shell = true, envs = buildenvs})
         end
