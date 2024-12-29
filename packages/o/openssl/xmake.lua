@@ -193,7 +193,7 @@ package("openssl")
                 os.mkdir("fuzz")
             end
         end
-        
+
         import("lib.detect.find_tool")
         local perl = assert(find_tool("perl", {paths={"$(env PERL)"}}), "package(openssl): perl not found!")
         local working_dir = os.iorunv(perl.program, {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
@@ -204,7 +204,7 @@ package("openssl")
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
-            os.tryrm(path.join(package:installdir("lib"), "*.a"))
+            os.tryrm(path.join(package:installdir("lib"), "*.a|*.dll.a"))
         end
     end)
     on_test(function (package)
