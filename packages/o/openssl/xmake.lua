@@ -32,7 +32,11 @@ package("openssl")
             -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
             package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
         elseif is_subhost("windows") then
-            package:add("deps", "strawberry-perl", { private = true })
+            import("lib.detect.find_tool")
+            local perl = find_tool("perl", {paths={"$(env PERL)"}})
+            if not perl then
+                package:add("deps", "strawberry-perl", { private = true })
+            end
             if package:is_plat("windows") then
                 package:add("deps", "nasm", { private = true })
                 -- check xmake tool jom
@@ -62,6 +66,20 @@ package("openssl")
         end
     end)
 
+    if on_check then
+        on_check(function (package)
+            import("lib.detect.find_tool")
+            local perl = assert(find_tool("perl", {paths={"$(env PERL)"}}), "package(openssl): perl not found!")
+            local working_dir = os.iorunv(perl.program, {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
+            -- Check if Perl is using Unix-style paths
+            local use_unix_path = working_dir:find("/") == 1
+            if use_unix_path and package:is_plat("windows") or not use_unix_path and not package:is_plat("windows") then
+                wprint("package(openssl): The detected Perl may not match your build platform. While it should generally work, it could potentially cause issues. If you encounter any build problems, " ..
+                "please try installing a compatible version of Perl. If you already have a suitable Perl installed but still see this message, ensure it takes priority over other Perl installations in your system.")
+            end
+        end)
+    end
+
     on_install("windows", function (package)
         import("package.tools.jom", {try = true})
         import("package.tools.nmake")
@@ -84,7 +102,13 @@ package("openssl")
             table.insert(configs, "no-makedepend")
             table.insert(configs, "/FS")
         end
-        os.vrunv("perl", configs)
+        import("lib.detect.find_tool")
+        local perl = assert(find_tool("perl", {paths={"$(env PERL)"}}), "package(openssl): perl not found!")
+        local working_dir = os.iorunv(perl.program, {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
+        perl.use_unix_path = working_dir:find("/") == 1
+        import("configure.patch")(package, {perl = perl})
+        os.vrunv(perl.program, configs, {envs = {CONFIGURE_INSIST = 1}})
+        import("makefile.patch")(package, {perl = perl})
 
         if jom then
             jom.build(package)
@@ -95,103 +119,88 @@ package("openssl")
         end
     end)
 
-    on_install("mingw", function (package)
-        local configs = {"Configure", "no-tests"}
-        table.insert(configs, package:is_arch("i386", "x86") and "mingw" or "mingw64")
-        table.insert(configs, package:config("shared") and "shared" or "no-shared")
+    on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", "mingw", function (package)
+        -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
+        local configs = {"no-tests"}
+        local target_plat, target_arch
+        if package:is_plat("macosx") then
+            target_plat = "darwin64"
+            target_arch = package:is_arch("arm64") and "arm64-cc" or "x86_64-cc"
+        elseif package:is_plat("iphoneos") then
+            local xcode = package:toolchain("xcode")
+            local simulator = xcode and xcode:config("appledev") == "simulator"
+            if simulator then
+                target_plat = "iossimulator"
+                target_arch = "xcrun"
+            else
+                if package:is_arch("arm64", "x86_64") then
+                    target_plat = "ios64"
+                else
+                    target_plat = "ios"
+                end
+                target_arch = "cross"
+            end
+        elseif package:is_plat("mingw") then
+            target_plat = package:is_arch("i386", "x86") and "mingw" or "mingw64"
+        else
+            target_plat = "linux"
+            if package:is_arch("x86_64") then
+                target_arch = "x86_64"
+            elseif package:is_arch("i386", "x86") then
+                target_arch = "x86"
+            elseif package:is_arch("arm64", "arm64-v8a") then
+                target_arch = "aarch64"
+            elseif package:is_arch("arm.*") then
+                target_arch = "armv4"
+            elseif package:is_arch(".*64") then
+                target_arch = "generic64"
+            else
+                target_arch = "generic32"
+            end
+        end
+        table.insert(configs, target_arch and (target_plat .. "-" .. target_arch) or target_plat)
+        if package:is_plat("cross", "android") then
+            table.insert(configs, "-DOPENSSL_NO_HEARTBEATS")
+            table.insert(configs, "no-threads")
+        end
         local installdir = package:installdir()
         -- Use MSYS2 paths instead of Windows paths
         if is_subhost("msys") then
-            installdir = installdir:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
+            installdir = installdir:gsub("(%a):[/\\](.+)", "/%1/%2")
         end
-        table.insert(configs, "--prefix=" .. installdir)
+        installdir = installdir:gsub("\\", "/")
         table.insert(configs, "--openssldir=" .. installdir)
-        local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        buildenvs.RC = package:build_getenv("mrc")
-        if is_subhost("msys") then
-            local rc = buildenvs.RC
-            if rc then
-                rc = rc:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
-                buildenvs.RC = rc
-            end
-        end
-        -- fix 'cp: directory fuzz does not exist'
-        if package:config("shared") then
-            os.mkdir("fuzz")
-        end
-
-        io.replace("Configure", "use Pod::Usage;", "", {plain = true})
-        io.replace("Configure", "pod2usage.-;", "")
-        os.vrunv("perl", configs, {envs = buildenvs})
-        import("package.tools.make").build(package)
-        import("package.tools.make").make(package, {"install_sw"})
-    end)
-
-    on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", function (package)
-        -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
-        local configs = {}
-        if package:is_cross() then
-            local target_plat, target_arch
-            if package:is_plat("macosx") then
-                target_plat = "darwin64"
-                target_arch = package:is_arch("arm64") and "arm64-cc" or "x86_64-cc"
-            elseif package:is_plat("iphoneos") then
-                local xcode = package:toolchain("xcode")
-                local simulator = xcode and xcode:config("appledev") == "simulator"
-                if simulator then
-                    target_plat = "iossimulator"
-                    target_arch = "xcrun"
-                else
-                    if package:is_arch("arm64", "x86_64") then
-                        target_plat = "ios64"
-                    else
-                        target_plat = "ios"
-                    end
-                    target_arch = "cross"
-                end
-            else
-                target_plat = "linux"
-                if package:is_arch("x86_64") then
-                    target_arch = "x86_64"
-                elseif package:is_arch("i386", "x86") then
-                    target_arch = "x86"
-                elseif package:is_arch("arm64", "arm64-v8a") then
-                    target_arch = "aarch64"
-                elseif package:is_arch("arm.*") then
-                    target_arch = "armv4"
-                elseif package:is_arch(".*64") then
-                    target_arch = "generic64"
-                else
-                    target_arch = "generic32"
-                end
-            end
-            table.insert(configs, target_plat .. "-" .. target_arch)
-            if package:is_plat("cross", "android") then
-                table.insert(configs, "-DOPENSSL_NO_HEARTBEATS")
-                table.insert(configs, "no-threads")
-            end
-        end
-        table.insert(configs, "--openssldir=" .. package:installdir():gsub("\\", "/"))
-        table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
+        table.insert(configs, "--prefix=" .. installdir)
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         if package:debug() then
             table.insert(configs, "--debug")
         end
 
-        io.replace("Configure", "use Pod::Usage;", "", {plain = true})
-        io.replace("Configure", "pod2usage.-;", "")
         local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        if package:is_cross() then
-            if is_host("windows") and package:is_plat("android") then
-                buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
-                buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
-                buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
-                buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
-            end
-            os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
-        else
-            os.vrunv("./config", configs, {shell = true, envs = buildenvs})
+        if is_host("windows") and package:is_plat("android") then
+            buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
+            buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
+            buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
+            buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
         end
+        if package:is_plat("mingw") then
+            buildenvs.RC = package:build_getenv("mrc")
+            if is_subhost("msys") and buildenvs.RC then
+                buildenvs.RC = buildenvs.RC:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
+            end
+            -- fix 'cp: directory fuzz does not exist'
+            if package:config("shared") then
+                os.mkdir("fuzz")
+            end
+        end
+        
+        import("lib.detect.find_tool")
+        local perl = assert(find_tool("perl", {paths={"$(env PERL)"}}), "package(openssl): perl not found!")
+        local working_dir = os.iorunv(perl.program, {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
+        perl.use_unix_path = working_dir:find("/") == 1
+        import("configure.patch")(package, {perl = perl})
+        os.vrunv(perl.program, table.join("./Configure", configs), {envs = buildenvs})
+        import("makefile.patch")(package, {perl = perl})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
