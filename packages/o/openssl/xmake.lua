@@ -142,6 +142,19 @@ package("openssl")
             end
         elseif package:is_plat("mingw") then
             target_plat = package:is_arch("i386", "x86") and "mingw" or "mingw64"
+        elseif package:is_plat("bsd") then
+            target_plat = "BSD"
+            if package:is_arch("i386") then
+                target_arch = "x86"
+            elseif package:is_arch("x86_64") then
+                target_arch = "x86_64"
+            elseif package:is_arch("arm64") then
+                target_arch = "aarch64"
+            elseif package:is_arch("riscv64") then
+                target_arch = "riscv64"
+            elseif package:is_arch(".*64") then
+                target_arch = "generic64"
+            end
         else
             target_plat = "linux"
             if package:is_arch("x86_64") then
@@ -199,7 +212,12 @@ package("openssl")
         local working_dir = os.iorunv(perl.program, {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
         perl.use_unix_path = working_dir:find("/") == 1
         import("configure.patch")(package, {perl = perl})
-        os.vrunv(perl.program, table.join("./Configure", configs), {envs = buildenvs})
+        if package:is_cross() or package:is_plat("mingw") then
+            os.vrunv(perl.program, table.join("./Configure", configs), {envs = buildenvs})
+        else
+            os.vrunv("./config", configs, {shell = true, envs = buildenvs})
+        end
+
         import("makefile.patch")(package, {perl = perl})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
