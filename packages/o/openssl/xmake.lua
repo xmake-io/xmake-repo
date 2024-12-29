@@ -67,10 +67,11 @@ package("openssl")
             local working_dir = try {function() return os.iorunv("perl", {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"}) end}
             assert(working_dir, "package(openssl): perl not found!")
             -- Check if Perl is using Unix-style paths
-            local use_unix_path = working_dir:find("/") == 1
-            if use_unix_path and package:is_plat("windows") or not use_unix_path and not package:is_plat("windows") then
-                wprint("package(openssl): The detected Perl may not match your build platform. While it should generally work, it could potentially cause issues. If you encounter any build problems, " ..
-                "please try installing a compatible version of Perl. If you already have a suitable Perl installed but still see this message, ensure it takes priority over other Perl installations in your system.")
+            local unix_perl = working_dir:find("/") == 1
+            if (unix_perl and package:is_plat("windows")) or (not unix_perl and not package:is_plat("windows")) then
+                wprint("package(openssl): Detected Perl may not match your build platform. "..
+                "If you encounter build issues, ensure you have the correct Perl installed "..
+                "and it takes priority in your system.")
             end
         end)
     end
@@ -97,6 +98,7 @@ package("openssl")
             table.insert(configs, "no-makedepend")
             table.insert(configs, "/FS")
         end
+        import("configure.patch")(package)
         os.vrunv("perl", configs)
 
         if jom then
