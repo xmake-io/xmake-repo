@@ -28,23 +28,21 @@ package("openssl")
     on_fetch("fetch")
 
     on_load(function (package)
-        if not package:is_precompiled() then
-            if package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
-                -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
-                package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
-            elseif is_subhost("windows") then
-                package:add("deps", "strawberry-perl", { private = true })
-                if package:is_plat("windows") then
-                    package:add("deps", "nasm", { private = true })
-                    -- check xmake tool jom
-                    import("package.tools.jom", {try = true})
-                    if jom then
-                        package:add("deps", "jom", {private = true})
-                    end
-                else
-                    wprint("package(openssl): OpenSSL should be built in a Unix-like shell (e.g., MSYS2, Git Bash) if not targeting MSVC. " ..
-                    "It seems you are not in such an environment. If you encounter build errors, please consider trying again in a Unix-like shell.")
+        if package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
+            -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
+            package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
+        elseif is_subhost("windows") then
+            package:add("deps", "strawberry-perl", { private = true })
+            if package:is_plat("windows") then
+                package:add("deps", "nasm", { private = true })
+                -- check xmake tool jom
+                import("package.tools.jom", {try = true})
+                if jom then
+                    package:add("deps", "jom", {private = true})
                 end
+            else
+                wprint("package(openssl): OpenSSL should be built in a Unix-like shell (e.g., MSYS2, Git Bash) if not targeting MSVC. " ..
+                "It seems you are not in such an environment. If you encounter build errors, please consider trying again in a Unix-like shell.")
             end
         end
 
