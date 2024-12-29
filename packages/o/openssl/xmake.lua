@@ -121,57 +121,59 @@ package("openssl")
 
     on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", "mingw", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
-        local configs = {"no-tests"}
-        local target_plat, target_arch
-        if package:is_plat("macosx") then
-            target_plat = "darwin64"
-            target_arch = package:is_arch("arm64") and "arm64-cc" or "x86_64-cc"
-        elseif package:is_plat("iphoneos") then
-            local xcode = package:toolchain("xcode")
-            local simulator = xcode and xcode:config("appledev") == "simulator"
-            if simulator then
-                target_plat = "iossimulator"
-                target_arch = "xcrun"
-            else
-                if package:is_arch("arm64", "x86_64") then
-                    target_plat = "ios64"
+        local configs = {}
+        if package:is_cross() or package:is_plat("mingw") then
+            local target_plat, target_arch
+            if package:is_plat("macosx") then
+                target_plat = "darwin64"
+                target_arch = package:is_arch("arm64") and "arm64-cc" or "x86_64-cc"
+            elseif package:is_plat("iphoneos") then
+                local xcode = package:toolchain("xcode")
+                local simulator = xcode and xcode:config("appledev") == "simulator"
+                if simulator then
+                    target_plat = "iossimulator"
+                    target_arch = "xcrun"
                 else
-                    target_plat = "ios"
+                    if package:is_arch("arm64", "x86_64") then
+                        target_plat = "ios64"
+                    else
+                        target_plat = "ios"
+                    end
+                    target_arch = "cross"
                 end
-                target_arch = "cross"
-            end
-        elseif package:is_plat("mingw") then
-            target_plat = package:is_arch("i386", "x86") and "mingw" or "mingw64"
-        elseif package:is_plat("bsd") then
-            target_plat = "BSD"
-            if package:is_arch("i386") then
-                target_arch = "x86"
-            elseif package:is_arch("x86_64") then
-                target_arch = "x86_64"
-            elseif package:is_arch("arm64") then
-                target_arch = "aarch64"
-            elseif package:is_arch("riscv64") then
-                target_arch = "riscv64"
-            elseif package:is_arch(".*64") then
-                target_arch = "generic64"
-            end
-        else
-            target_plat = "linux"
-            if package:is_arch("x86_64") then
-                target_arch = "x86_64"
-            elseif package:is_arch("i386", "x86") then
-                target_arch = "x86"
-            elseif package:is_arch("arm64", "arm64-v8a") then
-                target_arch = "aarch64"
-            elseif package:is_arch("arm.*") then
-                target_arch = "armv4"
-            elseif package:is_arch(".*64") then
-                target_arch = "generic64"
+            elseif package:is_plat("mingw") then
+                target_plat = package:is_arch("i386", "x86") and "mingw" or "mingw64"
+            elseif package:is_plat("bsd") then
+                target_plat = "BSD"
+                if package:is_arch("i386") then
+                    target_arch = "x86"
+                elseif package:is_arch("x86_64") then
+                    target_arch = "x86_64"
+                elseif package:is_arch("arm64") then
+                    target_arch = "aarch64"
+                elseif package:is_arch("riscv64") then
+                    target_arch = "riscv64"
+                elseif package:is_arch(".*64") then
+                    target_arch = "generic64"
+                end
             else
-                target_arch = "generic32"
+                target_plat = "linux"
+                if package:is_arch("x86_64") then
+                    target_arch = "x86_64"
+                elseif package:is_arch("i386", "x86") then
+                    target_arch = "x86"
+                elseif package:is_arch("arm64", "arm64-v8a") then
+                    target_arch = "aarch64"
+                elseif package:is_arch("arm.*") then
+                    target_arch = "armv4"
+                elseif package:is_arch(".*64") then
+                    target_arch = "generic64"
+                else
+                    target_arch = "generic32"
+                end
             end
+            table.insert(configs, target_arch and (target_plat .. "-" .. target_arch) or target_plat)
         end
-        table.insert(configs, target_arch and (target_plat .. "-" .. target_arch) or target_plat)
         if package:is_plat("cross", "android") then
             table.insert(configs, "-DOPENSSL_NO_HEARTBEATS")
             table.insert(configs, "no-threads")
@@ -213,7 +215,7 @@ package("openssl")
         perl.use_unix_path = working_dir:find("/") == 1
         import("configure.patch")(package, {perl = perl})
         if package:is_cross() or package:is_plat("mingw") then
-            os.vrunv(perl.program, table.join("./Configure", configs), {envs = buildenvs})
+            os.vrunv(perl.program, table.join("./Configure", "no-tests", configs), {envs = buildenvs})
         else
             os.vrunv("./config", configs, {shell = true, envs = buildenvs})
         end
