@@ -64,8 +64,8 @@ package("openssl")
 
     if on_check then
         on_check(function (package)
-            local perl = assert(package:find_tool("perl", {paths = {"$(env PERL)"}}), "package(openssl): perl not found!")
-            local working_dir = os.iorunv(perl.program, {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
+            local working_dir = try {function() return os.iorunv("perl", {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"}) end}
+            assert(working_dir, "package(openssl): perl not found!")
             -- Check if Perl is using Unix-style paths
             local use_unix_path = working_dir:find("/") == 1
             if use_unix_path and package:is_plat("windows") or not use_unix_path and not package:is_plat("windows") then
@@ -97,10 +97,7 @@ package("openssl")
             table.insert(configs, "no-makedepend")
             table.insert(configs, "/FS")
         end
-        -- local perl = package:dep("strawberry-perl")
-        -- assert(perl, "package(openssl): strawberry-perl not found!")
         os.vrunv("perl", configs)
-        -- import("makefile.patch")(package, {perl = perl})
 
         if jom then
             jom.build(package)
@@ -201,18 +198,13 @@ package("openssl")
             end
         end
 
-        import("lib.detect.find_tool")
-        local perl = assert(find_tool("perl", {paths={"$(env PERL)"}}), "package(openssl): perl not found!")
-        local working_dir = os.iorunv(perl.program, {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"})
-        perl.use_unix_path = working_dir:find("/") == 1
-        import("configure.patch")(package, {perl = perl})
+        import("configure.patch")(package)
         if package:is_cross() or package:is_plat("mingw") then
-            os.vrunv(perl.program, table.join("./Configure", configs), {envs = buildenvs})
+            os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
         else
             os.vrunv("./config", configs, {shell = true, envs = buildenvs})
         end
 
-        import("makefile.patch")(package, {perl = perl})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
