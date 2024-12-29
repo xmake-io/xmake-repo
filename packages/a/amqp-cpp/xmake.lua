@@ -6,6 +6,7 @@ package("amqp-cpp")
     add_urls("https://github.com/CopernicaMarketingSoftware/AMQP-CPP/archive/refs/tags/$(version).tar.gz",
              "https://github.com/CopernicaMarketingSoftware/AMQP-CPP.git")
 
+    add_versions("v4.3.27", "af649ef8b14076325387e0a1d2d16dd8395ff3db75d79cc904eb6c179c1982fe")
     add_versions("v4.3.26", "2baaab702f3fd9cce40563dc1e23f433cceee7ec3553bd529a98b1d3d7f7911c")
 
     if is_plat("windows", "mingw") then
