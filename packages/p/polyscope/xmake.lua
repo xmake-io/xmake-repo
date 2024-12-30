@@ -24,7 +24,7 @@ package("polyscope")
     add_deps("glad", "glfw", "glm", "nlohmann_json", "stb")
     on_load("windows", "macosx", "linux", function (package)
         if package:version():ge("2.2.0") then
-            package:add("deps", "imgui", {configs = {glfw = true, opengl3 = true}})
+            package:add("deps", "imgui <=1.90.4", {configs = {glfw = true, opengl3 = true}})
         else
             package:add("deps", "happly")
             package:add("deps", "imgui <=1.86", {configs = {glfw = true, opengl3 = true}})
