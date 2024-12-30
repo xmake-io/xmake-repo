@@ -5,7 +5,7 @@ package("x265")
 
     add_urls("https://bitbucket.org/multicoreware/x265_git.git",
              "https://github.com/videolan/x265.git")
-`
+
     add_urls("https://github.com/videolan/x265/archive/refs/tags/$(version).tar.gz", {alias = "github"})
     add_urls("https://bitbucket.org/multicoreware/x265_git/downloads/x265_$(version).tar.gz", {alias = "bitbucket"})
 
