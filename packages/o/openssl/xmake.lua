@@ -189,6 +189,10 @@ package("openssl")
             buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
             buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
         end
+        -- Check if ARFLAGS exists and is empty or contains only whitespace
+        if buildenvs.ARFLAGS and buildenvs.ARFLAGS:match("^%s*$") then
+            buildenvs.ARFLAGS = nil
+        end
         if package:is_plat("mingw") then
             buildenvs.RC = package:build_getenv("mrc")
             if is_subhost("msys") and buildenvs.RC then
