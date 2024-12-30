@@ -184,7 +184,14 @@ package("openssl")
             table.insert(configs, "--debug")
         end
 
-        local buildenvs = import("package.tools.autoconf").buildenvs(package)
+        local ldflags = {}
+        if package:is_plat("mingw") and package:has_tool("mrc", "llvm_rc", "llvm-rc", "rc") then
+            -- llvm-rc should be used with lld linker
+            if package:has_tool("cc", "clang") then
+                table.insert(ldflags, "-fuse-ld=lld")
+            end
+        end
+        local buildenvs = import("package.tools.autoconf").buildenvs(package, {ldflags = ldflags})
         if is_host("windows") and package:is_plat("android") then
             buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
             buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
@@ -213,6 +220,7 @@ package("openssl")
             os.vrunv("./config", configs, {shell = true, envs = buildenvs})
         end
 
+        import("makefile.patch")(package, {buildenvs = buildenvs})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
