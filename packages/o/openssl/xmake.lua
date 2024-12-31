@@ -75,6 +75,10 @@ package("openssl")
                 "If you encounter build issues, ensure you have the correct Perl installed "..
                 "and it takes priority in your system.")
             end
+
+            if not package:gitref() and package:version():lt("1.1.1") then
+                wprint("package(openssl): Building OpenSSL versions earlier than 1.1.1 may fail due to unresolved bugs. If you encounter build issues, please consider using a newer version.")
+            end
         end)
     end
 
