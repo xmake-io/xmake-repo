@@ -1,4 +1,4 @@
-function _fix_overlong_make_recipe()
+function _fix_overlong_make_recipe(package)
     -- In the MSYS environment, the make recipe can be too long to execute.
     -- This patch is adapted from OpenSSL 3.
     -- For more details, see: https://github.com/openssl/openssl/issues/12116
@@ -144,23 +144,27 @@ function _fix_overlong_make_recipe()
             "EOF")
 end
 
-function _remove_unused_pod_usage()
+function _remove_unused_pod_usage(package)
     -- Perl in "Git for Windows" lacks Pod::Usage, which is only used for help messages in the Configure script.
     -- It is not needed for the build and can be safely removed to avoid errors from the missing module.
+    if package:version():le("1.1.0") then
+        return
+    end
     io.replace("Configure", "use Pod::Usage;", "", {plain = true})
     io.replace("Configure", "pod2usage.-;", "")
 end
 
-function _replace_NUL_with_null()
+function _replace_NUL_with_null(package)
     -- The Configure script uses "NUL" to redirect output on Windows when checking NASM.
     -- Creating a file named "NUL" can cause issues because "NUL" is a reserved name in Windows.
+    if package:version():le("1.1.0") then
+        return
+    end
     io.replace("Configurations/10-main.conf", "NUL", "null", {plain = true})
 end
 
 function main(package)
-    _remove_unused_pod_usage()
-    if not package:gitref() and package:version():ge("1.1.1") then
-        _replace_NUL_with_null()
-        _fix_overlong_make_recipe()
-    end
+    _remove_unused_pod_usage(package)
+    _replace_NUL_with_null(package)
+    _fix_overlong_make_recipe(package)
 end

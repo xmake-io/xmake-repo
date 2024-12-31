@@ -76,7 +76,7 @@ package("openssl")
                 "and it takes priority in your system.")
             end
 
-            if not package:gitref() and package:version():lt("1.1.1") then
+            if package:version():le("1.1.0") then
                 wprint("package(openssl): Building OpenSSL versions earlier than 1.1.1 may fail due to unresolved bugs. If you encounter build issues, please consider using a newer version.")
             end
         end)
@@ -86,7 +86,7 @@ package("openssl")
         import("package.tools.jom", {try = true})
         import("package.tools.nmake")
         local configs = {"Configure"}
-        if not package:gitref() and package:version():ge("1.1.1") then
+        if not package:version():le("1.1.0") then
             table.insert(configs, "no-tests")
         end
         local target
@@ -103,14 +103,14 @@ package("openssl")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
-        if jom and (not package:gitref() and package:version():ge("1.1.1")) then
+        if jom and not package:version():le("1.1.0") then
             table.insert(configs, "no-makedepend")
             table.insert(configs, "/FS")
         end
         import("configure.patch")(package)
         os.vrunv("perl", configs)
 
-        if jom and (not package:gitref() and package:version():ge("1.1.1")) then
+        if jom and not package:version():le("1.1.0") then
             jom.build(package)
             jom.make(package, {"install_sw"})
         else
@@ -121,7 +121,7 @@ package("openssl")
 
     on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", "mingw", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
-        local configs = (not package:gitref() and package:version():ge("1.1.1")) and {"no-tests"} or {}
+        local configs = (not package:version():le("1.1.0")) and {"no-tests"} or {}
         if package:is_cross() or package:is_plat("mingw") then
             local target_plat, target_arch
             if package:is_plat("macosx") then
