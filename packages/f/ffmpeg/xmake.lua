@@ -216,6 +216,11 @@ package("ffmpeg")
             if path.cygwin then -- xmake 2.8.9
                 import("package.tools.autoconf")
                 local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
+                if not envs.PATH then -- Fix in xmake 2.9.8
+                    local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+                    envs.PATH = os.getenv("PATH") -- we need to reserve PATH on msys2
+                    envs = os.joinenvs(envs, msvc:runenvs())
+                end
                 -- add gas-preprocessor to PATH
                 if package:is_arch("arm", "arm64") then
                     envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
