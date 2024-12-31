@@ -1,36 +1,49 @@
 package("skia")
-
     set_homepage("https://skia.org/")
     set_description("A complete 2D graphic library for drawing Text, Geometries, and Images.")
     set_license("BSD-3-Clause")
 
-    local commits = {["88"] = "158dc9d7d4cafb177b99b68c5dc502f8f4282092",
-                     ["89"] = "109bfc9052ce1bde7acf07321d605601d7b7ec24",
-                     ["90"] = "adbb69cd7fe4e1c321e1526420e30265655e809c",
-                    ["132"] = "07f41bcb8ee32fd84ae845095d49055d5122e606"}
+    local commits = {
+        ["88"] = "158dc9d7d4cafb177b99b68c5dc502f8f4282092",
+        ["89"] = "109bfc9052ce1bde7acf07321d605601d7b7ec24",
+        ["90"] = "adbb69cd7fe4e1c321e1526420e30265655e809c",
+        ["132"] = "07f41bcb8ee32fd84ae845095d49055d5122e606",
+    }
     add_urls("https://github.com/google/skia/archive/$(version).zip", {version = function (version) return commits[tostring(version)] end})
+
     add_versions("88", "3334fd7d0705e803fe2dd606a2a7d67cc428422a3e2ba512deff84a4bc5c48fa")
     add_versions("89", "b4c8260ad7d1a60e0382422d76ea6174fc35ce781b01030068fcad08364dd334")
     add_versions("90", "5201386a026d1dd55e662408acf9df6ff9d8c1df24ef6a5b3d51b006b516ac90")
     add_versions("132", "1246975f106a2fc98a167bf5d56053a6e8618e42db0394228c6f152daa298116")
-    add_deps("gn", "python", "ninja", {kind = "binary"})
 
-    add_includedirs("include")
-    add_includedirs("include/..")
-    add_includedirs("include/ports")
+    local components = {"gpu", "pdf", "nvpr"}
+    for _, component in ipairs(components) do
+        add_configs(component, {description = "Enable " .. component .. " support.", default = true, type = "boolean"})
+    end
+
     if is_plat("windows") then
         add_syslinks("gdi32", "user32", "opengl32")
     elseif is_plat("macosx") then
         add_frameworks("CoreFoundation", "CoreGraphics", "CoreText", "CoreServices")
     elseif is_plat("linux") then
-        add_deps("fontconfig", "freetype >=2.10")
         add_syslinks("pthread", "GL", "dl", "rt")
     end
+
+    add_includedirs("include", "include/..", "include/ports")
+
     add_links("skia")
 
-    local components = {"gpu", "pdf", "nvpr"}
-    for _, component in ipairs(components) do
-        add_configs(component, {description = "Enable " .. component .. " support.", default = true, type = "boolean"})
+    add_deps("gn", "python", "ninja", {kind = "binary"})
+    if is_plat("linux") then
+        add_deps("fontconfig", "freetype >=2.10")
+    end
+
+    if on_check then
+        on_check(function (package)
+            if package:is_cross() then
+                raise("package(skia) unsupported cross-compilation now.")
+            end
+        end)
     end
 
     on_install("macosx", "linux", "windows", function (package)
