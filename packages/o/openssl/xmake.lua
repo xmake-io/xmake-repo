@@ -32,15 +32,18 @@ package("openssl")
             if package:is_plat("android") and is_subhost("windows") and os.arch() == "x64" then
                 -- when building for android on windows, use msys2 perl instead of strawberry-perl to avoid configure issue
                 package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}, private = true})
-            elseif is_subhost("windows") and not package:is_precompiled() then
-                package:add("deps", "nasm", { private = true })
-                -- the perl executable found in GitForWindows will fail to build OpenSSL
-                -- see https://github.com/openssl/openssl/blob/master/NOTES-PERL.md#perl-on-windows
-                package:add("deps", "strawberry-perl", { system = false, private = true })
-                -- check xmake tool jom
-                import("package.tools.jom", {try = true})
-                if jom then
-                    package:add("deps", "jom", {private = true})
+            elseif is_subhost("windows") then
+                package:add("deps", "strawberry-perl", { private = true })
+                if package:is_plat("windows") then
+                    package:add("deps", "nasm", { private = true })
+                    -- check xmake tool jom
+                    import("package.tools.jom", {try = true})
+                    if jom then
+                        package:add("deps", "jom", {private = true})
+                    end
+                else
+                    wprint("package(openssl): OpenSSL should be built in a Unix-like shell (e.g., MSYS2, Git Bash) if not targeting MSVC. " ..
+                    "It seems you are not in such an environment. If you encounter build errors, please consider trying again in a Unix-like shell.")
                 end
             end
         end
@@ -61,10 +64,31 @@ package("openssl")
         end
     end)
 
+    if on_check then
+        on_check(function (package)
+            local working_dir = try {function() return os.iorunv("perl", {"-MFile::Spec::Functions=rel2abs", "-e", "print rel2abs('.')"}) end}
+            assert(working_dir, "package(openssl): perl not found!")
+            -- Check if Perl is using Unix-style paths
+            local unix_perl = working_dir:find("/") == 1
+            if (unix_perl and package:is_plat("windows")) or (not unix_perl and not package:is_plat("windows")) then
+                wprint("package(openssl): Detected Perl may not match your build platform. "..
+                "If you encounter build issues, ensure you have the correct Perl installed "..
+                "and it takes priority in your system.")
+            end
+
+            if package:version():le("1.1.0") then
+                wprint("package(openssl): Building OpenSSL versions earlier than 1.1.1 may fail due to unresolved bugs. If you encounter build issues, please consider using a newer version.")
+            end
+        end)
+    end
+
     on_install("windows", function (package)
         import("package.tools.jom", {try = true})
         import("package.tools.nmake")
-        local configs = {"Configure", "no-tests"}
+        local configs = {"Configure"}
+        if not package:version():le("1.1.0") then
+            table.insert(configs, "no-tests")
+        end
         local target
         if package:is_arch("x86", "i386") then
             target = "VC-WIN32"
@@ -79,13 +103,14 @@ package("openssl")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
-        if jom then
+        if jom and not package:version():le("1.1.0") then
             table.insert(configs, "no-makedepend")
             table.insert(configs, "/FS")
         end
+        import("configure.patch")(package)
         os.vrunv("perl", configs)
 
-        if jom then
+        if jom and not package:version():le("1.1.0") then
             jom.build(package)
             jom.make(package, {"install_sw"})
         else
@@ -94,39 +119,10 @@ package("openssl")
         end
     end)
 
-    on_install("mingw", function (package)
-        local configs = {"Configure", "no-tests"}
-        table.insert(configs, package:is_arch("i386", "x86") and "mingw" or "mingw64")
-        table.insert(configs, package:config("shared") and "shared" or "no-shared")
-        local installdir = package:installdir()
-        -- Use MSYS2 paths instead of Windows paths
-        if is_subhost("msys") then
-            installdir = installdir:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
-        end
-        table.insert(configs, "--prefix=" .. installdir)
-        table.insert(configs, "--openssldir=" .. installdir)
-        local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        buildenvs.RC = package:build_getenv("mrc")
-        if is_subhost("msys") then
-            local rc = buildenvs.RC
-            if rc then
-                rc = rc:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
-                buildenvs.RC = rc
-            end
-        end
-        -- fix 'cp: directory fuzz does not exist'
-        if package:config("shared") then
-            os.mkdir("fuzz")
-        end
-        os.vrunv("perl", configs, {envs = buildenvs})
-        import("package.tools.make").build(package)
-        import("package.tools.make").make(package, {"install_sw"})
-    end)
-
-    on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", function (package)
+    on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", "mingw", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
-        local configs = {}
-        if package:is_cross() then
+        local configs = (not package:version():le("1.1.0")) and {"no-tests"} or {}
+        if package:is_cross() or package:is_plat("mingw") then
             local target_plat, target_arch
             if package:is_plat("macosx") then
                 target_plat = "darwin64"
@@ -145,6 +141,21 @@ package("openssl")
                     end
                     target_arch = "cross"
                 end
+            elseif package:is_plat("mingw") then
+                target_plat = package:is_arch("i386", "x86") and "mingw" or "mingw64"
+            elseif package:is_plat("bsd") then
+                target_plat = "BSD"
+                if package:is_arch("i386") then
+                    target_arch = "x86"
+                elseif package:is_arch("x86_64") then
+                    target_arch = "x86_64"
+                elseif package:is_arch("arm64") then
+                    target_arch = "aarch64"
+                elseif package:is_arch("riscv64") then
+                    target_arch = "riscv64"
+                elseif package:is_arch(".*64") then
+                    target_arch = "generic64"
+                end
             else
                 target_plat = "linux"
                 if package:is_arch("x86_64") then
@@ -161,36 +172,90 @@ package("openssl")
                     target_arch = "generic32"
                 end
             end
-            table.insert(configs, target_plat .. "-" .. target_arch)
-            if package:is_plat("cross", "android") then
-                table.insert(configs, "-DOPENSSL_NO_HEARTBEATS")
-                table.insert(configs, "no-threads")
-            end
+            table.insert(configs, target_arch and (target_plat .. "-" .. target_arch) or target_plat)
         end
-        table.insert(configs, "--openssldir=" .. package:installdir():gsub("\\", "/"))
-        table.insert(configs, "--prefix=" .. package:installdir():gsub("\\", "/"))
+        if package:is_plat("cross", "android") then
+            table.insert(configs, "-DOPENSSL_NO_HEARTBEATS")
+            table.insert(configs, "no-threads")
+        end
+        local installdir = package:installdir()
+        -- Use MSYS2 paths instead of Windows paths
+        if is_subhost("msys") then
+            installdir = installdir:gsub("(%a):[/\\](.+)", "/%1/%2")
+        end
+        installdir = installdir:gsub("\\", "/")
+        table.insert(configs, "--openssldir=" .. installdir)
+        table.insert(configs, "--prefix=" .. installdir)
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         if package:debug() then
             table.insert(configs, "--debug")
         end
-        local buildenvs = import("package.tools.autoconf").buildenvs(package)
-        if package:is_cross() then
-            if is_host("windows") and package:is_plat("android") then
-                buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
-                buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
-                buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
-                buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
+
+        local ldflags = {}
+        if package:is_plat("mingw") and package:has_tool("mrc", "llvm_rc", "llvm-rc", "rc") then
+            -- llvm-rc should be used with lld linker
+            if package:has_tool("cc", "clang") then
+                table.insert(ldflags, "-fuse-ld=lld")
             end
+        end
+        local buildenvs = import("package.tools.autoconf").buildenvs(package, {ldflags = ldflags})
+        if is_host("windows") and package:is_plat("android") then
+            buildenvs.CFLAGS = buildenvs.CFLAGS:gsub("\\", "/")
+            buildenvs.CXXFLAGS = buildenvs.CXXFLAGS:gsub("\\", "/")
+            buildenvs.CPPFLAGS = buildenvs.CPPFLAGS:gsub("\\", "/")
+            buildenvs.ASFLAGS = buildenvs.ASFLAGS:gsub("\\", "/")
+        end
+        -- Check if ARFLAGS exists and is empty or contains only whitespace
+        if buildenvs.ARFLAGS and buildenvs.ARFLAGS:match("^%s*$") then
+            buildenvs.ARFLAGS = nil
+        end
+        if package:is_plat("mingw") then
+            buildenvs.RC = package:build_getenv("mrc")
+            if is_subhost("msys") and buildenvs.RC then
+                buildenvs.RC = buildenvs.RC:gsub("(%a):[/\\](.+)", "/%1/%2"):gsub("\\", "/")
+            end
+            -- fix 'cp: directory fuzz does not exist'
+            if package:config("shared") then
+                os.mkdir("fuzz")
+            end
+        end
+
+        import("configure.patch")(package)
+        if package:is_cross() or package:is_plat("mingw") then
             os.vrunv("perl", table.join("./Configure", configs), {envs = buildenvs})
         else
             os.vrunv("./config", configs, {shell = true, envs = buildenvs})
         end
+
+        import("makefile.patch")(package, {buildenvs = buildenvs})
         import("package.tools.make").build(package)
         import("package.tools.make").make(package, {"install_sw"})
         if package:config("shared") then
-            os.tryrm(path.join(package:installdir("lib"), "*.a"))
+            os.tryrm(path.join(package:installdir("lib"), "*.a|*.dll.a"))
         end
     end)
     on_test(function (package)
-        assert(package:has_cfuncs("SSL_new", {includes = "openssl/ssl.h"}))
+        assert(package:check_csnippets({test = [[
+                #include <openssl/ssl.h>
+
+                int test(){
+                    SSL_library_init();
+                    SSL_load_error_strings();
+                    SSL_CTX *ctx = SSL_CTX_new(SSLv23_client_method());
+                    if(ctx == NULL){
+                        return 1;
+                    }
+
+                    SSL *ssl = SSL_new(ctx);
+                    if(ssl == NULL){
+                        SSL_CTX_free(ctx);
+                        return 1;
+                    }
+
+                    SSL_free(ssl);
+                    SSL_CTX_free(ctx);
+
+                    return 0;
+                }
+            ]]}))
     end)
