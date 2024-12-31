@@ -6,7 +6,7 @@ package("ta-lib")
     add_urls("https://github.com/TA-Lib/ta-lib/releases/download/v$(version)/ta-lib-$(version)-src.tar.gz")
     add_versions("0.6.2", "598164dd030546eac7385af9b311a4115bb47901971c74746cbef4d3287c81e0")         
 
-    add_deps("cmake >=3.30")
+    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
     on_install(function (package)
         os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
