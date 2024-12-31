@@ -96,7 +96,7 @@ package("skia")
             }})
         local skia_gn = "gn/skia/BUILD.gn"
 
-        if not io.exists(skia_gn) then
+        if not os.exists(skia_gn) then
             skia_gn = "gn/BUILD.gn"
         end
 
