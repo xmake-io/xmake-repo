@@ -158,7 +158,16 @@ function _replace_NUL_with_null()
 end
 
 function main(package)
-    _remove_unused_pod_usage()
-    _replace_NUL_with_null()
-    _fix_overlong_make_recipe()
+    try {
+        function()
+            _remove_unused_pod_usage()
+            _replace_NUL_with_null()
+            _fix_overlong_make_recipe()
+        end,
+        catch {
+            function (errors)
+                cprint("${color.error}" .. errors .. "${clear}\n")
+            end
+        }
+    }
 end

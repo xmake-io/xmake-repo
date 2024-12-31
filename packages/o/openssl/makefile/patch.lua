@@ -32,5 +32,5 @@ function _patch_for_llvm_rc(package, opt)
 end
 
 function main(package, opt)
-    _patch_for_llvm_rc(package, opt)
+    try {function() return _patch_for_llvm_rc(package, opt) end}
 end
