@@ -81,7 +81,10 @@ package("openssl")
     on_install("windows", function (package)
         import("package.tools.jom", {try = true})
         import("package.tools.nmake")
-        local configs = {"Configure", "no-tests"}
+        local configs = {"Configure"}
+        if not package:gitref() and package:version():ge("1.1.1") then
+            table.insert(configs, "no-tests")
+        end
         local target
         if package:is_arch("x86", "i386") then
             target = "VC-WIN32"
@@ -96,14 +99,14 @@ package("openssl")
         table.insert(configs, package:config("shared") and "shared" or "no-shared")
         table.insert(configs, "--prefix=" .. package:installdir())
         table.insert(configs, "--openssldir=" .. package:installdir())
-        if jom then
+        if jom and (not package:gitref() and package:version():ge("1.1.1")) then
             table.insert(configs, "no-makedepend")
             table.insert(configs, "/FS")
         end
         import("configure.patch")(package)
         os.vrunv("perl", configs)
 
-        if jom then
+        if jom and (not package:gitref() and package:version():ge("1.1.1")) then
             jom.build(package)
             jom.make(package, {"install_sw"})
         else
@@ -114,7 +117,7 @@ package("openssl")
 
     on_install("linux", "macosx", "bsd", "cross", "android", "iphoneos", "mingw", function (package)
         -- https://wiki.openssl.org/index.php/Compilation_and_Installation#PREFIX_and_OPENSSLDIR
-        local configs = {"no-tests"}
+        local configs = (not package:gitref() and package:version():ge("1.1.1")) and {"no-tests"} or {}
         if package:is_cross() or package:is_plat("mingw") then
             local target_plat, target_arch
             if package:is_plat("macosx") then

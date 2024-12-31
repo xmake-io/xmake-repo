@@ -158,16 +158,9 @@ function _replace_NUL_with_null()
 end
 
 function main(package)
-    try {
-        function()
-            _remove_unused_pod_usage()
-            _replace_NUL_with_null()
-            _fix_overlong_make_recipe()
-        end,
-        catch {
-            function (errors)
-                cprint("${color.error}" .. errors .. "${clear}\n")
-            end
-        }
-    }
+    _remove_unused_pod_usage()
+    if not package:gitref() and package:version():ge("1.1.1") then
+        _replace_NUL_with_null()
+        _fix_overlong_make_recipe()
+    end
 end
