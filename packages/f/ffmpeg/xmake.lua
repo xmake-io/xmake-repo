@@ -117,11 +117,20 @@ package("ffmpeg")
             package:add("syslinks", "Bcrypt", "Mfplat", "mfuuid", "Ole32", "Secur32", "Strmiids", "User32", "ws2_32")
         end
         if is_subhost("windows") and os.arch() == "x64" then
-            if package:is_plat("windows", "mingw") then
-                package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}})
-            else
-                package:add("deps", "msys2", {configs = {msystem = "MINGW64", mingw64_gcc = true, base_devel = true}})
+            local configs = {
+                msystem = "MINGW64",
+                base_devel = true,
+            }
+            -- @see https://stackoverflow.com/questions/65438878/ffmpeg-build-on-windows-using-msvc-make-fails
+            configs.make = true
+            if not package:is_plat("windows", "mingw") then
+                configs.mingw64_gcc = true
             end
+            package:add("deps", "msys2", {configs = configs})
+        end
+
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
         end
     end)
 
@@ -158,6 +167,7 @@ package("ffmpeg")
             table.insert(configs, "--enable-dxva2")
             table.insert(configs, "--enable-mediafoundation")
             table.insert(configs, "--toolchain=msvc")
+            table.insert(configs, "--extra-cflags=-" .. package:config("runtimes"))
         elseif package:is_plat("mingw") then
             if package:is_arch("x86", "i386", "i686") then
                 table.insert(configs, "--target-os=mingw32")
@@ -336,9 +346,18 @@ package("ffmpeg")
             end
             import("package.tools.autoconf").install(package, configs, opt)
         end
-        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("avformat_open_input", {includes = "libavformat/avformat.h"}))
+        if not package:is_cross() then
+            for _, tool in ipairs({"ffprobe", "ffmpeg", "ffplay"}) do
+                if package:config(tool) then
+                    os.vrunv(tool, {"-version"})
+                end
+            end
+        end
+
+        if package:is_library() then
+            assert(package:has_cfuncs("avformat_open_input", {includes = "libavformat/avformat.h"}))
+        end
     end)
