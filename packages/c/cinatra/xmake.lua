@@ -23,6 +23,15 @@ package("cinatra")
     add_deps("asio")
     add_deps("async_simple", {configs = {aio = false}})
 
+    on_check("windows", function (package)
+        local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+        if vs_toolset then
+            local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+            local minor = vs_toolset_ver:minor()
+            assert(minor and minor >= 30, "package(cinatra) require vs_toolset >= 14.3")
+        end
+    end)
+
     on_load(function (package)
         package:add("defines", "ASIO_STANDALONE")
         if package:config("ssl") then
