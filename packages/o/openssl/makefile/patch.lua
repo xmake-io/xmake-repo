@@ -5,6 +5,7 @@ function _patch_for_llvm_rc(package, opt)
         local tmpfile = path.unix(os.tmpfile() .. ".c")
         io.writefile(tmpfile, "int main(void) { return 0; }\n")
         local compile_out, compile_err = try {function() return os.iorun(format("%s -v %s %s", cc, cflags, tmpfile)) end}
+        os.tryrm(tmpfile)
         local include_dirs = {}
         local in_include_section = false
         for _, verbose_command in ipairs({compile_out, compile_err}) do
