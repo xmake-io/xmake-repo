@@ -221,14 +221,14 @@ package("ffmpeg")
                     envs.PATH = os.getenv("PATH") -- we need to reserve PATH on msys2
                     envs = os.joinenvs(envs, msvc:runenvs())
                 end
+                if package:config("shared") and package:is_cross() then
+                    -- The makedef script always assumes that the AR environment variable is gnu ar
+                    -- @see https://github.com/microsoft/vcpkg/issues/42365#issuecomment-2567009409
+                    envs.AR = nil
+                end
                 -- add gas-preprocessor to PATH
                 if package:is_arch("arm", "arm64") then
                     envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
-                end
-                if package:is_cross() then
-                    -- The makedef script always assumes that the AR environment variable is gnu ar
-                    -- @see https://github.com/microsoft/vcpkg/issues/42365
-                    envs.AR = nil
                 end
                 autoconf.install(package, configs, {envs = envs})
             else
