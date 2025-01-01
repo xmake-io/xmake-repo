@@ -43,5 +43,5 @@ package("snappy")
             void test(int args, char** argv) {
                 snappy::Compress(nullptr, nullptr);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "snappy.h"}))
+        ]]}, {configs = {languages = package:is_plat("windows") and "c++14" or "c++11"}, includes = "snappy.h"}))
     end)
