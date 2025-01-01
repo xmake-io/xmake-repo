@@ -22,6 +22,7 @@ package("libmysofa")
             io.replace("src/CMakeLists.txt", [[find_library(MATH m)]], [[set(MATH "")]], {plain = true})
         end
         os.rm("windows/third-party/zlib-1.2.11")
+        os.rm("share/default.sofa")
         os.cp("share/MIT_KEMAR_normal_pinna.sofa", "share/default.sofa")
         local configs = {"-DBUILD_TESTS=OFF", "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
         table.insert(configs, "-DBUILD_STATIC_LIBS=" .. (package:config("shared") and "OFF" or "ON"))
