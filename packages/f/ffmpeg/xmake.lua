@@ -225,6 +225,11 @@ package("ffmpeg")
                 if package:is_arch("arm", "arm64") then
                     envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
                 end
+                if package:is_cross() then
+                    -- The makedef script always assumes that the AR environment variable is gnu ar
+                    -- @see https://github.com/microsoft/vcpkg/issues/42365
+                    envs.AR = nil
+                end
                 autoconf.install(package, configs, {envs = envs})
             else
                 import("core.base.option")
