@@ -314,9 +314,14 @@ package("ffmpeg")
             local cflags   = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cflags")), table.wrap(get_config("cxflags")), get_config("cflags"))
             local cxxflags = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cxxflags")), table.wrap(get_config("cxflags")), get_config("cxxflags"))
             assert(os.isdir(sysroot), "we do not support old version ndk!")
+
+            local ndkver = tonumber(ndk:config("ndkver"))
             if package:is_arch("arm64-v8a") then
-                table.insert(cflags, "-mfpu=neon")
-                table.insert(cflags, "-mfloat-abi=hard")
+                -- https://github.com/llvm/llvm-project/issues/74361
+                if ndkver < 27 then
+                    table.insert(cflags, "-mfpu=neon")
+                    table.insert(cflags, "-mfloat-abi=hard")
+                end
             else
                 table.insert(cflags, "-mfpu=neon")
                 table.insert(cflags, "-mfloat-abi=soft")
