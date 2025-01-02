@@ -167,7 +167,7 @@ package("ffmpeg")
             table.insert(configs, "--enable-dxva2")
             table.insert(configs, "--enable-mediafoundation")
             table.insert(configs, "--toolchain=msvc")
-            table.insert(configs, "--extra-cflags=-" .. package:config("runtimes"))
+            table.insert(configs, "--extra-cflags=-" .. package:runtimes())
         elseif package:is_plat("mingw") then
             if package:is_arch("x86", "i386", "i686") then
                 table.insert(configs, "--target-os=mingw32")
