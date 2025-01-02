@@ -6,6 +6,7 @@ package("plutosvg")
     add_urls("https://github.com/sammycage/plutosvg/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sammycage/plutosvg.git")
 
+    add_versions("v0.0.4", "1fd07a15f701a045afa8cb3d2709709180b0d27edbb8f366322c74084684d215")
     add_versions("v0.0.3", "ff44d903aa5faf751624ce797e42375e1f71381b532642b162a7c4e220e9cb97")
     add_versions("v0.0.2", "92f9e74d5b50f485c73192791e3f755023d1573e3e009adf8c7f837e4b318e82")
 
