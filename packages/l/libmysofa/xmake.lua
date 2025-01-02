@@ -1,7 +1,6 @@
 package("libmysofa")
     set_homepage("https://github.com/hoene/libmysofa")
     set_description("Reader for AES SOFA files to get better HRTFs")
-
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/hoene/libmysofa/archive/refs/tags/$(version).tar.gz",
