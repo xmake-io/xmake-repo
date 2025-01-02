@@ -17,6 +17,7 @@ package("hookmanager")
 
     if on_check then
         on_check(function (package)
+            assert(not package:is_arch("arm64"),"package(hookmanager) The arm64 architecture is not currently supported.")
             assert(not (package:is_arch("x86") and package:config("lighthook")),"package(hookmanager) LightHook does not support the X86 architecture.")
         end)
     end
