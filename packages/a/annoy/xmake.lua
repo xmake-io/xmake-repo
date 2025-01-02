@@ -7,6 +7,7 @@ package("annoy")
     add_urls("https://github.com/spotify/annoy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/spotify/annoy.git")
 
+    add_versions("v1.17.3", "c121d38cacd98f5103b24ca4e94ca097f18179eed3037e9eb93ad70ec1e6356e")
     add_versions("v1.17.2", "ad3518f36bdd5ea54576dfe1c765c93d5c737342f269aada2cd7ff1bc0d0cd93")
 
     add_deps("cmake")
