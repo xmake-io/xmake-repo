@@ -1,0 +1,25 @@
+From 76e16e35a47a76e3eab00e55867abd203be8ffbf Mon Sep 17 00:00:00 2001
+From: Redbeanw44602 <redbeana44945@gmail.com>
+Date: Thu, 2 Jan 2025 22:25:44 +0800
+Subject: [PATCH] disable crt secure warnings.
+
+---
+ util/env_windows.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/util/env_windows.cc b/util/env_windows.cc
+index 1c74b02..76eb58a 100644
+--- a/util/env_windows.cc
++++ b/util/env_windows.cc
+@@ -4,6 +4,8 @@
+ 
+ // Prevent Windows headers from defining min/max macros and instead
+ // use STL.
++#define _CRT_SECURE_NO_WARNINGS
++
+ #ifndef NOMINMAX
+ #define NOMINMAX
+ #endif  // ifndef NOMINMAX
+-- 
+2.47.1
+
