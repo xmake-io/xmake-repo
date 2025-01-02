@@ -9,6 +9,9 @@ package("leveldb")
     add_versions("1.22", "55423cac9e3306f4a9502c738a001e4a339d1a38ffbee7572d4a07d5d63949b2")
     add_versions("1.23", "9a37f8a6174f09bd622bc723b55881dc541cd50747cbd08831c2a82d620f6d76")
 
+    add_patches("*", path.join(os.scriptdir(), "patches", "fix-build-under-clang-msabi.patch"), "e90d3ac992e6b00aed529da53c37bca9a0fe77cd223ca0857848ccd66239f24a")
+    add_patches("*", path.join(os.scriptdir(), "patches", "disable-crt-secure-warnings.patch"), "fbc769c1e0472aeeb2b6e8fddf21c84980142f0ab3896d0369e974bca982a2f9")
+
     add_deps("cmake")
     add_deps("snappy")
     if is_plat("linux") then
@@ -30,5 +33,5 @@ package("leveldb")
                 options.create_if_missing = true;
                 leveldb::Status status = leveldb::DB::Open(options, "./test", &db);
             }
-        ]]}, {configs = {languages = "c++11"}, includes = "leveldb/db.h"}))
+        ]]}, {configs = {languages = package:is_plat("windows") and "c++14" or "c++11"}, includes = "leveldb/db.h"}))
     end)
