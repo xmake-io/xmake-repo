@@ -13,6 +13,7 @@ package("snappy")
 
     add_patches("1.1.9", "patches/1.1.9/inline.patch", "ed6b247d19486ab3f08f268269133193d7cdadd779523c5e69b5e653f82d535b")
     add_patches("1.1.10", "patches/1.1.10/cmake.patch", "d4883111dcfab81ea35ac1e4e157e55105cec02a0ba804458405be25cbf7b6bb")
+    add_patches("1.2.1", "patches/1.2.1/0001-Fix-compilation-error-raised-by-vqtbl1q_u8-instructi.patch", "bac4e4ba7f5503c13968d18d86634715244ca278497a6916185bc432e91d2220")
 
     add_deps("cmake")
 
