@@ -15,7 +15,7 @@ package("ormpp")
     add_configs("postgresql", {description = "Using postgresql", default = false, type = "boolean"})
     add_configs("sqlite3", {description = "Using sqlite3", default = false, type = "boolean"})
 
-    add_deps("frozen", "iguana")
+    add_deps("iguana <=1.0.5")
 
     on_load(function(package) 
         local configs = {
