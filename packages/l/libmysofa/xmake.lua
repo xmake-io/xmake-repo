@@ -9,7 +9,7 @@ package("libmysofa")
 
     add_versions("v1.3.2", "6c5224562895977e87698a64cb7031361803d136057bba35ed4979b69ab4ba76")
 
-    add_patches("v1.3.2", "patches/v1.3.2/fix-build.patch", "890ba9fdbba755499eae72e8f8e3f0dabd39eaa4edc4330c61c4b15efa0e30a1")
+    add_patches("v1.3.2", "patches/v1.3.2/fix-build.patch", "a28aed4c5e766081ff90a7aed74c58b77927432a80385f6aad9f3278cde6bb59")
 
     add_deps("cmake", "zlib")
 
@@ -20,6 +20,18 @@ package("libmysofa")
     on_install(function (package)
         if package:is_plat("wasm", "cross") then
             io.replace("src/CMakeLists.txt", [[find_library(MATH m)]], [[set(MATH "")]], {plain = true})
+        end
+        if is_host("windows") and package:is_plat("wasm") then
+            io.replace("src/hrtf/portable_endian.h", [[elif defined(__WINDOWS__)]], [[elif 1]], {plain = true})
+        end
+        if is_host("linux") and package:is_plat("wasm") then
+            io.replace("src/hrtf/portable_endian.h", [[if defined(__linux__)]], [[if 1]], {plain = true})
+        end
+        if is_host("bsd") and package:is_plat("wasm") then
+            io.replace("src/hrtf/portable_endian.h", [[defined(__FreeBSD__)]], [[1]], {plain = true})
+        end
+        if is_host("macosx") and package:is_plat("wasm") then
+            io.replace("src/hrtf/portable_endian.h", [[elif defined(__APPLE__)]], [[elif 1]], {plain = true})
         end
         os.rm("windows/third-party/zlib-1.2.11")
         os.rm("share/default.sofa")
