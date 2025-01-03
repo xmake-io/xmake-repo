@@ -34,7 +34,8 @@ local sorted_libs = {
   "chrono",
   "system",
   "charconv",
-  "atomic"
+  "atomic",
+  "heap"
 }
 
 local libs_dep = {
@@ -157,7 +158,8 @@ local libs_dep = {
     "mpi",
     "random",
     "serialization"
-  }
+  },
+  heap = {}
 }
 
 local header_only_buildable = {
@@ -166,6 +168,7 @@ local header_only_buildable = {
   "exception",
   "regex",
   "math",
+  "heap"
 }
 
 function get_libs()
