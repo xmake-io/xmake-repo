@@ -14,7 +14,6 @@ package("snappy")
     add_patches("1.1.9", "patches/1.1.9/inline.patch", "ed6b247d19486ab3f08f268269133193d7cdadd779523c5e69b5e653f82d535b")
     add_patches("1.1.10", "patches/1.1.10/cmake.patch", "d4883111dcfab81ea35ac1e4e157e55105cec02a0ba804458405be25cbf7b6bb")
     add_patches(">=1.2.0 <=1.2.1", "patches/1.2.1/update-neon-flag-aarch64.patch", "13100aa56de71a11bb3704bd7507613fd53caa3ab6e7dbec3de74875deb46ba5")
-    add_patches("*", "patches/fix-build-under-android-ndk-r27.patch", "f3dcfd51072957c68ca9c404fe1f13a773ab76a187eeb2f73c2958c942d80a90")
 
     add_deps("cmake")
 
@@ -23,6 +22,7 @@ package("snappy")
     add_configs("bmi2", {description = "Use the BMI2 instruction set", default = false, type = "boolean"})
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "cmake_minimum_required(VERSION 3.1)", "cmake_minimum_required(VERSION 3.3)", {plain = true})
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
 
         if package:version():eq("1.1.10") then
