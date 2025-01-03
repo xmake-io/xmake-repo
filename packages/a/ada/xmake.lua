@@ -17,18 +17,21 @@ package("ada")
     add_versions("v2.4.0", "14624f1dfd966fee85272688064714172ff70e6e304a1e1850f352a07e4c6dc7")
     add_versions("v2.3.1", "298992ec0958979090566c7835ea60c14f5330d6372ee092ef6eee1d2e6ac079")
 
-    if is_plat("macosx") then
+    if is_plat("mingw") and is_subhost("msys") then
+        add_extsources("pacman::ada-url")
+    elseif is_plat("macosx") then
         add_extsources("brew::ada-url")
     end
 
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {"-DBUILD_TESTING=OFF"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         io.replace("CMakeLists.txt", "add_subdirectory(singleheader)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(tools)", "", {plain = true})
+
+        local configs = {"-DBUILD_TESTING=OFF", "-DADA_TOOLS=OFF"}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
