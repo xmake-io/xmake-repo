@@ -11,8 +11,8 @@ package("cunit")
     add_deps("cmake")
 
     on_install(function (package)
-        io.replace("CMakeLists.txt", "-Werror -Werror=strict-prototypes", "")
-        io.replace("CUnit/CMakeLists.txt", "-Werror -Werror=strict-prototypes", "")
+        io.replace("CMakeLists.txt", "-Werror -Werror=strict-prototypes", "", {plain = true})
+        io.replace("CUnit/CMakeLists.txt", "-Werror -Werror=strict-prototypes", "", {plain = true})
         local configs = {}
         table.insert(configs, "-DCUNIT_DISABLE_TESTS=TRUE")
         table.insert(configs, "-DCUNIT_DISABLE_EXAMPLES=TRUE")
