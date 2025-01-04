@@ -10,6 +10,7 @@ package("vulkan-loader")
         end
          return prefix .. version:gsub("%+", ".")
     end})
+
     add_versions("1.3.296+0", "924b439421c30513f59dfd360cb1309639c1522de28608eb64c9d79581e44c72")
     add_versions("1.3.290+0", "0cd31fdb9b576e432a85ad4d555fac4f4e5ede22ca37ff534ab67c71cd172644")
     add_versions("1.3.283+0", "59151a3cdbf8dcfe9c2ce4b5bf33358255a197f48d8d0ee8a1d8642ed9ace80f")
