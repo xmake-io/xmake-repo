@@ -18,6 +18,7 @@ package("vulkan-validationlayers")
             end
         end})
 
+        add_versions("1.3.296+0", "dea290d614c71eeb512452dff1555f907a405a5a21baefcf41b5548d5d0fe157")
         add_versions("1.3.290+0", "eb26b4bf1f031e57d1624c53d489279076b893b0383fddccc79de7ee2caaa128")
         add_versions("1.3.275+0", "6e22fb13601c1e780c44a17497a3c999cc5207e52a09819e7c32ecd8439eff7a")
         add_versions("1.2.198+0", "5436e974d6b3133b3454edf1910f76b9f869db8bbe086859b2abe32fdb539cbc")
