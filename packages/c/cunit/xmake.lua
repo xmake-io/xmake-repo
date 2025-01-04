@@ -6,7 +6,7 @@ package("cunit")
 
     add_urls("https://gitlab.com/cunity/cunit/-/archive/$(version)/cunit-$(version).tar.bz2",
              "https://gitlab.com/cunity/cunit.git")
-    add_versions("3.4.4", "1b6ecbf9f260d026589d8ee27026e6e8fdafbfa8e8a325860e064ceb8b069416")
+    add_versions("3.4.4", "eda4c24afcb2f689b150dadea790a12efb1a0e5e2eb68df7d6417a3ae70a90c7")
 
     add_deps("cmake")
 
