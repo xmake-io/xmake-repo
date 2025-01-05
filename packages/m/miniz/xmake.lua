@@ -9,7 +9,7 @@ package("miniz")
     add_versions("3.0.2", "c4b4c25a4eb81883448ff8924e6dba95c800094a198dc9ce66a292ac2ef8e018")
 
     on_install(function (package)
-        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW", "-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DINSTALL_PROJECT=ON")
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW", "-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DINSTALL_PROJECT=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
