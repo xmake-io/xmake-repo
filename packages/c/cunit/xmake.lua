@@ -19,7 +19,7 @@ package("cunit")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        if (package:config("shared")) then
+        if package:config("shared") then
             io.replace("CUnit/CUnit/CUnit.h.in", "ifdef CU_DLL", "if 1", {plain = true})
             io.replace("CUnit/CUnit/CUnit.h.in", "ifdef CU_BUILD_DLL", "if 1", {plain = true})
             io.replace("CUnit/CMakeLists.txt", "add_library(cunit STATIC", "add_library(cunit", {plain = true})
