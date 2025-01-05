@@ -17,7 +17,6 @@ package("cunit")
         table.insert(configs, "-DCUNIT_DISABLE_TESTS=TRUE")
         table.insert(configs, "-DCUNIT_DISABLE_EXAMPLES=TRUE")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
         if (package:config("shared")) then
