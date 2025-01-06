@@ -16,7 +16,7 @@ package("libgit2")
 
     add_configs("ssh", {description = "Enable SSH support", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
-    add_configs("https", {description = "Select crypto backend.", default = (is_plat("windows", "mingw") and "winhttp" or "openssl"), type = "string", values = {"winhttp", "openssl", "mbedtls"}})
+    add_configs("https", {description = "Select crypto backend.", default = (is_plat("windows", "mingw") and "winhttp" or "openssl3"), type = "string", values = {"winhttp", "openssl3", "mbedtls"}})
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
@@ -56,11 +56,6 @@ package("libgit2")
 
     on_load(function (package)
         local https = package:config("https")
-        if package:is_plat("iphoneos") and https == "openssl" then
-            -- TODO: openssl support iphoneos
-            return 
-        end
-
         if https ~= "winhttp" then
             package:add("deps", https)
         end
@@ -76,7 +71,7 @@ package("libgit2")
         end
     end)
 
-    on_install("!wasm", function (package)
+    on_install(function (package)
         if package:is_plat("android") then
             for _, file in ipairs(os.files("src/**.txt")) do
                 if path.basename(file) == "CMakeLists" then
@@ -130,11 +125,7 @@ package("libgit2")
         table.insert(configs, "-DUSE_SSH=" .. (package:config("ssh") and "ON" or "OFF"))
         table.insert(configs, "-DBUILD_CLI=" .. (package:config("tools") and "ON" or "OFF"))
 
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        elseif package:is_plat("iphoneos") and https == "openssl" then
-            table.insert(configs, "-DUSE_HTTPS=OFF")
-        elseif package:is_plat("mingw") then
+        if package:is_plat("mingw") then
             local mingw = import("detect.sdks.find_mingw")()
             local dlltool = assert(os.files(path.join(mingw.bindir, "*dlltool*"))[1], "dlltool not found!")
             table.insert(configs, "-DDLLTOOL=" .. dlltool)
@@ -146,11 +137,6 @@ package("libgit2")
             opt.cxflags = "-DPCRE2_STATIC"
         end
         import("package.tools.cmake").install(package, configs, opt)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.vcp(path.join(package:buildir(), "*.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
