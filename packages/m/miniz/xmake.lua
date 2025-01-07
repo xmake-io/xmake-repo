@@ -36,7 +36,7 @@ package("miniz")
             import("package.tools.cmake").install(package, configs)
         else
             os.cp(path.join(package:scriptdir(), "port", "xmake.lua"), "xmake.lua")
-            import("package.tools.xmake").install(package)
+            import("package.tools.xmake").install(package, {ver = package:version()})
         end
     end)
 
