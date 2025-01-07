@@ -6,7 +6,7 @@ package("libgit2cpp")
     add_versions("2024.06.09", "e9651575e388d7e5832ff64955b2f3304bac33db")
 
     add_configs("boost", {description = "Use boost", default = false, type = "boolean"})
-    if is_plat("windows") then
+    if is_plat("windows", "mingw") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
