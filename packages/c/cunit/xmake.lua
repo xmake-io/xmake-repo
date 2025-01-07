@@ -23,6 +23,8 @@ package("cunit")
         if is_plat("windows") then
             add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
         end
+        io.replace("CUnit/CUnit/CUnit.h.in", "ifdef CU_DLL", "if 1", {plain = true})
+        io.replace("CUnit/CUnit/CUnit.h.in", "ifdef CU_BUILD_DLL", "if 1", {plain = true})
         io.replace("CUnit/CMakeLists.txt", "STATIC", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
