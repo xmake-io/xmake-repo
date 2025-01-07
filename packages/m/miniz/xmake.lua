@@ -22,4 +22,5 @@ package("miniz")
 
     on_test(function (package)
         assert(package:has_cfuncs("mz_compress", {includes = "miniz.h"}))
+        assert(package:has_cfuncs("mz_compress", {includes = "miniz/miniz.h"}))
     end)
