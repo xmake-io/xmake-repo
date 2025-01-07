@@ -18,11 +18,21 @@ package("miniz")
     on_install(function (package)
         if version:lt("3.0.0") then
             add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+            io.writefile("miniz_export.h", "#define MINIZ_EXPORT")
+            io.writefile("xmake.lua", [[
+                add_rules("mode.debug", "mode.release")
+                target("miniz")
+                    set_kind("static")
+                    add_files("miniz.c", "miniz_zip.c", "miniz_tinfl.c", "miniz_tdef.c")
+                    add_headerfiles("miniz.h", "miniz_export.h", "miniz_common.h", "miniz_zip.h", "miniz_tinfl.h", "miniz_tdef.h")
+            ]])
+            import("package.tools.xmake").install(package)
+        else
+            local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW", "-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DINSTALL_PROJECT=ON"}
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            import("package.tools.cmake").install(package, configs)
         end
-        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW", "-DBUILD_EXAMPLES=OFF", "-DBUILD_TESTS=OFF", "-DINSTALL_PROJECT=ON"}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
