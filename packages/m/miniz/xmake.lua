@@ -17,7 +17,7 @@ package("miniz")
 
     on_install(function (package)
         if package:version():lt("3.0.0") then
-            add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+            package:add("configs", "shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
             io.writefile("miniz_export.h", "#define MINIZ_EXPORT")
             io.writefile("xmake.lua", [[
                 add_rules("mode.debug", "mode.release")
