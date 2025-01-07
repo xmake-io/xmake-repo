@@ -6,21 +6,35 @@ package("libgit2cpp")
     add_versions("2024.06.09", "e9651575e388d7e5832ff64955b2f3304bac33db")
 
     add_configs("boost", {description = "Use boost", default = false, type = "boolean"})
-    add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    if is_plat("windows") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     add_deps("cmake")
+    if is_subhost("windows") then
+        add_deps("pkgconf")
+    else
+        add_deps("pkg-config")
+    end
     add_deps("libgit2")
+
+    on_check("android", function (package)
+        if package:is_arch("armeabi-v7a") then
+            local ndk = package:toolchain("ndk")
+            local ndkver = ndk:config("ndkver")
+            assert(ndkver and tonumber(ndkver) > 22, "package(libgit2) deps(pcre2) require ndk version > 22")
+        end
+    end)
 
     on_load(function (package)
         if package:config("boost") then
             package:add("deps", "boost")
         end
-        if is_subhost("windows") then
-            package:add("deps", "pkgconf")
-        end
     end)
 
     on_install(function (package)
+        io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
+
         local configs = {"-DBUNDLE_LIBGIT2=OFF", "-DBUILD_LIBGIT2CPP_EXAMPLES=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
