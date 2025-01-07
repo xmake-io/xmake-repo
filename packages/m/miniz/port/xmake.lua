@@ -5,7 +5,7 @@ local export_file = "miniz_export.h"
 target("miniz")
     set_kind("$(kind)")
     add_files("miniz.c", "miniz_zip.c", "miniz_tinfl.c", "miniz_tdef.c")
-    add_headerfiles("miniz.h", "miniz_common.h", "miniz_zip.h", "miniz_tinfl.h", "miniz_tdef.h")
+    add_headerfiles("miniz.h", "miniz_common.h", "miniz_zip.h", "miniz_tinfl.h", "miniz_tdef.h", {prefixdir = "miniz"})
 
     on_load(function (target)
         local string = "#define MINIZ_EXPORT"
@@ -14,7 +14,7 @@ target("miniz")
         end
 
         io.writefile(export_file, string)
-        target:add("headerfiles", export_file)
+        target:add("headerfiles", export_file, {prefixdir = "miniz"})
     end)
 
     after_build(function (target)

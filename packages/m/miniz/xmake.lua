@@ -15,6 +15,11 @@ package("miniz")
     add_includedirs("include", "include/miniz")
 
     on_load(function (package)
+        local version = package:version()
+        if version and version:lt("2.2.0") then
+            package:config_set("cmake", false)
+        end
+
         if package:config("cmake") then
             package:add("deps", "cmake")
             if not package:config("shared") then
