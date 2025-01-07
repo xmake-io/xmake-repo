@@ -9,6 +9,8 @@ package("miniz")
 
     add_versions("3.0.2", "c4b4c25a4eb81883448ff8924e6dba95c800094a198dc9ce66a292ac2ef8e018")
 
+    add_includedirs("include", "include/miniz")
+
     add_deps("cmake")
 
     on_install(function (package)
@@ -19,5 +21,5 @@ package("miniz")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("mz_compress", {includes = "miniz/miniz.h"}))
+        assert(package:has_cfuncs("mz_compress", {includes = "miniz.h"}))
     end)
