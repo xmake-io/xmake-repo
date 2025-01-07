@@ -16,7 +16,7 @@ package("miniz")
     add_deps("cmake")
 
     on_install(function (package)
-        if version:lt("3.0.0") then
+        if package:version():lt("3.0.0") then
             add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
             io.writefile("miniz_export.h", "#define MINIZ_EXPORT")
             io.writefile("xmake.lua", [[
