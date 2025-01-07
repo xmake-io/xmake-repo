@@ -7,13 +7,15 @@ package("tlsf")
     add_versions("2020.03.29", "deff9ab509341f264addbd3c8ada533678591905")
 
     on_install(function (package)
-        local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
             target("tlsf")
-                set_kind("static")
+                set_kind("$(kind)")
                 add_files("tlsf.c")
                 add_headerfiles("tlsf.h")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all")
+                end
         ]])
         import("package.tools.xmake").install(package)
     end)
