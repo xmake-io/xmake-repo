@@ -19,6 +19,11 @@ package("cunit")
         table.insert(configs, "-DCUNIT_DISABLE_TESTS=TRUE")
         table.insert(configs, "-DCUNIT_DISABLE_EXAMPLES=TRUE")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if is_plat("windows") then
+            add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+        end
+        io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
