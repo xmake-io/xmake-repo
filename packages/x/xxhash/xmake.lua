@@ -28,7 +28,10 @@ package("xxhash")
             local configs = {"-DXXHASH_BUILD_XXHSUM=OFF"}
             table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-            table.insert(configs, "-DDISPATCH=" .. (package:config("dispatch") and "ON" or "OFF"))
+            if package:config("dispatch") then
+                -- if((DEFINED DISPATCH) AND (DEFINED PLATFORM))
+                table.insert(configs, "-DDISPATCH=ON")
+            end
 
             os.cd("cmake_unofficial")
             import("package.tools.cmake").install(package, configs)
