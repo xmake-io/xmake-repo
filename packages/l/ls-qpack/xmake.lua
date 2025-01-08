@@ -50,10 +50,3 @@ package("ls-qpack")
     on_test(function (package)
         assert(package:has_cfuncs("lsqpack_enc_init", {includes = "lsqpack.h"}))
     end)
-            os.trycp(path.join(package:buildir(), "ls-qpack.pdb"), dir)
-        end
-    end)
-
-    on_test(function (package)
-        assert(package:has_cfuncs("lsqpack_enc_init", {includes = "lsqpack.h"}))
-    end)
