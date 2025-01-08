@@ -7,6 +7,7 @@ package("jsoncons")
     set_urls("https://github.com/danielaparker/jsoncons/archive/refs/tags/$(version).tar.gz",
              "https://github.com/danielaparker/jsoncons.git")
 
+    add_versions("v1.0.0", "5b602e131761a3eb0fc85043a67e8006f04fa0ce2f2012aeca48371cd99ec85f")
     add_versions("v0.178.0", "c531b4288bb08c9c2b36fba53f568bc800e93656830bcffc18a87a3af1f46290")
     add_versions("v0.177.0", "a381d58489f143a3a515484f4ad6e32ae4d977033e1a455fecf8cdc4e2c9a49e")
     add_versions("v0.176.0", "2eb50b5cbe204265fef96c052511ed6e3b8808935c6e2c8d28e0aba7b08fda33")

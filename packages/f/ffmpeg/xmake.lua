@@ -117,11 +117,20 @@ package("ffmpeg")
             package:add("syslinks", "Bcrypt", "Mfplat", "mfuuid", "Ole32", "Secur32", "Strmiids", "User32", "ws2_32")
         end
         if is_subhost("windows") and os.arch() == "x64" then
-            if package:is_plat("windows", "mingw") then
-                package:add("deps", "msys2", {configs = {msystem = "MINGW64", base_devel = true}})
-            else
-                package:add("deps", "msys2", {configs = {msystem = "MINGW64", mingw64_gcc = true, base_devel = true}})
+            local configs = {
+                msystem = "MINGW64",
+                base_devel = true,
+            }
+            -- @see https://stackoverflow.com/questions/65438878/ffmpeg-build-on-windows-using-msvc-make-fails
+            configs.make = true
+            if not package:is_plat("windows", "mingw") then
+                configs.mingw64_gcc = true
             end
+            package:add("deps", "msys2", {configs = configs})
+        end
+
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
         end
     end)
 
@@ -158,6 +167,7 @@ package("ffmpeg")
             table.insert(configs, "--enable-dxva2")
             table.insert(configs, "--enable-mediafoundation")
             table.insert(configs, "--toolchain=msvc")
+            table.insert(configs, "--extra-cflags=-" .. package:runtimes())
         elseif package:is_plat("mingw") then
             if package:is_arch("x86", "i386", "i686") then
                 table.insert(configs, "--target-os=mingw32")
@@ -206,6 +216,16 @@ package("ffmpeg")
             if path.cygwin then -- xmake 2.8.9
                 import("package.tools.autoconf")
                 local envs = autoconf.buildenvs(package, {packagedeps = "libiconv"})
+                if not envs.PATH then -- Fix in xmake 2.9.8
+                    local msvc = package:toolchain("msvc") or toolchain.load("msvc", {plat = package:plat(), arch = package:arch()})
+                    envs.PATH = os.getenv("PATH") -- we need to reserve PATH on msys2
+                    envs = os.joinenvs(envs, msvc:runenvs())
+                end
+                if package:config("shared") and package:is_cross() then
+                    -- The makedef script always assumes that the AR environment variable is gnu ar
+                    -- @see https://github.com/microsoft/vcpkg/issues/42365#issuecomment-2567009409
+                    envs.AR = nil
+                end
                 -- add gas-preprocessor to PATH
                 if package:is_arch("arm", "arm64") then
                     envs.PATH = path.join(os.programdir(), "scripts") .. path.envsep() .. envs.PATH
@@ -299,9 +319,14 @@ package("ffmpeg")
             local cflags   = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cflags")), table.wrap(get_config("cxflags")), get_config("cflags"))
             local cxxflags = table.join(table.wrap(package:config("cxflags")), table.wrap(package:config("cxxflags")), table.wrap(get_config("cxflags")), get_config("cxxflags"))
             assert(os.isdir(sysroot), "we do not support old version ndk!")
+
+            local ndkver = tonumber(ndk:config("ndkver"))
             if package:is_arch("arm64-v8a") then
-                table.insert(cflags, "-mfpu=neon")
-                table.insert(cflags, "-mfloat-abi=hard")
+                -- https://github.com/llvm/llvm-project/issues/74361
+                if ndkver < 27 then
+                    table.insert(cflags, "-mfpu=neon")
+                    table.insert(cflags, "-mfloat-abi=hard")
+                end
             else
                 table.insert(cflags, "-mfpu=neon")
                 table.insert(cflags, "-mfloat-abi=soft")
@@ -336,9 +361,18 @@ package("ffmpeg")
             end
             import("package.tools.autoconf").install(package, configs, opt)
         end
-        package:addenv("PATH", "bin")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("avformat_open_input", {includes = "libavformat/avformat.h"}))
+        if not package:is_cross() then
+            for _, tool in ipairs({"ffprobe", "ffmpeg", "ffplay"}) do
+                if package:config(tool) then
+                    os.vrunv(tool, {"-version"})
+                end
+            end
+        end
+
+        if package:is_library() then
+            assert(package:has_cfuncs("avformat_open_input", {includes = "libavformat/avformat.h"}))
+        end
     end)
