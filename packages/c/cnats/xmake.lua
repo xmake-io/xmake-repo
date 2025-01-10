@@ -9,7 +9,7 @@ package("cnats")
     add_versions("v3.9.1", "56836bb30a2da93eaa6df0dfa27e796e6be0933b5b3d4d83b5c76d3b80304290")
     add_versions("v3.8.2", "083ee03cf5a413629d56272e88ad3229720c5006c286e8180c9e5b745c10f37d")
 
-    add_patches(">=3.9.1 <=3.9.2", "patches/3.9.1/fix-cmake-mingw.patch", "c437e3451898c1b5bd429484a8a1b1772aa42b421916b2f136fe409562032bec")
+    add_patches(">=3.9.0 <=3.9.2", "patches/3.9.1/fix-cmake-mingw.patch", "c437e3451898c1b5bd429484a8a1b1772aa42b421916b2f136fe409562032bec")
 
     add_configs("tls", {description = "Build with TLS support", default = false, type = "boolean"})
     add_configs("sodium", {description = "Build with libsodium", default = false, type = "boolean"})
@@ -62,7 +62,7 @@ package("cnats")
                 cxflags = "-DSODIUM_STATIC"
             end
         end
-        -- import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
+        import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
