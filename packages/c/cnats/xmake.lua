@@ -9,6 +9,8 @@ package("cnats")
     add_versions("v3.9.2", "28c4f39b88f095d78d653e8d4fe4581163fe96ecde5f9683933f0d82fd889a57")
     add_versions("v3.8.2", "083ee03cf5a413629d56272e88ad3229720c5006c286e8180c9e5b745c10f37d")
 
+    add_patches(">=3.9.0 <=3.9.2", "patches/3.9.1/fix-cmake-mingw.patch", "c437e3451898c1b5bd429484a8a1b1772aa42b421916b2f136fe409562032bec")
+
     add_configs("tls", {description = "Build with TLS support", default = false, type = "boolean"})
     add_configs("sodium", {description = "Build with libsodium", default = false, type = "boolean"})
     add_configs("streaming", {description = "Build NATS Streaming", default = false, type = "boolean"})

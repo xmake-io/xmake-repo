@@ -1,0 +1,45 @@
+From 9556761f0479786a1223c78ee4d7bd22a040bbd1 Mon Sep 17 00:00:00 2001
+From: Ivan Kozlovic <ivan@synadia.com>
+Date: Thu, 19 Dec 2024 12:49:08 -0700
+Subject: [PATCH] [FIXED] Build: failure with mingw
+
+Credit goes to @mtmk with the proposed fix and verification that it
+works on mingw.
+
+I have verified that the change still works when building on my Windows
+VM, so I don't expect windows users to have any issue with that.
+
+Resolves #827
+
+Signed-off-by: Ivan Kozlovic <ivan@synadia.com>
+---
+ CMakeLists.txt | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 413e0523..ee12730f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -208,11 +208,16 @@ elseif(WIN32)
+   set(NATS_PLATFORM_INCLUDE "win")
+ 
+   # Warning control.
+-  add_compile_options(/W4) # Set warning level to maximum, then disable:
+-  add_compile_options(/wd4100) # unreferenced formal parameter
+-  add_compile_options(/wd4200) # nonstandard extension used: zero-sized array in struct/union
+-  add_compile_options(/wd4130) # logical operation on address of string constant
+-  add_compile_options(/wd4127) # conditional expression is constant
++  if(MSVC)
++    # Set warning level to maximum, then disable:
++    # /wd4100 unreferenced formal parameter
++    # /wd4200 nonstandard extension used: zero-sized array in struct/union
++    # /wd4130 logical operation on address of string constant
++    # /wd4127 conditional expression is constant
++    add_compile_options(/W4 /wd4100 /wd4200 /wd4130 /wd4127)
++  else()
++    add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wno-pedantic -Wno-address -Wno-constant-conditional)
++  endif()
+ 
+   if(sodium_USE_STATIC_LIBS)
+     add_definitions(
+ 
