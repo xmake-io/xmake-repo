@@ -6,19 +6,12 @@ package("dipp")
 
     add_urls("https://github.com/01Pollux/dipp.git")
 
-    add_versions("2024.01.11", "85dd660b6829e9b2ff69f2d7b9be62811da17aed")
+    add_versions("2024.01.12", "e299326ea441f9df8dc8bcdd79bf3e49acda55fd")
 
-    on_check("windows", function (package)
-        import("core.base.semver")
-
-        local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
-        assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(dipp): need vs_toolset >= v143")
-    end)
-
-    on_install("windows", function (package)
+    on_install(function (package)
         local configs = {
             test = false,
-            benchmark = false,
+            benchmark = false
         }
         import("package.tools.xmake").install(package, configs)
     end)
@@ -29,5 +22,5 @@ package("dipp")
             void test() {
                 dipp::default_service_provider services({});
             }
-        ]]}, {configs = {languages = "c++23"}}))
+        ]]}, {configs = {languages = "c++20"}}))
     end)
