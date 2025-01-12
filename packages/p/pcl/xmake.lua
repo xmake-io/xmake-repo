@@ -14,7 +14,7 @@ package("pcl")
     add_configs("cuda", {description = "Build with cuda.", default = false, type = "boolean"})
 
     add_deps("cmake")
-    add_deps("boost", {configs = {filesystem = true, serialization = true, date_time = true, iostreams = true, system = true}})
+    add_deps("boost", {configs = {filesystem = true, serialization = true, date_time = true, iostreams = true, system = true, thread = true}})
     add_deps("eigen", "boost", "lz4", "flann", "zlib", "libpng", "qhull", "glew")
     on_load("windows", "linux", "macosx", function (package)
         package:add("includedirs", "include/pcl-" .. package:version():major() .. "." .. package:version():minor())
