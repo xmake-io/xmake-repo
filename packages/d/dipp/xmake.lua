@@ -8,10 +8,17 @@ package("dipp")
 
     add_versions("2024.01.11", "85dd660b6829e9b2ff69f2d7b9be62811da17aed")
 
-    on_install(function (package)
+    on_check("windows", function (package)
+        import("core.base.semver")
+
+        local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+        assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(dipp): need vs_toolset >= v143")
+    end)
+
+    on_install("windows", function (package)
         local configs = {
-            ['test'] = false,
-            ['benchmark'] = false
+            test = false,
+            benchmark = false,
         }
         import("package.tools.xmake").install(package, configs)
     end)
