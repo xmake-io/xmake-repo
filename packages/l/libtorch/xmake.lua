@@ -62,7 +62,9 @@ package("libtorch")
         end
         if package:config("cuda") then
             package:add("deps", "cuda", {configs = {utils = {"nvrtc", "cudnn", "cufft", "curand", "cublas", "cudart_static"}}})
-            package:add("deps", "nvtx")
+            if package:version():lt("2.5.0") then
+                package:add("deps", "nvtx")
+            end
         end
         if package:config("distributed") then
             package:add("deps", "libuv")
