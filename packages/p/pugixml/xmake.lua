@@ -14,7 +14,8 @@ package("pugixml")
     add_deps("cmake")
 
     on_install(function (package)
-        local configs = {}
+        os.cp(path.join(package:scriptdir(), "port", "overwriteProp.cmake"), "overwriteProp.cmake")
+        local configs = {"-DCMAKE_PROJECT_INCLUDE=overwriteProp.cmake"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:is_plat("windows") then
