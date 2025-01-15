@@ -16,8 +16,8 @@ package("pugixml")
     on_install(function (package)
         local configs = {}
         if package:is_plat("wasm") and package:config("shared") then
-            os.cp(path.join(package:scriptdir(), "port", "overwriteprop.cmake"), "overwriteprop.cmake")
-            table.insert(configs, "-DCMAKE_PROJECT_INCLUDE=overwriteprop.cmake")
+            os.cp(path.join(package:scriptdir(), "port", "sharedwasm.cmake"), "sharedwasm.cmake")
+            table.insert(configs, "-DCMAKE_PROJECT_INCLUDE=sharedwasm.cmake")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
