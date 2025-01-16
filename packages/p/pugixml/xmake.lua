@@ -11,7 +11,7 @@ package("pugixml")
     add_versions("v1.14", "610f98375424b5614754a6f34a491adbddaaec074e9044577d965160ec103d2e")
     add_versions("v1.15", "b39647064d9e28297a34278bfb897092bf33b7c487906ddfc094c9e8868bddcb")
 
-    add_configs("wchar", {description = "Enable wchar_t mode", default = true, type = "boolean"})
+    add_configs("wchar", {description = "Enable wchar_t mode", default = false, type = "boolean"})
     add_configs("exceptions", {description = "Enable exceptions", default = true, type = "boolean"})
     add_configs("headeronly", {description = "Install headerfiles only", default = false, type = "boolean"})
 
