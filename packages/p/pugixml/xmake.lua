@@ -12,7 +12,8 @@ package("pugixml")
     add_versions("v1.15", "b39647064d9e28297a34278bfb897092bf33b7c487906ddfc094c9e8868bddcb")
 
     add_configs("wchar", {description = "Enable wchar_t mode", default = true, type = "boolean"})
-    add_configs("exceptions", {description = "Disable exceptions", default = true, type = "boolean"})
+    add_configs("exceptions", {description = "Enable exceptions", default = true, type = "boolean"})
+    add_configs("exports", {description = "Export symbols for LIB/DLL", default = true, type = "boolean"})
 
     add_deps("cmake")
 
@@ -25,8 +26,15 @@ package("pugixml")
         if package:config("wchar") then
             io.replace("src/pugiconfig.hpp", "// #define PUGIXML_WCHAR_MODE", "#define PUGIXML_WCHAR_MODE", {plain = true})
         end
-        if package:config("exceptions") then
+        if not package:config("exceptions") then
             io.replace("src/pugiconfig.hpp", "// #define PUGIXML_NO_EXCEPTIONS", "#define PUGIXML_NO_EXCEPTIONS", {plain = true})
+        end
+        if package:config("exports") then
+            if package:config("shared") then
+                io.replace("src/pugiconfig.hpp", "// #define PUGIXML_API __declspec(dllexport)", "#define PUGIXML_API __declspec(dllexport)", {plain = true})                
+            else
+                io.replace("src/pugiconfig.hpp", "// #define PUGIXML_CLASS __declspec(dllimport)", "#define PUGIXML_CLASS __declspec(dllimport)", {plain = true})
+            end
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
