@@ -14,8 +14,15 @@ package("pugixml")
     add_configs("wchar", {description = "Enable wchar_t mode", default = true, type = "boolean"})
     add_configs("exceptions", {description = "Enable exceptions", default = true, type = "boolean"})
     add_configs("exports", {description = "Export symbols for DLL", default = true, type = "boolean"})
+    add_configs("headeronly", {description = "Install headerfiles only", default = true, type = "boolean"})
 
     add_deps("cmake")
+
+    on_load(function (package)
+        if package:config("headeronly") then
+            package:set("kind", "library", {headeronly = true})
+        end
+    end)
 
     on_install(function (package)
         local configs = {}
@@ -34,12 +41,17 @@ package("pugixml")
                 io.replace("src/pugiconfig.hpp", "// #define PUGIXML_API __declspec(dllexport)", "#define PUGIXML_API __declspec(dllexport)", {plain = true})
             end
         end
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
-        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-DSTATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+        if package:config("headeronly") then
+            io.replace("src/pugiconfig.hpp", "// #define PUGIXML_HEADER_ONLY", "#define PUGIXML_HEADER_ONLY", {plain = true})
+            os.cp("src/*.*", package:installdir("include"))
+        else
+            table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+            table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+            if package:is_plat("windows") then
+                table.insert(configs, "-DSTATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+            end
+            import("package.tools.cmake").install(package, configs)
         end
-        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
