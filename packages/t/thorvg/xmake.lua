@@ -108,13 +108,7 @@ package("thorvg")
     end)
 
     on_test(function (package)
-        assert(package:check_cxxsnippets({test = [[
-            #include <thorvg.h>
-            void test() {
-                tvg::Initializer::init(tvg::CanvasEngine::Sw, 0);
-                auto canvas = tvg::SwCanvas::gen();
-            }
-        ]]}, {configs = {languages = "c++14"}}))
+        assert(package:has_cxxfuncs("tvg::Initializer::init(0, tvg::CanvasEngine::Sw)", {includes = "thorvg.h", configs = {languages = "c++14"}}))
         if package:config("c_api") then
             assert(package:has_cxxfuncs("tvg_engine_init", {includes = "thorvg_capi.h"}))
         end
