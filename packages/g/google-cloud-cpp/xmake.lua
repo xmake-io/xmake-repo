@@ -17,10 +17,21 @@ package("google-cloud-cpp")
 
     add_deps("cmake")
 
+    on_check("mingw", function (package)
+        -- https://github.com/googleapis/google-cloud-cpp/issues/14436
+        if is_subhost("msys") then
+            raise("Unsupported msys2 mingw64, see https://github.com/rui314/mold/issues/613#issuecomment-1214294138")
+        end
+    end)
+
     on_load(function (package)
         package:add("deps", "abseil")
-        if not package:is_plat("windows") then
-            package:add("deps", "openssl3")
+        if not package:is_plat("windows", "mingw", "msys") then
+            if package:is_plat("macosx") then
+                package:add("deps", "openssl3", {system = false})
+            else
+                package:add("deps", "openssl3")
+            end
         end
 
         -- https://github.com/googleapis/google-cloud-cpp/blob/main/cmake/GoogleCloudCppFeatures.cmake
@@ -61,6 +72,7 @@ package("google-cloud-cpp")
                 else
                     package:add("deps", "grpc")
                 end
+
                 if package:is_cross() then
                     package:add("deps", "grpc~binary", {private = true, kind = "binary"})
                 end
@@ -87,20 +99,28 @@ package("google-cloud-cpp")
             local googleapis_dir = path.unix(package:resourcedir("googleapis"))
             io.replace("external/googleapis/CMakeLists.txt", 
                 [[set(EXTERNAL_GOOGLEAPIS_PREFIX "${PROJECT_BINARY_DIR}/external/googleapis")]],
-                format("set(EXTERNAL_GOOGLEAPIS_PREFIX %s)", googleapis_dir), {plain = true})
+                format([[set(EXTERNAL_GOOGLEAPIS_PREFIX "%s")]], googleapis_dir), {plain = true})
         end
 
         local configs = {
             "-DBUILD_TESTING=OFF",
+            "-DGOOGLE_CLOUD_CPP_ENABLE_EXAMPLES=OFF",
+            "-DGOOGLE_CLOUD_CPP_ENABLE_WERROR=OFF",
             "-DGOOGLE_CLOUD_CPP_WITH_MOCKS=OFF",
             "-DGOOGLE_CLOUD_CPP_ENABLE_MACOS_OPENSSL_CHECK=OFF",
-            "-DGOOGLE_CLOUD_CPP_ENABLE_WERROR=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DGOOGLE_CLOUD_CPP_ENABLE_CXX_EXCEPTIONS=" .. (package:config("exceptions") and "ON" or "OFF"))
         if package:is_plat("windows") and package:config("shared") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
+
+        local openssl = package:dep("openssl")
+        if openssl then
+            if not openssl:is_system() then
+                table.insert(configs, "-DOPENSSL_ROOT_DIR=" .. openssl:installdir())
+            end
         end
 
         local libraries = package:config("libraries")
