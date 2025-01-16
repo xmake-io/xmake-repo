@@ -18,6 +18,9 @@ package("lwlog")
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "STATIC", "", {plain = true})
+        io.replace("CMakeLists.txt",
+            "target_link_libraries(lwlog_lib PRIVATE Threads::Threads)",
+            "target_link_libraries(lwlog_lib PUBLIC Threads::Threads)", {plain = true})
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
