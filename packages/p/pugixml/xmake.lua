@@ -30,9 +30,6 @@ package("pugixml")
         if not package:config("exceptions") then
             io.replace("src/pugiconfig.hpp", "// #define PUGIXML_NO_EXCEPTIONS", "#define PUGIXML_NO_EXCEPTIONS", {plain = true})
         end
-        if package:is_plat("windows") and package:config("shared") then
-            io.replace("src/pugiconfig.hpp", "// #define PUGIXML_API __declspec(dllexport)", "#define PUGIXML_API __declspec(dllexport)", {plain = true})
-        end
 
         if package:config("headeronly") then
             io.replace("src/pugiconfig.hpp", "// #define PUGIXML_HEADER_ONLY", "#define PUGIXML_HEADER_ONLY", {plain = true})
@@ -43,6 +40,9 @@ package("pugixml")
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             if package:is_plat("windows") then
                 table.insert(configs, "-DSTATIC_CRT=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
+                if package:config("shared") then
+                    io.replace("src/pugiconfig.hpp", "// #define PUGIXML_API __declspec(dllexport)", "#define PUGIXML_API __declspec(dllexport)", {plain = true})
+                end
             end
             if package:is_plat("wasm") and package:config("shared") then
                 os.cp(path.join(package:scriptdir(), "port", "sharedwasm.cmake"), "sharedwasm.cmake")
