@@ -120,6 +120,10 @@ package("google-cloud-cpp")
         ]]}, {configs = {languages = languages}}))
 
         local hash_libraries = package:data("hash_libraries")
+        if not hash_libraries then
+            return
+        end
+
         if hash_libraries:has("storage") then
             assert(package:check_cxxsnippets({test = [[
                 #include <google/cloud/storage/client.h>
