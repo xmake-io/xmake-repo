@@ -100,7 +100,7 @@ package("poco")
         end
         if package:version():ge("1.14.0") then
             package:add("deps", "utf8proc")
-        else
+        end
     end)
 
     on_check(function (package)
