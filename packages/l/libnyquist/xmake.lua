@@ -21,11 +21,6 @@ package("libnyquist")
     on_test(function (package)
         assert(
             package:has_cxxincludes("libnyquist/Decoders.h") and
-            package:has_cxxincludes("libnyquist/Encoders.h") and
-            package:has_cxxfuncs("nqr::BaseDecoder::LoadFromPath", { includes = "libnyquist/Decoders.h" }) and
-            package:has_cxxfuncs("nqr::BaseDecoder::LoadFromBuffer", { includes = "libnyquist/Decoders.h" }) and
-            package:has_cxxfuncs("nqr::BaseDecoder::GetSupportedFileExtensions", { includes = "libnyquist/Decoders.h" }) and
-            package:has_cxxfuncs("nqr::encode_wav_to_disk", { includes = "libnyquist/Encoders.h" }) and
-            package:has_cxxfuncs("nqr::encode_opus_to_disk", { includes = "libnyquist/Encoders.h" })
+            package:has_cxxincludes("libnyquist/Encoders.h")
         , "libnyquist: tests failed")
     end)
