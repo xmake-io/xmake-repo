@@ -11,6 +11,7 @@ package("libnyquist")
     on_install(function (package)
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
+            "-DCMAKE_CXX_STANDARD=14",
             "-DLIBNYQUIST_BUILD_EXAMPLE=Off",
         }
         import("package.tools.cmake").install(package, configs)
