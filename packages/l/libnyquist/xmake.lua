@@ -20,7 +20,15 @@ package("libnyquist")
 
     on_test(function (package)
         assert(
-            package:has_cxxincludes("libnyquist/Decoders.h") and
-            package:has_cxxincludes("libnyquist/Encoders.h")
+            package:check_cxxsnippets({
+                test = [[
+                    #include <libnyquist/Decoders.h>
+                    #include <libnyquist/Encoders.h>
+                ]]
+            }, {
+                configs = {
+                    languages = "cxx14"
+                }
+            })
         , "libnyquist: tests failed")
     end)
