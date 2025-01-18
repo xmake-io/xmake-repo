@@ -15,6 +15,7 @@ package("poco")
     add_versions("1.12.4", "71ef96c35fced367d6da74da294510ad2c912563f12cd716ab02b6ed10a733ef")
     add_versions("1.12.5", "92b18eb0fcd2263069f03e7cc80f9feb43fb7ca23b8c822a48e42066b2cd17a6")
     add_versions("1.13.3", "9f074d230daf30f550c5bde5528037bdab6aa83b2a06c81a25e89dd3bcb7e419")
+    add_versions("1.14.0", "48e98bbc8ed9fcd8bec43538402181d33cc2abe7e19ac8aea4bc113c9ba8ef89")
     
     add_configs("install_cpp_runtimes", {description = "Install c++ runtimes with Poco.", default = false, type = "boolean"})
     -- https://docs.pocoproject.org/current/00200-GettingStarted.html
