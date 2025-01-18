@@ -6,7 +6,7 @@ index 5a7d764..c461a75 100644
      _disable_warning(4018)
  endif()
  
-+target_compile_options(libnyquist PRIVATE -Wno-register)
++target_compile_options(libnyquist PRIVATE -Wno-error=deprecated-register)
 +
  target_include_directories(libnyquist
    PUBLIC

@@ -6,8 +6,8 @@ package("libnyquist")
     add_urls("https://github.com/ddiakopoulos/libnyquist.git")
     add_versions("2023.02.12", "767efd97cdd7a281d193296586e708490eb6e54f")
 
-    add_patches("2023.02.12", path.join(os.scriptdir(), "patches", "-Wno-register.patch"),
-        "c2963c0a1bb8b9fed57bc629022b2965ad00c8b4e800d490f659036203d20d5f")
+    add_patches("2023.02.12", path.join(os.scriptdir(), "patches", "error-deprecated-register"),
+        "26c42b9bdb1f173737b2348a3bf03c474dc2f31b05ca4bc2499587de1f7f1bce")
 
     add_deps("cmake")
 
