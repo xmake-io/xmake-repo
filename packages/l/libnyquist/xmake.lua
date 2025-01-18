@@ -6,12 +6,16 @@ package("libnyquist")
     add_urls("https://github.com/ddiakopoulos/libnyquist.git")
     add_versions("2023.02.12", "767efd97cdd7a281d193296586e708490eb6e54f")
 
+    add_patches("2023.02.12", path.join(os.scriptdir(), "patches", "-Wno-register.patch"),
+        "c2963c0a1bb8b9fed57bc629022b2965ad00c8b4e800d490f659036203d20d5f")
+
     add_deps("cmake")
 
     on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         import("package.tools.cmake").install(package, configs)
+        os.cp("include/libnyquist/*.h", package:installdir("include/libnyquist"))
     end)
 
     on_test(function (package)
