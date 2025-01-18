@@ -16,16 +16,24 @@ package("libnyquist")
                 #endif
             ]]
         }, {})
+        local is_msvc = package:check_csnippets({
+            test = [[
+                #if !(defined(_MSC_VER) && !defined(__clang__) && !defined(__INTEL_COMPILER))
+                #error not msvc
+                #endif
+            ]]
+        })
 
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DCMAKE_CXX_STANDARD=14",
             "-DCMAKE_CXX_FLAGS=\z
-                -Wno-error=implicit-function-declaration \z
                 -D" .. (
                     (package:is_targetarch("x86_64", "i%d86") or is_byte_order_little)
                     and "ARCH_CPU_LITTLE_ENDIAN"
                     or "ARCH_CPU_BIG_ENDIAN"
+                ) .. (
+                    (not is_msvc) and " -Wno-implicit-function-declaration" or ""
                 ),
             "-DLIBNYQUIST_BUILD_EXAMPLE=Off",
         }
