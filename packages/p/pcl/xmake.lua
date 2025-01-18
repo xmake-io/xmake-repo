@@ -11,6 +11,10 @@ package("pcl")
     add_versions("1.14.0", "de297b929eafcb93747f12f98a196efddf3d55e4edf1b6729018b436d5be594d")
     add_versions("1.14.1", "5dc5e09509644f703de9a3fb76d99ab2cc67ef53eaf5637db2c6c8b933b28af6")
 
+    add_patches("1.14.1", "patches/1.14.1/octree_poisson.patch", "5423a29bbb3f51bb66dca3bcb7851e037944cc33e62e816a8a8d2d00b0bdc964")
+    add_patches("1.14.1", "patches/1.14.1/sparse_matrix.patch", "90b20730956104f3ed61fc2d4de156401d0c470257def7ac4e1e2ec0a9456442")
+    add_patches("1.14.1", "patches/1.14.1/correspondence_rejection_features.patch", "20bc608eb0bd7892a6c5fc34773fd7479021d6f5f2e6f311c17b5fe60ddff6fe")
+
     add_configs("vtk", {description = "Build with vtk.", default = false, type = "boolean"})
     add_configs("cuda", {description = "Build with cuda.", default = false, type = "boolean"})
 
