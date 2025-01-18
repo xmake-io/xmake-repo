@@ -98,6 +98,9 @@ package("poco")
             package:add("deps", "aprutil")
             package:add("deps", "apache2")
         end
+        if package:version():ge("1.14.0") then
+            package:add("deps", "utf8proc")
+        else
     end)
 
     on_check(function (package)
