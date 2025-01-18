@@ -9,11 +9,27 @@ package("libnyquist")
     add_deps("cmake")
 
     on_install(function (package)
+        local is_byte_order_little = package:check_csnippets({
+            test = [[
+                #if !(defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+                #error not little endian
+                #endif
+            ]]
+        }, {})
+
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
             "-DCMAKE_CXX_STANDARD=14",
+            "-DCMAKE_CXX_FLAGS=\z
+                -Wno-error=implicit-function-declaration \z
+                -D" .. (
+                    (package:is_targetarch("x86_64", "i%d86") or is_byte_order_little)
+                    and "ARCH_CPU_LITTLE_ENDIAN"
+                    or "ARCH_CPU_BIG_ENDIAN"
+                ),
             "-DLIBNYQUIST_BUILD_EXAMPLE=Off",
         }
+
         import("package.tools.cmake").install(package, configs)
         os.cp("include/libnyquist/*.h", package:installdir("include/libnyquist"))
     end)
