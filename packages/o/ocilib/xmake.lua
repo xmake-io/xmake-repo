@@ -6,6 +6,7 @@ package("ocilib")
     add_urls("https://github.com/vrogier/ocilib/archive/refs/tags/$(version).tar.gz",
              "https://github.com/vrogier/ocilib.git")
 
+    add_versions("v4.7.7", "92822cc683048d3a2cddbbc7835062a02a9011ed2d7382da52a4c120e8c911ab")
     add_versions("v4.7.6", "43f5093cac645518ad5bc8d6f48f5b77e12372ef84dc87ddb3a54c40e425bd26")
 
     add_configs("unicode", {description = "Enable Unicode", default = true, type = "boolean"})
