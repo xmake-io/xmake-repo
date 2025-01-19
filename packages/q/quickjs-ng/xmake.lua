@@ -17,10 +17,6 @@ package("quickjs-ng")
         add_syslinks("m", "pthread")
     end
 
-    if is_plat("wasm") then
-        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
-    end
-
     add_deps("cmake")
 
     if on_check then
@@ -52,11 +48,10 @@ package("quickjs-ng")
             io.replace("quickjs-libc.c", " defined(__wasi__)", " (defined(__wasi__) || defined(EMSCRIPTEN))", {plain = true})
             io.replace("quickjs-libc.c", " !defined(__wasi__)", " (!defined(__wasi__) && !defined(EMSCRIPTEN))", {plain = true})
         end
-        io.replace("CMakeLists.txt", "M_LIBRARIES OR CMAKE_C_COMPILER_ID STREQUAL \"TinyCC\"", "1", {plain = true})
-        import("package.tools.cmake").install(package, configs)
-        for _, filedir in ipairs(os.filedirs("**")) do
-            print(filedir)
+        if package:is_plat("cross") then
+            io.replace("CMakeLists.txt", "M_LIBRARIES OR CMAKE_C_COMPILER_ID STREQUAL \"TinyCC\"", "1", {plain = true})
         end
+        import("package.tools.cmake").install(package, configs)
 
         if package:is_plat("windows") and package:is_debug() then
             local dir = package:installdir(package:config("shared") and "bin" or "lib")
@@ -64,10 +59,13 @@ package("quickjs-ng")
         end
 
         os.cp("quickjs.h", package:installdir("include"))
-        if package:is_plat("iphoneos") then
-            os.vcp(path.join(package:buildir(), "libqjs.a"), package:installdir("lib"))
-            package:add("links", "qjs")
-        end
+
+        os.trycp(path.join(package:buildir(), "**.a"), package:installdir("lib"))
+        os.trycp(path.join(package:buildir(), "**.so"), package:installdir("lib"))
+        os.trycp(path.join(package:buildir(), "**.dylib"), package:installdir("lib"))
+        os.trycp(path.join(package:buildir(), "**.lib"), package:installdir("lib"))
+        os.trycp(path.join(package:buildir(), "**.dll"), package:installdir("bin"))
+        package:add("links", "qjs")
     end)
 
     on_test(function (package)
