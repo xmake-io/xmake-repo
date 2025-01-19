@@ -66,7 +66,7 @@ package("spdlog")
     end)
 
     on_install(function (package)
-        if package:has_tool("cxx", "cl") and not (package:config("fmt_external") or package:config("fmt_external_ho")) then
+        if package:has_tool("cxx", "cl") and not package:config("std_format") and not (package:config("fmt_external") or package:config("fmt_external_ho")) then
             package:add("cxxflags", "/utf-8")
         end
 
