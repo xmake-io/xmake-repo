@@ -13,8 +13,12 @@ package("quickjs-ng")
 
     add_configs("libc", {description = "Build standard library modules as part of the library", default = false, type = "boolean"})
 
-    if is_plat("linux", "bsd") then
+    if is_plat("linux", "bsd", "cross") then
         add_syslinks("m", "pthread")
+    end
+
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     add_deps("cmake")
@@ -28,14 +32,9 @@ package("quickjs-ng")
                 assert(minor and minor >= 30, "package(quickjs-ng) require vs_toolset >= 14.3")
             end
         end)
-        on_check("wasm", "cross", function (package)
-            if package:version():eq("0.8.0") then
-                raise("package(quickjs-ng v0.8.0) unsupported platform")
-            end
-        end)
     end
 
-    on_install("!iphoneos and (!windows or windows|!x86)", function (package)
+    on_install(function (package)
         io.replace("CMakeLists.txt", "xcheck_add_c_compiler_flag(-Werror)", "", {plain = true})
         io.replace("CMakeLists.txt", "if(NOT WIN32 AND NOT EMSCRIPTEN)", "if(0)", {plain = true})
 
@@ -49,11 +48,25 @@ package("quickjs-ng")
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
+        if package:is_plat("wasm") then
+            io.replace("quickjs-libc.c", " defined(__wasi__)", " (defined(__wasi__) || defined(EMSCRIPTEN))", {plain = true})
+            io.replace("quickjs-libc.c", " !defined(__wasi__)", " (!defined(__wasi__) && !defined(EMSCRIPTEN))", {plain = true})
+        end
+        io.replace("CMakeLists.txt", "M_LIBRARIES OR CMAKE_C_COMPILER_ID STREQUAL \"TinyCC\"", "1", {plain = true})
         import("package.tools.cmake").install(package, configs)
+        for _, filedir in ipairs(os.filedirs("**")) do
+            print(filedir)
+        end
 
         if package:is_plat("windows") and package:is_debug() then
             local dir = package:installdir(package:config("shared") and "bin" or "lib")
             os.vcp(path.join(package:buildir(), "qjs.pdb"), dir)
+        end
+
+        os.cp("quickjs.h", package:installdir("include"))
+        if package:is_plat("iphoneos") then
+            os.vcp(path.join(package:buildir(), "libqjs.a"), package:installdir("lib"))
+            package:add("links", "qjs")
         end
     end)
 
