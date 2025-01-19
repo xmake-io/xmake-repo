@@ -14,13 +14,11 @@ package("libnyquist")
           error("libnyquist: cannot compile with non-VS2017 toolchain")
         end
 
-        local is_byte_order_little = package:check_csnippets({
-            test = [[
-                #if !(defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-                #error not little endian
-                #endif
-            ]]
-        }, { verbose = false })
+        local is_byte_order_little = package:check_csnippets({[[
+            #if !(defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
+            #error not little endian
+            #endif
+        ]]}, {})
 
         local configs = {
             "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"),
