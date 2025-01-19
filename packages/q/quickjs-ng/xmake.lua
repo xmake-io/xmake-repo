@@ -48,8 +48,8 @@ package("quickjs-ng")
             io.replace("quickjs-libc.c", " defined(__wasi__)", " (defined(__wasi__) || defined(EMSCRIPTEN))", {plain = true})
             io.replace("quickjs-libc.c", " !defined(__wasi__)", " (!defined(__wasi__) && !defined(EMSCRIPTEN))", {plain = true})
         end
-        if package:is_plat("cross") or (package:is_plat("linux") and package:is_arch("arm64", "arm64-v8a")) then
-            io.replace("CMakeLists.txt", "M_LIBRARIES OR CMAKE_C_COMPILER_ID STREQUAL \"TinyCC\"", "1", {plain = true}) -- m link
+        if package:is_plat("linux", "bsd", "cross") then
+            io.replace("CMakeLists.txt", "M_LIBRARIES OR CMAKE_C_COMPILER_ID STREQUAL \"TinyCC\"", "1", {plain = true}) -- m library link
         end
         import("package.tools.cmake").install(package, configs)
 
