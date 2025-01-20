@@ -7,6 +7,8 @@ package("winpcap")
 
     add_versions("4.1.2", "ea799cf2f26e4afb1892938070fd2b1ca37ce5cf75fec4349247df12b784edbd")
 
+    add_configs("shared", {description = "Build shared library.", default = true, type = "boolean", readonly = true})
+
     add_defines("WIN32")
 
     on_install("windows|x86", "windows|x64", function (package)
