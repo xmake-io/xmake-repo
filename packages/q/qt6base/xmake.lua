@@ -22,6 +22,6 @@ package("qt6base")
     add_versions("6.7.2", "dummy")
     add_versions("6.8.0", "dummy")
 
-    on_install("windows|x64", "linux|x86_64", "macosx|x86_64", "mingw|x86_64", function (package)
+    on_install("windows|x64", "linux|x86_64", "macosx", "mingw|x86_64", function (package)
         package:base():script("install")(package)
     end)
