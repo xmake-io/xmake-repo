@@ -19,6 +19,7 @@ package("python")
             add_versions("3.11.8", "f5e399d12b00a4f73dc3078b7b4fe900e1de6821aa3e31d1c27c6ef4e33e95d9")
             add_versions("3.12.3", "49bbcd200cda1f56452feeaf0954045e85b27a93b929034cc03ab198c4d9662e")
             add_versions("3.12.8", "b4ec65bf24417c4098c8d1f30a30fec12680aedd7094de3caf35e5e2d55d9c46")
+            add_versions("3.13.1", "f89b297ca94ced2fbdad7919518ebf05005f39637f8ec5b01e42f2c71d53a673")
         else
             add_urls("https://github.com/xmake-mirror/python-windows/releases/download/$(version)/python-$(version).win64.zip")
             add_versions("2.7.18", "6680835ed5b818e2c041c7033bea47ace17f6f3b73b0d6efb6ded8598a266754")
@@ -34,6 +35,7 @@ package("python")
             add_versions("3.11.8", "2be5fdc87a96659b75f2acd9f4c4a7709fcfccb7a81cd0bd11e9c0e08380e55c")
             add_versions("3.12.3", "00a80ccce8738de45ebe73c6084b1ea92ad131ec79cbe5c033a925c761cb5fdc")
             add_versions("3.12.8", "7f8cf0a21a076d2646b26c5248ae47f1dbc870bc059670915e042f6eb1850ecb")
+            add_versions("3.13.1", "104d1de9eb6ff7c345c3415a57880dc0b2c51695515f2a87097512e6d77e977d")
         end
     else
         add_urls("https://www.python.org/ftp/python/$(version)/Python-$(version).tgz")
@@ -52,6 +54,7 @@ package("python")
         add_versions("3.12.3", "a6b9459f45a6ebbbc1af44f5762623fa355a0c87208ed417628b379d762dddb0")
         add_versions("3.12.8", "5978435c479a376648cb02854df3b892ace9ed7d32b1fead652712bee9d03a45")
         add_versions("3.13.0", "12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4")
+        add_versions("3.13.1", "1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55")
     end
 
     add_configs("headeronly", {description = "Use header only version.", default = false, type = "boolean"})
