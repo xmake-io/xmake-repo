@@ -27,21 +27,21 @@ package("pcapplusplus")
     end
 
     add_deps("cmake")
-    if is_plat("windows") then
-        if has_config("winpcap") then
-            add_deps("winpcap")
-        else
-            add_deps("npcap_sdk")
-        end
-    elseif is_plat("mingw") then
-        add_deps("npcap_sdk")
-    elseif is_plat("linux", "macosx", "android", "bsd") then
-        add_deps("libpcap")
-    end
 
     on_load(function (package)
         if package:config("zstd") then
             package:add("deps", "zstd")
+        end
+        if package:is_plat("windows") and not package:is_arch("arm.*") then
+            if package:config("winpcap") then
+                package:add("deps", "winpcap")
+            else
+                package:add("deps", "npcap_sdk")
+            end  
+        elseif package:is_plat("linux", "macosx", "android", "bsd") then
+            package:add("deps", "libpcap")
+        else
+            package:add("deps", "npcap_sdk")
         end
     end)
 
