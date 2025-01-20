@@ -58,8 +58,7 @@ package("quickjs-ng")
             os.vcp(path.join(package:buildir(), "qjs.pdb"), dir)
         end
 
-        os.cp("quickjs.h", package:installdir("include"))
-
+        os.trycp("*.h", package:installdir("include"))
         os.trycp(path.join(package:buildir(), "**.a"), package:installdir("lib"))
         os.trycp(path.join(package:buildir(), "**.so"), package:installdir("lib"))
         os.trycp(path.join(package:buildir(), "**.dylib"), package:installdir("lib"))
