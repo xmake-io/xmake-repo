@@ -14,6 +14,7 @@ package("pcapplusplus")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("zstd", {description = "Support compile with zstd", default = false, type = "boolean"})
+    add_configs("winpcap", {description = "Support compile with winpcap", default = false, type = "boolean"})
 
     add_links("Pcap++", "Packet++", "Common++")
 
@@ -26,15 +27,21 @@ package("pcapplusplus")
     end
 
     add_deps("cmake")
-    if is_plat("windows", "mingw") then
-        add_deps("npcap_sdk")
-    elseif is_plat("linux", "macosx", "android", "bsd") then
-        add_deps("libpcap")
-    end
 
     on_load(function (package)
         if package:config("zstd") then
             package:add("deps", "zstd")
+        end
+        if package:is_plat("windows") and not package:is_arch("arm.*") then
+            if package:config("winpcap") then
+                package:add("deps", "winpcap")
+            else
+                package:add("deps", "npcap_sdk")
+            end  
+        elseif package:is_plat("linux", "macosx", "android", "bsd") then
+            package:add("deps", "libpcap")
+        else
+            package:add("deps", "npcap_sdk")
         end
     end)
 
