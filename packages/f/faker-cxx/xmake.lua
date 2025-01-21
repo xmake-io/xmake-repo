@@ -14,6 +14,19 @@ package("faker-cxx")
 
     if on_check then
         on_check(function (package)
+            if package:version() and package:version():ge("4.0.0") then
+                if package:is_plat("mingw") then
+                    raise("package(faker-cxx v4.0.1) unsupported platform")
+                elseif package:is_plat("windows") then
+                    local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                    if vs_toolset then
+                        local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                        local minor = vs_toolset_ver:minor()
+                        assert(minor and minor >= 30, "package(bqlog) require vs_toolset >= 14.3")
+                    end
+                end
+            end
+
             assert(package:check_cxxsnippets({test = [[
                 #include <concepts>
                 #include <ranges>
