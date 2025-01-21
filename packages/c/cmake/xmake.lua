@@ -140,7 +140,9 @@ package("cmake")
         -- xmake v3.x will enable this ninja policy by default
         import("core.project.project")
         if xmake.version():ge("2.9.0") and project.policy("package.cmake_generator.ninja") then
-            package:add("deps", "ninja")
+            -- We mark it as public, even if cmake is already installed,
+            -- we need also to install ninja and export the ninja PATH. (above xmake 2.9.8)
+            package:add("deps", "ninja", {public = true})
         end
     end)
 
