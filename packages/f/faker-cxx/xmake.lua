@@ -11,21 +11,28 @@ package("faker-cxx")
     add_versions("v2.0.0", "8a7f5441f4453af868444675878a2d9a74918c1595caa65d537d3ea327e46a49")
 
     add_deps("cmake")
-    add_deps("fmt")
 
     if on_check then
         on_check(function (package)
             assert(package:check_cxxsnippets({test = [[
                 #include <concepts>
                 #include <ranges>
+                #include <format>
                 static_assert(std::integral<bool>);
                 void test() {
                     const auto v = {4, 1, 3, 2};
                     auto it = std::ranges::find(v, 3);
+                    std::format("Hello {}!\n", "world");
                 }
             ]]}, {configs = {languages = "c++20"}}), "package(faker-cxx) Require at least C++20.")
         end)
     end
+
+    on_load(function (package)
+        if package:version() and package:version():lt("4.0.0") then
+            package:add("deps", "fmt")
+        end
+    end)
 
     on_install(function (package)
         if not package:config("shared") then
@@ -36,8 +43,7 @@ package("faker-cxx")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        local version = package:version()
-        if version and version:lt("4.0.0") then
+        if package:version() and package:version():lt("4.0.0") then
             if package:is_plat("windows") and package:config("shared") then
                 table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
             end
