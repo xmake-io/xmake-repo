@@ -4,7 +4,7 @@ package("faker-cxx")
     set_license("MIT")
 
     add_urls("https://github.com/cieslarmichal/faker-cxx/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/cieslarmichal/faker-cxx.git")
+             "https://github.com/cieslarmichal/faker-cxx.git", {submodules = false})
 
     add_versions("v4.0.1", "ebeac25780878905d0e73cd6a5211bd0b5ce065d06961570f0de7f1a25ec7d9d")
     add_versions("v3.0.0", "63d6846376593e05da690136cabe8e7bf42ddcdd4edad3ae9b48696f86d80468")
@@ -28,30 +28,49 @@ package("faker-cxx")
     end
 
     on_install(function (package)
+        if not package:config("shared") then
+            package:add("defines", "FAKER_CXX_STATIC_DEFINE")
+        end
+
         local configs = {"-DBUILD_TESTING=OFF", "-DUSE_SYSTEM_DEPENDENCIES=ON", "-DUSE_STD_FORMAT=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
+        local version = package:version()
+        if version and version:lt("4.0.0") then
+            if package:is_plat("windows") and package:config("shared") then
+                table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+            end
+        end
+
         local cxflags
         if package:has_tool("cxx", "cl") then
             cxflags = "/utf-8"
-            if package:config("shared") then
-                table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
-            end
         end
         import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
     end)
 
     on_test(function (package)
         local includes = "faker-cxx/string.h"
+        local snippets = [[
+            void test() {
+                const auto id = faker::string::uuidV4();
+            }
+        ]]
+
         local version = package:version()
-        if version and version:lt("3.0.0") then
-            includes = "faker-cxx/String.h"
+        if version then
+            if version:lt("3.0.0") then
+                includes = "faker-cxx/String.h"
+            end
+            if version:lt("4.0.0") then
+                snippets = [[
+                    void test() {
+                        const auto id = faker::string::uuid();
+                    }
+                ]]
+            end
         end
 
-        assert(package:check_cxxsnippets({test = [[
-            void test() {
-                const auto id = faker::string::uuid();
-            }
-        ]]}, {configs = {languages = "c++20"}, includes = includes}))
+        assert(package:check_cxxsnippets({test = snippets}, {configs = {languages = "c++20"}, includes = includes}))
     end)
