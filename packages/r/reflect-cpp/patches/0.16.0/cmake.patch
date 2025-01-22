@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2e16468..38d289f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -138,7 +138,7 @@ if (REFLECTCPP_MSGPACK)
+     if(REFLECTCPP_USE_VCPKG)
+         find_package(msgpack-c CONFIG REQUIRED)
+     else()
+-        find_package(msgpack CONFIG REQUIRED)
++        find_package(msgpack-c CONFIG REQUIRED)
+     endif()
+     target_link_libraries(reflectcpp PUBLIC msgpack-c)
+ endif ()
