@@ -21,6 +21,7 @@ package("nim")
         add_urls("https://github.com/nim-lang/Nim/archive/refs/tags/v$(version).tar.gz")
         add_versions("2.0.2", "2ca2f559d05e29f130cb4f319ebb93a98e7c0e2187716b17b2cb4e747f5ff798")
         add_versions("2.2.0", "5fc7059f777a665df09465419d187ac2911548715fbb31ccb78d51704ece1784")
+        add_deps("bdwgc", "make", "sfml")
     end
 
     on_install("@windows", "@msys", function (package)
