@@ -8,6 +8,10 @@ package("wingetopt")
     add_deps("cmake")
 
     on_install("windows", "mingw", function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "WINGETOPT_SHARED_LIB")
+        end
+
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
