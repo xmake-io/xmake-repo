@@ -9,6 +9,7 @@ package("verilator")
 
     add_versions("v5.032", "5a262564b10be8bdb31ff4fb67d77bcf5f52fc1b4e6c88d5ca3264fb481f1e41")
     add_versions("v5.016", "66fc36f65033e5ec904481dd3d0df56500e90c0bfca23b2ae21b4a8d39e05ef1")
+    add_versions("v5.032", "5a262564b10be8bdb31ff4fb67d77bcf5f52fc1b4e6c88d5ca3264fb481f1e41")
 
     add_deps("cmake")
 
@@ -39,6 +40,10 @@ package("verilator")
 
         local version = package:version()
         if version then
+            if version:ge("5.024") then
+                io.replace("bin/verilator", "$verilator_root ne realpath($ENV{VERILATOR_ROOT})", "true")
+            end
+            
             if version:ge("5.030") then
                 io.replace("src/CMakeLists.txt", "MSVC_RUNTIME_LIBRARY MultiThreaded$<IF:$<CONFIG:Release>,,DebugDLL>", "", {plain = true})
             else
