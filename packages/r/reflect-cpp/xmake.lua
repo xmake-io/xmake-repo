@@ -142,4 +142,22 @@ package("reflect-cpp")
                 auto homer2 = rfl::json::read<Person>(json_string).value();
             }   
         ]]}, {configs = {languages = "c++20"}}))
+        if package:config("msgpack") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <rfl/msgpack.hpp>
+                #include <rfl.hpp>
+                struct Person {
+                    std::string first_name;
+                    std::string last_name;
+                    int age;
+                };
+                const auto homer = Person{.first_name = "Homer",
+                                          .last_name = "Simpson",
+                                          .age = 45};
+                void test() {
+                    std::vector<char> msgpack_str_vec = rfl::msgpack::write(homer);
+                    auto homer2 = rfl::msgpack::read<Person>(msgpack_str_vec).value();
+                }
+            ]]}, {configs = {languages = "c++20"}}))
+        end
     end)
