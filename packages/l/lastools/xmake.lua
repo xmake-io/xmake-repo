@@ -51,5 +51,5 @@ package("lastools")
                 LASreadOpener lasreadopener;
                 LASwriteOpener laswriteopener;
             }
-        ]]}, {configs = {languages = "c++14"}}))
+        ]]}, {configs = {languages = "c++11"}}))
     end)

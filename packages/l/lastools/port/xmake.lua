@@ -1,5 +1,5 @@
 add_rules("mode.debug", "mode.release")
-set_languages("c++14")
+set_languages("c++11")
 
 option("tools", {default = false})
 
