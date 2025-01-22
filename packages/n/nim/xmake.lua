@@ -8,16 +8,19 @@ package("nim")
         if os.arch() == "x86" then
             add_urls("https://nim-lang.org/download/nim-$(version)_x32.zip")
             add_versions("2.0.2", "d076d35fdab29baf83c66f1135a1fd607eb61d4c14037706f7be3ba58fb83d87")
+            add_versions("2.2.0", "67b0bdf4f190ccece7187fc2949703b2fce6cffae407e295f2e176674736cf4d")
             precompiled = true
         elseif os.arch() == "x64" then
             add_urls("https://nim-lang.org/download/nim-$(version)_x64.zip")
             add_versions("2.0.2", "948dbf8e3fdd1b5242e3d662fd25c50e9b2586e097be8a85c22d7db2bde70bad")
+            add_versions("2.2.0", "932970ed7535c7665c4f79005044ed5240426b5d2b55bfdba36dacc5af479e9d")
             precompiled = true
         end
     end
     if not precompiled then
         add_urls("https://github.com/nim-lang/Nim/archive/refs/tags/v$(version).tar.gz")
         add_versions("2.0.2", "2ca2f559d05e29f130cb4f319ebb93a98e7c0e2187716b17b2cb4e747f5ff798")
+        add_versions("2.2.0", "5fc7059f777a665df09465419d187ac2911548715fbb31ccb78d51704ece1784")
     end
 
     on_install("@windows", "@msys", function (package)
