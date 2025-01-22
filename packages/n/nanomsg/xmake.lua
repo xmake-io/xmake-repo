@@ -38,15 +38,7 @@ package("nanomsg")
         if package:config("asan") then
             table.insert(configs, "-DNNG_SANITIZER=address")
         end
-        if package:is_plat("windows") then
-            table.insert(configs, "-DCMAKE_COMPILE_PDB_OUTPUT_DIRECTORY=''")
-        end
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "nanomsg.pdb"), dir)
-        end
     end)
 
     on_test(function (package)
