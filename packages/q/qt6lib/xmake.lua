@@ -37,6 +37,11 @@ package("qt6lib")
         if not qt then
             return
         end
+        for _, dep in ipairs(package:orderdeps()) do
+            if not dep:fetch() then
+                return
+            end
+        end
 
         local libname = assert(package:data("libname"), "this package must not be used directly")
 
