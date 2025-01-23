@@ -6,6 +6,7 @@ package("orc")
     add_urls("https://github.com/apache/orc/archive/refs/tags/$(version).tar.gz",
              "https://github.com/apache/orc.git")
 
+    add_versions("v2.1.0", "c7f1b36e28a468fe7e3f92e581fb499825b7c342b7952c593f004defb50777d0")
     add_versions("v2.0.3", "7920c7c7644f31c5519befa18f8f949cdf53420603b621bd85d214b516e25ff3")
 
     add_configs("tools", {description = "build command line tools", default = false, type = "boolean"})
