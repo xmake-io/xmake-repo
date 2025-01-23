@@ -35,6 +35,7 @@ package("llvm")
                     package:add("versions", "16.0.6", "5e1f560f75e7a4c7a6509cf7d9a28b4543e7afcb4bcf4f747e9f208f0efa6818")
                     package:add("versions", "17.0.6", "ce78b510603cb3b347788d2f52978e971cf5f55559151ca13a73fd400ad80c41")
                     package:add("versions", "18.1.1", "9f59dd99d45f64a5c00b00d27da8fe8b5f162905026f5c9ef0ade6e73ae18df3")
+                    package:add("versions", "18.1.8", "3e46c24870921c85e3c747f7c422f41c1b7d2f92e066bb72274d6803ef0c63ba")
                     precompiled = true
                 else
                     package:set("urls", "https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
@@ -44,6 +45,7 @@ package("llvm")
                     package:add("versions", "16.0.6", "7adb1a630b6cc676a4b983aca9b01e67f770556c6e960e9ee9aa7752c8beb8a3")
                     package:add("versions", "17.0.6", "c480a4c280234b91f7796a1b73b18134ae62fe7c88d2d0c33312d33cb2999187")
                     package:add("versions", "18.1.1", "28a9fbcd18f1e7e736ece6d663726bc15649f025343c3004dcbfc2d367b9924c")
+                    package:add("versions", "18.1.8", "c9ff08a5267aa0a909d8aae9d4a08562853daa2eb85eac96eb9d3e33b0be1348")
                     precompiled = true
                 end
             end
@@ -56,6 +58,7 @@ package("llvm")
                 package:add("versions", "16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
                 package:add("versions", "17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
                 package:add("versions", "18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
+                package:add("versions", "18.1.8", "0b58557a6d32ceee97c8d533a59b9212d87e0fc4d2833924eb6c611247db2f2a")
             end
         end)
     else
@@ -70,6 +73,7 @@ package("llvm")
                 add_versions("16.0.6", "5e1f560f75e7a4c7a6509cf7d9a28b4543e7afcb4bcf4f747e9f208f0efa6818")
                 add_versions("17.0.6", "ce78b510603cb3b347788d2f52978e971cf5f55559151ca13a73fd400ad80c41")
                 add_versions("18.1.1", "9f59dd99d45f64a5c00b00d27da8fe8b5f162905026f5c9ef0ade6e73ae18df3")
+                add_versions("18.1.8", "3e46c24870921c85e3c747f7c422f41c1b7d2f92e066bb72274d6803ef0c63ba")
                 precompiled = true
             else
                 set_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
@@ -79,6 +83,7 @@ package("llvm")
                 add_versions("16.0.6", "7adb1a630b6cc676a4b983aca9b01e67f770556c6e960e9ee9aa7752c8beb8a3")
                 add_versions("17.0.6", "c480a4c280234b91f7796a1b73b18134ae62fe7c88d2d0c33312d33cb2999187")
                 add_versions("18.1.1", "28a9fbcd18f1e7e736ece6d663726bc15649f025343c3004dcbfc2d367b9924c")
+                add_versions("18.1.8", "c9ff08a5267aa0a909d8aae9d4a08562853daa2eb85eac96eb9d3e33b0be1348")
                 precompiled = true
             end
         end
@@ -91,6 +96,7 @@ package("llvm")
             add_versions("16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
             add_versions("17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
             add_versions("18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
+            add_versions("18.1.8", "0b58557a6d32ceee97c8d533a59b9212d87e0fc4d2833924eb6c611247db2f2a")
         end
     end
 
