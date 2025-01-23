@@ -5,7 +5,7 @@ package("octree")
     set_license("MIT")
 
     set_urls("https://github.com/attcs/Octree/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/attcs/Octree.git")
+             "https://github.com/attcs/Octree.git", {submodules = false})
 
     add_versions("v2.5", "86088cd000254aeddf4f9d75c0600b7f799e062340394124d69760829ed317fe")
 
