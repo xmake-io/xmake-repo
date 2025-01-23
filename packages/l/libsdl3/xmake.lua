@@ -15,7 +15,7 @@ package("libsdl3")
              "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL3-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL.git", { alias = "github" })
 
-    add_versions("archive:3.2.0", "f884c1bf3e7dab354e2df547d77397f593ee2af16a0ba31b34b96fe452736194")
+    add_versions("archive:3.2.0", "abe7114fa42edcc8097856787fa5d37f256d97e365b71368b60764fe7c10e4f8")
     add_versions("github:3.2.0", "release-3.2.0")
 
     add_deps("cmake")
@@ -57,7 +57,7 @@ package("libsdl3")
                 else
                     package:add("frameworks", "CoreBluetooth", "CoreGraphics", "CoreMotion", "OpenGLES", "UIKit")
                 end
-		        end
+		    end
         end
     end)
 
@@ -65,7 +65,8 @@ package("libsdl3")
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        table.insert(configs, "-DSDL_TEST=OFF")
+        table.insert(configs, "-DSDL_TEST_LIBRARY=OFF")
+        table.insert(configs, "-DSDL_EXAMPLES=OFF")
         local opt
         if package:is_plat("linux", "bsd", "cross") then
             local includedirs = {}
