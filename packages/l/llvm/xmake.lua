@@ -113,6 +113,7 @@ package("llvm")
             if package:config("openmp") then
                 package:add("deps", "libelf", {host = true})
             end
+            package:add("deps", "ca-certificates", "libffi", {host = true})
         end
         -- add components
         if package:is_library() then
