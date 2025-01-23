@@ -6,6 +6,7 @@ package("cpp-rotor")
     add_urls("https://github.com/basiliscos/cpp-rotor/archive/refs/tags/$(version).tar.gz",
              "https://github.com/basiliscos/cpp-rotor.git", {submodules = false})
 
+    add_versions("v0.32", "b0b7a294704f1ab779b95ab433eb5f4a2859db3539108a0e08709fc97f6bccee")
     add_versions("v0.31", "c8d9b28083c7a9c32af2cbff1d90fe1e62def989f0f89baba1244c44fb8ec9e4")
     add_versions("v0.30", "d143bfce1d18d42ab0f072acfe239d1cc07a495411537579e02260673cbe8121")
 
