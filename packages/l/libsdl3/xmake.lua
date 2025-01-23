@@ -20,8 +20,6 @@ package("libsdl3")
 
     add_deps("cmake")
 
-    add_includedirs("include", "include/SDL3")
-
     if is_plat("linux", "bsd") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
         add_configs("wayland", {description = "Enables Wayland support", default = true, type = "boolean"})
@@ -50,8 +48,8 @@ package("libsdl3")
             elseif package:is_plat("android") then
                 package:add("syslinks", "dl", "log", "android", "GLESv1_CM", "GLESv2", "OpenSLES")
             elseif package:is_plat("iphoneos", "macosx") then
-                package:add("frameworks", "AudioToolbox", "AVFoundation", "CoreAudio", "CoreHaptics", "CoreVideo", "Foundation", "GameController", "Metal", "QuartzCore", "CoreFoundation")
-		            package:add("syslinks", "iconv")
+                package:add("frameworks", "AudioToolbox", "AVFoundation", "CoreAudio", "CoreHaptics", "CoreMedia", "CoreVideo", "Foundation", "GameController", "Metal", "QuartzCore", "CoreFoundation")
+		        package:add("syslinks", "iconv")
                 if package:is_plat("macosx") then
                     package:add("frameworks", "Cocoa", "Carbon", "ForceFeedback", "IOKit")
                 else
