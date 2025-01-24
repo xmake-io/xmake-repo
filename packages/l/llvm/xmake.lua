@@ -114,7 +114,7 @@ package("llvm")
                 package:add("deps", "libelf", {host = true})
             end
         end
-        if package:is_plat("bsd") then
+        if package:is_plat("bsd", "macosx") then
             package:add("deps", "ca-certificates", "libffi", "openssl", {host = true})
         end
         -- add components
