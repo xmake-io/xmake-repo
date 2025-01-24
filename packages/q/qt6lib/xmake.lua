@@ -37,8 +37,9 @@ package("qt6lib")
         if not qt then
             return
         end
-        for _, dep in ipairs(package:orderdeps()) do
-            if not dep:fetch() then
+        -- Ensure all direct dependencies are fetched
+        for _, dep in ipairs(package:plaindeps()) do
+            if not dep:fetch() and dep:parents(package:name()) then
                 return
             end
         end
