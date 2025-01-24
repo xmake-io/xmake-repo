@@ -7,6 +7,7 @@ package("stc")
     add_urls("https://github.com/stclib/STC/archive/refs/tags/$(version).tar.gz",
              "https://github.com/stclib/STC.git")
 
+    add_versions("v5.0", "d61353852b9d7ef69b56fa32edcbc7934f2153385f3778536234201ceebcc950")
     add_versions("v4.2", "f16c3185ba5693f0257e5b521f0b6b3c11041433a4abbbbc531370364eb75d0c")
 
     on_install(function (package)
