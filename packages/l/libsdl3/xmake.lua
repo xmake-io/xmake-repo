@@ -30,6 +30,10 @@ package("libsdl3")
     end
 
     on_load(function (package)
+        if package:is_plat("windows") then
+            package:add("deps", "ninja")
+            package:set("policy", "package.cmake_generator.ninja", true)
+        end
         if package:is_plat("linux", "bsd") and package:config("x11") then
             package:add("deps", "libxext", {private = true})
         end
