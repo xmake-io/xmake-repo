@@ -52,7 +52,7 @@ package("libsdl3")
             elseif package:is_plat("android") then
                 package:add("syslinks", "dl", "log", "android", "GLESv1_CM", "GLESv2", "OpenSLES")
             elseif package:is_plat("iphoneos", "macosx") then
-                package:add("frameworks", "AudioToolbox", "AVFoundation", "CoreAudio", "CoreHaptics", "CoreMedia", "CoreVideo", "Foundation", "GameController", "Metal", "QuartzCore", "CoreFoundation")
+                package:add("frameworks", "AudioToolbox", "AVFoundation", "CoreAudio", "CoreHaptics", "CoreMedia", "CoreVideo", "Foundation", "GameController", "Metal", "QuartzCore", "CoreFoundation", "UniformTypeIdentifiers")
 		        package:add("syslinks", "iconv")
                 if package:is_plat("macosx") then
                     package:add("frameworks", "Cocoa", "Carbon", "ForceFeedback", "IOKit")
