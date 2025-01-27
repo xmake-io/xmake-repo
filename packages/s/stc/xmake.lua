@@ -10,7 +10,7 @@ package("stc")
     add_versions("v4.2", "f16c3185ba5693f0257e5b521f0b6b3c11041433a4abbbbc531370364eb75d0c")
 
     add_configs("checkscoped", {description = "Build checkscoped tool for c_guard* blocks", default = false, type = "boolean"})
-    if is_plat("windows") then
+    if is_plat("windows", "wasm") then
         add_configs("shared", {description = "Download shared binaries.", default = false, type = "boolean", readonly = true})
     end
 
