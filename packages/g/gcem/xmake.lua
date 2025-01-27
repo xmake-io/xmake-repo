@@ -14,7 +14,8 @@ package("gcem")
 
     add_deps("cmake")
     on_install(function (package)
-        import("package.tools.cmake").install(package)
+        local configs = {"-DCMAKE_POLICY_DEFAULT_CMP0057=NEW"}
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
