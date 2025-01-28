@@ -13,6 +13,16 @@ package("octree")
         if not package:is_arch("x64", "x86", "x86_64") then
             raise("package(octree) only support x86 arch")
         end
+
+        local msvc = package:toolchain("msvc")
+        if package:is_arch("x64") and msvc then
+            local vs_toolset = msvc:config("vs_toolset")
+            if vs_toolset then
+                local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
+                local minor = vs_toolset_ver:minor()
+                assert(minor and minor >= 30, "package(octree) require vs_toolset >= 14.3")
+            end
+        end
     end)
 
     on_install(function (package)
