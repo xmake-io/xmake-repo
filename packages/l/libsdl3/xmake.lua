@@ -18,7 +18,7 @@ package("libsdl3")
     add_versions("archive:3.2.0", "abe7114fa42edcc8097856787fa5d37f256d97e365b71368b60764fe7c10e4f8")
     add_versions("github:3.2.0", "release-3.2.0")
 
-    add_deps("cmake")
+    add_deps("cmake", "egl-headers")
 
     if is_plat("linux", "bsd") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
