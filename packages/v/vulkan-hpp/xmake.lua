@@ -28,6 +28,7 @@ package("vulkan-hpp")
     add_versions("v1.3.282", "4bf2835dd1a530291cd2b340a58dd7e369d5c86c")
     add_versions("v1.3.283", "2fbc146feefa43b8201af4b01eb3570110f9fa32")
     add_versions("v1.3.290", "e3b0737d57e81875361bf1943f083eac902dacb7")
+    add_versions("v1.4.304", "8ca59e086ccfa022cce1450f2f194cbb87137e63")
 
     add_configs("modules", {description = "Build with C++20 modules support.", default = false, type = "boolean"})
 
