@@ -23,7 +23,7 @@ package("octree")
         assert(package:check_cxxsnippets({test = [[
             using namespace OrthoTree;
             void test() {
-                auto constexpr points = array{ Point3D{0,0,0}, Point3D{1,1,1}, Point3D{2,2,2} };
+                auto constexpr points = std::array{ Point3D{0,0,0}, Point3D{1,1,1}, Point3D{2,2,2} };
                 auto const octree = OctreePointC(points, 3 /*max depth*/);
 
                 auto const searchBox = BoundingBox3D{ {0.5, 0.5, 0.5}, {2.5, 2.5, 2.5} };
