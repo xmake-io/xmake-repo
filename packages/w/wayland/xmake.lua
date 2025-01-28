@@ -37,6 +37,9 @@ package("wayland")
 
         -- build wayland
         local configs = {"-Ddocumentation=false", "-Dc_link_args=-lm"}
+        if package:is_cross() then
+            table.insert(configs, "-Dscanner=false")
+        end
         table.insert(configs, "--libdir=lib")
         local envs = meson.buildenvs(package)
         envs.LD_LIBRARY_PATH = path.joinenv(table.join(LD_LIBRARY_PATH, envs.LD_LIBRARY_PATH))
