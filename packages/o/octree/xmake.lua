@@ -20,5 +20,19 @@ package("octree")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxincludes("octree.h", {configs = {languages = "c++20"}}))
+        assert(package:check_cxxsnippets({test = [[
+            using namespace OrthoTree;
+            void test() {
+                auto constexpr points = array{ Point3D{0,0,0}, Point3D{1,1,1}, Point3D{2,2,2} };
+                auto const octree = OctreePointC(points, 3 /*max depth*/);
+
+                auto const searchBox = BoundingBox3D{ {0.5, 0.5, 0.5}, {2.5, 2.5, 2.5} };
+                auto const pointIDs = octree.RangeSearch(searchBox); //: { 1, 2 }
+
+                auto neighborNo = 2;
+                auto pointIDsByKNN = octree.GetNearestNeighbors(Point3D{ 1.1, 1.1, 1.1 }
+                    , neighborNo
+                ); //: { 1, 2 }
+            }
+        ]]}, {configs = {languages = "c++20"}, includes = "octree.h"}))
     end)
