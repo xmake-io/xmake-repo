@@ -15,19 +15,16 @@ package("kuba-zip")
 
     add_deps("cmake")
 
-    on_install("windows", "macosx", "linux", "mingw", function (package)
+    on_install("windows", "macosx", "linux", "mingw", "msys", function (package)
+        if package:is_plat("windows", "mingw") and package:config("shared") then
+            package:add("defines", "ZIP_SHARED")
+        end
+
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
 
         local configs = {"-DCMAKE_DISABLE_TESTING=ON", "-DZIP_BUILD_DOCS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        if package:config("shared") then
-            table.insert(configs, "-DBUILD_SHARED_LIBS=ON")
-            if package:is_plat("windows", "mingw") then
-                package:add("defines", "ZIP_SHARED")
-            end
-        else
-            table.insert(configs, "-DBUILD_SHARED_LIBS=OFF")
-        end
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
