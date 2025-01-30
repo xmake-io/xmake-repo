@@ -14,6 +14,8 @@ package("sol2")
 
     add_configs("includes_lua", {description = "Should this package includes the Lua package (set to false if you're shipping a custom Lua)", default = true, type = "boolean"})
 
+    add_patches(">=3.3.0", path.join(os.scriptdir(), "patches", "3.3.0", "optional.patch"), "8440f25e5dedc29229c3def85aa6f24e0eb165d4c390fd0e1312452a569a01a6")
+
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::sol2")
     elseif is_plat("linux") then
