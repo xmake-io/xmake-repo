@@ -17,6 +17,11 @@ package("reactiveplusplus")
 
     if on_check then
         on_check(function (package)
+            if package:is_plat("android") then
+                local ndk = package:toolchain("ndk")
+                local ndkver = ndk:config("ndkver")
+                assert(ndkver and tonumber(ndkver) > 22, "package(reactiveplusplus) require ndk version > 22")
+            end
             if package:version() and package:version():ge("2.2.0") then
                 local msvc = package:toolchain("msvc")
                 if msvc then
@@ -28,12 +33,7 @@ package("reactiveplusplus")
                     end
                 end
                 if package:is_plat("android") then
-                    local ndk = package:toolchain("ndk")
-                    local ndkver = ndk:config("ndkver")
-                    assert(ndkver and tonumber(ndkver) > 22, "package(reactiveplusplus) require ndk version > 22")
-                    if package:version():ge("2.2.0") then
-                        raise("package(reactiveplusplus >=2.2.0)  unsupported current platform")
-                    end
+                    raise("package(reactiveplusplus >=2.2.0)  unsupported current platform")
                 end
             end
         end)
