@@ -22,7 +22,7 @@ package("reactiveplusplus")
                 local ndkver = ndk:config("ndkver")
                 assert(ndkver and tonumber(ndkver) > 22, "package(reactiveplusplus) require ndk version > 22")
             end
-            if package:version() and package:version():ge("2.2.0") then
+            if package:version() and package:version():ge("2.1.0") then
                 local msvc = package:toolchain("msvc")
                 if msvc then
                     local vs_toolset = msvc:config("vs_toolset")
