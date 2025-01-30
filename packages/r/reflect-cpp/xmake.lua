@@ -120,10 +120,9 @@ package("reflect-cpp")
             table.insert(configs, "-DREFLECTCPP_UBJSON=" .. (package:config("ubjson") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_YAML=" .. (package:config("yaml") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
-        else
-            os.rm("include/thirdparty")
-            os.cp("include", package:installdir())
         end
+        os.rm("include/thirdparty")
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
