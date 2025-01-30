@@ -17,18 +17,18 @@ package("reactiveplusplus")
 
     if on_check then
         on_check(function (package)
-            if package:version() and package:version():ge("2.2.0") then
+            if package:version() and package:version():ge("2.1.0") then
                 local msvc = package:toolchain("msvc")
                 if msvc then
                     local vs_toolset = msvc:config("vs_toolset")
                     if vs_toolset then
                         local vs_toolset_ver = import("core.base.semver").new(vs_toolset)
                         local minor = vs_toolset_ver:minor()
-                        assert(minor and minor >= 30, "package(reactiveplusplus) require vs_toolset >= 14.3")
+                        assert(minor and minor >= 30, "package(reactiveplusplus >=2.1.0) require vs_toolset >= 14.3")
                     end
                 end
                 if package:is_plat("android") then
-                    raise("package(reactiveplusplus >=2.2.0)  unsupported current platform")
+                    raise("package(reactiveplusplus >=2.1.0)  unsupported current platform")
                 end
             end
         end)
