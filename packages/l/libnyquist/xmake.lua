@@ -20,6 +20,9 @@ package("libnyquist")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
+        io.replace("include/libnyquist/Common.h", "#if defined(__arm__) || defined(_M_ARM)",
+            "#if defined(__arm__) || defined(__arm64) || defined(__arm64__) || (defined(__aarch64__) && __aarch64__) || defined(_M_ARM64) || defined(_M_ARM)", {plain = true})
+
         io.replace("CMakeLists.txt", "${wavpack_src}", "", {plain = true})
         io.replace("src/WavPackDecoder.cpp", "wavpack.h", "wavpack/wavpack.h", {plain = true})
         os.rm("third_party/wavpack")
