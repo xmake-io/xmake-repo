@@ -6,6 +6,7 @@ package("libuv")
     set_urls("https://github.com/libuv/libuv/archive/refs/tags/$(version).zip",
              "https://github.com/libuv/libuv.git")
 
+    add_versions("v1.50.0", "038f48e48b3d15c9341dfe1fa5099b83b52ac30f15c97a67269163f8f8ab99ac")
     add_versions("v1.49.2", "9050042ac6cbd85c644e38c23a67e9f8a9d32eafe71479bbea674b4125489141")
     add_versions("v1.49.1", "94312ede44c6cae544ae316557e2651aea65efce5da06f8d44685db08392ec5d")
     add_versions("v1.49.0", "99378c7911af3f0141b085aa59feb76ff54885e4bbc516be677c06c952fb9fa0")
