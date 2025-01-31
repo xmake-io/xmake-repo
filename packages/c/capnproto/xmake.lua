@@ -21,6 +21,8 @@ package("capnproto")
     end
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
+    elseif is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     add_deps("cmake", "zlib")
