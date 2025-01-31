@@ -69,34 +69,17 @@ package("libsdl3")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_TEST_LIBRARY=OFF")
         table.insert(configs, "-DSDL_EXAMPLES=OFF")
-        local opt
-        if package:is_plat("linux", "bsd", "cross") then
-            local includedirs = {}
-            for _, depname in ipairs({"libxext", "libx11", "xorgproto"}) do
-                local dep = package:dep(depname)
-                if dep then
-                    local depfetch = dep:fetch()
-                    if depfetch then
-                        for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
-                            table.insert(includedirs, includedir)
-                        end
-                    end
-                end
-            end
-            if #includedirs > 0 then
-                includedirs = table.unique(includedirs)
+        local opt = {}
+        if not package:is_plat("wasm") then
+            opt.packagedeps = {"egl-headers"}
+        end
 
-                local cflags = {}
-                opt = opt or {}
-                opt.cflags = cflags
-                for _, includedir in ipairs(includedirs) do
-                    table.insert(cflags, "-I" .. includedir)
-                end
-                table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
-            end
+        if package:is_plat("linux", "bsd", "cross") then
+            table.insert(opt.packagedeps, "libxext")
+            table.insert(opt.packagedeps, "libx11")
+            table.insert(opt.packagedeps, "xorgproto")
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with the sdl headers
-            opt = opt or {}
             opt.cflags = {"-sUSE_SDL=0"}
         end
         import("package.tools.cmake").install(package, configs, opt)
