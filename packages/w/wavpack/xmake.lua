@@ -51,6 +51,11 @@ package("wavpack")
         end
 
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") then
+            os.trycp(path.join(package:installdir("lib"), "libwavpack.a"),
+                path.join(package:installdir("lib"), "libwavpack.lib"))
+        end
     end)
 
     on_test(function (package)
