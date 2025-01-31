@@ -13,20 +13,8 @@ package("capnproto")
     add_versions("0.8.0", "9a5e090b1f3ad39bb47fed5fd03672169493674ce273418b76c868393fced2e4")
     add_versions("0.7.0", "1054a879e174b8f797f1b506fedb14ecba5556c656e33ac51bd0a62bd90f925f")
 
-    add_linkorders("capnpc", "capnp-json")
-    add_linkorders("capnpc", "capnp-rpc")
-    add_linkorders("capnp-json", "capnp")
-    add_linkorders("capnp-json", "kj-http")
-    add_linkorders("capnp-rpc", "capnp")
-    add_linkorders("capnp-rpc", "kj-http")
-    add_linkorders("capnp", "kj-test")
-    add_linkorders("capnp", "kj-http")
-    add_linkorders("capnp", "kj-async")
-    add_linkorders("kj-async", "kj")
-    add_linkorders("kj-test", "kj")
-    add_linkorders("kj-gzip", "kj-async")
-    add_linkorders("kj-tls", "kj-async")
-    add_linkorders("kj-http", "kj-async")
+    add_links("capnpc", "capnp-json", "capnp", "capnp-websocket", "capnp-rpc")
+    add_links("kj-gzip", "kj-async", "kj-http", "kj", "kj-test", "kj-tls")
 
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
@@ -45,5 +33,15 @@ package("capnproto")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("capnp::MallocMessageBuilder", {configs = {languages = "c++14"}, includes = "capnp/message.h"}))
+        assert(package:has_cxxtypes("capnp::MallocMessageBuilder",
+            {configs = {languages = "c++14"}, includes = "capnp/message.h"}))
+    end)
+
+    on_test(function (package)
+        assert(package:check_cxxsnippets({test = [[
+            #include "capnp/message.h"
+            void test() {
+                capnp::MallocMessageBuilder message;
+            }
+        ]]}, {configs = {languages = "c++14"}}))
     end)
