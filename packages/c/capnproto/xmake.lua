@@ -7,6 +7,7 @@ package("capnproto")
     add_urls("https://github.com/capnproto/capnproto/archive/v$(version).zip")
     add_urls("https://github.com/capnproto/capnproto.git")
 
+    add_versions("1.1.0", "cefc757d4ee07acb17070b0c5c90bfa106b79468670869052246712bf8781fd9")
     add_versions("1.0.2", "3c9afa5dffa4d81a3cbd0581a15a5b1633feaf43093a3b108aded0f636622752")
     add_versions("0.9.0", "18cf46aa4e05446a3d34bad8d56f9d0c73e72020a2b7548b6ec7cb7b1a828d5b")
     add_versions("0.8.0", "9a5e090b1f3ad39bb47fed5fd03672169493674ce273418b76c868393fced2e4")
