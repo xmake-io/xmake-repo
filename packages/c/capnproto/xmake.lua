@@ -36,7 +36,20 @@ package("capnproto")
     end
 
     add_deps("cmake", "zlib")
-    on_install("windows|x86_64", "windows|i386", "linux", "macosx", "bsd", function (package)
+
+    -- Add on_check to fail for version greater than 1.0.2 on Windows ARM and MingW
+    on_check(function (package)
+        if package:version() >= "1.0.2" then
+            if is_plat("windows") and is_arch("arm*") then
+                raise("package(capnproto): Unsupported version on Windows ARM. Version 0.9.0 is the latest supported version on Windows ARM.")
+            end
+            if is_plat("mingw") then
+                raise("package(capnproto): Unsupported version on MingW. Version 0.9.0 is the latest supported version on MingW.")
+            end
+        end
+    end)
+
+    on_install("windows", "mingw@windows,msys", "linux", "macosx", "bsd", function (package)
         local configs = {"-DBUILD_TESTING=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
