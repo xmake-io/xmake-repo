@@ -18,7 +18,7 @@ package("libsdl3")
     add_versions("archive:3.2.0", "abe7114fa42edcc8097856787fa5d37f256d97e365b71368b60764fe7c10e4f8")
     add_versions("github:3.2.0", "release-3.2.0")
 
-    add_deps("cmake", "egl-headers")
+    add_deps("cmake", "egl-headers", "opengl-headers")
 
     if is_plat("linux", "bsd") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
@@ -69,20 +69,22 @@ package("libsdl3")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DSDL_TEST_LIBRARY=OFF")
         table.insert(configs, "-DSDL_EXAMPLES=OFF")
-        local opt = {}
+
+        local cflags
+        local packagedeps
         if not package:is_plat("wasm") then
-            opt.packagedeps = {"egl-headers"}
+            packagedeps = {"egl-headers", "opengl-headers"}
         end
 
         if package:is_plat("linux", "bsd", "cross") then
-            table.insert(opt.packagedeps, "libxext")
-            table.insert(opt.packagedeps, "libx11")
-            table.insert(opt.packagedeps, "xorgproto")
+            table.insert(packagedeps, "libxext")
+            table.insert(packagedeps, "libx11")
+            table.insert(packagedeps, "xorgproto")
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with the sdl headers
-            opt.cflags = {"-sUSE_SDL=0"}
+            cflags = {"-sUSE_SDL=0"}
         end
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs, {cflags = cflags, packagedeps = packagedeps})
     end)
 
     on_test(function (package)
