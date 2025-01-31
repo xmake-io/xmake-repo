@@ -44,9 +44,6 @@ package("wavpack")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
-        io.replace("include/libnyquist/Common.h", "#if defined(__arm__) || defined(_M_ARM)",
-            "#if defined(__arm__) || defined(__arm64) || defined(__arm64__) || (defined(__aarch64__) && __aarch64__) || defined(_M_ARM64) || defined(_M_ARM)", {plain = true})
-
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-DWAVPACK_ENABLE_" .. name:upper() .. "=" .. (enabled and "ON" or "OFF"))
