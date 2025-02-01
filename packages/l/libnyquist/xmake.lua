@@ -11,6 +11,10 @@ package("libnyquist")
     add_deps("cmake")
     add_deps("wavpack")
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
+    end
+
     on_install("windows", "linux", "macosx", "bsd", "wasm", function (package)
         local configs = {
             "-DCMAKE_CXX_STANDARD=14",
