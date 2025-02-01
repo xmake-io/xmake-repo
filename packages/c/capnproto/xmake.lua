@@ -30,10 +30,10 @@ package("capnproto")
     -- Add on_check to fail for version greater than 1.0.2 on Windows ARM and MingW
     on_check(function (package)
         if package:version() >= "1.0.2" then
-            if is_plat("windows") and is_arch("arm.*") then
+            if package:is_plat("windows") and package:is_arch("arm.*") then
                 raise("package(capnproto): Unsupported version on Windows ARM. Version 0.9.0 is the latest supported version on Windows ARM.")
             end
-            if is_plat("mingw") then
+            if package:is_plat("mingw") then
                 raise("package(capnproto): Unsupported version on MingW. Version 0.9.0 is the latest supported version on MingW.")
             end
         end
