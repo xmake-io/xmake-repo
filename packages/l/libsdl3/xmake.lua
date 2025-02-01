@@ -84,7 +84,25 @@ package("libsdl3")
             -- emscripten enables USE_SDL by default which will conflict with the sdl headers
             cflags = {"-sUSE_SDL=0"}
         end
-        import("package.tools.cmake").install(package, configs, {cflags = cflags, packagedeps = packagedeps})
+        
+        local includedirs = {}
+        for _, depname in ipairs(packagedeps) do
+            local dep = package:dep(depname)
+            if dep then
+                local depfetch = dep:fetch()
+                if depfetch then
+                    for _, includedir in ipairs(depfetch.includedirs or depfetch.sysincludedirs) do
+                        table.insert(includedirs, includedir)
+                    end
+                end
+            end
+        end
+        if #includedirs > 0 then
+            includedirs = table.unique(includedirs)
+            table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
+        end
+
+        import("package.tools.cmake").install(package, configs, {cflags = cflags})
     end)
 
     on_test(function (package)
