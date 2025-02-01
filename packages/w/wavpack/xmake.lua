@@ -55,6 +55,8 @@ package("wavpack")
         if package:is_plat("windows") then
             os.trycp(path.join(package:installdir("lib"), "libwavpack.a"),
                 path.join(package:installdir("lib"), "libwavpack.lib"))
+            os.trycp(path.join(package:installdir("lib"), "libwavpack.dll.a"),
+                path.join(package:installdir("lib"), "libwavpack.lib"))
         end
     end)
 
