@@ -15,7 +15,7 @@ package("libnyquist")
         add_syslinks("pthread")
     end
 
-    on_install("windows", "linux", "macosx", "bsd", "wasm", function (package)
+    on_install("windows|!arm64", "linux", "macosx", "bsd", "wasm", function (package)
         local configs = {
             "-DCMAKE_CXX_STANDARD=14",
             "-DLIBNYQUIST_BUILD_EXAMPLE=OFF",
