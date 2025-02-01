@@ -1,10 +1,9 @@
 package("sol2")
-
     set_kind("library", {headeronly = true})
     set_homepage("https://github.com/ThePhD/sol2")
     set_description("A C++ library binding to Lua.")
 
-    set_urls("https://github.com/ThePhD/sol2/archive/$(version).tar.gz",
+    set_urls("https://github.com/ThePhD/sol2/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ThePhD/sol2.git")
 
     add_versions("v3.3.0", "b82c5de030e18cb2bcbcefcd5f45afd526920c517a96413f0b59b4332d752a1e")
@@ -34,7 +33,7 @@ package("sol2")
         end
     end)
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local configs = {}
         if package:config("includes_lua") then
             if package:version() and package:version():ge("3.3") then
