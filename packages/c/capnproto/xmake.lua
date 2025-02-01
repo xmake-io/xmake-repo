@@ -48,11 +48,6 @@ package("capnproto")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("capnp::MallocMessageBuilder",
-            {configs = {languages = "c++14"}, includes = "capnp/message.h"}))
-    end)
-
-    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include "capnp/message.h"
             void test() {
