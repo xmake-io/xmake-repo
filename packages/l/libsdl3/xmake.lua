@@ -34,10 +34,10 @@ package("libsdl3")
             package:add("deps", "ninja")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
-        if package:is_plat("linux", "bsd") and package:config("x11") then
+        if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
             package:add("deps", "libxext", {private = true})
         end
-        if package:is_plat("linux", "bsd") and package:config("wayland") then
+        if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
         end
         local libsuffix = package:is_debug() and "d" or ""
