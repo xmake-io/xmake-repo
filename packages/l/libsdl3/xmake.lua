@@ -20,7 +20,7 @@ package("libsdl3")
 
     add_deps("cmake", "egl-headers", "opengl-headers")
 
-    if is_plat("linux", "bsd", "cross") then
+    if is_plat("linux", "bsd") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
         add_configs("wayland", {description = "Enables Wayland support", default = true, type = "boolean"})
     end
@@ -63,7 +63,7 @@ package("libsdl3")
         end
     end)
 
-    on_install(function (package)
+    on_install("!cross", function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -76,7 +76,7 @@ package("libsdl3")
             packagedeps = {"egl-headers", "opengl-headers"}
         end
 
-        if package:is_plat("linux", "bsd", "cross") then
+        if package:is_plat("linux", "bsd") then
             table.insert(packagedeps, "libxext")
             table.insert(packagedeps, "libx11")
             table.insert(packagedeps, "xorgproto")
