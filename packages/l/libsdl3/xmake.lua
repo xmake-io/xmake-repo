@@ -20,7 +20,7 @@ package("libsdl3")
 
     add_deps("cmake", "egl-headers", "opengl-headers")
 
-    if is_plat("linux", "bsd") then
+    if is_plat("linux", "bsd", "cross") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
         add_configs("wayland", {description = "Enables Wayland support", default = true, type = "boolean"})
     end
@@ -80,6 +80,7 @@ package("libsdl3")
             table.insert(packagedeps, "libxext")
             table.insert(packagedeps, "libx11")
             table.insert(packagedeps, "xorgproto")
+            table.insert(packagedeps, "wayland")
         elseif package:is_plat("wasm") then
             -- emscripten enables USE_SDL by default which will conflict with the sdl headers
             cflags = {"-sUSE_SDL=0"}
