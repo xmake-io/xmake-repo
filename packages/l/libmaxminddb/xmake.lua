@@ -11,6 +11,9 @@ package("libmaxminddb")
     add_versions("1.10.0", "5e6db72df423ae225bfe8897069f6def40faa8931f456b99d79b8b4d664c6671")
 
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
 
     if is_plat("windows", "mingw") then
         add_syslinks("ws2_32")
