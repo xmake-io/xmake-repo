@@ -7,6 +7,7 @@ package("toml11")
     add_urls("https://github.com/ToruNiina/toml11/archive/refs/tags/$(version).tar.gz",
              "https://github.com/ToruNiina/toml11.git")
 
+    add_versions("v4.3.0", "af95dab1bbb9b05a597e73d529a7269e13f1869e9ca9bd4779906c5cd96e282b")
     add_versions("v4.2.0", "9287971cd4a1a3992ef37e7b95a3972d1ae56410e7f8e3f300727ab1d6c79c2c")
     add_versions("v4.1.0", "fb4c02cc708ae28e6fc3496514e3625e4b6738ed4ce40897710ca4d7a29de4f7")
     add_versions("v4.0.3", "c8cbc7839cb3f235153045ce550e559f55a04554dfcab8743ba8a1e8ef6a54bf")
