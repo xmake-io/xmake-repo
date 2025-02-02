@@ -1,7 +1,7 @@
 package("srell")
     set_kind("library", {headeronly = true})
     set_homepage("https://akenotsuki.com/misc/srell")
-    set_description("Unicode-aware regular expression template library for C++")
+    set_description("SRELL (std::regex-like library) is a Unicode-aware regular expression template library for C++.")
     set_license("BSD-2-Clause")
 
     add_urls("https://akenotsuki.com/misc/srell/srell$(version).zip", {version = function(version)
