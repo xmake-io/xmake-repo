@@ -14,7 +14,7 @@ package("libxext")
         add_deps("pkg-config", "libx11", "xorgproto")
     end
 
-    on_install("macosx", "linux", "bsd", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
