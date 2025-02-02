@@ -36,7 +36,11 @@ package("wavpack")
             end
         end
 
-        local configs = {"-DWAVPACK_INSTALL_CMAKE_MODULE=OFF", "-DWAVPACK_INSTALL_DOCS=OFF", "-DWAVPACK_INSTALL_PKGCONFIG_MODULE=OFF"}
+        local configs = {
+            "-DWAVPACK_BUILD_PROGRAMS=OFF",
+            "-DWAVPACK_INSTALL_CMAKE_MODULE=OFF",
+            "-DWAVPACK_INSTALL_DOCS=OFF",
+            "-DWAVPACK_INSTALL_PKGCONFIG_MODULE=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
@@ -47,6 +51,13 @@ package("wavpack")
         end
 
         import("package.tools.cmake").install(package, configs)
+
+        if package:is_plat("windows") then
+            os.trycp(path.join(package:installdir("lib"), "libwavpack.a"),
+                path.join(package:installdir("lib"), "libwavpack.lib"))
+            os.trycp(path.join(package:installdir("lib"), "libwavpack.dll.a"),
+                path.join(package:installdir("lib"), "libwavpack.lib"))
+        end
     end)
 
     on_test(function (package)
