@@ -22,7 +22,7 @@ package("wayland")
         add_deps("epoll-shim")
     end
 
-    on_install("linux", "bsd", function (package)
+    on_install("linux", "bsd", "cross", function (package)
         -- imports
         import("package.tools.meson")
         import("lib.detect.find_file")
@@ -68,6 +68,8 @@ package("wayland")
     end)
 
     on_test(function (package)
-        os.vrun("wayland-scanner --version")
+        if not package:is_cross() then
+            os.vrun("wayland-scanner --version")
+        end
         assert(package:has_cfuncs("wl_list_init", {includes = "wayland-util.h"}))
     end)
