@@ -101,7 +101,7 @@ package("libsdl3")
             includedirs = table.unique(includedirs)
             table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
             cflags = cflags or {}
-            for _, includedir in impairs(includedirs) do
+            for _, includedir in ipairs(includedirs) do
                 table.insert(cflags, "-I" .. includedir)
             end
         end
