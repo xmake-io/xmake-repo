@@ -28,7 +28,7 @@ package("llvm")
         on_source(function (package)
             import("core.base.semver")
             local version = semver.new(package:requireinfo().version)
-            if version:major() <= 18 and version:minor() >= 1 then
+            if version:major() >= 18 then
                 if package:is_plat("windows") then
                     package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-pc-windows-msvc.tar.xz")
                     package:add("versions", "18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
