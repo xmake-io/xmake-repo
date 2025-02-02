@@ -100,6 +100,10 @@ package("libsdl3")
         if #includedirs > 0 then
             includedirs = table.unique(includedirs)
             table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
+            cflags = cflags or {}
+            for _, includedir in impairs(includedirs) do
+                table.insert(cflags, "-I" .. includedir)
+            end
         end
 
         import("package.tools.cmake").install(package, configs, {cflags = cflags})
