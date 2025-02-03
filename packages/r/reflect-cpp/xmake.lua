@@ -6,6 +6,7 @@ package("reflect-cpp")
     add_urls("https://github.com/getml/reflect-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/getml/reflect-cpp.git", {submodules = false})
 
+    add_versions("v0.17.0", "08b6406cbe4c6c14ff1a619fe93a94f92f6d9eb22213d93529ad975993945e45")
     add_versions("v0.16.0", "a84d94dbd353d788926d6e54507b44c046863f7bc4ecb35afe0338374a68a77d")
     add_versions("v0.14.1", "639aec9d33025703a58d32c231ab1ab474c0cc4fb0ff90eadcaffb49271c41cd")
     add_versions("v0.14.0", "ea92a2460a71184b7d4fa4e9baad9910efad092df78b114459a7d6b0ee558d3c")
@@ -119,10 +120,9 @@ package("reflect-cpp")
             table.insert(configs, "-DREFLECTCPP_UBJSON=" .. (package:config("ubjson") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_YAML=" .. (package:config("yaml") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
-        else
-            os.rm("include/thirdparty")
-            os.cp("include", package:installdir())
         end
+        os.rm("include/thirdparty")
+        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)

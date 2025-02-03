@@ -28,6 +28,7 @@ package("ufbx")
                 end
         ]])
         import("package.tools.xmake").install(package)
+        os.trycp("extra/*", package:installdir("include"))
     end)
 
     on_test(function (package)
