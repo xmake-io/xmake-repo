@@ -85,7 +85,7 @@ package("libsdl3")
             packagedeps = {"egl-headers", "opengl-headers"}
         end
 
-        if package:is_plat("linux", "bsd") then
+        if package:is_plat("linux", "bsd", "cross") then
             table.insert(packagedeps, "libxcb")
             table.insert(packagedeps, "libxext")
             table.insert(packagedeps, "libx11")
