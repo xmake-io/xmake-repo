@@ -22,9 +22,9 @@ package("libsdl3")
 
     add_deps("cmake", "egl-headers", "opengl-headers")
 
-    if is_plat("linux", "bsd") then
-        add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
-        add_configs("wayland", {description = "Enables Wayland support", default = not is_cross(), type = "boolean"})
+    if is_plat("linux", "bsd", "cross") then
+        add_configs("x11", {description = "Enables X11 support", default = true, type = "boolean"})
+        add_configs("wayland", {description = "Enables Wayland support", default = nil, type = "boolean"})
     end
 
     if is_plat("wasm") then
@@ -32,6 +32,13 @@ package("libsdl3")
     end
 
     on_load(function (package)
+        if package:is_plat("linux", "android", "cross") then
+            -- Enable Wayland by default except when cross-compiling (wayland package doesn't support cross-compilation yet)
+            if package:config("wayland") == nil and not package:is_cross() then
+                package:config_set("wayland", true)
+            end
+        end
+
         if package:is_plat("windows") then
             package:add("deps", "ninja")
             package:set("policy", "package.cmake_generator.ninja", true)
