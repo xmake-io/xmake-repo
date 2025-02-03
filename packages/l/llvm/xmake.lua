@@ -75,8 +75,8 @@ package("llvm")
         local precompiled = false
         if is_plat("windows") then
             if package:version():ge("18.1.8") then
-                package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-pc-windows-msvc.tar.xz")
-                package:add("versions", "18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
+                set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-pc-windows-msvc.tar.xz")
+                add_versions("18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
                 precompiled = true
             elseif is_isplat("linux") and version():ge("18.1.8") then
                 set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-linux-gnu-ubuntu-18.04.tar.xz")
