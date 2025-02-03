@@ -113,6 +113,7 @@ package("llvm")
                 add_versions("16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
                 add_versions("17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
                 add_versions("18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
+                add_versions("18.1.8", "0b58557a6d32ceee97c8d533a59b9212d87e0fc4d2833924eb6c611247db2f2a")
             end
         end
     end
