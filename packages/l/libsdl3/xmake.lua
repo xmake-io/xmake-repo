@@ -15,14 +15,16 @@ package("libsdl3")
              "https://github.com/libsdl-org/SDL/releases/download/release-$(version)/SDL3-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL.git", { alias = "github" })
 
+    add_versions("archive:3.2.0", "58d8adc7068d38923f918e0bdaa9c4948f93d9ba204fe4de8cc6eaaf77ad6f82")
     add_versions("archive:3.2.0", "abe7114fa42edcc8097856787fa5d37f256d97e365b71368b60764fe7c10e4f8")
+    add_versions("github:3.2.2", "release-3.2.2")
     add_versions("github:3.2.0", "release-3.2.0")
 
     add_deps("cmake", "egl-headers", "opengl-headers")
 
     if is_plat("linux", "bsd") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
-        add_configs("wayland", {description = "Enables Wayland support", default = true, type = "boolean"})
+        add_configs("wayland", {description = "Enables Wayland support", default = not is_cross(), type = "boolean"})
     end
 
     if is_plat("wasm") then
@@ -63,7 +65,7 @@ package("libsdl3")
         end
     end)
 
-    on_install("windows", "mingw", "linux|native", "macosx", "bsd", "android", "iphoneos", "wasm", function (package)
+    on_install(function (package)
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
