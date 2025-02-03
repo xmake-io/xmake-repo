@@ -22,7 +22,7 @@ package("wayland-protocols")
         add_extsources("apt::wayland-protocols", "pacman::wayland-protocols")
     end
 
-    on_install("linux", function (package)
+    on_install("linux|native", function (package)
         local configs = {"-Dtests=false"}
         import("package.tools.meson").install(package, configs)
     end)

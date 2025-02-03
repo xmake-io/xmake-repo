@@ -19,7 +19,7 @@ package("wayland")
         add_deps("epoll-shim")
     end
 
-    on_install("linux", "bsd", function (package)
+    on_install("linux|native", "bsd", function (package)
         import("package.tools.meson")
 
         -- set environment variables
