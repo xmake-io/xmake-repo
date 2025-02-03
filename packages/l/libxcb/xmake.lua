@@ -46,7 +46,7 @@ package("libxcb")
         add_extsources("apt::libxcb1-dev", "pacman::libxcb")
     end
 
-    if is_plat("macosx", "linux", "bsd") then
+    if is_plat("macosx", "linux", "bsd", "cross") then
         add_deps("pkg-config", "python 3.x", {kind = "binary"})
         add_deps("xcb-proto", "libpthread-stubs", "libxau", "libxdmcp")
     end
@@ -59,7 +59,7 @@ package("libxcb")
         end
     end)
 
-    on_install("macosx", "linux", "bsd", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",
