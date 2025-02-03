@@ -26,9 +26,13 @@ package("llvm")
     -- before adding a new version, make sure that the prebuild is containing llvm-config
     if on_source then
         on_source(function (package)
+            import("core.base.semver")
+
             local precompiled = false
+            local requiredversion = semver.new(package:requireinfo().version)
+
             if package:is_plat("windows") then
-                if package:version():ge("18.1.8") then
+                if requiredversion:major() <= 18 and requiredversion:minor() >= 1 then
                     package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-pc-windows-msvc.tar.xz")
                     package:add("versions", "18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
                     precompiled = true
@@ -53,7 +57,7 @@ package("llvm")
                         precompiled = true
                     end
                 end
-            elseif package:is_plat("linux") and package:version():ge("18.1.8") then
+            elseif package:is_plat("linux") and requiredversion:major() <= 18 and requiredversion:minor() >= 1 then
                 package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-linux-gnu-ubuntu-18.04.tar.xz")
                 package:add("versions", "18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
                 precompiled = true
@@ -74,35 +78,25 @@ package("llvm")
         -- After xmake v2.9.5, we'll remove it.
         local precompiled = false
         if is_plat("windows") then
-            if package:version():ge("18.1.8") then
-                set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-pc-windows-msvc.tar.xz")
-                add_versions("18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
-                precompiled = true
-            elseif is_isplat("linux") and version():ge("18.1.8") then
-                set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-linux-gnu-ubuntu-18.04.tar.xz")
-                add_versions("18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
+            if is_arch("x86") then
+                set_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win32.zip")
+                add_versions("11.0.0", "268043ae0b656cf6272ccb9b8e3f21f51170b74ed8997ddc0b99587983b821ca")
+                add_versions("14.0.0", "63afc3c472cb279978c5a7efc25b8783a700aeb416df67886b7057eba52a8742")
+                add_versions("15.0.7", "8dbabb2194404220f8641b4b18b24b36eca0ae751380c23fc7743097e205b95f")
+                add_versions("16.0.6", "5e1f560f75e7a4c7a6509cf7d9a28b4543e7afcb4bcf4f747e9f208f0efa6818")
+                add_versions("17.0.6", "ce78b510603cb3b347788d2f52978e971cf5f55559151ca13a73fd400ad80c41")
+                add_versions("18.1.1", "9f59dd99d45f64a5c00b00d27da8fe8b5f162905026f5c9ef0ade6e73ae18df3")
                 precompiled = true
             else
-                if is_arch("x86") then
-                    set_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win32.zip")
-                    add_versions("11.0.0", "268043ae0b656cf6272ccb9b8e3f21f51170b74ed8997ddc0b99587983b821ca")
-                    add_versions("14.0.0", "63afc3c472cb279978c5a7efc25b8783a700aeb416df67886b7057eba52a8742")
-                    add_versions("15.0.7", "8dbabb2194404220f8641b4b18b24b36eca0ae751380c23fc7743097e205b95f")
-                    add_versions("16.0.6", "5e1f560f75e7a4c7a6509cf7d9a28b4543e7afcb4bcf4f747e9f208f0efa6818")
-                    add_versions("17.0.6", "ce78b510603cb3b347788d2f52978e971cf5f55559151ca13a73fd400ad80c41")
-                    add_versions("18.1.1", "9f59dd99d45f64a5c00b00d27da8fe8b5f162905026f5c9ef0ade6e73ae18df3")
-                    precompiled = true
-                else
-                    set_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
-                    add_versions("11.0.0", "db5b3a44f8f784ebc71f716b54eb63c0d8d21aead12449f36291ab00820271c7")
-                    add_versions("14.0.0", "c1e1ddf11aa73c58073956d9217086550544328ed5e6ec64c1a709badb231711")
-                    add_versions("15.0.7", "7d29ca82f8b73e9973209e90428ec9f3fbd3b01925bd26e34f59e959e9ea7eb3")
-                    add_versions("16.0.6", "7adb1a630b6cc676a4b983aca9b01e67f770556c6e960e9ee9aa7752c8beb8a3")
-                    add_versions("17.0.6", "c480a4c280234b91f7796a1b73b18134ae62fe7c88d2d0c33312d33cb2999187")
-                    add_versions("18.1.1", "28a9fbcd18f1e7e736ece6d663726bc15649f025343c3004dcbfc2d367b9924c")
-                    add_versions("18.1.8", "c9ff08a5267aa0a909d8aae9d4a08562853daa2eb85eac96eb9d3e33b0be1348")
-                    precompiled = true
-                end
+                set_urls("https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win64.zip")
+                add_versions("11.0.0", "db5b3a44f8f784ebc71f716b54eb63c0d8d21aead12449f36291ab00820271c7")
+                add_versions("14.0.0", "c1e1ddf11aa73c58073956d9217086550544328ed5e6ec64c1a709badb231711")
+                add_versions("15.0.7", "7d29ca82f8b73e9973209e90428ec9f3fbd3b01925bd26e34f59e959e9ea7eb3")
+                add_versions("16.0.6", "7adb1a630b6cc676a4b983aca9b01e67f770556c6e960e9ee9aa7752c8beb8a3")
+                add_versions("17.0.6", "c480a4c280234b91f7796a1b73b18134ae62fe7c88d2d0c33312d33cb2999187")
+                add_versions("18.1.1", "28a9fbcd18f1e7e736ece6d663726bc15649f025343c3004dcbfc2d367b9924c")
+                add_versions("18.1.8", "c9ff08a5267aa0a909d8aae9d4a08562853daa2eb85eac96eb9d3e33b0be1348")
+                precompiled = true
             end
             if not precompiled then
                 set_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz")
