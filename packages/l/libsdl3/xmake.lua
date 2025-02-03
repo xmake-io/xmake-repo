@@ -86,6 +86,7 @@ package("libsdl3")
         end
 
         if package:is_plat("linux", "bsd") then
+            table.insert(packagedeps, "libxcb")
             table.insert(packagedeps, "libxext")
             table.insert(packagedeps, "libx11")
             table.insert(packagedeps, "xorgproto")
