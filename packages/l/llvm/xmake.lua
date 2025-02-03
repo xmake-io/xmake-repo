@@ -27,9 +27,20 @@ package("llvm")
     if on_source then
         on_source(function (package)
             import("core.base.semver")
-
             local precompiled = false
-            local requiredversion = semver.new(package:requireinfo().version)
+            local latest = "18.1.8"
+
+            local requiredversion = (package:requireinfo() and package:requireinfo().version) or "latest" == "latest"
+
+            if requiredversion ~= "latest" and requiredversion ~= latest then
+                if semver.satisfies(latest, (package:requireinfo() and package:requireinfo().version) or latest) then
+                    requiredversion = semver.new(latest)
+                else
+                    requiredversion = semver.new(requiredversion)
+                end
+            else
+                requiredversion = semver.new(latest)
+            end
 
             if package:is_plat("windows") then
                 if requiredversion:major() <= 18 and requiredversion:minor() >= 1 then
