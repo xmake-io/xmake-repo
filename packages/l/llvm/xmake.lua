@@ -71,15 +71,19 @@ package("llvm")
                 precompiled = true
             end
             if not precompiled then
-                package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz")
-                package:add("versions", "11.0.0", "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b")
-                package:add("versions", "14.0.0", "35ce9edbc8f774fe07c8f4acdf89ec8ac695c8016c165dd86b8d10e7cba07e23")
-                package:add("versions", "15.0.7", "8b5fcb24b4128cf04df1b0b9410ce8b1a729cb3c544e6da885d234280dedeac6")
-                package:add("versions", "16.0.5", "37f540124b9cfd4680666e649f557077f9937c9178489cea285a672e714b2863")
-                package:add("versions", "16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
-                package:add("versions", "17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
-                package:add("versions", "18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
-                package:add("versions", "18.1.8", "3e46c24870921c85e3c747f7c422f41c1b7d2f92e066bb72274d6803ef0c63ba")
+                if requiredversion:satisfies("11.0.0") then
+                    package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).tar.xz")
+                    package:add("versions", "11.0.0", "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b")
+                else
+                    package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz")
+                    package:add("versions", "14.0.0", "35ce9edbc8f774fe07c8f4acdf89ec8ac695c8016c165dd86b8d10e7cba07e23")
+                    package:add("versions", "15.0.7", "8b5fcb24b4128cf04df1b0b9410ce8b1a729cb3c544e6da885d234280dedeac6")
+                    package:add("versions", "16.0.5", "37f540124b9cfd4680666e649f557077f9937c9178489cea285a672e714b2863")
+                    package:add("versions", "16.0.6", "ce5e71081d17ce9e86d7cbcfa28c4b04b9300f8fb7e78422b1feb6bc52c3028e")
+                    package:add("versions", "17.0.6", "58a8818c60e6627064f312dbf46c02d9949956558340938b71cf731ad8bc0813")
+                    package:add("versions", "18.1.1", "8f34c6206be84b186b4b31f47e1b52758fa38348565953fad453d177ef34c0ad")
+                    package:add("versions", "18.1.8", "3e46c24870921c85e3c747f7c422f41c1b7d2f92e066bb72274d6803ef0c63ba")
+                end
             end
         end)
     else
