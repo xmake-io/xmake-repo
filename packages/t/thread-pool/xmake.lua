@@ -12,7 +12,7 @@ package("thread-pool")
     add_versions("v3.3.0", "b76c0103c7ed07c137bd5b1988b9c09da280bbbad37588a096d2954c8d996e0f")
 
     on_install(function (package)
-        if package:version():ge("3.5.0") then
+        if package:version() and package:version():ge("3.5.0") then
             os.vcp("include", package:installdir())
         else
             os.vcp("BS_thread_pool.hpp", package:installdir("include"))
@@ -20,5 +20,9 @@ package("thread-pool")
     end)
 
     on_test(function (package)
-        assert(package:has_cxxtypes("BS::thread_pool", {configs = {languages = "c++17"}, includes = "BS_thread_pool.hpp"}))
+        assert(package:check_cxxsnippets({test = [[
+            void test() {
+                BS::thread_pool pool;
+            }
+        ]]}, {configs = {languages = "c++17"}, includes = "BS_thread_pool.hpp"}))
     end)
