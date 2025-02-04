@@ -10,11 +10,11 @@ package("xtrans")
         add_extsources("apt::xtrans-dev", "pacman::xtrans")
     end
 
-    if is_plat("macosx", "linux", "bsd") then
+    if is_plat("macosx", "linux", "bsd", "cross") then
         add_deps("pkg-config", "util-macros", "xorgproto")
     end
 
-    on_install("macosx", "linux", "bsd", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-dependency-tracking",

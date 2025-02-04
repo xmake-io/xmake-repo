@@ -9,11 +9,11 @@ package("xcb-proto")
     add_versions("1.14.1", "85cd21e9d9fbc341d0dbf11eace98d55d7db89fda724b0e598855fcddf0944fd")
     add_versions("1.16.0", "d9c7f010b1105fc3858bf07b5169b2dd8e7493c6652b1fe45f3321d874f291d7")
 
-    if is_plat("macosx", "linux", "bsd") then
+    if is_plat("macosx", "linux", "bsd", "cross") then
         add_deps("pkg-config", "python 3.x", {kind = "binary"})
     end
 
-    on_install("macosx", "linux", "bsd", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         local configs = {"--sysconfdir=" .. package:installdir("etc"),
                          "--localstatedir=" .. package:installdir("var"),
                          "--disable-silent-rules",

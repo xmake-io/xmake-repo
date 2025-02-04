@@ -31,7 +31,8 @@ package("wayland")
         os.mkdir(package:installdir("share", "aclocal"))
 
         -- build wayland
-        local configs = {"-Ddocumentation=false", "-Dc_link_args=-lm"}
+        local configs = {"-Ddtd_validation=false", "-Ddocumentation=false", "-Dtests=false", "-Dc_link_args=-lm"}
+        table.insert(configs, "-Dscanner=" .. (package:is_cross() and "false" or "true"))
         table.insert(configs, "--libdir=lib")
         local envs = meson.buildenvs(package)
         envs.LD_LIBRARY_PATH = path.joinenv(table.join(LD_LIBRARY_PATH, envs.LD_LIBRARY_PATH))
@@ -42,6 +43,8 @@ package("wayland")
     end)
 
     on_test(function (package)
-        os.vrun("wayland-scanner --version")
+        if not package:is_cross() then
+            os.vrun("wayland-scanner --version")
+        end
         assert(package:has_cfuncs("wl_list_init", {includes = "wayland-util.h"}))
     end)
