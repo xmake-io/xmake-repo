@@ -41,9 +41,8 @@ package("llvm")
             else
                 requiredversion = semver.new(latest)
             end
-
             if package:is_plat("windows") then
-                if requiredversion:major() <= 18 and requiredversion:minor() >= 1 then
+                if requiredversion:satisfies("18.1.8") then
                     package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-pc-windows-msvc.tar.xz")
                     package:add("versions", "18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
                     precompiled = true
@@ -68,7 +67,7 @@ package("llvm")
                         precompiled = true
                     end
                 end
-            elseif package:is_plat("linux") and requiredversion:major() <= 18 and requiredversion:minor() >= 1 then
+            elseif package:is_plat("linux") and requiredversion:satisfies("18.1.8") then
                 package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-linux-gnu-ubuntu-18.04.tar.xz")
                 package:add("versions", "18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
                 precompiled = true
