@@ -17,6 +17,7 @@ package("libsdl3")
 
     add_versions("archive:3.2.0", "58d8adc7068d38923f918e0bdaa9c4948f93d9ba204fe4de8cc6eaaf77ad6f82")
     add_versions("archive:3.2.0", "abe7114fa42edcc8097856787fa5d37f256d97e365b71368b60764fe7c10e4f8")
+
     add_versions("github:3.2.2", "release-3.2.2")
     add_versions("github:3.2.0", "release-3.2.0")
 
@@ -86,13 +87,12 @@ package("libsdl3")
         end
 
         if package:is_plat("linux", "bsd", "cross") then
-            table.insert(packagedeps, "libxcb")
             table.insert(packagedeps, "libxext")
             table.insert(packagedeps, "libx11")
             table.insert(packagedeps, "xorgproto")
             table.insert(packagedeps, "wayland")
         elseif package:is_plat("wasm") then
-            -- emscripten enables USE_SDL by default which will conflict with the sdl headers
+            -- emscripten enables USE_SDL by default which will conflict with libsdl headers
             cflags = {"-sUSE_SDL=0"}
         end
         
@@ -113,7 +113,6 @@ package("libsdl3")
             table.insert(configs, "-DCMAKE_INCLUDE_PATH=" .. table.concat(includedirs, ";"))
             cflags = cflags or {}
             for _, includedir in ipairs(includedirs) do
-                print("include dir: " .. includedir)
                 table.insert(cflags, "-I" .. includedir)
             end
         end
