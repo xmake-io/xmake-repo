@@ -6,6 +6,7 @@ package("wasm-micro-runtime")
     add_urls("https://github.com/bytecodealliance/wasm-micro-runtime/archive/refs/tags/WAMR-$(version).tar.gz", {excludes = {"*/language-bindings/python/LICENSE"}})
     add_urls("https://github.com/bytecodealliance/wasm-micro-runtime.git")
 
+    add_versions("2.2.0", "93b6ba03f681e061967106046b1908631ee705312b9a6410f3baee7af7c6aac9")
     add_versions("1.3.2", "58961ba387ed66ace2dd903597f1670a42b8154a409757ae6f06f43fe867a98c")
     add_versions("1.2.3", "85057f788630dc1b8c371f5443cc192627175003a8ea63c491beaff29a338346")
 
@@ -19,8 +20,8 @@ package("wasm-micro-runtime")
     add_configs("fast_interp", {description = "Enable fast interpreter", default = false, type = "boolean"})
     add_configs("aot", {description = "Enable AOT", default = false, type = "boolean"})
     -- TODO: improve llvm
-    add_configs("jit", {description = "Enable JIT", default = false, type = "boolean", readonly = true})
-    add_configs("fast_jit", {description = "Enable Fast JIT", default = false, type = "boolean", readonly = true})
+    add_configs("jit", {description = "Enable JIT", default = false, type = "boolean", readonly=true})
+    add_configs("fast_jit", {description = "Enable Fast JIT", default = false, type = "boolean", readonly=true})
     add_configs("libc", {description = "Choose libc", default = "builtin", type = "string", values = {"builtin", "wasi", "uvwasi"}})
     add_configs("libc_builtin", {description = "Enable builtin libc", default = false, type = "boolean"})
     add_configs("libc_wasi", {description = "Enable wasi libc", default = false, type = "boolean"})
