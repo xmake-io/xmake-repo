@@ -45,7 +45,7 @@ package("libsdl3")
             package:set("policy", "package.cmake_generator.ninja", true)
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("x11") then
-            package:add("deps", "libxext", "libxcb", {private = true})
+            package:add("deps", "libxext", {private = true})
         end
         if package:is_plat("linux", "bsd", "cross") and package:config("wayland") then
             package:add("deps", "wayland", {private = true})
