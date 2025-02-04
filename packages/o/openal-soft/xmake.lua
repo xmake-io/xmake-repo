@@ -1,5 +1,4 @@
 package("openal-soft")
-
     set_homepage("https://openal-soft.org")
     set_description("OpenAL Soft is a software implementation of the OpenAL 3D audio API.")
     set_license("LGPL-2.0")
@@ -9,6 +8,8 @@ package("openal-soft")
     end})
     add_urls("https://github.com/kcat/openal-soft.git")
 
+    add_versions("1.24.1", "e1b6ec960e00bfed3d480330274b0f102dc10e4ae0dbb70fd9db80d6978165b1")
+    add_versions("1.24.0", "d3753f7aba798574ce2dc934e3c47dc655cd7a4652c038f2a860b0e81ff6d3dc")
     add_versions("1.23.1", "dfddf3a1f61059853c625b7bb03de8433b455f2f79f89548cbcbd5edca3d4a4a")
     add_versions("1.22.2", "3e58f3d4458f5ee850039b1a6b4dac2343b3a5985a6a2e7ae2d143369c5b8135")
     add_versions("1.22.0", "814831a8013d7365dfd1917b27f1fb6e723f3be3fe1c6a7ff4516425d8392f68")
@@ -28,11 +29,15 @@ package("openal-soft")
     end
 
     if is_plat("windows", "mingw") then
-        add_syslinks("ole32", "shell32", "user32", "winmm", "kernel32")
+        add_syslinks("ole32", "shell32", "user32", "winmm", "kernel32", "avrt")
+        if is_plat("mingw") then
+            add_syslinks("uuid")
+        end
     elseif is_plat("linux", "cross") then
         add_syslinks("dl", "pthread")
      elseif is_plat("bsd", "cross") then
-        add_syslinks("pthread")
+        add_ldflags("-pthread")
+        add_shflags("-pthread")
     elseif is_plat("android") then
         add_syslinks("dl", "OpenSLES")
     elseif is_plat("macosx", "iphoneos") then
@@ -44,6 +49,15 @@ package("openal-soft")
             package:add("defines", "AL_LIBTYPE_STATIC")
         end
     end)
+
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():ge("1.24.0") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(openal-soft): need ndk version > 22")
+            end
+        end)
+    end
 
     on_install("windows", "linux", "mingw", "macosx", "android", "iphoneos", "cross", "bsd" , function (package)
         if (package:is_plat("linux") and linuxos.name() == "fedora") or package:is_plat("bsd") then
