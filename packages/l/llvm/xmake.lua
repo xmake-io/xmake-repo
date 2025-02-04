@@ -47,7 +47,7 @@ package("llvm")
                     package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-pc-windows-msvc.tar.xz")
                     package:add("versions", "18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
                     precompiled = true
-                else
+                elseif requiredversion:major() ~= 16 and requiredversion:minor() ~= 0 and requiredversion:patch() ~= 5 then
                     if package:is_arch("x86") then
                         package:set("urls", "https://github.com/xmake-mirror/llvm-windows/releases/download/$(version)/clang+llvm-$(version)-win32.zip")
                         package:add("versions", "11.0.0", "268043ae0b656cf6272ccb9b8e3f21f51170b74ed8997ddc0b99587983b821ca")
@@ -73,6 +73,7 @@ package("llvm")
                 package:add("versions", "18.1.8", "22c5907db053026cc2a8ff96d21c0f642a90d24d66c23c6d28ee7b1d572b82e8")
                 precompiled = true
             end
+
             if not precompiled then
                 package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/llvm-project-$(version).src.tar.xz")
                 package:add("versions", "11.0.0", "b7b639fc675fa1c86dd6d0bc32267be9eb34451748d2efd03f674b773000e92b")
