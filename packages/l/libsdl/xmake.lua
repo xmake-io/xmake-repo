@@ -89,7 +89,7 @@ package("libsdl")
     add_includedirs("include", "include/SDL2")
 
     if is_plat("android") then
-        add_configs("sdlmain", {description = "Use SDL_main entry point", default = false, type = "boolean", readonly = true})
+        add_configs("sdlmain", {description = "Use SDL_main entry point", default = false, type = "boolean"})
     else
         add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
     end
