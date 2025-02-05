@@ -12,7 +12,9 @@ package("capstone")
     add_deps("cmake")
 
     on_install("!iphoneos", function (package)
-        package:addenv("PATH", "bin")
+        if not package:is_cross() then
+            package:addenv("PATH", "bin")
+        end
 
         local configs = {
             "-DCAPSTONE_BUILD_CSTOOL=ON",
@@ -24,12 +26,6 @@ package("capstone")
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         table.insert(configs, "-DENABLE_ASAN=" .. (package:config("asan") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-
-        if package:is_plat("windows") and package:is_debug() then
-            local dir = package:installdir(package:config("shared") and "bin" or "lib")
-            os.trycp(path.join(package:buildir(), "capstone.pdb"), dir)
-            os.trycp(path.join(package:buildir(), "cstool.pdb"), package:installdir("bin"))
-        end
     end)
 
     on_test(function (package)
