@@ -89,7 +89,6 @@ package("open3d")
         if package:is_plat("windows") then
             table.insert(configs, "-DSTATIC_WINDOWS_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
-        table.insert(configs, "-DOPEN3D_USE_ONEAPI_PACKAGES=" .. (package:config("blas") == "mkl" and "ON" or "OFF"))
         table.insert(configs, "-DUSE_BLAS=" .. (package:config("blas") == "openblas" and "ON" or "OFF"))
         table.insert(configs, "-DBORINGSSL_ROOT_DIR=" .. package:dep("openssl"):installdir())
         if package:is_plat("windows") then
