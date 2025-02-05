@@ -6,6 +6,7 @@ package("capstone")
     add_urls("https://github.com/capstone-engine/capstone/archive/refs/tags/$(version).tar.gz",
              "https://github.com/capstone-engine/capstone.git")
 
+    add_versions("5.0.5", "3bfd3e7085fbf0fab75fb1454067bf734bb0bebe9b670af7ce775192209348e9")
     add_versions("5.0.3", "3970c63ca1f8755f2c8e69b41432b710ff634f1b45ee4e5351defec4ec8e1753")
 
     add_deps("cmake")
