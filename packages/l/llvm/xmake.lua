@@ -65,10 +65,6 @@ package("llvm")
                         precompiled = true
                     end
                 end
-            elseif package:is_plat("linux") and requiredversion:satisfies("18.1.8") then
-                package:set("urls", "https://github.com/llvm/llvm-project/releases/download/llvmorg-$(version)/clang+llvm-$(version)-x86_64-linux-gnu-ubuntu-18.04.tar.xz")
-                package:add("versions", "18.1.8", "54ec30358afcc9fb8aa74307db3046f5187f9fb89fb37064cdde906e062ebf36")
-                precompiled = true
             end
             if not precompiled then
                 if requiredversion:satisfies("11.0.0") then
