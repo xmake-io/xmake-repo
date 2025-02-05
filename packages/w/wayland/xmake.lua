@@ -31,20 +31,24 @@ package("wayland")
         os.mkdir(package:installdir("share", "aclocal"))
 
         -- build wayland
-        local configs = {"-Ddtd_validation=false", "-Ddocumentation=false", "-Dtests=false", "-Dc_link_args=-lm"}
+        local configs = {"-Ddtd_validation=false", "-Ddocumentation=false", "-Dtests=false", "-Dc_link_args=-lm", "--libdir=lib"}
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
         table.insert(configs, "-Dscanner=" .. (package:is_cross() and "false" or "true"))
-        table.insert(configs, "--libdir=lib")
         local envs = meson.buildenvs(package)
         envs.LD_LIBRARY_PATH = path.joinenv(table.join(LD_LIBRARY_PATH, envs.LD_LIBRARY_PATH))
         envs.PKG_CONFIG_PATH = path.joinenv(table.join(PKG_CONFIG_PATH, envs.PKG_CONFIG_PATH))
         envs.ACLOCAL_PATH    = path.joinenv(table.join(ACLOCAL_PATH, envs.ACLOCAL_PATH))
         envs.ACLOCAL         = ACLOCAL
         meson.install(package, configs, {envs = envs})
+
+        package:addenv("PKG_CONFIG_PATH", path.join("lib", "pkgconfig"))
+        package:addenv("PKG_CONFIG_PATH", path.join("share", "pkgconfig"))
     end)
 
     on_test(function (package)
         if not package:is_cross() then
             os.vrun("wayland-scanner --version")
         end
+        assert(package:check_importfiles("pkgconfig::wayland-client"))
         assert(package:has_cfuncs("wl_list_init", {includes = "wayland-util.h"}))
     end)
