@@ -23,9 +23,8 @@ package("wayland")
         import("package.tools.meson")
 
         -- set environment variables
-        package:addenv("PATH", "bin")
         local LD_LIBRARY_PATH = package:installdir("lib")
-        local PKG_CONFIG_PATH = path.joinenv({package:installdir("lib", "pkgconfig"), package:installdir("share", "pkgconfig")})
+        local PKG_CONFIG_PATH = package:installdir("lib", "pkgconfig")
         local ACLOCAL_PATH = package:installdir("share", "aclocal")
         local ACLOCAL = "aclocal -I " .. package:installdir("share", "aclocal")
         os.mkdir(package:installdir("share", "aclocal"))
@@ -41,8 +40,8 @@ package("wayland")
         envs.ACLOCAL         = ACLOCAL
         meson.install(package, configs, {envs = envs})
 
+        package:addenv("PATH", "bin")
         package:addenv("PKG_CONFIG_PATH", path.join("lib", "pkgconfig"))
-        package:addenv("PKG_CONFIG_PATH", path.join("share", "pkgconfig"))
     end)
 
     on_test(function (package)

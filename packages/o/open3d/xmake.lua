@@ -20,8 +20,10 @@ package("open3d")
     add_deps("openssl", {system = false})
     add_includedirs("include", "include/open3d/3rdparty")
     if is_plat("linux") then
+        add_deps("glfw", {configs = {x11 = true, wayland = true}})
         add_syslinks("stdc++fs")
-        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi", "libxkbcommon", "wayland", "wayland-protocols")
+    else
+        add_deps("glfw")
     end
     on_load("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
         if package:config("cuda") then
@@ -54,6 +56,7 @@ package("open3d")
                          "-DBUILD_WEBRTC=OFF",
                          "-DUSE_SYSTEM_BLAS=ON",
                          "-DUSE_SYSTEM_OPENSSL=ON",
+                         "-DUSE_SYSTEM_GLFW=ON",
                          "-DBUILD_FILAMENT_FROM_SOURCE=OFF",
                          "-DBUILD_CURL_FROM_SOURCE=ON",
                          "-DWITH_IPPICV=OFF",
@@ -86,15 +89,16 @@ package("open3d")
         if package:is_plat("windows") then
             table.insert(configs, "-DSTATIC_WINDOWS_RUNTIME=" .. (package:config("vs_runtime"):startswith("MT") and "ON" or "OFF"))
         end
+        table.insert(configs, "-DOPEN3D_USE_ONEAPI_PACKAGES=" .. (package:config("blas") == "mkl" and "ON" or "OFF"))
         table.insert(configs, "-DUSE_BLAS=" .. (package:config("blas") == "openblas" and "ON" or "OFF"))
         table.insert(configs, "-DBORINGSSL_ROOT_DIR=" .. package:dep("openssl"):installdir())
         if package:is_plat("windows") then
             import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
         elseif package:is_plat("linux") then
-            local envs = import("package.tools.cmake").buildenvs(package, {packagedeps = {"libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi", "libx11", "libxkbcommon", "wayland", "wayland-protocol"}})
+            local envs = import("package.tools.cmake").buildenvs(package, {packagedeps = {"glfw"}})
             print(envs)
             print("Open3d PKG_CONFIG_PATH: ", envs.PKG_CONFIG_PATH)
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi", "libx11", "libxkbcommon", "wayland", "wayland-protocol"}})
+            import("package.tools.cmake").install(package, configs, {packagedeps = {"glfw"}})
         else
             import("package.tools.cmake").install(package, configs)
         end
