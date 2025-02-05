@@ -10,6 +10,7 @@ package("libxmake")
     add_versions("v2.9.8", "e797636aadf072c9b0851dba39b121e93c739d12d78398c91f12e8ed355d6a95")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    add_configs("embed", {description = "Embed lua scripts.", default = false, type = "boolean", readonly = true})
 
     add_includedirs("include")
     if is_plat("windows") then
@@ -38,7 +39,7 @@ package("libxmake")
     end)
 
     on_install("linux", "macosx", "windows", function (package)
-        local configs = {onlylib = true, curses = false}
+        local configs = {onlylib = true, curses = false, embed = package:config("embed")}
         if package:is_plat("windows") then
             configs.pdcurses = false
         end
@@ -49,7 +50,9 @@ package("libxmake")
         io.replace("src/sv/sv/include/semver.h", [[#if defined(_MSC_VER)
 typedef __int8 int8_t;]], '#if defined(_MSC_VER) && (_MSC_VER < 1600)\ntypedef __int8 int8_t;', {plain = true})
         import("package.tools.xmake").install(package, configs)
-        os.cp("../xmake", package:installdir("share"))
+        if not package:config("embed") then
+            os.cp("../xmake", package:installdir("share"))
+        end
         if package:is_plat("linux", "macosx") and package:has_cfuncs("readline", {links = "readline", includes = {"stdio.h", "readline/readline.h"}}) then
             package:add("syslinks", "readline")
         end
