@@ -6,19 +6,22 @@ package("open3d")
 
     add_urls("https://github.com/isl-org/Open3D/archive/refs/tags/$(version).tar.gz",
              "https://github.com/isl-org/Open3D.git")
-    add_versions("v0.15.1", "4bcfbaa6fcbcc14fba46a4d719b9256fffac09b23f8344a7d561b26394159660")
+    add_versions("v0.19.0", "5cedb0e093c6baceab801b903eb8e2558bc2b3999ac57762bf78a39d5e15394a")
     add_versions("v0.17.0", "a7526efaf54434c4d54276fa0ddc63a1555401c30fb10fec9efa3241326bdd27")
+    add_versions("v0.15.1", "4bcfbaa6fcbcc14fba46a4d719b9256fffac09b23f8344a7d561b26394159660")
 
     add_configs("python", {description = "Build the python module.", default = false, type = "boolean"})
     add_configs("cuda",   {description = "Enable CUDA support.", default = false, type = "boolean"})
     add_configs("blas",   {description = "Choose BLAS vendor.", default = "mkl", type = "string", values = {"mkl", "openblas"}})
+
+    set_policy("package.cmake_generator.ninja", false)
 
     add_deps("cmake", "nasm")
     add_deps("openssl", {system = false})
     add_includedirs("include", "include/open3d/3rdparty")
     if is_plat("linux") then
         add_syslinks("stdc++fs")
-        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi")
+        add_deps("libx11", "libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi", "libxkbcommon", "wayland", "wayland-protocols")
     end
     on_load("windows|x64", "linux|x86_64", "macosx|x86_64", function (package)
         if package:config("cuda") then
@@ -88,7 +91,10 @@ package("open3d")
         if package:is_plat("windows") then
             import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
         elseif package:is_plat("linux") then
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi", "libx11"}})
+            local envs = import("package.tools.cmake").buildenvs(package, {packagedeps = {"libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi", "libx11", "libxkbcommon", "wayland", "wayland-protocol"}})
+            print(envs)
+            print("Open3d PKG_CONFIG_PATH: ", envs.PKG_CONFIG_PATH)
+            import("package.tools.cmake").install(package, configs, {packagedeps = {"libxrandr", "libxrender", "libxinerama", "libxcursor", "libxfixes", "libxext", "libxi", "libx11", "libxkbcommon", "wayland", "wayland-protocol"}})
         else
             import("package.tools.cmake").install(package, configs)
         end
