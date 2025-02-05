@@ -85,6 +85,7 @@ package("llvm")
                     package:add("versions", "18.1.8", "3e46c24870921c85e3c747f7c422f41c1b7d2f92e066bb72274d6803ef0c63ba")
                 end
             end
+            package:data_set("precompiled", precompiled)
         end)
     else
         -- After xmake v2.9.5, we'll remove it.
@@ -160,6 +161,10 @@ package("llvm")
     end)
 
     on_install("linux", "macosx|x86_64", "bsd", function (package)
+        if package:data("precompiled") then
+            os.cp("*", package:installdir())
+            return
+        end
         local projects = {
             "bolt",
             "clang",
