@@ -37,10 +37,7 @@ package("libxmake")
     add_defines("LUA_COMPAT_5_1", "LUA_COMPAT_5_2", "LUA_COMPAT_5_3")
 
     on_load(function (package)
-        package:add("links", "xmake", "tbox", "sv", "lcurses")
-        if not package:is_plat("windows") then
-            package:add("deps", "ncurses")
-        end
+        package:add("links", "xmake", "tbox", "sv")
         if package:debug() then
             package:add("defines", "__tb_debug__")
         end
@@ -50,12 +47,12 @@ package("libxmake")
     end)
 
     on_install("linux", "macosx", "windows", function (package)
-        local configs = {"--onlylib=y"}
+        local configs = {onlylib = true, curses = false}
+        if package:is_plat("windows") then
+            configs.pdcurses = false
+        end
         os.cd("core")
         io.replace("xmake.lua", 'set_warnings("all", "error")', "", {plain = true})
-        io.replace("xmake.lua", [[option("pdcurses")
-    set_default(true)
-]], 'option("pdcurses")\nset_default(false)', {plain = true})
         io.replace("src/xmake/engine.c", 'sysarch = "arm64"', 'sysarch = "arm64";', {plain = true})
         io.replace("src/xmake/engine.c", 'sysarch = "arm"', 'sysarch = "arm";', {plain = true})
         io.replace("src/sv/sv/include/semver.h", [[#if defined(_MSC_VER)
