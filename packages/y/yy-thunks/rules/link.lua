@@ -1,3 +1,8 @@
+-- TODO:
+-- YY_Thunks_for_Win8.obj
+-- YY_Thunks_for_Win10.0.10240.obj
+-- YY_Thunks_for_Win10.0.19041.obj
+
 rule("xp")
     on_config(function (target)
         local objectfile = "YY_Thunks_for_WinXP.obj"
