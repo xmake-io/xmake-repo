@@ -25,6 +25,7 @@ package("libxmake")
     else
         add_syslinks("pthread", "dl", "m", "c")
     end
+    add_defines("LUA_COMPAT_5_1", "LUA_COMPAT_5_2", "LUA_COMPAT_5_3")
 
     on_load(function (package)
         package:add("links", "xmake", "tbox", "sv")
