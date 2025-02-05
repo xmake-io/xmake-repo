@@ -15,6 +15,12 @@ package("ggml")
 
     add_deps("cmake")
 
+    on_check("windows", function (package)
+        if package:is_arch("arm.*") and package:has_tool("cxx", "cl") then
+            raise("package(ggml) MSVC is not supported for ARM, use clang")
+        end
+    end)
+
     on_load(function (package)
         if package:config("openmp") then
             package:add("deps", "openmp")
@@ -57,7 +63,10 @@ package("ggml")
         end
     end)
 
-    on_install(function (package)
+    on_install("!cross", function (package)
+        -- Fix missing prefix `lib` for mingw
+        io.replace("CMakeLists.txt", "# remove the lib prefix on win32 mingw\nif (WIN32)", "if(0)", {plain = true})
+
         local configs = {
             "-DGGML_ALL_WARNINGS=OFF",
             "-DGGML_BUILD_TESTS=OFF",
@@ -86,5 +95,5 @@ package("ggml")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("ggml_time_us", {includes = "ggml.h"}))
+        assert(package:has_cfuncs("ggml_time_init", {includes = "ggml.h"}))
     end)
