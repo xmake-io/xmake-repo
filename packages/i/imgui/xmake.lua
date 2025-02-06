@@ -138,10 +138,10 @@ package("imgui")
             end
         end
         if package:config("sdl2_no_renderer") then
-            package:add("deps", "libsdl")
+            package:add("deps", "libsdl2")
         end
         if package:config("sdl2_renderer") then
-            package:add("deps", "libsdl >=2.0.17")
+            package:add("deps", "libsdl2 >=2.0.17")
         end
         if package:config("vulkan") then
             package:add("deps", "vulkansdk")

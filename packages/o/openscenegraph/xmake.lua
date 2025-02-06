@@ -19,7 +19,7 @@ package("openscenegraph")
                         dcmtk      = "DCMTK",
                         ffmpeg     = "FFmpeg",
                         glib       = "GLIB",
-                        libsdl     = "SDL2",
+                        libsdl2    = "SDL2",
                         nvtt       = "NVTT"}
     for config, dep in pairs(configdeps) do
         add_configs(config, {description = "Enable the " .. config .. " plugin.", default = false, type = "boolean"})

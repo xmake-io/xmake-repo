@@ -27,7 +27,7 @@ package("cimgui")
 
     on_load(function (package)
         if package:config("sdl2") then
-            package:add("deps", "libsdl")
+            package:add("deps", "libsdl2")
             package:add("defines", "CIMGUI_USE_SDL2")
         end
         if package:config("opengl2") then
