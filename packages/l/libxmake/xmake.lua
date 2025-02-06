@@ -12,6 +12,8 @@ package("libxmake")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("embed", {description = "Embed lua scripts.", default = true, type = "boolean"})
 
+    add_patches("2.9.8", "patches/2.9.8/prefix.patch", "559e953aab37c54296074de5da88562b410c2b01f859984a054b94468ca751ac")
+
     add_includedirs("include")
     if is_plat("windows") then
         add_ldflags("/export:malloc", "/export:free", "/export:memmove")
