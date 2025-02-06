@@ -34,7 +34,7 @@ package("libsdl2_image")
     add_includedirs("include", "include/SDL2")
 
     on_load(function (package)
-        package:add("deps", "libsdl", { configs = { shared = package:config("shared") }})
+        package:add("deps", "libsdl2", { configs = { shared = package:config("shared") }})
     end)
 
     on_install(function (package)
@@ -53,10 +53,10 @@ target_link_libraries(SDL2_image PRIVATE ${SDL2_LIBRARY})
         local configs = {"-DSDL2IMAGE_SAMPLES=OFF", "-DSDL2IMAGE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        local libsdl = package:dep("libsdl")
-        if libsdl and not libsdl:is_system() then
-            table.insert(configs, "-DSDL2_DIR=" .. libsdl:installdir())
-            local fetchinfo = libsdl:fetch()
+        local libsdl2 = package:dep("libsdl2")
+        if libsdl2 and not libsdl2:is_system() then
+            table.insert(configs, "-DSDL2_DIR=" .. libsdl2:installdir())
+            local fetchinfo = libsdl2:fetch()
             if fetchinfo then
                 for _, dir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
                     if os.isfile(path.join(dir, "SDL_version.h")) then

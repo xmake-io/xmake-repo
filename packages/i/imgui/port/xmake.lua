@@ -28,9 +28,9 @@ if has_config("glad") then
 end
 
 if has_config("sdl2_renderer") then
-    add_requires("libsdl >=2.0.17")
+    add_requires("libsdl2 >=2.0.17")
 elseif has_config("sdl2") then
-    add_requires("libsdl")
+    add_requires("libsdl2")
 end
 
 if has_config("vulkan") then
@@ -105,7 +105,7 @@ target("imgui")
             add_files("backends/imgui_impl_sdl.cpp")
             add_headerfiles("(backends/imgui_impl_sdl.h)")
         end
-        add_packages("libsdl")
+        add_packages("libsdl2")
     end
 
     if has_config("sdl2_renderer") then
@@ -116,7 +116,7 @@ target("imgui")
             add_files("backends/imgui_impl_sdlrenderer.cpp")
             add_headerfiles("(backends/imgui_impl_sdlrenderer.h)")
         end
-        add_packages("libsdl")
+        add_packages("libsdl2")
     end
 
     if has_config("vulkan") then

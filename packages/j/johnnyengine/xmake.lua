@@ -8,7 +8,7 @@ package("johnnyengine")
     add_versions("1.0.1", "53c11b827bea6fe30f9bca27adbd712eec85a0853c0402407930bae78ad54a8f")
     add_patches("1.0.1", path.join(os.scriptdir(), "patches", "1.0.1", "win32_shared_fix.patch"), "fbe22cb5a9f0485982c7755936d14de6da3ce80a42394d48946b14b922847611")
 
-    add_deps("glew", "libsdl", "libsdl_ttf", "libsdl_mixer", "libsdl_gfx", "box2d", "assimp", "stb", "tmxparser")
+    add_deps("glew", "libsdl2", "libsdl2_ttf", "libsdl2_mixer", "libsdl2_gfx", "box2d", "assimp", "stb", "tmxparser")
 
     on_install("windows", "linux", "macosx", function (package)
         import("package.tools.xmake").install(package, {kind = (package:config("shared") and "shared" or "static")})

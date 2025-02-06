@@ -30,22 +30,22 @@ package("libsdl2_gfx")
     add_includedirs("include", "include/SDL2")
 
     on_load(function (package)
-        package:add("deps", "libsdl", { configs = { shared = package:config("shared") }})
+        package:add("deps", "libsdl2", { configs = { shared = package:config("shared") }})
     end)
 
     on_install("windows|x86", "windows|x64", "macosx", "linux", function(package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
             if is_kind("shared") then
-                add_requires("libsdl", {configs = {shared = true}})
+                add_requires("libsdl2", {configs = {shared = true}})
             else
-                add_requires("libsdl")
+                add_requires("libsdl2")
             end
             target("SDL2_gfx")
                 set_kind("$(kind)")
                 add_files("*.c")
                 add_headerfiles("*.h", {prefixdir = "SDL2"})
-                add_packages("libsdl")
+                add_packages("libsdl2")
                 add_rules("utils.install.pkgconfig_importfiles")
                 if is_plat("windows") and is_kind("shared") then
                     add_defines("DLL_EXPORT")
