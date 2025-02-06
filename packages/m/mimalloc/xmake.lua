@@ -30,6 +30,8 @@ package("mimalloc")
         add_configs("etw", {description = "Enable Event tracing for Windows", default = false, type = "boolean"})
     end
 
+    set_policy("package.cmake_generator.ninja", true)
+
     add_deps("cmake")
 
     if is_plat("windows") then
@@ -79,11 +81,6 @@ package("mimalloc")
         if package:gitref() or package:version():ge("2.1.2") then
             table.insert(configs, "-DMI_INSTALL_TOPLEVEL=ON")
             import("package.tools.cmake").install(package, configs, {cxflags = cxflags})
-
-            if package:is_plat("windows") and package:is_debug() then
-                local dir = package:installdir(package:config("shared") and "bin" or "lib")
-                os.cp(path.join(package:buildir(), "mimalloc-debug.pdb"), dir)
-            end
         else
             import("package.tools.cmake").build(package, configs, {buildir = "build", cxflags = cxflags})
 
@@ -96,7 +93,7 @@ package("mimalloc")
             elseif package:is_plat("macosx") then
                 os.trycp("build/*.dylib", package:installdir("bin"))
                 os.trycp("build/*.dylib", package:installdir("lib"))
-                os.trycp("build/*.a", package:installdir("lib"))               
+                os.trycp("build/*.a", package:installdir("lib"))
             else
                 os.trycp("build/*.so", package:installdir("bin"))
                 os.trycp("build/*.so", package:installdir("lib"))
