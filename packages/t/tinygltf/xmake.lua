@@ -20,10 +20,11 @@ package("tinygltf")
     add_deps("cmake", "nlohmann_json", "stb")
 
     on_install(function (package)
+        io.replace("tiny_gltf.h", [[#include "json.hpp"]], "#include <nlohmann/json.hpp>", {plain = true})
+
         local configs = {
             "-DTINYGLTF_BUILD_LOADER_EXAMPLE=OFF",
-            "-DTINYGLTF_HEADER_ONLY=ON",
-            "-DTINYGLTF_INSTALL_VENDOR=OFF",
+            "-DTINYGLTF_HEADER_ONLY=ON"
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
