@@ -20,6 +20,8 @@ package("tinygltf")
     add_deps("cmake", "nlohmann_json", "stb")
 
     on_install(function (package)
+        io.replace("tiny_gltf.h", [[#include "json.hpp"]], "#include <nlohmann/json.hpp>", {plain = true})
+
         local configs = {
             "-DTINYGLTF_BUILD_LOADER_EXAMPLE=OFF",
             "-DTINYGLTF_HEADER_ONLY=ON",

@@ -4,8 +4,9 @@ package("nlohmann_json")
     set_description("JSON for Modern C++")
     set_license("MIT")
 
-    add_urls("https://github.com/nlohmann/json/archive/$(version).tar.gz",
+    add_urls("https://github.com/nlohmann/json/archive/refs/tags/$(version).tar.gz",
              "https://github.com/nlohmann/json.git")
+
     add_versions("v3.11.3", "0d8ef5af7f9794e3263480193c491549b2ba6cc74bb018906202ada498a79406")
     add_versions("v3.11.2", "d69f9deb6a75e2580465c6c4c5111b89c4dc2fa94e3a85fcd2ffcd9a143d9273")
     add_versions("v3.10.5", "5daca6ca216495edf89d167f808d1d03c4a4d929cef7da5e10f135ae1540c7e4")
