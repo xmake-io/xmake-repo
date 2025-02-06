@@ -11,6 +11,14 @@ package("thread-pool")
     add_versions("v4.1.0", "be7abecbc420bb87919eeef729b13ff7c29d5ce547bdae284923296c695415bd")
     add_versions("v3.3.0", "b76c0103c7ed07c137bd5b1988b9c09da280bbbad37588a096d2954c8d996e0f")
 
+    if on_check then
+        on_check("bsd", function (package)
+            if package:version() and package:version():ge("5.0.0") then
+                raise("package(thread-pool) unsupported platform")
+            end
+        end)
+    end
+
     on_install(function (package)
         if package:version() and package:version():ge("3.5.0") then
             os.vcp("include", package:installdir())
