@@ -12,7 +12,7 @@ package("libxmake")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("embed", {description = "Embed lua scripts.", default = true, type = "boolean"})
 
-    add_patches("2.9.8", "patches/2.9.8/prefix.patch", "559e953aab37c54296074de5da88562b410c2b01f859984a054b94468ca751ac")
+    add_patches("2.9.8", "patches/2.9.8/xmake-cli.patch", "8d1cc779a4ee6a6958c4e5d9dae2f8811210518a1a48f47c540c363053f6b10b")
 
     add_includedirs("include")
     if is_plat("windows") then
