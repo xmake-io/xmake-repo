@@ -1,4 +1,4 @@
-package("libsdl_ttf")
+package("libsdl2_ttf")
     set_homepage("https://github.com/libsdl-org/SDL_ttf/")
     set_description("Simple DirectMedia Layer text rendering library")
     set_license("zlib")

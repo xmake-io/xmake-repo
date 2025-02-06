@@ -1,4 +1,4 @@
-package("libsdl")
+package("libsdl2")
     set_homepage("https://www.libsdl.org/")
     set_description("Simple DirectMedia Layer")
     set_license("zlib")
@@ -216,7 +216,9 @@ package("libsdl")
     end)
 
     on_install(function (package)
-        io.replace("src/sensor/android/SDL_androidsensor.c", "ALooper_pollAll", "ALooper_pollOnce", {plain = true})
+        if os.isfile("src/sensor/android/SDL_androidsensor.c") then
+            io.replace("src/sensor/android/SDL_androidsensor.c", "ALooper_pollAll", "ALooper_pollOnce", {plain = true})
+        end
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))

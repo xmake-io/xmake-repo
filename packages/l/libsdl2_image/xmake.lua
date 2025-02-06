@@ -1,4 +1,4 @@
-package("libsdl_image")
+package("libsdl2_image")
     set_homepage("http://www.libsdl.org/projects/SDL_image/")
     set_description("Simple DirectMedia Layer image loading library")
     set_license("zlib")

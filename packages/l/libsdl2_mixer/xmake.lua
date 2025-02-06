@@ -1,31 +1,31 @@
-package("libsdl_net")
-    set_homepage("https://www.libsdl.org/projects/SDL_net/")
-    set_description("Simple DirectMedia Layer networking library")
+package("libsdl2_mixer")
+    set_homepage("https://www.libsdl.org/projects/SDL_mixer/")
+    set_description("Simple DirectMedia Layer mixer audio library")
     set_license("zlib")
 
-    add_urls("https://www.libsdl.org/projects/SDL_net/release/SDL2_net-$(version).zip",
-             "https://github.com/libsdl-org/SDL_net/releases/download/release-$(version)/SDL2_net-$(version).zip")
-    add_versions("2.2.0", "1eec3a9d43df019d7916a6ecce32f2a3ad5248c82c9c237948afc712399be36d")
+    add_urls("https://www.libsdl.org/projects/SDL_mixer/release/SDL2_mixer-$(version).zip",
+             "https://github.com/libsdl-org/SDL_mixer/releases/download/release-$(version)/SDL2_mixer-$(version).zip")
+    add_versions("2.0.4", "9affb8c7bf6fbffda0f6906bfb99c0ea50dca9b188ba9e15be90042dc03c5ded")
+    add_versions("2.6.0", "aca0ffc96a4bf2a56a16536a269de28e341ce38a46a25180bc1ef75e19b08a3a")
+    add_versions("2.6.1", "788c748c1d3a87126511e60995b03526ed4e31e2ba053dffd9dcc8abde97b950")
+    add_versions("2.6.2", "61549615a67e731805ca1df553e005be966a625c1d20fb085bf99edeef6e0469")
+    add_versions("2.8.0", "02df784cc68723419dd266530ee6964f810a6f02a27b03ecc85689c2e5e442ce")
 
     if is_plat("mingw") and is_subhost("msys") then
-        add_extsources("pacman::SDL2_net")
+        add_extsources("pacman::SDL2_mixer")
     elseif is_plat("linux") then
-        add_extsources("pacman::sdl2_net", "apt::libsdl2-net-dev")
+        add_extsources("pacman::sdl2_mixer", "apt::libsdl2-mixer-dev")
     elseif is_plat("macosx") then
-        add_extsources("brew::sdl2_net")
+        add_extsources("brew::sdl2_mixer")
     end
 
     add_deps("cmake")
 
-    if is_plat("windows", "mingw") then
-        add_syslinks("iphlpapi", "ws2_32")
-    end
+    add_includedirs("include", "include/SDL2")
 
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
-
-    add_includedirs("include", "include/SDL2")
 
     on_load(function (package)
         package:add("deps", "libsdl", { configs = { shared = package:config("shared") }})
@@ -34,17 +34,28 @@ package("libsdl_net")
     on_install(function (package)
         if package:is_plat("wasm") then
             io.replace("CMakeLists.txt", "sdl_find_sdl2(${sdl2_target_name} ${SDL_REQUIRED_VERSION})", "", {plain = true})
-            io.replace("CMakeLists.txt", "target_link_libraries(SDL2_net PRIVATE $<BUILD_INTERFACE:${sdl2_target_name}>)", [[
-target_include_directories(SDL2_net PRIVATE ${SDL2_INCLUDE_DIR})
-target_link_libraries(SDL2_net PRIVATE $<BUILD_INTERFACE:${SDL2_LIBRARY}>)
+            io.replace("CMakeLists.txt", "target_link_libraries(SDL2_mixer PRIVATE $<BUILD_INTERFACE:${sdl2_target_name}>)", [[
+target_include_directories(SDL2_mixer PRIVATE ${SDL2_INCLUDE_DIR})
+target_link_libraries(SDL2_mixer PRIVATE $<BUILD_INTERFACE:${SDL2_LIBRARY}>)
             ]], {plain = true})
-            io.replace("CMakeLists.txt", "target_link_libraries(SDL2_net PRIVATE ${sdl2_target_name})", [[
-target_include_directories(SDL2_net PRIVATE ${SDL2_INCLUDE_DIR})
-target_link_libraries(SDL2_net PRIVATE ${SDL2_LIBRARY})
+            io.replace("CMakeLists.txt", "target_link_libraries(SDL2_mixer PRIVATE ${sdl2_target_name})", [[
+target_include_directories(SDL2_mixer PRIVATE ${SDL2_INCLUDE_DIR})
+target_link_libraries(SDL2_mixer PRIVATE ${SDL2_LIBRARY})
             ]], {plain = true})
         end
 
-        local configs = {"-DSDL2NET_SAMPLES=OFF"}
+        local configs = {
+                            "-DSDL2MIXER_CMD=OFF",
+                            "-DSDL2MIXER_FLAC=OFF",
+                            "-DSDL2MIXER_GME=OFF",
+                            "-DSDL2MIXER_MIDI=OFF",
+                            "-DSDL2MIXER_MOD=OFF",
+                            "-DSDL2MIXER_MP3=ON", -- was on by not being here
+                            "-DSDL2MIXER_OPUS=OFF",
+                            "-DSDL2MIXER_SAMPLES=OFF",
+                            "-DSDL2MIXER_WAVE=ON", -- was on by not being here
+                            "-DSDL2MIXER_WAVPACK=OFF",
+                        }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local libsdl = package:dep("libsdl")
@@ -69,17 +80,16 @@ target_link_libraries(SDL2_net PRIVATE ${SDL2_LIBRARY})
                 table.insert(configs, "-DSDL2_LIBRARY=" .. table.concat(libfiles, ";"))
             end
         end
-        io.replace("CMakeLists.txt", "find_package(SDL2test)", "", {plain = true})
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <SDL2/SDL.h>
-            #include <SDL2/SDL_net.h>
+            #include <SDL2/SDL_mixer.h>
             int main(int argc, char** argv) {
-                SDLNet_Init();
-                SDLNet_Quit();
+                Mix_Init(MIX_INIT_OGG);
+                Mix_Quit();
                 return 0;
             }
         ]]}, {configs = {defines = "SDL_MAIN_HANDLED"}}));
