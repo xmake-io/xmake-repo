@@ -26,6 +26,15 @@ package("ada")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():ge("3.0.0") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(ada >=3.0.0) require ndk version > 22")
+            end
+        end)
+    end
+
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(singleheader)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(tools)", "", {plain = true})
