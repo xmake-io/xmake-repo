@@ -30,17 +30,27 @@ package("ada")
         io.replace("CMakeLists.txt", "add_subdirectory(singleheader)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(tools)", "", {plain = true})
 
+        io.replace("src/CMakeLists.txt", "/WX", "", {plain = true})
+
         local configs = {"-DBUILD_TESTING=OFF", "-DADA_TOOLS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        table.insert(configs, "-DADA_SANITIZE=" .. (package:config("asan") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
+        local languages
+        if package:version() and package:version():ge("3.0.0") then
+            languages = "c++20"
+        else
+            languages = "c++17"
+        end
         assert(package:check_cxxsnippets({test = [[
+            #include <iostream>
             #include <ada.h>
             void test() {
                 auto url = ada::parse<ada::url_aggregator>("https://xmake.io");
             }
-        ]]}, {configs = {languages = "c++17"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
