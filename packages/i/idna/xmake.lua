@@ -3,8 +3,10 @@ package("idna")
     set_description("C++ library implementing the to_ascii and to_unicode functions from the Unicode Technical Standard.")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/ada-url/idna.git")
-    add_versions("2024.02.28", "fff988508f659ef5c6494572ebea3d5db2466ed0")
+    set_urls("https://github.com/ada-url/idna/archive/refs/tags/$(version).tar.gz",
+             "https://github.com/ada-url/idna.git")
+
+    add_versions("0.2.0", "fa9aac3611d11ef4c0196d74bfbf5d12b87814b62d70c101e8eb74fb65c636c9")
 
     add_deps("cmake")
 
