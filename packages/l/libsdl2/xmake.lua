@@ -94,7 +94,6 @@ package("libsdl2")
         add_configs("sdlmain", {description = "Use SDL_main entry point", default = true, type = "boolean"})
     end
 
-
     if is_plat("linux", "bsd", "cross") then
         add_configs("x11", {description = "Enables X11 support (requires it on the system)", default = true, type = "boolean"})
         add_configs("wayland", {description = "Enables Wayland support", default = nil, type = "boolean"})
