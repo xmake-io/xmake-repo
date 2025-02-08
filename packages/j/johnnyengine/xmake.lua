@@ -10,8 +10,24 @@ package("johnnyengine")
 
     add_deps("glew", "libsdl2", "libsdl2_ttf", "libsdl2_mixer", "libsdl2_gfx", "box2d 2.x", "assimp", "stb", "tmxparser")
 
-    on_install("windows", "linux", "macosx", function (package)
-        io.replace("xmake.lua", [[add_requires("glew", "libsdl", "libsdl_ttf", "libsdl_mixer", "libsdl_gfx", "box2d", "assimp", "stb", "tmxparser")]], [[add_requires("glew", "libsdl2", "libsdl2_ttf", "libsdl2_mixer", "libsdl2_gfx", "box2d 2.x", "assimp", "stb", "tmxparser")]], {plain = true})
+    on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
+        io.writefile("xmake.lua", [[
+set_project("johnny-engine")
+
+add_requires("glew", "libsdl2", "libsdl2_ttf", "libsdl2_mixer", "libsdl2_gfx", "box2d 2.x", "assimp", "stb", "tmxparser")
+
+add_rules("mode.debug", "mode.release")
+target("johnny-engine")
+    set_kind("$(kind)")
+    add_defines("STB_IMAGE_IMPLEMENTATION")
+    set_languages("c++11")
+
+    add_packages("glew", "libsdl2", "libsdl2_ttf", "libsdl2_mixer", "libsdl2_gfx", "box2d 2.x", "assimp", "stb", "tmxparser")
+
+    add_files("src/*.cpp")
+    add_headerfiles("include/*.h")
+    add_includedirs("include")
+        ]])
         import("package.tools.xmake").install(package, {kind = (package:config("shared") and "shared" or "static")})
     end)
 
