@@ -6,6 +6,7 @@ package("lief")
     set_urls("https://github.com/lief-project/LIEF/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lief-project/LIEF.git")
 
+    add_versions("0.16.3", "465121937c0b7885e9ceb0f6fc452a0b06b8cf2b3aabb454bfa9d4cb985d33d3")
     add_versions("0.16.2", "895ce0321b233a6d610ed89ccbe8dc4aa2cf0bb959919a1db0693ba264f3d29a")
     add_versions("0.16.1", "9fb3d18bd2182170f65c63b577c680de53605e92d18a22d49b535ca61349c5db")
     add_versions("0.16.0", "532be16c49539aa98156a9f59c0cd8e7ad6f6b93afbfc6346ad6cb95edf246c2")
@@ -14,10 +15,9 @@ package("lief")
     add_versions("0.11.5", "6d6d57304a56850958e4ce54f3da2ea2b9eb856ccbab61c6cde9cba15d7c9da5")
     add_versions("0.14.0", "400804e38cb5ce8d15fb52a4db6345f02da7b2e5cb773665712283001482b808")
     add_versions("0.14.1", "92916dcb3178353d863aef4f409186889983c56e025b774741d5316a72ec3a7d")
-
     add_patches("0.15.1", "patches/0.15.1/algorithm.patch", "3e110539c3db037b2b24cd32f97ad8cc6241b1f69d4a65dab9fd6c84e482bbd9")
     add_patches("0.16.0", "https://github.com/lief-project/LIEF/commit/41166332a2435fdb7d2bdc5c73f9ff9b442c5459.patch", "e42e5dd7e4c7a24bf712c1a7c9efa19c9daf835fc85dd35c8ab4b81d1807d833")
-    
+
     add_configs("elf",    {description = "Enable ELF module.", default = true, type = "boolean"})
     add_configs("pe",     {description = "Enable PE module.", default = true, type = "boolean"})
     add_configs("macho",  {description = "Enable MachO module.", default = true, type = "boolean"})
@@ -59,7 +59,9 @@ package("lief")
             package:add("defines", "LIEF_IMPORT")
         end
 
-        os.rm("third-party")
+        if package:gitref() and package:version():ge("0.15.0") then
+            os.rm("third-party")
+        end
 
         io.replace("CMakeLists.txt", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp)", "target_link_libraries(LIB_LIEF PRIVATE utf8cpp::utf8cpp)", {plain = true})
 

@@ -15,6 +15,7 @@ package("reflect-cpp")
     add_versions("v0.11.1", "e45f112fb3f14507a4aa53b99ae2d4ab6a4e7b2d5f04dd06fec00bf7faa7bbdc")
     add_versions("v0.10.0", "d2c8876d993ddc8c57c5804e767786bdb46a2bdf1a6cd81f4b14f57b1552dfd7")
 
+    add_patches("0.17.0", "patches/0.17.0/cmake.patch", "b5956162feb37a369b80329ee4e56408f9b241001d3d8b8e89e2a4b352579c53")
     add_patches("0.16.0", "patches/0.16.0/cmake.patch", "1b2a6e0ed81dd0bd373bd1daaf52010de965f3829e5e19406c53e8ebf0a5b9fc")
     add_patches("0.11.1", "patches/0.11.1/cmake.patch", "a43ae2c6de455054ab860adfb309da7bd376c31c493c8bab0ebe07aae0805205")
     add_patches("0.10.0", "patches/0.10.0/cmake.patch", "b8929c0a13bd4045cbdeea0127e08a784e2dc8c43209ca9f056fff4a3ab5c4d3")
@@ -22,6 +23,7 @@ package("reflect-cpp")
     add_configs("bson", {description = "Enable Bson Support.", default = false, type = "boolean", readonly = true})
     add_configs("yyjson", {description = "Enable yyjson Support.", default = true, type = "boolean"})
     add_configs("cbor", {description = "Enable Cbor Support.", default = false, type = "boolean"})
+    add_configs("capnproto", {description = "Enable Capnproto Support.", default = false, type = "boolean"})
     add_configs("flatbuffers", {description = "Enable Flexbuffers Support.", default = false, type = "boolean"})
     add_configs("msgpack", {description = "Enable Msgpack Support.", default = false, type = "boolean"})
     add_configs("xml", {description = "Enable Xml Support.", default = false, type = "boolean"})
@@ -48,6 +50,9 @@ package("reflect-cpp")
                 }
             ]]}, {configs = {languages = "c++20"}}), "package(reflect-cpp) Require at least C++20.")
         end
+        if package:config("capnproto") and package:version() <= "0.16.0" then
+            raise("package(reflect-cpp): capnproto is not supported for version 0.16.0 and below.")
+        end
     end)
 
     on_load(function (package)
@@ -57,6 +62,10 @@ package("reflect-cpp")
 
         if package:config("cbor") then
             package:add("deps", "tinycbor")
+        end
+
+        if package:config("capnproto") then
+            package:add("deps", "capnproto")
         end
 
         if package:config("flatbuffers") then
@@ -82,6 +91,8 @@ package("reflect-cpp")
         if package:config("ubjson") then
             package:add("deps", "jsoncons")
         end
+
+
 
         local version = package:version()
         if version then
@@ -113,6 +124,7 @@ package("reflect-cpp")
             table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_BSON=" .. (package:config("bson") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_CBOR=" .. (package:config("cbor") and "ON" or "OFF"))
+            table.insert(configs, "-DREFLECTCPP_CAPNPROTO=" .. (package:config("capnproto") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_FLEXBUFFERS=" .. (package:config("flatbuffers") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_MSGPACK=" .. (package:config("msgpack") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_XML=" .. (package:config("xml") and "ON" or "OFF"))
@@ -120,15 +132,17 @@ package("reflect-cpp")
             table.insert(configs, "-DREFLECTCPP_UBJSON=" .. (package:config("ubjson") and "ON" or "OFF"))
             table.insert(configs, "-DREFLECTCPP_YAML=" .. (package:config("yaml") and "ON" or "OFF"))
             import("package.tools.cmake").install(package, configs)
+        else 
+            os.rm("include/thirdparty")
+            os.cp("include", package:installdir())
         end
-        os.rm("include/thirdparty")
-        os.cp("include", package:installdir())
     end)
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             #include <rfl/json.hpp>
             #include <rfl.hpp>
+            #include <rfl/DefaultIfMissing.hpp>
             struct Person {
                 std::string first_name;
                 std::string last_name;
@@ -139,8 +153,8 @@ package("reflect-cpp")
                                       .age = 45};
             void test() {
                 const std::string json_string = rfl::json::write(homer);
-                auto homer2 = rfl::json::read<Person>(json_string).value();
-            }   
+                auto homer2 = rfl::json::read<Person, rfl::DefaultIfMissing>(json_string).value();
+            }
         ]]}, {configs = {languages = "c++20"}}))
         if package:config("msgpack") then
             assert(package:check_cxxsnippets({test = [[
@@ -157,6 +171,24 @@ package("reflect-cpp")
                 void test() {
                     std::vector<char> msgpack_str_vec = rfl::msgpack::write(homer);
                     auto homer2 = rfl::msgpack::read<Person>(msgpack_str_vec).value();
+                }
+            ]]}, {configs = {languages = "c++20"}}))
+        end
+        if package:config("capnproto") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <rfl/capnproto.hpp>
+                #include <rfl.hpp>
+                struct Person {
+                    std::string first_name;
+                    std::string last_name;
+                    int age;
+                };
+                const auto homer = Person{.first_name = "Homer",
+                                          .last_name = "Simpson",
+                                          .age = 45};
+                void test() {
+                    std::vector<char> capnproto_str_vec = rfl::capnproto::write(homer);
+                    auto homer2 = rfl::capnproto::read<Person>(capnproto_str_vec).value();
                 }
             ]]}, {configs = {languages = "c++20"}}))
         end
