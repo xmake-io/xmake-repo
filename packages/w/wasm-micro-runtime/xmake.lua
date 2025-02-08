@@ -11,7 +11,9 @@ package("wasm-micro-runtime")
     add_versions("1.2.3", "85057f788630dc1b8c371f5443cc192627175003a8ea63c491beaff29a338346")
 
     add_patches("1.3.2", path.join(os.scriptdir(), "patches", "1.3.2", "cmake.patch"), "cf0e992bdf3fe03f7dc03624fd757444291a5286b1ceef6532bbf3f9567f394b")
-    add_patches("2.2.0", path.join(os.scriptdir(), "patches", "2.2.0", "8c2759c9d62a4e3203b4c7d210640cf2d031c388.patch"), "c13ce6f24922d6cb7f0f424f68d1a789b34d1e85273e6b2c420a9a11995fcf89")
+    if is_plat("windows") then
+        add_patches("2.2.0", path.join(os.scriptdir(), "patches", "2.2.0", "8c2759c9d62a4e3203b4c7d210640cf2d031c388.patch"), "c13ce6f24922d6cb7f0f424f68d1a789b34d1e85273e6b2c420a9a11995fcf89")
+    end
     add_patches("1.2.3", path.join(os.scriptdir(), "patches", "1.2.3", "cmake.patch"), "97d99509997b86d24a84cd1b2eca0d4dace7b460d5cb85bc23881d02e7ef08ed")
 
     add_patches("1.3.2", path.join(os.scriptdir(), "patches", "libc_uvwasi.patch"), "e83ff42588cc112588c7fde48a1bd9df7ffa8fa41f70dd99af5d6b0325ce46f7")
