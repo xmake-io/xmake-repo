@@ -52,5 +52,5 @@ target("johnny-engine")
           Rectangle<int> r(1, 2, 3, 4);
           Game().run();
         }
-        ]]}, {configs = {languages = "cxx11"}, includes = "Johnny.h"}))
+        ]]}, {configs = {defines = "SDL_MAIN_HANDLED", languages = "cxx11"}, includes = "Johnny.h"}))
     end)
