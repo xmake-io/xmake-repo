@@ -63,8 +63,16 @@ package("libsdl2_gfx")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("aacircleRGBA", {includes = {"SDL2/SDL_main.h", "SDL2/SDL2_gfxPrimitives.h"}}))
-        assert(package:has_cfuncs("SDL_initFramerate", {includes = {"SDL2/SDL_main.h", "SDL2/SDL2_framerate.h"}}))
-        assert(package:has_cfuncs("rotozoomSurface", {includes = {"SDL2/SDL_main.h", "SDL2/SDL2_rotozoom.h"}}))
-        assert(package:has_cfuncs("SDL_imageFilterAdd", {includes = {"SDL2/SDL_main.h", "SDL2/SDL2_imageFilter.h"}}))
+        local ldflags
+        if package:is_plat("windows") then
+            if package:has_tool("cxx", "cl", "clang-cl") then
+                ldflags = "-subsystem:console"
+            elseif package:has_tool("cxx", "clang", "clangxx") then
+                ldflags = "-Wl,/subsystem:console"
+            end
+        end
+        assert(package:has_cfuncs("aacircleRGBA", {includes = {"SDL2/SDL_main.h", "SDL2/SDL2_gfxPrimitives.h"}, configs = {ldflags = ldflags}}))
+        assert(package:has_cfuncs("SDL_initFramerate", {includes = {"SDL2/SDL_main.h", "SDL2/SDL2_framerate.h"}, configs = {ldflags = ldflags}}))
+        assert(package:has_cfuncs("rotozoomSurface", {includes = {"SDL2/SDL_main.h", "SDL2/SDL2_rotozoom.h"}, configs = {ldflags = ldflags}}))
+        assert(package:has_cfuncs("SDL_imageFilterAdd", {includes = {"SDL2/SDL_main.h", "SDL2/SDL2_imageFilter.h"}, configs = {ldflags = ldflags}}))
     end)
