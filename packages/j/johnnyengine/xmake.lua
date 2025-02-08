@@ -22,7 +22,7 @@ target("johnny-engine")
     add_defines("STB_IMAGE_IMPLEMENTATION")
     set_languages("c++11")
 
-    add_packages("glew", "libsdl2", "libsdl2_ttf", "libsdl2_mixer", "libsdl2_gfx", "box2d 2.x", "assimp", "stb", "tmxparser")
+    add_packages("glew", "libsdl2", "libsdl2_ttf", "libsdl2_mixer", "libsdl2_gfx", "box2d", "assimp", "stb", "tmxparser")
 
     add_files("src/*.cpp")
     add_headerfiles("include/*.h")
