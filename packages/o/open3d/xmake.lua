@@ -19,6 +19,7 @@ package("open3d")
 
     add_deps("cmake", "nasm")
     add_deps("openssl", {system = false})
+    add_deps("libcurl 7.x", {configs = {openssl = true}})
     add_includedirs("include", "include/open3d/3rdparty")
     if is_plat("linux") then
         add_deps("glfw", {configs = {x11 = true, wayland = true}})
@@ -58,6 +59,7 @@ package("open3d")
                          "-DBUILD_WEBRTC=OFF",
                          "-DUSE_SYSTEM_BLAS=ON",
                          "-DUSE_SYSTEM_OPENSSL=ON",
+                         "-DUSE_SYSTEM_CURL=ON",
                          "-DUSE_SYSTEM_GLFW=ON",
                          "-DBUILD_FILAMENT_FROM_SOURCE=OFF",
                          "-DBUILD_CURL_FROM_SOURCE=ON",
