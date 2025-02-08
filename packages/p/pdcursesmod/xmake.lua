@@ -32,7 +32,7 @@ package("pdcursesmod")
             package:add("defines", "PDC_DLL_BUILD")
         end
     end)
-    
+
     on_install("linux", "macosx", "mingw", "windows", function (package)
         io.writefile("xmake.lua", [[
             add_rules("mode.debug", "mode.release")
@@ -59,7 +59,7 @@ package("pdcursesmod")
                 end
         ]])
         local configs = {}
-        if package:config("shared") then 
+        if package:config("shared") then
             configs.kind = "shared"
         end
         configs.port = package:config("port")
