@@ -95,7 +95,7 @@ package("open3d")
         end
         table.insert(configs, "-DUSE_BLAS=" .. (package:config("blas") == "openblas" and "ON" or "OFF"))
         table.insert(configs, "-DBORINGSSL_ROOT_DIR=" .. package:dep("openssl"):installdir())
-        import("package.tools.cmake").install(package, configs, {packagedeps = {"glfw"}})
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"glfw", "libcurl"}})
         if not package:is_plat("windows") then
             package:add("links", "Open3D")
             for _, f in ipairs(os.files(path.join(package:installdir("lib"), "lib*.a"))) do
