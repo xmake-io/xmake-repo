@@ -29,7 +29,7 @@ package("centurion")
 
     on_load(function (package)
         package:add("deps", "libsdl2", { configs = { shared = package:config("shared") } })
-        
+
         if not package:config("pragma_once") then
             package:add("defines", "CENTURION_NO_PRAGMA_ONCE")
         end
