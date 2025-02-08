@@ -6,6 +6,7 @@ package("libbigwig")
     add_urls("https://github.com/dpryan79/libBigWig/archive/refs/tags/$(version).tar.gz",
              "https://github.com/dpryan79/libBigWig.git")
 
+    add_versions("0.4.8", "10e904ea6eab4c9926dd938050af888bebe6281e8d933237e4a254cb9d3063b1")
     add_versions("0.4.7", "8e057797011d93fa00e756600898af4fe6ca2d48959236efc9f296abe94916d9")
 
     add_configs("curl", {description = "Enable CURL support", default = false, type = "boolean"})
