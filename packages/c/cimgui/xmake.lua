@@ -25,6 +25,12 @@ package("cimgui")
 
     add_deps("luajit", {private = true})
 
+    on_check(function (package)
+        if package:is_arch("arm.*") then
+            raise("package(cimgui/arm64): unsupported arch, because it depends on luajit, we need to improve luajit first.")
+        end
+    end)
+
     on_load(function (package)
         if package:config("sdl2") then
             package:add("deps", "libsdl2")
@@ -49,7 +55,7 @@ package("cimgui")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "linux|!arm64", "macosx|!arm64", function (package)
+    on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
         os.vrun("git -c core.fsmonitor=false submodule foreach --recursive git checkout " .. package:config("imgui"))
 
         local envs = {}
