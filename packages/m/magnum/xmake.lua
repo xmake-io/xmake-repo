@@ -57,7 +57,7 @@ package("magnum")
             package:add("deps", "glfw")
         end
         if package:config("sdl2") then
-            package:add("deps", "libsdl", {configs = {sdlmain = false}})
+            package:add("deps", "libsdl2", {configs = {sdlmain = false}})
         end
         if package:config("glx") then
             package:add("deps", "libx11")

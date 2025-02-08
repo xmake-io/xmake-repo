@@ -27,7 +27,7 @@ package("cimgui")
 
     on_load(function (package)
         if package:config("sdl2") then
-            package:add("deps", "libsdl")
+            package:add("deps", "libsdl2")
             package:add("defines", "CIMGUI_USE_SDL2")
         end
         if package:config("opengl2") then
@@ -49,7 +49,7 @@ package("cimgui")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "linux", "macosx", function (package)
+    on_install("windows|x64", "windows|x86", "linux|!arm64", "macosx|!arm64", function (package)
         os.vrun("git -c core.fsmonitor=false submodule foreach --recursive git checkout " .. package:config("imgui"))
 
         local envs = {}
