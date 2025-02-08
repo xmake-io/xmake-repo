@@ -15,6 +15,7 @@ package("open3d")
     add_configs("blas",   {description = "Choose BLAS vendor.", default = "mkl", type = "string", values = {"mkl", "openblas"}})
 
     set_policy("package.cmake_generator.ninja", false)
+    set_policy("platform.longpaths", true)
 
     add_deps("cmake", "nasm")
     add_deps("openssl", {system = false})
@@ -47,6 +48,7 @@ package("open3d")
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
         io.replace("3rdparty/curl/curl.cmake", "add_dependencies", "#", {plain = true})
         io.replace("3rdparty/find_dependencies.cmake", "OpenSSL::Crypto", "OpenSSL::SSL OpenSSL::Crypto", {plain = true})
+        io.replace("cpp/open3d/visualization/gui/GLFWWindowSystem.cpp", "GL_TRUE", "GLFW_TRUE", {plain = true})
         io.writefile("examples/test_data/download_file_list.json", "{}")
         local configs = {"-DCMAKE_FIND_FRAMEWORK=LAST",
                          "-DBUILD_EXAMPLES=OFF",
@@ -91,16 +93,7 @@ package("open3d")
         end
         table.insert(configs, "-DUSE_BLAS=" .. (package:config("blas") == "openblas" and "ON" or "OFF"))
         table.insert(configs, "-DBORINGSSL_ROOT_DIR=" .. package:dep("openssl"):installdir())
-        if package:is_plat("windows") then
-            import("package.tools.cmake").install(package, configs, {buildir = os.tmpfile() .. ".dir"})
-        elseif package:is_plat("linux") then
-            local envs = import("package.tools.cmake").buildenvs(package, {packagedeps = {"glfw"}})
-            print(envs)
-            print("Open3d PKG_CONFIG_PATH: ", envs.PKG_CONFIG_PATH)
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"glfw"}})
-        else
-            import("package.tools.cmake").install(package, configs)
-        end
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"glfw"}})
         if not package:is_plat("windows") then
             package:add("links", "Open3D")
             for _, f in ipairs(os.files(path.join(package:installdir("lib"), "lib*.a"))) do
