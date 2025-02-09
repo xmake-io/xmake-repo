@@ -10,6 +10,10 @@ package("johnnyengine")
 
     add_deps("glew", "libsdl2", "libsdl2_ttf", "libsdl2_mixer", "libsdl2_gfx", "box2d 2.x", "assimp", "stb", "tmxparser")
 
+    if is_plat("macosx") then
+        add_frameworks("OpenGL")
+    end
+
     on_install("windows|x86", "windows|x64", "linux", "macosx", function (package)
         io.writefile("xmake.lua", [[
 set_project("johnny-engine")
@@ -25,7 +29,7 @@ target("johnny-engine")
     add_packages("glew", "libsdl2", "libsdl2_ttf", "libsdl2_mixer", "libsdl2_gfx", "box2d", "assimp", "stb", "tmxparser")
 
     if is_kind("shared") then
-        add_rules("utils.symbols.export_all")
+        add_rules("utils.symbols.export_all", {export_classes = true})
     end
             
     add_files("src/*.cpp")
