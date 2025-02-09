@@ -8,11 +8,11 @@ package("libcurl")
     set_urls("https://curl.haxx.se/download/curl-$(version).tar.bz2")
     add_urls("https://github.com/curl/curl/releases/download/curl-$(version).tar.bz2",
              {version = function (version) return (version:gsub("%.", "_")) .. "/curl-" .. version end})
-    if add_versionfiles then
-        add_versionfiles("versions.txt")
-    else
+    -- if add_versionfiles then
+    --     add_versionfiles("versions.txt")
+    -- else
         add_versions_list()
-    end
+    -- end
 
     add_patches("7.84.0", path.join(os.scriptdir(), "patches", "7.84.0", "sched.patch"), "e79f56f840cbc6996a153f19d9266bd46fe4154e6b494c8ee0478cb5b87662d3")
     add_patches("8.7.1", path.join(os.scriptdir(), "patches", "8.7.1", "android_armv7.patch"), "b172fd25063fcf4bce987b47a3d95d9d79bcf80f45e7e45dbf4aba72c685fb24")
