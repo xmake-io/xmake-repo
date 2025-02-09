@@ -15,7 +15,7 @@ package("liburing")
     add_versions("2.2", "e092624af6aa244ade2d52181cc07751ac5caba2f3d63e9240790db9ed130bbc")
     add_versions("2.1", "f1e0500cb3934b0b61c5020c3999a973c9c93b618faff1eba75aadc95bb03e07")
 
-    on_install("linux", function (package)
+    on_install("linux|native", function (package)
         local cflags
         if package:config("pic") ~= false then
             cflags = "-fPIC"
