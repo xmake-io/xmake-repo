@@ -24,6 +24,10 @@ target("johnny-engine")
 
     add_packages("glew", "libsdl2", "libsdl2_ttf", "libsdl2_mixer", "libsdl2_gfx", "box2d", "assimp", "stb", "tmxparser")
 
+    if is_kind("shared") then
+        add_rules("utils.symbols.export_all")
+    end
+            
     add_files("src/*.cpp")
     add_headerfiles("include/*.h")
     add_includedirs("include")
