@@ -49,6 +49,8 @@ package("open3d")
         io.replace("CMakeLists.txt", "add_subdirectory(examples)", "", {plain = true})
         io.replace("3rdparty/curl/curl.cmake", "add_dependencies", "#", {plain = true})
         io.replace("3rdparty/find_dependencies.cmake", "OpenSSL::Crypto", "OpenSSL::SSL OpenSSL::Crypto", {plain = true})
+        io.replace("3rdparty/find_dependencies.cmake", "open3d_pkg_config_3rdparty_library(3rdparty_curl", "open3d_find_package_3rdparty_library(3rdparty_curl", {plain = true})
+        io.replace("3rdparty/find_dependencies.cmake", "SEARCH_ARGS libcurl", "PACKAGE CURL\nTARGETS CURL::libcurl", {plain = true})
         io.replace("cpp/open3d/visualization/gui/GLFWWindowSystem.cpp", "GL_TRUE", "GLFW_TRUE", {plain = true})
         io.writefile("examples/test_data/download_file_list.json", "{}")
         local configs = {"-DCMAKE_FIND_FRAMEWORK=LAST",
