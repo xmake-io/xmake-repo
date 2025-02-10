@@ -13,6 +13,8 @@ package("webui")
         add_syslinks("user32", "advapi32", "shell32")
     elseif is_plat("mingw") then
         add_syslinks("ws2_32")
+    elseif is_plat("linux") then
+        add_syslinks("pthread", "dl")
     end
 
     on_install("windows", "linux", "macosx", "mingw", "msys", "android", "cross", function (package)
