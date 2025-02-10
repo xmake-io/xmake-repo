@@ -31,7 +31,11 @@ target("johnny-engine")
     if is_kind("shared") then
         add_rules("utils.symbols.export_all", {export_classes = true})
     end
-            
+
+    if is_plat("macosx") then
+        add_frameworks("OpenGL")
+    end
+
     add_files("src/*.cpp")
     add_headerfiles("include/*.h")
     add_includedirs("include")
