@@ -17,6 +17,12 @@ package("webui")
         add_syslinks("pthread", "dl")
     end
 
+    if on_check then
+        on_check("mingw", function (package)
+            assert(package:is_arch("x86_64"), "package(webui/mingw) only suport x86_64 arch")
+        end)
+    end
+
     on_install("windows", "linux", "macosx", "mingw", "msys", "android", "cross", function (package)
         if package:is_plat("android") and package:is_arch("armeabi-v7a") then
             import("core.tool.toolchain")
