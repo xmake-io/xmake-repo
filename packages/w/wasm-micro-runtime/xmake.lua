@@ -43,6 +43,16 @@ package("wasm-micro-runtime")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("windows", function (package)
+            if package:version() and package:version():eq("2.2.0") then
+                if package:is_arch("x86") then
+                    raise("package(wasm-micro-runtime 2.2.0) unsupported arch.")
+                end
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:is_plat("windows") and package:is_arch("x86") and winos.version():le("10.0.17763") then
             package:add("patches", "1.3.2", path.join(os.scriptdir(), "patches", "ntapi.patch"), "436c3f6bbb536a362e277d654ef8dc74e0d757dd815de2d89209bd2a9ac2f114")
