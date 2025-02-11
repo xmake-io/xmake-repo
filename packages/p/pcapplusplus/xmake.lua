@@ -15,6 +15,7 @@ package("pcapplusplus")
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     add_configs("zstd", {description = "Support compile with zstd", default = false, type = "boolean"})
     add_configs("winpcap", {description = "Support compile with winpcap", default = false, type = "boolean"})
+    add_configs("disable_log", {description = "Remove log at compile time", default = false, type = "boolean"})
 
     add_links("Pcap++", "Packet++", "Common++")
 
@@ -29,6 +30,9 @@ package("pcapplusplus")
     add_deps("cmake")
 
     on_load(function (package)
+        if package:config("disable_log") then
+            package:add("cxflags", "-DPCPP_ACTIVE_LOG_LEVEL=0")
+        end
         if package:config("zstd") then
             package:add("deps", "zstd")
         end
