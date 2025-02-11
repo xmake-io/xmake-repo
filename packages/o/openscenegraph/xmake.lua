@@ -1,5 +1,4 @@
 package("openscenegraph")
-
     set_homepage("https://www.openscenegraph.com/")
     set_description("The OpenSceneGraph is an open source high performance 3D graphics toolkit.")
 
@@ -19,11 +18,13 @@ package("openscenegraph")
                         dcmtk      = "DCMTK",
                         ffmpeg     = "FFmpeg",
                         glib       = "GLIB",
-                        libsdl     = "SDL2",
+                        libsdl2    = "SDL2",
                         nvtt       = "NVTT"}
     for config, dep in pairs(configdeps) do
         add_configs(config, {description = "Enable the " .. config .. " plugin.", default = false, type = "boolean"})
     end
+    -- deprecated config
+    add_configs("libsdl", {description = "Enable the libsdl2 plugin (deprecated, use libsdl2 config instead).", default = nil, type = "boolean"})
 
     set_policy("platform.longpaths", true)
 
@@ -43,6 +44,10 @@ package("openscenegraph")
         add_syslinks("pthread")
     end
     on_load("windows", "linux", "macosx", function (package)
+        if package:config("libsdl") ~= nil then
+            wprint("package(openscenegraph): config libsdl has been renamed has been renamed to libsdl2 following the release of SDL3, please use libsdl2 config instead.${clear}")
+            package:config_set("libsdl2", package:config("libsdl"))
+        end
         for config, dep in pairs(configdeps) do
             if package:config(config) then
                 package:add("deps", config)
