@@ -272,7 +272,7 @@ function get_modified_packages()
                 local package = file:match("packages/%w/(%S-)/")
                 table.insert(packages, package)
             end
-        elseif false then-- line:startswith("+") and line:find("add_versions") then
+        elseif line:startswith("+") and line:find("add_versions") then
             local version = line:match("add_versions%(\"(.-)\"")
             if version:find(":", 1, true) then
                 version = version:split(":")[2]
