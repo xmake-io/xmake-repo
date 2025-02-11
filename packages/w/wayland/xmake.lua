@@ -42,6 +42,7 @@ package("wayland")
 
         package:addenv("PATH", "bin")
         package:addenv("PKG_CONFIG_PATH", path.join("lib", "pkgconfig"))
+        print(os.files(package:installdir("**")))
     end)
 
     on_test(function (package)
