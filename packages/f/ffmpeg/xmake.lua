@@ -109,7 +109,7 @@ package("ffmpeg")
             end
         end
         -- https://www.ffmpeg.org/platform.html#toc-Advanced-linking-configuration
-        if package:config("pic") ~= false and not package:is_plat("windows", "macosx", "iphoneos") then
+        if package:config("pic") ~= false and package:is_plat("linux", "android") then
             package:add("shflags", "-Wl,-Bsymbolic")
             package:add("ldflags", "-Wl,-Bsymbolic")
         end
