@@ -1,12 +1,12 @@
 package("libsdl3_image")
-    set_homepage("http://www.libsdl.org/projects/SDL_image/")
-    set_description("Simple DirectMedia Layer image loading library")
+    set_homepage("https://github.com/libsdl-org/SDL_image")
+    set_description("Image decoding for many popular formats for Simple Directmedia Layer.")
     set_license("zlib")
 
     if is_plat("mingw") and is_subhost("msys") then
-        add_extsources("pacman::SDL3_image")
+        add_extsources("pacman::sdl3-image")
     elseif is_plat("linux") then
-        add_extsources("pacman::sdl3_image", "apt::libsdl3-image-dev")
+        add_extsources("apt::libsdl3-image-dev")
     elseif is_plat("macosx") then
         add_extsources("brew::sdl3_image")
     end
@@ -14,7 +14,6 @@ package("libsdl3_image")
     add_urls("https://www.libsdl.org/projects/SDL_image/release/SDL3_image-$(version).zip",
              "https://github.com/libsdl-org/SDL_image/releases/download/release-$(version)/SDL3_image-$(version).zip", { alias = "archive" })
     add_urls("https://github.com/libsdl-org/SDL_image", { alias = "github" })
-    add_versions("3.2.0", "144715a6afae430adc275fd3ab0e3e96177a2752cc10a49ca78511b1e665964e")
 
     add_versions("archive:3.2.0", "144715a6afae430adc275fd3ab0e3e96177a2752cc10a49ca78511b1e665964e")
 
