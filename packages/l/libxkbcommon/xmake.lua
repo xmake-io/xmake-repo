@@ -33,7 +33,7 @@ package("libxkbcommon")
 
     add_deps("meson", "ninja", "pkg-config")
 
-    on_install("linux", function (package)
+    on_install("linux|native", function (package)
         local configs = {
             "-Denable-docs=false",
             "-Dc_link_args=-lm",
