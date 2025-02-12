@@ -34,28 +34,6 @@ package("libsdl3_image")
         local configs = {"-DSDLIMAGE_SAMPLES=OFF", "-DSDLIMAGE_TESTS=OFF", "-DSDLIMAGE_VENDORED=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        local libsdl3 = package:dep("libsdl3")
-        if libsdl3 and not libsdl3:is_system() then
-            table.insert(configs, "-DSDL3_DIR=" .. libsdl3:installdir())
-            local fetchinfo = libsdl3:fetch()
-            if fetchinfo then
-                for _, dir in ipairs(fetchinfo.includedirs or fetchinfo.sysincludedirs) do
-                    if os.isfile(path.join(dir, "SDL_version.h")) then
-                        table.insert(configs, "-DSDL3_INCLUDE_DIR=" .. dir)
-                        break
-                    end
-                end
-                local libfiles = {}
-                for _, libfile in ipairs(fetchinfo.libfiles) do
-                    if libfile:match("SDL3%..+$") or libfile:match("SDL3-static%..+$") then
-                        if not (package:config("shared") and libfile:endswith(".dll")) then
-                            table.insert(libfiles, libfile)
-                        end
-                    end
-                end
-                table.insert(configs, "-DSDL3_LIBRARY=" .. table.concat(libfiles, ";"))
-            end
-        end
         import("package.tools.cmake").install(package, configs)
     end)
 
