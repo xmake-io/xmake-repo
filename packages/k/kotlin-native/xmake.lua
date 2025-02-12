@@ -36,11 +36,11 @@ package("kotlin-native")
             }
         ]])
         local suffix = ""
+        local suffix2 = ".kexe"
         if is_host("windows") then
             suffix = ".bat"
+            suffix2 = ".exe"
         end
         os.vrunv("kotlinc-native" .. suffix, {"./hello.kt", "-o", "hello"})
-        print(os.curdir())
-        print(os.files("*"))
-        os.vrun("./hello.kexe")
+        os.vrun("./hello." .. suffix2)
     end)
