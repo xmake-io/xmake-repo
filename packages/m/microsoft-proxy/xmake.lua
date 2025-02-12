@@ -16,18 +16,24 @@ package("microsoft-proxy")
     add_versions("1.1.1", "6852b135f0bb6de4dc723f76724794cff4e3d0d5706d09d0b2a4f749f309055d")
 
     if on_check then
-        on_check("windows", function (package)
-            if package:version():ge("3.0.0") then
-                import("core.base.semver")
+        on_check(function (package)
+            if package:is_plat("windows") then
+                if package:version() and package:version():ge("3.0.0") then
+                    import("core.base.semver")
 
-                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
-                assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(microsoft-proxy): need vs_toolset >= v143")
+                    local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                    assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(microsoft-proxy): need vs_toolset >= v143")
+                end
+            elseif package:is_plat("android") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(microsoft-proxy) require ndk version > 22")
             end
-        end)
 
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(microsoft-proxy) require ndk version > 22")
+            assert(package:check_cxxsnippets({test = [[
+                #include <format>
+                void test() {
+                }
+            ]]}, {configs = {languages = "c++20"}}), "package(microsoft-proxy) Require at least C++20.")
         end)
     end
 
