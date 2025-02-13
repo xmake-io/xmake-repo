@@ -6,7 +6,7 @@ package("crow")
 
     add_urls("https://github.com/CrowCpp/Crow/archive/refs/tags/$(version).zip", {version = function (version)
         return (version:gsub("%+", "."))
-    })
+    end})
     add_versions("v1.2.1+1", "d9f85d9df036336c9cb872ecd73c7744e493ed5d02e9aec8b3c1351c757c9707")
 
     add_configs("zlib", {description = "ZLib for HTTP Compression", default = true, type = "boolean"})
