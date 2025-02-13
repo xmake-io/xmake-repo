@@ -6,6 +6,7 @@ package("partio")
 
     add_urls("https://github.com/wdas/partio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/wdas/partio.git")
+    add_versions("v1.19.0", "128913266a88a0939aaa4bc951ae4d4da1c380408bcc0ea9e7f526556afeaad0")
     add_versions("v1.17.3", "08a571ca75cf133f373415dfd50b7d0e33a0dd1811dfb63409f0ae46652033c1")
     add_versions("v1.14.0", "f98874b781e92ab9b5d0575cabc437d27274cd91cb581f80960918efa491f902")
     add_versions("v1.14.6", "53a5754d6b2fc3e184953d985c233118ef0ab87169f34e3aec4a7e6d20cd9bd4")
