@@ -2,14 +2,12 @@ package("extra-cmake-modules")
     set_homepage("https://invent.kde.org/frameworks/extra-cmake-modules")
     set_description("Extra CMake Modules (ECM) extends CMake with additional modules and scripts.")
 
-    add_urls("https://invent.kde.org/frameworks/extra-cmake-modules/-/archive/v$(version)/extra-cmake-modules-v$(version).tar.gz" , {alias = "gitlab"})
-    add_urls("https://invent.kde.org/frameworks/extra-cmake-modules.git", {alias = "git"})
-    add_urls("https://github.com/KDE/extra-cmake-modules/archive/refs/tags/v$(version).tar.gz", {alias = "github"})
-    add_urls("https://github.com/KDE/extra-cmake-modules.git", {alias = "git"})
+    add_urls("https://invent.kde.org/frameworks/extra-cmake-modules/-/archive/v$(version)/extra-cmake-modules-$(version).tar.gz" , {alias = "gitlab"})
+    add_urls("https://github.com/KDE/extra-cmake-modules/archive/refs/tags/$(version).tar.gz", {alias = "github"})
+    add_urls("https://github.com/KDE/extra-cmake-modules.git")
 
-    add_versions("github:6.10.0", "96970136cf38c810f4ef90a33ad4ef9c8977956e1a6a02a179b7abf3a8967b34")
-    add_versions("gitlab:6.10.0", "6025709712e075f06c3b9eebfffc50ce31605712d8947c748d9b2241e915f595")
-    add_versions("git:6.10.0", "v6.10.0")
+    add_versions("github:v6.10.0", "96970136cf38c810f4ef90a33ad4ef9c8977956e1a6a02a179b7abf3a8967b34")
+    add_versions("gitlab:v6.10.0", "6025709712e075f06c3b9eebfffc50ce31605712d8947c748d9b2241e915f595")
 
     if is_plat("mingw") and is_subhost("msys") then
         add_extsources("pacman::extra-cmake-modules")
