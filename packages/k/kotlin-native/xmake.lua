@@ -27,6 +27,14 @@ package("kotlin-native")
 
     on_install("@macosx", "@linux|x86_64", "@windows|x64", function (package)
         os.cp("*", package:installdir())
+        local openjdk = package:dep("openjdk")
+        local java_home
+        if not openjdk:is_system() then
+            java_home = openjdk:installdir()
+        end
+        if java_home then
+            package:setenv("JAVA_HOME", java_home)
+        end
     end)
 
     on_test(function (package)
@@ -42,5 +50,5 @@ package("kotlin-native")
             suffix2 = ".exe"
         end
         os.vrunv("kotlinc-native" .. suffix, {"./hello.kt", "-o", "hello"})
-        os.vrun("./hello." .. suffix2)
+        os.vrun("./hello" .. suffix2)
     end)
