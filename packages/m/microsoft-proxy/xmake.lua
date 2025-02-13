@@ -7,6 +7,7 @@ package("microsoft-proxy")
     add_urls("https://github.com/microsoft/proxy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/proxy.git")
 
+    add_versions("3.2.0", "a828432a43a1e05c65176e58b48a6d6270669862adb437a069693f346275b5f0")
     add_versions("3.1.0", "c86ed7767ed3e90250632f2b5269c83225b0ae986314c58596d421b245f26cd1")
     add_versions("3.0.0", "7e073e217e5572bc4c17ed5893273c80ea34c87e1406c853beeb9ca9bdda9733")
     add_versions("2.4.0", "7eed973655938d681a90dcc0c200e6cc1330ea8611a9c1a9e1b30439514443cb")
@@ -15,18 +16,23 @@ package("microsoft-proxy")
     add_versions("1.1.1", "6852b135f0bb6de4dc723f76724794cff4e3d0d5706d09d0b2a4f749f309055d")
 
     if on_check then
-        on_check("windows", function (package)
-            if package:version():ge("3.0.0") then
-                import("core.base.semver")
+        on_check(function (package)
+            if package:is_plat("windows") then
+                if package:version() and package:version():ge("3.0.0") then
+                    import("core.base.semver")
 
-                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
-                assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(microsoft-proxy): need vs_toolset >= v143")
+                    local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                    assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(microsoft-proxy): need vs_toolset >= v143")
+                end
+            elseif package:is_plat("android") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(microsoft-proxy) require ndk version > 22")
             end
-        end)
 
-        on_check("android", function (package)
-            local ndk = package:toolchain("ndk"):config("ndkver")
-            assert(ndk and tonumber(ndk) > 22, "package(microsoft-proxy) require ndk version > 22")
+            assert(package:check_cxxsnippets({test = [[
+                #include <format>
+                void test(std::format_context& ctx) {}
+            ]]}, {configs = {languages = "c++20"}}), "package(microsoft-proxy) Require at least C++20.")
         end)
     end
 
