@@ -15,12 +15,10 @@ package("stdexec")
 
     if on_check then
         on_check("windows", function (package)
-            if package:version():ge("3.0.0") then
-                import("core.base.semver")
+            import("core.base.semver")
 
-                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
-                assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(stdexec): need vs_toolset >= v143")
-            end
+            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+            assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(stdexec): need vs_toolset >= v143")
         end)
     end
 
