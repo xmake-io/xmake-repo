@@ -31,8 +31,7 @@ package("microsoft-proxy")
 
             assert(package:check_cxxsnippets({test = [[
                 #include <format>
-                void test() {
-                }
+                void test(std::format_context& ctx) {}
             ]]}, {configs = {languages = "c++20"}}), "package(microsoft-proxy) Require at least C++20.")
         end)
     end
