@@ -5,6 +5,7 @@ package("verdict")
     add_urls("https://github.com/sandialabs/verdict/archive/refs/tags/$(version).tar.gz",
              "https://github.com/sandialabs/verdict.git")
 
+    add_versions("1.4.3", "b5f39c9e8e1fdf700f71442075d24942d6e947e15f2f2c9c9ebd000634c710b9")
     add_versions("1.4.2", "225c8c5318f4b02e7215cefa61b5dc3f99e05147ad3fefe6ee5a3ee5b828964b")
 
     add_deps("cmake")
