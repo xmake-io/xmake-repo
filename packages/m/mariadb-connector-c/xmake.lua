@@ -3,7 +3,7 @@ package("mariadb-connector-c")
     set_description("MariaDB Connector/C is used to connect applications developed in C/C++ to MariaDB and MySQL databases.")
     set_license("LGPL-2.1")
 
-    add_urls("https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/$(version).tar.gz"
+    add_urls("https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mariadb-corporation/mariadb-connector-c.git", {submodules = false})
 
     add_versions("v3.4.4", "79a1c5a3de86e7daa0a456c502d60dc15debe105932ad6a0d25024908603f433")
