@@ -24,7 +24,7 @@ package("metall")
         end
     end)
 
-    on_install("macosx", "linux", "bsd", "mingw", "cross", function (package)
+    on_install("macosx", "linux", "bsd", function (package)
         local configs = {"-DJUST_INSTALL_METALL_HEADER=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
