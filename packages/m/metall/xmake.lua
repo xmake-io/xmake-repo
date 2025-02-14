@@ -16,7 +16,7 @@ package("metall")
     end
 
     add_deps("cmake")
-    add_deps("boost", {configs = {header_only = true}})
+    add_deps("boost", {configs = {cmake = false}})
 
     on_load(function (package)
         if not package:config("c_api") then
