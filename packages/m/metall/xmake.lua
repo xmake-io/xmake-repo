@@ -6,7 +6,7 @@ package("metall")
     add_urls("https://github.com/LLNL/metall/archive/refs/tags/$(version).tar.gz",
              "https://github.com/LLNL/metall.git")
 
-    add_versions("v0.28", "770dedb7f8220c333688b232a22104ca9d8d5823e7a8a21152b58ef970eb85d0")
+    add_versions("v0.30", "d241f45978fceeb83a4b2eda7513466341c45452fa26ec224c5235d00d279d37")
 
     add_configs("c_api", {description = "Build C API", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
@@ -16,7 +16,7 @@ package("metall")
     end
 
     add_deps("cmake")
-    add_deps("boost")
+    add_deps("boost", {configs = {header_only = true}})
 
     on_load(function (package)
         if not package:config("c_api") then
@@ -24,9 +24,7 @@ package("metall")
         end
     end)
 
-    on_install("macosx", "linux", "bsd", "mingw", "cross", function (package)
-        io.replace("CMakeLists.txt", "find_package(Boost 1.64 QUIET)", "find_package(Boost REQUIRED)", {plain = true})
-
+    on_install("!windows", function (package)
         local configs = {"-DJUST_INSTALL_METALL_HEADER=ON"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
