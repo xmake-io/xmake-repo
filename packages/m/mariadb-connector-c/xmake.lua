@@ -4,9 +4,9 @@ package("mariadb-connector-c")
     set_license("LGPL-2.1")
 
     add_urls("https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/$(version).tar.gz"
-             "https://github.com/mariadb-corporation/mariadb-connector-c.git")
+             "https://github.com/mariadb-corporation/mariadb-connector-c.git", {submodules = false})
 
-    add_versions("3.4.4", "79a1c5a3de86e7daa0a456c502d60dc15debe105932ad6a0d25024908603f433")
+    add_versions("v3.4.4", "79a1c5a3de86e7daa0a456c502d60dc15debe105932ad6a0d25024908603f433")
     add_versions("v3.3.9", "062b9ec5c26cbb236a78f0ba26981272053f59bdfc113040bab904a9da36d31f")
     add_versions("v3.3.4", "ea6a23850d6a2f6f2e0d9e9fdb7d94fe905a4317f73842272cf121ed25903e1f")
     add_versions("v3.1.13", "361136e9c365259397190109d50f8b6a65c628177792273b4acdb6978942b5e7")
@@ -16,17 +16,11 @@ package("mariadb-connector-c")
     add_linkdirs("lib/mariadb")
 
     if is_plat("windows") then
-        add_syslinks("bcrypt")
-    end
-
-    if is_plat("windows") then
         add_configs("iconv", {description = "Enables character set conversion.", default = false, type = "boolean"})
         add_configs("msi", {description = "Build MSI installation package.", default = false, type = "boolean"})
         add_configs("rtc", {description = "Enables runtime checks for debug builds.", default = false, type = "boolean"})
         add_configs("signcode", {description = "Digitally sign files.", default = false, type = "boolean"})
-    end
-
-    if not is_plat("windows") then
+    else
         add_configs("mysqlcompat", {description = "Creates libmysql* symbolic links.", default = false, type = "boolean"})
     end
 
@@ -46,7 +40,7 @@ package("mariadb-connector-c")
         else
             package:add("links", "mariadbclient")
             if package:is_plat("windows") then
-                package:add("syslinks", "secur32", "shlwapi")
+                package:add("syslinks", "secur32", "shlwapi", "bcrypt")
             end
         end
 
@@ -64,6 +58,7 @@ package("mariadb-connector-c")
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
