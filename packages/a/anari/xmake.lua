@@ -8,7 +8,7 @@ package("anari")
 
     add_versions("v0.12.1", "1fc5cf360b260cc2e652bff4a41dcf3507c84d25701dc6c6630f6f6f83656b6c")
 
-    add_deps("cmake")
+    add_deps("cmake", "python 3.x", {kind = "binary"})
 
     on_install(function (package)
         if not package:config("shared") and package:is_plat("windows") then
@@ -19,8 +19,7 @@ package("anari")
             "-DBUILD_TESTING=OFF",
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_VIEWER=OFF",
-            "-DBUILD_CTS=OFF",
-
+            "-DCTS_ENABLE_GLTF=OFF",
             "-DBUILD_HELIDE_DEVICE=OFF",
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
