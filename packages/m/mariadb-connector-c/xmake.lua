@@ -3,16 +3,21 @@ package("mariadb-connector-c")
     set_description("MariaDB Connector/C is used to connect applications developed in C/C++ to MariaDB and MySQL databases.")
     set_license("LGPL-2.1")
 
-    add_urls("https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/v$(version).tar.gz")
+    add_urls("https://github.com/mariadb-corporation/mariadb-connector-c/archive/refs/tags/$(version).tar.gz"
+             "https://github.com/mariadb-corporation/mariadb-connector-c.git")
 
     add_versions("3.4.4", "79a1c5a3de86e7daa0a456c502d60dc15debe105932ad6a0d25024908603f433")
-    add_versions("3.3.9", "062b9ec5c26cbb236a78f0ba26981272053f59bdfc113040bab904a9da36d31f")
-    add_versions("3.3.4", "ea6a23850d6a2f6f2e0d9e9fdb7d94fe905a4317f73842272cf121ed25903e1f")
-    add_versions("3.1.13", "361136e9c365259397190109d50f8b6a65c628177792273b4acdb6978942b5e7")
+    add_versions("v3.3.9", "062b9ec5c26cbb236a78f0ba26981272053f59bdfc113040bab904a9da36d31f")
+    add_versions("v3.3.4", "ea6a23850d6a2f6f2e0d9e9fdb7d94fe905a4317f73842272cf121ed25903e1f")
+    add_versions("v3.1.13", "361136e9c365259397190109d50f8b6a65c628177792273b4acdb6978942b5e7")
 
     add_deps("cmake")
 
     add_linkdirs("lib/mariadb")
+
+    if is_plat("windows") then
+        add_syslinks("bcrypt")
+    end
 
     if is_plat("windows") then
         add_configs("iconv", {description = "Enables character set conversion.", default = false, type = "boolean"})
@@ -56,8 +61,9 @@ package("mariadb-connector-c")
 
     on_install("bsd", "linux", "windows", function(package)
         io.replace("CMakeLists.txt", "-Werror", "", {plain = true})
+
         local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 if enabled then
