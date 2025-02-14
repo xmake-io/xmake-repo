@@ -6,11 +6,15 @@ package("anari")
     add_urls("https://github.com/KhronosGroup/ANARI-SDK/archive/refs/tags/$(version).tar.gz",
              "https://github.com/KhronosGroup/ANARI-SDK.git")
 
-    add_versions("v0.10.0", "92581623fe5523db0b2a7ad5bdb97edc735f146eab4d42703fefcb536dff863d")
+    add_versions("v0.12.1", "1fc5cf360b260cc2e652bff4a41dcf3507c84d25701dc6c6630f6f6f83656b6c")
 
     add_deps("cmake")
 
     on_install(function (package)
+        if not package:config("shared") and package:is_plat("windows") then
+            package:add("defines", "ANARI_STATIC_DEFINE")
+        end
+
         local configs = {
             "-DBUILD_TESTING=OFF",
             "-DBUILD_EXAMPLES=OFF",
@@ -22,10 +26,6 @@ package("anari")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (not package:config("shared") and "ON" or "OFF"))
         import("package.tools.cmake").install(package, configs)
-
-        if not package:config("shared") and package:is_plat("windows") then
-            package:add("defines", "ANARI_STATIC_DEFINE")
-        end
     end)
 
     on_test(function (package)
