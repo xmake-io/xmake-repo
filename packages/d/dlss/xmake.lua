@@ -6,6 +6,7 @@ package("dlss")
     add_urls("https://github.com/NVIDIA/DLSS/archive/refs/tags/$(version).tar.gz",
              "https://github.com/NVIDIA/DLSS.git")
 
+    add_versions("v310.1.0", "f042769df59a3f4a5f80421e60d848d26d4f8a7c4848da410507fc07e50522f4")
     add_versions("v3.7.20", "904d771551526dd6aa458f0db7b85fe4abb8f49ce0307d377e8da089628bf9ec")
 
     on_install("windows|x64", "linux|x86_64", function (package)
