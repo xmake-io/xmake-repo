@@ -66,19 +66,17 @@ package("zxing-cpp")
         table.insert(configs, "-DZXING_EXPERIMENTAL_API=" .. (package:config("experimental") and "ON" or "OFF"))
         table.insert(configs, "-DZXING_C_API=" .. (package:config("c_api") and "ON" or "OFF"))
 
-        local version = package:version()
-        local opt = {}
-        opt.cxflags = {}
+        local opt = {cxflags = {}}
         if package:has_tool("cxx", "cl") then
             table.insert(opt.cxflags, "/utf-8")
         end
-        if version and package:version():lt("2.3.0") and not package:is_debug() then
+        if package:version() and package:version():le("2.3.0") and not package:is_debug() then
             -- https://github.com/zxing-cpp/zxing-cpp/issues/900
             table.insert(opt.cxflags, "-DNDEBUG")
         end
         import("package.tools.cmake").install(package, configs, opt)
 
-        if version and package:version():lt("2.3.0") then
+        if package:version() and package:version():lt("2.3.0") then
             if package:config("c_api") then
                 io.writefile("xmake.lua", [[
                     add_rules("mode.debug", "mode.release")
