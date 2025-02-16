@@ -17,6 +17,9 @@ package("aws-lc")
     add_configs("go", {description = "Enable go", default = false, type = "boolean"})
     add_configs("perl", {description = "Enable perl", default = false, type = "boolean"})
     add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
+    end
     
     add_deps("cmake")
     if is_plat("windows", "mingw") or is_host("windows") then
@@ -48,6 +51,7 @@ package("aws-lc")
 
     on_install("!cross and (!windows or windows|!arm64)", function (package)
         io.replace("CMakeLists.txt", "-WX", "", {plain = true})
+        io.replace("CMakeLists.txt", [[set(C_CXX_FLAGS "${C_CXX_FLAGS} -Werror -Wformat=2 -Wsign-compare -Wmissing-field-initializers -Wwrite-strings")]], "", {plain = true})
 
         local configs = {
             "-DBUILD_TESTING=OFF",
@@ -62,6 +66,10 @@ package("aws-lc")
         table.insert(configs, "-DDISABLE_GO=" .. (package:config("go") and "OFF" or "ON"))
         table.insert(configs, "-DDISABLE_PERL=" .. (package:config("perl") and "OFF" or "ON"))
         table.insert(configs, "-DBUILD_TOOL=" .. (package:config("tools") and "ON" or "OFF"))
+
+        if package:is_plat("mingw") and not package:is_arch64() then
+            table.insert(configs, "-DOPENSSL_NO_ASM=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
