@@ -48,7 +48,14 @@ package("fmtlog")
 
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
-        import("package.tools.cmake").install(package, configs, {packagedeps = "fmt"})
+        
+        local opt = {}
+        opt.packagedeps = "fmt"
+        if package:has_tool("cxx", "cl") and package:dep("fmt"):config("unicode") then
+            opt.cxflags = "/utf-8"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
+
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"),  "*.a"))
         else
