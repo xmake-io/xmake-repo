@@ -6,6 +6,7 @@ package("streamvbyte")
     add_urls("https://github.com/lemire/streamvbyte/archive/refs/tags/$(version).tar.gz",
              "https://github.com/lemire/streamvbyte.git")
 
+    add_versions("v2.0.0", "51ca1c3b02648ea4b965d65b0e586891981f2e8184b056520e38ad70bcc43dd8")
     add_versions("v1.0.0", "6b1920e9865146ba444cc317aa61cd39cdf760236e354ef7956011a9fe577882")
 
     add_deps("cmake")
