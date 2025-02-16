@@ -34,6 +34,14 @@ package("aws-lc")
         add_syslinks("pthread", "dl", "m")
     end
 
+    if on_check then
+        on_check("wasm", function (target)
+            if package:version() and package:version():eq("1.45.0") then
+                raise("package(aws-lc 1.45.0) unsupported version")
+            end
+        end)
+    end
+
     on_load(function (package)
         if not package:is_precompiled() then
             if package:config("go") then
@@ -70,13 +78,7 @@ package("aws-lc")
         if package:is_plat("mingw") and not package:is_arch64() then
             table.insert(configs, "-DOPENSSL_NO_ASM=ON")
         end
-
-        local opt = {}
-        if package:is_plat("wasm") then
-            opt.cxflags = "-pthread"
-            package:add("ldflags", "-s USE_PTHREADS=1")
-        end
-        import("package.tools.cmake").install(package, configs, opt)
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)
