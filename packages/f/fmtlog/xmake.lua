@@ -4,7 +4,9 @@ package("fmtlog")
     set_license("MIT")
 
     add_urls("https://github.com/MengRao/fmtlog/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/MengRao/fmtlog.git")
+             "https://github.com/MengRao/fmtlog.git", {submodules = false})
+
+    add_versions("v2.3.0", "769dee37a6375e2c4784c936c7191aaa755e669ef9ed311c412153305878ba56")
     add_versions("v2.2.2", "31e8341093e45fc999dbeeecfe9cdc118cc8f1e64a184cc3f194f5701d5eaec9")
     add_versions("v2.2.1", "9bc2f1ea37eece0f4807689962b529d2d4fa07654baef184f051319b4eac9304")
     add_versions("v2.1.2", "d286184e04c3c3286417873dd2feac524c53babc6cd60f10179aa5b10416ead7")
@@ -19,6 +21,7 @@ package("fmtlog")
         local packagever = package:version()
         if packagever then
             local version_mapping = {
+                {pkgver = "2.3.0", fmtver = " 11.1.3"},
                 {pkgver = "2.2.2", fmtver = " 10.2.1"},
                 {pkgver = "2.2.1", fmtver = " 9.1.0"},
                 {pkgver = "2.1.2", fmtver = " 8.1.0"}
@@ -39,12 +42,20 @@ package("fmtlog")
     end)
 
     on_install("linux", "macosx", "windows|!arm64", function (package)
-        local configs = {}
-        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         io.replace("CMakeLists.txt", "add_subdirectory(fmt)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(test)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(bench)", "", {plain = true})
-        import("package.tools.cmake").install(package, configs, {packagedeps = "fmt"})
+
+        local configs = {}
+        table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
+        
+        local opt = {}
+        opt.packagedeps = "fmt"
+        if package:has_tool("cxx", "cl") and package:dep("fmt"):config("unicode") then
+            opt.cxflags = "/utf-8"
+        end
+        import("package.tools.cmake").install(package, configs, opt)
+
         if package:config("shared") then
             os.tryrm(path.join(package:installdir("lib"),  "*.a"))
         else
