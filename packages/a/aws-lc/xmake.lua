@@ -32,18 +32,22 @@ package("aws-lc")
     end
 
     on_load(function (package)
-        if package:config("go") then
-            package:add("deps", "go")
+        if not package:is_precompiled() then
+            if package:config("go") then
+                package:add("deps", "go")
+            end
+            if is_subhost("windows") and package:config("perl") then
+                package:add("deps", "strawberry-perl")
+            end
         end
-        if package:config("perl") and package:is_plat() and (not package:is_precompiled()) then
-            package:add("deps", "strawberry-perl")
-        end
-    end)
 
-    on_install("!cross and windows|!arm64", function (package)
         if package:config("shared") and package:is_plat("windows") then
             package:add("defines", "BORINGSSL_SHARED_LIBRARY")
         end
+    end)
+
+    on_install("!cross and (!windows or windows|!arm64)", function (package)
+        io.replace("CMakeLists.txt", "-WX", "", {plain = true})
 
         local configs = {
             "-DBUILD_TESTING=OFF",
