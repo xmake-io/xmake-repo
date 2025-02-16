@@ -24,7 +24,7 @@ package("cpr")
     add_links("cpr")
 
     if on_check then
-        on_check(function (target)
+        on_check(function (package)
             -- Require to fIX cmake try run
             if package:version() and package:version():eq("1.6.2") then
                 if package:is_cross() then
