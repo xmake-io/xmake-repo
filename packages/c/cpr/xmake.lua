@@ -23,6 +23,17 @@ package("cpr")
     end
     add_links("cpr")
 
+    if on_check then
+        on_check(function (target)
+            -- Require to fIX cmake try run
+            if package:version() and package:version():eq("1.6.2") then
+                if package:is_cross() then
+                    raise("package(cpr 1.6.2) unsupported cross-compilation")
+                end
+            end
+        end)
+    end
+
     on_load(function (package)
         if package:config("ssl") then
             package:add("deps", "libcurl", {configs = {libssh2 = true, zlib = true}})
