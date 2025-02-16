@@ -5,6 +5,7 @@ package("fmtlog")
 
     add_urls("https://github.com/MengRao/fmtlog/archive/refs/tags/$(version).tar.gz",
              "https://github.com/MengRao/fmtlog.git")
+    add_versions("v2.3.0", "769dee37a6375e2c4784c936c7191aaa755e669ef9ed311c412153305878ba56")
     add_versions("v2.2.2", "31e8341093e45fc999dbeeecfe9cdc118cc8f1e64a184cc3f194f5701d5eaec9")
     add_versions("v2.2.1", "9bc2f1ea37eece0f4807689962b529d2d4fa07654baef184f051319b4eac9304")
     add_versions("v2.1.2", "d286184e04c3c3286417873dd2feac524c53babc6cd60f10179aa5b10416ead7")
