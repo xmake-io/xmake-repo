@@ -11,7 +11,19 @@ package("streamvbyte")
 
     add_deps("cmake")
 
+    if on_check then
+        on_check("windows", function (target)
+            if package:version() and package:version():eq("2.0.0") then
+                if package:is_arch("arm.*") then
+                    raise("package(streamvbyte 2.0.0) unsupported arm arch")
+                end
+            end
+        end)
+    end
+
     on_install(function (package)
+        io.replace("CMakeLists.txt", "set(CMAKE_POSITION_INDEPENDENT_CODE ON)", "", {plain = true})
+
         local configs = {"-DSTREAMVBYTE_ENABLE_EXAMPLES=OFF", "-DSTREAMVBYTE_ENABLE_TESTS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
