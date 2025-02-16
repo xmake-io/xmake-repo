@@ -20,7 +20,7 @@ package("aws-lc")
     if is_plat("wasm") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
-    
+
     add_deps("cmake")
     if is_plat("windows", "mingw") or is_host("windows") then
         add_deps("nasm")
@@ -70,7 +70,13 @@ package("aws-lc")
         if package:is_plat("mingw") and not package:is_arch64() then
             table.insert(configs, "-DOPENSSL_NO_ASM=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+
+        local opt = {}
+        if package:is_plat("wasm") then
+            opt.cxflags = "-pthread"
+            package:add("ldflags", "-s USE_PTHREADS=1")
+        end
+        import("package.tools.cmake").install(package, configs, opt)
     end)
 
     on_test(function (package)
