@@ -51,10 +51,10 @@ package("aws-lc")
 
         local configs = {
             "-DBUILD_TESTING=OFF",
+            "-DCMAKE_POLICY_DEFAULT_CMP0057=NEW",
             "-DCMAKE_INSTALL_INCLUDEDIR=include",
             "-DBUILD_LIBSSL=ON",
         }
-
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
 
