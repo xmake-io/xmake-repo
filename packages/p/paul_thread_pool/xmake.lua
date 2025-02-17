@@ -7,6 +7,7 @@ package("paul_thread_pool")
     add_urls("https://github.com/DeveloperPaul123/thread-pool/archive/refs/tags/$(version).zip",
              "https://github.com/DeveloperPaul123/thread-pool.git")
 
+    add_versions("0.7.0", "efb689fe5b02ddf039558a0f90c6ebc774b676e5ebb7176c14fb0107f023f4a6")
     add_versions("0.6.2", "a2b722560449da53faf4753288a5fb2074d88b1fa9bba257c85425b3e48ecb2c")
 
     on_check(function (package)
