@@ -15,6 +15,7 @@ package("spirv-reflect")
     add_versions("1.3.280+0", "8406f76dcf6cca11fe430058c4f0ed4b846f3be4")
     add_versions("1.3.283+0", "ee5b57fba6a986381f998567761bbc064428e645")
     add_versions("1.3.290+0", "b4dc70d8e6ac30c719a2d05b8ad05e1d277c92b4")
+    add_versions("1.4.304+0", "281b55edb67b1f2e61e1dc92fdc42a650da05d83")
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
 
