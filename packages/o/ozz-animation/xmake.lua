@@ -16,19 +16,24 @@ package("ozz-animation")
     add_configs("data", {description = "Build data on code change", default = false, type = "boolean"})
     add_configs("simd_ref", {description = "Force SIMD math reference implementation", default = false, type = "boolean"})
     add_configs("postfix", {description = "Use per config postfix name", default = false, type = "boolean"})
+    add_configs("tools", {description = "Build tools", default = false, type = "boolean"})
 
     add_deps("cmake")
 
     add_links("ozz_animation", "ozz_animation_offline", "ozz_geometry", "ozz_options", "ozz_base")
 
     on_install(function (package)
-        if package:is_plat("windows") and package:is_arch("arm.*") then
-            io.replace("build-utils/cmake/compiler_settings.cmake", "add_compile_options(/WX)", "", {plain = true})
+        if package:config("shared") then
+            package:add("defines", "OZZ_USE_DYNAMIC_LINKING")
         end
+
+        io.replace("build-utils/cmake/compiler_settings.cmake", "add_compile_options(/WX)", "", {plain = true})
+        io.replace("build-utils/cmake/compiler_settings.cmake", "add_compile_options(-Werror)", "", {plain = true})
+        io.replace("build-utils/cmake/compiler_settings.cmake", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")]], "", {plain = true})
+        io.replace("build-utils/cmake/compiler_settings.cmake", [[set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")]], "", {plain = true})
 
         local configs =
         {
-            "-Dozz_build_tools=OFF",
             "-Dozz_build_samples=OFF",
             "-Dozz_build_tests=OFF",
             "-Dozz_build_howtos=OFF",
@@ -36,9 +41,6 @@ package("ozz-animation")
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        if package:is_plat("windows") then
-            table.insert(configs, "-Dozz_build_msvc_rt_dll=" .. (package:has_runtime("MD", "MDd") and "ON" or "OFF"))
-        end
         for name, enabled in pairs(package:configs()) do
             if not package:extraconf("configs", name, "builtin") then
                 table.insert(configs, "-Dozz_build_" .. name .. "=" .. (enabled and "ON" or "OFF"))
@@ -48,10 +50,16 @@ package("ozz-animation")
     end)
 
     on_test(function (package)
+        local languages
+        if package:version() and package:version():ge("0.16.0") then
+            languages = "c++17"
+        else
+            languages = "c++11"
+        end
         assert(package:check_cxxsnippets({test = [[
             #include <ozz/animation/runtime/animation.h>
             void test() {
                 auto x = ozz::animation::Animation();
             }
-        ]]}, {configs = {languages = "c++11"}}))
+        ]]}, {configs = {languages = languages}}))
     end)
