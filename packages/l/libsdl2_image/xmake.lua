@@ -1,5 +1,5 @@
 package("libsdl2_image")
-    set_homepage("http://www.libsdl.org/projects/SDL_image/")
+    set_homepage("https://github.com/libsdl-org/SDL_image")
     set_description("Simple DirectMedia Layer image loading library")
     set_license("zlib")
 
@@ -13,6 +13,7 @@ package("libsdl2_image")
 
     add_urls("https://www.libsdl.org/projects/SDL_image/release/SDL2_image-$(version).zip",
              "https://github.com/libsdl-org/SDL_image/releases/download/release-$(version)/SDL2_image-$(version).zip")
+    add_versions("2.8.5", "1ad911966aabf194a8a5e5744f5e67de2b61cc6e2c399de0abb80e05ce526b2c")
     add_versions("2.8.4", "a99a906b23d13707df63bc02b7b6a2911282ff82f0f0bd72eaad7a6e53bd1f63")
     add_versions("2.8.3", "3d24c5a2b29813d515d4e37a9703bc3ae849963d1dc09e1ad6b46e1b4a6bb3c1")
     add_versions("2.6.0", "2252cdfd5be73cefaf727edc39c2ef3b7682e797acbd3126df117e925d46aaf6")
@@ -50,7 +51,7 @@ target_link_libraries(SDL2_image PRIVATE ${SDL2_LIBRARY})
             ]], {plain = true})
         end
 
-        local configs = {"-DSDL2IMAGE_SAMPLES=OFF", "-DSDL2IMAGE_TESTS=OFF"}
+        local configs = {"-DSDL2IMAGE_SAMPLES=OFF", "-DSDL2IMAGE_TESTS=OFF", "-DSDL2IMAGE_VENDORED=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local libsdl2 = package:dep("libsdl2")
