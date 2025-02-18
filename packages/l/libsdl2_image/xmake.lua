@@ -1,5 +1,5 @@
 package("libsdl2_image")
-    set_homepage("http://www.libsdl.org/projects/SDL_image/")
+    set_homepage("https://github.com/libsdl-org/SDL_image")
     set_description("Simple DirectMedia Layer image loading library")
     set_license("zlib")
 
@@ -51,7 +51,7 @@ target_link_libraries(SDL2_image PRIVATE ${SDL2_LIBRARY})
             ]], {plain = true})
         end
 
-        local configs = {"-DSDL2IMAGE_SAMPLES=OFF", "-DSDL2IMAGE_TESTS=OFF"}
+        local configs = {"-DSDL2IMAGE_SAMPLES=OFF", "-DSDL2IMAGE_TESTS=OFF", "-DSDL2IMAGE_VENDORED=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         local libsdl2 = package:dep("libsdl2")
