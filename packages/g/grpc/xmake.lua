@@ -15,12 +15,14 @@ package("grpc")
     add_patches("1.51.3", path.join(os.scriptdir(), "patches", "1.51.3", "disable-download-archive.patch"), "90fdd6e4a51cbc9756d1fcdd0f65e665d4b78cfd91fdbeb0228cc4e9c4ba1b73")
     add_patches("1.51.3", path.join(os.scriptdir(), "patches", "1.51.3", "static-linking-in-linux.patch"), "176474919883f93be0c5056098eccad408038663c6c7361f2e049cdf7247a19c")
 
+    add_configs("openssl3", {description = "default use openssl3.", default = true, type = "boolean"})
+
     if is_plat("windows") then
         add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     add_deps("cmake")
-    add_deps("c-ares", "re2", "protobuf-cpp", "openssl3", "zlib")
+    add_deps("c-ares", "re2", "protobuf-cpp", "zlib")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl", "m")
@@ -37,6 +39,11 @@ package("grpc")
     end
 
     on_load(function (package)
+        if package:config("openssl3") then
+            package:add("deps", "openssl3")
+        else
+            package:add("deps", "openssl")
+        end
         package:add("links", "grpc++", "grpc++_unsecure", "grpc++_alts", "grpc++_reflection", "grpc++_error_details", "grpcpp_channelz")
         package:add("links", "grpc", "grpc_unsecure", "grpc_plugin_support", "grpc_authorization_provider", "gpr")
         package:add("links", "address_sorting")
