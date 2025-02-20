@@ -19,7 +19,16 @@ package("watcher")
         add_frameworks("CoreFoundation", "CoreServices")
     end
 
-    on_install("windows", "linux", "macosx", "mingw", "msys", "android", "cross", function (package)
+    if on_check then
+        on_check("android", function (package)
+            if package:version() and package:version():ge("0.13.5") then
+                local ndk = package:toolchain("ndk"):config("ndkver")
+                assert(ndk and tonumber(ndk) > 22, "package(watcher >=0.13.5) require ndk version > 22")
+            end
+        end)
+    end
+
+    on_install("!wasm and !iphoneos", function (package)
         os.cp("include", package:installdir())
     end)
 
