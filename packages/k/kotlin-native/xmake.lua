@@ -25,7 +25,7 @@ package("kotlin-native")
 
     add_deps("openjdk")
 
-    on_install("@macosx", "@linux|x86_64", "@windows|x64", function (package)
+    on_install("@macosx", "@linux|x86_64", "@windows|x64", "@msys|x86_64", function (package)
         os.cp("*", package:installdir())
         local openjdk = package:dep("openjdk")
         local java_home
