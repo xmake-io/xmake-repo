@@ -1,9 +1,9 @@
 package("ggml")
-    set_homepage("https://github.com/ggerganov/ggml")
+    set_homepage("https://github.com/ggml-org/ggml")
     set_description("Tensor library for machine learning")
     set_license("MIT")
 
-    add_urls("https://github.com/ggerganov/ggml.git", {submodules = false})
+    add_urls("https://github.com/ggml-org/ggml.git", {submodules = false})
 
     add_versions("2025.02.04", "5734b97d896ec744ea9ea288571308cca2285149")
 

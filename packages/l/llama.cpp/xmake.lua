@@ -1,10 +1,10 @@
 package("llama.cpp")
-    set_homepage("https://github.com/ggerganov/llama.cpp")
+    set_homepage("https://github.com/ggml-org/llama.cpp")
     set_description("Port of Facebook's LLaMA model in C/C++")
     set_license("MIT")
 
-    add_urls("https://github.com/ggerganov/llama.cpp/archive/refs/tags/b$(version).tar.gz",
-             "https://github.com/ggerganov/llama.cpp.git")
+    add_urls("https://github.com/ggml-org/llama.cpp/archive/refs/tags/b$(version).tar.gz",
+             "https://github.com/ggml-org/llama.cpp.git")
 
     add_versions("3775", "405bae9d550cb3fbf36d6583377b951a346b548f5850987238fe024a16f45cad")
 
