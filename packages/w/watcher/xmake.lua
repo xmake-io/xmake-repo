@@ -28,7 +28,7 @@ package("watcher")
         end)
     end
 
-    on_install("!wasm and !iphoneos", function (package)
+    on_install("!wasm and !iphoneos and !bsd", function (package)
         os.cp("include", package:installdir())
     end)
 
