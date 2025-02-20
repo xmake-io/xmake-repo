@@ -7,6 +7,7 @@ package("microsoft-proxy")
     add_urls("https://github.com/microsoft/proxy/archive/refs/tags/$(version).tar.gz",
              "https://github.com/microsoft/proxy.git")
 
+    add_versions("3.2.1", "83df61c6ef762df14b4f803a1dde76c6e96261ac7f821976478354c0cc2417a8")
     add_versions("3.2.0", "a828432a43a1e05c65176e58b48a6d6270669862adb437a069693f346275b5f0")
     add_versions("3.1.0", "c86ed7767ed3e90250632f2b5269c83225b0ae986314c58596d421b245f26cd1")
     add_versions("3.0.0", "7e073e217e5572bc4c17ed5893273c80ea34c87e1406c853beeb9ca9bdda9733")
