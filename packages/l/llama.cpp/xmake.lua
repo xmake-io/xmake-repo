@@ -73,7 +73,7 @@ package("llama.cpp")
         end
     end)
 
-    on_install(function (package)
+    on_install("!cross", function (package)
         local configs = {
             "-DLLAMA_ALL_WARNINGS=OFF",
             "-DLLAMA_BUILD_TESTS=OFF",
