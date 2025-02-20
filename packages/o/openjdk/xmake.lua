@@ -20,7 +20,7 @@ package("openjdk")
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-linux-x64.tar.gz")
 
             add_versions("21.0.5", "0d42a80dbc92f2f112e6db3b4b9bd278c0776a73b6050812e720230813487ebd")
-        elseif os.arch() == "arm64-v8a" then
+        elseif os.arch() == "arm64" then
             add_urls("https://aka.ms/download-jdk/microsoft-jdk-$(version)-linux-aarch64.tar.gz")
 
             add_versions("21.0.5", "356844fe544085b00cd73935e0c7a4c534f286799728fa6d6e996d1cb8b1a682")
@@ -64,7 +64,7 @@ package("openjdk")
         end)
     end
 
-    on_install("windows|!x86", "linux", "macosx", function (package)
+    on_install("windows|!x86", "msys|x86_64", "linux", "macosx", function (package)
         local plat
         if package:is_plat("windows", "mingw") then
             plat = "win32"
