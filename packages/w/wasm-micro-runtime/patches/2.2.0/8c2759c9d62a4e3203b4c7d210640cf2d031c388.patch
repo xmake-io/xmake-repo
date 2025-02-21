@@ -1,0 +1,67 @@
+diff --git a/core/shared/platform/windows/win_clock.c b/core/shared/platform/windows/win_clock.c
+index c402330aad..1d618c8b67 100644
+--- a/core/shared/platform/windows/win_clock.c
++++ b/core/shared/platform/windows/win_clock.c
+@@ -11,9 +11,19 @@
+ #define NANOSECONDS_PER_TICK 100
+ 
+ #if WINAPI_PARTITION_DESKTOP
+-extern NTSTATUS
+-NtQueryTimerResolution(PULONG MinimumResolution, PULONG MaximumResolution,
+-                       PULONG CurrentResolution);
++#ifndef __kernel_entry
++#define __kernel_entry
++#endif
++#ifndef NTAPI
++#define NTAPI
++#endif
++#ifndef _Out_
++#define _Out_
++#endif
++extern __kernel_entry NTSTATUS NTAPI
++NtQueryTimerResolution(_Out_ PULONG MinimumResolution,
++                       _Out_ PULONG MaximumResolution,
++                       _Out_ PULONG CurrentResolution);
+ #endif
+ 
+ static __wasi_errno_t
+diff --git a/core/shared/platform/windows/win_thread.c b/core/shared/platform/windows/win_thread.c
+index 438e160405..1f6a57ebbf 100644
+--- a/core/shared/platform/windows/win_thread.c
++++ b/core/shared/platform/windows/win_thread.c
+@@ -60,6 +60,17 @@ static DWORD thread_data_key;
+ static void(WINAPI *GetCurrentThreadStackLimits_Kernel32)(PULONG_PTR,
+                                                           PULONG_PTR) = NULL;
+ 
++int
++os_sem_init(korp_sem *sem);
++int
++os_sem_destroy(korp_sem *sem);
++int
++os_sem_wait(korp_sem *sem);
++int
++os_sem_reltimed_wait(korp_sem *sem, uint64 useconds);
++int
++os_sem_signal(korp_sem *sem);
++
+ static void
+ thread_data_list_add(os_thread_data *thread_data)
+ {
+@@ -117,17 +128,6 @@ thread_data_list_lookup(korp_tid tid)
+     return NULL;
+ }
+ 
+-int
+-os_sem_init(korp_sem *sem);
+-int
+-os_sem_destroy(korp_sem *sem);
+-int
+-os_sem_wait(korp_sem *sem);
+-int
+-os_sem_reltimed_wait(korp_sem *sem, uint64 useconds);
+-int
+-os_sem_signal(korp_sem *sem);
+-
+ int
+ os_thread_sys_init()
+ {
