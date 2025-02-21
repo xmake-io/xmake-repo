@@ -7,6 +7,7 @@ package("mnn")
     add_urls("https://github.com/alibaba/MNN/archive/$(version).zip",
              "https://github.com/alibaba/MNN.git")
 
+    add_versions("3.0.5", "23179be245aefe2e1546e94ad6312fde6fdd14c669ff5123ee5a5a9ef14542ef")
     add_versions("1.2.2", "78698b879f796a84d1aeb02f60ee38f6860dfdd03c27d1649aaaf9e0adfc8630")
     add_versions("1.2.1", "485ae09558ff5626a63d1467ca81ebe0e17fbc60222c386d8f0e857f487c74d0")
 
@@ -24,14 +25,12 @@ package("mnn")
 
     add_deps("cmake")
 
-    add_links("")
-
     on_load("windows", "linux", "macosx", "android", function (package)
         local mnn_path = package:installdir("include")
         local mnn_lib_dir = string.sub(mnn_path, 1, string.len(mnn_path) - 7) .. "lib"
         if package:config("shared") then
-            package:add("ldflags", "-L" .. mnn_lib_dir .. " -lmnn")
-            package:add("shflags", "-L" .. mnn_lib_dir .. " -lmnn")
+            package:add("ldflags", "-L" .. mnn_lib_dir .. " -lMNN")
+            package:add("shflags", "-L" .. mnn_lib_dir .. " -lMNN")
         else
             if package:is_plat("linux", "android", "cross") then
                 package:add("shflags", " -Wl,--whole-archive " .. mnn_lib_dir .. "/libMNN.a -Wl,--no-whole-archive")
@@ -84,7 +83,7 @@ package("mnn")
             table.insert(configs, "-DMNN_BUILD_" .. string.upper(name) .. "=" .. (package:config(name) and "ON" or "OFF"))
         end
         if package:is_plat("windows") then
-            table.insert(configs, "-DMNN_WIN_RUNTIME_MT=" .. (package:config("vs_runtime") and "ON" or "OFF"))
+            table.insert(configs, "-DMNN_WIN_RUNTIME_MT=" .. (package:has_runtime("MT", "MTd") and "ON" or "OFF"))
             io.replace("CMakeLists.txt",
                 'SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /Zi")',
                 'SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")', {plain = true})
