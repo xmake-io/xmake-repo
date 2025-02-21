@@ -14,6 +14,7 @@ package("libsdl2_ttf")
     add_urls("https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-$(version).zip",
              "https://github.com/libsdl-org/SDL_ttf/releases/download/release-$(version)/SDL2_ttf-$(version).zip")
 
+    add_versions("2.24.0", "bef50614acb63347fe1612facabb31b0f1a05ca2b5c271a619c26fdae561a1c9")
     add_versions("2.20.0", "04e94fc5ecac3475ab35c1d5cf52650df691867e7e4befcc861bf982a747111a")
     add_versions("2.20.1", "18d81ab399c8e39adababe8918691830ba6e0d6448e5baa141ee0ddf87ede2dc")
     add_versions("2.20.2", "aa6256bfcffd8381a75b3a2a2384ac12109b5b148e72722a19b0ede54c4051dc")
