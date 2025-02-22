@@ -96,6 +96,14 @@ package("wgpu-native")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("wgpuCreateInstance", {includes = "wgpu.h"}))
+        assert(package:check_csnippets({test = [[
+            #include <wgpu.h>
+            #include <stddef.h>
+            void test()
+            {
+                WGPUInstance instance = wgpuCreateInstance(NULL);
+                if(instance != NULL)
+                    wgpuInstanceRelease(instance);
+            }
+        ]]}))
     end)
-
