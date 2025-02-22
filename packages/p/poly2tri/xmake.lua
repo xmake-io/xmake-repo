@@ -22,7 +22,7 @@ package("poly2tri")
                 LIBRARY DESTINATION lib
                 ARCHIVE DESTINATION lib
             )
-            install(DIRECTORY "${CMAKE_SOURCE_DIR}/poly2tri" DESTINATION include)
+            install(DIRECTORY "${CMAKE_SOURCE_DIR}/poly2tri" DESTINATION include FILES_MATCHING PATTERN "*.h")
         ]], {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
