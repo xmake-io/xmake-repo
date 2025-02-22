@@ -74,21 +74,21 @@ package("wgpu-native")
 
         if package:is_plat("windows") then
             if package:config("shared") then
-                os.cp(lib_path .. "wgpu_native.dll", package:installdir("bin"))
-                os.cp(lib_path .. "wgpu_native.pdb", package:installdir("bin"))
+                os.cp(lib_path .. "wgpu_native.dll", package:installdir("lib"))
+                os.cp(lib_path .. "wgpu_native.pdb", package:installdir("lib"))
                 os.cp(lib_path .. "wgpu_native.dll.lib", package:installdir("lib"))
             else
                 os.cp(lib_path .. "wgpu_native.lib", package:installdir("lib"))
             end
         elseif package:is_plat("linux") then
             if package:config("shared") then
-                os.cp(lib_path .. "libwgpu_native.so", package:installdir("bin"))
+                os.cp(lib_path .. "libwgpu_native.so", package:installdir("lib"))
             else
                 os.cp(lib_path .. "libwgpu_native.a", package:installdir("lib"))
             end
         elseif package:is_plat("macosx") then
             if package:config("shared") then
-                os.cp(lib_path .. "libwgpu_native.dylib", package:installdir("bin"))
+                os.cp(lib_path .. "libwgpu_native.dylib", package:installdir("lib"))
             else
                 os.cp(lib_path .. "libwgpu_native.a", package:installdir("lib"))
             end
@@ -98,3 +98,4 @@ package("wgpu-native")
     on_test(function (package)
         assert(package:has_cfuncs("wgpuCreateInstance", {includes = "wgpu.h"}))
     end)
+
