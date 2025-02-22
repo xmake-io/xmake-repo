@@ -64,6 +64,8 @@ package("boost")
 
     if is_plat("linux", "bsd") then
         add_syslinks("pthread", "dl")
+    elseif is_plat("windows", "mingw") then
+        add_syslinks("ntdll", "shell32", "advapi32", "user32", "ws2_32")
     end
 
     on_fetch("fetch")
