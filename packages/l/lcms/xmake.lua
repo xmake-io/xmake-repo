@@ -1,47 +1,44 @@
 package("lcms")
 
     set_homepage("https://www.littlecms.com/")
-    set_description("A free, open source, CMM engine.")
+    set_description("A free, open source, CMM engine. It provides fast transforms between ICC profiles.")
     set_license("MIT")
 
-    add_urls("https://github.com/mm2/Little-CMS/archive/$(version).tar.gz")
-    add_versions("2.11", "478c9c3938d7a91b1171de4616f8b04308a8676d73eadc19505b7ace41327f28")
-    add_versions("2.12", "e501f1482fc424550ef3abbf86bf1c66090e1661249e89552d39ed5bf935df66")
+    add_urls("https://github.com/mm2/Little-CMS/archive/refs/tags/lcms$(version).tar.gz",
+             "https://github.com/mm2/Little-CMS.git")
 
-    on_load("windows", function (package)
-        if package:config("shared") then
-            package:add("defines", "CMS_DLL")
+    add_versions("2.17", "6e6f6411db50e85ae8ff7777f01b2da0614aac13b7b9fcbea66dc56a1bc71418")
+
+    add_deps("meson")
+
+    add_configs("jpeg", {description = "Use JPEG", default = false, type = "boolean"})
+    add_configs("tiff", {description = "Use LibTiff", default = false, type = "boolean"})
+
+    add_configs("utils", {description = "Build the utils", default = false, type = "boolean"})
+    add_configs("fastfloat", {description = "Build and install the fast float plugin, use only if GPL 3.0 is acceptable", default = false, type = "boolean"})
+    add_configs("threaded", {description = "Build and install the multi threaded plugin, use only if GPL 3.0 is acceptable", default = false, type = "boolean"})
+
+    on_load(function (package)
+        if package:config("jpeg") then
+            package:add("deps", "libjpeg")
+        end
+        if package:config("tiff") then
+            package:add("deps", "libtiff")
         end
     end)
 
-    on_install("windows", function (package)
-        io.writefile("xmake.lua", [[
-            add_rules("mode.debug", "mode.release")
-            target("lcms2")
-                set_kind("$(kind)")
-                add_files("src/*.c")
-                if is_kind("shared") then
-                    add_defines("CMS_DLL_BUILD")
-                end
-                add_includedirs("include")
-                add_headerfiles("include/(*.h)")
-        ]])
-        import("package.tools.xmake").install(package, {kind = package:config("shared") and "shared" or "static"})
-    end)
-
-    on_install("macosx", "linux", "wasm", function (package)
+    on_install(function (package)
         local configs = {}
-        if package:config("shared") then
-            table.insert(configs, "--enable-shared=yes")
-            table.insert(configs, "--enable-static=no")
-        else
-            table.insert(configs, "--enable-static=yes")
-            table.insert(configs, "--enable-shared=no")
-        end
-        if package:config("pic") then
-            table.insert(configs, "--with-pic")
-        end
-        import("package.tools.autoconf").install(package, configs)
+        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+
+        table.insert(configs, "-Djpeg=" .. (package:config("jpeg") and "enabled" or "disabled"))
+        table.insert(configs, "-Dtiff=" .. (package:config("tiff") and "enabled" or "disabled"))
+
+        table.insert(configs, "-Dutils=" .. (package:config("utils") and "true" or "false"))
+        table.insert(configs, "-Dfastfloat=" .. (package:config("fastfloat") and "true" or "false"))
+        table.insert(configs, "-Dthreaded=" .. (package:config("threaded") and "true" or "false"))
+    
+        import("package.tools.meson").install(package, configs)
     end)
 
     on_test(function (package)
