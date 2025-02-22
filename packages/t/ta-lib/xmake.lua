@@ -4,6 +4,7 @@ package("ta-lib")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/TA-Lib/ta-lib/releases/download/v$(version)/ta-lib-$(version)-src.tar.gz")
+    add_versions("0.6.4", "aa04066d17d69c73b1baaef0883414d3d56ab3775872d82916d1cdb376a3ae86")
     add_versions("0.6.2", "598164dd030546eac7385af9b311a4115bb47901971c74746cbef4d3287c81e0")         
 
     add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})

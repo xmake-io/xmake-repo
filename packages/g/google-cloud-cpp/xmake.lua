@@ -6,6 +6,7 @@ package("google-cloud-cpp")
     add_urls("https://github.com/googleapis/google-cloud-cpp/archive/refs/tags/$(version).tar.gz",
              "https://github.com/googleapis/google-cloud-cpp.git")
 
+    add_versions("v2.34.0", "22deeb6c2abf0838f4d4c6100e83489bb581fa8015180370500ad31712f601ac")
     add_versions("v2.33.0", "e53ba3799c052d97acac9a6a6b27af24ce822dbde7bfde973bac9e5da714e6b2")
 
     add_configs("libraries", {description = "Enable subset of the libraries (default: google_cloud_cpp_common)", default = {}, type = "table"})

@@ -7,6 +7,7 @@ package("ffmpeg")
     add_urls("https://github.com/FFmpeg/FFmpeg/archive/n$(version).zip", {alias = "github"})
     add_urls("https://git.ffmpeg.org/ffmpeg.git", "https://github.com/FFmpeg/FFmpeg.git", {alias = "git"})
 
+    add_versions("home:7.1", "fd59e6160476095082e94150ada5a6032d7dcc282fe38ce682a00c18e7820528")
     add_versions("home:7.0", "a24d9074bf5523a65aaa9e7bd02afe4109ce79d69bd77d104fed3dab4b934d7a")
     add_versions("home:6.1", "eb7da3de7dd3ce48a9946ab447a7346bd11a3a85e6efb8f2c2ce637e7f547611")
     add_versions("home:6.0.1", "2c6e294569d1ba8e99cbf1acbe49e060a23454228a540a0f45d679d72ec69a06")
@@ -15,6 +16,7 @@ package("ffmpeg")
     add_versions("home:5.0.1", "28df33d400a1c1c1b20d07a99197809a3b88ef765f5f07dc1ff067fac64c59d6")
     add_versions("home:4.4.4", "47b1fbf70a2c090d9c0fae5910da11c6406ca92408bb69d8c935cd46c622c7ce")
     add_versions("home:4.0.2", "346c51735f42c37e0712e0b3d2f6476c86ac15863e4445d9e823fe396420d056")
+    add_versions("github:7.1", "201fe5427412e0a0a0304a545f2aceb7e95e2ef1c26a7e486d3106fd156ed812")
     add_versions("github:7.0", "9ea4f1e934b1655c9a6dad579fd52fa299cd4f6a5f2b82be97daa98ff2e798d0")
     add_versions("github:6.1", "7da07ff7e30bca95c0593db20442becba13ec446dd9c3331ca3d1b40eecd3c93")
     add_versions("github:6.0.1", "2acb5738a1b4b262633ac2d646340403ae47120d9eb289ecad23fc90093c0d6c")
@@ -23,6 +25,7 @@ package("ffmpeg")
     add_versions("github:5.0.1", "f9c2e06cafa4381df8d5c9c9e14d85d9afcbc10c516c6a206f821997cc7f6440")
     add_versions("github:4.4.4", "b0d16b48bd8ccb160e14291145294b0b12597e32b17175f7604288a8c73216de")
     add_versions("github:4.0.2", "4df1ef0bf73b7148caea1270539ef7bd06607e0ea8aa2fbf1bb34062a097f026")
+    add_versions("git:7.1", "n7.1")
     add_versions("git:7.0", "n7.0")
     add_versions("git:6.1", "n6.1")
     add_versions("git:6.0.1", "n6.0.1")
@@ -48,7 +51,7 @@ package("ffmpeg")
         add_configs("libdrm", {description = "Enable libdrm hardware acceleration", default = true, type = "boolean"})
     end
 
-    add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil")
+    add_links("avfilter", "avdevice", "avformat", "avcodec", "swscale", "swresample", "avutil", "postproc")
     if is_plat("macosx", "iphoneos") then
         add_frameworks("CoreFoundation", "Foundation", "CoreVideo", "CoreMedia", "VideoToolbox", "Security")
         if is_plat("iphoneos") then
@@ -59,7 +62,7 @@ package("ffmpeg")
     elseif is_plat("linux") then
         add_syslinks("dl", "pthread")
     elseif is_plat("android") then
-        add_syslinks("dl", "android")
+        add_syslinks("dl", "android", "mediandk")
     end
 
     add_deps("nasm")
@@ -106,7 +109,7 @@ package("ffmpeg")
             end
         end
         -- https://www.ffmpeg.org/platform.html#toc-Advanced-linking-configuration
-        if package:config("pic") ~= false and not package:is_plat("windows", "macosx", "iphoneos") then
+        if package:config("pic") ~= false and package:is_plat("linux", "android") then
             package:add("shflags", "-Wl,-Bsymbolic")
             package:add("ldflags", "-Wl,-Bsymbolic")
         end
@@ -209,7 +212,11 @@ package("ffmpeg")
 
         if package:is_cross() then
             table.insert(configs, "--enable-cross-compile")
-            table.insert(configs, "--arch=" .. package:targetarch())
+            local arch = package:targetarch()
+            if arch:match("arm64.*") then
+                arch = "arm64"
+            end
+            table.insert(configs, "--arch=" .. arch)
         end
 
         if package:is_plat("windows") then

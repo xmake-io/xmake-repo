@@ -10,12 +10,14 @@ package("webui")
     add_versions("2.3.0", "14be57405b12cf434daade2310178534240866e3169c7213a6fa0e4a6c6f9f27")
 
     if is_plat("windows") then
-        add_syslinks("user32", "advapi32", "shell32")
+        add_syslinks("user32", "advapi32", "shell32", "ws2_32", "ole32")
     elseif is_plat("mingw") then
         add_syslinks("ws2_32")
+    elseif is_plat("linux") then
+        add_syslinks("pthread", "dl")
     end
 
-    on_install("windows", "linux", "macosx", "mingw", "msys", "android", "cross", function (package)
+    on_install("windows", "linux", "macosx", "mingw|x86_64", "msys", "android", "cross", function (package)
         if package:is_plat("android") and package:is_arch("armeabi-v7a") then
             import("core.tool.toolchain")
             local ndk = toolchain.load("ndk", {plat = package:plat(), arch = package:arch()})
@@ -36,9 +38,11 @@ package("webui")
                 add_headerfiles("include/webui.h", "include/webui.hpp")
                 add_includedirs("include", "src/civetweb")
                 if is_plat("windows") then
-                    add_syslinks("user32", "advapi32", "shell32")
+                    add_syslinks("user32", "advapi32", "shell32", "ws2_32", "ole32")
                 elseif is_plat("mingw") then
                     add_syslinks("ws2_32")
+                elseif is_plat("linux") then
+                    add_syslinks("pthread", "dl")
                 end
         ]])
         import("package.tools.xmake").install(package)

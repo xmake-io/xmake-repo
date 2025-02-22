@@ -7,6 +7,8 @@ package("imgui")
     add_urls("https://github.com/ocornut/imgui.git", {alias = "git"})
 
     -- don't forget to add the docking versions as well
+    add_versions("v1.91.8", "db3a2e02bfd6c269adf0968950573053d002f40bdfb9ef2e4a90bce804b0f286")
+    add_versions("v1.91.7", "2001dab4bdd7d178d8277d3b17c40aa1ff1e76e2ccac5e7ab8c6daf9756312c2")
     add_versions("v1.91.6", "c5fbc5dcab1d46064001c3b84d7a88812985cde7e0e9ced03f5677bec1ba502a")
     add_versions("v1.91.5", "2aa2d169c569368439e5d5667e0796d09ca5cc6432965ce082e516937d7db254")
     add_versions("v1.91.4", "a455c28d987c78ddf56aab98ce0ff0fda791a23a2ec88ade46dd106b837f0923")
@@ -48,6 +50,8 @@ package("imgui")
     add_versions("v1.76",   "e482dda81330d38c87bd81597cacaa89f05e20ed2c4c4a93a64322e97565f6dc")
     add_versions("v1.75",   "1023227fae4cf9c8032f56afcaea8902e9bfaad6d9094d6e48fb8f3903c7b866")
 
+    add_versions("git:v1.91.8-docking", "v1.91.8-docking")
+    add_versions("git:v1.91.7-docking", "v1.91.7-docking")
     add_versions("git:v1.91.6-docking", "v1.91.6-docking")
     add_versions("git:v1.91.5-docking", "v1.91.5-docking")
     add_versions("git:v1.91.4-docking", "v1.91.4-docking")
@@ -138,10 +142,10 @@ package("imgui")
             end
         end
         if package:config("sdl2_no_renderer") then
-            package:add("deps", "libsdl")
+            package:add("deps", "libsdl2")
         end
         if package:config("sdl2_renderer") then
-            package:add("deps", "libsdl >=2.0.17")
+            package:add("deps", "libsdl2 >=2.0.17")
         end
         if package:config("vulkan") then
             package:add("deps", "vulkansdk")

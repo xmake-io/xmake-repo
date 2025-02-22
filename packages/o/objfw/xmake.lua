@@ -27,6 +27,7 @@ package("objfw")
     add_versions("1.2.0",   "f1d92b64f524a1aaf8e8b572a0edf5817d589c3d3c60cab9bb182ccbac3ee405")
     add_versions("1.2.1",   "637fdeccae149cec236e62c5289450afad542fe930343918856e76594ab3fcfd")
     add_versions("1.2.2",   "4fe0bed1ec21561a184d804aa577ff630f1e3d20b1c3b973073e23ce829294a1")
+    add_versions("1.2.3",   "8324d3b352121544f817f40f71c21005457ee0255104c7e0d5aedbd6d968bced")
     if is_host("linux", "macosx") then
         add_deps("autoconf", "automake", "libtool")
     end

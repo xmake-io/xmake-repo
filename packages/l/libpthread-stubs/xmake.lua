@@ -9,7 +9,7 @@ package("libpthread-stubs")
 
     add_deps("pkg-config")
 
-    on_install("macosx", "linux", "bsd", function (package)
+    on_install("macosx", "linux", "bsd", "cross", function (package)
         import("package.tools.autoconf").install(package)
     end)
 

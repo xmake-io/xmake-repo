@@ -44,7 +44,7 @@ package("glfw")
             package:add("deps", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext")
         end
         if package:config("wayland") then
-            package:add("deps", "wayland")
+            package:add("deps", "wayland", "wayland-protocols")
         end
     end)
 
