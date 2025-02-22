@@ -4,8 +4,10 @@ package("wgpu-native")
     set_license("Apache-2.0")
 
     if is_plat("windows") and is_arch("x64") then
-        add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version)/wgpu-windows-x86_64-release.zip", {version = function(version) return version:gsub("%+", ".") end})
-        add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version)/wgpu-windows-x86_64-msvc-release.zip", {version = function(version) return version:gsub("%+", ".") end})
+        add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version).zip", {version = function(version)
+            local build = version:ge("v24.0.0+1") and "-msvc" or ""
+            return version:gsub("%+", ".") .. "/wgpu-windows-x86_64" .. build .. "-release"
+        end})
         add_versions("v24.0.0+1", "7dff003da706bc413e514a0395ef369f2935a4dc7c99f61cd97e8fee601c9f8e")
         add_versions("v0.19.4+1", "9e1591d60c2d2ee20d6d4a63bc01c7c5eecf7734761673160aa639e550a1ba4d")
         add_versions("v0.17.0+2", "1b8ae05bb7626e037ab7088f9f11fc8bb8341a32800d33857c09ff2fb1b3893f")
