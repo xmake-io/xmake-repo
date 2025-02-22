@@ -9,7 +9,7 @@ package("lcms")
 
     add_versions("2.17", "6e6f6411db50e85ae8ff7777f01b2da0614aac13b7b9fcbea66dc56a1bc71418")
 
-    add_deps("meson")
+    add_deps("meson", "ninja")
 
     add_configs("jpeg", {description = "Use JPEG", default = false, type = "boolean"})
     add_configs("tiff", {description = "Use LibTiff", default = false, type = "boolean"})
