@@ -19,6 +19,9 @@ package("lcms")
     add_configs("threaded", {description = "Build and install the multi threaded plugin, use only if GPL 3.0 is acceptable", default = false, type = "boolean"})
 
     on_load(function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "CMS_DLL")
+        end
         if package:config("jpeg") then
             package:add("deps", "libjpeg")
         end
