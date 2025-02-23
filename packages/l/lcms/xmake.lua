@@ -29,16 +29,30 @@ package("lcms")
 
     on_install(function (package)
         local configs = {}
-        table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
+        if package:is_plat("wasm") and package:config("shared") then
+            if package:config("shared") then
+                table.insert(configs, "--enable-shared=yes")
+                table.insert(configs, "--enable-static=no")
+            else
+                table.insert(configs, "--enable-static=yes")
+                table.insert(configs, "--enable-shared=no")
+            end
+            if package:config("pic") then
+                table.insert(configs, "--with-pic")
+            end
+            import("package.tools.autoconf").install(package, configs)
+        else
+            table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
 
-        table.insert(configs, "-Djpeg=" .. (package:config("jpeg") and "enabled" or "disabled"))
-        table.insert(configs, "-Dtiff=" .. (package:config("tiff") and "enabled" or "disabled"))
+            table.insert(configs, "-Djpeg=" .. (package:config("jpeg") and "enabled" or "disabled"))
+            table.insert(configs, "-Dtiff=" .. (package:config("tiff") and "enabled" or "disabled"))
 
-        table.insert(configs, "-Dutils=" .. (package:config("utils") and "true" or "false"))
-        table.insert(configs, "-Dfastfloat=" .. (package:config("fastfloat") and "true" or "false"))
-        table.insert(configs, "-Dthreaded=" .. (package:config("threaded") and "true" or "false"))
-    
-        import("package.tools.meson").install(package, configs)
+            table.insert(configs, "-Dutils=" .. (package:config("utils") and "true" or "false"))
+            table.insert(configs, "-Dfastfloat=" .. (package:config("fastfloat") and "true" or "false"))
+            table.insert(configs, "-Dthreaded=" .. (package:config("threaded") and "true" or "false"))
+        
+            import("package.tools.meson").install(package, configs)
+        end
     end)
 
     on_test(function (package)
