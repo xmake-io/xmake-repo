@@ -74,7 +74,7 @@ package("wgpu-native")
         end
     end)
 
-    on_install("windows|x64", "windows|x86", "linux|arm64-v8a", "linux|x86_64", "macosx|x86_64", "macosx|arm64", function (package)
+    on_install("windows|x64", "windows|x86", "windows|arm64", "linux|arm64", "linux|x86_64", "macosx|x86_64", "macosx|arm64", function (package)
         os.cp("**.h", package:installdir("include", "webgpu"))
         local lib_path = ""
         if os.exists("lib") then
