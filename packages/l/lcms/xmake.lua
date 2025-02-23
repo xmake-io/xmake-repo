@@ -47,7 +47,7 @@ package("lcms")
             table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
             table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
 
-            if ackage:config("jpeg") then
+            if package:config("jpeg") then
                 table.insert(configs, "--with-jpeg=" .. package:dep("libjpeg"):installdir())
             end
             if package:config("tiff") then
