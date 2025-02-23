@@ -21,6 +21,14 @@ package("lcms")
     add_configs("fastfloat", {description = "Build and install the fast float plugin, use only if GPL 3.0 is acceptable", default = false, type = "boolean"})
     add_configs("threaded", {description = "Build and install the multi threaded plugin, use only if GPL 3.0 is acceptable", default = false, type = "boolean"})
 
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread", "m")
+    elseif is_plat("wasm") then
+        add_syslinks("pthread")
+        add_ldflags("-s USE_PTHREADS=1")
+        add_cxflags("-pthread")
+    end
+
     on_load(function (package)
         if package:is_plat("windows") and package:config("shared") then
             package:add("defines", "CMS_DLL")
@@ -36,15 +44,13 @@ package("lcms")
     on_install(function (package)
         local configs = {}
         if package:is_plat("wasm") and package:config("shared") then
-            if package:config("shared") then
-                table.insert(configs, "--enable-shared=yes")
-                table.insert(configs, "--enable-static=no")
-            else
-                table.insert(configs, "--enable-static=yes")
-                table.insert(configs, "--enable-shared=no")
-            end
-            if package:config("pic") then
+            table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
+            table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+            if package:config("pic") ~= false then
                 table.insert(configs, "--with-pic")
+            end
+            if package:debug() then
+                table.insert(configs, "--enable-debug")
             end
             import("package.tools.autoconf").install(package, configs)
         else
