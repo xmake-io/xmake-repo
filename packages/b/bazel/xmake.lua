@@ -35,12 +35,20 @@ package("bazel")
     end
 
     on_install("@windows|x64", "@windows|arm64", "@macosx", "@linux|x86_64", "@linux|arm64", function (package)
-        if is_host("windows") then
-            os.cp("../bazel-*.exe", path.join(package:installdir("bin"), "bazel.exe"))
-        else
-            os.cp("../bazel-*", path.join(package:installdir("bin"), "bazel"))
+        if is_host("windows") and os.arch() == "x64" then
+            os.cp("../bazel-" .. package:version() .. "-windows-x86_64.exe", path.join(package:installdir("bin"), "bazel.exe"))
+        elseif is_host("windows") and os.arch() == "arm64" then
+            os.cp("../bazel-" .. package:version() .. "-windows-arm64.exe", path.join(package:installdir("bin"), "bazel.exe"))
+        elseif is_host("macosx") and os.arch() == "x86_64" then
+            os.cp("../bazel-" .. package:version() .. "-darwin-x86_64", path.join(package:installdir("bin"), "bazel"))
+        elseif is_host("macosx") and os.arch() == "arm64" then
+            os.cp("../bazel-" .. package:version() .. "-darwin-arm64", path.join(package:installdir("bin"), "bazel"))
+        elseif is_host("linux") and os.arch() == "x86_64" then
+            os.cp("../bazel-" .. package:version() .. "-linux-x86_64", path.join(package:installdir("bin"), "bazel"))
+        elseif is_host("linux") and os.arch() == "arm64" then
+            os.cp("../bazel-" .. package:version() .. "-linux-arm64", path.join(package:installdir("bin"), "bazel"))
         end
-        if is_host("linux") then
+        if is_host("macosx", "linux") then
             os.vrunv("chmod", {"+x", path.join(package:installdir("bin"), "bazel")})
         end
     end)
