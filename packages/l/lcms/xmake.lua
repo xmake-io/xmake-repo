@@ -9,6 +9,9 @@ package("lcms")
 
     add_versions("2.17", "6e6f6411db50e85ae8ff7777f01b2da0614aac13b7b9fcbea66dc56a1bc71418")
 
+    add_patches("2.17", "https://github.com/mm2/Little-CMS/commit/1723db795a477de2b010db7a53b2d159ab94c3fa.diff",
+                        "5f47d872f0439ec340e6f59089abbd6ea579539f85a31634787dfbbd9c0bb8aa")
+
     add_deps("meson", "ninja")
 
     add_configs("jpeg", {description = "Use JPEG", default = false, type = "boolean"})
