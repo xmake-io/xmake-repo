@@ -3,7 +3,7 @@ package("wgpu-native")
     set_description("Native WebGPU implementation based on wgpu-core")
     set_license("Apache-2.0")
 
-    if is_plat("windows") and is_arch("x86_64") then
+    if is_plat("windows") and is_arch("x64") then
         add_urls("https://github.com/gfx-rs/wgpu-native/releases/download/$(version).zip", {version = function(version)
             local build = version:ge("v24.0.0+1") and "-msvc" or ""
             return version:gsub("%+", ".") .. "/wgpu-windows-x86_64" .. build .. "-release"
@@ -57,7 +57,7 @@ package("wgpu-native")
 
     on_load("windows", function (package)
         if not package:config("shared") then
-            package:add("syslinks", "Advapi32", "bcrypt", "d3dcompiler", "NtDll", "User32", "Userenv", "WS2_32", "Gdi32", "Opengl32", "propsys")
+            package:add("syslinks", "Advapi32", "bcrypt", "d3dcompiler", "NtDll", "User32", "Userenv", "WS2_32", "Gdi32", "Opengl32", "propsys", "OleAut32", "Ole32", "RuntimeObject")
         end
     end)
 
