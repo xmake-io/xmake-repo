@@ -43,15 +43,31 @@ package("lcms")
 
     on_install(function (package)
         local configs = {}
-        if package:is_plat("wasm") and package:config("shared") then
+        if false then
             table.insert(configs, "--enable-shared=" .. (package:config("shared") and "yes" or "no"))
             table.insert(configs, "--enable-static=" .. (package:config("shared") and "no" or "yes"))
+
+            if ackage:config("jpeg") then
+                table.insert(configs, "--with-jpeg=" .. package:dep("libjpeg"):installdir())
+            end
+            if package:config("tiff") then
+                table.insert(configs, "--with-tiff=" .. package:dep("libtiff"):installdir())
+            end
+
+            if package:config("fastfloat") then
+                table.insert(configs, "--with-fastfloat")
+            end
+            if package:config("threaded") then
+                table.insert(configs, "--with-threaded")
+            end
+
             if package:config("pic") ~= false then
                 table.insert(configs, "--with-pic")
             end
             if package:debug() then
                 table.insert(configs, "--enable-debug")
             end
+
             import("package.tools.autoconf").install(package, configs)
         else
             table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
