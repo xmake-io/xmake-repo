@@ -9,7 +9,7 @@ package("lcms")
 
     add_versions("2.17", "6e6f6411db50e85ae8ff7777f01b2da0614aac13b7b9fcbea66dc56a1bc71418")
 
-    add_deps("meson")
+    add_deps("meson", "ninja")
 
     add_configs("jpeg", {description = "Use JPEG", default = false, type = "boolean"})
     add_configs("tiff", {description = "Use LibTiff", default = false, type = "boolean"})
@@ -19,6 +19,9 @@ package("lcms")
     add_configs("threaded", {description = "Build and install the multi threaded plugin, use only if GPL 3.0 is acceptable", default = false, type = "boolean"})
 
     on_load(function (package)
+        if package:is_plat("windows") and package:config("shared") then
+            package:add("defines", "CMS_DLL")
+        end
         if package:config("jpeg") then
             package:add("deps", "libjpeg")
         end
