@@ -8,13 +8,14 @@ package("safetyhook")
 
     add_versions("v0.6.4", "57c2a7e23e9e0857eb0f5c6322d97d75147b579ae2b8831c821e6dbf6da04298")
 
-    add_deps("cmake", "zydis")
+    add_deps()
+    add_deps("cmake", "zycore-c v1.5.0", "zydis v4.1.0")
 
     on_install(function (package)
         local configs = {"-DSAFETYHOOK_FETCH_ZYDIS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {packagedeps = {"zycore-c"}})
     end)
 
     on_test(function (package)
