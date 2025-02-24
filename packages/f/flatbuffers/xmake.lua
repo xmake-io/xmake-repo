@@ -12,6 +12,7 @@ package("flatbuffers")
     add_versions("v23.5.26", "57bd580c0772fd1a726c34ab8bf05325293bc5f9c165060a898afa1feeeb95e1")
     add_versions("v24.3.25", "e706f5eb6ca8f78e237bf3f7eccffa1c5ec9a96d3c1c938f08dc09aab1884528")
     add_versions("v24.12.23", "c5cd6a605ff20350c7faa19d8eeb599df6117ea4aabd16ac58a7eb5ba82df4e7")
+    add_versions("v25.2.10", "75ffbce7d32f8218b5faec86ae2f6397c7ca810605dc710dfa9c146b9df9e3e9")
 
     add_deps("cmake")
 
