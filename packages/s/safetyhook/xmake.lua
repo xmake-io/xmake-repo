@@ -29,8 +29,18 @@ package("safetyhook")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            SAFETYHOOK_NOINLINE int add(int x, int y) {
+                return x + y;
+            }
+
+            SafetyHookInline g_add_hook{};
+
+            int hook_add(int x, int y) {
+                return g_add_hook.call<int>(x * 2, y * 2);
+            }
+
             void test() {
-                auto factory = SafetyHookFactory::init();
+                g_add_hook = safetyhook::create_inline(reinterpret_cast<void*>(add), reinterpret_cast<void*>(hook_add));
             }
         ]]}, {configs = {languages = "c++23"}, includes = "safetyhook.hpp"}))
     end)
