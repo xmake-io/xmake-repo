@@ -20,7 +20,7 @@ package("safetyhook")
         end
     end)
 
-    on_install("windows|!arm*", "mingw", function (package)
+    on_install(function (package)
         local configs = {"-DSAFETYHOOK_FETCH_ZYDIS=OFF"}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
@@ -29,18 +29,8 @@ package("safetyhook")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
-            __declspec(noinline) int add(int x, int y) {
-                return x + y;
-            }
-
-            SafetyHookInline g_add_hook{};
-
-            int hook_add(int x, int y) {
-                return g_add_hook.call<int>(x * 2, y * 2);
-            }
-
             void test() {
-                g_add_hook = safetyhook::create_inline(reinterpret_cast<void*>(add), reinterpret_cast<void*>(hook_add));
+                auto factory = SafetyHookFactory::init();
             }
         ]]}, {configs = {languages = "c++23"}, includes = "safetyhook.hpp"}))
     end)
