@@ -10,7 +10,7 @@ package("safetyhook")
 
     add_deps("cmake", "zydis 4.1.0")
 
-    on_check("windows", function (package)
+    on_check(function (package)
         import("core.base.semver")
 
         local msvc = package:toolchain("msvc")
@@ -19,7 +19,7 @@ package("safetyhook")
             assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(safetyhook): need vs_toolset >= v143")
         end
 
-        if not package:is_arch("x64", "x86", "x86_64") or package:is_arch("arm.*") then 
+        if not package:is_arch("i386", "x86", "x64", "x86_64") then 
             raise("package(safetyhook) only support x86 arch")
         end
     end)
