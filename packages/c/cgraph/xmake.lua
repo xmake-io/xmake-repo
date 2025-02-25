@@ -12,6 +12,10 @@ package("cgraph")
     add_versions("v2.6.0", "1b055ee86f0340f2c35b4ed40c4a3b4cc05081b115b0fb634d778671018648f2")
     add_versions("v2.5.4", "fd5a53dc0d7e3fc11050ccc13fac987196ad42184a4e244b9d5e5d698b1cb101")
 
+    if is_plat("windows") then
+        add_cxxflags("/source-charset:utf-8")
+    end
+
     on_install(function (package)
         os.vcp("src/*", package:installdir("include"))
         io.writefile("xmake.lua", [[
