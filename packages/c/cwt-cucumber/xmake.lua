@@ -19,7 +19,7 @@ package("cwt-cucumber")
     on_install(function (package)
         local opt = {}
         if package:is_plat("macosx") then
-            opt.cxxflags = "-fexperimental-library"
+            opt.ldflags = "-fexperimental-library"
         end
         io.replace("CMakeLists.txt", "add_subdirectory(${PROJECT_SOURCE_DIR}/examples)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(${PROJECT_SOURCE_DIR}/gtest)", "", {plain = true})
