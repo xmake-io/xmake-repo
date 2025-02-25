@@ -25,7 +25,7 @@ package("cwt-cucumber")
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
-        import("package.tools.cmake").install(package, configs, {cxflags = "-fexperimental-library"})
+        import("package.tools.cmake").install(package, configs, {cxxflags = "-fexperimental-library"})
     end)
 
     on_test(function (package)
