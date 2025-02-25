@@ -12,13 +12,13 @@ package("safetyhook")
 
     on_check(function (package)
         import("core.base.semver")
-
-        local msvc = package:toolchain("msvc")
-        if msvc then
-            local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
-            assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(safetyhook): need vs_toolset >= v143")
+        if package:is_plat("windows") then
+            local msvc = package:toolchain("msvc")
+            if msvc then
+                local vs_toolset = package:toolchain("msvc"):config("vs_toolset")
+                assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(safetyhook): need vs_toolset >= v143")
+            end
         end
-
         if not package:is_arch("i386", "x86", "x64", "x86_64") then 
             raise("package(safetyhook) only support x86 arch")
         end
