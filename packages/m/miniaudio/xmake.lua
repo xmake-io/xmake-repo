@@ -5,6 +5,7 @@ package("miniaudio")
 
     set_urls("https://github.com/mackron/miniaudio/archive/refs/tags/$(version).tar.gz",
              "https://github.com/mackron/miniaudio.git")
+    add_versions("0.11.22", "bcb07bfb27e6fa94d34da73ba2d5642d4940b208ec2a660dbf4e52e6b7cd492f")
     add_versions("0.11.21", "6afb5c231613d2fab4f1c668b7243ff9a7d6d78a7f5a2692c133f026fe508506")
     add_versions("0.11.15", "24a6d38fe69cd42d91f6c1ad211bb559f6c89768c4671fa05b8027f5601d5457")
     add_versions("0.11.16", "13320464820491c61bd178b95818fecb7cd0e68f9677d61e1345df6be8d4d77e")
