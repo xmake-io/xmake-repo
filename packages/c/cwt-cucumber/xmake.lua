@@ -17,9 +17,6 @@ package("cwt-cucumber")
     end)
 
     on_install(function (package)
-        if package:is_plat("macosx") then
-            package:add("cxxflags", "-fexperimental-library")
-        end
         io.replace("CMakeLists.txt", "add_subdirectory(${PROJECT_SOURCE_DIR}/examples)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(${PROJECT_SOURCE_DIR}/gtest)", "", {plain = true})
         local configs = {}
@@ -28,7 +25,7 @@ package("cwt-cucumber")
         if package:config("shared") and package:is_plat("windows") then
             table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
         end
-        import("package.tools.cmake").install(package, configs)
+        import("package.tools.cmake").install(package, configs, {cxflags = "-fexperimental-library"})
     end)
 
     on_test(function (package)
