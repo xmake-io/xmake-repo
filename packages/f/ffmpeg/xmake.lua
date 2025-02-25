@@ -71,7 +71,6 @@ package("ffmpeg")
     end
 
     on_fetch("mingw", "linux", "macosx", function (package, opt)
-        import("lib.detect.find_tool")
         if opt.system then
             local result
             for _, name in ipairs({"libavcodec", "libavdevice", "libavfilter", "libavformat", "libavutil", "libpostproc", "libswresample", "libswscale"}) do
@@ -83,7 +82,7 @@ package("ffmpeg")
             end
             result.shared = result.shared and true
             result.static = result.static and true
-            local ffmpeg = find_tool("ffmpeg", {check = "-help", version = true, command = "-version", parse = "ffmpeg version%s+n*(%S+)", force = true})
+            local ffmpeg = package:find_tool("ffmpeg", {check = "-help", version = true, command = "-version", parse = "ffmpeg version%s+n*(%S+)", force = true})
             result.version = ffmpeg and ffmpeg.version
             return result
         end
