@@ -11,12 +11,23 @@ package("cwt-cucumber")
     add_deps("cmake")
     add_deps("nlohmann_json", {configs = {cmake = true}})
 
+    on_check("android", function (package)
+        local ndk = package:toolchain("ndk"):config("ndkver")
+        assert(ndk and tonumber(ndk) > 22, "package(cwt-cucumber) require ndk version > 22")
+    end)
+
     on_install(function (package)
+        if package:is_plat("macosx") then
+            package:add("cxxflags", "-fexperimental-library")
+        end
         io.replace("CMakeLists.txt", "add_subdirectory(${PROJECT_SOURCE_DIR}/examples)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(${PROJECT_SOURCE_DIR}/gtest)", "", {plain = true})
         local configs = {}
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
+        if package:config("shared") and package:is_plat("windows") then
+            table.insert(configs, "-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON")
+        end
         import("package.tools.cmake").install(package, configs)
     end)
 
