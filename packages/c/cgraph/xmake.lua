@@ -1,5 +1,4 @@
 package("cgraph")
-    set_kind("library", {headeronly = true})
     set_homepage("http://www.chunel.cn")
     set_description("A common used C++ DAG framework")
     set_license("MIT")
@@ -12,12 +11,34 @@ package("cgraph")
     add_versions("v2.6.0", "1b055ee86f0340f2c35b4ed40c4a3b4cc05081b115b0fb634d778671018648f2")
     add_versions("v2.5.4", "fd5a53dc0d7e3fc11050ccc13fac987196ad42184a4e244b9d5e5d698b1cb101")
 
-    if is_plat("windows") then
-        add_cxxflags("/source-charset:utf-8")
+    if is_plat("linux", "bsd") then
+        add_syslinks("pthread")
     end
 
     on_install(function (package)
-        os.vcp("src/*", package:installdir("include"))
+        if package:has_tool("cxx", "cl") then
+            package:add("cxxflags", "/utf-8")
+        end
+
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            set_languages("c++11")
+            set_encodings("utf-8")
+            target("cgraph")
+                set_kind("$(kind)")
+                add_files("src/**.cpp")
+                add_headerfiles("src/(**.h)", "src/(**.inl)")
+                if is_plat("windows") and is_kind("shared") then
+                    add_rules("utils.symbols.export_all", {export_classes = true})
+                end
+                if is_plat("linux", "macosx") then
+                    add_defines("_ENABLE_LIKELY_")
+                end
+                if is_plat("linux", "bsd") then
+                    add_syslinks("pthread")
+                end
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
