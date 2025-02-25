@@ -16,14 +16,16 @@ package("cwt-cucumber")
         assert(ndk and tonumber(ndk) > 22, "package(cwt-cucumber) require ndk version > 22")
     end)
 
+    on_check("macosx", function (package)
+        if macos.version():le("13.7") then
+            raise("package(cwt-cucumber): requires macOS version >= 14.5")
+        end
+    end)
+
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(${PROJECT_SOURCE_DIR}/examples)", "", {plain = true})
         io.replace("CMakeLists.txt", "add_subdirectory(${PROJECT_SOURCE_DIR}/gtest)", "", {plain = true})
         local configs = {}
-        if package:is_plat("macosx") then
-            package:add("cxxflags", "-fexperimental-library")
-            table.insert(configs, "-DCMAKE_CXX_FLAGS=-fexperimental-library")
-        end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
         if package:config("shared") and package:is_plat("windows") then
