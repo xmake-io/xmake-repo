@@ -19,7 +19,7 @@ package("safetyhook")
             assert(vs_toolset and semver.new(vs_toolset):minor() >= 30, "package(safetyhook): need vs_toolset >= v143")
         end
 
-        if not is_arch("x64", "x86", "x86_64") then 
+        if not package:is_arch("x64", "x86", "x86_64") then 
             raise("package(safetyhook) only support x86 arch")
         end
     end)
