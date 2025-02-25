@@ -27,7 +27,6 @@ package("cgraph")
                 add_syslinks("pthread")
             end
             set_languages("c++11")
-            set_encodings("utf-8")
             target("cgraph")
                 set_kind("$(kind)")
                 add_files("src/**.cpp")
