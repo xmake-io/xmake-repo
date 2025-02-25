@@ -1,5 +1,5 @@
 package("cgraph")
-    set_kind("library", {headeronly = true})
+    set_kind("library")
     set_homepage("http://www.chunel.cn")
     set_description("A common used C++ DAG framework")
     set_license("MIT")
@@ -18,6 +18,21 @@ package("cgraph")
 
     on_install(function (package)
         os.vcp("src/*", package:installdir("include"))
+        io.writefile("xmake.lua", [[
+            add_rules("mode.debug", "mode.release")
+            if is_plat("macosx") then
+                add_defines("_ENABLE_LIKELY_")
+            elseif is_plat("linux") then
+                add_defines("_ENABLE_LIKELY_")
+                add_syslinks("pthread")
+            end
+            set_languages("c++11")
+            set_encodings("utf-8")
+            target("cgraph")
+                set_kind("$(kind)")
+                add_files("src/**.cpp")
+        ]])
+        import("package.tools.xmake").install(package)
     end)
 
     on_test(function (package)
