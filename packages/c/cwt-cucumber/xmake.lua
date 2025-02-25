@@ -17,7 +17,7 @@ package("cwt-cucumber")
     end)
 
     on_check("macosx", function (package)
-        if macos.version():le("13.7") then
+        if macos.version():le("14") then
             raise("package(cwt-cucumber): requires macOS version >= 14.5")
         end
     end)
