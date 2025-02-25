@@ -23,7 +23,6 @@ package("cwt-cucumber")
         if package:is_plat("macosx") then
             package:add("cxxflags", "-fexperimental-library")
             table.insert(configs, "-DCMAKE_CXX_FLAGS=-fexperimental-library")
-            add_syslinks("libc++experimental")
         end
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DBUILD_SHARED_LIBS=" .. (package:config("shared") and "ON" or "OFF"))
