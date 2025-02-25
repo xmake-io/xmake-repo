@@ -6,6 +6,7 @@ package("pahomqttcpp")
     add_urls("https://github.com/eclipse/paho.mqtt.cpp/archive/refs/tags/$(version).zip",
              "https://github.com/eclipse/paho.mqtt.cpp.git", {submodules = false})
 
+    add_versions("v1.5.1", "ad80c9cdf4c2e557fe0afb95e3170c818bd8f072c7efe6f19e174814d482c131")
     add_versions("v1.5.0", "0805f9d8003b80d3d389930bfb8d369c56cdea402effa76b6c1c61ba5aa0d804")
     add_versions("v1.4.1", "a3b2782ef6d19ff2ac4c6cfe29de79d8888f75122deb361ae91ca3d3a14456ee")
     add_versions("v1.4.0", "c165960f64322de21697eb06efdca3d74cce90f45ff5ff0efdd968708e13ba0c")
