@@ -10,7 +10,8 @@ package("google-gn")
     add_deps("python 3.x", "ninja", {kind = "binary"})
 
     on_install(function (package)
-        os.vrun("python build/gen.py")
+        local python = package:is_plat("windows") and "python" or "python3"
+        os.vrun(python .. " build/gen.py")
         os.vrunv("ninja", {"-C", "out"})
         os.cp("out/gn*", package:installdir("bin"))
     end)
