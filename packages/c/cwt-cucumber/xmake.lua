@@ -8,7 +8,8 @@ package("cwt-cucumber")
 
     add_versions("2.5", "793d07c2f1989a2943befd4344cb8a49f36d39bdc0d596dbebbbc50e25fa3bc5")
 
-    add_deps("cmake", "nlohmann_json")
+    add_deps("cmake")
+    add_deps("nlohmann_json", {configs = {cmake = true}})
 
     on_install(function (package)
         io.replace("CMakeLists.txt", "add_subdirectory(${PROJECT_SOURCE_DIR}/examples)", "", {plain = true})
