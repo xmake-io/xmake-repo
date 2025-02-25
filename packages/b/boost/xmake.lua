@@ -81,6 +81,10 @@ package("boost")
     end
 
     on_load(function (package)
+        if package:config("python") then
+            package:add("deps", "python")
+        end
+
         local version = package:version()
         if package:config("cmake") and version:lt("1.86") then
             -- Don't break old version
