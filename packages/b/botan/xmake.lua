@@ -13,6 +13,10 @@ package("botan")
     add_versions("3.5.0", "7d91d3349e6029e1a6929a50ab587f9fd4e29a9af3f3d698553451365564001f")
     add_versions("3.4.0", "6ef2a16a0527b1cfc9648a644877f7b95c4d07e8ef237273b030c623418c5e5b")
 
+    -- Backport MSVC flags regression after 3.5.0 (fixed in 3.7.0: https://github.com/randombit/botan/pull/4452)
+    add_patches("3.6.0", "patches/3.6.0/msvc-compiler-flags.patch", "fc41a662f34a5fa52b232b25a396f595984698dc0029e4aa75423c8c4782028c")
+    add_patches("3.6.1", "patches/3.6.0/msvc-compiler-flags.patch", "fc41a662f34a5fa52b232b25a396f595984698dc0029e4aa75423c8c4782028c")
+
     add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
     add_configs("python", {description = "Enable python module", default = false, type = "boolean"})
     add_configs("endian", {description = [[The  parameter should be either “little” or “big”. If not used then if the target architecture has a default, that is used. Otherwise left unspecified, which causes less optimal codepaths to be used but will work on either little or big endian.]], default = nil, type = "string", values = {"little", "big"}})

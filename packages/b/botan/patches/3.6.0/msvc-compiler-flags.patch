@@ -1,0 +1,159 @@
+From 4f0218bcc0e311e37dd191329a6757bddb2ea97b Mon Sep 17 00:00:00 2001
+From: Jack Lloyd <jack@randombit.net>
+Date: Sun, 1 Dec 2024 13:51:19 -0500
+Subject: [PATCH] Don't implicitly/always pass CXXFLAGS into LDFLAGS
+
+This was done to handle LTO (#4196 #4200) but causes problems especially for
+MSVC which in some (unclear) circumstances treats unknown flags to the linker as
+a hard error (#4451). Instead only pass CXXFLAGS into LDFLAGS when an extra
+option `--lto-cxxflags-to-ldflags` is provided to opt into this behavior.
+---
+ configure.py               | 76 +++++++++++++++++++-------------------
+ src/build-data/makefile.in |  2 +-
+ src/build-data/ninja.in    |  2 +-
+ 3 files changed, 41 insertions(+), 39 deletions(-)
+
+diff --git a/configure.py b/configure.py
+index 8d8d85d56c9..35c78bc10f7 100755
+--- a/configure.py
++++ b/configure.py
+@@ -379,6 +379,9 @@ def add_enable_disable_pair(group, what, default, msg=optparse.SUPPRESS_HELP):
+     target_group.add_option('--extra-cxxflags', metavar='FLAGS', default=[], action='append',
+                             help='set extra compiler flags')
+ 
++    target_group.add_option('--lto-cxxflags-to-ldflags', default=False, action='store_true',
++                            help='set all compilation flags also during linking (for LTO)')
++
+     target_group.add_option('--ldflags', metavar='FLAGS',
+                             help='set linker flags', default=None)
+ 
+@@ -1515,48 +1518,50 @@ def cc_lang_flags(self):
+     def cc_lang_binary_linker_flags(self):
+         return self.lang_binary_linker_flags
+ 
+-    def cc_compile_flags(self, options, with_debug_info=None, enable_optimizations=None):
+-        def gen_flags(with_debug_info, enable_optimizations):
++    def ldflags(self, options):
++        if options.ldflags:
++            yield options.ldflags
++
++        if options.lto_cxxflags_to_ldflags:
++            yield from self.cc_compile_flags(options)
+ 
+-            sanitizers_enabled = options.with_sanitizers or (len(options.enable_sanitizers) > 0)
++    def cc_compile_flags(self, options):
++        sanitizers_enabled = options.with_sanitizers or (len(options.enable_sanitizers) > 0)
+ 
+-            if with_debug_info is None:
+-                with_debug_info = options.with_debug_info
+-            if enable_optimizations is None:
+-                enable_optimizations = not options.no_optimizations
++        if options.cxxflags:
++            # CXXFLAGS is assumed to be the entire set of desired compilation flags
++            # if not the case the user should have used --extra-cxxflags
++            yield options.cxxflags
++            return
+ 
+-            if with_debug_info:
+-                yield self.debug_info_flags
++        if options.with_debug_info:
++            yield self.debug_info_flags
+ 
+-            if enable_optimizations:
+-                if options.optimize_for_size:
+-                    if self.size_optimization_flags != '':
+-                        yield self.size_optimization_flags
+-                    else:
+-                        logging.warning("No size optimization flags set for current compiler")
+-                        yield self.optimization_flags
+-                elif sanitizers_enabled and self.sanitizer_optimization_flags != '':
+-                    yield self.sanitizer_optimization_flags
++        if not options.no_optimizations:
++            if options.optimize_for_size:
++                if self.size_optimization_flags != '':
++                    yield self.size_optimization_flags
+                 else:
++                    logging.warning("No size optimization flags set for current compiler")
+                     yield self.optimization_flags
++            elif sanitizers_enabled and self.sanitizer_optimization_flags != '':
++                yield self.sanitizer_optimization_flags
++            else:
++                yield self.optimization_flags
+ 
+-            if options.arch in self.cpu_flags:
+-                yield self.cpu_flags[options.arch]
+-
+-            if options.arch in self.cpu_flags_no_debug:
+-
+-                # Only enable these if no debug/sanitizer options enabled
+-
+-                if not (options.debug_mode or sanitizers_enabled):
+-                    yield self.cpu_flags_no_debug[options.arch]
++        if options.arch in self.cpu_flags:
++            yield self.cpu_flags[options.arch]
+ 
+-            for flag in options.extra_cxxflags:
+-                yield flag
++        if options.arch in self.cpu_flags_no_debug:
++            # Only enable these if no debug/sanitizer options enabled
++            if not (options.debug_mode or sanitizers_enabled):
++                yield self.cpu_flags_no_debug[options.arch]
+ 
+-            for definition in options.define_build_macro:
+-                yield self.add_compile_definition_option + definition
++        for flag in options.extra_cxxflags:
++            yield flag
+ 
+-        return (' '.join(gen_flags(with_debug_info, enable_optimizations))).strip()
++        for definition in options.define_build_macro:
++            yield self.add_compile_definition_option + definition
+ 
+     @staticmethod
+     def _so_link_search(osname, debug_info):
+@@ -2264,9 +2269,6 @@ def test_exe_extra_ldflags():
+ 
+         'sanitizer_types' : sorted(cc.sanitizer_types),
+ 
+-        'cc_compile_opt_flags': cc.cc_compile_flags(options, False, True),
+-        'cc_compile_debug_flags': cc.cc_compile_flags(options, True, False),
+-
+         'dash_o': cc.output_to_object,
+         'dash_c': cc.compile_flags,
+ 
+@@ -2274,8 +2276,8 @@ def test_exe_extra_ldflags():
+         'cc_lang_binary_linker_flags': cc.cc_lang_binary_linker_flags(),
+         'os_feature_macros': osinfo.macros(cc),
+         'cc_sysroot': sysroot_option(),
+-        'cc_compile_flags': options.cxxflags or cc.cc_compile_flags(options),
+-        'ldflags': options.ldflags or '',
++        'cc_compile_flags': ' '.join(cc.cc_compile_flags(options)).strip(),
++        'ldflags': ' '.join(cc.ldflags(options)).strip(),
+         'test_exe_extra_ldflags': test_exe_extra_ldflags(),
+         'extra_libs': extra_libs(options.extra_libs, cc),
+         'cc_warning_flags': cc.cc_warning_flags(options),
+diff --git a/src/build-data/makefile.in b/src/build-data/makefile.in
+index e59085667bb..9b3ac587477 100644
+--- a/src/build-data/makefile.in
++++ b/src/build-data/makefile.in
+@@ -16,7 +16,7 @@ LANG_EXE_FLAGS = %{cc_lang_binary_linker_flags}
+ CXXFLAGS       = %{cc_compile_flags}
+ WARN_FLAGS     = %{cc_warning_flags}
+ LIB_FLAGS      = %{lib_flags}
+-LDFLAGS        = %{ldflags} %{cc_compile_flags}
++LDFLAGS        = %{ldflags}
+ 
+ EXE_LINK_CMD   = %{exe_link_cmd}
+ 
+diff --git a/src/build-data/ninja.in b/src/build-data/ninja.in
+index a6279d3dea2..414663acfeb 100644
+--- a/src/build-data/ninja.in
++++ b/src/build-data/ninja.in
+@@ -10,7 +10,7 @@ LANG_EXE_FLAGS = %{cc_lang_binary_linker_flags}
+ CXXFLAGS       = %{cc_compile_flags}
+ WARN_FLAGS     = %{cc_warning_flags}
+ 
+-LDFLAGS        = %{ldflags} %{cc_compile_flags}
++LDFLAGS        = %{ldflags}
+ 
+ EXE_LINK_CMD   = %{exe_link_cmd}
+ 
