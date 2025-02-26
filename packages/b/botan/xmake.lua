@@ -157,9 +157,16 @@ package("botan")
         end
         table.insert(configs, "--build-targets=" .. targets)
 
+        -- necessary functions were moved to a separate module in 3.7.0
         local modules = package:config("modules")
+        local needs_os_utils = package:version():ge("3.7.0")
         if modules then
+            if needs_os_utils and not table.contains(modules, "os_utils") then
+                table.insert(modules, "os_utils")
+            end
             table.insert(configs, "--enable-modules=" .. table.concat(modules, ","))
+        elseif needs_os_utils then
+            table.insert(configs, "--enable-modules=os_utils")
         end
 
         if not package:config("python") then
