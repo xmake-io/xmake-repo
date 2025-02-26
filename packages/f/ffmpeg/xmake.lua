@@ -80,8 +80,6 @@ package("ffmpeg")
                 end
                 result = (result and result .. pkginfo) or pkginfo
             end
-            result.shared = result.shared and true
-            result.static = result.static and true
             local ffmpeg = package:find_tool("ffmpeg", {check = "-help", version = true, command = "-version", parse = "ffmpeg version%s+n*(%S+)", force = true})
             result.version = ffmpeg and ffmpeg.version
             return result
