@@ -6,7 +6,7 @@ package("whereami")
     add_urls("https://github.com/gpakosz/whereami.git")
     add_versions("2024.08.26", "dcb52a058dc14530ba9ae05e4339bd3ddfae0e0e")
 
-    on_install(function (package)
+    on_install("!wasm", function (package)
         local configs = {}
         io.writefile("xmake.lua", [[
             add_rules("mode.release", "mode.debug")
