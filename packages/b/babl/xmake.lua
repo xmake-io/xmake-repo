@@ -27,5 +27,5 @@ package("babl")
     end)
 
     on_test(function (package)
-        assert(package:has_cfuncs("babl_init", {includes = "babl/babl.h"}))
+        assert(package:has_cfuncs("babl_init", {includes = "babl-0.1/babl/babl.h"}))
     end)
