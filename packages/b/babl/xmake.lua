@@ -9,9 +9,6 @@ package("babl")
 
     add_versions("0.1.110", "bf47be7540d6275389f66431ef03064df5376315e243d0bab448c6aa713f5743")
 
-    add_patches("0.1.110",  "https://gitlab.gnome.org/GNOME/babl/-/merge_requests/70.diff",
-                            "5a61f9267e90c36ea817f3d25855e88031d12bee281a59a7c98a21c3425fb6bf")
-
     add_configs("lcms", {description = "Build with lcms", default = false, type = "boolean"})
 
     if is_plat("wasm") then
