@@ -30,7 +30,7 @@ package("babl")
         end
     end)
 
-    on_install("!iphoneos", "!windows", function (package)
+    on_install("!iphoneos and !windows", function (package)
         local configs = {"-Dwith-docs=false", "-Denable-gir=false", "-Denable-vapi=false", "-Dgi-docgen=disabled"}
         table.insert(configs, "-Dwith-lcms=" .. (package:config("lcms") and "true" or "false"))
         table.insert(configs, "-Ddefault_library=" .. (package:config("shared") and "shared" or "static"))
