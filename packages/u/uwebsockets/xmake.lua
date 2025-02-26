@@ -41,6 +41,7 @@ package("uwebsockets")
 
     on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
+            #include <uWebSockets/PerMessageDeflate.h>
             void test(){
                 struct UserData {};
                 uWS::App().get("/hello/:name", [](auto *res, auto *req) {
