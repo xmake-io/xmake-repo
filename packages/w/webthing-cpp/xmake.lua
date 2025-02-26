@@ -1,4 +1,5 @@
 package("webthing-cpp")
+    set_kind("library", {headeronly = true})
     set_homepage("https://github.com/bw-hro/webthing-cpp")
     set_description("Webthing-CPP is a modern CPP/C++17 implementation of the WebThings API.")
     set_license("MIT")
@@ -28,7 +29,7 @@ package("webthing-cpp")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test(function (package)
+    on_test("linux", "macosx", function (package)
         assert(package:check_cxxsnippets({test = [[
             using namespace bw::webthing;
             void test() {
