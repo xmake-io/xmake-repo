@@ -7,7 +7,7 @@ package("babl")
         return format("%d.%d/babl-%s", version:major(), version:minor(), version)
     end})
 
-    add_versions("0.1.110", "ec9c46c2aefbb960fb6a6b7f800fe39de48343437b6ce08e30a8d9688ed14ba4")
+    add_versions("0.1.110", "bf47be7540d6275389f66431ef03064df5376315e243d0bab448c6aa713f5743")
 
     add_configs("lcms", {description = "Build with lcms", default = false, type = "boolean"})
 
