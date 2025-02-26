@@ -17,8 +17,8 @@ package("botan")
     add_configs("python", {description = "Enable python module", default = false, type = "boolean"})
     add_configs("endian", {description = [[The  parameter should be either “little” or “big”. If not used then if the target architecture has a default, that is used. Otherwise left unspecified, which causes less optimal codepaths to be used but will work on either little or big endian.]], default = nil, type = "string", values = {"little", "big"}})
     add_configs("modules", {description = [[Enable modules, example: {configs = {modules = {"zlib", "lzma"}}}]], type = "table"})
-    if is_plat("wasm") then 
-          add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true}) 
+    if is_plat("wasm") then
+        add_configs("shared", {description = "Build shared library.", default = false, type = "boolean", readonly = true})
     end
 
     add_deps("python 3.x", "ninja", {kind = "binary"})
