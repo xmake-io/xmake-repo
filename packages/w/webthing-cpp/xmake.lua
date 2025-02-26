@@ -21,7 +21,7 @@ package("webthing-cpp")
         end
     end)
 
-    on_install(function (package)
+    on_install("linux", "macosx", function (package)
         local configs = {"-DWT_BUILD_EXAMPLES=OFF", "-DWT_BUILD_TESTS=OFF"}
         table.insert(configs, "-DWT_WITH_SSL=" .. (package:config("ssl") and "ON" or "OFF"))
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
@@ -29,7 +29,7 @@ package("webthing-cpp")
         import("package.tools.cmake").install(package, configs)
     end)
 
-    on_test("linux", "macosx", function (package)
+    on_test(function (package)
         assert(package:check_cxxsnippets({test = [[
             using namespace bw::webthing;
             void test() {
