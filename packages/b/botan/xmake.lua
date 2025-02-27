@@ -148,7 +148,11 @@ package("botan")
                 -- let configure.py detech bsd host name
                 table.insert(configs, "--os=" .. package:plat())
             end
-            table.insert(configs, "--cpu=" .. package:arch())
+            local arch = package:arch()
+            if arch == "arm64-v8a" then
+                arch = "arm64"
+            end
+            table.insert(configs, "--cpu=" .. arch)
         end
 
         if package:is_debug() then
