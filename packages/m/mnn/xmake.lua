@@ -25,7 +25,7 @@ package("mnn")
 
     add_deps("cmake")
 
-    on_load("windows", "linux", "macosx", "android", function (package)
+    on_load("!windows|!arm*", function (package)
         local mnn_path = package:installdir("include")
         local mnn_lib_dir = string.sub(mnn_path, 1, string.len(mnn_path) - 7) .. "lib"
         if package:config("shared") then
@@ -62,7 +62,7 @@ package("mnn")
         end
     end)
 
-    on_install("windows", "linux", "macosx", "android", function (package)
+    on_install("!windows|!arm*", function (package)
         local configs = {"-DMNN_BUILD_TEST=OFF",
                          "-DMNN_BUILD_DEMO=OFF",
                          "-DMNN_SUPPORT_TFLITE_QUAN=ON",
