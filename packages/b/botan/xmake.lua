@@ -16,9 +16,6 @@ package("botan")
     -- Backport MSVC flags regression after 3.5.0 (fixed in 3.7.0: https://github.com/randombit/botan/pull/4452)
     add_patches(">=3.6.0 <3.7.0", "patches/3.6.0/msvc-compiler-flags.patch", "fc41a662f34a5fa52b232b25a396f595984698dc0029e4aa75423c8c4782028c")
 
-    -- Patch to support versions of ar that don't support response files (which are first used in 3.6.0)
-    add_patches(">=3.6.0", "patches/3.6.0/ar-response-files.patch", "30c9b46e077a07f3070b398eae3fb11e99621361d16a0157047712d8b693a2fd")
-
     add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
     add_configs("python", {description = "Enable python module", default = false, type = "boolean"})
     add_configs("endian", {description = [[The  parameter should be either “little” or “big”. If not used then if the target architecture has a default, that is used. Otherwise left unspecified, which causes less optimal codepaths to be used but will work on either little or big endian.]], default = nil, type = "string", values = {"little", "big"}})
@@ -78,6 +75,11 @@ package("botan")
                     end
                 end
             end
+        end
+
+        if not package:is_plat("windows") then
+            -- Patch to support versions of ar that don't support response files (which are first used in 3.6.0)
+            package:add("patches", ">=3.6.0", "patches/3.6.0/ar-response-files.patch", "30c9b46e077a07f3070b398eae3fb11e99621361d16a0157047712d8b693a2fd")
         end
     end)
 
