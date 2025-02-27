@@ -14,8 +14,10 @@ package("botan")
     add_versions("3.4.0", "6ef2a16a0527b1cfc9648a644877f7b95c4d07e8ef237273b030c623418c5e5b")
 
     -- Backport MSVC flags regression after 3.5.0 (fixed in 3.7.0: https://github.com/randombit/botan/pull/4452)
-    add_patches("3.6.0", "patches/3.6.0/msvc-compiler-flags.patch", "fc41a662f34a5fa52b232b25a396f595984698dc0029e4aa75423c8c4782028c")
-    add_patches("3.6.1", "patches/3.6.0/msvc-compiler-flags.patch", "fc41a662f34a5fa52b232b25a396f595984698dc0029e4aa75423c8c4782028c")
+    add_patches(">=3.6.0 <3.7.0", "patches/3.6.0/msvc-compiler-flags.patch", "fc41a662f34a5fa52b232b25a396f595984698dc0029e4aa75423c8c4782028c")
+
+    -- Patch to support versions of ar that don't support response files (which are first used in 3.6.0)
+    add_patches(">=3.6.0", "patches/3.6.0/ar-response-files.patch", "30c9b46e077a07f3070b398eae3fb11e99621361d16a0157047712d8b693a2fd")
 
     add_configs("tools", {description = "Build tools.", default = false, type = "boolean"})
     add_configs("python", {description = "Enable python module", default = false, type = "boolean"})
