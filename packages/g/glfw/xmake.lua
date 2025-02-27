@@ -17,7 +17,7 @@ package("glfw")
 
     add_configs("glfw_include", {description = "Choose submodules enabled in glfw", default = "none", type = "string", values = {"none", "vulkan", "glu", "glext", "es2", "es3", "system"}})
     add_configs("x11", {description = "Build support for X11", default = is_plat("linux"), type = "boolean"})
-    add_configs("wayland", {description = "Build support for Wayland", default = false, type = "boolean"})
+    add_configs("wayland", {description = "Build support for Wayland", default = is_plat("linux"), type = "boolean"})
 
     if is_plat("linux") then
         add_extsources("apt::libglfw3-dev", "pacman::glfw-x11")
@@ -44,7 +44,7 @@ package("glfw")
             package:add("deps", "libx11", "libxrandr", "libxrender", "libxinerama", "libxfixes", "libxcursor", "libxi", "libxext")
         end
         if package:config("wayland") then
-            package:add("deps", "wayland", "wayland-protocols")
+            package:add("deps", "wayland", "wayland-protocols", "libxkbcommon")
         end
     end)
 
@@ -58,7 +58,7 @@ package("glfw")
         table.insert(configs, "-DGLFW_BUILD_X11=" .. (package:config("x11") and "ON" or "OFF"))
         table.insert(configs, "-DGLFW_BUILD_WAYLAND=" .. (package:config("wayland") and "ON" or "OFF"))
         if package:is_plat("linux") then
-            import("package.tools.cmake").install(package, configs, {packagedeps = {"libxrender", "libxfixes", "libxext", "libx11", "wayland"}})
+            import("package.tools.cmake").install(package, configs, {packagedeps = {"libxrender", "libxfixes", "libxext", "libx11", "wayland", "wayland-protocols", "libxkbcommon"}})
         else
             import("package.tools.cmake").install(package, configs)
         end
