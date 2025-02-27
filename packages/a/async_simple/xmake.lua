@@ -3,8 +3,8 @@ package("async_simple")
     set_description("Simple, light-weight and easy-to-use asynchronous components")
     set_license("Apache-2.0")
 
-    add_urls("https://github.com/alibaba/async_simple/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/alibaba/async_simple/archive/refs/tags/v$(version).tar.gz",
+    add_urls("https://github.com/alibaba/async_simple/archive/refs/tags/v$(version).tar.gz",
+             "https://github.com/alibaba/async_simple/archive/refs/tags/$(version).tar.gz",
              "https://github.com/alibaba/async_simple.git")
 
     add_versions("1.1", "32d1ea16dfc1741206b6e4a3fbe532eeb1c378619766c1abe11a9efc53109c10")
